@@ -1,10 +1,10 @@
-import {useCallback} from 'react';
 import {useQuery} from 'react-query';
 import {TableOptions} from 'react-table';
 import {useCollectiviteId, useReferentielId} from 'core-logic/hooks/params';
 import {fetchRows, PriorisationRow} from './queries';
 import {useReferentiel} from '../ReferentielTable/useReferentiel';
-import {useUrlFilterParams} from 'utils/useUrlFilterParams';
+import {ITEM_ALL} from 'ui/shared/MultiSelectFilter';
+import {useSearchParams} from 'core-logic/hooks/query';
 
 export type UseTableData = () => TableData;
 
@@ -17,13 +17,31 @@ export type TableData = {
   /** Indique que le chargement des données est en cours */
   isLoading: boolean;
   /** filtres actifs */
-  filters: string[];
+  filters: TFilters;
   /** Nombre de lignes après filtrage */
   count: number;
   /** Nombre total de lignes */
   total: number;
   /** pour remettre à jour les filtres */
-  setFilters: (newFilter: Record<string, string[]> | null) => void;
+  setFilters: (newFilter: TFilters) => void;
+};
+
+type TFilters = {
+  score_realise: string[];
+  score_programme: string[];
+  phase: string[];
+};
+
+export const initialFilters: TFilters = {
+  score_realise: [ITEM_ALL],
+  score_programme: [ITEM_ALL],
+  phase: [ITEM_ALL],
+};
+
+const nameToShortNames = {
+  score_realise: 'r',
+  score_programme: 'p',
+  phase: 'v',
 };
 
 /**
@@ -34,20 +52,15 @@ export const useTableData: UseTableData = () => {
   const referentiel = useReferentielId();
 
   // filtre initial
-  const {filter: filterScoreRealise, setFilter: setFilterScoreRealise} =
-    useUrlFilterParams('r', '0');
-  const filters = [filterScoreRealise];
-
-  const setFilters = useCallback(
-    (newFilter: Record<string, string[]> | null) => {
-      console.log(newFilter);
-    },
-    [setFilterScoreRealise]
+  const [filters, setFilters] = useSearchParams<TFilters>(
+    'priorisation',
+    initialFilters,
+    nameToShortNames
   );
 
   // chargement des données en fonction des filtres
   const {data, isLoading} = useQuery(
-    ['priorisation', collectivite_id, referentiel, ...filters],
+    ['priorisation', collectivite_id, referentiel, filters],
     () => fetchRows(collectivite_id, referentiel, filters)
   );
   const {rows: actionsStatut} = data || {};

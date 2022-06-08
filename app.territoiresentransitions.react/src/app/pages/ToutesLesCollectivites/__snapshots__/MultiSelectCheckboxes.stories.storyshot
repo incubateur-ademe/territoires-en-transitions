@@ -4,7 +4,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Multi Select Checkboxes S
 <ul>
   <div>
     <div
-      className="font-semibold text-sm mb-2"
+      className="font-semibold text-md mb-2"
     >
       Niveau de labellisation
     </div>
@@ -18,12 +18,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Multi Select Checkboxes S
           checked={false}
           className="fr-toggle__input"
           disabled={true}
-          id="all"
+          id="1f1a6fcf-1bcc-4428-a225-7affd095fb8aall"
           onChange={[Function]}
           type="checkbox"
         />
         <label
-          htmlFor="all"
+          htmlFor="1f1a6fcf-1bcc-4428-a225-7affd095fb8aall"
         >
           Tous
         </label>
@@ -35,12 +35,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Multi Select Checkboxes S
           checked={true}
           className="fr-toggle__input"
           disabled={false}
-          id="NL"
+          id="1f1a6fcf-1bcc-4428-a225-7affd095fb8aNL"
           onChange={[Function]}
           type="checkbox"
         />
         <label
-          htmlFor="NL"
+          htmlFor="1f1a6fcf-1bcc-4428-a225-7affd095fb8aNL"
         >
           Non labellisé
         </label>
@@ -52,12 +52,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Multi Select Checkboxes S
           checked={true}
           className="fr-toggle__input"
           disabled={false}
-          id="1"
+          id="1f1a6fcf-1bcc-4428-a225-7affd095fb8a1"
           onChange={[Function]}
           type="checkbox"
         />
         <label
-          htmlFor="1"
+          htmlFor="1f1a6fcf-1bcc-4428-a225-7affd095fb8a1"
         >
           Première étoile
         </label>
@@ -69,12 +69,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Multi Select Checkboxes S
           checked={false}
           className="fr-toggle__input"
           disabled={false}
-          id="2"
+          id="1f1a6fcf-1bcc-4428-a225-7affd095fb8a2"
           onChange={[Function]}
           type="checkbox"
         />
         <label
-          htmlFor="2"
+          htmlFor="1f1a6fcf-1bcc-4428-a225-7affd095fb8a2"
         >
           Deuxième étoile
         </label>
@@ -86,12 +86,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Multi Select Checkboxes S
           checked={false}
           className="fr-toggle__input"
           disabled={false}
-          id="3"
+          id="1f1a6fcf-1bcc-4428-a225-7affd095fb8a3"
           onChange={[Function]}
           type="checkbox"
         />
         <label
-          htmlFor="3"
+          htmlFor="1f1a6fcf-1bcc-4428-a225-7affd095fb8a3"
         >
           Troisième étoile
         </label>
@@ -103,12 +103,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Multi Select Checkboxes S
           checked={false}
           className="fr-toggle__input"
           disabled={false}
-          id="4"
+          id="1f1a6fcf-1bcc-4428-a225-7affd095fb8a4"
           onChange={[Function]}
           type="checkbox"
         />
         <label
-          htmlFor="4"
+          htmlFor="1f1a6fcf-1bcc-4428-a225-7affd095fb8a4"
         >
           Quatrième étoile
         </label>
@@ -120,12 +120,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Multi Select Checkboxes S
           checked={false}
           className="fr-toggle__input"
           disabled={false}
-          id="5"
+          id="1f1a6fcf-1bcc-4428-a225-7affd095fb8a5"
           onChange={[Function]}
           type="checkbox"
         />
         <label
-          htmlFor="5"
+          htmlFor="1f1a6fcf-1bcc-4428-a225-7affd095fb8a5"
         >
           Cinquième étoile
         </label>
@@ -139,7 +139,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Multi Select Checkboxes S
 <ul>
   <div>
     <div
-      className="font-semibold text-sm mb-2"
+      className="font-semibold text-md mb-2"
     >
       Niveau de labellisation
     </div>
@@ -153,12 +153,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Multi Select Checkboxes S
           checked={true}
           className="fr-toggle__input"
           disabled={true}
-          id="all"
+          id="d86b59b4-cb2f-4cfd-958a-8c23937d87e4all"
           onChange={[Function]}
           type="checkbox"
         />
         <label
-          htmlFor="all"
+          htmlFor="d86b59b4-cb2f-4cfd-958a-8c23937d87e4all"
         >
           Tous
         </label>
@@ -170,12 +170,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Multi Select Checkboxes S
           checked={false}
           className="fr-toggle__input"
           disabled={false}
-          id="NL"
+          id="d86b59b4-cb2f-4cfd-958a-8c23937d87e4NL"
           onChange={[Function]}
           type="checkbox"
         />
         <label
-          htmlFor="NL"
+          htmlFor="d86b59b4-cb2f-4cfd-958a-8c23937d87e4NL"
         >
           Non labellisé
         </label>
@@ -187,12 +187,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Multi Select Checkboxes S
           checked={false}
           className="fr-toggle__input"
           disabled={false}
-          id="1"
+          id="d86b59b4-cb2f-4cfd-958a-8c23937d87e41"
           onChange={[Function]}
           type="checkbox"
         />
         <label
-          htmlFor="1"
+          htmlFor="d86b59b4-cb2f-4cfd-958a-8c23937d87e41"
         >
           Première étoile
         </label>
@@ -204,12 +204,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Multi Select Checkboxes S
           checked={false}
           className="fr-toggle__input"
           disabled={false}
-          id="2"
+          id="d86b59b4-cb2f-4cfd-958a-8c23937d87e42"
           onChange={[Function]}
           type="checkbox"
         />
         <label
-          htmlFor="2"
+          htmlFor="d86b59b4-cb2f-4cfd-958a-8c23937d87e42"
         >
           Deuxième étoile
         </label>
@@ -221,12 +221,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Multi Select Checkboxes S
           checked={false}
           className="fr-toggle__input"
           disabled={false}
-          id="3"
+          id="d86b59b4-cb2f-4cfd-958a-8c23937d87e43"
           onChange={[Function]}
           type="checkbox"
         />
         <label
-          htmlFor="3"
+          htmlFor="d86b59b4-cb2f-4cfd-958a-8c23937d87e43"
         >
           Troisième étoile
         </label>
@@ -238,12 +238,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Multi Select Checkboxes S
           checked={false}
           className="fr-toggle__input"
           disabled={false}
-          id="4"
+          id="d86b59b4-cb2f-4cfd-958a-8c23937d87e44"
           onChange={[Function]}
           type="checkbox"
         />
         <label
-          htmlFor="4"
+          htmlFor="d86b59b4-cb2f-4cfd-958a-8c23937d87e44"
         >
           Quatrième étoile
         </label>
@@ -255,12 +255,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Multi Select Checkboxes S
           checked={false}
           className="fr-toggle__input"
           disabled={false}
-          id="5"
+          id="d86b59b4-cb2f-4cfd-958a-8c23937d87e45"
           onChange={[Function]}
           type="checkbox"
         />
         <label
-          htmlFor="5"
+          htmlFor="d86b59b4-cb2f-4cfd-958a-8c23937d87e45"
         >
           Cinquième étoile
         </label>

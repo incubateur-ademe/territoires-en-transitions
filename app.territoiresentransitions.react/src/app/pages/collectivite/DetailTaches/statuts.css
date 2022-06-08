@@ -36,3 +36,7 @@
   font-size: 14px;
   font-weight: normal;
 }
+
+.filtre-statut .MuiSelect-outlined.MuiSelect-outlined {
+  width: 150px;
+}
