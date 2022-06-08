@@ -121,7 +121,7 @@ with
                     coalesce(mc.population, me.population, 0)::int4        as population,
                     coalesce(l.etoiles_cae, 0)                             as etoiles_cae,
                     coalesce(l.etoiles_eci, 0)                             as etoiles_eci,
-                    coalesce(l.etoiles_all, '{}')                          as etoiles_all,
+                    coalesce(l.etoiles_all, '{0}')                         as etoiles_all,
                     coalesce(s.score_fait_cae, 0)                          as score_fait_cae,
                     coalesce(s.score_fait_eci, 0)                          as score_fait_eci,
                     s.score_fait_max                                       as score_fait_max,
