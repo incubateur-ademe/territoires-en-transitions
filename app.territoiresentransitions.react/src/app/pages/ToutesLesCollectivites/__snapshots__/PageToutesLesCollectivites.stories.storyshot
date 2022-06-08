@@ -456,7 +456,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
               <label
                 htmlFor="100000-200000"
               >
-                10 0000 - 200 000
+                100 000 - 200 000
               </label>
             </div>
             <div
@@ -3023,7 +3023,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
               <label
                 htmlFor="100000-200000"
               >
-                10 0000 - 200 000
+                100 000 - 200 000
               </label>
             </div>
             <div
@@ -5589,7 +5589,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
               <label
                 htmlFor="100000-200000"
               >
-                10 0000 - 200 000
+                100 000 - 200 000
               </label>
             </div>
             <div
