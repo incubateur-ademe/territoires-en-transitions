@@ -1,6 +1,7 @@
 import {CollectiviteCarte} from 'app/pages/ToutesLesCollectivites/CollectiviteCarte';
 import {CollectiviteCarteRead} from 'generated/dataLayer/collectivite_carte_read';
 import {TCollectivitesFilters} from 'app/pages/ToutesLesCollectivites/filtreLibelles';
+import {allCollectivitesPath} from 'app/paths';
 
 const CollectivitesFiltrees = (props: {
   collectivites: CollectiviteCarteRead[];
@@ -17,17 +18,22 @@ const CollectivitesFiltrees = (props: {
   );
 };
 
-const DesactiverLesFiltres = (props: {onClick: () => void}) => (
-  <button className="max-h-1 text-sm" onClick={props.onClick}>
-    <div className="border-b-2 text-bf500 border-bf500">
-      <span
-        style={{fontSize: '.7rem'}}
-        className="fr-fi-close-circle-fill mr-1"
-      ></span>
-      <span className="text-xs">Désactiver tous les filtres</span>
+const DesactiverLesFiltres = (props: {onClick: () => void}) => {
+  // fixme. hard navigate to reset filters
+  return (
+    <div className="flex">
+      <a className="text-sm" href={allCollectivitesPath}>
+        <div className="text-bf500 border-bf500">
+          <span
+            style={{fontSize: '.7rem'}}
+            className="fr-fi-close-circle-fill mr-1"
+          ></span>
+          <span className="text-xs">Désactiver tous les filtres</span>
+        </div>
+      </a>
     </div>
-  </button>
-);
+  );
+};
 
 const AucuneCollectivite = (props: {desactiverLesFiltres: () => void}) => (
   <div style={{color: '#6A6AF4'}}>
@@ -81,7 +87,7 @@ export const CollectivitesFiltreesColonne = (props: {
         {props.children}
         <div>
           <NombreResultats count={count} />
-          {active(props.filters) ? (
+          {active(props.filters) && props.collectivites.length > 0 ? (
             <DesactiverLesFiltres onClick={props.desactiverLesFiltres} />
           ) : null}
         </div>
