@@ -52,9 +52,3 @@ const phaseToVerb: Record<string, string> = {
   'mise en œuvre': 'Concrétiser',
   effets: 'Consolider',
 };
-
-export const phaseToLabel: Record<string, string> = {
-  bases: 'S’engager (base, diagnostic)',
-  'mise en œuvre': 'Concrétiser (mise en oeuvre)',
-  effets: 'Consolider (effet, résultat)',
-};
