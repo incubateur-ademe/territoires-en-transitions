@@ -127,7 +127,7 @@ const CinqEtoiles = (props: TCinqEtoilesProps) => {
         const obtenue = etoiles >= niveau;
         const Star = obtenue ? GreenStar : GreyStar;
         return (
-          <div className="w-6 scale-75 -ml-1">
+          <div className="w-6 scale-75 -ml-1" key={niveau}>
             <Star key={`n${niveau}`} />
           </div>
         );

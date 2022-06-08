@@ -43,7 +43,7 @@ export const RenderToutesLesCollectivites = (
           departments={props.departements}
         />
       </div>
-      <div className="ml-6">
+      <div className="ml-6 w-full">
         {props.isLoading ? (
           <div className="text-center text-gray-500">
             Chargement en cours...
