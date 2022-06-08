@@ -30,8 +30,6 @@ export const RenderToutesLesCollectivites = (
     <div className="text-center">
       <h1>Toutes les collectivités</h1>
       <p>
-        {/* todo:
-            Consultez l'avancement des [xxx] collectivités sur la plateforme.*/}
         Consultez les <Link to="/statistics">statistiques</Link> d'utilisation
         de la plateforme.
       </p>
@@ -45,7 +43,7 @@ export const RenderToutesLesCollectivites = (
           departments={props.departements}
         />
       </div>
-      <div className="md:w-4/5">
+      <div className="ml-6 w-full">
         {props.isLoading ? (
           <div className="text-center text-gray-500">
             Chargement en cours...
@@ -54,6 +52,7 @@ export const RenderToutesLesCollectivites = (
           <CollectivitesFiltreesColonne
             collectivites={props.collectivites}
             desactiverLesFiltres={() => props.setFilters(filtresVides)}
+            filters={props.filters}
           >
             <TrierParFiltre
               onChange={selected =>

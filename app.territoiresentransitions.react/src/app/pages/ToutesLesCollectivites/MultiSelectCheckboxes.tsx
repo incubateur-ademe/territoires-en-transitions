@@ -1,25 +1,24 @@
-import {TSelectOption} from 'app/pages/ToutesLesCollectivites/types';
-import {useEffect, useState} from 'react';
+import {TOption} from 'app/pages/ToutesLesCollectivites/filtreLibelles';
+import {v4 as uuid} from 'uuid';
 
-export type TMultiSelectCheckboxesProps<T extends string> = {
+export type TMultiSelectCheckboxesProps = {
   title: string;
-  options: TSelectOption<T>[];
-  selected: T[];
-  onChange: (selected: T[]) => void;
+  options: TOption[];
+  selected: string[];
+  onChange: (selected: string[]) => void;
 };
 
 /**
  * Permet de sélectionner plusieurs options d'une liste via des checkboxes
  */
-export const MultiSelectCheckboxes = <T extends string>(
-  props: TMultiSelectCheckboxesProps<T>
-) => {
+export const MultiSelectCheckboxes = (props: TMultiSelectCheckboxesProps) => {
   const optionsIncludingAll = [{id: 'all', libelle: 'Tous'}, ...props.options];
-  const [selected, setSelected] = useState<T[]>(props.selected);
-  useEffect(() => props.onChange(selected), [selected.length]);
+
+  const htmlId = uuid();
+  const {selected, onChange} = props;
   return (
     <div>
-      <div className="font-semibold text-sm mb-2">{props.title}</div>
+      <div className="font-semibold text-md mb-2">{props.title}</div>
       <div className="small-checkbox  fr-checkbox-group text-sm">
         {optionsIncludingAll.map(option => (
           <div className="my-2" key={option.id}>
@@ -27,21 +26,21 @@ export const MultiSelectCheckboxes = <T extends string>(
               type="checkbox"
               className="fr-toggle__input"
               disabled={option.id === 'all'}
-              id={option.id}
+              id={htmlId + option.id}
               checked={
                 selected.length === 0
                   ? option.id === 'all'
-                  : selected.includes(option.id as T)
+                  : selected.includes(option.id as string)
               }
               onChange={e => {
                 if (e.currentTarget.checked) {
-                  setSelected([...selected, option.id as T]);
+                  onChange([...selected, option.id as string]);
                 } else {
-                  setSelected(selected.filter(s => s !== option.id));
+                  onChange(selected.filter(s => s !== option.id));
                 }
               }}
             />
-            <label htmlFor={option.id}>{option.libelle}</label>
+            <label htmlFor={htmlId + option.id}>{option.libelle}</label>
           </div>
         ))}
       </div>

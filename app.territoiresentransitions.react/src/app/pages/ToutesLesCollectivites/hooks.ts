@@ -118,7 +118,7 @@ export const filtresVides: TCollectivitesFilters = {
   niveauDeLabellisation: [],
   realiseCourant: [],
   tauxDeRemplissage: [],
-  trierPar: 'nom',
+  trierPar: 'score',
 };
 
 const paramToList = (s: string) => s.split('.').filter(r => r.length > 0);

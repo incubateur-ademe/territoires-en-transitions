@@ -2,7 +2,7 @@ create or replace view region
 as
 select code, libelle
 from imports.region
-order by naturalsort(libelle);
+order by unaccent(libelle);
 
 create or replace view departement
 as
@@ -38,8 +38,8 @@ values ('population', '<20000', 'Moins de 20 000', '[0,20000]'),
        ('score', '65-74', '65 à 74 %', '[65,75)'),
        ('score', '75-100', '75 à 100 %', '[75,]'),
        --
-       ('remplissage', '0', '0', '[0,0]'),
-       ('remplissage', '0-49', '0 à 50 %', '(0,50)'),
+       ('remplissage', '0', '0', '[0,1)'),
+       ('remplissage', '0-49', '0 à 50 %', '[1,50)'),
        ('remplissage', '50-79', '50 à 79 %', '[50,80)'),
        ('remplissage', '80-99', '80 à 99 %', '[80,100)'),
        ('remplissage', '100', '100 %', '[100,]');
@@ -76,6 +76,7 @@ with
                                      when e.nature = 'SMF' or e.nature = 'SIVOM' or e.nature = 'SMO' or
                                           e.nature = 'SIVU' then
                                          'syndicat'
+                                     when e.nature = 'CA' then 'CA'
                                      when e.nature = 'CU' then 'CU'
                                      when e.nature = 'CC' then 'CC'
                                      when e.nature = 'POLEM' then 'POLEM'
@@ -120,13 +121,16 @@ with
                     coalesce(mc.population, me.population, 0)::int4        as population,
                     coalesce(l.etoiles_cae, 0)                             as etoiles_cae,
                     coalesce(l.etoiles_eci, 0)                             as etoiles_eci,
-                    coalesce(l.etoiles_all, '{}')                          as etoiles_all,
+                    coalesce(l.etoiles_all, '{0}')                         as etoiles_all,
                     coalesce(s.score_fait_cae, 0)                          as score_fait_cae,
                     coalesce(s.score_fait_eci, 0)                          as score_fait_eci,
+                    s.score_fait_max                                       as score_fait_max,
                     coalesce(s.score_programme_cae, 0)                     as score_programme_cae,
                     coalesce(s.score_programme_eci, 0)                     as score_programme_eci,
+                    s.score_programme_max                                  as score_programme_max,
                     coalesce(s.completude_cae, 0)                          as completude_cae,
-                    coalesce(s.completude_eci, 0)                          as completude_eci
+                    coalesce(s.completude_eci, 0)                          as completude_eci,
+                    s.completude_max                                       as completude_max
 
              from named_collectivite c
                       left join meta_commune mc on mc.collectivite_id = c.collectivite_id
