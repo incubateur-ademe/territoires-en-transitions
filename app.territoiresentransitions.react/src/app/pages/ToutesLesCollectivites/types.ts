@@ -1,11 +1,8 @@
-import {TypeCollectiviteCarteRead} from 'generated/dataLayer/collectivite_carte_read';
-
 export type TSelectOption<T extends string> = {
   id: T;
   libelle: string;
 };
 
-export type TTypeFiltreOption = TypeCollectiviteCarteRead;
 export type TPopulationFiltreOption =
   | '<20000'
   | '20000-50000'

@@ -1,108 +1,71 @@
-import {
-  TNiveauLabellisationFiltreOption,
-  TPopulationFiltreOption,
-  TRealiseCourantFiltreOption,
-  TReferentielFiltreOption,
-  TTauxRemplissageFiltreOption,
-  TTrierParFiltreOption,
-} from 'app/pages/ToutesLesCollectivites/types';
-import {TypeCollectiviteCarteRead} from 'generated/dataLayer/collectivite_carte_read';
+export type TOption = {libelle: string; id: string};
 
 export type TCollectivitesFilters = {
-  types: TypeCollectiviteCarteRead[];
+  types: string[];
   regions: string[];
   departments: string[];
-  population: TPopulationFiltreOption[];
-  referentiel: TReferentielFiltreOption[];
-  niveauDeLabellisation: TNiveauLabellisationFiltreOption[];
-  realiseCourant: TRealiseCourantFiltreOption[];
-  tauxDeRemplissage: TTauxRemplissageFiltreOption[];
-  trierPar?: TTrierParFiltreOption;
+  population: string[];
+  referentiel: string[];
+  niveauDeLabellisation: string[];
+  realiseCourant: string[];
+  tauxDeRemplissage: string[];
+  trierPar?: string;
 };
 
 // could be downloaded from `filtre_intervalle` where type = population.
-export const populationCollectiviteFilterLibelleRecord: Record<
-  TPopulationFiltreOption,
-  string
-> = {
-  '<20000': 'Moins de 20 000',
-  '20000-50000': '20 000 - 50 000',
-  '50000-100000': '50 000 - 100 000',
-  '100000-200000': '100 000 - 200 000',
-  '>200000': 'Plus de 200 000',
-};
+export const populationCollectiviteOptions: TOption[] = [
+  {id: '<20000', libelle: 'Moins de 20 000'},
+  {id: '20000-50000', libelle: '20 000 - 50 000'},
+  {id: '50000-100000', libelle: '50 000 - 100 000'},
+  {id: '100000-200000', libelle: '100 000 - 200 000'},
+  {id: '>200000', libelle: 'Plus de 200 000'},
+];
 
 // could be downloaded from `filtre_intervalle` where type = score.
-export const realiseCourantCollectiviteFilterLibelleRecord: Record<
-  TRealiseCourantFiltreOption,
-  string
-> = {
-  '0-34': '0 à 34 %',
-  '35-49': '35 à 49 %',
-  '50-64': '50 à 64 %',
-  '65-74': '65 à 74 %',
-  '75-100': '75 à 100 %',
-};
+export const realiseCourantCollectiviteOptions: TOption[] = [
+  {id: '0-34', libelle: '0 à 34 %'},
+  {id: '35-49', libelle: '35 à 49 %'},
+  {id: '50-64', libelle: '50 à 64 %'},
+  {id: '65-74', libelle: '65 à 74 %'},
+  {id: '75-100', libelle: '75 à 100 %'},
+];
 
 // could be downloaded from `filtre_intervalle` where type = remplissage.
-export const tauxRemplissageCollectiviteFilterLibelleRecord: Record<
-  TTauxRemplissageFiltreOption,
-  string
-> = {
-  '0': '0 %',
-  '0-49': '1 à 49 %',
-  '50-79': '50 à 79 %',
-  '80-99': '80 à 99 %',
-  '100': '100 %',
-};
+export const tauxRemplissageCollectiviteOptions: TOption[] = [
+  {id: '0', libelle: '0 %'},
+  {id: '0-49', libelle: '1 à 49 %'},
+  {id: '50-79', libelle: '50 à 79 %'},
+  {id: '80-99', libelle: '80 à 99 %'},
+  {id: '100', libelle: '100 %'},
+];
 
-export const niveauLabellisationCollectiviteFilterLibelleRecord: Record<
-  TNiveauLabellisationFiltreOption,
-  string
-> = {
-  '0': 'Non labellisé',
-  '1': 'Première étoile',
-  '2': 'Deuxième étoile',
-  '3': 'Troisième étoile',
-  '4': 'Quatrième étoile',
-  '5': 'Cinquième étoile',
-};
+export const niveauLabellisationCollectiviteOptions: TOption[] = [
+  {id: '0', libelle: 'Non labellisé'},
+  {id: '1', libelle: 'Première étoile'},
+  {id: '2', libelle: 'Deuxième étoile'},
+  {id: '3', libelle: 'Troisième étoile'},
+  {id: '4', libelle: 'Quatrième étoile'},
+  {id: '5', libelle: 'Cinquième étoile'},
+];
 
-export const referentielCollectiviteFilterLibelleRecord: Record<
-  TReferentielFiltreOption,
-  string
-> = {
-  eci: 'Économie Circulaire',
-  cae: 'Climat Air Énergie',
-};
+export const referentielCollectiviteOptions: TOption[] = [
+  {id: 'eci', libelle: 'Économie Circulaire'},
+  {id: 'cae', libelle: 'Climat Air Énergie'},
+];
 
-export const trierParFilterLibelleRecord: Record<
-  TTrierParFiltreOption,
-  string
-> = {
-  score: '% Réalisé courant',
-  completude: 'Taux de remplissage',
-  nom: 'Ordre alphabétique',
-};
+export const trierParOptions: TOption[] = [
+  {id: 'score', libelle: '% Réalisé courant'},
+  {id: 'completude', libelle: 'Taux de remplissage'},
+  {id: 'nom', libelle: 'Ordre alphabétique'},
+];
 
-export const libelleRecordToOptions = <T extends string>(
-  libelleRecord: Record<T, string>
-): {libelle: string; id: T}[] =>
-  Object.entries(libelleRecord).map(entry => ({
-    id: entry[0] as T,
-    libelle: entry[1] as string,
-  }));
-
-export const typeCollectiviteFilterLibelleRecord: Record<
-  TypeCollectiviteCarteRead,
-  string
-> = {
-  CA: "Communauté d'agglomération",
-  CC: 'Communauté de communes',
-  CU: 'Communauté urbaine',
-  commune: 'Commune',
-  EPT: 'Établissement public territorial',
-  METRO: 'Métropole',
-  PETR: 'Pôle d’équilibre territorial rural',
-  syndicat: 'Syndicat',
-};
+export const typeCollectiviteOptions: TOption[] = [
+  {id: 'CA', libelle: "Communauté d'agglomération"},
+  {id: 'CC', libelle: 'Communauté de communes'},
+  {id: 'CU', libelle: 'Communauté urbaine'},
+  {id: 'commune', libelle: 'Commune'},
+  {id: 'EPT', libelle: 'Établissement public territorial'},
+  {id: 'METRO', libelle: 'Métropole'},
+  {id: 'PETR', libelle: 'Pôle d’équilibre territorial rural'},
+  {id: 'syndicat', libelle: 'Syndicat'},
+];
