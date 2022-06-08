@@ -21,12 +21,16 @@
   font-weight: bold;
   color: var(--text-label-blue-france);
   border: 1px solid transparent;
-  width: 120px;
 }
 
 .multi-select .MuiSelect-root[aria-expanded] {
   border: 1px solid var(--text-label-blue-france);
   border-radius: 4px;
+}
+
+.multi-select .MuiSelect-outlined.MuiSelect-outlined {
+  padding-left: 4px;
+  padding-right: 6px;
 }
 
 .multi-select .MuiMenuItem-root {
