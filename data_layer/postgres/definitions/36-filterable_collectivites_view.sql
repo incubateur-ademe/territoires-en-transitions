@@ -124,10 +124,13 @@ with
                     coalesce(l.etoiles_all, '{}')                          as etoiles_all,
                     coalesce(s.score_fait_cae, 0)                          as score_fait_cae,
                     coalesce(s.score_fait_eci, 0)                          as score_fait_eci,
+                    s.score_fait_max                                       as score_fait_max,
                     coalesce(s.score_programme_cae, 0)                     as score_programme_cae,
                     coalesce(s.score_programme_eci, 0)                     as score_programme_eci,
+                    s.score_programme_max                                  as score_programme_max,
                     coalesce(s.completude_cae, 0)                          as completude_cae,
-                    coalesce(s.completude_eci, 0)                          as completude_eci
+                    coalesce(s.completude_eci, 0)                          as completude_eci,
+                    s.completude_max                                       as completude_max
 
              from named_collectivite c
                       left join meta_commune mc on mc.collectivite_id = c.collectivite_id
