@@ -94,7 +94,9 @@ type FilterOperator = 'in' | 'ov';
 /**
  * Construit la query en ajoutant des opérateurs Postgrest pour chaque filtre.
  */
-const buildQueryFromFilters = (filters: TCollectivitesFilters) => {
+const buildQueryFromFilters = (
+  filters: TCollectivitesFilters
+): PostgrestFilterBuilder<CollectiviteCarteRead> => {
   console.log('filtres', filters);
   let query = supabaseClient
     .from<CollectiviteCarteRead>('collectivite_card')
@@ -153,13 +155,27 @@ const buildQueryFromFilters = (filters: TCollectivitesFilters) => {
   }
 
   //  Trier par
-  const trierPar = filters.trierPar;
-  query = query.order(
-    getSortColumn(
-      trierPar,
-      filters.referentiel.length === 1 ? filters.referentiel[0] : undefined
-    )
-  );
+  let orderBy: keyof CollectiviteCarteRead = 'score_fait_max';
+  let ascending = false;
+  switch (filters.trierPar) {
+    case 'nom':
+      orderBy = 'nom';
+      ascending = true;
+      break;
+    case 'completude':
+      if (filters.referentiel.length === 0) orderBy = 'completude_max';
+      orderBy =
+        filters.referentiel[0] === 'eci' ? 'completude_eci' : 'completude_cae';
+      break;
+    case 'score':
+    default:
+      if (filters.referentiel.length === 0) orderBy = 'score_fait_max';
+      orderBy =
+        filters.referentiel[0] === 'eci' ? 'score_fait_eci' : 'score_fait_cae';
+      break;
+  }
+
+  query = query.order(orderBy, {ascending: ascending});
 
   return query;
 };
