@@ -12,7 +12,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
     }
   >
     <div
-      className="MuiPaper-root MuiCard-root collectiviteCard p-6 max-w-md MuiPaper-elevation1 MuiPaper-rounded"
+      className="MuiPaper-root MuiCard-root collectiviteCard p-6 w-full MuiPaper-elevation1 MuiPaper-rounded"
     >
       <div
         className="text-lg font-bold h-24"
@@ -20,22 +20,24 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
         Ploemeur
       </div>
       <div
-        className="flex"
+        className="flex justify-between gap-4"
       >
         <div
-          className="flex flex-col flex-1 gap-2"
+          className="flex flex-col flex-1 gap-2 "
         >
           <div
             className="text-sm"
           >
             Climat Air Énergie
           </div>
-          <div>
+          <div
+            className="flex flex-col gap-1"
+          >
             <div
-              className="flex flex-col scale-75 -ml-7"
+              className="flex space-x-2"
             >
               <div
-                className="flex space-x-2"
+                className="w-6 scale-75 -ml-1"
               >
                 <svg
                   fill="none"
@@ -49,6 +51,10 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
                     fill="#00A95F"
                   />
                 </svg>
+              </div>
+              <div
+                className="w-6 scale-75 -ml-1"
+              >
                 <svg
                   fill="none"
                   height="38"
@@ -61,6 +67,10 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
                     fill="#00A95F"
                   />
                 </svg>
+              </div>
+              <div
+                className="w-6 scale-75 -ml-1"
+              >
                 <svg
                   fill="none"
                   height="38"
@@ -73,6 +83,10 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
                     fill="#00A95F"
                   />
                 </svg>
+              </div>
+              <div
+                className="w-6 scale-75 -ml-1"
+              >
                 <svg
                   fill="none"
                   height="38"
@@ -85,6 +99,10 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
                     fill="#e5e5e5"
                   />
                 </svg>
+              </div>
+              <div
+                className="w-6 scale-75 -ml-1"
+              >
                 <svg
                   fill="none"
                   height="38"
@@ -138,19 +156,24 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
           </div>
         </div>
         <div
-          className="flex flex-col flex-1 gap-2"
+          className="w-px bg-gray-200"
+        />
+        <div
+          className="flex flex-col flex-1 gap-2 "
         >
           <div
             className="text-sm"
           >
             Économie Circulaire
           </div>
-          <div>
+          <div
+            className="flex flex-col gap-1"
+          >
             <div
-              className="flex flex-col scale-75 -ml-7"
+              className="flex space-x-2"
             >
               <div
-                className="flex space-x-2"
+                className="w-6 scale-75 -ml-1"
               >
                 <svg
                   fill="none"
@@ -164,6 +187,10 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
                     fill="#e5e5e5"
                   />
                 </svg>
+              </div>
+              <div
+                className="w-6 scale-75 -ml-1"
+              >
                 <svg
                   fill="none"
                   height="38"
@@ -176,6 +203,10 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
                     fill="#e5e5e5"
                   />
                 </svg>
+              </div>
+              <div
+                className="w-6 scale-75 -ml-1"
+              >
                 <svg
                   fill="none"
                   height="38"
@@ -188,6 +219,10 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
                     fill="#e5e5e5"
                   />
                 </svg>
+              </div>
+              <div
+                className="w-6 scale-75 -ml-1"
+              >
                 <svg
                   fill="none"
                   height="38"
@@ -200,6 +235,10 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
                     fill="#e5e5e5"
                   />
                 </svg>
+              </div>
+              <div
+                className="w-6 scale-75 -ml-1"
+              >
                 <svg
                   fill="none"
                   height="38"
@@ -270,7 +309,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
     }
   >
     <div
-      className="MuiPaper-root MuiCard-root collectiviteCard p-6 max-w-md MuiPaper-elevation1 MuiPaper-rounded"
+      className="MuiPaper-root MuiCard-root collectiviteCard p-6 w-full MuiPaper-elevation1 MuiPaper-rounded"
     >
       <div
         className="text-lg font-bold h-24"
@@ -278,22 +317,24 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
         SI de l'Entre-deux-Mers Ouest pour la collecte et le traitement des ordures ménagères (SEMOCTOM)
       </div>
       <div
-        className="flex"
+        className="flex justify-between gap-4"
       >
         <div
-          className="flex flex-col flex-1 gap-2"
+          className="flex flex-col flex-1 gap-2 "
         >
           <div
             className="text-sm"
           >
             Climat Air Énergie
           </div>
-          <div>
+          <div
+            className="flex flex-col gap-1"
+          >
             <div
-              className="flex flex-col scale-75 -ml-7"
+              className="flex space-x-2"
             >
               <div
-                className="flex space-x-2"
+                className="w-6 scale-75 -ml-1"
               >
                 <svg
                   fill="none"
@@ -307,6 +348,10 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
                     fill="#00A95F"
                   />
                 </svg>
+              </div>
+              <div
+                className="w-6 scale-75 -ml-1"
+              >
                 <svg
                   fill="none"
                   height="38"
@@ -319,6 +364,10 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
                     fill="#e5e5e5"
                   />
                 </svg>
+              </div>
+              <div
+                className="w-6 scale-75 -ml-1"
+              >
                 <svg
                   fill="none"
                   height="38"
@@ -331,6 +380,10 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
                     fill="#e5e5e5"
                   />
                 </svg>
+              </div>
+              <div
+                className="w-6 scale-75 -ml-1"
+              >
                 <svg
                   fill="none"
                   height="38"
@@ -343,6 +396,10 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
                     fill="#e5e5e5"
                   />
                 </svg>
+              </div>
+              <div
+                className="w-6 scale-75 -ml-1"
+              >
                 <svg
                   fill="none"
                   height="38"
@@ -396,19 +453,24 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
           </div>
         </div>
         <div
-          className="flex flex-col flex-1 gap-2"
+          className="w-px bg-gray-200"
+        />
+        <div
+          className="flex flex-col flex-1 gap-2 "
         >
           <div
             className="text-sm"
           >
             Économie Circulaire
           </div>
-          <div>
+          <div
+            className="flex flex-col gap-1"
+          >
             <div
-              className="flex flex-col scale-75 -ml-7"
+              className="flex space-x-2"
             >
               <div
-                className="flex space-x-2"
+                className="w-6 scale-75 -ml-1"
               >
                 <svg
                   fill="none"
@@ -422,6 +484,10 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
                     fill="#00A95F"
                   />
                 </svg>
+              </div>
+              <div
+                className="w-6 scale-75 -ml-1"
+              >
                 <svg
                   fill="none"
                   height="38"
@@ -434,6 +500,10 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
                     fill="#e5e5e5"
                   />
                 </svg>
+              </div>
+              <div
+                className="w-6 scale-75 -ml-1"
+              >
                 <svg
                   fill="none"
                   height="38"
@@ -446,6 +516,10 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
                     fill="#e5e5e5"
                   />
                 </svg>
+              </div>
+              <div
+                className="w-6 scale-75 -ml-1"
+              >
                 <svg
                   fill="none"
                   height="38"
@@ -458,6 +532,10 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
                     fill="#e5e5e5"
                   />
                 </svg>
+              </div>
+              <div
+                className="w-6 scale-75 -ml-1"
+              >
                 <svg
                   fill="none"
                   height="38"
@@ -528,7 +606,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
     }
   >
     <div
-      className="MuiPaper-root MuiCard-root collectiviteCard p-6 max-w-md MuiPaper-elevation1 MuiPaper-rounded"
+      className="MuiPaper-root MuiCard-root collectiviteCard p-6 w-full MuiPaper-elevation1 MuiPaper-rounded"
     >
       <div
         className="text-lg font-bold h-24"
@@ -536,10 +614,10 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
         SYTEVOM SYndicat Transfert Elimination Valorisation des Ordures ménagères
       </div>
       <div
-        className="flex"
+        className="flex justify-between gap-4"
       >
         <div
-          className="flex flex-col flex-1 gap-2"
+          className="flex flex-col flex-1 gap-2 "
         >
           <div
             className="text-sm"
@@ -547,25 +625,30 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
             Climat Air Énergie
           </div>
           <div
-            className="font-light italic"
+            className="font-light italic text-center"
           >
             Non concerné
           </div>
         </div>
         <div
-          className="flex flex-col flex-1 gap-2"
+          className="w-px bg-gray-200"
+        />
+        <div
+          className="flex flex-col flex-1 gap-2 "
         >
           <div
             className="text-sm"
           >
             Économie Circulaire
           </div>
-          <div>
+          <div
+            className="flex flex-col gap-1"
+          >
             <div
-              className="flex flex-col scale-75 -ml-7"
+              className="flex space-x-2"
             >
               <div
-                className="flex space-x-2"
+                className="w-6 scale-75 -ml-1"
               >
                 <svg
                   fill="none"
@@ -579,6 +662,10 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
                     fill="#00A95F"
                   />
                 </svg>
+              </div>
+              <div
+                className="w-6 scale-75 -ml-1"
+              >
                 <svg
                   fill="none"
                   height="38"
@@ -591,6 +678,10 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
                     fill="#e5e5e5"
                   />
                 </svg>
+              </div>
+              <div
+                className="w-6 scale-75 -ml-1"
+              >
                 <svg
                   fill="none"
                   height="38"
@@ -603,6 +694,10 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
                     fill="#e5e5e5"
                   />
                 </svg>
+              </div>
+              <div
+                className="w-6 scale-75 -ml-1"
+              >
                 <svg
                   fill="none"
                   height="38"
@@ -615,6 +710,10 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
                     fill="#e5e5e5"
                   />
                 </svg>
+              </div>
+              <div
+                className="w-6 scale-75 -ml-1"
+              >
                 <svg
                   fill="none"
                   height="38"
