@@ -13,6 +13,9 @@ import {CellAction} from '../ReferentielTable/CellAction';
 import ReferentielTable from '../ReferentielTable';
 import {CellPercent, CellPoints, CellPhase} from './Cells';
 import {useReferentielId} from 'core-logic/hooks/params';
+import {FiltreScoreRealise} from './FiltreScoreRealise';
+import {FiltreScoreProgramme} from './FiltreScoreProgramme';
+import {FiltrePhase} from './FiltrePhase';
 
 export type TDetailTacheTableProps = {
   tableData: TableData;
@@ -39,19 +42,19 @@ const COLUMNS: TColumn[] = [
   },
   {
     accessor: 'score_realise',
-    Header: '% Réalisé',
+    Header: FiltreScoreRealise,
     Cell: CellPercent,
     width: 120,
   },
   {
     accessor: 'score_programme',
-    Header: '% Programmé',
+    Header: FiltreScoreProgramme,
     Cell: CellPercent,
     width: 125,
   },
   {
     accessor: 'phase',
-    Header: 'Phase',
+    Header: FiltrePhase,
     Cell: CellPhase,
     width: 120,
   },
