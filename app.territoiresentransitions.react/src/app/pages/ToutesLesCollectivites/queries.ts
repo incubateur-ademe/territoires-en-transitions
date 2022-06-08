@@ -55,8 +55,17 @@ const buildQueryFromFilters = (
   }
   // en l'absence de taux sélectionné, la selection d'un référentiel équivaut
   // à un taux de remplissage qui n'est pas 0
-  else if (filters.referentiel.length > 0)
-    filter('completude_intervalles', 'ov', ['0-49', '50-79', '80-99', '100']);
+  else if (filters.referentiel.length > 0) {
+    const intervalles = ['0-49', '50-79', '80-99', '100'];
+    if (filters.referentiel.length === 1) {
+      if (filters.referentiel.includes('cae'))
+        filter('completude_cae_intervalle', 'in', intervalles);
+      if (filters.referentiel.includes('eci'))
+        filter('completude_eci_intervalle', 'in', intervalles);
+    } else {
+      filter('completude_intervalles', 'ov', intervalles);
+    }
+  }
 
   //  Niveau de labellisation
   if (filters.niveauDeLabellisation.length > 0) {
@@ -91,16 +100,22 @@ const buildQueryFromFilters = (
       ascending = true;
       break;
     case 'completude':
-      if (filters.referentiel.length === 0) orderBy = 'completude_max';
-      orderBy =
-        filters.referentiel[0] === 'eci' ? 'completude_eci' : 'completude_cae';
+      if (filters.referentiel.length !== 1) orderBy = 'completude_max';
+      else
+        orderBy =
+          filters.referentiel[0] === 'eci'
+            ? 'completude_eci'
+            : 'completude_cae';
       ascending = false;
       break;
     case 'score':
     default:
-      if (filters.referentiel.length === 0) orderBy = 'score_fait_max';
-      orderBy =
-        filters.referentiel[0] === 'eci' ? 'score_fait_eci' : 'score_fait_cae';
+      if (filters.referentiel.length !== 1) orderBy = 'score_fait_max';
+      else
+        orderBy =
+          filters.referentiel[0] === 'eci'
+            ? 'score_fait_eci'
+            : 'score_fait_cae';
       ascending = false;
       break;
   }
