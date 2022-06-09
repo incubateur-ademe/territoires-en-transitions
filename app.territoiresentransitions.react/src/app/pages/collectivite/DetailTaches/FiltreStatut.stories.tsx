@@ -1,19 +1,19 @@
 import {Story, Meta} from '@storybook/react';
-// import { action } from '@storybook/addon-actions';
-import {FiltreStatut, TFiltreStatutProps} from './FiltreStatut';
+import {TFiltreProps} from './filters';
+import {FiltreStatut} from './FiltreStatut';
 
 export default {
   component: FiltreStatut,
 } as Meta;
 
-const Template: Story<TFiltreStatutProps> = args => <FiltreStatut {...args} />;
+const Template: Story<TFiltreProps> = args => <FiltreStatut {...args} />;
 
 export const All = Template.bind({});
 All.args = {
-  values: ['tous'],
+  filters: {statut: ['tous']},
 };
 
 export const MultiSelect = Template.bind({});
 MultiSelect.args = {
-  values: ['programme', 'fait'],
+  filters: {statut: ['programme', 'fait']},
 };
