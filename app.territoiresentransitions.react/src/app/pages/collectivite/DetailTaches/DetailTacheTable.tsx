@@ -9,9 +9,10 @@ import {
 } from 'react-table';
 import {TacheDetail} from './queries';
 import {TableData} from './useTableData';
-import {CellAction} from '../ReferentielTable/CellAction';
-import {CellStatut, HeaderStatut} from './ColumnStatut';
 import ReferentielTable from '../ReferentielTable';
+import {CellAction} from '../ReferentielTable/CellAction';
+import {CellStatut} from './CellStatut';
+import {FiltreStatut} from './FiltreStatut';
 
 export type TDetailTacheTableProps = {
   tableData: TableData;
@@ -32,7 +33,7 @@ const COLUMNS: TColumn[] = [
   },
   {
     accessor: 'avancement',
-    Header: HeaderStatut,
+    Header: FiltreStatut,
     Cell: CellStatut,
     width: 185,
   },
