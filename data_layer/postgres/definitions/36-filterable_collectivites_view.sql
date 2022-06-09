@@ -45,6 +45,35 @@ values ('population', '<20000', 'Moins de 20 000', '[0,20000]'),
        ('remplissage', '100', '100 %', '[100,]');
 
 
+create function private.referentiel_progress(collectivite_id integer)
+    returns table
+            (
+                referentiel     referentiel,
+                score_fait      double precision,
+                score_programme double precision,
+                completude      double precision,
+                complet         boolean,
+                concerne        boolean
+            )
+as
+$$
+with ref as (select unnest(enum_range(null::referentiel)) as referentiel),
+     scores as (select s.*
+                from ref
+                         left join client_scores cs on cs.referentiel = ref.referentiel
+                         join private.convert_client_scores(cs.scores) s on true
+                where cs.collectivite_id = referentiel_progress.collectivite_id)
+select s.referentiel,
+       ss.proportion_fait,
+       ss.proportion_programme,
+       ss.completude,
+       ss.complete,
+       ss.concerne
+from scores s
+         join private.score_summary_of(s) ss on true
+where s.action_id = s.referentiel::action_id;
+$$ language sql stable;
+
 create materialized view collectivite_card
 as
 with
@@ -92,15 +121,20 @@ with
                                  max(s.score_fait) filter ( where referentiel = 'eci' )      as score_fait_eci,
                                  max(s.score_fait) filter ( where referentiel = 'cae' )      as score_fait_cae,
                                  max(s.score_fait)                                           as score_fait_max,
+                                 sum(s.score_fait)                                           as score_fait_sum,
                                  max(s.score_programme) filter ( where referentiel = 'eci' ) as score_programme_eci,
                                  max(s.score_programme) filter ( where referentiel = 'cae' ) as score_programme_cae,
                                  max(s.score_programme)                                      as score_programme_max,
+                                 sum(s.score_programme)                                      as score_programme_sum,
                                  max(s.completude) filter ( where referentiel = 'eci' )      as completude_eci,
                                  max(s.completude) filter ( where referentiel = 'cae' )      as completude_cae,
-                                 max(s.completude)                                           as completude_max
+                                 max(s.completude)                                           as completude_max,
+                                 bool_and(s.concerne) filter ( where referentiel = 'eci' )   as concerne_eci,
+                                 bool_and(s.concerne) filter ( where referentiel = 'cae' )   as concerne_cae
+
                           from collectivite c
                                    join lateral (
-                              select * from labellisation.referentiel_score(c.id)
+                              select * from private.referentiel_progress(c.id)
                               ) s on true
                           group by collectivite_id),
 
@@ -114,23 +148,25 @@ with
     -- coalesce null values from epci or collectivité data.
     card as (select c.collectivite_id,
                     c.nom,
-                    tc.type                                                as type_collectivite,
-                    coalesce(mc.insee, me.siren, '')                       as code_siren_insee,
-                    coalesce(mc.region_code, me.region_code, '')           as region_code,
-                    coalesce(mc.departement_code, me.departement_code, '') as departement_code,
-                    coalesce(mc.population, me.population, 0)::int4        as population,
-                    coalesce(l.etoiles_cae, 0)                             as etoiles_cae,
-                    coalesce(l.etoiles_eci, 0)                             as etoiles_eci,
-                    coalesce(l.etoiles_all, '{0}')                         as etoiles_all,
-                    coalesce(s.score_fait_cae, 0)                          as score_fait_cae,
-                    coalesce(s.score_fait_eci, 0)                          as score_fait_eci,
-                    s.score_fait_max                                       as score_fait_max,
-                    coalesce(s.score_programme_cae, 0)                     as score_programme_cae,
-                    coalesce(s.score_programme_eci, 0)                     as score_programme_eci,
-                    s.score_programme_max                                  as score_programme_max,
-                    coalesce(s.completude_cae, 0)                          as completude_cae,
-                    coalesce(s.completude_eci, 0)                          as completude_eci,
-                    s.completude_max                                       as completude_max
+                    tc.type                                                              as type_collectivite,
+                    coalesce(mc.insee, me.siren, '')                                     as code_siren_insee,
+                    coalesce(mc.region_code, me.region_code, '')                         as region_code,
+                    coalesce(mc.departement_code, me.departement_code, '')               as departement_code,
+                    coalesce(mc.population, me.population, 0)::int4                      as population,
+                    coalesce(l.etoiles_cae, 0)                                           as etoiles_cae,
+                    coalesce(l.etoiles_eci, 0)                                           as etoiles_eci,
+                    coalesce(l.etoiles_all, '{0}')                                       as etoiles_all,
+                    case when s.concerne_cae then coalesce(s.score_fait_cae, 0) end      as score_fait_cae,
+                    case when s.concerne_eci then coalesce(s.score_fait_eci, 0) end      as score_fait_eci,
+                    s.score_fait_max                                                     as score_fait_max,
+                    s.score_fait_sum                                                     as score_fait_sum,
+                    case when s.concerne_cae then coalesce(s.score_programme_cae, 0) end as score_programme_cae,
+                    case when s.concerne_eci then coalesce(s.score_programme_eci, 0) end as score_programme_eci,
+                    s.score_programme_max                                                as score_programme_max,
+                    s.score_programme_sum                                                as score_programme_sum,
+                    coalesce(s.completude_cae, 0)                                        as completude_cae,
+                    coalesce(s.completude_eci, 0)                                        as completude_eci,
+                    s.completude_max                                                     as completude_max
 
              from named_collectivite c
                       left join meta_commune mc on mc.collectivite_id = c.collectivite_id
