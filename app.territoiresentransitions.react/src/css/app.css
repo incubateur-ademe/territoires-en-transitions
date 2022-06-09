@@ -121,3 +121,18 @@ label {
 [aria-selected='true'] .fr-fi-settings-line::before {
   background-color: var(--text-active-blue-france);
 }
+
+.collectiviteCard:hover {
+  background: #f6f6f6;
+}
+
+.small-checkbox input[type='checkbox'] + label::before {
+  width: 1rem !important;
+  height: 1rem !important ;
+  margin-top: 0.25rem !important;
+  left: -1.5rem !important;
+}
+
+.small-checkbox input[type='checkbox'] + label {
+  padding: 0.05rem 0 !important;
+}

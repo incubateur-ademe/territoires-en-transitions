@@ -1,0 +1,171 @@
+.referentiel-table {
+  --color-primary: #433eba;
+  --color-secondary: #6a6af4;
+  --color-pill: #e3e3fd;
+  margin-bottom: 32px;
+  border-radius: 8px;
+  border-width: 8px;
+  border-color: var(--background-disabled-grey);
+  width: 100%;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  background-color: var(--background-disabled-grey);
+}
+
+/** en-tête */
+.referentiel-table .header .row {
+  align-items: center;
+  background-color: var(--background-disabled-grey);
+}
+
+.referentiel-table .header .cell {
+  text-align: left;
+  padding: 1rem;
+}
+
+.referentiel-table .cell {
+  width: 100%;
+}
+
+/** zone scrollable */
+.referentiel-table .body {
+  max-height: 84vh;
+  overflow-y: auto;
+  border-radius: 8px;
+}
+
+/** couleurs de fond des lignes */
+.referentiel-table .row {
+  background-color: #fff;
+  color: #000;
+}
+
+.referentiel-table .message {
+  display: flex;
+  justify-content: center;
+  background-color: white;
+  padding: 1rem;
+}
+
+/** curseur au dessus des lignes */
+.referentiel-table .body .row,
+.referentiel-table .body .row:hover {
+  cursor: pointer;
+  overflow: hidden;
+  line-height: 36px;
+}
+
+.referentiel-table .row.d1 {
+  background-color: var(--color-primary);
+  color: #fff;
+  font-weight: bold;
+}
+
+.referentiel-table .row.d2 {
+  background-color: var(--color-secondary);
+  color: #fff;
+  font-weight: bold;
+}
+
+.referentiel-table .row .pill {
+  background-color: var(--color-pill);
+  border-radius: 14px;
+  padding: 4px 12px;
+}
+
+/** couleurs de fond des lignes au survol */
+.referentiel-table .row.d3:hover,
+.referentiel-table .row.d4:hover,
+.referentiel-table .row.d5:hover {
+  background-color: var(--background-alt-grey);
+}
+
+/** cellule */
+.referentiel-table .body .cell {
+  padding: 0.15rem 1rem;
+  border: 1px;
+}
+.referentiel-table .body .cell:first-of-type {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.referentiel-table .d1 .cell {
+  padding: 0.4rem 1rem;
+}
+
+/** bords arrondis pour le 1er niveau */
+.referentiel-table .d1 {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+.referentiel-table .d1.open {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.referentiel-table .d1.close {
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+/** espacement entre les sections de 1er niveau */
+.referentiel-table .d1:not(:first-of-type) {
+  margin-top: 16px;
+}
+
+/** bordure blanche en bas pour un niveau 2 fermé */
+.referentiel-table .d2.close {
+  border-bottom: 1px solid white;
+}
+
+.referentiel-table .d3 {
+  border-top: 1px solid var(--color-primary);
+}
+
+.referentiel-table.no-d3-border-top .d3 {
+  border-top: none;
+}
+
+.referentiel-table .body .row {
+  border-left: 1px solid var(--color-primary);
+  border-right: 1px solid var(--color-primary);
+}
+
+/** bordure arrondi en bas pour la dernière ligne avant une nouvelle section */
+.referentiel-table .row.last {
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  border-bottom: 1px solid var(--color-primary);
+}
+
+/** bordure en bas pour les sous-niveaux */
+.referentiel-table .d3,
+.referentiel-table .d4,
+.referentiel-table .d5 {
+  border-bottom: 1px solid var(--background-disabled-grey);
+}
+
+/** identifiant d'une action */
+.referentiel-table .identifiant {
+  display: inline-block;
+  width: 50px;
+  text-align: right;
+  color: var(--text-disabled-grey);
+}
+
+/** pictos flèche pointant vers le bas ou la droite */
+.referentiel-table .arrow-down::before {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='none' d='M0 0h24v24H0z'/%3E%3Cpath d='M12 16l-6-6h12z'/%3E%3C/svg%3E");
+}
+.referentiel-table .arrow-right::before {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='none' d='M0 0h24v24H0z'/%3E%3Cpath d='M16 12l-6 6V6z'/%3E%3C/svg%3E");
+}
+.referentiel-table .arrow-down::before,
+.referentiel-table .arrow-right::before {
+  vertical-align: middle;
+  content: ' ';
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  margin-top: -2px;
+}

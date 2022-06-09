@@ -18,9 +18,8 @@ import Referentiels from './Referentiels';
 
 const TABS_INDEX: Record<ReferentielVueParamOption, number> = {
   progression: 0,
-  priorisation: 2,
-  //  detail: 2,
   detail: 1,
+  priorisation: 2,
 };
 
 /**

@@ -2,7 +2,7 @@
 
 exports[`Storyshots App/Pages/Collectivite/Detail Taches/Filtre Statut All 1`] = `
 <div
-  className="MuiInputBase-root MuiOutlinedInput-root multi-select "
+  className="MuiInputBase-root MuiOutlinedInput-root multi-select filtre-statut "
   onClick={[Function]}
 >
   <div
@@ -18,7 +18,8 @@ exports[`Storyshots App/Pages/Collectivite/Detail Taches/Filtre Statut All 1`] =
     <span
       className="fr-fi-filter-line fr-fi--sm"
     >
-       Statut
+       
+      Statut
     </span>
   </div>
   <input
@@ -31,7 +32,7 @@ exports[`Storyshots App/Pages/Collectivite/Detail Taches/Filtre Statut All 1`] =
   />
   <fieldset
     aria-hidden={true}
-    className="PrivateNotchedOutline-root-1 MuiOutlinedInput-notchedOutline"
+    className="PrivateNotchedOutline-root-25 MuiOutlinedInput-notchedOutline"
     style={
       Object {
         "paddingLeft": 8,
@@ -39,7 +40,7 @@ exports[`Storyshots App/Pages/Collectivite/Detail Taches/Filtre Statut All 1`] =
     }
   >
     <legend
-      className="PrivateNotchedOutline-legend-2"
+      className="PrivateNotchedOutline-legend-26"
       style={
         Object {
           "width": 0.01,
@@ -60,7 +61,7 @@ exports[`Storyshots App/Pages/Collectivite/Detail Taches/Filtre Statut All 1`] =
 
 exports[`Storyshots App/Pages/Collectivite/Detail Taches/Filtre Statut Multi Select 1`] = `
 <div
-  className="MuiInputBase-root MuiOutlinedInput-root multi-select "
+  className="MuiInputBase-root MuiOutlinedInput-root multi-select filtre-statut "
   onClick={[Function]}
 >
   <div
@@ -76,7 +77,8 @@ exports[`Storyshots App/Pages/Collectivite/Detail Taches/Filtre Statut Multi Sel
     <span
       className="fr-fi-filter-fill fr-fi--sm"
     >
-       Statut
+       
+      Statut
     </span>
   </div>
   <input
@@ -89,7 +91,7 @@ exports[`Storyshots App/Pages/Collectivite/Detail Taches/Filtre Statut Multi Sel
   />
   <fieldset
     aria-hidden={true}
-    className="PrivateNotchedOutline-root-5 MuiOutlinedInput-notchedOutline"
+    className="PrivateNotchedOutline-root-29 MuiOutlinedInput-notchedOutline"
     style={
       Object {
         "paddingLeft": 8,
@@ -97,7 +99,7 @@ exports[`Storyshots App/Pages/Collectivite/Detail Taches/Filtre Statut Multi Sel
     }
   >
     <legend
-      className="PrivateNotchedOutline-legend-6"
+      className="PrivateNotchedOutline-legend-30"
       style={
         Object {
           "width": 0.01,

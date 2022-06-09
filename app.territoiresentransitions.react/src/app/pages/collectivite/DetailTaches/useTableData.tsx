@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useMemo, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useHistory, useLocation} from 'react-router-dom';
 import {useMutation, useQuery, useQueryClient} from 'react-query';
 import {TableOptions} from 'react-table';
@@ -10,10 +10,10 @@ import {
 } from 'core-logic/hooks/params';
 import {
   fetchActionStatutsList,
-  getTotalTachesCount,
   TacheDetail,
   updateTacheStatut,
 } from './queries';
+import {useReferentiel} from '../ReferentielTable/useReferentiel';
 
 export type UseTableData = () => TableData;
 
@@ -52,17 +52,20 @@ export const useTableData: UseTableData = () => {
   // filtre initial
   const [filters, setFilters] = useURLParams(DEFAULT_FILTER);
 
-  // chargement des données
+  // chargement des données en fonction des filtres
   const {data, isLoading} = useQuery(
     ['action_statuts', collectivite_id, referentiel, ...filters],
     () => fetchActionStatutsList(collectivite_id, referentiel, filters)
   );
-  const {rows, count} = data || {};
+  const {rows: actionsStatut} = data || {};
 
-  // charge le nombre total de tâches du référentiel
-  const {data: total} = useQuery(['action_statuts', referentiel], () =>
-    getTotalTachesCount(referentiel)
-  );
+  // chargement du référentiel
+  const {
+    table,
+    total,
+    count,
+    isLoading: isLoadingReferentiel,
+  } = useReferentiel(referentiel, collectivite_id, actionsStatut);
 
   // met à jour un statut
   const {mutate, isLoading: isSaving} = useMutation(updateTacheStatut);
@@ -79,40 +82,14 @@ export const useTableData: UseTableData = () => {
     }
   };
 
-  // extrait les lignes de 1er niveau
-  const firstLevel = useMemo(
-    () => rows?.filter(({depth}) => depth === 1) || [],
-    [rows]
-  );
-
-  // renvoi l'id d'une ligne
-  const getRowId = useCallback((row: TacheDetail) => row.identifiant, []);
-
-  // renvoi les sous-lignes d'une ligne
-  const getSubRows = useCallback(
-    (parentRow: TacheDetail) =>
-      rows && parentRow.have_children
-        ? rows?.filter(
-            ({identifiant, depth}) =>
-              depth === parentRow.depth + 1 &&
-              identifiant.startsWith(parentRow.identifiant)
-          )
-        : [],
-    [rows]
-  );
-
   return {
-    table: {
-      data: firstLevel,
-      getRowId,
-      getSubRows,
-    },
+    table,
     filters,
     setFilters,
-    isLoading,
+    isLoading: isLoading || isLoadingReferentiel,
     isSaving,
-    count: count || 0,
-    total: total || 0,
+    count,
+    total,
     updateStatut,
   };
 };
