@@ -15,11 +15,12 @@ import {
 import {ReferentielOfIndicateur} from 'types/litterals';
 import DetailTacheTable from '../DetailTaches';
 import Referentiels from './Referentiels';
+import AidePriorisation from '../AidePriorisation';
 
 const TABS_INDEX: Record<ReferentielVueParamOption, number> = {
   progression: 0,
-  detail: 1,
-  priorisation: 2,
+  priorisation: 1,
+  detail: 2,
 };
 
 /**
@@ -68,6 +69,9 @@ export default () => {
       <Tabs className="w-full" activeTab={activeTab} onChange={handleChange}>
         <Tab label="Progression">
           <Referentiels />
+        </Tab>
+        <Tab label="Aide à la priorisation">
+          <AidePriorisation />
         </Tab>
         <Tab label="Détail des tâches">
           <DetailTacheTable />
