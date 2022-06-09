@@ -217,12 +217,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={true}
-                id="4a31cbb1-5c3a-4220-99b9-a902f7d31ccaall"
+                id="tcall"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="4a31cbb1-5c3a-4220-99b9-a902f7d31ccaall"
+                htmlFor="tcall"
               >
                 Tous
               </label>
@@ -234,12 +234,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="4a31cbb1-5c3a-4220-99b9-a902f7d31ccaCA"
+                id="tcCA"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="4a31cbb1-5c3a-4220-99b9-a902f7d31ccaCA"
+                htmlFor="tcCA"
               >
                 Communauté d'agglomération
               </label>
@@ -251,12 +251,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={true}
                 className="fr-toggle__input"
                 disabled={false}
-                id="4a31cbb1-5c3a-4220-99b9-a902f7d31ccaCC"
+                id="tcCC"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="4a31cbb1-5c3a-4220-99b9-a902f7d31ccaCC"
+                htmlFor="tcCC"
               >
                 Communauté de communes
               </label>
@@ -268,12 +268,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={true}
                 className="fr-toggle__input"
                 disabled={false}
-                id="4a31cbb1-5c3a-4220-99b9-a902f7d31ccaCU"
+                id="tcCU"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="4a31cbb1-5c3a-4220-99b9-a902f7d31ccaCU"
+                htmlFor="tcCU"
               >
                 Communauté urbaine
               </label>
@@ -285,12 +285,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="4a31cbb1-5c3a-4220-99b9-a902f7d31ccacommune"
+                id="tccommune"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="4a31cbb1-5c3a-4220-99b9-a902f7d31ccacommune"
+                htmlFor="tccommune"
               >
                 Commune
               </label>
@@ -302,12 +302,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="4a31cbb1-5c3a-4220-99b9-a902f7d31ccaEPT"
+                id="tcEPT"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="4a31cbb1-5c3a-4220-99b9-a902f7d31ccaEPT"
+                htmlFor="tcEPT"
               >
                 Établissement public territorial
               </label>
@@ -319,12 +319,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="4a31cbb1-5c3a-4220-99b9-a902f7d31ccaMETRO"
+                id="tcMETRO"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="4a31cbb1-5c3a-4220-99b9-a902f7d31ccaMETRO"
+                htmlFor="tcMETRO"
               >
                 Métropole
               </label>
@@ -336,12 +336,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="4a31cbb1-5c3a-4220-99b9-a902f7d31ccaPETR"
+                id="tcPETR"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="4a31cbb1-5c3a-4220-99b9-a902f7d31ccaPETR"
+                htmlFor="tcPETR"
               >
                 Pôle d’équilibre territorial rural
               </label>
@@ -353,12 +353,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="4a31cbb1-5c3a-4220-99b9-a902f7d31ccasyndicat"
+                id="tcsyndicat"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="4a31cbb1-5c3a-4220-99b9-a902f7d31ccasyndicat"
+                htmlFor="tcsyndicat"
               >
                 Syndicat
               </label>
@@ -381,12 +381,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={true}
-                id="2a1e8a8f-0da5-4560-8f53-00ee142ecea2all"
+                id="popall"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="2a1e8a8f-0da5-4560-8f53-00ee142ecea2all"
+                htmlFor="popall"
               >
                 Tous
               </label>
@@ -398,12 +398,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="2a1e8a8f-0da5-4560-8f53-00ee142ecea2<20000"
+                id="pop<20000"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="2a1e8a8f-0da5-4560-8f53-00ee142ecea2<20000"
+                htmlFor="pop<20000"
               >
                 Moins de 20 000
               </label>
@@ -415,12 +415,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="2a1e8a8f-0da5-4560-8f53-00ee142ecea220000-50000"
+                id="pop20000-50000"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="2a1e8a8f-0da5-4560-8f53-00ee142ecea220000-50000"
+                htmlFor="pop20000-50000"
               >
                 20 000 - 50 000
               </label>
@@ -432,12 +432,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="2a1e8a8f-0da5-4560-8f53-00ee142ecea250000-100000"
+                id="pop50000-100000"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="2a1e8a8f-0da5-4560-8f53-00ee142ecea250000-100000"
+                htmlFor="pop50000-100000"
               >
                 50 000 - 100 000
               </label>
@@ -449,12 +449,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={true}
                 className="fr-toggle__input"
                 disabled={false}
-                id="2a1e8a8f-0da5-4560-8f53-00ee142ecea2100000-200000"
+                id="pop100000-200000"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="2a1e8a8f-0da5-4560-8f53-00ee142ecea2100000-200000"
+                htmlFor="pop100000-200000"
               >
                 100 000 - 200 000
               </label>
@@ -466,12 +466,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="2a1e8a8f-0da5-4560-8f53-00ee142ecea2>200000"
+                id="pop>200000"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="2a1e8a8f-0da5-4560-8f53-00ee142ecea2>200000"
+                htmlFor="pop>200000"
               >
                 Plus de 200 000
               </label>
@@ -494,12 +494,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={true}
-                id="0c8bdff0-0f7c-48ee-be6d-d4728af77660all"
+                id="refall"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="0c8bdff0-0f7c-48ee-be6d-d4728af77660all"
+                htmlFor="refall"
               >
                 Tous
               </label>
@@ -511,12 +511,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={true}
                 className="fr-toggle__input"
                 disabled={false}
-                id="0c8bdff0-0f7c-48ee-be6d-d4728af77660eci"
+                id="refeci"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="0c8bdff0-0f7c-48ee-be6d-d4728af77660eci"
+                htmlFor="refeci"
               >
                 Économie Circulaire
               </label>
@@ -528,12 +528,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="0c8bdff0-0f7c-48ee-be6d-d4728af77660cae"
+                id="refcae"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="0c8bdff0-0f7c-48ee-be6d-d4728af77660cae"
+                htmlFor="refcae"
               >
                 Climat Air Énergie
               </label>
@@ -556,12 +556,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={true}
                 className="fr-toggle__input"
                 disabled={true}
-                id="430453f0-a819-4325-abda-6583c9e02097all"
+                id="nxall"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="430453f0-a819-4325-abda-6583c9e02097all"
+                htmlFor="nxall"
               >
                 Tous
               </label>
@@ -573,12 +573,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="430453f0-a819-4325-abda-6583c9e020970"
+                id="nx0"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="430453f0-a819-4325-abda-6583c9e020970"
+                htmlFor="nx0"
               >
                 Non labellisé
               </label>
@@ -590,12 +590,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="430453f0-a819-4325-abda-6583c9e020971"
+                id="nx1"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="430453f0-a819-4325-abda-6583c9e020971"
+                htmlFor="nx1"
               >
                 Première étoile
               </label>
@@ -607,12 +607,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="430453f0-a819-4325-abda-6583c9e020972"
+                id="nx2"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="430453f0-a819-4325-abda-6583c9e020972"
+                htmlFor="nx2"
               >
                 Deuxième étoile
               </label>
@@ -624,12 +624,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="430453f0-a819-4325-abda-6583c9e020973"
+                id="nx3"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="430453f0-a819-4325-abda-6583c9e020973"
+                htmlFor="nx3"
               >
                 Troisième étoile
               </label>
@@ -641,12 +641,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="430453f0-a819-4325-abda-6583c9e020974"
+                id="nx4"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="430453f0-a819-4325-abda-6583c9e020974"
+                htmlFor="nx4"
               >
                 Quatrième étoile
               </label>
@@ -658,12 +658,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="430453f0-a819-4325-abda-6583c9e020975"
+                id="nx5"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="430453f0-a819-4325-abda-6583c9e020975"
+                htmlFor="nx5"
               >
                 Cinquième étoile
               </label>
@@ -686,12 +686,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={true}
-                id="dd22018c-d612-4f9a-b582-3b8e8f8eaa72all"
+                id="txall"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="dd22018c-d612-4f9a-b582-3b8e8f8eaa72all"
+                htmlFor="txall"
               >
                 Tous
               </label>
@@ -703,12 +703,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="dd22018c-d612-4f9a-b582-3b8e8f8eaa720"
+                id="tx0"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="dd22018c-d612-4f9a-b582-3b8e8f8eaa720"
+                htmlFor="tx0"
               >
                 0 %
               </label>
@@ -720,12 +720,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="dd22018c-d612-4f9a-b582-3b8e8f8eaa720-49"
+                id="tx0-49"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="dd22018c-d612-4f9a-b582-3b8e8f8eaa720-49"
+                htmlFor="tx0-49"
               >
                 1 à 49 %
               </label>
@@ -737,12 +737,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="dd22018c-d612-4f9a-b582-3b8e8f8eaa7250-79"
+                id="tx50-79"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="dd22018c-d612-4f9a-b582-3b8e8f8eaa7250-79"
+                htmlFor="tx50-79"
               >
                 50 à 79 %
               </label>
@@ -754,12 +754,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={true}
                 className="fr-toggle__input"
                 disabled={false}
-                id="dd22018c-d612-4f9a-b582-3b8e8f8eaa7280-99"
+                id="tx80-99"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="dd22018c-d612-4f9a-b582-3b8e8f8eaa7280-99"
+                htmlFor="tx80-99"
               >
                 80 à 99 %
               </label>
@@ -771,12 +771,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={true}
                 className="fr-toggle__input"
                 disabled={false}
-                id="dd22018c-d612-4f9a-b582-3b8e8f8eaa72100"
+                id="tx100"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="dd22018c-d612-4f9a-b582-3b8e8f8eaa72100"
+                htmlFor="tx100"
               >
                 100 %
               </label>
@@ -3063,12 +3063,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={true}
                 className="fr-toggle__input"
                 disabled={true}
-                id="d474af45-ae72-446b-b0ad-1ce9881d1abball"
+                id="tcall"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="d474af45-ae72-446b-b0ad-1ce9881d1abball"
+                htmlFor="tcall"
               >
                 Tous
               </label>
@@ -3080,12 +3080,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="d474af45-ae72-446b-b0ad-1ce9881d1abbCA"
+                id="tcCA"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="d474af45-ae72-446b-b0ad-1ce9881d1abbCA"
+                htmlFor="tcCA"
               >
                 Communauté d'agglomération
               </label>
@@ -3097,12 +3097,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="d474af45-ae72-446b-b0ad-1ce9881d1abbCC"
+                id="tcCC"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="d474af45-ae72-446b-b0ad-1ce9881d1abbCC"
+                htmlFor="tcCC"
               >
                 Communauté de communes
               </label>
@@ -3114,12 +3114,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="d474af45-ae72-446b-b0ad-1ce9881d1abbCU"
+                id="tcCU"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="d474af45-ae72-446b-b0ad-1ce9881d1abbCU"
+                htmlFor="tcCU"
               >
                 Communauté urbaine
               </label>
@@ -3131,12 +3131,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="d474af45-ae72-446b-b0ad-1ce9881d1abbcommune"
+                id="tccommune"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="d474af45-ae72-446b-b0ad-1ce9881d1abbcommune"
+                htmlFor="tccommune"
               >
                 Commune
               </label>
@@ -3148,12 +3148,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="d474af45-ae72-446b-b0ad-1ce9881d1abbEPT"
+                id="tcEPT"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="d474af45-ae72-446b-b0ad-1ce9881d1abbEPT"
+                htmlFor="tcEPT"
               >
                 Établissement public territorial
               </label>
@@ -3165,12 +3165,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="d474af45-ae72-446b-b0ad-1ce9881d1abbMETRO"
+                id="tcMETRO"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="d474af45-ae72-446b-b0ad-1ce9881d1abbMETRO"
+                htmlFor="tcMETRO"
               >
                 Métropole
               </label>
@@ -3182,12 +3182,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="d474af45-ae72-446b-b0ad-1ce9881d1abbPETR"
+                id="tcPETR"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="d474af45-ae72-446b-b0ad-1ce9881d1abbPETR"
+                htmlFor="tcPETR"
               >
                 Pôle d’équilibre territorial rural
               </label>
@@ -3199,12 +3199,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="d474af45-ae72-446b-b0ad-1ce9881d1abbsyndicat"
+                id="tcsyndicat"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="d474af45-ae72-446b-b0ad-1ce9881d1abbsyndicat"
+                htmlFor="tcsyndicat"
               >
                 Syndicat
               </label>
@@ -3227,12 +3227,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={true}
                 className="fr-toggle__input"
                 disabled={true}
-                id="f3d73b64-2404-40e3-86e3-47eec4c9720ball"
+                id="popall"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="f3d73b64-2404-40e3-86e3-47eec4c9720ball"
+                htmlFor="popall"
               >
                 Tous
               </label>
@@ -3244,12 +3244,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="f3d73b64-2404-40e3-86e3-47eec4c9720b<20000"
+                id="pop<20000"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="f3d73b64-2404-40e3-86e3-47eec4c9720b<20000"
+                htmlFor="pop<20000"
               >
                 Moins de 20 000
               </label>
@@ -3261,12 +3261,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="f3d73b64-2404-40e3-86e3-47eec4c9720b20000-50000"
+                id="pop20000-50000"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="f3d73b64-2404-40e3-86e3-47eec4c9720b20000-50000"
+                htmlFor="pop20000-50000"
               >
                 20 000 - 50 000
               </label>
@@ -3278,12 +3278,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="f3d73b64-2404-40e3-86e3-47eec4c9720b50000-100000"
+                id="pop50000-100000"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="f3d73b64-2404-40e3-86e3-47eec4c9720b50000-100000"
+                htmlFor="pop50000-100000"
               >
                 50 000 - 100 000
               </label>
@@ -3295,12 +3295,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="f3d73b64-2404-40e3-86e3-47eec4c9720b100000-200000"
+                id="pop100000-200000"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="f3d73b64-2404-40e3-86e3-47eec4c9720b100000-200000"
+                htmlFor="pop100000-200000"
               >
                 100 000 - 200 000
               </label>
@@ -3312,12 +3312,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="f3d73b64-2404-40e3-86e3-47eec4c9720b>200000"
+                id="pop>200000"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="f3d73b64-2404-40e3-86e3-47eec4c9720b>200000"
+                htmlFor="pop>200000"
               >
                 Plus de 200 000
               </label>
@@ -3340,12 +3340,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={true}
                 className="fr-toggle__input"
                 disabled={true}
-                id="037ab50c-51a3-46e0-8dc0-c1f8887c9c2aall"
+                id="refall"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="037ab50c-51a3-46e0-8dc0-c1f8887c9c2aall"
+                htmlFor="refall"
               >
                 Tous
               </label>
@@ -3357,12 +3357,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="037ab50c-51a3-46e0-8dc0-c1f8887c9c2aeci"
+                id="refeci"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="037ab50c-51a3-46e0-8dc0-c1f8887c9c2aeci"
+                htmlFor="refeci"
               >
                 Économie Circulaire
               </label>
@@ -3374,12 +3374,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="037ab50c-51a3-46e0-8dc0-c1f8887c9c2acae"
+                id="refcae"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="037ab50c-51a3-46e0-8dc0-c1f8887c9c2acae"
+                htmlFor="refcae"
               >
                 Climat Air Énergie
               </label>
@@ -3402,12 +3402,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={true}
                 className="fr-toggle__input"
                 disabled={true}
-                id="a7f2438a-bd11-4450-9c5c-c78089409ad5all"
+                id="nxall"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="a7f2438a-bd11-4450-9c5c-c78089409ad5all"
+                htmlFor="nxall"
               >
                 Tous
               </label>
@@ -3419,12 +3419,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="a7f2438a-bd11-4450-9c5c-c78089409ad50"
+                id="nx0"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="a7f2438a-bd11-4450-9c5c-c78089409ad50"
+                htmlFor="nx0"
               >
                 Non labellisé
               </label>
@@ -3436,12 +3436,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="a7f2438a-bd11-4450-9c5c-c78089409ad51"
+                id="nx1"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="a7f2438a-bd11-4450-9c5c-c78089409ad51"
+                htmlFor="nx1"
               >
                 Première étoile
               </label>
@@ -3453,12 +3453,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="a7f2438a-bd11-4450-9c5c-c78089409ad52"
+                id="nx2"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="a7f2438a-bd11-4450-9c5c-c78089409ad52"
+                htmlFor="nx2"
               >
                 Deuxième étoile
               </label>
@@ -3470,12 +3470,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="a7f2438a-bd11-4450-9c5c-c78089409ad53"
+                id="nx3"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="a7f2438a-bd11-4450-9c5c-c78089409ad53"
+                htmlFor="nx3"
               >
                 Troisième étoile
               </label>
@@ -3487,12 +3487,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="a7f2438a-bd11-4450-9c5c-c78089409ad54"
+                id="nx4"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="a7f2438a-bd11-4450-9c5c-c78089409ad54"
+                htmlFor="nx4"
               >
                 Quatrième étoile
               </label>
@@ -3504,12 +3504,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="a7f2438a-bd11-4450-9c5c-c78089409ad55"
+                id="nx5"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="a7f2438a-bd11-4450-9c5c-c78089409ad55"
+                htmlFor="nx5"
               >
                 Cinquième étoile
               </label>
@@ -3532,12 +3532,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={true}
                 className="fr-toggle__input"
                 disabled={true}
-                id="14164f44-f36f-4cce-8469-b3b33a26a10aall"
+                id="txall"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="14164f44-f36f-4cce-8469-b3b33a26a10aall"
+                htmlFor="txall"
               >
                 Tous
               </label>
@@ -3549,12 +3549,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="14164f44-f36f-4cce-8469-b3b33a26a10a0"
+                id="tx0"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="14164f44-f36f-4cce-8469-b3b33a26a10a0"
+                htmlFor="tx0"
               >
                 0 %
               </label>
@@ -3566,12 +3566,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="14164f44-f36f-4cce-8469-b3b33a26a10a0-49"
+                id="tx0-49"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="14164f44-f36f-4cce-8469-b3b33a26a10a0-49"
+                htmlFor="tx0-49"
               >
                 1 à 49 %
               </label>
@@ -3583,12 +3583,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="14164f44-f36f-4cce-8469-b3b33a26a10a50-79"
+                id="tx50-79"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="14164f44-f36f-4cce-8469-b3b33a26a10a50-79"
+                htmlFor="tx50-79"
               >
                 50 à 79 %
               </label>
@@ -3600,12 +3600,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="14164f44-f36f-4cce-8469-b3b33a26a10a80-99"
+                id="tx80-99"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="14164f44-f36f-4cce-8469-b3b33a26a10a80-99"
+                htmlFor="tx80-99"
               >
                 80 à 99 %
               </label>
@@ -3617,12 +3617,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="14164f44-f36f-4cce-8469-b3b33a26a10a100"
+                id="tx100"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="14164f44-f36f-4cce-8469-b3b33a26a10a100"
+                htmlFor="tx100"
               >
                 100 %
               </label>
@@ -5882,12 +5882,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={true}
-                id="8b1609ee-1bdd-45ff-baa3-cf077c9c3272all"
+                id="tcall"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="8b1609ee-1bdd-45ff-baa3-cf077c9c3272all"
+                htmlFor="tcall"
               >
                 Tous
               </label>
@@ -5899,12 +5899,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="8b1609ee-1bdd-45ff-baa3-cf077c9c3272CA"
+                id="tcCA"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="8b1609ee-1bdd-45ff-baa3-cf077c9c3272CA"
+                htmlFor="tcCA"
               >
                 Communauté d'agglomération
               </label>
@@ -5916,12 +5916,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={true}
                 className="fr-toggle__input"
                 disabled={false}
-                id="8b1609ee-1bdd-45ff-baa3-cf077c9c3272CC"
+                id="tcCC"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="8b1609ee-1bdd-45ff-baa3-cf077c9c3272CC"
+                htmlFor="tcCC"
               >
                 Communauté de communes
               </label>
@@ -5933,12 +5933,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={true}
                 className="fr-toggle__input"
                 disabled={false}
-                id="8b1609ee-1bdd-45ff-baa3-cf077c9c3272CU"
+                id="tcCU"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="8b1609ee-1bdd-45ff-baa3-cf077c9c3272CU"
+                htmlFor="tcCU"
               >
                 Communauté urbaine
               </label>
@@ -5950,12 +5950,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="8b1609ee-1bdd-45ff-baa3-cf077c9c3272commune"
+                id="tccommune"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="8b1609ee-1bdd-45ff-baa3-cf077c9c3272commune"
+                htmlFor="tccommune"
               >
                 Commune
               </label>
@@ -5967,12 +5967,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="8b1609ee-1bdd-45ff-baa3-cf077c9c3272EPT"
+                id="tcEPT"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="8b1609ee-1bdd-45ff-baa3-cf077c9c3272EPT"
+                htmlFor="tcEPT"
               >
                 Établissement public territorial
               </label>
@@ -5984,12 +5984,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="8b1609ee-1bdd-45ff-baa3-cf077c9c3272METRO"
+                id="tcMETRO"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="8b1609ee-1bdd-45ff-baa3-cf077c9c3272METRO"
+                htmlFor="tcMETRO"
               >
                 Métropole
               </label>
@@ -6001,12 +6001,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="8b1609ee-1bdd-45ff-baa3-cf077c9c3272PETR"
+                id="tcPETR"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="8b1609ee-1bdd-45ff-baa3-cf077c9c3272PETR"
+                htmlFor="tcPETR"
               >
                 Pôle d’équilibre territorial rural
               </label>
@@ -6018,12 +6018,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="8b1609ee-1bdd-45ff-baa3-cf077c9c3272syndicat"
+                id="tcsyndicat"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="8b1609ee-1bdd-45ff-baa3-cf077c9c3272syndicat"
+                htmlFor="tcsyndicat"
               >
                 Syndicat
               </label>
@@ -6046,12 +6046,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={true}
-                id="a67bf7ad-7163-4f05-bcce-403fede9e9d7all"
+                id="popall"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="a67bf7ad-7163-4f05-bcce-403fede9e9d7all"
+                htmlFor="popall"
               >
                 Tous
               </label>
@@ -6063,12 +6063,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="a67bf7ad-7163-4f05-bcce-403fede9e9d7<20000"
+                id="pop<20000"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="a67bf7ad-7163-4f05-bcce-403fede9e9d7<20000"
+                htmlFor="pop<20000"
               >
                 Moins de 20 000
               </label>
@@ -6080,12 +6080,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="a67bf7ad-7163-4f05-bcce-403fede9e9d720000-50000"
+                id="pop20000-50000"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="a67bf7ad-7163-4f05-bcce-403fede9e9d720000-50000"
+                htmlFor="pop20000-50000"
               >
                 20 000 - 50 000
               </label>
@@ -6097,12 +6097,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="a67bf7ad-7163-4f05-bcce-403fede9e9d750000-100000"
+                id="pop50000-100000"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="a67bf7ad-7163-4f05-bcce-403fede9e9d750000-100000"
+                htmlFor="pop50000-100000"
               >
                 50 000 - 100 000
               </label>
@@ -6114,12 +6114,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={true}
                 className="fr-toggle__input"
                 disabled={false}
-                id="a67bf7ad-7163-4f05-bcce-403fede9e9d7100000-200000"
+                id="pop100000-200000"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="a67bf7ad-7163-4f05-bcce-403fede9e9d7100000-200000"
+                htmlFor="pop100000-200000"
               >
                 100 000 - 200 000
               </label>
@@ -6131,12 +6131,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="a67bf7ad-7163-4f05-bcce-403fede9e9d7>200000"
+                id="pop>200000"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="a67bf7ad-7163-4f05-bcce-403fede9e9d7>200000"
+                htmlFor="pop>200000"
               >
                 Plus de 200 000
               </label>
@@ -6159,12 +6159,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={true}
-                id="2d428b5a-be24-4ffc-b13d-f9fd03c62482all"
+                id="refall"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="2d428b5a-be24-4ffc-b13d-f9fd03c62482all"
+                htmlFor="refall"
               >
                 Tous
               </label>
@@ -6176,12 +6176,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={true}
                 className="fr-toggle__input"
                 disabled={false}
-                id="2d428b5a-be24-4ffc-b13d-f9fd03c62482eci"
+                id="refeci"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="2d428b5a-be24-4ffc-b13d-f9fd03c62482eci"
+                htmlFor="refeci"
               >
                 Économie Circulaire
               </label>
@@ -6193,12 +6193,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="2d428b5a-be24-4ffc-b13d-f9fd03c62482cae"
+                id="refcae"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="2d428b5a-be24-4ffc-b13d-f9fd03c62482cae"
+                htmlFor="refcae"
               >
                 Climat Air Énergie
               </label>
@@ -6221,12 +6221,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={true}
                 className="fr-toggle__input"
                 disabled={true}
-                id="0a1ceb55-56be-4ed9-a152-1572d1145781all"
+                id="nxall"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="0a1ceb55-56be-4ed9-a152-1572d1145781all"
+                htmlFor="nxall"
               >
                 Tous
               </label>
@@ -6238,12 +6238,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="0a1ceb55-56be-4ed9-a152-1572d11457810"
+                id="nx0"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="0a1ceb55-56be-4ed9-a152-1572d11457810"
+                htmlFor="nx0"
               >
                 Non labellisé
               </label>
@@ -6255,12 +6255,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="0a1ceb55-56be-4ed9-a152-1572d11457811"
+                id="nx1"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="0a1ceb55-56be-4ed9-a152-1572d11457811"
+                htmlFor="nx1"
               >
                 Première étoile
               </label>
@@ -6272,12 +6272,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="0a1ceb55-56be-4ed9-a152-1572d11457812"
+                id="nx2"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="0a1ceb55-56be-4ed9-a152-1572d11457812"
+                htmlFor="nx2"
               >
                 Deuxième étoile
               </label>
@@ -6289,12 +6289,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="0a1ceb55-56be-4ed9-a152-1572d11457813"
+                id="nx3"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="0a1ceb55-56be-4ed9-a152-1572d11457813"
+                htmlFor="nx3"
               >
                 Troisième étoile
               </label>
@@ -6306,12 +6306,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="0a1ceb55-56be-4ed9-a152-1572d11457814"
+                id="nx4"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="0a1ceb55-56be-4ed9-a152-1572d11457814"
+                htmlFor="nx4"
               >
                 Quatrième étoile
               </label>
@@ -6323,12 +6323,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="0a1ceb55-56be-4ed9-a152-1572d11457815"
+                id="nx5"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="0a1ceb55-56be-4ed9-a152-1572d11457815"
+                htmlFor="nx5"
               >
                 Cinquième étoile
               </label>
@@ -6351,12 +6351,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={true}
-                id="4b2af285-0b68-418e-a1df-24ab37fbbcccall"
+                id="txall"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="4b2af285-0b68-418e-a1df-24ab37fbbcccall"
+                htmlFor="txall"
               >
                 Tous
               </label>
@@ -6368,12 +6368,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="4b2af285-0b68-418e-a1df-24ab37fbbccc0"
+                id="tx0"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="4b2af285-0b68-418e-a1df-24ab37fbbccc0"
+                htmlFor="tx0"
               >
                 0 %
               </label>
@@ -6385,12 +6385,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="4b2af285-0b68-418e-a1df-24ab37fbbccc0-49"
+                id="tx0-49"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="4b2af285-0b68-418e-a1df-24ab37fbbccc0-49"
+                htmlFor="tx0-49"
               >
                 1 à 49 %
               </label>
@@ -6402,12 +6402,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={false}
                 className="fr-toggle__input"
                 disabled={false}
-                id="4b2af285-0b68-418e-a1df-24ab37fbbccc50-79"
+                id="tx50-79"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="4b2af285-0b68-418e-a1df-24ab37fbbccc50-79"
+                htmlFor="tx50-79"
               >
                 50 à 79 %
               </label>
@@ -6419,12 +6419,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={true}
                 className="fr-toggle__input"
                 disabled={false}
-                id="4b2af285-0b68-418e-a1df-24ab37fbbccc80-99"
+                id="tx80-99"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="4b2af285-0b68-418e-a1df-24ab37fbbccc80-99"
+                htmlFor="tx80-99"
               >
                 80 à 99 %
               </label>
@@ -6436,12 +6436,12 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                 checked={true}
                 className="fr-toggle__input"
                 disabled={false}
-                id="4b2af285-0b68-418e-a1df-24ab37fbbccc100"
+                id="tx100"
                 onChange={[Function]}
                 type="checkbox"
               />
               <label
-                htmlFor="4b2af285-0b68-418e-a1df-24ab37fbbccc100"
+                htmlFor="tx100"
               >
                 100 %
               </label>

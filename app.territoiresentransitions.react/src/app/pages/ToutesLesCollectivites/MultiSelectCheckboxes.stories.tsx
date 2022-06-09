@@ -8,7 +8,7 @@ export default {
   component: MultiSelectCheckboxes,
 } as Meta;
 
-const Template: Story<TMultiSelectCheckboxesProps<string>> = args => (
+const Template: Story<TMultiSelectCheckboxesProps> = args => (
   <ul>
     <MultiSelectCheckboxes {...args} />
   </ul>
@@ -24,7 +24,8 @@ const options = [
 ];
 
 export const SelectionTousParDefaut = Template.bind({});
-const selectionTousParDefautArgs: TMultiSelectCheckboxesProps<string> = {
+const selectionTousParDefautArgs: TMultiSelectCheckboxesProps = {
+  htmlId: 'exemple',
   title: 'Niveau de labellisation',
   options: options,
   selected: [],
@@ -35,7 +36,8 @@ const selectionTousParDefautArgs: TMultiSelectCheckboxesProps<string> = {
 SelectionTousParDefaut.args = selectionTousParDefautArgs;
 
 export const SelectionMultiple = Template.bind({});
-const selectionMultipleArgs: TMultiSelectCheckboxesProps<string> = {
+const selectionMultipleArgs: TMultiSelectCheckboxesProps = {
+  htmlId: 'exemple',
   title: 'Niveau de labellisation',
   options: options,
   selected: ['NL', '1'],

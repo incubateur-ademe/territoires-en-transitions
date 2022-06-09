@@ -1,7 +1,7 @@
 import {TOption} from 'app/pages/ToutesLesCollectivites/filtreLibelles';
-import {v4 as uuid} from 'uuid';
 
 export type TMultiSelectCheckboxesProps = {
+  htmlId: string;
   title: string;
   options: TOption[];
   selected: string[];
@@ -12,13 +12,12 @@ export type TMultiSelectCheckboxesProps = {
  * Permet de sélectionner plusieurs options d'une liste via des checkboxes
  */
 export const MultiSelectCheckboxes = (props: TMultiSelectCheckboxesProps) => {
-  const optionsIncludingAll = [{id: 'all', libelle: 'Tous'}, ...props.options];
+  const {htmlId, selected, title, options, onChange} = props;
+  const optionsIncludingAll = [{id: 'all', libelle: 'Tous'}, ...options];
 
-  const htmlId = uuid();
-  const {selected, onChange} = props;
   return (
     <div>
-      <div className="font-semibold text-md mb-2">{props.title}</div>
+      <div className="font-semibold text-md mb-2">{title}</div>
       <div className="small-checkbox  fr-checkbox-group text-sm">
         {optionsIncludingAll.map(option => (
           <div className="my-2" key={option.id}>

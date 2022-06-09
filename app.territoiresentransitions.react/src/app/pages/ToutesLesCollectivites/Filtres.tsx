@@ -18,6 +18,7 @@ export const TypeCollectiviteFiltre = (props: {
   onChange: (selected: string[]) => void;
 }) => (
   <MultiSelectCheckboxes
+    htmlId="tc"
     title="Type de collectivité"
     options={typeCollectiviteOptions}
     onChange={props.onChange}
@@ -30,6 +31,7 @@ export const PopulationCollectiviteFiltre = (props: {
   onChange: (selected: string[]) => void;
 }) => (
   <MultiSelectCheckboxes
+    htmlId="pop"
     title="Population"
     options={populationCollectiviteOptions}
     onChange={props.onChange}
@@ -42,6 +44,7 @@ export const ReferentielCollectiviteFiltre = (props: {
   onChange: (selected: string[]) => void;
 }) => (
   <MultiSelectCheckboxes
+    htmlId="ref"
     title="Référentiel"
     options={referentielCollectiviteOptions}
     onChange={props.onChange}
@@ -54,6 +57,7 @@ export const NiveauDeLabellisationCollectiviteFiltre = (props: {
   onChange: (selected: string[]) => void;
 }) => (
   <MultiSelectCheckboxes
+    htmlId="nx"
     title="Niveau de labellisation"
     options={niveauLabellisationCollectiviteOptions}
     onChange={props.onChange}
@@ -66,6 +70,7 @@ export const TauxRemplissageCollectiviteFiltre = (props: {
   onChange: (selected: string[]) => void;
 }) => (
   <MultiSelectCheckboxes
+    htmlId="tx"
     title="Taux de remplissage"
     options={tauxRemplissageCollectiviteOptions}
     onChange={props.onChange}
