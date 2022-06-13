@@ -2,6 +2,7 @@ import os
 import time
 from typing import List, Optional
 
+from asyncio.exceptions import IncompleteReadError
 from realtime_py import Socket
 from websockets.exceptions import ConnectionClosedError
 
@@ -142,7 +143,7 @@ def start_realtime():
         config.prepare_catch_up_unprocessed_action_status_update_events().execute()
 
         socket.listen()
-    except ConnectionClosedError:
+    except (IncompleteReadError, ConnectionClosedError):
         print("Connection closed. Will try to reconnect in 5 seconds...")
         time.sleep(5)
         start_realtime()
