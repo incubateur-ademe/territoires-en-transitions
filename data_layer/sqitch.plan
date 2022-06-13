@@ -1,0 +1,60 @@
+%syntax-version=1.0.0
+%project=tet
+%uri=https://github.com/betagouv/territoires-en-transitions/
+
+utils/realtime 2022-06-14T16:07:26Z Florian <florian@derfurth.com> # Initialise la publication supabase.
+utils/auth 2022-06-15T11:12:07Z Florian <florian@derfurth.com> # Fonctions utilitaires pour l'authentification.
+utils/modified_at 2022-06-15T11:14:54Z Florian <florian@derfurth.com> # Permet de tenir à jour une colonne modified_at.
+utils/teapot 2022-06-15T11:17:10Z Florian <florian@derfurth.com> # Implementation partielle du Hyper Text Coffee Pot Control Protocol.
+collectivite/imports 2022-06-13T13:22:21Z Florian <florian@derfurth.com> # Adds schemas and tables to import collectivités.
+utilisateur/dcp [utils/auth] 2022-06-13T15:55:37Z Florian <florian@derfurth.com> # Adds utilisateur/dcp storage.
+collectivite/collectivite [utils/modified_at collectivite/imports] 2022-06-13T16:02:11Z Florian <florian@derfurth.com> # Collectivités.
+utilisateur/droits [collectivite/collectivite] 2022-06-13T16:52:02Z Florian <florian@derfurth.com> # Droits des utilisateurs sur les données des collectivités.
+utilisateur/invitation [collectivite/collectivite utilisateur/droits] 2022-06-14T13:36:36Z Florian <florian@derfurth.com> # Permet d'utiliser un lien d'utilisateur/invitation pour rejoindre une collectivité.
+collectivite/mes_collectivites [collectivite/collectivite utilisateur/droits] 2022-06-14T13:46:22Z Florian <florian@derfurth.com> # Permet de lister mes collectivités.
+referentiel/contenu 2022-06-14T14:11:16Z Florian <florian@derfurth.com> # Contenu des référentiels.
+private_schema 2022-06-14T14:29:52Z Florian <florian@derfurth.com> # Ajoute le schema private.
+referentiel/action_statut [private_schema referentiel/contenu collectivite/collectivite utils/realtime] 2022-06-14T14:32:01Z Florian <florian@derfurth.com> # Action statut.
+evaluation/client_scores [referentiel/contenu utils/modified_at] 2022-06-14T14:48:26Z Florian <florian@derfurth.com> # Permet de stocker les scores pour le client.
+evaluation/scores_events [referentiel/contenu utilisateur/droits evaluation/client_scores utils/modified_at] 2022-06-14T14:53:01Z Florian <florian@derfurth.com> # Événements pour déclencher le calcul des scores.
+referentiel/action_commentaire [referentiel/contenu] 2022-06-15T09:09:47Z Florian <florian@derfurth.com> # Permet d'ajouter un commentaire à une action.
+indicateur/referentiel [referentiel/contenu] 2022-06-15T09:12:03Z Florian <florian@derfurth.com> # Permet de renseigner et de commenter les indicateurs des référentiels.
+indicateur/personnalise 2022-06-15T09:14:16Z Florian <florian@derfurth.com> # Permet de créer et de renseigner des indicateurs personnalisés.
+plan_action/plan_action [collectivite/collectivite utils/modified_at indicateur/referentiel indicateur/personnalise] 2022-06-14T16:26:25Z Florian <florian@derfurth.com> # Plan d'action
+referentiel/business_update [utils/auth referentiel/contenu] 2022-06-15T11:45:03Z Florian <florian@derfurth.com> # Permet au business de mettre à jour le contenu.
+collectivite/bucket [collectivite/collectivite utilisateur/droits] 2022-06-15T11:53:18Z Florian <florian@derfurth.com> # Bucket S3 pour chaque collectivité.
+referentiel/preuve [collectivite/bucket utilisateur/droits] 2022-06-15T11:55:22Z Florian <florian@derfurth.com> # Fichier et lien preuve.
+labellisation/labellisation [referentiel/contenu collectivite/collectivite utils/auth] 2022-06-16T08:08:10Z Florian <florian@derfurth.com> # Les labellisations obtenues.
+collectivite/type [collectivite/collectivite] 2022-06-16T08:56:29Z Florian <florian@derfurth.com> # Type de collectivité.
+evaluation/question [collectivite/type referentiel/contenu] 2022-06-16T08:14:53Z Florian <florian@derfurth.com> # Permet de poser des questions.
+evaluation/reponse [referentiel/contenu collectivite/collectivite utils/auth utils/modified_at evaluation/question] 2022-06-16T08:16:24Z Florian <florian@derfurth.com> # Permet de répondre aux questions.
+evaluation/regle [referentiel/contenu utils/auth] 2022-06-16T13:17:12Z Florian <florian@derfurth.com> # Les formules de calcul.
+utils/naturalsort 2022-06-16T14:31:02Z Florian <florian@derfurth.com> # Ordonnancement naturel.
+referentiel/vues [referentiel/contenu utils/naturalsort] 2022-06-16T14:37:35Z Florian <florian@derfurth.com> # Premières vues du référentiel.
+collectivite/identite [collectivite/collectivite collectivite/type] 2022-06-16T15:06:16Z Florian <florian@derfurth.com> # Identité des collectivités.
+evaluation/question_display [collectivite/identite] 2022-06-16T15:07:46Z Florian <florian@derfurth.com> # Les questions affichées.
+evaluation/consequence [collectivite/collectivite] 2022-06-16T15:41:20Z Florian <florian@derfurth.com> # Les conséquences de la personnalisation.
+evaluation/reactivite [evaluation/consequence] 2022-06-16T15:54:13Z Florian <florian@derfurth.com> # Permet le recalcul des scores lors du changement des réponses.
+evaluation/thematique_completude [evaluation/question] 2022-06-16T16:24:30Z Florian <florian@derfurth.com> # Permet d'afficher la complétude des thématiques des questions.
+evaluation/score_summary [evaluation/client_scores] 2022-06-16T16:59:25Z Florian <florian@derfurth.com> # Permet de lire les scores json.
+labellisation/schema 2022-06-16T16:40:44Z Florian <florian@derfurth.com> # Schema pour les fonctions de labellisation.
+labellisation/prerequis [labellisation/schema labellisation/labellisation referentiel/contenu evaluation/client_scores] 2022-06-16T16:42:47Z Florian <florian@derfurth.com> # Critères pour obtenir une labellisation.
+labellisation/fichier_preuve [labellisation/labellisation collectivite/bucket] 2022-06-17T08:52:51Z Florian <florian@derfurth.com> # Fichier preuve pour demande de labellisation.
+labellisation/parcours [labellisation/prerequis] 2022-06-17T09:43:25Z Florian <florian@derfurth.com> # Permet d'afficher le parcours de labellisation.
+labellisation/demande [labellisation/parcours labellisation/prerequis] 2022-06-17T13:05:02Z Florian <florian@derfurth.com> # Demande de labellisation.
+referentiel/vue_tabulaire [referentiel/contenu referentiel/action_statut evaluation/score_summary] 2022-06-20T12:59:29Z Florian <florian@derfurth.com> # Vue tabulaire des actions par collectivité.
+evaluation/referentiel_progress [evaluation/score_summary] 2022-06-20T13:14:53Z Florian <florian@derfurth.com> # Les progrès d'une collectivité par référentiel.
+collectivite/region [collectivite/imports] 2022-06-20T13:41:49Z Florian <florian@derfurth.com> # La liste des regions importées.
+collectivite/departement [collectivite/imports] 2022-06-20T13:42:36Z Florian <florian@derfurth.com> # La liste des départements importés.
+collectivite/toutes_les_collectivites [collectivite/imports collectivite/collectivite evaluation/referentiel_progress] 2022-06-20T13:46:56Z Florian <florian@derfurth.com> # La vue pour la page toutes les collectivités.
+cron/cron 2022-06-20T14:45:05Z Florian <florian@derfurth.com> # Add pg_cron extension.
+cron/refresh_collectivite_card [cron/cron collectivite/toutes_les_collectivites] 2022-06-20T14:47:08Z Florian <florian@derfurth.com> # Rafraichit la liste des collectivités.
+retool/utilisateur [utilisateur/droits] 2022-06-20T15:51:48Z Florian <florian@derfurth.com> # Gestion des utilisateurs.
+retool/collectivite [collectivite/collectivite] 2022-06-20T15:52:13Z Florian <florian@derfurth.com> # Gestion des collectivite.
+retool/evaluation [labellisation/prerequis] 2022-06-20T15:52:31Z Florian <florian@derfurth.com> # Gestion des collectivite.
+retool/labellisation [labellisation/demande] 2022-06-20T15:53:10Z Florian <florian@derfurth.com> # Demande de labellisation.
+retool/modification [retool/collectivite utilisateur/droits referentiel/contenu plan_action/plan_action indicateur/referentiel indicateur/personnalise] 2022-06-20T15:59:32Z Florian <florian@derfurth.com> # Modifications des contenus.
+stats/collectivite [retool/collectivite utilisateur/droits] 2022-06-20T15:42:43Z Florian <florian@derfurth.com> # Les statistiques sur les collectivités.
+stats/utilisateur [stats/collectivite utilisateur/droits] 2022-06-20T15:44:31Z Florian <florian@derfurth.com> # Les statistiques sur les utilisateurs.
+stats/fonctionalite [stats/collectivite utilisateur/droits referentiel/contenu plan_action/plan_action indicateur/referentiel indicateur/personnalise] 2022-06-20T15:49:11Z Florian <florian@derfurth.com> # Les statistiques sur les utilisateurs.
+stats/completude [retool/evaluation] 2022-06-20T16:03:06Z Florian <florian@derfurth.com> # Les statistiques sur la completude.
