@@ -1,6 +1,7 @@
 export type TOption = {libelle: string; id: string};
 
 export type TCollectivitesFilters = {
+  nom?: string;
   types: string[];
   regions: string[];
   departments: string[];
