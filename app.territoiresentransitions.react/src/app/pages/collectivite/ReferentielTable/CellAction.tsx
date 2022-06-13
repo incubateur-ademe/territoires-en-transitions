@@ -19,8 +19,8 @@ const paddingByLevel: Record<number, number> = {
   5: 36,
 };
 
-// décalage supplémentaire appliqué quand on affiche le bouton Expand
-const EXPAND_OFFSET = 36;
+// décalage supplémentaire appliqué quand on n'affiche pas le bouton Expand
+const NO_EXPAND_OFFSET = 34;
 
 /**
  * Affiche le nom d'une action, éventuellement précédé de l'identifiant et d'un
@@ -36,7 +36,7 @@ export const CellAction = (props: TCellProps) => {
   // applique un décalage en fonction du niveau + un décalage optionnel pour
   // compenser l'absence du bouton Expand lorsque c'est nécessaire
   const style = {
-    paddingLeft: paddingByLevel[depth] + (showExpand ? 0 : EXPAND_OFFSET),
+    paddingLeft: paddingByLevel[depth] + (showExpand ? 0 : NO_EXPAND_OFFSET),
   };
 
   return collectiviteId && referentielId ? (
