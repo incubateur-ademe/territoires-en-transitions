@@ -1,6 +1,6 @@
 import {useTableData} from './useTableData';
 import {DetailTacheTable} from './DetailTacheTable';
-import {initialFilters} from './filters';
+import {noFilters} from './filters';
 
 export default () => {
   const tableData = useTableData();
@@ -15,7 +15,7 @@ export default () => {
         {filtersCount > 0 ? (
           <button
             className="fr-link fr-link--icon-left fr-fi-close-circle-fill fr-ml-2w"
-            onClick={() => setFilters(initialFilters)}
+            onClick={() => setFilters(noFilters)}
           >
             Désactiver tous les filtres
           </button>

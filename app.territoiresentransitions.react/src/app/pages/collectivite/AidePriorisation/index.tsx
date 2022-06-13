@@ -1,6 +1,6 @@
 import {useTableData} from './useTableData';
 import {Table} from './Table';
-import {initialFilters} from './filters';
+import {noFilters} from './filters';
 import {getMaxDepth} from './queries';
 import {useReferentielId} from 'core-logic/hooks/params';
 
@@ -25,7 +25,7 @@ export default () => {
         {filtersCount > 0 ? (
           <button
             className="fr-link fr-link--icon-left fr-fi-close-circle-fill fr-ml-2w"
-            onClick={() => setFilters(initialFilters)}
+            onClick={() => setFilters(noFilters)}
           >
             Désactiver tous les filtres
           </button>
