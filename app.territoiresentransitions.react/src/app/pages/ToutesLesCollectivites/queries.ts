@@ -91,6 +91,11 @@ const buildQueryFromFilters = (
     }
   }
 
+  // Nom
+  if (filters.nom) {
+    query = query.ilike('nom', `%${filters.nom}%`);
+  }
+
   //  Trier par
   let orderBy: keyof CollectiviteCarteRead;
   let ascending: boolean;

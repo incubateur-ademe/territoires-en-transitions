@@ -35,7 +35,7 @@ export const RenderToutesLesCollectivites = (
       </p>
     </div>
     <div className="md:flex">
-      <div className="md:w-1/5">
+      <div className="md:w-3/12">
         <FiltresColonne
           filters={props.filters}
           setFilters={props.setFilters}
