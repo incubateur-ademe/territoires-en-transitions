@@ -74,7 +74,7 @@ class StoreReferentielActions(UseCase):
                 ],
             )
 
-        # Update existing actions
+        #  Update existing actions
         self.referentiel_repo.update_referentiel_actions(
             [
                 definition

@@ -1,16 +1,6 @@
 import {useCallback} from 'react';
-import {TCellProps, THeaderProps} from './DetailTacheTable';
+import {TCellProps} from './DetailTacheTable';
 import {SelectStatut} from './SelectStatut';
-import {FiltreStatut} from './FiltreStatut';
-
-/** Affiche le filtre déroulant dans l'en-tête de la colonne Statut */
-export const HeaderStatut = ({filters, setFilters}: THeaderProps) => (
-  <FiltreStatut
-    className="float-right"
-    values={filters}
-    onChange={setFilters}
-  />
-);
 
 /** Affiche le sélecteur permettant de mettre à jour le statut d'une tâche */
 export const CellStatut = ({

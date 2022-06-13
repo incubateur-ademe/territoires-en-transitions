@@ -1,22 +1,21 @@
 import {useTableData} from './useTableData';
 import {DetailTacheTable} from './DetailTacheTable';
+import {noFilters} from './filters';
 
 export default () => {
   const tableData = useTableData();
-  const {count, total, filters, setFilters} = tableData;
-  const countFilters =
-    filters?.length && !filters.includes('tous') ? filters.length : 0;
-  const labelFilters = countFilters > 1 ? 'filtres actifs' : 'filtre actif';
+  const {count, total, setFilters, filtersCount} = tableData;
+  const labelFilters = filtersCount > 1 ? 'filtres actifs' : 'filtre actif';
   const labelTaches = 'tâche' + (count > 1 ? 's' : '');
 
   return (
     <>
       <p>
-        {countFilters} {labelFilters} ; {count} {labelTaches} sur {total}
-        {countFilters > 0 ? (
+        {filtersCount} {labelFilters} ; {count} {labelTaches} sur {total}
+        {filtersCount > 0 ? (
           <button
             className="fr-link fr-link--icon-left fr-fi-close-circle-fill fr-ml-2w"
-            onClick={() => setFilters(['tous'])}
+            onClick={() => setFilters(noFilters)}
           >
             Désactiver tous les filtres
           </button>
