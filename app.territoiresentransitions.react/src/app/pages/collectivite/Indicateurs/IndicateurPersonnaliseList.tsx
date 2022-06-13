@@ -30,7 +30,7 @@ export const IndicateurPersonnaliseList = ({
 
   return (
     <div className="app mx-5 mt-5">
-      <div className="float-right -mt-48">
+      <div className="float-right -mt-48 w-80">
         <UiSearchBar search={search} />
       </div>
       <div className="float-right -mt-12">
