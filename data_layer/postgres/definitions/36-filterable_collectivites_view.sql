@@ -206,7 +206,7 @@ from card
                             from filtre_intervalle
                             where type = 'remplissage'
                               and (intervalle @> (card.completude_cae * 100)::numeric
-                                or intervalle @> (card.completude_eci * 100)::numeric)) comps on true
+                                and intervalle @> (card.completude_eci * 100)::numeric)) comps on true
     -- score
          left join lateral (select id
                             from filtre_intervalle
@@ -222,7 +222,7 @@ from card
                             from filtre_intervalle
                             where type = 'score'
                               and (intervalle @> (card.score_fait_eci * 100)::numeric
-                                or intervalle @> (card.score_fait_cae * 100)::numeric)) scores on true
+                                and intervalle @> (card.score_fait_cae * 100)::numeric)) scores on true
 
 -- keep only active collectivités only.
 where card.collectivite_id in (select collectivite_id from private_utilisateur_droit where active);
