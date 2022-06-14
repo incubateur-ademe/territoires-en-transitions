@@ -17,7 +17,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Multi Select Checkboxes S
         <input
           checked={false}
           className="fr-toggle__input"
-          disabled={true}
+          disabled={false}
           id="exempleall"
           onChange={[Function]}
           type="checkbox"

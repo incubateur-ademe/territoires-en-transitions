@@ -26,11 +26,32 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
     className="md:flex"
   >
     <div
-      className="md:w-1/5"
+      className="md:w-3/12"
     >
       <div
         className="flex flex-col gap-8"
       >
+        <div
+          className="flex"
+        >
+          <div
+            className=" border-b-2 border-bf500 flex items-center w-full"
+          >
+            <input
+              className="bg-beige p-2 w-full"
+              onChange={[Function]}
+              placeholder="Rechercher par nom"
+              value=""
+            />
+            <div
+              className="bg-bf500 h-full p-2"
+            >
+              <div
+                className="fr-fi-search-line text-white"
+              />
+            </div>
+          </div>
+        </div>
         <div>
           <div
             className="mb-2 font-semibold"
@@ -216,7 +237,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
               <input
                 checked={false}
                 className="fr-toggle__input"
-                disabled={true}
+                disabled={false}
                 id="tcall"
                 onChange={[Function]}
                 type="checkbox"
@@ -380,7 +401,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
               <input
                 checked={false}
                 className="fr-toggle__input"
-                disabled={true}
+                disabled={false}
                 id="popall"
                 onChange={[Function]}
                 type="checkbox"
@@ -493,7 +514,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
               <input
                 checked={false}
                 className="fr-toggle__input"
-                disabled={true}
+                disabled={false}
                 id="refall"
                 onChange={[Function]}
                 type="checkbox"
@@ -685,7 +706,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
               <input
                 checked={false}
                 className="fr-toggle__input"
-                disabled={true}
+                disabled={false}
                 id="txall"
                 onChange={[Function]}
                 type="checkbox"
@@ -879,7 +900,6 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
           <p
             className="text-gray-500"
           >
-            7
              collectivités correspondent à votre recherche
           </p>
           <div
@@ -2841,6 +2861,62 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
       </div>
     </div>
   </div>
+  <div
+    className="flex justify-center mt-3"
+  >
+    <nav
+      aria-label="Pagination"
+      className="fr-pagination"
+      role="navigation"
+    >
+      <ul
+        className="fr-pagination__list"
+      >
+        <button
+          aria-disabled="true"
+          className="fr-pagination__link fr-pagination__link--first"
+          disabled={true}
+          onClick={[Function]}
+          role="link"
+        >
+          Première page
+        </button>
+        <button
+          aria-disabled="true"
+          className="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
+          disabled={true}
+          onClick={[Function]}
+          role="link"
+        >
+          Page précédente
+        </button>
+        <div
+          className=""
+        >
+          <button
+            className="fr-pagination__link fr-displayed-lg"
+            disabled={true}
+          >
+            …
+          </button>
+        </div>
+        <button
+          className="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
+          disabled={false}
+          onClick={[Function]}
+        >
+          Page suivante
+        </button>
+        <button
+          className="fr-pagination__link fr-pagination__link--last"
+          disabled={false}
+          onClick={[Function]}
+        >
+          Dernière page
+        </button>
+      </ul>
+    </nav>
+  </div>
 </div>
 `;
 
@@ -2870,11 +2946,32 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
     className="md:flex"
   >
     <div
-      className="md:w-1/5"
+      className="md:w-3/12"
     >
       <div
         className="flex flex-col gap-8"
       >
+        <div
+          className="flex"
+        >
+          <div
+            className=" border-b-2 border-bf500 flex items-center w-full"
+          >
+            <input
+              className="bg-beige p-2 w-full"
+              onChange={[Function]}
+              placeholder="Rechercher par nom"
+              value=""
+            />
+            <div
+              className="bg-bf500 h-full p-2"
+            >
+              <div
+                className="fr-fi-search-line text-white"
+              />
+            </div>
+          </div>
+        </div>
         <div>
           <div
             className="mb-2 font-semibold"
@@ -3726,7 +3823,6 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
           <p
             className="text-gray-500"
           >
-            7
              collectivités correspondent à votre recherche
           </p>
         </div>
@@ -5662,6 +5758,62 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
       </div>
     </div>
   </div>
+  <div
+    className="flex justify-center mt-3"
+  >
+    <nav
+      aria-label="Pagination"
+      className="fr-pagination"
+      role="navigation"
+    >
+      <ul
+        className="fr-pagination__list"
+      >
+        <button
+          aria-disabled="true"
+          className="fr-pagination__link fr-pagination__link--first"
+          disabled={true}
+          onClick={[Function]}
+          role="link"
+        >
+          Première page
+        </button>
+        <button
+          aria-disabled="true"
+          className="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
+          disabled={true}
+          onClick={[Function]}
+          role="link"
+        >
+          Page précédente
+        </button>
+        <div
+          className=""
+        >
+          <button
+            className="fr-pagination__link fr-displayed-lg"
+            disabled={true}
+          >
+            …
+          </button>
+        </div>
+        <button
+          className="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
+          disabled={false}
+          onClick={[Function]}
+        >
+          Page suivante
+        </button>
+        <button
+          className="fr-pagination__link fr-pagination__link--last"
+          disabled={false}
+          onClick={[Function]}
+        >
+          Dernière page
+        </button>
+      </ul>
+    </nav>
+  </div>
 </div>
 `;
 
@@ -5691,11 +5843,32 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
     className="md:flex"
   >
     <div
-      className="md:w-1/5"
+      className="md:w-3/12"
     >
       <div
         className="flex flex-col gap-8"
       >
+        <div
+          className="flex"
+        >
+          <div
+            className=" border-b-2 border-bf500 flex items-center w-full"
+          >
+            <input
+              className="bg-beige p-2 w-full"
+              onChange={[Function]}
+              placeholder="Rechercher par nom"
+              value=""
+            />
+            <div
+              className="bg-bf500 h-full p-2"
+            >
+              <div
+                className="fr-fi-search-line text-white"
+              />
+            </div>
+          </div>
+        </div>
         <div>
           <div
             className="mb-2 font-semibold"
@@ -5881,7 +6054,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
               <input
                 checked={false}
                 className="fr-toggle__input"
-                disabled={true}
+                disabled={false}
                 id="tcall"
                 onChange={[Function]}
                 type="checkbox"
@@ -6045,7 +6218,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
               <input
                 checked={false}
                 className="fr-toggle__input"
-                disabled={true}
+                disabled={false}
                 id="popall"
                 onChange={[Function]}
                 type="checkbox"
@@ -6158,7 +6331,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
               <input
                 checked={false}
                 className="fr-toggle__input"
-                disabled={true}
+                disabled={false}
                 id="refall"
                 onChange={[Function]}
                 type="checkbox"
@@ -6350,7 +6523,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
               <input
                 checked={false}
                 className="fr-toggle__input"
-                disabled={true}
+                disabled={false}
                 id="txall"
                 onChange={[Function]}
                 type="checkbox"
@@ -6540,7 +6713,13 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
             </fieldset>
           </div>
         </div>
-        <div />
+        <div>
+          <p
+            className="text-gray-500"
+          >
+             collectivités correspondent à votre recherche
+          </p>
+        </div>
       </div>
       <div
         style={
@@ -6587,6 +6766,62 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
         </div>
       </div>
     </div>
+  </div>
+  <div
+    className="flex justify-center mt-3"
+  >
+    <nav
+      aria-label="Pagination"
+      className="fr-pagination"
+      role="navigation"
+    >
+      <ul
+        className="fr-pagination__list"
+      >
+        <button
+          aria-disabled="true"
+          className="fr-pagination__link fr-pagination__link--first"
+          disabled={true}
+          onClick={[Function]}
+          role="link"
+        >
+          Première page
+        </button>
+        <button
+          aria-disabled="true"
+          className="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
+          disabled={true}
+          onClick={[Function]}
+          role="link"
+        >
+          Page précédente
+        </button>
+        <div
+          className=""
+        >
+          <button
+            className="fr-pagination__link fr-displayed-lg"
+            disabled={true}
+          >
+            …
+          </button>
+        </div>
+        <button
+          className="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
+          disabled={false}
+          onClick={[Function]}
+        >
+          Page suivante
+        </button>
+        <button
+          className="fr-pagination__link fr-pagination__link--last"
+          disabled={false}
+          onClick={[Function]}
+        >
+          Dernière page
+        </button>
+      </ul>
+    </nav>
   </div>
 </div>
 `;
