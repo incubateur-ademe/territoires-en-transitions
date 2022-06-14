@@ -1,34 +1,43 @@
-import {ITEM_ALL} from 'ui/shared/MultiSelectFilter';
 import {useTableData} from './useTableData';
 import {Table} from './Table';
-import {initialFilters} from './filters';
+import {noFilters} from './filters';
+import {getMaxDepth} from './queries';
+import {useReferentielId} from 'core-logic/hooks/params';
 
 export default () => {
   const tableData = useTableData();
-  const {filters, setFilters} = tableData;
-  const countFilters = Object.values(filters).reduce(
-    (cnt, f) => cnt + filterLength(f),
-    0
-  );
-  const labelFilters = countFilters > 1 ? 'filtres actifs' : 'filtre actif';
+  const referentiel = useReferentielId();
+  const {setFilters, filtersCount} = tableData;
+  const labelFilters = filtersCount > 1 ? 'filtres actifs' : 'filtre actif';
+  const filterInfoMessage =
+    filtersCount > 0
+      ? `Les filtres s‘appliquent au niveau des sous-actions (${Array(
+          getMaxDepth(referentiel)
+        )
+          .fill('x')
+          .join('.')})`
+      : null;
 
   return (
     <>
       <p>
-        {countFilters} {labelFilters}
-        {countFilters > 0 ? (
+        {filtersCount} {labelFilters}
+        {filtersCount > 0 ? (
           <button
             className="fr-link fr-link--icon-left fr-fi-close-circle-fill fr-ml-2w"
-            onClick={() => setFilters(initialFilters)}
+            onClick={() => setFilters(noFilters)}
           >
             Désactiver tous les filtres
           </button>
+        ) : null}
+        {filterInfoMessage ? (
+          <>
+            <br />
+            {filterInfoMessage}
+          </>
         ) : null}
       </p>
       <Table tableData={tableData} />
     </>
   );
 };
-
-const filterLength = (filters: string[]) =>
-  filters?.length && !filters.includes(ITEM_ALL) ? filters.length : 0;

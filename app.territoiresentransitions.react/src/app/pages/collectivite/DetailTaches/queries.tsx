@@ -1,6 +1,7 @@
 import {supabaseClient} from 'core-logic/api/supabase';
 import {IActionStatutsRead} from 'generated/dataLayer/action_statuts_read';
 import {ActionReferentiel} from '../ReferentielTable/useReferentiel';
+import {TFilters} from './filters';
 
 // un sous-ensemble des champs pour alimenter notre table des taches
 export type TacheDetail = ActionReferentiel & ActionStatut;
@@ -10,7 +11,7 @@ export type ActionStatut = Pick<IActionStatutsRead, 'action_id' | 'avancement'>;
 export const fetchActionStatutsList = async (
   collectivite_id: number | null,
   referentiel: string | null,
-  filters: string[]
+  filters: TFilters
 ) => {
   // la requête
   let query = supabaseClient
@@ -20,18 +21,19 @@ export const fetchActionStatutsList = async (
     .gt('depth', 0);
 
   // construit les filtres complémentaires sauf si "tous" est inclut
-  if (!filters.includes('tous')) {
+  const {statut} = filters;
+  if (!statut.includes('tous')) {
     // traite les autres filtres à propos de l'avancement
-    const descendants = filters.join(',');
-    const avancement = filters.map(s => `"${s}"`).join(',');
-    const or = filters.length
+    const descendants = statut.join(',');
+    const avancement = statut.map(s => `"${s}"`).join(',');
+    const or = statut.length
       ? [
           `avancement_descendants.ov.{${descendants}}`,
           `avancement.in.(${avancement})`,
         ]
       : [];
     // gère le cas où null veut dire "non renseigné"
-    if (filters.includes('non_renseigne')) {
+    if (statut.includes('non_renseigne')) {
       or.push('and(avancement.is.null,have_children.is.false)');
     }
 
