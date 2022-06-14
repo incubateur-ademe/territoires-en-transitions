@@ -138,11 +138,11 @@ def build_markdown_parser(
                 current_writer = head_writer
             elif isinstance(token, CodeFence):
                 current_writer = code_writer
-            elif current_writer == code_writer:
-                current_writer = make_section_writer(description_key)
             elif is_heading(token, name_level + 1):
                 title = token.children[0].content.strip()
                 current_writer = make_section_writer(title)
+            elif current_writer == code_writer:
+                current_writer = make_section_writer(description_key)
             current_writer(token, leaf)
 
         return node_writer
