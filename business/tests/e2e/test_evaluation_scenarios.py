@@ -8,7 +8,7 @@ from business.evaluation.domain.models.action_statut import (
     DetailedAvancement,
 )
 from business.evaluation.domain.models.events import (
-    ActionStatutOrConsequenceUpdatedForCollectivite,
+    TriggerNotationForCollectiviteForReferentiel,
 )
 from business.evaluation.domain.ports.action_status_repo import (
     InMemoryActionStatutRepository,
@@ -57,7 +57,7 @@ def test_eci_desactivation_of_sous_action_242_should_redistribute_points_amongst
     )
 
     scores_computed = spy_on_event(bus, events.ReferentielScoresForCollectiviteComputed)
-    use_case.execute(ActionStatutOrConsequenceUpdatedForCollectivite(1, "eci"))
+    use_case.execute(TriggerNotationForCollectiviteForReferentiel(1, "eci"))
 
     scores_by_id = {score.action_id: score for score in scores_computed[0].scores}
 

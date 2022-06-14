@@ -10,7 +10,12 @@ from business.utils.domain_message_bus import (
 
 
 @dataclass
-class ActionStatutOrConsequenceUpdatedForCollectivite(DomainEvent):
+class TriggerNotationForCollectivite(DomainEvent):
+    collectivite_id: int
+
+
+@dataclass
+class TriggerNotationForCollectiviteForReferentiel(DomainEvent):
     collectivite_id: int
     referentiel: ActionReferentiel
 

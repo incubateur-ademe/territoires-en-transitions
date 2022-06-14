@@ -18,6 +18,7 @@ from business.evaluation.entrypoints.start_realtime import (
 from business.evaluation.domain.ports.realtime import (
     AbstractConverter,
     CollectiviteActionStatutUpdateConverter,
+    CollectiviteActivationConverter,
     CollectiviteReponseUpdateConverter,
 )
 from tests.utils.supabase_fixtures import reset_supabase_client
@@ -33,6 +34,7 @@ def realtime(bus) -> ReplayRealtime:
     converters: List[AbstractConverter] = [
         CollectiviteActionStatutUpdateConverter(),
         CollectiviteReponseUpdateConverter(),
+        CollectiviteActivationConverter()
     ]
     return ReplayRealtime(bus, converters=converters)
 

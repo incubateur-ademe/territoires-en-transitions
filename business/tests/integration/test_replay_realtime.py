@@ -8,6 +8,7 @@ from business.evaluation.adapters.replay_realtime import ReplayRealtime
 from business.evaluation.domain.ports.realtime import (
     AbstractConverter,
     CollectiviteActionStatutUpdateConverter,
+    CollectiviteActivationConverter,
     CollectiviteReponseUpdateConverter,
 )
 from business.evaluation.domain.models import events
@@ -36,7 +37,7 @@ def test_domain_event_published_on_replay_correct_realtime_status_update_observe
     )
     failure_events = spy_on_event(bus, events.RealtimeEventWithWrongFormatObserved)
     corresponding_domain_events = spy_on_event(
-        bus, events.ActionStatutOrConsequenceUpdatedForCollectivite
+        bus, events.TriggerNotationForCollectiviteForReferentiel
     )
 
     realtime.start()
@@ -46,7 +47,7 @@ def test_domain_event_published_on_replay_correct_realtime_status_update_observe
 
     assert corresponding_domain_events[
         0
-    ] == events.ActionStatutOrConsequenceUpdatedForCollectivite(
+    ] == events.TriggerNotationForCollectiviteForReferentiel(
         collectivite_id=1, referentiel="eci"
     )
 
@@ -138,5 +139,37 @@ def test_domain_event_published_on_replay_correct_realtime_reponse_update_observ
     assert len(corresponding_domain_events) == 1
 
     assert corresponding_domain_events[0] == events.ReponseUpdatedForCollectivite(
+        collectivite_id=1
+    )
+
+
+# Test realtime on event collectivite activated
+def test_domain_event_published_on_replay_correct_realtime_collectivite_observer():
+    bus = InMemoryDomainMessageBus()
+    converters: List[AbstractConverter] = [CollectiviteActivationConverter()]
+    realtime = ReplayRealtime(bus, converters=converters)
+    realtime.set_events_to_emit(
+        [
+            {
+                "record": {
+                    "collectivite_id": 1,
+                    "created_at": "2020-01-01T12",
+                    "id": 42,
+                },
+                "table": "collectivite_activation_event",
+            }
+        ]
+    )
+    failure_events = spy_on_event(bus, events.RealtimeEventWithWrongFormatObserved)
+    corresponding_domain_events = spy_on_event(
+        bus, events.TriggerNotationForCollectivite
+    )
+
+    realtime.start()
+
+    assert len(failure_events) == 0
+    assert len(corresponding_domain_events) == 1
+
+    assert corresponding_domain_events[0] == events.TriggerNotationForCollectivite(
         collectivite_id=1
     )

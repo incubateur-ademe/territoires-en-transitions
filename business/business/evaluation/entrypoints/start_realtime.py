@@ -13,8 +13,8 @@ from business.evaluation.domain.use_cases.catch_up_unprocessed_reponse_update_ev
 from business.evaluation.domain.use_cases.compute_and_store_referentiel_personnalisations_for_collectivite import (
     ComputeAndStoreReferentielPersonnalisationsForCollectivite,
 )
-from business.evaluation.domain.use_cases.trigger_scores_computation_once_personnalisation_consequence_stored import (
-    TriggerScoresComputationOncePersonnalisationConsequenceStored,
+from business.evaluation.domain.use_cases.trigger_notation_for_collectivite import (
+    TriggerNotationForCollectivite,
 )
 from business.personnalisation.engine.regles_parser import ReglesParser
 from business.utils.domain_message_bus import (
@@ -29,16 +29,15 @@ from business.utils.config import Config
 
 # 1. Define Handlers
 EVENT_HANDLERS: EventHandlers = {
-    events.ActionStatutOrConsequenceUpdatedForCollectivite: [
+    events.TriggerNotationForCollectiviteForReferentiel: [
         ComputeReferentielScoresForCollectivite
     ],
+    events.TriggerNotationForCollectivite: [TriggerNotationForCollectivite],
     events.ReferentielScoresForCollectiviteComputed: [StoreScoresForCollectivite],
     events.ReponseUpdatedForCollectivite: [
         ComputeAndStoreReferentielPersonnalisationsForCollectivite
     ],
-    events.PersonnalisationForCollectiviteStored: [
-        TriggerScoresComputationOncePersonnalisationConsequenceStored
-    ],
+    events.PersonnalisationForCollectiviteStored: [TriggerNotationForCollectivite],
 }
 
 # 2. Define Config
@@ -84,9 +83,7 @@ class EvaluationConfig(Config):
                 personnalisation_repo=self.personnalisation_repo,
                 regles_parser=self.regles_parser,
             ),
-            TriggerScoresComputationOncePersonnalisationConsequenceStored(
-                self.domain_message_bus
-            ),
+            TriggerNotationForCollectivite(self.domain_message_bus),
         ]
 
     def prepare_catch_up_unprocessed_action_status_update_events(self):
