@@ -24,8 +24,8 @@ export const MultiSelectCheckboxes = (props: TMultiSelectCheckboxesProps) => {
             <input
               type="checkbox"
               className="fr-toggle__input"
-              disabled={option.id === 'all'}
               id={htmlId + option.id}
+              disabled={option.id === 'all' && selected.length === 0}
               checked={
                 selected.length === 0
                   ? option.id === 'all'
@@ -33,7 +33,9 @@ export const MultiSelectCheckboxes = (props: TMultiSelectCheckboxesProps) => {
               }
               onChange={e => {
                 if (e.currentTarget.checked) {
-                  onChange([...selected, option.id as string]);
+                  if (option.id === 'all') {
+                    onChange([]);
+                  } else onChange([...selected, option.id as string]);
                 } else {
                   onChange(selected.filter(s => s !== option.id));
                 }
