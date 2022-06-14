@@ -76,7 +76,7 @@ def prepare_use_case(
     consequences_by_action_id: Optional[
         Dict[ActionId, ActionPersonnalisationConsequence]
     ] = None,
-    trigger: Optional[events.ActionStatutOrConsequenceUpdatedForCollectivite] = None,
+    trigger: Optional[events.TriggerNotationForCollectiviteForReferentiel] = None,
     referentiel_repo: InMemoryReferentielRepository = referentiel_repo,
 ) -> Tuple[
     List[events.ReferentielScoresForCollectiviteComputed],
@@ -101,7 +101,7 @@ def prepare_use_case(
     failure_events = spy_on_event(
         bus, events.ReferentielScoresForCollectiviteComputationFailed
     )
-    trigger = trigger or events.ActionStatutOrConsequenceUpdatedForCollectivite(
+    trigger = trigger or events.TriggerNotationForCollectiviteForReferentiel(
         collectivite_id=1,
         referentiel=test_referentiel,
     )

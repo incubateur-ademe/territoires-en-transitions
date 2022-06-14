@@ -22,7 +22,7 @@ def test_catch_up_unprocessed_action_status_update_event():
         CatchUpUnprocessedActionStatusUpdateEvents(bus, repo)
     )
     published_events = spy_on_event(
-        bus, events.ActionStatutOrConsequenceUpdatedForCollectivite
+        bus, events.TriggerNotationForCollectiviteForReferentiel
     )
     test_catch_up_unprocessed_action_status_update_event.execute()
     assert len(published_events) == 1

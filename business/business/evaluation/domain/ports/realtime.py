@@ -6,6 +6,9 @@ from marshmallow import ValidationError
 import rx.operators as op
 from rx.subject.subject import Subject
 from business.evaluation.adapters import supabase_names
+from business.evaluation.domain.models.collectivite_activation_event import (
+    CollectiviteActivationEvent,
+)
 from business.evaluation.domain.models.reponse_update_event import ReponseUpdateEvent
 
 from business.utils.domain_message_bus import DomainEvent
@@ -43,7 +46,7 @@ class CollectiviteActionStatutUpdateConverter(AbstractConverter):
             raw_event: ActionStatutUpdateEvent = self.schema.load(
                 data.get("record", {})
             )  # type: ignore
-            return events.ActionStatutOrConsequenceUpdatedForCollectivite(
+            return events.TriggerNotationForCollectiviteForReferentiel(
                 collectivite_id=raw_event.collectivite_id,
                 referentiel=raw_event.referentiel,
             )
@@ -67,6 +70,28 @@ class CollectiviteReponseUpdateConverter(AbstractConverter):
                 data.get("record", {})
             )  # type: ignore
             return events.ReponseUpdatedForCollectivite(
+                collectivite_id=raw_event.collectivite_id,
+            )
+        except ValidationError as marshmallow_validation_error:
+            return events.RealtimeEventWithWrongFormatObserved(
+                f"Realtime event with wrong format: {marshmallow_validation_error}"
+            )
+
+
+class CollectiviteActivationConverter(AbstractConverter):
+    def __init__(self) -> None:
+        self.table = supabase_names.events.collectivite_activation
+        self.schema = marshmallow_dataclass.class_schema(CollectiviteActivationEvent)()
+
+    def filter(self, data: dict) -> bool:
+        return data.get("table") == self.table
+
+    def convert(self, data: dict) -> DomainEvent:
+        try:
+            raw_event: CollectiviteActivationEvent = self.schema.load(
+                data.get("record", {})
+            )  # type: ignore
+            return events.TriggerNotationForCollectivite(
                 collectivite_id=raw_event.collectivite_id,
             )
         except ValidationError as marshmallow_validation_error:

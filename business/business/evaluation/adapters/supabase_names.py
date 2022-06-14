@@ -43,3 +43,4 @@ class events:
     statut_update = "action_statut_update_event"
     reponse_update = "reponse_update_event"
     consequence_update = "consequence_update_event"
+    collectivite_activation = "collectivite_activation_event"
