@@ -55,8 +55,7 @@ const NombreResultats = (props: {count: number}) => {
     );
   return (
     <p className={className}>
-      {props.count > 99 ? 'Plus de 99 ' : props.count} collectivités
-      correspondent à votre recherche
+      {props.count} collectivités correspondent à votre recherche
     </p>
   );
 };
@@ -76,17 +75,17 @@ function active(filtres: TCollectivitesFilters): boolean {
 
 export const CollectivitesFiltreesColonne = (props: {
   collectivites: CollectiviteCarteRead[];
+  collectivitesCount: number;
   desactiverLesFiltres: () => void;
   children: React.ReactNode;
   filters: TCollectivitesFilters;
 }) => {
-  const count = props.collectivites.length;
   return (
     <>
       <div className="flex flex-row-reverse justify-between mb-4">
         {props.children}
         <div>
-          <NombreResultats count={count} />
+          <NombreResultats count={props.collectivitesCount} />
           {active(props.filters) && props.collectivites.length > 0 ? (
             <DesactiverLesFiltres onClick={props.desactiverLesFiltres} />
           ) : null}

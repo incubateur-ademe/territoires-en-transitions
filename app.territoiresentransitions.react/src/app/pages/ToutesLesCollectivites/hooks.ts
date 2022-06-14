@@ -52,7 +52,7 @@ export const useFilteredCollectivites = (
 ): {
   isLoading: boolean;
   collectivites: CollectiviteCarteRead[];
-  nbOfPages: number;
+  collectivitesCount: number;
 } => {
   // todo build args from params.
 
@@ -77,7 +77,7 @@ export const useFilteredCollectivites = (
   return {
     isLoading: isLoading,
     collectivites: data?.collectivites || [],
-    nbOfPages: data?.pages || 0,
+    collectivitesCount: data?.collectivitesCount || 0,
   };
 };
 

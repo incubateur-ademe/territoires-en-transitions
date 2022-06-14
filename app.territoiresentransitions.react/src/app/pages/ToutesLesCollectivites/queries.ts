@@ -6,7 +6,7 @@ import {TCollectivitesFilters} from 'app/pages/ToutesLesCollectivites/filtreLibe
 import {PostgrestFilterBuilder} from '@supabase/postgrest-js';
 
 //
-const NB_CARDS_PER_PAGE = 16;
+export const NB_CARDS_PER_PAGE = 16;
 // A subset of supabase FilterOperator as it not an exported type.
 type FilterOperator = 'in' | 'ov';
 
@@ -143,7 +143,10 @@ const buildQueryFromFilters = (
  */
 export const fetchCollectiviteCards = async (
   filters: TCollectivitesFilters
-): Promise<{collectivites: CollectiviteCarteRead[]; pages: number}> => {
+): Promise<{
+  collectivites: CollectiviteCarteRead[];
+  collectivitesCount: number;
+}> => {
   // la requête
   const query = buildQueryFromFilters(filters);
 
@@ -155,7 +158,7 @@ export const fetchCollectiviteCards = async (
   }
   return {
     collectivites: data || [],
-    pages: count ? Math.ceil(count / NB_CARDS_PER_PAGE) : 0,
+    collectivitesCount: count ?? 0,
   };
 };
 
