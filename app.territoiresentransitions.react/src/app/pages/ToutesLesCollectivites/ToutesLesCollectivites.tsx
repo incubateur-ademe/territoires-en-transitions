@@ -13,11 +13,13 @@ import {TrierParFiltre} from 'app/pages/ToutesLesCollectivites/Filtres';
 import {RegionRead} from 'generated/dataLayer/region_read';
 import {Link} from 'react-router-dom';
 import {DepartementRead} from 'generated/dataLayer/departement_read';
+import {Pagination} from 'app/pages/ToutesLesCollectivites/Pagination';
 
 export type TRenderToutesCollectivitesProps = {
   regions: RegionRead[];
   departements: DepartementRead[];
   collectivites: CollectiviteCarteRead[];
+  nbOfPages: number;
   filters: TCollectivitesFilters;
   setFilters: (filters: TCollectivitesFilters) => void;
   isLoading?: boolean;
@@ -64,6 +66,15 @@ export const RenderToutesLesCollectivites = (
         )}
       </div>
     </div>
+    <div className="flex justify-center mt-3">
+      <Pagination
+        nbOfPages={props.nbOfPages}
+        selectedPage={props.filters.page ?? 1}
+        onChange={selected =>
+          props.setFilters({...props.filters, page: selected})
+        }
+      />
+    </div>
   </div>
 );
 
@@ -72,11 +83,13 @@ const ToutesLesCollectivites = () => {
   const {departements} = useDepartements();
 
   const {filters, setFilters} = useFiltersParams();
-  const {collectivites, isLoading} = useFilteredCollectivites(filters);
+  const {collectivites, nbOfPages, isLoading} =
+    useFilteredCollectivites(filters);
 
   return (
     <RenderToutesLesCollectivites
       collectivites={collectivites}
+      nbOfPages={nbOfPages}
       filters={filters}
       setFilters={setFilters}
       regions={regions}

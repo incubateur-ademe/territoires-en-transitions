@@ -11,6 +11,7 @@ export type TCollectivitesFilters = {
   realiseCourant: string[];
   tauxDeRemplissage: string[];
   trierPar?: string;
+  page?: number;
 };
 
 // could be downloaded from `filtre_intervalle` where type = population.
