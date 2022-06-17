@@ -47,3 +47,10 @@ export const filterToBoundaries = (
 
   return filter.map(option => valueToBoundary[option]);
 };
+
+export const getFilterInfoMessage = (filtersCount: number, maxDepth: number) =>
+  filtersCount > 0
+    ? `Les filtres s'appliquent au niveau des sous-actions (${Array(maxDepth)
+        .fill('x')
+        .join('.')})`
+    : null;
