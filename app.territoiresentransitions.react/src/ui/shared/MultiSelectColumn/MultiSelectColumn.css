@@ -1,0 +1,4 @@
+.multi-select .option.separator {
+  color: var(--text-mention-grey);
+  font-style: italic;
+}
