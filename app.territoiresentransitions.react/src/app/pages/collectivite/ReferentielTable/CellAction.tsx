@@ -45,16 +45,20 @@ export const CellAction = (props: TCellProps) => {
       <span style={style}>
         {showExpand ? <Expand {...props} /> : null}
         <span className={depth === 3 && isNotMaxDepth ? 'pill' : undefined}>
-          <Link
-            className="hover:underline"
-            to={makeCollectiviteTacheUrl({
-              collectiviteId,
-              actionId: row.original.action_id,
-              referentielId,
-            })}
-          >
-            {value}
-          </Link>
+          {depth > 0 ? (
+            <Link
+              className="hover:underline"
+              to={makeCollectiviteTacheUrl({
+                collectiviteId,
+                actionId: row.original.action_id,
+                referentielId,
+              })}
+            >
+              {value}
+            </Link>
+          ) : (
+            `Référentiel ${value}`
+          )}
         </span>
       </span>
     </>
