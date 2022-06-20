@@ -1,4 +1,14 @@
 import {useEffect, useState} from 'react';
+// import {useHistory, useLocation} from 'react-router-dom';
+
+// export const scrollToTop = () => {
+//   const {pathname} = useLocation();
+//   const history = useHistory();
+
+//   useEffect(() => {
+//     if (history.action === 'PUSH') window.scrollTo(0, 0);
+//   }, [pathname]);
+// };
 
 export type TPaginationProps = {
   selectedPage: number;
@@ -18,14 +28,9 @@ export const Pagination = (props: TPaginationProps) => {
     number[]
   >([]);
 
-  const getLeftRangeToDisplay = () => {
-    if (props.nbOfPages <= 6) {
-      return range(1, props.nbOfPages);
-    } else if (selectedPage <= props.nbOfPages - 3) {
-      return range(Math.max(1, selectedPage - 3), Math.max(selectedPage, 4));
-    } else {
-      return range(1, 4 - (props.nbOfPages - selectedPage));
-    }
+  const setSelectedPageAndScrollToTop = (page: number) => {
+    setSelectedPage(page);
+    window.scrollTo(0, 0);
   };
   const setPageRangesToDisplay = () => {
     if (props.nbOfPages <= 6) {
@@ -55,7 +60,7 @@ export const Pagination = (props: TPaginationProps) => {
           className="fr-pagination__link fr-pagination__link--first"
           aria-disabled="true"
           role="link"
-          onClick={() => setSelectedPage(1)}
+          onClick={() => setSelectedPageAndScrollToTop(1)}
           disabled={selectedPage === 1}
         >
           Première page
@@ -65,7 +70,7 @@ export const Pagination = (props: TPaginationProps) => {
           className="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
           aria-disabled="true"
           role="link"
-          onClick={() => setSelectedPage(selectedPage - 1)}
+          onClick={() => setSelectedPageAndScrollToTop(selectedPage - 1)}
           disabled={selectedPage === 1}
         >
           Page précédente
@@ -75,7 +80,7 @@ export const Pagination = (props: TPaginationProps) => {
             key={page}
             number={page}
             isSelected={selectedPage === page}
-            onClick={() => setSelectedPage(page)}
+            onClick={() => setSelectedPageAndScrollToTop(page)}
           />
         ))}
 
@@ -90,19 +95,19 @@ export const Pagination = (props: TPaginationProps) => {
             key={page}
             number={page}
             isSelected={selectedPage === page}
-            onClick={() => setSelectedPage(page)}
+            onClick={() => setSelectedPageAndScrollToTop(page)}
           />
         ))}
         <button
           className="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
-          onClick={() => setSelectedPage(selectedPage + 1)}
+          onClick={() => setSelectedPageAndScrollToTop(selectedPage + 1)}
           disabled={selectedPage === props.nbOfPages}
         >
           Page suivante
         </button>
         <button
           className="fr-pagination__link fr-pagination__link--last"
-          onClick={() => setSelectedPage(props.nbOfPages)}
+          onClick={() => setSelectedPageAndScrollToTop(props.nbOfPages)}
           disabled={selectedPage === props.nbOfPages}
         >
           Dernière page

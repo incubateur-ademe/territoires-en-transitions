@@ -68,6 +68,11 @@ export const RenderToutesLesCollectivites = (
         )}
       </div>
     </div>
+    <div className="flex w-full">
+      <button className="fr-btn w-full fr-fi-filter-fill fr-fi--sm">
+        Filtres
+      </button>
+    </div>
     <div className="flex justify-center mt-3">
       <Pagination
         nbOfPages={Math.ceil(props.collectivitesCount / NB_CARDS_PER_PAGE)}

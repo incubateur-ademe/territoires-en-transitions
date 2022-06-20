@@ -194,24 +194,6 @@ const ChiffreCles = ({
   );
 };
 
-// const ObjectifLabelisation = () => (
-//   <div
-//     style={{
-//       height: '200px',
-//       backgroundColor: 'rgb(0, 0, 145, .05)',
-//       borderLeft: '1px solid rgb(0, 0, 145)',
-//       padding: '8px',
-//     }}
-//   >
-//     <div className="font-semibold mb-4 ">Mon parcours de labelisation</div>
-//     Eventuellement une section sur la labelisation.
-//     <Spacer />
-//     <button className="fr-btn fr-btn--secondary">
-//       Demander la première étoile
-//     </button>
-//   </div>
-// );
-
 const ReferentielSection = observer(
   ({
     referentielId,
@@ -233,7 +215,7 @@ const ReferentielSection = observer(
       referentielRoot.referentiel
     );
 
-    if (!rootScore) {
+    if (!rootScore || rootScore.completed_taches_count === 0) {
       return (
         <div>
           <div
