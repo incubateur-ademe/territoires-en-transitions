@@ -23,29 +23,31 @@ const HeaderObserver = observer(
         <div className="fr-header__body">
           <div className="fr-container">
             <div className="fr-header__body-row header__row">
-              <div className="fr-header__brand fr-enlarge-link">
-                <div className="fr-header__brand-top">
-                  <div className="fr-header__logo">
-                    <p className="fr-logo">
-                      République
-                      <br /> française
-                    </p>
+              <div className="hidden md:block">
+                <div className="fr-header__brand fr-enlarge-link hidden md:block">
+                  <div className="fr-header__brand-top">
+                    <div className="fr-header__logo">
+                      <p className="fr-logo">
+                        République
+                        <br /> française
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <div className="fr-header__ademe">
-                  <img
-                    src="https://territoiresentransitions.fr/img/ademe.jpg"
-                    alt="logo ADEME"
-                    loading="lazy"
-                    className="h-20"
-                  />
-                </div>
-                <div className="fr-header__service">
-                  <a href="/" title="Accueil">
-                    <p className="fr-header__service-title">
-                      Territoires en Transitions
-                    </p>
-                  </a>
+                  <div className="fr-header__ademe">
+                    <img
+                      src="https://territoiresentransitions.fr/img/ademe.jpg"
+                      alt="logo ADEME"
+                      loading="lazy"
+                      className="h-20"
+                    />
+                  </div>
+                  <div className="fr-header__service">
+                    <a href="/" title="Accueil">
+                      <p className="fr-header__service-title">
+                        Territoires en Transitions
+                      </p>
+                    </a>
+                  </div>
                 </div>
               </div>
               <Navigation />

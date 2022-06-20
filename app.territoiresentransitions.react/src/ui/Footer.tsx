@@ -7,7 +7,7 @@ export type FooterProps = {
 };
 
 export const FooterNavigation = () => (
-  <div className="fr-footer__bottom">
+  <div className="hidden md:fr-footer__bottom">
     <ul className="fr-footer__bottom-list">
       <li className="fr-footer__bottom-item">
         <a
@@ -63,66 +63,68 @@ export const Footer = (props: FooterProps) => {
       id="footer"
     >
       <div className="fr-container">
-        <div className="fr-footer__body">
-          <div className="fr-footer__brand">
-            <p className="fr-logo" title="république française">
-              république
-              <br />
-              française
-            </p>
-            <div className="px-5">
-              <picture>
-                <source
-                  src="https://territoiresentransitions.fr/img/ademe.jpg 118w"
-                  sizes="118px"
-                />
-                <img
-                  className="footer__logo"
-                  height="100"
-                  src="https://territoiresentransitions.fr/img/ademe.jpg"
-                  alt="ADEME"
-                  loading="lazy"
-                />
-              </picture>
-            </div>
-            <div className="fr-header__service">
-              <a href="https://territoiresentransitions.fr" title="Accueil">
-                <p className="fr-header__service-title">
-                  Territoires en Transitions
-                </p>
-              </a>
-            </div>
+        <div className="hidden md:block">
+          <div className="fr-footer__body">
+            <div className="fr-footer__brand">
+              <p className="fr-logo" title="république française">
+                république
+                <br />
+                française
+              </p>
+              <div className="px-5">
+                <picture>
+                  <source
+                    src="https://territoiresentransitions.fr/img/ademe.jpg 118w"
+                    sizes="118px"
+                  />
+                  <img
+                    className="footer__logo"
+                    height="100"
+                    src="https://territoiresentransitions.fr/img/ademe.jpg"
+                    alt="ADEME"
+                    loading="lazy"
+                  />
+                </picture>
+              </div>
+              <div className="fr-header__service">
+                <a href="https://territoiresentransitions.fr" title="Accueil">
+                  <p className="fr-header__service-title">
+                    Territoires en Transitions
+                  </p>
+                </a>
+              </div>
 
-            <div className="fr-footer__content">
-              {/* <!-- A small sentence in the footer to describe the service --> */}
-              {/* <slot name="description"></slot> */}
-              {props.description}
-              <ul className="fr-footer__content-list">
-                <li className="fr-footer__content-item">
-                  <a
-                    className="fr-footer__content-link"
-                    href="https://www.ademe.fr/"
-                  >
-                    ademe.fr
-                  </a>
-                </li>
-                <li className="fr-footer__content-item">
-                  <a
-                    className="fr-footer__content-link"
-                    href="https://beta.gouv.fr/"
-                  >
-                    beta.gouv
-                  </a>
-                </li>
-                <li className="fr-footer__content-item">
-                  <a
-                    className="fr-footer__content-link"
-                    href="https://territoireengagetransitionecologique.ademe.fr"
-                  >
-                    territoireengagetransitionecologique.ademe.fr
-                  </a>
-                </li>
-              </ul>
+              <div className="fr-footer__content">
+                {/* <!-- A small sentence in the footer to describe the service --> */}
+                {/* <slot name="description"></slot> */}
+                {props.description}
+                <ul className="fr-footer__content-list">
+                  <li className="fr-footer__content-item">
+                    <a
+                      className="fr-footer__content-link"
+                      href="https://www.ademe.fr/"
+                    >
+                      ademe.fr
+                    </a>
+                  </li>
+                  <li className="fr-footer__content-item">
+                    <a
+                      className="fr-footer__content-link"
+                      href="https://beta.gouv.fr/"
+                    >
+                      beta.gouv
+                    </a>
+                  </li>
+                  <li className="fr-footer__content-item">
+                    <a
+                      className="fr-footer__content-link"
+                      href="https://territoireengagetransitionecologique.ademe.fr"
+                    >
+                      territoireengagetransitionecologique.ademe.fr
+                    </a>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>

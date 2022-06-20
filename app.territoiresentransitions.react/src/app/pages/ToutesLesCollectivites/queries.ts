@@ -5,8 +5,11 @@ import {DepartementRead} from 'generated/dataLayer/departement_read';
 import {TCollectivitesFilters} from 'app/pages/ToutesLesCollectivites/filtreLibelles';
 import {PostgrestFilterBuilder} from '@supabase/postgrest-js';
 
-//
-export const NB_CARDS_PER_PAGE = 16;
+const screenIsMobile = () =>
+  window.innerHeight <= 800 && window.innerWidth <= 600;
+
+export const NB_CARDS_PER_PAGE = screenIsMobile() ? 2 : 16;
+
 // A subset of supabase FilterOperator as it not an exported type.
 type FilterOperator = 'in' | 'ov';
 

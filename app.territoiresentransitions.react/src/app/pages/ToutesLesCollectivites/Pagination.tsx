@@ -1,14 +1,4 @@
 import {useEffect, useState} from 'react';
-// import {useHistory, useLocation} from 'react-router-dom';
-
-// export const scrollToTop = () => {
-//   const {pathname} = useLocation();
-//   const history = useHistory();
-
-//   useEffect(() => {
-//     if (history.action === 'PUSH') window.scrollTo(0, 0);
-//   }, [pathname]);
-// };
 
 export type TPaginationProps = {
   selectedPage: number;

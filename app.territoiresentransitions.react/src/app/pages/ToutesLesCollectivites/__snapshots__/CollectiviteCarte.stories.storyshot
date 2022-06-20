@@ -12,26 +12,40 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
     }
   >
     <div
-      className="MuiPaper-root MuiCard-root collectiviteCard p-6 w-full MuiPaper-elevation1 MuiPaper-rounded"
+      className="MuiPaper-root MuiCard-root collectiviteCard md:p-6 p-3 w-full MuiPaper-elevation1 MuiPaper-rounded"
     >
       <div
-        className="text-lg font-bold h-24"
+        className="md:text-lg text-base font-bold md:h-24 h-12"
       >
         Ploemeur
       </div>
       <div
-        className="flex justify-between gap-4"
+        className="flex justify-between md:gap-4 gap-1"
       >
         <div
           className="flex flex-col flex-1 gap-2 "
+          style={
+            Object {
+              "color": "#666666",
+            }
+          }
         >
           <div
-            className="text-sm"
+            style={
+              Object {
+                "fontSize": "14px",
+              }
+            }
           >
             Climat Air Énergie
           </div>
           <div
             className="flex flex-col gap-1"
+            style={
+              Object {
+                "fontSize": "12px",
+              }
+            }
           >
             <div
               className="flex space-x-2"
@@ -138,7 +152,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
                 0%
               </span>
                
-              réalisé
+              réalisé courant
             </div>
             <div>
               <i
@@ -160,14 +174,28 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
         />
         <div
           className="flex flex-col flex-1 gap-2 "
+          style={
+            Object {
+              "color": "#666666",
+            }
+          }
         >
           <div
-            className="text-sm"
+            style={
+              Object {
+                "fontSize": "14px",
+              }
+            }
           >
             Économie Circulaire
           </div>
           <div
             className="flex flex-col gap-1"
+            style={
+              Object {
+                "fontSize": "12px",
+              }
+            }
           >
             <div
               className="flex space-x-2"
@@ -274,7 +302,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
                 0%
               </span>
                
-              réalisé
+              réalisé courant
             </div>
             <div>
               <i
@@ -309,26 +337,40 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
     }
   >
     <div
-      className="MuiPaper-root MuiCard-root collectiviteCard p-6 w-full MuiPaper-elevation1 MuiPaper-rounded"
+      className="MuiPaper-root MuiCard-root collectiviteCard md:p-6 p-3 w-full MuiPaper-elevation1 MuiPaper-rounded"
     >
       <div
-        className="text-lg font-bold h-24"
+        className="md:text-lg text-base font-bold md:h-24 h-12"
       >
         SI de l'Entre-deux-Mers Ouest pour la collecte et le traitement des ordures ménagères (SEMOCTOM)
       </div>
       <div
-        className="flex justify-between gap-4"
+        className="flex justify-between md:gap-4 gap-1"
       >
         <div
           className="flex flex-col flex-1 gap-2 "
+          style={
+            Object {
+              "color": "#666666",
+            }
+          }
         >
           <div
-            className="text-sm"
+            style={
+              Object {
+                "fontSize": "14px",
+              }
+            }
           >
             Climat Air Énergie
           </div>
           <div
             className="flex flex-col gap-1"
+            style={
+              Object {
+                "fontSize": "12px",
+              }
+            }
           >
             <div
               className="flex space-x-2"
@@ -435,7 +477,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
                 13%
               </span>
                
-              réalisé
+              réalisé courant
             </div>
             <div>
               <i
@@ -457,14 +499,28 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
         />
         <div
           className="flex flex-col flex-1 gap-2 "
+          style={
+            Object {
+              "color": "#666666",
+            }
+          }
         >
           <div
-            className="text-sm"
+            style={
+              Object {
+                "fontSize": "14px",
+              }
+            }
           >
             Économie Circulaire
           </div>
           <div
             className="flex flex-col gap-1"
+            style={
+              Object {
+                "fontSize": "12px",
+              }
+            }
           >
             <div
               className="flex space-x-2"
@@ -571,7 +627,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
                 59%
               </span>
                
-              réalisé
+              réalisé courant
             </div>
             <div>
               <i
@@ -606,21 +662,30 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
     }
   >
     <div
-      className="MuiPaper-root MuiCard-root collectiviteCard p-6 w-full MuiPaper-elevation1 MuiPaper-rounded"
+      className="MuiPaper-root MuiCard-root collectiviteCard md:p-6 p-3 w-full MuiPaper-elevation1 MuiPaper-rounded"
     >
       <div
-        className="text-lg font-bold h-24"
+        className="md:text-lg text-base font-bold md:h-24 h-12"
       >
         SYTEVOM SYndicat Transfert Elimination Valorisation des Ordures ménagères
       </div>
       <div
-        className="flex justify-between gap-4"
+        className="flex justify-between md:gap-4 gap-1"
       >
         <div
           className="flex flex-col flex-1 gap-2 "
+          style={
+            Object {
+              "color": "#666666",
+            }
+          }
         >
           <div
-            className="text-sm"
+            style={
+              Object {
+                "fontSize": "14px",
+              }
+            }
           >
             Climat Air Énergie
           </div>
@@ -635,14 +700,28 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
         />
         <div
           className="flex flex-col flex-1 gap-2 "
+          style={
+            Object {
+              "color": "#666666",
+            }
+          }
         >
           <div
-            className="text-sm"
+            style={
+              Object {
+                "fontSize": "14px",
+              }
+            }
           >
             Économie Circulaire
           </div>
           <div
             className="flex flex-col gap-1"
+            style={
+              Object {
+                "fontSize": "12px",
+              }
+            }
           >
             <div
               className="flex space-x-2"
@@ -749,7 +828,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
                 39%
               </span>
                
-              réalisé
+              réalisé courant
             </div>
             <div>
               <i
