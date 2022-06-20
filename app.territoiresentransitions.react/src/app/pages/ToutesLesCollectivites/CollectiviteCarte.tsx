@@ -82,10 +82,12 @@ const CheckIcon = () => (
  */
 export const ReferentielCol = (props: TReferentielColProps) => {
   return (
-    <div className="flex flex-col flex-1 gap-2 ">
-      <div className="text-sm">{referentielToName[props.referentiel]}</div>
+    <div style={{color: '#666666'}} className="flex flex-col flex-1 gap-2 ">
+      <div style={{fontSize: '14px'}}>
+        {referentielToName[props.referentiel]}
+      </div>
       {props.concerne ? (
-        <div className="flex flex-col gap-1">
+        <div style={{fontSize: '12px'}} className="flex flex-col gap-1">
           <CinqEtoiles etoiles={props.etoiles} />
           <div>
             {' '}
@@ -93,7 +95,7 @@ export const ReferentielCol = (props: TReferentielColProps) => {
             <span className="font-semibold">
               {toPercentString(props.scoreRealise)}
             </span>{' '}
-            réalisé
+            réalisé courant
           </div>
           <div>
             <i className="fr-icon fr-fi-calendar-line before:text-[#417DC4] mr-2"></i>{' '}

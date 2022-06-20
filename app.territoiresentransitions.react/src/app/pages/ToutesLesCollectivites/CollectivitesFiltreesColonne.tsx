@@ -2,6 +2,7 @@ import {CollectiviteCarte} from 'app/pages/ToutesLesCollectivites/CollectiviteCa
 import {CollectiviteCarteRead} from 'generated/dataLayer/collectivite_carte_read';
 import {TCollectivitesFilters} from 'app/pages/ToutesLesCollectivites/filtreLibelles';
 import {allCollectivitesPath} from 'app/paths';
+const noResultIllustration = require('app/static/img/no-results-astronaut-bro.svg');
 
 const CollectivitesFiltrees = (props: {
   collectivites: CollectiviteCarteRead[];
@@ -36,13 +37,21 @@ const DesactiverLesFiltres = (props: {onClick: () => void}) => {
 };
 
 const AucuneCollectivite = (props: {desactiverLesFiltres: () => void}) => (
-  <div style={{color: '#6A6AF4'}}>
-    <p className="font-bold">
+  <div className="flex flex-col gap-4" style={{color: '#6A6AF4'}}>
+    <div style={{fontSize: '22px', fontWeight: 'bold'}}>
       {' '}
       Oups... aucune collectivité ne correspond à votre recherche !{' '}
-    </p>
-    <p> Modifiez ou désactivez les filtres pour obtenir plus de résultats</p>
+    </div>
+    <div style={{fontSize: '20px'}}>
+      {' '}
+      Modifiez ou désactivez les filtres pour obtenir plus de résultats
+    </div>
     <DesactiverLesFiltres onClick={props.desactiverLesFiltres} />
+    <img
+      alt=""
+      style={{width: 400, alignSelf: 'center'}}
+      src={noResultIllustration.default}
+    />
   </div>
 );
 
@@ -60,7 +69,7 @@ const NombreResultats = (props: {count: number}) => {
   );
 };
 
-function active(filtres: TCollectivitesFilters): boolean {
+const someFiltersAreActive = (filtres: TCollectivitesFilters): boolean => {
   const notEmpty = (l: any[]) => l.length > 0;
   return (
     notEmpty(filtres.regions) ||
@@ -69,9 +78,11 @@ function active(filtres: TCollectivitesFilters): boolean {
     notEmpty(filtres.niveauDeLabellisation) ||
     notEmpty(filtres.population) ||
     notEmpty(filtres.realiseCourant) ||
-    notEmpty(filtres.types)
+    notEmpty(filtres.types) ||
+    notEmpty(filtres.referentiel) ||
+    !!filtres.nom
   );
-}
+};
 
 export const CollectivitesFiltreesColonne = (props: {
   collectivites: CollectiviteCarteRead[];
@@ -86,7 +97,8 @@ export const CollectivitesFiltreesColonne = (props: {
         {props.children}
         <div>
           <NombreResultats count={props.collectivitesCount} />
-          {active(props.filters) && props.collectivites.length > 0 ? (
+          {someFiltersAreActive(props.filters) &&
+          props.collectivites.length > 0 ? (
             <DesactiverLesFiltres onClick={props.desactiverLesFiltres} />
           ) : null}
         </div>
