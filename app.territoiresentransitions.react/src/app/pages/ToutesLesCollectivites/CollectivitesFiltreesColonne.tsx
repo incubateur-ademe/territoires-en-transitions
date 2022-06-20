@@ -2,6 +2,7 @@ import {CollectiviteCarte} from 'app/pages/ToutesLesCollectivites/CollectiviteCa
 import {CollectiviteCarteRead} from 'generated/dataLayer/collectivite_carte_read';
 import {TCollectivitesFilters} from 'app/pages/ToutesLesCollectivites/filtreLibelles';
 import {allCollectivitesPath} from 'app/paths';
+import {getNumberOfActiveFilters} from 'app/pages/ToutesLesCollectivites/getNumberOfActiveFilters';
 const noResultIllustration = require('app/static/img/no-results-astronaut-bro.svg');
 
 const CollectivitesFiltrees = (props: {
@@ -69,21 +70,6 @@ const NombreResultats = (props: {count: number}) => {
   );
 };
 
-const someFiltersAreActive = (filtres: TCollectivitesFilters): boolean => {
-  const notEmpty = (l: any[]) => l.length > 0;
-  return (
-    notEmpty(filtres.regions) ||
-    notEmpty(filtres.departments) ||
-    notEmpty(filtres.tauxDeRemplissage) ||
-    notEmpty(filtres.niveauDeLabellisation) ||
-    notEmpty(filtres.population) ||
-    notEmpty(filtres.realiseCourant) ||
-    notEmpty(filtres.types) ||
-    notEmpty(filtres.referentiel) ||
-    !!filtres.nom
-  );
-};
-
 export const CollectivitesFiltreesColonne = (props: {
   collectivites: CollectiviteCarteRead[];
   collectivitesCount: number;
@@ -93,11 +79,11 @@ export const CollectivitesFiltreesColonne = (props: {
 }) => {
   return (
     <>
-      <div className="flex flex-row-reverse justify-between mb-4">
+      <div className="flex flex-row-reverse justify-between mb-4 scroll">
         {props.children}
         <div>
           <NombreResultats count={props.collectivitesCount} />
-          {someFiltersAreActive(props.filters) &&
+          {getNumberOfActiveFilters(props.filters) > 0 &&
           props.collectivites.length > 0 ? (
             <DesactiverLesFiltres onClick={props.desactiverLesFiltres} />
           ) : null}

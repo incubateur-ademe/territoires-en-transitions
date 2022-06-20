@@ -29,9 +29,11 @@ export const CollectiviteCarte = (props: TCollectiviteCarteProps) => {
       })}
       style={{boxShadow: 'none'}} // override DSFR shadow
     >
-      <Card className="collectiviteCard p-6 w-full">
-        <div className="text-lg font-bold h-24">{collectivite.nom}</div>
-        <div className="flex justify-between gap-4">
+      <Card className="collectiviteCard md:p-6 p-3 w-full">
+        <div className="md:text-lg text-base font-bold md:h-24 h-12">
+          {collectivite.nom}
+        </div>
+        <div className="flex justify-between md:gap-4 gap-1">
           <ReferentielCol
             referentiel={'cae'}
             etoiles={collectivite.etoiles_cae}

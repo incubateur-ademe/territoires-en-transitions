@@ -8,9 +8,11 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
   <div
     className="text-center"
   >
-    <h1>
+    <div
+      className="font-bold text-black md:text-4xl text-3xl my-4 "
+    >
       Toutes les collectivités
-    </h1>
+    </div>
     <p>
       Consultez les 
       <a
@@ -26,7 +28,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
     className="md:flex"
   >
     <div
-      className="md:w-3/12"
+      className="md:w-3/12 hidden"
     >
       <div
         className="flex flex-col gap-8"
@@ -807,10 +809,10 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
       </div>
     </div>
     <div
-      className="ml-6 w-full"
+      className="ml-6 w-full "
     >
       <div
-        className="flex flex-row-reverse justify-between mb-4"
+        className="flex flex-row-reverse justify-between mb-4 scroll"
       >
         <div>
           <div
@@ -943,26 +945,40 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
           }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard p-6 w-full MuiPaper-elevation1 MuiPaper-rounded"
+            className="MuiPaper-root MuiCard-root collectiviteCard md:p-6 p-3 w-full MuiPaper-elevation1 MuiPaper-rounded"
           >
             <div
-              className="text-lg font-bold h-24"
+              className="md:text-lg text-base font-bold md:h-24 h-12"
             >
               Ploemeur
             </div>
             <div
-              className="flex justify-between gap-4"
+              className="flex justify-between md:gap-4 gap-1"
             >
               <div
                 className="flex flex-col flex-1 gap-2 "
+                style={
+                  Object {
+                    "color": "#666666",
+                  }
+                }
               >
                 <div
-                  className="text-sm"
+                  style={
+                    Object {
+                      "fontSize": "14px",
+                    }
+                  }
                 >
                   Climat Air Énergie
                 </div>
                 <div
                   className="flex flex-col gap-1"
+                  style={
+                    Object {
+                      "fontSize": "12px",
+                    }
+                  }
                 >
                   <div
                     className="flex space-x-2"
@@ -1069,7 +1085,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                       0%
                     </span>
                      
-                    réalisé
+                    réalisé courant
                   </div>
                   <div>
                     <i
@@ -1091,14 +1107,28 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
               />
               <div
                 className="flex flex-col flex-1 gap-2 "
+                style={
+                  Object {
+                    "color": "#666666",
+                  }
+                }
               >
                 <div
-                  className="text-sm"
+                  style={
+                    Object {
+                      "fontSize": "14px",
+                    }
+                  }
                 >
                   Économie Circulaire
                 </div>
                 <div
                   className="flex flex-col gap-1"
+                  style={
+                    Object {
+                      "fontSize": "12px",
+                    }
+                  }
                 >
                   <div
                     className="flex space-x-2"
@@ -1205,7 +1235,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                       0%
                     </span>
                      
-                    réalisé
+                    réalisé courant
                   </div>
                   <div>
                     <i
@@ -1235,26 +1265,40 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
           }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard p-6 w-full MuiPaper-elevation1 MuiPaper-rounded"
+            className="MuiPaper-root MuiCard-root collectiviteCard md:p-6 p-3 w-full MuiPaper-elevation1 MuiPaper-rounded"
           >
             <div
-              className="text-lg font-bold h-24"
+              className="md:text-lg text-base font-bold md:h-24 h-12"
             >
               SI de l'Entre-deux-Mers Ouest pour la collecte et le traitement des ordures ménagères (SEMOCTOM)
             </div>
             <div
-              className="flex justify-between gap-4"
+              className="flex justify-between md:gap-4 gap-1"
             >
               <div
                 className="flex flex-col flex-1 gap-2 "
+                style={
+                  Object {
+                    "color": "#666666",
+                  }
+                }
               >
                 <div
-                  className="text-sm"
+                  style={
+                    Object {
+                      "fontSize": "14px",
+                    }
+                  }
                 >
                   Climat Air Énergie
                 </div>
                 <div
                   className="flex flex-col gap-1"
+                  style={
+                    Object {
+                      "fontSize": "12px",
+                    }
+                  }
                 >
                   <div
                     className="flex space-x-2"
@@ -1361,7 +1405,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                       13%
                     </span>
                      
-                    réalisé
+                    réalisé courant
                   </div>
                   <div>
                     <i
@@ -1383,14 +1427,28 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
               />
               <div
                 className="flex flex-col flex-1 gap-2 "
+                style={
+                  Object {
+                    "color": "#666666",
+                  }
+                }
               >
                 <div
-                  className="text-sm"
+                  style={
+                    Object {
+                      "fontSize": "14px",
+                    }
+                  }
                 >
                   Économie Circulaire
                 </div>
                 <div
                   className="flex flex-col gap-1"
+                  style={
+                    Object {
+                      "fontSize": "12px",
+                    }
+                  }
                 >
                   <div
                     className="flex space-x-2"
@@ -1497,7 +1555,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                       59%
                     </span>
                      
-                    réalisé
+                    réalisé courant
                   </div>
                   <div>
                     <i
@@ -1527,21 +1585,30 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
           }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard p-6 w-full MuiPaper-elevation1 MuiPaper-rounded"
+            className="MuiPaper-root MuiCard-root collectiviteCard md:p-6 p-3 w-full MuiPaper-elevation1 MuiPaper-rounded"
           >
             <div
-              className="text-lg font-bold h-24"
+              className="md:text-lg text-base font-bold md:h-24 h-12"
             >
               SYTEVOM SYndicat Transfert Elimination Valorisation des Ordures ménagères
             </div>
             <div
-              className="flex justify-between gap-4"
+              className="flex justify-between md:gap-4 gap-1"
             >
               <div
                 className="flex flex-col flex-1 gap-2 "
+                style={
+                  Object {
+                    "color": "#666666",
+                  }
+                }
               >
                 <div
-                  className="text-sm"
+                  style={
+                    Object {
+                      "fontSize": "14px",
+                    }
+                  }
                 >
                   Climat Air Énergie
                 </div>
@@ -1556,14 +1623,28 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
               />
               <div
                 className="flex flex-col flex-1 gap-2 "
+                style={
+                  Object {
+                    "color": "#666666",
+                  }
+                }
               >
                 <div
-                  className="text-sm"
+                  style={
+                    Object {
+                      "fontSize": "14px",
+                    }
+                  }
                 >
                   Économie Circulaire
                 </div>
                 <div
                   className="flex flex-col gap-1"
+                  style={
+                    Object {
+                      "fontSize": "12px",
+                    }
+                  }
                 >
                   <div
                     className="flex space-x-2"
@@ -1670,7 +1751,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                       39%
                     </span>
                      
-                    réalisé
+                    réalisé courant
                   </div>
                   <div>
                     <i
@@ -1700,26 +1781,40 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
           }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard p-6 w-full MuiPaper-elevation1 MuiPaper-rounded"
+            className="MuiPaper-root MuiCard-root collectiviteCard md:p-6 p-3 w-full MuiPaper-elevation1 MuiPaper-rounded"
           >
             <div
-              className="text-lg font-bold h-24"
+              className="md:text-lg text-base font-bold md:h-24 h-12"
             >
               CA CAP Excellence
             </div>
             <div
-              className="flex justify-between gap-4"
+              className="flex justify-between md:gap-4 gap-1"
             >
               <div
                 className="flex flex-col flex-1 gap-2 "
+                style={
+                  Object {
+                    "color": "#666666",
+                  }
+                }
               >
                 <div
-                  className="text-sm"
+                  style={
+                    Object {
+                      "fontSize": "14px",
+                    }
+                  }
                 >
                   Climat Air Énergie
                 </div>
                 <div
                   className="flex flex-col gap-1"
+                  style={
+                    Object {
+                      "fontSize": "12px",
+                    }
+                  }
                 >
                   <div
                     className="flex space-x-2"
@@ -1826,7 +1921,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                       0%
                     </span>
                      
-                    réalisé
+                    réalisé courant
                   </div>
                   <div>
                     <i
@@ -1848,14 +1943,28 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
               />
               <div
                 className="flex flex-col flex-1 gap-2 "
+                style={
+                  Object {
+                    "color": "#666666",
+                  }
+                }
               >
                 <div
-                  className="text-sm"
+                  style={
+                    Object {
+                      "fontSize": "14px",
+                    }
+                  }
                 >
                   Économie Circulaire
                 </div>
                 <div
                   className="flex flex-col gap-1"
+                  style={
+                    Object {
+                      "fontSize": "12px",
+                    }
+                  }
                 >
                   <div
                     className="flex space-x-2"
@@ -1962,7 +2071,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                       0%
                     </span>
                      
-                    réalisé
+                    réalisé courant
                   </div>
                   <div>
                     <i
@@ -1992,26 +2101,40 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
           }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard p-6 w-full MuiPaper-elevation1 MuiPaper-rounded"
+            className="MuiPaper-root MuiCard-root collectiviteCard md:p-6 p-3 w-full MuiPaper-elevation1 MuiPaper-rounded"
           >
             <div
-              className="text-lg font-bold h-24"
+              className="md:text-lg text-base font-bold md:h-24 h-12"
             >
               CA Ventoux-Comtat-Venaissin (COVE)
             </div>
             <div
-              className="flex justify-between gap-4"
+              className="flex justify-between md:gap-4 gap-1"
             >
               <div
                 className="flex flex-col flex-1 gap-2 "
+                style={
+                  Object {
+                    "color": "#666666",
+                  }
+                }
               >
                 <div
-                  className="text-sm"
+                  style={
+                    Object {
+                      "fontSize": "14px",
+                    }
+                  }
                 >
                   Climat Air Énergie
                 </div>
                 <div
                   className="flex flex-col gap-1"
+                  style={
+                    Object {
+                      "fontSize": "12px",
+                    }
+                  }
                 >
                   <div
                     className="flex space-x-2"
@@ -2118,7 +2241,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                       0%
                     </span>
                      
-                    réalisé
+                    réalisé courant
                   </div>
                   <div>
                     <i
@@ -2140,14 +2263,28 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
               />
               <div
                 className="flex flex-col flex-1 gap-2 "
+                style={
+                  Object {
+                    "color": "#666666",
+                  }
+                }
               >
                 <div
-                  className="text-sm"
+                  style={
+                    Object {
+                      "fontSize": "14px",
+                    }
+                  }
                 >
                   Économie Circulaire
                 </div>
                 <div
                   className="flex flex-col gap-1"
+                  style={
+                    Object {
+                      "fontSize": "12px",
+                    }
+                  }
                 >
                   <div
                     className="flex space-x-2"
@@ -2254,7 +2391,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                       0%
                     </span>
                      
-                    réalisé
+                    réalisé courant
                   </div>
                   <div>
                     <i
@@ -2284,26 +2421,40 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
           }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard p-6 w-full MuiPaper-elevation1 MuiPaper-rounded"
+            className="MuiPaper-root MuiCard-root collectiviteCard md:p-6 p-3 w-full MuiPaper-elevation1 MuiPaper-rounded"
           >
             <div
-              className="text-lg font-bold h-24"
+              className="md:text-lg text-base font-bold md:h-24 h-12"
             >
               CC du Pays de Villeneuve en Armagnac Landais
             </div>
             <div
-              className="flex justify-between gap-4"
+              className="flex justify-between md:gap-4 gap-1"
             >
               <div
                 className="flex flex-col flex-1 gap-2 "
+                style={
+                  Object {
+                    "color": "#666666",
+                  }
+                }
               >
                 <div
-                  className="text-sm"
+                  style={
+                    Object {
+                      "fontSize": "14px",
+                    }
+                  }
                 >
                   Climat Air Énergie
                 </div>
                 <div
                   className="flex flex-col gap-1"
+                  style={
+                    Object {
+                      "fontSize": "12px",
+                    }
+                  }
                 >
                   <div
                     className="flex space-x-2"
@@ -2410,7 +2561,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                       0%
                     </span>
                      
-                    réalisé
+                    réalisé courant
                   </div>
                   <div>
                     <i
@@ -2432,14 +2583,28 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
               />
               <div
                 className="flex flex-col flex-1 gap-2 "
+                style={
+                  Object {
+                    "color": "#666666",
+                  }
+                }
               >
                 <div
-                  className="text-sm"
+                  style={
+                    Object {
+                      "fontSize": "14px",
+                    }
+                  }
                 >
                   Économie Circulaire
                 </div>
                 <div
                   className="flex flex-col gap-1"
+                  style={
+                    Object {
+                      "fontSize": "12px",
+                    }
+                  }
                 >
                   <div
                     className="flex space-x-2"
@@ -2546,7 +2711,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                       0%
                     </span>
                      
-                    réalisé
+                    réalisé courant
                   </div>
                   <div>
                     <i
@@ -2576,26 +2741,40 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
           }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard p-6 w-full MuiPaper-elevation1 MuiPaper-rounded"
+            className="MuiPaper-root MuiCard-root collectiviteCard md:p-6 p-3 w-full MuiPaper-elevation1 MuiPaper-rounded"
           >
             <div
-              className="text-lg font-bold h-24"
+              className="md:text-lg text-base font-bold md:h-24 h-12"
             >
               CC du Pays de Villeneuve en Armagnac Landais
             </div>
             <div
-              className="flex justify-between gap-4"
+              className="flex justify-between md:gap-4 gap-1"
             >
               <div
                 className="flex flex-col flex-1 gap-2 "
+                style={
+                  Object {
+                    "color": "#666666",
+                  }
+                }
               >
                 <div
-                  className="text-sm"
+                  style={
+                    Object {
+                      "fontSize": "14px",
+                    }
+                  }
                 >
                   Climat Air Énergie
                 </div>
                 <div
                   className="flex flex-col gap-1"
+                  style={
+                    Object {
+                      "fontSize": "12px",
+                    }
+                  }
                 >
                   <div
                     className="flex space-x-2"
@@ -2702,7 +2881,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                       0%
                     </span>
                      
-                    réalisé
+                    réalisé courant
                   </div>
                   <div>
                     <i
@@ -2724,14 +2903,28 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
               />
               <div
                 className="flex flex-col flex-1 gap-2 "
+                style={
+                  Object {
+                    "color": "#666666",
+                  }
+                }
               >
                 <div
-                  className="text-sm"
+                  style={
+                    Object {
+                      "fontSize": "14px",
+                    }
+                  }
                 >
                   Économie Circulaire
                 </div>
                 <div
                   className="flex flex-col gap-1"
+                  style={
+                    Object {
+                      "fontSize": "12px",
+                    }
+                  }
                 >
                   <div
                     className="flex space-x-2"
@@ -2838,7 +3031,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                       0%
                     </span>
                      
-                    réalisé
+                    réalisé courant
                   </div>
                   <div>
                     <i
@@ -2860,6 +3053,16 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
         </a>
       </div>
     </div>
+  </div>
+  <div
+    className="md:hidden w-full my-4"
+  >
+    <button
+      className="fr-btn text-center fr-fi-filter-fill fr-fi--sm min-w-full text-center"
+      onClick={[Function]}
+    >
+      Filtrer (6)
+    </button>
   </div>
   <div
     className="flex justify-center mt-3"
@@ -2928,9 +3131,11 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
   <div
     className="text-center"
   >
-    <h1>
+    <div
+      className="font-bold text-black md:text-4xl text-3xl my-4 "
+    >
       Toutes les collectivités
-    </h1>
+    </div>
     <p>
       Consultez les 
       <a
@@ -2946,7 +3151,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
     className="md:flex"
   >
     <div
-      className="md:w-3/12"
+      className="md:w-3/12 hidden"
     >
       <div
         className="flex flex-col gap-8"
@@ -3729,10 +3934,10 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
       </div>
     </div>
     <div
-      className="ml-6 w-full"
+      className="ml-6 w-full "
     >
       <div
-        className="flex flex-row-reverse justify-between mb-4"
+        className="flex flex-row-reverse justify-between mb-4 scroll"
       >
         <div>
           <div
@@ -3840,26 +4045,40 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
           }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard p-6 w-full MuiPaper-elevation1 MuiPaper-rounded"
+            className="MuiPaper-root MuiCard-root collectiviteCard md:p-6 p-3 w-full MuiPaper-elevation1 MuiPaper-rounded"
           >
             <div
-              className="text-lg font-bold h-24"
+              className="md:text-lg text-base font-bold md:h-24 h-12"
             >
               Ploemeur
             </div>
             <div
-              className="flex justify-between gap-4"
+              className="flex justify-between md:gap-4 gap-1"
             >
               <div
                 className="flex flex-col flex-1 gap-2 "
+                style={
+                  Object {
+                    "color": "#666666",
+                  }
+                }
               >
                 <div
-                  className="text-sm"
+                  style={
+                    Object {
+                      "fontSize": "14px",
+                    }
+                  }
                 >
                   Climat Air Énergie
                 </div>
                 <div
                   className="flex flex-col gap-1"
+                  style={
+                    Object {
+                      "fontSize": "12px",
+                    }
+                  }
                 >
                   <div
                     className="flex space-x-2"
@@ -3966,7 +4185,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                       0%
                     </span>
                      
-                    réalisé
+                    réalisé courant
                   </div>
                   <div>
                     <i
@@ -3988,14 +4207,28 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
               />
               <div
                 className="flex flex-col flex-1 gap-2 "
+                style={
+                  Object {
+                    "color": "#666666",
+                  }
+                }
               >
                 <div
-                  className="text-sm"
+                  style={
+                    Object {
+                      "fontSize": "14px",
+                    }
+                  }
                 >
                   Économie Circulaire
                 </div>
                 <div
                   className="flex flex-col gap-1"
+                  style={
+                    Object {
+                      "fontSize": "12px",
+                    }
+                  }
                 >
                   <div
                     className="flex space-x-2"
@@ -4102,7 +4335,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                       0%
                     </span>
                      
-                    réalisé
+                    réalisé courant
                   </div>
                   <div>
                     <i
@@ -4132,26 +4365,40 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
           }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard p-6 w-full MuiPaper-elevation1 MuiPaper-rounded"
+            className="MuiPaper-root MuiCard-root collectiviteCard md:p-6 p-3 w-full MuiPaper-elevation1 MuiPaper-rounded"
           >
             <div
-              className="text-lg font-bold h-24"
+              className="md:text-lg text-base font-bold md:h-24 h-12"
             >
               SI de l'Entre-deux-Mers Ouest pour la collecte et le traitement des ordures ménagères (SEMOCTOM)
             </div>
             <div
-              className="flex justify-between gap-4"
+              className="flex justify-between md:gap-4 gap-1"
             >
               <div
                 className="flex flex-col flex-1 gap-2 "
+                style={
+                  Object {
+                    "color": "#666666",
+                  }
+                }
               >
                 <div
-                  className="text-sm"
+                  style={
+                    Object {
+                      "fontSize": "14px",
+                    }
+                  }
                 >
                   Climat Air Énergie
                 </div>
                 <div
                   className="flex flex-col gap-1"
+                  style={
+                    Object {
+                      "fontSize": "12px",
+                    }
+                  }
                 >
                   <div
                     className="flex space-x-2"
@@ -4258,7 +4505,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                       13%
                     </span>
                      
-                    réalisé
+                    réalisé courant
                   </div>
                   <div>
                     <i
@@ -4280,14 +4527,28 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
               />
               <div
                 className="flex flex-col flex-1 gap-2 "
+                style={
+                  Object {
+                    "color": "#666666",
+                  }
+                }
               >
                 <div
-                  className="text-sm"
+                  style={
+                    Object {
+                      "fontSize": "14px",
+                    }
+                  }
                 >
                   Économie Circulaire
                 </div>
                 <div
                   className="flex flex-col gap-1"
+                  style={
+                    Object {
+                      "fontSize": "12px",
+                    }
+                  }
                 >
                   <div
                     className="flex space-x-2"
@@ -4394,7 +4655,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                       59%
                     </span>
                      
-                    réalisé
+                    réalisé courant
                   </div>
                   <div>
                     <i
@@ -4424,21 +4685,30 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
           }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard p-6 w-full MuiPaper-elevation1 MuiPaper-rounded"
+            className="MuiPaper-root MuiCard-root collectiviteCard md:p-6 p-3 w-full MuiPaper-elevation1 MuiPaper-rounded"
           >
             <div
-              className="text-lg font-bold h-24"
+              className="md:text-lg text-base font-bold md:h-24 h-12"
             >
               SYTEVOM SYndicat Transfert Elimination Valorisation des Ordures ménagères
             </div>
             <div
-              className="flex justify-between gap-4"
+              className="flex justify-between md:gap-4 gap-1"
             >
               <div
                 className="flex flex-col flex-1 gap-2 "
+                style={
+                  Object {
+                    "color": "#666666",
+                  }
+                }
               >
                 <div
-                  className="text-sm"
+                  style={
+                    Object {
+                      "fontSize": "14px",
+                    }
+                  }
                 >
                   Climat Air Énergie
                 </div>
@@ -4453,14 +4723,28 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
               />
               <div
                 className="flex flex-col flex-1 gap-2 "
+                style={
+                  Object {
+                    "color": "#666666",
+                  }
+                }
               >
                 <div
-                  className="text-sm"
+                  style={
+                    Object {
+                      "fontSize": "14px",
+                    }
+                  }
                 >
                   Économie Circulaire
                 </div>
                 <div
                   className="flex flex-col gap-1"
+                  style={
+                    Object {
+                      "fontSize": "12px",
+                    }
+                  }
                 >
                   <div
                     className="flex space-x-2"
@@ -4567,7 +4851,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                       39%
                     </span>
                      
-                    réalisé
+                    réalisé courant
                   </div>
                   <div>
                     <i
@@ -4597,26 +4881,40 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
           }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard p-6 w-full MuiPaper-elevation1 MuiPaper-rounded"
+            className="MuiPaper-root MuiCard-root collectiviteCard md:p-6 p-3 w-full MuiPaper-elevation1 MuiPaper-rounded"
           >
             <div
-              className="text-lg font-bold h-24"
+              className="md:text-lg text-base font-bold md:h-24 h-12"
             >
               CA CAP Excellence
             </div>
             <div
-              className="flex justify-between gap-4"
+              className="flex justify-between md:gap-4 gap-1"
             >
               <div
                 className="flex flex-col flex-1 gap-2 "
+                style={
+                  Object {
+                    "color": "#666666",
+                  }
+                }
               >
                 <div
-                  className="text-sm"
+                  style={
+                    Object {
+                      "fontSize": "14px",
+                    }
+                  }
                 >
                   Climat Air Énergie
                 </div>
                 <div
                   className="flex flex-col gap-1"
+                  style={
+                    Object {
+                      "fontSize": "12px",
+                    }
+                  }
                 >
                   <div
                     className="flex space-x-2"
@@ -4723,7 +5021,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                       0%
                     </span>
                      
-                    réalisé
+                    réalisé courant
                   </div>
                   <div>
                     <i
@@ -4745,14 +5043,28 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
               />
               <div
                 className="flex flex-col flex-1 gap-2 "
+                style={
+                  Object {
+                    "color": "#666666",
+                  }
+                }
               >
                 <div
-                  className="text-sm"
+                  style={
+                    Object {
+                      "fontSize": "14px",
+                    }
+                  }
                 >
                   Économie Circulaire
                 </div>
                 <div
                   className="flex flex-col gap-1"
+                  style={
+                    Object {
+                      "fontSize": "12px",
+                    }
+                  }
                 >
                   <div
                     className="flex space-x-2"
@@ -4859,7 +5171,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                       0%
                     </span>
                      
-                    réalisé
+                    réalisé courant
                   </div>
                   <div>
                     <i
@@ -4889,26 +5201,40 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
           }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard p-6 w-full MuiPaper-elevation1 MuiPaper-rounded"
+            className="MuiPaper-root MuiCard-root collectiviteCard md:p-6 p-3 w-full MuiPaper-elevation1 MuiPaper-rounded"
           >
             <div
-              className="text-lg font-bold h-24"
+              className="md:text-lg text-base font-bold md:h-24 h-12"
             >
               CA Ventoux-Comtat-Venaissin (COVE)
             </div>
             <div
-              className="flex justify-between gap-4"
+              className="flex justify-between md:gap-4 gap-1"
             >
               <div
                 className="flex flex-col flex-1 gap-2 "
+                style={
+                  Object {
+                    "color": "#666666",
+                  }
+                }
               >
                 <div
-                  className="text-sm"
+                  style={
+                    Object {
+                      "fontSize": "14px",
+                    }
+                  }
                 >
                   Climat Air Énergie
                 </div>
                 <div
                   className="flex flex-col gap-1"
+                  style={
+                    Object {
+                      "fontSize": "12px",
+                    }
+                  }
                 >
                   <div
                     className="flex space-x-2"
@@ -5015,7 +5341,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                       0%
                     </span>
                      
-                    réalisé
+                    réalisé courant
                   </div>
                   <div>
                     <i
@@ -5037,14 +5363,28 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
               />
               <div
                 className="flex flex-col flex-1 gap-2 "
+                style={
+                  Object {
+                    "color": "#666666",
+                  }
+                }
               >
                 <div
-                  className="text-sm"
+                  style={
+                    Object {
+                      "fontSize": "14px",
+                    }
+                  }
                 >
                   Économie Circulaire
                 </div>
                 <div
                   className="flex flex-col gap-1"
+                  style={
+                    Object {
+                      "fontSize": "12px",
+                    }
+                  }
                 >
                   <div
                     className="flex space-x-2"
@@ -5151,7 +5491,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                       0%
                     </span>
                      
-                    réalisé
+                    réalisé courant
                   </div>
                   <div>
                     <i
@@ -5181,26 +5521,40 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
           }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard p-6 w-full MuiPaper-elevation1 MuiPaper-rounded"
+            className="MuiPaper-root MuiCard-root collectiviteCard md:p-6 p-3 w-full MuiPaper-elevation1 MuiPaper-rounded"
           >
             <div
-              className="text-lg font-bold h-24"
+              className="md:text-lg text-base font-bold md:h-24 h-12"
             >
               CC du Pays de Villeneuve en Armagnac Landais
             </div>
             <div
-              className="flex justify-between gap-4"
+              className="flex justify-between md:gap-4 gap-1"
             >
               <div
                 className="flex flex-col flex-1 gap-2 "
+                style={
+                  Object {
+                    "color": "#666666",
+                  }
+                }
               >
                 <div
-                  className="text-sm"
+                  style={
+                    Object {
+                      "fontSize": "14px",
+                    }
+                  }
                 >
                   Climat Air Énergie
                 </div>
                 <div
                   className="flex flex-col gap-1"
+                  style={
+                    Object {
+                      "fontSize": "12px",
+                    }
+                  }
                 >
                   <div
                     className="flex space-x-2"
@@ -5307,7 +5661,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                       0%
                     </span>
                      
-                    réalisé
+                    réalisé courant
                   </div>
                   <div>
                     <i
@@ -5329,14 +5683,28 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
               />
               <div
                 className="flex flex-col flex-1 gap-2 "
+                style={
+                  Object {
+                    "color": "#666666",
+                  }
+                }
               >
                 <div
-                  className="text-sm"
+                  style={
+                    Object {
+                      "fontSize": "14px",
+                    }
+                  }
                 >
                   Économie Circulaire
                 </div>
                 <div
                   className="flex flex-col gap-1"
+                  style={
+                    Object {
+                      "fontSize": "12px",
+                    }
+                  }
                 >
                   <div
                     className="flex space-x-2"
@@ -5443,7 +5811,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                       0%
                     </span>
                      
-                    réalisé
+                    réalisé courant
                   </div>
                   <div>
                     <i
@@ -5473,26 +5841,40 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
           }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard p-6 w-full MuiPaper-elevation1 MuiPaper-rounded"
+            className="MuiPaper-root MuiCard-root collectiviteCard md:p-6 p-3 w-full MuiPaper-elevation1 MuiPaper-rounded"
           >
             <div
-              className="text-lg font-bold h-24"
+              className="md:text-lg text-base font-bold md:h-24 h-12"
             >
               CC du Pays de Villeneuve en Armagnac Landais
             </div>
             <div
-              className="flex justify-between gap-4"
+              className="flex justify-between md:gap-4 gap-1"
             >
               <div
                 className="flex flex-col flex-1 gap-2 "
+                style={
+                  Object {
+                    "color": "#666666",
+                  }
+                }
               >
                 <div
-                  className="text-sm"
+                  style={
+                    Object {
+                      "fontSize": "14px",
+                    }
+                  }
                 >
                   Climat Air Énergie
                 </div>
                 <div
                   className="flex flex-col gap-1"
+                  style={
+                    Object {
+                      "fontSize": "12px",
+                    }
+                  }
                 >
                   <div
                     className="flex space-x-2"
@@ -5599,7 +5981,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                       0%
                     </span>
                      
-                    réalisé
+                    réalisé courant
                   </div>
                   <div>
                     <i
@@ -5621,14 +6003,28 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
               />
               <div
                 className="flex flex-col flex-1 gap-2 "
+                style={
+                  Object {
+                    "color": "#666666",
+                  }
+                }
               >
                 <div
-                  className="text-sm"
+                  style={
+                    Object {
+                      "fontSize": "14px",
+                    }
+                  }
                 >
                   Économie Circulaire
                 </div>
                 <div
                   className="flex flex-col gap-1"
+                  style={
+                    Object {
+                      "fontSize": "12px",
+                    }
+                  }
                 >
                   <div
                     className="flex space-x-2"
@@ -5735,7 +6131,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
                       0%
                     </span>
                      
-                    réalisé
+                    réalisé courant
                   </div>
                   <div>
                     <i
@@ -5757,6 +6153,16 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
         </a>
       </div>
     </div>
+  </div>
+  <div
+    className="md:hidden w-full my-4"
+  >
+    <button
+      className="fr-btn text-center fr-fi-filter-line fr-fi--sm min-w-full text-center"
+      onClick={[Function]}
+    >
+      Filtrer
+    </button>
   </div>
   <div
     className="flex justify-center mt-3"
@@ -5825,9 +6231,11 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
   <div
     className="text-center"
   >
-    <h1>
+    <div
+      className="font-bold text-black md:text-4xl text-3xl my-4 "
+    >
       Toutes les collectivités
-    </h1>
+    </div>
     <p>
       Consultez les 
       <a
@@ -5843,7 +6251,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
     className="md:flex"
   >
     <div
-      className="md:w-3/12"
+      className="md:w-3/12 hidden"
     >
       <div
         className="flex flex-col gap-8"
@@ -6624,10 +7032,10 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
       </div>
     </div>
     <div
-      className="ml-6 w-full"
+      className="ml-6 w-full "
     >
       <div
-        className="flex flex-row-reverse justify-between mb-4"
+        className="flex flex-row-reverse justify-between mb-4 scroll"
       >
         <div>
           <div
@@ -6722,22 +7130,35 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
         </div>
       </div>
       <div
+        className="flex flex-col gap-4"
         style={
           Object {
             "color": "#6A6AF4",
           }
         }
       >
-        <p
-          className="font-bold"
+        <div
+          style={
+            Object {
+              "fontSize": "22px",
+              "fontWeight": "bold",
+            }
+          }
         >
            
           Oups... aucune collectivité ne correspond à votre recherche !
            
-        </p>
-        <p>
-           Modifiez ou désactivez les filtres pour obtenir plus de résultats
-        </p>
+        </div>
+        <div
+          style={
+            Object {
+              "fontSize": "20px",
+            }
+          }
+        >
+           
+          Modifiez ou désactivez les filtres pour obtenir plus de résultats
+        </div>
         <div
           className="flex"
         >
@@ -6764,8 +7185,28 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Page Toutes Les Collectiv
             </div>
           </a>
         </div>
+        <img
+          alt=""
+          src="no-results-astronaut-bro.svg"
+          style={
+            Object {
+              "alignSelf": "center",
+              "width": 400,
+            }
+          }
+        />
       </div>
     </div>
+  </div>
+  <div
+    className="md:hidden w-full my-4"
+  >
+    <button
+      className="fr-btn text-center fr-fi-filter-fill fr-fi--sm min-w-full text-center"
+      onClick={[Function]}
+    >
+      Filtrer (6)
+    </button>
   </div>
   <div
     className="flex justify-center mt-3"
