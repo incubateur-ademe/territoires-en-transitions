@@ -9,6 +9,7 @@ import {observer} from 'mobx-react-lite';
 import {CollectiviteRedirector} from 'app/Redirector';
 import {RejoindreCetteCollectiviteDialog} from 'app/pages/MesCollectivites/RejoindreCetteCollectiviteDialog';
 import {getReferentContacts} from 'core-logic/api/procedures/collectiviteProcedures';
+import LogoRepubliqueFrancaise from 'ui/logo/LogoRepubliqueFrancaise';
 
 const HeaderObserver = observer(
   ({
@@ -24,31 +25,26 @@ const HeaderObserver = observer(
         <div className="fr-header__body">
           <div className="fr-container">
             <div className="fr-header__body-row header__row">
-              <div className="hidden md:block">
-                <div className="fr-header__brand fr-enlarge-link hidden md:block">
-                  <div className="fr-header__brand-top">
-                    <div className="fr-header__logo">
-                      <p className="fr-logo">
-                        République
-                        <br /> française
-                      </p>
-                    </div>
+              <div className="fr-header__brand fr-enlarge-link hidden md:block">
+                <div className="fr-header__brand-top">
+                  <div className="fr-header__logo">
+                    <LogoRepubliqueFrancaise />
                   </div>
-                  <div className="fr-header__ademe">
-                    <img
-                      src="https://territoiresentransitions.fr/img/ademe.jpg"
-                      alt="logo ADEME"
-                      loading="lazy"
-                      className="h-20"
-                    />
-                  </div>
-                  <div className="fr-header__service">
-                    <a href="/" title="Accueil">
-                      <p className="fr-header__service-title">
-                        Territoires en Transitions
-                      </p>
-                    </a>
-                  </div>
+                </div>
+                <div className="fr-header__ademe">
+                  <img
+                    src="https://territoiresentransitions.fr/img/ademe.jpg"
+                    alt="logo ADEME"
+                    loading="lazy"
+                    className="h-20"
+                  />
+                </div>
+                <div className="fr-header__service">
+                  <a href="/" title="Accueil">
+                    <p className="fr-header__service-title">
+                      Territoires en Transitions
+                    </p>
+                  </a>
                 </div>
               </div>
               <Navigation />
@@ -60,13 +56,6 @@ const HeaderObserver = observer(
       <CollectiviteReadOnlyBanner bloc={currentCollectiviteBloc} />
     </>
   )
-);
-
-export const Header = () => (
-  <HeaderObserver
-    currentCollectiviteBloc={currentCollectiviteBloc}
-    authBloc={authBloc}
-  />
 );
 
 const CollectiviteReadOnlyBanner = observer(
@@ -105,3 +94,12 @@ const CollectiviteHeader = observer(
     );
   }
 );
+
+const Header = () => (
+  <HeaderObserver
+    currentCollectiviteBloc={currentCollectiviteBloc}
+    authBloc={authBloc}
+  />
+);
+
+export default Header;

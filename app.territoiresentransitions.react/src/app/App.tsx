@@ -8,7 +8,6 @@ import {
 import {QueryClient, QueryClientProvider} from 'react-query';
 import {ReactQueryDevtools} from 'react-query/devtools';
 import {E2E} from './E2E';
-import {Footer, FooterDescription, FooterNavigation} from 'ui/Footer';
 import {AuthRoutes} from 'app/pages/Auth/AuthRoutes';
 import {CollectiviteRoutes} from 'app/pages/collectivite/CollectiviteRoutes';
 import StatisticsPage from 'app/pages/StatisticsPage';
@@ -28,9 +27,9 @@ import {
 } from 'app/paths';
 import {authBloc} from 'core-logic/observables';
 import {MesCollectivitesPage} from 'app/pages/MesCollectivites/MesCollectivitesPage';
-import {Header} from 'ui/Header';
 import {InvitationLanding} from 'app/pages/invitation/InvitationLanding';
 import {ToutesLesCollectivitesPage} from 'app/pages/ToutesLesCollectivites/ToutesLesCollectivitesPage';
+import Layout from './Layout';
 
 const theme = createTheme({
   palette: {
@@ -49,47 +48,37 @@ export const App = () => {
         <QueryClientProvider client={queryClient}>
           <ReactQueryDevtools initialIsOpen={false} />
           <Router>
-            <E2E />
-            <ScrollToTop />
-            <Toasters />
-            <InvitationRedirector />
+            <Layout>
+              <E2E />
+              <ScrollToTop />
+              <Toasters />
+              <InvitationRedirector />
+              <Switch>
+                <HomeRoute exact path="/">
+                  <Home />
+                </HomeRoute>
 
-            <Switch>
-              <HomeRoute exact path="/">
-                <Header />
-                <Home />
-              </HomeRoute>
+                <HomeRoute path={authBasePath}>
+                  <AuthRoutes />
+                </HomeRoute>
 
-              <HomeRoute path={authBasePath}>
-                <Header />
-                <AuthRoutes />
-              </HomeRoute>
-
-              <Route path={myCollectivitesPath}>
-                <Header />
-                <MesCollectivitesPage />
-              </Route>
-              <Route path={allCollectivitesPath}>
-                <Header />
-                <ToutesLesCollectivitesPage />
-              </Route>
-              <Route path={'/collectivite/:collectiviteId'}>
-                <Header />
-                <CollectiviteRoutes />
-              </Route>
-              <Route path={'/statistics'}>
-                <Header />
-                <StatisticsPage />
-              </Route>
-              <Route path={invitationLandingPath}>
-                <Header />
-                <InvitationLanding />
-              </Route>
-            </Switch>
-            <Footer
-              description={<FooterDescription />}
-              navigation={<FooterNavigation />}
-            />
+                <Route path={myCollectivitesPath}>
+                  <MesCollectivitesPage />
+                </Route>
+                <Route path={allCollectivitesPath}>
+                  <ToutesLesCollectivitesPage />
+                </Route>
+                <Route path={'/collectivite/:collectiviteId'}>
+                  <CollectiviteRoutes />
+                </Route>
+                <Route path={'/statistics'}>
+                  <StatisticsPage />
+                </Route>
+                <Route path={invitationLandingPath}>
+                  <InvitationLanding />
+                </Route>
+              </Switch>
+            </Layout>
           </Router>
         </QueryClientProvider>
       </MuiThemeProvider>
