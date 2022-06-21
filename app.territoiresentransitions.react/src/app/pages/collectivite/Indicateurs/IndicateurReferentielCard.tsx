@@ -3,7 +3,7 @@ import {AnyIndicateurValues} from 'app/pages/collectivite/Indicateurs/AnyIndicat
 
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {AnyIndicateurLineChartExpandable} from './AnyIndicateurLineChartExpandable';
-import {inferIndicateurReferentielAndTitle} from 'utils/indicateurs';
+import {inferIndicateurTitle} from 'utils/indicateurs';
 import {AnyIndicateurCard} from 'app/pages/collectivite/Indicateurs/AnyIndicateurCard';
 import {Spacer} from 'ui/shared/Spacer';
 import {
@@ -67,7 +67,7 @@ export const IndicateurReferentielCardContent = (props: {
 
 const IndicateurReferentielCardHeaderTitle = (props: {
   definition: IndicateurDefinitionRead;
-}) => <div>{inferIndicateurReferentielAndTitle(props.definition)}</div>;
+}) => <div>{inferIndicateurTitle(props.definition)}</div>;
 
 export const IndicateurReferentielCard = ({
   definition,
