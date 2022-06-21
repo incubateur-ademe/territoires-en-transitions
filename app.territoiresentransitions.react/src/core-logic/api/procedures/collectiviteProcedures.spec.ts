@@ -1,6 +1,6 @@
 import {
   claimCollectivite,
-  referentContact,
+  getReferentContacts,
   userList,
 } from 'core-logic/api/procedures/collectiviteProcedures';
 import {supabaseClient} from 'core-logic/api/supabase';
@@ -17,20 +17,22 @@ describe('Claim and remove collectivite Remote Procedure Call ', () => {
   it('should be able to remove its own rights from an collectivite ', async () => {});
 });
 
-describe('Request referent_contact', () => {
-  it('should return referent contact of owned collectivite if exists', async () => {
-    const procedureResponse = await referentContact(1);
+describe('Request referent contacts', () => {
+  it('should return all referent contacts of owned collectivite if exists', async () => {
+    const procedureResponse = await getReferentContacts(1);
     expect(procedureResponse).not.toBeNull();
-    expect(procedureResponse).toEqual({
-      prenom: 'Yolo',
-      nom: 'Dodo',
-      email: 'yolo@dodo.com',
-    });
+    expect(procedureResponse).toEqual([
+      {
+        prenom: 'Yolo',
+        nom: 'Dodo',
+        email: 'yolo@dodo.com',
+      },
+    ]);
   });
-  it('should return null if no referent yet', async () => {
-    const procedureResponse = await referentContact(40);
+  it('should return an empty list if no referent yet', async () => {
+    const procedureResponse = await getReferentContacts(40);
     expect(procedureResponse).toBeDefined();
-    expect(procedureResponse).toBeNull();
+    expect(procedureResponse).toHaveLength(0);
   });
 });
 

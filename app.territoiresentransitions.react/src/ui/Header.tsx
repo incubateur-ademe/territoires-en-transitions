@@ -7,7 +7,8 @@ import {
 } from 'core-logic/observables';
 import {observer} from 'mobx-react-lite';
 import {CollectiviteRedirector} from 'app/Redirector';
-import {JoinCurrentCollectiviteDialog} from 'app/pages/CurrentUserCollectivite/_AddDialog';
+import {RejoindreCetteCollectiviteDialog} from 'app/pages/MesCollectivites/RejoindreCetteCollectiviteDialog';
+import {getReferentContacts} from 'core-logic/api/procedures/collectiviteProcedures';
 
 const HeaderObserver = observer(
   ({
@@ -74,7 +75,10 @@ const CollectiviteReadOnlyBanner = observer(
       return (
         <div className="flex justify-center items-center bg-yellow-400 py-4 bg-opacity-70">
           <div className="text-sm mr-4">Lecture seule</div>
-          <JoinCurrentCollectiviteDialog />
+          <RejoindreCetteCollectiviteDialog
+            getReferentContacts={getReferentContacts}
+            collectivite={bloc.currentCollectivite!}
+          />
         </div>
       );
     return null;

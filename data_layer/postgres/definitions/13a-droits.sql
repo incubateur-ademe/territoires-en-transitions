@@ -219,41 +219,22 @@ comment on function quit_collectivite is
         'Otherwise it will fail wit a code 40x.';
 
 
-create or replace function referent_contact(id integer) returns json as
+create or replace function referent_contacts(id integer)
+    returns table
+            (
+                prenom text,
+                nom text, 
+                email text
+            )
+as
 $$
-declare
-    requested_collectivite_id integer;
-    referent_id               uuid;
-    referent_email            text;
-    referent_nom              text;
-    referent_prenom           text;
-begin
-    -- select the collectivite id to get contact info from using its siren
-    select id into requested_collectivite_id;
+select p.prenom, p.nom, p.email
+from private_utilisateur_droit d
+         join dcp p on p.user_id = d.user_id
+where d.collectivite_id = referent_contacts.id
+  and d.active
+  and role_name = 'referent'
+$$ language sql security definer;
+comment on function referent_contacts is
+    'Returns the contact information of the all referents of a collectivite given the id.';
 
-    -- select referent user id
-    select user_id
-    from private_utilisateur_droit
-    where active
-      and collectivite_id = requested_collectivite_id
-      and role_name = 'referent'
-    into referent_id;
-
-    if referent_id is null
-    then
-        perform set_config('response.status', '404', true);
-        return json_build_object('message', 'Cette collectivité n''a pas de référent.');
-    else
-        -- retrieve contact information of referent_id
-        select email, nom, prenom
-        from dcp
-        where user_id = referent_id
-        into referent_email, referent_nom, referent_prenom;
-        perform set_config('response.status', '200', true);
-        return json_build_object('email', referent_email, 'nom', referent_nom, 'prenom', referent_prenom);
-    end if;
-end
-
-$$ language plpgsql security definer;
-comment on function referent_contact is
-    'Returns the contact information of the Collectivité referent given the siren.';

@@ -27,7 +27,7 @@ import {
   myCollectivitesPath,
 } from 'app/paths';
 import {authBloc} from 'core-logic/observables';
-import {CurrentUserCollectivitesPage} from 'app/pages/CurrentUserCollectivite/CurrentUserCollectivitesPage';
+import {MesCollectivitesPage} from 'app/pages/MesCollectivites/MesCollectivitesPage';
 import {Header} from 'ui/Header';
 import {InvitationLanding} from 'app/pages/invitation/InvitationLanding';
 import {ToutesLesCollectivitesPage} from 'app/pages/ToutesLesCollectivites/ToutesLesCollectivitesPage';
@@ -67,7 +67,7 @@ export const App = () => {
 
               <Route path={myCollectivitesPath}>
                 <Header />
-                <CurrentUserCollectivitesPage />
+                <MesCollectivitesPage />
               </Route>
               <Route path={allCollectivitesPath}>
                 <Header />
