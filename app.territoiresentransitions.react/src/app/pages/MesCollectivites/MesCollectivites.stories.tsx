@@ -1,16 +1,14 @@
 import {Story, Meta} from '@storybook/react';
 import {observable} from 'mobx';
 
-import CurrentUserCollectivites, {
-  CurrentUserCollectivitesProps,
-} from './CurrentUserCollectivites';
+import {MesCollectivites, TMesCollectivitesProps} from './MesCollectivites';
 
-const Template: Story<CurrentUserCollectivitesProps> = args => (
-  <CurrentUserCollectivites {...args} />
+const Template: Story<TMesCollectivitesProps> = args => (
+  <MesCollectivites {...args} />
 );
 
 export default {
-  component: CurrentUserCollectivites,
+  component: MesCollectivites,
 } as Meta;
 
 export const Exemple1Item = Template.bind({});
