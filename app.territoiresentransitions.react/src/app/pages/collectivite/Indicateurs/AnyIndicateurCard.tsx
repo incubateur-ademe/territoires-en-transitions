@@ -5,7 +5,7 @@ import {AnyIndicateurRepository} from 'core-logic/api/repositories/AnyIndicateur
 import {RenderMarkdownText} from 'ui/shared/RenderMarkdownText';
 import {Spacer} from 'ui/shared/Spacer';
 
-export function AnyIndicateurCard<T extends string | number>({
+export const AnyIndicateurCard = <T extends string | number>({
   children,
   headerTitle,
   indicateurId,
@@ -17,7 +17,7 @@ export function AnyIndicateurCard<T extends string | number>({
   indicateurId: string | number;
   description: string;
   indicateurResultatRepo: AnyIndicateurRepository<T>;
-}) {
+}) => {
   const [opened, setOpened] = useState(false);
   return (
     <div className="mt-2  px-5 py-4 mb-5 ">
@@ -46,4 +46,4 @@ export function AnyIndicateurCard<T extends string | number>({
       </section>
     </div>
   );
-}
+};

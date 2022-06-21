@@ -5,7 +5,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 import {shortenLabel} from './utils';
 import {useAllIndicateurDefinitionsForGroup} from 'core-logic/hooks/indicateur_definition';
-import {inferIndicateurReferentielAndTitle} from 'utils/indicateurs';
+import {inferIndicateurTitle} from 'utils/indicateurs';
 
 type IndicateursFieldProps = {
   label: string;
@@ -39,7 +39,7 @@ export const IndicateursField: FC<IndicateursFieldProps & FieldProps> = ({
     const indicateur = allSortedIndicateurDefinitions.find(
       definition => definition.id === id
     )!;
-    return indicateur ? inferIndicateurReferentielAndTitle(indicateur) : '';
+    return indicateur ? inferIndicateurTitle(indicateur, true) : '';
   };
 
   return (

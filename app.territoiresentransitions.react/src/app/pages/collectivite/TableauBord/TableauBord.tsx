@@ -18,7 +18,6 @@ import {DoughnutWithNumber} from 'ui/charts/DoughnutWithNumber';
 import {ReferentielAxisAvancementStackedBar} from 'ui/charts/ReferentielAxisAvancementStackedBar';
 import {ReferentielAxisScoresPolarArea} from 'ui/charts/ReferentielAxisScoresPolarArea';
 import {Spacer} from 'ui/shared/Spacer';
-import {refToEmoji} from 'utils/refToEmoji';
 import {toFixed} from 'utils/toFixed';
 import {useParcoursLabellisation} from '../ParcoursLabellisation/useParcoursLabellisation';
 import {NiveauLabellisation} from './NiveauLabellisation';
@@ -312,7 +311,6 @@ const TableauBord = () => {
         <main className="flex flex-row gap-4">
           <section style={{width: '600px'}} className="bg-white p-4">
             <div className="flex gap-4 justify-center font-bold text-center text-2xl text-gray">
-              <div>{refToEmoji.cae}</div>
               <div>Référentiel Climat Air Énergie</div>
             </div>
             <ReferentielSection scoreBloc={scoreBloc} referentielId="cae" />
@@ -320,7 +318,6 @@ const TableauBord = () => {
 
           <section style={{width: '600px'}} className="bg-white p-4">
             <div className="flex gap-4 justify-center font-bold text-center text-2xl text-gray">
-              <div>{refToEmoji.eci}</div>
               <div>Référentiel Économie Circulaire</div>
             </div>
             <ReferentielSection scoreBloc={scoreBloc} referentielId="eci" />
