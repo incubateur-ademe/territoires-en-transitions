@@ -22,7 +22,7 @@ type Props = {
 
 const CollectiviteNavigation = ({collectivite}: Props) => {
   return (
-    <div className="fr-container">
+    <div className="fr-container hidden lg:block">
       <div className="flex flex-row justify-between">
         <nav className="flex flex-row gap-5" aria-label="Menu principal">
           <NavLink

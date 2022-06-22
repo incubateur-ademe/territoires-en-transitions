@@ -22,7 +22,7 @@ const CollectiviteNavigationDropdownTab = (props: {
       <div className={_activeTabStyle(!!activePath)}>
         <button className="p-4">{props.menuLabel}</button>
       </div>
-      <nav className="bg-white invisible absolute left-0 top-full transition-all opacity-0 group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50">
+      <nav className="bg-white invisible absolute left-0 top-full transition-all opacity-0 drop-shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50">
         <ul>
           {props.listPathsAndLabels.map(labelAndPathSuffix => (
             <li className="fr-nav__item" key={labelAndPathSuffix.label}>
