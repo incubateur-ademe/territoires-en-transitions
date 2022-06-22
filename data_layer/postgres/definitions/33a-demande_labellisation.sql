@@ -6,7 +6,7 @@ $$
 with data as (select labellisation_demande.collectivite_id,
                      labellisation_demande.referentiel,
                      labellisation_demande.etoiles
-              where is_any_role_on(labellisation_demande.collectivite_id))
+              where is_authenticated())
 
 insert
 into labellisation.demande (collectivite_id, referentiel, etoiles)
