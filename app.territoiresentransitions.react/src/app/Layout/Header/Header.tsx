@@ -1,15 +1,28 @@
-import {CollectiviteNavigation, Navigation} from 'app/Navigation';
 import {
   authBloc,
   AuthBloc,
   currentCollectiviteBloc,
   CurrentCollectiviteBloc,
+  CurrentCollectiviteObserved,
 } from 'core-logic/observables';
 import {observer} from 'mobx-react-lite';
 import {CollectiviteRedirector} from 'app/Redirector';
 import {RejoindreCetteCollectiviteDialog} from 'app/pages/MesCollectivites/RejoindreCetteCollectiviteDialog';
 import {getReferentContacts} from 'core-logic/api/procedures/collectiviteProcedures';
 import LogoRepubliqueFrancaise from 'ui/logo/LogoRepubliqueFrancaise';
+import HeaderNavigation from './HeaderNavigation';
+import CollectiviteNavigation from './CollectiviteNavigation';
+
+/** FAKE DATA -> Dont' commit */
+const fakeCollectivite: CurrentCollectiviteObserved | null = {
+  nom: 'Test collectivite',
+  collectivite_id: 1,
+  role_name: null,
+};
+
+// const fakeCollectivite = null;
+
+/** END FAKE DATA */
 
 const HeaderObserver = observer(
   ({
@@ -25,7 +38,7 @@ const HeaderObserver = observer(
         <div className="fr-header__body">
           <div className="fr-container">
             <div className="fr-header__body-row header__row">
-              <div className="fr-header__brand fr-enlarge-link hidden md:block">
+              <div className="fr-header__brand fr-enlarge-link">
                 <div className="fr-header__brand-top">
                   <div className="fr-header__logo">
                     <LogoRepubliqueFrancaise />
@@ -47,11 +60,13 @@ const HeaderObserver = observer(
                   </a>
                 </div>
               </div>
-              <Navigation />
+              <HeaderNavigation />
             </div>
           </div>
         </div>
-        <CollectiviteHeader bloc={currentCollectiviteBloc} />
+        {fakeCollectivite !== null && (
+          <CollectiviteNavigation collectivite={fakeCollectivite} />
+        )}
       </header>
       <CollectiviteReadOnlyBanner bloc={currentCollectiviteBloc} />
     </>
@@ -71,27 +86,6 @@ const CollectiviteReadOnlyBanner = observer(
         </div>
       );
     return null;
-  }
-);
-
-const CollectiviteHeader = observer(
-  ({bloc}: {bloc: CurrentCollectiviteBloc}) => {
-    return (
-      <>
-        <div className="fr-container">
-          {bloc.currentCollectivite !== null && (
-            <div>
-              <div className="flex flex-row justify-between">
-                <CollectiviteNavigation />
-                <div className="flex items-center font-bold">
-                  {bloc.currentCollectivite.nom}
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </>
-    );
   }
 );
 
