@@ -113,44 +113,6 @@ comment on view retool_completude_compute is
     'Completude computed using statut over definition count.';
 
 
-create or replace view retool_score as
-with relation as (select *
-                  from action_relation),
-     statut as (select *
-                from action_statut a
-                         join relation on relation.id = a.action_id),
-     score as (select jsonb_array_elements(scores) ->> 'action_id'       as action_id,
-                      jsonb_array_elements(scores) ->> 'point_fait'      as points,
-                      jsonb_array_elements(scores) ->> 'point_potentiel' as points_pot,
-                      s.collectivite_id
-               from client_scores s),
-     commentaires as (select *
-                      from action_commentaire c
-                               join relation on relation.id = c.action_id)
-select n.collectivite_id,
-       n.nom                            as collectivité,
-       a.referentiel,
-       a.id                             as action,
-       coalesce(s.avancement::text, '') as avancement,
-       score.points                     as points,
-       score.points_pot                 as points_potentiels,
-       coalesce(
-                       score.points::numeric / nullif(score.points_pot::numeric, 0)::float * 100.0,
-                       0.0)             as pourcentage,
-       coalesce(c.commentaire, '')      as commentaire
-
-from named_collectivite n
-         full join relation a on true
-         left join statut s on s.action_id = a.id and s.collectivite_id = n.collectivite_id
-         left join score on score.action_id = a.id and score.collectivite_id = n.collectivite_id
-         left join commentaires c on c.action_id = a.id and c.collectivite_id = n.collectivite_id
-where is_service_role() -- Protect DCPs that could be in commentaires.
-order by n.collectivite_id, a.id
-;
-comment on view retool_score is
-    'Scores and commentaires for audit.';
-
-
 create or replace view retool_completude
 as
 with active as (select *
