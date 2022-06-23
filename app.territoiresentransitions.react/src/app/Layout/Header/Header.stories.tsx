@@ -1,4 +1,8 @@
-import {authBloc, currentCollectiviteBloc} from 'core-logic/observables';
+import {
+  authBloc,
+  currentCollectiviteBloc,
+  CurrentCollectiviteObserved,
+} from '../../../core-logic/observables';
 import Header from './Header';
 import {HeaderObserver} from './Header';
 
