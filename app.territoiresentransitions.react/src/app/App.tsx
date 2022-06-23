@@ -30,6 +30,7 @@ import {CurrentUserCollectivitesPage} from 'app/pages/CurrentUserCollectivite/Cu
 import {InvitationLanding} from 'app/pages/invitation/InvitationLanding';
 import {ToutesLesCollectivitesPage} from 'app/pages/ToutesLesCollectivites/ToutesLesCollectivitesPage';
 import Layout from './Layout';
+import {AuthProvider} from 'core-logic/api/auth/AuthProvider';
 
 const theme = createTheme({
   palette: {
@@ -46,40 +47,42 @@ export const App = () => {
     <MatomoProvider value={matomoInstance}>
       <MuiThemeProvider theme={theme}>
         <QueryClientProvider client={queryClient}>
-          <ReactQueryDevtools initialIsOpen={false} />
-          <Router>
-            <Layout>
-              <E2E />
-              <ScrollToTop />
-              <Toasters />
-              <InvitationRedirector />
-              <Switch>
-                <HomeRoute exact path="/">
-                  <Home />
-                </HomeRoute>
+          <AuthProvider>
+            <ReactQueryDevtools initialIsOpen={false} />
+            <Router>
+              <Layout>
+                <E2E />
+                <ScrollToTop />
+                <Toasters />
+                <InvitationRedirector />
+                <Switch>
+                  <HomeRoute exact path="/">
+                    <Home />
+                  </HomeRoute>
 
-                <HomeRoute path={authBasePath}>
-                  <AuthRoutes />
-                </HomeRoute>
+                  <HomeRoute path={authBasePath}>
+                    <AuthRoutes />
+                  </HomeRoute>
 
-                <Route path={myCollectivitesPath}>
-                  <CurrentUserCollectivitesPage />
-                </Route>
-                <Route path={allCollectivitesPath}>
-                  <ToutesLesCollectivitesPage />
-                </Route>
-                <Route path={'/collectivite/:collectiviteId'}>
-                  <CollectiviteRoutes />
-                </Route>
-                <Route path={'/statistics'}>
-                  <StatisticsPage />
-                </Route>
-                <Route path={invitationLandingPath}>
-                  <InvitationLanding />
-                </Route>
-              </Switch>
-            </Layout>
-          </Router>
+                  <Route path={myCollectivitesPath}>
+                    <CurrentUserCollectivitesPage />
+                  </Route>
+                  <Route path={allCollectivitesPath}>
+                    <ToutesLesCollectivitesPage />
+                  </Route>
+                  <Route path={'/collectivite/:collectiviteId'}>
+                    <CollectiviteRoutes />
+                  </Route>
+                  <Route path={'/statistics'}>
+                    <StatisticsPage />
+                  </Route>
+                  <Route path={invitationLandingPath}>
+                    <InvitationLanding />
+                  </Route>
+                </Switch>
+              </Layout>
+            </Router>
+          </AuthProvider>
         </QueryClientProvider>
       </MuiThemeProvider>
     </MatomoProvider>
