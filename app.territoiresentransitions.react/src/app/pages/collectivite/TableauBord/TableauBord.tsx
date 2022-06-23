@@ -39,7 +39,7 @@ const axisLabels: Record<string, string[][]> = {
   eci_3: [['3. Autres piliers'], ["de l'économie circulaire"]],
   eci_4: [['4. Outils financiers'], ['du changement'], ['de comportement']],
   eci_5: [['5. Coopération'], ['et engagement']],
-  cae_1: [['1. Plannification'], ['territoriale']],
+  cae_1: [['1. Planification'], ['territoriale']],
   cae_2: [['2. Patrimoine de la'], ['collectivité']],
   cae_3: [['3. Approvisionnement,'], ['énergie, eau,'], ['assainissement']],
   cae_4: [['4. Mobilité']],
