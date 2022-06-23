@@ -60,7 +60,7 @@ export const StatisticsPage = (props: TStatisticsPageProps) => {
           <DailyCountLineChart
             widthPx={650}
             dailyCounts={rattachements}
-            yTitle="Nombre d'utilisateurs rattachés à une collectivité"
+            yTitle="Utilisateurs rattachés à une collectivité"
             title1="Nouveaux rattachements"
             title2="Cumul des rattachements"
           />

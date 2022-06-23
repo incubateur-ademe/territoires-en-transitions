@@ -19,7 +19,7 @@ exports[`Storyshots Charts/ReferentielAxisAvancementStackedBar CAE Example 1`] =
   />
   <canvas
     data-testid="canvas"
-    height={348}
+    height={510}
     onClick={[Function]}
     role="img"
     width={500}

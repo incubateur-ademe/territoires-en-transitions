@@ -33,18 +33,24 @@ const axisLabels: Record<string, string[][]> = {
   eci_1: [['1. Stratégie globale']],
   eci_2: [
     ['2. Services de'],
-    ['réduction, collecte et'],
+    ['réduction,'],
+    ['collecte et'],
     ['valorisation des déchets'],
   ],
   eci_3: [['3. Autres piliers'], ["de l'économie circulaire"]],
-  eci_4: [['4. Outils financiers'], ['du changement'], ['de comportement']],
+  eci_4: [
+    ['4. Outils'],
+    ['financiers du'],
+    ['changement de'],
+    ['comportement'],
+  ],
   eci_5: [['5. Coopération'], ['et engagement']],
   cae_1: [['1. Planification'], ['territoriale']],
-  cae_2: [['2. Patrimoine de la'], ['collectivité']],
-  cae_3: [['3. Approvisionnement,'], ['énergie, eau,'], ['assainissement']],
+  cae_2: [['2. Patrimoine'], ['de la'], ['collectivité']],
+  cae_3: [['3. Approvisionnement'], ['énergie, eau,'], ['assainissement']],
   cae_4: [['4. Mobilité']],
   cae_5: [['5. Organisation'], ['interne']],
-  cae_6: [['6. Coopération, '], ['communication']],
+  cae_6: [['6. Coopération,'], ['communication']],
 };
 
 export type IndicateurCounts = {
