@@ -69,7 +69,6 @@ export const ReferentielAxisScoresPolarArea = ({
                 formatter: (value: any, context: any) => {
                   return context.chart.data.labels[context.dataIndex];
                 },
-                font: {size: 10},
                 anchor: 'start',
                 align: 'end',
                 offset: 150,
@@ -84,7 +83,6 @@ export const ReferentielAxisScoresPolarArea = ({
                 min: 0,
                 max: 100,
                 ticks: {
-                  font: {size: 7},
                   stepSize: 25,
                   callback: function (tick: number) {
                     return tick + '%';
