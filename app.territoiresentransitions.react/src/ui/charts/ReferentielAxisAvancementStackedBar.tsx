@@ -47,7 +47,7 @@ export const ReferentielAxisAvancementStackedBar = ({
       <Spacer size={2} />
       <Bar
         data={formatedData}
-        height={58 * data.length}
+        height={85 * data.length}
         width={widthPx}
         options={{
           indexAxis: 'y',
@@ -55,6 +55,10 @@ export const ReferentielAxisAvancementStackedBar = ({
             legend: {display: false},
             tooltip: {
               callbacks: {
+                title: items => {
+                  const dataIndex = items?.[0].dataIndex;
+                  return data[dataIndex]?.label.map(s => s[0]).join(' ');
+                },
                 label: (data: TooltipItem<'bar'>) => {
                   return `${data.dataset.label} : ${toFixed(
                     data.raw as number,
@@ -72,7 +76,6 @@ export const ReferentielAxisAvancementStackedBar = ({
               max: 100,
               stacked: true,
               ticks: {
-                font: {size: 10},
                 stepSize: 25,
                 backdropPadding: 0,
                 callback: function () {
@@ -84,15 +87,12 @@ export const ReferentielAxisAvancementStackedBar = ({
             y: {
               position: 'left',
               stacked: true,
-              ticks: {padding: 0, font: {size: 10}},
+              ticks: {padding: 0},
               afterFit: function (scaleInstance) {
-                scaleInstance.width = 120; // largeur libellés à gauche
+                scaleInstance.width = 175; // largeur libellés à gauche
               },
             },
             z: {
-              ticks: {
-                font: {size: 8},
-              },
               position: 'right',
               labels: data.map(
                 ({potentielPoints: maxPoints}) => `(${maxPoints} points)`

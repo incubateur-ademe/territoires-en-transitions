@@ -1,11 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {defaults} from 'react-chartjs-2';
 import {App} from 'app/App';
 import reportWebVitals from './reportWebVitals';
 
 import 'css/tailwind.css';
 import 'app/static/_app/assets/css/dsfr.css';
 import 'css/app.css';
+
+// typo par défaut pour les graphiques
+defaults.font = {...defaults.font, family: 'Marianne', size: 14};
 
 ReactDOM.render(
   <React.StrictMode>

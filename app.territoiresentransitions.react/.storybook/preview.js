@@ -5,6 +5,9 @@ import {addDecorator} from '@storybook/react';
 import StoryRouter from 'storybook-react-router';
 import {QueryClient, QueryClientProvider} from 'react-query';
 import {AuthContext} from '../src/core-logic/api/auth/AuthProvider';
+import {defaults} from 'react-chartjs-2';
+
+defaults.font = {...defaults.font, family: 'Marianne', size: 14};
 
 // charge les styles de l'appli
 import '../src/css/tailwind.css';
