@@ -3,18 +3,29 @@ import {observer} from 'mobx-react-lite';
 import {Link} from 'react-router-dom';
 import {signInPath, signUpPath} from 'app/paths';
 
-const LogoutBtn = observer(({bloc}: {bloc: AuthBloc}) => (
-  <Link
-    className="fr-nav__link"
-    data-test="logoutBtn"
-    to={signUpPath}
-    onClick={() => {
-      bloc.disconnect();
-    }}
-  >
-    <span className="px-3">Déconnexion</span>
-  </Link>
-));
+export const LogoutBtn = observer(
+  ({
+    bloc,
+    additionalOnClick,
+  }: {
+    bloc: AuthBloc;
+    additionalOnClick?: () => void;
+  }) => (
+    <Link
+      className="fr-nav__link"
+      data-test="logoutBtn"
+      to={signUpPath}
+      onClick={() => {
+        bloc.disconnect();
+        {
+          additionalOnClick && additionalOnClick();
+        }
+      }}
+    >
+      <span className="px-3">Déconnexion</span>
+    </Link>
+  )
+);
 
 /** FAKE DATA -> TODO: Replace with hook */
 const profilePath = '#';

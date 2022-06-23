@@ -15,13 +15,13 @@ import CollectiviteNavigation from './CollectiviteNavigation';
 import MobileNavigation from './MobileNavigation';
 
 /** FAKE DATA -> TODO: Replace with hook */
-const fakeCollectivite: CurrentCollectiviteObserved | null = {
-  nom: 'Test collectivite',
-  collectivite_id: 1,
-  role_name: null,
-};
+// const fakeCollectivite: CurrentCollectiviteObserved | null = {
+//   nom: 'Test collectivite',
+//   collectivite_id: 1,
+//   role_name: null,
+// };
 
-// const fakeCollectivite = null;
+const fakeCollectivite = null;
 
 const isConnected = false;
 
@@ -40,7 +40,7 @@ export const HeaderObserver = observer(
     authBloc: AuthBloc;
     currentCollectiviteBloc: CurrentCollectiviteBloc;
     isConnected: boolean;
-    collectivite: CurrentCollectiviteObserved;
+    collectivite: CurrentCollectiviteObserved | null;
   }) => {
     const [isMobileNavigationOpen, setIsMobileNavigationOpen] = useState(false);
     const toggleMobileNavigation = () =>
@@ -79,13 +79,17 @@ export const HeaderObserver = observer(
                   </div>
                 </div>
                 <HeaderNavigation isConnected={isConnected} user={fakeUser} />
-                <button
-                  onClick={toggleMobileNavigation}
-                  className="fr-fi-menu-fill absolute top-6 right-6 z-10 lg:hidden"
-                />
-                {isMobileNavigationOpen && (
+                {isMobileNavigationOpen ? (
                   <MobileNavigation
                     toggleMobileNavigation={toggleMobileNavigation}
+                    collectivite={collectivite}
+                    isConnected={isConnected}
+                    user={fakeUser}
+                  />
+                ) : (
+                  <button
+                    onClick={toggleMobileNavigation}
+                    className="fr-fi-menu-fill absolute top-6 right-6 z-10 lg:hidden"
                   />
                 )}
               </div>
