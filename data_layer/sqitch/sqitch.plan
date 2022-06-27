@@ -58,3 +58,4 @@ stats/collectivite [retool/collectivite utilisateur/droits] 2022-06-20T15:42:43Z
 stats/utilisateur [stats/collectivite utilisateur/droits] 2022-06-20T15:44:31Z Florian <florian@derfurth.com> # Les statistiques sur les utilisateurs.
 stats/fonctionalite [stats/collectivite utilisateur/droits referentiel/contenu plan_action/plan_action indicateur/referentiel indicateur/personnalise] 2022-06-20T15:49:11Z Florian <florian@derfurth.com> # Les statistiques sur les utilisateurs.
 stats/completude [retool/evaluation] 2022-06-20T16:03:06Z Florian <florian@derfurth.com> # Les statistiques sur la completude.
+utils/move_action_data [referentiel/action_statut referentiel/action_commentaire] 2022-06-27T14:49:42Z Florian <florian@derfurth.com> # Permet de mettre à jour le rattachement de données à une action dans le cadre d'une modification du référentiel.
