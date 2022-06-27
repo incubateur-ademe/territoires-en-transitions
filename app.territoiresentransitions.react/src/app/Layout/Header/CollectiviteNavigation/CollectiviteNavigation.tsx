@@ -1,15 +1,13 @@
-import {NavLink} from 'react-router-dom';
-import {
-  makeCollectiviteDefaultPlanActionUrl,
-  makeCollectiviteIndicateursUrl,
-  makeCollectiviteLabellisationUrl,
-  makeCollectivitePersoRefUrl,
-  makeCollectiviteReferentielUrl,
-  makeCollectiviteTableauBordUrl,
-  makeCollectiviteUsersUrl,
-} from 'app/paths';
+import {useMemo} from 'react';
+import {Link, NavLink} from 'react-router-dom';
 import {CurrentCollectiviteObserved} from 'core-logic/observables';
+import {
+  CollectiviteNavDropdown,
+  CollectiviteNavSingle,
+  isSingleNavItemDropdown,
+} from '../Header';
 import CollectiviteNavigationDropdownTab from './CollectiviteNavigationDropdownTab';
+import {makeCollectiviteTableauBordUrl} from 'app/paths';
 
 export const activeTabClassName = 'border-b-2 border-bf500';
 
@@ -17,124 +15,101 @@ export const _activeTabStyle = (active: boolean): string =>
   `${active ? activeTabClassName : ''}`;
 
 type Props = {
-  collectivite: CurrentCollectiviteObserved;
+  collectiviteNav: (CollectiviteNavSingle | CollectiviteNavDropdown)[];
+  currentCollectivite: CurrentCollectiviteObserved;
+  ownedCollectivites: CurrentCollectiviteObserved[];
 };
 
-const CollectiviteNavigation = ({collectivite}: Props) => {
+const CollectiviteNavigation = ({
+  collectiviteNav,
+  currentCollectivite,
+  ownedCollectivites,
+}: Props) => {
+  const collectivitesDropdown: CollectiviteNavDropdown = useMemo(() => {
+    const collectivitesWithoutCurrentCollectivite = ownedCollectivites.filter(
+      e => currentCollectivite && e.nom !== currentCollectivite.nom
+    );
+
+    return {
+      isSelectCollectivite: true,
+      menuLabel: currentCollectivite.nom,
+      listPathsAndLabels: collectivitesWithoutCurrentCollectivite.map(
+        collectivite => {
+          return {
+            label: collectivite.nom,
+            path: makeCollectiviteTableauBordUrl({
+              collectiviteId: collectivite.collectivite_id,
+            }),
+          };
+        }
+      ),
+    };
+  }, [currentCollectivite, ownedCollectivites]);
+
   return (
     <div className="fr-container hidden lg:block">
       <div className="flex flex-row justify-between">
-        <nav className="flex flex-row gap-5" aria-label="Menu principal">
-          <NavLink
-            className="fr-nav__item p-4"
-            activeClassName={activeTabClassName}
-            to={makeCollectiviteTableauBordUrl({
-              collectiviteId: collectivite.collectivite_id,
-            })}
-          >
-            Tableau de bord
-          </NavLink>
-          <CollectiviteNavigationDropdownTab
-            menuLabel="Référentiels"
-            listPathsAndLabels={[
-              {
-                path: makeCollectiviteReferentielUrl({
-                  collectiviteId: collectivite.collectivite_id,
-                  referentielId: 'eci',
-                }),
-
-                label: 'Économie Circulaire',
-              },
-              {
-                path: makeCollectiviteReferentielUrl({
-                  collectiviteId: collectivite.collectivite_id,
-                  referentielId: 'cae',
-                }),
-                label: 'Climat Air Énergie',
-              },
-            ]}
-          />
-          <CollectiviteNavigationDropdownTab
-            menuLabel="Indicateurs"
-            listPathsAndLabels={[
-              {
-                path: makeCollectiviteIndicateursUrl({
-                  collectiviteId: collectivite.collectivite_id,
-                  indicateurView: 'eci',
-                }),
-                label: 'Économie Circulaire',
-              },
-              {
-                path: makeCollectiviteIndicateursUrl({
-                  collectiviteId: collectivite.collectivite_id,
-                  indicateurView: 'cae',
-                }),
-                label: 'Climat Air Énergie',
-              },
-              {
-                path: makeCollectiviteIndicateursUrl({
-                  collectiviteId: collectivite.collectivite_id,
-                  indicateurView: 'crte',
-                }),
-                label: 'CRTE',
-              },
-              {
-                path: makeCollectiviteIndicateursUrl({
-                  collectiviteId: collectivite.collectivite_id,
-                  indicateurView: 'perso',
-                }),
-                label: 'Personnalisés',
-              },
-            ]}
-          />
-          <NavLink
-            className="fr-nav__item p-4"
-            activeClassName={activeTabClassName}
-            to={makeCollectiviteDefaultPlanActionUrl({
-              collectiviteId: collectivite.collectivite_id,
-            })}
-          >
-            Plans d'action
-          </NavLink>
-          <CollectiviteNavigationDropdownTab
-            menuLabel="Labellisation"
-            listPathsAndLabels={[
-              {
-                path: makeCollectiviteLabellisationUrl({
-                  collectiviteId: collectivite.collectivite_id,
-                  referentielId: 'eci',
-                }),
-
-                label: 'Économie Circulaire',
-              },
-              {
-                path: makeCollectiviteLabellisationUrl({
-                  collectiviteId: collectivite.collectivite_id,
-                  referentielId: 'cae',
-                }),
-                label: 'Climat Air Énergie',
-              },
-            ]}
-          />
-          <CollectiviteNavigationDropdownTab
-            menuLabel="Paramètres"
-            listPathsAndLabels={[
-              {
-                label: 'Gestion des accès',
-                path: makeCollectiviteUsersUrl({
-                  collectiviteId: collectivite.collectivite_id,
-                }),
-              },
-              {
-                label: 'Personnalisation des référentiels',
-                path: makeCollectivitePersoRefUrl({
-                  collectiviteId: collectivite.collectivite_id,
-                }),
-              },
-            ]}
-          />
+        <nav
+          className="flex flex-row w-full text-sm"
+          aria-label="Menu principal"
+        >
+          {collectiviteNav.map(
+            item =>
+              ((currentCollectivite.role_name === null &&
+                !item.displayOnlyToMember) ||
+                currentCollectivite.role_name !== null) &&
+              (isSingleNavItemDropdown(item) ? (
+                <CollectiviteNavigationDropdownTab
+                  key={item.menuLabel}
+                  item={item}
+                />
+              ) : (
+                <NavLink
+                  key={item.label}
+                  className="fr-nav__item justify-center p-4"
+                  activeClassName={activeTabClassName}
+                  to={item.path}
+                >
+                  {item.label}
+                </NavLink>
+              ))
+          )}
+          <div className="group relative flex ml-auto">
+            {collectivitesDropdown.listPathsAndLabels.length === 0 ? (
+              <p className="flex items-center p-4 text-sm font-bold">
+                {collectivitesDropdown.menuLabel}
+              </p>
+            ) : (
+              <>
+                <button className="flex items-center p-4 font-bold group-focus-within:bg-bf925">
+                  {collectivitesDropdown.menuLabel}
+                  <div className="ml-2 mt-1 fr-fi-arrow-down-s-line scale-75 group-focus-within:rotate-180" />
+                </button>
+                <nav className="bg-white invisible absolute left-0 top-full min-w-full w-max transition-all opacity-0 drop-shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50">
+                  <ul>
+                    {collectivitesDropdown.listPathsAndLabels.map(
+                      labelAndPathSuffix => (
+                        <li
+                          className="fr-nav__item"
+                          key={labelAndPathSuffix.label}
+                        >
+                          <Link
+                            className="fr-nav__link"
+                            to={labelAndPathSuffix.path}
+                          >
+                            <span className="block px-3 max-w-xs">
+                              {labelAndPathSuffix.label}
+                            </span>
+                          </Link>
+                        </li>
+                      )
+                    )}
+                  </ul>
+                </nav>
+              </>
+            )}
+          </div>
         </nav>
-        <div className="flex items-center font-bold">{collectivite.nom}</div>
       </div>
     </div>
   );
