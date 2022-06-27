@@ -2,6 +2,7 @@
 
 BEGIN;
 
+drop view question_engine;
 drop function business_upsert_questions(questions json[]);
 drop view question_thematique_display;
 drop table question_action;

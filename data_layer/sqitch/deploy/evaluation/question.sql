@@ -167,4 +167,17 @@ begin
 end
 $$ language plpgsql;
 
+
+create view question_engine
+as
+select q.id   as id,
+       type,
+       cx.ids as choix_ids
+from question q
+         left join lateral (select array_agg(c.id) as ids
+                            from question_choix c
+                            where c.question_id = q.id) cx on true;
+comment on view question_engine is
+    'Questions avec leurs choix pour le moteur de formule -- not used';
+
 COMMIT;

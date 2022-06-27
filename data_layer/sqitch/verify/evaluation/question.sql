@@ -28,4 +28,8 @@ where false;
 
 select has_function_privilege('business_upsert_questions(json[])', 'execute');
 
+select id, type, choix_ids
+from question_engine
+where false;
+
 ROLLBACK;
