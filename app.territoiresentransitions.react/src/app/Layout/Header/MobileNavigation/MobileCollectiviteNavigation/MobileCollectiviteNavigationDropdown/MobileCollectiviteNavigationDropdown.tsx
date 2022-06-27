@@ -1,46 +1,13 @@
 import {useState} from 'react';
-import {Link, NavLink, useLocation} from 'react-router-dom';
-import {
-  CollectiviteNavDropdown,
-  CollectiviteNavSingle,
-  isSingleNavItemDropdown,
-} from '../MobileNavigation';
-
-type Props = {
-  item: CollectiviteNavSingle | CollectiviteNavDropdown;
-  handleCloseMobileNavigation: () => void;
-};
-
-const MobileNavigationCollectiviteItem = ({
-  item,
-  handleCloseMobileNavigation,
-}: Props) => {
-  if (isSingleNavItemDropdown(item)) {
-    return (
-      <MobileNavigationCollectiviteDropdown
-        handleCloseMobileNavigation={handleCloseMobileNavigation}
-        item={item}
-      />
-    );
-  } else {
-    return (
-      <NavLink
-        className="block p-4 font-bold"
-        activeClassName="border-l-4 border-bf500 text-bf500"
-        to={item.path}
-      >
-        {item.label}
-      </NavLink>
-    );
-  }
-};
+import {Link, NavLink} from 'react-router-dom';
+import {CollectiviteNavDropdown} from '../../../Header';
 
 type DropdownProps = {
   item: CollectiviteNavDropdown;
   handleCloseMobileNavigation: () => void;
 };
 
-const MobileNavigationCollectiviteDropdown = ({
+const MobileCollectiviteNavigationDropdown = ({
   item,
   handleCloseMobileNavigation,
 }: DropdownProps) => {
@@ -90,4 +57,4 @@ const MobileNavigationCollectiviteDropdown = ({
   );
 };
 
-export default MobileNavigationCollectiviteItem;
+export default MobileCollectiviteNavigationDropdown;
