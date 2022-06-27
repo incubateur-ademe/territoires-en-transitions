@@ -1,6 +1,8 @@
+import {useParcoursLabellisation} from 'app/pages/collectivite/ParcoursLabellisation/useParcoursLabellisation';
 import {
   makeCollectiviteLabellisationUrl,
   makeCollectiviteReferentielUrl,
+  ReferentielParamOption,
 } from 'app/paths';
 import {actionAvancementColors} from 'app/theme';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
@@ -8,8 +10,12 @@ import {indicateurResultatRepository} from 'core-logic/api/repositories/AnyIndic
 import {useAllIndicateurDefinitionsForGroup} from 'core-logic/hooks/indicateur_definition';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useReferentielDownToAction} from 'core-logic/hooks/referentiel';
-import {scoreBloc, ScoreBloc} from 'core-logic/observables/scoreBloc';
-import {observer} from 'mobx-react-lite';
+import {scoreBloc} from 'core-logic/observables/scoreBloc';
+import {
+  ReferentielsActionScores,
+  useScores,
+} from 'core-logic/observables/useScores';
+import {LabellisationDemandeRead} from 'generated/dataLayer/labellisation_demande_read';
 import {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
 import {ActionScore} from 'types/ClientScore';
@@ -19,9 +25,11 @@ import {ReferentielAxisAvancementStackedBar} from 'ui/charts/ReferentielAxisAvan
 import {ReferentielAxisScoresPolarArea} from 'ui/charts/ReferentielAxisScoresPolarArea';
 import {Spacer} from 'ui/shared/Spacer';
 import {toFixed} from 'utils/toFixed';
-import {useParcoursLabellisation} from '../ParcoursLabellisation/useParcoursLabellisation';
 import {NiveauLabellisation} from './NiveauLabellisation';
-import {useLabellisationParNiveau} from './useLabellisationParNiveau';
+import {
+  LabellisationParNiveauRead,
+  useLabellisationParNiveau,
+} from './useLabellisationParNiveau';
 
 const remplissageColor = '#2F4077';
 
@@ -193,118 +201,135 @@ const ChiffreCles = ({
   );
 };
 
-const ReferentielSection = observer(
-  ({
-    referentielId,
-    scoreBloc,
-  }: {
-    referentielId: 'cae' | 'eci';
-    scoreBloc: ScoreBloc;
-  }) => {
-    const collectiviteId = useCollectiviteId()!;
-    const actions = useReferentielDownToAction(referentielId);
-    const labellisationParNiveau = useLabellisationParNiveau(referentielId);
-    const {demande} = useParcoursLabellisation(referentielId);
-    const referentielRoot = actions.find(a => a.type === 'referentiel');
+const ReferentielSection = ({
+  actions,
+  demande,
+  labellisationParNiveau,
+  scores,
+  referentielId,
+}: {
+  actions: ActionDefinitionSummary[];
+  demande: LabellisationDemandeRead | null;
+  labellisationParNiveau: LabellisationParNiveauRead | null;
+  scores: ActionScore[];
+  referentielId: ReferentielParamOption;
+}) => {
+  const collectiviteId = useCollectiviteId()!;
+  const referentielRoot = actions.find(a => a.type === 'referentiel');
+  if (!referentielRoot) return null;
 
-    if (!referentielRoot) return null;
+  const rootScore = scores.find(
+    score => score.action_id === referentielRoot.id
+  );
 
-    const rootScore = scoreBloc.getScore(
-      referentielRoot.id,
-      referentielRoot.referentiel
-    );
-
-    if (!rootScore || rootScore.completed_taches_count === 0) {
-      return (
-        <div>
-          <div
-            style={{padding: '10px', height: '150px'}}
-            className="flex items-center justify-center font-light"
-          >
-            Ce référentiel n’est pas encore renseigné pour votre collectivité.
-            Pour commencer à visualiser votre progression, mettez à jour les
-            statuts des actions.
-          </div>
-          <div className="flex justify-center">
-            <Link
-              className="fr-btn fr-btn--secondary "
-              to={makeCollectiviteReferentielUrl({
-                collectiviteId,
-                referentielId,
-              })}
-            >
-              Mettre à jour le référentiel
-            </Link>
-          </div>
-        </div>
-      );
-    }
-
-    const referentielAxes: ActionDefinitionSummary[] = actions.filter(
-      a => a.type === 'axe'
-    );
-
-    const axisAvancementSamples: AxisAvancementSample[] = referentielAxes
-      .map(axe => {
-        const axisScore = scoreBloc.getScore(axe.id, axe.referentiel);
-        if (!axisScore) return null;
-        const sample: AxisAvancementSample = {
-          label: axisLabels[axe.id],
-          potentielPoints: toFixed(axisScore?.point_potentiel, 0),
-          percentages: {
-            fait: (axisScore.point_fait / axisScore.point_potentiel) * 100,
-            programme:
-              (axisScore.point_programme / axisScore.point_potentiel) * 100,
-            pas_fait:
-              (axisScore.point_pas_fait / axisScore.point_potentiel) * 100,
-            non_renseigne:
-              (axisScore.point_non_renseigne / axisScore.point_potentiel) * 100,
-          },
-        };
-        return sample;
-      })
-      .filter((sample): sample is AxisAvancementSample => sample !== null);
-    const {realisePercentage} = scoreRealise(rootScore);
+  if (!rootScore || rootScore.completed_taches_count === 0) {
     return (
-      <div className="p-4">
-        {labellisationParNiveau ? (
-          <NiveauLabellisation
-            labellisationParNiveau={labellisationParNiveau}
-            realisePercentage={realisePercentage}
-          />
-        ) : null}
-        <div className="flex justify-center mb-8">
-          {!demande || demande.en_cours ? (
-            <Link
-              className="fr-btn"
-              to={makeCollectiviteLabellisationUrl({
-                collectiviteId,
-                referentielId,
-              })}
-            >
-              Décrocher les étoiles
-            </Link>
-          ) : (
-            <button className="fr-btn" disabled>
-              Demande envoyée
-            </button>
-          )}
+      <div>
+        <div
+          style={{padding: '10px', height: '150px'}}
+          className="flex items-center justify-center font-light"
+        >
+          Ce référentiel n’est pas encore renseigné pour votre collectivité.
+          Pour commencer à visualiser votre progression, mettez à jour les
+          statuts des actions.
         </div>
-        {rootScore && (
-          <ChiffreCles rootScore={rootScore} referentiel={referentielId} />
-        )}
-        <Spacer />
         <div className="flex justify-center">
-          <ReferentielAxisScoresPolarArea data={axisAvancementSamples} />
+          <Link
+            className="fr-btn fr-btn--secondary "
+            to={makeCollectiviteReferentielUrl({
+              collectiviteId,
+              referentielId,
+            })}
+          >
+            Mettre à jour le référentiel
+          </Link>
         </div>
-        <Spacer />
-        <ReferentielAxisAvancementStackedBar data={axisAvancementSamples} />
       </div>
     );
   }
-);
 
-const TableauBord = () => {
+  const referentielAxes: ActionDefinitionSummary[] = actions.filter(
+    a => a.type === 'axe'
+  );
+
+  const axisAvancementSamples: AxisAvancementSample[] = referentielAxes
+    .map(axe => {
+      const axisScore = scoreBloc.getScore(axe.id, axe.referentiel);
+      if (!axisScore) return null;
+      const sample: AxisAvancementSample = {
+        label: axisLabels[axe.id],
+        potentielPoints: toFixed(axisScore?.point_potentiel, 0),
+        percentages: {
+          fait: (axisScore.point_fait / axisScore.point_potentiel) * 100,
+          programme:
+            (axisScore.point_programme / axisScore.point_potentiel) * 100,
+          pas_fait:
+            (axisScore.point_pas_fait / axisScore.point_potentiel) * 100,
+          non_renseigne:
+            (axisScore.point_non_renseigne / axisScore.point_potentiel) * 100,
+        },
+      };
+      return sample;
+    })
+    .filter((sample): sample is AxisAvancementSample => sample !== null);
+  const {realisePercentage} = scoreRealise(rootScore);
+  return (
+    <div className="p-4">
+      {labellisationParNiveau ? (
+        <NiveauLabellisation
+          labellisationParNiveau={labellisationParNiveau}
+          realisePercentage={realisePercentage}
+        />
+      ) : null}
+      <div className="flex justify-center mb-8">
+        {!demande || demande.en_cours ? (
+          <Link
+            className="fr-btn"
+            to={makeCollectiviteLabellisationUrl({
+              collectiviteId,
+              referentielId,
+            })}
+          >
+            Décrocher les étoiles
+          </Link>
+        ) : (
+          <button className="fr-btn" disabled>
+            Demande envoyée
+          </button>
+        )}
+      </div>
+      {rootScore && (
+        <ChiffreCles rootScore={rootScore} referentiel={referentielId} />
+      )}
+      <Spacer />
+      <div className="flex justify-center">
+        <ReferentielAxisScoresPolarArea data={axisAvancementSamples} />
+      </div>
+      <Spacer />
+      <ReferentielAxisAvancementStackedBar data={axisAvancementSamples} />
+    </div>
+  );
+};
+
+export type TTableauBordProps = {
+  scores: ReferentielsActionScores;
+  actions: {eci: ActionDefinitionSummary[]; cae: ActionDefinitionSummary[]};
+  demande: {
+    eci: LabellisationDemandeRead | null;
+    cae: LabellisationDemandeRead | null;
+  };
+  labellisationParNiveau: {
+    eci: LabellisationParNiveauRead | null;
+    cae: LabellisationParNiveauRead | null;
+  };
+};
+
+export const TableauBord = ({
+  scores,
+  demande,
+  labellisationParNiveau,
+  actions,
+}: TTableauBordProps) => {
   return (
     <div className="bg-grey975">
       <div className="fr-container pt-9 pb-16">
@@ -313,14 +338,26 @@ const TableauBord = () => {
             <div className="flex gap-4 justify-center font-bold text-center text-2xl text-gray">
               <div>Référentiel Climat Air Énergie</div>
             </div>
-            <ReferentielSection scoreBloc={scoreBloc} referentielId="cae" />
+            <ReferentielSection
+              referentielId="cae"
+              actions={actions.cae}
+              labellisationParNiveau={labellisationParNiveau.cae}
+              scores={scores.cae}
+              demande={demande.cae}
+            />
           </section>
 
           <section style={{width: '600px'}} className="bg-white p-4">
             <div className="flex gap-4 justify-center font-bold text-center text-2xl text-gray">
               <div>Référentiel Économie Circulaire</div>
             </div>
-            <ReferentielSection scoreBloc={scoreBloc} referentielId="eci" />
+            <ReferentielSection
+              referentielId="eci"
+              actions={actions.eci}
+              labellisationParNiveau={labellisationParNiveau.eci}
+              scores={scores.eci}
+              demande={demande.eci}
+            />
           </section>
         </main>
       </div>
@@ -328,4 +365,27 @@ const TableauBord = () => {
   );
 };
 
-export default TableauBord;
+export default () => {
+  const eci_actions = useReferentielDownToAction('eci');
+  const cae_actions = useReferentielDownToAction('cae');
+
+  const eci_labellisationParNiveau = useLabellisationParNiveau('eci');
+  const cae_labellisationParNiveau = useLabellisationParNiveau('cae');
+
+  const {demande: eci_demande} = useParcoursLabellisation('eci');
+  const {demande: cae_demande} = useParcoursLabellisation('cae');
+
+  const scores = useScores();
+
+  return (
+    <TableauBord
+      actions={{eci: eci_actions, cae: cae_actions}}
+      demande={{eci: eci_demande, cae: cae_demande}}
+      labellisationParNiveau={{
+        eci: eci_labellisationParNiveau,
+        cae: cae_labellisationParNiveau,
+      }}
+      scores={scores}
+    />
+  );
+};
