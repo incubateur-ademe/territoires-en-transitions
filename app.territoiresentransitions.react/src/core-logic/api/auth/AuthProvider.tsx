@@ -3,7 +3,7 @@ import {User, UserCredentials} from '@supabase/supabase-js';
 import {supabaseClient} from '../supabase';
 
 // typage du contexte exposé par le fournisseur
-type TAuthContext = {
+export type TAuthContext = {
   connect: (data: UserCredentials) => Promise<boolean>;
   disconnect: () => Promise<boolean>;
   user: User | null;

@@ -1,42 +1,53 @@
-import {
-  authBloc,
-  currentCollectiviteBloc,
-  CurrentCollectiviteObserved,
-} from '../../../core-logic/observables';
-import Header from './Header';
-import {HeaderObserver} from './Header';
+import {action} from '@storybook/addon-actions';
+import {Header} from './Header';
+import {CurrentCollectivite} from '../../../core-logic/hooks/useCurrentCollectivite';
 
 export default {
   component: Header,
 };
 
-const fakeCollectivite: CurrentCollectiviteObserved | null = {
+const authDisconnected = {
+  isConnected: false,
+  user: null,
+  authError: null,
+  connect: action('connect'),
+  disconnect: action('disconnect'),
+};
+
+const authConnected = {
+  ...authDisconnected,
+  isConnected: true,
+  user: {name: 'Emeline'},
+};
+
+const readonlyCollectivite: CurrentCollectivite = {
   nom: 'Test collectivite',
   collectivite_id: 1,
   role_name: null,
+  isReferent: false,
+  readonly: true,
+};
+
+const ownedCollectivite: CurrentCollectivite = {
+  nom: 'Test collectivite',
+  collectivite_id: 1,
+  role_name: 'referent',
+  isReferent: true,
+  readonly: false,
 };
 
 export const NotConnected = () => (
-  <HeaderObserver
-    authBloc={authBloc}
-    currentCollectiviteBloc={currentCollectiviteBloc}
-    isConnected={false}
-    collectivite={null}
-  />
+  <Header auth={authDisconnected} currentCollectivite={null} />
 );
+
 export const Connected = () => (
-  <HeaderObserver
-    authBloc={authBloc}
-    currentCollectiviteBloc={currentCollectiviteBloc}
-    isConnected
-    collectivite={null}
-  />
+  <Header auth={authConnected} currentCollectivite={null} />
 );
+
 export const WithCollectivite = () => (
-  <HeaderObserver
-    authBloc={authBloc}
-    currentCollectiviteBloc={currentCollectiviteBloc}
-    isConnected
-    collectivite={fakeCollectivite}
-  />
+  <Header auth={authConnected} currentCollectivite={ownedCollectivite} />
+);
+
+export const WithReadonlyCollectivite = () => (
+  <Header auth={authConnected} currentCollectivite={readonlyCollectivite} />
 );
