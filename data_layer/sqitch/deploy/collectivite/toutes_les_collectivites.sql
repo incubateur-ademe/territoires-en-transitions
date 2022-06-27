@@ -85,6 +85,7 @@ with
     referentiel_score as (select c.id                                                        as collectivite_id,
                                  max(s.score_fait) filter ( where referentiel = 'eci' )      as score_fait_eci,
                                  max(s.score_fait) filter ( where referentiel = 'cae' )      as score_fait_cae,
+                                 min(s.score_fait)                                           as score_fait_min,
                                  max(s.score_fait)                                           as score_fait_max,
                                  sum(s.score_fait)                                           as score_fait_sum,
                                  max(s.score_programme) filter ( where referentiel = 'eci' ) as score_programme_eci,
@@ -94,6 +95,7 @@ with
                                  max(s.completude) filter ( where referentiel = 'eci' )      as completude_eci,
                                  max(s.completude) filter ( where referentiel = 'cae' )      as completude_cae,
                                  max(s.completude)                                           as completude_max,
+                                 min(s.completude)                                           as completude_min,
                                  bool_and(s.concerne) filter ( where referentiel = 'eci' )   as concerne_eci,
                                  bool_and(s.concerne) filter ( where referentiel = 'cae' )   as concerne_cae
 
@@ -123,6 +125,7 @@ with
                     coalesce(l.etoiles_all, '{0}')                                       as etoiles_all,
                     case when s.concerne_cae then coalesce(s.score_fait_cae, 0) end      as score_fait_cae,
                     case when s.concerne_eci then coalesce(s.score_fait_eci, 0) end      as score_fait_eci,
+                    s.score_fait_min                                                     as score_fait_min,
                     s.score_fait_max                                                     as score_fait_max,
                     s.score_fait_sum                                                     as score_fait_sum,
                     case when s.concerne_cae then coalesce(s.score_programme_cae, 0) end as score_programme_cae,
@@ -131,6 +134,7 @@ with
                     s.score_programme_sum                                                as score_programme_sum,
                     coalesce(s.completude_cae, 0)                                        as completude_cae,
                     coalesce(s.completude_eci, 0)                                        as completude_eci,
+                    s.completude_min                                                     as completude_min,
                     s.completude_max                                                     as completude_max
 
              from named_collectivite c
@@ -170,8 +174,7 @@ from card
          left join lateral (select array_agg(id) as ids
                             from filtre_intervalle
                             where type = 'remplissage'
-                              and (intervalle @> (card.completude_cae * 100)::numeric
-                                or intervalle @> (card.completude_eci * 100)::numeric)) comps on true
+                              and intervalle @> (card.completude_min * 100)::numeric) comps on true
     -- score
          left join lateral (select id
                             from filtre_intervalle
@@ -186,8 +189,7 @@ from card
          left join lateral (select array_agg(id) as ids
                             from filtre_intervalle
                             where type = 'score'
-                              and (intervalle @> (card.score_fait_eci * 100)::numeric
-                                or intervalle @> (card.score_fait_cae * 100)::numeric)) scores on true
+                              and intervalle @> (card.score_fait_min * 100)::numeric) scores on true
 
 -- keep only active collectivités only.
 where card.collectivite_id in (select collectivite_id from private_utilisateur_droit where active);
