@@ -10,11 +10,43 @@ export default {
   component: Header,
 };
 
-const fakeCollectivite: CurrentCollectiviteObserved | null = {
-  nom: 'Test collectivite',
+const collectivite: CurrentCollectiviteObserved | null = {
+  nom: 'Collectivité 1',
+  collectivite_id: 1,
+  role_name: 'agent',
+};
+
+const collectiviteNotMember: CurrentCollectiviteObserved | null = {
+  nom: 'Collectivité 1',
   collectivite_id: 1,
   role_name: null,
 };
+
+const ownedOneCollectivite: CurrentCollectiviteObserved[] = [
+  {
+    nom: 'Collectivité 1',
+    collectivite_id: 1,
+    role_name: null,
+  },
+];
+
+const ownedCollectivites: CurrentCollectiviteObserved[] = [
+  {
+    nom: 'Collectivité 1',
+    collectivite_id: 1,
+    role_name: null,
+  },
+  {
+    nom: 'Collectivité 2',
+    collectivite_id: 2,
+    role_name: null,
+  },
+  {
+    nom: 'Collectivité 3',
+    collectivite_id: 3,
+    role_name: null,
+  },
+];
 
 export const NotConnected = () => (
   <HeaderObserver
@@ -22,6 +54,7 @@ export const NotConnected = () => (
     currentCollectiviteBloc={currentCollectiviteBloc}
     isConnected={false}
     collectivite={null}
+    ownedCollectivite={null}
   />
 );
 export const Connected = () => (
@@ -30,13 +63,33 @@ export const Connected = () => (
     currentCollectiviteBloc={currentCollectiviteBloc}
     isConnected
     collectivite={null}
+    ownedCollectivite={null}
   />
 );
-export const WithCollectivite = () => (
+export const WithOneCollectivite = () => (
   <HeaderObserver
     authBloc={authBloc}
     currentCollectiviteBloc={currentCollectiviteBloc}
     isConnected
-    collectivite={fakeCollectivite}
+    collectivite={collectivite}
+    ownedCollectivite={ownedOneCollectivite}
+  />
+);
+export const WithCollectivites = () => (
+  <HeaderObserver
+    authBloc={authBloc}
+    currentCollectiviteBloc={currentCollectiviteBloc}
+    isConnected
+    collectivite={collectivite}
+    ownedCollectivite={ownedCollectivites}
+  />
+);
+export const WithCollectiviteNotMember = () => (
+  <HeaderObserver
+    authBloc={authBloc}
+    currentCollectiviteBloc={currentCollectiviteBloc}
+    isConnected
+    collectivite={collectiviteNotMember}
+    ownedCollectivite={[collectiviteNotMember]}
   />
 );
