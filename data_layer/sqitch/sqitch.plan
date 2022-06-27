@@ -60,3 +60,4 @@ stats/fonctionalite [stats/collectivite utilisateur/droits referentiel/contenu p
 stats/completude [retool/evaluation] 2022-06-20T16:03:06Z Florian <florian@derfurth.com> # Les statistiques sur la completude.
 utils/move_action_data [referentiel/action_statut referentiel/action_commentaire] 2022-06-27T14:49:42Z Florian <florian@derfurth.com> # Permet de mettre à jour le rattachement de données à une action dans le cadre d'une modification du référentiel.
 utils/remove_action_data [referentiel/action_statut referentiel/action_commentaire] 2022-06-27T14:58:09Z Florian <florian@derfurth.com> # Supprime les données rattachées à une action.
+collectivite/activation_event [utilisateur/droits] 2022-06-27T15:10:56Z Florian <florian@derfurth.com> # Permet au business de détecter l'activation d'une collectivité.
