@@ -4,6 +4,9 @@ import {toLocaleFixed} from 'utils/toFixed';
 
 type TCellProps = CellProps<PriorisationRow> & {referentiel: string | null};
 
+const isNullable = (value: number | undefined | null): boolean =>
+  !value || isNaN(value);
+
 /**
  * Affiche une cellule contenant un pourcentage
  */
@@ -12,7 +15,7 @@ export const CellPercent = (props: TCellProps) => {
 
   return (
     <span className="inline-block w-full text-right">
-      {isNaN(value) ? 0 : toLocaleFixed(value * 100)} %
+      {isNullable(value) ? 0 : toLocaleFixed(value * 100)} %
     </span>
   );
 };
@@ -25,7 +28,7 @@ export const CellPoints = (props: TCellProps) => {
 
   return (
     <span className="inline-block w-full text-right">
-      {isNaN(value) ? 0 : toLocaleFixed(value)}
+      {isNullable(value) ? 0 : toLocaleFixed(value)}
     </span>
   );
 };
