@@ -3,10 +3,11 @@ import {CurrentCollectiviteObserved} from 'core-logic/observables';
 import {CollectiviteNavDropdown, CollectiviteNavSingle} from '../Header';
 import MobileHeaderNavigation from './MobileHeaderNavigation/MobileHeaderNavigation';
 import MobileCollectiviteNavigation from './MobileCollectiviteNavigation';
+import {User} from '@supabase/supabase-js';
 
 type Props = {
   isConnected: boolean;
-  user: any; // TODO: Type user
+  user: User | null;
   collectiviteNav: (CollectiviteNavSingle | CollectiviteNavDropdown)[];
   currentCollectivite: CurrentCollectiviteObserved | null;
   ownedCollectivites: CurrentCollectiviteObserved[] | null;

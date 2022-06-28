@@ -2,6 +2,7 @@ import {authBloc, AuthBloc} from 'core-logic/observables';
 import {observer} from 'mobx-react-lite';
 import {Link} from 'react-router-dom';
 import {signInPath, signUpPath} from 'app/paths';
+import {User} from '@supabase/supabase-js';
 
 export const LogoutBtn = observer(
   ({
@@ -33,7 +34,7 @@ const profilePath = '#';
 
 type Props = {
   isConnected: boolean;
-  user: any; //TODO: Type user
+  user: User | null;
 };
 
 const HeaderNavigation = ({isConnected, user}: Props) => {
@@ -53,7 +54,7 @@ const HeaderNavigation = ({isConnected, user}: Props) => {
             <div className="group relative">
               <button className="fr-link">
                 <div className="fr-fi-account-line mr-2" />
-                {user.name}
+                {user && user.email}
                 <div className="fr-fi-arrow-down-s-line ml-2" />
               </button>
               <nav className="bg-white invisible absolute inset-x-0 top-full transition-all opacity-0 drop-shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50">

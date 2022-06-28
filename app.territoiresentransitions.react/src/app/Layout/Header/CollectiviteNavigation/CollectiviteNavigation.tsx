@@ -1,6 +1,5 @@
 import {useMemo} from 'react';
 import {Link, NavLink} from 'react-router-dom';
-import {CurrentCollectiviteObserved} from 'core-logic/observables';
 import {
   CollectiviteNavDropdown,
   CollectiviteNavSingle,
@@ -8,6 +7,7 @@ import {
 } from '../Header';
 import CollectiviteNavigationDropdownTab from './CollectiviteNavigationDropdownTab';
 import {makeCollectiviteTableauBordUrl} from 'app/paths';
+import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
 export const activeTabClassName = 'border-b-2 border-bf500';
 
@@ -16,8 +16,8 @@ export const _activeTabStyle = (active: boolean): string =>
 
 type Props = {
   collectiviteNav: (CollectiviteNavSingle | CollectiviteNavDropdown)[];
-  currentCollectivite: CurrentCollectiviteObserved;
-  ownedCollectivites: CurrentCollectiviteObserved[];
+  currentCollectivite: CurrentCollectivite;
+  ownedCollectivites: CurrentCollectivite[];
 };
 
 const CollectiviteNavigation = ({

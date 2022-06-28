@@ -1,3 +1,4 @@
+import {User} from '@supabase/supabase-js';
 import {signInPath, signUpPath} from 'app/paths';
 import {authBloc} from 'core-logic/observables';
 import {useState} from 'react';
@@ -8,7 +9,7 @@ const profilePath = '#';
 
 type Props = {
   isConnected: boolean;
-  user: any;
+  user: User | null;
   toggleMobileNavigation: () => void;
 };
 
@@ -21,11 +22,11 @@ const MobileHeaderNavigation = ({
   const toggleIsProfileOpen = () => setIsProfileOpen(!isProfileOpen);
   return (
     <>
-      {isConnected ? (
+      {isConnected && user ? (
         <div>
           <button className="fr-link w-full !p-4" onClick={toggleIsProfileOpen}>
             <div className="fr-fi-account-line mr-2" />
-            <span>{user.name}</span>
+            <span>{user.email}</span>
             <div
               className={`ml-auto fr-fi-arrow-down-s-line ${
                 isProfileOpen && 'rotate-180'
