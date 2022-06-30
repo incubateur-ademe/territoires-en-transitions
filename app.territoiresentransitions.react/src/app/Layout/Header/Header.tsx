@@ -12,6 +12,7 @@ import CollectiviteNavigation from './CollectiviteNavigation';
 import MobileNavigation from './MobileNavigation';
 import {makeCollectiviteNavItems} from './makeCollectiviteNavItems';
 import {OwnedCollectiviteRead} from 'generated/dataLayer';
+import ademeLogoImage from 'app/static/img/ademe.jpg';
 
 export const Header = ({
   auth,
@@ -41,7 +42,7 @@ export const Header = ({
                 </div>
                 <div className="fr-header__ademe flex-shrink-0">
                   <img
-                    src="https://territoiresentransitions.fr/img/ademe.jpg"
+                    src={ademeLogoImage}
                     alt="logo ADEME"
                     loading="lazy"
                     className="h-20"
