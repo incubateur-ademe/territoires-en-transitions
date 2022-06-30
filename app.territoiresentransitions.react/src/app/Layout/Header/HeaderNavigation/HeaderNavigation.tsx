@@ -3,10 +3,6 @@ import {signInPath, signUpPath} from 'app/paths';
 import {TAuthContext} from 'core-logic/api/auth/AuthProvider';
 import {LogoutBtn} from '../LogoutBtn';
 
-/** FAKE DATA -> TODO: Replace with hook */
-const profilePath = '#';
-/** END FAKE DATA */
-
 type Props = {
   auth: TAuthContext;
 };
@@ -30,14 +26,15 @@ const HeaderNavigation = ({auth}: Props) => {
               <button className="fr-link">
                 <div className="fr-fi-account-line mr-2" />
                 {user?.prenom}
-                <div className="fr-fi-arrow-down-s-line ml-2" />
+                <div className="fr-fi-arrow-down-s-line ml-2 scale-90 group-focus-within:rotate-180" />
               </button>
               <nav className="bg-white invisible absolute inset-x-0 top-full transition-all opacity-0 drop-shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50">
                 <ul>
                   <li className="fr-nav__item border-b border-gray-200">
-                    <Link className="fr-nav__link" to={profilePath}>
+                    {/* En attente de la page "Profil" */}
+                    {/* <Link className="fr-nav__link" to="#">
                       <span className="px-3">Profil</span>
-                    </Link>
+                    </Link> */}
                   </li>
                   <li className="fr-nav__item">
                     <LogoutBtn auth={auth} />
