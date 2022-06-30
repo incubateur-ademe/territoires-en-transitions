@@ -12,7 +12,6 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 
 export const CollectiviteRedirector = () => {
   const collectiviteId = useCollectiviteId();
-  console.log(collectiviteId);
   currentCollectiviteBloc.update({collectiviteId});
 
   return null;

@@ -31,7 +31,6 @@ export class CurrentCollectiviteBloc {
   };
 
   async update({collectiviteId}: {collectiviteId: number | null}) {
-    console.log('CollectiviteBloc update ', collectiviteId);
     if (collectiviteId === null) {
       this.setCollectiviteId(null);
       this.setNom(null);
