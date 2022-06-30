@@ -1,43 +1,18 @@
-import {authBloc, AuthBloc} from 'core-logic/observables';
-import {observer} from 'mobx-react-lite';
 import {Link} from 'react-router-dom';
 import {signInPath, signUpPath} from 'app/paths';
-import {User} from '@supabase/supabase-js';
-
-export const LogoutBtn = observer(
-  ({
-    bloc,
-    additionalOnClick,
-  }: {
-    bloc: AuthBloc;
-    additionalOnClick?: () => void;
-  }) => (
-    <Link
-      className="fr-nav__link"
-      data-test="logoutBtn"
-      to={signUpPath}
-      onClick={() => {
-        bloc.disconnect();
-        {
-          additionalOnClick && additionalOnClick();
-        }
-      }}
-    >
-      <span className="px-3">Déconnexion</span>
-    </Link>
-  )
-);
+import {TAuthContext} from 'core-logic/api/auth/AuthProvider';
+import {LogoutBtn} from '../LogoutBtn';
 
 /** FAKE DATA -> TODO: Replace with hook */
 const profilePath = '#';
 /** END FAKE DATA */
 
 type Props = {
-  isConnected: boolean;
-  user: User | null;
+  auth: TAuthContext;
 };
 
-const HeaderNavigation = ({isConnected, user}: Props) => {
+const HeaderNavigation = ({auth}: Props) => {
+  const {isConnected, user} = auth;
   return (
     <div className="fr-header__tools hidden lg:block">
       <div className="fr-header__tools-links">
@@ -54,7 +29,7 @@ const HeaderNavigation = ({isConnected, user}: Props) => {
             <div className="group relative">
               <button className="fr-link">
                 <div className="fr-fi-account-line mr-2" />
-                {user && user.email}
+                {user?.prenom}
                 <div className="fr-fi-arrow-down-s-line ml-2" />
               </button>
               <nav className="bg-white invisible absolute inset-x-0 top-full transition-all opacity-0 drop-shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50">
@@ -65,7 +40,7 @@ const HeaderNavigation = ({isConnected, user}: Props) => {
                     </Link>
                   </li>
                   <li className="fr-nav__item">
-                    <LogoutBtn bloc={authBloc} />
+                    <LogoutBtn auth={auth} />
                   </li>
                 </ul>
               </nav>
