@@ -38,6 +38,7 @@ export const collectivitePlanActionPath = `${collectivitePath}/plan_action/:${pl
 export const collectiviteNouvelleFichePath = `${collectivitePath}/nouvelle_fiche`;
 export const collectiviteFichePath = `${collectivitePath}/fiche/:${ficheParam}`;
 export const collectiviteUsersPath = `${collectivitePath}/users`;
+export const collectiviteAllCollectivitesPath = `${collectivitePath}/toutes_collectivites`;
 export const collectivitePersoRefPath = `${collectivitePath}/personnalisation`;
 export const collectivitePersoRefThematiquePath = `${collectivitePersoRefPath}/:${thematiqueParam}`;
 
@@ -174,6 +175,16 @@ export const makeCollectiviteUsersUrl = ({
   collectiviteId: number;
 }) =>
   collectiviteUsersPath.replace(
+    `:${collectiviteParam}`,
+    collectiviteId.toString()
+  );
+
+export const makeCollectiviteAllCollectivitesUrl = ({
+  collectiviteId,
+}: {
+  collectiviteId: number;
+}) =>
+  collectiviteAllCollectivitesPath.replace(
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );
