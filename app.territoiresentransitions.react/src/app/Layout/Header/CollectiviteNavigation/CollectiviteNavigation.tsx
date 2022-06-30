@@ -1,13 +1,14 @@
 import {useMemo} from 'react';
 import {Link, NavLink} from 'react-router-dom';
-import {CurrentCollectiviteObserved} from 'core-logic/observables';
-import {
-  CollectiviteNavDropdown,
-  CollectiviteNavSingle,
-  isSingleNavItemDropdown,
-} from '../Header';
 import CollectiviteNavigationDropdownTab from './CollectiviteNavigationDropdownTab';
 import {makeCollectiviteTableauBordUrl} from 'app/paths';
+import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import {
+  CollectiviteNavDropdown,
+  CollectiviteNavItems,
+  isSingleNavItemDropdown,
+} from '../makeCollectiviteNavItems';
+import {OwnedCollectiviteRead} from 'generated/dataLayer';
 
 export const activeTabClassName = 'border-b-2 border-bf500';
 
@@ -15,9 +16,9 @@ export const _activeTabStyle = (active: boolean): string =>
   `${active ? activeTabClassName : ''}`;
 
 type Props = {
-  collectiviteNav: (CollectiviteNavSingle | CollectiviteNavDropdown)[];
-  currentCollectivite: CurrentCollectiviteObserved;
-  ownedCollectivites: CurrentCollectiviteObserved[];
+  collectiviteNav: CollectiviteNavItems;
+  currentCollectivite: CurrentCollectivite;
+  ownedCollectivites: OwnedCollectiviteRead[];
 };
 
 const CollectiviteNavigation = ({
@@ -26,7 +27,7 @@ const CollectiviteNavigation = ({
   ownedCollectivites,
 }: Props) => {
   const collectivitesDropdown: CollectiviteNavDropdown = useMemo(() => {
-    const collectivitesWithoutCurrentCollectivite = ownedCollectivites.filter(
+    const collectivitesWithoutCurrentCollectivite = ownedCollectivites?.filter(
       e => currentCollectivite && e.nom !== currentCollectivite.nom
     );
 
@@ -53,26 +54,22 @@ const CollectiviteNavigation = ({
           className="flex flex-row w-full text-sm"
           aria-label="Menu principal"
         >
-          {collectiviteNav.map(
-            item =>
-              ((currentCollectivite.role_name === null &&
-                !item.displayOnlyToMember) ||
-                currentCollectivite.role_name !== null) &&
-              (isSingleNavItemDropdown(item) ? (
-                <CollectiviteNavigationDropdownTab
-                  key={item.menuLabel}
-                  item={item}
-                />
-              ) : (
-                <NavLink
-                  key={item.label}
-                  className="fr-nav__item justify-center p-4"
-                  activeClassName={activeTabClassName}
-                  to={item.path}
-                >
-                  {item.label}
-                </NavLink>
-              ))
+          {collectiviteNav.map(item =>
+            isSingleNavItemDropdown(item) ? (
+              <CollectiviteNavigationDropdownTab
+                key={item.menuLabel}
+                item={item}
+              />
+            ) : (
+              <NavLink
+                key={item.label}
+                className="fr-nav__item justify-center p-4"
+                activeClassName={activeTabClassName}
+                to={item.path}
+              >
+                {item.label}
+              </NavLink>
+            )
           )}
           <div className="group relative flex ml-auto">
             {collectivitesDropdown.listPathsAndLabels.length === 0 ? (

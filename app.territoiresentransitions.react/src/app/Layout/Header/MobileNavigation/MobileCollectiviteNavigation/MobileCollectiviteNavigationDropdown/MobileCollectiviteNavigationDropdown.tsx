@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import {Link, NavLink} from 'react-router-dom';
-import {CollectiviteNavDropdown} from '../../../Header';
+import {CollectiviteNavDropdown} from 'app/Layout/Header/makeCollectiviteNavItems';
 
 type DropdownProps = {
   item: CollectiviteNavDropdown;
