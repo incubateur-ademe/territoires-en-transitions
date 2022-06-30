@@ -1,9 +1,9 @@
+import {useQuery} from 'react-query';
 import {useAuth} from 'core-logic/api/auth/AuthProvider';
 import {supabaseClient} from 'core-logic/api/supabase';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 import {ElsesCollectiviteRead, RoleName} from 'generated/dataLayer';
 import {OwnedCollectiviteRead} from 'generated/dataLayer/owned_collectivite_read';
-import {useQuery} from 'react-query';
-import {useCollectiviteId} from './params';
 
 export type CurrentCollectivite = {
   collectivite_id: number;
@@ -18,11 +18,10 @@ export type CurrentCollectivite = {
 const fetchOwnedCollectivite = async (
   collectivite_id: number
 ): Promise<OwnedCollectiviteRead | null> => {
-  const query = supabaseClient
+  const {error, data} = await supabaseClient
     .from<OwnedCollectiviteRead>('owned_collectivite')
     .select()
     .match({collectivite_id});
-  const {error, data} = await query;
 
   if (error) {
     throw new Error(error.message);
@@ -36,11 +35,10 @@ const fetchOwnedCollectivite = async (
 const fetchElsesCollectivite = async (
   collectivite_id: number
 ): Promise<ElsesCollectiviteRead | null> => {
-  const query = supabaseClient
+  const {error, data} = await supabaseClient
     .from<ElsesCollectiviteRead>('elses_collectivite')
     .select()
     .match({collectivite_id});
-  const {error, data} = await query;
 
   if (error) {
     throw new Error(error.message);
@@ -51,12 +49,9 @@ const fetchElsesCollectivite = async (
 
 // charge une collectivité
 const fetchCurrentCollectivite = async (
-  collectivite_id: number | null
+  collectivite_id: number
 ): Promise<CurrentCollectivite | null> => {
-  if (!collectivite_id) {
-    return null;
-  }
-
+  // vérifie si la collectivité est rattachée au compte courant
   const ownedCollectivite = await fetchOwnedCollectivite(collectivite_id);
   if (ownedCollectivite) {
     const {nom, role_name} = ownedCollectivite;
@@ -69,6 +64,7 @@ const fetchCurrentCollectivite = async (
     };
   }
 
+  // sinon charge ses données depuis la vue "elses_collectivite"
   const elseCollectivite = await fetchElsesCollectivite(collectivite_id);
   if (!elseCollectivite) {
     return null;
@@ -88,11 +84,11 @@ const fetchCurrentCollectivite = async (
 // et détermine si elle est en lecture seule pour l'utilisateur courant ou non
 // la requête est rechargée quand le user id ou le collectivite id changent
 export const useCurrentCollectivite = () => {
-  const {user} = useAuth();
+  const {user} = useAuth() || {};
   const collectivite_id = useCollectiviteId();
   const {data} = useQuery<CurrentCollectivite | null>(
-    ['current_collectivite', user?.id, collectivite_id],
-    () => fetchCurrentCollectivite(collectivite_id)
+    ['current_collectivite', collectivite_id, user?.id],
+    () => (collectivite_id ? fetchCurrentCollectivite(collectivite_id) : null)
   );
   return data || null;
 };
