@@ -6,18 +6,21 @@ const CollectiviteNavigationDropdownTab = (props: {
   item: CollectiviteNavDropdown;
 }) => {
   const location = useLocation();
-  const activePath = props.item?.listPathsAndLabels.find(
-    ({path}) => location.pathname === path
-  )?.path;
 
-  // Remove focus thus close the menu.
-  // Since we are below useLocation it happens only when location change.
-  if (document.activeElement instanceof HTMLElement)
-    document.activeElement.blur();
+  const isActiveTitle = props.item.listPathsAndLabels.some(
+    ({path, alternativeActivePath}) =>
+      location.pathname === path ||
+      (alternativeActivePath &&
+        alternativeActivePath.some(e => location.pathname === e))
+  );
+
+  const isActivePath = (path: string, alternativePath?: string[]) =>
+    path === location.pathname ||
+    (!!alternativePath && alternativePath.some(e => e === location.pathname));
 
   return (
     <div className="group relative">
-      <div className={_activeTabStyle(!!activePath)}>
+      <div className={_activeTabStyle(isActiveTitle)}>
         <button className="flex items-center p-4 group-focus-within:bg-bf925">
           {props.item.menuLabel}
           <div className="ml-2 mt-1 fr-fi-arrow-down-s-line scale-75 group-focus-within:rotate-180" />
@@ -29,7 +32,10 @@ const CollectiviteNavigationDropdownTab = (props: {
             <li className="fr-nav__item" key={labelAndPathSuffix.label}>
               <Link
                 className={`fr-nav__link ${_activeTabStyle(
-                  labelAndPathSuffix.path === activePath
+                  isActivePath(
+                    labelAndPathSuffix.path,
+                    labelAndPathSuffix.alternativeActivePath
+                  )
                 )}`}
                 to={labelAndPathSuffix.path}
               >
