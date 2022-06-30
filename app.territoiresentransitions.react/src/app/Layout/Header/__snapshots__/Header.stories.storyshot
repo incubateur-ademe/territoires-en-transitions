@@ -137,10 +137,6 @@ exports[`Storyshots App/Layout/Header/Header Connected 1`] = `
             </ul>
           </div>
         </div>
-        <button
-          className="fr-fi-menu-fill absolute top-6 right-6 z-10 lg:hidden"
-          onClick={[Function]}
-        />
       </div>
     </div>
   </div>
@@ -254,10 +250,6 @@ exports[`Storyshots App/Layout/Header/Header Not Connected 1`] = `
             </ul>
           </div>
         </div>
-        <button
-          className="fr-fi-menu-fill absolute top-6 right-6 z-10 lg:hidden"
-          onClick={[Function]}
-        />
       </div>
     </div>
   </div>
@@ -416,11 +408,11 @@ exports[`Storyshots App/Layout/Header/Header With Collectivite 1`] = `
     >
       <nav
         aria-label="Menu principal"
-        className="flex flex-row gap-5"
+        className="flex flex-row w-full text-sm"
       >
         <a
           aria-current={null}
-          className="fr-nav__item p-4"
+          className="fr-nav__item justify-center p-4"
           href="/collectivite/1/tableau_bord"
           onClick={[Function]}
         >
@@ -433,27 +425,30 @@ exports[`Storyshots App/Layout/Header/Header With Collectivite 1`] = `
             className=""
           >
             <button
-              className="p-4"
+              className="flex items-center p-4 group-focus-within:bg-bf925"
             >
-              Référentiels
+              Climat Air Énergie
+              <div
+                className="ml-2 mt-1 fr-fi-arrow-down-s-line scale-75 group-focus-within:rotate-180"
+              />
             </button>
           </div>
           <nav
-            className="bg-white invisible absolute left-0 top-full transition-all opacity-0 drop-shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
+            className="bg-white invisible absolute left-0 top-full min-w-full w-max transition-all opacity-0 drop-shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
           >
             <ul>
               <li
                 className="fr-nav__item"
               >
                 <a
-                  className="fr-nav__link whitespace-nowrap "
-                  href="/collectivite/1/referentiels/eci/progression"
+                  className="fr-nav__link "
+                  href="/collectivite/1/referentiels/cae/progression"
                   onClick={[Function]}
                 >
                   <span
-                    className="px-3"
+                    className="block px-3 max-w-xs"
                   >
-                    Économie Circulaire
+                    Référentiel
                   </span>
                 </a>
               </li>
@@ -461,14 +456,29 @@ exports[`Storyshots App/Layout/Header/Header With Collectivite 1`] = `
                 className="fr-nav__item"
               >
                 <a
-                  className="fr-nav__link whitespace-nowrap "
-                  href="/collectivite/1/referentiels/cae/progression"
+                  className="fr-nav__link "
+                  href="/collectivite/1/indicateurs/cae"
                   onClick={[Function]}
                 >
                   <span
-                    className="px-3"
+                    className="block px-3 max-w-xs"
                   >
-                    Climat Air Énergie
+                    Indicateurs
+                  </span>
+                </a>
+              </li>
+              <li
+                className="fr-nav__item"
+              >
+                <a
+                  className="fr-nav__link "
+                  href="/collectivite/1/labellisation/cae"
+                  onClick={[Function]}
+                >
+                  <span
+                    className="block px-3 max-w-xs"
+                  >
+                    Labellisation
                   </span>
                 </a>
               </li>
@@ -482,27 +492,45 @@ exports[`Storyshots App/Layout/Header/Header With Collectivite 1`] = `
             className=""
           >
             <button
-              className="p-4"
+              className="flex items-center p-4 group-focus-within:bg-bf925"
             >
-              Indicateurs
+              Économie circulaire
+              <div
+                className="ml-2 mt-1 fr-fi-arrow-down-s-line scale-75 group-focus-within:rotate-180"
+              />
             </button>
           </div>
           <nav
-            className="bg-white invisible absolute left-0 top-full transition-all opacity-0 drop-shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
+            className="bg-white invisible absolute left-0 top-full min-w-full w-max transition-all opacity-0 drop-shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
           >
             <ul>
               <li
                 className="fr-nav__item"
               >
                 <a
-                  className="fr-nav__link whitespace-nowrap "
+                  className="fr-nav__link "
+                  href="/collectivite/1/referentiels/eci/progression"
+                  onClick={[Function]}
+                >
+                  <span
+                    className="block px-3 max-w-xs"
+                  >
+                    Référentiel
+                  </span>
+                </a>
+              </li>
+              <li
+                className="fr-nav__item"
+              >
+                <a
+                  className="fr-nav__link "
                   href="/collectivite/1/indicateurs/eci"
                   onClick={[Function]}
                 >
                   <span
-                    className="px-3"
+                    className="block px-3 max-w-xs"
                   >
-                    Économie Circulaire
+                    Indicateurs
                   </span>
                 </a>
               </li>
@@ -510,14 +538,51 @@ exports[`Storyshots App/Layout/Header/Header With Collectivite 1`] = `
                 className="fr-nav__item"
               >
                 <a
-                  className="fr-nav__link whitespace-nowrap "
-                  href="/collectivite/1/indicateurs/cae"
+                  className="fr-nav__link "
+                  href="/collectivite/1/labellisation/eci"
                   onClick={[Function]}
                 >
                   <span
-                    className="px-3"
+                    className="block px-3 max-w-xs"
                   >
-                    Climat Air Énergie
+                    Labellisation
+                  </span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+        <div
+          className="group relative"
+        >
+          <div
+            className=""
+          >
+            <button
+              className="flex items-center p-4 group-focus-within:bg-bf925"
+            >
+              Pilotage
+              <div
+                className="ml-2 mt-1 fr-fi-arrow-down-s-line scale-75 group-focus-within:rotate-180"
+              />
+            </button>
+          </div>
+          <nav
+            className="bg-white invisible absolute left-0 top-full min-w-full w-max transition-all opacity-0 drop-shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
+          >
+            <ul>
+              <li
+                className="fr-nav__item"
+              >
+                <a
+                  className="fr-nav__link "
+                  href="/collectivite/1/plan_action/plan_collectivite"
+                  onClick={[Function]}
+                >
+                  <span
+                    className="block px-3 max-w-xs"
+                  >
+                    Plans d'action
                   </span>
                 </a>
               </li>
@@ -525,14 +590,14 @@ exports[`Storyshots App/Layout/Header/Header With Collectivite 1`] = `
                 className="fr-nav__item"
               >
                 <a
-                  className="fr-nav__link whitespace-nowrap "
+                  className="fr-nav__link "
                   href="/collectivite/1/indicateurs/crte"
                   onClick={[Function]}
                 >
                   <span
-                    className="px-3"
+                    className="block px-3 max-w-xs"
                   >
-                    CRTE
+                    Indicateurs contrat de relance et de transition écologique (CRTE)
                   </span>
                 </a>
               </li>
@@ -540,14 +605,66 @@ exports[`Storyshots App/Layout/Header/Header With Collectivite 1`] = `
                 className="fr-nav__item"
               >
                 <a
-                  className="fr-nav__link whitespace-nowrap "
+                  className="fr-nav__link "
                   href="/collectivite/1/indicateurs/perso"
                   onClick={[Function]}
                 >
                   <span
-                    className="px-3"
+                    className="block px-3 max-w-xs"
                   >
-                    Personnalisés
+                    Indicateurs personnalisés
+                  </span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+        <div
+          className="group relative"
+        >
+          <div
+            className=""
+          >
+            <button
+              className="flex items-center p-4 group-focus-within:bg-bf925"
+            >
+              Paramètres
+              <div
+                className="ml-2 mt-1 fr-fi-arrow-down-s-line scale-75 group-focus-within:rotate-180"
+              />
+            </button>
+          </div>
+          <nav
+            className="bg-white invisible absolute left-0 top-full min-w-full w-max transition-all opacity-0 drop-shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
+          >
+            <ul>
+              <li
+                className="fr-nav__item"
+              >
+                <a
+                  className="fr-nav__link "
+                  href="/collectivite/1/personnalisation"
+                  onClick={[Function]}
+                >
+                  <span
+                    className="block px-3 max-w-xs"
+                  >
+                    Personnalisation des référentiels
+                  </span>
+                </a>
+              </li>
+              <li
+                className="fr-nav__item"
+              >
+                <a
+                  className="fr-nav__link "
+                  href="/collectivite/1/users"
+                  onClick={[Function]}
+                >
+                  <span
+                    className="block px-3 max-w-xs"
+                  >
+                    Gestion des membres
                   </span>
                 </a>
               </li>
@@ -556,117 +673,458 @@ exports[`Storyshots App/Layout/Header/Header With Collectivite 1`] = `
         </div>
         <a
           aria-current={null}
-          className="fr-nav__item p-4"
-          href="/collectivite/1/plan_action/plan_collectivite"
+          className="fr-nav__item justify-center p-4"
+          href="/collectivite/1/toutes_collectivites"
           onClick={[Function]}
         >
-          Plans d'action
+          Toutes les collectivités
         </a>
         <div
-          className="group relative"
+          className="group relative flex ml-auto"
         >
-          <div
-            className=""
+          <p
+            className="flex items-center p-4 text-sm font-bold"
           >
-            <button
-              className="p-4"
-            >
-              Labellisation
-            </button>
-          </div>
-          <nav
-            className="bg-white invisible absolute left-0 top-full transition-all opacity-0 drop-shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
-          >
-            <ul>
-              <li
-                className="fr-nav__item"
-              >
-                <a
-                  className="fr-nav__link whitespace-nowrap "
-                  href="/collectivite/1/labellisation/eci"
-                  onClick={[Function]}
-                >
-                  <span
-                    className="px-3"
-                  >
-                    Économie Circulaire
-                  </span>
-                </a>
-              </li>
-              <li
-                className="fr-nav__item"
-              >
-                <a
-                  className="fr-nav__link whitespace-nowrap "
-                  href="/collectivite/1/labellisation/cae"
-                  onClick={[Function]}
-                >
-                  <span
-                    className="px-3"
-                  >
-                    Climat Air Énergie
-                  </span>
-                </a>
-              </li>
-            </ul>
-          </nav>
-        </div>
-        <div
-          className="group relative"
-        >
-          <div
-            className=""
-          >
-            <button
-              className="p-4"
-            >
-              Paramètres
-            </button>
-          </div>
-          <nav
-            className="bg-white invisible absolute left-0 top-full transition-all opacity-0 drop-shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
-          >
-            <ul>
-              <li
-                className="fr-nav__item"
-              >
-                <a
-                  className="fr-nav__link whitespace-nowrap "
-                  href="/collectivite/1/users"
-                  onClick={[Function]}
-                >
-                  <span
-                    className="px-3"
-                  >
-                    Gestion des accès
-                  </span>
-                </a>
-              </li>
-              <li
-                className="fr-nav__item"
-              >
-                <a
-                  className="fr-nav__link whitespace-nowrap "
-                  href="/collectivite/1/personnalisation"
-                  onClick={[Function]}
-                >
-                  <span
-                    className="px-3"
-                  >
-                    Personnalisation des référentiels
-                  </span>
-                </a>
-              </li>
-            </ul>
-          </nav>
+            Test collectivite
+          </p>
         </div>
       </nav>
-      <div
-        className="flex items-center font-bold"
-      >
-        Test collectivite
-      </div>
     </div>
   </div>
 </header>
+`;
+
+exports[`Storyshots App/Layout/Header/Header With Readonly Collectivite 1`] = `
+Array [
+  <header
+    className="header fr-header "
+    role="banner"
+  >
+    <div
+      className="fr-header__body"
+    >
+      <div
+        className="fr-container"
+      >
+        <div
+          className="fr-header__body-row header__row"
+        >
+          <div
+            className="fr-header__brand fr-enlarge-link pointer-events-none lg:pointer-events-auto"
+          >
+            <div
+              className="fr-header__brand-top !w-auto"
+            >
+              <div
+                className="fr-header__logo"
+              >
+                <p
+                  className="fr-logo"
+                  title="république française"
+                >
+                  république
+                  <br />
+                  française
+                </p>
+              </div>
+            </div>
+            <div
+              className="fr-header__ademe flex-shrink-0"
+            >
+              <img
+                alt="logo ADEME"
+                className="h-20"
+                loading="lazy"
+                src="https://territoiresentransitions.fr/img/ademe.jpg"
+              />
+            </div>
+            <div
+              className="fr-header__service"
+            >
+              <a
+                href="/"
+                title="Accueil"
+              >
+                <p
+                  className="fr-header__service-title pointer-events-auto"
+                >
+                  Territoires en Transitions
+                </p>
+              </a>
+              <p
+                className="text-sm"
+              >
+                Accompagner la transition écologique des collectivités
+              </p>
+            </div>
+          </div>
+          <div
+            className="fr-header__tools hidden lg:block"
+          >
+            <div
+              className="fr-header__tools-links"
+            >
+              <ul
+                className="fr-links-group"
+              >
+                <a
+                  className="fr-link"
+                  data-test="help"
+                  href="https://aide.territoiresentransitions.fr/fr/"
+                >
+                  <div
+                    className="fr-fi-question-line mr-2"
+                  />
+                  Aide
+                </a>
+                <div
+                  className="group relative"
+                >
+                  <button
+                    className="fr-link"
+                  >
+                    <div
+                      className="fr-fi-account-line mr-2"
+                    />
+                    Émeline
+                    <div
+                      className="fr-fi-arrow-down-s-line ml-2"
+                    />
+                  </button>
+                  <nav
+                    className="bg-white invisible absolute inset-x-0 top-full transition-all opacity-0 drop-shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
+                  >
+                    <ul>
+                      <li
+                        className="fr-nav__item border-b border-gray-200"
+                      >
+                        <a
+                          className="fr-nav__link"
+                          href="/"
+                          onClick={[Function]}
+                        >
+                          <span
+                            className="px-3"
+                          >
+                            Profil
+                          </span>
+                        </a>
+                      </li>
+                      <li
+                        className="fr-nav__item"
+                      >
+                        <a
+                          className="fr-nav__link"
+                          data-test="logoutBtn"
+                          href="/auth/signup"
+                          onClick={[Function]}
+                        >
+                          <span
+                            className="px-3"
+                          >
+                            Déconnexion
+                          </span>
+                        </a>
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
+              </ul>
+            </div>
+          </div>
+          <button
+            className="fr-fi-menu-fill absolute top-6 right-6 z-10 lg:hidden"
+            onClick={[Function]}
+          />
+        </div>
+      </div>
+    </div>
+    <div
+      className="fr-container hidden lg:block"
+    >
+      <div
+        className="flex flex-row justify-between"
+      >
+        <nav
+          aria-label="Menu principal"
+          className="flex flex-row w-full text-sm"
+        >
+          <a
+            aria-current={null}
+            className="fr-nav__item justify-center p-4"
+            href="/collectivite/1/tableau_bord"
+            onClick={[Function]}
+          >
+            Tableau de bord
+          </a>
+          <div
+            className="group relative"
+          >
+            <div
+              className=""
+            >
+              <button
+                className="flex items-center p-4 group-focus-within:bg-bf925"
+              >
+                Climat Air Énergie
+                <div
+                  className="ml-2 mt-1 fr-fi-arrow-down-s-line scale-75 group-focus-within:rotate-180"
+                />
+              </button>
+            </div>
+            <nav
+              className="bg-white invisible absolute left-0 top-full min-w-full w-max transition-all opacity-0 drop-shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
+            >
+              <ul>
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    className="fr-nav__link "
+                    href="/collectivite/1/referentiels/cae/progression"
+                    onClick={[Function]}
+                  >
+                    <span
+                      className="block px-3 max-w-xs"
+                    >
+                      Référentiel
+                    </span>
+                  </a>
+                </li>
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    className="fr-nav__link "
+                    href="/collectivite/1/indicateurs/cae"
+                    onClick={[Function]}
+                  >
+                    <span
+                      className="block px-3 max-w-xs"
+                    >
+                      Indicateurs
+                    </span>
+                  </a>
+                </li>
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    className="fr-nav__link "
+                    href="/collectivite/1/labellisation/cae"
+                    onClick={[Function]}
+                  >
+                    <span
+                      className="block px-3 max-w-xs"
+                    >
+                      Labellisation
+                    </span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+          <div
+            className="group relative"
+          >
+            <div
+              className=""
+            >
+              <button
+                className="flex items-center p-4 group-focus-within:bg-bf925"
+              >
+                Économie circulaire
+                <div
+                  className="ml-2 mt-1 fr-fi-arrow-down-s-line scale-75 group-focus-within:rotate-180"
+                />
+              </button>
+            </div>
+            <nav
+              className="bg-white invisible absolute left-0 top-full min-w-full w-max transition-all opacity-0 drop-shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
+            >
+              <ul>
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    className="fr-nav__link "
+                    href="/collectivite/1/referentiels/eci/progression"
+                    onClick={[Function]}
+                  >
+                    <span
+                      className="block px-3 max-w-xs"
+                    >
+                      Référentiel
+                    </span>
+                  </a>
+                </li>
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    className="fr-nav__link "
+                    href="/collectivite/1/indicateurs/eci"
+                    onClick={[Function]}
+                  >
+                    <span
+                      className="block px-3 max-w-xs"
+                    >
+                      Indicateurs
+                    </span>
+                  </a>
+                </li>
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    className="fr-nav__link "
+                    href="/collectivite/1/labellisation/eci"
+                    onClick={[Function]}
+                  >
+                    <span
+                      className="block px-3 max-w-xs"
+                    >
+                      Labellisation
+                    </span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+          <div
+            className="group relative"
+          >
+            <div
+              className=""
+            >
+              <button
+                className="flex items-center p-4 group-focus-within:bg-bf925"
+              >
+                Pilotage
+                <div
+                  className="ml-2 mt-1 fr-fi-arrow-down-s-line scale-75 group-focus-within:rotate-180"
+                />
+              </button>
+            </div>
+            <nav
+              className="bg-white invisible absolute left-0 top-full min-w-full w-max transition-all opacity-0 drop-shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
+            >
+              <ul>
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    className="fr-nav__link "
+                    href="/collectivite/1/plan_action/plan_collectivite"
+                    onClick={[Function]}
+                  >
+                    <span
+                      className="block px-3 max-w-xs"
+                    >
+                      Plans d'action
+                    </span>
+                  </a>
+                </li>
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    className="fr-nav__link "
+                    href="/collectivite/1/indicateurs/crte"
+                    onClick={[Function]}
+                  >
+                    <span
+                      className="block px-3 max-w-xs"
+                    >
+                      Indicateurs contrat de relance et de transition écologique (CRTE)
+                    </span>
+                  </a>
+                </li>
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    className="fr-nav__link "
+                    href="/collectivite/1/indicateurs/perso"
+                    onClick={[Function]}
+                  >
+                    <span
+                      className="block px-3 max-w-xs"
+                    >
+                      Indicateurs personnalisés
+                    </span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+          <a
+            aria-current={null}
+            className="fr-nav__item justify-center p-4"
+            href="/collectivite/1/toutes_collectivites"
+            onClick={[Function]}
+          >
+            Toutes les collectivités
+          </a>
+          <div
+            className="group relative flex ml-auto"
+          >
+            <button
+              className="flex items-center p-4 font-bold group-focus-within:bg-bf925"
+            >
+              Test collectivite
+              <div
+                className="ml-2 mt-1 fr-fi-arrow-down-s-line scale-75 group-focus-within:rotate-180"
+              />
+            </button>
+            <nav
+              className="bg-white invisible absolute left-0 top-full min-w-full w-max transition-all opacity-0 drop-shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
+            >
+              <ul>
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    className="fr-nav__link"
+                    href="/collectivite/2/tableau_bord"
+                    onClick={[Function]}
+                  >
+                    <span
+                      className="block px-3 max-w-xs"
+                    >
+                      Collectivité 2
+                    </span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </header>,
+  <div
+    className="flex justify-center items-center bg-yellow-400 py-4 bg-opacity-70"
+  >
+    <div
+      className="text-sm mr-4"
+    >
+      Lecture seule
+    </div>
+    <div
+      className="bg-white"
+    >
+      <div
+        onClick={[Function]}
+      >
+        <button
+          className="fr-btn fr-btn--secondary fr-btn--sm"
+          onClick={[Function]}
+        >
+          Rejoindre cette collectivité
+        </button>
+      </div>
+    </div>
+  </div>,
+]
 `;
