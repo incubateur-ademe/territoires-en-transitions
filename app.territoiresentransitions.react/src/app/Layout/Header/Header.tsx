@@ -1,15 +1,35 @@
-import {CollectiviteNavigation, Navigation} from 'app/Navigation';
+import { CollectiviteNavigation, Navigation } from 'app/Navigation';
+import { RejoindreCetteCollectiviteDialog } from 'app/pages/MesCollectivites/RejoindreCetteCollectiviteDialog';
+import { CollectiviteRedirector } from 'app/Redirector';
+import ademeLogoImage from 'app/static/img/ademe.jpg';
+import { TAuthContext } from 'core-logic/api/auth/AuthProvider';
+import { getReferentContacts } from 'core-logic/api/procedures/collectiviteProcedures';
+import {
+  CurrentCollectivite
+} from 'core-logic/hooks/useCurrentCollectivite';
 import {
   authBloc,
   AuthBloc,
   currentCollectiviteBloc,
-  CurrentCollectiviteBloc,
+  CurrentCollectiviteBloc
 } from 'core-logic/observables';
-import {observer} from 'mobx-react-lite';
-import {CollectiviteRedirector} from 'app/Redirector';
+import { OwnedCollectiviteRead } from 'generated/dataLayer';
+import { observer } from 'mobx-react-lite';
 import LogoRepubliqueFrancaise from 'ui/logo/LogoRepubliqueFrancaise';
-import {RejoindreCetteCollectiviteDialog} from 'app/pages/MesCollectivites/RejoindreCetteCollectiviteDialog';
-import {getReferentContacts} from 'core-logic/api/procedures/collectiviteProcedures';
+import { makeCollectiviteNavItems } from './makeCollectiviteNavItems';
+
+export const Header = ({
+  auth,
+  currentCollectivite,
+  ownedCollectivites,
+}: {
+  auth: TAuthContext;
+  currentCollectivite: CurrentCollectivite | null;
+  ownedCollectivites: OwnedCollectiviteRead[] | null;
+}) => {
+  const collectiviteNav = currentCollectivite
+    ? makeCollectiviteNavItems(currentCollectivite)
+    : null;
 
 const HeaderObserver = observer(
   ({
@@ -33,7 +53,7 @@ const HeaderObserver = observer(
                 </div>
                 <div className="fr-header__ademe">
                   <img
-                    src="https://territoiresentransitions.fr/img/ademe.jpg"
+                    src={ademeLogoImage}
                     alt="logo ADEME"
                     loading="lazy"
                     className="h-20"
