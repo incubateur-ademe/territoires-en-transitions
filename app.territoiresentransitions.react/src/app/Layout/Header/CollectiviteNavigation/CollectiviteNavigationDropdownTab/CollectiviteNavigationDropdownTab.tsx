@@ -1,15 +1,13 @@
-import * as R from 'ramda';
 import {Link, useLocation} from 'react-router-dom';
-import {CollectiviteNavDropdown} from '../../Header';
+import {CollectiviteNavDropdown} from '../../makeCollectiviteNavItems';
 import {_activeTabStyle} from '../CollectiviteNavigation';
 
 const CollectiviteNavigationDropdownTab = (props: {
   item: CollectiviteNavDropdown;
 }) => {
   const location = useLocation();
-  const activePath = R.find(
-    ({path}) => location.pathname === path,
-    props.item.listPathsAndLabels
+  const activePath = props.item?.listPathsAndLabels.find(
+    ({path}) => location.pathname === path
   )?.path;
 
   // Remove focus thus close the menu.
