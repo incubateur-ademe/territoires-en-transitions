@@ -10,7 +10,7 @@ import {
 } from '../makeCollectiviteNavItems';
 import {OwnedCollectiviteRead} from 'generated/dataLayer';
 
-export const activeTabClassName = 'border-b-2 border-bf500';
+export const activeTabClassName = '!text-bf500 border-b-2 border-bf500';
 
 export const _activeTabStyle = (active: boolean): string =>
   `${active ? activeTabClassName : ''}`;
