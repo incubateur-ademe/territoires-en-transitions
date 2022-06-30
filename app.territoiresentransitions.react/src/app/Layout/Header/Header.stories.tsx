@@ -1,6 +1,7 @@
 import {action} from '@storybook/addon-actions';
 import {Header} from './Header';
 import {CurrentCollectivite} from '../../../core-logic/hooks/useCurrentCollectivite';
+import {OwnedCollectiviteRead} from 'generated/dataLayer';
 
 export default {
   component: Header,
@@ -17,7 +18,7 @@ const authDisconnected = {
 const authConnected = {
   ...authDisconnected,
   isConnected: true,
-  user: {email: 'emeline@beta.gouv.fr'},
+  user: {prenom: 'Émeline'},
 };
 
 const readonlyCollectivite: CurrentCollectivite = {
@@ -28,7 +29,7 @@ const readonlyCollectivite: CurrentCollectivite = {
   readonly: true,
 };
 
-const ownedCollectivite: CurrentCollectivite = {
+const currentCollectivite: CurrentCollectivite = {
   nom: 'Test collectivite',
   collectivite_id: 1,
   role_name: 'referent',
@@ -36,18 +37,45 @@ const ownedCollectivite: CurrentCollectivite = {
   readonly: false,
 };
 
+const ownedCollectivites: OwnedCollectiviteRead[] = [
+  currentCollectivite,
+  {
+    nom: 'Collectivité 2',
+    collectivite_id: 2,
+    role_name: null,
+    isReferent: false,
+    readonly: false,
+  },
+];
+
 export const NotConnected = () => (
-  <Header auth={authDisconnected} currentCollectivite={null} />
+  <Header
+    auth={authDisconnected}
+    currentCollectivite={null}
+    ownedCollectivites={null}
+  />
 );
 
 export const Connected = () => (
-  <Header auth={authConnected} currentCollectivite={null} />
+  <Header
+    auth={authConnected}
+    currentCollectivite={null}
+    ownedCollectivites={null}
+  />
 );
 
 export const WithCollectivite = () => (
-  <Header auth={authConnected} currentCollectivite={ownedCollectivite} />
+  <Header
+    auth={authConnected}
+    currentCollectivite={currentCollectivite}
+    ownedCollectivites={[currentCollectivite]}
+  />
 );
 
 export const WithReadonlyCollectivite = () => (
-  <Header auth={authConnected} currentCollectivite={readonlyCollectivite} />
+  <Header
+    auth={authConnected}
+    currentCollectivite={readonlyCollectivite}
+    ownedCollectivites={ownedCollectivites}
+  />
 );
