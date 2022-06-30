@@ -16,6 +16,7 @@ export interface CollectiviteNavSingle {
   displayOnlyToMember?: boolean;
   label: string;
   path: string;
+  alternativeActivePath?: string[];
 }
 
 export interface CollectiviteNavDropdown {
@@ -55,6 +56,18 @@ export const makeCollectiviteNavItems = (
             collectiviteId,
             referentielId: 'cae',
           }),
+          alternativeActivePath: [
+            makeCollectiviteReferentielUrl({
+              collectiviteId,
+              referentielId: 'cae',
+              referentielVue: 'priorisation',
+            }),
+            makeCollectiviteReferentielUrl({
+              collectiviteId,
+              referentielId: 'cae',
+              referentielVue: 'detail',
+            }),
+          ],
         },
         {
           label: 'Indicateurs',
@@ -81,6 +94,18 @@ export const makeCollectiviteNavItems = (
             collectiviteId,
             referentielId: 'eci',
           }),
+          alternativeActivePath: [
+            makeCollectiviteReferentielUrl({
+              collectiviteId,
+              referentielId: 'eci',
+              referentielVue: 'priorisation',
+            }),
+            makeCollectiviteReferentielUrl({
+              collectiviteId,
+              referentielId: 'eci',
+              referentielVue: 'detail',
+            }),
+          ],
         },
         {
           label: 'Indicateurs',
