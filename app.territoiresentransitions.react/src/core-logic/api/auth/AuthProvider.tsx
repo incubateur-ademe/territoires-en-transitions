@@ -1,18 +1,21 @@
 import {createContext, ReactNode, useContext, useEffect, useState} from 'react';
 import {User, UserCredentials} from '@supabase/supabase-js';
 import {supabaseClient} from '../supabase';
+import {useQuery} from 'react-query';
 
 // typage du contexte exposé par le fournisseur
 export type TAuthContext = {
   connect: (data: UserCredentials) => Promise<boolean>;
   disconnect: () => Promise<boolean>;
-  user: User | null;
+  user: UserData | null;
   authError: string | null;
   isConnected: boolean;
 };
+type UserData = User & DCP;
+type DCP = {nom?: string; prenom?: string};
 
 // crée le contexte
-const AuthContext = createContext<TAuthContext | null>(null);
+export const AuthContext = createContext<TAuthContext | null>(null);
 
 // le hook donnant accès au context
 export const useAuth = () => useContext(AuthContext) as TAuthContext;
@@ -21,6 +24,8 @@ export const useAuth = () => useContext(AuthContext) as TAuthContext;
 export const AuthProvider = ({children}: {children: ReactNode}) => {
   const [user, setUser] = useState<User | null>(null);
   const [authError, setAuthError] = useState<string | null>(null);
+  const dcp = useDCP(user?.id);
+  const userData = user && dcp ? {...user, ...dcp} : null;
 
   // initialisation : enregistre l'écouteur de changements d'état
   useEffect(() => {
@@ -34,7 +39,7 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
         setUser(updatedSession?.user ?? null);
         if (updatedSession?.user) {
           setAuthError(null);
-          setCrispUserData(updatedSession.user);
+          setCrispUserData(userData);
         } else {
           clearCrispUserData();
         }
@@ -73,30 +78,21 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
 
   // les données exposées par le fournisseur de contexte
   const isConnected = Boolean(user);
-  const value = {connect, disconnect, user, authError, isConnected};
+  const value = {connect, disconnect, user: userData, authError, isConnected};
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 // affecte les données de l'utilisateur connecté à la chatbox
-const setCrispUserData = (user: User) => {
-  if ('$crisp' in window) {
+const setCrispUserData = (userData: UserData | null) => {
+  if ('$crisp' in window && userData) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const {$crisp} = window as any;
+    const {nom, prenom, email} = userData;
 
-    // lecture des dcp
-    const {id: userId, email} = user;
-    supabaseClient
-      .from('dcp')
-      .select('user_id,nom,prenom')
-      .eq('user_id', userId)
-      .then(({data}) => {
-        if (data?.length) {
-          const {nom, prenom} = data[0];
-          // enregistre le nom/prénom
-          $crisp.push(['set', 'user:nickname', [`${prenom} ${nom}`]]);
-        }
-      });
+    if (nom && prenom) {
+      $crisp.push(['set', 'user:nickname', [`${prenom} ${nom}`]]);
+    }
 
     // enregistre l'email
     $crisp.push(['set', 'user:email', [email]]);
@@ -111,4 +107,20 @@ const clearCrispUserData = () => {
     $crisp.push(['set', 'user:nickname', [null]]);
     $crisp.push(['set', 'user:email', [null]]);
   }
+};
+
+// lecture des dcp
+const fetchDCP = async (user_id: string) => {
+  const {data} = await supabaseClient
+    .from('dcp')
+    .select('user_id,nom,prenom')
+    .match({user_id});
+
+  return data?.length ? data[0] : null;
+};
+const useDCP = (user_id?: string) => {
+  const {data} = useQuery(['dcp', user_id], () =>
+    user_id ? fetchDCP(user_id) : null
+  );
+  return data;
 };
