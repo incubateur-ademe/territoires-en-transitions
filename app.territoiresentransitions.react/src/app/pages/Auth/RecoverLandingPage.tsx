@@ -3,18 +3,18 @@ import {renderLoader} from 'utils/renderLoader';
 import {Spacer} from 'ui/shared/Spacer';
 import {useParams} from 'react-router-dom';
 
-const ResetPasswordForm = lazy(() => import('./ResetPasswordForm'));
+const RecoverLanding = lazy(() => import('./RecoverLanding'));
 
 /**
- * Permet à l'utilisateur de réinitialiser son mot de passe.
+ * La page de reset de mot passe.
  *
- * On arrive ici une fois que l'on est passé par RecoverLandingPage.
+ * On arrive ici depuis un lien.
  */
-export const ResetPasswordPage = () => {
+export const RecoverLandingPage = () => {
   const {token} = useParams<{token: string}>();
   return (
     <Suspense fallback={renderLoader()}>
-      <ResetPasswordForm token={token} />
+      <RecoverLanding token={token} />
       <Spacer />
     </Suspense>
   );
