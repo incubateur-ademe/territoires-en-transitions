@@ -7,9 +7,9 @@ import {
 } from 'core-logic/observables';
 import {observer} from 'mobx-react-lite';
 import {CollectiviteRedirector} from 'app/Redirector';
+import LogoRepubliqueFrancaise from 'ui/logo/LogoRepubliqueFrancaise';
 import {RejoindreCetteCollectiviteDialog} from 'app/pages/MesCollectivites/RejoindreCetteCollectiviteDialog';
 import {getReferentContacts} from 'core-logic/api/procedures/collectiviteProcedures';
-import LogoRepubliqueFrancaise from 'ui/logo/LogoRepubliqueFrancaise';
 
 const HeaderObserver = observer(
   ({

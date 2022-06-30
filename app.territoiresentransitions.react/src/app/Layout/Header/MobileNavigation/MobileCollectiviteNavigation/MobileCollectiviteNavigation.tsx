@@ -1,18 +1,19 @@
 import {NavLink} from 'react-router-dom';
 import {useMemo} from 'react';
-import {CurrentCollectiviteObserved} from 'core-logic/observables';
-import {
-  CollectiviteNavDropdown,
-  CollectiviteNavSingle,
-  isSingleNavItemDropdown,
-} from '../../Header';
 import MobileCollectiviteNavigationDropdown from './MobileCollectiviteNavigationDropdown';
 import {makeCollectiviteTableauBordUrl} from 'app/paths';
+import {
+  CollectiviteNavDropdown,
+  CollectiviteNavItems,
+  isSingleNavItemDropdown,
+} from '../../makeCollectiviteNavItems';
+import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import {OwnedCollectiviteRead} from 'generated/dataLayer';
 
 type Props = {
-  collectiviteNav: (CollectiviteNavSingle | CollectiviteNavDropdown)[];
-  currentCollectivite: CurrentCollectiviteObserved;
-  ownedCollectivites: CurrentCollectiviteObserved[];
+  collectiviteNav: CollectiviteNavItems;
+  currentCollectivite: CurrentCollectivite;
+  ownedCollectivites: OwnedCollectiviteRead[];
   toggleMobileNavigation: () => void;
 };
 
