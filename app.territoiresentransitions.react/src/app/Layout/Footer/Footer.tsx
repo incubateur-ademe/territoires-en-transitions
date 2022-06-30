@@ -1,6 +1,6 @@
-import React from 'react';
 import {Link} from 'react-router-dom';
 import LogoRepubliqueFrancaise from 'ui/logo/LogoRepubliqueFrancaise';
+import ademeLogoImage from 'app/static/img/ademe.jpg';
 
 const Footer = () => {
   return (
@@ -15,19 +15,12 @@ const Footer = () => {
           <div className="fr-footer__brand flex-shrink-0">
             <LogoRepubliqueFrancaise />
             <div className="px-6">
-              <picture>
-                <source
-                  src="https://territoiresentransitions.fr/img/ademe.jpg 118w"
-                  sizes="118px"
-                />
-                <img
-                  className="footer__logo"
-                  height="100"
-                  src="https://territoiresentransitions.fr/img/ademe.jpg"
-                  alt="ADEME"
-                  loading="lazy"
-                />
-              </picture>
+              <img
+                className="w-32"
+                src={ademeLogoImage}
+                alt="ADEME"
+                loading="lazy"
+              />
             </div>
           </div>
           <div className="fr-footer__content !mt-6 !flex-initial lg:!mt-0 lg:!ml-6">
