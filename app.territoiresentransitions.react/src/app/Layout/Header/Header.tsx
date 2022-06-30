@@ -1,192 +1,30 @@
 import {CollectiviteRedirector} from 'app/Redirector';
 import {JoinCurrentCollectiviteDialog} from 'app/pages/CurrentUserCollectivite/_AddDialog';
 import LogoRepubliqueFrancaise from 'ui/logo/LogoRepubliqueFrancaise';
-import {
-  allCollectivitesPath,
-  makeCollectiviteIndicateursUrl,
-  makeCollectiviteLabellisationUrl,
-  makeCollectivitePersoRefUrl,
-  makeCollectivitePlanActionUrl,
-  makeCollectiviteReferentielUrl,
-  makeCollectiviteTableauBordUrl,
-  makeCollectiviteUsersUrl,
-  planActionDefaultId,
-} from 'app/paths';
-import HeaderNavigation from './HeaderNavigation';
-import CollectiviteNavigation from './CollectiviteNavigation';
-import MobileNavigation from './MobileNavigation';
 import {useAuth, TAuthContext} from 'core-logic/api/auth/AuthProvider';
 import {
   CurrentCollectivite,
   useCurrentCollectivite,
 } from 'core-logic/hooks/useCurrentCollectivite';
-
-const fakeCollectivite: CurrentCollectivite | null = {
-  nom: 'Collectivité 1',
-  collectivite_id: 1,
-  role_name: null,
-  isReferent: false,
-  readonly: false,
-};
-
-const fakeOwnedCollectivites: CurrentCollectivite[] = [
-  {
-    nom: 'Collectivité 1',
-    collectivite_id: 1,
-    role_name: null,
-    isReferent: false,
-    readonly: false,
-  },
-  {
-    nom: 'Collectivité 2',
-    collectivite_id: 2,
-    role_name: null,
-    isReferent: false,
-    readonly: false,
-  },
-  {
-    nom: 'Collectivité 3',
-    collectivite_id: 3,
-    role_name: null,
-    isReferent: false,
-    readonly: false,
-  },
-];
-
-export interface CollectiviteNavSingle {
-  displayOnlyToMember?: boolean;
-  label: string;
-  path: string;
-}
-
-export interface CollectiviteNavDropdown {
-  isSelectCollectivite?: boolean;
-  displayOnlyToMember?: boolean;
-  menuLabel: string;
-  listPathsAndLabels: CollectiviteNavSingle[];
-}
-
-export const isSingleNavItemDropdown = (
-  item: CollectiviteNavSingle | CollectiviteNavDropdown
-): item is CollectiviteNavDropdown =>
-  (item as CollectiviteNavDropdown).listPathsAndLabels !== undefined;
-
-const collectiviteNav: (CollectiviteNavSingle | CollectiviteNavDropdown)[] = [
-  {
-    label: 'Tableau de bord',
-    path: makeCollectiviteTableauBordUrl({collectiviteId: 1}),
-  },
-  {
-    menuLabel: 'Climat Air Énergie',
-    listPathsAndLabels: [
-      {
-        label: 'Référentiel',
-        path: makeCollectiviteReferentielUrl({
-          collectiviteId: 1,
-          referentielId: 'cae',
-        }),
-      },
-      {
-        label: 'Indicateurs',
-        path: makeCollectiviteIndicateursUrl({
-          collectiviteId: 1,
-          indicateurView: 'cae',
-        }),
-      },
-      {
-        label: 'Labellisation',
-        path: makeCollectiviteLabellisationUrl({
-          collectiviteId: 1,
-          referentielId: 'cae',
-        }),
-      },
-    ],
-  },
-  {
-    menuLabel: 'Économie circulaire',
-    listPathsAndLabels: [
-      {
-        label: 'Référentiel',
-        path: makeCollectiviteReferentielUrl({
-          collectiviteId: 1,
-          referentielId: 'eci',
-        }),
-      },
-      {
-        label: 'Indicateurs',
-        path: makeCollectiviteIndicateursUrl({
-          collectiviteId: 1,
-          indicateurView: 'eci',
-        }),
-      },
-      {
-        label: 'Labellisation',
-        path: makeCollectiviteLabellisationUrl({
-          collectiviteId: 1,
-          referentielId: 'eci',
-        }),
-      },
-    ],
-  },
-  {
-    menuLabel: 'Pilotage',
-    listPathsAndLabels: [
-      {
-        label: "Plans d'action",
-        path: makeCollectivitePlanActionUrl({
-          collectiviteId: 1,
-          planActionUid: planActionDefaultId,
-        }),
-      },
-      {
-        label:
-          'Indicateurs contrat de relance et de transition écologique (CRTE)',
-        path: makeCollectiviteIndicateursUrl({
-          collectiviteId: 1,
-          indicateurView: 'crte',
-        }),
-      },
-      {
-        label: 'Indicateurs personnalisés',
-        path: makeCollectiviteIndicateursUrl({
-          collectiviteId: 1,
-          indicateurView: 'perso',
-        }),
-      },
-    ],
-  },
-  {
-    displayOnlyToMember: true,
-    menuLabel: 'Paramètres',
-    listPathsAndLabels: [
-      {
-        label: 'Personnalisation des référentiels',
-        path: makeCollectivitePersoRefUrl({
-          collectiviteId: 1,
-        }),
-      },
-      {
-        label: 'Gestion des membres',
-        path: makeCollectiviteUsersUrl({
-          collectiviteId: 1,
-        }),
-      },
-    ],
-  },
-  {
-    label: 'Toutes les collectivités',
-    path: allCollectivitesPath,
-  },
-];
+import {useOwnedCollectivites} from 'core-logic/hooks/useOwnedCollectivites';
+import HeaderNavigation from './HeaderNavigation';
+import CollectiviteNavigation from './CollectiviteNavigation';
+import MobileNavigation from './MobileNavigation';
+import {makeCollectiviteNavItems} from './makeCollectiviteNavItems';
+import {OwnedCollectiviteRead} from 'generated/dataLayer';
 
 export const Header = ({
   auth,
   currentCollectivite,
+  ownedCollectivites,
 }: {
   auth: TAuthContext;
   currentCollectivite: CurrentCollectivite | null;
+  ownedCollectivites: OwnedCollectiviteRead[] | null;
 }) => {
-  const {isConnected, user} = auth;
+  const collectiviteNav = currentCollectivite
+    ? makeCollectiviteNavItems(currentCollectivite)
+    : null;
 
   return (
     <>
@@ -220,26 +58,29 @@ export const Header = ({
                   </p>
                 </div>
               </div>
-              <HeaderNavigation isConnected={isConnected} user={user} />
-              <MobileNavigation
-                isConnected={isConnected}
-                user={user}
-                collectiviteNav={collectiviteNav}
-                currentCollectivite={fakeCollectivite}
-                ownedCollectivites={fakeOwnedCollectivites}
-              />
+              <HeaderNavigation auth={auth} />
+              {collectiviteNav ? (
+                <MobileNavigation
+                  auth={auth}
+                  collectiviteNav={collectiviteNav}
+                  currentCollectivite={currentCollectivite}
+                  ownedCollectivites={ownedCollectivites}
+                />
+              ) : null}
             </div>
           </div>
         </div>
-        {fakeCollectivite !== null && fakeOwnedCollectivites !== null && (
+        {collectiviteNav && currentCollectivite && ownedCollectivites ? (
           <CollectiviteNavigation
             collectiviteNav={collectiviteNav}
-            currentCollectivite={fakeCollectivite}
-            ownedCollectivites={fakeOwnedCollectivites}
+            currentCollectivite={currentCollectivite}
+            ownedCollectivites={ownedCollectivites}
           />
-        )}
+        ) : null}
       </header>
-      <CollectiviteReadOnlyBanner collectivite={currentCollectivite} />
+      {collectiviteNav && currentCollectivite?.readonly ? (
+        <CollectiviteReadOnlyBanner collectivite={currentCollectivite} />
+      ) : null}
     </>
   );
 };
@@ -262,5 +103,12 @@ const CollectiviteReadOnlyBanner = ({
 export default () => {
   const auth = useAuth();
   const currentCollectivite = useCurrentCollectivite();
-  return <Header auth={auth} currentCollectivite={currentCollectivite} />;
+  const ownedCollectivites = useOwnedCollectivites();
+  return (
+    <Header
+      auth={auth}
+      currentCollectivite={currentCollectivite}
+      ownedCollectivites={ownedCollectivites}
+    />
+  );
 };

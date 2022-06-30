@@ -1,21 +1,20 @@
 import {useState} from 'react';
-import {CurrentCollectiviteObserved} from 'core-logic/observables';
-import {CollectiviteNavDropdown, CollectiviteNavSingle} from '../Header';
+import {TAuthContext} from 'core-logic/api/auth/AuthProvider';
 import MobileHeaderNavigation from './MobileHeaderNavigation/MobileHeaderNavigation';
 import MobileCollectiviteNavigation from './MobileCollectiviteNavigation';
-import {User} from '@supabase/supabase-js';
+import {CollectiviteNavItems} from '../makeCollectiviteNavItems';
+import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import {OwnedCollectiviteRead} from 'generated/dataLayer';
 
 type Props = {
-  isConnected: boolean;
-  user: User | null;
-  collectiviteNav: (CollectiviteNavSingle | CollectiviteNavDropdown)[];
-  currentCollectivite: CurrentCollectiviteObserved | null;
-  ownedCollectivites: CurrentCollectiviteObserved[] | null;
+  auth: TAuthContext;
+  collectiviteNav: CollectiviteNavItems;
+  currentCollectivite: CurrentCollectivite | null;
+  ownedCollectivites: OwnedCollectiviteRead[] | null;
 };
 
 const MobileNavigation = ({
-  isConnected,
-  user,
+  auth,
   collectiviteNav,
   currentCollectivite,
   ownedCollectivites,
@@ -56,8 +55,7 @@ const MobileNavigation = ({
               Aide
             </a>
             <MobileHeaderNavigation
-              isConnected={isConnected}
-              user={user}
+              auth={auth}
               toggleMobileNavigation={toggleMobileNavigation}
             />
           </div>

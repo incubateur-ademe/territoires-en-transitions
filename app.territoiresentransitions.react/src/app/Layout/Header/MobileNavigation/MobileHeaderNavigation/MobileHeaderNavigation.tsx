@@ -1,25 +1,21 @@
-import {User} from '@supabase/supabase-js';
-import {signInPath, signUpPath} from 'app/paths';
-import {authBloc} from 'core-logic/observables';
 import {useState} from 'react';
 import {Link, NavLink} from 'react-router-dom';
-import {LogoutBtn} from '../../HeaderNavigation/HeaderNavigation';
+import {signInPath, signUpPath} from 'app/paths';
+import {TAuthContext} from 'core-logic/api/auth/AuthProvider';
+import {LogoutBtn} from '../../LogoutBtn';
 
 const profilePath = '#';
 
 type Props = {
-  isConnected: boolean;
-  user: User | null;
+  auth: TAuthContext;
   toggleMobileNavigation: () => void;
 };
 
-const MobileHeaderNavigation = ({
-  isConnected,
-  user,
-  toggleMobileNavigation,
-}: Props) => {
+const MobileHeaderNavigation = ({auth, toggleMobileNavigation}: Props) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const toggleIsProfileOpen = () => setIsProfileOpen(!isProfileOpen);
+  const {isConnected, user} = auth;
+
   return (
     <>
       {isConnected && user ? (
@@ -44,7 +40,7 @@ const MobileHeaderNavigation = ({
             </NavLink>
             <div className="py-3 px-8">
               <LogoutBtn
-                bloc={authBloc}
+                auth={auth}
                 additionalOnClick={toggleMobileNavigation}
               />
             </div>
