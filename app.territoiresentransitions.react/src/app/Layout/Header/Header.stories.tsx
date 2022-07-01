@@ -46,6 +46,13 @@ const ownedCollectivites: OwnedCollectiviteRead[] = [
     isReferent: false,
     readonly: false,
   },
+  {
+    nom: 'Collectivité 3 avec un nom très long sur deux lignes',
+    collectivite_id: 3,
+    role_name: null,
+    isReferent: false,
+    readonly: false,
+  },
 ];
 
 export const NotConnected = () => (

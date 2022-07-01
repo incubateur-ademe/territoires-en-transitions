@@ -78,31 +78,40 @@ const CollectiviteNavigation = ({
               </p>
             ) : (
               <>
-                <button className="flex items-center p-4 font-bold group-focus-within:bg-bf925">
-                  {collectivitesDropdown.menuLabel}
-                  <div className="ml-2 mt-1 fr-fi-arrow-down-s-line scale-75 group-focus-within:rotate-180" />
-                </button>
-                <nav className="bg-white invisible absolute left-0 top-full min-w-full w-max transition-all opacity-0 drop-shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50">
-                  <ul>
-                    {collectivitesDropdown.listPathsAndLabels.map(
-                      labelAndPathSuffix => (
-                        <li
-                          className="fr-nav__item"
-                          key={labelAndPathSuffix.label}
-                        >
-                          <Link
-                            className="fr-nav__link"
-                            to={labelAndPathSuffix.path}
+                <div className="relative m-2">
+                  <div className="relative border border-gray-300">
+                    <button className="flex items-center py-2 pl-4 pr-3 font-bold">
+                      {collectivitesDropdown.menuLabel}
+                      <div className="ml-2 mt-1 fr-fi-arrow-down-s-line scale-75 group-focus-within:rotate-180" />
+                    </button>
+                  </div>
+                  <nav className="invisible absolute right-0 top-full min-w-full w-max transition-all opacity-0 border border-gray-300 drop-shadow-md bg-white group-focus-within:visible group-focus-within:translate-y-1 group-focus-within:opacity-100 z-50">
+                    <p className="px-3 py-2 italic text-sm text-gray-600">
+                      {collectivitesDropdown.listPathsAndLabels.length > 1
+                        ? 'Mes collectivités'
+                        : 'Ma collectivité'}
+                    </p>
+                    <ul>
+                      {collectivitesDropdown.listPathsAndLabels.map(
+                        labelAndPathSuffix => (
+                          <li
+                            className="fr-nav__item"
+                            key={labelAndPathSuffix.label}
                           >
-                            <span className="block px-3 max-w-xs">
-                              {labelAndPathSuffix.label}
-                            </span>
-                          </Link>
-                        </li>
-                      )
-                    )}
-                  </ul>
-                </nav>
+                            <Link
+                              className="fr-nav__link !py-2"
+                              to={labelAndPathSuffix.path}
+                            >
+                              <span className="block px-3 max-w-xs">
+                                {labelAndPathSuffix.label}
+                              </span>
+                            </Link>
+                          </li>
+                        )
+                      )}
+                    </ul>
+                  </nav>
+                </div>
               </>
             )}
           </div>
