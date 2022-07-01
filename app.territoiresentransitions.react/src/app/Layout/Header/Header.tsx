@@ -60,14 +60,12 @@ export const Header = ({
                 </div>
               </div>
               <HeaderNavigation auth={auth} />
-              {collectiviteNav ? (
-                <MobileNavigation
-                  auth={auth}
-                  collectiviteNav={collectiviteNav}
-                  currentCollectivite={currentCollectivite}
-                  ownedCollectivites={ownedCollectivites}
-                />
-              ) : null}
+              <MobileNavigation
+                auth={auth}
+                collectiviteNav={collectiviteNav}
+                currentCollectivite={currentCollectivite}
+                ownedCollectivites={ownedCollectivites}
+              />
             </div>
           </div>
         </div>

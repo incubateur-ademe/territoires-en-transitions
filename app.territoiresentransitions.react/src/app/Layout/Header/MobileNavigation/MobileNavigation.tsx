@@ -8,7 +8,7 @@ import {OwnedCollectiviteRead} from 'generated/dataLayer';
 
 type Props = {
   auth: TAuthContext;
-  collectiviteNav: CollectiviteNavItems;
+  collectiviteNav: CollectiviteNavItems | null;
   currentCollectivite: CurrentCollectivite | null;
   ownedCollectivites: OwnedCollectiviteRead[] | null;
 };
@@ -37,14 +37,16 @@ const MobileNavigation = ({
             </button>
           </div>
           <div className="divide-y divide-gray-100">
-            {currentCollectivite !== null && ownedCollectivites !== null && (
-              <MobileCollectiviteNavigation
-                collectiviteNav={collectiviteNav}
-                currentCollectivite={currentCollectivite}
-                ownedCollectivites={ownedCollectivites}
-                toggleMobileNavigation={toggleMobileNavigation}
-              />
-            )}
+            {currentCollectivite !== null &&
+              ownedCollectivites !== null &&
+              collectiviteNav !== null && (
+                <MobileCollectiviteNavigation
+                  collectiviteNav={collectiviteNav}
+                  currentCollectivite={currentCollectivite}
+                  ownedCollectivites={ownedCollectivites}
+                  toggleMobileNavigation={toggleMobileNavigation}
+                />
+              )}
 
             <a
               data-test="help"

@@ -22,7 +22,7 @@ const MobileHeaderNavigation = ({auth, toggleMobileNavigation}: Props) => {
         <div>
           <button className="fr-link w-full !p-4" onClick={toggleIsProfileOpen}>
             <div className="fr-fi-account-line mr-2" />
-            <span>{user.email}</span>
+            <span>{user.prenom}</span>
             <div
               className={`ml-auto fr-fi-arrow-down-s-line ${
                 isProfileOpen && 'rotate-180'
@@ -30,14 +30,15 @@ const MobileHeaderNavigation = ({auth, toggleMobileNavigation}: Props) => {
             />
           </button>
           <div className={`${isProfileOpen ? 'block' : 'hidden'} pb-6`}>
-            <NavLink
+            {/* En attente de la page "Profil" */}
+            {/* <NavLink
               className="block py-3 px-8"
               activeClassName="border-l-4 border-bf500 text-bf500 font-bold"
               to={profilePath}
               onClick={toggleMobileNavigation}
             >
               Profil
-            </NavLink>
+            </NavLink> */}
             <div className="py-3 px-8">
               <LogoutBtn
                 auth={auth}
