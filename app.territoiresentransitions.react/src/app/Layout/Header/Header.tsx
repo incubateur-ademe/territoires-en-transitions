@@ -1,4 +1,6 @@
-import { CollectiviteNavigation, Navigation } from 'app/Navigation';
+import HeaderNavigation from 'app/Layout/Header/HeaderNavigation';
+import MobileNavigation from 'app/Layout/Header/MobileNavigation';
+import { CollectiviteNavigation } from 'app/Navigation';
 import { RejoindreCetteCollectiviteDialog } from 'app/pages/MesCollectivites/RejoindreCetteCollectiviteDialog';
 import { CollectiviteRedirector } from 'app/Redirector';
 import ademeLogoImage from 'app/static/img/ademe.jpg';
@@ -67,7 +69,13 @@ const HeaderObserver = observer(
                   </a>
                 </div>
               </div>
-              <Navigation />
+              <HeaderNavigation auth={auth} />
+              <MobileNavigation
+                auth={auth}
+                collectiviteNav={collectiviteNav}
+                currentCollectivite={currentCollectivite}
+                ownedCollectivites={ownedCollectivites}
+              />
             </div>
           </div>
         </div>
