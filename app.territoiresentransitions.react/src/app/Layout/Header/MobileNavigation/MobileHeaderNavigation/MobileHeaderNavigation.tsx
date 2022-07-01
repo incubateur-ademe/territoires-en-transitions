@@ -29,7 +29,7 @@ const MobileHeaderNavigation = ({auth, toggleMobileNavigation}: Props) => {
               }`}
             />
           </button>
-          <div className={`${isProfileOpen ? 'block' : 'hidden'} pb-8`}>
+          <div className={`${isProfileOpen ? 'block' : 'hidden'} pb-6`}>
             <NavLink
               className="block py-3 px-8"
               activeClassName="border-l-4 border-bf500 text-bf500 font-bold"

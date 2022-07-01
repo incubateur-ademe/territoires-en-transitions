@@ -23,7 +23,7 @@ const MobileCollectiviteNavigation = ({
   ownedCollectivites,
   toggleMobileNavigation,
 }: Props) => {
-  const collectivitesDropdown: CollectiviteNavDropdown = useMemo(() => {
+  const collectivites: CollectiviteNavDropdown = useMemo(() => {
     const collectivitesWithoutCurrentCollectivite = ownedCollectivites.filter(
       e => currentCollectivite && e.nom !== currentCollectivite.nom
     );
@@ -46,10 +46,14 @@ const MobileCollectiviteNavigation = ({
 
   return (
     <>
-      <MobileCollectiviteNavigationDropdown
-        item={collectivitesDropdown}
-        handleCloseMobileNavigation={toggleMobileNavigation}
-      />
+      {collectivites.listPathsAndLabels.length === 0 ? (
+        <p className="flex items-center p-4">{collectivites.menuLabel}</p>
+      ) : (
+        <MobileCollectiviteNavigationDropdown
+          item={collectivites}
+          handleCloseMobileNavigation={toggleMobileNavigation}
+        />
+      )}
       {collectiviteNav.map(item =>
         isSingleNavItemDropdown(item) ? (
           <div key={item.menuLabel}>
