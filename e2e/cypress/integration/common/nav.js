@@ -1,6 +1,6 @@
 /**
  * Steps dédiés à la navigation
- */
+ */ 
 import { Views } from './views';
 
 export const navigateTo = (view) => {

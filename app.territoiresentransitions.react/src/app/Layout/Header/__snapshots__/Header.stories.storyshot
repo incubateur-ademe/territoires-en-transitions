@@ -40,7 +40,7 @@ exports[`Storyshots App/Layout/Header/Header Connected 1`] = `
               alt="logo ADEME"
               className="h-20"
               loading="lazy"
-              src="https://territoiresentransitions.fr/img/ademe.jpg"
+              src="ademe.jpg"
             />
           </div>
           <div
@@ -93,7 +93,7 @@ exports[`Storyshots App/Layout/Header/Header Connected 1`] = `
                   />
                   Émeline
                   <div
-                    className="fr-fi-arrow-down-s-line ml-2"
+                    className="fr-fi-arrow-down-s-line ml-2 scale-90 group-focus-within:rotate-180"
                   />
                 </button>
                 <nav
@@ -102,19 +102,7 @@ exports[`Storyshots App/Layout/Header/Header Connected 1`] = `
                   <ul>
                     <li
                       className="fr-nav__item border-b border-gray-200"
-                    >
-                      <a
-                        className="fr-nav__link"
-                        href="/"
-                        onClick={[Function]}
-                      >
-                        <span
-                          className="px-3"
-                        >
-                          Profil
-                        </span>
-                      </a>
-                    </li>
+                    />
                     <li
                       className="fr-nav__item"
                     >
@@ -137,6 +125,10 @@ exports[`Storyshots App/Layout/Header/Header Connected 1`] = `
             </ul>
           </div>
         </div>
+        <button
+          className="fr-fi-menu-fill absolute top-6 right-6 z-10 lg:hidden"
+          onClick={[Function]}
+        />
       </div>
     </div>
   </div>
@@ -183,7 +175,7 @@ exports[`Storyshots App/Layout/Header/Header Not Connected 1`] = `
               alt="logo ADEME"
               className="h-20"
               loading="lazy"
-              src="https://territoiresentransitions.fr/img/ademe.jpg"
+              src="ademe.jpg"
             />
           </div>
           <div
@@ -250,6 +242,10 @@ exports[`Storyshots App/Layout/Header/Header Not Connected 1`] = `
             </ul>
           </div>
         </div>
+        <button
+          className="fr-fi-menu-fill absolute top-6 right-6 z-10 lg:hidden"
+          onClick={[Function]}
+        />
       </div>
     </div>
   </div>
@@ -296,7 +292,7 @@ exports[`Storyshots App/Layout/Header/Header With Collectivite 1`] = `
               alt="logo ADEME"
               className="h-20"
               loading="lazy"
-              src="https://territoiresentransitions.fr/img/ademe.jpg"
+              src="ademe.jpg"
             />
           </div>
           <div
@@ -349,7 +345,7 @@ exports[`Storyshots App/Layout/Header/Header With Collectivite 1`] = `
                   />
                   Émeline
                   <div
-                    className="fr-fi-arrow-down-s-line ml-2"
+                    className="fr-fi-arrow-down-s-line ml-2 scale-90 group-focus-within:rotate-180"
                   />
                 </button>
                 <nav
@@ -358,19 +354,7 @@ exports[`Storyshots App/Layout/Header/Header With Collectivite 1`] = `
                   <ul>
                     <li
                       className="fr-nav__item border-b border-gray-200"
-                    >
-                      <a
-                        className="fr-nav__link"
-                        href="/"
-                        onClick={[Function]}
-                      >
-                        <span
-                          className="px-3"
-                        >
-                          Profil
-                        </span>
-                      </a>
-                    </li>
+                    />
                     <li
                       className="fr-nav__item"
                     >
@@ -735,7 +719,7 @@ Array [
                 alt="logo ADEME"
                 className="h-20"
                 loading="lazy"
-                src="https://territoiresentransitions.fr/img/ademe.jpg"
+                src="ademe.jpg"
               />
             </div>
             <div
@@ -788,7 +772,7 @@ Array [
                     />
                     Émeline
                     <div
-                      className="fr-fi-arrow-down-s-line ml-2"
+                      className="fr-fi-arrow-down-s-line ml-2 scale-90 group-focus-within:rotate-180"
                     />
                   </button>
                   <nav
@@ -797,19 +781,7 @@ Array [
                     <ul>
                       <li
                         className="fr-nav__item border-b border-gray-200"
-                      >
-                        <a
-                          className="fr-nav__link"
-                          href="/"
-                          onClick={[Function]}
-                        >
-                          <span
-                            className="px-3"
-                          >
-                            Profil
-                          </span>
-                        </a>
-                      </li>
+                      />
                       <li
                         className="fr-nav__item"
                       >
@@ -1069,35 +1041,63 @@ Array [
           <div
             className="group relative flex ml-auto"
           >
-            <button
-              className="flex items-center p-4 font-bold group-focus-within:bg-bf925"
+            <div
+              className="relative m-2"
             >
-              Test collectivite
               <div
-                className="ml-2 mt-1 fr-fi-arrow-down-s-line scale-75 group-focus-within:rotate-180"
-              />
-            </button>
-            <nav
-              className="bg-white invisible absolute left-0 top-full min-w-full w-max transition-all opacity-0 drop-shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
-            >
-              <ul>
-                <li
-                  className="fr-nav__item"
+                className="relative border border-gray-300"
+              >
+                <button
+                  className="flex items-center py-2 pl-4 pr-3 font-bold"
                 >
-                  <a
-                    className="fr-nav__link"
-                    href="/collectivite/2/tableau_bord"
-                    onClick={[Function]}
+                  Test collectivite
+                  <div
+                    className="ml-2 mt-1 fr-fi-arrow-down-s-line scale-75 group-focus-within:rotate-180"
+                  />
+                </button>
+              </div>
+              <nav
+                className="invisible absolute right-0 top-full min-w-full w-max transition-all opacity-0 border border-gray-300 drop-shadow-md bg-white group-focus-within:visible group-focus-within:translate-y-1 group-focus-within:opacity-100 z-50"
+              >
+                <p
+                  className="px-3 py-2 italic text-sm text-gray-600"
+                >
+                  Mes collectivités
+                </p>
+                <ul>
+                  <li
+                    className="fr-nav__item"
                   >
-                    <span
-                      className="block px-3 max-w-xs"
+                    <a
+                      className="fr-nav__link !py-2"
+                      href="/collectivite/2/tableau_bord"
+                      onClick={[Function]}
                     >
-                      Collectivité 2
-                    </span>
-                  </a>
-                </li>
-              </ul>
-            </nav>
+                      <span
+                        className="block px-3 max-w-xs"
+                      >
+                        Collectivité 2
+                      </span>
+                    </a>
+                  </li>
+                  <li
+                    className="fr-nav__item"
+                  >
+                    <a
+                      className="fr-nav__link !py-2"
+                      href="/collectivite/3/tableau_bord"
+                      onClick={[Function]}
+                    >
+                      <span
+                        className="block px-3 max-w-xs"
+                      >
+                        Collectivité 3 avec un nom très long sur deux lignes
+                      </span>
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
           </div>
         </nav>
       </div>
