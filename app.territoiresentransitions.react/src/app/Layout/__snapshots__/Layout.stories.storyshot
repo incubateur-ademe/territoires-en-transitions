@@ -43,7 +43,7 @@ exports[`Storyshots App/Layout/Layout Exemple 1`] = `
                 alt="logo ADEME"
                 className="h-20"
                 loading="lazy"
-                src="https://territoiresentransitions.fr/img/ademe.jpg"
+                src="ademe.jpg"
               />
             </div>
             <div
@@ -110,6 +110,10 @@ exports[`Storyshots App/Layout/Layout Exemple 1`] = `
               </ul>
             </div>
           </div>
+          <button
+            className="fr-fi-menu-fill absolute top-6 right-6 z-10 lg:hidden"
+            onClick={[Function]}
+          />
         </div>
       </div>
     </div>
@@ -157,19 +161,12 @@ exports[`Storyshots App/Layout/Layout Exemple 1`] = `
           <div
             className="px-6"
           >
-            <picture>
-              <source
-                sizes="118px"
-                src="https://territoiresentransitions.fr/img/ademe.jpg 118w"
-              />
-              <img
-                alt="ADEME"
-                className="footer__logo"
-                height="100"
-                loading="lazy"
-                src="https://territoiresentransitions.fr/img/ademe.jpg"
-              />
-            </picture>
+            <img
+              alt="ADEME"
+              className="w-32"
+              loading="lazy"
+              src="ademe.jpg"
+            />
           </div>
         </div>
         <div
