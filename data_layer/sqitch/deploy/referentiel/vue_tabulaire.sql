@@ -128,7 +128,7 @@ select
         else sc.point_non_renseigne / sc.point_potentiel end               as score_non_renseigne,
 
     -- points
-    sc.point_potentiel - sc.point_fait                                     as points_restants,
+    greatest(sc.point_potentiel - sc.point_fait, 0)                        as points_restants,
     sc.point_fait                                                          as points_realises,
     sc.point_programme                                                     as points_programmes,
     sc.point_potentiel                                                     as points_max_personnalises,
@@ -164,7 +164,7 @@ from collectivite c
                        array_agg(distinct statut.avancement) filter ( where statut.concerne )
                -- des statuts pour chaque enfant
                else
-                           array_agg(distinct statut.avancement) filter ( where statut.concerne )
+                   array_agg(distinct statut.avancement) filter ( where statut.concerne )
                end
                as avancements,
            not bool_and(statut.concerne)
