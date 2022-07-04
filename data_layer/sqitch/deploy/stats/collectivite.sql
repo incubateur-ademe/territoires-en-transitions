@@ -10,7 +10,7 @@ select *
 from named_collectivite
 where collectivite_id not in (select collectivite_id from collectivite_test);
 
-create view stats_rattachements
+create materialized view stats_rattachements
 as
 with daily as (
     select created_at::date as day, count(created_at) as count
@@ -23,7 +23,7 @@ select day                                                                      
        sum(count) over (order by day rows between unbounded preceding and current row)::integer as cumulated_count
 from daily;
 
-create view stats_unique_active_collectivite
+create materialized view stats_unique_active_collectivite
 as
 with unique_collectivite_droit as (
     select d.collectivite_id, min(created_at) as created_at

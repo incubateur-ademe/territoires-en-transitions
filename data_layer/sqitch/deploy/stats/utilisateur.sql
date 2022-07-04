@@ -3,7 +3,7 @@
 
 BEGIN;
 
-create view stats_unique_active_users
+create materialized view stats_unique_active_users
 as
 with unique_user_droit as (
     select user_id, min(created_at) as created_at
