@@ -6,9 +6,9 @@ import {
   typeCollectiviteOptions,
   trierParOptions,
 } from 'app/pages/ToutesLesCollectivites/filtreLibelles';
-import {MultiSelectCheckboxes} from 'app/pages/ToutesLesCollectivites/MultiSelectCheckboxes';
-import {MultiSelectDropdown} from 'app/pages/ToutesLesCollectivites/MultiSelectDropdown';
-import {SelectDropdown} from 'app/pages/ToutesLesCollectivites/SelectDropdown';
+import {MultiSelectCheckboxes} from 'app/pages/ToutesLesCollectivites/components/MultiSelectCheckboxes';
+import {MultiSelectDropdown} from 'app/pages/ToutesLesCollectivites/components/MultiSelectDropdown';
+import {SelectDropdown} from 'app/pages/ToutesLesCollectivites/components/SelectDropdown';
 
 import {RegionRead} from 'generated/dataLayer/region_read';
 import {DepartementRead} from 'generated/dataLayer/departement_read';

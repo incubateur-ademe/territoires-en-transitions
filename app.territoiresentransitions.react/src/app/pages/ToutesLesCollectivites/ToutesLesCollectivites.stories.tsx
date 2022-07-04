@@ -46,6 +46,7 @@ const fakeDepartements: DepartementRead[] = [
 export const AvecDesRésultatsSansFiltres = Template.bind({});
 const avecDesRésultatsSansFiltresArgs: TRenderToutesCollectivitesProps = {
   collectivites: fixture.collectivites,
+  collectivitesCount: fixture.collectivites.length,
   filters: emptyFilters,
   setFilters: filters => {
     console.log(filters);
@@ -70,6 +71,7 @@ const activeFilters: TCollectivitesFilters = {
 export const AvecDesRésultatsEtDesFiltres = Template.bind({});
 const avecDesRésultatsEtDesArgs: TRenderToutesCollectivitesProps = {
   collectivites: fixture.collectivites,
+  collectivitesCount: fixture.collectivites.length,
   filters: activeFilters,
   setFilters: filters => {
     console.log(filters);
@@ -82,6 +84,7 @@ AvecDesRésultatsEtDesFiltres.args = avecDesRésultatsEtDesArgs;
 export const SansRésultats = Template.bind({});
 const sansRésultatsArgs: TRenderToutesCollectivitesProps = {
   collectivites: [],
+  collectivitesCount: 0,
   filters: activeFilters,
   setFilters: filters => {
     console.log(filters);

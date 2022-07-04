@@ -1,4 +1,4 @@
-import {CollectivitesFiltreesColonne} from 'app/pages/ToutesLesCollectivites/CollectivitesFiltreesColonne';
+import {CollectivitesGrid} from 'app/pages/ToutesLesCollectivites/components/CollectivitesGrid';
 import {
   filtresVides,
   useDepartements,
@@ -7,13 +7,14 @@ import {
   useFiltersParams,
 } from 'app/pages/ToutesLesCollectivites/hooks';
 import {TCollectivitesFilters} from 'app/pages/ToutesLesCollectivites/filtreLibelles';
-import {FiltresColonne} from 'app/pages/ToutesLesCollectivites/FiltresColonne';
+import {FiltresColonne} from 'app/pages/ToutesLesCollectivites/components/FiltresColonne';
 import {CollectiviteCarteRead} from 'generated/dataLayer/collectivite_carte_read';
-import {TrierParFiltre} from 'app/pages/ToutesLesCollectivites/Filtres';
+import {DesactiverLesFiltres} from './components/DesactiverLesFiltres';
+import {TrierParFiltre} from 'app/pages/ToutesLesCollectivites/components/Filtres';
 import {RegionRead} from 'generated/dataLayer/region_read';
 import {Link} from 'react-router-dom';
 import {DepartementRead} from 'generated/dataLayer/departement_read';
-import {Pagination} from 'app/pages/ToutesLesCollectivites/Pagination';
+import {Pagination} from 'app/pages/ToutesLesCollectivites/components/Pagination';
 import {NB_CARDS_PER_PAGE} from 'app/pages/ToutesLesCollectivites/queries';
 import {getNumberOfActiveFilters} from 'app/pages/ToutesLesCollectivites/getNumberOfActiveFilters';
 import {useState} from 'react';
@@ -33,18 +34,23 @@ export const RenderToutesLesCollectivites = (
 ) => {
   const [mobileClickedFilters, setMobileClickedFilters] = useState(false);
   return (
-    <div data-test="ToutesLesCollectivites" className="app fr-container mt-5">
-      <div className="text-center">
-        <div className="font-bold text-black md:text-4xl text-3xl my-4 ">
+    <div data-test="ToutesLesCollectivites" className="app fr-container mt-16">
+      <div className="text-center mb-8 md:mb-16">
+        <div className="font-bold text-black md:text-4xl text-3xl mb-6">
           Toutes les collectivités
         </div>
-        <p>
+        <p className="mb-0">
           Consultez les <Link to="/statistics">statistiques</Link> d'utilisation
           de la plateforme.
         </p>
       </div>
       <div className="md:flex">
-        <div className={`md:w-3/12 ${mobileClickedFilters ? '' : 'hidden'}`}>
+        {/* Filters column */}
+        <div
+          className={`md:mr-6 md:w-3/12 xl:mr-14 ${
+            mobileClickedFilters ? '' : 'hidden'
+          } md:!block`}
+        >
           <FiltresColonne
             filters={props.filters}
             setFilters={props.setFilters}
@@ -52,25 +58,52 @@ export const RenderToutesLesCollectivites = (
             departments={props.departements}
           />
         </div>
-        <div className={`ml-6 w-full ${mobileClickedFilters ? 'hidden' : ''}`}>
-          {props.isLoading ? (
-            <div className="text-center text-gray-500">
-              Chargement en cours...
+        {/* Collectivites column */}
+        <div
+          className={`w-full ${mobileClickedFilters ? 'hidden' : ''} md:!block`}
+        >
+          <div className="flex flex-col mb-6 md:flex-row md:justify-between">
+            <div className="order-last mt-4 md:flex md:flex-col md:order-first md:mt-0">
+              {props.collectivitesCount > 0 && (
+                <p className="mb-0 text-center text-gray-500 md:text-left">
+                  {props.collectivitesCount === 1
+                    ? 'Une collectivité correspond'
+                    : `${props.collectivitesCount} collectivités correspondent`}{' '}
+                  à votre recherche
+                </p>
+              )}
+              {getNumberOfActiveFilters(props.filters) > 0 && (
+                <DesactiverLesFiltres
+                  onClick={() => props.setFilters(filtresVides)}
+                />
+              )}
             </div>
-          ) : (
-            <CollectivitesFiltreesColonne
-              collectivites={props.collectivites}
-              collectivitesCount={props.collectivitesCount}
-              desactiverLesFiltres={() => props.setFilters(filtresVides)}
-              filters={props.filters}
-            >
-              <TrierParFiltre
+            <TrierParFiltre
+              onChange={selected =>
+                props.setFilters({...props.filters, trierPar: selected})
+              }
+              selected={props.filters.trierPar}
+            />
+          </div>
+          <CollectivitesGrid
+            isLoading={props.isLoading}
+            collectivites={props.collectivites}
+            collectivitesCount={props.collectivitesCount}
+            desactiverLesFiltres={() => props.setFilters(filtresVides)}
+            filters={props.filters}
+          />
+          {props.collectivitesCount !== 0 && (
+            <div className="flex justify-center mt-3">
+              <Pagination
+                nbOfPages={Math.ceil(
+                  props.collectivitesCount / NB_CARDS_PER_PAGE
+                )}
+                selectedPage={props.filters.page ?? 1}
                 onChange={selected =>
-                  props.setFilters({...props.filters, trierPar: selected})
+                  props.setFilters({...props.filters, page: selected})
                 }
-                selected={props.filters.trierPar}
               />
-            </CollectivitesFiltreesColonne>
+            </div>
           )}
         </div>
       </div>
@@ -79,15 +112,6 @@ export const RenderToutesLesCollectivites = (
         mobileClickedFilters={mobileClickedFilters}
         setMobileClickedFilters={setMobileClickedFilters}
       />
-      <div className="flex justify-center mt-3">
-        <Pagination
-          nbOfPages={Math.ceil(props.collectivitesCount / NB_CARDS_PER_PAGE)}
-          selectedPage={props.filters.page ?? 1}
-          onChange={selected =>
-            props.setFilters({...props.filters, page: selected})
-          }
-        />
-      </div>
     </div>
   );
 };

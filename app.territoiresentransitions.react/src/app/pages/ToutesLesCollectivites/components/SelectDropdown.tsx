@@ -30,7 +30,7 @@ export const SelectDropdown = <T extends string>(
           borderBottomWidth: '0.7px',
           borderRadius: '0.2rem',
         }}
-        className="select"
+        className="select w-full md:w-auto"
         value={props.selected}
         variant="outlined"
         renderValue={() => (
