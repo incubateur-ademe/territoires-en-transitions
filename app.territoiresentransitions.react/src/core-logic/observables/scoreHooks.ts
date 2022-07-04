@@ -7,6 +7,7 @@ import {useEffect, useState} from 'react';
 import {useQuery, useQueryClient} from 'react-query';
 import {ActionScore} from 'types/ClientScore';
 import {Referentiel} from 'types/litterals';
+import {referentielId} from 'utils/actions';
 
 export type ReferentielsActionScores = {eci: ActionScore[]; cae: ActionScore[]};
 // Should observe "CollectiviteId" of collectiviteBloc and ActionStatutWriteEndpoint
@@ -26,7 +27,6 @@ const fetchScoresForCollectiviteForReferentiel = async (
 const fetchScoresForCollectivite = async (
   collectiviteId: number
 ): Promise<ReferentielsActionScores> => {
-  console.log('fetchScoresForCollectivite');
   const eciScores = await fetchScoresForCollectiviteForReferentiel(
     collectiviteId,
     'eci'
@@ -49,10 +49,6 @@ export const useScores = (): ReferentielsActionScores => {
 
   // recharge les données après un changement
   const refetch = () => {
-    console.log(
-      'useScores refetch after a change in table client_scores ',
-      collectiviteId
-    );
     queryClient.invalidateQueries(['client_scores', collectiviteId]);
   };
 
@@ -60,15 +56,14 @@ export const useScores = (): ReferentielsActionScores => {
   const subscribe = (collectiviteId: number): RealtimeSubscription =>
     supabaseClient
       .from<ClientScoreBatchRead>(
-        `client_scores:collectivite_id=eq.${collectiviteId},referentiel=eq.eci`
+        `client_scores:collectivite_id=eq.${collectiviteId}` // ,referentiel=eq.${referentiel}
       )
       .on('INSERT', refetch)
-      // .on('UPDATE', refetch)
+      .on('UPDATE', refetch)
       .subscribe();
 
   // souscrit aux changements de collectivite si ce n'est pas déjà fait
   useEffect(() => {
-    console.log('useScores useEffect on collectiviteId ', collectiviteId);
     if (subscription) {
       subscription.unsubscribe();
     }
@@ -76,7 +71,6 @@ export const useScores = (): ReferentielsActionScores => {
     if (collectiviteId) {
       const subscribeTo = subscribe(collectiviteId);
       setSubscription(subscribeTo);
-      console.log('[UseScores] Successfully subscribed to ', subscribeTo);
     }
 
     // supprime la souscription quand le composant est démonté
@@ -94,4 +88,12 @@ export const useScores = (): ReferentielsActionScores => {
   );
 
   return data || {eci: [], cae: []};
+};
+
+export const useActionScore = (actionId: string): ActionScore | null => {
+  const scores = useScores();
+  const score = scores[referentielId(actionId)].find(
+    score => score.action_id === actionId
+  );
+  return score ? {...score} : null;
 };

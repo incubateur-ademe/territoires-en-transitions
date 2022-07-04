@@ -1,0 +1,244 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Ui/Referentiels/Action Progress Bar Mixte 1`] = `
+<div
+  aria-describedby={null}
+  className=""
+  data-test="score-eci_2.1"
+  onBlur={[Function]}
+  onFocus={[Function]}
+  onMouseLeave={[Function]}
+  onMouseOver={[Function]}
+  onTouchEnd={[Function]}
+  onTouchStart={[Function]}
+  title={null}
+>
+  <div
+    className="flex gap-3 items-center justify-end"
+  >
+    <div
+      className="text-sm font-bold"
+    >
+      20
+       %
+    </div>
+    <div
+      className="flex pt-1"
+    >
+      <div
+        style={
+          Object {
+            "backgroundColor": "#565656",
+            "borderRadius": 4,
+            "minHeight": 10,
+            "minWidth": 100,
+            "position": "relative",
+          }
+        }
+      >
+        <div
+          style={
+            Object {
+              "backgroundColor": "#CE0500",
+              "borderRadius": 4,
+              "left": 0,
+              "minHeight": "100%",
+              "minWidth": "68%",
+              "position": "absolute",
+              "top": 0,
+            }
+          }
+        />
+        <div
+          style={
+            Object {
+              "backgroundColor": "#00A95F",
+              "borderRadius": 4,
+              "left": 0,
+              "minHeight": "100%",
+              "minWidth": "48%",
+              "position": "absolute",
+              "top": 0,
+            }
+          }
+        />
+        <div
+          style={
+            Object {
+              "backgroundColor": "#0063CB",
+              "borderRadius": 4,
+              "left": 0,
+              "minHeight": "100%",
+              "minWidth": "20%",
+              "position": "absolute",
+              "top": 0,
+            }
+          }
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Ui/Referentiels/Action Progress Bar Rien Renseigne 1`] = `
+<div
+  aria-describedby={null}
+  className=""
+  data-test="score-eci_2.1"
+  onBlur={[Function]}
+  onFocus={[Function]}
+  onMouseLeave={[Function]}
+  onMouseOver={[Function]}
+  onTouchEnd={[Function]}
+  onTouchStart={[Function]}
+  title={null}
+>
+  <div
+    className="flex gap-3 items-center justify-end"
+  >
+    <div
+      className="text-sm font-bold"
+    >
+      0
+       %
+    </div>
+    <div
+      className="flex pt-1"
+    >
+      <div
+        style={
+          Object {
+            "backgroundColor": "#565656",
+            "borderRadius": 4,
+            "minHeight": 10,
+            "minWidth": 100,
+            "position": "relative",
+          }
+        }
+      >
+        <div
+          style={
+            Object {
+              "backgroundColor": "#CE0500",
+              "borderRadius": 4,
+              "left": 0,
+              "minHeight": "100%",
+              "minWidth": "0%",
+              "position": "absolute",
+              "top": 0,
+            }
+          }
+        />
+        <div
+          style={
+            Object {
+              "backgroundColor": "#00A95F",
+              "borderRadius": 4,
+              "left": 0,
+              "minHeight": "100%",
+              "minWidth": "0%",
+              "position": "absolute",
+              "top": 0,
+            }
+          }
+        />
+        <div
+          style={
+            Object {
+              "backgroundColor": "#0063CB",
+              "borderRadius": 4,
+              "left": 0,
+              "minHeight": "100%",
+              "minWidth": "0%",
+              "position": "absolute",
+              "top": 0,
+            }
+          }
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Ui/Referentiels/Action Progress Bar Tout Fait 1`] = `
+<div
+  aria-describedby={null}
+  className=""
+  data-test="score-eci_2.1"
+  onBlur={[Function]}
+  onFocus={[Function]}
+  onMouseLeave={[Function]}
+  onMouseOver={[Function]}
+  onTouchEnd={[Function]}
+  onTouchStart={[Function]}
+  title={null}
+>
+  <div
+    className="flex gap-3 items-center justify-end"
+  >
+    <div
+      className="text-sm font-bold"
+    >
+      100
+       %
+    </div>
+    <div
+      className="flex pt-1"
+    >
+      <div
+        style={
+          Object {
+            "backgroundColor": "#565656",
+            "borderRadius": 4,
+            "minHeight": 10,
+            "minWidth": 100,
+            "position": "relative",
+          }
+        }
+      >
+        <div
+          style={
+            Object {
+              "backgroundColor": "#CE0500",
+              "borderRadius": 4,
+              "left": 0,
+              "minHeight": "100%",
+              "minWidth": "100%",
+              "position": "absolute",
+              "top": 0,
+            }
+          }
+        />
+        <div
+          style={
+            Object {
+              "backgroundColor": "#00A95F",
+              "borderRadius": 4,
+              "left": 0,
+              "minHeight": "100%",
+              "minWidth": "100%",
+              "position": "absolute",
+              "top": 0,
+            }
+          }
+        />
+        <div
+          style={
+            Object {
+              "backgroundColor": "#0063CB",
+              "borderRadius": 4,
+              "left": 0,
+              "minHeight": "100%",
+              "minWidth": "100%",
+              "position": "absolute",
+              "top": 0,
+            }
+          }
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -1,31 +1,23 @@
-import {
-  ActionStatutRead,
-  ActionAvancement,
-} from 'generated/dataLayer/action_statut_read';
-import {actionStatutRepository} from 'core-logic/api/repositories/ActionStatutRepository';
-import {ScoreBloc} from 'core-logic/observables/scoreBloc';
-import {makeAutoObservable} from 'mobx';
-import {observer} from 'mobx-react-lite';
-import {useState} from 'react';
 import {Dialog, MenuItem, Select} from '@material-ui/core';
 import {SelectInputProps} from '@material-ui/core/Select/SelectInput';
 import {actionAvancementColors} from 'app/theme';
-import {ActionStatutWrite} from 'generated/dataLayer/action_statut_write';
-import {currentCollectiviteBloc} from 'core-logic/observables';
+import {actionStatutRepository} from 'core-logic/api/repositories/ActionStatutRepository';
 import {useCollectiviteId} from 'core-logic/hooks/params';
+import {currentCollectiviteBloc} from 'core-logic/observables';
+import {useActionScore} from 'core-logic/observables/scoreHooks';
+import {
+  ActionAvancement,
+  ActionStatutRead,
+} from 'generated/dataLayer/action_statut_read';
+import {ActionStatutWrite} from 'generated/dataLayer/action_statut_write';
+import {makeAutoObservable} from 'mobx';
+import {useState} from 'react';
 import {toPercentString} from 'utils/score';
 import {CloseDialogButton} from '../CloseDialogButton';
 import {DetailedScore} from '../DetailedScore/DetailedScore';
 import {AvancementValues} from '../DetailedScore/DetailedScoreSlider';
-import {referentielId} from 'utils/actions';
 
-export const ActionStatusDropdown = ({
-  actionId,
-  scoreBloc,
-}: {
-  actionId: string;
-  scoreBloc: ScoreBloc;
-}) => {
+export const ActionStatusDropdown = ({actionId}: {actionId: string}) => {
   const collectiviteId = useCollectiviteId()!;
   const actionStatusAvancementBloc = new ActionStatusAvancementRadioButtonBloc({
     actionId,
@@ -36,7 +28,6 @@ export const ActionStatusDropdown = ({
     <_ActionStatusAvancementRadioButton
       actionId={actionId}
       actionStatusAvancementBloc={actionStatusAvancementBloc}
-      scoreBloc={scoreBloc}
     />
   );
 };
@@ -113,111 +104,104 @@ const selectables = [
   nonConcerneStatut,
 ];
 
-const _ActionStatusAvancementRadioButton = observer(
-  ({
-    actionId,
-    actionStatusAvancementBloc,
-    scoreBloc,
-  }: {
-    actionId: string;
-    actionStatusAvancementBloc: ActionStatusAvancementRadioButtonBloc;
-    scoreBloc: ScoreBloc;
-  }) => {
-    const [opened, setOpened] = useState(false);
+const _ActionStatusAvancementRadioButton = ({
+  actionId,
+  actionStatusAvancementBloc,
+}: {
+  actionId: string;
+  actionStatusAvancementBloc: ActionStatusAvancementRadioButtonBloc;
+}) => {
+  const [opened, setOpened] = useState(false);
 
-    const handleChange: SelectInputProps['onChange'] = event => {
-      actionStatusAvancementBloc
-        .pickStatutValue(event.target.value as number)
-        .then(() => {
-          if (actionStatusAvancementBloc.statut.avancement === 'detaille') {
-            setOpened(true);
-          }
-        });
-    };
+  const handleChange: SelectInputProps['onChange'] = event => {
+    actionStatusAvancementBloc
+      .pickStatutValue(event.target.value as number)
+      .then(() => {
+        if (actionStatusAvancementBloc.statut.avancement === 'detaille') {
+          setOpened(true);
+        }
+      });
+  };
 
-    const handleSaveDetail = (values: number[]) => {
-      actionStatusAvancementBloc.setAvancementDetaille(values);
-      actionStatusAvancementBloc.saveStatut();
-      setOpened(false);
-    };
+  const handleSaveDetail = (values: number[]) => {
+    actionStatusAvancementBloc.setAvancementDetaille(values);
+    actionStatusAvancementBloc.saveStatut();
+    setOpened(false);
+  };
 
-    const {statut} = actionStatusAvancementBloc;
-    const {avancement, avancement_detaille} = statut;
+  const {statut} = actionStatusAvancementBloc;
+  const {avancement, avancement_detaille} = statut;
 
-    const score = scoreBloc.getScore(actionId, referentielId(actionId));
-    const currentStatus = score?.desactive
-      ? // affiche le statut "non concerné" quand l'action est désactivée par la personnalisation
-        nonConcerneStatut.value
-      : // sinon le statut courant ou à défaut "non renseigné"
-        statut.value ?? nonRenseigneStatut.value;
+  const score = useActionScore(actionId);
+  const currentStatus = score?.desactive
+    ? // affiche le statut "non concerné" quand l'action est désactivée par la personnalisation
+      nonConcerneStatut.value
+    : // sinon le statut courant ou à défaut "non renseigné"
+      statut.value ?? nonRenseigneStatut.value;
 
-    return (
-      <div className="flex flex-col w-full">
-        <Select
-          value={currentStatus}
-          onChange={handleChange}
-          displayEmpty
-          inputProps={{'aria-label': 'Without label'}}
-          disabled={currentCollectiviteBloc.readonly || score?.desactive}
-        >
-          {selectables.map(({value, color, label}) => (
-            <MenuItem key={value} value={value}>
-              <span style={{color: color}}>&#9679;</span>
-              &nbsp;{label}
-            </MenuItem>
-          ))}
-        </Select>
-        {avancement === 'detaille' && !score?.desactive ? (
-          <>
-            {avancement_detaille?.length === 3 ? (
-              <ul className="mt-6 text-sm">
-                <li>
-                  Fait :&nbsp;
-                  {toPercentString(avancement_detaille[0])}
-                </li>
-                <li>
-                  Programmé :&nbsp;
-                  {toPercentString(avancement_detaille[1])}
-                </li>
-                <li>
-                  Pas fait :&nbsp;
-                  {toPercentString(avancement_detaille[2])}
-                </li>
-              </ul>
-            ) : null}
-            <button
-              className="fr-btn fr-btn--sm"
-              onClick={() => setOpened(true)}
-            >
-              Préciser l'avancement
-            </button>
-            <Dialog
-              open={opened}
-              onClose={() => setOpened(false)}
-              maxWidth="sm"
-              fullWidth={true}
-            >
-              <div className="p-7 flex flex-col items-center">
-                <CloseDialogButton setOpened={setOpened} />
-                <h3 className="pb-4">Préciser l’avancement de cette tâche</h3>
-                <div className="w-full">
-                  <DetailedScore
-                    avancement={
-                      (avancement_detaille?.length === 3
-                        ? avancement_detaille
-                        : DEFAULT_DETAIL_VALUES) as AvancementValues
-                    }
-                    onSave={handleSaveDetail}
-                  />
-                </div>
+  return (
+    <div className="flex flex-col w-full">
+      <Select
+        value={currentStatus}
+        onChange={handleChange}
+        displayEmpty
+        inputProps={{'aria-label': 'Without label'}}
+        disabled={currentCollectiviteBloc.readonly || score?.desactive}
+      >
+        {selectables.map(({value, color, label}) => (
+          <MenuItem key={value} value={value}>
+            <span style={{color: color}}>&#9679;</span>
+            &nbsp;{label}
+          </MenuItem>
+        ))}
+      </Select>
+      {avancement === 'detaille' && !score?.desactive ? (
+        <>
+          {avancement_detaille?.length === 3 ? (
+            <ul className="mt-6 text-sm">
+              <li>
+                Fait :&nbsp;
+                {toPercentString(avancement_detaille[0])}
+              </li>
+              <li>
+                Programmé :&nbsp;
+                {toPercentString(avancement_detaille[1])}
+              </li>
+              <li>
+                Pas fait :&nbsp;
+                {toPercentString(avancement_detaille[2])}
+              </li>
+            </ul>
+          ) : null}
+          <button className="fr-btn fr-btn--sm" onClick={() => setOpened(true)}>
+            Préciser l'avancement
+          </button>
+          <Dialog
+            open={opened}
+            onClose={() => setOpened(false)}
+            maxWidth="sm"
+            fullWidth={true}
+          >
+            <div className="p-7 flex flex-col items-center">
+              <CloseDialogButton setOpened={setOpened} />
+              <h3 className="pb-4">Préciser l’avancement de cette tâche</h3>
+              <div className="w-full">
+                <DetailedScore
+                  avancement={
+                    (avancement_detaille?.length === 3
+                      ? avancement_detaille
+                      : DEFAULT_DETAIL_VALUES) as AvancementValues
+                  }
+                  onSave={handleSaveDetail}
+                />
               </div>
-            </Dialog>
-          </>
-        ) : null}
-      </div>
-    );
-  }
-);
+            </div>
+          </Dialog>
+        </>
+      ) : null}
+    </div>
+  );
+};
 
 class ActionStatusAvancementRadioButtonBloc {
   private actionId: string;
