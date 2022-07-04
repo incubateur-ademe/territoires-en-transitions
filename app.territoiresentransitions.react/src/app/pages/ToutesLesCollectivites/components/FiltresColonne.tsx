@@ -6,7 +6,7 @@ import {
   RegionFiltre,
   TauxRemplissageCollectiviteFiltre,
   TypeCollectiviteFiltre,
-} from 'app/pages/ToutesLesCollectivites/Filtres';
+} from 'app/pages/ToutesLesCollectivites/components/Filtres';
 import type {TCollectivitesFilters} from 'app/pages/ToutesLesCollectivites/filtreLibelles';
 import {RegionRead} from 'generated/dataLayer/region_read';
 import {DepartementRead} from 'generated/dataLayer/departement_read';
