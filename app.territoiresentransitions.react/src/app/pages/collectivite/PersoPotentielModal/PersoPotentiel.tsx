@@ -2,7 +2,6 @@ import {useState} from 'react';
 import {observer} from 'mobx-react-lite';
 import {Dialog} from '@material-ui/core';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {ScoreBloc} from 'core-logic/observables/scoreBloc';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {CloseDialogButton} from 'ui/shared/CloseDialogButton';
 import {PersoPotentielTabs} from './PersoPotentielTabs';
@@ -10,12 +9,11 @@ import {PointsPotentiels} from './PointsPotentiels';
 import {useQuestionsReponses} from './useQuestionsReponses';
 import {useRegles} from './useRegles';
 import {useChangeReponseHandler} from './useChangeReponseHandler';
+import {useActionScore} from 'core-logic/observables/scoreHooks';
 
 export type TPersoPotentielButtonProps = {
   /** Définition de l'action */
   actionDef: ActionDefinitionSummary;
-  /** Données score */
-  scoreBloc: ScoreBloc;
 };
 
 /**
@@ -23,9 +21,8 @@ export type TPersoPotentielButtonProps = {
  * bouton permettant d'ouvrir le dialogue "personnaliser le potentiel de points"
  * d'une action, et le dialogue lui-même
  */
-export const PersoPotentiel = observer((props: TPersoPotentielButtonProps) => {
-  const {actionDef, scoreBloc} = props;
-  const {id: actionId, type, identifiant, nom, referentiel} = actionDef;
+export const PersoPotentiel = (props: TPersoPotentielButtonProps) => {
+  const {id: actionId, type, identifiant, nom} = props.actionDef;
   const [opened, setOpened] = useState(false);
   const collectivite_id = useCollectiviteId();
   const [data, refetch] = useQuestionsReponses(actionId);
@@ -36,7 +33,7 @@ export const PersoPotentiel = observer((props: TPersoPotentielButtonProps) => {
   );
   const {qr} = data || {};
 
-  const actionScore = scoreBloc.getScore(actionId, referentiel);
+  const actionScore = useActionScore(actionId);
   if (!actionScore) {
     return null;
   }
@@ -44,7 +41,7 @@ export const PersoPotentiel = observer((props: TPersoPotentielButtonProps) => {
   return (
     <div onClick={event => event.stopPropagation()}>
       <PointsPotentiels
-        actionDef={actionDef}
+        actionDef={props.actionDef}
         actionScore={actionScore}
         onEdit={() => setOpened(true)}
       />
@@ -77,4 +74,4 @@ export const PersoPotentiel = observer((props: TPersoPotentielButtonProps) => {
       {renderToast()}
     </div>
   );
-});
+};

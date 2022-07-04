@@ -2,9 +2,8 @@ import {useState} from 'react';
 import {LazyDetails} from 'ui/shared/LazyDetails';
 import {ActionReferentielDisplayTitle} from 'ui/referentiels/ActionReferentielDisplayTitle';
 import {Chevron} from 'ui/shared/Chevron';
-import {scoreBloc} from 'core-logic/observables/scoreBloc';
 import {ActionReferentielLinkCard} from 'ui/referentiels/ActionReferentielLinkCard';
-import {ActionProgressBar} from 'ui/referentiels/ActionProgressBar';
+import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
 import {useActionSummaryChildren} from 'core-logic/hooks/referentiel';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 
@@ -33,7 +32,7 @@ export const ExpandableAction = ({
               </div>
             </div>
             <div className="w-1/6">
-              <ActionProgressBar actionId={action.id} scoreBloc={scoreBloc} />
+              <ActionProgressBar actionId={action.id} />
             </div>
           </div>
         }

@@ -1,9 +1,7 @@
-import {observer} from 'mobx-react-lite';
-import {scoreBloc, ScoreBloc} from 'core-logic/observables/scoreBloc';
-import {referentielId} from 'utils/actions';
 import {toFixed} from 'utils/toFixed';
 import {ActionType} from 'types/action_referentiel';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import {useActionScore} from 'core-logic/observables/scoreHooks';
 
 export interface PillParams {
   color: string;
@@ -40,26 +38,23 @@ export const pillParams: Record<ActionType, PillParams> = {
   },
   tache: {color: '#E8EBF3', textColor: 'black', filled: true, height: 20},
 };
-export const ActionPotentiel = observer(
-  ({
-    action,
-    scoreBloc,
-  }: {
-    action: ActionDefinitionSummary;
-    scoreBloc: ScoreBloc;
-  }) => {
-    const score = scoreBloc.getScore(action.id, referentielId(action.id));
+export const ActionPotentiel = ({
+  action,
+}: {
+  action: ActionDefinitionSummary;
+}) => {
+  const score = useActionScore(action.id);
 
-    if (score === null) return null;
+  if (score === null) return null;
 
-    const potentiel = toFixed(
-      score?.point_potentiel,
-      action.type === 'axe' || action.type === 'sous-axe' ? 0 : 2
-    );
-    const text = score?.point_potentiel ? `${potentiel} points` : '0 point';
-    return <span className="font-normal whitespace-nowrap">({text})</span>;
-  }
-);
+  const potentiel = toFixed(
+    score?.point_potentiel,
+    action.type === 'axe' || action.type === 'sous-axe' ? 0 : 2
+  );
+  const text = score?.point_potentiel ? `${potentiel} points` : '0 point';
+  return <span className="font-normal whitespace-nowrap">({text})</span>;
+};
+
 export const ActionReferentielTitlePill = ({
   action,
 }: {
@@ -95,7 +90,7 @@ export const ActionReferentielDisplayTitle = ({
       <ActionReferentielTitlePill action={action} />
       <div>
         <span className="fr-text--lg">{action.nom} </span>
-        <ActionPotentiel action={action} scoreBloc={scoreBloc} />
+        <ActionPotentiel action={action} />
       </div>
     </div>
   );
