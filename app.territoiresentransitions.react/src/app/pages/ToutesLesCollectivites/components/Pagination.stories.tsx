@@ -11,42 +11,52 @@ const Template: Story<TPaginationProps> = args => (
   </ul>
 );
 
-export const PaginationAvecPlusDe3Pages = Template.bind({});
-const paginationAvecPlusDe3PagesArgs: TPaginationProps = {
-  selectedPage: 1,
-  nbOfPages: 20,
-  onChange: (selected: number) => {
-    console.log(selected);
-  },
-};
-PaginationAvecPlusDe3Pages.args = paginationAvecPlusDe3PagesArgs;
-
-export const PaginationAvec1SeulePage = Template.bind({});
-const paginationAvec1SeulePageArgs: TPaginationProps = {
+export const UneSeulePage = Template.bind({});
+const UneSeulePageArgs: TPaginationProps = {
   selectedPage: 1,
   nbOfPages: 1,
   onChange: (selected: number) => {
     console.log(selected);
   },
 };
-PaginationAvec1SeulePage.args = paginationAvec1SeulePageArgs;
+UneSeulePage.args = UneSeulePageArgs;
 
-export const PaginationAvec6Pages = Template.bind({});
-const paginationAvec6PagesArgs: TPaginationProps = {
+export const TroisPages = Template.bind({});
+const TroisPagesArgs: TPaginationProps = {
+  selectedPage: 1,
+  nbOfPages: 3,
+  onChange: (selected: number) => {
+    console.log(selected);
+  },
+};
+TroisPages.args = TroisPagesArgs;
+
+export const SixPages = Template.bind({});
+const SixPagesArgs: TPaginationProps = {
   selectedPage: 1,
   nbOfPages: 6,
   onChange: (selected: number) => {
     console.log(selected);
   },
 };
-PaginationAvec6Pages.args = paginationAvec6PagesArgs;
+SixPages.args = SixPagesArgs;
 
-export const PaginationAvec8Pages = Template.bind({});
-const paginationAvec8PagesArgs: TPaginationProps = {
+export const HuitPages = Template.bind({});
+const HuitPagesArgs: TPaginationProps = {
   selectedPage: 1,
   nbOfPages: 8,
   onChange: (selected: number) => {
     console.log(selected);
   },
 };
-PaginationAvec8Pages.args = paginationAvec8PagesArgs;
+HuitPages.args = HuitPagesArgs;
+
+export const CentPlusPage = Template.bind({});
+const CentPlusPageArgs: TPaginationProps = {
+  selectedPage: 110,
+  nbOfPages: 140,
+  onChange: (selected: number) => {
+    console.log(selected);
+  },
+};
+CentPlusPage.args = CentPlusPageArgs;

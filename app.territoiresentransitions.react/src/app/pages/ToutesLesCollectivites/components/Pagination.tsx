@@ -1,4 +1,6 @@
+import classNames from 'classnames';
 import {useEffect, useState} from 'react';
+import useWindowSize from 'utils/useWindowSize';
 
 export type TPaginationProps = {
   selectedPage: number;
@@ -18,24 +20,54 @@ export const Pagination = (props: TPaginationProps) => {
     number[]
   >([]);
 
+  const windowSize = useWindowSize();
+  const isMobile = windowSize.width < 992;
+
   const setSelectedPageAndScrollToTop = (page: number) => {
     setSelectedPage(page);
     window.scrollTo(0, 0);
   };
+
+  const range = (start: number, end: number) =>
+    Array.from({length: end - start + 1}, (v, k) => start + k);
+
   const setPageRangesToDisplay = () => {
-    if (props.nbOfPages <= 6) {
-      setLeftPageRangeToDisplay(range(1, props.nbOfPages));
-      setRightPageRangeToDisplay([]);
-    } else if (selectedPage <= props.nbOfPages - 3) {
-      setLeftPageRangeToDisplay(
-        range(Math.max(1, selectedPage - 3), Math.max(selectedPage, 4))
-      );
-      setRightPageRangeToDisplay([props.nbOfPages]);
+    if (isMobile) {
+      if (props.nbOfPages <= 3) {
+        /* |< 1 2 3 >/ */
+        setLeftPageRangeToDisplay(range(1, props.nbOfPages));
+        setRightPageRangeToDisplay([]);
+      } else if (selectedPage <= props.nbOfPages - 2) {
+        /* |< 2 3 6 >/ */
+        setLeftPageRangeToDisplay(
+          range(Math.max(1, selectedPage - 1), Math.max(selectedPage, 2))
+        );
+        setRightPageRangeToDisplay([props.nbOfPages]);
+      } else {
+        /* |< 1 5 6 >/ */
+        setLeftPageRangeToDisplay([1]);
+        setRightPageRangeToDisplay(range(props.nbOfPages - 1, props.nbOfPages));
+      }
     } else {
-      setLeftPageRangeToDisplay(range(1, 4 - (props.nbOfPages - selectedPage)));
-      setRightPageRangeToDisplay(
-        range(Math.max(selectedPage, 4), props.nbOfPages)
-      );
+      if (props.nbOfPages <= 6) {
+        /* |< 1 2 3 4 5 6 >/ */
+        setLeftPageRangeToDisplay(range(1, props.nbOfPages));
+        setRightPageRangeToDisplay([]);
+      } else if (selectedPage <= props.nbOfPages - 3) {
+        /* |< 1 2 3 4 ... 8 >/ */
+        setLeftPageRangeToDisplay(
+          range(Math.max(1, selectedPage - 3), Math.max(selectedPage, 4))
+        );
+        setRightPageRangeToDisplay([props.nbOfPages]);
+      } else {
+        /* |< 1 2 ... 6 7 8 >/ */
+        setLeftPageRangeToDisplay(
+          range(1, 4 - (props.nbOfPages - selectedPage))
+        );
+        setRightPageRangeToDisplay(
+          range(Math.max(selectedPage, 4), props.nbOfPages)
+        );
+      }
     }
   };
 
@@ -43,18 +75,21 @@ export const Pagination = (props: TPaginationProps) => {
     setPageRangesToDisplay();
     props.onChange(selectedPage);
   }, [selectedPage, props.nbOfPages]);
+
   return (
     <nav role="navigation" className="fr-pagination" aria-label="Pagination">
       <ul className="fr-pagination__list">
-        <button
-          className="fr-pagination__link fr-pagination__link--first"
-          aria-disabled="true"
-          role="link"
-          onClick={() => setSelectedPageAndScrollToTop(1)}
-          disabled={selectedPage === 1}
-        >
-          Première page
-        </button>
+        <li>
+          <button
+            className="fr-pagination__link fr-pagination__link--first"
+            aria-disabled="true"
+            role="link"
+            onClick={() => setSelectedPageAndScrollToTop(1)}
+            disabled={selectedPage === 1}
+          >
+            Première page
+          </button>
+        </li>
 
         <button
           className="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
@@ -132,6 +167,3 @@ export const PageSelector = (props: {
     </button>
   );
 };
-
-const range = (start: number, end: number) =>
-  Array.from({length: end - start + 1}, (v, k) => start + k);

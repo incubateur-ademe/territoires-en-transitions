@@ -36,7 +36,7 @@ export const RenderToutesLesCollectivites = (
 ) => {
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   return (
-    <div data-test="ToutesLesCollectivites" className="app fr-container mt-16">
+    <div data-test="ToutesLesCollectivites" className="app fr-container my-16">
       <div className="text-center mb-8 md:mb-16">
         <div className="font-bold text-black md:text-4xl text-3xl mb-6">
           Toutes les collectivités
@@ -126,7 +126,7 @@ export const RenderToutesLesCollectivites = (
             filters={props.filters}
           />
           {props.collectivitesCount !== 0 && (
-            <div className="flex justify-center mt-3">
+            <div className="flex justify-center mt-6 md:mt-12">
               <Pagination
                 nbOfPages={Math.ceil(
                   props.collectivitesCount / NB_CARDS_PER_PAGE
@@ -149,9 +149,9 @@ const MobileFilterButton = (props: {
   handleOpenFilter: () => void;
 }) => {
   return (
-    <div className="fixed bottom-6 right-4 left-4 z-10 md:hidden">
+    <div className="fixed bottom-0 inset-x-0 z-10 md:hidden">
       <button
-        className={`fr-btn justify-center text-center ${
+        className={`fr-btn justify-center !py-6 text-center ${
           props.numberOfActiveFilters > 0
             ? 'fr-fi-filter-fill'
             : 'fr-fi-filter-line'

@@ -8,7 +8,7 @@ import {PostgrestFilterBuilder} from '@supabase/postgrest-js';
 const screenIsMobile = () =>
   window.innerHeight <= 800 && window.innerWidth <= 600;
 
-export const NB_CARDS_PER_PAGE = screenIsMobile() ? 2 : 16;
+export const NB_CARDS_PER_PAGE = screenIsMobile() ? 5 : 16;
 
 // A subset of supabase FilterOperator as it not an exported type.
 type FilterOperator = 'in' | 'ov';
