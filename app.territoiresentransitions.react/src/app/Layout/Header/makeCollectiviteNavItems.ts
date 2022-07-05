@@ -1,5 +1,5 @@
+import {CurrentCollectivite} from 'app/Layout/useCurrentCollectivite';
 import {
-  allCollectivitesPath,
   makeCollectiviteAllCollectivitesUrl,
   makeCollectiviteIndicateursUrl,
   makeCollectiviteLabellisationUrl,
@@ -10,7 +10,6 @@ import {
   makeCollectiviteUsersUrl,
   planActionDefaultId,
 } from 'app/paths';
-import {CurrentCollectivite} from '../../../core-logic/hooks/useCurrentCollectivite';
 
 export interface CollectiviteNavSingle {
   displayOnlyToMember?: boolean;

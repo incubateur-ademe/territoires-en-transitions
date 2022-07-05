@@ -84,6 +84,7 @@ exports[`Storyshots App/Layout/Header/Header Connected 1`] = `
               </a>
               <div
                 className="group relative"
+                data-test="connectedMenu"
               >
                 <button
                   className="fr-link"
@@ -336,6 +337,7 @@ exports[`Storyshots App/Layout/Header/Header With Collectivite 1`] = `
               </a>
               <div
                 className="group relative"
+                data-test="connectedMenu"
               >
                 <button
                   className="fr-link"
@@ -763,6 +765,7 @@ Array [
                 </a>
                 <div
                   className="group relative"
+                  data-test="connectedMenu"
                 >
                   <button
                     className="fr-link"

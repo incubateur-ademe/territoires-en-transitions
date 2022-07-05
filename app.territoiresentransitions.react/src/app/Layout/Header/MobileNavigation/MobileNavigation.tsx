@@ -3,8 +3,8 @@ import {TAuthContext} from 'core-logic/api/auth/AuthProvider';
 import MobileHeaderNavigation from './MobileHeaderNavigation/MobileHeaderNavigation';
 import MobileCollectiviteNavigation from './MobileCollectiviteNavigation';
 import {CollectiviteNavItems} from '../makeCollectiviteNavItems';
-import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {OwnedCollectiviteRead} from 'generated/dataLayer';
+import {CurrentCollectivite} from 'app/Layout/useCurrentCollectivite';
 
 type Props = {
   auth: TAuthContext;
