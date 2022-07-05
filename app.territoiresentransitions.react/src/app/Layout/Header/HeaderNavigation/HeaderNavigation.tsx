@@ -22,7 +22,7 @@ const HeaderNavigation = ({auth}: Props) => {
             Aide
           </a>
           {isConnected ? (
-            <div className="group relative">
+            <div data-test="connectedMenu" className="group relative">
               <button className="fr-link">
                 <div className="fr-fi-account-line mr-2" />
                 {user?.prenom}

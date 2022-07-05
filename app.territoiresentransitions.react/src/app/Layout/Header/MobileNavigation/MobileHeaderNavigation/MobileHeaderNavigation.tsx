@@ -19,7 +19,7 @@ const MobileHeaderNavigation = ({auth, toggleMobileNavigation}: Props) => {
   return (
     <>
       {isConnected && user ? (
-        <div>
+        <div data-test="connectedMenu">
           <button className="fr-link w-full !p-4" onClick={toggleIsProfileOpen}>
             <div className="fr-fi-account-line mr-2" />
             <span>{user.prenom}</span>
