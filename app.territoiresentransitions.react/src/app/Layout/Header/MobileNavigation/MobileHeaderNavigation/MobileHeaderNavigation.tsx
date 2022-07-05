@@ -4,8 +4,6 @@ import {signInPath, signUpPath} from 'app/paths';
 import {TAuthContext} from 'core-logic/api/auth/AuthProvider';
 import {LogoutBtn} from '../../LogoutBtn';
 
-const profilePath = '#';
-
 type Props = {
   auth: TAuthContext;
   toggleMobileNavigation: () => void;
