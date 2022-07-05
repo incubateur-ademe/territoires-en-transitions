@@ -19,7 +19,10 @@ const CollectivitesFiltrees = (props: {
 };
 
 const AucuneCollectivite = (props: {desactiverLesFiltres: () => void}) => (
-  <div className="flex flex-col gap-4" style={{color: '#6A6AF4'}}>
+  <div
+    className="flex flex-col gap-4 mt-10 md:mt-16"
+    style={{color: '#6A6AF4'}}
+  >
     <div style={{fontSize: '22px', fontWeight: 'bold'}}>
       {' '}
       Oups... aucune collectivité ne correspond à votre recherche !{' '}
