@@ -1,3 +1,4 @@
+import {useState} from 'react';
 import {CollectivitesGrid} from 'app/pages/ToutesLesCollectivites/components/CollectivitesGrid';
 import {
   filtresVides,
@@ -17,7 +18,8 @@ import {DepartementRead} from 'generated/dataLayer/departement_read';
 import {Pagination} from 'app/pages/ToutesLesCollectivites/components/Pagination';
 import {NB_CARDS_PER_PAGE} from 'app/pages/ToutesLesCollectivites/queries';
 import {getNumberOfActiveFilters} from 'app/pages/ToutesLesCollectivites/getNumberOfActiveFilters';
-import {useState} from 'react';
+import classNames from 'classnames';
+import './ToutesLesCollectivites.css';
 
 export type TRenderToutesCollectivitesProps = {
   regions: RegionRead[];
@@ -32,7 +34,7 @@ export type TRenderToutesCollectivitesProps = {
 export const RenderToutesLesCollectivites = (
   props: TRenderToutesCollectivitesProps
 ) => {
-  const [mobileClickedFilters, setMobileClickedFilters] = useState(false);
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   return (
     <div data-test="ToutesLesCollectivites" className="app fr-container mt-16">
       <div className="text-center mb-8 md:mb-16">
@@ -47,21 +49,52 @@ export const RenderToutesLesCollectivites = (
       <div className="md:flex">
         {/* Filters column */}
         <div
-          className={`md:mr-6 md:w-3/12 xl:mr-14 ${
-            mobileClickedFilters ? '' : 'hidden'
-          } md:!block`}
+          className={classNames(
+            'flex flex-col bg-white z-20 md:mr-6 md:!block md:w-3/12 xl:mr-14',
+            {
+              hidden: !isMobileFilterOpen,
+              ['collectivites-filter-column-mobile']: isMobileFilterOpen,
+            }
+          )}
         >
+          {isMobileFilterOpen && (
+            <>
+              {/* Close filters on mobile */}
+              <div className="w-max ml-auto mb-8 border-b border-bf500">
+                <button
+                  onClick={() => setIsMobileFilterOpen(false)}
+                  className="flex items-center text-bf500 hover:!bg-none"
+                >
+                  <span className="text-md">Fermer</span>
+                  <span className="fr-fi-close-line ml-1 mt-1 scale-90"></span>
+                </button>
+              </div>
+              <h4>Filtrer</h4>
+            </>
+          )}
           <FiltresColonne
             filters={props.filters}
             setFilters={props.setFilters}
             regions={props.regions}
             departments={props.departements}
           />
+          {isMobileFilterOpen && (
+            /* Display results button on mobile */
+            <button
+              className="fr-btn mt-8 mx-auto"
+              onClick={() => setIsMobileFilterOpen(false)}
+            >
+              Afficher les résultats
+            </button>
+          )}
         </div>
+        {/* Trigger filters on mobile */}
+        <MobileFilterButton
+          numberOfActiveFilters={getNumberOfActiveFilters(props.filters)}
+          handleOpenFilter={() => setIsMobileFilterOpen(true)}
+        />
         {/* Collectivites column */}
-        <div
-          className={`w-full ${mobileClickedFilters ? 'hidden' : ''} md:!block`}
-        >
+        <div className="w-full">
           <div className="flex flex-col mb-6 md:flex-row md:justify-between">
             <div className="order-last mt-4 md:flex md:flex-col md:order-first md:mt-0">
               {props.collectivitesCount > 0 && (
@@ -107,31 +140,23 @@ export const RenderToutesLesCollectivites = (
           )}
         </div>
       </div>
-      <MobileFilterButton
-        numberOfActiveFilters={getNumberOfActiveFilters(props.filters)}
-        mobileClickedFilters={mobileClickedFilters}
-        setMobileClickedFilters={setMobileClickedFilters}
-      />
     </div>
   );
 };
 
 const MobileFilterButton = (props: {
   numberOfActiveFilters: number;
-  mobileClickedFilters: boolean;
-  setMobileClickedFilters: (value: boolean) => void;
+  handleOpenFilter: () => void;
 }) => {
   return (
-    <div className="md:hidden w-full my-4">
+    <div className="fixed bottom-6 right-4 left-4 z-10 md:hidden">
       <button
-        className={`fr-btn text-center ${
+        className={`fr-btn justify-center text-center ${
           props.numberOfActiveFilters > 0
             ? 'fr-fi-filter-fill'
             : 'fr-fi-filter-line'
         } fr-fi--sm min-w-full text-center`}
-        onClick={() => {
-          props.setMobileClickedFilters(!props.mobileClickedFilters);
-        }}
+        onClick={props.handleOpenFilter}
       >
         {props.numberOfActiveFilters > 0
           ? `Filtrer (${props.numberOfActiveFilters})`
