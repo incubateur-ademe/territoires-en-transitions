@@ -2,6 +2,6 @@
 
 BEGIN;
 
-drop view stats_tranche_completude;
+drop materialized view stats_tranche_completude;
 
 COMMIT;

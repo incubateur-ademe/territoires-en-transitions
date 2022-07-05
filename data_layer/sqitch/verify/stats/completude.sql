@@ -2,6 +2,7 @@
 
 BEGIN;
 
-drop view stats_tranche_completude;
+select bucket, eci, cae
+from stats_tranche_completude where false;
 
 ROLLBACK;
