@@ -42,41 +42,47 @@ comment on view retool_completude_compute is
 
 
 create view retool_score as
-with relation as (select *
-                  from action_relation),
-     statut as (select *
-                from action_statut a
-                         join relation on relation.id = a.action_id),
-     score as (select jsonb_array_elements(scores) ->> 'action_id'       as action_id,
-                      jsonb_array_elements(scores) ->> 'point_fait'      as points,
-                      jsonb_array_elements(scores) ->> 'point_potentiel' as points_pot,
-                      s.collectivite_id
-               from client_scores s),
-     commentaires as (select *
-                      from action_commentaire c
-                               join relation on relation.id = c.action_id)
-select n.collectivite_id,
-       n.nom                            as collectivité,
-       a.referentiel,
-       a.id                             as action,
-       coalesce(s.avancement::text, '') as avancement,
-       score.points                     as points,
-       score.points_pot                 as points_potentiels,
-       coalesce(
-                       score.points::numeric / nullif(score.points_pot::numeric, 0)::float * 100.0,
-                       0.0)             as pourcentage,
-       coalesce(c.commentaire, '')      as commentaire
+with p as (select collectivite_id,
+                  action_id,
+                  array_agg(coalesce(preuve.url, preuve.filename)) as preuves
+           from preuve
+           group by collectivite_id, action_id)
+select c.collectivite_id                                              as collectivite_id,
+       c.nom                                                          as "Collectivité",
 
-from named_collectivite n
-         full join relation a on true
-         left join statut s on s.action_id = a.id and s.collectivite_id = n.collectivite_id
-         left join score on score.action_id = a.id and score.collectivite_id = n.collectivite_id
-         left join commentaires c on c.action_id = a.id and c.collectivite_id = n.collectivite_id
-where is_service_role() -- Protect DCPs that could be in commentaires.
-order by n.collectivite_id, a.id
-;
+       d.referentiel,
+       d.identifiant                                                  as "Identifiant",
+       d.nom                                                          as "Titre",
+       sc.point_potentiel                                             as "Points potentiels",
+       sc.point_fait                                                  as "Points realisés",
+
+       case
+           when sc.point_potentiel = 0 then 0
+           else sc.point_fait / sc.point_potentiel * 100 end          as "Pourcentage réalisé",
+
+       case
+           when sc.point_potentiel = 0 then 0
+           else sc.point_non_renseigne / sc.point_potentiel * 100 end as "Pourcentage non renseigné",
+
+       coalesce(s.avancement::varchar, '')                            as "Avancement",
+       not sc.concerne or sc.desactive                                as "Non concerné",
+       ac.commentaire                                                 as "Commentaire",
+       p.preuves                                                      as "Preuves"
+
+from named_collectivite c
+         -- definitions
+         left join action_definition d on true
+    -- collectivité data
+         left join action_statut s on c.collectivite_id = s.collectivite_id and s.action_id = d.action_id
+         left join private.action_scores sc on c.collectivite_id = sc.collectivite_id and sc.action_id = d.action_id
+         left join p on c.collectivite_id = p.collectivite_id and d.action_id = p.action_id
+         left join action_commentaire ac on d.action_id = ac.action_id and c.collectivite_id = ac.collectivite_id
+
+order by c.collectivite_id,
+         naturalsort(d.identifiant);
+
 comment on view retool_score is
-    'Scores and commentaires for audit.';
+    'Scores et colonnes nécessaire pour les exports retool pour les audits.';
 
 
 create view retool_completude

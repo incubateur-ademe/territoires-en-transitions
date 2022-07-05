@@ -7,14 +7,18 @@ from retool_completude_compute
 where false;
 
 select collectivite_id,
-       collectivité,
+       "Collectivité",
        referentiel,
-       action,
-       avancement,
-       points,
-       points_potentiels,
-       pourcentage,
-       commentaire
+       "Identifiant",
+       "Titre",
+       "Points potentiels",
+       "Points realisés",
+       "Pourcentage réalisé",
+       "Pourcentage non renseigné",
+       "Avancement",
+       "Non concerné",
+       "Commentaire",
+       "Preuves"
 from retool_score
 where false;
 
