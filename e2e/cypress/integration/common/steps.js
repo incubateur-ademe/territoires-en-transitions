@@ -38,7 +38,7 @@ Given(/je suis connecté en tant que "([^"]*)"/, function (userName) {
   assert(u, 'utilisateur non trouvé');
   cy.get('@authBloc').then((authBloc) => authBloc.connect(u));
   cy.get(SignInPage.selector).should('not.exist');
-  cy.get('[data-test=logoutBtn]').should('be.visible');
+  cy.get('[data-test=connectedMenu]').should('be.visible');
 });
 
 // Met en pause le déroulement d'un scénario.
