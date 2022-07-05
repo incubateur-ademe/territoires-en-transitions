@@ -11,7 +11,7 @@
     "start": "node server.js",
     "dev": "TAILWIND_MODE=watch craco start",
     "build": "craco build",
-    "test": "craco test",
+    "test": " LANG=fr_FR TZ=Europe/Paris craco test",
     "typecheck": "tsc --noEmit",
     "eject": "react-scripts eject",
     "storybook": "TAILWIND_MODE=watch start-storybook -p 6006",
