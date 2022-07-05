@@ -2,13 +2,13 @@ import {useMemo} from 'react';
 import {Link, NavLink} from 'react-router-dom';
 import CollectiviteNavigationDropdownTab from './CollectiviteNavigationDropdownTab';
 import {makeCollectiviteTableauBordUrl} from 'app/paths';
-import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {
   CollectiviteNavDropdown,
   CollectiviteNavItems,
   isSingleNavItemDropdown,
 } from '../makeCollectiviteNavItems';
 import {OwnedCollectiviteRead} from 'generated/dataLayer';
+import {CurrentCollectivite} from 'app/Layout/useCurrentCollectivite';
 
 export const activeTabClassName = '!text-bf500 border-b-2 border-bf500';
 

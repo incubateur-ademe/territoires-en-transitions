@@ -1,6 +1,6 @@
 import {action} from '@storybook/addon-actions';
 import {Header} from './Header';
-import {CurrentCollectivite} from '../../../core-logic/hooks/useCurrentCollectivite';
+import {CurrentCollectivite} from 'app/Layout/useCurrentCollectivite';
 import {OwnedCollectiviteRead} from 'generated/dataLayer';
 
 export default {
