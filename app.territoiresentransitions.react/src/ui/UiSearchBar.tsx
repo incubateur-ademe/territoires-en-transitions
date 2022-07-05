@@ -12,10 +12,10 @@ export const UiSearchBar = ({
   const [query, onChange] = useDebouncedInput('', search, debouncePeriod);
 
   return (
-    <div className="flex">
-      <div className=" border-b-2 border-bf500 flex items-center w-full">
+    <div className="border border-bf500 rounded-tr rounded-tl">
+      <div className="flex items-center w-full border-b-2 border-bf500">
         <input
-          className="bg-beige p-2 w-full"
+          className="bg-beige p-2 w-full placeholder-gray-500"
           key="random1"
           value={query || ''}
           placeholder={placeholder}
