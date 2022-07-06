@@ -16,13 +16,13 @@ select is_empty(
 
 select ialike(
                (claim_collectivite(10) -> 'message')::text,
-               '%Vous êtes référent%',
+               '%Vous êtes administrateur%',
                'should return the success message first time'
            );
 
 select ialike(
                (claim_collectivite(10) -> 'message')::text,
-               '%La collectivité dispose déjà d''un référent%',
+               '%La collectivité dispose déjà d''un administrateur%',
                'should return the failure message the second time'
            );
 
@@ -35,7 +35,7 @@ select results_eq(
 
 select ialike(
                (claim_collectivite(11) -> 'message')::text,
-               '%Vous êtes référent%',
+               '%Vous êtes administrateur%',
                'should return the success message for the second collectivite'
            );
 
