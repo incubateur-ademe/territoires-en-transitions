@@ -21,36 +21,6 @@ identite(population, moins_de_50000)
 ```
 Les collectivités de moins de 50 000 habitants ne sont pas concernées par l'obligation BEGES.
 
-# Réduction potentiel cae 1.2.2 liee AOM
-```yaml
-action_id: cae_1.2.2
-```
-## Règles
-### Réduction de potentiel
-```formule
-si reponse(centre_urbain, OUI) et reponse (AOM_1, NON) alors 6/12 
-sinon si reponse (AOM_1, NON) alors 2/12
-```
-Pour une collectivité n'ayant pas la compétence AOM, le score de la 1.2.2 est réduit de 50 %.
-
-Pour une collectivité n'ayant pas de centre urbain de plus de 5000 habitants ET n'ayant pas la compétence AOM, le score de la 1.2.2 est réduit à 2 points.
-
-
-# Réduction potentiel cae 1.2.3 liee competences dechets
-```yaml
-action_id: cae_1.2.3
-```
-## Règles
-### Réduction de potentiel
-```formule
-si reponse(dechets_1, OUI) et reponse(dechets_2, OUI) et reponse(dechets_3, OUI) alors 1.0
-sinon si reponse(dechets_1, NON) et reponse(dechets_2, NON) et reponse(dechets_3, NON) alors 2/10
-sinon si reponse(dechets_1, OUI) ou reponse(dechets_2, OUI) ou reponse(dechets_3, OUI) alors 0.75
-```
-Pour une collectivité ne possédant que partiellement les compétences collecte, traitement des déchets et plan de prévention des déchets, le score de la 1.2.3 est réduit de 25 %.
-
-Pour une collectivité n'ayant aucune des compétences collecte, traitement des déchets et plan de prévention des déchets, le score de la 1.2.3 est réduit à 2 points.
-
 # Personnalisation cae 1.1.3.1.4 liee competence collecte
 ```yaml
 action_id: cae_1.1.3.1.4
@@ -70,6 +40,83 @@ action_id: cae_1.1.3.1.5
 ```formule
 reponse(dechets_2, NON)
 ```
+
+# Réduction potentiel cae 1.2.2 liee AOM
+```yaml
+action_id: cae_1.2.2
+```
+## Règles
+### Réduction de potentiel
+```formule
+si reponse(centre_urbain, OUI) et reponse (AOM_1, NON) alors 6/12 
+sinon si reponse (AOM_1, NON) alors 2/12
+```
+Pour une collectivité n'ayant pas la compétence AOM, le score de la 1.2.2 est réduit de 50 %.
+
+Pour une collectivité n'ayant pas de centre urbain de plus de 5000 habitants ET n'ayant pas la compétence AOM, le score de la 1.2.2 est réduit à 2 points.
+
+# Personnalisation cae 1.2.2.1.1 liee EPCI
+```yaml
+action_id: cae_1.2.2.1.1
+```
+## Règles
+### Désactivation
+```formule
+identite(type, commune)
+```
+
+# Personnalisation cae 1.2.2.1.3 liee commmune
+```yaml
+action_id: cae_1.2.2.1.3
+```
+## Règles
+### Désactivation
+```formule
+identite(type, EPCI)
+```
+
+
+# Personnalisation cae 1.2.2.1 liee AOM > 100 000 hab
+```yaml
+action_id: cae_1.2.2.1
+```
+## Règles
+### Réduction de potentiel
+```formule
+si reponse(AOM, OUI) et identite(population, plus_de_100000) alors 0
+```
+### Désactivation
+```formule
+reponse(AOM, OUI) et identite(population, plus_de_100000)
+```
+Pour une collectivité AOM, de plus de 100 000 habitants, la 1.2.2.1 est désactivée.
+
+# Personnalisation cae 1.2.2.5 liee AOM > 100 000 hab
+```yaml
+action_id: cae_1.2.2.5
+```
+## Règles
+### Réduction de potentiel
+```formule
+si reponse(AOM, OUI) et identite(population, plus_de_100000) alors 4,8/12
+```
+Pour une collectivité AOM, de plus de 100 000 habitants, la 1.2.2.5 est notée sur 40 % (au lieu de 30 %).
+
+# Réduction potentiel cae 1.2.3 liee competences dechets
+```yaml
+action_id: cae_1.2.3
+```
+## Règles
+### Réduction de potentiel
+```formule
+si reponse(dechets_1, OUI) et reponse(dechets_2, OUI) et reponse(dechets_3, OUI) alors 1.0
+sinon si reponse(dechets_1, NON) et reponse(dechets_2, NON) et reponse(dechets_3, NON) alors 2/10
+sinon si reponse(dechets_1, OUI) ou reponse(dechets_2, OUI) ou reponse(dechets_3, OUI) alors 0.75
+```
+Pour une collectivité ne possédant que partiellement les compétences collecte, traitement des déchets et plan de prévention des déchets, le score de la 1.2.3 est réduit de 25 %.
+
+Pour une collectivité n'ayant aucune des compétences collecte, traitement des déchets et plan de prévention des déchets, le score de la 1.2.3 est réduit à 2 points.
+
 
 # Réduction potentiel cae 1.2.4 liee habitat
 ```yaml
