@@ -10,6 +10,7 @@ const Template: Story<ReferentielAxisScoresPolarAreaProps> = args => (
 export const CAEExample = Template.bind({});
 
 const props: ReferentielAxisScoresPolarAreaProps = {
+  referentiel: 'cae',
   data: [
     {
       label: [['1. Plannification'], ['territoriale']],

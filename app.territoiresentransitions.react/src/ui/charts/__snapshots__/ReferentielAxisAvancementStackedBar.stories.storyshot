@@ -2,6 +2,7 @@
 
 exports[`Storyshots Charts/ReferentielAxisAvancementStackedBar CAE Example 1`] = `
 <div
+  className="flex flex-col items-center gap-2"
   style={
     Object {
       "marginLeft": "0px",
@@ -14,15 +15,25 @@ exports[`Storyshots Charts/ReferentielAxisAvancementStackedBar CAE Example 1`] =
   >
     État d'avancement par axes
   </div>
-  <div
-    className="p-2"
-  />
   <canvas
     data-testid="canvas"
     height={348}
+    id="axis_avancement_bar_cae"
     onClick={[Function]}
     role="img"
     width={500}
   />
+  <a
+    className="fr-btn fr-btn--secondary"
+    download="État d'avancement par axes cae.png"
+    href=""
+    id="download_axis_avancement_bar_cae"
+    onClick={[Function]}
+  >
+    <div
+      className="fr-fi-download-line mr-2 text-xs"
+    />
+    Télécharger l'état d'avancement par axes pour CAE
+  </a>
 </div>
 `;

@@ -124,12 +124,16 @@ const ChiffreCles = ({
   const previsionnelPercentage =
     (previsionnelPoints / rootScore.point_potentiel) * 100;
 
+  const keyNumberElementId = `${referentiel}_chiffres_cles`;
   return (
     <div>
       <div className="font-semibold text-center mb-4  text-xl">
         Chiffres clés
       </div>
-      <div className="flex flex-row justify-between items-center">
+      <div
+        id={keyNumberElementId}
+        className="flex flex-row justify-between items-center"
+      >
         <div>
           <div className="font-light text-center mb-4">Taux de remplissage</div>
           <div className="flex flex-row">
@@ -320,11 +324,19 @@ const ReferentielSection = ({
         />
       )}
       <Spacer />
-      <div className="flex justify-center">
-        <ReferentielAxisScoresPolarArea data={axisAvancementSamples} />
+      <div className="flex flex-col justify-center items-center">
+        <div>
+          <ReferentielAxisScoresPolarArea
+            data={axisAvancementSamples}
+            referentiel={referentielId}
+          />
+        </div>
       </div>
       <Spacer />
-      <ReferentielAxisAvancementStackedBar data={axisAvancementSamples} />
+      <ReferentielAxisAvancementStackedBar
+        data={axisAvancementSamples}
+        referentiel={referentielId}
+      />
     </div>
   );
 };

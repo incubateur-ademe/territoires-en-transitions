@@ -230,6 +230,7 @@ exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Tableau Bord Page Refere
             </div>
             <div
               className="flex flex-row justify-between items-center"
+              id="cae_chiffres_cles"
             >
               <div>
                 <div
@@ -567,39 +568,56 @@ exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Tableau Bord Page Refere
             className="p-5"
           />
           <div
-            className="flex justify-center"
+            className="flex flex-col justify-center items-center"
           >
-            <div
-              style={
-                Object {
-                  "width": "500px",
-                }
-              }
-            >
+            <div>
               <div
-                className="font-semibold text-center text-xl"
+                className="flex flex-col items-center"
                 style={
                   Object {
-                    "marginBottom": "-32px",
-                    "paddingTop": "32px",
+                    "width": "500px",
                   }
                 }
               >
-                Scores par axe
+                <div
+                  className="font-semibold text-center text-xl"
+                  style={
+                    Object {
+                      "marginBottom": "-32px",
+                      "paddingTop": "32px",
+                    }
+                  }
+                >
+                  Scores par axe
+                </div>
+                <canvas
+                  data-testid="canvas"
+                  height={150}
+                  id="axis_scores_polar_cae"
+                  onClick={[Function]}
+                  role="img"
+                  width={300}
+                />
+                <a
+                  className="fr-btn fr-btn--secondary"
+                  download="Scores par axes cae.png"
+                  href=""
+                  id="download_axis_scores_polar_cae"
+                  onClick={[Function]}
+                >
+                  <div
+                    className="fr-fi-download-line mr-2 text-xs"
+                  />
+                  Télécharger les scores par axes pour CAE
+                </a>
               </div>
-              <canvas
-                data-testid="canvas"
-                height={150}
-                onClick={[Function]}
-                role="img"
-                width={300}
-              />
             </div>
           </div>
           <div
             className="p-5"
           />
           <div
+            className="flex flex-col items-center gap-2"
             style={
               Object {
                 "marginLeft": "0px",
@@ -612,16 +630,26 @@ exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Tableau Bord Page Refere
             >
               État d'avancement par axes
             </div>
-            <div
-              className="p-2"
-            />
             <canvas
               data-testid="canvas"
               height={290}
+              id="axis_avancement_bar_cae"
               onClick={[Function]}
               role="img"
               width={500}
             />
+            <a
+              className="fr-btn fr-btn--secondary"
+              download="État d'avancement par axes cae.png"
+              href=""
+              id="download_axis_avancement_bar_cae"
+              onClick={[Function]}
+            >
+              <div
+                className="fr-fi-download-line mr-2 text-xs"
+              />
+              Télécharger l'état d'avancement par axes pour CAE
+            </a>
           </div>
         </div>
       </section>
@@ -750,6 +778,7 @@ exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Tableau Bord Page Refere
             </div>
             <div
               className="flex flex-row justify-between items-center"
+              id="eci_chiffres_cles"
             >
               <div>
                 <div
@@ -1087,39 +1116,56 @@ exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Tableau Bord Page Refere
             className="p-5"
           />
           <div
-            className="flex justify-center"
+            className="flex flex-col justify-center items-center"
           >
-            <div
-              style={
-                Object {
-                  "width": "500px",
-                }
-              }
-            >
+            <div>
               <div
-                className="font-semibold text-center text-xl"
+                className="flex flex-col items-center"
                 style={
                   Object {
-                    "marginBottom": "-32px",
-                    "paddingTop": "32px",
+                    "width": "500px",
                   }
                 }
               >
-                Scores par axe
+                <div
+                  className="font-semibold text-center text-xl"
+                  style={
+                    Object {
+                      "marginBottom": "-32px",
+                      "paddingTop": "32px",
+                    }
+                  }
+                >
+                  Scores par axe
+                </div>
+                <canvas
+                  data-testid="canvas"
+                  height={150}
+                  id="axis_scores_polar_eci"
+                  onClick={[Function]}
+                  role="img"
+                  width={300}
+                />
+                <a
+                  className="fr-btn fr-btn--secondary"
+                  download="Scores par axes eci.png"
+                  href=""
+                  id="download_axis_scores_polar_eci"
+                  onClick={[Function]}
+                >
+                  <div
+                    className="fr-fi-download-line mr-2 text-xs"
+                  />
+                  Télécharger les scores par axes pour ECI
+                </a>
               </div>
-              <canvas
-                data-testid="canvas"
-                height={150}
-                onClick={[Function]}
-                role="img"
-                width={300}
-              />
             </div>
           </div>
           <div
             className="p-5"
           />
           <div
+            className="flex flex-col items-center gap-2"
             style={
               Object {
                 "marginLeft": "0px",
@@ -1132,16 +1178,26 @@ exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Tableau Bord Page Refere
             >
               État d'avancement par axes
             </div>
-            <div
-              className="p-2"
-            />
             <canvas
               data-testid="canvas"
               height={290}
+              id="axis_avancement_bar_eci"
               onClick={[Function]}
               role="img"
               width={500}
             />
+            <a
+              className="fr-btn fr-btn--secondary"
+              download="État d'avancement par axes eci.png"
+              href=""
+              id="download_axis_avancement_bar_eci"
+              onClick={[Function]}
+            >
+              <div
+                className="fr-fi-download-line mr-2 text-xs"
+              />
+              Télécharger l'état d'avancement par axes pour ECI
+            </a>
           </div>
         </div>
       </section>

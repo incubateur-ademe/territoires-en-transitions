@@ -5,16 +5,21 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import {AxisAvancementSample} from 'ui/charts/chartTypes';
 import {addOpacityToHex} from 'utils/addOpacityToHex';
 import {toFixed} from 'utils/toFixed';
+import {CanvasDownloadButton} from 'ui/charts/CanvasDownloadButton';
+import {Referentiel} from 'types/litterals';
 
 export type ReferentielAxisScoresPolarAreaProps = {
+  referentiel: Referentiel;
   data: AxisAvancementSample[];
   widthPx?: number;
 };
 
 export const ReferentielAxisScoresPolarArea = ({
+  referentiel,
   data,
   widthPx = 500,
 }: ReferentielAxisScoresPolarAreaProps) => {
+  const canvasId = `axis_scores_polar_${referentiel}`;
   const formatedData = {
     labels: data.map(({label, potentielPoints: referentielPoints}) => [
       ...label,
@@ -37,7 +42,7 @@ export const ReferentielAxisScoresPolarArea = ({
   };
 
   return (
-    <div style={{width: `${widthPx}px`}}>
+    <div className="flex flex-col items-center" style={{width: `${widthPx}px`}}>
       <div
         style={{paddingTop: '32px', marginBottom: '-32px'}}
         className="font-semibold text-center text-xl"
@@ -45,6 +50,7 @@ export const ReferentielAxisScoresPolarArea = ({
         Scores par axe
       </div>
       <PolarArea
+        id={canvasId}
         data={formatedData}
         plugins={[ChartDataLabels] as any}
         options={
@@ -55,7 +61,7 @@ export const ReferentielAxisScoresPolarArea = ({
               tooltip: {
                 callbacks: {
                   title: (tooltipItems: TooltipItem<'polarArea'>[]) => {
-                    return data[tooltipItems[0].datasetIndex].label;
+                    return tooltipItems[0].label;
                   },
                   label: (tooltipItem: TooltipItem<'polarArea'>) => {
                     return `${tooltipItem.dataset.label} : ${toFixed(
@@ -94,6 +100,11 @@ export const ReferentielAxisScoresPolarArea = ({
             },
           } as any
         }
+      />
+      <CanvasDownloadButton
+        fileName={`Scores par axes ${referentiel}.png`}
+        canvasId={canvasId}
+        buttonText={`Télécharger les scores par axes pour ${referentiel.toUpperCase()}`}
       />
     </div>
   );
