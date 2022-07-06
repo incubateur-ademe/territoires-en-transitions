@@ -136,7 +136,7 @@ action_id: cae_3.3.2
 ### Réduction de potentiel
 ```formule
 si reponse(assainissement_1, NON) alors 0/12
-sinon si reponse(assainissement_4, NON) alors 0.5
+sinon si reponse(assainissement_4, OUI) et reponse(assainissement_4bis, NON) alors 0.5
 ```
 ### Désactivation
 ```formule
