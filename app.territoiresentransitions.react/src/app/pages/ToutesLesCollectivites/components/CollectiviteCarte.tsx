@@ -29,11 +29,11 @@ export const CollectiviteCarte = (props: TCollectiviteCarteProps) => {
       })}
       style={{boxShadow: 'none'}} // override DSFR shadow
     >
-      <Card className="collectiviteCard md:p-6 p-3 w-full">
-        <div className="md:text-lg text-base font-bold md:h-24 h-12">
+      <Card className="collectiviteCard flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100">
+        <div className="md:text-lg text-base font-bold mb-4">
           {collectivite.nom}
         </div>
-        <div className="flex justify-between md:gap-4 gap-1">
+        <div className="flex justify-between gap-1 sm:gap-4 mt-auto">
           <ReferentielCol
             referentiel={'cae'}
             etoiles={collectivite.etoiles_cae}
@@ -108,7 +108,9 @@ export const ReferentielCol = (props: TReferentielColProps) => {
           </div>
         </div>
       ) : (
-        <div className="font-light italic text-center">Non concerné</div>
+        <div className="my-auto mr-auto font-light italic text-center">
+          Non concerné
+        </div>
       )}
     </div>
   );
@@ -126,12 +128,12 @@ const CinqEtoiles = (props: TCinqEtoilesProps) => {
   const {etoiles} = props;
 
   return (
-    <div className="flex space-x-2">
+    <div className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1">
       {NIVEAUX.map(niveau => {
         const obtenue = etoiles >= niveau;
         const Star = obtenue ? GreenStar : GreyStar;
         return (
-          <div className="w-6 scale-75 -ml-1" key={niveau}>
+          <div className="scale-75" key={niveau}>
             <Star key={`n${niveau}`} />
           </div>
         );
