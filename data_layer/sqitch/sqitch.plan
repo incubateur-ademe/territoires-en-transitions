@@ -71,3 +71,4 @@ utils/maintenance 2022-07-05T12:56:14Z sqitch <sqitch@bd48b0fa57bd> # Ajout du b
 evaluation/scores_events_fix [evaluation/scores_events] 2022-07-31T14:00:54Z Florian <florian@derfurth.com> # Répare la vue qui déclanche le recalcul des scores.
 labellisation/prerequis_fix [labellisation/prerequis] 2022-08-02T10:19:22Z Florian <florian@derfurth.com> # Le niveau de complétude n'est plus pris en compte pour déterminer les étoiles atteignables.
 evaluation/seuils_de_population 2022-08-01T12:44:15Z sqitch <sqitch@cf08f2556b3e> # Ajout de seuil de population pour les formules des actions cae_1.2.2.1, cae_1.2.2.5, cae_1.1.2.0.2, cae_1.1.2.0.1
+utilisateur/droits_v2 [utilisateur/droits] 2022-07-06T15:47:26Z Florian <florian@derfurth.com> # Change la notion de rôle en niveau d’accès.
