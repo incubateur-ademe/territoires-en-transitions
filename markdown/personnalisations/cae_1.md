@@ -51,6 +51,25 @@ Pour une collectivité ne possédant que partiellement les compétences collecte
 
 Pour une collectivité n'ayant aucune des compétences collecte, traitement des déchets et plan de prévention des déchets, le score de la 1.2.3 est réduit à 2 points.
 
+# Personnalisation cae 1.1.3.1.4 liee competence collecte
+```yaml
+action_id: cae_1.1.3.1.4
+```
+## Règles
+### Désactivation
+```formule
+reponse(dechets_1, NON)
+```
+
+# Personnalisation cae 1.1.3.1.5 liee competence traitement
+```yaml
+action_id: cae_1.1.3.1.5
+```
+## Règles
+### Désactivation
+```formule
+reponse(dechets_2, NON)
+```
 
 # Réduction potentiel cae 1.2.4 liee habitat
 ```yaml
