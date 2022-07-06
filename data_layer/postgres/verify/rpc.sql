@@ -1,1 +1,1 @@
-select has_function_privilege('retool_user_list()', 'execute');
+select has_function_privilege('have_edition_acces(integer)', 'execute');
