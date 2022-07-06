@@ -1,3 +1,26 @@
+# Personnalisation cae 1.1.2.0.1 liee obligation PCAET
+```yaml
+action_id: cae_1.1.2.0.1
+```
+## Règles
+### Désactivation
+```formule
+si identite(type, commune)
+sinon si identite(type, EPCI) et identite(population, moins_de_20000)
+```
+Seuls les EPCI à fiscalité propre de plus de 20 000 habitants sont concernées par l'obligation de réaliser un PCAET.
+
+# Personnalisation cae 1.1.2.0.2 liee obligation BEGES
+```yaml
+action_id: cae_1.1.2.0.2
+```
+## Règles
+### Désactivation
+```formule
+identite(population, moins_de_50000)
+```
+Les collectivités de moins de 50 000 habitants ne sont pas concernées par l'obligation BEGES.
+
 # Réduction potentiel cae 1.2.2 liee AOM
 ```yaml
 action_id: cae_1.2.2
