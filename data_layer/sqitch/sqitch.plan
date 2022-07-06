@@ -65,3 +65,4 @@ utilisateur/referent_contacts [utilisateur/droits] 2022-06-27T15:49:02Z Florian 
 cron/refresh_stats_collectivite [stats/collectivite cron/cron] 2022-07-04T13:19:38Z Florian <florian@derfurth.com> # Rafraichit les stats des collectivités.
 cron/refresh_stats_utilisateur [stats/utilisateur cron/cron] 2022-07-04T13:21:14Z Florian <florian@derfurth.com> # Rafraichit les stats utilisateurs.
 cron/refresh_stats_completude [stats/completude cron/cron] 2022-07-05T09:50:45Z Florian <florian@derfurth.com> # Rafraichit les stats sur la complétude.
+utilisateur/niveaux_acces [utilisateur/droits] 2022-07-06T15:47:26Z Florian <florian@derfurth.com> # Change la notion de rôle en niveau d’accès.
