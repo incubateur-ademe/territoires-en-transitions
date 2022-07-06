@@ -18,7 +18,7 @@ const CollectivitesFiltrees = (props: {
   );
 };
 
-const AucuneCollectivite = (props: {desactiverLesFiltres: () => void}) => (
+const AucuneCollectivite = () => (
   <div
     className="flex flex-col gap-4 mt-10 md:mt-16"
     style={{color: '#6A6AF4'}}
@@ -55,7 +55,7 @@ export const CollectivitesGrid = (props: {
   return (
     <>
       {props.collectivites.length === 0 ? (
-        <AucuneCollectivite desactiverLesFiltres={props.desactiverLesFiltres} />
+        <AucuneCollectivite />
       ) : (
         <CollectivitesFiltrees collectivites={props.collectivites} />
       )}
