@@ -1,4 +1,4 @@
-import {CurrentCollectivite} from 'app/Layout/useCurrentCollectivite';
+import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {
   makeCollectiviteAllCollectivitesUrl,
   makeCollectiviteIndicateursUrl,

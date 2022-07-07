@@ -8,7 +8,7 @@ import {
   isSingleNavItemDropdown,
 } from '../../makeCollectiviteNavItems';
 import {OwnedCollectiviteRead} from 'generated/dataLayer';
-import {CurrentCollectivite} from 'app/Layout/useCurrentCollectivite';
+import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
 type Props = {
   collectiviteNav: CollectiviteNavItems;

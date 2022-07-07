@@ -8,7 +8,7 @@ import {
   isSingleNavItemDropdown,
 } from '../makeCollectiviteNavItems';
 import {OwnedCollectiviteRead} from 'generated/dataLayer';
-import {CurrentCollectivite} from 'app/Layout/useCurrentCollectivite';
+import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
 export const activeTabClassName = '!text-bf500 border-b-2 border-bf500';
 
