@@ -1,25 +1,39 @@
+import {useEffect} from 'react';
+import {useHistory, useLocation} from 'react-router-dom';
 import {
   myCollectivitesPath,
   signInPath,
   resetPwdPath,
   resetPwdToken,
 } from 'app/paths';
-import {authBloc} from 'core-logic/observables/authBloc';
-import {reaction} from 'mobx';
-import {useHistory, useLocation} from 'react-router-dom';
-import {currentCollectiviteBloc} from 'core-logic/observables';
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import {useAuth} from 'core-logic/api/auth/AuthProvider';
+import {useInvitationState} from 'core-logic/hooks/useInvitationState';
 
-export const CollectiviteRedirector = () => {
-  const collectiviteId = useCollectiviteId();
-  currentCollectiviteBloc.update({collectiviteId});
-
-  return null;
-};
-
-export const InvitationRedirector = () => {
+export const Redirector = () => {
   const history = useHistory();
-  const {hash} = useLocation();
+  const {pathname, hash} = useLocation();
+  const {isConnected} = useAuth();
+  const {invitationState} = useInvitationState();
+
+  // réagit aux changements de l'état "invitation"
+  useEffect(() => {
+    // quand l'invitation est acceptée on redirige vers "mes collectivités"
+    if (invitationState === 'accepted') history.push(myCollectivitesPath);
+    // si l'invitation requiert la connexion on redirigue sur "se connecter"
+    if (invitationState === 'waitingForLogin') history.push(signInPath);
+  }, [invitationState]);
+
+  // réagit aux changements de l'état utilisateur connecté/déconnecté
+  useEffect(() => {
+    // si déconnecté on redirige sur la page d'accueil (ou la page "se
+    // connecter" dans le cas d'une invitation en attente de connexion)
+    if (!isConnected) {
+      history.push(invitationState === 'waitingForLogin' ? signInPath : '/');
+    } else if (pathname === '/') {
+      // si connecté et qu'on navigue sur la home on redirige vers "mes collectivités"
+      history.push(myCollectivitesPath);
+    }
+  }, [isConnected, invitationState]);
 
   const {type: _type, access_token} = parseHash(hash);
   if (access_token && _type === 'recovery') {
@@ -27,23 +41,6 @@ export const InvitationRedirector = () => {
     history.push(resetPwdPath.replace(`:${resetPwdToken}`, access_token));
     return null;
   }
-
-  reaction(
-    () => authBloc.connected,
-    connected => {
-      if (!connected) {
-        history.push(signInPath);
-      }
-    }
-  );
-
-  reaction(
-    () => authBloc.invitationState,
-    state => {
-      if (state === 'accepted') history.push(myCollectivitesPath);
-      if (state === 'waitingForLogin') history.push(signInPath);
-    }
-  );
 
   return null;
 };
