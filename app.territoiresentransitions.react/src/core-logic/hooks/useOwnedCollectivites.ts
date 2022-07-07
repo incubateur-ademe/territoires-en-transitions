@@ -20,10 +20,18 @@ const fetchOwnedCollectivites = async (): Promise<OwnedCollectiviteRead[]> => {
 // donne accès aux collectivités associées au compte de l'utilisateur courant
 // la requête est rechargée quand le user id change
 export const useOwnedCollectivites = () => {
-  const {user} = useAuth();
-  const {data} = useQuery(
-    ['owned_collectivites', user?.id],
-    fetchOwnedCollectivites
+  const {user, isConnected} = useAuth();
+  const {data} = useQuery(['owned_collectivites', user?.id], () =>
+    isConnected ? fetchOwnedCollectivites() : null
   );
   return data || null;
+};
+
+export const useOwnedAsAgentCollectiviteIds = () => {
+  const ownedCollectivites = useOwnedCollectivites();
+  return ownedCollectivites
+    ? ownedCollectivites
+        .filter(ownedCollectivite => ownedCollectivite.role_name === 'referent')
+        .map(ownedCollectivite => ownedCollectivite.collectivite_id)
+    : null;
 };
