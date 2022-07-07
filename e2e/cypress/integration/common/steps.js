@@ -12,7 +12,7 @@ beforeEach(() => {
   cy.visit('/');
   // on attends que l'appli expose un objet `e2e` permettant de la contrôler
   cy.window({ log: false }).its('e2e.history').as('history');
-  cy.window({ log: false }).its('e2e.authBloc').as('authBloc');
+  cy.window({ log: false }).its('e2e.auth').as('auth');
   cy.window({ log: false }).its('e2e.supabaseClient').as('supabaseClient');
 
   // bouchon pour la fonction window.open
@@ -36,7 +36,7 @@ const SignInPage = AuthSelectors['formulaire de connexion'];
 Given(/je suis connecté en tant que "([^"]*)"/, function (userName) {
   const u = Users[userName];
   assert(u, 'utilisateur non trouvé');
-  cy.get('@authBloc').then((authBloc) => authBloc.connect(u));
+  cy.get('@auth').then((auth) => auth.connect(u));
   cy.get(SignInPage.selector).should('not.exist');
   cy.get('[data-test=connectedMenu]').should('be.visible');
 });
