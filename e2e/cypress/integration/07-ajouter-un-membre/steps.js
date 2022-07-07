@@ -15,7 +15,10 @@ Given("un lien d'invitation est affiché", () => {
 });
 
 Given('je clique sur le bouton "Copier"', () => {
-  cy.get(LocalSelectors['Copier'].selector).click();
+  // pour que le test sur le contenu du presse-papier fonctionne correctement
+  // on doit donner le focus au bouton et utiliser realClick au lien de click :(
+  // Ref: https://github.com/cypress-io/cypress/issues/18198#issuecomment-1003756021
+  cy.get(LocalSelectors['Copier'].selector).focus().realClick();
 });
 
 Given('le presse-papier contient le lien copié', () => {
@@ -29,7 +32,28 @@ Given('le presse-papier contient le lien copié', () => {
     });
 });
 
-const invitationId = '7791dd09-806d-404c-8a65-163a24150b33';
-Given("j'ouvre un lien d'invitation", () =>
-  cy.visit(`/invitation/${invitationId}`)
+Given('je visite le lien copié', () =>
+  cy
+    .window()
+    .its('navigator.clipboard')
+    .invoke('readText')
+    .then((val) => {
+      cy.visit({
+        url: val,
+      });
+    })
 );
+
+Given(
+  /la page contient (?:les|la) collectivités? "([^"]*)"/,
+  (collectiviteNames) => {
+    const names = collectiviteNames.split(',').map((s) => s.trim());
+    cy.get('[data-test=SimpleCollectiviteCard]').each(($el, index) =>
+      cy.wrap($el).should('contain.text', names[index])
+    );
+  }
+);
+
+Given('la page ne contient aucune collectivité', () => {
+  cy.get('[data-test=SimpleCollectiviteCard]').should('not.exist');
+});

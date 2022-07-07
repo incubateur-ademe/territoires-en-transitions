@@ -40,6 +40,15 @@ Given(/je suis connecté en tant que "([^"]*)"/, function (userName) {
   cy.get('[data-test=connectedMenu]').should('be.visible');
 });
 
+Given('les droits utilisateur sont réinitialisés', () => {
+  cy.task('supabase_rpc', { name: 'test_reset_droits' });
+});
+
+Given('je me déconnecte', () => {
+  cy.get('[data-test=connectedMenu]').click();
+  cy.get('[data-test=logoutBtn]').click();
+});
+
 // Met en pause le déroulement d'un scénario.
 // Associé avec le tag @focus cela permet de debugger facilement les tests.
 Given('pause', () => cy.pause());
@@ -114,6 +123,9 @@ Given(
   /je clique sur le bouton "([^"]*)" de la page "([^"]*)"/,
   handleClickOnElement
 );
+Given(/^je clique sur le bouton "([^"]*)"$/, function (btnName) {
+  cy.get(resolveSelector(this, btnName).selector).click();
+});
 
 function fillFormWithValues(elem, dataTable) {
   const parent = resolveSelector(this, elem);
