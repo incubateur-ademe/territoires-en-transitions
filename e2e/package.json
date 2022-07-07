@@ -29,6 +29,8 @@
     "rimraf": "^3.0.2"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^1.35.4",
+    "cypress-real-events": "^1.7.1",
     "dotenv": "^16.0.0",
     "pg": "^8.7.3"
   }
