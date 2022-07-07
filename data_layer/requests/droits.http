@@ -23,10 +23,12 @@ GET {{api}}/rest/v1/private_utilisateur_droit?select=*
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 
+
 ### List droits of collectivité 1
 GET {{api}}/rest/v1/private_utilisateur_droit?collectivite_id=eq.1&select=*
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
+
 
 ### Claim a collectivite
 POST {{api}}/rest/v1/rpc/claim_collectivite
@@ -37,6 +39,7 @@ Content-Type: application/json
 {
   "id": 9
 }
+
 
 ### Quit a collectivite
 POST {{api}}/rest/v1/rpc/quit_collectivite
@@ -49,7 +52,7 @@ Content-Type: application/json
 }
 
 ### Referent contact
-POST {{api}}/rest/v1/rpc/referent_contact
+POST {{api}}/rest/v1/rpc/referent_contacts
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 Content-Type: application/json
@@ -58,8 +61,9 @@ Content-Type: application/json
   "id": 9
 }
 
-### Is referent of
-POST {{api}}/rest/v1/rpc/is_referent_of
+
+### Have lecture access
+POST {{api}}/rest/v1/rpc/have_lecture_acces
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 Content-Type: application/json
@@ -68,16 +72,24 @@ Content-Type: application/json
   "id": 1
 }
 
-
-### Is amongst role of
-POST {{api}}/rest/v1/rpc/is_amongst_role_on
+### Have edition access
+POST {{api}}/rest/v1/rpc/have_edition_acces
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {
-  "role_list": ["agent", "referent"],
-  "id": 9
+  "id": 1
+}
+
+### Have admin access
+POST {{api}}/rest/v1/rpc/have_admin_acces
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "id": 1
 }
 
 ### Is authenticated
