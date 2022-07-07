@@ -2,14 +2,18 @@ import {useQuery} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from './params';
 import {makeInvitationLandingPath} from 'app/paths';
+import {createAgentInvitation} from './useGenerateInvitation';
 
 export const useAgentInvitation = () => {
-  const collectiviteId = useCollectiviteId();
+  const collectivite_id = useCollectiviteId();
+
   const {data, isLoading} = useQuery<LatestInvitationResponse | null>(
-    ['agent_invitation', collectiviteId],
+    ['agent_invitation', collectivite_id],
     () =>
-      collectiviteId
-        ? fetchAgentInvitation(collectiviteId)
+      collectivite_id
+        ? fetchAgentInvitation(collectivite_id).then(
+            createIfNotExists(collectivite_id)
+          )
         : Promise.resolve(null)
   );
 
@@ -43,3 +47,19 @@ const fetchAgentInvitation = async (
 
   return (data as unknown as LatestInvitationResponse) || null;
 };
+
+// renvoi une fonction qui elle-même renvoi l'invitation donnée si elle est
+// valide ou à défaut la promesse de la réponse à la fonction de création d'une
+// demande
+const createIfNotExists =
+  (collectivite_id: number) =>
+  (
+    invitation: LatestInvitationResponse | null
+  ): Promise<LatestInvitationResponse | null> => {
+    console.log('createIfNotExists', invitation);
+    return invitation?.id
+      ? Promise.resolve(invitation)
+      : (createAgentInvitation(
+          collectivite_id
+        ) as Promise<LatestInvitationResponse | null>);
+  };
