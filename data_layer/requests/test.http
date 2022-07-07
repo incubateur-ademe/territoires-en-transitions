@@ -7,3 +7,79 @@ apikey: {{service}}
         client.assert(response.status === 200, "Response status is not 200");
     });
 %}
+
+
+### Génère un faux utilisateur pour une collectivité
+POST {{api}}/rest/v1/rpc/test_add_random_user
+apikey: {{service}}
+Content-Type: application/json
+
+
+{
+  "niveau": "lecture",
+  "collectivite_id": 1
+}
+
+
+> {%
+    client.test("Add random user executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+
+### Crée une utilisatrice avec ses DCPs.
+POST {{api}}/rest/v1/rpc/test_create_user
+apikey: {{service}}
+Content-Type: application/json
+
+
+{
+  "user_id": "66666666-6666-6666-6666-666666666666",
+  "prenom": "Waffle",
+  "nom": "Strawberry",
+  "email": "ouah_ouah@waffle.ck"
+}
+
+> {%
+    client.test("Create user executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+
+### Rattache une utilisatrice a une collectivité.
+POST {{api}}/rest/v1/rpc/test_attach_user
+apikey: {{service}}
+Content-Type: application/json
+
+{
+  "user_id": "66666666-6666-6666-6666-666666666666",
+  "collectivite_id": 1,
+  "niveau": "admin"
+}
+
+> {%
+    client.test("Attach user executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### Authenticate as Waffle
+POST {{api}}/auth/v1/token?grant_type=password
+apikey: {{anon}}
+Content-Type: application/json
+
+{
+  "email": "ouah_ouah@waffle.ck",
+  "password": "yolododo"
+}
+
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+    client.log('token is ' + response.body['access_token']);
+    client.global.set("auth_token", response.body['access_token']);
+%}
