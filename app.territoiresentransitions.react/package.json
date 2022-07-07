@@ -132,7 +132,7 @@
     "jest-websocket-mock": "^2.2.1",
     "mock-socket": "^9.0.8",
     "storybook-preset-craco": "0.0.6",
-    "storybook-react-router": "^1.0.8",
+    "storybook-react-router": "git@github.com:vsubbotskyy/storybook-router.git",
     "typescript": "^4.0.3"
   }
 }
