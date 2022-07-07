@@ -5,11 +5,11 @@ as
 $$
 insert into private_utilisateur_droit
 values (default, user_id, collectivite_id, true, default, default, niveau);
-$$ language sql security definer;
+$$ language sql security definer ;
 comment on function test_attach_user is
     'Rattache un utilisateur à une collectivité donnée.';
 
-create or replace function
+create function
     test_create_user(
     user_id uuid,
     prenom text,
