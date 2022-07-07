@@ -9,3 +9,10 @@ export const Views = {
     selector: '[data-test=CurrentUserCollectivites]',
   },
 };
+
+export const CollectivitePages = {
+  'Gestion des membres': {
+    route: 'users',
+    selector: '[data-test=Users]',
+  },
+};
