@@ -2,7 +2,7 @@ import {Tooltip} from '@material-ui/core';
 import {toFixed} from 'utils/toFixed';
 import {ActionScore} from 'types/ClientScore';
 import {actionAvancementColors} from 'app/theme';
-import {useActionScore} from 'core-logic/observables/scoreHooks';
+import {useActionScore} from 'core-logic/hooks/scoreHooks';
 
 export const ActionProgressBar = ({score}: {score: ActionScore | null}) => {
   if (score === null) return null;

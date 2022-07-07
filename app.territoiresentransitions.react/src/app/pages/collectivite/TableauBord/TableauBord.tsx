@@ -10,10 +10,7 @@ import {indicateurResultatRepository} from 'core-logic/api/repositories/AnyIndic
 import {useAllIndicateurDefinitionsForGroup} from 'core-logic/hooks/indicateur_definition';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useReferentielDownToAction} from 'core-logic/hooks/referentiel';
-import {
-  ReferentielsActionScores,
-  useScores,
-} from 'core-logic/observables/scoreHooks';
+import {ReferentielsActionScores, useScores} from 'core-logic/hooks/scoreHooks';
 import {LabellisationDemandeRead} from 'generated/dataLayer/labellisation_demande_read';
 import {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
@@ -264,7 +261,6 @@ const ReferentielSection = ({
   const referentielAxes: ActionDefinitionSummary[] = actions.filter(
     a => a.type === 'axe'
   );
-  console.log('referentielAxes ', referentielAxes);
   const axisAvancementSamples: AxisAvancementSample[] = referentielAxes
     .map(axe => {
       const axisScore = scores.find(score => score.action_id === axe.id);

@@ -1,5 +1,4 @@
 import {Link} from 'react-router-dom';
-import {observer} from 'mobx-react-lite';
 import {useCollectiviteId, useReferentielId} from 'core-logic/hooks/params';
 import {referentielToName} from 'app/labels';
 import {CriteresLabellisation} from './CriteresLabellisation';
@@ -12,7 +11,7 @@ import {
   ReferentielParamOption,
 } from 'app/paths';
 
-export default observer(() => {
+export default () => {
   const collectiviteId = useCollectiviteId();
   const referentiel = useReferentielId();
   const {parcours, demande} = useParcoursLabellisation(referentiel);
@@ -83,4 +82,4 @@ export default observer(() => {
   ) : (
     <div>...</div>
   );
-});
+};

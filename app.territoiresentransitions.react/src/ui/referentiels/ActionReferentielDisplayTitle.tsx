@@ -1,7 +1,7 @@
 import {toFixed} from 'utils/toFixed';
 import {ActionType} from 'types/action_referentiel';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {useActionScore} from 'core-logic/observables/scoreHooks';
+import {useActionScore} from 'core-logic/hooks/scoreHooks';
 
 export interface PillParams {
   color: string;

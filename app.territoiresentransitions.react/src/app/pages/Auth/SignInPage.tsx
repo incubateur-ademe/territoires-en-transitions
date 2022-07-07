@@ -3,14 +3,13 @@ import * as Yup from 'yup';
 import {useHistory} from 'react-router-dom';
 import {myCollectivitesPath} from 'app/paths';
 import LabeledTextField from 'ui/forms/LabeledTextField';
-import {AuthBloc, authBloc} from 'core-logic/observables/authBloc';
 import {ValiderButton} from 'ui/shared/ValiderButton';
 import {Spacer} from 'ui/shared/Spacer';
 import {Link} from 'react-router-dom';
 import {signUpPath} from 'app/paths';
-import {observer} from 'mobx-react-lite';
 import {ErrorMessage} from 'ui/forms/ErrorMessage';
 import {PasswordRecovery} from './PasswordRecovery';
+import {useAuth} from 'core-logic/api/auth/AuthProvider';
 
 export interface SignInCredentials {
   email: string;
@@ -27,6 +26,7 @@ export const SignInPage = () => {
     password: Yup.string().required('Champ requis'),
   });
   const history = useHistory();
+  const {connect, authError} = useAuth();
 
   return (
     <section data-test="SignInPage" className="max-w-xl mx-auto p-5">
@@ -37,7 +37,7 @@ export const SignInPage = () => {
           initialValues={{email: '', password: ''}}
           validationSchema={validation}
           onSubmit={credentials => {
-            authBloc.connect(credentials).then(connected => {
+            connect(credentials).then(connected => {
               if (connected) {
                 history.push(myCollectivitesPath);
               }
@@ -62,7 +62,7 @@ export const SignInPage = () => {
               <Spacer size={2} />
               <PasswordRecovery email={values.email} />
               <Spacer size={4} />
-              <AuthError bloc={authBloc} />
+              <AuthError message={authError} />
               <div className="flex flex-row-reverse justify-between">
                 <ValiderButton />
                 <Link className="fr-link" to={signUpPath}>
@@ -77,6 +77,5 @@ export const SignInPage = () => {
   );
 };
 
-const AuthError = observer(({bloc}: {bloc: AuthBloc}) =>
-  bloc.authError !== null ? <ErrorMessage message={bloc.authError} /> : null
-);
+const AuthError = ({message}: {message: string | null}) =>
+  message !== null ? <ErrorMessage message={message} /> : null;

@@ -5,7 +5,7 @@ import {
   makeCollectiviteTableauBordUrl,
   makeCollectiviteUsersUrl,
 } from 'app/paths';
-import {ownedCollectiviteBloc} from 'core-logic/observables/OwnedCollectiviteBloc';
+import {useOwnedAsAgentCollectiviteIds} from 'core-logic/hooks/useOwnedCollectivites';
 import {
   ElsesCollectiviteRead,
   OwnedCollectiviteRead,
@@ -43,6 +43,8 @@ export const SimpleCollectiviteCard = ({
 }: {
   collectivite: ElsesCollectiviteRead | OwnedCollectiviteRead;
 }) => {
+  const ownedAsAgentCollectiviteIds = useOwnedAsAgentCollectiviteIds();
+
   return (
     <div
       data-test="SimpleCollectiviteCard"
@@ -82,9 +84,7 @@ export const SimpleCollectiviteCard = ({
         />
         <div
           className={
-            ownedCollectiviteBloc.ownedAsAgentCollectiviteIds.includes(
-              collectivite.collectivite_id
-            )
+            ownedAsAgentCollectiviteIds?.includes(collectivite.collectivite_id)
               ? ''
               : 'invisible'
           }

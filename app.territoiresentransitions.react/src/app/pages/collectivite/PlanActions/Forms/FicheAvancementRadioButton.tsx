@@ -1,7 +1,7 @@
 import './FicheAvancementRadioButton.css';
 import type {Option} from 'types/componentSharedInterfaces';
-import {currentCollectiviteBloc} from 'core-logic/observables';
 import {FicheActionAvancementRenseigne} from 'app/labels';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
 // TODO / Question : Fiche action and Ref actions have the same avancement options ?
 export const FicheAvancementRadioButton = (props: {
@@ -17,9 +17,10 @@ export const FicheAvancementRadioButton = (props: {
     option: Option<FicheActionAvancementRenseigne>;
   }) => Promise<void>;
 }) => {
-  return (
+  const collectivite = useCurrentCollectivite();
+  return collectivite ? (
     <div className="FicheAvancementRadioButton">
-      <fieldset disabled={currentCollectiviteBloc.readonly}>
+      <fieldset disabled={collectivite.readonly}>
         {props.avancements.map(option => {
           const checked = props.optionIsChecked({option});
           return (
@@ -28,7 +29,7 @@ export const FicheAvancementRadioButton = (props: {
                 value={option.value}
                 name="actionStatusAvancement"
                 type="radio"
-                disabled={currentCollectiviteBloc.readonly}
+                disabled={collectivite.readonly}
               />
               <label
                 className={`border rounded-l flex-1 block whitespace-nowrap px-2 py-1 cursor-pointer border-gray-400 text-gray-700 ${
@@ -45,5 +46,5 @@ export const FicheAvancementRadioButton = (props: {
         })}
       </fieldset>
     </div>
-  );
+  ) : null;
 };

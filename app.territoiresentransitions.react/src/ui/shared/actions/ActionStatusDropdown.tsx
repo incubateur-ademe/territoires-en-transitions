@@ -1,36 +1,21 @@
+import {useState} from 'react';
 import {Dialog, MenuItem, Select} from '@material-ui/core';
 import {SelectInputProps} from '@material-ui/core/Select/SelectInput';
 import {actionAvancementColors} from 'app/theme';
-import {actionStatutRepository} from 'core-logic/api/repositories/ActionStatutRepository';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {currentCollectiviteBloc} from 'core-logic/observables';
-import {useActionScore} from 'core-logic/observables/scoreHooks';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import {useActionScore} from 'core-logic/hooks/scoreHooks';
+import {
+  useActionStatut,
+  useSaveActionStatut,
+} from 'core-logic/hooks/useActionStatut';
 import {
   ActionAvancement,
   ActionStatutRead,
 } from 'generated/dataLayer/action_statut_read';
-import {ActionStatutWrite} from 'generated/dataLayer/action_statut_write';
-import {makeAutoObservable} from 'mobx';
-import {useState} from 'react';
 import {toPercentString} from 'utils/score';
 import {CloseDialogButton} from '../CloseDialogButton';
 import {DetailedScore} from '../DetailedScore/DetailedScore';
 import {AvancementValues} from '../DetailedScore/DetailedScoreSlider';
-
-export const ActionStatusDropdown = ({actionId}: {actionId: string}) => {
-  const collectiviteId = useCollectiviteId()!;
-  const actionStatusAvancementBloc = new ActionStatusAvancementRadioButtonBloc({
-    actionId,
-    collectiviteId,
-  });
-
-  return (
-    <_ActionStatusAvancementRadioButton
-      actionId={actionId}
-      actionStatusAvancementBloc={actionStatusAvancementBloc}
-    />
-  );
-};
 
 interface SelectableStatut {
   value: number;
@@ -104,40 +89,50 @@ const selectables = [
   nonConcerneStatut,
 ];
 
-const _ActionStatusAvancementRadioButton = ({
-  actionId,
-  actionStatusAvancementBloc,
-}: {
-  actionId: string;
-  actionStatusAvancementBloc: ActionStatusAvancementRadioButtonBloc;
-}) => {
+export const ActionStatusDropdown = ({actionId}: {actionId: string}) => {
   const [opened, setOpened] = useState(false);
 
-  const handleChange: SelectInputProps['onChange'] = event => {
-    actionStatusAvancementBloc
-      .pickStatutValue(event.target.value as number)
-      .then(() => {
-        if (actionStatusAvancementBloc.statut.avancement === 'detaille') {
-          setOpened(true);
-        }
-      });
+  const collectivite = useCurrentCollectivite();
+  const args = {
+    action_id: actionId,
+    collectivite_id: collectivite?.collectivite_id || 0,
   };
-
-  const handleSaveDetail = (values: number[]) => {
-    actionStatusAvancementBloc.setAvancementDetaille(values);
-    actionStatusAvancementBloc.saveStatut();
-    setOpened(false);
-  };
-
-  const {statut} = actionStatusAvancementBloc;
-  const {avancement, avancement_detaille} = statut;
+  const {statut} = useActionStatut(args);
+  const {avancement, avancement_detaille} = statut || {};
 
   const score = useActionScore(actionId);
+  const currentOptionFromStatut = statut ? valueByStatut(statut) : null;
   const currentStatus = score?.desactive
     ? // affiche le statut "non concerné" quand l'action est désactivée par la personnalisation
       nonConcerneStatut.value
     : // sinon le statut courant ou à défaut "non renseigné"
-      statut.value ?? nonRenseigneStatut.value;
+      currentOptionFromStatut?.value || nonRenseigneStatut.value;
+
+  const {saveActionStatut} = useSaveActionStatut(args);
+
+  const handleChange: SelectInputProps['onChange'] = event => {
+    const {avancement, concerne} = statutByValue(event.target.value as number);
+    saveActionStatut({...args, ...statut, avancement, concerne});
+    if (avancement === 'detaille') {
+      setOpened(true);
+    }
+  };
+
+  const handleSaveDetail = (values: number[]) => {
+    if (statut) {
+      saveActionStatut({
+        ...args,
+        ...statut,
+        avancement: 'detaille',
+        avancement_detaille: values,
+      });
+      setOpened(false);
+    }
+  };
+
+  if (!collectivite) {
+    return null;
+  }
 
   return (
     <div className="flex flex-col w-full">
@@ -146,7 +141,7 @@ const _ActionStatusAvancementRadioButton = ({
         onChange={handleChange}
         displayEmpty
         inputProps={{'aria-label': 'Without label'}}
-        disabled={currentCollectiviteBloc.readonly || score?.desactive}
+        disabled={collectivite.readonly || score?.desactive}
       >
         {selectables.map(({value, color, label}) => (
           <MenuItem key={value} value={value}>
@@ -203,91 +198,15 @@ const _ActionStatusAvancementRadioButton = ({
   );
 };
 
-class ActionStatusAvancementRadioButtonBloc {
-  private actionId: string;
-  private collectiviteId: number;
-  private avancement: ActionAvancement = 'non_renseigne';
-  public avancement_detaille?: number[] | undefined;
-  private concerne = true;
-  private _statut: SelectableStatut = nonRenseigneStatut;
+const statutByValue = (value: number): SelectableStatut => {
+  return selectables.find(s => s.value === value)!;
+};
 
-  constructor({
-    actionId,
-    collectiviteId,
-  }: {
-    collectiviteId: number;
-    actionId: string;
-  }) {
-    makeAutoObservable(this);
-    this.actionId = actionId;
-    this.collectiviteId = collectiviteId;
-    this.fetch();
-  }
-
-  private setStatut = (s: SelectableStatut) => (this._statut = s);
-  private setAvancement = (a: ActionAvancement) => (this.avancement = a);
-  public setAvancementDetaille = (a: number[] | undefined) =>
-    (this.avancement_detaille = a);
-  private setConcerne = (c: boolean) => (this.concerne = c);
-
-  public async pickStatutValue(value: number) {
-    const statut = ActionStatusAvancementRadioButtonBloc.statutByValue(value);
-    this.setStatut(statut);
-    this.setAvancement(statut.avancement);
-    this.setConcerne(statut.concerne);
-    this.setAvancementDetaille(statut.avancement_detaille);
-    this.saveStatut();
-  }
-
-  get statut(): SelectableStatut {
-    return this._statut;
-  }
-
-  public saveStatut() {
-    actionStatutRepository
-      .save({
-        action_id: this.actionId,
-        collectivite_id: this.collectiviteId,
-        avancement: this.avancement,
-        avancement_detaille: this.avancement_detaille,
-        concerne: this.concerne,
-      })
-      .then(saved => {
-        if (saved) {
-          this.setStatut(
-            ActionStatusAvancementRadioButtonBloc.statutByEntity(saved)
-          );
-        }
-      });
-  }
-
-  private fetch() {
-    actionStatutRepository
-      .fetch({
-        actionId: this.actionId,
-        collectiviteId: this.collectiviteId,
-      })
-      .then(fetched => {
-        if (fetched) {
-          this.setStatut(
-            ActionStatusAvancementRadioButtonBloc.statutByEntity(fetched)
-          );
-        }
-      });
-  }
-
-  public static statutByValue(value: number): SelectableStatut {
-    return selectables.find(s => s.value === value)!;
-  }
-
-  public static statutByEntity(
-    entity: ActionStatutWrite | ActionStatutRead
-  ): SelectableStatut {
-    const ret = selectables.find(
-      s => s.concerne === entity.concerne && s.avancement === entity.avancement
-    )!;
-    return ret.avancement === 'detaille'
-      ? {...ret, avancement_detaille: entity.avancement_detaille || []}
-      : ret;
-  }
-}
+const valueByStatut = (statut: ActionStatutRead): SelectableStatut => {
+  const ret = selectables.find(
+    s => s.concerne === statut.concerne && s.avancement === statut.avancement
+  )!;
+  return ret.avancement === 'detaille'
+    ? {...ret, avancement_detaille: statut.avancement_detaille || []}
+    : ret;
+};

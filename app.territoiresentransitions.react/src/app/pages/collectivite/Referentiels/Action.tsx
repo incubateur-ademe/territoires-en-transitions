@@ -17,7 +17,7 @@ import {useActionSummaryChildren} from 'core-logic/hooks/referentiel';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {OrientationQuickNav} from 'app/pages/collectivite/Referentiels/QuickNav';
 import {PersoPotentiel} from '../PersoPotentielModal/PersoPotentiel';
-import {useActionScore} from 'core-logic/observables/scoreHooks';
+import {useActionScore} from 'core-logic/hooks/scoreHooks';
 
 const useActionLinkedIndicateurDefinitions = (actionId: string) => {
   const [linkedIndicateurDefinitions, setLinkedIndicateurDefinitions] =
