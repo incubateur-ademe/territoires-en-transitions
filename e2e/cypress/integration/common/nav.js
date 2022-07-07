@@ -1,7 +1,7 @@
 /**
  * Steps dédiés à la navigation
- */ 
-import { Views } from './views';
+ */
+import { Views, CollectivitePages } from './views';
 
 export const navigateTo = (view) => {
   const { route, selector } = Views[view];
@@ -23,6 +23,16 @@ When(
       `/collectivite/${collectiviteId}/action/${referentiel}/${referentiel}_${action}`
     );
     cy.get(`[data-test="Action-${action}"]`).should('be.visible');
+  }
+);
+
+// navigue sur une page d'une collectivité
+When(
+  /je suis sur la page "([^"]*)" de la collectivité "(\d+)"/,
+  (page, collectiviteId) => {
+    const { route, selector } = CollectivitePages[page];
+    cy.visit(`/collectivite/${collectiviteId}/${route}`);
+    cy.get(selector).should('be.visible');
   }
 );
 
