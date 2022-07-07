@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots App/Pages/Toutes Les Collectivites/Pagination Pagination Avec 1 Seule Page 1`] = `
+exports[`Storyshots app/pages/ToutesLesCollectivites/Pagination Pagination Avec 1 Seule Page 1`] = `
 <ul>
   <nav
     aria-label="Pagination"
@@ -64,7 +64,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Pagination Pagination Ave
 </ul>
 `;
 
-exports[`Storyshots App/Pages/Toutes Les Collectivites/Pagination Pagination Avec 6 Pages 1`] = `
+exports[`Storyshots app/pages/ToutesLesCollectivites/Pagination Pagination Avec 6 Pages 1`] = `
 <ul>
   <nav
     aria-label="Pagination"
@@ -163,7 +163,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Pagination Pagination Ave
 </ul>
 `;
 
-exports[`Storyshots App/Pages/Toutes Les Collectivites/Pagination Pagination Avec 8 Pages 1`] = `
+exports[`Storyshots app/pages/ToutesLesCollectivites/Pagination Pagination Avec 8 Pages 1`] = `
 <ul>
   <nav
     aria-label="Pagination"
@@ -255,7 +255,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Pagination Pagination Ave
 </ul>
 `;
 
-exports[`Storyshots App/Pages/Toutes Les Collectivites/Pagination Pagination Avec Plus De 3 Pages 1`] = `
+exports[`Storyshots app/pages/ToutesLesCollectivites/Pagination Pagination Avec Plus De 3 Pages 1`] = `
 <ul>
   <nav
     aria-label="Pagination"

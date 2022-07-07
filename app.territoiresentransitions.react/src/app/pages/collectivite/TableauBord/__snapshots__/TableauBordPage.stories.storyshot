@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Tableau Bord Page Referentiels Non Remplis 1`] = `
+exports[`Storyshots app/pages/collectivite/TableauBord/TableauBordPage Referentiels Non Remplis 1`] = `
 <div
   className="bg-grey975"
 >
@@ -95,7 +95,7 @@ exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Tableau Bord Page Refere
 </div>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Tableau Bord Page Referentiels Partiellement Remplis 1`] = `
+exports[`Storyshots app/pages/collectivite/TableauBord/TableauBordPage Referentiels Partiellement Remplis 1`] = `
 <div
   className="bg-grey975"
 >

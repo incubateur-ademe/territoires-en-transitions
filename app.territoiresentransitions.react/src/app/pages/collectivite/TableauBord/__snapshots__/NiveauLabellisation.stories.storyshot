@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Cinq Etoiles 1`] = `
+exports[`Storyshots app/pages/collectivite/TableauBord/NiveauLabellisation Cinq Etoiles 1`] = `
 <div
   className="flex flex-col items-center mt-4"
 >
@@ -95,7 +95,7 @@ Ambition à quatre ans : 80%
 </div>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Deux Etoiles 1`] = `
+exports[`Storyshots app/pages/collectivite/TableauBord/NiveauLabellisation Deux Etoiles 1`] = `
 <div
   className="flex flex-col items-center mt-4"
 >
@@ -187,7 +187,7 @@ Ambition à quatre ans : 62%
 </div>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Deux Etoiles Directement 1`] = `
+exports[`Storyshots app/pages/collectivite/TableauBord/NiveauLabellisation Deux Etoiles Directement 1`] = `
 <div
   className="flex flex-col items-center mt-4"
 >
@@ -278,7 +278,7 @@ exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Deu
 </div>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Deux Etoiles Possibles 1`] = `
+exports[`Storyshots app/pages/collectivite/TableauBord/NiveauLabellisation Deux Etoiles Possibles 1`] = `
 <div
   className="flex flex-col items-center mt-4"
 >
@@ -369,7 +369,7 @@ exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Deu
 </div>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Deux Etoiles Score Nul 1`] = `
+exports[`Storyshots app/pages/collectivite/TableauBord/NiveauLabellisation Deux Etoiles Score Nul 1`] = `
 <div
   className="flex flex-col items-center mt-4"
 >
@@ -460,7 +460,7 @@ exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Deu
 </div>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Non Labellise 1`] = `
+exports[`Storyshots app/pages/collectivite/TableauBord/NiveauLabellisation Non Labellise 1`] = `
 <div
   className="flex flex-col items-center mt-4"
 >
@@ -536,7 +536,7 @@ exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Non
 </div>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Non Labellise Pas De Donnees 1`] = `
+exports[`Storyshots app/pages/collectivite/TableauBord/NiveauLabellisation Non Labellise Pas De Donnees 1`] = `
 <div
   className="flex flex-col items-center mt-4"
 >
@@ -612,7 +612,7 @@ exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Non
 </div>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Quatre Etoiles 1`] = `
+exports[`Storyshots app/pages/collectivite/TableauBord/NiveauLabellisation Quatre Etoiles 1`] = `
 <div
   className="flex flex-col items-center mt-4"
 >
@@ -706,7 +706,7 @@ Ambition à quatre ans : 80%
 </div>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Trois Etoiles 1`] = `
+exports[`Storyshots app/pages/collectivite/TableauBord/NiveauLabellisation Trois Etoiles 1`] = `
 <div
   className="flex flex-col items-center mt-4"
 >
@@ -799,7 +799,7 @@ Ambition à quatre ans : 62%
 </div>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Trois Etoiles Possibles 1`] = `
+exports[`Storyshots app/pages/collectivite/TableauBord/NiveauLabellisation Trois Etoiles Possibles 1`] = `
 <div
   className="flex flex-col items-center mt-4"
 >
@@ -891,7 +891,7 @@ Ambition à quatre ans : 75%
 </div>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Niveau Labellisation Une Etoile 1`] = `
+exports[`Storyshots app/pages/collectivite/TableauBord/NiveauLabellisation Une Etoile 1`] = `
 <div
   className="flex flex-col items-center mt-4"
 >

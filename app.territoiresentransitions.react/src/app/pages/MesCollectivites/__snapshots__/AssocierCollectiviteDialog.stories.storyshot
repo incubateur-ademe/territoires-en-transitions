@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots App/Pages/Mes Collectivites/Associer Collectivite Dialog Aucun Contact Referent 1`] = `
+exports[`Storyshots app/pages/MesCollectivites/AssocierCollectiviteDialog Aucun Contact Referent 1`] = `
 <div
   onClick={[Function]}
 >
@@ -14,7 +14,7 @@ exports[`Storyshots App/Pages/Mes Collectivites/Associer Collectivite Dialog Auc
 </div>
 `;
 
-exports[`Storyshots App/Pages/Mes Collectivites/Associer Collectivite Dialog Plusieurs Contacts Referents 1`] = `
+exports[`Storyshots app/pages/MesCollectivites/AssocierCollectiviteDialog Plusieurs Contacts Referents 1`] = `
 <div
   onClick={[Function]}
 >
@@ -28,7 +28,7 @@ exports[`Storyshots App/Pages/Mes Collectivites/Associer Collectivite Dialog Plu
 </div>
 `;
 
-exports[`Storyshots App/Pages/Mes Collectivites/Associer Collectivite Dialog Un Seul Contact Referent 1`] = `
+exports[`Storyshots app/pages/MesCollectivites/AssocierCollectiviteDialog Un Seul Contact Referent 1`] = `
 <div
   onClick={[Function]}
 >

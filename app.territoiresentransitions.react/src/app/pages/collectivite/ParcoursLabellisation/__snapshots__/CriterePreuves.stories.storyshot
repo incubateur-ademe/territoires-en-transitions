@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Preuves Autres Etoiles CAE 1`] = `
+exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves Autres Etoiles CAE 1`] = `
 <ul>
   <li
     className="fr-mb-1w"
@@ -35,7 +35,7 @@ exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Preuve
 </ul>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Preuves Autres Etoiles ECI 1`] = `
+exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves Autres Etoiles ECI 1`] = `
 <ul>
   <li
     className="fr-mb-1w"
@@ -91,7 +91,7 @@ exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Preuve
 </ul>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Preuves Premiere Etoile CAE 1`] = `
+exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves Premiere Etoile CAE 1`] = `
 <ul>
   <li
     className="fr-mb-1w"
@@ -126,7 +126,7 @@ exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Preuve
 </ul>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Preuves Premiere Etoile ECI 1`] = `
+exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves Premiere Etoile ECI 1`] = `
 <ul>
   <li
     className="fr-mb-1w"
@@ -161,7 +161,7 @@ exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Preuve
 </ul>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Preuves Premiere Etoile ECI Rempli 1`] = `
+exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves Premiere Etoile ECI Rempli 1`] = `
 <ul>
   <li
     className="fr-mb-1w"
