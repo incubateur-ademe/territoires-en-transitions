@@ -66,3 +66,4 @@ cron/refresh_stats_collectivite [stats/collectivite cron/cron] 2022-07-04T13:19:
 cron/refresh_stats_utilisateur [stats/utilisateur cron/cron] 2022-07-04T13:21:14Z Florian <florian@derfurth.com> # Rafraichit les stats utilisateurs.
 cron/refresh_stats_completude [stats/completude cron/cron] 2022-07-05T09:50:45Z Florian <florian@derfurth.com> # Rafraichit les stats sur la complétude.
 utilisateur/droits_v2 [utilisateur/droits] 2022-07-06T15:47:26Z Florian <florian@derfurth.com> # Change la notion de rôle en niveau d’accès.
+collectivite/mes_collectivites_v2 [utilisateur/droits_v2] 2022-07-07T10:10:53Z Florian <florian@derfurth.com> # Mise à jour mes collectivités depuis niveaux d'accès.
