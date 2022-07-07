@@ -2,10 +2,7 @@ begin;
 select plan(6);
 
 -- make uid work as if yolododo user is connected
-create or replace function auth.uid() returns uuid as
-$$
-select '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid;
-$$ language sql stable;
+select test.identify_as('17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid);
 
 truncate private_utilisateur_droit;
 
