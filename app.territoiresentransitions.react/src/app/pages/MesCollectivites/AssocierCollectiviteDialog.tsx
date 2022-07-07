@@ -75,13 +75,12 @@ export const AssocierCollectiviteDialog = ({
           />
         </div>
         <Spacer />
-        {selectedCollectivite && (
+        {selectedCollectivite ? (
           <_RejoindreOuActiverDialogContent
             collectivite={selectedCollectivite}
             getReferentContacts={getReferentContacts}
           />
-        )}
-        {!selectedCollectivite && (
+        ) : (
           <p className="fr-text--sm" data-test="no-selection-msg">
             Vous ne trouvez pas la collectivité que vous recherchez ? <br />
             Merci d'envoyer un mail à{' '}

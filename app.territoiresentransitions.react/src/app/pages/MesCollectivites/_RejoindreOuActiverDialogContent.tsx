@@ -1,9 +1,6 @@
 import {makeCollectiviteTableauBordUrl} from 'app/paths';
 import {ReferentContact} from 'core-logic/api/procedures/collectiviteProcedures';
-import {
-  OwnedCollectiviteBloc,
-  ownedCollectiviteBloc,
-} from 'core-logic/observables/OwnedCollectiviteBloc';
+import {useClaimCollectivite} from 'core-logic/hooks/useClaimCollectivite';
 import {AllCollectiviteRead} from 'generated/dataLayer/all_collectivite_read';
 import {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
@@ -40,19 +37,14 @@ const _RejoindreCollectiviteDialogContent = ({
 
 const _ActiverCollectiviteDialogContent = ({
   collectivite,
-  bloc,
 }: {
   collectivite: AllCollectiviteRead;
-  bloc: OwnedCollectiviteBloc;
 }) => {
-  const [success, setSuccess] = useState<boolean | null>(null);
+  const {claimCollectivite, lastReply} = useClaimCollectivite();
 
-  const onClick = async () => {
-    const claimSuccess = await bloc.claim(collectivite.collectivite_id);
-    setSuccess(claimSuccess);
-  };
+  const onClick = () => claimCollectivite(collectivite.collectivite_id);
 
-  if (success === null)
+  if (lastReply === null)
     return (
       <div className="items-center" data-test="confirm-selection-msg">
         <ul>
@@ -68,7 +60,7 @@ const _ActiverCollectiviteDialogContent = ({
         </button>
       </div>
     );
-  else if (success)
+  else if (lastReply)
     return (
       <div>
         <div>Vous avez activé la collectivité {collectivite.nom}</div>
@@ -114,12 +106,7 @@ export const _RejoindreOuActiverDialogContent = ({
     }
   }, [collectivite?.collectivite_id]);
   if (referentContacts.length === 0)
-    return (
-      <_ActiverCollectiviteDialogContent
-        bloc={ownedCollectiviteBloc}
-        collectivite={collectivite}
-      />
-    );
+    return <_ActiverCollectiviteDialogContent collectivite={collectivite} />;
   return (
     <_RejoindreCollectiviteDialogContent
       referentContacts={referentContacts}

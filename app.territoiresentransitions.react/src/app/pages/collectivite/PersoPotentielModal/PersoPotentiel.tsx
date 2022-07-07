@@ -1,5 +1,4 @@
 import {useState} from 'react';
-import {observer} from 'mobx-react-lite';
 import {Dialog} from '@material-ui/core';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {useCollectiviteId} from 'core-logic/hooks/params';
@@ -9,7 +8,7 @@ import {PointsPotentiels} from './PointsPotentiels';
 import {useQuestionsReponses} from './useQuestionsReponses';
 import {useRegles} from './useRegles';
 import {useChangeReponseHandler} from './useChangeReponseHandler';
-import {useActionScore} from 'core-logic/observables/scoreHooks';
+import {useActionScore} from 'core-logic/hooks/scoreHooks';
 
 export type TPersoPotentielButtonProps = {
   /** Définition de l'action */

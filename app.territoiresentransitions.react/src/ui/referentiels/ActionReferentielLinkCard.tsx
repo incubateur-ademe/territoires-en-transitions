@@ -1,5 +1,4 @@
 import {Link} from 'react-router-dom';
-import {currentCollectiviteBloc} from 'core-logic/observables';
 import {makeCollectiviteActionUrl} from 'app/paths';
 import {ActionReferentielDescription} from 'ui/referentiels/ActionReferentielDescription';
 import {ArrowNarrowRightIcon} from '@heroicons/react/solid';
@@ -7,6 +6,7 @@ import {ActionReferentielDisplayTitle} from 'ui/referentiels/ActionReferentielDi
 import {referentielId} from 'utils/actions';
 import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 
 /**
  * Used on referentiels page, links to action page.
@@ -16,8 +16,7 @@ export const ActionReferentielLinkCard = ({
 }: {
   action: ActionDefinitionSummary;
 }) => {
-  const collectiviteId =
-    currentCollectiviteBloc.currentCollectivite?.collectivite_id;
+  const collectiviteId = useCollectiviteId();
   const referentiel = referentielId(action.id);
   return (
     <article>

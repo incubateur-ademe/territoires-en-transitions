@@ -1,12 +1,11 @@
 import {useState} from 'react';
-import {observer} from 'mobx-react-lite';
-import {currentCollectiviteBloc} from 'core-logic/observables';
 import {ReferentielOfIndicateur} from 'types/litterals';
 import Thematiques from './Thematiques';
 import {useQuestionThematiqueCompletude} from './useQuestionThematiqueCompletude';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
-export default observer(() => {
-  const collectivite = currentCollectiviteBloc.currentCollectivite;
+export default () => {
+  const collectivite = useCurrentCollectivite();
   const {collectivite_id, nom} = collectivite || {};
   const [selected, setSelected] = useState<ReferentielOfIndicateur[]>([
     'eci',
@@ -31,4 +30,4 @@ export default observer(() => {
       />
     </main>
   );
-});
+};
