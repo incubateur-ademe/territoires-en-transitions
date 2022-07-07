@@ -22,9 +22,6 @@ exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Tableau Bord Page Refere
           className="flex gap-4 justify-center font-bold text-center text-2xl text-gray"
         >
           <div>
-            🌍
-          </div>
-          <div>
             Référentiel Climat Air Énergie
           </div>
         </div>
@@ -64,9 +61,6 @@ exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Tableau Bord Page Refere
         <div
           className="flex gap-4 justify-center font-bold text-center text-2xl text-gray"
         >
-          <div>
-            ♻
-          </div>
           <div>
             Référentiel Économie Circulaire
           </div>
@@ -122,9 +116,6 @@ exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Tableau Bord Page Refere
         <div
           className="flex gap-4 justify-center font-bold text-center text-2xl text-gray"
         >
-          <div>
-            🌍
-          </div>
           <div>
             Référentiel Climat Air Énergie
           </div>
@@ -645,9 +636,6 @@ exports[`Storyshots App/Pages/Collectivite/Tableau Bord/Tableau Bord Page Refere
         <div
           className="flex gap-4 justify-center font-bold text-center text-2xl text-gray"
         >
-          <div>
-            ♻
-          </div>
           <div>
             Référentiel Économie Circulaire
           </div>
