@@ -36,4 +36,14 @@ module.exports = {
       },
     },
   },
+  // chargement des mocks pour le bon fonctionnement des stories dans le storybook
+  // ATTENTION : il faut aussi charger les mocks dans setupTests pour qu'ils
+  // soient accessibles lors du snapshot testing (storyshots)
+  webpackFinal: async config => {
+    config.resolve.alias['core-logic/hooks/useCurrentCollectivite'] =
+      require.resolve(
+        '../src/core-logic/hooks/__mocks__/useCurrentCollectivite.ts'
+      );
+    return config;
+  },
 };
