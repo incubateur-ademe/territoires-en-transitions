@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots App/Pages/Collectivite/Perso Referentiel/Thematiques Exemple 1 1`] = `
+exports[`Storyshots app/pages/collectivite/PersoReferentiel/Thematiques Exemple 1 1`] = `
 Array [
   <div
     className="flex flex-col items-center"

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots App/Pages/Statistics Page/Statistics Page Exemple 1 1`] = `
+exports[`Storyshots app/pages/StatisticsPage Exemple 1 1`] = `
 <div
   className="app fr-container m-5"
 >

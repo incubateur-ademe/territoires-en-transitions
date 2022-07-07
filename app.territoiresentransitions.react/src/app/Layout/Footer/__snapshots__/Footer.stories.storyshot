@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots App/Layout/Footer/Footer Exemple 1`] = `
+exports[`Storyshots app/Layout/Footer Exemple 1`] = `
 <footer
   className="footer fr-footer fr-mt-10w"
   id="footer"

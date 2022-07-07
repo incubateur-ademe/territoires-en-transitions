@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Criteres Labellisation Premiere Etoile CAE 1`] = `
+exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriteresLabellisation Premiere Etoile CAE 1`] = `
 Array [
   <p
     className="text-grey625"
@@ -530,7 +530,7 @@ Array [
 ]
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Criteres Labellisation Premiere Etoile ECI 1`] = `
+exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriteresLabellisation Premiere Etoile ECI 1`] = `
 Array [
   <p
     className="text-grey625"

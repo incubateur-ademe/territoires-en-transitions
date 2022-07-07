@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots App/Layout/Layout Exemple 1`] = `
+exports[`Storyshots app/Layout Exemple 1`] = `
 <div
   className="overflow-hidden"
 >

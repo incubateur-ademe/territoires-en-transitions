@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots App/Layout/Header/Header Connected 1`] = `
+exports[`Storyshots app/Layout/Header Connected 1`] = `
 <header
   className="header fr-header "
   role="banner"
@@ -136,7 +136,7 @@ exports[`Storyshots App/Layout/Header/Header Connected 1`] = `
 </header>
 `;
 
-exports[`Storyshots App/Layout/Header/Header Not Connected 1`] = `
+exports[`Storyshots app/Layout/Header Not Connected 1`] = `
 <header
   className="header fr-header "
   role="banner"
@@ -253,7 +253,7 @@ exports[`Storyshots App/Layout/Header/Header Not Connected 1`] = `
 </header>
 `;
 
-exports[`Storyshots App/Layout/Header/Header With Collectivite 1`] = `
+exports[`Storyshots app/Layout/Header With Collectivite 1`] = `
 <header
   className="header fr-header "
   role="banner"
@@ -680,7 +680,7 @@ exports[`Storyshots App/Layout/Header/Header With Collectivite 1`] = `
 </header>
 `;
 
-exports[`Storyshots App/Layout/Header/Header With Readonly Collectivite 1`] = `
+exports[`Storyshots app/Layout/Header With Readonly Collectivite 1`] = `
 Array [
   <header
     className="header fr-header "

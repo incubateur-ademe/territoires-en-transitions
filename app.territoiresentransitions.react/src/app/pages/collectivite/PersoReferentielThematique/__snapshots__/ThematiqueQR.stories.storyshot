@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots App/Pages/Collectivite/Perso Referentiel Thematique/Thematique QR Lien Thematique Suivante 1`] = `
+exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/ThematiqueQR Lien Thematique Suivante 1`] = `
 <div
   className="flex flex-col"
 >
@@ -263,7 +263,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Referentiel Thematique/Thematiq
 </div>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Perso Referentiel Thematique/Thematique QR Plusieurs Questions 1`] = `
+exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/ThematiqueQR Plusieurs Questions 1`] = `
 <div
   className="flex flex-col"
 >
@@ -520,7 +520,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Referentiel Thematique/Thematiq
 </div>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Perso Referentiel Thematique/Thematique QR Thematique Identite 1`] = `
+exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/ThematiqueQR Thematique Identite 1`] = `
 <div
   className="flex flex-col"
 >

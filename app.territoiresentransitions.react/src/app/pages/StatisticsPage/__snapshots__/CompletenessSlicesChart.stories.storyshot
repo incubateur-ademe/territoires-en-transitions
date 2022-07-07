@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots App/Pages/Statistics Page/Completeness Slices Chart CAE 1`] = `
+exports[`Storyshots app/pages/StatisticsPage/CompletenessSlicesChart CAE 1`] = `
 <div
   style={
     Object {
@@ -24,7 +24,7 @@ exports[`Storyshots App/Pages/Statistics Page/Completeness Slices Chart CAE 1`] 
 </div>
 `;
 
-exports[`Storyshots App/Pages/Statistics Page/Completeness Slices Chart ECI 1`] = `
+exports[`Storyshots app/pages/StatisticsPage/CompletenessSlicesChart ECI 1`] = `
 <div
   style={
     Object {

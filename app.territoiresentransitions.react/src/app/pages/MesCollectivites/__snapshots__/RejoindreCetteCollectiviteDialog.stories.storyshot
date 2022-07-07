@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots App/Pages/Mes Collectivites/Rejoindre Cette Collectivite Dialog Aucun Contact Referent 1`] = `
+exports[`Storyshots app/pages/MesCollectivites/RejoindreCetteCollectiviteDialog Aucun Contact Referent 1`] = `
 <div
   className="bg-white"
 >
@@ -17,7 +17,7 @@ exports[`Storyshots App/Pages/Mes Collectivites/Rejoindre Cette Collectivite Dia
 </div>
 `;
 
-exports[`Storyshots App/Pages/Mes Collectivites/Rejoindre Cette Collectivite Dialog Plusieurs Contacts Referents 1`] = `
+exports[`Storyshots app/pages/MesCollectivites/RejoindreCetteCollectiviteDialog Plusieurs Contacts Referents 1`] = `
 <div
   className="bg-white"
 >
@@ -34,7 +34,7 @@ exports[`Storyshots App/Pages/Mes Collectivites/Rejoindre Cette Collectivite Dia
 </div>
 `;
 
-exports[`Storyshots App/Pages/Mes Collectivites/Rejoindre Cette Collectivite Dialog Un Seul Contact Referent 1`] = `
+exports[`Storyshots app/pages/MesCollectivites/RejoindreCetteCollectiviteDialog Un Seul Contact Referent 1`] = `
 <div
   className="bg-white"
 >

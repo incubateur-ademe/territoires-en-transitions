@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots App/Pages/Collectivite/Perso Referentiel/Thematique List Exemple 1 1`] = `
+exports[`Storyshots app/pages/collectivite/PersoReferentiel/ThematiqueList Exemple 1 1`] = `
 <ul
   className="w-full border pl-0 "
 >
