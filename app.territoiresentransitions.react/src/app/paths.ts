@@ -210,5 +210,5 @@ export const makeCollectivitePersoRefThematiqueUrl = ({
     .replace(`:${thematiqueParam}`, thematiqueId);
 
 export const makeInvitationLandingPath = (invitationId: string) =>
-  window.location.hostname +
+  window.location.origin +
   invitationLandingPath.replace(`:${invitationIdParam}`, invitationId);
