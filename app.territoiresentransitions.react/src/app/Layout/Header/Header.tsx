@@ -7,11 +7,11 @@ import MobileNavigation from './MobileNavigation';
 import {makeCollectiviteNavItems} from './makeCollectiviteNavItems';
 import {OwnedCollectiviteRead} from 'generated/dataLayer';
 import ademeLogoImage from 'app/static/img/ademe.jpg';
-import {useOwnedCollectivites} from 'app/Layout/useOwnedCollectivites';
+import {useOwnedCollectivites} from 'core-logic/hooks/useOwnedCollectivites';
 import {
   CurrentCollectivite,
   useCurrentCollectivite,
-} from 'app/Layout/useCurrentCollectivite';
+} from 'core-logic/hooks/useCurrentCollectivite';
 import {RejoindreCetteCollectiviteDialog} from 'app/pages/MesCollectivites/RejoindreCetteCollectiviteDialog';
 import {getReferentContacts} from 'core-logic/api/procedures/collectiviteProcedures';
 

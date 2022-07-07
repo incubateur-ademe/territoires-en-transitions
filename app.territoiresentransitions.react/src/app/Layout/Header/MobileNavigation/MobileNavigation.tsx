@@ -4,7 +4,7 @@ import MobileHeaderNavigation from './MobileHeaderNavigation/MobileHeaderNavigat
 import MobileCollectiviteNavigation from './MobileCollectiviteNavigation';
 import {CollectiviteNavItems} from '../makeCollectiviteNavItems';
 import {OwnedCollectiviteRead} from 'generated/dataLayer';
-import {CurrentCollectivite} from 'app/Layout/useCurrentCollectivite';
+import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
 type Props = {
   auth: TAuthContext;
