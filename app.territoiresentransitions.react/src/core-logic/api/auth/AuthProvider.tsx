@@ -22,17 +22,19 @@ export const useAuth = () => useContext(AuthContext) as TAuthContext;
 
 // le fournisseur de contexte
 export const AuthProvider = ({children}: {children: ReactNode}) => {
-  const [user, setUser] = useState<User | null>(null);
+  // restaure une éventuelle session précédente
+  const session = supabaseClient.auth.session();
+  const [user, setUser] = useState<User | null>(session?.user ?? null);
+
+  // pour stocker la dernière erreur d'authentification
   const [authError, setAuthError] = useState<string | null>(null);
+
+  // charge les données associées à l'utilisateur courant
   const dcp = useDCP(user?.id);
   const userData = user && dcp ? {...user, ...dcp} : null;
 
   // initialisation : enregistre l'écouteur de changements d'état
   useEffect(() => {
-    // restaure une éventuelle session précédente
-    const session = supabaseClient.auth.session();
-    setUser(session?.user ?? null);
-
     // écoute les changements d'état (connecté, déconnecté, etc.)
     const {data: listener} = supabaseClient.auth.onAuthStateChange(
       async (event, updatedSession) => {
