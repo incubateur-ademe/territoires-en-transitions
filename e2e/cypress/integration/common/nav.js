@@ -37,10 +37,12 @@ When(
 );
 
 // vérifie qu'on est sur une route/vue
-When(/voi[rs] la vue(?: des)? "(.*)"/, (view) => {
+const isVisibleView = (view) => {
   const { selector } = Views[view];
   cy.get(selector).should('be.visible');
-});
+};
+When(/voi[rs] la vue(?: des)? "(.*)"/, isVisibleView);
+When(/la page "([^"]*)" est visible/, isVisibleView);
 
 // vérifie qu'on est pas sur une route/vue
 When(/ne vois (?:pas|plus) la vue(?: des)? "(.*)"/, (view) => {

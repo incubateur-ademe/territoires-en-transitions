@@ -5,4 +5,7 @@ export const LocalSelectors = {
   Copier: {
     selector: '[data-test=InvitationLink] [data-test=CopyLink]',
   },
+  'Générer un nouveau lien': {
+    selector: '[data-test=InvitationLink] [data-test=GenLink]',
+  },
 };
