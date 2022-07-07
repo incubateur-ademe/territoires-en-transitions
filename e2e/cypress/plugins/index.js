@@ -19,6 +19,7 @@
 const { isFileExist, findFiles } = require('cy-verify-downloads');
 const cucumber = require('cypress-cucumber-preprocessor').default;
 const pg = require('./pg');
+const supabase = require('./supabase');
 
 // eslint-disable-next-line no-unused-vars
 module.exports = (on, config) => {
@@ -33,4 +34,5 @@ module.exports = (on, config) => {
   on('file:preprocessor', cucumber());
   on('task', { isFileExist, findFiles });
   pg(on, config);
+  supabase(on, config);
 };

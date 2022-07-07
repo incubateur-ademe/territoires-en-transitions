@@ -20,3 +20,4 @@
 // require('./commands')
 
 require('cy-verify-downloads').addCustomCommand();
+require('cypress-real-events/support');
