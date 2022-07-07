@@ -6,7 +6,6 @@
 
 import { Selectors } from './selectors';
 import { Expectations } from './expectations';
-import { LocalSelectors as AuthSelectors } from '../01-se-connecter/selectors';
 
 beforeEach(() => {
   cy.visit('/');
@@ -32,7 +31,7 @@ const Users = {
     password: 'yolododo',
   },
 };
-const SignInPage = AuthSelectors['formulaire de connexion'];
+const SignInPage = Selectors['formulaire de connexion'];
 Given(/je suis connecté en tant que "([^"]*)"/, function (userName) {
   const u = Users[userName];
   assert(u, 'utilisateur non trouvé');
