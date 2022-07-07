@@ -1,4 +1,3 @@
-import {CollectiviteRedirector} from 'app/Redirector';
 import LogoRepubliqueFrancaise from 'ui/logo/LogoRepubliqueFrancaise';
 import {useAuth, TAuthContext} from 'core-logic/api/auth/AuthProvider';
 import HeaderNavigation from './HeaderNavigation';
@@ -30,7 +29,6 @@ export const Header = ({
 
   return (
     <>
-      <CollectiviteRedirector />
       <header role="banner" className="header fr-header ">
         <div className="fr-header__body">
           <div className="fr-container">
