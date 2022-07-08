@@ -36,6 +36,10 @@ jobs:
           sudo locale-gen ${{env.LANG}}
           sudo update-locale LANG=${{env.LANG}}
 
+      # pour faire passer les tests utilisant le presse-papier
+      - name: Install xsel
+        run: sudo apt-get install xsel
+
       # Copy all projet .sample.env into .env with the variables
       - name: Make .env files
         run: sh make_dot_env.sh
