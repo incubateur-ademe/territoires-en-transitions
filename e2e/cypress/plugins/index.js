@@ -20,9 +20,11 @@ const { isFileExist, findFiles } = require('cy-verify-downloads');
 const cucumber = require('cypress-cucumber-preprocessor').default;
 const pg = require('./pg');
 const supabase = require('./supabase');
+const clipboard = require('./clipboard');
 
 // eslint-disable-next-line no-unused-vars
 module.exports = (on, config) => {
+  // init. avant lancement du navigateur
   on('before:browser:launch', (browser, launchOptions) => {
     if (browser.family === 'firefox') {
       // force la langue dans ff pour faire passer les tests en CI
@@ -31,8 +33,14 @@ module.exports = (on, config) => {
     }
   });
 
+  // pré-traitement des fichiers Gherkin
   on('file:preprocessor', cucumber());
+  // pour vérifier les fichiers téléchargés
   on('task', { isFileExist, findFiles });
+  // pour accéder au client postgres
   pg(on, config);
+  // pour accéder au client supabase
   supabase(on, config);
+  // pour accéder au contenu du presse-papier
+  clipboard(on, config);
 };
