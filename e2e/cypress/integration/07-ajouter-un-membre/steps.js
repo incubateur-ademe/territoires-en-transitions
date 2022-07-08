@@ -25,23 +25,16 @@ Given('le presse-papier contient le lien copié', () => {
   cy.get(LocalSelectors["lien d'invitation"].selector)
     .invoke('val')
     .then((val) => {
-      cy.window()
-        .its('navigator.clipboard')
-        .invoke('readText')
-        .should('equal', val);
+      cy.task('getClipboard').should('equal', val);
     });
 });
 
 Given('je visite le lien copié', () =>
-  cy
-    .window()
-    .its('navigator.clipboard')
-    .invoke('readText')
-    .then((val) => {
-      cy.visit({
-        url: val,
-      });
-    })
+  cy.task('getClipboard').then((val) => {
+    cy.visit({
+      url: val,
+    });
+  })
 );
 
 Given(
