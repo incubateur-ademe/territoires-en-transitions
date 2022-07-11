@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots App/Pages/Toutes Les Collectivites/Components/Pagination Cent Plus Page 1`] = `
+exports[`Storyshots app/pages/ToutesLesCollectivites/components/Pagination Cent Plus Page 1`] = `
 <ul>
   <nav
     aria-label="Pagination"
@@ -94,7 +94,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Components/Pagination Cen
 </ul>
 `;
 
-exports[`Storyshots App/Pages/Toutes Les Collectivites/Components/Pagination Huit Pages 1`] = `
+exports[`Storyshots app/pages/ToutesLesCollectivites/components/Pagination Huit Pages 1`] = `
 <ul>
   <nav
     aria-label="Pagination"
@@ -188,7 +188,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Components/Pagination Hui
 </ul>
 `;
 
-exports[`Storyshots App/Pages/Toutes Les Collectivites/Components/Pagination Six Pages 1`] = `
+exports[`Storyshots app/pages/ToutesLesCollectivites/components/Pagination Six Pages 1`] = `
 <ul>
   <nav
     aria-label="Pagination"
@@ -289,7 +289,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Components/Pagination Six
 </ul>
 `;
 
-exports[`Storyshots App/Pages/Toutes Les Collectivites/Components/Pagination Trois Pages 1`] = `
+exports[`Storyshots app/pages/ToutesLesCollectivites/components/Pagination Trois Pages 1`] = `
 <ul>
   <nav
     aria-label="Pagination"
@@ -369,7 +369,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Components/Pagination Tro
 </ul>
 `;
 
-exports[`Storyshots App/Pages/Toutes Les Collectivites/Components/Pagination Une Seule Page 1`] = `
+exports[`Storyshots app/pages/ToutesLesCollectivites/components/Pagination Une Seule Page 1`] = `
 <ul>
   <nav
     aria-label="Pagination"
