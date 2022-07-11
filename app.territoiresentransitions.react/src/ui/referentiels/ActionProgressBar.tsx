@@ -1,32 +1,26 @@
 import {Tooltip} from '@material-ui/core';
 import {toFixed} from 'utils/toFixed';
-import {observer} from 'mobx-react-lite';
-import {ScoreBloc} from 'core-logic/observables/scoreBloc';
-import {referentielId} from 'utils/actions';
 import {ActionScore} from 'types/ClientScore';
 import {actionAvancementColors} from 'app/theme';
+import {useActionScore} from 'core-logic/hooks/scoreHooks';
 
-export const ActionProgressBar = observer(
-  ({actionId, scoreBloc}: {actionId: string; scoreBloc: ScoreBloc}) => {
-    const score = scoreBloc.getScore(actionId, referentielId(actionId));
+export const ActionProgressBar = ({score}: {score: ActionScore | null}) => {
+  if (score === null) return null;
 
-    if (score === null) return null;
-
-    return (
-      <Tooltip
-        title={
-          <div style={{whiteSpace: 'pre-line'}}>
-            {<_ProgressBarTooltipContent score={score} />}
-          </div>
-        }
-      >
-        <div data-test={`score-${actionId}`}>
-          <_ColoredBar score={score} />
+  return (
+    <Tooltip
+      title={
+        <div style={{whiteSpace: 'pre-line'}}>
+          {<_ProgressBarTooltipContent score={score} />}
         </div>
-      </Tooltip>
-    );
-  }
-);
+      }
+    >
+      <div data-test={`score-${score.action_id}`}>
+        <_ColoredBar score={score} />
+      </div>
+    </Tooltip>
+  );
+};
 
 const _ColoredBar = ({score}: {score: ActionScore}) => {
   if (score.point_potentiel < 1e-3) return null;
@@ -138,4 +132,9 @@ const _ProgressBarTooltipContent = ({score}: {score: ActionScore}) => {
       />
     </div>
   );
+};
+
+export default ({actionId}: {actionId: string}) => {
+  const score = useActionScore(actionId);
+  return <ActionProgressBar score={score} />;
 };

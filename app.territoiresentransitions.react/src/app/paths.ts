@@ -1,7 +1,6 @@
 export const authBasePath = '/auth';
 export const signInPath = `${authBasePath}/signin`;
 export const signUpPath = `${authBasePath}/signup`;
-export const identityPath = `${authBasePath}/identity`;
 export const resetPwdToken = 'token';
 export const resetPwdPath = `${authBasePath}/recover/:${resetPwdToken}`;
 
@@ -38,6 +37,7 @@ export const collectivitePlanActionPath = `${collectivitePath}/plan_action/:${pl
 export const collectiviteNouvelleFichePath = `${collectivitePath}/nouvelle_fiche`;
 export const collectiviteFichePath = `${collectivitePath}/fiche/:${ficheParam}`;
 export const collectiviteUsersPath = `${collectivitePath}/users`;
+export const collectiviteAllCollectivitesPath = `${collectivitePath}/toutes_collectivites`;
 export const collectivitePersoRefPath = `${collectivitePath}/personnalisation`;
 export const collectivitePersoRefThematiquePath = `${collectivitePersoRefPath}/:${thematiqueParam}`;
 
@@ -178,6 +178,16 @@ export const makeCollectiviteUsersUrl = ({
     collectiviteId.toString()
   );
 
+export const makeCollectiviteAllCollectivitesUrl = ({
+  collectiviteId,
+}: {
+  collectiviteId: number;
+}) =>
+  collectiviteAllCollectivitesPath.replace(
+    `:${collectiviteParam}`,
+    collectiviteId.toString()
+  );
+
 export const makeCollectivitePersoRefUrl = ({
   collectiviteId,
 }: {
@@ -200,5 +210,5 @@ export const makeCollectivitePersoRefThematiqueUrl = ({
     .replace(`:${thematiqueParam}`, thematiqueId);
 
 export const makeInvitationLandingPath = (invitationId: string) =>
-  window.location.hostname +
+  window.location.origin +
   invitationLandingPath.replace(`:${invitationIdParam}`, invitationId);

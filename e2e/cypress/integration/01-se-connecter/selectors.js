@@ -3,15 +3,6 @@
  */
 
 export const LocalSelectors = {
-  'formulaire de connexion': {
-    selector: '[data-test=SignInPage]',
-    children: {
-      email: 'input[name=email]',
-      mdp: 'input[name=password]',
-      Valider: 'button[type=submit]',
-      'Mot de passe oublié': '[data-test=forgotten-pwd]',
-    },
-  },
   'demande de lien de réinitialisation du mdp': {
     selector: '[data-test=PasswordRecovery]',
     children: {

@@ -83,12 +83,14 @@ action_id: cae_4.2.2
 ## Règles
 ### Réduction de potentiel
 ```formule
-si reponse(pouvoir_police, NON) et reponse(trafic, NON) alors 2/16
-sinon si reponse(pouvoir_police, NON) et reponse(voirie_1,voirie_1_b) alors 2/16
-sinon si reponse(pouvoir_police, NON) et reponse(voirie_1,voirie_1_c) alors 2/16
-sinon si reponse(voirie_1,voirie_1_b) et reponse(voirie_1,voirie_1_c) alors 2/16
-sinon si reponse(voirie_1,voirie_1_b) et reponse(trafic, NON) alors 2/16
-sinon si reponse(voirie_1,voirie_1_c) et reponse(trafic, NON) alors 2/16
+si reponse(pouvoir_police, NON) et reponse(trafic, NON) et reponse(voirie_1,voirie_1_b) alors 2/16
+sinon si reponse(pouvoir_police, NON) et reponse(trafic, NON) et reponse(voirie_1,voirie_1_c) alors 2/16
+sinon si reponse(pouvoir_police, NON) et reponse(trafic, NON) alors 4/16
+sinon si reponse(pouvoir_police, NON) et reponse(voirie_1,voirie_1_b) alors 4/16
+sinon si reponse(pouvoir_police, NON) et reponse(voirie_1,voirie_1_c) alors 4/16
+sinon si reponse(voirie_1,voirie_1_b) et reponse(voirie_1,voirie_1_c) alors 4/16
+sinon si reponse(voirie_1,voirie_1_b) et reponse(trafic, NON) alors 4/16
+sinon si reponse(voirie_1,voirie_1_c) et reponse(trafic, NON) alors 4/16
 sinon si reponse(pouvoir_police, NON) ou reponse(voirie_1,voirie_1_b) ou reponse(voirie_1,voirie_1_c) ou reponse
 (trafic, NON) alors 0.5
 ```
@@ -109,11 +111,23 @@ si reponse(AOM_1, NON) et reponse (voirie_1, voirie_1_c) et reponse(centre_polar
 sinon si reponse(AOM_1, NON) et reponse (voirie_1, voirie_1_c) et identite(population, moins_de_10000) alors 0
 sinon si identite(population, moins_de_10000) ou reponse(centre_polarite, NON) alors 0.5
 sinon si reponse(AOM_1, NON) et reponse (voirie_1, voirie_1_c) alors 0.5 
+sinon si reponse(AOM_1, NON) alors 0,75
+sinon si reponse (voirie_1, voirie_1_c) alors 0,75
 ```
-Pour une collectivité non AOM et sans compétence voirie, le score de la 4.2.3 est réduit de 50 %.
+Pour une collectivité non AOM, le score de la 4.2.3 est réduit de 25 %.
+Pour une collectivité sans compétence voirie, le score de la 4.2.3 est réduit de 25 %.
 Pour une collectivité de moins de 10 000 habitants ou ne comportant pas de commune ou centre-bourg de plus de 2000 habitants, le score de la 4.2.3 est réduit de 50 %.
-Les deux réductions sont cumulables.
+Les réductions sont cumulables.
 
+# Désactivation cae 4.2.3.5 liee stationnement
+```yaml
+action_id: cae_4.2.3.5
+```
+## Règles 
+### Désactivation
+```formule
+reponse(voirie_1, voirie_1_c)
+```
 
 # Réduction potentiel cae 4.3.1 liee voirie
 ```yaml

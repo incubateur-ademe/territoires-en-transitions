@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Criteres Action Exemple 1 1`] = `
+exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriteresAction Exemple 1 1`] = `
 Array [
   <li
     className=" fr-mt-2w fr-mb-1w"
@@ -478,7 +478,7 @@ Array [
 ]
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Criteres Action Exemple 2 1`] = `
+exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriteresAction Exemple 2 1`] = `
 Array [
   <li
     className=" fr-mt-2w fr-mb-1w"

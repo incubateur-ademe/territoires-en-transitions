@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots Ui/Page Header Surtitre Titre Et Bouton 1`] = `
+exports[`Storyshots ui/PageHeader Surtitre Titre Et Bouton 1`] = `
 <div
   className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
 >
@@ -26,7 +26,7 @@ exports[`Storyshots Ui/Page Header Surtitre Titre Et Bouton 1`] = `
 </div>
 `;
 
-exports[`Storyshots Ui/Page Header Titre Central 1`] = `
+exports[`Storyshots ui/PageHeader Titre Central 1`] = `
 <div
   className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
 >
@@ -38,7 +38,7 @@ exports[`Storyshots Ui/Page Header Titre Central 1`] = `
 </div>
 `;
 
-exports[`Storyshots Ui/Page Header Titre Et Bouton 1`] = `
+exports[`Storyshots ui/PageHeader Titre Et Bouton 1`] = `
 <div
   className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
 >

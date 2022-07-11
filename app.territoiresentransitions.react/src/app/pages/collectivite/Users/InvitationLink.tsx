@@ -34,10 +34,11 @@ const InvitationLink = (props: TInvitationLinkProps) => {
   });
 
   return (
-    <div className="flex flex-col max-w-2xl py-4">
+    <div data-test="InvitationLink" className="flex flex-col max-w-2xl py-4">
       <div className="flex py-4">
         <input className="fr-input mr-4" readOnly value={displayedLink} />
         <button
+          data-test="CopyLink"
           className="fr-btn fr-btn--secondary h-6"
           onClick={() => copy(displayedLink)}
         >

@@ -1,4 +1,3 @@
-import {refToEmoji} from 'utils/refToEmoji';
 import {ReferentielOfIndicateur} from 'types/litterals';
 import {IndicateurDefinitionRead} from 'generated/dataLayer/indicateur_definition_read';
 
@@ -8,14 +7,17 @@ export const indicateurIdRegexp =
 export const indicateurIdentifiantRegexp =
   '(?<number>[0-9]{1,3})(?<literal>.+)?';
 
-export const inferIndicateurReferentielAndTitle = (
-  definition: IndicateurDefinitionRead
+export const inferIndicateurTitle = (
+  definition: IndicateurDefinitionRead,
+  withReferentielPrefix = false
 ) => {
   const indicateurId = definition.id;
   const id_groups = indicateurId.match(indicateurIdRegexp)?.groups;
   if (!id_groups) return indicateurId;
   const ref = id_groups['ref'] as ReferentielOfIndicateur;
-  return `${refToEmoji[ref]} ${definition.identifiant} - ${definition.nom}`;
+  return `${withReferentielPrefix ? ref.toUpperCase() + ' ' : ''}${
+    definition.identifiant
+  } - ${definition.nom}`;
 };
 
 export const sortIndicateurDefinitionsByIdentifiant = (

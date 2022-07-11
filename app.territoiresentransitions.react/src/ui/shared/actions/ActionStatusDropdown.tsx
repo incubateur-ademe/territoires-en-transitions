@@ -1,45 +1,21 @@
-import {
-  ActionStatutRead,
-  ActionAvancement,
-} from 'generated/dataLayer/action_statut_read';
-import {actionStatutRepository} from 'core-logic/api/repositories/ActionStatutRepository';
-import {ScoreBloc} from 'core-logic/observables/scoreBloc';
-import {makeAutoObservable} from 'mobx';
-import {observer} from 'mobx-react-lite';
 import {useState} from 'react';
 import {Dialog, MenuItem, Select} from '@material-ui/core';
 import {SelectInputProps} from '@material-ui/core/Select/SelectInput';
 import {actionAvancementColors} from 'app/theme';
-import {ActionStatutWrite} from 'generated/dataLayer/action_statut_write';
-import {currentCollectiviteBloc} from 'core-logic/observables';
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import {useActionScore} from 'core-logic/hooks/scoreHooks';
+import {
+  useActionStatut,
+  useSaveActionStatut,
+} from 'core-logic/hooks/useActionStatut';
+import {
+  ActionAvancement,
+  ActionStatutRead,
+} from 'generated/dataLayer/action_statut_read';
 import {toPercentString} from 'utils/score';
 import {CloseDialogButton} from '../CloseDialogButton';
 import {DetailedScore} from '../DetailedScore/DetailedScore';
 import {AvancementValues} from '../DetailedScore/DetailedScoreSlider';
-import {referentielId} from 'utils/actions';
-
-export const ActionStatusDropdown = ({
-  actionId,
-  scoreBloc,
-}: {
-  actionId: string;
-  scoreBloc: ScoreBloc;
-}) => {
-  const collectiviteId = useCollectiviteId()!;
-  const actionStatusAvancementBloc = new ActionStatusAvancementRadioButtonBloc({
-    actionId,
-    collectiviteId,
-  });
-
-  return (
-    <_ActionStatusAvancementRadioButton
-      actionId={actionId}
-      actionStatusAvancementBloc={actionStatusAvancementBloc}
-      scoreBloc={scoreBloc}
-    />
-  );
-};
 
 interface SelectableStatut {
   value: number;
@@ -113,197 +89,124 @@ const selectables = [
   nonConcerneStatut,
 ];
 
-const _ActionStatusAvancementRadioButton = observer(
-  ({
-    actionId,
-    actionStatusAvancementBloc,
-    scoreBloc,
-  }: {
-    actionId: string;
-    actionStatusAvancementBloc: ActionStatusAvancementRadioButtonBloc;
-    scoreBloc: ScoreBloc;
-  }) => {
-    const [opened, setOpened] = useState(false);
+export const ActionStatusDropdown = ({actionId}: {actionId: string}) => {
+  const [opened, setOpened] = useState(false);
 
-    const handleChange: SelectInputProps['onChange'] = event => {
-      actionStatusAvancementBloc
-        .pickStatutValue(event.target.value as number)
-        .then(() => {
-          if (actionStatusAvancementBloc.statut.avancement === 'detaille') {
-            setOpened(true);
-          }
-        });
-    };
+  const collectivite = useCurrentCollectivite();
+  const args = {
+    action_id: actionId,
+    collectivite_id: collectivite?.collectivite_id || 0,
+  };
+  const {statut} = useActionStatut(args);
+  const {avancement, avancement_detaille} = statut || {};
 
-    const handleSaveDetail = (values: number[]) => {
-      actionStatusAvancementBloc.setAvancementDetaille(values);
-      actionStatusAvancementBloc.saveStatut();
+  const score = useActionScore(actionId);
+  const currentOptionFromStatut = statut ? valueByStatut(statut) : null;
+  const currentStatus = score?.desactive
+    ? // affiche le statut "non concerné" quand l'action est désactivée par la personnalisation
+      nonConcerneStatut.value
+    : // sinon le statut courant ou à défaut "non renseigné"
+      currentOptionFromStatut?.value || nonRenseigneStatut.value;
+
+  const {saveActionStatut} = useSaveActionStatut(args);
+
+  const handleChange: SelectInputProps['onChange'] = event => {
+    const {avancement, concerne} = statutByValue(event.target.value as number);
+    saveActionStatut({...args, ...statut, avancement, concerne});
+    if (avancement === 'detaille') {
+      setOpened(true);
+    }
+  };
+
+  const handleSaveDetail = (values: number[]) => {
+    if (statut) {
+      saveActionStatut({
+        ...args,
+        ...statut,
+        avancement: 'detaille',
+        avancement_detaille: values,
+      });
       setOpened(false);
-    };
+    }
+  };
 
-    const {statut} = actionStatusAvancementBloc;
-    const {avancement, avancement_detaille} = statut;
+  if (!collectivite) {
+    return null;
+  }
 
-    const score = scoreBloc.getScore(actionId, referentielId(actionId));
-    const currentStatus = score?.desactive
-      ? // affiche le statut "non concerné" quand l'action est désactivée par la personnalisation
-        nonConcerneStatut.value
-      : // sinon le statut courant ou à défaut "non renseigné"
-        statut.value ?? nonRenseigneStatut.value;
-
-    return (
-      <div className="flex flex-col w-full">
-        <Select
-          value={currentStatus}
-          onChange={handleChange}
-          displayEmpty
-          inputProps={{'aria-label': 'Without label'}}
-          disabled={currentCollectiviteBloc.readonly || score?.desactive}
-        >
-          {selectables.map(({value, color, label}) => (
-            <MenuItem key={value} value={value}>
-              <span style={{color: color}}>&#9679;</span>
-              &nbsp;{label}
-            </MenuItem>
-          ))}
-        </Select>
-        {avancement === 'detaille' && !score?.desactive ? (
-          <>
-            {avancement_detaille?.length === 3 ? (
-              <ul className="mt-6 text-sm">
-                <li>
-                  Fait :&nbsp;
-                  {toPercentString(avancement_detaille[0])}
-                </li>
-                <li>
-                  Programmé :&nbsp;
-                  {toPercentString(avancement_detaille[1])}
-                </li>
-                <li>
-                  Pas fait :&nbsp;
-                  {toPercentString(avancement_detaille[2])}
-                </li>
-              </ul>
-            ) : null}
-            <button
-              className="fr-btn fr-btn--sm"
-              onClick={() => setOpened(true)}
-            >
-              Préciser l'avancement
-            </button>
-            <Dialog
-              open={opened}
-              onClose={() => setOpened(false)}
-              maxWidth="sm"
-              fullWidth={true}
-            >
-              <div className="p-7 flex flex-col items-center">
-                <CloseDialogButton setOpened={setOpened} />
-                <h3 className="pb-4">Préciser l’avancement de cette tâche</h3>
-                <div className="w-full">
-                  <DetailedScore
-                    avancement={
-                      (avancement_detaille?.length === 3
-                        ? avancement_detaille
-                        : DEFAULT_DETAIL_VALUES) as AvancementValues
-                    }
-                    onSave={handleSaveDetail}
-                  />
-                </div>
+  return (
+    <div className="flex flex-col w-full">
+      <Select
+        value={currentStatus}
+        onChange={handleChange}
+        displayEmpty
+        inputProps={{'aria-label': 'Without label'}}
+        disabled={collectivite.readonly || score?.desactive}
+      >
+        {selectables.map(({value, color, label}) => (
+          <MenuItem key={value} value={value}>
+            <span style={{color: color}}>&#9679;</span>
+            &nbsp;{label}
+          </MenuItem>
+        ))}
+      </Select>
+      {avancement === 'detaille' && !score?.desactive ? (
+        <>
+          {avancement_detaille?.length === 3 ? (
+            <ul className="mt-6 text-sm">
+              <li>
+                Fait :&nbsp;
+                {toPercentString(avancement_detaille[0])}
+              </li>
+              <li>
+                Programmé :&nbsp;
+                {toPercentString(avancement_detaille[1])}
+              </li>
+              <li>
+                Pas fait :&nbsp;
+                {toPercentString(avancement_detaille[2])}
+              </li>
+            </ul>
+          ) : null}
+          <button className="fr-btn fr-btn--sm" onClick={() => setOpened(true)}>
+            Préciser l'avancement
+          </button>
+          <Dialog
+            open={opened}
+            onClose={() => setOpened(false)}
+            maxWidth="sm"
+            fullWidth={true}
+          >
+            <div className="p-7 flex flex-col items-center">
+              <CloseDialogButton setOpened={setOpened} />
+              <h3 className="pb-4">Préciser l’avancement de cette tâche</h3>
+              <div className="w-full">
+                <DetailedScore
+                  avancement={
+                    (avancement_detaille?.length === 3
+                      ? avancement_detaille
+                      : DEFAULT_DETAIL_VALUES) as AvancementValues
+                  }
+                  onSave={handleSaveDetail}
+                />
               </div>
-            </Dialog>
-          </>
-        ) : null}
-      </div>
-    );
-  }
-);
+            </div>
+          </Dialog>
+        </>
+      ) : null}
+    </div>
+  );
+};
 
-class ActionStatusAvancementRadioButtonBloc {
-  private actionId: string;
-  private collectiviteId: number;
-  private avancement: ActionAvancement = 'non_renseigne';
-  public avancement_detaille?: number[] | undefined;
-  private concerne = true;
-  private _statut: SelectableStatut = nonRenseigneStatut;
+const statutByValue = (value: number): SelectableStatut => {
+  return selectables.find(s => s.value === value)!;
+};
 
-  constructor({
-    actionId,
-    collectiviteId,
-  }: {
-    collectiviteId: number;
-    actionId: string;
-  }) {
-    makeAutoObservable(this);
-    this.actionId = actionId;
-    this.collectiviteId = collectiviteId;
-    this.fetch();
-  }
-
-  private setStatut = (s: SelectableStatut) => (this._statut = s);
-  private setAvancement = (a: ActionAvancement) => (this.avancement = a);
-  public setAvancementDetaille = (a: number[] | undefined) =>
-    (this.avancement_detaille = a);
-  private setConcerne = (c: boolean) => (this.concerne = c);
-
-  public async pickStatutValue(value: number) {
-    const statut = ActionStatusAvancementRadioButtonBloc.statutByValue(value);
-    this.setStatut(statut);
-    this.setAvancement(statut.avancement);
-    this.setConcerne(statut.concerne);
-    this.setAvancementDetaille(statut.avancement_detaille);
-    this.saveStatut();
-  }
-
-  get statut(): SelectableStatut {
-    return this._statut;
-  }
-
-  public saveStatut() {
-    actionStatutRepository
-      .save({
-        action_id: this.actionId,
-        collectivite_id: this.collectiviteId,
-        avancement: this.avancement,
-        avancement_detaille: this.avancement_detaille,
-        concerne: this.concerne,
-      })
-      .then(saved => {
-        if (saved) {
-          this.setStatut(
-            ActionStatusAvancementRadioButtonBloc.statutByEntity(saved)
-          );
-        }
-      });
-  }
-
-  private fetch() {
-    actionStatutRepository
-      .fetch({
-        actionId: this.actionId,
-        collectiviteId: this.collectiviteId,
-      })
-      .then(fetched => {
-        if (fetched) {
-          this.setStatut(
-            ActionStatusAvancementRadioButtonBloc.statutByEntity(fetched)
-          );
-        }
-      });
-  }
-
-  public static statutByValue(value: number): SelectableStatut {
-    return selectables.find(s => s.value === value)!;
-  }
-
-  public static statutByEntity(
-    entity: ActionStatutWrite | ActionStatutRead
-  ): SelectableStatut {
-    const ret = selectables.find(
-      s => s.concerne === entity.concerne && s.avancement === entity.avancement
-    )!;
-    return ret.avancement === 'detaille'
-      ? {...ret, avancement_detaille: entity.avancement_detaille || []}
-      : ret;
-  }
-}
+const valueByStatut = (statut: ActionStatutRead): SelectableStatut => {
+  const ret = selectables.find(
+    s => s.concerne === statut.concerne && s.avancement === statut.avancement
+  )!;
+  return ret.avancement === 'detaille'
+    ? {...ret, avancement_detaille: statut.avancement_detaille || []}
+    : ret;
+};

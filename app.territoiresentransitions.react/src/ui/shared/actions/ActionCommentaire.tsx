@@ -1,93 +1,59 @@
 import '../CrossExpandPanel.css';
-import {makeAutoObservable} from 'mobx';
-import {actionCommentaireRepository} from 'core-logic/api/repositories/ActionCommentaireRepository';
-import {observer} from 'mobx-react-lite';
-import {currentCollectiviteBloc} from 'core-logic/observables';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {AutoTextArea} from '../AutoTextArea';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import {AutoTextArea} from '../AutoTextArea';
+import {
+  useActionCommentaire,
+  useSaveActionCommentaire,
+} from '../../../core-logic/hooks/useActionCommentaire';
+import {useState} from 'react';
 
 export const ActionCommentaire = ({
   action,
 }: {
   action: ActionDefinitionSummary;
 }) => {
-  const collectiviteId = useCollectiviteId()!;
-  const observable = new ActionCommentaireFieldBloc({
-    actionId: action.id,
-    collectiviteId,
-  });
+  const data = useActionCommentaire(action.id);
+
   return (
     <div className="border-gray-300 my-3">
-      <ActionCommentaireField observable={observable} action={action} />
+      <ActionCommentaireField action={action} value={data?.commentaire || ''} />
     </div>
   );
 };
 
 export type ActionCommentaireFieldProps = {
-  observable: ActionCommentaireFieldBloc;
   action: ActionDefinitionSummary;
+  value: string;
 };
 
-export const ActionCommentaireField = observer(
-  ({observable, action, ...otherProps}: ActionCommentaireFieldProps) => (
+export const ActionCommentaireField = ({
+  action,
+  value,
+}: ActionCommentaireFieldProps) => {
+  const collectivite = useCurrentCollectivite();
+  const {saveActionCommentaire} = useSaveActionCommentaire();
+  const [commentaire, setCommentaire] = useState(value);
+
+  return collectivite ? (
     <AutoTextArea
-      value={observable.fieldValue ?? ''}
+      value={commentaire}
       onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-        observable.setFieldValue(event.currentTarget.value)
+        setCommentaire(event.currentTarget.value)
       }
-      onBlur={() => observable.saveFieldValue()}
+      onBlur={() =>
+        saveActionCommentaire({
+          action_id: action.id,
+          collectivite_id: collectivite.collectivite_id,
+          commentaire,
+        })
+      }
       hint={
         action.type === 'action'
           ? "Description générale de l'état d'avancement"
           : "Précisions sur l'état d'avancement"
       }
-      disabled={currentCollectiviteBloc.readonly}
-      {...otherProps}
+      disabled={collectivite.readonly}
     />
-  )
-);
-
-class ActionCommentaireFieldBloc {
-  private readonly collectiviteId: number;
-  private readonly actionId: string;
-  fieldValue: string | null = null;
-
-  constructor({
-    actionId,
-    collectiviteId,
-  }: {
-    collectiviteId: number;
-    actionId: string;
-  }) {
-    makeAutoObservable(this);
-    this.collectiviteId = collectiviteId;
-    this.actionId = actionId;
-    this.fetch();
-  }
-
-  setFieldValue(fieldValue: string | null) {
-    this.fieldValue = fieldValue;
-  }
-
-  saveFieldValue() {
-    actionCommentaireRepository.save({
-      action_id: this.actionId,
-      collectivite_id: this.collectiviteId,
-      commentaire: this.fieldValue ?? '',
-    });
-  }
-
-  fetch() {
-    actionCommentaireRepository
-      .fetch({
-        collectiviteId: this.collectiviteId,
-        actionId: this.actionId,
-      })
-      .then(fetched => {
-        this.setFieldValue(
-          fetched?.commentaire !== '' ? fetched?.commentaire ?? null : null
-        );
-      });
-  }
-}
+  ) : null;
+};

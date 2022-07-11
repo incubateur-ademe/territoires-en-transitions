@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots App/Pages/Statistics Page/Daily Count Line Chart Collectivites Actives 1`] = `
+exports[`Storyshots app/pages/StatisticsPage/DailyCountLineChart Collectivites Actives 1`] = `
 <div
   style={
     Object {
@@ -19,7 +19,7 @@ exports[`Storyshots App/Pages/Statistics Page/Daily Count Line Chart Collectivit
 </div>
 `;
 
-exports[`Storyshots App/Pages/Statistics Page/Daily Count Line Chart Rattachements 1`] = `
+exports[`Storyshots app/pages/StatisticsPage/DailyCountLineChart Rattachements 1`] = `
 <div
   style={
     Object {
@@ -38,7 +38,7 @@ exports[`Storyshots App/Pages/Statistics Page/Daily Count Line Chart Rattachemen
 </div>
 `;
 
-exports[`Storyshots App/Pages/Statistics Page/Daily Count Line Chart Utilisateurs Actifs 1`] = `
+exports[`Storyshots app/pages/StatisticsPage/DailyCountLineChart Utilisateurs Actifs 1`] = `
 <div
   style={
     Object {

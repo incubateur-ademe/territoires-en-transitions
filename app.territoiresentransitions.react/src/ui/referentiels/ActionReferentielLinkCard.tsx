@@ -1,14 +1,12 @@
 import {Link} from 'react-router-dom';
-import {currentCollectiviteBloc} from 'core-logic/observables';
 import {makeCollectiviteActionUrl} from 'app/paths';
-import {scoreBloc} from 'core-logic/observables/scoreBloc';
 import {ActionReferentielDescription} from 'ui/referentiels/ActionReferentielDescription';
 import {ArrowNarrowRightIcon} from '@heroicons/react/solid';
 import {ActionReferentielDisplayTitle} from 'ui/referentiels/ActionReferentielDisplayTitle';
 import {referentielId} from 'utils/actions';
-import {ActionProgressBar} from 'ui/referentiels/ActionProgressBar';
-import {ActionReferentiel} from 'types/action_referentiel';
+import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 
 /**
  * Used on referentiels page, links to action page.
@@ -18,8 +16,7 @@ export const ActionReferentielLinkCard = ({
 }: {
   action: ActionDefinitionSummary;
 }) => {
-  const collectiviteId =
-    currentCollectiviteBloc.currentCollectivite?.collectivite_id;
+  const collectiviteId = useCollectiviteId();
   const referentiel = referentielId(action.id);
   return (
     <article>
@@ -39,7 +36,7 @@ export const ActionReferentielLinkCard = ({
           <ActionReferentielDescription action={action} />
         </div>
         <div className="w-1/6 pl-4">
-          <ActionProgressBar actionId={action.id} scoreBloc={scoreBloc} />
+          <ActionProgressBar actionId={action.id} />
         </div>
       </div>
     </article>

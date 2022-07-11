@@ -31,9 +31,18 @@ actions: [cae_3.3.3]
 types_concernes: [EPCI]
 ```
 
-# Existe-t-il un potentiel de valorisation énergétique (méthanisation ou récupération de chaleur) attesté par une étude portant sur la totalité du périmètre d’assainissement ?
+
+# Une étude, portant sur la totalité du périmètre d’assainissement, a-t-elle été réalisée pour connaitre le potentiel de valorisation énergétique ? 
 ```yaml
 id: assainissement_4
+type: binaire
+thematique_id: eau_assainissement
+actions: [cae_3.3.2]
+```
+
+# Si oui, cette étude indique-t-elle un potentiel de valorisation énergétique (méthanisation ou récupération de chaleur) ? 
+```yaml
+id: assainissement_4bis
 type: binaire
 thematique_id: eau_assainissement
 actions: [cae_3.3.2]

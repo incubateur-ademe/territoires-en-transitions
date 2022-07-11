@@ -1,7 +1,6 @@
 import {useParams} from 'react-router-dom';
 import {ReferentielParamOption, referentielParam} from 'app/paths';
-import {scoreBloc} from 'core-logic/observables/scoreBloc';
-import {ActionProgressBar} from 'ui/referentiels/ActionProgressBar';
+import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
 import {useReferentielDownToAction} from 'core-logic/hooks/referentiel';
 import {ExpandableAction} from 'ui/shared/actions/ExpandableAction';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
@@ -11,10 +10,7 @@ const ReferentielHead = (props: {referentiel: ActionDefinitionSummary}) => {
     <>
       <header className="flex flex-row mb-6 items-center justify-between">
         <h2 className="fr-h2">{props.referentiel.nom}</h2>
-        <ActionProgressBar
-          actionId={props.referentiel.id}
-          scoreBloc={scoreBloc}
-        />
+        <ActionProgressBar actionId={props.referentiel.id} />
       </header>
     </>
   );

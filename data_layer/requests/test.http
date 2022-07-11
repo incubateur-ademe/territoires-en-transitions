@@ -1,0 +1,9 @@
+### Reinitialise les droits.
+POST {{api}}/rest/v1/rpc/test_reset_droits
+apikey: {{service}}
+
+> {%
+    client.test("Reset droits executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}

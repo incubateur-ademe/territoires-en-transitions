@@ -1,0 +1,1151 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots app/pages/collectivite/TableauBord/TableauBordPage Referentiels Non Remplis 1`] = `
+<div
+  className="bg-grey975"
+>
+  <div
+    className="fr-container pt-9 pb-16"
+  >
+    <main
+      className="flex flex-row gap-4"
+    >
+      <section
+        className="bg-white p-4"
+        style={
+          Object {
+            "width": "600px",
+          }
+        }
+      >
+        <div
+          className="flex gap-4 justify-center font-bold text-center text-2xl text-gray"
+        >
+          <div>
+            Référentiel Climat Air Énergie
+          </div>
+        </div>
+        <div>
+          <div
+            className="flex items-center justify-center font-light"
+            style={
+              Object {
+                "height": "150px",
+                "padding": "10px",
+              }
+            }
+          >
+            Ce référentiel n’est pas encore renseigné pour votre collectivité. Pour commencer à visualiser votre progression, mettez à jour les statuts des actions.
+          </div>
+          <div
+            className="flex justify-center"
+          >
+            <a
+              className="fr-btn fr-btn--secondary "
+              href="/collectivite/1/referentiels/cae/progression"
+              onClick={[Function]}
+            >
+              Mettre à jour le référentiel
+            </a>
+          </div>
+        </div>
+      </section>
+      <section
+        className="bg-white p-4"
+        style={
+          Object {
+            "width": "600px",
+          }
+        }
+      >
+        <div
+          className="flex gap-4 justify-center font-bold text-center text-2xl text-gray"
+        >
+          <div>
+            Référentiel Économie Circulaire
+          </div>
+        </div>
+        <div>
+          <div
+            className="flex items-center justify-center font-light"
+            style={
+              Object {
+                "height": "150px",
+                "padding": "10px",
+              }
+            }
+          >
+            Ce référentiel n’est pas encore renseigné pour votre collectivité. Pour commencer à visualiser votre progression, mettez à jour les statuts des actions.
+          </div>
+          <div
+            className="flex justify-center"
+          >
+            <a
+              className="fr-btn fr-btn--secondary "
+              href="/collectivite/1/referentiels/eci/progression"
+              onClick={[Function]}
+            >
+              Mettre à jour le référentiel
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+`;
+
+exports[`Storyshots app/pages/collectivite/TableauBord/TableauBordPage Referentiels Partiellement Remplis 1`] = `
+<div
+  className="bg-grey975"
+>
+  <div
+    className="fr-container pt-9 pb-16"
+  >
+    <main
+      className="flex flex-row gap-4"
+    >
+      <section
+        className="bg-white p-4"
+        style={
+          Object {
+            "width": "600px",
+          }
+        }
+      >
+        <div
+          className="flex gap-4 justify-center font-bold text-center text-2xl text-gray"
+        >
+          <div>
+            Référentiel Climat Air Énergie
+          </div>
+        </div>
+        <div
+          className="p-4"
+        >
+          <div
+            className="flex flex-col items-center mt-4"
+          >
+            <div
+              className="font-semibold text-center mb-4 text-xl"
+            >
+              Niveau de labellisation actuel
+            </div>
+            <div
+              className="flex space-x-4 pb-12"
+            >
+              <svg
+                fill="none"
+                height="38"
+                viewBox="0 0 39 38"
+                width="39"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <title>
+                  Score requis : 0%
+                </title>
+                <path
+                  d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+                  fill="#e5e5e5"
+                />
+              </svg>
+              <svg
+                fill="none"
+                height="38"
+                viewBox="0 0 39 38"
+                width="39"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <title>
+                  Score requis : 35%
+                </title>
+                <path
+                  d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+                  fill="#e5e5e5"
+                />
+              </svg>
+              <svg
+                fill="none"
+                height="38"
+                viewBox="0 0 39 38"
+                width="39"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <title>
+                  Score requis : 50%
+                </title>
+                <path
+                  d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+                  fill="#e5e5e5"
+                />
+              </svg>
+              <svg
+                fill="none"
+                height="38"
+                viewBox="0 0 39 38"
+                width="39"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <title>
+                  Score requis : 65%
+                </title>
+                <path
+                  d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+                  fill="#e5e5e5"
+                />
+              </svg>
+              <svg
+                fill="none"
+                height="38"
+                viewBox="0 0 39 38"
+                width="39"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <title>
+                  Score requis : 75%
+                </title>
+                <path
+                  d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+                  fill="#e5e5e5"
+                />
+              </svg>
+            </div>
+          </div>
+          <div
+            className="flex justify-center mb-8"
+          >
+            <a
+              className="fr-btn"
+              href="/collectivite/1/labellisation/cae"
+              onClick={[Function]}
+            >
+              Décrocher les étoiles
+            </a>
+          </div>
+          <div>
+            <div
+              className="font-semibold text-center mb-4  text-xl"
+            >
+              Chiffres clés
+            </div>
+            <div
+              className="flex flex-row justify-between items-center"
+            >
+              <div>
+                <div
+                  className="font-light text-center mb-4"
+                >
+                  Taux de remplissage
+                </div>
+                <div
+                  className="flex flex-row"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": "120px",
+                        "position": "relative",
+                        "width": "120px",
+                      }
+                    }
+                  >
+                    <div
+                      aria-describedby={null}
+                      className=""
+                      onBlur={[Function]}
+                      onFocus={[Function]}
+                      onMouseLeave={[Function]}
+                      onMouseOver={[Function]}
+                      onTouchEnd={[Function]}
+                      onTouchStart={[Function]}
+                      title={null}
+                    >
+                      <canvas
+                        data-testid="canvas"
+                        height={150}
+                        onClick={[Function]}
+                        role="img"
+                        width={300}
+                      />
+                      <div
+                        style={
+                          Object {
+                            "alignItems": "center",
+                            "display": "flex",
+                            "height": "120px",
+                            "justifyContent": "center",
+                            "left": "0px",
+                            "padding": "18px",
+                            "position": "absolute",
+                            "textAlign": "center",
+                            "top": "0px",
+                            "width": "120px",
+                            "zIndex": 0,
+                          }
+                        }
+                      >
+                        <div
+                          style={
+                            Object {
+                              "color": "#2F4077",
+                              "display": "flex",
+                              "flexDirection": "column",
+                              "fontSize": 30,
+                              "fontWeight": 450,
+                              "justifyContent": "space-between",
+                              "textAlign": "center",
+                            }
+                          }
+                        >
+                          <div>
+                            3
+                          </div>
+                          <div
+                            style={
+                              Object {
+                                "color": "#2F4077",
+                                "fontSize": "10px",
+                                "fontWeight": 250,
+                                "lineHeight": 1.1,
+                                "textAlign": "center",
+                              }
+                            }
+                          >
+                            actions renseignées
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    style={
+                      Object {
+                        "height": "120px",
+                        "position": "relative",
+                        "width": "120px",
+                      }
+                    }
+                  >
+                    <div
+                      aria-describedby={null}
+                      className=""
+                      onBlur={[Function]}
+                      onFocus={[Function]}
+                      onMouseLeave={[Function]}
+                      onMouseOver={[Function]}
+                      onTouchEnd={[Function]}
+                      onTouchStart={[Function]}
+                      title={null}
+                    >
+                      <canvas
+                        data-testid="canvas"
+                        height={150}
+                        onClick={[Function]}
+                        role="img"
+                        width={300}
+                      />
+                      <div
+                        style={
+                          Object {
+                            "alignItems": "center",
+                            "display": "flex",
+                            "height": "120px",
+                            "justifyContent": "center",
+                            "left": "0px",
+                            "padding": "18px",
+                            "position": "absolute",
+                            "textAlign": "center",
+                            "top": "0px",
+                            "width": "120px",
+                            "zIndex": 0,
+                          }
+                        }
+                      >
+                        <div
+                          style={
+                            Object {
+                              "color": "#2F4077",
+                              "display": "flex",
+                              "flexDirection": "column",
+                              "fontSize": 30,
+                              "fontWeight": 450,
+                              "justifyContent": "space-between",
+                              "textAlign": "center",
+                            }
+                          }
+                        >
+                          <div>
+                            12
+                          </div>
+                          <div
+                            style={
+                              Object {
+                                "color": "#2F4077",
+                                "fontSize": "10px",
+                                "fontWeight": 250,
+                                "lineHeight": 1.1,
+                                "textAlign": "center",
+                              }
+                            }
+                          >
+                            indicateurs renseignés
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div
+                  className="font-light text-center mb-4"
+                >
+                  Scores réalisé et programmé
+                </div>
+                <div
+                  className="flex flex-row"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": "120px",
+                        "position": "relative",
+                        "width": "120px",
+                      }
+                    }
+                  >
+                    <div
+                      aria-describedby={null}
+                      className=""
+                      onBlur={[Function]}
+                      onFocus={[Function]}
+                      onMouseLeave={[Function]}
+                      onMouseOver={[Function]}
+                      onTouchEnd={[Function]}
+                      onTouchStart={[Function]}
+                      title={null}
+                    >
+                      <canvas
+                        data-testid="canvas"
+                        height={150}
+                        onClick={[Function]}
+                        role="img"
+                        width={300}
+                      />
+                      <div
+                        style={
+                          Object {
+                            "alignItems": "center",
+                            "display": "flex",
+                            "height": "120px",
+                            "justifyContent": "center",
+                            "left": "0px",
+                            "padding": "18px",
+                            "position": "absolute",
+                            "textAlign": "center",
+                            "top": "0px",
+                            "width": "120px",
+                            "zIndex": 0,
+                          }
+                        }
+                      >
+                        <div
+                          style={
+                            Object {
+                              "color": "#0063CB",
+                              "display": "flex",
+                              "flexDirection": "column",
+                              "fontSize": 30,
+                              "fontWeight": 450,
+                              "justifyContent": "space-between",
+                              "textAlign": "center",
+                            }
+                          }
+                        >
+                          <div>
+                            16%
+                          </div>
+                          <div
+                            style={
+                              Object {
+                                "color": "#0063CB",
+                                "fontSize": "10px",
+                                "fontWeight": 250,
+                                "lineHeight": 1.1,
+                                "textAlign": "center",
+                              }
+                            }
+                          >
+                            réalisé
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    style={
+                      Object {
+                        "height": "120px",
+                        "position": "relative",
+                        "width": "120px",
+                      }
+                    }
+                  >
+                    <div
+                      aria-describedby={null}
+                      className=""
+                      onBlur={[Function]}
+                      onFocus={[Function]}
+                      onMouseLeave={[Function]}
+                      onMouseOver={[Function]}
+                      onTouchEnd={[Function]}
+                      onTouchStart={[Function]}
+                      title={null}
+                    >
+                      <canvas
+                        data-testid="canvas"
+                        height={150}
+                        onClick={[Function]}
+                        role="img"
+                        width={300}
+                      />
+                      <div
+                        style={
+                          Object {
+                            "alignItems": "center",
+                            "display": "flex",
+                            "height": "120px",
+                            "justifyContent": "center",
+                            "left": "0px",
+                            "padding": "18px",
+                            "position": "absolute",
+                            "textAlign": "center",
+                            "top": "0px",
+                            "width": "120px",
+                            "zIndex": 0,
+                          }
+                        }
+                      >
+                        <div
+                          style={
+                            Object {
+                              "color": "#00A95F",
+                              "display": "flex",
+                              "flexDirection": "column",
+                              "fontSize": 30,
+                              "fontWeight": 450,
+                              "justifyContent": "space-between",
+                              "textAlign": "center",
+                            }
+                          }
+                        >
+                          <div>
+                            20%
+                          </div>
+                          <div
+                            style={
+                              Object {
+                                "color": "#00A95F",
+                                "fontSize": "10px",
+                                "fontWeight": 250,
+                                "lineHeight": 1.1,
+                                "textAlign": "center",
+                              }
+                            }
+                          >
+                            programmé
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            className="p-5"
+          />
+          <div
+            className="flex justify-center"
+          >
+            <div
+              style={
+                Object {
+                  "width": "500px",
+                }
+              }
+            >
+              <div
+                className="font-semibold text-center text-xl"
+                style={
+                  Object {
+                    "marginBottom": "-32px",
+                    "paddingTop": "32px",
+                  }
+                }
+              >
+                Scores par axe
+              </div>
+              <canvas
+                data-testid="canvas"
+                height={150}
+                onClick={[Function]}
+                role="img"
+                width={300}
+              />
+            </div>
+          </div>
+          <div
+            className="p-5"
+          />
+          <div
+            style={
+              Object {
+                "marginLeft": "0px",
+                "width": "500px",
+              }
+            }
+          >
+            <div
+              className="font-semibold text-center text-xl"
+            >
+              État d'avancement par axes
+            </div>
+            <div
+              className="p-2"
+            />
+            <canvas
+              data-testid="canvas"
+              height={290}
+              onClick={[Function]}
+              role="img"
+              width={500}
+            />
+          </div>
+        </div>
+      </section>
+      <section
+        className="bg-white p-4"
+        style={
+          Object {
+            "width": "600px",
+          }
+        }
+      >
+        <div
+          className="flex gap-4 justify-center font-bold text-center text-2xl text-gray"
+        >
+          <div>
+            Référentiel Économie Circulaire
+          </div>
+        </div>
+        <div
+          className="p-4"
+        >
+          <div
+            className="flex flex-col items-center mt-4"
+          >
+            <div
+              className="font-semibold text-center mb-4 text-xl"
+            >
+              Niveau de labellisation actuel
+            </div>
+            <div
+              className="flex space-x-4 pb-12"
+            >
+              <svg
+                fill="none"
+                height="38"
+                viewBox="0 0 39 38"
+                width="39"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <title>
+                  Score requis : 0%
+                </title>
+                <path
+                  d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+                  fill="#e5e5e5"
+                />
+              </svg>
+              <svg
+                fill="none"
+                height="38"
+                viewBox="0 0 39 38"
+                width="39"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <title>
+                  Score requis : 35%
+                </title>
+                <path
+                  d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+                  fill="#e5e5e5"
+                />
+              </svg>
+              <svg
+                fill="none"
+                height="38"
+                viewBox="0 0 39 38"
+                width="39"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <title>
+                  Score requis : 50%
+                </title>
+                <path
+                  d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+                  fill="#e5e5e5"
+                />
+              </svg>
+              <svg
+                fill="none"
+                height="38"
+                viewBox="0 0 39 38"
+                width="39"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <title>
+                  Score requis : 65%
+                </title>
+                <path
+                  d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+                  fill="#e5e5e5"
+                />
+              </svg>
+              <svg
+                fill="none"
+                height="38"
+                viewBox="0 0 39 38"
+                width="39"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <title>
+                  Score requis : 75%
+                </title>
+                <path
+                  d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+                  fill="#e5e5e5"
+                />
+              </svg>
+            </div>
+          </div>
+          <div
+            className="flex justify-center mb-8"
+          >
+            <a
+              className="fr-btn"
+              href="/collectivite/1/labellisation/eci"
+              onClick={[Function]}
+            >
+              Décrocher les étoiles
+            </a>
+          </div>
+          <div>
+            <div
+              className="font-semibold text-center mb-4  text-xl"
+            >
+              Chiffres clés
+            </div>
+            <div
+              className="flex flex-row justify-between items-center"
+            >
+              <div>
+                <div
+                  className="font-light text-center mb-4"
+                >
+                  Taux de remplissage
+                </div>
+                <div
+                  className="flex flex-row"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": "120px",
+                        "position": "relative",
+                        "width": "120px",
+                      }
+                    }
+                  >
+                    <div
+                      aria-describedby={null}
+                      className=""
+                      onBlur={[Function]}
+                      onFocus={[Function]}
+                      onMouseLeave={[Function]}
+                      onMouseOver={[Function]}
+                      onTouchEnd={[Function]}
+                      onTouchStart={[Function]}
+                      title={null}
+                    >
+                      <canvas
+                        data-testid="canvas"
+                        height={150}
+                        onClick={[Function]}
+                        role="img"
+                        width={300}
+                      />
+                      <div
+                        style={
+                          Object {
+                            "alignItems": "center",
+                            "display": "flex",
+                            "height": "120px",
+                            "justifyContent": "center",
+                            "left": "0px",
+                            "padding": "18px",
+                            "position": "absolute",
+                            "textAlign": "center",
+                            "top": "0px",
+                            "width": "120px",
+                            "zIndex": 0,
+                          }
+                        }
+                      >
+                        <div
+                          style={
+                            Object {
+                              "color": "#2F4077",
+                              "display": "flex",
+                              "flexDirection": "column",
+                              "fontSize": 30,
+                              "fontWeight": 450,
+                              "justifyContent": "space-between",
+                              "textAlign": "center",
+                            }
+                          }
+                        >
+                          <div>
+                            3
+                          </div>
+                          <div
+                            style={
+                              Object {
+                                "color": "#2F4077",
+                                "fontSize": "10px",
+                                "fontWeight": 250,
+                                "lineHeight": 1.1,
+                                "textAlign": "center",
+                              }
+                            }
+                          >
+                            actions renseignées
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    style={
+                      Object {
+                        "height": "120px",
+                        "position": "relative",
+                        "width": "120px",
+                      }
+                    }
+                  >
+                    <div
+                      aria-describedby={null}
+                      className=""
+                      onBlur={[Function]}
+                      onFocus={[Function]}
+                      onMouseLeave={[Function]}
+                      onMouseOver={[Function]}
+                      onTouchEnd={[Function]}
+                      onTouchStart={[Function]}
+                      title={null}
+                    >
+                      <canvas
+                        data-testid="canvas"
+                        height={150}
+                        onClick={[Function]}
+                        role="img"
+                        width={300}
+                      />
+                      <div
+                        style={
+                          Object {
+                            "alignItems": "center",
+                            "display": "flex",
+                            "height": "120px",
+                            "justifyContent": "center",
+                            "left": "0px",
+                            "padding": "18px",
+                            "position": "absolute",
+                            "textAlign": "center",
+                            "top": "0px",
+                            "width": "120px",
+                            "zIndex": 0,
+                          }
+                        }
+                      >
+                        <div
+                          style={
+                            Object {
+                              "color": "#2F4077",
+                              "display": "flex",
+                              "flexDirection": "column",
+                              "fontSize": 30,
+                              "fontWeight": 450,
+                              "justifyContent": "space-between",
+                              "textAlign": "center",
+                            }
+                          }
+                        >
+                          <div>
+                            23
+                          </div>
+                          <div
+                            style={
+                              Object {
+                                "color": "#2F4077",
+                                "fontSize": "10px",
+                                "fontWeight": 250,
+                                "lineHeight": 1.1,
+                                "textAlign": "center",
+                              }
+                            }
+                          >
+                            indicateurs renseignés
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div
+                  className="font-light text-center mb-4"
+                >
+                  Scores réalisé et programmé
+                </div>
+                <div
+                  className="flex flex-row"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": "120px",
+                        "position": "relative",
+                        "width": "120px",
+                      }
+                    }
+                  >
+                    <div
+                      aria-describedby={null}
+                      className=""
+                      onBlur={[Function]}
+                      onFocus={[Function]}
+                      onMouseLeave={[Function]}
+                      onMouseOver={[Function]}
+                      onTouchEnd={[Function]}
+                      onTouchStart={[Function]}
+                      title={null}
+                    >
+                      <canvas
+                        data-testid="canvas"
+                        height={150}
+                        onClick={[Function]}
+                        role="img"
+                        width={300}
+                      />
+                      <div
+                        style={
+                          Object {
+                            "alignItems": "center",
+                            "display": "flex",
+                            "height": "120px",
+                            "justifyContent": "center",
+                            "left": "0px",
+                            "padding": "18px",
+                            "position": "absolute",
+                            "textAlign": "center",
+                            "top": "0px",
+                            "width": "120px",
+                            "zIndex": 0,
+                          }
+                        }
+                      >
+                        <div
+                          style={
+                            Object {
+                              "color": "#0063CB",
+                              "display": "flex",
+                              "flexDirection": "column",
+                              "fontSize": 30,
+                              "fontWeight": 450,
+                              "justifyContent": "space-between",
+                              "textAlign": "center",
+                            }
+                          }
+                        >
+                          <div>
+                            30%
+                          </div>
+                          <div
+                            style={
+                              Object {
+                                "color": "#0063CB",
+                                "fontSize": "10px",
+                                "fontWeight": 250,
+                                "lineHeight": 1.1,
+                                "textAlign": "center",
+                              }
+                            }
+                          >
+                            réalisé
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    style={
+                      Object {
+                        "height": "120px",
+                        "position": "relative",
+                        "width": "120px",
+                      }
+                    }
+                  >
+                    <div
+                      aria-describedby={null}
+                      className=""
+                      onBlur={[Function]}
+                      onFocus={[Function]}
+                      onMouseLeave={[Function]}
+                      onMouseOver={[Function]}
+                      onTouchEnd={[Function]}
+                      onTouchStart={[Function]}
+                      title={null}
+                    >
+                      <canvas
+                        data-testid="canvas"
+                        height={150}
+                        onClick={[Function]}
+                        role="img"
+                        width={300}
+                      />
+                      <div
+                        style={
+                          Object {
+                            "alignItems": "center",
+                            "display": "flex",
+                            "height": "120px",
+                            "justifyContent": "center",
+                            "left": "0px",
+                            "padding": "18px",
+                            "position": "absolute",
+                            "textAlign": "center",
+                            "top": "0px",
+                            "width": "120px",
+                            "zIndex": 0,
+                          }
+                        }
+                      >
+                        <div
+                          style={
+                            Object {
+                              "color": "#00A95F",
+                              "display": "flex",
+                              "flexDirection": "column",
+                              "fontSize": 30,
+                              "fontWeight": 450,
+                              "justifyContent": "space-between",
+                              "textAlign": "center",
+                            }
+                          }
+                        >
+                          <div>
+                            60%
+                          </div>
+                          <div
+                            style={
+                              Object {
+                                "color": "#00A95F",
+                                "fontSize": "10px",
+                                "fontWeight": 250,
+                                "lineHeight": 1.1,
+                                "textAlign": "center",
+                              }
+                            }
+                          >
+                            programmé
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            className="p-5"
+          />
+          <div
+            className="flex justify-center"
+          >
+            <div
+              style={
+                Object {
+                  "width": "500px",
+                }
+              }
+            >
+              <div
+                className="font-semibold text-center text-xl"
+                style={
+                  Object {
+                    "marginBottom": "-32px",
+                    "paddingTop": "32px",
+                  }
+                }
+              >
+                Scores par axe
+              </div>
+              <canvas
+                data-testid="canvas"
+                height={150}
+                onClick={[Function]}
+                role="img"
+                width={300}
+              />
+            </div>
+          </div>
+          <div
+            className="p-5"
+          />
+          <div
+            style={
+              Object {
+                "marginLeft": "0px",
+                "width": "500px",
+              }
+            }
+          >
+            <div
+              className="font-semibold text-center text-xl"
+            >
+              État d'avancement par axes
+            </div>
+            <div
+              className="p-2"
+            />
+            <canvas
+              data-testid="canvas"
+              height={290}
+              onClick={[Function]}
+              role="img"
+              width={500}
+            />
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+`;

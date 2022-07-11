@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots app/pages/MesCollectivites/AssocierCollectiviteDialog Aucun Contact Referent 1`] = `
+<div
+  onClick={[Function]}
+>
+  <button
+    className="fr-btn fr-btn--secondary"
+    data-test="btn-select-collectivite"
+    onClick={[Function]}
+  >
+    Associer une collectivité à mon compte
+  </button>
+</div>
+`;
+
+exports[`Storyshots app/pages/MesCollectivites/AssocierCollectiviteDialog Plusieurs Contacts Referents 1`] = `
+<div
+  onClick={[Function]}
+>
+  <button
+    className="fr-btn fr-btn--secondary"
+    data-test="btn-select-collectivite"
+    onClick={[Function]}
+  >
+    Associer une collectivité à mon compte
+  </button>
+</div>
+`;
+
+exports[`Storyshots app/pages/MesCollectivites/AssocierCollectiviteDialog Un Seul Contact Referent 1`] = `
+<div
+  onClick={[Function]}
+>
+  <button
+    className="fr-btn fr-btn--secondary"
+    data-test="btn-select-collectivite"
+    onClick={[Function]}
+  >
+    Associer une collectivité à mon compte
+  </button>
+</div>
+`;

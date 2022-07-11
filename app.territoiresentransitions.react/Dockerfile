@@ -7,6 +7,6 @@ ENV LANG fr_FR.UTF-8
 WORKDIR "/app"
 COPY ./package.json ./
 COPY ./package-lock.json ./
-RUN npm install
+RUN npm i
 COPY . .
 EXPOSE 3000
