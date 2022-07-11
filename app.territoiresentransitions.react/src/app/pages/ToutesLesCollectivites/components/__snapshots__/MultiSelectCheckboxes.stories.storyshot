@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots App/Pages/Toutes Les Collectivites/Components/Multi Select Checkboxes Selection Multiple 1`] = `
+exports[`Storyshots app/pages/ToutesLesCollectivites/components/MultiSelectCheckboxes Selection Multiple 1`] = `
 <ul>
   <div>
     <div
@@ -135,7 +135,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Components/Multi Select C
 </ul>
 `;
 
-exports[`Storyshots App/Pages/Toutes Les Collectivites/Components/Multi Select Checkboxes Selection Tous Par Defaut 1`] = `
+exports[`Storyshots app/pages/ToutesLesCollectivites/components/MultiSelectCheckboxes Selection Tous Par Defaut 1`] = `
 <ul>
   <div>
     <div

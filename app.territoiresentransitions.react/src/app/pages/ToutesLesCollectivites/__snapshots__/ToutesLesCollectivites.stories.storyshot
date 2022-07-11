@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots App/Pages/Toutes Les Collectivites/Toutes Les Collectivites Avec Des Resultats Et Des Filtres 1`] = `
+exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des Filtres 1`] = `
 <div
   className="app fr-container my-16"
   data-test="ToutesLesCollectivites"
@@ -3129,7 +3129,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Toutes Les Collectivites 
 </div>
 `;
 
-exports[`Storyshots App/Pages/Toutes Les Collectivites/Toutes Les Collectivites Avec Des Resultats Sans Filtres 1`] = `
+exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Filtres 1`] = `
 <div
   className="app fr-container my-16"
   data-test="ToutesLesCollectivites"
@@ -6244,7 +6244,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Toutes Les Collectivites 
 </div>
 `;
 
-exports[`Storyshots App/Pages/Toutes Les Collectivites/Toutes Les Collectivites Sans Resultats 1`] = `
+exports[`Storyshots app/pages/ToutesLesCollectivites Sans Resultats 1`] = `
 <div
   className="app fr-container my-16"
   data-test="ToutesLesCollectivites"

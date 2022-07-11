@@ -617,7 +617,7 @@ exports[`Storyshots app/pages/collectivite/TableauBord/TableauBordPage Referenti
             />
             <canvas
               data-testid="canvas"
-              height={290}
+              height={425}
               onClick={[Function]}
               role="img"
               width={500}
@@ -1137,7 +1137,7 @@ exports[`Storyshots app/pages/collectivite/TableauBord/TableauBordPage Referenti
             />
             <canvas
               data-testid="canvas"
-              height={290}
+              height={425}
               onClick={[Function]}
               role="img"
               width={500}
