@@ -5,6 +5,7 @@ export interface InscriptionUtilisateur {
   password: string;
   nom: string;
   prenom: string;
+  telephone?: string;
   vie_privee_conditions: boolean;
 }
 
@@ -25,6 +26,7 @@ export const registerUser = async (inscription: InscriptionUtilisateur) => {
   if (!signedUp.user || signedUp.error) throw signedUp.error?.message;
 
   const dcp: DcpWrite = {
+    telephone: inscription.telephone,
     email: inscription.email,
     prenom: inscription.prenom,
     nom: inscription.nom,
