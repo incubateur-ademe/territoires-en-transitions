@@ -4,6 +4,7 @@ create table dcp
     nom         text                                               not null,
     prenom      text                                               not null,
     email       text                                               not null,
+    telephone   text                                               not null,
     limited     bool                     default false             not null,
     deleted     bool                     default false             not null,
     created_at  timestamp with time zone default CURRENT_TIMESTAMP not null,
