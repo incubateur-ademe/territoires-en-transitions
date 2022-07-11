@@ -36,10 +36,6 @@ jobs:
           sudo locale-gen ${{env.LANG}}
           sudo update-locale LANG=${{env.LANG}}
 
-      # pour faire passer les tests utilisant le presse-papier
-      - name: Install xsel
-        run: sudo apt-get install xsel
-
       # Copy all projet .sample.env into .env with the variables
       - name: Make .env files
         run: sh make_dot_env.sh
@@ -69,28 +65,23 @@ jobs:
         run: sh scripts/wait_for_front.sh
         working-directory: ${{env.datalayer-directory}}
 
-      # run tests into chrome
-      - name: Cypress run (chrome)
+      # run tests into electron
+      - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
-          browser: chrome
           working-directory: ${{env.e2e-directory}}
-          record: true
         env:
-          # pass the Dashboard record key as an environment variable
-          CYPRESS_RECORD_KEY: ${{secrets.CYPRESS_RECORD_KEY}}
-          CYPRESS_PROJECT_ID: ${{secrets.CYPRESS_PROJECT_ID}}
           # pass GitHub token to allow accurately detecting a build vs a re-run build
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
-      - name: Generate test report (chrome)
+      - name: Generate test report
         if: failure()
         run: npm run report
         working-directory: ${{env.e2e-directory}}
         env:
           BROWSER: chrome
 
-      - name: Upload report to GitHub (chrome)
+      - name: Upload report to GitHub
         if: failure()
         uses: actions/upload-artifact@master
         with:
