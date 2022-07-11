@@ -26,7 +26,7 @@ create function
 as
 $$
 select case
-           when collectivite_type.collectivite_id in (select id from commune) then '{"commune"}'
+           when collectivite_type.collectivite_id in (select collectivite_id from commune) then '{"commune"}'
            when e.nature = 'SMF' or e.nature = 'SIVOM' or e.nature = 'SMO' or
                 e.nature = 'SIVU' then
                '{"EPCI", "syndicat"}'
