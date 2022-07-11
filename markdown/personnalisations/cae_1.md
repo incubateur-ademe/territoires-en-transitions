@@ -79,13 +79,13 @@ action_id: cae_1.3.3
 ```formule
 reponse(urba_1, NON) et reponse (urba_2, NON) et reponse(urba_3, NON)
 ```
-Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le statut de la 1.3.3 est "non concerné".
 
 ### Réduction de potentiel
 ```formule
 si reponse(urba_1, NON) et reponse (urba_2, NON) et reponse(urba_3, NON) alors 0
-sinon si reponse(urba_1, OUI) ou reponse(urba_2, OUI) et reponse(urba_3, OUI) alors 0.5
+sinon si reponse(urba_1, OUI) et reponse(urba_2, NON) et reponse(urba_3, NON) alors 0.5
+sinon si reponse(urba_1, NON) et reponse(urba_2, OUI) et reponse(urba_3, NON) alors 0.5
+sinon si reponse(urba_1, NON) et reponse(urba_2, NON) et reponse(urba_3, OUI) alors 0.5
 ```
-Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le score de la 1.3.3 est réduit de 100 %.
-
-Pour une collectivité ayant au moins 1 des compétences (PLU, instruction ou octroi des permis de construire), le score de la 1.3.3 est réduit de 50 %.
+Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le score de la 1.3.3 est réduit de 100 % et le statut de la 1.3.3 est "non concerné".
+Pour une collectivité n'ayant que l'une des compétences (PLU, instruction ou octroi des permis de construire), le score de la 1.3.3 est réduit de 50 %.
