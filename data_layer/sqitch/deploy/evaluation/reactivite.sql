@@ -54,6 +54,12 @@ with latest_collectivite_event as (
     from reponse_update_event
     group by collectivite_id
 ),
+active_collectivite_without_consequence as (
+    select c.id as collectivite_id, c.created_at
+    from collectivite c left join personnalisation_consequence pc on pc.collectivite_id = c.id
+    left join private_utilisateur_droit pud on pud.collectivite_id = c.id 
+    where pc.collectivite_id is NULL and pud.active
+),
      unprocessed_event as (
          select *
          from latest_collectivite_event e
@@ -66,9 +72,13 @@ with latest_collectivite_event as (
      )
 select collectivite_id,
        max_date as created_at
-from unprocessed_event;
+from unprocessed_event
+union 
+select collectivite_id, created_at 
+from active_collectivite_without_consequence;
 comment on view unprocessed_reponse_update_event is
     'Permet au business de déterminer quelles sont les collectivités '
-        'dont les réponses on changées depuis le dernier calcul des conséquences';
+    'dont les réponses ont changé depuis le dernier calcul des conséquences';
+
 
 COMMIT;
