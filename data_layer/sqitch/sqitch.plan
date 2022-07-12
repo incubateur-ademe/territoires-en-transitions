@@ -70,3 +70,4 @@ collectivite/mes_collectivites_v2 [utilisateur/droits_v2] 2022-07-07T10:10:53Z F
 evaluation/rls [evaluation/consequence] 2022-07-12T12:19:56Z Florian <florian@derfurth.com> # Active les RLS manquantes.
 collectivite/rls [collectivite/toutes_les_collectivites] 2022-07-12T12:25:27Z Florian <florian@derfurth.com> # Active les RLS manquantes.
 utilisateur/add-phone-to-dcp 2022-07-11T15:20:54Z sqitch <sqitch@b668dbfa988a> # Add column phone to dcp table
+utilisateur/membre 2022-07-12T12:01:09Z sqitch <sqitch@71076eaf04ce> # Ajout de la notion de membre : table et fonctions utilitaires
