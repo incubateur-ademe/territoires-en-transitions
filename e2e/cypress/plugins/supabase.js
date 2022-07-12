@@ -15,5 +15,9 @@ module.exports = (on, config) => {
       const res = await supabase.rpc(name, params);
       return res || null;
     },
+    supabase_generateLink: async ({ type, email }) => {
+      const res = await supabase.auth.api.generateLink(type, email);
+      return res || null;
+    },
   });
 };

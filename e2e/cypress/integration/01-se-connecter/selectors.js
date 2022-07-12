@@ -16,6 +16,9 @@ export const LocalSelectors = {
       'Retour à la connexion': 'button',
     },
   },
+  'changer de mdp': {
+    selector: '[data-test=Recovering]',
+  },
   'formulaire de réinitialisation du mdp': {
     selector: '[data-test=ResetPassword]',
     children: {

@@ -128,7 +128,11 @@ Fonctionnalité: Accéder au site et se connecter
     Alors la page vérifie les conditions suivantes :
       | Elément                               | Condition |
       | formulaire de connexion               | absent    |
-      | formulaire de réinitialisation du mdp | visible   |
+      | formulaire de réinitialisation du mdp | absent    |
+      | changer de mdp                        | présent   |
+
+    Quand je clique sur le bouton "changer de mdp"
+    Alors le "formulaire de réinitialisation du mdp" est visible
 
     Quand je remplis le "formulaire de réinitialisation du mdp" avec les valeurs suivantes :
       | Champ | Valeur                |
@@ -146,7 +150,11 @@ Fonctionnalité: Accéder au site et se connecter
     Alors la page vérifie les conditions suivantes :
       | Elément                               | Condition |
       | formulaire de connexion               | absent    |
-      | formulaire de réinitialisation du mdp | visible   |
+      | formulaire de réinitialisation du mdp | absent    |
+      | changer de mdp                        | présent   |
+
+    Quand je clique sur le bouton "changer de mdp"
+    Alors le "formulaire de réinitialisation du mdp" est visible
 
     Quand je remplis le "formulaire de réinitialisation du mdp" avec les valeurs suivantes :
       | Champ | Valeur                |
