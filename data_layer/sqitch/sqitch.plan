@@ -72,3 +72,5 @@ evaluation/scores_events_fix [evaluation/scores_events] 2022-07-31T14:00:54Z Flo
 labellisation/prerequis_fix [labellisation/prerequis] 2022-08-02T10:19:22Z Florian <florian@derfurth.com> # Le niveau de complétude n'est plus pris en compte pour déterminer les étoiles atteignables.
 utilisateur/droits_v2 [utilisateur/droits] 2022-07-06T15:47:26Z Florian <florian@derfurth.com> # Change la notion de rôle en niveau d’accès.
 collectivite/mes_collectivites_v2 [utilisateur/droits_v2] 2022-07-07T10:10:53Z Florian <florian@derfurth.com> # Mise à jour mes collectivités depuis niveaux d'accès.
+evaluation/rls [evaluation/consequence] 2022-07-12T12:19:56Z Florian <florian@derfurth.com> # Active les RLS manquantes.
+collectivite/rls [collectivite/toutes_les_collectivites] 2022-07-12T12:25:27Z Florian <florian@derfurth.com> # Active les RLS manquantes.
