@@ -11,6 +11,8 @@ import {DcpRead} from 'generated/dataLayer/dcp_read';
 import UserCard from './UserCard';
 import {useGenerateInvitation} from 'core-logic/hooks/useGenerateInvitation';
 import {useAgentInvitation} from 'core-logic/hooks/useAgentInvitation';
+import UserListTable from './components/UserListTable';
+import {fakeAdmin, fakeUsers} from './components/fakeData';
 
 const activeUsersByRole = (
   users: PersonneList[] | null,
@@ -74,8 +76,15 @@ const Users = () => {
   };
 
   return (
-    <main data-test="Users" className="fr-container mt-9 mb-16">
-      <h1 className="fr-h1 mb-3 whitespace-nowrap mr-4">Collaboration</h1>
+    <main data-test="Users" className="fr-container mt-10 mb-16">
+      <h1 className="mb-10 lg:mb-14 lg:text-center">Gestion des membres</h1>
+
+      <h2 className="">Liste des membres</h2>
+      <UserListTable
+        currentUser={fakeAdmin}
+        users={fakeUsers}
+        isLoading={false}
+      />
 
       <h2 className="fr-h2">Lien d'invitation</h2>
       <p>
