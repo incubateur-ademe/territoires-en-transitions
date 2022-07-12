@@ -1,15 +1,30 @@
-import {User} from './fakeData';
-import UserListTableRow from './UserListTableRow';
+import {
+  Membre,
+  TMembreFonction,
+  TUpdateMembreField,
+} from 'app/pages/collectivite/Users/membres.io';
+import MembreListTableRow from './MembreListTableRow';
 
 const thClassNames = 'py-3 px-5 whitespace-nowrap';
 
 export type UserListTableProps = {
-  currentUser: User;
-  users?: User[];
+  currentUserId: string;
+  membres?: Membre[];
   isLoading: boolean;
+  updateMembreFonction: TUpdateMembreField<TMembreFonction>;
 };
 
-const UserListTable = ({users, isLoading, currentUser}: UserListTableProps) => {
+const MembreListTable = ({
+  membres,
+  isLoading,
+  currentUserId,
+  updateMembreFonction,
+}: UserListTableProps) => {
+  console.log('membres  ', membres);
+  const currentUserAccess =
+    membres?.find(membre => membre.user_id === currentUserId)?.niveau_acces ??
+    'lecture';
+
   return (
     <div className="mx-auto border-8 border-t-0 border-bf925 bg-bf925 rounded-lg overflow-x-hidden">
       <div className="overflow-x-auto w-full">
@@ -53,12 +68,14 @@ const UserListTable = ({users, isLoading, currentUser}: UserListTableProps) => {
                   Chargement...
                 </td>
               </tr>
-            ) : users ? (
-              users.map(user => (
-                <UserListTableRow
-                  key={user.user_id}
-                  user={user}
-                  currentUser={currentUser}
+            ) : membres ? (
+              membres.map(membre => (
+                <MembreListTableRow
+                  key={membre.user_id}
+                  membre={membre}
+                  currentUserAccess={currentUserAccess}
+                  currentUserId={currentUserId}
+                  updateMembreFonction={updateMembreFonction}
                 />
               ))
             ) : (
@@ -75,4 +92,4 @@ const UserListTable = ({users, isLoading, currentUser}: UserListTableProps) => {
   );
 };
 
-export default UserListTable;
+export default MembreListTable;
