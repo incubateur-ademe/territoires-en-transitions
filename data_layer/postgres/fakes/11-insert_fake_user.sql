@@ -5,6 +5,8 @@ INSERT INTO auth.users (instance_id, id, aud, role, email, encrypted_password, e
 INSERT INTO dcp (user_id, email, prenom, nom) VALUES ('17440546-f389-4d4f-bfdb-b0c94a1bd0f9', 'yolo@dodo.com', 'Yolo', 'Dodo');
 INSERT INTO private_utilisateur_droit (user_id, collectivite_id, niveau_acces, active) VALUES ('17440546-f389-4d4f-bfdb-b0c94a1bd0f9', 1, 'admin', TRUE);
 INSERT INTO private_utilisateur_droit (user_id, collectivite_id, niveau_acces, active) VALUES ('17440546-f389-4d4f-bfdb-b0c94a1bd0f9', 2, 'edition', TRUE);
+INSERT INTO private_collectivite_membre (user_id, collectivite_id, fonction, details_fonction, champ_intervention) VALUES ('17440546-f389-4d4f-bfdb-b0c94a1bd0f9', 1, 'referent', 'Référent YOLO de cette collectivité', '{"eci", "cae"}');
+
 
 -- password yulududu
 INSERT INTO auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, invited_at, confirmation_token, confirmation_sent_at, recovery_token, recovery_sent_at, email_change_token_new, email_change, email_change_sent_at, last_sign_in_at, raw_app_meta_data, raw_user_meta_data, is_super_admin, created_at, updated_at, phone, phone_confirmed_at, phone_change, phone_change_token, phone_change_sent_at, email_change_token_current, email_change_confirm_status) VALUES ('00000000-0000-0000-0000-000000000000', '298235a0-60e7-4ceb-9172-0a991cce0386', '', 'authenticated', 'yulu@dudu.com', '$2a$10$EDMIBLBnkldcirBZUDHzkuPmYpEWkPtXwER1tEeTvDkMFtiBkswaK', '2022-02-10 14:29:28.445654 +00:00', null, '', null, '', null, '', '', null, '2022-02-10 14:29:28.452260 +00:00', '{"provider": "email", "providers": ["email"]}', '{}', false, '2022-02-10 14:29:28.430732 +00:00', '2022-02-10 14:29:28.430732 +00:00', null, null, '', '', null, '', 0);
@@ -15,11 +17,13 @@ INSERT INTO auth.users (instance_id, id, aud, role, email, encrypted_password, e
 INSERT INTO dcp (user_id, email, prenom, nom) VALUES ('3f407fc6-3634-45ff-a988-301e9088096a', 'yili@didi.com', 'Yili', 'Didi');
 INSERT INTO private_utilisateur_droit (user_id, collectivite_id, niveau_acces, active) VALUES ('3f407fc6-3634-45ff-a988-301e9088096a', 1, 'edition', TRUE);
 INSERT INTO private_utilisateur_droit (user_id, collectivite_id, niveau_acces, active) VALUES ('3f407fc6-3634-45ff-a988-301e9088096a', 2, 'edition', TRUE);
+INSERT INTO private_collectivite_membre (user_id, collectivite_id, fonction, details_fonction, champ_intervention) VALUES ('3f407fc6-3634-45ff-a988-301e9088096a', 1, 'politique', 'Politique YILI de cette collectivité', '{"eci", "cae"}');
+INSERT INTO private_collectivite_membre (user_id, collectivite_id, fonction, details_fonction, champ_intervention) VALUES ('3f407fc6-3634-45ff-a988-301e9088096a', 2, 'politique', 'Politique YILI de cette collectivité', '{"eci"}');
 
 --password yaladada
 INSERT INTO auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, invited_at, confirmation_token, confirmation_sent_at, recovery_token, recovery_sent_at, email_change_token_new, email_change, email_change_sent_at, last_sign_in_at, raw_app_meta_data, raw_user_meta_data, is_super_admin, created_at, updated_at, phone, phone_confirmed_at, phone_change, phone_change_token, phone_change_sent_at, email_change_token_current, email_change_confirm_status) VALUES ('00000000-0000-0000-0000-000000000000', '4ecc7d3a-7484-4a1c-8ac8-930cdacd2561', '', 'authenticated', 'yala@dada.com', '$2a$10$Iwp0tJ9zscbYSnBSSx0nPuW10BDgE9ghIy2Shq7wZzJ0hHjsenb9.', '2022-02-10 14:29:57.527665 +00:00', null, '', null, '', null, '', '', null, '2022-02-10 14:29:57.532222 +00:00', '{"provider": "email", "providers": ["email"]}', '{}', false, '2022-02-10 14:29:57.518684 +00:00', '2022-02-10 14:29:57.518684 +00:00', null, null, '', '', null, '', 0);
 INSERT INTO dcp (user_id, email, prenom, nom) VALUES ('4ecc7d3a-7484-4a1c-8ac8-930cdacd2561', 'yala@dada.com', 'Yala', 'Dada');
-INSERT INTO private_utilisateur_droit (user_id, collectivite_id, niveau_acces, active) VALUES ('4ecc7d3a-7484-4a1c-8ac8-930cdacd2561', 1, 'lecture', TRUE);
+INSERT INTO private_utilisateur_droit (user_id, collectivite_id, niveau^_acces, active) VALUES ('4ecc7d3a-7484-4a1c-8ac8-930cdacd2561', 1, 'lecture', TRUE);
 INSERT INTO private_utilisateur_droit (user_id, collectivite_id, niveau_acces, active) VALUES ('4ecc7d3a-7484-4a1c-8ac8-930cdacd2561', 2, 'lecture', TRUE);
 INSERT INTO private_utilisateur_droit (user_id, collectivite_id, niveau_acces, active) VALUES ('4ecc7d3a-7484-4a1c-8ac8-930cdacd2561', 3, 'lecture', TRUE);
 INSERT INTO private_utilisateur_droit (user_id, collectivite_id, niveau_acces, active) VALUES ('4ecc7d3a-7484-4a1c-8ac8-930cdacd2561', 4, 'lecture', TRUE);
