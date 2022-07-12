@@ -1,9 +1,15 @@
 import {useEffect} from 'react';
 import {useHistory, useLocation} from 'react-router-dom';
-import {myCollectivitesPath, signInPath} from 'app/paths';
+import {
+  myCollectivitesPath,
+  resetPwdPath,
+  resetPwdToken,
+  signInPath,
+} from 'app/paths';
 import {useAuth} from 'core-logic/api/auth/AuthProvider';
 import {useInvitationState} from 'core-logic/hooks/useInvitationState';
 import {useRecoveryToken} from 'core-logic/hooks/useRecoveryToken';
+import {useAccessToken} from 'core-logic/hooks/useVerifyRecoveryToken';
 
 export const Redirector = () => {
   const history = useHistory();
@@ -11,6 +17,7 @@ export const Redirector = () => {
   const {isConnected} = useAuth();
   const {invitationState} = useInvitationState();
   const recoveryToken = useRecoveryToken();
+  const accessToken = useAccessToken();
 
   // réagit aux changements de l'état "invitation"
   useEffect(() => {
@@ -19,6 +26,14 @@ export const Redirector = () => {
     // si l'invitation requiert la connexion on redirigue sur "se connecter"
     if (invitationState === 'waitingForLogin') history.push(signInPath);
   }, [invitationState]);
+
+  useEffect(() => {
+    // redirige vers le formulaire de réinit. de mdp si un jeton d'accès a été créé
+    if (accessToken) {
+      history.push(resetPwdPath.replace(`:${resetPwdToken}`, accessToken));
+      return;
+    }
+  }, [accessToken]);
 
   // réagit aux changements de l'état utilisateur connecté/déconnecté
   useEffect(() => {
