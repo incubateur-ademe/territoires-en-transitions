@@ -1,12 +1,12 @@
 import {lazy, Suspense} from 'react';
 import {renderLoader} from 'utils/renderLoader';
 
-const Users = lazy(() => import('app/pages/collectivite/Users/Users'));
+const Membres = lazy(() => import('app/pages/collectivite/Users/Membres'));
 
-export const UsersPage = () => {
+export const MembresPage = () => {
   return (
     <Suspense fallback={renderLoader()}>
-      <Users />
+      <Membres />
     </Suspense>
   );
 };

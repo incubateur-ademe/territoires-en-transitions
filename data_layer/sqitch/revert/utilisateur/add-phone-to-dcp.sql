@@ -2,6 +2,6 @@
 
 BEGIN;
 
-alter tabe dcp drop telephone; 
+alter table dcp drop telephone; 
 
 COMMIT;
