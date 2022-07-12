@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import {useRouteMatch} from 'react-router-dom';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useAuth} from 'core-logic/api/auth/AuthProvider';
-import {invitationLandingPath} from 'app/paths';
+import {invitationIdParam, invitationLandingPath} from 'app/paths';
 
 type TInvitationState =
   | 'empty' // aucune invitation en cours
@@ -14,8 +14,10 @@ type TInvitationState =
 // gère l'état associé à un lien d'invitation
 export const useInvitationState = () => {
   // extrait l'id d'invitation de l'url si il est présent
-  const match = useRouteMatch<{invitationId: string}>(invitationLandingPath);
-  const idFromURL = match?.params?.invitationId || null;
+  const match = useRouteMatch<{[invitationIdParam]: string}>(
+    invitationLandingPath
+  );
+  const idFromURL = match?.params?.[invitationIdParam] || null;
 
   // état de l'auth.
   const {isConnected} = useAuth();
