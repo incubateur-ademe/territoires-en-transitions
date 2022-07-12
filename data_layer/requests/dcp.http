@@ -1,0 +1,33 @@
+### Authenticate as a user
+POST {{api}}/auth/v1/token?grant_type=password
+apikey: {{anon}}
+Content-Type: application/json
+
+{
+  "email": "{{yolo_mail}}",
+  "password": "{{yolo_pass}}"
+}
+
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+    client.log('token is ' + response.body['access_token']);
+    client.global.set("auth_token", response.body['access_token']);
+%}
+
+
+### Demande les DCPs, ne renvoie que les miennes.
+GET {{api}}/rest/v1/dcp?select=*
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+    client.test("Ne comporte que mes DCPs", function() {
+        client.assert(response.body.length === 1, "Seule une DCP doit être renvoyée");
+    });
+%}
