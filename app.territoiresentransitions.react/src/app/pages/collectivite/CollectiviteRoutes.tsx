@@ -20,7 +20,7 @@ import {ReferentielsPage} from 'app/pages/collectivite/Referentiels/Referentiels
 import {ActionPage} from 'app/pages/collectivite/Referentiels/ActionPage';
 import {IndicateursPage} from 'app/pages/collectivite/Indicateurs/IndicateursPage';
 import {TableauBordPage} from 'app/pages/collectivite/TableauBord/TableauBordPage';
-import {UsersPage} from 'app/pages/collectivite/Users/UsersPage';
+import {MembresPage} from 'app/pages/collectivite/Users/MembresPage';
 import {PersoReferentielPage} from './PersoReferentiel/PersoReferentielPage';
 import {PersoReferentielThematiquePage} from './PersoReferentielThematique/PersoReferentielThematiquePage';
 import {ParcoursLabellisationPage} from './ParcoursLabellisation/ParcoursLabellisationPage';
@@ -57,7 +57,7 @@ export const CollectiviteRoutes = () => {
         <FicheActionCreationPage />
       </Route>
       <Route path={collectiviteUsersPath}>
-        <UsersPage />
+        <MembresPage />
       </Route>
       <Route path={collectivitePersoRefPath} exact>
         <PersoReferentielPage />

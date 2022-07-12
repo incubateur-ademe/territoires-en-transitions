@@ -1,0 +1,1780 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As Admin 1`] = `
+<div
+  className="mx-auto border-8 border-t-0 border-bf925 bg-bf925 rounded-lg overflow-x-hidden"
+>
+  <div
+    className="overflow-x-auto w-full"
+  >
+    <table
+      className="min-w-full text-sm text-left"
+    >
+      <thead>
+        <tr>
+          <th
+            className="py-3 px-5 whitespace-nowrap"
+          >
+            Nom et adresse mail
+          </th>
+          <th
+            className="py-3 px-5 whitespace-nowrap"
+          >
+            Numéro de tél.
+          </th>
+          <th
+            className="py-3 px-5 whitespace-nowrap"
+          >
+            Fonction
+             
+            <span
+              className="block text-xs font-normal"
+            >
+              dans cette collectivité
+            </span>
+          </th>
+          <th
+            className="py-3 px-5 whitespace-nowrap"
+          >
+            Champs d'intervention
+             
+            <span
+              className="block text-xs font-normal"
+            >
+              dans cette collectivité
+            </span>
+          </th>
+          <th
+            className="py-3 px-5 whitespace-nowrap"
+          >
+            Détails fonction
+             
+            <span
+              className="block text-xs font-normal"
+            >
+              dans cette collectivité
+            </span>
+          </th>
+          <th
+            className="py-3 px-5 whitespace-nowraptext-right"
+          >
+            <div
+              className="flex items-center justify-end"
+            >
+              Accès
+              <a
+                className="!shadow-none"
+                href="#"
+              >
+                <span
+                  className="fr-fi-information-line block ml-1 mt-1 scale-75"
+                />
+              </a>
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          className="h-20 border-b border-gray-300 bg-white"
+        >
+          <td
+            className="relative px-4"
+          >
+            <span
+              className="font-bold"
+            >
+              Yolo
+               
+              Dodo
+               
+            </span>
+            <span
+              className="block mt-1 text-xs text-gray-500"
+            >
+              yolo@dodo.com
+            </span>
+          </td>
+          <td
+            className="relative px-4"
+          >
+            <span>
+              06 46 82 45 85
+            </span>
+          </td>
+          <td
+            className="relative px-4"
+          >
+            <div
+              className="group relative"
+            >
+              <button
+                className="flex items-center w-full p-2 -ml-2 text-left"
+              >
+                <span
+                  className="mr-auto"
+                >
+                  Référent·e
+                </span>
+                <span
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 group-focus-within:rotate-180"
+                />
+              </button>
+              <div
+                className="bg-white invisible absolute -left-2 top-full min-w-full w-max transition-all opacity-0 shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
+              >
+                <button
+                  className="flex items-center w-full p-2 text-left"
+                  onClick={[Function]}
+                >
+                  <div
+                    className="w-6 mr-2"
+                  >
+                    <span
+                      className="block fr-fi-check-line scale-75"
+                    />
+                  </div>
+                  <span>
+                    Référent·e
+                  </span>
+                </button>
+                <button
+                  className="flex items-center w-full p-2 text-left"
+                  onClick={[Function]}
+                >
+                  <div
+                    className="w-6 mr-2"
+                  />
+                  <span>
+                    Conseiller·e
+                  </span>
+                </button>
+                <button
+                  className="flex items-center w-full p-2 text-left"
+                  onClick={[Function]}
+                >
+                  <div
+                    className="w-6 mr-2"
+                  />
+                  <span>
+                    Équipe technique
+                  </span>
+                </button>
+                <button
+                  className="flex items-center w-full p-2 text-left"
+                  onClick={[Function]}
+                >
+                  <div
+                    className="w-6 mr-2"
+                  />
+                  <span>
+                    Équipe politique
+                  </span>
+                </button>
+                <button
+                  className="flex items-center w-full p-2 text-left"
+                  onClick={[Function]}
+                >
+                  <div
+                    className="w-6 mr-2"
+                  />
+                  <span>
+                    Partenaire
+                  </span>
+                </button>
+              </div>
+            </div>
+          </td>
+          <td
+            className="relative px-4 pr-0"
+          >
+            <div
+              className="group relative"
+            >
+              <button
+                className="flex items-center w-full p-2 -ml-2 text-left"
+              >
+                <div
+                  className="mr-auto"
+                >
+                  <span
+                    className="block"
+                  >
+                    Climat Air Énergie
+                  </span>
+                </div>
+                <span
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 group-focus-within:rotate-180"
+                />
+              </button>
+              <div
+                className="bg-white invisible absolute -left-2 top-full min-w-full w-max transition-all opacity-0 shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
+              >
+                <button
+                  className="flex items-center w-full p-2 pr-4 text-left"
+                >
+                  <div
+                    className="w-6 mr-2"
+                  >
+                    <span
+                      className="block fr-fi-check-line scale-75"
+                    />
+                  </div>
+                  <span>
+                    Climat Air Énergie
+                  </span>
+                </button>
+                <button
+                  className="flex items-center w-full p-2 pr-4 text-left"
+                >
+                  <div
+                    className="w-6 mr-2"
+                  />
+                  <span>
+                    Économie circulaire
+                  </span>
+                </button>
+              </div>
+            </div>
+          </td>
+          <td
+            className="relative px-4"
+          >
+            <div
+              className="py-1 px-2 border border-gray-300"
+            >
+              <textarea
+                className="w-full resize-none"
+                value="Cheffe de projet PCAET"
+              />
+            </div>
+          </td>
+          <td
+            className="relative px-4 text-right"
+          >
+            <div
+              className="group relative flex -mr-2"
+            >
+              <button
+                className="flex items-center ml-auto p-2 text-left"
+              >
+                <span
+                  className="fr-fi-arrow-down-s-line mt-1 mr-1 scale-90 group-focus-within:rotate-180"
+                />
+                <span
+                  className="mr-auto"
+                >
+                  Admin
+                </span>
+              </button>
+              <div
+                className="bg-white invisible absolute right-0 top-full min-w-full w-max transition-all opacity-0 shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
+              >
+                <button
+                  className="flex items-center w-full p-2 pr-4 text-left"
+                >
+                  <div
+                    className="w-6 mr-2"
+                  >
+                    <span
+                      className="block fr-fi-check-line scale-75"
+                    />
+                  </div>
+                  <div>
+                    <div>
+                      Admin
+                    </div>
+                    <div
+                      className="mt-1 text-xs text-gray-500"
+                    >
+                      Peut entièrement configurer et éditer
+                    </div>
+                  </div>
+                </button>
+                <button
+                  className="flex items-center w-full p-2 pr-4 text-left"
+                >
+                  <div
+                    className="w-6 mr-2"
+                  />
+                  <div>
+                    <div>
+                      Édition
+                    </div>
+                    <div
+                      className="mt-1 text-xs text-gray-500"
+                    >
+                      Peut éditer et inviter de nouveaux membres
+                    </div>
+                  </div>
+                </button>
+                <button
+                  className="flex items-center w-full p-2 pr-4 text-left"
+                >
+                  <div
+                    className="w-6 mr-2"
+                  />
+                  <div>
+                    <div>
+                      Lecture
+                    </div>
+                    <div
+                      className="mt-1 text-xs text-gray-500"
+                    >
+                      Peut uniquement consulter
+                    </div>
+                  </div>
+                </button>
+                <button
+                  className="flex w-full px-2 py-4 text-left text-red-600"
+                >
+                  <div
+                    className="w-8"
+                  />
+                  Retirer mon accès à la collectivité
+                </button>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr
+          className="h-20 border-b border-gray-300 bg-white"
+        >
+          <td
+            className="relative px-4"
+          >
+            <span
+              className="font-bold"
+            >
+              Yala
+               
+              Dada
+               
+            </span>
+            <span
+              className="block mt-1 text-xs text-gray-500"
+            >
+              yala@dada.com
+            </span>
+          </td>
+          <td
+            className="relative px-4"
+          >
+            <span>
+              06 65 87 52 49
+            </span>
+          </td>
+          <td
+            className="relative px-4"
+          >
+            <span>
+              Équipe technique
+            </span>
+          </td>
+          <td
+            className="relative px-4 pr-0"
+          >
+            <span
+              className="block"
+            >
+              Climat Air Énergie
+            </span>
+            <span
+              className="block"
+            >
+              Économie circulaire
+            </span>
+          </td>
+          <td
+            className="relative px-4"
+          >
+            <span
+              className="w-72 line-clamp-3"
+              title="Vice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier, adjoint au maire en charge du dVice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier"
+            >
+              Vice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier, adjoint au maire en charge du dVice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier
+            </span>
+          </td>
+          <td
+            className="relative px-4 text-right"
+          >
+            <div
+              className="group relative flex -mr-2"
+            >
+              <button
+                className="flex items-center ml-auto p-2 text-left"
+              >
+                <span
+                  className="fr-fi-arrow-down-s-line mt-1 mr-1 scale-90 group-focus-within:rotate-180"
+                />
+                <span
+                  className="mr-auto"
+                >
+                  Édition
+                </span>
+              </button>
+              <div
+                className="bg-white invisible absolute right-0 top-full min-w-full w-max transition-all opacity-0 shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
+              >
+                <button
+                  className="flex items-center w-full p-2 pr-4 text-left"
+                >
+                  <div
+                    className="w-6 mr-2"
+                  />
+                  <div>
+                    <div>
+                      Admin
+                    </div>
+                    <div
+                      className="mt-1 text-xs text-gray-500"
+                    >
+                      Peut entièrement configurer et éditer
+                    </div>
+                  </div>
+                </button>
+                <button
+                  className="flex items-center w-full p-2 pr-4 text-left"
+                >
+                  <div
+                    className="w-6 mr-2"
+                  >
+                    <span
+                      className="block fr-fi-check-line scale-75"
+                    />
+                  </div>
+                  <div>
+                    <div>
+                      Édition
+                    </div>
+                    <div
+                      className="mt-1 text-xs text-gray-500"
+                    >
+                      Peut éditer et inviter de nouveaux membres
+                    </div>
+                  </div>
+                </button>
+                <button
+                  className="flex items-center w-full p-2 pr-4 text-left"
+                >
+                  <div
+                    className="w-6 mr-2"
+                  />
+                  <div>
+                    <div>
+                      Lecture
+                    </div>
+                    <div
+                      className="mt-1 text-xs text-gray-500"
+                    >
+                      Peut uniquement consulter
+                    </div>
+                  </div>
+                </button>
+                <button
+                  className="flex w-full px-2 py-4 text-left text-red-600"
+                >
+                  <div
+                    className="w-8"
+                  />
+                  Retirer ce membre de la collectivité
+                </button>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr
+          className="h-20 border-b border-gray-300 bg-white"
+        >
+          <td
+            className="relative px-4"
+          >
+            <span
+              className="font-bold"
+            >
+              John
+               
+              Doe
+               
+            </span>
+            <span
+              className="block mt-1 text-xs text-gray-500"
+            >
+              john@doe.com
+            </span>
+          </td>
+          <td
+            className="relative px-4"
+          >
+            <span>
+              06 75 51 24 57
+            </span>
+          </td>
+          <td
+            className="relative px-4"
+          >
+            <span>
+              Équipe politique
+            </span>
+          </td>
+          <td
+            className="relative px-4 pr-0"
+          >
+            <span
+              className="block"
+            >
+              Climat Air Énergie
+            </span>
+          </td>
+          <td
+            className="relative px-4"
+          >
+            <span
+              className="w-72 line-clamp-3"
+              title="Consultant assistance à maîtrise d’ouvrage - Bureau d’études Green Planet"
+            >
+              Consultant assistance à maîtrise d’ouvrage - Bureau d’études Green Planet
+            </span>
+          </td>
+          <td
+            className="relative px-4 text-right"
+          >
+            <div
+              className="group relative flex -mr-2"
+            >
+              <button
+                className="flex items-center ml-auto p-2 text-left"
+              >
+                <span
+                  className="fr-fi-arrow-down-s-line mt-1 mr-1 scale-90 group-focus-within:rotate-180"
+                />
+                <span
+                  className="mr-auto"
+                >
+                  Lecture
+                </span>
+              </button>
+              <div
+                className="bg-white invisible absolute right-0 top-full min-w-full w-max transition-all opacity-0 shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
+              >
+                <button
+                  className="flex items-center w-full p-2 pr-4 text-left"
+                >
+                  <div
+                    className="w-6 mr-2"
+                  />
+                  <div>
+                    <div>
+                      Admin
+                    </div>
+                    <div
+                      className="mt-1 text-xs text-gray-500"
+                    >
+                      Peut entièrement configurer et éditer
+                    </div>
+                  </div>
+                </button>
+                <button
+                  className="flex items-center w-full p-2 pr-4 text-left"
+                >
+                  <div
+                    className="w-6 mr-2"
+                  />
+                  <div>
+                    <div>
+                      Édition
+                    </div>
+                    <div
+                      className="mt-1 text-xs text-gray-500"
+                    >
+                      Peut éditer et inviter de nouveaux membres
+                    </div>
+                  </div>
+                </button>
+                <button
+                  className="flex items-center w-full p-2 pr-4 text-left"
+                >
+                  <div
+                    className="w-6 mr-2"
+                  >
+                    <span
+                      className="block fr-fi-check-line scale-75"
+                    />
+                  </div>
+                  <div>
+                    <div>
+                      Lecture
+                    </div>
+                    <div
+                      className="mt-1 text-xs text-gray-500"
+                    >
+                      Peut uniquement consulter
+                    </div>
+                  </div>
+                </button>
+                <button
+                  className="flex w-full px-2 py-4 text-left text-red-600"
+                >
+                  <div
+                    className="w-8"
+                  />
+                  Retirer ce membre de la collectivité
+                </button>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+`;
+
+exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As Editeur 1`] = `
+<div
+  className="mx-auto border-8 border-t-0 border-bf925 bg-bf925 rounded-lg overflow-x-hidden"
+>
+  <div
+    className="overflow-x-auto w-full"
+  >
+    <table
+      className="min-w-full text-sm text-left"
+    >
+      <thead>
+        <tr>
+          <th
+            className="py-3 px-5 whitespace-nowrap"
+          >
+            Nom et adresse mail
+          </th>
+          <th
+            className="py-3 px-5 whitespace-nowrap"
+          >
+            Numéro de tél.
+          </th>
+          <th
+            className="py-3 px-5 whitespace-nowrap"
+          >
+            Fonction
+             
+            <span
+              className="block text-xs font-normal"
+            >
+              dans cette collectivité
+            </span>
+          </th>
+          <th
+            className="py-3 px-5 whitespace-nowrap"
+          >
+            Champs d'intervention
+             
+            <span
+              className="block text-xs font-normal"
+            >
+              dans cette collectivité
+            </span>
+          </th>
+          <th
+            className="py-3 px-5 whitespace-nowrap"
+          >
+            Détails fonction
+             
+            <span
+              className="block text-xs font-normal"
+            >
+              dans cette collectivité
+            </span>
+          </th>
+          <th
+            className="py-3 px-5 whitespace-nowraptext-right"
+          >
+            <div
+              className="flex items-center justify-end"
+            >
+              Accès
+              <a
+                className="!shadow-none"
+                href="#"
+              >
+                <span
+                  className="fr-fi-information-line block ml-1 mt-1 scale-75"
+                />
+              </a>
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          className="h-20 border-b border-gray-300 bg-white"
+        >
+          <td
+            className="relative px-4"
+          >
+            <span
+              className="font-bold"
+            >
+              Yolo
+               
+              Dodo
+               
+            </span>
+            <span
+              className="block mt-1 text-xs text-gray-500"
+            >
+              yolo@dodo.com
+            </span>
+          </td>
+          <td
+            className="relative px-4"
+          >
+            <span>
+              06 46 82 45 85
+            </span>
+          </td>
+          <td
+            className="relative px-4"
+          >
+            <span>
+              Référent·e
+            </span>
+          </td>
+          <td
+            className="relative px-4 pr-0"
+          >
+            <span
+              className="block"
+            >
+              Climat Air Énergie
+            </span>
+          </td>
+          <td
+            className="relative px-4"
+          >
+            <span
+              className="w-72 line-clamp-3"
+              title="Cheffe de projet PCAET"
+            >
+              Cheffe de projet PCAET
+            </span>
+          </td>
+          <td
+            className="relative px-4 text-right"
+          >
+            <span>
+              Admin
+            </span>
+          </td>
+        </tr>
+        <tr
+          className="h-20 border-b border-gray-300 bg-white"
+        >
+          <td
+            className="relative px-4"
+          >
+            <span
+              className="font-bold"
+            >
+              Yala
+               
+              Dada
+               
+            </span>
+            <span
+              className="block mt-1 text-xs text-gray-500"
+            >
+              yala@dada.com
+            </span>
+          </td>
+          <td
+            className="relative px-4"
+          >
+            <span>
+              06 65 87 52 49
+            </span>
+          </td>
+          <td
+            className="relative px-4"
+          >
+            <div
+              className="group relative"
+            >
+              <button
+                className="flex items-center w-full p-2 -ml-2 text-left"
+              >
+                <span
+                  className="mr-auto"
+                >
+                  Équipe technique
+                </span>
+                <span
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 group-focus-within:rotate-180"
+                />
+              </button>
+              <div
+                className="bg-white invisible absolute -left-2 top-full min-w-full w-max transition-all opacity-0 shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
+              >
+                <button
+                  className="flex items-center w-full p-2 text-left"
+                  onClick={[Function]}
+                >
+                  <div
+                    className="w-6 mr-2"
+                  />
+                  <span>
+                    Référent·e
+                  </span>
+                </button>
+                <button
+                  className="flex items-center w-full p-2 text-left"
+                  onClick={[Function]}
+                >
+                  <div
+                    className="w-6 mr-2"
+                  />
+                  <span>
+                    Conseiller·e
+                  </span>
+                </button>
+                <button
+                  className="flex items-center w-full p-2 text-left"
+                  onClick={[Function]}
+                >
+                  <div
+                    className="w-6 mr-2"
+                  >
+                    <span
+                      className="block fr-fi-check-line scale-75"
+                    />
+                  </div>
+                  <span>
+                    Équipe technique
+                  </span>
+                </button>
+                <button
+                  className="flex items-center w-full p-2 text-left"
+                  onClick={[Function]}
+                >
+                  <div
+                    className="w-6 mr-2"
+                  />
+                  <span>
+                    Équipe politique
+                  </span>
+                </button>
+                <button
+                  className="flex items-center w-full p-2 text-left"
+                  onClick={[Function]}
+                >
+                  <div
+                    className="w-6 mr-2"
+                  />
+                  <span>
+                    Partenaire
+                  </span>
+                </button>
+              </div>
+            </div>
+          </td>
+          <td
+            className="relative px-4 pr-0"
+          >
+            <div
+              className="group relative"
+            >
+              <button
+                className="flex items-center w-full p-2 -ml-2 text-left"
+              >
+                <div
+                  className="mr-auto"
+                >
+                  <span
+                    className="block"
+                  >
+                    Climat Air Énergie
+                  </span>
+                  <span
+                    className="block"
+                  >
+                    Économie circulaire
+                  </span>
+                </div>
+                <span
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 group-focus-within:rotate-180"
+                />
+              </button>
+              <div
+                className="bg-white invisible absolute -left-2 top-full min-w-full w-max transition-all opacity-0 shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
+              >
+                <button
+                  className="flex items-center w-full p-2 pr-4 text-left"
+                >
+                  <div
+                    className="w-6 mr-2"
+                  >
+                    <span
+                      className="block fr-fi-check-line scale-75"
+                    />
+                  </div>
+                  <span>
+                    Climat Air Énergie
+                  </span>
+                </button>
+                <button
+                  className="flex items-center w-full p-2 pr-4 text-left"
+                >
+                  <div
+                    className="w-6 mr-2"
+                  >
+                    <span
+                      className="block fr-fi-check-line scale-75"
+                    />
+                  </div>
+                  <span>
+                    Économie circulaire
+                  </span>
+                </button>
+              </div>
+            </div>
+          </td>
+          <td
+            className="relative px-4"
+          >
+            <div
+              className="py-1 px-2 border border-gray-300"
+            >
+              <textarea
+                className="w-full resize-none"
+                value="Vice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier, adjoint au maire en charge du dVice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier"
+              />
+            </div>
+          </td>
+          <td
+            className="relative px-4 text-right"
+          >
+            <div
+              className="group relative flex -mr-2"
+            >
+              <button
+                className="flex items-center ml-auto p-2 text-left"
+              >
+                <span
+                  className="fr-fi-arrow-down-s-line mt-1 mr-1 scale-90 group-focus-within:rotate-180"
+                />
+                <span
+                  className="mr-auto"
+                >
+                  Édition
+                </span>
+              </button>
+              <div
+                className="bg-white invisible absolute right-0 top-full min-w-full w-max transition-all opacity-0 shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
+              >
+                <div
+                  className="flex items-center w-full p-2 text-left"
+                >
+                  <div
+                    className="w-6 mr-2"
+                  >
+                    <span
+                      className="block fr-fi-check-line scale-75"
+                    />
+                  </div>
+                  <div>
+                    <div>
+                      edition
+                    </div>
+                    <div
+                      className="mt-1 text-xs text-gray-500"
+                    >
+                      Peut éditer et inviter de nouveaux membres
+                    </div>
+                  </div>
+                </div>
+                <button
+                  className="flex w-full px-2 py-4 text-left text-red-600"
+                >
+                  <div
+                    className="w-8"
+                  />
+                  Retirer mon accès à la collectivité
+                </button>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr
+          className="h-20 border-b border-gray-300 bg-white"
+        >
+          <td
+            className="relative px-4"
+          >
+            <span
+              className="font-bold"
+            >
+              John
+               
+              Doe
+               
+            </span>
+            <span
+              className="block mt-1 text-xs text-gray-500"
+            >
+              john@doe.com
+            </span>
+          </td>
+          <td
+            className="relative px-4"
+          >
+            <span>
+              06 75 51 24 57
+            </span>
+          </td>
+          <td
+            className="relative px-4"
+          >
+            <span>
+              Équipe politique
+            </span>
+          </td>
+          <td
+            className="relative px-4 pr-0"
+          >
+            <span
+              className="block"
+            >
+              Climat Air Énergie
+            </span>
+          </td>
+          <td
+            className="relative px-4"
+          >
+            <span
+              className="w-72 line-clamp-3"
+              title="Consultant assistance à maîtrise d’ouvrage - Bureau d’études Green Planet"
+            >
+              Consultant assistance à maîtrise d’ouvrage - Bureau d’études Green Planet
+            </span>
+          </td>
+          <td
+            className="relative px-4 text-right"
+          >
+            <span>
+              Lecture
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+`;
+
+exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As Lecteur 1`] = `
+<div
+  className="mx-auto border-8 border-t-0 border-bf925 bg-bf925 rounded-lg overflow-x-hidden"
+>
+  <div
+    className="overflow-x-auto w-full"
+  >
+    <table
+      className="min-w-full text-sm text-left"
+    >
+      <thead>
+        <tr>
+          <th
+            className="py-3 px-5 whitespace-nowrap"
+          >
+            Nom et adresse mail
+          </th>
+          <th
+            className="py-3 px-5 whitespace-nowrap"
+          >
+            Numéro de tél.
+          </th>
+          <th
+            className="py-3 px-5 whitespace-nowrap"
+          >
+            Fonction
+             
+            <span
+              className="block text-xs font-normal"
+            >
+              dans cette collectivité
+            </span>
+          </th>
+          <th
+            className="py-3 px-5 whitespace-nowrap"
+          >
+            Champs d'intervention
+             
+            <span
+              className="block text-xs font-normal"
+            >
+              dans cette collectivité
+            </span>
+          </th>
+          <th
+            className="py-3 px-5 whitespace-nowrap"
+          >
+            Détails fonction
+             
+            <span
+              className="block text-xs font-normal"
+            >
+              dans cette collectivité
+            </span>
+          </th>
+          <th
+            className="py-3 px-5 whitespace-nowraptext-right"
+          >
+            <div
+              className="flex items-center justify-end"
+            >
+              Accès
+              <a
+                className="!shadow-none"
+                href="#"
+              >
+                <span
+                  className="fr-fi-information-line block ml-1 mt-1 scale-75"
+                />
+              </a>
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          className="h-20 border-b border-gray-300 bg-white"
+        >
+          <td
+            className="relative px-4"
+          >
+            <span
+              className="font-bold"
+            >
+              Yolo
+               
+              Dodo
+               
+            </span>
+            <span
+              className="block mt-1 text-xs text-gray-500"
+            >
+              yolo@dodo.com
+            </span>
+          </td>
+          <td
+            className="relative px-4"
+          >
+            <span>
+              06 46 82 45 85
+            </span>
+          </td>
+          <td
+            className="relative px-4"
+          >
+            <span>
+              Référent·e
+            </span>
+          </td>
+          <td
+            className="relative px-4 pr-0"
+          >
+            <span
+              className="block"
+            >
+              Climat Air Énergie
+            </span>
+          </td>
+          <td
+            className="relative px-4"
+          >
+            <span
+              className="w-72 line-clamp-3"
+              title="Cheffe de projet PCAET"
+            >
+              Cheffe de projet PCAET
+            </span>
+          </td>
+          <td
+            className="relative px-4 text-right"
+          >
+            <span>
+              Admin
+            </span>
+          </td>
+        </tr>
+        <tr
+          className="h-20 border-b border-gray-300 bg-white"
+        >
+          <td
+            className="relative px-4"
+          >
+            <span
+              className="font-bold"
+            >
+              Yala
+               
+              Dada
+               
+            </span>
+            <span
+              className="block mt-1 text-xs text-gray-500"
+            >
+              yala@dada.com
+            </span>
+          </td>
+          <td
+            className="relative px-4"
+          >
+            <span>
+              06 65 87 52 49
+            </span>
+          </td>
+          <td
+            className="relative px-4"
+          >
+            <span>
+              Équipe technique
+            </span>
+          </td>
+          <td
+            className="relative px-4 pr-0"
+          >
+            <span
+              className="block"
+            >
+              Climat Air Énergie
+            </span>
+            <span
+              className="block"
+            >
+              Économie circulaire
+            </span>
+          </td>
+          <td
+            className="relative px-4"
+          >
+            <span
+              className="w-72 line-clamp-3"
+              title="Vice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier, adjoint au maire en charge du dVice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier"
+            >
+              Vice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier, adjoint au maire en charge du dVice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier
+            </span>
+          </td>
+          <td
+            className="relative px-4 text-right"
+          >
+            <span>
+              Édition
+            </span>
+          </td>
+        </tr>
+        <tr
+          className="h-20 border-b border-gray-300 bg-white"
+        >
+          <td
+            className="relative px-4"
+          >
+            <span
+              className="font-bold"
+            >
+              John
+               
+              Doe
+               
+            </span>
+            <span
+              className="block mt-1 text-xs text-gray-500"
+            >
+              john@doe.com
+            </span>
+          </td>
+          <td
+            className="relative px-4"
+          >
+            <span>
+              06 75 51 24 57
+            </span>
+          </td>
+          <td
+            className="relative px-4"
+          >
+            <div
+              className="group relative"
+            >
+              <button
+                className="flex items-center w-full p-2 -ml-2 text-left"
+              >
+                <span
+                  className="mr-auto"
+                >
+                  Équipe politique
+                </span>
+                <span
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 group-focus-within:rotate-180"
+                />
+              </button>
+              <div
+                className="bg-white invisible absolute -left-2 top-full min-w-full w-max transition-all opacity-0 shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
+              >
+                <button
+                  className="flex items-center w-full p-2 text-left"
+                  onClick={[Function]}
+                >
+                  <div
+                    className="w-6 mr-2"
+                  />
+                  <span>
+                    Référent·e
+                  </span>
+                </button>
+                <button
+                  className="flex items-center w-full p-2 text-left"
+                  onClick={[Function]}
+                >
+                  <div
+                    className="w-6 mr-2"
+                  />
+                  <span>
+                    Conseiller·e
+                  </span>
+                </button>
+                <button
+                  className="flex items-center w-full p-2 text-left"
+                  onClick={[Function]}
+                >
+                  <div
+                    className="w-6 mr-2"
+                  />
+                  <span>
+                    Équipe technique
+                  </span>
+                </button>
+                <button
+                  className="flex items-center w-full p-2 text-left"
+                  onClick={[Function]}
+                >
+                  <div
+                    className="w-6 mr-2"
+                  >
+                    <span
+                      className="block fr-fi-check-line scale-75"
+                    />
+                  </div>
+                  <span>
+                    Équipe politique
+                  </span>
+                </button>
+                <button
+                  className="flex items-center w-full p-2 text-left"
+                  onClick={[Function]}
+                >
+                  <div
+                    className="w-6 mr-2"
+                  />
+                  <span>
+                    Partenaire
+                  </span>
+                </button>
+              </div>
+            </div>
+          </td>
+          <td
+            className="relative px-4 pr-0"
+          >
+            <div
+              className="group relative"
+            >
+              <button
+                className="flex items-center w-full p-2 -ml-2 text-left"
+              >
+                <div
+                  className="mr-auto"
+                >
+                  <span
+                    className="block"
+                  >
+                    Climat Air Énergie
+                  </span>
+                </div>
+                <span
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 group-focus-within:rotate-180"
+                />
+              </button>
+              <div
+                className="bg-white invisible absolute -left-2 top-full min-w-full w-max transition-all opacity-0 shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
+              >
+                <button
+                  className="flex items-center w-full p-2 pr-4 text-left"
+                >
+                  <div
+                    className="w-6 mr-2"
+                  >
+                    <span
+                      className="block fr-fi-check-line scale-75"
+                    />
+                  </div>
+                  <span>
+                    Climat Air Énergie
+                  </span>
+                </button>
+                <button
+                  className="flex items-center w-full p-2 pr-4 text-left"
+                >
+                  <div
+                    className="w-6 mr-2"
+                  />
+                  <span>
+                    Économie circulaire
+                  </span>
+                </button>
+              </div>
+            </div>
+          </td>
+          <td
+            className="relative px-4"
+          >
+            <div
+              className="py-1 px-2 border border-gray-300"
+            >
+              <textarea
+                className="w-full resize-none"
+                value="Consultant assistance à maîtrise d’ouvrage - Bureau d’études Green Planet"
+              />
+            </div>
+          </td>
+          <td
+            className="relative px-4 text-right"
+          >
+            <div
+              className="group relative flex -mr-2"
+            >
+              <button
+                className="flex items-center ml-auto p-2 text-left"
+              >
+                <span
+                  className="fr-fi-arrow-down-s-line mt-1 mr-1 scale-90 group-focus-within:rotate-180"
+                />
+                <span
+                  className="mr-auto"
+                >
+                  Lecture
+                </span>
+              </button>
+              <div
+                className="bg-white invisible absolute right-0 top-full min-w-full w-max transition-all opacity-0 shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
+              >
+                <div
+                  className="flex items-center w-full p-2 text-left"
+                >
+                  <div
+                    className="w-6 mr-2"
+                  >
+                    <span
+                      className="block fr-fi-check-line scale-75"
+                    />
+                  </div>
+                  <div>
+                    <div>
+                      lecture
+                    </div>
+                    <div
+                      className="mt-1 text-xs text-gray-500"
+                    >
+                      Peut uniquement consulter
+                    </div>
+                  </div>
+                </div>
+                <button
+                  className="flex w-full px-2 py-4 text-left text-red-600"
+                >
+                  <div
+                    className="w-8"
+                  />
+                  Retirer mon accès à la collectivité
+                </button>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+`;
+
+exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable Empty 1`] = `
+<div
+  className="mx-auto border-8 border-t-0 border-bf925 bg-bf925 rounded-lg overflow-x-hidden"
+>
+  <div
+    className="overflow-x-auto w-full"
+  >
+    <table
+      className="min-w-full text-sm text-left"
+    >
+      <thead>
+        <tr>
+          <th
+            className="py-3 px-5 whitespace-nowrap"
+          >
+            Nom et adresse mail
+          </th>
+          <th
+            className="py-3 px-5 whitespace-nowrap"
+          >
+            Numéro de tél.
+          </th>
+          <th
+            className="py-3 px-5 whitespace-nowrap"
+          >
+            Fonction
+             
+            <span
+              className="block text-xs font-normal"
+            >
+              dans cette collectivité
+            </span>
+          </th>
+          <th
+            className="py-3 px-5 whitespace-nowrap"
+          >
+            Champs d'intervention
+             
+            <span
+              className="block text-xs font-normal"
+            >
+              dans cette collectivité
+            </span>
+          </th>
+          <th
+            className="py-3 px-5 whitespace-nowrap"
+          >
+            Détails fonction
+             
+            <span
+              className="block text-xs font-normal"
+            >
+              dans cette collectivité
+            </span>
+          </th>
+          <th
+            className="py-3 px-5 whitespace-nowraptext-right"
+          >
+            <div
+              className="flex items-center justify-end"
+            >
+              Accès
+              <a
+                className="!shadow-none"
+                href="#"
+              >
+                <span
+                  className="fr-fi-information-line block ml-1 mt-1 scale-75"
+                />
+              </a>
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          className="bg-white"
+        >
+          <td
+            className="pt-6 pb-24 px-6"
+            colSpan={6}
+          >
+            Personne n'est rattaché à cette collectivité
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+`;
+
+exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable Is Loading 1`] = `
+<div
+  className="mx-auto border-8 border-t-0 border-bf925 bg-bf925 rounded-lg overflow-x-hidden"
+>
+  <div
+    className="overflow-x-auto w-full"
+  >
+    <table
+      className="min-w-full text-sm text-left"
+    >
+      <thead>
+        <tr>
+          <th
+            className="py-3 px-5 whitespace-nowrap"
+          >
+            Nom et adresse mail
+          </th>
+          <th
+            className="py-3 px-5 whitespace-nowrap"
+          >
+            Numéro de tél.
+          </th>
+          <th
+            className="py-3 px-5 whitespace-nowrap"
+          >
+            Fonction
+             
+            <span
+              className="block text-xs font-normal"
+            >
+              dans cette collectivité
+            </span>
+          </th>
+          <th
+            className="py-3 px-5 whitespace-nowrap"
+          >
+            Champs d'intervention
+             
+            <span
+              className="block text-xs font-normal"
+            >
+              dans cette collectivité
+            </span>
+          </th>
+          <th
+            className="py-3 px-5 whitespace-nowrap"
+          >
+            Détails fonction
+             
+            <span
+              className="block text-xs font-normal"
+            >
+              dans cette collectivité
+            </span>
+          </th>
+          <th
+            className="py-3 px-5 whitespace-nowraptext-right"
+          >
+            <div
+              className="flex items-center justify-end"
+            >
+              Accès
+              <a
+                className="!shadow-none"
+                href="#"
+              >
+                <span
+                  className="fr-fi-information-line block ml-1 mt-1 scale-75"
+                />
+              </a>
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          className="bg-white"
+        >
+          <td
+            className="pt-6 pb-24 px-6"
+            colSpan={6}
+          >
+            Chargement...
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+`;
+
+exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable TODO With Guest 1`] = `
+<div
+  className="mx-auto border-8 border-t-0 border-bf925 bg-bf925 rounded-lg overflow-x-hidden"
+>
+  <div
+    className="overflow-x-auto w-full"
+  >
+    <table
+      className="min-w-full text-sm text-left"
+    >
+      <thead>
+        <tr>
+          <th
+            className="py-3 px-5 whitespace-nowrap"
+          >
+            Nom et adresse mail
+          </th>
+          <th
+            className="py-3 px-5 whitespace-nowrap"
+          >
+            Numéro de tél.
+          </th>
+          <th
+            className="py-3 px-5 whitespace-nowrap"
+          >
+            Fonction
+             
+            <span
+              className="block text-xs font-normal"
+            >
+              dans cette collectivité
+            </span>
+          </th>
+          <th
+            className="py-3 px-5 whitespace-nowrap"
+          >
+            Champs d'intervention
+             
+            <span
+              className="block text-xs font-normal"
+            >
+              dans cette collectivité
+            </span>
+          </th>
+          <th
+            className="py-3 px-5 whitespace-nowrap"
+          >
+            Détails fonction
+             
+            <span
+              className="block text-xs font-normal"
+            >
+              dans cette collectivité
+            </span>
+          </th>
+          <th
+            className="py-3 px-5 whitespace-nowraptext-right"
+          >
+            <div
+              className="flex items-center justify-end"
+            >
+              Accès
+              <a
+                className="!shadow-none"
+                href="#"
+              >
+                <span
+                  className="fr-fi-information-line block ml-1 mt-1 scale-75"
+                />
+              </a>
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          className="bg-white"
+        >
+          <td
+            className="pt-6 pb-24 px-6"
+            colSpan={6}
+          >
+            Personne n'est rattaché à cette collectivité
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+`;
