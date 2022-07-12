@@ -7,12 +7,20 @@ import {
   removeUser,
 } from 'core-logic/api/procedures/collectiviteProcedures';
 import {DcpRead} from 'generated/dataLayer/dcp_read';
-//import MainContactForm from './MainContactForm';
 import UserCard from './UserCard';
 import {useGenerateInvitation} from 'core-logic/hooks/useGenerateInvitation';
 import {useAgentInvitation} from 'core-logic/hooks/useAgentInvitation';
-import UserListTable from './components/UserListTable';
-import {fakeAdmin, fakeUsers} from './components/fakeData';
+import MembreListTable from './components/MembreListTable';
+import {
+  Membre,
+  TMembreFonction,
+  TUpdateMembreField,
+  updateMembreChampIntervention,
+  updateMembreDetailsFonction,
+  updateMembreFonction,
+  useCollectiviteMembres,
+} from 'app/pages/collectivite/Users/membres.io';
+import {useAuth} from 'core-logic/api/auth/AuthProvider';
 
 const activeUsersByRole = (
   users: PersonneList[] | null,
@@ -59,7 +67,15 @@ const useUserList = () => {
  * Affiche la page listant les utilisateurs attachés à une collectivité
  * et le formulaire permettant d'envoyer des liens d'invitation
  */
-const Users = () => {
+export const Membres = ({
+  membres,
+  currentUserId,
+  updateMembreFonction,
+}: {
+  membres: Membre[];
+  currentUserId: string;
+  updateMembreFonction: TUpdateMembreField<TMembreFonction>;
+}) => {
   const {agents, conseillers, auditeurs, referents, removeFromCollectivite} =
     useUserList();
   const {invitationUrl: latestUrl} = useAgentInvitation();
@@ -80,10 +96,11 @@ const Users = () => {
       <h1 className="mb-10 lg:mb-14 lg:text-center">Gestion des membres</h1>
 
       <h2 className="">Liste des membres</h2>
-      <UserListTable
-        currentUser={fakeAdmin}
-        users={fakeUsers}
+      <MembreListTable
+        currentUserId={currentUserId}
+        membres={membres}
         isLoading={false}
+        updateMembreFonction={updateMembreFonction}
       />
 
       <h2 className="fr-h2">Lien d'invitation</h2>
@@ -143,4 +160,29 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default () => {
+  const auth = useAuth();
+  const userId = auth.user?.id;
+  const collectiviteId = useCollectiviteId();
+  if (!userId || !collectiviteId) return null;
+
+  const membres = useCollectiviteMembres();
+  return (
+    <Membres
+      currentUserId={userId}
+      membres={membres}
+      updateMembreFonction={(
+        membreId: string,
+        membreFunction: TMembreFonction
+      ) => {
+        updateMembreFonction(collectiviteId, membreId, membreFunction);
+        updateMembreDetailsFonction(
+          collectiviteId,
+          membreId,
+          'King of the universe ' + membreFunction
+        );
+        updateMembreChampIntervention(collectiviteId, membreId, ['eci']);
+      }}
+    />
+  );
+};
