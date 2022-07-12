@@ -44,7 +44,6 @@ export const App = () => {
                   <Route exact path="/">
                     <Home />
                   </Route>
-
                   <Route path={authBasePath}>
                     <AuthRoutes />
                   </Route>
