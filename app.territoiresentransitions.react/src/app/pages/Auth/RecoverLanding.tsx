@@ -1,9 +1,9 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {useQuery} from 'react-query';
+import {useHistory} from 'react-router-dom';
 import {ENV} from 'environmentVariables';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {resetPwdPath, resetPwdToken} from 'app/paths';
-import {useHistory} from 'react-router-dom';
 
 /**
  * Réponse de l'appel à la fonction verify de gotrue.
@@ -36,7 +36,7 @@ async function recover(token: String): Promise<VerifyResponse> {
       'Content-Type': 'application/json',
       apikey: ENV.supabase_anon_key!,
     },
-    body: body,
+    body,
   });
   const data = await response.json();
   // supabaseClient.auth.setAuth(data.access_token); ne fonctionne pas.
@@ -78,7 +78,17 @@ const RecoverLanding = ({token}: {token: string}) => {
 
   if (recovering) return <Recovery token={token} />;
   return (
-    <button onClick={() => setRecovering(true)}>Changer de mot de passe</button>
+    <section className="max-w-2xl mx-auto p-5">
+      <h2 className="fr-h2 flex justify-center">Changer de mot de passe</h2>
+      <p>Vous avez demandé le renouvellement de votre mot de passe.</p>
+      <button
+        className="fr-btn"
+        data-test="Recovering"
+        onClick={() => setRecovering(true)}
+      >
+        Changer de mot de passe
+      </button>
+    </section>
   );
 };
 
