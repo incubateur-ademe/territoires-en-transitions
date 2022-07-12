@@ -4,7 +4,7 @@ import HeaderNavigation from './HeaderNavigation';
 import CollectiviteNavigation from './CollectiviteNavigation';
 import MobileNavigation from './MobileNavigation';
 import {makeCollectiviteNavItems} from './makeCollectiviteNavItems';
-import {OwnedCollectiviteRead} from 'generated/dataLayer';
+import {MesCollectivitesRead} from 'generated/dataLayer';
 import ademeLogoImage from 'app/static/img/ademe.jpg';
 import {useOwnedCollectivites} from 'core-logic/hooks/useOwnedCollectivites';
 import {
@@ -21,7 +21,7 @@ export const Header = ({
 }: {
   auth: TAuthContext;
   currentCollectivite: CurrentCollectivite | null;
-  ownedCollectivites: OwnedCollectiviteRead[] | null;
+  ownedCollectivites: MesCollectivitesRead[] | null;
 }) => {
   const collectiviteNav = currentCollectivite
     ? makeCollectiviteNavItems(currentCollectivite)

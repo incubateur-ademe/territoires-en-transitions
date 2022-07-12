@@ -1,4 +1,4 @@
-import {OwnedCollectiviteRead} from 'generated/dataLayer';
+import {MesCollectivitesRead} from 'generated/dataLayer';
 import {useOwnedCollectivites} from 'core-logic/hooks/useOwnedCollectivites';
 import {SimpleCollectiviteCard} from 'ui/collectivites/SimpleCollectiviteCard';
 import {Spacer} from 'ui/shared/Spacer';
@@ -6,7 +6,7 @@ import {AssocierCollectiviteDialog} from './AssocierCollectiviteDialog';
 import {getReferentContacts} from 'core-logic/api/procedures/collectiviteProcedures';
 
 export type TMesCollectivitesProps = {
-  ownedCollectivites: OwnedCollectiviteRead[] | null;
+  ownedCollectivites: MesCollectivitesRead[] | null;
 };
 
 const MesCollectivitesCards = ({

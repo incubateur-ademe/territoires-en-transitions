@@ -6,10 +6,7 @@ import {
   makeCollectiviteUsersUrl,
 } from 'app/paths';
 import {useOwnedAsAgentCollectiviteIds} from 'core-logic/hooks/useOwnedCollectivites';
-import {
-  ElsesCollectiviteRead,
-  OwnedCollectiviteRead,
-} from 'generated/dataLayer';
+import {ElsesCollectiviteRead, MesCollectivitesRead} from 'generated/dataLayer';
 import {Link} from 'react-router-dom';
 
 const SimpleCollectiviteCardPrimaryLink = (props: {
@@ -41,7 +38,7 @@ const SimpleCollectiviteCardSecondaryLink = (props: {
 export const SimpleCollectiviteCard = ({
   collectivite,
 }: {
-  collectivite: ElsesCollectiviteRead | OwnedCollectiviteRead;
+  collectivite: ElsesCollectiviteRead | MesCollectivitesRead;
 }) => {
   const ownedAsAgentCollectiviteIds = useOwnedAsAgentCollectiviteIds();
 

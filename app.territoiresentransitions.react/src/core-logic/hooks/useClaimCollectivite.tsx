@@ -11,7 +11,7 @@ export const useClaimCollectivite = () => {
     mutate: claimCollectivite,
   } = useMutation(claim, {
     onSuccess: () => {
-      queryClient.invalidateQueries(['owned_collectivites']);
+      queryClient.invalidateQueries(['mes_collectivitess']);
     },
   });
 

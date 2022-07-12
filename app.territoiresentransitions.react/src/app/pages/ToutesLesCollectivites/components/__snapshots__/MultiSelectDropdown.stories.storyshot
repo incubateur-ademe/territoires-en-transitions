@@ -179,3 +179,183 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/components/MultiSelectDropd
   </div>
 </ul>
 `;
+
+exports[`Storyshots app/pages/ToutesLesCollectivites/components/MultiSelectDropdown Selection Aucun Par Defaut 1`] = `
+<ul>
+  <div>
+    <div
+      className="mb-2 font-semibold"
+    >
+      Région
+    </div>
+    <div
+      className="MuiInputBase-root MuiOutlinedInput-root"
+      onClick={[Function]}
+      style={
+        Object {
+          "borderBottomColor": "black",
+          "borderBottomWidth": "0.7px",
+          "borderColor": "lightgray",
+          "borderRadius": "0.2rem",
+          "borderStyle": "solid",
+          "borderWidth": "0.6px",
+          "maxHeight": "45px",
+          "width": "100%",
+        }
+      }
+    >
+      <div
+        aria-haspopup="listbox"
+        className="MuiSelect-root MuiSelect-select MuiSelect-selectMenu MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input"
+        onBlur={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onMouseDown={[Function]}
+        role="button"
+        tabIndex={0}
+      >
+        <span
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "&#8203;",
+            }
+          }
+        />
+      </div>
+      <input
+        aria-hidden={true}
+        className="MuiSelect-nativeInput"
+        onAnimationStart={[Function]}
+        onChange={[Function]}
+        tabIndex={-1}
+        value=""
+      />
+      <svg
+        aria-hidden={true}
+        className="MuiSvgIcon-root MuiSelect-icon MuiSelect-iconOutlined"
+        focusable="false"
+        viewBox="0 0 24 24"
+      >
+        <path
+          d="M7 10l5 5 5-5z"
+        />
+      </svg>
+      <fieldset
+        aria-hidden={true}
+        className="PrivateNotchedOutline-root-13 MuiOutlinedInput-notchedOutline"
+        style={
+          Object {
+            "paddingLeft": 8,
+          }
+        }
+      >
+        <legend
+          className="PrivateNotchedOutline-legend-14"
+          style={
+            Object {
+              "width": 0.01,
+            }
+          }
+        >
+          <span
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "&#8203;",
+              }
+            }
+          />
+        </legend>
+      </fieldset>
+    </div>
+  </div>
+</ul>
+`;
+
+exports[`Storyshots app/pages/ToutesLesCollectivites/components/MultiSelectDropdown Selection Multiple 1`] = `
+<ul>
+  <div>
+    <div
+      className="mb-2 font-semibold"
+    >
+      Région
+    </div>
+    <div
+      className="MuiInputBase-root MuiOutlinedInput-root"
+      onClick={[Function]}
+      style={
+        Object {
+          "borderBottomColor": "black",
+          "borderBottomWidth": "0.7px",
+          "borderColor": "lightgray",
+          "borderRadius": "0.2rem",
+          "borderStyle": "solid",
+          "borderWidth": "0.6px",
+          "maxHeight": "45px",
+          "width": "100%",
+        }
+      }
+    >
+      <div
+        aria-haspopup="listbox"
+        className="MuiSelect-root MuiSelect-select MuiSelect-selectMenu MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input"
+        onBlur={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onMouseDown={[Function]}
+        role="button"
+        tabIndex={0}
+      >
+        <span
+          className="text-gray-800 font-normal"
+        >
+          Corse, Île de France
+        </span>
+      </div>
+      <input
+        aria-hidden={true}
+        className="MuiSelect-nativeInput"
+        onAnimationStart={[Function]}
+        onChange={[Function]}
+        tabIndex={-1}
+        value="94,11"
+      />
+      <svg
+        aria-hidden={true}
+        className="MuiSvgIcon-root MuiSelect-icon MuiSelect-iconOutlined"
+        focusable="false"
+        viewBox="0 0 24 24"
+      >
+        <path
+          d="M7 10l5 5 5-5z"
+        />
+      </svg>
+      <fieldset
+        aria-hidden={true}
+        className="PrivateNotchedOutline-root-17 MuiOutlinedInput-notchedOutline"
+        style={
+          Object {
+            "paddingLeft": 8,
+          }
+        }
+      >
+        <legend
+          className="PrivateNotchedOutline-legend-18"
+          style={
+            Object {
+              "width": 0.01,
+            }
+          }
+        >
+          <span
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "&#8203;",
+              }
+            }
+          />
+        </legend>
+      </fieldset>
+    </div>
+  </div>
+</ul>
+`;

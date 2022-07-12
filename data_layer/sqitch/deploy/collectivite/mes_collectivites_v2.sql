@@ -6,20 +6,18 @@ BEGIN;
 -- retire une fonction dépréciée
 drop function collectivite_user_list;
 
--- remplace la vue qui a été retirée depuis utilisateur/niveaux_acces
-create view elses_collectivite
+-- remplace la vue owned_collectivite qui a été retirée depuis utilisateur/niveaux_acces
+create view mes_collectivites
 as
-with joined_collectivite as (select collectivite_id
-                             from private_utilisateur_droit
-                             where user_id = auth.uid()
-                               and active)
-select active_collectivite.collectivite_id, active_collectivite.nom
-from active_collectivite
-         full outer join joined_collectivite
-                         on joined_collectivite.collectivite_id = active_collectivite.collectivite_id
-where auth.uid() is null -- return all active collectivités if auth.user is null
-   or joined_collectivite is null;
-comment on view elses_collectivite
-    is 'Collectivités pour lesquelles l''utilisateur n''a pas de droits.';
+with current_droits as (select *
+                        from private_utilisateur_droit
+                        where user_id = auth.uid()
+                          and active)
+select named_collectivite.collectivite_id,
+       named_collectivite.nom,
+       niveau_acces
+from current_droits
+         join named_collectivite on named_collectivite.collectivite_id = current_droits.collectivite_id
+order by nom;
 
 COMMIT;
