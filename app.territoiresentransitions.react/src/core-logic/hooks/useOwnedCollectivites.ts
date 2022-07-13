@@ -31,7 +31,7 @@ export const useOwnedAsAgentCollectiviteIds = () => {
   const ownedCollectivites = useOwnedCollectivites();
   return ownedCollectivites
     ? ownedCollectivites
-        .filter(ownedCollectivite => ownedCollectivite.role_name === 'referent')
+        .filter(ownedCollectivite => ownedCollectivite.niveau_acces === 'admin')
         .map(ownedCollectivite => ownedCollectivite.collectivite_id)
     : null;
 };

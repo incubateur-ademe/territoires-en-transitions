@@ -9,12 +9,12 @@ import {MesCollectivitesRead} from 'generated/dataLayer';
 import ademeLogoImage from 'app/static/img/ademe.jpg';
 import {RejoindreCetteCollectiviteDialog} from 'app/pages/MesCollectivites/RejoindreCetteCollectiviteDialog';
 import {useState} from 'react';
-import {getReferentContacts} from 'core-logic/api/procedures/collectiviteProcedures';
 import {useOwnedCollectivites} from 'core-logic/hooks/useOwnedCollectivites';
 import {
   CurrentCollectivite,
   useCurrentCollectivite,
 } from 'core-logic/hooks/useCurrentCollectivite';
+import {getAdminContacts} from 'core-logic/api/procedures/collectiviteProcedures';
 
 export const Header = ({
   auth,
@@ -100,7 +100,7 @@ const CollectiviteReadOnlyBanner = ({
       <div className="flex justify-center items-center bg-yellow-400 py-4 bg-opacity-70">
         <div className="text-sm mr-4">Lecture seule</div>
         <RejoindreCetteCollectiviteDialog
-          getReferentContacts={getReferentContacts}
+          getReferentContacts={getAdminContacts}
           collectivite={collectivite}
         />
       </div>

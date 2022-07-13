@@ -25,7 +25,7 @@ const authConnected = {
 const readonlyCollectivite: CurrentCollectivite = {
   nom: 'Test collectivite',
   collectivite_id: 1,
-  role_name: null,
+  niveau_acces: null,
   isReferent: false,
   readonly: true,
 };
@@ -33,7 +33,7 @@ const readonlyCollectivite: CurrentCollectivite = {
 const currentCollectivite: CurrentCollectivite = {
   nom: 'Test collectivite',
   collectivite_id: 1,
-  role_name: 'referent',
+  niveau_acces: 'admin',
   isReferent: true,
   readonly: false,
 };

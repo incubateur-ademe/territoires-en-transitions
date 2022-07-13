@@ -3,7 +3,7 @@ import {useOwnedCollectivites} from 'core-logic/hooks/useOwnedCollectivites';
 import {SimpleCollectiviteCard} from 'ui/collectivites/SimpleCollectiviteCard';
 import {Spacer} from 'ui/shared/Spacer';
 import {AssocierCollectiviteDialog} from './AssocierCollectiviteDialog';
-import {getReferentContacts} from 'core-logic/api/procedures/collectiviteProcedures';
+import {getAdminContacts} from 'core-logic/api/procedures/collectiviteProcedures';
 
 export type TMesCollectivitesProps = {
   ownedCollectivites: MesCollectivitesRead[] | null;
@@ -38,7 +38,7 @@ export const MesCollectivites = ({
           <MesCollectivitesCards ownedCollectivites={ownedCollectivites} />
         ) : null}
         <Spacer />
-        <AssocierCollectiviteDialog getReferentContacts={getReferentContacts} />
+        <AssocierCollectiviteDialog getReferentContacts={getAdminContacts} />
       </section>
     </div>
   );
