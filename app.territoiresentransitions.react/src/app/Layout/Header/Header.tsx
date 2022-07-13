@@ -12,7 +12,7 @@ import {
   useCurrentCollectivite,
 } from 'core-logic/hooks/useCurrentCollectivite';
 import {RejoindreCetteCollectiviteDialog} from 'app/pages/MesCollectivites/RejoindreCetteCollectiviteDialog';
-import {getReferentContacts} from 'core-logic/api/procedures/collectiviteProcedures';
+import {getAdminContacts} from 'core-logic/api/procedures/collectiviteProcedures';
 
 export const Header = ({
   auth,
@@ -93,7 +93,7 @@ const CollectiviteReadOnlyBanner = ({
       <div className="flex justify-center items-center bg-yellow-400 py-4 bg-opacity-70">
         <div className="text-sm mr-4">Lecture seule</div>
         <RejoindreCetteCollectiviteDialog
-          getReferentContacts={getReferentContacts}
+          getReferentContacts={getAdminContacts}
           collectivite={collectivite}
         />
       </div>
