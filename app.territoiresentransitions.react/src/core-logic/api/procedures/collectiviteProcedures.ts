@@ -1,6 +1,6 @@
 import {supabaseClient} from 'core-logic/api/supabase';
 import {DcpRead} from 'generated/dataLayer/dcp_read';
-import {RoleName} from 'generated/dataLayer';
+import {NiveauAcces} from 'generated/dataLayer';
 
 export const claimCollectivite = async (id: number): Promise<boolean> => {
   const {data, error} = await supabaseClient.rpc('claim_collectivite', {
@@ -21,7 +21,7 @@ export type ReferentContact = {
 };
 
 // renvoi le contact principal (fonctionne même si on est pas membre de la coll.)
-export const getReferentContacts = async (
+export const getAdminContacts = async (
   collectivite_id: number
 ): Promise<ReferentContact[]> => {
   const {data, error} = await supabaseClient.rpc('referent_contacts', {
@@ -35,7 +35,7 @@ export const getReferentContacts = async (
 };
 
 export type PersonneList = {
-  role_name: RoleName;
+  niveau_acces: NiveauAcces;
   personnes: DcpRead[];
 };
 

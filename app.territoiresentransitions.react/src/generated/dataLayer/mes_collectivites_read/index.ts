@@ -3,5 +3,5 @@
 export interface MesCollectivitesRead {
   collectivite_id: number;
   nom: string;
-  role_name: string;
+  niveau_acces: string | null;
 }

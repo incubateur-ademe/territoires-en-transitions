@@ -41,11 +41,11 @@ describe('Owned Collectivite reading endpoint ', () => {
     const expectedResults: MesCollectivitesRead[] = [
       {
         ...collectivite1,
-        role_name: 'referent',
+        niveau_acces: 'admin',
       },
       {
         ...collectivite2,
-        role_name: 'agent',
+        niveau_acces: 'agent',
       },
     ];
     expect(results.length).toEqual(2);
