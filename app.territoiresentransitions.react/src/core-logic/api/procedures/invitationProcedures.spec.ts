@@ -7,7 +7,7 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {yoloCredentials} from 'test_utils/collectivites';
 
 describe('Create an invitation', () => {
-  it('should return a new invitation', async () => {
+  test.skip('should return a new invitation', async () => {
     await supabaseClient.auth.signIn(yoloCredentials);
     const partialExemple: Partial<AgentInvitationResponse> = {
       message: "L'invitation a été crée.",
@@ -20,7 +20,7 @@ describe('Create an invitation', () => {
 });
 
 describe('Retrieve an invitation', () => {
-  it('should return the latest existing invitation', async () => {
+  test.skip('should return the latest existing invitation', async () => {
     await supabaseClient.auth.signIn(yoloCredentials);
     const procedureResponse = await fetchAgentInvitation(1);
     expect(procedureResponse.id?.length).toBe(36);
