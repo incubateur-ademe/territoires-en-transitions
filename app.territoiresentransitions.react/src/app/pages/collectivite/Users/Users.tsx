@@ -17,7 +17,7 @@ const activeUsersByRole = (
   name: string
 ): DcpRead[] | undefined =>
   users
-    ?.find(({role_name}) => role_name === name)
+    ?.find(({niveau_acces}) => niveau_acces === name)
     ?.personnes.filter(({deleted}) => !deleted);
 
 const useUserList = () => {
