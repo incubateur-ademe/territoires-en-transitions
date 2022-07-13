@@ -2,13 +2,13 @@ import {useQuery} from 'react-query';
 import {useAuth} from 'core-logic/api/auth/AuthProvider';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {ElsesCollectiviteRead, RoleName} from 'generated/dataLayer';
+import {ElsesCollectiviteRead, NiveauAcces} from 'generated/dataLayer';
 import {MesCollectivitesRead} from 'generated/dataLayer/mes_collectivites_read';
 
 export type CurrentCollectivite = {
   collectivite_id: number;
   nom: string;
-  role_name: RoleName | null;
+  niveau_acces: NiveauAcces | null;
   isReferent: boolean;
   readonly: boolean;
 };
@@ -54,12 +54,12 @@ const fetchCurrentCollectivite = async (
   // vérifie si la collectivité est rattachée au compte courant
   const ownedCollectivite = await fetchOwnedCollectivite(collectivite_id);
   if (ownedCollectivite) {
-    const {nom, role_name} = ownedCollectivite;
+    const {nom, niveau_acces} = ownedCollectivite;
     return {
       collectivite_id,
       nom,
-      role_name: role_name as RoleName,
-      isReferent: role_name === 'referent',
+      niveau_acces: niveau_acces as NiveauAcces,
+      isReferent: niveau_acces === 'admin',
       readonly: false,
     };
   }
@@ -74,7 +74,7 @@ const fetchCurrentCollectivite = async (
   return {
     collectivite_id,
     nom,
-    role_name: null,
+    niveau_acces: null,
     isReferent: false,
     readonly: true,
   };
