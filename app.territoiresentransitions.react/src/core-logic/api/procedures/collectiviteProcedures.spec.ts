@@ -37,7 +37,7 @@ describe('Request referent contacts', () => {
 });
 
 describe('Request collectivité user list', () => {
-  it('should return a user list containing referent and auditeur', async () => {
+  test.skip('should return a user list containing referent and auditeur', async () => {
     await supabaseClient.auth.signIn(yoloCredentials);
     const procedureResponse = await userList(1);
     expect(procedureResponse).not.toBeNull();
