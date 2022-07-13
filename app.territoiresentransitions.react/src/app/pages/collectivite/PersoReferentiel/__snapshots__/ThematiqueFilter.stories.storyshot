@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots App/Pages/Collectivite/Perso Referentiel/Thematique Filter CAE Et ECI 1`] = `
+exports[`Storyshots app/pages/collectivite/PersoReferentiel/ThematiqueFilter CAE Et ECI 1`] = `
 <fieldset
   className="fr-fieldset fr-fieldset--inline"
 >
@@ -52,7 +52,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Referentiel/Thematique Filter C
 </fieldset>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Perso Referentiel/Thematique Filter CAE Seulement 1`] = `
+exports[`Storyshots app/pages/collectivite/PersoReferentiel/ThematiqueFilter CAE Seulement 1`] = `
 <fieldset
   className="fr-fieldset fr-fieldset--inline"
 >
@@ -104,7 +104,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Referentiel/Thematique Filter C
 </fieldset>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Perso Referentiel/Thematique Filter ECI Seulement 1`] = `
+exports[`Storyshots app/pages/collectivite/PersoReferentiel/ThematiqueFilter ECI Seulement 1`] = `
 <fieldset
   className="fr-fieldset fr-fieldset--inline"
 >
@@ -156,7 +156,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Referentiel/Thematique Filter E
 </fieldset>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Perso Referentiel/Thematique Filter Selection Vide 1`] = `
+exports[`Storyshots app/pages/collectivite/PersoReferentiel/ThematiqueFilter Selection Vide 1`] = `
 <fieldset
   className="fr-fieldset fr-fieldset--inline"
 >

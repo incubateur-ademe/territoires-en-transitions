@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte Collectivite Au Nom Court 1`] = `
+exports[`Storyshots app/pages/ToutesLesCollectivites/CollectiviteCarte Carte Collectivite Au Nom Court 1`] = `
 <ul>
   <a
     href="/collectivite/2/tableau_bord"
@@ -325,7 +325,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
 </ul>
 `;
 
-exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte Collectivite Au Nom Long 1`] = `
+exports[`Storyshots app/pages/ToutesLesCollectivites/CollectiviteCarte Carte Collectivite Au Nom Long 1`] = `
 <ul>
   <a
     href="/collectivite/3/tableau_bord"
@@ -650,7 +650,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte 
 </ul>
 `;
 
-exports[`Storyshots App/Pages/Toutes Les Collectivites/Collectivite Carte Carte Collectivite Syndicat 1`] = `
+exports[`Storyshots app/pages/ToutesLesCollectivites/CollectiviteCarte Carte Collectivite Syndicat 1`] = `
 <ul>
   <a
     href="/collectivite/3/tableau_bord"

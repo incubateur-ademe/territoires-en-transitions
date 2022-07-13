@@ -6,7 +6,9 @@ import {useParams} from 'react-router-dom';
 const ResetPasswordForm = lazy(() => import('./ResetPasswordForm'));
 
 /**
- * The user registration page, display the registration form.
+ * Permet à l'utilisateur de réinitialiser son mot de passe.
+ *
+ * On arrive ici une fois que l'on est passé par RecoverLandingPage.
  */
 export const ResetPasswordPage = () => {
   const {token} = useParams<{token: string}>();

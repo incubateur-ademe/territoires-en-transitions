@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel Tabs Documentation 1`] = `
+exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTabs Documentation 1`] = `
 <div
   className="fr-tabs"
 >
@@ -345,7 +345,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
 </div>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel Tabs Plusieurs Questions 1`] = `
+exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTabs Plusieurs Questions 1`] = `
 <div
   className="fr-tabs"
 >
@@ -690,7 +690,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
 </div>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel Tabs Question Binaire 1`] = `
+exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTabs Question Binaire 1`] = `
 <div
   className="fr-tabs"
 >
@@ -872,7 +872,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
 </div>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel Tabs Question Binaire Modifiee 1`] = `
+exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTabs Question Binaire Modifiee 1`] = `
 <div
   className="fr-tabs"
 >
@@ -1042,7 +1042,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
 </div>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel Tabs Question Choix 1`] = `
+exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTabs Question Choix 1`] = `
 <div
   className="fr-tabs"
 >
@@ -1270,7 +1270,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
 </div>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel Tabs Question Choix Modifiee 1`] = `
+exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTabs Question Choix Modifiee 1`] = `
 <div
   className="fr-tabs"
 >
@@ -1468,7 +1468,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
 </div>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel Tabs Question Proportion 1`] = `
+exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTabs Question Proportion 1`] = `
 <div
   className="fr-tabs"
 >
@@ -1663,7 +1663,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel
 </div>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Perso Potentiel Tabs Question Proportion Modifiee 1`] = `
+exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTabs Question Proportion Modifiee 1`] = `
 <div
   className="fr-tabs"
 >

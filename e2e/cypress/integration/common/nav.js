@@ -1,7 +1,7 @@
 /**
  * Steps dédiés à la navigation
  */
-import { Views } from './views';
+import { Views, CollectivitePages } from './views';
 
 export const navigateTo = (view) => {
   const { route, selector } = Views[view];
@@ -26,11 +26,23 @@ When(
   }
 );
 
+// navigue sur une page d'une collectivité
+When(
+  /je suis sur la page "([^"]*)" de la collectivité "(\d+)"/,
+  (page, collectiviteId) => {
+    const { route, selector } = CollectivitePages[page];
+    cy.visit(`/collectivite/${collectiviteId}/${route}`);
+    cy.get(selector).should('be.visible');
+  }
+);
+
 // vérifie qu'on est sur une route/vue
-When(/voi[rs] la vue(?: des)? "(.*)"/, (view) => {
+const isVisibleView = (view) => {
   const { selector } = Views[view];
   cy.get(selector).should('be.visible');
-});
+};
+When(/voi[rs] la vue(?: des)? "(.*)"/, isVisibleView);
+When(/la page "([^"]*)" est visible/, isVisibleView);
 
 // vérifie qu'on est pas sur une route/vue
 When(/ne vois (?:pas|plus) la vue(?: des)? "(.*)"/, (view) => {

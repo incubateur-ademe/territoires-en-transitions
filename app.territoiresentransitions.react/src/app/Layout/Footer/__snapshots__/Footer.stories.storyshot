@@ -1,0 +1,147 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots app/Layout/Footer Exemple 1`] = `
+<footer
+  className="footer fr-footer fr-mt-10w"
+  id="footer"
+  role="contentinfo"
+>
+  <div
+    className="fr-container"
+  >
+    <div
+      className="lg:flex"
+    >
+      <div
+        className="fr-footer__brand flex-shrink-0"
+      >
+        <p
+          className="fr-logo"
+          title="république française"
+        >
+          république
+          <br />
+          française
+        </p>
+        <div
+          className="px-6"
+        >
+          <img
+            alt="ADEME"
+            className="w-32"
+            loading="lazy"
+            src="ademe.jpg"
+          />
+        </div>
+      </div>
+      <div
+        className="fr-footer__content !mt-6 !flex-initial lg:!mt-0 lg:!ml-6"
+      >
+        <h5
+          className="w-full mb-4"
+        >
+          <a
+            href="https://territoiresentransitions.fr"
+            title="Accueil"
+          >
+            Territoires en Transitions
+          </a>
+        </h5>
+        <p
+          className="fr-footer__content-desc"
+        >
+          Territoires en transitions accompagne les collectivités afin de les aider à piloter plus facilement leur transition écologique.
+        </p>
+        <p
+          className="fr-footer__content-desc"
+        >
+          Vous rencontrez une difficulté ? Une suggestion pour nous aider à améliorer l'outil ?
+          <br />
+          Écrivez-nous à : 
+          <a
+            href="mailto:aide@territoiresentransitions.fr?subject=Aide sur app.territoiresentransitions.fr"
+          >
+            aide@territoiresentransitions.fr
+          </a>
+        </p>
+        <ul
+          className="fr-footer__content-list"
+        >
+          <li
+            className="fr-footer__content-item"
+          >
+            <a
+              className="fr-footer__content-link"
+              href="https://www.ademe.fr/"
+            >
+              ademe.fr
+            </a>
+          </li>
+          <li
+            className="fr-footer__content-item"
+          >
+            <a
+              className="fr-footer__content-link"
+              href="https://beta.gouv.fr/"
+            >
+              beta.gouv
+            </a>
+          </li>
+          <li
+            className="fr-footer__content-item"
+          >
+            <a
+              className="fr-footer__content-link"
+              href="https://territoireengagetransitionecologique.ademe.fr"
+            >
+              territoireengagetransitionecologique.ademe.fr
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div
+      className="fr-footer__bottom"
+    >
+      <ul
+        className="fr-footer__bottom-list"
+      >
+        <li
+          className="fr-footer__bottom-item"
+        >
+          <a
+            className="fr-footer__bottom-link"
+            href="https://territoiresentransitions.fr/mentions-legales/"
+            target="_self"
+          >
+            Mentions légales
+          </a>
+        </li>
+        <li
+          className="fr-footer__bottom-item"
+        >
+          <a
+            className="fr-footer__bottom-link"
+            href="https://www.ademe.fr/lademe/infos-pratiques/politique-protection-donnees-a-caractere-personnel"
+            rel="external noreferrer"
+            target="_blank"
+          >
+            Protection des données
+          </a>
+        </li>
+        <li
+          className="fr-footer__bottom-item"
+        >
+          <a
+            className="fr-footer__bottom-link"
+            href="/statistics"
+            onClick={[Function]}
+          >
+            Statistiques
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</footer>
+`;

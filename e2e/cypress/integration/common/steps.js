@@ -6,13 +6,12 @@
 
 import { Selectors } from './selectors';
 import { Expectations } from './expectations';
-import { LocalSelectors as AuthSelectors } from '../01-se-connecter/selectors';
 
 beforeEach(() => {
   cy.visit('/');
   // on attends que l'appli expose un objet `e2e` permettant de la contrôler
   cy.window({ log: false }).its('e2e.history').as('history');
-  cy.window({ log: false }).its('e2e.authBloc').as('authBloc');
+  cy.window({ log: false }).its('e2e.auth').as('auth');
   cy.window({ log: false }).its('e2e.supabaseClient').as('supabaseClient');
 
   // bouchon pour la fonction window.open
@@ -32,13 +31,22 @@ const Users = {
     password: 'yolododo',
   },
 };
-const SignInPage = AuthSelectors['formulaire de connexion'];
+const SignInPage = Selectors['formulaire de connexion'];
 Given(/je suis connecté en tant que "([^"]*)"/, function (userName) {
   const u = Users[userName];
   assert(u, 'utilisateur non trouvé');
-  cy.get('@authBloc').then((authBloc) => authBloc.connect(u));
+  cy.get('@auth').then((auth) => auth.connect(u));
   cy.get(SignInPage.selector).should('not.exist');
-  cy.get('[data-test=logoutBtn]').should('be.visible');
+  cy.get('[data-test=connectedMenu]').should('be.visible');
+});
+
+Given('les droits utilisateur sont réinitialisés', () => {
+  cy.task('supabase_rpc', { name: 'test_reset_droits' });
+});
+
+Given('je me déconnecte', () => {
+  cy.get('[data-test=connectedMenu]').click();
+  cy.get('[data-test=logoutBtn]').click();
 });
 
 // Met en pause le déroulement d'un scénario.
@@ -115,6 +123,9 @@ Given(
   /je clique sur le bouton "([^"]*)" de la page "([^"]*)"/,
   handleClickOnElement
 );
+Given(/^je clique sur le bouton "([^"]*)"$/, function (btnName) {
+  cy.get(resolveSelector(this, btnName).selector).click();
+});
 
 function fillFormWithValues(elem, dataTable) {
   const parent = resolveSelector(this, elem);

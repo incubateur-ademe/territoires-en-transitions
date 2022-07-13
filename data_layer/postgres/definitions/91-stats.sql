@@ -23,7 +23,7 @@ as
 with unique_collectivite_droit as (
     select d.collectivite_id, min(created_at) as created_at
     from private_utilisateur_droit d
-             join stats_real_collectivites c on d.collectivite_id = c.collectivite_id
+             join stats_real_collectivites c on d.collectivite_id = c.collectivite_id and active
     group by d.collectivite_id
 ),
      daily as (

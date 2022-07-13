@@ -1,6 +1,5 @@
-import {scoreBloc} from 'core-logic/observables/scoreBloc';
 import {ActionStatusDropdown} from 'ui/shared/actions/ActionStatusDropdown';
-import {ActionProgressBar} from 'ui/referentiels/ActionProgressBar';
+import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
 import {ActionReferentielDisplayTitle} from 'ui/referentiels/ActionReferentielDisplayTitle';
 import {ActionReferentielDescription} from 'ui/referentiels/ActionReferentielDescription';
 import {Spacer} from 'ui/shared/Spacer';
@@ -60,9 +59,7 @@ export const ActionReferentielAvancementCard = ({
         <ActionReferentielDisplayTitle action={action} />
         <Spacer size={1} />
         <ActionReferentielDescription action={action} />
-        {action.have_questions && (
-          <PersoPotentiel actionDef={action} scoreBloc={scoreBloc} />
-        )}
+        {action.have_questions && <PersoPotentiel actionDef={action} />}
         {action.have_exemples && <ActionExemplesExpandPanel action={action} />}
         {action.have_preuve && <ActionPreuvesExpandPanel action={action} />}
         <ActionCommentaire action={action} />
@@ -71,7 +68,7 @@ export const ActionReferentielAvancementCard = ({
         <div className="w-full flex flex-col">
           {!isLeaf && (
             <div className="pt-4">
-              <ActionProgressBar actionId={action.id} scoreBloc={scoreBloc} />
+              <ActionProgressBar actionId={action.id} />
             </div>
           )}
           {isLeaf && (
@@ -79,10 +76,7 @@ export const ActionReferentielAvancementCard = ({
               className="pt-2 flex justify-end"
               data-test={`task-${action.id}`}
             >
-              <ActionStatusDropdown
-                actionId={action.id}
-                scoreBloc={scoreBloc}
-              />
+              <ActionStatusDropdown actionId={action.id} />
             </div>
           )}
         </div>

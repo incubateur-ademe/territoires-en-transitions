@@ -1,19 +1,23 @@
 import {actionAvancementColors} from 'app/theme';
 import {TooltipItem} from 'chart.js';
 import {Bar} from 'react-chartjs-2';
+import {Referentiel} from 'types/litterals';
 import {AxisAvancementSample} from 'ui/charts/chartTypes';
-import {Spacer} from 'ui/shared/Spacer';
+import {CanvasDownloadButton} from 'ui/charts/CanvasDownloadButton';
 import {addOpacityToHex} from 'utils/addOpacityToHex';
 import {toFixed} from 'utils/toFixed';
 
 export type ReferentielAxisAvancementStackedBarProps = {
   data: AxisAvancementSample[];
   widthPx?: number;
+  referentiel: Referentiel;
 };
 export const ReferentielAxisAvancementStackedBar = ({
   data,
   widthPx = 500,
+  referentiel,
 }: ReferentielAxisAvancementStackedBarProps) => {
+  const canvasId = `axis_avancement_bar_${referentiel}`;
   const formatedData = {
     labels: data.map(sample => sample.label),
     datasets: [
@@ -40,14 +44,17 @@ export const ReferentielAxisAvancementStackedBar = ({
     ],
   };
   return (
-    <div style={{width: `${widthPx}px`, marginLeft: '0px'}}>
+    <div
+      className="flex flex-col items-center gap-2"
+      style={{width: `${widthPx}px`, marginLeft: '0px'}}
+    >
       <div className="font-semibold text-center text-xl">
         État d'avancement par axes
       </div>
-      <Spacer size={2} />
       <Bar
+        id={canvasId}
         data={formatedData}
-        height={58 * data.length}
+        height={85 * data.length}
         width={widthPx}
         options={{
           indexAxis: 'y',
@@ -55,6 +62,10 @@ export const ReferentielAxisAvancementStackedBar = ({
             legend: {display: false},
             tooltip: {
               callbacks: {
+                title: items => {
+                  const dataIndex = items?.[0].dataIndex;
+                  return data[dataIndex]?.label.map(s => s[0]).join(' ');
+                },
                 label: (data: TooltipItem<'bar'>) => {
                   return `${data.dataset.label} : ${toFixed(
                     data.raw as number,
@@ -72,7 +83,6 @@ export const ReferentielAxisAvancementStackedBar = ({
               max: 100,
               stacked: true,
               ticks: {
-                font: {size: 10},
                 stepSize: 25,
                 backdropPadding: 0,
                 callback: function () {
@@ -84,15 +94,12 @@ export const ReferentielAxisAvancementStackedBar = ({
             y: {
               position: 'left',
               stacked: true,
-              ticks: {padding: 0, font: {size: 10}},
+              ticks: {padding: 0},
               afterFit: function (scaleInstance) {
-                scaleInstance.width = 120; // largeur libellés à gauche
+                scaleInstance.width = 175; // largeur libellés à gauche
               },
             },
             z: {
-              ticks: {
-                font: {size: 8},
-              },
               position: 'right',
               labels: data.map(
                 ({potentielPoints: maxPoints}) => `(${maxPoints} points)`
@@ -100,6 +107,11 @@ export const ReferentielAxisAvancementStackedBar = ({
             },
           },
         }}
+      />
+      <CanvasDownloadButton
+        fileName={`État d'avancement par axes ${referentiel}.png`}
+        canvasId={canvasId}
+        buttonText={`Télécharger l'état d'avancement par axes pour ${referentiel.toUpperCase()}`}
       />
     </div>
   );

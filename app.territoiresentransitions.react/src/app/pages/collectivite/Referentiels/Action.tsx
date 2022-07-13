@@ -2,7 +2,6 @@ import {Link} from 'react-router-dom';
 import {DescriptionContextAndRessourcesDialogButton} from './_DescriptionContextAndRessourcesDialogButton';
 import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
 import {IndicateurDefinitionRead} from 'generated/dataLayer/indicateur_definition_read';
-import {scoreBloc} from 'core-logic/observables/scoreBloc';
 import {indicateurActionReadEndpoint} from 'core-logic/api/endpoints/IndicateurActionReadEndpoint';
 import {useEffect, useState} from 'react';
 import {useAllIndicateurDefinitions} from 'core-logic/hooks/indicateur_definition';
@@ -11,13 +10,14 @@ import {Tabs, Tab} from '@dataesr/react-dsfr';
 import {ActionReferentielDisplayTitle} from 'ui/referentiels/ActionReferentielDisplayTitle';
 import {Spacer} from 'ui/shared/Spacer';
 import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
-import {ActionProgressBar} from 'ui/referentiels/ActionProgressBar';
+import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
 import {ActionReferentielAvancementRecursiveCard} from 'ui/referentiels/ActionReferentielAvancementRecursiveCard';
 import {Switch} from '@material-ui/core';
 import {useActionSummaryChildren} from 'core-logic/hooks/referentiel';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {OrientationQuickNav} from 'app/pages/collectivite/Referentiels/QuickNav';
 import {PersoPotentiel} from '../PersoPotentielModal/PersoPotentiel';
+import {useActionScore} from 'core-logic/hooks/scoreHooks';
 
 const useActionLinkedIndicateurDefinitions = (actionId: string) => {
   const [linkedIndicateurDefinitions, setLinkedIndicateurDefinitions] =
@@ -51,7 +51,7 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
   const children = useActionSummaryChildren(action);
 
   const isFullyRenseigne = (action: ActionDefinitionSummary): boolean => {
-    const actionScore = scoreBloc.getScore(action.id, action.referentiel);
+    const actionScore = useActionScore(action.id);
     return (
       !!actionScore &&
       (actionScore.completed_taches_count === actionScore.total_taches_count ||
@@ -75,14 +75,14 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
           <ActionReferentielDisplayTitle action={action} />
         </div>
         <div className="w-1/6">
-          <ActionProgressBar actionId={action.id} scoreBloc={scoreBloc} />
+          <ActionProgressBar actionId={action.id} />
         </div>
       </div>
       <div className="mb-16">
         <div className="flex flex-col w-4/5">
           {action.have_questions && (
             <>
-              <PersoPotentiel actionDef={action} scoreBloc={scoreBloc} />
+              <PersoPotentiel actionDef={action} />
               <Spacer size={2} />
             </>
           )}

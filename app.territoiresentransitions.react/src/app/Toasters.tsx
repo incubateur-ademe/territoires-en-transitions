@@ -67,15 +67,13 @@ class EndpointToaster<T> extends React.Component<
     };
 
     return (
-      <div>
-        <Snackbar
-          open={this.state.open}
-          autoHideDuration={2000}
-          onClose={handleClose}
-        >
-          {composed ?? <div />}
-        </Snackbar>
-      </div>
+      <Snackbar
+        open={this.state.open}
+        autoHideDuration={2000}
+        onClose={handleClose}
+      >
+        {composed ?? <div />}
+      </Snackbar>
     );
   }
 
