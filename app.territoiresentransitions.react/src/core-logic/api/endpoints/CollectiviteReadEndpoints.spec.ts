@@ -26,14 +26,6 @@ describe('All Collectivite reading endpoint should retrieve 1628 Collectivites',
   });
 });
 
-describe('Elses Collectivite reading endpoint should retrieve only claimed Collectivite', () => {
-  it("should retrieve else's active Collectivite (3) if no id is given", async () => {
-    await supabaseClient.auth.signIn(yiliCredentials);
-    const results = await elsesCollectiviteReadEndpoint.getBy({});
-    expect(results).toHaveLength(3);
-  });
-});
-
 describe('Owned Collectivite reading endpoint ', () => {
   it('should retrieve 2 Collectivites for Yolo (referent and agent)', async () => {
     await supabaseClient.auth.signIn(yoloCredentials);
@@ -45,7 +37,7 @@ describe('Owned Collectivite reading endpoint ', () => {
       },
       {
         ...collectivite2,
-        niveau_acces: 'agent',
+        niveau_acces: 'edition',
       },
     ];
     expect(results.length).toEqual(2);
