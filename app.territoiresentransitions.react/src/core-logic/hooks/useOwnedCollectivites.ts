@@ -21,7 +21,7 @@ const fetchOwnedCollectivites = async (): Promise<MesCollectivitesRead[]> => {
 // la requête est rechargée quand le user id change
 export const useOwnedCollectivites = () => {
   const {user, isConnected} = useAuth();
-  const {data} = useQuery(['mes_collectivitess', user?.id], () =>
+  const {data} = useQuery(['mes_collectivites', user?.id], () =>
     isConnected ? fetchOwnedCollectivites() : null
   );
   return data || null;

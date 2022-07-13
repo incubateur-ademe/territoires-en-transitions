@@ -1,1 +1,1 @@
-export type RoleName = 'agent' | 'referent' | 'conseiller' | 'auditeur';
+export type NiveauAcces = 'admin' | 'edition' | 'lecture';
