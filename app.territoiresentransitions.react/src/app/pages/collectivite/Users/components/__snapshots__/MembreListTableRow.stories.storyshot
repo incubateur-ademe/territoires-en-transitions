@@ -138,6 +138,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow A
       >
         <button
           className="flex items-center w-full p-2 pr-4 text-left"
+          onClick={[Function]}
         >
           <div
             className="w-6 mr-2"
@@ -152,12 +153,13 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow A
         </button>
         <button
           className="flex items-center w-full p-2 pr-4 text-left"
+          onClick={[Function]}
         >
           <div
             className="w-6 mr-2"
           />
           <span>
-            Économie circulaire
+            Économie Circulaire
           </span>
         </button>
       </div>
@@ -171,6 +173,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow A
     >
       <textarea
         className="w-full resize-none"
+        onChange={[Function]}
         value="Cheffe de projet PCAET"
       />
     </div>
@@ -198,6 +201,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow A
       >
         <button
           className="flex items-center w-full p-2 pr-4 text-left"
+          onClick={[Function]}
         >
           <div
             className="w-6 mr-2"
@@ -219,6 +223,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow A
         </button>
         <button
           className="flex items-center w-full p-2 pr-4 text-left"
+          onClick={[Function]}
         >
           <div
             className="w-6 mr-2"
@@ -236,6 +241,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow A
         </button>
         <button
           className="flex items-center w-full p-2 pr-4 text-left"
+          onClick={[Function]}
         >
           <div
             className="w-6 mr-2"
@@ -253,6 +259,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow A
         </button>
         <button
           className="flex w-full px-2 py-4 text-left text-red-600"
+          onClick={[Function]}
         >
           <div
             className="w-8"
@@ -396,7 +403,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow E
           <span
             className="block"
           >
-            Économie circulaire
+            Économie Circulaire
           </span>
         </div>
         <span
@@ -408,6 +415,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow E
       >
         <button
           className="flex items-center w-full p-2 pr-4 text-left"
+          onClick={[Function]}
         >
           <div
             className="w-6 mr-2"
@@ -422,6 +430,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow E
         </button>
         <button
           className="flex items-center w-full p-2 pr-4 text-left"
+          onClick={[Function]}
         >
           <div
             className="w-6 mr-2"
@@ -431,7 +440,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow E
             />
           </div>
           <span>
-            Économie circulaire
+            Économie Circulaire
           </span>
         </button>
       </div>
@@ -445,6 +454,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow E
     >
       <textarea
         className="w-full resize-none"
+        onChange={[Function]}
         value="Vice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier, adjoint au maire en charge du dVice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier"
       />
     </div>
@@ -493,6 +503,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow E
         </div>
         <button
           className="flex w-full px-2 py-4 text-left text-red-600"
+          onClick={[Function]}
         >
           <div
             className="w-8"
@@ -643,6 +654,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow L
       >
         <button
           className="flex items-center w-full p-2 pr-4 text-left"
+          onClick={[Function]}
         >
           <div
             className="w-6 mr-2"
@@ -657,12 +669,13 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow L
         </button>
         <button
           className="flex items-center w-full p-2 pr-4 text-left"
+          onClick={[Function]}
         >
           <div
             className="w-6 mr-2"
           />
           <span>
-            Économie circulaire
+            Économie Circulaire
           </span>
         </button>
       </div>
@@ -676,6 +689,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow L
     >
       <textarea
         className="w-full resize-none"
+        onChange={[Function]}
         value="Consultant assistance à maîtrise d’ouvrage - Bureau d’études Green Planet"
       />
     </div>
@@ -724,6 +738,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow L
         </div>
         <button
           className="flex w-full px-2 py-4 text-left text-red-600"
+          onClick={[Function]}
         >
           <div
             className="w-8"
@@ -874,6 +889,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow T
       >
         <button
           className="flex items-center w-full p-2 pr-4 text-left"
+          onClick={[Function]}
         >
           <div
             className="w-6 mr-2"
@@ -888,12 +904,13 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow T
         </button>
         <button
           className="flex items-center w-full p-2 pr-4 text-left"
+          onClick={[Function]}
         >
           <div
             className="w-6 mr-2"
           />
           <span>
-            Économie circulaire
+            Économie Circulaire
           </span>
         </button>
       </div>
@@ -907,6 +924,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow T
     >
       <textarea
         className="w-full resize-none"
+        onChange={[Function]}
         value="Consultant assistance à maîtrise d’ouvrage - Bureau d’études Green Planet"
       />
     </div>
@@ -955,6 +973,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow T
         </div>
         <button
           className="flex w-full px-2 py-4 text-left text-red-600"
+          onClick={[Function]}
         >
           <div
             className="w-8"

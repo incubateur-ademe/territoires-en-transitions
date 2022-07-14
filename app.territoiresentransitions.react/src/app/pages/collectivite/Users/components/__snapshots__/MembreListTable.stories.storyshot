@@ -56,7 +56,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
             </span>
           </th>
           <th
-            className="py-3 px-5 whitespace-nowraptext-right"
+            className="py-3 px-5 whitespace-nowrap text-right"
           >
             <div
               className="flex items-center justify-end"
@@ -212,6 +212,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
               >
                 <button
                   className="flex items-center w-full p-2 pr-4 text-left"
+                  onClick={[Function]}
                 >
                   <div
                     className="w-6 mr-2"
@@ -226,12 +227,13 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                 </button>
                 <button
                   className="flex items-center w-full p-2 pr-4 text-left"
+                  onClick={[Function]}
                 >
                   <div
                     className="w-6 mr-2"
                   />
                   <span>
-                    Économie circulaire
+                    Économie Circulaire
                   </span>
                 </button>
               </div>
@@ -245,6 +247,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
             >
               <textarea
                 className="w-full resize-none"
+                onChange={[Function]}
                 value="Cheffe de projet PCAET"
               />
             </div>
@@ -272,6 +275,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
               >
                 <button
                   className="flex items-center w-full p-2 pr-4 text-left"
+                  onClick={[Function]}
                 >
                   <div
                     className="w-6 mr-2"
@@ -293,6 +297,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                 </button>
                 <button
                   className="flex items-center w-full p-2 pr-4 text-left"
+                  onClick={[Function]}
                 >
                   <div
                     className="w-6 mr-2"
@@ -310,6 +315,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                 </button>
                 <button
                   className="flex items-center w-full p-2 pr-4 text-left"
+                  onClick={[Function]}
                 >
                   <div
                     className="w-6 mr-2"
@@ -327,6 +333,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                 </button>
                 <button
                   className="flex w-full px-2 py-4 text-left text-red-600"
+                  onClick={[Function]}
                 >
                   <div
                     className="w-8"
@@ -382,7 +389,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
             <span
               className="block"
             >
-              Économie circulaire
+              Économie Circulaire
             </span>
           </td>
           <td
@@ -418,6 +425,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
               >
                 <button
                   className="flex items-center w-full p-2 pr-4 text-left"
+                  onClick={[Function]}
                 >
                   <div
                     className="w-6 mr-2"
@@ -435,6 +443,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                 </button>
                 <button
                   className="flex items-center w-full p-2 pr-4 text-left"
+                  onClick={[Function]}
                 >
                   <div
                     className="w-6 mr-2"
@@ -456,6 +465,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                 </button>
                 <button
                   className="flex items-center w-full p-2 pr-4 text-left"
+                  onClick={[Function]}
                 >
                   <div
                     className="w-6 mr-2"
@@ -473,6 +483,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                 </button>
                 <button
                   className="flex w-full px-2 py-4 text-left text-red-600"
+                  onClick={[Function]}
                 >
                   <div
                     className="w-8"
@@ -559,6 +570,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
               >
                 <button
                   className="flex items-center w-full p-2 pr-4 text-left"
+                  onClick={[Function]}
                 >
                   <div
                     className="w-6 mr-2"
@@ -576,6 +588,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                 </button>
                 <button
                   className="flex items-center w-full p-2 pr-4 text-left"
+                  onClick={[Function]}
                 >
                   <div
                     className="w-6 mr-2"
@@ -593,6 +606,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                 </button>
                 <button
                   className="flex items-center w-full p-2 pr-4 text-left"
+                  onClick={[Function]}
                 >
                   <div
                     className="w-6 mr-2"
@@ -614,6 +628,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                 </button>
                 <button
                   className="flex w-full px-2 py-4 text-left text-red-600"
+                  onClick={[Function]}
                 >
                   <div
                     className="w-8"
@@ -686,7 +701,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
             </span>
           </th>
           <th
-            className="py-3 px-5 whitespace-nowraptext-right"
+            className="py-3 px-5 whitespace-nowrap text-right"
           >
             <div
               className="flex items-center justify-end"
@@ -896,7 +911,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
                   <span
                     className="block"
                   >
-                    Économie circulaire
+                    Économie Circulaire
                   </span>
                 </div>
                 <span
@@ -908,6 +923,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
               >
                 <button
                   className="flex items-center w-full p-2 pr-4 text-left"
+                  onClick={[Function]}
                 >
                   <div
                     className="w-6 mr-2"
@@ -922,6 +938,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
                 </button>
                 <button
                   className="flex items-center w-full p-2 pr-4 text-left"
+                  onClick={[Function]}
                 >
                   <div
                     className="w-6 mr-2"
@@ -931,7 +948,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
                     />
                   </div>
                   <span>
-                    Économie circulaire
+                    Économie Circulaire
                   </span>
                 </button>
               </div>
@@ -945,6 +962,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
             >
               <textarea
                 className="w-full resize-none"
+                onChange={[Function]}
                 value="Vice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier, adjoint au maire en charge du dVice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier"
               />
             </div>
@@ -993,6 +1011,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
                 </div>
                 <button
                   className="flex w-full px-2 py-4 text-left text-red-600"
+                  onClick={[Function]}
                 >
                   <div
                     className="w-8"
@@ -1126,7 +1145,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
             </span>
           </th>
           <th
-            className="py-3 px-5 whitespace-nowraptext-right"
+            className="py-3 px-5 whitespace-nowrap text-right"
           >
             <div
               className="flex items-center justify-end"
@@ -1251,7 +1270,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
             <span
               className="block"
             >
-              Économie circulaire
+              Économie Circulaire
             </span>
           </td>
           <td
@@ -1409,6 +1428,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
               >
                 <button
                   className="flex items-center w-full p-2 pr-4 text-left"
+                  onClick={[Function]}
                 >
                   <div
                     className="w-6 mr-2"
@@ -1423,12 +1443,13 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
                 </button>
                 <button
                   className="flex items-center w-full p-2 pr-4 text-left"
+                  onClick={[Function]}
                 >
                   <div
                     className="w-6 mr-2"
                   />
                   <span>
-                    Économie circulaire
+                    Économie Circulaire
                   </span>
                 </button>
               </div>
@@ -1442,6 +1463,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
             >
               <textarea
                 className="w-full resize-none"
+                onChange={[Function]}
                 value="Consultant assistance à maîtrise d’ouvrage - Bureau d’études Green Planet"
               />
             </div>
@@ -1490,6 +1512,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
                 </div>
                 <button
                   className="flex w-full px-2 py-4 text-left text-red-600"
+                  onClick={[Function]}
                 >
                   <div
                     className="w-8"
@@ -1562,7 +1585,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable Empt
             </span>
           </th>
           <th
-            className="py-3 px-5 whitespace-nowraptext-right"
+            className="py-3 px-5 whitespace-nowrap text-right"
           >
             <div
               className="flex items-center justify-end"
@@ -1653,7 +1676,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable Is L
             </span>
           </th>
           <th
-            className="py-3 px-5 whitespace-nowraptext-right"
+            className="py-3 px-5 whitespace-nowrap text-right"
           >
             <div
               className="flex items-center justify-end"
@@ -1744,7 +1767,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable TODO
             </span>
           </th>
           <th
-            className="py-3 px-5 whitespace-nowraptext-right"
+            className="py-3 px-5 whitespace-nowrap text-right"
           >
             <div
               className="flex items-center justify-end"
