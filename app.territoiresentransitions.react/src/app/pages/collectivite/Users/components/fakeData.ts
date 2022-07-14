@@ -1,4 +1,4 @@
-import {Membre} from 'app/pages/collectivite/Users/membres.io';
+import {Membre} from 'app/pages/collectivite/Users/types';
 
 export const fakeAdmin: Membre = {
   user_id: '1',

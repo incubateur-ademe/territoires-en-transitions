@@ -1,8 +1,4 @@
-import {
-  Membre,
-  TMembreFonction,
-  TUpdateMembreField,
-} from 'app/pages/collectivite/Users/membres.io';
+import {Membre, TRemoveFromCollectivite, TUpdateMembre} from '../types';
 import MembreListTableRow from './MembreListTableRow';
 
 const thClassNames = 'py-3 px-5 whitespace-nowrap';
@@ -11,16 +7,17 @@ export type UserListTableProps = {
   currentUserId: string;
   membres?: Membre[];
   isLoading: boolean;
-  updateMembreFonction: TUpdateMembreField<TMembreFonction>;
+  updateMembre: TUpdateMembre;
+  removeFromCollectivite: TRemoveFromCollectivite;
 };
 
 const MembreListTable = ({
   membres,
   isLoading,
   currentUserId,
-  updateMembreFonction,
+  updateMembre,
+  removeFromCollectivite,
 }: UserListTableProps) => {
-  console.log('membres  ', membres);
   const currentUserAccess =
     membres?.find(membre => membre.user_id === currentUserId)?.niveau_acces ??
     'lecture';
@@ -31,27 +28,27 @@ const MembreListTable = ({
         <table className="min-w-full text-sm text-left">
           <thead>
             <tr>
-              <th className={`${thClassNames}`}>Nom et adresse mail</th>
-              <th className={`${thClassNames}`}>Numéro de tél.</th>
-              <th className={`${thClassNames}`}>
+              <th className={thClassNames}>Nom et adresse mail</th>
+              <th className={thClassNames}>Numéro de tél.</th>
+              <th className={thClassNames}>
                 Fonction{' '}
                 <span className="block text-xs font-normal">
                   dans cette collectivité
                 </span>
               </th>
-              <th className={`${thClassNames}`}>
+              <th className={thClassNames}>
                 Champs d'intervention{' '}
                 <span className="block text-xs font-normal">
                   dans cette collectivité
                 </span>
               </th>
-              <th className={`${thClassNames}`}>
+              <th className={thClassNames}>
                 Détails fonction{' '}
                 <span className="block text-xs font-normal">
                   dans cette collectivité
                 </span>
               </th>
-              <th className={`${thClassNames}text-right`}>
+              <th className={`${thClassNames} text-right`}>
                 <div className="flex items-center justify-end">
                   Accès
                   <a href="#" className="!shadow-none">
@@ -68,23 +65,26 @@ const MembreListTable = ({
                   Chargement...
                 </td>
               </tr>
-            ) : membres ? (
-              membres.map(membre => (
-                <MembreListTableRow
-                  key={membre.user_id}
-                  membre={membre}
-                  currentUserAccess={currentUserAccess}
-                  currentUserId={currentUserId}
-                  updateMembreFonction={updateMembreFonction}
-                />
-              ))
-            ) : (
+            ) : null}
+            {membres
+              ? membres.map(membre => (
+                  <MembreListTableRow
+                    key={membre.user_id}
+                    membre={membre}
+                    currentUserAccess={currentUserAccess}
+                    currentUserId={currentUserId}
+                    updateMembre={updateMembre}
+                    removeFromCollectivite={removeFromCollectivite}
+                  />
+                ))
+              : null}
+            {!membres && !isLoading ? (
               <tr className="bg-white">
                 <td colSpan={6} className="pt-6 pb-24 px-6">
                   Personne n'est rattaché à cette collectivité
                 </td>
               </tr>
-            )}
+            ) : null}
           </tbody>
         </table>
       </div>
