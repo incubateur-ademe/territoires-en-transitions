@@ -25,7 +25,7 @@ const readonlyCollectivite: CurrentCollectivite = {
   nom: 'Test collectivite',
   collectivite_id: 1,
   niveau_acces: null,
-  isReferent: false,
+  isAdmin: false,
   readonly: true,
 };
 
@@ -33,7 +33,7 @@ const currentCollectivite: CurrentCollectivite = {
   nom: 'Test collectivite',
   collectivite_id: 1,
   niveau_acces: 'admin',
-  isReferent: true,
+  isAdmin: true,
   readonly: false,
 };
 
