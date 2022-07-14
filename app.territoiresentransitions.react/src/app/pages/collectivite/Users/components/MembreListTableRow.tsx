@@ -1,18 +1,14 @@
-import {
-  Membre,
-  TMembreFonction,
-  TNiveauAcces,
-  TUpdateMembreField,
-} from 'app/pages/collectivite/Users/membres.io';
-import {keys} from 'ramda';
-import {useMemo, useState} from 'react';
+import {TNiveauAcces, TRemoveFromCollectivite, TUpdateMembre} from '../types';
+import {Membre, TMembreFonction} from 'app/pages/collectivite/Users/types';
 import {Referentiel} from 'types/litterals';
+import {referentielToName} from 'app/labels';
 
 export type TMembreListTableRowProps = {
   currentUserId: string;
   currentUserAccess: TNiveauAcces;
   membre: Membre;
-  updateMembreFonction: TUpdateMembreField<TMembreFonction>;
+  updateMembre: TUpdateMembre;
+  removeFromCollectivite: TRemoveFromCollectivite;
 };
 
 const membreFonctionLabels: Record<TMembreFonction, string> = {
@@ -29,6 +25,12 @@ const niveauAccesLabels: Record<TNiveauAcces, string> = {
   lecture: 'Lecture',
 };
 
+const niveauAccessDetail: Record<TNiveauAcces, string> = {
+  admin: 'Peut entièrement configurer et éditer',
+  edition: 'Peut éditer et inviter de nouveaux membres',
+  lecture: 'Peut uniquement consulter',
+};
+
 const rowClassNames = 'h-20 border-b border-gray-300 bg-white';
 const cellClassNames = 'relative px-4';
 
@@ -36,66 +38,94 @@ const MembreListTableRow = ({
   currentUserId,
   currentUserAccess,
   membre,
-  updateMembreFonction,
+  updateMembre,
+  removeFromCollectivite,
 }: TMembreListTableRowProps) => {
   const interventionOptions: Referentiel[] = ['cae', 'eci'];
+  const {
+    user_id: membre_id,
+    nom,
+    prenom,
+    telephone,
+    email,
+    fonction,
+    details_fonction,
+    champ_intervention,
+    niveau_acces,
+  } = membre;
 
-  const isCurrentUser = useMemo(() => {
-    return currentUserId === membre.user_id;
-  }, [currentUserId, membre.user_id]);
+  const isCurrentUser = currentUserId === membre_id;
+
+  const onRemove = () => {
+    if (
+      confirm(
+        'Etes-vous sûr de vouloir retirer cette utilisateur de la collectivité ?'
+      )
+    ) {
+      removeFromCollectivite(membre_id);
+    }
+  };
 
   return (
-    <tr className={`${rowClassNames}`}>
-      <td className={`${cellClassNames}`}>
+    <tr className={rowClassNames}>
+      <td className={cellClassNames}>
         <span className="font-bold">
-          {membre.nom} {membre.prenom} {isCurrentUser}
+          {nom} {prenom} {isCurrentUser}
         </span>
-        <span className="block mt-1 text-xs text-gray-500">{membre.email}</span>
+        <span className="block mt-1 text-xs text-gray-500">{email}</span>
       </td>
-      <td className={`${cellClassNames}`}>
-        <span>{membre.telephone}</span>
+      <td className={cellClassNames}>
+        <span>{telephone}</span>
       </td>
-      <td className={`${cellClassNames}`}>
+      <td className={cellClassNames}>
         {/* <span>{user.fonction}</span> */}
         {isCurrentUser ? (
           <FonctionDropdown
-            value={membre.fonction}
+            value={fonction}
             labels={membreFonctionLabels}
-            onSelect={updatedMembreFunction =>
-              updateMembreFonction(membre.user_id, updatedMembreFunction)
+            onChange={value =>
+              updateMembre({membre_id, name: 'fonction', value})
             }
           />
         ) : (
-          <span>
-            {membre.fonction && membreFonctionLabels[membre.fonction]}
-          </span>
+          <span>{fonction && membreFonctionLabels[fonction]}</span>
         )}
       </td>
       <td className={`${cellClassNames} pr-0`}>
         {isCurrentUser ? (
           <ChampsInterventionDropdown
-            values={membre.champ_intervention ?? []}
+            values={champ_intervention ?? []}
             options={interventionOptions}
+            onChange={value =>
+              updateMembre({membre_id, name: 'champ_intervention', value})
+            }
           />
         ) : (
-          (membre.champ_intervention ?? []).map(champ => (
+          (champ_intervention ?? []).map(champ => (
             <span key={champ} className="block">
-              {champ === 'cae' ? 'Climat Air Énergie' : 'Économie circulaire'}
+              {referentielToName[champ]}
             </span>
           ))
         )}
       </td>
-      <td className={`${cellClassNames}`}>
+      <td className={cellClassNames}>
         {isCurrentUser ? (
           <div className="py-1 px-2 border border-gray-300">
             <textarea
-              value={membre.details_fonction}
+              value={details_fonction}
               className="w-full resize-none"
+              onChange={e =>
+                updateMembre({
+                  membre_id,
+                  name: 'details_fonction',
+                  value: e.target.value,
+                })
+              }
             />
           </div>
         ) : (
-          <span title={membre.details_fonction} className="w-72 line-clamp-3">
-            {membre.details_fonction}
+          <span title={details_fonction} className="w-72 line-clamp-3">
+            {details_fonction}
           </span>
         )}
       </td>
@@ -104,11 +134,15 @@ const MembreListTableRow = ({
           <AccesDropdown
             isCurrentUser={isCurrentUser}
             currentUserAccess={currentUserAccess}
-            value={membre.niveau_acces}
+            value={niveau_acces}
             labels={niveauAccesLabels}
+            onChange={value =>
+              updateMembre({membre_id, name: 'niveau_access', value})
+            }
+            onRemove={onRemove}
           />
         ) : (
-          <span>{niveauAccesLabels[membre.niveau_acces]}</span>
+          <span>{niveauAccesLabels[niveau_acces]}</span>
         )}
       </td>
     </tr>
@@ -120,38 +154,31 @@ export default MembreListTableRow;
 const FonctionDropdown = ({
   value,
   labels,
-  onSelect,
+  onChange,
 }: {
   value?: TMembreFonction;
   labels: Record<TMembreFonction, string>;
-  onSelect: (value: TMembreFonction) => void;
+  onChange: (value: TMembreFonction) => void;
 }) => {
-  const [selectedValue, setSelectedValue] = useState(value);
-
   return (
     <div className="group relative">
       <button className="flex items-center w-full p-2 -ml-2 text-left">
-        {selectedValue && (
-          <span className="mr-auto">{labels[selectedValue]}</span>
-        )}
+        {value ? <span className="mr-auto">{labels[value]}</span> : null}
         <span className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 group-focus-within:rotate-180" />
       </button>
       <div className="bg-white invisible absolute -left-2 top-full min-w-full w-max transition-all opacity-0 shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50">
-        {keys(labels).map((v: TMembreFonction) => (
+        {Object.keys(labels).map(v => (
           <button
             key={v}
             className="flex items-center w-full p-2 text-left"
-            onClick={() => {
-              setSelectedValue(v);
-              onSelect(v);
-            }}
+            onClick={() => onChange(v as TMembreFonction)}
           >
             <div className="w-6 mr-2">
-              {selectedValue === v && (
+              {value === v ? (
                 <span className="block fr-fi-check-line scale-75" />
-              )}
+              ) : null}
             </div>
-            <span>{labels[v]}</span>
+            <span>{labels[v as TMembreFonction]}</span>
           </button>
         ))}
       </div>
@@ -162,17 +189,28 @@ const FonctionDropdown = ({
 const ChampsInterventionDropdown = ({
   values,
   options,
+  onChange,
 }: {
   values: Referentiel[];
   options: Referentiel[];
+  onChange: (value: Referentiel[]) => void;
 }) => {
+  const updateSelectedOptions = (clickedOption: Referentiel) => {
+    const index = options.indexOf(clickedOption);
+    return index !== -1
+      ? // génère un nouveau tableau sans l'option retirée
+        [...options.slice(0, index), ...options.slice(index + 1)]
+      : // ou avec l'option ajoutée
+        [...options, clickedOption];
+  };
+
   return (
     <div className="group relative">
       <button className="flex items-center w-full p-2 -ml-2 text-left">
         <div className="mr-auto">
           {values.map(v => (
             <span key={v} className="block">
-              {v === 'cae' ? 'Climat Air Énergie' : 'Économie circulaire'}
+              {referentielToName[v]}
             </span>
           ))}
         </div>
@@ -183,15 +221,14 @@ const ChampsInterventionDropdown = ({
           <button
             className="flex items-center w-full p-2 pr-4 text-left"
             key={v}
+            onClick={() => onChange(updateSelectedOptions(v as Referentiel))}
           >
             <div className="w-6 mr-2">
-              {values.some(value => value === v) && (
+              {values.find(value => value === v) ? (
                 <span className="block fr-fi-check-line scale-75" />
-              )}
+              ) : null}
             </div>
-            <span>
-              {v === 'cae' ? 'Climat Air Énergie' : 'Économie circulaire'}
-            </span>
+            <span>{referentielToName[v]}</span>
           </button>
         ))}
       </div>
@@ -204,6 +241,8 @@ type AccesDropdownProps = {
   currentUserAccess: TNiveauAcces;
   value: TNiveauAcces;
   labels: Record<TNiveauAcces, string>;
+  onChange: (value: TNiveauAcces) => void;
+  onRemove: () => void;
 };
 
 const AccesDropdown = ({
@@ -211,6 +250,8 @@ const AccesDropdown = ({
   currentUserAccess,
   value,
   labels,
+  onChange,
+  onRemove,
 }: AccesDropdownProps) => {
   return (
     <div className="group relative flex -mr-2">
@@ -220,23 +261,21 @@ const AccesDropdown = ({
       </button>
       <div className="bg-white invisible absolute right-0 top-full min-w-full w-max transition-all opacity-0 shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50">
         {currentUserAccess === 'admin' ? (
-          keys(labels).map(v => (
+          Object.keys(labels).map(v => (
             <button
               className="flex items-center w-full p-2 pr-4 text-left"
               key={v}
+              onClick={() => onChange(v as TNiveauAcces)}
             >
               <div className="w-6 mr-2">
-                {value === v && (
+                {value === v ? (
                   <span className="block fr-fi-check-line scale-75" />
-                )}
+                ) : null}
               </div>
               <div>
-                <div>{labels[v]}</div>
+                <div>{labels[v as TNiveauAcces]}</div>
                 <div className="mt-1 text-xs text-gray-500">
-                  {v === 'admin' && 'Peut entièrement configurer et éditer'}
-                  {v === 'edition' &&
-                    'Peut éditer et inviter de nouveaux membres'}
-                  {v === 'lecture' && 'Peut uniquement consulter'}
+                  {niveauAccessDetail[v as TNiveauAcces]}
                 </div>
               </div>
             </button>
@@ -249,14 +288,15 @@ const AccesDropdown = ({
             <div>
               <div>{currentUserAccess}</div>
               <div className="mt-1 text-xs text-gray-500">
-                {currentUserAccess === 'edition' &&
-                  'Peut éditer et inviter de nouveaux membres'}
-                {currentUserAccess === 'lecture' && 'Peut uniquement consulter'}
+                {niveauAccessDetail[currentUserAccess]}
               </div>
             </div>
           </div>
         )}
-        <button className="flex w-full px-2 py-4 text-left text-red-600">
+        <button
+          className="flex w-full px-2 py-4 text-left text-red-600"
+          onClick={onRemove}
+        >
           <div className="w-8" />
           {`${
             isCurrentUser ? 'Retirer mon accès à' : 'Retirer ce membre de'
