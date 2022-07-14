@@ -1,13 +1,20 @@
-import {Story, Meta} from '@storybook/react';
 import React from 'react';
+import {Story, Meta} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import {fakeAdmin, fakeEditeur, fakeLecteur} from './fakeData';
 import MembreListTableRow, {
   TMembreListTableRowProps,
 } from './MembreListTableRow';
+import {TUpdateMembre} from '../types';
 
 export default {
   component: MembreListTableRow,
 } as Meta;
+
+const handlers = {
+  updateMembre: action('updateMembre') as TUpdateMembre,
+  removeFromCollectivite: action('removeFromCollectivite'),
+};
 
 const Template: Story<TMembreListTableRowProps> = args => (
   <MembreListTableRow {...args} />
@@ -15,44 +22,36 @@ const Template: Story<TMembreListTableRowProps> = args => (
 
 export const Admin = Template.bind({});
 const AdminArgs: TMembreListTableRowProps = {
-  updateMembreFonction: fonction => {
-    console.log(fonction);
-  },
   currentUserId: fakeAdmin.user_id,
   membre: fakeAdmin,
   currentUserAccess: 'admin',
+  ...handlers,
 };
 Admin.args = AdminArgs;
 
 export const Editeur = Template.bind({});
 const EditeurArgs: TMembreListTableRowProps = {
-  updateMembreFonction: fonction => {
-    console.log(fonction);
-  },
   currentUserId: fakeEditeur.user_id,
   membre: fakeEditeur,
   currentUserAccess: 'edition',
+  ...handlers,
 };
 Editeur.args = EditeurArgs;
 
 export const Lecteur = Template.bind({});
 const LecteurArgs: TMembreListTableRowProps = {
-  updateMembreFonction: fonction => {
-    console.log(fonction);
-  },
   currentUserId: fakeLecteur.user_id,
   membre: fakeLecteur,
   currentUserAccess: 'lecture',
+  ...handlers,
 };
 Lecteur.args = LecteurArgs;
 
 export const TODOGuest = Template.bind({});
 const TODOGuestArgs: TMembreListTableRowProps = {
-  updateMembreFonction: fonction => {
-    console.log(fonction);
-  },
   currentUserId: fakeLecteur.user_id,
   membre: fakeLecteur,
   currentUserAccess: 'lecture',
+  ...handlers,
 };
 TODOGuest.args = TODOGuestArgs;
