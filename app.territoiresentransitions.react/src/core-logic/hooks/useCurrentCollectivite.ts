@@ -9,75 +9,32 @@ export type CurrentCollectivite = {
   collectivite_id: number;
   nom: string;
   niveau_acces: NiveauAcces | null;
-  isReferent: boolean;
+  isAdmin: boolean;
   readonly: boolean;
-};
-
-// charge une collectivité depuis la vue des collectivitités associées à
-// l'utilisateur courant
-const fetchOwnedCollectivite = async (
-  collectivite_id: number
-): Promise<MesCollectivitesRead | null> => {
-  const {error, data} = await supabaseClient
-    .from<MesCollectivitesRead>('mes_collectivites')
-    .select()
-    .match({collectivite_id});
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  return data && data.length ? data[0] : null;
-};
-
-// charge une collectivité depuis la vue des collectivitités NON associées à
-// l'utilisateur courant
-const fetchElsesCollectivite = async (
-  collectivite_id: number
-): Promise<ElsesCollectiviteRead | null> => {
-  const {error, data} = await supabaseClient
-    .from<ElsesCollectiviteRead>('elses_collectivite')
-    .select()
-    .match({collectivite_id});
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  return data && data.length ? data[0] : null;
 };
 
 // charge une collectivité
 const fetchCurrentCollectivite = async (
   collectivite_id: number
 ): Promise<CurrentCollectivite | null> => {
-  // vérifie si la collectivité est rattachée au compte courant
-  const ownedCollectivite = await fetchOwnedCollectivite(collectivite_id);
-  if (ownedCollectivite) {
-    const {nom, niveau_acces} = ownedCollectivite;
-    return {
-      collectivite_id,
-      nom,
-      niveau_acces: niveau_acces as NiveauAcces,
-      isReferent: niveau_acces === 'admin',
-      readonly: false,
-    };
-  }
+  const {error, data} = await supabaseClient
+    .from<MesCollectivitesRead>('collectivite_niveau_acces')
+    .select()
+    .match({collectivite_id});
 
-  // sinon charge ses données depuis la vue "elses_collectivite"
-  const elseCollectivite = await fetchElsesCollectivite(collectivite_id);
-  if (!elseCollectivite) {
-    return null;
-  }
+  const collectivite = data![0];
 
-  const {nom} = elseCollectivite;
-  return {
-    collectivite_id,
-    nom,
-    niveau_acces: null,
-    isReferent: false,
-    readonly: true,
-  };
+  return collectivite
+    ? {
+        collectivite_id,
+        nom: collectivite.nom,
+        niveau_acces: collectivite.niveau_acces,
+        isAdmin: collectivite.niveau_acces === 'admin',
+        readonly:
+          collectivite.niveau_acces === null ||
+          collectivite.niveau_acces === 'lecture',
+      }
+    : null;
 };
 
 // charge la collectivité courante (à partir de son id)
