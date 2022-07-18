@@ -24,7 +24,7 @@ export type ReferentContact = {
 export const getAdminContacts = async (
   collectivite_id: number
 ): Promise<ReferentContact[]> => {
-  const {data, error} = await supabaseClient.rpc('referent_contacts', {
+  const {data, error} = await supabaseClient.rpc('admin_contacts', {
     id: collectivite_id,
   });
 
