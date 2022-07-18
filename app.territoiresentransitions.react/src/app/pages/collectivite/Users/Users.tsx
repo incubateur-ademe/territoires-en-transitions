@@ -1,5 +1,4 @@
-import InvitationLink from './InvitationLink';
-import {useEffect, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {
   PersonneList,
@@ -7,10 +6,9 @@ import {
   removeUser,
 } from 'core-logic/api/procedures/collectiviteProcedures';
 import {DcpRead} from 'generated/dataLayer/dcp_read';
-//import MainContactForm from './MainContactForm';
-import UserCard from './UserCard';
 import {useGenerateInvitation} from 'core-logic/hooks/useGenerateInvitation';
 import {useAgentInvitation} from 'core-logic/hooks/useAgentInvitation';
+import InvitationForm from './components/InvitationForm';
 
 const activeUsersByRole = (
   users: PersonneList[] | null,
@@ -73,63 +71,32 @@ const Users = () => {
     }
   };
 
+  type FakeAcces = 'admin' | 'edition' | 'lecture';
+
+  type FakeCurrentUser = {
+    email: string;
+    acces: FakeAcces;
+  };
+
+  const fakeCurrentUser: FakeCurrentUser = {
+    email: 'asdasd@dasd.de',
+    acces: 'admin',
+  };
+
   return (
     <main data-test="Users" className="fr-container mt-9 mb-16">
       <h1 className="fr-h1 mb-3 whitespace-nowrap mr-4">Collaboration</h1>
-
-      <h2 className="fr-h2">Lien d'invitation</h2>
-      <p>
-        Envoyez ce lien aux personnes que vous souhaitez inviter à modifier les
-        données de votre collectivité.
-      </p>
-
-      <InvitationLink
-        link={invitationUrl || latestUrl}
-        onGenerateLink={generateInvitation}
-      />
-
-      {/* <h2 className="fr-h2 mt-4">Contact principal</h2>*/}
-      {/* <p className="pb-4">*/}
-      {/*   Ces informations sont affichées à toute personne qui demande accès à*/}
-      {/*   votre collectivité.*/}
-      {/* </p>*/}
-      {/* <MainContactForm {...TMP_contactProps} />*/}
-
-      <h2 className="fr-h2 mt-4">Liste des personnes référentes</h2>
-      {referents?.map(user => (
-        <UserCard key={user.user_id} user={user} onRemove={onRemove} />
-      ))}
-
-      {agents ? (
+      {(fakeCurrentUser.acces === 'admin' ||
+        fakeCurrentUser.acces === 'edition') && (
         <>
-          <h2 className="fr-h2 mt-4">Liste des utilisateurs</h2>
-          <p className="pb-4">
-            Lorsque vous retirez un utilisateur, il ne pourra plus modifier les
-            informations d’une collectivité.
+          <h2 className="fr-h2">Invitation</h2>
+          <p className="italic text-gray-500">
+            Tous les champs sont obligatoires
           </p>
-          {agents?.map(user => (
-            <UserCard key={user.user_id} user={user} onRemove={onRemove} />
-          ))}
-        </>
-      ) : null}
 
-      {conseillers ? (
-        <>
-          <h2 className="fr-h2 mt-4 pt-4">Liste des conseillers</h2>
-          {conseillers?.map(user => (
-            <UserCard key={user.user_id} user={user} />
-          ))}
+          <InvitationForm currentUser={fakeCurrentUser} />
         </>
-      ) : null}
-
-      {auditeurs ? (
-        <>
-          <h2 className="fr-h2 mt-4 pt-4">Auditeur</h2>
-          {auditeurs?.map(user => (
-            <UserCard key={user.user_id} user={user} />
-          ))}
-        </>
-      ) : null}
+      )}
     </main>
   );
 };
