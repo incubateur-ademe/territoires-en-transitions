@@ -19,7 +19,7 @@ export const useClaimCollectivite = () => {
     mutate: claimCollectivite,
   } = useMutation(claim, {
     onSuccess: async (success, collectivite_id) => {
-      await queryClient.invalidateQueries(['owned_collectivites']);
+      await queryClient.invalidateQueries(['mes_collectivites']);
       history.push(
         makeCollectiviteTableauBordUrl({
           collectiviteId: collectivite_id,
