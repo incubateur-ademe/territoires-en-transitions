@@ -77,6 +77,25 @@ $$
 select is_role_on('referent', is_referent_of.id)
 $$ language sql;
 
+create function referent_contacts(id integer)
+    returns table
+            (
+                prenom text,
+                nom    text,
+                email  text
+            )
+as
+$$
+select p.prenom, p.nom, p.email
+from private_utilisateur_droit d
+         join dcp p on p.user_id = d.user_id
+where d.collectivite_id = referent_contacts.id
+  and d.active
+  and role_name = 'referent'
+$$ language sql security definer;
+comment on function referent_contacts is
+    'Returns the contact information of the all referents of a collectivite given the id.';
+
 
 
 create view retool_user_list
@@ -228,6 +247,7 @@ drop function have_lecture_acces(id integer);
 drop function have_edition_acces(id integer);
 drop function have_admin_acces(id integer);
 drop function have_one_of_niveaux_acces(niveaux niveau_acces[], id integer);
+drop function admin_contacts(id integer);
 
 alter table private_utilisateur_droit
     drop column niveau_acces;
