@@ -3,14 +3,14 @@ import {TAuthContext} from 'core-logic/api/auth/AuthProvider';
 import MobileHeaderNavigation from './MobileHeaderNavigation/MobileHeaderNavigation';
 import MobileCollectiviteNavigation from './MobileCollectiviteNavigation';
 import {CollectiviteNavItems} from '../makeCollectiviteNavItems';
-import {OwnedCollectiviteRead} from 'generated/dataLayer';
+import {MesCollectivitesRead} from 'generated/dataLayer';
 import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
 type Props = {
   auth: TAuthContext;
   collectiviteNav: CollectiviteNavItems | null;
   currentCollectivite: CurrentCollectivite | null;
-  ownedCollectivites: OwnedCollectiviteRead[] | null;
+  ownedCollectivites: MesCollectivitesRead[] | null;
 };
 
 const MobileNavigation = ({

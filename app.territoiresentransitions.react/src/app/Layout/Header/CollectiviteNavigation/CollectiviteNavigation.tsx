@@ -7,7 +7,7 @@ import {
   CollectiviteNavItems,
   isSingleNavItemDropdown,
 } from '../makeCollectiviteNavItems';
-import {OwnedCollectiviteRead} from 'generated/dataLayer';
+import {MesCollectivitesRead} from 'generated/dataLayer';
 import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
 export const activeTabClassName = '!text-bf500 border-b-2 border-bf500';
@@ -18,7 +18,7 @@ export const _activeTabStyle = (active: boolean): string =>
 type Props = {
   collectiviteNav: CollectiviteNavItems;
   currentCollectivite: CurrentCollectivite;
-  ownedCollectivites: OwnedCollectiviteRead[];
+  ownedCollectivites: MesCollectivitesRead[];
 };
 
 const CollectiviteNavigation = ({

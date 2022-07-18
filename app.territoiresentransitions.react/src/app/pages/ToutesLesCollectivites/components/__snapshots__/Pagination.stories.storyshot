@@ -434,3 +434,438 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/components/Pagination Une S
   </nav>
 </ul>
 `;
+
+exports[`Storyshots app/pages/ToutesLesCollectivites/components/Pagination Cent Plus Page 1`] = `
+<ul>
+  <nav
+    aria-label="Pagination"
+    className="fr-pagination"
+    role="navigation"
+  >
+    <ul
+      className="fr-pagination__list"
+    >
+      <li>
+        <button
+          aria-disabled="true"
+          className="fr-pagination__link fr-pagination__link--first"
+          disabled={false}
+          onClick={[Function]}
+          role="link"
+        >
+          Première page
+        </button>
+      </li>
+      <button
+        aria-disabled="true"
+        className="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
+        disabled={false}
+        onClick={[Function]}
+        role="link"
+      >
+        Page précédente
+      </button>
+      <button
+        className="fr-pagination__link"
+        onClick={[Function]}
+        title="Page [object Object]"
+      >
+        107
+      </button>
+      <button
+        className="fr-pagination__link"
+        onClick={[Function]}
+        title="Page [object Object]"
+      >
+        108
+      </button>
+      <button
+        className="fr-pagination__link"
+        onClick={[Function]}
+        title="Page [object Object]"
+      >
+        109
+      </button>
+      <button
+        aria-current="page"
+        className="fr-pagination__link"
+        title="Page [object Object]"
+      >
+        110
+      </button>
+      <div
+        className=""
+      >
+        <button
+          className="fr-pagination__link fr-displayed-lg"
+          disabled={true}
+        >
+          …
+        </button>
+      </div>
+      <button
+        className="fr-pagination__link"
+        onClick={[Function]}
+        title="Page [object Object]"
+      >
+        140
+      </button>
+      <button
+        className="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
+        disabled={false}
+        onClick={[Function]}
+      >
+        Page suivante
+      </button>
+      <button
+        className="fr-pagination__link fr-pagination__link--last"
+        disabled={false}
+        onClick={[Function]}
+      >
+        Dernière page
+      </button>
+    </ul>
+  </nav>
+</ul>
+`;
+
+exports[`Storyshots app/pages/ToutesLesCollectivites/components/Pagination Huit Pages 1`] = `
+<ul>
+  <nav
+    aria-label="Pagination"
+    className="fr-pagination"
+    role="navigation"
+  >
+    <ul
+      className="fr-pagination__list"
+    >
+      <li>
+        <button
+          aria-disabled="true"
+          className="fr-pagination__link fr-pagination__link--first"
+          disabled={true}
+          onClick={[Function]}
+          role="link"
+        >
+          Première page
+        </button>
+      </li>
+      <button
+        aria-disabled="true"
+        className="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
+        disabled={true}
+        onClick={[Function]}
+        role="link"
+      >
+        Page précédente
+      </button>
+      <button
+        aria-current="page"
+        className="fr-pagination__link"
+        title="Page [object Object]"
+      >
+        1
+      </button>
+      <button
+        className="fr-pagination__link"
+        onClick={[Function]}
+        title="Page [object Object]"
+      >
+        2
+      </button>
+      <button
+        className="fr-pagination__link"
+        onClick={[Function]}
+        title="Page [object Object]"
+      >
+        3
+      </button>
+      <button
+        className="fr-pagination__link"
+        onClick={[Function]}
+        title="Page [object Object]"
+      >
+        4
+      </button>
+      <div
+        className=""
+      >
+        <button
+          className="fr-pagination__link fr-displayed-lg"
+          disabled={true}
+        >
+          …
+        </button>
+      </div>
+      <button
+        className="fr-pagination__link"
+        onClick={[Function]}
+        title="Page [object Object]"
+      >
+        8
+      </button>
+      <button
+        className="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
+        disabled={false}
+        onClick={[Function]}
+      >
+        Page suivante
+      </button>
+      <button
+        className="fr-pagination__link fr-pagination__link--last"
+        disabled={false}
+        onClick={[Function]}
+      >
+        Dernière page
+      </button>
+    </ul>
+  </nav>
+</ul>
+`;
+
+exports[`Storyshots app/pages/ToutesLesCollectivites/components/Pagination Six Pages 1`] = `
+<ul>
+  <nav
+    aria-label="Pagination"
+    className="fr-pagination"
+    role="navigation"
+  >
+    <ul
+      className="fr-pagination__list"
+    >
+      <li>
+        <button
+          aria-disabled="true"
+          className="fr-pagination__link fr-pagination__link--first"
+          disabled={true}
+          onClick={[Function]}
+          role="link"
+        >
+          Première page
+        </button>
+      </li>
+      <button
+        aria-disabled="true"
+        className="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
+        disabled={true}
+        onClick={[Function]}
+        role="link"
+      >
+        Page précédente
+      </button>
+      <button
+        aria-current="page"
+        className="fr-pagination__link"
+        title="Page [object Object]"
+      >
+        1
+      </button>
+      <button
+        className="fr-pagination__link"
+        onClick={[Function]}
+        title="Page [object Object]"
+      >
+        2
+      </button>
+      <button
+        className="fr-pagination__link"
+        onClick={[Function]}
+        title="Page [object Object]"
+      >
+        3
+      </button>
+      <button
+        className="fr-pagination__link"
+        onClick={[Function]}
+        title="Page [object Object]"
+      >
+        4
+      </button>
+      <button
+        className="fr-pagination__link"
+        onClick={[Function]}
+        title="Page [object Object]"
+      >
+        5
+      </button>
+      <button
+        className="fr-pagination__link"
+        onClick={[Function]}
+        title="Page [object Object]"
+      >
+        6
+      </button>
+      <div
+        className="hidden"
+      >
+        <button
+          className="fr-pagination__link fr-displayed-lg"
+          disabled={true}
+        >
+          …
+        </button>
+      </div>
+      <button
+        className="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
+        disabled={false}
+        onClick={[Function]}
+      >
+        Page suivante
+      </button>
+      <button
+        className="fr-pagination__link fr-pagination__link--last"
+        disabled={false}
+        onClick={[Function]}
+      >
+        Dernière page
+      </button>
+    </ul>
+  </nav>
+</ul>
+`;
+
+exports[`Storyshots app/pages/ToutesLesCollectivites/components/Pagination Trois Pages 1`] = `
+<ul>
+  <nav
+    aria-label="Pagination"
+    className="fr-pagination"
+    role="navigation"
+  >
+    <ul
+      className="fr-pagination__list"
+    >
+      <li>
+        <button
+          aria-disabled="true"
+          className="fr-pagination__link fr-pagination__link--first"
+          disabled={true}
+          onClick={[Function]}
+          role="link"
+        >
+          Première page
+        </button>
+      </li>
+      <button
+        aria-disabled="true"
+        className="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
+        disabled={true}
+        onClick={[Function]}
+        role="link"
+      >
+        Page précédente
+      </button>
+      <button
+        aria-current="page"
+        className="fr-pagination__link"
+        title="Page [object Object]"
+      >
+        1
+      </button>
+      <button
+        className="fr-pagination__link"
+        onClick={[Function]}
+        title="Page [object Object]"
+      >
+        2
+      </button>
+      <button
+        className="fr-pagination__link"
+        onClick={[Function]}
+        title="Page [object Object]"
+      >
+        3
+      </button>
+      <div
+        className="hidden"
+      >
+        <button
+          className="fr-pagination__link fr-displayed-lg"
+          disabled={true}
+        >
+          …
+        </button>
+      </div>
+      <button
+        className="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
+        disabled={false}
+        onClick={[Function]}
+      >
+        Page suivante
+      </button>
+      <button
+        className="fr-pagination__link fr-pagination__link--last"
+        disabled={false}
+        onClick={[Function]}
+      >
+        Dernière page
+      </button>
+    </ul>
+  </nav>
+</ul>
+`;
+
+exports[`Storyshots app/pages/ToutesLesCollectivites/components/Pagination Une Seule Page 1`] = `
+<ul>
+  <nav
+    aria-label="Pagination"
+    className="fr-pagination"
+    role="navigation"
+  >
+    <ul
+      className="fr-pagination__list"
+    >
+      <li>
+        <button
+          aria-disabled="true"
+          className="fr-pagination__link fr-pagination__link--first"
+          disabled={true}
+          onClick={[Function]}
+          role="link"
+        >
+          Première page
+        </button>
+      </li>
+      <button
+        aria-disabled="true"
+        className="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
+        disabled={true}
+        onClick={[Function]}
+        role="link"
+      >
+        Page précédente
+      </button>
+      <button
+        aria-current="page"
+        className="fr-pagination__link"
+        title="Page [object Object]"
+      >
+        1
+      </button>
+      <div
+        className="hidden"
+      >
+        <button
+          className="fr-pagination__link fr-displayed-lg"
+          disabled={true}
+        >
+          …
+        </button>
+      </div>
+      <button
+        className="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
+        disabled={true}
+        onClick={[Function]}
+      >
+        Page suivante
+      </button>
+      <button
+        className="fr-pagination__link fr-pagination__link--last"
+        disabled={true}
+        onClick={[Function]}
+      >
+        Dernière page
+      </button>
+    </ul>
+  </nav>
+</ul>
+`;

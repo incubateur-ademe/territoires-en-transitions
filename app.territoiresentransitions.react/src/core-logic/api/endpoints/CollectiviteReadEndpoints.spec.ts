@@ -5,7 +5,7 @@ import {
   ownedCollectiviteReadEndpoint,
 } from 'core-logic/api/endpoints/CollectiviteReadEndpoints';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {OwnedCollectiviteRead} from 'generated/dataLayer/owned_collectivite_read';
+import {MesCollectivitesRead} from 'generated/dataLayer/mes_collectivites_read';
 
 import {
   collectivite1,
@@ -38,7 +38,7 @@ describe('Owned Collectivite reading endpoint ', () => {
   it('should retrieve 2 Collectivites for Yolo (referent and agent)', async () => {
     await supabaseClient.auth.signIn(yoloCredentials);
     const results = await ownedCollectiviteReadEndpoint.getBy({});
-    const expectedResults: OwnedCollectiviteRead[] = [
+    const expectedResults: MesCollectivitesRead[] = [
       {
         ...collectivite1,
         role_name: 'referent',
