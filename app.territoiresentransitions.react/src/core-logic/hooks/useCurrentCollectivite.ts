@@ -3,7 +3,7 @@ import {useAuth} from 'core-logic/api/auth/AuthProvider';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {ElsesCollectiviteRead, RoleName} from 'generated/dataLayer';
-import {OwnedCollectiviteRead} from 'generated/dataLayer/owned_collectivite_read';
+import {MesCollectivitesRead} from 'generated/dataLayer/mes_collectivites_read';
 
 export type CurrentCollectivite = {
   collectivite_id: number;
@@ -17,9 +17,9 @@ export type CurrentCollectivite = {
 // l'utilisateur courant
 const fetchOwnedCollectivite = async (
   collectivite_id: number
-): Promise<OwnedCollectiviteRead | null> => {
+): Promise<MesCollectivitesRead | null> => {
   const {error, data} = await supabaseClient
-    .from<OwnedCollectiviteRead>('owned_collectivite')
+    .from<MesCollectivitesRead>('mes_collectivites')
     .select()
     .match({collectivite_id});
 
