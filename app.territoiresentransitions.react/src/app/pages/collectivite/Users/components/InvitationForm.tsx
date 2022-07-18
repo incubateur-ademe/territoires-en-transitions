@@ -1,14 +1,22 @@
-import {useMemo} from 'react';
+import {useMemo, useState} from 'react';
 import {Field, FieldAttributes, FieldProps, Form, Formik} from 'formik';
 import * as Yup from 'yup';
 import {v4 as uuid} from 'uuid';
 import classNames from 'classnames';
+import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import InvitationMessage from './InvitationMessage';
 
 type InvitationFormProps = {
-  currentUser: {email: string; acces: string};
+  currentUser: {nom: string; prenom: string; email: string; acces: string};
+  currentCollectivite: CurrentCollectivite;
 };
 
-const InvitationForm = ({currentUser}: InvitationFormProps) => {
+const InvitationForm = ({
+  currentUser,
+  currentCollectivite,
+}: InvitationFormProps) => {
+  const [acces, setAcces] = useState<string | undefined>(undefined);
+
   const validationInvitation = Yup.object({
     email: Yup.string()
       .email('Format attendu : nom@domaine.fr')
@@ -35,29 +43,38 @@ const InvitationForm = ({currentUser}: InvitationFormProps) => {
     }
   }, [currentUser]);
 
-  const onSubmitInvitation = (values: any) => {
+  const onSubmitInvitation = (values: {email: string; acces: string}) => {
+    setAcces(values.acces);
     console.log(values);
   };
 
   return (
-    <Formik
-      initialValues={{email: '', acces: ''}}
-      validationSchema={validationInvitation}
-      onSubmit={onSubmitInvitation}
-    >
-      <Form className="md:flex gap-8">
-        <Field name="email" type="text" component={InvitationEmailInput} />
-        {/* <Field name="acces" component={InvitationAccesSelect} /> */}
-        <SelectField
-          name="acces"
-          label="Niveau d’accès pour cette collectivité"
-          options={fakeAccesOptions}
+    <div className="max-w-4xl">
+      <Formik
+        initialValues={{email: '', acces: ''}}
+        validationSchema={validationInvitation}
+        onSubmit={onSubmitInvitation}
+      >
+        <Form className="md:flex gap-6">
+          <Field name="email" type="text" component={InvitationEmailInput} />
+          <SelectField
+            name="acces"
+            label="Niveau d’accès pour cette collectivité"
+            options={fakeAccesOptions}
+          />
+          <button type="submit" className="fr-btn md:mt-7 md:mb-auto">
+            Ajouter
+          </button>
+        </Form>
+      </Formik>
+      {acces && (
+        <InvitationMessage
+          currentCollectivite={currentCollectivite}
+          currentUser={currentUser}
+          acces={acces}
         />
-        <button type="submit" className="fr-btn md:mt-7 md:mb-auto">
-          Ajouter
-        </button>
-      </Form>
-    </Formik>
+      )}
+    </div>
   );
 };
 
@@ -83,7 +100,7 @@ const SelectField = (props: SelectFieldProps) => (
 
       return (
         <div
-          className={classNames('fr-select-group', {
+          className={classNames('fr-select-group md:flex-grow', {
             ['fr-select-group--error']: isError,
           })}
         >
@@ -128,7 +145,7 @@ const InvitationEmailInput = (
 
   return (
     <div
-      className={classNames('fr-input-group', {
+      className={classNames('fr-input-group md:flex-grow', {
         ['fr-input-group--error']: isError,
       })}
     >

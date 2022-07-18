@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {
   PersonneList,
@@ -6,9 +6,8 @@ import {
   removeUser,
 } from 'core-logic/api/procedures/collectiviteProcedures';
 import {DcpRead} from 'generated/dataLayer/dcp_read';
-import {useGenerateInvitation} from 'core-logic/hooks/useGenerateInvitation';
-import {useAgentInvitation} from 'core-logic/hooks/useAgentInvitation';
 import InvitationForm from './components/InvitationForm';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
 const activeUsersByRole = (
   users: PersonneList[] | null,
@@ -58,8 +57,8 @@ const useUserList = () => {
 const Users = () => {
   const {agents, conseillers, auditeurs, referents, removeFromCollectivite} =
     useUserList();
-  const {invitationUrl: latestUrl} = useAgentInvitation();
-  const {generateInvitation, invitationUrl} = useGenerateInvitation();
+
+  const collectivite = useCurrentCollectivite();
 
   const onRemove = (user_id: string) => {
     if (
@@ -74,12 +73,16 @@ const Users = () => {
   type FakeAcces = 'admin' | 'edition' | 'lecture';
 
   type FakeCurrentUser = {
+    nom: string;
+    prenom: string;
     email: string;
     acces: FakeAcces;
   };
 
   const fakeCurrentUser: FakeCurrentUser = {
-    email: 'asdasd@dasd.de',
+    nom: 'Yolo',
+    prenom: 'Dodo',
+    email: 'Yolo@Dodo.de',
     acces: 'admin',
   };
 
@@ -94,7 +97,12 @@ const Users = () => {
             Tous les champs sont obligatoires
           </p>
 
-          <InvitationForm currentUser={fakeCurrentUser} />
+          {collectivite && (
+            <InvitationForm
+              currentUser={fakeCurrentUser}
+              currentCollectivite={collectivite}
+            />
+          )}
         </>
       )}
     </main>
