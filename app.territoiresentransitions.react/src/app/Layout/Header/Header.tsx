@@ -5,7 +5,7 @@ import HeaderNavigation from './HeaderNavigation';
 import CollectiviteNavigation from './CollectiviteNavigation';
 import MobileNavigation from './MobileNavigation';
 import {makeCollectiviteNavItems} from './makeCollectiviteNavItems';
-import {OwnedCollectiviteRead} from 'generated/dataLayer';
+import {MesCollectivitesRead} from 'generated/dataLayer';
 import ademeLogoImage from 'app/static/img/ademe.jpg';
 import {RejoindreCetteCollectiviteDialog} from 'app/pages/MesCollectivites/RejoindreCetteCollectiviteDialog';
 import {useState} from 'react';
@@ -24,8 +24,8 @@ export const Header = ({
 }: {
   auth: TAuthContext;
   currentCollectivite: CurrentCollectivite | null;
-  ownedCollectivites: OwnedCollectiviteRead[] | null;
   maintenance: Maintenance | null;
+  ownedCollectivites: MesCollectivitesRead[] | null;
 }) => {
   const collectiviteNav = currentCollectivite
     ? makeCollectiviteNavItems(currentCollectivite)

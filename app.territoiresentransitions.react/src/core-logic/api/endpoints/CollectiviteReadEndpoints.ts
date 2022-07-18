@@ -1,6 +1,6 @@
 import {DataLayerReadEndpoint} from 'core-logic/api/dataLayerEndpoint';
 import {PostgrestResponse} from '@supabase/supabase-js';
-import {OwnedCollectiviteRead} from 'generated/dataLayer/owned_collectivite_read';
+import {MesCollectivitesRead} from 'generated/dataLayer/mes_collectivites_read';
 import {ElsesCollectiviteRead} from 'generated/dataLayer';
 import {NamedCollectiviteRead} from 'generated/dataLayer/named_collectivite_read';
 
@@ -38,14 +38,14 @@ export interface OwnedCollectiviteReadParams {
 }
 
 class OwnedCollectiviteReadEndpoint extends DataLayerReadEndpoint<
-  OwnedCollectiviteRead,
+  MesCollectivitesRead,
   OwnedCollectiviteReadParams
 > {
-  readonly name = 'owned_collectivite';
+  readonly name = 'mes_collectivites';
 
   async _read(
     params: OwnedCollectiviteReadParams
-  ): Promise<PostgrestResponse<OwnedCollectiviteRead>> {
+  ): Promise<PostgrestResponse<MesCollectivitesRead>> {
     if (!params.collectivite_id) return this._table;
     return this._table.eq('collectivite_id', params.collectivite_id);
   }

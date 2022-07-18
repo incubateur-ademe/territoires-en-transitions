@@ -89,3 +89,93 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/components/SelectDropdown S
   </div>
 </ul>
 `;
+
+exports[`Storyshots app/pages/ToutesLesCollectivites/components/SelectDropdown Selection Aucun Par Defaut 1`] = `
+<ul>
+  <div>
+    <div
+      className="mb-2 font-semibold"
+    >
+      Trier par
+    </div>
+    <div
+      className="MuiInputBase-root MuiOutlinedInput-root select w-full md:w-auto"
+      onClick={[Function]}
+      style={
+        Object {
+          "borderBottomColor": "black",
+          "borderBottomWidth": "0.7px",
+          "borderColor": "lightgray",
+          "borderRadius": "0.2rem",
+          "borderStyle": "solid",
+          "borderWidth": "0.6px",
+          "maxHeight": "45px",
+          "minWidth": "200px",
+        }
+      }
+    >
+      <div
+        aria-haspopup="listbox"
+        className="MuiSelect-root MuiSelect-select MuiSelect-selectMenu MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input"
+        onBlur={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onMouseDown={[Function]}
+        role="button"
+        tabIndex={0}
+      >
+        <span
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "&#8203;",
+            }
+          }
+        />
+      </div>
+      <input
+        aria-hidden={true}
+        className="MuiSelect-nativeInput"
+        onAnimationStart={[Function]}
+        onChange={[Function]}
+        tabIndex={-1}
+      />
+      <svg
+        aria-hidden={true}
+        className="MuiSvgIcon-root MuiSelect-icon MuiSelect-iconOutlined"
+        focusable="false"
+        viewBox="0 0 24 24"
+      >
+        <path
+          d="M7 10l5 5 5-5z"
+        />
+      </svg>
+      <fieldset
+        aria-hidden={true}
+        className="PrivateNotchedOutline-root-21 MuiOutlinedInput-notchedOutline"
+        style={
+          Object {
+            "paddingLeft": 8,
+          }
+        }
+      >
+        <legend
+          className="PrivateNotchedOutline-legend-22"
+          style={
+            Object {
+              "width": 0.01,
+            }
+          }
+        >
+          <span
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "&#8203;",
+              }
+            }
+          />
+        </legend>
+      </fieldset>
+    </div>
+  </div>
+</ul>
+`;
