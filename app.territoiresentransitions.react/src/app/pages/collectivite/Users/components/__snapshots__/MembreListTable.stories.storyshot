@@ -84,10 +84,9 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
             <span
               className="font-bold"
             >
-              Yolo
-               
               Dodo
                
+              Yolo
             </span>
             <span
               className="block mt-1 text-xs text-gray-500"
@@ -110,6 +109,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
             >
               <button
                 className="flex items-center w-full p-2 -ml-2 text-left"
+                onClick={[Function]}
               >
                 <span
                   className="mr-auto"
@@ -117,11 +117,11 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                   Référent·e
                 </span>
                 <span
-                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 group-focus-within:rotate-180"
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
                 />
               </button>
               <div
-                className="bg-white invisible absolute -left-2 top-full min-w-full w-max transition-all opacity-0 shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
+                className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
               >
                 <button
                   className="flex items-center w-full p-2 text-left"
@@ -193,25 +193,35 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
             >
               <button
                 className="flex items-center w-full p-2 -ml-2 text-left"
+                onClick={[Function]}
               >
-                <div
-                  className="mr-auto"
+                <span
+                  className="mr-auto flex flex-col"
                 >
-                  <span
-                    className="block"
-                  >
+                  <span>
                     Climat Air Énergie
                   </span>
-                </div>
+                </span>
                 <span
-                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 group-focus-within:rotate-180"
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
                 />
               </button>
               <div
-                className="bg-white invisible absolute -left-2 top-full min-w-full w-max transition-all opacity-0 shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
+                className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
               >
                 <button
-                  className="flex items-center w-full p-2 pr-4 text-left"
+                  className="flex items-center w-full p-2 text-left"
+                  onClick={[Function]}
+                >
+                  <div
+                    className="w-6 mr-2"
+                  />
+                  <span>
+                    Économie Circulaire
+                  </span>
+                </button>
+                <button
+                  className="flex items-center w-full p-2 text-left"
                   onClick={[Function]}
                 >
                   <div
@@ -223,17 +233,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                   </div>
                   <span>
                     Climat Air Énergie
-                  </span>
-                </button>
-                <button
-                  className="flex items-center w-full p-2 pr-4 text-left"
-                  onClick={[Function]}
-                >
-                  <div
-                    className="w-6 mr-2"
-                  />
-                  <span>
-                    Économie Circulaire
                   </span>
                 </button>
               </div>
@@ -248,6 +247,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
               <textarea
                 className="w-full resize-none"
                 onChange={[Function]}
+                onMouseOut={[Function]}
                 value="Cheffe de projet PCAET"
               />
             </div>
@@ -256,25 +256,26 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
             className="relative px-4 text-right"
           >
             <div
-              className="group relative flex -mr-2"
+              className="group relative"
             >
               <button
-                className="flex items-center ml-auto p-2 text-left"
+                className="flex items-center w-full p-2 -ml-2 text-left"
+                onClick={[Function]}
               >
-                <span
-                  className="fr-fi-arrow-down-s-line mt-1 mr-1 scale-90 group-focus-within:rotate-180"
-                />
                 <span
                   className="mr-auto"
                 >
                   Admin
                 </span>
+                <span
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                />
               </button>
               <div
-                className="bg-white invisible absolute right-0 top-full min-w-full w-max transition-all opacity-0 shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
+                className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
               >
                 <button
-                  className="flex items-center w-full p-2 pr-4 text-left"
+                  className="flex items-center w-full p-2 text-left"
                   onClick={[Function]}
                 >
                   <div
@@ -284,61 +285,73 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                       className="block fr-fi-check-line scale-75"
                     />
                   </div>
-                  <div>
+                  <span>
                     <div>
-                      Admin
+                      <div>
+                        Admin
+                      </div>
+                      <div
+                        className="mt-1 text-xs text-gray-500"
+                      >
+                        Peut entièrement configurer et éditer
+                      </div>
                     </div>
-                    <div
-                      className="mt-1 text-xs text-gray-500"
-                    >
-                      Peut entièrement configurer et éditer
-                    </div>
-                  </div>
+                  </span>
                 </button>
                 <button
-                  className="flex items-center w-full p-2 pr-4 text-left"
+                  className="flex items-center w-full p-2 text-left"
                   onClick={[Function]}
                 >
                   <div
                     className="w-6 mr-2"
                   />
-                  <div>
+                  <span>
                     <div>
-                      Édition
+                      <div>
+                        Édition
+                      </div>
+                      <div
+                        className="mt-1 text-xs text-gray-500"
+                      >
+                        Peut éditer et inviter de nouveaux membres
+                      </div>
                     </div>
-                    <div
-                      className="mt-1 text-xs text-gray-500"
-                    >
-                      Peut éditer et inviter de nouveaux membres
-                    </div>
-                  </div>
+                  </span>
                 </button>
                 <button
-                  className="flex items-center w-full p-2 pr-4 text-left"
+                  className="flex items-center w-full p-2 text-left"
                   onClick={[Function]}
                 >
                   <div
                     className="w-6 mr-2"
                   />
-                  <div>
+                  <span>
                     <div>
-                      Lecture
+                      <div>
+                        Lecture
+                      </div>
+                      <div
+                        className="mt-1 text-xs text-gray-500"
+                      >
+                        Peut uniquement consulter
+                      </div>
                     </div>
-                    <div
-                      className="mt-1 text-xs text-gray-500"
-                    >
-                      Peut uniquement consulter
-                    </div>
-                  </div>
+                  </span>
                 </button>
                 <button
-                  className="flex w-full px-2 py-4 text-left text-red-600"
+                  className="flex items-center w-full p-2 text-left"
                   onClick={[Function]}
                 >
                   <div
-                    className="w-8"
+                    className="w-6 mr-2"
                   />
-                  Retirer mon accès à la collectivité
+                  <span>
+                    <span
+                      className="flex w-full px-2 py-4 text-left text-red-600"
+                    >
+                      Retirer mon accès à la collectivité
+                    </span>
+                  </span>
                 </button>
               </div>
             </div>
@@ -353,10 +366,9 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
             <span
               className="font-bold"
             >
-              Yala
-               
               Dada
                
+              Yala
             </span>
             <span
               className="block mt-1 text-xs text-gray-500"
@@ -406,43 +418,46 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
             className="relative px-4 text-right"
           >
             <div
-              className="group relative flex -mr-2"
+              className="group relative"
             >
               <button
-                className="flex items-center ml-auto p-2 text-left"
+                className="flex items-center w-full p-2 -ml-2 text-left"
+                onClick={[Function]}
               >
-                <span
-                  className="fr-fi-arrow-down-s-line mt-1 mr-1 scale-90 group-focus-within:rotate-180"
-                />
                 <span
                   className="mr-auto"
                 >
                   Édition
                 </span>
+                <span
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                />
               </button>
               <div
-                className="bg-white invisible absolute right-0 top-full min-w-full w-max transition-all opacity-0 shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
+                className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
               >
                 <button
-                  className="flex items-center w-full p-2 pr-4 text-left"
+                  className="flex items-center w-full p-2 text-left"
                   onClick={[Function]}
                 >
                   <div
                     className="w-6 mr-2"
                   />
-                  <div>
+                  <span>
                     <div>
-                      Admin
+                      <div>
+                        Admin
+                      </div>
+                      <div
+                        className="mt-1 text-xs text-gray-500"
+                      >
+                        Peut entièrement configurer et éditer
+                      </div>
                     </div>
-                    <div
-                      className="mt-1 text-xs text-gray-500"
-                    >
-                      Peut entièrement configurer et éditer
-                    </div>
-                  </div>
+                  </span>
                 </button>
                 <button
-                  className="flex items-center w-full p-2 pr-4 text-left"
+                  className="flex items-center w-full p-2 text-left"
                   onClick={[Function]}
                 >
                   <div
@@ -452,43 +467,53 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                       className="block fr-fi-check-line scale-75"
                     />
                   </div>
-                  <div>
+                  <span>
                     <div>
-                      Édition
+                      <div>
+                        Édition
+                      </div>
+                      <div
+                        className="mt-1 text-xs text-gray-500"
+                      >
+                        Peut éditer et inviter de nouveaux membres
+                      </div>
                     </div>
-                    <div
-                      className="mt-1 text-xs text-gray-500"
-                    >
-                      Peut éditer et inviter de nouveaux membres
-                    </div>
-                  </div>
+                  </span>
                 </button>
                 <button
-                  className="flex items-center w-full p-2 pr-4 text-left"
+                  className="flex items-center w-full p-2 text-left"
                   onClick={[Function]}
                 >
                   <div
                     className="w-6 mr-2"
                   />
-                  <div>
+                  <span>
                     <div>
-                      Lecture
+                      <div>
+                        Lecture
+                      </div>
+                      <div
+                        className="mt-1 text-xs text-gray-500"
+                      >
+                        Peut uniquement consulter
+                      </div>
                     </div>
-                    <div
-                      className="mt-1 text-xs text-gray-500"
-                    >
-                      Peut uniquement consulter
-                    </div>
-                  </div>
+                  </span>
                 </button>
                 <button
-                  className="flex w-full px-2 py-4 text-left text-red-600"
+                  className="flex items-center w-full p-2 text-left"
                   onClick={[Function]}
                 >
                   <div
-                    className="w-8"
+                    className="w-6 mr-2"
                   />
-                  Retirer ce membre de la collectivité
+                  <span>
+                    <span
+                      className="flex w-full px-2 py-4 text-left text-red-600"
+                    >
+                      Retirer ce membre de la collectivité
+                    </span>
+                  </span>
                 </button>
               </div>
             </div>
@@ -503,10 +528,9 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
             <span
               className="font-bold"
             >
-              John
-               
               Doe
                
+              John
             </span>
             <span
               className="block mt-1 text-xs text-gray-500"
@@ -551,61 +575,66 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
             className="relative px-4 text-right"
           >
             <div
-              className="group relative flex -mr-2"
+              className="group relative"
             >
               <button
-                className="flex items-center ml-auto p-2 text-left"
+                className="flex items-center w-full p-2 -ml-2 text-left"
+                onClick={[Function]}
               >
-                <span
-                  className="fr-fi-arrow-down-s-line mt-1 mr-1 scale-90 group-focus-within:rotate-180"
-                />
                 <span
                   className="mr-auto"
                 >
                   Lecture
                 </span>
+                <span
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                />
               </button>
               <div
-                className="bg-white invisible absolute right-0 top-full min-w-full w-max transition-all opacity-0 shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
+                className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
               >
                 <button
-                  className="flex items-center w-full p-2 pr-4 text-left"
+                  className="flex items-center w-full p-2 text-left"
                   onClick={[Function]}
                 >
                   <div
                     className="w-6 mr-2"
                   />
-                  <div>
+                  <span>
                     <div>
-                      Admin
+                      <div>
+                        Admin
+                      </div>
+                      <div
+                        className="mt-1 text-xs text-gray-500"
+                      >
+                        Peut entièrement configurer et éditer
+                      </div>
                     </div>
-                    <div
-                      className="mt-1 text-xs text-gray-500"
-                    >
-                      Peut entièrement configurer et éditer
-                    </div>
-                  </div>
+                  </span>
                 </button>
                 <button
-                  className="flex items-center w-full p-2 pr-4 text-left"
+                  className="flex items-center w-full p-2 text-left"
                   onClick={[Function]}
                 >
                   <div
                     className="w-6 mr-2"
                   />
-                  <div>
+                  <span>
                     <div>
-                      Édition
+                      <div>
+                        Édition
+                      </div>
+                      <div
+                        className="mt-1 text-xs text-gray-500"
+                      >
+                        Peut éditer et inviter de nouveaux membres
+                      </div>
                     </div>
-                    <div
-                      className="mt-1 text-xs text-gray-500"
-                    >
-                      Peut éditer et inviter de nouveaux membres
-                    </div>
-                  </div>
+                  </span>
                 </button>
                 <button
-                  className="flex items-center w-full p-2 pr-4 text-left"
+                  className="flex items-center w-full p-2 text-left"
                   onClick={[Function]}
                 >
                   <div
@@ -615,25 +644,33 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                       className="block fr-fi-check-line scale-75"
                     />
                   </div>
-                  <div>
+                  <span>
                     <div>
-                      Lecture
+                      <div>
+                        Lecture
+                      </div>
+                      <div
+                        className="mt-1 text-xs text-gray-500"
+                      >
+                        Peut uniquement consulter
+                      </div>
                     </div>
-                    <div
-                      className="mt-1 text-xs text-gray-500"
-                    >
-                      Peut uniquement consulter
-                    </div>
-                  </div>
+                  </span>
                 </button>
                 <button
-                  className="flex w-full px-2 py-4 text-left text-red-600"
+                  className="flex items-center w-full p-2 text-left"
                   onClick={[Function]}
                 >
                   <div
-                    className="w-8"
+                    className="w-6 mr-2"
                   />
-                  Retirer ce membre de la collectivité
+                  <span>
+                    <span
+                      className="flex w-full px-2 py-4 text-left text-red-600"
+                    >
+                      Retirer ce membre de la collectivité
+                    </span>
+                  </span>
                 </button>
               </div>
             </div>
@@ -729,10 +766,9 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
             <span
               className="font-bold"
             >
-              Yolo
-               
               Dodo
                
+              Yolo
             </span>
             <span
               className="block mt-1 text-xs text-gray-500"
@@ -790,10 +826,9 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
             <span
               className="font-bold"
             >
-              Yala
-               
               Dada
                
+              Yala
             </span>
             <span
               className="block mt-1 text-xs text-gray-500"
@@ -816,6 +851,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
             >
               <button
                 className="flex items-center w-full p-2 -ml-2 text-left"
+                onClick={[Function]}
               >
                 <span
                   className="mr-auto"
@@ -823,11 +859,11 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
                   Équipe technique
                 </span>
                 <span
-                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 group-focus-within:rotate-180"
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
                 />
               </button>
               <div
-                className="bg-white invisible absolute -left-2 top-full min-w-full w-max transition-all opacity-0 shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
+                className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
               >
                 <button
                   className="flex items-center w-full p-2 text-left"
@@ -899,45 +935,27 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
             >
               <button
                 className="flex items-center w-full p-2 -ml-2 text-left"
+                onClick={[Function]}
               >
-                <div
-                  className="mr-auto"
+                <span
+                  className="mr-auto flex flex-col"
                 >
-                  <span
-                    className="block"
-                  >
+                  <span>
                     Climat Air Énergie
                   </span>
-                  <span
-                    className="block"
-                  >
+                  <span>
                     Économie Circulaire
                   </span>
-                </div>
+                </span>
                 <span
-                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 group-focus-within:rotate-180"
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
                 />
               </button>
               <div
-                className="bg-white invisible absolute -left-2 top-full min-w-full w-max transition-all opacity-0 shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
+                className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
               >
                 <button
-                  className="flex items-center w-full p-2 pr-4 text-left"
-                  onClick={[Function]}
-                >
-                  <div
-                    className="w-6 mr-2"
-                  >
-                    <span
-                      className="block fr-fi-check-line scale-75"
-                    />
-                  </div>
-                  <span>
-                    Climat Air Énergie
-                  </span>
-                </button>
-                <button
-                  className="flex items-center w-full p-2 pr-4 text-left"
+                  className="flex items-center w-full p-2 text-left"
                   onClick={[Function]}
                 >
                   <div
@@ -949,6 +967,21 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
                   </div>
                   <span>
                     Économie Circulaire
+                  </span>
+                </button>
+                <button
+                  className="flex items-center w-full p-2 text-left"
+                  onClick={[Function]}
+                >
+                  <div
+                    className="w-6 mr-2"
+                  >
+                    <span
+                      className="block fr-fi-check-line scale-75"
+                    />
+                  </div>
+                  <span>
+                    Climat Air Énergie
                   </span>
                 </button>
               </div>
@@ -963,6 +996,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
               <textarea
                 className="w-full resize-none"
                 onChange={[Function]}
+                onMouseOut={[Function]}
                 value="Vice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier, adjoint au maire en charge du dVice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier"
               />
             </div>
@@ -971,52 +1005,38 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
             className="relative px-4 text-right"
           >
             <div
-              className="group relative flex -mr-2"
+              className="group relative"
             >
               <button
-                className="flex items-center ml-auto p-2 text-left"
+                className="flex items-center w-full p-2 -ml-2 text-left"
+                onClick={[Function]}
               >
-                <span
-                  className="fr-fi-arrow-down-s-line mt-1 mr-1 scale-90 group-focus-within:rotate-180"
-                />
                 <span
                   className="mr-auto"
                 >
                   Édition
                 </span>
+                <span
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                />
               </button>
               <div
-                className="bg-white invisible absolute right-0 top-full min-w-full w-max transition-all opacity-0 shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
+                className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
               >
-                <div
-                  className="flex items-center w-full p-2 text-left"
-                >
-                  <div
-                    className="w-6 mr-2"
-                  >
-                    <span
-                      className="block fr-fi-check-line scale-75"
-                    />
-                  </div>
-                  <div>
-                    <div>
-                      edition
-                    </div>
-                    <div
-                      className="mt-1 text-xs text-gray-500"
-                    >
-                      Peut éditer et inviter de nouveaux membres
-                    </div>
-                  </div>
-                </div>
                 <button
-                  className="flex w-full px-2 py-4 text-left text-red-600"
+                  className="flex items-center w-full p-2 text-left"
                   onClick={[Function]}
                 >
                   <div
-                    className="w-8"
+                    className="w-6 mr-2"
                   />
-                  Retirer mon accès à la collectivité
+                  <span>
+                    <span
+                      className="flex w-full px-2 py-4 text-left text-red-600"
+                    >
+                      Retirer mon accès à la collectivité
+                    </span>
+                  </span>
                 </button>
               </div>
             </div>
@@ -1031,10 +1051,9 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
             <span
               className="font-bold"
             >
-              John
-               
               Doe
                
+              John
             </span>
             <span
               className="block mt-1 text-xs text-gray-500"
@@ -1173,10 +1192,9 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
             <span
               className="font-bold"
             >
-              Yolo
-               
               Dodo
                
+              Yolo
             </span>
             <span
               className="block mt-1 text-xs text-gray-500"
@@ -1234,10 +1252,9 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
             <span
               className="font-bold"
             >
-              Yala
-               
               Dada
                
+              Yala
             </span>
             <span
               className="block mt-1 text-xs text-gray-500"
@@ -1300,10 +1317,9 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
             <span
               className="font-bold"
             >
-              John
-               
               Doe
                
+              John
             </span>
             <span
               className="block mt-1 text-xs text-gray-500"
@@ -1326,6 +1342,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
             >
               <button
                 className="flex items-center w-full p-2 -ml-2 text-left"
+                onClick={[Function]}
               >
                 <span
                   className="mr-auto"
@@ -1333,11 +1350,11 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
                   Équipe politique
                 </span>
                 <span
-                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 group-focus-within:rotate-180"
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
                 />
               </button>
               <div
-                className="bg-white invisible absolute -left-2 top-full min-w-full w-max transition-all opacity-0 shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
+                className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
               >
                 <button
                   className="flex items-center w-full p-2 text-left"
@@ -1409,25 +1426,35 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
             >
               <button
                 className="flex items-center w-full p-2 -ml-2 text-left"
+                onClick={[Function]}
               >
-                <div
-                  className="mr-auto"
+                <span
+                  className="mr-auto flex flex-col"
                 >
-                  <span
-                    className="block"
-                  >
+                  <span>
                     Climat Air Énergie
                   </span>
-                </div>
+                </span>
                 <span
-                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 group-focus-within:rotate-180"
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
                 />
               </button>
               <div
-                className="bg-white invisible absolute -left-2 top-full min-w-full w-max transition-all opacity-0 shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
+                className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
               >
                 <button
-                  className="flex items-center w-full p-2 pr-4 text-left"
+                  className="flex items-center w-full p-2 text-left"
+                  onClick={[Function]}
+                >
+                  <div
+                    className="w-6 mr-2"
+                  />
+                  <span>
+                    Économie Circulaire
+                  </span>
+                </button>
+                <button
+                  className="flex items-center w-full p-2 text-left"
                   onClick={[Function]}
                 >
                   <div
@@ -1439,17 +1466,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
                   </div>
                   <span>
                     Climat Air Énergie
-                  </span>
-                </button>
-                <button
-                  className="flex items-center w-full p-2 pr-4 text-left"
-                  onClick={[Function]}
-                >
-                  <div
-                    className="w-6 mr-2"
-                  />
-                  <span>
-                    Économie Circulaire
                   </span>
                 </button>
               </div>
@@ -1464,6 +1480,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
               <textarea
                 className="w-full resize-none"
                 onChange={[Function]}
+                onMouseOut={[Function]}
                 value="Consultant assistance à maîtrise d’ouvrage - Bureau d’études Green Planet"
               />
             </div>
@@ -1472,52 +1489,38 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
             className="relative px-4 text-right"
           >
             <div
-              className="group relative flex -mr-2"
+              className="group relative"
             >
               <button
-                className="flex items-center ml-auto p-2 text-left"
+                className="flex items-center w-full p-2 -ml-2 text-left"
+                onClick={[Function]}
               >
-                <span
-                  className="fr-fi-arrow-down-s-line mt-1 mr-1 scale-90 group-focus-within:rotate-180"
-                />
                 <span
                   className="mr-auto"
                 >
                   Lecture
                 </span>
+                <span
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                />
               </button>
               <div
-                className="bg-white invisible absolute right-0 top-full min-w-full w-max transition-all opacity-0 shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
+                className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
               >
-                <div
-                  className="flex items-center w-full p-2 text-left"
-                >
-                  <div
-                    className="w-6 mr-2"
-                  >
-                    <span
-                      className="block fr-fi-check-line scale-75"
-                    />
-                  </div>
-                  <div>
-                    <div>
-                      lecture
-                    </div>
-                    <div
-                      className="mt-1 text-xs text-gray-500"
-                    >
-                      Peut uniquement consulter
-                    </div>
-                  </div>
-                </div>
                 <button
-                  className="flex w-full px-2 py-4 text-left text-red-600"
+                  className="flex items-center w-full p-2 text-left"
                   onClick={[Function]}
                 >
                   <div
-                    className="w-8"
+                    className="w-6 mr-2"
                   />
-                  Retirer mon accès à la collectivité
+                  <span>
+                    <span
+                      className="flex w-full px-2 py-4 text-left text-red-600"
+                    >
+                      Retirer mon accès à la collectivité
+                    </span>
+                  </span>
                 </button>
               </div>
             </div>
