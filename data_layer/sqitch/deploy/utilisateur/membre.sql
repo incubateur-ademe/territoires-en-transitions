@@ -21,19 +21,18 @@ alter table private_collectivite_membre
     add constraint private_collectivite_membre_user_collectivite
         unique (collectivite_id, user_id);
 
--- alter table private_collectivite_membre
---     enable row level security;
+alter table private_collectivite_membre
+    enable row level security;
 
--- create policy allow_read
---     on private_collectivite_membre
---     for select
---     using (true);
+create policy allow_read
+    on private_collectivite_membre
+    for select
+    using (true);
 
--- create policy allow_update
---     on private_collectivite_membre
---     for update
---     using (is_service_role());
-
+create policy allow_update
+    on private_collectivite_membre
+    for update
+    using (is_service_role());
 
 
 
@@ -124,7 +123,7 @@ comment on function update_collectivite_membre_champ_intervention is
     'Met à jour le champs champ_intervention d''un membre s''il est autorisé à le faire';
 
 
-create function update_collectivite_membre_niveau_acces(collectivite_id integer, membre_id uuid, niveau_acces referentiel[])
+create function update_collectivite_membre_niveau_acces(collectivite_id integer, membre_id uuid, niveau_acces niveau_acces)
     returns json
 as
 $$
@@ -208,7 +207,7 @@ select m.user_id, prenom, nom, email, telephone, niveau_acces , fonction, detail
 from droits_dcp d
 left join private_collectivite_membre m
 on m.user_id = d.user_id and m.collectivite_id = d.collectivite_id
-where m.user_id is not null
+where d.user_id is not null
 $$ language sql security definer;
 comment on function collectivite_membres is
     'Retourne les informations sur tous les membres d''une collectivité étant donné l''id.''';
