@@ -27,7 +27,7 @@ export type TUpdateMembreArgs = {
   | {name: 'fonction'; value: TMembreFonction}
   | {name: 'details_fonction'; value: string}
   | {name: 'champ_intervention'; value: Referentiel[]}
-  | {name: 'niveau_access'; value: TNiveauAcces}
+  | {name: 'niveau_acces'; value: TNiveauAcces}
 );
 
 export type TUpdateMembre = (args: TUpdateMembreArgs) => Promise<boolean>;
