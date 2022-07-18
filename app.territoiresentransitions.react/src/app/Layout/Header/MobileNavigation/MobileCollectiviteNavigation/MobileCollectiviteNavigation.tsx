@@ -7,13 +7,13 @@ import {
   CollectiviteNavItems,
   isSingleNavItemDropdown,
 } from '../../makeCollectiviteNavItems';
-import {OwnedCollectiviteRead} from 'generated/dataLayer';
+import {MesCollectivitesRead} from 'generated/dataLayer';
 import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
 type Props = {
   collectiviteNav: CollectiviteNavItems;
   currentCollectivite: CurrentCollectivite;
-  ownedCollectivites: OwnedCollectiviteRead[];
+  ownedCollectivites: MesCollectivitesRead[];
   toggleMobileNavigation: () => void;
 };
 
