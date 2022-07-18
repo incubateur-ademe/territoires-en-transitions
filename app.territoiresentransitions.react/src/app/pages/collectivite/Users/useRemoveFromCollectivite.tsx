@@ -1,11 +1,33 @@
 import {useMutation, useQueryClient} from 'react-query';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {removeUser} from 'core-logic/api/procedures/collectiviteProcedures';
 import {TRemoveFromCollectivite} from './types';
 import {getQueryKey} from './useCollectiviteMembres';
+import {supabaseClient} from 'core-logic/api/supabase';
+
+type RemoveMembreResponse = {
+  message?: string;
+};
+
+const removeMembre = async (
+  collectiviteId: number,
+  userId: string
+): Promise<RemoveMembreResponse | null> => {
+  const {data, error} = await supabaseClient.rpc(
+    'remove_membre_from_collectivite',
+    {
+      membre_id: userId,
+      collectivite_id: collectiviteId,
+    }
+  );
+
+  if (error || !data) {
+    return null;
+  }
+  return data as unknown as RemoveMembreResponse;
+};
 
 /**
- * Retire un utilisateur de la collectivité courante
+ * Retire un membre de la collectivité courante
  */
 
 export const useRemoveFromCollectivite = () => {
@@ -14,7 +36,7 @@ export const useRemoveFromCollectivite = () => {
   const {isLoading, mutate} = useMutation(
     (user_id: string) =>
       collectivite_id
-        ? removeUser(collectivite_id, user_id)
+        ? removeMembre(collectivite_id, user_id)
         : Promise.resolve(null),
     {
       onSuccess: () => {
