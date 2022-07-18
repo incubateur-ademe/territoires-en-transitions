@@ -128,7 +128,8 @@ comment on function claim_collectivite is
         'Renvoie un code 409 si la collectivité à déjà un administrateur.';
 
 
-create or replace function referent_contacts(id integer)
+drop function referent_contacts; 
+create function admin_contacts(id integer)
     returns table
             (
                 prenom text,
@@ -140,11 +141,11 @@ $$
 select p.prenom, p.nom, p.email
 from private_utilisateur_droit d
          join dcp p on p.user_id = d.user_id
-where d.collectivite_id = referent_contacts.id
+where d.collectivite_id = admin_contacts.id
   and d.active
   and niveau_acces = 'admin'
 $$ language sql security definer;
-comment on function referent_contacts is
+comment on function admin_contacts is
     'Renvoie la liste des contacts admin d''une collectivité donnée.' ;
 
 

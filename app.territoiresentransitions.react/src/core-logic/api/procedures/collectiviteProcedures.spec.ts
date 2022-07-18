@@ -17,8 +17,8 @@ describe('Claim and remove collectivite Remote Procedure Call ', () => {
   it('should be able to remove its own rights from an collectivite ', async () => {});
 });
 
-describe('Request referent contacts', () => {
-  it('should return all referent contacts of owned collectivite if exists', async () => {
+describe('Request admin contacts', () => {
+  it('should return all admin contacts of owned collectivite if exists', async () => {
     const procedureResponse = await getAdminContacts(1);
     expect(procedureResponse).not.toBeNull();
     expect(procedureResponse).toEqual([
