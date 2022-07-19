@@ -1,1 +1,1 @@
-select has_function_privilege('have_edition_acces(integer)', 'execute');
+select * from private_collectivite_membre where false;
