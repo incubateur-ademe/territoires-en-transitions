@@ -25,7 +25,10 @@ const MembreListTable = ({
   return (
     <div className="mx-auto border-8 border-t-0 border-bf925 bg-bf925 rounded-lg overflow-x-hidden">
       <div className="overflow-x-auto w-full">
-        <table className="min-w-full text-sm text-left">
+        <table
+          data-test="MembreListTable"
+          className="min-w-full text-sm text-left"
+        >
           <thead>
             <tr>
               <th className={thClassNames}>Nom et adresse mail</th>
@@ -60,7 +63,7 @@ const MembreListTable = ({
           </thead>
           <tbody>
             {isLoading ? (
-              <tr className="bg-white">
+              <tr data-test="Loading" className="bg-white">
                 <td colSpan={6} className="pt-6 pb-24 px-6">
                   Chargement...
                 </td>
