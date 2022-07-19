@@ -163,12 +163,13 @@ const DetailsFonctionTextarea = ({
     <textarea
       data-test="details_fonction-textarea"
       value={value}
-      className="w-full resize-none"
+      className=" w-60 resize-none"
       onChange={e => setValue(e.target.value)}
       onMouseOut={() => save(value)}
     />
   );
 };
+
 const FonctionDropdown = ({
   value,
   onChange,
@@ -216,7 +217,7 @@ const AccessDropdownLabel = ({
     return (
       <span
         aria-label="retirer l'acces"
-        className="flex w-full px-2 py-4 text-left text-red-600"
+        className="flex w-full py-2 text-left text-red-600"
       >
         {isCurrentUser
           ? 'Retirer mon accès à la collectivité'
@@ -258,6 +259,7 @@ const AccesDropdown = ({
   return (
     <div data-test="acces-dropdown">
       <SelectDropdown
+        placement="bottom-end"
         value={value}
         onSelect={onSelect}
         labels={{...niveauAccesLabels, remove: 'Supprimé'}}
