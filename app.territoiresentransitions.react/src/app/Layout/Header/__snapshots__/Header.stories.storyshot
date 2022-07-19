@@ -76,6 +76,7 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
                 className="fr-link"
                 data-test="help"
                 href="https://aide.territoiresentransitions.fr/fr/"
+                target="_blank"
               >
                 <div
                   className="fr-fi-question-line mr-2"
@@ -212,6 +213,7 @@ exports[`Storyshots app/Layout/Header Not Connected 1`] = `
                 className="fr-link"
                 data-test="help"
                 href="https://aide.territoiresentransitions.fr/fr/"
+                target="_blank"
               >
                 <div
                   className="fr-fi-question-line mr-2"
@@ -329,6 +331,7 @@ exports[`Storyshots app/Layout/Header With Collectivite 1`] = `
                 className="fr-link"
                 data-test="help"
                 href="https://aide.territoiresentransitions.fr/fr/"
+                target="_blank"
               >
                 <div
                   className="fr-fi-question-line mr-2"
@@ -757,6 +760,7 @@ Array [
                   className="fr-link"
                   data-test="help"
                   href="https://aide.territoiresentransitions.fr/fr/"
+                  target="_blank"
                 >
                   <div
                     className="fr-fi-question-line mr-2"
