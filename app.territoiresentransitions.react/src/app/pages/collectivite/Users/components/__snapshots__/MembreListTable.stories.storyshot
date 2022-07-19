@@ -386,33 +386,160 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
           <td
             className="relative px-4"
           >
-            <span>
-              Équipe technique
-            </span>
+            <div
+              className="group relative"
+            >
+              <button
+                className="flex items-center w-full p-2 -ml-2 text-left"
+                onClick={[Function]}
+              >
+                <span
+                  className="mr-auto"
+                >
+                  Équipe technique
+                </span>
+                <span
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                />
+              </button>
+              <div
+                className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
+              >
+                <button
+                  className="flex items-center w-full p-2 text-left"
+                  onClick={[Function]}
+                >
+                  <div
+                    className="w-6 mr-2"
+                  />
+                  <span>
+                    Référent·e
+                  </span>
+                </button>
+                <button
+                  className="flex items-center w-full p-2 text-left"
+                  onClick={[Function]}
+                >
+                  <div
+                    className="w-6 mr-2"
+                  />
+                  <span>
+                    Conseiller·e
+                  </span>
+                </button>
+                <button
+                  className="flex items-center w-full p-2 text-left"
+                  onClick={[Function]}
+                >
+                  <div
+                    className="w-6 mr-2"
+                  >
+                    <span
+                      className="block fr-fi-check-line scale-75"
+                    />
+                  </div>
+                  <span>
+                    Équipe technique
+                  </span>
+                </button>
+                <button
+                  className="flex items-center w-full p-2 text-left"
+                  onClick={[Function]}
+                >
+                  <div
+                    className="w-6 mr-2"
+                  />
+                  <span>
+                    Équipe politique
+                  </span>
+                </button>
+                <button
+                  className="flex items-center w-full p-2 text-left"
+                  onClick={[Function]}
+                >
+                  <div
+                    className="w-6 mr-2"
+                  />
+                  <span>
+                    Partenaire
+                  </span>
+                </button>
+              </div>
+            </div>
           </td>
           <td
             className="relative px-4 pr-0"
           >
-            <span
-              className="block"
+            <div
+              className="group relative"
             >
-              Climat Air Énergie
-            </span>
-            <span
-              className="block"
-            >
-              Économie Circulaire
-            </span>
+              <button
+                className="flex items-center w-full p-2 -ml-2 text-left"
+                onClick={[Function]}
+              >
+                <span
+                  className="mr-auto flex flex-col"
+                >
+                  <span>
+                    Climat Air Énergie
+                  </span>
+                  <span>
+                    Économie Circulaire
+                  </span>
+                </span>
+                <span
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                />
+              </button>
+              <div
+                className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
+              >
+                <button
+                  className="flex items-center w-full p-2 text-left"
+                  onClick={[Function]}
+                >
+                  <div
+                    className="w-6 mr-2"
+                  >
+                    <span
+                      className="block fr-fi-check-line scale-75"
+                    />
+                  </div>
+                  <span>
+                    Économie Circulaire
+                  </span>
+                </button>
+                <button
+                  className="flex items-center w-full p-2 text-left"
+                  onClick={[Function]}
+                >
+                  <div
+                    className="w-6 mr-2"
+                  >
+                    <span
+                      className="block fr-fi-check-line scale-75"
+                    />
+                  </div>
+                  <span>
+                    Climat Air Énergie
+                  </span>
+                </button>
+              </div>
+            </div>
           </td>
           <td
             className="relative px-4"
           >
-            <span
-              className="w-72 line-clamp-3"
-              title="Vice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier, adjoint au maire en charge du dVice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier"
+            <div
+              className="py-1 px-2 border border-gray-300"
             >
-              Vice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier, adjoint au maire en charge du dVice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier
-            </span>
+              <textarea
+                className="w-full resize-none"
+                onChange={[Function]}
+                onMouseOut={[Function]}
+                value="Vice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier, adjoint au maire en charge du dVice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier"
+              />
+            </div>
           </td>
           <td
             className="relative px-4 text-right"
@@ -548,28 +675,153 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
           <td
             className="relative px-4"
           >
-            <span>
-              Équipe politique
-            </span>
+            <div
+              className="group relative"
+            >
+              <button
+                className="flex items-center w-full p-2 -ml-2 text-left"
+                onClick={[Function]}
+              >
+                <span
+                  className="mr-auto"
+                >
+                  Équipe politique
+                </span>
+                <span
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                />
+              </button>
+              <div
+                className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
+              >
+                <button
+                  className="flex items-center w-full p-2 text-left"
+                  onClick={[Function]}
+                >
+                  <div
+                    className="w-6 mr-2"
+                  />
+                  <span>
+                    Référent·e
+                  </span>
+                </button>
+                <button
+                  className="flex items-center w-full p-2 text-left"
+                  onClick={[Function]}
+                >
+                  <div
+                    className="w-6 mr-2"
+                  />
+                  <span>
+                    Conseiller·e
+                  </span>
+                </button>
+                <button
+                  className="flex items-center w-full p-2 text-left"
+                  onClick={[Function]}
+                >
+                  <div
+                    className="w-6 mr-2"
+                  />
+                  <span>
+                    Équipe technique
+                  </span>
+                </button>
+                <button
+                  className="flex items-center w-full p-2 text-left"
+                  onClick={[Function]}
+                >
+                  <div
+                    className="w-6 mr-2"
+                  >
+                    <span
+                      className="block fr-fi-check-line scale-75"
+                    />
+                  </div>
+                  <span>
+                    Équipe politique
+                  </span>
+                </button>
+                <button
+                  className="flex items-center w-full p-2 text-left"
+                  onClick={[Function]}
+                >
+                  <div
+                    className="w-6 mr-2"
+                  />
+                  <span>
+                    Partenaire
+                  </span>
+                </button>
+              </div>
+            </div>
           </td>
           <td
             className="relative px-4 pr-0"
           >
-            <span
-              className="block"
+            <div
+              className="group relative"
             >
-              Climat Air Énergie
-            </span>
+              <button
+                className="flex items-center w-full p-2 -ml-2 text-left"
+                onClick={[Function]}
+              >
+                <span
+                  className="mr-auto flex flex-col"
+                >
+                  <span>
+                    Climat Air Énergie
+                  </span>
+                </span>
+                <span
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                />
+              </button>
+              <div
+                className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
+              >
+                <button
+                  className="flex items-center w-full p-2 text-left"
+                  onClick={[Function]}
+                >
+                  <div
+                    className="w-6 mr-2"
+                  />
+                  <span>
+                    Économie Circulaire
+                  </span>
+                </button>
+                <button
+                  className="flex items-center w-full p-2 text-left"
+                  onClick={[Function]}
+                >
+                  <div
+                    className="w-6 mr-2"
+                  >
+                    <span
+                      className="block fr-fi-check-line scale-75"
+                    />
+                  </div>
+                  <span>
+                    Climat Air Énergie
+                  </span>
+                </button>
+              </div>
+            </div>
           </td>
           <td
             className="relative px-4"
           >
-            <span
-              className="w-72 line-clamp-3"
-              title="Consultant assistance à maîtrise d’ouvrage - Bureau d’études Green Planet"
+            <div
+              className="py-1 px-2 border border-gray-300"
             >
-              Consultant assistance à maîtrise d’ouvrage - Bureau d’études Green Planet
-            </span>
+              <textarea
+                className="w-full resize-none"
+                onChange={[Function]}
+                onMouseOut={[Function]}
+                value="Consultant assistance à maîtrise d’ouvrage - Bureau d’études Green Planet"
+              />
+            </div>
           </td>
           <td
             className="relative px-4 text-right"
