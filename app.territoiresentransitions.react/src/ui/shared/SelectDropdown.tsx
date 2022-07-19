@@ -15,11 +15,11 @@ export const SelectDropdown = <T extends string>({
   options?: T[];
 }) => {
   const [opened, setOpened] = useState(false);
-  // const [selectedValue, setSelectedValue] = useState<T | undefined>(value);
   const selectableOptions: T[] = options ?? keys(labels);
   return (
     <div className="group relative">
       <button
+        aria-label="ouvrir le menu"
         onClick={() => setOpened(!opened)}
         className="flex items-center w-full p-2 -ml-2 text-left"
       >
@@ -35,26 +35,27 @@ export const SelectDropdown = <T extends string>({
           opened ? 'visible translate-y-1 opacity-100 ' : 'invisible opacity-0'
         }`}
       >
-        {selectableOptions.map(v => (
-          <button
-            key={v}
-            className="flex items-center w-full p-2 text-left"
-            onClick={() => {
-              onSelect(v as T);
-              // setSelectedValue(v as T);
-              setOpened(false);
-            }}
-          >
-            <div className="w-6 mr-2">
-              {value === v ? (
-                <span className="block fr-fi-check-line scale-75" />
-              ) : null}
-            </div>
-            <span>
-              {displayOption ? displayOption(v as T) : labels[v as T]}
-            </span>
-          </button>
-        ))}
+        {selectableOptions.map(v => {
+          const label = labels[v as T];
+          return (
+            <button
+              aria-label={label}
+              key={v}
+              className="flex items-center w-full p-2 text-left"
+              onClick={() => {
+                onSelect(v as T);
+                setOpened(false);
+              }}
+            >
+              <div className="w-6 mr-2">
+                {value === v ? (
+                  <span className="block fr-fi-check-line scale-75" />
+                ) : null}
+              </div>
+              <span>{displayOption ? displayOption(v as T) : label}</span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );
@@ -66,7 +67,7 @@ export const MultiSelectDropdown = <T extends string>({
   onSelect,
 }: {
   values?: T[];
-  labels: Record<T, string | ReactElement>;
+  labels: Record<T, string>;
   onSelect: (value: T[]) => void;
 }) => {
   const [opened, setOpened] = useState(false);
@@ -74,6 +75,7 @@ export const MultiSelectDropdown = <T extends string>({
   return (
     <div className="group relative">
       <button
+        aria-label="ouvrir le menu"
         onClick={() => {
           if (opened) onSelect(selectedValues);
           setOpened(!opened);
@@ -98,30 +100,35 @@ export const MultiSelectDropdown = <T extends string>({
           opened ? 'visible translate-y-1 opacity-100 ' : 'invisible opacity-0'
         }`}
       >
-        {Object.keys(labels).map(v => (
-          <button
-            key={v}
-            className="flex items-center w-full p-2 text-left"
-            onClick={() => {
-              if (selectedValues.includes(v as T)) {
-                setSelectedValues(
-                  selectedValues.filter(
-                    selectedValue => selectedValue !== (v as T)
-                  )
-                );
-              } else {
-                setSelectedValues([...selectedValues, v as T]);
-              }
-            }}
-          >
-            <div className="w-6 mr-2">
-              {selectedValues.includes(v as T) ? (
-                <span className="block fr-fi-check-line scale-75" />
-              ) : null}
-            </div>
-            <span>{labels[v as T]}</span>
-          </button>
-        ))}
+        {Object.keys(labels).map(v => {
+          const label = labels[v as T];
+          return (
+            <button
+              aria-label={label}
+              key={v}
+              className="flex items-center w-full p-2 text-left"
+              onClick={() => {
+                if (selectedValues.includes(v as T)) {
+                  setSelectedValues(
+                    selectedValues.filter(
+                      selectedValue => selectedValue !== (v as T)
+                    )
+                  );
+                } else {
+                  setSelectedValues([...selectedValues, v as T]);
+                }
+                setOpened(false);
+              }}
+            >
+              <div className="w-6 mr-2">
+                {selectedValues.includes(v as T) ? (
+                  <span className="block fr-fi-check-line scale-75" />
+                ) : null}
+              </div>
+              <span>{label}</span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );
