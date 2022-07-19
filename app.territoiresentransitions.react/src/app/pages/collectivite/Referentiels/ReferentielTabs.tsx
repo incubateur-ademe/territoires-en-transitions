@@ -14,7 +14,7 @@ import {
 } from 'core-logic/hooks/params';
 import {ReferentielOfIndicateur} from 'types/litterals';
 import AidePriorisation from '../AidePriorisation';
-import Progression from '../Progression';
+import Progression from './Referentiels';
 import DetailTacheTable from '../DetailTaches';
 
 const TABS_INDEX: Record<ReferentielVueParamOption, number> = {
