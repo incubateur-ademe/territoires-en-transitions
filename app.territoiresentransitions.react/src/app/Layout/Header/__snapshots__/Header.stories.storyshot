@@ -401,7 +401,7 @@ exports[`Storyshots app/Layout/Header With Collectivite 1`] = `
       >
         <a
           aria-current={null}
-          className="fr-nav__item justify-center p-4"
+          className="fr-nav__item justify-center text-center p-4"
           href="/collectivite/1/tableau_bord"
           onClick={[Function]}
         >
@@ -662,7 +662,7 @@ exports[`Storyshots app/Layout/Header With Collectivite 1`] = `
         </div>
         <a
           aria-current={null}
-          className="fr-nav__item justify-center p-4"
+          className="fr-nav__item justify-center text-center p-4"
           href="/collectivite/1/toutes_collectivites"
           onClick={[Function]}
         >
@@ -830,7 +830,7 @@ Array [
         >
           <a
             aria-current={null}
-            className="fr-nav__item justify-center p-4"
+            className="fr-nav__item justify-center text-center p-4"
             href="/collectivite/1/tableau_bord"
             onClick={[Function]}
           >
@@ -1039,7 +1039,7 @@ Array [
           </div>
           <a
             aria-current={null}
-            className="fr-nav__item justify-center p-4"
+            className="fr-nav__item justify-center text-center p-4"
             href="/collectivite/1/toutes_collectivites"
             onClick={[Function]}
           >
