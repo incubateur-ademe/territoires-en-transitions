@@ -10,13 +10,22 @@ export type TCellProps = CellProps<ActionReferentiel> & {
 };
 
 // décalage à gauche des lignes en fonction du niveau
-const paddingByLevel: Record<number, number> = {
-  1: 0,
-  2: 16,
-  // au dessus de 2 un décalage supplémentaire est appliqué par l'affichage de l'identifiant, il n'est donc pâs reporté ici
-  3: 16,
-  4: 26,
-  5: 36,
+const paddingByLevel: Record<ReferentielParamOption, Record<number, number>> = {
+  cae: {
+    1: 0,
+    2: 16,
+    // au dessus de 2 un décalage supplémentaire est appliqué par l'affichage de l'identifiant, il n'est donc pâs reporté ici
+    3: 16,
+    4: 26,
+    5: 36,
+  },
+  eci: {
+    1: 0,
+    2: 4,
+    3: 16,
+    4: 26,
+    5: 36,
+  },
 };
 
 // décalage supplémentaire appliqué quand on n'affiche pas le bouton Expand
@@ -28,6 +37,8 @@ const NO_EXPAND_OFFSET = 34;
  */
 export const CellAction = (props: TCellProps) => {
   const {row, value, collectiviteId, referentielId, maxDepth} = props;
+  if (!collectiviteId || !referentielId) return null;
+
   const {depth, identifiant} = row.original;
   const haveSubrows = row.subRows.length > 0;
   const isNotMaxDepth = !maxDepth || depth < maxDepth;
@@ -36,43 +47,65 @@ export const CellAction = (props: TCellProps) => {
   // applique un décalage en fonction du niveau + un décalage optionnel pour
   // compenser l'absence du bouton Expand lorsque c'est nécessaire
   const style = {
-    paddingLeft: paddingByLevel[depth] + (showExpand ? 0 : NO_EXPAND_OFFSET),
+    paddingLeft:
+      paddingByLevel[referentielId][depth] +
+      (showExpand ? 0 : NO_EXPAND_OFFSET),
   };
 
-  return collectiviteId && referentielId ? (
+  const pillDepths = referentielId === 'cae' ? [3, 4] : [2, 3];
+  const idDepth = referentielId === 'cae' ? 2 : 1;
+
+  return (
     <>
-      {depth > 2 ? <span className="identifiant">{identifiant}</span> : null}
+      {depth > idDepth ? (
+        <span className="identifiant">{identifiant}</span>
+      ) : null}
       <span style={style}>
         {showExpand ? <Expand {...props} /> : null}
-        <span className={depth === 3 && isNotMaxDepth ? 'pill' : undefined}>
+        <span
+          className={
+            pillDepths.includes(depth) && isNotMaxDepth ? 'pill' : undefined
+          }
+        >
           {depth > 0 ? (
-            <Link
-              className="hover:underline"
-              to={makeCollectiviteTacheUrl({
-                collectiviteId,
-                actionId: row.original.action_id,
-                referentielId,
-              })}
-            >
-              {value}
-            </Link>
+            depth > idDepth ? (
+              <Link
+                className="hover:underline"
+                to={makeCollectiviteTacheUrl({
+                  collectiviteId,
+                  actionId: row.original.action_id,
+                  referentielId,
+                })}
+              >
+                {value}
+              </Link>
+            ) : (
+              value
+            )
           ) : (
             `Référentiel ${value}`
           )}
         </span>
       </span>
     </>
-  ) : null;
+  );
 };
 
 // affiche le picto reflétant l'état plié/déplié
-const Expand = ({row}: TCellProps) => {
+const Expand = ({row, referentielId}: TCellProps) => {
   const {isExpanded, original} = row;
   const {depth} = original;
+  const invertColor = depth < (referentielId === 'cae' ? 3 : 2);
   const className = [
     'fr-mr-1w',
     isExpanded ? 'arrow-down' : 'arrow-right',
-    depth < 3 ? 'before:bg-white' : 'before:bg-black',
+    invertColor ? 'before:bg-white' : 'before:bg-black',
   ].join(' ');
-  return <button className={className} {...row.getToggleRowExpandedProps()} />;
+  return (
+    <button
+      className={className}
+      {...row.getToggleRowExpandedProps()}
+      title={isExpanded ? 'Replier' : 'Déplier'}
+    />
+  );
 };
