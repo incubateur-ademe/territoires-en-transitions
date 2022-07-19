@@ -57,10 +57,14 @@ const MembreListTableRow = ({
   } = membre;
 
   const isCurrentUser = currentUserId === membre_id;
+  const isAdmin = currentUserAccess === 'admin';
+  const canUpdate = isAdmin || isCurrentUser;
   const onRemove = () => {
     if (
       confirm(
-        'Etes-vous sûr de vouloir retirer cette utilisateur de la collectivité ?'
+        isCurrentUser
+          ? 'Êtes-vous sûr de vouloir vous retirer de la collectivité ?'
+          : 'Êtes-vous sûr de vouloir retirer cette utilisateur de la collectivité ?'
       )
     ) {
       removeFromCollectivite(membre_id);
@@ -79,7 +83,7 @@ const MembreListTableRow = ({
         <span>{telephone}</span>
       </td>
       <td className={cellClassNames}>
-        {isCurrentUser ? (
+        {canUpdate ? (
           <FonctionDropdown
             value={fonction}
             onChange={value =>
@@ -91,7 +95,7 @@ const MembreListTableRow = ({
         )}
       </td>
       <td className={`${cellClassNames} pr-0`}>
-        {isCurrentUser ? (
+        {canUpdate ? (
           <ChampsInterventionDropdown
             values={champ_intervention ?? []}
             onChange={value =>
@@ -107,7 +111,7 @@ const MembreListTableRow = ({
         )}
       </td>
       <td className={cellClassNames}>
-        {isCurrentUser ? (
+        {canUpdate ? (
           <div className="py-1 px-2 border border-gray-300">
             <DetailsFonctionTextarea
               details_fonction={details_fonction ?? ''}
@@ -127,7 +131,7 @@ const MembreListTableRow = ({
         )}
       </td>
       <td className={`${cellClassNames} text-right`}>
-        {isCurrentUser || currentUserAccess === 'admin' ? (
+        {canUpdate ? (
           <AccesDropdown
             isCurrentUser={isCurrentUser}
             currentUserAccess={currentUserAccess}
