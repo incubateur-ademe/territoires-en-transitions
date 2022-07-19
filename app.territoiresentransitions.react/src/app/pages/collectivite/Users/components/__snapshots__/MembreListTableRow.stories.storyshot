@@ -34,92 +34,26 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow A
     <div
       data-test="fonction-dropdown"
     >
-      <div
-        className="group relative"
+      <button
+        aria-label="ouvrir le menu"
+        className="flex items-center w-full p-2 -ml-2 text-left"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onPointerDown={[Function]}
       >
-        <button
-          aria-label="ouvrir le menu"
-          className="flex items-center w-full p-2 -ml-2 text-left"
-          onClick={[Function]}
+        <span
+          className="mr-auto"
         >
-          <span
-            className="mr-auto"
-          >
-            Référent·e
-          </span>
-          <span
-            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
-          />
-        </button>
-        <div
-          className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
-        >
-          <button
-            aria-label="Référent·e"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            >
-              <span
-                className="block fr-fi-check-line scale-75"
-              />
-            </div>
-            <span>
-              Référent·e
-            </span>
-          </button>
-          <button
-            aria-label="Équipe technique"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            />
-            <span>
-              Équipe technique
-            </span>
-          </button>
-          <button
-            aria-label="Équipe politique"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            />
-            <span>
-              Équipe politique
-            </span>
-          </button>
-          <button
-            aria-label="Conseiller·e"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            />
-            <span>
-              Conseiller·e
-            </span>
-          </button>
-          <button
-            aria-label="Partenaire"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            />
-            <span>
-              Partenaire
-            </span>
-          </button>
-        </div>
-      </div>
+          Référent·e
+        </span>
+        <span
+          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+        />
+      </button>
     </div>
   </td>
   <td
@@ -128,58 +62,28 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow A
     <div
       data-test="champ_intervention-dropdown"
     >
-      <div
-        className="group relative"
+      <button
+        aria-label="ouvrir le menu"
+        className="flex items-center w-full p-2 -ml-2 text-left"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onPointerDown={[Function]}
       >
-        <button
-          aria-label="ouvrir le menu"
-          className="flex items-center w-full p-2 -ml-2 text-left"
-          onClick={[Function]}
+        <span
+          className="mr-auto flex flex-col"
         >
-          <span
-            className="mr-auto flex flex-col"
-          >
-            <span>
-              Climat Air Énergie
-            </span>
+          <span>
+            Climat Air Énergie
           </span>
-          <span
-            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
-          />
-        </button>
-        <div
-          className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
-        >
-          <button
-            aria-label="Économie Circulaire"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            />
-            <span>
-              Économie Circulaire
-            </span>
-          </button>
-          <button
-            aria-label="Climat Air Énergie"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            >
-              <span
-                className="block fr-fi-check-line scale-75"
-              />
-            </div>
-            <span>
-              Climat Air Énergie
-            </span>
-          </button>
-        </div>
-      </div>
+        </span>
+        <span
+          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+        />
+      </button>
     </div>
   </td>
   <td
@@ -189,7 +93,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow A
       className="py-1 px-2 border border-gray-300"
     >
       <textarea
-        className="w-full resize-none"
+        className=" w-60 resize-none"
         data-test="details_fonction-textarea"
         onChange={[Function]}
         onMouseOut={[Function]}
@@ -203,115 +107,26 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow A
     <div
       data-test="acces-dropdown"
     >
-      <div
-        className="group relative"
+      <button
+        aria-label="ouvrir le menu"
+        className="flex items-center w-full p-2 -ml-2 text-left"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onPointerDown={[Function]}
       >
-        <button
-          aria-label="ouvrir le menu"
-          className="flex items-center w-full p-2 -ml-2 text-left"
-          onClick={[Function]}
+        <span
+          className="mr-auto"
         >
-          <span
-            className="mr-auto"
-          >
-            Admin
-          </span>
-          <span
-            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
-          />
-        </button>
-        <div
-          className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
-        >
-          <button
-            aria-label="Admin"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            >
-              <span
-                className="block fr-fi-check-line scale-75"
-              />
-            </div>
-            <span>
-              <div>
-                <div>
-                  Admin
-                </div>
-                <div
-                  aria-label="Peut entièrement configurer et éditer"
-                  className="mt-1 text-xs text-gray-500"
-                >
-                  Peut entièrement configurer et éditer
-                </div>
-              </div>
-            </span>
-          </button>
-          <button
-            aria-label="Édition"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            />
-            <span>
-              <div>
-                <div>
-                  Édition
-                </div>
-                <div
-                  aria-label="Peut éditer et inviter de nouveaux membres"
-                  className="mt-1 text-xs text-gray-500"
-                >
-                  Peut éditer et inviter de nouveaux membres
-                </div>
-              </div>
-            </span>
-          </button>
-          <button
-            aria-label="Lecture"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            />
-            <span>
-              <div>
-                <div>
-                  Lecture
-                </div>
-                <div
-                  aria-label="Peut uniquement consulter"
-                  className="mt-1 text-xs text-gray-500"
-                >
-                  Peut uniquement consulter
-                </div>
-              </div>
-            </span>
-          </button>
-          <button
-            aria-label="Supprimé"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            />
-            <span>
-              <span
-                aria-label="retirer l'acces"
-                className="flex w-full px-2 py-4 text-left text-red-600"
-              >
-                Retirer mon accès à la collectivité
-              </span>
-            </span>
-          </button>
-        </div>
-      </div>
+          Admin
+        </span>
+        <span
+          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+        />
+      </button>
     </div>
   </td>
 </tr>
@@ -351,92 +166,26 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow E
     <div
       data-test="fonction-dropdown"
     >
-      <div
-        className="group relative"
+      <button
+        aria-label="ouvrir le menu"
+        className="flex items-center w-full p-2 -ml-2 text-left"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onPointerDown={[Function]}
       >
-        <button
-          aria-label="ouvrir le menu"
-          className="flex items-center w-full p-2 -ml-2 text-left"
-          onClick={[Function]}
+        <span
+          className="mr-auto"
         >
-          <span
-            className="mr-auto"
-          >
-            Équipe technique
-          </span>
-          <span
-            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
-          />
-        </button>
-        <div
-          className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
-        >
-          <button
-            aria-label="Référent·e"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            />
-            <span>
-              Référent·e
-            </span>
-          </button>
-          <button
-            aria-label="Équipe technique"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            >
-              <span
-                className="block fr-fi-check-line scale-75"
-              />
-            </div>
-            <span>
-              Équipe technique
-            </span>
-          </button>
-          <button
-            aria-label="Équipe politique"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            />
-            <span>
-              Équipe politique
-            </span>
-          </button>
-          <button
-            aria-label="Conseiller·e"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            />
-            <span>
-              Conseiller·e
-            </span>
-          </button>
-          <button
-            aria-label="Partenaire"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            />
-            <span>
-              Partenaire
-            </span>
-          </button>
-        </div>
-      </div>
+          Équipe technique
+        </span>
+        <span
+          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+        />
+      </button>
     </div>
   </td>
   <td
@@ -445,65 +194,31 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow E
     <div
       data-test="champ_intervention-dropdown"
     >
-      <div
-        className="group relative"
+      <button
+        aria-label="ouvrir le menu"
+        className="flex items-center w-full p-2 -ml-2 text-left"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onPointerDown={[Function]}
       >
-        <button
-          aria-label="ouvrir le menu"
-          className="flex items-center w-full p-2 -ml-2 text-left"
-          onClick={[Function]}
+        <span
+          className="mr-auto flex flex-col"
         >
-          <span
-            className="mr-auto flex flex-col"
-          >
-            <span>
-              Climat Air Énergie
-            </span>
-            <span>
-              Économie Circulaire
-            </span>
+          <span>
+            Climat Air Énergie
           </span>
-          <span
-            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
-          />
-        </button>
-        <div
-          className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
-        >
-          <button
-            aria-label="Économie Circulaire"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            >
-              <span
-                className="block fr-fi-check-line scale-75"
-              />
-            </div>
-            <span>
-              Économie Circulaire
-            </span>
-          </button>
-          <button
-            aria-label="Climat Air Énergie"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            >
-              <span
-                className="block fr-fi-check-line scale-75"
-              />
-            </div>
-            <span>
-              Climat Air Énergie
-            </span>
-          </button>
-        </div>
-      </div>
+          <span>
+            Économie Circulaire
+          </span>
+        </span>
+        <span
+          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+        />
+      </button>
     </div>
   </td>
   <td
@@ -513,7 +228,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow E
       className="py-1 px-2 border border-gray-300"
     >
       <textarea
-        className="w-full resize-none"
+        className=" w-60 resize-none"
         data-test="details_fonction-textarea"
         onChange={[Function]}
         onMouseOut={[Function]}
@@ -527,45 +242,26 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow E
     <div
       data-test="acces-dropdown"
     >
-      <div
-        className="group relative"
+      <button
+        aria-label="ouvrir le menu"
+        className="flex items-center w-full p-2 -ml-2 text-left"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onPointerDown={[Function]}
       >
-        <button
-          aria-label="ouvrir le menu"
-          className="flex items-center w-full p-2 -ml-2 text-left"
-          onClick={[Function]}
+        <span
+          className="mr-auto"
         >
-          <span
-            className="mr-auto"
-          >
-            Édition
-          </span>
-          <span
-            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
-          />
-        </button>
-        <div
-          className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
-        >
-          <button
-            aria-label="Supprimé"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            />
-            <span>
-              <span
-                aria-label="retirer l'acces"
-                className="flex w-full px-2 py-4 text-left text-red-600"
-              >
-                Retirer mon accès à la collectivité
-              </span>
-            </span>
-          </button>
-        </div>
-      </div>
+          Édition
+        </span>
+        <span
+          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+        />
+      </button>
     </div>
   </td>
 </tr>
@@ -605,92 +301,26 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow L
     <div
       data-test="fonction-dropdown"
     >
-      <div
-        className="group relative"
+      <button
+        aria-label="ouvrir le menu"
+        className="flex items-center w-full p-2 -ml-2 text-left"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onPointerDown={[Function]}
       >
-        <button
-          aria-label="ouvrir le menu"
-          className="flex items-center w-full p-2 -ml-2 text-left"
-          onClick={[Function]}
+        <span
+          className="mr-auto"
         >
-          <span
-            className="mr-auto"
-          >
-            Équipe politique
-          </span>
-          <span
-            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
-          />
-        </button>
-        <div
-          className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
-        >
-          <button
-            aria-label="Référent·e"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            />
-            <span>
-              Référent·e
-            </span>
-          </button>
-          <button
-            aria-label="Équipe technique"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            />
-            <span>
-              Équipe technique
-            </span>
-          </button>
-          <button
-            aria-label="Équipe politique"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            >
-              <span
-                className="block fr-fi-check-line scale-75"
-              />
-            </div>
-            <span>
-              Équipe politique
-            </span>
-          </button>
-          <button
-            aria-label="Conseiller·e"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            />
-            <span>
-              Conseiller·e
-            </span>
-          </button>
-          <button
-            aria-label="Partenaire"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            />
-            <span>
-              Partenaire
-            </span>
-          </button>
-        </div>
-      </div>
+          Équipe politique
+        </span>
+        <span
+          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+        />
+      </button>
     </div>
   </td>
   <td
@@ -699,58 +329,28 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow L
     <div
       data-test="champ_intervention-dropdown"
     >
-      <div
-        className="group relative"
+      <button
+        aria-label="ouvrir le menu"
+        className="flex items-center w-full p-2 -ml-2 text-left"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onPointerDown={[Function]}
       >
-        <button
-          aria-label="ouvrir le menu"
-          className="flex items-center w-full p-2 -ml-2 text-left"
-          onClick={[Function]}
+        <span
+          className="mr-auto flex flex-col"
         >
-          <span
-            className="mr-auto flex flex-col"
-          >
-            <span>
-              Climat Air Énergie
-            </span>
+          <span>
+            Climat Air Énergie
           </span>
-          <span
-            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
-          />
-        </button>
-        <div
-          className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
-        >
-          <button
-            aria-label="Économie Circulaire"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            />
-            <span>
-              Économie Circulaire
-            </span>
-          </button>
-          <button
-            aria-label="Climat Air Énergie"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            >
-              <span
-                className="block fr-fi-check-line scale-75"
-              />
-            </div>
-            <span>
-              Climat Air Énergie
-            </span>
-          </button>
-        </div>
-      </div>
+        </span>
+        <span
+          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+        />
+      </button>
     </div>
   </td>
   <td
@@ -760,7 +360,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow L
       className="py-1 px-2 border border-gray-300"
     >
       <textarea
-        className="w-full resize-none"
+        className=" w-60 resize-none"
         data-test="details_fonction-textarea"
         onChange={[Function]}
         onMouseOut={[Function]}
@@ -774,45 +374,26 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow L
     <div
       data-test="acces-dropdown"
     >
-      <div
-        className="group relative"
+      <button
+        aria-label="ouvrir le menu"
+        className="flex items-center w-full p-2 -ml-2 text-left"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onPointerDown={[Function]}
       >
-        <button
-          aria-label="ouvrir le menu"
-          className="flex items-center w-full p-2 -ml-2 text-left"
-          onClick={[Function]}
+        <span
+          className="mr-auto"
         >
-          <span
-            className="mr-auto"
-          >
-            Lecture
-          </span>
-          <span
-            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
-          />
-        </button>
-        <div
-          className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
-        >
-          <button
-            aria-label="Supprimé"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            />
-            <span>
-              <span
-                aria-label="retirer l'acces"
-                className="flex w-full px-2 py-4 text-left text-red-600"
-              >
-                Retirer mon accès à la collectivité
-              </span>
-            </span>
-          </button>
-        </div>
-      </div>
+          Lecture
+        </span>
+        <span
+          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+        />
+      </button>
     </div>
   </td>
 </tr>
@@ -852,92 +433,26 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow T
     <div
       data-test="fonction-dropdown"
     >
-      <div
-        className="group relative"
+      <button
+        aria-label="ouvrir le menu"
+        className="flex items-center w-full p-2 -ml-2 text-left"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onPointerDown={[Function]}
       >
-        <button
-          aria-label="ouvrir le menu"
-          className="flex items-center w-full p-2 -ml-2 text-left"
-          onClick={[Function]}
+        <span
+          className="mr-auto"
         >
-          <span
-            className="mr-auto"
-          >
-            Équipe politique
-          </span>
-          <span
-            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
-          />
-        </button>
-        <div
-          className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
-        >
-          <button
-            aria-label="Référent·e"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            />
-            <span>
-              Référent·e
-            </span>
-          </button>
-          <button
-            aria-label="Équipe technique"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            />
-            <span>
-              Équipe technique
-            </span>
-          </button>
-          <button
-            aria-label="Équipe politique"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            >
-              <span
-                className="block fr-fi-check-line scale-75"
-              />
-            </div>
-            <span>
-              Équipe politique
-            </span>
-          </button>
-          <button
-            aria-label="Conseiller·e"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            />
-            <span>
-              Conseiller·e
-            </span>
-          </button>
-          <button
-            aria-label="Partenaire"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            />
-            <span>
-              Partenaire
-            </span>
-          </button>
-        </div>
-      </div>
+          Équipe politique
+        </span>
+        <span
+          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+        />
+      </button>
     </div>
   </td>
   <td
@@ -946,58 +461,28 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow T
     <div
       data-test="champ_intervention-dropdown"
     >
-      <div
-        className="group relative"
+      <button
+        aria-label="ouvrir le menu"
+        className="flex items-center w-full p-2 -ml-2 text-left"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onPointerDown={[Function]}
       >
-        <button
-          aria-label="ouvrir le menu"
-          className="flex items-center w-full p-2 -ml-2 text-left"
-          onClick={[Function]}
+        <span
+          className="mr-auto flex flex-col"
         >
-          <span
-            className="mr-auto flex flex-col"
-          >
-            <span>
-              Climat Air Énergie
-            </span>
+          <span>
+            Climat Air Énergie
           </span>
-          <span
-            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
-          />
-        </button>
-        <div
-          className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
-        >
-          <button
-            aria-label="Économie Circulaire"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            />
-            <span>
-              Économie Circulaire
-            </span>
-          </button>
-          <button
-            aria-label="Climat Air Énergie"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            >
-              <span
-                className="block fr-fi-check-line scale-75"
-              />
-            </div>
-            <span>
-              Climat Air Énergie
-            </span>
-          </button>
-        </div>
-      </div>
+        </span>
+        <span
+          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+        />
+      </button>
     </div>
   </td>
   <td
@@ -1007,7 +492,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow T
       className="py-1 px-2 border border-gray-300"
     >
       <textarea
-        className="w-full resize-none"
+        className=" w-60 resize-none"
         data-test="details_fonction-textarea"
         onChange={[Function]}
         onMouseOut={[Function]}
@@ -1021,45 +506,26 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow T
     <div
       data-test="acces-dropdown"
     >
-      <div
-        className="group relative"
+      <button
+        aria-label="ouvrir le menu"
+        className="flex items-center w-full p-2 -ml-2 text-left"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onPointerDown={[Function]}
       >
-        <button
-          aria-label="ouvrir le menu"
-          className="flex items-center w-full p-2 -ml-2 text-left"
-          onClick={[Function]}
+        <span
+          className="mr-auto"
         >
-          <span
-            className="mr-auto"
-          >
-            Lecture
-          </span>
-          <span
-            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
-          />
-        </button>
-        <div
-          className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
-        >
-          <button
-            aria-label="Supprimé"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            />
-            <span>
-              <span
-                aria-label="retirer l'acces"
-                className="flex w-full px-2 py-4 text-left text-red-600"
-              >
-                Retirer mon accès à la collectivité
-              </span>
-            </span>
-          </button>
-        </div>
-      </div>
+          Lecture
+        </span>
+        <span
+          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+        />
+      </button>
     </div>
   </td>
 </tr>
