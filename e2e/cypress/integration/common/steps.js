@@ -44,6 +44,10 @@ Given('les droits utilisateur sont réinitialisés', () => {
   cy.task('supabase_rpc', { name: 'test_reset_droits' });
 });
 
+Given('les informations des membres sont réinitialisées', () => {
+  cy.task('supabase_rpc', { name: 'test_reset_membres' });
+});
+
 Given('je me déconnecte', () => {
   cy.get('[data-test=connectedMenu]').click();
   cy.get('[data-test=logoutBtn]').click();
