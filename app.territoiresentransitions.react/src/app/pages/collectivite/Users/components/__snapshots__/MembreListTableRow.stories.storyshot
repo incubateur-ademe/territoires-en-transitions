@@ -3,6 +3,7 @@
 exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow Admin 1`] = `
 <tr
   className="h-20 border-b border-gray-300 bg-white"
+  data-test="MembreRow-yolo@dodo.com"
 >
   <td
     className="relative px-4"
@@ -31,83 +32,93 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow A
     className="relative px-4"
   >
     <div
-      className="group relative"
+      data-test="fonction-dropdown"
     >
-      <button
-        className="flex items-center w-full p-2 -ml-2 text-left"
-        onClick={[Function]}
-      >
-        <span
-          className="mr-auto"
-        >
-          Référent·e
-        </span>
-        <span
-          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
-        />
-      </button>
       <div
-        className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
+        className="group relative"
       >
         <button
-          className="flex items-center w-full p-2 text-left"
+          aria-label="ouvrir le menu"
+          className="flex items-center w-full p-2 -ml-2 text-left"
           onClick={[Function]}
         >
-          <div
-            className="w-6 mr-2"
+          <span
+            className="mr-auto"
           >
-            <span
-              className="block fr-fi-check-line scale-75"
-            />
-          </div>
-          <span>
             Référent·e
           </span>
-        </button>
-        <button
-          className="flex items-center w-full p-2 text-left"
-          onClick={[Function]}
-        >
-          <div
-            className="w-6 mr-2"
+          <span
+            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
           />
-          <span>
-            Conseiller·e
-          </span>
         </button>
-        <button
-          className="flex items-center w-full p-2 text-left"
-          onClick={[Function]}
+        <div
+          className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
         >
-          <div
-            className="w-6 mr-2"
-          />
-          <span>
-            Équipe technique
-          </span>
-        </button>
-        <button
-          className="flex items-center w-full p-2 text-left"
-          onClick={[Function]}
-        >
-          <div
-            className="w-6 mr-2"
-          />
-          <span>
-            Équipe politique
-          </span>
-        </button>
-        <button
-          className="flex items-center w-full p-2 text-left"
-          onClick={[Function]}
-        >
-          <div
-            className="w-6 mr-2"
-          />
-          <span>
-            Partenaire
-          </span>
-        </button>
+          <button
+            aria-label="Référent·e"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            >
+              <span
+                className="block fr-fi-check-line scale-75"
+              />
+            </div>
+            <span>
+              Référent·e
+            </span>
+          </button>
+          <button
+            aria-label="Conseiller·e"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            />
+            <span>
+              Conseiller·e
+            </span>
+          </button>
+          <button
+            aria-label="Équipe technique"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            />
+            <span>
+              Équipe technique
+            </span>
+          </button>
+          <button
+            aria-label="Équipe politique"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            />
+            <span>
+              Équipe politique
+            </span>
+          </button>
+          <button
+            aria-label="Partenaire"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            />
+            <span>
+              Partenaire
+            </span>
+          </button>
+        </div>
       </div>
     </div>
   </td>
@@ -115,52 +126,59 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow A
     className="relative px-4 pr-0"
   >
     <div
-      className="group relative"
+      data-test="champ_intervention-dropdown"
     >
-      <button
-        className="flex items-center w-full p-2 -ml-2 text-left"
-        onClick={[Function]}
-      >
-        <span
-          className="mr-auto flex flex-col"
-        >
-          <span>
-            Climat Air Énergie
-          </span>
-        </span>
-        <span
-          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
-        />
-      </button>
       <div
-        className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
+        className="group relative"
       >
         <button
-          className="flex items-center w-full p-2 text-left"
+          aria-label="ouvrir le menu"
+          className="flex items-center w-full p-2 -ml-2 text-left"
           onClick={[Function]}
         >
-          <div
-            className="w-6 mr-2"
-          />
-          <span>
-            Économie Circulaire
-          </span>
-        </button>
-        <button
-          className="flex items-center w-full p-2 text-left"
-          onClick={[Function]}
-        >
-          <div
-            className="w-6 mr-2"
+          <span
+            className="mr-auto flex flex-col"
           >
-            <span
-              className="block fr-fi-check-line scale-75"
-            />
-          </div>
-          <span>
-            Climat Air Énergie
+            <span>
+              Climat Air Énergie
+            </span>
           </span>
+          <span
+            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+          />
         </button>
+        <div
+          className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
+        >
+          <button
+            aria-label="Économie Circulaire"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            />
+            <span>
+              Économie Circulaire
+            </span>
+          </button>
+          <button
+            aria-label="Climat Air Énergie"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            >
+              <span
+                className="block fr-fi-check-line scale-75"
+              />
+            </div>
+            <span>
+              Climat Air Énergie
+            </span>
+          </button>
+        </div>
       </div>
     </div>
   </td>
@@ -172,6 +190,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow A
     >
       <textarea
         className="w-full resize-none"
+        data-test="details_fonction-textarea"
         onChange={[Function]}
         onMouseOut={[Function]}
         value="Cheffe de projet PCAET"
@@ -182,103 +201,116 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow A
     className="relative px-4 text-right"
   >
     <div
-      className="group relative"
+      data-test="acces-dropdown"
     >
-      <button
-        className="flex items-center w-full p-2 -ml-2 text-left"
-        onClick={[Function]}
-      >
-        <span
-          className="mr-auto"
-        >
-          Admin
-        </span>
-        <span
-          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
-        />
-      </button>
       <div
-        className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
+        className="group relative"
       >
         <button
-          className="flex items-center w-full p-2 text-left"
+          aria-label="ouvrir le menu"
+          className="flex items-center w-full p-2 -ml-2 text-left"
           onClick={[Function]}
         >
-          <div
-            className="w-6 mr-2"
+          <span
+            className="mr-auto"
           >
-            <span
-              className="block fr-fi-check-line scale-75"
-            />
-          </div>
-          <span>
-            <div>
-              <div>
-                Admin
-              </div>
-              <div
-                className="mt-1 text-xs text-gray-500"
-              >
-                Peut entièrement configurer et éditer
-              </div>
-            </div>
+            Admin
           </span>
-        </button>
-        <button
-          className="flex items-center w-full p-2 text-left"
-          onClick={[Function]}
-        >
-          <div
-            className="w-6 mr-2"
+          <span
+            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
           />
-          <span>
-            <div>
-              <div>
-                Édition
-              </div>
-              <div
-                className="mt-1 text-xs text-gray-500"
-              >
-                Peut éditer et inviter de nouveaux membres
-              </div>
-            </div>
-          </span>
         </button>
-        <button
-          className="flex items-center w-full p-2 text-left"
-          onClick={[Function]}
+        <div
+          className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
         >
-          <div
-            className="w-6 mr-2"
-          />
-          <span>
-            <div>
-              <div>
-                Lecture
-              </div>
-              <div
-                className="mt-1 text-xs text-gray-500"
-              >
-                Peut uniquement consulter
-              </div>
-            </div>
-          </span>
-        </button>
-        <button
-          className="flex items-center w-full p-2 text-left"
-          onClick={[Function]}
-        >
-          <div
-            className="w-6 mr-2"
-          />
-          <span>
-            <span
-              className="flex w-full px-2 py-4 text-left text-red-600"
+          <button
+            aria-label="Admin"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
             >
-              Retirer mon accès à la collectivité
+              <span
+                className="block fr-fi-check-line scale-75"
+              />
+            </div>
+            <span>
+              <div>
+                <div>
+                  Admin
+                </div>
+                <div
+                  aria-label="Peut entièrement configurer et éditer"
+                  className="mt-1 text-xs text-gray-500"
+                >
+                  Peut entièrement configurer et éditer
+                </div>
+              </div>
             </span>
-          </span>
-        </button>
+          </button>
+          <button
+            aria-label="Édition"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            />
+            <span>
+              <div>
+                <div>
+                  Édition
+                </div>
+                <div
+                  aria-label="Peut éditer et inviter de nouveaux membres"
+                  className="mt-1 text-xs text-gray-500"
+                >
+                  Peut éditer et inviter de nouveaux membres
+                </div>
+              </div>
+            </span>
+          </button>
+          <button
+            aria-label="Lecture"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            />
+            <span>
+              <div>
+                <div>
+                  Lecture
+                </div>
+                <div
+                  aria-label="Peut uniquement consulter"
+                  className="mt-1 text-xs text-gray-500"
+                >
+                  Peut uniquement consulter
+                </div>
+              </div>
+            </span>
+          </button>
+          <button
+            aria-label="Supprimé"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            />
+            <span>
+              <span
+                aria-label="retirer l'acces"
+                className="flex w-full px-2 py-4 text-left text-red-600"
+              >
+                Retirer mon accès à la collectivité
+              </span>
+            </span>
+          </button>
+        </div>
       </div>
     </div>
   </td>
@@ -288,6 +320,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow A
 exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow Editeur 1`] = `
 <tr
   className="h-20 border-b border-gray-300 bg-white"
+  data-test="MembreRow-yala@dada.com"
 >
   <td
     className="relative px-4"
@@ -316,83 +349,93 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow E
     className="relative px-4"
   >
     <div
-      className="group relative"
+      data-test="fonction-dropdown"
     >
-      <button
-        className="flex items-center w-full p-2 -ml-2 text-left"
-        onClick={[Function]}
-      >
-        <span
-          className="mr-auto"
-        >
-          Équipe technique
-        </span>
-        <span
-          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
-        />
-      </button>
       <div
-        className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
+        className="group relative"
       >
         <button
-          className="flex items-center w-full p-2 text-left"
+          aria-label="ouvrir le menu"
+          className="flex items-center w-full p-2 -ml-2 text-left"
           onClick={[Function]}
         >
-          <div
-            className="w-6 mr-2"
-          />
-          <span>
-            Référent·e
-          </span>
-        </button>
-        <button
-          className="flex items-center w-full p-2 text-left"
-          onClick={[Function]}
-        >
-          <div
-            className="w-6 mr-2"
-          />
-          <span>
-            Conseiller·e
-          </span>
-        </button>
-        <button
-          className="flex items-center w-full p-2 text-left"
-          onClick={[Function]}
-        >
-          <div
-            className="w-6 mr-2"
+          <span
+            className="mr-auto"
           >
-            <span
-              className="block fr-fi-check-line scale-75"
-            />
-          </div>
-          <span>
             Équipe technique
           </span>
-        </button>
-        <button
-          className="flex items-center w-full p-2 text-left"
-          onClick={[Function]}
-        >
-          <div
-            className="w-6 mr-2"
+          <span
+            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
           />
-          <span>
-            Équipe politique
-          </span>
         </button>
-        <button
-          className="flex items-center w-full p-2 text-left"
-          onClick={[Function]}
+        <div
+          className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
         >
-          <div
-            className="w-6 mr-2"
-          />
-          <span>
-            Partenaire
-          </span>
-        </button>
+          <button
+            aria-label="Référent·e"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            />
+            <span>
+              Référent·e
+            </span>
+          </button>
+          <button
+            aria-label="Conseiller·e"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            />
+            <span>
+              Conseiller·e
+            </span>
+          </button>
+          <button
+            aria-label="Équipe technique"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            >
+              <span
+                className="block fr-fi-check-line scale-75"
+              />
+            </div>
+            <span>
+              Équipe technique
+            </span>
+          </button>
+          <button
+            aria-label="Équipe politique"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            />
+            <span>
+              Équipe politique
+            </span>
+          </button>
+          <button
+            aria-label="Partenaire"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            />
+            <span>
+              Partenaire
+            </span>
+          </button>
+        </div>
       </div>
     </div>
   </td>
@@ -400,59 +443,66 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow E
     className="relative px-4 pr-0"
   >
     <div
-      className="group relative"
+      data-test="champ_intervention-dropdown"
     >
-      <button
-        className="flex items-center w-full p-2 -ml-2 text-left"
-        onClick={[Function]}
-      >
-        <span
-          className="mr-auto flex flex-col"
-        >
-          <span>
-            Climat Air Énergie
-          </span>
-          <span>
-            Économie Circulaire
-          </span>
-        </span>
-        <span
-          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
-        />
-      </button>
       <div
-        className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
+        className="group relative"
       >
         <button
-          className="flex items-center w-full p-2 text-left"
+          aria-label="ouvrir le menu"
+          className="flex items-center w-full p-2 -ml-2 text-left"
           onClick={[Function]}
         >
-          <div
-            className="w-6 mr-2"
+          <span
+            className="mr-auto flex flex-col"
           >
-            <span
-              className="block fr-fi-check-line scale-75"
-            />
-          </div>
-          <span>
-            Économie Circulaire
+            <span>
+              Climat Air Énergie
+            </span>
+            <span>
+              Économie Circulaire
+            </span>
           </span>
+          <span
+            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+          />
         </button>
-        <button
-          className="flex items-center w-full p-2 text-left"
-          onClick={[Function]}
+        <div
+          className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
         >
-          <div
-            className="w-6 mr-2"
+          <button
+            aria-label="Économie Circulaire"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
           >
-            <span
-              className="block fr-fi-check-line scale-75"
-            />
-          </div>
-          <span>
-            Climat Air Énergie
-          </span>
-        </button>
+            <div
+              className="w-6 mr-2"
+            >
+              <span
+                className="block fr-fi-check-line scale-75"
+              />
+            </div>
+            <span>
+              Économie Circulaire
+            </span>
+          </button>
+          <button
+            aria-label="Climat Air Énergie"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            >
+              <span
+                className="block fr-fi-check-line scale-75"
+              />
+            </div>
+            <span>
+              Climat Air Énergie
+            </span>
+          </button>
+        </div>
       </div>
     </div>
   </td>
@@ -464,6 +514,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow E
     >
       <textarea
         className="w-full resize-none"
+        data-test="details_fonction-textarea"
         onChange={[Function]}
         onMouseOut={[Function]}
         value="Vice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier, adjoint au maire en charge du dVice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier"
@@ -474,39 +525,46 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow E
     className="relative px-4 text-right"
   >
     <div
-      className="group relative"
+      data-test="acces-dropdown"
     >
-      <button
-        className="flex items-center w-full p-2 -ml-2 text-left"
-        onClick={[Function]}
-      >
-        <span
-          className="mr-auto"
-        >
-          Édition
-        </span>
-        <span
-          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
-        />
-      </button>
       <div
-        className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
+        className="group relative"
       >
         <button
-          className="flex items-center w-full p-2 text-left"
+          aria-label="ouvrir le menu"
+          className="flex items-center w-full p-2 -ml-2 text-left"
           onClick={[Function]}
         >
-          <div
-            className="w-6 mr-2"
-          />
-          <span>
-            <span
-              className="flex w-full px-2 py-4 text-left text-red-600"
-            >
-              Retirer mon accès à la collectivité
-            </span>
+          <span
+            className="mr-auto"
+          >
+            Édition
           </span>
+          <span
+            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+          />
         </button>
+        <div
+          className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
+        >
+          <button
+            aria-label="Supprimé"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            />
+            <span>
+              <span
+                aria-label="retirer l'acces"
+                className="flex w-full px-2 py-4 text-left text-red-600"
+              >
+                Retirer mon accès à la collectivité
+              </span>
+            </span>
+          </button>
+        </div>
       </div>
     </div>
   </td>
@@ -516,6 +574,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow E
 exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow Lecteur 1`] = `
 <tr
   className="h-20 border-b border-gray-300 bg-white"
+  data-test="MembreRow-john@doe.com"
 >
   <td
     className="relative px-4"
@@ -544,83 +603,93 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow L
     className="relative px-4"
   >
     <div
-      className="group relative"
+      data-test="fonction-dropdown"
     >
-      <button
-        className="flex items-center w-full p-2 -ml-2 text-left"
-        onClick={[Function]}
-      >
-        <span
-          className="mr-auto"
-        >
-          Équipe politique
-        </span>
-        <span
-          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
-        />
-      </button>
       <div
-        className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
+        className="group relative"
       >
         <button
-          className="flex items-center w-full p-2 text-left"
+          aria-label="ouvrir le menu"
+          className="flex items-center w-full p-2 -ml-2 text-left"
           onClick={[Function]}
         >
-          <div
-            className="w-6 mr-2"
-          />
-          <span>
-            Référent·e
-          </span>
-        </button>
-        <button
-          className="flex items-center w-full p-2 text-left"
-          onClick={[Function]}
-        >
-          <div
-            className="w-6 mr-2"
-          />
-          <span>
-            Conseiller·e
-          </span>
-        </button>
-        <button
-          className="flex items-center w-full p-2 text-left"
-          onClick={[Function]}
-        >
-          <div
-            className="w-6 mr-2"
-          />
-          <span>
-            Équipe technique
-          </span>
-        </button>
-        <button
-          className="flex items-center w-full p-2 text-left"
-          onClick={[Function]}
-        >
-          <div
-            className="w-6 mr-2"
+          <span
+            className="mr-auto"
           >
-            <span
-              className="block fr-fi-check-line scale-75"
-            />
-          </div>
-          <span>
             Équipe politique
           </span>
-        </button>
-        <button
-          className="flex items-center w-full p-2 text-left"
-          onClick={[Function]}
-        >
-          <div
-            className="w-6 mr-2"
+          <span
+            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
           />
-          <span>
-            Partenaire
-          </span>
         </button>
+        <div
+          className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
+        >
+          <button
+            aria-label="Référent·e"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            />
+            <span>
+              Référent·e
+            </span>
+          </button>
+          <button
+            aria-label="Conseiller·e"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            />
+            <span>
+              Conseiller·e
+            </span>
+          </button>
+          <button
+            aria-label="Équipe technique"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            />
+            <span>
+              Équipe technique
+            </span>
+          </button>
+          <button
+            aria-label="Équipe politique"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            >
+              <span
+                className="block fr-fi-check-line scale-75"
+              />
+            </div>
+            <span>
+              Équipe politique
+            </span>
+          </button>
+          <button
+            aria-label="Partenaire"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            />
+            <span>
+              Partenaire
+            </span>
+          </button>
+        </div>
       </div>
     </div>
   </td>
@@ -628,52 +697,59 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow L
     className="relative px-4 pr-0"
   >
     <div
-      className="group relative"
+      data-test="champ_intervention-dropdown"
     >
-      <button
-        className="flex items-center w-full p-2 -ml-2 text-left"
-        onClick={[Function]}
-      >
-        <span
-          className="mr-auto flex flex-col"
-        >
-          <span>
-            Climat Air Énergie
-          </span>
-        </span>
-        <span
-          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
-        />
-      </button>
       <div
-        className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
+        className="group relative"
       >
         <button
-          className="flex items-center w-full p-2 text-left"
+          aria-label="ouvrir le menu"
+          className="flex items-center w-full p-2 -ml-2 text-left"
           onClick={[Function]}
         >
-          <div
-            className="w-6 mr-2"
-          />
-          <span>
-            Économie Circulaire
-          </span>
-        </button>
-        <button
-          className="flex items-center w-full p-2 text-left"
-          onClick={[Function]}
-        >
-          <div
-            className="w-6 mr-2"
+          <span
+            className="mr-auto flex flex-col"
           >
-            <span
-              className="block fr-fi-check-line scale-75"
-            />
-          </div>
-          <span>
-            Climat Air Énergie
+            <span>
+              Climat Air Énergie
+            </span>
           </span>
+          <span
+            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+          />
         </button>
+        <div
+          className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
+        >
+          <button
+            aria-label="Économie Circulaire"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            />
+            <span>
+              Économie Circulaire
+            </span>
+          </button>
+          <button
+            aria-label="Climat Air Énergie"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            >
+              <span
+                className="block fr-fi-check-line scale-75"
+              />
+            </div>
+            <span>
+              Climat Air Énergie
+            </span>
+          </button>
+        </div>
       </div>
     </div>
   </td>
@@ -685,6 +761,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow L
     >
       <textarea
         className="w-full resize-none"
+        data-test="details_fonction-textarea"
         onChange={[Function]}
         onMouseOut={[Function]}
         value="Consultant assistance à maîtrise d’ouvrage - Bureau d’études Green Planet"
@@ -695,39 +772,46 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow L
     className="relative px-4 text-right"
   >
     <div
-      className="group relative"
+      data-test="acces-dropdown"
     >
-      <button
-        className="flex items-center w-full p-2 -ml-2 text-left"
-        onClick={[Function]}
-      >
-        <span
-          className="mr-auto"
-        >
-          Lecture
-        </span>
-        <span
-          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
-        />
-      </button>
       <div
-        className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
+        className="group relative"
       >
         <button
-          className="flex items-center w-full p-2 text-left"
+          aria-label="ouvrir le menu"
+          className="flex items-center w-full p-2 -ml-2 text-left"
           onClick={[Function]}
         >
-          <div
-            className="w-6 mr-2"
-          />
-          <span>
-            <span
-              className="flex w-full px-2 py-4 text-left text-red-600"
-            >
-              Retirer mon accès à la collectivité
-            </span>
+          <span
+            className="mr-auto"
+          >
+            Lecture
           </span>
+          <span
+            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+          />
         </button>
+        <div
+          className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
+        >
+          <button
+            aria-label="Supprimé"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            />
+            <span>
+              <span
+                aria-label="retirer l'acces"
+                className="flex w-full px-2 py-4 text-left text-red-600"
+              >
+                Retirer mon accès à la collectivité
+              </span>
+            </span>
+          </button>
+        </div>
       </div>
     </div>
   </td>
@@ -737,6 +821,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow L
 exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow TODO Guest 1`] = `
 <tr
   className="h-20 border-b border-gray-300 bg-white"
+  data-test="MembreRow-john@doe.com"
 >
   <td
     className="relative px-4"
@@ -765,83 +850,93 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow T
     className="relative px-4"
   >
     <div
-      className="group relative"
+      data-test="fonction-dropdown"
     >
-      <button
-        className="flex items-center w-full p-2 -ml-2 text-left"
-        onClick={[Function]}
-      >
-        <span
-          className="mr-auto"
-        >
-          Équipe politique
-        </span>
-        <span
-          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
-        />
-      </button>
       <div
-        className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
+        className="group relative"
       >
         <button
-          className="flex items-center w-full p-2 text-left"
+          aria-label="ouvrir le menu"
+          className="flex items-center w-full p-2 -ml-2 text-left"
           onClick={[Function]}
         >
-          <div
-            className="w-6 mr-2"
-          />
-          <span>
-            Référent·e
-          </span>
-        </button>
-        <button
-          className="flex items-center w-full p-2 text-left"
-          onClick={[Function]}
-        >
-          <div
-            className="w-6 mr-2"
-          />
-          <span>
-            Conseiller·e
-          </span>
-        </button>
-        <button
-          className="flex items-center w-full p-2 text-left"
-          onClick={[Function]}
-        >
-          <div
-            className="w-6 mr-2"
-          />
-          <span>
-            Équipe technique
-          </span>
-        </button>
-        <button
-          className="flex items-center w-full p-2 text-left"
-          onClick={[Function]}
-        >
-          <div
-            className="w-6 mr-2"
+          <span
+            className="mr-auto"
           >
-            <span
-              className="block fr-fi-check-line scale-75"
-            />
-          </div>
-          <span>
             Équipe politique
           </span>
-        </button>
-        <button
-          className="flex items-center w-full p-2 text-left"
-          onClick={[Function]}
-        >
-          <div
-            className="w-6 mr-2"
+          <span
+            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
           />
-          <span>
-            Partenaire
-          </span>
         </button>
+        <div
+          className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
+        >
+          <button
+            aria-label="Référent·e"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            />
+            <span>
+              Référent·e
+            </span>
+          </button>
+          <button
+            aria-label="Conseiller·e"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            />
+            <span>
+              Conseiller·e
+            </span>
+          </button>
+          <button
+            aria-label="Équipe technique"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            />
+            <span>
+              Équipe technique
+            </span>
+          </button>
+          <button
+            aria-label="Équipe politique"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            >
+              <span
+                className="block fr-fi-check-line scale-75"
+              />
+            </div>
+            <span>
+              Équipe politique
+            </span>
+          </button>
+          <button
+            aria-label="Partenaire"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            />
+            <span>
+              Partenaire
+            </span>
+          </button>
+        </div>
       </div>
     </div>
   </td>
@@ -849,52 +944,59 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow T
     className="relative px-4 pr-0"
   >
     <div
-      className="group relative"
+      data-test="champ_intervention-dropdown"
     >
-      <button
-        className="flex items-center w-full p-2 -ml-2 text-left"
-        onClick={[Function]}
-      >
-        <span
-          className="mr-auto flex flex-col"
-        >
-          <span>
-            Climat Air Énergie
-          </span>
-        </span>
-        <span
-          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
-        />
-      </button>
       <div
-        className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
+        className="group relative"
       >
         <button
-          className="flex items-center w-full p-2 text-left"
+          aria-label="ouvrir le menu"
+          className="flex items-center w-full p-2 -ml-2 text-left"
           onClick={[Function]}
         >
-          <div
-            className="w-6 mr-2"
-          />
-          <span>
-            Économie Circulaire
-          </span>
-        </button>
-        <button
-          className="flex items-center w-full p-2 text-left"
-          onClick={[Function]}
-        >
-          <div
-            className="w-6 mr-2"
+          <span
+            className="mr-auto flex flex-col"
           >
-            <span
-              className="block fr-fi-check-line scale-75"
-            />
-          </div>
-          <span>
-            Climat Air Énergie
+            <span>
+              Climat Air Énergie
+            </span>
           </span>
+          <span
+            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+          />
         </button>
+        <div
+          className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
+        >
+          <button
+            aria-label="Économie Circulaire"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            />
+            <span>
+              Économie Circulaire
+            </span>
+          </button>
+          <button
+            aria-label="Climat Air Énergie"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            >
+              <span
+                className="block fr-fi-check-line scale-75"
+              />
+            </div>
+            <span>
+              Climat Air Énergie
+            </span>
+          </button>
+        </div>
       </div>
     </div>
   </td>
@@ -906,6 +1008,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow T
     >
       <textarea
         className="w-full resize-none"
+        data-test="details_fonction-textarea"
         onChange={[Function]}
         onMouseOut={[Function]}
         value="Consultant assistance à maîtrise d’ouvrage - Bureau d’études Green Planet"
@@ -916,39 +1019,46 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow T
     className="relative px-4 text-right"
   >
     <div
-      className="group relative"
+      data-test="acces-dropdown"
     >
-      <button
-        className="flex items-center w-full p-2 -ml-2 text-left"
-        onClick={[Function]}
-      >
-        <span
-          className="mr-auto"
-        >
-          Lecture
-        </span>
-        <span
-          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
-        />
-      </button>
       <div
-        className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
+        className="group relative"
       >
         <button
-          className="flex items-center w-full p-2 text-left"
+          aria-label="ouvrir le menu"
+          className="flex items-center w-full p-2 -ml-2 text-left"
           onClick={[Function]}
         >
-          <div
-            className="w-6 mr-2"
-          />
-          <span>
-            <span
-              className="flex w-full px-2 py-4 text-left text-red-600"
-            >
-              Retirer mon accès à la collectivité
-            </span>
+          <span
+            className="mr-auto"
+          >
+            Lecture
           </span>
+          <span
+            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+          />
         </button>
+        <div
+          className="bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 invisible opacity-0"
+        >
+          <button
+            aria-label="Supprimé"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            />
+            <span>
+              <span
+                aria-label="retirer l'acces"
+                className="flex w-full px-2 py-4 text-left text-red-600"
+              >
+                Retirer mon accès à la collectivité
+              </span>
+            </span>
+          </button>
+        </div>
       </div>
     </div>
   </td>
