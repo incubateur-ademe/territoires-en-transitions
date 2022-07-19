@@ -19,7 +19,7 @@ until psql -v ON_ERROR_STOP=1 --file "$DATALAYER_DIR"/verify/supabase_storage.sq
   sleep 2
 done
 
-until psql -v ON_ERROR_STOP=1 --file "$DATALAYER_DIR"/verify/rpc.sql; do
+until psql -v ON_ERROR_STOP=1 --file "$DATALAYER_DIR"/verify/sqitch.sql; do
   echo "Waiting for sqitch migration..."
   sleep 4
 done
