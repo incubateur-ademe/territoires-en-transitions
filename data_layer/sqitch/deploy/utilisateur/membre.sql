@@ -112,15 +112,15 @@ begin
           else 
             insert into private_collectivite_membre(collectivite_id, user_id, champ_intervention) values(update_collectivite_membre_champ_intervention.collectivite_id, membre_id, update_collectivite_membre_champ_intervention.champ_intervention);
           end if;
-        return json_build_object('message', 'La champ_intervention du membre a été mise à jour.');
+        return json_build_object('message', 'Le champ d''intervention du membre a été mise à jour.');
     else
         perform set_config('response.status', '401', true);
-        return json_build_object('error', 'Vous n''avez pas les droits pour modifier la champ_intervention de ce membre.');
+        return json_build_object('error', 'Vous n''avez pas les droits pour modifier le champ d''intervention de ce membre.');
     end if;
 end
 $$ language plpgsql security definer;
 comment on function update_collectivite_membre_champ_intervention is
-    'Met à jour le champs champ_intervention d''un membre s''il est autorisé à le faire';
+    'Met à jour le champ d''intervention d''un membre s''il est autorisé à le faire';
 
 
 create function update_collectivite_membre_niveau_acces(collectivite_id integer, membre_id uuid, niveau_acces niveau_acces)
@@ -142,7 +142,7 @@ begin
           else 
             return json_build_object('error', 'Cet utilisateur n''est pas membre de la collectivité.');
           end if;
-        return json_build_object('message', 'La niveau_acces du membre a été mise à jour.');
+        return json_build_object('message', 'Le niveau d''acces du membre a été mise à jour.');
     else
         perform set_config('response.status', '401', true);
         return json_build_object('error', 'Vous n''avez pas les droits admin, vous ne pouvez pas éditer le niveau d''acces de ce membre.');
@@ -203,7 +203,7 @@ from private_utilisateur_droit d
     
 where d.collectivite_id = collectivite_membres.id
   and d.active)
-select m.user_id, prenom, nom, email, telephone, niveau_acces , fonction, details_fonction, champ_intervention
+select d.user_id, prenom, nom, email, telephone, niveau_acces , fonction, details_fonction, champ_intervention
 from droits_dcp d
 left join private_collectivite_membre m
 on m.user_id = d.user_id and m.collectivite_id = d.collectivite_id
