@@ -72,7 +72,7 @@ const MembreListTableRow = ({
   };
 
   return (
-    <tr className={rowClassNames}>
+    <tr data-test={`MembreRow-${email}`} className={rowClassNames}>
       <td className={cellClassNames}>
         <span className="font-bold">
           {prenom} {nom}
@@ -161,6 +161,7 @@ const DetailsFonctionTextarea = ({
   const [value, setValue] = useState(details_fonction);
   return (
     <textarea
+      data-test="details_fonction-textarea"
       value={value}
       className="w-full resize-none"
       onChange={e => setValue(e.target.value)}
@@ -175,11 +176,13 @@ const FonctionDropdown = ({
   value?: TMembreFonction;
   onChange: (value: TMembreFonction) => void;
 }) => (
-  <SelectDropdown
-    labels={membreFonctionLabels}
-    value={value}
-    onSelect={onChange}
-  />
+  <div data-test="fonction-dropdown">
+    <SelectDropdown
+      labels={membreFonctionLabels}
+      value={value}
+      onSelect={onChange}
+    />
+  </div>
 );
 
 const ChampsInterventionDropdown = ({
@@ -189,11 +192,13 @@ const ChampsInterventionDropdown = ({
   values: Referentiel[];
   onChange: (value: Referentiel[]) => void;
 }) => (
-  <MultiSelectDropdown
-    labels={pick(['eci', 'cae'], referentielToName)}
-    onSelect={onChange}
-    values={values}
-  />
+  <div data-test="champ_intervention-dropdown">
+    <MultiSelectDropdown
+      labels={pick(['eci', 'cae'], referentielToName)}
+      onSelect={onChange}
+      values={values}
+    />
+  </div>
 );
 
 type TAccesDropdownOption = TNiveauAcces | 'remove';
@@ -209,7 +214,10 @@ const AccessDropdownLabel = ({
 }) => {
   if (option === 'remove')
     return (
-      <span className="flex w-full px-2 py-4 text-left text-red-600">
+      <span
+        aria-label="retirer l'acces"
+        className="flex w-full px-2 py-4 text-left text-red-600"
+      >
         {isCurrentUser
           ? 'Retirer mon accès à la collectivité'
           : 'Retirer ce membre de la collectivité'}
@@ -219,7 +227,10 @@ const AccessDropdownLabel = ({
     return (
       <div>
         <div>{niveauAccesLabels[option]}</div>
-        <div className="mt-1 text-xs text-gray-500">
+        <div
+          aria-label={niveauAccessDetail[option]}
+          className="mt-1 text-xs text-gray-500"
+        >
           {niveauAccessDetail[option]}
         </div>
       </div>
@@ -245,22 +256,24 @@ const AccesDropdown = ({
   const onSelect = (option: TAccesDropdownOption) =>
     option === 'remove' ? onRemove() : onChange(option);
   return (
-    <SelectDropdown
-      value={value}
-      onSelect={onSelect}
-      labels={{...niveauAccesLabels, remove: 'Supprimé'}}
-      options={
-        currentUserAccess === 'admin'
-          ? ['admin', 'edition', 'lecture', 'remove']
-          : ['remove']
-      }
-      displayOption={value => (
-        <AccessDropdownLabel
-          option={value}
-          isCurrentUser={isCurrentUser}
-          currentUserAccess={currentUserAccess}
-        />
-      )}
-    />
+    <div data-test="acces-dropdown">
+      <SelectDropdown
+        value={value}
+        onSelect={onSelect}
+        labels={{...niveauAccesLabels, remove: 'Supprimé'}}
+        options={
+          currentUserAccess === 'admin'
+            ? ['admin', 'edition', 'lecture', 'remove']
+            : ['remove']
+        }
+        displayOption={value => (
+          <AccessDropdownLabel
+            option={value}
+            isCurrentUser={isCurrentUser}
+            currentUserAccess={currentUserAccess}
+          />
+        )}
+      />
+    </div>
   );
 };
