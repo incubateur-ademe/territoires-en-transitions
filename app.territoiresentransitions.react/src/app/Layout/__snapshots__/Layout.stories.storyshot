@@ -79,6 +79,7 @@ exports[`Storyshots app/Layout Exemple 1`] = `
                   className="fr-link"
                   data-test="help"
                   href="https://aide.territoiresentransitions.fr/fr/"
+                  target="_blank"
                 >
                   <div
                     className="fr-fi-question-line mr-2"
