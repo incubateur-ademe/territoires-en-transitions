@@ -1,4 +1,4 @@
-import {cloneElement, useState} from 'react';
+import {cloneElement, useLayoutEffect, useState} from 'react';
 import {
   useFloating,
   offset,
@@ -38,6 +38,16 @@ const DropdownFloater = ({
     useFocus(context),
   ]);
 
+  const [floatingMinWidth, setFloatingMinWidth] = useState<string | undefined>(
+    undefined
+  );
+
+  useLayoutEffect(() => {
+    setFloatingMinWidth(
+      `${context.refs.reference.current?.getBoundingClientRect().width}px`
+    );
+  }, []);
+
   return (
     <>
       {cloneElement(
@@ -55,6 +65,7 @@ const DropdownFloater = ({
                   position: strategy,
                   top: y ?? '',
                   left: x ?? '',
+                  minWidth: floatingMinWidth,
                 },
               })}
             >
