@@ -5,11 +5,11 @@ as
 $$
 insert into private_utilisateur_droit
 values (default, user_id, collectivite_id, true, default, default, niveau);
-$$ language sql security definer ;
+$$ language sql security definer;
 comment on function test_attach_user is
     'Rattache un utilisateur à une collectivité donnée.';
 
-create function
+create or replace function
     test_create_user(
     user_id uuid,
     prenom text,
@@ -94,7 +94,7 @@ comment on function test_add_random_user is
     'Rattache un utilisateur généré à une collectivité avec un niveau d''accès. Renvoie son id.';
 
 
-create or replace function
+create function
     test.identify_as(user_id uuid)
     returns void
 as
@@ -105,7 +105,7 @@ $$ language sql;
 comment on function test.identify_as(uuid) is
     'Change le résultat de la fonction `auth.uid()` pour les tests pgTAP.';
 
-create or replace function
+create function
     test.identify_as(email text)
     returns void
 as
