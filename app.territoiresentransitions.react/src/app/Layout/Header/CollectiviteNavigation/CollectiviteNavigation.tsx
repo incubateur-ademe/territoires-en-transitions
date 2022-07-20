@@ -12,9 +12,6 @@ import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
 export const activeTabClassName = '!text-bf500 border-b-2 border-bf500';
 
-export const _activeTabStyle = (active: boolean): string =>
-  `${active ? activeTabClassName : ''}`;
-
 type Props = {
   collectiviteNav: CollectiviteNavItems;
   currentCollectivite: CurrentCollectivite;
