@@ -3,7 +3,7 @@
 exports[`Storyshots ui/shared/SelectDropdown Aucune Option Selectionee 1`] = `
 <button
   aria-label="ouvrir le menu"
-  className="flex items-center w-full p-2 -ml-2 text-left"
+  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
   onBlur={[Function]}
   onClick={[Function]}
   onFocus={[Function]}
@@ -13,6 +13,105 @@ exports[`Storyshots ui/shared/SelectDropdown Aucune Option Selectionee 1`] = `
   onPointerDown={[Function]}
 >
   <span
+    className="mr-auto text-gray-500 italic"
+  >
+    
+  </span>
+  <span
+    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+  />
+</button>
+`;
+
+exports[`Storyshots ui/shared/SelectDropdown Avec Placeholder 1`] = `
+<button
+  aria-label="ouvrir le menu"
+  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onKeyDown={[Function]}
+  onKeyUp={[Function]}
+  onMouseDown={[Function]}
+  onPointerDown={[Function]}
+>
+  <span
+    className="mr-auto text-gray-500 italic"
+  >
+    À renseigner
+  </span>
+  <span
+    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+  />
+</button>
+`;
+
+exports[`Storyshots ui/shared/SelectDropdown Multi Select Aucune Option Selectionee 1`] = `
+<button
+  aria-label="ouvrir le menu"
+  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onKeyDown={[Function]}
+  onKeyUp={[Function]}
+  onMouseDown={[Function]}
+  onPointerDown={[Function]}
+>
+  <span
+    className="mr-auto text-gray-500 italic"
+  >
+    
+  </span>
+  <span
+    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+  />
+</button>
+`;
+
+exports[`Storyshots ui/shared/SelectDropdown Multi Select Avec Placeholder 1`] = `
+<button
+  aria-label="ouvrir le menu"
+  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onKeyDown={[Function]}
+  onKeyUp={[Function]}
+  onMouseDown={[Function]}
+  onPointerDown={[Function]}
+>
+  <span
+    className="mr-auto text-gray-500 italic"
+  >
+    À renseigner
+  </span>
+  <span
+    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+  />
+</button>
+`;
+
+exports[`Storyshots ui/shared/SelectDropdown Multi Select Une Option Selectionee 1`] = `
+<button
+  aria-label="ouvrir le menu"
+  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onKeyDown={[Function]}
+  onKeyUp={[Function]}
+  onMouseDown={[Function]}
+  onPointerDown={[Function]}
+>
+  <span
+    className="mr-auto flex flex-col"
+  >
+    <span>
+      Option 2
+    </span>
+  </span>
+  <span
     className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
   />
 </button>
@@ -21,7 +120,7 @@ exports[`Storyshots ui/shared/SelectDropdown Aucune Option Selectionee 1`] = `
 exports[`Storyshots ui/shared/SelectDropdown Option Selectionee 1`] = `
 <button
   aria-label="ouvrir le menu"
-  className="flex items-center w-full p-2 -ml-2 text-left"
+  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
   onBlur={[Function]}
   onClick={[Function]}
   onFocus={[Function]}
