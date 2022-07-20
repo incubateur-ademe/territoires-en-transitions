@@ -1,50 +1,68 @@
 import {keys} from 'ramda';
-import {ReactElement, useState} from 'react';
+import {forwardRef, ReactElement, Ref, useState} from 'react';
+import {Placement} from '@floating-ui/react-dom-interactions';
+import DropdownFloater from 'ui/shared/floating-ui/DropdownFloater';
+
+const DropdownButtonDisplayed = forwardRef(
+  <T extends string>(
+    {
+      labels,
+      value,
+      isOpen,
+      ...props
+    }: {
+      labels: Record<T, string>;
+      value?: T;
+      isOpen?: boolean;
+    },
+    ref?: Ref<HTMLButtonElement>
+  ) => (
+    <button
+      ref={ref}
+      aria-label="ouvrir le menu"
+      className="flex items-center w-full p-2 -ml-2 text-left"
+      {...props}
+    >
+      {value ? <span className="mr-auto">{labels[value]}</span> : null}
+      <span
+        className={`fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ${
+          isOpen ? 'rotate-180' : ''
+        }`}
+      />
+    </button>
+  )
+);
 
 export const SelectDropdown = <T extends string>({
+  placement,
   value,
   labels,
   onSelect,
   displayOption,
   options,
 }: {
+  placement?: Placement;
   value?: T;
   labels: Record<T, string>;
   displayOption?: (option: T) => ReactElement;
   onSelect: (value: T) => void;
   options?: T[];
 }) => {
-  const [opened, setOpened] = useState(false);
   const selectableOptions: T[] = options ?? keys(labels);
   return (
-    <div className="group relative">
-      <button
-        aria-label="ouvrir le menu"
-        onClick={() => setOpened(!opened)}
-        className="flex items-center w-full p-2 -ml-2 text-left"
-      >
-        {value ? <span className="mr-auto">{labels[value]}</span> : null}
-        <span
-          className={`fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ${
-            opened ? 'rotate-180' : ''
-          }`}
-        />
-      </button>
-      <div
-        className={`bg-white absolute -left-2 top-full min-w-full w-max transition-all shadow-md z-50 ${
-          opened ? 'visible translate-y-1 opacity-100 ' : 'invisible opacity-0'
-        }`}
-      >
-        {selectableOptions.map(v => {
+    <DropdownFloater
+      placement={placement}
+      render={({close}) =>
+        selectableOptions.map(v => {
           const label = labels[v as T];
           return (
             <button
-              aria-label={label}
               key={v}
-              className="flex items-center w-full p-2 text-left"
+              aria-label={label}
+              className="flex items-center w-full p-2 text-left text-sm"
               onClick={() => {
                 onSelect(v as T);
-                setOpened(false);
+                close();
               }}
             >
               <div className="w-6 mr-2">
@@ -52,12 +70,16 @@ export const SelectDropdown = <T extends string>({
                   <span className="block fr-fi-check-line scale-75" />
                 ) : null}
               </div>
-              <span>{displayOption ? displayOption(v as T) : label}</span>
+              <span>
+                {displayOption ? displayOption(v as T) : labels[v as T]}
+              </span>
             </button>
           );
-        })}
-      </div>
-    </div>
+        })
+      }
+    >
+      <DropdownButtonDisplayed labels={labels} value={value} />
+    </DropdownFloater>
   );
 };
 
