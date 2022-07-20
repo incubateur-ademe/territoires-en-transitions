@@ -10,7 +10,7 @@ import {
 import type {TCollectivitesFilters} from 'app/pages/ToutesLesCollectivites/filtreLibelles';
 import {RegionRead} from 'generated/dataLayer/region_read';
 import {DepartementRead} from 'generated/dataLayer/departement_read';
-import {UiSearchBar} from 'ui/UiSearchBar';
+import {InputSearch} from 'ui/UiSearchBar';
 
 type UpdateFilters = (newFilters: TCollectivitesFilters) => void;
 
@@ -22,12 +22,12 @@ export const FiltresColonne = (props: {
 }) => {
   return (
     <div className="flex flex-col gap-8">
-      <UiSearchBar
-        search={value => {
-          console.log('UiSearchBar value ', value);
-          return props.setFilters({...props.filters, nom: value});
-        }}
+      <InputSearch
+        value={props.filters.nom || ''}
         placeholder="Rechercher par nom"
+        onChange={e =>
+          props.setFilters({...props.filters, nom: e.target.value})
+        }
       />
       <RegionFiltre
         onChange={selected =>

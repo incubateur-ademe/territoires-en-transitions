@@ -63,7 +63,7 @@ const CollectiviteNavigation = ({
             ) : (
               <NavLink
                 key={item.label}
-                className="fr-nav__item justify-center p-4"
+                className="fr-nav__item justify-center text-center p-4"
                 activeClassName={activeTabClassName}
                 to={item.path}
               >
