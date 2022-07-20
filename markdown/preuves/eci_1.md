@@ -105,3 +105,70 @@ action_id: eci_1.1.5
 ```yaml
 action_id: eci_1.1.5
 ```
+
+# Vote/validation du plan formation par la collectivité
+```yaml
+action_id: eci_1.2.1
+```
+
+# Attestations de participation aux formations réalisées
+```yaml
+action_id: eci_1.2.1
+```
+
+# Description de l'action co-construite pour chaque compétence, avec l'explication sur ce qui favorise l'économie circulaire
+```yaml
+action_id: eci_1.2.2
+```
+
+# Fiches actions sur Optigede
+```yaml
+action_id: eci_1.2.2
+```
+
+# Document approuvé par un élu précisant comment l'économie circulaire est prise en compte dans les nouvelles stratégies
+```yaml
+action_id: eci_1.2.3
+```
+
+# Compte-rendu des réunions d'élaboration des nouvelles stratégies
+```yaml
+action_id: eci_1.2.3
+```
+
+# Comptes-rendus des réunions d'échange
+```yaml
+action_id: eci_1.2.4
+```
+
+# Documents de cadrage des actions (liste d'actions, plan d'action , etc.)
+```yaml
+action_id: eci_1.2.4
+```
+
+# Indicateurs spécifiques et objectifs renseignés dans une interface dédié 
+```yaml
+action_id: eci_1.3.1
+```
+## Description
+Plateforme Territoires en Transitions ou une autre interface choisie par la collectivité (ex. tableau de bord Excel)
+
+# Document de synthèse
+```yaml
+action_id: eci_1.3.2
+```
+
+# Compte-rendu des réunions d'analyse des résultats
+```yaml
+action_id: eci_1.3.2
+```
+
+# Support de communication externe
+```yaml
+action_id: eci_1.3.2
+```
+
+# Programme d'actions mis à jour
+```yaml
+action_id: eci_1.3.2
+```
