@@ -56,7 +56,6 @@ const createIfNotExists =
   (
     invitation: LatestInvitationResponse | null
   ): Promise<LatestInvitationResponse | null> => {
-    console.log('createIfNotExists', invitation);
     return invitation?.id
       ? Promise.resolve(invitation)
       : (createAgentInvitation(
