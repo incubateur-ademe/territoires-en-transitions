@@ -1,23 +1,23 @@
 /// <reference types="Cypress" />
 
-import { LocalSelectors } from "./selectors";
+import { LocalSelectors } from './selectors';
 
 beforeEach(() => {
   // enregistre les définitions locales
-  cy.wrap(LocalSelectors).as("LocalSelectors");
+  cy.wrap(LocalSelectors).as('LocalSelectors');
 });
 
-Given("le tableau charge les informations", () => {
-  cy.get(LocalSelectors["tableau des membres"].selector).within(() => {
-    cy.get("[data-test=Loading]").should("be.visible");
-    cy.get("[data-test=Loading]").should("not.exist");
+Given('le tableau charge les informations', () => {
+  cy.get(LocalSelectors['tableau des membres'].selector).within(() => {
+    //cy.get('[data-test=Loading]').should('be.visible');
+    cy.get('[data-test=Loading]').should('not.exist');
   });
 });
 
 Given(
-  "le tableau des membres doit contenir les informations suivantes",
+  'le tableau des membres doit contenir les informations suivantes',
   (dataTable) => {
-    cy.get(LocalSelectors["tableau des membres"].selector).within(() => {
+    cy.get(LocalSelectors['tableau des membres'].selector).within(() => {
       cy.wrap(dataTable.rows()).each(
         (
           [
@@ -32,13 +32,13 @@ Given(
           index
         ) => {
           cy.get(`tbody tr:nth(${index})`).within(() => {
-            cy.get("td:first").should("contain.text", nom);
-            cy.get("td:first").should("contain.text", mail);
-            cy.get("td:nth(1)").should("contain.text", telephone);
-            cy.get("td:nth(2)").should("contain.text", fonction);
-            cy.get("td:nth(3)").should("contain.text", champ_intervention);
-            cy.get("td:nth(4)").should("contain.text", details_fonction);
-            cy.get("td:nth(5)").should("contain.text", acces);
+            cy.get('td:first').should('contain.text', nom);
+            cy.get('td:first').should('contain.text', mail);
+            cy.get('td:nth(1)').should('contain.text', telephone);
+            cy.get('td:nth(2)').should('contain.text', fonction);
+            cy.get('td:nth(3)').should('contain.text', champ_intervention);
+            cy.get('td:nth(4)').should('contain.text', details_fonction);
+            cy.get('td:nth(5)').should('contain.text', acces);
           });
         }
       );
@@ -49,8 +49,8 @@ Given(
 Given(
   /le tableau des membres ne doit pas contenir l'utilisateur "([^"]+)"/,
   (mail) => {
-    cy.get(LocalSelectors["tableau des membres"].selector).should(
-      "not.contain",
+    cy.get(LocalSelectors['tableau des membres'].selector).should(
+      'not.contain',
       mail
     );
   }
@@ -59,19 +59,19 @@ Given(
 When(
   /je modifie le champ "([^"]+)" de "([^"]+)" en "([^"]+)"/,
   (champ, email, value) => {
-    getUtilisateurRow(email).within(() => {
-      if (champ === "details_fonction") {
-        cy.root()
-          .find('[data-test="details_fonction-textarea"]')
-          .clear()
-          .type(value + "{enter}");
-      } else {
-        cy.root()
-          .find(`[data-test="${champ}-dropdown"] [aria-label="ouvrir le menu"]`)
-          .click();
-        cy.root().get(`[aria-label="${value}"]`).click();
-      }
-    });
+    if (champ === 'details_fonction') {
+      getUtilisateurRow(email)
+        .find('[data-test="details_fonction-textarea"]')
+        .clear()
+        .type(value + '{enter}');
+    } else {
+      getUtilisateurRow(email)
+        .find(`[data-test="${champ}-dropdown"] [aria-label="ouvrir le menu"]`)
+        .click();
+      cy.get('#floating-ui-root')
+        .should('exist')
+        .within(() => cy.root().find(`[aria-label="${value}"]`).click());
+    }
   }
 );
 
