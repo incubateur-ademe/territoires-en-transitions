@@ -8,7 +8,7 @@ export const RegisterLink = () => (
 );
 
 export const SignInLink = () => (
-  <Link className="fr-btn" to={signInPath}>
+  <Link className="fr-btn text-center" to={signInPath}>
     Se connecter
   </Link>
 );
