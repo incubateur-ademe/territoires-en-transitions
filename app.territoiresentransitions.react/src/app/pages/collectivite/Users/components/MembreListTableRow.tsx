@@ -182,6 +182,7 @@ const FonctionDropdown = ({
       labels={membreFonctionLabels}
       value={value}
       onSelect={onChange}
+      placeholderText="À renseigner"
     />
   </div>
 );
@@ -198,6 +199,7 @@ const ChampsInterventionDropdown = ({
       labels={pick(['eci', 'cae'], referentielToName)}
       onSelect={onChange}
       values={values}
+      placeholderText="À renseigner"
     />
   </div>
 );

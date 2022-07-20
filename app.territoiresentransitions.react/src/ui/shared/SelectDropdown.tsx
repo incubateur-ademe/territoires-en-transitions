@@ -4,7 +4,9 @@ import {Placement} from '@floating-ui/react-dom-interactions';
 import DropdownFloater from 'ui/shared/floating-ui/DropdownFloater';
 
 /* Class génériques */
-const buttonDisplayedClassname = 'flex items-center w-full p-2 -ml-2 text-left';
+const buttonDisplayedClassname =
+  'flex items-center w-full p-2 -ml-2 text-left text-sm';
+const buttonDisplayedPlaceholderClassname = 'mr-auto text-gray-500 italic';
 const buttonDisplayedIconClassname =
   'fr-fi-arrow-down-s-line mt-1 ml-1 scale-90';
 const optionButtonClassname = 'flex items-center w-full p-2 text-left text-sm';
@@ -17,21 +19,29 @@ const SelectDropdownButtonDisplayed = forwardRef(
       labels,
       value,
       isOpen,
+      placeholderText,
       ...props
     }: {
       labels: Record<T, string>;
       value?: T;
       isOpen?: boolean;
+      placeholderText?: string;
     },
     ref?: Ref<HTMLButtonElement>
   ) => (
     <button
       ref={ref}
       aria-label="ouvrir le menu"
-      className="flex items-center w-full p-2 -ml-2 text-left"
+      className={buttonDisplayedClassname}
       {...props}
     >
-      {value ? <span className="mr-auto">{labels[value]}</span> : null}
+      {value ? (
+        <span className="mr-auto">{labels[value]}</span>
+      ) : (
+        <span className={buttonDisplayedPlaceholderClassname}>
+          {placeholderText ?? ''}
+        </span>
+      )}
       <span
         className={`${buttonDisplayedIconClassname} ${
           isOpen ? 'rotate-180' : ''
@@ -48,6 +58,7 @@ export const SelectDropdown = <T extends string>({
   onSelect,
   displayOption,
   options,
+  placeholderText,
 }: {
   placement?: Placement;
   value?: T;
@@ -55,6 +66,7 @@ export const SelectDropdown = <T extends string>({
   displayOption?: (option: T) => ReactElement;
   onSelect: (value: T) => void;
   options?: T[];
+  placeholderText?: string;
 }) => {
   const selectableOptions: T[] = options ?? keys(labels);
   return (
@@ -86,7 +98,11 @@ export const SelectDropdown = <T extends string>({
         })
       }
     >
-      <SelectDropdownButtonDisplayed labels={labels} value={value} />
+      <SelectDropdownButtonDisplayed
+        placeholderText={placeholderText}
+        labels={labels}
+        value={value}
+      />
     </DropdownFloater>
   );
 };
@@ -98,11 +114,13 @@ const MultiSelectDropdownButtonDisplayed = forwardRef(
       selectedValues,
       labels,
       isOpen,
+      placeholderText,
       ...props
     }: {
       selectedValues?: T[];
       labels: Record<T, string>;
       isOpen?: boolean;
+      placeholderText?: string;
     },
     ref?: Ref<HTMLButtonElement>
   ) => (
@@ -112,13 +130,17 @@ const MultiSelectDropdownButtonDisplayed = forwardRef(
       className={buttonDisplayedClassname}
       {...props}
     >
-      {selectedValues ? (
+      {selectedValues && selectedValues?.length !== 0 ? (
         <span className="mr-auto flex flex-col">
           {selectedValues.sort().map(value => (
             <span key={value}>{labels[value]}</span>
           ))}
         </span>
-      ) : null}
+      ) : (
+        <span className={buttonDisplayedPlaceholderClassname}>
+          {placeholderText ?? ''}
+        </span>
+      )}
       <span
         className={`${buttonDisplayedIconClassname} ${
           isOpen ? 'rotate-180' : ''
@@ -132,10 +154,12 @@ export const MultiSelectDropdown = <T extends string>({
   values,
   labels,
   onSelect,
+  placeholderText,
 }: {
   values?: T[];
   labels: Record<T, string>;
   onSelect: (value: T[]) => void;
+  placeholderText?: string;
 }) => {
   const [selectedValues, setSelectedValues] = useState<T[]>(values || []);
   return (
@@ -176,6 +200,7 @@ export const MultiSelectDropdown = <T extends string>({
       <MultiSelectDropdownButtonDisplayed
         labels={labels}
         selectedValues={selectedValues}
+        placeholderText={placeholderText}
       />
     </DropdownFloater>
   );
