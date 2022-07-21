@@ -2,8 +2,8 @@ import {OwnedCollectiviteRead} from 'generated/dataLayer';
 import {useOwnedCollectivites} from 'core-logic/hooks/useOwnedCollectivites';
 import {SimpleCollectiviteCard} from 'ui/collectivites/SimpleCollectiviteCard';
 import {Spacer} from 'ui/shared/Spacer';
-import {AssocierCollectiviteDialog} from './AssocierCollectiviteDialog';
 import {getReferentContacts} from 'core-logic/api/procedures/collectiviteProcedures';
+import {AssocierCollectiviteDialog} from 'ui/collectivites/AssocierCollectiviteDialog';
 
 export type TMesCollectivitesProps = {
   ownedCollectivites: OwnedCollectiviteRead[] | null;
