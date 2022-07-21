@@ -1,5 +1,3 @@
-import {useMemo} from 'react';
-import {useLocation} from 'react-router-dom';
 import LogoRepubliqueFrancaise from 'ui/logo/LogoRepubliqueFrancaise';
 import {useAuth, TAuthContext} from 'core-logic/api/auth/AuthProvider';
 import HeaderNavigation from 'app/Layout/Header/HeaderNavigation';
@@ -16,7 +14,6 @@ import {
 } from 'core-logic/hooks/useCurrentCollectivite';
 import {RejoindreCetteCollectiviteDialog} from 'app/pages/MesCollectivites/RejoindreCetteCollectiviteDialog';
 import {getReferentContacts} from 'core-logic/api/procedures/collectiviteProcedures';
-import {monParcoursPath} from 'app/paths';
 
 export const Header = ({
   auth,
@@ -31,15 +28,8 @@ export const Header = ({
     ? makeCollectiviteNavItems(currentCollectivite)
     : null;
 
-  const {pathname} = useLocation();
-
-  const isSansCollectiviteNavDisplayed = useMemo(
-    () =>
-      pathname !== monParcoursPath &&
-      ownedCollectivites &&
-      ownedCollectivites.length === 0,
-    [ownedCollectivites, pathname]
-  );
+  const showNoCollectiviteNav =
+    currentCollectivite === null && ownedCollectivites !== null;
 
   return (
     <>
@@ -62,11 +52,9 @@ export const Header = ({
                   />
                 </div>
                 <div className="fr-header__service">
-                  <a href="/" title="Accueil">
-                    <p className="fr-header__service-title pointer-events-auto">
-                      Territoires en Transitions
-                    </p>
-                  </a>
+                  <p className="fr-header__service-title pointer-events-auto">
+                    Territoires en Transitions
+                  </p>
                   <p className="text-sm">
                     Accompagner la transition écologique des collectivités
                   </p>
@@ -89,7 +77,7 @@ export const Header = ({
             ownedCollectivites={ownedCollectivites}
           />
         ) : null}
-        {isSansCollectiviteNavDisplayed && <SansCollectiviteNavigation />}
+        {showNoCollectiviteNav && <SansCollectiviteNavigation />}
       </header>
       {collectiviteNav && currentCollectivite?.readonly ? (
         <CollectiviteReadOnlyBanner collectivite={currentCollectivite} />
