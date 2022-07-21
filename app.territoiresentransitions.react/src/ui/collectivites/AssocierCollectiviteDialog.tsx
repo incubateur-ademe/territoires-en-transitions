@@ -36,9 +36,11 @@ export const AssocierCollectiviteDialog = ({
 
   return (
     <UiDialogButton
+      useFrBtn
       data-test="btn-select-collectivite"
       title="Associer une collectivité à mon compte"
-      buttonClasses="fr-btn--secondary"
+      buttonClasses="fr-btn"
+      buttonWrapperClasses="w-full"
       dialogClasses="overflow-hidden"
       opened={opened}
       setOpened={setOpened}
