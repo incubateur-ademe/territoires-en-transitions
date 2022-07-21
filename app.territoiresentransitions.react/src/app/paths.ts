@@ -14,6 +14,9 @@ export const monParcoursPath = '/mon_parcours';
 export const allCollectivitesPath = '/toutes_collectivites';
 export const myCollectivitesPath = '/mes_collectivites';
 
+// Utilisé après le login ou lorsqu'on clique sur le logo en étant connecté.
+export const homePath = allCollectivitesPath;
+
 const collectiviteParam = 'collectiviteId';
 export const indicateurViewParam = 'vue';
 export const referentielParam = 'referentielId';
