@@ -4,7 +4,6 @@ import {
   allCollectivitesPath,
   homePath,
   makeCollectiviteTableauBordUrl,
-  myCollectivitesPath,
   resetPwdPath,
   resetPwdToken,
   signInPath,
@@ -46,8 +45,8 @@ export const Redirector = () => {
 
   // réagit aux changements de l'état "invitation"
   useEffect(() => {
-    // quand l'invitation est acceptée on redirige vers "mes collectivités"
-    if (invitationState === 'accepted') history.push(myCollectivitesPath);
+    // quand l'invitation est acceptée on redirige vers "toutes les collectivités"
+    if (invitationState === 'accepted') history.push(homePath);
     // si l'invitation requiert la connexion on redirigue sur "se connecter"
     if (invitationState === 'waitingForLogin') history.push(signInPath);
   }, [invitationState]);
@@ -69,7 +68,7 @@ export const Redirector = () => {
     if (!isConnected) {
       history.push(invitationState === 'waitingForLogin' ? signInPath : '/');
     } else if (pathname === '/') {
-      // si connecté et qu'on navigue sur la home on redirige vers "mes collectivités"
+      // si connecté et qu'on navigue sur la home on redirige vers "toutes les collectivités"
       history.push(homePath);
     }
   }, [isConnected, invitationState, recoveryToken]);

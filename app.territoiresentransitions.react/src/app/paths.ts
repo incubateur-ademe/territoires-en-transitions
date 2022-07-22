@@ -10,7 +10,6 @@ export const invitationIdParam = 'invitationId';
 export const invitationLandingPath = `/invitation/:${invitationIdParam}`;
 
 export const allCollectivitesPath = '/toutes_collectivites';
-export const myCollectivitesPath = '/mes_collectivites';
 
 // Utilisé après le login ou lorsqu'on clique sur le logo en étant connecté.
 export const homePath = allCollectivitesPath;
