@@ -18,79 +18,43 @@ Content-Type: application/json
 %}
 
 
-### Create an inivtation
-POST {{api}}/rest/v1/rpc/create_agent_invitation
+### Add a registered user.
+POST {{api}}/rest/v1/rpc/add_user
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {
-  "collectivite_id": 1
-}
-
-
-### Retrieve inivtation
-POST {{api}}/rest/v1/rpc/latest_invitation
-apikey: {{anon}}
-Authorization: Bearer {{auth_token}}
-Content-Type: application/json
-
-{
-  "collectivite_id": 1
-}
-
-
-### Authenticate as a user
-POST {{api}}/auth/v1/token?grant_type=password
-apikey: {{anon}}
-Content-Type: application/json
-
-{
+  "collectivite_id": 1,
   "email": "yulu@dudu.com",
-  "password": "yulududu"
+  "niveau": "lecture"
 }
 
 > {%
     client.test("Request executed successfully", function() {
         client.assert(response.status === 200, "Response status is not 200");
     });
-    client.log('token is ' + response.body['access_token']);
-    client.global.set("auth_token", response.body['access_token']);
 %}
 
-### Accept invitation
-POST {{api}}/rest/v1/rpc/accept_invitation
+### Add a non-registered user to get an invitation.
+POST {{api}}/rest/v1/rpc/add_user
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {
-  "invitation_id": "5510cf6f-5725-4dae-8c83-51f89b196fb7"
+  "collectivite_id": 1,
+  "email": "yoyo@nono.no",
+  "niveau": "lecture"
 }
 
-
-### Is agent of
-POST {{api}}/rest/v1/rpc/is_agent_of
-apikey: {{anon}}
-Authorization: Bearer {{auth_token}}
-Content-Type: application/json
-
-{
-  "id": 1
-}
-
-
-### Remove from collectivité
-POST {{api}}/rest/v1/rpc/remove_from_collectivite
-apikey: {{anon}}
-Authorization: Bearer {{auth_token}}
-Content-Type: application/json
-
-{
-  "user_id": "298235a0-60e7-4ceb-9172-0a991cce0386",
-  "collectivite_id": 1
-}
-
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+    client.log('invitation id is' + response.body['invitation_id']);
+    client.global.set("invitation_id", response.body['invitation_id']);
+%}
 
 
 
