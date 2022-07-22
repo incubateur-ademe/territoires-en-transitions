@@ -15,10 +15,8 @@ import {MatomoProviderWithAuth} from 'app/MatomoProviderWithAuth';
 import {
   allCollectivitesPath,
   authBasePath,
-  monParcoursPath,
   myCollectivitesPath,
 } from 'app/paths';
-import {MonParcoursPage} from 'app/pages/MonParcours/MonParcoursPage';
 import {MesCollectivitesPage} from 'app/pages/MesCollectivites/MesCollectivitesPage';
 import {ToutesLesCollectivitesPage} from 'app/pages/ToutesLesCollectivites/ToutesLesCollectivitesPage';
 import Layout from 'app/Layout';
@@ -54,10 +52,6 @@ export const App = () => {
 
                   <Route path={authBasePath}>
                     <AuthRoutes />
-                  </Route>
-
-                  <Route path={monParcoursPath}>
-                    <MonParcoursPage />
                   </Route>
 
                   <Route path={myCollectivitesPath}>

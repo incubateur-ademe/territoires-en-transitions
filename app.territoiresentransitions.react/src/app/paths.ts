@@ -9,8 +9,6 @@ export const recoverLandingPath = `${authBasePath}/recover_landing/:${recoverTok
 export const invitationIdParam = 'invitationId';
 export const invitationLandingPath = `/invitation/:${invitationIdParam}`;
 
-export const monParcoursPath = '/mon_parcours';
-
 export const allCollectivitesPath = '/toutes_collectivites';
 export const myCollectivitesPath = '/mes_collectivites';
 
