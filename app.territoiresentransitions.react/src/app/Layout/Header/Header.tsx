@@ -12,8 +12,6 @@ import {
   CurrentCollectivite,
   useCurrentCollectivite,
 } from 'core-logic/hooks/useCurrentCollectivite';
-import {RejoindreCetteCollectiviteDialog} from 'app/pages/MesCollectivites/RejoindreCetteCollectiviteDialog';
-import {getReferentContacts} from 'core-logic/api/procedures/collectiviteProcedures';
 
 export const Header = ({
   auth,
@@ -32,76 +30,53 @@ export const Header = ({
     currentCollectivite === null && ownedCollectivites !== null;
 
   return (
-    <>
-      <header role="banner" className="header fr-header ">
-        <div className="fr-header__body">
-          <div className="fr-container">
-            <div className="fr-header__body-row header__row">
-              <div className="fr-header__brand fr-enlarge-link pointer-events-none lg:pointer-events-auto">
-                <div className="fr-header__brand-top !w-auto">
-                  <div className="fr-header__logo">
-                    <LogoRepubliqueFrancaise />
-                  </div>
-                </div>
-                <div className="fr-header__ademe flex-shrink-0">
-                  <img
-                    src={ademeLogoImage}
-                    alt="logo ADEME"
-                    loading="lazy"
-                    className="h-20"
-                  />
-                </div>
-                <div className="fr-header__service">
-                  <p className="fr-header__service-title pointer-events-auto">
-                    Territoires en Transitions
-                  </p>
-                  <p className="text-sm">
-                    Accompagner la transition écologique des collectivités
-                  </p>
+    <header role="banner" className="header fr-header ">
+      <div className="fr-header__body">
+        <div className="fr-container">
+          <div className="fr-header__body-row header__row">
+            <div className="fr-header__brand fr-enlarge-link pointer-events-none lg:pointer-events-auto">
+              <div className="fr-header__brand-top !w-auto">
+                <div className="fr-header__logo">
+                  <LogoRepubliqueFrancaise />
                 </div>
               </div>
-              <HeaderNavigation auth={auth} />
-              <MobileNavigation
-                auth={auth}
-                collectiviteNav={collectiviteNav}
-                currentCollectivite={currentCollectivite}
-                ownedCollectivites={ownedCollectivites}
-              />
+              <div className="fr-header__ademe flex-shrink-0">
+                <img
+                  src={ademeLogoImage}
+                  alt="logo ADEME"
+                  loading="lazy"
+                  className="h-20"
+                />
+              </div>
+              <div className="fr-header__service">
+                <p className="fr-header__service-title pointer-events-auto">
+                  Territoires en Transitions
+                </p>
+                <p className="text-sm">
+                  Accompagner la transition écologique des collectivités
+                </p>
+              </div>
             </div>
+            <HeaderNavigation auth={auth} />
+            <MobileNavigation
+              auth={auth}
+              collectiviteNav={collectiviteNav}
+              currentCollectivite={currentCollectivite}
+              ownedCollectivites={ownedCollectivites}
+            />
           </div>
         </div>
-        {collectiviteNav && currentCollectivite && ownedCollectivites ? (
-          <CollectiviteNavigation
-            collectiviteNav={collectiviteNav}
-            currentCollectivite={currentCollectivite}
-            ownedCollectivites={ownedCollectivites}
-          />
-        ) : null}
-        {showNoCollectiviteNav && <SansCollectiviteNavigation />}
-      </header>
-      {collectiviteNav && currentCollectivite?.readonly ? (
-        <CollectiviteReadOnlyBanner collectivite={currentCollectivite} />
-      ) : null}
-    </>
-  );
-};
-
-const CollectiviteReadOnlyBanner = ({
-  collectivite,
-}: {
-  collectivite: CurrentCollectivite | null;
-}) => {
-  if (!!collectivite && collectivite.readonly)
-    return (
-      <div className="flex justify-center items-center bg-yellow-400 py-4 bg-opacity-70">
-        <div className="text-sm mr-4">Lecture seule</div>
-        <RejoindreCetteCollectiviteDialog
-          getReferentContacts={getReferentContacts}
-          collectivite={collectivite}
-        />
       </div>
-    );
-  return null;
+      {collectiviteNav && currentCollectivite && ownedCollectivites ? (
+        <CollectiviteNavigation
+          collectiviteNav={collectiviteNav}
+          currentCollectivite={currentCollectivite}
+          ownedCollectivites={ownedCollectivites}
+        />
+      ) : null}
+      {showNoCollectiviteNav && <SansCollectiviteNavigation />}
+    </header>
+  );
 };
 
 export default () => {
