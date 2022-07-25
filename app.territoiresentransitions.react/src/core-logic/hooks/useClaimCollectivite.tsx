@@ -1,17 +1,30 @@
 import {useMutation, useQueryClient} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
+import {makeCollectiviteTableauBordUrl} from 'app/paths';
+import {useHistory} from 'react-router-dom';
 
-// rattache l'utilisateur courant à une collectivité
-// la liste des collectivités associées à l'utilisateur est rechargée quand l'appel réussi
+/**
+ * Associe l'utilisateur courant à une collectivité.
+ *
+ * Quand l'appel réussi
+ * - la liste des collectivités associées à l'utilisateur est rechargée.
+ * - on navigue vers le tableau de bord de la collectivité nouvellement associée.
+ */
 export const useClaimCollectivite = () => {
   const queryClient = useQueryClient();
+  const history = useHistory();
   const {
     isLoading,
     data: lastReply,
     mutate: claimCollectivite,
   } = useMutation(claim, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(['owned_collectivites']);
+    onSuccess: async (success, collectivite_id) => {
+      await queryClient.invalidateQueries(['owned_collectivites']);
+      history.push(
+        makeCollectiviteTableauBordUrl({
+          collectiviteId: collectivite_id,
+        })
+      );
     },
   });
 
