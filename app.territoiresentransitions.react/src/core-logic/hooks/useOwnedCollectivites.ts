@@ -26,12 +26,3 @@ export const useOwnedCollectivites = () => {
   );
   return data || null;
 };
-
-export const useOwnedAsAgentCollectiviteIds = () => {
-  const ownedCollectivites = useOwnedCollectivites();
-  return ownedCollectivites
-    ? ownedCollectivites
-        .filter(ownedCollectivite => ownedCollectivite.role_name === 'referent')
-        .map(ownedCollectivite => ownedCollectivite.collectivite_id)
-    : null;
-};
