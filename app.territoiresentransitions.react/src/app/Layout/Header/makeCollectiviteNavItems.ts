@@ -1,6 +1,6 @@
 import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {
-  makeCollectiviteAllCollectivitesUrl,
+  allCollectivitesPath,
   makeCollectiviteIndicateursUrl,
   makeCollectiviteLabellisationUrl,
   makeCollectivitePersoRefUrl,
@@ -153,7 +153,7 @@ export const makeCollectiviteNavItems = (
 
   const allCollectivitesItem = {
     label: 'Toutes les collectivités',
-    path: makeCollectiviteAllCollectivitesUrl({collectiviteId}),
+    path: allCollectivitesPath,
   };
 
   if (collectivite.readonly) {
