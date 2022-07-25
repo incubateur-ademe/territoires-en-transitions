@@ -16,9 +16,9 @@ export type TMembreListTableRowProps = {
 
 const membreFonctionLabels: Record<TMembreFonction, string> = {
   referent: 'Référent·e',
-  conseiller: 'Conseiller·e',
   technique: 'Équipe technique',
   politique: 'Équipe politique',
+  conseiller: 'Conseiller·e',
   partenaire: 'Partenaire',
 };
 
