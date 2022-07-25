@@ -29,12 +29,6 @@ create policy allow_read
     for select
     using (true);
 
-create policy allow_update
-    on private_collectivite_membre
-    for update
-    using (is_service_role());
-
-
 
 create function update_collectivite_membre_details_fonction(collectivite_id integer, membre_id uuid, details_fonction text)
     returns json
@@ -85,7 +79,7 @@ begin
           end if;
         return json_build_object('message', 'La fonction du membre a été mise à jour.');
     else
-        perform set_config('response.status', '401', true);
+        perform set_config('response.status', '403', true);
         return json_build_object('error', 'Vous n''avez pas les droits pour modifier la fonction de ce membre.');
     end if;
 end
@@ -114,7 +108,7 @@ begin
           end if;
         return json_build_object('message', 'Le champ d''intervention du membre a été mise à jour.');
     else
-        perform set_config('response.status', '401', true);
+        perform set_config('response.status', '403', true);
         return json_build_object('error', 'Vous n''avez pas les droits pour modifier le champ d''intervention de ce membre.');
     end if;
 end
