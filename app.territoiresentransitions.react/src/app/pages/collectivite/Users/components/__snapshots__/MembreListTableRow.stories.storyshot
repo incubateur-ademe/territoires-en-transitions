@@ -71,18 +71,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow A
             </span>
           </button>
           <button
-            aria-label="Conseiller·e"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            />
-            <span>
-              Conseiller·e
-            </span>
-          </button>
-          <button
             aria-label="Équipe technique"
             className="flex items-center w-full p-2 text-left"
             onClick={[Function]}
@@ -104,6 +92,18 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow A
             />
             <span>
               Équipe politique
+            </span>
+          </button>
+          <button
+            aria-label="Conseiller·e"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            />
+            <span>
+              Conseiller·e
             </span>
           </button>
           <button
@@ -384,18 +384,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow E
             </span>
           </button>
           <button
-            aria-label="Conseiller·e"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            />
-            <span>
-              Conseiller·e
-            </span>
-          </button>
-          <button
             aria-label="Équipe technique"
             className="flex items-center w-full p-2 text-left"
             onClick={[Function]}
@@ -421,6 +409,18 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow E
             />
             <span>
               Équipe politique
+            </span>
+          </button>
+          <button
+            aria-label="Conseiller·e"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            />
+            <span>
+              Conseiller·e
             </span>
           </button>
           <button
@@ -638,18 +638,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow L
             </span>
           </button>
           <button
-            aria-label="Conseiller·e"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            />
-            <span>
-              Conseiller·e
-            </span>
-          </button>
-          <button
             aria-label="Équipe technique"
             className="flex items-center w-full p-2 text-left"
             onClick={[Function]}
@@ -675,6 +663,18 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow L
             </div>
             <span>
               Équipe politique
+            </span>
+          </button>
+          <button
+            aria-label="Conseiller·e"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            />
+            <span>
+              Conseiller·e
             </span>
           </button>
           <button
@@ -885,18 +885,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow T
             </span>
           </button>
           <button
-            aria-label="Conseiller·e"
-            className="flex items-center w-full p-2 text-left"
-            onClick={[Function]}
-          >
-            <div
-              className="w-6 mr-2"
-            />
-            <span>
-              Conseiller·e
-            </span>
-          </button>
-          <button
             aria-label="Équipe technique"
             className="flex items-center w-full p-2 text-left"
             onClick={[Function]}
@@ -922,6 +910,18 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow T
             </div>
             <span>
               Équipe politique
+            </span>
+          </button>
+          <button
+            aria-label="Conseiller·e"
+            className="flex items-center w-full p-2 text-left"
+            onClick={[Function]}
+          >
+            <div
+              className="w-6 mr-2"
+            />
+            <span>
+              Conseiller·e
             </span>
           </button>
           <button
