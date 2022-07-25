@@ -1,7 +1,6 @@
 import {useEffect} from 'react';
 import {useHistory, useLocation} from 'react-router-dom';
 import {
-  allCollectivitesPath,
   homePath,
   makeCollectiviteTableauBordUrl,
   resetPwdPath,
@@ -13,7 +12,7 @@ import {useInvitationState} from 'core-logic/hooks/useInvitationState';
 import {useRecoveryToken} from 'core-logic/hooks/useRecoveryToken';
 import {useAccessToken} from 'core-logic/hooks/useVerifyRecoveryToken';
 import {useOwnedCollectivites} from 'core-logic/hooks/useOwnedCollectivites';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 
 export const Redirector = () => {
   const history = useHistory();
@@ -23,17 +22,17 @@ export const Redirector = () => {
   const recoveryToken = useRecoveryToken();
   const accessToken = useAccessToken();
   const ownedCollectivites = useOwnedCollectivites();
-  const currentCollectivite = useCurrentCollectivite();
+  const isHomePath = pathname === homePath;
+  const isCollectivitePath = useCollectiviteId() !== null;
 
-  // Quand l'utilisateur est connecté mais n'est associé à aucune collectivité
+  // Quand l'utilisateur est connecté, mais n'est associé à aucune collectivité
   // cas: après s'être retiré de la seule collectivité dont l'utilisateur était associé
   // cas: n'a jamais été associé
   useEffect(() => {
-    if (!isConnected || currentCollectivite !== null || pathname === homePath)
-      return;
+    if (!isConnected || isCollectivitePath || isHomePath) return;
 
     // Quand l'utilisateur est associé à au moins une collectivite
-    if (ownedCollectivites && ownedCollectivites.length > 0) {
+    if (ownedCollectivites && ownedCollectivites.length >= 1) {
       history.push(
         makeCollectiviteTableauBordUrl({
           collectiviteId: ownedCollectivites[0].collectivite_id,
@@ -42,12 +41,7 @@ export const Redirector = () => {
     } else {
       history.push(homePath);
     }
-  }, [
-    ownedCollectivites,
-    currentCollectivite,
-    isConnected,
-    pathname === homePath,
-  ]);
+  }, [ownedCollectivites, isCollectivitePath, isConnected, isHomePath]);
 
   // réagit aux changements de l'état "invitation"
   useEffect(() => {
