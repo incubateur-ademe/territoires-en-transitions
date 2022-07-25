@@ -127,28 +127,6 @@ comment on function claim_collectivite is
         'Succède avec code 200 si la collectivité n''a pas déjà d''administrateur.'
         'Renvoie un code 409 si la collectivité à déjà un administrateur.';
 
-
-drop function referent_contacts; 
-create function admin_contacts(id integer)
-    returns table
-            (
-                prenom text,
-                nom    text,
-                email  text
-            )
-as
-$$
-select p.prenom, p.nom, p.email
-from private_utilisateur_droit d
-         join dcp p on p.user_id = d.user_id
-where d.collectivite_id = admin_contacts.id
-  and d.active
-  and niveau_acces = 'admin'
-$$ language sql security definer;
-comment on function admin_contacts is
-    'Renvoie la liste des contacts admin d''une collectivité donnée.' ;
-
-
 -- redirige les fonctions, on évite de redéclarer les vues.
 create or replace function
     is_any_role_on(id integer)
