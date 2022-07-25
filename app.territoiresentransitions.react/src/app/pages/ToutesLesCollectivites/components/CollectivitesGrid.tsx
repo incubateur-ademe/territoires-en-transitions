@@ -3,21 +3,6 @@ import {CollectiviteCarteRead} from 'generated/dataLayer/collectivite_carte_read
 import {TCollectivitesFilters} from 'app/pages/ToutesLesCollectivites/filtreLibelles';
 import noResultIllustration from 'app/static/img/no-results-astronaut-bro.svg';
 
-const CollectivitesFiltrees = (props: {
-  collectivites: CollectiviteCarteRead[];
-}) => {
-  return (
-    <div className="grid lg:grid-cols-2 gap-4">
-      {props.collectivites.map(collectivite => (
-        <CollectiviteCarte
-          collectivite={collectivite}
-          key={collectivite.collectivite_id}
-        />
-      ))}
-    </div>
-  );
-};
-
 const AucuneCollectivite = () => (
   <div
     className="flex flex-col gap-4 mt-10 md:mt-16"
@@ -45,6 +30,7 @@ export const CollectivitesGrid = (props: {
   collectivitesCount: number;
   desactiverLesFiltres: () => void;
   filters: TCollectivitesFilters;
+  isCardClickable: boolean;
 }) => {
   if (props.isLoading) {
     return (
@@ -57,7 +43,15 @@ export const CollectivitesGrid = (props: {
       {props.collectivites.length === 0 ? (
         <AucuneCollectivite />
       ) : (
-        <CollectivitesFiltrees collectivites={props.collectivites} />
+        <div className="grid lg:grid-cols-2 gap-4">
+          {props.collectivites.map(collectivite => (
+            <CollectiviteCarte
+              key={collectivite.collectivite_id}
+              collectivite={collectivite}
+              isCardClickable={props.isCardClickable}
+            />
+          ))}
+        </div>
       )}
     </>
   );

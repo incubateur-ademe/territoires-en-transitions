@@ -23,25 +23,15 @@ export const Redirector = () => {
   const recoveryToken = useRecoveryToken();
   const accessToken = useAccessToken();
   const ownedCollectivites = useOwnedCollectivites();
-  const currentCollectivite = useCurrentCollectivite();
 
+  // Quand l'utilisateur est connecté mais n'est associé à aucune collectivité
+  // cas: après s'être retiré de la seule collectivité dont l'utilisateur était associé
+  // cas: n'a jamais été associé
   useEffect(() => {
-    if (currentCollectivite !== null || !isConnected) return;
-
-    // Quand l'utilisateur est associé à au moins une collectivite
-    if (ownedCollectivites?.length) {
-      history.push(
-        makeCollectiviteTableauBordUrl({
-          collectiviteId: ownedCollectivites[0].collectivite_id,
-        })
-      );
+    if (ownedCollectivites?.length === 0 && isConnected) {
+      history.push(homePath);
     }
-
-    // Quand l'utilisateur n'est associé à aucune collectivite
-    else {
-      history.push(allCollectivitesPath);
-    }
-  }, [ownedCollectivites, currentCollectivite, isConnected]);
+  }, [ownedCollectivites, isConnected]);
 
   // réagit aux changements de l'état "invitation"
   useEffect(() => {

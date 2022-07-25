@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useMemo, useState} from 'react';
 import {CollectivitesGrid} from 'app/pages/ToutesLesCollectivites/components/CollectivitesGrid';
 import {
   filtresVides,
@@ -20,6 +20,8 @@ import {NB_CARDS_PER_PAGE} from 'app/pages/ToutesLesCollectivites/queries';
 import {getNumberOfActiveFilters} from 'app/pages/ToutesLesCollectivites/getNumberOfActiveFilters';
 import classNames from 'classnames';
 import './ToutesLesCollectivites.css';
+import AssocierCollectiviteBandeau from 'ui/collectivites/AssocierCollectiviteBandeau';
+import {useOwnedCollectivites} from 'core-logic/hooks/useOwnedCollectivites';
 
 export type TRenderToutesCollectivitesProps = {
   regions: RegionRead[];
@@ -35,112 +37,126 @@ export const RenderToutesLesCollectivites = (
   props: TRenderToutesCollectivitesProps
 ) => {
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+
+  const ownedCollectivites = useOwnedCollectivites();
+  const hasCollectivites = useMemo(
+    () => ownedCollectivites?.length === 0,
+    [ownedCollectivites]
+  );
+
   return (
-    <div data-test="ToutesLesCollectivites" className="app fr-container my-16">
-      <div className="text-center mb-8 md:mb-16">
-        <div className="font-bold text-black md:text-4xl text-3xl mb-6">
-          Toutes les collectivités
-        </div>
-        <p className="mb-0">
-          Consultez les <Link to="/statistics">statistiques</Link> d'utilisation
-          de la plateforme.
-        </p>
-      </div>
-      <div className="md:flex">
-        {/* Filters column */}
-        <div
-          className={classNames(
-            'flex flex-col bg-white z-20 md:mr-6 md:!block md:w-3/12 xl:mr-14',
-            {
-              hidden: !isMobileFilterOpen,
-              ['collectivites-filter-column-mobile']: isMobileFilterOpen,
-            }
-          )}
-        >
-          {isMobileFilterOpen && (
-            <>
-              {/* Close filters on mobile */}
-              <div className="w-max ml-auto mb-8 border-b border-bf500">
-                <button
-                  onClick={() => setIsMobileFilterOpen(false)}
-                  className="flex items-center text-bf500 hover:!bg-none"
-                >
-                  <span className="text-md">Fermer</span>
-                  <span className="fr-fi-close-line ml-1 mt-1 scale-90"></span>
-                </button>
-              </div>
-              <h4>Filtrer</h4>
-            </>
-          )}
-          <FiltresColonne
-            filters={props.filters}
-            setFilters={props.setFilters}
-            regions={props.regions}
-            departments={props.departements}
-          />
-          {isMobileFilterOpen && (
-            /* Display results button on mobile */
-            <button
-              className="fr-btn mt-8 mx-auto"
-              onClick={() => setIsMobileFilterOpen(false)}
-            >
-              Afficher les résultats
-            </button>
-          )}
-        </div>
-        {/* Trigger filters on mobile */}
-        <MobileFilterButton
-          numberOfActiveFilters={getNumberOfActiveFilters(props.filters)}
-          handleOpenFilter={() => setIsMobileFilterOpen(true)}
-        />
-        {/* Collectivites column */}
-        <div className="w-full">
-          <div className="flex flex-col mb-6 md:flex-row md:justify-between">
-            <div className="order-last mt-4 md:flex md:flex-col md:order-first md:mt-0">
-              {props.collectivitesCount > 0 && (
-                <p className="mb-0 text-center text-gray-500 md:text-left">
-                  {props.collectivitesCount === 1
-                    ? 'Une collectivité correspond'
-                    : `${props.collectivitesCount} collectivités correspondent`}{' '}
-                  à votre recherche
-                </p>
-              )}
-              {getNumberOfActiveFilters(props.filters) > 0 && (
-                <DesactiverLesFiltres
-                  onClick={() => props.setFilters(filtresVides)}
-                />
-              )}
-            </div>
-            <TrierParFiltre
-              onChange={selected =>
-                props.setFilters({...props.filters, trierPar: selected})
-              }
-              selected={props.filters.trierPar}
-            />
+    <>
+      {hasCollectivites && <AssocierCollectiviteBandeau />}
+      <div
+        data-test="ToutesLesCollectivites"
+        className="app fr-container my-16"
+      >
+        <div className="text-center mb-8 md:mb-16">
+          <div className="font-bold text-black md:text-4xl text-3xl mb-6">
+            Toutes les collectivités
           </div>
-          <CollectivitesGrid
-            isLoading={props.isLoading}
-            collectivites={props.collectivites}
-            collectivitesCount={props.collectivitesCount}
-            desactiverLesFiltres={() => props.setFilters(filtresVides)}
-            filters={props.filters}
+          <p className="mb-0">
+            Consultez les <Link to="/statistics">statistiques</Link>{' '}
+            d'utilisation de la plateforme.
+          </p>
+        </div>
+        <div className="md:flex">
+          {/* Filters column */}
+          <div
+            className={classNames(
+              'flex flex-col bg-white z-20 md:mr-6 md:!block md:w-3/12 xl:mr-14',
+              {
+                hidden: !isMobileFilterOpen,
+                ['collectivites-filter-column-mobile']: isMobileFilterOpen,
+              }
+            )}
+          >
+            {isMobileFilterOpen && (
+              <>
+                {/* Close filters on mobile */}
+                <div className="w-max ml-auto mb-8 border-b border-bf500">
+                  <button
+                    onClick={() => setIsMobileFilterOpen(false)}
+                    className="flex items-center text-bf500 hover:!bg-none"
+                  >
+                    <span className="text-md">Fermer</span>
+                    <span className="fr-fi-close-line ml-1 mt-1 scale-90"></span>
+                  </button>
+                </div>
+                <h4>Filtrer</h4>
+              </>
+            )}
+            <FiltresColonne
+              filters={props.filters}
+              setFilters={props.setFilters}
+              regions={props.regions}
+              departments={props.departements}
+            />
+            {isMobileFilterOpen && (
+              /* Display results button on mobile */
+              <button
+                className="fr-btn mt-8 mx-auto"
+                onClick={() => setIsMobileFilterOpen(false)}
+              >
+                Afficher les résultats
+              </button>
+            )}
+          </div>
+          {/* Trigger filters on mobile */}
+          <MobileFilterButton
+            numberOfActiveFilters={getNumberOfActiveFilters(props.filters)}
+            handleOpenFilter={() => setIsMobileFilterOpen(true)}
           />
-          {props.collectivitesCount !== 0 && (
-            <div className="flex justify-center mt-6 md:mt-12">
-              <Pagination
-                nbOfPages={Math.ceil(
-                  props.collectivitesCount / NB_CARDS_PER_PAGE
+          {/* Collectivites column */}
+          <div className="w-full">
+            <div className="flex flex-col mb-6 md:flex-row md:justify-between">
+              <div className="order-last mt-4 md:flex md:flex-col md:order-first md:mt-0">
+                {props.collectivitesCount > 0 && (
+                  <p className="mb-0 text-center text-gray-500 md:text-left">
+                    {props.collectivitesCount === 1
+                      ? 'Une collectivité correspond'
+                      : `${props.collectivitesCount} collectivités correspondent`}{' '}
+                    à votre recherche
+                  </p>
                 )}
-                selectedPage={props.filters.page ?? 1}
+                {getNumberOfActiveFilters(props.filters) > 0 && (
+                  <DesactiverLesFiltres
+                    onClick={() => props.setFilters(filtresVides)}
+                  />
+                )}
+              </div>
+              <TrierParFiltre
                 onChange={selected =>
-                  props.setFilters({...props.filters, page: selected})
+                  props.setFilters({...props.filters, trierPar: selected})
                 }
+                selected={props.filters.trierPar}
               />
             </div>
-          )}
+            <CollectivitesGrid
+              isLoading={props.isLoading}
+              isCardClickable={!hasCollectivites}
+              collectivites={props.collectivites}
+              collectivitesCount={props.collectivitesCount}
+              desactiverLesFiltres={() => props.setFilters(filtresVides)}
+              filters={props.filters}
+            />
+            {props.collectivitesCount !== 0 && (
+              <div className="flex justify-center mt-6 md:mt-12">
+                <Pagination
+                  nbOfPages={Math.ceil(
+                    props.collectivitesCount / NB_CARDS_PER_PAGE
+                  )}
+                  selectedPage={props.filters.page ?? 1}
+                  onChange={selected =>
+                    props.setFilters({...props.filters, page: selected})
+                  }
+                />
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
