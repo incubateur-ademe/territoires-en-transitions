@@ -29,7 +29,6 @@ const removeMembre = async (
 /**
  * Retire un membre de la collectivité courante
  */
-
 export const useRemoveFromCollectivite = () => {
   const collectivite_id = useCollectiviteId();
   const queryClient = useQueryClient();
