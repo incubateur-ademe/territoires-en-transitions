@@ -182,16 +182,6 @@ export const makeCollectiviteUsersUrl = ({
     collectiviteId.toString()
   );
 
-export const makeCollectiviteAllCollectivitesUrl = ({
-  collectiviteId,
-}: {
-  collectiviteId: number;
-}) =>
-  collectiviteAllCollectivitesPath.replace(
-    `:${collectiviteParam}`,
-    collectiviteId.toString()
-  );
-
 export const makeCollectivitePersoRefUrl = ({
   collectiviteId,
 }: {
