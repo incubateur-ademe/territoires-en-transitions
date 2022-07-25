@@ -3,7 +3,6 @@ import {useAuth, TAuthContext} from 'core-logic/api/auth/AuthProvider';
 import HeaderNavigation from 'app/Layout/Header/HeaderNavigation';
 import CollectiviteNavigation from 'app/Layout/Header/CollectiviteNavigation';
 import MobileNavigation from 'app/Layout/Header/MobileNavigation';
-import SansCollectiviteNavigation from 'app/Layout/Header/SansCollectiviteNavigation';
 import {makeCollectiviteNavItems} from 'app/Layout/Header/makeCollectiviteNavItems';
 import {OwnedCollectiviteRead} from 'generated/dataLayer';
 import ademeLogoImage from 'app/static/img/ademe.jpg';
@@ -25,9 +24,6 @@ export const Header = ({
   const collectiviteNav = currentCollectivite
     ? makeCollectiviteNavItems(currentCollectivite)
     : null;
-
-  const showNoCollectiviteNav =
-    currentCollectivite === null && ownedCollectivites !== null;
 
   return (
     <header role="banner" className="header fr-header ">
@@ -74,7 +70,6 @@ export const Header = ({
           ownedCollectivites={ownedCollectivites}
         />
       ) : null}
-      {showNoCollectiviteNav && <SansCollectiviteNavigation />}
     </header>
   );
 };
