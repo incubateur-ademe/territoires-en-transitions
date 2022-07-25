@@ -7,9 +7,11 @@ import {GreyStar, GreenStar} from 'app/pages/collectivite/TableauBord/Star';
 import {Card} from '@material-ui/core';
 import {Link} from 'react-router-dom';
 import {makeCollectiviteTableauBordUrl} from 'app/paths';
+import classNames from 'classnames';
 
 export type TCollectiviteCarteProps = {
   collectivite: CollectiviteCarteRead;
+  isCardClickable: boolean;
 };
 
 /**
@@ -24,12 +26,25 @@ export const CollectiviteCarte = (props: TCollectiviteCarteProps) => {
 
   return (
     <Link
-      to={makeCollectiviteTableauBordUrl({
-        collectiviteId: collectivite.collectivite_id,
+      to={
+        props.isCardClickable
+          ? makeCollectiviteTableauBordUrl({
+              collectiviteId: collectivite.collectivite_id,
+            })
+          : '#'
+      }
+      className={classNames('!shadow-none', {
+        ['cursor-default, pointer-events-none']: !props.isCardClickable,
       })}
-      style={{boxShadow: 'none'}} // override DSFR shadow
     >
-      <Card className="collectiviteCard flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100">
+      <Card
+        className={classNames(
+          'flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100',
+          {
+            ['hover:bg-gray-100']: props.isCardClickable,
+          }
+        )}
+      >
         <div className="md:text-lg text-base font-bold mb-4">
           {collectivite.nom}
         </div>

@@ -4,7 +4,6 @@ import Dialog from '@material-ui/core/Dialog';
 interface UiDialogButtonProps {
   useFrBtn: boolean;
   buttonClasses?: string;
-  buttonWrapperClasses?: string;
   dialogClasses?: string;
   title: string;
   buttonLabel?: string;
@@ -19,10 +18,7 @@ const defaultProps = {
 };
 
 export const UiDialogButton = (props: UiDialogButtonProps) => (
-  <div
-    className={props.buttonWrapperClasses}
-    onClick={event => event.stopPropagation()}
-  >
+  <div onClick={event => event.stopPropagation()}>
     <button
       data-test={props['data-test']}
       className={
