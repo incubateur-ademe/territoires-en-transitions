@@ -950,6 +950,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
         >
           <div
             className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            data-test="CollectiviteCarte"
           >
             <div
               className="md:text-lg text-base font-bold mb-4"
@@ -1266,6 +1267,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
         >
           <div
             className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            data-test="CollectiviteCarte"
           >
             <div
               className="md:text-lg text-base font-bold mb-4"
@@ -1582,6 +1584,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
         >
           <div
             className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            data-test="CollectiviteCarte"
           >
             <div
               className="md:text-lg text-base font-bold mb-4"
@@ -1774,6 +1777,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
         >
           <div
             className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            data-test="CollectiviteCarte"
           >
             <div
               className="md:text-lg text-base font-bold mb-4"
@@ -2090,6 +2094,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
         >
           <div
             className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            data-test="CollectiviteCarte"
           >
             <div
               className="md:text-lg text-base font-bold mb-4"
@@ -2406,6 +2411,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
         >
           <div
             className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            data-test="CollectiviteCarte"
           >
             <div
               className="md:text-lg text-base font-bold mb-4"
@@ -2722,6 +2728,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
         >
           <div
             className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            data-test="CollectiviteCarte"
           >
             <div
               className="md:text-lg text-base font-bold mb-4"
@@ -4038,6 +4045,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
         >
           <div
             className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            data-test="CollectiviteCarte"
           >
             <div
               className="md:text-lg text-base font-bold mb-4"
@@ -4354,6 +4362,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
         >
           <div
             className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            data-test="CollectiviteCarte"
           >
             <div
               className="md:text-lg text-base font-bold mb-4"
@@ -4670,6 +4679,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
         >
           <div
             className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            data-test="CollectiviteCarte"
           >
             <div
               className="md:text-lg text-base font-bold mb-4"
@@ -4862,6 +4872,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
         >
           <div
             className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            data-test="CollectiviteCarte"
           >
             <div
               className="md:text-lg text-base font-bold mb-4"
@@ -5178,6 +5189,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
         >
           <div
             className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            data-test="CollectiviteCarte"
           >
             <div
               className="md:text-lg text-base font-bold mb-4"
@@ -5494,6 +5506,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
         >
           <div
             className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            data-test="CollectiviteCarte"
           >
             <div
               className="md:text-lg text-base font-bold mb-4"
@@ -5810,6 +5823,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
         >
           <div
             className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            data-test="CollectiviteCarte"
           >
             <div
               className="md:text-lg text-base font-bold mb-4"

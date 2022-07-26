@@ -90,7 +90,10 @@ const CollectiviteReadOnlyBanner = ({
 }) => {
   if (!!collectivite && collectivite.readonly)
     return (
-      <div className="flex justify-center items-center bg-yellow-400 py-4 bg-opacity-70">
+      <div
+        data-test="ReadOnlyBanner"
+        className="flex justify-center items-center bg-yellow-400 py-4 bg-opacity-70"
+      >
         <div className="text-sm mr-4">Lecture seule</div>
         <RejoindreCetteCollectiviteDialog
           getReferentContacts={getReferentContacts}

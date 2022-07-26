@@ -13,7 +13,7 @@ const _RejoindreCollectiviteDialogContent = ({
   referentContacts: ReferentContact[];
 }) => {
   return referentContacts.length === 1 ? (
-    <div>
+    <div data-test="RejoindreCollectiviteDialogContent">
       <div className="flex justify-center mt-8">
         Pour rejoindre {collectivite.nom}, contactez la personne référente{' '}
         {referentContacts[0].prenom} {referentContacts[0].nom} à l'adresse{' '}
@@ -46,7 +46,10 @@ const _ActiverCollectiviteDialogContent = ({
 
   if (lastReply === null)
     return (
-      <div className="items-center" data-test="confirm-selection-msg">
+      <div
+        className="items-center"
+        data-test="ActiverCollectiviteDialogContent"
+      >
         <ul>
           <li>Vous souhaitez rejoindre {collectivite.nom}</li>
           <li>Cette collectivité n'est pas encore active.</li>

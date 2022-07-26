@@ -20,7 +20,7 @@ const defaultProps = {
 export const UiDialogButton = (props: UiDialogButtonProps) => (
   <div onClick={event => event.stopPropagation()}>
     <button
-      data-test={props['data-test']}
+      data-test={`btn-${props['data-test']}`}
       className={
         `${props.useFrBtn ? 'fr-btn ' : ''}` + `${props.buttonClasses ?? ''}`
       }
@@ -38,6 +38,7 @@ export const UiDialogButton = (props: UiDialogButtonProps) => (
       fullWidth={true}
     >
       <div
+        data-test={`dialog-${props['data-test']}`}
         className={`p-7 flex flex-col items-center ${
           props.dialogClasses ?? ''
         }`}

@@ -3,6 +3,7 @@
 exports[`Storyshots app/pages/collectivite/TableauBord/TableauBordPage Referentiels Non Remplis 1`] = `
 <div
   className="bg-grey975"
+  data-test="TableauBord"
 >
   <div
     className="fr-container pt-9 pb-16"
@@ -98,6 +99,7 @@ exports[`Storyshots app/pages/collectivite/TableauBord/TableauBordPage Referenti
 exports[`Storyshots app/pages/collectivite/TableauBord/TableauBordPage Referentiels Partiellement Remplis 1`] = `
 <div
   className="bg-grey975"
+  data-test="TableauBord"
 >
   <div
     className="fr-container pt-9 pb-16"

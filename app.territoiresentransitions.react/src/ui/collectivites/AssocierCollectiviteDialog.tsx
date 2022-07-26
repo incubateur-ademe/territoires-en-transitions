@@ -37,13 +37,13 @@ export const AssocierCollectiviteDialog = ({
   return (
     <UiDialogButton
       useFrBtn
-      data-test="btn-select-collectivite"
+      data-test="AssocierCollectivite"
       title="Rejoindre une collectivité"
       dialogClasses="overflow-hidden"
       opened={opened}
       setOpened={setOpened}
     >
-      <div data-test="collectivite-picker" className="py-7 min-h-[400px]">
+      <div className="py-7 min-h-[400px]">
         <div className="flex flex-row justify-center">
           <AutocompleteInput
             label="Nom de la collectivité"
