@@ -22,8 +22,10 @@ export const Redirector = () => {
   const accessToken = useAccessToken();
   const userCollectivites = useOwnedCollectivites();
   const isSigninPath = pathname === signInPath;
-  const justSignedIn =
+  const isJustSignedIn = // L'utilisateur vient de se connecter.
     isConnected && isSigninPath && userCollectivites !== null;
+  const isLandingConnected = // L'utilisateur est connecté et arrive sur '/'.
+    isConnected && pathname === '/' && userCollectivites !== null;
 
   // Quand l'utilisateur connecté
   // - est associé à aucune collectivité :
@@ -31,7 +33,7 @@ export const Redirector = () => {
   // - est associé à une ou plus collectivité(s) :
   //    on redirige vers le tableau de bord de la première collectivité
   useEffect(() => {
-    if (!justSignedIn) return;
+    if (!isJustSignedIn && !isLandingConnected) return;
 
     if (userCollectivites && userCollectivites.length >= 1) {
       history.push(
@@ -42,7 +44,7 @@ export const Redirector = () => {
     } else {
       history.push(homePath);
     }
-  }, [justSignedIn]);
+  }, [isJustSignedIn, isLandingConnected]);
 
   // réagit aux changements de l'état "invitation"
   useEffect(() => {
@@ -68,9 +70,6 @@ export const Redirector = () => {
     // connecter" dans le cas d'une invitation en attente de connexion)
     if (!isConnected) {
       history.push(invitationState === 'waitingForLogin' ? signInPath : '/');
-    } else if (pathname === '/') {
-      // si connecté et qu'on navigue sur la home on redirige vers "toutes les collectivités"
-      history.push(homePath);
     }
   }, [isConnected, invitationState, recoveryToken]);
 
