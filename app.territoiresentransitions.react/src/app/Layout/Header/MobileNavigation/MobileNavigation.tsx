@@ -1,10 +1,12 @@
 import {useState} from 'react';
-import {TAuthContext} from 'core-logic/api/auth/AuthProvider';
+import {Link} from 'react-router-dom';
+import {TAuthContext, useAuth} from 'core-logic/api/auth/AuthProvider';
 import MobileHeaderNavigation from './MobileHeaderNavigation/MobileHeaderNavigation';
 import MobileCollectiviteNavigation from './MobileCollectiviteNavigation';
 import {CollectiviteNavItems} from '../makeCollectiviteNavItems';
 import {OwnedCollectiviteRead} from 'generated/dataLayer';
 import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import {allCollectivitesPath} from 'app/paths';
 
 type Props = {
   auth: TAuthContext;
@@ -19,6 +21,8 @@ const MobileNavigation = ({
   currentCollectivite,
   ownedCollectivites,
 }: Props) => {
+  const {isConnected} = useAuth();
+
   const [isMobileNavigationOpen, setIsMobileNavigationOpen] = useState(false);
   const toggleMobileNavigation = () =>
     setIsMobileNavigationOpen(!isMobileNavigationOpen);
@@ -47,7 +51,15 @@ const MobileNavigation = ({
                   toggleMobileNavigation={toggleMobileNavigation}
                 />
               )}
-
+            {isConnected && (
+              <Link
+                to={allCollectivitesPath}
+                onClick={toggleMobileNavigation}
+                className="fr-link w-full !p-4"
+              >
+                Collectivités engagées
+              </Link>
+            )}
             <a
               data-test="help"
               className="fr-link block w-full !p-4"

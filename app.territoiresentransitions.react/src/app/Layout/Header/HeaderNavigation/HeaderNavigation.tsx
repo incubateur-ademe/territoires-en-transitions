@@ -1,5 +1,5 @@
 import {Link} from 'react-router-dom';
-import {signInPath, signUpPath} from 'app/paths';
+import {allCollectivitesPath, signInPath, signUpPath} from 'app/paths';
 import {TAuthContext} from 'core-logic/api/auth/AuthProvider';
 import {LogoutBtn} from '../LogoutBtn';
 
@@ -13,6 +13,11 @@ const HeaderNavigation = ({auth}: Props) => {
     <div className="fr-header__tools hidden lg:block">
       <div className="fr-header__tools-links">
         <ul className="fr-links-group">
+          {isConnected && (
+            <Link to={allCollectivitesPath} className="fr-link">
+              Collectivités engagées
+            </Link>
+          )}
           <a
             data-test="help"
             className="fr-link"
