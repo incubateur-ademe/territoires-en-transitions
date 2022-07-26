@@ -53,7 +53,7 @@ export const RenderToutesLesCollectivites = (
       >
         <div className="text-center mb-8 md:mb-16">
           <div className="font-bold text-black md:text-4xl text-3xl mb-6">
-            Toutes les collectivités
+            Collectivités engagées
           </div>
           <p className="mb-0">
             Consultez les <Link to="/statistics">statistiques</Link>{' '}

@@ -26,7 +26,7 @@ export const Redirector = () => {
   const isCollectivitePath = useCollectiviteId() !== null;
 
   // Quand l'utilisateur est connecté, mais n'est associé à aucune collectivité
-  // cas: après s'être retiré de la seule collectivité dont l'utilisateur était associé
+  // cas: après s'être retiré de la seule collectivité dont l'utilisateur été associé
   // cas: n'a jamais été associé
   useEffect(() => {
     if (!isConnected || isCollectivitePath || isHomePath) return;
