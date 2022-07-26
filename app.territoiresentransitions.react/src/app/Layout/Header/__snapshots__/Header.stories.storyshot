@@ -69,6 +69,13 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
             >
               <a
                 className="fr-link"
+                href="/toutes_collectivites"
+                onClick={[Function]}
+              >
+                Collectivités engagées
+              </a>
+              <a
+                className="fr-link"
                 data-test="help"
                 href="https://aide.territoiresentransitions.fr/fr/"
                 target="_blank"
@@ -314,6 +321,13 @@ exports[`Storyshots app/Layout/Header With Collectivite 1`] = `
             >
               <a
                 className="fr-link"
+                href="/toutes_collectivites"
+                onClick={[Function]}
+              >
+                Collectivités engagées
+              </a>
+              <a
+                className="fr-link"
                 data-test="help"
                 href="https://aide.territoiresentransitions.fr/fr/"
                 target="_blank"
@@ -468,14 +482,6 @@ exports[`Storyshots app/Layout/Header With Collectivite 1`] = `
             />
           </button>
         </div>
-        <a
-          aria-current={null}
-          className="fr-nav__item justify-center text-center p-4"
-          href="/collectivite/1/toutes_collectivites"
-          onClick={[Function]}
-        >
-          Toutes les collectivités
-        </a>
         <div
           className="group relative flex ml-auto"
         >
@@ -558,6 +564,13 @@ exports[`Storyshots app/Layout/Header With Readonly Collectivite 1`] = `
             <ul
               className="fr-links-group"
             >
+              <a
+                className="fr-link"
+                href="/toutes_collectivites"
+                onClick={[Function]}
+              >
+                Collectivités engagées
+              </a>
               <a
                 className="fr-link"
                 data-test="help"
@@ -695,14 +708,6 @@ exports[`Storyshots app/Layout/Header With Readonly Collectivite 1`] = `
             />
           </button>
         </div>
-        <a
-          aria-current={null}
-          className="fr-nav__item justify-center text-center p-4"
-          href="/collectivite/1/toutes_collectivites"
-          onClick={[Function]}
-        >
-          Toutes les collectivités
-        </a>
         <div
           className="group relative flex ml-auto"
         >
