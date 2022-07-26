@@ -1,4 +1,4 @@
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import {useHistory, useLocation} from 'react-router-dom';
 import {
   homePath,
@@ -12,7 +12,6 @@ import {useInvitationState} from 'core-logic/hooks/useInvitationState';
 import {useRecoveryToken} from 'core-logic/hooks/useRecoveryToken';
 import {useAccessToken} from 'core-logic/hooks/useVerifyRecoveryToken';
 import {useOwnedCollectivites} from 'core-logic/hooks/useOwnedCollectivites';
-import {useCollectiviteId} from 'core-logic/hooks/params';
 
 export const Redirector = () => {
   const history = useHistory();
@@ -21,27 +20,29 @@ export const Redirector = () => {
   const {invitationState} = useInvitationState();
   const recoveryToken = useRecoveryToken();
   const accessToken = useAccessToken();
-  const ownedCollectivites = useOwnedCollectivites();
-  const isHomePath = pathname === homePath;
-  const isCollectivitePath = useCollectiviteId() !== null;
+  const userCollectivites = useOwnedCollectivites();
+  const isSigninPath = pathname === signInPath;
+  const justSignedIn =
+    isConnected && isSigninPath && userCollectivites !== null;
 
-  // Quand l'utilisateur est connecté, mais n'est associé à aucune collectivité
-  // cas: après s'être retiré de la seule collectivité dont l'utilisateur été associé
-  // cas: n'a jamais été associé
+  // Quand l'utilisateur connecté
+  // - est associé à aucune collectivité :
+  //    on redirige vers la page "Collectivités engagées"
+  // - est associé à une ou plus collectivité(s) :
+  //    on redirige vers le tableau de bord de la première collectivité
   useEffect(() => {
-    if (!isConnected || isCollectivitePath || isHomePath) return;
+    if (!justSignedIn) return;
 
-    // Quand l'utilisateur est associé à au moins une collectivite
-    if (ownedCollectivites && ownedCollectivites.length >= 1) {
+    if (userCollectivites && userCollectivites.length >= 1) {
       history.push(
         makeCollectiviteTableauBordUrl({
-          collectiviteId: ownedCollectivites[0].collectivite_id,
+          collectiviteId: userCollectivites[0].collectivite_id,
         })
       );
     } else {
       history.push(homePath);
     }
-  }, [ownedCollectivites, isCollectivitePath, isConnected, isHomePath]);
+  }, [justSignedIn]);
 
   // réagit aux changements de l'état "invitation"
   useEffect(() => {
