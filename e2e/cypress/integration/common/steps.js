@@ -30,6 +30,10 @@ const Users = {
     email: 'yolo@dodo.com',
     password: 'yolododo',
   },
+  yulu: {
+    email: 'yulu@dudu.com',
+    password: 'yulududu',
+  },
 };
 const SignInPage = Selectors['formulaire de connexion'];
 Given(/je suis connecté en tant que "([^"]*)"/, function (userName) {

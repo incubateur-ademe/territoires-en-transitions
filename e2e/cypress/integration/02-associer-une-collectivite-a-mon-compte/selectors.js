@@ -1,10 +1,6 @@
 export const LocalSelectors = {
-  'Mes collectivités': {
-    selector: '[data-test=CurrentUserCollectivites]',
-    children: {
-      'Associer une collectivité à mon compte':
-        '[data-test=btn-select-collectivite]',
-    },
+  'Associer une collectivité à mon compte': {
+    selector: '[data-test=btn-select-collectivite]'
   },
   'dialogue Associer une collectivité à mon compte': {
     selector: '[data-test=collectivite-picker]',
