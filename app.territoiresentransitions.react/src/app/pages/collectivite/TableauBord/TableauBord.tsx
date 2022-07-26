@@ -367,7 +367,7 @@ export const TableauBord = ({
   collectiviteId,
 }: TTableauBordProps) => {
   return (
-    <div className="bg-grey975">
+    <div data-test={`TableauBord_${collectiviteId}`} className="bg-grey975">
       <div className="fr-container pt-9 pb-16">
         <main className="flex flex-row gap-4">
           <section style={{width: '600px'}} className="bg-white p-4">
