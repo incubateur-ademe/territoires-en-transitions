@@ -11,7 +11,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
     <div
       className="font-bold text-black md:text-4xl text-3xl mb-6"
     >
-      Toutes les collectivités
+      Collectivités engagées
     </div>
     <p
       className="mb-0"
@@ -23,7 +23,8 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
       >
         statistiques
       </a>
-       d'utilisation de la plateforme.
+       
+      d'utilisation de la plateforme.
     </p>
   </div>
   <div
@@ -943,16 +944,12 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
         className="grid lg:grid-cols-2 gap-4"
       >
         <a
+          className="!shadow-none"
           href="/collectivite/2/tableau_bord"
           onClick={[Function]}
-          style={
-            Object {
-              "boxShadow": "none",
-            }
-          }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
           >
             <div
               className="md:text-lg text-base font-bold mb-4"
@@ -1263,16 +1260,12 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
           </div>
         </a>
         <a
+          className="!shadow-none"
           href="/collectivite/2/tableau_bord"
           onClick={[Function]}
-          style={
-            Object {
-              "boxShadow": "none",
-            }
-          }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
           >
             <div
               className="md:text-lg text-base font-bold mb-4"
@@ -1583,16 +1576,12 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
           </div>
         </a>
         <a
+          className="!shadow-none"
           href="/collectivite/3/tableau_bord"
           onClick={[Function]}
-          style={
-            Object {
-              "boxShadow": "none",
-            }
-          }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
           >
             <div
               className="md:text-lg text-base font-bold mb-4"
@@ -1779,16 +1768,12 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
           </div>
         </a>
         <a
+          className="!shadow-none"
           href="/collectivite/4/tableau_bord"
           onClick={[Function]}
-          style={
-            Object {
-              "boxShadow": "none",
-            }
-          }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
           >
             <div
               className="md:text-lg text-base font-bold mb-4"
@@ -2099,16 +2084,12 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
           </div>
         </a>
         <a
+          className="!shadow-none"
           href="/collectivite/5/tableau_bord"
           onClick={[Function]}
-          style={
-            Object {
-              "boxShadow": "none",
-            }
-          }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
           >
             <div
               className="md:text-lg text-base font-bold mb-4"
@@ -2419,16 +2400,12 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
           </div>
         </a>
         <a
+          className="!shadow-none"
           href="/collectivite/6/tableau_bord"
           onClick={[Function]}
-          style={
-            Object {
-              "boxShadow": "none",
-            }
-          }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
           >
             <div
               className="md:text-lg text-base font-bold mb-4"
@@ -2739,16 +2716,12 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
           </div>
         </a>
         <a
+          className="!shadow-none"
           href="/collectivite/7/tableau_bord"
           onClick={[Function]}
-          style={
-            Object {
-              "boxShadow": "none",
-            }
-          }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
           >
             <div
               className="md:text-lg text-base font-bold mb-4"
@@ -3140,7 +3113,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
     <div
       className="font-bold text-black md:text-4xl text-3xl mb-6"
     >
-      Toutes les collectivités
+      Collectivités engagées
     </div>
     <p
       className="mb-0"
@@ -3152,7 +3125,8 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
       >
         statistiques
       </a>
-       d'utilisation de la plateforme.
+       
+      d'utilisation de la plateforme.
     </p>
   </div>
   <div
@@ -4058,16 +4032,12 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
         className="grid lg:grid-cols-2 gap-4"
       >
         <a
+          className="!shadow-none"
           href="/collectivite/2/tableau_bord"
           onClick={[Function]}
-          style={
-            Object {
-              "boxShadow": "none",
-            }
-          }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
           >
             <div
               className="md:text-lg text-base font-bold mb-4"
@@ -4378,16 +4348,12 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
           </div>
         </a>
         <a
+          className="!shadow-none"
           href="/collectivite/2/tableau_bord"
           onClick={[Function]}
-          style={
-            Object {
-              "boxShadow": "none",
-            }
-          }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
           >
             <div
               className="md:text-lg text-base font-bold mb-4"
@@ -4698,16 +4664,12 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
           </div>
         </a>
         <a
+          className="!shadow-none"
           href="/collectivite/3/tableau_bord"
           onClick={[Function]}
-          style={
-            Object {
-              "boxShadow": "none",
-            }
-          }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
           >
             <div
               className="md:text-lg text-base font-bold mb-4"
@@ -4894,16 +4856,12 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
           </div>
         </a>
         <a
+          className="!shadow-none"
           href="/collectivite/4/tableau_bord"
           onClick={[Function]}
-          style={
-            Object {
-              "boxShadow": "none",
-            }
-          }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
           >
             <div
               className="md:text-lg text-base font-bold mb-4"
@@ -5214,16 +5172,12 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
           </div>
         </a>
         <a
+          className="!shadow-none"
           href="/collectivite/5/tableau_bord"
           onClick={[Function]}
-          style={
-            Object {
-              "boxShadow": "none",
-            }
-          }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
           >
             <div
               className="md:text-lg text-base font-bold mb-4"
@@ -5534,16 +5488,12 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
           </div>
         </a>
         <a
+          className="!shadow-none"
           href="/collectivite/6/tableau_bord"
           onClick={[Function]}
-          style={
-            Object {
-              "boxShadow": "none",
-            }
-          }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
           >
             <div
               className="md:text-lg text-base font-bold mb-4"
@@ -5854,16 +5804,12 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
           </div>
         </a>
         <a
+          className="!shadow-none"
           href="/collectivite/7/tableau_bord"
           onClick={[Function]}
-          style={
-            Object {
-              "boxShadow": "none",
-            }
-          }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
           >
             <div
               className="md:text-lg text-base font-bold mb-4"
@@ -6255,7 +6201,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Sans Resultats 1`] = `
     <div
       className="font-bold text-black md:text-4xl text-3xl mb-6"
     >
-      Toutes les collectivités
+      Collectivités engagées
     </div>
     <p
       className="mb-0"
@@ -6267,7 +6213,8 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Sans Resultats 1`] = `
       >
         statistiques
       </a>
-       d'utilisation de la plateforme.
+       
+      d'utilisation de la plateforme.
     </p>
   </div>
   <div

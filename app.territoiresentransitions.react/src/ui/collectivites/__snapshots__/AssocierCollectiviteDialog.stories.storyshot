@@ -2,45 +2,42 @@
 
 exports[`Storyshots ui/collectivites/AssocierCollectiviteDialog Aucun Contact Referent 1`] = `
 <div
-  className="w-full"
   onClick={[Function]}
 >
   <button
-    className="fr-btn fr-btn"
+    className="fr-btn "
     data-test="btn-select-collectivite"
     onClick={[Function]}
   >
-    Associer une collectivité à mon compte
+    Rejoindre une collectivité
   </button>
 </div>
 `;
 
 exports[`Storyshots ui/collectivites/AssocierCollectiviteDialog Plusieurs Contacts Referents 1`] = `
 <div
-  className="w-full"
   onClick={[Function]}
 >
   <button
-    className="fr-btn fr-btn"
+    className="fr-btn "
     data-test="btn-select-collectivite"
     onClick={[Function]}
   >
-    Associer une collectivité à mon compte
+    Rejoindre une collectivité
   </button>
 </div>
 `;
 
 exports[`Storyshots ui/collectivites/AssocierCollectiviteDialog Un Seul Contact Referent 1`] = `
 <div
-  className="w-full"
   onClick={[Function]}
 >
   <button
-    className="fr-btn fr-btn"
+    className="fr-btn "
     data-test="btn-select-collectivite"
     onClick={[Function]}
   >
-    Associer une collectivité à mon compte
+    Rejoindre une collectivité
   </button>
 </div>
 `;
