@@ -9,6 +9,7 @@ exports[`Storyshots app/pages/collectivite/RejoindreCetteCollectiviteDialog Aucu
   >
     <button
       className="fr-btn fr-btn--secondary fr-btn--sm"
+      data-test="btn-RejoindreCetteCollectivite"
       onClick={[Function]}
     >
       Rejoindre cette collectivité
@@ -26,6 +27,7 @@ exports[`Storyshots app/pages/collectivite/RejoindreCetteCollectiviteDialog Plus
   >
     <button
       className="fr-btn fr-btn--secondary fr-btn--sm"
+      data-test="btn-RejoindreCetteCollectivite"
       onClick={[Function]}
     >
       Rejoindre cette collectivité
@@ -43,6 +45,7 @@ exports[`Storyshots app/pages/collectivite/RejoindreCetteCollectiviteDialog Un S
   >
     <button
       className="fr-btn fr-btn--secondary fr-btn--sm"
+      data-test="btn-RejoindreCetteCollectivite"
       onClick={[Function]}
     >
       Rejoindre cette collectivité

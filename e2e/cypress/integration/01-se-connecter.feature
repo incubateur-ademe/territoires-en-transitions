@@ -26,12 +26,12 @@ Fonctionnalité: Accéder au site et se connecter
       | mdp   | yolododo      |
     Et que je clique sur le bouton "Valider" du "formulaire de connexion"
     Alors la page vérifie les conditions suivantes :
-      | Elément                                 | Condition |
-      | header                                  | visible   |
-      | home                                    | absent    |
-      | formulaire de connexion                 | absent    |
-      | le tableau de bord de la collectivité 1 | visible   |
-      | footer                                  | visible   |
+      | Elément                               | Condition |
+      | header                                | visible   |
+      | home                                  | absent    |
+      | formulaire de connexion               | absent    |
+      | le tableau de bord de la collectivité | visible   |
+      | footer                                | visible   |
 
   Scénario: Se connecter en tant que Yulu (utilisateur non encore rattaché)
     Etant donné que j'ouvre le site

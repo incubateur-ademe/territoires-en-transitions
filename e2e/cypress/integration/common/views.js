@@ -3,19 +3,19 @@ export const Views = {
   home: {
     selector: '[data-test=home]',
   },
-  'toutes les collectivités': {
+  'Toutes les collectivités': {
     route: '/toutes_collectivites',
     selector: '[data-test=ToutesLesCollectivites]',
-  },
-  'Mes collectivités': {
-    route: '/mes_collectivites',
-    selector: '[data-test=CurrentUserCollectivites]',
-  },
+  }
 };
 
 export const CollectivitePages = {
   'Gestion des membres': {
     route: 'users',
     selector: '[data-test=Users]',
+  },
+  'Tableau de bord': {
+    route: 'tableau_bord',
+    selector: '[data-test=TableauBord]',
   },
 };

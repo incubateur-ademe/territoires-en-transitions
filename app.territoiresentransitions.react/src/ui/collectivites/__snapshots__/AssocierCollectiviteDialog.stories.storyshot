@@ -6,7 +6,7 @@ exports[`Storyshots ui/collectivites/AssocierCollectiviteDialog Aucun Contact Re
 >
   <button
     className="fr-btn "
-    data-test="btn-select-collectivite"
+    data-test="btn-AssocierCollectivite"
     onClick={[Function]}
   >
     Rejoindre une collectivité
@@ -20,7 +20,7 @@ exports[`Storyshots ui/collectivites/AssocierCollectiviteDialog Plusieurs Contac
 >
   <button
     className="fr-btn "
-    data-test="btn-select-collectivite"
+    data-test="btn-AssocierCollectivite"
     onClick={[Function]}
   >
     Rejoindre une collectivité
@@ -34,7 +34,7 @@ exports[`Storyshots ui/collectivites/AssocierCollectiviteDialog Un Seul Contact 
 >
   <button
     className="fr-btn "
-    data-test="btn-select-collectivite"
+    data-test="btn-AssocierCollectivite"
     onClick={[Function]}
   >
     Rejoindre une collectivité

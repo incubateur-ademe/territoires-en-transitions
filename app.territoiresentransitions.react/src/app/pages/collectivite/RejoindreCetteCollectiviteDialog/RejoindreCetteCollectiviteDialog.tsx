@@ -22,6 +22,7 @@ export const RejoindreCetteCollectiviteDialog = ({
         opened={opened}
         setOpened={setOpened}
         buttonClasses="fr-btn--secondary fr-btn--sm"
+        data-test="RejoindreCetteCollectivite"
       >
         <_RejoindreOuActiverDialogContent
           getReferentContacts={getReferentContacts}

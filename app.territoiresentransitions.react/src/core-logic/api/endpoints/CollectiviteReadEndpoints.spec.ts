@@ -45,7 +45,7 @@ describe('Owned Collectivite reading endpoint ', () => {
       },
       {
         ...collectivite2,
-        role_name: 'agent',
+        role_name: 'referent',
       },
     ];
     expect(results.length).toEqual(2);

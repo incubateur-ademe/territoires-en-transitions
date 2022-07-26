@@ -38,6 +38,7 @@ export const CollectiviteCarte = (props: TCollectiviteCarteProps) => {
       })}
     >
       <Card
+        data-test="CollectiviteCarte"
         className={classNames(
           'flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100',
           {
