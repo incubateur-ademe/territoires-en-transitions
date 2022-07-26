@@ -37,11 +37,7 @@ export const SignInPage = () => {
           initialValues={{email: '', password: ''}}
           validationSchema={validation}
           onSubmit={credentials => {
-            connect(credentials).then(connected => {
-              if (connected) {
-                history.push(homePath);
-              }
-            });
+            connect(credentials);
           }}
         >
           {({values}) => (
