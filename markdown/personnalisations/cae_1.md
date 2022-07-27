@@ -5,8 +5,8 @@ action_id: cae_1.1.2.0.1
 ## Règles
 ### Désactivation
 ```formule
-si identite(type, commune)
-sinon si identite(type, EPCI) et identite(population, moins_de_20000)
+si identite(type, commune) alors VRAI
+sinon si identite(type, EPCI) et identite(population, moins_de_20000) alors VRAI
 ```
 Seuls les EPCI à fiscalité propre de plus de 20 000 habitants sont concernées par l'obligation de réaliser un PCAET.
 
@@ -64,11 +64,11 @@ action_id: cae_1.2.2.1
 ## Règles
 ### Réduction de potentiel
 ```formule
-si reponse(AOM, OUI) et identite(population, plus_de_100000) alors 0
+si reponse(AOM_1, OUI) et identite(population, plus_de_100000) alors 0
 ```
 ### Désactivation
 ```formule
-reponse(AOM, OUI) et identite(population, plus_de_100000)
+reponse(AOM_1, OUI) et identite(population, plus_de_100000)
 ```
 Pour une collectivité AOM, de plus de 100 000 habitants, la 1.2.2.1 est désactivée.
 
@@ -79,7 +79,7 @@ action_id: cae_1.2.2.5
 ## Règles
 ### Réduction de potentiel
 ```formule
-si reponse(AOM, OUI) et identite(population, plus_de_100000) alors 4,8/12
+si reponse(AOM_1, OUI) et identite(population, plus_de_100000) alors 4.8/12
 ```
 Pour une collectivité AOM, de plus de 100 000 habitants, la 1.2.2.5 est notée sur 40 % (au lieu de 30 %).
 
