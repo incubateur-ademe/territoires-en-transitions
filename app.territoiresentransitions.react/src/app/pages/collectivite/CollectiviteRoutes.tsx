@@ -25,10 +25,7 @@ import {PersoReferentielPage} from './PersoReferentiel/PersoReferentielPage';
 import {PersoReferentielThematiquePage} from './PersoReferentielThematique/PersoReferentielThematiquePage';
 import {ParcoursLabellisationPage} from './ParcoursLabellisation/ParcoursLabellisationPage';
 import {ToutesLesCollectivitesPage} from '../ToutesLesCollectivites/ToutesLesCollectivitesPage';
-import {
-  CurrentCollectivite,
-  useCurrentCollectivite,
-} from 'core-logic/hooks/useCurrentCollectivite';
+import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {RejoindreCetteCollectiviteDialog} from './RejoindreCetteCollectiviteDialog/RejoindreCetteCollectiviteDialog';
 import {getReferentContacts} from 'core-logic/api/procedures/collectiviteProcedures';
 
@@ -39,10 +36,8 @@ import {getReferentContacts} from 'core-logic/api/procedures/collectiviteProcedu
  */
 export const CollectiviteRoutes = () => {
   const {path} = useRouteMatch();
-  const currentCollectivite = useCurrentCollectivite();
   return (
     <>
-      <CollectiviteReadOnlyBanner collectivite={currentCollectivite} />
       <Route path={collectiviteReferentielPath}>
         <ReferentielsPage />
       </Route>
@@ -81,25 +76,4 @@ export const CollectiviteRoutes = () => {
       </Route>
     </>
   );
-};
-
-const CollectiviteReadOnlyBanner = ({
-  collectivite,
-}: {
-  collectivite: CurrentCollectivite | null;
-}) => {
-  if (!!collectivite && collectivite.readonly)
-    return (
-      <div
-        data-test="ReadOnlyBanner"
-        className="flex justify-center items-center bg-yellow-400 py-4 bg-opacity-70"
-      >
-        <div className="text-sm mr-4">Lecture seule</div>
-        <RejoindreCetteCollectiviteDialog
-          getReferentContacts={getReferentContacts}
-          collectivite={collectivite}
-        />
-      </div>
-    );
-  return null;
 };
