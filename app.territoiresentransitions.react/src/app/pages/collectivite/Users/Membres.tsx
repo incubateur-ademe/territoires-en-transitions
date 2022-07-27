@@ -36,6 +36,10 @@ export const Membres = ({
   updateMembre,
   removeFromCollectivite,
 }: MembresProps) => {
+  const canViewInvitation =
+    collectivite.niveau_acces === 'admin' ||
+    collectivite.niveau_acces === 'edition';
+
   return (
     <main data-test="Users" className="fr-container mt-9 mb-16">
       <h1 className="mb-10 lg:mb-14 lg:text-center">Gestion des membres</h1>
@@ -52,20 +56,16 @@ export const Membres = ({
         removeFromCollectivite={removeFromCollectivite}
       />
 
-      {(collectivite.niveau_acces === 'admin' ||
-        collectivite.niveau_acces === 'edition') && (
+      {canViewInvitation && (
         <>
           <h2 className="mt-12">Invitation</h2>
           <p className="italic text-gray-500">
             Tous les champs sont obligatoires
           </p>
-
-          {collectivite && (
-            <InvitationForm
-              currentUser={currentUser}
-              currentCollectivite={collectivite}
-            />
-          )}
+          <InvitationForm
+            currentUser={currentUser}
+            currentCollectivite={collectivite}
+          />
         </>
       )}
     </main>
