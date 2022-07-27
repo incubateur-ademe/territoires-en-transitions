@@ -1,6 +1,5 @@
 import {useEffect, useMemo} from 'react';
 import useCopyToClipboard from 'ui/shared/useCopyToClipboard';
-import {useGenerateInvitation} from 'core-logic/hooks/useGenerateInvitation';
 import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {UserData} from 'core-logic/api/auth/AuthProvider';
 
@@ -9,12 +8,14 @@ import {UserData} from 'core-logic/api/auth/AuthProvider';
 const COPIED_HINT_DURATION = 1500;
 
 type TInvitationMessageProps = {
-  /** L'utilisateur qui envoie l'invitation */
+  /** La collectivité à associé à l'utilisateur */
   currentCollectivite: CurrentCollectivite;
   /** L'utilisateur qui envoie l'invitation */
   currentUser: UserData;
   /** Niveau d'acces pour l'invitation */
   acces: string;
+  /** URL de l'invitation */
+  invitationUrl: string;
 };
 
 /**
@@ -25,15 +26,8 @@ const InvitationMessage = ({
   currentUser,
   currentCollectivite,
   acces,
+  invitationUrl,
 }: TInvitationMessageProps) => {
-  const {
-    invitationUrl,
-    generateInvitation,
-    isLoading: isGenerateInvitationLoading,
-  } = useGenerateInvitation();
-
-  useEffect(() => generateInvitation(), []);
-
   const [copiedText, copy, reset] = useCopyToClipboard();
 
   useEffect(() => {
@@ -76,16 +70,11 @@ const InvitationMessage = ({
       </div>
       {/* Buttons */}
       <div className="relative mt-4 flex flex-col gap-4 md:flex-row">
-        <button
-          className="fr-btn justify-center"
-          disabled={isGenerateInvitationLoading}
-          onClick={() => copy(message)}
-        >
+        <button className="fr-btn justify-center" onClick={() => copy(message)}>
           Copier le message
         </button>
         <button
           className="fr-btn fr-btn--secondary"
-          disabled={isGenerateInvitationLoading}
           onClick={() => copy(invitationUrl ? invitationUrl : '')}
         >
           Copier uniquement le lien d’invitation
