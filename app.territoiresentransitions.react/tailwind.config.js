@@ -31,5 +31,6 @@ module.exports = {
   variants: {
     extend: {},
   },
-  plugins: [],
+  // eslint-disable-next-line node/no-unpublished-require
+  plugins: [require('@tailwindcss/line-clamp')],
 };
