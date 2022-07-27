@@ -23,16 +23,6 @@ describe('Request referent contacts', () => {
         nom: 'Dodo',
         email: 'yolo@dodo.com',
       },
-      {
-        email: 'yili@didi.com',
-        nom: 'Didi',
-        prenom: 'Yili',
-      },
-      {
-        email: 'yala@dada.com',
-        nom: 'Dada',
-        prenom: 'Yala',
-      },
     ]);
   });
   it('should return an empty list if no referent yet', async () => {
