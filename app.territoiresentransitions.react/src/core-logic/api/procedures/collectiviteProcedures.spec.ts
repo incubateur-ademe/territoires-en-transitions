@@ -1,7 +1,4 @@
-import {
-  getReferentContacts,
-  userList,
-} from 'core-logic/api/procedures/collectiviteProcedures';
+import {getReferentContacts} from 'core-logic/api/procedures/collectiviteProcedures';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {yoloCredentials} from 'test_utils/collectivites';
 
@@ -42,26 +39,5 @@ describe('Request referent contacts', () => {
     const procedureResponse = await getReferentContacts(40);
     expect(procedureResponse).toBeDefined();
     expect(procedureResponse).toHaveLength(0);
-  });
-});
-
-describe('Request collectivité user list', () => {
-  it('should return a user list containing 2 referents', async () => {
-    await supabaseClient.auth.signIn(yoloCredentials);
-    const procedureResponse = await userList(1);
-    expect(procedureResponse).not.toBeNull();
-    const referents = procedureResponse!.filter(
-      l => l.role_name === 'referent'
-    );
-    expect(referents.length).toEqual(1);
-
-    const partialReferent = {
-      prenom: 'Yolo',
-      nom: 'Dodo',
-      email: 'yolo@dodo.com',
-    };
-    expect(referents[0].personnes).toEqual(
-      expect.arrayContaining([expect.objectContaining(partialReferent)])
-    );
   });
 });

@@ -33,21 +33,3 @@ export const getReferentContacts = async (
   }
   return data as unknown as ReferentContact[];
 };
-
-export type PersonneList = {
-  niveau_acces: NiveauAcces;
-  personnes: DcpRead[];
-};
-
-export const userList = async (
-  collectivite_id: number
-): Promise<PersonneList[] | null> => {
-  const {data, error} = await supabaseClient.rpc('collectivite_user_list', {
-    id: collectivite_id,
-  });
-
-  if (error || !data) {
-    return null;
-  }
-  return data as PersonneList[];
-};
