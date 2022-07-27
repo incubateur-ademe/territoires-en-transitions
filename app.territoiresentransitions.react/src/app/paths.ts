@@ -6,8 +6,9 @@ export const resetPwdPath = `${authBasePath}/recover/:${resetPwdToken}`;
 export const recoverToken = 'token';
 export const recoverLandingPath = `${authBasePath}/recover_landing/:${recoverToken}`;
 
+export const invitationPath = '/invitation';
 export const invitationIdParam = 'invitationId';
-export const invitationLandingPath = `/invitation/:${invitationIdParam}`;
+export const invitationLandingPath = `${invitationPath}/:${invitationIdParam}`;
 
 export const allCollectivitesPath = '/toutes_collectivites';
 
