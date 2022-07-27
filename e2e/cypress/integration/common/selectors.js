@@ -15,9 +15,12 @@ export const Selectors = {
   home: {
     selector: '[data-test=home]',
   },
-  'mes collectivités': {
-    selector: '[data-test=CurrentUserCollectivites]',
-  },
+'le tableau de bord de la collectivité': {
+  selector: '[data-test=TableauBord]',
+},
+'toutes les collectivités': {
+  selector: '[data-test=ToutesLesCollectivites]',
+},
   'bouton support': {
     selector: '.crisp-client',
   },

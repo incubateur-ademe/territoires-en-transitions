@@ -6,11 +6,14 @@ export const resetPwdPath = `${authBasePath}/recover/:${resetPwdToken}`;
 export const recoverToken = 'token';
 export const recoverLandingPath = `${authBasePath}/recover_landing/:${recoverToken}`;
 
+export const invitationPath = '/invitation';
 export const invitationIdParam = 'invitationId';
-export const invitationLandingPath = `/invitation/:${invitationIdParam}`;
+export const invitationLandingPath = `${invitationPath}/:${invitationIdParam}`;
 
 export const allCollectivitesPath = '/toutes_collectivites';
-export const myCollectivitesPath = '/mes_collectivites';
+
+// Utilisé après le login ou lorsqu'on clique sur le logo en étant connecté.
+export const homePath = allCollectivitesPath;
 
 const collectiviteParam = 'collectiviteId';
 export const indicateurViewParam = 'vue';
@@ -176,16 +179,6 @@ export const makeCollectiviteUsersUrl = ({
   collectiviteId: number;
 }) =>
   collectiviteUsersPath.replace(
-    `:${collectiviteParam}`,
-    collectiviteId.toString()
-  );
-
-export const makeCollectiviteAllCollectivitesUrl = ({
-  collectiviteId,
-}: {
-  collectiviteId: number;
-}) =>
-  collectiviteAllCollectivitesPath.replace(
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );

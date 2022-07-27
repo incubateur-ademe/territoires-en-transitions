@@ -12,14 +12,9 @@ import {ScrollToTop} from 'app/ScrollToTop';
 import {createTheme, MuiThemeProvider} from '@material-ui/core';
 import {MatomoProviderWithAuth} from 'app/MatomoProviderWithAuth';
 
-import {
-  allCollectivitesPath,
-  authBasePath,
-  myCollectivitesPath,
-} from 'app/paths';
-import {MesCollectivitesPage} from 'app/pages/MesCollectivites/MesCollectivitesPage';
+import {allCollectivitesPath, authBasePath} from 'app/paths';
 import {ToutesLesCollectivitesPage} from 'app/pages/ToutesLesCollectivites/ToutesLesCollectivitesPage';
-import Layout from './Layout';
+import Layout from 'app/Layout';
 import {AuthProvider} from 'core-logic/api/auth/AuthProvider';
 
 const theme = createTheme({
@@ -54,9 +49,6 @@ export const App = () => {
                     <AuthRoutes />
                   </Route>
 
-                  <Route path={myCollectivitesPath}>
-                    <MesCollectivitesPage />
-                  </Route>
                   <Route path={allCollectivitesPath}>
                     <ToutesLesCollectivitesPage />
                   </Route>

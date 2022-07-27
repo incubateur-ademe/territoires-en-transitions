@@ -1,25 +1,28 @@
+import React from 'react';
 import {Story, Meta} from '@storybook/react';
 import {
-  AssocierCollectiviteDialog,
-  TAssocierCollectiviteDialogProps,
-} from './AssocierCollectiviteDialog';
+  RejoindreCetteCollectiviteDialog,
+  TRejoindreCetteCollectiviteDialogProps,
+} from './RejoindreCetteCollectiviteDialog';
 
 export default {
-  component: AssocierCollectiviteDialog,
+  component: RejoindreCetteCollectiviteDialog,
 } as Meta;
 
-const Template: Story<TAssocierCollectiviteDialogProps> = args => (
-  <AssocierCollectiviteDialog {...args} />
+const Template: Story<TRejoindreCetteCollectiviteDialogProps> = args => (
+  <RejoindreCetteCollectiviteDialog {...args} />
 );
 
 export const AucunContactReferent = Template.bind({});
-const aucunContactReferentArgs: TAssocierCollectiviteDialogProps = {
+const aucunContactReferentArgs: TRejoindreCetteCollectiviteDialogProps = {
+  collectivite: {id: 1, nom: 'Nantes métropole'},
   getReferentContacts: async () => [],
 };
 AucunContactReferent.args = aucunContactReferentArgs;
 
 export const UnSeulContactReferent = Template.bind({});
-const unSeulContactReferentArgs: TAssocierCollectiviteDialogProps = {
+const unSeulContactReferentArgs: TRejoindreCetteCollectiviteDialogProps = {
+  collectivite: {id: 1, nom: 'Nantes métropole'},
   getReferentContacts: async () => [
     {nom: 'Cruze', prenom: 'Tom', email: 'tom@email.fr'},
   ],
@@ -27,7 +30,8 @@ const unSeulContactReferentArgs: TAssocierCollectiviteDialogProps = {
 UnSeulContactReferent.args = unSeulContactReferentArgs;
 
 export const PlusieursContactsReferents = Template.bind({});
-const plusieursContactsReferentsArgs: TAssocierCollectiviteDialogProps = {
+const plusieursContactsReferentsArgs: TRejoindreCetteCollectiviteDialogProps = {
+  collectivite: {id: 1, nom: 'Nantes métropole'},
   getReferentContacts: async () => [
     {nom: 'Cruze', prenom: 'Tom', email: 'tom@email.fr'},
     {nom: 'Canaple', prenom: 'Marie', email: 'marie@email.fr'},

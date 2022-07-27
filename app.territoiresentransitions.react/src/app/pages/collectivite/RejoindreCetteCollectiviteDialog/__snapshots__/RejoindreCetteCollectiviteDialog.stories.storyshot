@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots app/pages/MesCollectivites/RejoindreCetteCollectiviteDialog Aucun Contact Referent 1`] = `
+exports[`Storyshots app/pages/collectivite/RejoindreCetteCollectiviteDialog Aucun Contact Referent 1`] = `
 <div
   className="bg-white"
 >
@@ -9,6 +9,7 @@ exports[`Storyshots app/pages/MesCollectivites/RejoindreCetteCollectiviteDialog 
   >
     <button
       className="fr-btn fr-btn--secondary fr-btn--sm"
+      data-test="btn-RejoindreCetteCollectivite"
       onClick={[Function]}
     >
       Rejoindre cette collectivité
@@ -17,7 +18,7 @@ exports[`Storyshots app/pages/MesCollectivites/RejoindreCetteCollectiviteDialog 
 </div>
 `;
 
-exports[`Storyshots app/pages/MesCollectivites/RejoindreCetteCollectiviteDialog Plusieurs Contacts Referents 1`] = `
+exports[`Storyshots app/pages/collectivite/RejoindreCetteCollectiviteDialog Plusieurs Contacts Referents 1`] = `
 <div
   className="bg-white"
 >
@@ -26,6 +27,7 @@ exports[`Storyshots app/pages/MesCollectivites/RejoindreCetteCollectiviteDialog 
   >
     <button
       className="fr-btn fr-btn--secondary fr-btn--sm"
+      data-test="btn-RejoindreCetteCollectivite"
       onClick={[Function]}
     >
       Rejoindre cette collectivité
@@ -34,7 +36,7 @@ exports[`Storyshots app/pages/MesCollectivites/RejoindreCetteCollectiviteDialog 
 </div>
 `;
 
-exports[`Storyshots app/pages/MesCollectivites/RejoindreCetteCollectiviteDialog Un Seul Contact Referent 1`] = `
+exports[`Storyshots app/pages/collectivite/RejoindreCetteCollectiviteDialog Un Seul Contact Referent 1`] = `
 <div
   className="bg-white"
 >
@@ -43,6 +45,7 @@ exports[`Storyshots app/pages/MesCollectivites/RejoindreCetteCollectiviteDialog 
   >
     <button
       className="fr-btn fr-btn--secondary fr-btn--sm"
+      data-test="btn-RejoindreCetteCollectivite"
       onClick={[Function]}
     >
       Rejoindre cette collectivité

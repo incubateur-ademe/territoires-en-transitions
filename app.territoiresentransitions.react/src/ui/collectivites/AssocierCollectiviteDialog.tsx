@@ -1,4 +1,4 @@
-import {_RejoindreOuActiverDialogContent} from 'app/pages/MesCollectivites/_RejoindreOuActiverDialogContent';
+import {_RejoindreOuActiverDialogContent} from 'app/pages/collectivite/RejoindreCetteCollectiviteDialog/_RejoindreOuActiverDialogContent';
 import {allCollectiviteReadEndpoint} from 'core-logic/api/endpoints/CollectiviteReadEndpoints';
 import {ReferentContact} from 'core-logic/api/procedures/collectiviteProcedures';
 import {AllCollectiviteRead} from 'generated/dataLayer/all_collectivite_read';
@@ -36,14 +36,14 @@ export const AssocierCollectiviteDialog = ({
 
   return (
     <UiDialogButton
-      data-test="btn-select-collectivite"
-      title="Associer une collectivité à mon compte"
-      buttonClasses="fr-btn--secondary"
+      useFrBtn
+      data-test="AssocierCollectivite"
+      title="Rejoindre une collectivité"
       dialogClasses="overflow-hidden"
       opened={opened}
       setOpened={setOpened}
     >
-      <div data-test="collectivite-picker" className="py-7 min-h-[400px]">
+      <div className="py-7 min-h-[400px]">
         <div className="flex flex-row justify-center">
           <AutocompleteInput
             label="Nom de la collectivité"

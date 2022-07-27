@@ -3,16 +3,13 @@
 exports[`Storyshots app/pages/ToutesLesCollectivites/components/CollectiviteCarte Carte Collectivite Au Nom Court 1`] = `
 <ul>
   <a
-    href="/collectivite/2/tableau_bord"
+    className="!shadow-none cursor-default, pointer-events-none"
+    href="/"
     onClick={[Function]}
-    style={
-      Object {
-        "boxShadow": "none",
-      }
-    }
   >
     <div
-      className="MuiPaper-root MuiCard-root collectiviteCard flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+      className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+      data-test="CollectiviteCarte"
     >
       <div
         className="md:text-lg text-base font-bold mb-4"
@@ -328,16 +325,13 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/components/CollectiviteCart
 exports[`Storyshots app/pages/ToutesLesCollectivites/components/CollectiviteCarte Carte Collectivite Au Nom Long 1`] = `
 <ul>
   <a
-    href="/collectivite/3/tableau_bord"
+    className="!shadow-none cursor-default, pointer-events-none"
+    href="/"
     onClick={[Function]}
-    style={
-      Object {
-        "boxShadow": "none",
-      }
-    }
   >
     <div
-      className="MuiPaper-root MuiCard-root collectiviteCard flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+      className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+      data-test="CollectiviteCarte"
     >
       <div
         className="md:text-lg text-base font-bold mb-4"
@@ -653,16 +647,13 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/components/CollectiviteCart
 exports[`Storyshots app/pages/ToutesLesCollectivites/components/CollectiviteCarte Carte Collectivite Syndicat 1`] = `
 <ul>
   <a
-    href="/collectivite/3/tableau_bord"
+    className="!shadow-none cursor-default, pointer-events-none"
+    href="/"
     onClick={[Function]}
-    style={
-      Object {
-        "boxShadow": "none",
-      }
-    }
   >
     <div
-      className="MuiPaper-root MuiCard-root collectiviteCard flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+      className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+      data-test="CollectiviteCarte"
     >
       <div
         className="md:text-lg text-base font-bold mb-4"

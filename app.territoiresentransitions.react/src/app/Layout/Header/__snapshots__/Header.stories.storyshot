@@ -46,16 +46,11 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
           <div
             className="fr-header__service"
           >
-            <a
-              href="/"
-              title="Accueil"
+            <p
+              className="fr-header__service-title pointer-events-auto"
             >
-              <p
-                className="fr-header__service-title pointer-events-auto"
-              >
-                Territoires en Transitions
-              </p>
-            </a>
+              Territoires en Transitions
+            </p>
             <p
               className="text-sm"
             >
@@ -72,6 +67,13 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
             <ul
               className="fr-links-group"
             >
+              <a
+                className="fr-link"
+                href="/toutes_collectivites"
+                onClick={[Function]}
+              >
+                Collectivités engagées
+              </a>
               <a
                 className="fr-link"
                 data-test="help"
@@ -183,16 +185,11 @@ exports[`Storyshots app/Layout/Header Not Connected 1`] = `
           <div
             className="fr-header__service"
           >
-            <a
-              href="/"
-              title="Accueil"
+            <p
+              className="fr-header__service-title pointer-events-auto"
             >
-              <p
-                className="fr-header__service-title pointer-events-auto"
-              >
-                Territoires en Transitions
-              </p>
-            </a>
+              Territoires en Transitions
+            </p>
             <p
               className="text-sm"
             >
@@ -301,16 +298,11 @@ exports[`Storyshots app/Layout/Header With Collectivite 1`] = `
           <div
             className="fr-header__service"
           >
-            <a
-              href="/"
-              title="Accueil"
+            <p
+              className="fr-header__service-title pointer-events-auto"
             >
-              <p
-                className="fr-header__service-title pointer-events-auto"
-              >
-                Territoires en Transitions
-              </p>
-            </a>
+              Territoires en Transitions
+            </p>
             <p
               className="text-sm"
             >
@@ -327,6 +319,13 @@ exports[`Storyshots app/Layout/Header With Collectivite 1`] = `
             <ul
               className="fr-links-group"
             >
+              <a
+                className="fr-link"
+                href="/toutes_collectivites"
+                onClick={[Function]}
+              >
+                Collectivités engagées
+              </a>
               <a
                 className="fr-link"
                 data-test="help"
@@ -408,266 +407,307 @@ exports[`Storyshots app/Layout/Header With Collectivite 1`] = `
           Tableau de bord
         </a>
         <div
-          className="group relative"
+          className="flex"
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onPointerDown={[Function]}
         >
-          <div
-            className=""
+          <button
+            className="flex items-center p-4"
           >
-            <button
-              className="flex items-center p-4 group-focus-within:bg-bf925"
-            >
-              Climat Air Énergie
-              <div
-                className="ml-2 mt-1 fr-fi-arrow-down-s-line scale-75 group-focus-within:rotate-180"
-              />
-            </button>
-          </div>
-          <nav
-            className="bg-white invisible absolute left-0 top-full min-w-full w-max transition-all opacity-0 drop-shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
-          >
-            <ul>
-              <li
-                className="fr-nav__item"
-              >
-                <a
-                  className="fr-nav__link "
-                  href="/collectivite/1/referentiels/cae/progression"
-                  onClick={[Function]}
-                >
-                  <span
-                    className="block px-3 max-w-xs"
-                  >
-                    Référentiel
-                  </span>
-                </a>
-              </li>
-              <li
-                className="fr-nav__item"
-              >
-                <a
-                  className="fr-nav__link "
-                  href="/collectivite/1/indicateurs/cae"
-                  onClick={[Function]}
-                >
-                  <span
-                    className="block px-3 max-w-xs"
-                  >
-                    Indicateurs
-                  </span>
-                </a>
-              </li>
-              <li
-                className="fr-nav__item"
-              >
-                <a
-                  className="fr-nav__link "
-                  href="/collectivite/1/labellisation/cae"
-                  onClick={[Function]}
-                >
-                  <span
-                    className="block px-3 max-w-xs"
-                  >
-                    Labellisation
-                  </span>
-                </a>
-              </li>
-            </ul>
-          </nav>
+            Climat Air Énergie
+            <div
+              className="ml-2 mt-1 fr-fi-arrow-down-s-line scale-75"
+            />
+          </button>
         </div>
         <div
-          className="group relative"
+          className="flex"
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onPointerDown={[Function]}
         >
-          <div
-            className=""
+          <button
+            className="flex items-center p-4"
           >
-            <button
-              className="flex items-center p-4 group-focus-within:bg-bf925"
-            >
-              Économie circulaire
-              <div
-                className="ml-2 mt-1 fr-fi-arrow-down-s-line scale-75 group-focus-within:rotate-180"
-              />
-            </button>
-          </div>
-          <nav
-            className="bg-white invisible absolute left-0 top-full min-w-full w-max transition-all opacity-0 drop-shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
-          >
-            <ul>
-              <li
-                className="fr-nav__item"
-              >
-                <a
-                  className="fr-nav__link "
-                  href="/collectivite/1/referentiels/eci/progression"
-                  onClick={[Function]}
-                >
-                  <span
-                    className="block px-3 max-w-xs"
-                  >
-                    Référentiel
-                  </span>
-                </a>
-              </li>
-              <li
-                className="fr-nav__item"
-              >
-                <a
-                  className="fr-nav__link "
-                  href="/collectivite/1/indicateurs/eci"
-                  onClick={[Function]}
-                >
-                  <span
-                    className="block px-3 max-w-xs"
-                  >
-                    Indicateurs
-                  </span>
-                </a>
-              </li>
-              <li
-                className="fr-nav__item"
-              >
-                <a
-                  className="fr-nav__link "
-                  href="/collectivite/1/labellisation/eci"
-                  onClick={[Function]}
-                >
-                  <span
-                    className="block px-3 max-w-xs"
-                  >
-                    Labellisation
-                  </span>
-                </a>
-              </li>
-            </ul>
-          </nav>
+            Économie circulaire
+            <div
+              className="ml-2 mt-1 fr-fi-arrow-down-s-line scale-75"
+            />
+          </button>
         </div>
         <div
-          className="group relative"
+          className="flex"
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onPointerDown={[Function]}
         >
-          <div
-            className=""
+          <button
+            className="flex items-center p-4"
           >
-            <button
-              className="flex items-center p-4 group-focus-within:bg-bf925"
-            >
-              Pilotage
-              <div
-                className="ml-2 mt-1 fr-fi-arrow-down-s-line scale-75 group-focus-within:rotate-180"
-              />
-            </button>
-          </div>
-          <nav
-            className="bg-white invisible absolute left-0 top-full min-w-full w-max transition-all opacity-0 drop-shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
-          >
-            <ul>
-              <li
-                className="fr-nav__item"
-              >
-                <a
-                  className="fr-nav__link "
-                  href="/collectivite/1/plan_action/plan_collectivite"
-                  onClick={[Function]}
-                >
-                  <span
-                    className="block px-3 max-w-xs"
-                  >
-                    Plans d'action
-                  </span>
-                </a>
-              </li>
-              <li
-                className="fr-nav__item"
-              >
-                <a
-                  className="fr-nav__link "
-                  href="/collectivite/1/indicateurs/crte"
-                  onClick={[Function]}
-                >
-                  <span
-                    className="block px-3 max-w-xs"
-                  >
-                    Indicateurs contrat de relance et de transition écologique (CRTE)
-                  </span>
-                </a>
-              </li>
-              <li
-                className="fr-nav__item"
-              >
-                <a
-                  className="fr-nav__link "
-                  href="/collectivite/1/indicateurs/perso"
-                  onClick={[Function]}
-                >
-                  <span
-                    className="block px-3 max-w-xs"
-                  >
-                    Indicateurs personnalisés
-                  </span>
-                </a>
-              </li>
-            </ul>
-          </nav>
+            Pilotage
+            <div
+              className="ml-2 mt-1 fr-fi-arrow-down-s-line scale-75"
+            />
+          </button>
         </div>
         <div
-          className="group relative"
+          className="flex"
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onPointerDown={[Function]}
+        >
+          <button
+            className="flex items-center p-4"
+          >
+            Paramètres
+            <div
+              className="ml-2 mt-1 fr-fi-arrow-down-s-line scale-75"
+            />
+          </button>
+        </div>
+        <div
+          className="group relative flex ml-auto"
+        >
+          <p
+            className="flex items-center p-4 text-sm font-bold"
+          >
+            Test collectivite
+          </p>
+        </div>
+      </nav>
+    </div>
+  </div>
+</header>
+`;
+
+exports[`Storyshots app/Layout/Header With Ongoing Maintenance 1`] = `
+<header
+  className="header fr-header "
+  role="banner"
+>
+  <div
+    className="fr-header__body"
+  >
+    <div
+      className="fr-container"
+    >
+      <div
+        className="fr-header__body-row header__row"
+      >
+        <div
+          className="fr-header__brand fr-enlarge-link pointer-events-none lg:pointer-events-auto"
         >
           <div
-            className=""
+            className="fr-header__brand-top !w-auto"
           >
-            <button
-              className="flex items-center p-4 group-focus-within:bg-bf925"
+            <div
+              className="fr-header__logo"
             >
-              Paramètres
-              <div
-                className="ml-2 mt-1 fr-fi-arrow-down-s-line scale-75 group-focus-within:rotate-180"
-              />
-            </button>
+              <p
+                className="fr-logo"
+                title="république française"
+              >
+                république
+                <br />
+                française
+              </p>
+            </div>
           </div>
-          <nav
-            className="bg-white invisible absolute left-0 top-full min-w-full w-max transition-all opacity-0 drop-shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
+          <div
+            className="fr-header__ademe flex-shrink-0"
           >
-            <ul>
-              <li
-                className="fr-nav__item"
-              >
-                <a
-                  className="fr-nav__link "
-                  href="/collectivite/1/personnalisation"
-                  onClick={[Function]}
-                >
-                  <span
-                    className="block px-3 max-w-xs"
-                  >
-                    Personnalisation des référentiels
-                  </span>
-                </a>
-              </li>
-              <li
-                className="fr-nav__item"
-              >
-                <a
-                  className="fr-nav__link "
-                  href="/collectivite/1/users"
-                  onClick={[Function]}
-                >
-                  <span
-                    className="block px-3 max-w-xs"
-                  >
-                    Gestion des membres
-                  </span>
-                </a>
-              </li>
-            </ul>
-          </nav>
+            <img
+              alt="logo ADEME"
+              className="h-20"
+              loading="lazy"
+              src="ademe.jpg"
+            />
+          </div>
+          <div
+            className="fr-header__service"
+          >
+            <p
+              className="fr-header__service-title pointer-events-auto"
+            >
+              Territoires en Transitions
+            </p>
+            <p
+              className="text-sm"
+            >
+              Accompagner la transition écologique des collectivités
+            </p>
+          </div>
         </div>
+        <div
+          className="fr-header__tools hidden lg:block"
+        >
+          <div
+            className="fr-header__tools-links"
+          >
+            <ul
+              className="fr-links-group"
+            >
+              <a
+                className="fr-link"
+                href="/toutes_collectivites"
+                onClick={[Function]}
+              >
+                Collectivités engagées
+              </a>
+              <a
+                className="fr-link"
+                data-test="help"
+                href="https://aide.territoiresentransitions.fr/fr/"
+                target="_blank"
+              >
+                <div
+                  className="fr-fi-question-line mr-2"
+                />
+                Aide
+              </a>
+              <div
+                className="group relative"
+                data-test="connectedMenu"
+              >
+                <button
+                  className="fr-link"
+                >
+                  <div
+                    className="fr-fi-account-line mr-2"
+                  />
+                  Émeline
+                  <div
+                    className="fr-fi-arrow-down-s-line ml-2 scale-90 group-focus-within:rotate-180"
+                  />
+                </button>
+                <nav
+                  className="bg-white invisible absolute inset-x-0 top-full transition-all opacity-0 drop-shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
+                >
+                  <ul>
+                    <li
+                      className="fr-nav__item border-b border-gray-200"
+                    />
+                    <li
+                      className="fr-nav__item"
+                    >
+                      <a
+                        className="fr-nav__link"
+                        data-test="logoutBtn"
+                        href="/auth/signup"
+                        onClick={[Function]}
+                      >
+                        <span
+                          className="px-3"
+                        >
+                          Déconnexion
+                        </span>
+                      </a>
+                    </li>
+                  </ul>
+                </nav>
+              </div>
+            </ul>
+          </div>
+        </div>
+        <button
+          className="fr-fi-menu-fill absolute top-6 right-6 z-10 lg:hidden"
+          onClick={[Function]}
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    className="fr-container hidden lg:block"
+  >
+    <div
+      className="flex flex-row justify-between"
+    >
+      <nav
+        aria-label="Menu principal"
+        className="flex flex-row w-full text-sm"
+      >
         <a
           aria-current={null}
           className="fr-nav__item justify-center text-center p-4"
-          href="/collectivite/1/toutes_collectivites"
+          href="/collectivite/1/tableau_bord"
           onClick={[Function]}
         >
-          Toutes les collectivités
+          Tableau de bord
         </a>
+        <div
+          className="flex"
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onPointerDown={[Function]}
+        >
+          <button
+            className="flex items-center p-4"
+          >
+            Climat Air Énergie
+            <div
+              className="ml-2 mt-1 fr-fi-arrow-down-s-line scale-75"
+            />
+          </button>
+        </div>
+        <div
+          className="flex"
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onPointerDown={[Function]}
+        >
+          <button
+            className="flex items-center p-4"
+          >
+            Économie circulaire
+            <div
+              className="ml-2 mt-1 fr-fi-arrow-down-s-line scale-75"
+            />
+          </button>
+        </div>
+        <div
+          className="flex"
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onPointerDown={[Function]}
+        >
+          <button
+            className="flex items-center p-4"
+          >
+            Pilotage
+            <div
+              className="ml-2 mt-1 fr-fi-arrow-down-s-line scale-75"
+            />
+          </button>
+        </div>
         <div
           className="group relative flex ml-auto"
         >
@@ -684,454 +724,453 @@ exports[`Storyshots app/Layout/Header With Collectivite 1`] = `
 `;
 
 exports[`Storyshots app/Layout/Header With Readonly Collectivite 1`] = `
-Array [
-  <header
-    className="header fr-header "
-    role="banner"
+<header
+  className="header fr-header "
+  role="banner"
+>
+  <div
+    className="fr-header__body"
   >
     <div
-      className="fr-header__body"
+      className="fr-container"
     >
       <div
-        className="fr-container"
+        className="fr-header__body-row header__row"
       >
         <div
-          className="fr-header__body-row header__row"
+          className="fr-header__brand fr-enlarge-link pointer-events-none lg:pointer-events-auto"
         >
           <div
-            className="fr-header__brand fr-enlarge-link pointer-events-none lg:pointer-events-auto"
+            className="fr-header__brand-top !w-auto"
           >
             <div
-              className="fr-header__brand-top !w-auto"
+              className="fr-header__logo"
             >
-              <div
-                className="fr-header__logo"
-              >
-                <p
-                  className="fr-logo"
-                  title="république française"
-                >
-                  république
-                  <br />
-                  française
-                </p>
-              </div>
-            </div>
-            <div
-              className="fr-header__ademe flex-shrink-0"
-            >
-              <img
-                alt="logo ADEME"
-                className="h-20"
-                loading="lazy"
-                src="ademe.jpg"
-              />
-            </div>
-            <div
-              className="fr-header__service"
-            >
-              <a
-                href="/"
-                title="Accueil"
-              >
-                <p
-                  className="fr-header__service-title pointer-events-auto"
-                >
-                  Territoires en Transitions
-                </p>
-              </a>
               <p
-                className="text-sm"
+                className="fr-logo"
+                title="république française"
               >
-                Accompagner la transition écologique des collectivités
+                république
+                <br />
+                française
               </p>
             </div>
           </div>
           <div
-            className="fr-header__tools hidden lg:block"
+            className="fr-header__ademe flex-shrink-0"
           >
-            <div
-              className="fr-header__tools-links"
-            >
-              <ul
-                className="fr-links-group"
-              >
-                <a
-                  className="fr-link"
-                  data-test="help"
-                  href="https://aide.territoiresentransitions.fr/fr/"
-                  target="_blank"
-                >
-                  <div
-                    className="fr-fi-question-line mr-2"
-                  />
-                  Aide
-                </a>
-                <div
-                  className="group relative"
-                  data-test="connectedMenu"
-                >
-                  <button
-                    className="fr-link"
-                  >
-                    <div
-                      className="fr-fi-account-line mr-2"
-                    />
-                    Émeline
-                    <div
-                      className="fr-fi-arrow-down-s-line ml-2 scale-90 group-focus-within:rotate-180"
-                    />
-                  </button>
-                  <nav
-                    className="bg-white invisible absolute inset-x-0 top-full transition-all opacity-0 drop-shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
-                  >
-                    <ul>
-                      <li
-                        className="fr-nav__item border-b border-gray-200"
-                      />
-                      <li
-                        className="fr-nav__item"
-                      >
-                        <a
-                          className="fr-nav__link"
-                          data-test="logoutBtn"
-                          href="/auth/signup"
-                          onClick={[Function]}
-                        >
-                          <span
-                            className="px-3"
-                          >
-                            Déconnexion
-                          </span>
-                        </a>
-                      </li>
-                    </ul>
-                  </nav>
-                </div>
-              </ul>
-            </div>
+            <img
+              alt="logo ADEME"
+              className="h-20"
+              loading="lazy"
+              src="ademe.jpg"
+            />
           </div>
-          <button
-            className="fr-fi-menu-fill absolute top-6 right-6 z-10 lg:hidden"
-            onClick={[Function]}
-          />
+          <div
+            className="fr-header__service"
+          >
+            <p
+              className="fr-header__service-title pointer-events-auto"
+            >
+              Territoires en Transitions
+            </p>
+            <p
+              className="text-sm"
+            >
+              Accompagner la transition écologique des collectivités
+            </p>
+          </div>
         </div>
-      </div>
-    </div>
-    <div
-      className="fr-container hidden lg:block"
-    >
-      <div
-        className="flex flex-row justify-between"
-      >
-        <nav
-          aria-label="Menu principal"
-          className="flex flex-row w-full text-sm"
+        <div
+          className="fr-header__tools hidden lg:block"
         >
-          <a
-            aria-current={null}
-            className="fr-nav__item justify-center text-center p-4"
-            href="/collectivite/1/tableau_bord"
-            onClick={[Function]}
-          >
-            Tableau de bord
-          </a>
           <div
-            className="group relative"
+            className="fr-header__tools-links"
           >
-            <div
-              className=""
+            <ul
+              className="fr-links-group"
             >
-              <button
-                className="flex items-center p-4 group-focus-within:bg-bf925"
+              <a
+                className="fr-link"
+                href="/toutes_collectivites"
+                onClick={[Function]}
               >
-                Climat Air Énergie
-                <div
-                  className="ml-2 mt-1 fr-fi-arrow-down-s-line scale-75 group-focus-within:rotate-180"
-                />
-              </button>
-            </div>
-            <nav
-              className="bg-white invisible absolute left-0 top-full min-w-full w-max transition-all opacity-0 drop-shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
-            >
-              <ul>
-                <li
-                  className="fr-nav__item"
-                >
-                  <a
-                    className="fr-nav__link "
-                    href="/collectivite/1/referentiels/cae/progression"
-                    onClick={[Function]}
-                  >
-                    <span
-                      className="block px-3 max-w-xs"
-                    >
-                      Référentiel
-                    </span>
-                  </a>
-                </li>
-                <li
-                  className="fr-nav__item"
-                >
-                  <a
-                    className="fr-nav__link "
-                    href="/collectivite/1/indicateurs/cae"
-                    onClick={[Function]}
-                  >
-                    <span
-                      className="block px-3 max-w-xs"
-                    >
-                      Indicateurs
-                    </span>
-                  </a>
-                </li>
-                <li
-                  className="fr-nav__item"
-                >
-                  <a
-                    className="fr-nav__link "
-                    href="/collectivite/1/labellisation/cae"
-                    onClick={[Function]}
-                  >
-                    <span
-                      className="block px-3 max-w-xs"
-                    >
-                      Labellisation
-                    </span>
-                  </a>
-                </li>
-              </ul>
-            </nav>
-          </div>
-          <div
-            className="group relative"
-          >
-            <div
-              className=""
-            >
-              <button
-                className="flex items-center p-4 group-focus-within:bg-bf925"
+                Collectivités engagées
+              </a>
+              <a
+                className="fr-link"
+                data-test="help"
+                href="https://aide.territoiresentransitions.fr/fr/"
+                target="_blank"
               >
-                Économie circulaire
                 <div
-                  className="ml-2 mt-1 fr-fi-arrow-down-s-line scale-75 group-focus-within:rotate-180"
+                  className="fr-fi-question-line mr-2"
                 />
-              </button>
-            </div>
-            <nav
-              className="bg-white invisible absolute left-0 top-full min-w-full w-max transition-all opacity-0 drop-shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
-            >
-              <ul>
-                <li
-                  className="fr-nav__item"
-                >
-                  <a
-                    className="fr-nav__link "
-                    href="/collectivite/1/referentiels/eci/progression"
-                    onClick={[Function]}
-                  >
-                    <span
-                      className="block px-3 max-w-xs"
-                    >
-                      Référentiel
-                    </span>
-                  </a>
-                </li>
-                <li
-                  className="fr-nav__item"
-                >
-                  <a
-                    className="fr-nav__link "
-                    href="/collectivite/1/indicateurs/eci"
-                    onClick={[Function]}
-                  >
-                    <span
-                      className="block px-3 max-w-xs"
-                    >
-                      Indicateurs
-                    </span>
-                  </a>
-                </li>
-                <li
-                  className="fr-nav__item"
-                >
-                  <a
-                    className="fr-nav__link "
-                    href="/collectivite/1/labellisation/eci"
-                    onClick={[Function]}
-                  >
-                    <span
-                      className="block px-3 max-w-xs"
-                    >
-                      Labellisation
-                    </span>
-                  </a>
-                </li>
-              </ul>
-            </nav>
-          </div>
-          <div
-            className="group relative"
-          >
-            <div
-              className=""
-            >
-              <button
-                className="flex items-center p-4 group-focus-within:bg-bf925"
-              >
-                Pilotage
-                <div
-                  className="ml-2 mt-1 fr-fi-arrow-down-s-line scale-75 group-focus-within:rotate-180"
-                />
-              </button>
-            </div>
-            <nav
-              className="bg-white invisible absolute left-0 top-full min-w-full w-max transition-all opacity-0 drop-shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
-            >
-              <ul>
-                <li
-                  className="fr-nav__item"
-                >
-                  <a
-                    className="fr-nav__link "
-                    href="/collectivite/1/plan_action/plan_collectivite"
-                    onClick={[Function]}
-                  >
-                    <span
-                      className="block px-3 max-w-xs"
-                    >
-                      Plans d'action
-                    </span>
-                  </a>
-                </li>
-                <li
-                  className="fr-nav__item"
-                >
-                  <a
-                    className="fr-nav__link "
-                    href="/collectivite/1/indicateurs/crte"
-                    onClick={[Function]}
-                  >
-                    <span
-                      className="block px-3 max-w-xs"
-                    >
-                      Indicateurs contrat de relance et de transition écologique (CRTE)
-                    </span>
-                  </a>
-                </li>
-                <li
-                  className="fr-nav__item"
-                >
-                  <a
-                    className="fr-nav__link "
-                    href="/collectivite/1/indicateurs/perso"
-                    onClick={[Function]}
-                  >
-                    <span
-                      className="block px-3 max-w-xs"
-                    >
-                      Indicateurs personnalisés
-                    </span>
-                  </a>
-                </li>
-              </ul>
-            </nav>
-          </div>
-          <a
-            aria-current={null}
-            className="fr-nav__item justify-center text-center p-4"
-            href="/collectivite/1/toutes_collectivites"
-            onClick={[Function]}
-          >
-            Toutes les collectivités
-          </a>
-          <div
-            className="group relative flex ml-auto"
-          >
-            <div
-              className="relative m-2"
-            >
+                Aide
+              </a>
               <div
-                className="relative border border-gray-300"
+                className="group relative"
+                data-test="connectedMenu"
               >
                 <button
-                  className="flex items-center py-2 pl-4 pr-3 font-bold"
+                  className="fr-link"
                 >
-                  Test collectivite
                   <div
-                    className="ml-2 mt-1 fr-fi-arrow-down-s-line scale-75 group-focus-within:rotate-180"
+                    className="fr-fi-account-line mr-2"
+                  />
+                  Émeline
+                  <div
+                    className="fr-fi-arrow-down-s-line ml-2 scale-90 group-focus-within:rotate-180"
                   />
                 </button>
-              </div>
-              <nav
-                className="invisible absolute right-0 top-full min-w-full w-max transition-all opacity-0 border border-gray-300 drop-shadow-md bg-white group-focus-within:visible group-focus-within:translate-y-1 group-focus-within:opacity-100 z-50"
-              >
-                <p
-                  className="px-3 py-2 italic text-sm text-gray-600"
+                <nav
+                  className="bg-white invisible absolute inset-x-0 top-full transition-all opacity-0 drop-shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
                 >
-                  Mes collectivités
-                </p>
-                <ul>
-                  <li
-                    className="fr-nav__item"
-                  >
-                    <a
-                      className="fr-nav__link !py-2"
-                      href="/collectivite/2/tableau_bord"
-                      onClick={[Function]}
+                  <ul>
+                    <li
+                      className="fr-nav__item border-b border-gray-200"
+                    />
+                    <li
+                      className="fr-nav__item"
                     >
-                      <span
-                        className="block px-3 max-w-xs"
+                      <a
+                        className="fr-nav__link"
+                        data-test="logoutBtn"
+                        href="/auth/signup"
+                        onClick={[Function]}
                       >
-                        Collectivité 2
-                      </span>
-                    </a>
-                  </li>
-                  <li
-                    className="fr-nav__item"
-                  >
-                    <a
-                      className="fr-nav__link !py-2"
-                      href="/collectivite/3/tableau_bord"
-                      onClick={[Function]}
-                    >
-                      <span
-                        className="block px-3 max-w-xs"
-                      >
-                        Collectivité 3 avec un nom très long sur deux lignes
-                      </span>
-                    </a>
-                  </li>
-                </ul>
-              </nav>
-            </div>
+                        <span
+                          className="px-3"
+                        >
+                          Déconnexion
+                        </span>
+                      </a>
+                    </li>
+                  </ul>
+                </nav>
+              </div>
+            </ul>
           </div>
-        </nav>
+        </div>
+        <button
+          className="fr-fi-menu-fill absolute top-6 right-6 z-10 lg:hidden"
+          onClick={[Function]}
+        />
       </div>
     </div>
-  </header>,
+  </div>
   <div
-    className="flex justify-center items-center bg-yellow-400 py-4 bg-opacity-70"
+    className="fr-container hidden lg:block"
   >
     <div
-      className="text-sm mr-4"
+      className="flex flex-row justify-between"
     >
-      Lecture seule
-    </div>
-    <div
-      className="bg-white"
-    >
-      <div
-        onClick={[Function]}
+      <nav
+        aria-label="Menu principal"
+        className="flex flex-row w-full text-sm"
       >
-        <button
-          className="fr-btn fr-btn--secondary fr-btn--sm"
+        <a
+          aria-current={null}
+          className="fr-nav__item justify-center text-center p-4"
+          href="/collectivite/1/tableau_bord"
           onClick={[Function]}
         >
-          Rejoindre cette collectivité
-        </button>
+          Tableau de bord
+        </a>
+        <div
+          className="flex"
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onPointerDown={[Function]}
+        >
+          <button
+            className="flex items-center p-4"
+          >
+            Climat Air Énergie
+            <div
+              className="ml-2 mt-1 fr-fi-arrow-down-s-line scale-75"
+            />
+          </button>
+        </div>
+        <div
+          className="flex"
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onPointerDown={[Function]}
+        >
+          <button
+            className="flex items-center p-4"
+          >
+            Économie circulaire
+            <div
+              className="ml-2 mt-1 fr-fi-arrow-down-s-line scale-75"
+            />
+          </button>
+        </div>
+        <div
+          className="flex"
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onPointerDown={[Function]}
+        >
+          <button
+            className="flex items-center p-4"
+          >
+            Pilotage
+            <div
+              className="ml-2 mt-1 fr-fi-arrow-down-s-line scale-75"
+            />
+          </button>
+        </div>
+        <div
+          className="group relative flex ml-auto"
+        >
+          <p
+            className="flex items-center p-4 text-sm font-bold"
+          >
+            Test collectivite
+          </p>
+        </div>
+      </nav>
+    </div>
+  </div>
+</header>
+`;
+
+exports[`Storyshots app/Layout/Header With Upcoming Maintenance 1`] = `
+<header
+  className="header fr-header "
+  role="banner"
+>
+  <div
+    className="fr-header__body"
+  >
+    <div
+      className="fr-container"
+    >
+      <div
+        className="fr-header__body-row header__row"
+      >
+        <div
+          className="fr-header__brand fr-enlarge-link pointer-events-none lg:pointer-events-auto"
+        >
+          <div
+            className="fr-header__brand-top !w-auto"
+          >
+            <div
+              className="fr-header__logo"
+            >
+              <p
+                className="fr-logo"
+                title="république française"
+              >
+                république
+                <br />
+                française
+              </p>
+            </div>
+          </div>
+          <div
+            className="fr-header__ademe flex-shrink-0"
+          >
+            <img
+              alt="logo ADEME"
+              className="h-20"
+              loading="lazy"
+              src="ademe.jpg"
+            />
+          </div>
+          <div
+            className="fr-header__service"
+          >
+            <p
+              className="fr-header__service-title pointer-events-auto"
+            >
+              Territoires en Transitions
+            </p>
+            <p
+              className="text-sm"
+            >
+              Accompagner la transition écologique des collectivités
+            </p>
+          </div>
+        </div>
+        <div
+          className="fr-header__tools hidden lg:block"
+        >
+          <div
+            className="fr-header__tools-links"
+          >
+            <ul
+              className="fr-links-group"
+            >
+              <a
+                className="fr-link"
+                href="/toutes_collectivites"
+                onClick={[Function]}
+              >
+                Collectivités engagées
+              </a>
+              <a
+                className="fr-link"
+                data-test="help"
+                href="https://aide.territoiresentransitions.fr/fr/"
+                target="_blank"
+              >
+                <div
+                  className="fr-fi-question-line mr-2"
+                />
+                Aide
+              </a>
+              <div
+                className="group relative"
+                data-test="connectedMenu"
+              >
+                <button
+                  className="fr-link"
+                >
+                  <div
+                    className="fr-fi-account-line mr-2"
+                  />
+                  Émeline
+                  <div
+                    className="fr-fi-arrow-down-s-line ml-2 scale-90 group-focus-within:rotate-180"
+                  />
+                </button>
+                <nav
+                  className="bg-white invisible absolute inset-x-0 top-full transition-all opacity-0 drop-shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50"
+                >
+                  <ul>
+                    <li
+                      className="fr-nav__item border-b border-gray-200"
+                    />
+                    <li
+                      className="fr-nav__item"
+                    >
+                      <a
+                        className="fr-nav__link"
+                        data-test="logoutBtn"
+                        href="/auth/signup"
+                        onClick={[Function]}
+                      >
+                        <span
+                          className="px-3"
+                        >
+                          Déconnexion
+                        </span>
+                      </a>
+                    </li>
+                  </ul>
+                </nav>
+              </div>
+            </ul>
+          </div>
+        </div>
+        <button
+          className="fr-fi-menu-fill absolute top-6 right-6 z-10 lg:hidden"
+          onClick={[Function]}
+        />
       </div>
     </div>
-  </div>,
-]
+  </div>
+  <div
+    className="fr-container hidden lg:block"
+  >
+    <div
+      className="flex flex-row justify-between"
+    >
+      <nav
+        aria-label="Menu principal"
+        className="flex flex-row w-full text-sm"
+      >
+        <a
+          aria-current={null}
+          className="fr-nav__item justify-center text-center p-4"
+          href="/collectivite/1/tableau_bord"
+          onClick={[Function]}
+        >
+          Tableau de bord
+        </a>
+        <div
+          className="flex"
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onPointerDown={[Function]}
+        >
+          <button
+            className="flex items-center p-4"
+          >
+            Climat Air Énergie
+            <div
+              className="ml-2 mt-1 fr-fi-arrow-down-s-line scale-75"
+            />
+          </button>
+        </div>
+        <div
+          className="flex"
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onPointerDown={[Function]}
+        >
+          <button
+            className="flex items-center p-4"
+          >
+            Économie circulaire
+            <div
+              className="ml-2 mt-1 fr-fi-arrow-down-s-line scale-75"
+            />
+          </button>
+        </div>
+        <div
+          className="flex"
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onPointerDown={[Function]}
+        >
+          <button
+            className="flex items-center p-4"
+          >
+            Pilotage
+            <div
+              className="ml-2 mt-1 fr-fi-arrow-down-s-line scale-75"
+            />
+          </button>
+        </div>
+        <div
+          className="group relative flex ml-auto"
+        >
+          <p
+            className="flex items-center p-4 text-sm font-bold"
+          >
+            Test collectivite
+          </p>
+        </div>
+      </nav>
+    </div>
+  </div>
+</header>
 `;

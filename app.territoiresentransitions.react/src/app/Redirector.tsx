@@ -1,7 +1,10 @@
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import {useHistory, useLocation} from 'react-router-dom';
 import {
-  myCollectivitesPath,
+  homePath,
+  invitationIdParam,
+  invitationPath,
+  makeCollectiviteTableauBordUrl,
   resetPwdPath,
   resetPwdToken,
   signInPath,
@@ -10,6 +13,7 @@ import {useAuth} from 'core-logic/api/auth/AuthProvider';
 import {useInvitationState} from 'core-logic/hooks/useInvitationState';
 import {useRecoveryToken} from 'core-logic/hooks/useRecoveryToken';
 import {useAccessToken} from 'core-logic/hooks/useVerifyRecoveryToken';
+import {useOwnedCollectivites} from 'core-logic/hooks/useOwnedCollectivites';
 
 export const Redirector = () => {
   const history = useHistory();
@@ -18,11 +22,37 @@ export const Redirector = () => {
   const {invitationState} = useInvitationState();
   const recoveryToken = useRecoveryToken();
   const accessToken = useAccessToken();
+  const userCollectivites = useOwnedCollectivites();
+  const isSigninPath = pathname === signInPath;
+  const isJustSignedIn = // L'utilisateur vient de se connecter.
+    isConnected && isSigninPath && userCollectivites !== null;
+  const isLandingConnected = // L'utilisateur est connecté et arrive sur '/'.
+    isConnected && pathname === '/' && userCollectivites !== null;
+  const isInvitationJustAccepted =
+    isConnected && invitationState === 'accepted' && userCollectivites !== null;
+
+  // Quand l'utilisateur connecté
+  // - est associé à aucune collectivité :
+  //    on redirige vers la page "Collectivités engagées"
+  // - est associé à une ou plus collectivité(s) :
+  //    on redirige vers le tableau de bord de la première collectivité
+  useEffect(() => {
+    if (!isJustSignedIn && !isLandingConnected && !isInvitationJustAccepted)
+      return;
+
+    if (userCollectivites && userCollectivites.length >= 1) {
+      history.push(
+        makeCollectiviteTableauBordUrl({
+          collectiviteId: userCollectivites[0].collectivite_id,
+        })
+      );
+    } else {
+      history.push(homePath);
+    }
+  }, [isJustSignedIn, isLandingConnected, isInvitationJustAccepted]);
 
   // réagit aux changements de l'état "invitation"
   useEffect(() => {
-    // quand l'invitation est acceptée on redirige vers "mes collectivités"
-    if (invitationState === 'accepted') history.push(myCollectivitesPath);
     // si l'invitation requiert la connexion on redirigue sur "se connecter"
     if (invitationState === 'waitingForLogin') history.push(signInPath);
   }, [invitationState]);
@@ -43,9 +73,6 @@ export const Redirector = () => {
     // connecter" dans le cas d'une invitation en attente de connexion)
     if (!isConnected) {
       history.push(invitationState === 'waitingForLogin' ? signInPath : '/');
-    } else if (pathname === '/') {
-      // si connecté et qu'on navigue sur la home on redirige vers "mes collectivités"
-      history.push(myCollectivitesPath);
     }
   }, [isConnected, invitationState, recoveryToken]);
 

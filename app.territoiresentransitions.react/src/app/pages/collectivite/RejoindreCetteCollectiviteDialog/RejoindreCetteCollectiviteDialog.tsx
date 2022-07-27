@@ -1,4 +1,4 @@
-import {_RejoindreOuActiverDialogContent} from 'app/pages/MesCollectivites/_RejoindreOuActiverDialogContent';
+import {_RejoindreOuActiverDialogContent} from 'app/pages/collectivite/RejoindreCetteCollectiviteDialog/_RejoindreOuActiverDialogContent';
 import {ReferentContact} from 'core-logic/api/procedures/collectiviteProcedures';
 import {AllCollectiviteRead} from 'generated/dataLayer/all_collectivite_read';
 import React from 'react';
@@ -22,6 +22,7 @@ export const RejoindreCetteCollectiviteDialog = ({
         opened={opened}
         setOpened={setOpened}
         buttonClasses="fr-btn--secondary fr-btn--sm"
+        data-test="RejoindreCetteCollectivite"
       >
         <_RejoindreOuActiverDialogContent
           getReferentContacts={getReferentContacts}

@@ -52,7 +52,7 @@ select results_eq('select max(created_at) as time from reponse_update_event wher
                       'from reponse_proportion where collectivite_id = 1 and question_id = ''dechets_4'';',
                   'An event should be present with the same time as the reponse.');
 
-select results_eq('select created_at as time from unprocessed_reponse_update_event where collectivite_id = 1',
+select results_eq('select max(created_at) as time from unprocessed_reponse_update_event where collectivite_id = 1',
                   'select modified_at as time '
                       'from reponse_proportion where collectivite_id = 1 and question_id = ''dechets_4'';',
                   'An unprocessed event should be present with the same time as the reponse.');

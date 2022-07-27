@@ -1,10 +1,9 @@
 import {
-  claimCollectivite,
   getReferentContacts,
   userList,
 } from 'core-logic/api/procedures/collectiviteProcedures';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {yiliCredentials, yoloCredentials} from 'test_utils/collectivites';
+import {yoloCredentials} from 'test_utils/collectivites';
 
 describe('Claim and remove collectivite Remote Procedure Call ', () => {
   it('should return true when user is first to claim this collectivite', async () => {
@@ -27,6 +26,16 @@ describe('Request referent contacts', () => {
         nom: 'Dodo',
         email: 'yolo@dodo.com',
       },
+      {
+        email: 'yili@didi.com',
+        nom: 'Didi',
+        prenom: 'Yili',
+      },
+      {
+        email: 'yala@dada.com',
+        nom: 'Dada',
+        prenom: 'Yala',
+      },
     ]);
   });
   it('should return an empty list if no referent yet', async () => {
@@ -37,7 +46,7 @@ describe('Request referent contacts', () => {
 });
 
 describe('Request collectivité user list', () => {
-  it('should return a user list containing referent and auditeur', async () => {
+  it('should return a user list containing 2 referents', async () => {
     await supabaseClient.auth.signIn(yoloCredentials);
     const procedureResponse = await userList(1);
     expect(procedureResponse).not.toBeNull();
@@ -53,20 +62,6 @@ describe('Request collectivité user list', () => {
     };
     expect(referents[0].personnes).toEqual(
       expect.arrayContaining([expect.objectContaining(partialReferent)])
-    );
-
-    const auditeurs = procedureResponse!.filter(
-      l => l.role_name === 'auditeur'
-    );
-    expect(auditeurs.length).toEqual(1);
-
-    const partialAuditeur = {
-      prenom: 'Yala',
-      nom: 'Dada',
-      email: 'yala@dada.com',
-    };
-    expect(auditeurs[0].personnes).toEqual(
-      expect.arrayContaining([expect.objectContaining(partialAuditeur)])
     );
   });
 });

@@ -1,7 +1,7 @@
 import {Field, Form, Formik} from 'formik';
 import * as Yup from 'yup';
 import {useHistory} from 'react-router-dom';
-import {myCollectivitesPath} from 'app/paths';
+import {homePath} from 'app/paths';
 import LabeledTextField from 'ui/forms/LabeledTextField';
 import {ValiderButton} from 'ui/shared/ValiderButton';
 import {Spacer} from 'ui/shared/Spacer';
@@ -37,11 +37,7 @@ export const SignInPage = () => {
           initialValues={{email: '', password: ''}}
           validationSchema={validation}
           onSubmit={credentials => {
-            connect(credentials).then(connected => {
-              if (connected) {
-                history.push(myCollectivitesPath);
-              }
-            });
+            connect(credentials);
           }}
         >
           {({values}) => (

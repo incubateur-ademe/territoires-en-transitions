@@ -8,9 +8,10 @@ beforeEach(() => {
 });
 
 Given("un lien d'invitation est affiché", () => {
+  cy.wait(3000);
   cy.get(LocalSelectors["lien d'invitation"].selector).should(
     'contain.value',
-    '/invitation/'
+    '/invitation/',
   );
 });
 
