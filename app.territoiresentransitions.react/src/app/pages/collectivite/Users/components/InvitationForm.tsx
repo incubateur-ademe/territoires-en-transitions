@@ -1,4 +1,4 @@
-import {useMemo, useState} from 'react';
+import {useMemo} from 'react';
 import {Field, FieldAttributes, FieldProps, Form, Formik} from 'formik';
 import * as Yup from 'yup';
 import {v4 as uuid} from 'uuid';
@@ -6,6 +6,16 @@ import classNames from 'classnames';
 import {UserData} from 'core-logic/api/auth/AuthProvider';
 import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import InvitationMessage from 'app/pages/collectivite/Users/components/InvitationMessage';
+import {NiveauAcces} from 'generated/dataLayer';
+import {
+  AddUserToCollectiviteRequest,
+  useAddUserToCollectivite,
+} from 'core-logic/hooks/useAddUserToCollectivite';
+
+type AccesOption = {
+  value: NiveauAcces;
+  label: string;
+};
 
 type InvitationFormProps = {
   currentUser: UserData;
@@ -16,8 +26,6 @@ const InvitationForm = ({
   currentUser,
   currentCollectivite,
 }: InvitationFormProps) => {
-  const [acces, setAcces] = useState<string | undefined>(undefined);
-
   const validationInvitation = Yup.object({
     email: Yup.string()
       .email('Format attendu : nom@domaine.fr')
@@ -25,9 +33,9 @@ const InvitationForm = ({
     acces: Yup.string().required('Ce champ est obligatoire'),
   });
 
-  const fakeAccesOptions = useMemo(() => {
-    const adminOption = {value: 'admin', label: 'Admin'};
-    const editionOptions = [
+  const accesOptions: AccesOption[] = useMemo(() => {
+    const adminOption: AccesOption = {value: 'admin', label: 'Admin'};
+    const editionOptions: AccesOption[] = [
       {
         value: 'edition',
         label: 'Édition',
@@ -42,11 +50,23 @@ const InvitationForm = ({
     } else {
       return editionOptions;
     }
-  }, [currentUser]);
+  }, [currentCollectivite]);
 
-  const onSubmitInvitation = (values: {email: string; acces: string}) => {
-    setAcces(values.acces);
-    console.log(values);
+  const {data, isLoading, addUser} = useAddUserToCollectivite();
+
+  const {invitationUrl, acces} = data;
+
+  const onSubmitInvitation = (values: {
+    email: string;
+    acces: NiveauAcces | '';
+  }) => {
+    const req: AddUserToCollectiviteRequest = {
+      collectiviteId: currentCollectivite.collectivite_id,
+      email: values.email,
+      niveau_acces: values.acces === '' ? 'lecture' : values.acces,
+    };
+
+    addUser(req);
   };
 
   return (
@@ -61,18 +81,19 @@ const InvitationForm = ({
           <SelectField
             name="acces"
             label="Niveau d’accès pour cette collectivité"
-            options={fakeAccesOptions}
+            options={accesOptions}
           />
           <button type="submit" className="fr-btn md:mt-7 md:mb-auto">
             Ajouter
           </button>
         </Form>
       </Formik>
-      {acces && (
+      {invitationUrl && (
         <InvitationMessage
           currentCollectivite={currentCollectivite}
           currentUser={currentUser}
           acces={acces}
+          invitationUrl={invitationUrl}
         />
       )}
     </div>
@@ -81,14 +102,9 @@ const InvitationForm = ({
 
 export default InvitationForm;
 
-type Option = {
-  value: string;
-  label: string;
-};
-
 interface SelectFieldProps extends FieldAttributes<any> {
   label: string;
-  options: Option[];
+  options: AccesOption[];
 }
 
 const SelectField = (props: SelectFieldProps) => (
@@ -118,7 +134,7 @@ const SelectField = (props: SelectFieldProps) => (
             <option value="" disabled hidden>
               Selectionnez une option
             </option>
-            {props.options.map((option: Option) => (
+            {props.options.map((option: AccesOption) => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>
