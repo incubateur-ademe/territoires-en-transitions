@@ -1,13 +1,28 @@
-import InvitationLink from './InvitationLink';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useGenerateInvitation} from 'core-logic/hooks/useGenerateInvitation';
-import {useAgentInvitation} from 'core-logic/hooks/useAgentInvitation';
-import {useAuth} from 'core-logic/api/auth/AuthProvider';
-import {useUpdateCollectiviteMembre} from './useUpdateCollectiviteMembre';
-import {useCollectiviteMembres} from './useCollectiviteMembres';
-import {useRemoveFromCollectivite} from './useRemoveFromCollectivite';
-import {Membre, TRemoveFromCollectivite, TUpdateMembre} from './types';
-import MembreListTable from './components/MembreListTable';
+import {useAuth, UserData} from 'core-logic/api/auth/AuthProvider';
+import {
+  CurrentCollectivite,
+  useCurrentCollectivite,
+} from 'core-logic/hooks/useCurrentCollectivite';
+import {useUpdateCollectiviteMembre} from 'app/pages/collectivite/Users/useUpdateCollectiviteMembre';
+import {useCollectiviteMembres} from 'app/pages/collectivite/Users/useCollectiviteMembres';
+import {useRemoveFromCollectivite} from 'app/pages/collectivite/Users/useRemoveFromCollectivite';
+import {
+  Membre,
+  TRemoveFromCollectivite,
+  TUpdateMembre,
+} from 'app/pages/collectivite/Users/types';
+import MembreListTable from 'app/pages/collectivite/Users/components/MembreListTable';
+import InvitationForm from 'app/pages/collectivite/Users/components/InvitationForm';
+
+export type MembresProps = {
+  membres: Membre[];
+  collectivite: CurrentCollectivite;
+  isLoading: boolean;
+  currentUser: UserData;
+  updateMembre: TUpdateMembre;
+  removeFromCollectivite: TRemoveFromCollectivite;
+};
 
 /**
  * Affiche la page listant les utilisateurs attachés à une collectivité
@@ -15,63 +30,67 @@ import MembreListTable from './components/MembreListTable';
  */
 export const Membres = ({
   membres,
+  collectivite,
   isLoading,
-  currentUserId,
+  currentUser,
   updateMembre,
   removeFromCollectivite,
-}: {
-  membres: Membre[];
-  isLoading: boolean;
-  currentUserId: string;
-  updateMembre: TUpdateMembre;
-  removeFromCollectivite: TRemoveFromCollectivite;
-}) => {
-  const {invitationUrl: latestUrl} = useAgentInvitation();
-  const {generateInvitation, invitationUrl} = useGenerateInvitation();
-
+}: MembresProps) => {
   return (
-    <main data-test="Users" className="fr-container mt-10 mb-16">
+    <main data-test="Users" className="fr-container mt-9 mb-16">
       <h1 className="mb-10 lg:mb-14 lg:text-center">Gestion des membres</h1>
 
       <h2 className="">Liste des membres</h2>
       <MembreListTable
-        currentUserId={currentUserId}
+        currentUserId={currentUser.id}
+        currentUserAccess={
+          collectivite.niveau_acces ? collectivite.niveau_acces : 'lecture'
+        }
         membres={membres}
         isLoading={isLoading}
         updateMembre={updateMembre}
         removeFromCollectivite={removeFromCollectivite}
       />
 
-      <h2 className="fr-h2">Lien d'invitation</h2>
-      <p>
-        Envoyez ce lien aux personnes que vous souhaitez inviter à modifier les
-        données de votre collectivité.
-      </p>
+      {(collectivite.niveau_acces === 'admin' ||
+        collectivite.niveau_acces === 'edition') && (
+        <>
+          <h2 className="mt-12">Invitation</h2>
+          <p className="italic text-gray-500">
+            Tous les champs sont obligatoires
+          </p>
 
-      <InvitationLink
-        link={invitationUrl || latestUrl}
-        onGenerateLink={generateInvitation}
-      />
+          {collectivite && (
+            <InvitationForm
+              currentUser={currentUser}
+              currentCollectivite={collectivite}
+            />
+          )}
+        </>
+      )}
     </main>
   );
 };
 
 export default () => {
   const auth = useAuth();
-  const userId = auth.user?.id;
+  const user = auth.user;
   const collectivite_id = useCollectiviteId();
-  if (!userId || !collectivite_id) return null;
+  const collectivite = useCurrentCollectivite();
+  if (!user?.id || !collectivite_id || !collectivite) return null;
 
-  const {membres, isLoading} = useCollectiviteMembres();
+  const {membres, isLoading: isMemberLoading} = useCollectiviteMembres();
   const {updateMembre} = useUpdateCollectiviteMembre();
   const {removeFromCollectivite} = useRemoveFromCollectivite();
+
   return (
     <Membres
-      currentUserId={userId}
+      currentUser={user}
       membres={membres}
+      collectivite={collectivite}
       updateMembre={updateMembre}
       removeFromCollectivite={removeFromCollectivite}
-      isLoading={isLoading}
+      isLoading={isMemberLoading}
     />
   );
 };
