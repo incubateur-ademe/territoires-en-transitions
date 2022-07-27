@@ -2,6 +2,8 @@ import {useEffect, useState} from 'react';
 import {useHistory, useLocation} from 'react-router-dom';
 import {
   homePath,
+  invitationIdParam,
+  invitationPath,
   makeCollectiviteTableauBordUrl,
   resetPwdPath,
   resetPwdToken,
@@ -26,6 +28,8 @@ export const Redirector = () => {
     isConnected && isSigninPath && userCollectivites !== null;
   const isLandingConnected = // L'utilisateur est connecté et arrive sur '/'.
     isConnected && pathname === '/' && userCollectivites !== null;
+  const isInvitationJustAccepted =
+    isConnected && invitationState === 'accepted' && userCollectivites !== null;
 
   // Quand l'utilisateur connecté
   // - est associé à aucune collectivité :
@@ -33,7 +37,8 @@ export const Redirector = () => {
   // - est associé à une ou plus collectivité(s) :
   //    on redirige vers le tableau de bord de la première collectivité
   useEffect(() => {
-    if (!isJustSignedIn && !isLandingConnected) return;
+    if (!isJustSignedIn && !isLandingConnected && !isInvitationJustAccepted)
+      return;
 
     if (userCollectivites && userCollectivites.length >= 1) {
       history.push(
@@ -44,12 +49,10 @@ export const Redirector = () => {
     } else {
       history.push(homePath);
     }
-  }, [isJustSignedIn, isLandingConnected]);
+  }, [isJustSignedIn, isLandingConnected, isInvitationJustAccepted]);
 
   // réagit aux changements de l'état "invitation"
   useEffect(() => {
-    // quand l'invitation est acceptée on redirige vers "toutes les collectivités"
-    if (invitationState === 'accepted') history.push(homePath);
     // si l'invitation requiert la connexion on redirigue sur "se connecter"
     if (invitationState === 'waitingForLogin') history.push(signInPath);
   }, [invitationState]);
