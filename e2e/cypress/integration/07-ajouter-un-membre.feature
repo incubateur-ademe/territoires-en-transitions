@@ -23,9 +23,12 @@ Fonctionnalité: Ajouter un membre au profil de la collectivité
       | email | yulu@dudu.com |
       | mdp   | yulududu      |
     Et que je clique sur le bouton "Valider" du "formulaire de connexion"
-    Alors la page "Toutes les collectivités" est visible
 
-    Quand je visite le lien copié
-    Alors la page "Tableau de bord" de la collectivité "3" est visible
-
+    Alors la page vérifie les conditions suivantes :
+      | Elément                               | Condition |
+      | header                                | visible   |
+      | home                                  | absent    |
+      | formulaire de connexion               | absent    |
+      | le tableau de bord de la collectivité | visible   |
+      | footer                                | visible   |
 
