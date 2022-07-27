@@ -1,10 +1,12 @@
+import {NiveauAcces} from 'generated/dataLayer';
 import {Membre, TRemoveFromCollectivite, TUpdateMembre} from '../types';
 import MembreListTableRow from './MembreListTableRow';
 
 const thClassNames = 'py-3 px-5 whitespace-nowrap';
 
-export type UserListTableProps = {
+export type MembreListTableProps = {
   currentUserId: string;
+  currentUserAccess: NiveauAcces;
   membres?: Membre[];
   isLoading: boolean;
   updateMembre: TUpdateMembre;
@@ -15,13 +17,10 @@ const MembreListTable = ({
   membres,
   isLoading,
   currentUserId,
+  currentUserAccess,
   updateMembre,
   removeFromCollectivite,
-}: UserListTableProps) => {
-  const currentUserAccess =
-    membres?.find(membre => membre.user_id === currentUserId)?.niveau_acces ??
-    'lecture';
-
+}: MembreListTableProps) => {
   return (
     <div className="mx-auto border-8 border-t-0 border-bf925 bg-bf925 rounded-lg overflow-x-hidden">
       <div className="overflow-x-auto w-full">

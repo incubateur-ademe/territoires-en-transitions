@@ -2,14 +2,16 @@ import React from 'react';
 import {Story, Meta} from '@storybook/react';
 import {action} from '@storybook/addon-actions';
 import {TUpdateMembre} from '../types';
+import MembreListTable, {MembreListTableProps} from './MembreListTable';
 import {fakeAdmin, fakeEditeur, fakeLecteur, fakeMembres} from './fakeData';
-import UserListTable, {UserListTableProps} from './MembreListTable';
 
 export default {
-  component: UserListTable,
+  component: MembreListTable,
 } as Meta;
 
-const Template: Story<UserListTableProps> = args => <UserListTable {...args} />;
+const Template: Story<MembreListTableProps> = args => (
+  <MembreListTable {...args} />
+);
 
 const handlers = {
   updateMembre: action('updateMembre') as TUpdateMembre,
@@ -17,7 +19,7 @@ const handlers = {
 };
 
 export const AsAdmin = Template.bind({});
-const AsAdminArgs: UserListTableProps = {
+const AsAdminArgs: MembreListTableProps = {
   membres: fakeMembres,
   currentUserId: fakeAdmin.user_id,
   isLoading: false,
@@ -26,7 +28,7 @@ const AsAdminArgs: UserListTableProps = {
 AsAdmin.args = AsAdminArgs;
 
 export const AsEditeur = Template.bind({});
-const AsEditeurArgs: UserListTableProps = {
+const AsEditeurArgs: MembreListTableProps = {
   membres: fakeMembres,
   currentUserId: fakeEditeur.user_id,
   isLoading: false,
@@ -35,7 +37,7 @@ const AsEditeurArgs: UserListTableProps = {
 AsEditeur.args = AsEditeurArgs;
 
 export const AsLecteur = Template.bind({});
-const AsLecteurArgs: UserListTableProps = {
+const AsLecteurArgs: MembreListTableProps = {
   membres: fakeMembres,
   currentUserId: fakeLecteur.user_id,
   isLoading: false,
@@ -44,7 +46,7 @@ const AsLecteurArgs: UserListTableProps = {
 AsLecteur.args = AsLecteurArgs;
 
 export const TODOWithGuest = Template.bind({});
-const TODOWithGuestArgs: UserListTableProps = {
+const TODOWithGuestArgs: MembreListTableProps = {
   currentUserId: fakeLecteur.user_id,
   isLoading: false,
   ...handlers,
@@ -52,7 +54,7 @@ const TODOWithGuestArgs: UserListTableProps = {
 TODOWithGuest.args = TODOWithGuestArgs;
 
 export const isLoading = Template.bind({});
-const isLoadingArgs: UserListTableProps = {
+const isLoadingArgs: MembreListTableProps = {
   currentUserId: fakeAdmin.user_id,
   isLoading: true,
   ...handlers,
@@ -60,7 +62,7 @@ const isLoadingArgs: UserListTableProps = {
 isLoading.args = isLoadingArgs;
 
 export const Empty = Template.bind({});
-const EmptyArgs: UserListTableProps = {
+const EmptyArgs: MembreListTableProps = {
   currentUserId: fakeAdmin.user_id,
   isLoading: false,
   ...handlers,
