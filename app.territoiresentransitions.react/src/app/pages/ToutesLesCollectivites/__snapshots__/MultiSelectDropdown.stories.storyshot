@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots App/Pages/Toutes Les Collectivites/Multi Select Dropdown Selection Aucun Par Defaut 1`] = `
+exports[`Storyshots app/pages/ToutesLesCollectivites/MultiSelectDropdown Selection Aucun Par Defaut 1`] = `
 <ul>
   <div>
     <div
@@ -91,7 +91,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Multi Select Dropdown Sel
 </ul>
 `;
 
-exports[`Storyshots App/Pages/Toutes Les Collectivites/Multi Select Dropdown Selection Multiple 1`] = `
+exports[`Storyshots app/pages/ToutesLesCollectivites/MultiSelectDropdown Selection Multiple 1`] = `
 <ul>
   <div>
     <div

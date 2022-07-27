@@ -1,6 +1,5 @@
-import {observer} from 'mobx-react-lite';
 import {useParams} from 'react-router-dom';
-import {currentCollectiviteBloc} from 'core-logic/observables';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {PageHeader} from 'ui/PageHeader';
 import {ThematiqueQR} from './ThematiqueQR';
 import {useThematique} from './useThematique';
@@ -9,8 +8,8 @@ import {useChangeReponseHandler} from '../PersoPotentielModal/useChangeReponseHa
 import {useNextThematiqueId} from './useNextThematiqueId';
 import {useCarteIdentite} from './useCarteIdentite';
 
-export default observer(() => {
-  const collectivite = currentCollectiviteBloc.currentCollectivite;
+export default () => {
+  const collectivite = useCurrentCollectivite();
   const {collectivite_id, nom} = collectivite || {};
   const {thematiqueId} = useParams<{thematiqueId: string | undefined}>();
   const thematique = useThematique(thematiqueId);
@@ -46,4 +45,4 @@ export default observer(() => {
       </main>
     </>
   );
-});
+};

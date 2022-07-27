@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots App/Pages/Toutes Les Collectivites/Multi Select Checkboxes Selection Multiple 1`] = `
+exports[`Storyshots app/pages/ToutesLesCollectivites/MultiSelectCheckboxes Selection Multiple 1`] = `
 <ul>
   <div>
     <div
@@ -17,7 +17,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Multi Select Checkboxes S
         <input
           checked={false}
           className="fr-toggle__input"
-          disabled={true}
+          disabled={false}
           id="exempleall"
           onChange={[Function]}
           type="checkbox"
@@ -135,7 +135,7 @@ exports[`Storyshots App/Pages/Toutes Les Collectivites/Multi Select Checkboxes S
 </ul>
 `;
 
-exports[`Storyshots App/Pages/Toutes Les Collectivites/Multi Select Checkboxes Selection Tous Par Defaut 1`] = `
+exports[`Storyshots app/pages/ToutesLesCollectivites/MultiSelectCheckboxes Selection Tous Par Defaut 1`] = `
 <ul>
   <div>
     <div

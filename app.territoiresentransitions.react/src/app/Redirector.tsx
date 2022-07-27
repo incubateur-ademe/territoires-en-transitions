@@ -1,66 +1,78 @@
+import {useEffect} from 'react';
+import {useHistory, useLocation} from 'react-router-dom';
 import {
-  myCollectivitesPath,
-  signInPath,
+  homePath,
+  invitationPath,
+  makeCollectiviteTableauBordUrl,
   resetPwdPath,
   resetPwdToken,
+  signInPath,
 } from 'app/paths';
-import {authBloc} from 'core-logic/observables/authBloc';
-import {reaction} from 'mobx';
-import {useHistory, useLocation} from 'react-router-dom';
-import {currentCollectiviteBloc} from 'core-logic/observables';
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import {useAuth} from 'core-logic/api/auth/AuthProvider';
+import {useInvitationState} from 'core-logic/hooks/useInvitationState';
+import {useAccessToken} from 'core-logic/hooks/useVerifyRecoveryToken';
+import {useOwnedCollectivites} from 'core-logic/hooks/useOwnedCollectivites';
 
-export const CollectiviteRedirector = () => {
-  const collectiviteId = useCollectiviteId();
-  console.log(collectiviteId);
-  currentCollectiviteBloc.update({collectiviteId});
-
-  return null;
-};
-
-export const InvitationRedirector = () => {
+export const Redirector = () => {
   const history = useHistory();
-  const {hash} = useLocation();
+  const {pathname} = useLocation();
+  const {isConnected} = useAuth();
+  const {invitationState} = useInvitationState();
+  const accessToken = useAccessToken();
+  const userCollectivites = useOwnedCollectivites();
+  const isSigninPath = pathname === signInPath;
+  const isJustSignedIn = // L'utilisateur vient de se connecter.
+    isConnected && isSigninPath && userCollectivites !== null;
+  const isLandingConnected = // L'utilisateur est connecté et arrive sur '/'.
+    isConnected && pathname === '/' && userCollectivites !== null;
+  const isInvitationJustAccepted =
+    isConnected &&
+    invitationState === 'accepted' &&
+    pathname.startsWith(invitationPath) &&
+    userCollectivites &&
+    userCollectivites.length >= 1;
 
-  const {type: _type, access_token} = parseHash(hash);
-  if (access_token && _type === 'recovery') {
-    // on est en mode récupération de mdp
-    history.push(resetPwdPath.replace(`:${resetPwdToken}`, access_token));
-    return null;
-  }
-
-  reaction(
-    () => authBloc.connected,
-    connected => {
-      if (!connected) {
-        history.push(signInPath);
+  // Quand l'utilisateur connecté
+  // - est associé à aucune collectivité :
+  //    on redirige vers la page "Collectivités engagées"
+  // - est associé à une ou plus collectivité(s) :
+  //    on redirige vers le tableau de bord de la première collectivité
+  useEffect(() => {
+    if (isJustSignedIn || isLandingConnected || isInvitationJustAccepted) {
+      if (userCollectivites && userCollectivites.length >= 1) {
+        history.push(
+          makeCollectiviteTableauBordUrl({
+            collectiviteId: userCollectivites[0].collectivite_id,
+          })
+        );
+      } else {
+        history.push(homePath);
       }
     }
-  );
+  }, [isJustSignedIn, isLandingConnected, isInvitationJustAccepted]);
 
-  reaction(
-    () => authBloc.invitationState,
-    state => {
-      if (state === 'accepted') history.push(myCollectivitesPath);
-      if (state === 'waitingForLogin') history.push(signInPath);
+  // réagit aux changements de l'état "invitation"
+  useEffect(() => {
+    // si l'invitation requiert la connexion on redirigue sur "se connecter"
+    if (invitationState === 'waitingForLogin') history.push(signInPath);
+  }, [invitationState]);
+
+  useEffect(() => {
+    // redirige vers le formulaire de réinit. de mdp si un jeton d'accès a été créé
+    if (accessToken) {
+      history.push(resetPwdPath.replace(`:${resetPwdToken}`, accessToken));
+      return;
     }
-  );
+  }, [accessToken]);
+
+  // réagit aux changements de l'état utilisateur connecté/déconnecté
+  useEffect(() => {
+    // si déconnecté on redirige sur la page d'accueil (ou la page "se
+    // connecter" dans le cas d'une invitation en attente de connexion)
+    if (!isConnected && invitationState === 'waitingForLogin') {
+      history.push(signInPath);
+    }
+  }, [isConnected, invitationState]);
 
   return null;
 };
-
-// génère un dictionnaire de clé/valeur à partir d'une chaîne de la forme
-// #cle=valeur&cle2=val2
-type TKeyValues = {[k: string]: string};
-const parseHash = (hash: string): TKeyValues =>
-  hash
-    .substring(1) // saute le # en début de chaîne
-    .split('&') // sépare les groupes de clé/valeur
-    .reduce((dict, kv) => {
-      // ajoute la clé/valeur au dictionnaire
-      const [k, v] = kv.split('=');
-      return {
-        ...dict,
-        [k]: v,
-      };
-    }, {});

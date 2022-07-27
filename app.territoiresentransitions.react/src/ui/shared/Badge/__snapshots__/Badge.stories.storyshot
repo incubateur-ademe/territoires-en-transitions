@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots Ui/Shared/Badge/Badge Info 1`] = `
+exports[`Storyshots ui/shared/Badge Info 1`] = `
 <p
   className="fr-badge fr-badge--info "
 >
@@ -8,7 +8,7 @@ exports[`Storyshots Ui/Shared/Badge/Badge Info 1`] = `
 </p>
 `;
 
-exports[`Storyshots Ui/Shared/Badge/Badge Success 1`] = `
+exports[`Storyshots ui/shared/Badge Success 1`] = `
 <p
   className="fr-badge fr-badge--success "
 >

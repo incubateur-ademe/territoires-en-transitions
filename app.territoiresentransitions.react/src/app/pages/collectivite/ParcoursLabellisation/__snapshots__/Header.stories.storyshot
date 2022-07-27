@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Header Critere Action Non Rempli 1`] = `
+exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/Header Critere Action Non Rempli 1`] = `
 <div
   className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
 >
@@ -25,7 +25,7 @@ exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Header Critere
 </div>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Header Critere Preuves Non Rempli 1`] = `
+exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/Header Critere Preuves Non Rempli 1`] = `
 <div
   className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
 >
@@ -50,7 +50,7 @@ exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Header Critere
 </div>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Header Critere Score Non Atteint 1`] = `
+exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/Header Critere Score Non Atteint 1`] = `
 <div
   className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
 >
@@ -75,7 +75,7 @@ exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Header Critere
 </div>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Header OK 1`] = `
+exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/Header OK 1`] = `
 <div
   className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
 >
@@ -100,7 +100,7 @@ exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Header OK 1`] 
 </div>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Header Remplissage Incomplet 1`] = `
+exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/Header Remplissage Incomplet 1`] = `
 <div
   className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
 >

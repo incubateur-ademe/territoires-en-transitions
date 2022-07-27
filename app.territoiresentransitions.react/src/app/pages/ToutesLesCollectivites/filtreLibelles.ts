@@ -1,6 +1,7 @@
 export type TOption = {libelle: string; id: string};
 
 export type TCollectivitesFilters = {
+  nom?: string;
   types: string[];
   regions: string[];
   departments: string[];
@@ -10,6 +11,7 @@ export type TCollectivitesFilters = {
   realiseCourant: string[];
   tauxDeRemplissage: string[];
   trierPar?: string;
+  page?: number;
 };
 
 // could be downloaded from `filtre_intervalle` where type = population.

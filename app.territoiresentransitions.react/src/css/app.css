@@ -136,3 +136,12 @@ label {
 .small-checkbox input[type='checkbox'] + label {
   padding: 0.05rem 0 !important;
 }
+
+.small-checkbox input[type='checkbox'] + label {
+  padding: 0.05rem 0 !important;
+}
+
+input,
+textarea {
+  outline-width: 0px !important;
+}

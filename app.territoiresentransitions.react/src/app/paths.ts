@@ -1,15 +1,19 @@
 export const authBasePath = '/auth';
 export const signInPath = `${authBasePath}/signin`;
 export const signUpPath = `${authBasePath}/signup`;
-export const identityPath = `${authBasePath}/identity`;
 export const resetPwdToken = 'token';
 export const resetPwdPath = `${authBasePath}/recover/:${resetPwdToken}`;
+export const recoverToken = 'token';
+export const recoverLandingPath = `${authBasePath}/recover_landing/:${recoverToken}`;
 
+export const invitationPath = '/invitation';
 export const invitationIdParam = 'invitationId';
-export const invitationLandingPath = `/invitation/:${invitationIdParam}`;
+export const invitationLandingPath = `${invitationPath}/:${invitationIdParam}`;
 
 export const allCollectivitesPath = '/toutes_collectivites';
-export const myCollectivitesPath = '/mes_collectivites';
+
+// Utilisé après le login ou lorsqu'on clique sur le logo en étant connecté.
+export const homePath = allCollectivitesPath;
 
 const collectiviteParam = 'collectiviteId';
 export const indicateurViewParam = 'vue';
@@ -38,6 +42,7 @@ export const collectivitePlanActionPath = `${collectivitePath}/plan_action/:${pl
 export const collectiviteNouvelleFichePath = `${collectivitePath}/nouvelle_fiche`;
 export const collectiviteFichePath = `${collectivitePath}/fiche/:${ficheParam}`;
 export const collectiviteUsersPath = `${collectivitePath}/users`;
+export const collectiviteAllCollectivitesPath = `${collectivitePath}/toutes_collectivites`;
 export const collectivitePersoRefPath = `${collectivitePath}/personnalisation`;
 export const collectivitePersoRefThematiquePath = `${collectivitePersoRefPath}/:${thematiqueParam}`;
 
@@ -200,5 +205,5 @@ export const makeCollectivitePersoRefThematiqueUrl = ({
     .replace(`:${thematiqueParam}`, thematiqueId);
 
 export const makeInvitationLandingPath = (invitationId: string) =>
-  window.location.hostname +
+  window.location.origin +
   invitationLandingPath.replace(`:${invitationIdParam}`, invitationId);

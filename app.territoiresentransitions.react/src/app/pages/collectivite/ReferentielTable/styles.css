@@ -10,17 +10,26 @@
   font-size: 0.875rem;
   line-height: 1.25rem;
   background-color: var(--background-disabled-grey);
+  overflow-x: scroll;
 }
 
 /** en-tête */
+.referentiel-table .header {
+  padding-right: 8px;
+}
 .referentiel-table .header .row {
   align-items: center;
   background-color: var(--background-disabled-grey);
 }
 
 .referentiel-table .header .cell {
-  text-align: left;
+  text-align: right;
   padding: 1rem;
+  padding-right: 0;
+}
+
+.referentiel-table .header .cell:first-child {
+  text-align: left;
 }
 
 .referentiel-table .cell {
@@ -55,13 +64,17 @@
   line-height: 36px;
 }
 
+.referentiel-table .row.d0 {
+  background-color: var(--background-disabled-grey);
+}
+
 .referentiel-table .row.d1 {
   background-color: var(--color-primary);
   color: #fff;
   font-weight: bold;
 }
 
-.referentiel-table .row.d2 {
+.referentiel-table.cae .row.d2 {
   background-color: var(--color-secondary);
   color: #fff;
   font-weight: bold;
@@ -129,6 +142,12 @@
 .referentiel-table .body .row {
   border-left: 1px solid var(--color-primary);
   border-right: 1px solid var(--color-primary);
+}
+
+.referentiel-table .body .row.d0 {
+  border-left: none;
+  border-right: none;
+  border-top: 1px solid var(--text-disabled-grey);
 }
 
 /** bordure arrondi en bas pour la dernière ligne avant une nouvelle section */

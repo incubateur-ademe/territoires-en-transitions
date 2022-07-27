@@ -35,7 +35,7 @@ const ReferentielTable: Table = props => {
   return (
     <div
       {...getTableProps()}
-      className={`referentiel-table ${className || ''}`}
+      className={`referentiel-table ${referentielId} ${className || ''}`}
     >
       <div className="header">
         {headerGroups.map(headerGroup => (

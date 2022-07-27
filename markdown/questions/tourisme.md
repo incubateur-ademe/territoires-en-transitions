@@ -13,5 +13,4 @@ id: tourisme_2
 type: binaire
 thematique_id: tourisme
 actions: [cae_6.3.2]
-types_concernes : [EPCI]
 ```

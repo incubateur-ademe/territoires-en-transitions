@@ -1,5 +1,5 @@
 /// <reference types="Cypress" />
 
-Given(/la page contient (\d+) collectivités?/, (count) => {
-  cy.get('[data-test=SimpleCollectiviteCard]').should('have.length', count);
+Given(/la page contient au moins (\d+) collectivités?/, (count) => {
+  cy.get('[data-test=CollectiviteCarte]').should('have.length.gt', count);
 });

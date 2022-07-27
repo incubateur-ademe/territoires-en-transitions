@@ -2,6 +2,7 @@
 
 exports[`Storyshots Charts/ReferentielAxisScoresPolarArea CAE Example 1`] = `
 <div
+  className="flex flex-col items-center"
   style={
     Object {
       "width": "500px",
@@ -22,9 +23,22 @@ exports[`Storyshots Charts/ReferentielAxisScoresPolarArea CAE Example 1`] = `
   <canvas
     data-testid="canvas"
     height={150}
+    id="axis_scores_polar_cae"
     onClick={[Function]}
     role="img"
     width={300}
   />
+  <a
+    className="fr-btn fr-btn--secondary"
+    download="Scores par axes cae.png"
+    href=""
+    id="download_axis_scores_polar_cae"
+    onClick={[Function]}
+  >
+    <div
+      className="fr-fi-download-line mr-2 text-xs"
+    />
+    Télécharger les scores par axes pour CAE
+  </a>
 </div>
 `;

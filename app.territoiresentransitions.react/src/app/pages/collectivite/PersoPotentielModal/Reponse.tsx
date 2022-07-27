@@ -3,7 +3,7 @@ import {TReponse} from 'generated/dataLayer/reponse_read';
 import {TQuestionReponseProps} from './PersoPotentielQR';
 import {TListeChoix} from 'generated/dataLayer/question_read';
 import {useDebouncedInput} from 'ui/shared/useDebouncedInput';
-import {currentCollectiviteBloc} from 'core-logic/observables';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
 const ReponseContainer = ({
   children,
@@ -22,8 +22,9 @@ const ReponseChoix = ({qr, onChange}: TQuestionReponseProps) => {
   const {id: questionId, choix, reponse} = qr;
   const hasReponse = reponse !== null && reponse !== undefined;
   const choices = getFilteredChoices(reponse, choix || []);
+  const collectivite = useCurrentCollectivite();
 
-  return (
+  return collectivite ? (
     <ReponseContainer>
       {choices?.map(({id: choiceId, label}) => {
         return (
@@ -34,7 +35,7 @@ const ReponseChoix = ({qr, onChange}: TQuestionReponseProps) => {
             }`}
           >
             <RadioButton
-              disabled={currentCollectiviteBloc.readonly}
+              disabled={collectivite.readonly}
               questionId={questionId}
               choiceId={choiceId}
               label={label}
@@ -45,7 +46,7 @@ const ReponseChoix = ({qr, onChange}: TQuestionReponseProps) => {
         );
       })}
     </ReponseContainer>
-  );
+  ) : null;
 };
 
 /** Affiche une réponse donnant le choix entre oui et non */
@@ -55,13 +56,14 @@ const ReponseBinaire = ({qr, onChange}: TQuestionReponseProps) => {
     {id: 'true', label: 'Oui'},
     {id: 'false', label: 'Non'},
   ]);
+  const collectivite = useCurrentCollectivite();
 
-  return (
+  return collectivite ? (
     <ReponseContainer className="fr-fieldset--inline inline-radio">
       {choices?.map(({id: choiceId, label}) => (
         <div key={choiceId} className="fr-radio-group fr-radio-group--sm">
           <RadioButton
-            disabled={currentCollectiviteBloc.readonly}
+            disabled={collectivite.readonly}
             questionId={questionId}
             choiceId={choiceId}
             label={label}
@@ -71,7 +73,7 @@ const ReponseBinaire = ({qr, onChange}: TQuestionReponseProps) => {
         </div>
       ))}
     </ReponseContainer>
-  );
+  ) : null;
 };
 
 /** Affiche une réponse donnant lieu à la saisie d'une valeur entre 0 et 100 */
@@ -87,15 +89,16 @@ const ReponseProportion = ({qr, onChange}: TQuestionReponseProps) => {
       onChange(proportion);
     }
   );
+  const collectivite = useCurrentCollectivite();
 
-  return (
+  return collectivite ? (
     <ReponseContainer className="fr-fieldset--inline">
       <label className="fr-label" htmlFor={questionId}>
         Part en pourcentage
       </label>
       <input
         type="number"
-        disabled={currentCollectiviteBloc.readonly}
+        disabled={collectivite.readonly}
         min={min}
         max={max}
         id={questionId}
@@ -105,7 +108,7 @@ const ReponseProportion = ({qr, onChange}: TQuestionReponseProps) => {
         onChange={handleChange}
       />
     </ReponseContainer>
-  );
+  ) : null;
 };
 
 // parse une réponse saisie dans un champ proportion

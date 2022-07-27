@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots App/Pages/Collectivite/Detail Taches/Filtre Statut All 1`] = `
+exports[`Storyshots app/pages/collectivite/DetailTaches/FiltreStatut All 1`] = `
 <div
   className="MuiInputBase-root MuiOutlinedInput-root multi-select filtre-statut "
   onClick={[Function]}
@@ -59,7 +59,7 @@ exports[`Storyshots App/Pages/Collectivite/Detail Taches/Filtre Statut All 1`] =
 </div>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Detail Taches/Filtre Statut Multi Select 1`] = `
+exports[`Storyshots app/pages/collectivite/DetailTaches/FiltreStatut Multi Select 1`] = `
 <div
   className="MuiInputBase-root MuiOutlinedInput-root multi-select filtre-statut "
   onClick={[Function]}

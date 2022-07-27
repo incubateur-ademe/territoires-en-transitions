@@ -1,0 +1,8 @@
+.collectivites-filter-column-mobile {
+  position: fixed;
+  inset: 0;
+  top: 1rem;
+  padding: 1rem 1rem 1.5rem;
+  box-shadow: 0px -16px 16px 0px rgba(0, 0, 0, 0.32);
+  overflow-y: auto;
+}

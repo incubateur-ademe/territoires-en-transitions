@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Points Potentiels Augmente 1`] = `
+exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels Augmente 1`] = `
 <div
   className="fr-highlight"
   style={
@@ -24,7 +24,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Points Potentie
 </div>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Points Potentiels Desactive 1`] = `
+exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels Desactive 1`] = `
 <div
   className="fr-highlight"
   style={
@@ -54,7 +54,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Points Potentie
 </div>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Points Potentiels Non Personnalise 1`] = `
+exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels Non Personnalise 1`] = `
 <div
   className="fr-highlight"
   style={
@@ -78,7 +78,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Points Potentie
 </div>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Points Potentiels Personnalise Et Editable 1`] = `
+exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels Personnalise Et Editable 1`] = `
 <div
   className="fr-highlight"
   style={
@@ -108,7 +108,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Points Potentie
 </div>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Points Potentiels Personnalise Score Zero 1`] = `
+exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels Personnalise Score Zero 1`] = `
 <div
   className="fr-highlight"
   style={
@@ -138,7 +138,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Points Potentie
 </div>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Points Potentiels Reduit 1`] = `
+exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels Reduit 1`] = `
 <div
   className="fr-highlight"
   style={
@@ -162,7 +162,7 @@ exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Points Potentie
 </div>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Perso Potentiel Modal/Points Potentiels Reduit Deux Digits 1`] = `
+exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels Reduit Deux Digits 1`] = `
 <div
   className="fr-highlight"
   style={

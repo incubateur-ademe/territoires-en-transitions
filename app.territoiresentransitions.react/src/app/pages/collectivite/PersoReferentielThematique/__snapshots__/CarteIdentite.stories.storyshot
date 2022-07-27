@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots App/Pages/Collectivite/Perso Referentiel Thematique/Carte Identite Exemple 1 1`] = `
+exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/CarteIdentite Exemple 1 1`] = `
 Array [
   <h3>
     Informations administratives officielles

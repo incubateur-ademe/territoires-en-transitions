@@ -28,3 +28,6 @@ http-client.env.json
 
 # kong configuration
 supabase/kong.yml
+
+
+./*db.session.sql

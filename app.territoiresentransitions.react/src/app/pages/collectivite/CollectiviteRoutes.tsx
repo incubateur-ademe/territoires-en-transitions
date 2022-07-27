@@ -14,6 +14,7 @@ import {
   collectivitePersoRefPath,
   collectivitePersoRefThematiquePath,
   collectiviteLabellisationPath,
+  collectiviteAllCollectivitesPath,
 } from 'app/paths';
 import {ReferentielsPage} from 'app/pages/collectivite/Referentiels/ReferentielsPage';
 import {ActionPage} from 'app/pages/collectivite/Referentiels/ActionPage';
@@ -23,6 +24,13 @@ import {UsersPage} from 'app/pages/collectivite/Users/UsersPage';
 import {PersoReferentielPage} from './PersoReferentiel/PersoReferentielPage';
 import {PersoReferentielThematiquePage} from './PersoReferentielThematique/PersoReferentielThematiquePage';
 import {ParcoursLabellisationPage} from './ParcoursLabellisation/ParcoursLabellisationPage';
+import {ToutesLesCollectivitesPage} from '../ToutesLesCollectivites/ToutesLesCollectivitesPage';
+import {
+  CurrentCollectivite,
+  useCurrentCollectivite,
+} from 'core-logic/hooks/useCurrentCollectivite';
+import {RejoindreCetteCollectiviteDialog} from './RejoindreCetteCollectiviteDialog/RejoindreCetteCollectiviteDialog';
+import {getReferentContacts} from 'core-logic/api/procedures/collectiviteProcedures';
 
 /**
  * Routes starting with collectivite/:collectiviteId/ see App.ts Router.
@@ -31,8 +39,10 @@ import {ParcoursLabellisationPage} from './ParcoursLabellisation/ParcoursLabelli
  */
 export const CollectiviteRoutes = () => {
   const {path} = useRouteMatch();
+  const currentCollectivite = useCurrentCollectivite();
   return (
     <>
+      <CollectiviteReadOnlyBanner collectivite={currentCollectivite} />
       <Route path={collectiviteReferentielPath}>
         <ReferentielsPage />
       </Route>
@@ -66,6 +76,30 @@ export const CollectiviteRoutes = () => {
       <Route path={collectiviteLabellisationPath}>
         <ParcoursLabellisationPage />
       </Route>
+      <Route path={collectiviteAllCollectivitesPath}>
+        <ToutesLesCollectivitesPage />
+      </Route>
     </>
   );
+};
+
+const CollectiviteReadOnlyBanner = ({
+  collectivite,
+}: {
+  collectivite: CurrentCollectivite | null;
+}) => {
+  if (!!collectivite && collectivite.readonly)
+    return (
+      <div
+        data-test="ReadOnlyBanner"
+        className="flex justify-center items-center bg-yellow-400 py-4 bg-opacity-70"
+      >
+        <div className="text-sm mr-4">Lecture seule</div>
+        <RejoindreCetteCollectiviteDialog
+          getReferentContacts={getReferentContacts}
+          collectivite={collectivite}
+        />
+      </div>
+    );
+  return null;
 };

@@ -1,0 +1,843 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots app/pages/ToutesLesCollectivites/components/CollectiviteCarte Carte Collectivite Au Nom Court 1`] = `
+<ul>
+  <a
+    className="!shadow-none cursor-default, pointer-events-none"
+    href="/"
+    onClick={[Function]}
+  >
+    <div
+      className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+      data-test="CollectiviteCarte"
+    >
+      <div
+        className="md:text-lg text-base font-bold mb-4"
+      >
+        Ploemeur
+      </div>
+      <div
+        className="flex justify-between gap-1 sm:gap-4 mt-auto"
+      >
+        <div
+          className="flex flex-col flex-1 gap-2 "
+          style={
+            Object {
+              "color": "#666666",
+            }
+          }
+        >
+          <div
+            style={
+              Object {
+                "fontSize": "14px",
+              }
+            }
+          >
+            Climat Air Énergie
+          </div>
+          <div
+            className="flex flex-col gap-1"
+            style={
+              Object {
+                "fontSize": "12px",
+              }
+            }
+          >
+            <div
+              className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1"
+            >
+              <div
+                className="scale-75"
+              >
+                <svg
+                  fill="none"
+                  height="38"
+                  viewBox="0 0 39 38"
+                  width="39"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+                    fill="#00A95F"
+                  />
+                </svg>
+              </div>
+              <div
+                className="scale-75"
+              >
+                <svg
+                  fill="none"
+                  height="38"
+                  viewBox="0 0 39 38"
+                  width="39"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+                    fill="#00A95F"
+                  />
+                </svg>
+              </div>
+              <div
+                className="scale-75"
+              >
+                <svg
+                  fill="none"
+                  height="38"
+                  viewBox="0 0 39 38"
+                  width="39"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+                    fill="#00A95F"
+                  />
+                </svg>
+              </div>
+              <div
+                className="scale-75"
+              >
+                <svg
+                  fill="none"
+                  height="38"
+                  viewBox="0 0 39 38"
+                  width="39"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+                    fill="#e5e5e5"
+                  />
+                </svg>
+              </div>
+              <div
+                className="scale-75"
+              >
+                <svg
+                  fill="none"
+                  height="38"
+                  viewBox="0 0 39 38"
+                  width="39"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+                    fill="#e5e5e5"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div>
+               
+              <svg
+                className="inline-block mr-3"
+                fill="none"
+                height="24"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M11.602 13.7615L13.014 15.1735L21.48 6.70747L22.894 8.12147L13.014 18.0015L6.65 11.6375L8.064 10.2235L10.189 12.3485L11.602 13.7605V13.7615ZM11.604 10.9335L16.556 5.98047L17.966 7.39047L13.014 12.3435L11.604 10.9335ZM8.777 16.5885L7.364 18.0015L1 11.6375L2.414 10.2235L3.827 11.6365L3.826 11.6375L8.777 16.5885V16.5885Z"
+                  fill="#00A95F"
+                />
+              </svg>
+              <span
+                className="font-semibold"
+              >
+                0%
+              </span>
+               
+              réalisé courant
+            </div>
+            <div>
+              <i
+                className="fr-icon fr-fi-calendar-line before:text-[#417DC4] mr-2"
+              />
+               
+              <span
+                className="font-semibold"
+              >
+                51%
+              </span>
+               
+              programmé
+            </div>
+          </div>
+        </div>
+        <div
+          className="w-px bg-gray-200"
+        />
+        <div
+          className="flex flex-col flex-1 gap-2 "
+          style={
+            Object {
+              "color": "#666666",
+            }
+          }
+        >
+          <div
+            style={
+              Object {
+                "fontSize": "14px",
+              }
+            }
+          >
+            Économie Circulaire
+          </div>
+          <div
+            className="flex flex-col gap-1"
+            style={
+              Object {
+                "fontSize": "12px",
+              }
+            }
+          >
+            <div
+              className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1"
+            >
+              <div
+                className="scale-75"
+              >
+                <svg
+                  fill="none"
+                  height="38"
+                  viewBox="0 0 39 38"
+                  width="39"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+                    fill="#e5e5e5"
+                  />
+                </svg>
+              </div>
+              <div
+                className="scale-75"
+              >
+                <svg
+                  fill="none"
+                  height="38"
+                  viewBox="0 0 39 38"
+                  width="39"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+                    fill="#e5e5e5"
+                  />
+                </svg>
+              </div>
+              <div
+                className="scale-75"
+              >
+                <svg
+                  fill="none"
+                  height="38"
+                  viewBox="0 0 39 38"
+                  width="39"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+                    fill="#e5e5e5"
+                  />
+                </svg>
+              </div>
+              <div
+                className="scale-75"
+              >
+                <svg
+                  fill="none"
+                  height="38"
+                  viewBox="0 0 39 38"
+                  width="39"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+                    fill="#e5e5e5"
+                  />
+                </svg>
+              </div>
+              <div
+                className="scale-75"
+              >
+                <svg
+                  fill="none"
+                  height="38"
+                  viewBox="0 0 39 38"
+                  width="39"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+                    fill="#e5e5e5"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div>
+               
+              <svg
+                className="inline-block mr-3"
+                fill="none"
+                height="24"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M11.602 13.7615L13.014 15.1735L21.48 6.70747L22.894 8.12147L13.014 18.0015L6.65 11.6375L8.064 10.2235L10.189 12.3485L11.602 13.7605V13.7615ZM11.604 10.9335L16.556 5.98047L17.966 7.39047L13.014 12.3435L11.604 10.9335ZM8.777 16.5885L7.364 18.0015L1 11.6375L2.414 10.2235L3.827 11.6365L3.826 11.6375L8.777 16.5885V16.5885Z"
+                  fill="#00A95F"
+                />
+              </svg>
+              <span
+                className="font-semibold"
+              >
+                0%
+              </span>
+               
+              réalisé courant
+            </div>
+            <div>
+              <i
+                className="fr-icon fr-fi-calendar-line before:text-[#417DC4] mr-2"
+              />
+               
+              <span
+                className="font-semibold"
+              >
+                10%
+              </span>
+               
+              programmé
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </a>
+</ul>
+`;
+
+exports[`Storyshots app/pages/ToutesLesCollectivites/components/CollectiviteCarte Carte Collectivite Au Nom Long 1`] = `
+<ul>
+  <a
+    className="!shadow-none cursor-default, pointer-events-none"
+    href="/"
+    onClick={[Function]}
+  >
+    <div
+      className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+      data-test="CollectiviteCarte"
+    >
+      <div
+        className="md:text-lg text-base font-bold mb-4"
+      >
+        SI de l'Entre-deux-Mers Ouest pour la collecte et le traitement des ordures ménagères (SEMOCTOM)
+      </div>
+      <div
+        className="flex justify-between gap-1 sm:gap-4 mt-auto"
+      >
+        <div
+          className="flex flex-col flex-1 gap-2 "
+          style={
+            Object {
+              "color": "#666666",
+            }
+          }
+        >
+          <div
+            style={
+              Object {
+                "fontSize": "14px",
+              }
+            }
+          >
+            Climat Air Énergie
+          </div>
+          <div
+            className="flex flex-col gap-1"
+            style={
+              Object {
+                "fontSize": "12px",
+              }
+            }
+          >
+            <div
+              className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1"
+            >
+              <div
+                className="scale-75"
+              >
+                <svg
+                  fill="none"
+                  height="38"
+                  viewBox="0 0 39 38"
+                  width="39"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+                    fill="#00A95F"
+                  />
+                </svg>
+              </div>
+              <div
+                className="scale-75"
+              >
+                <svg
+                  fill="none"
+                  height="38"
+                  viewBox="0 0 39 38"
+                  width="39"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+                    fill="#e5e5e5"
+                  />
+                </svg>
+              </div>
+              <div
+                className="scale-75"
+              >
+                <svg
+                  fill="none"
+                  height="38"
+                  viewBox="0 0 39 38"
+                  width="39"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+                    fill="#e5e5e5"
+                  />
+                </svg>
+              </div>
+              <div
+                className="scale-75"
+              >
+                <svg
+                  fill="none"
+                  height="38"
+                  viewBox="0 0 39 38"
+                  width="39"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+                    fill="#e5e5e5"
+                  />
+                </svg>
+              </div>
+              <div
+                className="scale-75"
+              >
+                <svg
+                  fill="none"
+                  height="38"
+                  viewBox="0 0 39 38"
+                  width="39"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+                    fill="#e5e5e5"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div>
+               
+              <svg
+                className="inline-block mr-3"
+                fill="none"
+                height="24"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M11.602 13.7615L13.014 15.1735L21.48 6.70747L22.894 8.12147L13.014 18.0015L6.65 11.6375L8.064 10.2235L10.189 12.3485L11.602 13.7605V13.7615ZM11.604 10.9335L16.556 5.98047L17.966 7.39047L13.014 12.3435L11.604 10.9335ZM8.777 16.5885L7.364 18.0015L1 11.6375L2.414 10.2235L3.827 11.6365L3.826 11.6375L8.777 16.5885V16.5885Z"
+                  fill="#00A95F"
+                />
+              </svg>
+              <span
+                className="font-semibold"
+              >
+                13%
+              </span>
+               
+              réalisé courant
+            </div>
+            <div>
+              <i
+                className="fr-icon fr-fi-calendar-line before:text-[#417DC4] mr-2"
+              />
+               
+              <span
+                className="font-semibold"
+              >
+                39%
+              </span>
+               
+              programmé
+            </div>
+          </div>
+        </div>
+        <div
+          className="w-px bg-gray-200"
+        />
+        <div
+          className="flex flex-col flex-1 gap-2 "
+          style={
+            Object {
+              "color": "#666666",
+            }
+          }
+        >
+          <div
+            style={
+              Object {
+                "fontSize": "14px",
+              }
+            }
+          >
+            Économie Circulaire
+          </div>
+          <div
+            className="flex flex-col gap-1"
+            style={
+              Object {
+                "fontSize": "12px",
+              }
+            }
+          >
+            <div
+              className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1"
+            >
+              <div
+                className="scale-75"
+              >
+                <svg
+                  fill="none"
+                  height="38"
+                  viewBox="0 0 39 38"
+                  width="39"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+                    fill="#00A95F"
+                  />
+                </svg>
+              </div>
+              <div
+                className="scale-75"
+              >
+                <svg
+                  fill="none"
+                  height="38"
+                  viewBox="0 0 39 38"
+                  width="39"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+                    fill="#e5e5e5"
+                  />
+                </svg>
+              </div>
+              <div
+                className="scale-75"
+              >
+                <svg
+                  fill="none"
+                  height="38"
+                  viewBox="0 0 39 38"
+                  width="39"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+                    fill="#e5e5e5"
+                  />
+                </svg>
+              </div>
+              <div
+                className="scale-75"
+              >
+                <svg
+                  fill="none"
+                  height="38"
+                  viewBox="0 0 39 38"
+                  width="39"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+                    fill="#e5e5e5"
+                  />
+                </svg>
+              </div>
+              <div
+                className="scale-75"
+              >
+                <svg
+                  fill="none"
+                  height="38"
+                  viewBox="0 0 39 38"
+                  width="39"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+                    fill="#e5e5e5"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div>
+               
+              <svg
+                className="inline-block mr-3"
+                fill="none"
+                height="24"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M11.602 13.7615L13.014 15.1735L21.48 6.70747L22.894 8.12147L13.014 18.0015L6.65 11.6375L8.064 10.2235L10.189 12.3485L11.602 13.7605V13.7615ZM11.604 10.9335L16.556 5.98047L17.966 7.39047L13.014 12.3435L11.604 10.9335ZM8.777 16.5885L7.364 18.0015L1 11.6375L2.414 10.2235L3.827 11.6365L3.826 11.6375L8.777 16.5885V16.5885Z"
+                  fill="#00A95F"
+                />
+              </svg>
+              <span
+                className="font-semibold"
+              >
+                59%
+              </span>
+               
+              réalisé courant
+            </div>
+            <div>
+              <i
+                className="fr-icon fr-fi-calendar-line before:text-[#417DC4] mr-2"
+              />
+               
+              <span
+                className="font-semibold"
+              >
+                51%
+              </span>
+               
+              programmé
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </a>
+</ul>
+`;
+
+exports[`Storyshots app/pages/ToutesLesCollectivites/components/CollectiviteCarte Carte Collectivite Syndicat 1`] = `
+<ul>
+  <a
+    className="!shadow-none cursor-default, pointer-events-none"
+    href="/"
+    onClick={[Function]}
+  >
+    <div
+      className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+      data-test="CollectiviteCarte"
+    >
+      <div
+        className="md:text-lg text-base font-bold mb-4"
+      >
+        SYTEVOM SYndicat Transfert Elimination Valorisation des Ordures ménagères
+      </div>
+      <div
+        className="flex justify-between gap-1 sm:gap-4 mt-auto"
+      >
+        <div
+          className="flex flex-col flex-1 gap-2 "
+          style={
+            Object {
+              "color": "#666666",
+            }
+          }
+        >
+          <div
+            style={
+              Object {
+                "fontSize": "14px",
+              }
+            }
+          >
+            Climat Air Énergie
+          </div>
+          <div
+            className="my-auto mr-auto font-light italic text-center"
+          >
+            Non concerné
+          </div>
+        </div>
+        <div
+          className="w-px bg-gray-200"
+        />
+        <div
+          className="flex flex-col flex-1 gap-2 "
+          style={
+            Object {
+              "color": "#666666",
+            }
+          }
+        >
+          <div
+            style={
+              Object {
+                "fontSize": "14px",
+              }
+            }
+          >
+            Économie Circulaire
+          </div>
+          <div
+            className="flex flex-col gap-1"
+            style={
+              Object {
+                "fontSize": "12px",
+              }
+            }
+          >
+            <div
+              className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1"
+            >
+              <div
+                className="scale-75"
+              >
+                <svg
+                  fill="none"
+                  height="38"
+                  viewBox="0 0 39 38"
+                  width="39"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+                    fill="#00A95F"
+                  />
+                </svg>
+              </div>
+              <div
+                className="scale-75"
+              >
+                <svg
+                  fill="none"
+                  height="38"
+                  viewBox="0 0 39 38"
+                  width="39"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+                    fill="#e5e5e5"
+                  />
+                </svg>
+              </div>
+              <div
+                className="scale-75"
+              >
+                <svg
+                  fill="none"
+                  height="38"
+                  viewBox="0 0 39 38"
+                  width="39"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+                    fill="#e5e5e5"
+                  />
+                </svg>
+              </div>
+              <div
+                className="scale-75"
+              >
+                <svg
+                  fill="none"
+                  height="38"
+                  viewBox="0 0 39 38"
+                  width="39"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+                    fill="#e5e5e5"
+                  />
+                </svg>
+              </div>
+              <div
+                className="scale-75"
+              >
+                <svg
+                  fill="none"
+                  height="38"
+                  viewBox="0 0 39 38"
+                  width="39"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+                    fill="#e5e5e5"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div>
+               
+              <svg
+                className="inline-block mr-3"
+                fill="none"
+                height="24"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M11.602 13.7615L13.014 15.1735L21.48 6.70747L22.894 8.12147L13.014 18.0015L6.65 11.6375L8.064 10.2235L10.189 12.3485L11.602 13.7605V13.7615ZM11.604 10.9335L16.556 5.98047L17.966 7.39047L13.014 12.3435L11.604 10.9335ZM8.777 16.5885L7.364 18.0015L1 11.6375L2.414 10.2235L3.827 11.6365L3.826 11.6375L8.777 16.5885V16.5885Z"
+                  fill="#00A95F"
+                />
+              </svg>
+              <span
+                className="font-semibold"
+              >
+                39%
+              </span>
+               
+              réalisé courant
+            </div>
+            <div>
+              <i
+                className="fr-icon fr-fi-calendar-line before:text-[#417DC4] mr-2"
+              />
+               
+              <span
+                className="font-semibold"
+              >
+                51%
+              </span>
+               
+              programmé
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </a>
+</ul>
+`;

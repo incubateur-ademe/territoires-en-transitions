@@ -3,8 +3,8 @@ import {FieldProps} from 'formik';
 import {v4 as uuid} from 'uuid';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
-import {actionToEmoji, shortenLabel} from './utils';
 import {useActionTitleList} from 'core-logic/hooks/referentiel';
+import {shortenLabel} from 'app/pages/collectivite/PlanActions/Forms/utils';
 
 type ActionsFieldProps = {
   label: string;
@@ -35,7 +35,7 @@ export const ActionsField: FC<ActionsFieldProps & FieldProps> = ({
     .map(title => title.id);
   const renderActionOption = (actionId: string) => {
     const title = titles.find(title => title.id === actionId)!;
-    return `${actionToEmoji(title)} ${title.identifiant} - ${title.nom}`;
+    return `${title.referentiel} ${title.identifiant} - ${title.nom}`;
   };
 
   return (

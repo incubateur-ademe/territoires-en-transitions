@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots App/Pages/Toutes Les Collectivites/Select Dropdown Selection Aucun Par Defaut 1`] = `
+exports[`Storyshots app/pages/ToutesLesCollectivites/SelectDropdown Selection Aucun Par Defaut 1`] = `
 <ul>
   <div>
     <div

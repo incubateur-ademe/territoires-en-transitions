@@ -44,10 +44,9 @@ export const referentielDownToAction = async (
   });
 
   if (error) {
-    console.error(error);
+    console.error('Error calling rpc referentiel_down_to_action', error);
     return [];
   }
-
   return data as ActionDefinitionSummary[];
 };
 

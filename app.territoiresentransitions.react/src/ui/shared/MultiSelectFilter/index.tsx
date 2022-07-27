@@ -73,6 +73,7 @@ export const MultiSelectFilter = (props: TMultiSelectFilterProps) => {
       value={values}
       variant="outlined"
       IconComponent={() => null}
+      displayEmpty
       renderValue={() => (
         <span className={`${icon} fr-fi--sm`}>&nbsp;{label}</span>
       )}

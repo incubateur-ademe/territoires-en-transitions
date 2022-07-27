@@ -21,7 +21,7 @@ export const createAgentInvitation = async (
     return {message: error.message};
   }
 
-  return data as any as AgentInvitationResponse;
+  return data as unknown as AgentInvitationResponse;
 };
 
 export interface LatestInvitationResponse {
@@ -36,16 +36,19 @@ export interface LatestInvitationResponse {
 export const fetchAgentInvitation = async (
   collectiviteId: number
 ): Promise<LatestInvitationResponse> => {
-  const {data, error} = await supabaseClient.rpc('latest_invitation', {
-    collectivite_id: collectiviteId,
-  });
+  const {data, error} = await supabaseClient.rpc<LatestInvitationResponse>(
+    'latest_invitation',
+    {
+      collectivite_id: collectiviteId,
+    }
+  );
 
   if (error) {
     console.error(error);
     return {message: error.message};
   }
 
-  return data as any as LatestInvitationResponse;
+  return data as unknown as LatestInvitationResponse;
 };
 
 /**

@@ -5,6 +5,7 @@ import {AnyIndicateurValueRead} from 'generated/dataLayer/any_indicateur_value_w
 import {Line} from 'react-chartjs-2';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {Spacer} from 'ui/shared/Spacer';
+import {CanvasDownloadButton} from 'ui/charts/CanvasDownloadButton';
 
 const range = (start: number, end: number) => {
   const length = end + 1 - start;
@@ -129,21 +130,11 @@ function AnyIndicateurLineChart<T extends string | number>(props: {
         />
       </div>
       <Spacer />
-      <a
-        className="fr-btn fr-btn--secondary ml-7 mt-7"
-        id="download"
-        download={`${props.title}.png`}
-        href=""
-        onClick={() => {
-          const canvas = document.getElementById(canvasId) as HTMLCanvasElement;
-          if (canvas) {
-            (document.getElementById('download') as HTMLLinkElement).href =
-              canvas.toDataURL();
-          }
-        }}
-      >
-        Télécharger le graphique en .png
-      </a>
+      <CanvasDownloadButton
+        fileName={props.title + '.png'}
+        canvasId={canvasId}
+        buttonText="Télécharger le graphique en .png"
+      />
     </div>
   );
 }

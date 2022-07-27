@@ -1,6 +1,8 @@
+import {useParcoursLabellisation} from 'app/pages/collectivite/ParcoursLabellisation/useParcoursLabellisation';
 import {
   makeCollectiviteLabellisationUrl,
   makeCollectiviteReferentielUrl,
+  ReferentielParamOption,
 } from 'app/paths';
 import {actionAvancementColors} from 'app/theme';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
@@ -8,8 +10,8 @@ import {indicateurResultatRepository} from 'core-logic/api/repositories/AnyIndic
 import {useAllIndicateurDefinitionsForGroup} from 'core-logic/hooks/indicateur_definition';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useReferentielDownToAction} from 'core-logic/hooks/referentiel';
-import {scoreBloc, ScoreBloc} from 'core-logic/observables/scoreBloc';
-import {observer} from 'mobx-react-lite';
+import {ReferentielsActionScores, useScores} from 'core-logic/hooks/scoreHooks';
+import {LabellisationDemandeRead} from 'generated/dataLayer/labellisation_demande_read';
 import {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
 import {ActionScore} from 'types/ClientScore';
@@ -18,11 +20,12 @@ import {DoughnutWithNumber} from 'ui/charts/DoughnutWithNumber';
 import {ReferentielAxisAvancementStackedBar} from 'ui/charts/ReferentielAxisAvancementStackedBar';
 import {ReferentielAxisScoresPolarArea} from 'ui/charts/ReferentielAxisScoresPolarArea';
 import {Spacer} from 'ui/shared/Spacer';
-import {refToEmoji} from 'utils/refToEmoji';
 import {toFixed} from 'utils/toFixed';
-import {useParcoursLabellisation} from '../ParcoursLabellisation/useParcoursLabellisation';
 import {NiveauLabellisation} from './NiveauLabellisation';
-import {useLabellisationParNiveau} from './useLabellisationParNiveau';
+import {
+  LabellisationParNiveauRead,
+  useLabellisationParNiveau,
+} from './useLabellisationParNiveau';
 
 const remplissageColor = '#2F4077';
 
@@ -30,24 +33,42 @@ const axisLabels: Record<string, string[][]> = {
   eci_1: [['1. Stratégie globale']],
   eci_2: [
     ['2. Services de'],
-    ['réduction, collecte et'],
+    ['réduction,'],
+    ['collecte et'],
     ['valorisation des déchets'],
   ],
   eci_3: [['3. Autres piliers'], ["de l'économie circulaire"]],
-  eci_4: [['4. Outils financiers'], ['du changement'], ['de comportement']],
+  eci_4: [
+    ['4. Outils'],
+    ['financiers du'],
+    ['changement de'],
+    ['comportement'],
+  ],
   eci_5: [['5. Coopération'], ['et engagement']],
-  cae_1: [['1. Plannification'], ['territoriale']],
-  cae_2: [['2. Patrimoine de la'], ['collectivité']],
-  cae_3: [['3. Approvisionnement,'], ['énergie, eau,'], ['assainissement']],
+  cae_1: [['1. Planification'], ['territoriale']],
+  cae_2: [['2. Patrimoine'], ['de la'], ['collectivité']],
+  cae_3: [['3. Approvisionnement'], ['énergie, eau,'], ['assainissement']],
   cae_4: [['4. Mobilité']],
   cae_5: [['5. Organisation'], ['interne']],
-  cae_6: [['6. Coopération, '], ['communication']],
+  cae_6: [['6. Coopération,'], ['communication']],
+};
+
+export type IndicateurCounts = {
+  nbOfIndicateurswithValue: number;
+  nbOfIndicateurs: number;
 };
 
 const useIndicateurCounts = (
-  indicateurGroup: 'eci' | 'cae',
-  collectiviteId: number
-) => {
+  indicateurGroup: 'eci' | 'cae'
+): IndicateurCounts => {
+  const collectiviteId = useCollectiviteId();
+
+  if (collectiviteId === null)
+    return {
+      nbOfIndicateurswithValue: 0,
+      nbOfIndicateurs: 0,
+    };
+
   const [countIndicateurWithValue, setCountIndicateurWithValue] = useState(0);
   useEffect(() => {});
   const indicateurs = useAllIndicateurDefinitionsForGroup(indicateurGroup);
@@ -82,11 +103,15 @@ const scoreRealise = (rootScore: ActionScore) => {
 };
 
 const ChiffreCles = ({
+  collectiviteId,
   rootScore,
   referentiel,
+  indicateurCounts,
 }: {
+  collectiviteId: number;
   rootScore: ActionScore;
   referentiel: 'eci' | 'cae';
+  indicateurCounts: IndicateurCounts;
 }) => {
   const bigFontSizePx = 30;
   const smallFontSizePx = 10;
@@ -102,19 +127,16 @@ const ChiffreCles = ({
   const previsionnelPercentage =
     (previsionnelPoints / rootScore.point_potentiel) * 100;
 
-  // Indicateurs key numbers
-  const collectiviteId = useCollectiviteId()!;
-  const {nbOfIndicateurswithValue, nbOfIndicateurs} = useIndicateurCounts(
-    referentiel,
-    collectiviteId
-  );
-
+  const keyNumberElementId = `${referentiel}_chiffres_cles`;
   return (
     <div>
       <div className="font-semibold text-center mb-4  text-xl">
         Chiffres clés
       </div>
-      <div className="flex flex-row justify-between items-center">
+      <div
+        id={keyNumberElementId}
+        className="flex flex-row justify-between items-center"
+      >
         <div>
           <div className="font-light text-center mb-4">Taux de remplissage</div>
           <div className="flex flex-row">
@@ -133,12 +155,14 @@ const ChiffreCles = ({
             <DoughnutWithNumber
               bigFontSizePx={bigFontSizePx}
               smallFontSizePx={smallFontSizePx}
-              bigText={nbOfIndicateurswithValue.toString()}
+              bigText={indicateurCounts.nbOfIndicateurswithValue.toString()}
               smallText="indicateurs renseignés"
-              tooltipText={`${nbOfIndicateurswithValue} indicateurs renseignés sur ${nbOfIndicateurs}.`}
+              tooltipText={`${indicateurCounts.nbOfIndicateurswithValue} indicateurs renseignés sur ${indicateurCounts.nbOfIndicateurs}.`}
               hexColor={remplissageColor}
               doughnutFillPercentage={
-                (nbOfIndicateurswithValue / nbOfIndicateurs) * 100
+                (indicateurCounts.nbOfIndicateurswithValue /
+                  indicateurCounts.nbOfIndicateurs) *
+                100
               }
               widthPx={widthPx}
             />
@@ -194,154 +218,186 @@ const ChiffreCles = ({
   );
 };
 
-// const ObjectifLabelisation = () => (
-//   <div
-//     style={{
-//       height: '200px',
-//       backgroundColor: 'rgb(0, 0, 145, .05)',
-//       borderLeft: '1px solid rgb(0, 0, 145)',
-//       padding: '8px',
-//     }}
-//   >
-//     <div className="font-semibold mb-4 ">Mon parcours de labelisation</div>
-//     Eventuellement une section sur la labelisation.
-//     <Spacer />
-//     <button className="fr-btn fr-btn--secondary">
-//       Demander la première étoile
-//     </button>
-//   </div>
-// );
+const ReferentielSection = ({
+  actions,
+  demande,
+  labellisationParNiveau,
+  scores,
+  referentielId,
+  indicateurCounts,
+  collectiviteId,
+}: {
+  actions: ActionDefinitionSummary[];
+  demande: LabellisationDemandeRead | null;
+  labellisationParNiveau: LabellisationParNiveauRead | null;
+  scores: ActionScore[];
+  referentielId: ReferentielParamOption;
+  indicateurCounts: IndicateurCounts;
+  collectiviteId: number;
+}) => {
+  const referentielRoot = actions.find(a => a.type === 'referentiel');
+  if (!referentielRoot) return null;
 
-const ReferentielSection = observer(
-  ({
-    referentielId,
-    scoreBloc,
-  }: {
-    referentielId: 'cae' | 'eci';
-    scoreBloc: ScoreBloc;
-  }) => {
-    const collectiviteId = useCollectiviteId()!;
-    const actions = useReferentielDownToAction(referentielId);
-    const labellisationParNiveau = useLabellisationParNiveau(referentielId);
-    const {demande} = useParcoursLabellisation(referentielId);
-    const referentielRoot = actions.find(a => a.type === 'referentiel');
+  const rootScore = scores.find(
+    score => score.action_id === referentielRoot.id
+  );
 
-    if (!referentielRoot) return null;
-
-    const rootScore = scoreBloc.getScore(
-      referentielRoot.id,
-      referentielRoot.referentiel
-    );
-
-    if (!rootScore) {
-      return (
-        <div>
-          <div
-            style={{padding: '10px', height: '150px'}}
-            className="flex items-center justify-center font-light"
-          >
-            Ce référentiel n’est pas encore renseigné pour votre collectivité.
-            Pour commencer à visualiser votre progression, mettez à jour les
-            statuts des actions.
-          </div>
-          <div className="flex justify-center">
-            <Link
-              className="fr-btn fr-btn--secondary "
-              to={makeCollectiviteReferentielUrl({
-                collectiviteId,
-                referentielId,
-              })}
-            >
-              Mettre à jour le référentiel
-            </Link>
-          </div>
-        </div>
-      );
-    }
-
-    const referentielAxes: ActionDefinitionSummary[] = actions.filter(
-      a => a.type === 'axe'
-    );
-
-    const axisAvancementSamples: AxisAvancementSample[] = referentielAxes
-      .map(axe => {
-        const axisScore = scoreBloc.getScore(axe.id, axe.referentiel);
-        if (!axisScore) return null;
-        const sample: AxisAvancementSample = {
-          label: axisLabels[axe.id],
-          potentielPoints: toFixed(axisScore?.point_potentiel, 0),
-          percentages: {
-            fait: (axisScore.point_fait / axisScore.point_potentiel) * 100,
-            programme:
-              (axisScore.point_programme / axisScore.point_potentiel) * 100,
-            pas_fait:
-              (axisScore.point_pas_fait / axisScore.point_potentiel) * 100,
-            non_renseigne:
-              (axisScore.point_non_renseigne / axisScore.point_potentiel) * 100,
-          },
-        };
-        return sample;
-      })
-      .filter((sample): sample is AxisAvancementSample => sample !== null);
-    const {realisePercentage} = scoreRealise(rootScore);
+  if (!rootScore || rootScore.completed_taches_count === 0) {
     return (
-      <div className="p-4">
-        {labellisationParNiveau ? (
-          <NiveauLabellisation
-            labellisationParNiveau={labellisationParNiveau}
-            realisePercentage={realisePercentage}
-          />
-        ) : null}
-        <div className="flex justify-center mb-8">
-          {!demande || demande.en_cours ? (
-            <Link
-              className="fr-btn"
-              to={makeCollectiviteLabellisationUrl({
-                collectiviteId,
-                referentielId,
-              })}
-            >
-              Décrocher les étoiles
-            </Link>
-          ) : (
-            <button className="fr-btn" disabled>
-              Demande envoyée
-            </button>
-          )}
+      <div>
+        <div
+          style={{padding: '10px', height: '150px'}}
+          className="flex items-center justify-center font-light"
+        >
+          Ce référentiel n’est pas encore renseigné pour votre collectivité.
+          Pour commencer à visualiser votre progression, mettez à jour les
+          statuts des actions.
         </div>
-        {rootScore && (
-          <ChiffreCles rootScore={rootScore} referentiel={referentielId} />
-        )}
-        <Spacer />
         <div className="flex justify-center">
-          <ReferentielAxisScoresPolarArea data={axisAvancementSamples} />
+          <Link
+            className="fr-btn fr-btn--secondary "
+            to={makeCollectiviteReferentielUrl({
+              collectiviteId,
+              referentielId,
+            })}
+          >
+            Mettre à jour le référentiel
+          </Link>
         </div>
-        <Spacer />
-        <ReferentielAxisAvancementStackedBar data={axisAvancementSamples} />
       </div>
     );
   }
-);
 
-const TableauBord = () => {
+  const referentielAxes: ActionDefinitionSummary[] = actions.filter(
+    a => a.type === 'axe'
+  );
+  const axisAvancementSamples: AxisAvancementSample[] = referentielAxes
+    .map(axe => {
+      const axisScore = scores.find(score => score.action_id === axe.id);
+      if (!axisScore) return null;
+      const sample: AxisAvancementSample = {
+        label: axisLabels[axe.id],
+        potentielPoints: toFixed(axisScore?.point_potentiel, 0),
+        percentages: {
+          fait: (axisScore.point_fait / axisScore.point_potentiel) * 100,
+          programme:
+            (axisScore.point_programme / axisScore.point_potentiel) * 100,
+          pas_fait:
+            (axisScore.point_pas_fait / axisScore.point_potentiel) * 100,
+          non_renseigne:
+            (axisScore.point_non_renseigne / axisScore.point_potentiel) * 100,
+        },
+      };
+      return sample;
+    })
+    .filter((sample): sample is AxisAvancementSample => sample !== null);
+  const {realisePercentage} = scoreRealise(rootScore);
   return (
-    <div className="bg-grey975">
+    <div className="p-4">
+      {labellisationParNiveau ? (
+        <NiveauLabellisation
+          labellisationParNiveau={labellisationParNiveau}
+          realisePercentage={realisePercentage}
+        />
+      ) : null}
+      <div className="flex justify-center mb-8">
+        {!demande || demande.en_cours ? (
+          <Link
+            className="fr-btn"
+            to={makeCollectiviteLabellisationUrl({
+              collectiviteId,
+              referentielId,
+            })}
+          >
+            Décrocher les étoiles
+          </Link>
+        ) : (
+          <button className="fr-btn" disabled>
+            Demande envoyée
+          </button>
+        )}
+      </div>
+      {rootScore && (
+        <ChiffreCles
+          collectiviteId={collectiviteId}
+          rootScore={rootScore}
+          referentiel={referentielId}
+          indicateurCounts={indicateurCounts}
+        />
+      )}
+      <Spacer />
+      <div className="flex flex-col justify-center items-center">
+        <div>
+          <ReferentielAxisScoresPolarArea
+            data={axisAvancementSamples}
+            referentiel={referentielId}
+          />
+        </div>
+      </div>
+      <Spacer />
+      <ReferentielAxisAvancementStackedBar
+        data={axisAvancementSamples}
+        referentiel={referentielId}
+      />
+    </div>
+  );
+};
+
+export type TTableauBordProps = {
+  scores: ReferentielsActionScores;
+  actions: {eci: ActionDefinitionSummary[]; cae: ActionDefinitionSummary[]};
+  demande: {
+    eci: LabellisationDemandeRead | null;
+    cae: LabellisationDemandeRead | null;
+  };
+  labellisationParNiveau: {
+    eci: LabellisationParNiveauRead | null;
+    cae: LabellisationParNiveauRead | null;
+  };
+  indicateurCounts: {eci: IndicateurCounts; cae: IndicateurCounts};
+  collectiviteId: number;
+};
+
+export const TableauBord = ({
+  scores,
+  demande,
+  labellisationParNiveau,
+  actions,
+  indicateurCounts,
+  collectiviteId,
+}: TTableauBordProps) => {
+  return (
+    <div data-test="TableauBord" className="bg-grey975">
       <div className="fr-container pt-9 pb-16">
         <main className="flex flex-row gap-4">
           <section style={{width: '600px'}} className="bg-white p-4">
             <div className="flex gap-4 justify-center font-bold text-center text-2xl text-gray">
-              <div>{refToEmoji.cae}</div>
               <div>Référentiel Climat Air Énergie</div>
             </div>
-            <ReferentielSection scoreBloc={scoreBloc} referentielId="cae" />
+            <ReferentielSection
+              collectiviteId={collectiviteId}
+              referentielId="cae"
+              actions={actions.cae}
+              labellisationParNiveau={labellisationParNiveau.cae}
+              scores={scores.cae}
+              demande={demande.cae}
+              indicateurCounts={indicateurCounts.cae}
+            />
           </section>
 
           <section style={{width: '600px'}} className="bg-white p-4">
             <div className="flex gap-4 justify-center font-bold text-center text-2xl text-gray">
-              <div>{refToEmoji.eci}</div>
               <div>Référentiel Économie Circulaire</div>
             </div>
-            <ReferentielSection scoreBloc={scoreBloc} referentielId="eci" />
+            <ReferentielSection
+              collectiviteId={collectiviteId}
+              referentielId="eci"
+              actions={actions.eci}
+              labellisationParNiveau={labellisationParNiveau.eci}
+              scores={scores.eci}
+              demande={demande.eci}
+              indicateurCounts={indicateurCounts.eci}
+            />
           </section>
         </main>
       </div>
@@ -349,4 +405,36 @@ const TableauBord = () => {
   );
 };
 
-export default TableauBord;
+export default () => {
+  const eci_actions = useReferentielDownToAction('eci');
+  const cae_actions = useReferentielDownToAction('cae');
+
+  const eci_labellisationParNiveau = useLabellisationParNiveau('eci');
+  const cae_labellisationParNiveau = useLabellisationParNiveau('cae');
+
+  const {demande: eci_demande} = useParcoursLabellisation('eci');
+  const {demande: cae_demande} = useParcoursLabellisation('cae');
+
+  const eciIndicateurCounts = useIndicateurCounts('eci');
+  const caeIndicateurCounts = useIndicateurCounts('cae');
+
+  const collectiviteId = useCollectiviteId();
+
+  const scores = useScores();
+
+  if (!collectiviteId) return null;
+
+  return (
+    <TableauBord
+      actions={{eci: eci_actions, cae: cae_actions}}
+      demande={{eci: eci_demande, cae: cae_demande}}
+      labellisationParNiveau={{
+        eci: eci_labellisationParNiveau,
+        cae: cae_labellisationParNiveau,
+      }}
+      scores={scores}
+      indicateurCounts={{eci: eciIndicateurCounts, cae: caeIndicateurCounts}}
+      collectiviteId={collectiviteId}
+    />
+  );
+};

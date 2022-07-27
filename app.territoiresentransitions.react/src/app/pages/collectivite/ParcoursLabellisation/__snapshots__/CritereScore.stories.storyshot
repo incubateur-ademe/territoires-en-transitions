@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Score Niveau 1 Atteint 1`] = `
+exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CritereScore Niveau 1 Atteint 1`] = `
 <ul>
   <li
     className="fr-mb-1w"
@@ -15,7 +15,7 @@ exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Score 
 </ul>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Score Niveau 1 Non Atteint 1`] = `
+exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CritereScore Niveau 1 Non Atteint 1`] = `
 <ul>
   <li
     className="fr-mb-1w"
@@ -32,7 +32,7 @@ exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Score 
 </ul>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Score Niveau Suivant Atteint 1`] = `
+exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CritereScore Niveau Suivant Atteint 1`] = `
 <ul>
   <li
     className="fr-mb-1w"
@@ -47,7 +47,7 @@ exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Score 
 </ul>
 `;
 
-exports[`Storyshots App/Pages/Collectivite/Parcours Labellisation/Critere Score Niveau Suivant Non Atteint 1`] = `
+exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CritereScore Niveau Suivant Non Atteint 1`] = `
 <ul>
   <li
     className="fr-mb-1w"

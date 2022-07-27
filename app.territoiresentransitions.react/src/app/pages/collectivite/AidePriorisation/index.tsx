@@ -1,6 +1,6 @@
 import {useTableData} from './useTableData';
 import {Table} from './Table';
-import {noFilters} from './filters';
+import {getFilterInfoMessage, noFilters} from './filters';
 import {getMaxDepth} from './queries';
 import {useReferentielId} from 'core-logic/hooks/params';
 
@@ -9,14 +9,10 @@ export default () => {
   const referentiel = useReferentielId();
   const {setFilters, filtersCount} = tableData;
   const labelFilters = filtersCount > 1 ? 'filtres actifs' : 'filtre actif';
-  const filterInfoMessage =
-    filtersCount > 0
-      ? `Les filtres s‘appliquent au niveau des sous-actions (${Array(
-          getMaxDepth(referentiel)
-        )
-          .fill('x')
-          .join('.')})`
-      : null;
+  const filterInfoMessage = getFilterInfoMessage(
+    filtersCount,
+    getMaxDepth(referentiel)
+  );
 
   return (
     <>

@@ -14,24 +14,24 @@ export const claimCollectivite = async (id: number): Promise<boolean> => {
   return !!data;
 };
 
-export type ReferentContactResponse = {
+export type ReferentContact = {
   email: string;
   nom: string;
   prenom: string;
 };
 
 // renvoi le contact principal (fonctionne même si on est pas membre de la coll.)
-export const referentContact = async (
+export const getReferentContacts = async (
   collectivite_id: number
-): Promise<ReferentContactResponse | null> => {
-  const {data, error} = await supabaseClient.rpc('referent_contact', {
+): Promise<ReferentContact[]> => {
+  const {data, error} = await supabaseClient.rpc('referent_contacts', {
     id: collectivite_id,
   });
 
   if (error || !data) {
-    return null;
+    return [];
   }
-  return data as unknown as ReferentContactResponse;
+  return data as unknown as ReferentContact[];
 };
 
 export type PersonneList = {

@@ -1,0 +1,83 @@
+[
+  {
+    "referentiel_down_to_action": "(eci,eci,\"{eci_2,eci_3,eci_4,eci_1,eci_5}\",0,referentiel,\"\",\"Économie Circulaire\",\"\",f,f,f,f,f,f,f)"
+  },
+  {
+    "referentiel_down_to_action": "(eci_1,eci,\"{eci_1.1,eci_1.3,eci_1.2}\",1,axe,1,\"Définition d'une stratégie globale de la politique économie circulaire et inscription dans le territoire\",\"\",f,f,f,f,f,f,f)"
+  },
+  {
+    "referentiel_down_to_action": "(eci_1.1,eci,\"{eci_1.1.1,eci_1.1.5,eci_1.1.4,eci_1.1.3,eci_1.1.2}\",2,action,1.1,\"Définir une stratégie globale de la politique Economie Circulaire et assurer un portage politique fort\",\"<p>Une stratégie territoriale de la politique Économie Circulaire et l'inscription dans le territoire nécessite un portage politique et un pilotage technique dédiés, ainsi qu'un diagnostic et une stratégie d'économie circulaire avec des objectifs et des cibles clairement exprimés, cohérents avec les documents régionaux et nationaux.</p>\n\",t,f,t,f,f,t,f)"
+  },
+  {
+    "referentiel_down_to_action": "(eci_1.2,eci,\"{eci_1.2.4,eci_1.2.2,eci_1.2.3,eci_1.2.1}\",2,action,1.2,\"Développer une démarche transversale avec l'ensemble des politiques de la collectivité\",\"<p>Une démarche transversale au sein de la collectivité implique une participation de tous les services dans l'objectif commun de développer l'économie circulaire.</p>\n<p>Les équipes pilotes de la démarche économie circulaire doivent participer à la construction et à l'amélioration de l'ensemble des politiques.</p>\n<p>Cette démarche transversale est aussi menée dans une logique d'éco-exemplarité.</p>\n\",t,f,t,f,f,f,f)"
+  },
+  {
+    "referentiel_down_to_action": "(eci_1.3,eci,\"{eci_1.3.2,eci_1.3.1}\",2,action,1.3,\"Suivre, évaluer et améliorer le déploiement de la politique Économie Circulaire\",\"<p>L'efficacité de la politique Économie Circulaire de la collectivité dépend de sa capacité à suivre, évaluer et adapter ses plans d'actions. Pour cela, la collectivité doit mettre en œuvre des outils de reporting, quantifier les résultats obtenus et adapter/réorienter régulièrement les actions envisagées.</p>\n\",t,f,t,f,f,f,f)"
+  },
+  {
+    "referentiel_down_to_action": "(eci_2,eci,\"{eci_2.2,eci_2.1,eci_2.3,eci_2.4,eci_2.5}\",1,axe,2,\"Développement des services de réduction, collecte et valorisation des déchets\",\"\",f,f,f,f,f,f,f)"
+  },
+  {
+    "referentiel_down_to_action": "(eci_2.1,eci,\"{eci_2.1.2,eci_2.1.1,eci_2.1.0,eci_2.1.3}\",2,action,2.1,\"Disposer d'un programme de prévention des déchets\",\"<p>Le Programme Local de Prévention des Déchets Ménagers et Assimilés (PLPDMA) d'un territoire vise à réduire la quantité et la nocivité des déchets (via l'atteinte d'un objectif partagé). Ce programme s'inscrit dans la durée au travers de la coordination, de la mise en place et du suivi d'actions concertées avec les acteurs locaux.</p>\n\",f,f,t,f,f,t,t)"
+  },
+  {
+    "referentiel_down_to_action": "(eci_2.2,eci,\"{eci_2.2.3,eci_2.2.1,eci_2.2.2,eci_2.2.0}\",2,action,2.2,\"Améliorer l'efficience du système de collecte\",\"<p>Souvent responsable des plus gros impacts environnementaux et des plus gros coûts, la collecte des déchets doit être pensée pour être plus efficiente en elle-même mais également être en lien avec la prévention dans une logique de réduction des déchets et en cohérence avec les moyens de traitement.</p>\n<p>L’optimisation de la collecte commence chez le producteur du déchet et doit donc être associée à une communication efficace notamment lors du déploiement de nouvelles solutions (passage de « Porte A Porte » (PAP) à « Par Apport Volontaire » (PAV), mise en place de la Tarification Incitative (TI), …).</p>\n<p>L’optimisation en elle-même consiste en un ensemble de questions dont les réponses doivent impérativement être adaptées au contexte local afin de garantir la qualité du service rendu : PAP ou PAV ? Quels flux doivent être collectés séparément et dans quels contenants ? Où placer les points de collecte pour qu'ils soient accessibles et réduire la longueur des tournées ? Quelles fréquences choisir pour les différentes tournées ? Quels véhicules de collecte utiliser et comment les utiliser efficacement ? Comment optimiser les moyens humains associés à la collecte ?</p>\n\",f,f,t,f,f,t,t)"
+  },
+  {
+    "referentiel_down_to_action": "(eci_2.3,eci,\"{eci_2.3.1,eci_2.3.3,eci_2.3.0,eci_2.3.2}\",2,action,2.3,\"Améliorer la valorisation des déchets (dont organiques)\",\"<p>La collectivité privilégie le respect de la hiérarchie des modes de traitement et tend vers des taux de recyclage et de valorisation de plus en plus élevés.</p>\n\",t,f,t,f,f,t,t)"
+  },
+  {
+    "referentiel_down_to_action": "(eci_2.4,eci,\"{eci_2.4.3,eci_2.4.0,eci_2.4.1,eci_2.4.2,eci_2.4.4,eci_2.4.5}\",2,action,2.4,\"Réduire les impacts environnementaux et sociaux de la gestion des déchets\",\"<p>La gestion des déchets génère des impacts environnementaux (liés notamment au transport...) et sociaux (pénibilité du travail, nuisances olfactives et sonores, ...) ; la réduction de ces impacts s’appuie respectivement sur l’optimisation des systèmes de transport ainsi que sur les diverses recommandations et guides des CARSAT (Caisses d’Assurance Retraite et de la Santé Au Travail).</p>\n\",t,f,t,f,f,t,t)"
+  },
+  {
+    "referentiel_down_to_action": "(eci_2.5,eci,\"{eci_2.5.2,eci_2.5.3,eci_2.5.1}\",2,action,2.5,\"Créer du lien avec les acteurs économiques du territoire pour créer des dynamiques sur leurs déchets\",\"<p>La mobilisation des acteurs économiques (entreprises industrielles et du BTP, artisans et commerçants, services tertiaires…) est indispensable pour améliorer la prévention et la gestion des déchets sur un territoire en raison des quantités et de la nature des déchets qu’ils produisent.</p>\n<p>La collectivité, dans le cadre du Service Public de Prévention et  Gestion des Déchets (SPPGD) ou de sa compétence de développement économique, crée du lien avec et entre les acteurs économiques du territoire en collaboration avec les interlocuteurs locaux des entreprises (chambres consulaires, maisons de l’emploi, agence de développement économique, associations d’entreprises …)</p>\n\",t,f,t,f,f,t,f)"
+  },
+  {
+    "referentiel_down_to_action": "(eci_3,eci,\"{eci_3.5,eci_3.7,eci_3.3,eci_3.2,eci_3.6,eci_3.1,eci_3.4}\",1,axe,3,\"Déploiement des autres piliers de l'économie circulaire dans les territoires\",\"\",f,f,f,f,f,f,f)"
+  },
+  {
+    "referentiel_down_to_action": "(eci_3.1,eci,\"{eci_3.1.1,eci_3.1.3,eci_3.1.2}\",2,action,3.1,\"Identifier et développer des filières/domaines à enjeu en lien avec l'économie circulaire sur le territoire\",\"<p>En lien avec le diagnostic de l'économie circulaire réalisé dans l'orientation 1.1, la collectivité identifie précisément les filières à enjeux sur son territoire et met en place un plan d'action &quot;boucle&quot; dédié par filière. Une boucle locale d'économie circulaire vise à conserver le plus longtemps possible dans l’économie (locale) la valeur d’un produit, de ses composants ou des matières (des ressources) en limitant la génération de déchets (et en développant le partage, la réparation, le réemploi, la réutilisation, la rénovation, la refabrication et le recyclage) dans une perspective de développement d’activité économique  (durable, faible en carbone et réduction de l'utilisation des ressources naturelles) et d’emplois locaux (ou de proximité).</p>\n\",t,f,t,f,f,t,f)"
+  },
+  {
+    "referentiel_down_to_action": "(eci_3.2,eci,\"{eci_3.2.1,eci_3.2.0,eci_3.2.2,eci_3.2.3}\",2,action,3.2,\"Réaliser des achats responsables\",\"<p>Les achats responsables consistent à acheter en tenant compte, à chaque étape du cycle de vie d'un produit ou d'une prestation, des impacts économiques (producteurs locaux, ...), environnementaux (produits et services labélisés Ecolabel européen ou autre label recommandé par l'ADEME, transport, émissions polluantes, consommation de ressources,...) et sociaux (respect des conditions de travail, égalité des sexes, accès à l'emploi pour les handicapés, ESS,...) qui sont générés.</p>\n\",t,f,t,f,f,t,f)"
+  },
+  {
+    "referentiel_down_to_action": "(eci_3.3,eci,\"{eci_3.3.2,eci_3.3.4,eci_3.3.3,eci_3.3.1}\",2,action,3.3,\"Soutenir et accompagner la consommation responsable et la sobriété des acteurs du territoire\",\"<p>La consommation responsable correspond à un engagement civique actif en vue de la qualité de vie des citoyens, mais aussi en faveur de la collectivité dans son ensemble. Elle concerne aussi bien le citoyen consommateur que l'acheteur professionnel (privé ou public).</p>\n<p>La consommation responsable consiste à nous questionner sur la pertinence de nos besoins dans une logique de sobriété et à les satisfaire en limitant l’impact négatif sur l’environnement (à toutes les étapes du cycle de vie du produit) et sur la société. Elle doit nous conduire à faire évoluer nos modes de production et de consommation et plus globalement nos modes de vie, à l’échelle individuelle et collective.</p>\n\",t,f,t,f,f,f,f)"
+  },
+  {
+    "referentiel_down_to_action": "(eci_3.4,eci,\"{eci_3.4.2,eci_3.4.1,eci_3.4.4,eci_3.4.3}\",2,action,3.4,\"Soutenir et accompagner l'écoconception des produits transformés et des services du territoire\",\"<p>L'écoconception vise, dès la conception d'un procédé, d'un bien ou d'un service, à prendre en compte l'ensemble du cycle de vie en minimisant les impacts environnementaux.</p>\n\",t,f,t,f,f,t,t)"
+  },
+  {
+    "referentiel_down_to_action": "(eci_3.5,eci,\"{eci_3.5.2,eci_3.5.1,eci_3.5.3,eci_3.5.4}\",2,action,3.5,\"Soutenir et accompagner les projets d'Ecologie Industrielle et Territoriale (EIT)\",\"<p>L'EIT s'appuie sur l'étude des flux  pour identifier et développer des synergies entre acteurs économiques d’un territoire :  substituer des flux de matières, d'énergies et d'eau, initier la mutualisation de moyens et de services, le partage d'infrastructures.</p>\n<p>L’EIT, par ses démarches collectives et volontaires menées sur un territoire en vue d’en optimiser les ressources, réconcilie ainsi développement économique et meilleur usage des ressources, en privilégiant l’ancrage des activités et de l’emploi dans les territoires.</p>\n<p>Une collectivité qui soutient et accompagne ce type de projet intervient à différents stades :</p>\n<ul>\n<li>\n<p>impulsion : mise en réseau et sensibilisation des acteurs</p>\n</li>\n<li>\n<p>opération : accompagner</p>\n</li>\n<li>\n<p>financement</p>\n</li>\n</ul>\n\",t,f,t,f,f,t,f)"
+  },
+  {
+    "referentiel_down_to_action": "(eci_3.6,eci,\"{eci_3.6.1,eci_3.6.4,eci_3.6.3,eci_3.6.2}\",2,action,3.6,\"Soutenir et accompagner l'économie de la fonctionnalité et de la coopération\",\"<p>L’économie de la fonctionnalité et de la coopération établit une nouvelle relation entre l’offre et la demande qui n’est plus uniquement basée sur la simple vente de biens ou de services. La contractualisation repose sur les effets utiles (bénéfices) et l’offre s’adapte aux besoins réels des personnes, des entreprises et des collectivités ainsi qu’aux enjeux relatifs au développement durable. Ce modèle économique induit plus largement des transformations profondes dans les modes de production et de consommation. Les solutions doivent permettre une moindre consommation des ressources naturelles dans une perspective d’économie circulaire, un accroissement du bien-être des personnes et un développement économique.</p>\n<p>L’économie de la fonctionnalité et de la coopération propose un mode de développement économique basé sur la coopération entre les entreprises, les bénéficiaires des offres, voire les collectivités territoriales pour proposer des services adaptés aux différents usages. Elle induite des transformations profondes des modes de productions et des modes de vie. Elle vise à accroître les effets positifs sur la société tout en évitant la surproduction et la surconsommation.</p>\n\",t,f,t,f,f,t,f)"
+  },
+  {
+    "referentiel_down_to_action": "(eci_3.7,eci,\"{eci_3.7.1,eci_3.7.2}\",2,action,3.7,\"Soutenir et accompagner la recherche, l'innovation et l'expérimentation\",\"<p>La collectivité soutient des projets de recherche et d'innovation (R&amp;I), tant sur le volet technologique qu'organisationnel afin de promouvoir les pratiques d'économie circulaire (hors 3.4 à 3.7).</p>\n\",f,f,t,f,f,t,f)"
+  },
+  {
+    "referentiel_down_to_action": "(eci_4,eci,\"{eci_4.2,eci_4.1,eci_4.3}\",1,axe,4,\"Outils financiers du changement de comportement\",\"\",f,f,f,f,f,f,f)"
+  },
+  {
+    "referentiel_down_to_action": "(eci_4.1,eci,\"{eci_4.1.1,eci_4.1.3,eci_4.1.4,eci_4.1.2,eci_4.1.0}\",2,action,4.1,\"Connaître les coûts de la gestion des déchets pour maîtriser les dépenses publiques\",\"<p>La maîtrise des dépenses publiques se caractérise par la capacité de la collectivité à identifier les marges de manœuvre économiques des services dont elle a la maîtrise d'ouvrage tout en maintenant la qualité du service. Concernant l'économie circulaire, il s'agit principalement de la collecte et du traitement des déchets mais aussi d'autres actions en faveur de l'économie circulaire. Cela nécessite un suivi précis et détaillé des coûts et permet, in fine, de mettre en place des actions optimisant ces coûts.</p>\n\",t,f,t,f,f,t,t)"
+  },
+  {
+    "referentiel_down_to_action": "(eci_4.2,eci,\"{eci_4.2.3,eci_4.2.1,eci_4.2.2,eci_4.2.4,eci_4.2.5}\",2,action,4.2,\"Mettre en place un système de financement qui encourage l'adhésion aux pratiques de l'économie circulaire\",\"<p>Un système de financement adapté peut être un levier de sensibilisation important pour susciter l'adhésion aux pratiques de l'économie circulaire. Un tel système de financement vise au changement de comportement des acteurs du territoire et bénéficiaires des financements.</p>\n\",t,f,t,f,f,t,t)"
+  },
+  {
+    "referentiel_down_to_action": "(eci_4.3,eci,\"{eci_4.3.3,eci_4.3.1,eci_4.3.2,eci_4.3.4}\",2,action,4.3,\"Promouvoir et mettre en place des outils financiers en faveur de l'économie circulaire à destination des autres acteurs du territoire\",\"<p>Les outils financiers constituent une voie de mobilisation des autres acteurs du territoire. La collectivité peut promouvoir les financements tiers et l'émergence de nouveaux modèles économiques.</p>\n\",f,f,t,f,f,t,t)"
+  },
+  {
+    "referentiel_down_to_action": "(eci_5,eci,\"{eci_5.1,eci_5.3,eci_5.2}\",1,axe,5,\"Coopération et engagement\",\"\",f,f,f,f,f,f,f)"
+  },
+  {
+    "referentiel_down_to_action": "(eci_5.1,eci,\"{eci_5.1.1,eci_5.1.2,eci_5.1.3}\",2,action,5.1,\"Actions dirigées vers le Grand Public et les associations\",\"<p>L'objectif est d'encourager la collectivité à mettre en place une politique d'actions avec les cibles grand public (citoyens, scolaires, groupements citoyens associatifs ou non, ...) sur l'ensemble des 7 piliers de l'économie circulaire.</p>\n<p>Les actions pris en compte dans cette orientation doivent être en cours de validité ou avoir été réalisé dans les derniers 4 ans.</p>\n\",t,f,t,f,f,t,f)"
+  },
+  {
+    "referentiel_down_to_action": "(eci_5.2,eci,\"{eci_5.2.2,eci_5.2.1,eci_5.2.3}\",2,action,5.2,\"Actions dirigées vers les autres collectivités du territoire\",\"<p>L'objectif est d'encourager la collectivité à déployer une politique d'actions économie circulaire vers les collectivités infra et supra qui interviennent sur son territoire sur l'ensemble des 7 piliers de l'économie circulaire.</p>\n<p>Ces actions peuvent être déjà mentionnées dans les axes précédents.</p>\n\",t,f,t,f,f,f,f)"
+  },
+  {
+    "referentiel_down_to_action": "(eci_5.3,eci,\"{eci_5.3.3,eci_5.3.2,eci_5.3.1}\",2,action,5.3,\"Actions dirigées vers les acteurs économiques (TPE/PME, grandes entreprises, commerçants, artisans, … y compris associations à activité économique et acteurs économiques publics : type CHU, EHPAD, SEM, ...)\",\"<p>L'objectif est d'encourager la collectivité à déployer une politique d'actions économie circulaire vers les acteurs économiques du territoire, sur l'ensemble des 7 piliers de l'économie circulaire.</p>\n\",t,f,t,f,f,t,f)"
+  }
+]

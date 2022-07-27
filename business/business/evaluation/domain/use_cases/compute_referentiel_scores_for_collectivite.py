@@ -75,7 +75,7 @@ class ComputeReferentielScoresForCollectivite(UseCase):
         self.referentiel_action_level = referentiel_action_level or {"eci": 2, "cae": 3}
 
     @timeit("ComputeReferentielScoresForCollectivite.execute")
-    def execute(self, command: events.ActionStatutOrConsequenceUpdatedForCollectivite):
+    def execute(self, command: events.TriggerNotationForCollectiviteForReferentiel):
         point_tree_referentiel = self.points_trees.get(command.referentiel)
         action_level = self.referentiel_action_level[command.referentiel]
         if point_tree_referentiel is None:

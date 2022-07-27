@@ -13,9 +13,9 @@ import {
   useReferentielVue,
 } from 'core-logic/hooks/params';
 import {ReferentielOfIndicateur} from 'types/litterals';
-import DetailTacheTable from '../DetailTaches';
-import Referentiels from './Referentiels';
 import AidePriorisation from '../AidePriorisation';
+import Progression from './Referentiels';
+import DetailTacheTable from '../DetailTaches';
 
 const TABS_INDEX: Record<ReferentielVueParamOption, number> = {
   progression: 0,
@@ -68,7 +68,7 @@ export default () => {
       </h1>
       <Tabs className="w-full" activeTab={activeTab} onChange={handleChange}>
         <Tab label="Progression">
-          <Referentiels />
+          <Progression />
         </Tab>
         <Tab label="Aide à la priorisation">
           <AidePriorisation />

@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {AnyIndicateurRepository} from 'core-logic/api/repositories/AnyIndicateurRepository';
-import {currentCollectiviteBloc} from 'core-logic/observables';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {Editable} from 'ui/shared/Editable';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
 // Here we take advantage of IndicateurPersonnaliseValue and IndicateurValue
 // having the same shape.
@@ -22,6 +22,7 @@ function AnyIndicateurValueInput<T extends string | number>({
   borderColor?: 'blue' | 'gray';
 }) {
   const collectiviteId = useCollectiviteId()!;
+  const collectivite = useCurrentCollectivite();
   const [inputValue, setInputValue] = useState<string | number>('');
 
   useEffect(() => {
@@ -47,7 +48,7 @@ function AnyIndicateurValueInput<T extends string | number>({
     setInputValue(!isNaN(floatValue) ? floatValue.toString() : '');
   };
 
-  return (
+  return collectivite ? (
     <label className="flex flex-col mx-2 j">
       <div className="flex pl-2 justify-center">{year}</div>
       <input
@@ -61,10 +62,10 @@ function AnyIndicateurValueInput<T extends string | number>({
         onBlur={convertToFloatAndStore}
         type="number"
         lang="fr"
-        disabled={currentCollectiviteBloc.readonly}
+        disabled={collectivite.readonly}
       />
     </label>
-  );
+  ) : null;
 }
 
 /**

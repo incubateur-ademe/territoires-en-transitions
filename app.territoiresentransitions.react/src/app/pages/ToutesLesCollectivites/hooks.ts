@@ -3,7 +3,7 @@ import {RegionRead} from 'generated/dataLayer/region_read';
 import {useHistory, useLocation} from 'react-router-dom';
 import {useQuery as useQueryString} from 'core-logic/hooks/query';
 import {useEffect, useState} from 'react';
-import {useQuery, useQueryClient} from 'react-query';
+import {useQuery} from 'react-query';
 import {
   fetchAllDepartements,
   fetchAllRegions,
@@ -52,6 +52,7 @@ export const useFilteredCollectivites = (
 ): {
   isLoading: boolean;
   collectivites: CollectiviteCarteRead[];
+  collectivitesCount: number;
 } => {
   // todo build args from params.
 
@@ -66,6 +67,8 @@ export const useFilteredCollectivites = (
       ...args.niveauDeLabellisation,
       ...args.referentiel,
       ...args.tauxDeRemplissage,
+      args.page,
+      args.nom,
       args.trierPar,
     ],
     () => fetchCollectiviteCards(args)
@@ -73,7 +76,8 @@ export const useFilteredCollectivites = (
 
   return {
     isLoading: isLoading,
-    collectivites: data || [],
+    collectivites: data?.collectivites || [],
+    collectivitesCount: data?.collectivitesCount || 0,
   };
 };
 

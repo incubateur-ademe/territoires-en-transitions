@@ -2,7 +2,7 @@
 
 Fonctionnalité: Accéder au site et se connecter
 
-  Scénario: Se connecter
+  Scénario: Se connecter en tant que Yolo (utilisateur déjà rattaché)
     Etant donné que j'ouvre le site
     Alors la page vérifie les conditions suivantes :
       | Elément                 | Condition |
@@ -26,12 +26,44 @@ Fonctionnalité: Accéder au site et se connecter
       | mdp   | yolododo      |
     Et que je clique sur le bouton "Valider" du "formulaire de connexion"
     Alors la page vérifie les conditions suivantes :
+      | Elément                               | Condition |
+      | header                                | visible   |
+      | home                                  | absent    |
+      | formulaire de connexion               | absent    |
+      | le tableau de bord de la collectivité | visible   |
+      | footer                                | visible   |
+
+  Scénario: Se connecter en tant que Yulu (utilisateur non encore rattaché)
+    Etant donné que j'ouvre le site
+    Alors la page vérifie les conditions suivantes :
+      | Elément                 | Condition |
+      | header                  | visible   |
+      | home                    | visible   |
+      | formulaire de connexion | absent    |
+      | footer                  | visible   |
+      | bouton support          | présent   |
+
+    Quand je clique sur le bouton "Se connecter" du "header"
+    Alors la page vérifie les conditions suivantes :
       | Elément                 | Condition |
       | header                  | visible   |
       | home                    | absent    |
-      | formulaire de connexion | absent    |
-      | mes collectivités       | visible   |
+      | formulaire de connexion | visible   |
       | footer                  | visible   |
+
+    Quand je remplis le "formulaire de connexion" avec les valeurs suivantes :
+      | Champ | Valeur        |
+      | email | yulu@dudu.com |
+      | mdp   | yulududu      |
+    Et que je clique sur le bouton "Valider" du "formulaire de connexion"
+    Alors la page vérifie les conditions suivantes :
+      | Elément                  | Condition |
+      | header                   | visible   |
+      | home                     | absent    |
+      | formulaire de connexion  | absent    |
+      | toutes les collectivités | visible   |
+      | footer                   | visible   |
+
 
   Scénario: Echouer à se connecter
     Etant donné que j'ouvre le site
@@ -61,7 +93,6 @@ Fonctionnalité: Accéder au site et se connecter
       | home                    | absent    |                                                 |
       | formulaire de connexion | visible   |                                                 |
       | formulaire de connexion | contient  | L'email et le mot de passe ne correspondent pas |
-      | mes collectivités       | absent    |                                                 |
       | footer                  | visible   |                                                 |
 
   Scénario: Demander un lien de réinitialisation du mot de passe
@@ -128,7 +159,11 @@ Fonctionnalité: Accéder au site et se connecter
     Alors la page vérifie les conditions suivantes :
       | Elément                               | Condition |
       | formulaire de connexion               | absent    |
-      | formulaire de réinitialisation du mdp | visible   |
+      | formulaire de réinitialisation du mdp | absent    |
+      | changer de mdp                        | présent   |
+
+    Quand je clique sur le bouton "changer de mdp"
+    Alors le "formulaire de réinitialisation du mdp" est visible
 
     Quand je remplis le "formulaire de réinitialisation du mdp" avec les valeurs suivantes :
       | Champ | Valeur                |
@@ -146,7 +181,11 @@ Fonctionnalité: Accéder au site et se connecter
     Alors la page vérifie les conditions suivantes :
       | Elément                               | Condition |
       | formulaire de connexion               | absent    |
-      | formulaire de réinitialisation du mdp | visible   |
+      | formulaire de réinitialisation du mdp | absent    |
+      | changer de mdp                        | présent   |
+
+    Quand je clique sur le bouton "changer de mdp"
+    Alors le "formulaire de réinitialisation du mdp" est visible
 
     Quand je remplis le "formulaire de réinitialisation du mdp" avec les valeurs suivantes :
       | Champ | Valeur                |

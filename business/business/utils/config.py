@@ -41,6 +41,7 @@ from business.evaluation.domain.ports.realtime import (
     AbstractConverter,
     AbstractRealtime,
     CollectiviteActionStatutUpdateConverter,
+    CollectiviteActivationConverter,
     CollectiviteReponseUpdateConverter,
 )
 from business.evaluation.domain.ports.action_score_repo import (
@@ -165,6 +166,7 @@ class Config:
         converters: List[AbstractConverter] = [
             CollectiviteActionStatutUpdateConverter(),
             CollectiviteReponseUpdateConverter(),
+            CollectiviteActivationConverter(),
         ]
 
         if self.ENV.realtime == "REPLAY":

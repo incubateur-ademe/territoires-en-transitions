@@ -10,9 +10,10 @@ const Template: Story<ReferentielAxisAvancementStackedBarProps> = args => (
 export const CAEExample = Template.bind({});
 
 const props: ReferentielAxisAvancementStackedBarProps = {
+  referentiel: 'cae',
   data: [
     {
-      label: [['1. Plannification'], ['territoriale']],
+      label: [['1. Planification'], ['territoriale']],
       percentages: {
         fait: 0,
         programme: 0,

@@ -1,7 +1,7 @@
 import {useHistory, useLocation} from 'react-router-dom';
 import {useEffect} from 'react';
 
-export function ScrollToTop() {
+export const ScrollToTop = () => {
   const {pathname} = useLocation();
   const history = useHistory();
 
@@ -10,4 +10,4 @@ export function ScrollToTop() {
   }, [pathname]);
 
   return null;
-}
+};

@@ -5,6 +5,11 @@ import {DepartementRead} from 'generated/dataLayer/departement_read';
 import {TCollectivitesFilters} from 'app/pages/ToutesLesCollectivites/filtreLibelles';
 import {PostgrestFilterBuilder} from '@supabase/postgrest-js';
 
+const screenIsMobile = () =>
+  window.innerHeight <= 800 && window.innerWidth <= 600;
+
+export const NB_CARDS_PER_PAGE = screenIsMobile() ? 5 : 16;
+
 // A subset of supabase FilterOperator as it not an exported type.
 type FilterOperator = 'in' | 'ov';
 
@@ -16,8 +21,7 @@ const buildQueryFromFilters = (
 ): PostgrestFilterBuilder<CollectiviteCarteRead> => {
   let query = supabaseClient
     .from<CollectiviteCarteRead>('collectivite_card')
-    .select()
-    .limit(100);
+    .select('*', {count: 'exact'});
 
   const filter = (
     column: keyof CollectiviteCarteRead,
@@ -91,6 +95,11 @@ const buildQueryFromFilters = (
     }
   }
 
+  // Nom
+  if (filters.nom) {
+    query = query.ilike('nom', `%${filters.nom}%`);
+  }
+
   //  Trier par
   let orderBy: keyof CollectiviteCarteRead;
   let ascending: boolean;
@@ -122,6 +131,13 @@ const buildQueryFromFilters = (
 
   query = query.order(orderBy, {ascending: ascending});
 
+  // Pagination
+  if (filters.page) {
+    query.range(
+      NB_CARDS_PER_PAGE * (filters.page - 1),
+      NB_CARDS_PER_PAGE * filters.page - 1
+    );
+  }
   return query;
 };
 
@@ -130,18 +146,23 @@ const buildQueryFromFilters = (
  */
 export const fetchCollectiviteCards = async (
   filters: TCollectivitesFilters
-): Promise<CollectiviteCarteRead[]> => {
+): Promise<{
+  collectivites: CollectiviteCarteRead[];
+  collectivitesCount: number;
+}> => {
   // la requête
   const query = buildQueryFromFilters(filters);
 
   // attends les données
-  const {error, data} = await query;
+  const {error, data, count} = await query;
 
   if (error) {
     throw new Error(error.message);
   }
-
-  return data || [];
+  return {
+    collectivites: data || [],
+    collectivitesCount: count ?? 0,
+  };
 };
 
 /**
@@ -163,7 +184,6 @@ export const fetchAllRegions = async (): Promise<RegionRead[]> => {
 export const fetchAllDepartements = async (): Promise<DepartementRead[]> => {
   const query = supabaseClient.from<DepartementRead>('departement').select();
   const {error, data} = await query;
-
   if (error) {
     throw new Error(error.message);
   }

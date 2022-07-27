@@ -1,8 +1,6 @@
 import InvitationLink from './InvitationLink';
 import {useEffect, useState} from 'react';
-import {observer} from 'mobx-react-lite';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {InvitationBloc} from 'core-logic/observables/invitationBloc';
 import {
   PersonneList,
   userList,
@@ -11,6 +9,8 @@ import {
 import {DcpRead} from 'generated/dataLayer/dcp_read';
 //import MainContactForm from './MainContactForm';
 import UserCard from './UserCard';
+import {useGenerateInvitation} from 'core-logic/hooks/useGenerateInvitation';
+import {useAgentInvitation} from 'core-logic/hooks/useAgentInvitation';
 
 const activeUsersByRole = (
   users: PersonneList[] | null,
@@ -57,9 +57,11 @@ const useUserList = () => {
  * Affiche la page listant les utilisateurs attachés à une collectivité
  * et le formulaire permettant d'envoyer des liens d'invitation
  */
-const Users = observer(({invitationBloc}: {invitationBloc: InvitationBloc}) => {
+const Users = () => {
   const {agents, conseillers, auditeurs, referents, removeFromCollectivite} =
     useUserList();
+  const {invitationUrl: latestUrl} = useAgentInvitation();
+  const {generateInvitation, invitationUrl} = useGenerateInvitation();
 
   const onRemove = (user_id: string) => {
     if (
@@ -72,7 +74,7 @@ const Users = observer(({invitationBloc}: {invitationBloc: InvitationBloc}) => {
   };
 
   return (
-    <main className="fr-container mt-9 mb-16">
+    <main data-test="Users" className="fr-container mt-9 mb-16">
       <h1 className="fr-h1 mb-3 whitespace-nowrap mr-4">Collaboration</h1>
 
       <h2 className="fr-h2">Lien d'invitation</h2>
@@ -82,8 +84,8 @@ const Users = observer(({invitationBloc}: {invitationBloc: InvitationBloc}) => {
       </p>
 
       <InvitationLink
-        link={invitationBloc.agentInvitationUrl}
-        onGenerateLink={() => invitationBloc.generateInvitationId()}
+        link={invitationUrl || latestUrl}
+        onGenerateLink={generateInvitation}
       />
 
       {/* <h2 className="fr-h2 mt-4">Contact principal</h2>*/}
@@ -130,6 +132,6 @@ const Users = observer(({invitationBloc}: {invitationBloc: InvitationBloc}) => {
       ) : null}
     </main>
   );
-});
+};
 
 export default Users;

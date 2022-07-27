@@ -1,3 +1,46 @@
+# Personnalisation cae 1.1.2.0.1 liee obligation PCAET
+```yaml
+action_id: cae_1.1.2.0.1
+```
+## Règles
+### Désactivation
+```formule
+si identite(type, commune)
+sinon si identite(type, EPCI) et identite(population, moins_de_20000)
+```
+Seuls les EPCI à fiscalité propre de plus de 20 000 habitants sont concernées par l'obligation de réaliser un PCAET.
+
+# Personnalisation cae 1.1.2.0.2 liee obligation BEGES
+```yaml
+action_id: cae_1.1.2.0.2
+```
+## Règles
+### Désactivation
+```formule
+identite(population, moins_de_50000)
+```
+Les collectivités de moins de 50 000 habitants ne sont pas concernées par l'obligation BEGES.
+
+# Personnalisation cae 1.1.3.1.4 liee competence collecte
+```yaml
+action_id: cae_1.1.3.1.4
+```
+## Règles
+### Désactivation
+```formule
+reponse(dechets_1, NON)
+```
+
+# Personnalisation cae 1.1.3.1.5 liee competence traitement
+```yaml
+action_id: cae_1.1.3.1.5
+```
+## Règles
+### Désactivation
+```formule
+reponse(dechets_2, NON)
+```
+
 # Réduction potentiel cae 1.2.2 liee AOM
 ```yaml
 action_id: cae_1.2.2
@@ -12,6 +55,52 @@ Pour une collectivité n'ayant pas la compétence AOM, le score de la 1.2.2 est 
 
 Pour une collectivité n'ayant pas de centre urbain de plus de 5000 habitants ET n'ayant pas la compétence AOM, le score de la 1.2.2 est réduit à 2 points.
 
+# Personnalisation cae 1.2.2.1.1 liee EPCI
+```yaml
+action_id: cae_1.2.2.1.1
+```
+## Règles
+### Désactivation
+```formule
+identite(type, commune)
+```
+
+# Personnalisation cae 1.2.2.1.3 liee commmune
+```yaml
+action_id: cae_1.2.2.1.3
+```
+## Règles
+### Désactivation
+```formule
+identite(type, EPCI)
+```
+
+
+# Personnalisation cae 1.2.2.1 liee AOM > 100 000 hab
+```yaml
+action_id: cae_1.2.2.1
+```
+## Règles
+### Réduction de potentiel
+```formule
+si reponse(AOM, OUI) et identite(population, plus_de_100000) alors 0
+```
+### Désactivation
+```formule
+reponse(AOM, OUI) et identite(population, plus_de_100000)
+```
+Pour une collectivité AOM, de plus de 100 000 habitants, la 1.2.2.1 est désactivée.
+
+# Personnalisation cae 1.2.2.5 liee AOM > 100 000 hab
+```yaml
+action_id: cae_1.2.2.5
+```
+## Règles
+### Réduction de potentiel
+```formule
+si reponse(AOM, OUI) et identite(population, plus_de_100000) alors 4,8/12
+```
+Pour une collectivité AOM, de plus de 100 000 habitants, la 1.2.2.5 est notée sur 40 % (au lieu de 30 %).
 
 # Réduction potentiel cae 1.2.3 liee competences dechets
 ```yaml
@@ -79,13 +168,13 @@ action_id: cae_1.3.3
 ```formule
 reponse(urba_1, NON) et reponse (urba_2, NON) et reponse(urba_3, NON)
 ```
-Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le statut de la 1.3.3 est "non concerné".
 
 ### Réduction de potentiel
 ```formule
 si reponse(urba_1, NON) et reponse (urba_2, NON) et reponse(urba_3, NON) alors 0
-sinon si reponse(urba_1, OUI) ou reponse(urba_2, OUI) et reponse(urba_3, OUI) alors 0.5
+sinon si reponse(urba_1, OUI) et reponse(urba_2, NON) et reponse(urba_3, NON) alors 0.5
+sinon si reponse(urba_1, NON) et reponse(urba_2, OUI) et reponse(urba_3, NON) alors 0.5
+sinon si reponse(urba_1, NON) et reponse(urba_2, NON) et reponse(urba_3, OUI) alors 0.5
 ```
-Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le score de la 1.3.3 est réduit de 100 %.
-
-Pour une collectivité ayant au moins 1 des compétences (PLU, instruction ou octroi des permis de construire), le score de la 1.3.3 est réduit de 50 %.
+Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le score de la 1.3.3 est réduit de 100 % et le statut de la 1.3.3 est "non concerné".
+Pour une collectivité n'ayant que l'une des compétences (PLU, instruction ou octroi des permis de construire), le score de la 1.3.3 est réduit de 50 %.

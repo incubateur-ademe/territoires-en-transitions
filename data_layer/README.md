@@ -11,11 +11,11 @@ Le Data-Layer est responsable des lectures/écritures en base, c'est à dire de:
 - fournir au client des vues prêtes à consommer
 
 ## Organisation du dossier
-- `postgres/content` : le contenu exporté par le `business`. Destiné à disparaitre, `business` stockera directement les
-  données par la suite
-- `postgres/definitions` : le schema du datalayer, les modèles, types et fonctions.
+- `tests` : Les test [pgtap](https://pgtap.org/).
+- `sqitch` : Les migrations [sqitch](https://sqitch.org/about/)
 - `postgres/fakes` : des fausses données utilisées pour développer/tester [readme](data_layer/postgres/fakes/README.md)
-- `postgres/tests` : début de tests en sql, on utilisera [pgtap](https://pgtap.org/) par la suite 
+- `postgres/content` : le contenu exporté par le `business`. Destiné à disparaitre, `business` stockera directement les données par la suite
+- `postgres/verify` : Permet de verifier que des features existent dans le cadre du chargement.
 - `requests` : des requêtes http pour tester l'API [readme](data_layer/requests/README.md)
 
 ## Mode d'emploi
@@ -35,12 +35,34 @@ sudo cpan TAP::Parser::SourceHandler::pgTAP
 ```
 
 Puis utiliser `sh scripts/run_tests.sh`
-   
-### API
+
+#### API
 Les tests dans http dans `/requests` peuvent être lancées soit :
 - directement depuis IntelliJ/Webstorm
 - depuis VSCode avec le plugin httpYac
 - à partir d'un terminal avec [restcli](https://github.com/restcli/restcli), qui est utilisé aussi dans docker-compose.
+
+### Ajouter une nouvelle fonctionnalité
+[Installer sqitch](https://sqitch.org/download/) ou utiliser `docker compose`.
+
+Avec sqitch en local :
+```shell
+sqitch add domaine/fonctionnalite --note 'Une nouvelle fonctionnalité.'
+```
+
+Avec docker compose :
+```shell
+docker compose run --no-deps sqitch add domaine/fonctionnalite --note 'Une nouvelle fonctionnalité.'
+```
+
+Le résultat devrait être :
+```
+Created deploy/domaine/fonctionnalite.sql
+Created revert/domaine/fonctionnalite.sql
+Created verify/domaine/fonctionnalite.sql
+Added "domaine/fonctionnalite" to sqitch.plan
+```
+
 
 ## Créer un projet sur Supabase
 Après la création du projet
