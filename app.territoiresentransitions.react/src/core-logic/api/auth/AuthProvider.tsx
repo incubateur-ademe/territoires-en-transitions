@@ -11,7 +11,7 @@ export type TAuthContext = {
   authError: string | null;
   isConnected: boolean;
 };
-type UserData = User & DCP;
+export type UserData = User & DCP;
 type DCP = {nom?: string; prenom?: string};
 
 // crée le contexte
