@@ -3,6 +3,7 @@ import {useRouteMatch} from 'react-router-dom';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useAuth} from 'core-logic/api/auth/AuthProvider';
 import {invitationIdParam, invitationLandingPath} from 'app/paths';
+import {useQueryClient} from 'react-query';
 
 type TInvitationState =
   | 'empty' // aucune invitation en cours
@@ -34,6 +35,9 @@ export const useInvitationState = () => {
     setInvitationState(getInitialState(isConnected, idFromURL));
   }
 
+  const queryClient = useQueryClient();
+  const {user} = useAuth();
+
   // réagit aux changements d'état connecté/déconnecté
   useEffect(() => {
     if (invitationId) {
@@ -42,15 +46,20 @@ export const useInvitationState = () => {
         setInvitationState('waitingForAcceptation');
       } else if (isConnected && invitationState === 'waitingForAcceptation') {
         // fait l'appel RPC pour accepter l'invitation
-        acceptAgentInvitation(invitationId).then(accepted => {
-          // et change l'état local en fonction du retour
-          setInvitationState(accepted ? 'accepted' : 'rejected');
-        });
+        acceptAgentInvitation(invitationId)
+          .then(accepted => {
+            // et change l'état local en fonction du retour
+            setInvitationState(accepted ? 'accepted' : 'rejected');
+            return accepted;
+          })
+          .then(() =>
+            queryClient.invalidateQueries(['owned_collectivites', user?.id])
+          );
       } else if (!isConnected && invitationState === 'empty') {
         setInvitationState('waitingForLogin');
       }
     }
-  }, [isConnected, invitationId]);
+  }, [isConnected, invitationId, invitationState]);
 
   return {invitationId, invitationState};
 };
