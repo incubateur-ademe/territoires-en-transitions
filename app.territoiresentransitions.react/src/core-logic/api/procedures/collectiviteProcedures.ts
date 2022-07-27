@@ -21,7 +21,7 @@ export type ReferentContact = {
 };
 
 // renvoi le contact principal (fonctionne même si on est pas membre de la coll.)
-export const getAdminContacts = async (
+export const getReferentContacts = async (
   collectivite_id: number
 ): Promise<ReferentContact[]> => {
   const {data, error} = await supabaseClient.rpc('referent_contacts', {
