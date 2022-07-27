@@ -35,7 +35,6 @@ Fonctionnalité: Associer une collectivité à mon compte
     Etant donné que je suis connecté en tant que "yolo"
 
     Quand je suis sur la page "Tableau de bord" de la collectivité "3"
-    Alors le "bandeau lecture seule" est visible
 
     Quand je clique sur le bouton "Rejoindre cette collectivité"
     Alors le "dialogue Rejoindre cette collectivité" vérifie les conditions suivantes :
