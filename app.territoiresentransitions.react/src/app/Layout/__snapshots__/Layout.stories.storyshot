@@ -49,11 +49,16 @@ exports[`Storyshots app/Layout Exemple 1`] = `
             <div
               className="fr-header__service"
             >
-              <p
-                className="fr-header__service-title pointer-events-auto"
+              <a
+                href="/"
+                title="Accueil"
               >
-                Territoires en Transitions
-              </p>
+                <p
+                  className="fr-header__service-title pointer-events-auto"
+                >
+                  Territoires en Transitions
+                </p>
+              </a>
               <p
                 className="text-sm"
               >

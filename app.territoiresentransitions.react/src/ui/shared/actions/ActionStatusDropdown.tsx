@@ -68,7 +68,7 @@ const detailleStatut: SelectableStatut = {
   color: actionAvancementColors.detaille,
   concerne: true,
   avancement: 'detaille',
-  avancement_detaille: DEFAULT_DETAIL_VALUES,
+  avancement_detaille: [0.3, 0.4, 0.3],
   label: 'Détaillé',
 };
 
@@ -111,8 +111,16 @@ export const ActionStatusDropdown = ({actionId}: {actionId: string}) => {
   const {saveActionStatut} = useSaveActionStatut(args);
 
   const handleChange: SelectInputProps['onChange'] = event => {
-    const {avancement, concerne} = statutByValue(event.target.value as number);
-    saveActionStatut({...args, ...statut, avancement, concerne});
+    const {avancement, concerne, avancement_detaille} = statutByValue(
+      event.target.value as number
+    );
+    saveActionStatut({
+      ...args,
+      ...statut,
+      avancement,
+      concerne,
+      avancement_detaille,
+    });
     if (avancement === 'detaille') {
       setOpened(true);
     }
