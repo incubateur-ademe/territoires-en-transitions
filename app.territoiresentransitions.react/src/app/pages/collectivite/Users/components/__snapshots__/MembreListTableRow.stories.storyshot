@@ -93,7 +93,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow A
       className="py-1 px-2 border border-gray-300"
     >
       <textarea
-        className="w-full resize-none"
+        className=" w-60 resize-none"
         data-test="details_fonction-textarea"
         onChange={[Function]}
         onMouseOut={[Function]}
@@ -228,7 +228,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow E
       className="py-1 px-2 border border-gray-300"
     >
       <textarea
-        className="w-full resize-none"
+        className=" w-60 resize-none"
         data-test="details_fonction-textarea"
         onChange={[Function]}
         onMouseOut={[Function]}
@@ -360,7 +360,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow L
       className="py-1 px-2 border border-gray-300"
     >
       <textarea
-        className="w-full resize-none"
+        className=" w-60 resize-none"
         data-test="details_fonction-textarea"
         onChange={[Function]}
         onMouseOut={[Function]}
@@ -492,7 +492,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow T
       className="py-1 px-2 border border-gray-300"
     >
       <textarea
-        className="w-full resize-none"
+        className=" w-60 resize-none"
         data-test="details_fonction-textarea"
         onChange={[Function]}
         onMouseOut={[Function]}

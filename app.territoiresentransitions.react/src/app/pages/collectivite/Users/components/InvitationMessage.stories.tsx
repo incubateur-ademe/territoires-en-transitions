@@ -11,5 +11,6 @@ export const AccesEdition = () => (
     currentCollectivite={fakeCurrentCollectiviteAdmin}
     currentUser={fakeUserData}
     acces="edition"
+    invitationUrl="https://invitationUrl"
   />
 );
