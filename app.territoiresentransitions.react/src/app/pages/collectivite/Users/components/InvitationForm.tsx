@@ -1,4 +1,4 @@
-import {useMemo} from 'react';
+import {useMemo, useState} from 'react';
 import {Field, FieldAttributes, FieldProps, Form, Formik} from 'formik';
 import * as Yup from 'yup';
 import {v4 as uuid} from 'uuid';
@@ -9,8 +9,8 @@ import InvitationMessage from 'app/pages/collectivite/Users/components/Invitatio
 import {NiveauAcces} from 'generated/dataLayer';
 import {
   AddUserToCollectiviteRequest,
-  useAddUserToCollectivite,
-} from 'core-logic/hooks/useAddUserToCollectivite';
+  AddUserToCollectiviteResponse,
+} from 'app/pages/collectivite/Users/useAddUserToCollectivite';
 
 type AccesOption = {
   value: NiveauAcces;
@@ -20,11 +20,15 @@ type AccesOption = {
 type InvitationFormProps = {
   currentUser: UserData;
   currentCollectivite: CurrentCollectivite;
+  addUser: (request: AddUserToCollectiviteRequest) => void;
+  addUserResponse: AddUserToCollectiviteResponse | null;
 };
 
 const InvitationForm = ({
   currentUser,
   currentCollectivite,
+  addUser,
+  addUserResponse,
 }: InvitationFormProps) => {
   const validationInvitation = Yup.object({
     email: Yup.string()
@@ -51,11 +55,7 @@ const InvitationForm = ({
       return editionOptions;
     }
   }, [currentCollectivite]);
-
-  const {data, isLoading, addUser} = useAddUserToCollectivite();
-
-  const {invitationUrl, acces} = data;
-
+  const [formIsFilling, setFormIsFilling] = useState(true);
   const onSubmitInvitation = (values: {
     email: string;
     acces: NiveauAcces | '';
@@ -63,41 +63,80 @@ const InvitationForm = ({
     const req: AddUserToCollectiviteRequest = {
       collectiviteId: currentCollectivite.collectivite_id,
       email: values.email,
-      niveau_acces: values.acces === '' ? 'lecture' : values.acces,
+      niveauAcces: values.acces === '' ? 'lecture' : values.acces,
     };
-
     addUser(req);
+    setFormIsFilling(false);
   };
 
   return (
-    <div className="max-w-4xl">
+    <div data-test="invitation-form" className="max-w-4xl">
       <Formik
         initialValues={{email: '', acces: ''}}
         validationSchema={validationInvitation}
         onSubmit={onSubmitInvitation}
       >
-        <Form className="md:flex gap-6">
+        <Form
+          className="md:flex gap-6"
+          onChange={() => {
+            setFormIsFilling(true);
+          }}
+        >
           <Field name="email" type="text" component={InvitationEmailInput} />
           <SelectField
             name="acces"
             label="Niveau d’accès pour cette collectivité"
             options={accesOptions}
           />
-          <button type="submit" className="fr-btn md:mt-7 md:mb-auto">
+          <button
+            type="submit"
+            className="fr-btn md:mt-7 md:mb-auto"
+            disabled={!formIsFilling}
+          >
             Ajouter
           </button>
         </Form>
       </Formik>
-      {invitationUrl && (
-        <InvitationMessage
+      {!formIsFilling && (
+        <AddUserResponse
+          addUserResponse={addUserResponse}
           currentCollectivite={currentCollectivite}
           currentUser={currentUser}
-          acces={acces}
-          invitationUrl={invitationUrl}
         />
       )}
     </div>
   );
+};
+
+const AddUserResponse = ({
+  addUserResponse,
+  currentCollectivite,
+  currentUser,
+}: {
+  addUserResponse: AddUserToCollectiviteResponse | null;
+  currentCollectivite: CurrentCollectivite;
+  currentUser: UserData;
+}) => {
+  if (addUserResponse?.invitationUrl)
+    return (
+      <InvitationMessage
+        currentCollectivite={currentCollectivite}
+        currentUser={currentUser}
+        acces={'edition'}
+        invitationUrl={addUserResponse.invitationUrl}
+      />
+    );
+  else if (addUserResponse?.added)
+    return (
+      <div className="fr-alert fr-alert--success">
+        Nouveau membre ajouté avec succès à la collectivité !
+      </div>
+    );
+  else if (addUserResponse?.error)
+    return (
+      <div className="fr-alert fr-alert--info">{addUserResponse?.error}</div>
+    );
+  return null;
 };
 
 export default InvitationForm;

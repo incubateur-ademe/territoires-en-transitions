@@ -67,8 +67,8 @@ export const useInvitationState = () => {
 const acceptAgentInvitation = async (
   invitation_id: string
 ): Promise<boolean> => {
-  const {error} = await supabaseClient.rpc('accept_invitation', {
-    invitation_id,
+  const {error} = await supabaseClient.rpc('consume_invitation', {
+    id: invitation_id,
   });
 
   return error === null;
