@@ -12,10 +12,8 @@ export const useCollectiviteMembres = (): {
 } => {
   const collectiviteId = useCollectiviteId();
 
-  if (collectiviteId === null) return {membres: [], isLoading: false};
-
   const {data, isLoading} = useQuery(getQueryKey(collectiviteId), () =>
-    fetchMembresForCollectivite(collectiviteId)
+    collectiviteId ? fetchMembresForCollectivite(collectiviteId) : []
   );
 
   return {membres: data || [], isLoading};
