@@ -14,6 +14,11 @@ import {
 } from 'app/pages/collectivite/Users/types';
 import MembreListTable from 'app/pages/collectivite/Users/components/MembreListTable';
 import InvitationForm from 'app/pages/collectivite/Users/components/InvitationForm';
+import {
+  AddUserToCollectiviteRequest,
+  AddUserToCollectiviteResponse,
+  useAddUserToCollectivite,
+} from 'app/pages/collectivite/Users/useAddUserToCollectivite';
 
 export type MembresProps = {
   membres: Membre[];
@@ -22,6 +27,8 @@ export type MembresProps = {
   currentUser: UserData;
   updateMembre: TUpdateMembre;
   removeFromCollectivite: TRemoveFromCollectivite;
+  addUser: (request: AddUserToCollectiviteRequest) => void;
+  addUserResponse: AddUserToCollectiviteResponse | null;
 };
 
 /**
@@ -35,6 +42,8 @@ export const Membres = ({
   currentUser,
   updateMembre,
   removeFromCollectivite,
+  addUser,
+  addUserResponse,
 }: MembresProps) => {
   const canViewInvitation =
     collectivite.niveau_acces === 'admin' ||
@@ -63,6 +72,8 @@ export const Membres = ({
             Tous les champs sont obligatoires
           </p>
           <InvitationForm
+            addUser={addUser}
+            addUserResponse={addUserResponse}
             currentUser={currentUser}
             currentCollectivite={collectivite}
           />
@@ -77,14 +88,18 @@ export default () => {
   const user = auth.user;
   const collectivite_id = useCollectiviteId();
   const collectivite = useCurrentCollectivite();
-  if (!user?.id || !collectivite_id || !collectivite) return null;
 
   const {membres, isLoading: isMemberLoading} = useCollectiviteMembres();
   const {updateMembre} = useUpdateCollectiviteMembre();
   const {removeFromCollectivite} = useRemoveFromCollectivite();
+  const {addUser, addUserResponse} = useAddUserToCollectivite();
+
+  if (!user?.id || !collectivite_id || !collectivite) return null;
 
   return (
     <Membres
+      addUser={addUser}
+      addUserResponse={addUserResponse}
       currentUser={user}
       membres={membres}
       collectivite={collectivite}

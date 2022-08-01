@@ -168,7 +168,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
               className="py-1 px-2 border border-gray-300"
             >
               <textarea
-                className="w-full resize-none"
+                className=" w-60 resize-none"
                 data-test="details_fonction-textarea"
                 onChange={[Function]}
                 onMouseOut={[Function]}
@@ -235,106 +235,40 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
           <td
             className="relative px-4"
           >
-            <div
-              data-test="fonction-dropdown"
-            >
-              <button
-                aria-label="ouvrir le menu"
-                className="flex items-center w-full p-2 -ml-2 text-left text-sm"
-                onBlur={[Function]}
-                onClick={[Function]}
-                onFocus={[Function]}
-                onKeyDown={[Function]}
-                onKeyUp={[Function]}
-                onMouseDown={[Function]}
-                onPointerDown={[Function]}
-              >
-                <span
-                  className="mr-auto"
-                >
-                  Équipe technique
-                </span>
-                <span
-                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
-                />
-              </button>
-            </div>
+            <span>
+              Équipe technique
+            </span>
           </td>
           <td
             className="relative px-4 pr-0"
           >
-            <div
-              data-test="champ_intervention-dropdown"
+            <span
+              className="block"
             >
-              <button
-                aria-label="ouvrir le menu"
-                className="flex items-center w-full p-2 -ml-2 text-left text-sm"
-                onBlur={[Function]}
-                onClick={[Function]}
-                onFocus={[Function]}
-                onKeyDown={[Function]}
-                onKeyUp={[Function]}
-                onMouseDown={[Function]}
-                onPointerDown={[Function]}
-              >
-                <span
-                  className="mr-auto flex flex-col"
-                >
-                  <span>
-                    Climat Air Énergie
-                  </span>
-                  <span>
-                    Économie Circulaire
-                  </span>
-                </span>
-                <span
-                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
-                />
-              </button>
-            </div>
+              Climat Air Énergie
+            </span>
+            <span
+              className="block"
+            >
+              Économie Circulaire
+            </span>
           </td>
           <td
             className="relative px-4"
           >
-            <div
-              className="py-1 px-2 border border-gray-300"
+            <span
+              className="w-72 line-clamp-3"
+              title="Vice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier, adjoint au maire en charge du dVice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier"
             >
-              <textarea
-                className="w-full resize-none"
-                data-test="details_fonction-textarea"
-                onChange={[Function]}
-                onMouseOut={[Function]}
-                value="Vice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier, adjoint au maire en charge du dVice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier"
-              />
-            </div>
+              Vice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier, adjoint au maire en charge du dVice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier
+            </span>
           </td>
           <td
             className="relative px-4 text-right"
           >
-            <div
-              data-test="acces-dropdown"
-            >
-              <button
-                aria-label="ouvrir le menu"
-                className="flex items-center w-full p-2 -ml-2 text-left text-sm"
-                onBlur={[Function]}
-                onClick={[Function]}
-                onFocus={[Function]}
-                onKeyDown={[Function]}
-                onKeyUp={[Function]}
-                onMouseDown={[Function]}
-                onPointerDown={[Function]}
-              >
-                <span
-                  className="mr-auto"
-                >
-                  Édition
-                </span>
-                <span
-                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
-                />
-              </button>
-            </div>
+            <span>
+              Édition
+            </span>
           </td>
         </tr>
         <tr
@@ -367,103 +301,35 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
           <td
             className="relative px-4"
           >
-            <div
-              data-test="fonction-dropdown"
-            >
-              <button
-                aria-label="ouvrir le menu"
-                className="flex items-center w-full p-2 -ml-2 text-left text-sm"
-                onBlur={[Function]}
-                onClick={[Function]}
-                onFocus={[Function]}
-                onKeyDown={[Function]}
-                onKeyUp={[Function]}
-                onMouseDown={[Function]}
-                onPointerDown={[Function]}
-              >
-                <span
-                  className="mr-auto"
-                >
-                  Équipe politique
-                </span>
-                <span
-                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
-                />
-              </button>
-            </div>
+            <span>
+              Équipe politique
+            </span>
           </td>
           <td
             className="relative px-4 pr-0"
           >
-            <div
-              data-test="champ_intervention-dropdown"
+            <span
+              className="block"
             >
-              <button
-                aria-label="ouvrir le menu"
-                className="flex items-center w-full p-2 -ml-2 text-left text-sm"
-                onBlur={[Function]}
-                onClick={[Function]}
-                onFocus={[Function]}
-                onKeyDown={[Function]}
-                onKeyUp={[Function]}
-                onMouseDown={[Function]}
-                onPointerDown={[Function]}
-              >
-                <span
-                  className="mr-auto flex flex-col"
-                >
-                  <span>
-                    Climat Air Énergie
-                  </span>
-                </span>
-                <span
-                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
-                />
-              </button>
-            </div>
+              Climat Air Énergie
+            </span>
           </td>
           <td
             className="relative px-4"
           >
-            <div
-              className="py-1 px-2 border border-gray-300"
+            <span
+              className="w-72 line-clamp-3"
+              title="Consultant assistance à maîtrise d’ouvrage - Bureau d’études Green Planet"
             >
-              <textarea
-                className="w-full resize-none"
-                data-test="details_fonction-textarea"
-                onChange={[Function]}
-                onMouseOut={[Function]}
-                value="Consultant assistance à maîtrise d’ouvrage - Bureau d’études Green Planet"
-              />
-            </div>
+              Consultant assistance à maîtrise d’ouvrage - Bureau d’études Green Planet
+            </span>
           </td>
           <td
             className="relative px-4 text-right"
           >
-            <div
-              data-test="acces-dropdown"
-            >
-              <button
-                aria-label="ouvrir le menu"
-                className="flex items-center w-full p-2 -ml-2 text-left text-sm"
-                onBlur={[Function]}
-                onClick={[Function]}
-                onFocus={[Function]}
-                onKeyDown={[Function]}
-                onKeyUp={[Function]}
-                onMouseDown={[Function]}
-                onPointerDown={[Function]}
-              >
-                <span
-                  className="mr-auto"
-                >
-                  Lecture
-                </span>
-                <span
-                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
-                />
-              </button>
-            </div>
+            <span>
+              Lecture
+            </span>
           </td>
         </tr>
       </tbody>
@@ -704,7 +570,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
               className="py-1 px-2 border border-gray-300"
             >
               <textarea
-                className="w-full resize-none"
+                className=" w-60 resize-none"
                 data-test="details_fonction-textarea"
                 onChange={[Function]}
                 onMouseOut={[Function]}
@@ -1103,7 +969,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
               className="py-1 px-2 border border-gray-300"
             >
               <textarea
-                className="w-full resize-none"
+                className=" w-60 resize-none"
                 data-test="details_fonction-textarea"
                 onChange={[Function]}
                 onMouseOut={[Function]}

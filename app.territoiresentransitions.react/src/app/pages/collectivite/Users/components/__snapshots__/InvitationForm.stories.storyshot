@@ -1,0 +1,157 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots app/pages/collectivite/Users/components/InvitationForm As Admin 1`] = `
+<div
+  className="max-w-4xl"
+  data-test="invitation-form"
+>
+  <form
+    action="#"
+    className="md:flex gap-6"
+    onChange={[Function]}
+    onReset={[Function]}
+    onSubmit={[Function]}
+  >
+    <div
+      className="fr-input-group md:flex-grow"
+    >
+      <label
+        className="fr-label"
+        htmlFor="3dd886a4-e2c8-42b4-b857-165774e0bdfa"
+      >
+        Adresse email de la personne à inviter
+      </label>
+      <input
+        className="fr-input"
+        id="3dd886a4-e2c8-42b4-b857-165774e0bdfa"
+        name="email"
+        onBlur={[Function]}
+        onChange={[Function]}
+        type="text"
+        value=""
+      />
+    </div>
+    <div
+      className="fr-select-group md:flex-grow"
+    >
+      <label
+        className="fr-label"
+        htmlFor="8946e2c3-54b2-4734-b285-3d27226186f0"
+      >
+        Niveau d’accès pour cette collectivité
+      </label>
+      <select
+        className="fr-select"
+        id="8946e2c3-54b2-4734-b285-3d27226186f0"
+        name="acces"
+        onBlur={[Function]}
+        onChange={[Function]}
+        value=""
+      >
+        <option
+          disabled={true}
+          hidden={true}
+          value=""
+        >
+          Selectionnez une option
+        </option>
+        <option
+          value="edition"
+        >
+          Édition
+        </option>
+        <option
+          value="lecture"
+        >
+          Lecture
+        </option>
+      </select>
+    </div>
+    <button
+      className="fr-btn md:mt-7 md:mb-auto"
+      disabled={false}
+      type="submit"
+    >
+      Ajouter
+    </button>
+  </form>
+</div>
+`;
+
+exports[`Storyshots app/pages/collectivite/Users/components/InvitationForm As Editeur 1`] = `
+<div
+  className="max-w-4xl"
+  data-test="invitation-form"
+>
+  <form
+    action="#"
+    className="md:flex gap-6"
+    onChange={[Function]}
+    onReset={[Function]}
+    onSubmit={[Function]}
+  >
+    <div
+      className="fr-input-group md:flex-grow"
+    >
+      <label
+        className="fr-label"
+        htmlFor="3c223162-10e3-4078-9ab0-9551d30d5764"
+      >
+        Adresse email de la personne à inviter
+      </label>
+      <input
+        className="fr-input"
+        id="3c223162-10e3-4078-9ab0-9551d30d5764"
+        name="email"
+        onBlur={[Function]}
+        onChange={[Function]}
+        type="text"
+        value=""
+      />
+    </div>
+    <div
+      className="fr-select-group md:flex-grow"
+    >
+      <label
+        className="fr-label"
+        htmlFor="4bf26f14-9865-4545-8a3e-a93fd0b14edc"
+      >
+        Niveau d’accès pour cette collectivité
+      </label>
+      <select
+        className="fr-select"
+        id="4bf26f14-9865-4545-8a3e-a93fd0b14edc"
+        name="acces"
+        onBlur={[Function]}
+        onChange={[Function]}
+        value=""
+      >
+        <option
+          disabled={true}
+          hidden={true}
+          value=""
+        >
+          Selectionnez une option
+        </option>
+        <option
+          value="edition"
+        >
+          Édition
+        </option>
+        <option
+          value="lecture"
+        >
+          Lecture
+        </option>
+      </select>
+    </div>
+    <button
+      className="fr-btn md:mt-7 md:mb-auto"
+      disabled={false}
+      type="submit"
+    >
+      Ajouter
+    </button>
+  </form>
+</div>
+`;
