@@ -3,7 +3,6 @@ from business.evaluation.adapters import supabase_names
 from business.referentiel.adapters.supabase_referentiel_repo import (
     SupabaseReferentielRepository,
 )
-from business.referentiel.domain.models.action_children import ActionChildren
 from business.referentiel.domain.models.action_relation import ActionRelation
 from business.referentiel.domain.models.personnalisation import (
     ActionPersonnalisationRegles,
@@ -12,7 +11,6 @@ from business.referentiel.domain.models.personnalisation import (
 from business.referentiel.domain.models.question import Choix, Question
 from business.utils.action_id import ActionId
 from tests.utils.referentiel_factory import (
-    make_action_children,
     make_action_definition,
     make_action_points,
     make_indicateur,
