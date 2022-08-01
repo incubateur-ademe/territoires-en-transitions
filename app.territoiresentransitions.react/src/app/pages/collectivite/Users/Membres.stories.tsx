@@ -23,22 +23,56 @@ const handlers = {
   removeFromCollectivite: action('removeFromCollectivite'),
 };
 
-export const AsAdmin = Template.bind({});
-const AsAdminArgs: MembresProps = {
-  currentUser: fakeUserData,
-  membres: fakeMembres,
-  isLoading: false,
-  collectivite: fakeCurrentCollectiviteAdmin,
-  ...handlers,
-};
-AsAdmin.args = AsAdminArgs;
-
-export const AsLecteur = Template.bind({});
-const AsLecteurArgs: MembresProps = {
+export const EnTantQueLecteur = Template.bind({});
+const EnTantQueLecteurArgs: MembresProps = {
+  addUser: async _request => null,
+  addUserResponse: {},
   currentUser: {...fakeUserData, id: '3'},
   membres: fakeMembres,
   isLoading: false,
   collectivite: fakeCurrentCollectiviteLecture,
   ...handlers,
 };
-AsLecteur.args = AsLecteurArgs;
+EnTantQueLecteur.args = EnTantQueLecteurArgs;
+
+export const EnTantQuAdminQuiInviteUnNouvelUtilisateur = Template.bind({});
+const EnTantQuAdminQuiInviteUnNouvelUtilisateurArgs: MembresProps = {
+  addUser: async _request => undefined,
+  addUserResponse: {added: false, invitationId: 'invitationId'},
+  currentUser: fakeUserData,
+  membres: fakeMembres,
+  isLoading: false,
+  collectivite: fakeCurrentCollectiviteAdmin,
+  ...handlers,
+};
+EnTantQuAdminQuiInviteUnNouvelUtilisateur.args =
+  EnTantQuAdminQuiInviteUnNouvelUtilisateurArgs;
+
+export const EnTantQuAdminQuiInviteUnUtilisateurExistant = Template.bind({});
+const EnTantQuAdminQuiInviteUnUtilisateurExistantArgs: MembresProps = {
+  addUser: async _request => undefined,
+  addUserResponse: {added: true},
+  currentUser: fakeUserData,
+  membres: fakeMembres,
+  isLoading: false,
+  collectivite: fakeCurrentCollectiviteAdmin,
+  ...handlers,
+};
+EnTantQuAdminQuiInviteUnUtilisateurExistant.args =
+  EnTantQuAdminQuiInviteUnUtilisateurExistantArgs;
+
+export const EnTantQuAdminQuiInviteUnUtilisateurDejaMembre = Template.bind({});
+const EnTantQuAdminQuiInviteUnUtilisateurDejaMembreArgs: MembresProps = {
+  addUser: async _ => undefined,
+  addUserResponse: {
+    added: false,
+    error: 'Cet utilisateur est déjà membre de la collectivité',
+  },
+  currentUser: fakeUserData,
+  membres: fakeMembres,
+  isLoading: false,
+  collectivite: fakeCurrentCollectiviteAdmin,
+  ...handlers,
+};
+EnTantQuAdminQuiInviteUnUtilisateurDejaMembre.args =
+  EnTantQuAdminQuiInviteUnUtilisateurDejaMembreArgs;

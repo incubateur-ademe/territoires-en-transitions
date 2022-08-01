@@ -1,0 +1,2085 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui Invite Un Nouvel Utilisateur 1`] = `
+<main
+  className="fr-container mt-9 mb-16"
+  data-test="Users"
+>
+  <h1
+    className="mb-10 lg:mb-14 lg:text-center"
+  >
+    Gestion des membres
+  </h1>
+  <h2
+    className=""
+  >
+    Liste des membres
+  </h2>
+  <div
+    className="mx-auto border-8 border-t-0 border-bf925 bg-bf925 rounded-lg overflow-x-hidden"
+  >
+    <div
+      className="overflow-x-auto w-full"
+    >
+      <table
+        className="min-w-full text-sm text-left"
+        data-test="MembreListTable"
+      >
+        <thead>
+          <tr>
+            <th
+              className="py-3 px-5 whitespace-nowrap"
+            >
+              Nom et adresse mail
+            </th>
+            <th
+              className="py-3 px-5 whitespace-nowrap"
+            >
+              Numéro de tél.
+            </th>
+            <th
+              className="py-3 px-5 whitespace-nowrap"
+            >
+              Fonction
+               
+              <span
+                className="block text-xs font-normal"
+              >
+                dans cette collectivité
+              </span>
+            </th>
+            <th
+              className="py-3 px-5 whitespace-nowrap"
+            >
+              Champs d'intervention
+               
+              <span
+                className="block text-xs font-normal"
+              >
+                dans cette collectivité
+              </span>
+            </th>
+            <th
+              className="py-3 px-5 whitespace-nowrap"
+            >
+              Détails fonction
+               
+              <span
+                className="block text-xs font-normal"
+              >
+                dans cette collectivité
+              </span>
+            </th>
+            <th
+              className="py-3 px-5 whitespace-nowrap text-right"
+            >
+              <div
+                className="flex items-center justify-end"
+              >
+                Accès
+                <a
+                  className="!shadow-none"
+                  href="#"
+                >
+                  <span
+                    className="fr-fi-information-line block ml-1 mt-1 scale-75"
+                  />
+                </a>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            className="h-20 border-b border-gray-300 bg-white"
+            data-test="MembreRow-yolo@dodo.com"
+          >
+            <td
+              className="relative px-4"
+            >
+              <span
+                className="font-bold"
+              >
+                Dodo
+                 
+                Yolo
+              </span>
+              <span
+                className="block mt-1 text-xs text-gray-500"
+              >
+                yolo@dodo.com
+              </span>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <span>
+                06 46 82 45 85
+              </span>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <div
+                data-test="fonction-dropdown"
+              >
+                <button
+                  aria-label="ouvrir le menu"
+                  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
+                >
+                  <span
+                    className="mr-auto"
+                  >
+                    Référent·e
+                  </span>
+                  <span
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  />
+                </button>
+              </div>
+            </td>
+            <td
+              className="relative px-4 pr-0"
+            >
+              <div
+                data-test="champ_intervention-dropdown"
+              >
+                <button
+                  aria-label="ouvrir le menu"
+                  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
+                >
+                  <span
+                    className="mr-auto flex flex-col"
+                  >
+                    <span>
+                      Climat Air Énergie
+                    </span>
+                  </span>
+                  <span
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  />
+                </button>
+              </div>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <div
+                className="py-1 px-2 border border-gray-300"
+              >
+                <textarea
+                  className=" w-60 resize-none"
+                  data-test="details_fonction-textarea"
+                  onChange={[Function]}
+                  onMouseOut={[Function]}
+                  value="Cheffe de projet PCAET"
+                />
+              </div>
+            </td>
+            <td
+              className="relative px-4 text-right"
+            >
+              <div
+                data-test="acces-dropdown"
+              >
+                <button
+                  aria-label="ouvrir le menu"
+                  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
+                >
+                  <span
+                    className="mr-auto"
+                  >
+                    Admin
+                  </span>
+                  <span
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  />
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr
+            className="h-20 border-b border-gray-300 bg-white"
+            data-test="MembreRow-yala@dada.com"
+          >
+            <td
+              className="relative px-4"
+            >
+              <span
+                className="font-bold"
+              >
+                Dada
+                 
+                Yala
+              </span>
+              <span
+                className="block mt-1 text-xs text-gray-500"
+              >
+                yala@dada.com
+              </span>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <span>
+                06 65 87 52 49
+              </span>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <div
+                data-test="fonction-dropdown"
+              >
+                <button
+                  aria-label="ouvrir le menu"
+                  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
+                >
+                  <span
+                    className="mr-auto"
+                  >
+                    Équipe technique
+                  </span>
+                  <span
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  />
+                </button>
+              </div>
+            </td>
+            <td
+              className="relative px-4 pr-0"
+            >
+              <div
+                data-test="champ_intervention-dropdown"
+              >
+                <button
+                  aria-label="ouvrir le menu"
+                  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
+                >
+                  <span
+                    className="mr-auto flex flex-col"
+                  >
+                    <span>
+                      Climat Air Énergie
+                    </span>
+                    <span>
+                      Économie Circulaire
+                    </span>
+                  </span>
+                  <span
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  />
+                </button>
+              </div>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <div
+                className="py-1 px-2 border border-gray-300"
+              >
+                <textarea
+                  className=" w-60 resize-none"
+                  data-test="details_fonction-textarea"
+                  onChange={[Function]}
+                  onMouseOut={[Function]}
+                  value="Vice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier, adjoint au maire en charge du dVice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier"
+                />
+              </div>
+            </td>
+            <td
+              className="relative px-4 text-right"
+            >
+              <div
+                data-test="acces-dropdown"
+              >
+                <button
+                  aria-label="ouvrir le menu"
+                  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
+                >
+                  <span
+                    className="mr-auto"
+                  >
+                    Édition
+                  </span>
+                  <span
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  />
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr
+            className="h-20 border-b border-gray-300 bg-white"
+            data-test="MembreRow-john@doe.com"
+          >
+            <td
+              className="relative px-4"
+            >
+              <span
+                className="font-bold"
+              >
+                Doe
+                 
+                John
+              </span>
+              <span
+                className="block mt-1 text-xs text-gray-500"
+              >
+                john@doe.com
+              </span>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <span>
+                06 75 51 24 57
+              </span>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <div
+                data-test="fonction-dropdown"
+              >
+                <button
+                  aria-label="ouvrir le menu"
+                  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
+                >
+                  <span
+                    className="mr-auto"
+                  >
+                    Équipe politique
+                  </span>
+                  <span
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  />
+                </button>
+              </div>
+            </td>
+            <td
+              className="relative px-4 pr-0"
+            >
+              <div
+                data-test="champ_intervention-dropdown"
+              >
+                <button
+                  aria-label="ouvrir le menu"
+                  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
+                >
+                  <span
+                    className="mr-auto flex flex-col"
+                  >
+                    <span>
+                      Climat Air Énergie
+                    </span>
+                  </span>
+                  <span
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  />
+                </button>
+              </div>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <div
+                className="py-1 px-2 border border-gray-300"
+              >
+                <textarea
+                  className=" w-60 resize-none"
+                  data-test="details_fonction-textarea"
+                  onChange={[Function]}
+                  onMouseOut={[Function]}
+                  value="Consultant assistance à maîtrise d’ouvrage - Bureau d’études Green Planet"
+                />
+              </div>
+            </td>
+            <td
+              className="relative px-4 text-right"
+            >
+              <div
+                data-test="acces-dropdown"
+              >
+                <button
+                  aria-label="ouvrir le menu"
+                  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
+                >
+                  <span
+                    className="mr-auto"
+                  >
+                    Lecture
+                  </span>
+                  <span
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  />
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <h2
+    className="mt-12"
+  >
+    Invitation
+  </h2>
+  <p
+    className="italic text-gray-500"
+  >
+    Tous les champs sont obligatoires
+  </p>
+  <div
+    className="max-w-4xl"
+    data-test="invitation-form"
+  >
+    <form
+      action="#"
+      className="md:flex gap-6"
+      onChange={[Function]}
+      onReset={[Function]}
+      onSubmit={[Function]}
+    >
+      <div
+        className="fr-input-group md:flex-grow"
+      >
+        <label
+          className="fr-label"
+          htmlFor="24c0cc4c-8356-45cb-89e3-28f97daf5583"
+        >
+          Adresse email de la personne à inviter
+        </label>
+        <input
+          className="fr-input"
+          id="24c0cc4c-8356-45cb-89e3-28f97daf5583"
+          name="email"
+          onBlur={[Function]}
+          onChange={[Function]}
+          type="text"
+          value=""
+        />
+      </div>
+      <div
+        className="fr-select-group md:flex-grow"
+      >
+        <label
+          className="fr-label"
+          htmlFor="6b879412-2689-4cbb-baec-b2522d011dbc"
+        >
+          Niveau d’accès pour cette collectivité
+        </label>
+        <select
+          className="fr-select"
+          id="6b879412-2689-4cbb-baec-b2522d011dbc"
+          name="acces"
+          onBlur={[Function]}
+          onChange={[Function]}
+          value=""
+        >
+          <option
+            disabled={true}
+            hidden={true}
+            value=""
+          >
+            Selectionnez une option
+          </option>
+          <option
+            value="admin"
+          >
+            Admin
+          </option>
+          <option
+            value="edition"
+          >
+            Édition
+          </option>
+          <option
+            value="lecture"
+          >
+            Lecture
+          </option>
+        </select>
+      </div>
+      <button
+        className="fr-btn md:mt-7 md:mb-auto"
+        disabled={false}
+        type="submit"
+      >
+        Ajouter
+      </button>
+    </form>
+  </div>
+</main>
+`;
+
+exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui Invite Un Utilisateur Deja Membre 1`] = `
+<main
+  className="fr-container mt-9 mb-16"
+  data-test="Users"
+>
+  <h1
+    className="mb-10 lg:mb-14 lg:text-center"
+  >
+    Gestion des membres
+  </h1>
+  <h2
+    className=""
+  >
+    Liste des membres
+  </h2>
+  <div
+    className="mx-auto border-8 border-t-0 border-bf925 bg-bf925 rounded-lg overflow-x-hidden"
+  >
+    <div
+      className="overflow-x-auto w-full"
+    >
+      <table
+        className="min-w-full text-sm text-left"
+        data-test="MembreListTable"
+      >
+        <thead>
+          <tr>
+            <th
+              className="py-3 px-5 whitespace-nowrap"
+            >
+              Nom et adresse mail
+            </th>
+            <th
+              className="py-3 px-5 whitespace-nowrap"
+            >
+              Numéro de tél.
+            </th>
+            <th
+              className="py-3 px-5 whitespace-nowrap"
+            >
+              Fonction
+               
+              <span
+                className="block text-xs font-normal"
+              >
+                dans cette collectivité
+              </span>
+            </th>
+            <th
+              className="py-3 px-5 whitespace-nowrap"
+            >
+              Champs d'intervention
+               
+              <span
+                className="block text-xs font-normal"
+              >
+                dans cette collectivité
+              </span>
+            </th>
+            <th
+              className="py-3 px-5 whitespace-nowrap"
+            >
+              Détails fonction
+               
+              <span
+                className="block text-xs font-normal"
+              >
+                dans cette collectivité
+              </span>
+            </th>
+            <th
+              className="py-3 px-5 whitespace-nowrap text-right"
+            >
+              <div
+                className="flex items-center justify-end"
+              >
+                Accès
+                <a
+                  className="!shadow-none"
+                  href="#"
+                >
+                  <span
+                    className="fr-fi-information-line block ml-1 mt-1 scale-75"
+                  />
+                </a>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            className="h-20 border-b border-gray-300 bg-white"
+            data-test="MembreRow-yolo@dodo.com"
+          >
+            <td
+              className="relative px-4"
+            >
+              <span
+                className="font-bold"
+              >
+                Dodo
+                 
+                Yolo
+              </span>
+              <span
+                className="block mt-1 text-xs text-gray-500"
+              >
+                yolo@dodo.com
+              </span>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <span>
+                06 46 82 45 85
+              </span>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <div
+                data-test="fonction-dropdown"
+              >
+                <button
+                  aria-label="ouvrir le menu"
+                  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
+                >
+                  <span
+                    className="mr-auto"
+                  >
+                    Référent·e
+                  </span>
+                  <span
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  />
+                </button>
+              </div>
+            </td>
+            <td
+              className="relative px-4 pr-0"
+            >
+              <div
+                data-test="champ_intervention-dropdown"
+              >
+                <button
+                  aria-label="ouvrir le menu"
+                  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
+                >
+                  <span
+                    className="mr-auto flex flex-col"
+                  >
+                    <span>
+                      Climat Air Énergie
+                    </span>
+                  </span>
+                  <span
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  />
+                </button>
+              </div>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <div
+                className="py-1 px-2 border border-gray-300"
+              >
+                <textarea
+                  className=" w-60 resize-none"
+                  data-test="details_fonction-textarea"
+                  onChange={[Function]}
+                  onMouseOut={[Function]}
+                  value="Cheffe de projet PCAET"
+                />
+              </div>
+            </td>
+            <td
+              className="relative px-4 text-right"
+            >
+              <div
+                data-test="acces-dropdown"
+              >
+                <button
+                  aria-label="ouvrir le menu"
+                  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
+                >
+                  <span
+                    className="mr-auto"
+                  >
+                    Admin
+                  </span>
+                  <span
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  />
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr
+            className="h-20 border-b border-gray-300 bg-white"
+            data-test="MembreRow-yala@dada.com"
+          >
+            <td
+              className="relative px-4"
+            >
+              <span
+                className="font-bold"
+              >
+                Dada
+                 
+                Yala
+              </span>
+              <span
+                className="block mt-1 text-xs text-gray-500"
+              >
+                yala@dada.com
+              </span>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <span>
+                06 65 87 52 49
+              </span>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <div
+                data-test="fonction-dropdown"
+              >
+                <button
+                  aria-label="ouvrir le menu"
+                  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
+                >
+                  <span
+                    className="mr-auto"
+                  >
+                    Équipe technique
+                  </span>
+                  <span
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  />
+                </button>
+              </div>
+            </td>
+            <td
+              className="relative px-4 pr-0"
+            >
+              <div
+                data-test="champ_intervention-dropdown"
+              >
+                <button
+                  aria-label="ouvrir le menu"
+                  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
+                >
+                  <span
+                    className="mr-auto flex flex-col"
+                  >
+                    <span>
+                      Climat Air Énergie
+                    </span>
+                    <span>
+                      Économie Circulaire
+                    </span>
+                  </span>
+                  <span
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  />
+                </button>
+              </div>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <div
+                className="py-1 px-2 border border-gray-300"
+              >
+                <textarea
+                  className=" w-60 resize-none"
+                  data-test="details_fonction-textarea"
+                  onChange={[Function]}
+                  onMouseOut={[Function]}
+                  value="Vice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier, adjoint au maire en charge du dVice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier"
+                />
+              </div>
+            </td>
+            <td
+              className="relative px-4 text-right"
+            >
+              <div
+                data-test="acces-dropdown"
+              >
+                <button
+                  aria-label="ouvrir le menu"
+                  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
+                >
+                  <span
+                    className="mr-auto"
+                  >
+                    Édition
+                  </span>
+                  <span
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  />
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr
+            className="h-20 border-b border-gray-300 bg-white"
+            data-test="MembreRow-john@doe.com"
+          >
+            <td
+              className="relative px-4"
+            >
+              <span
+                className="font-bold"
+              >
+                Doe
+                 
+                John
+              </span>
+              <span
+                className="block mt-1 text-xs text-gray-500"
+              >
+                john@doe.com
+              </span>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <span>
+                06 75 51 24 57
+              </span>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <div
+                data-test="fonction-dropdown"
+              >
+                <button
+                  aria-label="ouvrir le menu"
+                  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
+                >
+                  <span
+                    className="mr-auto"
+                  >
+                    Équipe politique
+                  </span>
+                  <span
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  />
+                </button>
+              </div>
+            </td>
+            <td
+              className="relative px-4 pr-0"
+            >
+              <div
+                data-test="champ_intervention-dropdown"
+              >
+                <button
+                  aria-label="ouvrir le menu"
+                  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
+                >
+                  <span
+                    className="mr-auto flex flex-col"
+                  >
+                    <span>
+                      Climat Air Énergie
+                    </span>
+                  </span>
+                  <span
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  />
+                </button>
+              </div>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <div
+                className="py-1 px-2 border border-gray-300"
+              >
+                <textarea
+                  className=" w-60 resize-none"
+                  data-test="details_fonction-textarea"
+                  onChange={[Function]}
+                  onMouseOut={[Function]}
+                  value="Consultant assistance à maîtrise d’ouvrage - Bureau d’études Green Planet"
+                />
+              </div>
+            </td>
+            <td
+              className="relative px-4 text-right"
+            >
+              <div
+                data-test="acces-dropdown"
+              >
+                <button
+                  aria-label="ouvrir le menu"
+                  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
+                >
+                  <span
+                    className="mr-auto"
+                  >
+                    Lecture
+                  </span>
+                  <span
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  />
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <h2
+    className="mt-12"
+  >
+    Invitation
+  </h2>
+  <p
+    className="italic text-gray-500"
+  >
+    Tous les champs sont obligatoires
+  </p>
+  <div
+    className="max-w-4xl"
+    data-test="invitation-form"
+  >
+    <form
+      action="#"
+      className="md:flex gap-6"
+      onChange={[Function]}
+      onReset={[Function]}
+      onSubmit={[Function]}
+    >
+      <div
+        className="fr-input-group md:flex-grow"
+      >
+        <label
+          className="fr-label"
+          htmlFor="a02d8403-da68-4ef4-b856-993663c5ef9a"
+        >
+          Adresse email de la personne à inviter
+        </label>
+        <input
+          className="fr-input"
+          id="a02d8403-da68-4ef4-b856-993663c5ef9a"
+          name="email"
+          onBlur={[Function]}
+          onChange={[Function]}
+          type="text"
+          value=""
+        />
+      </div>
+      <div
+        className="fr-select-group md:flex-grow"
+      >
+        <label
+          className="fr-label"
+          htmlFor="ff4fce62-93f8-4b68-bb64-b5e032d24862"
+        >
+          Niveau d’accès pour cette collectivité
+        </label>
+        <select
+          className="fr-select"
+          id="ff4fce62-93f8-4b68-bb64-b5e032d24862"
+          name="acces"
+          onBlur={[Function]}
+          onChange={[Function]}
+          value=""
+        >
+          <option
+            disabled={true}
+            hidden={true}
+            value=""
+          >
+            Selectionnez une option
+          </option>
+          <option
+            value="admin"
+          >
+            Admin
+          </option>
+          <option
+            value="edition"
+          >
+            Édition
+          </option>
+          <option
+            value="lecture"
+          >
+            Lecture
+          </option>
+        </select>
+      </div>
+      <button
+        className="fr-btn md:mt-7 md:mb-auto"
+        disabled={false}
+        type="submit"
+      >
+        Ajouter
+      </button>
+    </form>
+  </div>
+</main>
+`;
+
+exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui Invite Un Utilisateur Existant 1`] = `
+<main
+  className="fr-container mt-9 mb-16"
+  data-test="Users"
+>
+  <h1
+    className="mb-10 lg:mb-14 lg:text-center"
+  >
+    Gestion des membres
+  </h1>
+  <h2
+    className=""
+  >
+    Liste des membres
+  </h2>
+  <div
+    className="mx-auto border-8 border-t-0 border-bf925 bg-bf925 rounded-lg overflow-x-hidden"
+  >
+    <div
+      className="overflow-x-auto w-full"
+    >
+      <table
+        className="min-w-full text-sm text-left"
+        data-test="MembreListTable"
+      >
+        <thead>
+          <tr>
+            <th
+              className="py-3 px-5 whitespace-nowrap"
+            >
+              Nom et adresse mail
+            </th>
+            <th
+              className="py-3 px-5 whitespace-nowrap"
+            >
+              Numéro de tél.
+            </th>
+            <th
+              className="py-3 px-5 whitespace-nowrap"
+            >
+              Fonction
+               
+              <span
+                className="block text-xs font-normal"
+              >
+                dans cette collectivité
+              </span>
+            </th>
+            <th
+              className="py-3 px-5 whitespace-nowrap"
+            >
+              Champs d'intervention
+               
+              <span
+                className="block text-xs font-normal"
+              >
+                dans cette collectivité
+              </span>
+            </th>
+            <th
+              className="py-3 px-5 whitespace-nowrap"
+            >
+              Détails fonction
+               
+              <span
+                className="block text-xs font-normal"
+              >
+                dans cette collectivité
+              </span>
+            </th>
+            <th
+              className="py-3 px-5 whitespace-nowrap text-right"
+            >
+              <div
+                className="flex items-center justify-end"
+              >
+                Accès
+                <a
+                  className="!shadow-none"
+                  href="#"
+                >
+                  <span
+                    className="fr-fi-information-line block ml-1 mt-1 scale-75"
+                  />
+                </a>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            className="h-20 border-b border-gray-300 bg-white"
+            data-test="MembreRow-yolo@dodo.com"
+          >
+            <td
+              className="relative px-4"
+            >
+              <span
+                className="font-bold"
+              >
+                Dodo
+                 
+                Yolo
+              </span>
+              <span
+                className="block mt-1 text-xs text-gray-500"
+              >
+                yolo@dodo.com
+              </span>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <span>
+                06 46 82 45 85
+              </span>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <div
+                data-test="fonction-dropdown"
+              >
+                <button
+                  aria-label="ouvrir le menu"
+                  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
+                >
+                  <span
+                    className="mr-auto"
+                  >
+                    Référent·e
+                  </span>
+                  <span
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  />
+                </button>
+              </div>
+            </td>
+            <td
+              className="relative px-4 pr-0"
+            >
+              <div
+                data-test="champ_intervention-dropdown"
+              >
+                <button
+                  aria-label="ouvrir le menu"
+                  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
+                >
+                  <span
+                    className="mr-auto flex flex-col"
+                  >
+                    <span>
+                      Climat Air Énergie
+                    </span>
+                  </span>
+                  <span
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  />
+                </button>
+              </div>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <div
+                className="py-1 px-2 border border-gray-300"
+              >
+                <textarea
+                  className=" w-60 resize-none"
+                  data-test="details_fonction-textarea"
+                  onChange={[Function]}
+                  onMouseOut={[Function]}
+                  value="Cheffe de projet PCAET"
+                />
+              </div>
+            </td>
+            <td
+              className="relative px-4 text-right"
+            >
+              <div
+                data-test="acces-dropdown"
+              >
+                <button
+                  aria-label="ouvrir le menu"
+                  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
+                >
+                  <span
+                    className="mr-auto"
+                  >
+                    Admin
+                  </span>
+                  <span
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  />
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr
+            className="h-20 border-b border-gray-300 bg-white"
+            data-test="MembreRow-yala@dada.com"
+          >
+            <td
+              className="relative px-4"
+            >
+              <span
+                className="font-bold"
+              >
+                Dada
+                 
+                Yala
+              </span>
+              <span
+                className="block mt-1 text-xs text-gray-500"
+              >
+                yala@dada.com
+              </span>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <span>
+                06 65 87 52 49
+              </span>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <div
+                data-test="fonction-dropdown"
+              >
+                <button
+                  aria-label="ouvrir le menu"
+                  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
+                >
+                  <span
+                    className="mr-auto"
+                  >
+                    Équipe technique
+                  </span>
+                  <span
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  />
+                </button>
+              </div>
+            </td>
+            <td
+              className="relative px-4 pr-0"
+            >
+              <div
+                data-test="champ_intervention-dropdown"
+              >
+                <button
+                  aria-label="ouvrir le menu"
+                  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
+                >
+                  <span
+                    className="mr-auto flex flex-col"
+                  >
+                    <span>
+                      Climat Air Énergie
+                    </span>
+                    <span>
+                      Économie Circulaire
+                    </span>
+                  </span>
+                  <span
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  />
+                </button>
+              </div>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <div
+                className="py-1 px-2 border border-gray-300"
+              >
+                <textarea
+                  className=" w-60 resize-none"
+                  data-test="details_fonction-textarea"
+                  onChange={[Function]}
+                  onMouseOut={[Function]}
+                  value="Vice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier, adjoint au maire en charge du dVice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier"
+                />
+              </div>
+            </td>
+            <td
+              className="relative px-4 text-right"
+            >
+              <div
+                data-test="acces-dropdown"
+              >
+                <button
+                  aria-label="ouvrir le menu"
+                  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
+                >
+                  <span
+                    className="mr-auto"
+                  >
+                    Édition
+                  </span>
+                  <span
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  />
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr
+            className="h-20 border-b border-gray-300 bg-white"
+            data-test="MembreRow-john@doe.com"
+          >
+            <td
+              className="relative px-4"
+            >
+              <span
+                className="font-bold"
+              >
+                Doe
+                 
+                John
+              </span>
+              <span
+                className="block mt-1 text-xs text-gray-500"
+              >
+                john@doe.com
+              </span>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <span>
+                06 75 51 24 57
+              </span>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <div
+                data-test="fonction-dropdown"
+              >
+                <button
+                  aria-label="ouvrir le menu"
+                  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
+                >
+                  <span
+                    className="mr-auto"
+                  >
+                    Équipe politique
+                  </span>
+                  <span
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  />
+                </button>
+              </div>
+            </td>
+            <td
+              className="relative px-4 pr-0"
+            >
+              <div
+                data-test="champ_intervention-dropdown"
+              >
+                <button
+                  aria-label="ouvrir le menu"
+                  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
+                >
+                  <span
+                    className="mr-auto flex flex-col"
+                  >
+                    <span>
+                      Climat Air Énergie
+                    </span>
+                  </span>
+                  <span
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  />
+                </button>
+              </div>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <div
+                className="py-1 px-2 border border-gray-300"
+              >
+                <textarea
+                  className=" w-60 resize-none"
+                  data-test="details_fonction-textarea"
+                  onChange={[Function]}
+                  onMouseOut={[Function]}
+                  value="Consultant assistance à maîtrise d’ouvrage - Bureau d’études Green Planet"
+                />
+              </div>
+            </td>
+            <td
+              className="relative px-4 text-right"
+            >
+              <div
+                data-test="acces-dropdown"
+              >
+                <button
+                  aria-label="ouvrir le menu"
+                  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
+                >
+                  <span
+                    className="mr-auto"
+                  >
+                    Lecture
+                  </span>
+                  <span
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  />
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <h2
+    className="mt-12"
+  >
+    Invitation
+  </h2>
+  <p
+    className="italic text-gray-500"
+  >
+    Tous les champs sont obligatoires
+  </p>
+  <div
+    className="max-w-4xl"
+    data-test="invitation-form"
+  >
+    <form
+      action="#"
+      className="md:flex gap-6"
+      onChange={[Function]}
+      onReset={[Function]}
+      onSubmit={[Function]}
+    >
+      <div
+        className="fr-input-group md:flex-grow"
+      >
+        <label
+          className="fr-label"
+          htmlFor="1f02df99-7d19-47fe-82ca-24aec67612b3"
+        >
+          Adresse email de la personne à inviter
+        </label>
+        <input
+          className="fr-input"
+          id="1f02df99-7d19-47fe-82ca-24aec67612b3"
+          name="email"
+          onBlur={[Function]}
+          onChange={[Function]}
+          type="text"
+          value=""
+        />
+      </div>
+      <div
+        className="fr-select-group md:flex-grow"
+      >
+        <label
+          className="fr-label"
+          htmlFor="b5a82cf5-3e40-4e0f-95df-657e76be636c"
+        >
+          Niveau d’accès pour cette collectivité
+        </label>
+        <select
+          className="fr-select"
+          id="b5a82cf5-3e40-4e0f-95df-657e76be636c"
+          name="acces"
+          onBlur={[Function]}
+          onChange={[Function]}
+          value=""
+        >
+          <option
+            disabled={true}
+            hidden={true}
+            value=""
+          >
+            Selectionnez une option
+          </option>
+          <option
+            value="admin"
+          >
+            Admin
+          </option>
+          <option
+            value="edition"
+          >
+            Édition
+          </option>
+          <option
+            value="lecture"
+          >
+            Lecture
+          </option>
+        </select>
+      </div>
+      <button
+        className="fr-btn md:mt-7 md:mb-auto"
+        disabled={false}
+        type="submit"
+      >
+        Ajouter
+      </button>
+    </form>
+  </div>
+</main>
+`;
+
+exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Que Lecteur 1`] = `
+<main
+  className="fr-container mt-9 mb-16"
+  data-test="Users"
+>
+  <h1
+    className="mb-10 lg:mb-14 lg:text-center"
+  >
+    Gestion des membres
+  </h1>
+  <h2
+    className=""
+  >
+    Liste des membres
+  </h2>
+  <div
+    className="mx-auto border-8 border-t-0 border-bf925 bg-bf925 rounded-lg overflow-x-hidden"
+  >
+    <div
+      className="overflow-x-auto w-full"
+    >
+      <table
+        className="min-w-full text-sm text-left"
+        data-test="MembreListTable"
+      >
+        <thead>
+          <tr>
+            <th
+              className="py-3 px-5 whitespace-nowrap"
+            >
+              Nom et adresse mail
+            </th>
+            <th
+              className="py-3 px-5 whitespace-nowrap"
+            >
+              Numéro de tél.
+            </th>
+            <th
+              className="py-3 px-5 whitespace-nowrap"
+            >
+              Fonction
+               
+              <span
+                className="block text-xs font-normal"
+              >
+                dans cette collectivité
+              </span>
+            </th>
+            <th
+              className="py-3 px-5 whitespace-nowrap"
+            >
+              Champs d'intervention
+               
+              <span
+                className="block text-xs font-normal"
+              >
+                dans cette collectivité
+              </span>
+            </th>
+            <th
+              className="py-3 px-5 whitespace-nowrap"
+            >
+              Détails fonction
+               
+              <span
+                className="block text-xs font-normal"
+              >
+                dans cette collectivité
+              </span>
+            </th>
+            <th
+              className="py-3 px-5 whitespace-nowrap text-right"
+            >
+              <div
+                className="flex items-center justify-end"
+              >
+                Accès
+                <a
+                  className="!shadow-none"
+                  href="#"
+                >
+                  <span
+                    className="fr-fi-information-line block ml-1 mt-1 scale-75"
+                  />
+                </a>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            className="h-20 border-b border-gray-300 bg-white"
+            data-test="MembreRow-yolo@dodo.com"
+          >
+            <td
+              className="relative px-4"
+            >
+              <span
+                className="font-bold"
+              >
+                Dodo
+                 
+                Yolo
+              </span>
+              <span
+                className="block mt-1 text-xs text-gray-500"
+              >
+                yolo@dodo.com
+              </span>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <span>
+                06 46 82 45 85
+              </span>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <span>
+                Référent·e
+              </span>
+            </td>
+            <td
+              className="relative px-4 pr-0"
+            >
+              <span
+                className="block"
+              >
+                Climat Air Énergie
+              </span>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <span
+                className="w-72 line-clamp-3"
+                title="Cheffe de projet PCAET"
+              >
+                Cheffe de projet PCAET
+              </span>
+            </td>
+            <td
+              className="relative px-4 text-right"
+            >
+              <span>
+                Admin
+              </span>
+            </td>
+          </tr>
+          <tr
+            className="h-20 border-b border-gray-300 bg-white"
+            data-test="MembreRow-yala@dada.com"
+          >
+            <td
+              className="relative px-4"
+            >
+              <span
+                className="font-bold"
+              >
+                Dada
+                 
+                Yala
+              </span>
+              <span
+                className="block mt-1 text-xs text-gray-500"
+              >
+                yala@dada.com
+              </span>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <span>
+                06 65 87 52 49
+              </span>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <span>
+                Équipe technique
+              </span>
+            </td>
+            <td
+              className="relative px-4 pr-0"
+            >
+              <span
+                className="block"
+              >
+                Climat Air Énergie
+              </span>
+              <span
+                className="block"
+              >
+                Économie Circulaire
+              </span>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <span
+                className="w-72 line-clamp-3"
+                title="Vice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier, adjoint au maire en charge du dVice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier"
+              >
+                Vice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier, adjoint au maire en charge du dVice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier
+              </span>
+            </td>
+            <td
+              className="relative px-4 text-right"
+            >
+              <span>
+                Édition
+              </span>
+            </td>
+          </tr>
+          <tr
+            className="h-20 border-b border-gray-300 bg-white"
+            data-test="MembreRow-john@doe.com"
+          >
+            <td
+              className="relative px-4"
+            >
+              <span
+                className="font-bold"
+              >
+                Doe
+                 
+                John
+              </span>
+              <span
+                className="block mt-1 text-xs text-gray-500"
+              >
+                john@doe.com
+              </span>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <span>
+                06 75 51 24 57
+              </span>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <div
+                data-test="fonction-dropdown"
+              >
+                <button
+                  aria-label="ouvrir le menu"
+                  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
+                >
+                  <span
+                    className="mr-auto"
+                  >
+                    Équipe politique
+                  </span>
+                  <span
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  />
+                </button>
+              </div>
+            </td>
+            <td
+              className="relative px-4 pr-0"
+            >
+              <div
+                data-test="champ_intervention-dropdown"
+              >
+                <button
+                  aria-label="ouvrir le menu"
+                  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
+                >
+                  <span
+                    className="mr-auto flex flex-col"
+                  >
+                    <span>
+                      Climat Air Énergie
+                    </span>
+                  </span>
+                  <span
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  />
+                </button>
+              </div>
+            </td>
+            <td
+              className="relative px-4"
+            >
+              <div
+                className="py-1 px-2 border border-gray-300"
+              >
+                <textarea
+                  className=" w-60 resize-none"
+                  data-test="details_fonction-textarea"
+                  onChange={[Function]}
+                  onMouseOut={[Function]}
+                  value="Consultant assistance à maîtrise d’ouvrage - Bureau d’études Green Planet"
+                />
+              </div>
+            </td>
+            <td
+              className="relative px-4 text-right"
+            >
+              <div
+                data-test="acces-dropdown"
+              >
+                <button
+                  aria-label="ouvrir le menu"
+                  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
+                >
+                  <span
+                    className="mr-auto"
+                  >
+                    Lecture
+                  </span>
+                  <span
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  />
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+`;

@@ -2,6 +2,7 @@ import {useEffect, useMemo} from 'react';
 import useCopyToClipboard from 'ui/shared/useCopyToClipboard';
 import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {UserData} from 'core-logic/api/auth/AuthProvider';
+import {NiveauAcces} from 'generated/dataLayer';
 
 // durée (en ms) pendant laquelle le message "copié !" est affiché sur la page
 // après un clic sur le bouton "Copier"
@@ -13,7 +14,7 @@ type TInvitationMessageProps = {
   /** L'utilisateur qui envoie l'invitation */
   currentUser: UserData;
   /** Niveau d'acces pour l'invitation */
-  acces: string;
+  acces: NiveauAcces;
   /** URL de l'invitation */
   invitationUrl: string;
 };
@@ -64,16 +65,22 @@ const InvitationMessage = ({
       {/* Message */}
       <div className="p-4 bg-gray-200 rounded-t">
         <p
+          data-test="invitation-message"
           className="text-gray-600 text-sm mb-0"
           dangerouslySetInnerHTML={htmlMessage}
         />
       </div>
       {/* Buttons */}
       <div className="relative mt-4 flex flex-col gap-4 md:flex-row">
-        <button className="fr-btn justify-center" onClick={() => copy(message)}>
+        <button
+          data-test="copier-message"
+          className="fr-btn justify-center"
+          onClick={() => copy(message)}
+        >
           Copier le message
         </button>
         <button
+          data-test="copier-url"
           className="fr-btn fr-btn--secondary"
           onClick={() => copy(invitationUrl ? invitationUrl : '')}
         >
