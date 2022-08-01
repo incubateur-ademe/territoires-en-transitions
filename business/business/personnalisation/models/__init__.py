@@ -24,7 +24,14 @@ class Question:
 
 
 IdentiteTypeOption = Literal["syndicat", "commune", "EPCI", "syndicat_traitement"]
-IdentitePopulationOption = Literal["moins_de_5000", "moins_de_10000", "moins_de_100000"]
+IdentitePopulationOption = Literal[
+    "moins_de_5000",
+    "moins_de_10000",
+    "moins_de_20000",
+    "moins_de_50000",
+    "moins_de_100000",
+    "plus_de_100000",
+]
 IdentiteLocalisationOption = Literal["DOM"]
 
 
