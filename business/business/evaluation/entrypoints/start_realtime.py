@@ -127,7 +127,11 @@ def get_connected_socket() -> Socket:
     return socket
 
 
-def start_realtime():
+MAX_RETRIES = 10
+
+
+def start_realtime(left_retries: int = MAX_RETRIES):
+
     try:
         socket = get_connected_socket()
         config = get_config(socket)
@@ -140,10 +144,16 @@ def start_realtime():
         config.prepare_catch_up_unprocessed_action_status_update_events().execute()
 
         socket.listen()
-    except (IncompleteReadError, ConnectionClosedError):
+    except Exception as e:
+        if left_retries > 0:
+            print("Exception => ", e)
+            print("Max retries reached, will raise the exception...")
+            raise e
+
+        print("Exception => ", e)
         print("Connection closed. Will try to reconnect in 5 seconds...")
         time.sleep(5)
-        start_realtime()
+        start_realtime(left_retries - 1)
 
 
 # 4. Launch realtime
