@@ -9,6 +9,76 @@ si identite(type, commune) alors 3/4
 ```
 Les communes sont évaluées sur 3 points au lieu de 4.
 
+# Désactivation cae 6.1.2.3.1 liee commune
+```yaml
+action_id: cae_6.1.2.3.1
+```
+## Règles
+### Désactivation
+```formule
+identite(type, commune)
+```
+
+# Désactivation cae 6.1.2.3.2 liee EPCI
+```yaml
+action_id: cae_6.1.2.3.2
+```
+## Règles
+### Désactivation
+```formule
+identite(type, EPCI)
+```
+
+# Désactivation cae 6.1.2.4.1 liee commune
+```yaml
+action_id: cae_6.1.2.4.1
+```
+## Règles
+### Désactivation
+```formule
+identite(type, commune)
+```
+
+# Désactivation cae 6.1.2.4.2 liee commune
+```yaml
+action_id: cae_6.1.2.4.2
+```
+## Règles
+### Désactivation
+```formule
+identite(type, commune)
+```
+
+# Désactivation cae 6.1.2.4.3 liee commune
+```yaml
+action_id: cae_6.1.2.4.3
+```
+## Règles
+### Désactivation
+```formule
+identite(type, commune)
+```
+
+# Désactivation cae 6.1.2.4.4 liee EPCI
+```yaml
+action_id: cae_6.1.2.4.4
+```
+## Règles
+### Désactivation
+```formule
+identite(type, EPCI)
+```
+
+# Désactivation cae 6.1.2.4.5 liee EPCI
+```yaml
+action_id: cae_6.1.2.4.5
+```
+## Règles
+### Désactivation
+```formule
+identite(type, EPCI)
+```
+
 # Reduction potentiel cae 6.2.1 liee logement-habitat
 ```yaml
 action_id: cae_6.2.1
@@ -72,7 +142,6 @@ En l’absence de tissu économique propice à l’émergence de projets d’éc
 action_id: cae_6.3.1.4
 ```
 ## Règles
-
 ### Réduction de potentiel
 ```formule
 si reponse(dev_eco_4,NON) alors 0
