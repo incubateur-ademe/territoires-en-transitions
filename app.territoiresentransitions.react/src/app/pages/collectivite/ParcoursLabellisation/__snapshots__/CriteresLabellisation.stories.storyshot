@@ -5,7 +5,7 @@ Array [
   <p
     className="text-grey625"
   >
-    Ce premier niveau de labellisation ne nécessite pas d’audit et sera validé directement par l’ADEME
+    Le premier niveau de labellisation ne nécessite pas d’audit et sera validé rapidement et directement par l’ADEME ! Les étoiles supérieures sont conditionnées à un audit réalisé par une personne experte mandatée par l’ADEME.
   </p>,
   <h2>
     Critères de labellisation
@@ -535,7 +535,7 @@ Array [
   <p
     className="text-grey625"
   >
-    Ce premier niveau de labellisation ne nécessite pas d’audit et sera validé directement par l’ADEME
+    Le premier niveau de labellisation ne nécessite pas d’audit et sera validé rapidement et directement par l’ADEME ! Les étoiles supérieures sont conditionnées à un audit réalisé par une personne experte mandatée par l’ADEME.
   </p>,
   <h2>
     Critères de labellisation
