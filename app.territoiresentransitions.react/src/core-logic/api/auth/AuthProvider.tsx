@@ -35,6 +35,8 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
 
   // initialisation : enregistre l'écouteur de changements d'état
   useEffect(() => {
+    // Initialise les données crisp.
+    setCrispUserData(userData);
     // écoute les changements d'état (connecté, déconnecté, etc.)
     const {data: listener} = supabaseClient.auth.onAuthStateChange(
       async (event, updatedSession) => {
