@@ -69,3 +69,4 @@ utils/maintenance 2022-07-05T12:56:14Z sqitch <sqitch@bd48b0fa57bd> # Ajout du b
 @v1.5.0 2022-07-27T17:02:15Z Florian <florian@derfurth.com> # Première release avec Sqitch
 
 evaluation/scores_events_fix [evaluation/scores_events] 2022-07-31T14:00:54Z Florian <florian@derfurth.com> # Répare la vue qui déclanche le recalcul des scores.
+labellisation/prerequis_fix [labellisation/prerequis] 2022-08-02T10:19:22Z Florian <florian@derfurth.com> # Le niveau de complétude n'est plus pris en compte pour déterminer les étoiles atteignables.
