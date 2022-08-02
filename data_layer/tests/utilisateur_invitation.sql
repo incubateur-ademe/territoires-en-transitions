@@ -1,6 +1,6 @@
 begin;
 
-select plan(14);
+select plan(16);
 
 -------------------------
 -- Invitation creation --
@@ -61,6 +61,25 @@ select is_empty('select * from private_utilisateur_droit pud '
                     'join registered_user ru on ru.user_id = pud.user_id and collectivite_id = 10 and niveau_acces = ''admin'';',
                 'Adding a user already associated to the collectivité should not change the niveau d''accès.');
 
+--- Add a registered user that was previously associated to the collectivité but was removed (active=fase)
+update private_utilisateur_droit pud
+set active = false
+from random_lecteur rl
+where collectivite_id = 10
+  and pud.user_id = rl.user_id;
+
+select add_user(10, rl.email, 'edition') ->> 'added' as added
+into add_registered_user_4
+from random_lecteur rl;
+
+select ok((select aru4.added = 'true'),
+          'When having admin droits on a collectivité add_user should return added state.')
+from add_registered_user_4 aru4;
+
+select isnt_empty('select * from private_utilisateur_droit pud '
+                      'join random_lecteur rl on rl.user_id = pud.user_id and collectivite_id = 10 and niveau_acces = ''edition'' and active=true;',
+                  'The added user should have edition accès on the collectivité.');
+
 --- Add a non-registered user to get an invitation.
 select (add_user(10, 'no@no.no', 'edition') ->> 'invitation_id')::uuid as id
 into invitation;
@@ -119,7 +138,7 @@ select consume_invitation(i.id::uuid)
 from invitation i;
 
 select ok((select current_setting('response.status') = '403'),
-                  'Consuming an invitation more than once should return a 403.');
+          'Consuming an invitation more than once should return a 403.');
 
 select is_empty('select * from private_utilisateur_droit pud join random_vilain rv on rv.user_id = pud.user_id;',
                 'A user consuming a previously consumed invitation should not have any droit.');
