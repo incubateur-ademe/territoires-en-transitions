@@ -44,7 +44,7 @@ const addUserToCollectivite = async (
     niveau: req.niveauAcces,
   });
   if (error) {
-    return {error: error.message, added: false};
+    return {error: (error as any).error, added: false};
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const response = data as any;
