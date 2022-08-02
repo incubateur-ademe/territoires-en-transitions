@@ -23,30 +23,33 @@ truncate labellisation.demande, labellisation_preuve_fichier;
 -----------------------------------
 ------- Test base functions -------
 -----------------------------------
--- pas_fait statut on all requirements
+-- Set pas_fait statut on all requirements.
 insert into action_statut (collectivite_id, action_id, avancement, avancement_detaille, concerne, modified_by)
 select 1, lac.action_id, 'pas_fait', null, true, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'
 from labellisation_action_critere lac
 on conflict do nothing;
 
--- fake scoring, every requirement at .0
---- use action_score as a temp table
-truncate private.action_score;
---- all scores at 0
+-- Set every requirement at .0.
+truncate private.action_score; --- use action_score as a temp table
+
+-- all scores at 0
 insert into private.action_score (referentiel, action_id, point_fait, point_programme, point_potentiel)
 select ar.referentiel, ar.id, .0, .0, 10
 from action_relation as ar;
 
--- insert roots
-select test_write_scores(
-               1,
-               (select array_agg(s) from private.action_score s)
-           );
+select test_write_scores( 1,(select array_agg(s) from private.action_score s));
+
+-- test base prérequis functions
+select ok((select bool_and(ss.complete) and sum(ss.proportion_fait) = 0
+           from private.action_score s
+                    join private.score_summary_of(s) ss on true),
+          'Score summaries should be not complete and have 0 points.');
+
+truncate private.action_score; -- clean up temp table
 
 select ok((select sum(score_fait) = 0 and bool_and(complet)
            from labellisation.referentiel_score(1)),
           'Referentiel scores should be at 0');
-
 
 select ok((select bool_and(etoile_labellise is null and
                            etoile_objectif = '1')
@@ -61,7 +64,6 @@ select ok((select not bool_and(atteint)
            from labellisation.critere_action(1)),
           'Should not be able to reach any criteres since all scores are at 0');
 
-truncate private.action_score;
 
 -----------------------------------------
 ------- Scenario: perfect scoring -------
@@ -71,7 +73,7 @@ truncate action_statut;
 truncate client_scores;
 truncate labellisation.demande, labellisation_preuve_fichier;
 
--- insert faked client scores.
+-- insert faked client scores, by default test_write_scores writes every score as fait.
 select test_write_scores(1);
 
 -- insert labellisation
@@ -151,33 +153,24 @@ on conflict do nothing;
 
 -- fake scoring, score and completion at 0
 truncate private.action_score; -- use action_score as a temp table
+
+-- zero the required actions scores
 insert into private.action_score (referentiel, action_id, point_fait, point_programme, point_potentiel,
                                   completed_taches_count, total_taches_count)
 select lac.referentiel, lac.action_id, 0.0, 0.0, 10, 0, 4
 from labellisation_action_critere lac;
 
+-- zero the referentiel roots.
 insert into private.action_score (referentiel, action_id, point_fait, point_programme, point_potentiel,
                                   completed_taches_count, total_taches_count)
 values ('eci', 'eci', .0, .0, 10, 0, 4),
        ('cae', 'cae', .0, .0, 10, 0, 4);
 
--- client scores from fake scoring
-truncate client_scores;
-insert into client_scores
-select 1,
-       s.referentiel,
-       jsonb_agg(s),
-       now()
-from test.generate_scores((select array_agg(s) from private.action_score s)) s
-group by s.referentiel;
+select test_write_scores( 1,(select array_agg(s) from private.action_score s));
 
+truncate private.action_score; -- clean up
 
-select ok((select not bool_and(ss.complete) and sum(ss.proportion_fait) = 0
-           from private.action_score s
-                    join private.score_summary_of(s) ss on true),
-          'Score summaries should be not complete and have 0 points.');
-
-
+-- tests
 select ok((select bool_and(score_fait = 0
     and score_programme = 0
     and completude = 0
@@ -223,21 +216,16 @@ insert into private.action_score (referentiel, action_id, point_fait, point_prog
 values ('eci', 'eci', .0, .0, 10, 4, 4),
        ('cae', 'cae', .0, .0, 10, 4, 4);
 
--- client scores from fake scoring
-truncate client_scores;
-insert into client_scores
-select 1,
-       s.referentiel,
-       jsonb_agg(s),
-       now()
-from test.generate_scores((select array_agg(s) from private.action_score s)) s
-group by s.referentiel;
+select test_write_scores( 1,(select array_agg(s) from private.action_score s));
 
+
+-- tests
 select ok((select bool_and(ss.complete) and sum(ss.proportion_fait) = 0
            from private.action_score s
                     join private.score_summary_of(s) ss on true),
           'Score summaries should be complete and have 0 points.');
 
+truncate private.action_score; -- clean up temp table
 
 select ok((select bool_and(score_fait = 0
     and score_programme = 0
