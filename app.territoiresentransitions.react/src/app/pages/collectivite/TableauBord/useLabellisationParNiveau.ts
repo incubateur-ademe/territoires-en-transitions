@@ -9,12 +9,10 @@ export const useLabellisationParNiveau = (referentiel: string) => {
 
   const collectivite_id = useCollectiviteId()!;
   useEffect(() => {
-    if (!labellisation) {
-      labellisationReadEndpoint
-        .getBy({collectivite_id, referentiel})
-        .then(res => setLabellisation(res.reduce(parNiveau, {})));
-    }
-  }, [labellisation]);
+    labellisationReadEndpoint
+      .getBy({collectivite_id, referentiel})
+      .then(res => setLabellisation(res.reduce(parNiveau, {})));
+  }, [collectivite_id]);
 
   return labellisation;
 };
