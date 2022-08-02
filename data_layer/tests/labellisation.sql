@@ -188,7 +188,7 @@ select ok((select bool_and(score_fait = 0
 
 select ok((select etoile_labellise is null
                       and prochaine_etoile_labellisation is null
-                      and etoile_score_possible is null
+                      and etoile_score_possible = '1'
                       and etoile_objectif = '1'
            from labellisation.etoiles(1)
            where referentiel = 'eci'),
