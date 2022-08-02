@@ -1,11 +1,20 @@
 export const LocalSelectors = {
-  "lien d'invitation": {
-    selector: '[data-test=InvitationLink] input',
+  "tableau des membres": {
+    selector: '[data-test=MembreListTable]',
   },
-  Copier: {
-    selector: '[data-test=InvitationLink] [data-test=CopyLink]',
+  "formulaire d'invitation": {
+    selector: '[data-test=invitation-form]',
   },
-  'Générer un nouveau lien': {
-    selector: '[data-test=InvitationLink] [data-test=GenLink]',
+  "message d'invitation": {
+    selector: '[data-test=invitation-message]',
   },
+  "Copier le message": {
+    selector: '[data-test=copier-message]', //[data-test=CopyLink]
+  },
+  "Copier le lien": {
+    selector: '[data-test=copier-url]', //[data-test=CopyLink]
+  },
+  // 'Générer un nouveau lien': {
+  //   selector: '[data-test=InvitationLink] [data-test=GenLink]',
+  // },
 };

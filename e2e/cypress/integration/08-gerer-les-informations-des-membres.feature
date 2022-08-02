@@ -34,7 +34,6 @@ Fonctionnalité: Gérer les informations des membres
     Alors le tableau des membres ne doit pas contenir l'utilisateur "yolo@dodo.com"
 
 
-  @focus:
   Scénario: Modifier les informations d'autres membres en tant qu'administrateur
     Etant donné que les droits utilisateur sont réinitialisés
     Et que les informations des membres sont réinitialisées
