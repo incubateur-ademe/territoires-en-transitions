@@ -7,27 +7,49 @@ beforeEach(() => {
   cy.wrap(LocalSelectors).as('LocalSelectors');
 });
 
-Given("un lien d'invitation est affiché", () => {
-  cy.wait(3000);
-  cy.get(LocalSelectors["lien d'invitation"].selector).should(
-    'contain.value',
-    '/invitation/',
+Given("un formulaire d'invitation est affiché", () => {
+  cy.get(LocalSelectors["formulaire d'invitation"].selector).should(
+  'be.visible'
   );
 });
 
-Given('je clique sur le bouton "Copier"', () => {
-  // pour que le test sur le contenu du presse-papier fonctionne correctement
-  // on doit donner le focus au bouton et utiliser realClick au lien de click :(
-  // Ref: https://github.com/cypress-io/cypress/issues/18198#issuecomment-1003756021
-  cy.get(LocalSelectors['Copier'].selector).focus().realClick();
+Given("un message d'invitation est affiché", () => {
+  cy.get(LocalSelectors["message d'invitation"].selector).should(
+  'be.visible'
+  );
+});
+Given(/je renseigne l'email "([^"]+)" de la personne à inviter en "([^"]+)"/, (email, acces) => {
+  cy.get('input[name="email"]')
+  .clear()
+  .type(email)
+  cy.get('select[name="acces"]')
+  .select(acces)
 });
 
-Given('le presse-papier contient le lien copié', () => {
-  cy.get(LocalSelectors["lien d'invitation"].selector)
-    .invoke('val')
-    .then((val) => {
-      cy.task('getClipboard').should('equal', val);
-    });
+
+Given(
+  /le tableau des membres doit contenir l'utilisateur "([^"]+)"/,
+  (mail) => {
+    cy.get(LocalSelectors["tableau des membres"].selector).should(
+      "contain",
+      mail
+    );
+  }
+);
+
+// pour que le test sur le contenu du presse-papier fonctionne correctement
+// on doit donner le focus au bouton et utiliser realClick au lien de click :(
+// Ref: https://github.com/cypress-io/cypress/issues/18198#issuecomment-1003756021
+Given('je clique sur le bouton "Copier le message"', () => {
+  cy.get(LocalSelectors['Copier le message'].selector).focus().realClick();
+});
+
+Given('je clique sur le bouton "Copier le lien"', () => {
+  cy.get(LocalSelectors['Copier le lien'].selector).focus().realClick();
+});
+
+Given(/le presse-papier contient "([^"]*)"/, (message) => {
+  cy.task('getClipboard').should('contain', message);
 });
 
 Given('je visite le lien copié', () =>
