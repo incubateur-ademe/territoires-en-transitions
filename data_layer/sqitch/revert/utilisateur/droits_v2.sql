@@ -233,6 +233,8 @@ alter table private_utilisateur_droit
     drop column niveau_acces;
 
 
+drop type niveau_acces;
+
 -- Restaure les anciennes vues.
 create view owned_collectivite
 as
