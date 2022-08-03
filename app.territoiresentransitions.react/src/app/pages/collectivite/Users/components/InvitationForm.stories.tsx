@@ -32,6 +32,8 @@ export const AsAdmin = () => (
   <InvitationForm
     currentCollectivite={fakeCollectivite}
     currentUser={fakeCurrentAdmin}
+    addUser={() => {}}
+    addUserResponse={{}}
   />
 );
 
@@ -39,5 +41,7 @@ export const AsEditeur = () => (
   <InvitationForm
     currentCollectivite={fakeCollectivite}
     currentUser={fakeCurrentEditeur}
+    addUser={() => {}}
+    addUserResponse={{}}
   />
 );

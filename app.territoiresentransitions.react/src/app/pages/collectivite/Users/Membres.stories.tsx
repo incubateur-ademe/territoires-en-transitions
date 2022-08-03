@@ -38,7 +38,7 @@ EnTantQueLecteur.args = EnTantQueLecteurArgs;
 export const EnTantQuAdminQuiInviteUnNouvelUtilisateur = Template.bind({});
 const EnTantQuAdminQuiInviteUnNouvelUtilisateurArgs: MembresProps = {
   addUser: async _request => undefined,
-  addUserResponse: {added: false, invitationId: 'invitationId'},
+  addUserResponse: {added: false, invitationUrl: 'invitationId'},
   currentUser: fakeUserData,
   membres: fakeMembres,
   isLoading: false,
