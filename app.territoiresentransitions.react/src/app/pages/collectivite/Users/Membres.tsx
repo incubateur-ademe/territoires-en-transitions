@@ -29,6 +29,7 @@ export type MembresProps = {
   removeFromCollectivite: TRemoveFromCollectivite;
   addUser: (request: AddUserToCollectiviteRequest) => void;
   addUserResponse: AddUserToCollectiviteResponse | null;
+  resetAddUser: () => void;
 };
 
 /**
@@ -44,6 +45,7 @@ export const Membres = ({
   removeFromCollectivite,
   addUser,
   addUserResponse,
+  resetAddUser,
 }: MembresProps) => {
   const canViewInvitation =
     collectivite.niveau_acces === 'admin' ||
@@ -74,6 +76,7 @@ export const Membres = ({
           <InvitationForm
             addUser={addUser}
             addUserResponse={addUserResponse}
+            resetAddUser={resetAddUser}
             currentUser={currentUser}
             currentCollectivite={collectivite}
           />
@@ -92,7 +95,7 @@ export default () => {
   const {membres, isLoading: isMemberLoading} = useCollectiviteMembres();
   const {updateMembre} = useUpdateCollectiviteMembre();
   const {removeFromCollectivite} = useRemoveFromCollectivite();
-  const {addUser, addUserResponse} = useAddUserToCollectivite();
+  const {addUser, addUserResponse, resetAddUser} = useAddUserToCollectivite();
 
   if (!user?.id || !collectivite_id || !collectivite) return null;
 
@@ -100,6 +103,7 @@ export default () => {
     <Membres
       addUser={addUser}
       addUserResponse={addUserResponse}
+      resetAddUser={resetAddUser}
       currentUser={user}
       membres={membres}
       collectivite={collectivite}
