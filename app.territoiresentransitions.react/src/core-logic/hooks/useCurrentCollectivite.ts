@@ -2,7 +2,7 @@ import {useQuery} from 'react-query';
 import {useAuth} from 'core-logic/api/auth/AuthProvider';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {ElsesCollectiviteRead, NiveauAcces} from 'generated/dataLayer';
+import {NiveauAcces} from 'generated/dataLayer';
 import {MesCollectivitesRead} from 'generated/dataLayer/mes_collectivites_read';
 
 export type CurrentCollectivite = {
