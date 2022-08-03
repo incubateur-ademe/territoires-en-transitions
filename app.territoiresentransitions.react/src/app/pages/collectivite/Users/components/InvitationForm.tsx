@@ -1,7 +1,13 @@
-import {useMemo, useState} from 'react';
-import {Field, FieldAttributes, FieldProps, Form, Formik} from 'formik';
+import {useMemo, useRef, useState} from 'react';
+import {
+  Field,
+  FieldAttributes,
+  FieldProps,
+  Form,
+  Formik,
+  FormikProps,
+} from 'formik';
 import * as Yup from 'yup';
-import {v4 as uuid} from 'uuid';
 import classNames from 'classnames';
 import {UserData} from 'core-logic/api/auth/AuthProvider';
 import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
@@ -22,6 +28,7 @@ type InvitationFormProps = {
   currentCollectivite: CurrentCollectivite;
   addUser: (request: AddUserToCollectiviteRequest) => void;
   addUserResponse: AddUserToCollectiviteResponse | null;
+  resetAddUser: () => void;
 };
 
 const InvitationForm = ({
@@ -29,6 +36,7 @@ const InvitationForm = ({
   currentCollectivite,
   addUser,
   addUserResponse,
+  resetAddUser,
 }: InvitationFormProps) => {
   const validationInvitation = Yup.object({
     email: Yup.string()
@@ -55,7 +63,19 @@ const InvitationForm = ({
       return editionOptions;
     }
   }, [currentCollectivite]);
+
+  const formRef = useRef<FormikProps<any>>(null);
+
   const [formIsFilling, setFormIsFilling] = useState(true);
+
+  const handleClearForm = () => {
+    setFormIsFilling(true);
+    resetAddUser();
+    if (formRef.current) {
+      formRef.current.handleReset();
+    }
+  };
+
   const onSubmitInvitation = (values: {
     email: string;
     acces: NiveauAcces | '';
@@ -72,6 +92,7 @@ const InvitationForm = ({
   return (
     <div data-test="invitation-form" className="max-w-4xl">
       <Formik
+        innerRef={formRef}
         initialValues={{email: '', acces: ''}}
         validationSchema={validationInvitation}
         onSubmit={onSubmitInvitation}
@@ -80,6 +101,7 @@ const InvitationForm = ({
           className="md:flex gap-6"
           onChange={() => {
             setFormIsFilling(true);
+            resetAddUser();
           }}
         >
           <Field name="email" type="text" component={InvitationEmailInput} />
@@ -102,6 +124,7 @@ const InvitationForm = ({
           addUserResponse={addUserResponse}
           currentCollectivite={currentCollectivite}
           currentUser={currentUser}
+          handleClearForm={handleClearForm}
         />
       )}
     </div>
@@ -112,12 +135,14 @@ const AddUserResponse = ({
   addUserResponse,
   currentCollectivite,
   currentUser,
+  handleClearForm,
 }: {
   addUserResponse: AddUserToCollectiviteResponse | null;
   currentCollectivite: CurrentCollectivite;
   currentUser: UserData;
+  handleClearForm: () => void;
 }) => {
-  if (addUserResponse?.invitationUrl)
+  if (addUserResponse?.invitationUrl) {
     return (
       <InvitationMessage
         currentCollectivite={currentCollectivite}
@@ -126,16 +151,23 @@ const AddUserResponse = ({
         invitationUrl={addUserResponse.invitationUrl}
       />
     );
-  else if (addUserResponse?.added)
+  } else if (addUserResponse?.added) {
+    setTimeout(() => {
+      handleClearForm();
+    }, 5000);
     return (
       <div className="fr-alert fr-alert--success">
         Nouveau membre ajouté avec succès à la collectivité !
       </div>
     );
-  else if (addUserResponse?.error)
+  } else if (addUserResponse?.error) {
+    setTimeout(() => {
+      handleClearForm();
+    }, 5000);
     return (
       <div className="fr-alert fr-alert--info">{addUserResponse?.error}</div>
     );
+  }
   return null;
 };
 
