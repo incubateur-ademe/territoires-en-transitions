@@ -510,13 +510,13 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
       >
         <label
           className="fr-label"
-          htmlFor="24c0cc4c-8356-45cb-89e3-28f97daf5583"
+          htmlFor="email"
         >
           Adresse email de la personne à inviter
         </label>
         <input
           className="fr-input"
-          id="24c0cc4c-8356-45cb-89e3-28f97daf5583"
+          id="email"
           name="email"
           onBlur={[Function]}
           onChange={[Function]}
@@ -529,13 +529,13 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
       >
         <label
           className="fr-label"
-          htmlFor="6b879412-2689-4cbb-baec-b2522d011dbc"
+          htmlFor="Niveau d’accès pour cette collectivité"
         >
           Niveau d’accès pour cette collectivité
         </label>
         <select
           className="fr-select"
-          id="6b879412-2689-4cbb-baec-b2522d011dbc"
+          id="Niveau d’accès pour cette collectivité"
           name="acces"
           onBlur={[Function]}
           onChange={[Function]}
@@ -1087,13 +1087,13 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
       >
         <label
           className="fr-label"
-          htmlFor="a02d8403-da68-4ef4-b856-993663c5ef9a"
+          htmlFor="email"
         >
           Adresse email de la personne à inviter
         </label>
         <input
           className="fr-input"
-          id="a02d8403-da68-4ef4-b856-993663c5ef9a"
+          id="email"
           name="email"
           onBlur={[Function]}
           onChange={[Function]}
@@ -1106,13 +1106,13 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
       >
         <label
           className="fr-label"
-          htmlFor="ff4fce62-93f8-4b68-bb64-b5e032d24862"
+          htmlFor="Niveau d’accès pour cette collectivité"
         >
           Niveau d’accès pour cette collectivité
         </label>
         <select
           className="fr-select"
-          id="ff4fce62-93f8-4b68-bb64-b5e032d24862"
+          id="Niveau d’accès pour cette collectivité"
           name="acces"
           onBlur={[Function]}
           onChange={[Function]}
@@ -1664,13 +1664,13 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
       >
         <label
           className="fr-label"
-          htmlFor="1f02df99-7d19-47fe-82ca-24aec67612b3"
+          htmlFor="email"
         >
           Adresse email de la personne à inviter
         </label>
         <input
           className="fr-input"
-          id="1f02df99-7d19-47fe-82ca-24aec67612b3"
+          id="email"
           name="email"
           onBlur={[Function]}
           onChange={[Function]}
@@ -1683,13 +1683,13 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
       >
         <label
           className="fr-label"
-          htmlFor="b5a82cf5-3e40-4e0f-95df-657e76be636c"
+          htmlFor="Niveau d’accès pour cette collectivité"
         >
           Niveau d’accès pour cette collectivité
         </label>
         <select
           className="fr-select"
-          id="b5a82cf5-3e40-4e0f-95df-657e76be636c"
+          id="Niveau d’accès pour cette collectivité"
           name="acces"
           onBlur={[Function]}
           onChange={[Function]}
