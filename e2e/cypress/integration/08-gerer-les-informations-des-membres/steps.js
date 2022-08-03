@@ -18,6 +18,8 @@ Given(
   'le tableau des membres doit contenir les informations suivantes',
   (dataTable) => {
     cy.get(LocalSelectors['tableau des membres'].selector).within(() => {
+      // Attend la disparition du chargement.
+      cy.get('[data-test=Loading]').should('not.exist');
       cy.wrap(dataTable.rows()).each(
         (
           [
