@@ -17,13 +17,13 @@ exports[`Storyshots app/pages/collectivite/Users/components/InvitationForm As Ad
     >
       <label
         className="fr-label"
-        htmlFor="3dd886a4-e2c8-42b4-b857-165774e0bdfa"
+        htmlFor="email"
       >
         Adresse email de la personne à inviter
       </label>
       <input
         className="fr-input"
-        id="3dd886a4-e2c8-42b4-b857-165774e0bdfa"
+        id="email"
         name="email"
         onBlur={[Function]}
         onChange={[Function]}
@@ -36,13 +36,13 @@ exports[`Storyshots app/pages/collectivite/Users/components/InvitationForm As Ad
     >
       <label
         className="fr-label"
-        htmlFor="8946e2c3-54b2-4734-b285-3d27226186f0"
+        htmlFor="Niveau d’accès pour cette collectivité"
       >
         Niveau d’accès pour cette collectivité
       </label>
       <select
         className="fr-select"
-        id="8946e2c3-54b2-4734-b285-3d27226186f0"
+        id="Niveau d’accès pour cette collectivité"
         name="acces"
         onBlur={[Function]}
         onChange={[Function]}
@@ -95,13 +95,13 @@ exports[`Storyshots app/pages/collectivite/Users/components/InvitationForm As Ed
     >
       <label
         className="fr-label"
-        htmlFor="3c223162-10e3-4078-9ab0-9551d30d5764"
+        htmlFor="email"
       >
         Adresse email de la personne à inviter
       </label>
       <input
         className="fr-input"
-        id="3c223162-10e3-4078-9ab0-9551d30d5764"
+        id="email"
         name="email"
         onBlur={[Function]}
         onChange={[Function]}
@@ -114,13 +114,13 @@ exports[`Storyshots app/pages/collectivite/Users/components/InvitationForm As Ed
     >
       <label
         className="fr-label"
-        htmlFor="4bf26f14-9865-4545-8a3e-a93fd0b14edc"
+        htmlFor="Niveau d’accès pour cette collectivité"
       >
         Niveau d’accès pour cette collectivité
       </label>
       <select
         className="fr-select"
-        id="4bf26f14-9865-4545-8a3e-a93fd0b14edc"
+        id="Niveau d’accès pour cette collectivité"
         name="acces"
         onBlur={[Function]}
         onChange={[Function]}
