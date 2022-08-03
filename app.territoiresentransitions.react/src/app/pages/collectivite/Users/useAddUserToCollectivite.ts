@@ -17,18 +17,20 @@ export interface AddUserToCollectiviteResponse {
 
 export const useAddUserToCollectivite = () => {
   const queryClient = useQueryClient();
-  const {mutate: addUser, data: addUserResponse} = useMutation(
-    addUserToCollectivite,
-    {
-      onSuccess: (_, {collectiviteId}) => {
-        queryClient.invalidateQueries(['collectivite_membres', collectiviteId]);
-      },
-    }
-  );
+  const {
+    mutate: addUser,
+    data: addUserResponse,
+    reset: resetAddUser,
+  } = useMutation(addUserToCollectivite, {
+    onSuccess: (_, {collectiviteId}) => {
+      queryClient.invalidateQueries(['collectivite_membres', collectiviteId]);
+    },
+  });
 
   return {
     addUserResponse: addUserResponse || null,
     addUser,
+    resetAddUser,
   };
 };
 
