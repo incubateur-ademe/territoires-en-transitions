@@ -149,7 +149,6 @@ interface SelectFieldProps extends FieldAttributes<any> {
 const SelectField = (props: SelectFieldProps) => (
   <Field {...props}>
     {({field, form}: {field: any; form: any}) => {
-      const htmlId = uuid();
       const errorMessage = form.errors[field.name];
       const isTouched = form.touched[field.name];
       const isError = errorMessage && isTouched;
@@ -160,14 +159,14 @@ const SelectField = (props: SelectFieldProps) => (
             ['fr-select-group--error']: isError,
           })}
         >
-          <label className="fr-label" htmlFor={htmlId}>
+          <label className="fr-label" htmlFor={props.label}>
             {props.label}
           </label>
           <select
             className={classNames('fr-select', {
               ['fr-select--error']: isError,
             })}
-            id={htmlId}
+            id={props.label}
             {...field}
           >
             <option value="" disabled hidden>
@@ -193,7 +192,6 @@ type InvitationEmailInputProps = {
 const InvitationEmailInput = (
   props: InvitationEmailInputProps & FieldProps
 ) => {
-  const htmlId = uuid();
   const errorMessage = props.form.errors[props.field.name];
   const isTouched = props.form.touched[props.field.name];
   const isError = errorMessage && isTouched;
@@ -205,11 +203,11 @@ const InvitationEmailInput = (
         ['fr-input-group--error']: isError,
       })}
     >
-      <label htmlFor={htmlId} className="fr-label">
+      <label htmlFor={props.field.name} className="fr-label">
         Adresse email de la personne à inviter
       </label>
       <input
-        id={htmlId}
+        id={props.field.name}
         type={inputType}
         className={classNames('fr-input', {['fr-input--error']: isError})}
         {...props.field}
