@@ -4,7 +4,7 @@
 BEGIN;
 
 -- retire une fonction dépréciée
-drop function collectivite_user_list;
+drop function if exists collectivite_user_list;
 
 -- permet au client d'afficher les noms des collectivités et de les filtrer sur les critères de droits.
 create view collectivite_niveau_acces
