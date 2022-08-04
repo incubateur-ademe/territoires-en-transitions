@@ -38,6 +38,7 @@ id: assainissement_4
 type: binaire
 thematique_id: eau_assainissement
 actions: [cae_3.3.2]
+ordonnancement: 1
 ```
 
 # Si oui, cette étude indique-t-elle un potentiel de valorisation énergétique (méthanisation ou récupération de chaleur) ? 
@@ -46,4 +47,5 @@ id: assainissement_4bis
 type: binaire
 thematique_id: eau_assainissement
 actions: [cae_3.3.2]
+ordonnancement: 2
 ```
