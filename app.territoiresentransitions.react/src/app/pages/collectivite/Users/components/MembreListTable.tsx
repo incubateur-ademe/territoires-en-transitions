@@ -71,7 +71,7 @@ const MembreListTable = ({
             {membres
               ? membres.map(membre => (
                   <MembreListTableRow
-                    key={membre.user_id}
+                    key={membre.email}
                     membre={membre}
                     currentUserAccess={currentUserAccess}
                     currentUserId={currentUserId}
