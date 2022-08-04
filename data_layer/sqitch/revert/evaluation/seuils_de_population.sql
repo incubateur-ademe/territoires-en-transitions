@@ -2,7 +2,8 @@
 
 BEGIN;
 
-create function private.population_buckets(population integer)
+-- restore previous version.
+create or replace function private.population_buckets(population integer)
     returns text[]
 as
 $$
