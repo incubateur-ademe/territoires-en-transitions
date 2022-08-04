@@ -1,10 +1,17 @@
-import {TNiveauAcces, TRemoveFromCollectivite, TUpdateMembre} from '../types';
-import {Membre, TMembreFonction} from 'app/pages/collectivite/Users/types';
+import {useState} from 'react';
+import {pick} from 'ramda';
+
+import {MultiSelectDropdown, SelectDropdown} from 'ui/shared/SelectDropdown';
+import {
+  Membre,
+  TMembreFonction,
+  TNiveauAcces,
+  TRemoveFromCollectivite,
+  TUpdateMembre,
+} from 'app/pages/collectivite/Users/types';
 import {Referentiel} from 'types/litterals';
 import {referentielToName} from 'app/labels';
-import {MultiSelectDropdown, SelectDropdown} from 'ui/shared/SelectDropdown';
-import {pick} from 'ramda';
-import {useState} from 'react';
+import UpdateMemberAccesModal from 'app/pages/collectivite/Users/components/UpdateMembreAccesModal';
 
 export type TMembreListTableRowProps = {
   currentUserId: string;
@@ -60,15 +67,23 @@ const MembreListTableRow = ({
   const isAdmin = currentUserAccess === 'admin';
   const canUpdate = isAdmin || isCurrentUser;
 
-  const onRemove = () => {
-    if (
-      confirm(
-        isCurrentUser
-          ? 'Êtes-vous sûr de vouloir vous retirer de la collectivité ?'
-          : 'Êtes-vous sûr de vouloir retirer cette utilisateur de la collectivité ?'
-      )
-    ) {
-      removeFromCollectivite(membre_id);
+  // Ce state est utilisé pour gérer l'affichage de la modal au click sans boutton
+  // car les boutons sont situés à l'intérieur du select
+  const [isAccesModalOpen, setIsAccesModalOpen] = useState(false);
+
+  // Récupère la valeur du selecteur d'accès pour la donner à la modal
+  const [accesOptionSelected, setAccesOptionSelected] = useState<
+    TAccesDropdownOption | undefined
+  >(undefined);
+
+  const onAccesSelect = (value: TAccesDropdownOption) => {
+    // Comme nous n'affichons pas de modal lors du changement d'accès d'un autre utilisateur que soit même,
+    // on crée une condition afin d'ouvrir la modal ou directement changer l'accès d'un tierce
+    if (isCurrentUser || value === 'remove') {
+      setAccesOptionSelected(value);
+      setIsAccesModalOpen(true);
+    } else {
+      updateMembre({membre_id, name: 'niveau_acces', value});
     }
   };
 
@@ -133,15 +148,23 @@ const MembreListTableRow = ({
       </td>
       <td className={`${cellClassNames} text-right`}>
         {canUpdate ? (
-          <AccesDropdown
-            isCurrentUser={isCurrentUser}
-            currentUserAccess={currentUserAccess}
-            value={niveau_acces}
-            onChange={value =>
-              updateMembre({membre_id, name: 'niveau_acces', value})
-            }
-            onRemove={onRemove}
-          />
+          <>
+            <AccesDropdown
+              isCurrentUser={isCurrentUser}
+              currentUserAccess={currentUserAccess}
+              value={niveau_acces}
+              onSelect={onAccesSelect}
+            />
+            <UpdateMemberAccesModal
+              isOpen={isAccesModalOpen}
+              setIsOpen={setIsAccesModalOpen}
+              selectedOption={accesOptionSelected}
+              membreId={membre_id}
+              isCurrentUser={isCurrentUser}
+              updateMembre={updateMembre}
+              removeFromCollectivite={removeFromCollectivite}
+            />
+          </>
         ) : (
           <span>{niveauAccesLabels[niveau_acces]}</span>
         )}
@@ -205,7 +228,7 @@ const ChampsInterventionDropdown = ({
   </div>
 );
 
-type TAccesDropdownOption = TNiveauAcces | 'remove';
+export type TAccesDropdownOption = TNiveauAcces | 'remove';
 
 const AccessDropdownLabel = ({
   option,
@@ -246,19 +269,15 @@ type TAccesDropdownProps = {
   isCurrentUser: boolean;
   currentUserAccess: TNiveauAcces;
   value: TAccesDropdownOption;
-  onChange: (value: TNiveauAcces) => void;
-  onRemove: () => void;
+  onSelect: (value: TAccesDropdownOption) => void;
 };
 
 const AccesDropdown = ({
   isCurrentUser,
   currentUserAccess,
   value,
-  onChange,
-  onRemove,
+  onSelect,
 }: TAccesDropdownProps) => {
-  const onSelect = (option: TAccesDropdownOption) =>
-    option === 'remove' ? onRemove() : onChange(option);
   return (
     <div data-test="acces-dropdown">
       <SelectDropdown
