@@ -17,7 +17,7 @@ action_id: cae_1.1.2.0.2
 ## Règles
 ### Désactivation
 ```formule
-identite(population, moins_de_50000)
+si identite(population, moins_de_50000) alors VRAI
 ```
 Les collectivités de moins de 50 000 habitants ne sont pas concernées par l'obligation BEGES.
 
@@ -43,7 +43,7 @@ action_id: cae_1.2.2.1.1
 ## Règles
 ### Désactivation
 ```formule
-identite(type, commune)
+si identite(type, commune) alors VRAI
 ```
 
 # Personnalisation cae 1.2.2.1.3 liee commmune
@@ -53,7 +53,7 @@ action_id: cae_1.2.2.1.3
 ## Règles
 ### Désactivation
 ```formule
-identite(type, EPCI)
+si identite(type, EPCI) alors VRAI
 ```
 
 
