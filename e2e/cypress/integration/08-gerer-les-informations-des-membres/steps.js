@@ -58,9 +58,7 @@ Given(
   },
 );
 
-When(
-  /je modifie le champ "([^"]+)" de "([^"]+)" en "([^"]+)"/,
-  (champ, email, value) => {
+const clickOnDropdownValue =   (champ, email, value) => {
     if (champ === 'details_fonction') {
       getUtilisateurRow(email).within(() => {
         cy.root().
@@ -76,7 +74,33 @@ When(
       });
       cy.root().get(`#floating-ui-root [aria-label="${value}"]`).click();
     }
-  },
+  };
+
+When(
+  /je modifie le champ "([^"]+)" de "([^"]+)" en "([^"]+)"/,
+  clickOnDropdownValue,
+);
+When(
+  /je clique sur la valeur "([^"]+)" du champ "([^"]+)" de "([^"]+)"/,
+  (value, champ, email) => clickOnDropdownValue(champ, email, value),
 );
 
 const getUtilisateurRow = (email) => cy.get(`[data-test="MembreRow-${email}"]`);
+
+
+Given(
+  /je vois une modale intitulée "([^"]+)"/,
+  (titre) => {
+    cy.get(LocalSelectors['modale'].selector).should(
+      'contain',
+      titre,
+    );
+  },
+);
+
+Given(
+  /je clique sur le bouton "([^"]+)" de la modale/,
+  (ariaLabel) => {
+    cy.get(`[aria-label="${ariaLabel}"]`).click();
+  },
+);
