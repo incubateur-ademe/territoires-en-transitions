@@ -233,27 +233,27 @@ with droits_dcp_membre as
                              on m.user_id = d.user_id and m.collectivite_id = d.collectivite_id
           where d.collectivite_id = collectivite_membres.id
             and d.active),
-     invitations as (select null::uuid            as user_id,
-                            null                  as prenom,
-                            null                  as nom,
+     invitations as (select null::uuid             as user_id,
+                            null                   as prenom,
+                            null                   as nom,
                             i.email,
-                            null                  as telephone,
-                            null::niveau_acces    as niveau_acces,
-                            null::membre_fonction as fonction,
-                            null                  as details_fonction,
-                            null::referentiel[]   as champ_intervention
+                            null                   as telephone,
+                            i.niveau::niveau_acces as niveau_acces,
+                            null::membre_fonction  as fonction,
+                            null                   as details_fonction,
+                            null::referentiel[]    as champ_intervention
                      from utilisateur.invitation i
                      where i.collectivite_id = collectivite_membres.id),
-    merged as (
-        select *
-        from droits_dcp_membre
-        where have_lecture_acces(collectivite_membres.id) -- limit dcp listing.
-        union
-        select *
-        from invitations
-        where have_edition_acces(collectivite_membres.id) -- do not show invitations to those who cannot invite.
-    )
-select * from merged
+     merged as (select *
+                from droits_dcp_membre
+                where have_lecture_acces(collectivite_membres.id) -- limit dcp listing.
+                union
+                select *
+                from invitations
+                where have_edition_acces(collectivite_membres.id) -- do not show invitations to those who cannot invite.
+     )
+select *
+from merged
 order by case fonction
              when 'referent' then 1
              when 'technique' then 2
@@ -263,7 +263,7 @@ order by case fonction
              end,
          nom,
          prenom
-;
+    ;
 $$ language sql security definer;
 comment on function collectivite_membres is
     'Les informations de tous les membres d''une collectivité étant donné son id.'
