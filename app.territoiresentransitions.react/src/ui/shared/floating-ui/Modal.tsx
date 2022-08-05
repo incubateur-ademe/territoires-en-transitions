@@ -12,7 +12,7 @@ import {
 } from '@floating-ui/react-dom-interactions';
 import classNames from 'classnames';
 
-type Props = {
+export type ModalProps = {
   /* où il faut mettre le contenu de la modale */
   render: (props: {
     close: () => void;
@@ -42,7 +42,7 @@ const Modal = ({
   externalOpen,
   setExternalOpen,
   size = 'md',
-}: Props) => {
+}: ModalProps) => {
   const [open, setOpen] = useState(false);
 
   const {reference, floating, context} = useFloating({
