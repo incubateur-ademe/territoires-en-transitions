@@ -28,7 +28,7 @@ jobs:
         run: docker compose run sqitch_revert && docker compose run --no-deps sqitch
 
   pgtap:
-    name: Datalayer tests
+    name: Datalayer SQL tests with pgTAP
     runs-on: ubuntu-latest
     env:
       SUPABASE_SERVICE_ROLE_KEY: ${{secrets.TEST_SERVICE_SUPABASE_KEY}}
@@ -47,7 +47,7 @@ jobs:
         run: docker-compose run datalayer-test
 
   requests:
-    name: Datalayer api tests
+    name: Datalayer API tests with requests
     runs-on: ubuntu-latest
     env:
       SUPABASE_SERVICE_ROLE_KEY: ${{secrets.TEST_SERVICE_SUPABASE_KEY}}
