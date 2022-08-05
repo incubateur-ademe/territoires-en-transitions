@@ -7,6 +7,9 @@ module.exports = {
   },
   darkMode: false, // or 'media' or 'class'
   theme: {
+    maxHeight: {
+      '80vh': '80vh',
+    },
     extend: {
       colors: {
         // Misc
