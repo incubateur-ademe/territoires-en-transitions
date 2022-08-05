@@ -480,6 +480,33 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
               </div>
             </td>
           </tr>
+          <tr
+            className="h-20 border-b border-gray-300 bg-white"
+            data-test="MembreRow-invite@dodo.com"
+          >
+            <td
+              className="relative px-4"
+              colSpan={5}
+            >
+              <span
+                className="block mb-1 text-sm text-gray-500"
+              >
+                invite@dodo.com
+              </span>
+              <span
+                className="text-sm text-gray-600"
+              >
+                Création de compte en attente
+              </span>
+            </td>
+            <td
+              className="relative px-4 text-right"
+            >
+              <span>
+                Lecture
+              </span>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -1055,6 +1082,33 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   />
                 </button>
               </div>
+            </td>
+          </tr>
+          <tr
+            className="h-20 border-b border-gray-300 bg-white"
+            data-test="MembreRow-invite@dodo.com"
+          >
+            <td
+              className="relative px-4"
+              colSpan={5}
+            >
+              <span
+                className="block mb-1 text-sm text-gray-500"
+              >
+                invite@dodo.com
+              </span>
+              <span
+                className="text-sm text-gray-600"
+              >
+                Création de compte en attente
+              </span>
+            </td>
+            <td
+              className="relative px-4 text-right"
+            >
+              <span>
+                Lecture
+              </span>
             </td>
           </tr>
         </tbody>
@@ -1634,6 +1688,33 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
               </div>
             </td>
           </tr>
+          <tr
+            className="h-20 border-b border-gray-300 bg-white"
+            data-test="MembreRow-invite@dodo.com"
+          >
+            <td
+              className="relative px-4"
+              colSpan={5}
+            >
+              <span
+                className="block mb-1 text-sm text-gray-500"
+              >
+                invite@dodo.com
+              </span>
+              <span
+                className="text-sm text-gray-600"
+              >
+                Création de compte en attente
+              </span>
+            </td>
+            <td
+              className="relative px-4 text-right"
+            >
+              <span>
+                Lecture
+              </span>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -2075,6 +2156,33 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Que Lecteur 1`]
                   />
                 </button>
               </div>
+            </td>
+          </tr>
+          <tr
+            className="h-20 border-b border-gray-300 bg-white"
+            data-test="MembreRow-invite@dodo.com"
+          >
+            <td
+              className="relative px-4"
+              colSpan={5}
+            >
+              <span
+                className="block mb-1 text-sm text-gray-500"
+              >
+                invite@dodo.com
+              </span>
+              <span
+                className="text-sm text-gray-600"
+              >
+                Création de compte en attente
+              </span>
+            </td>
+            <td
+              className="relative px-4 text-right"
+            >
+              <span>
+                Lecture
+              </span>
             </td>
           </tr>
         </tbody>
