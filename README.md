@@ -121,6 +121,12 @@ Le `client`, le `data layer` et le `business` peuvent être lancés à partir de
 - le `datalayer` qui est en fait supabase et les modèles/fonctions est démarré avec le container `loader` dont le role
   est de charger les modèles, les fonctions et les données `docker-compose up loader`
 
+_Pro-tip_ pour mettre à jour le datalayer sans le redémarrer lorsque l'on change de branche :
+
+```sh
+docker compose run sqitch_revert && docker compose run --no-deps sqitch
+```
+
 ### Lancer les tests
 
 Les trois services sont des projets indépendants qui peuvent-être testés en local sous reserve que les dépendances de
