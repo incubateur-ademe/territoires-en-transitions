@@ -83,6 +83,7 @@ const Modal = ({
           >
             <FloatingFocusManager context={context}>
               <div
+                data-test="Modal"
                 {...getFloatingProps({
                   ref: floating,
                   className: classNames(

@@ -50,6 +50,7 @@ const UpdateMemberAccesModal = ({
                   removeFromCollectivite(membreId);
                   setIsOpen(false);
                 }}
+                aria-label="Confirmer"
                 className="fr-btn"
               >
                 Confirmer
@@ -57,6 +58,7 @@ const UpdateMemberAccesModal = ({
               <button
                 onClick={() => setIsOpen(false)}
                 className="fr-btn fr-btn--secondary"
+                aria-label="Annuler"
               >
                 Revenir à la page Gestion des membres
               </button>
@@ -85,6 +87,7 @@ const UpdateMemberAccesModal = ({
                   });
                   setIsOpen(false);
                 }}
+                aria-label="Confirmer"
                 className="fr-btn"
               >
                 Confirmer
@@ -92,6 +95,7 @@ const UpdateMemberAccesModal = ({
               <button
                 onClick={() => setIsOpen(false)}
                 className="fr-btn fr-btn--secondary"
+                aria-label="Annuler"
               >
                 Revenir à la page Gestion des membres
               </button>
