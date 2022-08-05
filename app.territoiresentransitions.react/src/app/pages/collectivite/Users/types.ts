@@ -11,9 +11,9 @@ export type TMembreFonction =
 
 export interface Membre {
   email: string;
-  nom: string;
-  prenom: string;
-  user_id: string;
+  user_id: string | null;
+  nom?: string;
+  prenom?: string;
   telephone?: string;
   fonction?: TMembreFonction;
   champ_intervention?: Referentiel[];
