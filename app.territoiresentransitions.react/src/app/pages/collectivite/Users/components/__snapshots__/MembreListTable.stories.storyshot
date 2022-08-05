@@ -235,40 +235,106 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
           <td
             className="relative px-4"
           >
-            <span>
-              Équipe technique
-            </span>
+            <div
+              data-test="fonction-dropdown"
+            >
+              <button
+                aria-label="ouvrir le menu"
+                className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                onBlur={[Function]}
+                onClick={[Function]}
+                onFocus={[Function]}
+                onKeyDown={[Function]}
+                onKeyUp={[Function]}
+                onMouseDown={[Function]}
+                onPointerDown={[Function]}
+              >
+                <span
+                  className="mr-auto"
+                >
+                  Équipe technique
+                </span>
+                <span
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                />
+              </button>
+            </div>
           </td>
           <td
             className="relative px-4 pr-0"
           >
-            <span
-              className="block"
+            <div
+              data-test="champ_intervention-dropdown"
             >
-              Climat Air Énergie
-            </span>
-            <span
-              className="block"
-            >
-              Économie Circulaire
-            </span>
+              <button
+                aria-label="ouvrir le menu"
+                className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                onBlur={[Function]}
+                onClick={[Function]}
+                onFocus={[Function]}
+                onKeyDown={[Function]}
+                onKeyUp={[Function]}
+                onMouseDown={[Function]}
+                onPointerDown={[Function]}
+              >
+                <span
+                  className="mr-auto flex flex-col"
+                >
+                  <span>
+                    Climat Air Énergie
+                  </span>
+                  <span>
+                    Économie Circulaire
+                  </span>
+                </span>
+                <span
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                />
+              </button>
+            </div>
           </td>
           <td
             className="relative px-4"
           >
-            <span
-              className="w-72 line-clamp-3"
-              title="Vice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier, adjoint au maire en charge du dVice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier"
+            <div
+              className="py-1 px-2 border border-gray-300"
             >
-              Vice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier, adjoint au maire en charge du dVice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier
-            </span>
+              <textarea
+                className=" w-60 resize-none"
+                data-test="details_fonction-textarea"
+                onChange={[Function]}
+                onMouseOut={[Function]}
+                value="Vice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier, adjoint au maire en charge du dVice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier"
+              />
+            </div>
           </td>
           <td
             className="relative px-4 text-right"
           >
-            <span>
-              Édition
-            </span>
+            <div
+              data-test="acces-dropdown"
+            >
+              <button
+                aria-label="ouvrir le menu"
+                className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                onBlur={[Function]}
+                onClick={[Function]}
+                onFocus={[Function]}
+                onKeyDown={[Function]}
+                onKeyUp={[Function]}
+                onMouseDown={[Function]}
+                onPointerDown={[Function]}
+              >
+                <span
+                  className="mr-auto"
+                >
+                  Édition
+                </span>
+                <span
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                />
+              </button>
+            </div>
           </td>
         </tr>
         <tr
@@ -301,27 +367,122 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
           <td
             className="relative px-4"
           >
-            <span>
-              Équipe politique
-            </span>
+            <div
+              data-test="fonction-dropdown"
+            >
+              <button
+                aria-label="ouvrir le menu"
+                className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                onBlur={[Function]}
+                onClick={[Function]}
+                onFocus={[Function]}
+                onKeyDown={[Function]}
+                onKeyUp={[Function]}
+                onMouseDown={[Function]}
+                onPointerDown={[Function]}
+              >
+                <span
+                  className="mr-auto"
+                >
+                  Équipe politique
+                </span>
+                <span
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                />
+              </button>
+            </div>
           </td>
           <td
             className="relative px-4 pr-0"
           >
-            <span
-              className="block"
+            <div
+              data-test="champ_intervention-dropdown"
             >
-              Climat Air Énergie
-            </span>
+              <button
+                aria-label="ouvrir le menu"
+                className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                onBlur={[Function]}
+                onClick={[Function]}
+                onFocus={[Function]}
+                onKeyDown={[Function]}
+                onKeyUp={[Function]}
+                onMouseDown={[Function]}
+                onPointerDown={[Function]}
+              >
+                <span
+                  className="mr-auto flex flex-col"
+                >
+                  <span>
+                    Climat Air Énergie
+                  </span>
+                </span>
+                <span
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                />
+              </button>
+            </div>
           </td>
           <td
             className="relative px-4"
           >
-            <span
-              className="w-72 line-clamp-3"
-              title="Consultant assistance à maîtrise d’ouvrage - Bureau d’études Green Planet"
+            <div
+              className="py-1 px-2 border border-gray-300"
             >
-              Consultant assistance à maîtrise d’ouvrage - Bureau d’études Green Planet
+              <textarea
+                className=" w-60 resize-none"
+                data-test="details_fonction-textarea"
+                onChange={[Function]}
+                onMouseOut={[Function]}
+                value="Consultant assistance à maîtrise d’ouvrage - Bureau d’études Green Planet"
+              />
+            </div>
+          </td>
+          <td
+            className="relative px-4 text-right"
+          >
+            <div
+              data-test="acces-dropdown"
+            >
+              <button
+                aria-label="ouvrir le menu"
+                className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                onBlur={[Function]}
+                onClick={[Function]}
+                onFocus={[Function]}
+                onKeyDown={[Function]}
+                onKeyUp={[Function]}
+                onMouseDown={[Function]}
+                onPointerDown={[Function]}
+              >
+                <span
+                  className="mr-auto"
+                >
+                  Lecture
+                </span>
+                <span
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                />
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr
+          className="h-20 border-b border-gray-300 bg-white"
+          data-test="MembreRow-invite@dodo.com"
+        >
+          <td
+            className="relative px-4"
+            colSpan={5}
+          >
+            <span
+              className="block mb-1 text-sm text-gray-500"
+            >
+              invite@dodo.com
+            </span>
+            <span
+              className="text-sm text-gray-600"
+            >
+              Création de compte en attente
             </span>
           </td>
           <td
@@ -658,6 +819,33 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
               title="Consultant assistance à maîtrise d’ouvrage - Bureau d’études Green Planet"
             >
               Consultant assistance à maîtrise d’ouvrage - Bureau d’études Green Planet
+            </span>
+          </td>
+          <td
+            className="relative px-4 text-right"
+          >
+            <span>
+              Lecture
+            </span>
+          </td>
+        </tr>
+        <tr
+          className="h-20 border-b border-gray-300 bg-white"
+          data-test="MembreRow-invite@dodo.com"
+        >
+          <td
+            className="relative px-4"
+            colSpan={5}
+          >
+            <span
+              className="block mb-1 text-sm text-gray-500"
+            >
+              invite@dodo.com
+            </span>
+            <span
+              className="text-sm text-gray-600"
+            >
+              Création de compte en attente
             </span>
           </td>
           <td
@@ -1006,6 +1194,33 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
             </div>
           </td>
         </tr>
+        <tr
+          className="h-20 border-b border-gray-300 bg-white"
+          data-test="MembreRow-invite@dodo.com"
+        >
+          <td
+            className="relative px-4"
+            colSpan={5}
+          >
+            <span
+              className="block mb-1 text-sm text-gray-500"
+            >
+              invite@dodo.com
+            </span>
+            <span
+              className="text-sm text-gray-600"
+            >
+              Création de compte en attente
+            </span>
+          </td>
+          <td
+            className="relative px-4 text-right"
+          >
+            <span>
+              Lecture
+            </span>
+          </td>
+        </tr>
       </tbody>
     </table>
   </div>
@@ -1189,98 +1404,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable Is L
             colSpan={6}
           >
             Chargement...
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-`;
-
-exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable TODO With Guest 1`] = `
-<div
-  className="mx-auto border-8 border-t-0 border-bf925 bg-bf925 rounded-lg overflow-x-hidden"
->
-  <div
-    className="overflow-x-auto w-full"
-  >
-    <table
-      className="min-w-full text-sm text-left"
-      data-test="MembreListTable"
-    >
-      <thead>
-        <tr>
-          <th
-            className="py-3 px-5 whitespace-nowrap"
-          >
-            Nom et adresse mail
-          </th>
-          <th
-            className="py-3 px-5 whitespace-nowrap"
-          >
-            Numéro de tél.
-          </th>
-          <th
-            className="py-3 px-5 whitespace-nowrap"
-          >
-            Fonction
-             
-            <span
-              className="block text-xs font-normal"
-            >
-              dans cette collectivité
-            </span>
-          </th>
-          <th
-            className="py-3 px-5 whitespace-nowrap"
-          >
-            Champs d'intervention
-             
-            <span
-              className="block text-xs font-normal"
-            >
-              dans cette collectivité
-            </span>
-          </th>
-          <th
-            className="py-3 px-5 whitespace-nowrap"
-          >
-            Détails fonction
-             
-            <span
-              className="block text-xs font-normal"
-            >
-              dans cette collectivité
-            </span>
-          </th>
-          <th
-            className="py-3 px-5 whitespace-nowrap text-right"
-          >
-            <div
-              className="flex items-center justify-end"
-            >
-              Accès
-              <a
-                className="!shadow-none"
-                href="#"
-              >
-                <span
-                  className="fr-fi-information-line block ml-1 mt-1 scale-75"
-                />
-              </a>
-            </div>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          className="bg-white"
-        >
-          <td
-            className="pt-6 pb-24 px-6"
-            colSpan={6}
-          >
-            Personne n'est rattaché à cette collectivité
           </td>
         </tr>
       </tbody>
