@@ -22,6 +22,7 @@ export const AsAdmin = Template.bind({});
 const AsAdminArgs: MembreListTableProps = {
   membres: fakeMembres,
   currentUserId: fakeAdmin.user_id,
+  currentUserAccess: 'admin',
   isLoading: false,
   ...handlers,
 };
@@ -31,6 +32,7 @@ export const AsEditeur = Template.bind({});
 const AsEditeurArgs: MembreListTableProps = {
   membres: fakeMembres,
   currentUserId: fakeEditeur.user_id,
+  currentUserAccess: 'edition',
   isLoading: false,
   ...handlers,
 };
@@ -40,22 +42,16 @@ export const AsLecteur = Template.bind({});
 const AsLecteurArgs: MembreListTableProps = {
   membres: fakeMembres,
   currentUserId: fakeLecteur.user_id,
+  currentUserAccess: 'lecture',
   isLoading: false,
   ...handlers,
 };
 AsLecteur.args = AsLecteurArgs;
 
-export const TODOWithGuest = Template.bind({});
-const TODOWithGuestArgs: MembreListTableProps = {
-  currentUserId: fakeLecteur.user_id,
-  isLoading: false,
-  ...handlers,
-};
-TODOWithGuest.args = TODOWithGuestArgs;
-
 export const isLoading = Template.bind({});
 const isLoadingArgs: MembreListTableProps = {
   currentUserId: fakeAdmin.user_id,
+  currentUserAccess: 'admin',
   isLoading: true,
   ...handlers,
 };
@@ -64,6 +60,7 @@ isLoading.args = isLoadingArgs;
 export const Empty = Template.bind({});
 const EmptyArgs: MembreListTableProps = {
   currentUserId: fakeAdmin.user_id,
+  currentUserAccess: 'admin',
   isLoading: false,
   ...handlers,
 };

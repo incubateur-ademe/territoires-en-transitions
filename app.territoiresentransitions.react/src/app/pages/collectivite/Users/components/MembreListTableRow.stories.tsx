@@ -47,11 +47,11 @@ const LecteurArgs: TMembreListTableRowProps = {
 };
 Lecteur.args = LecteurArgs;
 
-export const TODOGuest = Template.bind({});
-const TODOGuestArgs: TMembreListTableRowProps = {
-  currentUserId: fakeLecteur.user_id,
-  membre: fakeLecteur,
+export const Invite = Template.bind({});
+const InviteArgs: TMembreListTableRowProps = {
+  currentUserId: '5',
+  membre: {email: 'invite@dodo.com', niveau_acces: 'lecture'},
   currentUserAccess: 'lecture',
   ...handlers,
 };
-TODOGuest.args = TODOGuestArgs;
+Invite.args = InviteArgs;
