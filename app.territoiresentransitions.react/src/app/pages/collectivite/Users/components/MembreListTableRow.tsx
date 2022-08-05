@@ -87,6 +87,23 @@ const MembreListTableRow = ({
     }
   };
 
+  // Si le membre est en attente d'acceptation d'une invitation
+  if (membre.user_id === null) {
+    return (
+      <tr data-test={`MembreRow-${email}`} className={rowClassNames}>
+        <td colSpan={5} className={cellClassNames}>
+          <span className="block mb-1 text-sm text-gray-500">{email}</span>
+          <span className="text-sm text-gray-600">
+            Création de compte en attente
+          </span>
+        </td>
+        <td className={cellClassNames}>
+          <span>{niveauAccesLabels[niveau_acces]}</span>
+        </td>
+      </tr>
+    );
+  }
+
   return (
     <tr data-test={`MembreRow-${email}`} className={rowClassNames}>
       <td className={cellClassNames}>
