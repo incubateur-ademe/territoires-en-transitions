@@ -76,6 +76,23 @@ const MembreListTableRow = ({
     TAccesDropdownOption | undefined
   >(undefined);
 
+  // Si le membre est en attente d'acceptation d'une invitation
+  if (membre_id === null) {
+    return (
+      <tr data-test={`MembreRow-${email}`} className={rowClassNames}>
+        <td colSpan={5} className={cellClassNames}>
+          <span className="block mb-1 text-sm text-gray-500">{email}</span>
+          <span className="text-sm text-gray-600">
+            Création de compte en attente
+          </span>
+        </td>
+        <td className={`${cellClassNames} text-right`}>
+          <span>{niveauAccesLabels[niveau_acces]}</span>
+        </td>
+      </tr>
+    );
+  }
+
   const onAccesSelect = (value: TAccesDropdownOption) => {
     // Comme nous n'affichons pas de modal lors du changement d'accès d'un autre utilisateur que soit même,
     // on crée une condition afin d'ouvrir la modal ou directement changer l'accès d'un tierce
@@ -86,23 +103,6 @@ const MembreListTableRow = ({
       updateMembre({membre_id, name: 'niveau_acces', value});
     }
   };
-
-  // Si le membre est en attente d'acceptation d'une invitation
-  if (membre.user_id === null) {
-    return (
-      <tr data-test={`MembreRow-${email}`} className={rowClassNames}>
-        <td colSpan={5} className={cellClassNames}>
-          <span className="block mb-1 text-sm text-gray-500">{email}</span>
-          <span className="text-sm text-gray-600">
-            Création de compte en attente
-          </span>
-        </td>
-        <td className={cellClassNames}>
-          <span>{niveauAccesLabels[niveau_acces]}</span>
-        </td>
-      </tr>
-    );
-  }
 
   return (
     <tr data-test={`MembreRow-${email}`} className={rowClassNames}>
