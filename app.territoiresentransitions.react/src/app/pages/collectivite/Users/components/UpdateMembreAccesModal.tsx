@@ -7,7 +7,7 @@ import {
   TUpdateMembre,
 } from 'app/pages/collectivite/Users/types';
 
-type AccesModalProps = {
+export type AccesModalProps = {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   selectedOption: TAccesDropdownOption | undefined;
