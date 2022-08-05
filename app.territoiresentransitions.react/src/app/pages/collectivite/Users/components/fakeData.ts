@@ -38,4 +38,15 @@ export const fakeLecteur: Membre = {
   niveau_acces: 'lecture',
 };
 
-export const fakeMembres: Membre[] = [fakeAdmin, fakeEditeur, fakeLecteur];
+const fakeInvite: Membre = {
+  user_id: null,
+  email: 'invite@dodo.com',
+  niveau_acces: 'lecture',
+};
+
+export const fakeMembres: Membre[] = [
+  fakeAdmin,
+  fakeEditeur,
+  fakeLecteur,
+  fakeInvite,
+];
