@@ -1,5 +1,5 @@
 begin;
-select plan(7);
+select plan(8);
 
 select *
 into random_admin
@@ -35,5 +35,8 @@ select ok(
                'When identifying with an uuid, the auth.uid should return it'
            );
 select ok((is_authenticated()), 'When identifying with an uuid is_authenticated should be true');
+
+select test.identify_as_service_role();
+select ok((is_service_role()), 'When identifying as service role is_service_role should be true');
 
 rollback;
