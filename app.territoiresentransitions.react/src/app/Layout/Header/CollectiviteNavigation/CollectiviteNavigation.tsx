@@ -9,6 +9,7 @@ import {
 } from '../makeCollectiviteNavItems';
 import {MesCollectivitesRead} from 'generated/dataLayer';
 import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import CollectiviteSwitchDropdown from './CollectiviteSwitchDropdown';
 
 export const activeTabClassName = '!text-bf500 border-b-2 border-bf500';
 
@@ -44,6 +45,8 @@ const CollectiviteNavigation = ({
     };
   }, [currentCollectivite, ownedCollectivites]);
 
+  console.log(collectivitesDropdown);
+
   return (
     <div className="fr-container hidden lg:block">
       <div className="flex flex-row justify-between">
@@ -68,7 +71,11 @@ const CollectiviteNavigation = ({
               </NavLink>
             )
           )}
-          <div className="group relative flex ml-auto">
+          <CollectiviteSwitchDropdown
+            currentCollectivite={currentCollectivite}
+            mesCollectivites={ownedCollectivites}
+          />
+          {/* <div className="group relative flex ml-auto">
             {collectivitesDropdown.listPathsAndLabels.length === 0 ? (
               <p className="flex items-center p-4 text-sm font-bold">
                 {collectivitesDropdown.menuLabel}
@@ -111,7 +118,7 @@ const CollectiviteNavigation = ({
                 </div>
               </>
             )}
-          </div>
+          </div> */}
         </nav>
       </div>
     </div>
