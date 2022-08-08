@@ -1,4 +1,5 @@
 import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import {NiveauAcces} from 'generated/dataLayer';
 import {
   makeCollectiviteIndicateursUrl,
   makeCollectiviteLabellisationUrl,
@@ -15,12 +16,14 @@ export interface CollectiviteNavSingle {
   label: string;
   path: string;
   alternativeActivePath?: string[];
+  niveauAcces?: NiveauAcces | null;
 }
 
 export interface CollectiviteNavDropdown {
   isSelectCollectivite?: boolean;
   displayOnlyToMember?: boolean;
   menuLabel: string;
+  niveauAcces?: NiveauAcces | null;
   listPathsAndLabels: CollectiviteNavSingle[];
 }
 
