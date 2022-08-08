@@ -24,29 +24,6 @@ const CollectiviteNavigation = ({
   currentCollectivite,
   ownedCollectivites,
 }: Props) => {
-  const collectivitesDropdown: CollectiviteNavDropdown = useMemo(() => {
-    const collectivitesWithoutCurrentCollectivite = ownedCollectivites?.filter(
-      e => currentCollectivite && e.nom !== currentCollectivite.nom
-    );
-
-    return {
-      isSelectCollectivite: true,
-      menuLabel: currentCollectivite.nom,
-      listPathsAndLabels: collectivitesWithoutCurrentCollectivite.map(
-        collectivite => {
-          return {
-            label: collectivite.nom,
-            path: makeCollectiviteTableauBordUrl({
-              collectiviteId: collectivite.collectivite_id,
-            }),
-          };
-        }
-      ),
-    };
-  }, [currentCollectivite, ownedCollectivites]);
-
-  console.log(collectivitesDropdown);
-
   return (
     <div className="fr-container hidden lg:block">
       <div className="flex flex-row justify-between">
