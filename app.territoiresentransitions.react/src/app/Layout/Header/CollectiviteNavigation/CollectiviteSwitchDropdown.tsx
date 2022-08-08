@@ -38,9 +38,13 @@ const CollectiviteSwitchDropdown = ({
   return (
     <>
       {collectiviteList.length === 0 ? (
-        <p className="flex items-center p-4 text-sm font-bold">
-          {currentCollectivite.nom}
-        </p>
+        <div className="flex items-center max-w-sm ml-auto p-4 text-sm font-bold">
+          <span className="line-clamp-1">{currentCollectivite.nom}</span>
+          <CollectiviteAccesChip
+            acces={currentCollectivite.niveau_acces}
+            className="ml-4"
+          />
+        </div>
       ) : (
         <DropdownFloater
           placement="bottom-end"
