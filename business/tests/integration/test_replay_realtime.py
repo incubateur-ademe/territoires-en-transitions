@@ -130,7 +130,7 @@ def test_domain_event_published_on_replay_correct_realtime_reponse_update_observ
     )
     failure_events = spy_on_event(bus, events.RealtimeEventWithWrongFormatObserved)
     corresponding_domain_events = spy_on_event(
-        bus, events.ReponseUpdatedForCollectivite
+        bus, events.TriggerPersonnalisationForCollectivite
     )
 
     realtime.start()
@@ -138,9 +138,9 @@ def test_domain_event_published_on_replay_correct_realtime_reponse_update_observ
     assert len(failure_events) == 0
     assert len(corresponding_domain_events) == 1
 
-    assert corresponding_domain_events[0] == events.ReponseUpdatedForCollectivite(
-        collectivite_id=1
-    )
+    assert corresponding_domain_events[
+        0
+    ] == events.TriggerPersonnalisationForCollectivite(collectivite_id=1)
 
 
 # Test realtime on event collectivite activated

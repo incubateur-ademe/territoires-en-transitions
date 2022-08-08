@@ -2,9 +2,7 @@ import os
 import time
 from typing import List, Optional
 
-from asyncio.exceptions import IncompleteReadError
 from realtime_py import Socket
-from websockets.exceptions import ConnectionClosedError
 
 from business.evaluation.domain.models import events
 from business.evaluation.domain.use_cases.catch_up_unprocessed_reponse_update_event import (
@@ -34,7 +32,7 @@ EVENT_HANDLERS: EventHandlers = {
     ],
     events.TriggerNotationForCollectivite: [TriggerNotationForCollectivite],
     events.ReferentielScoresForCollectiviteComputed: [StoreScoresForCollectivite],
-    events.ReponseUpdatedForCollectivite: [
+    events.TriggerPersonnalisationForCollectivite: [
         ComputeAndStoreReferentielPersonnalisationsForCollectivite
     ],
     events.PersonnalisationForCollectiviteStored: [TriggerNotationForCollectivite],
