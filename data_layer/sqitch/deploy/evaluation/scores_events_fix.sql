@@ -77,4 +77,60 @@ with
 comment on view unprocessed_action_statut_update_event is
     'To be used by business to compute only what is necessary.';
 
+
+alter table personnalisation_regle add column modified_at timestamp with time zone default CURRENT_TIMESTAMP not null; 
+
+
+create or replace view unprocessed_reponse_update_event as
+with
+    -- active collectivite
+    activation_updates as (
+        select collectivite_id, min(created_at) as updated_at
+        from private_utilisateur_droit
+        where active
+        group by collectivite_id
+    ),
+    -- update on reponse per collectivite
+    reponse_updates as (
+        select collectivite_id, max(created_at) as updated_at
+        from reponse_update_event
+        group by (collectivite_id)
+    ),
+    -- update on personnalisation regles
+    regles_updates as (
+        select collectivite_id, max(pr.modified_at) as updated_at
+        from personnalisation_regle pr inner join private_utilisateur_droit on 1 = 1
+        group by collectivite_id
+      ),
+    -- vertical join of all update that would require to re-calculate the personnalisation consequences 
+    all_updates as (
+      select collectivite_id,
+                  updated_at
+      from activation_updates a
+                full join reponse_updates using (collectivite_id, updated_at)
+                full join regles_updates using (collectivite_id, updated_at)
+    ),
+    -- last update per referentiel, per collectivite, that would require re-calculate the scores
+    latest_updates as (
+      select collectivite_id,
+             max(updated_at) as updated_at
+      from all_updates
+      group by collectivite_id
+    ),
+    -- last consequences calculation date  
+    latest_computed_consequences as (
+       select collectivite_id,
+             max(modified_at) as consequences_modified_at
+        from personnalisation_consequence 
+        group by (collectivite_id)
+    )
+    -- filter updates that happened after the last score update (for collectivite and referentiel)
+    select collectivite_id, updated_at as created_at from latest_updates
+    left join latest_computed_consequences using (collectivite_id)
+    where consequences_modified_at is null or updated_at > consequences_modified_at;
+comment on view unprocessed_reponse_update_event is
+    'Permet au business de déterminer quelles sont les collectivités '
+    'pour lesquelles il faut calculer les conséquences des règles de personnalisation';
+
+
 COMMIT;
