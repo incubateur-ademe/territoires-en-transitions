@@ -46,7 +46,7 @@ const DropdownFloater = ({
     setFloatingMinWidth(
       `${context.refs.reference.current?.getBoundingClientRect().width}px`
     );
-  }, []);
+  });
 
   return (
     <>
