@@ -1,6 +1,8 @@
 import {useState} from 'react';
 import {Link, NavLink} from 'react-router-dom';
+
 import {CollectiviteNavDropdown} from 'app/Layout/Header/makeCollectiviteNavItems';
+import CollectiviteAccesChip from 'app/Layout/Header/CollectiviteNavigation/CollectiviteAccesChip';
 
 type DropdownProps = {
   item: CollectiviteNavDropdown;
@@ -23,6 +25,12 @@ const MobileCollectiviteNavigationDropdown = ({
         onClick={toggleIsOpen}
       >
         <span>{item.menuLabel}</span>
+        {item.isSelectCollectivite && (
+          <CollectiviteAccesChip
+            acces={item.niveauAcces ?? null}
+            className="ml-4"
+          />
+        )}
         <div
           className={`ml-auto fr-fi-arrow-down-s-line ${
             isOpen && 'rotate-180'
@@ -40,11 +48,17 @@ const MobileCollectiviteNavigationDropdown = ({
             {item.listPathsAndLabels.map(e => (
               <Link
                 key={e.path}
-                className="block py-3 px-8"
+                className="flex items-center py-3 px-8"
                 to={e.path}
                 onClick={handleCloseMobileNavigation}
               >
-                {e.label}
+                <span className="mr-auto">{e.label}</span>
+                {e.niveauAcces && (
+                  <CollectiviteAccesChip
+                    acces={e.niveauAcces}
+                    className="ml-4"
+                  />
+                )}
               </Link>
             ))}
           </>
