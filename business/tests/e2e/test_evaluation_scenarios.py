@@ -133,7 +133,7 @@ def execute_scenario_collectivite_updates_reponse(
 
     scores_computed = spy_on_event(bus, events.ReferentielScoresForCollectiviteComputed)
 
-    bus.publish_event(events.ReponseUpdatedForCollectivite(collectivite_id))
+    bus.publish_event(events.TriggerPersonnalisationForCollectivite(collectivite_id))
 
     eci_scores_by_id = {score.action_id: score for score in scores_computed[0].scores}
     cae_scores_by_id = {score.action_id: score for score in scores_computed[1].scores}

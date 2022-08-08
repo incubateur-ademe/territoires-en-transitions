@@ -25,7 +25,7 @@ class ComputeAndStoreReferentielPersonnalisationsForCollectivite(UseCase):
         self.personnalisation_repo = personnalisation_repo
         self.regles_parser = regles_parser
 
-    def execute(self, command: events.ReponseUpdatedForCollectivite):
+    def execute(self, command: events.TriggerPersonnalisationForCollectivite):
         try:
             reponses = self.personnalisation_repo.get_reponses_for_collectivite(
                 command.collectivite_id

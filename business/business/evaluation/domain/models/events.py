@@ -48,7 +48,7 @@ class RealtimeEventWithWrongFormatObserved(DomainFailureEvent):
 
 
 @dataclass
-class ReponseUpdatedForCollectivite(DomainEvent):
+class TriggerPersonnalisationForCollectivite(DomainEvent):
     collectivite_id: int
 
 

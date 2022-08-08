@@ -41,7 +41,7 @@ def test_reponse_updated_on_realtime_event_with_correct_format(
     )
 
     trigger_compute_personnalisation_events = spy_on_event(
-        bus, events.ReponseUpdatedForCollectivite
+        bus, events.TriggerPersonnalisationForCollectivite
     )
 
     personnalisation_stored_events = spy_on_event(
