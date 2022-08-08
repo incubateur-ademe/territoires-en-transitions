@@ -116,3 +116,15 @@ where u.email = identify_as.email;
 $$ language sql;
 comment on function test.identify_as(text) is
     'Utilise l''adresse mail d''un utilisateur existant et change le résultat de la fonction `auth.uid()` pour les tests pgTAP.';
+
+
+create function
+    test.identify_as_service_role()
+    returns void
+as
+$$
+select set_config('request.jwt.claim.sub', null, true);
+select set_config('request.jwt.claim.role', 'service_role', true);
+$$ language sql;
+comment on function test.identify_as_service_role() is
+    'Change le résultat de la fonction `auth.uid()` pour les tests pgTAP.';
