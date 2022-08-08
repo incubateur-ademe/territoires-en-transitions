@@ -91,7 +91,7 @@ class CollectiviteActivationConverter(AbstractConverter):
             raw_event: CollectiviteActivationEvent = self.schema.load(
                 data.get("record", {})
             )  # type: ignore
-            return events.TriggerNotationForCollectivite(
+            return events.TriggerPersonnalisationForCollectivite(
                 collectivite_id=raw_event.collectivite_id,
             )
         except ValidationError as marshmallow_validation_error:
