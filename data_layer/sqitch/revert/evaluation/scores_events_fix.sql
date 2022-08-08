@@ -66,4 +66,41 @@ comment on view unprocessed_action_statut_update_event is
     'To be used by business to compute only what is necessary.';
 
 
+
+alter table personnalisation_regle drop column modified_at; 
+
+create or replace view unprocessed_reponse_update_event as
+with latest_collectivite_event as (
+    select collectivite_id,
+           max(created_at) as max_date
+    from reponse_update_event
+    group by collectivite_id
+),
+active_collectivite_without_consequence as (
+    select c.id as collectivite_id, c.created_at
+    from collectivite c left join personnalisation_consequence pc on pc.collectivite_id = c.id
+    left join private_utilisateur_droit pud on pud.collectivite_id = c.id 
+    where pc.collectivite_id is NULL and pud.active
+),
+     unprocessed_event as (
+         select *
+         from latest_collectivite_event e
+         where collectivite_id not in (
+             -- processed means that the consequence is more recent than the event
+             select collectivite_id
+             from personnalisation_consequence c
+             where c.modified_at > e.max_date
+         )
+     )
+select collectivite_id,
+       max_date as created_at
+from unprocessed_event
+union 
+select collectivite_id, created_at 
+from active_collectivite_without_consequence;
+comment on view unprocessed_reponse_update_event is
+    'Permet au business de déterminer quelles sont les collectivités '
+    'dont les réponses ont changé depuis le dernier calcul des conséquences';
+
+
 COMMIT;

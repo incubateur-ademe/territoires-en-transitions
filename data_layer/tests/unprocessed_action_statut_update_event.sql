@@ -4,7 +4,6 @@ select plan(8);
 -- prepare 
 truncate client_scores;
 truncate action_statut;
-truncate action_statut_update_event;
 truncate private_utilisateur_droit;
 truncate action_computed_points;
 
