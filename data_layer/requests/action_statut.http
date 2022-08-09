@@ -69,3 +69,4 @@ Content-Type: application/json
         client.assert(response.status === 403, "Response status is not 403");
     });
 %}
+
