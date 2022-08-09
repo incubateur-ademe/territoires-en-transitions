@@ -78,9 +78,7 @@ export const Header = ({
           />
         ) : null}
       </header>
-      {collectiviteNav && currentCollectivite?.readonly ? (
-        <MaintenanceBanner maintenance={maintenance} />
-      ) : null}
+      <MaintenanceBanner maintenance={maintenance} />
     </>
   );
 };
