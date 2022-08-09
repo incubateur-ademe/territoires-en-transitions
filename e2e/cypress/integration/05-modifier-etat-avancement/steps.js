@@ -52,3 +52,32 @@ const avancementToValue = {
   Détaillé: 4,
   'Non concerné': 5,
 };
+
+When(
+  /je clique sur l'onglet "([^"]+)"/,
+  (tabName) => {
+    cy.get('.fr-tabs__tab').contains(tabName).click()
+  }
+);
+
+When("aucun historique n'est affiché", () => {
+  cy.get('[data-test^=action-statut-historique-]').should('not.exist');
+});
+
+When(/l'historique de l'action "([^"]+)" est affiché/, (action_id) => {
+  cy.get(`[data-test="action-statut-historique-${action_id}"]`).should('exist');
+});
+
+When(
+  /l'historique de l'action "([^"]+)" pour la collectivité "(\d+)" est réinitialisé/,
+  (action_id, collectivite_id) => {
+    // on utilise ici un reset "hard" directement dans la base en attendant de
+    // disposer d'un appel RPC pour le faire de manière un peu plus "propre"
+    // (Ref: https://github.com/betagouv/territoires-en-transitions/issues/1572)
+    cy.task('pg_query', {
+      query:
+        'DELETE FROM history.action_statut WHERE collectivite_id = $1 AND action_id LIKE $2',
+      values: [collectivite_id, action_id],
+    });
+  }
+);
