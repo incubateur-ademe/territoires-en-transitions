@@ -1,8 +1,8 @@
 begin;
 select plan(4);
 
--- prepare 
-truncate personnalisation_consequence; 
+-- prepare
+truncate personnalisation_consequence;
 truncate reponse_update_event;
 truncate public.personnalisation_regle;
 truncate private_utilisateur_droit;
@@ -15,7 +15,7 @@ insert into public.personnalisation_regle(action_id, type, formule, description,
 
 
 -- collectivite #1 activated at 06:03 a.m.
-insert into private_utilisateur_droit (user_id, collectivite_id, role_name, active, created_at) values ('17440546-f389-4d4f-bfdb-b0c94a1bd0f9', 1, 'referent', true, '2022-01-01 06:03:00.000000 +00:00');
+insert into private_utilisateur_droit (user_id, collectivite_id, niveau_acces, active, created_at) values ('17440546-f389-4d4f-bfdb-b0c94a1bd0f9', 1, 'admin', true, '2022-01-01 06:03:00.000000 +00:00');
 
 
 -- [New activation should trigger personnalisation consequences computation]
@@ -49,7 +49,7 @@ insert into public.personnalisation_regle(action_id, type, formule, description,
 
 -- Hence, view should return one row with  created_at 10:00 a.m. (last referentiel update)
 select ok((select count(*) = 1
-           from unprocessed_reponse_update_event 
+           from unprocessed_reponse_update_event
            where collectivite_id=1 and created_at='2022-01-01 10:00:00.000000 +00:00'),
           'View should have only one row'
            );
