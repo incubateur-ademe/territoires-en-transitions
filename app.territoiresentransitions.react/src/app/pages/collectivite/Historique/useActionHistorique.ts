@@ -3,8 +3,10 @@ import {IHistoricalActionStatutRead} from 'generated/dataLayer/historical_action
 import {useEffect} from 'react';
 import {useQuery, useQueryClient} from 'react-query';
 
-// récupère toutes les entrées d'un référentiel pour une collectivité et des filtres donnés
-const fetchHistoricalActionStatutList = async (
+/**
+ * Toutes les entrées d'un référentiel pour une collectivité et des filtres donnés
+ */
+export const fetchHistoricalActionStatutList = async (
   collectiviteId: number,
   actionId: string
 ) => {
