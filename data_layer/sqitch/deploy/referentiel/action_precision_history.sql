@@ -83,9 +83,9 @@ select h.action_id                                         as tache_id,
        collectivite_id,
        precision,
        previous_precision,
-       modified_by,
+       modified_by as modified_by_id,
        h.modified_at,
-       coalesce(ud.prenom || ' ' || ud.nom, 'Équipe territoires en transitions') as nom
+       coalesce(ud.prenom || ' ' || ud.nom, 'Équipe territoires en transitions') as modified_by_nom
 from action_history h
          join actions ah on h.action_id = any (ah.descendants)
          join action_definition ad on ah.action_id = ad.action_id -- definition de l'action

@@ -18,6 +18,7 @@ import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinition
 import {OrientationQuickNav} from 'app/pages/collectivite/Referentiels/QuickNav';
 import {PersoPotentiel} from '../PersoPotentielModal/PersoPotentiel';
 import {useActionScore} from 'core-logic/hooks/scoreHooks';
+import ActionHistorique from 'app/pages/collectivite/Historique/ActionHistorique';
 
 const useActionLinkedIndicateurDefinitions = (actionId: string) => {
   const [linkedIndicateurDefinitions, setLinkedIndicateurDefinitions] =
@@ -99,7 +100,7 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
       </div>
 
       <Tabs>
-        <Tab label="Actions">
+        <Tab label="Suivi de l'action">
           <section>
             <div className="flex items-center fr-text--sm fr-m-0">
               Afficher uniquement les actions non-renseignées
@@ -140,6 +141,9 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
               />
             ))}
           </section>
+        </Tab>
+        <Tab label="Historique">
+          <ActionHistorique actionId={action.id} />
         </Tab>
       </Tabs>
     </div>
