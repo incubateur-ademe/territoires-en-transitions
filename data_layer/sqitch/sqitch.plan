@@ -86,3 +86,4 @@ retool/utilisateur_v2 [utilisateur/droits_v2] 2022-08-08T08:36:17Z Florian <flor
 
 history_schema 2022-08-09T07:57:47Z Florian <florian@derfurth.com> # Le schema history qui conserve les copies des changements.
 referentiel/action_statut_history [history_schema referentiel/action_statut utilisateur/droits_v2] 2022-08-08T12:44:15Z sqitch <sqitch@cf08f2556b3e> # Historique des modifications des statuts.
+referentiel/action_precision_history [history_schema utilisateur/droits_v2 referentiel/action_commentaire] 2022-08-09T08:55:00Z Florian <florian@derfurth.com> # Historique des modifications des précisions.
