@@ -2,6 +2,8 @@
 
 BEGIN;
 
+drop table if exists test.private_collectivite_membre;
+
 drop table private_collectivite_membre;
 drop function collectivite_membres;
 drop function update_collectivite_membre_details_fonction;
