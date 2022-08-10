@@ -19,9 +19,9 @@ type Props = {
 export const ActionStatutHistorique = ({actionStatutHistorique}: Props) => {
   const [isDetailsOpen, setIsDetailsOpen] = useState(true);
   return (
-    <div className="flex gap-6">
+    <div className="flex flex-col gap-4 md:flex-row md:gap-6">
       {/* DATE */}
-      <div className="pr-6 w-min border-r border-gray-200">
+      <div className="pr-6 w-min md:border-r md:border-gray-200">
         <span className="py-1 px-2 text-sm uppercase whitespace-nowrap text-blue-600 bg-blue-100 rounded-md">
           {format(
             new Date(actionStatutHistorique.modified_at),
@@ -33,7 +33,7 @@ export const ActionStatutHistorique = ({actionStatutHistorique}: Props) => {
         </span>
       </div>
       {/* MAIN */}
-      <div className="flex">
+      <div className="flex flex-col md:flex-row">
         {/* ICON */}
         <div className="mr-4 mt-0.5 fr-fi-information-fill text-blue-600" />
         {/* CONTENT */}
