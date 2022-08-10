@@ -77,14 +77,6 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                 className="flex items-center justify-end"
               >
                 Accès
-                <a
-                  className="!shadow-none"
-                  href="#"
-                >
-                  <span
-                    className="fr-fi-information-line block ml-1 mt-1 scale-75"
-                  />
-                </a>
               </div>
             </th>
           </tr>
@@ -681,14 +673,6 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                 className="flex items-center justify-end"
               >
                 Accès
-                <a
-                  className="!shadow-none"
-                  href="#"
-                >
-                  <span
-                    className="fr-fi-information-line block ml-1 mt-1 scale-75"
-                  />
-                </a>
               </div>
             </th>
           </tr>
@@ -1285,14 +1269,6 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                 className="flex items-center justify-end"
               >
                 Accès
-                <a
-                  className="!shadow-none"
-                  href="#"
-                >
-                  <span
-                    className="fr-fi-information-line block ml-1 mt-1 scale-75"
-                  />
-                </a>
               </div>
             </th>
           </tr>
@@ -1889,14 +1865,6 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Que Lecteur 1`]
                 className="flex items-center justify-end"
               >
                 Accès
-                <a
-                  className="!shadow-none"
-                  href="#"
-                >
-                  <span
-                    className="fr-fi-information-line block ml-1 mt-1 scale-75"
-                  />
-                </a>
               </div>
             </th>
           </tr>

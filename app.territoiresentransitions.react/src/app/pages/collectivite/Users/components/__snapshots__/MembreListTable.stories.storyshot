@@ -63,14 +63,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
               className="flex items-center justify-end"
             >
               Accès
-              <a
-                className="!shadow-none"
-                href="#"
-              >
-                <span
-                  className="fr-fi-information-line block ml-1 mt-1 scale-75"
-                />
-              </a>
             </div>
           </th>
         </tr>
@@ -562,14 +554,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
               className="flex items-center justify-end"
             >
               Accès
-              <a
-                className="!shadow-none"
-                href="#"
-              >
-                <span
-                  className="fr-fi-information-line block ml-1 mt-1 scale-75"
-                />
-              </a>
             </div>
           </th>
         </tr>
@@ -925,14 +909,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
               className="flex items-center justify-end"
             >
               Accès
-              <a
-                className="!shadow-none"
-                href="#"
-              >
-                <span
-                  className="fr-fi-information-line block ml-1 mt-1 scale-75"
-                />
-              </a>
             </div>
           </th>
         </tr>
@@ -1290,14 +1266,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable Empt
               className="flex items-center justify-end"
             >
               Accès
-              <a
-                className="!shadow-none"
-                href="#"
-              >
-                <span
-                  className="fr-fi-information-line block ml-1 mt-1 scale-75"
-                />
-              </a>
             </div>
           </th>
         </tr>
@@ -1382,14 +1350,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable Is L
               className="flex items-center justify-end"
             >
               Accès
-              <a
-                className="!shadow-none"
-                href="#"
-              >
-                <span
-                  className="fr-fi-information-line block ml-1 mt-1 scale-75"
-                />
-              </a>
             </div>
           </th>
         </tr>

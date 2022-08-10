@@ -51,12 +51,7 @@ const MembreListTable = ({
                 </span>
               </th>
               <th className={`${thClassNames} text-right`}>
-                <div className="flex items-center justify-end">
-                  Accès
-                  <a href="#" className="!shadow-none">
-                    <span className="fr-fi-information-line block ml-1 mt-1 scale-75" />
-                  </a>
-                </div>
+                <div className="flex items-center justify-end">Accès</div>
               </th>
             </tr>
           </thead>
