@@ -5,15 +5,18 @@ import {format} from 'date-fns';
 import {fr} from 'date-fns/locale';
 import classNames from 'classnames';
 
+import {fakeAjoutSimpleActionStatutHistorique} from './fixture';
+import ActionStatusBadge from 'ui/shared/ActionStatusBadge/ActionStatusBadge';
+
 import {fakeActionStatutHistoriqueSimple} from './fixture';
 
 export type TActionStatutHistoriqueProps = IHistoricalActionStatutRead;
 
 type Props = {
-  actionStatusHistorique: TActionStatutHistoriqueProps;
+  actionStatutHistorique: TActionStatutHistoriqueProps;
 };
 
-export const ActionStatutHistorique = ({actionStatusHistorique}: Props) => {
+export const ActionStatutHistorique = ({actionStatutHistorique}: Props) => {
   const [isDetailsOpen, setIsDetailsOpen] = useState(true);
   return (
     <div className="flex gap-6">
@@ -21,7 +24,7 @@ export const ActionStatutHistorique = ({actionStatusHistorique}: Props) => {
       <div className="pr-6 w-min border-r border-gray-200">
         <span className="py-1 px-2 text-sm uppercase whitespace-nowrap text-blue-600 bg-blue-100 rounded-md">
           {format(
-            new Date(actionStatusHistorique.modified_at),
+            new Date(actionStatutHistorique.modified_at),
             'ii MMMM yyyy',
             {
               locale: fr,
@@ -38,20 +41,20 @@ export const ActionStatutHistorique = ({actionStatusHistorique}: Props) => {
           <p className="mb-2 font-bold text-blue-600">Action: statut modifié</p>
           <p className="mb-2">
             <span className="text-gray-500">Par: </span>
-            {actionStatusHistorique.modified_by}
+            {actionStatutHistorique.modified_by_nom}
           </p>
           <p className="mb-2">
             <span className="text-gray-500">Action: </span>
-            {actionStatusHistorique.action_identifiant}{' '}
-            {actionStatusHistorique.action_nom}
+            {actionStatutHistorique.action_identifiant}{' '}
+            {actionStatutHistorique.action_nom}
           </p>
           <p className="m-0">
             <span className="text-gray-500">Tâche: </span>
-            {actionStatusHistorique.tache_identifiant}{' '}
-            {actionStatusHistorique.tache_nom}
+            {actionStatutHistorique.tache_identifiant}{' '}
+            {actionStatutHistorique.tache_nom}
           </p>
           {/* DETAILS */}
-          <div className="my-4 pb-4 border-t border-b border-gray-200">
+          <div className="my-4 border-t border-b border-gray-200">
             <button
               onClick={() => setIsDetailsOpen(!isDetailsOpen)}
               className="flex items-center w-full py-4 px-2"
@@ -67,12 +70,10 @@ export const ActionStatutHistorique = ({actionStatusHistorique}: Props) => {
               />
             </button>
             {isDetailsOpen && (
-              <div className="p-2 bg-gray-100">
-                <div className="w-min p-2 border-2 border-green-400">
-                  <span className="py-1 px-2 font-bold text-sm uppercase text-blue-500 bg-blue-100 rounded-md">
-                    {actionStatusHistorique.avancement}
-                  </span>
-                </div>
+              <div className="p-2 mb-4 bg-gray-100">
+                <ActionStatutHistoriqueDetails
+                  actionStatutHistorique={actionStatutHistorique}
+                />
               </div>
             )}
           </div>
@@ -92,7 +93,141 @@ export const ActionStatutHistorique = ({actionStatusHistorique}: Props) => {
 export default () => {
   return (
     <ActionStatutHistorique
-      actionStatusHistorique={fakeActionStatutHistoriqueSimple}
+      actionStatutHistorique={fakeAjoutSimpleActionStatutHistorique}
     />
   );
 };
+
+const ActionStatutHistoriqueDetails = ({
+  actionStatutHistorique,
+}: {
+  actionStatutHistorique: TActionStatutHistoriqueProps;
+}) => {
+  // Modification simple
+  if (
+    actionStatutHistorique.previous_avancement !== null &&
+    actionStatutHistorique.previous_avancement_detaille === null &&
+    actionStatutHistorique.avancement !== 'detaille'
+  ) {
+    return (
+      <>
+        <ActionStatutWrapper isPrevious>
+          <ActionStatusBadge
+            status={actionStatutHistorique.previous_avancement}
+            barre
+          />
+        </ActionStatutWrapper>
+        <ActionStatutWrapper>
+          <ActionStatusBadge status={actionStatutHistorique.avancement} />
+        </ActionStatutWrapper>
+      </>
+    );
+  }
+
+  // Modification simple à détaillée
+  if (
+    actionStatutHistorique.avancement === 'detaille' &&
+    actionStatutHistorique.previous_avancement !== 'detaille' &&
+    actionStatutHistorique.previous_avancement !== null &&
+    actionStatutHistorique.avancement_detaille !== null
+  ) {
+    return (
+      <>
+        <ActionStatutWrapper isPrevious>
+          <ActionStatusBadge
+            status={actionStatutHistorique.previous_avancement}
+            barre
+          />
+        </ActionStatutWrapper>
+        <ActionStatutWrapper>
+          <ActionDetaille
+            avancementDetaille={actionStatutHistorique.avancement_detaille}
+          />
+        </ActionStatutWrapper>
+      </>
+    );
+  }
+  // Modification détaillé à détaillée
+  if (
+    actionStatutHistorique.avancement === 'detaille' &&
+    actionStatutHistorique.previous_avancement === 'detaille' &&
+    actionStatutHistorique.avancement_detaille &&
+    actionStatutHistorique.previous_avancement_detaille
+  ) {
+    return (
+      <>
+        <ActionStatutWrapper isPrevious>
+          <ActionDetaille
+            isPrevious
+            avancementDetaille={
+              actionStatutHistorique.previous_avancement_detaille
+            }
+          />
+        </ActionStatutWrapper>
+        <ActionStatutWrapper>
+          <ActionDetaille
+            avancementDetaille={actionStatutHistorique.avancement_detaille}
+          />
+        </ActionStatutWrapper>
+      </>
+    );
+  }
+
+  // Ajout simple
+  return (
+    <ActionStatutWrapper>
+      <ActionStatusBadge status={actionStatutHistorique.avancement} />
+    </ActionStatutWrapper>
+  );
+};
+
+const ActionStatutWrapper = ({
+  children,
+  isPrevious,
+}: {
+  children: JSX.Element;
+  isPrevious?: boolean;
+}) => (
+  <div
+    className={classNames('w-min p-2 border-2 border-green-400', {
+      ['border-red-400 mb-4']: isPrevious,
+    })}
+  >
+    {children}
+  </div>
+);
+
+const ActionDetaille = ({
+  avancementDetaille,
+  isPrevious,
+}: {
+  avancementDetaille: number[];
+  isPrevious?: boolean;
+}) => (
+  <>
+    <ActionStatusBadge status="detaille" barre={isPrevious} />
+    <div className="mt-2">
+      <p
+        className={classNames('mb-0.5 text-sm whitespace-nowrap', {
+          ['line-through']: isPrevious,
+        })}
+      >
+        Fait: {avancementDetaille[0] * 100} %
+      </p>
+      <p
+        className={classNames('mb-0.5 text-sm whitespace-nowrap', {
+          ['line-through']: isPrevious,
+        })}
+      >
+        Programmé: {avancementDetaille[1] * 100} %
+      </p>
+      <p
+        className={classNames('mb-0 text-sm whitespace-nowrap', {
+          ['line-through']: isPrevious,
+        })}
+      >
+        Pas fait: {avancementDetaille[2] * 100} %
+      </p>
+    </div>
+  </>
+);
