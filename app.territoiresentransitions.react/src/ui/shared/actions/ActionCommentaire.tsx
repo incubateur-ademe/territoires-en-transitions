@@ -5,35 +5,41 @@ import {AutoTextArea} from '../AutoTextArea';
 import {
   useActionCommentaire,
   useSaveActionCommentaire,
-} from '../../../core-logic/hooks/useActionCommentaire';
-import {useState} from 'react';
+} from 'core-logic/hooks/useActionCommentaire';
+import React, {useState} from 'react';
 
 export const ActionCommentaire = ({
   action,
 }: {
   action: ActionDefinitionSummary;
 }) => {
-  const data = useActionCommentaire(action.id);
+  const {actionCommentaire, isLoading} = useActionCommentaire(action.id);
 
+  // On utilise le `isLoading` pour masquer l'input, car il gère son state.
   return (
     <div className="border-gray-300 my-3">
-      <ActionCommentaireField action={action} value={data?.commentaire || ''} />
+      {!isLoading && (
+        <ActionCommentaireField
+          action={action}
+          initialValue={actionCommentaire?.commentaire || ''}
+        />
+      )}
     </div>
   );
 };
 
 export type ActionCommentaireFieldProps = {
   action: ActionDefinitionSummary;
-  value: string;
+  initialValue: string;
 };
 
 export const ActionCommentaireField = ({
   action,
-  value,
+  initialValue,
 }: ActionCommentaireFieldProps) => {
   const collectivite = useCurrentCollectivite();
   const {saveActionCommentaire} = useSaveActionCommentaire();
-  const [commentaire, setCommentaire] = useState(value);
+  const [commentaire, setCommentaire] = useState(initialValue);
 
   return collectivite ? (
     <AutoTextArea
