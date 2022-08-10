@@ -34,9 +34,9 @@ select tache_id,
        previous_avancement_detaille,
        concerne,
        previous_concerne,
-       modified_by,
+       modified_by_id,
        modified_at,
-       nom
+       modified_by_nom
 from historical_action_statut
 where false;
 
