@@ -5,17 +5,39 @@ import {
   TActionStatutHistoriqueProps,
   ActionStatutHistorique,
 } from './ActionStatutHistorique';
-import {fakeActionStatutHistoriqueSimple} from './fixture';
+import {
+  fakeAjoutSimpleActionStatutHistorique,
+  fakeModificationSimpleActionStatutHistorique,
+  fakeModificationSimpleADetailleActionStatutHistorique,
+  fakeModificationDetailleActionStatutHistorique,
+} from './fixture';
 
 export default {
   component: ActionStatutHistorique,
 } as Meta;
 
 const Template: Story<TActionStatutHistoriqueProps> = args => (
-  <ActionStatutHistorique actionStatusHistorique={args} />
+  <ActionStatutHistorique actionStatutHistorique={args} />
 );
 
 export const AjoutDeStatusSimple = Template.bind({});
 const ajoutDeStatusSimpleArgs: TActionStatutHistoriqueProps =
-  fakeActionStatutHistoriqueSimple;
+  fakeAjoutSimpleActionStatutHistorique;
 AjoutDeStatusSimple.args = ajoutDeStatusSimpleArgs;
+
+export const ModificationDeStatutSimple = Template.bind({});
+const modificationDeStatusSimpleArgs: TActionStatutHistoriqueProps =
+  fakeModificationSimpleActionStatutHistorique;
+ModificationDeStatutSimple.args = modificationDeStatusSimpleArgs;
+
+export const ModificationDeStatutSimpleADetaille = Template.bind({});
+const modificationDeStatusSimpleADetailleArgs: TActionStatutHistoriqueProps =
+  fakeModificationSimpleADetailleActionStatutHistorique;
+ModificationDeStatutSimpleADetaille.args =
+  modificationDeStatusSimpleADetailleArgs;
+
+export const ModificationDeStatutDetailleADetaille = Template.bind({});
+const modificationDeStatusDetailleADetailleArgs: TActionStatutHistoriqueProps =
+  fakeModificationDetailleActionStatutHistorique;
+ModificationDeStatutDetailleADetaille.args =
+  modificationDeStatusDetailleADetailleArgs;
