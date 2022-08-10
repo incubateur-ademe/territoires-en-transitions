@@ -6,15 +6,27 @@ import {
 } from 'generated/dataLayer';
 import {useMutation, useQuery} from 'react-query';
 
+/**
+ * Permet de charger un commentaire (précision) pour une action.
+ *
+ * Charge tous les commentaires en une seule requête.
+ *
+ * @param action_id
+ * @return Un ActionCommentaireRead et un bool isLoading.
+ */
 export const useActionCommentaire = (
   action_id: string
-): ActionCommentaireRead | null => {
+): {actionCommentaire: ActionCommentaireRead | null; isLoading: boolean} => {
   const collectivite_id = useCollectiviteId();
-  const {data} = useQuery<ActionCommentaireRead[] | null>(
+  const {data, isLoading} = useQuery<ActionCommentaireRead[] | null>(
     ['action_commentaire', collectivite_id],
     () => (collectivite_id ? read({collectivite_id, action_id}) : null)
   );
-  return data?.find(action => action.action_id === action_id) || null;
+  return {
+    actionCommentaire:
+      data?.find(action => action.action_id === action_id) || null,
+    isLoading,
+  };
 };
 
 type CommentaireParams = {
