@@ -28,7 +28,7 @@ from historical_action_statut
 where false;
 insert into expected_history (tache_id, action_id, tache_identifiant, tache_nom, action_identifiant, action_nom,
                               collectivite_id, avancement, previous_avancement, avancement_detaille,
-                              previous_avancement_detaille, concerne, previous_concerne, modified_by, modified_at, nom)
+                              previous_avancement_detaille, concerne, previous_concerne, modified_by_id, modified_at, modified_by_nom)
 values ('cae_1.1.1.1.1', 'cae_1.1.1', '1.1.1.1.1',
         'Formaliser une vision et des engagements dans une décision de politique générale (délibération)', '1.1.1',
         'Définir la vision, les objectifs et la stratégie Climat-Air-Énergie', 1, 'programme', 'fait', null, null, true,

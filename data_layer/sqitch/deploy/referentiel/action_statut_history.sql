@@ -69,14 +69,15 @@ select h.action_id                                         as tache_id,
        previous_avancement_detaille,
        concerne,
        previous_concerne,
-       modified_by,
+       modified_by as modified_by_id,
        h.modified_at,
-       coalesce(ud.prenom || ' ' || ud.nom, 'Équipe territoires en transitions') as nom
+       coalesce(ud.prenom || ' ' || ud.nom, 'Équipe territoires en transitions') as modified_by_nom
 from action_history h
          join actions ah on h.action_id = any (ah.descendants)
          join action_definition ad on ah.action_id = ad.action_id -- definition de l'action
          join action_definition td on h.action_id = td.action_id -- definition de la tache
          left join utilisateur.dcp_display ud on h.modified_by = ud.user_id
+order by modified_at desc;
 ;
 comment on view historical_action_statut is
     'Historique des modification des statuts.';
