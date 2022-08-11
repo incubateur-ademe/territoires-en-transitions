@@ -163,7 +163,7 @@ const MembreListTableRow = ({
           </span>
         )}
       </td>
-      <td className={`${cellClassNames} text-right`}>
+      <td className={`${cellClassNames}`}>
         {canUpdate ? (
           <>
             <AccesDropdown
