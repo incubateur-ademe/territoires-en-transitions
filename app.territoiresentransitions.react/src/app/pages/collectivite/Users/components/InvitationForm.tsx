@@ -67,6 +67,9 @@ const InvitationForm = ({
   const formRef = useRef<FormikProps<any>>(null);
 
   const [formIsFilling, setFormIsFilling] = useState(true);
+  const [accesInvitationForm, setAccesInvitationForm] = useState<
+    NiveauAcces | undefined
+  >(undefined);
 
   const handleClearForm = () => {
     setFormIsFilling(true);
@@ -80,13 +83,16 @@ const InvitationForm = ({
     email: string;
     acces: NiveauAcces | '';
   }) => {
-    const req: AddUserToCollectiviteRequest = {
-      collectiviteId: currentCollectivite.collectivite_id,
-      email: values.email,
-      niveauAcces: values.acces === '' ? 'lecture' : values.acces,
-    };
-    addUser(req);
-    setFormIsFilling(false);
+    if (values.acces) {
+      const req: AddUserToCollectiviteRequest = {
+        collectiviteId: currentCollectivite.collectivite_id,
+        email: values.email,
+        niveauAcces: values.acces,
+      };
+      addUser(req);
+      setFormIsFilling(false);
+      setAccesInvitationForm(values.acces);
+    }
   };
 
   return (
@@ -119,12 +125,13 @@ const InvitationForm = ({
           </button>
         </Form>
       </Formik>
-      {!formIsFilling && (
+      {!formIsFilling && accesInvitationForm && (
         <AddUserResponse
           addUserResponse={addUserResponse}
           currentCollectivite={currentCollectivite}
           currentUser={currentUser}
           handleClearForm={handleClearForm}
+          acces={accesInvitationForm}
         />
       )}
     </div>
@@ -136,18 +143,20 @@ const AddUserResponse = ({
   currentCollectivite,
   currentUser,
   handleClearForm,
+  acces,
 }: {
   addUserResponse: AddUserToCollectiviteResponse | null;
   currentCollectivite: CurrentCollectivite;
   currentUser: UserData;
   handleClearForm: () => void;
+  acces: NiveauAcces;
 }) => {
   if (addUserResponse?.invitationUrl) {
     return (
       <InvitationMessage
         currentCollectivite={currentCollectivite}
         currentUser={currentUser}
-        acces={'edition'}
+        acces={acces}
         invitationUrl={addUserResponse.invitationUrl}
       />
     );
@@ -202,7 +211,7 @@ const SelectField = (props: SelectFieldProps) => (
             {...field}
           >
             <option value="" disabled hidden>
-              Selectionnez une option
+              Sélectionnez une option
             </option>
             {props.options.map((option: AccesOption) => (
               <option key={option.value} value={option.value}>
