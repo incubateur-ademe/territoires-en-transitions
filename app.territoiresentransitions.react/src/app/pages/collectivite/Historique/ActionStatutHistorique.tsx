@@ -8,28 +8,18 @@ import classNames from 'classnames';
 import {fakeAjoutSimpleActionStatutHistorique} from './fixture';
 import ActionStatusBadge from 'ui/shared/ActionStatusBadge/ActionStatusBadge';
 
-import {fakeActionStatutHistoriqueSimple} from './fixture';
-
 export type TActionStatutHistoriqueProps = IHistoricalActionStatutRead;
 
-type Props = {
-  actionStatutHistorique: TActionStatutHistoriqueProps;
-};
-
-export const ActionStatutHistorique = ({actionStatutHistorique}: Props) => {
+export const ActionStatutHistorique = (props: TActionStatutHistoriqueProps) => {
   const [isDetailsOpen, setIsDetailsOpen] = useState(true);
   return (
     <div className="flex flex-col gap-4 md:flex-row md:gap-6">
       {/* DATE */}
       <div className="pr-6 w-min md:border-r md:border-gray-200">
         <span className="py-1 px-2 text-sm uppercase whitespace-nowrap text-blue-600 bg-blue-100 rounded-md">
-          {format(
-            new Date(actionStatutHistorique.modified_at),
-            'ii MMMM yyyy',
-            {
-              locale: fr,
-            }
-          )}
+          {format(new Date(props.modified_at), 'ii MMMM yyyy', {
+            locale: fr,
+          })}
         </span>
       </div>
       {/* MAIN */}
@@ -41,17 +31,15 @@ export const ActionStatutHistorique = ({actionStatutHistorique}: Props) => {
           <p className="mb-2 font-bold text-blue-600">Action: statut modifié</p>
           <p className="mb-2">
             <span className="text-gray-500">Par: </span>
-            {actionStatutHistorique.modified_by_nom}
+            {props.modified_by_nom}
           </p>
           <p className="mb-2">
             <span className="text-gray-500">Action: </span>
-            {actionStatutHistorique.action_identifiant}{' '}
-            {actionStatutHistorique.action_nom}
+            {props.action_identifiant} {props.action_nom}
           </p>
           <p className="m-0">
             <span className="text-gray-500">Tâche: </span>
-            {actionStatutHistorique.tache_identifiant}{' '}
-            {actionStatutHistorique.tache_nom}
+            {props.tache_identifiant} {props.tache_nom}
           </p>
           {/* DETAILS */}
           <div className="my-4 border-t border-b border-gray-200">
@@ -71,9 +59,7 @@ export const ActionStatutHistorique = ({actionStatutHistorique}: Props) => {
             </button>
             {isDetailsOpen && (
               <div className="p-2 mb-4 bg-gray-100">
-                <ActionStatutHistoriqueDetails
-                  actionStatutHistorique={actionStatutHistorique}
-                />
+                <ActionStatutHistoriqueDetails actionStatutHistorique={props} />
               </div>
             )}
           </div>
@@ -91,11 +77,7 @@ export const ActionStatutHistorique = ({actionStatutHistorique}: Props) => {
 };
 
 export default () => {
-  return (
-    <ActionStatutHistorique
-      actionStatutHistorique={fakeAjoutSimpleActionStatutHistorique}
-    />
-  );
+  return <ActionStatutHistorique {...fakeAjoutSimpleActionStatutHistorique} />;
 };
 
 const ActionStatutHistoriqueDetails = ({

@@ -14,7 +14,7 @@ export interface IHistoricalActionStatutRead {
   previous_avancement_detaille: null | number[];
   concerne: boolean;
   previous_concerne: null | boolean;
-  modified_by: string; // Richard Evans
+  modified_by_nom: string; // Richard Evans
   modified_at: string; // '2022-08-08T15:12:22.940172+00:00'
-  nom: string;
+  modified_by_id: string;
 }

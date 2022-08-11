@@ -17,7 +17,7 @@ export default {
 } as Meta;
 
 const Template: Story<TActionStatutHistoriqueProps> = args => (
-  <ActionStatutHistorique actionStatutHistorique={args} />
+  <ActionStatutHistorique {...args} />
 );
 
 export const AjoutDeStatusSimple = Template.bind({});
