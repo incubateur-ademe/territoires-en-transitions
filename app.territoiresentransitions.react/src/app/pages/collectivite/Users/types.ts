@@ -32,4 +32,4 @@ export type TUpdateMembreArgs = {
 
 export type TUpdateMembre = (args: TUpdateMembreArgs) => Promise<boolean>;
 
-export type TRemoveFromCollectivite = (user_id: string) => void;
+export type TRemoveFromCollectivite = (userEmail: string) => void;
