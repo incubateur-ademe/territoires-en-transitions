@@ -1,5 +1,12 @@
 import {keys} from 'ramda';
-import {forwardRef, ReactElement, Ref, useState} from 'react';
+import {
+  forwardRef,
+  ReactElement,
+  Ref,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {Placement} from '@floating-ui/react-dom-interactions';
 import DropdownFloater from 'ui/shared/floating-ui/DropdownFloater';
 
@@ -162,6 +169,19 @@ export const MultiSelectDropdown = <T extends string>({
   placeholderText?: string;
 }) => {
   const [selectedValues, setSelectedValues] = useState<T[]>(values || []);
+
+  // On execute onSelect() uniquement après un changement et non au premier render du composant
+  const isFirstRender = useRef(true);
+  // On execute onSelect() dans un useEffect pour avoir la bonne valeur car useState étant asynchrone,
+  // si l'on performe onSelect sur le onClick du bouton on se retrouve avec la version précédente des selectedValues
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    onSelect(selectedValues);
+  }, [selectedValues]);
+
   return (
     <DropdownFloater
       render={() =>
@@ -182,7 +202,6 @@ export const MultiSelectDropdown = <T extends string>({
                 } else {
                   setSelectedValues([...selectedValues, v as T]);
                 }
-                onSelect(selectedValues);
               }}
             >
               <div className="w-6 mr-2">
