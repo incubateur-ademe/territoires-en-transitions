@@ -50,8 +50,8 @@ const MembreListTable = ({
                   dans cette collectivité
                 </span>
               </th>
-              <th className={`${thClassNames} text-right`}>
-                <div className="flex items-center justify-end">Accès</div>
+              <th className={`${thClassNames}`}>
+                <div className="flex items-center">Accès</div>
               </th>
             </tr>
           </thead>
