@@ -10,12 +10,12 @@ type RemoveMembreResponse = {
 
 const removeMembre = async (
   collectiviteId: number,
-  userId: string
+  userEmail: string
 ): Promise<RemoveMembreResponse | null> => {
   const {data, error} = await supabaseClient.rpc(
     'remove_membre_from_collectivite',
     {
-      membre_id: userId,
+      email: userEmail,
       collectivite_id: collectiviteId,
     }
   );
@@ -33,9 +33,9 @@ export const useRemoveFromCollectivite = () => {
   const collectivite_id = useCollectiviteId();
   const queryClient = useQueryClient();
   const {isLoading, mutate} = useMutation(
-    (user_id: string) =>
+    (userEmail: string) =>
       collectivite_id
-        ? removeMembre(collectivite_id, user_id)
+        ? removeMembre(collectivite_id, userEmail)
         : Promise.resolve(null),
     {
       onSuccess: () => {

@@ -12,6 +12,7 @@ export type AccesModalProps = {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   selectedOption: TAccesDropdownOption | undefined;
   membreId: string;
+  membreEmail: string;
   isCurrentUser: boolean;
   removeFromCollectivite: TRemoveFromCollectivite;
   updateMembre: TUpdateMembre;
@@ -22,6 +23,7 @@ const UpdateMemberAccesModal = ({
   setIsOpen,
   selectedOption,
   membreId,
+  membreEmail,
   isCurrentUser,
   removeFromCollectivite,
   updateMembre,
@@ -47,7 +49,7 @@ const UpdateMemberAccesModal = ({
             <div className="mt-2 fr-btns-group fr-btns-group--left fr-btns-group--inline-reverse fr-btns-group--inline-lg">
               <button
                 onClick={() => {
-                  removeFromCollectivite(membreId);
+                  removeFromCollectivite(membreEmail);
                   setIsOpen(false);
                 }}
                 aria-label="Confirmer"
