@@ -76,6 +76,10 @@ const MembreListTableRow = ({
     TAccesDropdownOption | undefined
   >(undefined);
 
+  const onRemoveInvite = (membreEmail: string) => {
+    removeFromCollectivite(membreEmail);
+  };
+
   // Si le membre est en attente d'acceptation d'une invitation
   if (membre_id === null) {
     return (
@@ -87,7 +91,17 @@ const MembreListTableRow = ({
           </span>
         </td>
         <td className={`${cellClassNames}`}>
-          <span>{niveauAccesLabels[niveau_acces]}</span>
+          {/* currentUserAccess="edition" permet de n'afficher que l'option "remove" même en étant admin */}
+          {canUpdate ? (
+            <AccesDropdown
+              isCurrentUser={isCurrentUser}
+              currentUserAccess="edition"
+              value={niveau_acces}
+              onSelect={() => onRemoveInvite(membre.email)}
+            />
+          ) : (
+            <span>{niveauAccesLabels[niveau_acces]}</span>
+          )}
         </td>
       </tr>
     );
@@ -177,6 +191,7 @@ const MembreListTableRow = ({
               setIsOpen={setIsAccesModalOpen}
               selectedOption={accesOptionSelected}
               membreId={membre_id}
+              membreEmail={membre.email}
               isCurrentUser={isCurrentUser}
               updateMembre={updateMembre}
               removeFromCollectivite={removeFromCollectivite}
