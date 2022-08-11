@@ -164,7 +164,7 @@ export const MultiSelectDropdown = <T extends string>({
   const [selectedValues, setSelectedValues] = useState<T[]>(values || []);
   return (
     <DropdownFloater
-      render={({close}) =>
+      render={() =>
         Object.keys(labels).map(v => {
           const label = labels[v as T];
           return (
@@ -183,7 +183,6 @@ export const MultiSelectDropdown = <T extends string>({
                   setSelectedValues([...selectedValues, v as T]);
                 }
                 onSelect(selectedValues);
-                close();
               }}
             >
               <div className="w-6 mr-2">

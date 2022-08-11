@@ -39,7 +39,7 @@ const MembreListTable = ({
                 </span>
               </th>
               <th className={thClassNames}>
-                Champs d'intervention{' '}
+                Champ d'intervention{' '}
                 <span className="block text-xs font-normal">
                   dans cette collectivité
                 </span>
