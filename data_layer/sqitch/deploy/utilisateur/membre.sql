@@ -170,32 +170,53 @@ comment on function update_collectivite_membre_niveau_acces is
 
 
 drop function remove_user_from_collectivite;
-create function remove_membre_from_collectivite(collectivite_id integer, membre_id uuid)
+create function remove_membre_from_collectivite(collectivite_id integer, email text)
     returns json
 as
 $$
+declare
+    found_user_id uuid;
 begin
-    if have_admin_acces(remove_membre_from_collectivite.collectivite_id)
-        or auth.uid() = membre_id
+    if is_authenticated()
     then
-        if membre_id in (select user_id
-                         from private_collectivite_membre pcm
-                         where pcm.collectivite_id = remove_membre_from_collectivite.collectivite_id)
-        then
-            update private_utilisateur_droit
-            set active      = false,
-                modified_at = now()
-            where user_id = membre_id
-              and private_utilisateur_droit.collectivite_id = remove_membre_from_collectivite.collectivite_id;
-        else
+        select u.id into found_user_id from auth.users u where u.email = remove_membre_from_collectivite.email;
+        if have_admin_acces(remove_membre_from_collectivite.collectivite_id)
+            or auth.uid() = found_user_id
+        then -- Admin ou utilisateur avec l'email.
+            if found_user_id in (select user_id
+                                 from private_collectivite_membre pcm
+                                 where pcm.collectivite_id = remove_membre_from_collectivite.collectivite_id)
+            then -- La suppression concerne un membre.
+                update private_utilisateur_droit
+                set active      = false,
+                    modified_at = now()
+                where user_id = found_user_id
+                  and private_utilisateur_droit.collectivite_id = remove_membre_from_collectivite.collectivite_id;
+                return json_build_object('message', 'Les accès de l''utilisateur ont été supprimés.');
+
+
+            elsif remove_membre_from_collectivite.email in (select i.email
+                                                            from utilisateur.invitation i
+                                                            where i.collectivite_id = remove_membre_from_collectivite.collectivite_id
+                                                              and pending)
+            then -- La suppression concerne une invitation.
+                update utilisateur.invitation i
+                set active = false
+                where i.email = remove_membre_from_collectivite.email
+                  and i.collectivite_id = remove_membre_from_collectivite.collectivite_id;
+                return json_build_object('message', 'L''invitation à été supprimée.');
+
+            end if;
+
             return json_build_object('error', 'Cet utilisateur n''est pas membre de la collectivité.');
+        else -- Ni admin ni utilisateur concerné.
+            perform set_config('response.status', '401', true);
+            return json_build_object('error',
+                                     'Vous n''avez pas les droits admin, vous ne pouvez pas retirer les droits d''accès d''un utilisateur');
         end if;
-        return json_build_object('message', 'Les accès de l''utilisateur ont été supprimés.');
-    else
-        perform set_config('response.status', '401', true);
-        return json_build_object('error',
-                                 'Vous n''avez pas les droits admin, vous ne pouvez pas retirer les droits d''accès d''uu utilisateur');
     end if;
+    -- Pas authentifié.
+    perform set_config('response.status', '401', true);
 end
 $$ language plpgsql security definer;
 comment on function remove_membre_from_collectivite is
@@ -243,10 +264,11 @@ with droits_dcp_membre as
                             null                   as details_fonction,
                             null::referentiel[]    as champ_intervention
                      from utilisateur.invitation i
-                     where i.collectivite_id = collectivite_membres.id),
+                     where i.collectivite_id = collectivite_membres.id
+                       and i.pending),
      merged as (select *
                 from droits_dcp_membre
-                where have_lecture_acces(collectivite_membres.id) -- limit dcp listing.
+                where is_authenticated() -- limit dcp listing to user with an account.
                 union
                 select *
                 from invitations
@@ -262,8 +284,7 @@ order by case fonction
              else 5
              end,
          nom,
-         prenom
-    ;
+         prenom;
 $$ language sql security definer;
 comment on function collectivite_membres is
     'Les informations de tous les membres d''une collectivité étant donné son id.'
