@@ -42,9 +42,16 @@ const InvitationMessage = ({
     return;
   }, [copiedText]);
 
+  const accesDisplayed = useMemo(() => {
+    if (acces === 'edition') {
+      return 'édition';
+    }
+    return acces;
+  }, [acces]);
+
   const message = useMemo(
     () =>
-      `Objet : Invitation à collaborer sur Territoires en transitions.fr\n\nBonjour,\n\n${currentUser.prenom} ${currentUser.nom} de ${currentCollectivite.nom} vous invite à collaborer.\n\nLe lien suivant vous donnera un accès ${acces} pour cette collectivité.\n\nCliquez sur le lien suivant pour accepter l’invitation et créer votre compte :\nlien ${invitationUrl}\n\n---------\n\nTerritoires en transitions est une initiative de l’ADEME pour accompagner la transition écologique des collectivités.`,
+      `Objet : Invitation à collaborer sur Territoires en transitions.fr\n\nBonjour,\n\n${currentUser.prenom} ${currentUser.nom} de ${currentCollectivite.nom} vous invite à collaborer.\n\nLe lien suivant vous donnera un accès ${accesDisplayed} pour cette collectivité.\n\nCliquez sur le lien suivant pour accepter l’invitation et créer votre compte :\nlien ${invitationUrl}\n\n---------\n\nTerritoires en transitions est une initiative de l’ADEME pour accompagner la transition écologique des collectivités.`,
     [currentCollectivite, currentUser, acces, invitationUrl]
   );
 
@@ -88,7 +95,7 @@ const InvitationMessage = ({
         </button>
         {copiedText && (
           <span className="absolute left-0 bottom-full mb-2 px-4 py-1 rounded bg-green-500 text-white">
-            copié&nbsp;!
+            Copié&nbsp;!
           </span>
         )}
       </div>

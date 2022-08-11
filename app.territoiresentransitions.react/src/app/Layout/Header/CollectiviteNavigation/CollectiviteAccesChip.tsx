@@ -1,3 +1,4 @@
+import {useMemo} from 'react';
 import classNames from 'classnames';
 import {NiveauAcces} from 'generated/dataLayer';
 
@@ -7,6 +8,16 @@ type Props = {
 };
 
 const CollectiviteAccesChip = ({acces, className}: Props) => {
+  const displayedAcces = useMemo(() => {
+    if (!acces) {
+      return 'visite';
+    }
+    if (acces === 'edition') {
+      return 'édition';
+    }
+    return acces;
+  }, [acces]);
+
   return (
     <div
       className={classNames(
@@ -20,7 +31,7 @@ const CollectiviteAccesChip = ({acces, className}: Props) => {
         }
       )}
     >
-      {acces ?? 'Visite'}
+      {displayedAcces}
     </div>
   );
 };
