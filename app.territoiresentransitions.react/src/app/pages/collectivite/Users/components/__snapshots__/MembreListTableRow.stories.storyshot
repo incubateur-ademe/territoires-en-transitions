@@ -102,7 +102,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow A
     </div>
   </td>
   <td
-    className="relative px-4 text-right"
+    className="relative px-4"
   >
     <div
       data-test="acces-dropdown"
@@ -237,7 +237,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow E
     </div>
   </td>
   <td
-    className="relative px-4 text-right"
+    className="relative px-4"
   >
     <div
       data-test="acces-dropdown"
@@ -307,7 +307,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow I
     />
   </td>
   <td
-    className="relative px-4 text-right"
+    className="relative px-4"
   >
     <span>
       Lecture
@@ -418,7 +418,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow L
     </div>
   </td>
   <td
-    className="relative px-4 text-right"
+    className="relative px-4"
   >
     <div
       data-test="acces-dropdown"
