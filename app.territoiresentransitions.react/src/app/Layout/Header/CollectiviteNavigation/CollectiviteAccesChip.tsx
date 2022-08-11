@@ -20,7 +20,7 @@ const CollectiviteAccesChip = ({acces, className}: Props) => {
         }
       )}
     >
-      {acces ?? 'Visiteur'}
+      {acces ?? 'Visite'}
     </div>
   );
 };
