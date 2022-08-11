@@ -40,11 +40,6 @@ const MobileCollectiviteNavigationDropdown = ({
       <div className={`${isOpen ? 'block' : 'hidden'} pb-8`}>
         {item.isSelectCollectivite ? (
           <>
-            <p className="px-8 py-2 italic text-sm text-gray-600">
-              {item.listPathsAndLabels.length > 1
-                ? 'Mes collectivités'
-                : 'Ma collectivité'}
-            </p>
             {item.listPathsAndLabels.map(e => (
               <Link
                 key={e.path}
