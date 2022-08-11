@@ -53,7 +53,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/InvitationForm As Ad
           hidden={true}
           value=""
         >
-          Selectionnez une option
+          Sélectionnez une option
         </option>
         <option
           value="edition"
@@ -131,7 +131,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/InvitationForm As Ed
           hidden={true}
           value=""
         >
-          Selectionnez une option
+          Sélectionnez une option
         </option>
         <option
           value="edition"
