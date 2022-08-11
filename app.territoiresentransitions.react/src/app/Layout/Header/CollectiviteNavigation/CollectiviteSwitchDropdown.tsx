@@ -50,11 +50,6 @@ const CollectiviteSwitchDropdown = ({
           placement="bottom-end"
           render={({close}) => (
             <nav className="border border-gray-300">
-              <p className="mb-0 px-3 py-2 italic text-sm text-gray-600">
-                {collectiviteList.length > 1
-                  ? 'Mes collectivités'
-                  : 'Ma collectivité'}
-              </p>
               <ul className="m-0 p-0">
                 {collectiviteList.map(collectivite => (
                   <li className="fr-nav__item p-0" key={collectivite.label}>
