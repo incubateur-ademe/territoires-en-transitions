@@ -24,7 +24,8 @@ create table utilisateur.invitation
 
     accepted_at     timestamptz,
     consumed        bool generated always as (accepted_at is not null) stored,
-    pending         bool generated always as (accepted_at is null) stored
+    pending         bool generated always as (accepted_at is null and active) stored,
+    active          bool             default true
 );
 comment on table utilisateur.invitation is
     'Permet d''inviter un utilisateur sur une collectivité.';
@@ -120,32 +121,31 @@ begin
 
             if conflicting_user
             then
-                if (
-                    select count(*) > 0
+                if (select count(*) > 0
                     from private_utilisateur_droit pud
                     where add_user.collectivite_id = pud.collectivite_id
                       and existing_user.id = pud.user_id
-                      and active=true
-                )
+                      and active = true)
                 then
                     -- The existing user is already associated with our collectivite.
                     perform set_config('response.status', '409', true); -- 409: Conflict
                     return json_build_object(
-                        'error', 'L''utilisateur est déjà associé à cette collectivité.'
-                    );
+                            'error', 'L''utilisateur est déjà associé à cette collectivité.'
+                        );
                 else
                     -- The existing user's rights to the collectivite had been desactivated.
-                    update  private_utilisateur_droit
-                    set active = true,
-                    modified_at = now(),
-                    niveau_acces=add_user.niveau
-                    where user_id = existing_user.id and private_utilisateur_droit.collectivite_id = add_user.collectivite_id; 
+                    update private_utilisateur_droit
+                    set active      = true,
+                        modified_at = now(),
+                        niveau_acces=add_user.niveau
+                    where user_id = existing_user.id
+                      and private_utilisateur_droit.collectivite_id = add_user.collectivite_id;
 
                     return json_build_object(
-                         'added', true,
-                         'message', 'Accès de l''utilisateur ré-activés.'
-                    );
-                end if; 
+                            'added', true,
+                            'message', 'Accès de l''utilisateur ré-activés.'
+                        );
+                end if;
             else
                 -- Associate the existing user with our collectivite.
                 perform utilisateur.associate(
