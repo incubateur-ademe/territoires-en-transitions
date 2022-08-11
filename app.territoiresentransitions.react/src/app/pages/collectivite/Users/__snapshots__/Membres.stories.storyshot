@@ -51,7 +51,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
             <th
               className="py-3 px-5 whitespace-nowrap"
             >
-              Champs d'intervention
+              Champ d'intervention
                
               <span
                 className="block text-xs font-normal"
@@ -71,10 +71,10 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
               </span>
             </th>
             <th
-              className="py-3 px-5 whitespace-nowrap text-right"
+              className="py-3 px-5 whitespace-nowrap"
             >
               <div
-                className="flex items-center justify-end"
+                className="flex items-center"
               >
                 Accès
               </div>
@@ -183,7 +183,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
               </div>
             </td>
             <td
-              className="relative px-4 text-right"
+              className="relative px-4"
             >
               <div
                 data-test="acces-dropdown"
@@ -315,7 +315,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
               </div>
             </td>
             <td
-              className="relative px-4 text-right"
+              className="relative px-4"
             >
               <div
                 data-test="acces-dropdown"
@@ -444,7 +444,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
               </div>
             </td>
             <td
-              className="relative px-4 text-right"
+              className="relative px-4"
             >
               <div
                 data-test="acces-dropdown"
@@ -481,22 +481,43 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
               colSpan={5}
             >
               <span
-                className="block mb-1 text-sm text-gray-500"
+                className="block mb-0.5 text-xs text-gray-500"
               >
                 invite@dodo.com
               </span>
               <span
-                className="text-sm text-gray-600"
+                className="font-medium text-xs text-gray-600"
               >
                 Création de compte en attente
               </span>
             </td>
             <td
-              className="relative px-4 text-right"
+              className="relative px-4"
             >
-              <span>
-                Lecture
-              </span>
+              <div
+                data-test="acces-dropdown"
+              >
+                <button
+                  aria-label="ouvrir le menu"
+                  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
+                >
+                  <span
+                    className="mr-auto"
+                  >
+                    Lecture
+                  </span>
+                  <span
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  />
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -565,7 +586,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
             hidden={true}
             value=""
           >
-            Selectionnez une option
+            Sélectionnez une option
           </option>
           <option
             value="admin"
@@ -647,7 +668,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
             <th
               className="py-3 px-5 whitespace-nowrap"
             >
-              Champs d'intervention
+              Champ d'intervention
                
               <span
                 className="block text-xs font-normal"
@@ -667,10 +688,10 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
               </span>
             </th>
             <th
-              className="py-3 px-5 whitespace-nowrap text-right"
+              className="py-3 px-5 whitespace-nowrap"
             >
               <div
-                className="flex items-center justify-end"
+                className="flex items-center"
               >
                 Accès
               </div>
@@ -779,7 +800,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
               </div>
             </td>
             <td
-              className="relative px-4 text-right"
+              className="relative px-4"
             >
               <div
                 data-test="acces-dropdown"
@@ -911,7 +932,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
               </div>
             </td>
             <td
-              className="relative px-4 text-right"
+              className="relative px-4"
             >
               <div
                 data-test="acces-dropdown"
@@ -1040,7 +1061,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
               </div>
             </td>
             <td
-              className="relative px-4 text-right"
+              className="relative px-4"
             >
               <div
                 data-test="acces-dropdown"
@@ -1077,22 +1098,43 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
               colSpan={5}
             >
               <span
-                className="block mb-1 text-sm text-gray-500"
+                className="block mb-0.5 text-xs text-gray-500"
               >
                 invite@dodo.com
               </span>
               <span
-                className="text-sm text-gray-600"
+                className="font-medium text-xs text-gray-600"
               >
                 Création de compte en attente
               </span>
             </td>
             <td
-              className="relative px-4 text-right"
+              className="relative px-4"
             >
-              <span>
-                Lecture
-              </span>
+              <div
+                data-test="acces-dropdown"
+              >
+                <button
+                  aria-label="ouvrir le menu"
+                  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
+                >
+                  <span
+                    className="mr-auto"
+                  >
+                    Lecture
+                  </span>
+                  <span
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  />
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -1161,7 +1203,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
             hidden={true}
             value=""
           >
-            Selectionnez une option
+            Sélectionnez une option
           </option>
           <option
             value="admin"
@@ -1243,7 +1285,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
             <th
               className="py-3 px-5 whitespace-nowrap"
             >
-              Champs d'intervention
+              Champ d'intervention
                
               <span
                 className="block text-xs font-normal"
@@ -1263,10 +1305,10 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
               </span>
             </th>
             <th
-              className="py-3 px-5 whitespace-nowrap text-right"
+              className="py-3 px-5 whitespace-nowrap"
             >
               <div
-                className="flex items-center justify-end"
+                className="flex items-center"
               >
                 Accès
               </div>
@@ -1375,7 +1417,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
               </div>
             </td>
             <td
-              className="relative px-4 text-right"
+              className="relative px-4"
             >
               <div
                 data-test="acces-dropdown"
@@ -1507,7 +1549,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
               </div>
             </td>
             <td
-              className="relative px-4 text-right"
+              className="relative px-4"
             >
               <div
                 data-test="acces-dropdown"
@@ -1636,7 +1678,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
               </div>
             </td>
             <td
-              className="relative px-4 text-right"
+              className="relative px-4"
             >
               <div
                 data-test="acces-dropdown"
@@ -1673,22 +1715,43 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
               colSpan={5}
             >
               <span
-                className="block mb-1 text-sm text-gray-500"
+                className="block mb-0.5 text-xs text-gray-500"
               >
                 invite@dodo.com
               </span>
               <span
-                className="text-sm text-gray-600"
+                className="font-medium text-xs text-gray-600"
               >
                 Création de compte en attente
               </span>
             </td>
             <td
-              className="relative px-4 text-right"
+              className="relative px-4"
             >
-              <span>
-                Lecture
-              </span>
+              <div
+                data-test="acces-dropdown"
+              >
+                <button
+                  aria-label="ouvrir le menu"
+                  className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
+                >
+                  <span
+                    className="mr-auto"
+                  >
+                    Lecture
+                  </span>
+                  <span
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  />
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -1757,7 +1820,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
             hidden={true}
             value=""
           >
-            Selectionnez une option
+            Sélectionnez une option
           </option>
           <option
             value="admin"
@@ -1839,7 +1902,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Que Lecteur 1`]
             <th
               className="py-3 px-5 whitespace-nowrap"
             >
-              Champs d'intervention
+              Champ d'intervention
                
               <span
                 className="block text-xs font-normal"
@@ -1859,10 +1922,10 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Que Lecteur 1`]
               </span>
             </th>
             <th
-              className="py-3 px-5 whitespace-nowrap text-right"
+              className="py-3 px-5 whitespace-nowrap"
             >
               <div
-                className="flex items-center justify-end"
+                className="flex items-center"
               >
                 Accès
               </div>
@@ -1924,7 +1987,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Que Lecteur 1`]
               </span>
             </td>
             <td
-              className="relative px-4 text-right"
+              className="relative px-4"
             >
               <span>
                 Admin
@@ -1990,7 +2053,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Que Lecteur 1`]
               </span>
             </td>
             <td
-              className="relative px-4 text-right"
+              className="relative px-4"
             >
               <span>
                 Édition
@@ -2098,7 +2161,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Que Lecteur 1`]
               </div>
             </td>
             <td
-              className="relative px-4 text-right"
+              className="relative px-4"
             >
               <div
                 data-test="acces-dropdown"
@@ -2135,18 +2198,18 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Que Lecteur 1`]
               colSpan={5}
             >
               <span
-                className="block mb-1 text-sm text-gray-500"
+                className="block mb-0.5 text-xs text-gray-500"
               >
                 invite@dodo.com
               </span>
               <span
-                className="text-sm text-gray-600"
+                className="font-medium text-xs text-gray-600"
               >
                 Création de compte en attente
               </span>
             </td>
             <td
-              className="relative px-4 text-right"
+              className="relative px-4"
             >
               <span>
                 Lecture
