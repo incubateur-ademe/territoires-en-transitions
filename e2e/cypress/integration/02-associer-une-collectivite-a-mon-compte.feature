@@ -3,6 +3,8 @@
 Fonctionnalité: Associer une collectivité à mon compte
 
   Scénario: Sélectionner la première collectivité à associer à mon compte (cas d'une collectivité déjà activée)
+    Etant donné que les droits utilisateur sont réinitialisés
+    Et que les informations des membres sont réinitialisées
     Etant donné que je suis connecté en tant que "yulu"
 
     Quand je visite la vue "Toutes les collectivités"
