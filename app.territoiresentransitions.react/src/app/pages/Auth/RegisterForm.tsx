@@ -84,7 +84,10 @@ const RegistrationFormTextField = ({
 const CGU = ({showWarning}: {showWarning?: boolean}) => (
   <label className="cgu">
     {showWarning && (
-      <div className="mb-2 text-sm opacity-80 text-red-500">
+      <div
+        className="mb-2 text-sm opacity-80 text-red-500"
+        data-test="cgu_error"
+      >
         L'acceptation de la politique de protection des données à caractère
         personnel est nécessaire pour créer un compte.
       </div>
@@ -124,7 +127,10 @@ const RegistrationForm = () => {
     );
   } else if (state === 'success') {
     return (
-      <section className="max-w-2xl mx-auto p-5 text-center">
+      <section
+        className="max-w-2xl mx-auto p-5 text-center"
+        data-test="signup_success"
+      >
         <Spacer />
         <p>Votre compte a bien été créé ! </p>
         <Spacer />
@@ -156,7 +162,7 @@ const RegistrationForm = () => {
   };
 
   return (
-    <section className="max-w-2xl mx-auto p-5">
+    <section className="max-w-2xl mx-auto p-5" data-test="SignUpPage">
       <Spacer />
       <h2 className="fr-h2 flex justify-center">Créer un compte</h2>
       <div className="mx-auto">
