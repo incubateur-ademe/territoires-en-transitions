@@ -128,3 +128,34 @@ select set_config('request.jwt.claim.role', 'service_role', true);
 $$ language sql;
 comment on function test.identify_as_service_role() is
     'Change le résultat de la fonction `auth.uid()` pour les tests pgTAP.';
+
+create function
+    test_remove_user(email text)
+    returns void
+as
+$$
+declare
+    found_id uuid;
+begin
+    select id into found_id from auth.users u where u.email = test_remove_user.email;
+
+    if found_id is not null
+    then
+        delete
+        from private_utilisateur_droit pud
+        where pud.user_id = found_id;
+
+        delete
+        from dcp
+        where dcp.user_id = found_id;
+
+        delete
+        from auth.users u
+        where u.email = test_remove_user.email;
+    else
+        perform set_config('response.status', '404', true);
+    end if;
+end;
+$$ language plpgsql security definer;
+comment on function test_remove_user is
+    'Supprime un utilisateur et ses droits.';
