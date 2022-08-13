@@ -48,6 +48,10 @@ Given('les droits utilisateur sont réinitialisés', () => {
   cy.task('supabase_rpc', { name: 'test_reset_droits' });
 });
 
+Given(/l'utilisateur "([^"]*)" est supprimé/, (email) => {
+  cy.task('supabase_rpc', { name: 'test_remove_user', params: {'email': email} });
+});
+
 Given('les informations des membres sont réinitialisées', () => {
   cy.task('supabase_rpc', { name: 'test_reset_membres' });
 });
