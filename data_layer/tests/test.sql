@@ -1,5 +1,5 @@
 begin;
-select plan(8);
+select plan(11);
 
 select *
 into random_admin
@@ -21,6 +21,27 @@ select set_has(
                'select user_id from random_admin;',
                'The random user should be in the droits table.'
            );
+
+select test_remove_user(ra.email)
+from random_admin ra;
+
+select set_hasnt(
+               'select id, email from auth.users;',
+               'select user_id as id, email from random_admin;',
+               'The random user should not be in the auth.users table anymore.'
+           );
+select set_hasnt(
+               'select user_id, nom, prenom, email from dcp;',
+               'select user_id, nom, prenom, email from random_admin;',
+               'The random user should not be in the dcp table anymore.'
+           );
+
+select set_hasnt(
+               'select user_id from private_utilisateur_droit where collectivite_id = 10 and niveau_acces = ''admin'';',
+               'select user_id from random_admin;',
+               'The random user should not be in the droits table anymore.'
+           );
+
 
 select test.identify_as('yolo@dodo.com');
 select ok(
