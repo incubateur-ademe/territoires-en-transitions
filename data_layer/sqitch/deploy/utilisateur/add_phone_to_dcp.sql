@@ -2,6 +2,7 @@
 
 BEGIN;
 
-alter table dcp add telephone text not null default '';
+alter table dcp
+    add telephone varchar(30);
 
 COMMIT;
