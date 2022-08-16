@@ -21,6 +21,13 @@ export const fakeAjoutSimpleActionStatutHistorique: TActionStatutHistoriqueProps
     previous_concerne: false,
   };
 
+export const fakeAjoutDetailleActionStatutHistorique: TActionStatutHistoriqueProps =
+  {
+    ...fakeAjoutSimpleActionStatutHistorique,
+    avancement: 'detaille',
+    avancement_detaille: [0.2, 0.3, 0.5],
+  };
+
 export const fakeModificationSimpleActionStatutHistorique: TActionStatutHistoriqueProps =
   {
     ...fakeAjoutSimpleActionStatutHistorique,
@@ -41,6 +48,7 @@ export const fakeModificationDetailleActionStatutHistorique: TActionStatutHistor
     ...fakeAjoutSimpleActionStatutHistorique,
     previous_avancement: 'detaille',
     previous_avancement_detaille: [1, 0, 0],
+    previous_avancement_detaille: [0.1, 0, 0],
     avancement: 'detaille',
     avancement_detaille: [0.2, 0.3, 0.5],
   };
