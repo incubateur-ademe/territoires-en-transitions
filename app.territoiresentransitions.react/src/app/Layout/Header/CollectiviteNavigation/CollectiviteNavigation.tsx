@@ -1,9 +1,6 @@
-import {useMemo} from 'react';
-import {Link, NavLink} from 'react-router-dom';
+import {NavLink} from 'react-router-dom';
 import CollectiviteNavigationDropdownTab from './CollectiviteNavigationDropdownTab';
-import {makeCollectiviteTableauBordUrl} from 'app/paths';
 import {
-  CollectiviteNavDropdown,
   CollectiviteNavItems,
   isSingleNavItemDropdown,
 } from '../makeCollectiviteNavItems';
