@@ -5,8 +5,8 @@ import {PostgrestResponse} from '@supabase/supabase-js';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 
 class RpcCache {
-  cache: Record<string, PostgrestResponse<any>> = {};
-  promises: Record<string, PostgrestFilterBuilder<any>> = {};
+  cache: Record<string, PostgrestResponse<unknown>> = {};
+  promises: Record<string, PostgrestFilterBuilder<unknown>> = {};
   clearCache() {
     this.cache = {};
   }
@@ -14,7 +14,10 @@ class RpcCache {
   private key = (fn: string, args: object | undefined): string =>
     `${fn}: ${JSON.stringify(args)}`;
 
-  public async rpc(fn: string, args: object | undefined): Promise<any> {
+  public async rpc(
+    fn: string,
+    args: object | undefined
+  ): Promise<PostgrestResponse<unknown>> {
     const key = this.key(fn, args);
 
     if (this.cache[key] !== undefined) {
