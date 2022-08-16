@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import {useEffect, useState} from 'react';
 import useWindowSize from 'utils/useWindowSize';
 
