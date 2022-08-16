@@ -123,8 +123,13 @@ Le `client`, le `data layer` et le `business` peuvent être lancés à partir de
 
 _Pro-tip_ pour mettre à jour le datalayer sans le redémarrer lorsque l'on change de branche :
 
+- Avant de changer de branche :
 ```sh
-docker compose run sqitch_revert && docker compose run --no-deps sqitch
+docker compose run --no-deps sqitch_revert
+```
+- Après le changement de branche :
+```sh
+docker compose run --no-deps sqitch
 ```
 
 ### Lancer les tests
