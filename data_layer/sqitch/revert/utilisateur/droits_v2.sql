@@ -4,7 +4,8 @@ BEGIN;
 
 drop function if exists test_attach_user;
 drop function if exists test_add_random_user;
-drop table if exists  test.private_utilisateur_droit;
+drop table if exists test.private_utilisateur_droit;
+drop table if exists test.invitation;
 
 alter table private_utilisateur_droit
     add role_name role_name not null default 'aucun';
