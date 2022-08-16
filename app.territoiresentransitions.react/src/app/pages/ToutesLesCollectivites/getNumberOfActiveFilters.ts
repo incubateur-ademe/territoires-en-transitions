@@ -1,6 +1,6 @@
 import {TCollectivitesFilters} from 'app/pages/ToutesLesCollectivites/filtreLibelles';
 
-const notEmpty = (l: any[]): boolean => l.length > 0;
+const notEmpty = (l: string[]): boolean => l.length > 0;
 
 export const getNumberOfActiveFilters = (
   filtres: TCollectivitesFilters

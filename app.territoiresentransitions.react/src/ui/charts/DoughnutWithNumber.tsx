@@ -78,7 +78,7 @@ export const DoughnutWithNumber = (props: DoughnutWithNumberProps) => {
                 responsive: true,
                 borderWidth: 0.5,
                 animation: false,
-              } as any
+              } as Record<string, unknown>
             }
           />
           <div
