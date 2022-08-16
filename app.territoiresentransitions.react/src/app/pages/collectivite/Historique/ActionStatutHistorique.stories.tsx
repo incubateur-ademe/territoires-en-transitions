@@ -10,6 +10,7 @@ import {
   fakeModificationSimpleActionStatutHistorique,
   fakeModificationSimpleADetailleActionStatutHistorique,
   fakeModificationDetailleActionStatutHistorique,
+  fakeAjoutDetailleActionStatutHistorique,
 } from './fixture';
 
 export default {
@@ -20,24 +21,29 @@ const Template: Story<TActionStatutHistoriqueProps> = args => (
   <ActionStatutHistorique {...args} />
 );
 
-export const AjoutDeStatusSimple = Template.bind({});
-const ajoutDeStatusSimpleArgs: TActionStatutHistoriqueProps =
+export const AjoutDeStatutSimple = Template.bind({});
+const ajoutDeStatutSimpleArgs: TActionStatutHistoriqueProps =
   fakeAjoutSimpleActionStatutHistorique;
-AjoutDeStatusSimple.args = ajoutDeStatusSimpleArgs;
+AjoutDeStatutSimple.args = ajoutDeStatutSimpleArgs;
+
+export const AjoutDeStatutDetaille = Template.bind({});
+const ajoutDeStatutDetailleArgs: TActionStatutHistoriqueProps =
+  fakeAjoutDetailleActionStatutHistorique;
+AjoutDeStatutDetaille.args = ajoutDeStatutDetailleArgs;
 
 export const ModificationDeStatutSimple = Template.bind({});
-const modificationDeStatusSimpleArgs: TActionStatutHistoriqueProps =
+const modificationDeStatutSimpleArgs: TActionStatutHistoriqueProps =
   fakeModificationSimpleActionStatutHistorique;
-ModificationDeStatutSimple.args = modificationDeStatusSimpleArgs;
+ModificationDeStatutSimple.args = modificationDeStatutSimpleArgs;
 
 export const ModificationDeStatutSimpleADetaille = Template.bind({});
-const modificationDeStatusSimpleADetailleArgs: TActionStatutHistoriqueProps =
+const modificationDeStatutSimpleADetailleArgs: TActionStatutHistoriqueProps =
   fakeModificationSimpleADetailleActionStatutHistorique;
 ModificationDeStatutSimpleADetaille.args =
-  modificationDeStatusSimpleADetailleArgs;
+  modificationDeStatutSimpleADetailleArgs;
 
 export const ModificationDeStatutDetailleADetaille = Template.bind({});
-const modificationDeStatusDetailleADetailleArgs: TActionStatutHistoriqueProps =
+const modificationDeStatutDetailleADetailleArgs: TActionStatutHistoriqueProps =
   fakeModificationDetailleActionStatutHistorique;
 ModificationDeStatutDetailleADetaille.args =
-  modificationDeStatusDetailleADetailleArgs;
+  modificationDeStatutDetailleADetailleArgs;
