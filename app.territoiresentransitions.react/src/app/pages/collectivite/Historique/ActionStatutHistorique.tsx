@@ -5,6 +5,8 @@ import {format} from 'date-fns';
 import {fr} from 'date-fns/locale';
 import classNames from 'classnames';
 
+import {makeCollectiviteTacheUrl, ReferentielParamOption} from 'app/paths';
+import {useReferentielId} from 'core-logic/hooks/params';
 import {fakeAjoutSimpleActionStatutHistorique} from './fixture';
 import ActionStatusBadge from 'ui/shared/ActionStatusBadge/ActionStatusBadge';
 
@@ -12,6 +14,8 @@ export type TActionStatutHistoriqueProps = IHistoricalActionStatutRead;
 
 export const ActionStatutHistorique = (props: TActionStatutHistoriqueProps) => {
   const [isDetailsOpen, setIsDetailsOpen] = useState(true);
+  const referentielId = useReferentielId() as ReferentielParamOption;
+
   return (
     <div className="flex flex-col gap-4 md:flex-row md:gap-6">
       {/* DATE */}
@@ -64,7 +68,11 @@ export const ActionStatutHistorique = (props: TActionStatutHistoriqueProps) => {
             )}
           </div>
           <Link
-            to="#"
+            to={makeCollectiviteTacheUrl({
+              referentielId,
+              collectiviteId: props.collectivite_id,
+              actionId: props.tache_id,
+            })}
             className="flex items-center ml-auto fr-btn fr-btn--secondary !px-4 border border-bf500"
           >
             Voir la page{' '}
