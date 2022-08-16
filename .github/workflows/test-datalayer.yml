@@ -25,7 +25,7 @@ jobs:
 
       # Run test container.
       - name: Run sqitch revert to latest major version and then deploy to test reversibility
-        run: docker compose run sqitch_revert && docker compose run --no-deps sqitch
+        run: docker compose run sqitch_revert && docker compose run --no-deps sqitch deploy --verify
 
   pgtap:
     name: Datalayer SQL tests with pgTAP
