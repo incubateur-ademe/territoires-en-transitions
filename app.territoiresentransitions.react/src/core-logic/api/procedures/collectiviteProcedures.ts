@@ -1,6 +1,4 @@
 import {supabaseClient} from 'core-logic/api/supabase';
-import {DcpRead} from 'generated/dataLayer/dcp_read';
-import {NiveauAcces} from 'generated/dataLayer';
 
 export const claimCollectivite = async (id: number): Promise<boolean> => {
   const {data, error} = await supabaseClient.rpc('claim_collectivite', {
