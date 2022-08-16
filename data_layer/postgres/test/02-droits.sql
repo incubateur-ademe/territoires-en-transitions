@@ -24,8 +24,8 @@ create or replace function
 as
 $$
 -- Vide la tables
-truncate private_utilisateur_droit;
-truncate utilisateur.invitation;
+truncate utilisateur.invitation cascade ;
+truncate private_utilisateur_droit cascade ;
 
 -- Restaure les copies.
 insert into public.private_utilisateur_droit
