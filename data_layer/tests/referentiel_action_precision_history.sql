@@ -13,22 +13,24 @@ values (1, 'cae_1.1.1.1.1', 'un commentaire de Yolo en cours', '2022-09-09 12:00
 insert into action_commentaire(collectivite_id, action_id, commentaire, modified_at)
 values (1, 'cae_1.1.1.1.1', 'un commentaire de Yolo finalisé', '2022-09-09 12:10:00.000000')
 on conflict (collectivite_id, action_id)
-    do update set commentaire  = excluded.commentaire,
+    do update set commentaire = excluded.commentaire,
                   modified_by = excluded.modified_by,
                   modified_at = excluded.modified_at;
 
-select ok((select count(*) = 1  from history.action_precision), 'Si un même utilisateur met à jour le champ précision, une seule historisation a lieu.');
+select ok((select count(*) = 1 from history.action_precision),
+          'Si un même utilisateur met à jour le champ précision, une seule historisation a lieu.');
 
 
 select test.identify_as('yili@didi.com');
 insert into action_commentaire(collectivite_id, action_id, commentaire, modified_at)
 values (1, 'cae_1.1.1.1.1', 'un commentaire de Yili', '2022-09-09 12:15:00.000000')
 on conflict (collectivite_id, action_id)
-    do update set commentaire  = excluded.commentaire,
+    do update set commentaire = excluded.commentaire,
                   modified_by = excluded.modified_by,
                   modified_at = excluded.modified_at;
 
-select ok((select count(*) = 2 from history.action_precision), 'Si un autre utilisateur met à jour le champ précision, une nouvelle historisation a lieu.');
+select ok((select count(*) = 2 from history.action_precision),
+          'Si un autre utilisateur met à jour le champ précision, une nouvelle historisation a lieu.');
 
 
 select *
@@ -37,14 +39,16 @@ from historical_action_precision
 where false;
 insert into expected_history (tache_id, action_id, tache_identifiant, tache_nom, action_identifiant, action_nom,
                               collectivite_id, precision, previous_precision,
-                              modified_by, modified_at, nom)
+                              modified_by_id, modified_at, modified_by_nom)
 values ('cae_1.1.1.1.1', 'cae_1.1.1', '1.1.1.1.1',
         'Formaliser une vision et des engagements dans une décision de politique générale (délibération)', '1.1.1',
-        'Définir la vision, les objectifs et la stratégie Climat-Air-Énergie', 1, 'un commentaire de Yili', 'un commentaire de Yolo finalisé', 
+        'Définir la vision, les objectifs et la stratégie Climat-Air-Énergie', 1, 'un commentaire de Yili',
+        'un commentaire de Yolo finalisé',
         '3f407fc6-3634-45ff-a988-301e9088096a', '2022-09-09 12:15:00.000000', 'Yili Didi'),
        ('cae_1.1.1.1.1', 'cae_1.1.1', '1.1.1.1.1',
         'Formaliser une vision et des engagements dans une décision de politique générale (délibération)', '1.1.1',
-        'Définir la vision, les objectifs et la stratégie Climat-Air-Énergie', 1, 'un commentaire de Yolo finalisé', 'un commentaire de Yolo en cours', 
+        'Définir la vision, les objectifs et la stratégie Climat-Air-Énergie', 1, 'un commentaire de Yolo finalisé',
+        'un commentaire de Yolo en cours',
         '17440546-f389-4d4f-bfdb-b0c94a1bd0f9', '2022-09-09 12:10:00.000000', 'Yolo Dodo');
 
 select set_eq('select * from historical_action_precision',
