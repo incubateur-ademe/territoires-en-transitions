@@ -2,6 +2,7 @@ import {useMemo, useRef, useState} from 'react';
 import {
   Field,
   FieldAttributes,
+  FieldInputProps,
   FieldProps,
   Form,
   Formik,
@@ -17,6 +18,11 @@ import {
   AddUserToCollectiviteRequest,
   AddUserToCollectiviteResponse,
 } from 'app/pages/collectivite/Users/useAddUserToCollectivite';
+
+type FormProps = {
+  email: string;
+  acces: NiveauAcces | '';
+};
 
 type AccesOption = {
   value: NiveauAcces;
@@ -64,7 +70,7 @@ const InvitationForm = ({
     }
   }, [currentCollectivite]);
 
-  const formRef = useRef<FormikProps<any>>(null);
+  const formRef = useRef<FormikProps<FormProps>>(null);
 
   const [formIsFilling, setFormIsFilling] = useState(true);
 
@@ -76,10 +82,7 @@ const InvitationForm = ({
     }
   };
 
-  const onSubmitInvitation = (values: {
-    email: string;
-    acces: NiveauAcces | '';
-  }) => {
+  const onSubmitInvitation = (values: FormProps) => {
     const req: AddUserToCollectiviteRequest = {
       collectiviteId: currentCollectivite.collectivite_id,
       email: values.email,
@@ -173,16 +176,26 @@ const AddUserResponse = ({
 
 export default InvitationForm;
 
-interface SelectFieldProps extends FieldAttributes<any> {
+type SelectFieldProps = FieldAttributes<{
   label: string;
   options: AccesOption[];
-}
+}>;
 
 const SelectField = (props: SelectFieldProps) => (
   <Field {...props}>
-    {({field, form}: {field: any; form: any}) => {
-      const errorMessage = form.errors[field.name];
-      const isTouched = form.touched[field.name];
+    {({
+      field,
+      form,
+    }: {
+      field: FieldInputProps<string>;
+      form: FormikProps<FormProps>;
+    }) => {
+      const errorMessage = (form.errors as Record<string, string | undefined>)[
+        field.name
+      ];
+      const isTouched = (form.touched as Record<string, boolean | undefined>)[
+        field.name
+      ];
       const isError = errorMessage && isTouched;
 
       return (

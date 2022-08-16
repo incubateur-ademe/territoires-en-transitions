@@ -15,6 +15,15 @@ export interface AddUserToCollectiviteResponse {
   added: boolean;
 }
 
+interface AddUserToCollectiviteError {
+  error?: string;
+}
+
+interface AddUserToCollectiviteData {
+  invitation_id?: string;
+  added: boolean;
+}
+
 export const useAddUserToCollectivite = () => {
   const queryClient = useQueryClient();
   const {
@@ -46,10 +55,9 @@ const addUserToCollectivite = async (
     niveau: req.niveauAcces,
   });
   if (error) {
-    return {error: (error as any).error, added: false};
+    return {error: (error as AddUserToCollectiviteError).error, added: false};
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const response = data as any;
+  const response = data as unknown as AddUserToCollectiviteData;
   const invitationUrl = response?.invitation_id
     ? makeInvitationLandingPath(response?.invitation_id)
     : undefined;
