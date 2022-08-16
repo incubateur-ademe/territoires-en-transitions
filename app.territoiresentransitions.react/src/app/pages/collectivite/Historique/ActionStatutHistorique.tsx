@@ -8,7 +8,15 @@ import classNames from 'classnames';
 import {makeCollectiviteTacheUrl, ReferentielParamOption} from 'app/paths';
 import {useReferentielId} from 'core-logic/hooks/params';
 import {fakeAjoutSimpleActionStatutHistorique} from './fixture';
-import ActionStatusBadge from 'ui/shared/ActionStatusBadge/ActionStatusBadge';
+import {
+  DetailNouvelleModificationWrapper,
+  DetailPrecedenteModificationWrapper,
+} from 'ui/shared/historique/DetailModificationWrapper';
+import ActionStatusBadge from 'ui/shared/historique/ActionStatusBadge/ActionStatusBadge';
+import {
+  NouvelleActionStatutDetaille,
+  PrecedenteActionStatutDetaille,
+} from 'ui/shared/historique/ActionStatutDetaillee';
 
 export type TActionStatutHistoriqueProps = IHistoricalActionStatutRead;
 
@@ -101,15 +109,15 @@ const ActionStatutHistoriqueDetails = ({
   ) {
     return (
       <>
-        <ActionStatutWrapper isPrevious>
+        <DetailPrecedenteModificationWrapper>
           <ActionStatusBadge
             status={actionStatutHistorique.previous_avancement}
             barre
           />
-        </ActionStatutWrapper>
-        <ActionStatutWrapper>
+        </DetailPrecedenteModificationWrapper>
+        <DetailNouvelleModificationWrapper>
           <ActionStatusBadge status={actionStatutHistorique.avancement} />
-        </ActionStatutWrapper>
+        </DetailNouvelleModificationWrapper>
       </>
     );
   }
@@ -123,17 +131,17 @@ const ActionStatutHistoriqueDetails = ({
   ) {
     return (
       <>
-        <ActionStatutWrapper isPrevious>
+        <DetailPrecedenteModificationWrapper>
           <ActionStatusBadge
             status={actionStatutHistorique.previous_avancement}
             barre
           />
-        </ActionStatutWrapper>
-        <ActionStatutWrapper>
-          <ActionDetaille
+        </DetailPrecedenteModificationWrapper>
+        <DetailNouvelleModificationWrapper>
+          <NouvelleActionStatutDetaille
             avancementDetaille={actionStatutHistorique.avancement_detaille}
           />
-        </ActionStatutWrapper>
+        </DetailNouvelleModificationWrapper>
       </>
     );
   }
@@ -146,78 +154,26 @@ const ActionStatutHistoriqueDetails = ({
   ) {
     return (
       <>
-        <ActionStatutWrapper isPrevious>
-          <ActionDetaille
-            isPrevious
+        <DetailPrecedenteModificationWrapper>
+          <PrecedenteActionStatutDetaille
             avancementDetaille={
               actionStatutHistorique.previous_avancement_detaille
             }
           />
-        </ActionStatutWrapper>
-        <ActionStatutWrapper>
-          <ActionDetaille
+        </DetailPrecedenteModificationWrapper>
+        <DetailNouvelleModificationWrapper>
+          <NouvelleActionStatutDetaille
             avancementDetaille={actionStatutHistorique.avancement_detaille}
           />
-        </ActionStatutWrapper>
+        </DetailNouvelleModificationWrapper>
       </>
     );
   }
 
   // Ajout simple
   return (
-    <ActionStatutWrapper>
+    <DetailNouvelleModificationWrapper>
       <ActionStatusBadge status={actionStatutHistorique.avancement} />
-    </ActionStatutWrapper>
+    </DetailNouvelleModificationWrapper>
   );
 };
-
-const ActionStatutWrapper = ({
-  children,
-  isPrevious,
-}: {
-  children: JSX.Element;
-  isPrevious?: boolean;
-}) => (
-  <div
-    className={classNames('w-min p-2 border-2 border-green-400', {
-      ['border-red-400 mb-4']: isPrevious,
-    })}
-  >
-    {children}
-  </div>
-);
-
-const ActionDetaille = ({
-  avancementDetaille,
-  isPrevious,
-}: {
-  avancementDetaille: number[];
-  isPrevious?: boolean;
-}) => (
-  <>
-    <ActionStatusBadge status="detaille" barre={isPrevious} />
-    <div className="mt-2">
-      <p
-        className={classNames('mb-0.5 text-sm whitespace-nowrap', {
-          ['line-through']: isPrevious,
-        })}
-      >
-        Fait: {avancementDetaille[0] * 100} %
-      </p>
-      <p
-        className={classNames('mb-0.5 text-sm whitespace-nowrap', {
-          ['line-through']: isPrevious,
-        })}
-      >
-        Programmé: {avancementDetaille[1] * 100} %
-      </p>
-      <p
-        className={classNames('mb-0 text-sm whitespace-nowrap', {
-          ['line-through']: isPrevious,
-        })}
-      >
-        Pas fait: {avancementDetaille[2] * 100} %
-      </p>
-    </div>
-  </>
-);
