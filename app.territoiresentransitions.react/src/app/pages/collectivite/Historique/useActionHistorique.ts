@@ -48,15 +48,24 @@ export const useHistoricalActionStatuts = ({
   };
 
   // souscrit aux changements de la table de statuts
-  const subscribe = () => {
+  const subscribe = () =>
     supabaseClient
       .from('action_statut')
       .on('INSERT', refetch)
       .on('UPDATE', refetch)
       .subscribe();
-  };
 
-  useEffect(() => subscribe(), []);
+  useEffect(() => {
+    const subscription = subscribe();
+
+    // supprime la souscription quand le composant est démonté
+    return () => {
+      if (subscription) {
+        subscription.unsubscribe();
+      }
+    };
+  }, []);
+
   const {data} = useQuery<IHistoricalActionStatutRead[] | null>(
     ['historical_action_statut', collectiviteId, actionId],
     () => fetchHistoricalActionStatutList(collectiviteId, actionId)
