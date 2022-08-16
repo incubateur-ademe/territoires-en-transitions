@@ -17,7 +17,7 @@ export const ActionStatutHistorique = (props: TActionStatutHistoriqueProps) => {
       {/* DATE */}
       <div className="pr-6 w-min md:border-r md:border-gray-200">
         <span className="py-1 px-2 text-sm uppercase whitespace-nowrap text-blue-600 bg-blue-100 rounded-md">
-          {format(new Date(props.modified_at), 'ii MMMM yyyy', {
+          {format(new Date(props.modified_at), 'dd MMMM yyyy', {
             locale: fr,
           })}
         </span>
