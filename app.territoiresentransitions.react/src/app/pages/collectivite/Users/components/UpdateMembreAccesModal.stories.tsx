@@ -18,6 +18,7 @@ const handlers = {
   setIsOpen: action('setIsOpen'),
   updateMembre: action('updateMembre') as TUpdateMembre,
   removeFromCollectivite: action('removeFromCollectivite'),
+  removeInvite: action('removeInvite'),
 };
 
 export const AdminRetireUnMembre = Template.bind({});
@@ -25,16 +26,29 @@ const AdminRetireUnMembreArgs: AccesModalProps = {
   isOpen: true,
   selectedOption: 'remove',
   membreId: '1',
+  membreEmail: '',
   isCurrentUser: false,
   ...handlers,
 };
 AdminRetireUnMembre.args = AdminRetireUnMembreArgs;
+
+export const AdminRetireUnInvite = Template.bind({});
+const AdminRetireUnInviteArgs: AccesModalProps = {
+  isOpen: true,
+  selectedOption: 'remove',
+  membreId: null,
+  membreEmail: '',
+  isCurrentUser: false,
+  ...handlers,
+};
+AdminRetireUnInvite.args = AdminRetireUnInviteArgs;
 
 export const AdminSeRetireLuiMeme = Template.bind({});
 const AdminSeRetireLuiMemeArgs: AccesModalProps = {
   isOpen: true,
   selectedOption: 'remove',
   membreId: '1',
+  membreEmail: '',
   isCurrentUser: true,
   ...handlers,
 };
@@ -45,6 +59,7 @@ const AdminChangeSonAccesArgs: AccesModalProps = {
   isOpen: true,
   selectedOption: 'edition',
   membreId: '1',
+  membreEmail: '',
   isCurrentUser: true,
   ...handlers,
 };
