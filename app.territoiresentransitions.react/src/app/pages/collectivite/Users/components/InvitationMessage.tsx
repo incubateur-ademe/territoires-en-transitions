@@ -51,7 +51,7 @@ const InvitationMessage = ({
 
   const message = useMemo(
     () =>
-      `Objet : Invitation à collaborer sur Territoires en transitions.fr\n\nBonjour,\n\n${currentUser.prenom} ${currentUser.nom} de ${currentCollectivite.nom} vous invite à collaborer.\n\nLe lien suivant vous donnera un accès ${accesDisplayed} pour cette collectivité.\n\nCliquez sur le lien suivant pour accepter l’invitation et créer votre compte :\nlien ${invitationUrl}\n\n---------\n\nTerritoires en transitions est une initiative de l’ADEME pour accompagner la transition écologique des collectivités.`,
+      `Objet : Invitation à collaborer sur Territoires en transitions.fr\n\nBonjour,\n\n${currentUser.prenom} ${currentUser.nom} de ${currentCollectivite.nom} vous invite à collaborer.\n\nLe lien suivant vous donnera un accès ${accesDisplayed} pour cette collectivité.\n\nCliquez sur le lien suivant pour accepter l’invitation :\n${invitationUrl}\n\nSi ce n’est pas déjà fait, créer un compte en cliquant sur “+ Créer un compte” en haut à droite sur la page d’arrivée.\n\n---------\n\nTerritoires en transitions est une initiative de l’ADEME pour accompagner la transition écologique des collectivités.`,
     [currentCollectivite, currentUser, acces, invitationUrl]
   );
 
