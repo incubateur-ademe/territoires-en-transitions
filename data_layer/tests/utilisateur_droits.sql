@@ -2,10 +2,7 @@ begin;
 select plan(6);
 
 -- make uid work as if yolododo user is connected
-create or replace function auth.uid() returns uuid as
-$$
-select '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid;
-$$ language sql stable;
+select test.identify_as('17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid);
 
 truncate private_utilisateur_droit;
 
@@ -16,13 +13,13 @@ select is_empty(
 
 select ialike(
                (claim_collectivite(10) -> 'message')::text,
-               '%Vous êtes référent%',
+               '%Vous êtes administrateur%',
                'should return the success message first time'
            );
 
 select ialike(
                (claim_collectivite(10) -> 'message')::text,
-               '%La collectivité dispose déjà d''un référent%',
+               '%La collectivité dispose déjà d''un administrateur%',
                'should return the failure message the second time'
            );
 
@@ -35,7 +32,7 @@ select results_eq(
 
 select ialike(
                (claim_collectivite(11) -> 'message')::text,
-               '%Vous êtes référent%',
+               '%Vous êtes administrateur%',
                'should return the success message for the second collectivite'
            );
 

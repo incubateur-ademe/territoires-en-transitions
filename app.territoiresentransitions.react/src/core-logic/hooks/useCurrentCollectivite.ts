@@ -2,82 +2,39 @@ import {useQuery} from 'react-query';
 import {useAuth} from 'core-logic/api/auth/AuthProvider';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {ElsesCollectiviteRead, RoleName} from 'generated/dataLayer';
-import {OwnedCollectiviteRead} from 'generated/dataLayer/owned_collectivite_read';
+import {NiveauAcces} from 'generated/dataLayer';
+import {MesCollectivitesRead} from 'generated/dataLayer/mes_collectivites_read';
 
 export type CurrentCollectivite = {
   collectivite_id: number;
   nom: string;
-  role_name: RoleName | null;
-  isReferent: boolean;
+  niveau_acces: NiveauAcces | null;
+  isAdmin: boolean;
   readonly: boolean;
-};
-
-// charge une collectivité depuis la vue des collectivitités associées à
-// l'utilisateur courant
-const fetchOwnedCollectivite = async (
-  collectivite_id: number
-): Promise<OwnedCollectiviteRead | null> => {
-  const {error, data} = await supabaseClient
-    .from<OwnedCollectiviteRead>('owned_collectivite')
-    .select()
-    .match({collectivite_id});
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  return data && data.length ? data[0] : null;
-};
-
-// charge une collectivité depuis la vue des collectivitités NON associées à
-// l'utilisateur courant
-const fetchElsesCollectivite = async (
-  collectivite_id: number
-): Promise<ElsesCollectiviteRead | null> => {
-  const {error, data} = await supabaseClient
-    .from<ElsesCollectiviteRead>('elses_collectivite')
-    .select()
-    .match({collectivite_id});
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  return data && data.length ? data[0] : null;
 };
 
 // charge une collectivité
 const fetchCurrentCollectivite = async (
   collectivite_id: number
 ): Promise<CurrentCollectivite | null> => {
-  // vérifie si la collectivité est rattachée au compte courant
-  const ownedCollectivite = await fetchOwnedCollectivite(collectivite_id);
-  if (ownedCollectivite) {
-    const {nom, role_name} = ownedCollectivite;
-    return {
-      collectivite_id,
-      nom,
-      role_name: role_name as RoleName,
-      isReferent: role_name === 'referent',
-      readonly: false,
-    };
-  }
+  const {error, data} = await supabaseClient
+    .from<MesCollectivitesRead>('collectivite_niveau_acces')
+    .select()
+    .match({collectivite_id});
 
-  // sinon charge ses données depuis la vue "elses_collectivite"
-  const elseCollectivite = await fetchElsesCollectivite(collectivite_id);
-  if (!elseCollectivite) {
-    return null;
-  }
+  const collectivite = data![0];
 
-  const {nom} = elseCollectivite;
-  return {
-    collectivite_id,
-    nom,
-    role_name: null,
-    isReferent: false,
-    readonly: true,
-  };
+  return collectivite
+    ? {
+        collectivite_id,
+        nom: collectivite.nom,
+        niveau_acces: collectivite.niveau_acces,
+        isAdmin: collectivite.niveau_acces === 'admin',
+        readonly:
+          collectivite.niveau_acces === null ||
+          collectivite.niveau_acces === 'lecture',
+      }
+    : null;
 };
 
 // charge la collectivité courante (à partir de son id)

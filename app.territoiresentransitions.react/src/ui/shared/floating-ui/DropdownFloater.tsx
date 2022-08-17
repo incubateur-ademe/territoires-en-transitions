@@ -46,7 +46,7 @@ const DropdownFloater = ({
     setFloatingMinWidth(
       `${context.refs.reference.current?.getBoundingClientRect().width}px`
     );
-  }, []);
+  });
 
   return (
     <>
@@ -58,7 +58,7 @@ const DropdownFloater = ({
         <FloatingPortal>
           <FloatingFocusManager context={context}>
             <div
-              className="w-max bg-white shadow-md z-50"
+              className="w-max bg-white shadow-md z-40"
               {...getFloatingProps({
                 ref: floating,
                 style: {

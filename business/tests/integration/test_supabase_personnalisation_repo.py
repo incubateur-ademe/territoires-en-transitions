@@ -228,6 +228,6 @@ def test_get_identite_for_collectivite_1(
 ):
     collectivite_1_identite = supabase_repo.get_identite_for_collectivite(1)
     expected_identite = IdentiteCollectivite(
-        type={"commune"}, population={"moins_de_100000"}, localisation=set()
+        type={"commune"}, population= {'moins_de_100000', 'moins_de_20000'}, localisation=set()
     )
     assert collectivite_1_identite == expected_identite

@@ -1,6 +1,8 @@
 import abc
 from typing import Dict, List
-from business.evaluation.domain.models.events import ReponseUpdatedForCollectivite
+from business.evaluation.domain.models.events import (
+    TriggerPersonnalisationForCollectivite,
+)
 
 from business.personnalisation.models import (
     ActionPersonnalisationConsequence,
@@ -44,7 +46,9 @@ class AbstractPersonnalisationRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get_unprocessed_reponse_events() -> List[ReponseUpdatedForCollectivite]:
+    def get_unprocessed_reponse_events() -> List[
+        TriggerPersonnalisationForCollectivite
+    ]:
         raise NotImplementedError
 
     @abc.abstractmethod
@@ -62,7 +66,9 @@ class InMemoryPersonnalisationRepository(AbstractPersonnalisationRepository):
             ActionId, ActionPersonnalisationConsequence
         ] = {}
         self._action_personnalisation_regles: List[ActionPersonnalisationRegles] = []
-        self._unprocessed_reponse_events: List[ReponseUpdatedForCollectivite] = []
+        self._unprocessed_reponse_events: List[
+            TriggerPersonnalisationForCollectivite
+        ] = []
         self._identite = IdentiteCollectivite()
 
     def get_reponses_for_collectivite(self, collectivite_id: int) -> List[Reponse]:
@@ -89,7 +95,9 @@ class InMemoryPersonnalisationRepository(AbstractPersonnalisationRepository):
     ) -> List[ActionPersonnalisationRegles]:
         return self._action_personnalisation_regles
 
-    def get_unprocessed_reponse_events(self) -> List[ReponseUpdatedForCollectivite]:
+    def get_unprocessed_reponse_events(
+        self,
+    ) -> List[TriggerPersonnalisationForCollectivite]:
         return self._unprocessed_reponse_events
 
     def get_action_personnalisation_consequences_for_collectivite(
@@ -122,6 +130,6 @@ class InMemoryPersonnalisationRepository(AbstractPersonnalisationRepository):
         )
 
     def set_unprocessed_reponse_events(
-        self, unprocessed_reponse_events: List[ReponseUpdatedForCollectivite]
+        self, unprocessed_reponse_events: List[TriggerPersonnalisationForCollectivite]
     ) -> None:
         self._unprocessed_reponse_events = unprocessed_reponse_events

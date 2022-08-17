@@ -3,7 +3,7 @@ export const useCurrentCollectivite = () => {
   return {
     collectivite_id: 1,
     nom: 'Amberieu-en-Bugey',
-    role_name: 'referent',
+    niveau_acces: 'referent',
     isReferent: true,
     readonly: false,
   };

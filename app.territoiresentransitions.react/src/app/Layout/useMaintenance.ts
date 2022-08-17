@@ -14,7 +14,6 @@ const fetchMaintenance = async (): Promise<Maintenance | null> => {
     .from<Maintenance>('ongoing_maintenance')
     .select();
   const {error, data} = await query;
-  console.log('fetch maintenance ', error, data);
 
   if (error) {
     throw new Error(error.message);

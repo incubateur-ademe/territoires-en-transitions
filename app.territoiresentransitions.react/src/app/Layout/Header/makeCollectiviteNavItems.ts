@@ -1,4 +1,5 @@
 import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import {NiveauAcces} from 'generated/dataLayer';
 import {
   makeCollectiviteIndicateursUrl,
   makeCollectiviteLabellisationUrl,
@@ -15,12 +16,14 @@ export interface CollectiviteNavSingle {
   label: string;
   path: string;
   alternativeActivePath?: string[];
+  niveauAcces?: NiveauAcces | null;
 }
 
 export interface CollectiviteNavDropdown {
   isSelectCollectivite?: boolean;
   displayOnlyToMember?: boolean;
   menuLabel: string;
+  niveauAcces?: NiveauAcces | null;
   listPathsAndLabels: CollectiviteNavSingle[];
 }
 
@@ -150,28 +153,26 @@ export const makeCollectiviteNavItems = (
     },
   ];
 
-  if (collectivite.readonly) {
-    return common;
+  const parametres = {
+    menuLabel: 'Paramètres',
+    listPathsAndLabels: [
+      {
+        label: 'Gestion des membres',
+        path: makeCollectiviteUsersUrl({
+          collectiviteId,
+        }),
+      },
+    ],
+  };
+
+  if (!collectivite.readonly) {
+    parametres.listPathsAndLabels.unshift({
+      label: 'Personnalisation des référentiels',
+      path: makeCollectivitePersoRefUrl({
+        collectiviteId,
+      }),
+    });
   }
 
-  return [
-    ...common,
-    {
-      menuLabel: 'Paramètres',
-      listPathsAndLabels: [
-        {
-          label: 'Personnalisation des référentiels',
-          path: makeCollectivitePersoRefUrl({
-            collectiviteId,
-          }),
-        },
-        {
-          label: 'Gestion des membres',
-          path: makeCollectiviteUsersUrl({
-            collectiviteId,
-          }),
-        },
-      ],
-    },
-  ];
+  return [...common, parametres];
 };

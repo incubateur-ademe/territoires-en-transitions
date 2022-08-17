@@ -269,3 +269,273 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/components/MultiSelectCheck
   </div>
 </ul>
 `;
+
+exports[`Storyshots app/pages/ToutesLesCollectivites/components/MultiSelectCheckboxes Selection Multiple 1`] = `
+<ul>
+  <div>
+    <div
+      className="font-semibold text-md mb-2"
+    >
+      Niveau de labellisation
+    </div>
+    <div
+      className="small-checkbox  fr-checkbox-group text-sm"
+    >
+      <div
+        className="my-2"
+      >
+        <input
+          checked={false}
+          className="fr-toggle__input"
+          disabled={false}
+          id="exempleall"
+          onChange={[Function]}
+          type="checkbox"
+        />
+        <label
+          htmlFor="exempleall"
+        >
+          Tous
+        </label>
+      </div>
+      <div
+        className="my-2"
+      >
+        <input
+          checked={true}
+          className="fr-toggle__input"
+          disabled={false}
+          id="exempleNL"
+          onChange={[Function]}
+          type="checkbox"
+        />
+        <label
+          htmlFor="exempleNL"
+        >
+          Non labellisé
+        </label>
+      </div>
+      <div
+        className="my-2"
+      >
+        <input
+          checked={true}
+          className="fr-toggle__input"
+          disabled={false}
+          id="exemple1"
+          onChange={[Function]}
+          type="checkbox"
+        />
+        <label
+          htmlFor="exemple1"
+        >
+          Première étoile
+        </label>
+      </div>
+      <div
+        className="my-2"
+      >
+        <input
+          checked={false}
+          className="fr-toggle__input"
+          disabled={false}
+          id="exemple2"
+          onChange={[Function]}
+          type="checkbox"
+        />
+        <label
+          htmlFor="exemple2"
+        >
+          Deuxième étoile
+        </label>
+      </div>
+      <div
+        className="my-2"
+      >
+        <input
+          checked={false}
+          className="fr-toggle__input"
+          disabled={false}
+          id="exemple3"
+          onChange={[Function]}
+          type="checkbox"
+        />
+        <label
+          htmlFor="exemple3"
+        >
+          Troisième étoile
+        </label>
+      </div>
+      <div
+        className="my-2"
+      >
+        <input
+          checked={false}
+          className="fr-toggle__input"
+          disabled={false}
+          id="exemple4"
+          onChange={[Function]}
+          type="checkbox"
+        />
+        <label
+          htmlFor="exemple4"
+        >
+          Quatrième étoile
+        </label>
+      </div>
+      <div
+        className="my-2"
+      >
+        <input
+          checked={false}
+          className="fr-toggle__input"
+          disabled={false}
+          id="exemple5"
+          onChange={[Function]}
+          type="checkbox"
+        />
+        <label
+          htmlFor="exemple5"
+        >
+          Cinquième étoile
+        </label>
+      </div>
+    </div>
+  </div>
+</ul>
+`;
+
+exports[`Storyshots app/pages/ToutesLesCollectivites/components/MultiSelectCheckboxes Selection Tous Par Defaut 1`] = `
+<ul>
+  <div>
+    <div
+      className="font-semibold text-md mb-2"
+    >
+      Niveau de labellisation
+    </div>
+    <div
+      className="small-checkbox  fr-checkbox-group text-sm"
+    >
+      <div
+        className="my-2"
+      >
+        <input
+          checked={true}
+          className="fr-toggle__input"
+          disabled={true}
+          id="exempleall"
+          onChange={[Function]}
+          type="checkbox"
+        />
+        <label
+          htmlFor="exempleall"
+        >
+          Tous
+        </label>
+      </div>
+      <div
+        className="my-2"
+      >
+        <input
+          checked={false}
+          className="fr-toggle__input"
+          disabled={false}
+          id="exempleNL"
+          onChange={[Function]}
+          type="checkbox"
+        />
+        <label
+          htmlFor="exempleNL"
+        >
+          Non labellisé
+        </label>
+      </div>
+      <div
+        className="my-2"
+      >
+        <input
+          checked={false}
+          className="fr-toggle__input"
+          disabled={false}
+          id="exemple1"
+          onChange={[Function]}
+          type="checkbox"
+        />
+        <label
+          htmlFor="exemple1"
+        >
+          Première étoile
+        </label>
+      </div>
+      <div
+        className="my-2"
+      >
+        <input
+          checked={false}
+          className="fr-toggle__input"
+          disabled={false}
+          id="exemple2"
+          onChange={[Function]}
+          type="checkbox"
+        />
+        <label
+          htmlFor="exemple2"
+        >
+          Deuxième étoile
+        </label>
+      </div>
+      <div
+        className="my-2"
+      >
+        <input
+          checked={false}
+          className="fr-toggle__input"
+          disabled={false}
+          id="exemple3"
+          onChange={[Function]}
+          type="checkbox"
+        />
+        <label
+          htmlFor="exemple3"
+        >
+          Troisième étoile
+        </label>
+      </div>
+      <div
+        className="my-2"
+      >
+        <input
+          checked={false}
+          className="fr-toggle__input"
+          disabled={false}
+          id="exemple4"
+          onChange={[Function]}
+          type="checkbox"
+        />
+        <label
+          htmlFor="exemple4"
+        >
+          Quatrième étoile
+        </label>
+      </div>
+      <div
+        className="my-2"
+      >
+        <input
+          checked={false}
+          className="fr-toggle__input"
+          disabled={false}
+          id="exemple5"
+          onChange={[Function]}
+          type="checkbox"
+        />
+        <label
+          htmlFor="exemple5"
+        >
+          Cinquième étoile
+        </label>
+      </div>
+    </div>
+  </div>
+</ul>
+`;

@@ -4,4 +4,4 @@ select has_function_privilege('teapot()', 'execute');
 select 1 / count(*)
 from sqitch.changes
 -- should be the latest change.
-where change = 'cron/refresh_stats_completude';
+where change = 'utilisateur/membre';

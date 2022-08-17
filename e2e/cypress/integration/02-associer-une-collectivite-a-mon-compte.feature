@@ -3,6 +3,8 @@
 Fonctionnalité: Associer une collectivité à mon compte
 
   Scénario: Sélectionner la première collectivité à associer à mon compte (cas d'une collectivité déjà activée)
+    Etant donné que les droits utilisateur sont réinitialisés
+    Et que les informations des membres sont réinitialisées
     Etant donné que je suis connecté en tant que "yulu"
 
     Quand je visite la vue "Toutes les collectivités"
@@ -29,15 +31,3 @@ Fonctionnalité: Associer une collectivité à mon compte
     Alors le "dialogue Associer une collectivité à mon compte" vérifie les conditions suivantes :
       | Element                               | Condition | Valeur |
       | dialogue Rejoindre cette collectivité | visible   |        |
-
-
-  Scénario: Rejoindre une collectivité déjà activée
-    Etant donné que je suis connecté en tant que "yolo"
-
-    Quand je suis sur la page "Tableau de bord" de la collectivité "3"
-    Alors le "bandeau lecture seule" est visible
-
-    Quand je clique sur le bouton "Rejoindre cette collectivité"
-    Alors le "dialogue Rejoindre cette collectivité" vérifie les conditions suivantes :
-      | Elément                                | Condition | Valeur        |
-      | Contenu pour rejoindre la collectivité | contient  | yala@dada.com |

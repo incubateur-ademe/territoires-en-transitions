@@ -171,6 +171,7 @@ services:
 
   # Sqitch
   sqitch:
+    container_name: tet-sqitch-deploy
     image: sqitch/sqitch
     depends_on:
       supabase_loaded:
@@ -190,7 +191,7 @@ services:
     image: postgres:14 # use postgres solely for its plsql client.
     healthcheck:
       test: sh /scripts/loaded_content.sh
-      interval: 10s
+      interval: 30s
       timeout: 5s
       retries: 100
     depends_on:
@@ -341,3 +342,21 @@ services:
       REACT_APP_SUPABASE_URL: http://kong:8000
       LANG: fr_FR.UTF-8
       CI: "true"
+
+  # Sqitch revert
+  sqitch_revert:
+    container_name: tet-sqitch-revert
+    image: sqitch/sqitch
+    depends_on:
+      loader:
+        condition: service_healthy
+    profiles:
+      - donotstart
+    environment:
+      SQITCH_TARGET: db:pg://db/postgres
+      SQITCH_PASSWORD: ${POSTGRES_PASSWORD}
+      SQITCH_USERNAME: postgres
+    command: revert --to @v1.5.0 --y
+    working_dir: /data_layer/sqitch
+    volumes:
+      - ./data_layer/sqitch:/data_layer/sqitch

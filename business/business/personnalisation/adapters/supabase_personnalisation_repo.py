@@ -1,9 +1,10 @@
 from dataclasses import asdict
-from datetime import datetime
 from itertools import groupby
 from typing import Dict, List
 from business.evaluation.adapters import supabase_names
-from business.evaluation.domain.models.events import ReponseUpdatedForCollectivite
+from business.evaluation.domain.models.events import (
+    TriggerPersonnalisationForCollectivite,
+)
 
 
 from business.personnalisation.models import (
@@ -106,11 +107,16 @@ class SupabasePersonnalisationRepository(
         ]
         return personnalisation_regles
 
-    def get_unprocessed_reponse_events(self) -> List[ReponseUpdatedForCollectivite]:
+    def get_unprocessed_reponse_events(
+        self,
+    ) -> List[TriggerPersonnalisationForCollectivite]:
         rows = self.client.db.get_all(
             supabase_names.views.unprocessed_reponse_event,
         )
-        return [ReponseUpdatedForCollectivite(row["collectivite_id"]) for row in rows]
+        return [
+            TriggerPersonnalisationForCollectivite(row["collectivite_id"])
+            for row in rows
+        ]
 
     def get_action_personnalisation_consequences_for_collectivite(
         self,

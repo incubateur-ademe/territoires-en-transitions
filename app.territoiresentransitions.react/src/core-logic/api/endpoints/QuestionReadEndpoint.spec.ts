@@ -19,11 +19,12 @@ const questionDechets4 = {
   ],
   choix: null,
   collectivite_id: 1,
+  description: '',
   formulation: 'La collectivité a-t-elle la compétence collecte des déchets ?',
   id: 'dechets_1',
   localisation: [],
   ordonnancement: null,
-  population: ['moins_de_100000'],
+  population: ['moins_de_20000', 'moins_de_100000'],
   thematique_id: 'dechets',
   thematique_nom: 'Déchets',
   type: 'binaire',
@@ -47,11 +48,12 @@ const QuestionEnergie2 = {
     {id: 'EP_1_c', label: 'Non pas du tout', ordonnancement: null},
   ],
   collectivite_id: 1,
+  description: '',
   formulation: 'La collectivité a-t-elle la compétence "éclairage public" ?',
   id: 'EP_1',
   localisation: [],
   ordonnancement: null,
-  population: ['moins_de_100000'],
+  population: ['moins_de_20000', 'moins_de_100000'],
   thematique_id: 'energie',
   thematique_nom: 'Énergie',
   type: 'choix',
@@ -62,18 +64,18 @@ const QuestionEnergie3 = {
   action_ids: ['cae_2.3.1'],
   choix: null,
   collectivite_id: 1,
+  description: '',
   formulation:
     "Quelle est la part de la collectivité dans la structure compétente en matière d'éclairage public ?",
   id: 'EP_2',
   localisation: [],
   ordonnancement: null,
-  population: ['moins_de_100000'],
+  population: ['moins_de_20000', 'moins_de_100000'],
   thematique_id: 'energie',
   thematique_nom: 'Énergie',
   type: 'proportion',
   types_collectivites_concernees: null,
 };
-
 describe('Question reading endpoint ', () => {
   it('should retrieve a question by action_id', async () => {
     const questionReadEndpoint = new QuestionReadEndpoint([]);
@@ -145,7 +147,7 @@ describe('Question reading endpoint ', () => {
             'La collectivité est-elle chargée de la réalisation d\'un "Programme local de prévention des déchets ménagers et assimilés" (PLPDMA) du fait de sa compétence collecte et/ou par délégation d\'une autre collectivité ?',
           ordonnancement: null,
           choix: null,
-          population: ['moins_de_100000'],
+          population: ['moins_de_20000', 'moins_de_100000'],
           localisation: [],
         },
       ])
