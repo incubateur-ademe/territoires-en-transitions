@@ -18,8 +18,8 @@ Content-Type: application/json
 %}
 
 
-### Liste l'historique des statuts des tâches de l'action cae_1.1.1
-GET {{api}}/rest/v1/historical_action_statut?collectivite_id=eq.1&action_id=eq.cae_1.1.1
+### Liste l'historique pour la collectivité 1
+GET {{api}}/rest/v1/historique?collectivite_id=eq.1
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 
