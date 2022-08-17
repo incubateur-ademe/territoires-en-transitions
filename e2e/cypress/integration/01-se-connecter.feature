@@ -24,6 +24,7 @@ Fonctionnalité: Accéder au site et se connecter
       | Champ | Valeur        |
       | email | yolo@dodo.com |
       | mdp   | yolododo      |
+    Et que je vais vérifier les données envoyées à la chatbox
     Et que je clique sur le bouton "Valider" du "formulaire de connexion"
     Alors la page vérifie les conditions suivantes :
       | Elément                               | Condition |
@@ -32,6 +33,10 @@ Fonctionnalité: Accéder au site et se connecter
       | formulaire de connexion               | absent    |
       | le tableau de bord de la collectivité | visible   |
       | footer                                | visible   |
+    Et les données suivantes ont été envoyées à la chatbox :
+      | nom    | Dodo          |
+      | prenom | Yolo          |
+      | email  | yolo@dodo.com |
 
   Scénario: Se connecter en tant que Yulu (utilisateur non encore rattaché)
     Etant donné que j'ouvre le site
@@ -63,7 +68,6 @@ Fonctionnalité: Accéder au site et se connecter
       | formulaire de connexion  | absent    |
       | toutes les collectivités | visible   |
       | footer                   | visible   |
-
 
   Scénario: Echouer à se connecter
     Etant donné que j'ouvre le site
