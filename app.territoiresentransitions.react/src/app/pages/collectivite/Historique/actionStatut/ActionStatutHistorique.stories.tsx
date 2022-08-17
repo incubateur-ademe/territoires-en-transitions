@@ -11,7 +11,7 @@ import {
   fakeModificationSimpleADetailleActionStatutHistorique,
   fakeModificationDetailleActionStatutHistorique,
   fakeAjoutDetailleActionStatutHistorique,
-} from './fixture';
+} from '../fixture';
 
 export default {
   component: ActionStatutHistorique,

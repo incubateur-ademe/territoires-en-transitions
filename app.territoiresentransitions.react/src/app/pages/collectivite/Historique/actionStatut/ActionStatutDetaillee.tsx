@@ -1,4 +1,4 @@
-import ActionStatusBadge from 'ui/shared/historique/ActionStatusBadge/ActionStatusBadge';
+import ActionStatusBadge from 'app/pages/collectivite/Historique/actionStatut/ActionStatusBadge';
 
 export const PrecedenteActionStatutDetaille = ({
   avancementDetaille,
