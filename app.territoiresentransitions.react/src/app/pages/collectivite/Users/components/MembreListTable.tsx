@@ -31,7 +31,8 @@ const MembreListTable = ({
           <thead>
             <tr>
               <th className={thClassNames}>Nom et adresse mail</th>
-              <th className={thClassNames}>Numéro de tél.</th>
+              {/* En attente de la page gestion de compte */}
+              {/* <th className={thClassNames}>Numéro de tél.</th> */}
               <th className={thClassNames}>
                 Fonction{' '}
                 <span className="block text-xs font-normal">

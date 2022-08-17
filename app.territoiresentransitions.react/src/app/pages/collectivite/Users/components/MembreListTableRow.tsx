@@ -55,7 +55,7 @@ const MembreListTableRow = ({
     user_id: membre_id,
     nom,
     prenom,
-    telephone,
+    // telephone,
     email,
     fonction,
     details_fonction,
@@ -95,7 +95,8 @@ const MembreListTableRow = ({
   if (membre_id === null) {
     return (
       <tr data-test={`MembreRow-${email}`} className={rowClassNames}>
-        <td colSpan={5} className={cellClassNames}>
+        {/* Mettre le valeur colSpan à 5 quand l'ion remet la colonne téléphone */}
+        <td colSpan={4} className={cellClassNames}>
           <span className="block mb-0.5 text-xs text-gray-500">{email}</span>
           <span className="font-medium text-xs text-gray-600">
             Création de compte en attente
@@ -139,9 +140,10 @@ const MembreListTableRow = ({
         </span>
         <span className="block mt-1 text-xs text-gray-500">{email}</span>
       </td>
-      <td className={cellClassNames}>
+      {/* En attente de la page gestion de compte */}
+      {/* <td className={cellClassNames}>
         <span>{telephone}</span>
-      </td>
+      </td> */}
       <td className={cellClassNames}>
         {canUpdate ? (
           <FonctionDropdown
