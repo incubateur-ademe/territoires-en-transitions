@@ -76,6 +76,17 @@ const MembreListTableRow = ({
     TAccesDropdownOption | undefined
   >(undefined);
 
+  const onAccesSelect = (value: TAccesDropdownOption) => {
+    // Comme nous n'affichons pas de modal lors du changement d'accès d'un autre utilisateur que soit même,
+    // on crée une condition afin d'ouvrir la modal ou directement changer l'accès d'un tierce
+    if (isCurrentUser || value === 'remove') {
+      setAccesOptionSelected(value);
+      setIsAccesModalOpen(true);
+    } else if (membre_id) {
+      updateMembre({membre_id, name: 'niveau_acces', value});
+    }
+  };
+
   const onRemoveInvite = (membreEmail: string) => {
     removeFromCollectivite(membreEmail);
   };
@@ -93,12 +104,25 @@ const MembreListTableRow = ({
         <td className={`${cellClassNames}`}>
           {/* currentUserAccess="edition" permet de n'afficher que l'option "remove" même en étant admin */}
           {canUpdate ? (
-            <AccesDropdown
-              isCurrentUser={isCurrentUser}
-              currentUserAccess="edition"
-              value={niveau_acces}
-              onSelect={() => onRemoveInvite(membre.email)}
-            />
+            <>
+              <AccesDropdown
+                isCurrentUser={isCurrentUser}
+                currentUserAccess="edition"
+                value={niveau_acces}
+                onSelect={onAccesSelect}
+              />
+              <UpdateMemberAccesModal
+                isOpen={isAccesModalOpen}
+                setIsOpen={setIsAccesModalOpen}
+                selectedOption={accesOptionSelected}
+                membreId={membre_id}
+                membreEmail={membre.email}
+                isCurrentUser={isCurrentUser}
+                updateMembre={updateMembre}
+                removeFromCollectivite={removeFromCollectivite}
+                removeInvite={onRemoveInvite}
+              />
+            </>
           ) : (
             <span>{niveauAccesLabels[niveau_acces]}</span>
           )}
@@ -106,17 +130,6 @@ const MembreListTableRow = ({
       </tr>
     );
   }
-
-  const onAccesSelect = (value: TAccesDropdownOption) => {
-    // Comme nous n'affichons pas de modal lors du changement d'accès d'un autre utilisateur que soit même,
-    // on crée une condition afin d'ouvrir la modal ou directement changer l'accès d'un tierce
-    if (isCurrentUser || value === 'remove') {
-      setAccesOptionSelected(value);
-      setIsAccesModalOpen(true);
-    } else {
-      updateMembre({membre_id, name: 'niveau_acces', value});
-    }
-  };
 
   return (
     <tr data-test={`MembreRow-${email}`} className={rowClassNames}>
@@ -195,6 +208,7 @@ const MembreListTableRow = ({
               isCurrentUser={isCurrentUser}
               updateMembre={updateMembre}
               removeFromCollectivite={removeFromCollectivite}
+              removeInvite={onRemoveInvite}
             />
           </>
         ) : (
