@@ -20,7 +20,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/InvitationMessage Ac
       className="text-gray-600 text-sm mb-0"
       dangerouslySetInnerHTML={
         Object {
-          "__html": "Objet : Invitation à collaborer sur Territoires en transitions.fr<br><br>Bonjour,<br><br>Yolo Dodo de Fake Collectivite vous invite à collaborer.<br><br>Le lien suivant vous donnera un accès édition pour cette collectivité.<br><br>Cliquez sur le lien suivant pour accepter l’invitation et créer votre compte :<br>lien https://invitationUrl<br><br>---------<br><br>Territoires en transitions est une initiative de l’ADEME pour accompagner la transition écologique des collectivités.",
+          "__html": "Objet : Invitation à collaborer sur Territoires en transitions.fr<br><br>Bonjour,<br><br>Yolo Dodo de Fake Collectivite vous invite à collaborer.<br><br>Le lien suivant vous donnera un accès édition pour cette collectivité.<br><br>Cliquez sur le lien suivant pour accepter l’invitation :<br>https://invitationUrl<br><br>Si ce n’est pas déjà fait, créer un compte en cliquant sur “+ Créer un compte” en haut à droite sur la page d’arrivée.<br><br>---------<br><br>Territoires en transitions est une initiative de l’ADEME pour accompagner la transition écologique des collectivités.",
         }
       }
       data-test="invitation-message"

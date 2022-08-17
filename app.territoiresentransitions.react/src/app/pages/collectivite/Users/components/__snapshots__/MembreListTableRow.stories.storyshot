@@ -24,13 +24,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow A
   <td
     className="relative px-4"
   >
-    <span>
-      06 46 82 45 85
-    </span>
-  </td>
-  <td
-    className="relative px-4"
-  >
     <div
       data-test="fonction-dropdown"
     >
@@ -151,13 +144,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow E
       className="block mt-1 text-xs text-gray-500"
     >
       yala@dada.com
-    </span>
-  </td>
-  <td
-    className="relative px-4"
-  >
-    <span>
-      06 65 87 52 49
     </span>
   </td>
   <td
@@ -292,11 +278,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow I
     <span />
   </td>
   <td
-    className="relative px-4"
-  >
-    <span />
-  </td>
-  <td
     className="relative px-4 pr-0"
   />
   <td
@@ -335,13 +316,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow L
       className="block mt-1 text-xs text-gray-500"
     >
       john@doe.com
-    </span>
-  </td>
-  <td
-    className="relative px-4"
-  >
-    <span>
-      06 75 51 24 57
     </span>
   </td>
   <td
