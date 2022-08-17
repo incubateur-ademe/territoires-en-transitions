@@ -21,11 +21,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
           <th
             className="py-3 px-5 whitespace-nowrap"
           >
-            Numéro de tél.
-          </th>
-          <th
-            className="py-3 px-5 whitespace-nowrap"
-          >
             Fonction
              
             <span
@@ -86,13 +81,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
               className="block mt-1 text-xs text-gray-500"
             >
               yolo@dodo.com
-            </span>
-          </td>
-          <td
-            className="relative px-4"
-          >
-            <span>
-              06 46 82 45 85
             </span>
           </td>
           <td
@@ -220,13 +208,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
           <td
             className="relative px-4"
           >
-            <span>
-              06 65 87 52 49
-            </span>
-          </td>
-          <td
-            className="relative px-4"
-          >
             <div
               data-test="fonction-dropdown"
             >
@@ -352,13 +333,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
           <td
             className="relative px-4"
           >
-            <span>
-              06 75 51 24 57
-            </span>
-          </td>
-          <td
-            className="relative px-4"
-          >
             <div
               data-test="fonction-dropdown"
             >
@@ -464,7 +438,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
         >
           <td
             className="relative px-4"
-            colSpan={5}
+            colSpan={4}
           >
             <span
               className="block mb-0.5 text-xs text-gray-500"
@@ -533,11 +507,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
           <th
             className="py-3 px-5 whitespace-nowrap"
           >
-            Numéro de tél.
-          </th>
-          <th
-            className="py-3 px-5 whitespace-nowrap"
-          >
             Fonction
              
             <span
@@ -604,13 +573,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
             className="relative px-4"
           >
             <span>
-              06 46 82 45 85
-            </span>
-          </td>
-          <td
-            className="relative px-4"
-          >
-            <span>
               Référent·e
             </span>
           </td>
@@ -659,13 +621,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
               className="block mt-1 text-xs text-gray-500"
             >
               yala@dada.com
-            </span>
-          </td>
-          <td
-            className="relative px-4"
-          >
-            <span>
-              06 65 87 52 49
             </span>
           </td>
           <td
@@ -797,13 +752,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
             className="relative px-4"
           >
             <span>
-              06 75 51 24 57
-            </span>
-          </td>
-          <td
-            className="relative px-4"
-          >
-            <span>
               Équipe politique
             </span>
           </td>
@@ -840,7 +788,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
         >
           <td
             className="relative px-4"
-            colSpan={5}
+            colSpan={4}
           >
             <span
               className="block mb-0.5 text-xs text-gray-500"
@@ -884,11 +832,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
             className="py-3 px-5 whitespace-nowrap"
           >
             Nom et adresse mail
-          </th>
-          <th
-            className="py-3 px-5 whitespace-nowrap"
-          >
-            Numéro de tél.
           </th>
           <th
             className="py-3 px-5 whitespace-nowrap"
@@ -959,13 +902,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
             className="relative px-4"
           >
             <span>
-              06 46 82 45 85
-            </span>
-          </td>
-          <td
-            className="relative px-4"
-          >
-            <span>
               Référent·e
             </span>
           </td>
@@ -1014,13 +950,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
               className="block mt-1 text-xs text-gray-500"
             >
               yala@dada.com
-            </span>
-          </td>
-          <td
-            className="relative px-4"
-          >
-            <span>
-              06 65 87 52 49
             </span>
           </td>
           <td
@@ -1080,13 +1009,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
               className="block mt-1 text-xs text-gray-500"
             >
               john@doe.com
-            </span>
-          </td>
-          <td
-            className="relative px-4"
-          >
-            <span>
-              06 75 51 24 57
             </span>
           </td>
           <td
@@ -1197,7 +1119,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
         >
           <td
             className="relative px-4"
-            colSpan={5}
+            colSpan={4}
           >
             <span
               className="block mb-0.5 text-xs text-gray-500"
@@ -1241,11 +1163,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable Empt
             className="py-3 px-5 whitespace-nowrap"
           >
             Nom et adresse mail
-          </th>
-          <th
-            className="py-3 px-5 whitespace-nowrap"
-          >
-            Numéro de tél.
           </th>
           <th
             className="py-3 px-5 whitespace-nowrap"
@@ -1325,11 +1242,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable Is L
             className="py-3 px-5 whitespace-nowrap"
           >
             Nom et adresse mail
-          </th>
-          <th
-            className="py-3 px-5 whitespace-nowrap"
-          >
-            Numéro de tél.
           </th>
           <th
             className="py-3 px-5 whitespace-nowrap"

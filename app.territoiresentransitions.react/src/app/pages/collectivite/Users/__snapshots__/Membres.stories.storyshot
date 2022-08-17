@@ -35,11 +35,6 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
             <th
               className="py-3 px-5 whitespace-nowrap"
             >
-              Numéro de tél.
-            </th>
-            <th
-              className="py-3 px-5 whitespace-nowrap"
-            >
               Fonction
                
               <span
@@ -100,13 +95,6 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                 className="block mt-1 text-xs text-gray-500"
               >
                 yolo@dodo.com
-              </span>
-            </td>
-            <td
-              className="relative px-4"
-            >
-              <span>
-                06 46 82 45 85
               </span>
             </td>
             <td
@@ -229,13 +217,6 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                 className="block mt-1 text-xs text-gray-500"
               >
                 yala@dada.com
-              </span>
-            </td>
-            <td
-              className="relative px-4"
-            >
-              <span>
-                06 65 87 52 49
               </span>
             </td>
             <td
@@ -366,13 +347,6 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
             <td
               className="relative px-4"
             >
-              <span>
-                06 75 51 24 57
-              </span>
-            </td>
-            <td
-              className="relative px-4"
-            >
               <div
                 data-test="fonction-dropdown"
               >
@@ -478,7 +452,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
           >
             <td
               className="relative px-4"
-              colSpan={5}
+              colSpan={4}
             >
               <span
                 className="block mb-0.5 text-xs text-gray-500"
@@ -652,11 +626,6 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
             <th
               className="py-3 px-5 whitespace-nowrap"
             >
-              Numéro de tél.
-            </th>
-            <th
-              className="py-3 px-5 whitespace-nowrap"
-            >
               Fonction
                
               <span
@@ -717,13 +686,6 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                 className="block mt-1 text-xs text-gray-500"
               >
                 yolo@dodo.com
-              </span>
-            </td>
-            <td
-              className="relative px-4"
-            >
-              <span>
-                06 46 82 45 85
               </span>
             </td>
             <td
@@ -846,13 +808,6 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                 className="block mt-1 text-xs text-gray-500"
               >
                 yala@dada.com
-              </span>
-            </td>
-            <td
-              className="relative px-4"
-            >
-              <span>
-                06 65 87 52 49
               </span>
             </td>
             <td
@@ -983,13 +938,6 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
             <td
               className="relative px-4"
             >
-              <span>
-                06 75 51 24 57
-              </span>
-            </td>
-            <td
-              className="relative px-4"
-            >
               <div
                 data-test="fonction-dropdown"
               >
@@ -1095,7 +1043,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
           >
             <td
               className="relative px-4"
-              colSpan={5}
+              colSpan={4}
             >
               <span
                 className="block mb-0.5 text-xs text-gray-500"
@@ -1269,11 +1217,6 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
             <th
               className="py-3 px-5 whitespace-nowrap"
             >
-              Numéro de tél.
-            </th>
-            <th
-              className="py-3 px-5 whitespace-nowrap"
-            >
               Fonction
                
               <span
@@ -1334,13 +1277,6 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                 className="block mt-1 text-xs text-gray-500"
               >
                 yolo@dodo.com
-              </span>
-            </td>
-            <td
-              className="relative px-4"
-            >
-              <span>
-                06 46 82 45 85
               </span>
             </td>
             <td
@@ -1463,13 +1399,6 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                 className="block mt-1 text-xs text-gray-500"
               >
                 yala@dada.com
-              </span>
-            </td>
-            <td
-              className="relative px-4"
-            >
-              <span>
-                06 65 87 52 49
               </span>
             </td>
             <td
@@ -1600,13 +1529,6 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
             <td
               className="relative px-4"
             >
-              <span>
-                06 75 51 24 57
-              </span>
-            </td>
-            <td
-              className="relative px-4"
-            >
               <div
                 data-test="fonction-dropdown"
               >
@@ -1712,7 +1634,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
           >
             <td
               className="relative px-4"
-              colSpan={5}
+              colSpan={4}
             >
               <span
                 className="block mb-0.5 text-xs text-gray-500"
@@ -1886,11 +1808,6 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Que Lecteur 1`]
             <th
               className="py-3 px-5 whitespace-nowrap"
             >
-              Numéro de tél.
-            </th>
-            <th
-              className="py-3 px-5 whitespace-nowrap"
-            >
               Fonction
                
               <span
@@ -1957,13 +1874,6 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Que Lecteur 1`]
               className="relative px-4"
             >
               <span>
-                06 46 82 45 85
-              </span>
-            </td>
-            <td
-              className="relative px-4"
-            >
-              <span>
                 Référent·e
               </span>
             </td>
@@ -2012,13 +1922,6 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Que Lecteur 1`]
                 className="block mt-1 text-xs text-gray-500"
               >
                 yala@dada.com
-              </span>
-            </td>
-            <td
-              className="relative px-4"
-            >
-              <span>
-                06 65 87 52 49
               </span>
             </td>
             <td
@@ -2078,13 +1981,6 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Que Lecteur 1`]
                 className="block mt-1 text-xs text-gray-500"
               >
                 john@doe.com
-              </span>
-            </td>
-            <td
-              className="relative px-4"
-            >
-              <span>
-                06 75 51 24 57
               </span>
             </td>
             <td
@@ -2195,7 +2091,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Que Lecteur 1`]
           >
             <td
               className="relative px-4"
-              colSpan={5}
+              colSpan={4}
             >
               <span
                 className="block mb-0.5 text-xs text-gray-500"
