@@ -1,11 +1,43 @@
-import {TActionStatutHistoriqueProps} from './ActionStatutHistorique';
+import {TActionStatutHistoriqueProps} from 'app/pages/collectivite/Historique/actionStatut/ActionStatutHistorique';
+
+export type FakeHistoriqueType =
+  | 'action_statut'
+  | 'action_texte'
+  | 'caracteristique_collectivite'
+  | 'preuve'
+  | 'membre'
+  | 'indicateur'
+  | 'plan_action_arborescence'
+  | 'plan_action_fiche';
+
+export type FakeHistoriqueDescription = {
+  titre: string;
+  description: string;
+};
+
+export type FakeBaseHistorique = {
+  collectivite_id: number;
+  type: FakeHistoriqueType;
+  modified_by_id: string;
+  modified_by_nom: string;
+  modified_at: string;
+  concerne: boolean;
+  previous_concerne: boolean;
+};
+
+export const fakeBaseHistorique: FakeBaseHistorique = {
+  collectivite_id: 1,
+  type: 'action_statut',
+  modified_by_id: '123e4567-e89b-12d3-a456-426614174000',
+  modified_by_nom: 'Richard Evans',
+  modified_at: '2022-08-08T15:12:22.940172+00:00',
+  concerne: false,
+  previous_concerne: false,
+};
 
 export const fakeAjoutSimpleActionStatutHistorique: TActionStatutHistoriqueProps =
   {
-    collectivite_id: 1,
-    modified_by_id: '123e4567-e89b-12d3-a456-426614174000',
-    modified_by_nom: 'Richard Evans',
-    modified_at: '2022-08-08T15:12:22.940172+00:00',
+    ...fakeBaseHistorique,
     avancement: 'programme',
     previous_avancement: null,
     avancement_detaille: null,
@@ -17,8 +49,6 @@ export const fakeAjoutSimpleActionStatutHistorique: TActionStatutHistoriqueProps
     action_identifiant: '1.2.3',
     action_nom:
       'Définir et mettre en oeuvre la stratégie de prévention et de gestion des déchets',
-    concerne: false,
-    previous_concerne: false,
   };
 
 export const fakeAjoutDetailleActionStatutHistorique: TActionStatutHistoriqueProps =
@@ -47,7 +77,6 @@ export const fakeModificationDetailleActionStatutHistorique: TActionStatutHistor
   {
     ...fakeAjoutSimpleActionStatutHistorique,
     previous_avancement: 'detaille',
-    previous_avancement_detaille: [1, 0, 0],
     previous_avancement_detaille: [0.1, 0, 0],
     avancement: 'detaille',
     avancement_detaille: [0.2, 0.3, 0.5],

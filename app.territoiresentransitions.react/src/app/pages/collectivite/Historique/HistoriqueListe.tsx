@@ -1,9 +1,9 @@
-import {ActionStatutHistorique} from 'app/pages/collectivite/Historique/ActionStatutHistorique';
-import {useHistoricalActionStatuts} from 'app/pages/collectivite/Historique/useActionHistorique';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {IHistoricalActionStatutRead} from 'generated/dataLayer/historical_action_statut_read';
+import {ActionStatutHistorique} from 'app/pages/collectivite/Historique/actionStatut/ActionStatutHistorique';
+import {useHistoricalActionStatuts} from 'app/pages/collectivite/Historique/useActionHistorique';
 
-export const ActionHistorique = ({
+export const HistoriqueListe = ({
   historicalActionStatuts,
 }: {
   historicalActionStatuts: IHistoricalActionStatutRead[];
@@ -15,7 +15,9 @@ export const ActionHistorique = ({
           data-test={`action-statut-historique-${historicalActionStatut.action_id}`}
           key={`${historicalActionStatut.action_id}-${historicalActionStatut.modified_at}`}
         >
-          <ActionStatutHistorique {...historicalActionStatut} />
+          <ActionStatutHistorique
+            {...{type: 'action_statut', ...historicalActionStatut}}
+          />
         </div>
       ))}
     </div>
@@ -28,5 +30,5 @@ export default ({actionId}: {actionId: string}) => {
     collectiviteId,
     actionId,
   });
-  return <ActionHistorique historicalActionStatuts={historicalActionStatuts} />;
+  return <HistoriqueListe historicalActionStatuts={historicalActionStatuts} />;
 };
