@@ -2,6 +2,6 @@
 
 BEGIN;
 
-comment on schema history is null;
+comment on schema historique is null;
 
 ROLLBACK;

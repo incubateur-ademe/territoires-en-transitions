@@ -2,6 +2,6 @@
 
 BEGIN;
 
-drop schema history;
+drop schema historique;
 
 COMMIT;
