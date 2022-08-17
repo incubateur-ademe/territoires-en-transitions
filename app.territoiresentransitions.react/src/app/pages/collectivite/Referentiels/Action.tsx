@@ -19,7 +19,6 @@ import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinition
 import {OrientationQuickNav} from 'app/pages/collectivite/Referentiels/QuickNav';
 import {PersoPotentiel} from '../PersoPotentielModal/PersoPotentiel';
 import {useActionScore} from 'core-logic/hooks/scoreHooks';
-import ActionHistorique from 'app/pages/collectivite/Historique/ActionHistorique';
 import {
   ActionVueParamOption,
   makeCollectiviteActionUrl,
@@ -30,6 +29,7 @@ import {
   useCollectiviteId,
   useReferentielId,
 } from 'core-logic/hooks/params';
+import HistoriqueListe from 'app/pages/collectivite/Historique/HistoriqueListe';
 
 const useActionLinkedIndicateurDefinitions = (actionId: string) => {
   const [linkedIndicateurDefinitions, setLinkedIndicateurDefinitions] =
@@ -192,7 +192,7 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
           </section>
         </Tab>
         <Tab label="Historique">
-          <ActionHistorique actionId={action.id} />
+          <HistoriqueListe actionId={action.id} />
         </Tab>
       </Tabs>
     </div>
