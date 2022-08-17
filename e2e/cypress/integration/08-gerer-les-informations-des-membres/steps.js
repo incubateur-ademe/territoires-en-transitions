@@ -25,7 +25,7 @@ Given(
           [
             nom,
             mail,
-            telephone,
+            // telephone,
             fonction,
             champ_intervention,
             details_fonction,
@@ -36,11 +36,11 @@ Given(
           cy.get(`tbody tr:nth(${index})`).within(() => {
             cy.get('td:first').should('contain.text', nom);
             cy.get('td:first').should('contain.text', mail);
-            cy.get('td:nth(1)').should('contain.text', telephone);
-            cy.get('td:nth(2)').should('contain.text', fonction);
-            cy.get('td:nth(3)').should('contain.text', champ_intervention);
-            cy.get('td:nth(4)').should('contain.text', details_fonction);
-            cy.get('td:nth(5)').should('contain.text', acces);
+            // cy.get('td:nth(1)').should('contain.text', telephone);
+            cy.get('td:nth(1)').should('contain.text', fonction);
+            cy.get('td:nth(2)').should('contain.text', champ_intervention);
+            cy.get('td:nth(3)').should('contain.text', details_fonction);
+            cy.get('td:nth(4)').should('contain.text', acces);
           });
         },
       );
