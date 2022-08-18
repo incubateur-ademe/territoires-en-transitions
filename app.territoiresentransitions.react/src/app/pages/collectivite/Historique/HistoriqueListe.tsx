@@ -1,34 +1,40 @@
+import {FC} from 'react';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {IHistoricalActionStatutRead} from 'generated/dataLayer/historical_action_statut_read';
-import {ActionStatutHistorique} from 'app/pages/collectivite/Historique/actionStatut/ActionStatutHistorique';
-import {useHistoricalActionStatuts} from 'app/pages/collectivite/Historique/useActionHistorique';
+import {useHistoriqueItemListe} from 'app/pages/collectivite/Historique/useHistoriqueItemListe';
+import HistoriqueItemActionStatut from 'app/pages/collectivite/Historique/actionStatut/HistoriqueItemActionStatut';
+import {THistoriqueItem, THistoriqueItemProps} from './types';
 
 export const HistoriqueListe = ({
-  historicalActionStatuts,
+  historiqueItemListe,
 }: {
-  historicalActionStatuts: IHistoricalActionStatutRead[];
+  historiqueItemListe: THistoriqueItem[];
 }) => {
   return (
     <div className="flex flex-col gap-5">
-      {historicalActionStatuts.map(historicalActionStatut => (
-        <div
-          data-test={`action-statut-historique-${historicalActionStatut.action_id}`}
-          key={`${historicalActionStatut.action_id}-${historicalActionStatut.modified_at}`}
-        >
-          <ActionStatutHistorique
-            {...{type: 'action_statut', ...historicalActionStatut}}
-          />
-        </div>
-      ))}
+      {historiqueItemListe.map(item => {
+        const {type, action_id, modified_at} = item;
+        const Item = historiqueParType[type];
+        return (
+          <div
+            data-test={`action-statut-historique-${action_id}`}
+            key={`${action_id}-${modified_at}`}
+          >
+            <Item item={item} />
+          </div>
+        );
+      })}
     </div>
   );
 };
 
-export default ({actionId}: {actionId: string}) => {
-  const collectiviteId = useCollectiviteId()!;
-  const historicalActionStatuts = useHistoricalActionStatuts({
-    collectiviteId,
-    actionId,
+export default () => {
+  const collectivite_id = useCollectiviteId()!;
+  const historiqueItemListe = useHistoriqueItemListe({
+    collectivite_id,
   });
-  return <HistoriqueListe historicalActionStatuts={historicalActionStatuts} />;
+  return <HistoriqueListe historiqueItemListe={historiqueItemListe} />;
+};
+
+const historiqueParType: {[k: string]: FC<THistoriqueItemProps>} = {
+  action_statut: HistoriqueItemActionStatut,
 };

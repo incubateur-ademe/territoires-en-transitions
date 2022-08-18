@@ -3,18 +3,22 @@ import {format} from 'date-fns';
 import {fr} from 'date-fns/locale';
 import classNames from 'classnames';
 
-import {FakeHistoriqueDescription} from 'app/pages/collectivite/Historique/fixture';
 import {Link} from 'react-router-dom';
-import {TActionStatutHistoriqueProps} from 'app/pages/collectivite/Historique/actionStatut/ActionStatutHistorique';
+import {THistoriqueItem} from './types';
+
+export type HistoriqueDescription = {
+  titre: string;
+  description: string;
+};
 
 type Props = {
-  historique: TActionStatutHistoriqueProps;
+  historique: THistoriqueItem;
   // la classe du DSFR affichant l'icon. ex: 'fr-fi-information-fill'
   icon: string;
   // nom de la modification. ex: 'Action: statut modifié'
   nom: string;
   // tableau contenant par exemple l'action et la tache pour une modification de statut
-  descriptions: FakeHistoriqueDescription[];
+  descriptions: HistoriqueDescription[];
   // le nouvel état et/ou le précédent en fonction du type d'historique
   detail?: JSX.Element;
   // à utiliser pour voir la page où se trouve la modification

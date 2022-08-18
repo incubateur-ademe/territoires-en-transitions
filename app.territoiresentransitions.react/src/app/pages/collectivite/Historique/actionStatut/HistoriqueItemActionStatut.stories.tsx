@@ -1,10 +1,8 @@
 import React from 'react';
 import {Story, Meta} from '@storybook/react';
 
-import {
-  TActionStatutHistoriqueProps,
-  ActionStatutHistorique,
-} from './ActionStatutHistorique';
+import HistoriqueItemActionStatut from './HistoriqueItemActionStatut';
+import {THistoriqueItemProps} from '../types';
 import {
   fakeAjoutSimpleActionStatutHistorique,
   fakeModificationSimpleActionStatutHistorique,
@@ -14,36 +12,41 @@ import {
 } from '../fixture';
 
 export default {
-  component: ActionStatutHistorique,
+  component: HistoriqueItemActionStatut,
 } as Meta;
 
-const Template: Story<TActionStatutHistoriqueProps> = args => (
-  <ActionStatutHistorique {...args} />
+const Template: Story<THistoriqueItemProps> = args => (
+  <HistoriqueItemActionStatut {...args} />
 );
 
 export const AjoutDeStatutSimple = Template.bind({});
-const ajoutDeStatutSimpleArgs: TActionStatutHistoriqueProps =
-  fakeAjoutSimpleActionStatutHistorique;
+const ajoutDeStatutSimpleArgs: THistoriqueItemProps = {
+  item: fakeAjoutSimpleActionStatutHistorique,
+};
 AjoutDeStatutSimple.args = ajoutDeStatutSimpleArgs;
 
 export const AjoutDeStatutDetaille = Template.bind({});
-const ajoutDeStatutDetailleArgs: TActionStatutHistoriqueProps =
-  fakeAjoutDetailleActionStatutHistorique;
+const ajoutDeStatutDetailleArgs: THistoriqueItemProps = {
+  item: fakeAjoutDetailleActionStatutHistorique,
+};
 AjoutDeStatutDetaille.args = ajoutDeStatutDetailleArgs;
 
 export const ModificationDeStatutSimple = Template.bind({});
-const modificationDeStatutSimpleArgs: TActionStatutHistoriqueProps =
-  fakeModificationSimpleActionStatutHistorique;
+const modificationDeStatutSimpleArgs: THistoriqueItemProps = {
+  item: fakeModificationSimpleActionStatutHistorique,
+};
 ModificationDeStatutSimple.args = modificationDeStatutSimpleArgs;
 
 export const ModificationDeStatutSimpleADetaille = Template.bind({});
-const modificationDeStatutSimpleADetailleArgs: TActionStatutHistoriqueProps =
-  fakeModificationSimpleADetailleActionStatutHistorique;
+const modificationDeStatutSimpleADetailleArgs: THistoriqueItemProps = {
+  item: fakeModificationSimpleADetailleActionStatutHistorique,
+};
 ModificationDeStatutSimpleADetaille.args =
   modificationDeStatutSimpleADetailleArgs;
 
 export const ModificationDeStatutDetailleADetaille = Template.bind({});
-const modificationDeStatutDetailleADetailleArgs: TActionStatutHistoriqueProps =
-  fakeModificationDetailleActionStatutHistorique;
+const modificationDeStatutDetailleADetailleArgs: THistoriqueItemProps = {
+  item: fakeModificationDetailleActionStatutHistorique,
+};
 ModificationDeStatutDetailleADetaille.args =
   modificationDeStatutDetailleADetailleArgs;
