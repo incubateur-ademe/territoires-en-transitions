@@ -182,14 +182,19 @@ from historique.reponse_binaire_display
 union all
 select 'choix' :: question_type,
        collectivite_id,
-       question_id,
-       to_json(reponse),
-       to_json(previous_reponse),
+       r.question_id,
+       to_json((select qc.formulation
+                from question_choix qc
+                where qc.id = reponse)),
+       to_json((select qc.formulation
+                from question_choix qc
+                where qc.id = previous_reponse)),
        modified_at,
        previous_modified_at,
        modified_by,
        previous_modified_by
-from historique.reponse_choix_display
+from historique.reponse_choix_display r
+
 union all
 select 'proportion' :: question_type,
        collectivite_id,
