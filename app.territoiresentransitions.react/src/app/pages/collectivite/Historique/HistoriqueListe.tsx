@@ -4,6 +4,7 @@ import {useHistoriqueItemListe} from 'app/pages/collectivite/Historique/useHisto
 import HistoriqueItemActionStatut from 'app/pages/collectivite/Historique/actionStatut/HistoriqueItemActionStatut';
 import HistoriqueItemActionPrecision from 'app/pages/collectivite/Historique/actionPrecision/HistoriqueItemActionPrecision';
 import {THistoriqueItem, THistoriqueItemProps} from './types';
+import HistoriqueItemReponse from './reponse/HistoriqueItemReponse';
 
 export const HistoriqueListe = ({
   historiqueItemListe,
@@ -39,4 +40,5 @@ export default () => {
 const historiqueParType: {[k: string]: FC<THistoriqueItemProps>} = {
   action_statut: HistoriqueItemActionStatut,
   action_precision: HistoriqueItemActionPrecision,
+  reponse: HistoriqueItemReponse,
 };
