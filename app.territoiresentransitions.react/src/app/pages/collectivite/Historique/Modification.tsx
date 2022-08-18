@@ -45,11 +45,11 @@ const Modification = ({
         </span>
       </div>
       {/* MAIN */}
-      <div className="flex flex-col md:flex-row">
+      <div className="flex flex-col overflow-hidden md:flex-row">
         {/* ICON */}
         <div className={`mr-4 mt-0.5 text-blue-600 ${icon}`} />
         {/* CONTENT */}
-        <div className="flex flex-col">
+        <div className="flex flex-col overflow-hidden">
           {/* DESCRIPTION */}
           <div className="mb-4">
             <p className="mb-2 font-bold text-blue-600">{nom}</p>
@@ -82,7 +82,7 @@ const Modification = ({
                 />
               </button>
               {isDetailsOpen && (
-                <div className="p-2 mb-4 bg-gray-100">{detail}</div>
+                <div className="max-w-full p-2 mb-4 bg-gray-100">{detail}</div>
               )}
             </div>
           )}

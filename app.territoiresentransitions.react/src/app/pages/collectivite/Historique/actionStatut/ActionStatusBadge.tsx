@@ -12,7 +12,7 @@ const ActionStatusBadge = ({className, status, barre}: Props) => {
   return (
     <span
       className={classNames(
-        `${className} py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md`,
+        `${className} w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md`,
         {['line-through']: barre},
         {['text-yellow-800 bg-yellow-100']: status === 'non_renseigne'},
         {['text-red-600 bg-pink-100']: status === 'pas_fait'},
