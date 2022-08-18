@@ -3,7 +3,7 @@
 exports[`Storyshots app/pages/collectivite/Historique/actionStatut/ActionStatutDetaillee Action Nouvelle 1`] = `
 Array [
   <span
-    className="undefined py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-gray-600 bg-pink-100"
+    className="w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-gray-600 bg-pink-100"
   >
     Détaillé
   </span>,
@@ -38,7 +38,7 @@ Array [
 exports[`Storyshots app/pages/collectivite/Historique/actionStatut/ActionStatutDetaillee Action Precedente 1`] = `
 Array [
   <span
-    className="undefined py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md line-through text-gray-600 bg-pink-100"
+    className="w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md line-through text-gray-600 bg-pink-100"
   >
     Détaillé
   </span>,
