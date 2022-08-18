@@ -1,3 +1,5 @@
+import {ReactNode} from 'react';
+
 const wrapperClassName = 'max-w-full w-max p-2 border-2';
 
 /*
@@ -8,7 +10,7 @@ const wrapperClassName = 'max-w-full w-max p-2 border-2';
 export const DetailPrecedenteModificationWrapper = ({
   children,
 }: {
-  children: JSX.Element;
+  children: ReactNode;
 }) => (
   <div className={`${wrapperClassName} mb-4 border-red-400`}>{children}</div>
 );
@@ -16,5 +18,5 @@ export const DetailPrecedenteModificationWrapper = ({
 export const DetailNouvelleModificationWrapper = ({
   children,
 }: {
-  children: JSX.Element;
+  children: ReactNode;
 }) => <div className={`${wrapperClassName} border-green-400`}>{children}</div>;
