@@ -69,3 +69,32 @@ export const fakeModificationDetailleActionStatutHistorique: THistoriqueItem = {
   avancement: 'detaille',
   avancement_detaille: [0.2, 0.3, 0.5],
 };
+
+/* Storybook Action Precision */
+export const fakeAjoutActionPrecisionHistorique: THistoriqueItem = {
+  ...fakeBaseHistorique,
+  tache_id: 'cae_1.2.3.1',
+  tache_identifiant: '1.2.3.1.3',
+  tache_nom: "Disposer d'un programme local de prévention",
+  action_id: 'cae_1.2.3',
+  action_identifiant: '1.2.3',
+  action_nom:
+    'Définir et mettre en oeuvre la stratégie de prévention et de gestion des déchets',
+  precision:
+    'A mat sioul skrivañ egisto kentel naon sae leziregezh, ahont abaoe fresk goap leur Baden c’helien peurvuiañ nav, ret veaj',
+};
+
+export const fakeModificationActionPrecisionHistorique: THistoriqueItem = {
+  ...fakeBaseHistorique,
+  tache_id: 'cae_1.2.3.1',
+  tache_identifiant: '1.2.3.1.3',
+  tache_nom: "Disposer d'un programme local de prévention",
+  action_id: 'cae_1.2.3',
+  action_identifiant: '1.2.3',
+  action_nom:
+    'Définir et mettre en oeuvre la stratégie de prévention et de gestion des déchets',
+  precision:
+    'A mat sioul skrivañ egisto kentel naon sae leziregezh, ahont abaoe fresk goap leur Baden c’helien peurvuiañ nav, ret veaj gouez lein kriz yaou roched. Livet dimezell nerzh sul trizek Kemper e c’hiz piz, fri mae pleg perc’henn oan va romant brodañ c’henwerzh, siwazh dindan  bras gwerenn grib kelc’hiek mui. Frouezh chaseour Melwenn esaeañ c’hastell.',
+  previous_precision:
+    'A mat sioul skrivañ egisto kentel naon sae leziregezh, ahont abaoe fresk goap leur Baden c’helien peurvuiañ nav, ret veaj',
+};
