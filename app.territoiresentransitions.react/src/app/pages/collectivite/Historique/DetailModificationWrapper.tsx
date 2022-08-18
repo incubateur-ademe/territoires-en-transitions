@@ -1,4 +1,4 @@
-const wrapperClassName = 'w-min p-2 border-2';
+const wrapperClassName = 'max-w-full w-max p-2 border-2';
 
 /*
  * À utiliser pour encadrer une modification dans les détails
