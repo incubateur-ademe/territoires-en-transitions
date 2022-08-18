@@ -15,7 +15,14 @@ import {THistoriqueItemProps} from '../types';
 const HistoriqueItemActionStatut = (props: THistoriqueItemProps) => {
   const referentielId = useReferentielId() as ReferentielParamOption;
   const {item} = props;
-  const {action_nom, tache_nom, tache_id, collectivite_id} = item;
+  const {
+    action_identifiant,
+    action_nom,
+    tache_identifiant,
+    tache_id,
+    tache_nom,
+    collectivite_id,
+  } = item;
 
   return (
     <Modification
@@ -23,8 +30,8 @@ const HistoriqueItemActionStatut = (props: THistoriqueItemProps) => {
       icon="fr-fi-information-fill"
       nom="Action : statut modifié"
       descriptions={[
-        {titre: 'Action', description: action_nom!},
-        {titre: 'Tâche', description: tache_nom!},
+        {titre: 'Action', description: `${action_identifiant} ${action_nom}`},
+        {titre: 'Tâche', description: `${tache_identifiant} ${tache_nom}`},
       ]}
       detail={<HistoriqueItemActionStatutDetails {...props} />}
       pageLink={makeCollectiviteTacheUrl({
