@@ -47,6 +47,7 @@ export const collectiviteUsersPath = `${collectivitePath}/users`;
 export const collectiviteAllCollectivitesPath = `${collectivitePath}/toutes_collectivites`;
 export const collectivitePersoRefPath = `${collectivitePath}/personnalisation`;
 export const collectivitePersoRefThematiquePath = `${collectivitePersoRefPath}/:${thematiqueParam}`;
+export const collectiviteJournalPath = `${collectivitePath}/journal`;
 
 export const makeCollectiviteIndicateursUrl = ({
   collectiviteId,
@@ -102,7 +103,7 @@ export const makeCollectiviteTacheUrl = ({
   actionId: string;
   referentielId: ReferentielParamOption;
 }) => {
-  const levels = actionId.split('.');
+  const levels = actionId?.split('.') || [];
   const limitedLevels = levels
     .slice(0, referentielId === 'cae' ? 3 : 2)
     .join('.');
@@ -208,6 +209,16 @@ export const makeCollectivitePersoRefThematiqueUrl = ({
   collectivitePersoRefThematiquePath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
     .replace(`:${thematiqueParam}`, thematiqueId);
+
+export const makeCollectiviteJournalUrl = ({
+  collectiviteId,
+}: {
+  collectiviteId: number;
+}) =>
+  collectiviteJournalPath.replace(
+    `:${collectiviteParam}`,
+    collectiviteId.toString()
+  );
 
 export const makeInvitationLandingPath = (invitationId: string) =>
   window.location.origin +
