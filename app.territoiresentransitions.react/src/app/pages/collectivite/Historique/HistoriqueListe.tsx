@@ -29,10 +29,11 @@ export const HistoriqueListe = ({
   );
 };
 
-export default () => {
+export default ({actionId}: {actionId?: string}) => {
   const collectivite_id = useCollectiviteId()!;
   const historiqueItemListe = useHistoriqueItemListe({
     collectivite_id,
+    action_id: actionId,
   });
   return <HistoriqueListe historiqueItemListe={historiqueItemListe} />;
 };

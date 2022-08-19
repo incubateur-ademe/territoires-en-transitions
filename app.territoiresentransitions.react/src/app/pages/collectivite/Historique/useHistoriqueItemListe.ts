@@ -6,13 +6,21 @@ import {THistoriqueItem} from './types';
 /**
  * Toutes les entrées d'un référentiel pour une collectivité et des filtres donnés
  */
-export const fetchHistorique = async (collectivite_id: number) => {
+export const fetchHistorique = async (
+  collectivite_id: number,
+  action_id?: string
+) => {
   // la requête
-  const query = supabaseClient
+  let query = supabaseClient
     .from<THistoriqueItem>('historique')
     .select('*')
     .match({collectivite_id})
     .limit(10); // TODO : pagination
+
+  // filtre optionnel par action
+  if (action_id) {
+    query = query.like('action_id', `${action_id}%`);
+  }
 
   // attends les données
   const {error, data} = await query;
@@ -28,8 +36,10 @@ export const fetchHistorique = async (collectivite_id: number) => {
  */
 export const useHistoriqueItemListe = ({
   collectivite_id,
+  action_id,
 }: {
   collectivite_id: number;
+  action_id?: string;
 }): THistoriqueItem[] => {
   const queryClient = useQueryClient();
 
@@ -38,10 +48,10 @@ export const useHistoriqueItemListe = ({
     queryClient.invalidateQueries(['historique', collectivite_id]);
   };
 
-  // souscrit aux changements de la table des modifications
+  // souscrit aux changements dans la base
   const subscribe = () =>
     supabaseClient
-      .from('historique')
+      .from('action_statut,action_commentaire')
       .on('INSERT', refetch)
       .on('UPDATE', refetch)
       .subscribe();
@@ -58,8 +68,8 @@ export const useHistoriqueItemListe = ({
   }, []);
 
   const {data} = useQuery<THistoriqueItem[] | null>(
-    ['historique', collectivite_id],
-    () => fetchHistorique(collectivite_id)
+    ['historique', collectivite_id, action_id],
+    () => fetchHistorique(collectivite_id, action_id)
   );
   return data || [];
 };
