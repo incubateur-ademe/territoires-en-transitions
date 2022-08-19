@@ -2,6 +2,7 @@ import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {NiveauAcces} from 'generated/dataLayer';
 import {
   makeCollectiviteIndicateursUrl,
+  makeCollectiviteJournalUrl,
   makeCollectiviteLabellisationUrl,
   makeCollectivitePersoRefUrl,
   makeCollectivitePlanActionUrl,
@@ -153,26 +154,34 @@ export const makeCollectiviteNavItems = (
     },
   ];
 
-  const parametres = {
-    menuLabel: 'Paramètres',
-    listPathsAndLabels: [
-      {
-        label: 'Gestion des membres',
-        path: makeCollectiviteUsersUrl({
-          collectiviteId,
-        }),
-      },
-    ],
-  };
-
-  if (!collectivite.readonly) {
-    parametres.listPathsAndLabels.unshift({
-      label: 'Personnalisation des référentiels',
-      path: makeCollectivitePersoRefUrl({
-        collectiviteId,
-      }),
-    });
+  if (collectivite.readonly) {
+    return common;
   }
 
-  return [...common, parametres];
+  return [
+    ...common,
+    {
+      menuLabel: 'Paramètres',
+      listPathsAndLabels: [
+        {
+          label: 'Personnalisation des référentiels',
+          path: makeCollectivitePersoRefUrl({
+            collectiviteId,
+          }),
+        },
+        {
+          label: 'Gestion des membres',
+          path: makeCollectiviteUsersUrl({
+            collectiviteId,
+          }),
+        },
+        {
+          label: "Journal d'activité",
+          path: makeCollectiviteJournalUrl({
+            collectiviteId,
+          }),
+        },
+      ],
+    },
+  ];
 };
