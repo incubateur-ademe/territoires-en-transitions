@@ -85,9 +85,11 @@ exports[`Storyshots app/pages/collectivite/Historique/actionPrecision/Historique
           <div
             className="max-w-full w-max p-2 border-2 border-green-400"
           >
-            <div>
+            <span
+              className="whitespace-pre-line"
+            >
               A mat sioul skrivañ egisto kentel naon sae leziregezh, ahont abaoe fresk goap leur Baden c’helien peurvuiañ nav, ret veaj
-            </div>
+            </span>
           </div>
         </div>
       </div>
@@ -192,14 +194,18 @@ exports[`Storyshots app/pages/collectivite/Historique/actionPrecision/Historique
           <div
             className="max-w-full w-max p-2 border-2 mb-4 border-red-400"
           >
-            <span>
+            <span
+              className="whitespace-pre-line line-through"
+            >
               A mat sioul skrivañ egisto kentel naon sae leziregezh, ahont abaoe fresk goap leur Baden c’helien peurvuiañ nav, ret veaj
             </span>
           </div>
           <div
             className="max-w-full w-max p-2 border-2 border-green-400"
           >
-            <span>
+            <span
+              className="whitespace-pre-line"
+            >
               A mat sioul skrivañ egisto kentel naon sae leziregezh, ahont abaoe fresk goap leur Baden c’helien peurvuiañ nav, ret veaj gouez lein kriz yaou roched. Livet dimezell nerzh sul trizek Kemper e c’hiz piz, fri mae pleg perc’henn oan va romant brodañ c’henwerzh, siwazh dindan  bras gwerenn grib kelc’hiek mui. Frouezh chaseour Melwenn esaeañ c’hastell.
             </span>
           </div>
