@@ -54,88 +54,29 @@ const HistoriqueItemActionStatutDetails = (props: THistoriqueItemProps) => {
     avancement_detaille,
   } = item;
 
-  // Modification simple
-  if (
-    previous_avancement !== null &&
-    previous_avancement_detaille === null &&
-    avancement !== 'detaille' &&
-    avancement !== null
-  ) {
-    return (
-      <>
-        <DetailPrecedenteModificationWrapper>
-          <ActionStatusBadge status={previous_avancement} barre />
-        </DetailPrecedenteModificationWrapper>
-        <DetailNouvelleModificationWrapper>
-          <ActionStatusBadge status={avancement} />
-        </DetailNouvelleModificationWrapper>
-      </>
-    );
-  }
-
-  // Modification simple à détaillée
-  if (
-    avancement === 'detaille' &&
-    previous_avancement !== 'detaille' &&
-    previous_avancement !== null &&
-    avancement_detaille !== null
-  ) {
-    return (
-      <>
-        <DetailPrecedenteModificationWrapper>
-          <ActionStatusBadge status={previous_avancement} barre />
-        </DetailPrecedenteModificationWrapper>
-        <DetailNouvelleModificationWrapper>
-          <NouvelleActionStatutDetaille
-            avancementDetaille={avancement_detaille}
-          />
-        </DetailNouvelleModificationWrapper>
-      </>
-    );
-  }
-  // Modification détaillé à détaillée
-  if (
-    avancement === 'detaille' &&
-    previous_avancement === 'detaille' &&
-    avancement_detaille &&
-    previous_avancement_detaille
-  ) {
-    return (
-      <>
-        <DetailPrecedenteModificationWrapper>
-          <PrecedenteActionStatutDetaille
-            avancementDetaille={previous_avancement_detaille}
-          />
-        </DetailPrecedenteModificationWrapper>
-        <DetailNouvelleModificationWrapper>
-          <NouvelleActionStatutDetaille
-            avancementDetaille={avancement_detaille}
-          />
-        </DetailNouvelleModificationWrapper>
-      </>
-    );
-  }
-
-  // Ajout detaille
-  if (
-    previous_avancement === null &&
-    previous_avancement_detaille === null &&
-    avancement === 'detaille' &&
-    avancement_detaille
-  ) {
-    return (
-      <DetailNouvelleModificationWrapper>
-        <NouvelleActionStatutDetaille
-          avancementDetaille={avancement_detaille}
-        />
-      </DetailNouvelleModificationWrapper>
-    );
-  }
-
-  // Ajout simple
   return (
-    <DetailNouvelleModificationWrapper>
-      <ActionStatusBadge status={avancement ?? 'non_renseigne'} />
-    </DetailNouvelleModificationWrapper>
+    <>
+      {previous_avancement !== null ? (
+        <DetailPrecedenteModificationWrapper>
+          {previous_avancement === 'detaille' &&
+          previous_avancement_detaille ? (
+            <PrecedenteActionStatutDetaille
+              avancementDetaille={previous_avancement_detaille}
+            />
+          ) : (
+            <ActionStatusBadge status={previous_avancement} barre />
+          )}
+        </DetailPrecedenteModificationWrapper>
+      ) : null}
+      <DetailNouvelleModificationWrapper>
+        {avancement === 'detaille' && avancement_detaille ? (
+          <NouvelleActionStatutDetaille
+            avancementDetaille={avancement_detaille}
+          />
+        ) : (
+          <ActionStatusBadge status={avancement ?? 'non_renseigne'} />
+        )}
+      </DetailNouvelleModificationWrapper>
+    </>
   );
 };
