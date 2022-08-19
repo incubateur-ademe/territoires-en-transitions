@@ -6,6 +6,7 @@ import {
   DetailNouvelleModificationWrapper,
   DetailPrecedenteModificationWrapper,
 } from '../DetailModificationWrapper';
+import classNames from 'classnames';
 
 const HistoriqueItemActionPrecision = (props: THistoriqueItemProps) => {
   const referentielId = useReferentielId() as ReferentielParamOption;
@@ -44,26 +45,24 @@ const HistoriqueItemActionPrecisionDetails = (props: THistoriqueItemProps) => {
   const {item} = props;
   const {previous_precision, precision} = item;
 
-  // Ajout de precision
-  if (previous_precision === null && precision !== null) {
-    return (
-      <>
-        <DetailNouvelleModificationWrapper>
-          <div>{precision}</div>
-        </DetailNouvelleModificationWrapper>
-      </>
-    );
-  }
-
-  // Modification de precision
   return (
     <>
-      <DetailPrecedenteModificationWrapper>
-        <span>{previous_precision}</span>
-      </DetailPrecedenteModificationWrapper>
+      {previous_precision ? (
+        <DetailPrecedenteModificationWrapper>
+          {renderPrecision(previous_precision!, true)}
+        </DetailPrecedenteModificationWrapper>
+      ) : null}
       <DetailNouvelleModificationWrapper>
-        <span>{precision}</span>
+        {renderPrecision(precision!)}
       </DetailNouvelleModificationWrapper>
     </>
   );
 };
+
+const renderPrecision = (precision: string, isPrevious?: boolean) => (
+  <span
+    className={classNames('whitespace-pre-line', {'line-through': isPrevious})}
+  >
+    {precision ? precision : <i>Non renseigné</i>}
+  </span>
+);
