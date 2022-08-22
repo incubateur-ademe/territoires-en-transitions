@@ -198,6 +198,7 @@ services:
       - sqitch
     command: sh /scripts/try_load.sh
     environment:
+      SKIP_TEST_DOMAIN: ${LOADER_SKIP_TEST_DOMAIN}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PGPASSWORD: ${POSTGRES_PASSWORD}
       PGUSER: postgres

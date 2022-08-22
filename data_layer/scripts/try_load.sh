@@ -39,10 +39,15 @@ for file in "$DATALAYER_DIR"/fakes/*.sql; do
     psql -v ON_ERROR_STOP=1 --file "${file}" || exit 1
 done
 
+if [ "$SKIP_TEST_DOMAIN" = 1 ];
+then
+echo "Skipping test domain."
+else
 echo "Load test domain.."
 for file in "$DATALAYER_DIR"/test/*.sql; do
     psql -v ON_ERROR_STOP=1 --file "${file}" || exit 1
 done
+fi
 
 echo "Done loading."
 sleep infinity
