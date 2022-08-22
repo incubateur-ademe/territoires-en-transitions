@@ -27,8 +27,8 @@ with historiques as (select -- common columns
                             -- réponse
                             null::question_id                       as question_id,
                             null::question_type                     as question_type,
-                            null::json                              as reponse,
-                            null::json                              as previous_reponse
+                            null::jsonb                             as reponse,
+                            null::jsonb                             as previous_reponse
                      from historique.action_statut s
 
                      union all
