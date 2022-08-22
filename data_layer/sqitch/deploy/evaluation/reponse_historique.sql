@@ -118,11 +118,11 @@ drop type historique.question_reponse;
 -- Fuse all response types using json values.
 create view historique.reponse_display
 as
-select 'binaire' :: question_type as question_type,
+select 'binaire' :: question_type  as question_type,
        collectivite_id,
        question_id,
-       to_json(reponse)           as reponse,
-       to_json(previous_reponse)  as previous_reponse,
+       to_jsonb(reponse)           as reponse,
+       to_jsonb(previous_reponse)  as previous_reponse,
        modified_at,
        previous_modified_at,
        modified_by,
@@ -132,10 +132,10 @@ union all
 select 'choix' :: question_type,
        collectivite_id,
        r.question_id,
-       to_json((select qc.formulation
+       to_jsonb((select qc.formulation
                 from question_choix qc
                 where qc.id = reponse)),
-       to_json((select qc.formulation
+       to_jsonb((select qc.formulation
                 from question_choix qc
                 where qc.id = previous_reponse)),
        modified_at,
@@ -148,8 +148,8 @@ union all
 select 'proportion' :: question_type,
        collectivite_id,
        question_id,
-       to_json(reponse),
-       to_json(previous_reponse),
+       to_jsonb(reponse),
+       to_jsonb(previous_reponse),
        modified_at,
        previous_modified_at,
        modified_by,
