@@ -14,6 +14,7 @@ jobs:
     env:
       SUPABASE_SERVICE_ROLE_KEY: ${{secrets.TEST_SERVICE_SUPABASE_KEY}}
       SUPABASE_ANON_KEY: ${{secrets.TEST_ANON_SUPABASE_KEY}}
+      LOADER_SKIP_TEST_DOMAIN: 1
 
     steps:
       # cf. https://github.com/actions/checkout
