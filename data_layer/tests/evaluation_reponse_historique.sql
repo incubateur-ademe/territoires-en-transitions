@@ -63,12 +63,10 @@ $$
 truncate reponse_proportion;
 truncate reponse_choix;
 truncate reponse_binaire;
-truncate historique.reponse_proportion;
-truncate historique.reponse_choix;
-truncate historique.reponse_binaire;
 truncate test.sequence_proportion;
 truncate test.sequence_choix;
 truncate test.sequence_binaire;
+select test_clear_history();
 $$ language sql;
 
 
