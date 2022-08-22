@@ -4,11 +4,11 @@ BEGIN;
 
 select type,
        collectivite_id,
-       action_id,
-       modified_by,
-       previous_modified_by,
+       modified_by_id,
+       previous_modified_by_id,
        modified_at,
        previous_modified_at,
+       action_id,
        avancement,
        previous_avancement,
        avancement_detaille,
@@ -17,11 +17,18 @@ select type,
        previous_concerne,
        precision,
        previous_precision,
+       question_id,
+       question_type,
+       reponse,
+       previous_reponse,
+       modified_by_nom,
        tache_identifiant,
        tache_nom,
        action_identifiant,
        action_nom,
-       modified_by_nom
+       question_formulation,
+       thematique_id,
+       thematique_nom
 from historique
 where false;
 
