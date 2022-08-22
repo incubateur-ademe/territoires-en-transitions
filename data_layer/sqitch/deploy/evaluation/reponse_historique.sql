@@ -53,7 +53,7 @@ execute
 ||' update historique.reponse_' || qr.type
 ||' set reponse = new.reponse,'
 ||'     previous_reponse = old.reponse,'
-||'     modified_at = now()'
+||'     modified_at = new.modified_at'
 ||' where id in (select id'
 ||'              from historique.reponse_' || qr.type
 ||'              where collectivite_id = new.collectivite_id'
@@ -73,7 +73,7 @@ execute
 ||'         new.reponse,'
 ||'         old.reponse,'
 ||'         auth.uid(),'
-||'         now());'
+||'         new.modified_at);'
 ||' end if;'
 ||' return new;'
 ||' end;'
