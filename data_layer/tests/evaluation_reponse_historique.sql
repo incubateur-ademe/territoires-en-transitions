@@ -1,5 +1,5 @@
 begin;
-select plan(13);
+select plan(25);
 
 -- Enlève les triggers pour tester le debounce - sinon les modified_at sont toujours égaux à now().
 drop trigger set_modified_at_before_reponse_proportion_update on reponse_proportion;
@@ -33,7 +33,7 @@ begin
 end;
 $$ language plpgsql;
 
--- La séquence des réponses à sauvegarder.
+-- Les séquences des réponses à sauvegarder.
 create table test.sequence_proportion
 (
     question_id question_id,
@@ -54,13 +54,27 @@ create table test.sequence_binaire
 );
 
 
--- Scenario : Yolo met à jour des réponses
-select test.identify_as('yolo@dodo.com');
--- Supprime les données
-truncate historique.reponse_proportion;
+-- Supprime les données avant un scénario.
+create function
+    clear()
+    returns void
+as
+$$
 truncate reponse_proportion;
 truncate reponse_choix;
 truncate reponse_binaire;
+truncate historique.reponse_proportion;
+truncate historique.reponse_choix;
+truncate historique.reponse_binaire;
+truncate test.sequence_proportion;
+truncate test.sequence_choix;
+truncate test.sequence_binaire;
+$$ language sql;
+
+
+-- Scenario : Yolo met à jour des réponses
+select clear();
+select test.identify_as('yolo@dodo.com');
 
 -- Réponses de type proportion
 --- On définit la séquence
@@ -321,5 +335,104 @@ select bag_eq(
                from historique.reponse_display ;',
                'L''historique global devrait contenir l''historique des réponses.'
            );
+
+
+-- Scenario : Yolo puis Yili mettent à jour des réponses de type proportion.
+select clear();
+insert into test.sequence_proportion
+values -- à quelques minutes d'intervalle
+       ('voirie_1', 0.1, '2022-09-10 06:02 +0'),
+       ('voirie_1', 0.2, '2022-09-10 06:03 +0'),
+       ('voirie_1', 0.4, '2022-09-10 06:04 +0'),
+       ('voirie_1', 0.5, '2022-09-10 06:05 +0');
+
+-- Yolo réponds deux fois.
+select test.identify_as('yolo@dodo.com');
+select test.upsert_reponse('proportion', 1, question_id, reponse, modified_at)
+from test.sequence_proportion
+limit 2;
+
+-- Puis Yili réponds deux fois.
+select test.identify_as('yili@didi.com');
+select test.upsert_reponse('proportion', 1, question_id, reponse, modified_at)
+from test.sequence_proportion
+limit 2 offset 2;
+
+-- On vérifie les résultats.
+select ok((select count(*) = 1 from reponse_proportion), 'Il devrait y avoir une seule réponse.');
+select ok((select count(*) = 2 from historique.reponse_proportion), 'Il devrait y avoir deux réponses historisées.');
+select isnt((select modified_by from historique.reponse_proportion limit 1),
+            (select modified_by from historique.reponse_proportion limit 1 offset 1),
+            'Les deux réponses historisées devraient avoir des `modified_by` différents.');
+select is((select array_agg(modified_by_nom) from historique),
+          (select array ['Yili Didi', 'Yolo Dodo']),
+          'La vue client devrait lister une modification par Yili suivie d''une par Yolo');
+
+
+-- Scenario : Yolo puis Yili mettent à jour des réponses de type choix.
+select clear();
+insert into test.sequence_choix
+values -- à quelques minutes d'intervalle
+       ('voirie_1', 'voirie_1_a', '2022-09-10 06:02 +0'),
+       ('voirie_1', null, '2022-09-10 06:03 +0'),
+       ('voirie_1', 'voirie_1_b', '2022-09-10 06:04 +0'),
+       ('voirie_1', 'voirie_1_b', '2022-09-10 06:05 +0');
+
+
+-- Yolo réponds deux fois.
+select test.identify_as('yolo@dodo.com');
+select test.upsert_reponse('choix', 1, question_id, reponse, modified_at)
+from test.sequence_choix
+limit 2;
+
+-- Puis Yili réponds deux fois.
+select test.identify_as('yili@didi.com');
+select test.upsert_reponse('choix', 1, question_id, reponse, modified_at)
+from test.sequence_choix
+limit 2 offset 2;
+
+-- On vérifie les résultats.
+select ok((select count(*) = 1 from reponse_choix), 'Il devrait y avoir une seule réponse.');
+select ok((select count(*) = 2 from historique.reponse_choix), 'Il devrait y avoir deux réponses historisées.');
+select isnt((select modified_by from historique.reponse_choix limit 1),
+            (select modified_by from historique.reponse_choix limit 1 offset 1),
+            'Les deux réponses historisées devraient avoir des `modified_by` différents.');
+select is((select array_agg(modified_by_nom) from historique),
+          (select array ['Yili Didi', 'Yolo Dodo']),
+          'La vue client devrait lister une modification par Yili suivie d''une par Yolo');
+
+
+-- Scenario : Yolo puis Yili mettent à jour des réponses de type binaire (oui/non).
+select clear();
+insert into test.sequence_binaire
+values -- à quelques minutes d'intervalle
+       ('dechets_1', false, '2022-09-10 06:02 +0'),
+       ('dechets_1', null, '2022-09-10 06:03 +0'),
+       ('dechets_1', false, '2022-09-10 06:04 +0'),
+       ('dechets_1', true, '2022-09-10 06:05 +0');
+
+
+-- Yolo réponds deux fois.
+select test.identify_as('yolo@dodo.com');
+select test.upsert_reponse('binaire', 1, question_id, reponse, modified_at)
+from test.sequence_binaire
+limit 2;
+
+-- Puis Yili réponds deux fois.
+select test.identify_as('yili@didi.com');
+select test.upsert_reponse('binaire', 1, question_id, reponse, modified_at)
+from test.sequence_binaire
+limit 2 offset 2;
+
+-- On vérifie les résultats.
+select ok((select count(*) = 1 from reponse_binaire), 'Il devrait y avoir une seule réponse.');
+select ok((select count(*) = 2 from historique.reponse_binaire), 'Il devrait y avoir deux réponses historisées.');
+select isnt((select modified_by from historique.reponse_binaire limit 1),
+            (select modified_by from historique.reponse_binaire limit 1 offset 1),
+            'Les deux réponses historisées devraient avoir des `modified_by` différents.');
+select is((select array_agg(modified_by_nom) from historique),
+          (select array ['Yili Didi', 'Yolo Dodo']),
+          'La vue client devrait lister une modification par Yili suivie d''une par Yolo');
+
 
 rollback;
