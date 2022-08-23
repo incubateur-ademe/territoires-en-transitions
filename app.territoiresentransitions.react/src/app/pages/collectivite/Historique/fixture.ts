@@ -11,7 +11,6 @@ export const fakeBaseHistorique: THistoriqueItem = {
   action_id: null,
   action_identifiant: null,
   action_nom: null,
-  tache_id: null,
   tache_identifiant: null,
   tache_nom: null,
   avancement: null,
@@ -40,10 +39,9 @@ export const fakeAjoutSimpleActionStatutHistorique: THistoriqueItem = {
   previous_avancement: null,
   avancement_detaille: null,
   previous_avancement_detaille: null,
-  tache_id: 'cae_1.2.3.1',
   tache_identifiant: '1.2.3.1.3',
   tache_nom: "Disposer d'un programme local de prévention",
-  action_id: 'cae_1.2.3',
+  action_id: 'cae_1.2.3.1',
   action_identifiant: '1.2.3',
   action_nom:
     'Définir et mettre en oeuvre la stratégie de prévention et de gestion des déchets',
@@ -80,10 +78,9 @@ export const fakeModificationDetailleActionStatutHistorique: THistoriqueItem = {
 /* Storybook Action Precision */
 export const fakeAjoutActionPrecisionHistorique: THistoriqueItem = {
   ...fakeBaseHistorique,
-  tache_id: 'cae_1.2.3.1',
   tache_identifiant: '1.2.3.1.3',
   tache_nom: "Disposer d'un programme local de prévention",
-  action_id: 'cae_1.2.3',
+  action_id: 'cae_1.2.3.1',
   action_identifiant: '1.2.3',
   action_nom:
     'Définir et mettre en oeuvre la stratégie de prévention et de gestion des déchets',
@@ -93,10 +90,9 @@ export const fakeAjoutActionPrecisionHistorique: THistoriqueItem = {
 
 export const fakeModificationActionPrecisionHistorique: THistoriqueItem = {
   ...fakeBaseHistorique,
-  tache_id: 'cae_1.2.3.1',
   tache_identifiant: '1.2.3.1.3',
   tache_nom: "Disposer d'un programme local de prévention",
-  action_id: 'cae_1.2.3',
+  action_id: 'cae_1.2.3.1',
   action_identifiant: '1.2.3',
   action_nom:
     'Définir et mettre en oeuvre la stratégie de prévention et de gestion des déchets',

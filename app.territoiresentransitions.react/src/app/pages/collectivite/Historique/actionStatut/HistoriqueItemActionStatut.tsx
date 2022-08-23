@@ -16,10 +16,10 @@ const HistoriqueItemActionStatut = (props: THistoriqueItemProps) => {
   const referentielId = useReferentielId() as ReferentielParamOption;
   const {item} = props;
   const {
+    action_id,
     action_identifiant,
     action_nom,
     tache_identifiant,
-    tache_id,
     tache_nom,
     collectivite_id,
   } = item;
@@ -37,7 +37,7 @@ const HistoriqueItemActionStatut = (props: THistoriqueItemProps) => {
       pageLink={makeCollectiviteTacheUrl({
         referentielId,
         collectiviteId: collectivite_id,
-        actionId: tache_id!,
+        actionId: action_id!,
       })}
     />
   );
