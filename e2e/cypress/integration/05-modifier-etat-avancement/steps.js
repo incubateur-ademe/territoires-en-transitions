@@ -53,12 +53,9 @@ const avancementToValue = {
   'Non concerné': 5,
 };
 
-When(
-  /je clique sur l'onglet "([^"]+)"/,
-  (tabName) => {
-    cy.get('.fr-tabs__tab').contains(tabName).click()
-  }
-);
+When(/je clique sur l'onglet "([^"]+)"/, (tabName) => {
+  cy.get('.fr-tabs__tab').contains(tabName).click();
+});
 
 When("aucun historique n'est affiché", () => {
   cy.get('[data-test^=action-statut-historique-]').should('not.exist');
@@ -76,7 +73,7 @@ When(
     // (Ref: https://github.com/betagouv/territoires-en-transitions/issues/1572)
     cy.task('pg_query', {
       query:
-        'DELETE FROM history.action_statut WHERE collectivite_id = $1 AND action_id LIKE $2',
+        'DELETE FROM historique.action_statut WHERE collectivite_id = $1 AND action_id LIKE $2',
       values: [collectivite_id, action_id],
     });
   }
