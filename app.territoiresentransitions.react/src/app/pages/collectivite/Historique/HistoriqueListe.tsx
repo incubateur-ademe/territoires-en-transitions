@@ -17,6 +17,9 @@ export const HistoriqueListe = ({
   return (
     <>
       <div className="flex flex-col gap-5">
+        {total === 0 ? (
+          <span data-test="empty_history">En attente d’une modification</span>
+        ) : null}
         {items.map(item => {
           const {type, action_id, modified_at} = item;
           const Item = historiqueParType[type];
