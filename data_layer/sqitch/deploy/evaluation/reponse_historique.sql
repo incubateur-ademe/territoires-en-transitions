@@ -57,7 +57,7 @@ execute
 ||' where id in (select id'
 ||'              from historique.reponse_' || qr.type
 ||'              where collectivite_id = new.collectivite_id'
-||'                and question_id = question_id'
+||'                and question_id = new.question_id'
 ||'                and modified_by = auth.uid()'
 ||'                and modified_at > new.modified_at - interval ''1 hour'''
 ||'              order by modified_by desc'

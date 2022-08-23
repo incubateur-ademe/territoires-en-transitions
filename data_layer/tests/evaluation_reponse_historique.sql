@@ -1,5 +1,5 @@
 begin;
-select plan(25);
+select plan(26);
 
 -- Enlève les triggers pour tester le debounce - sinon les modified_at sont toujours égaux à now().
 drop trigger set_modified_at_before_reponse_proportion_update on reponse_proportion;
@@ -56,7 +56,7 @@ create table test.sequence_binaire
 
 -- Supprime les données avant un scénario.
 create function
-    clear()
+    test.clear()
     returns void
 as
 $$
@@ -71,7 +71,7 @@ $$ language sql;
 
 
 -- Scenario : Yolo met à jour des réponses
-select clear();
+select test.clear();
 select test.identify_as('yolo@dodo.com');
 
 -- Réponses de type proportion
@@ -336,7 +336,7 @@ select bag_eq(
 
 
 -- Scenario : Yolo puis Yili mettent à jour des réponses de type proportion.
-select clear();
+select test.clear();
 insert into test.sequence_proportion
 values -- à quelques minutes d'intervalle
        ('voirie_1', 0.1, '2022-09-10 06:02 +0'),
@@ -368,7 +368,7 @@ select is((select array_agg(modified_by_nom) from historique),
 
 
 -- Scenario : Yolo puis Yili mettent à jour des réponses de type choix.
-select clear();
+select test.clear();
 insert into test.sequence_choix
 values -- à quelques minutes d'intervalle
        ('voirie_1', 'voirie_1_a', '2022-09-10 06:02 +0'),
@@ -401,7 +401,7 @@ select is((select array_agg(modified_by_nom) from historique),
 
 
 -- Scenario : Yolo puis Yili mettent à jour des réponses de type binaire (oui/non).
-select clear();
+select test.clear();
 insert into test.sequence_binaire
 values -- à quelques minutes d'intervalle
        ('dechets_1', false, '2022-09-10 06:02 +0'),
@@ -432,5 +432,27 @@ select is((select array_agg(modified_by_nom) from historique),
           (select array ['Yili Didi', 'Yolo Dodo']),
           'La vue client devrait lister une modification par Yili suivie d''une par Yolo');
 
+
+-- Scénario Yolo mets à jour plusieurs réponses de même type.
+select test.clear();
+select test.identify_as('yolo@dodo.com');
+
+--- On définit la séquence
+insert into test.sequence_binaire
+values -- un jour à quelques minutes d'intervalle
+       ('AOD_elec', false, '2022-09-13 06:02 +0'),
+       ('AOD_gaz', false, '2022-09-13 06:03 +0'),
+       ('AOD_chaleur', true, '2022-09-13 06:04 +0');
+
+--- On joue la séquence.
+select test.upsert_reponse('binaire', 1, question_id, reponse, modified_at)
+from test.sequence_binaire;
+
+--- On vérifie l'historique
+select bag_eq(
+               'select modified_at, collectivite_id, question_id, to_jsonb(reponse) from reponse_binaire;',
+               'select modified_at, collectivite_id, question_id, reponse from historique.reponse_display;',
+               'Toutes les réponses devraient être dans l''historique'
+           );
 
 rollback;
