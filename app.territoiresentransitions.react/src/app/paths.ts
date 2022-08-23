@@ -47,7 +47,7 @@ export const collectiviteUsersPath = `${collectivitePath}/users`;
 export const collectiviteAllCollectivitesPath = `${collectivitePath}/toutes_collectivites`;
 export const collectivitePersoRefPath = `${collectivitePath}/personnalisation`;
 export const collectivitePersoRefThematiquePath = `${collectivitePersoRefPath}/:${thematiqueParam}`;
-export const collectiviteJournalPath = `${collectivitePath}/journal`;
+export const collectiviteJournalPath = `${collectivitePath}/historique`;
 
 export const makeCollectiviteIndicateursUrl = ({
   collectiviteId,
