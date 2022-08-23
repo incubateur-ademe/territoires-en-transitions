@@ -46,6 +46,7 @@ export const useSaveActionStatut = (args: TActionStatutParams) => {
   const {collectivite_id} = args;
   const queryClient = useQueryClient();
   const {isLoading, mutate: saveActionStatut} = useMutation(write, {
+    mutationKey: 'action_statut',
     onSuccess: () => {
       queryClient.invalidateQueries(['action_statut', collectivite_id]);
     },

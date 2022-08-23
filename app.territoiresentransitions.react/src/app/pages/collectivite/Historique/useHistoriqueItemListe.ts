@@ -31,6 +31,9 @@ export const fetchHistorique = async (
   return data;
 };
 
+// les mutations "écoutées" pour déclencher le rechargement de l'historique
+const OBSERVED_MUTATION_KEYS = ['action_statut', 'action_commentaire'];
+
 /**
  * Les dernières modifications d'une collectivité
  */
@@ -43,28 +46,19 @@ export const useHistoriqueItemListe = ({
 }): THistoriqueItem[] => {
   const queryClient = useQueryClient();
 
-  // recharge les données lors de la mise à jour de la table des modifications
+  // recharge les données lors de la mise à jour d'une des mutations écoutées
   const refetch = () => {
     queryClient.invalidateQueries(['historique', collectivite_id]);
   };
-
-  // souscrit aux changements dans la base
-  const subscribe = () =>
-    supabaseClient
-      .from('action_statut,action_commentaire')
-      .on('INSERT', refetch)
-      .on('UPDATE', refetch)
-      .subscribe();
-
   useEffect(() => {
-    const subscription = subscribe();
-
-    // supprime la souscription quand le composant est démonté
-    return () => {
-      if (subscription) {
-        subscription.unsubscribe();
+    return queryClient.getMutationCache().subscribe(mutation => {
+      if (
+        mutation?.state.status === 'success' &&
+        OBSERVED_MUTATION_KEYS.includes(mutation.options.mutationKey as string)
+      ) {
+        refetch();
       }
-    };
+    });
   }, []);
 
   const {data} = useQuery<THistoriqueItem[] | null>(
