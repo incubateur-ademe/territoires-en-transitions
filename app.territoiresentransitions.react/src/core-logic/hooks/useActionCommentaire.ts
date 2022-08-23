@@ -48,7 +48,7 @@ export const useSaveActionCommentaire = () => {
     isLoading,
     mutate: saveActionCommentaire,
     data: lastReply,
-  } = useMutation(write);
+  } = useMutation(write, {mutationKey: 'action_commentaire'});
 
   return {
     isLoading,
