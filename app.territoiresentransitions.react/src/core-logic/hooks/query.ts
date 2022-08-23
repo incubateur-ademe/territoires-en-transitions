@@ -7,7 +7,7 @@ export const useQuery = (): URLSearchParams => {
   return useMemo(() => new URLSearchParams(search), [search]);
 };
 
-export type TParams = Record<string, string[]>;
+export type TParams = Record<string, unknown>;
 type TNamesMap = Record<string, string>;
 
 /**
@@ -78,7 +78,14 @@ export const objectToSearchParams = (
     .reduce(
       (ret, [key, value]) =>
         nameToShorName[key]
-          ? [...ret, nameToShorName[key] + '=' + value.join(',')]
+          ? [
+              ...ret,
+              nameToShorName[key] +
+                '=' +
+                (typeof (value as string[]).join === 'function'
+                  ? (value as string[]).join(',')
+                  : String(value)),
+            ]
           : ret,
       [] as string[]
     )
@@ -90,6 +97,11 @@ const invertKeyValues = (obj: TNamesMap) =>
 
 // compte les paramètres actifs
 const getParamsCount = (params: TParams) =>
-  Object.values(params).reduce((cnt, f) => cnt + paramsLength(f), 0);
-const paramsLength = (params: string[]) =>
-  params?.length && !params.includes(ITEM_ALL) ? params.length : 0;
+  Object.values(params).reduce((cnt: number, f) => cnt + paramsLength(f), 0);
+
+const paramsLength = (params: unknown | unknown[]) => {
+  if (Array.isArray(params)) {
+    return params?.length && !params.includes(ITEM_ALL) ? params.length : 0;
+  }
+  return params !== undefined ? 1 : 0;
+};
