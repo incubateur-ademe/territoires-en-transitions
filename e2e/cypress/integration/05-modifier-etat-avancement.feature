@@ -55,4 +55,4 @@ Fonctionnalité: Modifier l'état d'avancement et visualiser l'évolution des sc
     Quand je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "1"
     Et que j'assigne la valeur "Fait" à l'état d'avancement de la tâche "eci_1.1.1.1"
     Et que je clique sur l'onglet "Historique"
-    Alors l'historique de l'action "eci_1.1" est affiché
+    Alors l'historique de l'action "eci_1.1.1.1" est affiché
