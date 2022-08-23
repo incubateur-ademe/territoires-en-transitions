@@ -20,7 +20,6 @@ export const fakeReponseChoix: THistoriqueItem = {
   question_type: 'choix',
   reponse: "Oui sur l'ensemble du territoire",
   modified_by_nom: 'Yolo Dodo',
-  tache_id: null,
   tache_identifiant: null,
   tache_nom: null,
   action_identifiant: null,
@@ -58,7 +57,6 @@ export const fakeReponseBinaire: THistoriqueItem = {
   question_type: 'binaire',
   reponse: false,
   modified_by_nom: 'Yolo Dodo',
-  tache_id: null,
   tache_identifiant: null,
   tache_nom: null,
   action_identifiant: null,
@@ -100,7 +98,6 @@ export const fakeReponseProportion: THistoriqueItem = {
   action_identifiant: null,
   action_nom: null,
   modified_by_nom: 'Yolo Dodo',
-  tache_id: null,
   question_formulation:
     'Quelle est la part de la collectivité dans la structure compétente en matière de développement économique ?',
   thematique_id: 'developpement_economique',

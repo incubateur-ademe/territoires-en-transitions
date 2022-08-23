@@ -27,7 +27,6 @@ export type THistoriqueItem = {
   action_id: string | null; // cae_1.2.3
   action_identifiant: string | null; // 1.2.3
   action_nom: string | null;
-  tache_id: string | null; // cae_1.2.3.1
   tache_identifiant: string | null; // 1.2.3.1
   tache_nom: string | null;
 
