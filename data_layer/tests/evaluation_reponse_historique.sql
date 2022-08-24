@@ -105,28 +105,22 @@ select bag_eq(
                'L''historique devrait contenir uniquement les deux dernières réponses.'
            );
 
+select results_eq(
+           -- la vue historique
+               'select previous_reponse, reponse, previous_modified_by, modified_by
+                from historique.reponse_proportion_display',
+           -- une query fenêtrée
+               'select lag(reponse) over w     as previous_reponse,
+                       reponse,
+                       lag(modified_by) over w as previous_modified_by,
+                       modified_by             as modified_by
+               from historique.reponse_proportion
+                    -- la fenêtre des deux lignes adjacentes de la plus ancienne à la plus récente.
+                   window w as (order by modified_at rows between 1 preceding and current row)
+               order by modified_at desc;',
+               'La vue historique devrait être égale à la query fenêtrée sur l''historique.'
+           );
 
---- On vérifie la ligne la plus récente de la vue historique.
-with latest as (select first_value(reponse) over w     as previous_reponse,
-                       last_value(reponse) over w      as reponse,
-                       first_value(modified_by) over w as previous_modified_by,
-                       last_value(modified_by) over w  as modified_by
-                from historique.reponse_proportion
-                     -- la fenêtre des deux lignes adjacentes de la plus ancienne à la plus récente.
-                    window w as (order by modified_at rows between 1 preceding and current row)
-                     -- la query avec la ligne la plus récente (limit 1).
-                order by modified_at desc
-                limit 1)
-select is(
-           -- la ligne la plus récente de vue historique des réponses
-               (select row (previous_reponse, reponse, previous_modified_by, modified_by)
-                from historique.reponse_proportion_display
-                limit 1),
-           -- la ligne latest
-               (row (previous_reponse, reponse, previous_modified_by, modified_by)),
-               'La première ligne de l''historique devrait contenir les données des deux dernières réponses.'
-           )
-from latest;
 
 --- On vérifie que la vue historique des réponses.
 select bag_eq(
@@ -182,28 +176,21 @@ select bag_eq(
                'L''historique devrait contenir uniquement les deux dernières réponses.'
            );
 
-
---- On vérifie la ligne la plus récente de la vue historique.
-with latest as (select first_value(reponse) over w     as previous_reponse,
-                       last_value(reponse) over w      as reponse,
-                       first_value(modified_by) over w as previous_modified_by,
-                       last_value(modified_by) over w  as modified_by
-                from historique.reponse_choix
-                     -- la fenêtre des deux lignes adjacentes de la plus ancienne à la plus récente.
-                    window w as (order by modified_at rows between 1 preceding and current row)
-                     -- la query avec la ligne la plus récente (limit 1).
-                order by modified_at desc
-                limit 1)
-select is(
-           -- la ligne la plus récente de vue historique des réponses
-               (select row (previous_reponse, reponse, previous_modified_by, modified_by)
-                from historique.reponse_choix_display
-                limit 1),
-           -- la ligne latest
-               (row (previous_reponse, reponse, previous_modified_by, modified_by)),
-               'La première ligne de l''historique devrait contenir les données des deux dernières réponses.'
-           )
-from latest;
+select results_eq(
+           -- la vue historique
+               'select previous_reponse, reponse, previous_modified_by, modified_by
+                from historique.reponse_choix_display',
+           -- une query fenêtrée
+               'select lag(reponse) over w     as previous_reponse,
+                       reponse,
+                       lag(modified_by) over w as previous_modified_by,
+                       modified_by             as modified_by
+               from historique.reponse_choix_display
+                    -- la fenêtre des deux lignes adjacentes de la plus ancienne à la plus récente.
+                   window w as (order by modified_at rows between 1 preceding and current row)
+               order by modified_at desc;',
+               'La vue historique devrait être égale à la query fenêtrée sur l''historique.'
+           );
 
 --- On vérifie que la vue historique des réponses.
 select bag_eq(
@@ -261,28 +248,21 @@ select bag_eq(
                'L''historique devrait contenir uniquement les deux dernières réponses.'
            );
 
-
---- On vérifie la ligne la plus récente de la vue historique.
-with latest as (select first_value(reponse) over w     as previous_reponse,
-                       last_value(reponse) over w      as reponse,
-                       first_value(modified_by) over w as previous_modified_by,
-                       last_value(modified_by) over w  as modified_by
-                from historique.reponse_binaire
-                     -- la fenêtre des deux lignes adjacentes de la plus ancienne à la plus récente.
-                    window w as (order by modified_at rows between 1 preceding and current row)
-                     -- la query avec la ligne la plus récente (limit 1).
-                order by modified_at desc
-                limit 1)
-select is(
-           -- la ligne la plus récente de vue historique des réponses
-               (select row (previous_reponse, reponse, previous_modified_by, modified_by)
-                from historique.reponse_binaire_display
-                limit 1),
-           -- la ligne latest
-               (row (previous_reponse, reponse, previous_modified_by, modified_by)),
-               'La première ligne de l''historique devrait contenir les données des deux dernières réponses.'
-           )
-from latest;
+select results_eq(
+           -- la vue historique
+               'select previous_reponse, reponse, previous_modified_by, modified_by
+                from historique.reponse_binaire_display',
+           -- une query fenêtrée
+               'select lag(reponse) over w     as previous_reponse,
+                       reponse,
+                       lag(modified_by) over w as previous_modified_by,
+                       modified_by             as modified_by
+               from historique.reponse_binaire_display
+                    -- la fenêtre des deux lignes adjacentes de la plus ancienne à la plus récente.
+                   window w as (order by modified_at rows between 1 preceding and current row)
+               order by modified_at desc;',
+               'La vue historique devrait être égale à la query fenêtrée sur l''historique.'
+           );
 
 --- On vérifie que la vue historique des réponses.
 select bag_eq(
