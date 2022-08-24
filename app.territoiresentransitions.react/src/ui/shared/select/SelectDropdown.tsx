@@ -4,15 +4,17 @@ import {
   ReactElement,
   Ref,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
 import {Placement} from '@floating-ui/react-dom-interactions';
 import DropdownFloater from 'ui/shared/floating-ui/DropdownFloater';
+import classNames from 'classnames';
 
 /* Class génériques */
 const buttonDisplayedClassname =
-  'flex items-center w-full p-2 -ml-2 text-left text-sm';
+  'flex items-center w-full p-2 text-left text-sm';
 const buttonDisplayedPlaceholderClassname = 'mr-auto text-gray-500 italic';
 const buttonDisplayedIconClassname =
   'fr-fi-arrow-down-s-line mt-1 ml-1 scale-90';
@@ -118,12 +120,14 @@ export const SelectDropdown = <T extends string>({
 const MultiSelectDropdownButtonDisplayed = forwardRef(
   <T extends string>(
     {
+      inlineValues,
       selectedValues,
       labels,
       isOpen,
       placeholderText,
       ...props
     }: {
+      inlineValues?: boolean;
       selectedValues?: T[];
       labels: Record<T, string>;
       isOpen?: boolean;
@@ -138,9 +142,16 @@ const MultiSelectDropdownButtonDisplayed = forwardRef(
       {...props}
     >
       {selectedValues && selectedValues?.length !== 0 ? (
-        <span className="mr-auto flex flex-col">
-          {selectedValues.sort().map(value => (
-            <span key={value}>{labels[value]}</span>
+        <span
+          className={classNames('mr-auto flex flex-col', {
+            'flex-row line-clamp-1': inlineValues,
+          })}
+        >
+          {selectedValues.sort().map((value, index) => (
+            <span key={value}>
+              {labels[value]}
+              {inlineValues && selectedValues.length !== index + 1 && ', '}
+            </span>
           ))}
         </span>
       ) : (
@@ -158,14 +169,23 @@ const MultiSelectDropdownButtonDisplayed = forwardRef(
 );
 
 export const MultiSelectDropdown = <T extends string>({
+  inlineValues,
   values,
   labels,
+  isItemAllActive,
+  itemAllPlaceholder,
   onSelect,
   placeholderText,
 }: {
+  /** Affiche les valeurs sur une simple ligne si vrai */
+  inlineValues?: boolean;
   values?: T[];
   labels: Record<T, string>;
   onSelect: (value: T[]) => void;
+  /** Permet d'activer la sélection de tous les éléments */
+  isItemAllActive?: boolean;
+  /** Change le label de la ligne "tous les items", par défaut "Tous" */
+  itemAllPlaceholder?: string;
   placeholderText?: string;
 }) => {
   const [selectedValues, setSelectedValues] = useState<T[]>(values || []);
@@ -179,14 +199,29 @@ export const MultiSelectDropdown = <T extends string>({
       isFirstRender.current = false;
       return;
     }
+    if (isItemAllActive && selectedValues.includes('tous' as T)) {
+      setSelectedValues([]);
+      onSelect([]);
+    }
     onSelect(selectedValues);
   }, [selectedValues]);
+
+  const displayedLabels = useMemo(() => {
+    if (isItemAllActive) {
+      return {
+        tous: itemAllPlaceholder ?? 'Tous',
+        ...labels,
+      };
+    } else {
+      return labels;
+    }
+  }, [labels]);
 
   return (
     <DropdownFloater
       render={() =>
-        Object.keys(labels).map(v => {
-          const label = labels[v as T];
+        Object.keys(displayedLabels).map(v => {
+          const label = displayedLabels[v as T];
           return (
             <button
               key={v}
@@ -205,11 +240,11 @@ export const MultiSelectDropdown = <T extends string>({
               }}
             >
               <div className="w-6 mr-2">
-                {selectedValues.includes(v as T) ? (
+                {selectedValues.includes(v as T) && v !== 'tous' ? (
                   <span className={optionCheckMarkClassname} />
                 ) : null}
               </div>
-              <span>{labels[v as T]}</span>
+              <span className="leading-6">{displayedLabels[v as T]}</span>
             </button>
           );
         })
@@ -217,6 +252,7 @@ export const MultiSelectDropdown = <T extends string>({
     >
       <MultiSelectDropdownButtonDisplayed
         labels={labels}
+        inlineValues={inlineValues}
         selectedValues={selectedValues}
         placeholderText={placeholderText}
       />
