@@ -1,7 +1,10 @@
 import {useState} from 'react';
 import {pick} from 'ramda';
 
-import {MultiSelectDropdown, SelectDropdown} from 'ui/shared/SelectDropdown';
+import {
+  MultiSelectDropdown,
+  SelectDropdown,
+} from 'ui/shared/select/SelectDropdown';
 import {
   Membre,
   TMembreFonction,
