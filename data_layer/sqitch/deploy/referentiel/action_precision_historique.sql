@@ -43,7 +43,6 @@ begin
 
     if updated is null
     then
-        --  raise notice 'updated %', updated;
         insert into historique.action_precision
         values (default,
                 new.collectivite_id,
