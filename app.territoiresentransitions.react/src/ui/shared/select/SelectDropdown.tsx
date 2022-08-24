@@ -1,4 +1,5 @@
 import {keys} from 'ramda';
+import classNames from 'classnames';
 import {
   forwardRef,
   ReactElement,
@@ -9,17 +10,15 @@ import {
   useState,
 } from 'react';
 import {Placement} from '@floating-ui/react-dom-interactions';
-import DropdownFloater from 'ui/shared/floating-ui/DropdownFloater';
-import classNames from 'classnames';
 
-/* Class génériques */
-const buttonDisplayedClassname =
-  'flex items-center w-full p-2 text-left text-sm';
-const buttonDisplayedPlaceholderClassname = 'mr-auto text-gray-500 italic';
-const buttonDisplayedIconClassname =
-  'fr-fi-arrow-down-s-line mt-1 ml-1 scale-90';
-const optionButtonClassname = 'flex items-center w-full p-2 text-left text-sm';
-const optionCheckMarkClassname = 'block fr-fi-check-line scale-75';
+import DropdownFloater from 'ui/shared/floating-ui/DropdownFloater';
+import {
+  buttonDisplayedClassname,
+  buttonDisplayedIconClassname,
+  buttonDisplayedPlaceholderClassname,
+  optionButtonClassname,
+  optionCheckMarkClassname,
+} from 'ui/shared/select/commons';
 
 /* Création d'un composant séparé pour passer la ref du boutton au floater */
 const SelectDropdownButtonDisplayed = forwardRef(
