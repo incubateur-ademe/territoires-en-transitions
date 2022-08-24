@@ -29,7 +29,6 @@ declare
 begin
     update historique.action_precision
     set precision          = new.commentaire,
-        previous_precision = old.commentaire,
         modified_at        = new.modified_at
     where id in (select id
                  from historique.action_precision
@@ -64,6 +63,5 @@ create trigger save_history
     on action_commentaire
     for each row
 execute procedure historique.save_action_precision();
-
 
 COMMIT;

@@ -52,7 +52,6 @@ execute
 --- try to update before inserting to debounce.
 ||' update historique.reponse_' || qr.type
 ||' set reponse = new.reponse,'
-||'     previous_reponse = old.reponse,'
 ||'     modified_at = new.modified_at'
 ||' where id in (select id'
 ||'              from historique.reponse_' || qr.type
