@@ -1,5 +1,5 @@
 begin;
-select plan(26);
+select plan(27);
 
 -- Enlève les triggers pour tester le debounce - sinon les modified_at sont toujours égaux à now().
 drop trigger set_modified_at_before_reponse_proportion_update on reponse_proportion;
@@ -453,6 +453,23 @@ select bag_eq(
                'select modified_at, collectivite_id, question_id, to_jsonb(reponse) from reponse_binaire;',
                'select modified_at, collectivite_id, question_id, reponse from historique.reponse_display;',
                'Toutes les réponses devraient être dans l''historique'
+           );
+
+
+-- Scénario Yolo réponds à une question qui concerne plusieurs actions.
+select test.clear();
+select test.identify_as('yolo@dodo.com');
+
+insert into test.sequence_proportion
+values ('habitat_2', 0.1, '2022-09-10 06:02 +0');
+
+select test.upsert_reponse('proportion', 1, question_id, reponse, modified_at)
+from test.sequence_proportion;
+
+select bag_eq(
+               'select unnest(action_ids) as action_id from historique where type = ''reponse'';',
+               'select action_id from test.sequence_proportion s join question_action qa on qa.question_id = s.question_id;',
+               'Les ids actions de la réponse historisée devraient être les mêmes que ceux liés à la question.'
            );
 
 rollback;
