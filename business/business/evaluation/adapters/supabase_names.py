@@ -31,6 +31,7 @@ class views:
 
 @dataclass
 class rpc:
+    upsert_preuves = "business_upsert_preuves"
     upsert_indicateurs = "business_upsert_indicateurs"
     update_actions = "business_update_actions"
     insert_actions = "business_insert_actions"
