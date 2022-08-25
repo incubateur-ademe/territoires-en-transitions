@@ -43,19 +43,23 @@ const Modification = ({
   pageLink,
 }: Props) => {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-  const {modified_by_nom, type, action_id} = historique;
+  const {modified_at, modified_by_nom, type, action_id} = historique;
   const referentielId =
     SHOW_REFERENTIEL.includes(type) && action_id?.substring(0, 3);
   const referentielNom =
     referentielId &&
     referentielToName[referentielId as ReferentielOfIndicateur];
+  const modifiedAt = new Date(modified_at);
 
   return (
     <div data-test="item" className="flex flex-col gap-4 md:flex-row md:gap-6">
       {/* DATE */}
       <div className="pr-6 w-min md:border-r md:border-gray-200">
-        <span className="py-1 px-2 text-sm uppercase whitespace-nowrap text-blue-600 bg-blue-100 rounded-md">
-          {format(new Date(historique.modified_at), 'dd MMMM yyyy', {
+        <span
+          className="py-1 px-2 text-sm uppercase whitespace-nowrap text-blue-600 bg-blue-100 rounded-md"
+          title={`à ${format(modifiedAt, 'HH:mm')}`}
+        >
+          {format(modifiedAt, 'dd MMMM yyyy', {
             locale: fr,
           })}
         </span>
