@@ -43,6 +43,7 @@ export const ActionCommentaireField = ({
 
   return collectivite ? (
     <AutoTextArea
+      data-test={`comm-${action.id}`}
       value={commentaire}
       onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
         setCommentaire(event.currentTarget.value)
