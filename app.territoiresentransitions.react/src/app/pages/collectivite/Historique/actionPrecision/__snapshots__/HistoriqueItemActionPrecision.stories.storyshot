@@ -3,6 +3,7 @@
 exports[`Storyshots app/pages/collectivite/Historique/actionPrecision/HistoriqueItemActionPrecision Ajout Precision 1`] = `
 <div
   className="flex flex-col gap-4 md:flex-row md:gap-6"
+  data-test="item"
 >
   <div
     className="pr-6 w-min md:border-r md:border-gray-200"
@@ -14,16 +15,17 @@ exports[`Storyshots app/pages/collectivite/Historique/actionPrecision/Historique
     </span>
   </div>
   <div
-    className="flex flex-col overflow-hidden md:flex-row"
+    className="flex flex-col flex-grow overflow-hidden md:flex-row"
   >
     <div
       className="mr-4 mt-0.5 text-blue-600 fr-fi-information-fill"
     />
     <div
-      className="flex flex-col overflow-hidden"
+      className="flex flex-col flex-grow overflow-hidden"
     >
       <div
         className="mb-4"
+        data-test="desc"
       >
         <p
           className="mb-2 font-bold text-blue-600"
@@ -39,6 +41,16 @@ exports[`Storyshots app/pages/collectivite/Historique/actionPrecision/Historique
             Par : 
           </span>
           Richard Evans
+        </p>
+        <p
+          className="mb-2"
+        >
+          <span
+            className="text-gray-500"
+          >
+            Référentiel : 
+          </span>
+          Climat Air Énergie
         </p>
         <p
           className="mb-2 last:mb-0"
@@ -65,6 +77,7 @@ exports[`Storyshots app/pages/collectivite/Historique/actionPrecision/Historique
       </div>
       <div
         className="mb-4 border-t border-b border-gray-200"
+        data-test="detail-off"
       >
         <button
           className="flex items-center w-full py-4 px-2"
@@ -76,22 +89,9 @@ exports[`Storyshots app/pages/collectivite/Historique/actionPrecision/Historique
             Afficher le détail
           </div>
           <div
-            className="ml-auto fr-fi-arrow-down-s-line duration-100 rotate-180"
+            className="ml-auto fr-fi-arrow-down-s-line duration-100"
           />
         </button>
-        <div
-          className="max-w-full p-2 mb-4 bg-gray-100"
-        >
-          <div
-            className="max-w-full w-max p-2 border-2 border-green-400"
-          >
-            <span
-              className="whitespace-pre-line"
-            >
-              A mat sioul skrivañ egisto kentel naon sae leziregezh, ahont abaoe fresk goap leur Baden c’helien peurvuiañ nav, ret veaj
-            </span>
-          </div>
-        </div>
       </div>
       <a
         className="flex items-center ml-auto fr-btn fr-btn--secondary !px-4 border border-bf500"
@@ -112,6 +112,7 @@ exports[`Storyshots app/pages/collectivite/Historique/actionPrecision/Historique
 exports[`Storyshots app/pages/collectivite/Historique/actionPrecision/HistoriqueItemActionPrecision Modification Precision 1`] = `
 <div
   className="flex flex-col gap-4 md:flex-row md:gap-6"
+  data-test="item"
 >
   <div
     className="pr-6 w-min md:border-r md:border-gray-200"
@@ -123,16 +124,17 @@ exports[`Storyshots app/pages/collectivite/Historique/actionPrecision/Historique
     </span>
   </div>
   <div
-    className="flex flex-col overflow-hidden md:flex-row"
+    className="flex flex-col flex-grow overflow-hidden md:flex-row"
   >
     <div
       className="mr-4 mt-0.5 text-blue-600 fr-fi-information-fill"
     />
     <div
-      className="flex flex-col overflow-hidden"
+      className="flex flex-col flex-grow overflow-hidden"
     >
       <div
         className="mb-4"
+        data-test="desc"
       >
         <p
           className="mb-2 font-bold text-blue-600"
@@ -148,6 +150,16 @@ exports[`Storyshots app/pages/collectivite/Historique/actionPrecision/Historique
             Par : 
           </span>
           Richard Evans
+        </p>
+        <p
+          className="mb-2"
+        >
+          <span
+            className="text-gray-500"
+          >
+            Référentiel : 
+          </span>
+          Climat Air Énergie
         </p>
         <p
           className="mb-2 last:mb-0"
@@ -174,6 +186,7 @@ exports[`Storyshots app/pages/collectivite/Historique/actionPrecision/Historique
       </div>
       <div
         className="mb-4 border-t border-b border-gray-200"
+        data-test="detail-off"
       >
         <button
           className="flex items-center w-full py-4 px-2"
@@ -185,31 +198,9 @@ exports[`Storyshots app/pages/collectivite/Historique/actionPrecision/Historique
             Afficher le détail
           </div>
           <div
-            className="ml-auto fr-fi-arrow-down-s-line duration-100 rotate-180"
+            className="ml-auto fr-fi-arrow-down-s-line duration-100"
           />
         </button>
-        <div
-          className="max-w-full p-2 mb-4 bg-gray-100"
-        >
-          <div
-            className="max-w-full w-max p-2 border-2 mb-4 border-red-400"
-          >
-            <span
-              className="whitespace-pre-line line-through"
-            >
-              A mat sioul skrivañ egisto kentel naon sae leziregezh, ahont abaoe fresk goap leur Baden c’helien peurvuiañ nav, ret veaj
-            </span>
-          </div>
-          <div
-            className="max-w-full w-max p-2 border-2 border-green-400"
-          >
-            <span
-              className="whitespace-pre-line"
-            >
-              A mat sioul skrivañ egisto kentel naon sae leziregezh, ahont abaoe fresk goap leur Baden c’helien peurvuiañ nav, ret veaj gouez lein kriz yaou roched. Livet dimezell nerzh sul trizek Kemper e c’hiz piz, fri mae pleg perc’henn oan va romant brodañ c’henwerzh, siwazh dindan  bras gwerenn grib kelc’hiek mui. Frouezh chaseour Melwenn esaeañ c’hastell.
-            </span>
-          </div>
-        </div>
       </div>
       <a
         className="flex items-center ml-auto fr-btn fr-btn--secondary !px-4 border border-bf500"
