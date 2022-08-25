@@ -33,7 +33,7 @@ const Modification = ({
   detail,
   pageLink,
 }: Props) => {
-  const [isDetailsOpen, setIsDetailsOpen] = useState(true);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   return (
     <div className="flex flex-col gap-4 md:flex-row md:gap-6">
       {/* DATE */}
@@ -71,7 +71,9 @@ const Modification = ({
                 onClick={() => setIsDetailsOpen(!isDetailsOpen)}
                 className="flex items-center w-full py-4 px-2"
               >
-                <div className="font-bold">Afficher le détail</div>
+                <div className="font-bold">
+                  {isDetailsOpen ? 'Masquer le détail' : 'Afficher le détail'}
+                </div>
                 <div
                   className={classNames(
                     'ml-auto fr-fi-arrow-down-s-line duration-100',
