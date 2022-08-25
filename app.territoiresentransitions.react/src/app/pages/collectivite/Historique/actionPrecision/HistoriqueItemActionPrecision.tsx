@@ -59,10 +59,14 @@ const HistoriqueItemActionPrecisionDetails = (props: THistoriqueItemProps) => {
   );
 };
 
-const renderPrecision = (precision: string, isPrevious?: boolean) => (
+const renderPrecision = (value: string, isPrevious?: boolean) => (
   <span
     className={classNames('whitespace-pre-line', {'line-through': isPrevious})}
   >
-    {precision ? precision : <i>Non renseigné</i>}
+    {typeof value === 'string' && value.trim() !== '' ? (
+      value
+    ) : (
+      <i>Non renseigné</i>
+    )}
   </span>
 );
