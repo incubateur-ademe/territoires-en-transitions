@@ -15,7 +15,6 @@ class MarkdownActionNode(BaseModel):
     description: str = ""
     contexte: str = ""
     exemples: str = ""
-    preuve: str = ""
     ressources: str = ""
     reduction_de_potentiel: str = ""
     perimetre_de_levaluation: str = ""
