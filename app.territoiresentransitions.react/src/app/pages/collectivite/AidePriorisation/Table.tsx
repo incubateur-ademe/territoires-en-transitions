@@ -49,7 +49,7 @@ const COLUMNS: TColumn[] = [
     accessor: 'score_programme',
     Header: makeFiltrePourcentage('score_programme', '% Programmé'),
     Cell: CellPercent,
-    width: 125,
+    width: 150,
   },
   {
     accessor: 'phase',

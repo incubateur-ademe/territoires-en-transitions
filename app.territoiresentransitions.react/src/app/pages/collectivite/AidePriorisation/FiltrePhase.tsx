@@ -1,5 +1,9 @@
-import {ITEM_ALL, MultiSelectFilter} from 'ui/shared/MultiSelectFilter';
 import {TFiltreProps} from './filters';
+import {
+  ITEM_ALL,
+  MultiSelectFilter,
+  getIsAllSelected,
+} from 'ui/shared/select/MultiSelectFilter';
 
 export const PHASE = 'phase';
 
@@ -14,15 +18,23 @@ export const phaseItems = [
  * Affiche le filtre par phase
  */
 export const FiltrePhase = (props: TFiltreProps) => {
-  const {className, filters, setFilters} = props;
+  const {filters, setFilters} = props;
+
+  const isAllSelected = getIsAllSelected(filters[PHASE]);
+  const icon = isAllSelected ? 'fr-fi-filter-line' : 'fr-fi-filter-fill';
 
   return (
     <MultiSelectFilter
-      className={`filtre-phase ${className || ''}`}
-      label="Phase"
       values={filters[PHASE]}
-      items={phaseItems}
+      options={phaseItems}
       onChange={newValues => setFilters({...filters, [PHASE]: newValues})}
+      customOpenButton={
+        <span
+          className={`${icon} fr-fi--sm w-full text-center text-bf500 font-bold`}
+        >
+          &nbsp;Phase
+        </span>
+      }
     />
   );
 };

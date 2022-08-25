@@ -1,5 +1,9 @@
-import {ITEM_ALL, MultiSelectFilter} from 'ui/shared/MultiSelectFilter';
 import {TFilters, TFiltreProps, TValueToBoundary} from './filters';
+import {
+  ITEM_ALL,
+  MultiSelectFilter,
+  getIsAllSelected,
+} from 'ui/shared/select/MultiSelectFilter';
 
 export const SCORE_REALISE = 'score_realise';
 
@@ -21,15 +25,25 @@ export const percentBoundaries: TValueToBoundary = {
 
 export const makeFiltrePourcentage =
   (filterKey: string, label: string) => (props: TFiltreProps) => {
-    const {className, filters, setFilters} = props;
+    const {filters, setFilters} = props;
+
+    const isAllSelected = getIsAllSelected(
+      filters[filterKey as keyof TFilters]
+    );
+    const icon = isAllSelected ? 'fr-fi-filter-line' : 'fr-fi-filter-fill';
 
     return (
       <MultiSelectFilter
-        className={`${filterKey} ${className || ''}`}
-        label={label}
         values={filters[filterKey as keyof TFilters]}
-        items={percentItems}
+        options={percentItems}
         onChange={newValues => setFilters({...filters, [filterKey]: newValues})}
+        customOpenButton={
+          <span
+            className={`${icon} fr-fi--sm w-full text-center text-bf500 font-bold`}
+          >
+            &nbsp;{label}
+          </span>
+        }
       />
     );
   };
