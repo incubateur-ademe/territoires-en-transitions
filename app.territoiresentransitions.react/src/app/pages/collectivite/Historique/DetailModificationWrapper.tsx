@@ -12,11 +12,17 @@ export const DetailPrecedenteModificationWrapper = ({
 }: {
   children: ReactNode;
 }) => (
-  <div className={`${wrapperClassName} mb-4 border-red-400`}>{children}</div>
+  <div data-test="prev" className={`${wrapperClassName} mb-4 border-red-400`}>
+    {children}
+  </div>
 );
 
 export const DetailNouvelleModificationWrapper = ({
   children,
 }: {
   children: ReactNode;
-}) => <div className={`${wrapperClassName} border-green-400`}>{children}</div>;
+}) => (
+  <div data-test="new" className={`${wrapperClassName} border-green-400`}>
+    {children}
+  </div>
+);

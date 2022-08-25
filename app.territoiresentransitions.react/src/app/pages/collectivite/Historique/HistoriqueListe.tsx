@@ -19,7 +19,7 @@ export const HistoriqueListe = ({
 }: THistoriqueProps) => {
   return (
     <>
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-5" data-test="Historique">
         {total === 0 ? (
           <span data-test="empty_history">En attente d’une modification</span>
         ) : null}
