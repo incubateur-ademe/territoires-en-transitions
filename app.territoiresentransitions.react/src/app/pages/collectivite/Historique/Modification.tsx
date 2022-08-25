@@ -1,10 +1,12 @@
 import {useState} from 'react';
+import {Link} from 'react-router-dom';
 import {format} from 'date-fns';
 import {fr} from 'date-fns/locale';
 import classNames from 'classnames';
 
-import {Link} from 'react-router-dom';
-import {THistoriqueItem} from './types';
+import {referentielToName} from 'app/labels';
+import {HistoriqueType, THistoriqueItem} from './types';
+import {ReferentielOfIndicateur} from 'types/litterals';
 
 export type HistoriqueDescription = {
   titre: string;
@@ -25,6 +27,13 @@ type Props = {
   pageLink?: string;
 };
 
+// le nom du référentiel concerné sera affiché pour ces types de modifications
+const SHOW_REFERENTIEL: HistoriqueType[] = [
+  'action_statut',
+  'action_precision',
+  'preuve',
+];
+
 const Modification = ({
   historique,
   icon,
@@ -34,6 +43,13 @@ const Modification = ({
   pageLink,
 }: Props) => {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const {modified_by_nom, type, action_id} = historique;
+  const referentielId =
+    SHOW_REFERENTIEL.includes(type) && action_id?.substring(0, 3);
+  const referentielNom =
+    referentielId &&
+    referentielToName[referentielId as ReferentielOfIndicateur];
+
   return (
     <div className="flex flex-col gap-4 md:flex-row md:gap-6">
       {/* DATE */}
@@ -55,8 +71,14 @@ const Modification = ({
             <p className="mb-2 font-bold text-blue-600">{nom}</p>
             <p className="mb-2">
               <span className="text-gray-500">Par : </span>
-              {historique.modified_by_nom}
+              {modified_by_nom}
             </p>
+            {referentielNom ? (
+              <p className="mb-2">
+                <span className="text-gray-500">Référentiel : </span>
+                {referentielNom}
+              </p>
+            ) : null}
             {descriptions.map(desc => (
               <p key={desc.titre} className="mb-2 last:mb-0">
                 <span className="text-gray-500">{desc.titre} : </span>
