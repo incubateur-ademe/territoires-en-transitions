@@ -10,21 +10,30 @@ import {
   optionCheckMarkClassname,
 } from 'ui/shared/select/commons';
 
-const getIsAllSelected = (values: string[]) =>
+export const getIsAllSelected = (values: string[]) =>
   !values.length || values.indexOf(ITEM_ALL) !== -1;
-
-type MultiSelectFilterButtonProps = {
-  isOpen?: boolean;
-  values: string[];
-  options: {value: string; label: string}[];
-  placeholderText?: string;
-  inlineValues?: boolean;
-};
 
 /* Création d'un composant séparé pour passer la ref du boutton au floater */
 const MultiSelectFilterButton = forwardRef(
-  (props: MultiSelectFilterButtonProps, ref: Ref<HTMLButtonElement>) => {
-    const {isOpen, values, options, placeholderText, inlineValues} = props;
+  (
+    {
+      isOpen,
+      values,
+      options,
+      placeholderText,
+      inlineValues,
+      customOpenButton,
+      ...props
+    }: {
+      isOpen?: boolean;
+      values: string[];
+      options: {value: string; label: string}[];
+      placeholderText?: string;
+      inlineValues?: boolean;
+      customOpenButton?: React.ReactNode;
+    },
+    ref: Ref<HTMLButtonElement>
+  ) => {
     const isAllSelected = getIsAllSelected(values);
 
     return (
@@ -34,29 +43,35 @@ const MultiSelectFilterButton = forwardRef(
         className={buttonDisplayedClassname}
         {...props}
       >
-        {values.length !== 0 && !isAllSelected ? (
-          <span
-            className={classNames('mr-auto flex flex-col', {
-              'flex-row line-clamp-1': inlineValues,
-            })}
-          >
-            {values.map((value, index) => (
-              <span key={value}>
-                {options.find(o => o.value === value)?.label}
-                {inlineValues && values.length !== index + 1 && ', '}
-              </span>
-            ))}
-          </span>
+        {customOpenButton ? (
+          customOpenButton
         ) : (
-          <span className={buttonDisplayedPlaceholderClassname}>
-            {placeholderText ?? ''}
-          </span>
+          <>
+            {values.length !== 0 && !isAllSelected ? (
+              <span
+                className={classNames('mr-auto flex flex-col', {
+                  'flex-row line-clamp-1': inlineValues,
+                })}
+              >
+                {values.map((value, index) => (
+                  <span key={value}>
+                    {options.find(o => o.value === value)?.label}
+                    {inlineValues && values.length !== index + 1 && ', '}
+                  </span>
+                ))}
+              </span>
+            ) : (
+              <span className={buttonDisplayedPlaceholderClassname}>
+                {placeholderText ?? ''}
+              </span>
+            )}
+            <span
+              className={`${buttonDisplayedIconClassname} ${
+                isOpen ? 'rotate-180' : ''
+              }`}
+            />
+          </>
         )}
-        <span
-          className={`${buttonDisplayedIconClassname} ${
-            isOpen ? 'rotate-180' : ''
-          }`}
-        />
       </button>
     );
   }
@@ -64,12 +79,14 @@ const MultiSelectFilterButton = forwardRef(
 
 export const ITEM_ALL = 'tous';
 
+/** Uncontroled multi select filter */
 export const MultiSelectFilter = <T extends string>({
   values,
   options,
   onChange,
   inlineValues,
   placeholderText,
+  customOpenButton,
 }: {
   /** valeurs des options sélectionnées */
   values: T[];
@@ -77,10 +94,16 @@ export const MultiSelectFilter = <T extends string>({
   options: {value: T; label: string}[];
   /** appelée quand les options sélectionnée changent (reçoit les nouvelles valeurs) */
   onChange: (value: T[]) => void;
-  /** Texte pour le label par defaut pour le composant   */
+  /** Label par defaut pour le bouton d'ouverture du dropdown */
   placeholderText?: string;
-  /** Affiche les valeurs sur une simple ligne */
+  /** Affiche les valeurs sur une simple ligne pour le bouton d'ouverture du dropdown */
   inlineValues?: boolean;
+  /**
+   * Remplace le bouton d'ouverture du dropdown par un custom.
+   * Ne pas donner de tag button mais ce que vous mettriez à l'intérieur
+   * car le MultiSelectFilter possède déjà un boutton afin de gérer l'ouverture et la fermeture du dropdown.
+   */
+  customOpenButton?: React.ReactNode;
 }) => {
   const isAllSelected = getIsAllSelected(values);
 
@@ -140,6 +163,7 @@ export const MultiSelectFilter = <T extends string>({
         options={options}
         inlineValues={inlineValues}
         placeholderText={placeholderText}
+        customOpenButton={customOpenButton}
       />
     </DropdownFloater>
   );
