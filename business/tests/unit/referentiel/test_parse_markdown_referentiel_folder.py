@@ -76,7 +76,6 @@ def test_build_markdown_action_node_from_ok_folder():
                                     description="<p>Description de l'action 1.1.1</p>\n",
                                     contexte="<p>Contexte de l'action 1.1.1</p>\n",
                                     exemples="<p>Exemples de l'action 1.1.1</p>\n",
-                                    preuve="<p>preuve de l'action 1.1.1</p>\n",
                                     ressources="<p>Ressources de l'action 1.1.1</p>\n",
                                     points=20.0,
                                     pourcentage=None,

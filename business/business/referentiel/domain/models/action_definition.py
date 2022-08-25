@@ -18,7 +18,6 @@ class ActionDefinition:
     description: str
     contexte: str
     exemples: str
-    preuve: str
     ressources: str
     perimetre_evaluation: str
     reduction_potentiel: str
