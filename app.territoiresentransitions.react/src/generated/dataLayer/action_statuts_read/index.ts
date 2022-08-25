@@ -11,7 +11,6 @@ export interface IActionStatutsRead {
   nom: string;
   description: string;
   have_exemples: boolean;
-  have_preuve: boolean;
   have_ressources: boolean;
   have_reduction_potentiel: boolean;
   have_perimetre_evaluation: boolean;

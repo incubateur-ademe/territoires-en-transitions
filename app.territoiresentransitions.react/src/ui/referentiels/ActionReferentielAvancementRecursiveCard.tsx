@@ -3,10 +3,7 @@ import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
 import {ActionReferentielDisplayTitle} from 'ui/referentiels/ActionReferentielDisplayTitle';
 import {ActionReferentielDescription} from 'ui/referentiels/ActionReferentielDescription';
 import {Spacer} from 'ui/shared/Spacer';
-import {
-  ActionExemplesExpandPanel,
-  ActionPreuvesExpandPanel,
-} from 'ui/shared/actions/ActionExpandPanels';
+import {ActionExemplesExpandPanel} from 'ui/shared/actions/ActionExpandPanels';
 import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
 import {useActionSummaryChildren} from 'core-logic/hooks/referentiel';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
@@ -61,7 +58,6 @@ export const ActionReferentielAvancementCard = ({
         <ActionReferentielDescription action={action} />
         {action.have_questions && <PersoPotentiel actionDef={action} />}
         {action.have_exemples && <ActionExemplesExpandPanel action={action} />}
-        {action.have_preuve && <ActionPreuvesExpandPanel action={action} />}
         <ActionCommentaire action={action} />
       </div>
       <div className="w-2/8 pl-4">

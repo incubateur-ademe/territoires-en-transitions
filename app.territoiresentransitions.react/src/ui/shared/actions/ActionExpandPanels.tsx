@@ -1,8 +1,5 @@
 import {addTargetToContentAnchors} from 'utils/content';
-import {
-  CrossExpandPanelBase,
-  CrossExpandPanelWithNode,
-} from 'ui/shared/CrossExpandPanelWithHtmlContent';
+import {CrossExpandPanelBase} from 'ui/shared/CrossExpandPanelWithHtmlContent';
 import {
   useActionContexte,
   useActionExemples,
@@ -11,7 +8,6 @@ import {
   useActionResources,
 } from 'core-logic/hooks/referentiel';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {ActionPreuvePanel} from './ActionPreuvePanel';
 import {useToggle} from '../useToggle';
 import {ChangeEvent} from 'react';
 
@@ -74,25 +70,6 @@ export const ActionExemplesExpandPanel = ({
       opened={opened}
       onToggle={handleToggle}
     />
-  );
-};
-
-export const ActionPreuvesExpandPanel = ({
-  action,
-}: {
-  action: ActionDefinitionSummary;
-}) => {
-  return (
-    <div
-      className="ActionExpandPanelAdemeContent"
-      data-test={`PreuvesPanel-${action.identifiant}`}
-    >
-      <div className="border-gray-300">
-        <CrossExpandPanelWithNode title="Preuves">
-          <ActionPreuvePanel action={action} />
-        </CrossExpandPanelWithNode>
-      </div>
-    </div>
   );
 };
 
