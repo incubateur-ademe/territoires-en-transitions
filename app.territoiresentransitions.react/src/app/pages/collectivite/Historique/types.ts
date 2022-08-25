@@ -43,6 +43,7 @@ export type THistoriqueItem = {
   previous_precision: string | null;
 
   /** modif. d'une réponse à une question de personnalisation des référentiels */
+  action_ids: string[] | null;
   question_type: keyof typeof QuestionType | null;
   question_id: string | null;
   question_formulation: string | null;

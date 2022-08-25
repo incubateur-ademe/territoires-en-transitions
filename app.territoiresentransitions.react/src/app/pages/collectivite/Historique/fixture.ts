@@ -9,6 +9,7 @@ export const fakeBaseHistorique: THistoriqueItem = {
   previous_modified_by: null,
   previous_modified_at: null,
   action_id: null,
+  action_ids: null,
   action_identifiant: null,
   action_nom: null,
   tache_identifiant: null,
