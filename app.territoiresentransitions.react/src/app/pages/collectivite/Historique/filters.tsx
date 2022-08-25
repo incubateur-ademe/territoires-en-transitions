@@ -1,4 +1,4 @@
-export const NB_ITEMS_PER_PAGE = 3;
+export const NB_ITEMS_PER_PAGE = 10;
 
 export type TFilters = {
   /** filtre par collectivité */
