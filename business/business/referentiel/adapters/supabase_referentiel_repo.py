@@ -18,6 +18,7 @@ from business.referentiel.domain.models.action_children import ActionChildren
 from business.referentiel.domain.models.action_definition import ActionDefinition
 from business.referentiel.domain.models.action_computed_point import ActionComputedPoint
 from business.referentiel.domain.models.indicateur import Indicateur, IndicateurId
+from business.referentiel.domain.models.preuve import Preuve
 from business.utils.action_id import ActionId
 from business.utils.supabase_repo import SupabaseRepository
 
@@ -186,6 +187,23 @@ class SupabaseReferentielRepository(SupabaseRepository, AbstractReferentielRepos
                     for indicateur in indicateurs
                 ]
             ),
+        )
+
+    def upsert_preuves(
+        self,
+        preuves: List[Preuve],
+    ):
+        self.client.rpc.call(
+            supabase_names.rpc.upsert_preuves,
+            preuve_definitions=[
+                {
+                    "id": preuve.id,
+                    "nom": preuve.nom,
+                    "action_id": preuve.action_id,
+                    "description": preuve.description,
+                }
+                for preuve in preuves
+            ],
         )
 
     def update_referentiel_actions(
