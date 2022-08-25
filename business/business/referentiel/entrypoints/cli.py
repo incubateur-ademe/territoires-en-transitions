@@ -36,6 +36,8 @@ EVENT_HANDLERS: Dict[Type[events.DomainEvent], List[Type[UseCase]]] = {
         ParseAndConvertMarkdownIndicateursToEntities
     ],
     events.IndicateurMarkdownConvertedToEntities: [StoreReferentielIndicateurs],
+    # Preuves
+    events.ParseAndStorePreuvesTriggered: [ParseAndStorePreuves],
     # Personnalisation : Questions and regles
     events.ParseAndConvertMarkdownPersonnalisationsTriggered: [
         ParseAndConvertMarkdownReferentielQuestions
@@ -55,6 +57,7 @@ EVENT_HANDLERS: Dict[Type[events.DomainEvent], List[Type[UseCase]]] = {
     events.IndicateurMarkdownParsingOrConvertionFailed: [SystemExit],
     events.MarkdownReferentielNodeInconsistencyFound: [SystemExit],
     events.QuestionAndReglesCheckingFailed: [SystemExit],
+    DomainFailureEvent: [SystemExit],
 }
 
 
@@ -81,6 +84,8 @@ class ReferentielConfig(Config):
             ParseAndConvertMarkdownIndicateursToEntities(
                 self.domain_message_bus, self.referentiel_repo
             ),
+            # Preuves
+            ParseAndStorePreuves(self.domain_message_bus, self.referentiel_repo),
             # Personnalisation
             ParseAndConvertMarkdownReferentielQuestions(
                 self.domain_message_bus, self.referentiel_repo
@@ -156,7 +161,11 @@ def prepare_bus_to_store_referentiels(
             markdown_folder=markdown_folder,
             referentiel=ref_to_update,
         )
-
+    domain_message_bus.publish_event(
+        events.ParseAndStorePreuvesTriggered(
+            os.path.join(markdown_folder, "preuves"),
+        )
+    )
     return
 
 
@@ -275,6 +284,7 @@ def update_questions_and_personnalisations(
     Hence, markdown to parse will then be:
         - f"{markdown_foder}/referentiels/{referentiel}/*md"
         - f"{markdown_foder}/indicateurs/{referentiel}/*md"
+        - f"{markdown_foder}/preuves/{referentiel}/*md"
     """
     prepare_bus_to_update_questions_and_personnalisations(
         repo_option,

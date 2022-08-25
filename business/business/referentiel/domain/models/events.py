@@ -102,6 +102,11 @@ class ParseAndConvertMarkdownPersonnalisationsTriggered(DomainEvent):
 
 
 @dataclass
+class ParseAndStorePreuvesTriggered(DomainEvent):
+    folder_path: str
+
+
+@dataclass
 class QuestionMarkdownParsingOrConvertionFailed(DomainFailureEvent):
     pass
 
