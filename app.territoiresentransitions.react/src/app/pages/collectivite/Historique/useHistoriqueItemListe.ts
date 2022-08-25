@@ -47,7 +47,11 @@ export const fetchHistorique = async (
 };
 
 // les mutations "écoutées" pour déclencher le rechargement de l'historique
-const OBSERVED_MUTATION_KEYS = ['action_statut', 'action_commentaire'];
+const OBSERVED_MUTATION_KEYS = [
+  'action_statut',
+  'action_commentaire',
+  'save_reponse',
+];
 
 /**
  * Les dernières modifications d'une collectivité
