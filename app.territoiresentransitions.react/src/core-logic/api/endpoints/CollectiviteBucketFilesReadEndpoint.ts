@@ -17,7 +17,10 @@ class CollectiviteBucketFilesReadEndpoint {
 
     if (!bucket_id) return [];
 
-    const {data, error} = await supabaseClient.storage.from(bucket_id).list();
+    const {data, error} = await supabaseClient.storage
+      .from(bucket_id)
+      // en attendant de paginer la bibliothèque on charge plus que les 100 items par défaut
+      .list(undefined, {limit: 400});
     if (error) throw error?.message;
     return data || [];
   }
