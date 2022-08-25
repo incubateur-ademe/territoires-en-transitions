@@ -62,40 +62,38 @@ const MultiSelectFilterButton = forwardRef(
   }
 );
 
-type MultiSelectFilterProps = {
-  /** valeurs des options sélectionnées */
-  values: string[];
-  /** Liste des options */
-  options: {value: string; label: string}[];
-  /** appelée quand les options sélectionnée changent (reçoit les nouvelles valeurs) */
-  onChange: (value: string[]) => void;
-  /** Texte pour le label par defaut pour le composant   */
-  placeholderText?: string;
-  /** Affiche les valeurs sur une simple ligne */
-  inlineValues?: boolean;
-};
-
 export const ITEM_ALL = 'tous';
 
-export const MultiSelectFilter = ({
+export const MultiSelectFilter = <T extends string>({
   values,
   options,
   onChange,
   inlineValues,
   placeholderText,
-}: MultiSelectFilterProps) => {
+}: {
+  /** valeurs des options sélectionnées */
+  values: T[];
+  /** Liste des options */
+  options: {value: T; label: string}[];
+  /** appelée quand les options sélectionnée changent (reçoit les nouvelles valeurs) */
+  onChange: (value: T[]) => void;
+  /** Texte pour le label par defaut pour le composant   */
+  placeholderText?: string;
+  /** Affiche les valeurs sur une simple ligne */
+  inlineValues?: boolean;
+}) => {
   const isAllSelected = getIsAllSelected(values);
 
   // gère la sélection/déselection d'item dans la liste
   const handleChange = (value: string) => {
     // si la valeur existe déjà
-    if (values.indexOf(value) > -1) {
+    if (values.indexOf(value as T) > -1) {
       // on supprime la valeur
       const newValues = values.filter(v => v !== value);
       // évite d'avoir aucun item sélectionné
       if (newValues.length === 0) {
         if (!isAllSelected) {
-          onChange([ITEM_ALL]);
+          onChange([ITEM_ALL as T]);
         }
       } else {
         onChange(newValues);
@@ -103,11 +101,11 @@ export const MultiSelectFilter = ({
     } else {
       // sinon on ajoute la valeur
       const newValues = values;
-      newValues.push(value);
+      newValues.push(value as T);
       const newValuesIncludesAll = getIsAllSelected(newValues);
       // supprime les autres items de la sélection quand "tous" est sélectionné
       if (newValuesIncludesAll && !isAllSelected) {
-        onChange([ITEM_ALL]);
+        onChange([ITEM_ALL as T]);
       } else {
         // sinon évite que "tous" reste dans la nouvelle sélection
         onChange(newValues.filter(f => f !== ITEM_ALL));
