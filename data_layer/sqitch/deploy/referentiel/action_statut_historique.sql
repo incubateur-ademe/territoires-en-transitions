@@ -27,23 +27,42 @@ alter table historique.action_statut
 create function historique.save_action_statut() returns trigger
 as
 $$
+declare
+    updated integer;
 begin
-    insert into historique.action_statut
-    values (default,
-            new.collectivite_id,
-            new.action_id,
-            new.avancement,
-            old.avancement,
-            new.avancement_detaille,
-            old.avancement_detaille,
-            new.concerne,
-            old.concerne,
-            auth.uid(),
-            old.modified_by,
-            new.modified_at,
-            old.modified_at);
+    update historique.action_statut
+    set avancement                   = new.avancement,
+        avancement_detaille          = new.avancement_detaille,
+        modified_at                  = new.modified_at
+    where id in (select id
+                 from historique.action_statut
+                 where collectivite_id = new.collectivite_id
+                   and action_id = new.action_id
+                   and modified_by = new.modified_by
+                   and modified_at > new.modified_at - interval '1 hour'
+                 order by modified_by desc
+                 limit 1)
+    returning id into updated;
+
+    if updated is null
+    then
+        insert into historique.action_statut
+        values (default,
+                new.collectivite_id,
+                new.action_id,
+                new.avancement,
+                old.avancement,
+                new.avancement_detaille,
+                old.avancement_detaille,
+                new.concerne,
+                old.concerne,
+                auth.uid(),
+                old.modified_by,
+                new.modified_at,
+                old.modified_at);
+    end if;
     return new;
-end;
+end ;
 $$ language plpgsql security definer;
 
 create trigger save_history
