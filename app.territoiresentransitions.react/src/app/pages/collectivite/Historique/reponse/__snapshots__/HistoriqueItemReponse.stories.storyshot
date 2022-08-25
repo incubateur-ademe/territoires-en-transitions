@@ -3,6 +3,7 @@
 exports[`Storyshots app/pages/collectivite/Historique/reponse/HistoriqueItemReponse Premiere Reponse Question Binaire 1`] = `
 <div
   className="flex flex-col gap-4 md:flex-row md:gap-6"
+  data-test="item"
 >
   <div
     className="pr-6 w-min md:border-r md:border-gray-200"
@@ -14,16 +15,17 @@ exports[`Storyshots app/pages/collectivite/Historique/reponse/HistoriqueItemRepo
     </span>
   </div>
   <div
-    className="flex flex-col overflow-hidden md:flex-row"
+    className="flex flex-col flex-grow overflow-hidden md:flex-row"
   >
     <div
       className="mr-4 mt-0.5 text-blue-600 fr-fi-information-fill"
     />
     <div
-      className="flex flex-col overflow-hidden"
+      className="flex flex-col flex-grow overflow-hidden"
     >
       <div
         className="mb-4"
+        data-test="desc"
       >
         <p
           className="mb-2 font-bold text-blue-600"
@@ -54,6 +56,7 @@ exports[`Storyshots app/pages/collectivite/Historique/reponse/HistoriqueItemRepo
       </div>
       <div
         className="mb-4 border-t border-b border-gray-200"
+        data-test="detail-off"
       >
         <button
           className="flex items-center w-full py-4 px-2"
@@ -65,22 +68,9 @@ exports[`Storyshots app/pages/collectivite/Historique/reponse/HistoriqueItemRepo
             Afficher le détail
           </div>
           <div
-            className="ml-auto fr-fi-arrow-down-s-line duration-100 rotate-180"
+            className="ml-auto fr-fi-arrow-down-s-line duration-100"
           />
         </button>
-        <div
-          className="max-w-full p-2 mb-4 bg-gray-100"
-        >
-          <p>
-            Question : 
-            La collectivité est-elle chargée de la réalisation d'un "Programme local de prévention des déchets ménagers et assimilés" (PLPDMA) du fait de sa compétence collecte et/ou par délégation d'une autre collectivité ?
-          </p>
-          <div
-            className="max-w-full w-max p-2 border-2 border-green-400"
-          >
-            Non
-          </div>
-        </div>
       </div>
       <a
         className="flex items-center ml-auto fr-btn fr-btn--secondary !px-4 border border-bf500"
@@ -101,6 +91,7 @@ exports[`Storyshots app/pages/collectivite/Historique/reponse/HistoriqueItemRepo
 exports[`Storyshots app/pages/collectivite/Historique/reponse/HistoriqueItemReponse Premiere Reponse Question Choix 1`] = `
 <div
   className="flex flex-col gap-4 md:flex-row md:gap-6"
+  data-test="item"
 >
   <div
     className="pr-6 w-min md:border-r md:border-gray-200"
@@ -112,16 +103,17 @@ exports[`Storyshots app/pages/collectivite/Historique/reponse/HistoriqueItemRepo
     </span>
   </div>
   <div
-    className="flex flex-col overflow-hidden md:flex-row"
+    className="flex flex-col flex-grow overflow-hidden md:flex-row"
   >
     <div
       className="mr-4 mt-0.5 text-blue-600 fr-fi-information-fill"
     />
     <div
-      className="flex flex-col overflow-hidden"
+      className="flex flex-col flex-grow overflow-hidden"
     >
       <div
         className="mb-4"
+        data-test="desc"
       >
         <p
           className="mb-2 font-bold text-blue-600"
@@ -152,6 +144,7 @@ exports[`Storyshots app/pages/collectivite/Historique/reponse/HistoriqueItemRepo
       </div>
       <div
         className="mb-4 border-t border-b border-gray-200"
+        data-test="detail-off"
       >
         <button
           className="flex items-center w-full py-4 px-2"
@@ -163,22 +156,9 @@ exports[`Storyshots app/pages/collectivite/Historique/reponse/HistoriqueItemRepo
             Afficher le détail
           </div>
           <div
-            className="ml-auto fr-fi-arrow-down-s-line duration-100 rotate-180"
+            className="ml-auto fr-fi-arrow-down-s-line duration-100"
           />
         </button>
-        <div
-          className="max-w-full p-2 mb-4 bg-gray-100"
-        >
-          <p>
-            Question : 
-            La collectivité a-t-elle la compétence voirie ?
-          </p>
-          <div
-            className="max-w-full w-max p-2 border-2 border-green-400"
-          >
-            Oui sur l'ensemble du territoire
-          </div>
-        </div>
       </div>
       <a
         className="flex items-center ml-auto fr-btn fr-btn--secondary !px-4 border border-bf500"
@@ -199,6 +179,7 @@ exports[`Storyshots app/pages/collectivite/Historique/reponse/HistoriqueItemRepo
 exports[`Storyshots app/pages/collectivite/Historique/reponse/HistoriqueItemReponse Premiere Reponse Question Proportion 1`] = `
 <div
   className="flex flex-col gap-4 md:flex-row md:gap-6"
+  data-test="item"
 >
   <div
     className="pr-6 w-min md:border-r md:border-gray-200"
@@ -210,16 +191,17 @@ exports[`Storyshots app/pages/collectivite/Historique/reponse/HistoriqueItemRepo
     </span>
   </div>
   <div
-    className="flex flex-col overflow-hidden md:flex-row"
+    className="flex flex-col flex-grow overflow-hidden md:flex-row"
   >
     <div
       className="mr-4 mt-0.5 text-blue-600 fr-fi-information-fill"
     />
     <div
-      className="flex flex-col overflow-hidden"
+      className="flex flex-col flex-grow overflow-hidden"
     >
       <div
         className="mb-4"
+        data-test="desc"
       >
         <p
           className="mb-2 font-bold text-blue-600"
@@ -250,6 +232,7 @@ exports[`Storyshots app/pages/collectivite/Historique/reponse/HistoriqueItemRepo
       </div>
       <div
         className="mb-4 border-t border-b border-gray-200"
+        data-test="detail-off"
       >
         <button
           className="flex items-center w-full py-4 px-2"
@@ -261,22 +244,9 @@ exports[`Storyshots app/pages/collectivite/Historique/reponse/HistoriqueItemRepo
             Afficher le détail
           </div>
           <div
-            className="ml-auto fr-fi-arrow-down-s-line duration-100 rotate-180"
+            className="ml-auto fr-fi-arrow-down-s-line duration-100"
           />
         </button>
-        <div
-          className="max-w-full p-2 mb-4 bg-gray-100"
-        >
-          <p>
-            Question : 
-            Quelle est la part de la collectivité dans la structure compétente en matière de développement économique ?
-          </p>
-          <div
-            className="max-w-full w-max p-2 border-2 border-green-400"
-          >
-            25%
-          </div>
-        </div>
       </div>
       <a
         className="flex items-center ml-auto fr-btn fr-btn--secondary !px-4 border border-bf500"
@@ -297,6 +267,7 @@ exports[`Storyshots app/pages/collectivite/Historique/reponse/HistoriqueItemRepo
 exports[`Storyshots app/pages/collectivite/Historique/reponse/HistoriqueItemReponse Reponse Question Binaire Modifiee 1`] = `
 <div
   className="flex flex-col gap-4 md:flex-row md:gap-6"
+  data-test="item"
 >
   <div
     className="pr-6 w-min md:border-r md:border-gray-200"
@@ -308,16 +279,17 @@ exports[`Storyshots app/pages/collectivite/Historique/reponse/HistoriqueItemRepo
     </span>
   </div>
   <div
-    className="flex flex-col overflow-hidden md:flex-row"
+    className="flex flex-col flex-grow overflow-hidden md:flex-row"
   >
     <div
       className="mr-4 mt-0.5 text-blue-600 fr-fi-information-fill"
     />
     <div
-      className="flex flex-col overflow-hidden"
+      className="flex flex-col flex-grow overflow-hidden"
     >
       <div
         className="mb-4"
+        data-test="desc"
       >
         <p
           className="mb-2 font-bold text-blue-600"
@@ -348,6 +320,7 @@ exports[`Storyshots app/pages/collectivite/Historique/reponse/HistoriqueItemRepo
       </div>
       <div
         className="mb-4 border-t border-b border-gray-200"
+        data-test="detail-off"
       >
         <button
           className="flex items-center w-full py-4 px-2"
@@ -359,31 +332,9 @@ exports[`Storyshots app/pages/collectivite/Historique/reponse/HistoriqueItemRepo
             Afficher le détail
           </div>
           <div
-            className="ml-auto fr-fi-arrow-down-s-line duration-100 rotate-180"
+            className="ml-auto fr-fi-arrow-down-s-line duration-100"
           />
         </button>
-        <div
-          className="max-w-full p-2 mb-4 bg-gray-100"
-        >
-          <p>
-            Question : 
-            La collectivité est-elle chargée de la réalisation d'un "Programme local de prévention des déchets ménagers et assimilés" (PLPDMA) du fait de sa compétence collecte et/ou par délégation d'une autre collectivité ?
-          </p>
-          <div
-            className="max-w-full w-max p-2 border-2 mb-4 border-red-400"
-          >
-            <span
-              className="line-through"
-            >
-              Non
-            </span>
-          </div>
-          <div
-            className="max-w-full w-max p-2 border-2 border-green-400"
-          >
-            Oui
-          </div>
-        </div>
       </div>
       <a
         className="flex items-center ml-auto fr-btn fr-btn--secondary !px-4 border border-bf500"
@@ -404,6 +355,7 @@ exports[`Storyshots app/pages/collectivite/Historique/reponse/HistoriqueItemRepo
 exports[`Storyshots app/pages/collectivite/Historique/reponse/HistoriqueItemReponse Reponse Question Choix Modifiee 1`] = `
 <div
   className="flex flex-col gap-4 md:flex-row md:gap-6"
+  data-test="item"
 >
   <div
     className="pr-6 w-min md:border-r md:border-gray-200"
@@ -415,16 +367,17 @@ exports[`Storyshots app/pages/collectivite/Historique/reponse/HistoriqueItemRepo
     </span>
   </div>
   <div
-    className="flex flex-col overflow-hidden md:flex-row"
+    className="flex flex-col flex-grow overflow-hidden md:flex-row"
   >
     <div
       className="mr-4 mt-0.5 text-blue-600 fr-fi-information-fill"
     />
     <div
-      className="flex flex-col overflow-hidden"
+      className="flex flex-col flex-grow overflow-hidden"
     >
       <div
         className="mb-4"
+        data-test="desc"
       >
         <p
           className="mb-2 font-bold text-blue-600"
@@ -455,6 +408,7 @@ exports[`Storyshots app/pages/collectivite/Historique/reponse/HistoriqueItemRepo
       </div>
       <div
         className="mb-4 border-t border-b border-gray-200"
+        data-test="detail-off"
       >
         <button
           className="flex items-center w-full py-4 px-2"
@@ -466,31 +420,9 @@ exports[`Storyshots app/pages/collectivite/Historique/reponse/HistoriqueItemRepo
             Afficher le détail
           </div>
           <div
-            className="ml-auto fr-fi-arrow-down-s-line duration-100 rotate-180"
+            className="ml-auto fr-fi-arrow-down-s-line duration-100"
           />
         </button>
-        <div
-          className="max-w-full p-2 mb-4 bg-gray-100"
-        >
-          <p>
-            Question : 
-            La collectivité a-t-elle la compétence voirie ?
-          </p>
-          <div
-            className="max-w-full w-max p-2 border-2 mb-4 border-red-400"
-          >
-            <span
-              className="line-through"
-            >
-              Oui sur l'ensemble du territoire
-            </span>
-          </div>
-          <div
-            className="max-w-full w-max p-2 border-2 border-green-400"
-          >
-            Oui uniquement sur les trottoirs, parkings ou zones d'activités et industrielles
-          </div>
-        </div>
       </div>
       <a
         className="flex items-center ml-auto fr-btn fr-btn--secondary !px-4 border border-bf500"
@@ -511,6 +443,7 @@ exports[`Storyshots app/pages/collectivite/Historique/reponse/HistoriqueItemRepo
 exports[`Storyshots app/pages/collectivite/Historique/reponse/HistoriqueItemReponse Reponse Question Proportion Modifiee 1`] = `
 <div
   className="flex flex-col gap-4 md:flex-row md:gap-6"
+  data-test="item"
 >
   <div
     className="pr-6 w-min md:border-r md:border-gray-200"
@@ -522,16 +455,17 @@ exports[`Storyshots app/pages/collectivite/Historique/reponse/HistoriqueItemRepo
     </span>
   </div>
   <div
-    className="flex flex-col overflow-hidden md:flex-row"
+    className="flex flex-col flex-grow overflow-hidden md:flex-row"
   >
     <div
       className="mr-4 mt-0.5 text-blue-600 fr-fi-information-fill"
     />
     <div
-      className="flex flex-col overflow-hidden"
+      className="flex flex-col flex-grow overflow-hidden"
     >
       <div
         className="mb-4"
+        data-test="desc"
       >
         <p
           className="mb-2 font-bold text-blue-600"
@@ -562,6 +496,7 @@ exports[`Storyshots app/pages/collectivite/Historique/reponse/HistoriqueItemRepo
       </div>
       <div
         className="mb-4 border-t border-b border-gray-200"
+        data-test="detail-off"
       >
         <button
           className="flex items-center w-full py-4 px-2"
@@ -573,31 +508,9 @@ exports[`Storyshots app/pages/collectivite/Historique/reponse/HistoriqueItemRepo
             Afficher le détail
           </div>
           <div
-            className="ml-auto fr-fi-arrow-down-s-line duration-100 rotate-180"
+            className="ml-auto fr-fi-arrow-down-s-line duration-100"
           />
         </button>
-        <div
-          className="max-w-full p-2 mb-4 bg-gray-100"
-        >
-          <p>
-            Question : 
-            Quelle est la part de la collectivité dans la structure compétente en matière de développement économique ?
-          </p>
-          <div
-            className="max-w-full w-max p-2 border-2 mb-4 border-red-400"
-          >
-            <span
-              className="line-through"
-            >
-              25%
-            </span>
-          </div>
-          <div
-            className="max-w-full w-max p-2 border-2 border-green-400"
-          >
-            50%
-          </div>
-        </div>
       </div>
       <a
         className="flex items-center ml-auto fr-btn fr-btn--secondary !px-4 border border-bf500"
