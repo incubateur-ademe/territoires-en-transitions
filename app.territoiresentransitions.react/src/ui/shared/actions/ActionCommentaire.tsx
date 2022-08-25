@@ -48,6 +48,7 @@ export const ActionCommentaireField = ({
         setCommentaire(event.currentTarget.value)
       }
       onBlur={() =>
+        commentaire.trim() !== (initialValue || '') &&
         saveActionCommentaire({
           action_id: action.id,
           collectivite_id: collectivite.collectivite_id,
