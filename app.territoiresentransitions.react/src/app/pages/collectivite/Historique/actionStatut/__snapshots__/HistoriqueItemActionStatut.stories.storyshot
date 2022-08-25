@@ -10,6 +10,7 @@ exports[`Storyshots app/pages/collectivite/Historique/actionStatut/HistoriqueIte
   >
     <span
       className="py-1 px-2 text-sm uppercase whitespace-nowrap text-blue-600 bg-blue-100 rounded-md"
+      title="à 17:12"
     >
       08 août 2022
     </span>
@@ -119,6 +120,7 @@ exports[`Storyshots app/pages/collectivite/Historique/actionStatut/HistoriqueIte
   >
     <span
       className="py-1 px-2 text-sm uppercase whitespace-nowrap text-blue-600 bg-blue-100 rounded-md"
+      title="à 17:12"
     >
       08 août 2022
     </span>
@@ -228,6 +230,7 @@ exports[`Storyshots app/pages/collectivite/Historique/actionStatut/HistoriqueIte
   >
     <span
       className="py-1 px-2 text-sm uppercase whitespace-nowrap text-blue-600 bg-blue-100 rounded-md"
+      title="à 17:12"
     >
       08 août 2022
     </span>
@@ -337,6 +340,7 @@ exports[`Storyshots app/pages/collectivite/Historique/actionStatut/HistoriqueIte
   >
     <span
       className="py-1 px-2 text-sm uppercase whitespace-nowrap text-blue-600 bg-blue-100 rounded-md"
+      title="à 17:12"
     >
       08 août 2022
     </span>
@@ -446,6 +450,7 @@ exports[`Storyshots app/pages/collectivite/Historique/actionStatut/HistoriqueIte
   >
     <span
       className="py-1 px-2 text-sm uppercase whitespace-nowrap text-blue-600 bg-blue-100 rounded-md"
+      title="à 17:12"
     >
       08 août 2022
     </span>
