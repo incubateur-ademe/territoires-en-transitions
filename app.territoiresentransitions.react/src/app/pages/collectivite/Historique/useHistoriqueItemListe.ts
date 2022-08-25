@@ -24,7 +24,9 @@ export const fetchHistorique = async (
 
   // filtre optionnel par action
   if (action_id) {
-    query = query.like('action_id', `${action_id}%`);
+    query = query.or(
+      `action_ids.cs.{${action_id}},action_id.like.${action_id}*`
+    );
   }
 
   // Pagination
