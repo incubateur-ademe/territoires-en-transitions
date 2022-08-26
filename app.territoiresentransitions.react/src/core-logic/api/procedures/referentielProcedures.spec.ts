@@ -26,7 +26,7 @@ describe('Retrieve referentiel down to action', () => {
     const partialAxe: Partial<ActionDefinitionSummary> = {
       id: 'eci_1',
       referentiel: 'eci',
-      children: ['eci_1.1', 'eci_1.3', 'eci_1.2'],
+      children: ['eci_1.3', 'eci_1.1', 'eci_1.2'],
       depth: 1,
       type: 'axe',
       identifiant: '1',
@@ -35,18 +35,19 @@ describe('Retrieve referentiel down to action', () => {
       id: 'eci_1.1',
       referentiel: 'eci',
       children: [
+        'eci_1.1.2',
         'eci_1.1.1',
         'eci_1.1.5',
         'eci_1.1.4',
         'eci_1.1.3',
-        'eci_1.1.2',
       ],
       depth: 2,
       type: 'action',
       identifiant: '1.1',
     };
-
     const procedureResponse = await referentielDownToAction('eci');
+    console.log('procedureResponse ', procedureResponse);
+
     expect(procedureResponse).toEqual(
       expect.arrayContaining([
         expect.objectContaining(partialRoot),
@@ -62,7 +63,13 @@ describe('Retrieve action down to tache', () => {
     const partialAction: Partial<ActionDefinitionSummary> = {
       id: 'eci_1.1.1',
       referentiel: 'eci',
-      children: ['eci_1.1.1.3', 'eci_1.1.1.4', 'eci_1.1.1.1', 'eci_1.1.1.2'],
+      children: [
+        'eci_1.1.1.4',
+        'eci_1.1.1.5',
+        'eci_1.1.1.1',
+        'eci_1.1.1.2',
+        'eci_1.1.1.3',
+      ],
       depth: 3,
       type: 'sous-action',
       identifiant: '1.1.1',
@@ -78,7 +85,7 @@ describe('Retrieve action down to tache', () => {
 
     const procedureResponse = await actionDownToTache('eci', '1.1.1');
 
-    expect(procedureResponse).toHaveLength(5);
+    expect(procedureResponse).toHaveLength(6);
     expect(procedureResponse).toEqual(
       expect.arrayContaining([
         expect.objectContaining(partialAction),
