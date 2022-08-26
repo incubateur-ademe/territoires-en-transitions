@@ -84,6 +84,7 @@ class SqlReferentielRepository(InMemoryReferentielRepository):
         with open(self.path, "a") as f:
             f.write(f"{sql}\n")
 
-    def from_sql(self):  # TODO ?
+    def from_sql(self):
         self._actions_by_ref = {}
         self._indicateurs = []
+        self._preuves = []

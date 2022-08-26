@@ -249,6 +249,7 @@ insert into action_relation(id, referentiel, parent) values ('eci_1.1.1.1', 'eci
 insert into action_relation(id, referentiel, parent) values ('eci_1.1.1.2', 'eci', 'eci_1.1.1');
 insert into action_relation(id, referentiel, parent) values ('eci_1.1.1.3', 'eci', 'eci_1.1.1');
 insert into action_relation(id, referentiel, parent) values ('eci_1.1.1.4', 'eci', 'eci_1.1.1');
+insert into action_relation(id, referentiel, parent) values ('eci_1.1.1.5', 'eci', 'eci_1.1.1');
 insert into action_relation(id, referentiel, parent) values ('eci_1.1.2.1', 'eci', 'eci_1.1.2');
 insert into action_relation(id, referentiel, parent) values ('eci_1.1.2.2', 'eci', 'eci_1.1.2');
 insert into action_relation(id, referentiel, parent) values ('eci_1.1.2.3', 'eci', 'eci_1.1.2');
@@ -365,9 +366,9 @@ insert into action_relation(id, referentiel, parent) values ('eci_5.1.3.2', 'eci
 insert into action_relation(id, referentiel, parent) values ('eci_5.1.3.3', 'eci', 'eci_5.1.3');
 insert into action_relation(id, referentiel, parent) values ('eci_5.1.3.4', 'eci', 'eci_5.1.3');
 insert into action_relation(id, referentiel, parent) values ('eci_5.1.3.5', 'eci', 'eci_5.1.3');
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci', 'eci', '', 'Économie Circulaire', '', '', '', '', '', '', '', 500.0, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2', 'eci', '2', 'Développement des services de réduction, collecte et valorisation des déchets', '', '', '', '', '', '', '', 80.0, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.2', 'eci', '2.2', 'Améliorer l''efficience du système de collecte', '<p>Souvent responsable des plus gros impacts environnementaux et des plus gros coûts, la collecte des déchets doit être pensée pour être plus efficiente en elle-même mais également être en lien avec la prévention dans une logique de réduction des déchets et en cohérence avec les moyens de traitement.</p>
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci', 'eci', '', 'Économie Circulaire', '', '', '', '', '', '', 500.0, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2', 'eci', '2', 'Développement des services de réduction, collecte et valorisation des déchets', '', '', '', '', '', '', 80.0, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.2', 'eci', '2.2', 'Améliorer l''efficience du système de collecte', '<p>Souvent responsable des plus gros impacts environnementaux et des plus gros coûts, la collecte des déchets doit être pensée pour être plus efficiente en elle-même mais également être en lien avec la prévention dans une logique de réduction des déchets et en cohérence avec les moyens de traitement.</p>
 <p>L’optimisation de la collecte commence chez le producteur du déchet et doit donc être associée à une communication efficace notamment lors du déploiement de nouvelles solutions (passage de « Porte A Porte » (PAP) à « Par Apport Volontaire » (PAV), mise en place de la Tarification Incitative (TI), …).</p>
 <p>L’optimisation en elle-même consiste en un ensemble de questions dont les réponses doivent impérativement être adaptées au contexte local afin de garantir la qualité du service rendu : PAP ou PAV ? Quels flux doivent être collectés séparément et dans quels contenants ? Où placer les points de collecte pour qu''ils soient accessibles et réduire la longueur des tournées ? Quelles fréquences choisir pour les différentes tournées ? Quels véhicules de collecte utiliser et comment les utiliser efficacement ? Comment optimiser les moyens humains associés à la collecte ?</p>
 ', '<p><strong>Contexte</strong></p>
@@ -393,7 +394,7 @@ Caractérisation des déchets
 <a href="https://www.ademe.fr/collectivites-secteur-public/integrer-lenvironnement-domaines-dintervention/dechets/optimiser-collecte/collecte-obligations-dispositions-legales">
 Obligations et dispositions légales
 </a>
-', '', '', '<p><strong>Données de suivi</strong></p>
+', '', '<p><strong>Données de suivi</strong></p>
 <a href="https://www.ademe.fr/collectivites-secteur-public/integrer-lenvironnement-domaines-dintervention/dechets/connaitre/dossier/acceder-donnees/sinoer-dechets-alimenter-laide-a-decision-grace-a-donnees-detaillees">
 SINOE: Outil d’aide à la décision pour optimiser la politique déchets et les services associés
 </a>
@@ -469,8 +470,8 @@ Signalétique : livret, logos, panneaux, ressources photos
 <a href="https://www.sinoe.org/pageencapsule/index/idDoc/1182">
 CARADEME : guide d’aide à la réalisation de campagnes locales de caractérisation des déchets ménagers
 </a>
-', '', '', 15.0, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.2.0', 'eci', '2.2.0', 'Respecter la réglementation', '<p>La gestion de la collecte des déchets est conforme à la réglementation.</p>
+', '', '', 15.0, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.2.0', 'eci', '2.2.0', 'Respecter la réglementation', '<p>La gestion de la collecte des déchets est conforme à la réglementation.</p>
 <p>En cas de non-conformité, la collectivité doit justifier d''un plan d''actions correctives et de l''absence de contentieux.</p>
 ', '', '<p>Liste non exhaustive d''actions réglementaires à suivre :</p>
 <ul>
@@ -481,28 +482,8 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>La collectivité produit son rapport annuel déchets (Rapport du Service Public de Prévention et de Gestion des Déchets ménagers et assimilés (rapport SPPGD)</p>
 </li>
 </ul>
-', '<ul>
-<li>
-<p>Arrêté fixant les modalités de collecte des différentes catégories de déchets</p>
-</li>
-<li>
-<p>Rapport annuel déchets</p>
-</li>
-<li>
-<p>Autres documents de conformité règlementaire</p>
-</li>
-<li>
-<p>Délibération approuvant le règlement de collecte des déchets qui couvre l’ensemble du territoire administratif de l’EPCI. Si le règlement de collecte doit être mis à jour à la suite de changements (ex : fusion de collectivités), courrier d’engagement politique visant à réaliser la mise à jour du document.</p>
-</li>
-<li>
-<p>Dernier DUERP en date pour les activités liées à la compétence collecte.</p>
-</li>
-<li>
-<p>La liste des installations ICPE liées à la compétence collecte, en régie ou sous DSP</p>
-</li>
-</ul>
-', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.2.1', 'eci', '2.2.1', 'Connaitre l''état du service public de collecte des déchets', '<p>La collectivité a réalisé les études nécessaires en faveur d''une démarche d''optimisation du service public de collecte des déchets. Les études peuvent être réalisées en interne ou par un prestataire.</p>
+', '', '', '', null, null, 'bases');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.2.1', 'eci', '2.2.1', 'Connaitre l''état du service public de collecte des déchets', '<p>La collectivité a réalisé les études nécessaires en faveur d''une démarche d''optimisation du service public de collecte des déchets. Les études peuvent être réalisées en interne ou par un prestataire.</p>
 <p>Elle dispose notamment des analyses suivantes :</p>
 <ul>
 <li>
@@ -533,15 +514,11 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>Mener une étude en vue de la mise en place des solutions alternatives pour diminuer les flux traités : broyeurs de végétaux à disposition, collecte &quot;préservente&quot;, ...</p>
 </li>
 </ul>
-', '<ul>
-<li>Rapports issus des enquêtes et des études</li>
-</ul>
-<p>Les preuves ne doivent pas forcement être récentes (en terme de date), mais d''actualité par rapport à l''état du système de collecte en place.</p>
-', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.2.1.1', 'eci', '2.2.1.1', 'Disposer d''une analyse actualisée par rapport à l''état du système de collecte sur le taux d''utilisation du service', '', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.2.1.2', 'eci', '2.2.1.2', 'Disposer d''une analyse actualisée par rapport à l''état du système de collecte sur l''évaluation du parc de déchèteries', '', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.2.1.3', 'eci', '2.2.1.3', 'Disposer d''une étude préalable à la mise en place de solutions alternatives pour diminuer les flux traités', '', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.2.2', 'eci', '2.2.2', 'Définir un plan d''action', '<p>Sur la base des données du suivi ou des résultats des études, la collectivité défini un plan d''actions d''optimisation de la collecte, en cohérence avec les objectifs de la loi relative à la lutte contre le gaspillage et pour l''économie circulaire (loi AGEC).</p>
+', '', '', '', null, 20.0, 'bases');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.2.1.1', 'eci', '2.2.1.1', 'Disposer d''une analyse actualisée par rapport à l''état du système de collecte sur le taux d''utilisation du service', '', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.2.1.2', 'eci', '2.2.1.2', 'Disposer d''une analyse actualisée par rapport à l''état du système de collecte sur l''évaluation du parc de déchèteries', '', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.2.1.3', 'eci', '2.2.1.3', 'Disposer d''une étude préalable à la mise en place de solutions alternatives pour diminuer les flux traités', '', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.2.2', 'eci', '2.2.2', 'Définir un plan d''action', '<p>Sur la base des données du suivi ou des résultats des études, la collectivité défini un plan d''actions d''optimisation de la collecte, en cohérence avec les objectifs de la loi relative à la lutte contre le gaspillage et pour l''économie circulaire (loi AGEC).</p>
 ', '', '<p>Fixer des priorités d''optimisation du système de collecte sur une période donnée afin de ne pas mener tous les chantiers d''optimisation de front.</p>
 <p>En fonction de la stratégie et des moyens de la  collectivité,  les actions peuvent porter sur les objectifs extraits de la loi relative à la lutte contre le gaspillage et pour l''économie circulaire qui concernent la collecte :</p>
 <ul>
@@ -567,34 +544,23 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>Collecte élargie des produits usagés en magasin.</p>
 </li>
 </ul>
-', '<ul>
-<li>
-<p>Plan d''actions</p>
-</li>
-<li>
-<p>Délibération validant le plan d''actions</p>
-</li>
-</ul>
-', '', '', '', null, 30.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.2.2.1', 'eci', '2.2.2.1', 'Disposer d''un plan d''actions en cours d''élaboration', '', '', '', '', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.2.2.2', 'eci', '2.2.2.2', 'Disposer d''un plan d''actions validé par les élus', '', '', '', '', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.2.3', 'eci', '2.2.3', 'Mettre en œuvre le plan d''actions et communiquer', '<p>La collectivité met en œuvre le plan d''actions du Niveau 2. Elle pilote la mise en œuvre du plan d''actions pour s''assurer de l''atteinte des objectifs.</p>
+', '', '', '', null, 30.0, 'bases');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.2.2.1', 'eci', '2.2.2.1', 'Disposer d''un plan d''actions en cours d''élaboration', '', '', '', '', '', '', null, 50.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.2.2.2', 'eci', '2.2.2.2', 'Disposer d''un plan d''actions validé par les élus', '', '', '', '', '', '', null, 50.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.2.3', 'eci', '2.2.3', 'Mettre en œuvre le plan d''actions et communiquer', '<p>La collectivité met en œuvre le plan d''actions du Niveau 2. Elle pilote la mise en œuvre du plan d''actions pour s''assurer de l''atteinte des objectifs.</p>
 <p>Elle déploie la communication associée pour valoriser ses progrès.</p>
 <p>Une fois le plan d''actions  réalisé, la collectivité peut recommencer une nouvelle boucle d''optimisation.</p>
 ', '', '<p>Actions d''optimisation du service de collecte réalisées</p>
 <p>Adaptation et optimisation du réseau de déchèteries</p>
 <p>Solutions alternatives mises en œuvre</p>
 <p>Communication associée à chaque action définie et déployée</p>
-', '<ul>
-<li>Fiches actions Optigede incluant la stratégie de communication</li>
-</ul>
-', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.2.3.1', 'eci', '2.2.3.1', 'Disposer de bac pucés et contrôler l''accès aux déchèteries', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.2.3.2', 'eci', '2.2.3.2', 'Optimiser le réseau de déchèteries', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.2.3.3', 'eci', '2.2.3.3', 'Développer l''accueil de nouvelles filières en déchèteries (liées aux REP ou non)', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.2.3.4', 'eci', '2.2.3.4', 'Trier à la source les bio déchets', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.2.3.5', 'eci', '2.2.3.5', 'Étendre les consignes de tri', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.3', 'eci', '2.3', 'Améliorer la valorisation des déchets (dont organiques)', '<p>La collectivité privilégie le respect de la hiérarchie des modes de traitement et tend vers des taux de recyclage et de valorisation de plus en plus élevés.</p>
+', '', '', '', null, 50.0, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.2.3.1', 'eci', '2.2.3.1', 'Disposer de bac pucés et contrôler l''accès aux déchèteries', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.2.3.2', 'eci', '2.2.3.2', 'Optimiser le réseau de déchèteries', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.2.3.3', 'eci', '2.2.3.3', 'Développer l''accueil de nouvelles filières en déchèteries (liées aux REP ou non)', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.2.3.4', 'eci', '2.2.3.4', 'Trier à la source les bio déchets', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.2.3.5', 'eci', '2.2.3.5', 'Étendre les consignes de tri', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.3', 'eci', '2.3', 'Améliorer la valorisation des déchets (dont organiques)', '<p>La collectivité privilégie le respect de la hiérarchie des modes de traitement et tend vers des taux de recyclage et de valorisation de plus en plus élevés.</p>
 ', '<p><strong>Conformité réglementaire</strong></p>
 <a href="https://www.legifrance.gouv.fr/affichTexte.do?cidTexte=JORFTEXT000019818802&amp;categorieLien=id">
 Directive Déchets 2008/98/CE
@@ -672,7 +638,7 @@ Installation de préleveurs de fumées sur CVE
 <a href="https://optigede.ademe.fr/pdf/14143">
 Étude sur l''évolution des équipements de traitement des OMr (Finistère)
 </a>
-', '', '<p><strong>Installations de traitement</strong></p>
+', '<p><strong>Installations de traitement</strong></p>
 <a href="https://www.ademe.fr/installations-traitement-dechets-menagers-assimiles-france">
 Enquête sur les installations de traitement des ordures ménagères
 </a>
@@ -750,21 +716,13 @@ Fiche sur la composition matière de différents produits usuels
 Etude de faisabilité préalable à l’investissement dans une installation de regroupement, tri, valorisation des déchets du BTP
 </a>
  (pdf)
-', '', '', 20.0, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.3.0', 'eci', '2.3.0', 'Respecter la règlementation', '<p>Les installations et équipements sont conformes à la réglementation (tous flux et tous modes de traitement).</p>
+', '', '', 20.0, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.3.0', 'eci', '2.3.0', 'Respecter la règlementation', '<p>Les installations et équipements sont conformes à la réglementation (tous flux et tous modes de traitement).</p>
 <p>En cas de non-conformité, la collectivité doit justifier d''un plan d''actions correctives et de l''absence de contentieux</p>
 ', '', '<p>La collectivité respecte la hiérarchie des modes de traitement des déchets au titre de la directive 2008/98/CE et de l’article L.541-1 du Code de l’Environnement.</p>
 <p>Les usines d''incinération des ordures ménagères (UIOM) doivent respecter le seuil de performance légal.</p>
-', '<ul>
-<li>
-<p>Document Unique d''Evaluation de Risques Professionnels (DUERP)</p>
-</li>
-<li>
-<p>La liste des installations ICPE liées à la compétence traitement, en régie ou sous DSP, précisant le type d''installation et le niveau de conformité</p>
-</li>
-</ul>
-', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.3.1', 'eci', '2.3.1', 'Connaitre les flux', '<p>En amont de l’optimisation de la valorisation des déchets sur son territoire, la collectivité doit :</p>
+', '', '', '', null, null, 'bases');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.3.1', 'eci', '2.3.1', 'Connaitre les flux', '<p>En amont de l’optimisation de la valorisation des déchets sur son territoire, la collectivité doit :</p>
 <ul>
 <li>
 <p>Identifier les principaux flux de déchets du territoire et leur méthode de traitement actuelle.</p>
@@ -780,25 +738,19 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>Une étude peut être basée sur les travaux internes déjà disponibles ou réalisée sur mesure en interne ou par un sous-traitant.</p>
 <p>L''étude d''optimisation peut faire état du taux d''utilisation des installations actuelles et des pistes pour l''optimiser.</p>
 <p>L''étude peut mener vers la mise en place de nouvelle(s) filière(s).</p>
-', '<ul>
-<li>Rapport(s) d''étude(s)</li>
-</ul>
-', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.3.1.1', 'eci', '2.3.1.1', 'Connaitre les flux de déchets', '', '', '', '', '', '', '', null, 40.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.3.1.2', 'eci', '2.3.1.2', 'Disposer d''un état des lieux de l''utilisation des filières existantes', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.3.1.3', 'eci', '2.3.1.3', 'Etudier l''optimisation des filières envisageables', '', '', '', '', '', '', '', null, 40.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.3.2', 'eci', '2.3.2', 'Concrétiser les solutions issues des études d''optimisation', '<p>La collectivité concrétise les solutions issues des études d''optimisation. Elle met en place les conditions (financières et organisationnelles) pour favoriser l’émergence de ces solutions.</p>
+', '', '', '', null, null, 'bases');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.3.1.1', 'eci', '2.3.1.1', 'Connaitre les flux de déchets', '', '', '', '', '', '', null, 40.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.3.1.2', 'eci', '2.3.1.2', 'Disposer d''un état des lieux de l''utilisation des filières existantes', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.3.1.3', 'eci', '2.3.1.3', 'Etudier l''optimisation des filières envisageables', '', '', '', '', '', '', null, 40.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.3.2', 'eci', '2.3.2', 'Concrétiser les solutions issues des études d''optimisation', '<p>La collectivité concrétise les solutions issues des études d''optimisation. Elle met en place les conditions (financières et organisationnelles) pour favoriser l’émergence de ces solutions.</p>
 <p>Elle mène et accompagne l''évolution des moyens de traitement.</p>
 ', '', '<p>Au-delà des obligations du guide de collecte des déchets (Article R2224-27 du Code Général des Collectivités Territoriales), la collectivité informe les professionnels sur leurs obligations, notamment : tri 5 flux (décret n° 2016-288 du 10 mars 2016)</p>
-', '<ul>
-<li>Eléments de suivi du déploiement des solutions</li>
-</ul>
-', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.3.2.1', 'eci', '2.3.2.1', 'Concrétiser au moins une solution et avoir concrétisé moins d''un tiers des solutions retenues dans l’étude', '', '', '', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.3.2.2', 'eci', '2.3.2.2', 'Concrétiser entre un tiers et deux tiers des solutions', '', '', '', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.3.2.3', 'eci', '2.3.2.3', 'Concrétiser plus de deux tiers des solutions', '', '', '', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.3.2.4', 'eci', '2.3.2.4', 'Toutes les solutions ont été concrétisées', '', '', '', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.3.3', 'eci', '2.3.3', 'Suivre et accompagner les installations de traitement', '<p>La collectivité suit les installations de traitement sous sa responsabilité et s’assure de leur efficacité en matière de valorisation. Dans cette optique, elle accompagne les équipes en charge de ces installations.</p>
+', '', '', '', null, null, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.3.2.1', 'eci', '2.3.2.1', 'Concrétiser au moins une solution et avoir concrétisé moins d''un tiers des solutions retenues dans l’étude', '', '', '', '', '', '', null, 25.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.3.2.2', 'eci', '2.3.2.2', 'Concrétiser entre un tiers et deux tiers des solutions', '', '', '', '', '', '', null, 25.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.3.2.3', 'eci', '2.3.2.3', 'Concrétiser plus de deux tiers des solutions', '', '', '', '', '', '', null, 25.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.3.2.4', 'eci', '2.3.2.4', 'Toutes les solutions ont été concrétisées', '', '', '', '', '', '', null, 25.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.3.3', 'eci', '2.3.3', 'Suivre et accompagner les installations de traitement', '<p>La collectivité suit les installations de traitement sous sa responsabilité et s’assure de leur efficacité en matière de valorisation. Dans cette optique, elle accompagne les équipes en charge de ces installations.</p>
 <p>La collectivité doit ainsi :</p>
 <ul>
 <li>
@@ -833,22 +785,14 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>en tenant compte des études de prospection (évolution future des flux)</p>
 </li>
 </ul>
-', '<ul>
-<li>
-<p>Documents de production : PV de contrôle qualité, remonté des écarts, trace des actions correctives</p>
-</li>
-<li>
-<p>Document de suivi des refus (refus de tri, digestat et énergie)</p>
-</li>
-</ul>
-', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.3.3.1', 'eci', '2.3.3.1', 'Mesurer l''effet de l''accompagnement', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.3.3.2', 'eci', '2.3.3.2', 'Valoriser au moins 50% des déchets', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.3.3.3', 'eci', '2.3.3.3', 'Valoriser au moins 60% des déchets', '', '', '', '', '', '', '', null, 10.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.3.3.4', 'eci', '2.3.3.4', 'Valoriser au moins 70% des déchets', '', '', '', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.3.3.5', 'eci', '2.3.3.5', 'Valoriser au moins 80% des déchets', '', '', '', '', '', '', '', null, 15.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.3.3.6', 'eci', '2.3.3.6', 'Valoriser au moins 90% des déchets', '', '', '', '', '', '', '', null, 10.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.4', 'eci', '2.4', 'Réduire les impacts environnementaux et sociaux de la gestion des déchets', '<p>La gestion des déchets génère des impacts environnementaux (liés notamment au transport...) et sociaux (pénibilité du travail, nuisances olfactives et sonores, ...) ; la réduction de ces impacts s’appuie respectivement sur l’optimisation des systèmes de transport ainsi que sur les diverses recommandations et guides des CARSAT (Caisses d’Assurance Retraite et de la Santé Au Travail).</p>
+', '', '', '', null, null, 'effets');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.3.3.1', 'eci', '2.3.3.1', 'Mesurer l''effet de l''accompagnement', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.3.3.2', 'eci', '2.3.3.2', 'Valoriser au moins 50% des déchets', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.3.3.3', 'eci', '2.3.3.3', 'Valoriser au moins 60% des déchets', '', '', '', '', '', '', null, 10.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.3.3.4', 'eci', '2.3.3.4', 'Valoriser au moins 70% des déchets', '', '', '', '', '', '', null, 25.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.3.3.5', 'eci', '2.3.3.5', 'Valoriser au moins 80% des déchets', '', '', '', '', '', '', null, 15.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.3.3.6', 'eci', '2.3.3.6', 'Valoriser au moins 90% des déchets', '', '', '', '', '', '', null, 10.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.4', 'eci', '2.4', 'Réduire les impacts environnementaux et sociaux de la gestion des déchets', '<p>La gestion des déchets génère des impacts environnementaux (liés notamment au transport...) et sociaux (pénibilité du travail, nuisances olfactives et sonores, ...) ; la réduction de ces impacts s’appuie respectivement sur l’optimisation des systèmes de transport ainsi que sur les diverses recommandations et guides des CARSAT (Caisses d’Assurance Retraite et de la Santé Au Travail).</p>
 ', '<p><strong>Contexte</strong></p>
 <a href="http://www.officiel-prevention.com/environnement-pollution/gestion-des-dechets-stockage-enlevement-traitement/detail_dossier_CHSCT.php">
 Prévention des risques
@@ -897,7 +841,7 @@ Réduction des impacts envionnementaux des véhicules de collecte et formation �
 <a href="https://www.optigede.ademe.fr/fiche/ensemble-luttons-contre-les-depots-sauvages">
 Luttons contre les dépôts sauvages (département de l’Essonne)
 </a>
-', '', '<p><strong>Santé et sécurité</strong></p>
+', '<p><strong>Santé et sécurité</strong></p>
 <a href="http://www.inrs.fr/media.html?refINRS=ED%206143">
 Conception des déchèteries : intégration de la santé et de la sécurité au travail
 </a>
@@ -947,8 +891,8 @@ Méthode de quantification de l''impact GES d''une action de réduction des émi
 <a href="http://www.plpdma-guide-ademe.fr/estimer-les-impacts-environnementaux-et-economiques-des-actions-1.3.4.html">
 Estimer les impacts environnementaux et économiques des actions
 </a>
-', '', '', 20.0, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.4.0', 'eci', '2.4.0', 'Respecter la règlementation', '<p>La collectivité applique ou fait appliquer, dans tous les sites de collecte, de stockage ou de traitement des déchets, la réglementation contrôlée par la DREAL pour les émissions polluantes et les nuisances (olfactives, sonores....)</p>
+', '', '', 20.0, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.4.0', 'eci', '2.4.0', 'Respecter la règlementation', '<p>La collectivité applique ou fait appliquer, dans tous les sites de collecte, de stockage ou de traitement des déchets, la réglementation contrôlée par la DREAL pour les émissions polluantes et les nuisances (olfactives, sonores....)</p>
 <p>En cas de non-conformité, la collectivité doit justifier d''un plan d''actions correctives et de l''absence de contentieux</p>
 ', '', '<p>Exemples de règles à respecter suivant les modes de traitement :</p>
 <p>Collecte :</p>
@@ -985,22 +929,8 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>La plateforme de compostage dispose d''une certification (ex: label ASQA) ou produit un compost conforme à la norme NFU</p>
 </li>
 </ul>
-', '<ul>
-<li>
-<p>Autorisation d''exploiter pour les sites classés ICPE</p>
-</li>
-<li>
-<p>CR de commission de suivi de site</p>
-</li>
-<li>
-<p>DUERP</p>
-</li>
-<li>
-<p>Autre preuve de la conformité des installations (selon la nature de l''installation)</p>
-</li>
-</ul>
-', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.4.1', 'eci', '2.4.1', 'Identifier les pistes de réduction des impacts', '<p>La collectivité étudie et priorise des pistes de réduction des émissions et nuisances.</p>
+', '', '', '', null, null, 'bases');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.4.1', 'eci', '2.4.1', 'Identifier les pistes de réduction des impacts', '<p>La collectivité étudie et priorise des pistes de réduction des émissions et nuisances.</p>
 ', '', '<p>Mener une étude en interne ou par un prestataire :</p>
 <ul>
 <li>
@@ -1016,22 +946,11 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>Analyser les constats.</p>
 <p>Identifier les pistes de réduction des émissions et nuisances (optimisation des transports de déchets, optimisation des circuits de collecte et/ ou report modal, émissions des sites de traitement, dépôts sauvages de déchets, gestion des effluents, ...)</p>
 <p>Sélectionner les actions à mener</p>
-', '<ul>
-<li>
-<p>Justificatif de décision de la collectivité pour mener l''étude en interne ou en externe (ex. Compte rendu, délibération, cahier des charges de l''étude, etc.)</p>
-</li>
-<li>
-<p>Rapport de l''étude réalisée</p>
-</li>
-<li>
-<p>La liste des actions priorisées</p>
-</li>
-</ul>
-', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.4.1.1', 'eci', '2.4.1.1', 'Programmer une étude pour identifier les pistes de réduction des impacts', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.4.1.2', 'eci', '2.4.1.2', 'Réaliser l''étude et identifier les pistes de réduction des impacts', '', '', '', '', '', '', '', null, 30.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.4.1.3', 'eci', '2.4.1.3', 'Prioriser les actions d''optimisation', '', '', '', '', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.4.2', 'eci', '2.4.2', 'Gérer les impacts de la collecte des déchets', '<p>La collectivité a identifié les impacts de la collecte des déchets, a défini un plan d''actions pour les diminuer et le met en œuvre.</p>
+', '', '', '', null, 20.0, 'bases');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.4.1.1', 'eci', '2.4.1.1', 'Programmer une étude pour identifier les pistes de réduction des impacts', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.4.1.2', 'eci', '2.4.1.2', 'Réaliser l''étude et identifier les pistes de réduction des impacts', '', '', '', '', '', '', null, 30.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.4.1.3', 'eci', '2.4.1.3', 'Prioriser les actions d''optimisation', '', '', '', '', '', '', null, 50.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.4.2', 'eci', '2.4.2', 'Gérer les impacts de la collecte des déchets', '<p>La collectivité a identifié les impacts de la collecte des déchets, a défini un plan d''actions pour les diminuer et le met en œuvre.</p>
 <p>Ce plan d''actions devrait être en cohérence avec les mesures de prévention des déchets et d''amélioration des systèmes de collecte et de valorisation de déchets. Il donne des objectifs pertinents pour le territoire, ainsi que les outils de pilotage de la progression.</p>
 <p>Ce plan d''actions peut être itératif. Une fois terminé sur la période donnée, la collectivité peut construire un nouveau plan avec de nouveaux objectifs.</p>
 <p>Pour les collectivités portant la compétence collecte et traitement, les niveaux 2.4.2 et 2.4.4 peuvent faire objet d’un plan d’action unique.</p>
@@ -1055,29 +974,15 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>Améliorer sa maitrise des risques sanitaires - https://www.optigede.ademe.fr/impacts-sanitaires-et-economie-circulaire</p>
 </li>
 </ul>
-', '<ul>
-<li>
-<p>Plan d''actions</p>
-</li>
-<li>
-<p>Justificatifs des travaux en cours de réalisation</p>
-</li>
-<li>
-<p>Tableau de bord de pilotage de progression</p>
-</li>
-</ul>
-', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.4.2.1', 'eci', '2.4.2.1', 'Mettre en place le plan d''actions', '', '', '', '', '', '', '', null, 15.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.4.2.2', 'eci', '2.4.2.2', 'Chiffer les objectifs du plan d''actions', '', '', '', '', '', '', '', null, 15.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.4.2.3', 'eci', '2.4.2.3', 'Démarrer la mise en œuvre des actions', '', '', '', '', '', '', '', null, 40.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.4.2.4', 'eci', '2.4.2.4', 'Mettre en place le pilotage de la progression des actions', '', '', '', '', '', '', '', null, 30.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.4.3', 'eci', '2.4.3', 'Mettre en place le report modal de la collecte des déchets', '<p>La collectivité met en place un report modal de transport des déchets via un système de collecte autre que le système routier à moteur thermique.</p>
+', '', '', '', null, 20.0, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.4.2.1', 'eci', '2.4.2.1', 'Mettre en place le plan d''actions', '', '', '', '', '', '', null, 15.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.4.2.2', 'eci', '2.4.2.2', 'Chiffer les objectifs du plan d''actions', '', '', '', '', '', '', null, 15.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.4.2.3', 'eci', '2.4.2.3', 'Démarrer la mise en œuvre des actions', '', '', '', '', '', '', null, 40.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.4.2.4', 'eci', '2.4.2.4', 'Mettre en place le pilotage de la progression des actions', '', '', '', '', '', '', null, 30.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.4.3', 'eci', '2.4.3', 'Mettre en place le report modal de la collecte des déchets', '<p>La collectivité met en place un report modal de transport des déchets via un système de collecte autre que le système routier à moteur thermique.</p>
 ', '', '<p>Evolution des équipements de transport de déchets vers des véhicules GNV ou biogaz, par voie fluviale, par voie ferroviaire, par véhicules électriques, mobilité douce ou active, …</p>
-', '<ul>
-<li>Rapport annuel déchets</li>
-</ul>
-', '', '', '', null, 10.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.4.4', 'eci', '2.4.4', 'Gérer les impacts du traitement des déchets', '<p>La collectivité identifie les impacts du traitement. Elle définit un plan d''actions pour les diminuer et le met en œuvre.</p>
+', '', '', '', null, 10.0, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.4.4', 'eci', '2.4.4', 'Gérer les impacts du traitement des déchets', '<p>La collectivité identifie les impacts du traitement. Elle définit un plan d''actions pour les diminuer et le met en œuvre.</p>
 <p>Ce plan d''actions devrait être en cohérence avec les mesures de prévention et d''amélioration des systèmes de collecte et de valorisation des déchets. Il donne des objectifs pertinents pour le territoire, ainsi que les outils de pilotage de la progression.</p>
 <p>Ce plan d''actions peut être itératif. Une fois terminé sur la période donnée, la collectivité peut construire un nouveau plan avec de nouveaux objectifs.</p>
 <p>Pour les collectivités portant la compétence collecte et traitement, les niveaux 2.4.2 et 2.4.4 peuvent faire l''objet d’un plan d’action unique.</p>
@@ -1102,23 +1007,12 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>Améliorer la prévention des risques sanitaires (suivi du taux de Troubles Musculo-Squelettiques (TMS) chez les ripeurs et les techniciens des sites de traitement des déchets, formation des salariés, équipements adaptés, suivi médical professionnel, etc.)</p>
 </li>
 </ul>
-', '<ul>
-<li>
-<p>Plan d''actions</p>
-</li>
-<li>
-<p>Justificatifs des travaux en cours de réalisation</p>
-</li>
-<li>
-<p>Tableau de bord de pilotage de progression</p>
-</li>
-</ul>
-', '', '', '', null, 30.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.4.4.1', 'eci', '2.4.4.1', 'Mettre en place le plan d''actions', '', '', '', '', '', '', '', null, 15.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.4.4.2', 'eci', '2.4.4.2', 'Chiffrer les objectifs du plan d''actions', '', '', '', '', '', '', '', null, 15.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.4.4.3', 'eci', '2.4.4.3', 'Démarrer la mise en œuvre des actions', '', '', '', '', '', '', '', null, 40.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.4.4.4', 'eci', '2.4.4.4', 'Mettre en place le pilotage de la progression des actions', '', '', '', '', '', '', '', null, 30.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.4.5', 'eci', '2.4.5', 'Communiquer sur les impacts', '<p>La collectivité communique sur ses données d''impacts environnementaux et sociaux</p>
+', '', '', '', null, 30.0, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.4.4.1', 'eci', '2.4.4.1', 'Mettre en place le plan d''actions', '', '', '', '', '', '', null, 15.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.4.4.2', 'eci', '2.4.4.2', 'Chiffrer les objectifs du plan d''actions', '', '', '', '', '', '', null, 15.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.4.4.3', 'eci', '2.4.4.3', 'Démarrer la mise en œuvre des actions', '', '', '', '', '', '', null, 40.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.4.4.4', 'eci', '2.4.4.4', 'Mettre en place le pilotage de la progression des actions', '', '', '', '', '', '', null, 30.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.4.5', 'eci', '2.4.5', 'Communiquer sur les impacts', '<p>La collectivité communique sur ses données d''impacts environnementaux et sociaux</p>
 ', '', '<p>Exemples :</p>
 <ul>
 <li>
@@ -1144,20 +1038,12 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 </li>
 </ul>
 <p>En cas de mise en place d''une commission de suivi des sites, la collectivité fait une communication ciblée.</p>
-', '<ul>
-<li>
-<p>Rapport annuel diffusé aux particuliers</p>
-</li>
-<li>
-<p>Autre(s) support(s) de communication comme un article dans un journal local, la présence d''informations sur les factures, une commission locale d''information, etc.</p>
-</li>
-</ul>
-', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.4.5.1', 'eci', '2.4.5.1', 'Planifier les actions de communication', '', '', '', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.4.5.2', 'eci', '2.4.5.2', 'Réaliser une communication écrite', '', '', '', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.4.5.3', 'eci', '2.4.5.3', 'Réaliser une communication orale (réunions d''information, etc.)', '', '', '', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.4.5.4', 'eci', '2.4.5.4', 'Communiquer pour prévenir les comportements indésirables', '', '', '', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.5', 'eci', '2.5', 'Créer du lien avec les acteurs économiques du territoire pour créer des dynamiques sur leurs déchets', '<p>La mobilisation des acteurs économiques (entreprises industrielles et du BTP, artisans et commerçants, services tertiaires…) est indispensable pour améliorer la prévention et la gestion des déchets sur un territoire en raison des quantités et de la nature des déchets qu’ils produisent.</p>
+', '', '', '', null, 20.0, 'effets');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.4.5.1', 'eci', '2.4.5.1', 'Planifier les actions de communication', '', '', '', '', '', '', null, 25.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.4.5.2', 'eci', '2.4.5.2', 'Réaliser une communication écrite', '', '', '', '', '', '', null, 25.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.4.5.3', 'eci', '2.4.5.3', 'Réaliser une communication orale (réunions d''information, etc.)', '', '', '', '', '', '', null, 25.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.4.5.4', 'eci', '2.4.5.4', 'Communiquer pour prévenir les comportements indésirables', '', '', '', '', '', '', null, 25.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.5', 'eci', '2.5', 'Créer du lien avec les acteurs économiques du territoire pour créer des dynamiques sur leurs déchets', '<p>La mobilisation des acteurs économiques (entreprises industrielles et du BTP, artisans et commerçants, services tertiaires…) est indispensable pour améliorer la prévention et la gestion des déchets sur un territoire en raison des quantités et de la nature des déchets qu’ils produisent.</p>
 <p>La collectivité, dans le cadre du Service Public de Prévention et  Gestion des Déchets (SPPGD) ou de sa compétence de développement économique, crée du lien avec et entre les acteurs économiques du territoire en collaboration avec les interlocuteurs locaux des entreprises (chambres consulaires, maisons de l’emploi, agence de développement économique, associations d’entreprises …)</p>
 ', '<p><strong>Contexte</strong></p>
 <a href="https://www.optigede.ademe.fr/decheteries-professionnelles">
@@ -1229,7 +1115,7 @@ Tourisme durable en Corse
 <a href="https://www.optigede.ademe.fr/dechets-batiment-travaux-publics-references-recherche-developpement">
 Initiatives et retours d’expériences
 </a>
-', '', '<p><strong>Obligation Tri 5 flux</strong></p>
+', '<p><strong>Obligation Tri 5 flux</strong></p>
 <a href="https://www.ademe.fr/obligation-tri-5-flux">
 Brochure synthétique à destination des entreprises sur l’obligation Tri 5 flux
 </a>
@@ -1240,14 +1126,11 @@ Synthèse thématique: Bâtiment et Travaux public, prévention et valorisation 
 <a href="https://www.ademe.fr/dechets-batiment">
 Fiche technique sur les déchets du bâtiment
 </a>
-', '', '', 15.0, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.5.1', 'eci', '2.5.1', 'Informer les professionnels', '<p>La collectivité oriente les professionnels bénéficiant du SPPGD et leur propose l''ensemble des solutions de gestion de leurs déchets disponibles sur le territoire, y compris si ces solutions sont hors de leur périmètre SPPGD (renvoi vers les solutions privées)</p>
+', '', '', 15.0, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.5.1', 'eci', '2.5.1', 'Informer les professionnels', '<p>La collectivité oriente les professionnels bénéficiant du SPPGD et leur propose l''ensemble des solutions de gestion de leurs déchets disponibles sur le territoire, y compris si ces solutions sont hors de leur périmètre SPPGD (renvoi vers les solutions privées)</p>
 ', '', '<p>Au-delà des obligations du guide de collecte des déchets (Article R2224-27 du Code Général des Collectivités Territoriales), la collectivité informe les professionnels sur leurs obligations notamment : tri 5 flux (décret n° 2016-288 du 10 mars 2016) et tri des bio déchets (Art. 70 de la loi 2015-992 du 17 août 2015 relative à la transition énergétique pour la croissance verte).</p>
-', '<ul>
-<li>Documents d''information et moyen(s) de diffusion</li>
-</ul>
-', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.5.2', 'eci', '2.5.2', 'Conseiller les professionnels', '<p>La collectivité propose un service de conseil aux entreprises, collectif et/ou individuel, pour les aider à   réduire les déchets, mieux les trier et maîtriser les coûts associés.</p>
+', '', '', '', null, 25.0, 'bases');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.5.2', 'eci', '2.5.2', 'Conseiller les professionnels', '<p>La collectivité propose un service de conseil aux entreprises, collectif et/ou individuel, pour les aider à   réduire les déchets, mieux les trier et maîtriser les coûts associés.</p>
 <p>Elle évalue la satisfaction des entreprises conseillées.</p>
 ', '', '<p>La collectivité identifie un groupe cible d''entreprises prioritaires à conseiller en fonction des spécificités de son territoire.</p>
 <p>Cette identification peut s’appuyer sur les diagnostics cités dans le Niveau 1.2.2 et de l’Orientation 3.1 du Référentiel Economie Circulaire.</p>
@@ -1257,33 +1140,19 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>Mettre en place un numéro de téléphone disponible pour les questions</p>
 <p>Proposer des services aux entreprises : diagnostic déchets, approche MFCA, …</p>
 <p>La collectivité met en place un questionnaire d’évaluation du conseil reçu pour améliorer le dispositif de conseil.</p>
-', '<ul>
-<li>
-<p>Méthode d''identification des entreprises prioritaires à conseiller</p>
-</li>
-<li>
-<p>Compte rendu d''activité du service de conseil permettant calculer la taux de mobilisation (liste des entreprises ciblées et liste des entreprises conseillés)</p>
-</li>
-<li>
-<p>Enquête de satisfaction auprès des entreprises conseillées</p>
-</li>
-</ul>
-', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.5.2.1', 'eci', '2.5.2.1', 'Identifier les critères de priorisation des entreprises à conseiller', '', '', '', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.5.2.2', 'eci', '2.5.2.2', 'Conseiller toutes les entreprises ciblées', '', '', '', '', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.5.2.3', 'eci', '2.5.2.3', 'Disposer d''un taux de satisfaction élevé des entreprises conseillées', '', '', '', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.5.3', 'eci', '2.5.3', 'Structurer et mettre en réseau les acteurs', '<p>La collectivité joue un rôle de facilitateur et un rôle moteur auprès des entreprises dans l''implantation ou la consolidation de services de prévention et de gestion des déchets, adaptés aux besoins du territoire et, quand c''est possible, en lien avec le service développement économique.</p>
+', '', '', '', null, 50.0, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.5.2.1', 'eci', '2.5.2.1', 'Identifier les critères de priorisation des entreprises à conseiller', '', '', '', '', '', '', null, 25.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.5.2.2', 'eci', '2.5.2.2', 'Conseiller toutes les entreprises ciblées', '', '', '', '', '', '', null, 50.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.5.2.3', 'eci', '2.5.2.3', 'Disposer d''un taux de satisfaction élevé des entreprises conseillées', '', '', '', '', '', '', null, 25.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.5.3', 'eci', '2.5.3', 'Structurer et mettre en réseau les acteurs', '<p>La collectivité joue un rôle de facilitateur et un rôle moteur auprès des entreprises dans l''implantation ou la consolidation de services de prévention et de gestion des déchets, adaptés aux besoins du territoire et, quand c''est possible, en lien avec le service développement économique.</p>
 ', '', '<p>Faciliter la mise en place d''une collecte groupée dans les zones d''activités ou par secteur d''activité. Ces collaborations permettront par exemple de favoriser les démarches de gestion collective, l''émergence d''une filière de traitement d''un déchet particulier, les circuits courts de matériaux…</p>
 <p>NOTA : La collectivité qui souhaite, indépendamment de ses missions de service public, prendre en charge une activité économique, ne peut le faire légalement que dans le respect tant de la liberté du commerce et de l’industrie que du droit de la concurrence.</p>
 <p>(Voir décision du Conseil d''Etat du 31 mai 2006)</p>
-', '<ul>
-<li>Documents attestant que la collectivité a accompagné la mise en place de services (convention d''aide, mise en contact de personnes, mise à disposition de moyens, …)</li>
-</ul>
-', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.5.3.1', 'eci', '2.5.3.1', 'Mettre en place des moyens pour identifier ou fédérer des réseaux d''acteurs sur le territoire', '', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.5.3.2', 'eci', '2.5.3.2', 'Mettre en place des moyens pour accompagner les projets dans leur définition', '', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.5.3.3', 'eci', '2.5.3.3', 'Mettre en place des moyens pour soutenir le déploiement des projets', '', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.1', 'eci', '2.1', 'Disposer d''un programme de prévention des déchets', '<p>Le Programme Local de Prévention des Déchets Ménagers et Assimilés (PLPDMA) d''un territoire vise à réduire la quantité et la nocivité des déchets (via l''atteinte d''un objectif partagé). Ce programme s''inscrit dans la durée au travers de la coordination, de la mise en place et du suivi d''actions concertées avec les acteurs locaux.</p>
+', '', '', '', null, 25.0, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.5.3.1', 'eci', '2.5.3.1', 'Mettre en place des moyens pour identifier ou fédérer des réseaux d''acteurs sur le territoire', '', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.5.3.2', 'eci', '2.5.3.2', 'Mettre en place des moyens pour accompagner les projets dans leur définition', '', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.5.3.3', 'eci', '2.5.3.3', 'Mettre en place des moyens pour soutenir le déploiement des projets', '', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.1', 'eci', '2.1', 'Disposer d''un programme de prévention des déchets', '<p>Le Programme Local de Prévention des Déchets Ménagers et Assimilés (PLPDMA) d''un territoire vise à réduire la quantité et la nocivité des déchets (via l''atteinte d''un objectif partagé). Ce programme s''inscrit dans la durée au travers de la coordination, de la mise en place et du suivi d''actions concertées avec les acteurs locaux.</p>
 ', '<p><strong>Contexte</strong></p>
 <p><a href="https://www.optigede.ademe.fr/plan-programme-prevention">Plans et programmes de prévention</a></p>
 <p><a href="https://www.ademe.fr/expertises/dechets/quoi-parle-t/dossier/types-dechets/typologies-utilisees-distinguer-dechets">Les typologies de déchets</a></p>
@@ -1297,7 +1166,7 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p><a href="https://www.legifrance.gouv.fr/eli/decret/2015/6/10/DEVP1427461D/jo">Décret n°2015-662 du 14 juin 2015 relatif aux PLPDMA</a></p>
 <p><a href="https://www.ademe.fr/entreprises-monde-agricole/reduire-impacts/reduire-cout-dechets/dossier/respecter-reglementation/obligations-reglementaires">Obligations réglementaires</a></p>
 <p><a href="https://www.ademe.fr/expertises/dechets/passer-a-laction/eviter-production-dechets/dossier/programmes-locaux-prevention/cadre-legislatif">Programmes locaux de prévention</a></p>
-', '', '', '<p><strong>Élaborer et conduire avec succès son PLPDMA</strong></p>
+', '', '<p><strong>Élaborer et conduire avec succès son PLPDMA</strong></p>
 <p><a href="http://www.plpdma-guide-ademe.fr/portail.html">Guide PLPDMA de l’ADEME</a></p>
 <p><a href="http://www.plpdma-guide-ademe.fr/etablir-undiagnostic-du-territoire-1.3.1.html">Établir un PLPDMA</a></p>
 <p><a href="http://www.plpdma-guide-ademe.fr/constituer-la-commission-consultative-delaboration-et-de-suivi-cces-determine-1.2.2.html">Organiser la gouvernance du PLPDMA: la CCES</a></p>
@@ -1326,24 +1195,13 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p><a href="https://optigede.ademe.fr/btp">Secteur de la construction</a></p>
 <p><a href="https://www.ademe.fr/bien-vivre-zero-dechet">Bien vivre en Zéro Déchet (étude)</a></p>
 <p><a href="https://www.optigede.ademe.fr/eco-exemplarite-dechets-introduction">Exemplarité</a></p>
-', '', '', 10.0, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.1.0', 'eci', '2.1.0', 'Suivre la réglementation', '<p>La collectivité est conforme à la réglementation</p>
+', '', '', 10.0, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.1.0', 'eci', '2.1.0', 'Suivre la réglementation', '<p>La collectivité est conforme à la réglementation</p>
 <p>En cas de non-conformité, la collectivité doit justifier d''un plan d''actions correctives et de l''absence de contentieux</p>
 ', '', '<p>Adoption du PLPDMA (obligatoire pour les collectivités ayant la compétence collecte des déchets : article L. 541-15-1 du Code de l’Environnement; voir le document &quot;Elaborer et conduire avec succès un PLPDMA&quot; de l''ADEME)</p>
 <p>Mise à disposition du PLPDMA auprès de l''ADEME via la plateforme SINOÉ</p>
-', '<ul>
-<li>
-<p>PLPDMA approuvé ou une délibération récente prise pour le lancement de l’élaboration du PLPDMA</p>
-</li>
-<li>
-<p>Compte-rendu de la dernière réunion de la Commission consultative d’évaluation et de suivi (CCES) avec la liste des participants OU si la CCES n’est pas créée, délibération qui prévoit de le faire</p>
-</li>
-<li>
-<p>Dépôt sur SINOE du PLPDMA</p>
-</li>
-</ul>
-', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.1.1', 'eci', '2.1.1', 'Mettre en œuvre les actions du PLPDMA', '<p>Les actions prévues dans le PLPDMA sont mises en œuvre</p>
+', '', '', '', null, null, 'bases');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.1.1', 'eci', '2.1.1', 'Mettre en œuvre les actions du PLPDMA', '<p>Les actions prévues dans le PLPDMA sont mises en œuvre</p>
 ', '', '<p>Les 7 axes thématiques du PLPDMA :</p>
 <ul>
 <li>
@@ -1380,42 +1238,28 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>Utiliser les instruments économiques</p>
 </li>
 </ul>
-', '<ul>
-<li>Restitution du PLPDMA dans le rapport annuel SPGD</li>
-</ul>
-', '', '', '', null, 40.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.1.1.1', 'eci', '2.1.1.1', 'Déployer 3 à 9 actions sur l''année', '', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.1.1.2', 'eci', '2.1.1.2', 'Déployer 10 à 14 actions sur l''année', '', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.1.1.3', 'eci', '2.1.1.3', 'Déployer 15 actions ou plus', '', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.1.1.4', 'eci', '2.1.1.4', 'Exploiter 1 ou 2 axes du guide PLPDMA de l''ADEME', '', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.1.1.5', 'eci', '2.1.1.5', 'Exploiter 3 ou 4 axes du guide PLPDMA de l''ADEME', '', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.1.1.6', 'eci', '2.1.1.6', 'Exploiter 5 ou 6 axes du guide PLPDMA de l''ADEME', '', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.1.1.7', 'eci', '2.1.1.7', 'Exploiter les 7 axes du guide PLPDMA de l''ADEME', '', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.1.2', 'eci', '2.1.2', 'Disposer d''une commission consultative d''élaboration et de suivi (CCES) élargie', '<p>La collectivité fait vivre une gouvernance participative élargie avec la commission consultative d''élaboration et de suivi (CCES).</p>
+', '', '', '', null, 40.0, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.1.1.1', 'eci', '2.1.1.1', 'Déployer 3 à 9 actions sur l''année', '', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.1.1.2', 'eci', '2.1.1.2', 'Déployer 10 à 14 actions sur l''année', '', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.1.1.3', 'eci', '2.1.1.3', 'Déployer 15 actions ou plus', '', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.1.1.4', 'eci', '2.1.1.4', 'Exploiter 1 ou 2 axes du guide PLPDMA de l''ADEME', '', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.1.1.5', 'eci', '2.1.1.5', 'Exploiter 3 ou 4 axes du guide PLPDMA de l''ADEME', '', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.1.1.6', 'eci', '2.1.1.6', 'Exploiter 5 ou 6 axes du guide PLPDMA de l''ADEME', '', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.1.1.7', 'eci', '2.1.1.7', 'Exploiter les 7 axes du guide PLPDMA de l''ADEME', '', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.1.2', 'eci', '2.1.2', 'Disposer d''une commission consultative d''élaboration et de suivi (CCES) élargie', '<p>La collectivité fait vivre une gouvernance participative élargie avec la commission consultative d''élaboration et de suivi (CCES).</p>
 ', '', '<p>Une composition élargie de la CCES incluant l''ensemble des parties prenantes au-delà des élus (partenaires publics, ONG, associations, habitants, acteurs économiques, …)</p>
-', '<ul>
-<li>
-<p>CR de la réunion de la CCES</p>
-</li>
-<li>
-<p>Délibération stipulant la composition de la CCES</p>
-</li>
-</ul>
-', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.1.2.1', 'eci', '2.1.2.1', 'Organiser au moins 1 réunion de la CCES par an', '', '', '', '', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.1.2.2', 'eci', '2.1.2.2', 'Élargir la composition de la CCES au-delà des élus', '', '', '', '', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_2.1.3', 'eci', '2.1.3', 'Suivre le PLPDMA', '<p>La collectivité assure suivi la démarche, dresse des bilans des actions et ajuste le programme d''actions selon les résultats</p>
-', '', '', '<ul>
-<li>Bilan et outils de suivi</li>
-</ul>
-', '', '', '', null, 40.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3', 'eci', '3', 'Déploiement des autres piliers de l''économie circulaire dans les territoires', '', '', '', '', '', '', '', 180.0, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.7', 'eci', '3.7', 'Soutenir et accompagner la recherche, l''innovation et l''expérimentation', '<p>La collectivité soutient des projets de recherche et d''innovation (R&amp;I), tant sur le volet technologique qu''organisationnel afin de promouvoir les pratiques d''économie circulaire (hors 3.4 à 3.7).</p>
+', '', '', '', null, 20.0, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.1.2.1', 'eci', '2.1.2.1', 'Organiser au moins 1 réunion de la CCES par an', '', '', '', '', '', '', null, 50.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.1.2.2', 'eci', '2.1.2.2', 'Élargir la composition de la CCES au-delà des élus', '', '', '', '', '', '', null, 50.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_2.1.3', 'eci', '2.1.3', 'Suivre le PLPDMA', '<p>La collectivité assure suivi la démarche, dresse des bilans des actions et ajuste le programme d''actions selon les résultats</p>
+', '', '', '', '', '', null, 40.0, 'effets');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3', 'eci', '3', 'Déploiement des autres piliers de l''économie circulaire dans les territoires', '', '', '', '', '', '', 180.0, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.7', 'eci', '3.7', 'Soutenir et accompagner la recherche, l''innovation et l''expérimentation', '<p>La collectivité soutient des projets de recherche et d''innovation (R&amp;I), tant sur le volet technologique qu''organisationnel afin de promouvoir les pratiques d''économie circulaire (hors 3.4 à 3.7).</p>
 ', '<a href="https://www.ademe.fr/strategie-recherche-developpement-innovation-lademe-periode-2014-2020">
 Stratégie
 <p>Recherche et innovation de l’ADEME
 </a></p>
-', '', '', '<a href="https://www.ademe.fr/actualites/appels-a-projets?appels-en-cours=1&amp;investissements-davenir=1">
+', '', '<a href="https://www.ademe.fr/actualites/appels-a-projets?appels-en-cours=1&amp;investissements-davenir=1">
 Appels à projets de l’ADEME Investissements d’avenir&nbsp;
 </a>
 <a href="https://www.ademe.fr/dossier/ademe/lettre-recherche">
@@ -1438,8 +1282,8 @@ ADEME Innover et se développer
 <a href="https://www.ademe.fr/fiches-pratiques-eco-pme-recherche-financement">
 Fiches pratiques pour les éco-PME en recherche de financement
 </a>
-', '', '', 20.0, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.7.1', 'eci', '3.7.1', 'Accompagner non financièrement des programmes', '<p>Dans un souci de l''amélioration continue, la collectivité accueille des programmes d''étude ou de R&amp;I sur son territoire. La R&amp;I et l''expérimentation peuvent porter sur des nouvelles techniques, ainsi que sur les modes d''organisation ou des modèles d''affaires.</p>
+', '', '', 20.0, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.7.1', 'eci', '3.7.1', 'Accompagner non financièrement des programmes', '<p>Dans un souci de l''amélioration continue, la collectivité accueille des programmes d''étude ou de R&amp;I sur son territoire. La R&amp;I et l''expérimentation peuvent porter sur des nouvelles techniques, ainsi que sur les modes d''organisation ou des modèles d''affaires.</p>
 <p>La collectivité établit des partenariats avec les acteurs de la recherche.</p>
 ', '', '<p>La collectivité est territoire expérimentateur d''un programme de R&amp;I.</p>
 <p>La collectivité participe aux programmes d''innovation régionaux (incubateurs, programmes de formation, etc.).</p>
@@ -1449,26 +1293,20 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>La collectivité met à disposition des moyens hors budgétaires (locaux, équipements, matière première, ressource humaines, …) pour des programmes de R&amp;I sur l''économie circulaire.</p>
 <p>La collectivité est relais d’appel à projets R&amp;I (un appel à projet est un programme).</p>
 <p>La collectivité participe à des événements associés à un programme R&amp;I porté par des acteurs de la R&amp;I.</p>
-', '<ul>
-<li>Document formalisant l''implication dans les programmes comme un contrat ou une charte ou une convention ou une plaquette d''événement impliquant la collectivité, etc.</li>
-</ul>
-', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.7.1.1', 'eci', '3.7.1.1', 'Accepter des sollicitations pour des programmes d''études ou de R&I', '', '', '', '', '', '', '', null, 40.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.7.1.2', 'eci', '3.7.1.2', 'S''impliquer dans le suivi des travaux', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.7.1.3', 'eci', '3.7.1.3', 'S''approprier les résultats afin d''améliorer ses pratiques', '', '', '', '', '', '', '', null, 40.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.7.2', 'eci', '3.7.2', 'Financer des projets de R&I', '<p>La collectivité soutient financièrement un (ou des) projet(s) de R&amp;I sur des filières économie circulaire. Elle réalise une veille permanente des innovations en économie circulaire sur son territoire afin de valoriser et d''accompagner le développement d''initiatives locales. La collectivité fait partie de l''écosystème régional qui finance les projets de recherche.</p>
+', '', '', '', null, 25.0, 'bases');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.7.1.1', 'eci', '3.7.1.1', 'Accepter des sollicitations pour des programmes d''études ou de R&I', '', '', '', '', '', '', null, 40.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.7.1.2', 'eci', '3.7.1.2', 'S''impliquer dans le suivi des travaux', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.7.1.3', 'eci', '3.7.1.3', 'S''approprier les résultats afin d''améliorer ses pratiques', '', '', '', '', '', '', null, 40.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.7.2', 'eci', '3.7.2', 'Financer des projets de R&I', '<p>La collectivité soutient financièrement un (ou des) projet(s) de R&amp;I sur des filières économie circulaire. Elle réalise une veille permanente des innovations en économie circulaire sur son territoire afin de valoriser et d''accompagner le développement d''initiatives locales. La collectivité fait partie de l''écosystème régional qui finance les projets de recherche.</p>
 <p>La collectivité participe financièrement aux programmes d''innovation régionaux (incubateurs, programmes de formation, etc.).</p>
 ', '', '<p>Co-financement de projet de R&amp;I (exemples : nouvelles techniques, modes d''organisation ou modèles d''affaires)</p>
 <p>Publication de bulletins de veille sur le territoire.</p>
 <p>Soutien d''acteurs des écosystèmes régionaux : agence régionale de l''innovation, fonds européens, Région, BPI.</p>
 <p>Le degré d''innovation est à considérer à l''échelle géographique pertinente.</p>
-', '<ul>
-<li>Document formalisant l''accompagnement de chaque projet comme un contrat ou une convention de financement.</li>
-</ul>
-', '', '', '', null, 75.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.7.2.1', 'eci', '3.7.2.1', 'Disposer d''au moins 1 projet en tant que collectivité < 100 000 habitants ou entre 2 à 9 projets en tant que collectivité > 100 000 habitants', '', '', '', '', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.7.2.2', 'eci', '3.7.2.2', 'Disposer d''au moins 2 projets  en tant que collectivité < 100 000 habitants ou au moins 10 projets en tant que collectivité > 100 000 habitants', '', '', '', '', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.3', 'eci', '3.3', 'Soutenir et accompagner la consommation responsable et la sobriété des acteurs du territoire', '<p>La consommation responsable correspond à un engagement civique actif en vue de la qualité de vie des citoyens, mais aussi en faveur de la collectivité dans son ensemble. Elle concerne aussi bien le citoyen consommateur que l''acheteur professionnel (privé ou public).</p>
+', '', '', '', null, 75.0, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.7.2.1', 'eci', '3.7.2.1', 'Disposer d''au moins 1 projet en tant que collectivité < 100 000 habitants ou entre 2 à 9 projets en tant que collectivité > 100 000 habitants', '', '', '', '', '', '', null, 50.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.7.2.2', 'eci', '3.7.2.2', 'Disposer d''au moins 2 projets  en tant que collectivité < 100 000 habitants ou au moins 10 projets en tant que collectivité > 100 000 habitants', '', '', '', '', '', '', null, 50.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.3', 'eci', '3.3', 'Soutenir et accompagner la consommation responsable et la sobriété des acteurs du territoire', '<p>La consommation responsable correspond à un engagement civique actif en vue de la qualité de vie des citoyens, mais aussi en faveur de la collectivité dans son ensemble. Elle concerne aussi bien le citoyen consommateur que l''acheteur professionnel (privé ou public).</p>
 <p>La consommation responsable consiste à nous questionner sur la pertinence de nos besoins dans une logique de sobriété et à les satisfaire en limitant l’impact négatif sur l’environnement (à toutes les étapes du cycle de vie du produit) et sur la société. Elle doit nous conduire à faire évoluer nos modes de production et de consommation et plus globalement nos modes de vie, à l’échelle individuelle et collective.</p>
 ', '', '<p><strong>Sensibilisation des acteurs aux enjeux environnementaux de la consommation</strong></p>
 <a href="http://optigede.ademe.fr/fiche/promotion-de-lecoconsommation">
@@ -1582,7 +1420,7 @@ Jardinage au naturel et zéro phyto
 <a href="http://optigede.ademe.fr/fiche/sensibiliser-le-jardinier-amateur-aux-pratiques-eco-responsables-de-jardinage">
 Sensibiliser le jardinier amateur aux pratiques éco-responsables de jardinage
 </a>
-', '', '<p><strong>Ressources sur la sobriété</strong></p>
+', '<p><strong>Ressources sur la sobriété</strong></p>
 <a href="https://www.ademe.fr/gaspillage-a-sobriete">
 Du Gaspillage à la sobriété, VAlérie GUILLARD
 </a>
@@ -1602,8 +1440,8 @@ Virage-énergie : ressources pour une démarche de sobriété appliquée à l''�
 <a href="https://www.optigede.ademe.fr/operations-temoins-introduction">
 Les opérations témoins pour sensibiliser
 </a>
-', '', '', 25.0, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.3.1', 'eci', '3.3.1', 'Communiquer et sensibiliser à la consommation responsable et à la sobriété', '<p>La collectivité communique (elle-même ou en partenariat avec la Région, les chambres consulaires, les associations environnementales ou de consommateurs, les offices du tourisme…) sur les activités de son territoire pour rendre visibles et accessibles les structures contribuant à une consommation responsable et/ou à la sobriété.</p>
+', '', '', 25.0, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.3.1', 'eci', '3.3.1', 'Communiquer et sensibiliser à la consommation responsable et à la sobriété', '<p>La collectivité communique (elle-même ou en partenariat avec la Région, les chambres consulaires, les associations environnementales ou de consommateurs, les offices du tourisme…) sur les activités de son territoire pour rendre visibles et accessibles les structures contribuant à une consommation responsable et/ou à la sobriété.</p>
 <p>La collectivité sensibilise tous les acteurs aux enjeux environnementaux des activités et des consommations sur son territoire et à la sobriété.</p>
 ', '', '<p>Promouvoir l''usage de l''Ecolabel européen et des labels environnementaux &quot;100 labels environnementaux recommandés par l’ADEME&quot;</p>
 <p>https://agirpourlatransition.ademe.fr/particuliers/labels-environnementaux.</p>
@@ -1625,46 +1463,21 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>Favoriser et mettre en avant la location ou le prêt de matériel (bricolage, cuisine) entre particuliers, annuaires, associations mettant en location.</p>
 <p>Mettre en avant et valoriser les « talents » sur un territoire (artisans, artistes) pour donner envie de faire réparer, de faire des échanges…</p>
 <p>Organiser des visites pour les élus et techniciens de territoires démonstrateurs de la sobriété (échange de bonnes pratiques entre collectivités ou structures porteuses d’initiatives à succès).</p>
-', '<ul>
-<li>
-<p>Support(s) de communication : annuaire, carte en ligne, page du site web, livret, etc.</p>
-</li>
-<li>
-<p>Preuve du déroulé des ateliers de sensibilisation : programme, feuille d''émargement, bilan de l''évènement, etc.</p>
-</li>
-<li>
-<p>Preuve du déroulé des évènements mettant en avant la consommation sobre et responsable : programme, feuille d''émargement, bilan de l''évènement, etc.</p>
-</li>
-</ul>
-', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.3.1.1', 'eci', '3.3.1.1', 'Disposer de support(s) de communication recensant les solutions de consommation sobre et responsable sur la territoire', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.3.1.2', 'eci', '3.3.1.2', 'Organiser des ateliers de sensibilisation à la consommation sobre et responsable', '', '', '', '', '', '', '', null, 30.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.3.1.3', 'eci', '3.3.1.3', 'Soutenir financièrement ou organiser des évènements mettant en avant la consommation responsable et la sobriété', '', '', '', '', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.3.2', 'eci', '3.3.2', 'Promouvoir et lancer une dynamique relative à la consommation responsable et de sobriété', '<p>La collectivité sensibilise et forme à la consommation responsable et la sobriété ses élus et ses techniciens.</p>
+', '', '', '', null, 25.0, 'bases');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.3.1.1', 'eci', '3.3.1.1', 'Disposer de support(s) de communication recensant les solutions de consommation sobre et responsable sur la territoire', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.3.1.2', 'eci', '3.3.1.2', 'Organiser des ateliers de sensibilisation à la consommation sobre et responsable', '', '', '', '', '', '', null, 30.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.3.1.3', 'eci', '3.3.1.3', 'Soutenir financièrement ou organiser des évènements mettant en avant la consommation responsable et la sobriété', '', '', '', '', '', '', null, 50.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.3.2', 'eci', '3.3.2', 'Promouvoir et lancer une dynamique relative à la consommation responsable et de sobriété', '<p>La collectivité sensibilise et forme à la consommation responsable et la sobriété ses élus et ses techniciens.</p>
 <p>La collectivité élabore un document formalisant une vision et des actions de la consommation responsable et de sobriété à mettre en place pour son territoire. Ce document décline notamment la sobriété sur les 7 piliers de l''économie circulaire.</p>
 ', '', '<p>Sensibiliser et former les élus et techniciens à la réflexion sur le besoin : avant l''achat (pertinence du besoin, prêt et location, économie de la fonctionnalité), lors de l''achat (neuf ou occasion, label environnementaux, offre locale), lors de l''usage (utilisation, entretien, maintenance et réparation appropriés) et lors de la fin de vie du produit (revente, don ou élimination appropriée).</p>
 <p>A l''issue de la formation, mettre en place un document de formalisation (incluant des actions à décliner dans chaque service formé). Le document peut-être constitué au moment de conclure chaque formation.</p>
 <p>Mettre en place un groupe de travail ou une équipe dédiée à la construction de la vision et du plan d''action global sur la consommation responsable et la sobriété.</p>
-', '<ul>
-<li>
-<p>Documents de sensibilisation</p>
-</li>
-<li>
-<p>Attestations de formation</p>
-</li>
-<li>
-<p>Liste d’actions à décliner dans chaque service formé</p>
-</li>
-<li>
-<p>Document de formalisation</p>
-</li>
-</ul>
-', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.3.2.1', 'eci', '3.3.2.1', 'Sensibiliser les élus et les techniciens', '', '', '', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.3.2.2', 'eci', '3.3.2.2', 'Former les élus et les techniciens', '', '', '', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.3.2.3', 'eci', '3.3.2.3', 'Disposer d''une liste d’actions à décliner dans chaque service formé', '', '', '', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.3.2.4', 'eci', '3.3.2.4', 'Formaliser dans un document une vision et un plan d''action de la collectivité sur consommation responsable et la sobriété', '', '', '', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.3.3', 'eci', '3.3.3', 'Agir pour la consommation responsable et la sobriété dans le cadre de ses compétences', '<p>La collectivité met en place des actions de consommation responsable et de sobriété sur ses compétences (écoles, garderies, services de nettoyage, espaces verts, gestion des déchets …)</p>
+', '', '', '', null, 25.0, 'bases');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.3.2.1', 'eci', '3.3.2.1', 'Sensibiliser les élus et les techniciens', '', '', '', '', '', '', null, 25.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.3.2.2', 'eci', '3.3.2.2', 'Former les élus et les techniciens', '', '', '', '', '', '', null, 25.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.3.2.3', 'eci', '3.3.2.3', 'Disposer d''une liste d’actions à décliner dans chaque service formé', '', '', '', '', '', '', null, 25.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.3.2.4', 'eci', '3.3.2.4', 'Formaliser dans un document une vision et un plan d''action de la collectivité sur consommation responsable et la sobriété', '', '', '', '', '', '', null, 25.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.3.3', 'eci', '3.3.3', 'Agir pour la consommation responsable et la sobriété dans le cadre de ses compétences', '<p>La collectivité met en place des actions de consommation responsable et de sobriété sur ses compétences (écoles, garderies, services de nettoyage, espaces verts, gestion des déchets …)</p>
 ', '', '<p>Lutte contre les gaspillages, 5R, …</p>
 <p>Travailler avec les établissements scolaires:</p>
 <ul>
@@ -1691,20 +1504,12 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 </li>
 </ul>
 <p>Dimensionner les projets structurants de la collectivité, tels que les aménagements ou les infrastructures, en rapport aux besoins du territoire.</p>
-', '<ul>
-<li>
-<p>Fiches d''actions réalisés ou Suivi du plan d''action</p>
-</li>
-<li>
-<p>Fiches actions sur Optigede</p>
-</li>
-</ul>
-', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.3.3.1', 'eci', '3.3.3.1', 'Réaliser des actions à destination d''établissements scolaires', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.3.3.2', 'eci', '3.3.3.2', 'Réaliser des actions sur au moins 1 autre compétence de la collectivité', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.3.3.3', 'eci', '3.3.3.3', 'Réaliser des actions sur au moins 3 compétences de la collectivité', '', '', '', '', '', '', '', null, 30.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.3.3.4', 'eci', '3.3.3.4', 'Réaliser des actions de façon transversale qui concernent toutes les actions de la collectivité', '', '', '', '', '', '', '', null, 30.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.3.4', 'eci', '3.3.4', 'Accompagner les acteurs externes sur des actions de consommation responsable et de sobriété', '<p>La collectivité accompagne les acteurs de son territoire sur des actions de consommation responsable et de sobriété. Elle aide au changement de comportement et favorise le développement d’une offre sobre.</p>
+', '', '', '', null, 25.0, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.3.3.1', 'eci', '3.3.3.1', 'Réaliser des actions à destination d''établissements scolaires', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.3.3.2', 'eci', '3.3.3.2', 'Réaliser des actions sur au moins 1 autre compétence de la collectivité', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.3.3.3', 'eci', '3.3.3.3', 'Réaliser des actions sur au moins 3 compétences de la collectivité', '', '', '', '', '', '', null, 30.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.3.3.4', 'eci', '3.3.3.4', 'Réaliser des actions de façon transversale qui concernent toutes les compétences de la collectivité', '', '', '', '', '', '', null, 30.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.3.4', 'eci', '3.3.4', 'Accompagner les acteurs externes sur des actions de consommation responsable et de sobriété', '<p>La collectivité accompagne les acteurs de son territoire sur des actions de consommation responsable et de sobriété. Elle aide au changement de comportement et favorise le développement d’une offre sobre.</p>
 ', '', '<p>La collectivité peut définir les cibles clés de façon plus précise : grand public de certaines catégories socio-profesionnelles, entreprise de taille ou de secteur d''activité particulier, collectivités à compétence spécifique etc.</p>
 <p>Aider le changement de comportement (tous type de collectivité) :</p>
 <ul>
@@ -1762,22 +1567,11 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 </li>
 </ul>
 <p>entreprises (à travers l''action propre de la collectivité ou l''écosystème d''accompagnement au développement économique)</p>
-', '<ul>
-<li>
-<p>Fiche action sur Optigede</p>
-</li>
-<li>
-<p>Délibération décrivant les modalités du dispositif de soutien à une offre commerciale plus sobre ou au changement de modèle économique</p>
-</li>
-<li>
-<p>Délibération décrivant les critères d’exclusion de subventions aux associations promouvant des activités non sobres</p>
-</li>
-</ul>
-', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.3.4.1', 'eci', '3.3.4.1', 'Mettre en place au moins une action', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.3.4.2', 'eci', '3.3.4.2', 'Mettre en place un ensemble d’actions vers une cible', '', '', '', '', '', '', '', null, 40.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.3.4.3', 'eci', '3.3.4.3', 'Mettre en place un ensemble d’actions vers l''ensemble des cibles clés du territoire', '', '', '', '', '', '', '', null, 40.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.2', 'eci', '3.2', 'Réaliser des achats responsables', '<p>Les achats responsables consistent à acheter en tenant compte, à chaque étape du cycle de vie d''un produit ou d''une prestation, des impacts économiques (producteurs locaux, ...), environnementaux (produits et services labélisés Ecolabel européen ou autre label recommandé par l''ADEME, transport, émissions polluantes, consommation de ressources,...) et sociaux (respect des conditions de travail, égalité des sexes, accès à l''emploi pour les handicapés, ESS,...) qui sont générés.</p>
+', '', '', '', null, 25.0, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.3.4.1', 'eci', '3.3.4.1', 'Mettre en place au moins une action', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.3.4.2', 'eci', '3.3.4.2', 'Mettre en place un ensemble d’actions vers une cible', '', '', '', '', '', '', null, 40.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.3.4.3', 'eci', '3.3.4.3', 'Mettre en place un ensemble d’actions vers l''ensemble des cibles clés du territoire', '', '', '', '', '', '', null, 40.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.2', 'eci', '3.2', 'Réaliser des achats responsables', '<p>Les achats responsables consistent à acheter en tenant compte, à chaque étape du cycle de vie d''un produit ou d''une prestation, des impacts économiques (producteurs locaux, ...), environnementaux (produits et services labélisés Ecolabel européen ou autre label recommandé par l''ADEME, transport, émissions polluantes, consommation de ressources,...) et sociaux (respect des conditions de travail, égalité des sexes, accès à l''emploi pour les handicapés, ESS,...) qui sont générés.</p>
 ', '<p><strong>Réglementations</strong></p>
 <a href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006204306/2016-03-31/">
 Clauses sociales et environnementales: article 14 du code des marchés publics
@@ -1806,7 +1600,7 @@ Réseau Grand Ouest Commande public durable
 <a href="http://www.achatsresponsables-aquitaine.fr/">
 Association Aquitaine des Acheteurs publics
 </a>
-', '', '<p><strong>Guides sur l’achat responsable</strong></p>
+', '<p><strong>Guides sur l’achat responsable</strong></p>
 <a href="https://www.economie.gouv.fr/files/directions_services/daj/marches_publics/oeap/gem/ARCHIVE-eco_responsable/eco_responsable.pdf">
 Guide de l’Achat public éco-responsable
 </a>
@@ -1839,38 +1633,24 @@ Informations sur l’écolabel européen
 <a href="https://www.ademe.fr/labels-environnementaux">
 Site de l’ADEME sur les labels environnementaux
 </a>
-', '', '', 25.0, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.2.0', 'eci', '3.2.0', 'Mettre en place le Schéma de promotion des achats publics socialement et écologiquement responsables (SPASER)', '<p>Si la collectivité gère un montant annuel d''achats supérieur à 100 millions d''euros, elle est dans l''obligation d''avoir mis en place un Schéma de promotion des achats publics socialement et écologiquement responsables (SPASER).</p>
+', '', '', 25.0, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.2.0', 'eci', '3.2.0', 'Mettre en place le Schéma de promotion des achats publics socialement et écologiquement responsables (SPASER)', '<p>Si la collectivité gère un montant annuel d''achats supérieur à 100 millions d''euros, elle est dans l''obligation d''avoir mis en place un Schéma de promotion des achats publics socialement et écologiquement responsables (SPASER).</p>
 <p>La collectivité est conforme à la réglementation.</p>
 <p>En cas de non-conformité, la collectivité doit justifier d''un plan d''actions correctives et de l''absence de contentieux.</p>
 ', '', '<p>L’obligation d’adopter et de publier un schéma de promotion des achats publics socialement responsables est prévue par l’article 13 de la loi n° 2014-856 du 31 juillet 2014 relative à l’économie sociale et solidaire afin d’encourager les acheteurs publics dans la voie des achats responsables. Cet article a été modifié par l’article 76 de la loi n° 2015-992 du 17 août 2015 relative à la transition énergétique pour la croissance verte, afin d’élargir ce schéma à la promotion des achats publics écologiquement responsables.</p>
-', '<ul>
-<li>Le document formalisant le SPASER (Schéma de Promotion des Achats Publics Socialement et Ecologiquement Responsables), uniquement pour les collectivités dont le montant total annuel des achats est supérieur à 100 millions d’euros H.T</li>
-</ul>
-', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.2.1', 'eci', '3.2.1', 'Définir la politique d''achats responsables et sensibiliser', '<p>La collectivité définit le cadre et formalise sa politique d''achats responsables dans un document écrit.</p>
+', '', '', '', null, null, 'bases');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.2.1', 'eci', '3.2.1', 'Définir la politique d''achats responsables et sensibiliser', '<p>La collectivité définit le cadre et formalise sa politique d''achats responsables dans un document écrit.</p>
 <p>Elle réalise la cartographie de ses achats.</p>
 <p>Elle sensibilise et forme ses acheteurs aux enjeux et pratiques des achats responsables au regard de l''économie circulaire.</p>
 ', '', '<p>Document de formalisation : charte, délibération, schéma de promotion des achats responsables (SPASER) pour les obligés (plus de 100 millions d''euros d''achats).</p>
 <p>Cartographie des achats : identification des principales familles d''achats, des enjeux associés, des priorités d''action (familles à fort volume d''achat, à fort enjeux environnementaux, marchés à renouveler).</p>
 <p>La collectivité prend contact avec le réseau d''acheteurs &quot;Commande publique et développement durable&quot; (https://www.ecologie.gouv.fr/achats-publics-durables), réseaux présents dans la plupart des régions, pour être aidée dans la sensibilisation et la formation.</p>
-', '<ul>
-<li>
-<p>Politique d''achat, délibération, charte ou SPASER (si achats publics supérieurs à 100 M€)</p>
-</li>
-<li>
-<p>Cartographie des achats</p>
-</li>
-<li>
-<p>Document attestant des formations et sensibilisations réalisées</p>
-</li>
-</ul>
-', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.2.1.1', 'eci', '3.2.1.1', 'Décider d''engager une structuration de sa politique d''achats responsables', '', '', '', '', '', '', '', null, 10.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.2.1.2', 'eci', '3.2.1.2', 'Disposer d''une politique d''achat responsable structurée', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.2.1.3', 'eci', '3.2.1.3', 'Réaliser une cartographie des achats', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.2.1.4', 'eci', '3.2.1.4', 'Sensibiliser et former à la pratique des achats responsables au sein de la collectivité', '', '', '', '', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.2.2', 'eci', '3.2.2', 'Expérimenter l''intégration de dispositions relevant de l''économie circulaire', '<p>En lien avec le réseau d''acheteurs &quot;Commande publique et développement durable&quot;, les acheteurs expérimentent l''intégration de dispositions relevant de l''économie circulaire en plus des dispositions environnementales et sociales dans plusieurs marchés de la collectivité, en se basant sur la logique cycle de vie des produits et des services.</p>
+', '', '', '', null, 25.0, 'bases');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.2.1.1', 'eci', '3.2.1.1', 'Décider d''engager une structuration de sa politique d''achats responsables', '', '', '', '', '', '', null, 10.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.2.1.2', 'eci', '3.2.1.2', 'Disposer d''une politique d''achat responsable structurée', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.2.1.3', 'eci', '3.2.1.3', 'Réaliser une cartographie des achats', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.2.1.4', 'eci', '3.2.1.4', 'Sensibiliser et former à la pratique des achats responsables au sein de la collectivité', '', '', '', '', '', '', null, 50.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.2.2', 'eci', '3.2.2', 'Expérimenter l''intégration de dispositions relevant de l''économie circulaire', '<p>En lien avec le réseau d''acheteurs &quot;Commande publique et développement durable&quot;, les acheteurs expérimentent l''intégration de dispositions relevant de l''économie circulaire en plus des dispositions environnementales et sociales dans plusieurs marchés de la collectivité, en se basant sur la logique cycle de vie des produits et des services.</p>
 ', '', '<p>Exemples par filière :</p>
 <ul>
 <li>BTP : guide d’accompagnement des MOA du BTP</li>
@@ -1895,35 +1675,21 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>et aux labels environnementaux (100 labels environnementaux recommandés par l’ADEME)</p>
 <p>https://agirpourlatransition.ademe.fr/particuliers/labels-environnementaux</p>
 <p>Se référer aux ressources, guides cités dans Optigede (Synthèse thématique Achats responsables) (https://www.optigede.ademe.fr/syntheses-thematiques-a3p-economie-circulaire)</p>
-', '<ul>
-<li>Rapport d''activité</li>
-</ul>
-', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.2.2.1', 'eci', '3.2.2.1', 'Disposer d''au moins 30% des marchés publics incluant des dispositions environnementales', '', '', '', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.2.2.2', 'eci', '3.2.2.2', 'Disposer d''au moins 60% des marchés publics incluant des dispositions environnementales', '', '', '', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.2.2.3', 'eci', '3.2.2.3', 'Disposer d''au moins 30% des marchés publics incluant des dispositions sociales', '', '', '', '', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.2.3', 'eci', '3.2.3', 'Pérenniser la démarche', '<p>Le service Achats met en place les outils nécessaires à la pérennisation de la démarche : la démarche est systématisée à l''ensemble des marchés passés par la collectivité dans une logique d''amélioration continue, une veille sur les caractéristiques environnementales, sociales et de l''économie circulaire de l''offre est assurée, le pilotage de ses achats (mise en place d''indicateurs, d''un tableau de bord de suivi des progrès) est réalisé.</p>
+', '', '', '', null, 50.0, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.2.2.1', 'eci', '3.2.2.1', 'Disposer d''au moins 30% des marchés publics incluant des dispositions environnementales', '', '', '', '', '', '', null, 25.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.2.2.2', 'eci', '3.2.2.2', 'Disposer d''au moins 60% des marchés publics incluant des dispositions environnementales', '', '', '', '', '', '', null, 25.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.2.2.3', 'eci', '3.2.2.3', 'Disposer d''au moins 30% des marchés publics incluant des dispositions sociales', '', '', '', '', '', '', null, 50.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.2.3', 'eci', '3.2.3', 'Pérenniser la démarche', '<p>Le service Achats met en place les outils nécessaires à la pérennisation de la démarche : la démarche est systématisée à l''ensemble des marchés passés par la collectivité dans une logique d''amélioration continue, une veille sur les caractéristiques environnementales, sociales et de l''économie circulaire de l''offre est assurée, le pilotage de ses achats (mise en place d''indicateurs, d''un tableau de bord de suivi des progrès) est réalisé.</p>
 <p>Les acheteurs participent activement aux travaux du réseau d''acheteurs de leur territoire, ils capitalisent leurs retours d''expérience.</p>
 <p>Ils participent à la promotion des achats responsables auprès des élus et des acheteurs non encore sensibilisés au sein de leur territoire.</p>
 ', '', '<p>Pérennisation de la démarche : connaissance des producteurs locaux (plateformes présentant l''offre locale). Un élu ou un référent est identifié pour le suivi de la mise en oeuvre de la politique.</p>
 <p>La collectivité facilite l''accès des PME locales à ses marchés publics dans le respect des règles de la commande publique et de la libre concurrence.</p>
 <p>Ils testent des alternatives innovantes comme l''économie de la fonctionnalité (Orientation 3.6).</p>
-', '<ul>
-<li>
-<p>Tableau de bord</p>
-</li>
-<li>
-<p>Justificatif de participation à un réseau d''acheteurs ou club d''acheteurs (CR de réunions, etc.)</p>
-</li>
-<li>
-<p>Support(s) de promotion des achats durables</p>
-</li>
-</ul>
-', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.2.3.1', 'eci', '3.2.3.1', 'Mettre en place un tableau de bord', '', '', '', '', '', '', '', null, 40.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.2.3.2', 'eci', '3.2.3.2', 'Participer au réseau d''acheteurs', '', '', '', '', '', '', '', null, 30.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.2.3.3', 'eci', '3.2.3.3', 'Promouvoir les achats responsables', '', '', '', '', '', '', '', null, 30.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.6', 'eci', '3.6', 'Soutenir et accompagner l''économie de la fonctionnalité et de la coopération', '<p>L’économie de la fonctionnalité et de la coopération établit une nouvelle relation entre l’offre et la demande qui n’est plus uniquement basée sur la simple vente de biens ou de services. La contractualisation repose sur les effets utiles (bénéfices) et l’offre s’adapte aux besoins réels des personnes, des entreprises et des collectivités ainsi qu’aux enjeux relatifs au développement durable. Ce modèle économique induit plus largement des transformations profondes dans les modes de production et de consommation. Les solutions doivent permettre une moindre consommation des ressources naturelles dans une perspective d’économie circulaire, un accroissement du bien-être des personnes et un développement économique.</p>
+', '', '', '', null, 25.0, 'effets');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.2.3.1', 'eci', '3.2.3.1', 'Mettre en place un tableau de bord', '', '', '', '', '', '', null, 40.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.2.3.2', 'eci', '3.2.3.2', 'Participer au réseau d''acheteurs', '', '', '', '', '', '', null, 30.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.2.3.3', 'eci', '3.2.3.3', 'Promouvoir les achats responsables', '', '', '', '', '', '', null, 30.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.6', 'eci', '3.6', 'Soutenir et accompagner l''économie de la fonctionnalité et de la coopération', '<p>L’économie de la fonctionnalité et de la coopération établit une nouvelle relation entre l’offre et la demande qui n’est plus uniquement basée sur la simple vente de biens ou de services. La contractualisation repose sur les effets utiles (bénéfices) et l’offre s’adapte aux besoins réels des personnes, des entreprises et des collectivités ainsi qu’aux enjeux relatifs au développement durable. Ce modèle économique induit plus largement des transformations profondes dans les modes de production et de consommation. Les solutions doivent permettre une moindre consommation des ressources naturelles dans une perspective d’économie circulaire, un accroissement du bien-être des personnes et un développement économique.</p>
 <p>L’économie de la fonctionnalité et de la coopération propose un mode de développement économique basé sur la coopération entre les entreprises, les bénéficiaires des offres, voire les collectivités territoriales pour proposer des services adaptés aux différents usages. Elle induite des transformations profondes des modes de productions et des modes de vie. Elle vise à accroître les effets positifs sur la société tout en évitant la surproduction et la surconsommation.</p>
 ', '<p><strong>Définition</strong></p>
 <a href="https://www.ecologique-solidaire.gouv.fr/leconomie-fonctionnalite">
@@ -1956,7 +1722,7 @@ Panorama national et pistes d''action sur l''économie de la fonctionnalité
 <a href="http://www.optigede.ademe.fr/fiche/soutien-la-mise-en-place-dun-service-de-location-dappareils-culinaires-sur-le-territoire-du">
 Soutien à la mise en place d’un service de location d’appareils culinaires sur le territoire du Grand Dijon
 </a>
-', '', '<p><strong>Centres de ressources</strong></p>
+', '<p><strong>Centres de ressources</strong></p>
 <a href="http://crepe.ieefc.eu/">
 Institut européen de l’économie de la fonctionnalité net de la coopération
 </a>
@@ -1969,25 +1735,17 @@ Etude
 <p>prospective de l’ADEME : vers une économie de la</p>
 <p>fonctionnalité à haute valeur ajoutée et sociale en 2050
 </a></p>
-', '', '', 25.0, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.6.1', 'eci', '3.6.1', 'Sensibiliser et former', '<p>La collectivité forme les élus et son personnel à l’économie de la fonctionnalité et de la coopération en lien avec la transition écologique et sociale de son territoire.</p>
+', '', '', 25.0, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.6.1', 'eci', '3.6.1', 'Sensibiliser et former', '<p>La collectivité forme les élus et son personnel à l’économie de la fonctionnalité et de la coopération en lien avec la transition écologique et sociale de son territoire.</p>
 <p>Elle sensibilise les acteurs de son territoire à ce nouveau modèle économique (entreprises, associations, collectivités, etc.).</p>
 ', '', '<p>Organiser une journée de sensibilisation pour les différents services en interne, pour les élus. Organiser une formation avec le CNFPT.</p>
 <p>Co-organiser des journées techniques sur l’économie de la fonctionnalité à destination des PME, d''associations et d''autres acteurs économiques.</p>
-', '<ul>
-<li>
-<p>Attestation de suivi de formation</p>
-</li>
-<li>
-<p>Preuve de réalisation d''évènements de sensibilisation</p>
-</li>
-</ul>
-', '', '', '', null, 15.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.6.1.1', 'eci', '3.6.1.1', 'Engager une formation du personnel de la collectivité', '', '', '', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.6.1.2', 'eci', '3.6.1.2', 'Avoir formé des personnes de la collectivité', '', '', '', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.6.1.3', 'eci', '3.6.1.3', 'Engager une sensibilisation des acteurs du territoire', '', '', '', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.6.1.4', 'eci', '3.6.1.4', 'Sensibiliser les acteurs du territoire', '', '', '', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.6.2', 'eci', '3.6.2', 'Soutenir les entreprises du territoire et construire des réponses aux enjeux de politique publique adaptées aux différents usages', '<p>La collectivité soutient les acteurs économiques du territoire :</p>
+', '', '', '', null, 15.0, 'bases');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.6.1.1', 'eci', '3.6.1.1', 'Engager une formation du personnel de la collectivité', '', '', '', '', '', '', null, 25.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.6.1.2', 'eci', '3.6.1.2', 'Avoir formé des personnes de la collectivité', '', '', '', '', '', '', null, 25.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.6.1.3', 'eci', '3.6.1.3', 'Engager une sensibilisation des acteurs du territoire', '', '', '', '', '', '', null, 25.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.6.1.4', 'eci', '3.6.1.4', 'Sensibiliser les acteurs du territoire', '', '', '', '', '', '', null, 25.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.6.2', 'eci', '3.6.2', 'Soutenir les entreprises du territoire et construire des réponses aux enjeux de politique publique adaptées aux différents usages', '<p>La collectivité soutient les acteurs économiques du territoire :</p>
 <p>• engagement dans des structures d''animation territoriale qui portent des actions d’économie de la fonctionnalité et de la coopération vers les entreprises</p>
 <p>• portage d’actions collectives et individuelles d’entreprises, intégration de l’économie de la fonctionnalité et de la coopération dans les documents stratégiques.</p>
 <p>La collectivité construit des réponses aux enjeux de politique publique adaptées aux différents usages (alimentation, hâbitat et autres espaces de vie, mobilité, loisirs, etc.).</p>
@@ -1995,22 +1753,16 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 ', '', '<p>Les structure d''animation territoriale peuvent être des réseaux professionnels, des réseaux consulaires, des agences de l’innovation ou encore des structures d’animation territoriale spécialisées (ex. des clubs). Par ses actions, ses structures peuvent mettre en place une dynamique de coopération sur le terriotire qui dépasse la mutualisation d''équipements et travaille à la meilleure repartition de valeur.</p>
 <p>Les actions : actions de sencibilisation, les projets coopératifs, actions collectives ciblant les dirigeants d''entreprises et les collectivités du territoire.</p>
 <p>Exemples d''action en matière de commande publique : photocopiage, déplacements des salariés de la collectivité, confort thermique de ses locaux.</p>
-', '<ul>
-<li>
-<p>Convention avec une structure d''animation ou preuve de l''adhésion</p>
-</li>
-<li>
-<p>Cahier(s) des charges intégrant des critères d''économie de la fonctionnalité et de la coopération</p>
-</li>
-</ul>
-', '', '', '', null, 35.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.6.2.1', 'eci', '3.6.2.1', 'Participer à des actions d''animation des entreprises', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.6.2.2', 'eci', '3.6.2.2', 'Adhérer à une structure d''animation des acteurs du territoire', '', '', '', '', '', '', '', null, 10.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.6.2.3', 'eci', '3.6.2.3', 'Soutenir financièrement une structure d’animation des acteurs du territoire', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.6.2.4', 'eci', '3.6.2.4', 'Intégrer des critères d''économie de la fonctionnalité et de la coopération dans la commande publique', '', '', '', '', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.6.3', 'eci', '3.6.3', 'Apprendre à coopérer dans une dynamique d’écosystèmes entre acteurs publics et privés dans le cadre des projets coopératifs territoriaux', '<p>La collectivité initie ou participe à des projets coopératifs territoriaux d''économie de la fonctionnalité et de la coopération pour répondre à ses missions de service public ou pour répondre plus largement aux enjeux de développement durable sur son territoire. Ces projets peuvent concerner l’alimentation, la mobilité, l’habitat, le tourisme, etc. L’attention aux usages et la coopération sont au centre de la démarche.</p>
+', '', '', '', null, 35.0, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.6.2.1', 'eci', '3.6.2.1', 'Participer à des actions d''animation des entreprises', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.6.2.2', 'eci', '3.6.2.2', 'Adhérer à une structure d''animation des acteurs du territoire', '', '', '', '', '', '', null, 10.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.6.2.3', 'eci', '3.6.2.3', 'Soutenir financièrement une structure d’animation des acteurs du territoire', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.6.2.4', 'eci', '3.6.2.4', 'Intégrer des critères d''économie de la fonctionnalité et de la coopération dans la commande publique', '', '', '', '', '', '', null, 50.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.6.3', 'eci', '3.6.3', 'Coopérer dans une dynamique d’écosystèmes entre acteurs publics et privés dans le cadre des projets coopératifs territoriaux', '<p>La collectivité initie ou participe à des projets coopératifs territoriaux d''économie de la fonctionnalité et de la coopération pour répondre à ses missions de service public ou pour répondre plus largement aux enjeux de développement durable sur son territoire. Ces projets peuvent concerner l’alimentation, la mobilité, l’habitat, le tourisme, etc. L’attention aux usages et la coopération sont au centre de la démarche.</p>
 ', '', '<p>Missions service public : éclairage public, confort thermique des bâtiments, prévention des déchets, mutualisation d''espaces publics ou stationnements…</p>
-<p>Réponses à des enjeux de DD sur son territoire : nouvelles solutions de mobilité, d’habitat durable, d’alimentation durable (au-delà de ses compétences habituelles) : https://librairie.ademe.fr/dechets-economie-circulaire/986-developpement-durable-des-territoires-la-voie-de-l-economie-de-la-fonctionnalite-et-de-la-cooperation.html</p>
+<a href="https://librairie.ademe.fr/dechets-economie-circulaire/986-developpement-durable-des-territoires-la-voie-de-l-economie-de-la-fonctionnalite-et-de-la-cooperation.html">
+Réponses à des enjeux de DD sur son territoire : nouvelles solutions de mobilité, d’habitat durable, d’alimentation durable (au-delà de ses compétences habituelles)
+</a>
 <p>Le développement des projets coopératifs territoriaux passent souvent par deux phases :</p>
 <ol>
 <li>Phase d''emergence:</li>
@@ -2021,29 +1773,18 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <li>Développement:</li>
 </ol>
 <p>Définir le groupe projet avec d''autres acteurs pour prendre en charge l''initiative</p>
-', '<ul>
-<li>Preuve d''engagement (charte, comptes rendus de réunion)</li>
-</ul>
-', '', '', '', null, 30.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.6.3.1', 'eci', '3.6.3.1', 'Faire émerger un projet coopératif territorial d''économie de la fonctionnalité et de la coopération ou participer à un projet', '', '', '', '', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.6.3.2', 'eci', '3.6.3.2', 'Piloter et stabiliser un écosystème coopératif territorial d''économie de la fonctionnalité et de la coopération', '', '', '', '', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.6.4', 'eci', '3.6.4', 'Evaluer les effets', '<p>La collectivité évalue le développement des effets utiles positifs et de la réduction des effets négatifs de la mise en place d''actions de l''économie de la fonctionnalité et de la coopération pour les parties prenantes et pour le territoire. Elle tient compte des retours d''expérience pour ses futures actions.</p>
+', '', '', '', null, 30.0, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.6.3.1', 'eci', '3.6.3.1', 'Faire émerger un projet coopératif territorial d''économie de la fonctionnalité et de la coopération ou participer à un projet', '', '', '', '', '', '', null, 50.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.6.3.2', 'eci', '3.6.3.2', 'Piloter et stabiliser un écosystème coopératif territorial d''économie de la fonctionnalité et de la coopération', '', '', '', '', '', '', null, 50.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.6.4', 'eci', '3.6.4', 'Evaluer les effets', '<p>La collectivité évalue le développement des effets utiles positifs et de la réduction des effets négatifs de la mise en place d''actions de l''économie de la fonctionnalité et de la coopération pour les parties prenantes et pour le territoire. Elle tient compte des retours d''expérience pour ses futures actions.</p>
 ', '', '<p>Exemples d''effets à évaluer:</p>
 <p>Bénéfices sociaux, économiques et environnementaux sur des aspects pertinents pour le territoire</p>
 <p>Nouvelles dynamiques entrepreunatiales créées : nouvelles entreprises, nouvelles co-entreprises ou entreprises communes, nouvelles associations, nouveaux produits et services, etc.</p>
-', '<ul>
-<li>
-<p>Méthode d''évaluation choisie</p>
-</li>
-<li>
-<p>Preuve de l''évaluation (enquête, évaluation environnementale, évaluation sociétale…)</p>
-</li>
-</ul>
-', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.6.4.1', 'eci', '3.6.4.1', 'Identifier les effets à évaluer', '', '', '', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.6.4.2', 'eci', '3.6.4.2', 'Identifier les modalités d''évaluation', '', '', '', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.6.4.3', 'eci', '3.6.4.3', 'Mettre en place une évaluation', '', '', '', '', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.1', 'eci', '3.1', 'Identifier et développer des filières/domaines à enjeu en lien avec l''économie circulaire sur le territoire', '<p>En lien avec le diagnostic de l''économie circulaire réalisé dans l''orientation 1.1, la collectivité identifie précisément les filières à enjeux sur son territoire et met en place un plan d''action &quot;boucle&quot; dédié par filière. Une boucle locale d''économie circulaire vise à conserver le plus longtemps possible dans l’économie (locale) la valeur d’un produit, de ses composants ou des matières (des ressources) en limitant la génération de déchets (et en développant le partage, la réparation, le réemploi, la réutilisation, la rénovation, la refabrication et le recyclage) dans une perspective de développement d’activité économique  (durable, faible en carbone et réduction de l''utilisation des ressources naturelles) et d’emplois locaux (ou de proximité).</p>
+', '', '', '', null, 20.0, 'effets');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.6.4.1', 'eci', '3.6.4.1', 'Identifier les effets à évaluer', '', '', '', '', '', '', null, 25.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.6.4.2', 'eci', '3.6.4.2', 'Identifier les modalités d''évaluation', '', '', '', '', '', '', null, 25.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.6.4.3', 'eci', '3.6.4.3', 'Mettre en place une évaluation', '', '', '', '', '', '', null, 50.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.1', 'eci', '3.1', 'Identifier et développer des filières/domaines à enjeu en lien avec l''économie circulaire sur le territoire', '<p>En lien avec le diagnostic de l''économie circulaire réalisé dans l''orientation 1.1, la collectivité identifie précisément les filières à enjeux sur son territoire et met en place un plan d''action &quot;boucle&quot; dédié par filière. Une boucle locale d''économie circulaire vise à conserver le plus longtemps possible dans l’économie (locale) la valeur d’un produit, de ses composants ou des matières (des ressources) en limitant la génération de déchets (et en développant le partage, la réparation, le réemploi, la réutilisation, la rénovation, la refabrication et le recyclage) dans une perspective de développement d’activité économique  (durable, faible en carbone et réduction de l''utilisation des ressources naturelles) et d’emplois locaux (ou de proximité).</p>
 ', '<a href="https://librairie.ademe.fr/dechets-economie-circulaire/2983-guide-methodologique-du-developpement-des-strategies-regionales-d-economie-circulaire-en-france-9782358389051.html">
 Guide méthodologique du développement des stratégies régionales d''économie circulaire en France
 </a>
@@ -2187,7 +1928,7 @@ Alèzes de matelas lavables en maison de retraite
 <a href="https://www.optigede.ademe.fr/fiche/creation-du-repar-reseau-pour-amplifier-la-reparation">
 Réseau REPAR
 </a>
-', '', '<p><strong>Bâtiment</strong></p>
+', '<p><strong>Bâtiment</strong></p>
 <a href="https://www.optigede.ademe.fr/la-planification-dans-l-economie-circulaire">
 Déchets du BTP
 </a>
@@ -2206,8 +1947,8 @@ Valorisation de la matière organique
 <a href="https://refashion.fr/pro/frpage-349-strong-class-search-excerpt-guide-strong-pratique-collecter-trier-valoriser-les-tlc-usages-sur-mon-territoire.html">
 Guide pratique: collecter, trier, valoriser les TLC usagés de mon territoire
 </a>
-', '', '', 35.0, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.1.1', 'eci', '3.1.1', 'Réaliser le diagnostic des filière(s) à enjeux d''économie circulaire', '<p>A l''appui de la stratégie adoptée dans l''orientation 1.1, la collectivité approfondit le diagnostic sur les secteurs économiques analysés sous l''angle de l''économie circulaire.</p>
+', '', '', 35.0, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.1.1', 'eci', '3.1.1', 'Réaliser le diagnostic des filière(s) à enjeux d''économie circulaire', '<p>A l''appui de la stratégie adoptée dans l''orientation 1.1, la collectivité approfondit le diagnostic sur les secteurs économiques analysés sous l''angle de l''économie circulaire.</p>
 <p>Le diagnostic porte sur l''analyse des flux, des acteurs, des chaines de valeurs et des marchés. Son but est d''identifier des opportunités d''instaurer des boucles locales d''économie circulaire.</p>
 <p>La collectivité priorise les secteurs à enjeux le plus fort pour son territoire.</p>
 <p>Les diagnostics pourront s''appuyer sur la stratégie de développement économique du territoire.</p>
@@ -2236,23 +1977,12 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>Année 1: Filière 1 est diagnostiquée.</p>
 <p>Année 2: Filière 1 fait objet du plan d''action; Filière 2 est diagnostiquée.</p>
 <p>Année 3: Filière 1 a son plan d''action piloté; Filière 2 fait objet du plan d''action; Filière 3 est diagnostiquée.</p>
-', '<ul>
-<li>
-<p>Cadrage ou cahier des charges du diagnostic</p>
-</li>
-<li>
-<p>Rapport de diagnostic</p>
-</li>
-<li>
-<p>Liste d''acteurs avec lesquels le diagnostic a été partagé</p>
-</li>
-</ul>
-', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.1.1.1', 'eci', '3.1.1.1', 'Prioriser la filière (les filières) à diagnostiquer', '', '', '', '', '', '', '', null, 40.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.1.1.2', 'eci', '3.1.1.2', 'Disposer d''un diagnostic de filière(s) à enjeux d''économie circulaire en cours de réalisation', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.1.1.3', 'eci', '3.1.1.3', 'Disposer d''un diagnostic de filière(s) à enjeux d''économie circulaire finalisé', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.1.1.4', 'eci', '3.1.1.4', 'Partager le diagnostic avec les acteurs clés des filières étudiées', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.1.2', 'eci', '3.1.2', 'Construire un plan d''action spécifique', '<p>La collectivité construit son plan d''actions spécifique autour d''au moins une filière à enjeu sur son territoire. Elle consulte les acteurs clés de la filière et définit les partenariats associés au plan d''action. Les partenariats sont précisés dans l''Axe 5 du Référentiel.</p>
+', '', '', '', null, null, 'bases');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.1.1.1', 'eci', '3.1.1.1', 'Prioriser la filière (les filières) à diagnostiquer', '', '', '', '', '', '', null, 40.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.1.1.2', 'eci', '3.1.1.2', 'Disposer d''un diagnostic de filière(s) à enjeux d''économie circulaire en cours de réalisation', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.1.1.3', 'eci', '3.1.1.3', 'Disposer d''un diagnostic de filière(s) à enjeux d''économie circulaire finalisé', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.1.1.4', 'eci', '3.1.1.4', 'Partager le diagnostic avec les acteurs clés des filières étudiées', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.1.2', 'eci', '3.1.2', 'Construire un plan d''action spécifique', '<p>La collectivité construit son plan d''actions spécifique autour d''au moins une filière à enjeu sur son territoire. Elle consulte les acteurs clés de la filière et définit les partenariats associés au plan d''action. Les partenariats sont précisés dans l''Axe 5 du Référentiel.</p>
 <p>La collectivité rédige le plan d''actions, se fixe des objectifs concrets avec un horizon temps défini et intègre des indicateurs d''impact.</p>
 <p>Elle met en œuvre le plan d''actions en collaboration avec les acteurs et les initiatives de son territoire.</p>
 ', '', '<p>Actions possibles pour chaque plan d''actions spécifique à une filière :</p>
@@ -2276,20 +2006,12 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>Définir un coordinateur de la mise en œuvre du plan d''actions (une personne ou une équipe).</p>
 </li>
 </ul>
-', '<ul>
-<li>
-<p>Preuve de la validation du plan d''actions</p>
-</li>
-<li>
-<p>Fiches actions Optigede</p>
-</li>
-</ul>
-', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.1.2.1', 'eci', '3.1.2.1', 'Construire le plan d''actions', '', '', '', '', '', '', '', null, 30.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.1.2.2', 'eci', '3.1.2.2', 'Co-construire le plan d''action avec les acteurs clés des filières', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.1.2.3', 'eci', '3.1.2.3', 'Valider le plan d''actions', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.1.2.4', 'eci', '3.1.2.4', 'Réaliser les actions du plan d''actions', '', '', '', '', '', '', '', null, 30.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.1.3', 'eci', '3.1.3', 'Piloter et suivre les résultats du plan d''actions', '<p>La collectivité met en œuvre un suivi du (des) plan(s) d''action spécifique(s) par filière en y associant les acteurs impliqués dans sa réalisation.</p>
+', '', '', '', null, null, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.1.2.1', 'eci', '3.1.2.1', 'Construire le plan d''actions', '', '', '', '', '', '', null, 30.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.1.2.2', 'eci', '3.1.2.2', 'Co-construire le plan d''action avec les acteurs clés des filières', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.1.2.3', 'eci', '3.1.2.3', 'Valider le plan d''actions', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.1.2.4', 'eci', '3.1.2.4', 'Réaliser les actions du plan d''actions', '', '', '', '', '', '', null, 30.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.1.3', 'eci', '3.1.3', 'Piloter et suivre les résultats du plan d''actions', '<p>La collectivité met en œuvre un suivi du (des) plan(s) d''action spécifique(s) par filière en y associant les acteurs impliqués dans sa réalisation.</p>
 <p>Elle évalue régulièrement l''avancement des travaux, notamment au regard des indicateurs d''impact.</p>
 <p>En fin de période, elle fait un bilan final, qu''elle communique aux acteurs du territoire (grand public et associations, collectivités, entreprises).</p>
 <p>La collectivité peut envisager un nouvel plan d''action spécifique pour la filière ou travailler sur d''autres filières tout en apprenant de son expérience précédente.</p>
@@ -2314,19 +2036,11 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>Communiquer et valoriser les résultats et l''impact d''actions réalisées. Valoriser les partenariats.</p>
 </li>
 </ul>
-', '<ul>
-<li>
-<p>Protocole de suivi</p>
-</li>
-<li>
-<p>Bilan</p>
-</li>
-</ul>
-', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.1.3.1', 'eci', '3.1.3.1', 'Définir un protocole de suivi', '', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.1.3.2', 'eci', '3.1.3.2', 'Recueillir les données', '', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.1.3.3', 'eci', '3.1.3.3', 'Analyser l''évolution des indicateurs et ajuster le plan d''actions', '', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.5', 'eci', '3.5', 'Soutenir et accompagner les projets d''Ecologie Industrielle et Territoriale (EIT)', '<p>L''EIT s''appuie sur l''étude des flux  pour identifier et développer des synergies entre acteurs économiques d’un territoire :  substituer des flux de matières, d''énergies et d''eau, initier la mutualisation de moyens et de services, le partage d''infrastructures.</p>
+', '', '', '', null, null, 'effets');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.1.3.1', 'eci', '3.1.3.1', 'Définir un protocole de suivi', '', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.1.3.2', 'eci', '3.1.3.2', 'Recueillir les données', '', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.1.3.3', 'eci', '3.1.3.3', 'Analyser l''évolution des indicateurs et ajuster le plan d''actions', '', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.5', 'eci', '3.5', 'Soutenir et accompagner les projets d''Ecologie Industrielle et Territoriale (EIT)', '<p>L''EIT s''appuie sur l''étude des flux  pour identifier et développer des synergies entre acteurs économiques d’un territoire :  substituer des flux de matières, d''énergies et d''eau, initier la mutualisation de moyens et de services, le partage d''infrastructures.</p>
 <p>L’EIT, par ses démarches collectives et volontaires menées sur un territoire en vue d’en optimiser les ressources, réconcilie ainsi développement économique et meilleur usage des ressources, en privilégiant l’ancrage des activités et de l’emploi dans les territoires.</p>
 <p>Une collectivité qui soutient et accompagne ce type de projet intervient à différents stades :</p>
 <ul>
@@ -2400,7 +2114,7 @@ Mutualisation entre acteurs économiques - Initier une démarche d''EIT en entra
 <a href="https://optigede.ademe.fr/fiche/favoriser-les-synergies-entre-paysagistes-et-agriculteurs">
 Favoriser les synergies entre paysagistes et agriculteurs (SIRTOM de la Vallée de la Grosne)
 </a>
-', '', '<p><strong>Réseaux</strong></p>
+', '<p><strong>Réseaux</strong></p>
 <a href="https://www.economiecirculaire.org/eit/h/le-reseau-synapse.html#page1:local">
 Réseau Synapse: réseau national des acteurs de l''EIT
 </a>
@@ -2441,8 +2155,8 @@ Référentiel ELIPSE: évaluation des performances des démarches d''EIT
 <a href="https://formations.ademe.fr/formations_efficacite-energetique_connaitre-l-ecologie-industrielle-territoriale-(eit)_s4818.html">
 Connaître l''EIT (Foramation ADEME)
 </a>
-', '', '', 25.0, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.5.1', 'eci', '3.5.1', 'Elaborer la stratégie et structurer en interne', '<p>Conjointement avec les services Développement économique et Environnement (déchets, économie circulaire, climat, énergie, etc.), la collectivité élabore un document formalisant sa stratégie EIT (politique, feuille de route, etc.).</p>
+', '', '', 25.0, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.5.1', 'eci', '3.5.1', 'Elaborer la stratégie et structurer en interne', '<p>Conjointement avec les services Développement économique et Environnement (déchets, économie circulaire, climat, énergie, etc.), la collectivité élabore un document formalisant sa stratégie EIT (politique, feuille de route, etc.).</p>
 <p>Ce document doit notamment comporter les éléments suivants :</p>
 <ul>
 <li>
@@ -2470,16 +2184,8 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 </li>
 </ul>
 <p>Des objectifs de déploiement de l''EIT devront également être intégrées à ces documents lors de leur réédition.</p>
-', '<ul>
-<li>
-<p>Document formalisant la stratégie, si possible validé par un élu.</p>
-</li>
-<li>
-<p>CR des réunions de travail pour définir la stratégie (dans le but de montrer l''implication de tous les services concernés, en particulier du service développement économique)</p>
-</li>
-</ul>
-', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.5.2', 'eci', '3.5.2', 'Mettre en réseau les acteurs et mettre en place une gouvernance', '<p>La collectivité contribue à la mobilisation autour de l''EIT par une mise en réseau des acteurs pertinents (chambres consulaires, agences de développement économique, syndicats déchets, associations d''entreprises et de zones d''activités, DREAL/DIRECCTE, université/laboratoire de recherche, etc.). Elle réalise notamment des actions de communication et de sensibilisation sur l''EIT et organise des rencontres entre les acteurs.</p>
+', '', '', '', null, 20.0, 'bases');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.5.2', 'eci', '3.5.2', 'Mettre en réseau les acteurs et mettre en place une gouvernance', '<p>La collectivité contribue à la mobilisation autour de l''EIT par une mise en réseau des acteurs pertinents (chambres consulaires, agences de développement économique, syndicats déchets, associations d''entreprises et de zones d''activités, DREAL/DIRECCTE, université/laboratoire de recherche, etc.). Elle réalise notamment des actions de communication et de sensibilisation sur l''EIT et organise des rencontres entre les acteurs.</p>
 <p>La collectivité contribue à la mise en place d’une gouvernance territoriale de la démarche d''EIT avec l''ensemble de ses acteurs.</p>
 <p>Elle participe et contribue au réseau régional d’EIT quand il existe.</p>
 ', '', '<ul>
@@ -2496,26 +2202,12 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>Participation à une ou plusieurs réunions d’échanges au sein du réseau régional s''il existe.</p>
 </li>
 </ul>
-', '<ul>
-<li>
-<p>Supports de communication/sensibilisation réalisés.</p>
-</li>
-<li>
-<p>Compte-rendu des réunions/ateliers inter-entreprises réalisés.</p>
-</li>
-<li>
-<p>Documents descriptifs de la gouvernance de la démarche EIT, compte-rendu de comités de pilotage.</p>
-</li>
-<li>
-<p>Compte-rendu des réunions du réseau régional.</p>
-</li>
-</ul>
-', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.5.2.1', 'eci', '3.5.2.1', 'Réaliser au moins une action', '', '', '', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.5.2.2', 'eci', '3.5.2.2', 'Réaliser au moins 2 actions', '', '', '', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.5.2.3', 'eci', '3.5.2.3', 'Réaliser au moins 3 actions', '', '', '', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.5.2.4', 'eci', '3.5.2.4', 'Réaliser au moins 4 actions', '', '', '', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.5.3', 'eci', '3.5.3', 'Accompagner opérationnellement les projets', '<p>La collectivité a attribué un financement pluriannuel à la démarche d''EIT ou a internalisé un poste d''animateur(trice) en charge de l''accompagnement des projets d''EIT du territoire.</p>
+', '', '', '', null, 20.0, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.5.2.1', 'eci', '3.5.2.1', 'Réaliser au moins une action', '', '', '', '', '', '', null, 25.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.5.2.2', 'eci', '3.5.2.2', 'Réaliser au moins 2 actions', '', '', '', '', '', '', null, 25.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.5.2.3', 'eci', '3.5.2.3', 'Réaliser au moins 3 actions', '', '', '', '', '', '', null, 25.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.5.2.4', 'eci', '3.5.2.4', 'Réaliser au moins 4 actions', '', '', '', '', '', '', null, 25.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.5.3', 'eci', '3.5.3', 'Accompagner opérationnellement les projets', '<p>La collectivité a attribué un financement pluriannuel à la démarche d''EIT ou a internalisé un poste d''animateur(trice) en charge de l''accompagnement des projets d''EIT du territoire.</p>
 <p>En tant que porteur ou partenaire-facilitateur-financeur, la collectivité participe à la recherche et à l’identification de nouvelles synergies sur son territoire (via les outils méthodologiques de l’EIT : diagnostic de flux, animation d’ateliers collaboratifs inter-entreprises, visites d''entreprises, etc.).</p>
 <p>Le travail de coopération avec les acteurs du territoire a permis de qualifier des opportunités de synergies. Grâce à l''accompagnement de la collectivité (cofinancement d''études de faisabilité de synergies), certaines d’entre elles ont été mises en œuvre.</p>
 <p>La collectivité intègre les principes de l''EIT dans ses projets de développement économique et d''aménagement du territoire (création, extension, requalification de zones d’activités).</p>
@@ -2542,32 +2234,15 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>Pour en savoir plus, avec la cartographie des ZIP impliquées dans l’EIT et on y retrouve la Guadeloupe : https://www.economiecirculaire.org/articles/h/fiche-zoom-zones-industrialo-portuaires-et-chaleur-fatale.html</p>
 <p>La démarche EIT 972 ( Martinique) : https://www.economiecirculaire.org/articles/h/web-conference-eit-martinique-comment-creer-de-la-valeur-en-optimisant-nos-ressources.html</p>
 <p>Démarche Synergie Péi à La Réunion : https://www.economiecirculaire.org/articles/h/eit-synergie-pei-se-rapproche-de-cobaty-bourbon.html</p>
-', '<ul>
-<li>
-<p>Fiche de poste du poste internalisé ou convention d''aide pour le poste financé dans une structure tierce</p>
-</li>
-<li>
-<p>Compte rendu de réunions et d''activité liées à la recherche de synergies</p>
-</li>
-<li>
-<p>Document de preuve de la réalisation de la synergie (contrat, article, publication, ...)</p>
-</li>
-<li>
-<p>Document de présentation du dispositif mis en place pour intégrer l''EIT dans les activités de la collectivité (procédure d''implantation de nouvelles entreprises intégrant des mutualisations de flux, etc.)</p>
-</li>
-<li>
-<p>Contrat formalisant une synergie sur une activité de la collectivité</p>
-</li>
-</ul>
-', '', '', '', null, 30.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.5.3.1', 'eci', '3.5.3.1', 'Financer ou internaliser un animateur EIT', '', '', '', '', '', '', '', null, 10.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.5.3.2', 'eci', '3.5.3.2', 'Contribuer à l''identification de nouvelles synergies', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.5.3.3', 'eci', '3.5.3.3', 'Mettre en œuvre au moins une synergie par an', '', '', '', '', '', '', '', null, 10.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.5.3.4', 'eci', '3.5.3.4', 'Mettre en œuvre au moins 2 synergies par an', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.5.3.5', 'eci', '3.5.3.5', 'Mettre en œuvre 3 synergies ou plus par an', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.5.3.6', 'eci', '3.5.3.6', 'Intégrer l''eit dans les projets d''aménagement du territoire (zones d''activités)', '', '', '', '', '', '', '', null, 10.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.5.3.7', 'eci', '3.5.3.7', 'Au moins une synergie mise en œuvre sur les activités de la collectivité', '', '', '', '', '', '', '', null, 10.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.5.4', 'eci', '3.5.4', 'Pérenniser et partager les expériences', '<p>La collectivité impulse et/ou pilote la création ou le transfert du pilotage de la démarche d''EIT à une structure externe dédiée (acteur-tiers) dont la gouvernance est multi-acteurs. Si la structure existe déjà, elle participe à sa consolidation. Elle participe aux instances de gouvernance auprès des autres acteurs partenaires (entreprises, associations, etc.).</p>
+', '', '', '', null, 30.0, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.5.3.1', 'eci', '3.5.3.1', 'Financer ou internaliser un animateur EIT', '', '', '', '', '', '', null, 10.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.5.3.2', 'eci', '3.5.3.2', 'Contribuer à l''identification de nouvelles synergies', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.5.3.3', 'eci', '3.5.3.3', 'Mettre en œuvre au moins une synergie par an', '', '', '', '', '', '', null, 10.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.5.3.4', 'eci', '3.5.3.4', 'Mettre en œuvre au moins 2 synergies par an', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.5.3.5', 'eci', '3.5.3.5', 'Mettre en œuvre 3 synergies ou plus par an', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.5.3.6', 'eci', '3.5.3.6', 'Intégrer l''eit dans les projets d''aménagement du territoire (zones d''activités)', '', '', '', '', '', '', null, 10.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.5.3.7', 'eci', '3.5.3.7', 'Au moins une synergie mise en œuvre sur les activités de la collectivité', '', '', '', '', '', '', null, 10.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.5.4', 'eci', '3.5.4', 'Pérenniser et partager les expériences', '<p>La collectivité impulse et/ou pilote la création ou le transfert du pilotage de la démarche d''EIT à une structure externe dédiée (acteur-tiers) dont la gouvernance est multi-acteurs. Si la structure existe déjà, elle participe à sa consolidation. Elle participe aux instances de gouvernance auprès des autres acteurs partenaires (entreprises, associations, etc.).</p>
 <p>La collectivité participe à la définition du modèle économique de l’acteur-tiers sur le territoire et s’assure d’un équilibre de financement privés et publics et d’autofinancement de l’acteur-tiers.</p>
 <p>Un ETP est dédié au portage de la démarche pour assurer sa pérennité.</p>
 <p>La collectivité incite les projets d''EIT de son territoire à s''évaluer sur la plateforme ELIPSE et à valoriser les retours d''expérience au sein du réseau SYNAPSE (réseau national des acteurs de l''EIT).</p>
@@ -2575,25 +2250,11 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 ', '', '<p>Très fortement soutenue par les pouvoirs publics (ADEME, conseil régional, collectivité) en phase de lancement et de structuration (généralement les 3 premières années), la démarche d''EIT doit faire évoluer son portage et son modèle économique pour s''assurer de sa pérennisation, généralement via le transfert à un acteur-tiers légitime (association, clubs d''entreprises, SCIC, ...) dont le modèle économique repose sur un équilibre de financements privés/publics.</p>
 <p>La collectivité peut participer aux Rencontres Nationales de l’Ecologie Industrielle et Territoriale organisées par le réseau SYNAPSE.</p>
 <p>Communication : valorisation des projets dans la communication générale de la collectivité, publication d''articles dans les journaux professionnels, ...</p>
-', '<ul>
-<li>
-<p>Document attestant de la création de l''acteur-tiers et présentant les modalités de financement</p>
-</li>
-<li>
-<p>Fiche de poste de l''ETP dédié</p>
-</li>
-<li>
-<p>Projets EIT renseigné sur ELIPSE et SYNAPSE</p>
-</li>
-<li>
-<p>Documents de communication</p>
-</li>
-</ul>
-', '', '', '', null, 30.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.5.4.1', 'eci', '3.5.4.1', 'Transférer le pilotage de la démarche', '', '', '', '', '', '', '', null, 40.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.5.4.2', 'eci', '3.5.4.2', 'Disposer d''un ETP dédié', '', '', '', '', '', '', '', null, 40.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.5.4.3', 'eci', '3.5.4.3', 'Renseigner les projets EIT sur la plateforme ELIPSE et SYNAPSE et communiquer', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.4', 'eci', '3.4', 'Soutenir et accompagner l''écoconception des produits transformés et des services du territoire', '<p>L''écoconception vise, dès la conception d''un procédé, d''un bien ou d''un service, à prendre en compte l''ensemble du cycle de vie en minimisant les impacts environnementaux.</p>
+', '', '', '', null, 30.0, 'effets');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.5.4.1', 'eci', '3.5.4.1', 'Transférer le pilotage de la démarche', '', '', '', '', '', '', null, 40.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.5.4.2', 'eci', '3.5.4.2', 'Disposer d''un ETP dédié', '', '', '', '', '', '', null, 40.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.5.4.3', 'eci', '3.5.4.3', 'Renseigner les projets EIT sur la plateforme ELIPSE et SYNAPSE et communiquer', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.4', 'eci', '3.4', 'Soutenir et accompagner l''écoconception des produits transformés et des services du territoire', '<p>L''écoconception vise, dès la conception d''un procédé, d''un bien ou d''un service, à prendre en compte l''ensemble du cycle de vie en minimisant les impacts environnementaux.</p>
 ', '<p><strong>Définitions :</strong></p>
 <a href="https://www.ademe.fr/expertises/consommer-autrement/passer-a-laction/ameliorer-pratiques/lecoconception">
 Définition de l’éco-conception (ADEME)
@@ -2662,7 +2323,7 @@ CyclaB : le laboratoire d''innovation en économie circulaire du Cyclad
 <a href="https://www.optigede.ademe.fr/fiche/lancement-dun-programme-daccompagnement-des-entreprises-du-thouarsais-dans-des-demarches">
 Lancement d’un programme d’accompagnement des entreprises du Thouarsais dans des démarches Energie-Déchets
 </a>
-', '', '<p><strong>Argumentaire</strong></p>
+', '<p><strong>Argumentaire</strong></p>
 <a href="https://www.ademe.fr/entreprises-monde-agricole/organiser-demarche-environnementale/dossier/ecoconcevoir-produits/enjeux-lecoconception-benefices-lentreprise-leconomie-lenvironnement">
 Argumentaire sur l’éco-conception et les bénéfices pour l’entreprise
 </a>
@@ -2710,41 +2371,25 @@ CD2E: Centre de développement des éco-entreprises
 <a href="https://inforizon.blogs.com/files/etude-apedec-formations-eco-conception-v-16-02-10.pdf">
 Se former à l’éco-conception en Région (guide de l’APEDEC, 2010)
 </a>
-', '', '', 25.0, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.4.1', 'eci', '3.4.1', 'Animer le réseau', '<p>La collectivité anime (elle-même ou en partenariat avec la Région, les chambres consulaires, les associations environnementales, …) ou participe à l''animation d''un réseau d''entreprises, afin d''impulser une dynamique d''engagement de celles-ci dans les démarches d''éco-conception ou d''éco-innovation.</p>
+', '', '', 25.0, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.4.1', 'eci', '3.4.1', 'Animer le réseau', '<p>La collectivité anime (elle-même ou en partenariat avec la Région, les chambres consulaires, les associations environnementales, …) ou participe à l''animation d''un réseau d''entreprises, afin d''impulser une dynamique d''engagement de celles-ci dans les démarches d''éco-conception ou d''éco-innovation.</p>
 ', '', '<p>Se rapprocher des éco-organismes pour favoriser leur mise en relation avec les entreprises de son territoire.</p>
 <p>Organiser des évènements : colloques, groupes de travail ou formations.</p>
 <p>Créer un référent éco-conception pour accompagner les acteurs du territoire.</p>
-', '<ul>
-<li>
-<p>Rapport d''activité de l''animation du réseau.</p>
-</li>
-<li>
-<p>CR des réunions du réseau.</p>
-</li>
-</ul>
-', '', '', '', null, 30.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.4.1.1', 'eci', '3.4.1.1', 'Organiser au moins un évènement par an avec les entreprises du territoire', '', '', '', '', '', '', '', null, 5.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.4.1.2', 'eci', '3.4.1.2', 'Organiser au moins 2 évènements par an avec les entreprises du territoire', '', '', '', '', '', '', '', null, 15.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.4.1.3', 'eci', '3.4.1.3', 'Organiser au moins 3 évènements par an avec les entreprises du territoire', '', '', '', '', '', '', '', null, 30.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.4.1.4', 'eci', '3.4.1.4', 'Organiser au moins 4 évènements par an avec les entreprises du territoire', '', '', '', '', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.4.2', 'eci', '3.4.2', 'Encourager la collaboration entreprises-établissements de formation', '<p>Si des établissements de formation (initiale ou continue) sont présents sur son territoire, la collectivité encourage des collaborations entre les entreprises et ces établissements pour développer de nouvelles solutions d''éco-conception et une montée en compétences sur le sujet. Elle s''appuie en particulier sur la Région (qui a la compétence formation / éducation supérieure).</p>
+', '', '', '', null, 30.0, 'bases');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.4.1.1', 'eci', '3.4.1.1', 'Organiser au moins un évènement par an avec les entreprises du territoire', '', '', '', '', '', '', null, 5.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.4.1.2', 'eci', '3.4.1.2', 'Organiser au moins 2 évènements par an avec les entreprises du territoire', '', '', '', '', '', '', null, 15.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.4.1.3', 'eci', '3.4.1.3', 'Organiser au moins 3 évènements par an avec les entreprises du territoire', '', '', '', '', '', '', null, 30.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.4.1.4', 'eci', '3.4.1.4', 'Organiser au moins 4 évènements par an avec les entreprises du territoire', '', '', '', '', '', '', null, 50.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.4.2', 'eci', '3.4.2', 'Encourager la collaboration entreprises-établissements de formation', '<p>Si des établissements de formation (initiale ou continue) sont présents sur son territoire, la collectivité encourage des collaborations entre les entreprises et ces établissements pour développer de nouvelles solutions d''éco-conception et une montée en compétences sur le sujet. Elle s''appuie en particulier sur la Région (qui a la compétence formation / éducation supérieure).</p>
 ', '', '<p>Structurer et propose des modèles de partenariats entre les entreprises et les organismes de formation. Elle valorise ces partenariats.</p>
 <p>Organiser des rencontres ciblées &quot;Organismes de formation / entreprises&quot; .</p>
 <p>Mettre en place des actions durant les forums de l’emploi, les salons étudiant ou les événements de même type (exemple : « Made in Angers »).</p>
 <p>Créer un référent éco-conception pour accompagner les acteurs du territoire.</p>
-', '<ul>
-<li>
-<p>Liste des établissements.</p>
-</li>
-<li>
-<p>Convention des différents partenariats.</p>
-</li>
-</ul>
-', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.4.2.1', 'eci', '3.4.2.1', 'Etablir la liste des établissements du territoire qui dispensent une formation en écoconception', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.4.2.2', 'eci', '3.4.2.2', 'Disposer au moins d''un partenariat avec un organisme/entreprise conclu sous l’égide de la collectivité abordant le développement de l''écoconception', '', '', '', '', '', '', '', null, 80.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.4.3', 'eci', '3.4.3', 'Accompagner les entreprises', '<p>La collectivité accompagne, seule ou en partenariat, les entreprises à la mise en place de démarches d''éco-conception s''appuyant ou non sur un éco-label (des labels environnementaux &quot;100 labels environnementaux recommandés par l’ADEME&quot;: https://agirpourlatransition.ademe.fr/particuliers/labels-environnementaux).</p>
+', '', '', '', null, 25.0, 'bases');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.4.2.1', 'eci', '3.4.2.1', 'Etablir la liste des établissements du territoire qui dispensent une formation en écoconception', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.4.2.2', 'eci', '3.4.2.2', 'Disposer au moins d''un partenariat avec un organisme/entreprise conclu sous l’égide de la collectivité abordant le développement de l''écoconception', '', '', '', '', '', '', null, 80.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.4.3', 'eci', '3.4.3', 'Accompagner les entreprises', '<p>La collectivité accompagne, seule ou en partenariat, les entreprises à la mise en place de démarches d''éco-conception s''appuyant ou non sur un éco-label (des labels environnementaux &quot;100 labels environnementaux recommandés par l’ADEME&quot;: https://agirpourlatransition.ademe.fr/particuliers/labels-environnementaux).</p>
 <p>Elle cible ses actions d''accompagnement en matière d''éco-conception, notamment sur les filières à enjeux sur son territoire.</p>
 ', '', '<p>Etablir des partenariats avec les chambres consulaires, les universités, les agences régionales de l''innovation, les agences de développement économique, les pôles de compétitivité, les clusters, etc...</p>
 <p>S''impliquer dans le montage d’opérations collectives ou groupées d’éco-conception</p>
@@ -2756,25 +2401,19 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>https://librairie.ademe.fr/consommer-autrement/1790-vos-achats-responsables-avec-l-ecolabel-europeen-simplicite-et-fiabilite-9791029709463.html</p>
 <p>https://agirpourlatransition.ademe.fr/particuliers/labels-environnementaux.</p>
 <p>Exemple : en France, le tourisme est un secteur clé qui permet, via les hébergements touristiques, de mobiliser les acteurs économiques des territoires sur l''économie de la ressource, la sensibilisation des consommateurs et de développer des synergies.</p>
-', '<ul>
-<li>Fiches descriptives de l''accompagnement réalisé, factures, etc…</li>
-</ul>
-', '', '', '', null, 30.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.4.3.1', 'eci', '3.4.3.1', 'Accompagner les entreprises au travers d''opérations collectives', '', '', '', '', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.4.3.2', 'eci', '3.4.3.2', 'Accompagner les entreprises au travers d''un accompagnement individuel', '', '', '', '', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.4.4', 'eci', '3.4.4', 'Ecoconcevoir les projets à impacts', '<p>La collectivité encourage ou met en œuvre la prise en compte de l''ensemble du cycle de vie dans les études d''impacts de projets réalisés sur son territoire, au-delà des impacts locaux dus à son implantation.</p>
+', '', '', '', null, 30.0, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.4.3.1', 'eci', '3.4.3.1', 'Accompagner les entreprises au travers d''opérations collectives', '', '', '', '', '', '', null, 50.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.4.3.2', 'eci', '3.4.3.2', 'Accompagner les entreprises au travers d''un accompagnement individuel', '', '', '', '', '', '', null, 50.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.4.4', 'eci', '3.4.4', 'Ecoconcevoir les projets à impacts', '<p>La collectivité encourage ou met en œuvre la prise en compte de l''ensemble du cycle de vie dans les études d''impacts de projets réalisés sur son territoire, au-delà des impacts locaux dus à son implantation.</p>
 <p>L''enjeux est de généraliser la pensée cycle de vie pour les projets structurants implantés sur le territoire, notamment via l''éco-conception des bâtiments, des infrastractures, des ICPE, etc.</p>
 ', '', '<p>Intégrer de la méthode de l''empreinte environnementale dans la conception des projets et la prise de décisions: https://www.ademe.fr/expertises/produire-autrement/production-industrielle-services/passer-a-laction/dossier/levaluation-environnementale-lindustrie-services/outils-methodes</p>
 <p>Exemple : éco-conception des data centers.</p>
 <p>Créer un référent éco-conception pour accompagner les acteurs du territoire.</p>
-', '<ul>
-<li>Charte d’engagement, cahier des charges ou méthodologie.</li>
-</ul>
-', '', '', '', null, 15.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.4.4.1', 'eci', '3.4.4.1', 'Disposer d''une méthodologie d''écoconception des projets à impact', '', '', '', '', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_3.4.4.2', 'eci', '3.4.4.2', 'Mettre en œuvre la pensée cycle de vie sur les projets structurants', '', '', '', '', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4', 'eci', '4', 'Outils financiers du changement de comportement', '', '', '', '', '', '', '', 60.0, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.2', 'eci', '4.2', 'Mettre en place un système de financement qui encourage l''adhésion aux pratiques de l''économie circulaire', '<p>Un système de financement adapté peut être un levier de sensibilisation important pour susciter l''adhésion aux pratiques de l''économie circulaire. Un tel système de financement vise au changement de comportement des acteurs du territoire et bénéficiaires des financements.</p>
+', '', '', '', null, 15.0, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.4.4.1', 'eci', '3.4.4.1', 'Disposer d''une méthodologie d''écoconception des projets à impact', '', '', '', '', '', '', null, 50.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_3.4.4.2', 'eci', '3.4.4.2', 'Mettre en œuvre la pensée cycle de vie sur les projets structurants', '', '', '', '', '', '', null, 50.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4', 'eci', '4', 'Outils financiers du changement de comportement', '', '', '', '', '', '', 60.0, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.2', 'eci', '4.2', 'Mettre en place un système de financement qui encourage l''adhésion aux pratiques de l''économie circulaire', '<p>Un système de financement adapté peut être un levier de sensibilisation important pour susciter l''adhésion aux pratiques de l''économie circulaire. Un tel système de financement vise au changement de comportement des acteurs du territoire et bénéficiaires des financements.</p>
 ', '<a href="https://www.ademe.fr/expertises/dechets/passer-a-laction/couts-financement/dossier/modes-financement-service-public-gestion-dechets/tarification-incitative-ti">
 Tarification incitative (TI)
 </a>
@@ -2798,7 +2437,7 @@ Une connaissance fine des coûts pour la mise en place de la redevance incitativ
 <a href="https://www.optigede.ademe.fr/fiche/mise-en-place-de-la-teom-incitative">
 Mise en place de la TEOM incitative (SIEMDTO)
 </a>
-', '', '<p><strong>Tarification incitative</strong></p>
+', '<p><strong>Tarification incitative</strong></p>
 <a href="https://normandie.ademe.fr/collectivites-et-secteur-public/integrer-lenvironnement-dans-mes-domaines-dintervention/reduire-la/mettre-en-place-une-tarification-incitative">
 Mettre en place une tarification incitative
 </a>
@@ -2825,50 +2464,30 @@ Information sur le fond
 <a href="https://www.ademe.fr/dossier/aides-lademe/aides-financieres-lademe">
 Aides financières de l’ADEME
 </a>
-', '', '', 20.0, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.2.1', 'eci', '4.2.1', 'Facturer des usagers non ménagers', '<p>La collectivité, si elle n''est pas en REOM, met en place la Redevance Spéciale pour les usagers non ménagers.</p>
-', '', '', '<ul>
-<li>Délibération de la grille tarifaire.</li>
-</ul>
-', '', '', '', null, 12.5);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.2.1.1', 'eci', '4.2.1.1', 'Engager la mise en place de la redevance spéciale', '', '', '', '', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.2.1.2', 'eci', '4.2.1.2', 'Couvrir toutes les communes du territoire avec la redevance spéciale', '', '', '', '', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.2.2', 'eci', '4.2.2', 'Etudier le potentiel de mise en place de la Tarification incitative (Ti)', '<p>La collectivité étudie la mise en place d''un système de Ti (y compris redevance spéciale en cas de Taxe d’Enlèvement des Ordures Ménagères (TEOM) incitative) sur l''ensemble du territoire.</p>
-', '', '', '<ul>
-<li>Documents d''avancement de l''étude.</li>
-</ul>
-', '', '', '', null, 10.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.2.2.1', 'eci', '4.2.2.1', 'Engager l''étude de la mise en place de la tarification incitative (phase de lancement)', '', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.2.2.2', 'eci', '4.2.2.2', 'Disposer d''une étude de mise en place de la tarification incitative en cours de réalisation (phase de réalisation)', '', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.2.2.3', 'eci', '4.2.2.3', 'Disposer d''une étude de mise en place de la tarification incitative réalisée (étude terminée)', '', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.2.3', 'eci', '4.2.3', 'Mettre en œuvre la Redevance Spéciale incitative pour les usagers non ménagers', '<p>La collectivité, si elle n''est pas en REOM, facture la Redevance Spéciale avec une part variable en fonction des levées et/ou pesées effectuées.</p>
+', '', '', 20.0, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.2.1', 'eci', '4.2.1', 'Facturer des usagers non ménagers', '<p>La collectivité, si elle n''est pas en REOM, met en place la Redevance Spéciale pour les usagers non ménagers.</p>
+', '', '', '', '', '', null, 12.5, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.2.1.1', 'eci', '4.2.1.1', 'Engager la mise en place de la redevance spéciale', '', '', '', '', '', '', null, 50.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.2.1.2', 'eci', '4.2.1.2', 'Couvrir toutes les communes du territoire avec la redevance spéciale', '', '', '', '', '', '', null, 50.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.2.2', 'eci', '4.2.2', 'Etudier le potentiel de mise en place de la Tarification incitative (Ti)', '<p>La collectivité étudie la mise en place d''un système de Ti (y compris redevance spéciale en cas de Taxe d’Enlèvement des Ordures Ménagères (TEOM) incitative) sur l''ensemble du territoire.</p>
+', '', '', '', '', '', null, 10.0, 'bases');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.2.2.1', 'eci', '4.2.2.1', 'Engager l''étude de la mise en place de la tarification incitative (phase de lancement)', '', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.2.2.2', 'eci', '4.2.2.2', 'Disposer d''une étude de mise en place de la tarification incitative en cours de réalisation (phase de réalisation)', '', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.2.2.3', 'eci', '4.2.2.3', 'Disposer d''une étude de mise en place de la tarification incitative réalisée (étude terminée)', '', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.2.3', 'eci', '4.2.3', 'Mettre en œuvre la Redevance Spéciale incitative pour les usagers non ménagers', '<p>La collectivité, si elle n''est pas en REOM, facture la Redevance Spéciale avec une part variable en fonction des levées et/ou pesées effectuées.</p>
 <p>La facturation est différentiée par flux et donc pour le service mobilisé.</p>
-', '', '', '<ul>
-<li>Délibération de la grille tarifaire.</li>
-</ul>
-', '', '', '', null, 15.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.2.3.1', 'eci', '4.2.3.1', 'Inclure une part variable dans la redevance spéciale en fonction des levées et/ou pesées', '', '', '', '', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.2.3.2', 'eci', '4.2.3.2', 'Différencier la redevance spéciale en fonction des flux', '', '', '', '', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.2.4', 'eci', '4.2.4', 'Mettre en œuvre la Tarification incitative (Ti) pour tous les usagers', '<p>Au cas où l''étude sur la mise en place de la Ti est concluante, la collectivité met en place la Ti (y compris Redevance Spéciale en cas de TEOM incitative).</p>
-', '', '', '<ul>
-<li>
-<p>Délibération de principe sur la mise en place de la Ti.</p>
-</li>
-<li>
-<p>Délibération de tarif ou de grille tarifaire.</p>
-</li>
-</ul>
-', '', '', '', null, 12.5);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.2.4.1', 'eci', '4.2.4.1', 'Lancer la mise en place de la tarification incitative', '', '', '', '', '', '', '', null, 30.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.2.4.2', 'eci', '4.2.4.2', 'Couvrir toute la population de la collectivité avec la tarification incitative', '', '', '', '', '', '', '', null, 70.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.2.5', 'eci', '4.2.5', 'Mettre en place la Tarification incitative (Ti) du second niveau', '<p>Afin de récompenser les collectivités qui fournissent les efforts de prévention et de collecte sélective les plus significatifs, la collectivité en charge de traitement mets en place la Ti du second niveau.</p>
-', '', '', '<ul>
-<li>Délibération de la grille tarifaire.</li>
-</ul>
-', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.2.5.1', 'eci', '4.2.5.1', 'Inclure une part variable en fonction de sa production de déchets dans la facturation des adhérents', '', '', '', '', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.2.5.2', 'eci', '4.2.5.2', 'Différentier la facturation des adhérents en fonction des flux', '', '', '', '', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.3', 'eci', '4.3', 'Promouvoir et mettre en place des outils financiers en faveur de l''économie circulaire à destination des autres acteurs du territoire', '<p>Les outils financiers constituent une voie de mobilisation des autres acteurs du territoire. La collectivité peut promouvoir les financements tiers et l''émergence de nouveaux modèles économiques.</p>
+', '', '', '', '', '', null, 15.0, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.2.3.1', 'eci', '4.2.3.1', 'Inclure une part variable dans la redevance spéciale en fonction des levées et/ou pesées', '', '', '', '', '', '', null, 50.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.2.3.2', 'eci', '4.2.3.2', 'Différencier la redevance spéciale en fonction des flux', '', '', '', '', '', '', null, 50.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.2.4', 'eci', '4.2.4', 'Mettre en œuvre la Tarification incitative (Ti) pour tous les usagers', '<p>Au cas où l''étude sur la mise en place de la Ti est concluante, la collectivité met en place la Ti (y compris Redevance Spéciale en cas de TEOM incitative).</p>
+', '', '', '', '', '', null, 12.5, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.2.4.1', 'eci', '4.2.4.1', 'Lancer la mise en place de la tarification incitative', '', '', '', '', '', '', null, 30.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.2.4.2', 'eci', '4.2.4.2', 'Couvrir toute la population de la collectivité avec la tarification incitative', '', '', '', '', '', '', null, 70.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.2.5', 'eci', '4.2.5', 'Mettre en place la Tarification incitative (Ti) du second niveau', '<p>Afin de récompenser les collectivités qui fournissent les efforts de prévention et de collecte sélective les plus significatifs, la collectivité en charge de traitement mets en place la Ti du second niveau.</p>
+', '', '', '', '', '', null, 50.0, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.2.5.1', 'eci', '4.2.5.1', 'Inclure une part variable en fonction de sa production de déchets dans la facturation des adhérents', '', '', '', '', '', '', null, 50.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.2.5.2', 'eci', '4.2.5.2', 'Différentier la facturation des adhérents en fonction des flux', '', '', '', '', '', '', null, 50.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.3', 'eci', '4.3', 'Promouvoir et mettre en place des outils financiers en faveur de l''économie circulaire à destination des autres acteurs du territoire', '<p>Les outils financiers constituent une voie de mobilisation des autres acteurs du territoire. La collectivité peut promouvoir les financements tiers et l''émergence de nouveaux modèles économiques.</p>
 ', '<a href="https://www.ademe.fr/entreprises-monde-agricole/financer-projet">
 Financer un projet
 </a>
@@ -2881,7 +2500,7 @@ Aides d’autres financeurs
 <a href="http://www.plpdma-guide-ademe.fr/axe-utiliser-les-instruments-economiques-pour-favoriser-la-prevention-des-deche-2.3.html">
 Utiliser les instruments économiques pour favoriser la prévention des déchets
 </a>
-', '', '', '<p><strong>Aides ADEME</strong></p>
+', '', '<p><strong>Aides ADEME</strong></p>
 <a href="https://www.ademe.fr/ademe-finance-projets-principaux-dispositifs-daide-proteger-lenvironnement-maitriser-lenergie-l">
 L’ADEME finance vos projets
 </a>
@@ -2922,51 +2541,29 @@ INNOV''R: booster des éco-innovations
 <a href="https://agirpourlatransition.ademe.fr/particuliers/finances/aides-a-renovation/exoneration-taxe-fonciere">
 Exonération de la taxe foncière
 </a>
-', '', '', 20.0, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.3.1', 'eci', '4.3.1', 'Réaliser une veille', '<p>La collectivité s''informe sur les moyens de financements existants auprès des organismes qui agrègent déjà l''information dans le but de développer et porter des projets d''économie circulaire. Les acteurs relais possibles : agences de développement, CCI, réseaux, etc.</p>
+', '', '', 20.0, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.3.1', 'eci', '4.3.1', 'Réaliser une veille', '<p>La collectivité s''informe sur les moyens de financements existants auprès des organismes qui agrègent déjà l''information dans le but de développer et porter des projets d''économie circulaire. Les acteurs relais possibles : agences de développement, CCI, réseaux, etc.</p>
 ', '', '<p>Accompagnement financier de la Région, ADEME, BPI, CDC, financements européens, financement participatif, …</p>
-', '<ul>
-<li>Liste de sources ou veille formalisée.</li>
-</ul>
-', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.3.2', 'eci', '4.3.2', 'Communiquer sur les moyens de financement', '<p>La collectivité communique sur ces moyens de financement.</p>
+', '', '', '', null, 20.0, 'bases');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.3.2', 'eci', '4.3.2', 'Communiquer sur les moyens de financement', '<p>La collectivité communique sur ces moyens de financement.</p>
 ', '', '<p>Via son site internet, une newsletter, les journaux ou un blog.</p>
 <p>En particulier, la collectivité améliore la lisibilité des financements disponibles pour les acteurs de l''ESS de petite taille, les petites entreprises, les petites structures associatives…</p>
-', '<ul>
-<li>Outils de communication comme Page internet, Newsletter, Journaux, Blog, etc.</li>
-</ul>
-', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.3.3', 'eci', '4.3.3', 'Accompagner les acteurs du territoire', '<p>La collectivité accompagne les acteurs de son territoire dans leur recherche de financements en faveur de l''économie circulaire en fonction de leurs besoins. Elle identifie, valorise et communique autour des démarches exemplaires du territoire.</p>
+', '', '', '', null, 20.0, 'bases');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.3.3', 'eci', '4.3.3', 'Accompagner les acteurs du territoire', '<p>La collectivité accompagne les acteurs de son territoire dans leur recherche de financements en faveur de l''économie circulaire en fonction de leurs besoins. Elle identifie, valorise et communique autour des démarches exemplaires du territoire.</p>
 ', '', '<p>Actions spécifiques du service développement économique sur l''économie circulaire.</p>
-', '<ul>
-<li>
-<p>Preuve des démarches proactives de recherche d''acteurs intéressés (appels à idées, communication ouverte, etc.).</p>
-</li>
-<li>
-<p>Preuve des démarches établies par la collectivité pour chaque projet accompagné (comptes rendus de rendez-vous, agenda, …).</p>
-</li>
-</ul>
-', '', '', '', null, 35.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.3.3.1', 'eci', '4.3.3.1', 'Mettre en place des moyens pour identifier les acteurs en recherche de financements', '', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.3.3.2', 'eci', '4.3.3.2', 'Mettre en place des moyens pour accompagner les acteurs sur la recherche de financements', '', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.3.3.3', 'eci', '4.3.3.3', 'Accompagner des projets', '', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.3.4', 'eci', '4.3.4', 'Financer des projets sur le sujet de l''économie circulaire', '<p>La collectivité réserve une part de son budget au financement de projets sur le sujet de l''économie circulaire. Elle met en cohérence les subventions des acteurs du territoire au regard de la sobriété.</p>
+', '', '', '', null, 35.0, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.3.3.1', 'eci', '4.3.3.1', 'Mettre en place des moyens pour identifier les acteurs en recherche de financements', '', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.3.3.2', 'eci', '4.3.3.2', 'Mettre en place des moyens pour accompagner les acteurs sur la recherche de financements', '', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.3.3.3', 'eci', '4.3.3.3', 'Accompagner des projets', '', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.3.4', 'eci', '4.3.4', 'Financer des projets sur le sujet de l''économie circulaire', '<p>La collectivité réserve une part de son budget au financement de projets sur le sujet de l''économie circulaire. Elle met en cohérence les subventions des acteurs du territoire au regard de la sobriété.</p>
 ', '', '<p>Financement d''associations impliquées dans la réparation, les jardins partagés, le compostage, le &quot;zéro déchet&quot;.</p>
 <p>Appels à projets de la collectivité.</p>
 <p>La collectivité engage une part de ses ressources sur des actions de coopération internationale (promotion de l''économie circulaire dans les pays du Sud avec le 1% déchet).</p>
-', '<ul>
-<li>
-<p>Adoption du document de référence, dont les critères liés à la sobriété (si évoqué)</p>
-</li>
-<li>
-<p>Liste des projets soutenus et montants associés</p>
-</li>
-</ul>
-', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.3.4.1', 'eci', '4.3.4.1', 'Disposer de document de référence présentant les modalités de financement', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.3.4.2', 'eci', '4.3.4.2', 'Lister les projets', '', '', '', '', '', '', '', null, 30.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.3.4.3', 'eci', '4.3.4.3', 'Mettre en cohérence les subventions allouées aux acteurs du territoire au regard de la sobriété', '', '', '', '', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.1', 'eci', '4.1', 'Connaître les coûts de la gestion des déchets pour maîtriser les dépenses publiques', '<p>La maîtrise des dépenses publiques se caractérise par la capacité de la collectivité à identifier les marges de manœuvre économiques des services dont elle a la maîtrise d''ouvrage tout en maintenant la qualité du service. Concernant l''économie circulaire, il s''agit principalement de la collecte et du traitement des déchets mais aussi d''autres actions en faveur de l''économie circulaire. Cela nécessite un suivi précis et détaillé des coûts et permet, in fine, de mettre en place des actions optimisant ces coûts.</p>
+', '', '', '', null, 25.0, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.3.4.1', 'eci', '4.3.4.1', 'Disposer de document de référence présentant les modalités de financement', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.3.4.2', 'eci', '4.3.4.2', 'Lister les projets', '', '', '', '', '', '', null, 30.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.3.4.3', 'eci', '4.3.4.3', 'Mettre en cohérence les subventions allouées aux acteurs du territoire au regard de la sobriété', '', '', '', '', '', '', null, 50.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.1', 'eci', '4.1', 'Connaître les coûts de la gestion des déchets pour maîtriser les dépenses publiques', '<p>La maîtrise des dépenses publiques se caractérise par la capacité de la collectivité à identifier les marges de manœuvre économiques des services dont elle a la maîtrise d''ouvrage tout en maintenant la qualité du service. Concernant l''économie circulaire, il s''agit principalement de la collecte et du traitement des déchets mais aussi d''autres actions en faveur de l''économie circulaire. Cela nécessite un suivi précis et détaillé des coûts et permet, in fine, de mettre en place des actions optimisant ces coûts.</p>
 ', '<p><strong>Contexte – Modes de financement</strong></p>
 <a href="https://www.ademe.fr/expertises/dechets/passer-a-laction/couts-financement/dossier/modes-financement-service-public-gestion-dechets/generalites-differents-modes">
 Modes
@@ -3002,7 +2599,7 @@ Coût de l’incinération
 <a href="https://www.optigede.ademe.fr/exemples-couts-dechets-menagers">
 Exemples des coûts
 </a>
-', '', '<p><strong>Calcul des coûts</strong></p>
+', '<p><strong>Calcul des coûts</strong></p>
 <a href="https://www.optigede.ademe.fr/sites/default/files/cout-gestion-dechets.pdf">
 Suivre le coût du service
 </a>
@@ -3023,40 +2620,25 @@ Coûts de gestion des déchets: un dispositif complet de formation au service de
 <a href="https://ademe.webcompetence.org/solutions/stage.php?folid=26&amp;stageid=4874&amp;search=comptacout">
 Formation: maîtriser la Matrice des coûts et la méthode ComptaCoût®
 </a>
-', '', '', 20.0, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.1.0', 'eci', '4.1.0', 'Rédiger le rapport annuel SPPGD', '<p>La collectivité produit le rapport annuel du service public de prévention et de gestion des déchets ménagers et assimilés (SPPGD) qui répond aux exigences réglementaires en matière d''indicateurs techniques et économiques.</p>
+', '', '', 20.0, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.1.0', 'eci', '4.1.0', 'Rédiger le rapport annuel SPPGD', '<p>La collectivité produit le rapport annuel du service public de prévention et de gestion des déchets ménagers et assimilés (SPPGD) qui répond aux exigences réglementaires en matière d''indicateurs techniques et économiques.</p>
 <p>En cas de non-conformité, la collectivité doit justifier d''un plan d''actions correctives et de l''absence de contentieux.</p>
-', '', '<p>Décret du 30 décembre 2015 portant diverses dispositions d''adaptation et de simplification dans le domaine de la prévention et de la gestion des déchets</p>
-<p>https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000031739883</p>
-', '<ul>
-<li>
-<p>Rapport d’activité SPPGD</p>
-</li>
-<li>
-<p>Procès-verbal du conseil syndical ou intercommunal faisant état de la présentation du rapport en assemblée</p>
-</li>
-</ul>
-', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.1.0.1', 'eci', '4.1.0.1', 'Rédiger le rapport annuel', '', '', '', '', '', '', '', null, 60.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.1.0.2', 'eci', '4.1.0.2', 'Rédiger le rapport annuel avec tous les éléments du décret et le publier en ligne', '', '', '', '', '', '', '', null, 40.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.1.1', 'eci', '4.1.1', 'Connaître la structure des coûts de la gestion des déchets', '<p>La collectivité réalise annuellement la matrice des coûts.</p>
+', '', '<a href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000031739883">
+Décret du 30 décembre 2015 portant diverses dispositions d''adaptation et de simplification dans le domaine de la prévention et de la gestion des déchets
+</a>
+', '', '', '', null, null, 'bases');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.1.0.1', 'eci', '4.1.0.1', 'Rédiger le rapport annuel', '', '', '', '', '', '', null, 60.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.1.0.2', 'eci', '4.1.0.2', 'Rédiger le rapport annuel avec tous les éléments du décret et le publier en ligne', '', '', '', '', '', '', null, 40.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.1.1', 'eci', '4.1.1', 'Connaître la structure des coûts de la gestion des déchets', '<p>La collectivité réalise annuellement la matrice des coûts.</p>
 <p>La collectivité se positionne par rapport à d''autres collectivités via la matrice des coûts.</p>
 ', '', '<p>Utiliser la matrice des coûts</p>
 <p>Effectuer une comparaison avec le &quot;Référentiel national des coûts du service public de prévention et de gestion des déchets&quot;</p>
 <p>S''inspirer du guide &quot;Analyser et valoriser les matrices des coûts &quot;</p>
 <p>https://www.optigede.ademe.fr/analyser-referentiels-outils-animations</p>
-', '<ul>
-<li>
-<p>Matrice des coûts validée dans SINOE.</p>
-</li>
-<li>
-<p>Document présentant l''analyse de positionnement (ex.: onglet Analyse de la matrice des coûts, diaporama, etc.).</p>
-</li>
-</ul>
-', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.1.1.1', 'eci', '4.1.1.1', 'Réaliser la matrice des coûts', '', '', '', '', '', '', '', null, 60.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.1.1.2', 'eci', '4.1.1.2', 'Positionner les résultats de la matrice des coûts par rapport à d''autres collectivités', '', '', '', '', '', '', '', null, 40.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.1.2', 'eci', '4.1.2', 'Etudier les pistes d''optimisation', '<p>La collectivité analyse les résultats de la matrice afin d''identifier les pistes d''optimisation.</p>
+', '', '', '', null, 20.0, 'bases');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.1.1.1', 'eci', '4.1.1.1', 'Réaliser la matrice des coûts', '', '', '', '', '', '', null, 60.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.1.1.2', 'eci', '4.1.1.2', 'Positionner les résultats de la matrice des coûts par rapport à d''autres collectivités', '', '', '', '', '', '', null, 40.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.1.2', 'eci', '4.1.2', 'Etudier les pistes d''optimisation', '<p>La collectivité analyse les résultats de la matrice afin d''identifier les pistes d''optimisation.</p>
 <p>La collectivité a réalisé une étude d''optimisation sur tout ou partie de ses services.</p>
 <p>Si cela est nécessaire, la collectivité a étudié une réorganisation possible pour maîtriser les coûts du service.</p>
 ', '', '<p>Exemples :</p>
@@ -3065,41 +2647,27 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>étude d''optimisation de la collecte,</p>
 <p>étude ressourcerie.</p>
 <p>Prioriser les actions d''optimisation et les planifier dans le temps.</p>
-', '<ul>
-<li>
-<p>Synthèse de l''analyse de la matrice des coûts</p>
-</li>
-<li>
-<p>Rapport d''étude</p>
-</li>
-</ul>
-', '', '', '', null, 30.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.1.2.1', 'eci', '4.1.2.1', 'Analyser la matrice des coûts', '', '', '', '', '', '', '', null, 80.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.1.2.2', 'eci', '4.1.2.2', 'Réaliser une étude au cours des deux dernières années écoulées', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.1.3', 'eci', '4.1.3', 'Agir pour optimiser les dépenses publiques de gestion de déchets', '<p>Suite à l’étude d’optimisation désignée en 4.1.2., la collectivité met en œuvre des actions d''optimisation et évalue les résultats.</p>
+', '', '', '', null, 30.0, 'bases');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.1.2.1', 'eci', '4.1.2.1', 'Analyser la matrice des coûts', '', '', '', '', '', '', null, 80.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.1.2.2', 'eci', '4.1.2.2', 'Réaliser une étude au cours des deux dernières années écoulées', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.1.3', 'eci', '4.1.3', 'Agir pour optimiser les dépenses publiques de gestion de déchets', '<p>Suite à l’étude d’optimisation désignée en 4.1.2., la collectivité met en œuvre des actions d''optimisation et évalue les résultats.</p>
 ', '', '<p>Conduire des actions d''optimisation et analyser leurs impacts.</p>
 <p>Recommencer avec des pistes d''optimisation non-explorées.</p>
 <p>Parmi les actions à mettre en place  :  la Tarification Incitative (voir 4.2).</p>
-', '<ul>
-<li>Preuves des actions</li>
-</ul>
-', '', '', '', null, 30.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.1.3.1', 'eci', '4.1.3.1', 'Mettre en œuvre jusqu''à 50% des actions suite à l''étude', '', '', '', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.1.3.2', 'eci', '4.1.3.2', 'Mettre en œuvre plus de 50% des actions suite à l''étude', '', '', '', '', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.1.3.3', 'eci', '4.1.3.3', 'Mettre en œuvre toutes les actions suite à l''étude', '', '', '', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.1.4', 'eci', '4.1.4', 'Communiquer sur la démarche d''optimisation', '<p>La collectivité s''engage dans une communication transparente sur sa démarche d''optimisation des coûts de la gestion des déchets. Faire connaitre ces efforts d''optimisation est un levier de mobilisation des usagers pour la prévention des déchets et le changement de comportement.</p>
+', '', '', '', null, 30.0, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.1.3.1', 'eci', '4.1.3.1', 'Mettre en œuvre jusqu''à 50% des actions suite à l''étude', '', '', '', '', '', '', null, 25.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.1.3.2', 'eci', '4.1.3.2', 'Mettre en œuvre plus de 50% des actions suite à l''étude', '', '', '', '', '', '', null, 50.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.1.3.3', 'eci', '4.1.3.3', 'Mettre en œuvre toutes les actions suite à l''étude', '', '', '', '', '', '', null, 25.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.1.4', 'eci', '4.1.4', 'Communiquer sur la démarche d''optimisation', '<p>La collectivité s''engage dans une communication transparente sur sa démarche d''optimisation des coûts de la gestion des déchets. Faire connaitre ces efforts d''optimisation est un levier de mobilisation des usagers pour la prévention des déchets et le changement de comportement.</p>
 ', '', '<p>Site internet</p>
 <p>Journal intercommunal</p>
 <p>Réseau sociaux</p>
 <p>Groupe de travail</p>
-', '<ul>
-<li>Supports de communication</li>
-</ul>
-', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.1.4.1', 'eci', '4.1.4.1', 'Communiquer sur le positionnement et les résultats', '', '', '', '', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_4.1.4.2', 'eci', '4.1.4.2', 'Communiquer sur les objectifs et la démarche d''amélioration', '', '', '', '', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1', 'eci', '1', 'Définition d''une stratégie globale de la politique économie circulaire et inscription dans le territoire', '', '', '', '', '', '', '', 90.0, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1', 'eci', '1.1', 'Définir une stratégie globale de la politique Economie Circulaire et assurer un portage politique fort', '<p>Une stratégie territoriale de la politique Économie Circulaire et l''inscription dans le territoire nécessite un portage politique et un pilotage technique dédiés, ainsi qu''un diagnostic et une stratégie d''économie circulaire avec des objectifs et des cibles clairement exprimés, cohérents avec les documents régionaux et nationaux.</p>
+', '', '', '', null, 20.0, 'effets');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.1.4.1', 'eci', '4.1.4.1', 'Communiquer sur le positionnement et les résultats', '', '', '', '', '', '', null, 50.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_4.1.4.2', 'eci', '4.1.4.2', 'Communiquer sur les objectifs et la démarche d''amélioration', '', '', '', '', '', '', null, 50.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1', 'eci', '1', 'Définition d''une stratégie globale de la politique économie circulaire et inscription dans le territoire', '', '', '', '', '', '', 90.0, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1', 'eci', '1.1', 'Définir une stratégie globale de la politique Economie Circulaire et assurer un portage politique fort', '<p>Une stratégie territoriale de la politique Économie Circulaire et l''inscription dans le territoire nécessite un portage politique et un pilotage technique dédiés, ainsi qu''un diagnostic et une stratégie d''économie circulaire avec des objectifs et des cibles clairement exprimés, cohérents avec les documents régionaux et nationaux.</p>
 ', '<p><strong>Objectifs liés à l’économie circulaire</strong></p>
 <a href="https://www.legifrance.gouv.fr/loda/id/JORFTEXT000031044385/">
 Loi sur la transition écologique et la croissance verte
@@ -3140,7 +2708,7 @@ Rôle des structures d’intermédiation: exemples de plusieurs types
 <a href="https://librairie.ademe.fr/dechets-economie-circulaire/973-economie-circulaire-mobilisation-des-acteurs-economiques-par-les-collectivites.html">
 Synthèse thématique du réseau A3P: Mobilisation des acteurs économiques par les collectivités
 </a>
-', '', '<p><strong>Portage politique</strong></p>
+', '<p><strong>Portage politique</strong></p>
 <a href="http://www.plpdma-guide-ademe.fr/identifier-les-personnes-responsables-repartir-les-roles-et-les-responsabilites-1.2.1.1.html">
 Identifier les personnes responsables, répartir les rôles et les responsabilités
 </a>
@@ -3196,35 +2764,20 @@ L''économie circulaire au service de la préservation des ressources et du clim
 <a href="https://optigede.ademe.fr/la-planification-dans-l-economie-circulaire">
 La planification dans l''économie circulaire 
 </a>
-', '', '', 30.0, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.1', 'eci', '1.1.1', 'S''engager politiquement et mettre en place des moyens', '<p>La collectivité justifie d''un portage politique de l''économie circulaire : un élu s’engage à travers l’établissement d’une politique Economie Circulaire.</p>
+', '', '', 30.0, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.1', 'eci', '1.1.1', 'S''engager politiquement et mettre en place des moyens', '<p>La collectivité justifie d''un portage politique de l''économie circulaire : un élu s’engage à travers l’établissement d’une politique Economie Circulaire.</p>
 <p>La collectivité s''est dotée d''une équipe technique en charge de déployer la politique Economie Circulaire en interne et en externe.</p>
 ', '', '<p>Définir l''organisation de la collectivité : l''élu identifié, l''équipe projet.</p>
 <p>Définir les moyens humains et financiers  : le budget identifié, les moyens humains.</p>
 <p>Formaliser l''intention de développer une stratégie et un programme d''actions Economie Circulaire sur le territoire (exemple: une politique Economie Circulaire, une politique de Transition Ecologique intégrant les éléments de l''économie circulaire, etc.).</p>
-', '<ul>
-<li>
-<p>Délibération indiquant l''engagement à développer une stratégie et un programme d''actions Economie Circulaire</p>
-</li>
-<li>
-<p>Délibération qui donne délégation et/ou qui cite l’élu.e.s en charge de l’ECI</p>
-</li>
-<li>
-<p>L''organigramme de l''équipe mobilisée pour la mise en œuvre de la politique Economie Circulaire (élu et équipe technique)</p>
-</li>
-<li>
-<p>Justificatif d''une ligne budgétaire dédiée à la stratégie et au programme d''actions Economie Circulaire</p>
-</li>
-<li>
-<p>Fiches de poste des membres de l''équipe mises à jour</p>
-</li>
-</ul>
-', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.1.1', 'eci', '1.1.1.1', 'Identifier un élu référent en charge de la politique Economie Circulaire', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.1.2', 'eci', '1.1.1.2', 'Engager la politique Economie Circulaire', '', '', '', '', '', '', '', null, 30.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.1.3', 'eci', '1.1.1.3', 'Identifier l''équipe technique', '', '', '', '', '', '', '', null, 40.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.1.4', 'eci', '1.1.1.4', 'Allouer un budget à la politique économie circulaire', '', '', '', '', '', '', '', null, 10.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.2', 'eci', '1.1.2', 'Réaliser le diagnostic de l''économie circulaire', '<p>La collectivité réalise son diagnostic de l''économie circulaire sur le territoire à partir des analyses suivantes :</p>
+', '', '', '', null, 20.0, 'bases');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.1.1', 'eci', '1.1.1.1', 'Identifier un élu référent en charge de la politique Economie Circulaire', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.1.2', 'eci', '1.1.1.2', 'Engager la politique Economie Circulaire - Formaliser une vision et des engagements économie circulaire', '', '', '', '', '', '', null, 30.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.1.3', 'eci', '1.1.1.3', 'Désigner un chef de projet économie circulaire', '<p>En cas d’indisponibilité (arrêt maladie longue durée, maternité/paternité, départ…), son remplacement est une priorité pour éviter les absences de longue durée (ex : plus de 3 mois)</p>
+', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.1.4', 'eci', '1.1.1.4', 'Identifier l''équipe technique', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.1.5', 'eci', '1.1.1.5', 'Allouer un budget à la politique économie circulaire', '', '', '', '', '', '', null, 10.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.2', 'eci', '1.1.2', 'Réaliser le diagnostic de l''économie circulaire', '<p>La collectivité réalise son diagnostic de l''économie circulaire sur le territoire à partir des analyses suivantes :</p>
 <ul>
 <li>
 <p>une identification des orientations et des objectifs d''économie circulaire régionaux et locaux s''inscrivant dans les documents de planification (SRDEII, PRPGD, PRAEC, SRADDET, S3, PLU, SCOT, PCAET, PAT, SRDT, etc.).</p>
@@ -3250,50 +2803,22 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>2.1.1 Structure des achats de la collectivité (en vue d''y intégrer des clauses d''achats responsables)</p>
 <p>4.1.2 Etude d''optimisation des coûts du Service Public de Gestion des Déchets</p>
 <p>4.2.2 Etude de faisabilité de la Tarification Incitative</p>
-', '<ul>
-<li>
-<p>Synthèse des enjeux, objectifs et actions économie circulaire des documents de planification analysés (avec les sources)</p>
-</li>
-<li>
-<p>Analyse des enjeux économiques intégrés dans le diagnostic</p>
-</li>
-<li>
-<p>Analyse des enjeux environnementaux intégrés dans le diagnostic</p>
-</li>
-<li>
-<p>Analyse des enjeux sociaux intégrés dans le diagnostic</p>
-</li>
-<li>
-<p>La liste des acteurs et des initiatives en économie circulaire sur le territoire</p>
-</li>
-</ul>
-', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.2.1', 'eci', '1.1.2.1', 'Identifier les enjeux et objectifs en lien avec l''économie circulaire  dans les documents de planification existants', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.2.2', 'eci', '1.1.2.2', 'Intégrer dans le diagnostic une analyse des secteurs économiques', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.2.3', 'eci', '1.1.2.3', 'Intégrer dans le diagnostic une analyse des enjeux environnementaux', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.2.4', 'eci', '1.1.2.4', 'Intégrer dans le diagnostic une analyse des enjeux sociaux', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.2.5', 'eci', '1.1.2.5', 'Réaliser un recensement des acteurs et des initiatives', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.3', 'eci', '1.1.3', 'Élargir la gouvernance en interne et en externe', '<p>La collectivité met en place une gouvernance élargie permettant de construire une stratégie et des actions Economie Circulaire  en adéquation avec la réalité du  territoire. Co-construite avec les acteurs du territoire, la stratégie Economie Circulaire sera ainsi  soutenue par les acteurs du territoire lors de  sa mise en œuvre.</p>
+', '', '', '', null, 20.0, 'bases');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.2.1', 'eci', '1.1.2.1', 'Identifier les enjeux et objectifs en lien avec l''économie circulaire  dans les documents de planification existants', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.2.2', 'eci', '1.1.2.2', 'Intégrer dans le diagnostic une analyse des secteurs économiques', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.2.3', 'eci', '1.1.2.3', 'Intégrer dans le diagnostic une analyse des enjeux environnementaux', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.2.4', 'eci', '1.1.2.4', 'Intégrer dans le diagnostic une analyse des enjeux sociaux', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.2.5', 'eci', '1.1.2.5', 'Réaliser un recensement des acteurs et des initiatives', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.3', 'eci', '1.1.3', 'Élargir la gouvernance en interne et en externe', '<p>La collectivité met en place une gouvernance élargie permettant de construire une stratégie et des actions Economie Circulaire  en adéquation avec la réalité du  territoire. Co-construite avec les acteurs du territoire, la stratégie Economie Circulaire sera ainsi  soutenue par les acteurs du territoire lors de  sa mise en œuvre.</p>
 ', '', '<p>L''équipe Economie Circulaire associe à l''élaboration et au suivi de sa stratégie les autres services de la collectivité.</p>
 <p>La collectivité organise une consultation et/ou une co-construction avec les  acteurs du territoire pour son projet et sa stratégie Economie Circulaire.</p>
 <p>Acteurs du territoire : acteurs économiques, associations, citoyens...</p>
 <p>La collectivité cherche à co-construire ses actions avec les acteurs du territoire. Des espaces et temps d''échange sont créés pour le partage de bonnes pratiques et la co-construction des actions.</p>
-', '<ul>
-<li>
-<p>Liste des membres du comité de pilotage interne</p>
-</li>
-<li>
-<p>Liste des membres de la gouvernance élargie et leurs rôles</p>
-</li>
-<li>
-<p>Compte-rendu des réunions de gouvernance et des groupes de travail pour la construction des actions économie circulaire</p>
-</li>
-</ul>
-', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.3.1', 'eci', '1.1.3.1', 'Mettre en place un comité de pilotage interne élargi', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.3.2', 'eci', '1.1.3.2', 'Mettre en place une gouvernance élargie avec les représentants des acteurs du territoire (société civile, acteurs publics, acteurs économiques)', '', '', '', '', '', '', '', null, 30.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.3.3', 'eci', '1.1.3.3', 'Mettre en place des groupes de travail pour la construction des actions économie circulaire', '', '', '', '', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.4', 'eci', '1.1.4', 'Adopter une stratégie et un programme d''actions Économie Circulaire', '<p>Sur la base des résultats du diagnostic, la collectivité adopte le document cadre de la stratégie Economie Circulaire.</p>
+', '', '', '', null, 20.0, 'bases');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.3.1', 'eci', '1.1.3.1', 'Mettre en place un comité de pilotage interne élargi', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.3.2', 'eci', '1.1.3.2', 'Mettre en place une gouvernance élargie avec les représentants des acteurs du territoire (société civile, acteurs publics, acteurs économiques)', '', '', '', '', '', '', null, 30.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.3.3', 'eci', '1.1.3.3', 'Mettre en place des groupes de travail pour la construction des actions économie circulaire', '', '', '', '', '', '', null, 50.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.4', 'eci', '1.1.4', 'Adopter une stratégie et un programme d''actions Économie Circulaire', '<p>Sur la base des résultats du diagnostic, la collectivité adopte le document cadre de la stratégie Economie Circulaire.</p>
 <p>Elle crée un programme d''actions.</p>
 ', '', '<p>La Stratégie (avec la Gouvernance élargie) :</p>
 <ul>
@@ -3322,48 +2847,32 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>Comment favoriser les achats durables chez les acteurs publics du territoire ?</p>
 <p>Comment mobiliser différents publics sur le gaspillage alimentaire ?</p>
 <p>Comment la collectivité peut agir sur les fournisseurs de matières premières pour améliorer l''approvisionnement durable : au niveau local (biomasse, eau, etc.), national et international (minerais, etc.)?</p>
-', '<ul>
-<li>
-<p>Délibération relative à  l''adoption de la stratégie, comprenant le budget associé</p>
-</li>
-<li>
-<p>Programme d''actions formalisé</p>
-</li>
-</ul>
-', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.4.1', 'eci', '1.1.4.1', 'Intégrer dans la stratégie les enjeux économiques, environnementaux et sociaux', '', '', '', '', '', '', '', null, 15.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.4.2', 'eci', '1.1.4.2', 'Fixer dans la stratégie des caps à court, moyen et long terme', '', '', '', '', '', '', '', null, 15.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.4.3', 'eci', '1.1.4.3', 'Cibler dans la stratégie la société civile, les acteurs publics et les acteurs économiques', '', '', '', '', '', '', '', null, 15.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.4.4', 'eci', '1.1.4.4', 'Couvrir dans la stratégie tous les axes de l''économie circulaire', '', '', '', '', '', '', '', null, 15.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.4.5', 'eci', '1.1.4.5', 'Intégrer dans le programme d''actions des actions vers la société civile', '', '', '', '', '', '', '', null, 4.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.4.6', 'eci', '1.1.4.6', 'Intégrer dans le programme d''actions des actions vers les acteurs publics', '', '', '', '', '', '', '', null, 4.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.4.7', 'eci', '1.1.4.7', 'Intégrer dans le programme d''actions des actions vers les acteurs économiques', '', '', '', '', '', '', '', null, 4.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.4.8', 'eci', '1.1.4.8', 'Intégrer dans le programme d''actions des actions sur le pilier approvisionnement durable de l''économie circulaire', '', '', '', '', '', '', '', null, 4.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.4.9', 'eci', '1.1.4.9', 'Intégrer dans le programme d''actions des actions sur le pilier éco-conception de l''économie circulaire', '', '', '', '', '', '', '', null, 4.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.4.10', 'eci', '1.1.4.10', 'Intégrer dans le programme d''actions des actions sur le pilier écologie industrielle et territoriale de l''économie circulaire', '', '', '', '', '', '', '', null, 4.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.4.11', 'eci', '1.1.4.11', 'Intégrer dans le programme d''actions des actions sur le pilier économie de la fonctionnalité de l''économie circulaire', '', '', '', '', '', '', '', null, 4.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.4.12', 'eci', '1.1.4.12', 'Intégrer dans le programme d''actions des actions sur le pilier consommation responsable de l''économie circulaire', '', '', '', '', '', '', '', null, 4.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.4.13', 'eci', '1.1.4.13', 'Intégrer dans le programme d''actions des actions sur le pilier allongement de la durée d''usage de l''économie circulaire', '', '', '', '', '', '', '', null, 4.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.4.14', 'eci', '1.1.4.14', 'Intégrer dans le programme d''actions des actions sur le pilier recyclage de l''économie circulaire', '', '', '', '', '', '', '', null, 4.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.5', 'eci', '1.1.5', 'Mettre en œuvre et valoriser les actions', '<p>La collectivité met en œuvre sur ses compétences et de manière opérationnelle des actions co-construites avec les acteurs du territoire.</p>
+', '', '', '', null, 20.0, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.4.1', 'eci', '1.1.4.1', 'Intégrer dans la stratégie les enjeux économiques, environnementaux et sociaux', '', '', '', '', '', '', null, 15.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.4.2', 'eci', '1.1.4.2', 'Fixer dans la stratégie des caps à court, moyen et long terme', '', '', '', '', '', '', null, 15.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.4.3', 'eci', '1.1.4.3', 'Cibler dans la stratégie la société civile, les acteurs publics et les acteurs économiques', '', '', '', '', '', '', null, 15.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.4.4', 'eci', '1.1.4.4', 'Couvrir dans la stratégie tous les axes de l''économie circulaire', '', '', '', '', '', '', null, 15.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.4.5', 'eci', '1.1.4.5', 'Intégrer dans le programme d''actions des actions vers la société civile', '', '', '', '', '', '', null, 4.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.4.6', 'eci', '1.1.4.6', 'Intégrer dans le programme d''actions des actions vers les acteurs publics', '', '', '', '', '', '', null, 4.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.4.7', 'eci', '1.1.4.7', 'Intégrer dans le programme d''actions des actions vers les acteurs économiques', '', '', '', '', '', '', null, 4.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.4.8', 'eci', '1.1.4.8', 'Intégrer dans le programme d''actions des actions sur le pilier approvisionnement durable de l''économie circulaire', '', '', '', '', '', '', null, 4.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.4.9', 'eci', '1.1.4.9', 'Intégrer dans le programme d''actions des actions sur le pilier éco-conception de l''économie circulaire', '', '', '', '', '', '', null, 4.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.4.10', 'eci', '1.1.4.10', 'Intégrer dans le programme d''actions des actions sur le pilier écologie industrielle et territoriale de l''économie circulaire', '', '', '', '', '', '', null, 4.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.4.11', 'eci', '1.1.4.11', 'Intégrer dans le programme d''actions des actions sur le pilier économie de la fonctionnalité de l''économie circulaire', '', '', '', '', '', '', null, 4.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.4.12', 'eci', '1.1.4.12', 'Intégrer dans le programme d''actions des actions sur le pilier consommation responsable de l''économie circulaire', '', '', '', '', '', '', null, 4.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.4.13', 'eci', '1.1.4.13', 'Intégrer dans le programme d''actions des actions sur le pilier allongement de la durée d''usage de l''économie circulaire', '', '', '', '', '', '', null, 4.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.4.14', 'eci', '1.1.4.14', 'Intégrer dans le programme d''actions des actions sur le pilier recyclage de l''économie circulaire', '', '', '', '', '', '', null, 4.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.5', 'eci', '1.1.5', 'Mettre en œuvre et valoriser les actions', '<p>La collectivité met en œuvre sur ses compétences et de manière opérationnelle des actions co-construites avec les acteurs du territoire.</p>
 <p>Elle capitalise les retours relatifs aux  actions effectuées.</p>
 ', '', '<p>Organiser un suivi de la mise en œuvre des actions (par l''équipe technique et l''élu).</p>
 <p>Communiquer efficacement et largement  sur  les résultats obtenus, au sein de la collectivité et à travers tout le territoire (sous forme de &quot;belles histoires&quot; via un site web, des évènements, des réseaux sociaux, etc.). Les acteurs du territoire prennent ainsi conscience de leur impact sur le développement de l''économie circulaire et adhérent plus facilement aux projets.</p>
 <p>Ce retour d''expérience stimule d''autres territoires.</p>
-', '<ul>
-<li>
-<p>Fiches actions sur Optigede</p>
-</li>
-<li>
-<p>Fiches &quot;belles histoires&quot; dans des médias accessibles</p>
-</li>
-</ul>
-', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.5.1', 'eci', '1.1.5.1', 'Valoriser des actions antérieures à la stratégie', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.5.2', 'eci', '1.1.5.2', 'Valoriser plus de 20% des actions issues du programme d''actions', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.5.3', 'eci', '1.1.5.3', 'Valoriser plus de 50% des actions issues du programme d''actions', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.5.4', 'eci', '1.1.5.4', 'Couvrir les différents piliers de l''économie circulaire avec le programme d''actions réalisé', '', '', '', '', '', '', '', null, 40.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.3', 'eci', '1.3', 'Suivre, évaluer et améliorer le déploiement de la politique Économie Circulaire', '<p>L''efficacité de la politique Économie Circulaire de la collectivité dépend de sa capacité à suivre, évaluer et adapter ses plans d''actions. Pour cela, la collectivité doit mettre en œuvre des outils de reporting, quantifier les résultats obtenus et adapter/réorienter régulièrement les actions envisagées.</p>
+', '', '', '', null, 20.0, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.5.1', 'eci', '1.1.5.1', 'Valoriser des actions antérieures à la stratégie', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.5.2', 'eci', '1.1.5.2', 'Valoriser plus de 20% des actions issues du programme d''actions', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.5.3', 'eci', '1.1.5.3', 'Valoriser plus de 50% des actions issues du programme d''actions', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.1.5.4', 'eci', '1.1.5.4', 'Couvrir les différents piliers de l''économie circulaire avec le programme d''actions réalisé', '', '', '', '', '', '', null, 40.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.3', 'eci', '1.3', 'Suivre, évaluer et améliorer le déploiement de la politique Économie Circulaire', '<p>L''efficacité de la politique Économie Circulaire de la collectivité dépend de sa capacité à suivre, évaluer et adapter ses plans d''actions. Pour cela, la collectivité doit mettre en œuvre des outils de reporting, quantifier les résultats obtenus et adapter/réorienter régulièrement les actions envisagées.</p>
 ', '', '<p><strong>Indicateurs</strong></p>
 <a href="https://optigede.ademe.fr/fiche/suivi-d-activite-pour-la-prevention-et-l-observatoire-regional">
 Suivi d''activité de la ressourcerie du Limousin pour la prévention et l''observatoire régional
@@ -3382,7 +2891,7 @@ Exemples d’évènements annuels de restitution du guide PLPDMA (ressource A38)
 Plaquette bilan d’un PLPDMA: exemple de Limoges Métropole
 </a>
  (pdf)
-', '', '<p><strong>Types d’indicateurs existants</strong></p>
+', '<p><strong>Types d’indicateurs existants</strong></p>
 <a href="https://ec.europa.eu/eurostat/fr/web/circular-economy/indicators">
 Indicateurs de l’économie circulaire (Eurostat)
 </a>
@@ -3404,8 +2913,8 @@ Note méthodologique pour l’élaboration d’indicateurs de programmes et de p
 <a href="http://www.plpdma-guide-ademe.fr/concevoir-un-dispositif-de-suivi-et-devaluation-simple-1.3.2.6.html">
 Concevoir un dispositif de suivi et d’évaluation simple
 </a>
-', '', '', 30.0, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.3.1', 'eci', '1.3.1', 'Déterminer des indicateurs spécifiques dotés d''objectifs', '<p>Dans le cadre de sa stratégie, la collectivité détermine :</p>
+', '', '', 30.0, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.3.1', 'eci', '1.3.1', 'Déterminer des indicateurs spécifiques dotés d''objectifs', '<p>Dans le cadre de sa stratégie, la collectivité détermine :</p>
 <p>des indicateurs de résultats lui permettant de piloter la réalisation du programme d’actions.</p>
 <p>des indicateurs d''impact lui permettant de mesurer l''efficacité de son programme d''actions et suivre la trajectoire de sa stratégie.</p>
 <p>En accord avec la stratégie, elle détermine un objectif pour chaque indicateur spécifique.</p>
@@ -3417,38 +2926,21 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>Rendre accessibles certaines données pertinentes aux acteurs du territoire afin d''alimenter leurs actions et motivation.</p>
 <p>Exemple d''indicateur : gaspillage alimentaire dans les cantines scolaires en g/repas</p>
 <p>→ permet de mesurer l''efficacité des actions orientées vers une diminution de cette notion.</p>
-', '<ul>
-<li>Indicateurs spécifiques et objectifs renseignés dans une interface dédié (interface web du Référentiel Economie Circulaire ou une autre interface choisie par la collectivité ex. tableau de bord Excel).</li>
-</ul>
-', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.3.1.1', 'eci', '1.3.1.1', 'Identifier les indicateurs de résultat', '', '', '', '', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.3.1.2', 'eci', '1.3.1.2', 'Identifier les indicateurs d''impact', '', '', '', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.3.1.3', 'eci', '1.3.1.3', 'Identifier les indicateurs spécifiques par secteur stratégique (en lien avec l''orientation 3.1)', '', '', '', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.3.2', 'eci', '1.3.2', 'Effectuer le bilan et ajuster les actions', '<p>La collectivité effectue un bilan annuel sur la base des indicateurs  proposés par le Référentiel Economie Circulaire ou choisis par la collectivité. Elle en tire des conclusions aboutissant à un ajustement de sa politique et de sa stratégie Economie Circulaire ainsi qu''à une modification du programme d''actions.</p>
+', '', '', '', null, 50.0, 'bases');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.3.1.1', 'eci', '1.3.1.1', 'Identifier les indicateurs de résultat', '', '', '', '', '', '', null, 50.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.3.1.2', 'eci', '1.3.1.2', 'Identifier les indicateurs d''impact', '', '', '', '', '', '', null, 25.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.3.1.3', 'eci', '1.3.1.3', 'Identifier les indicateurs spécifiques par secteur stratégique (en lien avec l''orientation 3.1)', '', '', '', '', '', '', null, 25.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.3.2', 'eci', '1.3.2', 'Effectuer le bilan et ajuster les actions', '<p>La collectivité effectue un bilan annuel sur la base des indicateurs  proposés par le Référentiel Economie Circulaire ou choisis par la collectivité. Elle en tire des conclusions aboutissant à un ajustement de sa politique et de sa stratégie Economie Circulaire ainsi qu''à une modification du programme d''actions.</p>
 <p>Elle élabore un document synthétique pour présenter l''évolution des indicateurs et la mise à jour des actions.</p>
 ', '', '<p>Le COPIL interne et la Gouvernance sont associés à la revue annuelle. Des éventuels ajustements sont intégrés dans le programme d''actions. La stratégie peut aussi être ajustée si les raisons sont valables.</p>
 <p>Les bilans peuvent être plus fréquent si la collectivité le juge nécessaire.</p>
 <p>Des bilans spécifiques par filière ou par thématique peuvent également être réalisés grâce aux indicateurs de résultats, d''impact et spécifiques par secteur stratégique.</p>
-', '<ul>
-<li>
-<p>Compte Rendu des réunions d''analyse des résultats</p>
-</li>
-<li>
-<p>Programme d''actions mis à jour</p>
-</li>
-<li>
-<p>Document de synthèse</p>
-</li>
-<li>
-<p>Support de communication externe</p>
-</li>
-</ul>
-', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.3.2.1', 'eci', '1.3.2.1', 'Réaliser le bilan', '', '', '', '', '', '', '', null, 40.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.3.2.2', 'eci', '1.3.2.2', 'Partager le bilan avec la gouvernance', '', '', '', '', '', '', '', null, 10.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.3.2.3', 'eci', '1.3.2.3', 'Communiquer sur le bilan à l''externe', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.3.2.4', 'eci', '1.3.2.4', 'Mettre à jour régulièrement le programme d''actions au regard, notamment, de l''évaluation', '', '', '', '', '', '', '', null, 30.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.2', 'eci', '1.2', 'Développer une démarche transversale avec l''ensemble des politiques de la collectivité', '<p>Une démarche transversale au sein de la collectivité implique une participation de tous les services dans l''objectif commun de développer l''économie circulaire.</p>
+', '', '', '', null, 50.0, 'effets');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.3.2.1', 'eci', '1.3.2.1', 'Réaliser le bilan', '', '', '', '', '', '', null, 40.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.3.2.2', 'eci', '1.3.2.2', 'Partager le bilan avec la gouvernance', '', '', '', '', '', '', null, 10.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.3.2.3', 'eci', '1.3.2.3', 'Communiquer sur le bilan à l''externe', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.3.2.4', 'eci', '1.3.2.4', 'Mettre à jour régulièrement le programme d''actions au regard, notamment, de l''évaluation', '', '', '', '', '', '', null, 30.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.2', 'eci', '1.2', 'Développer une démarche transversale avec l''ensemble des politiques de la collectivité', '<p>Une démarche transversale au sein de la collectivité implique une participation de tous les services dans l''objectif commun de développer l''économie circulaire.</p>
 <p>Les équipes pilotes de la démarche économie circulaire doivent participer à la construction et à l''amélioration de l''ensemble des politiques.</p>
 <p>Cette démarche transversale est aussi menée dans une logique d''éco-exemplarité.</p>
 ', '', '<a href="https://librairie.ademe.fr/dechets-economie-circulaire/2097-mobilisation-des-elus-et-partenaires.html">
@@ -3496,7 +2988,7 @@ Développement d’un laboratoire d’innovation en économie circulaire : exemp
 <a href="https://www.optigede.ademe.fr/fiche/lancement-dun-programme-daccompagnement-des-entreprises-du-thouarsais-dans-des-demarches">
 Pogramme d’accompagnement dans des démarches énergie-déchets : exemple de la CC du Thouarsais
 </a>
-', '', '<p><strong>Former et informer les élus</strong></p>
+', '<p><strong>Former et informer les élus</strong></p>
 <a href="https://librairie.ademe.fr/dechets-economie-circulaire/2842-moins-de-dechets-une-dynamique-pour-votre-territoire--9782358389945.html">
 Moins de déchets, une dynamique pour votre territoire (ADEME, 2015)
 </a>
@@ -3517,8 +3009,8 @@ Compétences et formations et de l''économie circulaire : synthèse de groupes 
 <a href="https://www.ademe.fr/collectivites-secteur-public/animer-territoire/mobiliser-acteurs-territoire/mobiliser-communes-territoire-projet">
 Mobiliser les communes sur un territoire de projet
 </a>
-', '', '', 30.0, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.2.1', 'eci', '1.2.1', 'Former en interne', '<p>La collectivité répertorie les compétences nécessaires pour la mise en œuvre de la stratégie, du programme d''actions, ainsi que pour leur suivi.</p>
+', '', '', 30.0, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.2.1', 'eci', '1.2.1', 'Former en interne', '<p>La collectivité répertorie les compétences nécessaires pour la mise en œuvre de la stratégie, du programme d''actions, ainsi que pour leur suivi.</p>
 <p>La collectivité met en place des formations internes (auprès des élus, des chargés de mission, des agents techniques, etc.), sur l''économie circulaire dans sa globalité ou sur les thématiques qu''elle comprend.</p>
 <p>En collaboration avec les Ressources Humaines, le plan de formation annuel intègre des formations sur l’économie circulaire pertinentes pour chaque métier.</p>
 ', '', '<p>La collectivité peut répertorier les compétences nécessaires à la mise en œuvre des formations sur la base des fiches de poste de l''équipe technique.</p>
@@ -3541,21 +3033,13 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 </li>
 </ul>
 <p>Des pistes de formations par l''ADEME - catalogue de formations programmées : https://formations.ademe.fr/solutions/recherche-de-formation.html?stab=0&amp;start=0&amp;folid=26&amp;search=&amp;theme=31</p>
-', '<ul>
-<li>
-<p>Vote/validation  du plan formation par la collectivité</p>
-</li>
-<li>
-<p>Attestations de participation aux formations réalisées</p>
-</li>
-</ul>
-', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.2.1.1', 'eci', '1.2.1.1', 'Définir un programme de formation économie circulaire', '', '', '', '', '', '', '', null, 10.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.2.1.2', 'eci', '1.2.1.2', 'Inclure dans le programme de formation des formations économie circulaire pour les élus et les techniciens', '', '', '', '', '', '', '', null, 30.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.2.1.3', 'eci', '1.2.1.3', 'Disposer de plus de 20% des unités de gestion qui ont au moins 1 salarié formé à l''économie circulaire', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.2.1.4', 'eci', '1.2.1.4', 'Former le DGA/DGS à l''économie circulaire', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.2.1.5', 'eci', '1.2.1.5', 'Former plus de 20% des élus à l''économie circulaire', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.2.2', 'eci', '1.2.2', 'Mettre en place une transversalité des actions et des projets', '<p>Les personnes en charge de la démarche d''économie circulaire sont invitées dans la comitologie de pilotage et de suivi des autres stratégies de la collectivité.</p>
+', '', '', '', null, 20.0, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.2.1.1', 'eci', '1.2.1.1', 'Définir un programme de formation économie circulaire', '', '', '', '', '', '', null, 10.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.2.1.2', 'eci', '1.2.1.2', 'Inclure dans le programme de formation des formations économie circulaire pour les élus et les techniciens', '', '', '', '', '', '', null, 30.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.2.1.3', 'eci', '1.2.1.3', 'Disposer de plus de 20% des unités de gestion qui ont au moins 1 salarié formé à l''économie circulaire', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.2.1.4', 'eci', '1.2.1.4', 'Former le DGA/DGS à l''économie circulaire', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.2.1.5', 'eci', '1.2.1.5', 'Former plus de 20% des élus à l''économie circulaire', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.2.2', 'eci', '1.2.2', 'Mettre en place une transversalité des actions et des projets', '<p>Les personnes en charge de la démarche d''économie circulaire sont invitées dans la comitologie de pilotage et de suivi des autres stratégies de la collectivité.</p>
 <p>La collectivité co-construit des actions en économie circulaire, en mode  inter-services pour favoriser la transversalité entre les services de la collectivité.</p>
 <p>La stratégie Economie Circulaire est ainsi liée avec les stratégies sectorielles existantes.</p>
 ', '', '<ul>
@@ -3581,16 +3065,8 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>Identifier des cycles de révision des stratégies sectorielles pour passer à la transversalité amont</p>
 </li>
 </ul>
-', '<ul>
-<li>
-<p>Description de l''action co-construite pour chaque compétence, avec l''explication sur ce qui favorise l''économie circulaire</p>
-</li>
-<li>
-<p>Fiches actions sur Optigede</p>
-</li>
-</ul>
-', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.2.3', 'eci', '1.2.3', 'Intégrer l''économie circulaire dans les politiques territoriales', '<p>La collectivité intègre les équipes économie circulaire dans la conception de ses politiques et stratégies territoriales.</p>
+', '', '', '', null, 20.0, 'bases');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.2.3', 'eci', '1.2.3', 'Intégrer l''économie circulaire dans les politiques territoriales', '<p>La collectivité intègre les équipes économie circulaire dans la conception de ses politiques et stratégies territoriales.</p>
 ', '', '<p>Les futurs axes stratégiques intègrent les composantes de l''économie circulaire dès leur élaboration.</p>
 <ul>
 <li>
@@ -3621,37 +3097,21 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>etc.</p>
 </li>
 </ul>
-', '<ul>
-<li>
-<p>Document approuvé par un élu précisant comment l''économie circulaire est prise en compte dans les nouvelles stratégies</p>
-</li>
-<li>
-<p>Compte Rendu  des réunions d''élaboration des nouvelles stratégies</p>
-</li>
-</ul>
-', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.2.4', 'eci', '1.2.4', 'Mettre en place une transversalité inter-collectivités', '<p>Dans l''objectif de réduire la production de déchets ou d''améliorer leur qualité, le syndicat agit auprès de ses collectivités adhérentes afin qu''elles intègrent  l''économie circulaire dans leurs actions.</p>
+', '', '', '', null, 20.0, 'bases');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.2.4', 'eci', '1.2.4', 'Mettre en place une transversalité inter-collectivités', '<p>Dans l''objectif de réduire la production de déchets ou d''améliorer leur qualité, le syndicat agit auprès de ses collectivités adhérentes afin qu''elles intègrent  l''économie circulaire dans leurs actions.</p>
 <p>Le syndicat assiste et accompagne les EPCI adhérents pour les aider à intéger la dimension économie circulaire.dans leurs compétences (urbanisme, mobilité, affaires scolaires, développement économique, etc.).</p>
 ', '', '<p>Par sa connaissance des flux de déchets, le syndicat est capable d''identifier les gisements de déchets problématiques à optimiser. Sur cette base le syndicat peut ainsi prendre un rôle d''animateur pour un dialogue entre ses EPCI adhérents.</p>
 <p>Exemples:</p>
 <p>Pour la compétence Bâtiment - Le syndicat mobilise les EPCI adhérents afin d''améliorer le tri sur chantier ou permettre une organisation différente de la collecte, facilitant la gestion des déchets du BTP. Le syndicat propose les bourses aux matériaux facilitant le réemploi.</p>
 <p>Pour la filière Tourisme - Le syndicat mobilise les EPCI adhérents pour instaurer un dialogue entre les producteurs locaux d''alimentation et les organisations hébergeant les touristes, afin d'' instaurer des chaines d''approvisionnement locales et limiter la quantité d''emballages individuels utilisés.</p>
 <p>Agir sur la sobriété - voir 3.3 et particulièrement 3.3.4</p>
-', '<ul>
-<li>
-<p>Comptes-rendus des réunions d''échange</p>
-</li>
-<li>
-<p>Documents de cadrage des actions (liste d''actions, plan d''action , etc.)</p>
-</li>
-</ul>
-', '', '', '', null, 40.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.2.4.1', 'eci', '1.2.4.1', 'Partager avec les EPCI les observations sur les gisements de déchets à optimiser', '', '', '', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.2.4.2', 'eci', '1.2.4.2', 'Accompagner collectivement les EPCI adhérents vers la construction d''actions sur leurs autres compétences', '', '', '', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.2.4.3', 'eci', '1.2.4.3', 'Réaliser des actions d''amélioration en amont de la production de déchets dans le cadre d''une compétence', '', '', '', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.2.4.4', 'eci', '1.2.4.4', 'Réaliser des actions d''amélioration en amont de la production de déchets dans le cadre de plusieurs compétences', '', '', '', '', '', '', '', null, 25.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5', 'eci', '5', 'Coopération et engagement', '', '', '', '', '', '', '', 90.0, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.3', 'eci', '5.3', 'Actions dirigées vers les acteurs économiques (TPE/PME, grandes entreprises, commerçants, artisans, … y compris associations à activité économique et acteurs économiques publics : type CHU, EHPAD, SEM, ...)', '<p>L''objectif est d''encourager la collectivité à déployer une politique d''actions économie circulaire vers les acteurs économiques du territoire, sur l''ensemble des 7 piliers de l''économie circulaire.</p>
+', '', '', '', null, 40.0, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.2.4.1', 'eci', '1.2.4.1', 'Partager avec les EPCI les observations sur les gisements de déchets à optimiser', '', '', '', '', '', '', null, 25.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.2.4.2', 'eci', '1.2.4.2', 'Accompagner collectivement les EPCI adhérents vers la construction d''actions sur leurs autres compétences', '', '', '', '', '', '', null, 25.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.2.4.3', 'eci', '1.2.4.3', 'Réaliser des actions d''amélioration en amont de la production de déchets dans le cadre d''une compétence', '', '', '', '', '', '', null, 25.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_1.2.4.4', 'eci', '1.2.4.4', 'Réaliser des actions d''amélioration en amont de la production de déchets dans le cadre de plusieurs compétences', '', '', '', '', '', '', null, 25.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5', 'eci', '5', 'Coopération et engagement', '', '', '', '', '', '', 90.0, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.3', 'eci', '5.3', 'Actions dirigées vers les acteurs économiques (TPE/PME, grandes entreprises, commerçants, artisans, … y compris associations à activité économique et acteurs économiques publics : type CHU, EHPAD, SEM, ...)', '<p>L''objectif est d''encourager la collectivité à déployer une politique d''actions économie circulaire vers les acteurs économiques du territoire, sur l''ensemble des 7 piliers de l''économie circulaire.</p>
 ', '<p><strong>Contexte – Agir collectivement</strong></p>
 <a href="https://www.optigede.ademe.fr/ecologie-industrielle-territoriale-enjeux">
 Ecologie
@@ -3738,7 +3198,7 @@ Réduction du gaspillage alimentaire en restauration commerciale
 <a href="https://www.optigede.ademe.fr/fiche/mages-maitrise-et-amelioration-de-la-gestion-environnementale-du-site">
 MAGES: Maîtrise et Amélioration de la Gestion Environnementale du Site
 </a>
-', '', '<p><strong>Liste des actions de prévention des déchets</strong></p>
+', '<p><strong>Liste des actions de prévention des déchets</strong></p>
 <a href="http://www.plpdma-guide-ademe.fr/actions-de-prevention-2.html">
 3 axes transversaux et 7 axes thématiques du guide PLPDMA de l’ADEME
 </a>
@@ -3790,36 +3250,28 @@ Vos achats responsables avec l’Ecolabel européen: simplicité et fiabilité (
 <a href="https://www.obsar.asso.fr/">
 Observatoire des achats responsables
 </a>
-', '', '', 30.0, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.3.1', 'eci', '5.3.1', 'Informer et former les acteurs économiques', '<p>Dans une logique de sobriété, la collectivité met en place des actions de sensibilisation et de formations à l''attention des acteurs économiques sur les 7 piliers de l''économie circulaire.</p>
+', '', '', 30.0, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.3.1', 'eci', '5.3.1', 'Informer et former les acteurs économiques', '<p>Dans une logique de sobriété, la collectivité met en place des actions de sensibilisation et de formations à l''attention des acteurs économiques sur les 7 piliers de l''économie circulaire.</p>
 ', '', '<p>Entamer des démarches auprès des acteurs économiques ou de leurs représentants locaux (fédérations, réseaux, organisme consulaire, etc.) en fonction des compétences et des enjeux de la collectivité. La collectivité peut s''appuyer sur les actions identifiés dans son diagnostic initial.</p>
 <p>Diffuser des documents d''information (déjà disponibles auprès des Communautés de commune, Conseils régionaux, ADEME ou réalisé en propre) sur l''éco-conception, les achats responsables, l''économie de la fonctionnalité, la prévention des déchets, etc.</p>
 <p>Promouvoir des MOOCs, des formations ou des évènements à destinations des entreprises et des représentants locaux.</p>
 <p>Organiser des réunions d''information à destination des entreprises (y compris en partenariat avec les représentants locaux).</p>
-', '<ul>
-<li>
-<p>Historique des documents diffusés</p>
-</li>
-<li>
-<p>Historique des supports de présentations des réunions d''informations et les listes de participants</p>
-</li>
-</ul>
-', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.3.1.1', 'eci', '5.3.1.1', 'Réaliser au moins 1 ou 2 actions sur le pilier approvisionnement durable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.3.1.2', 'eci', '5.3.1.2', 'Réaliser au moins 1 ou 2 actions sur le pilier éco-conception', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.3.1.3', 'eci', '5.3.1.3', 'Réaliser au moins 1 ou 2 actions sur le pilier écologie industrielle et territoriale (EIT)', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.3.1.4', 'eci', '5.3.1.4', 'Réaliser au moins 1 ou 2 actions sur le pilier économie de la fonctionnalité', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.3.1.5', 'eci', '5.3.1.5', 'Réaliser au moins 1 ou 2 actions sur le pilier consommation responsable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.3.1.6', 'eci', '5.3.1.6', 'Réaliser au moins 1 ou 2 actions sur le pilier allongement de la durée d''usage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.3.1.7', 'eci', '5.3.1.7', 'Réaliser au moins 1 ou 2 actions sur le pilier recyclage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.3.2', 'eci', '5.3.2', 'Aider à l''action à destination des acteurs économiques', '<p>La collectivité met en place des actions concrètes avec les acteurs économiques de son territoire sur les 7 piliers de l''économie circulaire.</p>
+', '', '', '', null, 20.0, 'bases');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.3.1.1', 'eci', '5.3.1.1', 'Réaliser au moins 1 ou 2 actions sur le pilier approvisionnement durable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.3.1.2', 'eci', '5.3.1.2', 'Réaliser au moins 1 ou 2 actions sur le pilier éco-conception', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.3.1.3', 'eci', '5.3.1.3', 'Réaliser au moins 1 ou 2 actions sur le pilier écologie industrielle et territoriale (EIT)', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.3.1.4', 'eci', '5.3.1.4', 'Réaliser au moins 1 ou 2 actions sur le pilier économie de la fonctionnalité', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.3.1.5', 'eci', '5.3.1.5', 'Réaliser au moins 1 ou 2 actions sur le pilier consommation responsable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.3.1.6', 'eci', '5.3.1.6', 'Réaliser au moins 1 ou 2 actions sur le pilier allongement de la durée d''usage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.3.1.7', 'eci', '5.3.1.7', 'Réaliser au moins 1 ou 2 actions sur le pilier recyclage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.3.2', 'eci', '5.3.2', 'Aider à l''action à destination des acteurs économiques', '<p>La collectivité met en place des actions concrètes avec les acteurs économiques de son territoire sur les 7 piliers de l''économie circulaire.</p>
 <p>Ces actions peuvent être déjà mentionnées dans les axes précédents.</p>
 ', '', '<p>Lancer ou participer à des initiatives en matière d''économie circulaire  réalisées par les représentants locaux et/ou les acteurs économiques :</p>
 <p>Mettre en place des services mutualisés sur une ZI/ZAC ayant un impact sur l''économie circulaire.</p>
@@ -3827,25 +3279,22 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>Identifier et mettre à disposition du foncier en faveur d''installations : déchèteries professionnels, etc.</p>
 <p>Inciter financièrement ou techniquement (financement d''études environnementales et de diagnostics, montée en compétences, accompagnement collectif ou individuels, etc.)</p>
 <p>Organisation de concours autour de l''éco-conception, etc.</p>
-', '<ul>
-<li>Fiches actions sur Optigede</li>
-</ul>
-', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.3.2.1', 'eci', '5.3.2.1', 'Réaliser au moins 1 ou 2 actions sur le pilier approvisionnement durable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.3.2.2', 'eci', '5.3.2.2', 'Réaliser au moins 1 ou 2 actions sur le pilier éco-conception', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.3.2.3', 'eci', '5.3.2.3', 'Réaliser au moins 1 ou 2 actions sur le pilier écologie industrielle et territoriale (EIT)', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.3.2.4', 'eci', '5.3.2.4', 'Réaliser au moins 1 ou 2 actions sur le pilier économie de la fonctionnalité', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.3.2.5', 'eci', '5.3.2.5', 'Réaliser au moins 1 ou 2 actions sur le pilier consommation responsable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.3.2.6', 'eci', '5.3.2.6', 'Réaliser au moins 1 ou 2 actions sur le pilier allongement de la durée d''usage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.3.2.7', 'eci', '5.3.2.7', 'Réaliser au moins 1 ou 2 actions sur le pilier recyclage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.3.3', 'eci', '5.3.3', 'Fédérer les acteurs du territoire', '<p>La collectivité déploie des partenariats ayant aboutis à des actions avec les acteurs économiques de son territoire sur les 7 piliers de l''économie circulaire.</p>
+', '', '', '', null, 50.0, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.3.2.1', 'eci', '5.3.2.1', 'Réaliser au moins 1 ou 2 actions sur le pilier approvisionnement durable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.3.2.2', 'eci', '5.3.2.2', 'Réaliser au moins 1 ou 2 actions sur le pilier éco-conception', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.3.2.3', 'eci', '5.3.2.3', 'Réaliser au moins 1 ou 2 actions sur le pilier écologie industrielle et territoriale (EIT)', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.3.2.4', 'eci', '5.3.2.4', 'Réaliser au moins 1 ou 2 actions sur le pilier économie de la fonctionnalité', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.3.2.5', 'eci', '5.3.2.5', 'Réaliser au moins 1 ou 2 actions sur le pilier consommation responsable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.3.2.6', 'eci', '5.3.2.6', 'Réaliser au moins 1 ou 2 actions sur le pilier allongement de la durée d''usage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.3.2.7', 'eci', '5.3.2.7', 'Réaliser au moins 1 ou 2 actions sur le pilier recyclage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.3.3', 'eci', '5.3.3', 'Fédérer les acteurs du territoire', '<p>La collectivité déploie des partenariats ayant aboutis à des actions avec les acteurs économiques de son territoire sur les 7 piliers de l''économie circulaire.</p>
 <p>(Un partenariat peut couvrir plusieurs piliers)</p>
 ', '', '<p>Conclure des accords avec un ou plusieurs représentants locaux et/ou acteurs économiques du territoire permettant de progresser sur une thématique particulière de l''économie circulaire.</p>
 <p>Mettre en place un partenariat avec un réseau EIT ou économie de la fonctionnalité.</p>
@@ -3854,25 +3303,14 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>Co-financer un réseau de plateformes de recyclage des déchets inertes du BTP.</p>
 <p>Soutenir une association pour l''animation d''une bourse de déchets.</p>
 <p>etc.</p>
-', '<ul>
-<li>
-<p>Cartographie de représentants locaux</p>
-</li>
-<li>
-<p>Conventions de partenariat</p>
-</li>
-<li>
-<p>Supports de communication</p>
-</li>
-</ul>
-', '', '', '', null, 30.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.3.3.1', 'eci', '5.3.3.1', 'Établir une cartographie de représentants locaux à potentiel de partenariat', '', '', '', '', '', '', '', null, 10.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.3.3.2', 'eci', '5.3.3.2', 'Construire des accords avec les représentants locaux sur 1 à 2 piliers', '', '', '', '', '', '', '', null, 15.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.3.3.3', 'eci', '5.3.3.3', 'Construire des accords avec les représentants locaux sur 3 à 4 piliers', '', '', '', '', '', '', '', null, 15.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.3.3.4', 'eci', '5.3.3.4', 'Construire des accords avec les représentants locaux sur 5 à 7 piliers', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.3.3.5', 'eci', '5.3.3.5', 'Suivre les indicateurs des partenariats', '', '', '', '', '', '', '', null, 30.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.3.3.6', 'eci', '5.3.3.6', 'Communiquer les résultats', '', '', '', '', '', '', '', null, 10.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.2', 'eci', '5.2', 'Actions dirigées vers les autres collectivités du territoire', '<p>L''objectif est d''encourager la collectivité à déployer une politique d''actions économie circulaire vers les collectivités infra et supra qui interviennent sur son territoire sur l''ensemble des 7 piliers de l''économie circulaire.</p>
+', '', '', '', null, 30.0, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.3.3.1', 'eci', '5.3.3.1', 'Établir une cartographie de représentants locaux à potentiel de partenariat', '', '', '', '', '', '', null, 10.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.3.3.2', 'eci', '5.3.3.2', 'Construire des accords avec les représentants locaux sur 1 à 2 piliers', '', '', '', '', '', '', null, 15.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.3.3.3', 'eci', '5.3.3.3', 'Construire des accords avec les représentants locaux sur 3 à 4 piliers', '', '', '', '', '', '', null, 15.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.3.3.4', 'eci', '5.3.3.4', 'Construire des accords avec les représentants locaux sur 5 à 7 piliers', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.3.3.5', 'eci', '5.3.3.5', 'Suivre les indicateurs des partenariats', '', '', '', '', '', '', null, 30.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.3.3.6', 'eci', '5.3.3.6', 'Communiquer les résultats', '', '', '', '', '', '', null, 10.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.2', 'eci', '5.2', 'Actions dirigées vers les autres collectivités du territoire', '<p>L''objectif est d''encourager la collectivité à déployer une politique d''actions économie circulaire vers les collectivités infra et supra qui interviennent sur son territoire sur l''ensemble des 7 piliers de l''économie circulaire.</p>
 <p>Ces actions peuvent être déjà mentionnées dans les axes précédents.</p>
 ', '', '<a href="https://www.ademe.fr/actions-eco-exemplaires">
 Synthèse thématique du réseau A3P: éco-exemplarité
@@ -3890,7 +3328,7 @@ L''éco-exemplarité
 <a href="https://www.optigede.ademe.fr/fiche/participation-un-reseau-territorial-dacteurs-et-dechanges-de-bonnes-pratiques-sur-le">
 Participation à un réseau territorial d''acteurs et d''échanges de bonnes pratiques sur le gaspillage alimentaire
 </a>
-', '', '<a href="https://www.optigede.ademe.fr/la-planification-dans-l-economie-circulaire">
+', '<a href="https://www.optigede.ademe.fr/la-planification-dans-l-economie-circulaire">
 Economie circulaire et planification régionale
 </a>
 <p><strong>Liste des actions de prévention des déchets</strong></p>
@@ -3927,8 +3365,8 @@ Formation des élus
 <a href="https://formations.ademe.fr/formations_economie-circulaire_devenir-charge-de-mission-dechets-des-collectivites-:-prevention-et-gestion-de-proximite-des-biodechets_s4720.html">
 Formation/parcours chargé de mission économie circulaire
 </a>
-', '', '', 30.0, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.2.1', 'eci', '5.2.1', 'Informer, sensibiliser et former les autres collectivités de son territoire', '<p>Dans une logique de sobriété, la collectivité informe, sensibilise et forme les autres collectivités de son territoire sur les 7 piliers de l''économie circulaire</p>
+', '', '', 30.0, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.2.1', 'eci', '5.2.1', 'Informer, sensibiliser et former les autres collectivités de son territoire', '<p>Dans une logique de sobriété, la collectivité informe, sensibilise et forme les autres collectivités de son territoire sur les 7 piliers de l''économie circulaire</p>
 ', '', '<p>Diffuser des documents d''information (déjà disponibles auprès des Communautés de commune, Conseils régionaux, ADEME ou réalisé en propre).</p>
 <p>Par exemple, parmi les publication de l''ADEME : &quot;Agir pour mon territoire&quot;, Optigede, etc.</p>
 <p>Promouvoir des informations pour aider à des éco-gestes et des achats plus durables.</p>
@@ -3949,72 +3387,55 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>etc.</p>
 </li>
 </ul>
-', '<ul>
-<li>Preuve de participation aux formations comme des attestations de formation ou un compteur de participation aux MOOC ou un nombre de vues sur les vidéos pédagogiques, etc.</li>
-</ul>
-', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.2.1.1', 'eci', '5.2.1.1', 'Réaliser au moins 1 ou 2 actions sur le pilier approvisionnement durable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.2.1.2', 'eci', '5.2.1.2', 'Réaliser au moins 1 ou 2 actions sur le pilier éco-conception', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.2.1.3', 'eci', '5.2.1.3', 'Réaliser au moins 1 ou 2 actions sur le pilier écologie industrielle et territoriale (EIT)', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.2.1.4', 'eci', '5.2.1.4', 'Réaliser au moins 1 ou 2 actions sur le pilier économie de la fonctionnalité', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.2.1.5', 'eci', '5.2.1.5', 'Réaliser au moins 1 ou 2 actions sur le pilier consommation responsable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.2.1.6', 'eci', '5.2.1.6', 'Réaliser au moins 1 ou 2 actions sur le pilier allongement de la durée d''usage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.2.1.7', 'eci', '5.2.1.7', 'Réaliser au moins 1 ou 2 actions sur le pilier recyclage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.2.2', 'eci', '5.2.2', 'Aider à l''action des autres collectivités de son territoire', '<p>La collectivité soutient des actions concrètes réalisées en direction des collectivités infra et supra sur les 7 piliers de l''économie circulaire.</p>
+', '', '', '', null, 20.0, 'bases');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.2.1.1', 'eci', '5.2.1.1', 'Réaliser au moins 1 ou 2 actions sur le pilier approvisionnement durable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.2.1.2', 'eci', '5.2.1.2', 'Réaliser au moins 1 ou 2 actions sur le pilier éco-conception', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.2.1.3', 'eci', '5.2.1.3', 'Réaliser au moins 1 ou 2 actions sur le pilier écologie industrielle et territoriale (EIT)', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.2.1.4', 'eci', '5.2.1.4', 'Réaliser au moins 1 ou 2 actions sur le pilier économie de la fonctionnalité', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.2.1.5', 'eci', '5.2.1.5', 'Réaliser au moins 1 ou 2 actions sur le pilier consommation responsable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.2.1.6', 'eci', '5.2.1.6', 'Réaliser au moins 1 ou 2 actions sur le pilier allongement de la durée d''usage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.2.1.7', 'eci', '5.2.1.7', 'Réaliser au moins 1 ou 2 actions sur le pilier recyclage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.2.2', 'eci', '5.2.2', 'Aider à l''action des autres collectivités de son territoire', '<p>La collectivité soutient des actions concrètes réalisées en direction des collectivités infra et supra sur les 7 piliers de l''économie circulaire.</p>
 <p>Les actions peuvent être réalisées par la collectivité elle-même ou avec d''autres collectivités.</p>
 ', '', '<p>Lancer ou participer à des initiatives en matière d''économie circulaire entre les collectivités du territoire, par exemple : mutualisation de moyens ou de formations.</p>
 <p>Bourse d''échanges de matériel de voierie réformé.</p>
 <p>Mise en commun de cahier des charges achats responsables ou d''un réseau d''acheteurs publics.</p>
 <p>Mise à disposition par les EPCI de locaux pour une ressourcerie.</p>
 <p>Mise en place d''un club Economie circulaire des collectivités sur le territoire pour l''échange de bonnes pratiques, émergence de projets, etc.</p>
-', '<ul>
-<li>Fiches actions sur Optigede</li>
-</ul>
-', '', '', '', null, 40.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.2.2.1', 'eci', '5.2.2.1', 'Réaliser au moins 1 ou 2 actions sur le pilier approvisionnement durable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.2.2.2', 'eci', '5.2.2.2', 'Réaliser au moins 1 ou 2 actions sur le pilier éco-conception', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.2.2.3', 'eci', '5.2.2.3', 'Réaliser au moins 1 ou 2 actions sur le pilier écologie industrielle et territoriale (EIT)', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.2.2.4', 'eci', '5.2.2.4', 'Réaliser au moins 1 ou 2 actions sur le pilier économie de la fonctionnalité', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.2.2.5', 'eci', '5.2.2.5', 'Réaliser au moins 1 ou 2 actions sur le pilier consommation responsable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.2.2.6', 'eci', '5.2.2.6', 'Réaliser au moins 1 ou 2 actions sur le pilier allongement de la durée d''usage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.2.2.7', 'eci', '5.2.2.7', 'Réaliser au moins 1 ou 2 actions sur le pilier recyclage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.2.3', 'eci', '5.2.3', 'Structurer des partenariats', '<p>La collectivité structure des partenariats avec les collectivités infra et supra pour généraliser et amplifier la démarche sur l''ensemble du territoire.</p>
+', '', '', '', null, 40.0, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.2.2.1', 'eci', '5.2.2.1', 'Réaliser au moins 1 ou 2 actions sur le pilier approvisionnement durable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.2.2.2', 'eci', '5.2.2.2', 'Réaliser au moins 1 ou 2 actions sur le pilier éco-conception', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.2.2.3', 'eci', '5.2.2.3', 'Réaliser au moins 1 ou 2 actions sur le pilier écologie industrielle et territoriale (EIT)', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.2.2.4', 'eci', '5.2.2.4', 'Réaliser au moins 1 ou 2 actions sur le pilier économie de la fonctionnalité', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.2.2.5', 'eci', '5.2.2.5', 'Réaliser au moins 1 ou 2 actions sur le pilier consommation responsable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.2.2.6', 'eci', '5.2.2.6', 'Réaliser au moins 1 ou 2 actions sur le pilier allongement de la durée d''usage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.2.2.7', 'eci', '5.2.2.7', 'Réaliser au moins 1 ou 2 actions sur le pilier recyclage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.2.3', 'eci', '5.2.3', 'Structurer des partenariats', '<p>La collectivité structure des partenariats avec les collectivités infra et supra pour généraliser et amplifier la démarche sur l''ensemble du territoire.</p>
 <p>Elle mesure la réussite des partenariats mis en place et valorise les résultats.</p>
 <p>Un partenariat peut couvrir plusieurs piliers de l''économie circualire.</p>
 ', '', '<p>Créer ou participer à des espaces communs de dialogue pour les autres collectivités du territoire: restauration collective, établissements scolaires et culturelles, habitat social - bailleurs sociaux, etc.</p>
 <p>Mettre en place des accords avec une ou plusieurs autres collectivités du territoire permettant de progresser sur une thématique de l''économie circulaire. Chaque accord devrait comprendre des indicateurs de performance pour mesurer la réussite du partenariat (ex. gaspillage alimentaire, consommation d''eau, artificialisation du sol, etc.).</p>
 <p>La collectivité publie les indicateurs de réussite afin de valoriser les résultats de ces partenariats et encourager à la reproduction des actions : site internet, journal de la commune, réseaux sociaux, etc.</p>
 <p>Les indicateurs de réussite (simples et peu nombreux) ont pour but d''aider la collectivité à juger de la pertinence de ce partenariat au regard de sa politique Economie Circulaire.</p>
-', '<ul>
-<li>
-<p>Liste des autres collectivités à potentiel de collaboration</p>
-</li>
-<li>
-<p>Liste des autres collectivités et des enjeux identifiés</p>
-</li>
-<li>
-<p>Conventions de partenariat</p>
-</li>
-</ul>
-', '', '', '', null, 40.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.2.3.1', 'eci', '5.2.3.1', 'Identifier les collectivités à potentiel de collaboration', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.2.3.2', 'eci', '5.2.3.2', 'Identifier les enjeux', '', '', '', '', '', '', '', null, 30.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.2.3.3', 'eci', '5.2.3.3', 'Conclure un/des accord(s) avec une ou plusieurs collectivités du territoire', '', '', '', '', '', '', '', null, 50.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.1', 'eci', '5.1', 'Actions dirigées vers le Grand Public et les associations', '<p>L''objectif est d''encourager la collectivité à mettre en place une politique d''actions avec les cibles grand public (citoyens, scolaires, groupements citoyens associatifs ou non, ...) sur l''ensemble des 7 piliers de l''économie circulaire.</p>
+', '', '', '', null, 40.0, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.2.3.1', 'eci', '5.2.3.1', 'Identifier les collectivités à potentiel de collaboration', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.2.3.2', 'eci', '5.2.3.2', 'Identifier les enjeux', '', '', '', '', '', '', null, 30.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.2.3.3', 'eci', '5.2.3.3', 'Conclure un/des accord(s) avec une ou plusieurs collectivités du territoire', '', '', '', '', '', '', null, 50.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.1', 'eci', '5.1', 'Actions dirigées vers le Grand Public et les associations', '<p>L''objectif est d''encourager la collectivité à mettre en place une politique d''actions avec les cibles grand public (citoyens, scolaires, groupements citoyens associatifs ou non, ...) sur l''ensemble des 7 piliers de l''économie circulaire.</p>
 <p>Les actions pris en compte dans cette orientation doivent être en cours de validité ou avoir été réalisé dans les derniers 4 ans.</p>
 ', '<p><strong>Réglementation</strong></p>
 <a href="https://www.ademe.fr/collectivites-secteur-public/animer-territoire/mobiliser-acteurs-territoire/mobiliser-grand-public-lademe-cotes-collectivites-territoriales">
@@ -4047,7 +3468,7 @@ Sensibilisation des scolaires
 <a href="https://www.ademe.fr/eco-consommation">
 Eco-consommation
 </a>
-', '', '<a href="https://optigede.ademe.fr/sites/default/files/fichiers/actions_prevention_programme_local.pdf">
+', '<a href="https://optigede.ademe.fr/sites/default/files/fichiers/actions_prevention_programme_local.pdf">
 Liste des actions de prévention des déchets
 </a>
 <a href="http://www.plpdma-guide-ademe.fr/ressources.html">
@@ -4066,9 +3487,9 @@ Labels environnementaux
 </a>
 <a href="https://optigede.ademe.fr/foyers-temoins">
 Foyers témoins</a
-', '', '', 30.0, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.1.1', 'eci', '5.1.1', 'Informer et sensibiliser le grand public', '<p>Dans une logique de sobriété, la collectivité informe, sensibilise et forme le grand public sur les enjeux environnementaux en lien avec les 7 piliers de l''économie circulaire.</p>
-<p>Le grand publique et les associations représentatives sont plus concernés par certains piliers (consommation responsable, allengement de durée d''usage, recyclage) que par d''autres (approvisionnement durable, EIT, éco-conception). La collectivité peut tout de même sensibiliser le grand publiques et les associations sur son action destinée aux acteurs économiques. Cela informe les citoyens sur le dynamisme de leur territoire et les fait adhérer aux projets du territoire.</p>
+', '', '', 30.0, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.1.1', 'eci', '5.1.1', 'Informer et sensibiliser le grand public', '<p>Dans une logique de sobriété, la collectivité informe, sensibilise et forme le grand public sur les enjeux environnementaux en lien avec les 7 piliers de l''économie circulaire.</p>
+<p>Le grand public et les associations représentatives sont plus concernés par certains piliers (consommation responsable, allongement de la durée d''usage, recyclage) que par d''autres (approvisionnement durable, EIT, éco-conception). La collectivité peut tout de même sensibiliser le grand public et les associations sur l''action qu''elle mène en faveur des acteurs économiques. Cela informe les citoyens sur le dynamisme de leur territoire et les fait adhérer aux projets du territoire.</p>
 ', '', '<p>Pour le grand public :</p>
 <ul>
 <li>
@@ -4092,25 +3513,22 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <ul>
 <li>Promouvoir des outils (type MOOC) et de la documentation permettant d''augmenter la connaissance et de former leurs membres.</li>
 </ul>
-', '<ul>
-<li>Preuve de participation aux formations comme des attestations de formation ou un compteur de participation aux MOOC ou un nombre de vues sur les vidéos pédagogiques, etc.</li>
-</ul>
-', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.1.1.1', 'eci', '5.1.1.1', 'Réaliser au moins 1 ou 2 actions sur le pilier approvisionnement durable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.1.1.2', 'eci', '5.1.1.2', 'Réaliser au moins 1 ou 2 actions sur le pilier éco-conception', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.1.1.3', 'eci', '5.1.1.3', 'Réaliser au moins 1 ou 2 actions sur le pilier écologie industrielle et territoriale (EIT)', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.1.1.4', 'eci', '5.1.1.4', 'Réaliser au moins 1 ou 2 actions sur le pilier économie de la fonctionnalité', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.1.1.5', 'eci', '5.1.1.5', 'Réaliser au moins 1 ou 2 actions sur le pilier consommation responsable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.1.1.6', 'eci', '5.1.1.6', 'Réaliser au moins 1 ou 2 actions sur le pilier allongement de la durée d''usage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.1.1.7', 'eci', '5.1.1.7', 'Réaliser au moins 1 ou 2 actions sur le pilier recyclage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.1.2', 'eci', '5.1.2', 'Aider à l''action en direction du grand public', '<p>La collectivité soutient des actions concrètes réalisées en direction du grand public sur les 7 piliers de l''économie circulaire en s''appuyant sur les initiatives du territoire.</p>
+', '', '', '', null, 20.0, 'bases');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.1.1.1', 'eci', '5.1.1.1', 'Réaliser au moins 1 ou 2 actions sur le pilier approvisionnement durable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.1.1.2', 'eci', '5.1.1.2', 'Réaliser au moins 1 ou 2 actions sur le pilier éco-conception', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.1.1.3', 'eci', '5.1.1.3', 'Réaliser au moins 1 ou 2 actions sur le pilier écologie industrielle et territoriale (EIT)', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.1.1.4', 'eci', '5.1.1.4', 'Réaliser au moins 1 ou 2 actions sur le pilier économie de la fonctionnalité', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.1.1.5', 'eci', '5.1.1.5', 'Réaliser au moins 1 ou 2 actions sur le pilier consommation responsable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.1.1.6', 'eci', '5.1.1.6', 'Réaliser au moins 1 ou 2 actions sur le pilier allongement de la durée d''usage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.1.1.7', 'eci', '5.1.1.7', 'Réaliser au moins 1 ou 2 actions sur le pilier recyclage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.1.2', 'eci', '5.1.2', 'Aider à l''action en direction du grand public', '<p>La collectivité soutient des actions concrètes réalisées en direction du grand public sur les 7 piliers de l''économie circulaire en s''appuyant sur les initiatives du territoire.</p>
 <p>Ces actions peuvent être déjà mentionnées dans les axes précédents.</p>
 ', '', '<p>Mettre en place une ressourcerie ou un Repair Café</p>
 <p>Organiser un atelier de préparation SERD (Semaine Européenne de Réduction des Déchets)</p>
@@ -4119,25 +3537,22 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>Développer les tiers-lieux (éspace de co-working, FabLab, etc.)</p>
 <p>Mettre en place la collecte de biodéchets et la collecte sélective, ainsi que la fourniture de composteurs y compris en établissements scolaires</p>
 <p>etc.</p>
-', '<ul>
-<li>Fiches actions sur Optigede</li>
-</ul>
-', '', '', '', null, 40.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.1.2.1', 'eci', '5.1.2.1', 'Réaliser au moins 1 ou 2 actions sur le pilier approvisionnement durable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.1.2.2', 'eci', '5.1.2.2', 'Réaliser au moins 1 ou 2 actions sur le pilier éco-conception', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.1.2.3', 'eci', '5.1.2.3', 'Réaliser au moins 1 ou 2 actions sur le pilier écologie industrielle et territoriale (EIT)', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.1.2.4', 'eci', '5.1.2.4', 'Réaliser au moins 1 ou 2 actions sur le pilier économie de la fonctionnalité', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.1.2.5', 'eci', '5.1.2.5', 'Réaliser au moins 1 ou 2 actions sur le pilier consommation responsable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.1.2.6', 'eci', '5.1.2.6', 'Réaliser au moins 1 ou 2 actions sur le pilier allongement de la durée d''usage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.1.2.7', 'eci', '5.1.2.7', 'Réaliser au moins 1 ou 2 actions sur le pilier recyclage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
-', '', '', '', '', '', '', null, null);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.1.3', 'eci', '5.1.3', 'Fédérer les acteurs du territoire', '<p>La collectivité crée des espaces communs de dialogue afin d''encourager et amplifier les actions sur le territoire. Elle structure des partenariats avec les associations (et autres acteurs) sur les 7 piliers de l''économie circulaire. Elle mesure la réussite des partenariats mis en place et valorise les résultats.</p>
+', '', '', '', null, 40.0, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.1.2.1', 'eci', '5.1.2.1', 'Réaliser au moins 1 ou 2 actions sur le pilier approvisionnement durable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.1.2.2', 'eci', '5.1.2.2', 'Réaliser au moins 1 ou 2 actions sur le pilier éco-conception', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.1.2.3', 'eci', '5.1.2.3', 'Réaliser au moins 1 ou 2 actions sur le pilier écologie industrielle et territoriale (EIT)', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.1.2.4', 'eci', '5.1.2.4', 'Réaliser au moins 1 ou 2 actions sur le pilier économie de la fonctionnalité', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.1.2.5', 'eci', '5.1.2.5', 'Réaliser au moins 1 ou 2 actions sur le pilier consommation responsable', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.1.2.6', 'eci', '5.1.2.6', 'Réaliser au moins 1 ou 2 actions sur le pilier allongement de la durée d''usage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.1.2.7', 'eci', '5.1.2.7', 'Réaliser au moins 1 ou 2 actions sur le pilier recyclage', '<p>Au moins 1 action pour les collectivités avec une population inférieure à 100 000 habitants. Au moins 2 actions pour les collectivités avec une population supérieure à 100 000 habitants.</p>
+', '', '', '', '', '', null, null, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.1.3', 'eci', '5.1.3', 'Fédérer les acteurs du territoire', '<p>La collectivité crée des espaces communs de dialogue afin d''encourager et amplifier les actions sur le territoire. Elle structure des partenariats avec les associations (et autres acteurs) sur les 7 piliers de l''économie circulaire. Elle mesure la réussite des partenariats mis en place et valorise les résultats.</p>
 <p>Un partenariat peut couvrir plusieurs piliers.</p>
 ', '', '<p>Enquêter sur les besoins des acteurs associatifs grand public du territoire.</p>
 <p>Analyser les résultats de l''enquête afin de s''en inspirer pour la structuration de sa politique Economie Circulaire.</p>
@@ -4145,26 +3560,12 @@ insert into action_definition(action_id, referentiel, identifiant, nom, descript
 <p>Mise en place des accords avec un ou plusieurs acteurs associatifs grand public du territoire permettant de progresser sur une thématique particulière de l''économie circulaire. Chaque accord devrait comprendre des indicateurs de performance pour mesurer la réussite du partenariat (ex: nombre d''évènements réalisés, nombre de citoyens touchés, etc.).</p>
 <p>La collectivité publie les indicateurs de réussite afin de valoriser les résultats de ces partenariats et encourager à la reproduction des actions : site internet, journal de la commune, réseaux sociaux, etc.</p>
 <p>Les indicateurs de réussite (simples et peu nombreux) ont pour but d''aider la collectivité à juger de la pertinence de ce partenariat au regard de sa politique Economie Circulaire.</p>
-', '<ul>
-<li>
-<p>Synthèse de résultats de l''enquête</p>
-</li>
-<li>
-<p>Synthèse de l''analyse des besoins</p>
-</li>
-<li>
-<p>Description du/des espace(s) communs de dialogue</p>
-</li>
-<li>
-<p>Conventions de partenariat</p>
-</li>
-</ul>
-', '', '', '', null, 40.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.1.3.1', 'eci', '5.1.3.1', 'Réaliser une enquête sur les besoins des acteurs', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.1.3.2', 'eci', '5.1.3.2', 'Analyser les besoins', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.1.3.3', 'eci', '5.1.3.3', 'Créer un ou des espaces communs de dialogue pour les acteurs du territoire', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.1.3.4', 'eci', '5.1.3.4', 'Disposer d''accord(s) avec un ou plusieurs acteurs grand public du territoire', '', '', '', '', '', '', '', null, 20.0);
-insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_5.1.3.5', 'eci', '5.1.3.5', 'Publier les indicateurs de réussite des partenariats', '', '', '', '', '', '', '', null, 20.0);
+', '', '', '', null, 40.0, 'mise en œuvre');
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.1.3.1', 'eci', '5.1.3.1', 'Réaliser une enquête sur les besoins des acteurs', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.1.3.2', 'eci', '5.1.3.2', 'Analyser les besoins', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.1.3.3', 'eci', '5.1.3.3', 'Créer un ou des espaces communs de dialogue pour les acteurs du territoire', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.1.3.4', 'eci', '5.1.3.4', 'Disposer d''accord(s) avec un ou plusieurs acteurs grand public du territoire', '', '', '', '', '', '', null, 20.0, null);
+insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage, categorie) values ('eci_5.1.3.5', 'eci', '5.1.3.5', 'Publier les indicateurs de réussite des partenariats', '', '', '', '', '', '', null, 20.0, null);
 insert into action_computed_points(action_id, value) values ('eci', 500.0);
 insert into action_computed_points(action_id, value) values ('eci_2', 80.0);
 insert into action_computed_points(action_id, value) values ('eci_2.2', 15.0);
@@ -4192,120 +3593,96 @@ insert into action_computed_points(action_id, value) values ('eci_5', 90.0);
 insert into action_computed_points(action_id, value) values ('eci_5.3', 30.0);
 insert into action_computed_points(action_id, value) values ('eci_5.2', 30.0);
 insert into action_computed_points(action_id, value) values ('eci_5.1', 30.0);
+insert into action_computed_points(action_id, value) values ('eci_2.2.0', 0.0);
+insert into action_computed_points(action_id, value) values ('eci_2.2.1', 3.0);
+insert into action_computed_points(action_id, value) values ('eci_2.2.2', 4.5);
+insert into action_computed_points(action_id, value) values ('eci_2.2.3', 7.5);
+insert into action_computed_points(action_id, value) values ('eci_3.2.0', 0.0);
+insert into action_computed_points(action_id, value) values ('eci_3.2.1', 6.25);
+insert into action_computed_points(action_id, value) values ('eci_3.2.2', 12.5);
+insert into action_computed_points(action_id, value) values ('eci_3.2.3', 6.25);
+insert into action_computed_points(action_id, value) values ('eci_3.6.1', 3.75);
+insert into action_computed_points(action_id, value) values ('eci_3.6.2', 8.75);
+insert into action_computed_points(action_id, value) values ('eci_3.6.3', 7.5);
+insert into action_computed_points(action_id, value) values ('eci_3.6.4', 5.0);
+insert into action_computed_points(action_id, value) values ('eci_5.1.1', 6.0);
+insert into action_computed_points(action_id, value) values ('eci_5.1.2', 12.0);
+insert into action_computed_points(action_id, value) values ('eci_5.1.3', 12.0);
+insert into action_computed_points(action_id, value) values ('eci_2.5.1', 3.75);
+insert into action_computed_points(action_id, value) values ('eci_2.5.2', 7.5);
+insert into action_computed_points(action_id, value) values ('eci_2.5.3', 3.75);
+insert into action_computed_points(action_id, value) values ('eci_4.2.1', 2.5);
+insert into action_computed_points(action_id, value) values ('eci_4.2.2', 2.0);
+insert into action_computed_points(action_id, value) values ('eci_4.2.3', 3.0);
+insert into action_computed_points(action_id, value) values ('eci_4.2.4', 2.5);
+insert into action_computed_points(action_id, value) values ('eci_4.2.5', 10.0);
+insert into action_computed_points(action_id, value) values ('eci_3.5.1', 5.0);
+insert into action_computed_points(action_id, value) values ('eci_3.5.2', 5.0);
+insert into action_computed_points(action_id, value) values ('eci_3.5.3', 7.5);
+insert into action_computed_points(action_id, value) values ('eci_3.5.4', 7.5);
+insert into action_computed_points(action_id, value) values ('eci_5.2.1', 6.0);
+insert into action_computed_points(action_id, value) values ('eci_5.2.2', 12.0);
+insert into action_computed_points(action_id, value) values ('eci_5.2.3', 12.0);
+insert into action_computed_points(action_id, value) values ('eci_3.1.1', 11.666666666666666);
+insert into action_computed_points(action_id, value) values ('eci_3.1.2', 11.666666666666666);
+insert into action_computed_points(action_id, value) values ('eci_3.1.3', 11.666666666666666);
+insert into action_computed_points(action_id, value) values ('eci_2.1.0', 0.0);
+insert into action_computed_points(action_id, value) values ('eci_2.1.1', 4.0);
+insert into action_computed_points(action_id, value) values ('eci_2.1.2', 2.0);
+insert into action_computed_points(action_id, value) values ('eci_2.1.3', 4.0);
 insert into action_computed_points(action_id, value) values ('eci_1.3.1', 15.0);
 insert into action_computed_points(action_id, value) values ('eci_1.3.2', 15.0);
 insert into action_computed_points(action_id, value) values ('eci_2.3.0', 0.0);
 insert into action_computed_points(action_id, value) values ('eci_2.3.1', 6.666666666666667);
 insert into action_computed_points(action_id, value) values ('eci_2.3.2', 6.666666666666667);
 insert into action_computed_points(action_id, value) values ('eci_2.3.3', 6.666666666666667);
-insert into action_computed_points(action_id, value) values ('eci_3.7.1', 5.0);
-insert into action_computed_points(action_id, value) values ('eci_3.7.2', 15.0);
-insert into action_computed_points(action_id, value) values ('eci_3.1.1', 11.666666666666666);
-insert into action_computed_points(action_id, value) values ('eci_3.1.2', 11.666666666666666);
-insert into action_computed_points(action_id, value) values ('eci_3.1.3', 11.666666666666666);
-insert into action_computed_points(action_id, value) values ('eci_3.5.1', 5.0);
-insert into action_computed_points(action_id, value) values ('eci_3.5.2', 5.0);
-insert into action_computed_points(action_id, value) values ('eci_3.5.3', 7.5);
-insert into action_computed_points(action_id, value) values ('eci_3.5.4', 7.5);
 insert into action_computed_points(action_id, value) values ('eci_5.3.1', 6.0);
 insert into action_computed_points(action_id, value) values ('eci_5.3.2', 15.0);
 insert into action_computed_points(action_id, value) values ('eci_5.3.3', 9.0);
-insert into action_computed_points(action_id, value) values ('eci_1.2.1', 6.0);
-insert into action_computed_points(action_id, value) values ('eci_1.2.2', 6.0);
-insert into action_computed_points(action_id, value) values ('eci_1.2.3', 6.0);
-insert into action_computed_points(action_id, value) values ('eci_1.2.4', 12.0);
-insert into action_computed_points(action_id, value) values ('eci_3.4.1', 7.5);
-insert into action_computed_points(action_id, value) values ('eci_3.4.2', 6.25);
-insert into action_computed_points(action_id, value) values ('eci_3.4.3', 7.5);
-insert into action_computed_points(action_id, value) values ('eci_3.4.4', 3.75);
-insert into action_computed_points(action_id, value) values ('eci_2.1.0', 0.0);
-insert into action_computed_points(action_id, value) values ('eci_2.1.1', 4.0);
-insert into action_computed_points(action_id, value) values ('eci_2.1.2', 2.0);
-insert into action_computed_points(action_id, value) values ('eci_2.1.3', 4.0);
 insert into action_computed_points(action_id, value) values ('eci_4.1.0', 0.0);
 insert into action_computed_points(action_id, value) values ('eci_4.1.1', 4.0);
 insert into action_computed_points(action_id, value) values ('eci_4.1.2', 6.0);
 insert into action_computed_points(action_id, value) values ('eci_4.1.3', 6.0);
 insert into action_computed_points(action_id, value) values ('eci_4.1.4', 4.0);
-insert into action_computed_points(action_id, value) values ('eci_3.3.1', 6.25);
-insert into action_computed_points(action_id, value) values ('eci_3.3.2', 6.25);
-insert into action_computed_points(action_id, value) values ('eci_3.3.3', 6.25);
-insert into action_computed_points(action_id, value) values ('eci_3.3.4', 6.25);
-insert into action_computed_points(action_id, value) values ('eci_3.6.1', 3.75);
-insert into action_computed_points(action_id, value) values ('eci_3.6.2', 8.75);
-insert into action_computed_points(action_id, value) values ('eci_3.6.3', 7.5);
-insert into action_computed_points(action_id, value) values ('eci_3.6.4', 5.0);
-insert into action_computed_points(action_id, value) values ('eci_1.1.1', 6.0);
-insert into action_computed_points(action_id, value) values ('eci_1.1.2', 6.0);
-insert into action_computed_points(action_id, value) values ('eci_1.1.3', 6.0);
-insert into action_computed_points(action_id, value) values ('eci_1.1.4', 6.0);
-insert into action_computed_points(action_id, value) values ('eci_1.1.5', 6.0);
-insert into action_computed_points(action_id, value) values ('eci_5.1.1', 6.0);
-insert into action_computed_points(action_id, value) values ('eci_5.1.2', 12.0);
-insert into action_computed_points(action_id, value) values ('eci_5.1.3', 12.0);
-insert into action_computed_points(action_id, value) values ('eci_4.3.1', 4.0);
-insert into action_computed_points(action_id, value) values ('eci_4.3.2', 4.0);
-insert into action_computed_points(action_id, value) values ('eci_4.3.3', 7.0);
-insert into action_computed_points(action_id, value) values ('eci_4.3.4', 5.0);
-insert into action_computed_points(action_id, value) values ('eci_5.2.1', 6.0);
-insert into action_computed_points(action_id, value) values ('eci_5.2.2', 12.0);
-insert into action_computed_points(action_id, value) values ('eci_5.2.3', 12.0);
-insert into action_computed_points(action_id, value) values ('eci_2.2.0', 0.0);
-insert into action_computed_points(action_id, value) values ('eci_2.2.1', 3.0);
-insert into action_computed_points(action_id, value) values ('eci_2.2.2', 4.5);
-insert into action_computed_points(action_id, value) values ('eci_2.2.3', 7.5);
-insert into action_computed_points(action_id, value) values ('eci_2.5.1', 3.75);
-insert into action_computed_points(action_id, value) values ('eci_2.5.2', 7.5);
-insert into action_computed_points(action_id, value) values ('eci_2.5.3', 3.75);
+insert into action_computed_points(action_id, value) values ('eci_3.4.1', 7.5);
+insert into action_computed_points(action_id, value) values ('eci_3.4.2', 6.25);
+insert into action_computed_points(action_id, value) values ('eci_3.4.3', 7.5);
+insert into action_computed_points(action_id, value) values ('eci_3.4.4', 3.75);
 insert into action_computed_points(action_id, value) values ('eci_2.4.0', 0.0);
 insert into action_computed_points(action_id, value) values ('eci_2.4.1', 4.0);
 insert into action_computed_points(action_id, value) values ('eci_2.4.2', 4.0);
 insert into action_computed_points(action_id, value) values ('eci_2.4.3', 2.0);
 insert into action_computed_points(action_id, value) values ('eci_2.4.4', 6.0);
 insert into action_computed_points(action_id, value) values ('eci_2.4.5', 4.0);
-insert into action_computed_points(action_id, value) values ('eci_3.2.0', 0.0);
-insert into action_computed_points(action_id, value) values ('eci_3.2.1', 6.25);
-insert into action_computed_points(action_id, value) values ('eci_3.2.2', 12.5);
-insert into action_computed_points(action_id, value) values ('eci_3.2.3', 6.25);
-insert into action_computed_points(action_id, value) values ('eci_4.2.1', 2.5);
-insert into action_computed_points(action_id, value) values ('eci_4.2.2', 2.0);
-insert into action_computed_points(action_id, value) values ('eci_4.2.3', 3.0);
-insert into action_computed_points(action_id, value) values ('eci_4.2.4', 2.5);
-insert into action_computed_points(action_id, value) values ('eci_4.2.5', 10.0);
-insert into action_computed_points(action_id, value) values ('eci_3.6.3.1', 3.75);
-insert into action_computed_points(action_id, value) values ('eci_3.6.3.2', 3.75);
-insert into action_computed_points(action_id, value) values ('eci_3.6.4.1', 1.25);
-insert into action_computed_points(action_id, value) values ('eci_3.6.4.2', 1.25);
-insert into action_computed_points(action_id, value) values ('eci_3.6.4.3', 2.5);
-insert into action_computed_points(action_id, value) values ('eci_4.2.1.1', 1.25);
-insert into action_computed_points(action_id, value) values ('eci_4.2.1.2', 1.25);
-insert into action_computed_points(action_id, value) values ('eci_3.4.2.1', 1.25);
-insert into action_computed_points(action_id, value) values ('eci_3.4.2.2', 5.0);
-insert into action_computed_points(action_id, value) values ('eci_2.4.2.1', 0.6);
-insert into action_computed_points(action_id, value) values ('eci_2.4.2.2', 0.6);
-insert into action_computed_points(action_id, value) values ('eci_2.4.2.3', 1.6);
-insert into action_computed_points(action_id, value) values ('eci_2.4.2.4', 1.2);
-insert into action_computed_points(action_id, value) values ('eci_4.1.4.1', 2.0);
-insert into action_computed_points(action_id, value) values ('eci_4.1.4.2', 2.0);
-insert into action_computed_points(action_id, value) values ('eci_2.2.2.1', 2.25);
-insert into action_computed_points(action_id, value) values ('eci_2.2.2.2', 2.25);
-insert into action_computed_points(action_id, value) values ('eci_5.1.1.1', 0.8571428571428571);
-insert into action_computed_points(action_id, value) values ('eci_5.1.1.2', 0.8571428571428571);
-insert into action_computed_points(action_id, value) values ('eci_5.1.1.3', 0.8571428571428571);
-insert into action_computed_points(action_id, value) values ('eci_5.1.1.4', 0.8571428571428571);
-insert into action_computed_points(action_id, value) values ('eci_5.1.1.5', 0.8571428571428571);
-insert into action_computed_points(action_id, value) values ('eci_5.1.1.6', 0.8571428571428571);
-insert into action_computed_points(action_id, value) values ('eci_5.1.1.7', 0.8571428571428571);
-insert into action_computed_points(action_id, value) values ('eci_3.2.3.1', 2.5);
-insert into action_computed_points(action_id, value) values ('eci_3.2.3.2', 1.875);
-insert into action_computed_points(action_id, value) values ('eci_3.2.3.3', 1.875);
-insert into action_computed_points(action_id, value) values ('eci_5.2.1.1', 0.8571428571428571);
-insert into action_computed_points(action_id, value) values ('eci_5.2.1.2', 0.8571428571428571);
-insert into action_computed_points(action_id, value) values ('eci_5.2.1.3', 0.8571428571428571);
-insert into action_computed_points(action_id, value) values ('eci_5.2.1.4', 0.8571428571428571);
-insert into action_computed_points(action_id, value) values ('eci_5.2.1.5', 0.8571428571428571);
-insert into action_computed_points(action_id, value) values ('eci_5.2.1.6', 0.8571428571428571);
-insert into action_computed_points(action_id, value) values ('eci_5.2.1.7', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_3.3.1', 6.25);
+insert into action_computed_points(action_id, value) values ('eci_3.3.2', 6.25);
+insert into action_computed_points(action_id, value) values ('eci_3.3.3', 6.25);
+insert into action_computed_points(action_id, value) values ('eci_3.3.4', 6.25);
+insert into action_computed_points(action_id, value) values ('eci_3.7.1', 5.0);
+insert into action_computed_points(action_id, value) values ('eci_3.7.2', 15.0);
+insert into action_computed_points(action_id, value) values ('eci_4.3.1', 4.0);
+insert into action_computed_points(action_id, value) values ('eci_4.3.2', 4.0);
+insert into action_computed_points(action_id, value) values ('eci_4.3.3', 7.0);
+insert into action_computed_points(action_id, value) values ('eci_4.3.4', 5.0);
+insert into action_computed_points(action_id, value) values ('eci_1.2.1', 6.0);
+insert into action_computed_points(action_id, value) values ('eci_1.2.2', 6.0);
+insert into action_computed_points(action_id, value) values ('eci_1.2.3', 6.0);
+insert into action_computed_points(action_id, value) values ('eci_1.2.4', 12.0);
+insert into action_computed_points(action_id, value) values ('eci_1.1.1', 6.0);
+insert into action_computed_points(action_id, value) values ('eci_1.1.2', 6.0);
+insert into action_computed_points(action_id, value) values ('eci_1.1.3', 6.0);
+insert into action_computed_points(action_id, value) values ('eci_1.1.4', 6.0);
+insert into action_computed_points(action_id, value) values ('eci_1.1.5', 6.0);
+insert into action_computed_points(action_id, value) values ('eci_4.1.2.1', 4.800000000000001);
+insert into action_computed_points(action_id, value) values ('eci_4.1.2.2', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('eci_1.1.1.1', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('eci_1.1.1.2', 1.7999999999999998);
+insert into action_computed_points(action_id, value) values ('eci_1.1.1.3', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('eci_1.1.1.4', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('eci_1.1.1.5', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('eci_3.7.1.1', 2.0);
+insert into action_computed_points(action_id, value) values ('eci_3.7.1.2', 1.0);
+insert into action_computed_points(action_id, value) values ('eci_3.7.1.3', 2.0);
 insert into action_computed_points(action_id, value) values ('eci_2.1.1.1', 0.5714285714285714);
 insert into action_computed_points(action_id, value) values ('eci_2.1.1.2', 0.5714285714285714);
 insert into action_computed_points(action_id, value) values ('eci_2.1.1.3', 0.5714285714285714);
@@ -4313,44 +3690,60 @@ insert into action_computed_points(action_id, value) values ('eci_2.1.1.4', 0.57
 insert into action_computed_points(action_id, value) values ('eci_2.1.1.5', 0.5714285714285714);
 insert into action_computed_points(action_id, value) values ('eci_2.1.1.6', 0.5714285714285714);
 insert into action_computed_points(action_id, value) values ('eci_2.1.1.7', 0.5714285714285714);
-insert into action_computed_points(action_id, value) values ('eci_3.5.4.1', 3.0);
-insert into action_computed_points(action_id, value) values ('eci_3.5.4.2', 3.0);
-insert into action_computed_points(action_id, value) values ('eci_3.5.4.3', 1.5);
-insert into action_computed_points(action_id, value) values ('eci_3.7.1.1', 2.0);
-insert into action_computed_points(action_id, value) values ('eci_3.7.1.2', 1.0);
-insert into action_computed_points(action_id, value) values ('eci_3.7.1.3', 2.0);
-insert into action_computed_points(action_id, value) values ('eci_3.3.4.1', 1.25);
-insert into action_computed_points(action_id, value) values ('eci_3.3.4.2', 2.5);
-insert into action_computed_points(action_id, value) values ('eci_3.3.4.3', 2.5);
-insert into action_computed_points(action_id, value) values ('eci_5.1.2.1', 1.7142857142857142);
-insert into action_computed_points(action_id, value) values ('eci_5.1.2.2', 1.7142857142857142);
-insert into action_computed_points(action_id, value) values ('eci_5.1.2.3', 1.7142857142857142);
-insert into action_computed_points(action_id, value) values ('eci_5.1.2.4', 1.7142857142857142);
-insert into action_computed_points(action_id, value) values ('eci_5.1.2.5', 1.7142857142857142);
-insert into action_computed_points(action_id, value) values ('eci_5.1.2.6', 1.7142857142857142);
-insert into action_computed_points(action_id, value) values ('eci_5.1.2.7', 1.7142857142857142);
-insert into action_computed_points(action_id, value) values ('eci_2.3.2.1', 1.6666666666666667);
-insert into action_computed_points(action_id, value) values ('eci_2.3.2.2', 1.6666666666666667);
-insert into action_computed_points(action_id, value) values ('eci_2.3.2.3', 1.6666666666666667);
-insert into action_computed_points(action_id, value) values ('eci_2.3.2.4', 1.6666666666666667);
-insert into action_computed_points(action_id, value) values ('eci_3.7.2.1', 7.5);
-insert into action_computed_points(action_id, value) values ('eci_3.7.2.2', 7.5);
-insert into action_computed_points(action_id, value) values ('eci_4.1.2.1', 4.800000000000001);
-insert into action_computed_points(action_id, value) values ('eci_4.1.2.2', 1.2000000000000002);
-insert into action_computed_points(action_id, value) values ('eci_5.3.3.1', 0.9);
-insert into action_computed_points(action_id, value) values ('eci_5.3.3.2', 1.3499999999999999);
-insert into action_computed_points(action_id, value) values ('eci_5.3.3.3', 1.3499999999999999);
-insert into action_computed_points(action_id, value) values ('eci_5.3.3.4', 1.8);
-insert into action_computed_points(action_id, value) values ('eci_5.3.3.5', 2.6999999999999997);
-insert into action_computed_points(action_id, value) values ('eci_5.3.3.6', 0.9);
+insert into action_computed_points(action_id, value) values ('eci_5.3.2.1', 2.142857142857143);
+insert into action_computed_points(action_id, value) values ('eci_5.3.2.2', 2.142857142857143);
+insert into action_computed_points(action_id, value) values ('eci_5.3.2.3', 2.142857142857143);
+insert into action_computed_points(action_id, value) values ('eci_5.3.2.4', 2.142857142857143);
+insert into action_computed_points(action_id, value) values ('eci_5.3.2.5', 2.142857142857143);
+insert into action_computed_points(action_id, value) values ('eci_5.3.2.6', 2.142857142857143);
+insert into action_computed_points(action_id, value) values ('eci_5.3.2.7', 2.142857142857143);
+insert into action_computed_points(action_id, value) values ('eci_5.3.1.1', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.3.1.2', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.3.1.3', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.3.1.4', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.3.1.5', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.3.1.6', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.3.1.7', 0.8571428571428571);
 insert into action_computed_points(action_id, value) values ('eci_5.1.3.1', 2.4000000000000004);
 insert into action_computed_points(action_id, value) values ('eci_5.1.3.2', 2.4000000000000004);
 insert into action_computed_points(action_id, value) values ('eci_5.1.3.3', 2.4000000000000004);
 insert into action_computed_points(action_id, value) values ('eci_5.1.3.4', 2.4000000000000004);
 insert into action_computed_points(action_id, value) values ('eci_5.1.3.5', 2.4000000000000004);
-insert into action_computed_points(action_id, value) values ('eci_4.2.2.1', 0.6666666666666666);
-insert into action_computed_points(action_id, value) values ('eci_4.2.2.2', 0.6666666666666666);
-insert into action_computed_points(action_id, value) values ('eci_4.2.2.3', 0.6666666666666666);
+insert into action_computed_points(action_id, value) values ('eci_5.1.1.1', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.1.1.2', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.1.1.3', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.1.1.4', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.1.1.5', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.1.1.6', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.1.1.7', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_1.2.1.1', 0.6000000000000001);
+insert into action_computed_points(action_id, value) values ('eci_1.2.1.2', 1.7999999999999998);
+insert into action_computed_points(action_id, value) values ('eci_1.2.1.3', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('eci_1.2.1.4', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('eci_1.2.1.5', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('eci_3.5.2.1', 1.25);
+insert into action_computed_points(action_id, value) values ('eci_3.5.2.2', 1.25);
+insert into action_computed_points(action_id, value) values ('eci_3.5.2.3', 1.25);
+insert into action_computed_points(action_id, value) values ('eci_3.5.2.4', 1.25);
+insert into action_computed_points(action_id, value) values ('eci_2.3.3.1', 1.3333333333333335);
+insert into action_computed_points(action_id, value) values ('eci_2.3.3.2', 1.3333333333333335);
+insert into action_computed_points(action_id, value) values ('eci_2.3.3.3', 0.6666666666666667);
+insert into action_computed_points(action_id, value) values ('eci_2.3.3.4', 1.6666666666666667);
+insert into action_computed_points(action_id, value) values ('eci_2.3.3.5', 1.0);
+insert into action_computed_points(action_id, value) values ('eci_2.3.3.6', 0.6666666666666667);
+insert into action_computed_points(action_id, value) values ('eci_3.6.3.1', 3.75);
+insert into action_computed_points(action_id, value) values ('eci_3.6.3.2', 3.75);
+insert into action_computed_points(action_id, value) values ('eci_1.3.1.1', 7.5);
+insert into action_computed_points(action_id, value) values ('eci_1.3.1.2', 3.75);
+insert into action_computed_points(action_id, value) values ('eci_1.3.1.3', 3.75);
+insert into action_computed_points(action_id, value) values ('eci_3.6.1.1', 0.9375);
+insert into action_computed_points(action_id, value) values ('eci_3.6.1.2', 0.9375);
+insert into action_computed_points(action_id, value) values ('eci_3.6.1.3', 0.9375);
+insert into action_computed_points(action_id, value) values ('eci_3.6.1.4', 0.9375);
+insert into action_computed_points(action_id, value) values ('eci_3.2.1.1', 0.625);
+insert into action_computed_points(action_id, value) values ('eci_3.2.1.2', 1.25);
+insert into action_computed_points(action_id, value) values ('eci_3.2.1.3', 1.25);
+insert into action_computed_points(action_id, value) values ('eci_3.2.1.4', 3.125);
 insert into action_computed_points(action_id, value) values ('eci_5.2.2.1', 1.7142857142857142);
 insert into action_computed_points(action_id, value) values ('eci_5.2.2.2', 1.7142857142857142);
 insert into action_computed_points(action_id, value) values ('eci_5.2.2.3', 1.7142857142857142);
@@ -4358,117 +3751,76 @@ insert into action_computed_points(action_id, value) values ('eci_5.2.2.4', 1.71
 insert into action_computed_points(action_id, value) values ('eci_5.2.2.5', 1.7142857142857142);
 insert into action_computed_points(action_id, value) values ('eci_5.2.2.6', 1.7142857142857142);
 insert into action_computed_points(action_id, value) values ('eci_5.2.2.7', 1.7142857142857142);
-insert into action_computed_points(action_id, value) values ('eci_2.4.1.1', 0.8);
-insert into action_computed_points(action_id, value) values ('eci_2.4.1.2', 1.2);
-insert into action_computed_points(action_id, value) values ('eci_2.4.1.3', 2.0);
-insert into action_computed_points(action_id, value) values ('eci_2.1.2.1', 1.0);
-insert into action_computed_points(action_id, value) values ('eci_2.1.2.2', 1.0);
-insert into action_computed_points(action_id, value) values ('eci_3.3.2.1', 1.5625);
-insert into action_computed_points(action_id, value) values ('eci_3.3.2.2', 1.5625);
-insert into action_computed_points(action_id, value) values ('eci_3.3.2.3', 1.5625);
-insert into action_computed_points(action_id, value) values ('eci_3.3.2.4', 1.5625);
-insert into action_computed_points(action_id, value) values ('eci_3.4.4.1', 1.875);
-insert into action_computed_points(action_id, value) values ('eci_3.4.4.2', 1.875);
-insert into action_computed_points(action_id, value) values ('eci_3.1.3.1', 3.888888888888889);
-insert into action_computed_points(action_id, value) values ('eci_3.1.3.2', 3.888888888888889);
-insert into action_computed_points(action_id, value) values ('eci_3.1.3.3', 3.888888888888889);
-insert into action_computed_points(action_id, value) values ('eci_3.2.1.1', 0.625);
-insert into action_computed_points(action_id, value) values ('eci_3.2.1.2', 1.25);
-insert into action_computed_points(action_id, value) values ('eci_3.2.1.3', 1.25);
-insert into action_computed_points(action_id, value) values ('eci_3.2.1.4', 3.125);
-insert into action_computed_points(action_id, value) values ('eci_4.1.1.1', 2.4);
-insert into action_computed_points(action_id, value) values ('eci_4.1.1.2', 1.6);
-insert into action_computed_points(action_id, value) values ('eci_1.1.3.1', 1.2000000000000002);
-insert into action_computed_points(action_id, value) values ('eci_1.1.3.2', 1.7999999999999998);
-insert into action_computed_points(action_id, value) values ('eci_1.1.3.3', 3.0);
-insert into action_computed_points(action_id, value) values ('eci_5.2.3.1', 2.4000000000000004);
-insert into action_computed_points(action_id, value) values ('eci_5.2.3.2', 3.5999999999999996);
-insert into action_computed_points(action_id, value) values ('eci_5.2.3.3', 6.0);
+insert into action_computed_points(action_id, value) values ('eci_4.1.4.1', 2.0);
+insert into action_computed_points(action_id, value) values ('eci_4.1.4.2', 2.0);
+insert into action_computed_points(action_id, value) values ('eci_2.2.1.1', 1.0);
+insert into action_computed_points(action_id, value) values ('eci_2.2.1.2', 1.0);
+insert into action_computed_points(action_id, value) values ('eci_2.2.1.3', 1.0);
+insert into action_computed_points(action_id, value) values ('eci_3.2.3.1', 2.5);
+insert into action_computed_points(action_id, value) values ('eci_3.2.3.2', 1.875);
+insert into action_computed_points(action_id, value) values ('eci_3.2.3.3', 1.875);
+insert into action_computed_points(action_id, value) values ('eci_3.1.2.1', 3.4999999999999996);
+insert into action_computed_points(action_id, value) values ('eci_3.1.2.2', 2.3333333333333335);
+insert into action_computed_points(action_id, value) values ('eci_3.1.2.3', 2.3333333333333335);
+insert into action_computed_points(action_id, value) values ('eci_3.1.2.4', 3.4999999999999996);
+insert into action_computed_points(action_id, value) values ('eci_3.3.1.1', 1.25);
+insert into action_computed_points(action_id, value) values ('eci_3.3.1.2', 1.875);
+insert into action_computed_points(action_id, value) values ('eci_3.3.1.3', 3.125);
+insert into action_computed_points(action_id, value) values ('eci_4.3.3.1', 2.3333333333333335);
+insert into action_computed_points(action_id, value) values ('eci_4.3.3.2', 2.3333333333333335);
+insert into action_computed_points(action_id, value) values ('eci_4.3.3.3', 2.3333333333333335);
+insert into action_computed_points(action_id, value) values ('eci_3.1.1.1', 4.666666666666667);
+insert into action_computed_points(action_id, value) values ('eci_3.1.1.2', 2.3333333333333335);
+insert into action_computed_points(action_id, value) values ('eci_3.1.1.3', 2.3333333333333335);
+insert into action_computed_points(action_id, value) values ('eci_3.1.1.4', 2.3333333333333335);
+insert into action_computed_points(action_id, value) values ('eci_3.3.3.1', 1.25);
+insert into action_computed_points(action_id, value) values ('eci_3.3.3.2', 1.25);
+insert into action_computed_points(action_id, value) values ('eci_3.3.3.3', 1.875);
+insert into action_computed_points(action_id, value) values ('eci_3.3.3.4', 1.875);
+insert into action_computed_points(action_id, value) values ('eci_1.3.2.1', 6.0);
+insert into action_computed_points(action_id, value) values ('eci_1.3.2.2', 1.5);
+insert into action_computed_points(action_id, value) values ('eci_1.3.2.3', 3.0);
+insert into action_computed_points(action_id, value) values ('eci_1.3.2.4', 4.5);
+insert into action_computed_points(action_id, value) values ('eci_2.4.2.1', 0.6);
+insert into action_computed_points(action_id, value) values ('eci_2.4.2.2', 0.6);
+insert into action_computed_points(action_id, value) values ('eci_2.4.2.3', 1.6);
+insert into action_computed_points(action_id, value) values ('eci_2.4.2.4', 1.2);
+insert into action_computed_points(action_id, value) values ('eci_4.2.3.1', 1.5);
+insert into action_computed_points(action_id, value) values ('eci_4.2.3.2', 1.5);
+insert into action_computed_points(action_id, value) values ('eci_4.3.4.1', 1.0);
+insert into action_computed_points(action_id, value) values ('eci_4.3.4.2', 1.5);
+insert into action_computed_points(action_id, value) values ('eci_4.3.4.3', 2.5);
+insert into action_computed_points(action_id, value) values ('eci_1.1.5.1', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('eci_1.1.5.2', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('eci_1.1.5.3', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('eci_1.1.5.4', 2.4000000000000004);
 insert into action_computed_points(action_id, value) values ('eci_4.1.3.1', 1.5);
 insert into action_computed_points(action_id, value) values ('eci_4.1.3.2', 3.0);
 insert into action_computed_points(action_id, value) values ('eci_4.1.3.3', 1.5);
-insert into action_computed_points(action_id, value) values ('eci_2.4.5.1', 1.0);
-insert into action_computed_points(action_id, value) values ('eci_2.4.5.2', 1.0);
-insert into action_computed_points(action_id, value) values ('eci_2.4.5.3', 1.0);
-insert into action_computed_points(action_id, value) values ('eci_2.4.5.4', 1.0);
-insert into action_computed_points(action_id, value) values ('eci_1.1.2.1', 1.2000000000000002);
-insert into action_computed_points(action_id, value) values ('eci_1.1.2.2', 1.2000000000000002);
-insert into action_computed_points(action_id, value) values ('eci_1.1.2.3', 1.2000000000000002);
-insert into action_computed_points(action_id, value) values ('eci_1.1.2.4', 1.2000000000000002);
-insert into action_computed_points(action_id, value) values ('eci_1.1.2.5', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('eci_5.2.1.1', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.2.1.2', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.2.1.3', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.2.1.4', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.2.1.5', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.2.1.6', 0.8571428571428571);
+insert into action_computed_points(action_id, value) values ('eci_5.2.1.7', 0.8571428571428571);
 insert into action_computed_points(action_id, value) values ('eci_2.2.3.1', 1.5);
 insert into action_computed_points(action_id, value) values ('eci_2.2.3.2', 1.5);
 insert into action_computed_points(action_id, value) values ('eci_2.2.3.3', 1.5);
 insert into action_computed_points(action_id, value) values ('eci_2.2.3.4', 1.5);
 insert into action_computed_points(action_id, value) values ('eci_2.2.3.5', 1.5);
-insert into action_computed_points(action_id, value) values ('eci_3.1.2.1', 3.4999999999999996);
-insert into action_computed_points(action_id, value) values ('eci_3.1.2.2', 2.3333333333333335);
-insert into action_computed_points(action_id, value) values ('eci_3.1.2.3', 2.3333333333333335);
-insert into action_computed_points(action_id, value) values ('eci_3.1.2.4', 3.4999999999999996);
-insert into action_computed_points(action_id, value) values ('eci_2.4.4.1', 0.8999999999999999);
-insert into action_computed_points(action_id, value) values ('eci_2.4.4.2', 0.8999999999999999);
-insert into action_computed_points(action_id, value) values ('eci_2.4.4.3', 2.4000000000000004);
-insert into action_computed_points(action_id, value) values ('eci_2.4.4.4', 1.7999999999999998);
-insert into action_computed_points(action_id, value) values ('eci_2.3.1.1', 2.666666666666667);
-insert into action_computed_points(action_id, value) values ('eci_2.3.1.2', 1.3333333333333335);
-insert into action_computed_points(action_id, value) values ('eci_2.3.1.3', 2.666666666666667);
-insert into action_computed_points(action_id, value) values ('eci_1.3.1.1', 7.5);
-insert into action_computed_points(action_id, value) values ('eci_1.3.1.2', 3.75);
-insert into action_computed_points(action_id, value) values ('eci_1.3.1.3', 3.75);
-insert into action_computed_points(action_id, value) values ('eci_2.2.1.1', 1.0);
-insert into action_computed_points(action_id, value) values ('eci_2.2.1.2', 1.0);
-insert into action_computed_points(action_id, value) values ('eci_2.2.1.3', 1.0);
-insert into action_computed_points(action_id, value) values ('eci_3.3.1.1', 1.25);
-insert into action_computed_points(action_id, value) values ('eci_3.3.1.2', 1.875);
-insert into action_computed_points(action_id, value) values ('eci_3.3.1.3', 3.125);
+insert into action_computed_points(action_id, value) values ('eci_3.4.3.1', 3.75);
+insert into action_computed_points(action_id, value) values ('eci_3.4.3.2', 3.75);
+insert into action_computed_points(action_id, value) values ('eci_4.1.0.1', 0.0);
+insert into action_computed_points(action_id, value) values ('eci_4.1.0.2', 0.0);
 insert into action_computed_points(action_id, value) values ('eci_2.5.2.1', 1.875);
 insert into action_computed_points(action_id, value) values ('eci_2.5.2.2', 3.75);
 insert into action_computed_points(action_id, value) values ('eci_2.5.2.3', 1.875);
-insert into action_computed_points(action_id, value) values ('eci_4.2.4.1', 0.75);
-insert into action_computed_points(action_id, value) values ('eci_4.2.4.2', 1.75);
-insert into action_computed_points(action_id, value) values ('eci_3.6.1.1', 0.9375);
-insert into action_computed_points(action_id, value) values ('eci_3.6.1.2', 0.9375);
-insert into action_computed_points(action_id, value) values ('eci_3.6.1.3', 0.9375);
-insert into action_computed_points(action_id, value) values ('eci_3.6.1.4', 0.9375);
-insert into action_computed_points(action_id, value) values ('eci_4.1.0.1', 0.0);
-insert into action_computed_points(action_id, value) values ('eci_4.1.0.2', 0.0);
-insert into action_computed_points(action_id, value) values ('eci_3.4.1.1', 0.375);
-insert into action_computed_points(action_id, value) values ('eci_3.4.1.2', 1.125);
-insert into action_computed_points(action_id, value) values ('eci_3.4.1.3', 2.25);
-insert into action_computed_points(action_id, value) values ('eci_3.4.1.4', 3.75);
-insert into action_computed_points(action_id, value) values ('eci_4.3.4.1', 1.0);
-insert into action_computed_points(action_id, value) values ('eci_4.3.4.2', 1.5);
-insert into action_computed_points(action_id, value) values ('eci_4.3.4.3', 2.5);
-insert into action_computed_points(action_id, value) values ('eci_1.3.2.1', 6.0);
-insert into action_computed_points(action_id, value) values ('eci_1.3.2.2', 1.5);
-insert into action_computed_points(action_id, value) values ('eci_1.3.2.3', 3.0);
-insert into action_computed_points(action_id, value) values ('eci_1.3.2.4', 4.5);
-insert into action_computed_points(action_id, value) values ('eci_3.1.1.1', 4.666666666666667);
-insert into action_computed_points(action_id, value) values ('eci_3.1.1.2', 2.3333333333333335);
-insert into action_computed_points(action_id, value) values ('eci_3.1.1.3', 2.3333333333333335);
-insert into action_computed_points(action_id, value) values ('eci_3.1.1.4', 2.3333333333333335);
-insert into action_computed_points(action_id, value) values ('eci_3.2.2.1', 3.125);
-insert into action_computed_points(action_id, value) values ('eci_3.2.2.2', 3.125);
-insert into action_computed_points(action_id, value) values ('eci_3.2.2.3', 6.25);
-insert into action_computed_points(action_id, value) values ('eci_2.3.3.1', 1.3333333333333335);
-insert into action_computed_points(action_id, value) values ('eci_2.3.3.2', 1.3333333333333335);
-insert into action_computed_points(action_id, value) values ('eci_2.3.3.3', 0.6666666666666667);
-insert into action_computed_points(action_id, value) values ('eci_2.3.3.4', 1.6666666666666667);
-insert into action_computed_points(action_id, value) values ('eci_2.3.3.5', 1.0);
-insert into action_computed_points(action_id, value) values ('eci_2.3.3.6', 0.6666666666666667);
-insert into action_computed_points(action_id, value) values ('eci_1.1.1.1', 1.2000000000000002);
-insert into action_computed_points(action_id, value) values ('eci_1.1.1.2', 1.7999999999999998);
-insert into action_computed_points(action_id, value) values ('eci_1.1.1.3', 2.4000000000000004);
-insert into action_computed_points(action_id, value) values ('eci_1.1.1.4', 0.6000000000000001);
-insert into action_computed_points(action_id, value) values ('eci_4.3.3.1', 2.3333333333333335);
-insert into action_computed_points(action_id, value) values ('eci_4.3.3.2', 2.3333333333333335);
-insert into action_computed_points(action_id, value) values ('eci_4.3.3.3', 2.3333333333333335);
-insert into action_computed_points(action_id, value) values ('eci_1.1.5.1', 1.2000000000000002);
-insert into action_computed_points(action_id, value) values ('eci_1.1.5.2', 1.2000000000000002);
-insert into action_computed_points(action_id, value) values ('eci_1.1.5.3', 1.2000000000000002);
-insert into action_computed_points(action_id, value) values ('eci_1.1.5.4', 2.4000000000000004);
-insert into action_computed_points(action_id, value) values ('eci_4.2.3.1', 1.5);
-insert into action_computed_points(action_id, value) values ('eci_4.2.3.2', 1.5);
+insert into action_computed_points(action_id, value) values ('eci_2.2.2.1', 2.25);
+insert into action_computed_points(action_id, value) values ('eci_2.2.2.2', 2.25);
+insert into action_computed_points(action_id, value) values ('eci_1.1.3.1', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('eci_1.1.3.2', 1.7999999999999998);
+insert into action_computed_points(action_id, value) values ('eci_1.1.3.3', 3.0);
 insert into action_computed_points(action_id, value) values ('eci_1.1.4.1', 0.8999999999999999);
 insert into action_computed_points(action_id, value) values ('eci_1.1.4.2', 0.8999999999999999);
 insert into action_computed_points(action_id, value) values ('eci_1.1.4.3', 0.8999999999999999);
@@ -4483,34 +3835,9 @@ insert into action_computed_points(action_id, value) values ('eci_1.1.4.11', 0.2
 insert into action_computed_points(action_id, value) values ('eci_1.1.4.12', 0.24);
 insert into action_computed_points(action_id, value) values ('eci_1.1.4.13', 0.24);
 insert into action_computed_points(action_id, value) values ('eci_1.1.4.14', 0.24);
-insert into action_computed_points(action_id, value) values ('eci_3.4.3.1', 3.75);
-insert into action_computed_points(action_id, value) values ('eci_3.4.3.2', 3.75);
-insert into action_computed_points(action_id, value) values ('eci_3.5.2.1', 1.25);
-insert into action_computed_points(action_id, value) values ('eci_3.5.2.2', 1.25);
-insert into action_computed_points(action_id, value) values ('eci_3.5.2.3', 1.25);
-insert into action_computed_points(action_id, value) values ('eci_3.5.2.4', 1.25);
-insert into action_computed_points(action_id, value) values ('eci_3.6.2.1', 1.75);
-insert into action_computed_points(action_id, value) values ('eci_3.6.2.2', 0.875);
-insert into action_computed_points(action_id, value) values ('eci_3.6.2.3', 1.75);
-insert into action_computed_points(action_id, value) values ('eci_3.6.2.4', 4.375);
-insert into action_computed_points(action_id, value) values ('eci_1.2.1.1', 0.6000000000000001);
-insert into action_computed_points(action_id, value) values ('eci_1.2.1.2', 1.7999999999999998);
-insert into action_computed_points(action_id, value) values ('eci_1.2.1.3', 1.2000000000000002);
-insert into action_computed_points(action_id, value) values ('eci_1.2.1.4', 1.2000000000000002);
-insert into action_computed_points(action_id, value) values ('eci_1.2.1.5', 1.2000000000000002);
-insert into action_computed_points(action_id, value) values ('eci_3.3.3.1', 1.25);
-insert into action_computed_points(action_id, value) values ('eci_3.3.3.2', 1.25);
-insert into action_computed_points(action_id, value) values ('eci_3.3.3.3', 1.875);
-insert into action_computed_points(action_id, value) values ('eci_3.3.3.4', 1.875);
-insert into action_computed_points(action_id, value) values ('eci_5.3.1.1', 0.8571428571428571);
-insert into action_computed_points(action_id, value) values ('eci_5.3.1.2', 0.8571428571428571);
-insert into action_computed_points(action_id, value) values ('eci_5.3.1.3', 0.8571428571428571);
-insert into action_computed_points(action_id, value) values ('eci_5.3.1.4', 0.8571428571428571);
-insert into action_computed_points(action_id, value) values ('eci_5.3.1.5', 0.8571428571428571);
-insert into action_computed_points(action_id, value) values ('eci_5.3.1.6', 0.8571428571428571);
-insert into action_computed_points(action_id, value) values ('eci_5.3.1.7', 0.8571428571428571);
-insert into action_computed_points(action_id, value) values ('eci_4.2.5.1', 5.0);
-insert into action_computed_points(action_id, value) values ('eci_4.2.5.2', 5.0);
+insert into action_computed_points(action_id, value) values ('eci_3.1.3.1', 3.888888888888889);
+insert into action_computed_points(action_id, value) values ('eci_3.1.3.2', 3.888888888888889);
+insert into action_computed_points(action_id, value) values ('eci_3.1.3.3', 3.888888888888889);
 insert into action_computed_points(action_id, value) values ('eci_3.5.3.1', 0.75);
 insert into action_computed_points(action_id, value) values ('eci_3.5.3.2', 1.5);
 insert into action_computed_points(action_id, value) values ('eci_3.5.3.3', 0.75);
@@ -4518,20 +3845,95 @@ insert into action_computed_points(action_id, value) values ('eci_3.5.3.4', 1.5)
 insert into action_computed_points(action_id, value) values ('eci_3.5.3.5', 1.5);
 insert into action_computed_points(action_id, value) values ('eci_3.5.3.6', 0.75);
 insert into action_computed_points(action_id, value) values ('eci_3.5.3.7', 0.75);
+insert into action_computed_points(action_id, value) values ('eci_4.2.1.1', 1.25);
+insert into action_computed_points(action_id, value) values ('eci_4.2.1.2', 1.25);
+insert into action_computed_points(action_id, value) values ('eci_5.3.3.1', 0.9);
+insert into action_computed_points(action_id, value) values ('eci_5.3.3.2', 1.3499999999999999);
+insert into action_computed_points(action_id, value) values ('eci_5.3.3.3', 1.3499999999999999);
+insert into action_computed_points(action_id, value) values ('eci_5.3.3.4', 1.8);
+insert into action_computed_points(action_id, value) values ('eci_5.3.3.5', 2.6999999999999997);
+insert into action_computed_points(action_id, value) values ('eci_5.3.3.6', 0.9);
+insert into action_computed_points(action_id, value) values ('eci_4.2.2.1', 0.6666666666666666);
+insert into action_computed_points(action_id, value) values ('eci_4.2.2.2', 0.6666666666666666);
+insert into action_computed_points(action_id, value) values ('eci_4.2.2.3', 0.6666666666666666);
+insert into action_computed_points(action_id, value) values ('eci_4.1.1.1', 2.4);
+insert into action_computed_points(action_id, value) values ('eci_4.1.1.2', 1.6);
+insert into action_computed_points(action_id, value) values ('eci_3.3.4.1', 1.25);
+insert into action_computed_points(action_id, value) values ('eci_3.3.4.2', 2.5);
+insert into action_computed_points(action_id, value) values ('eci_3.3.4.3', 2.5);
+insert into action_computed_points(action_id, value) values ('eci_2.1.2.1', 1.0);
+insert into action_computed_points(action_id, value) values ('eci_2.1.2.2', 1.0);
+insert into action_computed_points(action_id, value) values ('eci_2.5.3.1', 1.25);
+insert into action_computed_points(action_id, value) values ('eci_2.5.3.2', 1.25);
+insert into action_computed_points(action_id, value) values ('eci_2.5.3.3', 1.25);
+insert into action_computed_points(action_id, value) values ('eci_2.4.5.1', 1.0);
+insert into action_computed_points(action_id, value) values ('eci_2.4.5.2', 1.0);
+insert into action_computed_points(action_id, value) values ('eci_2.4.5.3', 1.0);
+insert into action_computed_points(action_id, value) values ('eci_2.4.5.4', 1.0);
+insert into action_computed_points(action_id, value) values ('eci_2.3.1.1', 2.666666666666667);
+insert into action_computed_points(action_id, value) values ('eci_2.3.1.2', 1.3333333333333335);
+insert into action_computed_points(action_id, value) values ('eci_2.3.1.3', 2.666666666666667);
+insert into action_computed_points(action_id, value) values ('eci_4.2.4.1', 0.75);
+insert into action_computed_points(action_id, value) values ('eci_4.2.4.2', 1.75);
+insert into action_computed_points(action_id, value) values ('eci_3.5.4.1', 3.0);
+insert into action_computed_points(action_id, value) values ('eci_3.5.4.2', 3.0);
+insert into action_computed_points(action_id, value) values ('eci_3.5.4.3', 1.5);
+insert into action_computed_points(action_id, value) values ('eci_2.4.1.1', 0.8);
+insert into action_computed_points(action_id, value) values ('eci_2.4.1.2', 1.2);
+insert into action_computed_points(action_id, value) values ('eci_2.4.1.3', 2.0);
+insert into action_computed_points(action_id, value) values ('eci_3.6.2.1', 1.75);
+insert into action_computed_points(action_id, value) values ('eci_3.6.2.2', 0.875);
+insert into action_computed_points(action_id, value) values ('eci_3.6.2.3', 1.75);
+insert into action_computed_points(action_id, value) values ('eci_3.6.2.4', 4.375);
+insert into action_computed_points(action_id, value) values ('eci_4.2.5.1', 5.0);
+insert into action_computed_points(action_id, value) values ('eci_4.2.5.2', 5.0);
+insert into action_computed_points(action_id, value) values ('eci_3.6.4.1', 1.25);
+insert into action_computed_points(action_id, value) values ('eci_3.6.4.2', 1.25);
+insert into action_computed_points(action_id, value) values ('eci_3.6.4.3', 2.5);
+insert into action_computed_points(action_id, value) values ('eci_2.3.2.1', 1.6666666666666667);
+insert into action_computed_points(action_id, value) values ('eci_2.3.2.2', 1.6666666666666667);
+insert into action_computed_points(action_id, value) values ('eci_2.3.2.3', 1.6666666666666667);
+insert into action_computed_points(action_id, value) values ('eci_2.3.2.4', 1.6666666666666667);
+insert into action_computed_points(action_id, value) values ('eci_1.1.2.1', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('eci_1.1.2.2', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('eci_1.1.2.3', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('eci_1.1.2.4', 1.2000000000000002);
+insert into action_computed_points(action_id, value) values ('eci_1.1.2.5', 1.2000000000000002);
 insert into action_computed_points(action_id, value) values ('eci_1.2.4.1', 3.0);
 insert into action_computed_points(action_id, value) values ('eci_1.2.4.2', 3.0);
 insert into action_computed_points(action_id, value) values ('eci_1.2.4.3', 3.0);
 insert into action_computed_points(action_id, value) values ('eci_1.2.4.4', 3.0);
-insert into action_computed_points(action_id, value) values ('eci_5.3.2.1', 2.142857142857143);
-insert into action_computed_points(action_id, value) values ('eci_5.3.2.2', 2.142857142857143);
-insert into action_computed_points(action_id, value) values ('eci_5.3.2.3', 2.142857142857143);
-insert into action_computed_points(action_id, value) values ('eci_5.3.2.4', 2.142857142857143);
-insert into action_computed_points(action_id, value) values ('eci_5.3.2.5', 2.142857142857143);
-insert into action_computed_points(action_id, value) values ('eci_5.3.2.6', 2.142857142857143);
-insert into action_computed_points(action_id, value) values ('eci_5.3.2.7', 2.142857142857143);
-insert into action_computed_points(action_id, value) values ('eci_2.5.3.1', 1.25);
-insert into action_computed_points(action_id, value) values ('eci_2.5.3.2', 1.25);
-insert into action_computed_points(action_id, value) values ('eci_2.5.3.3', 1.25);
+insert into action_computed_points(action_id, value) values ('eci_3.4.4.1', 1.875);
+insert into action_computed_points(action_id, value) values ('eci_3.4.4.2', 1.875);
+insert into action_computed_points(action_id, value) values ('eci_3.4.1.1', 0.375);
+insert into action_computed_points(action_id, value) values ('eci_3.4.1.2', 1.125);
+insert into action_computed_points(action_id, value) values ('eci_3.4.1.3', 2.25);
+insert into action_computed_points(action_id, value) values ('eci_3.4.1.4', 3.75);
+insert into action_computed_points(action_id, value) values ('eci_3.7.2.1', 7.5);
+insert into action_computed_points(action_id, value) values ('eci_3.7.2.2', 7.5);
+insert into action_computed_points(action_id, value) values ('eci_3.4.2.1', 1.25);
+insert into action_computed_points(action_id, value) values ('eci_3.4.2.2', 5.0);
+insert into action_computed_points(action_id, value) values ('eci_3.3.2.1', 1.5625);
+insert into action_computed_points(action_id, value) values ('eci_3.3.2.2', 1.5625);
+insert into action_computed_points(action_id, value) values ('eci_3.3.2.3', 1.5625);
+insert into action_computed_points(action_id, value) values ('eci_3.3.2.4', 1.5625);
+insert into action_computed_points(action_id, value) values ('eci_5.2.3.1', 2.4000000000000004);
+insert into action_computed_points(action_id, value) values ('eci_5.2.3.2', 3.5999999999999996);
+insert into action_computed_points(action_id, value) values ('eci_5.2.3.3', 6.0);
+insert into action_computed_points(action_id, value) values ('eci_2.4.4.1', 0.8999999999999999);
+insert into action_computed_points(action_id, value) values ('eci_2.4.4.2', 0.8999999999999999);
+insert into action_computed_points(action_id, value) values ('eci_2.4.4.3', 2.4000000000000004);
+insert into action_computed_points(action_id, value) values ('eci_2.4.4.4', 1.7999999999999998);
+insert into action_computed_points(action_id, value) values ('eci_5.1.2.1', 1.7142857142857142);
+insert into action_computed_points(action_id, value) values ('eci_5.1.2.2', 1.7142857142857142);
+insert into action_computed_points(action_id, value) values ('eci_5.1.2.3', 1.7142857142857142);
+insert into action_computed_points(action_id, value) values ('eci_5.1.2.4', 1.7142857142857142);
+insert into action_computed_points(action_id, value) values ('eci_5.1.2.5', 1.7142857142857142);
+insert into action_computed_points(action_id, value) values ('eci_5.1.2.6', 1.7142857142857142);
+insert into action_computed_points(action_id, value) values ('eci_5.1.2.7', 1.7142857142857142);
+insert into action_computed_points(action_id, value) values ('eci_3.2.2.1', 3.125);
+insert into action_computed_points(action_id, value) values ('eci_3.2.2.2', 3.125);
+insert into action_computed_points(action_id, value) values ('eci_3.2.2.3', 6.25);
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_28', 'eci', '28', null, 'Proportion de l''activité de réemploi et/ou de réutilisation dans l''activité économique (%)', '<p>Nombre d''entreprises de réemploi et/ou de réutilisation (ex. SINOE Structures du réemploi et/ou de réutilisation) / nombre total d''entreprises sur le territoire</p>
 ', '%', false, null);
 insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_8', 'eci', '8', null, 'Taux de mise en décharge de DMA (%)', '<p>Poids de déchets envoyés en décharge / Poids de déchets produits sur le territoire</p>
