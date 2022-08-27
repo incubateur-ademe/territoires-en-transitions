@@ -8,6 +8,9 @@ services:
       - postgres
     environment:
       DATABASE_URL: postgres://postgres:password@postgres:5432/lala
+    # AUTH_DISABLED_DUMMY_USER: YES
+    # ports:
+    #   - 8000:8000
     # volumes:
     #   - ./api/api:/api/api
 
@@ -28,6 +31,8 @@ services:
       POSTGRES_PASSWORD: password
     volumes:
       - ./docker-data/postgresql:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "lala"]
     # ports:
     #   - 5432:5432
 
