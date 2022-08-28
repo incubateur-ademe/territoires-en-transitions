@@ -27,11 +27,8 @@ type InitialFormState = {
  * par mail.
  */
 const ResetPasswordForm = ({
-  token,
   initialState,
 }: {
-  // token nécessaire à la réinitialisation du mot de passe
-  token: string;
   /** état initial (pour les tests) */
   initialState?: InitialFormState;
 }) => {
@@ -74,7 +71,6 @@ const ResetPasswordForm = ({
 
   const initialData: UpdatePasswordParams = {
     password: '',
-    token: token || '',
   };
 
   const validation = Yup.object({

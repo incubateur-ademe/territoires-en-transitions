@@ -1,8 +1,7 @@
 export const authBasePath = '/auth';
 export const signInPath = `${authBasePath}/signin`;
 export const signUpPath = `${authBasePath}/signup`;
-export const resetPwdToken = 'token';
-export const resetPwdPath = `${authBasePath}/recover/:${resetPwdToken}`;
+export const resetPwdPath = `${authBasePath}/recover`;
 export const recoverToken = 'token';
 export const recoverLandingPath = `${authBasePath}/recover_landing/:${recoverToken}`;
 
