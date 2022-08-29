@@ -4,7 +4,7 @@ import {
   DetailNouvelleModificationWrapper,
   DetailPrecedenteModificationWrapper,
 } from 'app/pages/collectivite/Historique/DetailModificationWrapper';
-import ActionStatusBadge from 'app/pages/collectivite/Historique/actionStatut/ActionStatusBadge';
+import ActionStatutBadge from 'ui/shared/actions/ActionStatutBadge';
 import Modification from 'app/pages/collectivite/Historique/Modification';
 import {
   NouvelleActionStatutDetaille,
@@ -64,7 +64,7 @@ const HistoriqueItemActionStatutDetails = (props: THistoriqueItemProps) => {
               avancementDetaille={previous_avancement_detaille}
             />
           ) : (
-            <ActionStatusBadge status={previous_avancement} barre />
+            <ActionStatutBadge statut={previous_avancement} barre />
           )}
         </DetailPrecedenteModificationWrapper>
       ) : null}
@@ -74,7 +74,7 @@ const HistoriqueItemActionStatutDetails = (props: THistoriqueItemProps) => {
             avancementDetaille={avancement_detaille}
           />
         ) : (
-          <ActionStatusBadge status={avancement ?? 'non_renseigne'} />
+          <ActionStatutBadge statut={avancement ?? 'non_renseigne'} />
         )}
       </DetailNouvelleModificationWrapper>
     </>

@@ -1,4 +1,4 @@
-import ActionStatusBadge from 'app/pages/collectivite/Historique/actionStatut/ActionStatusBadge';
+import ActionStatutBadge from 'ui/shared/actions/ActionStatutBadge';
 
 export const PrecedenteActionStatutDetaille = ({
   avancementDetaille,
@@ -6,7 +6,7 @@ export const PrecedenteActionStatutDetaille = ({
   avancementDetaille: number[];
 }) => (
   <>
-    <ActionStatusBadge status="detaille" barre />
+    <ActionStatutBadge statut="detaille" barre />
     <div className="mt-2">
       <p className="mb-0.5 text-sm whitespace-nowrap line-through">
         Fait: {avancementDetaille[0] * 100} %
@@ -27,7 +27,7 @@ export const NouvelleActionStatutDetaille = ({
   avancementDetaille: number[];
 }) => (
   <>
-    <ActionStatusBadge status="detaille" />
+    <ActionStatutBadge statut="detaille" />
     <div className="mt-2">
       <p className="mb-0.5 text-sm whitespace-nowrap">
         Fait: {avancementDetaille[0] * 100} %
