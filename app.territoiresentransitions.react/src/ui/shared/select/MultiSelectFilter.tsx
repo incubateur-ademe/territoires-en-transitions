@@ -87,6 +87,7 @@ export const MultiSelectFilter = <T extends string>({
   inlineValues,
   placeholderText,
   customOpenButton,
+  customOption,
 }: {
   /** valeurs des options sélectionnées */
   values: T[];
@@ -104,6 +105,13 @@ export const MultiSelectFilter = <T extends string>({
    * car le MultiSelectFilter possède déjà un boutton afin de gérer l'ouverture et la fermeture du dropdown.
    */
   customOpenButton?: React.ReactNode;
+  /**
+   * Remplace le composant option par un custom.
+   *
+   * Ne pas donner de bouton, uniquement la partie droite sans la checkbox
+   * Déconstuire l'option afin de l'afficher dans le nouveaux composant
+   */
+  customOption?: (option: T) => React.ReactNode;
 }) => {
   const isAllSelected = getIsAllSelected(values);
 
@@ -152,7 +160,11 @@ export const MultiSelectFilter = <T extends string>({
                   <span className={optionCheckMarkClassname} />
                 )}
               </div>
-              <span className="leading-6">{label}</span>
+              {customOption ? (
+                customOption(value)
+              ) : (
+                <span className="leading-6">{label}</span>
+              )}
             </button>
           );
         })
