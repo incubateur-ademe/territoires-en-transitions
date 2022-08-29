@@ -34,11 +34,11 @@ export const FiltreStatut = (props: TFiltreProps) => {
         </span>
       }
       customOption={option =>
-        option === 'tous' ? (
+        option.value === ITEM_ALL ? (
           <span className="leading-6">Tous les statuts</span>
         ) : (
           <ActionStatutBadge
-            statut={option as ActionAvancement}
+            statut={option.value as ActionAvancement}
             small
             className="my-0.5"
           />

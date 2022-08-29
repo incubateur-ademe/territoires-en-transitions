@@ -110,7 +110,7 @@ export const MultiSelectFilter = <T extends string>({
    * Ne pas donner de bouton, uniquement la partie droite sans la checkbox
    * Déconstuire l'option afin de l'afficher dans le nouveaux composant
    */
-  customOption?: (option: T) => React.ReactNode;
+  customOption?: (option: {value: T; label: string}) => React.ReactNode;
 }) => {
   const isAllSelected = getIsAllSelected(values);
 
@@ -160,7 +160,7 @@ export const MultiSelectFilter = <T extends string>({
                 )}
               </div>
               {customOption ? (
-                customOption(value)
+                customOption({value, label})
               ) : (
                 <span className="leading-6">{label}</span>
               )}
