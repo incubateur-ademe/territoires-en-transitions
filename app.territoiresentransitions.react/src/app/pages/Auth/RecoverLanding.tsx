@@ -65,7 +65,7 @@ const OTPForm = ({
     >
       {() => {
         return (
-          <Form>
+          <Form data-test="OTPForm">
             <div className="flex flex-col gap-6">
               <OTPFormTextField fieldName="email" />
               <OTPFormTextField fieldName="code" />

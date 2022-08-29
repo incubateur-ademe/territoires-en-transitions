@@ -16,16 +16,13 @@ Given(
       type: 'recovery',
       email: 'yolo@dodo.com',
     }).then((res) => {
-      // vérifie le lien
-      const action_link = res?.data?.action_link;
-      assert(action_link, 'lien de réinit de mdp non trouvé');
 
-      // extrait le token
-      const token = action_link.match(/token=([A-Z0-9\-\_]+)/i)[1];
-      assert(token, 'token non trouvé');
+      // extrait le OTP
+      const email_otp = res?.data?.email_otp;
+      assert(email_otp, 'OTP non trouvé');
 
       // crée un lien tel qui doit être reçu par email et visite cette page
-      cy.visit(`/auth/recover_landing/${token}`);
+      cy.visit(`/auth/recover_landing/${email_otp}`);
     });
   }
 );

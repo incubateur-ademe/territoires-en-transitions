@@ -34,6 +34,14 @@ export const Selectors = {
       'Mot de passe oublié': '[data-test=forgotten-pwd]',
     },
   },
+  'formulaire de connexion OTP': {
+    selector: '[data-test=OTPForm]',
+    children: {
+      email: 'input[name=email]',
+      code: 'input[name=code]',
+      Valider: 'button[type=submit]'
+    },
+  },
   'formulaire de création de compte': {
     selector: '[data-test=SignUpPage]',
     children: {
