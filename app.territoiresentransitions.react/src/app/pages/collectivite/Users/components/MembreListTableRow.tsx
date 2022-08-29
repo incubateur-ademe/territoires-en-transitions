@@ -2,10 +2,6 @@ import {useState} from 'react';
 import {pick} from 'ramda';
 
 import {
-  MultiSelectDropdown,
-  SelectDropdown,
-} from 'ui/shared/select/SelectDropdown';
-import {
   Membre,
   TMembreFonction,
   TNiveauAcces,
@@ -15,6 +11,8 @@ import {
 import {Referentiel} from 'types/litterals';
 import {referentielToName} from 'app/labels';
 import UpdateMemberAccesModal from 'app/pages/collectivite/Users/components/UpdateMembreAccesModal';
+import SelectDropdown from 'ui/shared/select/SelectDropdown';
+import MultiSelectDropdown from 'ui/shared/select/MultiSelectDropdown';
 
 export type TMembreListTableRowProps = {
   currentUserId: string;
