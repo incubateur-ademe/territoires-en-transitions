@@ -1,4 +1,4 @@
-import {ITEM_ALL} from 'ui/shared/MultiSelectFilter';
+import {ITEM_ALL} from 'ui/shared/select/commons';
 import {TBoundary} from 'ui/shared/boundariesToQueryFilter';
 
 export type TFilters = {

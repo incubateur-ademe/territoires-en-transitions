@@ -2,7 +2,7 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {IActionStatutsRead} from 'generated/dataLayer/action_statuts_read';
 import {ActionReferentiel} from 'app/pages/collectivite/ReferentielTable/useReferentiel';
 import {boundariesToQueryFilter} from 'ui/shared/boundariesToQueryFilter';
-import {ITEM_ALL} from 'ui/shared/MultiSelectFilter';
+import {ITEM_ALL} from 'ui/shared/select/commons';
 import {filterToBoundaries, TFilters} from './filters';
 import {percentBoundaries} from './FiltrePourcentage';
 

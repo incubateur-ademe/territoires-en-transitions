@@ -1,3 +1,6 @@
+/** constante pour géré la sélection de tous les filtres */
+export const ITEM_ALL = 'tous';
+
 /* Class génériques */
 export const buttonDisplayedClassname =
   'flex items-center w-full p-2 text-left text-sm';

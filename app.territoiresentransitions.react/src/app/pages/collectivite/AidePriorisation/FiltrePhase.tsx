@@ -1,9 +1,9 @@
 import {TFiltreProps} from './filters';
 import {
-  ITEM_ALL,
   MultiSelectFilter,
   getIsAllSelected,
 } from 'ui/shared/select/MultiSelectFilter';
+import {ITEM_ALL} from 'ui/shared/select/commons';
 
 export const PHASE = 'phase';
 

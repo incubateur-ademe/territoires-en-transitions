@@ -2,7 +2,7 @@ import {ChangeEvent} from 'react';
 import {MenuProps} from '@material-ui/core';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import 'ui/shared/MultiSelectFilter/MultiSelectFilter.css';
+import 'ui/shared/select/old-multiselect-filter.css';
 import './statuts.css';
 
 export type TSelectStatutProps = {

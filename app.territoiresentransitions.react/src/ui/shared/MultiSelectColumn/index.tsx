@@ -1,9 +1,22 @@
 import {ChangeEvent} from 'react';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import {menuOptions} from '../MultiSelectFilter';
-import '../MultiSelectFilter/MultiSelectFilter.css';
+import {MenuProps} from '@material-ui/core/Menu';
+import 'ui/shared/select/old-multiselect-filter.css';
 import './MultiSelectColumn.css';
+
+// positionnement de la liste déroulante
+const menuOptions: Partial<MenuProps> = {
+  anchorOrigin: {
+    vertical: 'bottom',
+    horizontal: 'left',
+  },
+  transformOrigin: {
+    vertical: 'top',
+    horizontal: 'left',
+  },
+  getContentAnchorEl: null,
+};
 
 type TItem = {value: string; label: string};
 type TSeparator = {separator: string};

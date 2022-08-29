@@ -3,6 +3,7 @@ import {forwardRef, Ref} from 'react';
 
 import DropdownFloater from 'ui/shared/floating-ui/DropdownFloater';
 import {
+  ITEM_ALL,
   buttonDisplayedClassname,
   buttonDisplayedIconClassname,
   buttonDisplayedPlaceholderClassname,
@@ -76,8 +77,6 @@ const MultiSelectFilterButton = forwardRef(
     );
   }
 );
-
-export const ITEM_ALL = 'tous';
 
 /** Uncontroled multi select filter */
 export const MultiSelectFilter = <T extends string>({
