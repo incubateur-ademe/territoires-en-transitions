@@ -1,4 +1,4 @@
-/** constante pour géré la sélection de tous les filtres */
+/** constante pour gérer la sélection de tous les filtres */
 export const ITEM_ALL = 'tous';
 
 /* Class génériques */
