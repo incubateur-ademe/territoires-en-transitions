@@ -9,10 +9,8 @@ import {
   buttonDisplayedPlaceholderClassname,
   optionButtonClassname,
   optionCheckMarkClassname,
+  getIsAllSelected,
 } from 'ui/shared/select/commons';
-
-export const getIsAllSelected = (values: string[]) =>
-  !values.length || values.indexOf(ITEM_ALL) !== -1;
 
 /* Création d'un composant séparé pour passer la ref du boutton au floater */
 const MultiSelectFilterButton = forwardRef(

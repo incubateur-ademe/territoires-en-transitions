@@ -1,9 +1,6 @@
 import {TFilters, TFiltreProps, TValueToBoundary} from './filters';
-import {
-  MultiSelectFilter,
-  getIsAllSelected,
-} from 'ui/shared/select/MultiSelectFilter';
-import {ITEM_ALL} from 'ui/shared/select/commons';
+import {MultiSelectFilter} from 'ui/shared/select/MultiSelectFilter';
+import {getIsAllSelected, ITEM_ALL} from 'ui/shared/select/commons';
 
 export const SCORE_REALISE = 'score_realise';
 
