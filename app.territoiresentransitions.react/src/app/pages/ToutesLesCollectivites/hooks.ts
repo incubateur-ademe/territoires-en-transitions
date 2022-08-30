@@ -56,22 +56,8 @@ export const useFilteredCollectivites = (
 } => {
   // todo build args from params.
 
-  const {data, isLoading} = useQuery(
-    [
-      'collectivite_card',
-      ...args.regions,
-      ...args.departments,
-      ...args.population,
-      ...args.types,
-      ...args.realiseCourant,
-      ...args.niveauDeLabellisation,
-      ...args.referentiel,
-      ...args.tauxDeRemplissage,
-      args.page,
-      args.nom,
-      args.trierPar,
-    ],
-    () => fetchCollectiviteCards(args)
+  const {data, isLoading} = useQuery(['collectivite_card', args], () =>
+    fetchCollectiviteCards(args)
   );
 
   return {
@@ -135,18 +121,16 @@ export const useFiltersParams = (): {
   filters: TCollectivitesFilters;
   setFilters: (newFilters: TCollectivitesFilters) => void;
 } => {
-  const [synced, setSynced] = useState(false);
   const [filters, setFilters] = useState(filtresVides);
   const regions = useUrlParam('r');
   const departements = useUrlParam('d');
 
   // Met à jour les filtres avec les paramètres de l'URL lors du
   // chargement initial.
-  if (!synced) {
+  useEffect(() => {
     filters.regions = paramToList(regions.param);
     filters.departments = paramToList(departements.param);
-    setSynced(true);
-  }
+  }, []);
 
   // Se charge de résoudre l'état des filtres.
   const updateFilters = (newFilters: TCollectivitesFilters): void => {

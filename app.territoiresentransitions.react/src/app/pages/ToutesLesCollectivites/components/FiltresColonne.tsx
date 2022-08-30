@@ -11,6 +11,7 @@ import type {TCollectivitesFilters} from 'app/pages/ToutesLesCollectivites/filtr
 import {RegionRead} from 'generated/dataLayer/region_read';
 import {DepartementRead} from 'generated/dataLayer/departement_read';
 import {InputSearch} from 'ui/UiSearchBar';
+import {ITEM_ALL} from 'ui/shared/select/commons';
 
 type UpdateFilters = (newFilters: TCollectivitesFilters) => void;
 
@@ -31,7 +32,10 @@ export const FiltresColonne = (props: {
       />
       <RegionFiltre
         onChange={selected =>
-          props.setFilters({...props.filters, regions: selected})
+          props.setFilters({
+            ...props.filters,
+            regions: selected.includes(ITEM_ALL) ? [] : selected,
+          })
         }
         selected={props.filters.regions}
         regions={props.regions}

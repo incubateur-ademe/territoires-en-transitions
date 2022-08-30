@@ -12,6 +12,7 @@ import {SelectDropdown} from 'app/pages/ToutesLesCollectivites/components/Select
 
 import {RegionRead} from 'generated/dataLayer/region_read';
 import {DepartementRead} from 'generated/dataLayer/departement_read';
+import {MultiSelectFilter} from 'ui/shared/select/MultiSelectFilter';
 
 export const TypeCollectiviteFiltre = (props: {
   selected: string[];
@@ -95,12 +96,26 @@ export const RegionFiltre = (props: {
   selected: string[];
   onChange: (selected: string[]) => void;
 }) => (
-  <MultiSelectDropdown
-    title="Région"
-    options={props.regions.map(({code, libelle}) => ({id: code, libelle}))}
-    onChange={props.onChange}
-    selected={props.selected}
-  />
+  // <MultiSelectDropdown
+  //   title="Région"
+  //   options={props.regions.map(({code, libelle}) => ({id: code, libelle}))}
+  //   onChange={props.onChange}
+  //   selected={props.selected}
+  // />
+  <div>
+    <div className="mb-2 font-semibold">Région</div>
+    <div className="shadow border border-gray-300 rounded">
+      <MultiSelectFilter
+        values={props.selected}
+        options={props.regions.map(({code, libelle}) => ({
+          value: code,
+          label: libelle,
+        }))}
+        onChange={props.onChange}
+        inlineValues
+      />
+    </div>
+  </div>
 );
 
 export const DepartementFiltre = (props: {

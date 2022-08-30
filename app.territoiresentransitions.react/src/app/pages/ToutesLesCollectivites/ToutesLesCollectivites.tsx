@@ -120,9 +120,12 @@ export const RenderToutesLesCollectivites = (
                   </p>
                 )}
                 {getNumberOfActiveFilters(props.filters) > 0 && (
-                  <DesactiverLesFiltres
-                    onClick={() => props.setFilters(filtresVides)}
-                  />
+                  <>
+                    {/* {console.log('filtres vides: ', filtresVides)} */}
+                    <DesactiverLesFiltres
+                      onClick={() => props.setFilters(filtresVides)}
+                    />
+                  </>
                 )}
               </div>
               <TrierParFiltre
@@ -137,7 +140,6 @@ export const RenderToutesLesCollectivites = (
               isCardClickable={!hasCollectivites}
               collectivites={props.collectivites}
               collectivitesCount={props.collectivitesCount}
-              desactiverLesFiltres={() => props.setFilters(filtresVides)}
               filters={props.filters}
             />
             {props.collectivitesCount !== 0 && (
