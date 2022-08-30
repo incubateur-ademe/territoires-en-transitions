@@ -1,5 +1,5 @@
 # territoiresentransitions.fr
-
+ 
 Dans le cadre des programmes d'accompagnement des collectivités dans leurs
 démarches de transition écologique, l'[ADEME (l'Agence de la transition
 écologique)](https://www.ademe.fr/) s'est associée à
