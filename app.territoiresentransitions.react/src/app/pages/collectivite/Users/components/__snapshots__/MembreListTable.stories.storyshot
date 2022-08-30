@@ -91,7 +91,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
             >
               <button
                 aria-label="ouvrir le menu"
-                className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                className="flex items-center w-full p-2 text-left text-sm"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onFocus={[Function]}
@@ -119,7 +119,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
             >
               <button
                 aria-label="ouvrir le menu"
-                className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                className="flex items-center w-full p-2 text-left text-sm"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onFocus={[Function]}
@@ -164,7 +164,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
             >
               <button
                 aria-label="ouvrir le menu"
-                className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                className="flex items-center w-full p-2 text-left text-sm"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onFocus={[Function]}
@@ -213,7 +213,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
             >
               <button
                 aria-label="ouvrir le menu"
-                className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                className="flex items-center w-full p-2 text-left text-sm"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onFocus={[Function]}
@@ -241,7 +241,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
             >
               <button
                 aria-label="ouvrir le menu"
-                className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                className="flex items-center w-full p-2 text-left text-sm"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onFocus={[Function]}
@@ -289,7 +289,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
             >
               <button
                 aria-label="ouvrir le menu"
-                className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                className="flex items-center w-full p-2 text-left text-sm"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onFocus={[Function]}
@@ -338,7 +338,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
             >
               <button
                 aria-label="ouvrir le menu"
-                className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                className="flex items-center w-full p-2 text-left text-sm"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onFocus={[Function]}
@@ -366,7 +366,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
             >
               <button
                 aria-label="ouvrir le menu"
-                className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                className="flex items-center w-full p-2 text-left text-sm"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onFocus={[Function]}
@@ -411,7 +411,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
             >
               <button
                 aria-label="ouvrir le menu"
-                className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                className="flex items-center w-full p-2 text-left text-sm"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onFocus={[Function]}
@@ -459,7 +459,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
             >
               <button
                 aria-label="ouvrir le menu"
-                className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                className="flex items-center w-full p-2 text-left text-sm"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onFocus={[Function]}
@@ -631,7 +631,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
             >
               <button
                 aria-label="ouvrir le menu"
-                className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                className="flex items-center w-full p-2 text-left text-sm"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onFocus={[Function]}
@@ -659,7 +659,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
             >
               <button
                 aria-label="ouvrir le menu"
-                className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                className="flex items-center w-full p-2 text-left text-sm"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onFocus={[Function]}
@@ -707,7 +707,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
             >
               <button
                 aria-label="ouvrir le menu"
-                className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                className="flex items-center w-full p-2 text-left text-sm"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onFocus={[Function]}
@@ -1019,7 +1019,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
             >
               <button
                 aria-label="ouvrir le menu"
-                className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                className="flex items-center w-full p-2 text-left text-sm"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onFocus={[Function]}
@@ -1047,7 +1047,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
             >
               <button
                 aria-label="ouvrir le menu"
-                className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                className="flex items-center w-full p-2 text-left text-sm"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onFocus={[Function]}
@@ -1092,7 +1092,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
             >
               <button
                 aria-label="ouvrir le menu"
-                className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+                className="flex items-center w-full p-2 text-left text-sm"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onFocus={[Function]}
