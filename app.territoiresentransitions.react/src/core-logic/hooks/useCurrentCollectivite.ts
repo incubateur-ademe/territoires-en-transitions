@@ -17,7 +17,7 @@ export type CurrentCollectivite = {
 const fetchCurrentCollectivite = async (
   collectivite_id: number
 ): Promise<CurrentCollectivite | null> => {
-  const {error, data} = await supabaseClient
+  const {data} = await supabaseClient
     .from<MesCollectivitesRead>('collectivite_niveau_acces')
     .select()
     .match({collectivite_id});

@@ -82,3 +82,11 @@ utilisateur/dcp_display [utilisateur/schema utilisateur/dcp] 2022-08-03T14:22:18
 utilisateur/invitation_v2 [utilisateur/schema utilisateur/droits_v2] 2022-07-18T08:50:02Z Florian <florian@derfurth.com> # Permet d'inviter un utilisateur sur une collectivité avec un niveau d'accès donné.
 utilisateur/membre [utilisateur/dcp_display utilisateur/invitation_v2] 2022-07-12T12:01:09Z sqitch <sqitch@71076eaf04ce> # Ajout de la notion de membre : table et fonctions utilitaires
 retool/utilisateur_v2 [utilisateur/droits_v2] 2022-08-08T08:36:17Z Florian <florian@derfurth.com> # La vue retool permettant de lister les membres par collectivité.
+@v1.6.0 2022-08-17T16:26:10Z Florian <florian@derfurth.com> # Gestion des membres
+
+historique_schema 2022-08-09T07:57:47Z Florian <florian@derfurth.com> # Le schema historique qui conserve les copies des changements.
+referentiel/action_statut_historique [historique_schema referentiel/action_statut utilisateur/droits_v2] 2022-08-08T12:44:15Z sqitch <sqitch@cf08f2556b3e> # Historique des modifications des statuts.
+referentiel/action_precision_historique [historique_schema utilisateur/droits_v2 referentiel/action_commentaire] 2022-08-09T08:55:00Z Florian <florian@derfurth.com> # Historique des modifications des précisions.
+evaluation/reponse_historique [evaluation/reponse historique_schema] 2022-08-16T14:27:16Z Florian <florian@derfurth.com> # Historique des réponses aux questions de personnalisation.
+collectivite/historique [evaluation/reponse_historique referentiel/action_precision_historique referentiel/action_statut_historique] 2022-08-17T08:53:03Z Florian <florian@derfurth.com> # L'historique des données liées à une collectivité
+collectivite/identite [collectivite/identite@v1.6.0] 2022-08-23T13:55:15Z Florian <florian@derfurth.com> # Répare la fonction `collectivite_type` utilisée pour le calcul des scores.

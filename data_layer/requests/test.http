@@ -83,3 +83,13 @@ Content-Type: application/json
     client.log('token is ' + response.body['access_token']);
     client.global.set("auth_token", response.body['access_token']);
 %}
+
+### Vide l'historique
+POST {{api}}/rest/v1/rpc/test_clear_history
+apikey: {{service}}
+
+> {%
+    client.test("Clear history executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}

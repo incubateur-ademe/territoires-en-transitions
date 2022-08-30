@@ -46,7 +46,7 @@ Array [
           >
             <a
               className="hover:underline"
-              href="/collectivite/1/action/eci/eci_1.1#eci_1.1.1.1"
+              href="/collectivite/1/action/eci/eci_1.1/?#eci_1.1.1.1"
               target="_blank"
             >
               Identifier un⸱e élu⸱e référent⸱e
@@ -72,7 +72,7 @@ Array [
           >
             <a
               className="hover:underline"
-              href="/collectivite/1/action/eci/eci_1.1#eci_1.1.1.3"
+              href="/collectivite/1/action/eci/eci_1.1/?#eci_1.1.1.3"
               target="_blank"
             >
               Identifier une personne technique
@@ -98,7 +98,7 @@ Array [
           >
             <a
               className="hover:underline"
-              href="/collectivite/1/action/eci/eci_1.1#eci_1.1.1.3"
+              href="/collectivite/1/action/eci/eci_1.1/?#eci_1.1.1.3"
               target="_blank"
             >
               Mettre en place une équipe projet
@@ -124,7 +124,7 @@ Array [
           >
             <a
               className="hover:underline"
-              href="/collectivite/1/action/eci/eci_1.1#eci_1.1.2"
+              href="/collectivite/1/action/eci/eci_1.1/?#eci_1.1.2"
               target="_blank"
             >
               Engager un diagnostic territorial
@@ -150,7 +150,7 @@ Array [
           >
             <a
               className="hover:underline"
-              href="/collectivite/1/action/eci/eci_2.1#eci_2.1.0"
+              href="/collectivite/1/action/eci/eci_2.1/?#eci_2.1.0"
               target="_blank"
             >
               Respecter la réglementation PLPDMA
@@ -176,7 +176,7 @@ Array [
           >
             <a
               className="hover:underline"
-              href="/collectivite/1/action/eci/eci_2.2#eci_2.2.0"
+              href="/collectivite/1/action/eci/eci_2.2/?#eci_2.2.0"
               target="_blank"
             >
               Respecter la réglementation liée au système de collecte
@@ -202,7 +202,7 @@ Array [
           >
             <a
               className="hover:underline"
-              href="/collectivite/1/action/eci/eci_2.3#eci_2.3.0"
+              href="/collectivite/1/action/eci/eci_2.3/?#eci_2.3.0"
               target="_blank"
             >
               Respecter la règlementation concernant la valorisation des déchets (dont organiques)
@@ -228,7 +228,7 @@ Array [
           >
             <a
               className="hover:underline"
-              href="/collectivite/1/action/eci/eci_2.4#eci_2.4.0"
+              href="/collectivite/1/action/eci/eci_2.4/?#eci_2.4.0"
               target="_blank"
             >
               Respecter la règlementation sur les impacts environnementaux des émissions polluantes et les nuisances (olfactives, sonores....)
@@ -254,7 +254,7 @@ Array [
           >
             <a
               className="hover:underline"
-              href="/collectivite/1/action/eci/eci_3.2#eci_3.2.0"
+              href="/collectivite/1/action/eci/eci_3.2/?#eci_3.2.0"
               target="_blank"
             >
               Mettre en place le Schéma de promotion des achats publics socialement et écologiquement responsables (SPASER)
@@ -280,7 +280,7 @@ Array [
           >
             <a
               className="hover:underline"
-              href="/collectivite/1/action/eci/eci_4.1#eci_4.1.0"
+              href="/collectivite/1/action/eci/eci_4.1/?#eci_4.1.0"
               target="_blank"
             >
               Rédiger le rapport annuel SPPGD
@@ -306,7 +306,7 @@ Array [
           >
             <a
               className="hover:underline"
-              href="/collectivite/1/action/eci/eci_1.1#eci_1.1.1.2"
+              href="/collectivite/1/action/eci/eci_1.1/?#eci_1.1.1.2"
               target="_blank"
             >
               Avoir engagé la politique Économie Circulaire
@@ -332,7 +332,7 @@ Array [
           >
             <a
               className="hover:underline"
-              href="/collectivite/1/action/eci/eci_2.1#eci_2.1.0"
+              href="/collectivite/1/action/eci/eci_2.1/?#eci_2.1.0"
               target="_blank"
             >
               Respecter la réglementation PLPDMA
@@ -358,7 +358,7 @@ Array [
           >
             <a
               className="hover:underline"
-              href="/collectivite/1/action/eci/eci_2.2#eci_2.2.0"
+              href="/collectivite/1/action/eci/eci_2.2/?#eci_2.2.0"
               target="_blank"
             >
               Respecter la réglementation liée au système de collecte
@@ -384,7 +384,7 @@ Array [
           >
             <a
               className="hover:underline"
-              href="/collectivite/1/action/eci/eci_2.3#eci_2.3.0"
+              href="/collectivite/1/action/eci/eci_2.3/?#eci_2.3.0"
               target="_blank"
             >
               Respecter la règlementation concernant la valorisation des déchets (dont organiques)
@@ -410,7 +410,7 @@ Array [
           >
             <a
               className="hover:underline"
-              href="/collectivite/1/action/eci/eci_2.4#eci_2.4.0"
+              href="/collectivite/1/action/eci/eci_2.4/?#eci_2.4.0"
               target="_blank"
             >
               Respecter la règlementation sur les impacts environnementaux des émissions polluantes et les nuisances (olfactives, sonores....)
@@ -436,7 +436,7 @@ Array [
           >
             <a
               className="hover:underline"
-              href="/collectivite/1/action/eci/eci_3.2#eci_3.2.0"
+              href="/collectivite/1/action/eci/eci_3.2/?#eci_3.2.0"
               target="_blank"
             >
               Mettre en place le Schéma de promotion des achats publics socialement et écologiquement responsables (SPASER)
@@ -462,7 +462,7 @@ Array [
           >
             <a
               className="hover:underline"
-              href="/collectivite/1/action/eci/eci_4.1#eci_4.1.0"
+              href="/collectivite/1/action/eci/eci_4.1/?#eci_4.1.0"
               target="_blank"
             >
               Rédiger le rapport annuel SPPGD
@@ -524,7 +524,7 @@ Array [
           >
             <a
               className="hover:underline"
-              href="/collectivite/1/action/cae/cae_5.1.1#cae_5.1.1.1.3"
+              href="/collectivite/1/action/cae/cae_5.1.1/?#cae_5.1.1.1.3"
               target="_blank"
             >
               Identifier un⸱e élu⸱e référent⸱e
@@ -550,7 +550,7 @@ Array [
           >
             <a
               className="hover:underline"
-              href="/collectivite/1/action/cae/cae_5.1.1#cae_5.1.1.1.3"
+              href="/collectivite/1/action/cae/cae_5.1.1/?#cae_5.1.1.1.3"
               target="_blank"
             >
               Identifier une personne technique
@@ -576,7 +576,7 @@ Array [
           >
             <a
               className="hover:underline"
-              href="/collectivite/1/action/cae/cae_5.1.1#cae_5.1.1.3.2"
+              href="/collectivite/1/action/cae/cae_5.1.1/?#cae_5.1.1.3.2"
               target="_blank"
             >
               Mettre en place une équipe projet
@@ -602,7 +602,7 @@ Array [
           >
             <a
               className="hover:underline"
-              href="/collectivite/1/action/cae/cae_1.1.2#cae_1.1.2"
+              href="/collectivite/1/action/cae/cae_1.1.2/?#cae_1.1.2"
               target="_blank"
             >
               Engager un diagnostic territorial
@@ -632,7 +632,7 @@ Array [
           >
             <a
               className="hover:underline"
-              href="/collectivite/1/action/cae/cae_1.1.1#cae_1.1.1.1.1"
+              href="/collectivite/1/action/cae/cae_1.1.1/?#cae_1.1.1.1.1"
               target="_blank"
             >
               Avoir formalisé une vision et des engagements dans une décision de politique générale

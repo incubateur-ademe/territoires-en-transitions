@@ -1,4 +1,4 @@
-import {Link} from 'react-router-dom';
+import {Link, useHistory} from 'react-router-dom';
 import {DescriptionContextAndRessourcesDialogButton} from './_DescriptionContextAndRessourcesDialogButton';
 import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
 import {IndicateurDefinitionRead} from 'generated/dataLayer/indicateur_definition_read';
@@ -6,7 +6,8 @@ import {indicateurActionReadEndpoint} from 'core-logic/api/endpoints/IndicateurA
 import {useEffect, useState} from 'react';
 import {useAllIndicateurDefinitions} from 'core-logic/hooks/indicateur_definition';
 import {addTargetToContentAnchors} from 'utils/content';
-import {Tabs, Tab} from '@dataesr/react-dsfr';
+import Tabs from 'ui/shared/Tabs';
+import {Tab} from '@dataesr/react-dsfr';
 import {ActionReferentielDisplayTitle} from 'ui/referentiels/ActionReferentielDisplayTitle';
 import {Spacer} from 'ui/shared/Spacer';
 import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
@@ -18,6 +19,17 @@ import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinition
 import {OrientationQuickNav} from 'app/pages/collectivite/Referentiels/QuickNav';
 import {PersoPotentiel} from '../PersoPotentielModal/PersoPotentiel';
 import {useActionScore} from 'core-logic/hooks/scoreHooks';
+import {
+  ActionVueParamOption,
+  makeCollectiviteActionUrl,
+  ReferentielParamOption,
+} from 'app/paths';
+import {
+  useActionVue,
+  useCollectiviteId,
+  useReferentielId,
+} from 'core-logic/hooks/params';
+import HistoriqueListe from 'app/pages/collectivite/Historique/HistoriqueListe';
 
 const useActionLinkedIndicateurDefinitions = (actionId: string) => {
   const [linkedIndicateurDefinitions, setLinkedIndicateurDefinitions] =
@@ -46,9 +58,20 @@ const useActionLinkedIndicateurDefinitions = (actionId: string) => {
   return linkedIndicateurDefinitions;
 };
 
+// index des onglets de la page Action
+const TABS_INDEX: Record<ActionVueParamOption, number> = {
+  suivi: 0,
+  indicateurs: 1,
+  historique: 2,
+};
+
 const Action = ({action}: {action: ActionDefinitionSummary}) => {
   const [showOnlyActionWithData, setShowOnlyActionWithData] = useState(false);
   const children = useActionSummaryChildren(action);
+  const actionVue = useActionVue();
+  const history = useHistory();
+  const collectiviteId = useCollectiviteId();
+  const referentielId = useReferentielId() as ReferentielParamOption;
 
   const isFullyRenseigne = (action: ActionDefinitionSummary): boolean => {
     const actionScore = useActionScore(action.id);
@@ -64,6 +87,33 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
   }
   const actionLinkedIndicateurDefinitions =
     useActionLinkedIndicateurDefinitions(action.id);
+
+  const activeTab = actionVue ? TABS_INDEX[actionVue] : TABS_INDEX['suivi'];
+
+  // synchronise l'url lors du passage d'un onglet à l'autre
+  const handleChange = (activeTab: number) => {
+    // recherche le nom de la vue correspondant à l'onglet courant
+    const view = Object.entries(TABS_INDEX).find(
+      ([, index]) => index === activeTab
+    );
+    const name = view?.[0] as ActionVueParamOption;
+
+    // met à jour l'url
+    if (collectiviteId && name && name !== actionVue) {
+      history.replace(
+        makeCollectiviteActionUrl({
+          collectiviteId,
+          referentielId,
+          actionVue: name,
+          actionId: action.id,
+        })
+      );
+    }
+  };
+
+  if (!action || !collectiviteId) {
+    return <Link to="./referentiels" />;
+  }
 
   return (
     <div className="fr-container" data-test={`Action-${action.identifiant}`}>
@@ -98,8 +148,8 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
         </div>
       </div>
 
-      <Tabs>
-        <Tab label="Actions">
+      <Tabs activeTab={activeTab} onChange={handleChange}>
+        <Tab label="Suivi de l'action">
           <section>
             <div className="flex items-center fr-text--sm fr-m-0">
               Afficher uniquement les actions non-renseignées
@@ -140,6 +190,9 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
               />
             ))}
           </section>
+        </Tab>
+        <Tab label="Historique">
+          <HistoriqueListe actionId={action.id} />
         </Tab>
       </Tabs>
     </div>

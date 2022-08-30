@@ -15,6 +15,7 @@ import {
   collectivitePersoRefThematiquePath,
   collectiviteLabellisationPath,
   collectiviteAllCollectivitesPath,
+  collectiviteJournalPath,
 } from 'app/paths';
 import {ReferentielsPage} from 'app/pages/collectivite/Referentiels/ReferentielsPage';
 import {ActionPage} from 'app/pages/collectivite/Referentiels/ActionPage';
@@ -25,9 +26,7 @@ import {PersoReferentielPage} from './PersoReferentiel/PersoReferentielPage';
 import {PersoReferentielThematiquePage} from './PersoReferentielThematique/PersoReferentielThematiquePage';
 import {ParcoursLabellisationPage} from './ParcoursLabellisation/ParcoursLabellisationPage';
 import {ToutesLesCollectivitesPage} from '../ToutesLesCollectivites/ToutesLesCollectivitesPage';
-import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {RejoindreCetteCollectiviteDialog} from './RejoindreCetteCollectiviteDialog/RejoindreCetteCollectiviteDialog';
-import {getReferentContacts} from 'core-logic/api/procedures/collectiviteProcedures';
+import {JournalActivitePage} from './Historique/JournalActivitePage';
 
 /**
  * Routes starting with collectivite/:collectiviteId/ see App.ts Router.
@@ -67,6 +66,9 @@ export const CollectiviteRoutes = () => {
       </Route>
       <Route path={collectivitePersoRefThematiquePath}>
         <PersoReferentielThematiquePage />
+      </Route>
+      <Route path={collectiviteJournalPath}>
+        <JournalActivitePage />
       </Route>
       <Route path={collectiviteLabellisationPath}>
         <ParcoursLabellisationPage />

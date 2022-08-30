@@ -5,7 +5,6 @@ import {
   invitationPath,
   makeCollectiviteTableauBordUrl,
   resetPwdPath,
-  resetPwdToken,
   signInPath,
 } from 'app/paths';
 import {useAuth} from 'core-logic/api/auth/AuthProvider';
@@ -53,17 +52,9 @@ export const Redirector = () => {
 
   // réagit aux changements de l'état "invitation"
   useEffect(() => {
-    // si l'invitation requiert la connexion on redirigue sur "se connecter"
+    // si l'invitation requiert la connexion, on redirige sur "se connecter"
     if (invitationState === 'waitingForLogin') history.push(signInPath);
   }, [invitationState]);
-
-  useEffect(() => {
-    // redirige vers le formulaire de réinit. de mdp si un jeton d'accès a été créé
-    if (accessToken) {
-      history.push(resetPwdPath.replace(`:${resetPwdToken}`, accessToken));
-      return;
-    }
-  }, [accessToken]);
 
   // réagit aux changements de l'état utilisateur connecté/déconnecté
   useEffect(() => {

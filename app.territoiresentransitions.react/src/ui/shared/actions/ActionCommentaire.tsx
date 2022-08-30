@@ -43,11 +43,13 @@ export const ActionCommentaireField = ({
 
   return collectivite ? (
     <AutoTextArea
+      data-test={`comm-${action.id}`}
       value={commentaire}
       onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
         setCommentaire(event.currentTarget.value)
       }
       onBlur={() =>
+        commentaire.trim() !== (initialValue || '') &&
         saveActionCommentaire({
           action_id: action.id,
           collectivite_id: collectivite.collectivite_id,
