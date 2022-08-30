@@ -1,8 +1,12 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {AnyIndicateurRepository} from 'core-logic/api/repositories/AnyIndicateurRepository';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {Editable} from 'ui/shared/Editable';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import {
+  onlyNumericWithFloatRegExp,
+  setInputFilter,
+} from 'ui/shared/input/utils';
 
 // Here we take advantage of IndicateurPersonnaliseValue and IndicateurValue
 // having the same shape.
@@ -34,6 +38,12 @@ function AnyIndicateurValueInput<T extends string | number>({
       });
   }, []);
 
+  /** Ajoute le filtre numérique sur l'input */
+  const ref = useRef<HTMLInputElement>(null);
+  useLayoutEffect(() => {
+    setInputFilter(ref, value => onlyNumericWithFloatRegExp.test(value));
+  }, []);
+
   const convertToFloatAndStore = (event: React.FormEvent<HTMLInputElement>) => {
     const inputValue = event.currentTarget.value;
 
@@ -52,6 +62,7 @@ function AnyIndicateurValueInput<T extends string | number>({
     <label className="flex flex-col mx-2 j">
       <div className="flex pl-2 justify-center">{year}</div>
       <input
+        ref={ref}
         className={`text-right fr-input mt-2 w-full bg-white p-3 border-b-2 text-sm font-normal text-gray-500 ${
           borderColor === 'blue' ? 'border-bf500' : 'border-gray-500'
         }`}
@@ -60,7 +71,7 @@ function AnyIndicateurValueInput<T extends string | number>({
           setInputValue(event.currentTarget.value)
         }
         onBlur={convertToFloatAndStore}
-        type="number"
+        type="text"
         lang="fr"
         disabled={collectivite.readonly}
       />
