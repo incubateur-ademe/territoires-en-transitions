@@ -222,7 +222,7 @@ services:
       PGUSER: postgres
       PGHOST: db
     command: >
-      bash -c "pg_prove --dbname postgres --port 5432 tests/*.sql"
+      bash -c "pg_prove --dbname postgres --port 5432 tests/**/*.sql"
     volumes:
       - ./data_layer/tests:/tests
 
