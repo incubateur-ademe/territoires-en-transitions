@@ -1,6 +1,6 @@
 import {useState} from 'react';
-import {Link} from 'react-router-dom';
-import {signInPath, signUpPath} from 'app/paths';
+import {Link, NavLink} from 'react-router-dom';
+import {monComptePath, signInPath, signUpPath} from 'app/paths';
 import {TAuthContext} from 'core-logic/api/auth/AuthProvider';
 import {LogoutBtn} from '../../LogoutBtn';
 
@@ -28,16 +28,15 @@ const MobileHeaderNavigation = ({auth, toggleMobileNavigation}: Props) => {
             />
           </button>
           <div className={`${isProfileOpen ? 'block' : 'hidden'} pb-6`}>
-            {/* En attente de la page "Profil" */}
-            {/* <NavLink
+            <NavLink
               className="block py-3 px-8"
               activeClassName="border-l-4 border-bf500 text-bf500 font-bold"
-              to={profilePath}
+              to={monComptePath}
               onClick={toggleMobileNavigation}
             >
               Profil
-            </NavLink> */}
-            <div className="py-3 px-8">
+            </NavLink>
+            <div className="px-5">
               <LogoutBtn
                 auth={auth}
                 additionalOnClick={toggleMobileNavigation}

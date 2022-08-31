@@ -9,6 +9,8 @@ export const invitationPath = '/invitation';
 export const invitationIdParam = 'invitationId';
 export const invitationLandingPath = `${invitationPath}/:${invitationIdParam}`;
 
+export const monComptePath = '/mon-compte';
+
 export const allCollectivitesPath = '/toutes_collectivites';
 
 // Utilisé après le login ou lorsqu'on clique sur le logo en étant connecté.
