@@ -99,3 +99,6 @@ utils/merge_action_commentaire 2022-09-12T09:41:23Z sqitch <sqitch@39fd2a28bde6>
 utilisateur/modified_by_trigger 2022-09-03T15:41:27Z Florian <florian@derfurth.com> # Ajoute la fonction qui permet de maintenir l'état du modified_by.
 utils/modified_at_trigger 2022-09-03T14:31:16Z Florian <florian@derfurth.com> # Ajoute la fonction pour ajouter `modified_at` à une table.
 referentiel/preuve_reglementaire 2022-08-31T15:07:50Z Florian <florian@derfurth.com> # Stockage des preuves réglementaires.
+utilisateur/modified_by_nom [utilisateur/dcp_display] 2022-09-01T08:38:44Z Florian <florian@derfurth.com> # Fonction d'affichage du modified_by pour le client.
+labellisation/fichier_preuve [labellisation/fichier_preuve@v1.7.1 referentiel/preuve_reglementaire utilisateur/modified_by_nom] 2022-08-31T14:41:38Z Florian <florian@derfurth.com> # Ajoute les preuves réglementaires et simplifie l'API.
+labellisation/preuve_v2 [labellisation/fichier_preuve] 2022-09-04T14:59:44Z Florian <florian@derfurth.com> # La version 2 des preuves, déplacée dans le domaine labellisation.

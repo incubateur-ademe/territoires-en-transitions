@@ -2,6 +2,8 @@
 
 BEGIN;
 
--- XXX Add DDLs here.
+drop function business_upsert_preuves(preuve_reglementaire_definition[]);
+drop table preuve_reglementaire_definition;
+drop domain preuve_id;
 
 COMMIT;
