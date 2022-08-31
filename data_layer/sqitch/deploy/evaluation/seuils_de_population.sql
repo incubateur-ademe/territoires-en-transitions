@@ -6,7 +6,7 @@ create or replace function private.population_buckets(population integer)
     returns text[]
 as
 $$
-with bornes as (select unnest(array [5000, 10000, 20000, 100000] :: int[]) as pop),
+with bornes as (select unnest(array [10000, 20000, 50000, 100000] :: int[]) as pop),
      plafonds as (select pop from bornes where bornes.pop > population)
 select case
            when population > 100000 then '{"plus_de_100000"}'

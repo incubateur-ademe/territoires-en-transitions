@@ -28,7 +28,7 @@ where id = (select collectivite_id
 
 select ok((select count(*) = 1 from agen), 'Agen ne compte qu''une seule collectivité.');
 select ok((select '{commune}' = type from agen), 'Agen est une commune');
-select ok((select '{moins_de_100000}' = population from agen), 'Agen a moins de 100 000 habitants');
+select ok((select '{moins_de_50000, moins_de_100000}' = population from agen), 'Agen a moins de 50 000 habitants');
 
 select *
 into sictom
