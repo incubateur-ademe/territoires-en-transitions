@@ -76,7 +76,7 @@ Content-Type: application/json
 %}
 
 ### A. Upload a file
-POST {{api}}/storage/v1/object/{{bucket_id}}/preuve_input.txt
+POST {{api}}/storage/v1/object/{{bucket_id}}/c9df071601f3f72b5430a55cd7ea584be5c2a36bb4226b621c4dca50088ef8b9
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 x-upsert: true
@@ -84,7 +84,7 @@ cacheControl: 3600
 Content-Type: multipart/form-data; boundary=boundary
 
 --boundary
-Content-Disposition: form-data; name="preuve_input.txt"; filename="preuve_input.txt"
+Content-Disposition: form-data; name="c9df071601f3f72b5430a55cd7ea584be5c2a36bb4226b621c4dca50088ef8b9"; filename="c9df071601f3f72b5430a55cd7ea584be5c2a36bb4226b621c4dca50088ef8b9"
 
 < ./preuve_input.txt
 --boundary--
@@ -96,23 +96,20 @@ Content-Disposition: form-data; name="preuve_input.txt"; filename="preuve_input.
 %}
 
 ### A. Download a file
-GET {{api}}/storage/v1/object/{{bucket_id}}/preuve_input.txt
+GET {{api}}/storage/v1/object/{{bucket_id}}/c9df071601f3f72b5430a55cd7ea584be5c2a36bb4226b621c4dca50088ef8b9
 apikey: {{service}}
 Authorization: Bearer {{service}}
 
-
-
 ### A. Upsert a preuve
-POST {{api}}/rest/v1/rpc/upsert_preuve_fichier
+POST {{api}}/rest/v1/rpc/add_bibliotheque_fichier
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {
   "collectivite_id": 1,
-  "action_id": "eci_1.1.2",
-  "filename": "preuve_input.txt",
-  "commentaire": "très inspiré"
+  "hash": "c9df071601f3f72b5430a55cd7ea584be5c2a36bb4226b621c4dca50088ef8b9",
+  "filename": "preuve_input.txt"
 }
 
 > {%
@@ -122,49 +119,14 @@ Content-Type: application/json
 %}
 
 
-### A. List all fichier_preuve for collectivite 1 and action id eci_1.1.2
-GET {{api}}/rest/v1/action_preuve_fichier?collectivite_id=eq.1&action_id=eq.eci_1.1.2
-apikey: {{anon}}
-Authorization: Bearer {{auth_token}}
-
-> {%
-    client.test("List executed successfully", function() {
-        client.assert(response.status === 200, "Response status is not 200");
-    });
-%}
-
-### A. Delete file and related preuves
-DELETE {{api}}/storage/v1/object/{{bucket_id}}/preuve_input.txt
-apikey: {{service}}
-Authorization: Bearer {{service}}
-
-### A. removes a preuve
-POST {{api}}/rest/v1/rpc/delete_preuve_fichier
-apikey: {{anon}}
-Authorization: Bearer {{auth_token}}
-Content-Type: application/json
-
-{
-  "collectivite_id": 1,
-  "action_id": "eci_1.1.2",
-  "filename": "preuve_input.txt"
-}
-
-> {%
-    client.test("Delete executed successfully", function() {
-        client.assert(response.status === 200, "Response status is not 200");
-    });
-%}
-
-### # B. Add a lien scenario
-### List liens
-GET {{api}}/rest/v1/preuve_lien?collectivite_id=eq.1&action_id=eq.eci_1.1.2
+### Les fichier de la bibliothèque de la collectivité
+GET {{api}}/rest/v1/bibliotheque_fichier
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 
 
-### Insert a lien
-POST {{api}}/rest/v1/preuve_lien
+### Insert une preuve complementaire
+POST {{api}}/rest/v1/preuve_complementaire
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 Prefer: return=representation
@@ -172,10 +134,49 @@ Content-Type: application/json
 
 {
   "collectivite_id": 1,
-  "action_id": "eci_1.1.3",
-  "url": "bad url",
-  "titre": "hello",
-  "commentaire": "dodo"
+  "fichier_id": 1,
+  "commentaire": "dodo",
+  "action_id": "eci_1.1.3"
+}
+
+
+### Change le commentaire une preuve complementaire
+PATCH {{api}}/rest/v1/preuve_complementaire?id=eq.1
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Prefer: return=representation
+Content-Type: application/json
+
+{
+  "commentaire": "lala"
+}
+
+### Insert une preuve complementaire lien
+POST {{api}}/rest/v1/preuve_complementaire
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Prefer: return=representation
+Content-Type: application/json
+
+{
+  "collectivite_id": 1,
+  "url": "http://yolo.dodo",
+  "titre": "dodo",
+  "action_id": "eci_1.1.3"
+}
+
+### Insert une preuve reglementaire lien
+POST {{api}}/rest/v1/preuve_reglementaire
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Prefer: return=representation
+Content-Type: application/json
+
+{
+  "collectivite_id": 1,
+  "url": "http://yolo.dodo",
+  "titre": "dodo",
+  "preuve_id": "agenda"
 }
 
 ### List preuves of all types
@@ -183,13 +184,17 @@ GET {{api}}/rest/v1/preuve?collectivite_id=eq.1
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 
-### List preuves of all types
-DELETE {{api}}/rest/v1/preuve_lien?id=eq.1
+### Liste les preuves complementaire
+GET {{api}}/rest/v1/preuve?collectivite_id=eq.1&preuve_type=eq.complementaire
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 
-> {%
-    client.test("Delete executed successfully", function() {
-        client.assert(response.status === 204, "Response status is not 204");
-    });
-%}
+### Liste les preuves complementaire
+GET {{api}}/rest/v1/preuve?collectivite_id=eq.1&preuve_type=eq.rapport
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+
+### Les définitions des preuves réglementaires
+GET {{api}}/rest/v1/preuve_reglementaire_definition
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}

@@ -3,16 +3,13 @@
 BEGIN;
 
 select *
-from labellisation_preuve_fichier
+from labellisation.bibliotheque_fichier
 where false;
 
-select has_function_privilege('upsert_labellisation_preuve_fichier(integer, integer, text, text)', 'execute');
-
-select collectivite_id, bucket_id, demande_id, filename, path, commentaire
-from action_labellisation_preuve_fichier
+select *
+from bibliotheque_fichier
 where false;
 
-select has_function_privilege('remove_labellisation_preuve_fichier()', 'execute');
-select has_function_privilege('labellisation.critere_fichier(integer)', 'execute');
+select has_function_privilege('add_bibliotheque_fichier(integer, varchar(64), text)', 'execute');
 
 ROLLBACK;
