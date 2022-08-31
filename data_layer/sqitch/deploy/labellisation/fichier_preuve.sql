@@ -4,155 +4,83 @@
 
 BEGIN;
 
-create table labellisation_preuve_fichier
+-- on enlève `referentiel/preuve` qui est emmêlé avec la présente `labellisation/fichier_preuve`
+drop view if exists retool_score; -- depends on preuve.
+drop view preuve;
+drop function upsert_preuve_fichier;
+drop function delete_preuve_fichier;
+
+-- partially remove previous version
+drop function upsert_labellisation_preuve_fichier;
+drop function delete_labellisation_preuve_fichier;
+drop view action_preuve_fichier;
+drop trigger remove_preuve_fichier_before_file_delete on storage.objects;
+drop view action_labellisation_preuve_fichier;
+drop trigger remove_labellisation_preuve_fichier_before_file_delete on storage.objects;
+drop function remove_labellisation_preuve_fichier;
+
+-- todo : enlever le contenu une fois la migration résolue.
+--- drop table labellisation_preuve_fichier; -- labellisation
+--- drop table preuve_lien;                  -- referentiel
+--- drop table preuve_fichier;               -- referentiel
+
+
+create table labellisation.bibliotheque_fichier
 (
-    collectivite_id integer references collectivite          not null,
-    demande_id      integer references labellisation.demande not null,
-    file_id         uuid references storage.objects          not null,
-    commentaire     text                                     not null default '',
-    primary key (collectivite_id, demande_id, file_id)
+    id              serial primary key,
+    collectivite_id integer references collectivite,
+    hash            varchar(64), -- sha 256 calculé par le client et utilisé comme filename dans storage
+    filename        text,        -- le nom d'origine du fichier chez l'utilisateur
+    unique (collectivite_id, hash)
 );
-comment on table labellisation_preuve_fichier is
-    'Lie un fichier à une demande de labellisation d''une collectivité. '
-        'On peut lier plusieurs fichiers à une demande.';
 
-alter table labellisation_preuve_fichier
-    enable row level security;
-
-create policy allow_read
-    on labellisation_preuve_fichier for select
-    using (is_authenticated());
-
-create policy allow_insert
-    on labellisation_preuve_fichier for insert
-    with check (is_bucket_writer(
-        (select o.bucket_id
-         from storage.objects o
-         where o.id = labellisation_preuve_fichier.file_id)));
-
-create policy allow_update
-    on labellisation_preuve_fichier for update
-    using (is_bucket_writer(
-        (select o.bucket_id
-         from storage.objects o
-         where o.id = labellisation_preuve_fichier.file_id)));
-
-create policy allow_delete
-    on labellisation_preuve_fichier for delete
-    using (is_bucket_writer(
-        (select o.bucket_id
-         from storage.objects o
-         where o.id = labellisation_preuve_fichier.file_id)));
-
-
-
-create function upsert_labellisation_preuve_fichier(
-    collectivite_id integer,
-    demande_id integer,
-    filename text,
-    commentaire text
-)
-    returns void
+create view bibliotheque_fichier
 as
-$$
-with file as (select obj.id
-              from storage.objects obj
-                       join collectivite_bucket cb on obj.bucket_id = cb.bucket_id
-              where cb.collectivite_id = upsert_labellisation_preuve_fichier.collectivite_id
-                and obj.name = filename)
-insert
-into labellisation_preuve_fichier(collectivite_id, demande_id, file_id, commentaire)
-select collectivite_id, demande_id, file.id, upsert_labellisation_preuve_fichier.commentaire
-from file
-on conflict (collectivite_id, demande_id, file_id) do update set commentaire = upsert_labellisation_preuve_fichier.commentaire;
-$$ language sql;
-comment on function upsert_labellisation_preuve_fichier is
-    'Upsert une preuve de demande de labellisation.';
+select bf.id,
+       bf.collectivite_id,
+       bf.hash,
+       bf.filename,
+       o.bucket_id                      as bucked_id,
+       o.id                             as file_id,
+       (o.metadata ->> 'size')::integer as filesize
+from labellisation.bibliotheque_fichier bf
+         join collectivite_bucket cb on cb.collectivite_id = bf.collectivite_id
+         join storage.objects o on o.name = bf.hash and o.bucket_id = cb.bucket_id;
 
-create function delete_labellisation_preuve_fichier(
+
+create function add_bibliotheque_fichier(
     collectivite_id integer,
-    demande_id integer,
+    hash varchar(64),
     filename text
 )
-    returns void
+    returns bibliotheque_fichier
 as
 $$
-with file as (select obj.id
-              from storage.objects obj
-                       join collectivite_bucket cb on obj.bucket_id = cb.bucket_id
-              where cb.collectivite_id = delete_labellisation_preuve_fichier.collectivite_id
-                and obj.name = filename)
-delete
-from labellisation_preuve_fichier
-where labellisation_preuve_fichier.collectivite_id = delete_labellisation_preuve_fichier.collectivite_id
-  and labellisation_preuve_fichier.demande_id = delete_labellisation_preuve_fichier.demande_id
-  and labellisation_preuve_fichier.file_id in (select id from file);
-$$ language sql;
-comment on function delete_labellisation_preuve_fichier is
-    'Supprime une preuve de demande de labellisation.';
-
-
-create view action_labellisation_preuve_fichier
-as
-select c.id                            as collectivite_id,
-       cb.bucket_id                    as bucket_id,
-       p.demande_id                    as demande_id,
-       obj.name                        as filename,
-       cb.bucket_id || '/' || obj.name as path,
-       coalesce(p.commentaire, '')     as commentaire
-from collectivite c
-         join collectivite_bucket cb on c.id = cb.collectivite_id
-         join lateral (select id, name, path_tokens
-                       from storage.objects o
-                       where o.bucket_id = cb.bucket_id) as obj on true
-         left join labellisation_preuve_fichier p on p.file_id = obj.id;
-comment on view action_labellisation_preuve_fichier is
-    'Fichier preuve par demande de labellisation par collectivité.';
-
-
--- Handle file deletion.
-create function remove_labellisation_preuve_fichier()
-    returns trigger
-as
-$$
+declare
+    inserted     integer;
+    return_value bibliotheque_fichier;
 begin
-    delete
-    from labellisation_preuve_fichier
-    where file_id = old.id;
-    return old;
-end
+    if have_edition_acces(add_bibliotheque_fichier.collectivite_id)
+    then
+        insert into labellisation.bibliotheque_fichier(collectivite_id, hash, filename)
+        values (add_bibliotheque_fichier.collectivite_id,
+                add_bibliotheque_fichier.hash,
+                add_bibliotheque_fichier.filename)
+        returning id into inserted;
+
+        select *
+        from bibliotheque_fichier bf
+        where bf.id = inserted
+        into return_value;
+
+        return return_value;
+    else
+        perform set_config('response.status', '403', true);
+        return json_build_object('error', 'Vous n''avez pas les droits pour ajouter un fichier.');
+    end if;
+end;
 $$ language plpgsql security definer;
-
-create trigger remove_labellisation_preuve_fichier_before_file_delete
-    before delete
-    on storage.objects
-    for each row
-execute procedure remove_labellisation_preuve_fichier();
-
-
-create function
-    labellisation.critere_fichier(collectivite_id integer)
-    returns table
-            (
-                referentiel   referentiel,
-                preuve_nombre integer,
-                atteint       bool
-            )
-as
-$$
-with ref as (select unnest(enum_range(null::referentiel)) as referentiel)
-select r.referentiel,
-       count(lpf.file_id),
-       count(lpf.file_id) > 0
-from ref r
-         left join lateral (select *
-                            from labellisation.demande ld
-                            where ld.referentiel = r.referentiel
-                              and ld.collectivite_id = critere_fichier.collectivite_id) ld on true
-         left join labellisation_preuve_fichier lpf on ld.id = lpf.demande_id
-group by r.referentiel;
-$$ language sql;
-comment on function labellisation.critere_fichier is
-    'Renvoie le critère fichier preuve pour une collectivité donnée.';
+comment on function add_bibliotheque_fichier is
+    'Ajoute un fichier présent dan le bucket de la collectivité à l''adresse `bucket/hash`, dans la bibliothèque de fichiers.';
 
 COMMIT;
