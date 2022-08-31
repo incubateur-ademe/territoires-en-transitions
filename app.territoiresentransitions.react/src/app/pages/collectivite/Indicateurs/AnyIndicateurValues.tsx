@@ -41,8 +41,12 @@ function AnyIndicateurValueInput<T extends string | number>({
   /** Ajoute le filtre numérique sur l'input */
   const ref = useRef<HTMLInputElement>(null);
   useLayoutEffect(() => {
-    setInputFilter(ref, value => onlyNumericWithFloatRegExp.test(value));
-  }, []);
+    setInputFilter(
+      ref,
+      value => onlyNumericWithFloatRegExp.test(value),
+      'Nombre uniquement'
+    );
+  }, [ref.current]);
 
   const convertToFloatAndStore = (event: React.FormEvent<HTMLInputElement>) => {
     const inputValue = event.currentTarget.value;

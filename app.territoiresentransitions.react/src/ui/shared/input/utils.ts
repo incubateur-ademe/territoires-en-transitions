@@ -1,7 +1,7 @@
 export const onlyNumericWithFloatRegExp = new RegExp(/^-?\d*[.,]?\d*$/);
 
 /**
- * Permet de n'autoriser que certains caractères dans un  ou textarea.
+ * Permet de n'autoriser que certains caractères dans un input ou textarea.
  *
  * Basé sur cette solution:
  * https://stackoverflow.com/a/469362/16408731
