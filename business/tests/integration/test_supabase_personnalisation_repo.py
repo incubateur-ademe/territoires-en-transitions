@@ -163,7 +163,7 @@ def test_get_personnalisation_regles_should_return_all_personnalisation_regles(
         personnalisation_regle.action_id
         for personnalisation_regle in personnalisation_regles
     }
-    
+
     assert len(personnalisation_regles) > 50
     assert set(expected_action_id_with_regles).issubset(
         actual_action_id_with_regles
@@ -228,6 +228,6 @@ def test_get_identite_for_collectivite_1(
 ):
     collectivite_1_identite = supabase_repo.get_identite_for_collectivite(1)
     expected_identite = IdentiteCollectivite(
-        type={"commune"}, population= {'moins_de_100000', 'moins_de_20000'}, localisation=set()
+        type={"commune"}, population= {'moins_de_100000', 'moins_de_50000', 'moins_de_20000'}, localisation=set()
     )
     assert collectivite_1_identite == expected_identite
