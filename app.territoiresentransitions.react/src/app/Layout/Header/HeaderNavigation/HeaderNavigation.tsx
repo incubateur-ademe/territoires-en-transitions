@@ -1,7 +1,13 @@
-import {Link} from 'react-router-dom';
-import {allCollectivitesPath, signInPath, signUpPath} from 'app/paths';
+import {Link, NavLink} from 'react-router-dom';
+import {
+  allCollectivitesPath,
+  monComptePath,
+  signInPath,
+  signUpPath,
+} from 'app/paths';
 import {TAuthContext} from 'core-logic/api/auth/AuthProvider';
-import {LogoutBtn} from '../LogoutBtn';
+import {LogoutBtn} from 'app/Layout/Header/LogoutBtn';
+import {activeTabClassName} from 'app/Layout/Header/CollectiviteNavigation/CollectiviteNavigation';
 
 type Props = {
   auth: TAuthContext;
@@ -37,10 +43,13 @@ const HeaderNavigation = ({auth}: Props) => {
               <nav className="bg-white invisible absolute inset-x-0 top-full transition-all opacity-0 drop-shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50">
                 <ul>
                   <li className="fr-nav__item border-b border-gray-200">
-                    {/* En attente de la page "Profil" */}
-                    {/* <Link className="fr-nav__link" to="#">
+                    <NavLink
+                      to={monComptePath}
+                      className="fr-nav__link before:!hidden"
+                      activeClassName={activeTabClassName}
+                    >
                       <span className="px-3">Profil</span>
-                    </Link> */}
+                    </NavLink>
                   </li>
                   <li className="fr-nav__item">
                     <LogoutBtn auth={auth} />
