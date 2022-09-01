@@ -1,14 +1,12 @@
 import * as Yup from 'yup';
-import {Field, Form, Formik, FormikHelpers} from 'formik';
+import {Field, Form, Formik} from 'formik';
 import LabeledTextField from 'ui/forms/LabeledTextField';
 import {emailValidator} from 'app/pages/Auth/RegisterForm';
 import {ValiderButton} from 'ui/shared/ValiderButton';
-import React from 'react';
-import {useVerifyRecoveryToken} from 'core-logic/hooks/useVerifyRecoveryToken';
 import {useRecoveryToken} from 'core-logic/hooks/useRecoveryToken';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useHistory} from 'react-router-dom';
-import {homePath, resetPwdPath} from 'app/paths';
+import {resetPwdPath} from 'app/paths';
 
 const validation = Yup.object({
   email: emailValidator,

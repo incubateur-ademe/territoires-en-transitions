@@ -90,3 +90,6 @@ referentiel/action_precision_historique [historique_schema utilisateur/droits_v2
 evaluation/reponse_historique [evaluation/reponse historique_schema] 2022-08-16T14:27:16Z Florian <florian@derfurth.com> # Historique des réponses aux questions de personnalisation.
 collectivite/historique [evaluation/reponse_historique referentiel/action_precision_historique referentiel/action_statut_historique] 2022-08-17T08:53:03Z Florian <florian@derfurth.com> # L'historique des données liées à une collectivité
 collectivite/identite [collectivite/identite@v1.6.0] 2022-08-23T13:55:15Z Florian <florian@derfurth.com> # Répare la fonction `collectivite_type` utilisée pour le calcul des scores.
+@v1.7.0 2022-08-30T07:54:42Z Florian <florian@derfurth.com> # Historique
+
+evaluation/seuils_de_population [evaluation/seuils_de_population@v1.7.0] 2022-08-30T13:57:38Z Florian <florian@derfurth.com> # Répare les seuils de population.

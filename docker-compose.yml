@@ -222,7 +222,7 @@ services:
       PGUSER: postgres
       PGHOST: db
     command: >
-      bash -c "pg_prove --dbname postgres --port 5432 tests/*.sql"
+      bash -c "pg_prove --dbname postgres --port 5432 tests/**/*.sql"
     volumes:
       - ./data_layer/tests:/tests
 
@@ -357,7 +357,7 @@ services:
       SQITCH_TARGET: db:pg://db/postgres
       SQITCH_PASSWORD: ${POSTGRES_PASSWORD}
       SQITCH_USERNAME: postgres
-    command: revert --to @v1.6.0 --y
+    command: revert --to @v1.7.0 --y
     working_dir: /data_layer/sqitch
     volumes:
       - ./data_layer/sqitch:/data_layer/sqitch

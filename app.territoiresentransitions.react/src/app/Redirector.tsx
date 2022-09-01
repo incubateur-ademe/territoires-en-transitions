@@ -4,12 +4,10 @@ import {
   homePath,
   invitationPath,
   makeCollectiviteTableauBordUrl,
-  resetPwdPath,
   signInPath,
 } from 'app/paths';
 import {useAuth} from 'core-logic/api/auth/AuthProvider';
 import {useInvitationState} from 'core-logic/hooks/useInvitationState';
-import {useAccessToken} from 'core-logic/hooks/useVerifyRecoveryToken';
 import {useOwnedCollectivites} from 'core-logic/hooks/useOwnedCollectivites';
 
 export const Redirector = () => {
@@ -17,7 +15,6 @@ export const Redirector = () => {
   const {pathname} = useLocation();
   const {isConnected} = useAuth();
   const {invitationState} = useInvitationState();
-  const accessToken = useAccessToken();
   const userCollectivites = useOwnedCollectivites();
   const isSigninPath = pathname === signInPath;
   const isJustSignedIn = // L'utilisateur vient de se connecter.
