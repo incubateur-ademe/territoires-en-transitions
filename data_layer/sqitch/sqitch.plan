@@ -97,3 +97,4 @@ evaluation/seuils_de_population [evaluation/seuils_de_population@v1.7.0] 2022-08
 utils/merge_action_commentaire 2022-09-12T09:41:23Z sqitch <sqitch@39fd2a28bde6> # Utilitaire pour merger les commentaires de deux actions
 utilisateur/dcp_sync 2022-09-26T12:14:08Z Florian <florian@derfurth.com> # Synchronise l'email des DCP avec l'authentification.
 utils/modified_at_trigger 2022-09-03T14:31:16Z Florian <florian@derfurth.com> # Ajoute la fonction pour ajouter `modified_at` à une table.
+utilisateur/modified_by_trigger 2022-09-03T15:41:27Z Florian <florian@derfurth.com> # Ajoute la fonction qui permet de maintenir l'état du modified_by.
