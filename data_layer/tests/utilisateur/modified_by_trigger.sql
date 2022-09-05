@@ -1,6 +1,6 @@
 begin;
 
-select plan(2);
+select plan(4);
 
 -- une premiere table sans colonne modified by.
 create table test.a
