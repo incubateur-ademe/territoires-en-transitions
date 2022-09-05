@@ -55,16 +55,20 @@ const LabeledTextField: FC<LabeledTextInputProps & FieldProps> = ({
           className="fr-input mt-2 w-full bg-red p-3 border-b-2 border-red-500"
           maxLength={props.maxLength}
           {...field}
+          {...props}
         />
       )}
       {inputType === 'text' && (
-        <input
-          id={htmlId}
-          className="fr-input mt-2 w-full bg-beige p-3 border-b-2 border-gray-500"
-          maxLength={props.maxLength}
-          onKeyDown={preventSubmit}
-          {...field}
-        />
+        <>
+          <input
+            id={htmlId}
+            className="fr-input mt-2 w-full bg-beige p-3 border-b-2 border-gray-500"
+            maxLength={props.maxLength}
+            onKeyDown={preventSubmit}
+            {...field}
+            {...props}
+          />
+        </>
       )}
       {inputType === 'area' && (
         <textarea
@@ -72,6 +76,7 @@ const LabeledTextField: FC<LabeledTextInputProps & FieldProps> = ({
           className="fr-input mt-2 w-full bg-beige p-3 border-b-2 border-gray-500"
           maxLength={props.maxLength}
           {...field}
+          {...props}
         />
       )}
     </div>
