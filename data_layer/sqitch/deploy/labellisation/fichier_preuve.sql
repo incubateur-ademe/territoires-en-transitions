@@ -57,11 +57,25 @@ create function add_bibliotheque_fichier(
 as
 $$
 declare
+    object_id    uuid;
     inserted     integer;
     return_value bibliotheque_fichier;
 begin
     if have_edition_acces(add_bibliotheque_fichier.collectivite_id)
     then
+        select o.id
+        into object_id
+        from storage.objects o
+                 join collectivite_bucket cb on o.bucket_id = cb.bucket_id
+        where cb.collectivite_id = add_bibliotheque_fichier.collectivite_id
+          and o.name = add_bibliotheque_fichier.hash;
+
+        if object_id is null
+        then
+            perform set_config('response.status', '404', true);
+            return null;
+        end if;
+
         insert into labellisation.bibliotheque_fichier(collectivite_id, hash, filename)
         values (add_bibliotheque_fichier.collectivite_id,
                 add_bibliotheque_fichier.hash,
@@ -73,10 +87,11 @@ begin
         where bf.id = inserted
         into return_value;
 
+        perform set_config('response.status', '201', true);
         return return_value;
     else
         perform set_config('response.status', '403', true);
-        return json_build_object('error', 'Vous n''avez pas les droits pour ajouter un fichier.');
+        return null;
     end if;
 end;
 $$ language plpgsql security definer;
