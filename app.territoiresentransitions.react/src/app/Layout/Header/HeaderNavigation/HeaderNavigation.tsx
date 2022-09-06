@@ -35,9 +35,9 @@ const HeaderNavigation = ({auth}: Props) => {
           </a>
           {isConnected ? (
             <div data-test="connectedMenu" className="group relative">
-              <button className="fr-link">
+              <button className="fr-link" style={{maxWidth: '15rem'}}>
                 <div className="fr-fi-account-line mr-2" />
-                {user?.prenom}
+                <span className="line-clamp-1">{user?.prenom}</span>
                 <div className="fr-fi-arrow-down-s-line ml-2 scale-90 group-focus-within:rotate-180" />
               </button>
               <nav className="bg-white invisible absolute inset-x-0 top-full transition-all opacity-0 drop-shadow-md group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1 z-50">
