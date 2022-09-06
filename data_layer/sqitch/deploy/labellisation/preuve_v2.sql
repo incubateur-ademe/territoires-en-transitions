@@ -59,14 +59,14 @@ select private.add_modified_at_trigger('public', 'preuve_reglementaire');
 select utilisateur.add_modified_by_trigger('public', 'preuve_reglementaire');
 
 -- Une preuve rattachée à une demande de labellisation.
-create table preuve_demande
+create table preuve_labellisation
 (
     id         serial primary key,
     like labellisation.preuve_base including all,
     demande_id integer references labellisation.demande not null
 );
-select private.add_modified_at_trigger('public', 'preuve_demande');
-select utilisateur.add_modified_by_trigger('public', 'preuve_demande');
+select private.add_modified_at_trigger('public', 'preuve_labellisation');
+select utilisateur.add_modified_by_trigger('public', 'preuve_labellisation');
 
 
 -- Une preuve rattachée à une collectivité.
@@ -183,7 +183,7 @@ select 'labellisation',
 
 
 from labellisation.demande d
-         left join preuve_demande p on p.demande_id = d.id
+         left join preuve_labellisation p on p.demande_id = d.id
          left join labellisation.bibliotheque_fichier_snippet fs on fs.id = p.fichier_id
 
 union all
@@ -204,7 +204,7 @@ from preuve_rapport p
          left join labellisation.bibliotheque_fichier_snippet fs on fs.id = p.fichier_id
 ;
 
--- todo
+-- Mets à jour la fonction critère fichier.
 create or replace function
     labellisation.critere_fichier(collectivite_id integer)
     returns table
@@ -217,14 +217,14 @@ as
 $$
 with ref as (select unnest(enum_range(null::referentiel)) as referentiel)
 select r.referentiel,
-       count(lpf.file_id),
-       count(lpf.file_id) > 0
+       count(pd.fichier_id),
+       count(pd.fichier_id) > 0
 from ref r
          left join lateral (select *
                             from labellisation.demande ld
                             where ld.referentiel = r.referentiel
                               and ld.collectivite_id = critere_fichier.collectivite_id) ld on true
-         left join labellisation_preuve_fichier lpf on ld.id = lpf.demande_id
+         left join preuve_labellisation pd on ld.id = pd.demande_id
 group by r.referentiel;
 $$ language sql;
 
