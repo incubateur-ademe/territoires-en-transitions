@@ -17,8 +17,8 @@ create table labellisation.preuve_base
 
     commentaire     text                            not null default '',
 
-    modified_by     uuid references auth.users      not null,
-    modified_at     timestamptz                     not null,
+    modified_by     uuid references auth.users      not null default auth.uid(),
+    modified_at     timestamptz                     not null default CURRENT_TIMESTAMP,
 
     check ( (fichier_id is not null and url is null) or (url is not null and fichier_id is null) ), -- xor on null
     lien            jsonb generated always as (
@@ -90,7 +90,7 @@ select id,
                'hash', hash,
                'bucked_id', bucked_id,
                'filesize', filesize) as snippet
-from bibliotheque_fichier;
+from public.bibliotheque_fichier;
 
 -- Vue partielle de `action_definition` en json.
 create view labellisation.action_snippet as
@@ -98,12 +98,15 @@ with score as (select *
                from client_scores cs
                         left join private.convert_client_scores(cs.scores) on true)
 select ad.action_id,
+       score.collectivite_id,
        jsonb_build_object(
                'action_id', ad.action_id,
                'identifiant', ad.identifiant,
                'referentiel', ad.referentiel,
                'desactive', score.desactive,
-               'concerne', score.concerne
+               'concerne', score.concerne,
+               'nom', ad.nom,
+               'description', ad.description
            ) as snippet
 from collectivite c
          join action_definition ad on true
@@ -129,8 +132,11 @@ select -- champs communs
        null:: jsonb                                as demande,
        null:: jsonb                                as rapport
 from preuve_complementaire pc
-         left join labellisation.bibliotheque_fichier_snippet fs on fs.id = pc.fichier_id
-         left join labellisation.action_snippet snippet on snippet.action_id = pc.action_id
+         left join labellisation.bibliotheque_fichier_snippet fs
+             on fs.id = pc.fichier_id
+         left join labellisation.action_snippet snippet
+             on snippet.action_id = pc.action_id
+            and snippet.collectivite_id = pc.collectivite_id
 union all
 
 -- Toutes les preuves réglementaires par collectivité, avec ou sans fichier.
