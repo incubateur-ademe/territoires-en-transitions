@@ -1,8 +1,12 @@
 import * as Yup from 'yup';
 import {Field, Form, Formik, FormikHandlers} from 'formik';
-import {useAuth, useDCP} from 'core-logic/api/auth/AuthProvider';
+
 import LabeledTextField from 'ui/forms/LabeledTextField';
 import {Spacer} from 'ui/shared/Spacer';
+
+import {useAuth} from 'core-logic/api/auth/AuthProvider';
+import {useUpdateEmail} from 'core-logic/api/auth/useUpdateEmail';
+import {useUpdateDCP} from 'core-logic/api/auth/useUpdateDCP';
 
 interface ModifierCompteData {
   prenom: string;
@@ -21,7 +25,10 @@ const MonCompte = () => {
       .required('Champ requis'),
   });
 
-  const {mutate: mutateDCP} = useDCP(user?.id);
+  const {handleUpdateDCP, renderToast: renderDCPToast} = useUpdateDCP(
+    user ? user.id : ''
+  );
+  const {handleUpdateEmail, renderToast: renderEmailToast} = useUpdateEmail();
 
   return (
     user && (
@@ -47,7 +54,9 @@ const MonCompte = () => {
                   component={LabeledTextField}
                   onBlur={(evt: FormikHandlers['handleBlur']) => {
                     handleBlur(evt);
-                    isValid && mutateDCP({prenom: values.prenom});
+                    isValid &&
+                      user.prenom !== values.prenom &&
+                      handleUpdateDCP({prenom: values.prenom});
                   }}
                 />
                 <Spacer size={3} />
@@ -58,7 +67,9 @@ const MonCompte = () => {
                   component={LabeledTextField}
                   onBlur={(evt: FormikHandlers['handleBlur']) => {
                     handleBlur(evt);
-                    isValid && mutateDCP({nom: values.nom});
+                    isValid &&
+                      user.nom !== values.nom &&
+                      handleUpdateDCP({nom: values.nom});
                   }}
                 />
                 <Spacer size={3} />
@@ -67,10 +78,18 @@ const MonCompte = () => {
                   label="Email"
                   type="text"
                   component={LabeledTextField}
+                  onBlur={(evt: FormikHandlers['handleBlur']) => {
+                    handleBlur(evt);
+                    isValid &&
+                      user.email !== values.email &&
+                      handleUpdateEmail({email: values.email});
+                  }}
                 />
               </Form>
             )}
           </Formik>
+          {renderDCPToast()}
+          {renderEmailToast()}
         </div>
       </div>
     )
