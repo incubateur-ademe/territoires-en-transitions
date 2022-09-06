@@ -4,8 +4,8 @@
 
 BEGIN;
 
--- Restore previous versions
-create or replace materialized view stats_rattachements
+
+create materialized view stats_rattachements
 as
 with daily as (
     select created_at::date as day, count(created_at) as count
@@ -18,7 +18,7 @@ select day                                                                      
        sum(count) over (order by day rows between unbounded preceding and current row)::integer as cumulated_count
 from daily;
 
-create or replace materialized view stats_unique_active_collectivite
+create materialized view stats_unique_active_collectivite
 as
 with unique_collectivite_droit as (
     select d.collectivite_id, min(created_at) as created_at
