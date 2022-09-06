@@ -1,6 +1,6 @@
 begin;
 
-select plan(2);
+select plan(7);
 truncate storage.objects cascade;
 truncate labellisation.bibliotheque_fichier cascade;
 
@@ -17,7 +17,7 @@ where collectivite_id = 1;
 -- En tant que yolo
 select test.identify_as('yolo@dodo.com');
 
--- Yolo ajoute le fichier dans le bucket.
+-- On ajoute le fichier dans le bucket.
 insert into storage.objects (bucket_id, name, owner, metadata)
 select bucket_id, hash, auth.uid(), metadata
 from test.file;
@@ -30,7 +30,10 @@ select add_bibliotheque_fichier(
            )
 from test.file f;
 
--- Puis attache le fichier à une action comme preuve complémentaire.
+-- check l'insertion dans la bibliothèque qui est testée dans `fichier_preuve`
+select isnt_empty('select * from bibliotheque_fichier');
+
+-- Puis on attache le fichier à une action comme preuve complémentaire.
 insert into preuve_complementaire (collectivite_id, fichier_id, url, action_id)
 select collectivite_id, id, null, 'eci_1.1.1.1'
 from bibliotheque_fichier;
@@ -48,6 +51,46 @@ select bag_eq(
                'select p.collectivite_id, hash, action_id, lien
                 from preuve_complementaire p
                     join bibliotheque_fichier bf on bf.id = p.fichier_id;'
+           );
+
+
+-- Yolo attache le fichier à une demande de labellisation.
+-- Puis ajoute une demande pour eci, avec un id de 100
+insert into labellisation.demande (id, collectivite_id, referentiel, etoiles)
+values (100, 1, 'eci', '5');
+
+-- Yolo ajoute la preuve à la demande
+insert into preuve_labellisation (collectivite_id, fichier_id, demande_id)
+select collectivite_id, id, 100
+from bibliotheque_fichier;
+
+select isnt_empty('select * from preuve_labellisation where demande_id = 100');
+
+select bag_eq(
+               'select (p.fichier ->> ''hash'')::varchar(64), p.collectivite_id, (p.demande ->> ''etoiles'')::labellisation.etoile
+                from preuve p
+                where collectivite_id = 1
+                  and preuve_type = ''labellisation'';',
+               'select bf.hash, pl.collectivite_id, ld.etoiles
+                from preuve_labellisation pl
+                         join bibliotheque_fichier bf on pl.fichier_id = bf.id
+                         join labellisation.demande ld on pl.demande_id = ld.id;',
+               'La vue preuve devrait contenir la preuve et la labellisation'
+           );
+
+-- Test la fonction interne `critere_fichier` de la labellisation
+select ok(
+               (select atteint
+                from labellisation.critere_fichier(1)
+                where referentiel = 'eci'),
+               'La collectivité devrait avoir atteint le critère fichier pour eci'
+           );
+
+select ok(
+               (select atteint = false
+                from labellisation.critere_fichier(1)
+                where referentiel = 'cae'),
+               'La collectivité ne devrait pas avoir atteint le critère fichier pour cae'
            );
 
 rollback;
