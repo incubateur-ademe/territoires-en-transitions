@@ -28,7 +28,7 @@ $$ language sql;
 
 -- drop feature
 drop view preuve;
-drop view labellisation.action_definition_snippet;
+drop view labellisation.action_snippet;
 drop view labellisation.bibliotheque_fichier_snippet;
 
 drop table preuve_rapport;
