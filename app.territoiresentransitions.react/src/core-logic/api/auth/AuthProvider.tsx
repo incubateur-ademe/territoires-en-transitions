@@ -7,8 +7,8 @@ import {
   useState,
 } from 'react';
 import {User, UserCredentials} from '@supabase/supabase-js';
+import {useQuery} from 'react-query';
 import {supabaseClient} from '../supabase';
-import {useMutation, useQuery, useQueryClient} from 'react-query';
 
 // typage du contexte exposé par le fournisseur
 export type TAuthContext = {
@@ -19,7 +19,7 @@ export type TAuthContext = {
   isConnected: boolean;
 };
 export type UserData = User & DCP;
-type DCP = {nom?: string; prenom?: string};
+export type DCP = {nom?: string; prenom?: string};
 
 // crée le contexte
 export const AuthContext = createContext<TAuthContext | null>(null);
@@ -137,24 +137,12 @@ const fetchDCP = async (user_id: string) => {
   return data?.length ? data[0] : null;
 };
 
-// update des DCP
-const updateDCP = async (dcp: DCP) => {
-  await supabaseClient.from('dcp').update([dcp]);
-};
-
 // hook qui utilise les queries DCP
 export const useDCP = (user_id?: string) => {
-  const queryClient = useQueryClient();
-
+  // fetch
   const {data} = useQuery(['dcp', user_id], () =>
     user_id ? fetchDCP(user_id) : null
   );
 
-  const {mutate} = useMutation(updateDCP, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(['dcp', user_id]);
-    },
-  });
-
-  return {data, mutate};
+  return {data};
 };
