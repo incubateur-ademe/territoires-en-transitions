@@ -1,6 +1,5 @@
-import {useState, SyntheticEvent, ReactNode} from 'react';
-import {Snackbar, SnackbarCloseReason} from '@material-ui/core';
-import MuiAlert, {Color} from '@material-ui/lab/Alert';
+import {useState, ReactNode, useMemo} from 'react';
+import {ToastFloater} from './floating-ui/ToastFloater';
 
 /**
  * Affiche une alerte "error" ou "success" sous forme de bandeau qui disparait
@@ -10,27 +9,51 @@ import MuiAlert, {Color} from '@material-ui/lab/Alert';
 export const ToastAlert = ({
   toastAlert,
   children,
+  autoHideDuration,
 }: {
   /** Etat et fonctions de contrôle de l'alerte */
   toastAlert: ToastAlertHook;
   /** Une fonction recevant l'état courant et renvoyant le contenu à afficher
    * dans l'alerte */
   children: (status: ToastAlertStatus) => ReactNode;
+  /** Nombre en millisecondes à attendre avant d'appeler la fonction onClose.
+   * Par default: 4000 */
+  autoHideDuration?: number;
 }) => {
   const {isVisible, status, close} = toastAlert;
 
-  const handleClose = (event: SyntheticEvent, reason: SnackbarCloseReason) => {
-    if (reason !== 'clickaway') {
-      close();
+  const classNames = useMemo(() => {
+    if (status === 'success') {
+      return '!bg-green-500';
     }
-  };
+    if (status === 'error') {
+      return '!bg-red-500';
+    }
+    return;
+  }, [status]);
+
+  const icon = useMemo(() => {
+    if (status === 'success') {
+      return 'fr-fi-check-line';
+    }
+    if (status === 'error') {
+      return 'fr-fi-close-line';
+    }
+    return;
+  }, [status]);
 
   return isVisible ? (
-    <Snackbar open={isVisible} autoHideDuration={2000} onClose={handleClose}>
-      <MuiAlert severity={status as Color} variant="filled">
+    <ToastFloater
+      open={isVisible}
+      onClose={() => close()}
+      className={classNames}
+      autoHideDuration={autoHideDuration}
+    >
+      <div className="flex items-center">
+        <div className={`flex mr-3 ${icon}`}></div>
         {children(status)}
-      </MuiAlert>
-    </Snackbar>
+      </div>
+    </ToastFloater>
   ) : null;
 };
 
