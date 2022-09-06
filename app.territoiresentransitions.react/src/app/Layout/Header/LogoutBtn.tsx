@@ -12,7 +12,7 @@ export const LogoutBtn = ({
   const history = useHistory();
   return (
     <Link
-      className="fr-nav__link"
+      className="fr-nav__link !shadow-none"
       data-test="logoutBtn"
       to={signUpPath}
       onClick={() => {
