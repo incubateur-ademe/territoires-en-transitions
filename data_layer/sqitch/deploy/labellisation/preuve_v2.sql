@@ -45,8 +45,6 @@ create table preuve_complementaire
     like labellisation.preuve_base including all, -- on copie les colonnes et toutes les contraintes.
     action_id action_id references action_relation not null
 );
-select private.add_modified_at_trigger('public', 'preuve_complementaire');
-select utilisateur.add_modified_by_trigger('public', 'preuve_complementaire');
 
 -- Une preuve rattachée à la definition d'une preuve réglementaire.
 create table preuve_reglementaire
@@ -55,8 +53,6 @@ create table preuve_reglementaire
     like labellisation.preuve_base including all,
     preuve_id preuve_id references preuve_reglementaire_definition not null
 );
-select private.add_modified_at_trigger('public', 'preuve_reglementaire');
-select utilisateur.add_modified_by_trigger('public', 'preuve_reglementaire');
 
 -- Une preuve rattachée à une demande de labellisation.
 create table preuve_labellisation
@@ -65,9 +61,6 @@ create table preuve_labellisation
     like labellisation.preuve_base including all,
     demande_id integer references labellisation.demande not null
 );
-select private.add_modified_at_trigger('public', 'preuve_labellisation');
-select utilisateur.add_modified_by_trigger('public', 'preuve_labellisation');
-
 
 -- Une preuve rattachée à une collectivité.
 create table preuve_rapport
@@ -76,11 +69,35 @@ create table preuve_rapport
     like labellisation.preuve_base including all,
     date timestamptz not null
 );
-select private.add_modified_at_trigger('public', 'preuve_rapport');
-select utilisateur.add_modified_by_trigger('public', 'preuve_rapport');
 
+do
+$$
+    declare
+        name text;
+    begin
+        -- Pour chaque type, et donc chaque table nommée preuve_[type]
+        foreach name in array enum_range(NULL::preuve_type)
+            loop
+                -- On ajoute les triggers
+                perform private.add_modified_at_trigger('public', 'preuve_' || name);
+                perform utilisateur.add_modified_by_trigger('public', 'preuve_' || name);
 
--- todo rls
+                -- Et les RLS
+                execute format('alter table preuve_%I
+                    enable row level security;', name);
+                --- Tout les membres de Territoires en transitions peuvent lire.
+                execute format('create policy allow_read
+                    on preuve_%I using (is_authenticated());', name);
+                --- Seuls les membres ayant un accès en édition peuvent écrire.
+                execute format('create policy allow_insert
+                    on preuve_%I
+                    with check (have_edition_acces(collectivite_id));', name);
+                execute format('create policy allow_update
+                    on preuve_%I
+                    using (have_edition_acces(collectivite_id));', name);
+            end loop;
+    end;
+$$;
 
 -- Vue partielle `bibliotheque_fichier` en json.
 create view labellisation.bibliotheque_fichier_snippet as
@@ -133,10 +150,10 @@ select -- champs communs
        null:: jsonb                                as rapport
 from preuve_complementaire pc
          left join labellisation.bibliotheque_fichier_snippet fs
-             on fs.id = pc.fichier_id
+                   on fs.id = pc.fichier_id
          left join labellisation.action_snippet snippet
-             on snippet.action_id = pc.action_id
-            and snippet.collectivite_id = pc.collectivite_id
+                   on snippet.action_id = pc.action_id
+                       and snippet.collectivite_id = pc.collectivite_id
 union all
 
 -- Toutes les preuves réglementaires par collectivité, avec ou sans fichier.
