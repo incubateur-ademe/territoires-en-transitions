@@ -9,17 +9,43 @@ select has_function('test', 'generate_scores'::name);
 select has_function('test_write_scores');
 select has_function('test_fulfill');
 
-
--- alter preuve so we can insert fake data without messing with storage.
-alter table labellisation_preuve_fichier
-    drop constraint labellisation_preuve_fichier_file_id_fkey;
-
 -- truncate data
 truncate action_statut;
 truncate client_scores;
 truncate labellisation;
-truncate labellisation.demande, labellisation_preuve_fichier;
+truncate labellisation.demande cascade ;
 
+truncate storage.objects cascade;
+truncate labellisation.bibliotheque_fichier cascade;
+
+--------------------------------------------------------
+------- Ajoute un faux fichier à la bibliothèque -------
+--------------------------------------------------------
+-- Le faux fichier.
+select cb.collectivite_id,
+       cb.bucket_id,
+       'e9df071601f3f72b5430a55cd7ea584be5c2a36bb4226b621c4dca50088ef8b9'::varchar(64) as hash,
+       'yo.pdf'                                                                        as filename,
+       jsonb_build_object('size', 34, 'mimetype', '*/*', 'cacheControl', 'no-cache')   as metadata
+into test.file
+from collectivite_bucket cb
+where collectivite_id = 1;
+
+-- En tant que yolo
+select test.identify_as('yolo@dodo.com');
+
+-- On ajoute le fichier dans le bucket.
+insert into storage.objects (bucket_id, name, owner, metadata)
+select bucket_id, hash, auth.uid(), metadata
+from test.file;
+
+-- Puis à la bibliothèque
+select add_bibliotheque_fichier(
+               f.collectivite_id,
+               f.hash,
+               f.filename
+           )
+from test.file f;
 -----------------------------------
 ------- Test base functions -------
 -----------------------------------
@@ -71,7 +97,7 @@ select ok((select not bool_and(atteint)
 truncate labellisation;
 truncate action_statut;
 truncate client_scores;
-truncate labellisation.demande, labellisation_preuve_fichier;
+truncate labellisation.demande, labellisation_preuve_fichier, preuve_labellisation;
 
 -- insert faked client scores, by default test_write_scores writes every score as fait.
 select test_write_scores(1);
@@ -111,15 +137,14 @@ select ok((select preuve_nombre = 0
            where referentiel = 'eci'),
           'Labellisation critere fichier function should output correct state when no file have been inserted.');
 
--- Create demande
+-- Puis ajoute une demande pour eci, avec un id de 100
 insert into labellisation.demande (id, collectivite_id, referentiel, etoiles)
 values (100, 1, 'eci', '5');
 
--- Mock file insertion
-truncate labellisation_preuve_fichier;
-insert into labellisation_preuve_fichier (collectivite_id, demande_id, file_id)
-values (1, 100, gen_random_uuid());
-
+-- Yolo ajoute la preuve à la demande
+insert into preuve_labellisation (collectivite_id, fichier_id, demande_id)
+select collectivite_id, id, 100
+from bibliotheque_fichier;
 
 select ok((select preuve_nombre = 1
                       and atteint
@@ -142,7 +167,7 @@ select ok((select etoiles = '5'
 ------- Scenario: nothing is done nor complete -------
 ------------------------------------------------------
 truncate labellisation;
-truncate labellisation.demande, labellisation_preuve_fichier;
+truncate labellisation.demande, labellisation_preuve_fichier, preuve_labellisation;
 
 -- pas_fait statut on all requirements
 truncate action_statut;
@@ -202,7 +227,7 @@ select ok((select etoiles = '1'
 --------------------------------------------------------------------
 
 truncate labellisation;
-truncate labellisation.demande, labellisation_preuve_fichier;
+truncate labellisation.demande, labellisation_preuve_fichier, preuve_labellisation;
 
 -- fake scoring, score and completion at 1
 truncate private.action_score; -- use action_score as a temp table
@@ -287,14 +312,15 @@ select ok((select etoiles = '1'
            where referentiel = 'eci'),
           'Labellisation parcours function should output correct state for 0% fait, complete, no demande.');
 
--- Create demande
-truncate labellisation.demande, labellisation_preuve_fichier;
+-- Yolo crée une demande
+truncate labellisation.demande, labellisation_preuve_fichier, preuve_labellisation;
 insert into labellisation.demande (id, collectivite_id, referentiel, etoiles)
 values (100, 1, 'eci', '1');
 
--- Mock file insertion
-insert into labellisation_preuve_fichier (collectivite_id, demande_id, file_id)
-values (1, 100, gen_random_uuid());
+-- Puis ajoute la preuve à la demande
+insert into preuve_labellisation (collectivite_id, fichier_id, demande_id)
+select collectivite_id, id, 100
+from bibliotheque_fichier;
 
 select ok((select preuve_nombre = 1
                       and atteint
