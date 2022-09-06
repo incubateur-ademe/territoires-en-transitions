@@ -32,7 +32,7 @@ drop view labellisation.action_snippet;
 drop view labellisation.bibliotheque_fichier_snippet;
 
 drop table preuve_rapport;
-drop table preuve_demande;
+drop table preuve_labellisation;
 drop table preuve_reglementaire;
 drop table preuve_complementaire;
 drop table labellisation.preuve_base;
