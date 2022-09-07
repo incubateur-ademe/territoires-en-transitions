@@ -8,3 +8,6 @@ import '@testing-library/jest-dom';
 // ATTENTION : il faut aussi charger les mocks dans .storybook/main.js pour
 // qu'ils soient disponibles pour l'affichage des stories dans le storybook
 jest.mock('core-logic/hooks/useCurrentCollectivite.ts');
+
+// ce mock n'est importé qu'ici car la version d'origine fonctionne dans le navigateur
+jest.mock('utils/shasum256.ts');
