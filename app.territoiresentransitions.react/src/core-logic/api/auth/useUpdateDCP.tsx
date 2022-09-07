@@ -39,5 +39,6 @@ export const useUpdateDCP = (user_id: string) => {
  * Query pour mettre à jour les DCP de l'utilisateur courant
  */
 const updateDCP = async (dcp: DCP) => {
-  await supabaseClient.from('dcp').update([dcp]);
+  const {error} = await supabaseClient.from('dcp').update([dcp]);
+  if (error) throw error?.message;
 };
