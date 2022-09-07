@@ -3,34 +3,28 @@
 exports[`Storyshots ui/shared/actions/ActionPreuvePanel Default 1`] = `
 Array [
   <p
-    className="text-sm text-grey425"
+    className="fr-text-sm"
   >
-    Toutes les preuves ajoutées seront visibles par les membres de la communauté Territoires en Transitions.
+    Il n'y a pas de preuve attendue pour cette sous-action du référentiel.
+    <br />
+    Vous pouvez ajouter les documents preuves que vous jugez utiles pour justifier l'avancement.
   </p>,
-  <div
-    onClick={[Function]}
+  <h5>
+    Preuves complémentaires
+  </h5>,
+  <button
+    className="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-fi-add-line"
   >
-    <button
-      className="fr-btn fr-btn--sm"
-      data-test="AddPreuveButton"
-      onClick={[Function]}
-    >
-      + Ajouter
-    </button>
-  </div>,
-  <hr
-    className="mt-4"
-  />,
-  <h6>
-    Liste des preuves requises pour cette action
-  </h6>,
+    Ajouter une preuve complémentaire
+  </button>,
   <div
-    className="content"
-    dangerouslySetInnerHTML={
-      Object {
-        "__html": "...",
-      }
-    }
+    className="divide-y divide-[#ddd]"
   />,
+  <div
+    className="border-solid border-t-[1px] border-[#FCC63A] my-4"
+  />,
+  <p>
+    Toutes les preuves ajoutées seront visibles par les membres de la communauté Territoires en Transitions
+  </p>,
 ]
 `;
