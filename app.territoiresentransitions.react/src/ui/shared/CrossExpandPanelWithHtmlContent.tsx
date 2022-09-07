@@ -27,7 +27,7 @@ export const CrossExpandPanelWithNode = (props: {
 
   return (
     <div className="CrossExpandPanel">
-      <details className="htmlContent" open={opened} onToggle={handleToggle}>
+      <details open={opened} onToggle={handleToggle}>
         <summary className="title">
           {editable ? <Editable text={title} /> : <div>{title}</div>}
         </summary>

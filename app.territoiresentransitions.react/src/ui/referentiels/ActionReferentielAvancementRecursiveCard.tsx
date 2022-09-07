@@ -61,7 +61,7 @@ export const ActionReferentielAvancementCard = ({
         <ActionReferentielDescription action={action} />
         {action.have_questions && <PersoPotentiel actionDef={action} />}
         {action.have_exemples && <ActionExemplesExpandPanel action={action} />}
-        {action.have_preuve && <ActionPreuvesExpandPanel action={action} />}
+        <ActionPreuvesExpandPanel action={action} />
         <ActionCommentaire action={action} />
       </div>
       <div className="w-2/8 pl-4">
