@@ -40,7 +40,7 @@ select bf.id,
        bf.collectivite_id,
        bf.hash,
        bf.filename,
-       o.bucket_id                      as bucked_id,
+       o.bucket_id                      as bucket_id,
        o.id                             as file_id,
        (o.metadata ->> 'size')::integer as filesize
 from labellisation.bibliotheque_fichier bf
