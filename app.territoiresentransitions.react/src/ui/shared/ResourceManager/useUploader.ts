@@ -7,92 +7,99 @@ import {
   UploadStatus,
   UploadStatusCode,
 } from './types';
-import {ChangeNotifier} from 'core-logic/api/reactivity';
 import {collectiviteBucketReadEndpoint} from 'core-logic/api/endpoints/CollectiviteBucketReadEndpoint';
 import {useCollectiviteId} from 'core-logic/hooks/params';
+import {useMutation, useQueryClient} from 'react-query';
+import {shasum256} from 'utils/shasum256';
 
 /**
  * Gère l'upload et envoi une notification après un transfert réussi
  * afin de déclencher un refetch aux endroits où c'est nécessaire
  */
-class PreuveUploader extends ChangeNotifier {
-  async upload(
-    collectiviteId: number,
-    file: File,
-    callback: (status: UploadStatus) => void
-  ) {
-    /**
-     * On utilise une requête XHR plutôt que le client Supabase car celui-ci
-     * ne permet pas d'avoir la progression et l'interruption.
-     * Ref: https://github.com/supabase/storage-api/issues/23#issuecomment-973277262
-     */
-    const xhr = new XMLHttpRequest();
-    const buckets = await collectiviteBucketReadEndpoint.getBy({
-      collectivite_id: collectiviteId,
-    });
-    const bucket_id = buckets[0]?.bucket_id;
+const addFileToBucket = async ({
+  collectivite_id,
+  file,
+  callback,
+}: {
+  collectivite_id: number;
+  file: File;
+  callback: (status: UploadStatus) => void;
+}) => {
+  // calcule une somme de contrôle du fichier
+  // celle-ci va servir de nom unique pour le fichier dans le bucket
+  // le nom original du fichier est sauvegardé après l'upload dans la table `bibliotheque_fichier`
+  const hash = await shasum256(file);
 
-    const abort = () => xhr.abort();
+  /**
+   * On utilise une requête XHR plutôt que le client Supabase car celui-ci
+   * ne permet pas d'avoir la progression et l'interruption.
+   * Ref: https://github.com/supabase/storage-api/issues/23#issuecomment-973277262
+   */
+  const xhr = new XMLHttpRequest();
+  const buckets = await collectiviteBucketReadEndpoint.getBy({
+    collectivite_id,
+  });
+  const bucket_id = buckets[0]?.bucket_id;
 
-    if (bucket_id) {
-      // url de destination
-      const url = `${ENV.supabase_url!}/storage/v1/object/${bucket_id}/${
-        file.name
-      }`;
+  const abort = () => xhr.abort();
 
-      // attache les écouteurs d'événements
-      xhr.upload.onprogress = (e: ProgressEvent<EventTarget>) => {
-        const progress = (e.loaded / e.total) * 100;
-        callback({
-          code: UploadStatusCode.running,
-          progress,
-          abort,
-        });
-      };
+  if (bucket_id) {
+    // url de destination
+    const url = `${ENV.supabase_url!}/storage/v1/object/${bucket_id}/${hash}`;
 
-      const notifyListeners = () => this.notifyListeners();
-      // appelé quand le transfert est terminé
-      xhr.onreadystatechange = function () {
-        if (this.readyState === XMLHttpRequest.DONE) {
-          if (this.status === 200) {
-            callback({code: UploadStatusCode.completed});
-            notifyListeners();
-          } else {
-            setError();
-          }
+    // attache les écouteurs d'événements
+    xhr.upload.onprogress = (e: ProgressEvent<EventTarget>) => {
+      const progress = (e.loaded / e.total) * 100;
+      callback({
+        code: UploadStatusCode.running,
+        progress,
+        abort,
+      });
+    };
+
+    // appelé quand le transfert est terminé
+    xhr.onreadystatechange = function () {
+      if (this.readyState === XMLHttpRequest.DONE) {
+        if (this.status === 200) {
+          // crée l'entrée dans la bibliothèque
+          addFileToLib({collectivite_id, hash, filename: file.name}).then(
+            () => {
+              callback({code: UploadStatusCode.completed});
+            }
+          );
+        } else {
+          setError();
         }
-      };
-
-      // appelé quand le transfert est interrompu
-      xhr.upload.onabort = () => {
-        console.log('aborted');
-        callback({code: UploadStatusCode.aborted});
-      };
-
-      // appelé quand le transfert est terminé en erreur
-      const setError = () => {
-        callback({
-          code: UploadStatusCode.failed,
-          error: UploadErrorCode.uploadError,
-        });
-      };
-      xhr.upload.onerror = xhr.upload.ontimeout = setError;
-
-      // attache les en-têtes et démarre l'envoi
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore: on utilise ici volontairement une fonction privée du client
-      // supabase pour récupérer les en-têtes contenant le token d'auth.
-      const headers = supabaseClient._getAuthHeaders();
-      xhr.open('POST', url);
-      for (const [key, value] of Object.entries(headers)) {
-        xhr.setRequestHeader(key, value as string);
       }
-      xhr.send(file);
-    }
-  }
-}
+    };
 
-export const preuveUploader = new PreuveUploader();
+    // appelé quand le transfert est interrompu
+    xhr.upload.onabort = () => {
+      console.log('aborted');
+      callback({code: UploadStatusCode.aborted});
+    };
+
+    // appelé quand le transfert est terminé en erreur
+    const setError = () => {
+      callback({
+        code: UploadStatusCode.failed,
+        error: UploadErrorCode.uploadError,
+      });
+    };
+    xhr.upload.onerror = xhr.upload.ontimeout = setError;
+
+    // attache les en-têtes et démarre l'envoi
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore: on utilise ici volontairement une fonction privée du client
+    // supabase pour récupérer les en-têtes contenant le token d'auth.
+    const headers = supabaseClient._getAuthHeaders();
+    xhr.open('POST', url);
+    for (const [key, value] of Object.entries(headers)) {
+      xhr.setRequestHeader(key, value as string);
+    }
+    xhr.send(file);
+  }
+};
 
 /**
  * Démarre l'upload d'un fichier et fourni un état de la progression
@@ -108,11 +115,41 @@ export const useUploader = (
     progress: 0,
   });
 
-  const collectiviteId = useCollectiviteId()!;
+  const collectivite_id = useCollectiviteId()!;
 
   useEffect(() => {
-    preuveUploader.upload(collectiviteId, file, setStatus);
-  }, [collectiviteId]);
+    addFileToBucket({collectivite_id, file, callback: setStatus});
+  }, [collectivite_id]);
 
   return {status};
+};
+
+/** Ajoute le fichier dans la bibliothèque */
+const addFileToLib = async ({
+  collectivite_id,
+  hash,
+  filename,
+}: {
+  collectivite_id: number;
+  hash: string;
+  filename: string;
+}) => {
+  const {error, data} = await supabaseClient
+    .from('bibliotheque_fichier')
+    .upsert({collectivite_id, hash, filename});
+  if (error) {
+    throw new Error(error.message);
+  }
+  return data;
+};
+
+export const useAddFileToLib = () => {
+  const queryClient = useQueryClient();
+  const {isLoading, mutate} = useMutation(addFileToLib, {
+    mutationKey: 'update_bibliotheque_fichier',
+    onSuccess: () => {
+      queryClient.invalidateQueries(['preuve_fichier']);
+    },
+  });
+  return {isLoading, addFileToLib: mutate};
 };

@@ -2,6 +2,7 @@ import {FileObject} from '@supabase/storage-js';
 import {TFileItem} from './FileItem';
 import {UploadStatusCode, UploadErrorCode} from './types';
 import {MAX_FILE_SIZE_BYTES, EXPECTED_FORMATS} from './constants';
+import {getExtension} from 'utils/file';
 
 /**
  * Transforme la sélection de fichiers en une liste d'items
@@ -77,7 +78,7 @@ const isValidFileSize = (f: File): boolean => {
 
 // contrôle le format d'un fichier
 const isValidFileFormat = (f: File): boolean => {
-  const ext = f.name.split('.')?.pop();
+  const ext = getExtension(f.name);
   return (ext && EXPECTED_FORMATS.includes(ext.toLowerCase())) || false;
 };
 
