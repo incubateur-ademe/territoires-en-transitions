@@ -8,6 +8,7 @@ import {
 import {useUploader} from 'ui/shared/ResourceManager/useUploader';
 import {ButtonClose} from 'ui/shared/SmallIconButton';
 import {ProgressBar} from 'ui/shared/ProgressBar';
+import {formatFileSize} from 'utils/file';
 
 export type TFileItem = {
   /** Fichier concerné */
@@ -138,13 +139,4 @@ const statusToRenderer = {
   completed: FileItemCompleted,
   failed: FileItemFailed,
   aborted: () => null,
-};
-
-const formatFileSize = (size: number) => {
-  const i = Math.floor(Math.log(size) / Math.log(1024));
-  return (
-    Number((size / Math.pow(1024, i)).toFixed(2)) +
-    ' ' +
-    ['o', 'Ko', 'Mo', 'Go', 'To'][i]
-  );
 };
