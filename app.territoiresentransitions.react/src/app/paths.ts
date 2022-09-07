@@ -9,7 +9,9 @@ export const invitationPath = '/invitation';
 export const invitationIdParam = 'invitationId';
 export const invitationLandingPath = `${invitationPath}/:${invitationIdParam}`;
 
-export const monComptePath = '/mon-compte';
+export const profilPath = '/profil';
+export const monComptePath = `${profilPath}/mon-compte`;
+export const mesCollectivitesPath = `${profilPath}/mes-collectivites`;
 
 export const allCollectivitesPath = '/toutes_collectivites';
 
