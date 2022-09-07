@@ -105,7 +105,7 @@ select id,
        jsonb_build_object(
                'filename', filename,
                'hash', hash,
-               'bucked_id', bucked_id,
+               'bucket_id', bucket_id,
                'filesize', filesize) as snippet
 from public.bibliotheque_fichier;
 
