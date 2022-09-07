@@ -1,0 +1,415 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots app/pages/collectivite/Bibliotheque/PreuveReglementaire Action Desactivee 1`] = `
+<div
+  className="flex flex-row gap-8 pt-2 pb-4"
+>
+  <div
+    className="flex flex-1 flex-col"
+  >
+    <span
+      className="fr-text--sm pt-2 text-grey25"
+    >
+      Délibération d'engagement dans la Convention des Maires
+      <span
+        className="fr-fi-information-line pl-4 text-bf500 cursor-pointer"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onPointerDown={[Function]}
+      />
+    </span>
+    <span
+      className="text-xs text-grey625"
+    >
+      1.1.2
+      <span
+        className="fr-badge fr-ml-4w fr-text-mention--grey fr-text--xs"
+      >
+        Non concerné
+      </span>
+    </span>
+  </div>
+  <div
+    className="flex flex-1 flex-col justify-center space-y-2"
+  >
+    <button
+      className="fr-btn fr-fi-add-line fr-btn--secondary"
+      title="Ajouter une preuve"
+    />
+  </div>
+</div>
+`;
+
+exports[`Storyshots app/pages/collectivite/Bibliotheque/PreuveReglementaire Action Non Concernee 1`] = `
+<div
+  className="flex flex-row gap-8 pt-2 pb-4"
+>
+  <div
+    className="flex flex-1 flex-col"
+  >
+    <span
+      className="fr-text--sm pt-2 text-grey25"
+    >
+      Délibération d'engagement dans la Convention des Maires
+      <span
+        className="fr-fi-information-line pl-4 text-bf500 cursor-pointer"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onPointerDown={[Function]}
+      />
+    </span>
+    <span
+      className="text-xs text-grey625"
+    >
+      1.1.2
+      <span
+        className="fr-badge fr-ml-4w fr-text-mention--grey fr-text--xs"
+      >
+        Non concerné
+      </span>
+    </span>
+  </div>
+  <div
+    className="flex flex-1 flex-col justify-center space-y-2"
+  >
+    <button
+      className="fr-btn fr-fi-add-line fr-btn--secondary"
+      title="Ajouter une preuve"
+    />
+  </div>
+</div>
+`;
+
+exports[`Storyshots app/pages/collectivite/Bibliotheque/PreuveReglementaire Fichier 1`] = `
+<div
+  className="flex flex-row gap-8 pt-2 pb-4"
+>
+  <div
+    className="flex flex-1 flex-col"
+  >
+    <span
+      className="fr-text--sm pt-2 text-black"
+    >
+      Etude de vulnérabilité au changement climatique
+      <span
+        className="fr-fi-information-line pl-4 text-bf500 cursor-pointer"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onPointerDown={[Function]}
+      />
+    </span>
+    <span
+      className="text-xs text-grey625"
+    >
+      1.1.3
+    </span>
+  </div>
+  <div
+    className="flex flex-1 flex-col justify-center space-y-2"
+  >
+    <div
+      data-test="item"
+    >
+      <div
+        className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0 cursor-pointer"
+      >
+        <a
+          className="fr-text--sm fr-mb-1v fr-fi-file-line fr-link--icon-left"
+          data-test="name"
+          href="#"
+          onClick={[Function]}
+        >
+          preuve_input.txt (TXT, 34 o)
+        </a>
+        <div
+          className="invisible group-hover:visible"
+        >
+          <button
+            className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line undefined"
+            onClick={[Function]}
+            title="Décrire"
+          />
+          <button
+            className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
+            onClick={[Function]}
+            title="Supprimer"
+          />
+        </div>
+      </div>
+      <p
+        className="text-xs fr-text-mention--grey mb-0 "
+        data-test="comment"
+        onClick={[Function]}
+      >
+        commentaire preuve fichier
+      </p>
+      <span
+        className="text-xs grey625"
+      >
+        Ajouté
+         le 
+        06 sept. 2022
+         par 
+        Yolo Dodo
+      </span>
+    </div>
+    <button
+      className="fr-btn fr-fi-add-line"
+      title="Ajouter une preuve"
+    />
+  </div>
+</div>
+`;
+
+exports[`Storyshots app/pages/collectivite/Bibliotheque/PreuveReglementaire Lien 1`] = `
+<div
+  className="flex flex-row gap-8 pt-2 pb-4"
+>
+  <div
+    className="flex flex-1 flex-col"
+  >
+    <span
+      className="fr-text--sm pt-2 text-black"
+    >
+      Agenda 21 / Agenda 2030
+      <span
+        className="fr-fi-information-line pl-4 text-bf500 cursor-pointer"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onPointerDown={[Function]}
+      />
+    </span>
+    <span
+      className="text-xs text-grey625"
+    >
+      1.1.3
+    </span>
+  </div>
+  <div
+    className="flex flex-1 flex-col justify-center space-y-2"
+  >
+    <div
+      data-test="item"
+    >
+      <div
+        className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0 cursor-pointer"
+      >
+        <a
+          className="fr-text--sm fr-mb-1v fr-fi-links-fill fr-link--icon-left"
+          data-test="name"
+          href="#"
+          onClick={[Function]}
+        >
+          dodo
+        </a>
+        <div
+          className="invisible group-hover:visible"
+        >
+          <button
+            className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line undefined"
+            onClick={[Function]}
+            title="Décrire"
+          />
+          <button
+            className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
+            onClick={[Function]}
+            title="Supprimer"
+          />
+        </div>
+      </div>
+      <span
+        className="text-xs grey625"
+      >
+        Ajouté
+         le 
+        06 sept. 2022
+         par 
+        Yolo Dodo
+      </span>
+    </div>
+    <button
+      className="fr-btn fr-fi-add-line"
+      title="Ajouter une preuve"
+    />
+  </div>
+</div>
+`;
+
+exports[`Storyshots app/pages/collectivite/Bibliotheque/PreuveReglementaire Multiple 1`] = `
+<div
+  className="flex flex-row gap-8 pt-2 pb-4"
+>
+  <div
+    className="flex flex-1 flex-col"
+  >
+    <span
+      className="fr-text--sm pt-2 text-black"
+    >
+      Etude de vulnérabilité au changement climatique
+      <span
+        className="fr-fi-information-line pl-4 text-bf500 cursor-pointer"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onPointerDown={[Function]}
+      />
+    </span>
+    <span
+      className="text-xs text-grey625"
+    >
+      1.1.3
+    </span>
+  </div>
+  <div
+    className="flex flex-1 flex-col justify-center space-y-2"
+  >
+    <div
+      data-test="item"
+    >
+      <div
+        className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0 cursor-pointer"
+      >
+        <a
+          className="fr-text--sm fr-mb-1v fr-fi-file-line fr-link--icon-left"
+          data-test="name"
+          href="#"
+          onClick={[Function]}
+        >
+          preuve_input.txt (TXT, 34 o)
+        </a>
+        <div
+          className="invisible group-hover:visible"
+        >
+          <button
+            className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line undefined"
+            onClick={[Function]}
+            title="Décrire"
+          />
+          <button
+            className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
+            onClick={[Function]}
+            title="Supprimer"
+          />
+        </div>
+      </div>
+      <p
+        className="text-xs fr-text-mention--grey mb-0 "
+        data-test="comment"
+        onClick={[Function]}
+      >
+        commentaire preuve fichier
+      </p>
+      <span
+        className="text-xs grey625"
+      >
+        Ajouté
+         le 
+        06 sept. 2022
+         par 
+        Yolo Dodo
+      </span>
+    </div>
+    <div
+      data-test="item"
+    >
+      <div
+        className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0 cursor-pointer"
+      >
+        <a
+          className="fr-text--sm fr-mb-1v fr-fi-links-fill fr-link--icon-left"
+          data-test="name"
+          href="#"
+          onClick={[Function]}
+        >
+          dodo
+        </a>
+        <div
+          className="invisible group-hover:visible"
+        >
+          <button
+            className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line undefined"
+            onClick={[Function]}
+            title="Décrire"
+          />
+          <button
+            className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
+            onClick={[Function]}
+            title="Supprimer"
+          />
+        </div>
+      </div>
+      <span
+        className="text-xs grey625"
+      >
+        Ajouté
+         le 
+        06 sept. 2022
+         par 
+        Yolo Dodo
+      </span>
+    </div>
+    <button
+      className="fr-btn fr-fi-add-line"
+      title="Ajouter une preuve"
+    />
+  </div>
+</div>
+`;
+
+exports[`Storyshots app/pages/collectivite/Bibliotheque/PreuveReglementaire Non Renseignee 1`] = `
+<div
+  className="flex flex-row gap-8 pt-2 pb-4"
+>
+  <div
+    className="flex flex-1 flex-col"
+  >
+    <span
+      className="fr-text--sm pt-2 text-black"
+    >
+      Délibération d'engagement dans la Convention des Maires
+      <span
+        className="fr-fi-information-line pl-4 text-bf500 cursor-pointer"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onPointerDown={[Function]}
+      />
+    </span>
+    <span
+      className="text-xs text-grey625"
+    >
+      1.1.2
+    </span>
+  </div>
+  <div
+    className="flex flex-1 flex-col justify-center space-y-2"
+  >
+    <button
+      className="fr-btn fr-fi-add-line"
+      title="Ajouter une preuve"
+    />
+  </div>
+</div>
+`;
