@@ -20,7 +20,7 @@ const HeaderNavigationProfileDropdown = ({
       <DropdownFloater
         placement="bottom-start"
         render={({close}) => (
-          <nav data-test="connectedMenu">
+          <nav>
             <ul className="m-0 p-0">
               <li className="fr-nav__item pb-0 border-b border-gray-200">
                 <NavLink
