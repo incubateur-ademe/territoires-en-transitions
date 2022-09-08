@@ -32,9 +32,12 @@ const MonCompte = () => {
 
   return (
     user && (
-      <div>
+      <div data-test="MonCompte">
         <h1 className="!mb-8 md:!mb-14">Mon compte</h1>
-        <div className="p-4 md:p-14 lg:px-24 bg-gray-100">
+        <div
+          data-test="modification-compte-formulaire"
+          className="p-4 md:p-14 lg:px-24 bg-gray-100"
+        >
           <p className="text-sm">Information requises</p>
           <Formik<ModifierCompteData>
             initialValues={{
@@ -48,6 +51,7 @@ const MonCompte = () => {
             {({values, isValid, handleBlur}) => (
               <Form>
                 <Field
+                  data-test="prenom"
                   name="prenom"
                   label="Prénom"
                   type="text"
@@ -61,6 +65,7 @@ const MonCompte = () => {
                 />
                 <Spacer size={3} />
                 <Field
+                  data-test="nom"
                   name="nom"
                   label="Nom"
                   type="text"
