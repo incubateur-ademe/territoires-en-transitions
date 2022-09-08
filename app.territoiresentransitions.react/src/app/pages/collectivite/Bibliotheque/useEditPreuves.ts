@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {useMutation} from 'react-query';
+import {useMutation, useQueryClient} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {TPreuve, TEditHandlers} from './types';
 
@@ -50,8 +50,10 @@ const useRemovePreuve = () =>
   );
 
 // renvoie une fonction de modification du commentaire d'une preuve
-const useUpdatePreuveCommentaire = () =>
-  useMutation(
+const useUpdatePreuveCommentaire = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation(
     async (preuve: TPreuve) => {
       const {id, commentaire} = preuve;
       return supabaseClient
@@ -59,5 +61,11 @@ const useUpdatePreuveCommentaire = () =>
         .update({commentaire})
         .match({id});
     },
-    {mutationKey: 'update_preuve_commentaire'}
+    {
+      mutationKey: 'update_preuve_commentaire',
+      onSuccess: (data, variables) => {
+        queryClient.invalidateQueries(['preuve', variables.collectivite_id]);
+      },
+    }
   );
+};
