@@ -1,0 +1,97 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots app/pages/Profil/MonCompte Defaut 1`] = `
+<div
+  data-test="MonCompte"
+>
+  <h1
+    className="!mb-8 md:!mb-14"
+  >
+    Mon compte
+  </h1>
+  <div
+    className="p-4 md:p-14 lg:px-24 bg-gray-100"
+    data-test="modification-compte-formulaire"
+  >
+    <p
+      className="text-sm"
+    >
+      Information requises
+    </p>
+    <form
+      action="#"
+      onReset={[Function]}
+      onSubmit={[Function]}
+    >
+      <div>
+        <label
+          className="fr-label"
+          htmlFor="4d0d5a97-95df-40c2-9b9a-f3f08203cade"
+        >
+          Prénom
+          <slot />
+        </label>
+        <input
+          className="fr-input mt-2 w-full bg-beige p-3 border-b-2 border-gray-500"
+          data-test="prenom"
+          id="4d0d5a97-95df-40c2-9b9a-f3f08203cade"
+          label="Prénom"
+          name="prenom"
+          onBlur={[Function]}
+          onChange={[Function]}
+          onKeyDown={[Function]}
+          type="text"
+          value="Yolo"
+        />
+      </div>
+      <div
+        className="p-3"
+      />
+      <div>
+        <label
+          className="fr-label"
+          htmlFor="819fdf71-b6d6-4a80-8f0c-dc2d14b24935"
+        >
+          Nom
+          <slot />
+        </label>
+        <input
+          className="fr-input mt-2 w-full bg-beige p-3 border-b-2 border-gray-500"
+          data-test="nom"
+          id="819fdf71-b6d6-4a80-8f0c-dc2d14b24935"
+          label="Nom"
+          name="nom"
+          onBlur={[Function]}
+          onChange={[Function]}
+          onKeyDown={[Function]}
+          type="text"
+          value="Dodo"
+        />
+      </div>
+      <div
+        className="p-3"
+      />
+      <div>
+        <label
+          className="fr-label"
+          htmlFor="2022f76c-2f55-494b-99c5-9b06665b9375"
+        >
+          Email
+          <slot />
+        </label>
+        <input
+          className="fr-input mt-2 w-full bg-beige p-3 border-b-2 border-gray-500"
+          id="2022f76c-2f55-494b-99c5-9b06665b9375"
+          label="Email"
+          name="email"
+          onBlur={[Function]}
+          onChange={[Function]}
+          onKeyDown={[Function]}
+          type="text"
+          value="yolo@dodo.com"
+        />
+      </div>
+    </form>
+  </div>
+</div>
+`;
