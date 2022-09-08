@@ -1,10 +1,5 @@
-import {Link, NavLink} from 'react-router-dom';
-import {
-  allCollectivitesPath,
-  monComptePath,
-  signInPath,
-  signUpPath,
-} from 'app/paths';
+import {Link} from 'react-router-dom';
+import {allCollectivitesPath, signInPath, signUpPath} from 'app/paths';
 import {TAuthContext} from 'core-logic/api/auth/AuthProvider';
 import HeaderNavigationProfileDropdown from './HeaderNavigationProfileDropdown';
 
@@ -33,7 +28,9 @@ const HeaderNavigation = ({auth}: Props) => {
             Aide
           </a>
           {isConnected && user ? (
-            <HeaderNavigationProfileDropdown user={user} auth={auth} />
+            <div data-test="connectedMenu">
+              <HeaderNavigationProfileDropdown user={user} auth={auth} />
+            </div>
           ) : (
             <>
               <Link data-test="signup" className="fr-link" to={signUpPath}>
