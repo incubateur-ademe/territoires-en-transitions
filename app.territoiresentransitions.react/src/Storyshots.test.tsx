@@ -11,7 +11,7 @@ import {act, create} from 'react-test-renderer';
 const converter = new Stories2SnapsConverter();
 
 // Les tests contenant ces mots clés sont skippés.
-const exclusions = ['floating', 'modal'];
+const exclusions = ['floating', 'modal', 'toast'];
 
 initStoryshots({
   asyncJest: true,
