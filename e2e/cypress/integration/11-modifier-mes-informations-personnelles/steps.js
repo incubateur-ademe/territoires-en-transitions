@@ -20,3 +20,9 @@ Given(/je modifie le champ "([^"]+)" en "([^"]+)"/, (champ, value) => {
 Given(/le champ "([^"]+)" doit contenir "([^"]+)"/, (champ, value) => {
   cy.get(`[data-test="${champ}"]`).should("have.value", value);
 });
+
+Given("la modale de modification d'email est affichée", () => {
+  cy.get(LocalSelectors["modale de modification d'email"].selector).should(
+    "be.visible"
+  );
+});
