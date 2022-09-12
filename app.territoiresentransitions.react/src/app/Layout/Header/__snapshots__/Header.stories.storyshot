@@ -91,38 +91,35 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
                 Aide
               </a>
               <div
-                data-test="connectedMenu"
+                onBlur={[Function]}
+                onClick={[Function]}
+                onFocus={[Function]}
+                onKeyDown={[Function]}
+                onKeyUp={[Function]}
+                onMouseDown={[Function]}
+                onPointerDown={[Function]}
               >
-                <div
-                  onBlur={[Function]}
-                  onClick={[Function]}
-                  onFocus={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onPointerDown={[Function]}
-                >
-                  <button
-                    className="fr-link"
-                    style={
-                      Object {
-                        "maxWidth": "15rem",
-                      }
+                <button
+                  className="fr-link"
+                  data-test="connectedMenu"
+                  style={
+                    Object {
+                      "maxWidth": "15rem",
                     }
+                  }
+                >
+                  <div
+                    className="fr-fi-account-line mr-2"
+                  />
+                  <span
+                    className="line-clamp-1"
                   >
-                    <div
-                      className="fr-fi-account-line mr-2"
-                    />
-                    <span
-                      className="line-clamp-1"
-                    >
-                      Yolo
-                    </span>
-                    <div
-                      className="fr-fi-arrow-down-s-line ml-2 scale-90"
-                    />
-                  </button>
-                </div>
+                    Yolo
+                  </span>
+                  <div
+                    className="fr-fi-arrow-down-s-line ml-2 scale-90"
+                  />
+                </button>
               </div>
             </ul>
           </div>

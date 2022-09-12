@@ -28,9 +28,7 @@ const HeaderNavigation = ({auth}: Props) => {
             Aide
           </a>
           {isConnected && user ? (
-            <div data-test="connectedMenu">
-              <HeaderNavigationProfileDropdown user={user} auth={auth} />
-            </div>
+            <HeaderNavigationProfileDropdown user={user} auth={auth} />
           ) : (
             <>
               <Link data-test="signup" className="fr-link" to={signUpPath}>
