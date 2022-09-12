@@ -26,7 +26,7 @@ exports[`Storyshots app/pages/Profil/MonCompte Defaut 1`] = `
       <div>
         <label
           className="fr-label"
-          htmlFor="4d0d5a97-95df-40c2-9b9a-f3f08203cade"
+          htmlFor="b9224f24-03d7-4b80-814f-45685f65a868"
         >
           Prénom
           <slot />
@@ -34,7 +34,7 @@ exports[`Storyshots app/pages/Profil/MonCompte Defaut 1`] = `
         <input
           className="fr-input mt-2 w-full bg-beige p-3 border-b-2 border-gray-500"
           data-test="prenom"
-          id="4d0d5a97-95df-40c2-9b9a-f3f08203cade"
+          id="b9224f24-03d7-4b80-814f-45685f65a868"
           label="Prénom"
           name="prenom"
           onBlur={[Function]}
@@ -50,7 +50,7 @@ exports[`Storyshots app/pages/Profil/MonCompte Defaut 1`] = `
       <div>
         <label
           className="fr-label"
-          htmlFor="819fdf71-b6d6-4a80-8f0c-dc2d14b24935"
+          htmlFor="fbb6e65a-e6b0-4b33-ac68-7b021512366b"
         >
           Nom
           <slot />
@@ -58,7 +58,7 @@ exports[`Storyshots app/pages/Profil/MonCompte Defaut 1`] = `
         <input
           className="fr-input mt-2 w-full bg-beige p-3 border-b-2 border-gray-500"
           data-test="nom"
-          id="819fdf71-b6d6-4a80-8f0c-dc2d14b24935"
+          id="fbb6e65a-e6b0-4b33-ac68-7b021512366b"
           label="Nom"
           name="nom"
           onBlur={[Function]}
@@ -74,14 +74,14 @@ exports[`Storyshots app/pages/Profil/MonCompte Defaut 1`] = `
       <div>
         <label
           className="fr-label"
-          htmlFor="2022f76c-2f55-494b-99c5-9b06665b9375"
+          htmlFor="49593217-192b-403f-b830-3f063fc3d409"
         >
           Email
           <slot />
         </label>
         <input
           className="fr-input mt-2 w-full bg-beige p-3 border-b-2 border-gray-500"
-          id="2022f76c-2f55-494b-99c5-9b06665b9375"
+          id="49593217-192b-403f-b830-3f063fc3d409"
           label="Email"
           name="email"
           onBlur={[Function]}
