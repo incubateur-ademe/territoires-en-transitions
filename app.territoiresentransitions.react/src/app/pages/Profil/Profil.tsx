@@ -6,7 +6,7 @@ import {ProfilRoutes} from './ProfileRoutes';
 const Profil = () => {
   return (
     <div className="flex items-start">
-      <nav className="hidden md:flex fr-sidemenu py-8 px-14 border-r border-gray-100">
+      <nav className="hidden md:flex fr-sidemenu w-64 py-8 md:px-8 lg:px-14 border-r border-gray-100 whitespace-nowrap">
         <div className="fr-sidemenu-wrapper">
           <ul className="fr-sidemenu_list">
             <li className="fr-sidemenu_item fr-sidemenu_item--active">
