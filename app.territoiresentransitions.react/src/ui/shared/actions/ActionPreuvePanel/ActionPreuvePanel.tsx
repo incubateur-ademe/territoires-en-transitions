@@ -1,11 +1,11 @@
 import {PreuveRead} from 'generated/dataLayer/preuve_read';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {usePreuvesParType} from 'app/pages/collectivite/Bibliotheque/usePreuves';
-import {PreuvesAction} from 'app/pages/collectivite/Bibliotheque/PreuvesAction';
+import {usePreuvesParType} from 'ui/shared/preuves/Bibliotheque/usePreuves';
+import {PreuvesAction} from 'ui/shared/preuves/Bibliotheque/PreuvesAction';
 import {
   TPreuveComplementaire,
   TPreuveReglementaire,
-} from 'app/pages/collectivite/Bibliotheque/types';
+} from 'ui/shared/preuves/Bibliotheque/types';
 
 export type TActionPreuvePanelProps = {
   action: ActionDefinitionSummary;

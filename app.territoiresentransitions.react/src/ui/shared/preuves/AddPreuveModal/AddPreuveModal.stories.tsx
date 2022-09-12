@@ -1,6 +1,6 @@
 import {Story, Meta} from '@storybook/react';
 import {action} from '@storybook/addon-actions';
-import {ResourceManager, TResourceManagerProps} from './index';
+import {AddPreuveModal, TAddPreuveModalProps} from './index';
 
 const DEFAULT_ARGS = {
   onClose: action('onClose'),
@@ -10,12 +10,12 @@ const DEFAULT_ARGS = {
   },
 };
 export default {
-  component: ResourceManager,
+  component: AddPreuveModal,
   args: DEFAULT_ARGS,
 } as Meta;
 
-const Template: Story<TResourceManagerProps> = args => (
-  <ResourceManager {...args} />
+const Template: Story<TAddPreuveModalProps> = args => (
+  <AddPreuveModal {...args} />
 );
 
 export const Lien = Template.bind({});

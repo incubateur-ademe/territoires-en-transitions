@@ -1,6 +1,6 @@
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {labellisationFichierWriteEndpoint} from 'core-logic/api/endpoints/LabellisationFichierWriteEndpoint';
-import {TAddFileFromLib} from 'ui/shared/ResourceManager/AddFile';
+import {TAddFileFromLib} from 'ui/shared/preuves/AddPreuveModal/AddFile';
 
 type TAddDocs = (demande_id: number) => {
   /** ajoute un fichier sélectionné depuis la bibliothèque */

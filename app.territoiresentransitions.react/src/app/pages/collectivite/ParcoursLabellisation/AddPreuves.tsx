@@ -2,7 +2,7 @@
  * Affiche le sélecteur de preuves
  */
 import {useAddPreuves} from './useAddPreuves';
-import {ResourceManager} from 'ui/shared/ResourceManager';
+import {AddPreuveModal} from 'ui/shared/preuves/AddPreuveModal';
 
 export type TAddDocsProps = {
   /** Identifiant de la demande de labellisation */
@@ -17,7 +17,7 @@ export const AddDocs = (props: TAddDocsProps) => {
   const handlers = useAddPreuves(demande_id);
 
   return (
-    <ResourceManager
+    <AddPreuveModal
       defaultActiveTab={defaultActiveTab}
       onClose={onClose}
       handlers={handlers}

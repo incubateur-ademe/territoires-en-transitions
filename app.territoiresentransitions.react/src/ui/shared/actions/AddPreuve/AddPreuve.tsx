@@ -3,7 +3,7 @@
  */
 import {TActionPreuvePanelProps} from '../ActionPreuvePanel/ActionPreuvePanel';
 import {useAddPreuveToAction} from './useAddPreuveToAction';
-import {ResourceManager} from 'ui/shared/ResourceManager';
+import {AddPreuveModal} from 'ui/shared/preuves/AddPreuveModal';
 
 export type TAddPreuveProps = TActionPreuvePanelProps & {
   /** Index de l'onglet actif */
@@ -16,7 +16,7 @@ export const AddPreuve = (props: TAddPreuveProps) => {
   const handlers = useAddPreuveToAction(action.id);
 
   return (
-    <ResourceManager
+    <AddPreuveModal
       defaultActiveTab={defaultActiveTab}
       onClose={onClose}
       handlers={handlers}

@@ -3,12 +3,12 @@
  */
 import {LabellisationDemandeRead} from 'generated/dataLayer/labellisation_demande_read';
 import {LabellisationParcoursRead} from 'generated/dataLayer/labellisation_parcours_read';
-import {LabellisationPreuveFichierRead} from 'generated/dataLayer/labellisation_preuve_fichier_read';
 import {referentielToName} from 'app/labels';
-import {DocItem} from 'ui/shared/ResourceManager/DocItem';
+import {PreuveDoc} from 'ui/shared/preuves/Bibliotheque/PreuveDoc';
 import {AddDocsButton} from './AddPreuvesButton';
 import {CritereRempli} from './CritereRempli';
-import {useEditPreuves} from './useEditPreuves';
+import {useEditPreuves} from 'ui/shared/preuves/Bibliotheque/useEditPreuves';
+import {TPreuveLabellisation} from 'ui/shared/preuves/Bibliotheque/types';
 
 const REGLEMENTS: {[k: string]: string} = {
   eci: '/Reglement_label_ECi_20220316.pdf',
@@ -18,7 +18,7 @@ const REGLEMENTS: {[k: string]: string} = {
 export type TCriterePreuvesProps = {
   collectiviteId: number;
   parcours: LabellisationParcoursRead;
-  preuves: LabellisationPreuveFichierRead[];
+  preuves: TPreuveLabellisation[];
   demande: LabellisationDemandeRead | null;
 };
 
@@ -94,13 +94,13 @@ const PreuveFichierDetail = ({
   preuve,
   demande,
 }: TCriterePreuvesProps & {
-  preuve: LabellisationPreuveFichierRead;
+  preuve: TPreuveLabellisation;
 }) => {
   const handlers = useEditPreuves(preuve, demande?.id || 0);
 
   return (
-    <DocItem
-      doc={{...preuve, type: 'fichier'}}
+    <PreuveDoc
+      preuve={preuve}
       readonly={!demande?.en_cours}
       classComment="pb-0 mb-2"
       handlers={handlers}

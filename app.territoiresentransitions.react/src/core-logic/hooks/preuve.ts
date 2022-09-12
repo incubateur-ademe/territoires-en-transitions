@@ -7,7 +7,7 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import {preuveFichierWriteEndpoint} from 'core-logic/api/endpoints/PreuveFichierWriteEndpoint';
 import {preuveLienWriteEndpoint} from 'core-logic/api/endpoints/PreuveLienWriteEndpoint';
 import {collectiviteBucketFilesReadEndpoint} from 'core-logic/api/endpoints/CollectiviteBucketFilesReadEndpoint';
-//import {preuveUploader} from 'ui/shared/ResourceManager/useUploader';
+//import {preuveUploader} from 'ui/shared/AddPreuveModal/useUploader';
 
 export const usePreuves = (action_id: string): PreuveRead[] => {
   const [preuves, setPreuves] = useState<PreuveRead[]>([]);
