@@ -6,22 +6,22 @@ import {AddLink, TAddLink} from './AddLink';
 import {AddFile, TAddFileFromLib} from './AddFile';
 import {AddFromLib} from './AddFromLib';
 
-export type TResourceManagerHandlers = {
+export type TAddPreuveModalHandlers = {
   /** ajoute un fichier sélectionné depuis la bibliothèque */
   addFileFromLib: TAddFileFromLib;
   /** ajoute un lien (l'onglet 'Lien' ne s'affiche pas si non renseigné) */
   addLink?: TAddLink;
 };
 
-export type TResourceManagerProps = {
+export type TAddPreuveModalProps = {
   /** Index de l'onglet actif */
   defaultActiveTab?: number;
   /** Gestionnaires d'événements */
-  handlers: TResourceManagerHandlers;
+  handlers: TAddPreuveModalHandlers;
   onClose: () => void;
 };
 
-export const ResourceManager = (props: TResourceManagerProps) => {
+export const AddPreuveModal = (props: TAddPreuveModalProps) => {
   const {defaultActiveTab, handlers} = props;
   const {addFileFromLib, addLink} = handlers;
 

@@ -4,8 +4,8 @@ import {
   UploadStatusCode,
   UploadStatusRunning,
   UploadStatusFailed,
-} from 'ui/shared/ResourceManager/types';
-import {useUploader} from 'ui/shared/ResourceManager/useUploader';
+} from 'ui/shared/preuves/AddPreuveModal/types';
+import {useUploader} from 'ui/shared/preuves/AddPreuveModal/useUploader';
 import {ButtonClose} from 'ui/shared/SmallIconButton';
 import {ProgressBar} from 'ui/shared/ProgressBar';
 import {formatFileSize} from 'utils/file';

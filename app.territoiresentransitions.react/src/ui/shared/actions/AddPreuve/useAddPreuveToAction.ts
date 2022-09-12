@@ -1,8 +1,8 @@
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {preuveFichierWriteEndpoint} from 'core-logic/api/endpoints/PreuveFichierWriteEndpoint';
 import {preuveLienWriteEndpoint} from 'core-logic/api/endpoints/PreuveLienWriteEndpoint';
-import {TAddFileFromLib} from 'ui/shared/ResourceManager/AddFile';
-import {TAddLink} from 'ui/shared/ResourceManager/AddLink';
+import {TAddFileFromLib} from 'ui/shared/preuves/AddPreuveModal/AddFile';
+import {TAddLink} from 'ui/shared/preuves/AddPreuveModal/AddLink';
 
 type TResourceDialog = (action_id: string) => {
   /** ajoute un fichier sélectionné depuis la bibliothèque */
