@@ -1,12 +1,14 @@
 import * as Yup from 'yup';
 import {Field, Form, Formik, FormikHandlers} from 'formik';
 
-import LabeledTextField from 'ui/forms/LabeledTextField';
 import {Spacer} from 'ui/shared/Spacer';
+import Modal from 'ui/shared/floating-ui/Modal';
+import LabeledTextField from 'ui/forms/LabeledTextField';
 
 import {useAuth, UserData} from 'core-logic/api/auth/AuthProvider';
 import {useUpdateEmail} from 'core-logic/api/auth/useUpdateEmail';
 import {useUpdateDCP} from 'core-logic/api/auth/useUpdateDCP';
+import {useState} from 'react';
 
 interface ModifierCompteData {
   prenom: string;
@@ -25,6 +27,8 @@ export const MonCompte = ({user}: {user: UserData}) => {
 
   const {handleUpdateDCP, renderToast: renderDCPToast} = useUpdateDCP(user.id);
   const {handleUpdateEmail, renderToast: renderEmailToast} = useUpdateEmail();
+
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
 
   return (
     <div data-test="MonCompte">
@@ -82,8 +86,45 @@ export const MonCompte = ({user}: {user: UserData}) => {
                   handleBlur(evt);
                   isValid &&
                     user.email !== values.email &&
-                    handleUpdateEmail({email: values.email});
+                    setIsEmailModalOpen(true);
                 }}
+              />
+              <Modal
+                size="lg"
+                externalOpen={isEmailModalOpen}
+                setExternalOpen={setIsEmailModalOpen}
+                render={({labelId, descriptionId}) => (
+                  <>
+                    <h4 id={labelId} className="fr-h4">
+                      Modifier mon adresse email
+                    </h4>
+                    <p id={descriptionId}>
+                      Cette modification sera effective quand vous aurez cliqué
+                      sur le lien de validation du message envoyé à la nouvelle
+                      adresse associée à votre compte{' '}
+                      <span className="font-bold">{values.email}</span>
+                    </p>
+                    <div className="mt-2 fr-btns-group fr-btns-group--left fr-btns-group--inline-reverse fr-btns-group--inline-lg">
+                      <button
+                        onClick={() => setIsEmailModalOpen(false)}
+                        className="fr-btn fr-btn--secondary"
+                        aria-label="Annuler"
+                      >
+                        Annuler
+                      </button>
+                      <button
+                        onClick={() => {
+                          handleUpdateEmail({email: values.email});
+                          setIsEmailModalOpen(false);
+                        }}
+                        aria-label="Confirmer"
+                        className="fr-btn"
+                      >
+                        Confirmer
+                      </button>
+                    </div>
+                  </>
+                )}
               />
             </Form>
           )}
