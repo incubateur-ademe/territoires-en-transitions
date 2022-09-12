@@ -78,6 +78,7 @@ export const MonCompte = ({user}: {user: UserData}) => {
               />
               <Spacer size={3} />
               <Field
+                data-test="email"
                 name="email"
                 label="Email"
                 type="text"
@@ -94,7 +95,7 @@ export const MonCompte = ({user}: {user: UserData}) => {
                 externalOpen={isEmailModalOpen}
                 setExternalOpen={setIsEmailModalOpen}
                 render={({labelId, descriptionId}) => (
-                  <>
+                  <div data-test="modification-email-modal">
                     <h4 id={labelId} className="fr-h4">
                       Modifier mon adresse email
                     </h4>
@@ -123,7 +124,7 @@ export const MonCompte = ({user}: {user: UserData}) => {
                         Confirmer
                       </button>
                     </div>
-                  </>
+                  </div>
                 )}
               />
             </Form>
