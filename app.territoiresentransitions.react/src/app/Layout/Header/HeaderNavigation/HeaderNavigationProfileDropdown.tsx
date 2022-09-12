@@ -60,7 +60,11 @@ const HeaderNavigationProfileDropdownButtonDisplayed = forwardRef(
     ref?: Ref<HTMLDivElement>
   ) => (
     <div ref={ref} {...props}>
-      <button className="fr-link" style={{maxWidth: '15rem'}}>
+      <button
+        data-test="connectedMenu"
+        className="fr-link"
+        style={{maxWidth: '15rem'}}
+      >
         <div className="fr-fi-account-line mr-2" />
         <span className="line-clamp-1">{user.prenom}</span>
         <div
