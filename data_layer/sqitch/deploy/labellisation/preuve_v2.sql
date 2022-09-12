@@ -194,7 +194,8 @@ select 'labellisation',
                        'en_cours', d.en_cours,
                        'referentiel', d.referentiel,
                        'etoiles', d.etoiles,
-                       'date', d.date
+                       'date', d.date,
+                       'id', d.id
                    )),
        null
 
