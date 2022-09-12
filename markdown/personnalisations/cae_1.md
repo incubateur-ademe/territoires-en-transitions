@@ -36,6 +36,8 @@ Pour une collectivité n'ayant pas la compétence AOM, le score de la 1.2.2 est 
 
 Pour une collectivité n'ayant pas de centre urbain de plus de 5000 habitants ET n'ayant pas la compétence AOM, le score de la 1.2.2 est réduit à 2 points.
 
+Pour une collectivité AOM, de plus de 100 000 habitants, la 1.2.2.1 est désactivée et la 1.2.2.5 est évaluée sur 40 % des points.
+
 # Personnalisation cae 1.2.2.1.1 liee EPCI
 ```yaml
 action_id: cae_1.2.2.1.1
@@ -62,10 +64,6 @@ identite(type, EPCI)
 action_id: cae_1.2.2.1
 ```
 ## Règles
-### Réduction de potentiel
-```formule
-si reponse(AOM_1, OUI) et identite(population, plus_de_100000) alors 0
-```
 ### Désactivation
 ```formule
 reponse(AOM_1, OUI) et identite(population, plus_de_100000)
