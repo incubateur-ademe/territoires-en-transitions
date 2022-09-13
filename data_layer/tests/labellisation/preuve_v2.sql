@@ -1,8 +1,17 @@
 begin;
 
-select plan(7);
+select plan(8);
+
 truncate storage.objects cascade;
 truncate labellisation.bibliotheque_fichier cascade;
+truncate client_scores;
+
+-- La collectivite doit avoir des scores pour apparaître dans la vue des preuves 
+select test_write_scores(1);
+
+-- Les preuves réglementaires (insérées via 22-insert_fake_preuve_reglementaire.sql) sont dans la vue 
+select ok((select action ->> 'action_id' = 'cae_1.1.2.1' from preuve where collectivite_id = 1 and preuve_reglementaire ->> 'id' = 'pcaet_ees'), 
+'Le preuves réglementaires apparaissent dans la vue avec les détails de l''action. ');
 
 -- Un faux fichier.
 select cb.collectivite_id,
