@@ -51,7 +51,8 @@ Fonctionnalité: Création de compte
     # -----------
     # On est connecté mais on affiche un bouton se connecter
     # Le flow va changer
-    Quand je me déconnecte
+    Quand je recharge la page
+    Et que je me déconnecte
     Et que je clique sur le bouton "Se connecter" du "header"
     Alors la page vérifie les conditions suivantes :
       | Elément                                    | Condition |
