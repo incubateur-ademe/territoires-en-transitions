@@ -51,6 +51,7 @@ export const MonCompte = ({user}: {user: UserData}) => {
             <Form>
               <Field
                 data-test="prenom"
+                id="prenom"
                 name="prenom"
                 label="Prénom"
                 type="text"
@@ -65,6 +66,7 @@ export const MonCompte = ({user}: {user: UserData}) => {
               <Spacer size={3} />
               <Field
                 data-test="nom"
+                id="nom"
                 name="nom"
                 label="Nom"
                 type="text"
@@ -79,6 +81,7 @@ export const MonCompte = ({user}: {user: UserData}) => {
               <Spacer size={3} />
               <Field
                 data-test="email"
+                id="email"
                 name="email"
                 label="Email"
                 type="text"
