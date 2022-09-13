@@ -80,9 +80,11 @@ action_id: eci_5.3.3
 # Conventions de partenariat
 ```yaml
 action_id: eci_5.3.3
+id: eci_533_convention_partenariat
 ```
 
 # Supports de communication
 ```yaml
 action_id: eci_5.3.3
+id:  eci_533_support_comm
 ```
