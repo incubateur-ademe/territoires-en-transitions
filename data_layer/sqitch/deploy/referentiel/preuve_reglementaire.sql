@@ -7,7 +7,7 @@ BEGIN;
 alter table action_definition
     alter column preuve drop not null;
 
-create domain preuve_id as varchar(30);
+create domain preuve_id as varchar(50);
 create table preuve_reglementaire_definition
 (
     id              preuve_id primary key,
