@@ -1,6 +1,7 @@
 # Délibération indiquant l'engagement à développer une stratégie et un programme d'actions Economie Circulaire
 ```yaml
 action_id: eci_1.1.1
+id: delib_engagement_progr_actions_eci
 ```
 ## Description
 Tout document démontrant l’existence d’une politique ECi : délibération, note explicative.
@@ -8,6 +9,7 @@ Tout document démontrant l’existence d’une politique ECi : délibération, 
 # Délibération qui donne délégation et/ou qui cite l’élu.e.s en charge de l’ECi
 ```yaml
 action_id: eci_1.1.1
+id: delib_delegation_eci
 ```
 ## Description
 Si l’ECi ne figure pas explicitement dans la délégation, joindre une note explicative.
@@ -15,6 +17,7 @@ Si l’ECi ne figure pas explicitement dans la délégation, joindre une note ex
 # L'organigramme de l'équipe mobilisée pour la mise en œuvre de la politique Economie Circulaire (élu et équipe technique)
 ```yaml
 action_id: eci_1.1.1
+id: equipe_mobilisee_eci
 ```
 ## Description
 Organigramme du candidat sur lequel sont surlignés les services et directions qui participent à la politique ECi.
@@ -22,6 +25,7 @@ Organigramme du candidat sur lequel sont surlignés les services et directions q
 # Justificatif d'une ligne budgétaire dédiée à la stratégie et au programme d'actions Economie Circulaire
 ```yaml
 action_id: eci_1.1.1
+id: justif_ligne_budget_eci
 ```
 ## Description
 Toute ligne budgétaire relative à la politique économie circulaire quel que soit le service mettant en oeuvre l’action.
@@ -29,11 +33,13 @@ Toute ligne budgétaire relative à la politique économie circulaire quel que s
 # Fiches de poste des membres de l'équipe mises à jour
 ```yaml
 action_id: eci_1.1.1
+id: fiches_equipe_maj
 ```
 
 # Diagnostic de l'économie circulaire
 ```yaml
 action_id: eci_1.1.2
+id: diag_eci
 ```
 ## Description
 - Tout élément de diagnostic disponible, même issu de diagnostics relatifs à des démarches connexes (PLPDMA, SRDEII, PRPGD, PRAEC, SRADDET, S3, PLU,
@@ -44,6 +50,7 @@ SCOT, PCAET, PAT, SRDT, etc…).
 # Synthèse des enjeux, objectifs et actions économie circulaire des documents de planification analysés
 ```yaml
 action_id: eci_1.1.2
+id: synthese_enjeux_objectifs_actions_eci
 ```
 ## Description
 La synthèse doit indiquer les sources des enjeux, objectifs et actions.
@@ -51,26 +58,31 @@ La synthèse doit indiquer les sources des enjeux, objectifs et actions.
 # Analyse des enjeux économiques intégrés dans le diagnostic
 ```yaml
 action_id: eci_1.1.2
+id: analyse_enjeux_eco
 ```
 
 # Analyse des enjeux environnementaux intégrés dans le diagnostic
 ```yaml
 action_id: eci_1.1.2
+id: analyse_enjeux_envir
 ```
 
 # Analyse des enjeux sociaux intégrés dans le diagnostic
 ```yaml
 action_id: eci_1.1.2
+id: analyse_enjeux_sociaux
 ```
 
 # La liste des acteurs et des initiatives en économie circulaire sur le territoire
 ```yaml
 action_id: eci_1.1.2
+id: liste_acteurs_initiatives_eci
 ```
 
 # Liste des membres du comité de pilotage interne
 ```yaml
 action_id: eci_1.1.3
+id: liste_membres_comite_pilotage_interne
 ```
 ## Description
 La gouvernance interne, inter-services, peut être justifiée par des compte-rendu de comité de pilotage, feuille de présence, schéma de gouvernance, etc.
@@ -78,17 +90,20 @@ La gouvernance interne, inter-services, peut être justifiée par des compte-ren
 # Liste des membres de la gouvernance élargie et leurs rôles
 ```yaml
 action_id: eci_1.1.3
+id: liste_membres_gouvernance
 ```
 
 # Compte-rendu des réunions de gouvernance et des groupes de travail pour la construction des actions économie circulaire
 ```yaml
 action_id: eci_1.1.3
+id: cr_reunions_gouvernance
 ```
 
 
 # Délibération relative à l'adoption de la stratégie, comprenant le budget associé
 ```yaml
 action_id: eci_1.1.4
+id: delib_relative_
 ```
 
 # Programme d'actions formalisé

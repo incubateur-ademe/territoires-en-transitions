@@ -149,7 +149,7 @@ id: cdc_projets_urbanisme
 # Convention de partenariat avec des organismes certificateurs du bâtiment
 ```yaml
 action_id: cae_1.3.2.3
-id: certification_batiment
+id: certif_batiment
 ```
 
 # Cahier des charges de cession des terrains intégrant des prescriptions énergétiques
