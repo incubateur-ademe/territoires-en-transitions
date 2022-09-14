@@ -22,7 +22,6 @@ exports[`Storyshots Charts/DoughnutWithNumberChart Doughnut With Number Story 1`
     title={null}
   >
     <canvas
-      data-testid="canvas"
       height={150}
       onClick={[Function]}
       role="img"
