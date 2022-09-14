@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import {Tooltip} from 'ui/shared/floating-ui/Tooltip';
 import {TPreuve, TPreuveReglementaire} from './types';
 import {EditablePreuveDoc} from './PreuveDoc';
+import {AddPreuveReglementaire} from 'ui/shared/actions/AddPreuve/AddPreuveReglementaire';
 
 export type TPreuveReglementaireProps = {
   preuves: TPreuveReglementaire[];
@@ -18,11 +19,11 @@ export const PreuveReglementaire = (props: TPreuveReglementaireProps) => {
     return null;
   }
 
-  // lit les informations du 1er item (identiques aux suivans)
+  // lit les informations du 1er item (identiques aux suivants)
   const first = preuves[0];
   const {action, preuve_reglementaire, fichier, lien} = first;
   const {identifiant, concerne, desactive} = action;
-  const {nom, description} = preuve_reglementaire;
+  const {id: preuve_id, nom, description} = preuve_reglementaire;
   const isDisabled = !concerne || desactive;
   const haveDoc = fichier || lien;
 
@@ -57,12 +58,7 @@ export const PreuveReglementaire = (props: TPreuveReglementaireProps) => {
               <EditablePreuveDoc key={preuve.id} preuve={preuve as TPreuve} />
             ))
           : null}
-        <button
-          className={classNames('fr-btn fr-fi-add-line', {
-            'fr-btn--secondary': isDisabled,
-          })}
-          title="Ajouter une preuve"
-        />
+        <AddPreuveReglementaire preuve_id={preuve_id} isDisabled={isDisabled} />
       </div>
     </div>
   );

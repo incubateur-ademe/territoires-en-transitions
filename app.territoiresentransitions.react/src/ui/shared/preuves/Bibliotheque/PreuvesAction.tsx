@@ -1,8 +1,10 @@
 import {TPreuveComplementaire, TPreuveReglementaire} from './types';
 import {PreuveReglementaire} from './PreuveReglementaire';
 import {EditablePreuveDoc} from './PreuveDoc';
+import {AddPreuveComplementaire} from 'ui/shared/actions/AddPreuve/AddPreuveComplementaire';
 
 export type TPreuvesActionProps = {
+  action_id: string;
   /** les preuves réglementaires */
   reglementaires?: TPreuveReglementaire[];
   /** les preuves complémentaires */
@@ -17,7 +19,7 @@ export type TPreuvesActionProps = {
  * preuves réglementaires celles associées au même id de définition
  */
 export const PreuvesAction = (props: TPreuvesActionProps) => {
-  const {reglementaires, complementaires, showWarning} = props;
+  const {action_id, reglementaires, complementaires, showWarning} = props;
   const preuvesParId = reglementaires?.length
     ? Array.from(groupByPreuveDefinitionId(reglementaires))
     : null;
@@ -43,9 +45,7 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
         </p>
       )}
       <h5>Preuves complémentaires</h5>
-      <button className="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-fi-add-line">
-        Ajouter une preuve complémentaire
-      </button>
+      <AddPreuveComplementaire action_id={action_id} />
       <div className="divide-y divide-[#ddd]">
         {complementaires?.map(preuve => (
           <div className="py-4" key={preuve.id}>
