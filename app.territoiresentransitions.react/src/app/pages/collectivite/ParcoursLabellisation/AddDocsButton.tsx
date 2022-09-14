@@ -1,16 +1,19 @@
 import {useState} from 'react';
 import Modal from 'ui/shared/floating-ui/Modal';
-import {AddDocs} from './AddDocs';
+import {AddPreuveModal} from 'ui/shared/preuves/AddPreuveModal';
+import {useAddPreuveToDemande} from './useAddPreuveToDemande';
 
 export type TAddDocsButtonProps = {
   demande_id: number;
 };
 
 /**
- * Affiche un bouton permettant d'ouvrir le sélecteur de fichiers
+ * Affiche un bouton permettant d'ouvrir le sélecteur de fichiers pour ajouter
+ * des documents à une demande de labellisation
  */
 export const AddDocsButton = (props: TAddDocsButtonProps) => {
   const [opened, setOpened] = useState(false);
+  const handlers = useAddPreuveToDemande(props.demande_id);
 
   return (
     <Modal
@@ -21,7 +24,10 @@ export const AddDocsButton = (props: TAddDocsButtonProps) => {
         return (
           <>
             <h4>Ajouter un document</h4>
-            <AddDocs {...props} onClose={() => setOpened(false)} />
+            <AddPreuveModal
+              onClose={() => setOpened(false)}
+              handlers={handlers}
+            />
           </>
         );
       }}
