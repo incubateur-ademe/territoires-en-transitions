@@ -4,16 +4,16 @@
 
 import {LabellisationDemandeRead} from 'generated/dataLayer/labellisation_demande_read';
 import {LabellisationParcoursRead} from 'generated/dataLayer/labellisation_parcours_read';
-import {LabellisationPreuveFichierRead} from 'generated/dataLayer/labellisation_preuve_fichier_read';
 import {useState} from 'react';
 import {PageHeaderLeft} from 'ui/PageHeader';
+import {TPreuve} from 'ui/shared/preuves/Bibliotheque/types';
 import {DemandeLabellisationModal} from './DemandeLabellisationModal';
 import {numLabels} from './numLabels';
 
 export type THeaderProps = {
   parcours: LabellisationParcoursRead;
   demande: LabellisationDemandeRead | null;
-  preuves: LabellisationPreuveFichierRead[];
+  preuves: TPreuve[];
 };
 
 export const Header = (props: THeaderProps) => {
