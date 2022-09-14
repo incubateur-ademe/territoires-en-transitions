@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots app/pages/collectivite/Bibliotheque/PreuveDoc Preuve Fichier 1`] = `
+exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveDoc Preuve Fichier 1`] = `
 <div
   data-test="item"
 >
@@ -49,7 +49,7 @@ exports[`Storyshots app/pages/collectivite/Bibliotheque/PreuveDoc Preuve Fichier
 </div>
 `;
 
-exports[`Storyshots app/pages/collectivite/Bibliotheque/PreuveDoc Preuve Fichier Commentee 1`] = `
+exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveDoc Preuve Fichier Commentee 1`] = `
 <div
   data-test="item"
 >
@@ -98,7 +98,7 @@ exports[`Storyshots app/pages/collectivite/Bibliotheque/PreuveDoc Preuve Fichier
 </div>
 `;
 
-exports[`Storyshots app/pages/collectivite/Bibliotheque/PreuveDoc Preuve Lien 1`] = `
+exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveDoc Preuve Lien 1`] = `
 <div
   data-test="item"
 >
@@ -140,7 +140,7 @@ exports[`Storyshots app/pages/collectivite/Bibliotheque/PreuveDoc Preuve Lien 1`
 </div>
 `;
 
-exports[`Storyshots app/pages/collectivite/Bibliotheque/PreuveDoc Preuve Lien Commentee 1`] = `
+exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveDoc Preuve Lien Commentee 1`] = `
 <div
   data-test="item"
 >

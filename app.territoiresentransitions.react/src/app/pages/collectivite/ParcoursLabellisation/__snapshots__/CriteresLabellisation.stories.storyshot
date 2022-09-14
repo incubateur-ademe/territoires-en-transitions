@@ -538,9 +538,15 @@ Array [
       </a>
     </li>
     <button
+      aria-expanded="false"
+      aria-haspopup="dialog"
       className="fr-btn fr-btn--sm fr-btn--secondary"
       data-test="AddDocsButton"
       onClick={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onPointerDown={[Function]}
     >
       + Ajouter
     </button>
@@ -1086,9 +1092,15 @@ Array [
       </a>
     </li>
     <button
+      aria-expanded="false"
+      aria-haspopup="dialog"
       className="fr-btn fr-btn--sm fr-btn--secondary"
       data-test="AddDocsButton"
       onClick={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onPointerDown={[Function]}
     >
       + Ajouter
     </button>

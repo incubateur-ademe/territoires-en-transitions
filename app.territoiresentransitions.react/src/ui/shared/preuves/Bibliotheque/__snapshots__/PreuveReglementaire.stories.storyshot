@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots app/pages/collectivite/Bibliotheque/PreuveReglementaire Action Desactivee 1`] = `
+exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Action Desactivee 1`] = `
 <div
   className="flex flex-row gap-8 pt-2 pb-4"
 >
@@ -37,14 +37,22 @@ exports[`Storyshots app/pages/collectivite/Bibliotheque/PreuveReglementaire Acti
     className="flex flex-1 flex-col justify-center space-y-2"
   >
     <button
+      aria-expanded="false"
+      aria-haspopup="dialog"
       className="fr-btn fr-fi-add-line fr-btn--secondary"
+      data-test="AddPreuveReglementaire"
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onPointerDown={[Function]}
       title="Ajouter une preuve"
     />
   </div>
 </div>
 `;
 
-exports[`Storyshots app/pages/collectivite/Bibliotheque/PreuveReglementaire Action Non Concernee 1`] = `
+exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Action Non Concernee 1`] = `
 <div
   className="flex flex-row gap-8 pt-2 pb-4"
 >
@@ -81,14 +89,22 @@ exports[`Storyshots app/pages/collectivite/Bibliotheque/PreuveReglementaire Acti
     className="flex flex-1 flex-col justify-center space-y-2"
   >
     <button
+      aria-expanded="false"
+      aria-haspopup="dialog"
       className="fr-btn fr-fi-add-line fr-btn--secondary"
+      data-test="AddPreuveReglementaire"
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onPointerDown={[Function]}
       title="Ajouter une preuve"
     />
   </div>
 </div>
 `;
 
-exports[`Storyshots app/pages/collectivite/Bibliotheque/PreuveReglementaire Fichier 1`] = `
+exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Fichier 1`] = `
 <div
   className="flex flex-row gap-8 pt-2 pb-4"
 >
@@ -166,14 +182,22 @@ exports[`Storyshots app/pages/collectivite/Bibliotheque/PreuveReglementaire Fich
       </span>
     </div>
     <button
+      aria-expanded="false"
+      aria-haspopup="dialog"
       className="fr-btn fr-fi-add-line"
+      data-test="AddPreuveReglementaire"
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onPointerDown={[Function]}
       title="Ajouter une preuve"
     />
   </div>
 </div>
 `;
 
-exports[`Storyshots app/pages/collectivite/Bibliotheque/PreuveReglementaire Lien 1`] = `
+exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Lien 1`] = `
 <div
   className="flex flex-row gap-8 pt-2 pb-4"
 >
@@ -244,14 +268,22 @@ exports[`Storyshots app/pages/collectivite/Bibliotheque/PreuveReglementaire Lien
       </span>
     </div>
     <button
+      aria-expanded="false"
+      aria-haspopup="dialog"
       className="fr-btn fr-fi-add-line"
+      data-test="AddPreuveReglementaire"
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onPointerDown={[Function]}
       title="Ajouter une preuve"
     />
   </div>
 </div>
 `;
 
-exports[`Storyshots app/pages/collectivite/Bibliotheque/PreuveReglementaire Multiple 1`] = `
+exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Multiple 1`] = `
 <div
   className="flex flex-row gap-8 pt-2 pb-4"
 >
@@ -368,14 +400,22 @@ exports[`Storyshots app/pages/collectivite/Bibliotheque/PreuveReglementaire Mult
       </span>
     </div>
     <button
+      aria-expanded="false"
+      aria-haspopup="dialog"
       className="fr-btn fr-fi-add-line"
+      data-test="AddPreuveReglementaire"
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onPointerDown={[Function]}
       title="Ajouter une preuve"
     />
   </div>
 </div>
 `;
 
-exports[`Storyshots app/pages/collectivite/Bibliotheque/PreuveReglementaire Non Renseignee 1`] = `
+exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Non Renseignee 1`] = `
 <div
   className="flex flex-row gap-8 pt-2 pb-4"
 >
@@ -407,7 +447,15 @@ exports[`Storyshots app/pages/collectivite/Bibliotheque/PreuveReglementaire Non 
     className="flex flex-1 flex-col justify-center space-y-2"
   >
     <button
+      aria-expanded="false"
+      aria-haspopup="dialog"
       className="fr-btn fr-fi-add-line"
+      data-test="AddPreuveReglementaire"
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onPointerDown={[Function]}
       title="Ajouter une preuve"
     />
   </div>

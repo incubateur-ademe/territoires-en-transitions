@@ -13,7 +13,15 @@ Array [
     Preuves complémentaires
   </h5>,
   <button
+    aria-expanded="false"
+    aria-haspopup="dialog"
     className="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-fi-add-line"
+    data-test="AddPreuveComlementaire"
+    onClick={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    onMouseDown={[Function]}
+    onPointerDown={[Function]}
   >
     Ajouter une preuve complémentaire
   </button>,
