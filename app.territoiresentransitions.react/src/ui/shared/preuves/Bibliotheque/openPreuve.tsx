@@ -17,12 +17,10 @@ export const openPreuve = async (preuve: TPreuve) => {
 };
 
 const downloadPreuve = async (preuve: TPreuve) => {
-  const {filename, bucket_id} = preuve.fichier!;
+  const {filename, hash, bucket_id} = preuve.fichier!;
   // télécharge le fichier car l'ouverture directe de l'URL ne fonctionne
   // pas, les headers d'authenfication étant absents
-  const {data} = await supabaseClient.storage
-    .from(bucket_id)
-    .download(filename);
+  const {data} = await supabaseClient.storage.from(bucket_id).download(hash);
 
   // si le téléchargement a réussi
   if (data) {
