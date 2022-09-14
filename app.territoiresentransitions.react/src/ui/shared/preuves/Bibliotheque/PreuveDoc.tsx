@@ -7,7 +7,7 @@ import {ButtonComment, ButtonRemove} from 'ui/shared/SmallIconButton';
 import {formatFileSize, getExtension} from 'utils/file';
 import {TPreuve, TEditHandlers} from './types';
 import {openPreuve} from './openPreuve';
-import {useEditPreuves} from './useEditPreuves';
+import {useEditPreuve} from './useEditPreuve';
 
 export type TPreuveDocProps = {
   classComment?: string;
@@ -17,7 +17,7 @@ export type TPreuveDocProps = {
 };
 
 export const EditablePreuveDoc = (props: Omit<TPreuveDocProps, 'handlers'>) => {
-  const handlers = useEditPreuves(props.preuve);
+  const handlers = useEditPreuve(props.preuve);
   return <PreuveDoc {...props} handlers={handlers} />;
 };
 
