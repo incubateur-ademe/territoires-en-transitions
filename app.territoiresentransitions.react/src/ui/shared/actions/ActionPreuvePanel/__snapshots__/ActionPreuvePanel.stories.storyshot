@@ -16,7 +16,7 @@ Array [
     aria-expanded="false"
     aria-haspopup="dialog"
     className="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-fi-add-line"
-    data-test="AddPreuveComlementaire"
+    data-test="AddPreuveComplementaire"
     onClick={[Function]}
     onKeyDown={[Function]}
     onKeyUp={[Function]}
