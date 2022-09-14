@@ -3,8 +3,10 @@ import {useQuery} from 'react-query';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {TPreuve, TPreuveType} from './types';
 
+type TFilters = {action_id?: string; demande_id?: number};
+
 // charge les données
-const fetch = async (collectivite_id: number, action_id?: string) => {
+const fetch = async (collectivite_id: number, filters?: TFilters) => {
   // lit la liste des preuves de la collectivité
   const query = supabaseClient
     .from<TPreuve>('preuve')
@@ -12,9 +14,17 @@ const fetch = async (collectivite_id: number, action_id?: string) => {
     .eq('collectivite_id', collectivite_id);
 
   // éventuellement filtrées par action (et ses sous-actions)
+  const action_id = filters?.action_id;
   if (action_id) {
     query.ilike('action->>action_id' as 'action', `${action_id}%`);
   }
+
+  // ou par demande de labellisation
+  const demande_id = filters?.demande_id;
+  if (demande_id) {
+    query.eq('demande->>id' as 'demande', demande_id);
+  }
+
   const {data, error} = await query;
 
   if (error) {
@@ -27,12 +37,12 @@ const fetch = async (collectivite_id: number, action_id?: string) => {
 /**
  * Donne la liste de toutes les preuves de la collectivité, éventuellement
  * filtrée pour ne conserver que celles associées à une action et ses
- * sous-actions
+ * sous-actions OU à une demande de labellelisation
  */
-export const usePreuves = (action_id?: string) => {
+export const usePreuves = (filters?: TFilters) => {
   const collectivite_id = useCollectiviteId();
-  const {data} = useQuery(['preuve', collectivite_id, action_id], () =>
-    collectivite_id ? fetch(collectivite_id, action_id) : []
+  const {data} = useQuery(['preuve', collectivite_id, filters], () =>
+    collectivite_id ? fetch(collectivite_id, filters) : []
   );
   return data || [];
 };
@@ -40,8 +50,8 @@ export const usePreuves = (action_id?: string) => {
 /**
  * Identique à `usePreuves` mais indexées par type de preuve
  */
-export const usePreuvesParType = (action_id?: string) => {
-  const preuves = usePreuves(action_id);
+export const usePreuvesParType = (filters?: TFilters) => {
+  const preuves = usePreuves(filters);
   return groupByType(preuves);
 };
 
