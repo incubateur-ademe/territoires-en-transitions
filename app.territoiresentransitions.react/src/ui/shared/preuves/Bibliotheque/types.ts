@@ -69,7 +69,7 @@ type TPreuveComplementaireFields = {
 };
 
 // action liée à une preuve réglementaire ou complémentaire
-type TPreuveAction = {
+export type TPreuveAction = {
   action_id: string;
   nom: string;
   description: string;
