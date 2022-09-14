@@ -11,6 +11,12 @@ const fetch = async (collectivite_id: number, filters?: TFilters) => {
   const query = supabaseClient
     .from<TPreuve>('preuve')
     .select('*')
+    .order('action->>action_id' as 'action', {ascending: true})
+    .order('preuve_reglementaire->>nom' as 'preuve_reglementaire', {
+      ascending: true,
+    })
+    .order('lien->>titre' as 'lien', {ascending: true})
+    .order('fichier->>filename' as 'fichier', {ascending: true})
     .eq('collectivite_id', collectivite_id);
 
   // éventuellement filtrées par action (et ses sous-actions)
