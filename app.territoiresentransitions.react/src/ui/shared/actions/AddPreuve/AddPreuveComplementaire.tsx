@@ -34,7 +34,7 @@ export const AddPreuveComplementaire = (props: TAddPreuveButtonProps) => {
       }}
     >
       <button
-        data-test="AddPreuveComlementaire"
+        data-test="AddPreuveComplementaire"
         className="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-fi-add-line"
         onClick={() => setOpened(true)}
       >
