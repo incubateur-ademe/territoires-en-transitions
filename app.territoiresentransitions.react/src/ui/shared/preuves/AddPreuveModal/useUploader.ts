@@ -9,8 +9,8 @@ import {
 } from './types';
 import {collectiviteBucketReadEndpoint} from 'core-logic/api/endpoints/CollectiviteBucketReadEndpoint';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useMutation, useQueryClient} from 'react-query';
 import {shasum256} from 'utils/shasum256';
+import {useAddFileToLib} from './useAddFileToLib';
 
 /**
  * Gère l'upload et envoi une notification après un transfert réussi
@@ -19,11 +19,11 @@ import {shasum256} from 'utils/shasum256';
 const addFileToBucket = async ({
   collectivite_id,
   file,
-  callback,
+  onStatusChange,
 }: {
   collectivite_id: number;
   file: File;
-  callback: (status: UploadStatus) => void;
+  onStatusChange: (status: UploadStatus) => void;
 }) => {
   // calcule une somme de contrôle du fichier
   // celle-ci va servir de nom unique pour le fichier dans le bucket
@@ -50,7 +50,7 @@ const addFileToBucket = async ({
     // attache les écouteurs d'événements
     xhr.upload.onprogress = (e: ProgressEvent<EventTarget>) => {
       const progress = (e.loaded / e.total) * 100;
-      callback({
+      onStatusChange({
         code: UploadStatusCode.running,
         progress,
         abort,
@@ -59,29 +59,23 @@ const addFileToBucket = async ({
 
     // appelé quand le transfert est terminé
     xhr.onreadystatechange = function () {
-      if (this.readyState === XMLHttpRequest.DONE) {
-        if (this.status === 200) {
-          // crée l'entrée dans la bibliothèque
-          addFileToLib({collectivite_id, hash, filename: file.name}).then(
-            () => {
-              callback({code: UploadStatusCode.completed});
-            }
-          );
-        } else {
-          setError();
-        }
+      if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+        onStatusChange({
+          code: UploadStatusCode.uploaded,
+          hash,
+          filename: file.name,
+        });
       }
     };
 
     // appelé quand le transfert est interrompu
     xhr.upload.onabort = () => {
-      console.log('aborted');
-      callback({code: UploadStatusCode.aborted});
+      onStatusChange({code: UploadStatusCode.aborted});
     };
 
     // appelé quand le transfert est terminé en erreur
     const setError = () => {
-      callback({
+      onStatusChange({
         code: UploadStatusCode.failed,
         error: UploadErrorCode.uploadError,
       });
@@ -116,40 +110,25 @@ export const useUploader = (
   });
 
   const collectivite_id = useCollectiviteId()!;
+  const {addFileToLib} = useAddFileToLib();
+
+  const onStatusChange = (status: UploadStatus) => {
+    if (status.code === UploadStatusCode.uploaded) {
+      const {filename, hash} = status;
+      // crée l'entrée dans la bibliothèque
+      addFileToLib({collectivite_id, filename, hash}).then(fichier => {
+        setStatus({code: UploadStatusCode.completed, fichier_id: fichier.id});
+      });
+    } else {
+      setStatus(status);
+    }
+  };
 
   useEffect(() => {
-    addFileToBucket({collectivite_id, file, callback: setStatus});
+    if (collectivite_id) {
+      addFileToBucket({collectivite_id, file, onStatusChange});
+    }
   }, [collectivite_id]);
 
   return {status};
-};
-
-/** Ajoute le fichier dans la bibliothèque */
-const addFileToLib = async ({
-  collectivite_id,
-  hash,
-  filename,
-}: {
-  collectivite_id: number;
-  hash: string;
-  filename: string;
-}) => {
-  const {error, data} = await supabaseClient
-    .from('bibliotheque_fichier')
-    .upsert({collectivite_id, hash, filename});
-  if (error) {
-    throw new Error(error.message);
-  }
-  return data;
-};
-
-export const useAddFileToLib = () => {
-  const queryClient = useQueryClient();
-  const {isLoading, mutate} = useMutation(addFileToLib, {
-    mutationKey: 'update_bibliotheque_fichier',
-    onSuccess: () => {
-      queryClient.invalidateQueries(['preuve_fichier']);
-    },
-  });
-  return {isLoading, addFileToLib: mutate};
 };
