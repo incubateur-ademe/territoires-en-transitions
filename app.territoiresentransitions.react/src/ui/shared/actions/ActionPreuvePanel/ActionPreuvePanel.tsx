@@ -21,12 +21,14 @@ export type TActionPreuvesProps = {
  */
 export default (props: TActionPreuvePanelProps) => {
   const {action} = props;
+  const {id: action_id} = action;
   const {reglementaire, complementaire} = usePreuvesParType({
-    action_id: action.id,
+    action_id,
   });
 
   return (
     <PreuvesAction
+      action_id={action_id}
       reglementaires={reglementaire as TPreuveReglementaire[]}
       complementaires={complementaire as TPreuveComplementaire[]}
       showWarning

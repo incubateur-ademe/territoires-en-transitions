@@ -7,7 +7,7 @@ import * as Yup from 'yup';
 import LabeledTextField from 'ui/forms/LabeledTextField';
 import {Spacer} from 'ui/shared/Spacer';
 
-export type TAddLink = (titre: string, url: string) => Promise<boolean>;
+export type TAddLink = (titre: string, url: string) => void;
 
 export type TAddLinkProps = {
   onAddLink: TAddLink;
@@ -35,7 +35,8 @@ export const AddLink = (props: TAddLinkProps) => {
   const {onClose, onAddLink} = props;
 
   const onSubmit = ({titre, url}: TPreuveLienParams) => {
-    onAddLink(titre, url).then(onClose);
+    onAddLink(titre, url);
+    onClose();
   };
 
   return (
