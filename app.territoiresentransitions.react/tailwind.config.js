@@ -1,11 +1,7 @@
+/** @type {import('tailwindcss').Config} */
 module.exports = {
-  mode: 'jit',
-  style: 'jit',
-  purge: {
-    content: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
-    safelist: ['ml-0', 'ml-20', 'ml-40', 'ml-60'],
-  },
-  darkMode: false, // or 'media' or 'class'
+  content: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
+  safelist: ['ml-0', 'ml-20', 'ml-40', 'ml-60'],
   theme: {
     maxHeight: {
       '80vh': '80vh',
@@ -30,9 +26,6 @@ module.exports = {
         error425: '#CE0500',
       },
     },
-  },
-  variants: {
-    extend: {},
   },
   // eslint-disable-next-line node/no-unpublished-require
   plugins: [require('@tailwindcss/line-clamp')],

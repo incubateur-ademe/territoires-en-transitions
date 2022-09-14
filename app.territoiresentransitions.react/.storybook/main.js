@@ -1,7 +1,6 @@
 /**
  * Configuration générale du storybook
  */
-
 module.exports = {
   // pattern de recherche des stories
   stories: ['../src/**/*.stories.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)'],
@@ -11,21 +10,19 @@ module.exports = {
     '@storybook/addon-links',
     // les extensions les plus utilisées (Actions, Controls, Docs...)
     '@storybook/addon-essentials',
-    // pour charger la surcharge de la config create-react-app fournie par craco
-    'storybook-preset-craco',
-    // et la faire fonctionner avec le addon Docs
-    {
-      name: '@storybook/addon-docs',
-      options: {
-        configureJSX: true,
-      },
-    },
+    '@storybook/preset-create-react-app',
   ],
   framework: '@storybook/react',
+  core: {
+    builder: 'webpack5',
+  },
   staticDirs: [
     '../public',
     '../src/app/static/_app/assets/css',
-    {from: '../src/app/static/_app/assets/fonts', to: '/fonts'},
+    {
+      from: '../src/app/static/_app/assets/fonts',
+      to: '/fonts',
+    },
   ],
   typescript: {
     reactDocgen: 'react-docgen-typescript',
