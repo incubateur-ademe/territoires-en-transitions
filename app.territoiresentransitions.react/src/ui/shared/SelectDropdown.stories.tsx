@@ -6,14 +6,14 @@ export default {
   component: SelectDropdown,
 };
 
-const fakeLabels: Record<any, string> = {
+const fakeLabels: Record<string, string> = {
   option1: 'Option 1',
   option2: 'Option 2',
   option3: 'Option 3',
 };
 
 export const AucuneOptionSelectionee = () => {
-  const [value, setValue] = useState(undefined);
+  const [value, setValue] = useState<undefined | string>(undefined);
   return (
     <SelectDropdown
       labels={fakeLabels}
@@ -24,7 +24,7 @@ export const AucuneOptionSelectionee = () => {
 };
 
 export const AvecPlaceholder = () => {
-  const [value, setValue] = useState(undefined);
+  const [value, setValue] = useState<undefined | string>(undefined);
   return (
     <SelectDropdown
       labels={fakeLabels}
@@ -47,23 +47,23 @@ export const OptionSelectionee = () => {
 };
 
 export const MultiSelectAucuneOptionSelectionee = () => {
-  const [values, setValues] = useState(undefined);
+  const [values, setValues] = useState<undefined | string[]>(undefined);
   return (
     <MultiSelectDropdown
       labels={fakeLabels}
       values={values}
-      onSelect={({v}: any) => setValues(v)}
+      onSelect={v => setValues(v)}
     />
   );
 };
 
 export const MultiSelectAvecPlaceholder = () => {
-  const [values, setValues] = useState(undefined);
+  const [values, setValues] = useState<undefined | string[]>(undefined);
   return (
     <MultiSelectDropdown
       labels={fakeLabels}
       values={values}
-      onSelect={({v}: any) => setValues(v)}
+      onSelect={v => setValues(v)}
       placeholderText="À renseigner"
     />
   );
