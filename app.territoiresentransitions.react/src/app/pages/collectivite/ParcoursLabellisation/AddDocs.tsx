@@ -1,7 +1,7 @@
 /**
  * Affiche le sélecteur de preuves
  */
-import {useAddPreuves} from './useAddPreuves';
+import {useAddPreuveToDemande} from './useAddPreuveToDemande';
 import {AddPreuveModal} from 'ui/shared/preuves/AddPreuveModal';
 
 export type TAddDocsProps = {
@@ -14,7 +14,7 @@ export type TAddDocsProps = {
 
 export const AddDocs = (props: TAddDocsProps) => {
   const {demande_id, defaultActiveTab, onClose} = props;
-  const handlers = useAddPreuves(demande_id);
+  const handlers = useAddPreuveToDemande(demande_id);
 
   return (
     <AddPreuveModal
