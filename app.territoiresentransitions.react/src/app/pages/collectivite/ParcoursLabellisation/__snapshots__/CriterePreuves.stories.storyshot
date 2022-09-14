@@ -26,9 +26,15 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves 
     </a>
   </li>
   <button
+    aria-expanded="false"
+    aria-haspopup="dialog"
     className="fr-btn fr-btn--sm fr-btn--secondary"
     data-test="AddDocsButton"
     onClick={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    onMouseDown={[Function]}
+    onPointerDown={[Function]}
   >
     + Ajouter
   </button>
@@ -82,9 +88,15 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves 
     </a>
   </li>
   <button
+    aria-expanded="false"
+    aria-haspopup="dialog"
     className="fr-btn fr-btn--sm fr-btn--secondary"
     data-test="AddDocsButton"
     onClick={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    onMouseDown={[Function]}
+    onPointerDown={[Function]}
   >
     + Ajouter
   </button>
@@ -117,9 +129,15 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves 
     </a>
   </li>
   <button
+    aria-expanded="false"
+    aria-haspopup="dialog"
     className="fr-btn fr-btn--sm fr-btn--secondary"
     data-test="AddDocsButton"
     onClick={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    onMouseDown={[Function]}
+    onPointerDown={[Function]}
   >
     + Ajouter
   </button>
@@ -152,9 +170,15 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves 
     </a>
   </li>
   <button
+    aria-expanded="false"
+    aria-haspopup="dialog"
     className="fr-btn fr-btn--sm fr-btn--secondary"
     data-test="AddDocsButton"
     onClick={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    onMouseDown={[Function]}
+    onPointerDown={[Function]}
   >
     + Ajouter
   </button>
@@ -192,9 +216,15 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves 
     Terminé
   </i>
   <button
+    aria-expanded="false"
+    aria-haspopup="dialog"
     className="fr-btn fr-btn--sm fr-btn--secondary"
     data-test="AddDocsButton"
     onClick={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    onMouseDown={[Function]}
+    onPointerDown={[Function]}
   >
     + Ajouter
   </button>
@@ -208,19 +238,19 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves 
       <div
         className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0 cursor-pointer"
       >
-        <div
+        <a
+          className="fr-text--sm fr-mb-1v"
           data-test="name"
+          href="#"
           onClick={[Function]}
-        >
-          fichier-preuve.doc
-        </div>
+        />
         <div
           className="invisible group-hover:visible"
         >
           <button
             className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line undefined"
             onClick={[Function]}
-            title="Commentaire"
+            title="Décrire"
           />
           <button
             className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"

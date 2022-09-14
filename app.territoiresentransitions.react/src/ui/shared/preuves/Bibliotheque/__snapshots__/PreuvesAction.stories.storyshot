@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots app/pages/collectivite/Bibliotheque/PreuvesAction Avec Message Avertissement 1`] = `
+exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Message Avertissement 1`] = `
 Array [
   <p
     className="fr-text-sm"
@@ -13,7 +13,15 @@ Array [
     Preuves complémentaires
   </h5>,
   <button
+    aria-expanded="false"
+    aria-haspopup="dialog"
     className="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-fi-add-line"
+    data-test="AddPreuveComlementaire"
+    onClick={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    onMouseDown={[Function]}
+    onPointerDown={[Function]}
   >
     Ajouter une preuve complémentaire
   </button>,
@@ -80,7 +88,7 @@ Array [
 ]
 `;
 
-exports[`Storyshots app/pages/collectivite/Bibliotheque/PreuvesAction Avec Preuves Complementaires 1`] = `
+exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Complementaires 1`] = `
 Array [
   <h5>
     Preuves attendues
@@ -119,7 +127,15 @@ Array [
         className="flex flex-1 flex-col justify-center space-y-2"
       >
         <button
+          aria-expanded="false"
+          aria-haspopup="dialog"
           className="fr-btn fr-fi-add-line"
+          data-test="AddPreuveReglementaire"
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onPointerDown={[Function]}
           title="Ajouter une preuve"
         />
       </div>
@@ -247,7 +263,15 @@ Array [
           </span>
         </div>
         <button
+          aria-expanded="false"
+          aria-haspopup="dialog"
           className="fr-btn fr-fi-add-line"
+          data-test="AddPreuveReglementaire"
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onPointerDown={[Function]}
           title="Ajouter une preuve"
         />
       </div>
@@ -322,7 +346,15 @@ Array [
           </span>
         </div>
         <button
+          aria-expanded="false"
+          aria-haspopup="dialog"
           className="fr-btn fr-fi-add-line"
+          data-test="AddPreuveReglementaire"
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onPointerDown={[Function]}
           title="Ajouter une preuve"
         />
       </div>
@@ -335,7 +367,15 @@ Array [
     Preuves complémentaires
   </h5>,
   <button
+    aria-expanded="false"
+    aria-haspopup="dialog"
     className="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-fi-add-line"
+    data-test="AddPreuveComlementaire"
+    onClick={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    onMouseDown={[Function]}
+    onPointerDown={[Function]}
   >
     Ajouter une preuve complémentaire
   </button>,
@@ -439,7 +479,7 @@ Array [
 ]
 `;
 
-exports[`Storyshots app/pages/collectivite/Bibliotheque/PreuvesAction Sans Preuves Attendues 1`] = `
+exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Attendues 1`] = `
 Array [
   <p
     className="fr-text-sm"
@@ -452,7 +492,15 @@ Array [
     Preuves complémentaires
   </h5>,
   <button
+    aria-expanded="false"
+    aria-haspopup="dialog"
     className="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-fi-add-line"
+    data-test="AddPreuveComlementaire"
+    onClick={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    onMouseDown={[Function]}
+    onPointerDown={[Function]}
   >
     Ajouter une preuve complémentaire
   </button>,
@@ -462,7 +510,7 @@ Array [
 ]
 `;
 
-exports[`Storyshots app/pages/collectivite/Bibliotheque/PreuvesAction Sans Preuves Complementaires 1`] = `
+exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Complementaires 1`] = `
 Array [
   <h5>
     Preuves attendues
@@ -501,7 +549,15 @@ Array [
         className="flex flex-1 flex-col justify-center space-y-2"
       >
         <button
+          aria-expanded="false"
+          aria-haspopup="dialog"
           className="fr-btn fr-fi-add-line"
+          data-test="AddPreuveReglementaire"
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onPointerDown={[Function]}
           title="Ajouter une preuve"
         />
       </div>
@@ -629,7 +685,15 @@ Array [
           </span>
         </div>
         <button
+          aria-expanded="false"
+          aria-haspopup="dialog"
           className="fr-btn fr-fi-add-line"
+          data-test="AddPreuveReglementaire"
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onPointerDown={[Function]}
           title="Ajouter une preuve"
         />
       </div>
@@ -704,7 +768,15 @@ Array [
           </span>
         </div>
         <button
+          aria-expanded="false"
+          aria-haspopup="dialog"
           className="fr-btn fr-fi-add-line"
+          data-test="AddPreuveReglementaire"
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onPointerDown={[Function]}
           title="Ajouter une preuve"
         />
       </div>
@@ -717,7 +789,15 @@ Array [
     Preuves complémentaires
   </h5>,
   <button
+    aria-expanded="false"
+    aria-haspopup="dialog"
     className="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-fi-add-line"
+    data-test="AddPreuveComlementaire"
+    onClick={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    onMouseDown={[Function]}
+    onPointerDown={[Function]}
   >
     Ajouter une preuve complémentaire
   </button>,
