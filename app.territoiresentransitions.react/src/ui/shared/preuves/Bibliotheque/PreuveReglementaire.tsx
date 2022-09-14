@@ -3,6 +3,7 @@ import {Tooltip} from 'ui/shared/floating-ui/Tooltip';
 import {TPreuve, TPreuveReglementaire} from './types';
 import {EditablePreuveDoc} from './PreuveDoc';
 import {AddPreuveReglementaire} from 'ui/shared/actions/AddPreuve/AddPreuveReglementaire';
+import {IdentifiantAction, isDisabledAction} from './IdentifiantAction';
 
 export type TPreuveReglementaireProps = {
   preuves: TPreuveReglementaire[];
@@ -22,9 +23,8 @@ export const PreuveReglementaire = (props: TPreuveReglementaireProps) => {
   // lit les informations du 1er item (identiques aux suivants)
   const first = preuves[0];
   const {action, preuve_reglementaire, fichier, lien} = first;
-  const {identifiant, concerne, desactive} = action;
   const {id: preuve_id, nom, description} = preuve_reglementaire;
-  const isDisabled = !concerne || desactive;
+  const isDisabled = isDisabledAction(action);
   const haveDoc = fichier || lien;
 
   return (
@@ -43,14 +43,7 @@ export const PreuveReglementaire = (props: TPreuveReglementaireProps) => {
             </Tooltip>
           ) : null}
         </span>
-        <span className="text-xs text-grey625">
-          {identifiant}
-          {isDisabled ? (
-            <span className="fr-badge fr-ml-4w fr-text-mention--grey fr-text--xs">
-              Non concerné
-            </span>
-          ) : null}
-        </span>
+        <IdentifiantAction action={action} />
       </div>
       <div className="flex flex-1 flex-col justify-center space-y-2">
         {haveDoc
