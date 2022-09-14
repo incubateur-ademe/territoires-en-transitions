@@ -1,7 +1,7 @@
 import {TPreuveComplementaire, TPreuveReglementaire} from './types';
 import {PreuveReglementaire} from './PreuveReglementaire';
-import {EditablePreuveDoc} from './PreuveDoc';
 import {AddPreuveComplementaire} from 'ui/shared/actions/AddPreuve/AddPreuveComplementaire';
+import {PreuveComplementaire} from './PreuveComplementaire';
 
 export type TPreuvesActionProps = {
   action_id: string;
@@ -48,9 +48,7 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
       <AddPreuveComplementaire action_id={action_id} />
       <div className="divide-y divide-[#ddd]">
         {complementaires?.map(preuve => (
-          <div className="py-4" key={preuve.id}>
-            <EditablePreuveDoc preuve={preuve} />
-          </div>
+          <PreuveComplementaire key={preuve.id} preuve={preuve} />
         ))}
       </div>
       {showWarning ? (
