@@ -1,16 +1,21 @@
 // un fichier de la bibliothèque
-export type TFichier = {
+export type TBibliothequeFichier = {
+  id: number;
   collectivite_id: number;
-  bucket_id: string;
   hash: string;
   filename: string;
+  bucket_id: string;
+  file_id: string;
   filesize: number;
 };
 
 // champs propres aux fichiers
 export type TPreuveFichierFields = {
   lien: null;
-  fichier: Pick<TFichier, 'bucket_id' | 'hash' | 'filename' | 'filesize'>;
+  fichier: Pick<
+    TBibliothequeFichier,
+    'bucket_id' | 'filename' | 'filesize' | 'hash'
+  >;
 };
 
 // champs propres aux liens

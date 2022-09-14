@@ -1,9 +1,7 @@
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useQuery} from 'react-query';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {TFichier} from './types';
-
-type TFichierCollectivite = Pick<TFichier, 'filename' | 'filesize' | 'hash'>;
+import {TBibliothequeFichier} from './types';
 
 /**
  * Donne la liste de tous les fichiers de la collectivité, éventuellement
@@ -23,8 +21,8 @@ export const useFichiers = (search?: string) => {
 const fetch = async (collectivite_id: number, search?: string) => {
   // lit la liste des fichiers de la collectivité
   const query = supabaseClient
-    .from<TFichier>('bibliotheque_fichier')
-    .select('filename,filesize,hash')
+    .from<TBibliothequeFichier>('bibliotheque_fichier')
+    .select('id,filename,filesize,hash')
     .eq('collectivite_id', collectivite_id);
 
   // éventuellement filtrées par action (et ses sous-actions)
@@ -37,5 +35,5 @@ const fetch = async (collectivite_id: number, search?: string) => {
     return [];
   }
 
-  return data as TFichierCollectivite[];
+  return data as TBibliothequeFichier[];
 };
