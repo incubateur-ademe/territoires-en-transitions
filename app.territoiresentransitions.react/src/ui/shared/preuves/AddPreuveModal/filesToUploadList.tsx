@@ -1,44 +1,44 @@
-import {FileObject} from '@supabase/storage-js';
 import {TFileItem} from './FileItem';
 import {UploadStatusCode, UploadErrorCode} from './types';
 import {MAX_FILE_SIZE_BYTES, EXPECTED_FORMATS} from './constants';
 import {getExtension} from 'utils/file';
+import {TBibliothequeFichier} from '../Bibliotheque/types';
+import {shasum256} from 'utils/shasum256';
 
 /**
  * Transforme la sélection de fichiers en une liste d'items
  * pour l'onglet "Fichier" du dialogue "Ajouter une preuve"
  */
-export const filesToUploadList = (
+export const filesToUploadList = async (
   files: FileList | null,
-  bucketFiles: FileObject[]
-): TFileItem[] => {
+  fichiers: TBibliothequeFichier[]
+): Promise<TFileItem[]> => {
   if (!files) {
     return [];
   }
 
-  return filesToArray(files).map((file: File) => {
-    const normalizedFile = normalizeFileName(file);
-    const duplicateErr = isDuplicate(normalizedFile, bucketFiles);
-    if (duplicateErr) {
-      return createItemFailed(normalizedFile, UploadErrorCode.duplicateError);
-    }
+  return Promise.all(
+    filesToArray(files).map(async (file: File) => {
+      const hash = await shasum256(file);
+      const duplicateErr = await isDuplicate(hash, fichiers);
+      if (duplicateErr) {
+        return createItemFailed(file, UploadErrorCode.duplicateError, hash);
+      }
 
-    const sizeErr = !isValidFileSize(normalizedFile);
-    const formatErr = !isValidFileFormat(normalizedFile);
-    if (formatErr && sizeErr) {
-      return createItemFailed(
-        normalizedFile,
-        UploadErrorCode.formatAndSizeError
-      );
-    }
-    if (formatErr) {
-      return createItemFailed(normalizedFile, UploadErrorCode.formatError);
-    }
-    if (sizeErr) {
-      return createItemFailed(normalizedFile, UploadErrorCode.sizeError);
-    }
-    return createItemRunning(normalizedFile);
-  });
+      const sizeErr = !isValidFileSize(file);
+      const formatErr = !isValidFileFormat(file);
+      if (formatErr && sizeErr) {
+        return createItemFailed(file, UploadErrorCode.formatAndSizeError);
+      }
+      if (formatErr) {
+        return createItemFailed(file, UploadErrorCode.formatError);
+      }
+      if (sizeErr) {
+        return createItemFailed(file, UploadErrorCode.sizeError);
+      }
+      return createItemRunning(file);
+    })
+  );
 };
 
 // Transforme un objet FileList (retourné par le sélecteur de fichiers standard)
@@ -52,11 +52,16 @@ const filesToArray = (files: FileList): File[] => {
 };
 
 // représente un fichier en erreur (pb de taille, de format, etc.)
-const createItemFailed = (file: File, error: UploadErrorCode): TFileItem => ({
+const createItemFailed = (
+  file: File,
+  error: UploadErrorCode,
+  hash?: string
+): TFileItem => ({
   file,
   status: {
     code: UploadStatusCode.failed,
     error,
+    hash,
   },
 });
 
@@ -83,18 +88,9 @@ const isValidFileFormat = (f: File): boolean => {
 };
 
 // contrôle la présence d'un fichier portant le même nom dans le bucket
-const isDuplicate = (f: File, bucketFiles: FileObject[]): boolean =>
-  bucketFiles.findIndex(({name}) => name === f.name) !== -1;
-
-// supprime les diacritiques du nom du fichier et renvoi un nouvel objet fichier
-// ne fait rien si la fonction normalize n'est pas disponible (IE)
-const normalizeFileName = (file: File): File =>
-  typeof file.name.normalize === 'function'
-    ? new File(
-        [file],
-        file.name.normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
-        {
-          type: file.type,
-        }
-      )
-    : file;
+const isDuplicate = async (
+  hash: string,
+  fichiers: TBibliothequeFichier[]
+): Promise<boolean> => {
+  return fichiers.findIndex(({hash: h}) => hash === h) !== -1;
+};

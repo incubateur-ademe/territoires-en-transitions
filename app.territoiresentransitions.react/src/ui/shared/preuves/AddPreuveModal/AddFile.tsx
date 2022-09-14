@@ -2,15 +2,15 @@
  * Affiche le composant d'upload de fichiers
  */
 import {File as InputFile} from '@dataesr/react-dsfr';
-import {useCollectiviteBucketFiles} from 'core-logic/hooks/preuve';
+import {useFichiers} from '../Bibliotheque/useFichiers';
 import {ChangeEvent, FormEvent, useState} from 'react';
 import {HINT, EXPECTED_FORMATS_LIST} from './constants';
 import {filesToUploadList} from './filesToUploadList';
 import {TFileItem} from './FileItem';
 import {FileItemsList} from './FileItemsList';
-import {UploadStatus, UploadStatusCode} from './types';
+import {UploadStatus, UploadStatusCode, UploadStatusCompleted} from './types';
 
-export type TAddFileFromLib = (filename: string) => Promise<boolean>;
+export type TAddFileFromLib = (fichier_id: number) => void;
 
 export type TAddFileProps = {
   /** Fichiers initialement sélectionnés (pour les tests) */
@@ -27,15 +27,13 @@ export const AddFile = (props: TAddFileProps) => {
   const [currentSelection, setCurrentSelection] = useState<Array<TFileItem>>(
     initialSelection || []
   );
-  const {bucketFiles} = useCollectiviteBucketFiles();
+  const fichiers = useFichiers();
 
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const onChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const {files} = e.target;
+    const filesToUpload = await filesToUploadList(files, fichiers);
     if (files) {
-      setCurrentSelection([
-        ...currentSelection,
-        ...filesToUploadList(files, bucketFiles),
-      ]);
+      setCurrentSelection([...currentSelection, ...filesToUpload]);
     }
   };
 
@@ -68,11 +66,13 @@ export const AddFile = (props: TAddFileProps) => {
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-    Promise.all(validFiles.map(({file}) => onAddFileFromLib(file.name))).then(
-      () => {
-        onClose();
-      }
-    );
+    Promise.all(
+      validFiles.map(({status}) =>
+        onAddFileFromLib((status as UploadStatusCompleted).fichier_id)
+      )
+    ).then(() => {
+      onClose();
+    });
   };
 
   return (

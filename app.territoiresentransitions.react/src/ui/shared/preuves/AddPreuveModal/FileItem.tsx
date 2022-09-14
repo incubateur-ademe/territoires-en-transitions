@@ -21,7 +21,7 @@ export type TFileItem = {
   onRemoveFailed?: (fileName: string) => void;
 };
 
-export type TFileItemProps = TFileItem; //& {};
+export type TFileItemProps = TFileItem;
 
 /**
  * Affiche un item représentant un fichier
@@ -136,6 +136,7 @@ const FileItemFailed = (props: TFileItemProps) => {
 
 const statusToRenderer = {
   running: FileItemRunning,
+  uploaded: FileItemCompleted,
   completed: FileItemCompleted,
   failed: FileItemFailed,
   aborted: () => null,

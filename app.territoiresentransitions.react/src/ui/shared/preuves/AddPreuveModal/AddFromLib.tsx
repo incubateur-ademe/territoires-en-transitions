@@ -4,7 +4,7 @@
  */
 
 import {ChangeEvent, FormEvent, useState} from 'react';
-import {useCollectiviteBucketFiles} from 'core-logic/hooks/preuve';
+import {useFichiers} from '../Bibliotheque/useFichiers';
 import {TAddFileFromLib} from './AddFile';
 
 export type TAddFromLibProps = {
@@ -15,17 +15,17 @@ export type TAddFromLibProps = {
 export const AddFromLib = (props: TAddFromLibProps) => {
   const {onAddFileFromLib, onClose} = props;
 
-  const {bucketFiles} = useCollectiviteBucketFiles();
+  const fichiers = useFichiers();
   const [currentSelection, setCurrentSelection] = useState<{
-    [key: string]: boolean;
+    [key: number]: boolean;
   }>({});
   const canAdd = Object.values(currentSelection).find(v => !!v);
 
   const onChange = (e: ChangeEvent<HTMLFieldSetElement>) => {
     if (e.target.tagName === 'INPUT' && e.target.type === 'checkbox') {
       const {target} = e as unknown as ChangeEvent<HTMLInputElement>;
-      const {checked, name} = target;
-      setCurrentSelection({...currentSelection, [name]: checked});
+      const {checked, id} = target;
+      setCurrentSelection({...currentSelection, [id]: checked});
     }
   };
 
@@ -34,7 +34,7 @@ export const AddFromLib = (props: TAddFromLibProps) => {
     Promise.all(
       Object.entries(currentSelection)
         .filter(([, checked]) => checked)
-        .map(([name]) => onAddFileFromLib(name))
+        .map(([id]) => onAddFileFromLib(parseInt(id)))
     ).then(onClose);
   };
 
@@ -46,13 +46,18 @@ export const AddFromLib = (props: TAddFromLibProps) => {
           <fieldset className="fr-fieldset" onChange={onChange}>
             <div
               className="fr-fieldset__content overflow-auto"
-              style={{maxHeight: '36vh'}}
+              style={{maxHeight: '25vh'}}
             >
-              {bucketFiles.map(({id, name}) => (
+              {fichiers.map(({id, filename}) => (
                 <div key={id} className="fr-checkbox-group">
-                  <input type="checkbox" name={name} id={id} className="py-0" />
-                  <label className="fr-label" htmlFor={id}>
-                    {name}
+                  <input
+                    type="checkbox"
+                    name={filename}
+                    id={`${id}`}
+                    className="py-0"
+                  />
+                  <label className="fr-label" htmlFor={`${id}`}>
+                    {filename}
                   </label>
                 </div>
               ))}
