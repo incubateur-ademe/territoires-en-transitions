@@ -1,13 +1,14 @@
 import {useState} from 'react';
-import {useMutation, useQueryClient} from 'react-query';
+import {useMutation} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {TPreuve, TEditHandlers} from './types';
+import {useRefetchPreuves} from './useAddPreuves';
 
 type TEditPreuve = (preuve: TPreuve) => TEditHandlers;
 
 /** Renvoie les gestionnaires d'événement nécessaires à l'édition des preuves
  * (édition commentaire & suppression) */
-export const useEditPreuves: TEditPreuve = preuve => {
+export const useEditPreuve: TEditPreuve = preuve => {
   const [isEditingComment, setEditingComment] = useState(false);
   const {mutate: removePreuve} = useRemovePreuve();
   const {mutate: updateComment} = useUpdatePreuveCommentaire();
@@ -46,14 +47,15 @@ const useRemovePreuve = () =>
       const {id} = preuve;
       return supabaseClient.from(tableOfType(preuve)).delete().match({id});
     },
-    {mutationKey: 'remove_preuve'}
+    {
+      mutationKey: 'remove_preuve',
+      onSuccess: useRefetchPreuves(),
+    }
   );
 
 // renvoie une fonction de modification du commentaire d'une preuve
-const useUpdatePreuveCommentaire = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation(
+const useUpdatePreuveCommentaire = () =>
+  useMutation(
     async (preuve: TPreuve) => {
       const {id, commentaire} = preuve;
       return supabaseClient
@@ -63,9 +65,6 @@ const useUpdatePreuveCommentaire = () => {
     },
     {
       mutationKey: 'update_preuve_commentaire',
-      onSuccess: (data, variables) => {
-        queryClient.invalidateQueries(['preuve', variables.collectivite_id]);
-      },
+      onSuccess: useRefetchPreuves(),
     }
   );
-};
