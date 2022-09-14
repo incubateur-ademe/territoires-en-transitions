@@ -1,17 +1,17 @@
 import {LabellisationParcoursRead} from 'generated/dataLayer/labellisation_parcours_read';
 import {LabellisationDemandeRead} from 'generated/dataLayer/labellisation_demande_read';
-import {LabellisationPreuveFichierRead} from 'generated/dataLayer/labellisation_preuve_fichier_read';
 import {CritereScore} from './CritereScore';
 import {CriteresAction} from './CriteresAction';
 import {CriterePreuves} from './CriterePreuves';
 import {numLabels} from './numLabels';
 import {CritereCompletude} from './CritereCompletude';
+import {TPreuveLabellisation} from 'ui/shared/preuves/Bibliotheque/types';
 
 export type TCriteresLabellisationProps = {
   collectiviteId: number;
   parcours: LabellisationParcoursRead;
   demande: LabellisationDemandeRead | null;
-  preuves: LabellisationPreuveFichierRead[];
+  preuves: TPreuveLabellisation[];
 };
 
 /**

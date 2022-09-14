@@ -5,9 +5,9 @@ import {LabellisationDemandeRead} from 'generated/dataLayer/labellisation_demand
 import {LabellisationParcoursRead} from 'generated/dataLayer/labellisation_parcours_read';
 import {referentielToName} from 'app/labels';
 import {PreuveDoc} from 'ui/shared/preuves/Bibliotheque/PreuveDoc';
-import {AddDocsButton} from './AddPreuvesButton';
+import {AddDocsButton} from './AddDocsButton';
 import {CritereRempli} from './CritereRempli';
-import {useEditPreuves} from 'ui/shared/preuves/Bibliotheque/useEditPreuves';
+import {useEditPreuve} from 'ui/shared/preuves/Bibliotheque/useEditPreuve';
 import {TPreuveLabellisation} from 'ui/shared/preuves/Bibliotheque/types';
 
 const REGLEMENTS: {[k: string]: string} = {
@@ -80,7 +80,11 @@ const LabellisationPreuves = (props: TCriterePreuvesProps) => {
   return (
     <div className="mt-2" data-test="LabellisationPreuves">
       {preuves.map(preuve => (
-        <PreuveFichierDetail key={preuve.filename} {...props} preuve={preuve} />
+        <PreuveFichierDetail
+          key={preuve.fichier?.hash}
+          {...props}
+          preuve={preuve}
+        />
       ))}
     </div>
   );
@@ -96,7 +100,7 @@ const PreuveFichierDetail = ({
 }: TCriterePreuvesProps & {
   preuve: TPreuveLabellisation;
 }) => {
-  const handlers = useEditPreuves(preuve, demande?.id || 0);
+  const handlers = useEditPreuve(preuve);
 
   return (
     <PreuveDoc
