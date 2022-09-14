@@ -10,7 +10,6 @@ exports[`Storyshots app/pages/StatisticsPage/FeaturesUseBarChart Exemple 1 1`] =
   }
 >
   <canvas
-    data-testid="canvas"
     height={150}
     onClick={[Function]}
     role="img"
