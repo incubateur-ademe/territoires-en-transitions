@@ -45,8 +45,6 @@ export const useScores = (): ReferentielsActionScores => {
     null
   );
 
-  if (collectiviteId === null) return {eci: [], cae: []};
-
   // recharge les données après un changement
   const refetch = () => {
     queryClient.invalidateQueries(['client_scores', collectiviteId]);
@@ -83,9 +81,11 @@ export const useScores = (): ReferentielsActionScores => {
   }, [collectiviteId]);
 
   // charge les données du parcours
-  const {data} = useQuery(['client_scores', collectiviteId], () =>
-    fetchScoresForCollectivite(collectiviteId)
-  );
+  const {data} = useQuery(['client_scores', collectiviteId], () => {
+    if (collectiviteId) {
+      return fetchScoresForCollectivite(collectiviteId);
+    }
+  });
 
   return data || {eci: [], cae: []};
 };

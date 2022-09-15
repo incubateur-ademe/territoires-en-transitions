@@ -25,10 +25,10 @@ const ActionReferentielRecursiveCard = ({
   card: ({action}: {action: ActionDefinitionSummary}) => JSX.Element;
 }) => {
   const myRef = useScrollIntoView(action.id);
+  const children = useActionSummaryChildren(action);
 
   if (action.children.length === 0) return <div> {card({action})}</div>;
 
-  const children = useActionSummaryChildren(action);
   return (
     <div id={action.id} ref={myRef}>
       <div> {card({action})}</div>{' '}
