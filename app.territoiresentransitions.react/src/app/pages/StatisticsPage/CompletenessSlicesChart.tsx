@@ -26,7 +26,7 @@ const formatLabel = (label: string): string =>
 const getChartData = (
   slices: CompletenessSlice[],
   referentiel: Referentiel
-): ChartData => {
+): ChartData<'doughnut'> => {
   const labels: string[] = [];
   const data: number[] = [];
   slices.forEach(slice => {
