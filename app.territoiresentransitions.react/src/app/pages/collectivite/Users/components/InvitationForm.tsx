@@ -206,7 +206,7 @@ const SelectField = (props: SelectFieldProps) => (
 
       return (
         <div
-          className={classNames('fr-select-group md:flex-grow', {
+          className={classNames('fr-select-group md:grow', {
             'fr-select-group--error': isError,
           })}
         >
@@ -250,7 +250,7 @@ const InvitationEmailInput = (
 
   return (
     <div
-      className={classNames('fr-input-group md:flex-grow', {
+      className={classNames('fr-input-group md:grow', {
         'fr-input-group--error': isError,
       })}
     >

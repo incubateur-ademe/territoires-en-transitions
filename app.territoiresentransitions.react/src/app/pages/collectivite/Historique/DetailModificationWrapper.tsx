@@ -22,7 +22,7 @@ export const DetailNouvelleModificationWrapper = ({
 }: {
   children: ReactNode;
 }) => (
-  <div data-test="new" className={`${wrapperClassName} border-green-400`}>
+  <div data-test="new" className={`${wrapperClassName} border-emerald-400`}>
     {children}
   </div>
 );

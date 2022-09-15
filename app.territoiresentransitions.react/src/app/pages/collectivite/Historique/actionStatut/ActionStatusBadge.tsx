@@ -19,7 +19,7 @@ const ActionStatusBadge = ({className, status, barre}: Props) => {
         {'text-red-600 bg-pink-100': status === 'pas_fait'},
         {'text-blue-600 bg-blue-100': status === 'programme'},
         {'text-gray-600 bg-pink-100': status === 'detaille'},
-        {'text-green-700 bg-green-200': status === 'fait'}
+        {'text-emerald-700 bg-emerald-200': status === 'fait'}
       )}
     >
       {status === 'non_renseigne' && 'Non renseigné'}

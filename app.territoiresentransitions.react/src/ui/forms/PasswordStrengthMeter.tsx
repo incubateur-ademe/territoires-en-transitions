@@ -16,7 +16,7 @@ const bgColorsByScore = [
   DEFAULT_BG_COLOR,
   'bg-yellow-500',
   'bg-yellow-300',
-  'bg-green-500',
+  'bg-emerald-500',
 ];
 
 const DEFAULT_TEXT_COLOR = 'text-red-500';
@@ -25,7 +25,7 @@ const textColorsByScore = [
   DEFAULT_TEXT_COLOR,
   'text-yellow-500',
   'text-gray-500',
-  'text-green-500',
+  'text-emerald-500',
 ];
 
 /**
