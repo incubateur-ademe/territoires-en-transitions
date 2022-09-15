@@ -1,17 +1,13 @@
 {
-  "extends": "./node_modules/gts/",
-  "rules": {
-    "node/no-extraneous-import": [
-      "error",
-      {
-        "allowModules": ["@supabase/storage-js", "@supabase/postgrest-js"]
+  "extends": ["react-app", "react-app/jest"],
+  "overrides": [
+    {
+      "files": ["**/*.ts?(x)"],
+      "rules": {
+        "react-hooks/exhaustive-deps": "off",
+        "no-restricted-globals": "warn",
+        "import/no-anonymous-default-export": "off"
       }
-    ],
-    "node/no-unpublished-import": [
-      "error",
-      {
-        "allowModules": ["@storybook/addon-actions"]
-      }
-    ]
-  }
+    }
+  ]
 }
