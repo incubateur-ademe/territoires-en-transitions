@@ -52,7 +52,7 @@ const FileItemRunning = (props: TFileItemProps) => {
       <div className="w-8/12 flex justify-between">
         <div
           data-test="name"
-          className="text-sm font-bold whitespace-nowrap overflow-ellipsis overflow-hidden"
+          className="text-sm font-bold whitespace-nowrap text-ellipsis overflow-hidden"
         >
           {file.name}
         </div>
@@ -78,7 +78,7 @@ const FileItemCompleted = (props: TFileItemProps) => {
   return (
     <div
       data-test="file-completed"
-      className="px-2 py-1 text-sm text-bf500 w-full font-bold whitespace-nowrap overflow-ellipsis overflow-hidden"
+      className="px-2 py-1 text-sm text-bf500 w-full font-bold whitespace-nowrap text-ellipsis overflow-hidden"
     >
       {file.name}
     </div>
@@ -110,7 +110,7 @@ const FileItemFailed = (props: TFileItemProps) => {
         <div className="flex w-11/12">
           <div
             data-test="name"
-            className="text-sm whitespace-nowrap overflow-ellipsis overflow-hidden"
+            className="text-sm whitespace-nowrap text-ellipsis overflow-hidden"
           >
             {file.name}
           </div>

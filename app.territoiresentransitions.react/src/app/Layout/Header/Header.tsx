@@ -41,7 +41,7 @@ export const Header = ({
                     <LogoRepubliqueFrancaise />
                   </div>
                 </div>
-                <div className="fr-header__ademe flex-shrink-0">
+                <div className="fr-header__ademe shrink-0">
                   <img
                     src={ademeLogoImage}
                     alt="logo ADEME"
