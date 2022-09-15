@@ -16,8 +16,10 @@ export const JournalActivite = (props: THistoriqueProps) => {
   );
 };
 
-export default () => {
+const JournalActiviteConnected = () => {
   const collectivite_id = useCollectiviteId()!;
   const historique = useHistoriqueItemListe(collectivite_id);
   return <JournalActivite {...historique} />;
 };
+
+export default JournalActiviteConnected;

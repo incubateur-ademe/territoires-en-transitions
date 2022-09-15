@@ -178,7 +178,7 @@ const MaintenanceBanner = ({
   );
 };
 
-export default () => {
+const HeaderConnected = () => {
   const auth = useAuth();
   const currentCollectivite = useCurrentCollectivite();
   const ownedCollectivites = useOwnedCollectivites();
@@ -193,3 +193,5 @@ export default () => {
     />
   );
 };
+
+export default HeaderConnected;

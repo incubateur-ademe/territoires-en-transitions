@@ -2,7 +2,7 @@ import {useTableData} from './useTableData';
 import {DetailTacheTable} from './DetailTacheTable';
 import {noFilters} from './filters';
 
-export default () => {
+const DetailTaches = () => {
   const tableData = useTableData();
   const {count, total, setFilters, filtersCount} = tableData;
   const labelFilters = filtersCount > 1 ? 'filtres actifs' : 'filtre actif';
@@ -25,3 +25,5 @@ export default () => {
     </>
   );
 };
+
+export default DetailTaches;

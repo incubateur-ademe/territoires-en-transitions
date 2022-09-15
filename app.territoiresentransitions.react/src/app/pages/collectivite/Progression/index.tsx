@@ -6,7 +6,7 @@ import {useReferentielId} from 'core-logic/hooks/params';
 import {getFilterInfoMessage} from '../AidePriorisation/filters';
 import {ColumnSelector} from './ColumnSelector';
 
-export default () => {
+const Progression = () => {
   const tableData = useTableData();
   const referentiel = useReferentielId();
   const {setFilters, filtersCount, options, setOptions} = tableData;
@@ -41,3 +41,5 @@ export default () => {
     </>
   );
 };
+
+export default Progression;

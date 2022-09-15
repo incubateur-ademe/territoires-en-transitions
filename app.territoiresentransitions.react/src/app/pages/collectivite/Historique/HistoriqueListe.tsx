@@ -45,7 +45,7 @@ export const HistoriqueListe = ({
 /**
  * Charge et affiche les données de l'historique
  */
-export default ({actionId}: {actionId?: string}) => {
+const HistoriqueListeConnected = ({actionId}: {actionId?: string}) => {
   const collectivite_id = useCollectiviteId()!;
   const historique = useHistoriqueItemListe(collectivite_id, actionId);
   return <HistoriqueListe {...historique} />;
@@ -75,3 +75,5 @@ const makeKey = (item: THistoriqueItem): string => {
   // TODO: gérer les autres types de modification
   return 'TODO';
 };
+
+export default HistoriqueListeConnected;
