@@ -4,7 +4,7 @@ import {getFilterInfoMessage, noFilters} from './filters';
 import {getMaxDepth} from './queries';
 import {useReferentielId} from 'core-logic/hooks/params';
 
-export default () => {
+const AidePriorisation = () => {
   const tableData = useTableData();
   const referentiel = useReferentielId();
   const {setFilters, filtersCount} = tableData;
@@ -37,3 +37,5 @@ export default () => {
     </>
   );
 };
+
+export default AidePriorisation;

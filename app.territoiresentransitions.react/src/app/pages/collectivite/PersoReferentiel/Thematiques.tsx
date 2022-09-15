@@ -7,7 +7,7 @@ import {ThematiqueList, TThematiqueListProps} from './ThematiqueList';
 
 export type TThematiquesProps = TThematiqueFilterProps & TThematiqueListProps;
 
-export default (props: TThematiquesProps) => {
+const Thematique = (props: TThematiquesProps) => {
   const {collectivite, selected, items, onChange} = props;
   return (
     <>
@@ -36,3 +36,5 @@ export default (props: TThematiquesProps) => {
     </>
   );
 };
+
+export default Thematique;

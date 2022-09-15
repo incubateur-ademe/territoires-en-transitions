@@ -26,7 +26,7 @@ const TABS_INDEX: Record<ReferentielVueParamOption, number> = {
 /**
  * Affiche les onglets des vues tabulaires sur le référentiel
  */
-export default () => {
+const ReferentielTabs = () => {
   const collectiviteId = useCollectiviteId();
   const referentielId = useReferentielId() as ReferentielParamOption;
   const referentielVue = useReferentielVue();
@@ -80,3 +80,5 @@ export default () => {
     </main>
   );
 };
+
+export default ReferentielTabs;

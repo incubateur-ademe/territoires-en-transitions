@@ -8,7 +8,7 @@ import {useChangeReponseHandler} from '../PersoPotentielModal/useChangeReponseHa
 import {useNextThematiqueId} from './useNextThematiqueId';
 import {useCarteIdentite} from './useCarteIdentite';
 
-export default () => {
+const PersoReferentielThematique = () => {
   const collectivite = useCurrentCollectivite();
   const {collectivite_id, nom} = collectivite || {};
   const {thematiqueId} = useParams<{thematiqueId: string | undefined}>();
@@ -46,3 +46,5 @@ export default () => {
     </>
   );
 };
+
+export default PersoReferentielThematique;

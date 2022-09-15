@@ -86,7 +86,7 @@ export const Membres = ({
   );
 };
 
-export default () => {
+const MembresConnected = () => {
   const auth = useAuth();
   const user = auth.user;
   const collectivite_id = useCollectiviteId();
@@ -113,3 +113,5 @@ export default () => {
     />
   );
 };
+
+export default MembresConnected;

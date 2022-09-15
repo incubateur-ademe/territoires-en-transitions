@@ -11,7 +11,7 @@ import {
   ReferentielParamOption,
 } from 'app/paths';
 
-export default () => {
+const ParcoursLabellisation = () => {
   const collectiviteId = useCollectiviteId();
   const referentiel = useReferentielId();
   const {parcours, demande} = useParcoursLabellisation(referentiel);
@@ -83,3 +83,5 @@ export default () => {
     <div>...</div>
   );
 };
+
+export default ParcoursLabellisation;

@@ -4,7 +4,7 @@ import Thematiques from './Thematiques';
 import {useQuestionThematiqueCompletude} from './useQuestionThematiqueCompletude';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
-export default () => {
+const PersoReferentiel = () => {
   const collectivite = useCurrentCollectivite();
   const {collectivite_id, nom} = collectivite || {};
   const [selected, setSelected] = useState<ReferentielOfIndicateur[]>([
@@ -31,3 +31,5 @@ export default () => {
     </main>
   );
 };
+
+export default PersoReferentiel;

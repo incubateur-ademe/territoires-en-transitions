@@ -401,7 +401,7 @@ export const TableauBord = ({
   );
 };
 
-export default () => {
+const TableauBordConnected = () => {
   const eci_actions = useReferentielDownToAction('eci');
   const cae_actions = useReferentielDownToAction('cae');
 
@@ -434,3 +434,5 @@ export default () => {
     />
   );
 };
+
+export default TableauBordConnected;
