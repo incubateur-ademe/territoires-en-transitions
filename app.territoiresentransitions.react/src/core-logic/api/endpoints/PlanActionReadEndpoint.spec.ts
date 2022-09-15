@@ -3,7 +3,7 @@ import {PlanActionReadEndpoint} from 'core-logic/api/endpoints/PlanActionReadEnd
 import {supabaseClient} from 'core-logic/api/supabase';
 import {yuluCredentials} from 'test_utils/collectivites';
 
-describe('Plan action reading endpoint ', () => {
+describe('Plan action reading endpoint', () => {
   it('should not be able to read if not connected', async () => {
     const planActionReadEndpoint = new PlanActionReadEndpoint([]);
 

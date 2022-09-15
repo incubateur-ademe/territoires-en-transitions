@@ -17,9 +17,7 @@ export const LogoutBtn = ({
       to={signUpPath}
       onClick={() => {
         auth.disconnect().then(() => history.push('/'));
-        {
-          additionalOnClick && additionalOnClick();
-        }
+        additionalOnClick && additionalOnClick();
       }}
     >
       <span className="px-3">Déconnexion</span>

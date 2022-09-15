@@ -3,7 +3,7 @@ import {indicateurCommentaireReadEndpoint} from 'core-logic/api/endpoints/Indica
 import {supabaseClient} from 'core-logic/api/supabase';
 import {yuluCredentials} from 'test_utils/collectivites';
 
-describe('Indicateur-commentaire reading endpoint ', () => {
+describe('Indicateur-commentaire reading endpoint', () => {
   it('should not be able to read if not connected', async () => {
     const results = await indicateurCommentaireReadEndpoint.getBy({
       collectivite_id: 1,
@@ -11,7 +11,7 @@ describe('Indicateur-commentaire reading endpoint ', () => {
 
     expect(results).toHaveLength(0);
   });
-  it('should retrieve data-layer default commentaire for collectivite #1 (for any connected user) ', async () => {
+  it('should retrieve data-layer default commentaire for collectivite #1 (for any connected user)', async () => {
     await supabaseClient.auth.signIn(yuluCredentials); // Yulu has not rights on collectivite #1
     const results = await indicateurCommentaireReadEndpoint.getBy({
       collectivite_id: 1,
@@ -29,4 +29,3 @@ describe('Indicateur-commentaire reading endpoint ', () => {
     );
   });
 });
-2;

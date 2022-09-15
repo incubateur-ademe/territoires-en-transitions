@@ -33,7 +33,7 @@ const makeScoreRead = ({
   };
 };
 
-describe('Score socket ', () => {
+describe('Score socket', () => {
   it('Should expose ReadScores when Client Scores payloads are published', async () => {
     const scoreRead1 = makeScoreRead({action_id: 'cae_1', referentiel: 'cae'});
     const scoreRead2 = makeScoreRead({action_id: 'cae_2', referentiel: 'cae'});

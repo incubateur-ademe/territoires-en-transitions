@@ -14,7 +14,9 @@ export const politique_vie_privee =
 
 export const registerUser = async (inscription: InscriptionUtilisateur) => {
   if (!inscription.vie_privee_conditions)
-    throw 'La politique de protection des données personnelles doit être acceptée. ';
+    throw Error(
+      'La politique de protection des données personnelles doit être acceptée.'
+    );
 
   // todo fix signup with existing user email.
 

@@ -39,7 +39,7 @@ export abstract class ScoreController {
 
   handleScores(clientScores: ClientScoreBatchRead) {
     if (!this._scoreSocket)
-      throw 'Score socket is null; cannot handle scores !';
+      throw Error('Score socket is null; cannot handle scores !');
     const scoreReads = clientScores.scores;
     this._scoreSocket._scores.next(scoreReads);
   }

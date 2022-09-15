@@ -76,7 +76,7 @@ const QuestionEnergie3 = {
   type: 'proportion',
   types_collectivites_concernees: null,
 };
-describe('Question reading endpoint ', () => {
+describe('Question reading endpoint', () => {
   it('should retrieve a question by action_id', async () => {
     const questionReadEndpoint = new QuestionReadEndpoint([]);
     await supabaseClient.auth.signIn(yuluCredentials); // Yulu has no rights on collectivite #1

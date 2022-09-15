@@ -2,7 +2,7 @@ import '@testing-library/jest-dom/extend-expect';
 import {indicateurDefinitionReadEndpoint} from 'core-logic/api/endpoints/IndicateurDefinitionReadEndpoint';
 import {IndicateurDefinitionRead} from 'generated/dataLayer/indicateur_definition_read';
 
-describe('Indicateur definition reading endpoint ', () => {
+describe('Indicateur definition reading endpoint', () => {
   it('should retrieve data-layer indicateur definitions of given id', async () => {
     const results = await indicateurDefinitionReadEndpoint.getBy({
       indicateur_id: 'cae_8',
@@ -31,4 +31,3 @@ describe('Indicateur definition reading endpoint ', () => {
     expect(results).toHaveLength(35);
   });
 });
-2;

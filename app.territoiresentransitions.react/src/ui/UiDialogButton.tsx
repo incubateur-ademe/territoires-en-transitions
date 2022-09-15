@@ -1,5 +1,6 @@
 import React from 'react';
 import Dialog from '@material-ui/core/Dialog';
+import classNames from 'classnames';
 
 interface UiDialogButtonProps {
   useFrBtn: boolean;
@@ -21,9 +22,7 @@ export const UiDialogButton = (props: UiDialogButtonProps) => (
   <div onClick={event => event.stopPropagation()}>
     <button
       data-test={`btn-${props['data-test']}`}
-      className={
-        `${props.useFrBtn ? 'fr-btn ' : ''}` + `${props.buttonClasses ?? ''}`
-      }
+      className={classNames({'fr-btn': props.useFrBtn}, props.buttonClasses)}
       onClick={e => {
         e.preventDefault();
         props.setOpened(true);

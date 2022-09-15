@@ -11,18 +11,18 @@ export const ActionProgressBar = ({score}: {score: ActionScore | null}) => {
     <Tooltip
       title={
         <div style={{whiteSpace: 'pre-line'}}>
-          {<_ProgressBarTooltipContent score={score} />}
+          {<ProgressBarTooltipContent score={score} />}
         </div>
       }
     >
       <div data-test={`score-${score.action_id}`}>
-        <_ColoredBar score={score} />
+        <ColoredBar score={score} />
       </div>
     </Tooltip>
   );
 };
 
-const _ColoredBar = ({score}: {score: ActionScore}) => {
+const ColoredBar = ({score}: {score: ActionScore}) => {
   if (score.point_potentiel < 1e-3) return null;
   const percentageAgainstPotentiel = (x: number): number =>
     (100 * x) / score.point_potentiel;
@@ -84,14 +84,14 @@ const _ColoredBar = ({score}: {score: ActionScore}) => {
     </div>
   );
 };
-const _formatAvancementScore = (
+const formatAvancementScore = (
   avancementPoint: number,
   maxPoint: number
 ): string => {
   return `${maxPoint ? toFixed((avancementPoint / maxPoint) * 100) : 0}%`;
 };
 
-const _ProgressBarTooltipAvancementContent = ({
+const ProgressBarTooltipAvancementContent = ({
   prefix,
   avancementPoint,
   potentielPoint,
@@ -102,30 +102,30 @@ const _ProgressBarTooltipAvancementContent = ({
 }) =>
   avancementPoint > 1e-3 ? (
     <div>
-      {prefix} : {_formatAvancementScore(avancementPoint, potentielPoint)}{' '}
+      {prefix} : {formatAvancementScore(avancementPoint, potentielPoint)}{' '}
     </div>
   ) : null;
 
-const _ProgressBarTooltipContent = ({score}: {score: ActionScore}) => {
+const ProgressBarTooltipContent = ({score}: {score: ActionScore}) => {
   return (
     <div className="text-base">
-      <_ProgressBarTooltipAvancementContent
+      <ProgressBarTooltipAvancementContent
         prefix={'Fait'}
         avancementPoint={score.point_fait}
         potentielPoint={score.point_potentiel}
       />
-      <_ProgressBarTooltipAvancementContent
+      <ProgressBarTooltipAvancementContent
         prefix={'Programmé'}
         avancementPoint={score.point_programme}
         potentielPoint={score.point_potentiel}
       />
-      <_ProgressBarTooltipAvancementContent
+      <ProgressBarTooltipAvancementContent
         prefix={'Pas fait'}
         avancementPoint={score.point_pas_fait}
         potentielPoint={score.point_potentiel}
       />
 
-      <_ProgressBarTooltipAvancementContent
+      <ProgressBarTooltipAvancementContent
         prefix={'Non renseigné'}
         avancementPoint={score.point_non_renseigne}
         potentielPoint={score.point_potentiel}

@@ -3,14 +3,13 @@ export const CloseDialogButton = ({
 }: {
   setOpened: (opened: boolean) => void;
 }) => (
-  <a
+  <button
     className="fr-link fr-fi-close-line fr-link--icon-right self-end"
-    href="#"
     onClick={e => {
       e.preventDefault();
       setOpened(false);
     }}
   >
     Fermer
-  </a>
+  </button>
 );

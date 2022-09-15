@@ -64,7 +64,7 @@ const MobileNavigation = ({
               data-test="help"
               className="fr-link block w-full !p-4"
               href="https://aide.territoiresentransitions.fr/fr/"
-              target="_blank"
+              target="_blank" rel="noreferrer"
             >
               <div className="fr-fi-question-line mr-2" />
               Aide

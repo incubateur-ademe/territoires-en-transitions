@@ -9,7 +9,7 @@ describe('Indicateur-commentaire write endpoint', () => {
     await supabaseClient.auth.signIn(yiliCredentials);
   });
   const endpoint = new IndicateurCommentaireWriteEndpoint();
-  it('Should be able to create and update a commentaire ', async () => {
+  it('Should be able to create and update a commentaire', async () => {
     const commentaire: IndicateurCommentaireWrite = {
       collectivite_id: 2,
       indicateur_id: 'cae_10',

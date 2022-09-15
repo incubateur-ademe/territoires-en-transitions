@@ -84,7 +84,7 @@ const CollectiviteNavigationDropdownButtonDisplayed = forwardRef(
         {menuLabel}
         <div
           className={classNames('ml-2 mt-1 fr-fi-arrow-down-s-line scale-75', {
-            ['rotate-180']: isOpen,
+            'rotate-180': isOpen,
           })}
         />
       </button>

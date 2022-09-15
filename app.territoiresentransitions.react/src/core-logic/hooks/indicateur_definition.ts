@@ -30,7 +30,7 @@ export const useAllIndicateurDefinitionsForGroup = (
         indicateur_group: group,
       })
       .then(definitions => {
-        // TODO : sorting should be done in datalayer (using a view @florian ? )
+        // TODO : sorting should be done in datalayer (using a view florian ?)
         const sortedDefinitions =
           sortIndicateurDefinitionsByIdentifiant(definitions);
         return setIndicateurDefinitions(sortedDefinitions);

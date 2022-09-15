@@ -67,7 +67,7 @@ export const RenderToutesLesCollectivites = (
               'flex flex-col bg-white z-20 md:mr-6 md:!block md:w-3/12 xl:mr-14',
               {
                 hidden: !isMobileFilterOpen,
-                ['collectivites-filter-column-mobile']: isMobileFilterOpen,
+                'collectivites-filter-column-mobile': isMobileFilterOpen,
               }
             )}
           >
