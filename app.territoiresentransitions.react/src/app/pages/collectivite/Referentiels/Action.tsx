@@ -30,6 +30,7 @@ import {
   useReferentielId,
 } from 'core-logic/hooks/params';
 import HistoriqueListe from 'app/pages/collectivite/Historique/HistoriqueListe';
+import ScrollTopButton from 'ui/shared/ScrollTopButton';
 
 const useActionLinkedIndicateurDefinitions = (actionId: string) => {
   const [linkedIndicateurDefinitions, setLinkedIndicateurDefinitions] =
@@ -195,6 +196,9 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
           <HistoriqueListe actionId={action.id} />
         </Tab>
       </Tabs>
+      <div className="mt-8">
+        <ScrollTopButton />
+      </div>
     </div>
   );
 };
