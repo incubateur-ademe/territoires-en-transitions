@@ -30,7 +30,7 @@ const getChartData = (
   dailyCounts: DailyCount[],
   title1: string,
   title2: string
-): ChartData => {
+): ChartData<'line'> => {
   const color2 = '#247BC7';
   const color1 = '#033663';
   const {labels, daily, cumul} = dailyCounts.reduce(byCountType, {
