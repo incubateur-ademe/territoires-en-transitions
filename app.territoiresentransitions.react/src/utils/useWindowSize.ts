@@ -6,7 +6,7 @@ type Size = {
   height: number;
 };
 
-export default () => {
+const useWindowSize = () => {
   // Initialize state with undefined width/height so server and client renders match
   // Learn more here: https://joshwcomeau.com/react/the-perils-of-rehydration/
   const [windowSize, setWindowSize] = useState<Size>({
@@ -36,3 +36,5 @@ export default () => {
 
   return windowSize;
 };
+
+export default useWindowSize;

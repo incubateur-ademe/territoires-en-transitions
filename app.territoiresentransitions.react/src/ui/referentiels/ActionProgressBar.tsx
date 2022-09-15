@@ -134,7 +134,9 @@ const ProgressBarTooltipContent = ({score}: {score: ActionScore}) => {
   );
 };
 
-export default ({actionId}: {actionId: string}) => {
+const ActionProgressBarConnected = ({actionId}: {actionId: string}) => {
   const score = useActionScore(actionId);
   return <ActionProgressBar score={score} />;
 };
+
+export default ActionProgressBarConnected;

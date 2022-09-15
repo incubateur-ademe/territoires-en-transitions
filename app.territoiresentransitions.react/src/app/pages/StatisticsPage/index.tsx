@@ -7,7 +7,7 @@ import {
 } from 'core-logic/api/statisticsApiEndpoints';
 import {StatisticsPage} from './StatisticsPage';
 
-export default () => {
+const StatisticsPageConnected = () => {
   const rattachements = useRattachements();
   const activeUsers = useActiveUsers();
   const activeCollectivites = useActiveCollectivites();
@@ -22,3 +22,5 @@ export default () => {
   };
   return <StatisticsPage {...props} />;
 };
+
+export default StatisticsPageConnected;
