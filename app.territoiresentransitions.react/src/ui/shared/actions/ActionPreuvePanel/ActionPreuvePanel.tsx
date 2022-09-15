@@ -18,7 +18,7 @@ export type TActionPreuvesProps = {
 /**
  * Affiche le panneau "preuves" d'une action
  */
-export default (props: TActionPreuvePanelProps) => {
+const Panel = (props: TActionPreuvePanelProps) => {
   const {action} = props;
   const preuveContent = useActionPreuve(action.id);
   const preuves = usePreuves(action.id);
@@ -40,6 +40,8 @@ export default (props: TActionPreuvePanelProps) => {
     </>
   );
 };
+
+export default Panel;
 
 /**
  * Affiche les fichiers attachés à l'action

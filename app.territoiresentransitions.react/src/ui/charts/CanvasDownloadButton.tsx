@@ -10,8 +10,8 @@ export const CanvasDownloadButton = (props: TCanvasDownloadButtonProps) => {
     <a
       className="fr-btn fr-btn--secondary"
       id={linkId}
+      href="/"
       download={`${props.fileName}`}
-      href=""
       onClick={() => {
         const canvas = document.getElementById(
           props.canvasId
