@@ -19,7 +19,6 @@
   },
   "dependencies": {
     "@dataesr/react-dsfr": "^0.9.2",
-    "@datapunt/matomo-tracker-react": "^0.5.1",
     "@floating-ui/react-dom-interactions": "^0.8.0",
     "@gouvfr/dsfr": "^1.2.1",
     "@heroicons/react": "^1.0.5",
@@ -76,30 +75,6 @@
     "web-vitals": "^0.2.4",
     "yup": "^0.32.9"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ],
-    "overrides": [
-      {
-        "files": [
-          "**/*.ts?(x)"
-        ],
-        "rules": {
-          "react-hooks/exhaustive-deps": "off"
-        }
-      },
-      {
-        "files": [
-          "**/*.stories.*"
-        ],
-        "rules": {
-          "import/no-anonymous-default-export": "off"
-        }
-      }
-    ]
-  },
   "browserslist": {
     "production": [
       ">0.2%",
@@ -113,13 +88,13 @@
     ]
   },
   "devDependencies": {
-    "@storybook/addon-actions": "^6.4.13",
-    "@storybook/addon-essentials": "^6.4.13",
-    "@storybook/addon-links": "^6.4.13",
-    "@storybook/addon-storyshots": "^6.4.18",
+    "@storybook/addon-actions": "^6.5.12",
+    "@storybook/addon-essentials": "^6.5.12",
+    "@storybook/addon-links": "^6.5.12",
+    "@storybook/addon-storyshots": "^6.5.12",
     "@storybook/builder-webpack5": "^6.5.12",
     "@storybook/manager-webpack5": "^6.5.12",
-    "@storybook/node-logger": "^6.4.13",
+    "@storybook/node-logger": "^6.5.12",
     "@storybook/preset-create-react-app": "^4.1.2",
     "@tailwindcss/line-clamp": "^0.4.2",
     "@types/fuzzy-search": "^2.1.1",
@@ -129,7 +104,6 @@
     "@types/uuid": "^8.3.1",
     "@types/zxcvbn": "^4.4.1",
     "autoprefixer": "^10.4.10",
-    "gts": "^3.1.0",
     "jest-websocket-mock": "^2.2.1",
     "mock-socket": "^9.0.8",
     "postcss": "^8.4.16",

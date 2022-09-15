@@ -1,12 +1,7 @@
 {
-  "extends": "./node_modules/gts/tsconfig-google.json",
   "compilerOptions": {
     "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "experimentalDecorators": true,
     "downlevelIteration": true,
     "allowJs": true,
@@ -24,12 +19,6 @@
     "jsx": "react-jsx",
     "baseUrl": "src"
   },
-  "include": [
-    "src",
-    "postcss.config.js"
-  ],
-  "exclude": [
-    "**/*.stories.tsx",
-    "**/Storyshots.test.tsx"
-  ]
+  "include": ["src", "postcss.config.js"],
+  "exclude": ["**/*.stories.tsx", "**/Storyshots.test.tsx"]
 }

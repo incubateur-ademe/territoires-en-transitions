@@ -10,7 +10,6 @@ import {Redirector} from 'app/Redirector';
 import {Toasters} from 'app/Toasters';
 import {ScrollToTop} from 'app/ScrollToTop';
 import {createTheme, MuiThemeProvider} from '@material-ui/core';
-import {MatomoProviderWithAuth} from 'app/MatomoProviderWithAuth';
 
 import {allCollectivitesPath, authBasePath} from 'app/paths';
 import {ToutesLesCollectivitesPage} from 'app/pages/ToutesLesCollectivites/ToutesLesCollectivitesPage';
@@ -31,37 +30,35 @@ export const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <MatomoProviderWithAuth>
-          <MuiThemeProvider theme={theme}>
-            <ReactQueryDevtools initialIsOpen={false} />
-            <Router>
-              <Layout>
-                <E2E />
-                <ScrollToTop />
-                <Toasters />
-                <Redirector />
-                <Switch>
-                  <Route exact path="/">
-                    <Home />
-                  </Route>
-                  <Route path={authBasePath}>
-                    <AuthRoutes />
-                  </Route>
+        <MuiThemeProvider theme={theme}>
+          <ReactQueryDevtools initialIsOpen={false} />
+          <Router>
+            <Layout>
+              <E2E />
+              <ScrollToTop />
+              <Toasters />
+              <Redirector />
+              <Switch>
+                <Route exact path="/">
+                  <Home />
+                </Route>
+                <Route path={authBasePath}>
+                  <AuthRoutes />
+                </Route>
 
-                  <Route path={allCollectivitesPath}>
-                    <ToutesLesCollectivitesPage />
-                  </Route>
-                  <Route path={'/collectivite/:collectiviteId'}>
-                    <CollectiviteRoutes />
-                  </Route>
-                  <Route path={'/statistics'}>
-                    <StatisticsPage />
-                  </Route>
-                </Switch>
-              </Layout>
-            </Router>
-          </MuiThemeProvider>
-        </MatomoProviderWithAuth>
+                <Route path={allCollectivitesPath}>
+                  <ToutesLesCollectivitesPage />
+                </Route>
+                <Route path={'/collectivite/:collectiviteId'}>
+                  <CollectiviteRoutes />
+                </Route>
+                <Route path={'/statistics'}>
+                  <StatisticsPage />
+                </Route>
+              </Switch>
+            </Layout>
+          </Router>
+        </MuiThemeProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
