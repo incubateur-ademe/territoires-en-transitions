@@ -28,7 +28,7 @@ export type TFeaturesUseBarChartProps = {
 
 const getChartData = (
   proportions: FunctionnalitiesUsageProportion
-): ChartData => ({
+): ChartData<'bar'> => ({
   labels: [''],
   datasets: KEYS.map((key, index) => ({
     label: keyToLabel[key],
@@ -39,10 +39,7 @@ const getChartData = (
 
 export const FeaturesUseBarChart = (props: TFeaturesUseBarChartProps) => {
   const {widthPx, proportions} = props;
-  const data: ChartData = useMemo(
-    () => getChartData(proportions),
-    [proportions]
-  );
+  const data = useMemo(() => getChartData(proportions), [proportions]);
 
   return (
     <div style={{width: widthPx, marginLeft: 0}}>
@@ -60,7 +57,7 @@ export const FeaturesUseBarChart = (props: TFeaturesUseBarChartProps) => {
             },
             tooltip: {
               callbacks: {
-                label: ({raw, dataset}: TooltipItem<'line'>) =>
+                label: ({raw, dataset}: TooltipItem<'bar'>) =>
                   ` ${dataset.label?.trim()} : ${(raw as number).toFixed(2)} %`,
               },
             },

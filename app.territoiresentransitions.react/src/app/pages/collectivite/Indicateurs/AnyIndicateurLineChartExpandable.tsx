@@ -105,7 +105,7 @@ function AnyIndicateurLineChart<T extends string | number>(props: {
         <div className="sm text-center font-bold ">{props.title}</div>
         <Line
           id={canvasId}
-          data={data}
+          data={data as ChartData<'line'>}
           options={{
             responsive: true,
             maintainAspectRatio: false,
