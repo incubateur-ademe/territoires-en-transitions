@@ -22,7 +22,7 @@ const HeaderNavigation = ({auth}: Props) => {
             data-test="help"
             className="fr-link"
             href="https://aide.territoiresentransitions.fr/fr/"
-            target="_blank"
+            target="_blank" rel="noreferrer"
           >
             <div className="fr-fi-question-line mr-2" />
             Aide

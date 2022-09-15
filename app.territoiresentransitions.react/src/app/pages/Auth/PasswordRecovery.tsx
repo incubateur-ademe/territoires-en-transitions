@@ -149,16 +149,15 @@ export const PasswordRecovery = ({
       {succeed ? <Succeed /> : <PasswordRecoveryForm />}
     </UiDialogButton>
   ) : (
-    <a
+    <button
       data-test="forgotten-pwd"
       className="fr-link text-sm"
-      href="#"
       onClick={e => {
         e.preventDefault();
         setOpened(true);
       }}
     >
       Mot de passe oublié ?
-    </a>
+    </button>
   );
 };

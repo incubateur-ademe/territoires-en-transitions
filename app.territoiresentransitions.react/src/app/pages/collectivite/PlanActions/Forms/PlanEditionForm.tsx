@@ -265,6 +265,7 @@ export const PlanEditionForm = (props: {plan: PlanActionRead}) => {
             planActionWriteEndpoint.save(plan);
           }}
           remove={(categorie: Categorie) => {
+            // eslint-disable-next-line no-restricted-globals
             if (confirm(categoryDeletionMessage(categorie))) {
               const plan = props.plan;
               plan.categories = plan.categories.filter(

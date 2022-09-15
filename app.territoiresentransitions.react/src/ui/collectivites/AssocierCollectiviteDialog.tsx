@@ -1,4 +1,4 @@
-import {_RejoindreOuActiverDialogContent} from 'app/pages/collectivite/RejoindreCetteCollectiviteDialog/_RejoindreOuActiverDialogContent';
+import {RejoindreOuActiverDialogContent} from 'app/pages/collectivite/RejoindreCetteCollectiviteDialog/RejoindreOuActiverDialogContent';
 import {allCollectiviteReadEndpoint} from 'core-logic/api/endpoints/CollectiviteReadEndpoints';
 import {ReferentContact} from 'core-logic/api/procedures/collectiviteProcedures';
 import {AllCollectiviteRead} from 'generated/dataLayer/all_collectivite_read';
@@ -76,7 +76,7 @@ export const AssocierCollectiviteDialog = ({
         </div>
         <Spacer />
         {selectedCollectivite ? (
-          <_RejoindreOuActiverDialogContent
+          <RejoindreOuActiverDialogContent
             collectivite={selectedCollectivite}
             getReferentContacts={getReferentContacts}
           />

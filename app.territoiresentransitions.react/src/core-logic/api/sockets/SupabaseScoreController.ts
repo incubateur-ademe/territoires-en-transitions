@@ -31,8 +31,10 @@ export class SupabaseScoreController extends ScoreController {
   }
 
   private subscribe() {
-    if (!this._scoreSocket) throw 'Score socket is null; cannot subscribe !';
-    if (this.subscription) throw 'Already subscribed, cannot listen twice.';
+    if (!this._scoreSocket)
+      throw Error('Score socket is null; cannot subscribe !');
+    if (this.subscription)
+      throw Error('Already subscribed, cannot listen twice.');
     const subscribeTo = `client_scores:collectivite_id=eq.${this._scoreSocket?.collectiviteId}`;
     this.subscription = this.supabaseClient
       .from<ClientScoreBatchRead>(subscribeTo)

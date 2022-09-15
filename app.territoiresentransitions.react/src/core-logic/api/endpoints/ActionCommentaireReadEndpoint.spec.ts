@@ -3,7 +3,7 @@ import {ActionCommentaireReadEndpoint} from 'core-logic/api/endpoints/ActionComm
 import {supabaseClient} from 'core-logic/api/supabase';
 import {yuluCredentials} from 'test_utils/collectivites';
 
-describe('Action-commentaire reading endpoint ', () => {
+describe('Action-commentaire reading endpoint', () => {
   it('should not be able to read if not connected', async () => {
     const actionCommentaireReadEndpoint = new ActionCommentaireReadEndpoint([]);
     const results = await actionCommentaireReadEndpoint.getBy({
@@ -12,7 +12,7 @@ describe('Action-commentaire reading endpoint ', () => {
 
     expect(results).toHaveLength(0);
   });
-  it('should retrieve data-layer default commentaire for collectivite #1 (for anyone connected) ', async () => {
+  it('should retrieve data-layer default commentaire for collectivite #1 (for anyone connected)', async () => {
     const actionCommentaireReadEndpoint = new ActionCommentaireReadEndpoint([]);
     await supabaseClient.auth.signIn(yuluCredentials); // Yulu is connected but has no rights on collectivite #1
 
@@ -31,4 +31,3 @@ describe('Action-commentaire reading endpoint ', () => {
     );
   });
 });
-2;

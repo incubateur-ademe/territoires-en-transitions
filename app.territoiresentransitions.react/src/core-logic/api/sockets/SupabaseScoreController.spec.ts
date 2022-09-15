@@ -5,11 +5,11 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {yiliCredentials} from 'test_utils/collectivites';
 import {sleep} from 'utils/sleep';
 
-describe('Supabase Score Controller ', () => {
+describe('Supabase Score Controller', () => {
   const collectiviteId = 1;
   jest.setTimeout(10000);
   // This test needs the business to run !
-  it.skip('[Should observe some new scores when saving an action statut (requires that business is running !) ', async () => {
+  it.skip('[Should observe some new scores when saving an action statut (requires that business is running !)', async () => {
     const controller = new SupabaseScoreController({
       supabaseClient: supabaseClient,
     });

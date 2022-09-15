@@ -107,7 +107,7 @@ const Modification = ({
                   className={classNames(
                     'ml-auto fr-fi-arrow-down-s-line duration-100',
                     {
-                      ['rotate-180']: isDetailsOpen,
+                      'rotate-180': isDetailsOpen,
                     }
                   )}
                 />

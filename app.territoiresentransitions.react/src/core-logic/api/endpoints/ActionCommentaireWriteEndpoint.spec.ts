@@ -9,7 +9,7 @@ describe('Action-commentaire write endpoint', () => {
     await supabaseClient.auth.signIn(yiliCredentials);
   });
 
-  it('Should be able to save and update a commentaire ', async () => {
+  it('Should be able to save and update a commentaire', async () => {
     const endpoint = new ActionCommentaireWriteEndpoint();
     const commentaire: ActionCommentaireWrite = {
       collectivite_id: 2,

@@ -4,7 +4,7 @@ import {
   actionTitleReadEndpoint,
 } from 'core-logic/api/endpoints/ActionTitleReadEndpoint';
 
-describe('Action title endpoint ', () => {
+describe('Action title endpoint', () => {
   it('should retrieve all titles', async () => {
     const partialTitle: Partial<ActionTitleRead> = {
       id: 'eci_1.1.1',

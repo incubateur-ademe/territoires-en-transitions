@@ -25,6 +25,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CritereScore Ni
   <a
     className="fr-link fr-link--icon-right fr-fi-arrow-right-line fr-mb-2w"
     href="/collectivite/1/referentiels/eci/progression"
+    rel="noreferrer"
     target="_blank"
   >
     Mettre à jour
@@ -57,6 +58,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CritereScore Ni
   <a
     className="fr-link fr-link--icon-right fr-fi-arrow-right-line fr-mb-2w"
     href="/collectivite/1/referentiels/eci/progression"
+    rel="noreferrer"
     target="_blank"
   >
     Mettre à jour

@@ -36,7 +36,7 @@ export const CritereScore = (props: TCritereScoreProps) => {
           href={makeCollectiviteReferentielUrl({
             collectiviteId,
             referentielId,
-          })}
+          })} rel="noreferrer"
         >
           Mettre à jour
         </a>

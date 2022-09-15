@@ -30,7 +30,7 @@ describe('Fiche action write endpoint', () => {
     await supabaseClient.auth.signIn(yiliCredentials);
   });
 
-  it('Should be able to save and update a fiche ', async () => {
+  it('Should be able to save and update a fiche', async () => {
     const endpoint = new FicheActionWriteEndpoint();
 
     // create

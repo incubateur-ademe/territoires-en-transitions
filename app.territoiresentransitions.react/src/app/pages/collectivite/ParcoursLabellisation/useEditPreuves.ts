@@ -19,6 +19,7 @@ export const useEditPreuves: TEditPreuve = (preuve, demande_id) => {
 
   const remove = () => {
     if (collectivite_id) {
+      // eslint-disable-next-line no-restricted-globals
       if (confirm('Voulez-vous vraiment supprimer cette preuve ?')) {
         labellisationFichierWriteEndpoint.delete({
           collectivite_id,

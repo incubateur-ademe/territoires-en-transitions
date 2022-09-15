@@ -86,7 +86,7 @@ const CritereActionRow = (props: TCriteresActionTable & {rowIndex: number}) => {
         <span>{action_identifiant}</span>
       </td>
       <td className="pl-4 pr-8">
-        <a href={pathname} target="_blank" className="hover:underline">
+        <a href={pathname} target="_blank" className="hover:underline" rel="noreferrer">
           {formulation}
         </a>
       </td>
