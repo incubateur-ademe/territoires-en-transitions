@@ -94,7 +94,7 @@ const InvitationMessage = ({
           Copier uniquement le lien d’invitation
         </button>
         {copiedText && (
-          <span className="absolute left-0 bottom-full mb-2 px-4 py-1 rounded bg-green-500 text-white">
+          <span className="absolute left-0 bottom-full mb-2 px-4 py-1 rounded bg-emerald-500 text-white">
             Copié&nbsp;!
           </span>
         )}

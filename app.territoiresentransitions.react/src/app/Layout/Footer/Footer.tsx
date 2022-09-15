@@ -12,7 +12,7 @@ const Footer = () => {
       <div className="fr-container">
         {/* BODY */}
         <div className="lg:flex">
-          <div className="fr-footer__brand flex-shrink-0">
+          <div className="fr-footer__brand shrink-0">
             <LogoRepubliqueFrancaise />
             <div className="px-6">
               <img

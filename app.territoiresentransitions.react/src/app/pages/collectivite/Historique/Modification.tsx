@@ -65,11 +65,11 @@ const Modification = ({
         </span>
       </div>
       {/* MAIN */}
-      <div className="flex flex-col flex-grow overflow-hidden md:flex-row">
+      <div className="flex flex-col grow overflow-hidden md:flex-row">
         {/* ICON */}
         <div className={`mr-4 mt-0.5 text-blue-600 ${icon}`} />
         {/* CONTENT */}
-        <div className="flex flex-col flex-grow overflow-hidden">
+        <div className="flex flex-col grow overflow-hidden">
           {/* DESCRIPTION */}
           <div className="mb-4" data-test="desc">
             <p className="mb-2 font-bold text-blue-600">{nom}</p>
