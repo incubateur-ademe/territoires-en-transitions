@@ -31,7 +31,7 @@ export const CritereCompletude = (props: TCritereScoreProps) => {
             collectiviteId,
             referentielId,
             referentielVue: 'detail',
-          })}
+          })} rel="noreferrer"
         >
           Mettre à jour
         </a>

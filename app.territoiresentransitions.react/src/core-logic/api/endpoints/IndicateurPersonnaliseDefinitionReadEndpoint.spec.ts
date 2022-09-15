@@ -4,7 +4,7 @@ import {IndicateurPersonnaliseDefinitionRead} from 'generated/dataLayer/indicate
 import {supabaseClient} from 'core-logic/api/supabase';
 import {yuluCredentials} from 'test_utils/collectivites';
 
-describe('Indicateur perso definition reading endpoint ', () => {
+describe('Indicateur perso definition reading endpoint', () => {
   it('should not be able to read if not connected', async () => {
     const results = await indicateurPersonnaliseDefinitionReadEndpoint.getBy({
       collectivite_id: 1,
@@ -12,7 +12,7 @@ describe('Indicateur perso definition reading endpoint ', () => {
 
     expect(results).toHaveLength(0);
   });
-  it('should retrieve data-layer default indicateur perso definition with id 0 for collectivite #1 (for anyone connected) ', async () => {
+  it('should retrieve data-layer default indicateur perso definition with id 0 for collectivite #1 (for anyone connected)', async () => {
     await supabaseClient.auth.signIn(yuluCredentials); // Yulu has no rights on collectivite #1
 
     const results = await indicateurPersonnaliseDefinitionReadEndpoint.getBy({

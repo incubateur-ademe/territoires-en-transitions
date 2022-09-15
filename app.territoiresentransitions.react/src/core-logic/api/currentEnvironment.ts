@@ -5,7 +5,7 @@ export const getCurrentEnvironment = (): ProductionEnvironment => {
   if (hostname.substring(0, 10) === 'localhost') return 'local';
   if (hostname === 'sandbox.territoiresentransitions.fr') return 'sandbox';
   if (hostname === 'app.territoiresentransitions.fr') return 'app';
-  throw `no environment for ${hostname}`;
+  throw Error(`no environment for ${hostname}`);
 };
 
 export const testUIVisibility = (): boolean => {

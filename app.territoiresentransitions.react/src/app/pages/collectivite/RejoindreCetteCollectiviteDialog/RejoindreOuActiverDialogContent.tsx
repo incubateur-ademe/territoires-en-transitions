@@ -5,7 +5,7 @@ import {AllCollectiviteRead} from 'generated/dataLayer/all_collectivite_read';
 import {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
 
-const _RejoindreCollectiviteDialogContent = ({
+const RejoindreCollectiviteDialogContent = ({
   collectivite,
   referentContacts,
 }: {
@@ -35,7 +35,7 @@ const _RejoindreCollectiviteDialogContent = ({
   );
 };
 
-const _ActiverCollectiviteDialogContent = ({
+const ActiverCollectiviteDialogContent = ({
   collectivite,
 }: {
   collectivite: AllCollectiviteRead;
@@ -90,7 +90,7 @@ export type TUiRejoindreOuActiverDialogContentProps = {
   referentContacts: ReferentContact[];
 };
 
-export const _RejoindreOuActiverDialogContent = ({
+export const RejoindreOuActiverDialogContent = ({
   collectivite,
   getReferentContacts,
 }: {
@@ -109,9 +109,9 @@ export const _RejoindreOuActiverDialogContent = ({
     }
   }, [collectivite?.collectivite_id]);
   if (referentContacts.length === 0)
-    return <_ActiverCollectiviteDialogContent collectivite={collectivite} />;
+    return <ActiverCollectiviteDialogContent collectivite={collectivite} />;
   return (
-    <_RejoindreCollectiviteDialogContent
+    <RejoindreCollectiviteDialogContent
       referentContacts={referentContacts}
       collectivite={collectivite}
     />

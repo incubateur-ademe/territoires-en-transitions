@@ -4,7 +4,7 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {LabellisationRead} from 'generated/dataLayer/labellisation_read';
 import {yuluCredentials} from 'test_utils/collectivites';
 
-describe('Labellisation reading endpoint ', () => {
+describe('Labellisation reading endpoint', () => {
   it('should not be able to read if not connected', async () => {
     const labellisationReadEndpoint = new LabellisationReadEndpoint([]);
     const results = await labellisationReadEndpoint.getBy({
@@ -14,7 +14,7 @@ describe('Labellisation reading endpoint ', () => {
 
     expect(results).toHaveLength(0);
   });
-  it('should retrieve data-layer default last labellisation for collectivite #1 (for any connected user) ', async () => {
+  it('should retrieve data-layer default last labellisation for collectivite #1 (for any connected user)', async () => {
     const labellisationReadEndpoint = new LabellisationReadEndpoint([]);
     await supabaseClient.auth.signIn(yuluCredentials); // Yulu has not rights on collectivite #1
     const results = await labellisationReadEndpoint.getBy({
@@ -34,4 +34,3 @@ describe('Labellisation reading endpoint ', () => {
     expect(results[0]).toMatchObject(expectedLabellisationRead);
   });
 });
-2;

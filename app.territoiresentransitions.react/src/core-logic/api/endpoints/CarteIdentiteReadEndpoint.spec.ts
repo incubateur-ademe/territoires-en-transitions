@@ -3,12 +3,12 @@ import {carteIdentiteReadEndpoint} from 'core-logic/api/endpoints/CarteIdentitit
 import {supabaseClient} from 'core-logic/api/supabase';
 import {yiliCredentials} from 'test_utils/collectivites';
 
-describe('ClientScores reading endpoint ', () => {
+describe('ClientScores reading endpoint', () => {
   beforeEach(async () => {
     await supabaseClient.auth.signIn(yiliCredentials);
   });
 
-  it('should retrieve identite for collectivite #1 ', async () => {
+  it('should retrieve identite for collectivite #1', async () => {
     const results = await carteIdentiteReadEndpoint.getBy({
       collectivite_id: 1,
     });

@@ -23,11 +23,11 @@ const CollectiviteAccesChip = ({acces, className}: Props) => {
       className={classNames(
         `${className} px-2 py-0.5 font-bold text-xs uppercase rounded-md text-blue-600 bg-blue-200`,
         {
-          ['text-blue-600 bg-blue-100']:
+          'text-blue-600 bg-blue-100':
             acces === 'admin' || acces === 'edition' || acces === 'lecture',
         },
         {
-          ['text-yellow-800 bg-yellow-100']: acces === null,
+          'text-yellow-800 bg-yellow-100': acces === null,
         }
       )}
     >

@@ -3,7 +3,7 @@ import {indicateurActionReadEndpoint} from 'core-logic/api/endpoints/IndicateurA
 import {supabaseClient} from 'core-logic/api/supabase';
 import {yoloCredentials} from 'test_utils/collectivites';
 
-describe('Indicateur action reading endpoint ', () => {
+describe('Indicateur action reading endpoint', () => {
   // todo add indicateur-action fake content
   it('should retrieve data-layer all indicateur definitions', async () => {
     await supabaseClient.auth.signIn(yoloCredentials);
@@ -11,4 +11,3 @@ describe('Indicateur action reading endpoint ', () => {
     expect(results).toHaveLength(157);
   });
 });
-2;

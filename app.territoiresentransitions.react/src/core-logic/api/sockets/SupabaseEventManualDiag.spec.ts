@@ -10,7 +10,7 @@ import {
 describe('Supabase diag', () => {
   // This test needs the business to run !
   jest.setTimeout(100000);
-  it.skip('[Should observe some new scores when saving an action statut (requires that business is running !) ', async () => {
+  it.skip('[Should observe some new scores when saving an action statut (requires that business is running !)', async () => {
     const controller = new SupabaseController({
       supabaseClient: supabaseClient,
     });
@@ -43,7 +43,8 @@ class SupabaseController {
   }
 
   private subscribe() {
-    if (this.subscription) throw 'Already subscribed, cannot listen twice.';
+    if (this.subscription)
+      throw Error('Already subscribed, cannot listen twice.');
     this.subscription = this.supabaseClient
       .from<ClientScoreBatchRead>(
         // todo filter by collectivite col :collectivite_id=${this._scoreSocket?.collectiviteId}

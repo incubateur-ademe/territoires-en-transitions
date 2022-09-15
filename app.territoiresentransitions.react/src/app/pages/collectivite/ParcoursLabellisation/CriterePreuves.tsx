@@ -55,7 +55,7 @@ export const CriterePreuves = (props: TCriterePreuvesProps) => {
           acte d’engagement
         </a>{' '}
         dans le programme affirmant votre adhésion{' '}
-        <a href={REGLEMENTS[referentiel]} target="_blank" rel="noopener">
+        <a href={REGLEMENTS[referentiel]} target="_blank" rel="noopener noreferrer">
           au règlement du label
         </a>
       </li>

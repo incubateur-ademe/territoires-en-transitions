@@ -3,7 +3,7 @@ import {QuestionThematiqueCompletudeReadEndpoint} from 'core-logic/api/endpoints
 import {supabaseClient} from 'core-logic/api/supabase';
 import {yuluCredentials} from 'test_utils/collectivites';
 
-describe('Question completude by thematique reading endpoint ', () => {
+describe('Question completude by thematique reading endpoint', () => {
   it('should retrieve items by collectivite_id', async () => {
     const questionThematiqueReadEndpoint =
       new QuestionThematiqueCompletudeReadEndpoint([]);

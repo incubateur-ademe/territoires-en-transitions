@@ -12,7 +12,7 @@ describe('Plan action write endpoint', () => {
     await supabaseClient.auth.signIn(yiliCredentials);
   });
 
-  it('Should be able to save and update a plan ', async () => {
+  it('Should be able to save and update a plan', async () => {
     const plan: PlanActionWrite = {
       collectivite_id: 2,
       uid: 'f000cf22-e00f-4457-a312-d91a796df993',

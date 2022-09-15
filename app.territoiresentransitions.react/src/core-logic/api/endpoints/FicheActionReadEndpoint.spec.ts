@@ -4,7 +4,7 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {FicheActionRead} from 'generated/dataLayer/fiche_action_read';
 import {yuluCredentials} from 'test_utils/collectivites';
 
-describe('Fiche action reading endpoint ', () => {
+describe('Fiche action reading endpoint', () => {
   it('should not be able to read if not connected', async () => {
     const ficheActionReadEndpoint = new FicheActionReadEndpoint([]);
     const results = await ficheActionReadEndpoint.getBy({
@@ -14,7 +14,7 @@ describe('Fiche action reading endpoint ', () => {
     expect(results).toHaveLength(0);
   });
 
-  it('should retrieve data-layer default fiche for collectivite #1 (for any connected user) ', async () => {
+  it('should retrieve data-layer default fiche for collectivite #1 (for any connected user)', async () => {
     const ficheActionReadEndpoint = new FicheActionReadEndpoint([]);
 
     await supabaseClient.auth.signIn(yuluCredentials); // Yulu is connected with no rights on collectivite #1
@@ -48,4 +48,3 @@ describe('Fiche action reading endpoint ', () => {
     expect(results[0]).toMatchObject(partialExpectedReadFicheAction);
   });
 });
-2;

@@ -83,6 +83,7 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
                 className="fr-link"
                 data-test="help"
                 href="https://aide.territoiresentransitions.fr/fr/"
+                rel="noreferrer"
                 target="_blank"
               >
                 <div
@@ -349,6 +350,7 @@ exports[`Storyshots app/Layout/Header Not Connected 1`] = `
                 className="fr-link"
                 data-test="help"
                 href="https://aide.territoiresentransitions.fr/fr/"
+                rel="noreferrer"
                 target="_blank"
               >
                 <div

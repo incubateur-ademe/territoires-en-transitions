@@ -19,7 +19,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves 
      
     <a
       href="/TE-CAE_Reglement-label_2021.pdf"
-      rel="noopener"
+      rel="noopener noreferrer"
       target="_blank"
     >
       au règlement du label
@@ -75,7 +75,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves 
      
     <a
       href="/Reglement_label_ECi_20220316.pdf"
-      rel="noopener"
+      rel="noopener noreferrer"
       target="_blank"
     >
       au règlement du label
@@ -110,7 +110,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves 
      
     <a
       href="/TE-CAE_Reglement-label_2021.pdf"
-      rel="noopener"
+      rel="noopener noreferrer"
       target="_blank"
     >
       au règlement du label
@@ -145,7 +145,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves 
      
     <a
       href="/Reglement_label_ECi_20220316.pdf"
-      rel="noopener"
+      rel="noopener noreferrer"
       target="_blank"
     >
       au règlement du label
@@ -180,7 +180,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves 
      
     <a
       href="/Reglement_label_ECi_20220316.pdf"
-      rel="noopener"
+      rel="noopener noreferrer"
       target="_blank"
     >
       au règlement du label

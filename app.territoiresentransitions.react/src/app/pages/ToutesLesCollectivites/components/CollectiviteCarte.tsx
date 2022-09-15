@@ -34,7 +34,7 @@ export const CollectiviteCarte = (props: TCollectiviteCarteProps) => {
           : '#'
       }
       className={classNames('!shadow-none', {
-        ['cursor-default, pointer-events-none']: !props.isCardClickable,
+        'cursor-default, pointer-events-none': !props.isCardClickable,
       })}
     >
       <Card
@@ -42,7 +42,7 @@ export const CollectiviteCarte = (props: TCollectiviteCarteProps) => {
         className={classNames(
           'flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100',
           {
-            ['hover:bg-gray-100']: props.isCardClickable,
+            'hover:bg-gray-100': props.isCardClickable,
           }
         )}
       >

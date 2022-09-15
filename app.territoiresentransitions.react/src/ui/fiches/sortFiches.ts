@@ -55,10 +55,13 @@ export const categorizeAndSortFiches = (
     CategorizedFiche[],
     CategorizedFiche[]
   >(
+    // @ts-ignore : en attendant d'enlever ramda et faire une v2 du plan d'actions
     byCategorieUid,
     asCategorizedFiche,
     R.values,
     sortCategorizedFiches
+    // @ts-ignore
   )(fiches);
+  // @ts-ignore
   return sortedCategorizedFiches;
 };

@@ -109,7 +109,7 @@ const CollectiviteSwitchDropdownDisplay = forwardRef(
           <CollectiviteAccesChip acces={acces} className="ml-4" />
           <div
             className={classNames('ml-2 fr-fi-arrow-down-s-line scale-75', {
-              ['rotate-180']: isOpen,
+              'rotate-180': isOpen,
             })}
           />
         </button>
