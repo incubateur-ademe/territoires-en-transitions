@@ -1,6 +1,7 @@
 import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {NiveauAcces} from 'generated/dataLayer';
 import {
+  makeCollectiviteBibliothequeUrl,
   makeCollectiviteIndicateursUrl,
   makeCollectiviteJournalUrl,
   makeCollectiviteLabellisationUrl,
@@ -172,6 +173,12 @@ export const makeCollectiviteNavItems = (
         {
           label: 'Gestion des membres',
           path: makeCollectiviteUsersUrl({
+            collectiviteId,
+          }),
+        },
+        {
+          label: 'Bibliothèque de documents',
+          path: makeCollectiviteBibliothequeUrl({
             collectiviteId,
           }),
         },

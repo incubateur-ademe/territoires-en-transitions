@@ -49,6 +49,7 @@ export const collectiviteFichePath = `${collectivitePath}/fiche/:${ficheParam}`;
 export const collectiviteUsersPath = `${collectivitePath}/users`;
 export const collectiviteAllCollectivitesPath = `${collectivitePath}/toutes_collectivites`;
 export const collectivitePersoRefPath = `${collectivitePath}/personnalisation`;
+export const collectiviteBibliothequePath = `${collectivitePath}/bibliotheque`;
 export const collectivitePersoRefThematiquePath = `${collectivitePersoRefPath}/:${thematiqueParam}`;
 export const collectiviteJournalPath = `${collectivitePath}/historique`;
 
@@ -198,6 +199,16 @@ export const makeCollectivitePersoRefUrl = ({
   collectiviteId: number;
 }) =>
   collectivitePersoRefPath.replace(
+    `:${collectiviteParam}`,
+    collectiviteId.toString()
+  );
+
+export const makeCollectiviteBibliothequeUrl = ({
+  collectiviteId,
+}: {
+  collectiviteId: number;
+}) =>
+  collectiviteBibliothequePath.replace(
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );
