@@ -4,6 +4,9 @@ import {AddPreuveComplementaire} from 'ui/shared/actions/AddPreuve/AddPreuveComp
 import {PreuveComplementaire} from './PreuveComplementaire';
 
 export type TPreuvesActionProps = {
+  /** Identifiant de l'action (ou de la sous-action concernée). Si l'id se
+   * termine par "%" il s'agit du cas "action et ses sous-actions"
+   */
   action_id: string;
   /** les preuves réglementaires */
   reglementaires?: TPreuveReglementaire[];
@@ -23,6 +26,8 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
   const preuvesParId = reglementaires?.length
     ? Array.from(groupByPreuveDefinitionId(reglementaires))
     : null;
+  // si l'id se termine par "%" il s'agit du cas "action et ses sous-actions"
+  const isAction = action_id.endsWith('%');
 
   return (
     <>
@@ -38,7 +43,8 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
         </>
       ) : (
         <p className="fr-text-sm">
-          Il n'y a pas de preuve attendue pour cette sous-action du référentiel.
+          Il n'y a pas de preuve attendue pour cette{' '}
+          {isAction ? 'action' : 'sous-action'} du référentiel.
           <br />
           Vous pouvez ajouter les documents preuves que vous jugez utiles pour
           justifier l'avancement.
