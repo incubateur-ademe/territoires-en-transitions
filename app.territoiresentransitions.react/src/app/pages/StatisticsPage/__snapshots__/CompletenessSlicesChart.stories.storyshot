@@ -15,7 +15,6 @@ exports[`Storyshots app/pages/StatisticsPage/CompletenessSlicesChart CAE 1`] = `
     Climat Air Énergie
   </div>
   <canvas
-    data-testid="canvas"
     height={150}
     onClick={[Function]}
     role="img"
@@ -39,7 +38,6 @@ exports[`Storyshots app/pages/StatisticsPage/CompletenessSlicesChart ECI 1`] = `
     Économie Circulaire
   </div>
   <canvas
-    data-testid="canvas"
     height={150}
     onClick={[Function]}
     role="img"
