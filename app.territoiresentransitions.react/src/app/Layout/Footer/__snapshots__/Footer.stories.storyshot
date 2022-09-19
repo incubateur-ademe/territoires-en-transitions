@@ -13,7 +13,7 @@ exports[`Storyshots app/Layout/Footer Exemple 1`] = `
       className="lg:flex"
     >
       <div
-        className="fr-footer__brand flex-shrink-0"
+        className="fr-footer__brand shrink-0"
       >
         <p
           className="fr-logo"

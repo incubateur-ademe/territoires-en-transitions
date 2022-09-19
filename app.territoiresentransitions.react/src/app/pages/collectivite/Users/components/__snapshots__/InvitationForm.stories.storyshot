@@ -13,7 +13,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/InvitationForm As Ad
     onSubmit={[Function]}
   >
     <div
-      className="fr-input-group md:flex-grow"
+      className="fr-input-group md:grow"
     >
       <label
         className="fr-label"
@@ -32,7 +32,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/InvitationForm As Ad
       />
     </div>
     <div
-      className="fr-select-group md:flex-grow"
+      className="fr-select-group md:grow"
     >
       <label
         className="fr-label"
@@ -91,7 +91,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/InvitationForm As Ed
     onSubmit={[Function]}
   >
     <div
-      className="fr-input-group md:flex-grow"
+      className="fr-input-group md:grow"
     >
       <label
         className="fr-label"
@@ -110,7 +110,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/InvitationForm As Ed
       />
     </div>
     <div
-      className="fr-select-group md:flex-grow"
+      className="fr-select-group md:grow"
     >
       <label
         className="fr-label"

@@ -10,7 +10,7 @@ exports[`Storyshots ui/shared/ResourceManager/FileItem Completed 1`] = `
   }
 >
   <div
-    className="px-2 py-1 text-sm text-bf500 w-full font-bold whitespace-nowrap overflow-ellipsis overflow-hidden"
+    className="px-2 py-1 text-sm text-bf500 w-full font-bold whitespace-nowrap text-ellipsis overflow-hidden"
     data-test="file-completed"
   >
     feuille de route des élus responsables CAE.pdf
@@ -38,7 +38,7 @@ exports[`Storyshots ui/shared/ResourceManager/FileItem Failed Duplicate 1`] = `
         className="flex w-11/12"
       >
         <div
-          className="text-sm whitespace-nowrap overflow-ellipsis overflow-hidden"
+          className="text-sm whitespace-nowrap text-ellipsis overflow-hidden"
           data-test="name"
         >
           fichier.xls
@@ -88,7 +88,7 @@ exports[`Storyshots ui/shared/ResourceManager/FileItem Failed Format And Size 1`
         className="flex w-11/12"
       >
         <div
-          className="text-sm whitespace-nowrap overflow-ellipsis overflow-hidden"
+          className="text-sm whitespace-nowrap text-ellipsis overflow-hidden"
           data-test="name"
         >
           mauvais format et taille.exe
@@ -138,7 +138,7 @@ exports[`Storyshots ui/shared/ResourceManager/FileItem Failed To Upload 1`] = `
         className="flex w-11/12"
       >
         <div
-          className="text-sm whitespace-nowrap overflow-ellipsis overflow-hidden"
+          className="text-sm whitespace-nowrap text-ellipsis overflow-hidden"
           data-test="name"
         >
           fichier.doc
@@ -188,7 +188,7 @@ exports[`Storyshots ui/shared/ResourceManager/FileItem Failed Too Big 1`] = `
         className="flex w-11/12"
       >
         <div
-          className="text-sm whitespace-nowrap overflow-ellipsis overflow-hidden"
+          className="text-sm whitespace-nowrap text-ellipsis overflow-hidden"
           data-test="name"
         >
           Rapport d’activités 2019-2020 et rapport DD 2020 nom vraiment trop long.doc
@@ -238,7 +238,7 @@ exports[`Storyshots ui/shared/ResourceManager/FileItem Failed Unknown Format 1`]
         className="flex w-11/12"
       >
         <div
-          className="text-sm whitespace-nowrap overflow-ellipsis overflow-hidden"
+          className="text-sm whitespace-nowrap text-ellipsis overflow-hidden"
           data-test="name"
         >
           Logo-comcom.SVG
@@ -285,7 +285,7 @@ exports[`Storyshots ui/shared/ResourceManager/FileItem Running 1`] = `
       className="w-8/12 flex justify-between"
     >
       <div
-        className="text-sm font-bold whitespace-nowrap overflow-ellipsis overflow-hidden"
+        className="text-sm font-bold whitespace-nowrap text-ellipsis overflow-hidden"
         data-test="name"
       >
         Délibération-Engagement-PCAET.pdf
@@ -344,7 +344,7 @@ exports[`Storyshots ui/shared/ResourceManager/FileItem Running 2 1`] = `
       className="w-8/12 flex justify-between"
     >
       <div
-        className="text-sm font-bold whitespace-nowrap overflow-ellipsis overflow-hidden"
+        className="text-sm font-bold whitespace-nowrap text-ellipsis overflow-hidden"
         data-test="name"
       >
         Rapport d’activités 2019-2020 et rapport DD 2020.doc

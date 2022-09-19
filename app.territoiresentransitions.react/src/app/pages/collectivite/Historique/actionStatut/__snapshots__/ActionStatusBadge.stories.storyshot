@@ -18,7 +18,7 @@ exports[`Storyshots app/pages/collectivite/Historique/actionStatut/ActionStatusB
 
 exports[`Storyshots app/pages/collectivite/Historique/actionStatut/ActionStatusBadge Fait 1`] = `
 <span
-  className="w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-green-700 bg-green-200"
+  className="w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-emerald-700 bg-emerald-200"
 >
   Fait
 </span>

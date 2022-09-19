@@ -115,7 +115,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
             </svg>
             <fieldset
               aria-hidden={true}
-              className="PrivateNotchedOutline-root-1 MuiOutlinedInput-notchedOutline"
+              className="PrivateNotchedOutline-root-5 MuiOutlinedInput-notchedOutline"
               style={
                 Object {
                   "paddingLeft": 8,
@@ -123,7 +123,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
               }
             >
               <legend
-                className="PrivateNotchedOutline-legend-2"
+                className="PrivateNotchedOutline-legend-6"
                 style={
                   Object {
                     "width": 0.01,
@@ -201,7 +201,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
             </svg>
             <fieldset
               aria-hidden={true}
-              className="PrivateNotchedOutline-root-1 MuiOutlinedInput-notchedOutline"
+              className="PrivateNotchedOutline-root-5 MuiOutlinedInput-notchedOutline"
               style={
                 Object {
                   "paddingLeft": 8,
@@ -209,7 +209,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
               }
             >
               <legend
-                className="PrivateNotchedOutline-legend-2"
+                className="PrivateNotchedOutline-legend-6"
                 style={
                   Object {
                     "width": 0.01,
@@ -913,7 +913,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
             </svg>
             <fieldset
               aria-hidden={true}
-              className="PrivateNotchedOutline-root-1 MuiOutlinedInput-notchedOutline"
+              className="PrivateNotchedOutline-root-5 MuiOutlinedInput-notchedOutline"
               style={
                 Object {
                   "paddingLeft": 8,
@@ -921,7 +921,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
               }
             >
               <legend
-                className="PrivateNotchedOutline-legend-2"
+                className="PrivateNotchedOutline-legend-6"
                 style={
                   Object {
                     "width": 0.01,
@@ -3226,7 +3226,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
             </svg>
             <fieldset
               aria-hidden={true}
-              className="PrivateNotchedOutline-root-5 MuiOutlinedInput-notchedOutline"
+              className="PrivateNotchedOutline-root-1 MuiOutlinedInput-notchedOutline"
               style={
                 Object {
                   "paddingLeft": 8,
@@ -3234,7 +3234,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
               }
             >
               <legend
-                className="PrivateNotchedOutline-legend-6"
+                className="PrivateNotchedOutline-legend-2"
                 style={
                   Object {
                     "width": 0.01,
@@ -3312,7 +3312,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
             </svg>
             <fieldset
               aria-hidden={true}
-              className="PrivateNotchedOutline-root-5 MuiOutlinedInput-notchedOutline"
+              className="PrivateNotchedOutline-root-1 MuiOutlinedInput-notchedOutline"
               style={
                 Object {
                   "paddingLeft": 8,
@@ -3320,7 +3320,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
               }
             >
               <legend
-                className="PrivateNotchedOutline-legend-6"
+                className="PrivateNotchedOutline-legend-2"
                 style={
                   Object {
                     "width": 0.01,
@@ -4008,7 +4008,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
             </svg>
             <fieldset
               aria-hidden={true}
-              className="PrivateNotchedOutline-root-5 MuiOutlinedInput-notchedOutline"
+              className="PrivateNotchedOutline-root-1 MuiOutlinedInput-notchedOutline"
               style={
                 Object {
                   "paddingLeft": 8,
@@ -4016,7 +4016,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
               }
             >
               <legend
-                className="PrivateNotchedOutline-legend-6"
+                className="PrivateNotchedOutline-legend-2"
                 style={
                   Object {
                     "width": 0.01,

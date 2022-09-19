@@ -34,7 +34,7 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
             </div>
           </div>
           <div
-            className="fr-header__ademe flex-shrink-0"
+            className="fr-header__ademe shrink-0"
           >
             <img
               alt="logo ADEME"
@@ -308,7 +308,7 @@ exports[`Storyshots app/Layout/Header Not Connected 1`] = `
             </div>
           </div>
           <div
-            className="fr-header__ademe flex-shrink-0"
+            className="fr-header__ademe shrink-0"
           >
             <img
               alt="logo ADEME"
