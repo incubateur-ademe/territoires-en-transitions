@@ -1,3 +1,6 @@
+import {TEtoiles} from 'generated/dataLayer/labellisation_parcours_read';
+import {Referentiel} from 'types/litterals';
+
 // un fichier de la bibliothèque
 export type TBibliothequeFichier = {
   id: number;
@@ -86,8 +89,8 @@ type TPreuveLabellisationFields = {
   preuve_reglementaire: null;
   demande: {
     en_cours: boolean;
-    referentiel: string;
-    etoiles: string;
+    referentiel: Referentiel;
+    etoiles: TEtoiles;
     date: string;
   };
   rapport: null;
