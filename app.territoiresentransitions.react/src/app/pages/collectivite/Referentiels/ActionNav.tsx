@@ -21,7 +21,7 @@ const ActionNav = ({actionId}: {actionId: string}) => {
   const actions = useReferentielDownToAction(currentReferentiel);
 
   const filteredActions = useMemo(() => {
-    return actions.filter(action => action.identifiant.indexOf('.') > -1);
+    return actions.filter(action => action.type === 'action');
   }, [actions]);
 
   /**
