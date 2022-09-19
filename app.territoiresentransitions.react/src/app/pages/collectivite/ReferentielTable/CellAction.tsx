@@ -7,6 +7,7 @@ export type TCellProps = CellProps<ActionReferentiel> & {
   collectiviteId: number | null;
   referentielId: ReferentielParamOption | null;
   maxDepth?: number | null;
+  alwaysShowExpand?: boolean;
 };
 
 // décalage à gauche des lignes en fonction du niveau
@@ -36,13 +37,20 @@ const NO_EXPAND_OFFSET = 34;
  * picto reflétant l'état plié/déplié lorsqu'il y a des descandants
  */
 export const CellAction = (props: TCellProps) => {
-  const {row, value, collectiviteId, referentielId, maxDepth} = props;
+  const {
+    row,
+    value,
+    collectiviteId,
+    referentielId,
+    maxDepth,
+    alwaysShowExpand,
+  } = props;
   if (!collectiviteId || !referentielId) return null;
 
   const {depth, identifiant} = row.original;
   const haveSubrows = row.subRows.length > 0;
   const isNotMaxDepth = !maxDepth || depth < maxDepth;
-  const showExpand = haveSubrows && isNotMaxDepth;
+  const showExpand = alwaysShowExpand || (haveSubrows && isNotMaxDepth);
 
   // applique un décalage en fonction du niveau + un décalage optionnel pour
   // compenser l'absence du bouton Expand lorsque c'est nécessaire

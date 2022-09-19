@@ -5,16 +5,19 @@ import {
   useTable,
   useExpanded,
   useFlexLayout,
+  Row,
 } from 'react-table';
 import {Referentiel} from 'types/litterals';
 import {TableData} from './useTableData';
 import {CellAction} from '../ReferentielTable/CellAction';
-import ReferentielTable from '../ReferentielTable';
 import {ActionReferentiel} from '../ReferentielTable/useReferentiel';
+import {useCollectiviteId} from 'core-logic/hooks/params';
+import '../ReferentielTable/styles.css';
+import ActionPreuvePanel from 'ui/shared/actions/ActionPreuvePanel/ActionPreuvePanel';
 
 export type TPreuvesTableProps = {
   tableData: TableData;
-  referentiel: Referentiel;
+  referentielId: Referentiel;
 };
 
 export type TCellProps = CellProps<ActionReferentiel>;
@@ -29,15 +32,18 @@ const COLUMNS: TColumn[] = [
   },
 ];
 
-const getMaxDepth = (referentiel: string | null) =>
-  referentiel === 'cae' ? 3 : 2;
+const subActionLevel = {
+  cae: 4,
+  eci: 3,
+};
 
 /**
  * Affiche la table "Preuves" d'un référentiel
  */
 export const PreuvesTable = (props: TPreuvesTableProps) => {
-  const {tableData, referentiel} = props;
-  const maxDepth = getMaxDepth(referentiel);
+  const collectiviteId = useCollectiviteId();
+  const {tableData, referentielId} = props;
+  const maxDepth = subActionLevel[referentielId];
   const {table, isLoading} = tableData;
 
   // crée l'instance de la table
@@ -46,7 +52,14 @@ export const PreuvesTable = (props: TPreuvesTableProps) => {
     useExpanded,
     useFlexLayout
   );
-  const {toggleRowExpanded, flatRows} = tableInstance;
+  const {
+    toggleRowExpanded,
+    flatRows,
+    getTableProps,
+    getTableBodyProps,
+    rows,
+    prepareRow,
+  } = tableInstance;
 
   // initialement
   const isInitialLoading = useRef(true);
@@ -66,12 +79,66 @@ export const PreuvesTable = (props: TPreuvesTableProps) => {
 
   // rendu de la table
   return (
-    <ReferentielTable
-      className="no-d3-border-top"
-      isLoading={isLoading}
-      table={tableInstance}
-      referentiel={referentiel}
-      noHeader
-    />
+    <div
+      {...getTableProps()}
+      className={`referentiel-table no-d3-border-top ${referentielId}`}
+    >
+      <div className="body" {...getTableBodyProps()}>
+        {isLoading ? (
+          <div className="message">Chargement en cours...</div>
+        ) : rows.length ? (
+          rows.map(
+            (
+              row: Row<ActionReferentiel>,
+              index: number,
+              rows: Row<ActionReferentiel>[]
+            ) => {
+              prepareRow(row);
+              const {original, isExpanded} = row;
+              const {depth, nom} = original;
+              // dernière ligne avant une nouvelle section
+              const isLast =
+                (!rows[index + 1] || rows[index + 1].depth === 0) &&
+                row.depth > 0;
+
+              const className = `row d${depth} ${
+                isExpanded ? 'open' : 'close'
+              } ${isLast ? 'last' : ''}`;
+
+              return (
+                <>
+                  {depth <= maxDepth ? (
+                    <div
+                      {...row.getRowProps()}
+                      className={className}
+                      title={(nom as string) || ''}
+                    >
+                      {row.cells.map(cell => {
+                        return (
+                          <div className="cell" {...cell.getCellProps()}>
+                            {cell.render('Cell', {
+                              collectiviteId,
+                              referentielId,
+                              alwaysShowExpand: true,
+                            })}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : null}
+                  {isExpanded && depth === maxDepth ? (
+                    <div className="row pt-5 pl-32">
+                      <ActionPreuvePanel action_id={row.original.action_id} />
+                    </div>
+                  ) : null}
+                </>
+              );
+            }
+          )
+        ) : (
+          <div className="message">Aucun résultat</div>
+        )}
+      </div>
+    </div>
   );
 };
