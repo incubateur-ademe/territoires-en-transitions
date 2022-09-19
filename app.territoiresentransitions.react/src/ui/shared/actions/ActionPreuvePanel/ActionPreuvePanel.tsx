@@ -29,8 +29,8 @@ export default (props: TActionPreuvePanelProps) => {
   return (
     <PreuvesAction
       action_id={action_id}
-      reglementaires={reglementaire as TPreuveReglementaire[]}
-      complementaires={complementaire as TPreuveComplementaire[]}
+      reglementaires={reglementaire || []}
+      complementaires={complementaire || []}
       showWarning
     />
   );

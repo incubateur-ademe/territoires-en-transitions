@@ -123,6 +123,14 @@ export type TPreuve =
 // identifiants des types de preuves
 export type TPreuveType = TPreuve['preuve_type'];
 
+// indexation par type
+export type TPreuvesParType = {
+  reglementaire: TPreuveReglementaire[] | undefined;
+  complementaire: TPreuveComplementaire[] | undefined;
+  labellisation: TPreuveLabellisation[] | undefined;
+  rapport: TPreuveRapport[] | undefined;
+};
+
 // gestionnaires pour l'édition d'une preuve
 export type TEditHandlers = {
   remove: () => void;

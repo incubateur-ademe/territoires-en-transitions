@@ -1,7 +1,7 @@
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useQuery} from 'react-query';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {TPreuve, TPreuveType} from './types';
+import {TPreuve, TPreuvesParType, TPreuveType} from './types';
 
 type TFilters = {
   action_id?: string;
@@ -76,7 +76,6 @@ export const usePreuvesParType = (filters?: TFilters) => {
 };
 
 // indexe une liste de preuves par type
-export type TPreuvesParType = Record<TPreuveType, TPreuve[]>;
 const groupByType = (preuves: TPreuve[]) => {
   const preuvesParType = preuves.reduce<TPreuvesParType>(
     (dict, preuve) => ({
