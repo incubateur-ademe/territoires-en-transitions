@@ -80,11 +80,7 @@ const LabellisationPreuves = (props: TCriterePreuvesProps) => {
   return (
     <div className="mt-2" data-test="LabellisationPreuves">
       {preuves.map(preuve => (
-        <PreuveFichierDetail
-          key={preuve.fichier?.hash}
-          {...props}
-          preuve={preuve}
-        />
+        <PreuveFichierDetail key={`${preuve.id}`} {...props} preuve={preuve} />
       ))}
     </div>
   );
