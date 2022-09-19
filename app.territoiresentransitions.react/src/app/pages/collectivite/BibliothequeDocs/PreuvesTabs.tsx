@@ -14,16 +14,16 @@ const REFERENTIELS: Referentiel[] = ['cae', 'eci'];
 export const PreuvesTabs = () => {
   return (
     <Tabs>
-      {REFERENTIELS.map(referentiel => {
-        const tableData = useTableData(referentiel);
+      {REFERENTIELS.map(referentielId => {
+        const tableData = useTableData(referentielId);
         return (
           <Tab
-            key={referentiel}
+            key={referentielId}
             label={`Référentiel ${
-              referentielToName[referentiel as Referentiel]
+              referentielToName[referentielId as Referentiel]
             }`}
           >
-            <PreuvesTable tableData={tableData} referentiel={referentiel} />
+            <PreuvesTable tableData={tableData} referentielId={referentielId} />
           </Tab>
         );
       })}
