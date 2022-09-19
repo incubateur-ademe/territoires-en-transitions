@@ -9,18 +9,31 @@ type Table = <T extends Record<string, unknown>>(props: {
   className?: string;
   isLoading: boolean;
   table: TableInstance<T>;
-  customHeaderProps: Record<string, unknown>;
+  referentiel?: ReferentielParamOption;
+  noHeader?: boolean;
+  customHeaderProps?: Record<string, unknown>;
   customCellProps?: Record<string, unknown>;
 }) => JSX.Element;
 
 const ReferentielTable: Table = props => {
-  const {className, isLoading, table, customHeaderProps, customCellProps} =
-    props;
+  const {
+    className,
+    isLoading,
+    table,
+    referentiel,
+    noHeader,
+    customHeaderProps,
+    customCellProps,
+  } = props;
   const {getTableProps, getTableBodyProps, headerGroups, rows, prepareRow} =
     table;
 
   const collectiviteId = useCollectiviteId();
-  const referentielId = useReferentielId() as ReferentielParamOption;
+
+  // si le nom du référentiel n'est pas passé en prop on l'obtient de l'url
+  const referentielIdFromUrl = useReferentielId() as ReferentielParamOption;
+  const referentielId = referentiel || referentielIdFromUrl;
+
   const cellProps = useMemo(
     () => ({collectiviteId, referentielId, ...(customCellProps || {})}),
     [collectiviteId, referentielId, customCellProps]
@@ -37,17 +50,19 @@ const ReferentielTable: Table = props => {
       {...getTableProps()}
       className={`referentiel-table ${referentielId} ${className || ''}`}
     >
-      <div className="header">
-        {headerGroups.map(headerGroup => (
-          <div className="row" {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map(column => (
-              <div className="cell" {...column.getHeaderProps()}>
-                {column.render('Header', customHeaderProps)}
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
+      {noHeader ? null : (
+        <div className="header">
+          {headerGroups.map(headerGroup => (
+            <div className="row" {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map(column => (
+                <div className="cell" {...column.getHeaderProps()}>
+                  {column.render('Header', customHeaderProps)}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      )}
       <div className="body" {...getTableBodyProps()}>
         {isLoading ? (
           <div className="message">Chargement en cours...</div>
