@@ -20,7 +20,7 @@ type TActionsSubset<ActionSubset> = (ActionSubset & ActionReferentiel)[];
 export const useReferentiel = <ActionSubset extends IAction>(
   referentiel: string | null,
   collectivite_id: number | null,
-  actions?: ActionSubset[]
+  actions?: ActionSubset[] | 'all'
 ) => {
   // chargement du référentiel
   const {mergeActions, isLoading, total} = useReferentielData(
@@ -93,24 +93,35 @@ const useReferentielData = (
         data => ({
           actionById: data?.reduce(byActionId, {}) || {},
           total: data?.filter(isTache)?.length || 0,
+          rows: data,
         }),
         []
       ),
     }
   );
-  const {actionById, total} = data || {};
+  const {actionById, total, rows} = data || {};
 
   // fusionne avec les informations préchargées du référentiel
   const mergeActions = useCallback(
     <ActionSubset extends IAction>(
-      actions?: ActionSubset[]
-    ): TActionsSubset<ActionSubset> =>
-      (actionById &&
-        actions?.map(action => ({
-          ...action,
-          ...(actionById[action.action_id] || {}),
-        }))) ||
-      [],
+      actions?: ActionSubset[] | 'all'
+    ): TActionsSubset<ActionSubset> => {
+      // pas de données
+      if (!actionById || !actions) {
+        return [];
+      }
+
+      // uniquement les lignes du référentiel
+      if (actions === 'all') {
+        return rows;
+      }
+
+      // fusionne dans chaque ligne les données complémentaires
+      return actions.map(action => ({
+        ...action,
+        ...(actionById[action.action_id] || {}),
+      }));
+    },
     [actionById]
   );
 
