@@ -17,7 +17,6 @@ exports[`Storyshots Charts/ReferentielScoreHistory Referentiel Score History Sto
      
   </div>
   <canvas
-    data-testid="canvas"
     height={150}
     onClick={[Function]}
     role="img"

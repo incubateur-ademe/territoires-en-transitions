@@ -16,7 +16,6 @@ exports[`Storyshots Charts/ReferentielAxisAvancementStackedBar CAE Example 1`] =
     État d'avancement par axes
   </div>
   <canvas
-    data-testid="canvas"
     height={510}
     id="axis_avancement_bar_cae"
     onClick={[Function]}

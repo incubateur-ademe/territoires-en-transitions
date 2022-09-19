@@ -264,7 +264,6 @@ exports[`Storyshots app/pages/collectivite/TableauBord/TableauBordPage Referenti
                       title={null}
                     >
                       <canvas
-                        data-testid="canvas"
                         height={150}
                         onClick={[Function]}
                         role="img"
@@ -341,7 +340,6 @@ exports[`Storyshots app/pages/collectivite/TableauBord/TableauBordPage Referenti
                       title={null}
                     >
                       <canvas
-                        data-testid="canvas"
                         height={150}
                         onClick={[Function]}
                         role="img"
@@ -429,7 +427,6 @@ exports[`Storyshots app/pages/collectivite/TableauBord/TableauBordPage Referenti
                       title={null}
                     >
                       <canvas
-                        data-testid="canvas"
                         height={150}
                         onClick={[Function]}
                         role="img"
@@ -506,7 +503,6 @@ exports[`Storyshots app/pages/collectivite/TableauBord/TableauBordPage Referenti
                       title={null}
                     >
                       <canvas
-                        data-testid="canvas"
                         height={150}
                         onClick={[Function]}
                         role="img"
@@ -593,7 +589,6 @@ exports[`Storyshots app/pages/collectivite/TableauBord/TableauBordPage Referenti
                   Scores par axe
                 </div>
                 <canvas
-                  data-testid="canvas"
                   height={150}
                   id="axis_scores_polar_cae"
                   onClick={[Function]}
@@ -633,7 +628,6 @@ exports[`Storyshots app/pages/collectivite/TableauBord/TableauBordPage Referenti
               État d'avancement par axes
             </div>
             <canvas
-              data-testid="canvas"
               height={425}
               id="axis_avancement_bar_cae"
               onClick={[Function]}
@@ -812,7 +806,6 @@ exports[`Storyshots app/pages/collectivite/TableauBord/TableauBordPage Referenti
                       title={null}
                     >
                       <canvas
-                        data-testid="canvas"
                         height={150}
                         onClick={[Function]}
                         role="img"
@@ -889,7 +882,6 @@ exports[`Storyshots app/pages/collectivite/TableauBord/TableauBordPage Referenti
                       title={null}
                     >
                       <canvas
-                        data-testid="canvas"
                         height={150}
                         onClick={[Function]}
                         role="img"
@@ -977,7 +969,6 @@ exports[`Storyshots app/pages/collectivite/TableauBord/TableauBordPage Referenti
                       title={null}
                     >
                       <canvas
-                        data-testid="canvas"
                         height={150}
                         onClick={[Function]}
                         role="img"
@@ -1054,7 +1045,6 @@ exports[`Storyshots app/pages/collectivite/TableauBord/TableauBordPage Referenti
                       title={null}
                     >
                       <canvas
-                        data-testid="canvas"
                         height={150}
                         onClick={[Function]}
                         role="img"
@@ -1141,7 +1131,6 @@ exports[`Storyshots app/pages/collectivite/TableauBord/TableauBordPage Referenti
                   Scores par axe
                 </div>
                 <canvas
-                  data-testid="canvas"
                   height={150}
                   id="axis_scores_polar_eci"
                   onClick={[Function]}
@@ -1181,7 +1170,6 @@ exports[`Storyshots app/pages/collectivite/TableauBord/TableauBordPage Referenti
               État d'avancement par axes
             </div>
             <canvas
-              data-testid="canvas"
               height={425}
               id="axis_avancement_bar_eci"
               onClick={[Function]}
