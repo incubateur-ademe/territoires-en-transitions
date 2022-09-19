@@ -43,6 +43,11 @@ const ActionReferentielRecursiveCard = ({
   );
 };
 
+const subActionLevel = {
+  cae: 4,
+  eci: 3,
+};
+
 export const ActionReferentielAvancementCard = ({
   action,
 }: {
@@ -52,6 +57,7 @@ export const ActionReferentielAvancementCard = ({
 }) => {
   const isLeaf = action.children.length === 0;
   const myRef = useScrollIntoView(action.id);
+  const isSubAction = action.depth === subActionLevel[action.referentiel];
 
   return (
     <div className="pt-8 flex flex-row justify-between" ref={myRef}>
@@ -61,7 +67,7 @@ export const ActionReferentielAvancementCard = ({
         <ActionReferentielDescription action={action} />
         {action.have_questions && <PersoPotentiel actionDef={action} />}
         {action.have_exemples && <ActionExemplesExpandPanel action={action} />}
-        <ActionPreuvesExpandPanel action={action} />
+        {isSubAction && <ActionPreuvesExpandPanel action={action} />}
         <ActionCommentaire action={action} />
       </div>
       <div className="w-2/8 pl-4">
