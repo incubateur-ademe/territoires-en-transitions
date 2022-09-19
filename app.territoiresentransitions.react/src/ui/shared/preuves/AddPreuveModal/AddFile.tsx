@@ -66,13 +66,10 @@ export const AddFile = (props: TAddFileProps) => {
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-    Promise.all(
-      validFiles.map(({status}) =>
-        onAddFileFromLib((status as UploadStatusCompleted).fichier_id)
-      )
-    ).then(() => {
-      onClose();
-    });
+    validFiles.map(({status}) =>
+      onAddFileFromLib((status as UploadStatusCompleted).fichier_id)
+    );
+    onClose();
   };
 
   return (
