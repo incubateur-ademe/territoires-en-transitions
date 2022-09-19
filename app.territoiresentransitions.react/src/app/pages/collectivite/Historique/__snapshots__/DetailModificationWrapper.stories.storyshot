@@ -13,7 +13,7 @@ exports[`Storyshots app/pages/collectivite/Historique/DetailModificationWrapper 
 
 exports[`Storyshots app/pages/collectivite/Historique/DetailModificationWrapper Detail Nouvelle Modification 1`] = `
 <div
-  className="max-w-full w-max p-2 border-2 border-green-400"
+  className="max-w-full w-max p-2 border-2 border-emerald-400"
   data-test="new"
 >
   <div>

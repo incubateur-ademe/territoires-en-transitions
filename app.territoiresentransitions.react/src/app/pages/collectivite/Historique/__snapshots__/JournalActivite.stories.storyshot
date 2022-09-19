@@ -30,13 +30,13 @@ exports[`Storyshots app/pages/collectivite/Historique/JournalActivite Exemple 1 
         </span>
       </div>
       <div
-        className="flex flex-col flex-grow overflow-hidden md:flex-row"
+        className="flex flex-col grow overflow-hidden md:flex-row"
       >
         <div
           className="mr-4 mt-0.5 text-blue-600 fr-fi-information-fill"
         />
         <div
-          className="flex flex-col flex-grow overflow-hidden"
+          className="flex flex-col grow overflow-hidden"
         >
           <div
             className="mb-4"
@@ -137,13 +137,13 @@ exports[`Storyshots app/pages/collectivite/Historique/JournalActivite Exemple 1 
         </span>
       </div>
       <div
-        className="flex flex-col flex-grow overflow-hidden md:flex-row"
+        className="flex flex-col grow overflow-hidden md:flex-row"
       >
         <div
           className="mr-4 mt-0.5 text-blue-600 fr-fi-information-fill"
         />
         <div
-          className="flex flex-col flex-grow overflow-hidden"
+          className="flex flex-col grow overflow-hidden"
         >
           <div
             className="mb-4"
