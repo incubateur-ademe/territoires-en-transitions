@@ -1,9 +1,6 @@
 import {EditablePreuveDoc} from 'ui/shared/preuves/Bibliotheque/PreuveDoc';
-import {TPreuveLabellisation} from 'ui/shared/preuves/Bibliotheque/types';
-import {
-  TPreuvesParType,
-  usePreuvesParType,
-} from 'ui/shared/preuves/Bibliotheque/usePreuves';
+import {TPreuvesParType} from 'ui/shared/preuves/Bibliotheque/types';
+import {usePreuvesParType} from 'ui/shared/preuves/Bibliotheque/usePreuves';
 import {AddRapportVisite} from './AddRapportVisite';
 import {PreuvesLabellisation} from './PreuveLabellisation';
 import {PreuvesTabs} from './PreuvesTabs';
@@ -23,9 +20,7 @@ export const BibliothequeDocs = ({preuves}: TBibliothequeDocsProps) => {
 
       {labellisation ? (
         <section className="fr-mt-4w">
-          <PreuvesLabellisation
-            preuves={labellisation as TPreuveLabellisation[]}
-          />
+          <PreuvesLabellisation preuves={labellisation} />
         </section>
       ) : null}
 
