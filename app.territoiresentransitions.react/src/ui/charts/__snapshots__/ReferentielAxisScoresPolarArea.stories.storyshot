@@ -21,7 +21,6 @@ exports[`Storyshots Charts/ReferentielAxisScoresPolarArea CAE Example 1`] = `
     Scores par axe
   </div>
   <canvas
-    data-testid="canvas"
     height={150}
     id="axis_scores_polar_cae"
     onClick={[Function]}

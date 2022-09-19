@@ -10,7 +10,6 @@ exports[`Storyshots app/pages/StatisticsPage/DailyCountLineChart Collectivites A
   }
 >
   <canvas
-    data-testid="canvas"
     height={150}
     onClick={[Function]}
     role="img"
@@ -29,7 +28,6 @@ exports[`Storyshots app/pages/StatisticsPage/DailyCountLineChart Rattachements 1
   }
 >
   <canvas
-    data-testid="canvas"
     height={150}
     onClick={[Function]}
     role="img"
@@ -48,7 +46,6 @@ exports[`Storyshots app/pages/StatisticsPage/DailyCountLineChart Utilisateurs Ac
   }
 >
   <canvas
-    data-testid="canvas"
     height={150}
     onClick={[Function]}
     role="img"
