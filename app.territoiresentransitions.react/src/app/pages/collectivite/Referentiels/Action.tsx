@@ -64,8 +64,9 @@ const useActionLinkedIndicateurDefinitions = (actionId: string) => {
 // index des onglets de la page Action
 const TABS_INDEX: Record<ActionVueParamOption, number> = {
   suivi: 0,
-  indicateurs: 1,
-  historique: 2,
+  preuves: 1,
+  indicateurs: 2,
+  historique: 3,
 };
 
 const useIsFullyRenseigne = (action: ActionDefinitionSummary): boolean => {
