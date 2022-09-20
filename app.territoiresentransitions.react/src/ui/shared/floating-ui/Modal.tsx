@@ -29,6 +29,8 @@ export type ModalProps = {
   setExternalOpen?: Dispatch<SetStateAction<boolean>>;
   /* max-width prédéfinies dans le DSFR, valeur par défaut "md" */
   size?: 'sm' | 'md' | 'lg';
+  /** désactive la fermeture lors du clic sur le fond */
+  disableDismiss?: boolean;
 };
 
 /*
@@ -42,6 +44,7 @@ const Modal = ({
   externalOpen,
   setExternalOpen,
   size = 'md',
+  disableDismiss,
 }: ModalProps) => {
   const [open, setOpen] = useState(false);
 
@@ -57,7 +60,7 @@ const Modal = ({
   const {getReferenceProps, getFloatingProps} = useInteractions([
     useClick(context),
     useRole(context),
-    useDismiss(context),
+    disableDismiss ? undefined : useDismiss(context),
   ]);
 
   const mobileClassnames = 'absolute inset-x-0 bottom-0 mt-8 max-h-full';
