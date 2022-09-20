@@ -13,6 +13,7 @@ import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinition
 import {PersoPotentiel} from 'app/pages/collectivite/PersoPotentielModal/PersoPotentiel';
 import {useEffect, useRef} from 'react';
 import {useLocation} from 'react-router-dom';
+import {subActionLevel} from 'types/litterals';
 
 /**
  * Displays an actions and it's children below.
@@ -41,11 +42,6 @@ const ActionReferentielRecursiveCard = ({
       ))}
     </div>
   );
-};
-
-const subActionLevel = {
-  cae: 4,
-  eci: 3,
 };
 
 export const ActionReferentielAvancementCard = ({

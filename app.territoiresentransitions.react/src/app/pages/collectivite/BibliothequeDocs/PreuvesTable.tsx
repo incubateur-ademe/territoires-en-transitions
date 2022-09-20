@@ -7,7 +7,7 @@ import {
   useFlexLayout,
   Row,
 } from 'react-table';
-import {Referentiel} from 'types/litterals';
+import {Referentiel, subActionLevel} from 'types/litterals';
 import {TableData} from './useTableData';
 import {CellAction} from '../ReferentielTable/CellAction';
 import {ActionReferentiel} from '../ReferentielTable/useReferentiel';
@@ -31,11 +31,6 @@ const COLUMNS: TColumn[] = [
     width: '100%',
   },
 ];
-
-const subActionLevel = {
-  cae: 4,
-  eci: 3,
-};
 
 /**
  * Affiche la table "Preuves" d'un référentiel
