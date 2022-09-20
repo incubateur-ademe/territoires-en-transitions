@@ -38,19 +38,10 @@ Fonctionnalité: Ajouter un membre au profil de la collectivité
     Et que je clique sur le bouton "Valider" du "formulaire de création de compte"
 
     # ------------
-    # Cette partie déco/reco n'a pas lieu d'être mais le flow va changer.
+    # Cette partie bouton se connecter etg rechargement n'a pas lieu d'être car le flow va changer
+    # avec l'onboarding.
+    Et que je clique sur le bouton "se connecter" de la page "confirmation de creation de compte"
     Quand je recharge la page
-    Et que je me déconnecte
-    Et que je clique sur le bouton "Se connecter" du "header"
-    Alors la page vérifie les conditions suivantes :
-      | Elément                                    | Condition |
-      | formulaire de connexion                    | visible   |
-
-    Quand je remplis le "formulaire de connexion" avec les valeurs suivantes :
-      | Champ | Valeur        |
-      | email | nono@dodo.com |
-      | mdp   | Noo0000oo00!! |
-    Et que je clique sur le bouton "Valider" du "formulaire de connexion"
     # ------------
 
     Alors la page vérifie les conditions suivantes :

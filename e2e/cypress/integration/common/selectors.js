@@ -57,4 +57,11 @@ export const Selectors = {
   "tableau des membres": {
     selector: "[data-test=MembreListTable]",
   },
+  "confirmation de creation de compte": {
+    selector: "[data-test=signup_success]",
+    children: {
+      "se connecter": "[data-test=SeConnecter]",
+    },
+  },
+
 };
