@@ -7,13 +7,14 @@ import {IdentifiantAction, isDisabledAction} from './IdentifiantAction';
 
 export type TPreuveReglementaireProps = {
   preuves: TPreuveReglementaire[];
+  noIdentifiant?: boolean;
 };
 
 /**
  * Affiche une preuve règlementaire et les éventuels documents associés
  */
 export const PreuveReglementaire = (props: TPreuveReglementaireProps) => {
-  const {preuves} = props;
+  const {preuves, noIdentifiant} = props;
 
   // n'affiche rien quand la liste est vide
   if (!preuves.length) {
@@ -43,7 +44,7 @@ export const PreuveReglementaire = (props: TPreuveReglementaireProps) => {
             </Tooltip>
           ) : null}
         </span>
-        <IdentifiantAction action={action} />
+        {noIdentifiant ? null : <IdentifiantAction action={action} />}
       </div>
       <div className="flex flex-1 flex-col justify-center space-y-2">
         {haveDoc

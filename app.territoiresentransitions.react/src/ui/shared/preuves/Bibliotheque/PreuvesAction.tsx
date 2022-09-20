@@ -8,13 +8,15 @@ export type TPreuvesActionProps = {
    * termine par "%" il s'agit du cas "action et ses sous-actions"
    */
   action_id: string;
+  /** indique si l'avertissement "toutes les preuves ajoutées seront
+   * visibles..." doit être affiché */
+  showWarning?: boolean;
+  /** indique si l'identifiant de l'action doit être masqué */
+  noIdentifiant?: boolean;
   /** les preuves réglementaires */
   reglementaires?: TPreuveReglementaire[];
   /** les preuves complémentaires */
   complementaires?: TPreuveComplementaire[];
-  /** indique si l'avertissement "toutes les preuves ajoutées seront
-   * visibles..." doit être affiché */
-  showWarning?: boolean;
 };
 
 /**
@@ -22,7 +24,13 @@ export type TPreuvesActionProps = {
  * preuves réglementaires celles associées au même id de définition
  */
 export const PreuvesAction = (props: TPreuvesActionProps) => {
-  const {action_id, reglementaires, complementaires, showWarning} = props;
+  const {
+    action_id,
+    reglementaires,
+    complementaires,
+    showWarning,
+    noIdentifiant,
+  } = props;
   const preuvesParId = reglementaires?.length
     ? Array.from(groupByPreuveDefinitionId(reglementaires))
     : null;
@@ -36,7 +44,11 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
           <h5>Preuves attendues</h5>
           <div className="divide-y divide-[#ddd] -mt-2">
             {preuvesParId.map(([preuveDefId, preuvesList]) => (
-              <PreuveReglementaire key={preuveDefId} preuves={preuvesList} />
+              <PreuveReglementaire
+                key={preuveDefId}
+                preuves={preuvesList}
+                noIdentifiant={noIdentifiant}
+              />
             ))}
           </div>
           <YellowDivider />
@@ -54,7 +66,11 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
       <AddPreuveComplementaire action_id={action_id} />
       <div className="divide-y divide-[#ddd]">
         {complementaires?.map(preuve => (
-          <PreuveComplementaire key={preuve.id} preuve={preuve} />
+          <PreuveComplementaire
+            key={preuve.id}
+            preuve={preuve}
+            noIdentifiant={noIdentifiant}
+          />
         ))}
       </div>
       {showWarning ? (
