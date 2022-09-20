@@ -135,7 +135,7 @@ const RegistrationForm = () => {
         <p>Votre compte a bien été créé ! </p>
         <Spacer />
         <div>
-          <Link to={signInPath} className="fr-btn">
+          <Link to={signInPath} className="fr-btn" data-test="SeConnecter">
             Se connecter
           </Link>
         </div>
