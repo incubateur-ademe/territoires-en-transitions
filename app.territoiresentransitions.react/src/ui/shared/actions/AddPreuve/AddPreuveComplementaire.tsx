@@ -1,7 +1,9 @@
 import {useState} from 'react';
 import Modal from 'ui/shared/floating-ui/Modal';
 import {AddPreuveModal} from 'ui/shared/preuves/AddPreuveModal';
+import {SelectDropdown} from 'ui/shared/SelectDropdown';
 import {useAddPreuveComplementaireToAction} from './useAddPreuveToAction';
+import {useSubActionLabelsById} from './useSubActions';
 
 export type TAddPreuveButtonProps = {
   action_id: string;
@@ -13,22 +15,47 @@ export type TAddPreuveButtonProps = {
  */
 export const AddPreuveComplementaire = (props: TAddPreuveButtonProps) => {
   const [opened, setOpened] = useState(false);
-  const {action_id} = props;
-  const handlers = useAddPreuveComplementaireToAction(action_id);
+
+  // détermine si on est dans le cas de l'ajout depuis l'onglet Preuves de
+  // l'action dans ce cas il est nécessaire d'extraire l'identifiant de l'action
+  // et de demander à laquelle de ses sous-actions doit être associée la preuve
+  // complémentaire
+  const {action_id: actionIdBase} = props;
+  const [action_id] = actionIdBase.split('%');
+  const isAction = action_id !== actionIdBase;
+  const [subaction_id, setSubaction] = useState('');
+
+  const handlers = useAddPreuveComplementaireToAction(
+    isAction ? subaction_id : action_id
+  );
+
+  const onClose = () => {
+    setOpened(false);
+    // quand on ferme le dialogue il faut aussi réinitialiser la sous-action
+    // sélectionnée pour que le sélecteur ré-apparaisse bien lors de la
+    // prochaine ouverture
+    setSubaction('');
+  };
 
   return (
     <Modal
       size="lg"
       externalOpen={opened}
       setExternalOpen={setOpened}
+      disableDismiss
       render={() => {
         return (
           <>
             <h4>Ajouter une preuve complémentaire</h4>
-            <AddPreuveModal
-              onClose={() => setOpened(false)}
-              handlers={handlers}
-            />
+            {isAction && !subaction_id ? (
+              <SelectSubAction
+                action_id={action_id}
+                subaction_id={subaction_id}
+                setSubaction={setSubaction}
+              />
+            ) : (
+              <AddPreuveModal onClose={onClose} handlers={handlers} />
+            )}
           </>
         );
       }}
@@ -41,5 +68,34 @@ export const AddPreuveComplementaire = (props: TAddPreuveButtonProps) => {
         Ajouter une preuve complémentaire
       </button>
     </Modal>
+  );
+};
+
+/** Affiche le sélecteur de sous-action */
+const SelectSubAction = ({
+  action_id,
+  subaction_id,
+  setSubaction,
+}: {
+  action_id: string;
+  subaction_id: string;
+  setSubaction: (value: string) => void;
+}) => {
+  const labels = useSubActionLabelsById(action_id);
+
+  return (
+    <fieldset className="fr-fieldset h-52">
+      <label className="fr-label mb-2">
+        Sous-action associée (obligatoire)
+      </label>
+      <SelectDropdown
+        placeholderText="Sélectionnez une option"
+        value={subaction_id}
+        labels={labels}
+        onSelect={value => {
+          setSubaction(value);
+        }}
+      />
+    </fieldset>
   );
 };
