@@ -35,7 +35,11 @@ export type ReferentielVueParamOption =
   | 'progression'
   | 'priorisation'
   | 'detail';
-export type ActionVueParamOption = 'suivi' | 'indicateurs' | 'historique';
+export type ActionVueParamOption =
+  | 'suivi'
+  | 'preuves'
+  | 'indicateurs'
+  | 'historique';
 
 export const collectivitePath = `/collectivite/:${collectiviteParam}`;
 export const collectiviteIndicateurPath = `${collectivitePath}/indicateurs/:${indicateurViewParam}`;
