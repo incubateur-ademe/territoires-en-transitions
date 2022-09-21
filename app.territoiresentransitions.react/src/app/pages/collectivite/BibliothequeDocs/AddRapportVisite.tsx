@@ -9,7 +9,8 @@ import {useAddRapportVisite} from './useAddRapportVisite';
  */
 export const AddRapportVisite = () => {
   const [opened, setOpened] = useState(false);
-  const handlers = useAddRapportVisite();
+  const [date, setDate] = useState('');
+  const handlers = useAddRapportVisite(date);
 
   return (
     <Modal
@@ -20,11 +21,14 @@ export const AddRapportVisite = () => {
         return (
           <>
             <h4>Ajouter un rapport de visite annuelle</h4>
-            <AddPreuveModal
-              onClose={() => setOpened(false)}
-              handlers={handlers}
-              mode="rapport"
-            />
+            {!date ? (
+              <SelectDate date={date} setDate={setDate} />
+            ) : (
+              <AddPreuveModal
+                onClose={() => setOpened(false)}
+                handlers={handlers}
+              />
+            )}
           </>
         );
       }}
@@ -37,5 +41,23 @@ export const AddRapportVisite = () => {
         +&nbsp;Ajouter
       </button>
     </Modal>
+  );
+};
+
+/** Affiche le sélecteur de date */
+const SelectDate = ({
+  date,
+  setDate,
+}: {
+  date: string;
+  setDate: (value: string) => void;
+}) => {
+  return (
+    <fieldset className="fr-fieldset h-52">
+      <label className="fr-label mb-2">
+        Date de la visite annuelle (obligatoire)
+      </label>
+      <input type="date" value={date} onChange={e => setDate(e.target.value)} />
+    </fieldset>
   );
 };

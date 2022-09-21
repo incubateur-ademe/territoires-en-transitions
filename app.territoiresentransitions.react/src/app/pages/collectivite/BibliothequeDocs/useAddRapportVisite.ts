@@ -3,7 +3,7 @@ import {TAddFileFromLib} from 'ui/shared/preuves/AddPreuveModal/AddFile';
 import {TAddLink} from 'ui/shared/preuves/AddPreuveModal/AddLink';
 import {useAddPreuveRapport} from 'ui/shared/preuves/Bibliotheque/useAddPreuves';
 
-type TAddDocs = () => {
+type TAddDocs = (date: string) => {
   /** ajoute un fichier sélectionné depuis la bibliothèque */
   addFileFromLib: TAddFileFromLib;
   /** ou un lien */
@@ -12,7 +12,7 @@ type TAddDocs = () => {
 
 /** Renvoie les gestionnaires d'événements du dialogue d'ajout de
  * fichiers au parcours de labellisation en cours */
-export const useAddRapportVisite: TAddDocs = () => {
+export const useAddRapportVisite: TAddDocs = date => {
   const collectivite_id = useCollectiviteId();
   const {mutate: addPreuve} = useAddPreuveRapport();
 
@@ -36,8 +36,7 @@ export const useAddRapportVisite: TAddDocs = () => {
         commentaire: '',
         titre,
         url,
-        // TODO: récupérer la date depuis le sélecteur
-        date: new Date().toISOString(),
+        date,
       });
     }
   };
