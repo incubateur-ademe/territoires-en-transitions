@@ -32,6 +32,7 @@ export const PreuveDoc = ({
   handlers,
 }: TPreuveDocProps) => {
   const {commentaire} = preuve;
+  const dateVisite = preuve.rapport?.date;
 
   const {
     remove,
@@ -106,6 +107,11 @@ export const PreuveDoc = ({
           }}
         />
       ) : null}
+      {dateVisite ? (
+        <p className="text-xs grey625 mb-0">
+          Visite effectuée le {formatDate(dateVisite)}
+        </p>
+      ) : null}
       {formatCreatedAt(preuve)}
     </div>
   );
@@ -152,7 +158,7 @@ const formatDateAndAuthor = (
   author: string,
   isModification: boolean
 ) => {
-  const le = format(new Date(date), 'dd MMM yyyy', {locale: fr});
+  const le = formatDate(date);
   const modif = isModification ? 'Modifié' : 'Ajouté';
   return (
     <span className="text-xs grey625">
@@ -160,3 +166,6 @@ const formatDateAndAuthor = (
     </span>
   );
 };
+
+const formatDate = (date: string) =>
+  format(new Date(date), 'dd MMM yyyy', {locale: fr});
