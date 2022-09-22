@@ -21,6 +21,7 @@ const Template: Story<TPreuvesActionProps> = args => (
 
 export const SansPreuvesComplementaires = Template.bind({});
 SansPreuvesComplementaires.args = {
+  action_id: 'cae_1.2.3.4',
   reglementaires: [
     preuveReglementaireNonRenseignee,
     preuveReglementaireFichier,
@@ -31,6 +32,7 @@ SansPreuvesComplementaires.args = {
 
 export const AvecPreuvesComplementaires = Template.bind({});
 AvecPreuvesComplementaires.args = {
+  action_id: 'cae_1.2.3.4',
   reglementaires: [
     preuveReglementaireNonRenseignee,
     preuveReglementaireFichier,
@@ -42,12 +44,14 @@ AvecPreuvesComplementaires.args = {
 
 export const SansPreuvesAttendues = Template.bind({});
 SansPreuvesAttendues.args = {
+  action_id: 'cae_1.2.3%',
   reglementaires: [],
   complementaires: [],
 };
 
 export const AvecMessageAvertissement = Template.bind({});
 AvecMessageAvertissement.args = {
+  action_id: 'cae_1.2.4',
   reglementaires: [],
   complementaires: [preuveComplementaireFichier],
   showWarning: true,
