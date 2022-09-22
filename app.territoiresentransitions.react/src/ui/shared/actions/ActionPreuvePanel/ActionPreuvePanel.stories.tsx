@@ -2,7 +2,8 @@ import {Story, Meta} from '@storybook/react';
 import ActionPreuvePanel, {TActionPreuvePanelProps} from './ActionPreuvePanel';
 
 const DEFAULT_ARGS = {
-  action: {id: 'eci_1.1.1'},
+  action_id: 'eci_1.1.1',
+  showWarning: true,
 };
 
 export default {

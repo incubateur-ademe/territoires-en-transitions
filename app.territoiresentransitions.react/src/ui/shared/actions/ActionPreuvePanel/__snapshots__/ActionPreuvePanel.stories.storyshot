@@ -5,7 +5,10 @@ Array [
   <p
     className="fr-text-sm"
   >
-    Il n'y a pas de preuve attendue pour cette sous-action du référentiel.
+    Il n'y a pas de preuve attendue pour cette
+     
+    sous-action
+     du référentiel.
     <br />
     Vous pouvez ajouter les documents preuves que vous jugez utiles pour justifier l'avancement.
   </p>,
