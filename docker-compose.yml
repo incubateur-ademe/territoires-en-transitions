@@ -42,6 +42,7 @@ services:
     image: supabase/gotrue:v2.10.0
     depends_on:
       - db
+      - mailhog
     restart: unless-stopped
     environment:
       GOTRUE_API_HOST: 0.0.0.0
@@ -60,12 +61,12 @@ services:
 
       GOTRUE_EXTERNAL_EMAIL_ENABLED: ${ENABLE_EMAIL_SIGNUP}
       GOTRUE_MAILER_AUTOCONFIRM: ${ENABLE_EMAIL_AUTOCONFIRM}
-      GOTRUE_SMTP_ADMIN_EMAIL: ${SMTP_ADMIN_EMAIL}
-      GOTRUE_SMTP_HOST: ${SMTP_HOST}
-      GOTRUE_SMTP_PORT: ${SMTP_PORT}
-      GOTRUE_SMTP_USER: ${SMTP_USER}
-      GOTRUE_SMTP_PASS: ${SMTP_PASS}
-      GOTRUE_SMTP_SENDER_NAME: ${SMTP_SENDER_NAME}
+      GOTRUE_SMTP_ADMIN_EMAIL: dev@territoiresentransitions.fr
+      GOTRUE_SMTP_HOST: mailhog
+      GOTRUE_SMTP_PORT: 1025
+#      GOTRUE_SMTP_USER: ${SMTP_USER}
+#      GOTRUE_SMTP_PASS: ${SMTP_PASS}
+#      GOTRUE_SMTP_SENDER_NAME: ${SMTP_SENDER_NAME}
       GOTRUE_MAILER_URLPATHS_INVITE: /auth/v1/verify
       GOTRUE_MAILER_URLPATHS_CONFIRMATION: /auth/v1/verify
       GOTRUE_MAILER_URLPATHS_RECOVERY: /auth/v1/verify
@@ -361,3 +362,10 @@ services:
     working_dir: /data_layer/sqitch
     volumes:
       - ./data_layer/sqitch:/data_layer/sqitch
+
+  # Mailhog est utilisé pour tester l'envoi de mails par Gotrue
+  mailhog:
+    container_name: tet-mailhog
+    image: mailhog/mailhog
+    ports:
+      - 8025:8025 # web ui
