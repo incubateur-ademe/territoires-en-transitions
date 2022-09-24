@@ -1,5 +1,5 @@
 begin;
-select plan(11);
+select plan(12);
 
 select *
 into random_admin
@@ -59,5 +59,15 @@ select ok((is_authenticated()), 'When identifying with an uuid is_authenticated 
 
 select test.identify_as_service_role();
 select ok((is_service_role()), 'When identifying as service role is_service_role should be true');
+
+select *
+into random_user
+from test_add_random_user(1, 'lecture');
+select test_reset_users();
+select set_hasnt(
+               'select id, email from auth.users;',
+               'select user_id as id, email from random_user;',
+               'The random user should not be in the auth.users table.'
+           );
 
 rollback;
