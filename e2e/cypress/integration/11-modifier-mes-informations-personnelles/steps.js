@@ -26,3 +26,23 @@ Given("la modale de modification d'email est affichée", () => {
     "be.visible"
   );
 });
+
+Given (/je vide ma boite de reception/, (email) => {
+  cy.origin(`http://localhost:8025/`, { args: { email } }, ({ email }) => {
+    cy.visit("/");
+    cy.get(`[ng-click="deleteAll()"]`).click();
+    cy.get(`[ng-click="deleteAllConfirm()"]`).click();
+  })
+  cy.visit("/");
+});
+
+Given("je clique sur le bouton confirmer de la modale de modification d'email", () => {
+  cy.get(LocalSelectors["modale de modification d'email"].selector).get(`[aria-label="Confirmer"]`).click();
+});
+
+Given (/ma boite de reception contient un mail adressé à "([^"]+)"/, (email) => {
+  cy.origin(`http://localhost:8025/`, { args: { email } }, ({ email }) => {
+    cy.visit("/");
+    cy.get(".msglist-message").contains(email);
+  })
+});
