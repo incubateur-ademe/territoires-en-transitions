@@ -8,7 +8,6 @@ export type TBibliothequeFichier = {
   hash: string;
   filename: string;
   bucket_id: string;
-  file_id: string;
   filesize: number;
 };
 

@@ -16,12 +16,16 @@ export const FileItemsList = (props: TFileItemsListProps) => {
   const {items, onRunningStopped, onRemoveFailed} = props;
 
   // groupe les items terminés/en cours/en erreur
-  const {completed, running, failed} = items.reduce(groupByStatus, emptyGroups);
+  const {completed, running, failed, duplicated} = items.reduce(
+    groupByStatus,
+    emptyGroups
+  );
 
   // et rend chaque groupe d'items
   return (
-    <div data-test="FileItems" className="pt-2">
+    <div data-test="FileItems" className="pt-2 overflow-y-auto max-h-[220px]">
       {renderItems(completed)}
+      {renderItems(duplicated, {onRemoveFailed})}
       {renderItems(running, {onRunningStopped})}
       {renderItems(failed, {onRemoveFailed})}
     </div>
@@ -43,11 +47,13 @@ type TGroupedItems = {
   completed: Array<TFileItem>;
   running: Array<TFileItem>;
   failed: Array<TFileItem>;
+  duplicated: Array<TFileItem>;
 };
 const emptyGroups: TGroupedItems = {
   completed: [],
   running: [],
   failed: [],
+  duplicated: [],
 };
 
 const groupByStatus = (
@@ -57,6 +63,7 @@ const groupByStatus = (
   const {status} = item;
   switch (status.code) {
     case UploadStatusCode.completed:
+    case UploadStatusCode.duplicated:
     case UploadStatusCode.running:
     case UploadStatusCode.failed:
       return {...result, [status.code]: [...result[status.code], item]};

@@ -60,7 +60,9 @@ export const AddFile = (props: TAddFileProps) => {
   };
 
   const validFiles = currentSelection.filter(
-    ({status}) => status.code === UploadStatusCode.completed
+    ({status}) =>
+      status.code === UploadStatusCode.completed ||
+      status.code === UploadStatusCode.duplicated
   );
   const isDisabled = !validFiles?.length;
 
