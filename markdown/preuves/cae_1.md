@@ -93,7 +93,7 @@ actions:
 id: plan_mobilite
 ```
 
-# Programme local de prévention des déchets - PLPDMA approuvé
+# Programme local de prévention des déchets - PLPDMA approuvé ou délibération récente prise pour le lancement de l’élaboration du PLPDMA
 ```yaml
 actions: 
   - cae_1.2.3.1
