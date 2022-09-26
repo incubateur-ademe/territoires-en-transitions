@@ -2,13 +2,13 @@ import * as Yup from 'yup';
 import {Field, Form, Formik, FormikHandlers} from 'formik';
 
 import {Spacer} from 'ui/shared/Spacer';
-import Modal from 'ui/shared/floating-ui/Modal';
 import LabeledTextField from 'ui/forms/LabeledTextField';
 
 import {useAuth, UserData} from 'core-logic/api/auth/AuthProvider';
 import {useUpdateEmail} from 'core-logic/api/auth/useUpdateEmail';
 import {useUpdateDCP} from 'core-logic/api/auth/useUpdateDCP';
 import {useState} from 'react';
+import ModifierEmailModal from './ModifierEmailModal';
 
 interface ModifierCompteData {
   prenom: string;
@@ -16,17 +16,17 @@ interface ModifierCompteData {
   email: string;
 }
 
-export const MonCompte = ({user}: {user: UserData}) => {
-  const validation = Yup.object({
-    prenom: Yup.string().required('Champ requis'),
-    nom: Yup.string().required('Champ requis'),
-    email: Yup.string()
-      .email("Cette adresse email n'est pas valide")
-      .required('Champ requis'),
-  });
+const validation = Yup.object({
+  prenom: Yup.string().required('Champ requis'),
+  nom: Yup.string().required('Champ requis'),
+  email: Yup.string()
+    .email("Cette adresse email n'est pas valide")
+    .required('Champ requis'),
+});
 
+export const MonCompte = ({user}: {user: UserData}) => {
   const {handleUpdateDCP, renderToast: renderDCPToast} = useUpdateDCP(user.id);
-  const {handleUpdateEmail, renderToast: renderEmailToast} = useUpdateEmail();
+  const {renderToast: renderEmailToast} = useUpdateEmail();
 
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
 
@@ -47,7 +47,7 @@ export const MonCompte = ({user}: {user: UserData}) => {
           validationSchema={validation}
           onSubmit={() => undefined}
         >
-          {({values, isValid, handleBlur}) => (
+          {({values, isValid, handleBlur, resetForm}) => (
             <Form>
               <Field
                 data-test="prenom"
@@ -93,42 +93,13 @@ export const MonCompte = ({user}: {user: UserData}) => {
                     setIsEmailModalOpen(true);
                 }}
               />
-              <Modal
-                size="lg"
-                externalOpen={isEmailModalOpen}
-                setExternalOpen={setIsEmailModalOpen}
-                render={({labelId, descriptionId}) => (
-                  <div data-test="modification-email-modal">
-                    <h4 id={labelId} className="fr-h4">
-                      Modifier mon adresse email
-                    </h4>
-                    <p id={descriptionId}>
-                      Cette modification sera effective quand vous aurez cliqué
-                      sur le lien de validation du message envoyé à la nouvelle
-                      adresse associée à votre compte{' '}
-                      <span className="font-bold">{values.email}</span>
-                    </p>
-                    <div className="mt-2 fr-btns-group fr-btns-group--left fr-btns-group--inline-reverse fr-btns-group--inline-lg">
-                      <button
-                        onClick={() => setIsEmailModalOpen(false)}
-                        className="fr-btn fr-btn--secondary"
-                        aria-label="Annuler"
-                      >
-                        Annuler
-                      </button>
-                      <button
-                        onClick={() => {
-                          handleUpdateEmail({email: values.email});
-                          setIsEmailModalOpen(false);
-                        }}
-                        aria-label="Confirmer"
-                        className="fr-btn"
-                      >
-                        Confirmer
-                      </button>
-                    </div>
-                  </div>
-                )}
+              <ModifierEmailModal
+                isOpen={isEmailModalOpen}
+                setOpen={setIsEmailModalOpen}
+                resetEmail={() =>
+                  resetForm({values: {...values, email: user.email!}})
+                }
+                email={values.email}
               />
             </Form>
           )}
