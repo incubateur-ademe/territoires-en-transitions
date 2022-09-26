@@ -18,7 +18,7 @@ id: semaine_mobilite
 ```yaml
 actions: 
   - cae_4.1.1.3
-id: promotion_plans_mobilite
+id: promotion_PDE
 ```
 
 # Politique des pédibus
@@ -39,7 +39,7 @@ id: releve_conso_vehicule
 ```yaml
 actions: 
   - cae_4.1.2.2
-id: plan_mobilite
+id: PDA
 ```
 
 # Présentation certification parc auto (ISO 14001 ou autre démarche)
@@ -186,21 +186,21 @@ id: program_rue_double_sens_cycliste
 ```yaml
 actions: 
   - cae_4.3.3.2
-id: rapport_annuel_transports_commun
+id: rapport_annuel_TC
 ```
 
 # Plan du réseau / fiches horaires
 ```yaml
 actions: 
   - cae_4.3.3.2
-id: plan_reseau
+id: plan_reseau_TC
 ```
 
 # Présentation / Bilan fréquentation des parking-relais
 ```yaml
 actions: 
   - cae_4.3.4.2
-id: bilan_frequentation_parking_relais
+id: bilan_parking_relais
 ```
 
 # Présentation / Bilan offre covoiturage
