@@ -44,14 +44,14 @@ id: prog_formation_cae
 ```yaml
 actions: 
   - cae_5.1.3.1
-id: ex_entretien_indiv_personnel
+id: ex_grille_entretien_indiv
 ```
 
 # Exemple d’objectifs annuels du personnel dans le domaine de l’énergie
 ```yaml
 actions: 
   - cae_5.1.3.1
-id: ex_object_annuel_personnel_ener
+id: ex_object_annuel_personnel_energie
 ```
 
 # Budget du plan d’actions de la politique Climat-Air-Énergie
@@ -61,7 +61,7 @@ actions:
 id: budget_plan_actions_cae
 ```
 ## Description
-ou budgest des actions programmées couvertes par le référentiel Climat-Air-Énergie
+ou budget des actions programmées couvertes par le référentiel Climat-Air-Énergie
 
 # Évaluation climat du budget de la collectivité
 ```yaml
@@ -74,7 +74,7 @@ id: eval_climat_budget
 ```yaml
 actions: 
   - cae_5.2.1.5
-id: dossier_certif_economie_ener
+id: dossier_CEE
 ```
 
 # Contrat de performance énergétique
