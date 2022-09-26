@@ -3,15 +3,7 @@
 BEGIN;
 
 select collectivite_id, nom
-from stats_real_collectivites
-where false;
-
-select date, count, cumulated_count
-from stats_rattachements
-where false;
-
-select date, count, cumulated_count
-from stats_unique_active_collectivite
+from stats_active_real_collectivites
 where false;
 
 ROLLBACK;
