@@ -23,8 +23,7 @@ export const useAddRapportVisite: TAddDocs = date => {
         collectivite_id,
         commentaire: '',
         fichier_id,
-        // TODO: récupérer la date depuis le sélecteur
-        date: new Date().toISOString(),
+        date: new Date(date).toISOString(),
       });
     }
   };
