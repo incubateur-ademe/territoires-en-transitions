@@ -1,14 +1,25 @@
-# PLPDMA approuvé ou une délibération récente prise pour le lancement de l’élaboration du PLPDMA
+<!--# PLPDMA approuvé ou une délibération récente prise pour le lancement de l’élaboration du PLPDMA
 ```yaml
 actions: 
   - eci_2.1.0
 id: plpdma
 ```
+## Description
+Preuve identique à la cae_1.2.3.1 -->
 
-# Compte-rendu de la dernière réunion de la Commission consultative d’évaluation et de suivi (CCES) avec la liste des participants OU si la CCES n’est pas créée, délibération qui prévoit de le faire
+# Délibération de création de la CCES avec sa composition 
 ```yaml
 actions: 
   - eci_2.1.0
+  - eci_2.1.2
+id: delib_cces
+```
+
+# Compte-rendu de la dernière réunion de la Commission consultative d’évaluation et de suivi (CCES) avec la liste des participants 
+```yaml
+actions: 
+  - eci_2.1.0
+  - eci_2.1.2
 id: cr_cces
 ```
 
@@ -26,25 +37,29 @@ actions:
 id: restit_plpdma_spgd
 ```
 
-# Compte-rendu de la réunion de la CCES
+<!--# Compte-rendu de la réunion de la CCES
 ```yaml
 actions: 
   - eci_2.1.2
 id: cr_cces
 ```
+## Description
+Preuve identique à la eci_2.1.0 -->
 
-# Délibération stipulant la composition de la CCES
+<!--# Délibération stipulant la composition de la CCES
 ```yaml
 actions: 
   - eci_2.1.2
 id: delib_compo_cces
 ```
+## Description
+Preuve identique à la eci_2.1.0 -->
 
 # Bilan et outils de suivi
 ```yaml
 actions: 
   - eci_2.1.3
-id: bilan_outil_suivi
+id: bilan_outil_suivi_PLPDMA
 ```
 
 # Arrêté fixant les modalités de collecte des différentes catégories de déchets
@@ -54,7 +69,7 @@ actions:
 id: arrete_modalites_collecte_dechets
 ```
 
-# Dernier rapport annuel d'activité SPPGD présenté en conseil
+<!--# Dernier rapport annuel d'activité SPPGD présenté en conseil
 ```yaml
 actions: 
   - eci_2.2.0
@@ -64,6 +79,7 @@ id: rapport_annuel_sppgd
 Pour les audits d’une année N, disposer au moins du rapport N-2.
 Le rapport est un vrai document d’information du public et non un simple document de communication. Vous trouverez <a href="https://expertises.ademe.fr/professionnels/collectivites/integrer-lenvironnement-domaines-dintervention/dechets/connaitre/dossier/acceder-donnees/rapport-service-public-prevention-gestion-dechets-menagers-assimiles">ici une page d’information</a> sur le rapport du service public
 de prévention et de gestion des déchets ménagers et assimilés et les exigences associées.
+Preuve identique à la cae_1.2.3.1 / cae_3.3.5.3 / eci_4.1.0 / eci_2.4.3-->
 
 # Délibération approuvant le règlement de collecte des déchets qui couvre l’ensemble du territoire administratif de l’EPCI
 ```yaml
@@ -101,7 +117,7 @@ Pour les compétences déléguées à une autre collectivité, il n’est pas de
 ```yaml
 actions: 
   - eci_2.2.1
-id: rapports_issus_enquetes_etudes
+id: rapports_etudes_service_collecte
 ```
 ## Description
 Les preuves ne doivent pas forcement être récentes (en terme de date), mais d'actualité par rapport à l'état du système de collecte en place.
@@ -117,14 +133,14 @@ id: plan_actions_eci
 ```yaml
 actions: 
   - eci_2.2.2
-id: delib_plan_actions_eci
+id: delib_plan_actions_optimisation_collecte
 ```
 
 # Fiches actions Optigede incluant la stratégie de communication
 ```yaml
 actions: 
   - eci_2.2.3
-id: fiches_actions_optigede
+id: fiche_Optigede_optimisation_collecte
 ```
 
 # Dernier DUERP en date pour les activités liées à la compétence traitement
@@ -154,28 +170,28 @@ Pour les compétences déléguées à une autre collectivité, il n’est pas de
 ```yaml
 actions: 
   - eci_2.3.1
-id: reci_231_rapports_etudes
+id: rapports_etudes_flux_dechets
 ```
 
 # Eléments de suivi du déploiement des solutions
 ```yaml
 actions: 
   - eci_2.3.2
-id: eci_232_elements_suivi_deploiement_solutions
+id: suivi_deploiement_solutions_optimisation_filieres
 ```
 
 # Documents de production : PV de contrôle qualité, remonté des écarts, trace des actions correctives
 ```yaml
 actions: 
   - eci_2.3.3
-id: eci_233_documents_production
+id: accompagnement_installation_traitement
 ```
 
 # Document de suivi des refus (refus de tri, digestat et énergie)
 ```yaml
 actions: 
   - eci_2.3.3
-id: eci_233_documents_suivi_refus
+id: suivi_refus
 ```
 
 # Autorisation d'exploiter pour les sites classés ICPE
@@ -189,20 +205,21 @@ id: autorisation_exploit_icpe
 ```yaml
 actions: 
   - eci_2.4.0
-id: eci_240_cr_commission
+id: cr_commission_suivi_sites
 ```
 
 # DUERP
 ```yaml
 actions: 
   - eci_2.4.0
-id: duerp
+id: duerp_traitement_collecte
 ```
 
 # Autre preuve de la conformité des installations (selon la nature de l'installation) pour les émissions polluantes et les nuisances (olfactives, sonores, etc.)
 ```yaml
 actions: 
   - eci_2.4.0
+id : conformite_installations
 ```
 ## Description
 En présence de non-conformité, la collectivité doit justifier d'un plan d'actions correctives et de l'absence de contentieux.
@@ -245,11 +262,12 @@ actions:
   - eci_2.4.2
 ```
 
-# Rapport annuel déchets
+<!--# Rapport annuel déchets
 ```yaml
 actions: 
   - eci_2.4.3
 ```
+Preuve identique à la cae_1.2.3.1 / cae_3.3.5.3 / eci_4.1.0 / eci_2.4.3-->
 
 # Plan d'actions
 ```yaml
