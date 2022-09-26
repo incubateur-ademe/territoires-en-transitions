@@ -16,7 +16,7 @@ id: rapport_annuel_perfo_ener
 ```yaml
 actions: 
   - cae_2.1.1.3
-id: conseil_energie_partage
+id: CEP
 ```
 ## Description
 Description, création, bilan d’activités…
@@ -53,7 +53,7 @@ id: plan_pluriannuel_reno
 ```yaml
 actions: 
   - cae_2.1.2.2
-id: schema_directeur_immo
+id: SDI
 ```
 
 # Référentiel de qualité environnementale dans la construction publique
@@ -67,42 +67,42 @@ id: ref_qualite_envir_constr
 ```yaml
 actions: 
   - cae_2.2.3.1
-id: etudes_opportunite_chaleur
+id: etudes_ENR_chaleur
 ```
 
 # Études d’opportunité et/ou de faisabilité sur les énergies renouvelables pour l'électricité
 ```yaml
 actions: 
   - cae_2.2.4.1
-id: etudes_opportunite_elec
+id: etudes_ENR_elec
 ```
 
 # Précisions sur la certification de l’énergie « verte » achetée
 ```yaml
 actions: 
   - cae_2.2.4.4
-id: precision_certif_ener_verte
+id: certif_energie_verte
 ```
 
 # Politique éclairage, Plan d’aménagement lumière
 ```yaml
 actions: 
   - cae_2.3.1.3
-id: politique_eclair
+id: politique_EP
 ```
 
 # Cahier des prescriptions éclairage public
 ```yaml
 actions: 
   - cae_2.3.1.3
-id: prescription_eclair_public
+id: prescription_EP
 ```
 
 # Calcul ratio éclairage public
 ```yaml
 actions: 
   - cae_2.3.1.4
-id: ratio_eclair_public
+id: ratio_EP
 ```
 
 # Programme d'économie d'eau
