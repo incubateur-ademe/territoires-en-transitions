@@ -60,7 +60,7 @@ const createItemFailed = (file: File, error: UploadErrorCode): TFileItem => ({
   },
 });
 
-// représente un fichier qui déjà téléversé
+// représente un fichier déjà téléversé
 const createItemDuplicated = (
   file: File,
   fichier: TBibliothequeFichier
