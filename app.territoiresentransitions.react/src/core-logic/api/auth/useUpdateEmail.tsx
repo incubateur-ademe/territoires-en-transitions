@@ -1,6 +1,5 @@
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useMutation} from 'react-query';
-import {ToastAlert, useToastAlert} from 'ui/shared/ToastAlert';
 
 export interface UpdateEmailParams {
   email: string;
@@ -10,31 +9,15 @@ export interface UpdateEmailParams {
  * Met à jour l'email de l'utilisateur courant
  */
 export const useUpdateEmail = () => {
-  const toastAlert = useToastAlert();
-
-  const toastLabelByStatus = {
-    success: 'Le nouvel email est enregistrée',
-    error: "Le nouvel email n'a pas pu être enregistré",
-  };
-
-  const renderToast = () => (
-    <ToastAlert toastAlert={toastAlert}>
-      {status => (status ? toastLabelByStatus[status] : '')}
-    </ToastAlert>
-  );
-
   const {mutate} = useMutation(updateEmail, {
-    onSuccess: () => {
-      toastAlert.showSuccess();
-    },
-    onError: toastAlert.showError,
+    mutationKey: 'update_email',
   });
 
   const handleUpdateEmail = (email: UpdateEmailParams) => {
     mutate(email);
   };
 
-  return {handleUpdateEmail, renderToast};
+  return {handleUpdateEmail};
 };
 
 /**

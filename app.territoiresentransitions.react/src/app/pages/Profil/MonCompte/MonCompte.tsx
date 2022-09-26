@@ -5,7 +5,6 @@ import {Spacer} from 'ui/shared/Spacer';
 import LabeledTextField from 'ui/forms/LabeledTextField';
 
 import {useAuth, UserData} from 'core-logic/api/auth/AuthProvider';
-import {useUpdateEmail} from 'core-logic/api/auth/useUpdateEmail';
 import {useUpdateDCP} from 'core-logic/api/auth/useUpdateDCP';
 import {useState} from 'react';
 import ModifierEmailModal from './ModifierEmailModal';
@@ -25,8 +24,7 @@ const validation = Yup.object({
 });
 
 export const MonCompte = ({user}: {user: UserData}) => {
-  const {handleUpdateDCP, renderToast: renderDCPToast} = useUpdateDCP(user.id);
-  const {renderToast: renderEmailToast} = useUpdateEmail();
+  const {handleUpdateDCP} = useUpdateDCP(user.id);
 
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
 
@@ -104,8 +102,6 @@ export const MonCompte = ({user}: {user: UserData}) => {
             </Form>
           )}
         </Formik>
-        {renderDCPToast()}
-        {renderEmailToast()}
       </div>
     </div>
   );
