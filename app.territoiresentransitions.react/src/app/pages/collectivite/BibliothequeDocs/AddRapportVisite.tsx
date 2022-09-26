@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {Dispatch, SetStateAction, useState} from 'react';
 import Modal from 'ui/shared/floating-ui/Modal';
 import {AddPreuveModal} from 'ui/shared/preuves/AddPreuveModal';
 import {useAddRapportVisite} from './useAddRapportVisite';
@@ -12,20 +12,30 @@ export const AddRapportVisite = () => {
   const [date, setDate] = useState('');
   const handlers = useAddRapportVisite(date);
 
+  const onSetOpened: Dispatch<SetStateAction<boolean>> = value => {
+    setOpened(value);
+    // quand on ferme le dialogue il faut aussi réinitialiser la date
+    // sélectionnée pour que le sélecteur ré-apparaisse bien lors de la
+    // prochaine ouverture
+    if (!value) {
+      setDate('');
+    }
+  };
+
   return (
     <Modal
       size="lg"
       externalOpen={opened}
-      setExternalOpen={setOpened}
+      setExternalOpen={onSetOpened}
       render={() => {
         return (
           <>
             <h4>Ajouter un rapport de visite annuelle</h4>
             {!date ? (
-              <SelectDate date={date} setDate={setDate} />
+              <SelectDate setDate={setDate} />
             ) : (
               <AddPreuveModal
-                onClose={() => setOpened(false)}
+                onClose={() => onSetOpened(false)}
                 handlers={handlers}
               />
             )}
@@ -45,19 +55,32 @@ export const AddRapportVisite = () => {
 };
 
 /** Affiche le sélecteur de date */
-const SelectDate = ({
-  date,
-  setDate,
-}: {
-  date: string;
-  setDate: (value: string) => void;
-}) => {
+const SelectDate = ({setDate}: {setDate: (value: string) => void}) => {
+  const [isValid, setIsValid] = useState(false);
+  const [value, setValue] = useState('');
+
   return (
     <fieldset className="fr-fieldset h-52">
       <label className="fr-label mb-2">
         Date de la visite annuelle (obligatoire)
       </label>
-      <input type="date" value={date} onChange={e => setDate(e.target.value)} />
+      <input
+        type="date"
+        required
+        pattern="\d{4}-\d{2}-\d{2}"
+        onChange={e => {
+          setIsValid(e.target.validity.valid || false);
+          setValue(e.target.value || '');
+        }}
+      />
+      <br />
+      <button
+        className="fr-btn fr-mt-2w"
+        disabled={!isValid}
+        onClick={() => value && setDate(value)}
+      >
+        Ajouter le rapport
+      </button>
     </fieldset>
   );
 };
