@@ -1,0 +1,423 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow Admin 1`] = `
+<tr
+  className="h-20 border-b border-gray-300 bg-white"
+  data-test="MembreRow-yolo@dodo.com"
+>
+  <td
+    className="relative px-4"
+  >
+    <span
+      className="font-bold"
+    >
+      Dodo
+       
+      Yolo
+    </span>
+    <span
+      className="block mt-1 text-xs text-gray-500"
+    >
+      yolo@dodo.com
+    </span>
+  </td>
+  <td
+    className="relative px-4"
+  >
+    <div
+      data-test="fonction-dropdown"
+    >
+      <button
+        aria-label="ouvrir le menu"
+        className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onPointerDown={[Function]}
+      >
+        <span
+          className="mr-auto"
+        >
+          Référent·e
+        </span>
+        <span
+          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+        />
+      </button>
+    </div>
+  </td>
+  <td
+    className="relative px-4 pr-0"
+  >
+    <div
+      data-test="champ_intervention-dropdown"
+    >
+      <button
+        aria-label="ouvrir le menu"
+        className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onPointerDown={[Function]}
+      >
+        <span
+          className="mr-auto flex flex-col"
+        >
+          <span>
+            Climat Air Énergie
+          </span>
+        </span>
+        <span
+          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+        />
+      </button>
+    </div>
+  </td>
+  <td
+    className="relative px-4"
+  >
+    <div
+      className="py-1 px-2 border border-gray-300"
+    >
+      <textarea
+        className=" w-60 resize-none"
+        data-test="details_fonction-textarea"
+        onChange={[Function]}
+        onMouseOut={[Function]}
+        value="Cheffe de projet PCAET"
+      />
+    </div>
+  </td>
+  <td
+    className="relative px-4"
+  >
+    <div
+      data-test="acces-dropdown"
+    >
+      <button
+        aria-label="ouvrir le menu"
+        className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onPointerDown={[Function]}
+      >
+        <span
+          className="mr-auto"
+        >
+          Admin
+        </span>
+        <span
+          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+        />
+      </button>
+    </div>
+  </td>
+</tr>
+`;
+
+exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow Editeur 1`] = `
+<tr
+  className="h-20 border-b border-gray-300 bg-white"
+  data-test="MembreRow-yala@dada.com"
+>
+  <td
+    className="relative px-4"
+  >
+    <span
+      className="font-bold"
+    >
+      Dada
+       
+      Yala
+    </span>
+    <span
+      className="block mt-1 text-xs text-gray-500"
+    >
+      yala@dada.com
+    </span>
+  </td>
+  <td
+    className="relative px-4"
+  >
+    <div
+      data-test="fonction-dropdown"
+    >
+      <button
+        aria-label="ouvrir le menu"
+        className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onPointerDown={[Function]}
+      >
+        <span
+          className="mr-auto"
+        >
+          Équipe technique
+        </span>
+        <span
+          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+        />
+      </button>
+    </div>
+  </td>
+  <td
+    className="relative px-4 pr-0"
+  >
+    <div
+      data-test="champ_intervention-dropdown"
+    >
+      <button
+        aria-label="ouvrir le menu"
+        className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onPointerDown={[Function]}
+      >
+        <span
+          className="mr-auto flex flex-col"
+        >
+          <span>
+            Climat Air Énergie
+          </span>
+          <span>
+            Économie Circulaire
+          </span>
+        </span>
+        <span
+          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+        />
+      </button>
+    </div>
+  </td>
+  <td
+    className="relative px-4"
+  >
+    <div
+      className="py-1 px-2 border border-gray-300"
+    >
+      <textarea
+        className=" w-60 resize-none"
+        data-test="details_fonction-textarea"
+        onChange={[Function]}
+        onMouseOut={[Function]}
+        value="Vice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier, adjoint au maire en charge du dVice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier"
+      />
+    </div>
+  </td>
+  <td
+    className="relative px-4"
+  >
+    <div
+      data-test="acces-dropdown"
+    >
+      <button
+        aria-label="ouvrir le menu"
+        className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onPointerDown={[Function]}
+      >
+        <span
+          className="mr-auto"
+        >
+          Édition
+        </span>
+        <span
+          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+        />
+      </button>
+    </div>
+  </td>
+</tr>
+`;
+
+exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow Invite 1`] = `
+<tr
+  className="h-20 border-b border-gray-300 bg-white"
+  data-test="MembreRow-invite@dodo.com"
+>
+  <td
+    className="relative px-4"
+  >
+    <span
+      className="font-bold"
+    >
+       
+    </span>
+    <span
+      className="block mt-1 text-xs text-gray-500"
+    >
+      invite@dodo.com
+    </span>
+  </td>
+  <td
+    className="relative px-4"
+  >
+    <span />
+  </td>
+  <td
+    className="relative px-4 pr-0"
+  />
+  <td
+    className="relative px-4"
+  >
+    <span
+      className="w-72 line-clamp-3"
+    />
+  </td>
+  <td
+    className="relative px-4"
+  >
+    <span>
+      Lecture
+    </span>
+  </td>
+</tr>
+`;
+
+exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow Lecteur 1`] = `
+<tr
+  className="h-20 border-b border-gray-300 bg-white"
+  data-test="MembreRow-john@doe.com"
+>
+  <td
+    className="relative px-4"
+  >
+    <span
+      className="font-bold"
+    >
+      Doe
+       
+      John
+    </span>
+    <span
+      className="block mt-1 text-xs text-gray-500"
+    >
+      john@doe.com
+    </span>
+  </td>
+  <td
+    className="relative px-4"
+  >
+    <div
+      data-test="fonction-dropdown"
+    >
+      <button
+        aria-label="ouvrir le menu"
+        className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onPointerDown={[Function]}
+      >
+        <span
+          className="mr-auto"
+        >
+          Équipe politique
+        </span>
+        <span
+          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+        />
+      </button>
+    </div>
+  </td>
+  <td
+    className="relative px-4 pr-0"
+  >
+    <div
+      data-test="champ_intervention-dropdown"
+    >
+      <button
+        aria-label="ouvrir le menu"
+        className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onPointerDown={[Function]}
+      >
+        <span
+          className="mr-auto flex flex-col"
+        >
+          <span>
+            Climat Air Énergie
+          </span>
+        </span>
+        <span
+          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+        />
+      </button>
+    </div>
+  </td>
+  <td
+    className="relative px-4"
+  >
+    <div
+      className="py-1 px-2 border border-gray-300"
+    >
+      <textarea
+        className=" w-60 resize-none"
+        data-test="details_fonction-textarea"
+        onChange={[Function]}
+        onMouseOut={[Function]}
+        value="Consultant assistance à maîtrise d’ouvrage - Bureau d’études Green Planet"
+      />
+    </div>
+  </td>
+  <td
+    className="relative px-4"
+  >
+    <div
+      data-test="acces-dropdown"
+    >
+      <button
+        aria-label="ouvrir le menu"
+        className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onPointerDown={[Function]}
+      >
+        <span
+          className="mr-auto"
+        >
+          Lecture
+        </span>
+        <span
+          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+        />
+      </button>
+    </div>
+  </td>
+</tr>
+`;

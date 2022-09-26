@@ -8,18 +8,33 @@ from public.private_utilisateur_droit;
 comment on table test.private_utilisateur_droit is
     'Copie de la table des droits.';
 
-create function
+
+-- Copie la table des invitations.
+create table test.invitation
+as
+select *
+from utilisateur.invitation i;
+comment on table test.invitation is
+    'Copie de la table des invitations.';
+
+
+create or replace function
     test_reset_droits()
     returns void
 as
 $$
--- Vide la table des droits
-truncate private_utilisateur_droit;
+-- Vide la tables
+truncate utilisateur.invitation cascade ;
+truncate private_utilisateur_droit cascade ;
 
--- Restaure la copie.
+-- Restaure les copies.
 insert into public.private_utilisateur_droit
 select *
 from test.private_utilisateur_droit;
+
+insert into utilisateur.invitation (niveau, email, collectivite_id, created_by, accepted_at)
+select niveau, email, collectivite_id, created_by, accepted_at
+from test.invitation;
 $$ language sql security definer;
 comment on function test_reset_droits is
     'Reinitialise les droits.';

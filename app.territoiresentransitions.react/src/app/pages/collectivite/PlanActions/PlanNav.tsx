@@ -1,5 +1,4 @@
 import {Chip} from '@material-ui/core';
-import {useParams} from 'react-router-dom';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {usePlanActionList} from 'core-logic/hooks/plan_action';
 import {makeCollectivitePlanActionUrl} from 'app/paths';

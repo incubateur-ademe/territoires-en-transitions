@@ -7,6 +7,9 @@ module.exports = {
   },
   darkMode: false, // or 'media' or 'class'
   theme: {
+    maxHeight: {
+      '80vh': '80vh',
+    },
     extend: {
       colors: {
         // Misc
@@ -31,5 +34,6 @@ module.exports = {
   variants: {
     extend: {},
   },
-  plugins: [],
+  // eslint-disable-next-line node/no-unpublished-require
+  plugins: [require('@tailwindcss/line-clamp')],
 };

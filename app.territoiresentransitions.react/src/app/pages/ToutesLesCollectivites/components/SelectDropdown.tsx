@@ -38,7 +38,7 @@ export const SelectDropdown = <T extends string>(
             {props.options.find(option => option.id === selected)?.libelle}
           </span>
         )}
-        onChange={(event: ChangeEvent<{value: any}>) => {
+        onChange={(event: ChangeEvent<{value: unknown}>) => {
           const selectedValue = event.target.value as T;
           props.onChange(selectedValue);
           setSelected(selectedValue);

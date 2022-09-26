@@ -39,7 +39,7 @@ services:
 
   auth:
     container_name: supabase-auth
-    image: supabase/gotrue:v2.2.12
+    image: supabase/gotrue:v2.10.0
     depends_on:
       - db
     restart: unless-stopped
@@ -76,7 +76,7 @@ services:
 
   realtime:
     container_name: supabase-realtime
-    image: supabase/realtime:v0.21.0
+    image: supabase/realtime:v0.22.4
     depends_on:
       - db
     restart: unless-stopped
@@ -136,7 +136,7 @@ services:
 
   db:
     container_name: supabase-db
-    image: supabase/postgres:14.1.0
+    image: supabase/postgres:14.1.0.21
     command: postgres -c config_file=/etc/postgresql/postgresql.conf
     restart: unless-stopped
     ports:
@@ -171,6 +171,7 @@ services:
 
   # Sqitch
   sqitch:
+    container_name: tet-sqitch-deploy
     image: sqitch/sqitch
     depends_on:
       supabase_loaded:
@@ -190,13 +191,14 @@ services:
     image: postgres:14 # use postgres solely for its plsql client.
     healthcheck:
       test: sh /scripts/loaded_content.sh
-      interval: 10s
+      interval: 30s
       timeout: 5s
       retries: 100
     depends_on:
       - sqitch
     command: sh /scripts/try_load.sh
     environment:
+      SKIP_TEST_DOMAIN: ${LOADER_SKIP_TEST_DOMAIN}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PGPASSWORD: ${POSTGRES_PASSWORD}
       PGUSER: postgres
@@ -220,7 +222,7 @@ services:
       PGUSER: postgres
       PGHOST: db
     command: >
-      bash -c "pg_prove --dbname postgres --port 5432 tests/*.sql"
+      bash -c "pg_prove --dbname postgres --port 5432 tests/**/*.sql"
     volumes:
       - ./data_layer/tests:/tests
 
@@ -239,7 +241,7 @@ services:
 
   rest:
     container_name: supabase-rest
-    image: postgrest/postgrest:v9.0.0
+    image: postgrest/postgrest:v9.0.1
     depends_on:
       loader:
         condition: service_healthy
@@ -341,3 +343,21 @@ services:
       REACT_APP_SUPABASE_URL: http://kong:8000
       LANG: fr_FR.UTF-8
       CI: "true"
+
+  # Sqitch revert
+  sqitch_revert:
+    container_name: tet-sqitch-revert
+    image: sqitch/sqitch
+    depends_on:
+      loader:
+        condition: service_healthy
+    profiles:
+      - donotstart
+    environment:
+      SQITCH_TARGET: db:pg://db/postgres
+      SQITCH_PASSWORD: ${POSTGRES_PASSWORD}
+      SQITCH_USERNAME: postgres
+    command: revert --to @v1.7.1 --y
+    working_dir: /data_layer/sqitch
+    volumes:
+      - ./data_layer/sqitch:/data_layer/sqitch

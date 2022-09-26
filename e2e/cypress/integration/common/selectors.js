@@ -7,6 +7,7 @@ export const Selectors = {
     selector: 'header[role=banner]',
     children: {
       'Se connecter': '[data-test=signin]',
+      'Créer un compte': '[data-test=signup]',
     },
   },
   footer: {
@@ -31,6 +32,25 @@ export const Selectors = {
       mdp: 'input[name=password]',
       Valider: 'button[type=submit]',
       'Mot de passe oublié': '[data-test=forgotten-pwd]',
+    },
+  },
+  'formulaire de connexion OTP': {
+    selector: '[data-test=OTPForm]',
+    children: {
+      email: 'input[name=email]',
+      code: 'input[name=code]',
+      Valider: 'button[type=submit]'
+    },
+  },
+  'formulaire de création de compte': {
+    selector: '[data-test=SignUpPage]',
+    children: {
+      email: 'input[name=email]',
+      mdp: 'input[name=password]',
+      nom: 'input[name=nom]',
+      prenom: 'input[name=prenom]',
+      cgu: 'input[name=vie_privee_conditions]',
+      Valider: 'button[type=submit]',
     },
   },
 };

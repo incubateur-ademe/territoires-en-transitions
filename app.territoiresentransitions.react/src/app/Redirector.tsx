@@ -4,13 +4,10 @@ import {
   homePath,
   invitationPath,
   makeCollectiviteTableauBordUrl,
-  resetPwdPath,
-  resetPwdToken,
   signInPath,
 } from 'app/paths';
 import {useAuth} from 'core-logic/api/auth/AuthProvider';
 import {useInvitationState} from 'core-logic/hooks/useInvitationState';
-import {useAccessToken} from 'core-logic/hooks/useVerifyRecoveryToken';
 import {useOwnedCollectivites} from 'core-logic/hooks/useOwnedCollectivites';
 
 export const Redirector = () => {
@@ -18,7 +15,6 @@ export const Redirector = () => {
   const {pathname} = useLocation();
   const {isConnected} = useAuth();
   const {invitationState} = useInvitationState();
-  const accessToken = useAccessToken();
   const userCollectivites = useOwnedCollectivites();
   const isSigninPath = pathname === signInPath;
   const isJustSignedIn = // L'utilisateur vient de se connecter.
@@ -53,17 +49,9 @@ export const Redirector = () => {
 
   // réagit aux changements de l'état "invitation"
   useEffect(() => {
-    // si l'invitation requiert la connexion on redirigue sur "se connecter"
+    // si l'invitation requiert la connexion, on redirige sur "se connecter"
     if (invitationState === 'waitingForLogin') history.push(signInPath);
   }, [invitationState]);
-
-  useEffect(() => {
-    // redirige vers le formulaire de réinit. de mdp si un jeton d'accès a été créé
-    if (accessToken) {
-      history.push(resetPwdPath.replace(`:${resetPwdToken}`, accessToken));
-      return;
-    }
-  }, [accessToken]);
 
   // réagit aux changements de l'état utilisateur connecté/déconnecté
   useEffect(() => {

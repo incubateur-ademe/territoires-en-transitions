@@ -1,13 +1,13 @@
 import {useQuery} from 'react-query';
 import {useAuth} from 'core-logic/api/auth/AuthProvider';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {OwnedCollectiviteRead} from 'generated/dataLayer/owned_collectivite_read';
+import {MesCollectivitesRead} from 'generated/dataLayer/mes_collectivites_read';
 
 // charge les collectivités associées au compte de l'utilisateur courant
 // (identifié à partir du token passant dans toutes les requêtes)
-const fetchOwnedCollectivites = async (): Promise<OwnedCollectiviteRead[]> => {
+const fetchOwnedCollectivites = async (): Promise<MesCollectivitesRead[]> => {
   const query = supabaseClient
-    .from<OwnedCollectiviteRead>('owned_collectivite')
+    .from<MesCollectivitesRead>('mes_collectivites')
     .select();
   const {error, data} = await query;
 
@@ -21,7 +21,7 @@ const fetchOwnedCollectivites = async (): Promise<OwnedCollectiviteRead[]> => {
 // la requête est rechargée quand le user id change
 export const useOwnedCollectivites = () => {
   const {user, isConnected} = useAuth();
-  const {data} = useQuery(['owned_collectivites', user?.id], () =>
+  const {data} = useQuery(['mes_collectivites', user?.id], () =>
     isConnected ? fetchOwnedCollectivites() : null
   );
   return data || null;

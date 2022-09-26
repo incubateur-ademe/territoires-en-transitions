@@ -1,19 +1,20 @@
 import {NavLink} from 'react-router-dom';
 import {useMemo} from 'react';
-import MobileCollectiviteNavigationDropdown from './MobileCollectiviteNavigationDropdown';
 import {makeCollectiviteTableauBordUrl} from 'app/paths';
 import {
   CollectiviteNavDropdown,
   CollectiviteNavItems,
   isSingleNavItemDropdown,
-} from '../../makeCollectiviteNavItems';
-import {OwnedCollectiviteRead} from 'generated/dataLayer';
+} from 'app/Layout/Header/makeCollectiviteNavItems';
+import CollectiviteAccesChip from 'app/Layout/Header/CollectiviteNavigation/CollectiviteAccesChip';
+import MobileCollectiviteNavigationDropdown from 'app/Layout/Header/MobileNavigation/MobileCollectiviteNavigation/MobileCollectiviteNavigationDropdown';
+import {MesCollectivitesRead} from 'generated/dataLayer';
 import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
 type Props = {
   collectiviteNav: CollectiviteNavItems;
   currentCollectivite: CurrentCollectivite;
-  ownedCollectivites: OwnedCollectiviteRead[];
+  ownedCollectivites: MesCollectivitesRead[];
   toggleMobileNavigation: () => void;
 };
 
@@ -31,6 +32,7 @@ const MobileCollectiviteNavigation = ({
     return {
       isSelectCollectivite: true,
       menuLabel: currentCollectivite.nom,
+      niveauAcces: currentCollectivite.niveau_acces,
       listPathsAndLabels: collectivitesWithoutCurrentCollectivite.map(
         collectivite => {
           return {
@@ -38,6 +40,7 @@ const MobileCollectiviteNavigation = ({
             path: makeCollectiviteTableauBordUrl({
               collectiviteId: collectivite.collectivite_id,
             }),
+            niveauAcces: collectivite.niveau_acces,
           };
         }
       ),
@@ -47,7 +50,13 @@ const MobileCollectiviteNavigation = ({
   return (
     <>
       {collectivites.listPathsAndLabels.length === 0 ? (
-        <p className="flex items-center p-4">{collectivites.menuLabel}</p>
+        <div className="flex items-center p-4">
+          <span className="mr-auto">{collectivites.menuLabel}</span>
+          <CollectiviteAccesChip
+            acces={currentCollectivite.niveau_acces}
+            className="ml-4"
+          />
+        </div>
       ) : (
         <MobileCollectiviteNavigationDropdown
           item={collectivites}

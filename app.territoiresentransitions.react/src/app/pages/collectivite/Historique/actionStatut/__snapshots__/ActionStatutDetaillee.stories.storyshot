@@ -1,0 +1,71 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots app/pages/collectivite/Historique/actionStatut/ActionStatutDetaillee Action Nouvelle 1`] = `
+Array [
+  <span
+    className="w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-gray-600 bg-pink-100"
+  >
+    Détaillé
+  </span>,
+  <div
+    className="mt-2"
+  >
+    <p
+      className="mb-0.5 text-sm whitespace-nowrap"
+    >
+      Fait: 
+      20
+       %
+    </p>
+    <p
+      className="mb-0.5 text-sm whitespace-nowrap"
+    >
+      Programmé: 
+      30
+       %
+    </p>
+    <p
+      className="mb-0 text-sm whitespace-nowrap"
+    >
+      Pas fait: 
+      50
+       %
+    </p>
+  </div>,
+]
+`;
+
+exports[`Storyshots app/pages/collectivite/Historique/actionStatut/ActionStatutDetaillee Action Precedente 1`] = `
+Array [
+  <span
+    className="w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md line-through text-gray-600 bg-pink-100"
+  >
+    Détaillé
+  </span>,
+  <div
+    className="mt-2"
+  >
+    <p
+      className="mb-0.5 text-sm whitespace-nowrap line-through"
+    >
+      Fait: 
+      10
+       %
+    </p>
+    <p
+      className="mb-0.5 text-sm whitespace-nowrap line-through"
+    >
+      Programmé: 
+      0
+       %
+    </p>
+    <p
+      className="mb-0 text-sm whitespace-nowrap line-through"
+    >
+      Pas fait: 
+      0
+       %
+    </p>
+  </div>,
+]
+`;

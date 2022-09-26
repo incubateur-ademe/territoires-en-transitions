@@ -1,7 +1,6 @@
 import {lazy, Suspense} from 'react';
 import {renderLoader} from 'utils/renderLoader';
 import {Spacer} from 'ui/shared/Spacer';
-import {useParams} from 'react-router-dom';
 
 const ResetPasswordForm = lazy(() => import('./ResetPasswordForm'));
 
@@ -11,10 +10,9 @@ const ResetPasswordForm = lazy(() => import('./ResetPasswordForm'));
  * On arrive ici une fois que l'on est passé par RecoverLandingPage.
  */
 export const ResetPasswordPage = () => {
-  const {token} = useParams<{token: string}>();
   return (
     <Suspense fallback={renderLoader()}>
-      <ResetPasswordForm token={token} />
+      <ResetPasswordForm />
       <Spacer />
     </Suspense>
   );

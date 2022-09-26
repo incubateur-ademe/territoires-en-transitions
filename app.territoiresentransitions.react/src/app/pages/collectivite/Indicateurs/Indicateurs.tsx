@@ -58,7 +58,7 @@ const Indicateurs = () => {
                 color="primary"
                 checked={showOnlyIndicateurWithData}
                 inputProps={{'aria-label': 'controlled'}}
-                onChange={event => {
+                onChange={() => {
                   setShowOnlyIndicateurWithData(!showOnlyIndicateurWithData);
                 }}
               />

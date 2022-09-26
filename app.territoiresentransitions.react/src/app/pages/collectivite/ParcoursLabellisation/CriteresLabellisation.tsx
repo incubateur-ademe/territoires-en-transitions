@@ -24,12 +24,12 @@ export const CriteresLabellisation = (props: TCriteresLabellisationProps) => {
 
   return (
     <>
-      {etoiles === '1' ? (
-        <p className="text-grey625">
-          Ce premier niveau de labellisation ne nécessite pas d’audit et sera
-          validé directement par l’ADEME
-        </p>
-      ) : null}
+      <p className="text-grey625">
+        Le premier niveau de labellisation ne nécessite pas d’audit et sera
+        validé rapidement et directement par l’ADEME ! Les étoiles supérieures
+        sont conditionnées à un audit réalisé par une personne experte mandatée
+        par l’ADEME.
+      </p>
       {etoiles !== '1' && atteint ? (
         <div className="fr-alert fr-alert--info fr-mb-2w">
           Bravo, vous avez plus de {Math.round(score_a_realiser * 100)} %

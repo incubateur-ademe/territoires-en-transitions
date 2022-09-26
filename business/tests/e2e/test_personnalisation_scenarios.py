@@ -1,6 +1,8 @@
 from typing import Dict, List
 
-from business.evaluation.domain.models.events import ReponseUpdatedForCollectivite
+from business.evaluation.domain.models.events import (
+    TriggerPersonnalisationForCollectivite,
+)
 from business.evaluation.domain.use_cases.compute_and_store_referentiel_personnalisations_for_collectivite import (
     ComputeAndStoreReferentielPersonnalisationsForCollectivite,
 )
@@ -50,7 +52,7 @@ def given_reponses_and_identite_assert_personnalisation_consequences(
     in_memory_personnalisation_repo.set_identite(identite)
 
     # execute
-    use_case.execute(ReponseUpdatedForCollectivite(1))
+    use_case.execute(TriggerPersonnalisationForCollectivite(1))
 
     # assert
     computed_consequences = in_memory_personnalisation_repo.get_action_personnalisation_consequences_for_collectivite(

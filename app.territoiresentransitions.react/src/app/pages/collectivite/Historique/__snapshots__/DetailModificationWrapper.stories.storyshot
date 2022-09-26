@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots app/pages/collectivite/Historique/DetailModificationWrapper Detail Modification Precedente 1`] = `
+<div
+  className="max-w-full w-max p-2 border-2 mb-4 border-red-400"
+  data-test="prev"
+>
+  <div>
+    Modification précédente
+  </div>
+</div>
+`;
+
+exports[`Storyshots app/pages/collectivite/Historique/DetailModificationWrapper Detail Nouvelle Modification 1`] = `
+<div
+  className="max-w-full w-max p-2 border-2 border-green-400"
+  data-test="new"
+>
+  <div>
+    Nouvelle modification
+  </div>
+</div>
+`;

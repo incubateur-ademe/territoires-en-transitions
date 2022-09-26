@@ -24,6 +24,7 @@ Fonctionnalité: Accéder au site et se connecter
       | Champ | Valeur        |
       | email | yolo@dodo.com |
       | mdp   | yolododo      |
+    Et que je vais vérifier les données envoyées à la chatbox
     Et que je clique sur le bouton "Valider" du "formulaire de connexion"
     Alors la page vérifie les conditions suivantes :
       | Elément                               | Condition |
@@ -32,6 +33,10 @@ Fonctionnalité: Accéder au site et se connecter
       | formulaire de connexion               | absent    |
       | le tableau de bord de la collectivité | visible   |
       | footer                                | visible   |
+    Et les données suivantes ont été envoyées à la chatbox :
+      | nom    | Dodo          |
+      | prenom | Yolo          |
+      | email  | yolo@dodo.com |
 
   Scénario: Se connecter en tant que Yulu (utilisateur non encore rattaché)
     Etant donné que j'ouvre le site
@@ -63,7 +68,6 @@ Fonctionnalité: Accéder au site et se connecter
       | formulaire de connexion  | absent    |
       | toutes les collectivités | visible   |
       | footer                   | visible   |
-
 
   Scénario: Echouer à se connecter
     Etant donné que j'ouvre le site
@@ -158,11 +162,13 @@ Fonctionnalité: Accéder au site et se connecter
     Etant donné que j'ouvre le site depuis un lien de réinitialisation du mot de passe
     Alors la page vérifie les conditions suivantes :
       | Elément                               | Condition |
-      | formulaire de connexion               | absent    |
+      | formulaire de connexion OTP           | visible   |
       | formulaire de réinitialisation du mdp | absent    |
-      | changer de mdp                        | présent   |
 
-    Quand je clique sur le bouton "changer de mdp"
+    Quand je remplis le "formulaire de connexion OTP" avec les valeurs suivantes :
+      | Champ | Valeur        |
+      | email | yolo@dodo.com |
+    Et que je clique sur le bouton "Valider" du "formulaire de connexion OTP"
     Alors le "formulaire de réinitialisation du mdp" est visible
 
     Quand je remplis le "formulaire de réinitialisation du mdp" avec les valeurs suivantes :
@@ -170,6 +176,7 @@ Fonctionnalité: Accéder au site et se connecter
       | mdp   | monmotdepassesécurisé |
     Et que l'appel à "auth.updateUserPassword" va répondre "ok"
     Et que je clique sur le bouton "Valider" du "formulaire de réinitialisation du mdp"
+
     Alors la page vérifie les conditions suivantes :
       | Elément                                  | Condition |
       | formulaire de connexion                  | absent    |
@@ -180,11 +187,13 @@ Fonctionnalité: Accéder au site et se connecter
     Etant donné que j'ouvre le site depuis un lien de réinitialisation du mot de passe
     Alors la page vérifie les conditions suivantes :
       | Elément                               | Condition |
-      | formulaire de connexion               | absent    |
+      | formulaire de connexion OTP           | visible   |
       | formulaire de réinitialisation du mdp | absent    |
-      | changer de mdp                        | présent   |
 
-    Quand je clique sur le bouton "changer de mdp"
+    Quand je remplis le "formulaire de connexion OTP" avec les valeurs suivantes :
+      | Champ | Valeur        |
+      | email | yolo@dodo.com |
+    Et que je clique sur le bouton "Valider" du "formulaire de connexion OTP"
     Alors le "formulaire de réinitialisation du mdp" est visible
 
     Quand je remplis le "formulaire de réinitialisation du mdp" avec les valeurs suivantes :
@@ -192,6 +201,7 @@ Fonctionnalité: Accéder au site et se connecter
       | mdp   | monmotdepassesécurisé |
     Et que l'appel à "auth.updateUserPassword" va répondre "error"
     Et que je clique sur le bouton "Valider" du "formulaire de réinitialisation du mdp"
+
     Alors la page vérifie les conditions suivantes :
       | Elément                                    | Condition |
       | formulaire de connexion                    | absent    |

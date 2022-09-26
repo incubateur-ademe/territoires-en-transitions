@@ -23,8 +23,8 @@ apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 
 
-### List elses collectivite
-GET {{api}}/rest/v1/elses_collectivite?select=*
+### Les collectivités et le niveau d'accès de l'utilisateur
+GET {{api}}/rest/v1/collectivite_niveau_acces?select=*
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 

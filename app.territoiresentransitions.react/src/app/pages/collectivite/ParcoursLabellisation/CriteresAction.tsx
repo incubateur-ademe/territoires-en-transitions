@@ -34,7 +34,6 @@ export const CriteresAction = (props: TCriteresActionProps) => {
  */
 export const CritereActionTable = (props: TCriteresActionTable) => {
   const {parcours} = props;
-  const {etoiles} = parcours;
   const {criteres_action} = parcours;
 
   return (
@@ -49,17 +48,13 @@ export const CritereActionTable = (props: TCriteresActionTable) => {
           </tr>
         </thead>
         <tbody>
-          {criteres_action.map((c, index) =>
-            // affiche le critère si il est associé au même niveau de
-            // labellisation que le parcours ou si il n'est pas encore rempli
-            c.etoile === etoiles || !c.rempli ? (
-              <CritereActionRow
-                key={`${c.etoile}.${index + 1}`}
-                rowIndex={index}
-                {...props}
-              />
-            ) : null
-          )}
+          {criteres_action.map((c, index) => (
+            <CritereActionRow
+              key={`${c.etoile}.${index + 1}`}
+              rowIndex={index}
+              {...props}
+            />
+          ))}
         </tbody>
       </table>
     </div>

@@ -111,8 +111,8 @@ si reponse(AOM_1, NON) et reponse (voirie_1, voirie_1_c) et reponse(centre_polar
 sinon si reponse(AOM_1, NON) et reponse (voirie_1, voirie_1_c) et identite(population, moins_de_10000) alors 0
 sinon si identite(population, moins_de_10000) ou reponse(centre_polarite, NON) alors 0.5
 sinon si reponse(AOM_1, NON) et reponse (voirie_1, voirie_1_c) alors 0.5 
-sinon si reponse(AOM_1, NON) alors 0,75
-sinon si reponse (voirie_1, voirie_1_c) alors 0,75
+sinon si reponse(AOM_1, NON) alors 0.75
+sinon si reponse (voirie_1, voirie_1_c) alors 0.75
 ```
 Pour une collectivité non AOM, le score de la 4.2.3 est réduit de 25 %.
 Pour une collectivité sans compétence voirie, le score de la 4.2.3 est réduit de 25 %.

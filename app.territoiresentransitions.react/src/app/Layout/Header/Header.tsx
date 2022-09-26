@@ -12,7 +12,7 @@ import {
   CurrentCollectivite,
   useCurrentCollectivite,
 } from 'core-logic/hooks/useCurrentCollectivite';
-import {OwnedCollectiviteRead} from 'generated/dataLayer';
+import {MesCollectivitesRead} from 'generated/dataLayer';
 
 export const Header = ({
   auth,
@@ -23,7 +23,7 @@ export const Header = ({
   auth: TAuthContext;
   currentCollectivite: CurrentCollectivite | null;
   maintenance: Maintenance | null;
-  ownedCollectivites: OwnedCollectiviteRead[] | null;
+  ownedCollectivites: MesCollectivitesRead[] | null;
 }) => {
   const collectiviteNav = currentCollectivite
     ? makeCollectiviteNavItems(currentCollectivite)
@@ -78,9 +78,7 @@ export const Header = ({
           />
         ) : null}
       </header>
-      {collectiviteNav && currentCollectivite?.readonly ? (
-        <MaintenanceBanner maintenance={maintenance} />
-      ) : null}
+      <MaintenanceBanner maintenance={maintenance} />
     </>
   );
 };

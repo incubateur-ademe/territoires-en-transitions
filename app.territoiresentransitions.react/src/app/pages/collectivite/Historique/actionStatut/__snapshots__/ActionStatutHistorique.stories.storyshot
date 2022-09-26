@@ -1,0 +1,673 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots app/pages/collectivite/Historique/actionStatut/ActionStatutHistorique Ajout De Statut Detaille 1`] = `
+<div
+  className="flex flex-col gap-4 md:flex-row md:gap-6"
+>
+  <div
+    className="pr-6 w-min md:border-r md:border-gray-200"
+  >
+    <span
+      className="py-1 px-2 text-sm uppercase whitespace-nowrap text-blue-600 bg-blue-100 rounded-md"
+    >
+      08 août 2022
+    </span>
+  </div>
+  <div
+    className="flex flex-col md:flex-row"
+  >
+    <div
+      className="mr-4 mt-0.5 text-blue-600 fr-fi-information-fill"
+    />
+    <div
+      className="flex flex-col"
+    >
+      <div
+        className="mb-4"
+      >
+        <p
+          className="mb-2 font-bold text-blue-600"
+        >
+          Action : statut modifié
+        </p>
+        <p
+          className="mb-2"
+        >
+          <span
+            className="text-gray-500"
+          >
+            Par : 
+          </span>
+          Richard Evans
+        </p>
+        <p
+          className="mb-2 last:mb-0"
+        >
+          <span
+            className="text-gray-500"
+          >
+            Action
+             : 
+          </span>
+          Définir et mettre en oeuvre la stratégie de prévention et de gestion des déchets
+        </p>
+        <p
+          className="mb-2 last:mb-0"
+        >
+          <span
+            className="text-gray-500"
+          >
+            Tâche
+             : 
+          </span>
+          Disposer d'un programme local de prévention
+        </p>
+      </div>
+      <div
+        className="mb-4 border-t border-b border-gray-200"
+      >
+        <button
+          className="flex items-center w-full py-4 px-2"
+          onClick={[Function]}
+        >
+          <div
+            className="font-bold"
+          >
+            Afficher le détail
+          </div>
+          <div
+            className="ml-auto fr-fi-arrow-down-s-line duration-100 rotate-180"
+          />
+        </button>
+        <div
+          className="p-2 mb-4 bg-gray-100"
+        >
+          <div
+            className="w-min p-2 border-2 border-green-400"
+          >
+            <span
+              className="undefined py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-gray-600 bg-pink-100"
+            >
+              Détaillé
+            </span>
+            <div
+              className="mt-2"
+            >
+              <p
+                className="mb-0.5 text-sm whitespace-nowrap"
+              >
+                Fait: 
+                20
+                 %
+              </p>
+              <p
+                className="mb-0.5 text-sm whitespace-nowrap"
+              >
+                Programmé: 
+                30
+                 %
+              </p>
+              <p
+                className="mb-0 text-sm whitespace-nowrap"
+              >
+                Pas fait: 
+                50
+                 %
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <a
+        className="flex items-center ml-auto fr-btn fr-btn--secondary !px-4 border border-bf500"
+        href="/collectivite/1/action/null/cae_1.2/#cae_1.2.3.1"
+        onClick={[Function]}
+      >
+        Voir la page
+         
+        <span
+          className="ml-1 mt-1 fr-fi-arrow-right-line scale-75"
+        />
+      </a>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots app/pages/collectivite/Historique/actionStatut/ActionStatutHistorique Ajout De Statut Simple 1`] = `
+<div
+  className="flex flex-col gap-4 md:flex-row md:gap-6"
+>
+  <div
+    className="pr-6 w-min md:border-r md:border-gray-200"
+  >
+    <span
+      className="py-1 px-2 text-sm uppercase whitespace-nowrap text-blue-600 bg-blue-100 rounded-md"
+    >
+      08 août 2022
+    </span>
+  </div>
+  <div
+    className="flex flex-col md:flex-row"
+  >
+    <div
+      className="mr-4 mt-0.5 text-blue-600 fr-fi-information-fill"
+    />
+    <div
+      className="flex flex-col"
+    >
+      <div
+        className="mb-4"
+      >
+        <p
+          className="mb-2 font-bold text-blue-600"
+        >
+          Action : statut modifié
+        </p>
+        <p
+          className="mb-2"
+        >
+          <span
+            className="text-gray-500"
+          >
+            Par : 
+          </span>
+          Richard Evans
+        </p>
+        <p
+          className="mb-2 last:mb-0"
+        >
+          <span
+            className="text-gray-500"
+          >
+            Action
+             : 
+          </span>
+          Définir et mettre en oeuvre la stratégie de prévention et de gestion des déchets
+        </p>
+        <p
+          className="mb-2 last:mb-0"
+        >
+          <span
+            className="text-gray-500"
+          >
+            Tâche
+             : 
+          </span>
+          Disposer d'un programme local de prévention
+        </p>
+      </div>
+      <div
+        className="mb-4 border-t border-b border-gray-200"
+      >
+        <button
+          className="flex items-center w-full py-4 px-2"
+          onClick={[Function]}
+        >
+          <div
+            className="font-bold"
+          >
+            Afficher le détail
+          </div>
+          <div
+            className="ml-auto fr-fi-arrow-down-s-line duration-100 rotate-180"
+          />
+        </button>
+        <div
+          className="p-2 mb-4 bg-gray-100"
+        >
+          <div
+            className="w-min p-2 border-2 border-green-400"
+          >
+            <span
+              className="undefined py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-blue-600 bg-blue-100"
+            >
+              Programmé
+            </span>
+          </div>
+        </div>
+      </div>
+      <a
+        className="flex items-center ml-auto fr-btn fr-btn--secondary !px-4 border border-bf500"
+        href="/collectivite/1/action/null/cae_1.2/#cae_1.2.3.1"
+        onClick={[Function]}
+      >
+        Voir la page
+         
+        <span
+          className="ml-1 mt-1 fr-fi-arrow-right-line scale-75"
+        />
+      </a>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots app/pages/collectivite/Historique/actionStatut/ActionStatutHistorique Modification De Statut Detaille A Detaille 1`] = `
+<div
+  className="flex flex-col gap-4 md:flex-row md:gap-6"
+>
+  <div
+    className="pr-6 w-min md:border-r md:border-gray-200"
+  >
+    <span
+      className="py-1 px-2 text-sm uppercase whitespace-nowrap text-blue-600 bg-blue-100 rounded-md"
+    >
+      08 août 2022
+    </span>
+  </div>
+  <div
+    className="flex flex-col md:flex-row"
+  >
+    <div
+      className="mr-4 mt-0.5 text-blue-600 fr-fi-information-fill"
+    />
+    <div
+      className="flex flex-col"
+    >
+      <div
+        className="mb-4"
+      >
+        <p
+          className="mb-2 font-bold text-blue-600"
+        >
+          Action : statut modifié
+        </p>
+        <p
+          className="mb-2"
+        >
+          <span
+            className="text-gray-500"
+          >
+            Par : 
+          </span>
+          Richard Evans
+        </p>
+        <p
+          className="mb-2 last:mb-0"
+        >
+          <span
+            className="text-gray-500"
+          >
+            Action
+             : 
+          </span>
+          Définir et mettre en oeuvre la stratégie de prévention et de gestion des déchets
+        </p>
+        <p
+          className="mb-2 last:mb-0"
+        >
+          <span
+            className="text-gray-500"
+          >
+            Tâche
+             : 
+          </span>
+          Disposer d'un programme local de prévention
+        </p>
+      </div>
+      <div
+        className="mb-4 border-t border-b border-gray-200"
+      >
+        <button
+          className="flex items-center w-full py-4 px-2"
+          onClick={[Function]}
+        >
+          <div
+            className="font-bold"
+          >
+            Afficher le détail
+          </div>
+          <div
+            className="ml-auto fr-fi-arrow-down-s-line duration-100 rotate-180"
+          />
+        </button>
+        <div
+          className="p-2 mb-4 bg-gray-100"
+        >
+          <div
+            className="w-min p-2 border-2 mb-4 border-red-400"
+          >
+            <span
+              className="undefined py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md line-through text-gray-600 bg-pink-100"
+            >
+              Détaillé
+            </span>
+            <div
+              className="mt-2"
+            >
+              <p
+                className="mb-0.5 text-sm whitespace-nowrap line-through"
+              >
+                Fait: 
+                10
+                 %
+              </p>
+              <p
+                className="mb-0.5 text-sm whitespace-nowrap line-through"
+              >
+                Programmé: 
+                0
+                 %
+              </p>
+              <p
+                className="mb-0 text-sm whitespace-nowrap line-through"
+              >
+                Pas fait: 
+                0
+                 %
+              </p>
+            </div>
+          </div>
+          <div
+            className="w-min p-2 border-2 border-green-400"
+          >
+            <span
+              className="undefined py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-gray-600 bg-pink-100"
+            >
+              Détaillé
+            </span>
+            <div
+              className="mt-2"
+            >
+              <p
+                className="mb-0.5 text-sm whitespace-nowrap"
+              >
+                Fait: 
+                20
+                 %
+              </p>
+              <p
+                className="mb-0.5 text-sm whitespace-nowrap"
+              >
+                Programmé: 
+                30
+                 %
+              </p>
+              <p
+                className="mb-0 text-sm whitespace-nowrap"
+              >
+                Pas fait: 
+                50
+                 %
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <a
+        className="flex items-center ml-auto fr-btn fr-btn--secondary !px-4 border border-bf500"
+        href="/collectivite/1/action/null/cae_1.2/#cae_1.2.3.1"
+        onClick={[Function]}
+      >
+        Voir la page
+         
+        <span
+          className="ml-1 mt-1 fr-fi-arrow-right-line scale-75"
+        />
+      </a>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots app/pages/collectivite/Historique/actionStatut/ActionStatutHistorique Modification De Statut Simple 1`] = `
+<div
+  className="flex flex-col gap-4 md:flex-row md:gap-6"
+>
+  <div
+    className="pr-6 w-min md:border-r md:border-gray-200"
+  >
+    <span
+      className="py-1 px-2 text-sm uppercase whitespace-nowrap text-blue-600 bg-blue-100 rounded-md"
+    >
+      08 août 2022
+    </span>
+  </div>
+  <div
+    className="flex flex-col md:flex-row"
+  >
+    <div
+      className="mr-4 mt-0.5 text-blue-600 fr-fi-information-fill"
+    />
+    <div
+      className="flex flex-col"
+    >
+      <div
+        className="mb-4"
+      >
+        <p
+          className="mb-2 font-bold text-blue-600"
+        >
+          Action : statut modifié
+        </p>
+        <p
+          className="mb-2"
+        >
+          <span
+            className="text-gray-500"
+          >
+            Par : 
+          </span>
+          Richard Evans
+        </p>
+        <p
+          className="mb-2 last:mb-0"
+        >
+          <span
+            className="text-gray-500"
+          >
+            Action
+             : 
+          </span>
+          Définir et mettre en oeuvre la stratégie de prévention et de gestion des déchets
+        </p>
+        <p
+          className="mb-2 last:mb-0"
+        >
+          <span
+            className="text-gray-500"
+          >
+            Tâche
+             : 
+          </span>
+          Disposer d'un programme local de prévention
+        </p>
+      </div>
+      <div
+        className="mb-4 border-t border-b border-gray-200"
+      >
+        <button
+          className="flex items-center w-full py-4 px-2"
+          onClick={[Function]}
+        >
+          <div
+            className="font-bold"
+          >
+            Afficher le détail
+          </div>
+          <div
+            className="ml-auto fr-fi-arrow-down-s-line duration-100 rotate-180"
+          />
+        </button>
+        <div
+          className="p-2 mb-4 bg-gray-100"
+        >
+          <div
+            className="w-min p-2 border-2 mb-4 border-red-400"
+          >
+            <span
+              className="undefined py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md line-through text-blue-600 bg-blue-100"
+            >
+              Programmé
+            </span>
+          </div>
+          <div
+            className="w-min p-2 border-2 border-green-400"
+          >
+            <span
+              className="undefined py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-green-700 bg-green-200"
+            >
+              Fait
+            </span>
+          </div>
+        </div>
+      </div>
+      <a
+        className="flex items-center ml-auto fr-btn fr-btn--secondary !px-4 border border-bf500"
+        href="/collectivite/1/action/null/cae_1.2/#cae_1.2.3.1"
+        onClick={[Function]}
+      >
+        Voir la page
+         
+        <span
+          className="ml-1 mt-1 fr-fi-arrow-right-line scale-75"
+        />
+      </a>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots app/pages/collectivite/Historique/actionStatut/ActionStatutHistorique Modification De Statut Simple A Detaille 1`] = `
+<div
+  className="flex flex-col gap-4 md:flex-row md:gap-6"
+>
+  <div
+    className="pr-6 w-min md:border-r md:border-gray-200"
+  >
+    <span
+      className="py-1 px-2 text-sm uppercase whitespace-nowrap text-blue-600 bg-blue-100 rounded-md"
+    >
+      08 août 2022
+    </span>
+  </div>
+  <div
+    className="flex flex-col md:flex-row"
+  >
+    <div
+      className="mr-4 mt-0.5 text-blue-600 fr-fi-information-fill"
+    />
+    <div
+      className="flex flex-col"
+    >
+      <div
+        className="mb-4"
+      >
+        <p
+          className="mb-2 font-bold text-blue-600"
+        >
+          Action : statut modifié
+        </p>
+        <p
+          className="mb-2"
+        >
+          <span
+            className="text-gray-500"
+          >
+            Par : 
+          </span>
+          Richard Evans
+        </p>
+        <p
+          className="mb-2 last:mb-0"
+        >
+          <span
+            className="text-gray-500"
+          >
+            Action
+             : 
+          </span>
+          Définir et mettre en oeuvre la stratégie de prévention et de gestion des déchets
+        </p>
+        <p
+          className="mb-2 last:mb-0"
+        >
+          <span
+            className="text-gray-500"
+          >
+            Tâche
+             : 
+          </span>
+          Disposer d'un programme local de prévention
+        </p>
+      </div>
+      <div
+        className="mb-4 border-t border-b border-gray-200"
+      >
+        <button
+          className="flex items-center w-full py-4 px-2"
+          onClick={[Function]}
+        >
+          <div
+            className="font-bold"
+          >
+            Afficher le détail
+          </div>
+          <div
+            className="ml-auto fr-fi-arrow-down-s-line duration-100 rotate-180"
+          />
+        </button>
+        <div
+          className="p-2 mb-4 bg-gray-100"
+        >
+          <div
+            className="w-min p-2 border-2 mb-4 border-red-400"
+          >
+            <span
+              className="undefined py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md line-through text-yellow-800 bg-yellow-100"
+            >
+              Non renseigné
+            </span>
+          </div>
+          <div
+            className="w-min p-2 border-2 border-green-400"
+          >
+            <span
+              className="undefined py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-gray-600 bg-pink-100"
+            >
+              Détaillé
+            </span>
+            <div
+              className="mt-2"
+            >
+              <p
+                className="mb-0.5 text-sm whitespace-nowrap"
+              >
+                Fait: 
+                20
+                 %
+              </p>
+              <p
+                className="mb-0.5 text-sm whitespace-nowrap"
+              >
+                Programmé: 
+                30
+                 %
+              </p>
+              <p
+                className="mb-0 text-sm whitespace-nowrap"
+              >
+                Pas fait: 
+                50
+                 %
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <a
+        className="flex items-center ml-auto fr-btn fr-btn--secondary !px-4 border border-bf500"
+        href="/collectivite/1/action/null/cae_1.2/#cae_1.2.3.1"
+        onClick={[Function]}
+      >
+        Voir la page
+         
+        <span
+          className="ml-1 mt-1 fr-fi-arrow-right-line scale-75"
+        />
+      </a>
+    </div>
+  </div>
+</div>
+`;

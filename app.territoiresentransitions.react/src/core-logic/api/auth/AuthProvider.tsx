@@ -1,4 +1,11 @@
-import {createContext, ReactNode, useContext, useEffect, useState} from 'react';
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import {User, UserCredentials} from '@supabase/supabase-js';
 import {supabaseClient} from '../supabase';
 import {useQuery} from 'react-query';
@@ -11,7 +18,7 @@ export type TAuthContext = {
   authError: string | null;
   isConnected: boolean;
 };
-type UserData = User & DCP;
+export type UserData = User & DCP;
 type DCP = {nom?: string; prenom?: string};
 
 // crée le contexte
@@ -31,7 +38,10 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
 
   // charge les données associées à l'utilisateur courant
   const dcp = useDCP(user?.id);
-  const userData = user && dcp ? {...user, ...dcp} : null;
+  const userData = useMemo(
+    () => (user && dcp ? {...user, ...dcp} : null),
+    [user, dcp]
+  );
 
   // initialisation : enregistre l'écouteur de changements d'état
   useEffect(() => {
@@ -41,9 +51,6 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
         setUser(updatedSession?.user ?? null);
         if (updatedSession?.user) {
           setAuthError(null);
-          setCrispUserData(userData);
-        } else {
-          clearCrispUserData();
         }
       }
     );
@@ -52,6 +59,15 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
       listener?.unsubscribe();
     };
   }, []);
+
+  // Initialise les données crisp.
+  useEffect(() => {
+    if (userData) {
+      setCrispUserData(userData);
+    } else {
+      clearCrispUserData();
+    }
+  }, [userData]);
 
   // pour authentifier l'utilisateur
   const connect = (data: UserCredentials) =>

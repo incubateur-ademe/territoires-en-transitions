@@ -1,6 +1,9 @@
 import {ReactNode} from 'react';
+import {useMutation} from 'react-query';
 import {reponseWriteEndpoint} from 'core-logic/api/endpoints/ReponseWriteEndpoint';
 import {TChangeReponse} from 'generated/dataLayer/reponse_write';
+import {TQuestionRead} from 'generated/dataLayer/question_read';
+import {TReponse} from 'generated/dataLayer/reponse_read';
 import {ToastAlert, useToastAlert} from 'ui/shared/ToastAlert';
 
 type TUseChangeReponseHandler = (
@@ -22,20 +25,35 @@ export const useChangeReponseHandler: TUseChangeReponseHandler = (
 ) => {
   const toastAlert = useToastAlert();
 
-  const handleChange: TChangeReponse = (question, reponse) => {
+  const saveReponse = async ({
+    question,
+    reponse,
+  }: {
+    question: TQuestionRead;
+    reponse: TReponse;
+  }): Promise<boolean> => {
     if (!collectivite_id) {
-      return;
+      return false;
     }
 
-    reponseWriteEndpoint
-      .save({
-        collectivite_id,
-        question,
-        reponse,
-      })
-      .then(toastAlert.showSuccess, toastAlert.showError)
-      .finally(refetch);
+    return reponseWriteEndpoint.save({
+      collectivite_id,
+      question,
+      reponse,
+    });
   };
+
+  const {mutate} = useMutation(saveReponse, {
+    mutationKey: 'save_reponse',
+    onSuccess: () => {
+      toastAlert.showSuccess();
+      refetch?.();
+    },
+    onError: toastAlert.showError,
+  });
+
+  const handleChange = (question: TQuestionRead, reponse: TReponse) =>
+    mutate({question, reponse});
 
   const renderToast = () => (
     <ToastAlert toastAlert={toastAlert}>

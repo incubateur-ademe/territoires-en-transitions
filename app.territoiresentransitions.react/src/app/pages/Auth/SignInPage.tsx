@@ -1,7 +1,5 @@
 import {Field, Form, Formik} from 'formik';
 import * as Yup from 'yup';
-import {useHistory} from 'react-router-dom';
-import {homePath} from 'app/paths';
 import LabeledTextField from 'ui/forms/LabeledTextField';
 import {ValiderButton} from 'ui/shared/ValiderButton';
 import {Spacer} from 'ui/shared/Spacer';
@@ -25,7 +23,6 @@ export const SignInPage = () => {
       .required('Champ requis'),
     password: Yup.string().required('Champ requis'),
   });
-  const history = useHistory();
   const {connect, authError} = useAuth();
 
   return (

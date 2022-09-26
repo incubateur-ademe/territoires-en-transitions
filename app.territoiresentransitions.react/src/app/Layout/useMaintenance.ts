@@ -14,7 +14,6 @@ const fetchMaintenance = async (): Promise<Maintenance | null> => {
     .from<Maintenance>('ongoing_maintenance')
     .select();
   const {error, data} = await query;
-  console.log('fetch maintenance ', error, data);
 
   if (error) {
     throw new Error(error.message);
@@ -33,16 +32,24 @@ export const useMaintenance = (): Maintenance | null => {
   };
 
   // souscrit aux changements de la table de maintenance
-  const subscribe = () => {
-    console.log('subscribes to table maintenance');
+  const subscribe = () =>
     supabaseClient
       .from('maintenance')
       .on('INSERT', refetch)
       .on('UPDATE', refetch)
       .subscribe();
-  };
 
-  useEffect(() => subscribe(), []);
+  useEffect(() => {
+    const subscription = subscribe();
+
+    // supprime la souscription quand le composant est démonté
+    return () => {
+      if (subscription) {
+        subscription.unsubscribe();
+      }
+    };
+  }, []);
+
   const {data} = useQuery<Maintenance | null>(
     ['ongoing_maintenance'],
     fetchMaintenance
