@@ -1,54 +1,63 @@
 # PLPDMA approuvé ou une délibération récente prise pour le lancement de l’élaboration du PLPDMA
 ```yaml
-action_id: eci_2.1.0
+actions: 
+  - eci_2.1.0
 id: plpdma
 ```
 
 # Compte-rendu de la dernière réunion de la Commission consultative d’évaluation et de suivi (CCES) avec la liste des participants OU si la CCES n’est pas créée, délibération qui prévoit de le faire
 ```yaml
-action_id: eci_2.1.0
+actions: 
+  - eci_2.1.0
 id: cr_cces
 ```
 
 # Dépôt sur SINOE du PLPDMA
 ```yaml
-action_id: eci_2.1.0
+actions: 
+  - eci_2.1.0
 id: sinoe_plpdma
 ```
 
 # Restitution du PLPDMA dans le rapport annuel SPGD
 ```yaml
-action_id: eci_2.1.1
+actions: 
+  - eci_2.1.1
 id: restit_plpdma_spgd
 ```
 
 # Compte-rendu de la réunion de la CCES
 ```yaml
-action_id: eci_2.1.2
+actions: 
+  - eci_2.1.2
 id: cr_cces
 ```
 
 # Délibération stipulant la composition de la CCES
 ```yaml
-action_id: eci_2.1.2
+actions: 
+  - eci_2.1.2
 id: delib_compo_cces
 ```
 
 # Bilan et outils de suivi
 ```yaml
-action_id: eci_2.1.3
+actions: 
+  - eci_2.1.3
 id: bilan_outil_suivi
 ```
 
 # Arrêté fixant les modalités de collecte des différentes catégories de déchets
 ```yaml
-action_id: eci_2.2.0
+actions: 
+  - eci_2.2.0
 id: arrete_modalites_collecte_dechets
 ```
 
 # Dernier rapport annuel d'activité SPPGD présenté en conseil
 ```yaml
-action_id: eci_2.2.0
+actions: 
+  - eci_2.2.0
 id: rapport_annuel_sppgd
 ```
 ## Description
@@ -58,7 +67,8 @@ de prévention et de gestion des déchets ménagers et assimilés et les exigenc
 
 # Délibération approuvant le règlement de collecte des déchets qui couvre l’ensemble du territoire administratif de l’EPCI
 ```yaml
-action_id: eci_2.2.0
+actions: 
+  - eci_2.2.0
 id: delib_regl_collecte_dechets
 ```
 ## Description
@@ -66,13 +76,15 @@ Si le règlement de collecte doit être mis à jour à la suite de changements (
 
 # Dernier DUERP en date pour les activités liées à la compétence collecte
 ```yaml
-action_id: eci_2.2.0
+actions: 
+  - eci_2.2.0
 id: duerp_collecte
 ```
 
 # La liste des installations ICPE liées à la compétence collecte, précisant le type de ces installations et leur niveau de conformité
 ```yaml
-action_id: eci_2.2.0
+actions: 
+  - eci_2.2.0
 id: liste_installations_icpe_collecte
 ```
 ## Description
@@ -87,7 +99,8 @@ Pour les compétences déléguées à une autre collectivité, il n’est pas de
 
 # Rapports issus des enquêtes et des études 
 ```yaml
-action_id: eci_2.2.1
+actions: 
+  - eci_2.2.1
 id: rapports_issus_enquetes_etudes
 ```
 ## Description
@@ -95,31 +108,36 @@ Les preuves ne doivent pas forcement être récentes (en terme de date), mais d'
 
 # Plan d'actions
 ```yaml
-action_id: eci_2.2.2
+actions: 
+  - eci_2.2.2
 id: plan_actions_eci
 ```
 
 # Délibération validant le plan d'actions
 ```yaml
-action_id: eci_2.2.2
+actions: 
+  - eci_2.2.2
 id: delib_plan_actions_eci
 ```
 
 # Fiches actions Optigede incluant la stratégie de communication
 ```yaml
-action_id: eci_2.2.3
+actions: 
+  - eci_2.2.3
 id: fiches_actions_optigede
 ```
 
 # Dernier DUERP en date pour les activités liées à la compétence traitement
 ```yaml
-action_id: eci_2.3.0
+actions: 
+  - eci_2.3.0
 id: duerp_traitement
 ```
 
 # La liste des installations ICPE liées à la compétence traitement, précisant le type de ces installations et leur niveau de conformité
 ```yaml
-action_id: eci_2.3.0
+actions: 
+  - eci_2.3.0
 id: liste_installations_icpe_traitement
 ```
 ## Description
@@ -134,142 +152,167 @@ Pour les compétences déléguées à une autre collectivité, il n’est pas de
 
 # Rapport(s) d'étude(s)
 ```yaml
-action_id: eci_2.3.1
+actions: 
+  - eci_2.3.1
 id: reci_231_rapports_etudes
 ```
 
 # Eléments de suivi du déploiement des solutions
 ```yaml
-action_id: eci_2.3.2
+actions: 
+  - eci_2.3.2
 id: eci_232_elements_suivi_deploiement_solutions
 ```
 
 # Documents de production : PV de contrôle qualité, remonté des écarts, trace des actions correctives
 ```yaml
-action_id: eci_2.3.3
+actions: 
+  - eci_2.3.3
 id: eci_233_documents_production
 ```
 
 # Document de suivi des refus (refus de tri, digestat et énergie)
 ```yaml
-action_id: eci_2.3.3
+actions: 
+  - eci_2.3.3
 id: eci_233_documents_suivi_refus
 ```
 
 # Autorisation d'exploiter pour les sites classés ICPE
 ```yaml
-action_id: eci_2.4.0
+actions: 
+  - eci_2.4.0
 id: autorisation_exploit_icpe
 ```
 
 # Compte-rendu de commission de suivi de site
 ```yaml
-action_id: eci_2.4.0
+actions: 
+  - eci_2.4.0
 id: eci_240_cr_commission
 ```
 
 # DUERP
 ```yaml
-action_id: eci_2.4.0
+actions: 
+  - eci_2.4.0
 id: duerp
 ```
 
 # Autre preuve de la conformité des installations (selon la nature de l'installation) pour les émissions polluantes et les nuisances (olfactives, sonores, etc.)
 ```yaml
-action_id: eci_2.4.0
+actions: 
+  - eci_2.4.0
 ```
 ## Description
 En présence de non-conformité, la collectivité doit justifier d'un plan d'actions correctives et de l'absence de contentieux.
 
 # Justificatif de décision de la collectivité pour mener l'étude en interne ou en externe 
 ```yaml
-action_id: eci_2.4.1
+actions: 
+  - eci_2.4.1
 ```
 ## Description
 Compte rendu, délibération, cahier des charges de l'étude, etc.
 
 # Rapport de l'étude réalisée
 ```yaml
-action_id: eci_2.4.1
+actions: 
+  - eci_2.4.1
 ```
 
 # La liste des actions priorisées
 ```yaml
-action_id: eci_2.4.1
+actions: 
+  - eci_2.4.1
 ```
 
 # Plan d'actions
 ```yaml
-action_id: eci_2.4.2
+actions: 
+  - eci_2.4.2
 ```
 
 # Justificatifs des travaux en cours de réalisation
 ```yaml
-action_id: eci_2.4.2
+actions: 
+  - eci_2.4.2
 ```
 
 # Tableau de bord de pilotage de progression
 ```yaml
-action_id: eci_2.4.2
+actions: 
+  - eci_2.4.2
 ```
 
 # Rapport annuel déchets
 ```yaml
-action_id: eci_2.4.3
+actions: 
+  - eci_2.4.3
 ```
 
 # Plan d'actions
 ```yaml
-action_id: eci_2.4.4
+actions: 
+  - eci_2.4.4
 ```
 
 # Justificatifs des travaux en cours de réalisation
 ```yaml
-action_id: eci_2.4.4
+actions: 
+  - eci_2.4.4
 ```
 
 # Tableau de bord de pilotage de progression
 ```yaml
-action_id: eci_2.4.4
+actions: 
+  - eci_2.4.4
 ```
 
 # Rapport annuel diffusé aux particuliers
 ```yaml
-action_id: eci_2.4.5
+actions: 
+  - eci_2.4.5
 ```
 
 # Autre(s) support(s) de communication 
 ```yaml
-action_id: eci_2.4.5
+actions: 
+  - eci_2.4.5
 ```
 ## Description
 Exemples : article dans un journal local, présence d'informations sur les factures, commission locale d'information, etc.
 
 # Documents d'information et moyen(s) de diffusion
 ```yaml
-action_id: eci_2.5.1
+actions: 
+  - eci_2.5.1
 ```
 
 # Méthode d'identification des entreprises prioritaires à conseiller
 ```yaml
-action_id: eci_2.5.2
+actions: 
+  - eci_2.5.2
 ```
 
 # Compte-rendu d'activité du service de conseil 
 ```yaml
-action_id: eci_2.5.2
+actions: 
+  - eci_2.5.2
 ```
 ## Description
 Le compte-rendu doit indiquer le taux de mobilisation (liste des entreprises ciblées et liste des entreprises conseillées)
 
 # Enquête de satisfaction auprès des entreprises conseillées
 ```yaml
-action_id: eci_2.5.2
+actions: 
+  - eci_2.5.2
 ```
 
 # Documents attestant que la collectivité a accompagné la mise en place de services
 ```yaml
-action_id: eci_2.5.3
+actions: 
+  - eci_2.5.3
 ```
 ## Description
 Convention d'aide, mise en contact de personnes, mise à disposition de moyens...
