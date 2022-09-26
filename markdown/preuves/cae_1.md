@@ -111,6 +111,10 @@ actions:
   - eci_2.4.3
 id: rapport_sppgd
 ```
+## Description
+Pour les audits d’une année N, disposer au moins du rapport N-2.
+Le rapport est un vrai document d’information du public et non un simple document de communication. Vous trouverez <a href="https://expertises.ademe.fr/professionnels/collectivites/integrer-lenvironnement-domaines-dintervention/dechets/connaitre/dossier/acceder-donnees/rapport-service-public-prevention-gestion-dechets-menagers-assimiles">ici une page d’information</a> sur le rapport du service public
+de prévention et de gestion des déchets ménagers et assimilés et les exigences associées.
 
 # Programme Local de l'Habitat
 ```yaml
