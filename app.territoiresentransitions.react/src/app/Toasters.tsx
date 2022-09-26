@@ -18,6 +18,7 @@ import {
   indicateurResultatWriteEndpoint,
 } from 'core-logic/api/endpoints/AnyIndicateurValueWriteEndpoint';
 import {indicateurCommentaireWriteEndpoint} from 'core-logic/api/endpoints/IndicateurCommentaireWriteEndpoint';
+import {useMutationToast} from 'core-logic/hooks/useMutationToast';
 
 type Composer<T> = (
   response: PostgrestResponse<T> | null,
@@ -114,8 +115,10 @@ const makeComposer = (messages: {
 };
 
 export const Toasters = () => {
+  const {renderToast} = useMutationToast();
   return (
     <>
+      {renderToast()}
       <EndpointToaster
         endpoint={actionStatutWriteEndpoint}
         composer={makeComposer({

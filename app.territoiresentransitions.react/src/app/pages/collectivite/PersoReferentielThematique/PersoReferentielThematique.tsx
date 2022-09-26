@@ -16,7 +16,7 @@ const PersoReferentielThematique = () => {
   const [qr, refetch] = useThematiqueQR(collectivite_id, thematiqueId);
   const nextThematiqueId = useNextThematiqueId(collectivite_id, thematiqueId);
   const identite = useCarteIdentite(collectivite_id);
-  const [handleChange, renderToast] = useChangeReponseHandler(
+  const [handleChange] = useChangeReponseHandler(
     collectivite_id || null,
     refetch
   );
@@ -41,7 +41,6 @@ const PersoReferentielThematique = () => {
           }
           onChange={handleChange}
         />
-        {renderToast()}
       </main>
     </>
   );

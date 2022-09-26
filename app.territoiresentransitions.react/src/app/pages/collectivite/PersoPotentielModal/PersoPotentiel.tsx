@@ -26,10 +26,7 @@ export const PersoPotentiel = (props: TPersoPotentielButtonProps) => {
   const collectivite_id = useCollectiviteId();
   const [data, refetch] = useQuestionsReponses(actionId);
   const regles = useRegles(actionId);
-  const [handleChange, renderToast] = useChangeReponseHandler(
-    collectivite_id,
-    refetch
-  );
+  const [handleChange] = useChangeReponseHandler(collectivite_id, refetch);
   const {qr} = data || {};
 
   const actionScore = useActionScore(actionId);
@@ -70,7 +67,6 @@ export const PersoPotentiel = (props: TPersoPotentielButtonProps) => {
           </div>
         </div>
       </Dialog>
-      {renderToast()}
     </div>
   );
 };
