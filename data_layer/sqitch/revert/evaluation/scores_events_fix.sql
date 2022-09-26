@@ -1,104 +1,72 @@
--- Revert tet:evaluation/scores_events_fix from pg
+-- Deploy tet:evaluation/scores_events_fix to pg
+-- requires: evaluation/scores_events
 
 BEGIN;
-
-drop trigger set_modified_at_action_statut_update on action_statut;
-
 
 create or replace view unprocessed_action_statut_update_event
 as
 with
-    -- equivalent to active collectivite
+    -- active collectivite
     unique_collectivite_droit as (
-        select named_collectivite.collectivite_id, min(created_at) as max_date
-        from named_collectivite
-                 join private_utilisateur_droit
-                      on named_collectivite.collectivite_id = private_utilisateur_droit.collectivite_id
-        where private_utilisateur_droit.active
-        group by named_collectivite.collectivite_id
+        select collectivite_id, min(created_at) as max_date
+        from private_utilisateur_droit
+        where active
+        group by collectivite_id
     ),
-    -- virtual events, so we consider someone joining a collectivite as a statuts update
-    virtual_inital_event as (
+    -- cross join active collectivite with (eci, cae)
+    activation_updates as (
         select collectivite_id,
                unnest('{eci, cae}'::referentiel[]) as referentiel,
-               max_date
+               max_date as updated_at
         from unique_collectivite_droit
     ),
-    -- the latest from virtual and action statut update event
-    latest_event as (
-        select v.collectivite_id,
-               v.referentiel,
-               max(coalesce(v.max_date, r.created_at)) as max_date
-        from virtual_inital_event v
-                 full join action_statut_update_event r on r.collectivite_id = v.collectivite_id
-        group by v.collectivite_id, v.referentiel
+    -- update on statuses per collectivite and referentiel
+    statut_updates as (
+        select collectivite_id, max(modified_at) as updated_at, referentiel
+        from action_statut left join action_definition_summary on action_statut.action_id = action_definition_summary.id
+        group by (collectivite_id, referentiel)
     ),
-    -- last time points where updated for a referentiel
-    latest_referentiel_modification as (
-        select referentiel, max(modified_at) as referentiel_last_modified_at
+    -- update on referentiel computed points 
+    referentiels_last_update as (
+        select  referentiel, max(modified_at) as updated_at
         from action_computed_points acp
-                 left join action_relation ar on ar.id = acp.action_id
+        left join action_relation ar on ar.id = acp.action_id
         group by (referentiel)
+      ),
+    referentiels_updates as (
+        select referentiel, updated_at, collectivite_id
+        from referentiels_last_update inner join private_utilisateur_droit on 1 = 1),
+    -- vertical join of all update that would require to re-calculate the scores 
+    all_updates as (
+      select collectivite_id,
+                  referentiel,
+                  updated_at
+      from activation_updates a
+                full join statut_updates using (collectivite_id, referentiel, updated_at)
+                full join referentiels_updates using (collectivite_id, referentiel, updated_at)
     ),
-    -- score require to be processed either if a statut is updated or if computed_points changed
-    latest_score_update_required as (
-        select collectivite_id, r.referentiel, GREATEST(e.max_date::timestamp,
-                                                        r.referentiel_last_modified_at::timestamp) as required_at
-        from latest_event e
-                 left join latest_referentiel_modification r on r.referentiel = e.referentiel
+    -- last update per referentiel, per collectivite, that would require re-calculate the scores
+    latest_updates as (
+      select collectivite_id,
+             referentiel,
+             max(updated_at) as updated_at
+      from all_updates
+      group by collectivite_id, referentiel
     ),
-    -- events that are not processed
-    unprocessed as (
-        select *
-        from latest_score_update_required lsur
-        where collectivite_id not in (
-            -- processed means that the score is more recent than the event
-            select collectivite_id
-            from client_scores s
-            where s.score_created_at > lsur.required_at
-        )
+    -- last scores calculation date  
+    latest_client_scores as (
+       select collectivite_id,
+             referentiel,
+             max(score_created_at) as score_created_at
+        from client_scores 
+        group by (collectivite_id, referentiel)
     )
-select unprocessed.collectivite_id,
-       unprocessed.referentiel,
-       unprocessed.required_at as created_at
-from unprocessed;
+    -- filter updates that happened after the last score update (for collectivite and referentiel)
+    select collectivite_id, referentiel, updated_at::timestamp as created_at from latest_updates
+    left join latest_client_scores using (referentiel, collectivite_id)
+    where score_created_at is null or updated_at > score_created_at;
+
 comment on view unprocessed_action_statut_update_event is
     'To be used by business to compute only what is necessary.';
-
-create or replace view unprocessed_reponse_update_event as
-with latest_collectivite_event as (
-    select collectivite_id,
-           max(created_at) as max_date
-    from reponse_update_event
-    group by collectivite_id
-),
-active_collectivite_without_consequence as (
-    select c.id as collectivite_id, c.created_at
-    from collectivite c left join personnalisation_consequence pc on pc.collectivite_id = c.id
-    left join private_utilisateur_droit pud on pud.collectivite_id = c.id
-    where pc.collectivite_id is NULL and pud.active
-),
-     unprocessed_event as (
-         select *
-         from latest_collectivite_event e
-         where collectivite_id not in (
-             -- processed means that the consequence is more recent than the event
-             select collectivite_id
-             from personnalisation_consequence c
-             where c.modified_at > e.max_date
-         )
-     )
-select collectivite_id,
-       max_date as created_at
-from unprocessed_event
-union
-select collectivite_id, created_at
-from active_collectivite_without_consequence;
-comment on view unprocessed_reponse_update_event is
-    'Permet au business de déterminer quelles sont les collectivités '
-    'dont les réponses ont changé depuis le dernier calcul des conséquences';
-
-
-alter table personnalisation_regle drop column modified_at;
 
 COMMIT;
