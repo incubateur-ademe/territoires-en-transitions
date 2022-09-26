@@ -17,7 +17,7 @@ Fonctionnalité: Modifier mes informations personnelles
     Et que je recharge la page
     Alors le champ "nom" doit contenir "Dodoran"
 
-    Et que je modifie le champ "email" en "yolo@doudou.com"
+    Quand je modifie le champ "email" en "yolo@doudou.com"
     Alors la modale de modification d'email est affichée
 
     Quand je clique sur le bouton confirmer de la modale de modification d'email
