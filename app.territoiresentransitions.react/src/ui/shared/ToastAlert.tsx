@@ -1,4 +1,5 @@
-import {useState, ReactNode, useMemo} from 'react';
+import {useState, ReactNode} from 'react';
+import classNames from 'classnames';
 import {ToastFloater} from './floating-ui/ToastFloater';
 
 /**
@@ -22,35 +23,23 @@ export const ToastAlert = ({
 }) => {
   const {isVisible, status, close} = toastAlert;
 
-  const classNames = useMemo(() => {
-    if (status === 'success') {
-      return '!bg-green-500';
-    }
-    if (status === 'error') {
-      return '!bg-red-500';
-    }
-    return;
-  }, [status]);
-
-  const icon = useMemo(() => {
-    if (status === 'success') {
-      return 'fr-fi-check-line';
-    }
-    if (status === 'error') {
-      return 'fr-fi-close-line';
-    }
-    return;
-  }, [status]);
-
   return isVisible ? (
     <ToastFloater
       open={isVisible}
       onClose={() => close()}
-      className={classNames}
+      className={classNames(
+        {'!bg-green-500': status === 'success'},
+        {'!bg-red-500': status === 'error'}
+      )}
       autoHideDuration={autoHideDuration}
     >
       <div className="flex items-center">
-        <div className={`flex mr-3 ${icon}`}></div>
+        <div
+          className={`flex mr-3 ${classNames(
+            {'fr-fi-check-line': status === 'success'},
+            {'fr-fi-close-line': status === 'error'}
+          )}`}
+        ></div>
         {children(status)}
       </div>
     </ToastFloater>
