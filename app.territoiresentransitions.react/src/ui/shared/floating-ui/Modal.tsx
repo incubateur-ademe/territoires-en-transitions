@@ -27,6 +27,8 @@ export type ModalProps = {
   externalOpen?: boolean;
   /* accompagne "externalOpen" afin de pouvoir fermer la modale */
   setExternalOpen?: Dispatch<SetStateAction<boolean>>;
+  /** permet de donner une fonction à exécuter lors du click "Fermer" */
+  onCloseClick?: () => void;
   /* max-width prédéfinies dans le DSFR, valeur par défaut "md" */
   size?: 'sm' | 'md' | 'lg';
 };
@@ -41,6 +43,7 @@ const Modal = ({
   children,
   externalOpen,
   setExternalOpen,
+  onCloseClick,
   size = 'md',
 }: ModalProps) => {
   const [open, setOpen] = useState(false);
@@ -62,6 +65,11 @@ const Modal = ({
 
   const mobileClassnames = 'absolute inset-x-0 bottom-0 mt-8 max-h-full';
   const aboveMobileClassnames = 'sm:relative sm:m-0 max-h-80vh';
+
+  const handleCloseClick = () => {
+    setExternalOpen ? setExternalOpen(false) : setOpen(false);
+    onCloseClick && onCloseClick();
+  };
 
   return (
     <>
@@ -99,9 +107,7 @@ const Modal = ({
                 })}
               >
                 <button
-                  onClick={() =>
-                    setExternalOpen ? setExternalOpen(false) : setOpen(false)
-                  }
+                  onClick={handleCloseClick}
                   className="flex items-center ml-auto mb-2 px-2 py-2 md:-mr-4 fr-btn--secondary !shadow-none"
                 >
                   <span className="-mt-1">Fermer</span>
