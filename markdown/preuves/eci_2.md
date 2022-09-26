@@ -219,7 +219,7 @@ id: duerp_traitement_collecte
 ```yaml
 actions: 
   - eci_2.4.0
-id : conformite_installations
+id: conformite_installations
 ```
 ## Description
 En présence de non-conformité, la collectivité doit justifier d'un plan d'actions correctives et de l'absence de contentieux.
@@ -228,6 +228,7 @@ En présence de non-conformité, la collectivité doit justifier d'un plan d'act
 ```yaml
 actions: 
   - eci_2.4.1
+id: decision_etude_reduction_impact_collecte
 ```
 ## Description
 Compte rendu, délibération, cahier des charges de l'étude, etc.
@@ -236,30 +237,35 @@ Compte rendu, délibération, cahier des charges de l'étude, etc.
 ```yaml
 actions: 
   - eci_2.4.1
+id: rapport_etude_reduction_impact_collecte
 ```
 
 # La liste des actions priorisées
 ```yaml
 actions: 
   - eci_2.4.1
+id: liste_actions_reduction_impact_collecte
 ```
 
 # Plan d'actions
 ```yaml
 actions: 
   - eci_2.4.2
+id: plan_actions_reduction_impact_collecte
 ```
 
 # Justificatifs des travaux en cours de réalisation
 ```yaml
 actions: 
   - eci_2.4.2
+id: realisation_actions_reduction_impact_collecte
 ```
 
 # Tableau de bord de pilotage de progression
 ```yaml
 actions: 
   - eci_2.4.2
+id: suivi_actions_reduction_impact_collecte
 ```
 
 <!--# Rapport annuel déchets
@@ -273,30 +279,35 @@ Preuve identique à la cae_1.2.3.1 / cae_3.3.5.3 / eci_4.1.0 / eci_2.4.3-->
 ```yaml
 actions: 
   - eci_2.4.4
+id: plan_actions_reduction_impact_traitement
 ```
 
 # Justificatifs des travaux en cours de réalisation
 ```yaml
 actions: 
   - eci_2.4.4
+id: realisation_actions_reduction_impact_traitement
 ```
 
 # Tableau de bord de pilotage de progression
 ```yaml
 actions: 
   - eci_2.4.4
+id: suivi_actions_reduction_impact_traitement
 ```
 
 # Rapport annuel diffusé aux particuliers
 ```yaml
 actions: 
   - eci_2.4.5
+id: diffusion_rapport_annuel_public
 ```
 
 # Autre(s) support(s) de communication 
 ```yaml
 actions: 
   - eci_2.4.5
+id: communication_public_impacts
 ```
 ## Description
 Exemples : article dans un journal local, présence d'informations sur les factures, commission locale d'information, etc.
@@ -305,18 +316,21 @@ Exemples : article dans un journal local, présence d'informations sur les factu
 ```yaml
 actions: 
   - eci_2.5.1
+id: diffusion_rapport_annuel_pro
 ```
 
 # Méthode d'identification des entreprises prioritaires à conseiller
 ```yaml
 actions: 
   - eci_2.5.2
+id: identification_entreprises_conseillees
 ```
 
 # Compte-rendu d'activité du service de conseil 
 ```yaml
 actions: 
   - eci_2.5.2
+id: CR_activite_conseil
 ```
 ## Description
 Le compte-rendu doit indiquer le taux de mobilisation (liste des entreprises ciblées et liste des entreprises conseillées)
@@ -325,12 +339,14 @@ Le compte-rendu doit indiquer le taux de mobilisation (liste des entreprises cib
 ```yaml
 actions: 
   - eci_2.5.2
+id: enquete_satisfaction_entreprises_conseillees
 ```
 
 # Documents attestant que la collectivité a accompagné la mise en place de services
 ```yaml
 actions: 
   - eci_2.5.3
+id: justif_action_acteurs_pro
 ```
 ## Description
 Convention d'aide, mise en contact de personnes, mise à disposition de moyens...
