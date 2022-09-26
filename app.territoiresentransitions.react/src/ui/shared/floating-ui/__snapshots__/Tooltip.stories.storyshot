@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots ui/shared/floating-ui/Tooltip Actif Au Clic 1`] = `
+<div
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onKeyDown={[Function]}
+  onKeyUp={[Function]}
+  onMouseDown={[Function]}
+  onPointerDown={[Function]}
+>
+  un élément avec une info-bulle au clic
+</div>
+`;
+
+exports[`Storyshots ui/shared/floating-ui/Tooltip Avec HTML 1`] = `
+<button
+  onBlur={[Function]}
+  onFocus={[Function]}
+  onMouseMove={[Function]}
+  onPointerDown={[Function]}
+  onPointerEnter={[Function]}
+>
+  un élément avec une info-bulle au survol
+</button>
+`;
+
+exports[`Storyshots ui/shared/floating-ui/Tooltip Simple 1`] = `
+<button
+  onBlur={[Function]}
+  onFocus={[Function]}
+  onMouseMove={[Function]}
+  onPointerDown={[Function]}
+  onPointerEnter={[Function]}
+>
+  un élément avec une info-bulle au survol
+</button>
+`;

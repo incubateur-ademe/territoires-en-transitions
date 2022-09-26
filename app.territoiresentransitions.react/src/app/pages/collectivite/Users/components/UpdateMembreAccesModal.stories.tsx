@@ -8,6 +8,7 @@ import UpdateMembreAccesModal, {
 
 export default {
   component: UpdateMembreAccesModal,
+  parameters: {storyshots: false},
 } as Meta;
 
 const Template: Story<AccesModalProps> = args => (

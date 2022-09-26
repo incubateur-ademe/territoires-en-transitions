@@ -10,9 +10,6 @@ import {act, create} from 'react-test-renderer';
 
 const converter = new Stories2SnapsConverter();
 
-// Les tests contenant ces mots clés sont skippés.
-const exclusions = ['floating', 'modal', 'toast'];
-
 initStoryshots({
   asyncJest: true,
   // fonction de test spécifique pour éviter certains avertissements
@@ -21,13 +18,6 @@ initStoryshots({
     const filename = '../' + converter.getSnapshotFileName(context);
     if (!filename || !done) {
       return;
-    }
-
-    for (const exclusion of exclusions) {
-      if (filename.toLowerCase().includes(exclusion)) {
-        done();
-        return;
-      }
     }
 
     // rendu de la story
