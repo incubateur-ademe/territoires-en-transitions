@@ -2,10 +2,11 @@
 ```yaml
 actions: 
   - cae_1.1.1.3
+  - cae_1.1.2.1
 id: rapport_diag_pcaet
 ```
 ## Description
-PCAET avec EES et résumé non technique ; éventuel bilan intermédiaire
+PCAET avec EES et résumé non technique ; éventuel bilan intermédiaire 
 Preuve identique à la 1.1.2.1
 
 # Délibération d'engagement dans la Convention des Maires
@@ -26,24 +27,26 @@ id: rapport_dev_durable
 ```yaml
 actions: 
   - cae_1.1.1.3
-id: agenda
+id: agenda21
 ```
 
-# TEPOS (et éventuel avenant ou bilan intermédiaire)
+# TEPOS 
 ```yaml
 actions: 
   - cae_1.1.1.3
 id: tepos
 ```
+## Description
+Possible de joindre aussi un éventuel avenant ou bilan intermédiaire
 
 # Programme TEPCV 
 ```yaml
 actions: 
   - cae_1.1.1.3
-id: prog_tepcv
+id: tepcv
 ```
 ## Description
-éventuel avenant ou bilan intermédiaire
+Possible de joindre aussi un éventuel avenant ou bilan intermédiaire
 
 # Contrat de Relance de Transition Écologique (CRTE)
 ```yaml
@@ -66,7 +69,7 @@ Preuve identique à la 1.1.1.3 -->
 ```yaml
 actions: 
   - cae_1.1.3.2
-id: etude_vulnerabilite
+id: etude_vulnerabiliteCC
 ```
 
 # Schéma directeur des énergies
@@ -80,7 +83,7 @@ id: schema_directeur_energies
 ```yaml
 actions: 
   - cae_1.2.1.3
-id: etude_potentiel_renouvelable
+id: etude_potentiel_ENR
 ```
 
 # Plan de mobilité (PDM) / Plan de Mobilité Simplifié / ancien Plan de Déplacement Urbain / Schéma directeur mobilité
@@ -94,13 +97,18 @@ id: plan_mobilite
 ```yaml
 actions: 
   - cae_1.2.3.1
-id: prog_dechets
+  - eci_2.1.0
+id: PLPDMA
 ```
 
 # Rapport du service public de prévention et de gestion des déchets ménagers et assimilés (SPPGD)
 ```yaml
 actions: 
   - cae_1.2.3.1
+  - cae_3.3.5.3
+  - eci_2.2.0
+  - eci_4.1.0
+  - eci_2.4.3
 id: rapport_sppgd
 ```
 
@@ -108,14 +116,14 @@ id: rapport_sppgd
 ```yaml
 actions: 
   - cae_1.2.4.1
-id: prog_local_habitat
+id: PLH
 ```
 
 # Plan Local d'Urbanisme (Intercommunal)
 ```yaml
 actions: 
   - cae_1.3.1.1
-id: plan_local_urba
+id: PLU
 ```
 
 # Règlement du PLU (extrait sur une zone)
@@ -150,14 +158,14 @@ id: aeu
 ```yaml
 actions: 
   - cae_1.3.1.1
-id: amenagement_durable
+id: ref_amenagement_durable
 ```
 
 # Délibération sur la bonification de droits à construire 
 ```yaml
 actions: 
   - cae_1.3.1.1
-id: droits_construire
+id: delib_droits_construire
 ```
 ## Description
 Coefficient d'occupation des sols (COS) ou gabarit
@@ -166,7 +174,7 @@ Coefficient d'occupation des sols (COS) ou gabarit
 ```yaml
 actions: 
   - cae_1.3.2.3
-id: cdc_projets_urbanisme
+id: cdc_projets_urba
 ```
 
 # Convention de partenariat avec des organismes certificateurs du bâtiment
