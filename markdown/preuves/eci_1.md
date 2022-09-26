@@ -2,7 +2,7 @@
 ```yaml
 actions: 
   - eci_1.1.1
-id: delib_engagement_progr_actions_eci
+id: delib_engagement_politique_eci
 ```
 ## Description
 Tout document démontrant l’existence d’une politique ECi : délibération, note explicative.
@@ -11,7 +11,7 @@ Tout document démontrant l’existence d’une politique ECi : délibération, 
 ```yaml
 actions: 
   - eci_1.1.1
-id: delib_delegation_eci
+id: delib_elu_eci
 ```
 ## Description
 Si l’ECi ne figure pas explicitement dans la délégation, joindre une note explicative.
@@ -20,7 +20,7 @@ Si l’ECi ne figure pas explicitement dans la délégation, joindre une note ex
 ```yaml
 actions: 
   - eci_1.1.1
-id: equipe_mobilisee_eci
+id: organigramme_eci
 ```
 ## Description
 Organigramme du candidat sur lequel sont surlignés les services et directions qui participent à la politique ECi.
@@ -29,7 +29,7 @@ Organigramme du candidat sur lequel sont surlignés les services et directions q
 ```yaml
 actions: 
   - eci_1.1.1
-id: justif_ligne_budget_eci
+id: budget_eci
 ```
 ## Description
 Toute ligne budgétaire relative à la politique économie circulaire quel que soit le service mettant en oeuvre l’action.
@@ -73,7 +73,7 @@ id: analyse_enjeux_eco
 ```yaml
 actions: 
   - eci_1.1.2
-id: analyse_enjeux_envir
+id: analyse_enjeux_envi
 ```
 
 # Analyse des enjeux sociaux intégrés dans le diagnostic
@@ -94,7 +94,7 @@ id: liste_acteurs_initiatives_eci
 ```yaml
 actions: 
   - eci_1.1.3
-id: liste_membres_comite_pilotage_interne
+id: liste_membres_copil_interne
 ```
 ## Description
 La gouvernance interne, inter-services, peut être justifiée par des compte-rendu de comité de pilotage, feuille de présence, schéma de gouvernance, etc.
@@ -103,7 +103,7 @@ La gouvernance interne, inter-services, peut être justifiée par des compte-ren
 ```yaml
 actions: 
   - eci_1.1.3
-id: liste_membres_gouvernance
+id: liste_membres_copil_elargi
 ```
 
 # Compte-rendu des réunions de gouvernance et des groupes de travail pour la construction des actions économie circulaire
@@ -118,79 +118,91 @@ id: cr_reunions_gouvernance
 ```yaml
 actions: 
   - eci_1.1.4
-id: delib_relative_
+id: delib_strategie_eci
 ```
 
 # Programme d'actions formalisé
 ```yaml
 actions: 
   - eci_1.1.4
+id: plan_action_eci
 ```
 
 # Fiches actions sur Optigede
 ```yaml
 actions: 
   - eci_1.1.5
+id: fiche_Optigede_eci
 ```
 
 # Fiches "belles histoires" dans des médias accessibles
 ```yaml
 actions: 
   - eci_1.1.5
+id: fiche_media_eci
 ```
 
 # Vote/validation du plan formation par la collectivité
 ```yaml
 actions: 
   - eci_1.2.1
+id: plan_formation_eci
 ```
 
 # Attestations de participation aux formations réalisées
 ```yaml
 actions: 
   - eci_1.2.1
+id: participation_formation_eci
 ```
 
 # Description de l'action co-construite pour chaque compétence, avec l'explication sur ce qui favorise l'économie circulaire
 ```yaml
 actions: 
   - eci_1.2.2
+id: action_co_constuite_eci
 ```
 
 # Fiches actions sur Optigede
 ```yaml
 actions: 
   - eci_1.2.2
+id: fiche_Optigede_tranversalite_eci
 ```
 
 # Document approuvé par un élu précisant comment l'économie circulaire est prise en compte dans les nouvelles stratégies
 ```yaml
 actions: 
   - eci_1.2.3
+id: nouvelle_strategie_eci
 ```
 
 # Compte-rendu des réunions d'élaboration des nouvelles stratégies
 ```yaml
 actions: 
   - eci_1.2.3
+id: CR_reunion_elaboration_nouvelle_strategie_eci
 ```
 
 # Comptes-rendus des réunions d'échange
 ```yaml
 actions: 
   - eci_1.2.4
+id: CR_reunion_inter_collectivites
 ```
 
 # Documents de cadrage des actions (liste d'actions, plan d'action , etc.)
 ```yaml
 actions: 
   - eci_1.2.4
+id: doc_cadrage_actions_inter_collectivites
 ```
 
 # Indicateurs spécifiques et objectifs renseignés dans une interface dédié 
 ```yaml
 actions: 
   - eci_1.3.1
+id: indicateurs_eci
 ```
 ## Description
 Plateforme Territoires en Transitions ou une autre interface choisie par la collectivité (ex. tableau de bord Excel)
@@ -199,22 +211,26 @@ Plateforme Territoires en Transitions ou une autre interface choisie par la coll
 ```yaml
 actions: 
   - eci_1.3.2
+id: synthese_bilan
 ```
 
 # Compte-rendu des réunions d'analyse des résultats
 ```yaml
 actions: 
   - eci_1.3.2
+id: CR_reunion_partage_bilan
 ```
 
 # Support de communication externe
 ```yaml
 actions: 
   - eci_1.3.2
+id: com_externe_bilan
 ```
 
 # Programme d'actions mis à jour
 ```yaml
 actions: 
   - eci_1.3.2
+id: plan_action_maj_suite_bilan
 ```
