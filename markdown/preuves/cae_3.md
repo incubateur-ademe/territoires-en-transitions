@@ -40,7 +40,7 @@ actions:
 id: facture_eau
 ```
 
-# Programme pluri-annuel de travaux d’amélioration des réseaux
+# Programme pluriannuel de travaux d’amélioration des réseaux
 ```yaml
 actions: 
   - cae_3.3.1.5
