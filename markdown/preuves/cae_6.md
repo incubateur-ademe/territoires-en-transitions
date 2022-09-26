@@ -9,7 +9,7 @@ id: cr_reunions_reseaux
 ```yaml
 actions: 
   - cae_6.1.1.2
-id: prog_rencontres_interregion_ener_climat
+id: prog_rencontres_interregion_CAE
 ```
 
 # Note d’information sur les projets menés ou financés dans le cadre de la coopération internationale
@@ -135,7 +135,7 @@ id: actions_partenariales_organismes_formation
 ```yaml
 actions: 
   - cae_6.4.1.7
-id: projet_alim_territ
+id: PAT
 ```
 
 # Charte agricole
