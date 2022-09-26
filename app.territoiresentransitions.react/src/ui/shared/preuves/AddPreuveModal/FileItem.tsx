@@ -93,8 +93,6 @@ const errorToLabel = {
     'Ce fichier ne peut pas être téléversé car son format n’est pas supporté',
   formatAndSizeError:
     'Ce fichier ne peut pas être téléversé car son format n’est pas supporté et il dépasse la taille maximale autorisée',
-  duplicateError:
-    'Ce fichier a déjà été téléversé. Il peut être ajouté depuis la bibliothèque.',
   uploadError: 'Ce fichier n’a pas pu être téléversé',
 };
 
@@ -124,12 +122,29 @@ const FileItemFailed = (props: TFileItemProps) => {
           onClick={() => onRemoveFailed?.(file.name)}
         />
       </div>
-      <div
-        data-test="error"
-        className="px-2 py-2 fr-fi-alert-line fr-fi--sm text-error425 text-xs"
-      >
-        &nbsp;{label}
-      </div>
+      {status.code === UploadStatusCode.duplicated ? (
+        <div className="fr-alert fr-alert--info fr-mt-2w">
+          <p>
+            Ce fichier sera ajouté directement via votre bibliothèque de
+            fichiers car il a déjà été téléversé
+            {file.name !== status.filename ? (
+              <>
+                {' '}
+                sous le nom <i>{status.filename}.</i>
+              </>
+            ) : (
+              '.'
+            )}
+          </p>
+        </div>
+      ) : (
+        <div
+          data-test="error"
+          className="px-2 py-2 fr-fi-alert-line fr-fi--sm text-error425 text-xs"
+        >
+          &nbsp;{label}
+        </div>
+      )}
     </div>
   );
 };
@@ -138,6 +153,7 @@ const statusToRenderer = {
   running: FileItemRunning,
   uploaded: FileItemCompleted,
   completed: FileItemCompleted,
+  duplicated: FileItemFailed,
   failed: FileItemFailed,
   aborted: () => null,
 };

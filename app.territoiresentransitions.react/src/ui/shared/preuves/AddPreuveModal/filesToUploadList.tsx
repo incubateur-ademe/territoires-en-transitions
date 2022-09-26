@@ -20,9 +20,9 @@ export const filesToUploadList = async (
   return Promise.all(
     filesToArray(files).map(async (file: File) => {
       const hash = await shasum256(file);
-      const duplicateErr = await isDuplicate(hash, fichiers);
-      if (duplicateErr) {
-        return createItemFailed(file, UploadErrorCode.duplicateError, hash);
+      const duplicatedFile = getFileFromLib(hash, fichiers);
+      if (duplicatedFile) {
+        return createItemDuplicated(file, duplicatedFile);
       }
 
       const sizeErr = !isValidFileSize(file);
@@ -52,23 +52,29 @@ const filesToArray = (files: FileList): File[] => {
 };
 
 // représente un fichier en erreur (pb de taille, de format, etc.)
-const createItemFailed = (
-  file: File,
-  error: UploadErrorCode,
-  hash?: string
-): TFileItem => ({
+const createItemFailed = (file: File, error: UploadErrorCode): TFileItem => ({
   file,
   status: {
     code: UploadStatusCode.failed,
     error,
-    hash,
+  },
+});
+
+// représente un fichier qui déjà téléversé
+const createItemDuplicated = (
+  file: File,
+  fichier: TBibliothequeFichier
+): TFileItem => ({
+  file,
+  status: {
+    code: UploadStatusCode.duplicated,
+    fichier_id: fichier.id,
+    filename: fichier.filename,
   },
 });
 
 // représente un fichier dont l'upload va démarrer
 const createItemRunning = (file: File): TFileItem => ({
-  // normalise le nom du fichier pour contourner la limitation de storage-api
-  // Ref: https://github.com/supabase/storage-api/issues/133
   file,
   status: {
     code: UploadStatusCode.running,
@@ -87,10 +93,12 @@ const isValidFileFormat = (f: File): boolean => {
   return (ext && EXPECTED_FORMATS.includes(ext.toLowerCase())) || false;
 };
 
-// contrôle la présence d'un fichier portant le même nom dans le bucket
-const isDuplicate = async (
+// contrôle la présence d'un fichier portant le même nom dans le bucket et
+// renvoi ses informations, si il existe ou sinon `false`
+const getFileFromLib = (
   hash: string,
   fichiers: TBibliothequeFichier[]
-): Promise<boolean> => {
-  return fichiers.findIndex(({hash: h}) => hash === h) !== -1;
+): TBibliothequeFichier | false => {
+  const fichier = fichiers.find(({hash: h}) => hash === h);
+  return fichier || false;
 };

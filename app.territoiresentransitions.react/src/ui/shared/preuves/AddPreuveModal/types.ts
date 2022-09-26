@@ -6,6 +6,7 @@ export enum UploadStatusCode {
   running = 'running',
   uploaded = 'uploaded',
   completed = 'completed',
+  duplicated = 'duplicated',
   failed = 'failed',
   aborted = 'aborted',
 }
@@ -14,7 +15,6 @@ export enum UploadErrorCode {
   sizeError = 'sizeError',
   formatError = 'formatError',
   formatAndSizeError = 'formatAndSizeError',
-  duplicateError = 'duplicateError',
   uploadError = 'uploadError',
 }
 
@@ -29,7 +29,6 @@ export type UploadStatusRunning = {
 export type UploadStatusFailed = {
   code: UploadStatusCode.failed;
   error: UploadErrorCode;
-  hash?: string;
 };
 
 // fichier téléversé
@@ -45,6 +44,13 @@ export type UploadStatusCompleted = {
   fichier_id: number;
 };
 
+// fichier déjà téléversé
+export type UploadStatusDuplicated = {
+  code: UploadStatusCode.duplicated;
+  fichier_id: number;
+  filename: string;
+};
+
 // téléversement interrompu par l'utilisateur
 type UploadStatusAborted = {code: UploadStatusCode.aborted};
 
@@ -52,5 +58,6 @@ export type UploadStatus =
   | UploadStatusRunning
   | UploadStatusUploaded
   | UploadStatusCompleted
+  | UploadStatusDuplicated
   | UploadStatusFailed
   | UploadStatusAborted;

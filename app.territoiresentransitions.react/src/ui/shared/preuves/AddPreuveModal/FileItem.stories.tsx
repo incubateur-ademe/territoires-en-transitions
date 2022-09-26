@@ -43,9 +43,13 @@ export const fileItemMocks = {
     file: createMockFile('fichier.doc', 15 * 1024 * 1024),
     status: {code: 'failed', error: 'uploadError'},
   },
-  duplicateError: {
+  duplicateWarning: {
     file: createMockFile('fichier.xls', 15 * 1024 * 1024),
-    status: {code: 'failed', error: 'duplicateError'},
+    status: {code: 'duplicated', fichier_id: 1, filename: 'fichier.xls'},
+  },
+  duplicatedAndRenamedWarning: {
+    file: createMockFile('nouveau nom.xls', 15 * 1024 * 1024),
+    status: {code: 'duplicated', fichier_id: 1, filename: 'fichier.xls'},
   },
 };
 
@@ -82,4 +86,9 @@ export const FailedToUpload = Template.bind({});
 FailedToUpload.args = {...fileItemMocks.uploadError};
 
 export const FailedDuplicate = Template.bind({});
-FailedDuplicate.args = {...fileItemMocks.duplicateError};
+FailedDuplicate.args = {...fileItemMocks.duplicateWarning};
+
+export const FailedDuplicatedAndRenamed = Template.bind({});
+FailedDuplicatedAndRenamed.args = {
+  ...fileItemMocks.duplicatedAndRenamedWarning,
+};
