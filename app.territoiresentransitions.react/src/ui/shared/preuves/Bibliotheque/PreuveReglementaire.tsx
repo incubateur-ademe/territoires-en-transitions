@@ -29,9 +29,10 @@ export const PreuveReglementaire = (props: TPreuveReglementaireProps) => {
   const haveDoc = fichier || lien;
 
   return (
-    <div className="flex flex-row gap-8 pt-2 pb-4">
+    <div className="flex flex-row gap-8 pt-2 pb-4" data-test="preuve">
       <div className="flex flex-1 flex-col">
         <span
+          data-test="desc"
           className={classNames('fr-text--sm pt-2', {
             'text-black': !isDisabled,
             'text-grey25': isDisabled,

@@ -112,12 +112,14 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
   >
     <div
       className="flex flex-row gap-8 pt-2 pb-4"
+      data-test="preuve"
     >
       <div
         className="flex flex-1 flex-col"
       >
         <span
           className="fr-text--sm pt-2 text-black"
+          data-test="desc"
         >
           Délibération d'engagement dans la Convention des Maires
           <span
@@ -156,12 +158,14 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
     </div>
     <div
       className="flex flex-row gap-8 pt-2 pb-4"
+      data-test="preuve"
     >
       <div
         className="flex flex-1 flex-col"
       >
         <span
           className="fr-text--sm pt-2 text-black"
+          data-test="desc"
         >
           Etude de vulnérabilité au changement climatique
           <span
@@ -292,12 +296,14 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
     </div>
     <div
       className="flex flex-row gap-8 pt-2 pb-4"
+      data-test="preuve"
     >
       <div
         className="flex flex-1 flex-col"
       >
         <span
           className="fr-text--sm pt-2 text-black"
+          data-test="desc"
         >
           Agenda 21 / Agenda 2030
           <span
@@ -554,12 +560,14 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
   >
     <div
       className="flex flex-row gap-8 pt-2 pb-4"
+      data-test="preuve"
     >
       <div
         className="flex flex-1 flex-col"
       >
         <span
           className="fr-text--sm pt-2 text-black"
+          data-test="desc"
         >
           Délibération d'engagement dans la Convention des Maires
           <span
@@ -598,12 +606,14 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
     </div>
     <div
       className="flex flex-row gap-8 pt-2 pb-4"
+      data-test="preuve"
     >
       <div
         className="flex flex-1 flex-col"
       >
         <span
           className="fr-text--sm pt-2 text-black"
+          data-test="desc"
         >
           Etude de vulnérabilité au changement climatique
           <span
@@ -734,12 +744,14 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
     </div>
     <div
       className="flex flex-row gap-8 pt-2 pb-4"
+      data-test="preuve"
     >
       <div
         className="flex flex-1 flex-col"
       >
         <span
           className="fr-text--sm pt-2 text-black"
+          data-test="desc"
         >
           Agenda 21 / Agenda 2030
           <span

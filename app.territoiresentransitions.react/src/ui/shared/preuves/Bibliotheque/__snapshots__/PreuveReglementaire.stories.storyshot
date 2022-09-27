@@ -3,12 +3,14 @@
 exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Action Desactivee 1`] = `
 <div
   className="flex flex-row gap-8 pt-2 pb-4"
+  data-test="preuve"
 >
   <div
     className="flex flex-1 flex-col"
   >
     <span
       className="fr-text--sm pt-2 text-grey25"
+      data-test="desc"
     >
       Délibération d'engagement dans la Convention des Maires
       <span
@@ -55,12 +57,14 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Action De
 exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Action Non Concernee 1`] = `
 <div
   className="flex flex-row gap-8 pt-2 pb-4"
+  data-test="preuve"
 >
   <div
     className="flex flex-1 flex-col"
   >
     <span
       className="fr-text--sm pt-2 text-grey25"
+      data-test="desc"
     >
       Délibération d'engagement dans la Convention des Maires
       <span
@@ -107,12 +111,14 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Action No
 exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Fichier 1`] = `
 <div
   className="flex flex-row gap-8 pt-2 pb-4"
+  data-test="preuve"
 >
   <div
     className="flex flex-1 flex-col"
   >
     <span
       className="fr-text--sm pt-2 text-black"
+      data-test="desc"
     >
       Etude de vulnérabilité au changement climatique
       <span
@@ -200,12 +206,14 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Fichier 1
 exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Lien 1`] = `
 <div
   className="flex flex-row gap-8 pt-2 pb-4"
+  data-test="preuve"
 >
   <div
     className="flex flex-1 flex-col"
   >
     <span
       className="fr-text--sm pt-2 text-black"
+      data-test="desc"
     >
       Agenda 21 / Agenda 2030
       <span
@@ -286,12 +294,14 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Lien 1`] 
 exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Multiple 1`] = `
 <div
   className="flex flex-row gap-8 pt-2 pb-4"
+  data-test="preuve"
 >
   <div
     className="flex flex-1 flex-col"
   >
     <span
       className="fr-text--sm pt-2 text-black"
+      data-test="desc"
     >
       Etude de vulnérabilité au changement climatique
       <span
@@ -418,12 +428,14 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Multiple 
 exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Non Renseignee 1`] = `
 <div
   className="flex flex-row gap-8 pt-2 pb-4"
+  data-test="preuve"
 >
   <div
     className="flex flex-1 flex-col"
   >
     <span
       className="fr-text--sm pt-2 text-black"
+      data-test="desc"
     >
       Délibération d'engagement dans la Convention des Maires
       <span
