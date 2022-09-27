@@ -189,7 +189,7 @@ services:
   # Load contents and fakes once db is ready.
   loader:
     container_name: tet-datalayer-loader
-    image: postgres:14 # use postgres solely for its plsql client.
+    build: ./data_layer/loader/.
     healthcheck:
       test: sh /scripts/loaded_content.sh
       interval: 30s
@@ -197,6 +197,7 @@ services:
       retries: 100
     depends_on:
       - sqitch
+      - kong
     command: sh /scripts/try_load.sh
     environment:
       SKIP_TEST_DOMAIN: ${LOADER_SKIP_TEST_DOMAIN}
@@ -204,10 +205,14 @@ services:
       PGPASSWORD: ${POSTGRES_PASSWORD}
       PGUSER: postgres
       PGHOST: db
+      SERVICE_ROLE_KEY: ${SERVICE_ROLE_KEY}
+      SUPABASE_URL: ${SUPABASE_URL}
     volumes:
       - ./data_layer/postgres:/postgres
       - ./data_layer/scripts/try_load.sh:/scripts/try_load.sh
       - ./data_layer/scripts/loaded_content.sh:/scripts/loaded_content.sh
+      - ./data_layer/scripts/load_json_content.sh:/scripts/load_json_content.sh
+      - ./data_layer/content:/content
 
   datalayer-test:
     container_name: tet-datalayer-test
@@ -362,18 +367,3 @@ services:
     working_dir: /data_layer/sqitch
     volumes:
       - ./data_layer/sqitch:/data_layer/sqitch
-
-  loader_2:
-    container_name: tet-curl
-    build: ./data_layer/.
-    depends_on:
-      loader:
-        condition: service_healthy
-    environment:
-      SERVICE_ROLE_KEY: ${SERVICE_ROLE_KEY}
-      SUPABASE_URL: ${SUPABASE_URL}
-    volumes:
-      - ./data_layer/scripts/load_json_content.sh:/scripts/load_json_content.sh
-      - ./data_layer/content:/content
-    command: >
-      sh /scripts/load_json_content.sh
