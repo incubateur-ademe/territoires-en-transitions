@@ -2,10 +2,17 @@
 
 BEGIN;
 
-select *
+comment on trigger after_preuve_json on preuve_reglementaire_json is '';
+select has_function_privilege('labellisation.upsert_preuves_reglementaire(jsonb)', 'execute');
+select has_function_privilege('labellisation.upsert_preuves_reglementaire_after_json_insert()', 'execute');
+select preuve_id, action_id
+from preuve_action
+where false;
+select id, nom, description
 from preuve_reglementaire_definition
 where false;
-
-select has_function_privilege('business_upsert_preuves(preuve_reglementaire_definition[])', 'execute');
+select preuves, created_at
+from preuve_reglementaire_json
+where false;
 
 ROLLBACK;

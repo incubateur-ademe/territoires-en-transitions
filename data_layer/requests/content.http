@@ -1,0 +1,26 @@
+### Ajoute les définition des preuves.
+POST {{api}}/rest/v1/preuve_reglementaire_json
+apikey: {{service}}
+Authorization: Bearer {{service}}
+Content-Type: application/json
+
+{
+  "preuves": [
+    {
+      "id": "enquete_deplacements",
+      "nom": "R\u00e9sultats d\u2019enqu\u00eate m\u00e9nages d\u00e9placements",
+      "actions": [
+        "cae_4.1.1.1"
+      ],
+      "description": "<p>ou autre diagnostic sur la mobilit\u00e9</p>\n"
+    },
+    {
+      "id": "semaine_mobilite",
+      "nom": "Descriptif semaine de la mobilit\u00e9",
+      "actions": [
+        "cae_4.1.1.3"
+      ],
+      "description": ""
+    }
+  ]
+}

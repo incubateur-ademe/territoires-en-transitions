@@ -2,4 +2,4 @@
 
 FROM postgres:14
 RUN apt-get update
-RUN apt-get install sqitch libdbd-pg-perl postgresql-client
+RUN apt-get install -y curl

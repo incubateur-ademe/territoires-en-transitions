@@ -146,6 +146,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - ./data_layer/supabase/init:/docker-entrypoint-initdb.d
+      - ./data_layer/content:/content
 
 
   # When this service is healthy, supabase has been loaded.
@@ -369,3 +370,18 @@ services:
     image: mailhog/mailhog
     ports:
       - 8025:8025 # web ui
+
+  loader_2:
+    container_name: tet-curl
+    build: ./data_layer/.
+    depends_on:
+      loader:
+        condition: service_healthy
+    environment:
+      SERVICE_ROLE_KEY: ${SERVICE_ROLE_KEY}
+      SUPABASE_URL: ${SUPABASE_URL}
+    volumes:
+      - ./data_layer/scripts/load_json_content.sh:/scripts/load_json_content.sh
+      - ./data_layer/content:/content
+    command: >
+      sh /scripts/load_json_content.sh
