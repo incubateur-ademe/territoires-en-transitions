@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {LabeledTextInput} from 'ui/forms/LabeledTextInput';
+import {LabeledTextInput} from 'app/pages/collectivite/PlanActions/Forms/LabeledTextInput';
 import {createPlanAction} from 'core-logic/commands/plans';
 
 export const PlanCreationForm = (props: {onSave: () => void}) => {
