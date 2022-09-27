@@ -60,7 +60,7 @@ When(
   (action, dataTable) => {
     const rows = dataTable.rows();
     getPreuvePanel(action)
-      .find('[data-test=preuves]')
+      .find('[data-test=preuves] [data-test=complementaires]')
       .within(() => {
         // vérifie le nombre de lignes
         cy.root().get('[data-test=item]').should('have.length', rows.length);
@@ -75,6 +75,37 @@ When(
               cy.get('[data-test=comment]').should('have.text', commentaire);
             } else {
               cy.get('[data-test=comment]').should('not.exist');
+            }
+          });
+        });
+      });
+  }
+);
+
+When(
+  /la liste des preuves attendues de l'action "([^"]+)" contient les lignes suivantes/,
+  (action, dataTable) => {
+    const rows = dataTable.rows();
+    getPreuvePanel(action)
+      .find('[data-test=preuves] [data-test=attendues]')
+      .within(() => {
+        // vérifie le nombre de lignes
+        cy.root().get('[data-test=preuve]').should('have.length', rows.length);
+
+        // vérifie que chaque ligne du tableau donné correspond à l'affichage
+        cy.wrap(rows).each(([nom, preuves], index) => {
+          cy.get(`[data-test=preuve]:nth(${index})`).within(() => {
+            // vérifie la description de la preuve règlementaire
+            cy.get('[data-test=desc]').should('contain.text', nom);
+            // vérifie les noms des liens/fichiers rattachés à la preuve attendue
+            if (preuves) {
+              const items = preuves.split(',');
+              cy.wrap(items).each((item, idx) => {
+                cy.get(`[data-test=item]:nth(${idx}) [data-test=name]`).should(
+                  'contain.text',
+                  item
+                );
+              });
             }
           });
         });
@@ -124,6 +155,20 @@ When(
   (action) => {
     // utilise le paramètre "force" pour le clic (sinon il ne se produit jamais ?)
     getAddPreuveButton(action).click({ force: true });
+  }
+);
+
+When(
+  /clique sur le (\d)(?:er|ème) bouton "Ajouter une preuve réglementaire" à l'action "([^"]+)"/,
+  (num, action) => {
+    // utilise le paramètre "force" pour le clic (sinon il ne se produit jamais ?)
+    getPreuvePanel(action)
+      .find(
+        `[data-test=attendues] [data-test=preuve]:nth(${
+          num - 1
+        }) [data-test=AddPreuveReglementaire]`
+      )
+      .click({ force: true });
   }
 );
 

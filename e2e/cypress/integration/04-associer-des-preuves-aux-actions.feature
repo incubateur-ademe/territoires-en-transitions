@@ -202,3 +202,48 @@ Fonctionnalité: Associer des preuves aux actions
 
     Quand je clique sur le bouton "Supprimer" de la preuve "Exemple2" de l'action "1.1.1"
     Alors la liste des preuves de l'action "1.1.1" est vide
+
+  Scénario: Ajouter une preuve réglementaire à une sous-action
+    On teste l'affichage et l'ajout d'une preuve réglementaire sous forme d'un lien et d'un fichier,
+    mais on ne reteste pas les actions "décrire" et "supprimer" qui sont mutualisées quelque soit le type de preuve.
+
+    Etant donné que je suis connecté en tant que "yolo"
+    Et que les tables de preuves de la collectivité "1" sont vides
+    Et que je visite le sous-axe "1.1.1" du référentiel "cae" de la collectivité "1"
+    Et que le bouton "Ajouter une preuve" à l'action "1.1.1.3" est absent
+
+    Quand je déplie le panneau Preuves de l'action "1.1.1.3"
+    Alors le bouton "Ajouter une preuve" à l'action "1.1.1.3" est visible
+    Et la liste des preuves de l'action "1.1.1.3" est vide
+    Et la liste des preuves attendues de l'action "1.1.1.3" contient les lignes suivantes :
+      | nom                                                       | preuves |
+      | Agenda 21 / Agenda 2030                                   |         |
+      | Délibération d'engagement dans la Convention des Maires   |         |
+      | Rapport Développement Durable                             |         |
+      | Rapports diagnostic, stratégie et plan d'actions du PCAET |         |
+
+    # on ajoute un lien
+    Quand je clique sur le 1er bouton "Ajouter une preuve réglementaire" à l'action "1.1.1.3"
+    Et que je remplis le "formulaire Lien" avec les valeurs suivantes :
+      | Champ | Valeur           |
+      | titre | Exemple          |
+      | lien  | https://ademe.fr |
+    Et que je clique sur le bouton "Ajouter" du "formulaire Lien"
+    Alors la liste des preuves attendues de l'action "1.1.1.3" contient les lignes suivantes :
+      | nom                                                       | preuves |
+      | Agenda 21 / Agenda 2030                                   | Exemple |
+      | Délibération d'engagement dans la Convention des Maires   |         |
+      | Rapport Développement Durable                             |         |
+      | Rapports diagnostic, stratégie et plan d'actions du PCAET |         |
+
+    # et un fichier
+    Quand je clique sur le 1er bouton "Ajouter une preuve réglementaire" à l'action "1.1.1.3"
+    Et que je clique sur l'onglet "Fichier" du "dialogue d'ajout d'une preuve"
+    Et que je transfère à partir du "dialogue d'ajout d'une preuve" le fichier nommé "fichier.xls" et contenant "contenu du fichier"
+    Et que je clique sur le bouton "Ajouter" du "formulaire Fichier"
+    Alors la liste des preuves attendues de l'action "1.1.1.3" contient les lignes suivantes :
+      | nom                                                       | preuves             |
+      | Agenda 21 / Agenda 2030                                   | Exemple,fichier.xls |
+      | Délibération d'engagement dans la Convention des Maires   |                     |
+      | Rapport Développement Durable                             |                     |
+      | Rapports diagnostic, stratégie et plan d'actions du PCAET |                     |
