@@ -10,38 +10,49 @@ beforeEach(() => {
 When(/je déplie le panneau Preuves de l'action "([^"]+)"/, (action) =>
   getPreuvePanel(action).within(() => {
     // la liste des preuves attendues n'existe pas
-    cy.get('.content li').should('not.exist');
+    cy.get('[data-test=preuves]').should('not.exist');
     // clic pour déplier le panneau
     cy.root().click();
     // attend que la liste existe
-    cy.get('.content li').should('be.visible');
+    cy.get('[data-test=preuves]').should('be.visible');
   })
 );
 
 When(
   /les tables de preuves de la collectivité "(\d+)" sont vides/,
-  (collectivite_id) =>
-    cy
-      .get('@supabaseClient')
-      .then((client) =>
-        Promise.all([
-          client.from('preuve_lien').delete().match({ collectivite_id }),
-          client.from('preuve_fichier').delete().match({ collectivite_id }),
-        ])
-      )
+  (collectivite_id) => {
+    cy.get('@supabaseClient').then((client) =>
+      Promise.all([
+        client.from('preuve_reglementaire').delete().match({ collectivite_id }),
+        client
+          .from('preuve_complementaire')
+          .delete()
+          .match({ collectivite_id }),
+        client.from('preuve_labellisation').delete().match({ collectivite_id }),
+        client.from('preuve_rapport').delete().match({ collectivite_id }),
+      ])
+    );
+    cy.task('pg_query', {
+      query:
+        'DELETE FROM labellisation.bibliotheque_fichier WHERE collectivite_id = $1',
+      values: [collectivite_id],
+    });
+  }
 );
 
 When(
   /la table des liens preuve est initialisée avec les données suivantes/,
   (dataTable) => {
     cy.get('@supabaseClient').then((client) =>
-      client.from('preuve_lien').insert(dataTable.hashes())
+      client.from('preuve_complementaire').insert(dataTable.hashes())
     );
   }
 );
 
 When(/la liste des preuves de l'action "([^"]+)" est vide/, (action) => {
-  getPreuvePanel(action).find('[data-test=ActionPreuves]').should('not.exist');
+  getPreuvePanel(action)
+    .find('[data-test=preuves] [data-test=item]')
+    .should('not.exist');
 });
 
 When(
@@ -49,7 +60,7 @@ When(
   (action, dataTable) => {
     const rows = dataTable.rows();
     getPreuvePanel(action)
-      .find('[data-test=ActionPreuves]')
+      .find('[data-test=preuves]')
       .within(() => {
         // vérifie le nombre de lignes
         cy.root().get('[data-test=item]').should('have.length', rows.length);
@@ -58,7 +69,7 @@ When(
         cy.wrap(rows).each(([titre, commentaire], index) => {
           cy.get(`[data-test=item]:nth(${index})`).within(() => {
             // vérifie le nom
-            cy.get('[data-test=name]').should('have.text', titre);
+            cy.get('[data-test=name]').should('contain.text', titre);
             // et le commentaire (ou son absence)
             if (commentaire) {
               cy.get('[data-test=comment]').should('have.text', commentaire);
@@ -75,7 +86,7 @@ When(
   /je clique sur la preuve "([^"]+)" de l'action "([^"]+)"/,
   (preuve, action) => {
     getPreuvePanel(action)
-      .find(`[data-test=ActionPreuves] > div`)
+      .find(`[data-test=preuves] > div`)
       .contains(preuve)
       .click();
   }
@@ -85,7 +96,7 @@ When(
   /je clique sur le bouton "([^"]+)" de la preuve "([^"]+)" de l'action "([^"]+)"/,
   (btn, preuve, action) => {
     getPreuvePanel(action)
-      .find(`[data-test=ActionPreuves] > div`)
+      .find(`[data-test=preuves] > div`)
       .contains(preuve)
       .parent()
       //      .trigger('mouseover')
@@ -98,7 +109,7 @@ When(
   /je saisi "([^"]+)" comme commentaire de la preuve "([^"]+)" de l'action "([^"]+)"/,
   (commentaire, preuve, action) => {
     getPreuvePanel(action)
-      .find(`[data-test=ActionPreuves] input`)
+      .find(`[data-test=preuves] input`)
       .clear()
       .type(commentaire + '{enter}');
   }
@@ -126,7 +137,7 @@ When(
 );
 
 const getAddPreuveButton = (action) =>
-  getPreuvePanel(action).find('[data-test=AddPreuveButton]');
+  getPreuvePanel(action).find('[data-test=AddPreuveComplementaire]');
 
 const getPreuvePanel = (action) =>
   cy.get(`[data-test="PreuvesPanel-${action}"]`);

@@ -2,7 +2,7 @@
 
 Fonctionnalité: Associer des preuves aux actions
 
-  Scénario: Ajouter un fichier comme preuve à une action
+  Scénario: Ajouter un fichier comme preuve complémentaire à une sous-action
     Etant donné que je suis connecté en tant que "yolo"
     Et que les tables de preuves de la collectivité "1" sont vides
     Et que la bibliothèque de la collectivité "1" est vide
@@ -20,33 +20,31 @@ Fonctionnalité: Associer des preuves aux actions
     Et le bouton "Ajouter" du "formulaire Fichier" est désactivé
 
     Quand je transfère à partir du "dialogue d'ajout d'une preuve" le fichier nommé "bien nommé.doc" et contenant "contenu du fichier"
-    # le fichier a été renommé en "bien nomme.doc" afin de contourner une limitation de supabase/storage-api
-    # Ref: https://github.com/supabase/storage-api/issues/133
     Alors la liste des fichiers transférés contient les entrées suivantes :
       | Fichier        | Etat    | Taille | Message |
-      | bien nomme.doc | running | 18 o   |         |
+      | bien nommé.doc | running | 18 o   |         |
     Et le bouton "Ajouter" du "formulaire Fichier" est désactivé
 
     Quand tous les transferts sont terminés
     Alors la liste des fichiers transférés contient les entrées suivantes :
       | Fichier        | Etat      | Taille | Message |
-      | bien nomme.doc | completed |        |         |
+      | bien nommé.doc | completed |        |         |
     Et le bouton "Ajouter" du "formulaire Fichier" est activé
 
     Quand je clique sur le bouton "Ajouter" du "formulaire Fichier"
     Alors le "dialogue d'ajout d'une preuve" est absent
     Alors la liste des preuves de l'action "1.1.1" contient les lignes suivantes :
       | Titre          | Commentaire |
-      | bien nomme.doc |             |
+      | bien nommé.doc |             |
 
-    Quand je clique sur le bouton "Commentaire" de la preuve "bien nomme.doc" de l'action "1.1.1"
-    Et que je saisi "une phrase" comme commentaire de la preuve "bien nomme.doc" de l'action "1.1.1"
+    Quand je clique sur le bouton "Décrire" de la preuve "bien nommé.doc" de l'action "1.1.1"
+    Et que je saisi "une phrase" comme commentaire de la preuve "bien nommé.doc" de l'action "1.1.1"
     Alors la liste des preuves de l'action "1.1.1" contient les lignes suivantes :
       | Titre          | Commentaire |
-      | bien nomme.doc | une phrase  |
+      | bien nommé.doc | une phrase  |
 
-    Quand je clique sur la preuve "bien nomme.doc" de l'action "1.1.1"
-    Alors le fichier "bien nomme.doc" doit avoir été téléchargé
+    Quand je clique sur la preuve "bien nommé.doc" de l'action "1.1.1"
+    Alors le fichier "bien nommé.doc" doit avoir été téléchargé
 
   Scénario: Visualiser une erreur lors de l'ajout d'un fichier preuve trop lourd
     Etant donné que je suis connecté en tant que "yolo"
@@ -94,7 +92,7 @@ Fonctionnalité: Associer des preuves aux actions
       | file.txt | failed | 18 o   | Ce fichier ne peut pas être téléversé car son format n’est pas supporté |
     Et le bouton "Ajouter" du "formulaire Fichier" est désactivé
 
-  Scénario: Ajouter un lien comme preuve à une action
+  Scénario: Ajouter un lien comme preuve complémentaire à une sous-action
     Etant donné que je suis connecté en tant que "yolo"
     Et que les tables de preuves de la collectivité "1" sont vides
     Et que je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "1"
@@ -155,7 +153,7 @@ Fonctionnalité: Associer des preuves aux actions
       | Titre   | Commentaire |
       | Exemple |             |
 
-    Quand je clique sur le bouton "Commentaire" de la preuve "Exemple" de l'action "1.1.1"
+    Quand je clique sur le bouton "Décrire" de la preuve "Exemple" de l'action "1.1.1"
     Et que je saisi "deux mots" comme commentaire de la preuve "Exemple" de l'action "1.1.1"
     Alors la liste des preuves de l'action "1.1.1" contient les lignes suivantes :
       | Titre   | Commentaire |
@@ -174,7 +172,7 @@ Fonctionnalité: Associer des preuves aux actions
       | Titre   | Commentaire     |
       | Exemple | mon commentaire |
 
-    Quand je clique sur le bouton "Commentaire" de la preuve "Exemple" de l'action "1.1.1"
+    Quand je clique sur le bouton "Décrire" de la preuve "Exemple" de l'action "1.1.1"
     Et que je saisi "deux mots" comme commentaire de la preuve "Exemple" de l'action "1.1.1"
     Alors la liste des preuves de l'action "1.1.1" contient les lignes suivantes :
       | Titre   | Commentaire |
