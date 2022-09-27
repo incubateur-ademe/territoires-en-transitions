@@ -2,8 +2,8 @@ name: Update preuves
 
 on:
   push:
-    # paths:
-    #   - "markdown/preuves/*.md"
+    paths:
+      - "markdown/preuves/*.md"
   pull_request:
     branches-ignore:
       - production

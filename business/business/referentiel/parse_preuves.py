@@ -57,6 +57,8 @@ def convert_preuves_markdown_folder_to_json(folder_path: str, json_filename: str
     print(
         f"Lecture de {len(md_files)} fichiers preuves depuis le dossier {folder_path} :) "
     )
+
+    # Parse all markdown files
     preuves: List[dict] = []
     errors: List[str] = []
     for md_file in md_files:
@@ -65,10 +67,10 @@ def convert_preuves_markdown_folder_to_json(folder_path: str, json_filename: str
         errors += file_errors
 
     # Raise if any errors
-    # if errors:
-    #     raise Exception(
-    #         "Erreurs dans le format des fichiers preuves :\n- " + "\n- ".join(errors)
-    #     )
+    if errors:
+        raise Exception(
+            "Erreurs dans le format des fichiers preuves :\n- " + "\n- ".join(errors)
+        )
 
     # Check that ids are unique
     duplicated_preuve_ids = find_duplicates([preuve["id"] for preuve in preuves])
@@ -78,6 +80,7 @@ def convert_preuves_markdown_folder_to_json(folder_path: str, json_filename: str
             + ", ".join(duplicated_preuve_ids),
         )
 
+    # Save to JSON
     with open(json_filename, "w") as f:
         json.dump({"preuves": preuves}, f)
     print(
