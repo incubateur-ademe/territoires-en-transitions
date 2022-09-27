@@ -176,8 +176,9 @@ select 'reglementaire',
 from collectivite c -- toutes les collectivités ...
          left join preuve_reglementaire_definition prd on true -- ... x toutes les preuves réglementaires
          left join preuve_reglementaire pr on prd.id = pr.preuve_id
+         left join preuve_action pa on prd.id = pa.preuve_id
          left join labellisation.bibliotheque_fichier_snippet fs on fs.id = pr.fichier_id
-         left join labellisation.action_snippet snippet on snippet.action_id = prd.action_id and snippet.collectivite_id = c.id
+         left join labellisation.action_snippet snippet on snippet.action_id = pa.action_id and snippet.collectivite_id = c.id
 union all
 
 select 'labellisation',
