@@ -54,7 +54,7 @@ def parse_preuves_from_markdown(md_file: str) -> Tuple[List[dict], List[str]]:
 def convert_preuves_markdown_folder_to_json(folder_path: str, json_filename: str):
     md_files = glob(os.path.join(folder_path, "*.md"))
     print(
-        f"Lecture de {len(md_files)} fichiers preuves depuis le dossier {folder_path}."
+        f"Lecture de {len(md_files)} fichiers preuves depuis le dossier {folder_path} :) "
     )
     preuves: List[dict] = []
     errors: List[str] = []
@@ -63,10 +63,10 @@ def convert_preuves_markdown_folder_to_json(folder_path: str, json_filename: str
         preuves += file_preuves
         errors += file_errors
 
-    if errors:
-        raise Exception(
-            "Erreurs dans le format des fichiers preuves :" + "\n- ".join(errors)
-        )
+    # if errors:
+    #     raise Exception(
+    #         "Erreurs dans le format des fichiers preuves :\n- " + "\n- ".join(errors)
+    #     )
 
     with open(json_filename, "w") as f:
         json.dump(preuves, f)
