@@ -1,0 +1,37 @@
+name: Update preuves
+
+on:
+  push:
+    # paths:
+    #   - "markdown/preuves/*.md"
+  pull_request:
+    branches-ignore:
+      - production
+      - production-static
+
+jobs:
+  parse-preuves:
+    name: Lecture et conversion des fichiers markdown
+    runs-on: ubuntu-latest
+
+    steps:
+      # cf. https://github.com/actions/checkout
+      - uses: actions/checkout@v2
+
+      # Execute CLI on local datalayer if branch not in [upcoming-sandbox, upcoming-production]
+      - name: Execute parsing scripts to generate JSON files in data_layer/content
+        run: docker compose run --no-deps business-parse-preuves
+
+      # Check that datalayer loader runs  
+      - name: Run datalayer loader 
+        run: sh make_dot_env.sh && docker-compose run loader
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{secrets.TEST_SERVICE_SUPABASE_KEY}}
+          SUPABASE_ANON_KEY: ${{secrets.TEST_ANON_SUPABASE_KEY}}
+          
+      # Commit changes
+      - name: Commit generated JSON files
+        uses: EndBug/add-and-commit@v7
+        with:
+          default_author: github_actions
+          message: Generated preuves from updated markdowns.

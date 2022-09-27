@@ -36,8 +36,6 @@ EVENT_HANDLERS: Dict[Type[events.DomainEvent], List[Type[UseCase]]] = {
         ParseAndConvertMarkdownIndicateursToEntities
     ],
     events.IndicateurMarkdownConvertedToEntities: [StoreReferentielIndicateurs],
-    # Preuves
-    events.ParseAndStorePreuvesTriggered: [ParseAndStorePreuves],
     # Personnalisation : Questions and regles
     events.ParseAndConvertMarkdownPersonnalisationsTriggered: [
         ParseAndConvertMarkdownReferentielQuestions
@@ -84,8 +82,6 @@ class ReferentielConfig(Config):
             ParseAndConvertMarkdownIndicateursToEntities(
                 self.domain_message_bus, self.referentiel_repo
             ),
-            # Preuves
-            ParseAndStorePreuves(self.domain_message_bus, self.referentiel_repo),
             # Personnalisation
             ParseAndConvertMarkdownReferentielQuestions(
                 self.domain_message_bus, self.referentiel_repo

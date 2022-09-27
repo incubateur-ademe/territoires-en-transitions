@@ -181,7 +181,7 @@ id: fiche_Optigede_conso_responsable
 ```yaml
 actions: 
   - eci_3.3.4
-id: fiche_Optigede_accompagnement_externe_conso_responsable
+id: fiche_Optigede_externe_conso_responsable
 ```
 
 # Délibération décrivant les modalités du dispositif de soutien à une offre commerciale plus sobre ou au changement de modèle économique

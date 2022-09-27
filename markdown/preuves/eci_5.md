@@ -111,7 +111,7 @@ id: carto_representants_locaux_acteurseco
 ```yaml
 actions: 
   - eci_5.3.3
-id: convention_partenariat_representants_locaux_acteurseco
+id: convention_partenariat_repr_locaux_acteurs_eco
 ```
 
 # Supports de communication
