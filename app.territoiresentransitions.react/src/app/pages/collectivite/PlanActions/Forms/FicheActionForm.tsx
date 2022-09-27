@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import * as Yup from 'yup';
 import {Field, Form, Formik, useFormikContext} from 'formik';
-import LabeledTextField from 'ui/forms/LabeledTextField';
 import {ActionsField} from 'app/pages/collectivite/PlanActions/Forms/ActionsField';
 import {IndicateursField} from 'app/pages/collectivite/PlanActions/Forms/IndicateursField';
 import {IndicateursPersonnalisesField} from 'app/pages/collectivite/PlanActions/Forms/IndicateursPersonnalisesField';
@@ -20,6 +19,7 @@ import {useAllIndicateurDefinitions} from 'core-logic/hooks/indicateur_definitio
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useActionTitleList} from 'core-logic/hooks/referentiel';
 import {ExpensiveActionReferentielAvancementCard} from 'ui/referentiels/ExpensiveActionReferentielAvancementCard';
+import FormInput from 'ui/shared/form/FormInput';
 
 /**
  * Stores both plan and category uid, represents the user's selection of a
@@ -219,43 +219,35 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
               name="numerotation"
               label="Numérotation de l'action"
               hint="ex: 1.2.3, A.1.a, 1.1 permet le classement"
-              component={LabeledTextField}
+              component={FormInput}
             />
-            <Spacer />
-
             <Field
               name="titre"
               label="Titre *"
               hint="Champ requis"
-              component={LabeledTextField}
+              component={FormInput}
             />
             <Spacer />
-
             <Field
               name="planCategories"
               label="plans d'action"
               ficheUid={props.fiche.uid}
               component={PlanCategoriesSelectionField}
             />
-
             <Spacer />
-
             <Field
+              type="area"
               name="description"
               label="Description"
-              type="area"
-              component={LabeledTextField}
+              component={FormInput}
             />
             <Spacer />
-
             <Field
               name="avancement"
               label="Avancement"
               component={AvancementRadioField}
             />
-
             <Spacer />
-
             <label>
               <Field type="checkbox" name="en_retard" />
               <span className="ml-2">Action en retard</span>
@@ -265,28 +257,26 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
             <Field
               name="structure_pilote"
               label="Structure pilote"
-              component={LabeledTextField}
+              component={FormInput}
             />
             <Spacer />
-
             <Field
               name="personne_referente"
               label="Personne référente"
-              component={LabeledTextField}
+              component={FormInput}
             />
             <Spacer />
-
             <Field
               name="elu_referent"
               label="Élu référent"
-              component={LabeledTextField}
+              component={FormInput}
             />
             <Spacer />
 
             <Field
               name="partenaires"
               label="Partenaires"
-              component={LabeledTextField}
+              component={FormInput}
             />
             <Spacer />
 
@@ -294,10 +284,9 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
               name="budget_global"
               label="Budget global"
               hint="Ce champ ne doit comporter que des chiffres sans espaces"
-              component={LabeledTextField}
+              component={FormInput}
             />
             <Spacer />
-
             <fieldset className="flex flex-row">
               <div className="flex flex-col mr-5">
                 <label className="fr-label mb-2" htmlFor="fiche_create_debut">

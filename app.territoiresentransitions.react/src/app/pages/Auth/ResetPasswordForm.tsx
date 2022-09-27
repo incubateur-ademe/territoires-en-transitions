@@ -1,7 +1,6 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {Field, Form, Formik} from 'formik';
 import * as Yup from 'yup';
-import LabeledTextField from 'ui/forms/LabeledTextField';
 import {Link} from 'react-router-dom';
 import {
   updatePassword,
@@ -13,6 +12,7 @@ import {Spacer} from 'ui/shared/Spacer';
 import {ValiderButton} from 'ui/shared/ValiderButton';
 import {PasswordStrengthMeter} from 'ui/forms/PasswordStrengthMeter';
 import {passwordValidator} from './RegisterForm';
+import FormInput from 'ui/shared/form/FormInput';
 
 type FormState = 'ready' | 'success' | 'failure';
 
@@ -110,10 +110,10 @@ const ResetPasswordForm = ({
             return (
               <Form>
                 <Field
+                  type="password"
                   name="password"
                   label="Nouveau mot de passe"
-                  type="password"
-                  component={LabeledTextField}
+                  component={FormInput}
                 />
                 {result.score > 0 && (
                   <PasswordStrengthMeter strength={result} className="pt-2" />

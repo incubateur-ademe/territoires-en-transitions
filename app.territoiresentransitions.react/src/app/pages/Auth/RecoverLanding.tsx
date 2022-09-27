@@ -1,44 +1,22 @@
 import * as Yup from 'yup';
 import {Field, Form, Formik} from 'formik';
-import LabeledTextField from 'ui/forms/LabeledTextField';
 import {emailValidator} from 'app/pages/Auth/RegisterForm';
 import {ValiderButton} from 'ui/shared/ValiderButton';
 import {useRecoveryToken} from 'core-logic/hooks/useRecoveryToken';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useHistory} from 'react-router-dom';
 import {resetPwdPath} from 'app/paths';
+import FormInput from 'ui/shared/form/FormInput';
 
 const validation = Yup.object({
   email: emailValidator,
   code: Yup.string(),
 });
 
-const textFieldLabels: Partial<Record<keyof OTPLogin, string>> = {
-  email: 'Votre adresse email',
-  code: 'Le code reçu par email',
-};
-
 interface OTPLogin {
   email: string;
   code: string;
 }
-
-const OTPFormTextField = ({
-  fieldName,
-  type,
-}: {
-  fieldName: keyof OTPLogin;
-  type?: string;
-}) => (
-  <div>
-    <Field
-      name={fieldName}
-      label={textFieldLabels[fieldName]}
-      component={LabeledTextField}
-      type={type}
-    />
-  </div>
-);
 
 /**
  * Le formulaire One Time Password, aujourd'hui utilisé pour le password
@@ -65,9 +43,16 @@ const OTPForm = ({
         return (
           <Form data-test="OTPForm">
             <div className="flex flex-col gap-6">
-              <OTPFormTextField fieldName="email" />
-              <OTPFormTextField fieldName="code" />
-
+              <Field
+                name="email"
+                label="Votre adresse email"
+                component={FormInput}
+              />
+              <Field
+                name="code"
+                label="Le code reçu par email"
+                component={FormInput}
+              />
               <div className="max-w-2xl flex flex-row-reverse">
                 <ValiderButton />
               </div>

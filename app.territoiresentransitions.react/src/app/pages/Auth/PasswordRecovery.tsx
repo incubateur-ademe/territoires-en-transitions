@@ -2,10 +2,10 @@ import {useState} from 'react';
 import {Field, Form, Formik} from 'formik';
 import * as Yup from 'yup';
 import {supabaseClient} from 'core-logic/api/supabase';
-import LabeledTextField from 'ui/forms/LabeledTextField';
 import {Spacer} from 'ui/shared/Spacer';
 import {UiDialogButton} from 'ui/UiDialogButton';
 import {ErrorMessage} from 'ui/forms/ErrorMessage';
+import FormInput from 'ui/shared/form/FormInput';
 
 interface IPasswordRecovery {
   email: string;
@@ -84,12 +84,7 @@ export const PasswordRecovery = ({
             Nous allons vous envoyer un email, merci d’indiquer l’adresse avec
             laquelle vous avez créé votre compte Territoires en Transitions.
           </p>
-          <Field
-            name="email"
-            label="Adresse email"
-            type="text"
-            component={LabeledTextField}
-          />
+          <Field name="email" label="Adresse email" component={FormInput} />
           {error ? <ErrorMessage message={error} /> : null}
           <Spacer size={4} />
           <div className="flex justify-between">

@@ -1,12 +1,12 @@
-import * as Yup from 'yup';
+import {useState} from 'react';
 import {Field, Form, Formik, FormikHandlers} from 'formik';
+import * as Yup from 'yup';
 
-import {Spacer} from 'ui/shared/Spacer';
-import LabeledTextField from 'ui/forms/LabeledTextField';
+import Modal from 'ui/shared/floating-ui/Modal';
+import FormInput from 'ui/shared/form/FormInput';
 
 import {useAuth, UserData} from 'core-logic/api/auth/AuthProvider';
 import {useUpdateDCP} from 'core-logic/api/auth/useUpdateDCP';
-import {useState} from 'react';
 import ModifierEmailModal from './ModifierEmailModal';
 
 interface ModifierCompteData {
@@ -49,11 +49,9 @@ export const MonCompte = ({user}: {user: UserData}) => {
             <Form>
               <Field
                 data-test="prenom"
-                id="prenom"
                 name="prenom"
                 label="Prénom"
-                type="text"
-                component={LabeledTextField}
+                component={FormInput}
                 onBlur={(evt: FormikHandlers['handleBlur']) => {
                   handleBlur(evt);
                   isValid &&
@@ -61,14 +59,11 @@ export const MonCompte = ({user}: {user: UserData}) => {
                     handleUpdateDCP({prenom: values.prenom});
                 }}
               />
-              <Spacer size={3} />
               <Field
                 data-test="nom"
-                id="nom"
                 name="nom"
                 label="Nom"
-                type="text"
-                component={LabeledTextField}
+                component={FormInput}
                 onBlur={(evt: FormikHandlers['handleBlur']) => {
                   handleBlur(evt);
                   isValid &&
@@ -76,14 +71,11 @@ export const MonCompte = ({user}: {user: UserData}) => {
                     handleUpdateDCP({nom: values.nom});
                 }}
               />
-              <Spacer size={3} />
               <Field
                 data-test="email"
-                id="email"
                 name="email"
                 label="Email"
-                type="text"
-                component={LabeledTextField}
+                component={FormInput}
                 onBlur={(evt: FormikHandlers['handleBlur']) => {
                   handleBlur(evt);
                   isValid &&

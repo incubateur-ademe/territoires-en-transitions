@@ -4,8 +4,8 @@
 
 import {Field, Form, Formik} from 'formik';
 import * as Yup from 'yup';
-import LabeledTextField from 'ui/forms/LabeledTextField';
 import {Spacer} from 'ui/shared/Spacer';
+import FormInput from 'ui/shared/form/FormInput';
 
 export type TAddLink = (titre: string, url: string) => void;
 
@@ -54,13 +54,13 @@ export const AddLink = (props: TAddLinkProps) => {
                 <Field
                   name="titre"
                   label="Titre (obligatoire)"
-                  component={LabeledTextField}
+                  component={FormInput}
                 />
                 <Spacer size={2} />
                 <Field
                   name="url"
                   label="Lien (obligatoire)"
-                  component={LabeledTextField}
+                  component={FormInput}
                 />
               </fieldset>
             </div>
