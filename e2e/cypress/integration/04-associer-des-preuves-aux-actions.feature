@@ -92,6 +92,25 @@ Fonctionnalité: Associer des preuves aux actions
       | file.txt | failed | 18 o   | Ce fichier ne peut pas être téléversé car son format n’est pas supporté |
     Et le bouton "Ajouter" du "formulaire Fichier" est désactivé
 
+  Scénario: Supprimer un fichier preuve
+    Etant donné que je suis connecté en tant que "yolo"
+    Et que les tables de preuves de la collectivité "1" sont vides
+    Et que la bibliothèque de la collectivité "1" est vide
+    Et que je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "1"
+    Et que je déplie le panneau Preuves de l'action "1.1.1"
+    Et que la liste des preuves de l'action "1.1.1" est vide
+
+    Quand je clique sur le bouton "Ajouter une preuve" à l'action "1.1.1"
+    Et que je clique sur l'onglet "Fichier" du "dialogue d'ajout d'une preuve"
+    Et que je transfère à partir du "dialogue d'ajout d'une preuve" le fichier nommé "mon.doc" et contenant "du texte"
+    Et que je clique sur le bouton "Ajouter" du "formulaire Fichier"
+    Alors la liste des preuves de l'action "1.1.1" contient les lignes suivantes :
+      | Titre   | Commentaire |
+      | mon.doc |             |
+
+    Quand je clique sur le bouton "Supprimer" de la preuve "mon.doc" de l'action "1.1.1"
+    Alors la liste des preuves de l'action "1.1.1" est vide
+
   Scénario: Ajouter un lien comme preuve complémentaire à une sous-action
     Etant donné que je suis connecté en tant que "yolo"
     Et que les tables de preuves de la collectivité "1" sont vides
