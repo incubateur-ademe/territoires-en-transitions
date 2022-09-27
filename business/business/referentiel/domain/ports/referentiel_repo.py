@@ -13,7 +13,6 @@ from ..models.action_children import ActionChildren
 from ..models.action_definition import ActionDefinition
 from ..models.action_computed_point import ActionComputedPoint
 from ..models.indicateur import Indicateur, IndicateurId
-from ..models.preuve import Preuve
 from business.referentiel.domain.models.referentiel import ActionReferentiel
 from business.utils.action_id import ActionId
 
@@ -59,13 +58,6 @@ class AbstractReferentielRepository(abc.ABC):
     def upsert_indicateurs(
         self,
         indicateurs: List[Indicateur],
-    ):
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    def upsert_preuves(
-        self,
-        preuves: List[Preuve],
     ):
         raise NotImplementedError
 
@@ -128,7 +120,6 @@ class InMemoryReferentielRepository(AbstractReferentielRepository):
         self._indicateurs: List[Indicateur] = []
         self._questions: List[Question] = []
         self._personnalisations: List[ActionPersonnalisationRegles] = []
-        self._preuves: List[Preuve] = []
         if children_entities and definition_entities and points_entities:
             self.add_referentiel_actions(
                 definition_entities,
@@ -195,12 +186,6 @@ class InMemoryReferentielRepository(AbstractReferentielRepository):
         indicateurs: List[Indicateur],
     ):
         self._indicateurs += indicateurs
-
-    def upsert_preuves(
-        self,
-        preuves: List[Preuve],
-    ):
-        self._preuves += preuves
 
     def update_referentiel_actions(
         self,
