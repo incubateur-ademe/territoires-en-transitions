@@ -15,6 +15,8 @@ class tables:
     personnalisation = "personnalisation"
     personnalisation_regle = "personnalisation_regle"
     personnalisation_consequence = "personnalisation_consequence"
+    preuve_definition = "preuve_reglementaire_definition"
+    preuve_action = "preuve_reglementaire_action"
 
 
 @dataclass
@@ -31,7 +33,6 @@ class views:
 
 @dataclass
 class rpc:
-    upsert_preuves = "business_upsert_preuves"
     upsert_indicateurs = "business_upsert_indicateurs"
     update_actions = "business_update_actions"
     insert_actions = "business_insert_actions"

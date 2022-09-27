@@ -16,6 +16,7 @@ from tests.utils.referentiel_factory import (
     make_indicateur,
 )
 from business.personnalisation.models import Question as QuestionEngine
+from business.referentiel.domain.models.preuve import Preuve
 from tests.utils.supabase_fixtures import *
 
 
