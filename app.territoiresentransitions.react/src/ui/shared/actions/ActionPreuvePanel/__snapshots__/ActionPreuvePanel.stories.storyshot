@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Storyshots ui/shared/actions/ActionPreuvePanel Default 1`] = `
-Array [
+<div
+  data-test="preuves"
+>
   <p
     className="fr-text-sm"
   >
@@ -11,10 +13,10 @@ Array [
      du référentiel.
     <br />
     Vous pouvez ajouter les documents preuves que vous jugez utiles pour justifier l'avancement.
-  </p>,
+  </p>
   <h5>
     Preuves complémentaires
-  </h5>,
+  </h5>
   <button
     aria-expanded="false"
     aria-haspopup="dialog"
@@ -27,15 +29,16 @@ Array [
     onPointerDown={[Function]}
   >
     Ajouter une preuve complémentaire
-  </button>,
+  </button>
   <div
     className="divide-y divide-[#ddd]"
-  />,
+    data-test="complementaires"
+  />
   <div
     className="border-solid border-t-[1px] border-[#FCC63A] my-4"
-  />,
+  />
   <p>
     Toutes les preuves ajoutées seront visibles par les membres de la communauté Territoires en Transitions
-  </p>,
-]
+  </p>
+</div>
 `;

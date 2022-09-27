@@ -26,7 +26,7 @@ export const AddPreuveModal = (props: TAddPreuveModalProps) => {
   const {addFileFromLib, addLink} = handlers;
 
   return (
-    <Tabs defaultActiveTab={defaultActiveTab}>
+    <Tabs data-test="AddPreuveModal" defaultActiveTab={defaultActiveTab}>
       {addLink ? (
         <Tab label="&nbsp;Lien" icon="fr-fi-links-fill">
           <AddLink {...props} onAddLink={addLink} />
