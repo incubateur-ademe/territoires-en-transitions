@@ -176,7 +176,7 @@ Content-Type: application/json
   "collectivite_id": 1,
   "url": "http://yolo.dodo",
   "titre": "dodo",
-  "preuve_id": "agenda"
+  "preuve_id": "semaine_mobilite"
 }
 
 ### List preuves of all types
@@ -189,7 +189,7 @@ GET {{api}}/rest/v1/preuve?collectivite_id=eq.1&preuve_type=eq.complementaire
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 
-### Liste les preuves complementaire
+### Liste les preuves rapport
 GET {{api}}/rest/v1/preuve?collectivite_id=eq.1&preuve_type=eq.rapport
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
