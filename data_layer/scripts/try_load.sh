@@ -1,7 +1,6 @@
 #!/bin/bash
 # This script waits for the db to be ready then load the content
 
-
 DATALAYER_DIR="./../postgres"
 
 until psql -c "select 1"; do
@@ -48,6 +47,9 @@ for file in "$DATALAYER_DIR"/test/*.sql; do
     psql -v ON_ERROR_STOP=1 --file "${file}" || exit 1
 done
 fi
+
+echo "Loading content with curl..."
+sh /scripts/load_json_content.sh || exit 1
 
 echo "Done loading."
 sleep infinity
