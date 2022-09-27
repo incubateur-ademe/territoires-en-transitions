@@ -38,11 +38,11 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
   const isAction = action_id.endsWith('%');
 
   return (
-    <>
+    <div data-test="preuves">
       {preuvesParId ? (
         <>
           <h5>Preuves attendues</h5>
-          <div className="divide-y divide-[#ddd] -mt-2">
+          <div data-test="attendues" className="divide-y divide-[#ddd] -mt-2">
             {preuvesParId.map(([preuveDefId, preuvesList]) => (
               <PreuveReglementaire
                 key={preuveDefId}
@@ -64,7 +64,7 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
       )}
       <h5>Preuves complémentaires</h5>
       <AddPreuveComplementaire action_id={action_id} />
-      <div className="divide-y divide-[#ddd]">
+      <div data-test="complementaires" className="divide-y divide-[#ddd]">
         {complementaires?.map(preuve => (
           <PreuveComplementaire
             key={preuve.id}
@@ -82,7 +82,7 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
           </p>
         </>
       ) : null}
-    </>
+    </div>
   );
 };
 
