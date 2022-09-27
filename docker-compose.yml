@@ -311,11 +311,8 @@ services:
     build: ./business/.
     profiles:
       - donotstart
-    depends_on:
-      - kong
-      - rest
-    restart: unless-stopped
-    command: bash -c "pipenv run python business/referentiel/cli2.py parse-preuves --input-markdown-folder ../markdown/preuves --output-json-file ../data_layer/content/preuves.json"
+    command: >
+      bash -c "pipenv run python business/referentiel/cli2.py parse-preuves --input-markdown-folder ../markdown/preuves --output-json-file ../data_layer/content/preuves.json"
     volumes:
       - ./markdown:/markdown
       - ./data_layer/content:/data_layer/content

@@ -9,6 +9,7 @@ from typing import List, Tuple
 import marshmallow_dataclass
 from marshmallow import ValidationError
 
+from business.utils.find_duplicates import find_duplicates
 from business.utils.markdown_import.markdown_parser import build_markdown_parser
 from business.utils.markdown_import.markdown_utils import load_md
 
@@ -63,13 +64,22 @@ def convert_preuves_markdown_folder_to_json(folder_path: str, json_filename: str
         preuves += file_preuves
         errors += file_errors
 
+    # Raise if any errors
     # if errors:
     #     raise Exception(
     #         "Erreurs dans le format des fichiers preuves :\n- " + "\n- ".join(errors)
     #     )
 
+    # Check that ids are unique
+    duplicated_preuve_ids = find_duplicates([preuve["id"] for preuve in preuves])
+    if duplicated_preuve_ids:
+        raise Exception(
+            "Les ids des preuves suivantes ne sont pas uniques : "
+            + ", ".join(duplicated_preuve_ids),
+        )
+
     with open(json_filename, "w") as f:
-        json.dump(preuves, f)
+        json.dump({"preuves": preuves}, f)
     print(
         "Lecture et conversion réussies, le résultat JSON se trouve dans ",
         json_filename,

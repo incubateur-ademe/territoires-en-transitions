@@ -20,7 +20,7 @@ jobs:
 
       # Execute CLI on local datalayer if branch not in [upcoming-sandbox, upcoming-production]
       - name: Execute parsing scripts to generate JSON files in data_layer/content
-        run: docker compose run business-parse-preuves
+        run: docker compose run --no-deps business-parse-preuves
 
       # TODO : check that data_layer can 
 
