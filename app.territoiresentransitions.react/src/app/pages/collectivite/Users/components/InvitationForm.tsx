@@ -3,7 +3,6 @@ import {
   Field,
   FieldAttributes,
   FieldInputProps,
-  FieldProps,
   Form,
   Formik,
   FormikProps,
@@ -18,6 +17,7 @@ import {
   AddUserToCollectiviteRequest,
   AddUserToCollectiviteResponse,
 } from 'app/pages/collectivite/Users/useAddUserToCollectivite';
+import FormInput from 'ui/shared/form/FormInput';
 
 type AccesOption = {
   value: NiveauAcces;
@@ -110,7 +110,12 @@ const InvitationForm = ({
             resetAddUser();
           }}
         >
-          <Field name="email" type="text" component={InvitationEmailInput} />
+          <Field
+            type="text"
+            name="email"
+            label="Adresse email de la personne à inviter"
+            component={FormInput}
+          />
           <SelectField
             name="acces"
             label="Niveau d’accès pour cette collectivité"
@@ -235,35 +240,3 @@ const SelectField = (props: SelectFieldProps) => (
     }}
   </Field>
 );
-
-type InvitationEmailInputProps = {
-  type?: string;
-};
-
-const InvitationEmailInput = (
-  props: InvitationEmailInputProps & FieldProps
-) => {
-  const errorMessage = props.form.errors[props.field.name];
-  const isTouched = props.form.touched[props.field.name];
-  const isError = errorMessage && isTouched;
-  const inputType = props.type ?? 'text';
-
-  return (
-    <div
-      className={classNames('fr-input-group md:grow', {
-        'fr-input-group--error': isError,
-      })}
-    >
-      <label htmlFor={props.field.name} className="fr-label">
-        Adresse email de la personne à inviter
-      </label>
-      <input
-        id={props.field.name}
-        type={inputType}
-        className={classNames('fr-input', {'fr-input--error': isError})}
-        {...props.field}
-      />
-      {isError && <p className="fr-error-text">{errorMessage}</p>}
-    </div>
-  );
-};

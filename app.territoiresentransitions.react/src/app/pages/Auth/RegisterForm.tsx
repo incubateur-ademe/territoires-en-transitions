@@ -1,7 +1,6 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {Field, Form, Formik} from 'formik';
 import * as Yup from 'yup';
-import LabeledTextField from 'ui/forms/LabeledTextField';
 import {Link} from 'react-router-dom';
 import {
   InscriptionUtilisateur,
@@ -13,6 +12,7 @@ import {signInPath} from 'app/paths';
 import {Spacer} from 'ui/shared/Spacer';
 import {ValiderButton} from 'ui/shared/ValiderButton';
 import {PasswordStrengthMeter} from 'ui/forms/PasswordStrengthMeter';
+import FormInput from 'ui/shared/form/FormInput';
 
 type FormState = 'ready' | 'success' | 'failure';
 
@@ -55,31 +55,6 @@ const validation = Yup.object({
   password: passwordValidator,
   vie_privee_conditions: Yup.boolean().isTrue('Champ requis'),
 });
-
-const textFieldLabels: Partial<Record<keyof InscriptionUtilisateur, string>> = {
-  prenom: 'Prénom',
-  nom: 'Nom',
-  email: 'Email',
-  password: 'Mot de passe',
-  telephone: 'Numéro de téléphone professionnel',
-};
-
-const RegistrationFormTextField = ({
-  fieldName,
-  type,
-}: {
-  fieldName: keyof InscriptionUtilisateur;
-  type?: string;
-}) => (
-  <div>
-    <Field
-      name={fieldName}
-      label={textFieldLabels[fieldName]}
-      component={LabeledTextField}
-      type={type}
-    />
-  </div>
-);
 
 const CGU = ({showWarning}: {showWarning?: boolean}) => (
   <label className="cgu">
@@ -176,28 +151,31 @@ const RegistrationForm = () => {
 
             return (
               <Form>
-                <div className="flex flex-col gap-6">
-                  <RegistrationFormTextField fieldName="email" />
-                  <RegistrationFormTextField
-                    fieldName="password"
-                    type="password"
-                  />
-                  {result.score > 0 && (
-                    <PasswordStrengthMeter strength={result} className="pt-2" />
-                  )}
-                  <RegistrationFormTextField fieldName="prenom" />
-                  <RegistrationFormTextField fieldName="nom" />
-                  <RegistrationFormTextField fieldName="telephone" />
-                  <CGU
-                    showWarning={
-                      !!errors.vie_privee_conditions &&
-                      touched.vie_privee_conditions
-                    }
-                  />
-                  <Spacer size={2} />
-                  <div className="max-w-2xl flex flex-row-reverse">
-                    <ValiderButton />
-                  </div>
+                <Field name="email" label="Email" component={FormInput} />
+                <Field
+                  type="password"
+                  name="password"
+                  label="Mot de passe"
+                  component={FormInput}
+                />
+                {result.score > 0 && (
+                  <PasswordStrengthMeter strength={result} className="pt-2" />
+                )}
+                <Field name="prenom" label="Prénom" component={FormInput} />
+                <Field name="nom" label="Nom" component={FormInput} />
+                <Field
+                  name="telephone"
+                  label="Numéro de téléphone professionnel"
+                  component={FormInput}
+                />
+                <CGU
+                  showWarning={
+                    !!errors.vie_privee_conditions &&
+                    touched.vie_privee_conditions
+                  }
+                />
+                <div className="max-w-2xl flex flex-row-reverse mt-12">
+                  <ValiderButton />
                 </div>
               </Form>
             );
