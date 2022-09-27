@@ -13,7 +13,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/InvitationForm As Ad
     onSubmit={[Function]}
   >
     <div
-      className="fr-input-group md:grow"
+      className="fr-input-group flex-grow"
     >
       <label
         className="fr-label"
@@ -24,15 +24,17 @@ exports[`Storyshots app/pages/collectivite/Users/components/InvitationForm As Ad
       <input
         className="fr-input"
         id="email"
+        label="Adresse email de la personne à inviter"
         name="email"
         onBlur={[Function]}
         onChange={[Function]}
+        onKeyDown={[Function]}
         type="text"
         value=""
       />
     </div>
     <div
-      className="fr-select-group md:grow"
+      className="fr-select-group md:flex-grow"
     >
       <label
         className="fr-label"
@@ -91,7 +93,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/InvitationForm As Ed
     onSubmit={[Function]}
   >
     <div
-      className="fr-input-group md:grow"
+      className="fr-input-group flex-grow"
     >
       <label
         className="fr-label"
@@ -102,15 +104,17 @@ exports[`Storyshots app/pages/collectivite/Users/components/InvitationForm As Ed
       <input
         className="fr-input"
         id="email"
+        label="Adresse email de la personne à inviter"
         name="email"
         onBlur={[Function]}
         onChange={[Function]}
+        onKeyDown={[Function]}
         type="text"
         value=""
       />
     </div>
     <div
-      className="fr-select-group md:grow"
+      className="fr-select-group md:flex-grow"
     >
       <label
         className="fr-label"

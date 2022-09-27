@@ -23,16 +23,17 @@ exports[`Storyshots app/pages/Profil/MonCompte Defaut 1`] = `
       onReset={[Function]}
       onSubmit={[Function]}
     >
-      <div>
+      <div
+        className="fr-input-group flex-grow"
+      >
         <label
           className="fr-label"
           htmlFor="prenom"
         >
           Prénom
-          <slot />
         </label>
         <input
-          className="fr-input mt-2 w-full bg-beige p-3 border-b-2 border-gray-500"
+          className="fr-input"
           data-test="prenom"
           id="prenom"
           label="Prénom"
@@ -45,18 +46,16 @@ exports[`Storyshots app/pages/Profil/MonCompte Defaut 1`] = `
         />
       </div>
       <div
-        className="p-3"
-      />
-      <div>
+        className="fr-input-group flex-grow"
+      >
         <label
           className="fr-label"
           htmlFor="nom"
         >
           Nom
-          <slot />
         </label>
         <input
-          className="fr-input mt-2 w-full bg-beige p-3 border-b-2 border-gray-500"
+          className="fr-input"
           data-test="nom"
           id="nom"
           label="Nom"
@@ -69,18 +68,16 @@ exports[`Storyshots app/pages/Profil/MonCompte Defaut 1`] = `
         />
       </div>
       <div
-        className="p-3"
-      />
-      <div>
+        className="fr-input-group flex-grow"
+      >
         <label
           className="fr-label"
           htmlFor="email"
         >
           Email
-          <slot />
         </label>
         <input
-          className="fr-input mt-2 w-full bg-beige p-3 border-b-2 border-gray-500"
+          className="fr-input"
           data-test="email"
           id="email"
           label="Email"

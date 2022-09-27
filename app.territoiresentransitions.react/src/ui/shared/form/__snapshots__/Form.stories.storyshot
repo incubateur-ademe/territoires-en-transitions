@@ -1,0 +1,117 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots ui/shared/form/Form Defaut 1`] = `
+<form
+  action="#"
+  onReset={[Function]}
+  onSubmit={[Function]}
+>
+  <div
+    className="fr-input-group flex-grow"
+  >
+    <label
+      className="fr-label"
+      htmlFor="input"
+    >
+      Basique input
+    </label>
+    <input
+      className="fr-input"
+      id="input"
+      label="Basique input"
+      name="input"
+      onBlur={[Function]}
+      onChange={[Function]}
+      onKeyDown={[Function]}
+      type="text"
+      value=""
+    />
+  </div>
+  <div
+    className="fr-input-group flex-grow fr-input-group--disabled"
+  >
+    <label
+      className="fr-label"
+      htmlFor="inputDisabled"
+    >
+      Input désactivé
+    </label>
+    <input
+      className="fr-input"
+      disabled={true}
+      id="inputDisabled"
+      label="Input désactivé"
+      name="inputDisabled"
+      onBlur={[Function]}
+      onChange={[Function]}
+      onKeyDown={[Function]}
+      type="text"
+    />
+  </div>
+  <div
+    className="fr-input-group flex-grow"
+  >
+    <label
+      className="fr-label"
+      htmlFor="email"
+    >
+      Adresse email avec hint *
+      <span
+        className="fr-hint-text"
+      >
+        Entrez une adresse valide
+      </span>
+    </label>
+    <input
+      className="fr-input"
+      hint="Entrez une adresse valide"
+      id="email"
+      label="Adresse email avec hint *"
+      name="email"
+      onBlur={[Function]}
+      onChange={[Function]}
+      onKeyDown={[Function]}
+      type="text"
+      value=""
+    />
+  </div>
+  <div
+    className="fr-input-group flex-grow"
+  >
+    <label
+      className="fr-label"
+      htmlFor="password"
+    >
+      Mot de passe *
+    </label>
+    <input
+      className="fr-input"
+      id="password"
+      label="Mot de passe *"
+      name="password"
+      onBlur={[Function]}
+      onChange={[Function]}
+      type="password"
+    />
+  </div>
+  <div
+    className="fr-input-group flex-grow"
+  >
+    <label
+      className="fr-label"
+      htmlFor="textarea"
+    >
+      Text area
+    </label>
+    <textarea
+      className="fr-input"
+      id="textarea"
+      label="Text area"
+      name="textarea"
+      onBlur={[Function]}
+      onChange={[Function]}
+      type="area"
+    />
+  </div>
+</form>
+`;
