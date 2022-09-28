@@ -27,8 +27,6 @@ export type ModalProps = {
   externalOpen?: boolean;
   /* accompagne "externalOpen" afin de pouvoir fermer la modale */
   setExternalOpen?: Dispatch<SetStateAction<boolean>>;
-  /** permet de donner une fonction à exécuter lors du click "Fermer" */
-  onCloseClick?: () => void;
   /* max-width prédéfinies dans le DSFR, valeur par défaut "md" */
   size?: 'sm' | 'md' | 'lg';
 };
@@ -43,7 +41,6 @@ const Modal = ({
   children,
   externalOpen,
   setExternalOpen,
-  onCloseClick,
   size = 'md',
 }: ModalProps) => {
   const [open, setOpen] = useState(false);
@@ -68,7 +65,6 @@ const Modal = ({
 
   const handleCloseClick = () => {
     setExternalOpen ? setExternalOpen(false) : setOpen(false);
-    onCloseClick && onCloseClick();
   };
 
   return (
