@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {Field, Form, Formik} from 'formik';
+import {Form, Formik} from 'formik';
 import * as Yup from 'yup';
 import {Link} from 'react-router-dom';
 import {
@@ -109,11 +109,10 @@ const ResetPasswordForm = ({
 
             return (
               <Form>
-                <Field
+                <FormInput
                   type="password"
                   name="password"
                   label="Nouveau mot de passe"
-                  component={FormInput}
                 />
                 {result.score > 0 && (
                   <PasswordStrengthMeter strength={result} className="pt-2" />

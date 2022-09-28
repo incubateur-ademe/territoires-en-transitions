@@ -2,7 +2,7 @@
  * Affiche le formulaire d'ajout de liens
  */
 
-import {Field, Form, Formik} from 'formik';
+import {Form, Formik} from 'formik';
 import * as Yup from 'yup';
 import {Spacer} from 'ui/shared/Spacer';
 import FormInput from 'ui/shared/form/FormInput';
@@ -51,17 +51,9 @@ export const AddLink = (props: TAddLinkProps) => {
             <div className="fr-form-group">
               <fieldset className="fr-fieldset">
                 <div className="fr-fieldset__content"></div>
-                <Field
-                  name="titre"
-                  label="Titre (obligatoire)"
-                  component={FormInput}
-                />
+                <FormInput name="titre" label="Titre (obligatoire)" />
                 <Spacer size={2} />
-                <Field
-                  name="url"
-                  label="Lien (obligatoire)"
-                  component={FormInput}
-                />
+                <FormInput name="url" label="Lien (obligatoire)" />
               </fieldset>
             </div>
             <button

@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import {FieldProps} from 'formik';
+import {Field, FieldAttributes, FieldProps} from 'formik';
 
 type FormInputProps = {
   type?: 'area' | 'text' | 'password';
@@ -8,6 +8,14 @@ type FormInputProps = {
   disabled?: boolean;
   maxLength?: number;
 };
+
+type Type = FieldAttributes<{
+  type?: 'area' | 'text' | 'password';
+  hint?: string;
+  label: string;
+  disabled?: boolean;
+  maxLength?: number;
+}>;
 
 /**
  * Prevents enter key submitting the form.
@@ -18,7 +26,9 @@ const preventSubmit = (event: React.KeyboardEvent) => {
   }
 };
 
-const FormInput = ({field, form, ...props}: FormInputProps & FieldProps) => {
+const FormInput = (props: Type) => <Field {...props} component={InputField} />;
+
+const InputField = ({field, form, ...props}: FormInputProps & FieldProps) => {
   const errorMessage = form.errors[field.name];
   const isTouched = form.touched[field.name];
   const isError = errorMessage && isTouched;

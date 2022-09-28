@@ -1,5 +1,5 @@
-import {useState} from 'react';
-import {Field, Form, Formik, FormikHandlers} from 'formik';
+import React, {useState} from 'react';
+import {Form, Formik} from 'formik';
 import * as Yup from 'yup';
 
 import Modal from 'ui/shared/floating-ui/Modal';
@@ -47,36 +47,33 @@ export const MonCompte = ({user}: {user: UserData}) => {
         >
           {({values, isValid, handleBlur, resetForm}) => (
             <Form>
-              <Field
+              <FormInput
                 data-test="prenom"
                 name="prenom"
                 label="Prénom"
-                component={FormInput}
-                onBlur={(evt: FormikHandlers['handleBlur']) => {
+                onBlur={(evt: React.FocusEvent) => {
                   handleBlur(evt);
                   isValid &&
                     user.prenom !== values.prenom &&
                     handleUpdateDCP({prenom: values.prenom});
                 }}
               />
-              <Field
+              <FormInput
                 data-test="nom"
                 name="nom"
                 label="Nom"
-                component={FormInput}
-                onBlur={(evt: FormikHandlers['handleBlur']) => {
+                onBlur={(evt: React.FocusEvent) => {
                   handleBlur(evt);
                   isValid &&
                     user.nom !== values.nom &&
                     handleUpdateDCP({nom: values.nom});
                 }}
               />
-              <Field
+              <FormInput
                 data-test="email"
                 name="email"
                 label="Email"
-                component={FormInput}
-                onBlur={(evt: FormikHandlers['handleBlur']) => {
+                onBlur={(evt: React.FocusEvent) => {
                   handleBlur(evt);
                   isValid &&
                     user.email !== values.email &&

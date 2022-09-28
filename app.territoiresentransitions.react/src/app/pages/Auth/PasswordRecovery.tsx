@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {Field, Form, Formik} from 'formik';
+import {Form, Formik} from 'formik';
 import * as Yup from 'yup';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {Spacer} from 'ui/shared/Spacer';
@@ -84,7 +84,7 @@ export const PasswordRecovery = ({
             Nous allons vous envoyer un email, merci d’indiquer l’adresse avec
             laquelle vous avez créé votre compte Territoires en Transitions.
           </p>
-          <Field name="email" label="Adresse email" component={FormInput} />
+          <FormInput name="email" label="Adresse email" />
           {error ? <ErrorMessage message={error} /> : null}
           <Spacer size={4} />
           <div className="flex justify-between">
