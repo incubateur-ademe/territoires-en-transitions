@@ -40,6 +40,10 @@ export const useChangeReponseHandler: TUseChangeReponseHandler = (
 
   const {mutate} = useMutation(saveReponse, {
     mutationKey: 'save_reponse',
+    meta: {
+      success: 'La personnalisation du potentiel est enregistrée',
+      error: "La personnalisation du potentiel n'a pas été enregistrée",
+    },
     onSuccess: () => {
       refetch?.();
     },

@@ -3,24 +3,6 @@ import {useEffect, useState} from 'react';
 import {useQueryClient} from 'react-query';
 import {ToastFloater} from 'ui/shared/floating-ui/ToastFloater';
 
-type TMessageByMutationKey = {
-  [key: string]: {
-    success: string;
-    error: string;
-  };
-};
-
-const messageByMutationKey: TMessageByMutationKey = {
-  upload_preuve: {
-    success: 'Preuve téléversée !',
-    error: 'Erreur lors du téléversement',
-  },
-  save_reponse: {
-    success: 'La personnalisation du potentiel est enregistrée',
-    error: "La personnalisation du potentiel n'a pas été enregistrée",
-  },
-};
-
 // messages génériques
 const DEFAULT_MESSAGE = {
   success: 'Modification enregistrée',
@@ -30,6 +12,11 @@ const DEFAULT_MESSAGE = {
 type Hidden = null;
 type ToastStatus = Hidden | 'success' | 'error';
 
+/**
+ * Écoute toutes les mutations de l'application et fait apparaître un toast
+ * avec un message par défaut si l'on a pas spécifié de message dans l'objet "meta" des options de "useMutation".
+ * Passer "disableToast" à true dans l'objet "meta" si l'on ne vuet pas afficher de toast.
+ */
 export const useMutationToast = () => {
   const queryClient = useQueryClient();
 
@@ -43,12 +30,13 @@ export const useMutationToast = () => {
 
   useEffect(() => {
     return queryClient.getMutationCache().subscribe(mutation => {
-      const key = mutation && (mutation.options.mutationKey as string);
       const status = mutation?.state.status;
-      if (key && (status === 'success' || status === 'error')) {
-        const message = messageByMutationKey[key]
-          ? messageByMutationKey[key][status]
-          : DEFAULT_MESSAGE[status];
+      if (
+        (status === 'success' || status === 'error') &&
+        !mutation?.meta?.disableToast
+      ) {
+        const message =
+          (mutation?.meta?.[status] as string) || DEFAULT_MESSAGE[status];
         setMessage(message);
         setStatus(status);
       }
