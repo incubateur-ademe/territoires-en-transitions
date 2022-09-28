@@ -151,22 +151,20 @@ const RegistrationForm = () => {
 
             return (
               <Form>
-                <Field name="email" label="Email" component={FormInput} />
-                <Field
+                <FormInput name="email" label="Email" />
+                <FormInput
                   type="password"
                   name="password"
                   label="Mot de passe"
-                  component={FormInput}
                 />
                 {result.score > 0 && (
                   <PasswordStrengthMeter strength={result} className="pt-2" />
                 )}
-                <Field name="prenom" label="Prénom" component={FormInput} />
-                <Field name="nom" label="Nom" component={FormInput} />
-                <Field
+                <FormInput name="prenom" label="Prénom" />
+                <FormInput name="nom" label="Nom" />
+                <FormInput
                   name="telephone"
                   label="Numéro de téléphone professionnel"
-                  component={FormInput}
                 />
                 <CGU
                   showWarning={

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Field, Form, Formik} from 'formik';
+import {Form, Formik} from 'formik';
 import * as Yup from 'yup';
 
 import FormInput from './FormInput';
@@ -26,31 +26,15 @@ export const Defaut = () => (
     onSubmit={() => undefined}
   >
     <Form>
-      <Field name="input" label="Basique input" component={FormInput} />
-      <Field
-        disabled
-        name="inputDisabled"
-        label="Input désactivé"
-        component={FormInput}
-      />
-      <Field
+      <FormInput name="input" label="Basique input" />
+      <FormInput disabled name="inputDisabled" label="Input désactivé" />
+      <FormInput
         name="email"
         label="Adresse email avec hint *"
         hint="Entrez une adresse valide"
-        component={FormInput}
       />
-      <Field
-        type="password"
-        name="password"
-        label="Mot de passe *"
-        component={FormInput}
-      />
-      <Field
-        type="area"
-        name="textarea"
-        label="Text area"
-        component={FormInput}
-      />
+      <FormInput type="password" name="password" label="Mot de passe *" />
+      <FormInput type="area" name="textarea" label="Text area" />
     </Form>
   </Formik>
 );

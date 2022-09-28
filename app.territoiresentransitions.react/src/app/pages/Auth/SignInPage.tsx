@@ -39,13 +39,8 @@ export const SignInPage = () => {
         >
           {({values}) => (
             <Form>
-              <Field name="email" label="Email" component={FormInput} />
-              <Field
-                type="password"
-                name="password"
-                label="Mot de passe"
-                component={FormInput}
-              />
+              <FormInput name="email" label="Email" />
+              <FormInput type="password" name="password" label="Mot de passe" />
               <PasswordRecovery email={values.email} />
               <Spacer size={3} />
               <AuthError message={authError} />

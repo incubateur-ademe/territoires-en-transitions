@@ -110,11 +110,10 @@ const InvitationForm = ({
             resetAddUser();
           }}
         >
-          <Field
+          <FormInput
             type="text"
             name="email"
             label="Adresse email de la personne à inviter"
-            component={FormInput}
           />
           <SelectField
             name="acces"

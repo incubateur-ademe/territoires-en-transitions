@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import {Field, Form, Formik} from 'formik';
+import {Form, Formik} from 'formik';
 import {emailValidator} from 'app/pages/Auth/RegisterForm';
 import {ValiderButton} from 'ui/shared/ValiderButton';
 import {useRecoveryToken} from 'core-logic/hooks/useRecoveryToken';
@@ -43,16 +43,8 @@ const OTPForm = ({
         return (
           <Form data-test="OTPForm">
             <div className="flex flex-col gap-6">
-              <Field
-                name="email"
-                label="Votre adresse email"
-                component={FormInput}
-              />
-              <Field
-                name="code"
-                label="Le code reçu par email"
-                component={FormInput}
-              />
+              <FormInput name="email" label="Votre adresse email" />
+              <FormInput name="code" label="Le code reçu par email" />
               <div className="max-w-2xl flex flex-row-reverse">
                 <ValiderButton />
               </div>

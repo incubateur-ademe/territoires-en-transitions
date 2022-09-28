@@ -215,18 +215,12 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
       {() => (
         <Form className="fiche-action">
           <div className="max-w-2xl">
-            <Field
+            <FormInput
               name="numerotation"
               label="Numérotation de l'action"
               hint="ex: 1.2.3, A.1.a, 1.1 permet le classement"
-              component={FormInput}
             />
-            <Field
-              name="titre"
-              label="Titre *"
-              hint="Champ requis"
-              component={FormInput}
-            />
+            <FormInput name="titre" label="Titre *" hint="Champ requis" />
             <Spacer />
             <Field
               name="planCategories"
@@ -235,12 +229,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
               component={PlanCategoriesSelectionField}
             />
             <Spacer />
-            <Field
-              type="area"
-              name="description"
-              label="Description"
-              component={FormInput}
-            />
+            <FormInput type="area" name="description" label="Description" />
             <Spacer />
             <Field
               name="avancement"
@@ -254,37 +243,20 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
             </label>
             <Spacer />
 
-            <Field
-              name="structure_pilote"
-              label="Structure pilote"
-              component={FormInput}
-            />
+            <FormInput name="structure_pilote" label="Structure pilote" />
             <Spacer />
-            <Field
-              name="personne_referente"
-              label="Personne référente"
-              component={FormInput}
-            />
+            <FormInput name="personne_referente" label="Personne référente" />
             <Spacer />
-            <Field
-              name="elu_referent"
-              label="Élu référent"
-              component={FormInput}
-            />
+            <FormInput name="elu_referent" label="Élu référent" />
             <Spacer />
 
-            <Field
-              name="partenaires"
-              label="Partenaires"
-              component={FormInput}
-            />
+            <FormInput name="partenaires" label="Partenaires" />
             <Spacer />
 
-            <Field
+            <FormInput
               name="budget_global"
               label="Budget global"
               hint="Ce champ ne doit comporter que des chiffres sans espaces"
-              component={FormInput}
             />
             <Spacer />
             <fieldset className="flex flex-row">
