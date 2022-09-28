@@ -27,8 +27,7 @@ const ModifierEmailModal = ({
     <Modal
       size="lg"
       externalOpen={isOpen}
-      setExternalOpen={setOpen}
-      onCloseClick={resetEmail}
+      setExternalOpen={handleAnnuler}
       render={({labelId, descriptionId}) => (
         <div data-test="modification-email-modal">
           <h4 id={labelId} className="fr-h4">
