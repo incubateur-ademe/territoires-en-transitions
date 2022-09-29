@@ -3,10 +3,22 @@ import {Form, Formik} from 'formik';
 import * as Yup from 'yup';
 
 import FormInput from './FormInput';
+import FormSelect from './FormSelect';
 
 export default {
   component: FormInput,
 };
+
+const selectOptions = [
+  {
+    value: 'valeur1',
+    label: 'Valeur 1',
+  },
+  {
+    value: 'valeur2',
+    label: 'Valeur 2',
+  },
+];
 
 const validation = Yup.object({
   email: Yup.string()
@@ -17,11 +29,12 @@ const validation = Yup.object({
     .max(300, 'Ce champ doit faire au maximum 300 caractères')
     .test('is-robust', 'Ce mot de passe est trop simple', value => !value)
     .required('Champ requis'),
+  select: Yup.string().required('Ce champ est obligatoire'),
 });
 
 export const Defaut = () => (
   <Formik
-    initialValues={{input: '', email: ''}}
+    initialValues={{input: '', email: '', select: ''}}
     validationSchema={validation}
     onSubmit={() => undefined}
   >
@@ -35,6 +48,13 @@ export const Defaut = () => (
       />
       <FormInput type="password" name="password" label="Mot de passe *" />
       <FormInput type="area" name="textarea" label="Text area" />
+      <FormSelect name="select" label="Basique elect" options={selectOptions} />
+      <FormSelect
+        disabled
+        name="selectDisabled"
+        label="Select désactivé"
+        options={selectOptions}
+      />
     </Form>
   </Formik>
 );
