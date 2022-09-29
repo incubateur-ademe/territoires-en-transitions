@@ -1,14 +1,6 @@
 import {useMemo, useRef, useState} from 'react';
-import {
-  Field,
-  FieldAttributes,
-  FieldInputProps,
-  Form,
-  Formik,
-  FormikProps,
-} from 'formik';
+import {Form, Formik, FormikProps} from 'formik';
 import * as Yup from 'yup';
-import classNames from 'classnames';
 import {UserData} from 'core-logic/api/auth/AuthProvider';
 import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import InvitationMessage from 'app/pages/collectivite/Users/components/InvitationMessage';
@@ -18,6 +10,7 @@ import {
   AddUserToCollectiviteResponse,
 } from 'app/pages/collectivite/Users/useAddUserToCollectivite';
 import FormInput from 'ui/shared/form/FormInput';
+import FormSelect from 'ui/shared/form/FormSelect';
 
 type AccesOption = {
   value: NiveauAcces;
@@ -111,11 +104,10 @@ const InvitationForm = ({
           }}
         >
           <FormInput
-            type="text"
             name="email"
             label="Adresse email de la personne à inviter"
           />
-          <SelectField
+          <FormSelect
             name="acces"
             label="Niveau d’accès pour cette collectivité"
             options={accesOptions}
@@ -185,57 +177,3 @@ const AddUserResponse = ({
 };
 
 export default InvitationForm;
-
-type SelectFieldProps = FieldAttributes<{
-  label: string;
-  options: AccesOption[];
-}>;
-
-const SelectField = (props: SelectFieldProps) => (
-  <Field {...props}>
-    {({
-      field,
-      form,
-    }: {
-      field: FieldInputProps<string>;
-      form: FormikProps<FormProps>;
-    }) => {
-      const errorMessage = (form.errors as Record<string, string | undefined>)[
-        field.name
-      ];
-      const isTouched = (form.touched as Record<string, boolean | undefined>)[
-        field.name
-      ];
-      const isError = errorMessage && isTouched;
-
-      return (
-        <div
-          className={classNames('fr-select-group md:grow', {
-            'fr-select-group--error': isError,
-          })}
-        >
-          <label className="fr-label" htmlFor={props.label}>
-            {props.label}
-          </label>
-          <select
-            className={classNames('fr-select', {
-              'fr-select--error': isError,
-            })}
-            id={props.label}
-            {...field}
-          >
-            <option value="" disabled hidden>
-              Sélectionnez une option
-            </option>
-            {props.options.map((option: AccesOption) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-          {isError && <p className="fr-error-text">{errorMessage}</p>}
-        </div>
-      );
-    }}
-  </Field>
-);
