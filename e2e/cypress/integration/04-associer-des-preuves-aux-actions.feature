@@ -8,7 +8,7 @@ Fonctionnalité: Associer des preuves aux actions
     Et que la bibliothèque de la collectivité "1" est vide
     Et que je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "1"
     Et que je déplie le panneau Preuves de l'action "1.1.1"
-    Et que la liste des preuves de l'action "1.1.1" est vide
+    Et que la liste des preuves complémentaires de la sous-action "1.1.1" est vide
 
     Quand je clique sur le bouton "Ajouter une preuve" à l'action "1.1.1"
     Alors le "dialogue d'ajout d'une preuve" est visible
@@ -33,13 +33,13 @@ Fonctionnalité: Associer des preuves aux actions
 
     Quand je clique sur le bouton "Ajouter" du "formulaire Fichier"
     Alors le "dialogue d'ajout d'une preuve" est absent
-    Alors la liste des preuves de l'action "1.1.1" contient les lignes suivantes :
+    Alors la liste des preuves complémentaires de la sous-action "1.1.1" contient les lignes suivantes :
       | Titre          | Commentaire |
       | bien nommé.doc |             |
 
     Quand je clique sur le bouton "Décrire" de la preuve "bien nommé.doc" de l'action "1.1.1"
     Et que je saisi "une phrase" comme commentaire de la preuve "bien nommé.doc" de l'action "1.1.1"
-    Alors la liste des preuves de l'action "1.1.1" contient les lignes suivantes :
+    Alors la liste des preuves complémentaires de la sous-action "1.1.1" contient les lignes suivantes :
       | Titre          | Commentaire |
       | bien nommé.doc | une phrase  |
 
@@ -52,7 +52,7 @@ Fonctionnalité: Associer des preuves aux actions
     Et que la bibliothèque de la collectivité "1" est vide
     Et que je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "1"
     Et que je déplie le panneau Preuves de l'action "1.1.1"
-    Et que la liste des preuves de l'action "1.1.1" est vide
+    Et que la liste des preuves complémentaires de la sous-action "1.1.1" est vide
 
     Quand je clique sur le bouton "Ajouter une preuve" à l'action "1.1.1"
     Alors le "dialogue d'ajout d'une preuve" est visible
@@ -75,7 +75,7 @@ Fonctionnalité: Associer des preuves aux actions
     Et que la bibliothèque de la collectivité "1" est vide
     Et que je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "1"
     Et que je déplie le panneau Preuves de l'action "1.1.1"
-    Et que la liste des preuves de l'action "1.1.1" est vide
+    Et que la liste des preuves complémentaires de la sous-action "1.1.1" est vide
 
     Quand je clique sur le bouton "Ajouter une preuve" à l'action "1.1.1"
     Alors le "dialogue d'ajout d'une preuve" est visible
@@ -98,18 +98,18 @@ Fonctionnalité: Associer des preuves aux actions
     Et que la bibliothèque de la collectivité "1" est vide
     Et que je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "1"
     Et que je déplie le panneau Preuves de l'action "1.1.1"
-    Et que la liste des preuves de l'action "1.1.1" est vide
+    Et que la liste des preuves complémentaires de la sous-action "1.1.1" est vide
 
     Quand je clique sur le bouton "Ajouter une preuve" à l'action "1.1.1"
     Et que je clique sur l'onglet "Fichier" du "dialogue d'ajout d'une preuve"
     Et que je transfère à partir du "dialogue d'ajout d'une preuve" le fichier nommé "mon.doc" et contenant "du texte"
     Et que je clique sur le bouton "Ajouter" du "formulaire Fichier"
-    Alors la liste des preuves de l'action "1.1.1" contient les lignes suivantes :
+    Alors la liste des preuves complémentaires de la sous-action "1.1.1" contient les lignes suivantes :
       | Titre   | Commentaire |
       | mon.doc |             |
 
     Quand je clique sur le bouton "Supprimer" de la preuve "mon.doc" de l'action "1.1.1"
-    Alors la liste des preuves de l'action "1.1.1" est vide
+    Alors la liste des preuves complémentaires de la sous-action "1.1.1" est vide
 
   Scénario: Ajouter un lien comme preuve complémentaire à une sous-action
     Etant donné que je suis connecté en tant que "yolo"
@@ -119,7 +119,7 @@ Fonctionnalité: Associer des preuves aux actions
 
     Quand je déplie le panneau Preuves de l'action "1.1.1"
     Alors le bouton "Ajouter une preuve" à l'action "1.1.1" est visible
-    Et la liste des preuves de l'action "1.1.1" est vide
+    Et la liste des preuves complémentaires de la sous-action "1.1.1" est vide
 
     Quand je clique sur le bouton "Ajouter une preuve" à l'action "1.1.1"
     Alors le "dialogue d'ajout d'une preuve" est visible
@@ -139,20 +139,20 @@ Fonctionnalité: Associer des preuves aux actions
       | Ajouter | activé    |
 
     Quand je clique sur le bouton "Ajouter" du "formulaire Lien"
-    Alors la liste des preuves de l'action "1.1.1" contient les lignes suivantes :
+    Alors la liste des preuves complémentaires de la sous-action "1.1.1" contient les lignes suivantes :
       | Titre   | Commentaire |
       | Exemple |             |
 
   Scénario: Ouvrir un lien preuve
     Etant donné que je suis connecté en tant que "yolo"
     Et que les tables de preuves de la collectivité "1" sont vides
-    Et que la table des liens preuve est initialisée avec les données suivantes :
+    Et que la table des preuves complémentaires est initialisée avec les données suivantes :
       | collectivite_id | action_id | titre   | url              | commentaire |
       | 1               | eci_1.1.1 | Exemple | https://ademe.fr |             |
     Et que je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "1"
 
     Quand je déplie le panneau Preuves de l'action "1.1.1"
-    Alors la liste des preuves de l'action "1.1.1" contient les lignes suivantes :
+    Alors la liste des preuves complémentaires de la sous-action "1.1.1" contient les lignes suivantes :
       | Titre   | Commentaire |
       | Exemple |             |
 
@@ -162,45 +162,45 @@ Fonctionnalité: Associer des preuves aux actions
   Scénario: Ajouter un commentaire à un lien preuve
     Etant donné que je suis connecté en tant que "yolo"
     Et que les tables de preuves de la collectivité "1" sont vides
-    Et que la table des liens preuve est initialisée avec les données suivantes :
+    Et que la table des preuves complémentaires est initialisée avec les données suivantes :
       | collectivite_id | action_id | titre   | url              | commentaire |
       | 1               | eci_1.1.1 | Exemple | https://ademe.fr |             |
     Et que je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "1"
 
     Quand je déplie le panneau Preuves de l'action "1.1.1"
-    Alors la liste des preuves de l'action "1.1.1" contient les lignes suivantes :
+    Alors la liste des preuves complémentaires de la sous-action "1.1.1" contient les lignes suivantes :
       | Titre   | Commentaire |
       | Exemple |             |
 
     Quand je clique sur le bouton "Décrire" de la preuve "Exemple" de l'action "1.1.1"
     Et que je saisi "deux mots" comme commentaire de la preuve "Exemple" de l'action "1.1.1"
-    Alors la liste des preuves de l'action "1.1.1" contient les lignes suivantes :
+    Alors la liste des preuves complémentaires de la sous-action "1.1.1" contient les lignes suivantes :
       | Titre   | Commentaire |
       | Exemple | deux mots   |
 
   Scénario: Modifier le commentaire d'un lien preuve
     Etant donné que je suis connecté en tant que "yolo"
     Et que les tables de preuves de la collectivité "1" sont vides
-    Et que la table des liens preuve est initialisée avec les données suivantes :
+    Et que la table des preuves complémentaires est initialisée avec les données suivantes :
       | collectivite_id | action_id | titre   | url              | commentaire     |
       | 1               | eci_1.1.1 | Exemple | https://ademe.fr | mon commentaire |
     Et que je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "1"
 
     Quand je déplie le panneau Preuves de l'action "1.1.1"
-    Alors la liste des preuves de l'action "1.1.1" contient les lignes suivantes :
+    Alors la liste des preuves complémentaires de la sous-action "1.1.1" contient les lignes suivantes :
       | Titre   | Commentaire     |
       | Exemple | mon commentaire |
 
     Quand je clique sur le bouton "Décrire" de la preuve "Exemple" de l'action "1.1.1"
     Et que je saisi "deux mots" comme commentaire de la preuve "Exemple" de l'action "1.1.1"
-    Alors la liste des preuves de l'action "1.1.1" contient les lignes suivantes :
+    Alors la liste des preuves complémentaires de la sous-action "1.1.1" contient les lignes suivantes :
       | Titre   | Commentaire |
       | Exemple | deux mots   |
 
   Scénario: Supprimer un lien preuve
     Etant donné que je suis connecté en tant que "yolo"
     Et que les tables de preuves de la collectivité "1" sont vides
-    Et que la table des liens preuve est initialisée avec les données suivantes :
+    Et que la table des preuves complémentaires est initialisée avec les données suivantes :
       | collectivite_id | action_id | titre              | url                                  | commentaire     |
       | 1               | eci_1.1.1 | Exemple1           | https://ademe.fr                     |                 |
       | 1               | eci_1.1.1 | Exemple2           | https://territoiresentransitions.fr/ | mon commentaire |
@@ -209,18 +209,18 @@ Fonctionnalité: Associer des preuves aux actions
     Et que je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "1"
 
     Quand je déplie le panneau Preuves de l'action "1.1.1"
-    Alors la liste des preuves de l'action "1.1.1" contient les lignes suivantes :
+    Alors la liste des preuves complémentaires de la sous-action "1.1.1" contient les lignes suivantes :
       | Titre    | Commentaire     |
       | Exemple1 |                 |
       | Exemple2 | mon commentaire |
 
     Quand je clique sur le bouton "Supprimer" de la preuve "Exemple1" de l'action "1.1.1"
-    Alors la liste des preuves de l'action "1.1.1" contient les lignes suivantes :
+    Alors la liste des preuves complémentaires de la sous-action "1.1.1" contient les lignes suivantes :
       | Titre    | Commentaire     |
       | Exemple2 | mon commentaire |
 
     Quand je clique sur le bouton "Supprimer" de la preuve "Exemple2" de l'action "1.1.1"
-    Alors la liste des preuves de l'action "1.1.1" est vide
+    Alors la liste des preuves complémentaires de la sous-action "1.1.1" est vide
 
   Scénario: Ajouter une preuve réglementaire à une sous-action
     On teste l'affichage et l'ajout d'une preuve réglementaire sous forme d'un lien et d'un fichier,
@@ -233,8 +233,8 @@ Fonctionnalité: Associer des preuves aux actions
 
     Quand je déplie le panneau Preuves de l'action "1.1.1.3"
     Alors le bouton "Ajouter une preuve" à l'action "1.1.1.3" est visible
-    Et la liste des preuves de l'action "1.1.1.3" est vide
-    Et la liste des preuves attendues de l'action "1.1.1.3" contient les lignes suivantes :
+    Et la liste des preuves complémentaires de la sous-action "1.1.1.3" est vide
+    Et la liste des preuves attendues de la sous-action "1.1.1.3" contient les lignes suivantes :
       | nom                                                       | preuves |
       | Agenda 21 / Agenda 2030                                   |         |
       | Délibération d'engagement dans la Convention des Maires   |         |
@@ -248,7 +248,7 @@ Fonctionnalité: Associer des preuves aux actions
       | titre | Exemple          |
       | lien  | https://ademe.fr |
     Et que je clique sur le bouton "Ajouter" du "formulaire Lien"
-    Alors la liste des preuves attendues de l'action "1.1.1.3" contient les lignes suivantes :
+    Alors la liste des preuves attendues de la sous-action "1.1.1.3" contient les lignes suivantes :
       | nom                                                       | preuves |
       | Agenda 21 / Agenda 2030                                   | Exemple |
       | Délibération d'engagement dans la Convention des Maires   |         |
@@ -260,9 +260,44 @@ Fonctionnalité: Associer des preuves aux actions
     Et que je clique sur l'onglet "Fichier" du "dialogue d'ajout d'une preuve"
     Et que je transfère à partir du "dialogue d'ajout d'une preuve" le fichier nommé "fichier.xls" et contenant "contenu du fichier"
     Et que je clique sur le bouton "Ajouter" du "formulaire Fichier"
-    Alors la liste des preuves attendues de l'action "1.1.1.3" contient les lignes suivantes :
+    Alors la liste des preuves attendues de la sous-action "1.1.1.3" contient les lignes suivantes :
       | nom                                                       | preuves             |
       | Agenda 21 / Agenda 2030                                   | Exemple,fichier.xls |
       | Délibération d'engagement dans la Convention des Maires   |                     |
       | Rapport Développement Durable                             |                     |
       | Rapports diagnostic, stratégie et plan d'actions du PCAET |                     |
+
+  Scénario: Visualiser toutes les preuves associées à une action et ses sous-actions (1/2)
+    On sépare ce test en 2 scénarios car, pour une raison non élucidée, les étapes
+    d'injection des données ("la table des preuves ... est initialisée avec") échouent
+    en timeout (promesse non résolue, alors que l'insert dans la base est pourtant effectif)
+    lorsqu'on a déjà navigué sur une page ("Quand je visite l'onglet...")
+
+    # scénario 1 : on vérifie l'affichage de l'onglet lorsqu'il n'y a pas de donnée
+    Etant donné que je suis connecté en tant que "yolo"
+    Et que les tables de preuves de la collectivité "1" sont vides
+
+    Quand je visite l'onglet "preuves" de l'action "1.1.3" du référentiel "cae" de la collectivité "1"
+    Alors la liste des preuves attendues de l'action contient les lignes suivantes :
+      | nom                                             | preuves |
+      | Etude de vulnérabilité au changement climatique |         |
+    Et la liste des preuves complémentaires de l'action est vide
+
+  Scénario: Visualiser toutes les preuves associées à une action et ses sous-actions (2/2)
+    # scénario 2 : on vérifie l'affichage de l'onglet lorsqu'il y a des données
+    Etant donné que je suis connecté en tant que "yolo"
+    Et que les tables de preuves de la collectivité "1" sont vides
+    Et que la table des preuves réglementaires est initialisée avec les données suivantes :
+      | collectivite_id | preuve_id           | titre     | url            | commentaire |
+      | 1               | etude_vulnerabilite | Exemple 1 | https://ex1.fr | ex1         |
+    Et que la table des preuves complémentaires est initialisée avec les données suivantes :
+      | collectivite_id | action_id   | titre     | url            | commentaire |
+      | 1               | cae_1.1.3.2 | Exemple 2 | https://ex2.fr | ex2         |
+
+    Quand je visite l'onglet "preuves" de l'action "1.1.3" du référentiel "cae" de la collectivité "1"
+    Alors la liste des preuves attendues de l'action contient les lignes suivantes :
+      | nom                                             | preuves   |
+      | Etude de vulnérabilité au changement climatique | Exemple 1 |
+    Et la liste des preuves complémentaires de l'action contient les lignes suivantes :
+      | Titre     | Commentaire |
+      | Exemple 2 | ex2         |

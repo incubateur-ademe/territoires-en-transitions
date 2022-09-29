@@ -30,88 +30,124 @@ When(
           .match({ collectivite_id }),
         client.from('preuve_labellisation').delete().match({ collectivite_id }),
         client.from('preuve_rapport').delete().match({ collectivite_id }),
+        cy.task('pg_query', {
+          query:
+            'DELETE FROM labellisation.bibliotheque_fichier WHERE collectivite_id = $1',
+          values: [collectivite_id],
+        }),
       ])
     );
-    cy.task('pg_query', {
-      query:
-        'DELETE FROM labellisation.bibliotheque_fichier WHERE collectivite_id = $1',
-      values: [collectivite_id],
-    });
   }
 );
 
 When(
-  /la table des liens preuve est initialisée avec les données suivantes/,
+  /la table des preuves complémentaires est initialisée avec les données suivantes/,
   (dataTable) => {
     cy.get('@supabaseClient').then((client) =>
       client.from('preuve_complementaire').insert(dataTable.hashes())
     );
   }
 );
+When(
+  /la table des preuves réglementaires est initialisée avec les données suivantes/,
+  (dataTable) => {
+    cy.get('@supabaseClient').then((client) =>
+      client.from('preuve_reglementaire').insert(dataTable.hashes())
+    );
+  }
+);
 
-When(/la liste des preuves de l'action "([^"]+)" est vide/, (action) => {
-  getPreuvePanel(action)
-    .find('[data-test=preuves] [data-test=item]')
-    .should('not.exist');
+When(
+  /la liste des preuves complémentaires de la sous-action "([^"]+)" est vide/,
+  (action) => {
+    noPreuvesComplementaires(getPreuvePanel(action));
+  }
+);
+
+When(/la liste des preuves complémentaires de l'action est vide/, () => {
+  noPreuvesComplementaires(getPreuveTab());
 });
 
-When(
-  /la liste des preuves de l'action "([^"]+)" contient les lignes suivantes/,
-  (action, dataTable) => {
-    const rows = dataTable.rows();
-    getPreuvePanel(action)
-      .find('[data-test=preuves] [data-test=complementaires]')
-      .within(() => {
-        // vérifie le nombre de lignes
-        cy.root().get('[data-test=item]').should('have.length', rows.length);
+const noPreuvesComplementaires = (parent) =>
+  parent.find('[data-test=preuves] [data-test=item]').should('not.exist');
 
-        // vérifie que chaque ligne du tableau donné correspond à l'affichage
-        cy.wrap(rows).each(([titre, commentaire], index) => {
-          cy.get(`[data-test=item]:nth(${index})`).within(() => {
-            // vérifie le nom
-            cy.get('[data-test=name]').should('contain.text', titre);
-            // et le commentaire (ou son absence)
-            if (commentaire) {
-              cy.get('[data-test=comment]').should('have.text', commentaire);
-            } else {
-              cy.get('[data-test=comment]').should('not.exist');
-            }
-          });
-        });
-      });
+When(
+  /la liste des preuves complémentaires de la sous-action "([^"]+)" contient les lignes suivantes/,
+  (action, dataTable) => {
+    checkPreuvesComplementaires(getPreuvePanel(action), dataTable);
   }
 );
 
 When(
-  /la liste des preuves attendues de l'action "([^"]+)" contient les lignes suivantes/,
-  (action, dataTable) => {
-    const rows = dataTable.rows();
-    getPreuvePanel(action)
-      .find('[data-test=preuves] [data-test=attendues]')
-      .within(() => {
-        // vérifie le nombre de lignes
-        cy.root().get('[data-test=preuve]').should('have.length', rows.length);
-
-        // vérifie que chaque ligne du tableau donné correspond à l'affichage
-        cy.wrap(rows).each(([nom, preuves], index) => {
-          cy.get(`[data-test=preuve]:nth(${index})`).within(() => {
-            // vérifie la description de la preuve règlementaire
-            cy.get('[data-test=desc]').should('contain.text', nom);
-            // vérifie les noms des liens/fichiers rattachés à la preuve attendue
-            if (preuves) {
-              const items = preuves.split(',');
-              cy.wrap(items).each((item, idx) => {
-                cy.get(`[data-test=item]:nth(${idx}) [data-test=name]`).should(
-                  'contain.text',
-                  item
-                );
-              });
-            }
-          });
-        });
-      });
+  /la liste des preuves complémentaires de l'action contient les lignes suivantes/,
+  (dataTable) => {
+    checkPreuvesComplementaires(getPreuveTab(), dataTable);
   }
 );
+
+const checkPreuvesComplementaires = (parent, dataTable) => {
+  const rows = dataTable.rows();
+  parent.find('[data-test=preuves] [data-test=complementaires]').within(() => {
+    // vérifie le nombre de lignes
+    cy.root().get('[data-test=item]').should('have.length', rows.length);
+
+    // vérifie que chaque ligne du tableau donné correspond à l'affichage
+    cy.wrap(rows).each(([titre, commentaire], index) => {
+      cy.get(`[data-test=item]:nth(${index})`).within(() => {
+        // vérifie le nom
+        cy.get('[data-test=name]').should('contain.text', titre);
+        // et le commentaire (ou son absence)
+        if (commentaire) {
+          cy.get('[data-test=comment]').should('have.text', commentaire);
+        } else {
+          cy.get('[data-test=comment]').should('not.exist');
+        }
+      });
+    });
+  });
+};
+
+When(
+  /la liste des preuves attendues de la sous-action "([^"]+)" contient les lignes suivantes/,
+  (action, dataTable) => {
+    checkPreuvesReglementaires(getPreuvePanel(action), dataTable);
+  }
+);
+
+When(
+  /la liste des preuves attendues de l'action contient les lignes suivantes/,
+  (dataTable) => {
+    checkPreuvesReglementaires(getPreuveTab(), dataTable);
+  }
+);
+
+const checkPreuvesReglementaires = (parent, dataTable) => {
+  const rows = dataTable.rows();
+  parent.find('[data-test=preuves] [data-test=attendues]').within(() => {
+    // vérifie le nombre de lignes
+    cy.root().get('[data-test=preuve]').should('have.length', rows.length);
+
+    // vérifie que chaque ligne du tableau donné correspond à l'affichage
+    cy.wrap(rows).each(([nom, preuves], index) => {
+      cy.get(`[data-test=preuve]:nth(${index})`).within(() => {
+        // vérifie la description de la preuve règlementaire
+        cy.get('[data-test=desc]').should('contain.text', nom);
+        // vérifie les noms des liens/fichiers rattachés à la preuve attendue
+        if (preuves) {
+          const items = preuves.split(',');
+          cy.wrap(items).each((item, idx) => {
+            cy.get(`[data-test=item]:nth(${idx}) [data-test=name]`).should(
+              'contain.text',
+              item
+            );
+          });
+        } else {
+          cy.get('[data-test=item]').should('not.exist');
+        }
+      });
+    });
+  });
+};
 
 When(
   /je clique sur la preuve "([^"]+)" de l'action "([^"]+)"/,
@@ -186,3 +222,6 @@ const getAddPreuveButton = (action) =>
 
 const getPreuvePanel = (action) =>
   cy.get(`[data-test="PreuvesPanel-${action}"]`);
+
+const getPreuveTab = (action) =>
+  cy.get(`[role=tabpanel] [data-test=preuves]`).parent();
