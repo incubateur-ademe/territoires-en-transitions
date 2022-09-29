@@ -26,6 +26,17 @@ When(
   }
 );
 
+// navigue sur un référentiel et un onglet
+When(
+  /je visite l'onglet "([^"]*)" de l'action "([^"]*)" du référentiel "([^"]*)" de la collectivité "([^"]*)"/,
+  (tabName, action, referentiel, collectiviteId) => {
+    cy.visit(
+      `/collectivite/${collectiviteId}/action/${referentiel}/${referentiel}_${action}/${tabName}`
+    );
+    cy.get(`[role=tabpanel] [data-test=${tabName}`).should('be.visible');
+  }
+);
+
 // navigue sur une page d'une collectivité
 When(
   /je suis sur la page "([^"]*)" de la collectivité "(\d+)"/,
