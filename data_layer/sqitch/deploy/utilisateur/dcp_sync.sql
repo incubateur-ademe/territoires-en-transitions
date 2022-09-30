@@ -13,7 +13,7 @@ begin
     where user_id = new.id;
     return new;
 end;
-$$ language plpgsql;
+$$ language plpgsql security definer;
 comment on function utilisateur.sync_dcp is
     'Mets à jour les DCP lorsque l''email change.';
 
