@@ -1,14 +1,17 @@
 begin;
 select plan(6);
 
+select test.identify_as('yolo@dodo.com');
+
 truncate table action_statut;
 truncate table action_commentaire;
 
+
 insert into action_statut
-values (1, 'eci_1.1.1.1', 'fait', null, true, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9');
+values (1, 'eci_1.1.1.1', 'fait', null, true);
 
 insert into action_commentaire
-values (1, 'eci_1.1.1.1', 'yo!', '17440546-f389-4d4f-bfdb-b0c94a1bd0f9');
+values (1, 'eci_1.1.1.1', 'yo!');
 
 
 select isnt_empty(
