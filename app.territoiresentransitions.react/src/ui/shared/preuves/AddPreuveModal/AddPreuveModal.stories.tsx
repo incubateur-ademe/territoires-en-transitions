@@ -18,19 +18,5 @@ const Template: Story<TAddPreuveModalProps> = args => (
   <AddPreuveModal {...args} />
 );
 
-export const Lien = Template.bind({});
-Lien.parameters = {storyshots: false}; // désactive le storyshot à cause d'un pb dans react-dsfr <File> (?)
-
-export const Fichier = Template.bind({});
-Fichier.args = {
-  ...DEFAULT_ARGS,
-  defaultActiveTab: 1,
-};
-Fichier.parameters = {storyshots: false}; // désactive le storyshot à cause d'un pb dans react-dsfr <File> (?)
-
-export const Bibliotheque = Template.bind({});
-Bibliotheque.args = {
-  ...DEFAULT_ARGS,
-  defaultActiveTab: 2,
-};
-Bibliotheque.parameters = {storyshots: false}; // désactive le storyshot à cause d'un pb dans react-dsfr <File> (?)
+export const Default = Template.bind({});
+Default.parameters = {storyshots: false}; // désactive le storyshot à cause d'un pb dans react-dsfr <File> (?)
