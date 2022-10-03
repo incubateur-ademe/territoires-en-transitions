@@ -100,13 +100,15 @@ export const PreuvesTable = (props: TPreuvesTableProps) => {
                 isExpanded ? 'open' : 'close'
               } ${isLast ? 'last' : ''}`;
 
+              const {key, ...rowProps} = row.getRowProps();
+
               return (
-                <>
+                <div key={key}>
                   {depth <= maxDepth ? (
                     <div
-                      {...row.getRowProps()}
                       className={className}
                       title={(nom as string) || ''}
+                      {...rowProps}
                     >
                       {row.cells.map(cell => {
                         return (
@@ -129,7 +131,7 @@ export const PreuvesTable = (props: TPreuvesTableProps) => {
                       />
                     </div>
                   ) : null}
-                </>
+                </div>
               );
             }
           )
