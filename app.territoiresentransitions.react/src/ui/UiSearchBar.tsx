@@ -3,14 +3,16 @@ import {useDebouncedInput} from './shared/useDebouncedInput';
 
 export const UiSearchBar = ({
   search,
+  value = '',
   debouncePeriod = 1000,
   placeholder = 'Rechercher',
 }: {
   search: (value: string) => void;
+  value?: string;
   debouncePeriod?: number;
   placeholder?: string;
 }) => {
-  const [query, onChange] = useDebouncedInput('', search, debouncePeriod);
+  const [query, onChange] = useDebouncedInput(value, search, debouncePeriod);
 
   return (
     <InputSearch value={query} placeholder={placeholder} onChange={onChange} />
