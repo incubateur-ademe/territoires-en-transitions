@@ -4,41 +4,51 @@ import {MAX_FILE_SIZE_BYTES, EXPECTED_FORMATS} from './constants';
 import {getExtension} from 'utils/file';
 import {TBibliothequeFichier} from '../Bibliotheque/types';
 import {shasum256} from 'utils/shasum256';
+import {getFilesPerHash} from '../Bibliotheque/useFichiers';
 
 /**
  * Transforme la sélection de fichiers en une liste d'items
  * pour l'onglet "Fichier" du dialogue "Ajouter une preuve"
  */
 export const filesToUploadList = async (
-  files: FileList | null,
-  fichiers: TBibliothequeFichier[]
+  collectivite_id: number | null,
+  files: FileList | null
 ): Promise<TFileItem[]> => {
-  if (!files) {
+  if (!files || !collectivite_id) {
     return [];
   }
 
-  return Promise.all(
+  // détermine la clé de chaque fichier
+  const filesWithHash = await Promise.all(
     filesToArray(files).map(async (file: File) => {
       const hash = await shasum256(file);
-      const duplicatedFile = getFileFromLib(hash, fichiers);
-      if (duplicatedFile) {
-        return createItemDuplicated(file, duplicatedFile);
-      }
-
-      const sizeErr = !isValidFileSize(file);
-      const formatErr = !isValidFileFormat(file);
-      if (formatErr && sizeErr) {
-        return createItemFailed(file, UploadErrorCode.formatAndSizeError);
-      }
-      if (formatErr) {
-        return createItemFailed(file, UploadErrorCode.formatError);
-      }
-      if (sizeErr) {
-        return createItemFailed(file, UploadErrorCode.sizeError);
-      }
-      return createItemRunning(file);
+      return {file, hash};
     })
   );
+
+  // récupère la liste des éventuels doublons (fichiers déjà téléversés ayant la même clé)
+  const hashes = filesWithHash.map(({hash}) => hash);
+  const duplicatedFiles = await getFilesPerHash(collectivite_id, hashes);
+
+  return filesWithHash.map(({file, hash}: {file: File; hash: string}) => {
+    const duplicatedFile = duplicatedFiles?.find(f => f.hash === hash);
+    if (duplicatedFile) {
+      return createItemDuplicated(file, duplicatedFile);
+    }
+
+    const sizeErr = !isValidFileSize(file);
+    const formatErr = !isValidFileFormat(file);
+    if (formatErr && sizeErr) {
+      return createItemFailed(file, UploadErrorCode.formatAndSizeError);
+    }
+    if (formatErr) {
+      return createItemFailed(file, UploadErrorCode.formatError);
+    }
+    if (sizeErr) {
+      return createItemFailed(file, UploadErrorCode.sizeError);
+    }
+    return createItemRunning(file);
+  });
 };
 
 // Transforme un objet FileList (retourné par le sélecteur de fichiers standard)
@@ -91,14 +101,4 @@ const isValidFileSize = (f: File): boolean => {
 const isValidFileFormat = (f: File): boolean => {
   const ext = getExtension(f.name);
   return (ext && EXPECTED_FORMATS.includes(ext.toLowerCase())) || false;
-};
-
-// contrôle la présence d'un fichier portant le même nom dans le bucket et
-// renvoi ses informations, si il existe ou sinon `false`
-const getFileFromLib = (
-  hash: string,
-  fichiers: TBibliothequeFichier[]
-): TBibliothequeFichier | false => {
-  const fichier = fichiers.find(({hash: h}) => hash === h);
-  return fichier || false;
 };

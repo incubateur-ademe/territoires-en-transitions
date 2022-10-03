@@ -2,13 +2,13 @@
  * Affiche le composant d'upload de fichiers
  */
 import {File as InputFile} from '@dataesr/react-dsfr';
-import {useFichiers} from '../Bibliotheque/useFichiers';
 import {ChangeEvent, FormEvent, useState} from 'react';
 import {HINT, EXPECTED_FORMATS_LIST} from './constants';
 import {filesToUploadList} from './filesToUploadList';
 import {TFileItem} from './FileItem';
 import {FileItemsList} from './FileItemsList';
 import {UploadStatus, UploadStatusCode, UploadStatusCompleted} from './types';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 
 export type TAddFileFromLib = (fichier_id: number) => void;
 
@@ -27,11 +27,11 @@ export const AddFile = (props: TAddFileProps) => {
   const [currentSelection, setCurrentSelection] = useState<Array<TFileItem>>(
     initialSelection || []
   );
-  const fichiers = useFichiers();
+  const collectivite_id = useCollectiviteId();
 
   const onChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const {files} = e.target;
-    const filesToUpload = await filesToUploadList(files, fichiers);
+    const filesToUpload = await filesToUploadList(collectivite_id, files);
     if (files) {
       setCurrentSelection([...currentSelection, ...filesToUpload]);
     }

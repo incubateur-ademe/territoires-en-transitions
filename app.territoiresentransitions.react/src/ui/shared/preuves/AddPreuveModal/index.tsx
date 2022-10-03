@@ -4,7 +4,7 @@
 import {Tabs, Tab} from '@dataesr/react-dsfr';
 import {AddLink, TAddLink} from './AddLink';
 import {AddFile, TAddFileFromLib} from './AddFile';
-import {AddFromLib} from './AddFromLib';
+import AddFromLib from './AddFromLib';
 
 export type TAddPreuveModalHandlers = {
   /** ajoute un fichier sélectionné depuis la bibliothèque */

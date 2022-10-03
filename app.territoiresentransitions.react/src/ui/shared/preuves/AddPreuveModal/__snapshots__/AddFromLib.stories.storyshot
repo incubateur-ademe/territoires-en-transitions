@@ -1,0 +1,250 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots ui/shared/preuves/AddPreuveModal/AddFromLib Fichiers 1`] = `
+Array [
+  <h6
+    className="fr-text--md"
+  >
+    Tous les fichiers de ma collectivité
+  </h6>,
+  <div
+    className="fr-form-group"
+  >
+    <div
+      className="border border-bf500 rounded-tr rounded-tl"
+    >
+      <div
+        className="flex items-center w-full border-b-2 border-bf500"
+      >
+        <input
+          className="bg-beige p-2 w-full placeholder-gray-500"
+          onChange={[Function]}
+          placeholder="Rechercher par nom"
+          value=""
+        />
+        <div
+          className="bg-bf500 h-full p-2"
+        >
+          <div
+            className="fr-fi-search-line text-white"
+          />
+        </div>
+      </div>
+    </div>
+    <p
+      className="fr-mt-2w"
+    >
+      Sélectionner les fichiers à ajouter
+    </p>
+    <fieldset
+      className="fr-fieldset"
+      onChange={[Function]}
+    >
+      <div
+        className="fr-fieldset__content overflow-auto"
+        style={
+          Object {
+            "height": 220,
+          }
+        }
+      >
+        <div
+          className="fr-checkbox-group"
+        >
+          <input
+            className="py-0"
+            id="1"
+            name="exemple 1"
+            type="checkbox"
+          />
+          <label
+            className="fr-label"
+            htmlFor="1"
+          >
+            exemple 1
+          </label>
+        </div>
+        <div
+          className="fr-checkbox-group"
+        >
+          <input
+            className="py-0"
+            id="2"
+            name="exemple 2"
+            type="checkbox"
+          />
+          <label
+            className="fr-label"
+            htmlFor="2"
+          >
+            exemple 2
+          </label>
+        </div>
+        <div
+          className="fr-checkbox-group"
+        >
+          <input
+            className="py-0"
+            id="3"
+            name="exemple 3"
+            type="checkbox"
+          />
+          <label
+            className="fr-label"
+            htmlFor="3"
+          >
+            exemple 3
+          </label>
+        </div>
+        <div
+          className="fr-checkbox-group"
+        >
+          <input
+            className="py-0"
+            id="4"
+            name="exemple 4"
+            type="checkbox"
+          />
+          <label
+            className="fr-label"
+            htmlFor="4"
+          >
+            exemple 4
+          </label>
+        </div>
+      </div>
+    </fieldset>
+    <div
+      className="flex justify-center mt-6 md:mt-12"
+    >
+      <nav
+        aria-label="Pagination"
+        className="fr-pagination"
+        role="navigation"
+      >
+        <ul
+          className="fr-pagination__list"
+        >
+          <li>
+            <button
+              aria-disabled="true"
+              className="fr-pagination__link fr-pagination__link--first"
+              disabled={true}
+              onClick={[Function]}
+              role="link"
+            >
+              Première page
+            </button>
+          </li>
+          <button
+            aria-disabled="true"
+            className="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
+            disabled={true}
+            onClick={[Function]}
+            role="link"
+          >
+            Page précédente
+          </button>
+          <button
+            aria-current="page"
+            className="fr-pagination__link"
+            title="Page [object Object]"
+          >
+            1
+          </button>
+          <button
+            className="fr-pagination__link"
+            onClick={[Function]}
+            title="Page [object Object]"
+          >
+            2
+          </button>
+          <button
+            className="fr-pagination__link"
+            onClick={[Function]}
+            title="Page [object Object]"
+          >
+            3
+          </button>
+          <div
+            className="hidden"
+          >
+            <button
+              className="fr-pagination__link fr-displayed-lg"
+              disabled={true}
+            >
+              …
+            </button>
+          </div>
+          <button
+            className="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
+            disabled={false}
+            onClick={[Function]}
+          >
+            Page suivante
+          </button>
+          <button
+            className="fr-pagination__link fr-pagination__link--last"
+            disabled={false}
+            onClick={[Function]}
+          >
+            Dernière page
+          </button>
+        </ul>
+      </nav>
+    </div>
+  </div>,
+  <button
+    className="fr-btn mt-2"
+    disabled={true}
+    onClick={[Function]}
+  >
+    Ajouter
+  </button>,
+]
+`;
+
+exports[`Storyshots ui/shared/preuves/AddPreuveModal/AddFromLib Vide 1`] = `
+Array [
+  <h6
+    className="fr-text--md"
+  >
+    Tous les fichiers de ma collectivité
+  </h6>,
+  <div
+    className="fr-form-group"
+  >
+    <div
+      className="border border-bf500 rounded-tr rounded-tl"
+    >
+      <div
+        className="flex items-center w-full border-b-2 border-bf500"
+      >
+        <input
+          className="bg-beige p-2 w-full placeholder-gray-500"
+          onChange={[Function]}
+          placeholder="Rechercher par nom"
+          value=""
+        />
+        <div
+          className="bg-bf500 h-full p-2"
+        >
+          <div
+            className="fr-fi-search-line text-white"
+          />
+        </div>
+      </div>
+    </div>
+  </div>,
+  <p>
+    Aucun fichier
+  </p>,
+  <button
+    className="fr-btn mt-2"
+    disabled={true}
+    onClick={[Function]}
+  >
+    Ajouter
+  </button>,
+]
+`;
