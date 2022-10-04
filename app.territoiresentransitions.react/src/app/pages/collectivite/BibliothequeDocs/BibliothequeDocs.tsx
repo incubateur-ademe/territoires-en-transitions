@@ -18,13 +18,13 @@ export const BibliothequeDocs = ({preuves}: TBibliothequeDocsProps) => {
         Bibliothèque de documents
       </h1>
 
-      {labellisation ? (
-        <section className="fr-mt-4w">
+      {labellisation?.length ? (
+        <section className="fr-mt-4w" data-test="labellisation">
           <PreuvesLabellisation preuves={labellisation} />
         </section>
       ) : null}
 
-      <section className="fr-mt-4w">
+      <section className="fr-mt-4w" data-test="rapports">
         <h2>Rapports de visite annuelle</h2>
         <AddRapportVisite />
         {rapport?.map(preuve => (

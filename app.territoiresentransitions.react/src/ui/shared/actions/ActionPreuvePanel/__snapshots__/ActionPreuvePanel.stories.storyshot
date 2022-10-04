@@ -2,7 +2,7 @@
 
 exports[`Storyshots ui/shared/actions/ActionPreuvePanel Default 1`] = `
 <div
-  data-test="preuves"
+  data-test="preuves-eci_1.1.1"
 >
   <p
     className="fr-text-sm"

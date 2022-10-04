@@ -60,7 +60,7 @@ const SelectDate = ({setDate}: {setDate: (value: string) => void}) => {
   const [value, setValue] = useState('');
 
   return (
-    <fieldset className="fr-fieldset h-52">
+    <fieldset className="fr-fieldset h-52" data-test="date-visite">
       <label className="fr-label mb-2">
         Date de la visite annuelle (obligatoire)
       </label>
