@@ -100,7 +100,7 @@ def build_markdown_parser(
     keyword_per_level = dict()
 
     def build_current_node():
-        return keyword_node_builders[current_keyword]()
+        return keyword_node_builders[current_keyword]()  # type: ignore
 
     def node_writer_builder(
         name_level: int,
