@@ -1,6 +1,11 @@
 /// <reference types="Cypress" />
 
 import { LocalSelectors } from './selectors';
+import {
+  noPreuvesComplementaires,
+  checkPreuvesComplementaires,
+  checkPreuvesReglementaires,
+} from './checkPreuves';
 
 beforeEach(() => {
   // enregistre les définitions locales
@@ -10,11 +15,11 @@ beforeEach(() => {
 When(/je déplie le panneau Preuves de l'action "([^"]+)"/, (action) =>
   getPreuvePanel(action).within(() => {
     // la liste des preuves attendues n'existe pas
-    cy.get('[data-test=preuves]').should('not.exist');
+    cy.get('[data-test^=preuves]').should('not.exist');
     // clic pour déplier le panneau
     cy.root().click();
     // attend que la liste existe
-    cy.get('[data-test=preuves]').should('be.visible');
+    cy.get('[data-test^=preuves]').should('be.visible');
   })
 );
 
@@ -68,9 +73,6 @@ When(/la liste des preuves complémentaires de l'action est vide/, () => {
   noPreuvesComplementaires(getPreuveTab());
 });
 
-const noPreuvesComplementaires = (parent) =>
-  parent.find('[data-test=preuves] [data-test=item]').should('not.exist');
-
 When(
   /la liste des preuves complémentaires de la sous-action "([^"]+)" contient les lignes suivantes/,
   (action, dataTable) => {
@@ -84,28 +86,6 @@ When(
     checkPreuvesComplementaires(getPreuveTab(), dataTable);
   }
 );
-
-const checkPreuvesComplementaires = (parent, dataTable) => {
-  const rows = dataTable.rows();
-  parent.find('[data-test=preuves] [data-test=complementaires]').within(() => {
-    // vérifie le nombre de lignes
-    cy.root().get('[data-test=item]').should('have.length', rows.length);
-
-    // vérifie que chaque ligne du tableau donné correspond à l'affichage
-    cy.wrap(rows).each(([titre, commentaire], index) => {
-      cy.get(`[data-test=item]:nth(${index})`).within(() => {
-        // vérifie le nom
-        cy.get('[data-test=name]').should('contain.text', titre);
-        // et le commentaire (ou son absence)
-        if (commentaire) {
-          cy.get('[data-test=comment]').should('have.text', commentaire);
-        } else {
-          cy.get('[data-test=comment]').should('not.exist');
-        }
-      });
-    });
-  });
-};
 
 When(
   /la liste des preuves attendues de la sous-action "([^"]+)" contient les lignes suivantes/,
@@ -121,39 +101,11 @@ When(
   }
 );
 
-const checkPreuvesReglementaires = (parent, dataTable) => {
-  const rows = dataTable.rows();
-  parent.find('[data-test=preuves] [data-test=attendues]').within(() => {
-    // vérifie le nombre de lignes
-    cy.root().get('[data-test=preuve]').should('have.length', rows.length);
-
-    // vérifie que chaque ligne du tableau donné correspond à l'affichage
-    cy.wrap(rows).each(([nom, preuves], index) => {
-      cy.get(`[data-test=preuve]:nth(${index})`).within(() => {
-        // vérifie la description de la preuve règlementaire
-        cy.get('[data-test=desc]').should('contain.text', nom);
-        // vérifie les noms des liens/fichiers rattachés à la preuve attendue
-        if (preuves) {
-          const items = preuves.split(',');
-          cy.wrap(items).each((item, idx) => {
-            cy.get(`[data-test=item]:nth(${idx}) [data-test=name]`).should(
-              'contain.text',
-              item
-            );
-          });
-        } else {
-          cy.get('[data-test=item]').should('not.exist');
-        }
-      });
-    });
-  });
-};
-
 When(
   /je clique sur la preuve "([^"]+)" de l'action "([^"]+)"/,
   (preuve, action) => {
     getPreuvePanel(action)
-      .find(`[data-test=preuves] > div`)
+      .find(`[data-test^=preuves] > div`)
       .contains(preuve)
       .click();
   }
@@ -163,7 +115,7 @@ When(
   /je clique sur le bouton "([^"]+)" de la preuve "([^"]+)" de l'action "([^"]+)"/,
   (btn, preuve, action) => {
     getPreuvePanel(action)
-      .find(`[data-test=preuves] > div`)
+      .find(`[data-test^=preuves] > div`)
       .contains(preuve)
       .parent()
       //      .trigger('mouseover')
@@ -176,7 +128,7 @@ When(
   /je saisi "([^"]+)" comme commentaire de la preuve "([^"]+)" de l'action "([^"]+)"/,
   (commentaire, preuve, action) => {
     getPreuvePanel(action)
-      .find(`[data-test=preuves] input`)
+      .find(`[data-test^=preuves] input`)
       .clear()
       .type(commentaire + '{enter}');
   }
@@ -224,4 +176,4 @@ const getPreuvePanel = (action) =>
   cy.get(`[data-test="PreuvesPanel-${action}"]`);
 
 const getPreuveTab = (action) =>
-  cy.get(`[role=tabpanel] [data-test=preuves]`).parent();
+  cy.get(`[role=tabpanel] [data-test^=preuves-]`).parent();
