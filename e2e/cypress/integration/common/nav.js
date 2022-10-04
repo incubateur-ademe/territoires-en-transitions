@@ -33,7 +33,7 @@ When(
     cy.visit(
       `/collectivite/${collectiviteId}/action/${referentiel}/${referentiel}_${action}/${tabName}`
     );
-    cy.get(`[role=tabpanel] [data-test=${tabName}`).should('be.visible');
+    cy.get(`[role=tabpanel] [data-test^=${tabName}`).should('be.visible');
   }
 );
 
