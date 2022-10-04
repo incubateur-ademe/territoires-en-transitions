@@ -116,6 +116,7 @@ Given(
 );
 Given(/le "([^"]*)" vérifie la condition "([^"]*)"/, verifyExpectation);
 Given(/^le "([^"]*)" est ([^"]*)$/, verifyExpectation);
+Given(/^le bouton "([^"]*)" est ([^"]*)$/, verifyExpectation);
 Given(
   /^le bouton "([^"]*)" du "([^"]*)" est ([^"]*)$/,
   childrenVerifyExpectation
