@@ -1,17 +1,38 @@
 begin;
 
-select plan(8);
+select plan(10);
 
 truncate storage.objects cascade;
 truncate labellisation.bibliotheque_fichier cascade;
 truncate client_scores;
 
--- La collectivite doit avoir des scores pour apparaître dans la vue des preuves 
+-- La collectivite doit avoir des scores pour apparaître dans la vue preuves
 select test_write_scores(1);
 
--- Les preuves réglementaires (insérées via 22-insert_fake_preuve_reglementaire.sql) sont dans la vue 
-select ok((select action ->> 'action_id' = 'cae_1.1.2.1' from preuve where collectivite_id = 1 and preuve_reglementaire ->> 'id' = 'pcaet_ees'), 
-'Le preuves réglementaires apparaissent dans la vue avec les détails de l''action. ');
+select isnt_empty(
+               'select * from preuve_reglementaire_definition;',
+               'Le contenu des preuves règlementaires devrait être présent.'
+           );
+
+select isnt_empty(
+               'select * '
+                   'from preuve_action pa '
+                   'join preuve_reglementaire_definition prd on prd.id = pa.preuve_id '
+                   'where pa.preuve_id = ''pedibus''',
+               'La définition de preuve règlementaire sur le pédibus devrait être présente et liée à une action.'
+           );
+
+select bag_eq(
+               'select p.preuve_reglementaire ->> ''id'' as preuve_id, '
+                   'p.action ->> ''action_id'' as action_id, '
+                   'p.preuve_reglementaire ->> ''nom'' as nom '
+                   'from preuve p '
+                   'where collectivite_id = 1;',
+               'select preuve_id, action_id, nom '
+                   'from preuve_action pa '
+                   'join preuve_reglementaire_definition prd on prd.id = pa.preuve_id;',
+               'Toutes les preuves réglementaires devraient apparaître dans la vue preuve pour le client.'
+           );
 
 -- Un faux fichier.
 select cb.collectivite_id,
