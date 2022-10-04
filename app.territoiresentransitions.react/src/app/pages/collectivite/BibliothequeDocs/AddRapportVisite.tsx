@@ -64,15 +64,18 @@ const SelectDate = ({setDate}: {setDate: (value: string) => void}) => {
       <label className="fr-label mb-2">
         Date de la visite annuelle (obligatoire)
       </label>
-      <input
-        type="date"
-        required
-        pattern="\d{4}-\d{2}-\d{2}"
-        onChange={e => {
-          setIsValid(e.target.validity.valid || false);
-          setValue(e.target.value || '');
-        }}
-      />
+      <div className="fr-input-wrap fr-fi-calendar-line max-w-min">
+        <input
+          className="fr-input"
+          type="date"
+          required
+          pattern="\d{4}-\d{2}-\d{2}"
+          onChange={e => {
+            setIsValid(e.target.validity.valid || false);
+            setValue(e.target.value || '');
+          }}
+        />
+      </div>
       <br />
       <button
         className="fr-btn fr-mt-2w"
