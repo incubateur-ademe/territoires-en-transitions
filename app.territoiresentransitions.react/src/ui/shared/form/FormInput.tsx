@@ -1,22 +1,6 @@
 import classNames from 'classnames';
 import {Field, FieldAttributes, FieldProps} from 'formik';
 
-type FormInputProps = {
-  type?: 'area' | 'text' | 'password';
-  hint?: string;
-  label: string;
-  disabled?: boolean;
-  maxLength?: number;
-};
-
-type Type = FieldAttributes<{
-  type?: 'area' | 'text' | 'password';
-  hint?: string;
-  label: string;
-  disabled?: boolean;
-  maxLength?: number;
-}>;
-
 /**
  * Prevents enter key submitting the form.
  */
@@ -26,7 +10,27 @@ const preventSubmit = (event: React.KeyboardEvent) => {
   }
 };
 
-const FormInput = (props: Type) => <Field {...props} component={InputField} />;
+type FormInputProps = {
+  type?: 'area' | 'text' | 'password';
+  hint?: string;
+  label: string;
+  disabled?: boolean;
+  maxLength?: number;
+};
+
+type FormFieldProps = FieldAttributes<FormInputProps>;
+
+/**
+ * Input field à utiliser dans un formulaire Formik.
+ *
+ * Peut exécuter du code avec l'événement onBlur si nécessaire.
+ * Pour cela, il faut déconstruire Formik pour récupérer handleBlur et le donner à l'input.
+ */
+const FormInput = (props: FormFieldProps) => (
+  <Field {...props} component={InputField} />
+);
+
+export default FormInput;
 
 const InputField = ({field, form, ...props}: FormInputProps & FieldProps) => {
   const errorMessage = form.errors[field.name];
@@ -79,5 +83,3 @@ const InputField = ({field, form, ...props}: FormInputProps & FieldProps) => {
     </div>
   );
 };
-
-export default FormInput;
