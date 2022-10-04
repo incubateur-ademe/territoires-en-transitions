@@ -1,10 +1,16 @@
-import {supabaseClient} from 'core-logic/api/supabase';
 import {useQuery} from 'react-query';
+import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
+import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {TPreuve, TPreuvesParType, TPreuveType} from './types';
 
+export type TActionDef = Pick<
+  ActionDefinitionSummary,
+  'id' | 'identifiant' | 'referentiel'
+>;
 type TFilters = {
-  action_id?: string;
+  action?: TActionDef;
+  withSubActions?: boolean;
   demande_id?: number;
   preuve_types?: TPreuveType[];
 };
@@ -26,11 +32,16 @@ const fetch = async (collectivite_id: number, filters?: TFilters) => {
     .order('fichier->>filename' as 'fichier', {ascending: true})
     .eq('collectivite_id', collectivite_id);
 
-  // éventuellement filtrées par action (et ses sous-actions si l'id se termine
-  // par "%")
-  const action_id = filters?.action_id;
-  if (action_id) {
-    query.ilike('action->>action_id' as 'action', action_id);
+  // éventuellement filtrées par action (et ses sous-actions si `withSubActions` est aussi fourni)
+  const action = filters?.action;
+  if (action) {
+    if (filters?.withSubActions) {
+      query
+        .eq('action->>referentiel' as 'action', action.referentiel)
+        .ilike('action->>identifiant' as 'action', `${action.identifiant}%`);
+    } else {
+      query.eq('action->>action_id' as 'action', action.id);
+    }
   }
 
   // ou par demande de labellisation

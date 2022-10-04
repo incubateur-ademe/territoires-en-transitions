@@ -1,12 +1,16 @@
 import {useState} from 'react';
 import Modal from 'ui/shared/floating-ui/Modal';
 import {AddPreuveModal} from 'ui/shared/preuves/AddPreuveModal';
+import {TActionDef} from 'ui/shared/preuves/Bibliotheque/usePreuves';
 import {SelectDropdown} from 'ui/shared/SelectDropdown';
 import {useAddPreuveComplementaireToAction} from './useAddPreuveToAction';
 import {useSubActionLabelsById} from './useSubActions';
 
 export type TAddPreuveButtonProps = {
-  action_id: string;
+  /** Identifiant de l'action concernée */
+  action: TActionDef;
+  /** indique si la preuve doit être associée à une sous-action */
+  addToSubAction?: boolean;
 };
 
 /**
@@ -20,13 +24,11 @@ export const AddPreuveComplementaire = (props: TAddPreuveButtonProps) => {
   // l'action dans ce cas il est nécessaire d'extraire l'identifiant de l'action
   // et de demander à laquelle de ses sous-actions doit être associée la preuve
   // complémentaire
-  const {action_id: actionIdBase} = props;
-  const [action_id] = actionIdBase.split('%');
-  const isAction = action_id !== actionIdBase;
+  const {action, addToSubAction} = props;
   const [subaction_id, setSubaction] = useState('');
 
   const handlers = useAddPreuveComplementaireToAction(
-    isAction ? subaction_id : action_id
+    addToSubAction ? subaction_id : action.id
   );
 
   const onClose = () => {
@@ -47,9 +49,9 @@ export const AddPreuveComplementaire = (props: TAddPreuveButtonProps) => {
         return (
           <>
             <h4>Ajouter une preuve complémentaire</h4>
-            {isAction && !subaction_id ? (
+            {addToSubAction && !subaction_id ? (
               <SelectSubAction
-                action_id={action_id}
+                action={action}
                 subaction_id={subaction_id}
                 setSubaction={setSubaction}
               />
@@ -73,15 +75,15 @@ export const AddPreuveComplementaire = (props: TAddPreuveButtonProps) => {
 
 /** Affiche le sélecteur de sous-action */
 const SelectSubAction = ({
-  action_id,
+  action,
   subaction_id,
   setSubaction,
 }: {
-  action_id: string;
+  action: TActionDef;
   subaction_id: string;
   setSubaction: (value: string) => void;
 }) => {
-  const labels = useSubActionLabelsById(action_id);
+  const labels = useSubActionLabelsById(action);
 
   return (
     <fieldset className="fr-fieldset h-52">

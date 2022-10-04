@@ -1,6 +1,7 @@
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useQuery} from 'react-query';
-import {Referentiel, subActionLevel} from 'types/litterals';
+import {subActionLevel} from 'types/litterals';
+import {TActionDef} from 'ui/shared/preuves/Bibliotheque/usePreuves';
 
 type TFetchedData = {
   id: string;
@@ -11,9 +12,9 @@ type TFetchedData = {
 /**
  * Toutes les sous-actions rattachées à une action
  */
-export const useSubActions = (action_id: string) => {
+export const useSubActions = (action: TActionDef) => {
   // charge les données
-  const {data} = useQuery(['sub_actions', action_id], () => fetch(action_id), {
+  const {data} = useQuery(['sub_actions', action.id], () => fetch(action), {
     // il n'est pas nécessaire de recharger trop systématiquement ici
     refetchOnReconnect: false,
     refetchOnWindowFocus: false,
@@ -26,25 +27,22 @@ export const useSubActions = (action_id: string) => {
  * Les libellés indéxés par id de toutes les sous-actions rattachées à une
  * action
  */
-export const useSubActionLabelsById = (action_id: string) => {
-  const actions = useSubActions(action_id);
+export const useSubActionLabelsById = (action: TActionDef) => {
+  const actions = useSubActions(action);
   return subActionLabelsById(actions);
 };
 
-const fetch = async (action_id: string): Promise<TFetchedData[]> => {
+const fetch = async (action: TActionDef): Promise<TFetchedData[]> => {
   // extrait l'id du référentiel depuis l'id de l'action
-  const referentielId = action_id.split('_').shift() as Referentiel;
-
-  if (!action_id || !referentielId) {
-    return [];
-  }
+  const {referentiel, identifiant} = action;
 
   // la requête
   const query = supabaseClient
     .from('action_definition_summary')
     .select('id,identifiant,nom')
-    .ilike('id', `${action_id}%`)
-    .eq('depth', subActionLevel[referentielId]);
+    .ilike('identifiant', `${identifiant}%`)
+    .eq('referentiel', referentiel)
+    .eq('depth', subActionLevel[referentiel]);
 
   // attends les données
   const {error, data} = await query;

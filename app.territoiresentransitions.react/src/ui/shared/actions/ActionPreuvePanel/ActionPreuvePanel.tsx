@@ -1,11 +1,14 @@
-import {usePreuvesParType} from 'ui/shared/preuves/Bibliotheque/usePreuves';
+import {
+  TActionDef,
+  usePreuvesParType,
+} from 'ui/shared/preuves/Bibliotheque/usePreuves';
 import {PreuvesAction} from 'ui/shared/preuves/Bibliotheque/PreuvesAction';
 
 export type TActionPreuvePanelProps = {
-  /** Identifiant de l'action (ou de la sous-action concernée). Si l'id se
-   * termine par "%" il s'agit du cas "action et ses sous-actions"
-   */
-  action_id: string;
+  /** Identifiant de l'action ou de la sous-action concernée */
+  action: TActionDef;
+  /** indique si les preuves associées aux sous-actions sont également chargées */
+  withSubActions?: boolean;
   /** indique si l'avertissement "toutes les preuves ajoutées seront
    * visibles..." doit être affiché */
   showWarning?: boolean;
@@ -17,14 +20,16 @@ export type TActionPreuvePanelProps = {
  * Affiche le panneau "preuves" d'une action
  */
 export default (props: TActionPreuvePanelProps) => {
-  const {action_id, showWarning, noIdentifiant} = props;
+  const {action, withSubActions, showWarning, noIdentifiant} = props;
   const {reglementaire, complementaire} = usePreuvesParType({
-    action_id,
+    action,
+    withSubActions,
   });
 
   return (
     <PreuvesAction
-      action_id={action_id}
+      action={action}
+      withSubActions={withSubActions}
       reglementaires={reglementaire || []}
       complementaires={complementaire || []}
       showWarning={showWarning}

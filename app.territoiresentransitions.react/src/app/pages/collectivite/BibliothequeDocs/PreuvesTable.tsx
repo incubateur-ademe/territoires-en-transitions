@@ -90,7 +90,7 @@ export const PreuvesTable = (props: TPreuvesTableProps) => {
             ) => {
               prepareRow(row);
               const {original, isExpanded} = row;
-              const {depth, nom} = original;
+              const {depth, nom, identifiant, action_id} = original;
               // dernière ligne avant une nouvelle section
               const isLast =
                 (!rows[index + 1] || rows[index + 1].depth === 0) &&
@@ -101,6 +101,12 @@ export const PreuvesTable = (props: TPreuvesTableProps) => {
               } ${isLast ? 'last' : ''}`;
 
               const {key, ...rowProps} = row.getRowProps();
+
+              const action = {
+                id: action_id,
+                identifiant,
+                referentiel: referentielId,
+              };
 
               return (
                 <div key={key}>
@@ -125,10 +131,7 @@ export const PreuvesTable = (props: TPreuvesTableProps) => {
                   ) : null}
                   {isExpanded && depth === maxDepth ? (
                     <div className="row py-5 pl-32">
-                      <ActionPreuvePanel
-                        action_id={row.original.action_id}
-                        noIdentifiant
-                      />
+                      <ActionPreuvePanel action={action} noIdentifiant />
                     </div>
                   ) : null}
                 </div>

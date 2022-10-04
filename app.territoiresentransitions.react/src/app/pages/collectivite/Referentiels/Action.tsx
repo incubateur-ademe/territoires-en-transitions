@@ -178,7 +178,7 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
         </Tab>
         <Tab label="Preuves">
           <section>
-            <ActionPreuvePanel action_id={`${action.id}%`} />
+            <ActionPreuvePanel withSubActions action={action} />
           </section>
         </Tab>
         <Tab label="Indicateurs">
