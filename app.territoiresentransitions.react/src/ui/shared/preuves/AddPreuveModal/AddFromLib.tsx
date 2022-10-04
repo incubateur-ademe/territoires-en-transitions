@@ -108,7 +108,7 @@ export const AddFromLib = (props: TAddFromLibProps) => {
 };
 
 const AddFromLibConnected = (
-  props: Omit<TAddFromLibProps, 'data' | 'filters' | 'onFilter'>
+  props: Omit<TAddFromLibProps, 'items' | 'total' | 'filters' | 'setFilters'>
 ) => {
   const [filters, setFilters] = useState({search: '', page: 1});
   const data = useFichiers(filters);
