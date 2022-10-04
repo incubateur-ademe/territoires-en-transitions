@@ -1,3 +1,4 @@
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {useState} from 'react';
 import Modal from 'ui/shared/floating-ui/Modal';
 import {AddPreuveModal} from 'ui/shared/preuves/AddPreuveModal';
@@ -30,6 +31,11 @@ export const AddPreuveComplementaire = (props: TAddPreuveButtonProps) => {
   const handlers = useAddPreuveComplementaireToAction(
     addToSubAction ? subaction_id : action.id
   );
+
+  const currentCollectivite = useCurrentCollectivite();
+  if (!currentCollectivite || currentCollectivite.readonly) {
+    return null;
+  }
 
   const onClose = () => {
     setOpened(false);

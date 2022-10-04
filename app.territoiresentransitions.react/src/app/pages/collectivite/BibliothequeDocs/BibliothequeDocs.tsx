@@ -1,4 +1,4 @@
-import {EditablePreuveDoc} from 'ui/shared/preuves/Bibliotheque/PreuveDoc';
+import PreuveDoc from 'ui/shared/preuves/Bibliotheque/PreuveDoc';
 import {TPreuvesParType} from 'ui/shared/preuves/Bibliotheque/types';
 import {usePreuvesParType} from 'ui/shared/preuves/Bibliotheque/usePreuves';
 import {AddRapportVisite} from './AddRapportVisite';
@@ -29,7 +29,7 @@ export const BibliothequeDocs = ({preuves}: TBibliothequeDocsProps) => {
         <AddRapportVisite />
         {rapport?.map(preuve => (
           <div className="py-4" key={preuve.id}>
-            <EditablePreuveDoc preuve={preuve} />
+            <PreuveDoc preuve={preuve} />
           </div>
         ))}
       </section>

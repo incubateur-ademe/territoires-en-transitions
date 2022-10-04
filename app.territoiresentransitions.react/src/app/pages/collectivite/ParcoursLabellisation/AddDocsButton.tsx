@@ -1,3 +1,4 @@
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {useState} from 'react';
 import Modal from 'ui/shared/floating-ui/Modal';
 import {AddPreuveModal} from 'ui/shared/preuves/AddPreuveModal';
@@ -14,6 +15,10 @@ export type TAddDocsButtonProps = {
 export const AddDocsButton = (props: TAddDocsButtonProps) => {
   const [opened, setOpened] = useState(false);
   const handlers = useAddPreuveToDemande(props.demande_id);
+  const currentCollectivite = useCurrentCollectivite();
+  if (!currentCollectivite || currentCollectivite.readonly) {
+    return null;
+  }
 
   return (
     <Modal

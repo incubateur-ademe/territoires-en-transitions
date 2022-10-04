@@ -1,5 +1,5 @@
 import {TPreuveComplementaire} from './types';
-import {EditablePreuveDoc} from './PreuveDoc';
+import PreuveDoc from './PreuveDoc';
 import {IdentifiantAction} from './IdentifiantAction';
 
 export type TPreuveComplementaireProps = {
@@ -16,7 +16,7 @@ export const PreuveComplementaire = ({
 
   return (
     <div className="py-4" key={preuve.id}>
-      <EditablePreuveDoc preuve={preuve} />
+      <PreuveDoc preuve={preuve} />
       {noIdentifiant ? null : <IdentifiantAction action={action} />}
     </div>
   );

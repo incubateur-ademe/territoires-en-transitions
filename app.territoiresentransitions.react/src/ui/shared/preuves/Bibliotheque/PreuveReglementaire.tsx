@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import {Tooltip} from 'ui/shared/floating-ui/Tooltip';
 import {TPreuve, TPreuveReglementaire} from './types';
-import {EditablePreuveDoc} from './PreuveDoc';
+import PreuveDoc from './PreuveDoc';
 import {AddPreuveReglementaire} from 'ui/shared/actions/AddPreuve/AddPreuveReglementaire';
 import {IdentifiantAction, isDisabledAction} from './IdentifiantAction';
 
@@ -50,7 +50,7 @@ export const PreuveReglementaire = (props: TPreuveReglementaireProps) => {
       <div className="flex flex-1 flex-col justify-center space-y-2">
         {haveDoc
           ? preuves.map(preuve => (
-              <EditablePreuveDoc key={preuve.id} preuve={preuve as TPreuve} />
+              <PreuveDoc key={preuve.id} preuve={preuve as TPreuve} />
             ))
           : null}
         <AddPreuveReglementaire preuve_id={preuve_id} isDisabled={isDisabled} />
