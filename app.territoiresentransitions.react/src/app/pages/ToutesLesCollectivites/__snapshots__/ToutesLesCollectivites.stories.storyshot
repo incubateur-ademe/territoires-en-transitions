@@ -3073,7 +3073,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
             <button
               aria-current="page"
               className="fr-pagination__link"
-              title="Page [object Object]"
+              title="Page 1"
             >
               1
             </button>
@@ -6168,7 +6168,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
             <button
               aria-current="page"
               className="fr-pagination__link"
-              title="Page [object Object]"
+              title="Page 1"
             >
               1
             </button>

@@ -264,7 +264,7 @@ exports[`Storyshots app/pages/collectivite/Historique/JournalActivite Exemple 1 
         <button
           aria-current="page"
           className="fr-pagination__link"
-          title="Page [object Object]"
+          title="Page 1"
         >
           1
         </button>
