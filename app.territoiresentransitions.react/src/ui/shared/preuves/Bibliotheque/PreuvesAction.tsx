@@ -2,12 +2,13 @@ import {TPreuveComplementaire, TPreuveReglementaire} from './types';
 import {PreuveReglementaire} from './PreuveReglementaire';
 import {AddPreuveComplementaire} from 'ui/shared/actions/AddPreuve/AddPreuveComplementaire';
 import {PreuveComplementaire} from './PreuveComplementaire';
+import {TActionDef} from './usePreuves';
 
 export type TPreuvesActionProps = {
-  /** Identifiant de l'action (ou de la sous-action concernée). Si l'id se
-   * termine par "%" il s'agit du cas "action et ses sous-actions"
-   */
-  action_id: string;
+  /** Identifiant de l'action ou de la sous-action concernée */
+  action: TActionDef;
+  /** indique si les preuves associées aux sous-actions sont également chargées */
+  withSubActions?: boolean;
   /** indique si l'avertissement "toutes les preuves ajoutées seront
    * visibles..." doit être affiché */
   showWarning?: boolean;
@@ -25,7 +26,8 @@ export type TPreuvesActionProps = {
  */
 export const PreuvesAction = (props: TPreuvesActionProps) => {
   const {
-    action_id,
+    action,
+    withSubActions,
     reglementaires,
     complementaires,
     showWarning,
@@ -34,11 +36,9 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
   const preuvesParId = reglementaires?.length
     ? Array.from(groupByPreuveDefinitionId(reglementaires))
     : null;
-  // si l'id se termine par "%" il s'agit du cas "action et ses sous-actions"
-  const isAction = action_id.endsWith('%');
 
   return (
-    <div data-test={`preuves-${action_id}`}>
+    <div data-test={`preuves-${action.id}`}>
       {preuvesParId ? (
         <>
           <h5>Preuves attendues</h5>
@@ -56,14 +56,17 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
       ) : (
         <p className="fr-text-sm">
           Il n'y a pas de preuve attendue pour cette{' '}
-          {isAction ? 'action' : 'sous-action'} du référentiel.
+          {withSubActions ? 'action' : 'sous-action'} du référentiel.
           <br />
           Vous pouvez ajouter les documents preuves que vous jugez utiles pour
           justifier l'avancement.
         </p>
       )}
       <h5>Preuves complémentaires</h5>
-      <AddPreuveComplementaire action_id={action_id} />
+      <AddPreuveComplementaire
+        action={action}
+        addToSubAction={withSubActions}
+      />
       <div data-test="complementaires" className="divide-y divide-[#ddd]">
         {complementaires?.map(preuve => (
           <PreuveComplementaire

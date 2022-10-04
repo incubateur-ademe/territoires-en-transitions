@@ -512,7 +512,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
 
 exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Attendues 1`] = `
 <div
-  data-test="preuves-cae_1.2.3%"
+  data-test="preuves-cae_1.2.3"
 >
   <p
     className="fr-text-sm"

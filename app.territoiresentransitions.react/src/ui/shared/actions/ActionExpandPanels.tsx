@@ -89,7 +89,7 @@ export const ActionPreuvesExpandPanel = ({
     >
       <div className="border-gray-300">
         <CrossExpandPanelWithNode title="Preuves">
-          <ActionPreuvePanel action_id={action.id} showWarning />
+          <ActionPreuvePanel action={action} showWarning />
         </CrossExpandPanelWithNode>
       </div>
     </div>
