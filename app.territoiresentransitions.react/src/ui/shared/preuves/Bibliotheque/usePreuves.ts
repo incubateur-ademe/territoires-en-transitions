@@ -47,11 +47,15 @@ const fetch = async (collectivite_id: number, filters?: TFilters) => {
 
   const {data, error} = await query;
 
-  if (error) {
+  if (error || !data) {
     return [];
   }
 
-  return data;
+  // filtre supplémentaire pour éviter les preuves labellisation vides (?)
+  return data.filter(
+    ({preuve_type, fichier, lien}) =>
+      preuve_type !== 'labellisation' || fichier || lien
+  );
 };
 
 /**
@@ -77,19 +81,11 @@ export const usePreuvesParType = (filters?: TFilters) => {
 
 // indexe une liste de preuves par type
 const groupByType = (preuves: TPreuve[]) => {
-  const preuvesParType = preuves.reduce<TPreuvesParType>(
+  return preuves.reduce<TPreuvesParType>(
     (dict, preuve) => ({
       ...dict,
       [preuve.preuve_type]: [...(dict[preuve.preuve_type] || []), preuve],
     }),
     {} as TPreuvesParType
   );
-
-  // filtre supplémentaire pour éviter les preuves labellisation vides (?)
-  return {
-    ...preuvesParType,
-    labellisation: preuvesParType.labellisation?.filter(
-      ({fichier, lien}) => fichier || lien
-    ),
-  };
 };
