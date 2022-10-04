@@ -25,6 +25,7 @@ export const Pagination = (props: TPaginationProps) => {
   const setSelectedPageAndScrollToTop = (page: number) => {
     setSelectedPage(page);
     window.scrollTo(0, 0);
+    props.onChange(page);
   };
 
   const range = (start: number, end: number) =>
@@ -72,8 +73,14 @@ export const Pagination = (props: TPaginationProps) => {
 
   useEffect(() => {
     setPageRangesToDisplay();
-    props.onChange(selectedPage);
   }, [selectedPage, props.nbOfPages]);
+
+  useEffect(() => {
+    if (selectedPage !== props.selectedPage) {
+      setPageRangesToDisplay();
+      setSelectedPage(props.selectedPage);
+    }
+  }, [props.selectedPage, selectedPage]);
 
   return (
     <nav role="navigation" className="fr-pagination" aria-label="Pagination">
