@@ -59,7 +59,7 @@ export const AddFromLib = (props: TAddFromLibProps) => {
   return (
     <>
       <h6 className="fr-text--md">Tous les fichiers de ma collectivité</h6>
-      <div className="fr-form-group">
+      <div>
         <UiSearchBar
           key="search"
           value={filters.search}
@@ -89,7 +89,7 @@ export const AddFromLib = (props: TAddFromLibProps) => {
                 ))}
               </div>
             </fieldset>
-            <div className="flex justify-center mt-6 md:mt-12">
+            <div className="flex justify-center fr-mt-2w">
               <Pagination
                 nbOfPages={Math.ceil(total / NB_ITEMS_PER_PAGE)}
                 selectedPage={filters.page ?? 1}
@@ -99,7 +99,7 @@ export const AddFromLib = (props: TAddFromLibProps) => {
           </>
         ) : null}
       </div>
-      {!total ? <p>Aucun fichier</p> : null}
+      {!total ? <p className="fr-mt-2w">Aucun fichier</p> : null}
       <button className="fr-btn mt-2" disabled={!canAdd} onClick={onSubmit}>
         Ajouter
       </button>

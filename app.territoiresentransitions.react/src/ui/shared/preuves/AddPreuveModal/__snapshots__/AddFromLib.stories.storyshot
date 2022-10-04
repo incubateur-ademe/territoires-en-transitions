@@ -7,9 +7,7 @@ Array [
   >
     Tous les fichiers de ma collectivité
   </h6>,
-  <div
-    className="fr-form-group"
-  >
+  <div>
     <div
       className="border border-bf500 rounded-tr rounded-tl"
     >
@@ -115,7 +113,7 @@ Array [
       </div>
     </fieldset>
     <div
-      className="flex justify-center mt-6 md:mt-12"
+      className="flex justify-center fr-mt-2w"
     >
       <nav
         aria-label="Pagination"
@@ -148,21 +146,21 @@ Array [
           <button
             aria-current="page"
             className="fr-pagination__link"
-            title="Page [object Object]"
+            title="Page 1"
           >
             1
           </button>
           <button
             className="fr-pagination__link"
             onClick={[Function]}
-            title="Page [object Object]"
+            title="Page 2"
           >
             2
           </button>
           <button
             className="fr-pagination__link"
             onClick={[Function]}
-            title="Page [object Object]"
+            title="Page 3"
           >
             3
           </button>
@@ -211,9 +209,7 @@ Array [
   >
     Tous les fichiers de ma collectivité
   </h6>,
-  <div
-    className="fr-form-group"
-  >
+  <div>
     <div
       className="border border-bf500 rounded-tr rounded-tl"
     >
@@ -236,7 +232,9 @@ Array [
       </div>
     </div>
   </div>,
-  <p>
+  <p
+    className="fr-mt-2w"
+  >
     Aucun fichier
   </p>,
   <button
