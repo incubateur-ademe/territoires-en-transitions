@@ -19,6 +19,7 @@ export const PreuvesTabs = () => {
         return (
           <Tab
             key={referentielId}
+            data-test={referentielId}
             label={`Référentiel ${
               referentielToName[referentielId as Referentiel]
             }`}

@@ -2,7 +2,7 @@
 
 exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Message Avertissement 1`] = `
 <div
-  data-test="preuves"
+  data-test="preuves-cae_1.2.4"
 >
   <p
     className="fr-text-sm"
@@ -101,7 +101,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Message Av
 
 exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Complementaires 1`] = `
 <div
-  data-test="preuves"
+  data-test="preuves-cae_1.2.3.4"
 >
   <h5>
     Preuves attendues
@@ -512,7 +512,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
 
 exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Attendues 1`] = `
 <div
-  data-test="preuves"
+  data-test="preuves-cae_1.2.3%"
 >
   <p
     className="fr-text-sm"
@@ -549,7 +549,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves At
 
 exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Complementaires 1`] = `
 <div
-  data-test="preuves"
+  data-test="preuves-cae_1.2.3.4"
 >
   <h5>
     Preuves attendues

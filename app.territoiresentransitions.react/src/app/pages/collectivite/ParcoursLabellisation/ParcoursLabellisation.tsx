@@ -67,7 +67,10 @@ const ParcoursLabellisation = () => {
         Référentiel {referentielToName[parcours.referentiel]}
       </p>
       <Header parcours={parcours} demande={demande} preuves={preuves} />
-      <main className="fr-container mt-9 mb-16">
+      <main
+        className="fr-container mt-9 mb-16"
+        data-test={`labellisation-${parcours.referentiel}`}
+      >
         <CriteresLabellisation
           collectiviteId={collectiviteId}
           parcours={parcours}

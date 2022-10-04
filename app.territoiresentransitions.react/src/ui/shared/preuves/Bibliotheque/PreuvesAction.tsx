@@ -38,7 +38,7 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
   const isAction = action_id.endsWith('%');
 
   return (
-    <div data-test="preuves">
+    <div data-test={`preuves-${action_id}`}>
       {preuvesParId ? (
         <>
           <h5>Preuves attendues</h5>
