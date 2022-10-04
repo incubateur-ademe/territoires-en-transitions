@@ -35,6 +35,7 @@ const fetch = async (
     .from<TBibliothequeFichier>('bibliotheque_fichier')
     .select('id,filename,filesize,hash', {count: 'exact'})
     .eq('collectivite_id', collectivite_id)
+    .order('filename', {ascending: true})
     .range(NB_ITEMS_PER_PAGE * (page - 1), NB_ITEMS_PER_PAGE * page - 1);
 
   // éventuellement filtrée par nom de fichier
