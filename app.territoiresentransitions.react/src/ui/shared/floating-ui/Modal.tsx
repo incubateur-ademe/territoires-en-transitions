@@ -96,9 +96,9 @@ const Modal = ({
                   className: classNames(
                     `${mobileClassnames} ${aboveMobileClassnames} flex flex-col w-full p-4 md:px-8 bg-white overflow-y-auto`,
                     {
-                      'max-w-sm': size === 'sm',
-                      'max-w-xl': size === 'md',
-                      'max-w-3xl': size === 'lg',
+                      ['max-w-sm']: size === 'sm',
+                      ['max-w-xl']: size === 'md',
+                      ['max-w-4xl']: size === 'lg',
                     }
                   ),
                   'aria-labelledby': labelId,
