@@ -64,7 +64,7 @@ export const AddFromLib = (props: TAddFromLibProps) => {
           key="search"
           value={filters.search}
           placeholder="Rechercher par nom"
-          search={search => setFilters({...filters, search})}
+          search={search => setFilters({page: 1, search})}
         />
         {total ? (
           <>
