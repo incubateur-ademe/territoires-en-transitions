@@ -17,7 +17,8 @@ export const useFichiers = (filters: TFilters) => {
   const collectivite_id = useCollectiviteId();
   const {data} = useQuery(
     ['bibliotheque_fichier', collectivite_id, filters],
-    () => (collectivite_id ? fetch(collectivite_id, filters) : null)
+    () => (collectivite_id ? fetch(collectivite_id, filters) : null),
+    {keepPreviousData: true}
   );
 
   return data;
