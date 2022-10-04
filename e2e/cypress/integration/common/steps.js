@@ -4,77 +4,77 @@
  * Définitions de "steps" communes à tous les tests
  */
 
-import { Selectors } from "./selectors";
-import { Expectations } from "./expectations";
+import { Selectors } from './selectors';
+import { Expectations } from './expectations';
 
 beforeEach(() => {
-  cy.visit("/");
+  cy.visit('/');
   // on attends que l'appli expose un objet `e2e` permettant de la contrôler
-  cy.window({ log: false }).its("e2e.history").as("history");
-  cy.window({ log: false }).its("e2e.auth").as("auth");
-  cy.window({ log: false }).its("e2e.supabaseClient").as("supabaseClient");
+  cy.window({ log: false }).its('e2e.history').as('history');
+  cy.window({ log: false }).its('e2e.auth').as('auth');
+  cy.window({ log: false }).its('e2e.supabaseClient').as('supabaseClient');
 
   // bouchon pour la fonction window.open
-  const stub = cy.stub().as("open");
-  cy.on("window:before:load", (win) => {
-    cy.stub(win, "open").callsFake(stub);
+  const stub = cy.stub().as('open');
+  cy.on('window:before:load', (win) => {
+    cy.stub(win, 'open').callsFake(stub);
   });
 });
 
 Given("j'ouvre le site", () => {
-  cy.get("[data-test=home]").should("be.visible");
+  cy.get('[data-test=home]').should('be.visible');
 });
 
 const Users = {
   yolo: {
-    email: "yolo@dodo.com",
-    password: "yolododo",
+    email: 'yolo@dodo.com',
+    password: 'yolododo',
   },
   yulu: {
-    email: "yulu@dudu.com",
-    password: "yulududu",
+    email: 'yulu@dudu.com',
+    password: 'yulududu',
   },
 };
-const SignInPage = Selectors["formulaire de connexion"];
+const SignInPage = Selectors['formulaire de connexion'];
 Given(/je suis connecté en tant que "([^"]*)"/, function (userName) {
   const u = Users[userName];
-  assert(u, "utilisateur non trouvé");
-  cy.get("@auth").then((auth) => auth.connect(u));
-  cy.get(SignInPage.selector).should("not.exist");
-  cy.get("[data-test=connectedMenu]").should("be.visible");
+  assert(u, 'utilisateur non trouvé');
+  cy.get('@auth').then((auth) => auth.connect(u));
+  cy.get(SignInPage.selector).should('not.exist');
+  cy.get('[data-test=connectedMenu]').should('be.visible');
 });
 
-Given("les droits utilisateur sont réinitialisés", () => {
-  cy.task("supabase_rpc", { name: "test_reset_droits" });
+Given('les droits utilisateur sont réinitialisés', () => {
+  cy.task('supabase_rpc', { name: 'test_reset_droits' });
 });
 
 Given(/l'utilisateur "([^"]*)" est supprimé/, (email) => {
-  cy.task("supabase_rpc", {
-    name: "test_remove_user",
+  cy.task('supabase_rpc', {
+    name: 'test_remove_user',
     params: { email: email },
   });
 });
 
-Given("les informations des membres sont réinitialisées", () => {
-  cy.task("supabase_rpc", { name: "test_reset_membres" });
+Given('les informations des membres sont réinitialisées', () => {
+  cy.task('supabase_rpc', { name: 'test_reset_membres' });
 });
 
-Given("je me déconnecte", () => {
-  cy.get("[data-test=connectedMenu]").click();
-  cy.get("[data-test=logoutBtn]").click();
+Given('je me déconnecte', () => {
+  cy.get('[data-test=connectedMenu]').click();
+  cy.get('[data-test=logoutBtn]').click();
 });
 
 // Met en pause le déroulement d'un scénario.
 // Associé avec le tag @focus cela permet de debugger facilement les tests.
-Given("pause", () => cy.pause());
+Given('pause', () => cy.pause());
 
 // utilitaire pour vérifier quelques attentes d'affichage génériques à partir d'une table de correspondances
 export const checkExpectation = (selector, expectation, value) => {
   const c = Expectations[expectation];
   if (!c) return;
-  if (typeof c === "object" && c.cond) {
+  if (typeof c === 'object' && c.cond) {
     cy.get(selector).should(c.cond, value || c.value);
-  } else if (typeof c === "function") {
+  } else if (typeof c === 'function') {
     c(selector, value);
   } else {
     if (selector) {
@@ -89,7 +89,7 @@ export const checkExpectation = (selector, expectation, value) => {
 // un nom d'élément dans la page
 export const resolveSelector = (context, elem) => {
   const s = context.LocalSelectors?.[elem] || Selectors[elem];
-  assert(s, "sélecteur non trouvé");
+  assert(s, 'sélecteur non trouvé');
   return s;
 };
 
@@ -156,15 +156,17 @@ Given(/je remplis le "([^"]*)" avec les valeurs suivantes/, fillFormWithValues);
 
 Given(/l'appel à "([^"]*)" va répondre "([^"]*)"/, function (name, reply) {
   const r = this.LocalMocks?.[name]?.[reply];
-  assert(r, "mock non trouvé");
+  assert(r, 'mock non trouvé');
   cy.intercept(...r).as(name);
 });
 
-Given("je clique en dehors de la boîte de dialogue", () =>
-  cy.get("body").click(10, 10)
+Given('je clique en dehors de la boîte de dialogue', () =>
+  cy.get('body').click(10, 10)
 );
 
-Given("je valide le formulaire", () => cy.get("button[type=submit]").click());
+Given('je valide le formulaire', () =>
+cy.get('button[type=submit]').click()
+);
 
 const transateTypes = {
   succès: "success",
