@@ -1,8 +1,7 @@
 from __future__ import annotations
 from typing import Callable, List, Optional
 
-from business.referentiel.domain.models.action_children import ActionChildren
-from business.referentiel.domain.models.action_definition import ActionId
+from .models.actions import ActionChildren, ActionId
 
 
 class ActionTreeError(Exception):
@@ -10,7 +9,7 @@ class ActionTreeError(Exception):
 
 
 class ActionTree:
-    def __init__(self, actions_children: List[ActionChildren]) -> None:
+    def __init__(self, actions_children: list[ActionChildren]) -> None:
 
         self.children_ids_by_action_id = {
             action_children.action_id: action_children.children

@@ -18,7 +18,7 @@ from business.personnalisation.models import (
 from business.personnalisation.ports.personnalisation_repo import (
     InMemoryPersonnalisationRepository,
 )
-from business.utils.action_id import ActionId
+from business.utils.models.actions import ActionId
 from business.utils.config import Config
 from business.utils.domain_message_bus import InMemoryDomainMessageBus
 
