@@ -1,15 +1,16 @@
 from typing import List, Tuple, Any, Type
 
-from lark import Transformer
+from lark.visitors import Transformer
 
 from business.personnalisation.engine.formule import FormuleABC, FormuleError
-from business.personnalisation.models import (
+from business.utils.models.questions import (
     Question,
-    IdentiteTypeOption,
-    IdentitePopulationOption,
-    IdentiteLocalisationOption,
 )
-from business.utils.action_id import ActionId
+from business.utils.models.identite import (
+    IdentiteLocalisationOption,
+    IdentitePopulationOption,
+    IdentiteTypeOption,
+)
 
 TypedValue = Tuple[Type, Any]
 Arg1 = Tuple[TypedValue]
@@ -23,12 +24,10 @@ class FormuleChecker(FormuleABC, Transformer):
     def __init__(
         self,
         questions: List[Question],
-        action_ids: List[ActionId],
         visit_tokens: bool = True,
     ) -> None:
         Transformer.__init__(self, visit_tokens)
         self.questions = {question.id: question for question in questions}
-        self.action_ids = action_ids
 
     def reponse_comparison(self, node: Arg2) -> TypedValue:
         """Compute reponse to questions of type choix
@@ -44,7 +43,7 @@ class FormuleChecker(FormuleABC, Transformer):
                 f"La question d'id {question_id} est de type proportion, donc la fonction réponse n'attend qu'un argument."
             )
         allowed_choix_ids = (
-            self.questions[question_id].choix_ids or []
+            [choix.id for choix in self.questions[question_id].choix or []]
             if question_type == "choix"
             else ["OUI", "NON"]
         )
@@ -69,12 +68,7 @@ class FormuleChecker(FormuleABC, Transformer):
         return float, "reponse"
 
     def score_value(self, node: Arg1) -> TypedValue:
-        """Compute score of action
-        Raises FormuleError if action_id does not exist
-        """
-        action_id = node[0][1]
-        if action_id not in self.action_ids:
-            raise FormuleError(f"Id de l'action inconnue: {action_id}.")
+        """Compute score of action"""
         return str, "score"
 
     def identite(self, node: Arg2) -> TypedValue:

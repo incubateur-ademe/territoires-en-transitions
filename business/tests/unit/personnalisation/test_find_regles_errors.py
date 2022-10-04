@@ -1,5 +1,5 @@
 from business.personnalisation.models import Question
-from business.personnalisation.find_regles_errors import find_regles_errors
+from business.referentiel.check_regles_against_questions import find_regles_errors
 from business.referentiel.domain.models.personnalisation import Regle
 from business.utils.action_id import ActionId
 

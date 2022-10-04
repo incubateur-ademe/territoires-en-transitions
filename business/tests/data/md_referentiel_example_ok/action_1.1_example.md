@@ -1,7 +1,6 @@
 # Titre de l'action 1.1
 ```yaml
 identifiant: 1.1
-points:  30
 ```
 ## Description
 **Première partie**
@@ -63,3 +62,21 @@ pourcentage: 50
 categorie: effets
 ```
 
+
+## Actions
+### Titre de l'action 1.1.2
+```yaml
+identifiant: 1.1.2
+points:  80
+```
+#### Description
+Description de l'action 1.1.2
+
+#### Contexte
+Contexte de l'action 1.1.2
+
+#### Exemples
+Exemples de l'action 1.1.2 
+
+#### Ressources
+Ressources de l'action 1.1.2

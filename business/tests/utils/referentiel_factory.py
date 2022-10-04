@@ -1,26 +1,27 @@
-from typing import List, Optional, Tuple
+from typing import List, Optional
 
-from business.referentiel.domain.models.action_children import ActionChildren
-from business.referentiel.domain.models.action_definition import (
+from business.utils.models.actions import (
+    ActionChildren,
     ActionDefinition,
     ActionCategorie,
     ActionId,
+    ActionReferentiel,
 )
-from business.referentiel.domain.models.action_computed_point import ActionComputedPoint
-from business.referentiel.domain.models.indicateur import (
-    Indicateur,
-    IndicateurGroup,
-    IndicateurId,
-)
-from business.referentiel.domain.models.referentiel import ActionReferentiel
-from business.referentiel.domain.models.markdown_action_node import MarkdownActionNode
-from business.utils.action_id import retrieve_referentiel
+from business.referentiel.convert_actions import MarkdownActionTree
+
+
+def _retrieve_referentiel(action_id: str) -> ActionReferentiel:
+    return action_id.split("_")[0]  # type: ignore
+
+
+def _retrieve_identifiant(action_id: str) -> str:
+    return action_id.split("_")[1] if "_" in action_id else ""
 
 
 def make_action_definition(
     action_id: str,
-    referentiel: Optional[ActionReferentiel] = None,
-    identifiant: str = "",
+    computed_points: float,
+    referentiel: ActionReferentiel = "eci",
     nom: str = "",
     description: str = "",
     contexte: str = "",
@@ -28,14 +29,14 @@ def make_action_definition(
     ressources: str = "",
     perimetre_evaluation="",
     reduction_potentiel="",
-    points: Optional[float] = None,
-    pourcentage: Optional[float] = None,
+    md_points: Optional[float] = None,
+    md_pourcentage: Optional[float] = None,
     categorie: Optional[ActionCategorie] = None,
 ):
     return ActionDefinition(
         action_id=ActionId(action_id),
-        referentiel=referentiel or retrieve_referentiel(ActionId(action_id)),
-        identifiant=identifiant,
+        referentiel=referentiel or _retrieve_referentiel(ActionId(action_id)),
+        identifiant=_retrieve_identifiant(action_id),
         nom=nom,
         description=description,
         contexte=contexte,
@@ -43,17 +44,10 @@ def make_action_definition(
         ressources=ressources,
         perimetre_evaluation=perimetre_evaluation,
         reduction_potentiel=reduction_potentiel,
-        points=points,
-        pourcentage=pourcentage,
+        md_points=md_points,
+        md_pourcentage=md_pourcentage,
+        computed_points=computed_points,
         categorie=categorie,
-    )
-
-
-def make_action_points(action_id: str, points: float):
-    return ActionComputedPoint(
-        action_id=ActionId(action_id),
-        value=points,
-        referentiel=retrieve_referentiel(ActionId(action_id)),
     )
 
 
@@ -61,20 +55,20 @@ def make_action_children(action_id: str, children_ids: List[str]):
     return ActionChildren(
         action_id=ActionId(action_id),
         children=[ActionId(child_id) for child_id in children_ids],
-        referentiel=retrieve_referentiel(ActionId(action_id)),
+        referentiel=_retrieve_referentiel(action_id),
     )
 
 
-def make_markdown_action_node(
+def make_markdown_action_tree(
     identifiant: str,
     description: Optional[str] = None,
     points: Optional[float] = None,
     pourcentage: Optional[float] = None,
-    actions: List[MarkdownActionNode] = [],
+    actions: List[MarkdownActionTree] = [],
     referentiel: ActionReferentiel = "eci",
     categorie: Optional[ActionCategorie] = None,
 ):
-    return MarkdownActionNode(
+    return MarkdownActionTree(
         identifiant=identifiant,
         referentiel=referentiel,
         points=points,
@@ -88,59 +82,3 @@ def make_markdown_action_node(
         nom="",
         categorie=categorie,
     )
-
-
-def make_indicateur(
-    indicateur_id: str,
-    description: Optional[str] = None,
-    indicateur_group: Optional[IndicateurGroup] = None,
-    action_ids: Optional[List[str]] = None,
-    valeur_indicateur: Optional[str] = None,
-) -> Indicateur:
-    return Indicateur(
-        indicateur_id=IndicateurId(indicateur_id),
-        identifiant="",
-        indicateur_group=indicateur_group or "eci",
-        nom="",
-        unite="",
-        action_ids=[ActionId(action_id) for action_id in action_ids]
-        if action_ids
-        else [],
-        description=description or "",
-        valeur_indicateur=IndicateurId(valeur_indicateur)
-        if valeur_indicateur
-        else None
-        if valeur_indicateur
-        else None,
-        obligation_eci=False,
-    )
-
-
-def set_markdown_action_node_children_with_points(
-    action: MarkdownActionNode, points: List[float]
-):
-    action.actions = [
-        make_markdown_action_node(
-            identifiant=f"{action.identifiant}.{k+1}", points=child_points
-        )
-        for k, child_points in enumerate(points)
-    ]
-
-
-def make_dummy_referentiel(
-    action_ids: List[str], referentiel: ActionReferentiel = "eci"
-) -> Tuple[List[ActionChildren], List[ActionDefinition], List[ActionComputedPoint]]:
-    definitions = [
-        make_action_definition(
-            action_id=action_id, identifiant=action_id.split(f"{referentiel}")[-1][1:]
-        )
-        for action_id in action_ids
-    ]
-    chidren = [
-        make_action_children(action_id=action_id, children_ids=[])
-        for action_id in action_ids
-    ]
-    points = [
-        make_action_points(action_id=action_id, points=100) for action_id in action_ids
-    ]
-    return chidren, definitions, points
