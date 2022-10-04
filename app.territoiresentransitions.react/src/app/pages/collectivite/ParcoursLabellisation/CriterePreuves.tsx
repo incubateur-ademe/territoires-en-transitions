@@ -4,10 +4,9 @@
 import {LabellisationDemandeRead} from 'generated/dataLayer/labellisation_demande_read';
 import {LabellisationParcoursRead} from 'generated/dataLayer/labellisation_parcours_read';
 import {referentielToName} from 'app/labels';
-import {PreuveDoc} from 'ui/shared/preuves/Bibliotheque/PreuveDoc';
+import PreuveDoc from 'ui/shared/preuves/Bibliotheque/PreuveDoc';
 import {AddDocsButton} from './AddDocsButton';
 import {CritereRempli} from './CritereRempli';
-import {useEditPreuve} from 'ui/shared/preuves/Bibliotheque/useEditPreuve';
 import {TPreuveLabellisation} from 'ui/shared/preuves/Bibliotheque/types';
 
 const REGLEMENTS: {[k: string]: string} = {
@@ -72,7 +71,7 @@ export const CriterePreuves = (props: TCriterePreuvesProps) => {
  * Affiche les fichiers attachés à la demande
  */
 const LabellisationPreuves = (props: TCriterePreuvesProps) => {
-  const {preuves} = props;
+  const {preuves, demande} = props;
   if (!preuves.length) {
     return null;
   }
@@ -80,30 +79,13 @@ const LabellisationPreuves = (props: TCriterePreuvesProps) => {
   return (
     <div className="mt-2" data-test="LabellisationPreuves">
       {preuves.map(preuve => (
-        <PreuveFichierDetail key={`${preuve.id}`} {...props} preuve={preuve} />
+        <PreuveDoc
+          key={`${preuve.id}`}
+          preuve={preuve}
+          readonly={!demande?.en_cours}
+          classComment="pb-0 mb-2"
+        />
       ))}
     </div>
-  );
-};
-
-/**
- * Affiche un fichier et gère l'édition de
- * commentaire, la suppression et le téléchargement
- */
-const PreuveFichierDetail = ({
-  preuve,
-  demande,
-}: TCriterePreuvesProps & {
-  preuve: TPreuveLabellisation;
-}) => {
-  const handlers = useEditPreuve(preuve);
-
-  return (
-    <PreuveDoc
-      preuve={preuve}
-      readonly={!demande?.en_cours}
-      classComment="pb-0 mb-2"
-      handlers={handlers}
-    />
   );
 };

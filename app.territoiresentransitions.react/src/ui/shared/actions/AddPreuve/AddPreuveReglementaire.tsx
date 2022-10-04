@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {useState} from 'react';
 import Modal from 'ui/shared/floating-ui/Modal';
 import {AddPreuveModal} from 'ui/shared/preuves/AddPreuveModal';
@@ -20,6 +21,10 @@ export const AddPreuveReglementaire = (props: TAddPreuveButtonProps) => {
   const [opened, setOpened] = useState(false);
   const {preuve_id, isDisabled} = props;
   const handlers = useAddPreuveReglementaireToAction(preuve_id);
+  const currentCollectivite = useCurrentCollectivite();
+  if (!currentCollectivite || currentCollectivite.readonly) {
+    return null;
+  }
 
   return (
     <Modal

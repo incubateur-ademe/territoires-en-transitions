@@ -8,6 +8,7 @@ import {formatFileSize, getExtension} from 'utils/file';
 import {TPreuve, TEditHandlers} from './types';
 import {openPreuve} from './openPreuve';
 import {useEditPreuve} from './useEditPreuve';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
 export type TPreuveDocProps = {
   classComment?: string;
@@ -16,10 +17,21 @@ export type TPreuveDocProps = {
   handlers: TEditHandlers;
 };
 
-export const EditablePreuveDoc = (props: Omit<TPreuveDocProps, 'handlers'>) => {
+const PreuveDocConnected = (props: Omit<TPreuveDocProps, 'handlers'>) => {
   const handlers = useEditPreuve(props.preuve);
-  return <PreuveDoc {...props} handlers={handlers} />;
+  const currentCollectivite = useCurrentCollectivite();
+  return (
+    <PreuveDoc
+      {...props}
+      readonly={
+        !currentCollectivite || currentCollectivite.readonly || props.readonly
+      }
+      handlers={handlers}
+    />
+  );
 };
+
+export default PreuveDocConnected;
 
 /**
  * Affiche un document (nom de fichier ou titre lien) et gère l'édition de

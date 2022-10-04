@@ -1,7 +1,7 @@
 import {referentielToName} from 'app/labels';
 import {Fragment} from 'react';
 import {Referentiel} from 'types/litterals';
-import {EditablePreuveDoc} from 'ui/shared/preuves/Bibliotheque/PreuveDoc';
+import PreuveDoc from 'ui/shared/preuves/Bibliotheque/PreuveDoc';
 import {TPreuveLabellisation} from 'ui/shared/preuves/Bibliotheque/types';
 import {numLabels} from '../ParcoursLabellisation/numLabels';
 
@@ -35,7 +35,7 @@ export const PreuvesLabellisation = ({
                       étoile {en_cours ? '(en cours)' : ''}
                     </h3>
                     {preuvesEtoile.map(preuve => (
-                      <EditablePreuveDoc
+                      <PreuveDoc
                         key={preuve.id}
                         preuve={preuve}
                         readonly={!preuve.demande?.en_cours}
