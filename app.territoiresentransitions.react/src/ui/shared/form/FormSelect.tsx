@@ -3,13 +3,14 @@ import {Field, FieldAttributes, FieldProps} from 'formik';
 
 type HTMLSelectOption = string | number | readonly string[] | undefined;
 
-type SelectOption<T> = {
+export type SelectOption<T> = {
   value: T;
   label: string;
 };
 
 type FormSelectProps<T> = {
   label: string;
+  hint?: string;
   disabled?: boolean;
   options: SelectOption<T>[];
 };
@@ -45,6 +46,7 @@ const SelectField = ({
     >
       <label className="fr-label" htmlFor={props.label}>
         {props.label}
+        {props.hint && <span className="fr-hint-text">{props.hint}</span>}
       </label>
       <select
         className={classNames('fr-select', {

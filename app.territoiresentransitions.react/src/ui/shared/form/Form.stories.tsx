@@ -53,6 +53,7 @@ export const Defaut = () => (
         disabled
         name="selectDisabled"
         label="Select désactivé"
+        hint="Selecteur avec hint"
         options={selectOptions}
       />
     </Form>
