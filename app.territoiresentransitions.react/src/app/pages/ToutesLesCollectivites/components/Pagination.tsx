@@ -146,23 +146,27 @@ export const PageSelector = (props: {
   isSelected: boolean;
   onClick: () => void;
 }) => {
-  if (props.isSelected)
+  const {number, isSelected, onClick} = props;
+  if (isSelected)
     return (
       <button
         className="fr-pagination__link"
         aria-current="page"
-        title={`Page ${props}`}
+        title={`Page ${number}`}
       >
-        {props.number}
+        {number}
       </button>
     );
   return (
     <button
       className="fr-pagination__link"
-      title={`Page ${props}`}
-      onClick={props.onClick}
+      title={`Page ${number}`}
+      onClick={e => {
+        e.preventDefault();
+        onClick();
+      }}
     >
-      {props.number}
+      {number}
     </button>
   );
 };
