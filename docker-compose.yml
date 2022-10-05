@@ -151,7 +151,7 @@ services:
   # When this service is healthy, supabase has been loaded.
   supabase_loaded:
     container_name: tet-datalayer-loaded
-    image: postgres:14 # use postgres solely for its plsql client.
+    build: ./data_layer/loader/.
     healthcheck:
       test: sh /scripts/loaded_supabase.sh
       interval: 10s
@@ -190,11 +190,6 @@ services:
   loader:
     container_name: tet-datalayer-loader
     build: ./data_layer/loader/.
-    healthcheck:
-      test: sh /scripts/loaded_content.sh
-      interval: 30s
-      timeout: 5s
-      retries: 100
     depends_on:
       - sqitch
       - kong
@@ -220,7 +215,7 @@ services:
     build: ./data_layer/test_docker/.
     depends_on:
       loader:
-        condition: service_healthy
+        condition: service_completed_successfully
     profiles:
       - donotstart
     environment:
@@ -238,7 +233,7 @@ services:
     image: j4yf7o/restcli-node
     depends_on:
       loader:
-        condition: service_healthy
+        condition: service_completed_successfully
     profiles:
       - donotstart
     command: rest-cli requests/*.http -e docker
@@ -262,7 +257,7 @@ services:
     build: ./business/.
     depends_on:
       loader:
-        condition: service_healthy
+        condition: service_completed_successfully
       realtime:
         condition: service_started
     restart: unless-stopped
@@ -280,7 +275,7 @@ services:
       - donotstart
     depends_on:
       loader:
-        condition: service_healthy
+        condition: service_completed_successfully
     restart: unless-stopped
     command: >
       bash -c "pipenv run python business/referentiel/entrypoints/cli.py update-referentiels --referentiel eci
@@ -302,7 +297,7 @@ services:
       - donotstart
     depends_on:
       loader:
-        condition: service_healthy
+        condition: service_completed_successfully
       realtime:
         condition: service_started
     command: >
@@ -356,7 +351,7 @@ services:
     image: sqitch/sqitch
     depends_on:
       loader:
-        condition: service_healthy
+        condition: service_completed_successfully
     profiles:
       - donotstart
     environment:
