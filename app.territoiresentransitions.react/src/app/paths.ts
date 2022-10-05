@@ -12,6 +12,7 @@ export const invitationLandingPath = `${invitationPath}/:${invitationIdParam}`;
 export const profilPath = '/profil';
 export const monComptePath = `${profilPath}/mon-compte`;
 export const mesCollectivitesPath = `${profilPath}/mes-collectivites`;
+export const rejoindreUneCollectivitePath = `${profilPath}/rejoindre-une-collectivite`;
 
 export const allCollectivitesPath = '/toutes_collectivites';
 
