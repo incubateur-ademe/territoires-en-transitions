@@ -19,7 +19,7 @@ export type Option<T extends string> = {
   label: string;
 };
 
-type FormSelectProps<T extends string> = {
+type FormAutoCompleteInputProps<T extends string> = {
   label: string;
   hint?: string;
   disabled?: boolean;
@@ -42,7 +42,9 @@ type FormSelectProps<T extends string> = {
   inputDebounceDelay?: number;
 };
 
-type FormFieldProps<T extends string> = FieldAttributes<FormSelectProps<T>>;
+type FormFieldProps<T extends string> = FieldAttributes<
+  FormAutoCompleteInputProps<T>
+>;
 
 /**
  * Auto complete input à utiliser dans un formulaire Formik.
@@ -57,7 +59,7 @@ const AutoCompleteInputField = <T extends string>({
   field,
   form,
   ...props
-}: FormSelectProps<T> & FieldProps) => {
+}: FormAutoCompleteInputProps<T> & FieldProps) => {
   const errorMessage = (form.errors as Record<string, string | undefined>)[
     field.name
   ];
