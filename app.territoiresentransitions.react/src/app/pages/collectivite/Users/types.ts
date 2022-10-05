@@ -1,13 +1,7 @@
+import {MembreFonction} from 'generated/dataLayer/membres';
 import {Referentiel} from 'types/litterals';
 
 export type TNiveauAcces = 'admin' | 'edition' | 'lecture';
-
-export type TMembreFonction =
-  | 'referent'
-  | 'conseiller'
-  | 'technique'
-  | 'politique'
-  | 'partenaire';
 
 export interface Membre {
   email: string;
@@ -15,7 +9,7 @@ export interface Membre {
   nom?: string;
   prenom?: string;
   telephone?: string;
-  fonction?: TMembreFonction;
+  fonction?: MembreFonction;
   champ_intervention?: Referentiel[];
   details_fonction?: string;
   niveau_acces: TNiveauAcces;
@@ -24,7 +18,7 @@ export interface Membre {
 export type TUpdateMembreArgs = {
   membre_id: string;
 } & (
-  | {name: 'fonction'; value: TMembreFonction}
+  | {name: 'fonction'; value: MembreFonction}
   | {name: 'details_fonction'; value: string}
   | {name: 'champ_intervention'; value: Referentiel[]}
   | {name: 'niveau_acces'; value: TNiveauAcces}
