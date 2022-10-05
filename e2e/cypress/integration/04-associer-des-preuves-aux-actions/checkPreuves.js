@@ -10,7 +10,7 @@ export const makeCheckPreuveRows = (dataTable) => () => {
   cy.wrap(rows).each(checkPreuveRow);
 };
 
-export const checkPreuveRow = ([titre, commentaire], index) => {
+export const checkPreuveRow = ([titre, commentaire, readonly], index) => {
   cy.get(`[data-test=item]:nth(${index})`).within(() => {
     // vérifie le nom
     cy.get('[data-test=name]').should('contain.text', titre);
@@ -19,6 +19,16 @@ export const checkPreuveRow = ([titre, commentaire], index) => {
       cy.get('[data-test=comment]').should('have.text', commentaire);
     } else {
       cy.get('[data-test=comment]').should('not.exist');
+    }
+    if (readonly) {
+      // en lecture seule les boutons sont absents
+      cy.get('button').should('not.exist');
+    } else {
+      // sinon ils sont présents mais masqués (visibles au survol)
+      cy.get('button')
+        .should('have.length', 2) // on attends 2 boutons: Décrire et Supprimer
+        .should('be.hidden')
+        .should('be.enabled');
     }
   });
 };
