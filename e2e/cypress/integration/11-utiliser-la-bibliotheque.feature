@@ -54,6 +54,27 @@ Fonctionnalité: Utiliser la bibliothèque de documents de la collectivité
       | Titre                 | Commentaire |
       | doc labellisation.pdf |             |
 
+  # TODO: à déplacer dans un fichier `feature` distinct à propos de la page labellisation
+  Scénario: Ne pas pouvoir décrire/supprimer ou ajouter de document de labellisation
+    Etant donné que je suis connecté en tant que "yolo"
+    Et que les tables de preuves de la collectivité "1" sont vides
+    Et que la bibliothèque de la collectivité "1" est vide
+
+    Quand je suis sur la page "Labellisation CAE" de la collectivité "1"
+    Et que je clique sur le bouton "Ajouter un document de labellisation"
+    Et que je transfère à partir du "dialogue d'ajout d'une preuve" le fichier nommé "mon-doc.pdf" et contenant "contenu"
+    Et que je clique sur le bouton "Ajouter" du "formulaire Fichier"
+    Alors la liste des documents de la page Labellisation contient les lignes suivantes :
+      | Titre       | Commentaire | Lecture seule |
+      | mon-doc.pdf |             |               |
+
+    Quand je me reconnecte en tant que "yala"
+    Et que je suis sur la page "Labellisation CAE" de la collectivité "1"
+    Alors le bouton "Ajouter un document de labellisation" est absent
+    Et la liste des documents de la page Labellisation contient les lignes suivantes :
+      | Titre       | Commentaire | Lecture seule |
+      | mon-doc.pdf |             | oui           |
+
   Scénario: Associer une preuve complémentaire à une sous-action depuis la bibliothèque
     Etant donné que je suis connecté en tant que "yolo"
     Et que les tables de preuves de la collectivité "1" sont vides
