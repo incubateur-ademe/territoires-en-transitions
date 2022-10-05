@@ -1,7 +1,5 @@
 import {useMutation, useQueryClient} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {makeCollectiviteTableauBordUrl} from 'app/paths';
-import {useHistory} from 'react-router-dom';
 
 /**
  * Associe l'utilisateur courant à une collectivité.
@@ -12,24 +10,22 @@ import {useHistory} from 'react-router-dom';
  */
 export const useClaimCollectivite = () => {
   const queryClient = useQueryClient();
-  const history = useHistory();
   const {
     isLoading,
+    isSuccess,
+    reset,
     data: lastReply,
     mutate: claimCollectivite,
   } = useMutation(claim, {
-    onSuccess: async (success, collectivite_id) => {
+    onSuccess: async () => {
       await queryClient.invalidateQueries(['mes_collectivites']);
-      history.push(
-        makeCollectiviteTableauBordUrl({
-          collectiviteId: collectivite_id,
-        })
-      );
     },
   });
 
   return {
     isLoading,
+    isSuccess,
+    reset,
     claimCollectivite,
     lastReply: lastReply || null,
   };
