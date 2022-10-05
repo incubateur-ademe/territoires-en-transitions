@@ -4,7 +4,6 @@ import {pick} from 'ramda';
 import {MultiSelectDropdown, SelectDropdown} from 'ui/shared/SelectDropdown';
 import {
   Membre,
-  TMembreFonction,
   TNiveauAcces,
   TRemoveFromCollectivite,
   TUpdateMembre,
@@ -12,6 +11,7 @@ import {
 import {Referentiel} from 'types/litterals';
 import {referentielToName} from 'app/labels';
 import UpdateMemberAccesModal from 'app/pages/collectivite/Users/components/UpdateMembreAccesModal';
+import {MembreFonction} from 'generated/dataLayer/membres';
 
 export type TMembreListTableRowProps = {
   currentUserId: string;
@@ -21,7 +21,7 @@ export type TMembreListTableRowProps = {
   removeFromCollectivite: TRemoveFromCollectivite;
 };
 
-const membreFonctionLabels: Record<TMembreFonction, string> = {
+const membreFonctionLabels: Record<MembreFonction, string> = {
   referent: 'Référent·e',
   technique: 'Équipe technique',
   politique: 'Équipe politique',
@@ -246,8 +246,8 @@ const FonctionDropdown = ({
   value,
   onChange,
 }: {
-  value?: TMembreFonction;
-  onChange: (value: TMembreFonction) => void;
+  value?: MembreFonction;
+  onChange: (value: MembreFonction) => void;
 }) => (
   <div data-test="fonction-dropdown">
     <SelectDropdown
