@@ -7,12 +7,9 @@
 import { Selectors } from './selectors';
 import { Expectations } from './expectations';
 
-beforeEach(() => {
+beforeEach(function () {
   cy.visit('/');
-  // on attends que l'appli expose un objet `e2e` permettant de la contrôler
-  cy.window({ log: false }).its('e2e.history').as('history');
-  cy.window({ log: false }).its('e2e.auth').as('auth');
-  cy.window({ log: false }).its('e2e.supabaseClient').as('supabaseClient');
+  waitForApp();
 
   // bouchon pour la fonction window.open
   const stub = cy.stub().as('open');
@@ -21,27 +18,42 @@ beforeEach(() => {
   });
 });
 
+// attends que l'appli expose un objet `e2e` permettant de la contrôler, il est
+// nécessaire de rappeler cette fonction si on veut que la promesse
+// `cy.get('@auth')` soit bien résolue une 2ème fois dans le même scénario
+// (utilisée avec le step "je me reconnecte en tant que ...")
+function waitForApp() {
+  cy.window({ log: false }).its('e2e.history').as('history');
+  cy.window({ log: false }).its('e2e.auth').as('auth');
+  cy.window({ log: false }).its('e2e.supabaseClient').as('supabaseClient');
+}
+
 Given("j'ouvre le site", () => {
   cy.get('[data-test=home]').should('be.visible');
 });
 
-const Users = {
-  yolo: {
-    email: 'yolo@dodo.com',
-    password: 'yolododo',
-  },
-  yulu: {
-    email: 'yulu@dudu.com',
-    password: 'yulududu',
-  },
+const genUser = (userName) => {
+  const letter = userName.slice(1, 2);
+  const dd = `d${letter}d${letter}`;
+  return {
+    email: `${userName}@${dd}.com`,
+    password: `${userName}${dd}`,
+  };
 };
+
 const SignInPage = Selectors['formulaire de connexion'];
-Given(/je suis connecté en tant que "([^"]*)"/, function (userName) {
-  const u = Users[userName];
-  assert(u, 'utilisateur non trouvé');
+Given(/je suis connecté en tant que "([^"]*)"/, login);
+function login(userName) {
+  const u = genUser(userName);
   cy.get('@auth').then((auth) => auth.connect(u));
   cy.get(SignInPage.selector).should('not.exist');
   cy.get('[data-test=connectedMenu]').should('be.visible');
+}
+
+Given('je me reconnecte en tant que {string}', function (userName) {
+  logout();
+  waitForApp();
+  login(userName);
 });
 
 Given('les droits utilisateur sont réinitialisés', () => {
@@ -59,10 +71,11 @@ Given('les informations des membres sont réinitialisées', () => {
   cy.task('supabase_rpc', { name: 'test_reset_membres' });
 });
 
-Given('je me déconnecte', () => {
+Given('je me déconnecte', logout);
+function logout() {
   cy.get('[data-test=connectedMenu]').click();
   cy.get('[data-test=logoutBtn]').click();
-});
+}
 
 // Met en pause le déroulement d'un scénario.
 // Associé avec le tag @focus cela permet de debugger facilement les tests.
@@ -121,6 +134,7 @@ Given(
   /^le bouton "([^"]*)" du "([^"]*)" est ([^"]*)$/,
   childrenVerifyExpectation
 );
+
 function verifyExpectation(elem, expectation) {
   checkExpectation(resolveSelector(this, elem).selector, expectation);
 }
