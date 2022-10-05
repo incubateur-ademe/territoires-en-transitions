@@ -198,6 +198,7 @@ services:
     depends_on:
       - sqitch
       - kong
+      - rest
     command: sh /scripts/try_load.sh
     environment:
       SKIP_TEST_DOMAIN: ${LOADER_SKIP_TEST_DOMAIN}
@@ -236,8 +237,8 @@ services:
     container_name: tet-datalayer-api-test
     image: j4yf7o/restcli-node
     depends_on:
-      - kong
-      - rest
+      loader:
+        condition: service_healthy
     profiles:
       - donotstart
     command: rest-cli requests/*.http -e docker
@@ -248,9 +249,6 @@ services:
   rest:
     container_name: supabase-rest
     image: postgrest/postgrest:v9.0.1
-    depends_on:
-      loader:
-        condition: service_healthy
     restart: unless-stopped
     environment:
       PGRST_DB_URI: postgres://postgres:${POSTGRES_PASSWORD}@db:5432/postgres
@@ -263,9 +261,10 @@ services:
     container_name: tet-business
     build: ./business/.
     depends_on:
-      - kong
-      - rest
-      - realtime
+      loader:
+        condition: service_healthy
+      realtime:
+        condition: service_started
     restart: unless-stopped
     command: >
       bash -c "pipenv run python -u business/evaluation/entrypoints/start_realtime.py"
@@ -280,8 +279,8 @@ services:
     profiles:
       - donotstart
     depends_on:
-      - kong
-      - rest
+      loader:
+        condition: service_healthy
     restart: unless-stopped
     command: >
       bash -c "pipenv run python business/referentiel/entrypoints/cli.py update-referentiels --referentiel eci
@@ -302,9 +301,10 @@ services:
     profiles:
       - donotstart
     depends_on:
-      - kong
-      - rest
-      - realtime
+      loader:
+        condition: service_healthy
+      realtime:
+        condition: service_started
     command: >
       bash -c "pipenv run pytest tests"
     environment:
