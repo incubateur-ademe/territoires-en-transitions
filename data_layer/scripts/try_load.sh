@@ -51,5 +51,5 @@ fi
 echo "Loading content with curl..."
 sh /scripts/load_json_content.sh || exit 1
 
-echo "Done loading."
-sleep infinity
+echo "Done!"
+exit 0
