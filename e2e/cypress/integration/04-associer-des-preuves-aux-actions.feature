@@ -228,44 +228,39 @@ Fonctionnalité: Associer des preuves aux actions
 
     Etant donné que je suis connecté en tant que "yolo"
     Et que les tables de preuves de la collectivité "1" sont vides
-    Et que je visite le sous-axe "1.1.1" du référentiel "cae" de la collectivité "1"
-    Et que le bouton "Ajouter une preuve" à l'action "1.1.1.3" est absent
+    Et que la bibliothèque de la collectivité "1" est vide
+    Et que je visite le sous-axe "1.3.2" du référentiel "cae" de la collectivité "1"
+    Et que le bouton "Ajouter une preuve" à l'action "1.3.2.3" est absent
 
-    Quand je déplie le panneau Preuves de l'action "1.1.1.3"
-    Alors le bouton "Ajouter une preuve" à l'action "1.1.1.3" est visible
-    Et la liste des preuves complémentaires de la sous-action "1.1.1.3" est vide
-    Et la liste des preuves attendues de la sous-action "1.1.1.3" contient les lignes suivantes :
-      | nom                                                       | preuves |
-      | Agenda 21 / Agenda 2030                                   |         |
-      | Délibération d'engagement dans la Convention des Maires   |         |
-      | Rapport Développement Durable                             |         |
-      | Rapports diagnostic, stratégie et plan d'actions du PCAET |         |
+    Quand je déplie le panneau Preuves de l'action "1.3.2.3"
+    Alors le bouton "Ajouter une preuve" à l'action "1.3.2.3" est visible
+    Et la liste des preuves complémentaires de la sous-action "1.3.2.3" est vide
+    Et la liste des preuves attendues de la sous-action "1.3.2.3" contient les lignes suivantes :
+      | nom                                                                                                                             | preuves |
+      | Cahier des charges ou règlement de consultation rédigé par la collectivité pour des projets d’urbanisme ou de bâtiments publics |         |
+      | Convention de partenariat avec des organismes certificateurs du bâtiment                                                        |         |
 
     # on ajoute un lien
-    Quand je clique sur le 1er bouton "Ajouter une preuve réglementaire" à l'action "1.1.1.3"
+    Quand je clique sur le 1er bouton "Ajouter une preuve réglementaire" à l'action "1.3.2.3"
     Et que je remplis le "formulaire Lien" avec les valeurs suivantes :
       | Champ | Valeur           |
       | titre | Exemple          |
       | lien  | https://ademe.fr |
     Et que je clique sur le bouton "Ajouter" du "formulaire Lien"
-    Alors la liste des preuves attendues de la sous-action "1.1.1.3" contient les lignes suivantes :
-      | nom                                                       | preuves |
-      | Agenda 21 / Agenda 2030                                   | Exemple |
-      | Délibération d'engagement dans la Convention des Maires   |         |
-      | Rapport Développement Durable                             |         |
-      | Rapports diagnostic, stratégie et plan d'actions du PCAET |         |
+    Alors la liste des preuves attendues de la sous-action "1.3.2.3" contient les lignes suivantes :
+      | nom                                                                                                                             | preuves |
+      | Cahier des charges ou règlement de consultation rédigé par la collectivité pour des projets d’urbanisme ou de bâtiments publics | Exemple |
+      | Convention de partenariat avec des organismes certificateurs du bâtiment                                                        |         |
 
     # et un fichier
-    Quand je clique sur le 1er bouton "Ajouter une preuve réglementaire" à l'action "1.1.1.3"
+    Quand je clique sur le 1er bouton "Ajouter une preuve réglementaire" à l'action "1.3.2.3"
     Et que je clique sur l'onglet "Fichier" du "dialogue d'ajout d'une preuve"
     Et que je transfère à partir du "dialogue d'ajout d'une preuve" le fichier nommé "fichier.xls" et contenant "contenu du fichier"
     Et que je clique sur le bouton "Ajouter" du "formulaire Fichier"
-    Alors la liste des preuves attendues de la sous-action "1.1.1.3" contient les lignes suivantes :
-      | nom                                                       | preuves             |
-      | Agenda 21 / Agenda 2030                                   | Exemple,fichier.xls |
-      | Délibération d'engagement dans la Convention des Maires   |                     |
-      | Rapport Développement Durable                             |                     |
-      | Rapports diagnostic, stratégie et plan d'actions du PCAET |                     |
+    Alors la liste des preuves attendues de la sous-action "1.3.2.3" contient les lignes suivantes :
+      | nom                                                                                                                             | preuves             |
+      | Cahier des charges ou règlement de consultation rédigé par la collectivité pour des projets d’urbanisme ou de bâtiments publics | Exemple,fichier.xls |
+      | Convention de partenariat avec des organismes certificateurs du bâtiment                                                        |                     |
 
   Scénario: Visualiser toutes les preuves associées à une action et ses sous-actions (1/2)
     On sépare ce test en 2 scénarios car, pour une raison non élucidée, les étapes
@@ -276,11 +271,14 @@ Fonctionnalité: Associer des preuves aux actions
     # scénario 1 : on vérifie l'affichage de l'onglet lorsqu'il n'y a pas de donnée
     Etant donné que je suis connecté en tant que "yolo"
     Et que les tables de preuves de la collectivité "1" sont vides
+    Et que la bibliothèque de la collectivité "1" est vide
 
-    Quand je visite l'onglet "preuves" de l'action "1.1.3" du référentiel "cae" de la collectivité "1"
+    Quand je visite l'onglet "preuves" de l'action "2.3.1" du référentiel "cae" de la collectivité "1"
     Alors la liste des preuves attendues de l'action contient les lignes suivantes :
       | nom                                             | preuves |
-      | Etude de vulnérabilité au changement climatique |         |
+      | Cahier des prescriptions éclairage public       |         |
+      | Politique éclairage, Plan d’aménagement lumière |         |
+      | Calcul ratio éclairage public                   |         |
     Et la liste des preuves complémentaires de l'action est vide
 
   Scénario: Visualiser toutes les preuves associées à une action et ses sous-actions (2/2)
@@ -288,16 +286,18 @@ Fonctionnalité: Associer des preuves aux actions
     Etant donné que je suis connecté en tant que "yolo"
     Et que les tables de preuves de la collectivité "1" sont vides
     Et que la table des preuves réglementaires est initialisée avec les données suivantes :
-      | collectivite_id | preuve_id           | titre     | url            | commentaire |
-      | 1               | etude_vulnerabilite | Exemple 1 | https://ex1.fr | ex1         |
+      | collectivite_id | preuve_id | titre     | url            | commentaire |
+      | 1               | ratio_EP  | Exemple 1 | https://ex1.fr | ex1         |
     Et que la table des preuves complémentaires est initialisée avec les données suivantes :
       | collectivite_id | action_id   | titre     | url            | commentaire |
-      | 1               | cae_1.1.3.2 | Exemple 2 | https://ex2.fr | ex2         |
+      | 1               | cae_2.3.1.4 | Exemple 2 | https://ex2.fr | ex2         |
 
-    Quand je visite l'onglet "preuves" de l'action "1.1.3" du référentiel "cae" de la collectivité "1"
+    Quand je visite l'onglet "preuves" de l'action "2.3.1" du référentiel "cae" de la collectivité "1"
     Alors la liste des preuves attendues de l'action contient les lignes suivantes :
       | nom                                             | preuves   |
-      | Etude de vulnérabilité au changement climatique | Exemple 1 |
+      | Cahier des prescriptions éclairage public       |           |
+      | Politique éclairage, Plan d’aménagement lumière |           |
+      | Calcul ratio éclairage public                   | Exemple 1 |
     Et la liste des preuves complémentaires de l'action contient les lignes suivantes :
       | Titre     | Commentaire |
       | Exemple 2 | ex2         |
