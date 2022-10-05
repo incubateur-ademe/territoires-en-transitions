@@ -1,6 +1,6 @@
+import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useQuery} from 'react-query';
-import {subActionLevel} from 'types/litterals';
 import {TActionDef} from 'ui/shared/preuves/Bibliotheque/usePreuves';
 
 type TFetchedData = {
@@ -38,11 +38,11 @@ const fetch = async (action: TActionDef): Promise<TFetchedData[]> => {
 
   // la requête
   const query = supabaseClient
-    .from('action_definition_summary')
+    .from<ActionDefinitionSummary>('action_definition_summary')
     .select('id,identifiant,nom')
     .ilike('identifiant', `${identifiant}%`)
     .eq('referentiel', referentiel)
-    .eq('depth', subActionLevel[referentiel]);
+    .eq('type', 'sous-action');
 
   // attends les données
   const {error, data} = await query;
