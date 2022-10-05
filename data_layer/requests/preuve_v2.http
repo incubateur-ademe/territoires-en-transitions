@@ -18,18 +18,6 @@ Content-Type: application/json
 %}
 
 ### # Supabase API
-### Create a bucket as service user.
-POST {{api}}/storage/v1/bucket
-apikey: {{service}}
-Authorization: Bearer {{service}}
-Content-Type: application/json
-
-{
-  "id": "1",
-  "name": "preuves de la collectivité x",
-  "public": true
-}
-
 ### List files using supabase API (does not work well with files with slashes)
 POST {{api}}/storage/v1/object/list/{{bucket_id}}
 apikey: {{anon}}
@@ -45,6 +33,14 @@ Content-Type: application/json
     "order": "asc"
   }
 }
+
+
+### # Test function
+POST {{api}}/rest/v1/rpc/test_reset_preuves
+apikey: {{service}}
+Authorization: Bearer {{service}}
+Content-Type: application/json
+
 
 ### # A. Upload scenario
 ### A. Retrieve bucket id for collectivite 1
@@ -114,7 +110,7 @@ Content-Type: application/json
 
 > {%
     client.test("Upsert executed successfully", function() {
-        client.assert(response.status === 200, "Response status is not 200");
+        client.assert(response.status === 201, "Response status is not 201");
     });
 %}
 
