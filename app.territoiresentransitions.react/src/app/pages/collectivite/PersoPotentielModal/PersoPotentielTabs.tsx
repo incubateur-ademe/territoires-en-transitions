@@ -18,7 +18,7 @@ export const PersoPotentielTabs = (props: TPersoPotentielTabsProps) => {
     <Tabs defaultActiveTab={defaultActiveTab}>
       <Tab
         label="&nbsp;Personnalisation du potentiel"
-        icon="fr-fi-settings-line"
+        icon="fr-fi-settings-line flex"
       >
         <PersoPotentielQR {...other} />
       </Tab>

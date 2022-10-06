@@ -22,9 +22,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         tabIndex={-1}
         type="button"
       >
-        <i
-          className="fr-fi-settings-line"
-        />
+        <span>
+          <span
+            className="ri-sm icon-left ds-fr--v-middle fr-fi-settings-line flex"
+          />
+        </span>
          Personnalisation du potentiel
       </button>
     </li>
@@ -42,9 +44,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         tabIndex={0}
         type="button"
       >
-        <i
-          className="fr-fi-information-line"
-        />
+        <span>
+          <span
+            className="ri-sm icon-left ds-fr--v-middle fr-fi-information-line"
+          />
+        </span>
          Règles applicables
       </button>
     </li>
@@ -367,9 +371,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         tabIndex={0}
         type="button"
       >
-        <i
-          className="fr-fi-settings-line"
-        />
+        <span>
+          <span
+            className="ri-sm icon-left ds-fr--v-middle fr-fi-settings-line flex"
+          />
+        </span>
          Personnalisation du potentiel
       </button>
     </li>
@@ -387,9 +393,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         tabIndex={-1}
         type="button"
       >
-        <i
-          className="fr-fi-information-line"
-        />
+        <span>
+          <span
+            className="ri-sm icon-left ds-fr--v-middle fr-fi-information-line"
+          />
+        </span>
          Règles applicables
       </button>
     </li>
@@ -712,9 +720,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         tabIndex={0}
         type="button"
       >
-        <i
-          className="fr-fi-settings-line"
-        />
+        <span>
+          <span
+            className="ri-sm icon-left ds-fr--v-middle fr-fi-settings-line flex"
+          />
+        </span>
          Personnalisation du potentiel
       </button>
     </li>
@@ -732,9 +742,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         tabIndex={-1}
         type="button"
       >
-        <i
-          className="fr-fi-information-line"
-        />
+        <span>
+          <span
+            className="ri-sm icon-left ds-fr--v-middle fr-fi-information-line"
+          />
+        </span>
          Règles applicables
       </button>
     </li>
@@ -894,9 +906,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         tabIndex={0}
         type="button"
       >
-        <i
-          className="fr-fi-settings-line"
-        />
+        <span>
+          <span
+            className="ri-sm icon-left ds-fr--v-middle fr-fi-settings-line flex"
+          />
+        </span>
          Personnalisation du potentiel
       </button>
     </li>
@@ -914,9 +928,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         tabIndex={-1}
         type="button"
       >
-        <i
-          className="fr-fi-information-line"
-        />
+        <span>
+          <span
+            className="ri-sm icon-left ds-fr--v-middle fr-fi-information-line"
+          />
+        </span>
          Règles applicables
       </button>
     </li>
@@ -1064,9 +1080,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         tabIndex={0}
         type="button"
       >
-        <i
-          className="fr-fi-settings-line"
-        />
+        <span>
+          <span
+            className="ri-sm icon-left ds-fr--v-middle fr-fi-settings-line flex"
+          />
+        </span>
          Personnalisation du potentiel
       </button>
     </li>
@@ -1084,9 +1102,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         tabIndex={-1}
         type="button"
       >
-        <i
-          className="fr-fi-information-line"
-        />
+        <span>
+          <span
+            className="ri-sm icon-left ds-fr--v-middle fr-fi-information-line"
+          />
+        </span>
          Règles applicables
       </button>
     </li>
@@ -1292,9 +1312,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         tabIndex={0}
         type="button"
       >
-        <i
-          className="fr-fi-settings-line"
-        />
+        <span>
+          <span
+            className="ri-sm icon-left ds-fr--v-middle fr-fi-settings-line flex"
+          />
+        </span>
          Personnalisation du potentiel
       </button>
     </li>
@@ -1312,9 +1334,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         tabIndex={-1}
         type="button"
       >
-        <i
-          className="fr-fi-information-line"
-        />
+        <span>
+          <span
+            className="ri-sm icon-left ds-fr--v-middle fr-fi-information-line"
+          />
+        </span>
          Règles applicables
       </button>
     </li>
@@ -1490,9 +1514,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         tabIndex={0}
         type="button"
       >
-        <i
-          className="fr-fi-settings-line"
-        />
+        <span>
+          <span
+            className="ri-sm icon-left ds-fr--v-middle fr-fi-settings-line flex"
+          />
+        </span>
          Personnalisation du potentiel
       </button>
     </li>
@@ -1510,9 +1536,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         tabIndex={-1}
         type="button"
       >
-        <i
-          className="fr-fi-information-line"
-        />
+        <span>
+          <span
+            className="ri-sm icon-left ds-fr--v-middle fr-fi-information-line"
+          />
+        </span>
          Règles applicables
       </button>
     </li>
@@ -1685,9 +1713,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         tabIndex={0}
         type="button"
       >
-        <i
-          className="fr-fi-settings-line"
-        />
+        <span>
+          <span
+            className="ri-sm icon-left ds-fr--v-middle fr-fi-settings-line flex"
+          />
+        </span>
          Personnalisation du potentiel
       </button>
     </li>
@@ -1705,9 +1735,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         tabIndex={-1}
         type="button"
       >
-        <i
-          className="fr-fi-information-line"
-        />
+        <span>
+          <span
+            className="ri-sm icon-left ds-fr--v-middle fr-fi-information-line"
+          />
+        </span>
          Règles applicables
       </button>
     </li>
