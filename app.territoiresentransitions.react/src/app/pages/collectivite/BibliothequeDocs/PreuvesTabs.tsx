@@ -11,11 +11,15 @@ import {PreuvesTable} from './PreuvesTable';
 
 const REFERENTIELS: Referentiel[] = ['cae', 'eci'];
 
+const PreuvesTab = (props: { referentielId: Referentiel }) => {
+  const tableData = useTableData(props.referentielId);
+  return <PreuvesTable tableData={tableData} referentielId={props.referentielId} />
+};
+
 export const PreuvesTabs = () => {
   return (
     <Tabs>
       {REFERENTIELS.map(referentielId => {
-        const tableData = useTableData(referentielId);
         return (
           <Tab
             key={referentielId}
@@ -24,7 +28,7 @@ export const PreuvesTabs = () => {
               referentielToName[referentielId as Referentiel]
             }`}
           >
-            <PreuvesTable tableData={tableData} referentielId={referentielId} />
+            <PreuvesTab referentielId={referentielId} />
           </Tab>
         );
       })}
