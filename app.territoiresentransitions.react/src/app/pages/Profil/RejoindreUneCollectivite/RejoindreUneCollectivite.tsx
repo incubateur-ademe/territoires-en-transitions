@@ -112,7 +112,7 @@ export const RejoindreUneCollectivite = ({
   };
 
   return (
-    <div data-test="RejoindreCollectivite">
+    <div data-test="RejoindreUneCollectivite">
       <h1 className="!mb-8 md:!mb-14">Rejoindre une collectivité</h1>
       <div className="p-4 md:p-14 lg:px-24 bg-gray-100">
         <Formik
@@ -121,11 +121,12 @@ export const RejoindreUneCollectivite = ({
           onSubmit={handleFormSubmit}
         >
           {({isSubmitting, submitForm, setFieldValue, resetForm}) => (
-            <>
+            <div data-test="formulaire-RejoindreUneCollectivite">
               {!isClaimSuccess ? (
                 <>
                   <Form>
                     <FormSelect
+                      data-test="SelectFonction"
                       name="fonction"
                       label="Fonction principale"
                       hint="Quel est votre rôle au sein ou auprès de la collectivité ?"
@@ -167,7 +168,7 @@ export const RejoindreUneCollectivite = ({
                   />
                 )
               )}
-            </>
+            </div>
           )}
         </Formik>
       </div>
