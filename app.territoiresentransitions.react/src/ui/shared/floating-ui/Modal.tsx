@@ -36,7 +36,7 @@ export type ModalProps = {
 /*
  * Basic modal
  * floating-ui doc: https://floating-ui.com/docs/react-dom-interactions
- * if you provide an externalOpen boolean, don't forget to add the corresponding setState function
+ * If you provide externalOpen you must add the corresponding setState function.
  */
 const Modal = ({
   render,
@@ -54,13 +54,14 @@ const Modal = ({
   });
 
   const id = useId();
+  const dismiss = useDismiss(context);
   const labelId = `${id}-label`;
   const descriptionId = `${id}-description`;
 
   const {getReferenceProps, getFloatingProps} = useInteractions([
     useClick(context),
     useRole(context),
-    disableDismiss ? undefined : useDismiss(context),
+    disableDismiss ? undefined : dismiss,
   ]);
 
   const mobileClassnames = 'absolute inset-x-0 bottom-0 mt-8 max-h-full';
@@ -96,9 +97,9 @@ const Modal = ({
                   className: classNames(
                     `${mobileClassnames} ${aboveMobileClassnames} flex flex-col w-full p-4 md:px-8 bg-white overflow-y-auto`,
                     {
-                      ['max-w-sm']: size === 'sm',
-                      ['max-w-xl']: size === 'md',
-                      ['max-w-4xl']: size === 'lg',
+                      'max-w-sm': size === 'sm',
+                      'max-w-xl': size === 'md',
+                      'max-w-4xl': size === 'lg',
                     }
                   ),
                   'aria-labelledby': labelId,
