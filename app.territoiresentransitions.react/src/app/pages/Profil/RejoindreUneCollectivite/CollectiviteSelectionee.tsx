@@ -26,6 +26,7 @@ const CollectiviteSelectionee = ({
           description="Vous pourrez configurer les paramètres et éditer l’ensemble du contenu de cette collectivité."
         />
         <button
+          data-test="BtnActiverCollectivite"
           type="button"
           onClick={submitForm}
           className="fr-btn mt-6"

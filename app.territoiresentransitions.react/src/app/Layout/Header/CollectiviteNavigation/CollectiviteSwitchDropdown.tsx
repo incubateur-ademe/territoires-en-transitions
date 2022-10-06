@@ -38,7 +38,10 @@ const CollectiviteSwitchDropdown = ({
   return (
     <>
       {collectiviteList.length === 0 ? (
-        <div className="flex ml-auto pl-2 w-full max-w-sm">
+        <div
+          data-test="CollectiviteSwitchDropdown"
+          className="flex ml-auto pl-2 w-full max-w-sm"
+        >
           <div className="flex items-center w-full mt-auto mb-2 py-2 px-4 font-bold border border-gray-300">
             <span className="mr-auto line-clamp-1 border border-transparent">
               {currentCollectivite.nom}
@@ -102,7 +105,12 @@ const CollectiviteSwitchDropdownDisplay = forwardRef(
     },
     ref?: Ref<HTMLDivElement>
   ) => (
-    <div ref={ref} className="flex ml-auto pl-2 w-full max-w-sm" {...props}>
+    <div
+      data-test="CollectiviteSwitchDropdown"
+      ref={ref}
+      className="flex ml-auto pl-2 w-full max-w-sm"
+      {...props}
+    >
       <div className="w-full mt-auto mb-2 border border-gray-300">
         <button className="flex items-center w-full py-2 pl-4 pr-3 font-bold">
           <span className="mr-auto line-clamp-1">{menuLabel}</span>

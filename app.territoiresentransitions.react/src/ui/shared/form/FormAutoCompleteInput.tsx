@@ -102,7 +102,7 @@ const AutoCompleteInputField = <T extends string>({
         ['fr-select-group--disabled']: props.disabled,
       })}
     >
-      <label className="fr-label" htmlFor={props.label}>
+      <label className="fr-label" htmlFor={field.name}>
         {props.label}
         {props.hint && <span className="fr-hint-text">{props.hint}</span>}
       </label>
@@ -130,6 +130,7 @@ const AutoCompleteInputField = <T extends string>({
             <input
               type="text"
               onKeyDown={preventSubmit}
+              name={field.name}
               {...params.inputProps}
               className={classNames('fr-input', {
                 ['fr-input--error']: isError,

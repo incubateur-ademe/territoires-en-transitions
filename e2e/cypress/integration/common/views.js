@@ -1,5 +1,5 @@
 export const Views = {
-  defaultRoute: "/",
+  defaultRoute: '/',
   home: {
     selector: '[data-test=home]',
   },
@@ -7,9 +7,13 @@ export const Views = {
     route: '/toutes_collectivites',
     selector: '[data-test=ToutesLesCollectivites]',
   },
-  "Mon compte": {
-    route: "/profil/mon-compte",
-    selector: "[data-test=MonCompte]",
+  'Mon compte': {
+    route: '/profil/mon-compte',
+    selector: '[data-test=MonCompte]',
+  },
+  'Rejoindre une collectivité': {
+    route: 'profil/rejoindre-une-collectivite',
+    selector: '[data-test=RejoindreUneCollectivite]',
   },
 };
 
