@@ -1,4 +1,3 @@
-import {ReactNode} from 'react';
 import {useMutation} from 'react-query';
 import {reponseWriteEndpoint} from 'core-logic/api/endpoints/ReponseWriteEndpoint';
 import {TChangeReponse} from 'generated/dataLayer/reponse_write';

@@ -55,21 +55,10 @@ export const PreuveDoc = ({
     setUpdatedComment,
   } = handlers;
 
-  const picto = preuvePicto(preuve);
-
   return (
     <div data-test="item">
       <div className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0 cursor-pointer">
-        <a
-          data-test="name"
-          href="#"
-          className={classNames('fr-text--sm fr-mb-1v', picto, {
-            'fr-link--icon-left': Boolean(picto),
-          })}
-          onClick={() => openPreuve(preuve)}
-        >
-          {formatTitle(preuve)}
-        </a>
+        <PreuveTitle preuve={preuve} />
         {!readonly ? (
           <div className="invisible group-hover:visible">
             <ButtonComment
@@ -139,6 +128,29 @@ const preuvePicto = (preuve: TPreuve) => {
     return 'fr-fi-links-fill';
   }
   return null;
+};
+
+// affiche le titre d'une preuve sous forme de lien
+const PreuveTitle = ({preuve}: {preuve: TPreuve}) => {
+  const picto = preuvePicto(preuve);
+
+  // désactive un avertissement de lint à propos de l'attribut `href` non
+  // valide, car si on met un <button> à la place comme c'est recommandé et même
+  // avec le style `fr-link` les styles rendus ne sont pas bons (bouton arrondi
+  // au survol et souligné absent)
+  /* eslint-disable jsx-a11y/anchor-is-valid */
+  return (
+    <a
+      data-test="name"
+      href="#"
+      className={classNames('fr-text--sm fr-mb-1v', picto, {
+        'fr-link--icon-left': Boolean(picto),
+      })}
+      onClick={() => openPreuve(preuve)}
+    >
+      {formatTitle(preuve)}
+    </a>
+  );
 };
 
 // formate le titre en fonction du type (fichier ou lien)

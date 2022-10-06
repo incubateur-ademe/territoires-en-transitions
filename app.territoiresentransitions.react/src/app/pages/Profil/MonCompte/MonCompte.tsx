@@ -107,8 +107,10 @@ export const MonCompte = ({user}: {user: UserData}) => {
   );
 };
 
-export default () => {
+const MonCompteConnected = () => {
   const {user} = useAuth();
 
   return user && <MonCompte user={user} />;
 };
+
+export default MonCompteConnected;
