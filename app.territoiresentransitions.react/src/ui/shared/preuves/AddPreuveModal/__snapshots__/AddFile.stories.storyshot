@@ -54,7 +54,7 @@ exports[`Storyshots ui/shared/preuves/AddPreuveModal/AddFile Exemple 1 1`] = `
               className="flex w-11/12"
             >
               <div
-                className="text-sm whitespace-nowrap overflow-ellipsis overflow-hidden"
+                className="text-sm whitespace-nowrap text-ellipsis overflow-hidden"
                 data-test="name"
               >
                 Rapport d’activités 2019-2020 et rapport DD 2020 nom vraiment trop long.doc
@@ -92,7 +92,7 @@ exports[`Storyshots ui/shared/preuves/AddPreuveModal/AddFile Exemple 1 1`] = `
               className="flex w-11/12"
             >
               <div
-                className="text-sm whitespace-nowrap overflow-ellipsis overflow-hidden"
+                className="text-sm whitespace-nowrap text-ellipsis overflow-hidden"
                 data-test="name"
               >
                 Logo-comcom.SVG
@@ -130,7 +130,7 @@ exports[`Storyshots ui/shared/preuves/AddPreuveModal/AddFile Exemple 1 1`] = `
               className="flex w-11/12"
             >
               <div
-                className="text-sm whitespace-nowrap overflow-ellipsis overflow-hidden"
+                className="text-sm whitespace-nowrap text-ellipsis overflow-hidden"
                 data-test="name"
               >
                 mauvais format et taille.exe
