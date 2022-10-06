@@ -19,7 +19,7 @@ export type TActionPreuvePanelProps = {
 /**
  * Affiche le panneau "preuves" d'une action
  */
-export default (props: TActionPreuvePanelProps) => {
+const ActionPreuvePanel = (props: TActionPreuvePanelProps) => {
   const {action, withSubActions, showWarning, noIdentifiant} = props;
   const {reglementaire, complementaire} = usePreuvesParType({
     action,
@@ -37,3 +37,5 @@ export default (props: TActionPreuvePanelProps) => {
     />
   );
 };
+
+export default ActionPreuvePanel;

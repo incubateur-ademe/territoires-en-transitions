@@ -69,7 +69,7 @@ const HeaderNavigationProfileDropdownButtonDisplayed = forwardRef(
         <span className="line-clamp-1">{user.prenom}</span>
         <div
           className={classNames('fr-fi-arrow-down-s-line ml-2 scale-90', {
-            ['rotate-180']: isOpen,
+            'rotate-180': isOpen,
           })}
         />
       </button>
