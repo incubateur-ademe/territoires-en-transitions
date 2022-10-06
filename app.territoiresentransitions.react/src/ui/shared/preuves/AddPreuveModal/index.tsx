@@ -35,7 +35,7 @@ export const AddPreuveModal = (props: TAddPreuveModalProps) => {
       <Tab label="&nbsp;Fichier" icon="fr-fi-upload-2-fill">
         <AddFile {...props} onAddFileFromLib={addFileFromLib} />
       </Tab>
-      <Tab label="&nbsp;Bibliothèque" icon="fr-fi-archive-line">
+      <Tab label="&nbsp;Bibliothèque" icon="fr-fi-archive-line flex">
         <AddFromLib {...props} onAddFileFromLib={addFileFromLib} />
       </Tab>
     </Tabs>
