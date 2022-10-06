@@ -20,6 +20,13 @@ export const Succes = () => (
   />
 );
 
+export const Warning = () => (
+  <Alerte
+    state="warning"
+    description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque ultricies ante ligula, in ornare mauris faucibus sit amet. Pellentesque iaculis a metus a molestie."
+  />
+);
+
 export const Erreur = () => (
   <Alerte
     state="error"
