@@ -103,3 +103,6 @@ referentiel/preuve_reglementaire 2022-08-31T15:07:50Z Florian <florian@derfurth.
 utilisateur/modified_by_nom [utilisateur/dcp_display] 2022-09-01T08:38:44Z Florian <florian@derfurth.com> # Fonction d'affichage du modified_by pour le client.
 labellisation/fichier_preuve [labellisation/fichier_preuve@v1.7.1 referentiel/preuve_reglementaire utilisateur/modified_by_nom] 2022-08-31T14:41:38Z Florian <florian@derfurth.com> # Ajoute les preuves réglementaires et simplifie l'API.
 labellisation/preuve_v2 [labellisation/fichier_preuve] 2022-09-04T14:59:44Z Florian <florian@derfurth.com> # La version 2 des preuves, déplacée dans le domaine labellisation.
+export/schema 2022-10-09T11:42:11Z Florian <florian@derfurth.com> # Le schéma export.
+export/fonctions 2022-10-09T11:43:00Z Florian <florian@derfurth.com> # Les fonctions pour exporter en json.
+export/ademe 2022-10-09T11:43:35Z Florian <florian@derfurth.com> # La exportée pour l'ADEME.
