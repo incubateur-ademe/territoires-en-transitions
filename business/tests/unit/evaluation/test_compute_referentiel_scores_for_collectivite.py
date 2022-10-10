@@ -12,9 +12,8 @@ from business.personnalisation.models import ActionPersonnalisationConsequence
 from business.personnalisation.ports.personnalisation_repo import (
     InMemoryPersonnalisationRepository,
 )
-from business.referentiel.domain.ports.referentiel_repo import (
+from business.evaluation.domain.ports.referentiel_repo import (
     InMemoryReferentielRepository,
-    children_to_relations,
 )
 from business.evaluation.domain.ports.action_status_repo import (
     InMemoryActionStatutRepository,
@@ -23,7 +22,7 @@ from business.utils.domain_message_bus import InMemoryDomainMessageBus
 from business.evaluation.domain.use_cases.compute_referentiel_scores_for_collectivite import (
     ComputeReferentielScoresForCollectivite,
 )
-from business.utils.action_id import ActionId
+from business.utils.models.actions import ActionId
 
 from tests.utils.referentiel_factory import (
     make_action_children,
@@ -51,23 +50,8 @@ action_points = [
 ]
 
 
-referentiel_repo = InMemoryReferentielRepository()
-referentiel_repo.add_referentiel_actions(
-    definitions=[
-        make_action_definition(action_id)
-        for action_id in [
-            "eci",
-            "eci_1",
-            "eci_2",
-            "eci_1.1",
-            "eci_1.2",
-            "eci_2.0",
-            "eci_2.1",
-            "eci_2.2",
-        ]
-    ],
-    points=action_points,
-    relations=children_to_relations(action_childrens),
+referentiel_repo = InMemoryReferentielRepository(
+    points_entities=action_points, children_entities=action_childrens
 )
 
 
@@ -779,12 +763,11 @@ def test_notation_should_not_redistribute_points_on_taches_regementaires():
 
 
 deeper_referentiel = copy.deepcopy(referentiel_repo)
-action_childrens = [
+deeper_referentiel._children_entities += [
     make_action_children(f"eci_2.2", ["eci_2.2.1", "eci_2.2.2", "eci_2.2.3"]),
     make_action_children(f"eci_2.1", ["eci_2.1.0", "eci_2.1.1", "eci_2.1.2"]),
 ]
-
-action_points = [
+deeper_referentiel._points_entities += [
     make_action_points(action_id=f"eci_2.2.1", points=2),
     make_action_points(action_id=f"eci_2.2.2", points=1.5),
     make_action_points(action_id=f"eci_2.2.3", points=1.5),
@@ -792,22 +775,6 @@ action_points = [
     make_action_points(action_id=f"eci_2.1.1", points=40),
     make_action_points(action_id=f"eci_2.1.2", points=25),
 ]
-
-deeper_referentiel.add_referentiel_actions(
-    definitions=[
-        make_action_definition(action_id)
-        for action_id in [
-            "eci_2.2.1",
-            "eci_2.2.2",
-            "eci_2.2.3",
-            "eci_2.1.0",
-            "eci_2.1.1",
-            "eci_2.1.2",
-        ]
-    ],
-    points=action_points,
-    relations=children_to_relations(action_childrens),
-)
 
 
 def test_notation_should_redistribute_non_concernee_points_if_depth_is_greater_than_action_depth():

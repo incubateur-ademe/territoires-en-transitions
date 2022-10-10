@@ -1,11 +1,10 @@
 from dataclasses import dataclass
-from enum import Enum
 
 from typing import Any
 
 from typing import Optional
 
-from business.utils.action_id import ActionId
+from business.utils.models.actions import ActionId
 
 
 @dataclass

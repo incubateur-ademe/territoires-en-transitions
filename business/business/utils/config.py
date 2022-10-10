@@ -1,5 +1,4 @@
 import abc
-from pathlib import Path
 from typing import List, Optional
 import os
 from dotenv import load_dotenv
@@ -25,18 +24,16 @@ from business.personnalisation.ports.personnalisation_repo import (
     AbstractPersonnalisationRepository,
     InMemoryPersonnalisationRepository,
 )
-
-from business.referentiel.adapters.json_referentiel_repo import (
-    JsonReferentielRepository,
+from business.evaluation.adapters.supabase_referentiel_repo import (
+    SupabaseReferentielRepository,
 )
 from business.evaluation.adapters.replay_realtime import ReplayRealtime
 from business.evaluation.adapters.supabase_realtime import SupabaseRealtime
 from business.utils.domain_message_bus import AbstractDomainMessageBus
-from business.referentiel.domain.ports.referentiel_repo import (
+from business.evaluation.domain.ports.referentiel_repo import (
     AbstractReferentielRepository,
 )
 
-from business.referentiel.adapters.sql_referentiel_repo import SqlReferentielRepository
 from business.evaluation.domain.ports.realtime import (
     AbstractConverter,
     AbstractRealtime,
@@ -93,29 +90,7 @@ class Config:
         return SupabaseClient(url=url, key=key)
 
     def get_referentiel_repo(self) -> AbstractReferentielRepository:
-        if self.ENV.referentiels_repository == "JSON":
-            if self.ENV.referentiels_repo_file is None:
-                raise ValueError(
-                    "`REFERENTIEL_REPO_JSON` should de specified in mode JSON"
-                )
-            return JsonReferentielRepository(Path(self.ENV.referentiels_repo_file))
-        elif self.ENV.referentiels_repository == "SQL":
-            if self.ENV.referentiels_repo_file is None:
-                raise ValueError(
-                    "`REFERENTIEL_REPO_JSON` should de specified in mode JSON"
-                )
-            return SqlReferentielRepository(Path(self.ENV.referentiels_repo_file))
-        elif self.ENV.referentiels_repository == "SUPABASE":
-            from business.referentiel.adapters.supabase_referentiel_repo import (
-                SupabaseReferentielRepository,
-            )
-
-            return SupabaseReferentielRepository(self.get_supabase_client())
-
-        else:
-            raise NotImplementedError(
-                f"Referentiels repo adapter {self.ENV.referentiels_repository} not yet implemented."
-            )
+        return SupabaseReferentielRepository(self.get_supabase_client())
 
     def get_personnalisation_repo(self) -> AbstractPersonnalisationRepository:
         if self.ENV.repositories == "IN_MEMORY":

@@ -9,10 +9,10 @@ from business.personnalisation.models import (
     IdentiteCollectivite,
     Reponse,
 )
-from business.referentiel.domain.models.personnalisation import (
+from business.utils.models.personnalisation import (
     ActionPersonnalisationRegles,
 )
-from business.utils.action_id import ActionId
+from business.utils.models.actions import ActionId
 
 
 class AbstractPersonnalisationRepository(abc.ABC):

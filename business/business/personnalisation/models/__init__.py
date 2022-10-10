@@ -3,7 +3,7 @@ from typing import List, Literal, Optional, Set, Union
 
 from lark import ParseTree
 
-from business.referentiel.domain.models.question import QuestionType
+from business.utils.models.questions import QuestionType
 
 
 @dataclass

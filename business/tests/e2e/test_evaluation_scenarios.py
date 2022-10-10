@@ -17,7 +17,7 @@ from business.evaluation.domain.use_cases.compute_referentiel_scores_for_collect
     ComputeReferentielScoresForCollectivite,
 )
 from business.personnalisation.models import ActionPersonnalisationConsequence, Reponse
-from business.referentiel.adapters.supabase_referentiel_repo import (
+from business.evaluation.adapters.supabase_referentiel_repo import (
     SupabaseReferentielRepository,
 )
 from business.personnalisation.ports.personnalisation_repo import (

@@ -2,7 +2,7 @@ from typing import List
 
 import pytest
 
-from business.referentiel.adapters.supabase_referentiel_repo import (
+from business.evaluation.adapters.supabase_referentiel_repo import (
     SupabaseReferentielRepository,
 )
 from business.utils.domain_message_bus import (
@@ -34,7 +34,7 @@ def realtime(bus) -> ReplayRealtime:
     converters: List[AbstractConverter] = [
         CollectiviteActionStatutUpdateConverter(),
         CollectiviteReponseUpdateConverter(),
-        CollectiviteActivationConverter()
+        CollectiviteActivationConverter(),
     ]
     return ReplayRealtime(bus, converters=converters)
 

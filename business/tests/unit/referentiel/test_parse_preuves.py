@@ -1,7 +1,6 @@
 from business.referentiel.parse_preuves import (
     parse_preuves_from_markdown,
 )
-from business.utils.action_id import ActionId
 
 
 def test_parse_and_convert_markdown_preuves_to_entities_from_ok_folder():

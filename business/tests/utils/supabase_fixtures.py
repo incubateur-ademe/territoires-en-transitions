@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 import pytest
 from business.evaluation.adapters import supabase_names
-from business.referentiel.adapters.supabase_referentiel_repo import (
+from business.evaluation.adapters.supabase_referentiel_repo import (
     SupabaseReferentielRepository,
 )
 

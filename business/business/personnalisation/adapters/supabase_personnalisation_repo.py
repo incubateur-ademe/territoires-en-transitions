@@ -15,11 +15,11 @@ from business.personnalisation.models import (
 from business.personnalisation.ports.personnalisation_repo import (
     AbstractPersonnalisationRepository,
 )
-from business.referentiel.domain.models.personnalisation import (
+from business.utils.models.personnalisation import (
     ActionPersonnalisationRegles,
     Regle,
 )
-from business.utils.action_id import ActionId
+from business.utils.models.actions import ActionId
 from business.utils.supabase_repo import SupabaseRepository
 
 

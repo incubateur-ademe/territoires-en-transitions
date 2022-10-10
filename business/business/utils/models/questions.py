@@ -11,8 +11,8 @@ class Choix:
     """Choix as saved in the JSON"""
 
     id: str
-    formulation: str
-    ordonnancement: Optional[int]
+    formulation: str = ""
+    ordonnancement: Optional[int] = None
 
 
 @dataclass
@@ -20,11 +20,11 @@ class Question:
     """Question as saved in the JSON"""
 
     id: str
-    formulation: str
-    description: str
-    thematique_id: str
-    action_ids: List[ActionId]
     type: QuestionType
-    ordonnnancement: Optional[int]
-    types_collectivites_concernees: Optional[List[CollectiviteType]]
+    action_ids: List[ActionId]
+    formulation: str = ""
+    description: str = ""
+    thematique_id: str = ""
+    ordonnnancement: Optional[int] = None
+    types_collectivites_concernees: Optional[List[CollectiviteType]] = None
     choix: Optional[List[Choix]] = None

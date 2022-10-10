@@ -4,17 +4,17 @@ from business.personnalisation.execute_personnalisation_regles import (
     ActionPersonnalisationConsequence,
     execute_personnalisation_regles,
 )
-from business.referentiel.domain.models.personnalisation import (
-    ActionPersonnalisationRegles,
+from business.utils.models.regles import (
+    ActionRegles,
     Regle,
 )
-from business.utils.action_id import ActionId
+from business.utils.models.actions import ActionId
 
 
 def test_execute_personnalisation_regles_when_all_reponses_are_given():
     regles_parser = ReglesParser(
         [
-            ActionPersonnalisationRegles(
+            ActionRegles(
                 ActionId("eci_1"),
                 [
                     Regle("reponse(mobilite_1, VRAI)", "desactivation"),
@@ -34,7 +34,7 @@ def test_execute_personnalisation_regles_when_all_reponses_are_given():
 def test_execute_personnalisation_regles_when_some_reponses_are_not_given():
     regles_parser = ReglesParser(
         [
-            ActionPersonnalisationRegles(
+            ActionRegles(
                 ActionId("eci_1"),
                 [
                     Regle("reponse(mobilite_1, VRAI)", "desactivation"),
@@ -54,7 +54,7 @@ def test_execute_personnalisation_regles_when_some_reponses_are_not_given():
 def test_execute_personnalisation_regles_when_both_identite_type_and_reponse_are_needed():
     regles_parser = ReglesParser(
         [
-            ActionPersonnalisationRegles(
+            ActionRegles(
                 ActionId("eci_1"),
                 [
                     Regle(
@@ -78,7 +78,7 @@ def test_execute_personnalisation_regles_when_both_identite_type_and_reponse_are
 def test_execute_personnalisation_regles_with_identite_population():
     regles_parser = ReglesParser(
         [
-            ActionPersonnalisationRegles(
+            ActionRegles(
                 ActionId("eci_1"),
                 [
                     Regle(
@@ -102,7 +102,7 @@ def test_execute_personnalisation_regles_with_identite_population():
 def test_execute_personnalisation_regles_with_reduction_depends_on_score():
     regles_parser = ReglesParser(
         [
-            ActionPersonnalisationRegles(
+            ActionRegles(
                 ActionId("eci_1"),
                 [
                     Regle(
