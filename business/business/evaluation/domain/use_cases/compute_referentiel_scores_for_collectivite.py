@@ -592,7 +592,11 @@ def compute_scores(
         action_id,
         personnalisation_consequence,
     ) in personnalisation_consequences.items():
-        if personnalisation_consequence.score_formule:
+        if (
+            personnalisation_consequence.score_formule is not None
+            and scores[action_id].point_potentiel
+            != 0.0  # if point_potentiel equals 0., no worthy reduction
+        ):
             original_score = (
                 scores[action_id].point_fait / scores[action_id].point_potentiel
             )
