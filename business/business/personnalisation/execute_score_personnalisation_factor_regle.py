@@ -1,7 +1,7 @@
 from typing import Dict, Optional
 import re
 
-from business.evaluation.domain.models.action_score import ActionScore
+from business.utils.models.action_score import ActionScore
 from business.personnalisation.engine.formule_interpreter import FormuleInterpreter
 from business.utils.models.actions import ActionId
 from business.personnalisation.engine.parser import parser

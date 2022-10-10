@@ -8,7 +8,7 @@ from business.evaluation.domain.models import events
 from business.evaluation.domain.use_cases.catch_up_unprocessed_reponse_update_event import (
     CatchUpUnprocessedReponseUpdateEvents,
 )
-from business.evaluation.domain.use_cases.compute_and_store_referentiel_personnalisations_for_collectivite import (
+from business.evaluation.domain.use_cases.compute_personnalisations import (
     ComputeAndStoreReferentielPersonnalisationsForCollectivite,
 )
 from business.evaluation.domain.use_cases.trigger_notation_for_collectivite import (

@@ -5,8 +5,11 @@ from typing import List, Dict
 from business.evaluation.adapters.supabase_action_statut_repo import (
     SupabaseActionStatutRepository,
 )
-from business.evaluation.domain.models.action_statut import ActionStatut
-from business.evaluation.domain.use_cases import ActionPointTree, compute_scores
+from business.utils.models.action_statut import ActionStatut
+from business.evaluation.domain.use_cases import (
+    ActionPointTree,
+    compute_referentiel_scores_for_collectivite,
+)
 from business.personnalisation.models import ActionPersonnalisationConsequence
 from business.referentiel.domain.models.action_children import ActionChildren
 from business.referentiel.domain.models.action_computed_point import ActionComputedPoint
@@ -84,7 +87,7 @@ def run(referentiel: str, action_level: int, times: int):
     }
 
     for _ in range(times):
-        compute_scores(
+        compute_referentiel_scores_for_collectivite(
             tree,
             statuts,
             personnalisation_consequences,

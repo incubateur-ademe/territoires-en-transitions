@@ -20,6 +20,5 @@ class ActionScore:
     programme_taches_avancement: float
     pas_fait_taches_avancement: float
     pas_concerne_taches_avancement: float
-    referentiel: ActionReferentiel
     desactive: bool
     point_potentiel_perso: Optional[float]

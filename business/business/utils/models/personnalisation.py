@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
 
 from .actions import ActionId
 from .regles import RegleType
@@ -29,3 +29,12 @@ class ActionPersonnalisationRegles:
             titre=d["titre"],
             regles=[Regle(**regle) for regle in d["regles"]],
         )
+
+
+@dataclass
+class ActionPersonnalisationConsequence:
+    """Computed consequence for an action"""
+
+    desactive: Optional[bool] = None
+    potentiel_perso: Optional[float] = None
+    score_formule: Optional[str] = None
