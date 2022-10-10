@@ -33,6 +33,7 @@ import HistoriqueListe from 'app/pages/collectivite/Historique/HistoriqueListe';
 import ScrollTopButton from 'ui/shared/ScrollTopButton';
 import ActionNav from './ActionNav';
 import ActionPreuvePanel from 'ui/shared/actions/ActionPreuvePanel/ActionPreuvePanel';
+import {DownloadDocs} from './DownloadDocs';
 
 const useActionLinkedIndicateurDefinitions = (actionId: string) => {
   const [linkedIndicateurDefinitions, setLinkedIndicateurDefinitions] =
@@ -178,7 +179,8 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
         </Tab>
         <Tab label="Preuves">
           <section>
-            <ActionPreuvePanel withSubActions action={action} />
+            <ActionPreuvePanel withSubActions showWarning action={action} />
+            <DownloadDocs action={action} />
           </section>
         </Tab>
         <Tab label="Indicateurs">

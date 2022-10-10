@@ -11,13 +11,15 @@ export type TBibliothequeFichier = {
   filesize: number;
 };
 
+export type TFichier = Pick<
+  TBibliothequeFichier,
+  'bucket_id' | 'filename' | 'filesize' | 'hash'
+>;
+
 // champs propres aux fichiers
 export type TPreuveFichierFields = {
   lien: null;
-  fichier: Pick<
-    TBibliothequeFichier,
-    'bucket_id' | 'filename' | 'filesize' | 'hash'
-  >;
+  fichier: TFichier;
 };
 
 // champs propres aux liens
