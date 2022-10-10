@@ -42,6 +42,7 @@ L'arborescence du front est la suivante :
 
 - `app` : c'est là qu'est construite l'application react à proprement parlée. Elle va consommer ce qui est dans `core-logic` et dans `ui`.
 
+- `server/zipUrls.js` : module intégré au serveur de ressources du front, permettant de télécharger une liste d'URLs passée dans le corps d'une requête POST émise par le front, et de renvoyer une archive zip des fichiers téléchargés. Ce module est intégré dans le serveur de développement (cf `setupProxy.js`) et dans celui de production (cf `server.js`).
 
 ### CSS
 Les feuilles de style suivantes sont utilisées :
