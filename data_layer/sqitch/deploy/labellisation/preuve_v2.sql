@@ -85,7 +85,7 @@ $$
                 -- Et les RLS
                 execute format('alter table preuve_%I
                     enable row level security;', name);
-                --- Tout les membres de Territoires en transitions peuvent lire.
+                --- Tous les membres de Territoires en transitions peuvent lire.
                 execute format('create policy allow_read
                     on preuve_%I using (is_authenticated());', name);
                 --- Seuls les membres ayant un accès en édition peuvent écrire.
@@ -109,25 +109,27 @@ select id,
                'filesize', filesize) as snippet
 from public.bibliotheque_fichier;
 
+
 -- Vue partielle de `action_definition` en json.
 create view labellisation.action_snippet as
-with score as (select *
-               from client_scores cs
-                        left join private.convert_client_scores(cs.scores) on true)
-select ad.action_id,
-       score.collectivite_id,
+with ref as (select unnest(enum_range(null::referentiel)) as referentiel)
+select s.action_id,
+       c.id  as collectivite_id,
        jsonb_build_object(
-               'action_id', ad.action_id,
+               'action_id', s.action_id,
                'identifiant', ad.identifiant,
-               'referentiel', ad.referentiel,
-               'desactive', score.desactive,
-               'concerne', score.concerne,
+               'referentiel', s.referentiel,
+               'desactive', s.desactive,
+               'concerne', s.concerne,
                'nom', ad.nom,
                'description', ad.description
            ) as snippet
 from collectivite c
-         join action_definition ad on true
-         join score on score.collectivite_id = c.id and score.action_id = ad.action_id;
+         join ref r on true
+         left join lateral (
+    select *
+    from private.action_score(c.id, r.referentiel)) as s on true
+         left join action_definition ad on s.action_id = ad.action_id;
 
 
 -- La vue utilisée par le client qui regroupe tout les types de preuves.
@@ -175,10 +177,11 @@ select 'reglementaire',
        null
 from collectivite c -- toutes les collectivités ...
          left join preuve_reglementaire_definition prd on true -- ... x toutes les preuves réglementaires
-         left join preuve_reglementaire pr on prd.id = pr.preuve_id
+         left join preuve_reglementaire pr on prd.id = pr.preuve_id and c.id = pr.collectivite_id
          left join preuve_action pa on prd.id = pa.preuve_id
          left join labellisation.bibliotheque_fichier_snippet fs on fs.id = pr.fichier_id
-         left join labellisation.action_snippet snippet on snippet.action_id = pa.action_id and snippet.collectivite_id = c.id
+         left join labellisation.action_snippet snippet
+                   on snippet.action_id = pa.action_id and snippet.collectivite_id = c.id
 union all
 
 select 'labellisation',
@@ -200,8 +203,6 @@ select 'labellisation',
                        'id', d.id
                    )),
        null
-
-
 from labellisation.demande d
          left join preuve_labellisation p on p.demande_id = d.id
          left join labellisation.bibliotheque_fichier_snippet fs on fs.id = p.fichier_id

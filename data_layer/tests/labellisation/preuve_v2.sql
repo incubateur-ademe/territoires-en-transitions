@@ -1,6 +1,6 @@
 begin;
 
-select plan(10);
+select plan(12);
 
 truncate storage.objects cascade;
 truncate labellisation.bibliotheque_fichier cascade;
@@ -108,7 +108,7 @@ select bag_eq(
                'La vue preuve devrait contenir la preuve et la labellisation'
            );
 
--- Test la fonction interne `critere_fichier` de la labellisation
+-- Teste la fonction interne `critere_fichier` de la labellisation
 select ok(
                (select atteint
                 from labellisation.critere_fichier(1)
@@ -121,6 +121,17 @@ select ok(
                 from labellisation.critere_fichier(1)
                 where referentiel = 'cae'),
                'La collectivité ne devrait pas avoir atteint le critère fichier pour cae'
+           );
+
+-- Teste que les fichiers d'une collectivité ne soient pas présents dans la vue d'une autre collectivité
+select isnt_empty(
+               'select * from preuve p where collectivite_id = 1 and fichier is not null;',
+               'La collectivité #1 devrait avoir des fichiers dans sa vue preuve'
+           );
+
+select is_empty(
+               'select * from preuve p where collectivite_id = 2 and fichier is not null;',
+               'La collectivité #2 ne devrait pas avoir de fichiers dans sa vue preuve'
            );
 
 rollback;
