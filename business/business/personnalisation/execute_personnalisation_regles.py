@@ -8,7 +8,7 @@ from business.personnalisation.models import (
     Reponse,
 )
 from business.personnalisation.engine.regles_parser import ReglesParser
-from business.utils.action_id import ActionId
+from business.utils.models.actions import ActionId
 
 
 def execute_personnalisation_regles(

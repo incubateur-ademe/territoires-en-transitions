@@ -144,7 +144,9 @@ def test_build_markdown_action_node_from_ok_folder():
             actions=[],
         ),
     ]
-    assert markdown_action_nodes == expected_markdown_action_nodes
+    assert sorted(
+        markdown_action_nodes, key=lambda action: action.identifiant
+    ) == sorted(expected_markdown_action_nodes, key=lambda action: action.identifiant)
 
 
 def test_build_markdown_action_node_when_referentiel_is_unknown():

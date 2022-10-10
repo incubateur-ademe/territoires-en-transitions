@@ -2,7 +2,7 @@ import operator
 from dataclasses import asdict
 from typing import List, Optional
 
-from lark import Tree
+from lark.tree import Tree
 from lark.visitors import Interpreter
 
 from business.personnalisation.engine.formule import FormuleABC, ReponseMissing

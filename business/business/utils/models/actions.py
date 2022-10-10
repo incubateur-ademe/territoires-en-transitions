@@ -40,3 +40,10 @@ class ActionChildren:
     referentiel: ActionReferentiel  # eg. "eci_2022"
     action_id: ActionId  # eg. "eci_1.1"
     children: list[ActionId]  # ["eci_1.1.1", "eci_1.1.2"]
+
+
+@dataclass
+class ActionComputedPoint:
+    referentiel: ActionReferentiel
+    action_id: ActionId
+    value: float

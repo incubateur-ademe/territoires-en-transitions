@@ -313,7 +313,7 @@ services:
     profiles:
       - donotstart
     command: >
-      bash -c "pipenv run python business/referentiel/cli2.py parse-preuves --input-markdown-folder ../markdown/preuves --output-json-file ../data_layer/content/preuves.json"
+      bash -c "pipenv run python business/referentiel/cli.py parse-preuves --input-markdown-folder ../markdown/preuves --output-json-file ../data_layer/content/preuves.json"
     volumes:
       - ./markdown:/markdown
       - ./data_layer/content:/data_layer/content

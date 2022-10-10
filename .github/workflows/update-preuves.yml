@@ -25,7 +25,7 @@ jobs:
       # Check that datalayer loader runs  
       - name: Run datalayer loader 
         run: sh make_dot_env.sh && docker-compose run loader
-        env:
+        env:cli2
           SUPABASE_SERVICE_ROLE_KEY: ${{secrets.TEST_SERVICE_SUPABASE_KEY}}
           SUPABASE_ANON_KEY: ${{secrets.TEST_ANON_SUPABASE_KEY}}
           

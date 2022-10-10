@@ -74,7 +74,7 @@ def parse_markdown_action_trees_from_folder(
 ) -> tuple[list[MarkdownActionTree], list[str]]:
     md_files = glob(os.path.join(folder_path, "*.md"))
     print(
-        f"Lecture de {len(md_files)} fichiers indicateurs depuis le dossier {folder_path} :) "
+        f"Lecture de {len(md_files)} fichiers actions depuis le dossier {folder_path} :) "
     )
     action_nodes = []
     errors = []

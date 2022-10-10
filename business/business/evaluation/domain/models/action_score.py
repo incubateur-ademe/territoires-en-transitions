@@ -1,8 +1,7 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from business.utils.action_id import ActionId
-from business.referentiel.domain.models.referentiel import ActionReferentiel
+from business.utils.models.actions import ActionId, ActionReferentiel
 
 
 @dataclass  # TODO : decide how to type this output for client !

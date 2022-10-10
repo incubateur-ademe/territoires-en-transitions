@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import List
 
 from business.evaluation.domain.models.action_score import ActionScore
-from business.referentiel.domain.models.referentiel import ActionReferentiel
+from business.utils.models.actions import ActionReferentiel
 from business.utils.domain_message_bus import (
     DomainEvent,
     DomainFailureEvent,

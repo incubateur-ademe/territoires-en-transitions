@@ -1,7 +1,7 @@
 from business.personnalisation.execute_score_personnalisation_factor_regle import (
     execute_score_personnalisation_override_regle,
 )
-from business.utils.action_id import ActionId
+from business.utils.models.actions import ActionId
 from tests.utils.score_factory import make_action_score
 
 

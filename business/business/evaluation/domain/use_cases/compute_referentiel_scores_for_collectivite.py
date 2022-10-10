@@ -15,17 +15,15 @@ from business.personnalisation.models import ActionPersonnalisationConsequence
 from business.personnalisation.ports.personnalisation_repo import (
     AbstractPersonnalisationRepository,
 )
-from business.referentiel.domain.models.referentiel import ActionReferentiel
+from business.utils.models.actions import ActionReferentiel, ActionId
 from business.evaluation.domain.ports.action_status_repo import (
     AbstractActionStatutRepository,
 )
-from business.referentiel.domain.ports.referentiel_repo import (
+from business.evaluation.domain.ports.referentiel_repo import (
     AbstractReferentielRepository,
 )
 from business.utils.domain_message_bus import AbstractDomainMessageBus
-from business.referentiel.domain.models.action_children import ActionChildren
-from business.referentiel.domain.models.action_computed_point import ActionComputedPoint
-from business.utils.action_id import ActionId
+from business.utils.models.actions import ActionChildren, ActionComputedPoint
 from business.utils.action_tree import ActionTree, ActionTreeError
 from business.utils.timeit import timeit
 from business.utils.use_case import UseCase

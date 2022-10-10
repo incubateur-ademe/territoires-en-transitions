@@ -2,7 +2,9 @@ import json
 import time
 from typing import List, Dict
 
-from business.evaluation.adapters.supabase_action_statut_repo import SupabaseActionStatutRepository
+from business.evaluation.adapters.supabase_action_statut_repo import (
+    SupabaseActionStatutRepository,
+)
 from business.evaluation.domain.models.action_statut import ActionStatut
 from business.evaluation.domain.use_cases import ActionPointTree, compute_scores
 from business.personnalisation.models import ActionPersonnalisationConsequence
@@ -20,7 +22,8 @@ def all_children_from_referentiel(referentiel: str):
                 action_id=row["id"],
                 children=row["children"] or [],
             )
-            for row in data if row['referentiel'] == referentiel
+            for row in data
+            if row["referentiel"] == referentiel
         ]
 
 
@@ -33,7 +36,8 @@ def all_points_from_referentiel(referentiel: str) -> List[ActionComputedPoint]:
                 action_id=row["action_id"],
                 value=row["value"],
             )
-            for row in data if str.startswith(row['action_id'], referentiel)
+            for row in data
+            if str.startswith(row["action_id"], referentiel)
         ]
 
 
@@ -48,16 +52,20 @@ def action_statuts(referentiel: str) -> List[ActionStatut]:
         data = json.load(read_file)
         return [
             SupabaseActionStatutRepository.action_statut_from_row(row)
-            for row in data if str.startswith(row['action_id'], referentiel)
+            for row in data
+            if str.startswith(row["action_id"], referentiel)
         ]
 
 
-def action_consequences(referentiel: str) -> Dict[ActionId, ActionPersonnalisationConsequence]:
+def action_consequences(
+    referentiel: str,
+) -> Dict[ActionId, ActionPersonnalisationConsequence]:
     with open("./benchmark/consequences.json", "r") as read_file:
         data = json.load(read_file)
         return {
             action_id: ActionPersonnalisationConsequence(**consequence)
-            for action_id, consequence in data.items() if str.startswith(action_id, referentiel)
+            for action_id, consequence in data.items()
+            if str.startswith(action_id, referentiel)
         }
 
 
@@ -86,14 +94,14 @@ def run(referentiel: str, action_level: int, times: int):
 
 
 def run_cae(times: int):
-    run('cae', 3, times)
+    run("cae", 3, times)
 
 
 def run_eci(times: int):
-    run('eci', 2, times)
+    run("eci", 2, times)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     times = 100
     cae_start = time.time()
     run_cae(times)
@@ -103,5 +111,5 @@ if __name__ == '__main__':
     run_eci(times)
     eci_end = time.time()
 
-    print('CAE: %2.2f ms' % ((cae_end - cae_start) * 1000 / times))
-    print('ECI: %2.2f ms' % ((eci_end - eci_start) * 1000 / times))
+    print("CAE: %2.2f ms" % ((cae_end - cae_start) * 1000 / times))
+    print("ECI: %2.2f ms" % ((eci_end - eci_start) * 1000 / times))

@@ -2,11 +2,11 @@ from typing import Dict, List
 
 from business.personnalisation.models import ActionPersonnalisationParsedRegles
 
-from business.referentiel.domain.models.personnalisation import (
+from business.utils.models.personnalisation import (
     ActionPersonnalisationRegles,
 )
 from business.personnalisation.engine.parser import parser
-from business.utils.action_id import ActionId
+from business.utils.models.actions import ActionId
 
 
 class ReglesParser:

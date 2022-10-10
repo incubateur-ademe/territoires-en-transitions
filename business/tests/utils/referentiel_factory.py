@@ -2,6 +2,7 @@ from typing import List, Optional
 
 from business.utils.models.actions import (
     ActionChildren,
+    ActionComputedPoint,
     ActionDefinition,
     ActionCategorie,
     ActionId,
@@ -81,4 +82,12 @@ def make_markdown_action_tree(
         contexte="",
         nom="",
         categorie=categorie,
+    )
+
+
+def make_action_points(action_id: str, points: float):
+    return ActionComputedPoint(
+        action_id=ActionId(action_id),
+        value=points,
+        referentiel=_retrieve_referentiel(ActionId(action_id)),
     )

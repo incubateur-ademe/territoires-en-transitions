@@ -6,7 +6,6 @@ from business.collectivite.domain.collectivite_repo import (
 )
 from business.collectivite.domain.epci import Epci
 from business.collectivite.domain.commune import Commune
-from business.referentiel.adapters.make_sql import format_sql_text
 
 
 class SqlCollectiviteRepository(AbstractCollectiviteRepository):
@@ -25,3 +24,8 @@ class SqlCollectiviteRepository(AbstractCollectiviteRepository):
             for commune in communes:
                 sql = f"insert into commune(nom, code) values ({format_sql_text(commune.nom)}, '{commune.code}');"
                 f.write(f"{sql}\n")
+
+
+def format_sql_text(text: str):
+    text = text.replace("'", "''")
+    return f"'{text}'"

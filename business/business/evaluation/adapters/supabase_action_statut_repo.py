@@ -1,6 +1,6 @@
 from typing import List
 
-from business.referentiel.domain.models.referentiel import ActionReferentiel
+from business.utils.models.actions import ActionReferentiel
 from business.evaluation.domain.ports.action_status_repo import (
     AbstractActionStatutRepository,
 )

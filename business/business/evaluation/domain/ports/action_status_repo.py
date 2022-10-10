@@ -2,7 +2,7 @@ import abc
 from typing import List, Optional
 
 from business.evaluation.domain.models.action_statut import ActionStatut
-from business.referentiel.domain.models.referentiel import ActionReferentiel
+from business.utils.models.actions import ActionReferentiel
 
 
 class AbstractActionStatutRepository(abc.ABC):
