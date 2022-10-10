@@ -98,8 +98,8 @@ const AutoCompleteInputField = <T extends string>({
   return (
     <div
       className={classNames('fr-select-group flex-grow', {
-        ['fr-select-group--error']: isError,
-        ['fr-select-group--disabled']: props.disabled,
+        'fr-select-group--error': isError,
+        'fr-select-group--disabled': props.disabled,
       })}
     >
       <label className="fr-label" htmlFor={field.name}>
@@ -133,7 +133,7 @@ const AutoCompleteInputField = <T extends string>({
               name={field.name}
               {...params.inputProps}
               className={classNames('fr-input', {
-                ['fr-input--error']: isError,
+                'fr-input--error': isError,
               })}
             />
           </div>

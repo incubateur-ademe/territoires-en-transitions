@@ -40,8 +40,8 @@ const SelectField = ({
   return (
     <div
       className={classNames('fr-select-group flex-grow', {
-        ['fr-select-group--error']: isError,
-        ['fr-select-group--disabled']: props.disabled,
+        'fr-select-group--error': isError,
+        'fr-select-group--disabled': props.disabled,
       })}
     >
       <label className="fr-label" htmlFor={props.label}>
@@ -50,7 +50,7 @@ const SelectField = ({
       </label>
       <select
         className={classNames('fr-select', {
-          ['fr-select--error']: isError,
+          'fr-select--error': isError,
         })}
         id={props.label}
         {...field}

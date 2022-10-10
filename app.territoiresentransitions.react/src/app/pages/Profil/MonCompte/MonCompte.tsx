@@ -2,12 +2,11 @@ import React, {useState} from 'react';
 import {Form, Formik} from 'formik';
 import * as Yup from 'yup';
 
-import Modal from 'ui/shared/floating-ui/Modal';
 import FormInput from 'ui/shared/form/FormInput';
+import ModifierEmailModal from './ModifierEmailModal';
 
 import {useAuth, UserData} from 'core-logic/api/auth/AuthProvider';
 import {useUpdateDCP} from 'core-logic/api/auth/useUpdateDCP';
-import ModifierEmailModal from './ModifierEmailModal';
 
 interface ModifierCompteData {
   prenom: string;
