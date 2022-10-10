@@ -54,14 +54,13 @@ const Modal = ({
   });
 
   const id = useId();
-  const dismiss = useDismiss(context);
   const labelId = `${id}-label`;
   const descriptionId = `${id}-description`;
 
   const {getReferenceProps, getFloatingProps} = useInteractions([
     useClick(context),
     useRole(context),
-    disableDismiss ? undefined : dismiss,
+    useDismiss(context, {enabled: !disableDismiss}),
   ]);
 
   const mobileClassnames = 'absolute inset-x-0 bottom-0 mt-8 max-h-full';
