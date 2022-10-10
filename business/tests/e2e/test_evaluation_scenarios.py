@@ -2,8 +2,8 @@ import math
 from typing import List
 from business.evaluation.adapters.replay_realtime import ReplayRealtime
 from business.evaluation.domain.models import events
-from business.evaluation.domain.models.action_score import ActionScore
-from business.evaluation.domain.models.action_statut import (
+from business.utils.models.action_score import ActionScore
+from business.utils.models.action_statut import (
     ActionStatut,
     DetailedAvancement,
 )
