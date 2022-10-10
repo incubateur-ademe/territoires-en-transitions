@@ -48,8 +48,7 @@ actions:
 id: diag_eci
 ```
 ## Description
-- Tout élément de diagnostic disponible, même issu de diagnostics relatifs à des démarches connexes (PLPDMA, SRDEII, PRPGD, PRAEC, SRADDET, S3, PLU,
-SCOT, PCAET, PAT, SRDT, etc…).
+- Tout élément de diagnostic disponible, même issu de diagnostics relatifs à des démarches connexes (PLPDMA, SRDEII, PRPGD, PRAEC, SRADDET, S3, PLU, SCoT, PCAET, PAT, SRDT, etc…).
 - Comptes-rendus de réunion de travail, etc.
 - Les autres preuves détaillées dans cette sous-action sont des composantes du diagnostic. 
 
