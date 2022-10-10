@@ -29,7 +29,7 @@ export type TTooltipProps = {
 // les styles de l'infobulle
 // TODO: permettre de les surcharger si nécessaire
 const tooltipClass =
-  'pointer-events-none max-w-prose px-2 py-1 bg-[#19271D] text-white text-xs z-10';
+  'pointer-events-none max-w-prose px-2 py-1 bg-[#19271D] text-white text-sm [&_*]:text-sm [&_*]:mb-0 z-10';
 
 /**
  * Affiche une info-bulle
