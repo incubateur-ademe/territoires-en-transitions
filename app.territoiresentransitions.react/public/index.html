@@ -6,15 +6,29 @@
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
-        name="description"
-        content="Territoires en transitions accompagne les collectivités afin de les aider à piloter plus facilement leur transition écologique."
+      name="description"
+      content="Territoires en transitions accompagne les collectivités afin de les aider à piloter plus facilement leur transition écologique."
     />
 
     <meta charset="utf-8" />
-    <link rel="icon" type="image/png"
-          href="https://dteci.ademe.fr/favicon.png" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="https://dteci.ademe.fr/favicon.png"
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#333333">
+    <meta name="theme-color" content="#333333" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="
+        default-src 'self';
+        script-src 'self' *.data.gouv.fr/ 'sha256-kO6puxapZiqpb3t6i8bI0xf0enmClp/hvy3/u7oanbw=' https://client.crisp.chat;
+        connect-src 'self' http://localhost:8000 ws://localhost:8000;
+        img-src 'self' data: https://dteci.ademe.fr;
+        font-src 'self' data: https://client.crisp.chat;
+        style-src 'self' 'unsafe-inline' https://client.crisp.chat;
+        "
+    />
     <title>Territoires en Transitions</title>
     <script async src="https://stats.data.gouv.fr//piwik.js"></script>
     <script type="text/javascript">
@@ -30,11 +44,10 @@
     </script>
   </head>
   <body class="fr">
-  <noscript>You need to enable JavaScript to run this app.</noscript>
-  <div id="root">
-  </div>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
 
-<!--  <script type="module" src="dsfr/dsfr.module.min.js"></script>-->
-<!--  <script type="text/javascript" nomodule src="dsfr/dsfr.nomodule.min.js"></script>-->
+    <!--  <script type="module" src="dsfr/dsfr.module.min.js"></script>-->
+    <!--  <script type="text/javascript" nomodule src="dsfr/dsfr.nomodule.min.js"></script>-->
   </body>
 </html>
