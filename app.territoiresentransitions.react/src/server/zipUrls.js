@@ -4,7 +4,7 @@ const fetch = require('node-fetch');
 // génère un zip de tous les fichiers donnés en paramètres
 const zipUrls = async (req, res) => {
   // URLs des fichiers à télécharger
-  const signedUrls = req.body?.signedUrls;
+  const signedUrls = req.body?.signedUrls?.filter(isValidURL);
   if (!signedUrls?.length) {
     return res.sendStatus(404);
   }
@@ -69,4 +69,11 @@ const getFetchAndAppend =
       console.error(err);
     }
   };
+
+// vérifie qu'une URL est autorisée à être téléchargée
+const isValidURL = ({url}) => {
+  const urlObj = new URL(url);
+  return urlObj.origin === process.env.REACT_APP_SUPABASE_URL;
+};
+
 module.exports = zipUrls;
