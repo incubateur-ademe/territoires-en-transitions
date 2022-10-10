@@ -54,12 +54,9 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
           <YellowDivider />
         </>
       ) : (
-        <p className="fr-text-sm">
+        <p className="fr-text--sm">
           Il n'y a pas de preuve attendue pour cette{' '}
           {withSubActions ? 'action' : 'sous-action'} du référentiel.
-          <br />
-          Vous pouvez ajouter les documents preuves que vous jugez utiles pour
-          justifier l'avancement.
         </p>
       )}
       <h5>Preuves complémentaires</h5>

@@ -5,14 +5,12 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Message Av
   data-test="preuves-cae_1.2.4"
 >
   <p
-    className="fr-text-sm"
+    className="fr-text--sm"
   >
     Il n'y a pas de preuve attendue pour cette
      
     sous-action
      du référentiel.
-    <br />
-    Vous pouvez ajouter les documents preuves que vous jugez utiles pour justifier l'avancement.
   </p>
   <h5>
     Preuves complémentaires
@@ -515,14 +513,12 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves At
   data-test="preuves-cae_1.2.3"
 >
   <p
-    className="fr-text-sm"
+    className="fr-text--sm"
   >
     Il n'y a pas de preuve attendue pour cette
      
     action
      du référentiel.
-    <br />
-    Vous pouvez ajouter les documents preuves que vous jugez utiles pour justifier l'avancement.
   </p>
   <h5>
     Preuves complémentaires
