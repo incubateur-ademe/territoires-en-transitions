@@ -1,6 +1,6 @@
 from typing import Optional
 from business.utils.models.actions import ActionId, ActionReferentiel
-from business.evaluation.domain.models.action_score import ActionScore
+from business.utils.models.action_score import ActionScore
 
 
 def make_action_score(

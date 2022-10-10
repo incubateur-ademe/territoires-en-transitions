@@ -1,32 +1,20 @@
 from copy import deepcopy, copy
 import logging
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 
-from business.evaluation.domain.models import events
-from business.evaluation.domain.models.action_statut import (
+from business.utils.models.action_statut import (
     ActionStatut,
 )
-from business.evaluation.domain.models.action_score import ActionScore
+from business.utils.models.action_score import ActionScore
 from business.personnalisation.execute_score_personnalisation_factor_regle import (
     execute_score_personnalisation_override_regle,
 )
 from business.personnalisation.models import ActionPersonnalisationConsequence
-from business.personnalisation.ports.personnalisation_repo import (
-    AbstractPersonnalisationRepository,
-)
 from business.utils.models.actions import ActionReferentiel, ActionId
-from business.evaluation.domain.ports.action_status_repo import (
-    AbstractActionStatutRepository,
-)
-from business.evaluation.domain.ports.referentiel_repo import (
-    AbstractReferentielRepository,
-)
-from business.utils.domain_message_bus import AbstractDomainMessageBus
 from business.utils.models.actions import ActionChildren, ActionComputedPoint
-from business.utils.action_tree import ActionTree, ActionTreeError
+from business.utils.action_tree import ActionTree
 from business.utils.timeit import timeit
-from business.utils.use_case import UseCase
 
 logger = logging.getLogger()
 
@@ -56,82 +44,6 @@ class ActionPointTree(ActionTree):
         self._points_by_id[action_id] = value
 
 
-class ComputeReferentielScoresForCollectivite(UseCase):
-    def __init__(
-        self,
-        bus: AbstractDomainMessageBus,
-        referentiel_repo: AbstractReferentielRepository,
-        personnalisation_repo: AbstractPersonnalisationRepository,
-        statuses_repo: AbstractActionStatutRepository,
-        referentiel_action_level: Optional[Dict[ActionReferentiel, int]] = None,
-    ) -> None:
-        self.bus = bus
-        self.statuses_repo = statuses_repo
-        self.referentiel_repo = referentiel_repo
-        self.personnalisation_repo = personnalisation_repo
-        self.points_trees: Dict[ActionReferentiel, ActionPointTree] = {}
-        self.referentiel_action_level = referentiel_action_level or {"eci": 2, "cae": 3}
-
-    @timeit("ComputeReferentielScoresForCollectivite.execute")
-    def execute(self, command: events.TriggerNotationForCollectiviteForReferentiel):
-        point_tree_referentiel = self.points_trees.get(command.referentiel)
-        action_level = self.referentiel_action_level[command.referentiel]
-        if point_tree_referentiel is None:
-            try:
-                print("Building point tree for referentiel ", command.referentiel)
-                point_tree_referentiel = self._build_points_tree(command.referentiel)
-                self.points_trees[command.referentiel] = point_tree_referentiel
-            except ActionTreeError:
-                self.bus.publish_event(
-                    events.ReferentielScoresForCollectiviteComputationFailed(
-                        f"Referentiel tree could not be computed for referentiel {command.referentiel}"
-                    )
-                )
-                return
-
-        statuses = self.statuses_repo.get_all_for_collectivite(
-            command.collectivite_id, command.referentiel
-        )
-
-        personnalisation_consequences = {
-            action_id: personnalisation_consequence
-            for (
-                action_id,
-                personnalisation_consequence,
-            ) in self.personnalisation_repo.get_action_personnalisation_consequences_for_collectivite(
-                command.collectivite_id
-            ).items()
-            if action_id in point_tree_referentiel.backward_ids
-        }
-
-        scores = compute_scores(
-            point_tree_referentiel,
-            statuses,
-            personnalisation_consequences,
-            action_level,
-            command.referentiel,
-        )
-        self.bus.publish_event(
-            events.ReferentielScoresForCollectiviteComputed(
-                collectivite_id=command.collectivite_id,
-                referentiel=command.referentiel,
-                scores=list(scores.values()),
-            )
-        )
-
-    def _build_points_tree(self, referentiel: ActionReferentiel) -> ActionPointTree:
-        ref_points = self.referentiel_repo.get_all_points_from_referentiel(
-            referentiel=referentiel
-        )
-        ref_children = self.referentiel_repo.get_all_children_from_referentiel(
-            referentiel=referentiel
-        )
-        print(
-            f"Got {len(ref_points)} points and {len(ref_children)} children for referentiel {referentiel}."
-        )
-        return ActionPointTree(ref_points, ref_children)
-
-
 def update_scores_from_tache_given_statuses(
     point_tree_referentiel: ActionPointTree,
     point_tree_personnalise: ActionPointTree,
@@ -142,7 +54,6 @@ def update_scores_from_tache_given_statuses(
     actions_non_concernes_ids: List[ActionId],
     action_personnalises_ids: List[ActionId],
     actions_desactivees_ids: List[ActionId],
-    referentiel: ActionReferentiel,
 ):
 
     tache_points_personnalise = point_tree_personnalise.get_action_point(tache_id)
@@ -174,7 +85,6 @@ def update_scores_from_tache_given_statuses(
             pas_concerne_taches_avancement=1,
             point_referentiel=tache_points_referentiel,
             concerne=tache_concerne,
-            referentiel=referentiel,
             # perso
             point_potentiel_perso=tache_points_personnalise
             if tache_is_personnalise and not tache_is_desactive
@@ -230,7 +140,6 @@ def update_scores_from_tache_given_statuses(
         pas_fait_taches_avancement=pas_fait_taches_avancement,
         pas_concerne_taches_avancement=pas_concerne_taches_avancement,
         concerne=tache_concerne,
-        referentiel=referentiel,
         # perso
         point_potentiel_perso=tache_points_personnalise
         if tache_is_personnalise
@@ -247,7 +156,6 @@ def update_scores_for_action_given_children_scores(
     action_personnalises_ids: List[ActionId],
     actions_desactivees_ids: List[ActionId],
     action_id: ActionId,
-    referentiel: ActionReferentiel,
 ):
     action_children = point_tree_referentiel.get_children(action_id)
     action_point_referentiel = point_tree_referentiel.get_action_point(action_id)
@@ -327,7 +235,6 @@ def update_scores_for_action_given_children_scores(
         ),
         point_referentiel=action_point_referentiel,
         concerne=concerne,
-        referentiel=referentiel,
         # perso
         point_potentiel_perso=action_point_personnalise
         if action_is_personnalise and not action_is_desactive
@@ -520,10 +427,10 @@ def build_point_tree_personnalise(
 def compute_scores(
     point_tree_referentiel: ActionPointTree,
     statuses: List[ActionStatut],
-    personnalisation_consequences: Dict[ActionId, ActionPersonnalisationConsequence],
+    personnalisation_consequences: dict[ActionId, ActionPersonnalisationConsequence],
     action_level: int,
-    referentiel: ActionReferentiel,
 ) -> Dict[ActionId, ActionScore]:
+
     # 0. Build point tree personnalise
     point_tree_personnalise = build_point_tree_personnalise(
         point_tree_referentiel, personnalisation_consequences
@@ -543,7 +450,6 @@ def compute_scores(
         compute_actions_non_concernes_ids(point_tree_personnalise, statuses)
         + actions_desactivees_ids
     )
-
     potentiels = compute_potentiels(
         point_tree_personnalise,
         actions_non_concernes_ids,
@@ -568,7 +474,6 @@ def compute_scores(
             actions_non_concernes_ids,
             action_personnalises_ids,
             actions_desactivees_ids,
-            referentiel,
         )
     )
     # 3. Infer all action points based on their children's
@@ -581,7 +486,6 @@ def compute_scores(
             action_personnalises_ids,
             actions_desactivees_ids,
             action_id,
-            referentiel,
         )
     )
 
