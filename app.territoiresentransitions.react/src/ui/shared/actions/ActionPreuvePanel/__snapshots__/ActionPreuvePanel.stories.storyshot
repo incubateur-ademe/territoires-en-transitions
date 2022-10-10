@@ -5,14 +5,12 @@ exports[`Storyshots ui/shared/actions/ActionPreuvePanel Default 1`] = `
   data-test="preuves-eci_1.1.1"
 >
   <p
-    className="fr-text-sm"
+    className="fr-text--sm"
   >
     Il n'y a pas de preuve attendue pour cette
      
     sous-action
      du référentiel.
-    <br />
-    Vous pouvez ajouter les documents preuves que vous jugez utiles pour justifier l'avancement.
   </p>
   <h5>
     Preuves complémentaires
