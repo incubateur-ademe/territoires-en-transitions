@@ -113,5 +113,109 @@ exports[`Storyshots ui/shared/form/Form Defaut 1`] = `
       type="area"
     />
   </div>
+  <div
+    className="fr-select-group flex-grow"
+  >
+    <label
+      className="fr-label"
+      htmlFor="Basique elect"
+    >
+      Basique elect
+    </label>
+    <select
+      className="fr-select"
+      id="Basique elect"
+      label="Basique elect"
+      name="select"
+      onBlur={[Function]}
+      onChange={[Function]}
+      options={
+        Array [
+          Object {
+            "label": "Valeur 1",
+            "value": "valeur1",
+          },
+          Object {
+            "label": "Valeur 2",
+            "value": "valeur2",
+          },
+        ]
+      }
+      value=""
+    >
+      <option
+        disabled={true}
+        hidden={true}
+        value=""
+      >
+        Sélectionnez une option
+      </option>
+      <option
+        value="valeur1"
+      >
+        Valeur 1
+      </option>
+      <option
+        value="valeur2"
+      >
+        Valeur 2
+      </option>
+    </select>
+  </div>
+  <div
+    className="fr-select-group flex-grow fr-select-group--disabled"
+  >
+    <label
+      className="fr-label"
+      htmlFor="Select désactivé"
+    >
+      Select désactivé
+      <span
+        className="fr-hint-text"
+      >
+        Selecteur avec hint
+      </span>
+    </label>
+    <select
+      className="fr-select"
+      disabled={true}
+      hint="Selecteur avec hint"
+      id="Select désactivé"
+      label="Select désactivé"
+      name="selectDisabled"
+      onBlur={[Function]}
+      onChange={[Function]}
+      options={
+        Array [
+          Object {
+            "label": "Valeur 1",
+            "value": "valeur1",
+          },
+          Object {
+            "label": "Valeur 2",
+            "value": "valeur2",
+          },
+        ]
+      }
+    >
+      <option
+        disabled={true}
+        hidden={true}
+        value=""
+      >
+        Sélectionnez une option
+      </option>
+      <option
+        value="valeur1"
+      >
+        Valeur 1
+      </option>
+      <option
+        value="valeur2"
+      >
+        Valeur 2
+      </option>
+    </select>
+  </div>
 </form>
 `;

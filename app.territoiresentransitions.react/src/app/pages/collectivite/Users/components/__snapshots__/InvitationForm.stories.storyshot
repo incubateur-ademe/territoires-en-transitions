@@ -34,7 +34,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/InvitationForm As Ad
       />
     </div>
     <div
-      className="fr-select-group md:flex-grow"
+      className="fr-select-group flex-grow"
     >
       <label
         className="fr-label"
@@ -45,9 +45,22 @@ exports[`Storyshots app/pages/collectivite/Users/components/InvitationForm As Ad
       <select
         className="fr-select"
         id="Niveau d’accès pour cette collectivité"
+        label="Niveau d’accès pour cette collectivité"
         name="acces"
         onBlur={[Function]}
         onChange={[Function]}
+        options={
+          Array [
+            Object {
+              "label": "Édition",
+              "value": "edition",
+            },
+            Object {
+              "label": "Lecture",
+              "value": "lecture",
+            },
+          ]
+        }
         value=""
       >
         <option
@@ -114,7 +127,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/InvitationForm As Ed
       />
     </div>
     <div
-      className="fr-select-group md:flex-grow"
+      className="fr-select-group flex-grow"
     >
       <label
         className="fr-label"
@@ -125,9 +138,22 @@ exports[`Storyshots app/pages/collectivite/Users/components/InvitationForm As Ed
       <select
         className="fr-select"
         id="Niveau d’accès pour cette collectivité"
+        label="Niveau d’accès pour cette collectivité"
         name="acces"
         onBlur={[Function]}
         onChange={[Function]}
+        options={
+          Array [
+            Object {
+              "label": "Édition",
+              "value": "edition",
+            },
+            Object {
+              "label": "Lecture",
+              "value": "lecture",
+            },
+          ]
+        }
         value=""
       >
         <option

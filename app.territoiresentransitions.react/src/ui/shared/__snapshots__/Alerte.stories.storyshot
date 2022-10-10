@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots ui/shared/Alerte Erreur 1`] = `
+<div
+  className="fr-alert fr-alert--error"
+>
+  <p>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque ultricies ante ligula, in ornare mauris faucibus sit amet. Pellentesque iaculis a metus a molestie.
+  </p>
+</div>
+`;
+
+exports[`Storyshots ui/shared/Alerte Information 1`] = `
+<div
+  className="fr-alert fr-alert--info"
+>
+  <h3
+    className="fr-alert__title"
+  >
+    Avec un titre
+  </h3>
+  <p>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque ultricies ante ligula, in ornare mauris faucibus sit amet. Pellentesque iaculis a metus a molestie.
+  </p>
+</div>
+`;
+
+exports[`Storyshots ui/shared/Alerte Succes 1`] = `
+<div
+  className="fr-alert fr-alert--success"
+>
+  <p>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque ultricies ante ligula, in ornare mauris faucibus sit amet. Pellentesque iaculis a metus a molestie.
+  </p>
+</div>
+`;
+
+exports[`Storyshots ui/shared/Alerte Warning 1`] = `
+<div
+  className="fr-alert fr-alert--warning"
+>
+  <p>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque ultricies ante ligula, in ornare mauris faucibus sit amet. Pellentesque iaculis a metus a molestie.
+  </p>
+</div>
+`;
