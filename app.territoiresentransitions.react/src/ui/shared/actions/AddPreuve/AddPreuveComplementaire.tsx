@@ -27,6 +27,7 @@ export const AddPreuveComplementaire = (props: TAddPreuveButtonProps) => {
   // complémentaire
   const {action, addToSubAction} = props;
   const [subaction_id, setSubaction] = useState('');
+  const selectSubActionIsRequired = addToSubAction && !subaction_id;
 
   const handlers = useAddPreuveComplementaireToAction(
     addToSubAction ? subaction_id : action.id
@@ -45,17 +46,21 @@ export const AddPreuveComplementaire = (props: TAddPreuveButtonProps) => {
     setSubaction('');
   };
 
+  // on désactive (avec le flag `disableDismiss`) la fermeture lors du clic en
+  // en dehors de la modale, car sinon la sélection dans le dropdown ferme le
+  // dialogue !
+  // TODO: fixer l'ordre des floaters (j'imagine que c'est possible) pour éviter cela ?
   return (
     <Modal
       size="lg"
       externalOpen={opened}
-      setExternalOpen={setOpened}
-      disableDismiss
+      setExternalOpen={onClose}
+      disableDismiss={selectSubActionIsRequired}
       render={() => {
         return (
           <>
             <h4>Ajouter une preuve complémentaire</h4>
-            {addToSubAction && !subaction_id ? (
+            {selectSubActionIsRequired ? (
               <SelectSubAction
                 action={action}
                 subaction_id={subaction_id}
