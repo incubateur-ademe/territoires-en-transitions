@@ -3,7 +3,7 @@ from typing import Dict, List
 from business.evaluation.domain.models.events import (
     TriggerPersonnalisationForCollectivite,
 )
-from business.evaluation.domain.use_cases.compute_and_store_referentiel_personnalisations_for_collectivite import (
+from business.evaluation.domain.use_cases.compute_personnalisations import (
     ComputeAndStoreReferentielPersonnalisationsForCollectivite,
 )
 from business.personnalisation.adapters.supabase_personnalisation_repo import (

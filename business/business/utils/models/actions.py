@@ -47,3 +47,9 @@ class ActionComputedPoint:
     referentiel: ActionReferentiel
     action_id: ActionId
     value: float
+
+    @classmethod
+    def from_definition(cls, definition: ActionDefinition) -> "ActionComputedPoint":
+        return cls(
+            definition.referentiel, definition.action_id, definition.computed_points
+        )
