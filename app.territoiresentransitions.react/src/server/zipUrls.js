@@ -9,13 +9,13 @@ const zipUrls = async (req, res) => {
     return res.sendStatus(404);
   }
 
-  let archiveFinalized = false;
+  let status = 'running';
 
   // crée l'archive et les écouteurs d'événements associés
   const archive = archiver('zip');
   // -> quand l'archive est finalisée
   archive.on('end', () => {
-    archiveFinalized = true;
+    status = 'finalized';
     console.log(archive.pointer() + ' total bytes');
     console.log('archive finalized');
   });
@@ -24,7 +24,7 @@ const zipUrls = async (req, res) => {
     console.error(err);
   });
   // -> à chaque fichier ajouté
-  archive.on('entry', ({name}) => console.log(name + ' archived'));
+  // archive.on('entry', ({name}) => console.log(name + ' archived'));
 
   // redirige le stream de l'archive vers la réponse au client
   archive.pipe(res);
@@ -39,8 +39,9 @@ const zipUrls = async (req, res) => {
   // détecte la fin de la réponse renvoyée
   res.on('close', () => {
     // si la requête a été interrompue avant la fin du l'archivage
-    if (!archiveFinalized) {
+    if (status !== 'finalized') {
       // arrête les téléchargements et l'archivage
+      status = 'canceled';
       fetcher.abort();
       archive.abort();
       console.log('archive aborted');
@@ -52,8 +53,10 @@ const zipUrls = async (req, res) => {
   const fetchAndAppend = getFetchAndAppend(archive, fetcher.signal);
   await Promise.all(signedUrls.map(fetchAndAppend));
 
-  // finalise le zip
-  archive.finalize();
+  // finalise le zip (si la requête n'a pas été interrompue)
+  if (status === 'running') {
+    archive.finalize();
+  }
 };
 
 // renvoie une fonction qui permet de télécharger et ajouter à l'archive donnée...
@@ -66,7 +69,11 @@ const getFetchAndAppend =
       const buffer = await response.buffer();
       return archive.append(buffer, {name: filename});
     } catch (err) {
-      console.error(err);
+      // on attrape les erreurs mais on ne les affiche dans la console que si
+      // c'est autre chose qu'un arrêt volontaire des téléchargements
+      if (err.type !== 'aborted') {
+        console.error(err);
+      }
     }
   };
 
