@@ -41,8 +41,8 @@ const InputField = ({field, form, ...props}: FormInputProps & FieldProps) => {
   return (
     <div
       className={classNames('fr-input-group flex-grow', {
-        ['fr-input-group--error']: isError,
-        ['fr-input-group--disabled']: props.disabled,
+        'fr-input-group--error': isError,
+        'fr-input-group--disabled': props.disabled,
       })}
     >
       <label htmlFor={field.name} className="fr-label">
@@ -53,7 +53,7 @@ const InputField = ({field, form, ...props}: FormInputProps & FieldProps) => {
         <input
           id={field.name}
           type={inputType}
-          className={classNames('fr-input', {['fr-input--error']: isError})}
+          className={classNames('fr-input', {'fr-input--error': isError})}
           maxLength={props.maxLength}
           onKeyDown={preventSubmit}
           {...field}
@@ -64,7 +64,7 @@ const InputField = ({field, form, ...props}: FormInputProps & FieldProps) => {
         <input
           id={field.name}
           type={inputType}
-          className={classNames('fr-input', {['fr-input--error']: isError})}
+          className={classNames('fr-input', {'fr-input--error': isError})}
           maxLength={props.maxLength}
           {...field}
           {...props}
@@ -73,7 +73,7 @@ const InputField = ({field, form, ...props}: FormInputProps & FieldProps) => {
       {inputType === 'area' && (
         <textarea
           id={field.name}
-          className={classNames('fr-input', {['fr-input--error']: isError})}
+          className={classNames('fr-input', {'fr-input--error': isError})}
           maxLength={props.maxLength}
           {...field}
           {...props}
