@@ -228,6 +228,7 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
         </div>
         <div
           className="flex ml-auto pl-2 w-full max-w-sm"
+          data-test="CollectiviteSwitchDropdown"
           onBlur={[Function]}
           onClick={[Function]}
           onFocus={[Function]}
