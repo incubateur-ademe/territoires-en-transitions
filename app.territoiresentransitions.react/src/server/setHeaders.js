@@ -14,7 +14,7 @@ const setHeaders = app => {
       ); // 1 année
     }
     res.header(
-      'Content-Security-Policy-Report-Only',
+      'Content-Security-Policy-Report-Only', // enlever -Report-Only pour activer la sécurité
       `default-src 'self'; script-src 'self' *.data.gouv.fr/ 'sha256-kO6puxapZiqpb3t6i8bI0xf0enmClp/hvy3/u7oanbw=' https://client.crisp.chat; connect-src 'self' ${process.env.REACT_APP_SUPABASE_URL} ${webSocketSupabaseKey}; img-src 'self' data: https://dteci.ademe.fr; font-src 'self' data: https://client.crisp.chat; style-src 'self' 'unsafe-inline' https://client.crisp.chat; frame-ancestors 'none'`
     );
     next();
