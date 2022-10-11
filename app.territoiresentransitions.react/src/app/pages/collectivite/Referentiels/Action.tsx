@@ -34,6 +34,7 @@ import ScrollTopButton from 'ui/shared/ScrollTopButton';
 import ActionNav from './ActionNav';
 import ActionPreuvePanel from 'ui/shared/actions/ActionPreuvePanel/ActionPreuvePanel';
 import {DownloadDocs} from './DownloadDocs';
+import DOMPurify from 'dompurify';
 
 const useActionLinkedIndicateurDefinitions = (actionId: string) => {
   const [linkedIndicateurDefinitions, setLinkedIndicateurDefinitions] =
@@ -145,7 +146,9 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
           <div
             className="htmlContent"
             dangerouslySetInnerHTML={{
-              __html: addTargetToContentAnchors(action.description ?? ''),
+              __html: DOMPurify.sanitize(
+                addTargetToContentAnchors(action.description ?? '')
+              ),
             }}
           />
           <DescriptionContextAndRessourcesDialogButton action={action} />

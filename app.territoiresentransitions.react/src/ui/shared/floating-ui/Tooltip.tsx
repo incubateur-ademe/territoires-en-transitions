@@ -13,6 +13,7 @@ import {
   useDismiss,
   useClick,
 } from '@floating-ui/react-dom-interactions';
+import DOMPurify from 'dompurify';
 
 export type TTooltipProps = {
   /** libellé de l'infobulle (accepte du code HTML) */
@@ -74,7 +75,7 @@ export const Tooltip = ({
             left: x ?? 0,
           }}
           {...getFloatingProps()}
-          dangerouslySetInnerHTML={{__html: label}}
+          dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(label)}}
         ></div>
       )}
     </>
