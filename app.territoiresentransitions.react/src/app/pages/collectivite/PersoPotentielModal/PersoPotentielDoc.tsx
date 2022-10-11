@@ -1,6 +1,7 @@
 /**
  * Affiche l'onglet "Documentation"
  */
+import DOMPurify from 'dompurify';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {TPersonnalisationRegleRead} from 'generated/dataLayer/personnalisation_regle_read';
 import {ActionScore} from 'types/ClientScore';
@@ -24,7 +25,9 @@ export const PersoPotentielDoc = (props: TPersoPotentielDocProps) => {
           description ? (
             <li
               key={`r${index}`}
-              dangerouslySetInnerHTML={{__html: description}}
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(description),
+              }}
             />
           ) : null
         )}

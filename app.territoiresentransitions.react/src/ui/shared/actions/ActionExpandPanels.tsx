@@ -14,6 +14,7 @@ import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinition
 import {ActionPreuvePanel} from './ActionPreuvePanel';
 import {useToggle} from '../useToggle';
 import {ChangeEvent} from 'react';
+import DOMPurify from 'dompurify';
 
 const ActionExpandPanelAdemeContent = (props: {
   content?: string;
@@ -32,7 +33,7 @@ const ActionExpandPanelAdemeContent = (props: {
           <div
             className="content"
             dangerouslySetInnerHTML={{
-              __html: addTargetToContentAnchors(content),
+              __html: DOMPurify.sanitize(addTargetToContentAnchors(content)),
             }}
           />
         </CrossExpandPanelBase>

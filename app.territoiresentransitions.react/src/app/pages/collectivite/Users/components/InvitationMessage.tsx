@@ -1,4 +1,5 @@
 import {useEffect, useMemo} from 'react';
+import DOMPurify from 'dompurify';
 import useCopyToClipboard from 'ui/shared/useCopyToClipboard';
 import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {UserData} from 'core-logic/api/auth/AuthProvider';
@@ -55,8 +56,10 @@ const InvitationMessage = ({
     [currentCollectivite, currentUser, acces, invitationUrl]
   );
 
-  const htmlMessage = useMemo(() => {
-    return {__html: message.replace(/(?:\r\n|\r|\n)/g, '<br>')};
+  const sanitzeHtmlMessage = useMemo(() => {
+    return {
+      __html: DOMPurify.sanitize(message.replace(/(?:\r\n|\r|\n)/g, '<br>')),
+    };
   }, [message]);
 
   return (
@@ -74,7 +77,7 @@ const InvitationMessage = ({
         <p
           data-test="invitation-message"
           className="text-gray-600 text-sm mb-0"
-          dangerouslySetInnerHTML={htmlMessage}
+          dangerouslySetInnerHTML={sanitzeHtmlMessage}
         />
       </div>
       {/* Buttons */}

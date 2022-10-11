@@ -2,6 +2,7 @@
  * Affiche l'onglet "Personnalisation du potentiel"
  */
 
+import DOMPurify from 'dompurify';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {ActionScore} from 'types/ClientScore';
 import {
@@ -61,7 +62,7 @@ const QuestionReponse = (props: TQuestionReponseProps) => {
     <>
       <legend
         className="fr-fieldset__legend fr-text--regular pt-6"
-        dangerouslySetInnerHTML={{__html: formulation}}
+        dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(formulation)}}
       />
       {description ? (
         <Accordion

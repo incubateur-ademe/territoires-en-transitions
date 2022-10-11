@@ -1,3 +1,4 @@
+import DOMPurify from 'dompurify';
 import {useToggle} from 'ui/shared/useToggle';
 
 export type TAccordionProps = {
@@ -34,7 +35,7 @@ export const Accordion = (props: TAccordionProps) => {
       <div
         className={`fr-collapse${expanded ? '--expanded' : ''}`}
         id={id}
-        dangerouslySetInnerHTML={{__html: html}}
+        dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(html)}}
       />
     </section>
   );

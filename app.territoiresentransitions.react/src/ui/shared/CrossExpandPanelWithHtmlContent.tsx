@@ -1,4 +1,6 @@
 import {ChangeEvent, ReactNode} from 'react';
+import DOMPurify from 'dompurify';
+
 import './CrossExpandPanel.css';
 import {Editable} from 'ui/shared/Editable';
 import {useToggle} from './useToggle';
@@ -12,7 +14,10 @@ export const CrossExpandPanelWithHtmlContent = (props: {
 
   return (
     <CrossExpandPanelWithNode {...otherProps}>
-      <div className="content" dangerouslySetInnerHTML={{__html: content}} />
+      <div
+        className="content"
+        dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(content)}}
+      />
     </CrossExpandPanelWithNode>
   );
 };
