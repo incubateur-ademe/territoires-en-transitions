@@ -325,7 +325,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         <li
           dangerouslySetInnerHTML={
             Object {
-              "__html": "<p>Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le statut de la 1.3.3 est &quot;non concerné&quot;.</p>",
+              "__html": "<p>Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le statut de la 1.3.3 est \\"non concerné\\".</p>",
             }
           }
         />
@@ -674,7 +674,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         <li
           dangerouslySetInnerHTML={
             Object {
-              "__html": "<p>Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le statut de la 1.3.3 est &quot;non concerné&quot;.</p>",
+              "__html": "<p>Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le statut de la 1.3.3 est \\"non concerné\\".</p>",
             }
           }
         />
@@ -860,7 +860,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         <li
           dangerouslySetInnerHTML={
             Object {
-              "__html": "<p>Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le statut de la 1.3.3 est &quot;non concerné&quot;.</p>",
+              "__html": "<p>Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le statut de la 1.3.3 est \\"non concerné\\".</p>",
             }
           }
         />
@@ -1034,7 +1034,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         <li
           dangerouslySetInnerHTML={
             Object {
-              "__html": "<p>Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le statut de la 1.3.3 est &quot;non concerné&quot;.</p>",
+              "__html": "<p>Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le statut de la 1.3.3 est \\"non concerné\\".</p>",
             }
           }
         />
@@ -1266,7 +1266,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         <li
           dangerouslySetInnerHTML={
             Object {
-              "__html": "<p>Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le statut de la 1.3.3 est &quot;non concerné&quot;.</p>",
+              "__html": "<p>Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le statut de la 1.3.3 est \\"non concerné\\".</p>",
             }
           }
         />
@@ -1468,7 +1468,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         <li
           dangerouslySetInnerHTML={
             Object {
-              "__html": "<p>Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le statut de la 1.3.3 est &quot;non concerné&quot;.</p>",
+              "__html": "<p>Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le statut de la 1.3.3 est \\"non concerné\\".</p>",
             }
           }
         />
@@ -1667,7 +1667,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         <li
           dangerouslySetInnerHTML={
             Object {
-              "__html": "<p>Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le statut de la 1.3.3 est &quot;non concerné&quot;.</p>",
+              "__html": "<p>Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le statut de la 1.3.3 est \\"non concerné\\".</p>",
             }
           }
         />
@@ -1866,7 +1866,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         <li
           dangerouslySetInnerHTML={
             Object {
-              "__html": "<p>Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le statut de la 1.3.3 est &quot;non concerné&quot;.</p>",
+              "__html": "<p>Pour une collectivité n'ayant ni la compétence PLU, ni l'instruction, ni l'octroi des permis de construire, le statut de la 1.3.3 est \\"non concerné\\".</p>",
             }
           }
         />
