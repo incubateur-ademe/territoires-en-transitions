@@ -172,7 +172,7 @@ const MembreListTableRow = ({
           ))
         )}
       </td>
-      <td className={cellClassNames}>
+      <td className={`w-96 ${cellClassNames}`}>
         {canUpdate ? (
           <div className="py-1 px-2 border border-gray-300">
             <DetailsFonctionTextarea
@@ -187,7 +187,7 @@ const MembreListTableRow = ({
             />
           </div>
         ) : (
-          <span title={details_fonction} className="w-72 line-clamp-3">
+          <span title={details_fonction} className="line-clamp-3">
             {details_fonction}
           </span>
         )}
@@ -235,7 +235,7 @@ const DetailsFonctionTextarea = ({
     <textarea
       data-test="details_fonction-textarea"
       value={value}
-      className=" w-60 resize-none"
+      className="w-full cursor-text resize-none"
       onChange={e => setValue(e.target.value)}
       onMouseOut={() => save(value)}
     />
