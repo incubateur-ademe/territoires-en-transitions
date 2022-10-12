@@ -21,3 +21,10 @@ class IdentiteCollectivite:
     type: Set[IdentiteTypeOption] = field(default_factory=lambda: set())
     population: Set[IdentitePopulationOption] = field(default_factory=lambda: set())
     localisation: Set[IdentiteLocalisationOption] = field(default_factory=lambda: set())
+
+    def asdict(self):
+        return {
+            "type": list(self.type),
+            "population": list(self.population),
+            "localisation": list(self.localisation),
+        }

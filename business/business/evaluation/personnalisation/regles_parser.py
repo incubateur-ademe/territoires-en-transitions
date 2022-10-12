@@ -1,12 +1,21 @@
-from typing import Dict, List
-
-from business.personnalisation.models import ActionPersonnalisationParsedRegles
-
+from dataclasses import dataclass
+from typing import Dict, List, Optional
+from lark import ParseTree
+from dataclasses import dataclass
 from business.utils.models.personnalisation import (
     ActionPersonnalisationRegles,
 )
-from business.personnalisation.engine.parser import parser
+from business.evaluation.personnalisation.parser import parser
 from business.utils.models.actions import ActionId
+
+
+@dataclass
+class ActionPersonnalisationParsedRegles:
+    """Parsed regles for an action"""
+
+    desactivation: Optional[ParseTree] = None
+    reduction: Optional[ParseTree] = None
+    score: Optional[ParseTree] = None
 
 
 class ReglesParser:

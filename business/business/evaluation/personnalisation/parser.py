@@ -2,6 +2,6 @@ from lark import Lark
 
 
 parser = Lark.open(
-    "./business/personnalisation/engine/grammar.lark",
+    "./business/evaluation/personnalisation/grammar.lark",
     parser="lalr",
 )

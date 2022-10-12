@@ -1,11 +1,14 @@
 import pytest
 
-from business.personnalisation.engine.formule import (
+from business.evaluation.personnalisation.formule import (
     ReponseMissing,
 )
-from business.personnalisation.engine.formule_interpreter import ReponsesInterpreter
-from business.personnalisation.models import Reponse, IdentiteCollectivite
-from business.personnalisation.engine.parser import parser
+from business.evaluation.personnalisation.formule_interpreter import (
+    ReponsesInterpreter,
+)
+from business.utils.models.reponse import Reponse
+from business.utils.models.identite import IdentiteCollectivite
+from business.evaluation.personnalisation.parser import parser
 
 
 def test_function_reponse_on_question_type_choix():

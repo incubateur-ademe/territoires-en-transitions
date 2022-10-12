@@ -1,7 +1,5 @@
 from dataclasses import dataclass
 
-from typing import Any
-
 from typing import Optional
 
 from business.utils.models.actions import ActionId
