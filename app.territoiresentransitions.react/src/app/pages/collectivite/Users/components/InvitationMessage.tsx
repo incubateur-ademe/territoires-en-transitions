@@ -56,7 +56,7 @@ const InvitationMessage = ({
     [currentCollectivite, currentUser, acces, invitationUrl]
   );
 
-  const sanitzeHtmlMessage = useMemo(() => {
+  const sanitizedHtmlMessage = useMemo(() => {
     return {
       __html: DOMPurify.sanitize(message.replace(/(?:\r\n|\r|\n)/g, '<br>')),
     };
@@ -77,7 +77,7 @@ const InvitationMessage = ({
         <p
           data-test="invitation-message"
           className="text-gray-600 text-sm mb-0"
-          dangerouslySetInnerHTML={sanitzeHtmlMessage}
+          dangerouslySetInnerHTML={sanitizedHtmlMessage}
         />
       </div>
       {/* Buttons */}
