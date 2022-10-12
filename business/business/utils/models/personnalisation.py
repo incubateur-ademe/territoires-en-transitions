@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from .actions import ActionId
 from .regles import RegleType
@@ -36,5 +36,5 @@ class ActionPersonnalisationConsequence:
     """Computed consequence for an action"""
 
     desactive: Optional[bool] = None
-    potentiel_perso: Optional[float] = None
+    potentiel_perso: Optional[Union[float, str]] = None
     score_formule: Optional[str] = None

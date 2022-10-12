@@ -1,14 +1,14 @@
 from typing import Dict, List, Optional, Union
 
-from business.personnalisation.engine.formule import ReponseMissing
-from business.personnalisation.engine.formule_interpreter import ReponsesInterpreter
-from business.personnalisation.models import (
-    ActionPersonnalisationConsequence,
-    IdentiteCollectivite,
-    Reponse,
+from business.evaluation.personnalisation.formule import ReponseMissing
+from business.evaluation.personnalisation.formule_interpreter import (
+    ReponsesInterpreter,
 )
-from business.personnalisation.engine.regles_parser import ReglesParser
+from business.utils.models.personnalisation import ActionPersonnalisationConsequence
+from business.utils.models.identite import IdentiteCollectivite
+from .regles_parser import ReglesParser
 from business.utils.models.actions import ActionId
+from business.utils.models.reponse import Reponse
 
 
 def execute_personnalisation_regles(
@@ -30,7 +30,7 @@ def execute_personnalisation_regles(
                 pass
         if parsed_regle.reduction:
             try:
-                potentiel_perso: Optional[float] = interpreter.visit(
+                potentiel_perso: Optional[Union[str, float]] = interpreter.visit(
                     parsed_regle.reduction
                 )
             except ReponseMissing:

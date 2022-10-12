@@ -1,8 +1,8 @@
 from typing import Optional
 
 
-from business.personnalisation.engine.formule_checker import FormuleChecker
-from business.personnalisation.engine.parser import parser
+from business.evaluation.personnalisation.formule_checker import FormuleChecker
+from business.evaluation.personnalisation.parser import parser
 from .parse_regles import (
     ActionRegles,
     Regle,

@@ -6,7 +6,7 @@ from business.evaluation.adapters.supabase_action_statut_repo import (
     SupabaseActionStatutRepository,
 )
 from business.utils.models.action_statut import ActionStatut
-from business.evaluation.domain.use_cases import (
+from business.evaluation.domain.evaluation import (
     ActionPointTree,
     compute_referentiel_scores_for_collectivite,
 )

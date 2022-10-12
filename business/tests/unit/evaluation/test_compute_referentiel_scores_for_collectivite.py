@@ -1,3 +1,4 @@
+import math
 import pytest
 
 from business.utils.models.action_score import ActionScore
@@ -5,8 +6,10 @@ from business.utils.models.action_statut import (
     ActionStatut,
     DetailedAvancement,
 )
-from business.evaluation.domain.use_cases.compute_referentiel_scores_for_collectivite import (
+from business.evaluation.evaluation.action_point_tree import (
     ActionPointTree,
+)
+from business.evaluation.evaluation.compute_scores import (
     compute_scores,
 )
 from business.utils.models.actions import ActionId
@@ -796,8 +799,8 @@ def test_notation_should_redistribute_non_concernee_points_if_depth_is_greater_t
         point_fait=0,
         point_programme=0,
         point_pas_fait=0,
-        point_non_renseigne=40 / 65 * 70,
-        point_potentiel=40 / 65 * 70,
+        point_non_renseigne=round(40 / 65 * 70, 3),
+        point_potentiel=round(40 / 65 * 70, 3),
         point_referentiel=40,
         completed_taches_count=0,
         total_taches_count=1,
@@ -814,8 +817,8 @@ def test_notation_should_redistribute_non_concernee_points_if_depth_is_greater_t
         point_fait=0,
         point_programme=0,
         point_pas_fait=0,
-        point_non_renseigne=25 / 65 * 70,
-        point_potentiel=25 / 65 * 70,
+        point_non_renseigne=round(25 / 65 * 70, 3),
+        point_potentiel=round(25 / 65 * 70, 3),
         point_referentiel=25,
         completed_taches_count=0,
         total_taches_count=1,
@@ -1164,9 +1167,10 @@ def test_notation_when_potentiel_perso_formule_is_given(simple_point_tree_refere
     )
 
     # Action eci_1 should have the score reduced to the same than eci_2
-    assert (
+    assert math.isclose(
         actual_scores[ActionId("eci_1")].point_fait
-        / actual_scores[ActionId("eci_1")].point_potentiel
-        == actual_scores[ActionId("eci_2")].point_fait
-        / actual_scores[ActionId("eci_2")].point_potentiel
+        / actual_scores[ActionId("eci_1")].point_potentiel,
+        actual_scores[ActionId("eci_2")].point_fait
+        / actual_scores[ActionId("eci_2")].point_potentiel, 
+        rel_tol=3
     )
