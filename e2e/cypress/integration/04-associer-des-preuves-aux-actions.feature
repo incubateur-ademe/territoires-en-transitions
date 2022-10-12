@@ -241,7 +241,7 @@ Fonctionnalité: Associer des preuves aux actions
       | Convention de partenariat avec des organismes certificateurs du bâtiment                                                        |         |
 
     # on ajoute un lien
-    Quand je clique sur le 1er bouton "Ajouter une preuve réglementaire" à l'action "1.3.2.3"
+    Quand je clique sur le 1er bouton "Ajouter une preuve réglementaire" à l'action "cae_1.3.2.3"
     Et que je remplis le "formulaire Lien" avec les valeurs suivantes :
       | Champ | Valeur           |
       | titre | Exemple          |
@@ -253,7 +253,7 @@ Fonctionnalité: Associer des preuves aux actions
       | Convention de partenariat avec des organismes certificateurs du bâtiment                                                        |         |
 
     # et un fichier
-    Quand je clique sur le 1er bouton "Ajouter une preuve réglementaire" à l'action "1.3.2.3"
+    Quand je clique sur le 1er bouton "Ajouter une preuve réglementaire" à l'action "cae_1.3.2.3"
     Et que je clique sur l'onglet "Fichier" du "dialogue d'ajout d'une preuve"
     Et que je transfère à partir du "dialogue d'ajout d'une preuve" le fichier nommé "fichier.xls" et contenant "contenu du fichier"
     Et que je clique sur le bouton "Ajouter" du "formulaire Fichier"
@@ -285,6 +285,8 @@ Fonctionnalité: Associer des preuves aux actions
     # scénario 2 : on vérifie l'affichage de l'onglet lorsqu'il y a des données
     Etant donné que je suis connecté en tant que "yolo"
     Et que les tables de preuves de la collectivité "1" sont vides
+    Et que la bibliothèque de la collectivité "1" est vide
+    # on ajoute des preuves lien directement dans la base de données
     Et que la table des preuves réglementaires est initialisée avec les données suivantes :
       | collectivite_id | preuve_id | titre     | url            | commentaire |
       | 1               | ratio_EP  | Exemple 1 | https://ex1.fr | ex1         |
@@ -301,3 +303,45 @@ Fonctionnalité: Associer des preuves aux actions
     Et la liste des preuves complémentaires de l'action contient les lignes suivantes :
       | Titre     | Commentaire |
       | Exemple 2 | ex2         |
+    # le bouton est absent car il n'y a pas de preuve fichier (que des liens)
+    Et le bouton "Télécharger toutes les preuves" est absent
+
+    # on ajoute une preuve complémentaire fichier depuis l'onglet Preuves et on vérifie son affichage et le zip téléchargé
+    Quand je clique sur le bouton d'ajout d'une preuve complémentaire à l'action
+    Et que je sélectionne la sous-action "cae_2.3.1.2" dans la liste déroulante
+    Et que je clique sur l'onglet "Fichier" du "dialogue d'ajout d'une preuve"
+    Et que je transfère à partir du "dialogue d'ajout d'une preuve" le fichier nommé "mon.doc" et contenant "mon contenu"
+    Et que je clique sur le bouton "Ajouter" du "formulaire Fichier"
+    Alors le "dialogue d'ajout d'une preuve" est absent
+    Et la liste des preuves attendues de l'action contient les lignes suivantes :
+      | nom                                             | preuves   |
+      | Cahier des prescriptions éclairage public       |           |
+      | Politique éclairage, Plan d’aménagement lumière |           |
+      | Calcul ratio éclairage public                   | Exemple 1 |
+    Et la liste des preuves complémentaires de l'action contient les lignes suivantes :
+      | Titre     | Commentaire |
+      | mon.doc   |             |
+      | Exemple 2 | ex2         |
+    Et je peux télécharger toutes les preuves sous la forme d'un fichier nommé "cae_2.3.1_Ambérieu-en-Bugey.zip" et contenant les fichiers suivants :
+      | nom     | contenu     |
+      | mon.doc | mon contenu |
+
+    # puis une preuve réglementaire et on refait les vérifications
+    Quand je clique sur le 2ème bouton "Ajouter une preuve réglementaire" à l'action "cae_2.3.1"
+    Et que je clique sur l'onglet "Fichier" du "dialogue d'ajout d'une preuve"
+    Et que je transfère à partir du "dialogue d'ajout d'une preuve" le fichier nommé "autre.doc" et contenant "autre contenu"
+    Et que je clique sur le bouton "Ajouter" du "formulaire Fichier"
+    Alors le "dialogue d'ajout d'une preuve" est absent
+    Et la liste des preuves attendues de l'action contient les lignes suivantes :
+      | nom                                             | preuves   |
+      | Cahier des prescriptions éclairage public       |           |
+      | Politique éclairage, Plan d’aménagement lumière | autre.doc |
+      | Calcul ratio éclairage public                   | Exemple 1 |
+    Et la liste des preuves complémentaires de l'action contient les lignes suivantes :
+      | Titre     | Commentaire |
+      | mon.doc   |             |
+      | Exemple 2 | ex2         |
+    Et je peux télécharger toutes les preuves sous la forme d'un fichier nommé "cae_2.3.1_Ambérieu-en-Bugey.zip" et contenant les fichiers suivants :
+      | nom       | contenu       |
+      | mon.doc   | mon contenu   |
+      | autre.doc | autre contenu |

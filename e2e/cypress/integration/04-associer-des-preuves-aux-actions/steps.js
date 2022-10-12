@@ -150,13 +150,11 @@ When(
   /clique sur le (\d)(?:er|ème) bouton "Ajouter une preuve réglementaire" à l'action "([^"]+)"/,
   (num, action) => {
     // utilise le paramètre "force" pour le clic (sinon il ne se produit jamais ?)
-    getPreuvePanel(action)
-      .find(
-        `[data-test=attendues] [data-test=preuve]:nth(${
-          num - 1
-        }) [data-test=AddPreuveReglementaire]`
-      )
-      .click({ force: true });
+    cy.get(
+      `[data-test="preuves-${action}"] [data-test=attendues] [data-test=preuve]:nth(${
+        num - 1
+      }) [data-test=AddPreuveReglementaire]`
+    ).click({ force: true });
   }
 );
 
@@ -166,6 +164,61 @@ When(
     getAddPreuveButton(action).should(
       status === 'visible' ? 'be.visible' : 'not.exist'
     );
+  }
+);
+
+When(
+  "je clique sur le bouton d'ajout d'une preuve complémentaire à l'action",
+  () => {
+    getPreuveTab().find('[data-test=AddPreuveComplementaire]').click();
+  }
+);
+
+When(
+  /je sélectionne la sous-action "([^"]+)" dans la liste déroulante/,
+  (value) => {
+    cy.get('[data-test=SelectSubAction]').should('be.visible').click();
+    cy.get(`[data-test=SelectSubAction-options] [data-test="${value}"]`)
+      .should('be.visible')
+      .click();
+  }
+);
+
+When(/la liste déroulante des sous-actions est visible/, () => {
+  cy.get('[data-test=SelectSubAction]').should('be.visible');
+});
+
+When(
+  "je peux télécharger toutes les preuves sous la forme d'un fichier nommé {string} et contenant les fichiers suivants :",
+  (downloadedFile, dataTable) => {
+    // chemin du fichier téléchargé
+    const downloadsFolder = Cypress.config('downloadsFolder');
+    const filename = downloadsFolder + '/' + downloadedFile;
+
+    // fichiers attendus dans l'archive
+    const expectedFiles = dataTable.rows();
+
+    // espionne l'url de génération du zip
+    cy.intercept('POST', '/zip').as('zip');
+
+    // déclenche la génération du zip
+    cy.get(LocalSelectors['Télécharger toutes les preuves'].selector)
+      .should('be.enabled')
+      .click();
+
+    // attend que la réponse soit reçue
+    cy.wait('@zip')
+      .its('response')
+      .then((response) => {
+        // vérifie le code de retour
+        expect(response.statusCode).to.eq(200);
+        // et le contenu du fichier téléchargé
+        return cy.task('validateZip', {
+          filename,
+          expectedFiles,
+          removeAfter: true,
+        });
+      });
   }
 );
 

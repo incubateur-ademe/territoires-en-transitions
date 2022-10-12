@@ -19,4 +19,7 @@ export const LocalSelectors = {
       Ajouter: 'button[type=submit]',
     },
   },
+  'Télécharger toutes les preuves': {
+    selector: '[data-test=DownloadDocs]',
+  },
 };
