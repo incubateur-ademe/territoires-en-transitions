@@ -66,6 +66,7 @@ export const SelectDropdown = <T extends string>({
   displayOption,
   options,
   placeholderText,
+  'data-test': dataTest,
 }: {
   placement?: Placement;
   value?: T;
@@ -74,38 +75,44 @@ export const SelectDropdown = <T extends string>({
   onSelect: (value: T) => void;
   options?: T[];
   placeholderText?: string;
+  'data-test'?: string;
 }) => {
   const selectableOptions: T[] = options ?? keys(labels);
   return (
     <DropdownFloater
       placement={placement}
-      render={({close}) =>
-        selectableOptions.map(v => {
-          const label = labels[v as T];
-          return (
-            <button
-              key={v}
-              aria-label={label}
-              className="flex items-center w-full p-2 text-left text-sm"
-              onClick={() => {
-                onSelect(v as T);
-                close();
-              }}
-            >
-              <div className="w-6 mr-2">
-                {value === v ? (
-                  <span className={optionCheckMarkClassname} />
-                ) : null}
-              </div>
-              <span>
-                {displayOption ? displayOption(v as T) : labels[v as T]}
-              </span>
-            </button>
-          );
-        })
-      }
+      render={({close}) => (
+        <div data-test={`${dataTest}-options`}>
+          {selectableOptions.map(v => {
+            const label = labels[v as T];
+            return (
+              <button
+                key={v}
+                aria-label={label}
+                data-test={v}
+                className="flex items-center w-full p-2 text-left text-sm"
+                onClick={e => {
+                  e.preventDefault();
+                  onSelect(v as T);
+                  close();
+                }}
+              >
+                <div className="w-6 mr-2">
+                  {value === v ? (
+                    <span className={optionCheckMarkClassname} />
+                  ) : null}
+                </div>
+                <span>
+                  {displayOption ? displayOption(v as T) : labels[v as T]}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      )}
     >
       <SelectDropdownButtonDisplayed
+        data-test={dataTest}
         placeholderText={placeholderText}
         labels={labels}
         value={value}

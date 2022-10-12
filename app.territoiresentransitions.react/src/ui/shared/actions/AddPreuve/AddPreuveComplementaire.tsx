@@ -102,6 +102,7 @@ const SelectSubAction = ({
         Sous-action associée (obligatoire)
       </label>
       <SelectDropdown
+        data-test="SelectSubAction"
         placeholderText="Sélectionnez une option"
         value={subaction_id}
         labels={labels}
