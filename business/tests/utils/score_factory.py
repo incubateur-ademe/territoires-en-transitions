@@ -18,7 +18,6 @@ def make_action_score(
     programme_taches_avancement: float = 0.0,
     pas_fait_taches_avancement: float = 0.0,
     pas_concerne_taches_avancement: float = 0.0,
-    referentiel: ActionReferentiel = "eci",
     point_potentiel_perso: Optional[float] = None,
     desactive: bool = False,
 ):
@@ -37,7 +36,6 @@ def make_action_score(
         programme_taches_avancement=programme_taches_avancement,
         pas_fait_taches_avancement=pas_fait_taches_avancement,
         pas_concerne_taches_avancement=pas_concerne_taches_avancement,
-        referentiel=referentiel,
         point_potentiel_perso=point_potentiel_perso,
         desactive=desactive,
     )

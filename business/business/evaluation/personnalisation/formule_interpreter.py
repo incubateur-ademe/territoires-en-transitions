@@ -5,8 +5,12 @@ from typing import List, Optional
 from lark.tree import Tree
 from lark.visitors import Interpreter
 
-from business.personnalisation.engine.formule import FormuleABC, ReponseMissing
-from business.personnalisation.models import IdentiteCollectivite, Reponse
+from business.evaluation.personnalisation.formule import (
+    FormuleABC,
+    ReponseMissing,
+)
+from business.utils.models.identite import IdentiteCollectivite
+from business.utils.models.reponse import Reponse
 
 
 class FormuleInterpreter(Interpreter):
@@ -113,7 +117,7 @@ class ReponsesInterpreter(FormuleABC, FormuleInterpreter):
         question_id = self.visit_children(tree)[0]
         if question_id not in self.reponses:
             raise ReponseMissing(f"No reponse for question {question_id}")
-        return self.reponses[question_id]
+        return float(self.reponses[question_id])
 
     def score_value(self, tree: Tree):
         """Compute score of an action

@@ -1,7 +1,5 @@
-from business.personnalisation.engine.parser import parser
-
-
-from business.personnalisation.engine.math import MathTransformer
+from business.evaluation.personnalisation.parser import parser
+from business.evaluation.personnalisation.math import MathTransformer
 
 
 def test_a_parser_should_be_built_from_grammar():

@@ -4,7 +4,6 @@ from business.referentiel.check_regles_against_questions import (
     FormuleChecker,
 )
 from business.utils.models.regles import Regle
-from business.utils.models.actions import ActionId
 
 questions = [
     Question(
