@@ -155,7 +155,7 @@ export const makeCollectiviteNavItems = (
     },
   ];
 
-  if (collectivite.readonly) {
+  if (collectivite.niveau_acces === null) {
     return common;
   }
 
