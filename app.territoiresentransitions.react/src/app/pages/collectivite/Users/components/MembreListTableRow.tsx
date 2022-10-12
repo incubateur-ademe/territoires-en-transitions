@@ -237,7 +237,7 @@ const DetailsFonctionTextarea = ({
       value={value}
       className="w-full cursor-text resize-none"
       onChange={e => setValue(e.target.value)}
-      onMouseOut={() => save(value)}
+      onBlur={() => details_fonction !== value && save(value)}
     />
   );
 };
