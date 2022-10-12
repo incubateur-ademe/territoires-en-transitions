@@ -21,6 +21,7 @@ const cucumber = require('cypress-cucumber-preprocessor').default;
 const pg = require('./pg');
 const supabase = require('./supabase');
 const clipboard = require('./clipboard');
+const validateZip = require('./validateZip');
 
 // eslint-disable-next-line no-unused-vars
 module.exports = (on, config) => {
@@ -43,4 +44,6 @@ module.exports = (on, config) => {
   supabase(on, config);
   // pour accéder au contenu du presse-papier
   clipboard(on, config);
+  // pour vérifier le contenu d'un zip
+  validateZip(on, config);
 };
