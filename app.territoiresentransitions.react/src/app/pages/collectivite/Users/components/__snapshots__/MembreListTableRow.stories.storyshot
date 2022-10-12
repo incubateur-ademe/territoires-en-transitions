@@ -80,16 +80,16 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow A
     </div>
   </td>
   <td
-    className="relative px-4"
+    className="w-96 relative px-4"
   >
     <div
       className="py-1 px-2 border border-gray-300"
     >
       <textarea
-        className=" w-60 resize-none"
+        className="w-full cursor-text resize-none"
         data-test="details_fonction-textarea"
+        onBlur={[Function]}
         onChange={[Function]}
-        onMouseOut={[Function]}
         value="Cheffe de projet PCAET"
       />
     </div>
@@ -208,16 +208,16 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow E
     </div>
   </td>
   <td
-    className="relative px-4"
+    className="w-96 relative px-4"
   >
     <div
       className="py-1 px-2 border border-gray-300"
     >
       <textarea
-        className=" w-60 resize-none"
+        className="w-full cursor-text resize-none"
         data-test="details_fonction-textarea"
+        onBlur={[Function]}
         onChange={[Function]}
-        onMouseOut={[Function]}
         value="Vice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier, adjoint au maire en charge du dVice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier"
       />
     </div>
@@ -281,10 +281,10 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow I
     className="relative px-4 pr-0"
   />
   <td
-    className="relative px-4"
+    className="w-96 relative px-4"
   >
     <span
-      className="w-72 line-clamp-3"
+      className="line-clamp-3"
     />
   </td>
   <td
@@ -377,16 +377,16 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow L
     </div>
   </td>
   <td
-    className="relative px-4"
+    className="w-96 relative px-4"
   >
     <div
       className="py-1 px-2 border border-gray-300"
     >
       <textarea
-        className=" w-60 resize-none"
+        className="w-full cursor-text resize-none"
         data-test="details_fonction-textarea"
+        onBlur={[Function]}
         onChange={[Function]}
-        onMouseOut={[Function]}
         value="Consultant assistance à maîtrise d’ouvrage - Bureau d’études Green Planet"
       />
     </div>
