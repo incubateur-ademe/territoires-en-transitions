@@ -1,4 +1,4 @@
-from business.personnalisation.execute_score_personnalisation_factor_regle import (
+from business.evaluation.personnalisation.execute_score_personnalisation_factor_regle import (
     execute_score_personnalisation_override_regle,
 )
 from business.utils.models.actions import ActionId

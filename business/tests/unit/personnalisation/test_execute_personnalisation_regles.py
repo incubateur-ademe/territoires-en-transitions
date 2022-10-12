@@ -1,8 +1,9 @@
-from business.personnalisation.models import IdentiteCollectivite, Reponse
-from business.personnalisation.engine.regles_parser import ReglesParser
-from business.personnalisation.execute_personnalisation_regles import (
-    ActionPersonnalisationConsequence,
+from business.utils.models.identite import IdentiteCollectivite
+from business.utils.models.reponse import Reponse
+from business.evaluation.personnalisation.regles_parser import ReglesParser
+from business.evaluation.personnalisation.execute_personnalisation_regles import (
     execute_personnalisation_regles,
+    ActionPersonnalisationConsequence,
 )
 from business.utils.models.regles import (
     ActionRegles,

@@ -2,9 +2,11 @@ from typing import Dict, Optional
 import re
 
 from business.utils.models.action_score import ActionScore
-from business.personnalisation.engine.formule_interpreter import FormuleInterpreter
+from business.evaluation.personnalisation.formule_interpreter import (
+    FormuleInterpreter,
+)
 from business.utils.models.actions import ActionId
-from business.personnalisation.engine.parser import parser
+from business.evaluation.personnalisation.parser import parser
 
 
 formule_interpreter = FormuleInterpreter()
