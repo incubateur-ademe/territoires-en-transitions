@@ -22,28 +22,33 @@ const BTN = 'fr-btn fr-btn--secondary fr-btn--icon-left fr-btn--sm';
  */
 export const DownloadDocs = (props: TDownloadDocsProps) => {
   const {action} = props;
-  const {refetch, isFetching} = useDownloadDocs(action);
+  const {refetch, isFetching} = useDownloadDocs(action) || {};
   const queryClient = useQueryClient();
 
-  return isFetching ? (
-    <p>
-      Téléchargement en cours...
-      <button
-        className={`${BTN} fr-ml-4w fr-fi-close-line`}
-        onClick={() => queryClient.cancelQueries('zip-action')}
-      >
-        Annuler
-      </button>
-    </p>
-  ) : (
+  if (isFetching) {
+    return (
+      <p>
+        Téléchargement en cours...
+        <button
+          className={`${BTN} fr-ml-4w fr-fi-close-line`}
+          onClick={() => queryClient.cancelQueries('zip-action')}
+        >
+          Annuler
+        </button>
+      </p>
+    );
+  }
+
+  return refetch ? (
     <button
+      data-test="DownloadDocs"
       className={`${BTN} fr-fi-download-line`}
       disabled={isFetching}
       onClick={() => refetch()}
     >
       Télécharger toutes les preuves
     </button>
-  );
+  ) : null;
 };
 
 /**
@@ -74,11 +79,13 @@ const useDownloadDocs = (action: ActionDefinitionSummary) => {
   // et le nom du fichier cible
   const filename = `${referentiel}_${identifiant}_${nom}.zip`;
 
+  const canFetch = collectivite && signedUrls?.length;
+
   // appelle le endpoint de génération du zip
-  return useQuery(
+  const query = useQuery(
     'zip-action',
     async ({signal}) => {
-      if (collectivite && signedUrls) {
+      if (canFetch) {
         const response = await fetch(URL, {
           signal,
           method: 'POST',
@@ -94,6 +101,8 @@ const useDownloadDocs = (action: ActionDefinitionSummary) => {
     },
     {enabled: false}
   );
+
+  return canFetch ? query : null;
 };
 
 // crée une url signée temporaire pour chaque fichier
