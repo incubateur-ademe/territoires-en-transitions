@@ -70,7 +70,8 @@ jobs:
 
       # run tests into electron
       - name: Cypress run
-        uses: cypress-io/github-action@v2
+        # utilise la v3 pour être en node 16 et cypress v9
+        uses: cypress-io/github-action@v3
         with:
           working-directory: ${{env.e2e-directory}}
         env:
