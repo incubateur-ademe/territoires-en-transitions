@@ -4,7 +4,7 @@
 #   Stop:           docker-compose down
 #   Destroy:        docker-compose -f docker-compose.yml -f ./dev/docker-compose.dev.yml down -v --remove-orphans
 
-version: "3.8"
+version: '3.8'
 
 services:
   studio:
@@ -29,7 +29,7 @@ services:
       - ${KONG_HTTP_PORT}:8000/tcp
       - ${KONG_HTTPS_PORT}:8443/tcp
     environment:
-      KONG_DATABASE: "off"
+      KONG_DATABASE: 'off'
       KONG_DECLARATIVE_CONFIG: /var/lib/kong/kong.yml
       # https://github.com/supabase/cli/issues/14
       KONG_DNS_ORDER: LAST,A,CNAME
@@ -64,9 +64,9 @@ services:
       GOTRUE_SMTP_ADMIN_EMAIL: dev@territoiresentransitions.fr
       GOTRUE_SMTP_HOST: mailhog
       GOTRUE_SMTP_PORT: 1025
-#      GOTRUE_SMTP_USER: ${SMTP_USER}
-#      GOTRUE_SMTP_PASS: ${SMTP_PASS}
-#      GOTRUE_SMTP_SENDER_NAME: ${SMTP_SENDER_NAME}
+      #      GOTRUE_SMTP_USER: ${SMTP_USER}
+      #      GOTRUE_SMTP_PASS: ${SMTP_PASS}
+      #      GOTRUE_SMTP_SENDER_NAME: ${SMTP_SENDER_NAME}
       GOTRUE_MAILER_URLPATHS_INVITE: /auth/v1/verify
       GOTRUE_MAILER_URLPATHS_CONFIRMATION: /auth/v1/verify
       GOTRUE_MAILER_URLPATHS_RECOVERY: /auth/v1/verify
@@ -87,14 +87,14 @@ services:
       DB_NAME: postgres
       DB_USER: postgres
       DB_PASSWORD: ${POSTGRES_PASSWORD}
-      DB_SSL: "false"
+      DB_SSL: 'false'
       PORT: 4000
       JWT_SECRET: ${JWT_SECRET}
       REPLICATION_MODE: RLS
       REPLICATION_POLL_INTERVAL: 100
-      SECURE_CHANNELS: "true"
+      SECURE_CHANNELS: 'true'
       SLOT_NAME: supabase_realtime_rls
-      TEMPORARY_SLOT: "true"
+      TEMPORARY_SLOT: 'true'
     command: >
       bash -c "./prod/rel/realtime/bin/realtime eval Realtime.Release.migrate
       && ./prod/rel/realtime/bin/realtime start"
@@ -147,7 +147,6 @@ services:
     volumes:
       - ./data_layer/supabase/init:/docker-entrypoint-initdb.d
       - ./data_layer/content:/content
-
 
   # When this service is healthy, supabase has been loaded.
   supabase_loaded:
@@ -251,7 +250,7 @@ services:
       PGRST_DB_SCHEMAS: public,storage
       PGRST_DB_ANON_ROLE: anon
       PGRST_JWT_SECRET: ${JWT_SECRET}
-      PGRST_DB_USE_LEGACY_GUCS: "false"
+      PGRST_DB_USE_LEGACY_GUCS: 'false'
 
   business:
     container_name: tet-business
@@ -326,7 +325,7 @@ services:
       REACT_APP_SUPABASE_URL: http://localhost:8000
       # passer cette variable pour que les urls signées téléchargées dans le zip
       # soient ré-écrites
-  #      ZIP_ORIGIN_OVERRIDE: http://kong:8000
+      ZIP_ORIGIN_OVERRIDE: http://kong:8000
 
   client-test:
     container_name: tet-client-test
@@ -347,7 +346,7 @@ services:
       REACT_APP_SUPABASE_KEY: ${ANON_KEY}
       REACT_APP_SUPABASE_URL: http://kong:8000
       LANG: fr_FR.UTF-8
-      CI: "true"
+      CI: 'true'
 
   # Sqitch revert
   sqitch_revert:
