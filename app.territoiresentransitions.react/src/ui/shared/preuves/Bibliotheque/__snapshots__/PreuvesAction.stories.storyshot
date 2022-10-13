@@ -29,162 +29,14 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Message Av
     Ajouter une preuve complémentaire
   </button>
   <div
-    className="divide-y divide-[#ddd]"
+    className="mt-2 divide-y divide-[#ddd]"
     data-test="complementaires"
   >
     <div
-      className="py-4"
-    >
-      <div
-        data-test="item"
-      >
-        <div
-          className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0 cursor-pointer"
-        >
-          <a
-            className="fr-text--sm fr-mb-1v fr-fi-file-line fr-link--icon-left"
-            data-test="name"
-            href="#"
-            onClick={[Function]}
-          >
-            preuve_input.txt (TXT, 34 o)
-          </a>
-          <div
-            className="invisible group-hover:visible"
-          >
-            <button
-              className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line undefined"
-              onClick={[Function]}
-              title="Décrire"
-            />
-            <button
-              className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
-              onClick={[Function]}
-              title="Supprimer"
-            />
-          </div>
-        </div>
-        <p
-          className="text-xs fr-text-mention--grey mb-0 "
-          data-test="comment"
-          onClick={[Function]}
-        >
-          lala
-        </p>
-        <span
-          className="text-xs grey625"
-        >
-          Ajouté
-           le 
-          06 sept. 2022
-           par 
-          Yolo Dodo
-        </span>
-      </div>
-      <span
-        className="text-xs text-grey625"
-      >
-        1.1.3
-      </span>
-    </div>
-  </div>
-  <div
-    className="border-solid border-t-[1px] border-[#FCC63A] my-4"
-  />
-  <p>
-    Toutes les preuves ajoutées seront visibles par les membres de la communauté Territoires en Transitions
-  </p>
-</div>
-`;
-
-exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Complementaires 1`] = `
-<div
-  data-test="preuves-cae_1.2.3.4"
->
-  <h5>
-    Preuves attendues
-  </h5>
-  <div
-    className="divide-y divide-[#ddd] -mt-2"
-    data-test="attendues"
-  >
-    <div
       className="flex flex-row gap-8 pt-2 pb-4"
-      data-test="preuve"
     >
       <div
         className="flex flex-1 flex-col"
-      >
-        <span
-          className="fr-text--sm pt-2 text-black"
-          data-test="desc"
-        >
-          Délibération d'engagement dans la Convention des Maires
-          <span
-            className="fr-fi-information-line pl-4 text-bf500 cursor-pointer"
-            onBlur={[Function]}
-            onClick={[Function]}
-            onFocus={[Function]}
-            onKeyDown={[Function]}
-            onKeyUp={[Function]}
-            onMouseDown={[Function]}
-            onPointerDown={[Function]}
-          />
-        </span>
-        <span
-          className="text-xs text-grey625"
-        >
-          1.1.2
-        </span>
-      </div>
-      <div
-        className="flex flex-1 flex-col justify-center space-y-2"
-      >
-        <button
-          aria-expanded="false"
-          aria-haspopup="dialog"
-          className="fr-btn fr-fi-add-line"
-          data-test="AddPreuveReglementaire"
-          onClick={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onPointerDown={[Function]}
-          title="Ajouter une preuve"
-        />
-      </div>
-    </div>
-    <div
-      className="flex flex-row gap-8 pt-2 pb-4"
-      data-test="preuve"
-    >
-      <div
-        className="flex flex-1 flex-col"
-      >
-        <span
-          className="fr-text--sm pt-2 text-black"
-          data-test="desc"
-        >
-          Etude de vulnérabilité au changement climatique
-          <span
-            className="fr-fi-information-line pl-4 text-bf500 cursor-pointer"
-            onBlur={[Function]}
-            onClick={[Function]}
-            onFocus={[Function]}
-            onKeyDown={[Function]}
-            onKeyUp={[Function]}
-            onMouseDown={[Function]}
-            onPointerDown={[Function]}
-          />
-        </span>
-        <span
-          className="text-xs text-grey625"
-        >
-          1.1.3
-        </span>
-      </div>
-      <div
-        className="flex flex-1 flex-col justify-center space-y-2"
       >
         <div
           data-test="item"
@@ -220,7 +72,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
             data-test="comment"
             onClick={[Function]}
           >
-            commentaire preuve fichier
+            lala
           </p>
           <span
             className="text-xs grey625"
@@ -232,51 +84,212 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
             Yolo Dodo
           </span>
         </div>
+        <span
+          className="text-xs text-grey625"
+        >
+          1.1.3
+        </span>
+      </div>
+      <div
+        className="flex flex-1 flex-col"
+      />
+    </div>
+  </div>
+  <div
+    className="border-solid border-t-[1px] border-[#FCC63A] my-4"
+  />
+  <p
+    className="text-xs grey625"
+  >
+    Toutes les preuves ajoutées seront visibles par les membres de la communauté Territoires en Transitions
+  </p>
+</div>
+`;
+
+exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Complementaires 1`] = `
+<div
+  data-test="preuves-cae_1.2.3.4"
+>
+  <h5>
+    Preuves attendues
+  </h5>
+  <div
+    className="divide-y divide-[#ddd] -mt-2"
+    data-test="attendues"
+  >
+    <div
+      className="flex flex-row gap-8 pt-2 pb-4"
+      data-test="preuve"
+    >
+      <div
+        className="flex flex-1 flex-col"
+      >
+        <span
+          className="fr-text--sm pt-2 fr-mb-1v text-black"
+          data-test="desc"
+        >
+          Délibération d'engagement dans la Convention des Maires
+          <span
+            className="fr-fi-information-line pl-4 text-bf500 cursor-pointer"
+            onBlur={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onPointerDown={[Function]}
+          />
+        </span>
+        <span
+          className="text-xs text-grey625"
+        >
+          1.1.2
+        </span>
+      </div>
+      <div
+        className="flex flex-1 flex-col justify-center"
+      >
+        <button
+          aria-expanded="false"
+          aria-haspopup="dialog"
+          className="fr-btn fr-fi-add-line"
+          data-test="AddPreuveReglementaire"
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onPointerDown={[Function]}
+          title="Ajouter une preuve"
+        />
+      </div>
+    </div>
+    <div
+      className="flex flex-row gap-8 pt-2 pb-4"
+      data-test="preuve"
+    >
+      <div
+        className="flex flex-1 flex-col"
+      >
+        <span
+          className="fr-text--sm pt-2 fr-mb-1v text-black"
+          data-test="desc"
+        >
+          Etude de vulnérabilité au changement climatique
+          <span
+            className="fr-fi-information-line pl-4 text-bf500 cursor-pointer"
+            onBlur={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onPointerDown={[Function]}
+          />
+        </span>
+        <span
+          className="text-xs text-grey625"
+        >
+          1.1.3
+        </span>
+      </div>
+      <div
+        className="flex flex-1 flex-col justify-center"
+      >
         <div
-          data-test="item"
+          className="flex flex-1 flex-col justify-center space-y-3 fr-mb-2w"
         >
           <div
-            className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0 cursor-pointer"
+            data-test="item"
           >
-            <a
-              className="fr-text--sm fr-mb-1v fr-fi-links-fill fr-link--icon-left"
-              data-test="name"
-              href="#"
+            <div
+              className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0 cursor-pointer"
+            >
+              <a
+                className="fr-text--sm fr-mb-1v fr-fi-file-line fr-link--icon-left"
+                data-test="name"
+                href="#"
+                onClick={[Function]}
+              >
+                preuve_input.txt (TXT, 34 o)
+              </a>
+              <div
+                className="invisible group-hover:visible"
+              >
+                <button
+                  className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line undefined"
+                  onClick={[Function]}
+                  title="Décrire"
+                />
+                <button
+                  className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
+                  onClick={[Function]}
+                  title="Supprimer"
+                />
+              </div>
+            </div>
+            <p
+              className="text-xs fr-text-mention--grey mb-0 "
+              data-test="comment"
               onClick={[Function]}
             >
-              didi
-            </a>
-            <div
-              className="invisible group-hover:visible"
+              commentaire preuve fichier
+            </p>
+            <span
+              className="text-xs grey625"
             >
-              <button
-                className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line undefined"
-                onClick={[Function]}
-                title="Décrire"
-              />
-              <button
-                className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
-                onClick={[Function]}
-                title="Supprimer"
-              />
-            </div>
+              Ajouté
+               le 
+              06 sept. 2022
+               par 
+              Yolo Dodo
+            </span>
           </div>
-          <p
-            className="text-xs fr-text-mention--grey mb-0 "
-            data-test="comment"
-            onClick={[Function]}
+          <div
+            data-test="item"
           >
-            commentaire
-          </p>
-          <span
-            className="text-xs grey625"
-          >
-            Ajouté
-             le 
-            06 sept. 2022
-             par 
-            Yili Didi
-          </span>
+            <div
+              className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0 cursor-pointer"
+            >
+              <a
+                className="fr-text--sm fr-mb-1v fr-fi-links-fill fr-link--icon-left"
+                data-test="name"
+                href="#"
+                onClick={[Function]}
+              >
+                didi
+              </a>
+              <div
+                className="invisible group-hover:visible"
+              >
+                <button
+                  className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line undefined"
+                  onClick={[Function]}
+                  title="Décrire"
+                />
+                <button
+                  className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
+                  onClick={[Function]}
+                  title="Supprimer"
+                />
+              </div>
+            </div>
+            <p
+              className="text-xs fr-text-mention--grey mb-0 "
+              data-test="comment"
+              onClick={[Function]}
+            >
+              commentaire
+            </p>
+            <span
+              className="text-xs grey625"
+            >
+              Ajouté
+               le 
+              06 sept. 2022
+               par 
+              Yili Didi
+            </span>
+          </div>
         </div>
         <button
           aria-expanded="false"
@@ -300,7 +313,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
         className="flex flex-1 flex-col"
       >
         <span
-          className="fr-text--sm pt-2 text-black"
+          className="fr-text--sm pt-2 fr-mb-1v text-black"
           data-test="desc"
         >
           Agenda 21 / Agenda 2030
@@ -322,7 +335,156 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
         </span>
       </div>
       <div
-        className="flex flex-1 flex-col justify-center space-y-2"
+        className="flex flex-1 flex-col justify-center"
+      >
+        <div
+          className="flex flex-1 flex-col justify-center space-y-3 fr-mb-2w"
+        >
+          <div
+            data-test="item"
+          >
+            <div
+              className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0 cursor-pointer"
+            >
+              <a
+                className="fr-text--sm fr-mb-1v fr-fi-links-fill fr-link--icon-left"
+                data-test="name"
+                href="#"
+                onClick={[Function]}
+              >
+                dodo
+              </a>
+              <div
+                className="invisible group-hover:visible"
+              >
+                <button
+                  className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line undefined"
+                  onClick={[Function]}
+                  title="Décrire"
+                />
+                <button
+                  className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
+                  onClick={[Function]}
+                  title="Supprimer"
+                />
+              </div>
+            </div>
+            <span
+              className="text-xs grey625"
+            >
+              Ajouté
+               le 
+              06 sept. 2022
+               par 
+              Yolo Dodo
+            </span>
+          </div>
+        </div>
+        <button
+          aria-expanded="false"
+          aria-haspopup="dialog"
+          className="fr-btn fr-fi-add-line"
+          data-test="AddPreuveReglementaire"
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onPointerDown={[Function]}
+          title="Ajouter une preuve"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    className="border-solid border-t-[1px] border-[#FCC63A] my-4"
+  />
+  <h5>
+    Preuves complémentaires
+  </h5>
+  <button
+    aria-expanded="false"
+    aria-haspopup="dialog"
+    className="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-fi-add-line"
+    data-test="AddPreuveComplementaire"
+    onClick={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    onMouseDown={[Function]}
+    onPointerDown={[Function]}
+  >
+    Ajouter une preuve complémentaire
+  </button>
+  <div
+    className="mt-2 divide-y divide-[#ddd]"
+    data-test="complementaires"
+  >
+    <div
+      className="flex flex-row gap-8 pt-2 pb-4"
+    >
+      <div
+        className="flex flex-1 flex-col"
+      >
+        <div
+          data-test="item"
+        >
+          <div
+            className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0 cursor-pointer"
+          >
+            <a
+              className="fr-text--sm fr-mb-1v fr-fi-file-line fr-link--icon-left"
+              data-test="name"
+              href="#"
+              onClick={[Function]}
+            >
+              preuve_input.txt (TXT, 34 o)
+            </a>
+            <div
+              className="invisible group-hover:visible"
+            >
+              <button
+                className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line undefined"
+                onClick={[Function]}
+                title="Décrire"
+              />
+              <button
+                className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
+                onClick={[Function]}
+                title="Supprimer"
+              />
+            </div>
+          </div>
+          <p
+            className="text-xs fr-text-mention--grey mb-0 "
+            data-test="comment"
+            onClick={[Function]}
+          >
+            lala
+          </p>
+          <span
+            className="text-xs grey625"
+          >
+            Ajouté
+             le 
+            06 sept. 2022
+             par 
+            Yolo Dodo
+          </span>
+        </div>
+        <span
+          className="text-xs text-grey625"
+        >
+          1.1.3
+        </span>
+      </div>
+      <div
+        className="flex flex-1 flex-col"
+      />
+    </div>
+    <div
+      className="flex flex-row gap-8 pt-2 pb-4"
+    >
+      <div
+        className="flex flex-1 flex-col"
       >
         <div
           data-test="item"
@@ -363,146 +525,15 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
             Yolo Dodo
           </span>
         </div>
-        <button
-          aria-expanded="false"
-          aria-haspopup="dialog"
-          className="fr-btn fr-fi-add-line"
-          data-test="AddPreuveReglementaire"
-          onClick={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onPointerDown={[Function]}
-          title="Ajouter une preuve"
-        />
-      </div>
-    </div>
-  </div>
-  <div
-    className="border-solid border-t-[1px] border-[#FCC63A] my-4"
-  />
-  <h5>
-    Preuves complémentaires
-  </h5>
-  <button
-    aria-expanded="false"
-    aria-haspopup="dialog"
-    className="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-fi-add-line"
-    data-test="AddPreuveComplementaire"
-    onClick={[Function]}
-    onKeyDown={[Function]}
-    onKeyUp={[Function]}
-    onMouseDown={[Function]}
-    onPointerDown={[Function]}
-  >
-    Ajouter une preuve complémentaire
-  </button>
-  <div
-    className="divide-y divide-[#ddd]"
-    data-test="complementaires"
-  >
-    <div
-      className="py-4"
-    >
-      <div
-        data-test="item"
-      >
-        <div
-          className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0 cursor-pointer"
-        >
-          <a
-            className="fr-text--sm fr-mb-1v fr-fi-file-line fr-link--icon-left"
-            data-test="name"
-            href="#"
-            onClick={[Function]}
-          >
-            preuve_input.txt (TXT, 34 o)
-          </a>
-          <div
-            className="invisible group-hover:visible"
-          >
-            <button
-              className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line undefined"
-              onClick={[Function]}
-              title="Décrire"
-            />
-            <button
-              className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
-              onClick={[Function]}
-              title="Supprimer"
-            />
-          </div>
-        </div>
-        <p
-          className="text-xs fr-text-mention--grey mb-0 "
-          data-test="comment"
-          onClick={[Function]}
-        >
-          lala
-        </p>
         <span
-          className="text-xs grey625"
+          className="text-xs text-grey625"
         >
-          Ajouté
-           le 
-          06 sept. 2022
-           par 
-          Yolo Dodo
+          1.1.3
         </span>
       </div>
-      <span
-        className="text-xs text-grey625"
-      >
-        1.1.3
-      </span>
-    </div>
-    <div
-      className="py-4"
-    >
       <div
-        data-test="item"
-      >
-        <div
-          className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0 cursor-pointer"
-        >
-          <a
-            className="fr-text--sm fr-mb-1v fr-fi-links-fill fr-link--icon-left"
-            data-test="name"
-            href="#"
-            onClick={[Function]}
-          >
-            dodo
-          </a>
-          <div
-            className="invisible group-hover:visible"
-          >
-            <button
-              className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line undefined"
-              onClick={[Function]}
-              title="Décrire"
-            />
-            <button
-              className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
-              onClick={[Function]}
-              title="Supprimer"
-            />
-          </div>
-        </div>
-        <span
-          className="text-xs grey625"
-        >
-          Ajouté
-           le 
-          06 sept. 2022
-           par 
-          Yolo Dodo
-        </span>
-      </div>
-      <span
-        className="text-xs text-grey625"
-      >
-        1.1.3
-      </span>
+        className="flex flex-1 flex-col"
+      />
     </div>
   </div>
 </div>
@@ -537,7 +568,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves At
     Ajouter une preuve complémentaire
   </button>
   <div
-    className="divide-y divide-[#ddd]"
+    className="mt-2 divide-y divide-[#ddd]"
     data-test="complementaires"
   />
 </div>
@@ -562,7 +593,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
         className="flex flex-1 flex-col"
       >
         <span
-          className="fr-text--sm pt-2 text-black"
+          className="fr-text--sm pt-2 fr-mb-1v text-black"
           data-test="desc"
         >
           Délibération d'engagement dans la Convention des Maires
@@ -584,7 +615,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
         </span>
       </div>
       <div
-        className="flex flex-1 flex-col justify-center space-y-2"
+        className="flex flex-1 flex-col justify-center"
       >
         <button
           aria-expanded="false"
@@ -608,7 +639,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
         className="flex flex-1 flex-col"
       >
         <span
-          className="fr-text--sm pt-2 text-black"
+          className="fr-text--sm pt-2 fr-mb-1v text-black"
           data-test="desc"
         >
           Etude de vulnérabilité au changement climatique
@@ -630,99 +661,103 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
         </span>
       </div>
       <div
-        className="flex flex-1 flex-col justify-center space-y-2"
+        className="flex flex-1 flex-col justify-center"
       >
         <div
-          data-test="item"
+          className="flex flex-1 flex-col justify-center space-y-3 fr-mb-2w"
         >
           <div
-            className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0 cursor-pointer"
+            data-test="item"
           >
-            <a
-              className="fr-text--sm fr-mb-1v fr-fi-file-line fr-link--icon-left"
-              data-test="name"
-              href="#"
+            <div
+              className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0 cursor-pointer"
+            >
+              <a
+                className="fr-text--sm fr-mb-1v fr-fi-file-line fr-link--icon-left"
+                data-test="name"
+                href="#"
+                onClick={[Function]}
+              >
+                preuve_input.txt (TXT, 34 o)
+              </a>
+              <div
+                className="invisible group-hover:visible"
+              >
+                <button
+                  className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line undefined"
+                  onClick={[Function]}
+                  title="Décrire"
+                />
+                <button
+                  className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
+                  onClick={[Function]}
+                  title="Supprimer"
+                />
+              </div>
+            </div>
+            <p
+              className="text-xs fr-text-mention--grey mb-0 "
+              data-test="comment"
               onClick={[Function]}
             >
-              preuve_input.txt (TXT, 34 o)
-            </a>
-            <div
-              className="invisible group-hover:visible"
+              commentaire preuve fichier
+            </p>
+            <span
+              className="text-xs grey625"
             >
-              <button
-                className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line undefined"
-                onClick={[Function]}
-                title="Décrire"
-              />
-              <button
-                className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
-                onClick={[Function]}
-                title="Supprimer"
-              />
-            </div>
+              Ajouté
+               le 
+              06 sept. 2022
+               par 
+              Yolo Dodo
+            </span>
           </div>
-          <p
-            className="text-xs fr-text-mention--grey mb-0 "
-            data-test="comment"
-            onClick={[Function]}
-          >
-            commentaire preuve fichier
-          </p>
-          <span
-            className="text-xs grey625"
-          >
-            Ajouté
-             le 
-            06 sept. 2022
-             par 
-            Yolo Dodo
-          </span>
-        </div>
-        <div
-          data-test="item"
-        >
           <div
-            className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0 cursor-pointer"
+            data-test="item"
           >
-            <a
-              className="fr-text--sm fr-mb-1v fr-fi-links-fill fr-link--icon-left"
-              data-test="name"
-              href="#"
+            <div
+              className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0 cursor-pointer"
+            >
+              <a
+                className="fr-text--sm fr-mb-1v fr-fi-links-fill fr-link--icon-left"
+                data-test="name"
+                href="#"
+                onClick={[Function]}
+              >
+                didi
+              </a>
+              <div
+                className="invisible group-hover:visible"
+              >
+                <button
+                  className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line undefined"
+                  onClick={[Function]}
+                  title="Décrire"
+                />
+                <button
+                  className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
+                  onClick={[Function]}
+                  title="Supprimer"
+                />
+              </div>
+            </div>
+            <p
+              className="text-xs fr-text-mention--grey mb-0 "
+              data-test="comment"
               onClick={[Function]}
             >
-              didi
-            </a>
-            <div
-              className="invisible group-hover:visible"
+              commentaire
+            </p>
+            <span
+              className="text-xs grey625"
             >
-              <button
-                className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line undefined"
-                onClick={[Function]}
-                title="Décrire"
-              />
-              <button
-                className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
-                onClick={[Function]}
-                title="Supprimer"
-              />
-            </div>
+              Ajouté
+               le 
+              06 sept. 2022
+               par 
+              Yili Didi
+            </span>
           </div>
-          <p
-            className="text-xs fr-text-mention--grey mb-0 "
-            data-test="comment"
-            onClick={[Function]}
-          >
-            commentaire
-          </p>
-          <span
-            className="text-xs grey625"
-          >
-            Ajouté
-             le 
-            06 sept. 2022
-             par 
-            Yili Didi
-          </span>
         </div>
         <button
           aria-expanded="false"
@@ -746,7 +781,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
         className="flex flex-1 flex-col"
       >
         <span
-          className="fr-text--sm pt-2 text-black"
+          className="fr-text--sm pt-2 fr-mb-1v text-black"
           data-test="desc"
         >
           Agenda 21 / Agenda 2030
@@ -768,46 +803,50 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
         </span>
       </div>
       <div
-        className="flex flex-1 flex-col justify-center space-y-2"
+        className="flex flex-1 flex-col justify-center"
       >
         <div
-          data-test="item"
+          className="flex flex-1 flex-col justify-center space-y-3 fr-mb-2w"
         >
           <div
-            className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0 cursor-pointer"
+            data-test="item"
           >
-            <a
-              className="fr-text--sm fr-mb-1v fr-fi-links-fill fr-link--icon-left"
-              data-test="name"
-              href="#"
-              onClick={[Function]}
-            >
-              dodo
-            </a>
             <div
-              className="invisible group-hover:visible"
+              className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0 cursor-pointer"
             >
-              <button
-                className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line undefined"
+              <a
+                className="fr-text--sm fr-mb-1v fr-fi-links-fill fr-link--icon-left"
+                data-test="name"
+                href="#"
                 onClick={[Function]}
-                title="Décrire"
-              />
-              <button
-                className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
-                onClick={[Function]}
-                title="Supprimer"
-              />
+              >
+                dodo
+              </a>
+              <div
+                className="invisible group-hover:visible"
+              >
+                <button
+                  className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line undefined"
+                  onClick={[Function]}
+                  title="Décrire"
+                />
+                <button
+                  className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
+                  onClick={[Function]}
+                  title="Supprimer"
+                />
+              </div>
             </div>
+            <span
+              className="text-xs grey625"
+            >
+              Ajouté
+               le 
+              06 sept. 2022
+               par 
+              Yolo Dodo
+            </span>
           </div>
-          <span
-            className="text-xs grey625"
-          >
-            Ajouté
-             le 
-            06 sept. 2022
-             par 
-            Yolo Dodo
-          </span>
         </div>
         <button
           aria-expanded="false"
@@ -844,7 +883,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
     Ajouter une preuve complémentaire
   </button>
   <div
-    className="divide-y divide-[#ddd]"
+    className="mt-2 divide-y divide-[#ddd]"
     data-test="complementaires"
   />
 </div>
