@@ -270,10 +270,10 @@ Fonctionnalité: Associer des preuves aux actions
 
     # scénario 1 : on vérifie l'affichage de l'onglet lorsqu'il n'y a pas de donnée
     Etant donné que je suis connecté en tant que "yolo"
-    Et que les tables de preuves de la collectivité "1" sont vides
-    Et que la bibliothèque de la collectivité "1" est vide
+    Et que les tables de preuves de la collectivité "2" sont vides
+    Et que la bibliothèque de la collectivité "2" est vide
 
-    Quand je visite l'onglet "preuves" de l'action "2.3.1" du référentiel "cae" de la collectivité "1"
+    Quand je visite l'onglet "preuves" de l'action "2.3.1" du référentiel "cae" de la collectivité "2"
     Alors la liste des preuves attendues de l'action contient les lignes suivantes :
       | nom                                             | preuves |
       | Cahier des prescriptions éclairage public       |         |
@@ -284,17 +284,17 @@ Fonctionnalité: Associer des preuves aux actions
   Scénario: Visualiser toutes les preuves associées à une action et ses sous-actions (2/2)
     # scénario 2 : on vérifie l'affichage de l'onglet lorsqu'il y a des données
     Etant donné que je suis connecté en tant que "yolo"
-    Et que les tables de preuves de la collectivité "1" sont vides
-    Et que la bibliothèque de la collectivité "1" est vide
+    Et que les tables de preuves de la collectivité "2" sont vides
+    Et que la bibliothèque de la collectivité "2" est vide
     # on ajoute des preuves lien directement dans la base de données
     Et que la table des preuves réglementaires est initialisée avec les données suivantes :
       | collectivite_id | preuve_id | titre     | url            | commentaire |
-      | 1               | ratio_EP  | Exemple 1 | https://ex1.fr | ex1         |
+      | 2               | ratio_EP  | Exemple 1 | https://ex1.fr | ex1         |
     Et que la table des preuves complémentaires est initialisée avec les données suivantes :
       | collectivite_id | action_id   | titre     | url            | commentaire |
-      | 1               | cae_2.3.1.4 | Exemple 2 | https://ex2.fr | ex2         |
+      | 2               | cae_2.3.1.4 | Exemple 2 | https://ex2.fr | ex2         |
 
-    Quand je visite l'onglet "preuves" de l'action "2.3.1" du référentiel "cae" de la collectivité "1"
+    Quand je visite l'onglet "preuves" de l'action "2.3.1" du référentiel "cae" de la collectivité "2"
     Alors la liste des preuves attendues de l'action contient les lignes suivantes :
       | nom                                             | preuves   |
       | Cahier des prescriptions éclairage public       |           |
@@ -322,7 +322,7 @@ Fonctionnalité: Associer des preuves aux actions
       | Titre     | Commentaire |
       | mon.doc   |             |
       | Exemple 2 | ex2         |
-    Et je peux télécharger toutes les preuves sous la forme d'un fichier nommé "cae_2.3.1_Ambérieu-en-Bugey.zip" et contenant les fichiers suivants :
+    Et je peux télécharger toutes les preuves sous la forme d'un fichier nommé "cae_2.3.1_Arbent.zip" et contenant les fichiers suivants :
       | nom     | contenu     |
       | mon.doc | mon contenu |
 
@@ -341,7 +341,7 @@ Fonctionnalité: Associer des preuves aux actions
       | Titre     | Commentaire |
       | mon.doc   |             |
       | Exemple 2 | ex2         |
-    Et je peux télécharger toutes les preuves sous la forme d'un fichier nommé "cae_2.3.1_Ambérieu-en-Bugey.zip" et contenant les fichiers suivants :
+    Et je peux télécharger toutes les preuves sous la forme d'un fichier nommé "cae_2.3.1_Arbent.zip" et contenant les fichiers suivants :
       | nom       | contenu       |
       | mon.doc   | mon contenu   |
       | autre.doc | autre contenu |
