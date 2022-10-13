@@ -1,6 +1,6 @@
 /// <reference types="Cypress" />
 
-import { LocalSelectors } from './selectors';
+import {LocalSelectors} from './selectors';
 import {
   noPreuvesComplementaires,
   checkPreuvesComplementaires,
@@ -12,7 +12,7 @@ beforeEach(() => {
   cy.wrap(LocalSelectors).as('LocalSelectors');
 });
 
-When(/je déplie le panneau Preuves de l'action "([^"]+)"/, (action) =>
+When(/je déplie le panneau Preuves de l'action "([^"]+)"/, action =>
   getPreuvePanel(action).within(() => {
     // la liste des preuves attendues n'existe pas
     cy.get('[data-test^=preuves]').should('not.exist');
@@ -25,16 +25,10 @@ When(/je déplie le panneau Preuves de l'action "([^"]+)"/, (action) =>
 
 When(
   /les tables de preuves de la collectivité "(\d+)" sont vides/,
-  (collectivite_id) => {
-    cy.get('@supabaseClient').then((client) =>
+  collectivite_id => {
+    cy.get('@supabaseClient').then(client =>
       Promise.all([
-        client.from('preuve_reglementaire').delete().match({ collectivite_id }),
-        client
-          .from('preuve_complementaire')
-          .delete()
-          .match({ collectivite_id }),
-        client.from('preuve_labellisation').delete().match({ collectivite_id }),
-        client.from('preuve_rapport').delete().match({ collectivite_id }),
+        client.rpc('test_reset_preuves'),
         cy.task('pg_query', {
           query:
             'DELETE FROM labellisation.bibliotheque_fichier WHERE collectivite_id = $1',
@@ -47,16 +41,16 @@ When(
 
 When(
   /la table des preuves complémentaires est initialisée avec les données suivantes/,
-  (dataTable) => {
-    cy.get('@supabaseClient').then((client) =>
+  dataTable => {
+    cy.get('@supabaseClient').then(client =>
       client.from('preuve_complementaire').insert(dataTable.hashes())
     );
   }
 );
 When(
   /la table des preuves réglementaires est initialisée avec les données suivantes/,
-  (dataTable) => {
-    cy.get('@supabaseClient').then((client) =>
+  dataTable => {
+    cy.get('@supabaseClient').then(client =>
       client.from('preuve_reglementaire').insert(dataTable.hashes())
     );
   }
@@ -64,7 +58,7 @@ When(
 
 When(
   /la liste des preuves complémentaires de la sous-action "([^"]+)" est vide/,
-  (action) => {
+  action => {
     noPreuvesComplementaires(getPreuvePanel(action));
   }
 );
@@ -82,7 +76,7 @@ When(
 
 When(
   /la liste des preuves complémentaires de l'action contient les lignes suivantes/,
-  (dataTable) => {
+  dataTable => {
     checkPreuvesComplementaires(getPreuveTab(), dataTable);
   }
 );
@@ -96,7 +90,7 @@ When(
 
 When(
   /la liste des preuves attendues de l'action contient les lignes suivantes/,
-  (dataTable) => {
+  dataTable => {
     checkPreuvesReglementaires(getPreuveTab(), dataTable);
   }
 );
@@ -120,7 +114,7 @@ When(
       .parent()
       //      .trigger('mouseover')
       .find(`button[title=${btn}]`)
-      .click({ force: true });
+      .click({force: true});
   }
 );
 
@@ -134,15 +128,15 @@ When(
   }
 );
 
-When(/l'ouverture du lien "([^"]+)" doit avoir été demandée/, (url) => {
+When(/l'ouverture du lien "([^"]+)" doit avoir été demandée/, url => {
   cy.get('@open').should('have.been.calledOnceWithExactly', url);
 });
 
 When(
   /clique sur le bouton "Ajouter une preuve" à l'action "([^"]+)"/,
-  (action) => {
+  action => {
     // utilise le paramètre "force" pour le clic (sinon il ne se produit jamais ?)
-    getAddPreuveButton(action).click({ force: true });
+    getAddPreuveButton(action).click({force: true});
   }
 );
 
@@ -154,7 +148,7 @@ When(
       `[data-test="preuves-${action}"] [data-test=attendues] [data-test=preuve]:nth(${
         num - 1
       }) [data-test=AddPreuveReglementaire]`
-    ).click({ force: true });
+    ).click({force: true});
   }
 );
 
@@ -176,7 +170,7 @@ When(
 
 When(
   /je sélectionne la sous-action "([^"]+)" dans la liste déroulante/,
-  (value) => {
+  value => {
     cy.get('[data-test=SelectSubAction]').should('be.visible').click();
     cy.get(`[data-test=SelectSubAction-options] [data-test="${value}"]`)
       .should('be.visible')
@@ -188,6 +182,7 @@ When(/la liste déroulante des sous-actions est visible/, () => {
   cy.get('[data-test=SelectSubAction]').should('be.visible');
 });
 
+let cnt = 1;
 When(
   "je peux télécharger toutes les preuves sous la forme d'un fichier nommé {string} et contenant les fichiers suivants :",
   (downloadedFile, dataTable) => {
@@ -198,35 +193,39 @@ When(
     // fichiers attendus dans l'archive
     const expectedFiles = dataTable.rows();
 
-    // espionne l'url de génération du zip
-    cy.intercept('POST', '/zip').as('zip');
+    // espionne l'url de génération du zip avec un alias différent pour
+    // distinguer les appels
+    const alias = `zip${cnt++}`;
+    cy.intercept('POST', '/zip').as(alias);
 
     // déclenche la génération du zip
     cy.get(LocalSelectors['Télécharger toutes les preuves'].selector)
       .should('be.enabled')
       .click();
 
-    // attend que la réponse soit reçue
-    cy.wait('@zip')
-      .its('response')
-      .then((response) => {
-        // vérifie le code de retour
-        expect(response.statusCode).to.eq(200);
-        // et le contenu du fichier téléchargé
-        return cy.task('validateZip', {
+    // attend que la réponse soit reçue et vérifie le code
+    cy.wait(`@${alias}`).its('response.statusCode').should('eq', 200);
+
+    // le téléchargement peut prendre du temps, on utilise donc `cy.readFile`
+    // pour ré-essayer jusqu'à ce que le fichier existe et contienne quelques octets
+    // en présumant qu'à ce moment le téléchargement sera terminé
+    cy.readFile(filename, {timeout: 15000})
+      .should('have.length.gt', 100)
+      // vérifie le contenu du fichier téléchargé
+      .then(() =>
+        cy.task('validateZip', {
           filename,
           expectedFiles,
           removeAfter: true,
-        });
-      });
+        })
+      );
   }
 );
 
-const getAddPreuveButton = (action) =>
+const getAddPreuveButton = action =>
   getPreuvePanel(action).find('[data-test=AddPreuveComplementaire]');
 
-const getPreuvePanel = (action) =>
-  cy.get(`[data-test="PreuvesPanel-${action}"]`);
+const getPreuvePanel = action => cy.get(`[data-test="PreuvesPanel-${action}"]`);
 
-const getPreuveTab = (action) =>
+const getPreuveTab = action =>
   cy.get(`[role=tabpanel] [data-test^=preuves-]`).parent();

@@ -14,11 +14,12 @@ module.exports = (on, config) => {
       const zipEntries = zip.getEntries();
       const names = zipEntries.map((entry) => entry.entryName);
       const list = names.join(',');
+      const expectedList = expectedFiles.map(([name]) => name).join(',');
 
       // vérifie le nombre de fichiers contenus dans le zip
       if (names.length !== expectedFiles.length) {
         throw new Error(
-          `La liste de fichiers ${list} de l'archive ${filename} a des fichiers en trop`
+          `La liste de fichiers "${list}" de l'archive ${filename} n'est pas celle attendue "${expectedList}"`
         );
       }
 
