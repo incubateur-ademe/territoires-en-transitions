@@ -83,7 +83,7 @@ const useDownloadDocs = (action: ActionDefinitionSummary) => {
 
   // appelle le endpoint de génération du zip
   const query = useQuery(
-    'zip-action',
+    ['zip-action', signedUrls],
     async ({signal}) => {
       if (canFetch) {
         const response = await fetch(URL, {
