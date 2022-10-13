@@ -146,6 +146,7 @@ export const PasswordRecovery = ({
   ) : (
     <button
       data-test="forgotten-pwd"
+      type="button"
       className="fr-link text-sm"
       onClick={e => {
         e.preventDefault();
