@@ -76,7 +76,7 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
       {showWarning ? (
         <>
           <YellowDivider />
-          <p>
+          <p className="text-xs grey625">
             Toutes les preuves ajoutées seront visibles par les membres de la
             communauté Territoires en Transitions
           </p>
