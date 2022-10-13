@@ -64,7 +64,7 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
         action={action}
         addToSubAction={withSubActions}
       />
-      <div data-test="complementaires" className="divide-y divide-[#ddd]">
+      <div data-test="complementaires" className="mt-2 divide-y divide-[#ddd]">
         {complementaires?.map(preuve => (
           <PreuveComplementaire
             key={preuve.id}
