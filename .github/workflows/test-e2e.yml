@@ -73,6 +73,8 @@ jobs:
         env:
           # pass GitHub token to allow accurately detecting a build vs a re-run build
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          # pour que les urls téléchargées depuis le serveur node (front) soit ré-écrites
+          ZIP_ORIGIN_OVERRIDE: http://kong:8000
 
       - name: Generate test report
         if: failure()

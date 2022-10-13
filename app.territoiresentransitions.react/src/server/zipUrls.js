@@ -1,10 +1,26 @@
 const archiver = require('archiver');
 const fetch = require('node-fetch');
 
+console.log(`zip origin override: ${process.env.ZIP_ORIGIN_OVERRIDE}`);
+
 // génère un zip de tous les fichiers donnés en paramètres
 const zipUrls = async (req, res) => {
   // URLs des fichiers à télécharger
-  const signedUrls = req.body?.signedUrls?.filter(isValidURL);
+  let signedUrls;
+  if (process.env.ZIP_ORIGIN_OVERRIDE) {
+    /** Cas spécial pour la CI : on doit ré-écrire les urls données car elles
+     * pointent sur localhost:8000 pour le client mais elles doivent être
+     * téléchargées sur kong:8000 depuis le serveur node qui tourne dans le
+     * réseau docker */
+    const origin = new URL(process.env.ZIP_ORIGIN_OVERRIDE).origin;
+    console.log(`files url redirected to: ${origin}`);
+    signedUrls = req.body?.signedUrls?.map(({url, ...other}) => ({
+      url: url.replace(new URL(url).origin, origin),
+      ...other,
+    }));
+  } else {
+    signedUrls = req.body?.signedUrls?.filter(isValidURL);
+  }
   if (!signedUrls?.length) {
     return res.sendStatus(404);
   }
