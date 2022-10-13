@@ -64,7 +64,7 @@ const Modal = ({
   ]);
 
   const mobileClassnames = 'absolute inset-x-0 bottom-0 mt-8 max-h-full';
-  const aboveMobileClassnames = 'sm:relative sm:m-0 max-h-80vh';
+  const aboveMobileClassnames = 'sm:relative sm:m-0 max-h-90vh';
 
   const handleCloseClick = () => {
     setExternalOpen ? setExternalOpen(false) : setOpen(false);
