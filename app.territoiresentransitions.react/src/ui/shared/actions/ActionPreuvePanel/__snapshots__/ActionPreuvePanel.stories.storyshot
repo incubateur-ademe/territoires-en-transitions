@@ -29,13 +29,15 @@ exports[`Storyshots ui/shared/actions/ActionPreuvePanel Default 1`] = `
     Ajouter une preuve complémentaire
   </button>
   <div
-    className="divide-y divide-[#ddd]"
+    className="mt-2 divide-y divide-[#ddd]"
     data-test="complementaires"
   />
   <div
     className="border-solid border-t-[1px] border-[#FCC63A] my-4"
   />
-  <p>
+  <p
+    className="text-xs grey625"
+  >
     Toutes les preuves ajoutées seront visibles par les membres de la communauté Territoires en Transitions
   </p>
 </div>
