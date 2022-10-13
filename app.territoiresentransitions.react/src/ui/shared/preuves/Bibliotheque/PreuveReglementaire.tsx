@@ -33,7 +33,7 @@ export const PreuveReglementaire = (props: TPreuveReglementaireProps) => {
       <div className="flex flex-1 flex-col">
         <span
           data-test="desc"
-          className={classNames('fr-text--sm pt-2', {
+          className={classNames('fr-text--sm pt-2 fr-mb-1v', {
             'text-black': !isDisabled,
             'text-grey25': isDisabled,
           })}
@@ -47,12 +47,14 @@ export const PreuveReglementaire = (props: TPreuveReglementaireProps) => {
         </span>
         {noIdentifiant ? null : <IdentifiantAction action={action} />}
       </div>
-      <div className="flex flex-1 flex-col justify-center space-y-2">
-        {haveDoc
-          ? preuves.map(preuve => (
+      <div className="flex flex-1 flex-col justify-center">
+        {haveDoc ? (
+          <div className="flex flex-1 flex-col justify-center space-y-3 fr-mb-2w">
+            {preuves.map(preuve => (
               <PreuveDoc key={preuve.id} preuve={preuve as TPreuve} />
-            ))
-          : null}
+            ))}
+          </div>
+        ) : null}
         <AddPreuveReglementaire preuve_id={preuve_id} isDisabled={isDisabled} />
       </div>
     </div>
