@@ -175,6 +175,20 @@ Content-Type: application/json
   "preuve_id": "semaine_mobilite"
 }
 
+### Insert une preuve reglementaire lien
+POST {{api}}/rest/v1/preuve_labellisation
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Prefer: return=representation
+Content-Type: application/json
+
+{
+  "collectivite_id": 1,
+  "url": "http://yolo.dodo",
+  "titre": "dodo",
+  "demande_id": 9
+}
+
 ### List preuves of all types
 GET {{api}}/rest/v1/preuve?collectivite_id=eq.1
 apikey: {{anon}}
