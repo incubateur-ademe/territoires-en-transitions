@@ -204,7 +204,7 @@ select 'labellisation',
                    )),
        null
 from labellisation.demande d
-         left join preuve_labellisation p on p.demande_id = d.id
+         join preuve_labellisation p on p.demande_id = d.id
          left join labellisation.bibliotheque_fichier_snippet fs on fs.id = p.fichier_id
 
 union all
