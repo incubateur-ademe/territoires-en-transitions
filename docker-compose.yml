@@ -295,17 +295,8 @@ services:
     build: ./business/.
     profiles:
       - donotstart
-    depends_on:
-      loader:
-        condition: service_completed_successfully
-      realtime:
-        condition: service_started
     command: >
       bash -c "pipenv run pytest tests"
-    environment:
-      SUPABASE_URL: ${SUPABASE_URL}
-      SUPABASE_WS: ${SUPABASE_WS}
-      REPOSITORIES: SUPABASE
 
   business-parse-preuves:
     container_name: tet-business-parse-preuves
