@@ -19,11 +19,6 @@ drop view action_labellisation_preuve_fichier;
 drop trigger remove_labellisation_preuve_fichier_before_file_delete on storage.objects;
 drop function remove_labellisation_preuve_fichier;
 
--- todo : enlever le contenu une fois la migration résolue.
---- drop table labellisation_preuve_fichier; -- labellisation
---- drop table preuve_lien;                  -- referentiel
---- drop table preuve_fichier;               -- referentiel
-
 
 create table labellisation.bibliotheque_fichier
 (
@@ -97,5 +92,11 @@ end;
 $$ language plpgsql security definer;
 comment on function add_bibliotheque_fichier is
     'Ajoute un fichier présent dan le bucket de la collectivité à l''adresse `bucket/hash`, dans la bibliothèque de fichiers.';
+
+
+-- Archive les contenus des utilisateurs
+alter table labellisation_preuve_fichier set schema archive;
+alter table  preuve_lien set schema archive;
+alter table  preuve_fichier set schema archive;
 
 COMMIT;
