@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-mistletoe = "*"
+mistletoe = "0.0.9"
 pydantic = "*"
 pytest = "*"
 pyyaml = "*"
