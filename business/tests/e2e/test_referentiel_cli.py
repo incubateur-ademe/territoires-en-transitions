@@ -54,7 +54,7 @@ def test_cli_parse_preuves():
 
     with json_path.open("r") as file:
         data = json.load(file)
-    assert len(data["preuves"]) == 2
+    assert len(data["preuves"]) == 3
 
 
 def test_cli_parse_indicateurs():
