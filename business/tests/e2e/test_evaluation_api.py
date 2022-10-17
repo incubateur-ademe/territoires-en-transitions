@@ -20,7 +20,8 @@ def test_evaluate_eci(execution_api, eci_evaluation_ref):
     # vérifie que l'api retourne les bons scores
     assert response.status_code == 200
     actual_response = response.json()
-    assert actual_response["eci"] == {
+    actions_scores = {score['action_id']: score for score in actual_response}
+    assert actions_scores["eci"] == {
         "action_id": "eci",
         "point_fait": 0.0,
         "point_programme": 0.0,
@@ -54,7 +55,8 @@ def test_evaluate_cae(execution_api, cae_evaluation_ref):
     # vérifie que l'api retourne les bons scores
     assert response.status_code == 200
     actual_response = response.json()
-    assert actual_response["cae"] == {
+    actions_scores = {score['action_id']: score for score in actual_response}
+    assert actions_scores["cae"] == {
         "action_id": "cae",
         "point_fait": 0.0,
         "point_programme": 0.0,

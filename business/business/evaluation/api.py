@@ -51,7 +51,7 @@ async def evaluate(payload: EvaluatePayload) -> list[ActionScore]:
         payload.consequences,
         payload.evaluation_referentiel.action_level,
     )
-    return scores
+    return list(scores.values())
 
 
 @dataclass
@@ -69,11 +69,11 @@ class PersonnalizePayload:
 
 
 @app.post("/personnalize/")
-async def personnalize(payload: PersonnalizePayload) -> list[ActionScore]:
+async def personnalize(payload: PersonnalizePayload) -> dict[ActionId, ActionPersonnalisationConsequence]:
     regles_parser = ReglesParser(payload.regles)
-    regles = execute_personnalisation_regles(
+    consequences = execute_personnalisation_regles(
         regles_parser,
         payload.reponses,
         payload.identite,
     )
-    return regles
+    return consequences
