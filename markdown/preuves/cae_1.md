@@ -7,7 +7,7 @@ id: rapport_diag_pcaet
 ```
 ## Description
 PCAET avec EES et résumé non technique ; éventuel bilan intermédiaire 
-Preuve identique à la 1.1.2.1
+Preuve identique à la 1.1.2.1 
 
 # Délibération d'engagement dans la Convention des Maires
 ```yaml
