@@ -30,4 +30,17 @@ create table action_discussion_commentaire
     message       text                                                 not null
 );
 
+create view action_discussion_feed
+as
+select ad.id,
+       ad.collectivite_id,
+       ad.action_id,
+       ad.created_by,
+       ad.created_at,
+       ad.modified_at,
+       ad.status,
+       utilisateur.modified_by_nom(created_by) as created_by_nom,
+       (select array_agg(adc) from action_discussion_commentaire adc where adc.discussion_id = ad.id) as commentaires
+from action_discussion ad;
+
 COMMIT;
