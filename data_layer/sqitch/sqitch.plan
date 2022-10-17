@@ -105,3 +105,4 @@ evaluation/action_score 2022-10-10T14:18:43Z Florian <florian@derfurth.com> # Le
 archive_schema 2022-10-16T15:02:45Z Florian <florian@derfurth.com> # Le schéma archives destiné à stocker les contenus dépréciés.
 labellisation/fichier_preuve [labellisation/fichier_preuve@v1.7.1 referentiel/preuve_reglementaire utilisateur/modified_by_nom evaluation/action_score archive_schema] 2022-08-31T14:41:38Z Florian <florian@derfurth.com> # Ajoute les preuves réglementaires et simplifie l'API.
 labellisation/preuve_v2 [labellisation/fichier_preuve] 2022-09-04T14:59:44Z Florian <florian@derfurth.com> # La version 2 des preuves, déplacée dans le domaine labellisation.
+referentiel/action_discussion 2022-10-17T14:31:37Z Florian <florian@derfurth.com> # Permet de discuter sur les actions du referentiel
