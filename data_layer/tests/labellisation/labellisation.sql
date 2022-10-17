@@ -12,7 +12,7 @@ select has_function('test_fulfill');
 -- truncate data
 truncate action_statut;
 truncate client_scores;
-truncate labellisation;
+truncate labellisation cascade ;
 truncate labellisation.demande cascade ;
 
 truncate storage.objects cascade;
@@ -94,10 +94,9 @@ select ok((select not bool_and(atteint)
 -----------------------------------------
 ------- Scenario: perfect scoring -------
 -----------------------------------------
-truncate labellisation;
 truncate action_statut;
 truncate client_scores;
-truncate labellisation.demande, labellisation_preuve_fichier, preuve_labellisation;
+truncate labellisation, labellisation.demande cascade;
 
 -- insert faked client scores, by default test_write_scores writes every score as fait.
 select test_write_scores(1);
@@ -166,8 +165,8 @@ select ok((select etoiles = '5'
 ------------------------------------------------------
 ------- Scenario: nothing is done nor complete -------
 ------------------------------------------------------
-truncate labellisation;
-truncate labellisation.demande, labellisation_preuve_fichier, preuve_labellisation;
+truncate labellisation.demande;
+truncate labellisation cascade;
 
 -- pas_fait statut on all requirements
 truncate action_statut;
@@ -226,8 +225,8 @@ select ok((select etoiles = '1'
 ------- Scenario: nothing is done but everything is complete -------
 --------------------------------------------------------------------
 
-truncate labellisation;
-truncate labellisation.demande, labellisation_preuve_fichier, preuve_labellisation;
+truncate labellisation.demande;
+truncate labellisation cascade;
 
 -- fake scoring, score and completion at 1
 truncate private.action_score; -- use action_score as a temp table
@@ -313,7 +312,7 @@ select ok((select etoiles = '1'
           'Labellisation parcours function should output correct state for 0% fait, complete, no demande.');
 
 -- Yolo crée une demande
-truncate labellisation.demande, labellisation_preuve_fichier, preuve_labellisation;
+truncate labellisation.demande cascade;
 insert into labellisation.demande (id, collectivite_id, referentiel, etoiles)
 values (100, 1, 'eci', '1');
 
