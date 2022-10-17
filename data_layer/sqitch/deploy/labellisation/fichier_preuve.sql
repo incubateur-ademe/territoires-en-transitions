@@ -93,10 +93,4 @@ $$ language plpgsql security definer;
 comment on function add_bibliotheque_fichier is
     'Ajoute un fichier présent dan le bucket de la collectivité à l''adresse `bucket/hash`, dans la bibliothèque de fichiers.';
 
-
--- Archive les contenus des utilisateurs
-alter table labellisation_preuve_fichier set schema archive;
-alter table  preuve_lien set schema archive;
-alter table  preuve_fichier set schema archive;
-
 COMMIT;

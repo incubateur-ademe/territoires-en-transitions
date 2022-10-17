@@ -249,4 +249,9 @@ from ref r
 group by r.referentiel;
 $$ language sql;
 
+-- Archive les contenus des utilisateurs
+alter table labellisation_preuve_fichier set schema archive;
+alter table  preuve_lien set schema archive;
+alter table  preuve_fichier set schema archive;
+
 COMMIT;

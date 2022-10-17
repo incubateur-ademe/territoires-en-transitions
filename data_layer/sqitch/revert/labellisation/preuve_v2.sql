@@ -2,6 +2,11 @@
 
 BEGIN;
 
+-- Sort les contenus du schéma archive.
+alter table archive.labellisation_preuve_fichier set schema public;
+alter table archive.preuve_lien set schema public;
+alter table archive.preuve_fichier set schema public;
+
 -- revert to previous version
 create or replace function
     labellisation.critere_fichier(collectivite_id integer)

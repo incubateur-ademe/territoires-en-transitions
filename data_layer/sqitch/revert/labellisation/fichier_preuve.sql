@@ -4,11 +4,6 @@
 
 BEGIN;
 
--- Sort les contenus du schéma archive.
-alter table labellisation_preuve_fichier set schema public;
-alter table  preuve_lien set schema public;
-alter table  preuve_fichier set schema public;
-
 -- drop current version
 drop function add_bibliotheque_fichier;
 drop view bibliotheque_fichier;
