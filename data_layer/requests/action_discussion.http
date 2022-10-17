@@ -54,3 +54,10 @@ Content-Type: application/json
         client.assert(response.status === 201, "Response status is not 201");
     });
 %}
+
+
+### Get les discussions d'une action
+GET {{api}}/rest/v1/action_discussion_feed?action_id=eq.eci_1.1.1.1
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
