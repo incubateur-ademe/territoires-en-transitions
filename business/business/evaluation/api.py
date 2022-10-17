@@ -1,5 +1,5 @@
 from dataclasses import asdict, dataclass
-from fastapi import FastAPI
+from fastapi import APIRouter
 
 from business.evaluation.evaluation.compute_scores import (
     ActionPointTree,
@@ -21,7 +21,7 @@ from business.utils.models.action_score import ActionScore
 from business.utils.models.personnalisation import ActionPersonnalisationRegles
 from business.utils.models.reponse import Reponse
 
-app = FastAPI()
+router = APIRouter()
 
 
 @dataclass
@@ -38,7 +38,7 @@ class EvaluatePayload:
     evaluation_referentiel: EvaluationReferentiel
 
 
-@app.post("/evaluate/")
+@router.post("/evaluate/")
 async def evaluate(payload: EvaluatePayload) -> list[ActionScore]:
     # TODO : cache this tree ?
     point_tree_referentiel = ActionPointTree(
@@ -68,7 +68,7 @@ class PersonnalizePayload:
         }
 
 
-@app.post("/personnalize/")
+@router.post("/personnalize/")
 async def personnalize(payload: PersonnalizePayload) -> dict[ActionId, ActionPersonnalisationConsequence]:
     regles_parser = ReglesParser(payload.regles)
     consequences = execute_personnalisation_regles(
