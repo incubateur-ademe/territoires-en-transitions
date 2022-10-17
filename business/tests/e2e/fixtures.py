@@ -4,7 +4,7 @@ import pytest
 import json
 from fastapi.testclient import TestClient
 
-from business.evaluation.api import EvaluationReferentiel, app, PersonnalizePayload
+from business.evaluation.api import EvaluationReferentiel, router, PersonnalizePayload
 from business.utils.models.actions import (
     ActionComputedPoint,
     ActionDefinition,
@@ -27,7 +27,7 @@ from business.evaluation.api import (
 
 @pytest.fixture
 def execution_api():
-    return TestClient(app)
+    return TestClient(router)
 
 
 @pytest.fixture
@@ -103,8 +103,8 @@ def test_post_evaluate(
         # vérifie que l'api retourne les bons scores
         assert response.status_code == 200
         scores = {
-            action_id: ActionScore(**score_as_dict)
-            for action_id, score_as_dict in response.json().items()
+            score_as_dict['action_id']: ActionScore(**score_as_dict)
+            for score_as_dict in response.json()
         }
         return scores
 
