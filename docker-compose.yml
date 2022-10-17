@@ -256,39 +256,10 @@ services:
     container_name: tet-business
     build: ./business/.
     depends_on:
-      loader:
-        condition: service_completed_successfully
-      realtime:
-        condition: service_started
+      - kong
     restart: unless-stopped
     command: >
-      bash -c "pipenv run python -u business/evaluation/entrypoints/start_realtime.py"
-    environment:
-      SUPABASE_URL: ${SUPABASE_URL}
-      SUPABASE_WS: ${SUPABASE_WS}
-      REPOSITORIES: SUPABASE
-
-  business-update-content:
-    container_name: tet-business-update-content
-    build: ./business/.
-    profiles:
-      - donotstart
-    depends_on:
-      loader:
-        condition: service_completed_successfully
-    restart: unless-stopped
-    command: >
-      bash -c "pipenv run python business/referentiel/entrypoints/cli.py update-referentiels --referentiel eci
-      && pipenv run python business/referentiel/entrypoints/cli.py update-referentiels --referentiel cae
-      && pipenv run python business/referentiel/entrypoints/cli.py update-referentiels --referentiel crte
-      && pipenv run python business/referentiel/entrypoints/cli.py update-questions-and-personnalisations"
-    environment:
-      SUPABASE_URL: ${SUPABASE_URL}
-      SUPABASE_WS: ${SUPABASE_WS}
-      REPOSITORIES: SUPABASE
-      REFERENTIELS_REPOSITORY: SUPABASE
-    volumes:
-      - ./markdown:/markdown
+      bash -c "uvicorn api:app --host 0.0.0.0 --port 8888"
 
   business-test:
     container_name: tet-business-test
