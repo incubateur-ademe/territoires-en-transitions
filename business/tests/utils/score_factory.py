@@ -1,5 +1,5 @@
 from typing import Optional
-from business.utils.models.actions import ActionId, ActionReferentiel
+from business.utils.models.actions import ActionId
 from business.utils.models.action_score import ActionScore
 
 
