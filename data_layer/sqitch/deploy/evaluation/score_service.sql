@@ -114,6 +114,9 @@ create trigger after_reponse_insert
 execute procedure after_reponse_call_business();
 
 -- todo keep in score service
+alter table client_scores
+    alter column score_created_at set default CURRENT_TIMESTAMP;
+
 -- remove deprecated triggers
 drop trigger after_action_statut_insert on action_statut;
 -- drop function after_action_statut_insert_write_event;
