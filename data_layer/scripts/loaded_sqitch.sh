@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 DATALAYER_DIR="./../postgres"
 

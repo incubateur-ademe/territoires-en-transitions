@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 echo "Uploading json to $SUPABASE_URL/rest/v1/..."
 curl -X POST \
      -H "apikey: $SERVICE_ROLE_KEY" \
