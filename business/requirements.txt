@@ -1,0 +1,10 @@
+## Used by Docker dev image, production uses pipenv.
+fastapi
+pyyaml
+mistletoe
+lark
+tqdm
+marshmallow-dataclass
+pytest
+requests
+uvicorn

@@ -261,7 +261,11 @@ services:
       - kong
     restart: unless-stopped
     command: >
-      bash -c "uvicorn api:app --host 0.0.0.0 --port 8888"
+      bash -c "uvicorn evaluation_api:app --host 0.0.0.0 --port 8888"
+    environment:
+      SUPABASE_PERSONNALISATION_URL: http://kong:8000/rest/v1/personnalisation_consequence
+      SUPABASE_SCORE_URL: http://localhost:8000/rest/v1/client_scores
+      SUPABASE_KEY: ${SERVICE_ROLE_KEY}
 
   business-test:
     container_name: tet-business-test
@@ -269,7 +273,7 @@ services:
     profiles:
       - donotstart
     command: >
-      bash -c "pipenv run pytest tests"
+      bash -c "pytest tests"
 
   business-parse-preuves:
     container_name: tet-business-parse-preuves
