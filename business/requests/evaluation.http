@@ -1,5 +1,5 @@
-### Authenticate as a user
-POST http://localhost:8888/evaluate/
+### Appel l'endpoint pour obtenir les scores
+POST http://localhost:8888/evaluation/
 Content-Type: application/json
 
 {
