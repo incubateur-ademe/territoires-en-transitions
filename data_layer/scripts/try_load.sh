@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # This script waits for the db to be ready then load the content
 
 DATALAYER_DIR="./../postgres"
