@@ -380,7 +380,7 @@ def build_point_tree_personnalise(
     point_tree_personnalise = point_tree_referentiel.clone()
     for action_id, consequence in personnalisation_consequences.items():
         if consequence.potentiel_perso is not None:
-            factor = consequence.potentiel_perso
+            factor = float(consequence.potentiel_perso)
             personnalisation = (
                 lambda action_id: point_tree_personnalise.set_action_point(
                     action_id,
