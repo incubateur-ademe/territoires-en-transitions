@@ -255,6 +255,8 @@ services:
   business:
     container_name: tet-business
     build: ./business/.
+    ports: # expose le port pour tester de l'extérieur.
+      - "8888:8888"
     depends_on:
       - kong
     restart: unless-stopped
