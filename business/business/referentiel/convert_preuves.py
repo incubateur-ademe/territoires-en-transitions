@@ -1,6 +1,6 @@
 import json
 import os
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from glob import glob
 from pathlib import Path
 from typing import List, Tuple
@@ -45,8 +45,8 @@ def parse_preuves_from_markdown(md_file: str) -> Tuple[List[dict], List[str]]:
     errors = []
     for md_preuve in md_preuves:
         try:
-            markdown_preuve_schema.load(md_preuve)
-            preuves.append(md_preuve)
+            preuve = markdown_preuve_schema.load(md_preuve)
+            preuves.append(asdict(preuve))
         except ValidationError as error:
             errors.append(f"Dans le fichier {Path(md_file).name} {str(error)}")
     return preuves, errors
@@ -63,7 +63,6 @@ def convert_preuves_markdown_folder_to_json(folder_path: str, json_filename: str
         file_preuves, file_errors = parse_preuves_from_markdown(md_file)
         preuves += file_preuves
         errors += file_errors
-
     # Plante si y a des erreurs
     if errors:
         raise MarkdownError(
@@ -77,7 +76,6 @@ def convert_preuves_markdown_folder_to_json(folder_path: str, json_filename: str
             "Les ids des preuves suivantes ne sont pas uniques : "
             + ", ".join(duplicated_preuve_ids),
         )
-
     with open(json_filename, "w") as f:
         json.dump({"preuves": preuves}, f)
     print(

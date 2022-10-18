@@ -245,7 +245,6 @@ def referentiel_from_actions(
             parent = _find_parent_within_tree(orphan, closest_parent)
 
             if parent is None:
-                breakpoint()
                 raise MarkdownError(
                     f"Il manque un niveau entre l'action {closest_parent.identifiant} et son enfant {orphan.identifiant}"
                 )
