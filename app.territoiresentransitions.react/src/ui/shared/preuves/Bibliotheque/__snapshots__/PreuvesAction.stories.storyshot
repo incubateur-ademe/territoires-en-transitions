@@ -244,52 +244,6 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
               Yolo Dodo
             </span>
           </div>
-          <div
-            data-test="item"
-          >
-            <div
-              className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0 cursor-pointer"
-            >
-              <a
-                className="fr-text--sm fr-mb-1v fr-fi-links-fill fr-link--icon-left"
-                data-test="name"
-                href="#"
-                onClick={[Function]}
-              >
-                didi
-              </a>
-              <div
-                className="invisible group-hover:visible"
-              >
-                <button
-                  className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line undefined"
-                  onClick={[Function]}
-                  title="Décrire"
-                />
-                <button
-                  className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
-                  onClick={[Function]}
-                  title="Supprimer"
-                />
-              </div>
-            </div>
-            <p
-              className="text-xs fr-text-mention--grey mb-0 "
-              data-test="comment"
-              onClick={[Function]}
-            >
-              commentaire
-            </p>
-            <span
-              className="text-xs grey625"
-            >
-              Ajouté
-               le 
-              06 sept. 2022
-               par 
-              Yili Didi
-            </span>
-          </div>
         </div>
         <button
           aria-expanded="false"
@@ -377,6 +331,92 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
               06 sept. 2022
                par 
               Yolo Dodo
+            </span>
+          </div>
+        </div>
+        <button
+          aria-expanded="false"
+          aria-haspopup="dialog"
+          className="fr-btn fr-fi-add-line"
+          data-test="AddPreuveReglementaire"
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onPointerDown={[Function]}
+          title="Ajouter une preuve"
+        />
+      </div>
+    </div>
+    <div
+      className="flex flex-row gap-8 pt-2 pb-4"
+      data-test="preuve"
+    >
+      <div
+        className="flex flex-1 flex-col"
+      >
+        <span
+          className="fr-text--sm pt-2 fr-mb-1v text-black"
+          data-test="desc"
+        >
+          Etude de vulnérabilité au changement climatique
+        </span>
+        <span
+          className="text-xs text-grey625"
+        >
+          1.1.4
+        </span>
+      </div>
+      <div
+        className="flex flex-1 flex-col justify-center"
+      >
+        <div
+          className="flex flex-1 flex-col justify-center space-y-3 fr-mb-2w"
+        >
+          <div
+            data-test="item"
+          >
+            <div
+              className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0 cursor-pointer"
+            >
+              <a
+                className="fr-text--sm fr-mb-1v fr-fi-links-fill fr-link--icon-left"
+                data-test="name"
+                href="#"
+                onClick={[Function]}
+              >
+                didi
+              </a>
+              <div
+                className="invisible group-hover:visible"
+              >
+                <button
+                  className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line undefined"
+                  onClick={[Function]}
+                  title="Décrire"
+                />
+                <button
+                  className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
+                  onClick={[Function]}
+                  title="Supprimer"
+                />
+              </div>
+            </div>
+            <p
+              className="text-xs fr-text-mention--grey mb-0 "
+              data-test="comment"
+              onClick={[Function]}
+            >
+              commentaire
+            </p>
+            <span
+              className="text-xs grey625"
+            >
+              Ajouté
+               le 
+              06 sept. 2022
+               par 
+              Yili Didi
             </span>
           </div>
         </div>
@@ -712,52 +752,6 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
               Yolo Dodo
             </span>
           </div>
-          <div
-            data-test="item"
-          >
-            <div
-              className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0 cursor-pointer"
-            >
-              <a
-                className="fr-text--sm fr-mb-1v fr-fi-links-fill fr-link--icon-left"
-                data-test="name"
-                href="#"
-                onClick={[Function]}
-              >
-                didi
-              </a>
-              <div
-                className="invisible group-hover:visible"
-              >
-                <button
-                  className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line undefined"
-                  onClick={[Function]}
-                  title="Décrire"
-                />
-                <button
-                  className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
-                  onClick={[Function]}
-                  title="Supprimer"
-                />
-              </div>
-            </div>
-            <p
-              className="text-xs fr-text-mention--grey mb-0 "
-              data-test="comment"
-              onClick={[Function]}
-            >
-              commentaire
-            </p>
-            <span
-              className="text-xs grey625"
-            >
-              Ajouté
-               le 
-              06 sept. 2022
-               par 
-              Yili Didi
-            </span>
-          </div>
         </div>
         <button
           aria-expanded="false"
@@ -845,6 +839,92 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
               06 sept. 2022
                par 
               Yolo Dodo
+            </span>
+          </div>
+        </div>
+        <button
+          aria-expanded="false"
+          aria-haspopup="dialog"
+          className="fr-btn fr-fi-add-line"
+          data-test="AddPreuveReglementaire"
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onPointerDown={[Function]}
+          title="Ajouter une preuve"
+        />
+      </div>
+    </div>
+    <div
+      className="flex flex-row gap-8 pt-2 pb-4"
+      data-test="preuve"
+    >
+      <div
+        className="flex flex-1 flex-col"
+      >
+        <span
+          className="fr-text--sm pt-2 fr-mb-1v text-black"
+          data-test="desc"
+        >
+          Etude de vulnérabilité au changement climatique
+        </span>
+        <span
+          className="text-xs text-grey625"
+        >
+          1.1.4
+        </span>
+      </div>
+      <div
+        className="flex flex-1 flex-col justify-center"
+      >
+        <div
+          className="flex flex-1 flex-col justify-center space-y-3 fr-mb-2w"
+        >
+          <div
+            data-test="item"
+          >
+            <div
+              className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0 cursor-pointer"
+            >
+              <a
+                className="fr-text--sm fr-mb-1v fr-fi-links-fill fr-link--icon-left"
+                data-test="name"
+                href="#"
+                onClick={[Function]}
+              >
+                didi
+              </a>
+              <div
+                className="invisible group-hover:visible"
+              >
+                <button
+                  className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line undefined"
+                  onClick={[Function]}
+                  title="Décrire"
+                />
+                <button
+                  className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
+                  onClick={[Function]}
+                  title="Supprimer"
+                />
+              </div>
+            </div>
+            <p
+              className="text-xs fr-text-mention--grey mb-0 "
+              data-test="comment"
+              onClick={[Function]}
+            >
+              commentaire
+            </p>
+            <span
+              className="text-xs grey625"
+            >
+              Ajouté
+               le 
+              06 sept. 2022
+               par 
+              Yili Didi
             </span>
           </div>
         </div>
