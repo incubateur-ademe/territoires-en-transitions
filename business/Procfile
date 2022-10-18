@@ -1,1 +1,1 @@
-web: python serve_eval_api.py
+web: python evaluation_server.py

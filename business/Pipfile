@@ -3,19 +3,17 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 name = "pypi"
 
+[requires]
+python_version = "3.9"
+
 [packages]
 fastapi = "*"
 pyyaml = "*"
-uvicorn = "*"
 mistletoe = "*"
 lark = "*"
 tqdm = "*"
 marshmallow-dataclass = "*"
-business = {editable = true, path = "."}
 pytest = "*"
 requests = "*"
-
-[dev-packages]
-
-[requires]
-python_version = "3.9"
+uvicorn = {extras = ["standard"], version = "*"}
+business = {editable = true, path = "."}
