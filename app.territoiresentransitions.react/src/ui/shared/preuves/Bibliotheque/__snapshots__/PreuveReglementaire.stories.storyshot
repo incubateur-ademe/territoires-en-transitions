@@ -28,11 +28,11 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Action De
       className="text-xs text-grey625"
     >
       1.1.2
-      <span
-        className="fr-badge fr-ml-4w fr-text-mention--grey fr-text--xs"
+      <p
+        className="fr-badge fr-badge--no-icon fr-ml-4w fr-text-mention--grey fr-text--xs"
       >
         Non concerné
-      </span>
+      </p>
     </span>
   </div>
   <div
@@ -82,11 +82,11 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Action No
       className="text-xs text-grey625"
     >
       1.1.2
-      <span
-        className="fr-badge fr-ml-4w fr-text-mention--grey fr-text--xs"
+      <p
+        className="fr-badge fr-badge--no-icon fr-ml-4w fr-text-mention--grey fr-text--xs"
       >
         Non concerné
-      </span>
+      </p>
     </span>
   </div>
   <div
