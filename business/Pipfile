@@ -4,22 +4,16 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-mistletoe = "0.0.9"
-pydantic = "*"
-pytest = "*"
-pyyaml = "*"
-marshmallow-dataclass = "*"
-black = "==21.5b1"
-business = {editable = true, path = "."}
-python-dotenv = "*"
-pandas = "*"
-openpyxl = "*"
-tqdm = "*"
-numpy = "*"
-supabase = "==0.0.3"
-click = "*"
-lark = "*"
 fastapi = "*"
+pyyaml = "*"
+uvicorn = "*"
+mistletoe = "*"
+lark = "*"
+tqdm = "*"
+marshmallow-dataclass = "*"
+business = {editable = true, path = "."}
+pytest = "*"
+requests = "*"
 
 [dev-packages]
 
