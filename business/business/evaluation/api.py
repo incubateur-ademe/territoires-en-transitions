@@ -38,7 +38,7 @@ class EvaluatePayload:
     evaluation_referentiel: EvaluationReferentiel
 
 
-@router.post("/evaluate/")
+@router.post("/evaluation/")
 async def evaluate(payload: EvaluatePayload) -> list[ActionScore]:
     # TODO : cache this tree ?
     point_tree_referentiel = ActionPointTree(
@@ -68,7 +68,7 @@ class PersonnalizePayload:
         }
 
 
-@router.post("/personnalize/")
+@router.post("/personnalisation/")
 async def personnalize(payload: PersonnalizePayload) -> dict[ActionId, ActionPersonnalisationConsequence]:
     regles_parser = ReglesParser(payload.regles)
     consequences = execute_personnalisation_regles(
