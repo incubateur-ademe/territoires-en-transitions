@@ -96,7 +96,7 @@ def test_post_evaluate(
         )
         payload = EvaluatePayload(statuts or [], consequences or [], evaluation_ref)
         response = execution_api.post(
-            "/evaluate/",
+            "/evaluation/",
             headers={"X-Token": "coneofsilence"},
             json=asdict(payload),
         )
@@ -126,7 +126,7 @@ def test_post_personnalize(
             regles, reponses or [], identite or IdentiteCollectivite()
         )
         response = execution_api.post(
-            "/personnalize/",
+            "/personnalisation/",
             headers={"X-Token": "coneofsilence"},
             json=payload.asdict(),
         )

@@ -3,6 +3,7 @@ import json
 import os
 from fastapi import APIRouter
 import requests
+import asyncio
 
 from business.evaluation.evaluation.compute_scores import (
     ActionPointTree,
@@ -74,7 +75,7 @@ class PersonnalizePayload:
 
 @router.post("/personnalisation/")
 async def personnalize(
-    payload: PersonnalizePayload,
+        payload: PersonnalizePayload,
 ) -> dict[ActionId, ActionPersonnalisationConsequence]:
     regles_parser = ReglesParser(payload.regles)
     consequences = execute_personnalisation_regles(
@@ -85,66 +86,78 @@ async def personnalize(
     return consequences
 
 
-# Endpoints called by the datalayer : return immediately and then post the responses to the right tables
+# Endpoints called by the datalayer: return immediately and then post the responses to the right tables
 # ---------------------------------
 supabase_key = os.environ.get("SUPABASE_KEY")
 supabase_perso_url = os.environ.get("SUPABASE_PERSONNALISATION_URL")
 supabase_score_url = os.environ.get("SUPABASE_SCORE_URL")
 
 
+def supabase_headers() -> dict:
+    return {"ApiKey": supabase_key,
+            "Authorization": f"Bearer {supabase_key}",
+            "Content-Type": "application/json",
+            "Prefer": "resolution=merge-duplicates"}
+
+
 @dataclass
-class PersonnalizePayloadWithCollectiviteId:
+class DatalayerPersonnalisationPayload:
     collectivite_id: int
     payload: PersonnalizePayload
 
 
-@router.post("/dl_personnalisation/")
-async def dl_personnalize(payload: PersonnalizePayload):
-    personnalize_and_save_to_dl(payload)
-    return
-
-
-@router.post("/dl_evaluation/")
-async def dl_evaluate(payload: EvaluatePayload):
-    evaluate_and_save_to_dl(payload)
-    return
-
-
-async def personnalize_and_save_to_dl(
-    payload_with_collectivite_id: PersonnalizePayloadWithCollectiviteId,
-):
-    consequences = await personnalize(payload_with_collectivite_id.payload)
-    requests.post(
-        supabase_perso_url,
-        data=json.dumps(
-            {
-                "consequences": consequences,
-                "collectivite_id": payload_with_collectivite_id.collectivite_id,
-                "referentiel": payload_with_collectivite_id.referentiel,
-            }
-        ),
-        headers={"ApiKey": supabase_key, "Authorization": f"Bearer {supabase_key}"},
-    )
-
-
 @dataclass
-class EvaluatePayloadWithCollectiviteIdAndRef:
+class DatalayerEvaluationPayload:
     collectivite_id: int
     referentiel: ActionReferentiel
     payload: EvaluatePayload
 
 
-async def evaluate_and_save_to_dl(
-    payload_with_collectivite_id: EvaluatePayloadWithCollectiviteIdAndRef,
+@router.post("/dl_personnalisation/")
+def datalayer_personnalisation(payload: DatalayerPersonnalisationPayload):
+    asyncio.run(personnalize_then_post_consequences(payload))
+    return
+
+
+@router.post("/dl_evaluation/")
+def datalayer_evaluation(payload: DatalayerEvaluationPayload):
+    asyncio.run(evaluate_then_post_scores(payload))
+    return
+
+
+async def personnalize_then_post_consequences(
+        payload_with_collectivite_id: DatalayerPersonnalisationPayload,
+):
+    consequences = await personnalize(payload_with_collectivite_id.payload)
+    response = requests.post(
+        supabase_perso_url,
+        data=json.dumps(
+            {
+                "consequences": {
+                    action_id: asdict(consequence)
+                    for action_id, consequence in consequences.items()
+                },
+                "collectivite_id": payload_with_collectivite_id.collectivite_id,
+            }
+        ),
+        headers=supabase_headers(),
+    )
+    print(f'{response.url} replied with a code {response.status_code}')
+
+
+async def evaluate_then_post_scores(
+        payload_with_collectivite_id: DatalayerEvaluationPayload,
 ):
     scores = await evaluate(payload_with_collectivite_id.payload)
-    requests.post(
+    response = requests.post(
         supabase_score_url,
         data=json.dumps(
             {
                 "scores": scores,
                 "collectivite_id": payload_with_collectivite_id.collectivite_id,
+                "referentiel": payload_with_collectivite_id.referentiel,
             }
         ),
-        headers={"ApiKey": supabase_key, "Authorization": f"Bearer {supabase_key}"},
+        headers=supabase_headers(),
     )
+    print(f'{response.url} replied with a code {response.status_code}')

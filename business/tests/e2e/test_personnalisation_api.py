@@ -12,7 +12,7 @@ def test_personnalize_eci(execution_api, regles):
     identite = IdentiteCollectivite()
     payload = PersonnalizePayload(regles, reponses, identite)
     response = execution_api.post(
-        "/personnalize/",
+        "/personnalisation/",
         headers={"X-Token": "coneofsilence"},
         json=payload.asdict(),
     )
