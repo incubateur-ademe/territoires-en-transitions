@@ -12,7 +12,7 @@ def test_evaluate_eci(execution_api, eci_evaluation_ref):
     consequences = {}
     payload = EvaluatePayload(statuts, consequences, eci_evaluation_ref)
     response = execution_api.post(
-        "/evaluate/",
+        "/evaluation/",
         headers={"X-Token": "coneofsilence"},
         json=asdict(payload),
     )
@@ -47,7 +47,7 @@ def test_evaluate_cae(execution_api, cae_evaluation_ref):
     consequences = {}
     payload = EvaluatePayload(statuts, consequences, cae_evaluation_ref)
     response = execution_api.post(
-        "/evaluate/",
+        "/evaluation/",
         headers={"X-Token": "coneofsilence"},
         json=asdict(payload),
     )
