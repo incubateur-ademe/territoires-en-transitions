@@ -130,7 +130,7 @@ async def personnalize_then_post_consequences(
 ):
     consequences = await personnalize(payload_with_collectivite_id.payload)
     response = requests.post(
-        supabase_perso_url,
+        f'{supabase_perso_url}?on_conflict=collectivite_id',
         data=json.dumps(
             {
                 "consequences": {
@@ -150,10 +150,12 @@ async def evaluate_then_post_scores(
 ):
     scores = await evaluate(payload_with_collectivite_id.payload)
     response = requests.post(
-        supabase_score_url,
+        f'{supabase_score_url}?on_conflict=collectivite_id,referentiel',
         data=json.dumps(
             {
-                "scores": scores,
+                "scores": [
+                    asdict(score) for score in scores
+                ],
                 "collectivite_id": payload_with_collectivite_id.collectivite_id,
                 "referentiel": payload_with_collectivite_id.referentiel,
             }
