@@ -11,7 +11,7 @@ create table evaluation.service_configuration
 );
 
 insert into evaluation.service_configuration
-values ('http://business:8888/evaluation/', 'http://business:8888/personnalisation/');
+values ('http://business:8888/dl_evaluation/', 'http://business:8888/dl_personnalisation/');
 
 
 -- todo move in personnalisation service
@@ -66,7 +66,8 @@ create or replace function
 )
 as
 $$
-with payload as (select jsonb_build_object(
+with payload as (select ci.id as collectivite_id,
+                        jsonb_build_object(
                                 'identite', jsonb_build_object('population', ci.population,
                                                                'type', ci.type,
                                                                'localisation',
@@ -74,7 +75,7 @@ with payload as (select jsonb_build_object(
                                 'regles', (select jsonb_agg(to_jsonb(sr)) from evaluation.service_regles sr),
                                 'reponses',
                                 (select reponses from evaluation.service_reponses sr where sr.collectivite_id = ci.id)
-                            ) as data
+                            ) as payload
                  from collectivite_identite ci
                  where ci.id = evaluate_regles.collectivite_id)
 select post.*
@@ -85,7 +86,7 @@ from payload
                                      from evaluation.service_configuration
                                      order by created_at desc
                                      limit 1),
-                                    payload.data::varchar,
+                                    to_jsonb(payload.*)::varchar,
                                     'application/json'::varchar
                                 )
     ) as post on true
@@ -94,21 +95,14 @@ $$
     security definer
     set search_path = public, extensions; -- permet d'utiliser l'extension http depuis un trigger
 
+-- select * from evaluation.evaluate_regles(1);
 
 
 create or replace function after_reponse_call_business() returns trigger as
 $$
 declare
 begin
-    raise notice 'calling business for collectivite %', new.collectivite_id;
-
-    insert into personnalisation_consequence (collectivite_id, consequences)
-    select 1, content::jsonb
-    from evaluation.evaluate_regles(new.collectivite_id)
-        -- todo handle failure
-    on conflict (collectivite_id)
-        do update set consequences = excluded.consequences,
-                      modified_at  = excluded.modified_at;
+    perform evaluation.evaluate_regles(new.collectivite_id);
     return new;
 end
 $$ language plpgsql security definer;
@@ -202,11 +196,13 @@ create or replace function
 )
 as
 $$
-with payload as (select jsonb_build_object(
+with payload as (select s.collectivite_id,
+                        r.referentiel,
+                        jsonb_build_object(
                                 'statuts', coalesce(s.data, to_jsonb('{}'::jsonb[])), -- si il n'y a pas de statuts
                                 'evaluation_referentiel', r.data,
                                 'consequences', jsonb_build_object() -- todo
-                            ) as data
+                            ) as payload
                  from evaluation.service_referentiel as r
                           left join evaluation.service_statuts s on s.referentiel = r.referentiel
                  where r.referentiel = evaluate_statuts.referentiel
@@ -220,7 +216,7 @@ from payload
                                      from evaluation.service_configuration
                                      order by created_at desc
                                      limit 1),
-                                    payload.data::varchar,
+                                    to_jsonb(payload.*)::varchar,
                                     'application/json'::varchar
                                 )
     ) as post on true
@@ -229,24 +225,16 @@ $$
     security definer
     set search_path = public, extensions;
 
+-- select * from evaluation.evaluate_statuts(1, 'eci');
 
--- todo do not use a trigger to avoid long transactions on statuts updates
+
 create or replace function after_action_statut_call_business() returns trigger as
 $$
 declare
     relation action_relation%ROWTYPE;
 begin
     select * into relation from action_relation where id = new.action_id limit 1;
-
-    raise notice 'calling business for collectivite %, %', new.collectivite_id, relation.referentiel;
-
-    insert into client_scores (collectivite_id, referentiel, scores, score_created_at)
-    select new.collectivite_id, relation.referentiel, content::jsonb, now()
-    from evaluation.evaluate_statuts(new.collectivite_id, relation.referentiel)
-        -- todo handle failure
-    on conflict (collectivite_id, referentiel)
-        do update set scores           = excluded.scores,
-                      score_created_at = excluded.score_created_at;
+    perform evaluation.evaluate_statuts(new.collectivite_id, relation.referentiel);
     return new;
 end
 $$ language plpgsql security definer;

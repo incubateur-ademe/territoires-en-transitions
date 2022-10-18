@@ -40,3 +40,51 @@ Content-Type: application/json
     "localisation": []
   }
 }
+
+
+### Appel l'endpoint pour lancer le calclus conséquences de la personnalisation
+## http://localhost:8000/rest/v1/rpc/dl_personnalisation
+POST http://localhost:8888/dl_personnalisation/
+Content-Type: application/json
+
+{
+  "collectivite_id": 1,
+  "payload": {
+    "regles": [
+      {
+        "action_id": "eci_1.2.4",
+        "regles": [
+          {
+            "formule": "si identite(type, syndicat) alors FAUX sinon VRAI",
+            "type": "desactivation"
+          }
+        ]
+      }
+    ],
+    "reponses": [
+      {
+        "id": "dechets_1",
+        "value": "OUI"
+      },
+      {
+        "id": "EP_1",
+        "value": "EP_1_b"
+      },
+      {
+        "id": "habitat_2",
+        "value": 0.8
+      }
+    ],
+    "identite": {
+      "population": [
+        "moins_de_20000",
+        "moins_de_50000",
+        "moins_de_100000"
+      ],
+      "type": [
+        "commune"
+      ],
+      "localisation": []
+    }
+  }
+}
