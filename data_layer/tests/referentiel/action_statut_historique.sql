@@ -1,5 +1,6 @@
 begin;
 select plan(9);
+select test.disable_evaluation_api();
 
 -- Enlève le trigger pour tester le debounce - sinon les modified_at sont toujours égaux à now().
 drop trigger if exists set_modified_at_action_statut_update on action_statut;

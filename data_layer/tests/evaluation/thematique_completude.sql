@@ -1,5 +1,6 @@
 begin;
 select plan(13);
+select test.disable_evaluation_api();
 
 select has_view('question_thematique_completude');
 select has_column('question_thematique_completude', 'collectivite_id');

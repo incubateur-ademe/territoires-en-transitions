@@ -10,10 +10,6 @@ create table evaluation.service_configuration
     created_at                timestamptz default now() not null
 );
 
-insert into evaluation.service_configuration
-values ('http://business:8888/dl_evaluation/', 'http://business:8888/dl_personnalisation/');
-
-
 -- todo move in personnalisation service
 create view evaluation.service_reponses
 as
@@ -77,9 +73,15 @@ with payload as (select ci.id as collectivite_id,
                                 (select reponses from evaluation.service_reponses sr where sr.collectivite_id = ci.id)
                             ) as payload
                  from collectivite_identite ci
-                 where ci.id = evaluate_regles.collectivite_id)
+                 where ci.id = evaluate_regles.collectivite_id),
+     configuration as (select *
+                       from evaluation.service_configuration
+                       order by created_at desc
+                       limit 1)
+
 select post.*
-from payload
+from configuration -- si il n'y a aucune configuration on ne fait pas d'appel
+         join payload on true
          left join lateral (select *
                             from http_post(
                                     (select personnalisation_endpoint
@@ -93,7 +95,8 @@ from payload
 $$
     language sql
     security definer
-    set search_path = public, extensions; -- permet d'utiliser l'extension http depuis un trigger
+    set search_path = public, extensions;
+-- permet d'utiliser l'extension http depuis un trigger
 
 -- select * from evaluation.evaluate_regles(1);
 
@@ -209,16 +212,18 @@ with payload as (select s.collectivite_id,
                  from evaluation.service_referentiel as r
                           left join evaluation.service_statuts s on s.referentiel = r.referentiel
                  where r.referentiel = evaluate_statuts.referentiel
-                   and s.collectivite_id = evaluate_statuts.collectivite_id)
+                   and s.collectivite_id = evaluate_statuts.collectivite_id),
+     configuration as (select *
+                       from evaluation.service_configuration
+                       order by created_at desc
+                       limit 1)
 
 select post.*
-from payload
+from configuration -- si il n'y a aucune configuration on ne fait pas d'appel
+         join payload on true
          left join lateral (select *
                             from http_post(
-                                    (select evaluation_endpoint
-                                     from evaluation.service_configuration
-                                     order by created_at desc
-                                     limit 1),
+                                    configuration.evaluation_endpoint,
                                     to_jsonb(payload.*)::varchar,
                                     'application/json'::varchar
                                 )

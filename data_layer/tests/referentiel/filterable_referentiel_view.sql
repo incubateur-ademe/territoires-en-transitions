@@ -1,6 +1,7 @@
 begin;
 select plan(7);
 select has_view('action_statuts');
+select test.disable_evaluation_api();
 
 truncate action_statut;
 truncate client_scores;

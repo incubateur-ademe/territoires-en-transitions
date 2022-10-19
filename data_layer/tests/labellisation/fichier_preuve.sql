@@ -1,6 +1,7 @@
 begin;
 
 select plan(4);
+select test.disable_evaluation_api();
 
 truncate storage.objects cascade;
 truncate labellisation.bibliotheque_fichier cascade;

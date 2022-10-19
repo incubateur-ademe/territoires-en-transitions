@@ -1,6 +1,9 @@
 begin;
 select plan(8);
 
+-- prevent calls to the business service
+select test.disable_evaluation_api();
+
 -- prepare
 truncate client_scores;
 truncate action_statut;
