@@ -1,5 +1,6 @@
 begin;
 select plan(27);
+select test.disable_evaluation_api();
 
 -- Enlève les triggers pour tester le debounce - sinon les modified_at sont toujours égaux à now().
 drop trigger set_modified_at_before_reponse_proportion_update on reponse_proportion;

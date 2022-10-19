@@ -1,6 +1,6 @@
 begin;
 select plan(6);
-
+select test.disable_evaluation_api();
 select test.identify_as('yolo@dodo.com');
 
 truncate table action_statut;

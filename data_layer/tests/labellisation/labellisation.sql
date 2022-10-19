@@ -1,6 +1,9 @@
 begin;
 select plan(35);
 
+-- prevent calls to the business service
+select test.disable_evaluation_api();
+
 select has_function('labellisation', 'referentiel_score'::name);
 select has_function('labellisation', 'etoiles'::name);
 select has_function('labellisation_parcours');
