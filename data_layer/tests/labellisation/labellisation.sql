@@ -165,7 +165,7 @@ select ok((select etoiles = '5'
 ------------------------------------------------------
 ------- Scenario: nothing is done nor complete -------
 ------------------------------------------------------
-truncate labellisation.demande;
+truncate labellisation.demande cascade ;
 truncate labellisation cascade;
 
 -- pas_fait statut on all requirements
@@ -225,7 +225,7 @@ select ok((select etoiles = '1'
 ------- Scenario: nothing is done but everything is complete -------
 --------------------------------------------------------------------
 
-truncate labellisation.demande;
+truncate labellisation.demande cascade;
 truncate labellisation cascade;
 
 -- fake scoring, score and completion at 1
