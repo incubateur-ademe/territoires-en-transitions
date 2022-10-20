@@ -2,11 +2,11 @@
 
 BEGIN;
 
-select id, collectivite_id, hash, filename
+select *
 from labellisation.bibliotheque_fichier
 where false;
 
-select id, collectivite_id, hash, filename, bucket_id, file_id, filesize
+select *
 from bibliotheque_fichier
 where false;
 
