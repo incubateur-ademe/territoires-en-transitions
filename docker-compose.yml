@@ -307,13 +307,12 @@ services:
       SUPABASE_WS: ${SUPABASE_WS}
       REPOSITORIES: SUPABASE
 
-  business-parse-preuves:
-    container_name: tet-business-parse-preuves
+  business-parse-content:
+    container_name: tet-business-parse-content
     build: ./business/.
     profiles:
       - donotstart
-    command: >
-      bash -c "pipenv run python business/referentiel/cli.py parse-preuves --input-markdown-folder ../markdown/preuves --output-json-file ../data_layer/content/preuves.json"
+    command: sh ./referentiel_parse_all.sh
     volumes:
       - ./markdown:/markdown
       - ./data_layer/content:/data_layer/content

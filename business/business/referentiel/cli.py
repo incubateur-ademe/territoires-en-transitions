@@ -118,15 +118,3 @@ def parse_personnalisations(
         )
     except Exception as e:
         raise SystemExit(e)
-
-
-if __name__ == "__main__":
-    cli()
-
-
-# Command lines
-# --------------
-#  python business/referentiel/cli.py parse-preuves --input-markdown-folder "../markdown/preuves" --output-json-file "../data_layer/content/preuves.json"
-#  python business/referentiel/cli.py parse-actions --input-markdown-folder "../markdown/referentiels/cae" --output-json-file "../data_layer/content/cae.json"
-#  python business/referentiel/cli.py parse-indicateurs --input-markdown-folder "../markdown/indicateurs/**" --output-json-file "../data_layer/content/indicateurs.json"
-#  python business/referentiel/cli.py parse-personnalisations --questions-markdown-folder "../markdown/questions"  --regles-markdown-folder "../markdown/personnalisations" --output-json-file "../data_layer/content/personnalisations.json"
