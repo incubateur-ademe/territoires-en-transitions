@@ -16,15 +16,15 @@ jobs:
 
       # Execute CLI on local datalayer if branch not in [upcoming-sandbox, upcoming-production]
       - name: Execute parsing scripts to generate JSON files in data_layer/content
-        run: docker compose run --no-deps business-parse-preuves
+        run: docker compose run --no-deps business-parse-content
 
-      # Check that datalayer loader runs  
-      - name: Run datalayer loader 
+      # Check that datalayer loader runs
+      - name: Run datalayer loader
         run: sh make_dot_env.sh && docker-compose run loader
         env:
           SUPABASE_SERVICE_ROLE_KEY: ${{secrets.TEST_SERVICE_SUPABASE_KEY}}
           SUPABASE_ANON_KEY: ${{secrets.TEST_ANON_SUPABASE_KEY}}
-          
+
       # Commit changes
       - name: Commit generated JSON files
         uses: EndBug/add-and-commit@v7
