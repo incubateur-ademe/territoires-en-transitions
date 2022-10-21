@@ -111,3 +111,4 @@ labellisation/fichier_preuve [labellisation/fichier_preuve@v1.8.0] 2022-10-20T11
 @v1.8.1 2022-10-20T14:40:00Z Florian <florian@derfurth.com> # Répare les preuves.
 
 stats/collectivite [stats/collectivite@v1.7.1] 2022-09-26T09:02:45Z Florian <florian@derfurth.com> # Prends en compte les collectivités désactivées.
+labellisation/audit 2022-10-21T14:59:44Z Amandine <contact@jacquelinamandine.fr> # Permettre à l'auditeur de marquer les actions audités
