@@ -114,3 +114,4 @@ stats/collectivite [stats/collectivite@v1.7.1] 2022-09-26T09:02:45Z Florian <flo
 referentiel/action_discussion 2022-10-17T14:31:37Z Florian <florian@derfurth.com> # Permet de discuter sur les actions du referentiel
 @v1.9.0 2022-11-04T10:35:32Z Florian <florian@derfurth.com> # Commentaires
 
+labellisation/audit 2022-10-21T14:59:44Z Amandine <contact@jacquelinamandine.fr> # Permettre à l'auditeur de marquer les actions audités
