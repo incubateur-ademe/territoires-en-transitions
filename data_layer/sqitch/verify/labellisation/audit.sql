@@ -2,7 +2,7 @@
 
 BEGIN;
 
-select id, collectivite_id, referentiel, demande_id, auditeur, date_debut, date_fin, statut
+select id, collectivite_id, referentiel, demande_id, auditeur, date_debut, date_fin
 from audit
 where false;
 
@@ -10,7 +10,7 @@ select id, audit_id, action_id, collectivite_id, modified_by, modified_at, ordre
 from action_audit_state
 where false;
 
-select has_function_privilege('get_current_audit(integer, referentiel)', 'execute');
-select has_function_privilege('set_audit_id()', 'execute');
+select has_function_privilege('labellisation.current_audit(integer, referentiel)', 'execute');
+select has_function_privilege('labellisation.audit_id()', 'execute');
 
 ROLLBACK;

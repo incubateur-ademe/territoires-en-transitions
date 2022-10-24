@@ -1,0 +1,63 @@
+### Authenticate as a user
+POST {{api}}/auth/v1/token?grant_type=password
+apikey: {{anon}}
+Content-Type: application/json
+
+{
+  "email": "youlou@doudou.com",
+  "password": "youloudoudou"
+}
+
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+    client.log('token is ' + response.body['access_token']);
+    client.global.set("auth_token", response.body['access_token']);
+%}
+
+### List action_audit_state display
+GET {{api}}/rest/v1/action_audit_state_list?collectivite_id=eq.1&referentiel=eq.eci
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+
+### Create an action_audit_state
+POST {{api}}/rest/v1/action_audit_state
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+prefer: return=representation, resolution=merge-duplicates
+Content-Type: application/json
+
+{
+  "collectivite_id": 1,
+  "action_id": "eci_2.5",
+  "ordre_du_jour" : true,
+  "avis" :  "avis test",
+  "statut" : "en_cours"
+}
+
+> {%
+    client.test("Create executed successfully", function() {
+        client.assert(response.status === 201, "Response status is not 201");
+    });
+%}
+
+### Update an action_audit_state
+PATCH {{api}}/rest/v1/action_audit_state?id=eq.2
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+prefer: return=representation, resolution=merge-duplicates
+Content-Type: application/json
+
+{
+  "ordre_du_jour" : true
+}
+
+> {%
+    client.test("Update executed successfully", function() {
+        client.assert(response.status === 201, "Response status is not 201");
+    });
+%}
+
+
