@@ -1,57 +1,58 @@
 begin;
 select plan(6);
 
+truncate action_audit_state;
 truncate audit cascade;
 
 -- Crée des audits de test
-insert into audit(collectivite_id, referentiel, statut)
+insert into audit(collectivite_id, referentiel, date_debut, date_fin)
 values
-    (23, 'eci', 'en cours'),
-    (23, 'eci', 'audite'),
-    (23, 'cae', 'en cours'),
-    (24, 'eci', 'en cours'),
-    (25, 'eci', 'audite');
+    (23, 'eci', default, null),
+    (23, 'eci', now() - interval'2 day' ,now() - interval'1 day'),
+    (23, 'cae', default, null),
+    (24, 'eci', default, null),
+    (25, 'eci', now() - interval'2 day' ,now() - interval'1 day');
 
--- Test fonction get_current_audit - audit existant
+-- Test fonction labellisation.current_audit - audit existant
 select ok(
     (
-        select a.id = get_current_audit(23, 'eci')
+        select a.id = labellisation.current_audit(23, 'eci')
         from audit a
         where a.collectivite_id = 23
         and a.referentiel = 'eci'
-        and a.statut = 'en cours'
+        and a.date_fin is null or a.date_fin >= now()
     ),
-    'Test fonction get_current_audit - audit existant'
+    'labellisation.current_audit devrait retourner un audit existant'
 );
 -- Test fonction get_current_audit - audit ferme
 select ok(
-    (select get_current_audit(25, 'eci') is null),
-    'Test fonction get_current_audit - audit ferme'
+    (select labellisation.current_audit(25, 'eci') is null),
+    'labellisation.current_audit devrait retourner null car audit ferme'
 );
 -- Test fonction get_current_audit - audit inexistant
 select ok(
-    (select get_current_audit(26, 'eci') is null),
-    'Test fonction get_current_audit - audit inexistant'
+    (select labellisation.current_audit(26, 'eci') is null),
+    'labellisation.current_audit devrait retourner null car audit inexistant'
 );
 
 
 -- Crée des action_audit_state
 insert into action_audit_state (action_id, collectivite_id, modified_by)
 values
-    ('eci_2.2.1.1', '23', '4ecc7d3a-7484-4a1c-8ac8-930cdacd2561'),
-    ('eci_2.2.1.2', '23', '4ecc7d3a-7484-4a1c-8ac8-930cdacd2561'),
-    ('cae_2.1.1.1', '23', '4ecc7d3a-7484-4a1c-8ac8-930cdacd2561'),
-    ('eci_2.2.1.1', '24', '4ecc7d3a-7484-4a1c-8ac8-930cdacd2561');
+    ('eci_2.2', '23', '4ecc7d3a-7484-4a1c-8ac8-930cdacd2561'),
+    ('eci_2.3', '23', '4ecc7d3a-7484-4a1c-8ac8-930cdacd2561'),
+    ('cae_2.2', '23', '4ecc7d3a-7484-4a1c-8ac8-930cdacd2561'),
+    ('eci_2.4', '24', '4ecc7d3a-7484-4a1c-8ac8-930cdacd2561');
 
--- Test trigger get_audit_id - audit trouve
+-- Test trigger audit_id - audit trouve
 select ok(
     (
         select a.audit_id is not null
         from action_audit_state a
         where a.collectivite_id = 23
-        and a.action_id = 'eci_2.2.1.1'
+        and a.action_id = 'eci_2.2'
     ),
-    'Test trigger get_audit_id - audit trouve'
+    'audit_id devrait trouver un audit'
 );
 
 -- Test trigger get_audit_id - audit pas trouve
@@ -62,18 +63,19 @@ prepare my_thrower as
 select throws_ok(
     'my_thrower',
     'Pas d audit en cours ou existant à rattacher',
-    'Test trigger get_audit_id - audit pas trouve'
+    'audit_id ne devrait pas trouver d audit'
 );
 
 -- Test vue pour une collectivite et un referentiel
 select ok(
     (
         select count(*) = 2
-        from get_action_audit_state_list
+        from action_audit_state_list a
         where collectivite_id = 23
         and referentiel = 'eci'
+        and state_id is not null
     ),
-    'Test vue pour une collectivite et un referentiel'
+    'La vue doit retourner deux résultats'
 );
 
 
