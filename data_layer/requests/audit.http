@@ -22,11 +22,11 @@ GET {{api}}/rest/v1/action_audit_state_list?collectivite_id=eq.1&referentiel=eq.
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 
-### Create an action_audit_state
-POST {{api}}/rest/v1/action_audit_state
+### Upsert un action_audit_state dans la vue.
+POST {{api}}/rest/v1/action_audit_state_list
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
-prefer: return=representation, resolution=merge-duplicates
+prefer: return=representation
 Content-Type: application/json
 
 {
@@ -42,22 +42,3 @@ Content-Type: application/json
         client.assert(response.status === 201, "Response status is not 201");
     });
 %}
-
-### Update an action_audit_state
-PATCH {{api}}/rest/v1/action_audit_state?id=eq.2
-apikey: {{anon}}
-Authorization: Bearer {{auth_token}}
-prefer: return=representation, resolution=merge-duplicates
-Content-Type: application/json
-
-{
-  "ordre_du_jour" : true
-}
-
-> {%
-    client.test("Update executed successfully", function() {
-        client.assert(response.status === 201, "Response status is not 201");
-    });
-%}
-
-
