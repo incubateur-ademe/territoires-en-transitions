@@ -2,10 +2,29 @@
 /** Doc MDN - Strict-Transport-Security - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security#syntax */
 
 const setHeaders = app => {
-  const webSocketSupabaseKey = process.env.REACT_APP_SUPABASE_URL.replace(
-    'http',
-    'ws'
-  );
+  // déduit l'URL de la connexion websocket à partir de l'URL du service Supabase
+  const {host} = new URL(process.env.REACT_APP_SUPABASE_URL);
+  const webSocketSupabaseKey = new URL(`ws://${host}`);
+
+  // directives de la règle CSP par type de ressources
+  const directives = {
+    'default-src': 'self',
+    'script-src':
+      "'self' https://stats.data.gouv.fr https://client.crisp.chat https://settings.crisp.chat",
+    'connect-src': `'self' ${process.env.REACT_APP_SUPABASE_URL} ${webSocketSupabaseKey} https://client.crisp.chat https://storage.crisp.chat wss://client.relay.crisp.chat wss://stream.relay.crisp.chat`,
+    'img-src':
+      "'self' data: https://dteci.ademe.fr https://client.crisp.chat https://image.crisp.chat https://storage.crisp.chat",
+    'font-src': "'self' data: https://client.crisp.chat",
+    'media-src': "'self' https://client.crisp.chat",
+    'style-src': "'self' 'unsafe-inline' https://client.crisp.chat",
+    'frame-src': "'self' https://game.crisp.chat",
+    'frame-ancestors': "'none'",
+  };
+  // assemble les directives en un seul bloc de texte
+  const ruleContent = Object.entries(directives)
+    .map(([k, v]) => `${k} ${v}`)
+    .join('; ');
+
   app.use((req, res, next) => {
     if (req.secure) {
       res.header(
@@ -15,7 +34,7 @@ const setHeaders = app => {
     }
     res.header(
       'Content-Security-Policy-Report-Only', // enlever -Report-Only pour activer la sécurité
-      `default-src 'self'; script-src 'self' *.data.gouv.fr/ 'sha256-kO6puxapZiqpb3t6i8bI0xf0enmClp/hvy3/u7oanbw=' https://client.crisp.chat; connect-src 'self' ${process.env.REACT_APP_SUPABASE_URL} ${webSocketSupabaseKey}; img-src 'self' data: https://dteci.ademe.fr; font-src 'self' data: https://client.crisp.chat; style-src 'self' 'unsafe-inline' https://client.crisp.chat; frame-ancestors 'none'`
+      ruleContent
     );
     next();
   });
