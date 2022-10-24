@@ -7,10 +7,9 @@ from audit
 where false;
 
 select id, audit_id, action_id, collectivite_id, modified_by, modified_at, ordre_du_jour, avis, statut
-from action_audit_state
+from labellisation.action_audit_state
 where false;
 
 select has_function_privilege('labellisation.current_audit(integer, referentiel)', 'execute');
-select has_function_privilege('labellisation.audit_id()', 'execute');
 
 ROLLBACK;

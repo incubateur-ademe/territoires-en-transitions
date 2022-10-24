@@ -2,11 +2,11 @@
 
 BEGIN;
 
-drop view action_audit_state_list;
+drop view public.action_audit_state;
+drop function labellisation.upsert_action_audit;
 drop function labellisation.current_audit(col integer, ref referentiel);
-drop function labellisation.audit_id();
-drop table action_audit_state;
-drop table audit cascade;
+drop table labellisation.action_audit_state;
+drop table audit;
 drop type audit_statut;
 
 COMMIT;
