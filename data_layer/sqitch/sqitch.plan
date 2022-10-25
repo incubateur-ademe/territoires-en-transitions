@@ -123,3 +123,4 @@ labellisation/suivi_audit 2022-11-10T15:17:25Z Florian <florian@derfurth.com> # 
 @v1.11.0 2022-11-15T08:39:44Z Florian <florian@derfurth.com> # Audit lot 2
 
 referentiel/contenu_json 2022-10-21T11:49:29Z Florian <florian@derfurth.com> # Ingestion des contenus JSON générés par le business
+indicateur/contenu_json 2022-10-25T08:45:19Z Florian <florian@derfurth.com> # Ingestion des contenus JSON générés par le business
