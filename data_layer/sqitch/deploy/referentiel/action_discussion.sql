@@ -2,8 +2,10 @@
 
 BEGIN;
 
+-- Enum action_discussion_statut
 create type action_discussion_statut as enum ('ouvert', 'ferme');
 
+-- Table discussion
 create table action_discussion
 (
     id              serial primary key,
@@ -21,6 +23,7 @@ create trigger set_modified_at
     for each row
 execute procedure update_modified_at();
 
+-- Table action_discussion_commentaire
 create table action_discussion_commentaire
 (
     id            serial primary key,
@@ -30,6 +33,32 @@ create table action_discussion_commentaire
     message       text                                                 not null
 );
 
+-- Supprimer une discussion si son dernier commentaires a été supprimé
+create function supprimer_discussion() returns trigger as
+$$
+declare
+    exist_adc integer;
+begin
+    exist_adc = (
+        select count(*)
+        from action_discussion_commentaire adc
+        where adc.discussion_id = old.discussion_id
+    );
+    if exist_adc = 0 then
+        delete from action_discussion where id = old.discussion_id;
+    end if;
+    return old;
+end;
+$$ language plpgsql;
+
+-- Trigger sur suppression de action_discussion_commentaire
+create trigger supprimer_commentaire
+    after delete
+    on action_discussion_commentaire
+    for each row
+execute procedure supprimer_discussion();
+
+-- Vue action_discussion_feed
 create view action_discussion_feed
 as
 select ad.id,
@@ -39,7 +68,7 @@ select ad.id,
        ad.created_at,
        ad.modified_at,
        ad.status,
-       utilisateur.modified_by_nom(created_by) as created_by_nom,
+       utilisateur.modified_by_nom(ad.created_by) as created_by_nom,
        (select array_agg(adc) from action_discussion_commentaire adc where adc.discussion_id = ad.id) as commentaires
 from action_discussion ad;
 
