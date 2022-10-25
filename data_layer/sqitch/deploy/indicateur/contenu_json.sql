@@ -58,7 +58,7 @@ begin
             end if;
         end loop;
 end ;
-$$ language plpgsql;
+$$ language plpgsql security definer;
 comment on function private.upsert_indicateurs is
     'Mets à jour les définitions des indicateurs ansi que les liens avec les actions.';
 
