@@ -18,12 +18,12 @@ Content-Type: application/json
 %}
 
 ### List action_audit_state display
-GET {{api}}/rest/v1/action_audit_state_list?collectivite_id=eq.1&referentiel=eq.eci
+GET {{api}}/rest/v1/action_audit_state?collectivite_id=eq.1&referentiel=eq.eci
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 
 ### Upsert un action_audit_state dans la vue.
-POST {{api}}/rest/v1/action_audit_state_list
+POST {{api}}/rest/v1/action_audit_state
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 prefer: return=representation
