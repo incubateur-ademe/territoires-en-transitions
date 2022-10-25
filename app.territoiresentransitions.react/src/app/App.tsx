@@ -16,6 +16,7 @@ import {ToutesLesCollectivitesPage} from 'app/pages/ToutesLesCollectivites/Toute
 import {ProfilPage} from './pages/Profil/ProfilPage';
 import Layout from 'app/Layout';
 import {AuthProvider} from 'core-logic/api/auth/AuthProvider';
+import {useCrispClient} from './useCrispClient';
 
 const theme = createTheme({
   palette: {
@@ -28,6 +29,8 @@ const theme = createTheme({
 const queryClient = new QueryClient();
 
 export const App = () => {
+  useCrispClient();
+
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>

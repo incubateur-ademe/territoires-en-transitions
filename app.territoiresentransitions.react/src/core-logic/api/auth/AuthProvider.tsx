@@ -122,8 +122,7 @@ const clearCrispUserData = () => {
   if ('$crisp' in window) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const {$crisp} = window as any;
-    $crisp.push(['set', 'user:nickname', [null]]);
-    $crisp.push(['set', 'user:email', [null]]);
+    $crisp.push(['do', 'session:reset']);
   }
 };
 

@@ -1,8 +1,11 @@
 const express = require('express');
 const {createProxyMiddleware} = require('http-proxy-middleware');
 const zipUrls = require('./server/zipUrls');
+const setHeaders = require('./server/setHeaders');
 
 module.exports = function (app) {
+  setHeaders(app);
+
   if (process.env.REACT_APP_WITH_PROXY === 'TRUE') {
     app.use(
       '/api',

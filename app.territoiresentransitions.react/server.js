@@ -2,9 +2,13 @@ require('dotenv').config();
 const path = require('path');
 const express = require('express');
 const zipUrls = require('./src/server/zipUrls');
+const setHeaders = require('./src/server/setHeaders');
 
 const app = express();
 const directory = '/' + (process.env.STATIC_DIR || 'build');
+
+setHeaders(app);
+
 app.use(express.static(__dirname + directory));
 
 app.use(express.json()); // for parsing application/json
