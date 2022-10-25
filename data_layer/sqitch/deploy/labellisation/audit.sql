@@ -66,7 +66,7 @@ create trigger set_modified_at
     for each row
 execute procedure update_modified_at();
 
--- Vue get_action_audit_state_list
+-- Vue get_action_audit_state
 create view public.action_audit_state
 as
 with action as (select ar.action_id
