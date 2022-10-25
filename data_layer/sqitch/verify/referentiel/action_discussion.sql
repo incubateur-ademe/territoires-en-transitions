@@ -6,8 +6,10 @@ select id, collectivite_id, action_id, created_by, created_at, modified_at, stat
 from action_discussion
 where false;
 
-select collectivite_id, action_id, commentaire, modified_by, modified_at
-from action_commentaire
+select id, created_by, created_at, discussion_id, message
+from action_discussion_commentaire
 where false;
+
+select has_function_privilege('supprimer_discussion()', 'execute');
 
 ROLLBACK;
