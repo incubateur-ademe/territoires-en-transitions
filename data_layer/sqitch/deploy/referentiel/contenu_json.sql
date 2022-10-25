@@ -89,7 +89,7 @@ begin
                 do update set value = excluded.value;
         end loop;
 end;
-$$ language plpgsql;
+$$ language plpgsql security definer;
 comment on function private.upsert_actions is
     'Met à jour les définitions des définitions des actions qui constituent un référentiel.';
 
