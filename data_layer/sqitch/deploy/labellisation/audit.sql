@@ -28,7 +28,7 @@ create table labellisation.action_audit_state
     modified_by     uuid references auth.users default auth.uid()        not null,
     modified_at     timestamp with time zone   default CURRENT_TIMESTAMP not null,
     ordre_du_jour   boolean                    default false             not null,
-    avis            text,
+    avis            text                       default ''                not null,
     statut          audit_statut               default 'non_audite'      not null
 );
 
@@ -129,10 +129,10 @@ begin
     if existing_audit_state is null
     then
         insert into labellisation.action_audit_state (audit_id, action_id, collectivite_id, avis, ordre_du_jour, statut)
-        values (found_audit.id, new.action_id, new.collectivite_id, new.avis, new.ordre_du_jour, new.statut);
+        values (found_audit.id, new.action_id, new.collectivite_id, coalesce(new.avis, ''), new.ordre_du_jour, new.statut);
     else
         update labellisation.action_audit_state
-        set avis          = new.avis,
+        set avis          = coalesce(new.avis, ''),
             ordre_du_jour = new.ordre_du_jour,
             statut        = new.statut
         where id = existing_audit_state.id;
