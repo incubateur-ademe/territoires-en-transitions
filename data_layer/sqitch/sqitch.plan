@@ -113,3 +113,4 @@ labellisation/fichier_preuve [labellisation/fichier_preuve@v1.8.0] 2022-10-20T11
 stats/collectivite [stats/collectivite@v1.7.1] 2022-09-26T09:02:45Z Florian <florian@derfurth.com> # Prends en compte les collectivités désactivées.
 referentiel/contenu_json 2022-10-21T11:49:29Z Florian <florian@derfurth.com> # Ingestion des contenus JSON générés par le business
 indicateur/contenu_json 2022-10-25T08:45:19Z Florian <florian@derfurth.com> # Ingestion des contenus JSON générés par le business
+evaluation/contenu_json 2022-10-25T15:57:21Z Florian <florian@derfurth.com> # Ingestion des contenus JSON générés par le business
