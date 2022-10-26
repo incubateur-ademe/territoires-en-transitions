@@ -1,0 +1,121 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots app/pages/collectivite/Audit/ActionAuditStatut Audite 1`] = `
+<div
+  className="px-2 w-full bg-[#e8edff]"
+>
+  <div
+    className="w-52"
+  >
+    <button
+      aria-label="ouvrir le menu"
+      className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+      data-test="action-audit-statut"
+      onBlur={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onPointerDown={[Function]}
+    >
+      <span
+        className="mr-auto"
+      >
+        <p
+          className="fr-badge fr-badge--success fr-badge--no-icon"
+        >
+          Audité
+        </p>
+      </span>
+      <span
+        className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+      />
+    </button>
+  </div>
+</div>
+`;
+
+exports[`Storyshots app/pages/collectivite/Audit/ActionAuditStatut En Cours 1`] = `
+<div
+  className="px-2 w-full bg-[#e8edff]"
+>
+  <div
+    className="w-52"
+  >
+    <button
+      aria-label="ouvrir le menu"
+      className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+      data-test="action-audit-statut"
+      onBlur={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onPointerDown={[Function]}
+    >
+      <span
+        className="mr-auto"
+      >
+        <p
+          className="fr-badge fr-badge--info fr-badge--no-icon"
+        >
+          Audit en cours
+        </p>
+      </span>
+      <span
+        className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+      />
+    </button>
+  </div>
+</div>
+`;
+
+exports[`Storyshots app/pages/collectivite/Audit/ActionAuditStatut Non Audite 1`] = `
+<div
+  className="px-2 w-full bg-[#e8edff]"
+>
+  <div
+    className="w-52"
+  >
+    <button
+      aria-label="ouvrir le menu"
+      className="flex items-center w-full p-2 -ml-2 text-left text-sm"
+      data-test="action-audit-statut"
+      onBlur={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onPointerDown={[Function]}
+    >
+      <span
+        className="mr-auto"
+      >
+        <p
+          className="fr-badge fr-badge--warning fr-badge--no-icon"
+        >
+          Non audité
+        </p>
+      </span>
+      <span
+        className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+      />
+    </button>
+  </div>
+</div>
+`;
+
+exports[`Storyshots app/pages/collectivite/Audit/ActionAuditStatut Read Only 1`] = `
+<div
+  className="px-2 w-full bg-[#e8edff]"
+>
+  <p
+    className="fr-badge fr-badge--success fr-badge--no-icon"
+  >
+    Audité
+  </p>
+</div>
+`;
