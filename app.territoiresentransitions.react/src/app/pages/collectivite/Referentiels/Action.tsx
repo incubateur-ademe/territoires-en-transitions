@@ -35,6 +35,8 @@ import ActionNav from './ActionNav';
 import ActionPreuvePanel from 'ui/shared/actions/ActionPreuvePanel/ActionPreuvePanel';
 import {DownloadDocs} from './DownloadDocs';
 import DOMPurify from 'dompurify';
+import ActionAuditStatut from '../Audit/ActionAuditStatut';
+import {ActionAuditDetail} from '../Audit/ActionAuditDetail';
 
 const useActionLinkedIndicateurDefinitions = (actionId: string) => {
   const [linkedIndicateurDefinitions, setLinkedIndicateurDefinitions] =
@@ -126,6 +128,10 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
     <div className="fr-container" data-test={`Action-${action.identifiant}`}>
       <div className="mt-8 mb-4">
         <OrientationQuickNav action={action} />
+      </div>
+      <ActionAuditStatut action={action} />
+      <div className="mt-4 mb-8">
+        <ActionAuditDetail action={action} />
       </div>
       <div className="sticky top-0 z-40 flex flex-row justify-between bg-white pr-8 py-4">
         <div className="flex flex-col w-4/5">
