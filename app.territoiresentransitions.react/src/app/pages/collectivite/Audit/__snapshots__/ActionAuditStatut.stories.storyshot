@@ -112,10 +112,14 @@ exports[`Storyshots app/pages/collectivite/Audit/ActionAuditStatut Read Only 1`]
 <div
   className="px-2 w-full bg-[#e8edff]"
 >
-  <p
-    className="fr-badge fr-badge--success fr-badge--no-icon"
+  <div
+    className="py-2"
   >
-    Audité
-  </p>
+    <p
+      className="fr-badge fr-badge--success fr-badge--no-icon"
+    >
+      Audité
+    </p>
+  </div>
 </div>
 `;
