@@ -20,7 +20,7 @@ ExempleAction.args = {
   action: {
     type: 'action',
   } as ActionCommentaireFieldProps['action'],
-  value: 'mon commentaire',
+  initialValue: 'mon commentaire',
 };
 
 // Commentaire associé à une tâche
@@ -30,7 +30,7 @@ ExempleTache.args = {
   action: {
     type: 'tache',
   } as ActionCommentaireFieldProps['action'],
-  value: 'mon commentaire',
+  initialValue: 'mon commentaire',
 };
 
 // Le champ est redimensionné en fonction de la longueur du texte initial
@@ -40,7 +40,7 @@ CommentaireLong.args = {
   action: {
     type: 'tache',
   } as ActionCommentaireFieldProps['action'],
-  value: `mon commentaire vraiment très long ! 
+  initialValue: `mon commentaire vraiment très long ! 
         
           Lorem ipsum dolor sit amet. A quia animi aut aspernatur totam aut laboriosam enim qui velit repudiandae. Non ratione provident est mollitia voluptatibus ut quibusdam totam hic minima rerum et rerum reiciendis ab officia beatae et voluptate dolore. Eos labore exercitationem id dolorem dolorum eos itaque sapiente et sapiente ducimus aut pariatur autem. Ut pariatur aliquid non laborum facilis ab natus sint sit enim quia ut fuga earum nam debitis nihil est enim dolores. Sit fugiat molestiae est quia possimus nam magni quisquam hic voluptas sint. Ex illo quis ut illum quasi sit quia harum eum consequuntur veniam ut possimus harum.
           
