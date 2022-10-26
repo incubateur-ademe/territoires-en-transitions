@@ -33,29 +33,6 @@ create table action_discussion_commentaire
     message       text                                                 not null
 );
 
--- Supprimer une discussion si son dernier commentaires a été supprimé
-create function supprimer_discussion() returns trigger as
-$$
-declare
-    exist_adc integer;
-begin
-    exist_adc = (select count(*)
-                 from action_discussion_commentaire adc
-                 where adc.discussion_id = old.discussion_id);
-    if exist_adc = 0 then
-        delete from action_discussion where id = old.discussion_id;
-    end if;
-    return old;
-end;
-$$ language plpgsql;
-
--- Trigger sur suppression de action_discussion_commentaire
-create trigger supprimer_commentaire
-    after delete
-    on action_discussion_commentaire
-    for each row
-execute procedure supprimer_discussion();
-
 -- Vue action_discussion_feed
 create view action_discussion_feed
 as
@@ -69,6 +46,8 @@ select ad.id,
        utilisateur.modified_by_nom(ad.created_by)                                                     as created_by_nom,
        (select array_agg(adc) from action_discussion_commentaire adc where adc.discussion_id = ad.id) as commentaires
 from action_discussion ad;
+
+
 
 -- Les autres commentaires sont visibles par tous les membres de la collectivité.
 create policy allow_read
@@ -90,9 +69,8 @@ create policy allow_delete
     for update
     using (created_by = auth.uid());
 
-
----
-
+-- Ajouter un commentaire via la vue action_discussion_feed
+-- Créer une discussion si c'est un premier commentaire
 create or replace function ajouter_commentaire() returns trigger as
 $$
 declare
@@ -102,6 +80,10 @@ begin
         insert into action_discussion(collectivite_id, action_id, status)
         values (new.collectivite_id, new.action_id, 'ouvert');
         new.id = currval('action_discussion_id_seq');
+    else
+        update action_discussion
+        set status = new.status
+        where id = new.id;
     end if;
     foreach commentaire in array new.commentaires
         loop
@@ -112,51 +94,57 @@ begin
 end;
 $$ language plpgsql security definer;
 
+-- Trigger sur insert de action_discussion_feed
 create trigger upsert
     instead of insert
     on action_discussion_feed
     for each row
 execute procedure ajouter_commentaire();
 
-
-drop trigger if exists upsert on action_discussion_feed;
-select test.identify_as('yolo@dodo.com');
-select auth.uid();
-insert into action_discussion_feed (collectivite_id, action_id, commentaires)
-values (1, 'eci_1.1', '{}');
-
-select *
-from action_discussion_feed adf;
-
-do
+-- Supprimer une discussion si son dernier commentaires a été supprimé
+create function supprimer_discussion() returns trigger as
 $$
-    declare
-        i            integer;
-        commentaires action_discussion_commentaire[];
-        commentaire  action_discussion_commentaire;
-    begin
-        --     for i in 1..5 loop
---     end loop;
-        select 0,
-               auth.uid(),
-               now(),
-               0,
-               'yo'
-        into commentaire;
+declare
+    exist_adc integer;
+begin
+    exist_adc = (select count(*)
+                 from action_discussion_commentaire adc
+                 where adc.discussion_id = old.discussion_id);
+    if exist_adc = 0 then
+        delete from action_discussion where id = old.discussion_id;
+    end if;
+    return old;
+end;
+$$ language plpgsql security definer;
 
-        commentaires = '{}'::action_discussion_commentaire[];
+-- Trigger sur suppression de action_discussion_commentaire
+create trigger supprimer_commentaire_via_table
+    after delete
+    on action_discussion_commentaire
+    for each row
+execute procedure supprimer_discussion();
 
-        commentaires := commentaires || commentaire;
+-- Supprimer une discussion si son dernier commentaires a été supprimé
+create function supprimer_commentaire() returns trigger as
+$$
+declare
+    commentaire action_discussion_commentaire;
+begin
+    foreach commentaire in array old.commentaires
+        loop
+            -- Dois appeler le trigger supprimer_commentaire_via_table
+            delete from action_discussion_commentaire
+            where id =commentaire.id;
+        end loop;
+    return new;
+end;
+$$ language plpgsql security definer;
 
-        raise notice 'commentaire %, commentaires: %', commentaire, commentaires;
-
-
-        insert into action_discussion_feed (collectivite_id, action_id, commentaires, created_by)
-        values (1, 'eci_1.1', commentaires, auth.uid());
-    end
-$$;
-
-select * from action_discussion_feed;
-select * from action_discussion_commentaire adc;
+-- Trigger sur suppression de action_discussion_feed
+create trigger supprimer_commentaire_via_feed
+    instead of delete
+    on action_discussion_feed
+    for each row
+execute procedure supprimer_commentaire();
 
 COMMIT;
