@@ -230,3 +230,96 @@ export const MultiSelectDropdown = <T extends string>({
     </DropdownFloater>
   );
 };
+
+/** une variante qui affiche les items avec un renderer externe, y compris la
+ * valeur courante (quand la liste déroulante est fermée) */
+export const SelectDropdownCustom = <T extends string>({
+  placement,
+  value,
+  onSelect,
+  displayOption,
+  options,
+  placeholderText,
+  'data-test': dataTest,
+}: {
+  placement?: Placement;
+  value?: T;
+  displayOption: (option: T) => ReactElement;
+  onSelect: (value: T) => void;
+  options: T[];
+  placeholderText?: string;
+  'data-test'?: string;
+}) => {
+  const selectableOptions: T[] = options;
+  return (
+    <DropdownFloater
+      placement={placement}
+      render={({close}) => (
+        <div data-test={`${dataTest}-options`}>
+          {selectableOptions.map(v => {
+            return (
+              <button
+                key={v}
+                data-test={v}
+                className="flex items-center w-full p-2 text-left text-sm"
+                onClick={e => {
+                  e.preventDefault();
+                  onSelect(v as T);
+                  close();
+                }}
+              >
+                <span>{displayOption(v as T)}</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+    >
+      <SelectDropdownCustomOpenButton
+        data-test={dataTest}
+        placeholderText={placeholderText}
+        displayOption={v => displayOption(v as T)}
+        value={value}
+      />
+    </DropdownFloater>
+  );
+};
+
+/** le bouton d'ouverture pour la variante "custom" */
+const SelectDropdownCustomOpenButton = forwardRef(
+  <T extends string>(
+    {
+      value,
+      isOpen,
+      placeholderText,
+      displayOption,
+      ...props
+    }: {
+      value?: T;
+      isOpen?: boolean;
+      placeholderText?: string;
+      displayOption: (option: T) => ReactElement;
+    },
+    ref?: Ref<HTMLButtonElement>
+  ) => (
+    <button
+      ref={ref}
+      aria-label="ouvrir le menu"
+      className={buttonDisplayedClassname}
+      {...props}
+    >
+      {value ? (
+        <span className="mr-auto">{displayOption(value as T)}</span>
+      ) : (
+        <span className={buttonDisplayedPlaceholderClassname}>
+          {placeholderText ?? ''}
+        </span>
+      )}
+      <span
+        className={`${buttonDisplayedIconClassname} ${
+          isOpen ? 'rotate-180' : ''
+        }`}
+      />
+    </button>
+  )
+);

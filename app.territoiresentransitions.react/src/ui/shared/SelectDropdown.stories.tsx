@@ -1,6 +1,11 @@
 import React from 'react';
 import {useState} from 'react';
-import {SelectDropdown, MultiSelectDropdown} from './SelectDropdown';
+import {action} from '@storybook/addon-actions';
+import {
+  SelectDropdown,
+  MultiSelectDropdown,
+  SelectDropdownCustom,
+} from './SelectDropdown';
 
 export default {
   component: SelectDropdown,
@@ -76,6 +81,17 @@ export const MultiSelectUneOptionSelectionee = () => {
       labels={fakeLabels}
       values={values}
       onSelect={v => setValues(v)}
+    />
+  );
+};
+
+export const RenduPersonnalise = () => {
+  return (
+    <SelectDropdownCustom
+      value="option 1"
+      options={['option 1', 'option2']}
+      displayOption={v => <div>rendu personnalisé de {v}</div>}
+      onSelect={action('onChange')}
     />
   );
 };
