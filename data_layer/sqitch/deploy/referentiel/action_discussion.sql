@@ -47,7 +47,8 @@ select ad.id,
        (select array_agg(adc) from action_discussion_commentaire adc where adc.discussion_id = ad.id) as commentaires
 from action_discussion ad;
 
-
+alter table action_discussion enable row level security;
+alter table action_discussion_commentaire enable row level security;
 
 -- Les autres commentaires sont visibles par tous les membres de la collectivité.
 create policy allow_read
