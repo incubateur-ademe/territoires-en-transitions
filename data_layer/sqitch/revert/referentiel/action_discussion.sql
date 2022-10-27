@@ -3,7 +3,6 @@
 BEGIN;
 
 drop view action_discussion_feed;
-drop function ajouter_commentaire();
 drop table action_discussion_commentaire;
 drop function supprimer_discussion();
 drop table action_discussion;

@@ -36,6 +36,9 @@ create table action_discussion_commentaire
 -- Vue action_discussion_feed
 create view action_discussion_feed
 as
+with
+    nom_commentaire as (select *, utilisateur.modified_by_nom(adc.created_by) as created_by_nom
+                        from action_discussion_commentaire adc)
 select ad.id,
        ad.collectivite_id,
        ad.action_id,
@@ -43,12 +46,41 @@ select ad.id,
        ad.created_at,
        ad.modified_at,
        ad.status,
-       utilisateur.modified_by_nom(ad.created_by)                                                     as created_by_nom,
-       (select array_agg(adc) from action_discussion_commentaire adc where adc.discussion_id = ad.id) as commentaires
-from action_discussion ad;
+       c.commentaires
+from action_discussion ad
+         left join lateral (
+    select array_agg(to_jsonb(nc)) as commentaires
+    from nom_commentaire nc
+    where nc.discussion_id = ad.id
+    ) as c on true
+;
 
 alter table action_discussion enable row level security;
 alter table action_discussion_commentaire enable row level security;
+
+-- Les discussions sont visibles par tous les membres de la collectivité.
+create policy allow_read
+    on action_discussion
+    for select
+    using (have_lecture_acces(collectivite_id));
+
+-- La discussion peut être crée par tous les membres de la collectivité
+create policy allow_insert
+    on action_discussion
+    for insert
+    with check (have_lecture_acces(collectivite_id));
+
+-- Le discussion peut être modifié par tous les membres de la collectivité
+create policy allow_update
+    on action_discussion
+    for update
+    using (have_lecture_acces(collectivite_id));
+
+-- La discussion peut être supprimé par tous les membres de la collectivité
+create policy allow_delete
+    on action_discussion
+    for update
+    using (have_lecture_acces(collectivite_id));
 
 -- Les autres commentaires sont visibles par tous les membres de la collectivité.
 create policy allow_read
@@ -58,49 +90,26 @@ create policy allow_read
                                from action_discussion ad
                                where ad.id = discussion_id)));
 
+-- Le commentaire peut être crée par tous les membres de la collectivité
+create policy allow_insert
+    on action_discussion_commentaire
+    for insert
+    with check (have_lecture_acces((select collectivite_id
+                               from action_discussion ad
+                               where ad.id = discussion_id)));
+
 -- Le commentaire peut être modifié par son créateur.
 create policy allow_update
     on action_discussion_commentaire
     for update
-    using (created_by = auth.uid());
+    using (auth.uid() = created_by);
 
 -- Le commentaire peut être supprimé par son créateur ou l’un des membres participant au commentaire.
 create policy allow_delete
     on action_discussion_commentaire
     for update
-    using (created_by = auth.uid());
+    using (auth.uid() = created_by);
 
--- Ajouter un commentaire via la vue action_discussion_feed
--- Créer une discussion si c'est un premier commentaire
-create or replace function ajouter_commentaire() returns trigger as
-$$
-declare
-    commentaire action_discussion_commentaire;
-begin
-    if new.id is null then
-        insert into action_discussion(collectivite_id, action_id, status)
-        values (new.collectivite_id, new.action_id, 'ouvert');
-        new.id = currval('action_discussion_id_seq');
-    else
-        update action_discussion
-        set status = new.status
-        where id = new.id;
-    end if;
-    foreach commentaire in array new.commentaires
-        loop
-            insert into action_discussion_commentaire (discussion_id, message)
-            values (new.id, commentaire.message);
-        end loop;
-    return new;
-end;
-$$ language plpgsql security definer;
-
--- Trigger sur insert de action_discussion_feed
-create trigger upsert
-    instead of insert
-    on action_discussion_feed
-    for each row
-execute procedure ajouter_commentaire();
 
 -- Supprimer une discussion si son dernier commentaires a été supprimé
 create function supprimer_discussion() returns trigger as
@@ -116,7 +125,7 @@ begin
     end if;
     return old;
 end;
-$$ language plpgsql security definer;
+$$ language plpgsql;
 
 -- Trigger sur suppression de action_discussion_commentaire
 create trigger supprimer_commentaire_via_table
