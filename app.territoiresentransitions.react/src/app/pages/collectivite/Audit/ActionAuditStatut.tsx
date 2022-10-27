@@ -36,7 +36,7 @@ export const ActionAuditStatutBase = (props: TActionAuditStatutBaseProps) => {
   return (
     <div className="px-2 w-full bg-[#e8edff]">
       {readonly ? (
-        <div className="py-2">
+        <div className="py-2" data-test="action-audit-statut-ro">
           <BadgeStatut statut={statut} />
         </div>
       ) : (
