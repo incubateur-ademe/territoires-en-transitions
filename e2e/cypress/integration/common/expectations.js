@@ -10,6 +10,8 @@ export const Expectations = {
   désactivé: 'be.disabled',
   désactivée: 'be.disabled',
   vide: 'be.empty',
-  aucun: { cond: 'have.length', value: 0 },
-  plusieurs: { cond: 'have.length.greaterThan', value: 0 },
+  aucun: {cond: 'have.length', value: 0},
+  plusieurs: {cond: 'have.length.greaterThan', value: 0},
+  coché: 'be.checked',
+  décoché: 'not.be.checked',
 };
