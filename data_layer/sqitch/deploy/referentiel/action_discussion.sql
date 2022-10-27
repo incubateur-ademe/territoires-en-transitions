@@ -125,27 +125,4 @@ create trigger supprimer_commentaire_via_table
     for each row
 execute procedure supprimer_discussion();
 
--- Supprimer une discussion si son dernier commentaires a été supprimé
-create function supprimer_commentaire() returns trigger as
-$$
-declare
-    commentaire action_discussion_commentaire;
-begin
-    foreach commentaire in array old.commentaires
-        loop
-            -- Dois appeler le trigger supprimer_commentaire_via_table
-            delete from action_discussion_commentaire
-            where id =commentaire.id;
-        end loop;
-    return new;
-end;
-$$ language plpgsql security definer;
-
--- Trigger sur suppression de action_discussion_feed
-create trigger supprimer_commentaire_via_feed
-    instead of delete
-    on action_discussion_feed
-    for each row
-execute procedure supprimer_commentaire();
-
 COMMIT;
