@@ -112,12 +112,13 @@ export const ActionStatusDropdown = ({actionId}: {actionId: string}) => {
   const {saveActionStatut} = useSaveActionStatut(args);
 
   // donnée liée à l'audit en cours (si il y en a un)
-  const audit = useAudit();
+  const {data: audit} = useAudit();
   const isAuditeur = useIsAuditeur();
 
   // détermine si l'édition du statut est désactivée
-  const disabled =
-    collectivite?.readonly || score?.desactive || (audit && !isAuditeur);
+  const disabled = Boolean(
+    collectivite?.readonly || score?.desactive || (audit && !isAuditeur)
+  );
 
   const handleChange: SelectInputProps['onChange'] = event => {
     const {avancement, concerne, avancement_detaille} = statutByValue(
