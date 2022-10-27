@@ -161,6 +161,13 @@ Given(/^je clique sur le bouton "([^"]*)"$/, function (btnName) {
   cy.get(resolveSelector(this, btnName).selector).click();
 });
 
+Given(/^je clique sur la case "([^"]*)"$/, function (checkbox) {
+  cy.get(resolveSelector(this, checkbox).selector)
+    .parent()
+    .should('have.class', 'fr-checkbox-group')
+    .click();
+});
+
 function fillFormWithValues(elem, dataTable) {
   const parent = resolveSelector(this, elem);
   cy.get(parent.selector).within(() => {
@@ -177,6 +184,22 @@ Given(/l'appel à "([^"]*)" va répondre "([^"]*)"/, function (name, reply) {
   assert(r, 'mock non trouvé');
   cy.intercept(...r).as(name);
 });
+
+Given(
+  "je sélectionne l'option {string} dans la liste déroulante {string}",
+  selectDropdownValue
+);
+function selectDropdownValue(value, dropdown) {
+  // ouvre le sélecteur
+  cy.get(resolveSelector(this, dropdown).selector).click();
+  // et sélectionne la valeur voulue
+  cy.get(`#floating-ui-root [data-test="${value}"]`).click();
+}
+
+Given('je saisi la valeur {string} dans le champ {string}', fillInput);
+function fillInput(value, input) {
+  cy.get(resolveSelector(this, input).selector).clear().type(value);
+}
 
 Given('je clique en dehors de la boîte de dialogue', () =>
   cy.get('body').click(10, 10)
