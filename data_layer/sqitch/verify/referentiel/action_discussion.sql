@@ -11,6 +11,5 @@ from action_discussion_commentaire
 where false;
 
 select has_function_privilege('supprimer_discussion()', 'execute');
-select has_function_privilege('ajouter_commentaire()', 'execute');
 
 ROLLBACK;

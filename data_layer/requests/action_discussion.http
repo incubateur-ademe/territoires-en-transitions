@@ -18,14 +18,14 @@ Content-Type: application/json
 %}
 
 ### Get le feed de discussions d'une action
-GET {{api}}/rest/v1/action_discussion_feed?action_id=eq.eci_1.1
+GET {{api}}/rest/v1/action_discussion_feed
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 
-### Upsert une discussion - Premier commentaire
-POST {{api}}/rest/v1/action_discussion_feed
+### Créer une discussion
+POST {{api}}/rest/v1/action_discussion
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 prefer: return=representation
@@ -33,41 +33,23 @@ Content-Type: application/json
 
 {
   "collectivite_id": 1,
-  "action_id": "eci_1.1",
-  "status": "ouvert",
-  "commentaires": [
-    {
-      "message": "yolo"
-    }
-  ]
+  "action_id": "eci_1.1"
 }
 
-### Upsert une discussion - Réponse
-POST {{api}}/rest/v1/action_discussion_feed
+### Ajouter un commentaire dans une discussion
+POST {{api}}/rest/v1/action_discussion_commentaire
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
 prefer: return=representation
 Content-Type: application/json
 
 {
-  "id": {{discussion_id}},
-  "status": "ouvert",
-  "commentaires": [
-    {
-      "message": "yolo"
-    }
-  ]
+  "discussion_id": 3,
+  "message": "yolo"
 }
 
-### Upsert une discussion - Fermeture de la discussion
-POST {{api}}/rest/v1/action_discussion_feed
+### Delete
+DELETE {{api}}/rest/v1/action_discussion_commentaire?id=eq.5
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
-prefer: return=representation
 Content-Type: application/json
-
-{
-  "id": {{discussion_id}},
-  "status": "ferme",
-  "commentaires": []
-}
