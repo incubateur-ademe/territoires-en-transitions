@@ -15,16 +15,15 @@ export const fetch = async (
     .from<TAudit>('audit')
     .select()
     .match({collectivite_id, referentiel})
-    .limit(1)
-    .single();
+    .limit(1);
 
   const {data, error} = await query;
 
-  if (error || !data) {
+  if (error || !data?.length) {
     return null;
   }
 
-  return data as TAudit;
+  return data[0] as TAudit;
 };
 
 /**
