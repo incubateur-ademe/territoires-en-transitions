@@ -79,7 +79,7 @@ create policy allow_update
 -- La discussion peut être supprimé par tous les membres de la collectivité
 create policy allow_delete
     on action_discussion
-    for update
+    for delete
     using (have_lecture_acces(collectivite_id));
 
 -- Les autres commentaires sont visibles par tous les membres de la collectivité.
@@ -107,7 +107,7 @@ create policy allow_update
 -- Le commentaire peut être supprimé par son créateur ou l’un des membres participant au commentaire.
 create policy allow_delete
     on action_discussion_commentaire
-    for update
+    for delete
     using (auth.uid() = created_by);
 
 
