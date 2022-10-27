@@ -1,4 +1,17 @@
 /// <reference types="Cypress" />
+import {LocalSelectors} from './selectors';
+
+// enregistre les définitions locales
+beforeEach(() => {
+  cy.wrap(LocalSelectors).as('LocalSelectors');
+
+  // reset les données d'audit des actions en attendant que le DL fournisse une
+  // fonction générique
+  cy.task('pg_query', {
+    query:
+      "DELETE FROM labellisation.action_audit_state WHERE collectivite_id = 1 AND action_id LIKE 'eci_1.%'",
+  });
+});
 
 When(
   /l'état d'avancement de l'action "([^"]+)" pour la collectivité "(\d+)" est réinitialisé/,
@@ -43,6 +56,22 @@ When(
     ).click();
   }
 );
+
+When("l'état d'avancement des tâches n'est pas éditable", () => {
+  // tous les Select sont désactivés
+  cy.get(`[data-test^="task-"] .MuiInput-root`).should(
+    'have.class',
+    'Mui-disabled'
+  );
+});
+
+When("l'état d'avancement des tâches est éditable", () => {
+  // tous les Select sont activés
+  cy.get(`[data-test^="task-"] .MuiInput-root`).should(
+    'not.have.class',
+    'Mui-disabled'
+  );
+});
 
 const avancementToValue = {
   'Non renseigné': -1,
