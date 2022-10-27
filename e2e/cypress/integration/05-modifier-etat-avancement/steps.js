@@ -39,7 +39,7 @@ When('tous les scores sont à 0', () => {
 });
 */
 
-When('les scores sont affichés avec les valeurs suivantes :', (dataTable) => {
+When('les scores sont affichés avec les valeurs suivantes :', dataTable => {
   cy.wrap(dataTable.rows()).each(([action, score]) => {
     cy.get(`[data-test="score-${action}"]`).should('have.text', score);
   });
@@ -92,7 +92,7 @@ When(
   }
 );
 
-When(/je clique sur l'onglet "([^"]+)"/, (tabName) => {
+When(/je clique sur l'onglet "([^"]+)"/, tabName => {
   cy.get('.fr-tabs__tab').contains(tabName).click();
 });
 
@@ -101,7 +101,7 @@ When("aucun historique n'est affiché", () => {
   cy.get('[data-test=empty_history]').should('be.visible');
 });
 
-When(/l'historique contient (\d+) entrées?/, (count) => {
+When(/l'historique contient (\d+) entrées?/, count => {
   cy.get('[data-test=empty_history]').should('not.exist');
   cy.get('[data-test=Historique] [data-test=item]').should(
     'have.length',
@@ -116,14 +116,14 @@ When(
       .should('exist')
       .within(() => {
         const lines = dataTable.raw();
-        cy.wrap(lines).each((line) =>
+        cy.wrap(lines).each(line =>
           cy.get('[data-test=desc]').should('contain.text', line[0])
         );
       });
   }
 );
 
-When(/le détail de l'entrée (\d+) de l'historique n'est pas affiché/, (num) => {
+When(/le détail de l'entrée (\d+) de l'historique n'est pas affiché/, num => {
   cy.get(
     `[data-test=Historique] [data-test=item]:nth(${
       num - 1
@@ -152,18 +152,15 @@ When(
   }
 );
 
-When(
-  /je clique sur le bouton "Afficher le détail" de l'entrée (\d+)/,
-  (num) => {
-    cy.get(
-      `[data-test=Historique] [data-test=item]:nth(${
-        num - 1
-      }) [data-test=detail-off] button`
-    ).click();
-  }
-);
+When(/je clique sur le bouton "Afficher le détail" de l'entrée (\d+)/, num => {
+  cy.get(
+    `[data-test=Historique] [data-test=item]:nth(${
+      num - 1
+    }) [data-test=detail-off] button`
+  ).click();
+});
 
-When(/je clique sur le bouton "Masquer le détail" de l'entrée (\d+)/, (num) => {
+When(/je clique sur le bouton "Masquer le détail" de l'entrée (\d+)/, num => {
   cy.get(
     `[data-test=Historique] [data-test=item]:nth(${
       num - 1
@@ -175,5 +172,5 @@ When(/l'historique est réinitialisé/, () => {
   cy.task('pg_query', {
     query: 'TRUNCATE action_commentaire',
   });
-  cy.task('supabase_rpc', { name: 'test_clear_history' });
+  cy.task('supabase_rpc', {name: 'test_clear_history'});
 });
