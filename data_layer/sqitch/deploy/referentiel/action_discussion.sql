@@ -55,9 +55,46 @@ from action_discussion ad
     ) as c on true
 ;
 
-alter table action_discussion enable row level security;
-alter table action_discussion_commentaire enable row level security;
 
+
+create function
+    have_discussion_lecture_acces(id integer)
+    returns bool
+as
+$$
+declare
+    found_id integer;
+begin
+    select collectivite_id
+    from action_discussion ad
+    where have_discussion_lecture_acces.id = ad.id
+    into found_id;
+    return have_lecture_acces(found_id);
+end
+$$ language plpgsql;
+comment on function have_discussion_lecture_acces is
+    'Vrai si l''utilisateur peut consulter une discussion.';
+
+create function
+    have_discussion_edition_acces(id integer)
+    returns bool
+as
+$$
+declare
+    found_id integer;
+begin
+    select collectivite_id
+    from action_discussion ad
+    where have_discussion_edition_acces.id = ad.id
+    into found_id;
+    return have_edition_acces(found_id);
+end
+$$ language plpgsql;
+comment on function have_discussion_edition_acces is
+    'Vrai si l''utilisateur peut éditer une discussion.';
+
+-----
+alter table action_discussion enable row level security;
 -- Les discussions sont visibles par tous les membres de la collectivité.
 create policy allow_read
     on action_discussion
@@ -74,41 +111,39 @@ create policy allow_insert
 create policy allow_update
     on action_discussion
     for update
-    using (have_lecture_acces(collectivite_id));
+    using (have_discussion_edition_acces(collectivite_id));
 
 -- La discussion peut être supprimé par tous les membres de la collectivité
 create policy allow_delete
     on action_discussion
     for delete
-    using (have_lecture_acces(collectivite_id));
+    using (have_discussion_edition_acces(id));
 
--- Les autres commentaires sont visibles par tous les membres de la collectivité.
+
+alter table action_discussion_commentaire enable row level security;
+-- Les discussions sont visibles par tous les membres de la collectivité.
 create policy allow_read
     on action_discussion_commentaire
     for select
-    using (have_lecture_acces((select collectivite_id
-                               from action_discussion ad
-                               where ad.id = discussion_id)));
+    using (have_discussion_lecture_acces(discussion_id));
 
--- Le commentaire peut être crée par tous les membres de la collectivité
+-- La discussion peut être crée par tous les membres de la collectivité
 create policy allow_insert
     on action_discussion_commentaire
     for insert
-    with check (have_lecture_acces((select collectivite_id
-                               from action_discussion ad
-                               where ad.id = discussion_id)));
+    with check (have_discussion_edition_acces(discussion_id));
 
--- Le commentaire peut être modifié par son créateur.
+-- Le discussion peut être modifié par tous les membres de la collectivité
 create policy allow_update
     on action_discussion_commentaire
     for update
-    using (auth.uid() = created_by);
+    using (have_discussion_edition_acces(discussion_id));
 
--- Le commentaire peut être supprimé par son créateur ou l’un des membres participant au commentaire.
+-- La discussion peut être supprimé par tous les membres de la collectivité
 create policy allow_delete
     on action_discussion_commentaire
     for delete
-    using (auth.uid() = created_by);
+    using (have_discussion_edition_acces(discussion_id));
 
 
 -- Supprimer une discussion si son dernier commentaires a été supprimé

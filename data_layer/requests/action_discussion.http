@@ -36,6 +36,26 @@ Content-Type: application/json
   "action_id": "eci_1.1"
 }
 
+### Have lecture access
+POST {{api}}/rest/v1/rpc/have_discussion_lecture_acces
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "id": 1
+}
+
+### Have edition access
+POST {{api}}/rest/v1/rpc/have_discussion_edition_acces
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "id": 1
+}
+
 ### Ajouter un commentaire dans une discussion
 POST {{api}}/rest/v1/action_discussion_commentaire
 apikey: {{anon}}
@@ -44,7 +64,7 @@ prefer: return=representation
 Content-Type: application/json
 
 {
-  "discussion_id": 3,
+  "discussion_id": 1,
   "message": "yolo"
 }
 
