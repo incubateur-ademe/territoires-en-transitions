@@ -6,18 +6,18 @@ truncate action_discussion cascade;
 select test.identify_as('yolo@dodo.com');
 
 -- Ajout de deux discussions pour les collectivites 23 et 24
-insert into action_discussion(id, collectivite_id, action_id)
+insert into action_discussion(collectivite_id, action_id)
 values
-    (1, 23, 'eci_2'),
-    (2, 24, 'eci_2')
+    (23, 'eci_2'),
+    (24, 'eci_2')
 ;
 
 -- Ajout de deux commentaires à la discussion de la collectivite 23
-insert into action_discussion_commentaire (id, discussion_id, message)
+insert into action_discussion_commentaire (discussion_id, message)
 values
-    (1, 1, 'test message c23'),
-    (2, 1, 'test message2 c23'),
-    (3, 2, 'test message c24');
+    ((select id from action_discussion where collectivite_id=23 limit 1), '1'),
+    ((select id from action_discussion where collectivite_id=23 limit 1), '2'),
+    ((select id from action_discussion where collectivite_id=24 limit 1), '3');
 
 -- Verification du nombre de discussions total
 select ok(
@@ -81,22 +81,22 @@ select ok(
         'Il devrait y avoir un status ferme dans la discussion de la collectivite 25.');
 
 -- Verification trigger suppression discussion si dernier commentaire
-delete from action_discussion_commentaire where id = 3;
+delete from action_discussion_commentaire where message ='3';
 select is_empty(
-    'select * from action_discussion where id= 2',
-    'La discussion 2 devrait ne plus exister');
+    'select * from action_discussion where collectivite_id = 24',
+    'La discussion de la collectivite 24 devrait ne plus exister');
 -- Verification trigger suppression discussion si reste commentaires
-delete from action_discussion_commentaire where id = 2;
+delete from action_discussion_commentaire where message = '2';
 select isnt_empty(
-               'select * from action_discussion where id= 1',
-               'La discussion 1 devrait toujours exister');
+               'select * from action_discussion where collectivite_id = 23',
+               'La discussion de la collectivite 23 devrait toujours exister');
 
 -- Verification trigger suppression discussion via une suppression par la vue
 delete from action_discussion_feed
 where commentaires = (select array_agg(adc)
                       from action_discussion_commentaire adc
-                      where adc.id = 1);
+                      where adc.message = '1');
 select is_empty(
-               'select * from action_discussion where id= 1',
-               'La discussion 1 devrait ne plus exister');
+               'select * from action_discussion where collectivite_id= 23',
+               'La discussion de la collectivite 23 devrait ne plus exister');
 rollback;
