@@ -1,5 +1,5 @@
 begin;
-select plan(12);
+select plan(5);
 
 truncate action_discussion cascade;
 
@@ -31,56 +31,6 @@ select ok(
 select ok(
     (select cardinality(commentaires) = 1 from action_discussion_feed where collectivite_id = 24),
     'Il devrait y avoir un commentaires dans la discussion de la collectivite 24.');
-
--- Verification de la fonction modified_by_nom
-select ok(
-    (select created_by_nom = 'Yolo Dodo' from action_discussion_feed limit 1),
-    'La discussion devrait être créé par Yolo Dodo');
-
--- Verification upsert dans la vue avec création discussion
-insert into action_discussion_feed(collectivite_id, action_id, commentaires)
--- ! Valeur de commentaires fausses à mettre que pour faire passer les tests sql
-values (25, 'eci_2', '{"(0,17440546-f389-4d4f-bfdb-b0c94a1bd0f9,2022-10-26 12:15:11.271759 +00:00,0,ajoutparvue)"}');
-select ok(
-        (select count(*) = 3 from action_discussion_feed),
-        'Il devrait y avoir trois discussions.');
-select ok(
-        (
-            select message = 'ajoutparvue'
-            from action_discussion_commentaire adc
-            join action_discussion ad on ad.id = adc.discussion_id
-            where ad.collectivite_id = 25
-            limit 1
-        ),
-        'Il devrait y avoir le message ajoutparvue dans la discussion de la collectivite 25.');
-
--- Verification upsert dans la vue avec discussion déjà existante
-insert into action_discussion_feed(id, commentaires, status)
-values (
-        (select id from action_discussion where collectivite_id = 25),
-           -- ! Valeur de commentaires fausses à mettre que pour faire passer les tests sql
-        '{"(0,17440546-f389-4d4f-bfdb-b0c94a1bd0f9,2022-10-26 12:15:11.271759 +00:00,0,reponseparvue)"}',
-        'ouvert'
-);
-select ok(
-        (select count(*) = 3 from action_discussion_feed),
-        'Il devrait y toujours y avoir trois discussions.');
-select ok(
-         (select cardinality(commentaires) = 2 from action_discussion_feed where collectivite_id = 25),
-        'Il devrait y avoir deux commentaires dans la discussion de la collectivite 25.');
--- Verification upsert dans la vue avec discussion déjà existante sans ajout de commentaire
-insert into action_discussion_feed(id, commentaires, status)
-values (
-           (select id from action_discussion where collectivite_id = 25),
-           '{}',
-           'ferme'
-       );
-select ok(
-               (select cardinality(commentaires) = 2 from action_discussion_feed where collectivite_id = 25),
-               'Il devrait toujours y avoir deux commentaires dans la discussion de la collectivite 25.');
-select ok(
-        (select status = 'ferme' from action_discussion_feed where collectivite_id = 25),
-        'Il devrait y avoir un status ferme dans la discussion de la collectivite 25.');
 
 -- Verification trigger suppression discussion si dernier commentaire
 delete from action_discussion_commentaire where message ='3';
