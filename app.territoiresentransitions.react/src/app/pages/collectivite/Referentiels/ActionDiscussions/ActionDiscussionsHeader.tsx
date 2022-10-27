@@ -1,19 +1,20 @@
-import {TVue} from './ActionDiscussions';
 import ChangeVueDropdown from './ChangeVueDropdown';
+import {TActionDiscussionStatut} from './data/types';
 
 type Props = {
   closeActionDiscussions: () => void;
-  vue: TVue;
-  changeVue: (vue: TVue) => void;
+  vue: TActionDiscussionStatut;
+  changeVue: (vue: TActionDiscussionStatut) => void;
 };
 
+/** Header du panneau de discussion d'une action */
 const ActionDiscussionsHeader = ({
   closeActionDiscussions,
   vue,
   changeVue,
 }: Props) => {
   return (
-    <div className="p-6 border-b border-gray-200">
+    <div className="p-6 pb-4 border-b border-gray-200">
       <button
         className="p-2 text-gray-400 fr-fi-arrow-right-s-line-double hover:bg-gray-50"
         onClick={closeActionDiscussions}
