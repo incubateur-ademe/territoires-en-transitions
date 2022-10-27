@@ -95,3 +95,41 @@ Fonctionnalité: Modifier l'état d'avancement et visualiser l'évolution des sc
     Alors le détail de l'entrée 2 est affiché avec les valeurs suivantes :
       | Valeur précédente | Non renseigné |
       | Valeur courante   | Fait          |
+
+  Scénario: Ne pas pouvoir modifier l'état d'avancement quand un audit est en cours
+    Etant donné que je suis connecté en tant que "yolo"
+
+    Quand je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "1"
+    Alors l'état d'avancement des tâches n'est pas éditable
+    Et la page vérifie les conditions suivantes :
+      | Elément                         | Condition | Valeur     |
+      | état audit action               | absent    |            |
+      | état audit action lecture seule | contient  | Non audité |
+      | avis audit                      | vide      |            |
+      | avis audit                      | désactivé |            |
+      | ajouter à l'ordre du jour       | décoché   |            |
+      | ajouter à l'ordre du jour       | désactivé |            |
+
+  Scénario: Modifier l'état d'avancement et le statut d'audit quand on est auditeur
+    Etant donné que je suis connecté en tant que "youlou"
+    Et que l'état d'avancement de l'action "eci_1.1%" pour la collectivité "1" est réinitialisé
+
+    Quand je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "1"
+    Alors l'état d'avancement des tâches est éditable
+    Et la page vérifie les conditions suivantes :
+      | Elément                         | Condition | Valeur     |
+      | état audit action               | contient  | Non audité |
+      | état audit action lecture seule | absent    |            |
+      | avis audit                      | vide      |            |
+      | avis audit                      | activé    |            |
+      | ajouter à l'ordre du jour       | décoché   |            |
+      | ajouter à l'ordre du jour       | activé    |            |
+
+    Quand je sélectionne l'option "en_cours" dans la liste déroulante "état audit action"
+    Et que je saisi la valeur "mon commentaire d'audit" dans le champ "avis audit"
+    Et que je clique sur la case "ajouter à l'ordre du jour"
+    Alors la page vérifie les conditions suivantes :
+      | Elément                   | Condition | Valeur                  |
+      | état audit action         | contient  | Audit en cours          |
+      | avis audit                | contient  | mon commentaire d'audit |
+      | ajouter à l'ordre du jour | coché     |                         |
