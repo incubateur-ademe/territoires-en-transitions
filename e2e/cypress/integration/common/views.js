@@ -34,4 +34,8 @@ export const CollectivitePages = {
     route: 'labellisation/cae',
     selector: '[data-test=labellisation-cae]',
   },
+  'Action ECI': {
+    route: 'action/eci/eci_3.1',
+    selector: '[data-test=Action]',
+  },
 };
