@@ -3,7 +3,7 @@ import {useParams} from 'react-router-dom';
 import {renderLoader} from 'utils/renderLoader';
 import {Referentiel} from 'types/litterals';
 import {useActionDownToTache} from 'core-logic/hooks/referentiel';
-import ActionDiscussions from './ActionDiscussions';
+import ActionDiscussionsPanel from './ActionDiscussions/ActionDiscussionsPanel';
 
 const ActionReferentielAvancement = lazy(
   () => import('app/pages/collectivite/Referentiels/Action')
@@ -23,9 +23,9 @@ export const ActionPage = () => {
   return (
     <Suspense fallback={renderLoader()}>
       {action && (
-        <div className="relative flex">
+        <div data-test="Action" className="relative flex">
           <ActionReferentielAvancement action={action} />
-          <ActionDiscussions />
+          <ActionDiscussionsPanel action_id={action.id} />
         </div>
       )}
     </Suspense>
