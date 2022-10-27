@@ -1,33 +1,26 @@
 import noCommentIllustration from 'app/static/img/no-comment-illustration.svg';
-import {TVue} from './ActionDiscussions';
-
-const fakeDiscussionOuvertes = [];
-const fakeDiscussionFermees = [];
+import ActionDiscussion from './ActionDiscussion';
+import {TActionDiscussion, TActionDiscussionStatut} from './data/types';
 
 type Props = {
-  vue: TVue;
+  vue: TActionDiscussionStatut;
+  discussions: TActionDiscussion[];
 };
 
-const ActionDiscussionsFeed = ({vue}: Props) => {
+/** Affiche les discussions celon leur statut dans une action */
+const ActionDiscussionsFeed = ({vue, discussions}: Props) => {
+  const messageFeedVide = `Aucun commentaire ${
+    (vue === 'ouvert' && 'ouvert') || (vue === 'ferme' && 'fermé')
+  } pour l’instant`;
+
   return (
-    <div>
-      {vue === 'ouverts' && (
-        <>
-          {fakeDiscussionOuvertes.length === 0 ? (
-            <ActionDiscussionsFeedVide message="Aucun commentaire ouvert pour l’instant" />
-          ) : (
-            <div>plein ouverts</div>
-          )}
-        </>
-      )}
-      {vue === 'fermer' && (
-        <>
-          {fakeDiscussionFermees.length === 0 ? (
-            <ActionDiscussionsFeedVide message="Aucun commentaire fermé pour l'instant" />
-          ) : (
-            <div>FERMER</div>
-          )}
-        </>
+    <div data-test="ActionDiscussionsFeed">
+      {discussions.length === 0 ? (
+        <ActionDiscussionsFeedVide message={messageFeedVide} />
+      ) : (
+        discussions.map(
+          d => d.commentaires && <ActionDiscussion key={d.id} discussion={d} />
+        )
       )}
     </div>
   );

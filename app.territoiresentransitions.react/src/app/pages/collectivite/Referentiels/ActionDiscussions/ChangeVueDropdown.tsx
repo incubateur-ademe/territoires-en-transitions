@@ -3,27 +3,28 @@ import classNames from 'classnames';
 
 import DropdownFloater from 'ui/shared/floating-ui/DropdownFloater';
 
-import {TVue} from './ActionDiscussions';
+import {TActionDiscussionStatut} from './data/types';
 
+/** Menu et options pour changer la vue du feed de discussion dans une action */
 const ChangeVueDropdown = ({
   vue,
   changeVue,
 }: {
-  vue: TVue;
-  changeVue: (vue: TVue) => void;
+  vue: TActionDiscussionStatut;
+  changeVue: (vue: TActionDiscussionStatut) => void;
 }) => {
   return (
     <>
       <DropdownFloater
         placement="bottom-start"
         render={({close}) => (
-          <nav>
+          <nav data-test="ActionDiscussionsChangeVueMenu">
             <ul className="m-0 p-0">
               <li className="fr-nav__item pb-0 border-b border-gray-200">
                 <button
                   className="fr-nav__link !py-2 before:!hidden !shadow-none"
                   onClick={() => {
-                    changeVue('ouverts');
+                    changeVue('ouvert');
                     close();
                   }}
                 >
@@ -34,11 +35,11 @@ const ChangeVueDropdown = ({
                 <button
                   className="fr-nav__link !py-2 before:!hidden !shadow-none"
                   onClick={() => {
-                    changeVue('fermer');
+                    changeVue('ferme');
                     close();
                   }}
                 >
-                  <span className="px-3">Fermer</span>
+                  <span className="px-3">Fermés</span>
                 </button>
               </li>
             </ul>
@@ -60,14 +61,18 @@ const ChangeVueDropdownButtonDisplayed = forwardRef(
       isOpen,
       ...props
     }: {
-      vue: TVue;
+      vue: TActionDiscussionStatut;
       isOpen?: boolean;
     },
     ref?: Ref<HTMLDivElement>
   ) => (
     <div ref={ref} className="ml-auto border border-gray-200" {...props}>
-      <button className="flex items-center py-0.5 pl-2 pr-1 text-sm capitalize hover:bg-gray-100">
-        {vue}{' '}
+      <button
+        data-test="ActionDiscussionsChangeVue"
+        className="flex items-center py-0.5 pl-2 pr-1 text-sm capitalize hover:bg-gray-100"
+      >
+        {vue === 'ouvert' && 'Ouverts'}
+        {vue === 'ferme' && 'Fermés'}{' '}
         <div
           className={classNames(
             'fr-fi-arrow-down-s-line mt-0.5 ml-1 scale-90',
