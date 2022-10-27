@@ -33,7 +33,7 @@ Given("j'ouvre le site", () => {
 });
 
 const genUser = userName => {
-  const letter = userName.slice(1, 2);
+  const letter = userName.slice(1, userName.indexOf('l'));
   const dd = `d${letter}d${letter}`;
   return {
     email: `${userName}@${dd}.com`,
