@@ -105,19 +105,19 @@ create policy allow_read
 create policy allow_insert
     on action_discussion
     for insert
-    with check (have_lecture_acces(collectivite_id));
+    with check (have_edition_acces(collectivite_id));
 
 -- Le discussion peut être modifié par tous les membres de la collectivité
 create policy allow_update
     on action_discussion
     for update
-    using (have_discussion_edition_acces(collectivite_id));
+    using (have_edition_acces(collectivite_id));
 
 -- La discussion peut être supprimé par tous les membres de la collectivité
 create policy allow_delete
     on action_discussion
     for delete
-    using (have_discussion_edition_acces(id));
+    using (have_edition_acces(collectivite_id));
 
 
 alter table action_discussion_commentaire enable row level security;
@@ -137,13 +137,13 @@ create policy allow_insert
 create policy allow_update
     on action_discussion_commentaire
     for update
-    using (have_discussion_edition_acces(discussion_id));
+    using (auth.uid() = created_by);
 
 -- La discussion peut être supprimé par tous les membres de la collectivité
 create policy allow_delete
     on action_discussion_commentaire
     for delete
-    using (have_discussion_edition_acces(discussion_id));
+    using (auth.uid() = created_by);
 
 
 -- Supprimer une discussion si son dernier commentaires a été supprimé
