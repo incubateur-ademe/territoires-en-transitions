@@ -263,8 +263,7 @@ services:
     command: >
       bash -c "uvicorn evaluation_api:app --host 0.0.0.0 --port 8888"
     environment:
-      SUPABASE_PERSONNALISATION_URL: http://kong:8000/rest/v1/personnalisation_consequence
-      SUPABASE_SCORE_URL: http://kong:8000/rest/v1/client_scores
+      SUPABASE_URL: http://kong:8000
       SUPABASE_KEY: ${SERVICE_ROLE_KEY}
 
   business-test:
