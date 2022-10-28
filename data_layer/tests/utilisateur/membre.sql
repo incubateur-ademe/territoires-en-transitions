@@ -4,8 +4,8 @@ select plan(23);
 select test.identify_as('yolo@dodo.com');
 
 -- vérifie que la fonction collectivite_membres renvoie autant de membres que d'utilisateurs d'une collectivité
-select ok((select count(*) = 3 from collectivite_membres(1) where user_id is not null),
-               'La collectivité #1 devrait avoir 3 membres');
+select ok((select count(*) = 4 from collectivite_membres(1) where user_id is not null),
+               'La collectivité #1 devrait avoir 4 membres');
 
 
 -- Test de la fonction update_collectivite_membre_details_fonction
