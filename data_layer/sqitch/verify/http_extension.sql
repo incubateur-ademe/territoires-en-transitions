@@ -2,6 +2,6 @@
 
 BEGIN;
 
--- XXX Add verifications here.
+select has_function_privilege('http_post(varchar, varchar, varchar)', 'execute');
 
 ROLLBACK;
