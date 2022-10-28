@@ -17,10 +17,34 @@ Content-Type: application/json
     client.global.set("auth_token", response.body['access_token']);
 %}
 
+### List audit display
+GET {{api}}/rest/v1/audit
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+
 ### List action_audit_state display
 GET {{api}}/rest/v1/action_audit_state?collectivite_id=eq.1&referentiel=eq.eci
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
+
+### Upsert un audit
+POST {{api}}/rest/v1/audit
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+prefer: return=representation
+Content-Type: application/json
+
+{
+  "collectivite_id": 2,
+  "referentiel": "eci"
+}
+
+> {%
+    client.test("Create executed successfully", function() {
+        client.assert(response.status === 201, "Response status is not 201");
+    });
+%}
+
 
 ### Upsert un action_audit_state dans la vue.
 POST {{api}}/rest/v1/action_audit_state

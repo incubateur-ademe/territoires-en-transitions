@@ -90,5 +90,5 @@ on conflict (id) do update
         reauthentication_sent_at    = excluded.reauthentication_sent_at
 ;
 $$ language sql security definer;
-comment on function test_reset_membres is
+comment on function test_reset_users is
     'Reinitialise les utilisateurs (auth.users) et supprime les données DCP et membres.';
