@@ -65,5 +65,3 @@ end
 $$ language plpgsql security definer;
 comment on function test_reset_preuves is
     'Reinitialise les preuves de toutes les collectivités.';
-
-select test_reset_preuves();
