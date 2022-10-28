@@ -1,9 +1,9 @@
-from dataclasses import asdict, dataclass
-import json
 import os
-from fastapi import APIRouter
+import json
+from dataclasses import asdict, dataclass
+from urllib.parse import urljoin
+from fastapi import BackgroundTasks, APIRouter
 import requests
-import asyncio
 
 from business.evaluation.evaluation.compute_scores import (
     ActionPointTree,
@@ -40,21 +40,21 @@ class EvaluationReferentiel:
 class EvaluatePayload:
     statuts: list[ActionStatut]
     consequences: dict[ActionId, ActionPersonnalisationConsequence]
-    evaluation_referentiel: EvaluationReferentiel
+    referentiel: EvaluationReferentiel
 
 
 @router.post("/evaluation/")
 async def evaluate(payload: EvaluatePayload) -> list[ActionScore]:
     # TODO : cache this tree ?
     point_tree_referentiel = ActionPointTree(
-        payload.evaluation_referentiel.computed_points,
-        payload.evaluation_referentiel.children,
+        payload.referentiel.computed_points,
+        payload.referentiel.children,
     )
     scores = compute_scores(
         point_tree_referentiel,
         payload.statuts,
         payload.consequences,
-        payload.evaluation_referentiel.action_level,
+        payload.referentiel.action_level,
     )
     return list(scores.values())
 
@@ -89,8 +89,8 @@ async def personnalize(
 # Endpoints called by the datalayer: return immediately and then post the responses to the right tables
 # ---------------------------------
 supabase_key = os.environ.get("SUPABASE_KEY")
-supabase_perso_url = os.environ.get("SUPABASE_PERSONNALISATION_URL")
-supabase_score_url = os.environ.get("SUPABASE_SCORE_URL")
+supabase_url = os.environ.get("SUPABASE_URL")
+supabase_rest_url = urljoin(supabase_url, 'rest/v1')
 
 
 def supabase_headers() -> dict:
@@ -101,63 +101,70 @@ def supabase_headers() -> dict:
 
 
 @dataclass
-class DatalayerPersonnalisationPayload:
-    collectivite_id: int
-    payload: PersonnalizePayload
-
-
-@dataclass
 class DatalayerEvaluationPayload:
     collectivite_id: int
+    scores_table: str
     referentiel: ActionReferentiel
     payload: EvaluatePayload
 
 
+@dataclass
+class DatalayerPersonnalisationPayload:
+    collectivite_id: int
+    consequences_table: str
+    payload: PersonnalizePayload
+    evaluation_payloads: list[DatalayerEvaluationPayload]
+
+
 @router.post("/dl_personnalisation/")
-def datalayer_personnalisation(payload: DatalayerPersonnalisationPayload):
-    asyncio.run(personnalize_then_post_consequences(payload))
+async def datalayer_personnalisation(payload: DatalayerPersonnalisationPayload, background_tasks: BackgroundTasks):
+    background_tasks.add_task(personnalize_then_post_consequences, payload)
     return
 
 
 @router.post("/dl_evaluation/")
-def datalayer_evaluation(payload: DatalayerEvaluationPayload):
-    asyncio.run(evaluate_then_post_scores(payload))
+async def datalayer_evaluation(payload: DatalayerEvaluationPayload, background_tasks: BackgroundTasks):
+    background_tasks.add_task(evaluate_then_post_scores, payload)
     return
 
 
 async def personnalize_then_post_consequences(
-        payload_with_collectivite_id: DatalayerPersonnalisationPayload,
+        payload: DatalayerPersonnalisationPayload,
 ):
-    consequences = await personnalize(payload_with_collectivite_id.payload)
+    consequences = await personnalize(payload.payload)
     response = requests.post(
-        f'{supabase_perso_url}?on_conflict=collectivite_id',
+        f'{supabase_rest_url}/{payload.consequences_table}?on_conflict=collectivite_id',
         data=json.dumps(
             {
                 "consequences": {
                     action_id: asdict(consequence)
                     for action_id, consequence in consequences.items()
                 },
-                "collectivite_id": payload_with_collectivite_id.collectivite_id,
+                "collectivite_id": payload.collectivite_id,
             }
         ),
         headers=supabase_headers(),
     )
     print(f'{response.url} replied with a code {response.status_code}')
 
+    if response.status_code == 201:
+        for evaluation_payload in payload.evaluation_payloads:
+            await evaluate_then_post_scores(evaluation_payload)
+
 
 async def evaluate_then_post_scores(
-        payload_with_collectivite_id: DatalayerEvaluationPayload,
+        payload: DatalayerEvaluationPayload,
 ):
-    scores = await evaluate(payload_with_collectivite_id.payload)
+    scores = await evaluate(payload.payload)
     response = requests.post(
-        f'{supabase_score_url}?on_conflict=collectivite_id,referentiel',
+        f'{supabase_rest_url}/{payload.scores_table}?on_conflict=collectivite_id,referentiel',
         data=json.dumps(
             {
                 "scores": [
                     asdict(score) for score in scores
                 ],
-                "collectivite_id": payload_with_collectivite_id.collectivite_id,
-                "referentiel": payload_with_collectivite_id.referentiel,
+                "collectivite_id": payload.collectivite_id,
+                "referentiel": payload.referentiel,
             }
         ),
         headers=supabase_headers(),

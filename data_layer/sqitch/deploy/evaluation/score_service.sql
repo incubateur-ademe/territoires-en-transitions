@@ -50,78 +50,12 @@ select action_id,
 from personnalisation_regle pr
 group by action_id;
 
-
-
-create or replace function
-    evaluation.evaluate_regles(
-    in collectivite_id integer,
-    out status integer,
-    out content_type varchar,
-    out http_header http_header[],
-    out content varchar
-)
-as
-$$
-with payload as (select ci.id as collectivite_id,
-                        jsonb_build_object(
-                                'identite', jsonb_build_object('population', ci.population,
-                                                               'type', ci.type,
-                                                               'localisation',
-                                                               ci.localisation), -- si il n'y a pas de statuts
-                                'regles', (select jsonb_agg(to_jsonb(sr)) from evaluation.service_regles sr),
-                                'reponses',
-                                (select reponses from evaluation.service_reponses sr where sr.collectivite_id = ci.id)
-                            ) as payload
-                 from collectivite_identite ci
-                 where ci.id = evaluate_regles.collectivite_id),
-     configuration as (select *
-                       from evaluation.service_configuration
-                       order by created_at desc
-                       limit 1)
-
-select post.*
-from configuration -- si il n'y a aucune configuration on ne fait pas d'appel
-         join payload on true
-         left join lateral (select *
-                            from http_post(
-                                    (select personnalisation_endpoint
-                                     from evaluation.service_configuration
-                                     order by created_at desc
-                                     limit 1),
-                                    to_jsonb(payload.*)::varchar,
-                                    'application/json'::varchar
-                                )
-    ) as post on true
-$$
-    language sql
-    security definer
-    set search_path = public, extensions;
--- permet d'utiliser l'extension http depuis un trigger
-
--- select * from evaluation.evaluate_regles(1);
-
-
-create or replace function after_reponse_call_business() returns trigger as
-$$
-declare
-begin
-    perform evaluation.evaluate_regles(new.collectivite_id);
-    return new;
-end
-$$ language plpgsql security definer;
-
-create trigger after_reponse_insert
-    after insert or update
-    on reponse_binaire -- todo other reponse types
-    for each row
-execute procedure after_reponse_call_business();
-
 -- todo keep in score service
 alter table client_scores
     alter column score_created_at set default CURRENT_TIMESTAMP;
 
--- remove deprecated triggers
-drop trigger after_action_statut_insert on action_statut;
+-- todo remove deprecated triggers
+drop trigger if exists after_action_statut_insert on action_statut;
 -- drop function after_action_statut_insert_write_event;
 -- drop table action_statut_update_event;
 
@@ -191,10 +125,12 @@ from action_statut
 group by collectivite_id, referentiel;
 
 
+
 create or replace function
     evaluation.evaluate_statuts(
     in collectivite_id integer,
     in referentiel referentiel,
+    in scores_table varchar,
     out status integer,
     out content_type varchar,
     out http_header http_header[],
@@ -202,17 +138,19 @@ create or replace function
 )
 as
 $$
-with payload as (select s.collectivite_id,
+with payload as (select evaluate_statuts.collectivite_id,
                         r.referentiel,
+                        evaluate_statuts.scores_table as scores_table,
                         jsonb_build_object(
                                 'statuts', coalesce(s.data, to_jsonb('{}'::jsonb[])), -- si il n'y a pas de statuts
-                                'evaluation_referentiel', r.data,
+                                'referentiel', r.data,
                                 'consequences', jsonb_build_object() -- todo
-                            ) as payload
+                            )                         as payload
                  from evaluation.service_referentiel as r
-                          left join evaluation.service_statuts s on s.referentiel = r.referentiel
-                 where r.referentiel = evaluate_statuts.referentiel
-                   and s.collectivite_id = evaluate_statuts.collectivite_id),
+                          left join evaluation.service_statuts s
+                                    on s.referentiel = r.referentiel
+                                        and s.collectivite_id = evaluate_statuts.collectivite_id
+                 where r.referentiel = evaluate_statuts.referentiel),
      configuration as (select *
                        from evaluation.service_configuration
                        order by created_at desc
@@ -233,8 +171,106 @@ $$
     security definer
     set search_path = public, extensions;
 
--- select * from evaluation.evaluate_statuts(1, 'eci');
 
+create or replace function
+    evaluation.evaluate_regles(
+    in collectivite_id integer,
+    in consequences_table varchar,
+    in scores_table varchar,
+    out status integer,
+    out content_type varchar,
+    out http_header http_header[],
+    out content varchar
+)
+as
+$$
+with -- les payloads pour le calculs des scores des référentiels
+     evaluation_payload as (select evaluate_regles.collectivite_id,
+                                   r.referentiel,
+                                   evaluate_regles.scores_table as scores_table,
+                                   jsonb_build_object(
+                                           'statuts',
+                                           coalesce(s.data, to_jsonb('{}'::jsonb[])), -- si il n'y a pas de statuts
+                                           'referentiel', r.data,
+                                           'consequences', jsonb_build_object() -- todo
+                                       )                        as payload
+                            from evaluation.service_referentiel as r
+                                     left join evaluation.service_statuts s
+                                               on s.referentiel = r.referentiel
+                                                   and s.collectivite_id = evaluate_regles.collectivite_id),
+
+     -- la payload de personnalisation qui contient les payloads d'évaluation.
+     personnalisation_payload as (select ci.id                                                       as collectivite_id,
+                                         evaluate_regles.consequences_table                          as consequences_table,
+                                         jsonb_build_object(
+                                                 'identite', jsonb_build_object('population', ci.population,
+                                                                                'type', ci.type,
+                                                                                'localisation',
+                                                                                ci.localisation), -- si il n'y a pas de statuts
+                                                 'regles',
+                                                 (select jsonb_agg(to_jsonb(sr)) from evaluation.service_regles sr),
+                                                 'reponses',
+                                                 (select reponses
+                                                  from evaluation.service_reponses sr
+                                                  where sr.collectivite_id = ci.id)
+                                             )                                                       as payload,
+                                         (select jsonb_agg(to_jsonb(ep)) from evaluation_payload ep) as evaluation_payloads
+                                  from collectivite_identite ci
+                                  where ci.id = evaluate_regles.collectivite_id),
+     configuration as (select *
+                       from evaluation.service_configuration
+                       order by created_at desc
+                       limit 1)
+
+select post.*
+from configuration -- si il n'y a aucune configuration on ne fait pas d'appel
+         join personnalisation_payload on true
+         left join lateral (
+    -- appel le business avec la payload.
+    select *
+    from http_post(
+            configuration.personnalisation_endpoint,
+            to_jsonb(personnalisation_payload.*)::varchar,
+            'application/json'::varchar
+        )
+    ) as post on true
+$$
+    language sql
+    security definer
+-- permet d'utiliser l'extension http depuis un trigger
+    set search_path = public, extensions;
+
+
+create or replace function after_reponse_call_business() returns trigger as
+$$
+declare
+begin
+    perform evaluation.evaluate_regles(
+            new.collectivite_id,
+            'personnalisation_consequence',
+            'client_scores'
+        );
+    return new;
+end
+$$ language plpgsql security definer;
+
+create trigger after_reponse_insert
+    after insert or update
+    on reponse_binaire
+    for each row
+execute procedure after_reponse_call_business();
+
+create trigger after_reponse_insert
+    after insert or update
+    on reponse_choix
+    for each row
+execute procedure after_reponse_call_business();
+
+create trigger after_reponse_insert
+    after insert or update
+    on reponse_proportion
+    for each row
+execute procedure after_reponse_call_business();
 
 create or replace function after_action_statut_call_business() returns trigger as
 $$
@@ -242,7 +278,7 @@ declare
     relation action_relation%ROWTYPE;
 begin
     select * into relation from action_relation where id = new.action_id limit 1;
-    perform evaluation.evaluate_statuts(new.collectivite_id, relation.referentiel);
+    perform evaluation.evaluate_statuts(new.collectivite_id, relation.referentiel, 'client_scores');
     return new;
 end
 $$ language plpgsql security definer;
