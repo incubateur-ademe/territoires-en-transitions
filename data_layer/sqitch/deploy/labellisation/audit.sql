@@ -149,4 +149,11 @@ create trigger upsert
     for each row
 execute procedure labellisation.upsert_action_audit();
 
+alter table audit enable row level security;
+
+create policy allow_all -- TODO meilleurs permissions
+on audit
+for all
+using(have_edition_acces(collectivite_id));
+
 COMMIT;
