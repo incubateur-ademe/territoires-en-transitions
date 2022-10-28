@@ -4,8 +4,8 @@ apikey: {{anon}}
 Content-Type: application/json
 
 {
-  "email": "youlou@doudou.com",
-  "password": "youloudoudou"
+  "email": "{{youlou_mail}}",
+  "password": "{{youlou_pass}}"
 }
 
 
