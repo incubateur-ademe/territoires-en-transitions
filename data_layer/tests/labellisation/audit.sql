@@ -29,7 +29,7 @@ select ok(
 
 -- Test fonction get_current_audit - audit ferme
 select ok(
-               (select labellisation.current_audit(25, 'eci') is null),
+               (select labellisation.current_audit(2, 'eci') is null),
                'labellisation.current_audit devrait retourner null car audit ferme'
            );
 -- Test fonction get_current_audit - audit inexistant
