@@ -151,9 +151,19 @@ execute procedure labellisation.upsert_action_audit();
 
 alter table audit enable row level security;
 
-create policy allow_all -- TODO meilleurs permissions
-on audit
-for all
-using(have_edition_acces(collectivite_id));
+create policy allow_read
+    on audit
+    for select
+    using(is_authenticated());
+
+create policy allow_insert
+    on audit
+    for insert
+    with check(have_edition_acces(collectivite_id));
+
+create policy allow_update
+    on audit
+    for update
+    using(have_edition_acces(collectivite_id));
 
 COMMIT;
