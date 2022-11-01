@@ -2,8 +2,8 @@ import http from 'k6/http';
 import {sleep, check} from 'k6';
 
 export const options = {
-  // 10 users looping for 1 minute
-  vus: 10,
+  // 5 users looping for 1 minute
+  vus: 5,
   duration: '1m',
 
   thresholds: {
