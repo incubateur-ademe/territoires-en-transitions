@@ -145,7 +145,7 @@ async def personnalize_then_post_consequences(
         ),
         headers=supabase_headers(),
     )
-    print(f'{response.url} replied with a code {response.status_code}')
+    print(f'{response.url} replied with a code {response.status_code} in {response.elapsed}')
 
     if response.status_code == 201:
         for evaluation_payload in payload.evaluation_payloads:
@@ -169,4 +169,4 @@ async def evaluate_then_post_scores(
         ),
         headers=supabase_headers(),
     )
-    print(f'{response.url} replied with a code {response.status_code}')
+    print(f'{response.url} replied with a code {response.status_code} in {response.elapsed}')

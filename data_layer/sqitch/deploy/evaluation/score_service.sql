@@ -2,7 +2,6 @@
 
 BEGIN;
 
--- todo move in evaluation service
 create table evaluation.service_configuration
 (
     evaluation_endpoint       varchar                   not null,
@@ -10,7 +9,6 @@ create table evaluation.service_configuration
     created_at                timestamptz default now() not null
 );
 
--- todo move in personnalisation service
 create view evaluation.service_reponses
 as
 with r as (select q.id                                                                 as question_id,
@@ -50,7 +48,6 @@ select action_id,
 from personnalisation_regle pr
 group by action_id;
 
--- todo keep in score service
 alter table client_scores
     alter column score_created_at set default CURRENT_TIMESTAMP;
 
@@ -59,7 +56,7 @@ drop trigger if exists after_action_statut_insert on action_statut;
 -- drop function after_action_statut_insert_write_event;
 -- drop table action_statut_update_event;
 
-create view evaluation.service_referentiel
+create materialized view evaluation.service_referentiel
 as
 with computed_points as (select referentiel,
                                 jsonb_agg(jsonb_build_object(
@@ -81,12 +78,34 @@ with computed_points as (select referentiel,
 
 select c.referentiel,
        json_build_object(
-               'action_level', 2, -- todo
+               'action_level', case when c.referentiel = 'cae' then 3 else 2 end,
                'children', c.data,
                'computed_points', p.data
            ) as data
 from children c
          left join computed_points p on c.referentiel = p.referentiel;
+comment on materialized view evaluation.service_referentiel
+    is 'Les référentiels au format json pour l''évaluation par le business.'
+        'Coûteuse à construire elle est rafraichie lors de la mise à jour des référentiels';
+
+
+-- Modifie le trigger de mise à jour du contenu suite à l'insertion de json.
+create or replace function
+    private.upsert_referentiel_after_json_insert()
+    returns trigger
+as
+$$
+declare
+begin
+    -- Met à jour le contenu.
+    perform private.upsert_actions(new.definitions, new.children);
+    -- Rafraichit la vue des référentiels utilisée pour l'évaluation.
+    refresh materialized view evaluation.service_referentiel;
+    return new;
+end;
+$$ language plpgsql
+    -- Nécessite les droits sur la vue matérialisée pour la rafraichir.
+    security definer;
 
 
 create view evaluation.service_statuts
@@ -123,7 +142,6 @@ select collectivite_id,
 from action_statut
          left join action_relation on action_statut.action_id = action_relation.id
 group by collectivite_id, referentiel;
-
 
 
 create or replace function
