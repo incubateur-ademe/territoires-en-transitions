@@ -5,12 +5,8 @@ import {LocalSelectors} from './selectors';
 beforeEach(() => {
   cy.wrap(LocalSelectors).as('LocalSelectors');
 
-  // reset les données d'audit des actions en attendant que le DL fournisse une
-  // fonction générique
-  cy.task('pg_query', {
-    query:
-      "DELETE FROM labellisation.action_audit_state WHERE collectivite_id = 1 AND action_id LIKE 'eci_1.%'",
-  });
+  // reset les données d'audit des actions
+  cy.task('supabase_rpc', {name: 'test_reset_audit'});
 });
 
 When(
