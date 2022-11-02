@@ -128,3 +128,5 @@ evaluation/contenu_json 2022-10-25T15:57:21Z Florian <florian@derfurth.com> # In
 http_extension 2022-10-17T13:22:43Z Florian <florian@derfurth.com> # Installe l extension http
 evaluation/schema 2022-10-17T13:26:06Z Florian <florian@derfurth.com> # Le schéma pour le domaine évaluation
 evaluation/score_service [evaluation/schema] 2022-10-17T13:23:41Z Florian <florian@derfurth.com> # Utilise l'API REST du business
+evaluation/score_mise_a_jour [evaluation/score_service] 2022-11-02T08:43:32Z Florian <florian@derfurth.com> # Permet déterminer les collectivités dont les scores ne sont plus à jour
+cron/update_late_scores [evaluation/score_mise_a_jour] 2022-11-02T10:08:16Z Florian <florian@derfurth.com> # Met à jour les scores des collectivités toutes les 5 minutes
