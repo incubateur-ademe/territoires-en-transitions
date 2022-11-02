@@ -4,8 +4,8 @@
  * Définitions de "steps" communes à tous les tests
  */
 
-import { Selectors } from './selectors';
-import { Expectations } from './expectations';
+import {Selectors} from './selectors';
+import {Expectations} from './expectations';
 
 beforeEach(function () {
   cy.visit('/');
@@ -13,7 +13,7 @@ beforeEach(function () {
 
   // bouchon pour la fonction window.open
   const stub = cy.stub().as('open');
-  cy.on('window:before:load', (win) => {
+  cy.on('window:before:load', win => {
     cy.stub(win, 'open').callsFake(stub);
   });
 });
@@ -23,16 +23,16 @@ beforeEach(function () {
 // `cy.get('@auth')` soit bien résolue une 2ème fois dans le même scénario
 // (utilisée avec le step "je me reconnecte en tant que ...")
 function waitForApp() {
-  cy.window({ log: false }).its('e2e.history').as('history');
-  cy.window({ log: false }).its('e2e.auth').as('auth');
-  cy.window({ log: false }).its('e2e.supabaseClient').as('supabaseClient');
+  cy.window({log: false}).its('e2e.history').as('history');
+  cy.window({log: false}).its('e2e.auth').as('auth');
+  cy.window({log: false}).its('e2e.supabaseClient').as('supabaseClient');
 }
 
 Given("j'ouvre le site", () => {
   cy.get('[data-test=home]').should('be.visible');
 });
 
-const genUser = (userName) => {
+const genUser = userName => {
   const letter = userName.slice(1, 2);
   const dd = `d${letter}d${letter}`;
   return {
@@ -45,7 +45,7 @@ const SignInPage = Selectors['formulaire de connexion'];
 Given(/je suis connecté en tant que "([^"]*)"/, login);
 function login(userName) {
   const u = genUser(userName);
-  cy.get('@auth').then((auth) => auth.connect(u));
+  cy.get('@auth').then(auth => auth.connect(u));
   cy.get(SignInPage.selector).should('not.exist');
   cy.get('[data-test=connectedMenu]').should('be.visible');
 }
@@ -56,19 +56,23 @@ Given('je me reconnecte en tant que {string}', function (userName) {
   login(userName);
 });
 
-Given('les droits utilisateur sont réinitialisés', () => {
-  cy.task('supabase_rpc', { name: 'test_reset_droits' });
+Given('les discussions sont réinitialisées', () => {
+  cy.task('supabase_rpc', {name: 'test_reset_discussion_et_commentaires'});
 });
 
-Given(/l'utilisateur "([^"]*)" est supprimé/, (email) => {
+Given('les droits utilisateur sont réinitialisés', () => {
+  cy.task('supabase_rpc', {name: 'test_reset_droits'});
+});
+
+Given(/l'utilisateur "([^"]*)" est supprimé/, email => {
   cy.task('supabase_rpc', {
     name: 'test_remove_user',
-    params: { email: email },
+    params: {email: email},
   });
 });
 
 Given('les informations des membres sont réinitialisées', () => {
-  cy.task('supabase_rpc', { name: 'test_reset_membres' });
+  cy.task('supabase_rpc', {name: 'test_reset_membres'});
 });
 
 Given('je me déconnecte', logout);
@@ -178,37 +182,35 @@ Given('je clique en dehors de la boîte de dialogue', () =>
   cy.get('body').click(10, 10)
 );
 
-Given('je valide le formulaire', () =>
-cy.get('button[type=submit]').click()
-);
+Given('je valide le formulaire', () => cy.get('button[type=submit]').click());
 
 const transateTypes = {
-  succès: "success",
-  information: "info",
-  erreur: "error",
+  succès: 'success',
+  information: 'info',
+  erreur: 'error',
 };
 Given(
   /une alerte de "([^"]*)" est affichée et contient "([^"]*)"/,
   (type, message) => {
-    cy.get(`.fr-alert--${transateTypes[type]}`).should("be.visible");
-    cy.get(`.fr-alert--${transateTypes[type]}`).should("contain.text", message);
+    cy.get(`.fr-alert--${transateTypes[type]}`).should('be.visible');
+    cy.get(`.fr-alert--${transateTypes[type]}`).should('contain.text', message);
   }
 );
 
-Given("je recharge la page", () => {
+Given('je recharge la page', () => {
   cy.reload();
 });
 
 // Le tableau des membres est utilisé dans plusieurs tests
 // pour valider la modification des informations des membres ou
 // les informations de l'utilisateur courant
-const tableauMembresSelector = Selectors["tableau des membres"];
+const tableauMembresSelector = Selectors['tableau des membres'];
 Given(
-  "le tableau des membres doit contenir les informations suivantes",
-  (dataTable) => {
+  'le tableau des membres doit contenir les informations suivantes',
+  dataTable => {
     cy.get(tableauMembresSelector.selector).within(() => {
       // Attend la disparition du chargement.
-      cy.get("[data-test=Loading]").should("not.exist");
+      cy.get('[data-test=Loading]').should('not.exist');
       cy.wrap(dataTable.rows()).each(
         (
           [
@@ -223,13 +225,13 @@ Given(
           index
         ) => {
           cy.get(`tbody tr:nth(${index})`).within(() => {
-            cy.get("td:first").should("contain.text", nom);
-            cy.get("td:first").should("contain.text", mail);
+            cy.get('td:first').should('contain.text', nom);
+            cy.get('td:first').should('contain.text', mail);
             // cy.get('td:nth(1)').should('contain.text', telephone);
-            cy.get("td:nth(1)").should("contain.text", fonction);
-            cy.get("td:nth(2)").should("contain.text", champ_intervention);
-            cy.get("td:nth(3)").should("contain.text", details_fonction);
-            cy.get("td:nth(4)").should("contain.text", acces);
+            cy.get('td:nth(1)').should('contain.text', fonction);
+            cy.get('td:nth(2)').should('contain.text', champ_intervention);
+            cy.get('td:nth(3)').should('contain.text', details_fonction);
+            cy.get('td:nth(4)').should('contain.text', acces);
           });
         }
       );

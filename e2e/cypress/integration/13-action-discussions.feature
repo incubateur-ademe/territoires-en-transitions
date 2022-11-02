@@ -1,17 +1,9 @@
 # language: fr
 
 Fonctionnalité: Utiliser les discussions dans une action d'un référentiel
-  Scénario: Consulter les discussions d'une action
-    Etant donné que je suis connecté en tant que "yolo"
-    # Et que les discussions de la collectivité "1" sont réinitialisées
-    Et que je suis sur la page "Action ECI" de la collectivité "1" 
-    Quand je clique sur l'icône commentaires
-
-    Alors le panel-action-discussions est visible
-    Et il affiche les discussions ouvertes
-
   Scénario: Créer une discussion
     Etant donné que je suis connecté en tant que "yolo"
+    Et que les discussions sont réinitialisées
     Et que je suis sur la page "Action ECI" de la collectivité "1" 
     Quand je clique sur l'icône commentaires
 
