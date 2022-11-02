@@ -8,8 +8,11 @@ beforeEach(() => {
 });
 
 // Génériques
+const getFirstDiscussion = () =>
+  cy.get('[data-test=ActionDiscussionsFeed]').first();
+
 Given(/le commentaire "([^"]+)" n'est plus visible/, value => {
-  getFirstDiscussion().contains(value).should('not.be.visible');
+  getFirstDiscussion().contains(value).should('not.exist');
 });
 
 Given(/le commentaire "([^"]+)" est visible/, value => {
@@ -90,7 +93,7 @@ Given(
   (button, commentaire) => {
     getFirstDiscussion()
       .find('[data-test=ActionDiscussionCommentaireMenuButton]')
-      .first()
+      .last()
       .click();
     cy.root()
       .get(`#floating-ui-root [data-test="ActionDiscussionCommentaireMenu"]`)
@@ -99,6 +102,3 @@ Given(
     cy.wait(100);
   }
 );
-
-const getFirstDiscussion = () =>
-  cy.get('[data-test=ActionDiscussionsFeed] > div');
