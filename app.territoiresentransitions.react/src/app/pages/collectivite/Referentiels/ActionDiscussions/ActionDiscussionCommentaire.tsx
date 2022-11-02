@@ -47,10 +47,10 @@ const ActionDiscussionCommentaire = ({commentaire, discussion}: Props) => {
       <div className="grow mr-4">
         <div className="flex items-center mb-1">
           <span className="h-5 w-5 flex items-center justify-center text-sm leading-none rounded-full border border-gray-900">
-            {/* {commentaire.created_by_nom[0]} */}R
+            {commentaire.created_by_nom[0]}
           </span>
           <span className="mx-2 font-bold text-sm">
-            {commentaire.created_by_nom}Fake nom
+            {commentaire.created_by_nom}
           </span>
           <span className="text-gray-400 text-sm">
             {format(creationDate, 'd MMMM y', {locale: fr})}
