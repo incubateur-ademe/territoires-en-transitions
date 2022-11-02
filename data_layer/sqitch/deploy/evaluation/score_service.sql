@@ -77,7 +77,7 @@ with computed_points as (select referentiel,
                   group by referentiel)
 
 select c.referentiel,
-       json_build_object(
+       jsonb_build_object(
                'action_level', case when c.referentiel = 'cae' then 3 else 2 end,
                'children', c.data,
                'computed_points', p.data
@@ -145,6 +145,37 @@ group by collectivite_id, referentiel;
 
 
 create or replace function
+    evaluation.evaluation_payload(
+    in collectivite_id integer,
+    in referentiel referentiel,
+    out referentiel jsonb,
+    out statuts jsonb,
+    out consequences jsonb
+)
+as
+$$
+with statuts as (select s.data
+                 from evaluation.service_statuts s
+                 where s.referentiel = evaluation_payload.referentiel
+                   and s.collectivite_id = evaluation_payload.collectivite_id),
+     consequences as ( -- on ne garde que les conséquences du référentiel concerné
+         select jsonb_object_agg(tuple.key, tuple.value) as filtered
+         from personnalisation_consequence pc
+                  join jsonb_each(pc.consequences) tuple on true
+                  join action_relation ar on tuple.key = ar.id
+         where pc.collectivite_id = evaluation_payload.collectivite_id
+           and ar.referentiel = evaluation_payload.referentiel)
+select r.data                                        as referentiel,
+       coalesce(s.data, to_jsonb('{}'::jsonb[]))     as statuts,
+       coalesce(c.filtered, to_jsonb('{}'::jsonb[])) as consequences
+from evaluation.service_referentiel as r
+         left join statuts s on true
+         left join consequences c on true
+where r.referentiel = evaluation_payload.referentiel
+$$ language sql stable;
+
+
+create or replace function
     evaluation.evaluate_statuts(
     in collectivite_id integer,
     in referentiel referentiel,
@@ -157,23 +188,14 @@ create or replace function
 as
 $$
 with payload as (select evaluate_statuts.collectivite_id,
-                        r.referentiel,
+                        evaluate_statuts.referentiel,
                         evaluate_statuts.scores_table as scores_table,
-                        jsonb_build_object(
-                                'statuts', coalesce(s.data, to_jsonb('{}'::jsonb[])), -- si il n'y a pas de statuts
-                                'referentiel', r.data,
-                                'consequences', jsonb_build_object() -- todo
-                            )                         as payload
-                 from evaluation.service_referentiel as r
-                          left join evaluation.service_statuts s
-                                    on s.referentiel = r.referentiel
-                                        and s.collectivite_id = evaluate_statuts.collectivite_id
-                 where r.referentiel = evaluate_statuts.referentiel),
+                        to_jsonb(ep)                  as payload
+                 from evaluation.evaluation_payload(evaluate_statuts.collectivite_id, evaluate_statuts.referentiel) ep),
      configuration as (select *
                        from evaluation.service_configuration
                        order by created_at desc
                        limit 1)
-
 select post.*
 from configuration -- si il n'y a aucune configuration on ne fait pas d'appel
          join payload on true
@@ -202,37 +224,32 @@ create or replace function
 )
 as
 $$
-with -- les payloads pour le calculs des scores des référentiels
+with ref as (select unnest(enum_range(null::referentiel)) as referentiel),
+-- les payloads pour le calculs des scores des référentiels
      evaluation_payload as (select evaluate_regles.collectivite_id,
-                                   r.referentiel,
+                                   ref.referentiel              as referentiel,
                                    evaluate_regles.scores_table as scores_table,
-                                   jsonb_build_object(
-                                           'statuts',
-                                           coalesce(s.data, to_jsonb('{}'::jsonb[])), -- si il n'y a pas de statuts
-                                           'referentiel', r.data,
-                                           'consequences', jsonb_build_object() -- todo
-                                       )                        as payload
-                            from evaluation.service_referentiel as r
-                                     left join evaluation.service_statuts s
-                                               on s.referentiel = r.referentiel
-                                                   and s.collectivite_id = evaluate_regles.collectivite_id),
-
+                                   ep                           as payload
+                            from ref
+                                     left join evaluation.evaluation_payload(
+                                    evaluate_regles.collectivite_id,
+                                    ref.referentiel) ep on true),
      -- la payload de personnalisation qui contient les payloads d'évaluation.
-     personnalisation_payload as (select ci.id                                                       as collectivite_id,
-                                         evaluate_regles.consequences_table                          as consequences_table,
+     personnalisation_payload as (select ci.id                                             as collectivite_id,
+                                         evaluate_regles.consequences_table                as consequences_table,
                                          jsonb_build_object(
                                                  'identite', jsonb_build_object('population', ci.population,
                                                                                 'type', ci.type,
-                                                                                'localisation',
-                                                                                ci.localisation), -- si il n'y a pas de statuts
+                                                                                'localisation', ci.localisation),
                                                  'regles',
-                                                 (select jsonb_agg(to_jsonb(sr)) from evaluation.service_regles sr),
+                                                 (select array_agg(sr) from evaluation.service_regles sr),
                                                  'reponses',
-                                                 (select reponses
-                                                  from evaluation.service_reponses sr
-                                                  where sr.collectivite_id = ci.id)
-                                             )                                                       as payload,
-                                         (select jsonb_agg(to_jsonb(ep)) from evaluation_payload ep) as evaluation_payloads
+                                                 coalesce((select reponses
+                                                           from evaluation.service_reponses sr
+                                                           where sr.collectivite_id = ci.id),
+                                                          to_jsonb('{}'::jsonb[]))
+                                             )                                             as payload,
+                                         (select array_agg(ep) from evaluation_payload ep) as evaluation_payloads
                                   from collectivite_identite ci
                                   where ci.id = evaluate_regles.collectivite_id),
      configuration as (select *
@@ -242,13 +259,13 @@ with -- les payloads pour le calculs des scores des référentiels
 
 select post.*
 from configuration -- si il n'y a aucune configuration on ne fait pas d'appel
-         join personnalisation_payload on true
+         join personnalisation_payload pp on true
          left join lateral (
     -- appel le business avec la payload.
     select *
     from http_post(
             configuration.personnalisation_endpoint,
-            to_jsonb(personnalisation_payload.*)::varchar,
+            to_jsonb(pp.*)::varchar,
             'application/json'::varchar
         )
     ) as post on true
