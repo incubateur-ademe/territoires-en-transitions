@@ -307,4 +307,5 @@ create trigger after_action_statut_insert
     for each row
 execute procedure after_action_statut_call_business();
 
+
 COMMIT;
