@@ -32,7 +32,7 @@ Fonctionnalité: Ajouter un membre au profil de la collectivité
     Quand je suis sur la page "Gestion des membres" de la collectivité "1"
     Alors un formulaire d'invitation est affiché
 
-    Quand je renseigne l'email "youlou@doudou.com" de la personne à inviter en "admin"
+    Quand je renseigne l'email "yaulau@daudau.com" de la personne à inviter en "admin"
     Et que je valide le formulaire
     Alors un message d'invitation est affiché
 
