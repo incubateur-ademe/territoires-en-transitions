@@ -5,6 +5,11 @@ BEGIN;
 create type evaluation.update
 as enum ('statut', 'réponse', 'activation');
 
+-- Change le `created_at` autrefois écrit par le business en `modified_at`
+alter table client_scores
+    rename column score_created_at to modified_at;
+select private.add_modified_at_trigger('public', 'client_scores');
+
 create view evaluation.collectivite_latest_update
 as
 with recent as
@@ -56,7 +61,7 @@ with data_latest as (select collectivite_id, max(latest) as latest
                      from evaluation.collectivite_latest_update
                      group by collectivite_id
                      order by latest desc),
-     score_latest as (select collectivite_id, max(score_created_at) as latest
+     score_latest as (select collectivite_id, max(modified_at) as latest
                       from client_scores
                       group by collectivite_id),
      with_users as (select distinct c.id
