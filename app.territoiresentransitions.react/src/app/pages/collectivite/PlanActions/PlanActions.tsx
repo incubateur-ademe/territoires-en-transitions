@@ -19,6 +19,7 @@ import {makeCollectiviteNouvelleFicheUrl, planActionDefaultId} from 'app/paths';
 import {UiDialogButton} from 'ui/UiDialogButton';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {ModifierArboDialogButton} from './ModifierArboDialogButton';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
 /**
  * The title of a category
@@ -136,6 +137,7 @@ const AddFicheActionLink = (props: {plan: PlanActionRead}) => {
  * Plans d'action page contents
  */
 const PlanActions = () => {
+  const currentCollectivite = useCurrentCollectivite();
   const {planActionUid} = useParams<{planActionUid: string}>();
   const collectiviteId = useCollectiviteId()!;
   const plan = usePlanAction(
@@ -153,7 +155,9 @@ const PlanActions = () => {
         <div className="flex flex-row items-center">
           <h1 className="fr-h1 mb-3 whitespace-nowrap mr-4">Plans d'action</h1>
         </div>
-        {plan && <PlanButtons plan={plan} />}
+        {plan && currentCollectivite?.niveau_acces && (
+          <PlanButtons plan={plan} />
+        )}
       </div>
 
       <PlanNav planActionUid={plan.uid} />
