@@ -44,6 +44,7 @@ const IndicateurPersonnaliseCardContent = (props: {
 }) => {
   return (
     <div>
+      <div className="text-lg ml-7 mb-2">Objectifs</div>
       <AnyIndicateurValues
         repo={indicateurPersonnaliseObjectifRepository}
         indicateurId={props.indicateur.id}
