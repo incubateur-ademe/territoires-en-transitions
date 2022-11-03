@@ -1,5 +1,8 @@
 begin;
 
+-- Désactive l'API, les tests devant pouvoir tourner sans le business.
+select test.disable_evaluation_api();
+
 select plan(13);
 
 select has_table('reponse_choix');
