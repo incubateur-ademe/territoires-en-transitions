@@ -21,7 +21,9 @@ export const HistoriqueListe = ({
     <>
       <div className="flex flex-col gap-5" data-test="Historique">
         {total === 0 ? (
-          <span data-test="empty_history">En attente d’une modification</span>
+          <span data-test="empty_history">
+            Aucun historique de modification
+          </span>
         ) : null}
         {items.map(item => {
           const {type} = item;
