@@ -52,10 +52,7 @@ from action_discussion ad
     select array_agg(to_jsonb(nc)) as commentaires
     from nom_commentaire nc
     where nc.discussion_id = ad.id
-    ) as c on true
-;
-
-
+    ) as c on true;
 
 create function
     have_discussion_lecture_acces(id integer)
@@ -87,7 +84,7 @@ begin
     from action_discussion ad
     where have_discussion_edition_acces.id = ad.id
     into found_id;
-    return have_edition_acces(found_id);
+    return have_lecture_acces(found_id);
 end
 $$ language plpgsql;
 comment on function have_discussion_edition_acces is
@@ -105,19 +102,19 @@ create policy allow_read
 create policy allow_insert
     on action_discussion
     for insert
-    with check (have_edition_acces(collectivite_id));
+    with check (have_lecture_acces(collectivite_id));
 
--- Le discussion peut être modifié par tous les membres de la collectivité
+-- Le discussion peut être modifiée par tous les membres de la collectivité
 create policy allow_update
     on action_discussion
     for update
-    using (have_edition_acces(collectivite_id));
+    using (have_lecture_acces(collectivite_id));
 
--- La discussion peut être supprimé par tous les membres de la collectivité
+-- La discussion peut être supprimée par tous les membres de la collectivité
 create policy allow_delete
     on action_discussion
     for delete
-    using (have_edition_acces(collectivite_id));
+    using (have_lecture_acces(collectivite_id));
 
 
 alter table action_discussion_commentaire enable row level security;
@@ -133,13 +130,13 @@ create policy allow_insert
     for insert
     with check (have_discussion_edition_acces(discussion_id));
 
--- Le discussion peut être modifié par tous les membres de la collectivité
+-- Le discussion peut être modifiée par tous les membres de la collectivité
 create policy allow_update
     on action_discussion_commentaire
     for update
     using (auth.uid() = created_by);
 
--- La discussion peut être supprimé par tous les membres de la collectivité
+-- La discussion peut être supprimée par tous les membres de la collectivité
 create policy allow_delete
     on action_discussion_commentaire
     for delete
