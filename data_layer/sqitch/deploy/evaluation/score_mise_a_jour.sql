@@ -2,15 +2,15 @@
 
 BEGIN;
 
-create type private.update
+create type evaluation.update
 as enum ('statut', 'réponse', 'activation');
 
-create view private.collectivite_latest_update
+create view evaluation.collectivite_latest_update
 as
 with recent as
          (
              -- les statuts
-             select collectivite_id, max(modified_at) as latest, 'statut'::private.update as type
+             select collectivite_id, max(modified_at) as latest, 'statut'::evaluation.update as type
              from action_statut
              group by collectivite_id
              union all
@@ -40,7 +40,7 @@ select collectivite_id, latest, type
 from recent
 order by latest desc;
 
-create view private.content_latest_update
+create view evaluation.content_latest_update
 as
 with json_content as (select created_at
                       from personnalisations_json
@@ -50,10 +50,10 @@ with json_content as (select created_at
 select max(created_at) as latest
 from json_content;
 
-create view private.late_collectivite
+create view evaluation.late_collectivite
 as
 with data_latest as (select collectivite_id, max(latest) as latest
-                     from private.collectivite_latest_update
+                     from evaluation.collectivite_latest_update
                      group by collectivite_id
                      order by latest desc),
      score_latest as (select collectivite_id, max(score_created_at) as latest
@@ -74,18 +74,18 @@ select c.id                                                            as collec
 from with_users c
          left join score_latest s on s.collectivite_id = c.id
          left join data_latest d on d.collectivite_id = c.id
-         left join private.content_latest_update clu on true;
+         left join evaluation.content_latest_update clu on true;
 
 
 create function
-    private.update_late_collectivite_scores(max int)
+    evaluation.update_late_collectivite_scores(max int)
     returns void
 as
 $$
 select evaluation.evaluate_regles(collectivite_id,
                                   'personnalisation_consequence',
                                   'client_scores')
-from private.late_collectivite
+from evaluation.late_collectivite
 where late
 order by data desc
 limit update_late_collectivite_scores.max;
