@@ -11,6 +11,9 @@ export const useDeleteCommentaireFromDiscussion = () => {
 
   return useMutation(deleteCommentaire, {
     mutationKey: 'delete-commentaire-from-discussion',
+    meta: {
+      disableToast: true,
+    },
     onSuccess: () => {
       queryClient.invalidateQueries(['action_discussion_feed']);
     },

@@ -20,6 +20,9 @@ export const useAddDiscussionToAction = (action_id: string) => {
 
   return useMutation(addDiscussionToAction, {
     mutationKey: 'add_discussion_to_action',
+    meta: {
+      disableToast: true,
+    },
     onSuccess: () => {
       queryClient.invalidateQueries(['action_discussion_feed']);
     },

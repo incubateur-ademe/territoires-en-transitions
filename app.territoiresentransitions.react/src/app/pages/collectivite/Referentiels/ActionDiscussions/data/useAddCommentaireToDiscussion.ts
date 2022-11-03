@@ -13,6 +13,9 @@ export const useAddCommentaireToDiscussion = (discussion_id: number) => {
 
   return useMutation(addCommentaireToDiscussion, {
     mutationKey: 'add_commentaire-to-discussion',
+    meta: {
+      disableToast: true,
+    },
     onSuccess: () => {
       queryClient.invalidateQueries(['action_discussion_feed']);
     },

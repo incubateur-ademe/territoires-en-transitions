@@ -11,6 +11,9 @@ export const useUpdateDiscussionStatus = () => {
 
   return useMutation(update, {
     mutationKey: 'update_discussion_status',
+    meta: {
+      disableToast: true,
+    },
     onSuccess: () => {
       queryClient.invalidateQueries(['action_discussion_feed']);
     },
