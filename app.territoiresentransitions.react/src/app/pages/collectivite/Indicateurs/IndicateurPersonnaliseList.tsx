@@ -6,11 +6,13 @@ import {IndicateurPersonnaliseDefinitionRead} from 'generated/dataLayer/indicate
 import {useState} from 'react';
 import {UiSearchBar} from 'ui/UiSearchBar';
 import {IndicateurPersonnaliseCreationDialog} from './IndicateurPersonnaliseCreationDialog';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
 export const IndicateurPersonnaliseList = ({
   showOnlyIndicateurWithData = false,
 }) => {
   const collectiviteId = useCollectiviteId()!;
+  const currentCollectivite = useCurrentCollectivite();
 
   const [filteredIndicateurs, setFilteredIndicateurs] =
     useState<IndicateurPersonnaliseDefinitionRead[]>();
@@ -34,7 +36,9 @@ export const IndicateurPersonnaliseList = ({
         <UiSearchBar search={search} />
       </div>
       <div className="float-right -mt-12">
-        <IndicateurPersonnaliseCreationDialog />
+        {currentCollectivite?.niveau_acces && (
+          <IndicateurPersonnaliseCreationDialog />
+        )}
       </div>
       <section className="flex flex-col">
         {(filteredIndicateurs || indicateurs).map(indicateur => (
