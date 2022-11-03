@@ -18,6 +18,3 @@ truncate evaluation.service_configuration;
 $$ language sql;
 comment on function test.disable_evaluation_api is
     'Supprime les configurations pour se connecter au business ce qui désactive les appels.';
-
-
-select test.enable_evaluation_api();
