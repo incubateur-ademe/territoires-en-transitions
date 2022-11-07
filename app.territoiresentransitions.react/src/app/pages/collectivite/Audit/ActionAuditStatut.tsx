@@ -1,6 +1,6 @@
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {Badge, TBadgeProps} from 'ui/shared/Badge';
 import {SelectDropdownCustom} from 'ui/shared/SelectDropdown';
+import {BadgeAuditStatut} from './BadgeAuditStatut';
 import {TActionAuditStatut, TAuditStatut} from './types';
 import {useActionAuditStatut} from './useActionAuditStatut';
 import {useAudit, useIsAuditeur} from './useAudit';
@@ -16,15 +16,6 @@ export type TActionAuditStatutBaseProps = {
   onChange: (newStatut: TAuditStatut) => void;
 };
 
-const statutToOption: Record<
-  TAuditStatut,
-  {label: string; badge: TBadgeProps['status']}
-> = {
-  non_audite: {label: 'Non audité', badge: 'warning'},
-  en_cours: {label: 'Audit en cours', badge: 'info'},
-  audite: {label: 'Audité', badge: 'success'},
-};
-
 const options: TAuditStatut[] = ['non_audite', 'en_cours', 'audite'];
 
 /**
@@ -37,32 +28,20 @@ export const ActionAuditStatutBase = (props: TActionAuditStatutBaseProps) => {
     <div className="px-2 w-full bg-[#e8edff]">
       {readonly ? (
         <div className="py-2" data-test="action-audit-statut-ro">
-          <BadgeStatut statut={statut} />
+          <BadgeAuditStatut statut={statut} />
         </div>
       ) : (
         <div className="w-52">
           <SelectDropdownCustom
             data-test="action-audit-statut"
             options={options}
-            displayOption={statut => <BadgeStatut statut={statut} />}
+            renderOption={statut => <BadgeAuditStatut statut={statut} />}
             value={statut}
             onSelect={onChange}
           />
         </div>
       )}
     </div>
-  );
-};
-
-/**
- * Affiche un badge représentant un statut d'audit
- */
-const BadgeStatut = ({statut}: {statut: TAuditStatut}) => {
-  const {label, badge} = statutToOption[statut];
-  return (
-    <Badge status={badge} className="fr-badge--no-icon">
-      {label}
-    </Badge>
   );
 };
 
