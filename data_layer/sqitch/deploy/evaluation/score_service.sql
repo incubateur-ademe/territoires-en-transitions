@@ -14,6 +14,41 @@ drop trigger after_reponse_proportion_write on reponse_proportion;
 drop view unprocessed_reponse_update_event;
 drop table reponse_update_event;
 
+-- ajoute la colonne `payload_timestamp` pour éviter le scénario
+--- où l'écriture des scores ou des conséquences suivant la première payload arrive après la dernière.
+alter table client_scores
+    add payload_timestamp timestamptz;
+
+alter table personnalisation_consequence
+    add payload_timestamp timestamptz;
+
+
+create function prevent_older_results()
+returns trigger
+as
+$$
+begin
+    if old is null or new.payload_timestamp > old.payload_timestamp
+    then
+        return new;
+    else
+        perform set_config('response.status', '409', true);
+        raise 'Results from a newer payload already exists.';
+    end if;
+end
+$$ language plpgsql;
+
+create trigger check_payload_timestamp
+    before insert or update on client_scores
+    for each row
+    execute procedure prevent_older_results();
+
+create trigger check_payload_timestamp
+    before insert or update on personnalisation_consequence
+    for each row
+    execute procedure prevent_older_results();
+
+
 create table evaluation.service_configuration
 (
     evaluation_endpoint       varchar                   not null,
@@ -202,7 +237,8 @@ create function
 )
 as
 $$
-with payload as (select evaluate_statuts.collectivite_id,
+with payload as (select transaction_timestamp()       as timestamp,
+                        evaluate_statuts.collectivite_id,
                         evaluate_statuts.referentiel,
                         evaluate_statuts.scores_table as scores_table,
                         to_jsonb(ep)                  as payload
@@ -244,7 +280,8 @@ as
 $$
 with ref as (select unnest(enum_range(null::referentiel)) as referentiel),
 -- les payloads pour le calculs des scores des référentiels
-     evaluation_payload as (select evaluate_regles.collectivite_id,
+     evaluation_payload as (select transaction_timestamp()      as timestamp,
+                                   evaluate_regles.collectivite_id,
                                    ref.referentiel              as referentiel,
                                    evaluate_regles.scores_table as scores_table,
                                    ep                           as payload
@@ -253,7 +290,8 @@ with ref as (select unnest(enum_range(null::referentiel)) as referentiel),
                                     evaluate_regles.collectivite_id,
                                     ref.referentiel) ep on true),
      -- la payload de personnalisation qui contient les payloads d'évaluation.
-     personnalisation_payload as (select ci.id                                             as collectivite_id,
+     personnalisation_payload as (select transaction_timestamp()                           as timestamp,
+                                         ci.id                                             as collectivite_id,
                                          evaluate_regles.consequences_table                as consequences_table,
                                          jsonb_build_object(
                                                  'identite', jsonb_build_object('population', ci.population,
