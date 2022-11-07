@@ -1,8 +1,6 @@
-import {ChangeEvent} from 'react';
-import Select from '@material-ui/core/Select';
-import {MenuProps} from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import './MultiSelectFilter.css';
+import classNames from 'classnames';
+import {ReactElement} from 'react';
+import {MultiSelectDropdown} from 'ui/shared/SelectDropdown';
 
 export type TMultiSelectFilterProps = {
   /** pour surcharger les styles de l'élément principal */
@@ -13,6 +11,8 @@ export type TMultiSelectFilterProps = {
   values: string[];
   /** liste des options */
   items: {value: string; label: string}[];
+  /** fait le rendu d'un item de la liste (optionnel) */
+  renderValue?: (value: string) => ReactElement;
   /** appelée quand les options sélectionnée changent (reçoit les nouvelles valeurs) */
   onChange: (values: string[]) => void;
 };
@@ -22,32 +22,20 @@ export const ITEM_ALL = 'tous';
 const getIsAllSelected = (values?: string[]) =>
   !values?.length || values.indexOf(ITEM_ALL) !== -1;
 
-// positionnement de la liste déroulante
-export const menuOptions: Partial<MenuProps> = {
-  anchorOrigin: {
-    vertical: 'bottom',
-    horizontal: 'left',
-  },
-  transformOrigin: {
-    vertical: 'top',
-    horizontal: 'left',
-  },
-  getContentAnchorEl: null,
-};
-
 /**
  * Affiche un filtre avec une liste déroulante permettant la multi-sélection
  */
 export const MultiSelectFilter = (props: TMultiSelectFilterProps) => {
-  const {className, label, values, items, onChange} = props;
+  const {label, values, items, onChange, renderValue} = props;
   const isAllSelected = getIsAllSelected(values);
+  let labels = new Map<string, string>();
+  items.forEach(({label, value}) => labels.set(value, label));
 
   // le picto est différent si un ou plusieurs filtres sont sélectionnés
   const icon = isAllSelected ? 'fr-fi-filter-line' : 'fr-fi-filter-fill';
 
   // gère la sélection/déselection d'item dans la liste
-  const handleChange = (event: ChangeEvent<{value: unknown}>) => {
-    const newValues = (event?.target.value as string[]) || [];
+  const handleChange = (newValues: string[]) => {
     // évite d'avoir aucun item sélectionné
     if (!newValues.length) {
       if (!isAllSelected) {
@@ -67,35 +55,29 @@ export const MultiSelectFilter = (props: TMultiSelectFilterProps) => {
   };
 
   return (
-    <Select
-      className={`multi-select ${className || ''}`}
-      multiple
-      value={values}
-      variant="outlined"
-      IconComponent={() => null}
-      displayEmpty
-      renderValue={() => (
-        <span className={`${icon} fr-fi--sm`}>&nbsp;{label}</span>
+    <MultiSelectDropdown
+      buttonClassName="flex items-center px-4 py-1 text-left text-sm"
+      values={values}
+      options={items}
+      renderValue={v =>
+        renderValue ? (
+          renderValue(v)
+        ) : (
+          <span
+            className={classNames('pr-4 py-1', {
+              'fr-text-mention--grey': v === ITEM_ALL,
+            })}
+          >
+            {labels.get(v)}
+          </span>
+        )
+      }
+      renderSelection={() => (
+        <span className={`${icon} fr-fi--sm fr-text-label--blue-france`}>
+          &nbsp;{label}
+        </span>
       )}
-      MenuProps={{
-        ...menuOptions,
-        PaperProps: {
-          className: `multi-select ${className || ''}`,
-        },
-      }}
-      onChange={handleChange}
-    >
-      {items.map(({value, label}) => (
-        <MenuItem
-          key={value}
-          value={value}
-          className={
-            values.indexOf(value) !== -1 ? 'fr-fi-check-line' : 'offset-item'
-          }
-        >
-          <span className={`option ${value}`}>{label}</span>
-        </MenuItem>
-      ))}
-    </Select>
+      onSelect={handleChange}
+    />
   );
 };

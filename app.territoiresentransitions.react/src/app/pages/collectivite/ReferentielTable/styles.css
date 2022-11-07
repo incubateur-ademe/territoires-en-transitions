@@ -20,11 +20,14 @@
 .referentiel-table .header .row {
   align-items: center;
   background-color: var(--background-disabled-grey);
+  border-bottom: 1px solid var(--text-disabled-grey);
+  margin-bottom: 0.4rem;
+  padding-right: 0.4rem;
 }
 
 .referentiel-table .header .cell {
   text-align: right;
-  padding: 1rem;
+  padding: 0.4rem 1rem;
   padding-right: 0;
 }
 
