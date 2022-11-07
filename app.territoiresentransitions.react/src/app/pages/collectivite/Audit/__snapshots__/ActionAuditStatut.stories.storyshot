@@ -8,6 +8,7 @@ exports[`Storyshots app/pages/collectivite/Audit/ActionAuditStatut Audite 1`] = 
     className="w-52"
   >
     <button
+      aria-expanded={false}
       aria-label="ouvrir le menu"
       className="flex items-center w-full p-2 -ml-2 text-left text-sm"
       data-test="action-audit-statut"
@@ -19,17 +20,13 @@ exports[`Storyshots app/pages/collectivite/Audit/ActionAuditStatut Audite 1`] = 
       onMouseDown={[Function]}
       onPointerDown={[Function]}
     >
-      <span
-        className="mr-auto"
+      <p
+        className="fr-badge fr-badge--success fr-badge--no-icon"
       >
-        <p
-          className="fr-badge fr-badge--success fr-badge--no-icon"
-        >
-          Audité
-        </p>
-      </span>
+        Audité
+      </p>
       <span
-        className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+        className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
       />
     </button>
   </div>
@@ -44,6 +41,7 @@ exports[`Storyshots app/pages/collectivite/Audit/ActionAuditStatut En Cours 1`] 
     className="w-52"
   >
     <button
+      aria-expanded={false}
       aria-label="ouvrir le menu"
       className="flex items-center w-full p-2 -ml-2 text-left text-sm"
       data-test="action-audit-statut"
@@ -55,17 +53,13 @@ exports[`Storyshots app/pages/collectivite/Audit/ActionAuditStatut En Cours 1`] 
       onMouseDown={[Function]}
       onPointerDown={[Function]}
     >
-      <span
-        className="mr-auto"
+      <p
+        className="fr-badge fr-badge--info fr-badge--no-icon"
       >
-        <p
-          className="fr-badge fr-badge--info fr-badge--no-icon"
-        >
-          Audit en cours
-        </p>
-      </span>
+        Audit en cours
+      </p>
       <span
-        className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+        className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
       />
     </button>
   </div>
@@ -80,6 +74,7 @@ exports[`Storyshots app/pages/collectivite/Audit/ActionAuditStatut Non Audite 1`
     className="w-52"
   >
     <button
+      aria-expanded={false}
       aria-label="ouvrir le menu"
       className="flex items-center w-full p-2 -ml-2 text-left text-sm"
       data-test="action-audit-statut"
@@ -91,17 +86,13 @@ exports[`Storyshots app/pages/collectivite/Audit/ActionAuditStatut Non Audite 1`
       onMouseDown={[Function]}
       onPointerDown={[Function]}
     >
-      <span
-        className="mr-auto"
+      <p
+        className="fr-badge fr-badge--warning fr-badge--no-icon"
       >
-        <p
-          className="fr-badge fr-badge--warning fr-badge--no-icon"
-        >
-          Non audité
-        </p>
-      </span>
+        Non audité
+      </p>
       <span
-        className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+        className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
       />
     </button>
   </div>
