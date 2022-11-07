@@ -1,7 +1,7 @@
 import {ChangeEvent} from 'react';
+import {MenuProps} from '@material-ui/core';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import {menuOptions} from '../MultiSelectFilter';
 import '../MultiSelectFilter/MultiSelectFilter.css';
 import './MultiSelectColumn.css';
 
@@ -22,6 +22,19 @@ export type TMultiSelectColumnProps = {
 
 const getHiddenColsCount = ({values, items}: TMultiSelectColumnProps) =>
   items.filter(item => !('separator' in item)).length - (values?.length || 0);
+
+// positionnement de la liste déroulante
+const menuOptions: Partial<MenuProps> = {
+  anchorOrigin: {
+    vertical: 'bottom',
+    horizontal: 'left',
+  },
+  transformOrigin: {
+    vertical: 'top',
+    horizontal: 'left',
+  },
+  getContentAnchorEl: null,
+};
 
 /**
  * Affiche une liste déroulante permettant la multi-sélection
