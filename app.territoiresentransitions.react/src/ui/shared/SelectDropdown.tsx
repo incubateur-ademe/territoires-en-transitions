@@ -138,7 +138,7 @@ export const MultiSelectDropdown = <T extends string>({
           return (
             <button
               key={v}
-              aria-label={label}
+              data-test={v}
               className={optionButtonClassname}
               onClick={() => {
                 if (values?.includes(v as T)) {
