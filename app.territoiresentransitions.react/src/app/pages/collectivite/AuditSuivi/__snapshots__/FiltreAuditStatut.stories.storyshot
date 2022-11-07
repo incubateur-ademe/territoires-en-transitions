@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots app/pages/collectivite/AuditSuivi/FiltreAuditStatut Selection 1`] = `
+<button
+  aria-expanded={false}
+  aria-label="ouvrir le menu"
+  className="flex items-center px-4 py-1 text-left text-sm"
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onKeyDown={[Function]}
+  onKeyUp={[Function]}
+  onMouseDown={[Function]}
+  onPointerDown={[Function]}
+>
+  <span
+    className="fr-fi-filter-fill fr-fi--sm fr-text-label--blue-france"
+  >
+     
+    Avancement audit
+  </span>
+  <span
+    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+  />
+</button>
+`;
+
+exports[`Storyshots app/pages/collectivite/AuditSuivi/FiltreAuditStatut Tous 1`] = `
+<button
+  aria-expanded={false}
+  aria-label="ouvrir le menu"
+  className="flex items-center px-4 py-1 text-left text-sm"
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onKeyDown={[Function]}
+  onKeyUp={[Function]}
+  onMouseDown={[Function]}
+  onPointerDown={[Function]}
+>
+  <span
+    className="fr-fi-filter-line fr-fi--sm fr-text-label--blue-france"
+  >
+     
+    Avancement audit
+  </span>
+  <span
+    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+  />
+</button>
+`;
