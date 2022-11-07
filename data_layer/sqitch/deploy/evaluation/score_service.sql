@@ -14,6 +14,10 @@ drop trigger after_reponse_proportion_write on reponse_proportion;
 drop view unprocessed_reponse_update_event;
 drop table reponse_update_event;
 
+drop trigger before_collectivite_activation_insert_write_event on private_utilisateur_droit;
+drop function before_collectivite_activation_insert_write_event();
+drop table collectivite_activation_event;
+
 -- ajoute la colonne `payload_timestamp` pour éviter le scénario
 --- où l'écriture des scores ou des conséquences suivant la première payload arrive après la dernière.
 alter table client_scores
