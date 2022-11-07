@@ -4,6 +4,9 @@ BEGIN;
 -- Statuts possibles pour audit
 create type audit_statut as enum ('non_audite', 'en_cours', 'audite');
 
+-- Extension pour avoir des fonctions supplémentaires pour gist
+create extension btree_gist;
+
 -- Table audit
 create table audit
 (
@@ -13,7 +16,13 @@ create table audit
     demande_id      integer references labellisation.demande,
     auditeur        uuid references auth.users,
     date_debut      timestamp with time zone default CURRENT_TIMESTAMP not null,
-    date_fin        timestamp with time zone
+    date_fin        timestamp with time zone,
+    constraint audit_existant exclude using GIST (
+        -- Audit unique pour une collectivité, un référentiel, et une période de temps
+        collectivite_id with =,
+        referentiel with =,
+        tstzrange(date_debut, date_fin) with &&
+    )
 );
 comment on table audit is
     'Les audits par collectivité.';
