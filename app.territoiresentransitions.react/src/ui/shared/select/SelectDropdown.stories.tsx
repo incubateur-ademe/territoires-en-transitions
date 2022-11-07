@@ -1,6 +1,6 @@
 import React from 'react';
 import {useState} from 'react';
-import {SelectDropdown, MultiSelectDropdown} from './SelectDropdown';
+import SelectDropdown from './SelectDropdown';
 
 export default {
   component: SelectDropdown,
@@ -42,40 +42,6 @@ export const OptionSelectionee = () => {
       labels={fakeLabels}
       value={value}
       onSelect={v => setValue(v)}
-    />
-  );
-};
-
-export const MultiSelectAucuneOptionSelectionee = () => {
-  const [values, setValues] = useState(undefined);
-  return (
-    <MultiSelectDropdown
-      labels={fakeLabels}
-      values={values}
-      onSelect={({v}: any) => setValues(v)}
-    />
-  );
-};
-
-export const MultiSelectAvecPlaceholder = () => {
-  const [values, setValues] = useState(undefined);
-  return (
-    <MultiSelectDropdown
-      labels={fakeLabels}
-      values={values}
-      onSelect={({v}: any) => setValues(v)}
-      placeholderText="À renseigner"
-    />
-  );
-};
-
-export const MultiSelectUneOptionSelectionee = () => {
-  const [values, setValues] = useState(['option2']);
-  return (
-    <MultiSelectDropdown
-      labels={fakeLabels}
-      values={values}
-      onSelect={v => setValues(v)}
     />
   );
 };
