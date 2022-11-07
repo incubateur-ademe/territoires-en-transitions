@@ -1,5 +1,4 @@
 import {useState} from 'react';
-import {pick} from 'ramda';
 
 import {MultiSelectDropdown, SelectDropdown} from 'ui/shared/SelectDropdown';
 import {
@@ -259,6 +258,11 @@ const FonctionDropdown = ({
   </div>
 );
 
+const Referentiels = [
+  {label: referentielToName['eci'], value: 'eci'},
+  {label: referentielToName['cae'], value: 'cae'},
+];
+
 const ChampsInterventionDropdown = ({
   values,
   onChange,
@@ -268,7 +272,7 @@ const ChampsInterventionDropdown = ({
 }) => (
   <div data-test="champ_intervention-dropdown">
     <MultiSelectDropdown
-      labels={pick(['eci', 'cae'], referentielToName)}
+      options={Referentiels}
       onSelect={onChange}
       values={values}
       placeholderText="À renseigner"
@@ -338,7 +342,7 @@ const AccesDropdown = ({
             ? ['admin', 'edition', 'lecture', 'remove']
             : ['remove']
         }
-        displayOption={value => (
+        renderOption={value => (
           <AccessDropdownLabel
             option={value}
             isCurrentUser={isCurrentUser}
