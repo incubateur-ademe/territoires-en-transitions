@@ -2,6 +2,18 @@
 
 BEGIN;
 
+select payload_timestamp
+from client_scores
+where false;
+
+select payload_timestamp
+from personnalisation_consequence
+where false;
+
+comment on trigger check_payload_timestamp on client_scores is '';
+comment on trigger check_payload_timestamp on personnalisation_consequence is '';
+select has_function_privilege('prevent_older_results()', 'execute');
+
 comment on trigger after_action_statut_insert on action_statut is '';
 select has_function_privilege('after_action_statut_call_business()', 'execute');
 

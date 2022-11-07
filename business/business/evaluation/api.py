@@ -1,3 +1,4 @@
+from datetime import datetime
 import os
 import json
 from dataclasses import asdict, dataclass
@@ -102,6 +103,7 @@ def supabase_headers() -> dict:
 
 @dataclass
 class DatalayerEvaluationPayload:
+    timestamp: datetime
     collectivite_id: int
     scores_table: str
     referentiel: ActionReferentiel
@@ -110,6 +112,7 @@ class DatalayerEvaluationPayload:
 
 @dataclass
 class DatalayerPersonnalisationPayload:
+    timestamp: datetime
     collectivite_id: int
     consequences_table: str
     payload: PersonnalizePayload
@@ -141,6 +144,7 @@ async def personnalize_then_post_consequences(
                     for action_id, consequence in consequences.items()
                 },
                 "collectivite_id": payload.collectivite_id,
+                "payload_timestamp": payload.timestamp.isoformat(),
             }
         ),
         headers=supabase_headers(),
@@ -165,6 +169,7 @@ async def evaluate_then_post_scores(
                 ],
                 "collectivite_id": payload.collectivite_id,
                 "referentiel": payload.referentiel,
+                "payload_timestamp": payload.timestamp.isoformat(),
             }
         ),
         headers=supabase_headers(),

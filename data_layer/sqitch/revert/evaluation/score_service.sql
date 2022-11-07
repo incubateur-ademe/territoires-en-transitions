@@ -20,6 +20,12 @@ drop view evaluation.service_regles;
 drop view evaluation.service_reponses;
 drop table evaluation.service_configuration;
 
+drop trigger check_payload_timestamp on client_scores;
+drop trigger check_payload_timestamp on personnalisation_consequence;
+drop function prevent_older_results;
+alter table client_scores drop column payload_timestamp;
+alter table personnalisation_consequence drop column payload_timestamp;
+
 -- restore prev version
 --- Restore le trigger pour mettre à jour le contenu suite à l'insertion de json.
 create or replace function
