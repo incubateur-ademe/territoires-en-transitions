@@ -1,5 +1,5 @@
 begin;
-select plan(6);
+select plan(8);
 
 truncate labellisation.action_audit_state;
 truncate audit cascade;
@@ -11,7 +11,7 @@ select test.identify_as('youlou@doudou.com');
 insert into audit(collectivite_id, referentiel, date_debut, date_fin)
 values (1, 'eci', default, null),
        (1, 'cae', default, null),
-       (2, 'eci', now() - interval '2 day', now() - interval '1 day');
+       (2, 'eci', now() - interval '3 day', now() - interval '1 day');
 
 -- Test fonction labellisation.current_audit - audit existant
 select ok(
@@ -85,6 +85,30 @@ select bag_eq(
                           statut
                    from public.action_audit_state;',
                    'La vue devrait contenir les données de la table.'
+           );
+
+/*insert into audit(collectivite_id, referentiel, date_debut, date_fin)
+values (1, 'eci', default, null),
+       (1, 'cae', default, null),
+       (2, 'eci', now() - interval '3 day', now() - interval '1 day');*/
+
+-- Test contrainte audit_existant - creation impossible - nouveau maintenant et audit en cours
+prepare my_thrower_audit_en_cours as
+    insert into audit(collectivite_id, referentiel, date_debut, date_fin)
+    values(1, 'eci', default, null);
+select throws_ok(
+               'my_thrower_audit_en_cours',
+               'conflicting key value violates exclusion constraint "audit_existant"',
+               'On ne devrait pas pouvoir insérer un nouvel audit quand il en existe un en cours'
+           );
+-- Test contrainte audit_existant - creation impossible - nouveau début avant-hier, et audit terminé hier
+prepare my_thrower_audit_existant as
+    insert into audit(collectivite_id, referentiel, date_debut, date_fin)
+    values(2, 'eci', now() - interval '2 day', null);
+select throws_ok(
+               'my_thrower_audit_existant',
+               'conflicting key value violates exclusion constraint "audit_existant"',
+               'On ne devrait pas pouvoir insérer un audit en même temps qu''un audit existant'
            );
 
 rollback;
