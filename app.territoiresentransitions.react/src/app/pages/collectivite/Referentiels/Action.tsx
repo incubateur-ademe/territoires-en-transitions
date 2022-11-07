@@ -129,10 +129,6 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
       <div className="mt-8 mb-4">
         <OrientationQuickNav action={action} />
       </div>
-      <ActionAuditStatut action={action} />
-      <div className="mt-4 mb-8">
-        <ActionAuditDetail action={action} />
-      </div>
       <div className="sticky top-0 z-40 flex flex-row justify-between bg-white pr-8 py-4">
         <div className="flex flex-col w-4/5">
           <ActionReferentielDisplayTitle action={action} />
@@ -140,6 +136,10 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
         <div className="w-1/6">
           <ActionProgressBar actionId={action.id} />
         </div>
+      </div>
+      <ActionAuditStatut action={action} />
+      <div className="mt-4">
+        <ActionAuditDetail action={action} />
       </div>
       <div className="mb-16">
         <div className="flex flex-col w-4/5">
@@ -149,23 +149,24 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
               <Spacer size={2} />
             </>
           )}
-          <div
-            className="htmlContent"
-            dangerouslySetInnerHTML={{
-              __html: DOMPurify.sanitize(
-                addTargetToContentAnchors(action.description ?? '')
-              ),
-            }}
-          />
-          <DescriptionContextAndRessourcesDialogButton action={action} />
-          <Spacer size={1} />
-          <ActionCommentaire action={action} />
         </div>
       </div>
 
       <Tabs activeTab={activeTab} onChange={handleChange}>
         <Tab label="Suivi de l'action">
           <section>
+            <div
+              className="htmlContent"
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(
+                  addTargetToContentAnchors(action.description ?? '')
+                ),
+              }}
+            />
+            <DescriptionContextAndRessourcesDialogButton action={action} />
+            <Spacer size={1} />
+            <ActionCommentaire action={action} />
+
             <div className="flex items-center fr-text--sm fr-m-0">
               Afficher uniquement les actions non-renseignées
               <Switch
