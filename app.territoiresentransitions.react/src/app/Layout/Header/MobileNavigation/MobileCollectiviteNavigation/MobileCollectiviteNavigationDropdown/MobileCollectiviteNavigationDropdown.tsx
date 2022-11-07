@@ -28,6 +28,7 @@ const MobileCollectiviteNavigationDropdown = ({
         {item.isSelectCollectivite && (
           <CollectiviteAccesChip
             acces={item.niveauAcces ?? null}
+            isAuditeur={item.isAuditeur}
             className="ml-4"
           />
         )}
@@ -51,6 +52,7 @@ const MobileCollectiviteNavigationDropdown = ({
                 {e.niveauAcces && (
                   <CollectiviteAccesChip
                     acces={e.niveauAcces}
+                    isAuditeur={e.isAuditeur}
                     className="ml-4"
                   />
                 )}
