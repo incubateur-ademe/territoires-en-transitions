@@ -17,6 +17,12 @@ const fakeLabels: Record<string, string> = {
   option3: 'Option 3',
 };
 
+const options = [
+  {value: 'option1', label: 'Option 1'},
+  {value: 'option2', label: 'Option 2'},
+  {value: 'option3', label: 'Option 3'},
+];
+
 export const AucuneOptionSelectionee = () => {
   const [value, setValue] = useState<undefined | string>(undefined);
   return (
@@ -55,7 +61,7 @@ export const MultiSelectAucuneOptionSelectionee = () => {
   const [values, setValues] = useState<undefined | string[]>(undefined);
   return (
     <MultiSelectDropdown
-      labels={fakeLabels}
+      options={options}
       values={values}
       onSelect={v => setValues(v)}
     />
@@ -66,7 +72,7 @@ export const MultiSelectAvecPlaceholder = () => {
   const [values, setValues] = useState<undefined | string[]>(undefined);
   return (
     <MultiSelectDropdown
-      labels={fakeLabels}
+      options={options}
       values={values}
       onSelect={v => setValues(v)}
       placeholderText="À renseigner"
@@ -78,9 +84,24 @@ export const MultiSelectUneOptionSelectionee = () => {
   const [values, setValues] = useState(['option2']);
   return (
     <MultiSelectDropdown
-      labels={fakeLabels}
+      options={options}
       values={values}
       onSelect={v => setValues(v)}
+    />
+  );
+};
+
+export const MultiSelectRenduPersonnalise = () => {
+  const [values, setValues] = useState(['option2', 'option1']);
+  return (
+    <MultiSelectDropdown
+      options={options}
+      values={values}
+      onSelect={v => setValues(v)}
+      renderValue={v => <span style={{color: 'red'}}>{v}</span>}
+      renderSelection={values => (
+        <span style={{color: 'green'}}>{values?.sort().join(';')}</span>
+      )}
     />
   );
 };
@@ -90,7 +111,7 @@ export const RenduPersonnalise = () => {
     <SelectDropdownCustom
       value="option 1"
       options={['option 1', 'option2']}
-      displayOption={v => <div>rendu personnalisé de {v}</div>}
+      renderOption={v => <div>rendu personnalisé de {v}</div>}
       onSelect={action('onChange')}
     />
   );
