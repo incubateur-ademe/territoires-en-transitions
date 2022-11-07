@@ -186,30 +186,37 @@ export const ActionStatusDropdown = ({actionId}: {actionId: string}) => {
               </li>
             </ul>
           ) : null}
-          <button className="fr-btn fr-btn--sm" onClick={() => setOpened(true)}>
-            Préciser l'avancement
-          </button>
-          <Dialog
-            open={opened}
-            onClose={() => setOpened(false)}
-            maxWidth="sm"
-            fullWidth={true}
-          >
-            <div className="p-7 flex flex-col items-center">
-              <CloseDialogButton setOpened={setOpened} />
-              <h3 className="pb-4">Préciser l’avancement de cette tâche</h3>
-              <div className="w-full">
-                <DetailedScore
-                  avancement={
-                    (avancement_detaille?.length === 3
-                      ? avancement_detaille
-                      : DEFAULT_DETAIL_VALUES) as AvancementValues
-                  }
-                  onSave={handleSaveDetail}
-                />
-              </div>
-            </div>
-          </Dialog>
+          {disabled ? null : (
+            <>
+              <button
+                className="fr-btn fr-btn--sm"
+                onClick={() => setOpened(true)}
+              >
+                Préciser l'avancement
+              </button>
+              <Dialog
+                open={opened}
+                onClose={() => setOpened(false)}
+                maxWidth="sm"
+                fullWidth={true}
+              >
+                <div className="p-7 flex flex-col items-center">
+                  <CloseDialogButton setOpened={setOpened} />
+                  <h3 className="pb-4">Préciser l’avancement de cette tâche</h3>
+                  <div className="w-full">
+                    <DetailedScore
+                      avancement={
+                        (avancement_detaille?.length === 3
+                          ? avancement_detaille
+                          : DEFAULT_DETAIL_VALUES) as AvancementValues
+                      }
+                      onSave={handleSaveDetail}
+                    />
+                  </div>
+                </div>
+              </Dialog>
+            </>
+          )}
         </>
       ) : null}
     </div>
