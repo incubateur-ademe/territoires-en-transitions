@@ -5,7 +5,7 @@ BEGIN;
 create type audit_statut as enum ('non_audite', 'en_cours', 'audite');
 
 -- Extension pour avoir des fonctions supplémentaires pour gist
-create extension btree_gist;
+create extension if not exists btree_gist;
 
 -- Table audit
 create table audit
