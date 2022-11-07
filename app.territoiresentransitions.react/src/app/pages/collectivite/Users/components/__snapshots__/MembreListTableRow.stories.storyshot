@@ -28,6 +28,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow A
       data-test="fonction-dropdown"
     >
       <button
+        aria-expanded={false}
         aria-label="ouvrir le menu"
         className="flex items-center w-full p-2 -ml-2 text-left text-sm"
         onBlur={[Function]}
@@ -44,7 +45,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow A
           Référent·e
         </span>
         <span
-          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
         />
       </button>
     </div>
@@ -56,6 +57,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow A
       data-test="champ_intervention-dropdown"
     >
       <button
+        aria-expanded={false}
         aria-label="ouvrir le menu"
         className="flex items-center w-full p-2 -ml-2 text-left text-sm"
         onBlur={[Function]}
@@ -74,7 +76,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow A
           </span>
         </span>
         <span
-          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
         />
       </button>
     </div>
@@ -101,6 +103,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow A
       data-test="acces-dropdown"
     >
       <button
+        aria-expanded={false}
         aria-label="ouvrir le menu"
         className="flex items-center w-full p-2 -ml-2 text-left text-sm"
         onBlur={[Function]}
@@ -117,7 +120,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow A
           Admin
         </span>
         <span
-          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
         />
       </button>
     </div>
@@ -153,6 +156,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow E
       data-test="fonction-dropdown"
     >
       <button
+        aria-expanded={false}
         aria-label="ouvrir le menu"
         className="flex items-center w-full p-2 -ml-2 text-left text-sm"
         onBlur={[Function]}
@@ -169,7 +173,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow E
           Équipe technique
         </span>
         <span
-          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
         />
       </button>
     </div>
@@ -181,6 +185,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow E
       data-test="champ_intervention-dropdown"
     >
       <button
+        aria-expanded={false}
         aria-label="ouvrir le menu"
         className="flex items-center w-full p-2 -ml-2 text-left text-sm"
         onBlur={[Function]}
@@ -202,7 +207,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow E
           </span>
         </span>
         <span
-          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
         />
       </button>
     </div>
@@ -229,6 +234,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow E
       data-test="acces-dropdown"
     >
       <button
+        aria-expanded={false}
         aria-label="ouvrir le menu"
         className="flex items-center w-full p-2 -ml-2 text-left text-sm"
         onBlur={[Function]}
@@ -245,7 +251,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow E
           Édition
         </span>
         <span
-          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
         />
       </button>
     </div>
@@ -325,6 +331,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow L
       data-test="fonction-dropdown"
     >
       <button
+        aria-expanded={false}
         aria-label="ouvrir le menu"
         className="flex items-center w-full p-2 -ml-2 text-left text-sm"
         onBlur={[Function]}
@@ -341,7 +348,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow L
           Équipe politique
         </span>
         <span
-          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
         />
       </button>
     </div>
@@ -353,6 +360,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow L
       data-test="champ_intervention-dropdown"
     >
       <button
+        aria-expanded={false}
         aria-label="ouvrir le menu"
         className="flex items-center w-full p-2 -ml-2 text-left text-sm"
         onBlur={[Function]}
@@ -371,7 +379,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow L
           </span>
         </span>
         <span
-          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
         />
       </button>
     </div>
@@ -398,6 +406,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow L
       data-test="acces-dropdown"
     >
       <button
+        aria-expanded={false}
         aria-label="ouvrir le menu"
         className="flex items-center w-full p-2 -ml-2 text-left text-sm"
         onBlur={[Function]}
@@ -414,7 +423,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow L
           Lecture
         </span>
         <span
-          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+          className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
         />
       </button>
     </div>

@@ -90,6 +90,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
               data-test="fonction-dropdown"
             >
               <button
+                aria-expanded={false}
                 aria-label="ouvrir le menu"
                 className="flex items-center w-full p-2 -ml-2 text-left text-sm"
                 onBlur={[Function]}
@@ -106,7 +107,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                   Référent·e
                 </span>
                 <span
-                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
                 />
               </button>
             </div>
@@ -118,6 +119,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
               data-test="champ_intervention-dropdown"
             >
               <button
+                aria-expanded={false}
                 aria-label="ouvrir le menu"
                 className="flex items-center w-full p-2 -ml-2 text-left text-sm"
                 onBlur={[Function]}
@@ -136,7 +138,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                   </span>
                 </span>
                 <span
-                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
                 />
               </button>
             </div>
@@ -163,6 +165,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
               data-test="acces-dropdown"
             >
               <button
+                aria-expanded={false}
                 aria-label="ouvrir le menu"
                 className="flex items-center w-full p-2 -ml-2 text-left text-sm"
                 onBlur={[Function]}
@@ -179,7 +182,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                   Admin
                 </span>
                 <span
-                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
                 />
               </button>
             </div>
@@ -212,6 +215,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
               data-test="fonction-dropdown"
             >
               <button
+                aria-expanded={false}
                 aria-label="ouvrir le menu"
                 className="flex items-center w-full p-2 -ml-2 text-left text-sm"
                 onBlur={[Function]}
@@ -228,7 +232,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                   Équipe technique
                 </span>
                 <span
-                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
                 />
               </button>
             </div>
@@ -240,6 +244,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
               data-test="champ_intervention-dropdown"
             >
               <button
+                aria-expanded={false}
                 aria-label="ouvrir le menu"
                 className="flex items-center w-full p-2 -ml-2 text-left text-sm"
                 onBlur={[Function]}
@@ -261,7 +266,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                   </span>
                 </span>
                 <span
-                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
                 />
               </button>
             </div>
@@ -288,6 +293,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
               data-test="acces-dropdown"
             >
               <button
+                aria-expanded={false}
                 aria-label="ouvrir le menu"
                 className="flex items-center w-full p-2 -ml-2 text-left text-sm"
                 onBlur={[Function]}
@@ -304,7 +310,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                   Édition
                 </span>
                 <span
-                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
                 />
               </button>
             </div>
@@ -337,6 +343,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
               data-test="fonction-dropdown"
             >
               <button
+                aria-expanded={false}
                 aria-label="ouvrir le menu"
                 className="flex items-center w-full p-2 -ml-2 text-left text-sm"
                 onBlur={[Function]}
@@ -353,7 +360,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                   Équipe politique
                 </span>
                 <span
-                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
                 />
               </button>
             </div>
@@ -365,6 +372,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
               data-test="champ_intervention-dropdown"
             >
               <button
+                aria-expanded={false}
                 aria-label="ouvrir le menu"
                 className="flex items-center w-full p-2 -ml-2 text-left text-sm"
                 onBlur={[Function]}
@@ -383,7 +391,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                   </span>
                 </span>
                 <span
-                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
                 />
               </button>
             </div>
@@ -410,6 +418,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
               data-test="acces-dropdown"
             >
               <button
+                aria-expanded={false}
                 aria-label="ouvrir le menu"
                 className="flex items-center w-full p-2 -ml-2 text-left text-sm"
                 onBlur={[Function]}
@@ -426,7 +435,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                   Lecture
                 </span>
                 <span
-                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
                 />
               </button>
             </div>
@@ -458,6 +467,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
               data-test="acces-dropdown"
             >
               <button
+                aria-expanded={false}
                 aria-label="ouvrir le menu"
                 className="flex items-center w-full p-2 -ml-2 text-left text-sm"
                 onBlur={[Function]}
@@ -474,7 +484,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                   Lecture
                 </span>
                 <span
-                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
                 />
               </button>
             </div>
@@ -630,6 +640,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
               data-test="fonction-dropdown"
             >
               <button
+                aria-expanded={false}
                 aria-label="ouvrir le menu"
                 className="flex items-center w-full p-2 -ml-2 text-left text-sm"
                 onBlur={[Function]}
@@ -646,7 +657,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
                   Équipe technique
                 </span>
                 <span
-                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
                 />
               </button>
             </div>
@@ -658,6 +669,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
               data-test="champ_intervention-dropdown"
             >
               <button
+                aria-expanded={false}
                 aria-label="ouvrir le menu"
                 className="flex items-center w-full p-2 -ml-2 text-left text-sm"
                 onBlur={[Function]}
@@ -679,7 +691,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
                   </span>
                 </span>
                 <span
-                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
                 />
               </button>
             </div>
@@ -706,6 +718,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
               data-test="acces-dropdown"
             >
               <button
+                aria-expanded={false}
                 aria-label="ouvrir le menu"
                 className="flex items-center w-full p-2 -ml-2 text-left text-sm"
                 onBlur={[Function]}
@@ -722,7 +735,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
                   Édition
                 </span>
                 <span
-                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
                 />
               </button>
             </div>
@@ -1018,6 +1031,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
               data-test="fonction-dropdown"
             >
               <button
+                aria-expanded={false}
                 aria-label="ouvrir le menu"
                 className="flex items-center w-full p-2 -ml-2 text-left text-sm"
                 onBlur={[Function]}
@@ -1034,7 +1048,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
                   Équipe politique
                 </span>
                 <span
-                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
                 />
               </button>
             </div>
@@ -1046,6 +1060,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
               data-test="champ_intervention-dropdown"
             >
               <button
+                aria-expanded={false}
                 aria-label="ouvrir le menu"
                 className="flex items-center w-full p-2 -ml-2 text-left text-sm"
                 onBlur={[Function]}
@@ -1064,7 +1079,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
                   </span>
                 </span>
                 <span
-                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
                 />
               </button>
             </div>
@@ -1091,6 +1106,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
               data-test="acces-dropdown"
             >
               <button
+                aria-expanded={false}
                 aria-label="ouvrir le menu"
                 className="flex items-center w-full p-2 -ml-2 text-left text-sm"
                 onBlur={[Function]}
@@ -1107,7 +1123,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
                   Lecture
                 </span>
                 <span
-                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 "
+                  className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
                 />
               </button>
             </div>
