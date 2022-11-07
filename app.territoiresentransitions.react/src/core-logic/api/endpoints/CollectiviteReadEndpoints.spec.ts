@@ -32,10 +32,12 @@ describe('Owned Collectivite reading endpoint', () => {
       {
         ...collectivite1,
         niveau_acces: 'admin',
+        est_auditeur: false,
       },
       {
         ...collectivite2,
         niveau_acces: 'edition',
+        est_auditeur: false,
       },
     ];
     expect(results.length).toEqual(2);

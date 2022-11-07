@@ -9,6 +9,7 @@ export const fakeCurrentCollectiviteAdmin: CurrentCollectivite = {
   ...fakeCurrentCollectiviteBase,
   niveau_acces: 'admin',
   isAdmin: true,
+  est_auditeur: false,
   readonly: false,
 };
 
@@ -16,5 +17,6 @@ export const fakeCurrentCollectiviteLecture: CurrentCollectivite = {
   ...fakeCurrentCollectiviteBase,
   niveau_acces: 'lecture',
   isAdmin: false,
+  est_auditeur: false,
   readonly: true,
 };

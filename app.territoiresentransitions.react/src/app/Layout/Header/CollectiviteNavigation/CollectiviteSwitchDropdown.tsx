@@ -29,6 +29,7 @@ const CollectiviteSwitchDropdown = ({
           collectiviteId: collectivite.collectivite_id,
         }),
         niveauAcces: collectivite.niveau_acces,
+        est_auditeur: collectivite.est_auditeur,
       };
     });
 
@@ -48,6 +49,7 @@ const CollectiviteSwitchDropdown = ({
             </span>
             <CollectiviteAccesChip
               acces={currentCollectivite.niveau_acces}
+              isAuditeur={currentCollectivite.est_auditeur}
               className="ml-4"
             />
           </div>
@@ -70,6 +72,7 @@ const CollectiviteSwitchDropdown = ({
                       </span>
                       <CollectiviteAccesChip
                         acces={collectivite.niveauAcces}
+                        isAuditeur={collectivite.est_auditeur}
                         className="ml-4"
                       />
                     </Link>
@@ -82,6 +85,7 @@ const CollectiviteSwitchDropdown = ({
           <CollectiviteSwitchDropdownDisplay
             menuLabel={currentCollectivite.nom}
             acces={currentCollectivite.niveau_acces}
+            isAuditeur={currentCollectivite.est_auditeur}
           />
         </DropdownFloater>
       )}
@@ -95,11 +99,13 @@ const CollectiviteSwitchDropdownDisplay = forwardRef(
   (
     {
       acces,
+      isAuditeur,
       menuLabel,
       isOpen,
       ...props
     }: {
       acces: NiveauAcces | null;
+      isAuditeur: boolean;
       menuLabel: string;
       isOpen?: boolean;
     },
@@ -114,7 +120,11 @@ const CollectiviteSwitchDropdownDisplay = forwardRef(
       <div className="w-full mt-auto mb-2 border border-gray-300">
         <button className="flex items-center w-full py-2 pl-4 pr-3 font-bold">
           <span className="mr-auto line-clamp-1">{menuLabel}</span>
-          <CollectiviteAccesChip acces={acces} className="ml-4" />
+          <CollectiviteAccesChip
+            acces={acces}
+            isAuditeur={isAuditeur}
+            className="ml-4"
+          />
           <div
             className={classNames('ml-2 fr-fi-arrow-down-s-line scale-75', {
               'rotate-180': isOpen,
