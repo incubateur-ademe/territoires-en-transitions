@@ -2,12 +2,28 @@
 
 BEGIN;
 
+-- remove deprecated triggers and tables
+drop trigger after_action_statut_insert on action_statut;
+drop function after_action_statut_insert_write_event;
+drop view unprocessed_action_statut_update_event;
+drop table action_statut_update_event;
+
+drop trigger after_reponse_binaire_write on reponse_binaire;
+drop trigger after_reponse_choix_write on reponse_choix;
+drop trigger after_reponse_proportion_write on reponse_proportion;
+drop view unprocessed_reponse_update_event;
+drop table reponse_update_event;
+
 create table evaluation.service_configuration
 (
     evaluation_endpoint       varchar                   not null,
     personnalisation_endpoint varchar                   not null,
     created_at                timestamptz default now() not null
 );
+comment on table evaluation.service_configuration
+    is 'Les URLs des endpoints du service d''évaluation. '
+        'Seul les endpoints de la configuration la plus récente sont appelés. '
+        'Lorsque cette table est vide les endpoints ne sont pas appelés.';
 
 create view evaluation.service_reponses
 as
@@ -40,6 +56,8 @@ select r.collectivite_id,
 from r
 where r.collectivite_id is not null
 group by r.collectivite_id;
+comment on view evaluation.service_reponses
+    is 'Les réponses des collectivité au format JSON, inclues dans les payload envoyées au service.';
 
 create view evaluation.service_regles
 as
@@ -47,14 +65,8 @@ select action_id,
        jsonb_agg(jsonb_build_object('type', pr.type, 'formule', formule)) as regles
 from personnalisation_regle pr
 group by action_id;
-
-alter table client_scores
-    alter column score_created_at set default CURRENT_TIMESTAMP;
-
--- todo remove deprecated triggers
-drop trigger if exists after_action_statut_insert on action_statut;
--- drop function after_action_statut_insert_write_event;
--- drop table action_statut_update_event;
+comment on view evaluation.service_regles
+    is 'Les règles qui s''appliquent aux actions au format JSON, inclues dans les payload envoyées au service.';
 
 create materialized view evaluation.service_referentiel
 as
@@ -85,7 +97,7 @@ select c.referentiel,
 from children c
          left join computed_points p on c.referentiel = p.referentiel;
 comment on materialized view evaluation.service_referentiel
-    is 'Les référentiels au format json pour l''évaluation par le business.'
+    is 'Les référentiels au format JSON pour l''évaluation par le business.'
         'Coûteuse à construire elle est rafraichie lors de la mise à jour des référentiels';
 
 
@@ -142,9 +154,10 @@ select collectivite_id,
 from action_statut
          left join action_relation on action_statut.action_id = action_relation.id
 group by collectivite_id, referentiel;
+comment on view evaluation.service_statuts
+    is 'Les statuts des action au format JSON, inclus dans les payload envoyées au service.';
 
-
-create or replace function
+create function
     evaluation.evaluation_payload(
     in collectivite_id integer,
     in referentiel referentiel,
@@ -173,9 +186,11 @@ from evaluation.service_referentiel as r
          left join consequences c on true
 where r.referentiel = evaluation_payload.referentiel
 $$ language sql stable;
+comment on function evaluation.evaluation_payload
+    is 'Construit la payload pour l''évaluation des statuts.';
 
 
-create or replace function
+create function
     evaluation.evaluate_statuts(
     in collectivite_id integer,
     in referentiel referentiel,
@@ -209,10 +224,13 @@ from configuration -- si il n'y a aucune configuration on ne fait pas d'appel
 $$
     language sql
     security definer
+    -- permet au trigger d'utiliser l'extension http.
     set search_path = public, extensions;
+comment on function evaluation.evaluate_statuts
+    is 'Appel le service d''évaluation pour une collectivité et un référentiel. '
+        'Le service écrira une fois le calcul fait dans la table `scores_table`.';
 
-
-create or replace function
+create function
     evaluation.evaluate_regles(
     in collectivite_id integer,
     in consequences_table varchar,
@@ -274,9 +292,14 @@ $$
     security definer
 -- permet d'utiliser l'extension http depuis un trigger
     set search_path = public, extensions;
+comment on function evaluation.evaluate_regles
+    is 'Appel le service d''évaluation pour une collectivité. '
+        'Le service écrira une fois les conséquences de personnalisation calculée dans la table `consequences_table`. '
+        'Puis le service écrira pour chaque référentiel les scores dans la table `scores_table`.';
 
 
-create or replace function after_reponse_call_business() returns trigger as
+-- Les triggers
+create function after_reponse_call_business() returns trigger as
 $$
 declare
 begin
@@ -307,7 +330,7 @@ create trigger after_reponse_insert
     for each row
 execute procedure after_reponse_call_business();
 
-create or replace function after_action_statut_call_business() returns trigger as
+create function after_action_statut_call_business() returns trigger as
 $$
 declare
     relation action_relation%ROWTYPE;

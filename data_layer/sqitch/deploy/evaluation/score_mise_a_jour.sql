@@ -4,6 +4,8 @@ BEGIN;
 
 create type evaluation.update
 as enum ('statut', 'réponse', 'activation');
+comment on type evaluation.update
+    is 'Le type de changement dans les données qui peut nécessiter une évaluation.';
 
 -- Change le `created_at` autrefois écrit par le business en `modified_at`
 alter table client_scores
@@ -44,6 +46,8 @@ with recent as
 select collectivite_id, latest, type
 from recent
 order by latest desc;
+comment on view evaluation.collectivite_latest_update
+    is 'Les derniers changement des données des collectivités.';
 
 create view evaluation.content_latest_update
 as
@@ -54,6 +58,8 @@ with json_content as (select created_at
                       from referentiel_json)
 select max(created_at) as latest
 from json_content;
+comment on view evaluation.content_latest_update
+    is 'Les derniers changements dans les contenus';
 
 create view evaluation.late_collectivite
 as
@@ -80,6 +86,9 @@ from with_users c
          left join score_latest s on s.collectivite_id = c.id
          left join data_latest d on d.collectivite_id = c.id
          left join evaluation.content_latest_update clu on true;
+comment on view evaluation.late_collectivite
+    is 'Les collectivités avec leur statut `late` '
+        'qui indique que leurs scores sont en retard par rapport aux contenus ou aux modifications apportées au données';
 
 
 create function
@@ -95,6 +104,8 @@ where late
 order by data desc
 limit update_late_collectivite_scores.max;
 $$ language sql security definer;
+comment on function evaluation.update_late_collectivite_scores
+    is 'Appel le service d''évaluation pour un maximum de [max] collectivités en retard.';
 
 
 COMMIT;
