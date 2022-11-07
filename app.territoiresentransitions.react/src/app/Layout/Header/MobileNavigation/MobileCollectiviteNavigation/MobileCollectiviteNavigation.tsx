@@ -33,10 +33,12 @@ const MobileCollectiviteNavigation = ({
       isSelectCollectivite: true,
       menuLabel: currentCollectivite.nom,
       niveauAcces: currentCollectivite.niveau_acces,
+      isAuditeur: currentCollectivite.est_auditeur,
       listPathsAndLabels: collectivitesWithoutCurrentCollectivite.map(
         collectivite => {
           return {
             label: collectivite.nom,
+            isAuditeur: collectivite.est_auditeur,
             path: makeCollectiviteTableauBordUrl({
               collectiviteId: collectivite.collectivite_id,
             }),
@@ -54,6 +56,7 @@ const MobileCollectiviteNavigation = ({
           <span className="mr-auto">{collectivites.menuLabel}</span>
           <CollectiviteAccesChip
             acces={currentCollectivite.niveau_acces}
+            isAuditeur={currentCollectivite.est_auditeur}
             className="ml-4"
           />
         </div>

@@ -10,6 +10,7 @@ export type CurrentCollectivite = {
   nom: string;
   niveau_acces: NiveauAcces | null;
   isAdmin: boolean;
+  est_auditeur: boolean;
   readonly: boolean;
 };
 
@@ -30,6 +31,7 @@ const fetchCurrentCollectivite = async (
         nom: collectivite.nom,
         niveau_acces: collectivite.niveau_acces,
         isAdmin: collectivite.niveau_acces === 'admin',
+        est_auditeur: collectivite.est_auditeur,
         readonly:
           collectivite.niveau_acces === null ||
           collectivite.niveau_acces === 'lecture',

@@ -6,4 +6,5 @@ export interface MesCollectivitesRead {
   collectivite_id: number;
   nom: string;
   niveau_acces: NiveauAcces | null;
+  est_auditeur: boolean;
 }

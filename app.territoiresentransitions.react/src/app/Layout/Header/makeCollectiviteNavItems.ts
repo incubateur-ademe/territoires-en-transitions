@@ -19,10 +19,12 @@ export interface CollectiviteNavSingle {
   path: string;
   alternativeActivePath?: string[];
   niveauAcces?: NiveauAcces | null;
+  isAuditeur?: boolean;
 }
 
 export interface CollectiviteNavDropdown {
   isSelectCollectivite?: boolean;
+  isAuditeur?: boolean;
   displayOnlyToMember?: boolean;
   menuLabel: string;
   niveauAcces?: NiveauAcces | null;
