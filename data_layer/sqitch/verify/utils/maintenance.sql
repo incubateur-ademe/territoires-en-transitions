@@ -2,8 +2,9 @@
 
 BEGIN;
 
-select id, begins_at, ends_at
-from maintenance
-where false;
+select 1 / count(*)
+from pg_publication_tables
+where pubname = 'supabase_realtime'
+  and tablename = 'maintenance';
 
 ROLLBACK;
