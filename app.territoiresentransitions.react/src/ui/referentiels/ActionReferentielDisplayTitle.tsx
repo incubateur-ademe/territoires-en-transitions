@@ -1,4 +1,3 @@
-import {toFixed} from 'utils/toFixed';
 import {ActionType} from 'types/action_referentiel';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {useActionScore} from 'core-logic/hooks/scoreHooks';
@@ -47,11 +46,11 @@ export const ActionPotentiel = ({
 
   if (score === null) return null;
 
-  const potentiel = toFixed(
-    score?.point_potentiel,
-    action.type === 'axe' || action.type === 'sous-axe' ? 0 : 2
-  );
-  const text = score?.point_potentiel ? `${potentiel} points` : '0 point';
+  const potentiel = Number(score.point_potentiel.toFixed(2));
+  const text =
+    potentiel && !isNaN(potentiel)
+      ? `${potentiel.toLocaleString()} points`
+      : '0 point';
   return <span className="font-normal whitespace-nowrap">({text})</span>;
 };
 
