@@ -17,7 +17,7 @@ with
         from ref left join labellisation.current_audit(est_auditeur.col,ref.referentiel) on true
     )
 select coalesce(bool_or(auth.uid()=audit_en_cours.auditeur), false) from audit_en_cours;
-$$ language sql security definer;
+$$ language sql;
 comment on function est_auditeur is
     'Dit si l''utilisateur courant est auditeur sur une collectivité
      Paramètres :
