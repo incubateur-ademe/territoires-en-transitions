@@ -16,6 +16,7 @@ import {ToutesLesCollectivitesPage} from 'app/pages/ToutesLesCollectivites/Toute
 import {ProfilPage} from './pages/Profil/ProfilPage';
 import Layout from 'app/Layout';
 import {AuthProvider} from 'core-logic/api/auth/AuthProvider';
+import {ScoreListenerProvider} from 'core-logic/hooks/useScoreListener';
 
 const theme = createTheme({
   palette: {
@@ -34,33 +35,35 @@ export const App = () => {
         <MuiThemeProvider theme={theme}>
           <ReactQueryDevtools initialIsOpen={false} />
           <Router>
-            <Layout>
-              <E2E />
-              <ScrollToTop />
-              <Toasters />
-              <Redirector />
-              <Switch>
-                <Route exact path="/">
-                  <Home />
-                </Route>
-                <Route path={authBasePath}>
-                  <AuthRoutes />
-                </Route>
-                <Route path={profilPath}>
-                  <ProfilPage />
-                </Route>
+            <ScoreListenerProvider>
+              <Layout>
+                <E2E />
+                <ScrollToTop />
+                <Toasters />
+                <Redirector />
+                <Switch>
+                  <Route exact path="/">
+                    <Home />
+                  </Route>
+                  <Route path={authBasePath}>
+                    <AuthRoutes />
+                  </Route>
+                  <Route path={profilPath}>
+                    <ProfilPage />
+                  </Route>
 
-                <Route path={allCollectivitesPath}>
-                  <ToutesLesCollectivitesPage />
-                </Route>
-                <Route path={'/collectivite/:collectiviteId'}>
-                  <CollectiviteRoutes />
-                </Route>
-                <Route path={'/statistics'}>
-                  <StatisticsPage />
-                </Route>
-              </Switch>
-            </Layout>
+                  <Route path={allCollectivitesPath}>
+                    <ToutesLesCollectivitesPage />
+                  </Route>
+                  <Route path={'/collectivite/:collectiviteId'}>
+                    <CollectiviteRoutes />
+                  </Route>
+                  <Route path={'/statistics'}>
+                    <StatisticsPage />
+                  </Route>
+                </Switch>
+              </Layout>
+            </ScoreListenerProvider>
           </Router>
         </MuiThemeProvider>
       </AuthProvider>
