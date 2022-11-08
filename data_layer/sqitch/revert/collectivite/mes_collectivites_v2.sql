@@ -3,6 +3,8 @@
 
 BEGIN;
 
+drop view mes_collectivites;
+drop view collectivite_niveau_acces;
 drop function if exists est_auditeur;
 
 -- permet au client d'afficher les noms des collectivités et de les filtrer sur les critères de droits.
