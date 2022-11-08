@@ -116,3 +116,4 @@ referentiel/action_discussion 2022-10-17T14:31:37Z Florian <florian@derfurth.com
 
 labellisation/audit 2022-10-21T14:59:44Z Amandine <contact@jacquelinamandine.fr> # Permettre à l'auditeur de marquer les actions audités
 collectivite/mes_collectivites_v2 [collectivite/mes_collectivites_v2@v1.9.0] 2022-11-08T09:20:51Z Amandine Jacquelin <conta@LanceLibre> # Ajout de la colonne est_auditeur dans la vue mes_collectivites
+utils/maintenance [utils/maintenance@v1.9.0] 2022-11-08T17:29:14Z Florian <florian@derfurth.com> # Ajoute la table maintenance à la publication realtime

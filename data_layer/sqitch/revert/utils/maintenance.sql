@@ -1,8 +1,7 @@
--- Revert tet:utils/maintenance from pg
+-- Deploy tet:utils/maintenance to pg
 
 BEGIN;
 
-drop view ongoing_maintenance;
-drop table maintenance; 
+alter publication supabase_realtime drop table maintenance;
 
 COMMIT;
