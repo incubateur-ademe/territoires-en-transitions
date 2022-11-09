@@ -1,7 +1,6 @@
 import {Link} from 'react-router-dom';
 import {useCollectiviteId, useReferentielId} from 'core-logic/hooks/params';
 import {referentielToName} from 'app/labels';
-import {CriteresLabellisation} from './CriteresLabellisation';
 import {usePreuves} from 'ui/shared/preuves/Bibliotheque/usePreuves';
 import {useParcoursLabellisation} from './useParcoursLabellisation';
 import {Header} from './Header';
@@ -11,6 +10,8 @@ import {
   ReferentielParamOption,
 } from 'app/paths';
 import {TPreuveLabellisation} from 'ui/shared/preuves/Bibliotheque/types';
+import {LabellisationTabs} from './LabellisationTabs';
+import {CriteresLabellisation} from './CriteresLabellisation';
 
 const ParcoursLabellisation = () => {
   const collectiviteId = useCollectiviteId();
@@ -71,12 +72,14 @@ const ParcoursLabellisation = () => {
         className="fr-container mt-9 mb-16"
         data-test={`labellisation-${parcours.referentiel}`}
       >
-        <CriteresLabellisation
-          collectiviteId={collectiviteId}
-          parcours={parcours}
-          demande={demande}
-          preuves={preuves}
-        />
+        <LabellisationTabs>
+          <CriteresLabellisation
+            collectiviteId={collectiviteId}
+            parcours={parcours}
+            demande={demande}
+            preuves={preuves}
+          />
+        </LabellisationTabs>
         {/*parcours.referentiel === 'cae' ? (
           <>
             <h2 className="fr-mt-4w">Calendrier de labellisation</h2>
