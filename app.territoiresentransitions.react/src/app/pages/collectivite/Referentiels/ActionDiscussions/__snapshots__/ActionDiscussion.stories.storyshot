@@ -1,0 +1,250 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/ActionDiscussion Avec Commentaires Masques 1`] = `
+<div
+  className="border-b border-gray-200"
+>
+  <div
+    className="p-4 border-l-4 border-yellow-400"
+  >
+    <div>
+      <div
+        className="flex items-start mb-4"
+      >
+        <div
+          className="grow mr-4"
+        >
+          <div
+            className="flex items-center mb-1"
+          >
+            <span
+              className="h-5 w-5 flex items-center justify-center text-sm leading-none rounded-full border border-gray-900"
+            >
+              Y
+            </span>
+            <span
+              className="mx-2 font-bold text-sm"
+            >
+              Yolo Dodo
+            </span>
+            <span
+              className="text-gray-400 text-sm"
+            >
+              25 octobre 2022
+            </span>
+          </div>
+          <div
+            className="text-sm whitespace-pre-wrap"
+          >
+            Bonjour le monde, ceci est un message.
+          </div>
+        </div>
+        <div
+          className="flex items-center"
+        >
+          <div
+            className="shrink-0 mr-1 border border-gray-200"
+          >
+            <button
+              className="py-1 px-2 text-sm text-bf500 hover:bg-gray-100"
+              onClick={[Function]}
+            >
+              Fermer
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        className="inline-flex mb-4 border-b border-bf500"
+      >
+        <button
+          className="flex text-sm text-bf500 hover:!bg-none"
+          onClick={[Function]}
+        >
+          2
+           autre
+          s
+           réponse
+          s
+          <div
+            className="fr-fi-arrow-down-s-line scale-75"
+          />
+        </button>
+      </div>
+      <div
+        className="flex items-start mb-4"
+      >
+        <div
+          className="grow mr-4"
+        >
+          <div
+            className="flex items-center mb-1"
+          >
+            <span
+              className="h-5 w-5 flex items-center justify-center text-sm leading-none rounded-full border border-gray-900"
+            >
+              Y
+            </span>
+            <span
+              className="mx-2 font-bold text-sm"
+            >
+              Yolo Dodo
+            </span>
+            <span
+              className="text-gray-400 text-sm"
+            >
+              25 octobre 2022
+            </span>
+          </div>
+          <div
+            className="text-sm whitespace-pre-wrap"
+          >
+            Le dernier commentaire est visible
+          </div>
+        </div>
+        <div
+          className="flex items-center"
+        />
+      </div>
+    </div>
+    <div
+      className="flex rounded-lg bg-white border border-white"
+    >
+      <textarea
+        className="w-full py-2 px-3 text-sm cursor-text rounded-lg outline !outline-1 outline-gray-300 focus:outline-blue-500"
+        onChange={[Function]}
+        placeholder="Répondre..."
+        value=""
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/ActionDiscussion Fermee 1`] = `
+<div
+  className="border-b border-gray-200"
+>
+  <div
+    className="p-4 border-l-4 border-yellow-400"
+  >
+    <div>
+      <div
+        className="flex items-start mb-4"
+      >
+        <div
+          className="grow mr-4"
+        >
+          <div
+            className="flex items-center mb-1"
+          >
+            <span
+              className="h-5 w-5 flex items-center justify-center text-sm leading-none rounded-full border border-gray-900"
+            >
+              Y
+            </span>
+            <span
+              className="mx-2 font-bold text-sm"
+            >
+              Yolo Dodo
+            </span>
+            <span
+              className="text-gray-400 text-sm"
+            >
+              25 octobre 2022
+            </span>
+          </div>
+          <div
+            className="text-sm whitespace-pre-wrap"
+          >
+            Bonjour le monde, ceci est un message.
+          </div>
+        </div>
+        <div
+          className="flex items-center"
+        >
+          <div
+            className="shrink-0 mr-1 border border-gray-200"
+          >
+            <button
+              className="py-1 px-2 text-sm text-bf500 hover:bg-gray-100"
+              onClick={[Function]}
+            >
+              Rouvrir
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/ActionDiscussion Ouverte 1`] = `
+<div
+  className="border-b border-gray-200"
+>
+  <div
+    className="p-4 border-l-4 border-yellow-400"
+  >
+    <div>
+      <div
+        className="flex items-start mb-4"
+      >
+        <div
+          className="grow mr-4"
+        >
+          <div
+            className="flex items-center mb-1"
+          >
+            <span
+              className="h-5 w-5 flex items-center justify-center text-sm leading-none rounded-full border border-gray-900"
+            >
+              Y
+            </span>
+            <span
+              className="mx-2 font-bold text-sm"
+            >
+              Yolo Dodo
+            </span>
+            <span
+              className="text-gray-400 text-sm"
+            >
+              25 octobre 2022
+            </span>
+          </div>
+          <div
+            className="text-sm whitespace-pre-wrap"
+          >
+            Bonjour le monde, ceci est un message.
+          </div>
+        </div>
+        <div
+          className="flex items-center"
+        >
+          <div
+            className="shrink-0 mr-1 border border-gray-200"
+          >
+            <button
+              className="py-1 px-2 text-sm text-bf500 hover:bg-gray-100"
+              onClick={[Function]}
+            >
+              Fermer
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="flex rounded-lg bg-white border border-white"
+    >
+      <textarea
+        className="w-full py-2 px-3 text-sm cursor-text rounded-lg outline !outline-1 outline-gray-300 focus:outline-blue-500"
+        onChange={[Function]}
+        placeholder="Répondre..."
+        value=""
+      />
+    </div>
+  </div>
+</div>
+`;
