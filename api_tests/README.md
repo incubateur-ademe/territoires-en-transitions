@@ -20,5 +20,6 @@ La commande se décompose ainsi :
 - `--location`: le `location.href` dont le client Supabase a besoin
 
 ### Variables d'environnement
+
 - `SUPABASE_URL`: l'URL de Supabase
-- `SUPABASE_KEY`: la clé **anon** de l'API 
+- `SUPABASE_KEY`: la clé **anon** de l'API
