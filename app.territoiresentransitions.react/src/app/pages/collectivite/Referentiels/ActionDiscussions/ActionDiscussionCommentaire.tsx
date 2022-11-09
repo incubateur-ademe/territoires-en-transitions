@@ -59,7 +59,7 @@ const ActionDiscussionCommentaire = ({commentaire, discussion}: Props) => {
         <div className="text-sm whitespace-pre-wrap">{commentaire.message}</div>
       </div>
       <div className="flex items-center">
-        {user && user.id === discussion?.created_by && (
+        {discussion && (
           <div className="shrink-0 mr-1 border border-gray-200">
             <button
               onClick={() =>
