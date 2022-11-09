@@ -2,6 +2,11 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {ITEM_ALL} from 'ui/shared/MultiSelectFilter';
 import {TFilters} from './filters';
 import {TActionAuditStatut} from '../Audit/types';
+import {ActionReferentiel} from '../ReferentielTable/useReferentiel';
+
+// un sous-ensemble des champs pour alimenter notre table
+export type TAuditSuiviRow = ActionReferentiel &
+  Pick<TActionAuditStatut, 'action_id' | 'statut' | 'ordre_du_jour'>;
 
 // toutes les entrées d'un référentiel pour une collectivité et des filtres donnés
 export const fetchRows = async (
@@ -11,7 +16,7 @@ export const fetchRows = async (
 ) => {
   // la requête
   const query = supabaseClient
-    .from<TActionAuditStatut>('action_audit_state')
+    .from<TAuditSuiviRow>('action_audit_state')
     .select('action_id,statut,ordre_du_jour')
     .match({collectivite_id, referentiel});
 
@@ -31,7 +36,7 @@ export const fetchRows = async (
     throw new Error(error.message);
   }
 
-  const rows = data as TActionAuditStatut[];
+  const rows = data as TAuditSuiviRow[];
 
   return {rows, count};
 };
