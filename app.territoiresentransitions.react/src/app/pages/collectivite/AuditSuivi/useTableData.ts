@@ -2,11 +2,8 @@ import {useQuery} from 'react-query';
 import {TableOptions} from 'react-table';
 import {useCollectiviteId, useReferentielId} from 'core-logic/hooks/params';
 import {useSearchParams} from 'core-logic/hooks/query';
-import {
-  ActionReferentiel,
-  useReferentiel,
-} from '../ReferentielTable/useReferentiel';
-import {fetchRows} from './queries';
+import {useReferentiel} from '../ReferentielTable/useReferentiel';
+import {fetchRows, TAuditSuiviRow} from './queries';
 import {initialFilters, nameToShortNames, TFilters} from './filters';
 
 export type UseTableData = () => TableData;
@@ -14,7 +11,7 @@ export type UseTableData = () => TableData;
 export type TableData = {
   /** données à passer à useTable */
   table: Pick<
-    TableOptions<ActionReferentiel>,
+    TableOptions<TAuditSuiviRow>,
     'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded'
   >;
   /** Indique que le chargement des données est en cours */
