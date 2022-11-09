@@ -20,28 +20,32 @@ const ChangeVueDropdown = ({
         render={({close}) => (
           <nav data-test="ActionDiscussionsChangeVueMenu">
             <ul className="m-0 p-0">
-              <li className="fr-nav__item pb-0 border-b border-gray-200">
-                <button
-                  className="fr-nav__link !py-2 before:!hidden !shadow-none"
-                  onClick={() => {
-                    changeVue('ouvert');
-                    close();
-                  }}
-                >
-                  <span className="px-3">Ouverts</span>
-                </button>
-              </li>
-              <li className="fr-nav__item pb-0 border-b border-gray-200">
-                <button
-                  className="fr-nav__link !py-2 before:!hidden !shadow-none"
-                  onClick={() => {
-                    changeVue('ferme');
-                    close();
-                  }}
-                >
-                  <span className="px-3">Fermés</span>
-                </button>
-              </li>
+              {vue === 'ferme' && (
+                <li className="fr-nav__item pb-0 border-b border-gray-200">
+                  <button
+                    className="fr-nav__link !py-2 before:!hidden !shadow-none"
+                    onClick={() => {
+                      changeVue('ouvert');
+                      close();
+                    }}
+                  >
+                    <span className="px-3">Ouverts</span>
+                  </button>
+                </li>
+              )}
+              {vue === 'ouvert' && (
+                <li className="fr-nav__item pb-0 border-b border-gray-200">
+                  <button
+                    className="fr-nav__link !py-2 before:!hidden !shadow-none"
+                    onClick={() => {
+                      changeVue('ferme');
+                      close();
+                    }}
+                  >
+                    <span className="px-3">Fermés</span>
+                  </button>
+                </li>
+              )}
             </ul>
           </nav>
         )}
@@ -69,7 +73,7 @@ const ChangeVueDropdownButtonDisplayed = forwardRef(
     <div ref={ref} className="ml-auto border border-gray-200" {...props}>
       <button
         data-test="ActionDiscussionsChangeVue"
-        className="flex items-center py-0.5 pl-2 pr-1 text-sm capitalize hover:bg-gray-100"
+        className="w-24 flex items-center justify-between py-0.5 pl-2 pr-1 text-sm capitalize hover:bg-gray-100"
       >
         {vue === 'ouvert' && 'Ouverts'}
         {vue === 'ferme' && 'Fermés'}{' '}
