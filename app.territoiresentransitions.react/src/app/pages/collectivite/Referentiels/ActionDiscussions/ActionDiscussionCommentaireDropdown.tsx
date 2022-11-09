@@ -1,4 +1,5 @@
 import {forwardRef, Ref} from 'react';
+import IconThreeDotHorizontal from 'ui/icons/IconThreeDotHorizontal';
 
 import DropdownFloater from 'ui/shared/floating-ui/DropdownFloater';
 import {useDeleteCommentaireFromDiscussion} from './data/useDeleteCommentaireFromDiscussion';
@@ -55,9 +56,9 @@ const ActionDiscussionCommentaireDropdownButtonDisplayed = forwardRef(
     <div ref={ref} className="shrink-0 flex border border-gray-200" {...props}>
       <button
         data-test="ActionDiscussionCommentaireMenuButton"
-        className="p-0.5 text-bf500"
+        className="p-1 text-bf500"
       >
-        <span className="block fr-fi-menu-fill scale-75" />
+        <IconThreeDotHorizontal className="w-5 h-5" />
       </button>
     </div>
   )
