@@ -65,7 +65,7 @@ const ActionDiscussionCommentaire = ({commentaire, discussion}: Props) => {
               onClick={() =>
                 handleUpdateDiscussionStatus(discussion.id, discussion.status)
               }
-              className="py-1 px-2 text-sm hover:bg-gray-100"
+              className="py-1 px-2 text-sm text-bf500 hover:bg-gray-100"
             >
               {discussion.status === 'ouvert' && 'Fermer'}
               {discussion.status === 'ferme' && 'Rouvrir'}

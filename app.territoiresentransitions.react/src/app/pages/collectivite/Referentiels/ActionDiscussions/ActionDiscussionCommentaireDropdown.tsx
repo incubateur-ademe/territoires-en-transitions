@@ -58,7 +58,7 @@ const ActionDiscussionCommentaireDropdownButtonDisplayed = forwardRef(
         data-test="ActionDiscussionCommentaireMenuButton"
         className="p-1 text-bf500"
       >
-        <IconThreeDotHorizontal className="w-5 h-5" />
+        <IconThreeDotHorizontal className="w-5 h-5 fill-bf500" />
       </button>
     </div>
   )
