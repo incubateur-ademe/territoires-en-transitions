@@ -2,7 +2,6 @@ import {RealtimeSubscription} from '@supabase/realtime-js';
 import {createContext, ReactNode, useContext, useRef} from 'react';
 import {useQueryClient} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
 import {Referentiel} from 'types/litterals';
 import {ActionScore} from 'types/ClientScore';
 
@@ -54,13 +53,7 @@ export const useScoreListener = () => useContext(ScoreListenerContext);
 export const ScoreListenerProvider = ({children}: {children: ReactNode}) => {
   const contextDataRef = useRef<TContextData>(null);
 
-  const collectiviteId = useCollectiviteId();
   const queryClient = useQueryClient();
-
-  // recharge les données après un changement
-  const refetch = () => {
-    queryClient.invalidateQueries(['client_scores', collectiviteId]);
-  };
 
   // souscrit aux changements de client_scores pour cette collectivite
   const subscribe = (collectiviteId: number | null): void => {
@@ -68,6 +61,11 @@ export const ScoreListenerProvider = ({children}: {children: ReactNode}) => {
       collectiviteId &&
       shouldSubscribe(contextDataRef.current, collectiviteId)
     ) {
+      // recharge les données après un changement
+      const refetch = () => {
+        queryClient.invalidateQueries(['client_scores', collectiviteId]);
+      };
+
       contextDataRef.current = {
         collectiviteId,
         subscription: supabaseClient
