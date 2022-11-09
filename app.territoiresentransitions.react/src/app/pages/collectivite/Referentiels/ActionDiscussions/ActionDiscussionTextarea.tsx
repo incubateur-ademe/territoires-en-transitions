@@ -20,10 +20,10 @@ const ActionDiscussionTextarea = ({
   const textareaRef = useAutoSizeTextarea(commentaire, '2.25rem');
 
   return (
-    <div className="flex rounded-lg bg-white border border-gray-300 focus:border-blue-300">
+    <div className="flex rounded-lg bg-white border border-white">
       <textarea
         ref={textareaRef}
-        className="w-full py-2 px-3 text-sm cursor-text"
+        className="w-full py-2 px-3 text-sm cursor-text rounded-lg outline !outline-1 outline-gray-300 focus:outline-blue-500"
         placeholder={placeholder}
         onChange={textAreaChange}
         value={commentaire}
