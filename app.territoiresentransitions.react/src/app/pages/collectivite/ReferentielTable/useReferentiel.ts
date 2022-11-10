@@ -6,7 +6,7 @@ import {IActionStatutsRead} from 'generated/dataLayer/action_statuts_read';
 // les informations du référentiel à précharger
 export type ActionReferentiel = Pick<
   IActionStatutsRead,
-  'action_id' | 'identifiant' | 'nom' | 'depth' | 'have_children'
+  'action_id' | 'identifiant' | 'nom' | 'depth' | 'have_children' | 'type'
 >;
 
 type IAction = Pick<IActionStatutsRead, 'action_id'>;
@@ -141,7 +141,7 @@ const fetchActionsReferentiel = async (
   // la requête
   const query = supabaseClient
     .from<IActionStatutsRead>('action_statuts')
-    .select('action_id,identifiant,have_children,nom,depth')
+    .select('action_id,identifiant,have_children,nom,depth,type')
     .match({referentiel, collectivite_id})
     .gt('depth', 0);
 
