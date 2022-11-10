@@ -145,8 +145,8 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
         <div className="flex flex-col w-4/5">
           {action.have_questions && (
             <>
-              <PersoPotentiel actionDef={action} />
               <Spacer size={2} />
+              <PersoPotentiel actionDef={action} />
             </>
           )}
         </div>
