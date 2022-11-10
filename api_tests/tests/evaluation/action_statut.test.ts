@@ -4,8 +4,8 @@ import {
   assertObjectMatch,
 } from "https://deno.land/std/testing/asserts.ts";
 import { delay } from "https://deno.land/std@0.163.0/async/delay.ts";
-import { supabase } from "../../lib/client.ts";
-import { fakeCredentials } from "../../lib/auth.ts";
+import { supabase } from "../../lib/supabase.ts";
+import { signIn, signOut } from "../../lib/auth.ts";
 import { ActionScore, ClientScores } from "../../lib/types/clientScores.ts";
 import { ActionStatut } from "../../lib/types/actionStatut.ts";
 import { Avancement } from "../../lib/types/avancement.ts";
@@ -16,9 +16,8 @@ function scoreById(clientScores: ClientScores, actionId: string): ActionScore {
   )[0]!;
 }
 
-Deno.test("Authentification et DCP", async () => {
-  const credentials = fakeCredentials("yolododo");
-  await supabase.auth.signIn(credentials);
+Deno.test("Calcul des scores après insertion des statuts", async () => {
+  await signIn("yolododo");
 
   const statut = {
     concerne: true,
@@ -70,5 +69,5 @@ Deno.test("Authentification et DCP", async () => {
   assertEquals(actionScores2.point_fait, actionScores2.point_potentiel);
 
   // on se déconnecte pour libérer les ressources
-  await supabase.auth.signOut();
+  await signOut();
 });

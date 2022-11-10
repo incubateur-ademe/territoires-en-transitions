@@ -1,5 +1,5 @@
-import { supabase } from "../lib/client.ts";
-import { fakeCredentials } from "../lib/auth.ts";
+import { supabase } from "../lib/supabase.ts";
+import { fakeCredentials, signIn, signOut } from "../lib/auth.ts";
 import { assertEquals } from "https://deno.land/std@0.163.0/testing/asserts.ts";
 
 Deno.test("Génération des login/mdp de test", () => {
@@ -15,15 +15,14 @@ Deno.test("Génération des login/mdp de test", () => {
 });
 
 Deno.test("Authentification et DCP", async () => {
-  const credentials = fakeCredentials("yolododo");
-
-  const signIn = await supabase.auth.signIn(credentials);
-  assertEquals(signIn.data!.user!.email, credentials.email);
+  await signIn("yolododo");
 
   const dcps = await supabase.from("dcp").select();
+
+  // Yolododo ne peut récupérer que ses propres DCP.
   assertEquals(dcps.data!.length, 1);
-  assertEquals(dcps.data![0].email, credentials.email);
+  assertEquals(dcps.data![0].email, "yolo@dodo.com");
 
   // on se déconnecte pour libérer les ressources
-  await supabase.auth.signOut();
+  await signOut();
 });
