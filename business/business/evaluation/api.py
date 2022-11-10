@@ -46,7 +46,6 @@ class EvaluatePayload:
 
 @router.post("/evaluation/")
 async def evaluate(payload: EvaluatePayload) -> list[ActionScore]:
-    # TODO : cache this tree ?
     point_tree_referentiel = ActionPointTree(
         payload.referentiel.computed_points,
         payload.referentiel.children,
@@ -151,8 +150,15 @@ async def personnalize_then_post_consequences(
     )
     print(f'{response.url} replied with a code {response.status_code} in {response.elapsed}')
 
-    if response.status_code == 201:
+    # si les personnalisations sont insérées ou si des plus récentes existent
+    if response.status_code == 201 or response.status_code == 400:
         for evaluation_payload in payload.evaluation_payloads:
+            # reprend les conséquences calculées pour le référentiel de la payload
+            evaluation_payload.payload.consequences = {
+                action_id: consequence
+                for action_id, consequence in consequences.items()
+                if action_id.startswith(evaluation_payload.referentiel)
+            }
             await evaluate_then_post_scores(evaluation_payload)
 
 

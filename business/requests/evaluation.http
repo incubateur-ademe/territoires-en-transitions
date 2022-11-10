@@ -16,7 +16,7 @@ Content-Type: application/json
   ],
   "consequences": {
   },
-  "evaluation_referentiel": {
+  "referentiel": {
     "action_level": 2,
     "children": [
       {
