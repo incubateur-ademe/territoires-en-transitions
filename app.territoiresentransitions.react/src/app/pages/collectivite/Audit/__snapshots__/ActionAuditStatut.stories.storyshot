@@ -21,7 +21,7 @@ exports[`Storyshots app/pages/collectivite/Audit/ActionAuditStatut Audite 1`] = 
       onPointerDown={[Function]}
     >
       <p
-        className="fr-badge fr-badge--success fr-badge--no-icon"
+        className="fr-badge fr-badge--success fr-badge--no-icon fr-text--xs"
       >
         Audité
       </p>
@@ -54,7 +54,7 @@ exports[`Storyshots app/pages/collectivite/Audit/ActionAuditStatut En Cours 1`] 
       onPointerDown={[Function]}
     >
       <p
-        className="fr-badge fr-badge--info fr-badge--no-icon"
+        className="fr-badge fr-badge--info fr-badge--no-icon fr-text--xs"
       >
         Audit en cours
       </p>
@@ -87,7 +87,7 @@ exports[`Storyshots app/pages/collectivite/Audit/ActionAuditStatut Non Audite 1`
       onPointerDown={[Function]}
     >
       <p
-        className="fr-badge fr-badge--warning fr-badge--no-icon"
+        className="fr-badge fr-badge--warning fr-badge--no-icon fr-text--xs"
       >
         Non audité
       </p>
@@ -108,7 +108,7 @@ exports[`Storyshots app/pages/collectivite/Audit/ActionAuditStatut Read Only 1`]
     data-test="action-audit-statut-ro"
   >
     <p
-      className="fr-badge fr-badge--success fr-badge--no-icon"
+      className="fr-badge fr-badge--success fr-badge--no-icon fr-text--xs"
     >
       Audité
     </p>
