@@ -16,7 +16,7 @@ export const statutToOption: Record<
 export const BadgeAuditStatut = ({statut}: {statut: TAuditStatut}) => {
   const {label, badge} = statutToOption[statut];
   return (
-    <Badge status={badge} className="fr-badge--no-icon">
+    <Badge status={badge} className="fr-badge--no-icon fr-text--xs">
       {label}
     </Badge>
   );
