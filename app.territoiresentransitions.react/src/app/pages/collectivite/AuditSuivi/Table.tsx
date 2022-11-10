@@ -42,7 +42,7 @@ const COLUMNS: TColumn[] = [
     accessor: 'statut',
     Header: FiltreAuditStatut,
     Cell: CellAuditStatut,
-    width: 160,
+    width: 165,
   },
 ];
 
