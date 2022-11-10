@@ -101,11 +101,18 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
+declare global {
+  interface Window {
+    $crisp: {
+      push: (args: [action: string, method: string, value?: string[]]) => void;
+    };
+  }
+}
+
 // affecte les données de l'utilisateur connecté à la chatbox
 const setCrispUserData = (userData: UserData | null) => {
   if ('$crisp' in window && userData) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const {$crisp} = window as any;
+    const {$crisp} = window;
     const {nom, prenom, email} = userData;
 
     if (nom && prenom) {
@@ -113,15 +120,16 @@ const setCrispUserData = (userData: UserData | null) => {
     }
 
     // enregistre l'email
-    $crisp.push(['set', 'user:email', [email]]);
+    if (email) {
+      $crisp.push(['set', 'user:email', [email]]);
+    }
   }
 };
 
 // ré-initialise les données de la chatbox (appelée à la déconnexion)
 const clearCrispUserData = () => {
   if ('$crisp' in window) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const {$crisp} = window as any;
+    const {$crisp} = window;
     $crisp.push(['do', 'session:reset']);
   }
 };
