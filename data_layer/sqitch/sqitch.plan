@@ -118,3 +118,5 @@ labellisation/audit 2022-10-21T14:59:44Z Amandine <contact@jacquelinamandine.fr>
 collectivite/mes_collectivites_v2 [collectivite/mes_collectivites_v2@v1.9.0] 2022-11-08T09:20:51Z Amandine Jacquelin <conta@LanceLibre> # Ajout de la colonne est_auditeur dans la vue mes_collectivites
 utils/maintenance [utils/maintenance@v1.9.0] 2022-11-08T17:29:14Z Florian <florian@derfurth.com> # Ajoute la table maintenance à la publication realtime
 @v1.10.0 2022-11-09T14:11:36Z Florian <florian@derfurth.com> # Audit lot 1
+
+labellisation/suivi_audit 2022-11-10T15:17:25Z Florian <florian@derfurth.com> # La vue du suivi de l'audit
