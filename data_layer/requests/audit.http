@@ -66,3 +66,8 @@ Content-Type: application/json
         client.assert(response.status === 201, "Response status is not 201");
     });
 %}
+
+### La vue de suivi de l'audit
+GET {{api}}/rest/v1/suivi_audit?collectivite_id=eq.1&referentiel=eq.eci
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
