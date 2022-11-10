@@ -1,4 +1,5 @@
 import { createClient } from "https://deno.land/x/supabase/mod.ts";
+import "https://deno.land/x/dotenv/load.ts";
 
 /**
  * Supabase client
