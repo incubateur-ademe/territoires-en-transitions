@@ -8,9 +8,11 @@ type TCellProps = CellProps<TAuditSuiviRow>;
  * Affiche une cellule contenant le statut d'audit d'une action
  */
 export const CellAuditStatut = (props: TCellProps) => {
-  const {value} = props;
+  const {value, row} = props;
 
-  return <BadgeAuditStatut statut={value} />;
+  return row.original.type === 'action' ? (
+    <BadgeAuditStatut statut={value || 'non_audite'} />
+  ) : null;
 };
 
 /**
@@ -19,5 +21,7 @@ export const CellAuditStatut = (props: TCellProps) => {
 export const CellCheckmark = (props: TCellProps) => {
   const {value} = props;
 
-  return value ? <span className="block fr-fi-check-line scale-75" /> : null;
+  return value ? (
+    <span className="block fr-fi-check-line scale-75 text-center" />
+  ) : null;
 };
