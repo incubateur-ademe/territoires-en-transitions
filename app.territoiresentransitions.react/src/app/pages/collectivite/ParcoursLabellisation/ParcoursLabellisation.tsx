@@ -25,15 +25,7 @@ const ParcoursLabellisation = () => {
   if (!parcours) {
     return (
       <>
-        <h1 className="text-center fr-mt-4w fr-mb-1w">
-          Parcours de labellisation
-        </h1>
-        {referentiel ? (
-          <p className="text-center text-[22px]">
-            Référentiel{' '}
-            {referentielToName[referentiel as ReferentielOfIndicateur]}
-          </p>
-        ) : null}
+        <Title referentiel={referentiel} />
         <main className="fr-container mt-9 mb-16">
           <p>
             Ce référentiel n’est pas encore renseigné pour votre collectivité.
@@ -61,12 +53,7 @@ const ParcoursLabellisation = () => {
 
   return collectiviteId && parcours ? (
     <>
-      <h1 className="text-center fr-mt-4w fr-mb-1w">
-        Parcours de labellisation
-      </h1>
-      <p className="text-center text-[22px]">
-        Référentiel {referentielToName[parcours.referentiel]}
-      </p>
+      <Title referentiel={parcours.referentiel} />
       <Header parcours={parcours} demande={demande} preuves={preuves} />
       <main
         className="fr-container mt-9 mb-16"
@@ -92,5 +79,16 @@ const ParcoursLabellisation = () => {
     <div>...</div>
   );
 };
+
+const Title = ({referentiel}: {referentiel: string | null}) => (
+  <>
+    <h1 className="text-center fr-mt-4w fr-mb-1w">Audit et labellisation</h1>
+    {referentiel ? (
+      <p className="text-center text-[22px]">
+        Référentiel {referentielToName[referentiel as ReferentielOfIndicateur]}
+      </p>
+    ) : null}
+  </>
+);
 
 export default ParcoursLabellisation;
