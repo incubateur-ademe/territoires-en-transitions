@@ -1,5 +1,35 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Storyshots ui/shared/Alerte Avec Class Name 1`] = `
+<div
+  className="fr-alert fr-m-4w fr-alert--info"
+>
+  <p>
+    des styles supplémentaires peuvent être passés dans le champ \`classname\`, par exemple ici des marges
+  </p>
+</div>
+`;
+
+exports[`Storyshots ui/shared/Alerte Avec Contenu JSX 1`] = `
+<div
+  className="fr-alert fr-alert--info"
+>
+  <ul>
+    <li>
+      contenu JSX passé en 
+      <code>
+        children
+      </code>
+       au lieu du champ
+       
+      <code>
+        description
+      </code>
+    </li>
+  </ul>
+</div>
+`;
+
 exports[`Storyshots ui/shared/Alerte Erreur 1`] = `
 <div
   className="fr-alert fr-alert--error"

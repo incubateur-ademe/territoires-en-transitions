@@ -33,3 +33,22 @@ export const Erreur = () => (
     description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque ultricies ante ligula, in ornare mauris faucibus sit amet. Pellentesque iaculis a metus a molestie."
   />
 );
+
+export const AvecContenuJSX = () => (
+  <Alerte state="information">
+    <ul>
+      <li>
+        contenu JSX passé en <code>children</code> au lieu du champ{' '}
+        <code>description</code>
+      </li>
+    </ul>
+  </Alerte>
+);
+
+export const AvecClassName = () => (
+  <Alerte
+    state="information"
+    classname="fr-m-4w"
+    description="des styles supplémentaires peuvent être passés dans le champ `classname`, par exemple ici des marges"
+  />
+);
