@@ -16,17 +16,25 @@ export const fetchRows = async (
 ) => {
   // la requête
   const query = supabaseClient
-    .from<TAuditSuiviRow>('action_audit_state')
+    .from<TAuditSuiviRow>('suivi_audit')
     .select('action_id,statut,ordre_du_jour')
     .match({collectivite_id, referentiel});
 
   // applique les filtres
   const {statut, ordre_du_jour} = filters;
+  const and = [];
   if (statut?.length && !statut.includes(ITEM_ALL)) {
-    query.in('statut', statut);
+    const statuts = statut.join(',');
+    and.push(`or(statut.in.(${statut}), statuts.ov.{${statuts}})`);
   }
   if (ordre_du_jour?.length && !ordre_du_jour.includes(ITEM_ALL)) {
-    query.is('ordre_du_jour', ordre_du_jour[0] === 'true');
+    const odj = ordre_du_jour.map(o => o === 'true');
+    and.push(
+      `or(ordre_du_jour.in.(${odj}), ordres_du_jour.ov.{${odj.join(',')}})`
+    );
+  }
+  if (and.length) {
+    query.or(`and(${and.join(',')})`);
   }
 
   // attends les données
