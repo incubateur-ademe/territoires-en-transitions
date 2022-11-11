@@ -19,7 +19,25 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels 
     className="flex items-center"
     data-test="PointsPotentiels"
   >
-    Potentiel augmenté pour cette sous-action : 10 points
+    <div
+      className="relative whitespace-nowrap"
+    >
+      <span
+        className="text-transparent"
+      >
+        Potentiel augmenté pour cette sous-action : 10 points
+      </span>
+      <div
+        className="absolute top-0 transition-opacity duration-300 ease-in-out left-0  opacity-100"
+      >
+        Potentiel augmenté pour cette sous-action : 10 points
+      </div>
+      <div
+        className="absolute top-0 transition-opacity duration-300 ease-in-out left-0  opacity-0"
+      >
+        Potentiel augmenté pour cette sous-action : 10 points
+      </div>
+    </div>
   </div>
 </div>
 `;
@@ -43,7 +61,25 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels 
     className="flex items-center"
     data-test="PointsPotentiels"
   >
-    Potentiel réduit pour cette sous-action : 0 point
+    <div
+      className="relative whitespace-nowrap"
+    >
+      <span
+        className="text-transparent"
+      >
+        Potentiel réduit pour cette sous-action : 0 point
+      </span>
+      <div
+        className="absolute top-0 transition-opacity duration-300 ease-in-out left-0  opacity-100"
+      >
+        Potentiel réduit pour cette sous-action : 0 point
+      </div>
+      <div
+        className="absolute top-0 transition-opacity duration-300 ease-in-out left-0  opacity-0"
+      >
+        Potentiel réduit pour cette sous-action : 0 point
+      </div>
+    </div>
     <button
       className="fr-link fr-link--icon-left fr-fi-settings-line fr-ml-10v"
       onClick={[Function]}
@@ -73,7 +109,25 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels 
     className="flex items-center"
     data-test="PointsPotentiels"
   >
-    Potentiel pour cette sous-action : 6,7 points
+    <div
+      className="relative whitespace-nowrap"
+    >
+      <span
+        className="text-transparent"
+      >
+        Potentiel pour cette sous-action : 6,7 points
+      </span>
+      <div
+        className="absolute top-0 transition-opacity duration-300 ease-in-out left-0  opacity-100"
+      >
+        Potentiel pour cette sous-action : 6,7 points
+      </div>
+      <div
+        className="absolute top-0 transition-opacity duration-300 ease-in-out left-0  opacity-0"
+      >
+        Potentiel pour cette sous-action : 6,7 points
+      </div>
+    </div>
   </div>
 </div>
 `;
@@ -97,7 +151,25 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels 
     className="flex items-center"
     data-test="PointsPotentiels"
   >
-    Potentiel réduit pour cette sous-action : 3,3 points
+    <div
+      className="relative whitespace-nowrap"
+    >
+      <span
+        className="text-transparent"
+      >
+        Potentiel réduit pour cette sous-action : 3,3 points
+      </span>
+      <div
+        className="absolute top-0 transition-opacity duration-300 ease-in-out left-0  opacity-100"
+      >
+        Potentiel réduit pour cette sous-action : 3,3 points
+      </div>
+      <div
+        className="absolute top-0 transition-opacity duration-300 ease-in-out left-0  opacity-0"
+      >
+        Potentiel réduit pour cette sous-action : 3,3 points
+      </div>
+    </div>
     <button
       className="fr-link fr-link--icon-left fr-fi-settings-line fr-ml-10v"
       onClick={[Function]}
@@ -127,7 +199,25 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels 
     className="flex items-center"
     data-test="PointsPotentiels"
   >
-    Potentiel réduit pour cette sous-action : 0 point
+    <div
+      className="relative whitespace-nowrap"
+    >
+      <span
+        className="text-transparent"
+      >
+        Potentiel réduit pour cette sous-action : 0 point
+      </span>
+      <div
+        className="absolute top-0 transition-opacity duration-300 ease-in-out left-0  opacity-100"
+      >
+        Potentiel réduit pour cette sous-action : 0 point
+      </div>
+      <div
+        className="absolute top-0 transition-opacity duration-300 ease-in-out left-0  opacity-0"
+      >
+        Potentiel réduit pour cette sous-action : 0 point
+      </div>
+    </div>
     <button
       className="fr-link fr-link--icon-left fr-fi-settings-line fr-ml-10v"
       onClick={[Function]}
@@ -157,7 +247,25 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels 
     className="flex items-center"
     data-test="PointsPotentiels"
   >
-    Potentiel réduit pour cette sous-action : 3,3 points
+    <div
+      className="relative whitespace-nowrap"
+    >
+      <span
+        className="text-transparent"
+      >
+        Potentiel réduit pour cette sous-action : 3,3 points
+      </span>
+      <div
+        className="absolute top-0 transition-opacity duration-300 ease-in-out left-0  opacity-100"
+      >
+        Potentiel réduit pour cette sous-action : 3,3 points
+      </div>
+      <div
+        className="absolute top-0 transition-opacity duration-300 ease-in-out left-0  opacity-0"
+      >
+        Potentiel réduit pour cette sous-action : 3,3 points
+      </div>
+    </div>
   </div>
 </div>
 `;
@@ -181,7 +289,25 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels 
     className="flex items-center"
     data-test="PointsPotentiels"
   >
-    Potentiel réduit pour cette sous-action : 3,35 points
+    <div
+      className="relative whitespace-nowrap"
+    >
+      <span
+        className="text-transparent"
+      >
+        Potentiel réduit pour cette sous-action : 3,35 points
+      </span>
+      <div
+        className="absolute top-0 transition-opacity duration-300 ease-in-out left-0  opacity-100"
+      >
+        Potentiel réduit pour cette sous-action : 3,35 points
+      </div>
+      <div
+        className="absolute top-0 transition-opacity duration-300 ease-in-out left-0  opacity-0"
+      >
+        Potentiel réduit pour cette sous-action : 3,35 points
+      </div>
+    </div>
   </div>
 </div>
 `;

@@ -3,6 +3,7 @@ import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinition
 import {ActionScore} from 'types/ClientScore';
 import {YellowHighlight} from 'ui/Highlight';
 import {toLocaleFixed} from 'utils/toFixed';
+import {TweenText} from 'ui/shared/TweenText';
 
 export type TPointsPotentielsProps = {
   /** Définition de l'action */
@@ -24,7 +25,7 @@ export const PointsPotentiels = ({
   return (
     <YellowHighlight>
       <div data-test="PointsPotentiels" className="flex items-center">
-        {getLabel(actionDef, actionScore)}
+        <TweenText text={getLabel(actionDef, actionScore)} align-left />
         {typeof onEdit === 'function' ? (
           <button
             className="fr-link fr-link--icon-left fr-fi-settings-line fr-ml-10v"

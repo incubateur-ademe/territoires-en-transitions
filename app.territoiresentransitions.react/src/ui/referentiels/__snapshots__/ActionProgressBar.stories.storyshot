@@ -19,13 +19,31 @@ exports[`Storyshots ui/referentiels/ActionProgressBar Mixte 1`] = `
     <div
       className="text-sm font-bold"
     >
-      20
-       %
+      <div
+        className="relative whitespace-nowrap"
+      >
+        <span
+          className="text-transparent"
+        >
+          20 %
+        </span>
+        <div
+          className="absolute top-0 transition-opacity duration-300 ease-in-out  right-0 opacity-100"
+        >
+          20 %
+        </div>
+        <div
+          className="absolute top-0 transition-opacity duration-300 ease-in-out  right-0 opacity-0"
+        >
+          20 %
+        </div>
+      </div>
     </div>
     <div
       className="flex pt-1"
     >
       <div
+        className="transition-width duration-500 ease-in-out"
         style={
           Object {
             "backgroundColor": "#565656",
@@ -37,6 +55,7 @@ exports[`Storyshots ui/referentiels/ActionProgressBar Mixte 1`] = `
         }
       >
         <div
+          className="transition-width duration-500 ease-in-out"
           style={
             Object {
               "backgroundColor": "#CE0500",
@@ -50,6 +69,7 @@ exports[`Storyshots ui/referentiels/ActionProgressBar Mixte 1`] = `
           }
         />
         <div
+          className="transition-width duration-500 ease-in-out"
           style={
             Object {
               "backgroundColor": "#00A95F",
@@ -63,6 +83,7 @@ exports[`Storyshots ui/referentiels/ActionProgressBar Mixte 1`] = `
           }
         />
         <div
+          className="transition-width duration-500 ease-in-out"
           style={
             Object {
               "backgroundColor": "#0063CB",
@@ -100,13 +121,31 @@ exports[`Storyshots ui/referentiels/ActionProgressBar Rien Renseigne 1`] = `
     <div
       className="text-sm font-bold"
     >
-      0
-       %
+      <div
+        className="relative whitespace-nowrap"
+      >
+        <span
+          className="text-transparent"
+        >
+          0 %
+        </span>
+        <div
+          className="absolute top-0 transition-opacity duration-300 ease-in-out  right-0 opacity-100"
+        >
+          0 %
+        </div>
+        <div
+          className="absolute top-0 transition-opacity duration-300 ease-in-out  right-0 opacity-0"
+        >
+          0 %
+        </div>
+      </div>
     </div>
     <div
       className="flex pt-1"
     >
       <div
+        className="transition-width duration-500 ease-in-out"
         style={
           Object {
             "backgroundColor": "#565656",
@@ -118,6 +157,7 @@ exports[`Storyshots ui/referentiels/ActionProgressBar Rien Renseigne 1`] = `
         }
       >
         <div
+          className="transition-width duration-500 ease-in-out"
           style={
             Object {
               "backgroundColor": "#CE0500",
@@ -131,6 +171,7 @@ exports[`Storyshots ui/referentiels/ActionProgressBar Rien Renseigne 1`] = `
           }
         />
         <div
+          className="transition-width duration-500 ease-in-out"
           style={
             Object {
               "backgroundColor": "#00A95F",
@@ -144,6 +185,7 @@ exports[`Storyshots ui/referentiels/ActionProgressBar Rien Renseigne 1`] = `
           }
         />
         <div
+          className="transition-width duration-500 ease-in-out"
           style={
             Object {
               "backgroundColor": "#0063CB",
@@ -181,13 +223,31 @@ exports[`Storyshots ui/referentiels/ActionProgressBar Tout Fait 1`] = `
     <div
       className="text-sm font-bold"
     >
-      100
-       %
+      <div
+        className="relative whitespace-nowrap"
+      >
+        <span
+          className="text-transparent"
+        >
+          100 %
+        </span>
+        <div
+          className="absolute top-0 transition-opacity duration-300 ease-in-out  right-0 opacity-100"
+        >
+          100 %
+        </div>
+        <div
+          className="absolute top-0 transition-opacity duration-300 ease-in-out  right-0 opacity-0"
+        >
+          100 %
+        </div>
+      </div>
     </div>
     <div
       className="flex pt-1"
     >
       <div
+        className="transition-width duration-500 ease-in-out"
         style={
           Object {
             "backgroundColor": "#565656",
@@ -199,6 +259,7 @@ exports[`Storyshots ui/referentiels/ActionProgressBar Tout Fait 1`] = `
         }
       >
         <div
+          className="transition-width duration-500 ease-in-out"
           style={
             Object {
               "backgroundColor": "#CE0500",
@@ -212,6 +273,7 @@ exports[`Storyshots ui/referentiels/ActionProgressBar Tout Fait 1`] = `
           }
         />
         <div
+          className="transition-width duration-500 ease-in-out"
           style={
             Object {
               "backgroundColor": "#00A95F",
@@ -225,6 +287,7 @@ exports[`Storyshots ui/referentiels/ActionProgressBar Tout Fait 1`] = `
           }
         />
         <div
+          className="transition-width duration-500 ease-in-out"
           style={
             Object {
               "backgroundColor": "#0063CB",
