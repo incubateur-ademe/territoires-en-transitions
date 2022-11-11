@@ -351,6 +351,8 @@ begin
             'client_scores'
         );
     return new;
+exception -- si l'appel lève une erreur on continue.
+    when others then return new;
 end
 $$ language plpgsql security definer;
 
@@ -380,6 +382,8 @@ begin
     select * into relation from action_relation where id = new.action_id limit 1;
     perform evaluation.evaluate_statuts(new.collectivite_id, relation.referentiel, 'client_scores');
     return new;
+exception -- si l'appel lève une erreur on continue.
+    when others then return new;
 end
 $$ language plpgsql security definer;
 
