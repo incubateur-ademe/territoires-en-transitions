@@ -3,6 +3,7 @@ import {toFixed} from 'utils/toFixed';
 import {ActionScore} from 'types/ClientScore';
 import {actionAvancementColors} from 'app/theme';
 import {useActionScore} from 'core-logic/hooks/scoreHooks';
+import {TweenText} from 'ui/shared/TweenText';
 
 export const ActionProgressBar = ({score}: { score: ActionScore | null }) => {
   if (score === null) return null;
@@ -36,7 +37,9 @@ const ColoredBar = ({score}: { score: ActionScore }) => {
   const animationClasses = 'transition-width duration-500 ease-in-out';
   return (
     <div className="flex gap-3 items-center justify-end">
-      <div className="text-sm font-bold">{toFixed(fait_width)} %</div>
+      <div className="text-sm font-bold">
+        <TweenText text={`${toFixed(fait_width)} %`} align-right />
+      </div>
       <div className="flex pt-1">
         <div
           style={{
