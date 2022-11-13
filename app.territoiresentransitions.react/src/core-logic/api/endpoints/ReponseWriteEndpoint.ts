@@ -12,8 +12,7 @@ export class ReponseWriteEndpoint extends ChangeNotifier {
     const newReponse = transform(qr);
     const ret = await supabaseClient.rpc('save_reponse', newReponse);
     if (ret?.error) {
-      console.error(ret?.error);
-      return false;
+      throw ret?.error;
     }
     this.notifyListeners();
     return true;
