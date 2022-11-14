@@ -60,7 +60,7 @@ When(
     getRefentielIdentifiants(referentiel)
       .contains(actionId)
       .siblings()
-      .find('button[title=Déplier]')
+      .find('button[data-test=btn-expand]')
       .click();
   }
 );

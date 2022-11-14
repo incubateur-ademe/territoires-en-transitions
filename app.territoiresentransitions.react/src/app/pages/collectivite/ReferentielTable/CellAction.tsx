@@ -117,6 +117,7 @@ const Expand = ({row, referentielId}: TCellProps) => {
   const label = isExpanded ? infoReplier : infoDeplier;
   return (
     <button
+      data-test={`btn-${isExpanded ? 'collapse' : 'expand'}`}
       className={className}
       {...row.getToggleRowExpandedProps()}
       title={label}
