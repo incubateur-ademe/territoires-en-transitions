@@ -99,6 +99,10 @@ export const CellAction = (props: TCellProps) => {
   );
 };
 
+// infobulles
+const infoReplier = `Cliquer pour replier (tenir SHIFT enfoncé pour replier toutes les lignes de même niveau)`;
+const infoDeplier = `Cliquer pour déplier (tenir SHIFT enfoncé pour déplier toutes les lignes de même niveau de l'axe, ou tenir ALT enfoncé pour déplier aussi tous les axes)`;
+
 // affiche le picto reflétant l'état plié/déplié
 const Expand = ({row, referentielId}: TCellProps) => {
   const {isExpanded, original} = row;
@@ -109,11 +113,13 @@ const Expand = ({row, referentielId}: TCellProps) => {
     isExpanded ? 'arrow-down' : 'arrow-right',
     invertColor ? 'before:bg-white' : 'before:bg-black',
   ].join(' ');
+
+  const label = isExpanded ? infoReplier : infoDeplier;
   return (
     <button
       className={className}
       {...row.getToggleRowExpandedProps()}
-      title={isExpanded ? 'Replier' : 'Déplier'}
+      title={label}
     />
   );
 };
