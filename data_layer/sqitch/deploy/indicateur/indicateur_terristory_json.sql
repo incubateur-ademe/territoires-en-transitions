@@ -41,4 +41,9 @@ create table indicateur_terristory_json
 alter table indicateur_terristory_json
     enable row level security;
 
+create policy allow_insert
+    on indicateur_terristory_json for insert
+    with check(is_authenticated());
+
+
 COMMIT;

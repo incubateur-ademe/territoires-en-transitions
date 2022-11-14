@@ -1,0 +1,55 @@
+### Authenticate as a user
+POST {{api}}/auth/v1/token?grant_type=password
+apikey: {{anon}}
+Content-Type: application/json
+
+{
+  "email": "{{yolo_mail}}",
+  "password": "{{yolo_pass}}"
+}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+    client.log('token is ' + response.body['access_token']);
+    client.global.set("auth_token", response.body['access_token']);
+%}
+
+### Ajout d'un indicateur_terristory_json
+POST {{api}}/rest/v1/indicateur_terristory_json
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "indicateurs" : {
+    "type":"conso_energetique_aura",
+    "contenu":[
+      {
+        "code": "200000172",
+        "nom": "CC Faucigny-Gli\u00e8res",
+        "x": 715564.0,
+        "y": 5786687.0,
+        "val": 794.0,
+        "confidentiel": false,
+        "annee": "2019"
+      },
+      {
+        "code": "200011773",
+        "nom": "CA Annemasse-Les Voirons-Agglom\u00e9ration",
+        "x": 701943.0,
+        "y": 5814170.0,
+        "val": 1743.0,
+        "confidentiel": false,
+        "annee": "2019"
+      }
+    ]
+  }
+}
+
+> {%
+    client.test("Create executed successfully", function() {
+        client.assert(response.status === 201, "Response status is not 201");
+    });
+%}
