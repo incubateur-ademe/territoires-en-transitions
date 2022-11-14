@@ -19,12 +19,27 @@ from collectivite c
          left join action_audit_state s on s.action_id = ah.action_id and s.collectivite_id = c.id
     -- les statuts des enfants
          left join lateral (
-    -- pour chaque action on agrège les statuts de ses descendants
+    -- pour chaque action de `s` on agrège les statuts de ses descendants
     -- afin que le client puisse filtrer sur les statuts des enfants.
     --- ex: afficher l'axe et les actions où le statut est audité
-
-    select coalesce(array_agg(distinct aas.statut), '{non_audite}'::audit_statut[]) as statuts,
-           coalesce(array_agg(distinct aas.ordre_du_jour), '{false}'::bool[])       as ordres_du_jour
+    select case
+               when s.statut is null -- si l'action 'parente' n'a pas de statut
+                   then
+                   coalesce(array_agg(distinct aas.statut),
+                            '{non_audite}'::audit_statut[]
+                       )
+               else
+                   '{}'::audit_statut[]
+               end
+               as statuts,
+           case
+               when s.statut is null -- si l'action 'parente' n'a pas de statut
+                   then
+                   coalesce(array_agg(distinct aas.ordre_du_jour), '{false}'::bool[])
+               else
+                   '{}'::bool[]
+               end
+               as ordres_du_jour
     from action_audit_state aas
              join action_hierarchy iah on iah.action_id = aas.action_id
     where aas.collectivite_id = c.id
