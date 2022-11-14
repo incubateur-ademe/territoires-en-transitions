@@ -25,6 +25,7 @@ export const referentielParam = 'referentielId';
 export const referentielVueParam = 'referentielVue';
 const actionParam = 'actionId';
 const actionVueParam = 'actionVue';
+const labellisationVueParam = 'labellisationVue';
 const ficheParam = 'ficheUid';
 export const planActionParam = 'planActionUid';
 export const planActionDefaultId = 'plan_collectivite';
@@ -41,13 +42,14 @@ export type ActionVueParamOption =
   | 'preuves'
   | 'indicateurs'
   | 'historique';
+export type LabellisationVueParamOption = 'suivi' | 'cycles' | 'criteres';
 
 export const collectivitePath = `/collectivite/:${collectiviteParam}`;
 export const collectiviteIndicateurPath = `${collectivitePath}/indicateurs/:${indicateurViewParam}`;
 export const collectiviteReferentielPath = `${collectivitePath}/referentiels/:${referentielParam}/:${referentielVueParam}`;
 export const collectiviteTableauBordPath = `${collectivitePath}/tableau_bord`;
 export const collectiviteActionPath = `${collectivitePath}/action/:${referentielParam}/:${actionParam}/:${actionVueParam}?`;
-export const collectiviteLabellisationPath = `${collectivitePath}/labellisation/:${referentielParam}`;
+export const collectiviteLabellisationPath = `${collectivitePath}/labellisation/:${referentielParam}/:${labellisationVueParam}?`;
 export const collectivitePlanActionPath = `${collectivitePath}/plan_action/:${planActionParam}`;
 export const collectiviteNouvelleFichePath = `${collectivitePath}/nouvelle_fiche`;
 export const collectiviteFichePath = `${collectivitePath}/fiche/:${ficheParam}`;
@@ -129,13 +131,16 @@ export const makeCollectiviteTacheUrl = ({
 export const makeCollectiviteLabellisationUrl = ({
   collectiviteId,
   referentielId,
+  labellisationVue,
 }: {
   collectiviteId: number;
   referentielId: ReferentielParamOption;
+  labellisationVue?: LabellisationVueParamOption;
 }) =>
   collectiviteLabellisationPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .replace(`:${referentielParam}`, referentielId);
+    .replace(`:${referentielParam}`, referentielId)
+    .replace(`:${labellisationVueParam}`, labellisationVue || 'suivi');
 
 export const makeCollectivitePlanActionUrl = ({
   collectiviteId,

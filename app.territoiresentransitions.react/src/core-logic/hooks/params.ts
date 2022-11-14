@@ -2,6 +2,7 @@ import {useParams, useRouteMatch} from 'react-router-dom';
 import {
   ActionVueParamOption,
   collectivitePath,
+  LabellisationVueParamOption,
   ReferentielVueParamOption,
 } from 'app/paths';
 
@@ -20,13 +21,22 @@ export const useReferentielId = (): string | null => {
 };
 
 export const useReferentielVue = (): ReferentielVueParamOption | null => {
-  const {referentielVue} =
-    useParams<{referentielVue: ReferentielVueParamOption | undefined}>();
+  const {referentielVue} = useParams<{
+    referentielVue: ReferentielVueParamOption | undefined;
+  }>();
   return referentielVue || null;
 };
 
 export const useActionVue = (): ActionVueParamOption | null => {
-  const {actionVue} =
-    useParams<{actionVue: ActionVueParamOption | undefined}>();
+  const {actionVue} = useParams<{
+    actionVue: ActionVueParamOption | undefined;
+  }>();
   return actionVue || null;
+};
+
+export const useLabellisationVue = (): LabellisationVueParamOption | null => {
+  const {labellisationVue} = useParams<{
+    labellisationVue: LabellisationVueParamOption | undefined;
+  }>();
+  return labellisationVue || null;
 };
