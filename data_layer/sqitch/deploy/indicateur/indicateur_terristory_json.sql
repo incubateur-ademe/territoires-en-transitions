@@ -43,7 +43,7 @@ alter table indicateur_terristory_json
 
 create policy allow_insert
     on indicateur_terristory_json for insert
-    with check(is_authenticated());
+    with check(true);
 
 
 COMMIT;
