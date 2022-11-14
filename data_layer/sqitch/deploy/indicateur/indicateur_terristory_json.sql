@@ -2,7 +2,7 @@
 
 BEGIN;
 
-create table indicateurs_terristory_json
+create table indicateur_terristory_json
 (
     indicateurs jsonb       not null
         check (
@@ -38,7 +38,7 @@ create table indicateurs_terristory_json
             ),
     created_at  timestamptz not null default now()
 );
-alter table indicateurs_terristory_json
+alter table indicateur_terristory_json
     enable row level security;
 
 COMMIT;
