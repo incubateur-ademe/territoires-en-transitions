@@ -218,7 +218,7 @@ exports[`Storyshots app/pages/collectivite/TableauBord/TableauBordPage Referenti
           >
             <a
               className="fr-btn"
-              href="/collectivite/1/labellisation/cae"
+              href="/collectivite/1/labellisation/cae/suivi"
               onClick={[Function]}
             >
               Décrocher les étoiles
@@ -760,7 +760,7 @@ exports[`Storyshots app/pages/collectivite/TableauBord/TableauBordPage Referenti
           >
             <a
               className="fr-btn"
-              href="/collectivite/1/labellisation/eci"
+              href="/collectivite/1/labellisation/eci/suivi"
               onClick={[Function]}
             >
               Décrocher les étoiles

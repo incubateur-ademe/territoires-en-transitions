@@ -37,7 +37,7 @@ export const useTableData: UseTableData = () => {
 
   // filtre initial
   const [filters, setFilters, filtersCount] = useSearchParams<TFilters>(
-    'audit-suivi',
+    'suivi',
     initialFilters,
     nameToShortNames
   );
