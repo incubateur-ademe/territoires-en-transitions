@@ -2,6 +2,6 @@
 
 BEGIN;
 
-drop table indicateur_territory_json;
+drop table indicateur_terristory_json;
 
 COMMIT;

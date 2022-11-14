@@ -1,14 +1,14 @@
 begin;
 select plan(4);
 
-truncate indicateurs_terristory_json;
+truncate indicateur_terristory_json;
 
 select is_empty(
-               'select * from indicateurs_terristory_json',
+               'select * from indicateur_terristory_json',
                'Il devrait ne plus y avoir de contenu '
            );
 
-insert into indicateurs_terristory_json (indicateurs)
+insert into indicateur_terristory_json (indicateurs)
 values ('
 {
   "type":"test",
@@ -36,12 +36,12 @@ values ('
 '::jsonb);
 
 select isnt_empty(
-               'select * from indicateurs_terristory_json',
+               'select * from indicateur_terristory_json',
                'Les indicateurs terristory au format json devraient être présents'
            );
 
 prepare thrower_indicateur_terristory_json_type_different as
-    insert into indicateurs_terristory_json (indicateurs)
+    insert into indicateur_terristory_json (indicateurs)
     values ('
     {
       "type":"test",
@@ -60,12 +60,12 @@ prepare thrower_indicateur_terristory_json_type_different as
     '::jsonb);
 select throws_ok(
                'thrower_indicateur_terristory_json_type_different',
-               'new row for relation "indicateurs_terristory_json" violates check constraint "indicateurs_terristory_json_indicateurs_check"',
+               'new row for relation "indicateur_terristory_json" violates check constraint "indicateur_terristory_json_indicateurs_check"',
                'Les données json insérées de devrait pas être valide car le mauvais type pour x est donné.'
  );
 
 prepare thrower_indicateur_terristory_json_attribut_manquant as
-    insert into indicateurs_terristory_json (indicateurs)
+    insert into indicateur_terristory_json (indicateurs)
     values ('
     {
       "type":"test",
@@ -83,7 +83,7 @@ prepare thrower_indicateur_terristory_json_attribut_manquant as
     '::jsonb);
 select throws_ok(
                'thrower_indicateur_terristory_json_attribut_manquant',
-               'new row for relation "indicateurs_terristory_json" violates check constraint "indicateurs_terristory_json_indicateurs_check"',
+               'new row for relation "indicateur_terristory_json" violates check constraint "indicateur_terristory_json_indicateurs_check"',
                'Les données json insérées de devrait pas être valide car un attribut est manquant.'
            );
 
