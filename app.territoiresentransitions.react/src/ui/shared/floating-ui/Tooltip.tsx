@@ -1,4 +1,4 @@
-import {cloneElement, useCallback, useState} from 'react';
+import {cloneElement, ReactElement, useCallback, useState} from 'react';
 import {
   Placement,
   offset,
@@ -16,8 +16,8 @@ import {
 import DOMPurify from 'dompurify';
 
 export type TTooltipProps = {
-  /** libellé de l'infobulle (accepte du code HTML) */
-  label: string;
+  /** libellé de l'infobulle (accepte du code HTML ou peut être une fonction de rendu) */
+  label: string | (() => ReactElement);
   /** position à utiliser de préférence */
   placement?: Placement;
   /** élément auquel ajouter l'infobulle */
@@ -53,7 +53,9 @@ export const Tooltip = ({
   });
 
   const {getReferenceProps, getFloatingProps} = useInteractions([
-    (activatedBy === 'click' ? useClick : useHover)(context),
+    (activatedBy === 'click' ? useClick : useHover)(context, {
+      delay: {open: 1000, close: 0},
+    }),
     useFocus(context),
     useRole(context, {role: 'tooltip'}),
     useDismiss(context),
@@ -75,8 +77,14 @@ export const Tooltip = ({
             left: x ?? 0,
           }}
           {...getFloatingProps()}
-          dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(label)}}
-        ></div>
+          dangerouslySetInnerHTML={
+            typeof label === 'string'
+              ? {__html: DOMPurify.sanitize(label)}
+              : undefined
+          }
+        >
+          {typeof label === 'function' ? label() : null}
+        </div>
       )}
     </>
   );
