@@ -1,4 +1,4 @@
-import {useEffect, useRef} from 'react';
+import {useEffect, useRef, Fragment} from 'react';
 import {
   Column,
   CellProps,
@@ -114,7 +114,7 @@ export const PreuvesTable = (props: TPreuvesTableProps) => {
               };
 
               return (
-                <div key={key}>
+                <Fragment key={key}>
                   {depth <= maxDepth ? (
                     <div
                       className={className}
@@ -139,7 +139,7 @@ export const PreuvesTable = (props: TPreuvesTableProps) => {
                       <ActionPreuvePanel action={action} noIdentifiant />
                     </div>
                   ) : null}
-                </div>
+                </Fragment>
               );
             }
           )
