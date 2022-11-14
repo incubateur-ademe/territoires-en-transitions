@@ -2,6 +2,8 @@ import {CellProps} from 'react-table';
 import {Link} from 'react-router-dom';
 import {makeCollectiviteTacheUrl, ReferentielParamOption} from 'app/paths';
 import {ActionReferentiel} from './useReferentiel';
+import {Tooltip} from 'ui/shared/floating-ui/Tooltip';
+import {Kbd} from 'ui/shared/Kbd';
 
 export type TCellProps = CellProps<ActionReferentiel> & {
   collectiviteId: number | null;
@@ -100,8 +102,22 @@ export const CellAction = (props: TCellProps) => {
 };
 
 // infobulles
-const infoReplier = `Cliquer pour replier (tenir SHIFT enfoncé pour replier toutes les lignes de même niveau)`;
-const infoDeplier = `Cliquer pour déplier (tenir SHIFT enfoncé pour déplier toutes les lignes de même niveau de l'axe, ou tenir ALT enfoncé pour déplier aussi tous les axes)`;
+const infoReplier = () => (
+  <p>
+    Cliquer pour replier (tenir <Kbd>⇧ SHIFT</Kbd> enfoncé
+    <br />
+    pour replier toutes les lignes de même niveau)
+  </p>
+);
+const infoDeplier = () => (
+  <p>
+    Cliquer pour déplier (tenir <Kbd>⇧ SHIFT</Kbd> enfoncé pour déplier
+    <br />
+    toutes les lignes de même niveau de l'axe, ou tenir
+    <br />
+    <Kbd>⌥ ALT</Kbd> enfoncé pour déplier aussi tous les axes)
+  </p>
+);
 
 // affiche le picto reflétant l'état plié/déplié
 const Expand = ({row, referentielId}: TCellProps) => {
@@ -116,11 +132,14 @@ const Expand = ({row, referentielId}: TCellProps) => {
 
   const label = isExpanded ? infoReplier : infoDeplier;
   return (
-    <button
-      data-test={`btn-${isExpanded ? 'collapse' : 'expand'}`}
-      className={className}
-      {...row.getToggleRowExpandedProps()}
-      title={label}
-    />
+    <Tooltip label={label}>
+      <button
+        data-test={`btn-${isExpanded ? 'collapse' : 'expand'}`}
+        className={className}
+        {...row.getToggleRowExpandedProps()}
+        onMouseOver={undefined}
+        title=""
+      />
+    </Tooltip>
   );
 };
