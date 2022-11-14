@@ -3,7 +3,7 @@
 BEGIN;
 
 select indicateurs, created_at
-from indicateur_territory_json
+from indicateur_terristory_json
 where false;
 
 ROLLBACK;
