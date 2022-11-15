@@ -1,108 +1,126 @@
-import {keys} from 'ramda';
-import {forwardRef, ReactElement, Ref} from 'react';
-import {Placement} from '@floating-ui/react-dom-interactions';
+import {forwardRef, Ref} from 'react';
 
 import DropdownFloater from 'ui/shared/floating-ui/DropdownFloater';
 import {
   buttonDisplayedClassname,
-  buttonDisplayedIconClassname,
   buttonDisplayedPlaceholderClassname,
-  optionCheckMarkClassname,
+  optionButtonClassname,
+  Checkmark,
+  ExpandCollapseIcon,
+  TSelectBase,
+  TSelectDropdownBase,
+  TSelectSelectionButtonBase,
 } from 'ui/shared/select/commons';
 
-/* Création d'un composant séparé pour passer la ref du boutton au floater */
-const SelectDropdownButtonDisplayed = forwardRef(
-  <T extends string>(
-    {
-      labels,
-      value,
-      isOpen,
-      placeholderText,
-      ...props
-    }: {
-      labels: Record<T, string>;
-      value?: T;
-      isOpen?: boolean;
-      placeholderText?: string;
-    },
-    ref?: Ref<HTMLButtonElement>
-  ) => (
-    <button
-      ref={ref}
-      aria-label="ouvrir le menu"
-      className={buttonDisplayedClassname}
-      {...props}
-    >
-      {value ? (
-        <span className="mr-auto">{labels[value]}</span>
-      ) : (
-        <span className={buttonDisplayedPlaceholderClassname}>
-          {placeholderText ?? ''}
-        </span>
-      )}
-      <span
-        className={`${buttonDisplayedIconClassname} ${
-          isOpen ? 'rotate-180' : ''
-        }`}
-      />
-    </button>
-  )
-);
+type TSelectDropdownBaseProps<T extends string> = TSelectBase & {
+  /** valeurs des options sélectionnées */
+  value?: T;
+  /** Expose la valeur sélectionnée afin d'afficher un composant custom pour le bouton d'ouverture du menu*/
+  renderSelection?: (value: T) => React.ReactElement;
+};
+
+type TSelectButtonProps<T extends string> = TSelectDropdownBaseProps<T> &
+  TSelectSelectionButtonBase;
+
+export type TSelectDropdownProps<T extends string> =
+  TSelectDropdownBaseProps<T> &
+    TSelectDropdownBase<T> & {
+      /** appelée quand l'option sélectionnée change (reçoit la nouvelle valeur) */
+      onSelect: (value: T) => void;
+    };
 
 const SelectDropdown = <T extends string>({
-  placement,
   value,
-  labels,
-  onSelect,
-  displayOption,
   options,
+  onSelect,
+  buttonClassName,
+  renderSelection,
+  renderOption,
   placeholderText,
-}: {
-  placement?: Placement;
-  value?: T;
-  labels: Record<T, string>;
-  displayOption?: (option: T) => ReactElement;
-  onSelect: (value: T) => void;
-  options?: T[];
-  placeholderText?: string;
-}) => {
-  const selectableOptions: T[] = options ?? keys(labels);
+  placement,
+  'data-test': dataTest,
+}: TSelectDropdownProps<T>) => {
   return (
     <DropdownFloater
       placement={placement}
-      render={({close}) =>
-        selectableOptions.map(v => {
-          const label = labels[v as T];
-          return (
-            <button
-              key={v}
-              aria-label={label}
-              className="flex items-center w-full p-2 text-left text-sm"
-              onClick={() => {
-                onSelect(v as T);
-                close();
-              }}
-            >
-              <div className="w-6 mr-2">
-                {value === v ? (
-                  <span className={optionCheckMarkClassname} />
-                ) : null}
-              </div>
-              <span>
-                {displayOption ? displayOption(v as T) : labels[v as T]}
-              </span>
-            </button>
-          );
-        })
-      }
+      render={({close}) => (
+        <div data-test={`${dataTest}-options`}>
+          {options.map(v => {
+            return (
+              <button
+                key={v.value}
+                data-test={v.value}
+                className={optionButtonClassname}
+                onClick={() => {
+                  onSelect(v.value as T);
+                  close();
+                }}
+              >
+                <Checkmark isSelected={value === v.value} />
+                {renderOption ? (
+                  renderOption(v.value as T)
+                ) : (
+                  <span>{v.label}</span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      )}
     >
-      <SelectDropdownButtonDisplayed
-        placeholderText={placeholderText}
-        labels={labels}
+      <SelectButtton
+        data-test={dataTest}
         value={value}
+        options={options}
+        renderSelection={
+          renderSelection ? value => renderSelection(value as T) : undefined
+        }
+        buttonClassName={buttonClassName}
+        placeholderText={placeholderText}
       />
     </DropdownFloater>
   );
 };
 
 export default SelectDropdown;
+
+/* Création d'un composant séparé pour passer la ref du boutton au floater */
+const SelectButtton = forwardRef(
+  <T extends string>(
+    {
+      isOpen,
+      value,
+      options,
+      buttonClassName,
+      placeholderText,
+      renderSelection,
+      'data-test': dataTest,
+      ...props
+    }: TSelectButtonProps<T>,
+    ref?: Ref<HTMLButtonElement>
+  ) => (
+    <button
+      ref={ref}
+      data-test={`${dataTest}-select-button`}
+      aria-expanded={isOpen}
+      aria-label="ouvrir le menu"
+      className={buttonClassName || buttonDisplayedClassname}
+      {...props}
+    >
+      {value ? (
+        renderSelection ? (
+          renderSelection(value)
+        ) : (
+          <span className="mr-auto flex line-clamp-1">
+            {options.find(({value: v}) => v === value)?.label || ''}
+          </span>
+        )
+      ) : (
+        <span className={buttonDisplayedPlaceholderClassname}>
+          {placeholderText ?? ''}
+        </span>
+      )}
+      <ExpandCollapseIcon isOpen={isOpen} />
+    </button>
+  )
+);
