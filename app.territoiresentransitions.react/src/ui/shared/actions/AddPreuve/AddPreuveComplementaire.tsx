@@ -3,9 +3,9 @@ import {useState} from 'react';
 import Modal from 'ui/shared/floating-ui/Modal';
 import {AddPreuveModal} from 'ui/shared/preuves/AddPreuveModal';
 import {TActionDef} from 'ui/shared/preuves/Bibliotheque/usePreuves';
-import {SelectDropdown} from 'ui/shared/SelectDropdown';
+import SelectDropdown from 'ui/shared/select/SelectDropdown';
 import {useAddPreuveComplementaireToAction} from './useAddPreuveToAction';
-import {useSubActionLabelsById} from './useSubActions';
+import {useSubActionOptionsListe} from './useSubActions';
 
 export type TAddPreuveButtonProps = {
   /** Identifiant de l'action concernée */
@@ -94,7 +94,7 @@ const SelectSubAction = ({
   subaction_id: string;
   setSubaction: (value: string) => void;
 }) => {
-  const labels = useSubActionLabelsById(action);
+  const options = useSubActionOptionsListe(action);
 
   return (
     <fieldset className="fr-fieldset h-52">
@@ -105,7 +105,7 @@ const SelectSubAction = ({
         data-test="SelectSubAction"
         placeholderText="Sélectionnez une option"
         value={subaction_id}
-        labels={labels}
+        options={options}
         onSelect={value => {
           setSubaction(value);
         }}

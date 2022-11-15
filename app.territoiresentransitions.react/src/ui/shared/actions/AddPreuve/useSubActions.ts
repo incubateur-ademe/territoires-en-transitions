@@ -24,12 +24,14 @@ export const useSubActions = (action: TActionDef) => {
 };
 
 /**
- * Les libellés indéxés par id de toutes les sous-actions rattachées à une
- * action
+ * Liste de options pour la sélection d'une sous-action
  */
-export const useSubActionLabelsById = (action: TActionDef) => {
+export const useSubActionOptionsListe = (action: TActionDef) => {
   const actions = useSubActions(action);
-  return subActionLabelsById(actions);
+  return actions.map(({id, identifiant, nom}) => ({
+    value: id,
+    label: `${identifiant} ${nom}`,
+  }));
 };
 
 const fetch = async (action: TActionDef): Promise<TFetchedData[]> => {
@@ -52,12 +54,3 @@ const fetch = async (action: TActionDef): Promise<TFetchedData[]> => {
 
   return data as TFetchedData[];
 };
-
-const subActionLabelsById = (actions: TFetchedData[]) =>
-  actions.reduce(
-    (dict, {id, identifiant, nom}) => ({
-      ...dict,
-      [id]: `${identifiant} ${nom}`,
-    }),
-    {}
-  );
