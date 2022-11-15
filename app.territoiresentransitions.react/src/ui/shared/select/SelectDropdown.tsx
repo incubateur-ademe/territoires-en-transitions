@@ -104,7 +104,7 @@ const SelectButtton = forwardRef(
       data-test={`${dataTest}-select-button`}
       aria-expanded={isOpen}
       aria-label="ouvrir le menu"
-      className={buttonClassName || buttonDisplayedClassname}
+      className={`${buttonDisplayedClassname} ${buttonClassName}`}
       {...props}
     >
       {value ? (
