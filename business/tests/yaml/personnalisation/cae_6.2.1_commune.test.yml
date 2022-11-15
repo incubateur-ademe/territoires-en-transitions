@@ -1,0 +1,13 @@
+Test:
+  Si une commune est à 10 % de l'EPCI et qu'elle participe au conseil d'administration d'un bailleur social, 
+  alors elle est notée sur 3 points
+Collectivité:
+  type:
+    - commune
+Réponses:
+  habitat_3: OUI
+  habitat_2: 0.1
+Scores:
+  cae_6.2.1:
+    test: cae 6.2.1 est réduite à 2 points et on lui ajoute 1 point, donc on devrait avoir un potentiel de 3 points
+    point_potentiel: 3.0

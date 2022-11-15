@@ -1,0 +1,30 @@
+Test:
+  La redistribution des points non concernés 
+  des tâches de la sous-action cae_1.2.2.1
+  avec deux tâches sur trois non-concernée
+Collectivité:
+  type:
+    - EPCI
+Statuts:
+  cae_1.2.2.1.1: fait
+  cae_1.2.2.1.2: non_concerne
+  cae_1.2.2.1.3: non_concerne
+Scores:
+  cae_1.2.2:
+    point_potentiel: 12
+    point_referentiel: 12
+    point_fait: 1.2
+  cae_1.2.2.1:
+    point_fait: 1.2
+    point_potentiel: 1.2
+    point_referentiel: 1.2
+  cae_1.2.2.1.1:
+    test: le fait devrait être égal au potentiel et au parent
+    point_fait: 1.2
+    point_potentiel: 1.2
+    point_referentiel: 0.4
+  cae_1.2.2.2:
+    test: le non renseigné devrait être égal au potentiel et au référentiel
+    point_non_renseigne: 1.8
+    point_potentiel: 1.8
+    point_referentiel: 1.8
