@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import {forwardRef, Ref} from 'react';
 
 import DropdownFloater from 'ui/shared/floating-ui/DropdownFloater';
@@ -104,7 +105,7 @@ const SelectButtton = forwardRef(
       data-test={`${dataTest}-select-button`}
       aria-expanded={isOpen}
       aria-label="ouvrir le menu"
-      className={`${buttonDisplayedClassname} ${buttonClassName}`}
+      className={classNames(buttonDisplayedClassname, buttonClassName)}
       {...props}
     >
       {value ? (
