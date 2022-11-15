@@ -1,0 +1,118 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots ui/shared/select/MultiSelectDropdown Aucune Option Selectionee 1`] = `
+<button
+  aria-expanded={false}
+  aria-label="ouvrir le menu"
+  className="flex items-center w-full p-2 text-left text-sm"
+  data-test="undefined-select-button"
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onKeyDown={[Function]}
+  onKeyUp={[Function]}
+  onMouseDown={[Function]}
+  onPointerDown={[Function]}
+>
+  <span
+    className="mr-auto text-gray-500 italic"
+  >
+    Sélectionner une ou plusieurs options...
+  </span>
+  <span
+    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+  />
+</button>
+`;
+
+exports[`Storyshots ui/shared/select/MultiSelectDropdown Custom Option Et Selection 1`] = `
+<button
+  aria-expanded={false}
+  aria-label="ouvrir le menu"
+  className="flex items-center w-full p-2 text-left text-sm"
+  data-test="undefined-select-button"
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onKeyDown={[Function]}
+  onKeyUp={[Function]}
+  onMouseDown={[Function]}
+  onPointerDown={[Function]}
+>
+  <span
+    className="mr-auto"
+  >
+    <span
+      className="mr-4 py-1 px-2 rounded bg-teal-600 text-white"
+    >
+      Option 2
+    </span>
+    <span
+      className="mr-4 py-1 px-2 rounded bg-teal-600 text-white"
+    >
+      Option 3
+    </span>
+  </span>
+  <span
+    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+  />
+</button>
+`;
+
+exports[`Storyshots ui/shared/select/MultiSelectDropdown Plusieurs Options Selectionees 1`] = `
+<button
+  aria-expanded={false}
+  aria-label="ouvrir le menu"
+  className="flex items-center w-full p-2 text-left text-sm"
+  data-test="undefined-select-button"
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onKeyDown={[Function]}
+  onKeyUp={[Function]}
+  onMouseDown={[Function]}
+  onPointerDown={[Function]}
+>
+  <span
+    className="mr-auto flex line-clamp-1"
+  >
+    <span>
+      Option 2
+      , 
+    </span>
+    <span>
+      Option 3
+    </span>
+  </span>
+  <span
+    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+  />
+</button>
+`;
+
+exports[`Storyshots ui/shared/select/MultiSelectDropdown Une Option Selectionee 1`] = `
+<button
+  aria-expanded={false}
+  aria-label="ouvrir le menu"
+  className="flex items-center w-full p-2 text-left text-sm"
+  data-test="undefined-select-button"
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onKeyDown={[Function]}
+  onKeyUp={[Function]}
+  onMouseDown={[Function]}
+  onPointerDown={[Function]}
+>
+  <span
+    className="mr-auto flex line-clamp-1"
+  >
+    <span>
+      Option 2
+    </span>
+  </span>
+  <span
+    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+  />
+</button>
+`;

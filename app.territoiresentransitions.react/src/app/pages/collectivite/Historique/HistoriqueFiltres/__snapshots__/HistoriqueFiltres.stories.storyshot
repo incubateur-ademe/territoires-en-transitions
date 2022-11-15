@@ -1,0 +1,122 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots app/pages/collectivite/Historique/HistoriqueFiltres Defaut 1`] = `
+<div
+  className="my-8"
+>
+  <p
+    className="mb-6 font-bold"
+  >
+    Filtrer l’historique des modifications par
+  </p>
+  <div
+    className="flex flex-wrap gap-x-8 gap-y-6"
+  >
+    <div
+      className="w-full md:w-1/2 lg:w-full lg:max-w-xs"
+    >
+      <p
+        className="mb-2 font-medium"
+      >
+        Membre de la collectivité
+      </p>
+      <div
+        className="shadow"
+      >
+        <button
+          aria-expanded={false}
+          aria-label="ouvrir le menu"
+          className="flex items-center w-full p-2 text-left text-sm"
+          data-test="undefined-select-button"
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onPointerDown={[Function]}
+        >
+          <span
+            className="mr-auto flex line-clamp-1"
+          >
+            <span>
+              Tous
+            </span>
+          </span>
+          <span
+            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+          />
+        </button>
+      </div>
+    </div>
+    <div
+      className="w-full md:w-1/2 lg:w-full lg:max-w-xs"
+    >
+      <p
+        className="mb-2 font-medium"
+      >
+        Type d'élément modifié
+      </p>
+      <div
+        className="shadow"
+      >
+        <button
+          aria-expanded={false}
+          aria-label="ouvrir le menu"
+          className="flex items-center w-full p-2 text-left text-sm"
+          data-test="undefined-select-button"
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onPointerDown={[Function]}
+        >
+          <span
+            className="mr-auto flex line-clamp-1"
+          >
+            <span>
+              Tous
+            </span>
+          </span>
+          <span
+            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+          />
+        </button>
+      </div>
+    </div>
+  </div>
+  <div
+    className="flex items-baseline gap-6 mt-8"
+  >
+    <span
+      className="text-sm text-gray-400"
+    >
+      nb resultat
+    </span>
+    <div
+      className="w-max mt-4 border-b border-bf500 md:mt-auto"
+    >
+      <button
+        className="flex items-center text-bf500 hover:!bg-none"
+        onClick={[Function]}
+      >
+        <span
+          className="fr-fi-close-circle-fill mr-1 scale-90"
+        />
+        <span
+          className="text-sm"
+        >
+          Désactiver tous les filtres
+        </span>
+      </button>
+    </div>
+  </div>
+  <div
+    className="mt-16"
+  >
+    {"collectivite_id":1,"page":1}
+  </div>
+</div>
+`;
