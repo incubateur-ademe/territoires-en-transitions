@@ -6,65 +6,82 @@ export default {
   component: MultiSelectDropdown,
 };
 
-const fakeLabels: Record<any, string> = {
-  option1: 'Option 1',
-  option2: 'Option 2',
-  option3: 'Option 3',
-};
+const fakeOptions = [
+  {
+    label: 'Option 1',
+    value: 'option1',
+  },
+  {
+    label: 'Option 2',
+    value: 'option2',
+  },
+  {
+    label: 'Option 3',
+    value: 'option3',
+  },
+];
 
-export const MultiSelectAucuneOptionSelectionee = () => {
-  const [values, setValues] = useState(undefined);
+export const AucuneOptionSelectionee = () => {
+  const [values, setValues] = useState([]);
   return (
     <MultiSelectDropdown
-      labels={fakeLabels}
+      options={fakeOptions}
       values={values}
-      onSelect={({v}: any) => setValues(v)}
+      onSelect={v => setValues(v)}
+      placeholderText="Sélectionner une ou plusieurs options..."
     />
   );
 };
 
-export const MultiSelectAvecPlaceholder = () => {
-  const [values, setValues] = useState(undefined);
-  return (
-    <MultiSelectDropdown
-      labels={fakeLabels}
-      values={values}
-      onSelect={({v}: any) => setValues(v)}
-      placeholderText="À renseigner"
-    />
-  );
-};
-
-export const MultiSelectUneOptionSelectionee = () => {
+export const UneOptionSelectionee = () => {
   const [values, setValues] = useState(['option2']);
   return (
     <MultiSelectDropdown
-      labels={fakeLabels}
+      options={fakeOptions}
       values={values}
       onSelect={v => setValues(v)}
+      placeholderText="Sélectionner une ou plusieurs options..."
     />
   );
 };
 
-export const MultiSelectPlusieursOptionsSelectionees = () => {
+export const PlusieursOptionsSelectionees = () => {
   const [values, setValues] = useState(['option2', 'option3']);
   return (
     <MultiSelectDropdown
-      labels={fakeLabels}
+      options={fakeOptions}
       values={values}
       onSelect={v => setValues(v)}
+      placeholderText="Sélectionner une ou plusieurs options..."
     />
   );
 };
 
-export const MultiSelectPlusieursOptionsSelectioneesUneLigne = () => {
+export const CustomOptionEtSelection = () => {
   const [values, setValues] = useState(['option2', 'option3']);
   return (
     <MultiSelectDropdown
-      labels={fakeLabels}
-      inlineValues
+      options={fakeOptions}
       values={values}
       onSelect={v => setValues(v)}
+      placeholderText="Sélectionner une ou plusieurs options..."
+      renderSelection={values => (
+        <span className="mr-auto">
+          {values.sort().map(value => (
+            <span
+              key={value}
+              className="mr-4 py-1 px-2 rounded bg-teal-600 text-white"
+            >
+              {fakeOptions.find(({value: v}) => v === value)?.label || ''}
+            </span>
+          ))}
+        </span>
+      )}
+      renderOption={value => (
+        <span className="mr-auto py-1 px-2 rounded bg-teal-600 text-white">
+          {value}
+        </span>
+      )}
     />
   );
 };
