@@ -1,6 +1,8 @@
 import {useState} from 'react';
 
-import {MultiSelectDropdown, SelectDropdown} from 'ui/shared/SelectDropdown';
+import SelectDropdown from 'ui/shared/select/SelectDropdown';
+import MultiSelectDropdown from 'ui/shared/select/MultiSelectDropdown';
+import UpdateMemberAccesModal from 'app/pages/collectivite/Users/components/UpdateMembreAccesModal';
 import {
   Membre,
   TNiveauAcces,
@@ -9,7 +11,6 @@ import {
 } from 'app/pages/collectivite/Users/types';
 import {Referentiel} from 'types/litterals';
 import {referentielToName} from 'app/labels';
-import UpdateMemberAccesModal from 'app/pages/collectivite/Users/components/UpdateMembreAccesModal';
 import {MembreFonction} from 'generated/dataLayer/membres';
 
 export type TMembreListTableRowProps = {
@@ -20,19 +21,19 @@ export type TMembreListTableRowProps = {
   removeFromCollectivite: TRemoveFromCollectivite;
 };
 
-const membreFonctionLabels: Record<MembreFonction, string> = {
-  referent: 'Référent·e',
-  technique: 'Équipe technique',
-  politique: 'Équipe politique',
-  conseiller: 'Conseiller·e',
-  partenaire: 'Partenaire',
-};
+const membreFonctions: {value: MembreFonction; label: string}[] = [
+  {value: 'referent', label: 'Référent·e'},
+  {value: 'technique', label: 'Équipe technique'},
+  {value: 'politique', label: 'Équipe politique'},
+  {value: 'conseiller', label: 'Conseiller·e'},
+  {value: 'partenaire', label: 'Partenaire'},
+];
 
-const niveauAccesLabels: Record<TNiveauAcces, string> = {
-  admin: 'Admin',
-  edition: 'Édition',
-  lecture: 'Lecture',
-};
+const niveauAcces: {value: TNiveauAcces; label: string}[] = [
+  {value: 'admin', label: 'Admin'},
+  {value: 'edition', label: 'Édition'},
+  {value: 'lecture', label: 'Lecture'},
+];
 
 const niveauAccessDetail: Record<TNiveauAcces, string> = {
   admin: 'Peut entièrement configurer et éditer',
@@ -124,7 +125,9 @@ const MembreListTableRow = ({
               />
             </>
           ) : (
-            <span>{niveauAccesLabels[niveau_acces]}</span>
+            <span>
+              {niveauAcces.find(v => v.value === niveau_acces)?.label}
+            </span>
           )}
         </td>
       </tr>
@@ -152,7 +155,9 @@ const MembreListTableRow = ({
             }
           />
         ) : (
-          <span>{fonction && membreFonctionLabels[fonction]}</span>
+          <span>
+            {fonction && membreFonctions.find(v => v.value === fonction)?.label}
+          </span>
         )}
       </td>
       <td className={`${cellClassNames} pr-0`}>
@@ -213,7 +218,7 @@ const MembreListTableRow = ({
             />
           </>
         ) : (
-          <span>{niveauAccesLabels[niveau_acces]}</span>
+          <span>{niveauAcces.find(v => v.value === niveau_acces)?.label}</span>
         )}
       </td>
     </tr>
@@ -250,15 +255,15 @@ const FonctionDropdown = ({
 }) => (
   <div data-test="fonction-dropdown">
     <SelectDropdown
-      labels={membreFonctionLabels}
       value={value}
+      options={membreFonctions}
       onSelect={onChange}
       placeholderText="À renseigner"
     />
   </div>
 );
 
-const Referentiels = [
+const referentiels = [
   {label: referentielToName['eci'], value: 'eci'},
   {label: referentielToName['cae'], value: 'cae'},
 ];
@@ -272,10 +277,19 @@ const ChampsInterventionDropdown = ({
 }) => (
   <div data-test="champ_intervention-dropdown">
     <MultiSelectDropdown
-      options={Referentiels}
+      options={referentiels}
       onSelect={onChange}
       values={values}
       placeholderText="À renseigner"
+      renderSelection={values => (
+        <span className="mr-auto flex flex-col gap-2">
+          {values.sort().map((value, index) => (
+            <div key={value}>
+              {referentiels.find(({value: v}) => v === value)?.label || ''}
+            </div>
+          ))}
+        </span>
+      )}
     />
   </div>
 );
@@ -305,7 +319,7 @@ const AccessDropdownLabel = ({
   if (currentUserAccess === 'admin')
     return (
       <div>
-        <div>{niveauAccesLabels[option]}</div>
+        <div>{niveauAcces.find(v => v.value === option)?.label}</div>
         <div
           aria-label={niveauAccessDetail[option]}
           className="mt-1 text-xs text-gray-500"
@@ -336,12 +350,16 @@ const AccesDropdown = ({
         placement="bottom-end"
         value={value}
         onSelect={onSelect}
-        labels={{...niveauAccesLabels, remove: 'Supprimé'}}
         options={
           currentUserAccess === 'admin'
-            ? ['admin', 'edition', 'lecture', 'remove']
-            : ['remove']
+            ? [...niveauAcces, {value: 'remove', label: 'Supprimé'}]
+            : [{value: 'remove', label: 'Supprimé'}]
         }
+        renderSelection={value => (
+          <span className="mr-auto">
+            {niveauAcces.find(v => v.value === value)?.label}
+          </span>
+        )}
         renderOption={value => (
           <AccessDropdownLabel
             option={value}
