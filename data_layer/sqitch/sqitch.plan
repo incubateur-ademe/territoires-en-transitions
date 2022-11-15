@@ -120,3 +120,4 @@ utils/maintenance [utils/maintenance@v1.9.0] 2022-11-08T17:29:14Z Florian <flori
 @v1.10.0 2022-11-09T14:11:36Z Florian <florian@derfurth.com> # Audit lot 1
 
 labellisation/suivi_audit 2022-11-10T15:17:25Z Florian <florian@derfurth.com> # La vue du suivi de l'audit
+@v1.11.0 2022-11-15T08:39:44Z Florian <florian@derfurth.com> # Audit lot 2
