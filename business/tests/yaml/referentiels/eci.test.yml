@@ -1,0 +1,20 @@
+Test:
+  "Les points du référentiel ECI"
+Scores:
+  eci: # La racine du référentiel
+    test: "Le référentiel ECI devrait faire 500 point au total et comporter 274 tâches"
+    point_fait: 0.0
+    point_programme: 0.0
+    point_pas_fait: 0.0
+    point_non_renseigne: 500.0
+    point_potentiel: 500.0
+    point_referentiel: 500.0
+    concerne: yes
+    total_taches_count: 274
+    completed_taches_count: 6
+    fait_taches_avancement: 0
+    programme_taches_avancement: 0
+    pas_fait_taches_avancement: 0
+    pas_concerne_taches_avancement: 6
+    desactive: no
+    point_potentiel_perso: null

@@ -1,0 +1,43 @@
+Test:
+  "Désactivation eci_2.4.2 et eci_2.4.3 liée collecte déchets"
+Réponses:
+  dechets_1: NON
+Scores:
+  eci: # La racine du référentiel
+    test: "Le référentiel ECI devrait faire 465 points au total"
+    point_potentiel: 465.0
+  eci_2.4:
+    test: "Le potentiel devrait être égal au référentiel"
+    point_referentiel: 20.0
+    point_potentiel: 20.0
+    desactive: no
+  eci_2.4.0:
+    test: "Devrait être à 0 car c'est une action réglementaire"
+    point_referentiel: 0.0
+    point_potentiel: 0.0
+    desactive: no
+  eci_2.4.1:
+    test: "Devrait avoir un potentiel de 6 (4 + 2)"
+    point_referentiel: 4.0
+    point_potentiel: 6.0
+    desactive: no
+  eci_2.4.2:
+    test: "L'action 2.4.2 devrait être désactivée"
+    point_referentiel: 4.0
+    point_potentiel: 0.0
+    desactive: yes
+  eci_2.4.3:
+    test: "Devrait être désactivée"
+    point_referentiel: 2.0
+    point_potentiel: 0.0
+    desactive: yes
+  eci_2.4.4:
+    test: "Devrait avoir un potentiel de 8 (6 + 2)"
+    point_referentiel: 6.0
+    point_potentiel: 8.0
+    desactive: no
+  eci_2.4.5:
+    test: "Devrait avoir un potentiel de 6 (4 + 2)"
+    point_referentiel: 4.0
+    point_potentiel: 6.0
+    desactive: no

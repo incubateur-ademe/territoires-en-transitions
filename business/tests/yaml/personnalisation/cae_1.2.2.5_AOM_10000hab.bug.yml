@@ -1,0 +1,33 @@
+Test:
+  La redistribution des points non concernés
+  des tâches de la sous-action cae_1.2.2.1
+  avec une EPCI de plus de 10 000 habitants
+Collectivité:
+  type:
+    - EPCI
+  population:
+    - plus_de_100000
+Réponses:
+  AOM_1: OUI
+Scores:
+  cae_1.2.2.1:
+    test:
+      la sous action devrait être désactivée étant donné
+      les caratéristiques de la collectivité
+    point_referentiel: 1.2
+    point_potentiel: 0.0
+    desactive: yes
+  cae_1.2.2.5:
+    test:
+      la sous action devrait être désactivée étant donné
+      les caratéristiques de la collectivité
+    point_referentiel: 3.6
+    point_potentiel: 3.6 # BUG est à 1.427
+    desactive: no
+  cae_1.2.2:
+    test:
+      le potentiel ne devrait pas changer
+    point_referentiel: 12
+    point_potentiel: 12 # BUG est à 9.84
+    desactive: no
+
