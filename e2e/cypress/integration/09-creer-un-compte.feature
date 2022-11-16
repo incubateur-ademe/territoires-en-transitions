@@ -11,7 +11,6 @@ Fonctionnalité: Création de compte
       | home                    | visible   |
       | formulaire de connexion | absent    |
       | footer                  | visible   |
-      | bouton support          | présent   |
 
     Quand je clique sur le bouton "Créer un compte" du "header"
     Alors la page vérifie les conditions suivantes :
