@@ -1,4 +1,4 @@
-insert into indicateur_definition
+/*insert into indicateur_definition
 values (default,
         'ind0',
         'cae',
@@ -20,66 +20,63 @@ values (default,
         'commentaire',
         '17440546-f389-4d4f-bfdb-b0c94a1bd0f9');
 
-insert into fiche_action (titre, description, thematiques, piliers_eci, collectivite_id)
-values
-    (
-        'fiche 1',
+insert into fiche_action
+(collectivite_id,
+ uid,
+ avancement,
+ numerotation,
+ titre,
+ description,
+ structure_pilote,
+ personne_referente,
+ elu_referent,
+ partenaires,
+ budget_global,
+ commentaire,
+ date_fin,
+ date_debut,
+ action_ids,
+ indicateur_ids,
+ indicateur_personnalise_ids,
+ en_retard)
+values (1,
+        '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
+        'pas_fait',
+        'A0',
+        'titre',
         'description',
-        array[
-            'Bâtiments'::fiche_action_thematiques
-            ],
-        array[
-            'Écoconception'::fiche_action_piliers_eci,
-            'Recyclage'::fiche_action_piliers_eci
-            ],
-        1
-    ),
-    ('fiche 2','description',array[]::fiche_action_thematiques[],array[]::fiche_action_piliers_eci[],1),
-    ('fiche 3','description',array[]::fiche_action_thematiques[],array[]::fiche_action_piliers_eci[],2)
-;
-insert into partenaires_tags (nom, collectivite_id)
-values ('ptag1', 1), ('ptag2', 1), ('ptag3', 2);
+        'pilote',
+        'référente',
+        'référent',
+        'partenaires',
+        0,
+        'commentaire',
+        'fin',
+        'début',
+        array []::action_id[],
+        array []::indicateur_id[],
+        array []::integer[],
+        false);
 
-insert into structures_tags (nom, collectivite_id)
-values ('stag1', 1), ('stag2', 2), ('stag3', 2);
-
-insert into users_tags(nom, collectivite_id)
-values ('user1', 1), ('user2', 1), ('user3', 2);
-
-insert into plan_action (nom, collectivite_id, parent)
-values ('Plan 1',1,null), -- id 1
-       ('Plan 1.1', 1, 1), -- id 2
-       ('Plan 1.2', 1, 1), -- id 3
-       ('Plan 1.1.1', 1, 2), -- id 4
-       ('Plan 2',2,null); -- id 5
-
-select upsert_fiche_action_liens(
-               1,
-               array [1, 2],
-               array [1],
-               array[1],
-               array['298235a0-60e7-4ceb-9172-0a991cce0386'::uuid],
-               array[2],
-               array[]::uuid[],
-               array[]::integer[],
-               array [3, 5],
-               array[]::action_id[],
-               array[]::indicateur_id[],
-               array[]::integer[]
-           );
-select upsert_fiche_action_liens(
-               2,
-               array [1],
-               array [1],
-               array[2],
-               array[]::uuid[],
-               array[1],
-               array[]::uuid[],
-               array[]::integer[],
-               array [4],
-               array[]::action_id[],
-               array[]::indicateur_id[],
-               array[]::integer[]
-           );
-select upsert_fiche_action_plan_action(3, array [4]);
+insert into plan_action
+(collectivite_id,
+ uid,
+ nom,
+ categories,
+ fiches_by_category)
+values (1,
+        '29770546-f389-4d4f-bfdb-b0c94a1bd0f9',
+        'Plan d''action de test',
+        '[
+          {
+            "nom": "1. Yolo",
+            "uid": "ef599348-6ab9-4dc7-bf62-41b9a17ea5fa"
+          }
+        ]',
+        '[
+          {
+            "fiche_uid": "17440546-f389-4d4f-bfdb-b0c94a1bd0f9",
+            "category_uid": "ef599348-6ab9-4dc7-bf62-41b9a17ea5fa"
+          }
+        ]');*/
 
