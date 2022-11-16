@@ -198,3 +198,5 @@ stats/vues_BI [stats/vues_BI@v1.22.0] 2023-01-11T13:10:10Z Florian <florian@derf
 
 stats/vues_BI [stats/vues_BI@v1.23.0] 2023-01-12T08:15:17Z Florian <florian@derfurth.com> # Améliore le comptage des utilisateurs par collectivité.
 @v1.24.0 2023-01-12T14:21:26Z Florian <florian@derfurth.com> # Amélioration stats publiques
+
+plan_action/plan_action [plan_action/plan_action@v1.10.0] 2022-11-16T15:11:47Z Amandine Jacquelin <conta@LanceLibre> # Refonte des tables fiches et plans action
