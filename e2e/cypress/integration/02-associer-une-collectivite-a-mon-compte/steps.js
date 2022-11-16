@@ -20,16 +20,18 @@ Given(/le champ "([^"]+)" doit contenir "([^"]+)"/, (champ, value) => {
   cy.get(`[data-test=${champ}]`).should('have.value', value);
 });
 
+const inputSelector = 'input[name=collectiviteId]';
 Given(
   /je recherche la collectivité "([^"]+)" dans le champ "([^"]+)"/,
   (value, champ) => {
-    cy.get('[data-test="formulaire-RejoindreUneCollectivite"]')
-      .find(`input[name=collectiviteId]`)
-      .clear()
-      .type(value)
-      .wait(500) // attente de la requete
-      .trigger('keydown', {keyCode: 40}) //fleche du bas
-      .trigger('keydown', {keyCode: 13}); //enter
+    cy.get('[data-test="formulaire-RejoindreUneCollectivite"]').within(() => {
+      // saisie dans le champ la valeur recherchée
+      cy.get(inputSelector).clear().type(value);
+      // attends que la valeur apparaisse dans les résultats remontés par l'auto-complétion
+      cy.get('div').contains(value).should('be.visible');
+      // sélectionne la valeur au clavier (en supposant que c'est le 1er item de la liste de résultat)
+      cy.get(inputSelector).type('{downArrow}{enter}');
+    });
   }
 );
 
