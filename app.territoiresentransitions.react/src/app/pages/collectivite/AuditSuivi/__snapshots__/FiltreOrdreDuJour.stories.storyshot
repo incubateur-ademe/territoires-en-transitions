@@ -4,7 +4,8 @@ exports[`Storyshots app/pages/collectivite/AuditSuivi/FiltreOrdreDuJour Selectio
 <button
   aria-expanded={false}
   aria-label="ouvrir le menu"
-  className="flex items-center px-4 py-1 text-left text-sm"
+  className="flex items-center w-full p-2 text-left text-sm"
+  data-test="undefined-select-button"
   onBlur={[Function]}
   onClick={[Function]}
   onFocus={[Function]}
@@ -14,7 +15,7 @@ exports[`Storyshots app/pages/collectivite/AuditSuivi/FiltreOrdreDuJour Selectio
   onPointerDown={[Function]}
 >
   <span
-    className="fr-fi-filter-fill fr-fi--sm fr-text-label--blue-france"
+    className="fr-fi--sm w-full text-center text-bf500 font-bold fr-fi-filter-line"
   >
      
     A discuter - Séance d'audit
@@ -29,7 +30,8 @@ exports[`Storyshots app/pages/collectivite/AuditSuivi/FiltreOrdreDuJour Tous 1`]
 <button
   aria-expanded={false}
   aria-label="ouvrir le menu"
-  className="flex items-center px-4 py-1 text-left text-sm"
+  className="flex items-center w-full p-2 text-left text-sm"
+  data-test="undefined-select-button"
   onBlur={[Function]}
   onClick={[Function]}
   onFocus={[Function]}
@@ -39,7 +41,7 @@ exports[`Storyshots app/pages/collectivite/AuditSuivi/FiltreOrdreDuJour Tous 1`]
   onPointerDown={[Function]}
 >
   <span
-    className="fr-fi-filter-line fr-fi--sm fr-text-label--blue-france"
+    className="fr-fi--sm w-full text-center text-bf500 font-bold fr-fi-filter-fill"
   >
      
     A discuter - Séance d'audit
