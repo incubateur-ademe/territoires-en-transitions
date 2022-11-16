@@ -1,0 +1,31 @@
+Test:
+  La redistribution des points non concernés
+  des tâches de la sous-action cae 2.2.3
+  avec une collectivité dans les DOM
+Collectivité:
+  localisation:
+    - DOM
+Réponses:
+  ECS: NON
+Scores:
+  cae_2.2.3.1:
+    test:
+      la sous action devrait être désactivée étant donné
+      la localisation de la collectivité
+    point_referentiel: 0.9
+    point_potentiel: 0.0
+    desactive: yes
+  cae_2.2.3.3:
+    test:
+      la sous action devrait être désactivée étant donné
+      la localisation de la collectivité
+    point_referentiel: 0.3
+    point_potentiel: 0.0
+    desactive: yes
+  cae_2.2.3.4:
+    test:
+      les points potentiels devraient être diminués
+    point_referentiel: 4.5
+    point_potentiel: 1.8
+    desactive: no
+
