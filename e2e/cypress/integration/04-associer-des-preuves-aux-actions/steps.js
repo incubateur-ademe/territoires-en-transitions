@@ -176,9 +176,7 @@ When(
 When(
   /je sélectionne la sous-action "([^"]+)" dans la liste déroulante/,
   value => {
-    cy.get('[data-test=SelectSubAction-select-button]')
-      .should('be.visible')
-      .click();
+    cy.get('[data-test=SelectSubAction]').should('be.visible').click();
     cy.get(`[data-test=SelectSubAction-options] [data-test="${value}"]`)
       .should('be.visible')
       .click();
@@ -186,7 +184,7 @@ When(
 );
 
 When(/la liste déroulante des sous-actions est visible/, () => {
-  cy.get('[data-test=SelectSubAction-select-button]').should('be.visible');
+  cy.get('[data-test=SelectSubAction]').should('be.visible');
 });
 
 let cnt = 1;

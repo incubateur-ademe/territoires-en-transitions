@@ -111,7 +111,7 @@ const MultiSelectButton = forwardRef(
   ) => (
     <button
       ref={ref}
-      data-test={`${dataTest}-select-button`}
+      data-test={dataTest}
       aria-expanded={isOpen}
       aria-label="ouvrir le menu"
       className={classNames(buttonDisplayedClassname, buttonClassName)}
