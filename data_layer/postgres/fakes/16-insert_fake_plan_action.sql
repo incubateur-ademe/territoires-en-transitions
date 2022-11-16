@@ -1,4 +1,4 @@
-insert into indicateur_definition
+/*insert into indicateur_definition
 values (default,
         'ind0',
         'cae',
@@ -78,5 +78,5 @@ values (1,
             "fiche_uid": "17440546-f389-4d4f-bfdb-b0c94a1bd0f9",
             "category_uid": "ef599348-6ab9-4dc7-bf62-41b9a17ea5fa"
           }
-        ]');
+        ]');*/
 

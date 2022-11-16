@@ -1,26 +1,6 @@
 -- Deploy tet:plan_action to pg
 
 BEGIN;
-drop table fiche_action_annexes;
-drop table annexes;
-drop table fiche_action_action;
-drop table fiche_action_referents;
-drop table fiche_action_pilotes;
-drop table users_tags;
-drop table fiche_action_structures_tags;
-drop table structures_tags;
-drop table fiche_action_partenaires_tags;
-drop table partenaires_tags;
-drop table tags;
-drop table fiche_action_plan_action;
-drop table plan_action;
-drop table fiche_action;
-drop type fiche_action_niveaux_priorite;
-drop type fiche_action_statuts;
-drop type fiche_action_cibles;
-drop type fiche_action_resultats_attendus;
-drop type fiche_action_piliers_eci;
-drop type fiche_action_thematiques;
 
 create type fiche_action_avancement as enum ('pas_fait', 'fait', 'en_cours', 'non_renseigne');
 
