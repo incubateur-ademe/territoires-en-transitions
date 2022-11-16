@@ -17,7 +17,8 @@ exports[`Storyshots app/pages/collectivite/DetailTaches/FiltreStatut All 1`] = `
   <span
     className="fr-fi--sm w-full text-center text-bf500 font-bold fr-fi-filter-fill"
   >
-     Statut
+     
+    Statut
   </span>
   <span
     className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
@@ -42,7 +43,8 @@ exports[`Storyshots app/pages/collectivite/DetailTaches/FiltreStatut Multi Selec
   <span
     className="fr-fi--sm w-full text-center text-bf500 font-bold fr-fi-filter-line"
   >
-     Statut
+     
+    Statut
   </span>
   <span
     className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
