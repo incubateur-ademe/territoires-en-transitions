@@ -293,7 +293,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
                 }
               }
               type="number"
-              value="undefined"
+              value=""
             />
           </div>
           <section
@@ -1743,7 +1743,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
                 }
               }
               type="number"
-              value="undefined"
+              value=""
             />
           </div>
           <section
