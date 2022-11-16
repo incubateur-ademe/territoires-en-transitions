@@ -128,9 +128,8 @@ const FiltreMembre = ({
         <MultiSelectFilter
           values={filteredMembers}
           options={collectiviteMemberList}
-          onChange={onSelect}
+          onSelect={onSelect}
           placeholderText="Sélectionner une option"
-          inlineValues
         />
       </div>
     </div>
@@ -151,9 +150,8 @@ const FiltreType = ({typeList, filteredTypes, onSelect}: FiltreTypeProps) => {
         <MultiSelectFilter
           values={filteredTypes}
           options={typeList}
-          onChange={onSelect}
+          onSelect={onSelect}
           placeholderText="Sélectionner une option"
-          inlineValues
         />
       </div>
     </div>

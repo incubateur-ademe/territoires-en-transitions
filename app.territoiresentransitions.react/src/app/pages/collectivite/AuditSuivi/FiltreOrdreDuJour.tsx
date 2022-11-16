@@ -1,4 +1,6 @@
-import {ITEM_ALL, MultiSelectFilter} from 'ui/shared/MultiSelectFilter';
+import {ITEM_ALL} from 'ui/shared/select/commons';
+import {MultiSelectFilter} from 'ui/shared/select/MultiSelectFilter';
+import {MultiSelectFilterTitle} from 'ui/shared/select/MultiSelectFilterTitle';
 import {TFiltreProps} from './filters';
 
 export const FILTER = 'ordre_du_jour';
@@ -13,15 +15,19 @@ export const filterItems = [
  * Affiche le filtre par inscription à la prochaine séance d'audit
  */
 export const FiltreOrdreDuJour = (props: TFiltreProps) => {
-  const {className, filters, setFilters} = props;
+  const {filters, setFilters} = props;
 
   return (
     <MultiSelectFilter
-      className={`filtre-odj ${className || ''}`}
-      label="A discuter - Séance d'audit"
+      renderSelection={values => (
+        <MultiSelectFilterTitle
+          values={values}
+          label="A discuter - Séance d'audit"
+        />
+      )}
       values={filters[FILTER]}
-      items={filterItems}
-      onChange={newValues => setFilters({...filters, [FILTER]: newValues})}
+      options={filterItems}
+      onSelect={newValues => setFilters({...filters, [FILTER]: newValues})}
     />
   );
 };

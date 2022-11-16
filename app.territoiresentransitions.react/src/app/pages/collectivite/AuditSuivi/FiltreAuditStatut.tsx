@@ -1,7 +1,9 @@
-import {ITEM_ALL, MultiSelectFilter} from 'ui/shared/MultiSelectFilter';
+import {MultiSelectFilter} from 'ui/shared/select/MultiSelectFilter';
+import {ITEM_ALL} from 'ui/shared/select/commons';
 import {TFiltreProps} from './filters';
 import {BadgeAuditStatut} from 'app/pages/collectivite/Audit/BadgeAuditStatut';
 import {TAuditStatut} from 'app/pages/collectivite/Audit/types';
+import {MultiSelectFilterTitle} from 'ui/shared/select/MultiSelectFilterTitle';
 
 export const FILTER = 'statut';
 
@@ -16,16 +18,17 @@ export const filterItems = [
  * Affiche le filtre par statut d'audit
  */
 export const FiltreAuditStatut = (props: TFiltreProps) => {
-  const {className, filters, setFilters} = props;
+  const {filters, setFilters} = props;
 
   return (
     <MultiSelectFilter
-      className={`filtre-statut ${className || ''}`}
-      label="Avancement audit"
+      renderSelection={values => (
+        <MultiSelectFilterTitle values={values} label="Avancement audit" />
+      )}
       values={filters[FILTER]}
-      items={filterItems}
-      onChange={newValues => setFilters({...filters, [FILTER]: newValues})}
-      renderValue={(value: string) =>
+      options={filterItems}
+      onSelect={newValues => setFilters({...filters, [FILTER]: newValues})}
+      renderOption={(value: string) =>
         value === ITEM_ALL ? (
           <span className="pr-4 py-1 fr-text-mention--grey">Tous</span>
         ) : (
