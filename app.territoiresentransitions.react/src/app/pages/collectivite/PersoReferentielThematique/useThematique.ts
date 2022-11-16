@@ -1,6 +1,6 @@
-import {useEffect, useState} from 'react';
+import {supabaseClient} from 'core-logic/api/supabase';
 import {TQuestionThematiqueRead} from 'generated/dataLayer/question_thematique_read';
-import {questionThematiqueReadEndpoint} from 'core-logic/api/endpoints/QuestionThematiqueReadEndpoint';
+import {useQuery} from 'react-query';
 
 type TUseThematique = (
   thematique_id: string | undefined
@@ -8,23 +8,20 @@ type TUseThematique = (
 
 // charge les informations d'une thématique
 export const useThematique: TUseThematique = thematique_id => {
-  const [thematique, setThematique] = useState<TQuestionThematiqueRead | null>(
-    null
+  const {data} = useQuery(['question_thematique', thematique_id], () =>
+    fetch(thematique_id)
   );
+  return data || null;
+};
 
-  // charge les données de la thématique
-  const fetchThematique = async () => {
-    if (thematique_id) {
-      const thematique = await questionThematiqueReadEndpoint.getBy({
-        thematique_id,
-      });
-
-      setThematique(thematique?.[0] || null);
-    }
-  };
-  useEffect(() => {
-    fetchThematique();
-  }, [thematique_id]);
-
-  return thematique;
+// charge les données de la thématique
+const fetch = async (thematique_id: string | undefined) => {
+  if (thematique_id) {
+    const {data: thematique} = await supabaseClient
+      .from<TQuestionThematiqueRead>('question_thematique')
+      .select()
+      .eq('id', thematique_id);
+    return thematique?.[0] || null;
+  }
+  return null;
 };

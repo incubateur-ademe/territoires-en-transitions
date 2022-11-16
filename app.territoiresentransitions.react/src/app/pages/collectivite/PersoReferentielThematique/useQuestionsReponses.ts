@@ -1,57 +1,118 @@
-import {useEffect, useState} from 'react';
-import {questionReadEndpoint} from 'core-logic/api/endpoints/QuestionReadEndpoint';
-import {reponseReadEndpoint} from 'core-logic/api/endpoints/ReponseReadEndpoint';
-import {TQuestionReponse} from 'generated/dataLayer/reponse_write';
-import {ReponseRead} from 'generated/dataLayer/reponse_read';
+import {useQueries, useQuery} from 'react-query';
+import {supabaseClient} from 'core-logic/api/supabase';
+import {useCollectiviteId} from 'core-logic/hooks/params';
+import {QuestionType, TQuestionRead} from 'generated/dataLayer/question_read';
+import {TReponseRead, TReponse} from 'generated/dataLayer/reponse_read';
 
-type TReponseByQuestionId = {[k: string]: ReponseRead};
-type TUseQuestionsReponses = (
-  collectivite_id?: number
-) => [qr: TQuestionReponse[], refetch: () => void];
+type TFilters = {
+  action_ids?: string[];
+  thematique_id?: string;
+};
 
-// charge et agrège les questions et réponses de personnalisation d'une collectivité
-export const useQuestionsReponses: TUseQuestionsReponses = collectivite_id => {
-  const [qr, setQR] = useState<TQuestionReponse[]>([]);
+/**
+ * Charge la liste des questions de personnalisation et leur éventuelle réponse
+ * pour la collectivité courante. La liste est filtrable par action(s) ou par
+ * thématique
+ */
+export const useQuestionsReponses = (filters: TFilters) => {
+  // charge les questions et les réponses
+  const {data: questions} = useQuestions(filters);
+  const reponses = useReponses(questions!);
 
-  const fetch = async () => {
-    if (!collectivite_id) {
-      return;
+  // indexe les réponses par id de question
+  const reponsesByQuestionId = new Map<string, TReponse>();
+  reponses.forEach(({data}) => {
+    if (data) {
+      const {question_id, reponse} = data;
+      reponsesByQuestionId.set(question_id, reponse.reponse);
     }
+  });
 
-    // charge les questions
-    const questions = await questionReadEndpoint.getBy({
-      collectivite_id,
-    });
+  // associe les réponses aux questions
+  const qrList = questions?.map(question => {
+    const reponse = reponsesByQuestionId.get(question.id);
+    return {...question, reponse};
+  });
 
-    // charge les réponses
-    const reponses = await reponseReadEndpoint.getBy({
-      collectivite_id,
-    });
+  return qrList || [];
+};
 
-    // indexe les réponses par id de question
-    const reponsesByQuestionId: TReponseByQuestionId = reponses.reduce(
-      (dict, reponse) => ({
-        ...dict,
-        [reponse.question_id]: reponse.reponse,
-      }),
-      {}
-    );
+// charge les questions
+const useQuestions = (filters: TFilters) => {
+  const collectivite_id = useCollectiviteId();
 
-    // associe les réponses aux questions
-    const qrList = questions.map(question => {
-      const reponse = reponsesByQuestionId[question.id];
-      return {
-        ...question,
-        reponse: reponse ? reponse.reponse : undefined,
-      } as TQuestionReponse;
-    });
+  return useQuery(
+    ['questions', collectivite_id, filters],
+    () => fetchQuestions(collectivite_id!, filters),
+    {enabled: !!collectivite_id, initialData: []}
+  );
+};
+const fetchQuestions = async (collectivite_id: number, filters: TFilters) => {
+  const query = supabaseClient
+    .from('question_display')
+    .select()
+    .eq('collectivite_id', collectivite_id);
 
-    setQR(qrList);
-  };
+  const {action_ids, thematique_id} = filters || {};
+  if (action_ids) {
+    query.contains('action_ids', action_ids);
+  }
 
-  useEffect(() => {
-    fetch();
-  }, [collectivite_id]);
+  if (thematique_id) {
+    query.eq('thematique_id', thematique_id);
+  }
 
-  return [qr, fetch];
+  // attends les données
+  const {error, data} = await query;
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data as TQuestionRead[];
+};
+
+// charge les réponses correspondant aux questions données
+const useReponses = (questions: TQuestionRead[]) => {
+  const collectivite_id = useCollectiviteId();
+
+  // une requête par question pour permettre le rechargement individuel
+  const queries = questions.map(q => ({
+    queryKey: ['reponse', collectivite_id, q.id],
+    queryFn: () => fetchReponse(collectivite_id!, q.id),
+    enabled: !!collectivite_id,
+  }));
+
+  return useQueries(queries);
+};
+const fetchReponse = async (collectivite_id: number, question_id: string) => {
+  const query = supabaseClient
+    .from<TReponseRead>('reponse_display')
+    .select()
+    .match({collectivite_id, question_id});
+
+  // attends les données
+  const {error, data} = await query;
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data?.length ? transform(data[0]) : undefined;
+};
+
+// transforme en pourcentage une réponse de type proportion non null
+// (et laisse inchangé les autres types de réponse)
+const transform = (row: TReponseRead) => {
+  const {reponse: reponseObj} = row;
+  const {type, reponse} = reponseObj;
+  return type === QuestionType.proportion && reponse !== null
+    ? {
+        ...row,
+        reponse: {
+          ...reponseObj,
+          reponse: ((reponse as number) * 100).toFixed(0),
+        },
+      }
+    : row;
 };
