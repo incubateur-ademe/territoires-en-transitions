@@ -10,7 +10,6 @@ Fonctionnalité: Accéder au site et se connecter
       | home                    | visible   |
       | formulaire de connexion | absent    |
       | footer                  | visible   |
-      | bouton support          | présent   |
 
     Quand je clique sur le bouton "Se connecter" du "header"
     Alors la page vérifie les conditions suivantes :
@@ -46,7 +45,6 @@ Fonctionnalité: Accéder au site et se connecter
       | home                    | visible   |
       | formulaire de connexion | absent    |
       | footer                  | visible   |
-      | bouton support          | présent   |
 
     Quand je clique sur le bouton "Se connecter" du "header"
     Alors la page vérifie les conditions suivantes :
