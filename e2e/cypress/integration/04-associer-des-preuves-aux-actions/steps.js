@@ -121,10 +121,15 @@ When(
 When(
   /je saisi "([^"]+)" comme commentaire de la preuve "([^"]+)" de l'action "([^"]+)"/,
   (commentaire, preuve, action) => {
-    getPreuvePanel(action)
-      .find(`[data-test^=preuves] input`)
-      .clear()
-      .type(commentaire + '{enter}');
+    getPreuvePanel(action).within(() => {
+      // efface le contenu du champ commentaire
+      const inputSelector = '[data-test^=preuves] input';
+      cy.get(inputSelector).clear();
+      // saisi une nouvelle valeur + ENTREE
+      cy.get(inputSelector).type(commentaire + '{enter}');
+      // le champ doit avoir disparu (le nouveau commentaire est en lecture seule)
+      cy.get(inputSelector).should('not.exist');
+    });
   }
 );
 
@@ -171,7 +176,9 @@ When(
 When(
   /je sélectionne la sous-action "([^"]+)" dans la liste déroulante/,
   value => {
-    cy.get('[data-test=SelectSubAction]').should('be.visible').click();
+    cy.get('[data-test=SelectSubAction-select-button]')
+      .should('be.visible')
+      .click();
     cy.get(`[data-test=SelectSubAction-options] [data-test="${value}"]`)
       .should('be.visible')
       .click();
@@ -179,7 +186,7 @@ When(
 );
 
 When(/la liste déroulante des sous-actions est visible/, () => {
-  cy.get('[data-test=SelectSubAction]').should('be.visible');
+  cy.get('[data-test=SelectSubAction-select-button]').should('be.visible');
 });
 
 let cnt = 1;
