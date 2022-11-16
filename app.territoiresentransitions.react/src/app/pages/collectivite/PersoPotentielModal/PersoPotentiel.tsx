@@ -5,10 +5,10 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import {CloseDialogButton} from 'ui/shared/CloseDialogButton';
 import {PersoPotentielTabs} from './PersoPotentielTabs';
 import {PointsPotentiels} from './PointsPotentiels';
-import {useQuestionsReponses} from './useQuestionsReponses';
 import {useRegles} from './useRegles';
 import {useChangeReponseHandler} from './useChangeReponseHandler';
 import {useActionScore} from 'core-logic/hooks/scoreHooks';
+import {useQuestionsReponses} from '../PersoReferentielThematique/useQuestionsReponses';
 
 export type TPersoPotentielButtonProps = {
   /** Définition de l'action */
@@ -24,10 +24,9 @@ export const PersoPotentiel = (props: TPersoPotentielButtonProps) => {
   const {id: actionId, type, identifiant, nom} = props.actionDef;
   const [opened, setOpened] = useState(false);
   const collectivite_id = useCollectiviteId();
-  const [data, refetch] = useQuestionsReponses(actionId);
+  const qr = useQuestionsReponses({action_ids: [actionId]});
   const regles = useRegles(actionId);
-  const [handleChange] = useChangeReponseHandler(collectivite_id, refetch);
-  const {qr} = data || {};
+  const handleChange = useChangeReponseHandler(collectivite_id);
 
   const actionScore = useActionScore(actionId);
   if (!actionScore) {
