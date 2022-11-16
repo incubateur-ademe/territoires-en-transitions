@@ -1,6 +1,4 @@
-import {useEffect, useState} from 'react';
-import {questionThematiqueCompletudeReadEndpoint} from 'core-logic/api/endpoints/QuestionThematiqueCompletudeReadEndpoint';
-import {TQuestionThematiqueCompletudeRead} from 'generated/dataLayer/question_thematique_completude_read';
+import {useQuestionThematiqueCompletude} from '../PersoReferentiel/useQuestionThematiqueCompletude';
 
 type TUseNextThematiqueLink = (
   collectivite_id?: number,
@@ -11,21 +9,7 @@ export const useNextThematiqueId: TUseNextThematiqueLink = (
   collectivite_id,
   thematique_id
 ) => {
-  const [data, setData] = useState<TQuestionThematiqueCompletudeRead[]>([]);
-
-  // charge les données
-  const fetch = async () => {
-    if (collectivite_id) {
-      const thematiques = await questionThematiqueCompletudeReadEndpoint.getBy({
-        collectivite_id,
-      });
-
-      setData(thematiques);
-    }
-  };
-  useEffect(() => {
-    fetch();
-  }, [collectivite_id, thematique_id]);
+  const data = useQuestionThematiqueCompletude(collectivite_id);
 
   // données non valides ou pas encore chargée
   if (!data || !thematique_id) {
