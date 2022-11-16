@@ -1,4 +1,4 @@
-import {ITEM_ALL} from 'ui/shared/MultiSelectFilter';
+import {ITEM_ALL} from 'ui/shared/select/commons';
 
 export type TFilters = {
   ordre_du_jour: string[];
