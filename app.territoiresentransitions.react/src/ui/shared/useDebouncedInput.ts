@@ -1,4 +1,4 @@
-import {ChangeEvent, useState} from 'react';
+import {ChangeEvent, useEffect, useRef, useState} from 'react';
 
 /** Gère l'appel différé à un callback lors de la saisie dans un champ */
 export const useDebouncedInput: TDebouncedInputHook = (
@@ -6,8 +6,17 @@ export const useDebouncedInput: TDebouncedInputHook = (
   callback,
   debouncePeriod = 1000
 ) => {
+  const initialValueRef = useRef(initialValue);
   const [query, setQuery] = useState(initialValue);
   const [timeoutId, setTimeoutId] = useState<number | undefined>();
+
+  // synchronise l'état initial si il a changé
+  useEffect(() => {
+    if (initialValue !== initialValueRef.current) {
+      initialValueRef.current = initialValue;
+      setQuery(initialValue);
+    }
+  }, [initialValue, initialValueRef, setQuery]);
 
   const onChange = (event: ChangeEvent<HTMLInputElement>) => {
     // récupère la nouvelle valeur du champ
