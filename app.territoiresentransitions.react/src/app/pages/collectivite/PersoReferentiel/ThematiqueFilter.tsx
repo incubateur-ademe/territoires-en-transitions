@@ -4,14 +4,14 @@
 
 import {referentielToName} from 'app/labels';
 import {FormEvent} from 'react';
-import {ReferentielOfIndicateur} from 'types/litterals';
+import {Referentiel} from 'types/litterals';
 
 export type TThematiqueFilterProps = {
-  selected: ReferentielOfIndicateur[];
-  onChange: (newSelection: ReferentielOfIndicateur[]) => void;
+  selected: Referentiel[];
+  onChange: (newSelection: Referentiel[]) => void;
 };
 
-const referentiels: ReferentielOfIndicateur[] = ['cae', 'eci'];
+const referentiels: Referentiel[] = ['cae', 'eci'];
 
 export const ThematiqueFilter = (props: TThematiqueFilterProps) => {
   const {selected, onChange} = props;
