@@ -25,7 +25,7 @@ select
 from fiche_action
 where false;
 
-select id, nom, collectivite_id, parent
+select id, nom, parent
 from plan_action
 where false;
 
@@ -57,24 +57,16 @@ select id, nom, collectivite_id
 from users_tags
 where false;
 
-select fiche_id, utilisateur, tags
+select fiche_id, utilisateur, tag
 from fiche_action_pilotes
 where false;
 
-select fiche_id, utilisateur, tags
+select fiche_id, utilisateur, tag
 from fiche_action_referents
 where false;
 
 select fiche_id, action_id
 from fiche_action_action
-where false;
-
-select fiche_id, indicateur_id
-from fiche_action_indicateur
-where false;
-
-select fiche_id, indicateur_id
-from fiche_action_indicateur_personnalise
 where false;
 
 select
@@ -93,19 +85,5 @@ where false;
 select fiche_id, annexe_id
 from fiche_action_annexes
 where false;
-
-
-select has_function_privilege('upsert_fiche_action_liens(integer,integer[],integer[],integer[],uuid[],integer[],uuid[], integer[], integer[], action_id[], indicateur_id[], integer[])', 'execute');
-select has_function_privilege('upsert_fiche_action_plan_action(integer, integer[])', 'execute');
-select has_function_privilege('upsert_fiche_action_annexes(integer, integer[])', 'execute');
-select has_function_privilege('upsert_fiche_action_referents(integer, integer[], uuid[])', 'execute');
-select has_function_privilege('upsert_fiche_action_pilotes(integer, integer[], uuid[])', 'execute');
-select has_function_privilege('upsert_fiche_action_structures(integer, integer[])', 'execute');
-select has_function_privilege('upsert_fiche_action_partenaires(integer, integer[])', 'execute');
-select has_function_privilege('upsert_fiche_action_action(integer, action_id[])', 'execute');
-select has_function_privilege('upsert_fiche_action_indicateur(integer, indicateur_id[])', 'execute');
-select has_function_privilege('upsert_fiche_action_indicateur_personnalise(integer, integer[])', 'execute');
-
-select has_function_privilege('recursive_plan_action(integer)', 'execute');
 
 ROLLBACK;
