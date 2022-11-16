@@ -8,3 +8,4 @@ marshmallow-dataclass
 pytest
 requests
 uvicorn
+httpx
