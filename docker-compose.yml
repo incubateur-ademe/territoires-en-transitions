@@ -329,8 +329,6 @@ services:
       - business
     ports:
       - ${CLIENT_PORT}:3000
-    command: >
-      bash -c "npm run build && npm run start"
     environment:
       REACT_APP_SUPABASE_KEY: ${ANON_KEY}
       REACT_APP_SUPABASE_URL: http://localhost:8000
