@@ -2,8 +2,6 @@ import {ChangeEvent} from 'react';
 import {MenuProps} from '@material-ui/core';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import '../MultiSelectFilter/MultiSelectFilter.css';
-import './MultiSelectColumn.css';
 
 type TItem = {value: string; label: string};
 type TSeparator = {separator: string};
