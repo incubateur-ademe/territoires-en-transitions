@@ -5,7 +5,6 @@ exports[`Storyshots app/pages/collectivite/AuditSuivi/FiltreOrdreDuJour Selectio
   aria-expanded={false}
   aria-label="ouvrir le menu"
   className="flex items-center w-full p-2 text-left text-sm"
-  data-test="undefined-select-button"
   onBlur={[Function]}
   onClick={[Function]}
   onFocus={[Function]}
@@ -31,7 +30,6 @@ exports[`Storyshots app/pages/collectivite/AuditSuivi/FiltreOrdreDuJour Tous 1`]
   aria-expanded={false}
   aria-label="ouvrir le menu"
   className="flex items-center w-full p-2 text-left text-sm"
-  data-test="undefined-select-button"
   onBlur={[Function]}
   onClick={[Function]}
   onFocus={[Function]}

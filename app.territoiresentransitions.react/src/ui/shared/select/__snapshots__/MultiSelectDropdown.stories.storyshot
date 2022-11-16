@@ -5,7 +5,6 @@ exports[`Storyshots ui/shared/select/MultiSelectDropdown Aucune Option Selection
   aria-expanded={false}
   aria-label="ouvrir le menu"
   className="flex items-center w-full p-2 text-left text-sm"
-  data-test="undefined-select-button"
   onBlur={[Function]}
   onClick={[Function]}
   onFocus={[Function]}
@@ -30,7 +29,6 @@ exports[`Storyshots ui/shared/select/MultiSelectDropdown Custom Option Et Select
   aria-expanded={false}
   aria-label="ouvrir le menu"
   className="flex items-center w-full p-2 text-left text-sm"
-  data-test="undefined-select-button"
   onBlur={[Function]}
   onClick={[Function]}
   onFocus={[Function]}
@@ -64,7 +62,6 @@ exports[`Storyshots ui/shared/select/MultiSelectDropdown Plusieurs Options Selec
   aria-expanded={false}
   aria-label="ouvrir le menu"
   className="flex items-center w-full p-2 text-left text-sm"
-  data-test="undefined-select-button"
   onBlur={[Function]}
   onClick={[Function]}
   onFocus={[Function]}
@@ -95,7 +92,6 @@ exports[`Storyshots ui/shared/select/MultiSelectDropdown Une Option Selectionee 
   aria-expanded={false}
   aria-label="ouvrir le menu"
   className="flex items-center w-full p-2 text-left text-sm"
-  data-test="undefined-select-button"
   onBlur={[Function]}
   onClick={[Function]}
   onFocus={[Function]}

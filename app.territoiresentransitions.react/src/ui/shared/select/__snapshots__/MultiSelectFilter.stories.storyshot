@@ -5,7 +5,6 @@ exports[`Storyshots ui/shared/select/MultiSelectFilter Aucune Option Selectionee
   aria-expanded={false}
   aria-label="ouvrir le menu"
   className="flex items-center w-full p-2 text-left text-sm"
-  data-test="undefined-select-button"
   onBlur={[Function]}
   onClick={[Function]}
   onFocus={[Function]}
@@ -32,7 +31,6 @@ exports[`Storyshots ui/shared/select/MultiSelectFilter Custom Option Et Selectio
   aria-expanded={false}
   aria-label="ouvrir le menu"
   className="flex items-center w-full p-2 text-left text-sm"
-  data-test="undefined-select-button"
   onBlur={[Function]}
   onClick={[Function]}
   onFocus={[Function]}
@@ -57,7 +55,6 @@ exports[`Storyshots ui/shared/select/MultiSelectFilter Plusieurs Options Selecti
   aria-expanded={false}
   aria-label="ouvrir le menu"
   className="flex items-center w-full p-2 text-left text-sm"
-  data-test="undefined-select-button"
   onBlur={[Function]}
   onClick={[Function]}
   onFocus={[Function]}

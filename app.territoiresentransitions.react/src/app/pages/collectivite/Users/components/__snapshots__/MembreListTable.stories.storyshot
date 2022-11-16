@@ -93,7 +93,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                 aria-expanded={false}
                 aria-label="ouvrir le menu"
                 className="flex items-center w-full p-2 text-left text-sm"
-                data-test="undefined-select-button"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onFocus={[Function]}
@@ -123,7 +122,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                 aria-expanded={false}
                 aria-label="ouvrir le menu"
                 className="flex items-center w-full p-2 text-left text-sm"
-                data-test="undefined-select-button"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onFocus={[Function]}
@@ -170,7 +168,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                 aria-expanded={false}
                 aria-label="ouvrir le menu"
                 className="flex items-center w-full p-2 text-left text-sm"
-                data-test="undefined-select-button"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onFocus={[Function]}
@@ -221,7 +218,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                 aria-expanded={false}
                 aria-label="ouvrir le menu"
                 className="flex items-center w-full p-2 text-left text-sm"
-                data-test="undefined-select-button"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onFocus={[Function]}
@@ -251,7 +247,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                 aria-expanded={false}
                 aria-label="ouvrir le menu"
                 className="flex items-center w-full p-2 text-left text-sm"
-                data-test="undefined-select-button"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onFocus={[Function]}
@@ -301,7 +296,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                 aria-expanded={false}
                 aria-label="ouvrir le menu"
                 className="flex items-center w-full p-2 text-left text-sm"
-                data-test="undefined-select-button"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onFocus={[Function]}
@@ -352,7 +346,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                 aria-expanded={false}
                 aria-label="ouvrir le menu"
                 className="flex items-center w-full p-2 text-left text-sm"
-                data-test="undefined-select-button"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onFocus={[Function]}
@@ -382,7 +375,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                 aria-expanded={false}
                 aria-label="ouvrir le menu"
                 className="flex items-center w-full p-2 text-left text-sm"
-                data-test="undefined-select-button"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onFocus={[Function]}
@@ -429,7 +421,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                 aria-expanded={false}
                 aria-label="ouvrir le menu"
                 className="flex items-center w-full p-2 text-left text-sm"
-                data-test="undefined-select-button"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onFocus={[Function]}
@@ -479,7 +470,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                 aria-expanded={false}
                 aria-label="ouvrir le menu"
                 className="flex items-center w-full p-2 text-left text-sm"
-                data-test="undefined-select-button"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onFocus={[Function]}
@@ -653,7 +643,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
                 aria-expanded={false}
                 aria-label="ouvrir le menu"
                 className="flex items-center w-full p-2 text-left text-sm"
-                data-test="undefined-select-button"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onFocus={[Function]}
@@ -683,7 +672,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
                 aria-expanded={false}
                 aria-label="ouvrir le menu"
                 className="flex items-center w-full p-2 text-left text-sm"
-                data-test="undefined-select-button"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onFocus={[Function]}
@@ -733,7 +721,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
                 aria-expanded={false}
                 aria-label="ouvrir le menu"
                 className="flex items-center w-full p-2 text-left text-sm"
-                data-test="undefined-select-button"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onFocus={[Function]}
@@ -1047,7 +1034,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
                 aria-expanded={false}
                 aria-label="ouvrir le menu"
                 className="flex items-center w-full p-2 text-left text-sm"
-                data-test="undefined-select-button"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onFocus={[Function]}
@@ -1077,7 +1063,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
                 aria-expanded={false}
                 aria-label="ouvrir le menu"
                 className="flex items-center w-full p-2 text-left text-sm"
-                data-test="undefined-select-button"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onFocus={[Function]}
@@ -1124,7 +1109,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
                 aria-expanded={false}
                 aria-label="ouvrir le menu"
                 className="flex items-center w-full p-2 text-left text-sm"
-                data-test="undefined-select-button"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onFocus={[Function]}
