@@ -81,6 +81,7 @@ const DEFAULT_RANGE = [0, 100];
 const ReponseProportion = ({qr, onChange}: TQuestionReponseProps) => {
   const {id: questionId, reponse} = qr;
   const [min, max] = DEFAULT_RANGE;
+
   const [value, handleChange, setValue] = useDebouncedInput(
     proportionToString(reponse as number),
     query => {
@@ -121,7 +122,7 @@ const stringToProportion = (str: string, min: number, max: number) => {
 };
 
 const proportionToString = (value: number | null) =>
-  value === null ? '' : String(value);
+  value === null || value === undefined ? '' : String(value);
 
 // correspondances entre un type de réponse et son composant
 export const reponseParType: {[k: string]: FC<TQuestionReponseProps>} = {
@@ -173,7 +174,10 @@ const RadioButton = ({
         {hasReponse && (
           <button
             className="fr-link fr-link--icon-left fr-fi-edit-line fr-ml-3w"
-            onClick={() => onChange(null)}
+            onClick={e => {
+              e.preventDefault();
+              onChange(null);
+            }}
           >
             Modifier
           </button>

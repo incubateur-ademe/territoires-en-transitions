@@ -3,23 +3,20 @@ import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {PageHeader} from 'ui/PageHeader';
 import {ThematiqueQR} from './ThematiqueQR';
 import {useThematique} from './useThematique';
-import {useThematiqueQR} from './useThematiqueQR';
 import {useChangeReponseHandler} from '../PersoPotentielModal/useChangeReponseHandler';
 import {useNextThematiqueId} from './useNextThematiqueId';
 import {useCarteIdentite} from './useCarteIdentite';
+import {useQuestionsReponses} from './useQuestionsReponses';
 
 const PersoReferentielThematique = () => {
   const collectivite = useCurrentCollectivite();
   const {collectivite_id, nom} = collectivite || {};
   const {thematiqueId} = useParams<{thematiqueId: string | undefined}>();
   const thematique = useThematique(thematiqueId);
-  const [qr, refetch] = useThematiqueQR(collectivite_id, thematiqueId);
+  const qr = useQuestionsReponses({thematique_id: thematiqueId});
   const nextThematiqueId = useNextThematiqueId(collectivite_id, thematiqueId);
   const identite = useCarteIdentite(collectivite_id);
-  const [handleChange] = useChangeReponseHandler(
-    collectivite_id || null,
-    refetch
-  );
+  const handleChange = useChangeReponseHandler(collectivite_id || null);
 
   if (!collectivite_id || !thematique) {
     return null;
@@ -34,7 +31,7 @@ const PersoReferentielThematique = () => {
         <ThematiqueQR
           collectivite={{id: collectivite_id, nom: nom || ''}}
           thematique={thematique}
-          questionReponses={qr}
+          questionReponses={qr || []}
           nextThematiqueId={nextThematiqueId}
           identite={
             thematiqueId === 'identite' ? identite || undefined : undefined
