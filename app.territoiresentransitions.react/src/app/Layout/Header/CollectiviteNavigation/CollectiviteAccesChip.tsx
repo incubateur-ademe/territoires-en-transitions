@@ -27,13 +27,12 @@ const CollectiviteAccesChip = (props: Props) => {
   return (
     <div
       className={classNames(
-        `${className} px-2 py-0.5 font-bold text-xs uppercase rounded-md text-blue-600 bg-blue-200`,
+        'px-2 py-0.5 font-bold text-xs uppercase rounded-md',
         {
           'text-blue-600 bg-blue-100': acces !== null,
-        },
-        {
           'text-yellow-800 bg-yellow-100': acces === null,
-        }
+        },
+        className
       )}
     >
       {displayedAcces}
