@@ -1,0 +1,26 @@
+Test:
+  Le total des points de la 3.3.5.1 ne peut
+  pas excéder celui de la 1.2.3 en vertu de
+  la règle `Réduction potentiel cae 3.3.5`
+Statuts:
+  cae_1.2.3.1.1: fait
+  #  toutes les tâches de la 3.3.5.1
+  cae_3.3.5.1.1: fait
+  cae_3.3.5.1.2: fait
+  cae_3.3.5.1.3: fait
+  cae_3.3.5.1.4: fait
+  cae_3.3.5.1.5: fait
+  cae_3.3.5.1.6: fait
+Scores:
+  cae_1.2.3.1.1:
+    point_referentiel: 0.333
+    point_fait: 0.333
+  cae_1.2.3:
+    point_referentiel: 10
+    point_fait: 0.333
+  cae_3.3.5.1:
+    test: le point fait de l'action devrait être limité par la 1.2.3
+    point_referentiel: 3.6
+    point_potentiel: 3.6
+    point_fait: 0.4 # bug potentiel d'arrondi ?
+
