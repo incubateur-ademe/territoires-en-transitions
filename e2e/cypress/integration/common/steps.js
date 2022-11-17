@@ -193,7 +193,7 @@ function selectDropdownValue(value, dropdown) {
   // ouvre le sélecteur
   cy.get(resolveSelector(this, dropdown).selector).click();
   // et sélectionne la valeur voulue
-  cy.get(`#floating-ui-root [data-test="${value}"]`).click();
+  cy.get(`#floating-ui-root [data-test="${value}"]`).should('be.visible').click();
 }
 
 Given('je saisi la valeur {string} dans le champ {string}', fillInput);
