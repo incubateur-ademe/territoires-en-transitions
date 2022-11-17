@@ -1,6 +1,15 @@
 -- Deploy tet:plan_action to pg
 
 BEGIN;
+--drop view fiches_action;
+drop function upsert_fiche_action_liens;
+drop function upsert_fiche_action_action;
+drop function upsert_fiche_action_plan_action;
+drop function upsert_fiche_action_annexes;
+drop function upsert_fiche_action_referents;
+drop function upsert_fiche_action_pilotes;
+drop function upsert_fiche_action_structures;
+drop function upsert_fiche_action_partenaires;
 drop table fiche_action_annexes;
 drop table annexes;
 drop table fiche_action_action;
