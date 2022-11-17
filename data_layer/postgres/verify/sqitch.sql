@@ -4,4 +4,4 @@ select has_function_privilege('teapot()', 'execute');
 select 1 / count(*)
 from sqitch.changes
 -- should be the latest change.
-where change = 'evaluation/score_service';
+where change = 'cron/update_late_scores';
