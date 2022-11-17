@@ -1,0 +1,14 @@
+Test:
+  Le potentiel de la 3.2.1 est réduit à 2 10èmes
+  la règle `Modification points cae 3.2.1 liée DOM`
+Collectivité:
+  localisation:
+    - DOM
+Réponses:
+  recuperation_cogeneration: NON
+Scores:
+  cae_3.2.1:
+    point_referentiel: 12
+    point_potentiel: 2.4
+
+
