@@ -4,14 +4,17 @@ import {FicheActionResultatsAttendus} from "./enums/ficheActionResultatsAttendus
 import {FicheActionCibles} from "./enums/ficheActionCibles.ts";
 import {FicheActionStatuts} from "./enums/ficheActionStatuts.ts";
 import {FicheActionNiveauxPriorite} from "./enums/ficheActionNiveauxPriorite.ts";
+import {PartenairesTags, StructuresTags, UsersTags} from "./ficheActionTags.ts";
+import {PlanAction} from "./planAction.ts";
 
-export type FicheAction = {
-    /*id : number;*/
+export type FicheActionWrite =
+    {
+    id : number;
     titre : string;
     description : string;
     thematiques: FicheActionThematiques[];
     piliers_eci: FicheActionPiliersEci[];
-    /*objectifs: string;
+    objectifs: string;
     resultats_attendus: FicheActionResultatsAttendus[];
     cibles: FicheActionCibles[];
     ressources: string;
@@ -25,5 +28,20 @@ export type FicheAction = {
     calendrier: string;
     notes_complementaires: string;
     maj_termine: boolean;
-    collectivite_id: number;*/
-}
+    collectivite_id: number; // Seul champs obligatoire
+    }
+
+export type FicheActionRead =
+    FicheActionWrite &
+    {
+        plans_action : PlanAction[];
+        partenaires : PartenairesTags[];
+        structures : StructuresTags[];
+        pilotes_tags : UsersTags[];
+        // pilotes_users : UserData[];
+        referents_tags : UsersTags[];
+        // referents_users : UsersData[];
+        // indicateurs : Indicateurs[]
+        // annexes : Annexes[];
+        // actions : ActionRelation[];
+    };
