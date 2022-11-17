@@ -37,7 +37,7 @@ When('tous les scores sont à 0', () => {
 
 When('les scores sont affichés avec les valeurs suivantes :', dataTable => {
   cy.wrap(dataTable.rows()).each(([action, score]) => {
-    cy.get(`[data-test="score-${action}"]`).should('have.text', score);
+    cy.get(`[data-test="score-${action}"]`).should('contain.text', score);
   });
 });
 
