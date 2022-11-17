@@ -249,7 +249,7 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
                 Collectivité test
               </span>
               <div
-                className="ml-4 px-2 py-0.5 font-bold text-xs uppercase rounded-md text-blue-600 bg-blue-200 text-blue-600 bg-blue-100"
+                className="px-2 py-0.5 font-bold text-xs uppercase rounded-md text-blue-600 bg-blue-100 ml-4"
               >
                 admin
               </div>
