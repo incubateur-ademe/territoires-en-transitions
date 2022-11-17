@@ -35,17 +35,17 @@ def test_compare_inputs_to_results(test_post_personnalize, test_post_evaluate):
                     reponses.append(Reponse(question_id, reponse))
 
             # Lit les caratéristiques de la collectivité
-            indentite = None
+            identite = None
             if "Collectivité" in data:
                 collectivite = data['Collectivité']
-                indentite = IdentiteCollectivite(
+                identite = IdentiteCollectivite(
                     type=collectivite.get('type') or [],
                     population=collectivite.get('population') or [],
                     localisation=collectivite.get('localisation') or [],
                 )
 
-            # On calcul la personnalisation à partir des réponses et de l'identité
-            consequences = test_post_personnalize(reponses, indentite)
+            # On calcule la personnalisation à partir des réponses et de l'identité
+            consequences = test_post_personnalize(reponses, identite)
 
             # Lit les statuts
             statuts = []
