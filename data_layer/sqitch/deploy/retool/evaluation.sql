@@ -45,7 +45,7 @@ select c.collectivite_id                                              as collect
        case
            when not sc.concerne or sc.desactive
                then 'Non concerné'
-           when sc.point_non_renseigne = sc.point_potentiel
+           when sc.completed_taches_count = 0
                then 'Non renseigné'
            else
                coalesce(s.avancement::varchar, '')
