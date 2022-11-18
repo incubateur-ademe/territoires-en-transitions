@@ -139,6 +139,7 @@ action_id: cae_4.3.1
 ```formule
 si identite(type, commune) alors max(reponse(voirie_2), 0.5)
 sinon si identite(type, EPCI) et reponse(voirie_1, voirie_1_b) alors 0.5
+sinon si identite(type, EPCI) et reponse(voirie_1, voirie_1_c) alors 0.5
 ```
 Pour les communes, le score de la 4.3.1 est réduit proportionnellement à la part dans l’EPCI compétent en matière de voirie (création, aménagement, entretien) dans la limite de 50 % pour prendre en compte le pouvoir de police du maire.
 Pour les intercommunalités qui n’ont la compétence que sur les voiries et parcs de stationnements communautaires, le score est réduit de 50 %.
