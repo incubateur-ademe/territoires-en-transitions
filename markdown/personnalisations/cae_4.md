@@ -69,10 +69,11 @@ action_id: cae_4.2.1
 ```formule
 si identite(type, commune) alors max(reponse(voirie_2), 2/8)
 sinon si identite(type, EPCI) et reponse(voirie_1, voirie_1_b) alors 0.5
+sinon si identite(type, EPCI) et reponse(voirie_1, voirie_1_c) alors 0.5
 sinon si reponse(voirie_1, voirie_1_c) et reponse(centre_polarite, NON) alors 0.25
 ```
 Pour les communes, le score est réduit proportionnelle à la part dans l’EPCI en cas de transfert de la compétence en matière de voirie/stationnement, dans la limite de 2 points pour le pouvoir de police du maire.
-Pour les intercommunalités qui n’ont la compétence que sur les voiries et parcs de stationnements communautaires, le score est réduit de 50 %.
+Pour les intercommunalités qui n’ont pas la compétence "voirie" ou uniquement sur les voiries et parcs de stationnements communautaires, le score est réduit de 50 %.
 En l’absence de compétences voirie et stationnement et de zones de polarités, le score est réduit de 75 %.
 
 
