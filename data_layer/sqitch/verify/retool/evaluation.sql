@@ -2,8 +2,15 @@
 
 BEGIN;
 
-select collectivite_id, nom, completude_eci, completude_cae
-from retool_completude_compute
+select collectivite_id,
+       nom,
+       referentiel,
+       action,
+       preuve_type,
+       fichier,
+       lien,
+       created_at
+from retool_preuves
 where false;
 
 select collectivite_id,
@@ -14,24 +21,13 @@ select collectivite_id,
        "Points potentiels",
        "Points realisés",
        "Pourcentage réalisé",
+       "Points programmés",
+       "Pourcentage programmé",
        "Pourcentage non renseigné",
        "Avancement",
-       "Non concerné",
-       "Commentaire",
-       "Preuves"
+       "Commentaires fusionnés",
+       "Commentaire"
 from retool_score
-where false;
-
-select collectivite_id,
-       nom,
-       region_name,
-       departement_name,
-       type_collectivite,
-       population_totale,
-       code_siren_insee,
-       completude_eci,
-       completude_cae
-from retool_completude
 where false;
 
 ROLLBACK;
