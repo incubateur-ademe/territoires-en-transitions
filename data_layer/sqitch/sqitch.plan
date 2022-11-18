@@ -132,3 +132,5 @@ evaluation/score_mise_a_jour [evaluation/score_service] 2022-11-02T08:43:32Z Flo
 cron/update_late_scores [evaluation/score_mise_a_jour] 2022-11-02T10:08:16Z Florian <florian@derfurth.com> # Met à jour les scores des collectivités toutes les 5 minutes
 evaluation/score_summary [evaluation/score_summary@v1.10.0] 2022-11-15T10:25:46Z Florian <florian@derfurth.com> # Met à jour la fonction de conversion du json.
 @v1.12.0 2022-11-17T14:56:31Z Florian <florian@derfurth.com> # Evaluation dans un service.
+
+retool/evaluation [retool/evaluation@v1.12.0] 2022-11-17T16:43:20Z Florian <florian@derfurth.com> # Améliore la vue retool pour les exports d'audit.
