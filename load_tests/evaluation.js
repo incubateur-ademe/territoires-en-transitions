@@ -3,14 +3,16 @@ import {sleep, check} from 'k6';
 
 export const options = {
   stages: [
-    {duration: '5m', target: 10}, // simulate ramp-up of traffic from 1 to 100 users over 5 minutes.
-    {duration: '10m', target: 10}, // stay at 100 users for 10 minutes
+    // On monte à 16 utilisateurs
+    // Soit 4x plus que le maximum constaté en production.
+    {duration: '5m', target: 16}, // simulate ramp-up of traffic over 5 minutes.
+    {duration: '10m', target: 16}, // stay at 16 users for 10 minutes
     {duration: '5m', target: 0}, // ramp-down to 0 users
   ],
 
   thresholds: {
-    // 99% of requests must complete below 1.5s
-    http_req_duration: ['p(99)<1500'],
+    // 95% of requests must complete below 1.5s
+    http_req_duration: ['p(95)<1500'],
   },
 };
 
@@ -71,7 +73,14 @@ export default function() {
         'statut updated successfully': (resp) => resp.status === 201,
       });
       if (upsertResponse.status !== 201) console.log(upsertResponse.body);
-      sleep(1);
+
+      // On attend 1.8 seconde soit l'intervalle median constaté durant un
+      // remplissage rapide.
+      // Les 100 intervalles les plus courts d'une session :
+      // - maximum : 2343ms
+      // - median : 1817ms
+      // - minimum : 6ms
+      sleep(1.8);
     }
   }
 }
