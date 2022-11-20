@@ -5,6 +5,13 @@ from auth.users;
 comment on table test.auth_users is
     'Copie de la table users.';
 
+create table test.dcp
+as
+select *
+from public.dcp;
+comment on table test.dcp is
+    'Copie de la table users.';
+
 
 create function
     test_reset_users()
@@ -12,9 +19,10 @@ create function
 as
 $$
 -- Supprime les données liées aux utilisateurs qui ne sont pas dans test.auth_users.
-delete
-from dcp
-where user_id not in (select id from test.auth_users);
+--delete
+--from dcp
+--where user_id not in (select id from test.auth_users);
+truncate table dcp;
 
 delete
 from private_utilisateur_droit
@@ -89,6 +97,11 @@ on conflict (id) do update
         reauthentication_token      = excluded.reauthentication_token,
         reauthentication_sent_at    = excluded.reauthentication_sent_at
 ;
+
+insert into public.dcp
+select *
+from test.dcp;
+
 $$ language sql security definer;
 comment on function test_reset_users is
     'Reinitialise les utilisateurs (auth.users) et supprime les données DCP et membres.';
