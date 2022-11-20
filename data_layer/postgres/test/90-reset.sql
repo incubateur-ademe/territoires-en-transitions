@@ -17,6 +17,8 @@ $$
     select test_reset_audit();
 -- 07-discussion.sql
 -- select test_reset_discussion_et_commentaires();
+-- 20-preuve.sql
+    select test_reset_reponse();
 $$ language sql security definer;
 comment on function test_reset is
     'Reinitialise les données fake.';
