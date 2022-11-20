@@ -7,7 +7,12 @@
 import {Selectors} from './selectors';
 import {Expectations} from './expectations';
 
+// avant chaque test
 beforeEach(function () {
+  // réinitialise les données fake
+  cy.task('supabase_rpc', {name: 'test_reset'});
+
+  // charge l'appli
   cy.visit('/');
   waitForApp();
 
