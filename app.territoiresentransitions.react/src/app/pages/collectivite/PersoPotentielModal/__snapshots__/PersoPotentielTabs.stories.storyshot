@@ -150,7 +150,8 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
             />
           </section>
           <div
-            className="fr-fieldset__content pl-4 "
+            className="fr-fieldset__content pl-4"
+            data-test="reponse"
           >
             <div
               className="fr-radio-group fr-radio-group--sm vertical"
@@ -221,6 +222,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
           />
           <div
             className="fr-fieldset__content pl-4 fr-fieldset--inline inline-radio"
+            data-test="reponse"
           >
             <div
               className="fr-radio-group fr-radio-group--sm"
@@ -228,14 +230,14 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
               <input
                 checked={false}
                 disabled={false}
-                id="q2-true"
+                id="q2-oui"
                 onChange={[Function]}
                 type="radio"
-                value="true"
+                value="oui"
               />
               <label
                 className="fr-label"
-                htmlFor="q2-true"
+                htmlFor="q2-oui"
               >
                 Oui
               </label>
@@ -246,14 +248,14 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
               <input
                 checked={false}
                 disabled={false}
-                id="q2-false"
+                id="q2-non"
                 onChange={[Function]}
                 type="radio"
-                value="false"
+                value="non"
               />
               <label
                 className="fr-label"
-                htmlFor="q2-false"
+                htmlFor="q2-non"
               >
                 Non
               </label>
@@ -273,6 +275,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
           />
           <div
             className="fr-fieldset__content pl-4 fr-fieldset--inline"
+            data-test="reponse"
           >
             <label
               className="fr-label"
@@ -517,7 +520,8 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
             />
           </section>
           <div
-            className="fr-fieldset__content pl-4 "
+            className="fr-fieldset__content pl-4"
+            data-test="reponse"
           >
             <div
               className="fr-radio-group fr-radio-group--sm vertical"
@@ -588,6 +592,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
           />
           <div
             className="fr-fieldset__content pl-4 fr-fieldset--inline inline-radio"
+            data-test="reponse"
           >
             <div
               className="fr-radio-group fr-radio-group--sm"
@@ -595,14 +600,14 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
               <input
                 checked={false}
                 disabled={false}
-                id="q2-true"
+                id="q2-oui"
                 onChange={[Function]}
                 type="radio"
-                value="true"
+                value="oui"
               />
               <label
                 className="fr-label"
-                htmlFor="q2-true"
+                htmlFor="q2-oui"
               >
                 Oui
               </label>
@@ -613,14 +618,14 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
               <input
                 checked={false}
                 disabled={false}
-                id="q2-false"
+                id="q2-non"
                 onChange={[Function]}
                 type="radio"
-                value="false"
+                value="non"
               />
               <label
                 className="fr-label"
-                htmlFor="q2-false"
+                htmlFor="q2-non"
               >
                 Non
               </label>
@@ -640,6 +645,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
           />
           <div
             className="fr-fieldset__content pl-4 fr-fieldset--inline"
+            data-test="reponse"
           >
             <label
               className="fr-label"
@@ -857,6 +863,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
           />
           <div
             className="fr-fieldset__content pl-4 fr-fieldset--inline inline-radio"
+            data-test="reponse"
           >
             <div
               className="fr-radio-group fr-radio-group--sm"
@@ -864,14 +871,14 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
               <input
                 checked={false}
                 disabled={false}
-                id="q2-true"
+                id="q2-oui"
                 onChange={[Function]}
                 type="radio"
-                value="true"
+                value="oui"
               />
               <label
                 className="fr-label"
-                htmlFor="q2-true"
+                htmlFor="q2-oui"
               >
                 Oui
               </label>
@@ -882,14 +889,14 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
               <input
                 checked={false}
                 disabled={false}
-                id="q2-false"
+                id="q2-non"
                 onChange={[Function]}
                 type="radio"
-                value="false"
+                value="non"
               />
               <label
                 className="fr-label"
-                htmlFor="q2-false"
+                htmlFor="q2-non"
               >
                 Non
               </label>
@@ -1061,32 +1068,8 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
           />
           <div
             className="fr-fieldset__content pl-4 fr-fieldset--inline inline-radio"
-          >
-            <div
-              className="fr-radio-group fr-radio-group--sm"
-            >
-              <input
-                checked={true}
-                disabled={false}
-                id="q2-false"
-                onChange={[Function]}
-                type="radio"
-                value="false"
-              />
-              <label
-                className="fr-label"
-                htmlFor="q2-false"
-              >
-                Non
-                <button
-                  className="fr-link fr-link--icon-left fr-fi-edit-line fr-ml-3w"
-                  onClick={[Function]}
-                >
-                  Modifier
-                </button>
-              </label>
-            </div>
-          </div>
+            data-test="reponse"
+          />
         </fieldset>
       </div>
     </div>
@@ -1280,7 +1263,8 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
             />
           </section>
           <div
-            className="fr-fieldset__content pl-4 "
+            className="fr-fieldset__content pl-4"
+            data-test="reponse"
           >
             <div
               className="fr-radio-group fr-radio-group--sm vertical"
@@ -1530,7 +1514,8 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
             />
           </section>
           <div
-            className="fr-fieldset__content pl-4 "
+            className="fr-fieldset__content pl-4"
+            data-test="reponse"
           >
             <div
               className="fr-radio-group fr-radio-group--sm "
@@ -1723,6 +1708,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
           />
           <div
             className="fr-fieldset__content pl-4 fr-fieldset--inline"
+            data-test="reponse"
           >
             <label
               className="fr-label"
@@ -1940,6 +1926,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
           />
           <div
             className="fr-fieldset__content pl-4 fr-fieldset--inline"
+            data-test="reponse"
           >
             <label
               className="fr-label"
