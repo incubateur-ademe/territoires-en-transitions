@@ -18,7 +18,7 @@ const PersoReferentiel = () => {
   }
 
   return (
-    <main className="fr-container mt-9 mb-16">
+    <main data-test="personnalisation" className="fr-container mt-9 mb-16">
       <Thematiques
         collectivite={{id: collectivite_id, nom: nom || ''}}
         selected={selected}

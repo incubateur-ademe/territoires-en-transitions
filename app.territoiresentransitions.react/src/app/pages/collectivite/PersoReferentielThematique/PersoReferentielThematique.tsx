@@ -27,7 +27,7 @@ const PersoReferentielThematique = () => {
       <PageHeader>
         <h2 className="w-full text-center m-0">{thematique.nom}</h2>
       </PageHeader>
-      <main className="fr-container fr-mt-1w fr-mb-4w">
+      <main className="fr-container fr-mt-1w fr-mb-4w" data-test="thematique">
         <ThematiqueQR
           collectivite={{id: collectivite_id, nom: nom || ''}}
           thematique={thematique}
