@@ -18,6 +18,10 @@ export const Views = {
 };
 
 export const CollectivitePages = {
+  'Personnalisation des référentiels': {
+    route: 'personnalisation',
+    selector: '[data-test=personnalisation]',
+  },
   'Gestion des membres': {
     route: 'users',
     selector: '[data-test=Users]',
