@@ -101,18 +101,38 @@ const fetchReponse = async (collectivite_id: number, question_id: string) => {
   return data?.length ? transform(data[0]) : undefined;
 };
 
-// transforme en pourcentage une réponse de type proportion non null
-// (et laisse inchangé les autres types de réponse)
+// met à jour si nécessaire la valeur d'une réponse lue depuis la base
 const transform = (row: TReponseRead) => {
-  const {reponse: reponseObj} = row;
-  const {type, reponse} = reponseObj;
-  return type === QuestionType.proportion && reponse !== null
-    ? {
-        ...row,
-        reponse: {
-          ...reponseObj,
-          reponse: ((reponse as number) * 100).toFixed(0),
-        },
-      }
-    : row;
+  const {reponse} = row;
+  const {type, reponse: reponseValue} = reponse;
+
+  // transforme en pourcentage une réponse de type proportion
+  if (type === QuestionType.proportion) {
+    const value =
+      typeof reponseValue === 'number' ? (reponseValue * 100).toFixed(0) : '';
+    return setReponseValue(row, value);
+  }
+
+  // transforme une valeur booléen en id (oui/non) du bouton radio correspondant
+  if (reponseValue !== null && type === QuestionType.binaire) {
+    if (reponseValue === true) return setReponseValue(row, 'oui');
+    if (reponseValue === false) return setReponseValue(row, 'non');
+    return setReponseValue(row, null);
+  }
+
+  // autres cas: renvoi la réponse inchangée
+  return row;
+};
+
+// change la valeur dans une réponse et renvoi l'objet résultant
+const setReponseValue = (row: TReponseRead, reponseValue: TReponse) => {
+  const {reponse} = row;
+
+  return {
+    ...row,
+    reponse: {
+      ...reponse,
+      reponse: reponseValue,
+    },
+  };
 };

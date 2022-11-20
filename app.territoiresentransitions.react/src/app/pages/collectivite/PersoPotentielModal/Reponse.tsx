@@ -1,4 +1,5 @@
 import {FC, ReactNode} from 'react';
+import classNames from 'classnames';
 import {TReponse} from 'generated/dataLayer/reponse_read';
 import {TQuestionReponseProps} from './PersoPotentielQR';
 import {TListeChoix} from 'generated/dataLayer/question_read';
@@ -12,7 +13,10 @@ const ReponseContainer = ({
   children: ReactNode;
   className?: string;
 }) => (
-  <div className={`fr-fieldset__content pl-4 ${className || ''}`}>
+  <div
+    data-test="reponse"
+    className={classNames('fr-fieldset__content pl-4', className)}
+  >
     {children}
   </div>
 );
@@ -53,8 +57,8 @@ const ReponseChoix = ({qr, onChange}: TQuestionReponseProps) => {
 const ReponseBinaire = ({qr, onChange}: TQuestionReponseProps) => {
   const {id: questionId, reponse} = qr;
   const choices = getFilteredChoices(reponse, [
-    {id: 'true', label: 'Oui'},
-    {id: 'false', label: 'Non'},
+    {id: 'oui', label: 'Oui'},
+    {id: 'non', label: 'Non'},
   ]);
   const collectivite = useCurrentCollectivite();
 

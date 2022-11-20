@@ -105,24 +105,25 @@ export const useChangeReponseHandler: TUseChangeReponseHandler =
     return handleChange;
   };
 
-// transforme les données envoyées à l'API
+// transforme si nécessaire la valeur d'une réponse à écrire dans la base
 const transform = (qr: TQuestionReponseWrite): TReponseWrite => {
-  const {collectivite_id, question, reponse} = qr;
-  const newReponse = {collectivite_id, question_id: question.id};
+  const {question, reponse: reponseValue} = qr;
   if (question.type === 'proportion') {
-    return {
-      ...newReponse,
-      reponse: typeof reponse === 'number' ? reponse / 100 : null,
-    };
-  }
-  if (question.type === 'binaire') {
-    const value =
-      reponse === 'false' ? false : reponse === 'true' ? true : reponse;
-    return {
-      ...newReponse,
-      reponse: typeof value === 'boolean' ? value : null,
-    };
+    const value = typeof reponseValue === 'number' ? reponseValue / 100 : null;
+    return setReponseValue(qr, value);
   }
 
-  return {...newReponse, reponse};
+  if (question.type === 'binaire') {
+    if (reponseValue === 'oui') return setReponseValue(qr, true);
+    if (reponseValue === 'non') return setReponseValue(qr, false);
+    return setReponseValue(qr, null);
+  }
+
+  return setReponseValue(qr, reponseValue);
+};
+
+// change la valeur dans une réponse et renvoi l'objet résultant
+const setReponseValue = (qr: TQuestionReponseWrite, reponse: TReponse) => {
+  const {collectivite_id, question} = qr;
+  return {collectivite_id, question_id: question.id, reponse};
 };
