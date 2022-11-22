@@ -1,15 +1,4 @@
-import { resolveSelector } from './steps';
-
-Given(
-  /la bibliothèque de la collectivité "(\d+)" est vide/,
-  (collectivite_id) => {
-    cy.task('pg_query', {
-      query:
-        'delete from storage.objects where bucket_id = (select bucket_id from collectivite_bucket where collectivite_id=$1)',
-      values: [collectivite_id],
-    });
-  }
-);
+import {resolveSelector} from './steps';
 
 Given(
   /je transfère à partir du "([^"]*)" le fichier nommé "([^"]*)" et contenant "([^"]*)"/,
@@ -41,7 +30,7 @@ Given(
 
 Given(
   /la liste des fichiers transférés contient les entrées suivantes/,
-  (dataTable) => {
+  dataTable => {
     // dans la liste d'items affichée
     cy.get('[data-test=FileItems]').within(() =>
       // pour chaque ligne de donnée
@@ -82,9 +71,9 @@ Given(
 );
 
 Given('tous les transferts sont terminés', () => {
-  cy.get('[data-test*=file-running]', { timeout: 10000 }).should('not.exist');
+  cy.get('[data-test*=file-running]', {timeout: 10000}).should('not.exist');
 });
 
-Given('le fichier {string} doit avoir été téléchargé', (fileName) => {
+Given('le fichier {string} doit avoir été téléchargé', fileName => {
   cy.verifyDownload(fileName);
 });

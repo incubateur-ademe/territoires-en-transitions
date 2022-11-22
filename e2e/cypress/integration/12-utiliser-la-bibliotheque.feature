@@ -4,8 +4,6 @@ Fonctionnalité: Utiliser la bibliothèque de documents de la collectivité
 
   Scénario: Ajouter un rapport de visite annuelle depuis la bibliothèque
     Etant donné que je suis connecté en tant que "yolo"
-    Et que les tables de preuves de la collectivité "1" sont vides
-    Et que la bibliothèque de la collectivité "1" est vide
 
     Quand je suis sur la page "Bibliothèque de documents" de la collectivité "1"
     Alors il n'y a pas de rapports de visite annuelle
@@ -31,8 +29,6 @@ Fonctionnalité: Utiliser la bibliothèque de documents de la collectivité
 
   Scénario: Ajouter un document de labellisation et le visualiser dans la bibliothèque
     Etant donné que je suis connecté en tant que "yolo"
-    Et que les tables de preuves de la collectivité "1" sont vides
-    Et que la bibliothèque de la collectivité "1" est vide
 
     Quand je suis sur la page "Bibliothèque de documents" de la collectivité "1"
     Alors il n'y a pas de documents de labellisation
@@ -57,8 +53,6 @@ Fonctionnalité: Utiliser la bibliothèque de documents de la collectivité
   # TODO: à déplacer dans un fichier `feature` distinct à propos de la page labellisation
   Scénario: Ne pas pouvoir décrire/supprimer ou ajouter de document de labellisation
     Etant donné que je suis connecté en tant que "yolo"
-    Et que les tables de preuves de la collectivité "1" sont vides
-    Et que la bibliothèque de la collectivité "1" est vide
 
     Quand je suis sur la page "Labellisation CAE" de la collectivité "1"
     Et que je clique sur le bouton "Ajouter un document de labellisation"
@@ -77,8 +71,6 @@ Fonctionnalité: Utiliser la bibliothèque de documents de la collectivité
 
   Scénario: Associer une preuve complémentaire à une sous-action depuis la bibliothèque
     Etant donné que je suis connecté en tant que "yolo"
-    Et que les tables de preuves de la collectivité "1" sont vides
-    Et que la bibliothèque de la collectivité "1" est vide
 
     Quand je suis sur la page "Bibliothèque de documents" de la collectivité "1"
     Et que je déplie la sous-action "1.1.1.1" du référentiel "cae"

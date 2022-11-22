@@ -4,8 +4,6 @@ Fonctionnalité: Associer des preuves aux actions
 
   Scénario: Ajouter un fichier comme preuve complémentaire à une sous-action
     Etant donné que je suis connecté en tant que "yolo"
-    Et que les tables de preuves de la collectivité "1" sont vides
-    Et que la bibliothèque de la collectivité "1" est vide
     Et que je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "1"
     Et que je déplie le panneau Preuves de l'action "1.1.1"
     Et que la liste des preuves complémentaires de la sous-action "1.1.1" est vide
@@ -48,8 +46,6 @@ Fonctionnalité: Associer des preuves aux actions
 
   Scénario: Visualiser une erreur lors de l'ajout d'un fichier preuve trop lourd
     Etant donné que je suis connecté en tant que "yolo"
-    Et que les tables de preuves de la collectivité "1" sont vides
-    Et que la bibliothèque de la collectivité "1" est vide
     Et que je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "1"
     Et que je déplie le panneau Preuves de l'action "1.1.1"
     Et que la liste des preuves complémentaires de la sous-action "1.1.1" est vide
@@ -71,8 +67,6 @@ Fonctionnalité: Associer des preuves aux actions
 
   Scénario: Visualiser une erreur lors de l'ajout d'un fichier preuve dans un format non supporté
     Etant donné que je suis connecté en tant que "yolo"
-    Et que les tables de preuves de la collectivité "1" sont vides
-    Et que la bibliothèque de la collectivité "1" est vide
     Et que je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "1"
     Et que je déplie le panneau Preuves de l'action "1.1.1"
     Et que la liste des preuves complémentaires de la sous-action "1.1.1" est vide
@@ -94,8 +88,6 @@ Fonctionnalité: Associer des preuves aux actions
 
   Scénario: Supprimer un fichier preuve
     Etant donné que je suis connecté en tant que "yolo"
-    Et que les tables de preuves de la collectivité "1" sont vides
-    Et que la bibliothèque de la collectivité "1" est vide
     Et que je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "1"
     Et que je déplie le panneau Preuves de l'action "1.1.1"
     Et que la liste des preuves complémentaires de la sous-action "1.1.1" est vide
@@ -113,7 +105,6 @@ Fonctionnalité: Associer des preuves aux actions
 
   Scénario: Ajouter un lien comme preuve complémentaire à une sous-action
     Etant donné que je suis connecté en tant que "yolo"
-    Et que les tables de preuves de la collectivité "1" sont vides
     Et que je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "1"
     Et que le bouton "Ajouter une preuve" à l'action "1.1.1" est absent
 
@@ -145,7 +136,6 @@ Fonctionnalité: Associer des preuves aux actions
 
   Scénario: Ouvrir un lien preuve
     Etant donné que je suis connecté en tant que "yolo"
-    Et que les tables de preuves de la collectivité "1" sont vides
     Et que la table des preuves complémentaires est initialisée avec les données suivantes :
       | collectivite_id | action_id | titre   | url              | commentaire |
       | 1               | eci_1.1.1 | Exemple | https://ademe.fr |             |
@@ -161,7 +151,6 @@ Fonctionnalité: Associer des preuves aux actions
 
   Scénario: Ajouter un commentaire à un lien preuve
     Etant donné que je suis connecté en tant que "yolo"
-    Et que les tables de preuves de la collectivité "1" sont vides
     Et que la table des preuves complémentaires est initialisée avec les données suivantes :
       | collectivite_id | action_id | titre   | url              | commentaire |
       | 1               | eci_1.1.1 | Exemple | https://ademe.fr |             |
@@ -180,7 +169,6 @@ Fonctionnalité: Associer des preuves aux actions
 
   Scénario: Modifier le commentaire d'un lien preuve
     Etant donné que je suis connecté en tant que "yolo"
-    Et que les tables de preuves de la collectivité "1" sont vides
     Et que la table des preuves complémentaires est initialisée avec les données suivantes :
       | collectivite_id | action_id | titre   | url              | commentaire     |
       | 1               | eci_1.1.1 | Exemple | https://ademe.fr | mon commentaire |
@@ -199,7 +187,6 @@ Fonctionnalité: Associer des preuves aux actions
 
   Scénario: Supprimer un lien preuve
     Etant donné que je suis connecté en tant que "yolo"
-    Et que les tables de preuves de la collectivité "1" sont vides
     Et que la table des preuves complémentaires est initialisée avec les données suivantes :
       | collectivite_id | action_id | titre              | url                                  | commentaire     |
       | 1               | eci_1.1.1 | Exemple1           | https://ademe.fr                     |                 |
@@ -227,8 +214,6 @@ Fonctionnalité: Associer des preuves aux actions
     mais on ne reteste pas les actions "décrire" et "supprimer" qui sont mutualisées quelque soit le type de preuve.
 
     Etant donné que je suis connecté en tant que "yolo"
-    Et que les tables de preuves de la collectivité "1" sont vides
-    Et que la bibliothèque de la collectivité "1" est vide
     Et que je visite le sous-axe "1.3.2" du référentiel "cae" de la collectivité "1"
     Et que le bouton "Ajouter une preuve" à l'action "1.3.2.3" est absent
 
@@ -270,8 +255,6 @@ Fonctionnalité: Associer des preuves aux actions
 
     # scénario 1 : on vérifie l'affichage de l'onglet lorsqu'il n'y a pas de donnée
     Etant donné que je suis connecté en tant que "yolo"
-    Et que les tables de preuves de la collectivité "2" sont vides
-    Et que la bibliothèque de la collectivité "2" est vide
 
     Quand je visite l'onglet "preuves" de l'action "2.3.1" du référentiel "cae" de la collectivité "2"
     Alors la liste des preuves attendues de l'action contient les lignes suivantes :
@@ -284,8 +267,6 @@ Fonctionnalité: Associer des preuves aux actions
   Scénario: Visualiser toutes les preuves associées à une action et ses sous-actions (2/2)
     # scénario 2 : on vérifie l'affichage de l'onglet lorsqu'il y a des données
     Etant donné que je suis connecté en tant que "yolo"
-    Et que les tables de preuves de la collectivité "2" sont vides
-    Et que la bibliothèque de la collectivité "2" est vide
     # on ajoute des preuves lien directement dans la base de données
     Et que la table des preuves réglementaires est initialisée avec les données suivantes :
       | collectivite_id | preuve_id | titre     | url            | commentaire |
