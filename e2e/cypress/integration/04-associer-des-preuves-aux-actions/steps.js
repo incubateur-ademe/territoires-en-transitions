@@ -24,22 +24,6 @@ When(/je déplie le panneau Preuves de l'action "([^"]+)"/, action =>
 );
 
 When(
-  /les tables de preuves de la collectivité "(\d+)" sont vides/,
-  collectivite_id => {
-    cy.get('@supabaseClient').then(client =>
-      Promise.all([
-        client.rpc('test_reset_preuves'),
-        cy.task('pg_query', {
-          query:
-            'DELETE FROM labellisation.bibliotheque_fichier WHERE collectivite_id = $1',
-          values: [collectivite_id],
-        }),
-      ])
-    );
-  }
-);
-
-When(
   /la table des preuves complémentaires est initialisée avec les données suivantes/,
   dataTable => {
     cy.get('@supabaseClient').then(client =>

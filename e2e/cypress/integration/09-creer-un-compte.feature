@@ -3,7 +3,6 @@
 Fonctionnalité: Création de compte
 
   Scénario: Nono Dodo créé un compte
-    Etant donné que l'utilisateur "nono@dodo.com" est supprimé
     Etant donné que j'ouvre le site
     Alors la page vérifie les conditions suivantes :
       | Elément                 | Condition |

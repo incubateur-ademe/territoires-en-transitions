@@ -3,9 +3,7 @@
 Fonctionnalité: Ajouter un membre au profil de la collectivité
 
   Scénario: J'invite Nono qui n'est pas un utilisateur
-    Etant donné que l'utilisateur "nono@dodo.com" est supprimé
-    Etant donné que les droits utilisateur sont réinitialisés
-    Et que je suis connecté en tant que "yolo"
+    Etant donné que je suis connecté en tant que "yolo"
 
     Quand je suis sur la page "Gestion des membres" de la collectivité "1"
     Alors un formulaire d'invitation est affiché

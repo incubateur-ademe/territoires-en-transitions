@@ -6,7 +6,6 @@ Fonctionnalité: Modifier l'état d'avancement et visualiser l'évolution des sc
     Dans ce scénario, on teste la mise à jour d'un état d'avancement, puis d'un second et enfin le retour à l'état initial du second avancement, en vérifiant à chaque fois l'impact sur le score du sous-axes et des tâches concernées.
 
     Etant donné que je suis connecté en tant que "yili"
-    Et que l'état d'avancement de l'action "eci_1.1%" pour la collectivité "2" est réinitialisé
 
     Quand je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "2"
     Alors aucun score n'est affiché
@@ -46,8 +45,6 @@ Fonctionnalité: Modifier l'état d'avancement et visualiser l'évolution des sc
     On teste aussi le comportement des filtres de l'historique
 
     Etant donné que je suis connecté en tant que "yili"
-    Et que l'état d'avancement de l'action "eci_1.1%" pour la collectivité "2" est réinitialisé
-    Et que l'historique est réinitialisé
 
     Quand je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "2"
     Et que je clique sur l'onglet "Historique"
@@ -131,7 +128,6 @@ Fonctionnalité: Modifier l'état d'avancement et visualiser l'évolution des sc
 
   Scénario: Modifier l'état d'avancement et le statut d'audit quand on est auditeur
     Etant donné que je suis connecté en tant que "youlou"
-    Et que l'état d'avancement de l'action "eci_1.1%" pour la collectivité "1" est réinitialisé
 
     Quand je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "1"
     Alors l'état d'avancement des tâches est éditable
