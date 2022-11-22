@@ -39,6 +39,10 @@ declare
     name    text;
     columns text;
 begin
+    -- supprime les références aux fichiers
+    truncate labellisation.bibliotheque_fichier cascade;
+    truncate storage.objects cascade;
+
     -- Pour chaque type, et donc chaque table nommée preuve_[type]
     foreach name in array enum_range(NULL::preuve_type)
         loop
@@ -61,6 +65,7 @@ begin
                             name, name
                 );
         end loop;
+
 end
 $$ language plpgsql security definer;
 comment on function test_reset_preuves is
