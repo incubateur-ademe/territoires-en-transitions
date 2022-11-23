@@ -29,7 +29,7 @@ export function fakeCredentials(nickname: string): credentials {
  */
 export async function signIn(nickname: string) {
   const credentials = fakeCredentials(nickname);
-  return await supabase.auth.signIn(credentials);
+  return await supabase.auth.signInWithPassword(credentials);
 }
 
 /**

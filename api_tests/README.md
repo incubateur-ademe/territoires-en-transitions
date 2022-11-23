@@ -24,3 +24,23 @@ La commande se décompose ainsi :
 
 - `SUPABASE_URL`: l'URL de Supabase
 - `SUPABASE_KEY`: la clé **anon** de l'API
+
+## Générer les types
+
+```sh
+gen_types.sh
+```
+
+### Variables d'environnement
+
+- `POSTGRES_PASSWORD`: Le mot de passe de la base locale, voir le `.env` à la
+  racine.
+- `POSTGRES_PORT`: Le port de la base locale
+
+## Formater le code
+
+Pour le moment on le fait avant commit en attendant de mettre à jour notre CI.
+
+```sh
+deno fmt
+```

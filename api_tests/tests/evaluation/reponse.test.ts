@@ -20,12 +20,15 @@ Deno.test("Calcul de 'eci_2.4.2' après la réponse à la question 'dechets_1'",
 
   // on attend le calcul des scores
   await delay(200);
-  let clientScores = await supabase.from<ClientScores>("client_scores")
+  let clientScores = await supabase.from("client_scores")
     .select()
     .eq("collectivite_id", 2)
     .eq("referentiel", "eci");
 
-  const eci242_1 = scoreById(clientScores.data![0], "eci_2.4.2");
+  const eci242_1 = scoreById(
+    clientScores.data![0] as unknown as ClientScores,
+    "eci_2.4.2",
+  );
   assertEquals(
     eci242_1.desactive,
     true,
@@ -38,12 +41,15 @@ Deno.test("Calcul de 'eci_2.4.2' après la réponse à la question 'dechets_1'",
 
   // on attend de nouveau le calcul des scores
   await delay(200);
-  clientScores = await supabase.from<ClientScores>("client_scores")
+  clientScores = await supabase.from("client_scores")
     .select()
     .eq("collectivite_id", 2)
     .eq("referentiel", "eci");
 
-  const eci242_2 = scoreById(clientScores.data![0], "eci_2.4.2");
+  const eci242_2 = scoreById(
+    clientScores.data![0] as unknown as ClientScores,
+    "eci_2.4.2",
+  );
   assertEquals(
     eci242_2.desactive,
     false,
