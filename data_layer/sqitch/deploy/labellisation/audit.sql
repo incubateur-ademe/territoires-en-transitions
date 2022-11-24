@@ -2,7 +2,6 @@
 BEGIN;
 
 -- Crée une table migration pour passer l'auditeur de la table audit à la table audit_auditeur
-create schema if not exists migration;
 create table migration.audit
 as
 select *
