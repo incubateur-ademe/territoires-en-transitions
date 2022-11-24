@@ -1,5 +1,8 @@
-insert into audit(id, collectivite_id, referentiel, auditeur)
-values (1, 1, 'eci', '5f407fc6-3634-45ff-a988-301e9088096a');
+insert into audit(id, collectivite_id, referentiel)
+values (1, 1, 'eci');
+
+insert into audit_auditeur (audit_id, auditeur)
+values (1, '5f407fc6-3634-45ff-a988-301e9088096a');
 
 insert into labellisation.action_audit_state(audit_id, action_id, collectivite_id, ordre_du_jour, avis, statut, modified_by)
 values
