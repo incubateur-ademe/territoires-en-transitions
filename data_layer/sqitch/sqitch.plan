@@ -140,3 +140,5 @@ stats/schema 2022-11-28T08:45:41Z Florian <florian@derfurth.com> # Ajoute le sch
 stats/collectivite [stats/collectivite@v1.13.0 stats/schema] 2022-11-28T10:42:31Z Florian <florian@derfurth.com> # Répare les stats pour les collectivités actives.
 stats/utilisateur [stats/utilisateur@v1.13.0 stats/collectivite] 2022-11-28T13:27:47Z Florian <florian@derfurth.com> # Les stats des utilisateurs uniques
 @v1.14.0 2022-11-29T08:31:36Z Florian <florian@derfurth.com> # Répare les vues stats.
+
+retool/evaluation [retool/evaluation@v1.13.0] 2022-11-24T14:56:45Z Florian <florian@derfurth.com> # Répare la fusion des commentaires
