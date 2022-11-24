@@ -70,7 +70,7 @@ const RecoverLanding = () => {
 
   const recover = (data: OTPLogin) => {
     supabaseClient.auth
-      .verifyOTP({
+      .verifyOtp({
         email: data.email,
         token: data.code,
         type: 'recovery',

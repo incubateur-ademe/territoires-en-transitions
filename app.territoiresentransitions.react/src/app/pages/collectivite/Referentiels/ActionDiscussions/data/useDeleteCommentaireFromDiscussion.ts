@@ -1,7 +1,5 @@
 import {useMutation, useQueryClient} from 'react-query';
-
 import {supabaseClient} from 'core-logic/api/supabase';
-import {TActionDiscussionCommentaire} from './types';
 
 /**
  * Supprime un commentaire d'une discussion
@@ -22,7 +20,7 @@ export const useDeleteCommentaireFromDiscussion = () => {
 
 const deleteCommentaire = async (commentaire_id: number) => {
   const {error} = await supabaseClient
-    .from<TActionDiscussionCommentaire>('action_discussion_commentaire')
+    .from('action_discussion_commentaire')
     .delete()
     .eq('id', commentaire_id);
 

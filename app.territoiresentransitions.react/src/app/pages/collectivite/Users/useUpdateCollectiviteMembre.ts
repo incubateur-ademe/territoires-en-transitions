@@ -31,7 +31,7 @@ export const useUpdateCollectiviteMembre = () => {
   };
 };
 
-const fieldNameToRPCName = (name: string) =>
+const fieldNameToRPCName = (name: TUpdateMembreArgs['name']) =>
   `update_collectivite_membre_${name}`;
 
 const updateMembre = async ({
@@ -41,7 +41,11 @@ const updateMembre = async ({
   value,
 }: TUpdateMembreArgs & {collectivite_id: number}) => {
   const {error} = await supabaseClient
-    .rpc(fieldNameToRPCName(name), {collectivite_id, membre_id, [name]: value})
+    .rpc(fieldNameToRPCName(name) as any, {
+      collectivite_id,
+      membre_id,
+      [name]: value,
+    })
     .select();
   return Boolean(error);
 };

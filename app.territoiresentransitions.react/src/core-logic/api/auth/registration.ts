@@ -20,19 +20,19 @@ export const registerUser = async (inscription: InscriptionUtilisateur) => {
 
   // todo fix signup with existing user email.
 
-  const signedUp = await supabaseClient.auth.signUp({
+  const {data, error} = await supabaseClient.auth.signUp({
     email: inscription.email,
     password: inscription.password,
   });
 
-  if (!signedUp.user || signedUp.error) throw signedUp.error?.message;
+  if (!data.user || error) throw error?.message;
 
   const dcp: DcpWrite = {
     telephone: inscription.telephone,
     email: inscription.email,
     prenom: inscription.prenom,
     nom: inscription.nom,
-    user_id: signedUp.user.id,
+    user_id: data.user.id,
   };
   await supabaseClient.from('dcp').insert([dcp]);
 };

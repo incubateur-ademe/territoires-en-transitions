@@ -75,6 +75,10 @@ const recover = async (
 
   // supabaseClient.auth.setAuth(data.access_token); ne fonctionne pas.
   // fixme va sans doute être redirigée.
-  await supabaseClient.auth.signIn({refreshToken: data.refresh_token});
+  // await supabaseClient.auth.signIn({refreshToken: data.refresh_token});
+
+  // TODO: utiliser API supabase-js v2
+  //const { data, error } = supabase.auth.setSession({refresh_token, access_token})
+
   return data?.access_token || null;
 };

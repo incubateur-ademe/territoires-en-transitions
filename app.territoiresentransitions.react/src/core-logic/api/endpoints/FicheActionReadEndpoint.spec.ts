@@ -17,7 +17,7 @@ describe('Fiche action reading endpoint', () => {
   it('should retrieve data-layer default fiche for collectivite #1 (for any connected user)', async () => {
     const ficheActionReadEndpoint = new FicheActionReadEndpoint([]);
 
-    await supabaseClient.auth.signIn(yuluCredentials); // Yulu is connected with no rights on collectivite #1
+    await supabaseClient.auth.signInWithPassword(yuluCredentials); // Yulu is connected with no rights on collectivite #1
 
     const results = await ficheActionReadEndpoint.getBy({
       collectivite_id: 1,

@@ -1,7 +1,7 @@
 import {useMutation, useQueryClient} from 'react-query';
 
 import {supabaseClient} from 'core-logic/api/supabase';
-import {TActionDiscussion, TActionDiscussionStatut} from './types';
+import {TActionDiscussionStatut} from './types';
 
 /**
  * Update le status d'une discussions
@@ -30,7 +30,7 @@ type UpdateArgs = {
  */
 const update = async (args: UpdateArgs) => {
   const {error} = await supabaseClient
-    .from<TActionDiscussion>('action_discussion')
+    .from('action_discussion')
     .update({status: args.status})
     .eq('id', args.discussion_id);
 

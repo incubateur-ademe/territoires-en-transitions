@@ -10,7 +10,10 @@ export const upsertActionDiscussion = async ({
   collectivite_id,
   action_id,
 }: UpsertArgs) =>
-  supabaseClient.from('action_discussion').upsert({collectivite_id, action_id});
+  supabaseClient
+    .from('action_discussion')
+    .upsert({collectivite_id, action_id})
+    .select();
 
 type InsertCommentaireArgs = {
   discussion_id: number;

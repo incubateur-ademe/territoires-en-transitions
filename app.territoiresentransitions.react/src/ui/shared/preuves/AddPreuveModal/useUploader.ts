@@ -1,4 +1,3 @@
-import {supabaseClient} from 'core-logic/api/supabase';
 import {ENV} from 'environmentVariables';
 import {useEffect, useState} from 'react';
 import {
@@ -11,6 +10,7 @@ import {collectiviteBucketReadEndpoint} from 'core-logic/api/endpoints/Collectiv
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {shasum256} from 'utils/shasum256';
 import {useAddFileToLib} from './useAddFileToLib';
+import {useAuthHeaders} from 'core-logic/api/auth/useCurrentSession';
 
 /**
  * Gère l'upload et envoi une notification après un transfert réussi
@@ -19,10 +19,12 @@ import {useAddFileToLib} from './useAddFileToLib';
 const addFileToBucket = async ({
   collectivite_id,
   file,
+  authHeaders,
   onStatusChange,
 }: {
   collectivite_id: number;
   file: File;
+  authHeaders: {authorization: string; apikey: string};
   onStatusChange: (status: UploadStatus) => void;
 }) => {
   // calcule une somme de contrôle du fichier
@@ -83,12 +85,8 @@ const addFileToBucket = async ({
     xhr.upload.onerror = xhr.upload.ontimeout = setError;
 
     // attache les en-têtes et démarre l'envoi
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore: on utilise ici volontairement une fonction privée du client
-    // supabase pour récupérer les en-têtes contenant le token d'auth.
-    const headers = supabaseClient._getAuthHeaders();
     xhr.open('POST', url);
-    for (const [key, value] of Object.entries(headers)) {
+    for (const [key, value] of Object.entries(authHeaders)) {
       xhr.setRequestHeader(key, value as string);
     }
     xhr.send(file);
@@ -111,6 +109,7 @@ export const useUploader = (
 
   const collectivite_id = useCollectiviteId()!;
   const {addFileToLib} = useAddFileToLib();
+  const authHeaders = useAuthHeaders();
 
   const onStatusChange = (status: UploadStatus) => {
     if (status.code === UploadStatusCode.uploaded) {
@@ -125,8 +124,8 @@ export const useUploader = (
   };
 
   useEffect(() => {
-    if (collectivite_id) {
-      addFileToBucket({collectivite_id, file, onStatusChange});
+    if (collectivite_id && authHeaders) {
+      addFileToBucket({collectivite_id, file, authHeaders, onStatusChange});
     }
   }, [collectivite_id]);
 

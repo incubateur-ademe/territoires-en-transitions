@@ -1,5 +1,5 @@
 import {supabaseClient} from 'core-logic/api/supabase';
-import {useEffect, useState} from 'react';
+import {useQuery} from 'react-query';
 
 // Models
 export type DailyCount = {
@@ -9,12 +9,12 @@ export type DailyCount = {
 };
 
 export type FunctionnalitiesUsageProportion = {
-  [key: string]: number;
-  fiche_action_avg: number;
-  eci_referentiel_avg: number;
-  cae_referentiel_avg: number;
-  indicateur_personnalise_avg: number;
-  inficateur_referentiel_avg: number;
+  [key: string]: number | null;
+  fiche_action_avg: number | null;
+  cae_statuses_avg: number | null;
+  eci_statuses_avg: number | null;
+  indicateur_personnalise_avg: number | null;
+  indicateur_referentiel_avg: number | null;
 };
 
 export type CompletenessSlice = {
@@ -23,19 +23,17 @@ export type CompletenessSlice = {
   cae: number;
 };
 
-const useDailyCounts = (view: string) => {
-  const [data, setData] = useState<DailyCount[] | null>(null);
-
-  useEffect(() => {
-    if (!data) {
-      supabaseClient
-        .from(view)
-        .select()
-        .then(result => setData(result.data));
-    }
-  }, [view, data]);
-
-  return data;
+const useDailyCounts = (
+  view:
+    | 'stats_rattachements'
+    | 'stats_unique_active_collectivite'
+    | 'stats_unique_active_users'
+) => {
+  const {data} = useQuery([view], async () => {
+    const {data, error} = await supabaseClient.from(view).select();
+    return !data?.length || error ? undefined : data[0];
+  });
+  return (data as DailyCount[]) || [];
 };
 
 export const useRattachements = () => useDailyCounts('stats_rattachements');
@@ -44,37 +42,30 @@ export const useActiveCollectivites = () =>
 export const useActiveUsers = () => useDailyCounts('stats_unique_active_users');
 
 export const useFunctionnalitiesUsageProportion = () => {
-  const [data, setData] = useState<FunctionnalitiesUsageProportion | null>(
-    null
+  const {data} = useQuery(
+    ['stats_functionnalities_usage_proportion'],
+    fetchUsage
   );
+  return data || null;
+};
 
-  useEffect(() => {
-    if (!data) {
-      supabaseClient
-        .from('stats_functionnalities_usage_proportion')
-        .select()
-        .then(result => {
-          if (result.data?.length === 1) {
-            setData(result.data[0]);
-          }
-        });
-    }
-  }, [data]);
+const fetchUsage = async () => {
+  const {data, error} = await supabaseClient
+    .from('stats_functionnalities_usage_proportion')
+    .select();
 
-  return data;
+  return !data?.length || error ? null : data[0];
 };
 
 export const useCompletenessSlices = () => {
-  const [data, setData] = useState<CompletenessSlice[] | null>(null);
+  const {data} = useQuery(['stats_tranche_completude'], fetchCompletness);
+  return data || [];
+};
 
-  useEffect(() => {
-    if (!data) {
-      supabaseClient
-        .from('stats_tranche_completude')
-        .select()
-        .then(result => setData(result.data));
-    }
-  }, [data]);
+const fetchCompletness = async () => {
+  const {data, error} = await supabaseClient
+    .from('stats_tranche_completude')
+    .select();
 
-  return data;
+  return !data || error ? [] : (data as CompletenessSlice[]);
 };

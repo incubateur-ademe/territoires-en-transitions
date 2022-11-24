@@ -12,7 +12,7 @@ export const fetch = async (
 ) => {
   // lit le statut de l'audit en cours (si il existe)
   const query = supabaseClient
-    .from<TAudit>('audit')
+    .from('audit')
     .select()
     .match({collectivite_id, referentiel})
     .limit(1);

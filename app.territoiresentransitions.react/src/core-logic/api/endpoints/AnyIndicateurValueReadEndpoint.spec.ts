@@ -9,7 +9,7 @@ import {yuluCredentials} from 'test_utils/collectivites';
 
 describe('Indicateur-resultat reading endpoint should retrieve data-layer default resultat values  (for anyone connected)', () => {
   beforeEach(async () => {
-    await supabaseClient.auth.signIn(yuluCredentials); // Yulu has no rights on collectivite #1
+    await supabaseClient.auth.signInWithPassword(yuluCredentials); // Yulu has no rights on collectivite #1
   });
 
   it('Retrieves at least one resutat when collectivite_id with resultat for collectivite #1', async () => {
@@ -30,7 +30,7 @@ describe('Indicateur-resultat reading endpoint should retrieve data-layer defaul
 
 describe('Indicateur-personnalise values reading endpoint should retrieve data-layer default resultat values (for anyone connected)', () => {
   beforeEach(async () => {
-    await supabaseClient.auth.signIn(yuluCredentials); // Yulu has no rights on collectivite #1.
+    await supabaseClient.auth.signInWithPassword(yuluCredentials); // Yulu has no rights on collectivite #1.
   });
   it('Retrieves one resutat when collectivite_id with resultat for collectivite #1', async () => {
     const results = await indicateurPersonnaliseResultatReadEndpoint.getBy({

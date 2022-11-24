@@ -15,7 +15,7 @@ describe('Plan action reading endpoint', () => {
   });
   it('should retrieve data-layer fake plan for collectivite #1  (for anyone connected)', async () => {
     const planActionReadEndpoint = new PlanActionReadEndpoint([]);
-    await supabaseClient.auth.signIn(yuluCredentials); // Yulu has no rights on collectivite #1
+    await supabaseClient.auth.signInWithPassword(yuluCredentials); // Yulu has no rights on collectivite #1
 
     const results = await planActionReadEndpoint.getBy({
       collectivite_id: 1,

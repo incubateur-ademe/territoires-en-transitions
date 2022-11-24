@@ -19,7 +19,7 @@ type TFilters = {
 const fetch = async (collectivite_id: number, filters?: TFilters) => {
   // lit la liste des preuves de la collectivité
   const query = supabaseClient
-    .from<TPreuve>('preuve')
+    .from('preuve')
     .select('*')
     .order('action->>action_id' as 'action', {ascending: true})
     .order('preuve_reglementaire->>nom' as 'preuve_reglementaire', {
@@ -79,7 +79,7 @@ export const usePreuves = (filters?: TFilters) => {
   const {data} = useQuery(['preuve', collectivite_id, filters], () =>
     collectivite_id ? fetch(collectivite_id, filters) : []
   );
-  return data || [];
+  return (data as TPreuve[]) || [];
 };
 
 /**

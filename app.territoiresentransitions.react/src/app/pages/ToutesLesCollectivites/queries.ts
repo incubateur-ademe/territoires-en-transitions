@@ -1,9 +1,6 @@
 import {supabaseClient} from 'core-logic/api/supabase';
 import {CollectiviteCarteRead} from 'generated/dataLayer/collectivite_carte_read';
-import {RegionRead} from 'generated/dataLayer/region_read';
-import {DepartementRead} from 'generated/dataLayer/departement_read';
 import {TCollectivitesFilters} from 'app/pages/ToutesLesCollectivites/filtreLibelles';
-import {PostgrestFilterBuilder} from '@supabase/postgrest-js';
 
 const screenIsMobile = () =>
   window.innerHeight <= 800 && window.innerWidth <= 600;
@@ -16,11 +13,9 @@ type FilterOperator = 'in' | 'ov';
 /**
  * Construit la query en ajoutant des opérateurs Postgrest pour chaque filtre.
  */
-const buildQueryFromFilters = (
-  filters: TCollectivitesFilters
-): PostgrestFilterBuilder<CollectiviteCarteRead> => {
+const buildQueryFromFilters = (filters: TCollectivitesFilters) => {
   let query = supabaseClient
-    .from<CollectiviteCarteRead>('collectivite_card')
+    .from('collectivite_card')
     .select('*', {count: 'exact'});
 
   const filter = (
@@ -168,8 +163,8 @@ export const fetchCollectiviteCards = async (
 /**
  * Télécharge toutes les régions, pour les afficher dans le filtre.
  */
-export const fetchAllRegions = async (): Promise<RegionRead[]> => {
-  const query = supabaseClient.from<RegionRead>('region').select();
+export const fetchAllRegions = async () => {
+  const query = supabaseClient.from('region').select();
   const {error, data} = await query;
 
   if (error) {
@@ -181,8 +176,8 @@ export const fetchAllRegions = async (): Promise<RegionRead[]> => {
 /**
  * Télécharge tous les départements, pour les afficher dans le filtre.
  */
-export const fetchAllDepartements = async (): Promise<DepartementRead[]> => {
-  const query = supabaseClient.from<DepartementRead>('departement').select();
+export const fetchAllDepartements = async () => {
+  const query = supabaseClient.from('departement').select();
   const {error, data} = await query;
   if (error) {
     throw new Error(error.message);

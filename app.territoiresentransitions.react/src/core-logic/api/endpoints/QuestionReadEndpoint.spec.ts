@@ -79,7 +79,7 @@ const QuestionEnergie3 = {
 describe('Question reading endpoint', () => {
   it('should retrieve a question by action_id', async () => {
     const questionReadEndpoint = new QuestionReadEndpoint([]);
-    await supabaseClient.auth.signIn(yuluCredentials); // Yulu has no rights on collectivite #1
+    await supabaseClient.auth.signInWithPassword(yuluCredentials); // Yulu has no rights on collectivite #1
 
     const results = await questionReadEndpoint.getBy({
       collectivite_id: 1,
@@ -95,7 +95,7 @@ describe('Question reading endpoint', () => {
 
   it('should retrieve questions by action_id', async () => {
     const questionReadEndpoint = new QuestionReadEndpoint([]);
-    await supabaseClient.auth.signIn(yuluCredentials); // Yulu has no rights on collectivite #1
+    await supabaseClient.auth.signInWithPassword(yuluCredentials); // Yulu has no rights on collectivite #1
 
     const results = await questionReadEndpoint.getBy({
       collectivite_id: 1,
@@ -112,7 +112,7 @@ describe('Question reading endpoint', () => {
 
   it('should return an empty array if there is no questions related to action_id', async () => {
     const questionReadEndpoint = new QuestionReadEndpoint([]);
-    await supabaseClient.auth.signIn(yuluCredentials); // Yulu has no rights on collectivite #1
+    await supabaseClient.auth.signInWithPassword(yuluCredentials); // Yulu has no rights on collectivite #1
 
     const results = await questionReadEndpoint.getBy({
       collectivite_id: 1,
@@ -124,7 +124,7 @@ describe('Question reading endpoint', () => {
 
   it('should return questions related to thematique_id', async () => {
     const questionReadEndpoint = new QuestionReadEndpoint([]);
-    await supabaseClient.auth.signIn(yuluCredentials); // Yulu has no rights on collectivite #1
+    await supabaseClient.auth.signInWithPassword(yuluCredentials); // Yulu has no rights on collectivite #1
 
     const results = await questionReadEndpoint.getBy({
       collectivite_id: 1,

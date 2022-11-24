@@ -13,7 +13,7 @@ describe('Indicateur perso definition reading endpoint', () => {
     expect(results).toHaveLength(0);
   });
   it('should retrieve data-layer default indicateur perso definition with id 0 for collectivite #1 (for anyone connected)', async () => {
-    await supabaseClient.auth.signIn(yuluCredentials); // Yulu has no rights on collectivite #1
+    await supabaseClient.auth.signInWithPassword(yuluCredentials); // Yulu has no rights on collectivite #1
 
     const results = await indicateurPersonnaliseDefinitionReadEndpoint.getBy({
       collectivite_id: 1,

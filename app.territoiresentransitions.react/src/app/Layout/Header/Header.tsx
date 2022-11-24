@@ -1,6 +1,6 @@
 import LogoRepubliqueFrancaise from 'ui/logo/LogoRepubliqueFrancaise';
 import {useAuth, TAuthContext} from 'core-logic/api/auth/AuthProvider';
-import {Maintenance, useMaintenance} from 'app/Layout/useMaintenance';
+import {useMaintenance, Maintenance} from 'app/Layout/useMaintenance';
 import HeaderNavigation from './HeaderNavigation';
 import CollectiviteNavigation from './CollectiviteNavigation';
 import MobileNavigation from './MobileNavigation';
@@ -22,7 +22,7 @@ export const Header = ({
 }: {
   auth: TAuthContext;
   currentCollectivite: CurrentCollectivite | null;
-  maintenance: Maintenance | null;
+  maintenance: ReturnType<typeof useMaintenance>;
   ownedCollectivites: MesCollectivitesRead[] | null;
 }) => {
   const collectiviteNav = currentCollectivite
@@ -152,19 +152,17 @@ const MaintenanceBanner = ({
 }: {
   maintenance: Maintenance | null;
 }) => {
-  if (!maintenance) return null;
+  const {now, begins_at, ends_at} = maintenance || {};
+  if (!now || !begins_at || !ends_at) return null;
 
-  const ongoing = new Date(maintenance.now) > new Date(maintenance.begins_at);
-  const formatedDate = new Date(maintenance.begins_at).toLocaleString('fr', {
+  const ongoing = new Date(now) > new Date(begins_at);
+  const formatedDate = new Date(begins_at).toLocaleString('fr', {
     dateStyle: 'short',
   });
-  const formatedBeginsAt = new Date(maintenance.begins_at).toLocaleTimeString(
-    [],
-    {
-      timeStyle: 'short',
-    }
-  );
-  const formatedEndsAt = new Date(maintenance.ends_at).toLocaleTimeString([], {
+  const formatedBeginsAt = new Date(begins_at).toLocaleTimeString([], {
+    timeStyle: 'short',
+  });
+  const formatedEndsAt = new Date(ends_at).toLocaleTimeString([], {
     timeStyle: 'short',
   });
   if (ongoing)
@@ -187,8 +185,8 @@ const HeaderConnected = () => {
   return (
     <Header
       auth={auth}
-      currentCollectivite={currentCollectivite}
-      ownedCollectivites={ownedCollectivites}
+      currentCollectivite={currentCollectivite as CurrentCollectivite}
+      ownedCollectivites={ownedCollectivites as CurrentCollectivite[]}
       maintenance={maintenance}
     />
   );

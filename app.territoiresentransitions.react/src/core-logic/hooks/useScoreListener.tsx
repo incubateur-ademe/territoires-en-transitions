@@ -1,24 +1,14 @@
-import {RealtimeSubscription} from '@supabase/realtime-js';
 import {createContext, ReactNode, useContext, useRef} from 'react';
 import {useQueryClient} from 'react-query';
+import {RealtimeChannel} from '@supabase/supabase-js';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {Referentiel} from 'types/litterals';
-import {ActionScore} from 'types/ClientScore';
-
-type TClientScore = {
-  id: number;
-  collectivite_id: number;
-  referentiel: Referentiel;
-  scores: ActionScore[];
-  score_created_at: string;
-};
 
 type TScoreListenerContext = {
   subscribe: (collectiviteId: number | null) => void;
 };
 
 type TContextData = {
-  subscription: RealtimeSubscription;
+  subscription: RealtimeChannel;
   collectiviteId: number;
 } | null;
 
@@ -66,15 +56,17 @@ export const ScoreListenerProvider = ({children}: {children: ReactNode}) => {
         queryClient.invalidateQueries(['client_scores', collectiviteId]);
       };
 
+      const table = {schema: 'public', table: 'client_scores'};
+      const subscription = supabaseClient
+        .channel(
+          `public:client_scores:collectivite_id=eq.${collectiviteId}` // ,referentiel=eq.${referentiel}
+        )
+        .on('postgres_changes', {event: 'INSERT', ...table}, refetch)
+        .on('postgres_changes', {event: 'UPDATE', ...table}, refetch)
+        .subscribe();
       contextDataRef.current = {
         collectiviteId,
-        subscription: supabaseClient
-          .from<TClientScore>(
-            `client_scores:collectivite_id=eq.${collectiviteId}` // ,referentiel=eq.${referentiel}
-          )
-          .on('INSERT', refetch)
-          .on('UPDATE', refetch)
-          .subscribe(),
+        subscription,
       };
     }
   };

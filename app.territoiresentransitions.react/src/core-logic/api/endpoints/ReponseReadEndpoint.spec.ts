@@ -5,7 +5,7 @@ import {yoloCredentials, yuluCredentials} from 'test_utils/collectivites';
 
 export const checkReponseProportion = async () => {
   const reponseReadEndpoint = new ReponseReadEndpoint([]);
-  await supabaseClient.auth.signIn(yoloCredentials);
+  await supabaseClient.auth.signInWithPassword(yoloCredentials);
 
   const results = await reponseReadEndpoint.getBy({
     collectivite_id: 1,
@@ -30,7 +30,7 @@ export const checkReponseProportion = async () => {
 describe('Reponse reading endpoint', () => {
   it('should return an empty array if there is no response for a question', async () => {
     const reponseReadEndpoint = new ReponseReadEndpoint([]);
-    await supabaseClient.auth.signIn(yuluCredentials); // Yulu has no rights on collectivite #1
+    await supabaseClient.auth.signInWithPassword(yuluCredentials); // Yulu has no rights on collectivite #1
 
     const results = await reponseReadEndpoint.getBy({
       collectivite_id: 1,
@@ -42,7 +42,7 @@ describe('Reponse reading endpoint', () => {
 
   it('should return an empty array if user is not bind to the collectivite', async () => {
     const reponseReadEndpoint = new ReponseReadEndpoint([]);
-    await supabaseClient.auth.signIn(yuluCredentials); // Yulu has no rights on collectivite #1
+    await supabaseClient.auth.signInWithPassword(yuluCredentials); // Yulu has no rights on collectivite #1
 
     const results = await reponseReadEndpoint.getBy({
       collectivite_id: 1,
@@ -54,7 +54,7 @@ describe('Reponse reading endpoint', () => {
 
   it('should return the response to a question (binaire)', async () => {
     const reponseReadEndpoint = new ReponseReadEndpoint([]);
-    await supabaseClient.auth.signIn(yoloCredentials);
+    await supabaseClient.auth.signInWithPassword(yoloCredentials);
 
     const results = await reponseReadEndpoint.getBy({
       collectivite_id: 1,

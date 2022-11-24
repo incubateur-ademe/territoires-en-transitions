@@ -1,6 +1,5 @@
 import {useMutation, useQuery, useQueryClient} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {ActionStatutRead} from 'generated/dataLayer/action_statut_read';
 import {ActionStatutWrite} from 'generated/dataLayer/action_statut_write';
 
 /**
@@ -28,7 +27,7 @@ const fetchCollectiviteActionStatuts = async (collectivite_id?: number) => {
     return null;
   }
   const query = supabaseClient
-    .from<ActionStatutRead>('action_statut')
+    .from('action_statut')
     .select()
     .eq('collectivite_id', collectivite_id);
   const {error, data} = await query;

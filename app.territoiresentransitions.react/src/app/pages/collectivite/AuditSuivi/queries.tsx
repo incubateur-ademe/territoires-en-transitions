@@ -16,7 +16,7 @@ export const fetchRows = async (
 ) => {
   // la requête
   const query = supabaseClient
-    .from<TAuditSuiviRow>('suivi_audit')
+    .from('suivi_audit')
     .select('action_id,statut,ordre_du_jour')
     .match({collectivite_id, referentiel});
 

@@ -8,7 +8,7 @@ export class PlanActionWriteEndpoint extends DataLayerWriteEndpoint<PlanActionWr
   async _write(
     commentaire: PlanActionWrite
   ): Promise<PostgrestResponse<PlanActionWrite>> {
-    return this._table.upsert([commentaire], {onConflict: 'uid'});
+    return this._table.upsert([commentaire], {onConflict: 'uid'}).select();
   }
 }
 

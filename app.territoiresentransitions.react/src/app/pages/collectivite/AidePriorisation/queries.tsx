@@ -30,7 +30,7 @@ export const fetchRows = async (
 
   // la requête
   const query = supabaseClient
-    .from<IActionStatutsRead>('action_statuts')
+    .from('action_statuts')
     .select('action_id,phase,score_realise,score_programme,points_restants')
     .match({collectivite_id, referentiel})
     .gt('depth', 0);

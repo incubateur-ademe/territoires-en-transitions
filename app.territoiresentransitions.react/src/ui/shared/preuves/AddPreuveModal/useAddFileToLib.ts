@@ -12,14 +12,13 @@ const addFileToLib = async ({
   hash: string;
   filename: string;
 }) => {
-  const {error, data} = await supabaseClient.rpc<TBibliothequeFichier>(
-    'add_bibliotheque_fichier',
-    {collectivite_id, hash, filename}
-  );
+  const {error, data} = await supabaseClient
+    .rpc('add_bibliotheque_fichier', {collectivite_id, hash, filename})
+    .single();
   if (error || !data) {
     throw new Error(error?.message || '');
   }
-  return data as unknown as TBibliothequeFichier;
+  return data as TBibliothequeFichier;
 };
 
 export const useAddFileToLib = () => {

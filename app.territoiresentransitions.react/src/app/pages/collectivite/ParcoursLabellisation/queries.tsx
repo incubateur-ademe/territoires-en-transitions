@@ -1,6 +1,10 @@
 import {supabaseClient} from 'core-logic/api/supabase';
-import {LabellisationParcoursRead} from 'generated/dataLayer/labellisation_parcours_read';
+import {
+  LabellisationParcoursRead,
+  TEtoiles,
+} from 'generated/dataLayer/labellisation_parcours_read';
 import {LabellisationDemandeRead} from 'generated/dataLayer/labellisation_demande_read';
+import {Referentiel} from 'types/litterals';
 
 // charge les parcours (eci/cae) de labellisation d'une collectivité donnée
 export const fetchParcours = async (
@@ -10,14 +14,16 @@ export const fetchParcours = async (
     return null;
   }
 
-  const {data, error} = await supabaseClient.rpc('labellisation_parcours', {
-    collectivite_id,
-  });
+  const {data, error} = await supabaseClient
+    .rpc('labellisation_parcours', {
+      collectivite_id,
+    })
+    .select();
 
   if (error || !data) {
     return null;
   }
-  return data;
+  return data as unknown as LabellisationParcoursRead[];
 };
 
 export const getReferentielParcours = (
@@ -44,8 +50,8 @@ export const getReferentielParcours = (
 // collectivité pour un référentiel et un niveau
 export const fetchDemande = async (
   collectivite_id: number | null,
-  referentiel: string | null,
-  etoiles: string | undefined
+  referentiel: Referentiel | null,
+  etoiles: TEtoiles | undefined
 ): Promise<LabellisationDemandeRead | null> => {
   if (!collectivite_id || !referentiel || !etoiles) {
     return null;
@@ -67,8 +73,8 @@ export const fetchDemande = async (
 // soumet une demande de labellisation
 export const submitDemande = async (demande: {
   collectivite_id: number | null;
-  referentiel: string | null;
-  etoiles: string | undefined;
+  referentiel: Referentiel | null;
+  etoiles: TEtoiles | undefined;
 }): Promise<boolean> => {
   const {collectivite_id, referentiel, etoiles} = demande;
   if (!collectivite_id || !referentiel || !etoiles) {

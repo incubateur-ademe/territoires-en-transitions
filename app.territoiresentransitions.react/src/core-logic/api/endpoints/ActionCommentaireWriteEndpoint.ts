@@ -8,9 +8,11 @@ export class ActionCommentaireWriteEndpoint extends DataLayerWriteEndpoint<Actio
   async _write(
     commentaire: ActionCommentaireWrite
   ): Promise<PostgrestResponse<ActionCommentaireWrite>> {
-    return this._table.upsert([commentaire], {
-      onConflict: 'collectivite_id,action_id',
-    });
+    return this._table
+      .upsert([commentaire], {
+        onConflict: 'collectivite_id,action_id',
+      })
+      .select();
   }
 }
 

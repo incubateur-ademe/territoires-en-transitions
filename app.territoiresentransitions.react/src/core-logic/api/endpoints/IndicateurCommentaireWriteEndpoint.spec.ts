@@ -6,7 +6,7 @@ import {yiliCredentials} from 'test_utils/collectivites';
 
 describe('Indicateur-commentaire write endpoint', () => {
   beforeEach(async () => {
-    await supabaseClient.auth.signIn(yiliCredentials);
+    await supabaseClient.auth.signInWithPassword(yiliCredentials);
   });
   const endpoint = new IndicateurCommentaireWriteEndpoint();
   it('Should be able to create and update a commentaire', async () => {

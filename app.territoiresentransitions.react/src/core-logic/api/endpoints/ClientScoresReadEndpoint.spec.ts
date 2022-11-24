@@ -5,7 +5,7 @@ import {yiliCredentials} from 'test_utils/collectivites';
 
 describe('ClientScores reading endpoint', () => {
   beforeEach(async () => {
-    await supabaseClient.auth.signIn(yiliCredentials);
+    await supabaseClient.auth.signInWithPassword(yiliCredentials);
   });
 
   /// todo add fake score.

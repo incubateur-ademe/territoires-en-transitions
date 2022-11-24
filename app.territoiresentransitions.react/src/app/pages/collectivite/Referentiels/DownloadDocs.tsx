@@ -66,7 +66,7 @@ const useDownloadDocs = (action: ActionDefinitionSummary) => {
 
   // indexe les fichiers par leur clé (pour avoir l'unicité) et retransforme en
   // tableau les valeurs restantes
-  const fichiers = Object.values(
+  const fichiers: TFichier[] = Object.values(
     preuves.reduce((filenameByHash, {fichier}) => {
       return fichier
         ? {...filenameByHash, [fichier.hash]: fichier}
@@ -123,7 +123,10 @@ const useSignedUrls = (fichiers: TFichier[]) => {
   )
     .map((reply, index) => {
       const {data} = reply;
-      return {filename: fichiers[index].filename, url: data?.signedURL || null};
+      return {
+        filename: fichiers[index].filename,
+        url: data?.data?.signedUrl || null,
+      };
     })
     .filter(fichier => Boolean(fichier.url));
 };

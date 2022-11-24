@@ -6,7 +6,7 @@ import {yiliCredentials} from 'test_utils/collectivites';
 
 describe('Action-commentaire write endpoint', () => {
   beforeEach(async () => {
-    await supabaseClient.auth.signIn(yiliCredentials);
+    await supabaseClient.auth.signInWithPassword(yiliCredentials);
   });
 
   it('Should be able to save and update a commentaire', async () => {

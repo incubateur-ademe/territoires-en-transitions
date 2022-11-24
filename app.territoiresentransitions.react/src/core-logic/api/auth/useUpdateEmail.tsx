@@ -24,6 +24,6 @@ export const useUpdateEmail = () => {
  * Query pour mettre à jour l'email de l'utilisateur courant
  */
 export const updateEmail = async ({email}: UpdateEmailParams) => {
-  const {error} = await supabaseClient.auth.update({email});
+  const {error} = await supabaseClient.auth.updateUser({email});
   if (error) throw error?.message;
 };
