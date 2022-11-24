@@ -83,4 +83,6 @@ do $$
     end
 $$;
 
+drop table migration.audit;
+
 COMMIT;
