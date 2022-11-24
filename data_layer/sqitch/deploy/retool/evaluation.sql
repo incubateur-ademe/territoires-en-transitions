@@ -2,7 +2,8 @@
 
 BEGIN;
 
-create or replace view retool_score
+drop view retool_score;
+create view retool_score
 as
 select c.collectivite_id                                              as collectivite_id,
        c.nom                                                          as "Collectivité",
@@ -47,7 +48,8 @@ select c.collectivite_id                                              as collect
                        and a.commentaire != '')
            else ac.commentaire end                                    as "Commentaires fusionnés",
 
-       ac.commentaire                                                 as "Commentaire"
+       ac.commentaire                                                 as "Commentaire",
+       to_char(s.modified_at, 'DD-MM-YYY')                            as "Modifié le"
 
 from named_collectivite c
          -- definitions

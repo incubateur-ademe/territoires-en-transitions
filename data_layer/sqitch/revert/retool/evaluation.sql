@@ -2,6 +2,7 @@
 
 BEGIN;
 
+drop view retool_score;
 create view retool_score
 as
 select c.collectivite_id                                              as collectivite_id,
