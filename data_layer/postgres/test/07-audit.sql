@@ -8,6 +8,14 @@ from public.audit;
 comment on table test.audit is
     'Copie de la table audit.';
 
+-- Copie la table des auditeurs.
+create table test.audit_auditeur
+as
+select *
+from public.audit_auditeur;
+comment on table test.audit_auditeur is
+    'Copie de la table auditeurs.';
+
 -- Copie la table des états des actions de l'audit
 create table test.action_audit_state
 as
@@ -22,14 +30,20 @@ create function
     returns void
 as
 $$
-    -- Vide la table des commentaires et discussions
+    -- Vide les tables des audits
 truncate labellisation.action_audit_state;
+truncate audit_auditeur;
 truncate audit cascade;
 
     -- Restaure les audits
 insert into public.audit
 select *
 from test.audit;
+
+    -- Restaure les auditeurs
+insert into public.audit_auditeur
+select *
+from test.audit_auditeur;
 
     -- Restaure les états des actions de l'audit
 insert into labellisation.action_audit_state

@@ -45,6 +45,25 @@ Content-Type: application/json
     });
 %}
 
+### Ajout d'un auditeur
+POST {{api}}/rest/v1/audit_auditeur
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+prefer: return=representation
+Content-Type: application/json
+
+{
+  "audit_id": 1,
+  "auditeur": "4ecc7d3a-7484-4a1c-8ac8-930cdacd2561"
+}
+
+> {%
+    client.test("Create executed successfully", function() {
+        client.assert(response.status === 201, "Response status is not 201");
+    });
+%}
+
+
 
 ### Upsert un action_audit_state dans la vue.
 POST {{api}}/rest/v1/action_audit_state
