@@ -2,7 +2,6 @@ import {useQuery} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId, useReferentielId} from 'core-logic/hooks/params';
 import {Referentiel} from 'types/litterals';
-import {TActionAuditStatut} from './types';
 
 /**
  * Statut d'audit de toutes les actions du référentiel et de la collectivité
@@ -25,7 +24,7 @@ export const useActionAuditStatutsListe = () => {
 const fetch = async (collectivite_id: number, referentiel: Referentiel) => {
   // lit la liste des statuts d'audit des actions
   const query = supabaseClient
-    .from<TActionAuditStatut>('action_audit_state')
+    .from('action_audit_state')
     .select()
     .match({collectivite_id, referentiel});
 

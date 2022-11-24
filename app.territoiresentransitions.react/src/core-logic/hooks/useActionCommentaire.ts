@@ -1,9 +1,6 @@
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {
-  ActionCommentaireRead,
-  ActionCommentaireWrite,
-} from 'generated/dataLayer';
+import {ActionCommentaireWrite} from 'generated/dataLayer';
 import {useMutation, useQuery} from 'react-query';
 
 /**
@@ -14,11 +11,9 @@ import {useMutation, useQuery} from 'react-query';
  * @param action_id
  * @return Un ActionCommentaireRead et un bool isLoading.
  */
-export const useActionCommentaire = (
-  action_id: string
-): {actionCommentaire: ActionCommentaireRead | null; isLoading: boolean} => {
+export const useActionCommentaire = (action_id: string) => {
   const collectivite_id = useCollectiviteId();
-  const {data, isLoading} = useQuery<ActionCommentaireRead[] | null>(
+  const {data, isLoading} = useQuery(
     ['action_commentaire', collectivite_id],
     () => (collectivite_id ? read({collectivite_id, action_id}) : null)
   );

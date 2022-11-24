@@ -2,17 +2,9 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {useEffect} from 'react';
 import {useQuery, useQueryClient} from 'react-query';
 
-export type Maintenance = {
-  now: string;
-  begins_at: string;
-  ends_at: string;
-};
-
 // Télécharge la dernière maintenance en cours
-const fetchMaintenance = async (): Promise<Maintenance | null> => {
-  const query = supabaseClient
-    .from<Maintenance>('ongoing_maintenance')
-    .select();
+const fetchMaintenance = async () => {
+  const query = supabaseClient.from('ongoing_maintenance').select();
   const {error, data} = await query;
 
   if (error) {
@@ -22,21 +14,21 @@ const fetchMaintenance = async (): Promise<Maintenance | null> => {
 };
 
 // Donne les horaires de la dernière maintenance en cours (null si aucune maitenance en cours)
-export const useMaintenance = (): Maintenance | null => {
+export const useMaintenance = () => {
   const queryClient = useQueryClient();
 
   // recharge les données lors de la mise à jour de la table de maintenance
   const refetch = () => {
-    console.log('invalidate view, hence re-fetch');
     queryClient.invalidateQueries(['ongoing_maintenance']);
   };
 
   // souscrit aux changements de la table de maintenance
+  const table = {schema: 'public', table: 'maintenance'};
   const subscribe = () =>
     supabaseClient
-      .from('maintenance')
-      .on('INSERT', refetch)
-      .on('UPDATE', refetch)
+      .channel('public:maintenance')
+      .on('postgres_changes', {event: 'INSERT', ...table}, refetch)
+      .on('postgres_changes', {event: 'UPDATE', ...table}, refetch)
       .subscribe();
 
   useEffect(() => {
@@ -50,9 +42,8 @@ export const useMaintenance = (): Maintenance | null => {
     };
   }, []);
 
-  const {data} = useQuery<Maintenance | null>(
-    ['ongoing_maintenance'],
-    fetchMaintenance
-  );
+  const {data} = useQuery(['ongoing_maintenance'], fetchMaintenance);
   return data || null;
 };
+
+export type Maintenance = ReturnType<typeof useMaintenance>;

@@ -26,8 +26,8 @@ export const fetchHistorique = async (
   } = filters;
 
   // la requête
-  const query = supabaseClient
-    .from<THistoriqueItem>('historique')
+  let query = supabaseClient
+    .from('historique')
     .select('*', {count: 'exact'})
     .match({collectivite_id})
     .limit(NB_ITEMS_PER_PAGE);
@@ -67,7 +67,7 @@ export const fetchHistorique = async (
     throw new Error(error.message);
   }
 
-  return {items: data || [], total: count || 0};
+  return {items: (data as THistoriqueItem[]) || [], total: count || 0};
 };
 
 // les mutations "écoutées" pour déclencher le rechargement de l'historique

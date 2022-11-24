@@ -11,8 +11,14 @@ export const useUpdateActionAuditStatut = () => {
       const {collectivite_id, action_id, ordre_du_jour, avis, statut} =
         actionAuditStatut;
       return supabaseClient
-        .from<TActionAuditStatut>('action_audit_state')
-        .insert({collectivite_id, action_id, ordre_du_jour, avis, statut});
+        .from('action_audit_state')
+        .insert({
+          collectivite_id,
+          action_id,
+          ordre_du_jour,
+          avis,
+          statut,
+        } as never);
     },
     {
       mutationKey: 'update_action_audit_state',

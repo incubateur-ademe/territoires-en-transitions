@@ -17,7 +17,7 @@ describe('Action-statut reading endpoint should retrieve data-layer default stat
   it('Retrieves at least one status when collectivite_id is given (for any connected user)', async () => {
     const actionStatutReadEndpoint = new ActionStatutReadEndpoint([]);
 
-    await supabaseClient.auth.signIn(yuluCredentials); // Yulu is connected but has no rights on collectivite #1
+    await supabaseClient.auth.signInWithPassword(yuluCredentials); // Yulu is connected but has no rights on collectivite #1
 
     const results = await actionStatutReadEndpoint.getBy({collectivite_id: 1});
     expect(actionStatutReadEndpoint.lastResponse?.status).toBe(200);

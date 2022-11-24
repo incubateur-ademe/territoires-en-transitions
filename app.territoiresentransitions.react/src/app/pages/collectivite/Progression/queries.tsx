@@ -45,7 +45,7 @@ export const fetchRows = async (
 
   // la requête
   const query = supabaseClient
-    .from<IActionStatutsRead>('action_statuts')
+    .from('action_statuts')
     .select(['action_id', ...visibleColumns].join(','))
     .match({collectivite_id, referentiel})
     .gte('depth', 0);
@@ -68,7 +68,7 @@ export const fetchRows = async (
     throw new Error(error.message);
   }
 
-  const rows = data as ProgressionRow[];
+  const rows = data as unknown as ProgressionRow[];
 
   // décompte les sous-actions uniquement
   const count = rows.reduce(
@@ -109,7 +109,7 @@ export const fetchHeaderRow = async (
 ) => {
   // la requête
   const query = supabaseClient
-    .from<IActionStatutsRead>('action_statuts')
+    .from('action_statuts')
     .select(headerRowCols)
     .match({collectivite_id, referentiel, depth: 0});
 
@@ -120,6 +120,6 @@ export const fetchHeaderRow = async (
     throw new Error(error.message);
   }
 
-  const rows = data as ProgressionRow[];
+  const rows = data as unknown as ProgressionRow[];
   return rows?.[0];
 };

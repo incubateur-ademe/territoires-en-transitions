@@ -20,7 +20,7 @@ export const useActionDiscussionFeed = (args: ActionDiscussionFeedArgs) => {
     collectivite_id ? fetch(collectivite_id, args.action_id, args.statut) : []
   );
 
-  return data || [];
+  return (data as TActionDiscussion[]) || [];
 };
 
 /**
@@ -32,7 +32,7 @@ const fetch = async (
   statut: TActionDiscussionStatut
 ) => {
   const {data, error} = await supabaseClient
-    .from<TActionDiscussion>('action_discussion_feed')
+    .from('action_discussion_feed')
     .select()
     .match({
       collectivite_id,

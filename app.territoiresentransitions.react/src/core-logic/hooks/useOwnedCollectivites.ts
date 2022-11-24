@@ -1,14 +1,11 @@
 import {useQuery} from 'react-query';
 import {useAuth} from 'core-logic/api/auth/AuthProvider';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {MesCollectivitesRead} from 'generated/dataLayer/mes_collectivites_read';
 
 // charge les collectivités associées au compte de l'utilisateur courant
 // (identifié à partir du token passant dans toutes les requêtes)
-const fetchOwnedCollectivites = async (): Promise<MesCollectivitesRead[]> => {
-  const query = supabaseClient
-    .from<MesCollectivitesRead>('mes_collectivites')
-    .select();
+const fetchOwnedCollectivites = async () => {
+  const query = supabaseClient.from('mes_collectivites').select();
   const {error, data} = await query;
 
   if (error) {

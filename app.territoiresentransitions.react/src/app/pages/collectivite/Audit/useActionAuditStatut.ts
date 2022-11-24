@@ -13,7 +13,7 @@ export type TActionDef = Pick<
 export const fetch = async (collectivite_id: number, action: TActionDef) => {
   // lit le statut d'audit d'une action
   const query = supabaseClient
-    .from<TActionAuditStatut>('action_audit_state')
+    .from('action_audit_state')
     .select()
     .eq('collectivite_id', collectivite_id)
     .eq('action_id', action.id);

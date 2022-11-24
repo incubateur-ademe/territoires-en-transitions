@@ -7,7 +7,7 @@ describe('Question completude by thematique reading endpoint', () => {
   it('should retrieve items by collectivite_id', async () => {
     const questionThematiqueReadEndpoint =
       new QuestionThematiqueCompletudeReadEndpoint([]);
-    await supabaseClient.auth.signIn(yuluCredentials); // Yulu has no rights on collectivite #1
+    await supabaseClient.auth.signInWithPassword(yuluCredentials); // Yulu has no rights on collectivite #1
 
     const results = await questionThematiqueReadEndpoint.getBy({
       collectivite_id: 1,

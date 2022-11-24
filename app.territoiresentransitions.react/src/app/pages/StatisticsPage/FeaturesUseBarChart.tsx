@@ -33,7 +33,7 @@ const getChartData = (
   datasets: KEYS.map((key, index) => ({
     label: keyToLabel[key],
     backgroundColor: COLORS[index],
-    data: [proportions[key] * 100],
+    data: [(proportions[key] || 0) * 100],
   })),
 });
 

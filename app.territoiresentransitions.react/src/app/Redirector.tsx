@@ -35,7 +35,11 @@ export const Redirector = () => {
   //    on redirige vers le tableau de bord de la première collectivité
   useEffect(() => {
     if (isJustSignedIn || isLandingConnected || isInvitationJustAccepted) {
-      if (userCollectivites && userCollectivites.length >= 1) {
+      if (
+        userCollectivites &&
+        userCollectivites.length >= 1 &&
+        userCollectivites[0].collectivite_id
+      ) {
         history.push(
           makeCollectiviteTableauBordUrl({
             collectiviteId: userCollectivites[0].collectivite_id,

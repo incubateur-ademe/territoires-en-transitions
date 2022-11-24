@@ -12,7 +12,7 @@ describe('Indicateur-commentaire reading endpoint', () => {
     expect(results).toHaveLength(0);
   });
   it('should retrieve data-layer default commentaire for collectivite #1 (for any connected user)', async () => {
-    await supabaseClient.auth.signIn(yuluCredentials); // Yulu has not rights on collectivite #1
+    await supabaseClient.auth.signInWithPassword(yuluCredentials); // Yulu has not rights on collectivite #1
     const results = await indicateurCommentaireReadEndpoint.getBy({
       collectivite_id: 1,
       indicateur_id: 'cae_8',

@@ -8,7 +8,7 @@ export class IndicateurPersonnaliseDefinitionWriteEndpoint extends DataLayerWrit
   async _write(
     IndicateurPersonnaliseDefinition: IndicateurPersonnaliseDefinitionWrite
   ): Promise<PostgrestResponse<IndicateurPersonnaliseDefinitionWrite>> {
-    return this._table.upsert([IndicateurPersonnaliseDefinition]);
+    return this._table.upsert([IndicateurPersonnaliseDefinition]).select();
   }
 }
 

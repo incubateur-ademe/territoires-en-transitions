@@ -8,7 +8,7 @@ describe('Question completude by thematique reading endpoint', () => {
     const questionThematiqueReadEndpoint = new QuestionThematiqueReadEndpoint(
       []
     );
-    await supabaseClient.auth.signIn(yuluCredentials); // Yulu has no rights on collectivite #1
+    await supabaseClient.auth.signInWithPassword(yuluCredentials); // Yulu has no rights on collectivite #1
 
     const results = await questionThematiqueReadEndpoint.getBy({
       thematique_id: 'dechets',
@@ -28,7 +28,7 @@ describe('Question completude by thematique reading endpoint', () => {
     const questionThematiqueReadEndpoint = new QuestionThematiqueReadEndpoint(
       []
     );
-    await supabaseClient.auth.signIn(yuluCredentials); // Yulu has no rights on collectivite #1
+    await supabaseClient.auth.signInWithPassword(yuluCredentials); // Yulu has no rights on collectivite #1
 
     const results = await questionThematiqueReadEndpoint.getBy({
       thematique_id: 'nimp',

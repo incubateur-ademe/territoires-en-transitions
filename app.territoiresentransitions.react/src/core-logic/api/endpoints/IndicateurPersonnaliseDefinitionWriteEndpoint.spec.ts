@@ -6,7 +6,7 @@ import {yiliCredentials} from 'test_utils/collectivites';
 
 describe('Indicateur perso definition write endpoint', () => {
   beforeEach(async () => {
-    await supabaseClient.auth.signIn(yiliCredentials);
+    await supabaseClient.auth.signInWithPassword(yiliCredentials);
   });
 
   it('Should allow saving and updating an indicateur perso definition when connected', async () => {

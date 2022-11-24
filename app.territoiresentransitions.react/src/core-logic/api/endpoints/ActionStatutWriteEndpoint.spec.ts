@@ -7,11 +7,11 @@ import {ActionAvancement} from 'generated/dataLayer/action_statut_read';
 
 describe('Action-statut write endpoint', () => {
   beforeEach(async () => {
-    await supabaseClient.auth.signIn(yiliCredentials);
+    await supabaseClient.auth.signInWithPassword(yiliCredentials);
   });
 
   beforeAll(async () => {
-    await supabaseClient.auth.signIn(yiliCredentials);
+    await supabaseClient.auth.signInWithPassword(yiliCredentials);
   });
   it('Should be able to save and update a statut with basic avancement', async () => {
     const endpoint = new ActionStatutWriteEndpoint();

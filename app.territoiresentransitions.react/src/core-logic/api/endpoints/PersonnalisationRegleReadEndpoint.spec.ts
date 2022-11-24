@@ -16,7 +16,7 @@ describe('Personnalisation règles reading endpoint', () => {
   it('should return an empty array if there is no regles for an action', async () => {
     const personnalisationRegleReadEndpoint =
       new PersonnalisationRegleReadEndpoint([]);
-    await supabaseClient.auth.signIn(yoloCredentials);
+    await supabaseClient.auth.signInWithPassword(yoloCredentials);
 
     const results = await personnalisationRegleReadEndpoint.getBy({
       action_id: 'nimp',
@@ -28,7 +28,7 @@ describe('Personnalisation règles reading endpoint', () => {
   it('should return rules bound to an action', async () => {
     const personnalisationRegleReadEndpoint =
       new PersonnalisationRegleReadEndpoint([]);
-    await supabaseClient.auth.signIn(yoloCredentials);
+    await supabaseClient.auth.signInWithPassword(yoloCredentials);
 
     const results = await personnalisationRegleReadEndpoint.getBy({
       action_id: 'cae_2.2.3.1',
@@ -41,7 +41,7 @@ describe('Personnalisation règles reading endpoint', () => {
   it('should return rules bound to an action when user is not attached to the collectivite', async () => {
     const personnalisationRegleReadEndpoint =
       new PersonnalisationRegleReadEndpoint([]);
-    await supabaseClient.auth.signIn(yuluCredentials);
+    await supabaseClient.auth.signInWithPassword(yuluCredentials);
 
     const results = await personnalisationRegleReadEndpoint.getBy({
       action_id: 'cae_2.2.3.1',

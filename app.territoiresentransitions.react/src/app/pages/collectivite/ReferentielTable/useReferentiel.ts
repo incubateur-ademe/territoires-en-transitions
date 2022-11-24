@@ -148,7 +148,7 @@ const fetchActionsReferentiel = async (
 ): Promise<ActionReferentiel[]> => {
   // la requête
   const query = supabaseClient
-    .from<IActionStatutsRead>('action_statuts')
+    .from('action_statuts')
     .select('action_id,identifiant,have_children,nom,depth,type')
     .match({referentiel, collectivite_id})
     .gt('depth', 0);

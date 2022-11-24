@@ -15,7 +15,7 @@ export const fetchActionStatutsList = async (
 ) => {
   // la requête
   let query = supabaseClient
-    .from<IActionStatutsRead>('action_statuts')
+    .from('action_statuts')
     .select('action_id,avancement')
     .match({collectivite_id, referentiel})
     .gt('depth', 0);
@@ -79,7 +79,7 @@ export const updateTacheStatut = async ({
         avancement_detaille ||
         (avancement === 'detaille' ? [0.3, 0.4, 0.3] : undefined),
       concerne: true,
-    },
+    } as never,
     {onConflict: 'collectivite_id, action_id'}
   );
   if (error) {

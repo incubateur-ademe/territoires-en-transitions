@@ -65,6 +65,10 @@ export const CellAction = (props: TCellProps) => {
   const pillDepths = referentielId === 'cae' ? [3, 4] : [2, 3];
   const idDepth = referentielId === 'cae' ? 2 : 1;
 
+  if (!collectiviteId) {
+    return null;
+  }
+
   return (
     <>
       {depth > idDepth ? (

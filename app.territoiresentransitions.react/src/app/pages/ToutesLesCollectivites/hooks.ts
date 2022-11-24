@@ -23,7 +23,7 @@ export const useRegions = (): {
 
   return {
     isLoading: isLoading,
-    regions: data || [],
+    regions: (data as RegionRead[]) || [],
   };
 };
 
@@ -40,7 +40,7 @@ export const useDepartements = (): {
 
   return {
     isLoading: isLoading,
-    departements: data || [],
+    departements: (data as DepartementRead[]) || [],
   };
 };
 

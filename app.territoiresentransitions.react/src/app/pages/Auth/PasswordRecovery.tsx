@@ -34,7 +34,7 @@ const useResetPassword = (): TResetPwdHookReturn => {
   const [error, setError] = useState('');
 
   const resetPassword = ({email}: {email: string}) =>
-    supabaseClient.auth.api
+    supabaseClient.auth
       .resetPasswordForEmail(email)
       .then(response => {
         if (response.error) {

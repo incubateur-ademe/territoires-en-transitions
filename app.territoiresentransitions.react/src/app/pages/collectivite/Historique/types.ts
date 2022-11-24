@@ -20,7 +20,7 @@ export type THistoriqueItem = {
   modified_by_id: string;
   modified_by_nom: string;
   modified_at: string;
-  previous_modified_by: string | null;
+  previous_modified_by_id: string | null;
   previous_modified_at: string | null;
 
   /** modif. d'un statut d'action ou d'une précision */

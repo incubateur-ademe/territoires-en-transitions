@@ -6,7 +6,7 @@ export const fakeBaseHistorique: THistoriqueItem = {
   modified_by_id: '123e4567-e89b-12d3-a456-426614174000',
   modified_by_nom: 'Richard Evans',
   modified_at: '2022-08-08T15:12:22.940172+00:00',
-  previous_modified_by: null,
+  previous_modified_by_id: null,
   previous_modified_at: null,
   action_id: null,
   action_ids: null,

@@ -16,7 +16,7 @@ describe('Labellisation reading endpoint', () => {
   });
   it('should retrieve data-layer default last labellisation for collectivite #1 (for any connected user)', async () => {
     const labellisationReadEndpoint = new LabellisationReadEndpoint([]);
-    await supabaseClient.auth.signIn(yuluCredentials); // Yulu has not rights on collectivite #1
+    await supabaseClient.auth.signInWithPassword(yuluCredentials); // Yulu has not rights on collectivite #1
     const results = await labellisationReadEndpoint.getBy({
       collectivite_id: 1,
       referentiel: 'cae',

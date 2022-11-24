@@ -3,10 +3,9 @@
 export interface ActionStatutRead {
   action_id: string;
   avancement: 'pas_fait' | 'fait' | 'non_renseigne' | 'programme' | 'detaille';
-  avancement_detaille: number[];
+  avancement_detaille: number[] | null;
   concerne: boolean;
   collectivite_id: number;
-  id: number;
   modified_at: string;
   modified_by: string;
 }

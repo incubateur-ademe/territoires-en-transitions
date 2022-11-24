@@ -14,7 +14,7 @@ describe('Action-commentaire reading endpoint', () => {
   });
   it('should retrieve data-layer default commentaire for collectivite #1 (for anyone connected)', async () => {
     const actionCommentaireReadEndpoint = new ActionCommentaireReadEndpoint([]);
-    await supabaseClient.auth.signIn(yuluCredentials); // Yulu is connected but has no rights on collectivite #1
+    await supabaseClient.auth.signInWithPassword(yuluCredentials); // Yulu is connected but has no rights on collectivite #1
 
     const results = await actionCommentaireReadEndpoint.getBy({
       collectivite_id: 1,

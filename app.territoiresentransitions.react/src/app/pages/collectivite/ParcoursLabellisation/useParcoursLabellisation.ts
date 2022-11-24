@@ -1,6 +1,5 @@
 import {useEffect, useState} from 'react';
 import {useQuery, useQueryClient} from 'react-query';
-import {RealtimeSubscription} from '@supabase/realtime-js';
 import {LabellisationParcoursRead} from 'generated/dataLayer/labellisation_parcours_read';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {supabaseClient} from 'core-logic/api/supabase';
@@ -8,10 +7,11 @@ import {LabellisationDemandeRead} from 'generated/dataLayer/labellisation_demand
 import {fetchParcours, getReferentielParcours} from './queries';
 import {useDemandeLabellisation} from './useDemandeLabellisation';
 import {ReferentielParamOption} from 'app/paths';
+import {RealtimeChannel} from '@supabase/supabase-js';
 
 type SubToRef = {
   ref: string;
-  sub: RealtimeSubscription;
+  sub: RealtimeChannel;
 };
 
 /** Renvoie les données de labellisation de la collectivité courante */
@@ -46,11 +46,19 @@ export const useParcoursLabellisation = (
 
   // souscrit aux changements de statuts dans un référentiel
   const subscribe = (ref: string) => {
-    const subscribeTo = `action_statut:collectivite_id=eq.${collectivite_id}`;
+    const subscribeTo = `public:action_statut:collectivite_id=eq.${collectivite_id}`;
     const sub = supabaseClient
-      .from(subscribeTo)
-      .on('INSERT', refetch)
-      .on('UPDATE', refetch)
+      .channel(subscribeTo)
+      .on(
+        'postgres_changes',
+        {event: 'INSERT', schema: 'public', table: 'action_statut'},
+        refetch
+      )
+      .on(
+        'postgres_changes',
+        {event: 'UPDATE', schema: 'public', table: 'action_statut'},
+        refetch
+      )
       .subscribe();
     setSubscription({sub, ref});
   };

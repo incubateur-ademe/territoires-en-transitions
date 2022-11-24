@@ -10,7 +10,7 @@ import {AnyIndicateurValueWrite} from '../../../generated/dataLayer/any_indicate
 // NB : We're testing the behavior for resultat endpoints only (referentiel & perso), since the objectif is very similar (but we could do both to ensure there's no mistake on table name)
 describe('Indicateur-resultat write endpoint', () => {
   beforeAll(async () => {
-    await supabaseClient.auth.signIn(yiliCredentials);
+    await supabaseClient.auth.signInWithPassword(yiliCredentials);
   });
   it('Should be able to save an update an indicateur resultat for an editable collectivite', async () => {
     const endpoint = makeNewIndicateurResultatWriteEndpoint();
@@ -63,7 +63,7 @@ describe('Indicateur-resultat write endpoint', () => {
 
 describe('Indicateur personnalise resultat write endpoint', () => {
   beforeAll(async () => {
-    await supabaseClient.auth.signIn(yiliCredentials);
+    await supabaseClient.auth.signInWithPassword(yiliCredentials);
   });
   it('Should be able to save and update an indicateur personnalise resultat for an editable collectivite', async () => {
     const endpoint = makeNewIndicateurPersonnaliseResultatWriteEndpoint();
@@ -80,7 +80,7 @@ describe('Indicateur personnalise resultat write endpoint', () => {
   });
   it('Saving an indicateur perso resultat value for a collectivite readonly should fail', async () => {
     await supabaseClient.auth.signOut(); // Yili signs out
-    await supabaseClient.auth.signIn(yuluCredentials);
+    await supabaseClient.auth.signInWithPassword(yuluCredentials);
     const endpoint = makeNewIndicateurPersonnaliseResultatWriteEndpoint();
     const indicateurValue: AnyIndicateurValueWrite<number> = {
       annee: 2020,

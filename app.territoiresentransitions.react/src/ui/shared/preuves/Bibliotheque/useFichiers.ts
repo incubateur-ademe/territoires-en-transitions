@@ -33,7 +33,7 @@ const fetch = async (
 
   // lit la liste des fichiers de la collectivité
   const query = supabaseClient
-    .from<TBibliothequeFichier>('bibliotheque_fichier')
+    .from('bibliotheque_fichier')
     .select('id,filename,filesize,hash', {count: 'exact'})
     .eq('collectivite_id', collectivite_id)
     .order('filename', {ascending: true})
@@ -49,7 +49,7 @@ const fetch = async (
     throw new Error(error.message);
   }
 
-  return {items: data || [], total: count || 0};
+  return {items: (data as TBibliothequeFichier[]) || [], total: count || 0};
 };
 
 /**
@@ -61,7 +61,7 @@ export const getFilesPerHash = async (
   hashes: string[]
 ) => {
   const query = supabaseClient
-    .from<TBibliothequeFichier>('bibliotheque_fichier')
+    .from('bibliotheque_fichier')
     .select('id,filename,filesize,hash')
     .eq('collectivite_id', collectivite_id)
     .in('hash', hashes);
