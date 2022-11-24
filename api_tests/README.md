@@ -27,6 +27,8 @@ La commande se décompose ainsi :
 
 ## Générer les types
 
+Nécessite [d'installer la CLI Supabase](https://supabase.com/docs/guides/cli).
+
 ```sh
 gen_types.sh
 ```
@@ -37,7 +39,7 @@ gen_types.sh
   racine.
 - `POSTGRES_PORT`: Le port de la base locale
 
-## Formater le code
+## Formater la doc et le code
 
 Pour le moment on le fait avant commit en attendant de mettre à jour notre CI.
 
