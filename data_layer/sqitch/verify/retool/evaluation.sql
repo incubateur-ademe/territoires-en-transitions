@@ -15,7 +15,8 @@ select collectivite_id,
        "Pourcentage non renseigné",
        "Avancement",
        "Commentaires fusionnés",
-       "Commentaire"
+       "Commentaire",
+       "Modifié le"
 from retool_score
 where false;
 
