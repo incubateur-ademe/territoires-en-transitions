@@ -106,6 +106,7 @@ create policy allow_update
 
 -- Passe l'auditeur de la table audit à la table audit_auditeur
 insert into audit_auditeur (select id as audit_id, auditeur
-                            from migration.audit) ;
+                            from migration.audit
+                            where auditeur is not null) ;
 
 COMMIT;
