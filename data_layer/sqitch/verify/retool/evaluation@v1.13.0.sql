@@ -3,6 +3,17 @@
 BEGIN;
 
 select collectivite_id,
+       nom,
+       referentiel,
+       action,
+       preuve_type,
+       fichier,
+       lien,
+       created_at
+from retool_preuves
+where false;
+
+select collectivite_id,
        "Collectivité",
        referentiel,
        "Identifiant",
