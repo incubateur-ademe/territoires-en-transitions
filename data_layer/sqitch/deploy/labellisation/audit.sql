@@ -45,7 +45,7 @@ begin
         raise 'Pas d''audit en cours.';
     end if;
 
-    if bool_or((select auth.uid() = auditeur from audit_auditeur where audit_id=found_audit.id))
+    if not (select bool_or(auth.uid() = auditeur) from audit_auditeur where audit_id=found_audit.id)
     then
         perform set_config('response.status', '403', true);
         raise 'L''utilisateur n''est pas auditeur sur l''audit de la collectivité.';
@@ -71,7 +71,7 @@ begin
     end if;
 
     return new;
-end;
+end
 $$ language plpgsql security definer;
 
 create or replace trigger upsert
