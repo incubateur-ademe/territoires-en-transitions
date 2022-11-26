@@ -7,6 +7,7 @@ import HistoriqueItemActionPrecision from 'app/pages/collectivite/Historique/act
 import {THistoriqueItem, THistoriqueItemProps, THistoriqueProps} from './types';
 import HistoriqueItemReponse from './reponse/HistoriqueItemReponse';
 import {NB_ITEMS_PER_PAGE} from './filters';
+import HistoriqueFiltres from './HistoriqueFiltres/HistoriqueFiltres';
 
 /**
  * Affiche l'historique des modifications
@@ -14,11 +15,18 @@ import {NB_ITEMS_PER_PAGE} from './filters';
 export const HistoriqueListe = ({
   items,
   total,
+  initialFilters,
   filters,
   setFilters,
 }: THistoriqueProps) => {
   return (
     <>
+      <HistoriqueFiltres
+        itemsNumber={items.length}
+        initialFilters={initialFilters}
+        filters={filters}
+        setFilters={setFilters}
+      />
       <div className="flex flex-col gap-5" data-test="Historique">
         {total === 0 ? (
           <span data-test="empty_history">
