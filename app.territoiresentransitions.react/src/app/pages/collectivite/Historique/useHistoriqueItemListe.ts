@@ -1,7 +1,9 @@
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useSearchParams} from 'core-logic/hooks/query';
 import {useEffect} from 'react';
 import {useQuery, useQueryClient} from 'react-query';
+
+import {supabaseClient} from 'core-logic/api/supabase';
+import {useSearchParams} from 'core-logic/hooks/query';
+import {isValidFilter} from 'ui/shared/select/commons';
 import {TFilters, NB_ITEMS_PER_PAGE, nameToShortNames} from './filters';
 import {THistoriqueItem, THistoriqueProps} from './types';
 
@@ -13,10 +15,18 @@ type TFetchedData = {items: THistoriqueItem[]; total: number};
 export const fetchHistorique = async (
   filters: TFilters
 ): Promise<TFetchedData> => {
-  const {collectivite_id, action_id, page} = filters;
+  const {
+    collectivite_id,
+    action_id,
+    page,
+    modified_by,
+    types,
+    startDate,
+    endDate,
+  } = filters;
 
   // la requête
-  let query = supabaseClient
+  const query = supabaseClient
     .from<THistoriqueItem>('historique')
     .select('*', {count: 'exact'})
     .match({collectivite_id})
@@ -24,17 +34,31 @@ export const fetchHistorique = async (
 
   // filtre optionnel par action
   if (action_id) {
-    query = query.or(
-      `action_ids.cs.{${action_id}},action_id.like.${action_id}*`
-    );
+    query.or(`action_ids.cs.{${action_id}},action_id.like.${action_id}*`);
+  }
+
+  // filtre optionnel par membre
+  if (isValidFilter(modified_by)) {
+    query.in('modified_by_id', modified_by!);
+  }
+
+  // filtre optionnel par type
+  if (isValidFilter(types)) {
+    query.in('type', types!);
+  }
+
+  // filtre optionnel par date de début
+  if (startDate) {
+    query.gte('modified_at', startDate);
+  }
+  // filtre optionnel par date de fin
+  if (endDate) {
+    query.lte('modified_at', `${endDate} 24:00`);
   }
 
   // Pagination
   if (page) {
-    query = query.range(
-      NB_ITEMS_PER_PAGE * (page - 1),
-      NB_ITEMS_PER_PAGE * page - 1
-    );
+    query.range(NB_ITEMS_PER_PAGE * (page - 1), NB_ITEMS_PER_PAGE * page - 1);
   }
 
   // attends les données
@@ -91,6 +115,7 @@ export const useHistoriqueItemListe = (
 
   return {
     ...(data || {items: [], total: 0}),
+    initialFilters: {collectivite_id, action_id},
     filters,
     setFilters,
     filtersCount,

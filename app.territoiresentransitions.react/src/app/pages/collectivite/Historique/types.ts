@@ -1,6 +1,6 @@
 import {ActionAvancement} from 'generated/dataLayer/action_statut_read';
 import {QuestionType} from 'generated/dataLayer/question_read';
-import {TFilters} from './filters';
+import {TFilters, TInitialFilters} from './filters';
 
 /* Types des données reçu par le data layer */
 export type HistoriqueType =
@@ -60,6 +60,7 @@ export type THistoriqueItemProps = {
 export type THistoriqueProps = {
   items: THistoriqueItem[];
   total: number;
+  initialFilters: TInitialFilters;
   filters: TFilters;
   filtersCount: number;
   setFilters: (filters: TFilters) => void;
