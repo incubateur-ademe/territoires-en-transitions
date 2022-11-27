@@ -6,11 +6,135 @@ exports[`Storyshots app/pages/collectivite/Historique/JournalActivite Exemple 1 
   data-test="JournalActivite"
 >
   <h1
-    className="text-center fr-mt-4w fr-mb-4w"
+    className="text-center fr-mt-6w fr-mb-6w"
   >
     Journal d'activité
   </h1>
   <hr />
+  <div
+    className="mb-8 pb-8 border-b border-b-gray-200"
+  >
+    <p
+      className="mb-6 font-bold"
+    >
+      Filtrer l’historique des modifications par
+    </p>
+    <div
+      className="grid sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-6"
+    >
+      <div
+        className="w-full"
+      >
+        <p
+          className="mb-2 font-medium"
+        >
+          Membre de la collectivité
+        </p>
+        <div
+          className="shadow border-b border-b-gray-500"
+        >
+          <button
+            aria-expanded={false}
+            aria-label="ouvrir le menu"
+            className="flex items-center w-full p-2 text-left text-sm"
+            data-test="filtre-membre"
+            onBlur={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onPointerDown={[Function]}
+          >
+            <span
+              className="mr-auto text-gray-500 italic line-clamp-1"
+            >
+              Sélectionner des options
+            </span>
+            <span
+              className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+            />
+          </button>
+        </div>
+      </div>
+      <div
+        className="w-full"
+      >
+        <p
+          className="mb-2 font-medium"
+        >
+          Type d'élément modifié
+        </p>
+        <div
+          className="shadow border-b border-b-gray-500"
+        >
+          <button
+            aria-expanded={false}
+            aria-label="ouvrir le menu"
+            className="flex items-center w-full p-2 text-left text-sm"
+            data-test="filtre-type"
+            onBlur={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onPointerDown={[Function]}
+          >
+            <span
+              className="mr-auto text-gray-500 italic line-clamp-1"
+            >
+              Sélectionner des options
+            </span>
+            <span
+              className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+            />
+          </button>
+        </div>
+      </div>
+      <div
+        className="w-full"
+      >
+        <p
+          className="mb-2 font-medium"
+        >
+          Date de début
+        </p>
+        <div
+          className="shadow border-b border-b-gray-500"
+        >
+          <input
+            className="w-full p-2"
+            onChange={[Function]}
+            pattern="\\\\d{4}-\\\\d{2}-\\\\d{2}"
+            type="date"
+            value=""
+          />
+        </div>
+      </div>
+      <div
+        className="w-full"
+      >
+        <p
+          className="mb-2 font-medium"
+        >
+          Date de fin
+        </p>
+        <div
+          className="shadow border-b border-b-gray-500"
+        >
+          <input
+            className="w-full p-2"
+            data-test="filtre-end-date"
+            onChange={[Function]}
+            pattern="\\\\d{4}-\\\\d{2}-\\\\d{2}"
+            type="date"
+            value=""
+          />
+        </div>
+      </div>
+    </div>
+  </div>
   <div
     className="flex flex-col gap-5"
     data-test="Historique"

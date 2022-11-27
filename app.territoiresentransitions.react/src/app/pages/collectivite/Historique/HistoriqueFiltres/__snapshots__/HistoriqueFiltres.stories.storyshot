@@ -1,8 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots app/pages/collectivite/Historique/HistoriqueFiltres Defaut 1`] = `
+exports[`Storyshots app/pages/collectivite/Historique/HistoriqueFiltres Avec Filtres 1`] = `
 <div
-  className="my-8"
+  className="mb-8 pb-8 border-b border-b-gray-200"
 >
   <p
     className="mb-6 font-bold"
@@ -10,10 +10,10 @@ exports[`Storyshots app/pages/collectivite/Historique/HistoriqueFiltres Defaut 1
     Filtrer l’historique des modifications par
   </p>
   <div
-    className="flex flex-wrap gap-x-8 gap-y-6"
+    className="grid sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-6"
   >
     <div
-      className="w-full md:w-1/2 lg:w-full lg:max-w-xs"
+      className="w-full"
     >
       <p
         className="mb-2 font-medium"
@@ -21,12 +21,48 @@ exports[`Storyshots app/pages/collectivite/Historique/HistoriqueFiltres Defaut 1
         Membre de la collectivité
       </p>
       <div
-        className="shadow"
+        className="shadow border-b border-b-gray-500"
       >
         <button
           aria-expanded={false}
           aria-label="ouvrir le menu"
           className="flex items-center w-full p-2 text-left text-sm"
+          data-test="filtre-membre"
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onPointerDown={[Function]}
+        >
+          <span
+            className="mr-auto text-gray-500 italic line-clamp-1"
+          >
+            Sélectionner des options
+          </span>
+          <span
+            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+          />
+        </button>
+      </div>
+    </div>
+    <div
+      className="w-full"
+    >
+      <p
+        className="mb-2 font-medium"
+      >
+        Type d'élément modifié
+      </p>
+      <div
+        className="shadow border-b border-b-gray-500"
+      >
+        <button
+          aria-expanded={false}
+          aria-label="ouvrir le menu"
+          className="flex items-center w-full p-2 text-left text-sm"
+          data-test="filtre-type"
           onBlur={[Function]}
           onClick={[Function]}
           onFocus={[Function]}
@@ -39,7 +75,7 @@ exports[`Storyshots app/pages/collectivite/Historique/HistoriqueFiltres Defaut 1
             className="mr-auto flex line-clamp-1"
           >
             <span>
-              Tous
+              Action : statut
             </span>
           </span>
           <span
@@ -49,39 +85,44 @@ exports[`Storyshots app/pages/collectivite/Historique/HistoriqueFiltres Defaut 1
       </div>
     </div>
     <div
-      className="w-full md:w-1/2 lg:w-full lg:max-w-xs"
+      className="w-full"
     >
       <p
         className="mb-2 font-medium"
       >
-        Type d'élément modifié
+        Date de début
       </p>
       <div
-        className="shadow"
+        className="shadow border-b border-b-gray-500"
       >
-        <button
-          aria-expanded={false}
-          aria-label="ouvrir le menu"
-          className="flex items-center w-full p-2 text-left text-sm"
-          onBlur={[Function]}
-          onClick={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onPointerDown={[Function]}
-        >
-          <span
-            className="mr-auto flex line-clamp-1"
-          >
-            <span>
-              Tous
-            </span>
-          </span>
-          <span
-            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
-          />
-        </button>
+        <input
+          className="w-full p-2"
+          onChange={[Function]}
+          pattern="\\\\d{4}-\\\\d{2}-\\\\d{2}"
+          type="date"
+          value="2022-11-03"
+        />
+      </div>
+    </div>
+    <div
+      className="w-full"
+    >
+      <p
+        className="mb-2 font-medium"
+      >
+        Date de fin
+      </p>
+      <div
+        className="shadow border-b border-b-gray-500"
+      >
+        <input
+          className="w-full p-2"
+          data-test="filtre-end-date"
+          onChange={[Function]}
+          pattern="\\\\d{4}-\\\\d{2}-\\\\d{2}"
+          type="date"
+          value="2022-11-24"
+        />
       </div>
     </div>
   </div>
@@ -91,13 +132,16 @@ exports[`Storyshots app/pages/collectivite/Historique/HistoriqueFiltres Defaut 1
     <span
       className="text-sm text-gray-400"
     >
-      nb resultat
+      4
+       résultat
+      s
     </span>
     <div
       className="w-max mt-4 border-b border-bf500 md:mt-auto"
     >
       <button
         className="flex items-center text-bf500 hover:!bg-none"
+        data-test="desactiver-les-filtres"
         onClick={[Function]}
       >
         <span
@@ -111,10 +155,132 @@ exports[`Storyshots app/pages/collectivite/Historique/HistoriqueFiltres Defaut 1
       </button>
     </div>
   </div>
-  <div
-    className="mt-16"
+</div>
+`;
+
+exports[`Storyshots app/pages/collectivite/Historique/HistoriqueFiltres Defaut 1`] = `
+<div
+  className="mb-8 pb-8 border-b border-b-gray-200"
+>
+  <p
+    className="mb-6 font-bold"
   >
-    {"collectivite_id":1,"page":1}
+    Filtrer l’historique des modifications par
+  </p>
+  <div
+    className="grid sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-6"
+  >
+    <div
+      className="w-full"
+    >
+      <p
+        className="mb-2 font-medium"
+      >
+        Membre de la collectivité
+      </p>
+      <div
+        className="shadow border-b border-b-gray-500"
+      >
+        <button
+          aria-expanded={false}
+          aria-label="ouvrir le menu"
+          className="flex items-center w-full p-2 text-left text-sm"
+          data-test="filtre-membre"
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onPointerDown={[Function]}
+        >
+          <span
+            className="mr-auto text-gray-500 italic line-clamp-1"
+          >
+            Sélectionner des options
+          </span>
+          <span
+            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+          />
+        </button>
+      </div>
+    </div>
+    <div
+      className="w-full"
+    >
+      <p
+        className="mb-2 font-medium"
+      >
+        Type d'élément modifié
+      </p>
+      <div
+        className="shadow border-b border-b-gray-500"
+      >
+        <button
+          aria-expanded={false}
+          aria-label="ouvrir le menu"
+          className="flex items-center w-full p-2 text-left text-sm"
+          data-test="filtre-type"
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onPointerDown={[Function]}
+        >
+          <span
+            className="mr-auto text-gray-500 italic line-clamp-1"
+          >
+            Sélectionner des options
+          </span>
+          <span
+            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+          />
+        </button>
+      </div>
+    </div>
+    <div
+      className="w-full"
+    >
+      <p
+        className="mb-2 font-medium"
+      >
+        Date de début
+      </p>
+      <div
+        className="shadow border-b border-b-gray-500"
+      >
+        <input
+          className="w-full p-2"
+          onChange={[Function]}
+          pattern="\\\\d{4}-\\\\d{2}-\\\\d{2}"
+          type="date"
+          value=""
+        />
+      </div>
+    </div>
+    <div
+      className="w-full"
+    >
+      <p
+        className="mb-2 font-medium"
+      >
+        Date de fin
+      </p>
+      <div
+        className="shadow border-b border-b-gray-500"
+      >
+        <input
+          className="w-full p-2"
+          data-test="filtre-end-date"
+          onChange={[Function]}
+          pattern="\\\\d{4}-\\\\d{2}-\\\\d{2}"
+          type="date"
+          value=""
+        />
+      </div>
+    </div>
   </div>
 </div>
 `;
