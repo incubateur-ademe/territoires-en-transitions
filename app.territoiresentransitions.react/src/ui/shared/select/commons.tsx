@@ -16,7 +16,7 @@ export const isValidFilter = (values: string[] | undefined | null) =>
 export const buttonDisplayedClassname =
   'flex items-center w-full p-2 text-left text-sm';
 export const buttonDisplayedPlaceholderClassname =
-  'mr-auto text-gray-500 italic';
+  'mr-auto text-gray-500 italic line-clamp-1';
 export const buttonDisplayedIconClassname =
   'fr-fi-arrow-down-s-line mt-1 ml-1 scale-90';
 export const optionButtonClassname =
