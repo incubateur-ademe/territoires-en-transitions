@@ -19,6 +19,7 @@ export const FiltreDateFin = ({filters, setFilters}: TFiltreProps) => {
   return (
     <HistoriqueFiltreField title="Date de fin">
       <InputDate
+        dataTest="filtre-end-date"
         value={filters.endDate || ''}
         onChange={(newDate: string) => {
           setFilters({...filters, endDate: newDate});
@@ -29,12 +30,14 @@ export const FiltreDateFin = ({filters, setFilters}: TFiltreProps) => {
 };
 
 type InputDateProps = {
+  dataTest?: string;
   value?: string;
   onChange: (date: string) => void;
 };
 
-const InputDate = ({value, onChange}: InputDateProps) => (
+const InputDate = ({dataTest, value, onChange}: InputDateProps) => (
   <input
+    data-test={dataTest}
     type="date"
     className="w-full p-2"
     pattern="\d{4}-\d{2}-\d{2}"
