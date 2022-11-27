@@ -8,6 +8,7 @@ const FiltreType = ({filters, setFilters}: TFiltreProps) => {
   return (
     <HistoriqueFiltreField title="Type d'élément modifié">
       <MultiSelectFilter
+        data-test="filtre-type"
         values={
           filters.types && getIsAllSelected(filters.types)
             ? undefined

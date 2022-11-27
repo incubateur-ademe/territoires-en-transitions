@@ -170,3 +170,23 @@ When(/l'historique est réinitialisé/, () => {
   });
   cy.task('supabase_rpc', {name: 'test_clear_history'});
 });
+
+When(
+  /je filtre l'historique avec le filtre "([^"]+)" par l'option "([^"]+)"/,
+  (filtre, option) => {
+    cy.get(`[data-test=filtre-${filtre}]`).click();
+    cy.root()
+      .get(`[data-test=filtre-${filtre}-options]`)
+      .contains(option)
+      .click();
+    cy.get(`[data-test=filtre-${filtre}]`).click();
+  }
+);
+
+When(/je filtre l'historique avec comme date de fin "([^"]+)"/, date => {
+  cy.get('[data-test=filtre-end-date]').type(date);
+});
+
+When('je désactive tous les filtres', () => {
+  cy.get('[data-test=desactiver-les-filtres]').click();
+});

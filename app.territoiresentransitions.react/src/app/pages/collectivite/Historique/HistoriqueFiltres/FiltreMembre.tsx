@@ -19,6 +19,7 @@ const FiltreMembre = ({filters, setFilters}: TFiltreProps) => {
   return (
     <HistoriqueFiltreField title="Membre de la collectivité">
       <MultiSelectFilter
+        data-test="filtre-membre"
         values={
           filters.modified_by && getIsAllSelected(filters.modified_by)
             ? undefined

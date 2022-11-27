@@ -14,6 +14,7 @@ export const MultiSelectFilter = <T extends string>({
   onSelect,
   renderSelection,
   renderOption,
+  'data-test': dataTest,
 }: TMultiSelectDropdownProps<T>) => {
   const isAllSelected = values && getIsAllSelected(values);
 
@@ -42,6 +43,7 @@ export const MultiSelectFilter = <T extends string>({
 
   return (
     <MultiSelectDropdown
+      data-test={dataTest}
       buttonClassName={buttonClassName}
       values={values}
       options={options}

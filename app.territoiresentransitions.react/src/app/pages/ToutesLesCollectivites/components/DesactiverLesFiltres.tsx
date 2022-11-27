@@ -3,6 +3,7 @@ export const DesactiverLesFiltres = (props: {onClick: () => void}) => {
   return (
     <div className="w-max mt-4 border-b border-bf500 md:mt-auto">
       <button
+        data-test="desactiver-les-filtres"
         onClick={props.onClick}
         className="flex items-center text-bf500 hover:!bg-none"
       >
