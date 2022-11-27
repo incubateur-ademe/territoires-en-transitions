@@ -1,0 +1,34 @@
+name: Publie le storybook sur chromatic
+
+on:
+  push:
+    paths:
+      - '**.storyshot'
+
+# interrompt le workflow précédent si un nouveau est déclenché pour le même
+# commit (cas push + ouverture PR)
+concurrency:
+  group: ${{github.workflow}}-${{github.ref}}
+  cancel-in-progress: true
+
+# List of jobs
+jobs:
+  chromatic-deployment:
+    # Operating System
+    runs-on: ubuntu-latest
+
+    env:
+      working-directory: ./app.territoiresentransitions.react
+
+    # Job steps
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install dependencies
+        run: npm install
+        # 👇 Adds Chromatic as a step in the workflow
+      - name: Publish to Chromatic
+        uses: chromaui/action@v1
+        # Chromatic GitHub Action options
+        with:
+          # 👇 Chromatic projectToken, refer to the manage page to obtain it.
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
