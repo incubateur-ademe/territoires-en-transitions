@@ -14,7 +14,7 @@ exports[`Storyshots ui/shared/select/MultiSelectDropdown Aucune Option Selection
   onPointerDown={[Function]}
 >
   <span
-    className="mr-auto text-gray-500 italic"
+    className="mr-auto text-gray-500 italic line-clamp-1"
   >
     Sélectionner une ou plusieurs options...
   </span>

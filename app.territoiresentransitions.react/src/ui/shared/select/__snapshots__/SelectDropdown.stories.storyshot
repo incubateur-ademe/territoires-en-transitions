@@ -14,7 +14,7 @@ exports[`Storyshots ui/shared/select/SelectDropdown Aucune Option Selectionee 1`
   onPointerDown={[Function]}
 >
   <span
-    className="mr-auto text-gray-500 italic"
+    className="mr-auto text-gray-500 italic line-clamp-1"
   >
     
   </span>
@@ -38,7 +38,7 @@ exports[`Storyshots ui/shared/select/SelectDropdown Avec Placeholder 1`] = `
   onPointerDown={[Function]}
 >
   <span
-    className="mr-auto text-gray-500 italic"
+    className="mr-auto text-gray-500 italic line-clamp-1"
   >
     Sélectionner une option
   </span>

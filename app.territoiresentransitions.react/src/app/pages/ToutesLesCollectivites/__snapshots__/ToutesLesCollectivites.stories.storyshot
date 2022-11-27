@@ -842,6 +842,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
           >
             <button
               className="flex items-center text-bf500 hover:!bg-none"
+              data-test="desactiver-les-filtres"
               onClick={[Function]}
             >
               <span
@@ -7039,6 +7040,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Sans Resultats 1`] = `
           >
             <button
               className="flex items-center text-bf500 hover:!bg-none"
+              data-test="desactiver-les-filtres"
               onClick={[Function]}
             >
               <span
