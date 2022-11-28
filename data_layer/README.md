@@ -1,22 +1,22 @@
 # Data-Layer
-Le Data-Layer est responsable des lectures/écritures en base, c'est à dire de:
+Le Data-Layer est responsable des lectures/écritures en base, c'est-à-dire de :
 
 - stocker des données
     - provenant du business (referentiel, scores calculés...)
     - provenant du client (toutes valeurs saisies dans l'application)
 - notifier d'un changement en base
     - au business (ex : nouveau statut d'une action, qui déclenchera le moteur de notation pour mettre à jour les
-      scores)
-    - au client (ex : un nouveau score a été calculé, donc les jauges doivent être mises à jour dynamiquement)
+      scores).
+    - au client (ex : un nouveau score a été calculé, donc les jauges doivent être mises à jour dynamiquement).
 - fournir au client des vues prêtes à consommer
 
 ## Organisation du dossier
-- `tests` : Les test [pgtap](https://pgtap.org/).
+- `tests` : Les test [pgTAP](https://pgtap.org/).
 - `sqitch` : Les migrations [sqitch](https://sqitch.org/about/)
-- `postgres/fakes` : des fausses données utilisées pour développer/tester [readme](data_layer/postgres/fakes/README.md)
-- `postgres/content` : le contenu exporté par le `business`. Destiné à disparaitre, `business` stockera directement les données par la suite
-- `postgres/verify` : Permet de verifier que des features existent dans le cadre du chargement.
-- `requests` : des requêtes http pour tester l'API [readme](data_layer/requests/README.md)
+- `postgres/fakes` : des fausses données utilisées pour développer/tester [readme](./postgres/fakes/README.md)
+- `postgres/content` : le contenu exporté par le `business` au format json.
+- `postgres/verify` : Permet de verifier que des features existent dans le cadre du chargement du [docker compose de développement](../docker-compose.yml).
+- `requests` : des requêtes http pour tester l'API [readme](../data_layer/requests/README.md)
 
 ## Mode d'emploi
 
@@ -37,10 +37,10 @@ sudo cpan TAP::Parser::SourceHandler::pgTAP
 Puis utiliser `sh scripts/run_tests.sh`
 
 #### API
-Les tests dans http dans `/requests` peuvent être lancées soit :
+Les [tests http](./requests/README.md) dans peuvent-être lancés soit :
 - directement depuis IntelliJ/Webstorm
 - depuis VSCode avec le plugin httpYac
-- à partir d'un terminal avec [restcli](https://github.com/restcli/restcli), qui est utilisé aussi dans docker-compose.
+- à partir d'un terminal avec [restcli](https://github.com/restcli/restcli), qui est utilisé aussi dans le [docker compose de développement](../docker-compose.yml).
 
 ### Ajouter une nouvelle fonctionnalité
 [Installer sqitch](https://sqitch.org/download/) ou utiliser `docker compose`.
