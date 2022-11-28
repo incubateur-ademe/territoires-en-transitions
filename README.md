@@ -82,10 +82,6 @@ Chacun de ses éléments a un périmètre définit :
     - il lit les contenus markdown et les enregistre dans le `data layer`
     - il évalue les données utilisateur et les enregistre dans le `data layer`
 
-<div align="center">
-<img src="design.png" alt="architecture design" >
-</div>
-
 ## Stack
 
 - Le `client` utilise React ce qui nous permet de bénéficier d'un écosystème riche. Il est développé en TypeScript.
@@ -145,4 +141,4 @@ Néanmoins, on peut lancer les tests à partir de docker compose :
 
 ## Déploiement
 
-Aujourd'hui le `business` et le `client` sont déployés chez Scalingo, le `data layer` est chez supabase.io en mode SAAS.
+Aujourd'hui le `business` et le `client` sont déployés chez [Scalingo](https://scalingo.com/), le `data layer` est chez [Supabase](https://supabase.com/) en mode BaaS.
