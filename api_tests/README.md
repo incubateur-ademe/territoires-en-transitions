@@ -1,6 +1,10 @@
 # API tests
 
-Regroupe les tests d'intégration de l'API fournie par le Datalayer.
+Regroupe les tests d'intégration de l'API générée par le Datalayer.
+
+Ces tests écrits en TypeScript nous permettent de produire des scénarios d'utilisation au fur et à mesure du développement de l'API et de s'assurer que l'API est bien accessible par le client.
+
+On se sert des [tests pgTAP](../data_layer/tests) pour tester le comportement de la base de données.
 
 ## Utilisation
 
