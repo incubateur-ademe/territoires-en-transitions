@@ -2,6 +2,8 @@
 
 On utilise [k6](https://k6.io/) pour obtenir des [résultats](https://k6.io/docs/get-started/results-output/) sur des scénarios d'utilisation.
 
+Ces scénarios nous permettent de valider notre approche, pas de tester une infrastructure qui de toute façon repose principalement sur Supabase en BaaS. 
+
 ## Où en est-on ?
 - [x] Tester que le moteur de notation tient la charge.
 - [ ] Modéliser la visite d'un utilisateur.
