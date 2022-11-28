@@ -1,7 +1,8 @@
--- Revert tet:stats/utilisateur from pg
+-- Deploy tet:stats/utilisateur to pg
+-- requires: utilisateur/droits
 
 BEGIN;
 
-drop view stats_unique_active_users;
+-- On ne veut pas revert le fix qui resynchronise la feature.
 
 COMMIT;
