@@ -1,15 +1,12 @@
 name: Publie le storybook sur chromatic
 
+# On ne lance le workflow que si un storyshot ou une story est modifié.
 on:
   push:
-#    paths:
-#      - '**.storyshot'
+    paths:
+      - '**.storyshot'
+      - '**.stories.tsx'
 
-# interrompt le workflow précédent si un nouveau est déclenché pour le même
-# commit (cas push + ouverture PR)
-concurrency:
-  group: ${{github.workflow}}-${{github.ref}}
-  cancel-in-progress: true
 
 jobs:
   chromatic-deployment:
@@ -32,11 +29,12 @@ jobs:
       - name: Copie les variables d'environnement
         run: sh make_dot_env.sh
 
+      # On n'utilise pas Docker, car l'action Chromatic nécessite Git.
       - name: Installe les dépendances.
         run: npm install
         working-directory: ${{env.client-directory}}
 
-      - name: Publication sur Chromatic
+      - name: Publication du storybook sur Chromatic
         uses: chromaui/action@v1
 
         with:
