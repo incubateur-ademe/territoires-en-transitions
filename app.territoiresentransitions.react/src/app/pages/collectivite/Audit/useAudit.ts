@@ -10,14 +10,14 @@ export const fetch = async (
   collectivite_id: number,
   referentiel: Referentiel
 ) => {
-  // lit le statut de l'audit en cours (si il existe)
-  const query = supabaseClient
+  // lit le statut de l'audit en cours (s'il existe)
+  const {data, error} = await supabaseClient
     .from('audit')
-    .select()
+    .select(
+      'id,collectivite_id,referentiel,demande_id,date_debut,date_fin,auditeurs:audit_auditeur (id:auditeur)'
+    )
     .match({collectivite_id, referentiel})
     .limit(1);
-
-  const {data, error} = await query;
 
   if (error || !data?.length) {
     return null;
@@ -38,9 +38,12 @@ export const useAudit = () => {
 };
 
 /** Indique si l'utilisateur courant est l'auditeur pour la
- * collectivité et le référentiel courants */
+ * collectivité et le référentiel courant */
 export const useIsAuditeur = () => {
   const {user} = useAuth();
   const {data: audit} = useAudit();
-  return (audit && user && audit.auditeur === user.id) || false;
+  if (!audit || !user || !audit.auditeurs?.length) {
+    return false;
+  }
+  return audit.auditeurs.findIndex(({id}) => id === user.id) !== -1;
 };

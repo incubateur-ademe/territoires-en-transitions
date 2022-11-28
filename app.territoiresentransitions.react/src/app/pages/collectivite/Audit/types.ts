@@ -8,9 +8,9 @@ export type TAudit = {
   collectivite_id: number;
   referentiel: Referentiel;
   demande_id: number | null;
-  auditeur: string;
   date_debut: string;
   date_fin: string | null;
+  auditeurs: Record<'id', string>[];
 };
 
 // statut d'audit d'une action
