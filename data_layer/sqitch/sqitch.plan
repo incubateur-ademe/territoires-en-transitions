@@ -135,3 +135,5 @@ evaluation/score_summary [evaluation/score_summary@v1.10.0] 2022-11-15T10:25:46Z
 
 retool/evaluation [retool/evaluation@v1.12.0] 2022-11-17T16:43:20Z Florian <florian@derfurth.com> # Améliore la vue retool pour les exports d'audit.
 @v1.13.0 2022-11-18T15:00:47Z Florian <florian@derfurth.com> # Nouvelles vues retool pour export audit.
+
+stats/schema 2022-11-28T08:45:41Z Florian <florian@derfurth.com> # Ajoute le schéma stats
