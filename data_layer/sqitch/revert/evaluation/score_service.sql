@@ -1,245 +1,108 @@
--- Revert tet:evaluation/score_service from pg
+-- Deploy tet:evaluation/score_service to pg
 
 BEGIN;
 
-drop function if exists test.enable_evaluation_api();
-drop function if exists test.disable_evaluation_api();
-
-drop trigger after_action_statut_insert on action_statut;
-drop function after_action_statut_call_business();
-drop trigger after_reponse_insert on reponse_binaire;
-drop trigger after_reponse_insert on reponse_choix;
-drop trigger after_reponse_insert on reponse_proportion;
-drop function after_reponse_call_business();
-drop function evaluation.evaluate_regles;
-drop function evaluation.evaluate_statuts;
-drop function evaluation.evaluation_payload;
-drop view evaluation.service_statuts;
-drop materialized view evaluation.service_referentiel;
-drop view evaluation.service_regles;
-drop view evaluation.service_reponses;
-drop table evaluation.service_configuration;
-
-drop trigger check_payload_timestamp on client_scores;
-drop trigger check_payload_timestamp on personnalisation_consequence;
-drop function prevent_older_results;
-alter table client_scores drop column payload_timestamp;
-alter table personnalisation_consequence drop column payload_timestamp;
-
--- restore prev version
---- Restore le trigger pour mettre à jour le contenu suite à l'insertion de json.
 create or replace function
-    private.upsert_referentiel_after_json_insert()
-    returns trigger
+    evaluation.evaluate_statuts(
+    in collectivite_id integer,
+    in referentiel referentiel,
+    in scores_table varchar,
+    out status integer,
+    out content_type varchar,
+    out http_header http_header[],
+    out content varchar
+)
 as
 $$
-declare
-begin
-    perform private.upsert_actions(new.definitions, new.children);
-    return new;
-end;
-$$ language plpgsql;
-
---- Restore action statut events
-create table action_statut_update_event
-(
-    id              serial primary key,
-    collectivite_id integer references collectivite                    not null,
-    referentiel     referentiel                                        not null,
-    created_at      timestamp with time zone default CURRENT_TIMESTAMP not null
-);
-comment on table action_statut_update_event is
-    'Used by business only to trigger score computation';
-
-alter table action_statut_update_event
-    -- Disallow all since business use a privileged postgres access (for now).
-    enable row level security;
-
-create or replace function after_action_statut_insert_write_event() returns trigger as
+with payload as (select transaction_timestamp()       as timestamp,
+                        evaluate_statuts.collectivite_id,
+                        evaluate_statuts.referentiel,
+                        evaluate_statuts.scores_table as scores_table,
+                        to_jsonb(ep)                  as payload
+                 from evaluation.evaluation_payload(evaluate_statuts.collectivite_id, evaluate_statuts.referentiel) ep),
+     configuration as (select *
+                       from evaluation.service_configuration
+                       order by created_at desc
+                       limit 1)
+select post.*
+from configuration -- si il n'y a aucune configuration on ne fait pas d'appel
+         join payload on true
+         left join lateral (select *
+                            from http_post(
+                                    configuration.evaluation_endpoint,
+                                    to_jsonb(payload.*)::varchar,
+                                    'application/json'::varchar
+                                )
+    ) as post on true
 $$
-declare
-    relation action_relation%ROWTYPE;
-begin
-    select * into relation from action_relation where id = NEW.action_id limit 1;
-    insert into action_statut_update_event values (default, NEW.collectivite_id, relation.referentiel, default);
-    return null;
-end;
-$$ language plpgsql security definer;
+    language sql
+    security definer
+    -- permet au trigger d'utiliser l'extension http.
+    set search_path = public, extensions;
 
-create trigger after_action_statut_insert
-    after insert or update
-    on action_statut
-    for each row
-execute procedure after_action_statut_insert_write_event();
-
-alter publication supabase_realtime add table action_statut_update_event;
-
---- Restore réponses events
-create table reponse_update_event
-(
-    id              serial primary key,
-    collectivite_id integer references collectivite                    not null,
-    created_at      timestamp with time zone default CURRENT_TIMESTAMP not null
-);
-comment on table reponse_update_event is
-    'Utilisé par le business pour déclencher un calcul des conséquences.';
-
-alter table reponse_update_event
-    -- Disallow all since business use a privileged service access.
-    enable row level security;
-
-alter publication supabase_realtime add table reponse_update_event;
-
-create or replace function after_reponse_insert_write_event() returns trigger as
-$$
-begin
-    insert into reponse_update_event (collectivite_id) values (new.collectivite_id);
-    return null;
-end;
-$$ language plpgsql security definer;
-comment on function after_reponse_insert_write_event is
-    'Écrit un évènement après chaque écriture de réponse par un utilisateur.';
-
-create trigger after_reponse_choix_write
-    after insert or update
-    on reponse_choix
-    for each row
-execute procedure after_reponse_insert_write_event();
-
-create trigger after_reponse_binaire_write
-    after insert or update
-    on reponse_binaire
-    for each row
-execute procedure after_reponse_insert_write_event();
-
-create trigger after_reponse_proportion_write
-    after insert or update
-    on reponse_proportion
-    for each row
-execute procedure after_reponse_insert_write_event();
-
-create view unprocessed_reponse_update_event as
-with latest_collectivite_event as (select collectivite_id,
-                                          max(created_at) as max_date
-                                   from reponse_update_event
-                                   group by collectivite_id),
-     active_collectivite_without_consequence as (select c.id as collectivite_id, c.created_at
-                                                 from collectivite c
-                                                          left join personnalisation_consequence pc on pc.collectivite_id = c.id
-                                                          left join private_utilisateur_droit pud on pud.collectivite_id = c.id
-                                                 where pc.collectivite_id is NULL
-                                                   and pud.active),
-     unprocessed_event as (select *
-                           from latest_collectivite_event e
-                           where collectivite_id not in (
-                               -- processed means that the consequence is more recent than the event
-                               select collectivite_id
-                               from personnalisation_consequence c
-                               where c.modified_at > e.max_date))
-select collectivite_id,
-       max_date as created_at
-from unprocessed_event
-union
-select collectivite_id, created_at
-from active_collectivite_without_consequence;
-comment on view unprocessed_reponse_update_event is
-    'Permet au business de déterminer quelles sont les collectivités '
-        'dont les réponses ont changé depuis le dernier calcul des conséquences';
-
--- Restore la vue
-
-create view unprocessed_action_statut_update_event
+create or replace function
+    evaluation.evaluate_regles(
+    in collectivite_id integer,
+    in consequences_table varchar,
+    in scores_table varchar,
+    out status integer,
+    out content_type varchar,
+    out http_header http_header[],
+    out content varchar
+)
 as
-with
-    -- equivalent to active collectivite
-    unique_collectivite_droit as (
-        select named_collectivite.collectivite_id, min(created_at) as max_date
-        from named_collectivite
-                 join private_utilisateur_droit
-                      on named_collectivite.collectivite_id = private_utilisateur_droit.collectivite_id
-        where private_utilisateur_droit.active
-        group by named_collectivite.collectivite_id
-    ),
-    -- virtual events, so we consider someone joining a collectivite as a statuts update
-    virtual_inital_event as (
-        select collectivite_id,
-               unnest('{eci, cae}'::referentiel[]) as referentiel,
-               max_date
-        from unique_collectivite_droit
-    ),
-    -- the latest from virtual and action statut update event
-    latest_event as (
-        select v.collectivite_id,
-               v.referentiel,
-               max(coalesce(v.max_date, r.created_at)) as max_date
-        from virtual_inital_event v
-                 full join action_statut_update_event r on r.collectivite_id = v.collectivite_id
-        group by v.collectivite_id, v.referentiel
-    ),
-    -- last time points where updated for a referentiel
-    latest_referentiel_modification as (
-        select referentiel, max(modified_at) as referentiel_last_modified_at
-        from action_computed_points acp
-                 left join action_relation ar on ar.id = acp.action_id
-        group by (referentiel)
-    ),
-    -- score require to be processed either if a statut is updated or if computed_points changed
-    latest_score_update_required as (
-        select collectivite_id, r.referentiel, GREATEST(e.max_date::timestamp,
-                                                        r.referentiel_last_modified_at::timestamp) as required_at
-        from latest_event e
-                 left join latest_referentiel_modification r on r.referentiel = e.referentiel
-    ),
-    -- events that are not processed
-    unprocessed as (
-        select *
-        from latest_score_update_required lsur
-        where collectivite_id not in (
-            -- processed means that the score is more recent than the event
-            select collectivite_id
-            from client_scores s
-            where s.score_created_at > lsur.required_at
+$$
+with ref as (select unnest(enum_range(null::referentiel)) as referentiel),
+-- les payloads pour le calculs des scores des référentiels
+     evaluation_payload as (select transaction_timestamp()      as timestamp,
+                                   evaluate_regles.collectivite_id,
+                                   ref.referentiel              as referentiel,
+                                   evaluate_regles.scores_table as scores_table,
+                                   ep                           as payload
+                            from ref
+                                     left join evaluation.evaluation_payload(
+                                    evaluate_regles.collectivite_id,
+                                    ref.referentiel) ep on true),
+     -- la payload de personnalisation qui contient les payloads d'évaluation.
+     personnalisation_payload as (select transaction_timestamp()                           as timestamp,
+                                         ci.id                                             as collectivite_id,
+                                         evaluate_regles.consequences_table                as consequences_table,
+                                         jsonb_build_object(
+                                                 'identite', jsonb_build_object('population', ci.population,
+                                                                                'type', ci.type,
+                                                                                'localisation', ci.localisation),
+                                                 'regles',
+                                                 (select array_agg(sr) from evaluation.service_regles sr),
+                                                 'reponses',
+                                                 coalesce((select reponses
+                                                           from evaluation.service_reponses sr
+                                                           where sr.collectivite_id = ci.id),
+                                                          to_jsonb('{}'::jsonb[]))
+                                             )                                             as payload,
+                                         (select array_agg(ep) from evaluation_payload ep) as evaluation_payloads
+                                  from collectivite_identite ci
+                                  where ci.id = evaluate_regles.collectivite_id),
+     configuration as (select *
+                       from evaluation.service_configuration
+                       order by created_at desc
+                       limit 1)
+
+select post.*
+from configuration -- si il n'y a aucune configuration on ne fait pas d'appel
+         join personnalisation_payload pp on true
+         left join lateral (
+    -- appel le business avec la payload.
+    select *
+    from http_post(
+            configuration.personnalisation_endpoint,
+            to_jsonb(pp.*)::varchar,
+            'application/json'::varchar
         )
-    )
-select unprocessed.collectivite_id,
-       unprocessed.referentiel,
-       unprocessed.required_at as created_at
-from unprocessed;
-comment on view unprocessed_action_statut_update_event is
-    'To be used by business to compute only what is necessary.';
-
---- Revert les événements des collectivités
-create table collectivite_activation_event
-(
-    id              serial primary key,
-    collectivite_id integer references collectivite                    not null,
-    created_at      timestamp with time zone default CURRENT_TIMESTAMP not null
-);
-comment on table collectivite_activation_event is
-    'Used by business only to trigger score computation';
-
-alter table collectivite_activation_event
-    -- Disallow all since business use a privileged postgres access (for now).
-    enable row level security;
-
-create function before_collectivite_activation_insert_write_event() returns trigger as
+    ) as post on true
 $$
-declare already_activated boolean;
-begin
-    select into already_activated count(*) > 0 from private_utilisateur_droit where collectivite_id = NEW.collectivite_id and active;
-    if not already_activated
-    then insert into collectivite_activation_event values (default, NEW.collectivite_id, default);
-    end if;
-    return NEW;
-end;
-$$ language plpgsql security definer;
-
-create trigger before_collectivite_activation_insert_write_event
-    before insert or update
-    on private_utilisateur_droit
-    for each row
-execute procedure before_collectivite_activation_insert_write_event();
-
-alter publication supabase_realtime add table collectivite_activation_event;
+    language sql
+    security definer
+-- permet d'utiliser l'extension http depuis un trigger
+    set search_path = public, extensions;
 
 COMMIT;

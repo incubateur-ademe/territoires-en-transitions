@@ -145,4 +145,5 @@ retool/evaluation [retool/evaluation@v1.13.0] 2022-11-24T14:56:45Z Florian <flor
 migration_schema 2022-11-24T16:47:43Z Amandine Jacquelin <conta@LanceLibre> # Schema de migration pour transferer les donnees dans un rework
 labellisation/audit [labellisation/audit@v1.13.0 migration_schema] 2022-11-24T13:16:45Z Amandine Jacquelin <conta@LanceLibre> # Il peut y avoir plusieurs auditeurs
 pg_net_extension 2022-11-29T17:06:17Z Florian <florian@derfurth.com> # Ajoute l'extension pg net pour des appels http asynchrone
+evaluation/score_service [evaluation/score_service@v1.14.0 pg_net_extension] 2022-11-29T17:16:37Z Florian <florian@derfurth.com> # Utilise pg_net pour les appels au service d'évaluation
 referentiel/action_statut_historique [referentiel/action_statut_historique@v1.14.0] 2022-11-29T15:45:07Z Florian <florian@derfurth.com> # Permet de reconstituer les statuts à un instant donné
