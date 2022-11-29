@@ -7,10 +7,13 @@ import {referentielId} from 'utils/actions';
 import {useScoreListener} from './useScoreListener';
 
 export type ReferentielsActionScores = {eci: ActionScore[]; cae: ActionScore[]};
-// Should observe "CollectiviteId" of collectiviteBloc and ActionStatutWriteEndpoint
-// so that you start the connection on first status written
 
-const fetchScoresForCollectiviteForReferentiel = async (
+export const getScoreQueryKey = (
+  collectiviteId: number | null,
+  referentiel: Referentiel
+) => ['client_scores', collectiviteId, referentiel];
+
+const fetchScoresForCollectiviteAndReferentiel = async (
   collectiviteId: number,
   referentiel: Referentiel
 ): Promise<ActionScore[]> => {
@@ -21,35 +24,27 @@ const fetchScoresForCollectiviteForReferentiel = async (
   return clientScores[0] ? clientScores[0].scores : [];
 };
 
-const fetchScoresForCollectivite = async (
-  collectiviteId: number
-): Promise<ReferentielsActionScores> => {
-  const eciScores = await fetchScoresForCollectiviteForReferentiel(
-    collectiviteId,
-    'eci'
-  );
-  const caeScores = await fetchScoresForCollectiviteForReferentiel(
-    collectiviteId,
-    'cae'
-  );
-  return {eci: eciScores, cae: caeScores};
-};
-
-export const useScores = (): ReferentielsActionScores => {
+// donne accès aux scores d'un référentiel
+const useReferentielScores = (referentiel: Referentiel) => {
   const collectiviteId = useCollectiviteId();
 
   // écoute les changements
-  const score = useScoreListener();
-  score?.subscribe(collectiviteId);
+  useScoreListener()?.subscribe(collectiviteId);
 
-  // charge les données du parcours
-  const {data} = useQuery(['client_scores', collectiviteId], () => {
-    if (collectiviteId) {
-      return fetchScoresForCollectivite(collectiviteId);
-    }
-  });
+  // charge les données
+  return useQuery(getScoreQueryKey(collectiviteId, referentiel), () =>
+    collectiviteId
+      ? fetchScoresForCollectiviteAndReferentiel(collectiviteId, referentiel)
+      : []
+  );
+};
 
-  return data || {eci: [], cae: []};
+// donne accès aux scores de chaque référentiel
+export const useScores = (): ReferentielsActionScores => {
+  const {data: cae} = useReferentielScores('cae');
+  const {data: eci} = useReferentielScores('eci');
+
+  return {cae: cae || [], eci: eci || []} || {cae: [], eci: []};
 };
 
 export const useActionScore = (actionId: string): ActionScore | null => {
