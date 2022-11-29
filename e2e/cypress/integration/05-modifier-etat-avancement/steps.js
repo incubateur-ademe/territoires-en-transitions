@@ -146,3 +146,23 @@ When(/je clique sur le bouton "Masquer le détail" de l'entrée (\d+)/, num => {
     }) [data-test=detail-on] button`
   ).click();
 });
+
+When(
+  /je filtre l'historique avec le filtre "([^"]+)" par l'option "([^"]+)"/,
+  (filtre, option) => {
+    cy.get(`[data-test=filtre-${filtre}]`).click();
+    cy.root()
+      .get(`[data-test=filtre-${filtre}-options]`)
+      .contains(option)
+      .click();
+    cy.get(`[data-test=filtre-${filtre}]`).click();
+  }
+);
+
+When(/je filtre l'historique avec comme date de fin "([^"]+)"/, date => {
+  cy.get('[data-test=filtre-end-date]').type(date);
+});
+
+When('je désactive tous les filtres', () => {
+  cy.get('[data-test=desactiver-les-filtres]').click();
+});
