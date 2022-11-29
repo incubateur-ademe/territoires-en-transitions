@@ -268,3 +268,18 @@ Given(
     });
   }
 );
+
+When(/je clique sur l'onglet "([^"]+)"/, tabName => {
+  cy.get('.fr-tabs__tab').contains(tabName).click();
+});
+
+When(/je vois (\d+) onglets?/, count =>
+  cy.get('.fr-tabs__tab').should('have.length', count)
+);
+
+When(/l'onglet "([^"]+)" est sélectionné/, tabName =>
+  cy
+    .get('.fr-tabs__tab')
+    .contains(tabName)
+    .should('have.attr', 'aria-selected', 'true')
+);

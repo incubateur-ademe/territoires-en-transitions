@@ -71,10 +71,6 @@ When(
   }
 );
 
-When(/je clique sur l'onglet "([^"]+)"/, tabName => {
-  cy.get('.fr-tabs__tab').contains(tabName).click();
-});
-
 When("aucun historique n'est affiché", () => {
   cy.get('[data-test^=action-statut-]').should('not.exist');
   cy.get('[data-test=empty_history]').should('be.visible');

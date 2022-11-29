@@ -38,6 +38,10 @@ export const CollectivitePages = {
     route: 'labellisation/cae',
     selector: '[data-test=labellisation-cae]',
   },
+  'Labellisation ECi': {
+    route: 'labellisation/eci',
+    selector: '[data-test=labellisation-eci]',
+  },
   'Action ECI': {
     route: 'action/eci/eci_3.1',
     selector: '[data-test=Action]',
