@@ -18,10 +18,10 @@ export const useThematique: TUseThematique = thematique_id => {
 const fetch = async (thematique_id: string | undefined) => {
   if (thematique_id) {
     const {data: thematique} = await supabaseClient
-      .from<TQuestionThematiqueRead>('question_thematique')
+      .from('question_thematique')
       .select()
       .eq('id', thematique_id);
-    return thematique?.[0] || null;
+    return (thematique?.[0] as TQuestionThematiqueRead) || null;
   }
   return null;
 };
