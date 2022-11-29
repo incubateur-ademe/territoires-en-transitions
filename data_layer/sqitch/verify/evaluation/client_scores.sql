@@ -2,8 +2,10 @@
 
 BEGIN;
 
-select collectivite_id, referentiel, scores, score_created_at
-from client_scores
+select collectivite_id, referentiel, modified_at
+from client_scores_update
 where false;
+
+select has_function_privilege('evaluation.after_scores_write()', 'execute');
 
 ROLLBACK;
