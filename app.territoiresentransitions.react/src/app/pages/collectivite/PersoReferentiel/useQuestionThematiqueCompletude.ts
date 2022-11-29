@@ -17,14 +17,17 @@ export const useQuestionThematiqueCompletude: TUseQuestionThematiqueCompletude =
       {enabled: !!collectivite_id}
     );
 
-    return applyFilter(data || [], filters);
+    return applyFilter(
+      (data as TQuestionThematiqueCompletudeRead[]) || [],
+      filters
+    );
   };
 
 // charge les données
 const fetch = async (collectivite_id: number) => {
   if (collectivite_id) {
     const {data: thematiques} = await supabaseClient
-      .from<TQuestionThematiqueCompletudeRead>('question_thematique_completude')
+      .from('question_thematique_completude')
       .select()
       .eq('collectivite_id', collectivite_id);
 

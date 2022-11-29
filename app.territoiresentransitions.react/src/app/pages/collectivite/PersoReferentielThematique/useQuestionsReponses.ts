@@ -69,7 +69,7 @@ const fetchQuestions = async (collectivite_id: number, filters: TFilters) => {
     throw new Error(error.message);
   }
 
-  return data as TQuestionRead[];
+  return data as unknown as TQuestionRead[];
 };
 
 // charge les réponses correspondant aux questions données
@@ -87,7 +87,7 @@ const useReponses = (questions: TQuestionRead[]) => {
 };
 const fetchReponse = async (collectivite_id: number, question_id: string) => {
   const query = supabaseClient
-    .from<TReponseRead>('reponse_display')
+    .from('reponse_display')
     .select()
     .match({collectivite_id, question_id});
 
@@ -98,7 +98,7 @@ const fetchReponse = async (collectivite_id: number, question_id: string) => {
     throw new Error(error.message);
   }
 
-  return data?.length ? transform(data[0]) : undefined;
+  return data?.length ? transform(data[0] as TReponseRead) : undefined;
 };
 
 // met à jour si nécessaire la valeur d'une réponse lue depuis la base
