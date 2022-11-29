@@ -14,7 +14,7 @@ exports[`Storyshots app/pages/collectivite/AuditSuivi/FiltreOrdreDuJour Selectio
   onPointerDown={[Function]}
 >
   <span
-    className="fr-fi--sm w-full text-center text-bf500 font-bold fr-fi-filter-line"
+    className="fr-fi--sm w-full text-center text-bf500 font-bold fr-fi-filter-fill"
   >
      
     A discuter - Séance d'audit
@@ -39,7 +39,7 @@ exports[`Storyshots app/pages/collectivite/AuditSuivi/FiltreOrdreDuJour Tous 1`]
   onPointerDown={[Function]}
 >
   <span
-    className="fr-fi--sm w-full text-center text-bf500 font-bold fr-fi-filter-fill"
+    className="fr-fi--sm w-full text-center text-bf500 font-bold fr-fi-filter-line"
   >
      
     A discuter - Séance d'audit

@@ -14,7 +14,7 @@ exports[`Storyshots app/pages/collectivite/DetailTaches/FiltreStatut All 1`] = `
   onPointerDown={[Function]}
 >
   <span
-    className="fr-fi--sm w-full text-center text-bf500 font-bold fr-fi-filter-fill"
+    className="fr-fi--sm w-full text-center text-bf500 font-bold fr-fi-filter-line"
   >
      
     Statut
@@ -39,7 +39,7 @@ exports[`Storyshots app/pages/collectivite/DetailTaches/FiltreStatut Multi Selec
   onPointerDown={[Function]}
 >
   <span
-    className="fr-fi--sm w-full text-center text-bf500 font-bold fr-fi-filter-line"
+    className="fr-fi--sm w-full text-center text-bf500 font-bold fr-fi-filter-fill"
   >
      
     Statut
