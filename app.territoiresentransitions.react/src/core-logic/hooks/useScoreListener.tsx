@@ -2,6 +2,7 @@ import {createContext, ReactNode, useContext, useRef} from 'react';
 import {useQueryClient} from 'react-query';
 import {RealtimeChannel} from '@supabase/supabase-js';
 import {supabaseClient} from 'core-logic/api/supabase';
+import {getScoreQueryKey} from './scoreHooks';
 
 type TScoreListenerContext = {
   subscribe: (collectiviteId: number | null) => void;
@@ -51,16 +52,21 @@ export const ScoreListenerProvider = ({children}: {children: ReactNode}) => {
       collectiviteId &&
       shouldSubscribe(contextDataRef.current, collectiviteId)
     ) {
-      // recharge les données après un changement
-      const refetch = () => {
-        queryClient.invalidateQueries(['client_scores', collectiviteId]);
+      // met à jour le cache après un changement
+      const refetch = (payload: Record<string, any>) => {
+        const {
+          record: {collectivite_id, referentiel, scores},
+        } = payload;
+        queryClient.setQueryData(
+          getScoreQueryKey(collectivite_id, referentiel),
+          scores
+        );
       };
 
+      // souscrit aux changements
       const table = {schema: 'public', table: 'client_scores'};
       const subscription = supabaseClient
-        .channel(
-          `public:client_scores:collectivite_id=eq.${collectiviteId}` // ,referentiel=eq.${referentiel}
-        )
+        .channel(`public:client_scores:collectivite_id=eq.${collectiviteId}`)
         .on('postgres_changes', {event: 'INSERT', ...table}, refetch)
         .on('postgres_changes', {event: 'UPDATE', ...table}, refetch)
         .subscribe();
