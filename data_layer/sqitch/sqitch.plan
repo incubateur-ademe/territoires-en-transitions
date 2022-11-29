@@ -148,3 +148,4 @@ pg_net_extension 2022-11-29T17:06:17Z Florian <florian@derfurth.com> # Ajoute l'
 evaluation/score_service [evaluation/score_service@v1.14.0 pg_net_extension] 2022-11-29T17:16:37Z Florian <florian@derfurth.com> # Utilise pg_net pour les appels au service d'évaluation
 evaluation/client_scores [evaluation/client_scores@v1.14.0] 2022-11-29T17:44:36Z Florian <florian@derfurth.com> # Ajoute la table client_score_update pour alleger les payloads
 collectivite/historique [collectivite/historique@v1.14.0] 2022-12-01T14:38:28Z Florian <florian@derfurth.com> # Ajoute une vue des utilisateurs pour l'historique
+utils/automatisation 2022-11-29T15:13:51Z Amandine Jacquelin <conta@LanceLibre> # Envoie JSON à n8n puis à Salesforce quand nouveau utilisateur et collectivité
