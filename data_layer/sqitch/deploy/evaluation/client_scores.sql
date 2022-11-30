@@ -20,7 +20,7 @@ comment on table client_scores_update
 
 alter table client_scores_update enable row level security;
 create policy allow_read
-    on client_scores_update
+    on client_scores_update for select
     using (true);
 alter publication supabase_realtime add table client_scores_update;
 
