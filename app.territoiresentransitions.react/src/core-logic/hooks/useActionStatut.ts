@@ -74,7 +74,6 @@ export const useEditActionStatutIsDisabled = (actionId: string) => {
   const isAuditeur = useIsAuditeur();
   const score = useActionScore(actionId);
 
-  console.log({collectivite, score, audit, isAuditeur});
   return Boolean(
     !collectivite ||
       collectivite.readonly ||
