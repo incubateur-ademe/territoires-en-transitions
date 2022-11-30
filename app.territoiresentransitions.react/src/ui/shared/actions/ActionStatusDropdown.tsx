@@ -6,6 +6,7 @@ import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {useActionScore} from 'core-logic/hooks/scoreHooks';
 import {
   useActionStatut,
+  useEditActionStatutIsDisabled,
   useSaveActionStatut,
 } from 'core-logic/hooks/useActionStatut';
 import {
@@ -16,7 +17,6 @@ import {toPercentString} from 'utils/score';
 import {CloseDialogButton} from '../CloseDialogButton';
 import {DetailedScore} from '../DetailedScore/DetailedScore';
 import {AvancementValues} from '../DetailedScore/DetailedScoreSlider';
-import {useAudit, useIsAuditeur} from 'app/pages/collectivite/Audit/useAudit';
 
 interface SelectableStatut {
   value: number;
@@ -111,14 +111,8 @@ export const ActionStatusDropdown = ({actionId}: {actionId: string}) => {
 
   const {saveActionStatut} = useSaveActionStatut(args);
 
-  // donnée liée à l'audit en cours (si il y en a un)
-  const {data: audit} = useAudit();
-  const isAuditeur = useIsAuditeur();
-
   // détermine si l'édition du statut est désactivée
-  const disabled = Boolean(
-    collectivite?.readonly || score?.desactive || (audit && !isAuditeur)
-  );
+  const disabled = useEditActionStatutIsDisabled(actionId);
 
   const handleChange: SelectInputProps['onChange'] = event => {
     const {avancement, concerne, avancement_detaille} = statutByValue(

@@ -1,10 +1,10 @@
 import SelectDropdown from 'ui/shared/select/SelectDropdown';
 import ActionStatutBadge from 'ui/shared/actions/ActionStatutBadge';
 import {ActionAvancement} from 'generated/dataLayer/action_statut_read';
+import {useEditActionStatutIsDisabled} from 'core-logic/hooks/useActionStatut';
 
 export type TSelectStatutProps = {
   className?: string;
-  disabled?: boolean;
   value: string;
   onChange: (value: string) => void;
 };
@@ -35,11 +35,18 @@ export const ITEMS: {value: ActionAvancement; label: string}[] = [
 /**
  * Affiche le filtre par statuts
  */
-export const SelectStatut = (props: TSelectStatutProps) => {
-  const {value, onChange} = props;
+const SelectStatutBase = (props: TSelectStatutProps & {disabled?: boolean}) => {
+  const {value, onChange, disabled} = props;
 
-  return (
+  return disabled ? (
+    <ActionStatutBadge
+      statut={value as ActionAvancement}
+      small
+      className="mr-auto"
+    />
+  ) : (
     <SelectDropdown
+      data-test="SelectStatut"
       value={value}
       options={ITEMS}
       onSelect={onChange}
@@ -56,4 +63,13 @@ export const SelectStatut = (props: TSelectStatutProps) => {
       )}
     />
   );
+};
+
+export const SelectStatut = (
+  props: TSelectStatutProps & {action_id: string}
+) => {
+  const {action_id} = props;
+  const isDisabled = useEditActionStatutIsDisabled(action_id);
+
+  return <SelectStatutBase disabled={isDisabled} {...props} />;
 };
