@@ -4,6 +4,7 @@ exports[`Storyshots app/pages/collectivite/Historique/actionStatut/ActionStatutD
 Array [
   <span
     className="w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-gray-600 bg-pink-100"
+    data-test="ActionStatutBadge"
   >
     Détaillé
   </span>,
@@ -39,6 +40,7 @@ exports[`Storyshots app/pages/collectivite/Historique/actionStatut/ActionStatutD
 Array [
   <span
     className="w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md line-through text-gray-600 bg-pink-100"
+    data-test="ActionStatutBadge"
   >
     Détaillé
   </span>,

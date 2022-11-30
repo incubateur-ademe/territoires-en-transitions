@@ -15,7 +15,7 @@ import {FiltreOrdreDuJour} from './FiltreOrdreDuJour';
 import {FiltreAuditStatut} from './FiltreAuditStatut';
 import {TAuditSuiviRow} from './queries';
 
-export type TDetailTacheTableProps = {
+export type TAuditSuiviTableProps = {
   tableData: TableData;
 };
 export type THeaderProps = HeaderProps<TAuditSuiviRow> & {
@@ -49,7 +49,7 @@ const COLUMNS: TColumn[] = [
 /**
  * Affiche la table "Suivi de l'audit"
  */
-export const Table = (props: TDetailTacheTableProps) => {
+export const Table = (props: TAuditSuiviTableProps) => {
   const {tableData} = props;
   const {table, isLoading, filters, setFilters} = tableData;
 
@@ -76,6 +76,7 @@ export const Table = (props: TDetailTacheTableProps) => {
   // rendu de la table
   return (
     <ReferentielTable
+      dataTest="suivi-audit"
       className="no-d3-border-top"
       isLoading={isLoading}
       table={tableInstance}
