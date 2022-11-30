@@ -71,6 +71,7 @@ export const DetailTacheTable = (props: TDetailTacheTableProps) => {
   // rendu de la table
   return (
     <ReferentielTable
+      dataTest="DetailTacheTable"
       isLoading={isLoading}
       table={tableInstance}
       customCellProps={customCellProps}

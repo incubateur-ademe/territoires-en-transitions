@@ -3,6 +3,7 @@
 exports[`Storyshots ui/shared/actions/ActionStatutBadge Barre 1`] = `
 <span
   className="w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md line-through text-yellow-800 bg-yellow-100"
+  data-test="ActionStatutBadge"
 >
   Non renseigné
 </span>
@@ -11,6 +12,7 @@ exports[`Storyshots ui/shared/actions/ActionStatutBadge Barre 1`] = `
 exports[`Storyshots ui/shared/actions/ActionStatutBadge Detaille 1`] = `
 <span
   className="w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-gray-600 bg-pink-100"
+  data-test="ActionStatutBadge"
 >
   Détaillé
 </span>
@@ -19,6 +21,7 @@ exports[`Storyshots ui/shared/actions/ActionStatutBadge Detaille 1`] = `
 exports[`Storyshots ui/shared/actions/ActionStatutBadge Fait 1`] = `
 <span
   className="w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-green-700 bg-green-200"
+  data-test="ActionStatutBadge"
 >
   Fait
 </span>
@@ -27,6 +30,7 @@ exports[`Storyshots ui/shared/actions/ActionStatutBadge Fait 1`] = `
 exports[`Storyshots ui/shared/actions/ActionStatutBadge Non Renseigne 1`] = `
 <span
   className="w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-yellow-800 bg-yellow-100"
+  data-test="ActionStatutBadge"
 >
   Non renseigné
 </span>
@@ -35,6 +39,7 @@ exports[`Storyshots ui/shared/actions/ActionStatutBadge Non Renseigne 1`] = `
 exports[`Storyshots ui/shared/actions/ActionStatutBadge Pas Fait 1`] = `
 <span
   className="w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-red-600 bg-pink-100"
+  data-test="ActionStatutBadge"
 >
   Pas fait
 </span>
@@ -43,6 +48,7 @@ exports[`Storyshots ui/shared/actions/ActionStatutBadge Pas Fait 1`] = `
 exports[`Storyshots ui/shared/actions/ActionStatutBadge Programme 1`] = `
 <span
   className="w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-blue-600 bg-blue-100"
+  data-test="ActionStatutBadge"
 >
   Programmé
 </span>
@@ -51,6 +57,7 @@ exports[`Storyshots ui/shared/actions/ActionStatutBadge Programme 1`] = `
 exports[`Storyshots ui/shared/actions/ActionStatutBadge Small 1`] = `
 <span
   className="w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md !text-xs !px-1 text-yellow-800 bg-yellow-100"
+  data-test="ActionStatutBadge"
 >
   Non renseigné
 </span>

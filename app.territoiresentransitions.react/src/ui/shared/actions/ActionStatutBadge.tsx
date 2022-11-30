@@ -13,6 +13,7 @@ type Props = {
 const ActionStatutBadge = ({className, statut, barre, small}: Props) => {
   return (
     <span
+      data-test="ActionStatutBadge"
       className={classNames(
         className,
         'w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md',

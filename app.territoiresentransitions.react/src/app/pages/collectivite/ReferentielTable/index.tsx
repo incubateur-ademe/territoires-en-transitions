@@ -11,11 +11,18 @@ type Table = <T extends Record<string, unknown>>(props: {
   table: TableInstance<T>;
   customHeaderProps: Record<string, unknown>;
   customCellProps?: Record<string, unknown>;
+  dataTest?: string;
 }) => JSX.Element;
 
 const ReferentielTable: Table = props => {
-  const {className, isLoading, table, customHeaderProps, customCellProps} =
-    props;
+  const {
+    className,
+    isLoading,
+    table,
+    customHeaderProps,
+    customCellProps,
+    dataTest,
+  } = props;
   const {getTableProps, getTableBodyProps, headerGroups, rows, prepareRow} =
     table;
 
@@ -36,6 +43,7 @@ const ReferentielTable: Table = props => {
     <div
       {...getTableProps()}
       className={`referentiel-table ${referentielId} ${className || ''}`}
+      data-test={dataTest}
     >
       <div className="header">
         {headerGroups.map(headerGroup => (
