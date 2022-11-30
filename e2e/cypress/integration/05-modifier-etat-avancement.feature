@@ -9,6 +9,7 @@ Fonctionnalité: Modifier l'état d'avancement et visualiser l'évolution des sc
 
     Quand je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "2"
     Alors aucun score n'est affiché
+    Et l'état d'avancement des tâches est éditable
 
     Quand j'assigne la valeur "Fait" à l'état d'avancement de la tâche "eci_1.1.1.1"
     Alors les scores sont affichés avec les valeurs suivantes :
@@ -96,7 +97,7 @@ Fonctionnalité: Modifier l'état d'avancement et visualiser l'évolution des sc
 
     Quand je filtre l'historique avec le filtre "membre" par l'option "Yala Dada"
     Alors aucun historique n'est affiché
-    
+
     Quand je filtre l'historique avec le filtre "membre" par l'option "Yili Didi"
     Alors l'historique contient 2 entrées
 
