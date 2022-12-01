@@ -12,5 +12,7 @@ drop function send_collectivite_membre_json_n8n();
 drop view users_crm;
 drop view collectivites_crm;
 drop view collectivite_membre_crm;
+drop table automatisation_uri;
+drop type automatisation_type;
 
 COMMIT;
