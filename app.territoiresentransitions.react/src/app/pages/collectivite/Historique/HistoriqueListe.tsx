@@ -22,7 +22,7 @@ export const HistoriqueListe = ({
   return (
     <>
       <HistoriqueFiltres
-        itemsNumber={items.length}
+        itemsNumber={total}
         initialFilters={initialFilters}
         filters={filters}
         setFilters={setFilters}
