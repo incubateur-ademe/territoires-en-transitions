@@ -1,5 +1,6 @@
 // recopié/adapté de react-dsfr pour gérer une prop. onChange
 // https://github.com/dataesr/react-dsfr/blob/master/src/components/interface/Tabs/Tabs.js
+import classNames from 'classnames';
 import React, {
   cloneElement,
   Children,
@@ -64,10 +65,17 @@ const Tabs = ({className, children, activeTab, onChange}: TabsProps) => {
               aria-selected={activeTab === index ? 'true' : 'false'}
               tabIndex={activeTab === index ? 0 : -1}
               aria-controls={`fr-tabpanel-${index}`}
-              className="fr-tabs__tab"
+              className={classNames('fr-tabs__tab', {
+                'fr-tabs__tab--icon-left': element.props.icon,
+              })}
               onClick={() => onChange(index)}
               onKeyDown={e => onKeyDownTab(e, index)}
             >
+              {element.props.icon && (
+                <span
+                  className={`ri-sm icon-left ds-fr--v-middle ${element.props.icon}`}
+                />
+              )}
               {element.props.label}
             </button>
           </li>
