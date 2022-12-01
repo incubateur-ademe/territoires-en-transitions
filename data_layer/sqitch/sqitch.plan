@@ -158,3 +158,4 @@ automatisation/crm [automatisation_schema] 2022-11-29T15:13:51Z Amandine Jacquel
 @v1.16.0 2022-12-12T08:46:49Z Florian <florian@derfurth.com> # Statistiques et automatisation.
 
 referentiel/action_statut_historique [referentiel/action_statut_historique@v1.14.0] 2022-11-29T15:45:07Z Florian <florian@derfurth.com> # Permet de reconstituer les statuts à un instant donné
+evaluation/score_service [evaluation/score_service@v1.15.0] 2022-11-30T14:31:12Z Florian <florian@derfurth.com> # Améliore la construction des payloads
