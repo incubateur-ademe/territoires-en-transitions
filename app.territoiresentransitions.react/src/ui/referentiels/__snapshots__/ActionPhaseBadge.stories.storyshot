@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots ui/referentiels/ActionPhaseBadge Bases 1`] = `
+<p
+  className="fr-badge fr-text-mention--grey fr-text--xs !bg-white border-[1px]"
+>
+  S'engager
+</p>
+`;
+
+exports[`Storyshots ui/referentiels/ActionPhaseBadge Effets 1`] = `
+<p
+  className="fr-badge fr-text-mention--grey fr-text--xs !bg-white border-[1px]"
+>
+  Consolider
+</p>
+`;
+
+exports[`Storyshots ui/referentiels/ActionPhaseBadge Mise En Oeuvre 1`] = `
+<p
+  className="fr-badge fr-text-mention--grey fr-text--xs !bg-white border-[1px]"
+>
+  Concrétiser
+</p>
+`;
