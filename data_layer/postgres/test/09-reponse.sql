@@ -27,6 +27,12 @@ create function
     returns void
 as
 $$
+
+-- désactive temporairement les triggers pour accélérer les inserts
+alter table reponse_binaire disable trigger all;
+alter table reponse_choix disable trigger all;
+alter table reponse_proportion disable trigger all;
+
     -- Vide les tables des réponses
 truncate reponse_binaire;
 truncate reponse_choix;
@@ -44,6 +50,12 @@ from test.reponse_choix;
 insert into public.reponse_proportion
 select *
 from test.reponse_proportion;
+
+-- ré active les triggers
+alter table reponse_binaire enable trigger all;
+alter table reponse_choix enable trigger all;
+alter table reponse_proportion enable trigger all;
+
 $$ language sql security definer;
 comment on function test_reset_reponse is
     'Reinitialise les réponses de personnalisation des référentiels.';

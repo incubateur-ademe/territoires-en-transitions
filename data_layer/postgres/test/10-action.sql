@@ -18,6 +18,10 @@ create function
     returns void
 as
 $$
+-- désactive temporairement les triggers pour accélérer les inserts
+alter table action_statut disable trigger all;
+alter table action_commentaire disable trigger all;
+
     -- Vide les tables
 truncate action_statut;
 truncate action_commentaire;
@@ -30,6 +34,10 @@ from test.action_statut;
 insert into public.action_commentaire
 select *
 from test.action_commentaire;
+
+-- ré active les triggers
+alter table action_statut enable trigger all;
+alter table action_commentaire enable trigger all;
 
 $$ language sql security definer;
 comment on function test_reset_action_statut_and_desc is
