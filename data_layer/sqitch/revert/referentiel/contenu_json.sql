@@ -1,9 +1,19 @@
--- Revert tet:referentiel/action_definition from pg
+-- Deploy tet:referentiel/action_definition to pg
 
 BEGIN;
 
-drop table referentiel_json;
-drop function private.upsert_actions(definitions jsonb, children jsonb);
-drop function private.upsert_referentiel_after_json_insert();
+
+-- version précédente du trigger
+create or replace function
+    private.upsert_referentiel_after_json_insert()
+    returns trigger
+as
+$$
+declare
+begin
+    perform private.upsert_actions(new.definitions, new.children);
+    return new;
+end;
+$$ language plpgsql;
 
 COMMIT;
