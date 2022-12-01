@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  sqitch-test:
+  sqitch:
     name: Sqitch
     runs-on: ubuntu-latest
     env:
