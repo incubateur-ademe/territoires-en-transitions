@@ -1,0 +1,61 @@
+name: Tests
+
+on:
+  pull_request:
+    paths-ignore:
+      - '**.md'
+  workflow_dispatch:
+
+# interrompt le workflow précédent si un nouveau est déclenché pour le même
+# commit (cas push + ouverture PR)
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sqitch-test:
+    name: Sqitch
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_SERVICE_ROLE_KEY: ${{secrets.TEST_SERVICE_SUPABASE_KEY}}
+      SUPABASE_ANON_KEY: ${{secrets.TEST_ANON_SUPABASE_KEY}}
+      LOADER_SKIP_TEST_DOMAIN: 1
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Make .env files
+        run: sh make_dot_env.sh
+
+      - name: Run sqitch revert to latest major version and then deploy to test reversibility
+        run: docker compose run sqitch_revert && docker compose run --no-deps sqitch deploy --verify
+
+  tests:
+    needs: sqitch
+    name: Tests
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_SERVICE_ROLE_KEY: ${{secrets.TEST_SERVICE_SUPABASE_KEY}}
+      SUPABASE_ANON_KEY: ${{secrets.TEST_ANON_SUPABASE_KEY}}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Make .env files
+        run: sh make_dot_env.sh
+
+      - name: pgTAP
+        run: docker-compose run datalayer-test
+
+      - name: Business tests
+        run: docker-compose run --no-deps business-test
+
+      - name: Test reset datalayer
+        run: |
+          curl -X POST "http://localhost:8000/rest/v1/rpc/test_reset" \
+          -H "Content-Type: application/json" \
+          -H "apikey: ${{ secrets.TEST_SERVICE_SUPABASE_KEY }}" \
+          -H "Authorization: Bearer ${{ secrets.TEST_SERVICE_SUPABASE_KEY }}"
+
+      - name: Client tests
+        run: docker-compose run --no-deps client-test

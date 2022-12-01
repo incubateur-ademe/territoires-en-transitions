@@ -2,9 +2,15 @@ name: Tests end-to-end
 
 on:
   pull_request:
-    branches-ignore:
-      - production
-      - production-static
+    paths-ignore:
+      - '**.md'
+  workflow_dispatch:
+
+# interrompt le workflow précédent si un nouveau est déclenché pour le même
+# commit (cas push + ouverture PR)
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   end-to-end-test:
