@@ -8,21 +8,18 @@ import {TFiltreProps} from '../filters';
 const FiltreMembre = ({filters, setFilters}: TFiltreProps) => {
   const {membres} = useCollectiviteMembres();
 
-  // Tableau d'options pour le multi-select
+  // Initialisation du tableau d'options pour le multi-select
   const memberList: {value: string; label: string}[] = [];
   // Ajoute l'option "Tous" s'il y a plus d'une option
   if (membres.length > 1) {
     memberList.push({value: ITEM_ALL, label: 'Tous'});
   }
-  // Transformation des données membres en options pour le multi-select
-  membres
-    .filter(m => m.user_id)
-    .map(m =>
-      memberList.push({
-        value: m.user_id!,
-        label: `${m.prenom} ${m.nom}`,
-      })
-    );
+  // Transformation et ajout des données membres au tableau d'options
+  membres.forEach(
+    m =>
+      m.user_id &&
+      memberList.push({value: m.user_id!, label: `${m.prenom} ${m.nom}`})
+  );
 
   return (
     <HistoriqueFiltreField title="Membre de la collectivité">
@@ -34,12 +31,18 @@ const FiltreMembre = ({filters, setFilters}: TFiltreProps) => {
             : filters.modified_by
         }
         options={memberList}
-        onSelect={newValues =>
-          setFilters({
-            ...filters,
-            modified_by: newValues,
-          })
-        }
+        onSelect={newValues => {
+          if (getIsAllSelected(newValues)) {
+            const filtres = filters;
+            delete filtres.modified_by;
+            setFilters({...filtres});
+          } else {
+            setFilters({
+              ...filters,
+              modified_by: newValues,
+            });
+          }
+        }}
         placeholderText="Sélectionner des options"
       />
     </HistoriqueFiltreField>
