@@ -159,3 +159,4 @@ automatisation/crm [automatisation_schema] 2022-11-29T15:13:51Z Amandine Jacquel
 
 json_schema 2022-11-14T09:06:51Z Amandine Jacquelin <conta@LanceLibre> # Ajout de l'extension json_schema
 indicateur/indicateur_terristory_json [json_schema] 2022-11-09T13:39:16Z Amandine Jacquelin <conta@LanceLibre> # Indicateur venant de terristory via json
+referentiel/action_statut_historique [referentiel/action_statut_historique@v1.14.0] 2022-11-29T15:45:07Z Florian <florian@derfurth.com> # Permet de reconstituer les statuts à un instant donné
