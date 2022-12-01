@@ -9,7 +9,7 @@ export const filtresTypeOptions: {value: TFilterType; label: string}[] = [
   {value: ITEM_ALL, label: 'Tous'},
   {value: 'action_statut', label: 'Action : statut'},
   {value: 'action_precision', label: 'Action : texte'},
-  // {value: 'reponse', label: 'Caractéristique de la collectivité'},
+  {value: 'reponse', label: 'Caractéristique de la collectivité'},
   // {value: 'preuve', label: 'Documents et preuves'},
   // {value: 'membre', label: 'Membre'},
   // {value: 'indicateur', label: 'Indicateur'},
