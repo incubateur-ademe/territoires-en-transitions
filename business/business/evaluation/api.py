@@ -2,6 +2,7 @@ from datetime import datetime
 import os
 import json
 from dataclasses import asdict, dataclass
+from typing import Union
 from urllib.parse import urljoin
 from fastapi import BackgroundTasks, APIRouter
 import requests
@@ -107,6 +108,7 @@ class DatalayerEvaluationPayload:
     scores_table: str
     referentiel: ActionReferentiel
     payload: EvaluatePayload
+    audit_id: Union[int, None] = None
 
 
 @dataclass
@@ -166,18 +168,22 @@ async def evaluate_then_post_scores(
         payload: DatalayerEvaluationPayload,
 ):
     scores = await evaluate(payload.payload)
+    row = {
+        "scores": [
+            asdict(score) for score in scores
+        ],
+        "collectivite_id": payload.collectivite_id,
+        "referentiel": payload.referentiel,
+        "payload_timestamp": payload.timestamp.isoformat(),
+    }
+    on_conflict = 'collectivite_id,referentiel'
+    if payload.audit_id:
+        row['audit_id'] = payload.audit_id
+        on_conflict += ',audit_id'
+
     response = requests.post(
-        f'{supabase_rest_url}/{payload.scores_table}?on_conflict=collectivite_id,referentiel',
-        data=json.dumps(
-            {
-                "scores": [
-                    asdict(score) for score in scores
-                ],
-                "collectivite_id": payload.collectivite_id,
-                "referentiel": payload.referentiel,
-                "payload_timestamp": payload.timestamp.isoformat(),
-            }
-        ),
+        f'{supabase_rest_url}/{payload.scores_table}?on_conflict={on_conflict}',
+        data=json.dumps(row),
         headers=supabase_headers(),
     )
     print(f'{response.url} replied with a code {response.status_code} in {response.elapsed}')
