@@ -15,7 +15,15 @@ const FiltreType = ({filters, setFilters}: TFiltreProps) => {
             : filters.types
         }
         options={filtresTypeOptions}
-        onSelect={newValues => setFilters({...filters, types: newValues})}
+        onSelect={newValues => {
+          if (getIsAllSelected(newValues)) {
+            const filtres = filters;
+            delete filtres.types;
+            setFilters({...filtres});
+          } else {
+            setFilters({...filters, types: newValues});
+          }
+        }}
         placeholderText="Sélectionner des options"
       />
     </HistoriqueFiltreField>
