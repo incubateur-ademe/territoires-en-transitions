@@ -2,6 +2,9 @@
 
 BEGIN;
 
+drop function evaluation.evaluate_statuts;
+drop function evaluation.evaluate_regles;
+
 create or replace function
     evaluation.evaluate_statuts(
     in collectivite_id integer,
