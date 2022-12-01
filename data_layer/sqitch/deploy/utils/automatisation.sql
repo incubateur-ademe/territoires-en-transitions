@@ -2,6 +2,12 @@
 
 BEGIN;
 
+create type automatisation_type as enum ('utilisateur', 'collectivite', 'collectivite_utilisateur');
+create table automatisation_uri (
+                                    uri_type automatisation_type primary key,
+                                    uri text not null
+);
+
 -- Vue d'un utilisateur pour un crm
 create view users_crm as
 select p.prenom                              as prenom,
@@ -43,15 +49,19 @@ from private_collectivite_membre pcm
 create or replace function send_users_json_n8n() returns trigger as $$
 declare
     to_send jsonb;
+    uri text;
 begin
     to_send = to_jsonb((select jsonb_build_array(u.*)
                         from users_crm u
                         where u.email = new.email));
-    perform http_post(
-            'https://territoires.app.n8n.cloud/webhook/7727c971-f11b-4f16-9a65-06e4c77e05b4',
-            to_send::varchar,
-            'application/json'::varchar
-        );
+    uri = (select au.uri from automatisation_uri au where au.uri_type = 'utilisateur' limit 1);
+    if uri is not null then
+        perform http_post(
+                uri,
+                to_send::varchar,
+                'application/json'::varchar
+            );
+    end if;
     return new;
 end;
 $$ language plpgsql security definer;
@@ -62,15 +72,19 @@ comment on function send_users_json_n8n is
 create or replace function send_collectivites_json_n8n() returns trigger as $$
 declare
     to_send jsonb;
+    uri text;
 begin
     to_send = to_jsonb((select jsonb_build_array(c.*)
                         from collectivites_crm c
                         where c.collectivite_id = new.collectivite_id));
-    perform http_post(
-            'https://territoires.app.n8n.cloud/webhook/72c7d554-91af-4b9f-a50a-d2cb358e2429',
-            to_send::varchar,
-            'application/json'::varchar
-        );
+    uri = (select au.uri from automatisation_uri au where au.uri_type = 'collectivite' limit 1);
+    if uri is not null then
+        perform http_post(
+                uri::varchar,
+                to_send::varchar,
+                'application/json'::varchar
+            );
+    end if;
     return new;
 end;
 $$ language plpgsql security definer;
@@ -81,16 +95,20 @@ comment on function send_collectivites_json_n8n is
 create or replace function send_collectivite_membre_json_n8n() returns trigger as $$
 declare
     to_send jsonb;
+    uri text;
 begin
     to_send = to_jsonb((select jsonb_build_array(c.*)
                         from collectivite_membre_crm c
                         where c.user_id = new.user_id
-                        and c.collectivite_id =new.collectivite_id));
-    perform http_post(
-            'https://territoires.app.n8n.cloud/webhook/0c2cc85e-5c38-44ed-a373-117e53125eb6',
-            to_send::varchar,
-            'application/json'::varchar
-        );
+                          and c.collectivite_id =new.collectivite_id));
+    uri = (select au.uri from automatisation_uri au where au.uri_type = 'collectivite_utilisateur' limit 1);
+    if uri is not null then
+        perform http_post(
+                uri,
+                to_send::varchar,
+                'application/json'::varchar
+            );
+    end if;
     return new;
 end;
 $$ language plpgsql security definer;
