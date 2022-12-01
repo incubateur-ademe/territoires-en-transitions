@@ -32,10 +32,16 @@ const useReferentielScores = (referentiel: Referentiel) => {
   useScoreListener()?.subscribe(collectiviteId);
 
   // charge les données
-  return useQuery(getScoreQueryKey(collectiviteId, referentiel), () =>
-    collectiviteId
-      ? fetchScoresForCollectiviteAndReferentiel(collectiviteId, referentiel)
-      : []
+  return useQuery(
+    getScoreQueryKey(collectiviteId, referentiel),
+    () =>
+      collectiviteId
+        ? fetchScoresForCollectiviteAndReferentiel(collectiviteId, referentiel)
+        : [],
+    // on ne refetch pas trop systématiquement car il peut y avoir beaucoup
+    // d'instances de ce hook et que l'update est fait lors de la réception des
+    // notifications `client_scores_update`
+    {refetchOnMount: false}
   );
 };
 
