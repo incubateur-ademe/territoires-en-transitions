@@ -153,7 +153,7 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
       </div>
 
       <Tabs activeTab={activeTab} onChange={handleChange}>
-        <Tab label="Suivi de l'action">
+        <Tab label="Suivi de l'action" icon="fr-fi-seedling-fill">
           <section>
             <div
               className="htmlContent"
@@ -167,6 +167,9 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
             <Spacer size={1} />
             <ActionCommentaire action={action} />
 
+            <h4 className="text-xl fr-mt-4w">
+              Détail des sous-actions et des tâches
+            </h4>
             <div className="flex items-center fr-text--sm fr-m-0">
               Afficher uniquement les actions non-renseignées
               <Switch
@@ -187,13 +190,13 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
             ))}
           </section>
         </Tab>
-        <Tab label="Preuves">
+        <Tab label="Preuves" icon="fr-fi-file-line">
           <section>
             <ActionPreuvePanel withSubActions showWarning action={action} />
             <DownloadDocs action={action} />
           </section>
         </Tab>
-        <Tab label="Indicateurs">
+        <Tab label="Indicateurs" icon="fr-fi-line-chart-fill">
           <section>
             {actionLinkedIndicateurDefinitions.length === 0 && (
               <p>Cette action ne comporte pas d'indicateur</p>
@@ -207,7 +210,7 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
             ))}
           </section>
         </Tab>
-        <Tab label="Historique">
+        <Tab label="Historique" icon="fr-fi-history-line">
           <HistoriqueListe actionId={action.id} />
         </Tab>
       </Tabs>

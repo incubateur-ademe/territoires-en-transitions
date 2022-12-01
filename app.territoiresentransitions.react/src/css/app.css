@@ -115,10 +115,37 @@ label {
   width: 24px;
   height: 24px;
 }
+.fr-fi-seedling-fill::before {
+  background-color: var(--text-action-high-grey);
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='none' d='M0 0H24V24H0z'/%3E%3Cpath d='M22 7v2.5c0 3.59-2.91 6.5-6.5 6.5H13v5h-2v-7l.019-1c.255-3.356 3.06-6 6.481-6H22zM6 3c3.092 0 5.716 2.005 6.643 4.786-1.5 1.275-2.49 3.128-2.627 5.214H9c-3.866 0-7-3.134-7-7V3h4z' fill='rgba(255,255,255,1)'/%3E%3C/svg%3E");
+  content: ' ';
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+.fr-fi-line-chart-fill::before {
+  background-color: var(--text-action-high-grey);
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='none' d='M0 0H24V24H0z'/%3E%3Cpath d='M5 3v16h16v2H3V3h2zm14.94 2.94l2.12 2.12L16 14.122l-3-3-3.94 3.94-2.12-2.122L13 6.88l3 3 3.94-3.94z'/%3E%3C/svg%3E");
+  content: ' ';
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+.fr-fi-history-line::before {
+  background-color: var(--text-action-high-grey);
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='none' d='M0 0H24V24H0z'/%3E%3Cpath d='M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12h2c0 4.418 3.582 8 8 8s8-3.582 8-8-3.582-8-8-8C9.25 4 6.824 5.387 5.385 7.5H8v2H2v-6h2V6c1.824-2.43 4.729-4 8-4zm1 5v4.585l3.243 3.243-1.415 1.415L11 12.413V7h2z'/%3E%3C/svg%3E");
+  content: ' ';
+  display: block;
+  width: 24px;
+  height: 24px;
+}
 
 /** change la couleur quand ces icônes sont utilisées dans le titre d'un onglet sélectionné */
 [aria-selected='true'] .fr-fi-archive-line::before,
-[aria-selected='true'] .fr-fi-settings-line::before {
+[aria-selected='true'] .fr-fi-settings-line::before,
+[aria-selected='true'] .fr-fi-line-chart-fill::before,
+[aria-selected='true'] .fr-fi-seedling-fill::before,
+[aria-selected='true'] .fr-fi-history-line::before {
   background-color: var(--text-active-blue-france);
 }
 
