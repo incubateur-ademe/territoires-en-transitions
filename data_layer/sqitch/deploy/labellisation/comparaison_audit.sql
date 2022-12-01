@@ -2,22 +2,36 @@
 
 BEGIN;
 
+-- Stockage des scores pre-audit.
+
 create table pre_audit_scores
 (
     like client_scores,
     audit_id integer references audit,
     primary key (collectivite_id, referentiel, audit_id)
 );
-select private.add_modified_at_trigger('public', 'pre_audit_scores');
 comment on table pre_audit_scores
     is 'Les scores avant audit.';
 
+-- maintient le modified at à jour.
+select private.add_modified_at_trigger('public', 'pre_audit_scores');
+
+-- tout le monde peut lire la table
 alter table pre_audit_scores
     enable row level security;
 create policy allow_read
     on pre_audit_scores for select
     using (true);
 
+-- les résultats d'une payload plus ancienne ne peuvent pas écraser les nouveaux
+create trigger check_payload_timestamp
+    before insert or update
+    on pre_audit_scores
+    for each row
+execute procedure prevent_older_results();
+
+
+-- Evaluation des statuts pre-audit
 
 create function labellisation.pre_audit_service_statuts(audit_id integer)
     returns jsonb
@@ -110,10 +124,42 @@ comment on function labellisation.evaluate_audit_statuts
     is 'Appel le service d''évaluation pour une collectivité et un référentiel. '
         'Le service écrira une fois le calcul fait dans la table `scores_table`.';
 
--- lorsque que les conséquences de personalisation changent
---- todo trigger
--- ou qu'un audit est modifié
---- todo trigger
--- on appelle la fonction update_audit scores
+
+create function labellisation.update_audit_scores() returns trigger as
+$$
+begin
+    perform labellisation.evaluate_audit_statuts(new.id, 'pre_audit_scores');
+    return new;
+end
+$$ language plpgsql;
+
+create trigger after_write_update_audit_scores
+    after insert or update
+    on audit
+    for each row
+execute procedure labellisation.update_audit_scores();
+comment on trigger after_write_update_audit_scores on audit is
+    'Mets à jour les scores pre-audit.';
+
+create function labellisation.update_audit_score_on_personnalisation() returns trigger as
+$$
+begin
+    with ref as (select unnest(enum_range(null::referentiel)) as referentiel),
+         audit as (select ca.id
+                   from ref
+                            join labellisation.current_audit(new.collectivite_id, ref.referentiel) ca on true)
+    select labellisation.evaluate_audit_statuts(audit.id, 'pre_audit_scores')
+    from audit;
+    return new;
+end
+$$ language plpgsql;
+
+create trigger after_write_update_audit_scores
+    after insert or update
+    on personnalisation_consequence
+    for each row
+execute procedure labellisation.update_audit_score_on_personnalisation();
+comment on trigger after_write_update_audit_scores on personnalisation_consequence is
+    'Mets à jour les scores pre-audit si un audit est en cours.';
 
 COMMIT;
