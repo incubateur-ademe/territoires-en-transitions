@@ -7,6 +7,7 @@ create table automatisation_uri (
                                     uri_type automatisation_type primary key,
                                     uri text not null
 );
+alter table automatisation_uri enable row level security;
 
 -- Vue d'un utilisateur pour un crm
 create view users_crm as
