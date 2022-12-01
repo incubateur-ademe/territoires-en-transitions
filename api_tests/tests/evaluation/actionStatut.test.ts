@@ -30,7 +30,7 @@ Deno.test("Calcul des scores après la modification de statuts", async () => {
   assertObjectMatch(insert.data![0], statut);
 
   // on attend le calcul des scores
-  await delay(200);
+  await delay(1000);
   const clientScores1 = await supabase.from("client_scores")
     .select()
     .eq("collectivite_id", 2)
@@ -54,7 +54,7 @@ Deno.test("Calcul des scores après la modification de statuts", async () => {
   await supabase.from("action_statut").upsert(statut);
 
   // on attend de nouveau le calcul des scores
-  await delay(200);
+  await delay(1000);
   const clientScores2 = await supabase.from("client_scores")
     .select()
     .eq("collectivite_id", 2)

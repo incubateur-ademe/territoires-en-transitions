@@ -19,7 +19,7 @@ Deno.test("Calcul de 'eci_2.4.2' après la réponse à la question 'dechets_1'",
   await saveReponse(reponse);
 
   // on attend le calcul des scores
-  await delay(200);
+  await delay(1000);
   let clientScores = await supabase.from("client_scores")
     .select()
     .eq("collectivite_id", 2)
@@ -40,7 +40,7 @@ Deno.test("Calcul de 'eci_2.4.2' après la réponse à la question 'dechets_1'",
   await saveReponse(reponse);
 
   // on attend de nouveau le calcul des scores
-  await delay(200);
+  await delay(1000);
   clientScores = await supabase.from("client_scores")
     .select()
     .eq("collectivite_id", 2)
