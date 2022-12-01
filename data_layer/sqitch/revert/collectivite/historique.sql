@@ -1,7 +1,7 @@
--- Revert tet:collectivite/historique from pg
+-- Deploy tet:collectivite/historique to pg
 
 BEGIN;
 
-drop view historique;
+drop view historique_utilisateur;
 
 COMMIT;
