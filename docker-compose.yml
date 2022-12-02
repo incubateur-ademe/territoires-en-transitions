@@ -148,55 +148,22 @@ services:
       - ./data_layer/supabase/init:/docker-entrypoint-initdb.d
       - ./data_layer/content:/content
 
-  # When this service is healthy, supabase has been loaded.
-  supabase_loaded:
-    container_name: tet-datalayer-loaded
-    build: ./data_layer/loader/.
-    healthcheck:
-      test: sh /scripts/loaded_supabase.sh
-      interval: 10s
-      timeout: 5s
-      retries: 100
-    depends_on:
-      - db
-      - auth
-      - storage
-    environment:
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      PGPASSWORD: ${POSTGRES_PASSWORD}
-      PGUSER: postgres
-      PGHOST: db
-    volumes:
-      - ./data_layer/scripts/loaded_supabase.sh:/scripts/loaded_supabase.sh
-      - ./data_layer/postgres:/postgres
-
-  # Sqitch
-  sqitch:
-    container_name: tet-sqitch-deploy
-    image: sqitch/sqitch
-    depends_on:
-      supabase_loaded:
-        condition: service_healthy
-    environment:
-      SQITCH_TARGET: db:pg://db/postgres
-      SQITCH_PASSWORD: ${POSTGRES_PASSWORD}
-      SQITCH_USERNAME: postgres
-    command: deploy
-    working_dir: /data_layer/sqitch
-    volumes:
-      - ./data_layer/sqitch:/data_layer/sqitch
-
   # Load contents and fakes once db is ready.
   loader:
     container_name: tet-datalayer-loader
     build: ./data_layer/loader/.
     depends_on:
-      - sqitch
+      - db
+      - auth
+      - storage
       - kong
       - rest
       - business
     command: sh /scripts/try_load.sh
     environment:
+      SQITCH_TARGET: db:pg://db/postgres
+      SQITCH_PASSWORD: ${POSTGRES_PASSWORD}
+      SQITCH_USERNAME: postgres
       SKIP_TEST_DOMAIN: ${LOADER_SKIP_TEST_DOMAIN}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PGPASSWORD: ${POSTGRES_PASSWORD}
@@ -205,6 +172,7 @@ services:
       SERVICE_ROLE_KEY: ${SERVICE_ROLE_KEY}
       SUPABASE_URL: ${SUPABASE_URL}
     volumes:
+      - ./data_layer/sqitch:/sqitch
       - ./data_layer/postgres:/postgres
       - ./data_layer/scripts/try_load.sh:/scripts/try_load.sh
       - ./data_layer/scripts/loaded_content.sh:/scripts/loaded_content.sh
