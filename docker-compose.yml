@@ -290,23 +290,37 @@ services:
       LANG: fr_FR.UTF-8
       CI: 'true'
 
-  # Sqitch revert
-  sqitch_revert:
-    container_name: tet-sqitch-revert
-    image: sqitch/sqitch
+  # Teste la réversibilité du plan.
+  sqitch-test:
+    container_name: tet-datalayer-loader
+    build: ./data_layer/loader/.
     depends_on:
-      loader:
-        condition: service_completed_successfully
-    profiles:
-      - donotstart
+      - db
+      - auth
+      - storage
+    command:
+      - sh
+      - -c
+      - | 
+        sh /scripts/wait_for_supabase.sh
+        sqitch deploy --chdir /sqitch || exit 1 
+        sqitch revert --to @v1.12.0 --y --chdir /sqitch || exit 1
+        sqitch deploy --chdir /sqitch || exit 1
     environment:
       SQITCH_TARGET: db:pg://db/postgres
       SQITCH_PASSWORD: ${POSTGRES_PASSWORD}
       SQITCH_USERNAME: postgres
-    command: revert --to @v1.12.0 --y
-    working_dir: /data_layer/sqitch
+      SKIP_TEST_DOMAIN: ${LOADER_SKIP_TEST_DOMAIN}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      PGUSER: postgres
+      PGHOST: db
+      SERVICE_ROLE_KEY: ${SERVICE_ROLE_KEY}
+      SUPABASE_URL: ${SUPABASE_URL}
     volumes:
-      - ./data_layer/sqitch:/data_layer/sqitch
+      - ./data_layer/sqitch:/sqitch
+      - ./data_layer/postgres:/postgres
+      - ./data_layer/scripts/wait_for_supabase.sh:/scripts/wait_for_supabase.sh
 
   # Mailhog est utilisé pour tester l'envoi de mails par Gotrue
   mailhog:
