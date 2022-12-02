@@ -6,8 +6,6 @@ on:
       - '**.md'
   workflow_dispatch:
 
-# interrompt le workflow précédent si un nouveau est déclenché pour le même
-# commit (cas push + ouverture PR)
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -16,6 +14,7 @@ jobs:
   sqitch:
     name: Sqitch
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     env:
       SUPABASE_SERVICE_ROLE_KEY: ${{secrets.TEST_SERVICE_SUPABASE_KEY}}
       SUPABASE_ANON_KEY: ${{secrets.TEST_ANON_SUPABASE_KEY}}
@@ -34,6 +33,7 @@ jobs:
     needs: sqitch
     name: Tests
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     env:
       SUPABASE_SERVICE_ROLE_KEY: ${{secrets.TEST_SERVICE_SUPABASE_KEY}}
       SUPABASE_ANON_KEY: ${{secrets.TEST_ANON_SUPABASE_KEY}}
