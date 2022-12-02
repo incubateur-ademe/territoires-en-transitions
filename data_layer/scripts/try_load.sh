@@ -18,10 +18,8 @@ until psql -v ON_ERROR_STOP=1 --file "$DATALAYER_DIR"/verify/supabase_storage.sq
   sleep 10
 done
 
-until psql -v ON_ERROR_STOP=1 --file "$DATALAYER_DIR"/verify/sqitch.sql; do
-  echo "Waiting for sqitch migration..."
-  sleep 10
-done
+echo "Running Sqitch.."
+sqitch deploy --chdir /sqitch || exit 1
 
 echo "Loading content..."
 for file in "$DATALAYER_DIR"/content/*.sql; do
