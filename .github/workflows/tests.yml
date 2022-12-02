@@ -27,7 +27,7 @@ jobs:
         run: sh make_dot_env.sh
 
       - name: Run sqitch revert to latest major version and then deploy to test reversibility
-        run: docker compose run sqitch_revert && docker compose run --no-deps sqitch deploy --verify
+        run: docker compose run sqitch-test
 
   tests:
     needs: sqitch
