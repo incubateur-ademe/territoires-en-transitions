@@ -38,6 +38,8 @@ export type TSelectBase = {
   placement?: Placement;
   /** Donne un id pour les tests e2e */
   'data-test'?: string;
+  /** Permet de désactiver le bouton d'ouverture */
+  disabled?: boolean;
 };
 
 export type TSelectSelectionButtonBase = {
