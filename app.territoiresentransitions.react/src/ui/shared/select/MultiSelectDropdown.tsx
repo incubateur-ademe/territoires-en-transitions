@@ -42,6 +42,7 @@ const MultiSelectDropdown = <T extends string>({
   renderSelection,
   renderOption,
   placement,
+  disabled,
   'data-test': dataTest,
 }: TMultiSelectDropdownProps<T>) => (
   <DropdownFloater
@@ -85,6 +86,7 @@ const MultiSelectDropdown = <T extends string>({
         renderSelection ? values => renderSelection(values as T[]) : undefined
       }
       data-test={dataTest}
+      disabled={disabled}
     />
   </DropdownFloater>
 );
@@ -104,6 +106,7 @@ const MultiSelectButton = forwardRef(
       buttonClassName,
       placeholderText,
       renderSelection,
+      disabled,
       'data-test': dataTest,
       ...props
     }: TMultiSelectButtonProps<T>,
@@ -115,6 +118,7 @@ const MultiSelectButton = forwardRef(
       aria-expanded={isOpen}
       aria-label="ouvrir le menu"
       className={classNames(buttonDisplayedClassname, buttonClassName)}
+      disabled={disabled}
       {...props}
     >
       {values && values?.length !== 0 ? (
