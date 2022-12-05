@@ -89,6 +89,7 @@ export const useHistoriqueItemListe = (
   // recharge les données lors de la mise à jour d'une des mutations écoutées
   const refetch = () => {
     queryClient.invalidateQueries(['historique', collectivite_id]);
+    queryClient.invalidateQueries(['historique_utilisateur', collectivite_id]);
   };
   useEffect(() => {
     return queryClient.getMutationCache().subscribe(mutation => {
