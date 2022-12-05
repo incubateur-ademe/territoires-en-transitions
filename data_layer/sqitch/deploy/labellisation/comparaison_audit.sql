@@ -165,33 +165,18 @@ comment on trigger after_write_update_audit_scores on personnalisation_consequen
 
 create function
     private.collectivite_scores(
-    in collectivite_id integer,
-    in referentiel referentiel,
-    out referentiel referentiel,
-    out action_id action_id,
-    out score_realise float,
-    out score_programme float,
-    out score_realise_plus_programme float,
-    out score_pas_fait float,
-    out score_non_renseigne float,
-    out points_restants float,
-    out points_realises float,
-    out points_programmes float,
-    out points_max_personnalises float,
-    out points_max_referentiel float
+    collectivite_id integer,
+    referentiel referentiel
 )
+    returns setof type_tabular_score
 begin
     atomic
-    select client_scores.referentiel as referentiel,
-           sc.*
-    from collectivite c
-             -- on prend les scores au format json pour chaque référentiel
-             join client_scores on client_scores.collectivite_id = c.id and client_scores.referentiel = referentiel
-        -- que l'on explose en lignes, une par action
+    select sc.*
+    from client_scores
              join private.convert_client_scores(client_scores.scores) ccc on true
-        -- puis on converti chacune de ces lignes au format approprié pour les vues tabulaires du client
              join private.to_tabular_score(ccc) sc on true
-    where c.id = collectivite_id;
+    where client_scores.collectivite_id = collectivite_scores.collectivite_id
+      and client_scores.referentiel = collectivite_scores.referentiel;
 end;
 comment on function private.collectivite_scores is
     'Les scores des actions pour une collectivité.';
@@ -199,61 +184,55 @@ comment on function private.collectivite_scores is
 
 create function
     private.collectivite_scores_pre_audit(
-    in collectivite_id integer,
-    in referentiel referentiel,
-    out referentiel referentiel,
-    out action_id action_id,
-    out score_realise float,
-    out score_programme float,
-    out score_realise_plus_programme float,
-    out score_pas_fait float,
-    out score_non_renseigne float,
-    out points_restants float,
-    out points_realises float,
-    out points_programmes float,
-    out points_max_personnalises float,
-    out points_max_referentiel float
+    collectivite_id integer,
+    referentiel referentiel
 )
+    returns setof type_tabular_score
 begin
     atomic
-    select pre_audit_scores.referentiel as referentiel, sc.*
-    from collectivite c
-             -- on prend les scores au format json pour chaque référentiel
-             join pre_audit_scores
-                  on pre_audit_scores.collectivite_id = c.id and pre_audit_scores.referentiel = referentiel
-        -- que l'on explose en lignes, une par action
+    select sc.*
+    from pre_audit_scores
              join private.convert_client_scores(pre_audit_scores.scores) ccc on true
-        -- puis on converti chacune de ces lignes au format approprié pour les vues tabulaires du client
              join private.to_tabular_score(ccc) sc on true
-    where c.id = collectivite_id;
+    where pre_audit_scores.collectivite_id = collectivite_scores_pre_audit.collectivite_id
+      and pre_audit_scores.referentiel = collectivite_scores_pre_audit.referentiel;
 end;
 comment on function private.collectivite_scores_pre_audit is
     'Les scores des actions avant audit en cours pour une collectivité.';
 
 
+create function
+    private.collectivite_score_comparaison(
+    collectivite_id integer,
+    referentiel referentiel
+)
+    returns table
+            (
+                referentiel referentiel,
+                courant     type_tabular_score,
+                pre_audit   type_tabular_score
+            )
+begin
+    atomic
+    select referentiel,
+           private.collectivite_scores(collectivite_id, referentiel) as courant,
+           private.collectivite_scores(collectivite_id, referentiel) as pre_audit;
+
+end;
+
+
 create view comparaison_scores_audit
 as
-with ref as (select unnest(enum_range(null::referentiel)) as referentiel),
-
-     current_scores as (select c.id as collectivite_id,
-                               s.*
-                        from collectivite c
-                                 join ref on true
-                                 join private.collectivite_scores(c.id, ref.referentiel) s on true),
-     pre_audit_scores as (select c.id as collectivite_id,
-                                 s.*
-                          from collectivite c
-                                   join ref on true
-                                   join private.collectivite_scores_pre_audit(c.id, ref.referentiel) s on true)
-select cs.collectivite_id,
-       cs.referentiel,
-       cs.action_id,
-       to_jsonb(cs)  as score_courant,
-       to_jsonb(pas) as score_pre_audit
-from current_scores cs
-         join pre_audit_scores pas
-              on cs.collectivite_id = pas.collectivite_id
-                  and cs.action_id = pas.action_id;
+with ref as (select unnest(enum_range(null::referentiel)) as referentiel)
+select c.id as collectivite_id,
+       sc.referentiel,
+       (sc.courant).action_id,
+       sc.courant,
+       sc.pre_audit
+from collectivite c
+         join ref on true
+         join lateral private.collectivite_score_comparaison(c.id, ref.referentiel) sc on true
+order by collectivite_id, referentiel, naturalsort((sc.courant).action_id);
 comment on view comparaison_scores_audit
     is 'Permet de comparer les scores pre audit avec ceux de l''audit en cours.';
 
