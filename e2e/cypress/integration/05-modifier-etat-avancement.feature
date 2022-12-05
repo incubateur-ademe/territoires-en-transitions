@@ -95,9 +95,6 @@ Fonctionnalité: Modifier l'état d'avancement et visualiser l'évolution des sc
       | Valeur précédente | Non renseigné |
       | Valeur courante   | Fait          |
 
-    Quand je filtre l'historique avec le filtre "membre" par l'option "Yala Dada"
-    Alors aucun historique n'est affiché
-
     Quand je filtre l'historique avec le filtre "membre" par l'option "Yili Didi"
     Alors l'historique contient 2 entrées
 
