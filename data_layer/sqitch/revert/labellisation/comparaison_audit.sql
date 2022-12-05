@@ -2,6 +2,10 @@
 
 BEGIN;
 
+drop view comparaison_scores_audit;
+drop function private.collectivite_scores;
+drop function private.collectivite_scores_pre_audit;
+
 drop trigger after_write_update_audit_scores on audit;
 drop trigger after_write_update_audit_scores on personnalisation_consequence;
 drop function labellisation.update_audit_score_on_personnalisation;
