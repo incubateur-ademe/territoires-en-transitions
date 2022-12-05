@@ -28,41 +28,6 @@ exports[`Storyshots app/pages/collectivite/Historique/JournalActivite Exemple 1 
         <p
           className="mb-2 font-medium"
         >
-          Membre de la collectivité
-        </p>
-        <div
-          className="shadow border-b border-b-gray-500"
-        >
-          <button
-            aria-expanded={false}
-            aria-label="ouvrir le menu"
-            className="flex items-center w-full p-2 text-left text-sm"
-            data-test="filtre-membre"
-            onBlur={[Function]}
-            onClick={[Function]}
-            onFocus={[Function]}
-            onKeyDown={[Function]}
-            onKeyUp={[Function]}
-            onMouseDown={[Function]}
-            onPointerDown={[Function]}
-          >
-            <span
-              className="mr-auto text-gray-500 italic line-clamp-1"
-            >
-              Sélectionner des options
-            </span>
-            <span
-              className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
-            />
-          </button>
-        </div>
-      </div>
-      <div
-        className="w-full"
-      >
-        <p
-          className="mb-2 font-medium"
-        >
           Type d'élément modifié
         </p>
         <div
