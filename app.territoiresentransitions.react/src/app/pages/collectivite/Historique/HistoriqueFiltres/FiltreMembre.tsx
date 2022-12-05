@@ -10,20 +10,17 @@ const FiltreMembre = ({filters, setFilters}: TFiltreProps) => {
   const collectivite_id = useCollectiviteId();
   const utilisateurs = useHistoriqueUtilisateurListe(collectivite_id!);
 
-  if (!utilisateurs) {
-    return null;
-  }
-
   // Initialisation du tableau d'options pour le multi-select
   const memberList: {value: string; label: string}[] = [];
   // Ajoute l'option "Tous" s'il y a plus d'une option
-  if (utilisateurs.length > 1) {
+  if (utilisateurs && utilisateurs.length > 1) {
     memberList.push({value: ITEM_ALL, label: 'Tous'});
   }
   // Transformation et ajout des données membres au tableau d'options
-  utilisateurs.forEach(u =>
-    memberList.push({value: u.modified_by_id!, label: u.modified_by_nom!})
-  );
+  utilisateurs &&
+    utilisateurs.forEach(u =>
+      memberList.push({value: u.modified_by_id!, label: u.modified_by_nom!})
+    );
 
   return (
     <HistoriqueFiltreField title="Membre">
