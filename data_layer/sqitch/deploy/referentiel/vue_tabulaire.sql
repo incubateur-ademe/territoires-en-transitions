@@ -53,26 +53,38 @@ from private.action_hierarchy ah
 comment on materialized view action_referentiel
     is 'La vue matérialisée utilisée comme tronc commun pour les vues tabulaires dans le client.';
 
-create or replace function
-    private.to_tabular_score(
-    in action_score private.action_score,
-    out action_id action_id,
+
+create table type_tabular_score
+(
+    referentiel                  referentiel,
+    action_id                    action_id,
     -- score
-    out score_realise double precision,
-    out score_programme double precision,
-    out score_realise_plus_programme double precision,
-    out score_pas_fait double precision,
-    out score_non_renseigne double precision,
+    score_realise                double precision,
+    score_programme              double precision,
+    score_realise_plus_programme double precision,
+    score_pas_fait               double precision,
+    score_non_renseigne          double precision,
     -- points
-    out points_restants double precision,
-    out points_realises double precision,
-    out points_programmes double precision,
-    out points_max_personnalises double precision,
-    out points_max_referentiel double precision
+    points_restants              double precision,
+    points_realises              double precision,
+    points_programmes            double precision,
+    points_max_personnalises     double precision,
+    points_max_referentiel       double precision
+);
+comment on table type_tabular_score
+    is 'Un score utilisé pour être affiché dans le client. '
+        'Cette table sert uniquement à typer les données, pas pour stocker.';
+alter table type_tabular_score enable row level security;
+
+create function
+    private.to_tabular_score(
+    action_score private.action_score
 )
+    returns type_tabular_score
 begin
     atomic
-    select action_score.action_id,
+    select action_score.referentiel,
+           action_score.action_id,
 -- score [0.0, 1.0]
            case
                when action_score.point_potentiel = 0 then 0
