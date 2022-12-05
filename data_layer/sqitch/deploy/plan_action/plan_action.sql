@@ -104,7 +104,7 @@ create table plan_action(
                             id serial primary key,
                             nom text,
                             collectivite_id integer references collectivite not null,
-                            parent integer references fiche_action
+                            parent integer references plan_action
 );
 create table fiche_action_plan_action(
                                          fiche_id integer references fiche_action not null,
