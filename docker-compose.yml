@@ -292,7 +292,7 @@ services:
 
   # Teste la réversibilité du plan.
   sqitch-test:
-    container_name: tet-datalayer-loader
+    container_name: tet-sqitch-test
     build: ./data_layer/loader/.
     depends_on:
       - db
