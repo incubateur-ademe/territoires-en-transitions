@@ -1,5 +1,5 @@
-insert into audit(id, collectivite_id, referentiel)
-values (1, 1, 'eci');
+insert into audit(id, collectivite_id, referentiel, date_debut)
+values (1, 1, 'eci', now() - interval '1 day');
 
 insert into audit_auditeur (audit_id, auditeur)
 values (1, '5f407fc6-3634-45ff-a988-301e9088096a');
