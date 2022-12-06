@@ -5,7 +5,7 @@
 import {Form, Formik} from 'formik';
 import * as Yup from 'yup';
 import {Spacer} from 'ui/shared/Spacer';
-import FormInput from 'ui/shared/form/FormInput';
+import FormikInput from 'ui/shared/form/formik/FormikInput';
 
 export type TAddLink = (titre: string, url: string) => void;
 
@@ -51,9 +51,9 @@ export const AddLink = (props: TAddLinkProps) => {
             <div className="fr-form-group">
               <fieldset className="fr-fieldset">
                 <div className="fr-fieldset__content"></div>
-                <FormInput name="titre" label="Titre (obligatoire)" />
+                <FormikInput name="titre" label="Titre (obligatoire)" />
                 <Spacer size={2} />
-                <FormInput name="url" label="Lien (obligatoire)" />
+                <FormikInput name="url" label="Lien (obligatoire)" />
               </fieldset>
             </div>
             <button
