@@ -92,16 +92,6 @@ action_id: cae_6.3.1.3
 si reponse(dev_eco_4,NON) alors 1.625
 ```
 
-# Désactivation cae 6.3.1.4.4 liee DOM
-```yaml
-action_id: cae_6.3.1.4.4
-```
-## Règles
-### Désactivation
-```formule
-identite(localisation, DOM)
-```
-
 # Modification potentiel cae 6.3.1.5 liee tissu economique
 ```yaml
 action_id: cae_6.3.1.5
