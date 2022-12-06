@@ -1589,6 +1589,32 @@ export interface Database {
           uid?: string
         }
       }
+      pre_audit_scores: {
+        Insert: {
+          audit_id: number,
+          collectivite_id: number,
+          modified_at: string,
+          payload_timestamp?: string | null,
+          referentiel: Database["public"]["Enums"]["referentiel"],
+          scores: Json
+        },
+        Row: {
+          audit_id: number,
+          collectivite_id: number,
+          modified_at: string,
+          payload_timestamp: string | null,
+          referentiel: Database["public"]["Enums"]["referentiel"],
+          scores: Json
+        },
+        Update: {
+          audit_id?: number,
+          collectivite_id?: number,
+          modified_at?: string,
+          payload_timestamp?: string | null,
+          referentiel?: Database["public"]["Enums"]["referentiel"],
+          scores?: Json
+        }
+      }
       preuve_action: {
         Insert: {
           action_id: string,
@@ -2013,6 +2039,50 @@ export interface Database {
           reponse?: number | null
         }
       }
+      type_tabular_score: {
+        Insert: {
+          action_id?: string | null,
+          points_max_personnalises?: number | null,
+          points_max_referentiel?: number | null,
+          points_programmes?: number | null,
+          points_realises?: number | null,
+          points_restants?: number | null,
+          referentiel?: Database["public"]["Enums"]["referentiel"] | null,
+          score_non_renseigne?: number | null,
+          score_pas_fait?: number | null,
+          score_programme?: number | null,
+          score_realise?: number | null,
+          score_realise_plus_programme?: number | null
+        },
+        Row: {
+          action_id: string | null,
+          points_max_personnalises: number | null,
+          points_max_referentiel: number | null,
+          points_programmes: number | null,
+          points_realises: number | null,
+          points_restants: number | null,
+          referentiel: Database["public"]["Enums"]["referentiel"] | null,
+          score_non_renseigne: number | null,
+          score_pas_fait: number | null,
+          score_programme: number | null,
+          score_realise: number | null,
+          score_realise_plus_programme: number | null
+        },
+        Update: {
+          action_id?: string | null,
+          points_max_personnalises?: number | null,
+          points_max_referentiel?: number | null,
+          points_programmes?: number | null,
+          points_realises?: number | null,
+          points_restants?: number | null,
+          referentiel?: Database["public"]["Enums"]["referentiel"] | null,
+          score_non_renseigne?: number | null,
+          score_pas_fait?: number | null,
+          score_programme?: number | null,
+          score_realise?: number | null,
+          score_realise_plus_programme?: number | null
+        }
+      }
     },
     Views: {
       action_audit_state: {
@@ -2063,18 +2133,6 @@ export interface Database {
           id: number | null,
           modified_at: string | null,
           status: Database["public"]["Enums"]["action_discussion_statut"] | null
-        }
-      }
-      action_hierarchy: {
-        Row: {
-          action_id: string | null
-          ascendants: unknown[] | null,
-          depth: number | null,
-          descendants: unknown[] | null,
-          have_children: boolean | null
-          leaves: unknown[] | null,
-          referentiel: Database["public"]["Enums"]["referentiel"] | null,
-          type: Database["public"]["Enums"]["action_type"] | null
         }
       }
       action_statuts: {
@@ -2217,6 +2275,15 @@ export interface Database {
           est_auditeur: boolean | null,
           niveau_acces: Database["public"]["Enums"]["niveau_acces"] | null
           nom: string | null
+        }
+      }
+      comparaison_scores_audit: {
+        Row: {
+          action_id: string | null,
+          collectivite_id: number | null,
+          courant: unknown | null,
+          pre_audit: unknown | null,
+          referentiel: Database["public"]["Enums"]["referentiel"] | null
         }
       }
       departement: {
