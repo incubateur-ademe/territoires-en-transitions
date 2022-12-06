@@ -11,6 +11,7 @@ $$
 declare
 begin
     perform private.upsert_actions(new.definitions, new.children);
+    refresh materialized view evaluation.service_referentiel;
     refresh materialized view private.action_node;
     refresh materialized view action_referentiel;
     return new;
