@@ -14,6 +14,14 @@
       "rules": {
         "import/no-anonymous-default-export": "off"
       }
+    },
+    {
+      "files": ["src/types/database.types.ts"],
+      "plugins": ["typescript-sort-keys"],
+      "rules": {
+        "typescript-sort-keys/interface": "error",
+        "typescript-sort-keys/string-enum": "error"
+      }
     }
   ]
 }

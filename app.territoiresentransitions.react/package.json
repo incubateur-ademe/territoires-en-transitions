@@ -111,6 +111,7 @@
     "@types/zxcvbn": "^4.4.1",
     "autoprefixer": "^10.4.10",
     "chromatic": "^6.11.4",
+    "eslint-plugin-typescript-sort-keys": "^2.1.0",
     "jest-websocket-mock": "^2.2.1",
     "mock-socket": "^9.0.8",
     "postcss": "^8.4.16",
