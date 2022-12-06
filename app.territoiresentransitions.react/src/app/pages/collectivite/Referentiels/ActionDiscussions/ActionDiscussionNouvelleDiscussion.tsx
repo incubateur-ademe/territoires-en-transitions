@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import ActionDiscussionTextarea from './ActionDiscussionTextarea';
+import Textarea from 'ui/shared/form/Textarea';
 import {useAddDiscussionToAction} from './data/useAddDiscussionToAction';
 
 type Props = {
@@ -17,9 +17,10 @@ const ActionDiscussionNouvelleDiscussion = ({actionId}: Props) => {
       data-test="ActionDiscussionsNouvelleDiscussion"
       className="py-3 px-4 bg-gray-100"
     >
-      <ActionDiscussionTextarea
-        commentaire={commentaire}
-        onChange={setCommentaire}
+      <Textarea
+        className="bg-white"
+        value={commentaire}
+        onInputChange={setCommentaire}
         placeholder="Écrire un nouveau commentaire..."
       />
 
