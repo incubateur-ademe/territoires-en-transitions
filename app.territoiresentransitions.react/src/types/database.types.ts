@@ -636,24 +636,24 @@ export interface Database {
       }
       action_computed_points: {
         Insert: {
-          action_id: string,
+          action_id: string
           modified_at?: string,
           value: number
         },
         Row: {
-          action_id: string,
+          action_id: string
           modified_at: string,
           value: number
         },
         Update: {
-          action_id?: string,
+          action_id?: string
           modified_at?: string,
           value?: number
         }
       }
       action_definition: {
         Insert: {
-          action_id: string,
+          action_id: string
           categorie?: Database["public"]["Enums"]["action_categorie"] | null,
           contexte: string,
           description: string,
@@ -664,13 +664,13 @@ export interface Database {
           perimetre_evaluation: string,
           points?: number | null,
           pourcentage?: number | null,
-          preuve?: string | null
+          preuve?: string | null,
           reduction_potentiel: string,
           referentiel: Database["public"]["Enums"]["referentiel"],
           ressources: string
         },
         Row: {
-          action_id: string,
+          action_id: string
           categorie: Database["public"]["Enums"]["action_categorie"] | null,
           contexte: string,
           description: string,
@@ -681,13 +681,13 @@ export interface Database {
           perimetre_evaluation: string,
           points: number | null,
           pourcentage: number | null,
-          preuve: string | null
+          preuve: string | null,
           reduction_potentiel: string,
           referentiel: Database["public"]["Enums"]["referentiel"],
           ressources: string
         },
         Update: {
-          action_id?: string,
+          action_id?: string
           categorie?: Database["public"]["Enums"]["action_categorie"] | null,
           contexte?: string,
           description?: string,
@@ -698,7 +698,7 @@ export interface Database {
           perimetre_evaluation?: string,
           points?: number | null,
           pourcentage?: number | null,
-          preuve?: string | null
+          preuve?: string | null,
           reduction_potentiel?: string,
           referentiel?: Database["public"]["Enums"]["referentiel"],
           ressources?: string
@@ -707,7 +707,7 @@ export interface Database {
       action_discussion: {
         Insert: {
           action_id: string,
-          collectivite_id: number
+          collectivite_id: number,
           created_at?: string,
           created_by?: string
           id?: number,
@@ -716,7 +716,7 @@ export interface Database {
         },
         Row: {
           action_id: string,
-          collectivite_id: number
+          collectivite_id: number,
           created_at: string,
           created_by: string
           id: number,
@@ -725,7 +725,7 @@ export interface Database {
         },
         Update: {
           action_id?: string,
-          collectivite_id?: number
+          collectivite_id?: number,
           created_at?: string,
           created_by?: string
           id?: number,
@@ -736,21 +736,21 @@ export interface Database {
       action_discussion_commentaire: {
         Insert: {
           created_at?: string,
-          created_by?: string
+          created_by?: string,
           discussion_id: number,
           id?: number,
           message: string
         },
         Row: {
           created_at: string,
-          created_by: string
+          created_by: string,
           discussion_id: number,
           id: number,
           message: string
         },
         Update: {
           created_at?: string,
-          created_by?: string
+          created_by?: string,
           discussion_id?: number,
           id?: number,
           message?: string
@@ -804,27 +804,27 @@ export interface Database {
       }
       audit: {
         Insert: {
-          collectivite_id: number,
+          collectivite_id: number
           date_debut?: string,
           date_fin?: string | null,
-          demande_id?: number | null
-          id?: number,
+          demande_id?: number | null,
+          id?: number
           referentiel: Database["public"]["Enums"]["referentiel"]
         },
         Row: {
-          collectivite_id: number,
+          collectivite_id: number
           date_debut: string,
           date_fin: string | null,
-          demande_id: number | null
-          id: number,
+          demande_id: number | null,
+          id: number
           referentiel: Database["public"]["Enums"]["referentiel"]
         },
         Update: {
-          collectivite_id?: number,
+          collectivite_id?: number
           date_debut?: string,
           date_fin?: string | null,
-          demande_id?: number | null
-          id?: number,
+          demande_id?: number | null,
+          id?: number
           referentiel?: Database["public"]["Enums"]["referentiel"]
         }
       }
@@ -915,17 +915,17 @@ export interface Database {
       }
       collectivite_test: {
         Insert: {
-          collectivite_id?: number | null,
+          collectivite_id?: number | null
           id?: number,
           nom: string
         },
         Row: {
-          collectivite_id: number | null,
+          collectivite_id: number | null
           id: number,
           nom: string
         },
         Update: {
-          collectivite_id?: number | null,
+          collectivite_id?: number | null
           id?: number,
           nom?: string
         }
@@ -933,19 +933,19 @@ export interface Database {
       commune: {
         Insert: {
           code: string,
-          collectivite_id?: number | null
+          collectivite_id?: number | null,
           id?: number,
           nom: string
         },
         Row: {
           code: string,
-          collectivite_id: number | null
+          collectivite_id: number | null,
           id: number,
           nom: string
         },
         Update: {
           code?: string,
-          collectivite_id?: number | null
+          collectivite_id?: number | null,
           id?: number,
           nom?: string
         }
@@ -987,21 +987,21 @@ export interface Database {
       }
       epci: {
         Insert: {
-          collectivite_id?: number | null,
+          collectivite_id?: number | null
           id?: number,
           nature: Database["public"]["Enums"]["nature"],
           nom: string,
           siren: string
         },
         Row: {
-          collectivite_id: number | null,
+          collectivite_id: number | null
           id: number,
           nature: Database["public"]["Enums"]["nature"],
           nom: string,
           siren: string
         },
         Update: {
-          collectivite_id?: number | null,
+          collectivite_id?: number | null
           id?: number,
           nature?: Database["public"]["Enums"]["nature"],
           nom?: string,
@@ -1018,7 +1018,7 @@ export interface Database {
           date_debut: string,
           date_fin: string,
           description: string,
-          elu_referent: string,
+          elu_referent: string
           en_retard: boolean,
           indicateur_ids: unknown[],
           indicateur_personnalise_ids: number[],
@@ -1039,7 +1039,7 @@ export interface Database {
           date_debut: string,
           date_fin: string,
           description: string,
-          elu_referent: string,
+          elu_referent: string
           en_retard: boolean,
           indicateur_ids: unknown[],
           indicateur_personnalise_ids: number[],
@@ -1060,7 +1060,7 @@ export interface Database {
           date_debut?: string,
           date_fin?: string,
           description?: string,
-          elu_referent?: string,
+          elu_referent?: string
           en_retard?: boolean,
           indicateur_ids?: unknown[],
           indicateur_personnalise_ids?: number[],
@@ -1138,51 +1138,51 @@ export interface Database {
       indicateur_action: {
         Insert: {
           action_id: string,
-          indicateur_id: string
+          indicateur_id: string,
           modified_at?: string
         },
         Row: {
           action_id: string,
-          indicateur_id: string
+          indicateur_id: string,
           modified_at: string
         },
         Update: {
           action_id?: string,
-          indicateur_id?: string
+          indicateur_id?: string,
           modified_at?: string
         }
       }
       indicateur_commentaire: {
         Insert: {
-          collectivite_id: number,
+          collectivite_id: number
           commentaire: string,
-          indicateur_id: string
-          modified_at?: string,
+          indicateur_id: string,
+          modified_at?: string
           modified_by?: string
         },
         Row: {
-          collectivite_id: number,
+          collectivite_id: number
           commentaire: string,
-          indicateur_id: string
-          modified_at: string,
+          indicateur_id: string,
+          modified_at: string
           modified_by: string
         },
         Update: {
-          collectivite_id?: number,
+          collectivite_id?: number
           commentaire?: string,
-          indicateur_id?: string
-          modified_at?: string,
+          indicateur_id?: string,
+          modified_at?: string
           modified_by?: string
         }
       }
       indicateur_definition: {
         Insert: {
           description: string,
-          id: string
-          identifiant: string,
+          id: string,
+          identifiant: string
           indicateur_group: Database["public"]["Enums"]["indicateur_group"],
           modified_at?: string,
-          nom: string
+          nom: string,
           obligation_eci: boolean,
           parent?: number | null,
           unite: string,
@@ -1190,11 +1190,11 @@ export interface Database {
         },
         Row: {
           description: string,
-          id: string
-          identifiant: string,
+          id: string,
+          identifiant: string
           indicateur_group: Database["public"]["Enums"]["indicateur_group"],
           modified_at: string,
-          nom: string
+          nom: string,
           obligation_eci: boolean,
           parent: number | null,
           unite: string,
@@ -1202,11 +1202,11 @@ export interface Database {
         },
         Update: {
           description?: string,
-          id?: string
-          identifiant?: string,
+          id?: string,
+          identifiant?: string
           indicateur_group?: Database["public"]["Enums"]["indicateur_group"],
           modified_at?: string,
-          nom?: string
+          nom?: string,
           obligation_eci?: boolean,
           parent?: number | null,
           unite?: string,
@@ -1238,26 +1238,26 @@ export interface Database {
       }
       indicateur_parent: {
         Insert: {
-          id?: number
-          nom: string,
+          id?: number,
+          nom: string
           numero: string
         },
         Row: {
-          id: number
-          nom: string,
+          id: number,
+          nom: string
           numero: string
         },
         Update: {
-          id?: number
-          nom?: string,
+          id?: number,
+          nom?: string
           numero?: string
         }
       }
       indicateur_personnalise_definition: {
         Insert: {
-          collectivite_id?: number | null,
+          collectivite_id?: number | null
           commentaire: string,
-          description: string,
+          description: string
           id?: number,
           modified_at?: string,
           modified_by?: string,
@@ -1265,9 +1265,9 @@ export interface Database {
           unite: string
         },
         Row: {
-          collectivite_id: number | null,
+          collectivite_id: number | null
           commentaire: string,
-          description: string,
+          description: string
           id: number,
           modified_at: string,
           modified_by: string,
@@ -1275,9 +1275,9 @@ export interface Database {
           unite: string
         },
         Update: {
-          collectivite_id?: number | null,
+          collectivite_id?: number | null
           commentaire?: string,
-          description?: string,
+          description?: string
           id?: number,
           modified_at?: string,
           modified_by?: string,
@@ -1371,7 +1371,7 @@ export interface Database {
       labellisation: {
         Insert: {
           annee?: number | null,
-          collectivite_id?: number | null
+          collectivite_id?: number | null,
           etoiles: number,
           id?: number,
           obtenue_le: string,
@@ -1381,7 +1381,7 @@ export interface Database {
         },
         Row: {
           annee: number | null,
-          collectivite_id: number | null
+          collectivite_id: number | null,
           etoiles: number,
           id: number,
           obtenue_le: string,
@@ -1391,7 +1391,7 @@ export interface Database {
         },
         Update: {
           annee?: number | null,
-          collectivite_id?: number | null
+          collectivite_id?: number | null,
           etoiles?: number,
           id?: number,
           obtenue_le?: string,
@@ -1468,18 +1468,18 @@ export interface Database {
       }
       maintenance: {
         Insert: {
-          begins_at: string,
-          ends_at: string,
+          begins_at: string
+          ends_at: string
           id?: number
         },
         Row: {
-          begins_at: string,
-          ends_at: string,
+          begins_at: string
+          ends_at: string
           id: number
         },
         Update: {
-          begins_at?: string,
-          ends_at?: string,
+          begins_at?: string
+          ends_at?: string
           id?: number
         }
       }
@@ -1502,21 +1502,21 @@ export interface Database {
       }
       personnalisation_consequence: {
         Insert: {
-          collectivite_id: number,
-          consequences: Json,
-          modified_at?: string,
+          collectivite_id: number
+          consequences: Json
+          modified_at?: string
           payload_timestamp?: string | null
         },
         Row: {
-          collectivite_id: number,
-          consequences: Json,
-          modified_at: string,
+          collectivite_id: number
+          consequences: Json
+          modified_at: string
           payload_timestamp: string | null
         },
         Update: {
-          collectivite_id?: number,
-          consequences?: Json,
-          modified_at?: string,
+          collectivite_id?: number
+          consequences?: Json
+          modified_at?: string
           payload_timestamp?: string | null
         }
       }
@@ -1606,6 +1606,119 @@ export interface Database {
       preuve_complementaire: {
         Insert: {
           action_id: string,
+          collectivite_id: number,
+          commentaire?: string,
+          fichier_id?: number | null,
+          id?: number
+          lien?: Json | null,
+          modified_at?: string,
+          modified_by?: string
+          titre?: string,
+          url?: string | null
+        },
+        Row: {
+          action_id: string,
+          collectivite_id: number,
+          commentaire: string,
+          fichier_id: number | null,
+          id: number
+          lien: Json | null,
+          modified_at: string,
+          modified_by: string
+          titre: string,
+          url: string | null
+        },
+        Update: {
+          action_id?: string,
+          collectivite_id?: number,
+          commentaire?: string,
+          fichier_id?: number | null,
+          id?: number
+          lien?: Json | null,
+          modified_at?: string,
+          modified_by?: string
+          titre?: string,
+          url?: string | null
+        }
+      }
+      preuve_labellisation: {
+        Insert: {
+          collectivite_id: number
+          commentaire?: string,
+          demande_id: number,
+          fichier_id?: number | null,
+          id?: number
+          lien?: Json | null,
+          modified_at?: string,
+          modified_by?: string
+          titre?: string,
+          url?: string | null
+        },
+        Row: {
+          collectivite_id: number
+          commentaire: string,
+          demande_id: number,
+          fichier_id: number | null,
+          id: number
+          lien: Json | null,
+          modified_at: string,
+          modified_by: string
+          titre: string,
+          url: string | null
+        },
+        Update: {
+          collectivite_id?: number
+          commentaire?: string,
+          demande_id?: number,
+          fichier_id?: number | null,
+          id?: number
+          lien?: Json | null,
+          modified_at?: string,
+          modified_by?: string
+          titre?: string,
+          url?: string | null
+        }
+      }
+      preuve_rapport: {
+        Insert: {
+          collectivite_id: number
+          commentaire?: string,
+          date: string,
+          fichier_id?: number | null,
+          id?: number
+          lien?: Json | null,
+          modified_at?: string,
+          modified_by?: string
+          titre?: string,
+          url?: string | null
+        },
+        Row: {
+          collectivite_id: number
+          commentaire: string,
+          date: string,
+          fichier_id: number | null,
+          id: number
+          lien: Json | null,
+          modified_at: string,
+          modified_by: string
+          titre: string,
+          url: string | null
+        },
+        Update: {
+          collectivite_id?: number
+          commentaire?: string,
+          date?: string,
+          fichier_id?: number | null,
+          id?: number
+          lien?: Json | null,
+          modified_at?: string,
+          modified_by?: string
+          titre?: string,
+          url?: string | null
+        }
+      }
+      preuve_reglementaire: {
+        Insert: {
           collectivite_id: number
           commentaire?: string,
           fichier_id?: number | null,
@@ -1613,11 +1726,11 @@ export interface Database {
           lien?: Json | null,
           modified_at?: string,
           modified_by?: string,
+          preuve_id: string,
           titre?: string,
           url?: string | null
         },
         Row: {
-          action_id: string,
           collectivite_id: number
           commentaire: string,
           fichier_id: number | null,
@@ -1625,11 +1738,11 @@ export interface Database {
           lien: Json | null,
           modified_at: string,
           modified_by: string,
+          preuve_id: string,
           titre: string,
           url: string | null
         },
         Update: {
-          action_id?: string,
           collectivite_id?: number
           commentaire?: string,
           fichier_id?: number | null,
@@ -1637,119 +1750,6 @@ export interface Database {
           lien?: Json | null,
           modified_at?: string,
           modified_by?: string,
-          titre?: string,
-          url?: string | null
-        }
-      }
-      preuve_labellisation: {
-        Insert: {
-          collectivite_id: number,
-          commentaire?: string,
-          demande_id: number,
-          fichier_id?: number | null,
-          id?: number,
-          lien?: Json | null,
-          modified_at?: string,
-          modified_by?: string,
-          titre?: string,
-          url?: string | null
-        },
-        Row: {
-          collectivite_id: number,
-          commentaire: string,
-          demande_id: number,
-          fichier_id: number | null,
-          id: number,
-          lien: Json | null,
-          modified_at: string,
-          modified_by: string,
-          titre: string,
-          url: string | null
-        },
-        Update: {
-          collectivite_id?: number,
-          commentaire?: string,
-          demande_id?: number,
-          fichier_id?: number | null,
-          id?: number,
-          lien?: Json | null,
-          modified_at?: string,
-          modified_by?: string,
-          titre?: string,
-          url?: string | null
-        }
-      }
-      preuve_rapport: {
-        Insert: {
-          collectivite_id: number,
-          commentaire?: string,
-          date: string,
-          fichier_id?: number | null,
-          id?: number,
-          lien?: Json | null,
-          modified_at?: string,
-          modified_by?: string,
-          titre?: string,
-          url?: string | null
-        },
-        Row: {
-          collectivite_id: number,
-          commentaire: string,
-          date: string,
-          fichier_id: number | null,
-          id: number,
-          lien: Json | null,
-          modified_at: string,
-          modified_by: string,
-          titre: string,
-          url: string | null
-        },
-        Update: {
-          collectivite_id?: number,
-          commentaire?: string,
-          date?: string,
-          fichier_id?: number | null,
-          id?: number,
-          lien?: Json | null,
-          modified_at?: string,
-          modified_by?: string,
-          titre?: string,
-          url?: string | null
-        }
-      }
-      preuve_reglementaire: {
-        Insert: {
-          collectivite_id: number,
-          commentaire?: string,
-          fichier_id?: number | null
-          id?: number,
-          lien?: Json | null,
-          modified_at?: string,
-          modified_by?: string
-          preuve_id: string,
-          titre?: string,
-          url?: string | null
-        },
-        Row: {
-          collectivite_id: number,
-          commentaire: string,
-          fichier_id: number | null
-          id: number,
-          lien: Json | null,
-          modified_at: string,
-          modified_by: string
-          preuve_id: string,
-          titre: string,
-          url: string | null
-        },
-        Update: {
-          collectivite_id?: number,
-          commentaire?: string,
-          fichier_id?: number | null
-          id?: number,
-          lien?: Json | null,
-          modified_at?: string,
-          modified_by?: string
           preuve_id?: string,
           titre?: string,
           url?: string | null
@@ -1824,9 +1824,9 @@ export interface Database {
       private_utilisateur_droit: {
         Insert: {
           active: boolean,
-          collectivite_id: number,
+          collectivite_id: number
           created_at?: string,
-          id?: number,
+          id?: number
           invitation_id?: string | null,
           modified_at?: string
           niveau_acces?: Database["public"]["Enums"]["niveau_acces"]
@@ -1834,9 +1834,9 @@ export interface Database {
         },
         Row: {
           active: boolean,
-          collectivite_id: number,
+          collectivite_id: number
           created_at: string,
-          id: number,
+          id: number
           invitation_id: string | null,
           modified_at: string
           niveau_acces: Database["public"]["Enums"]["niveau_acces"]
@@ -1844,9 +1844,9 @@ export interface Database {
         },
         Update: {
           active?: boolean,
-          collectivite_id?: number,
+          collectivite_id?: number
           created_at?: string,
-          id?: number,
+          id?: number
           invitation_id?: string | null,
           modified_at?: string
           niveau_acces?: Database["public"]["Enums"]["niveau_acces"]
@@ -1955,61 +1955,61 @@ export interface Database {
       }
       reponse_binaire: {
         Insert: {
-          collectivite_id: number,
+          collectivite_id: number
           modified_at?: string,
-          question_id: string
+          question_id: string,
           reponse?: boolean | null
         },
         Row: {
-          collectivite_id: number,
+          collectivite_id: number
           modified_at: string,
-          question_id: string
+          question_id: string,
           reponse: boolean | null
         },
         Update: {
-          collectivite_id?: number,
+          collectivite_id?: number
           modified_at?: string,
-          question_id?: string
+          question_id?: string,
           reponse?: boolean | null
         }
       }
       reponse_choix: {
         Insert: {
-          collectivite_id: number,
+          collectivite_id: number
           modified_at?: string,
-          question_id: string
+          question_id: string,
           reponse?: string | null
         },
         Row: {
-          collectivite_id: number,
+          collectivite_id: number
           modified_at: string,
-          question_id: string
+          question_id: string,
           reponse: string | null
         },
         Update: {
-          collectivite_id?: number,
+          collectivite_id?: number
           modified_at?: string,
-          question_id?: string
+          question_id?: string,
           reponse?: string | null
         }
       }
       reponse_proportion: {
         Insert: {
-          collectivite_id: number,
+          collectivite_id: number
           modified_at?: string,
-          question_id: string
+          question_id: string,
           reponse?: number | null
         },
         Row: {
-          collectivite_id: number,
+          collectivite_id: number
           modified_at: string,
-          question_id: string
+          question_id: string,
           reponse: number | null
         },
         Update: {
-          collectivite_id?: number,
+          collectivite_id?: number
           modified_at?: string,
-          question_id?: string
+          question_id?: string,
           reponse?: number | null
         }
       }
@@ -2049,7 +2049,6 @@ export interface Database {
           id: string | null,
           identifiant: string | null,
           nom: string | null,
-          phase: Database["public"]["Enums"]["action_categorie"] | null,
           referentiel: Database["public"]["Enums"]["referentiel"] | null,
           type: Database["public"]["Enums"]["action_type"] | null
         }
@@ -2267,6 +2266,13 @@ export interface Database {
           thematique_id: string | null
           thematique_nom: string | null
           type: string | null
+        }
+      }
+      historique_utilisateur: {
+        Row: {
+          collectivite_id: number | null
+          modified_by_id: string | null
+          modified_by_nom: string | null
         }
       }
       mes_collectivites: {
