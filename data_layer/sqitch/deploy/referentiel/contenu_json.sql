@@ -15,6 +15,6 @@ begin
     refresh materialized view action_referentiel;
     return new;
 end;
-$$ language plpgsql;
+$$ language plpgsql security definer;
 
 COMMIT;
