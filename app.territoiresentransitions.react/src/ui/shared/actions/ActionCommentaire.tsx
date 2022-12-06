@@ -1,7 +1,7 @@
 import '../CrossExpandPanel.css';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {AutoTextArea} from '../AutoTextArea';
+import Textarea from 'ui/shared/form/Textarea';
 import {
   useActionCommentaire,
   useSaveActionCommentaire,
@@ -42,26 +42,30 @@ export const ActionCommentaireField = ({
   const [commentaire, setCommentaire] = useState(initialValue);
 
   return collectivite ? (
-    <AutoTextArea
-      data-test={`comm-${action.id}`}
-      value={commentaire}
-      onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-        setCommentaire(event.currentTarget.value)
-      }
-      onBlur={() =>
-        commentaire.trim() !== (initialValue || '') &&
-        saveActionCommentaire({
-          action_id: action.id,
-          collectivite_id: collectivite.collectivite_id,
-          commentaire,
-        })
-      }
-      hint={
-        action.type === 'action'
+    <>
+      <span className="fr-hint-text !mb-2">
+        {action.type === 'action'
           ? "Description générale de l'état d'avancement"
-          : "Précisions sur l'état d'avancement"
-      }
-      disabled={collectivite.readonly}
-    />
+          : "Précisions sur l'état d'avancement"}
+      </span>
+      <Textarea
+        data-test={`comm-${action.id}`}
+        className="fr-input !outline-none"
+        value={commentaire}
+        onInputChange={() => null}
+        onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) =>
+          setCommentaire(event.currentTarget.value)
+        }
+        onBlur={() =>
+          commentaire.trim() !== (initialValue || '') &&
+          saveActionCommentaire({
+            action_id: action.id,
+            collectivite_id: collectivite.collectivite_id,
+            commentaire,
+          })
+        }
+        disabled={collectivite.readonly}
+      />
+    </>
   ) : null;
 };
