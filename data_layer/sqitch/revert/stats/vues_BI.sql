@@ -7,5 +7,6 @@ drop materialized view stats.collectivite_referentiel;
 drop materialized view stats.collectivite_labellisation;
 drop materialized view stats.collectivite;
 drop function stats.refresh_views();
+drop table stats.iso_3166;
 
 COMMIT;

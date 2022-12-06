@@ -2,6 +2,16 @@
 
 BEGIN;
 
+create table stats.iso_3166
+(
+    type     varchar,
+    code     varchar(6),
+    nom      varchar,
+    variante varchar,
+    langue   varchar
+);
+
+
 create materialized view stats.collectivite
 as
 with
@@ -41,23 +51,41 @@ with
                                      else 'EPCI'
                                      end::type_collectivite as type
                           from collectivite c
-                                   left join epci e on c.id = e.collectivite_id)
--- coalesce null values from epci or collectivite data.
-select c.collectivite_id,
-       c.nom,
-       tc.type                                                as type_collectivite,
-       coalesce(me.nature::varchar, tc.type::varchar)         as nature_collectivite,
-       coalesce(mc.insee, me.siren, '')                       as code_siren_insee,
-       coalesce(mc.region_name, me.region_name, '')           as region_name,
-       coalesce(mc.region_code, me.region_code, '')           as region_code,
-       coalesce(mc.departement_name, me.departement_name, '') as departement_name,
-       coalesce(mc.departement_code, me.departement_code, '') as departement_code,
-       coalesce(mc.population, me.population, 0)::int4        as population_totale
+                                   left join epci e on c.id = e.collectivite_id),
+    info as (
 
-from named_collectivite c
-         left join meta_commune mc on mc.collectivite_id = c.collectivite_id
-         left join meta_epci me on me.collectivite_id = c.collectivite_id
-         left join type_collectivite tc on tc.collectivite_id = c.collectivite_id;
+-- coalesce null values from epci or collectivite data.
+        select c.collectivite_id,
+               c.nom,
+               tc.type                                                as type_collectivite,
+               coalesce(me.nature::varchar, tc.type::varchar)         as nature_collectivite,
+               coalesce(mc.insee, me.siren, '')                       as code_siren_insee,
+               coalesce(mc.region_name, me.region_name, '')           as region_name,
+               coalesce(mc.region_code, me.region_code, '')           as region_code,
+               coalesce(mc.departement_name, me.departement_name, '') as departement_name,
+               coalesce(mc.departement_code, me.departement_code, '') as departement_code,
+               coalesce(mc.population, me.population, 0)::int4        as population_totale
+
+        from named_collectivite c
+                 left join meta_commune mc on mc.collectivite_id = c.collectivite_id
+                 left join meta_epci me on me.collectivite_id = c.collectivite_id
+                 left join type_collectivite tc on tc.collectivite_id = c.collectivite_id)
+select info.collectivite_id,
+       info.nom,
+       info.type_collectivite,
+       info.nature_collectivite,
+       info.code_siren_insee,
+       info.region_name,
+       info.region_code,
+       info.departement_name,
+       info.departement_code,
+       info.population_totale,
+       id.code as departement_iso_3166,
+       ir.code as region_iso_3166
+from info
+         left join stats.iso_3166 id on id.nom = departement_name
+         left join stats.iso_3166 ir on ir.nom = region_name
+;
 comment on materialized view stats.collectivite
     is 'Toutes les collectivités.';
 
