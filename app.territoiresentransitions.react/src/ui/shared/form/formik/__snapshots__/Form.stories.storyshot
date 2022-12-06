@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots ui/shared/form/Form Defaut 1`] = `
+exports[`Storyshots ui/shared/form/formik/Form Defaut 1`] = `
 <form
   action="#"
   onReset={[Function]}
