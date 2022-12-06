@@ -2,8 +2,8 @@ import {useEffect, useState} from 'react';
 import {Form, Formik} from 'formik';
 import * as Yup from 'yup';
 
-import FormSelect from 'ui/shared/form/FormSelect';
-import FormAutoCompleteInput from 'ui/shared/form/FormAutoCompleteInput';
+import FormikSelect from 'ui/shared/form/formik/FormikSelect';
+import FormikAutoCompleteInput from 'ui/shared/form/formik/FormikAutoCompleteInput';
 import Aide from './Aide';
 
 import {AllCollectiviteRead} from 'generated/dataLayer';
@@ -125,14 +125,14 @@ export const RejoindreUneCollectivite = ({
               {!isClaimSuccess ? (
                 <>
                   <Form>
-                    <FormSelect
+                    <FormikSelect
                       data-test="SelectFonction"
                       name="fonction"
                       label="Fonction principale"
                       hint="Quel est votre rôle au sein ou auprès de la collectivité ?"
                       options={collectiviteFonctionOptions}
                     />
-                    <FormAutoCompleteInput
+                    <FormikAutoCompleteInput
                       name="collectiviteId"
                       label="Quelle collectivité souhaitez-vous rejoindre ?"
                       hint="Recherchez par nom"

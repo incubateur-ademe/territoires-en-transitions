@@ -9,8 +9,8 @@ import {
   AddUserToCollectiviteRequest,
   AddUserToCollectiviteResponse,
 } from 'app/pages/collectivite/Users/useAddUserToCollectivite';
-import FormInput from 'ui/shared/form/FormInput';
-import FormSelect from 'ui/shared/form/FormSelect';
+import FormikInput from 'ui/shared/form/formik/FormikInput';
+import FormikSelect from 'ui/shared/form/formik/FormikSelect';
 
 type AccesOption = {
   value: NiveauAcces;
@@ -103,11 +103,11 @@ const InvitationForm = ({
             resetAddUser();
           }}
         >
-          <FormInput
+          <FormikInput
             name="email"
             label="Adresse email de la personne à inviter"
           />
-          <FormSelect
+          <FormikSelect
             name="acces"
             label="Niveau d’accès pour cette collectivité"
             options={accesOptions}

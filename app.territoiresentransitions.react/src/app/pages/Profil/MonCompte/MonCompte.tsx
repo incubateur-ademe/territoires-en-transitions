@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Form, Formik} from 'formik';
 import * as Yup from 'yup';
 
-import FormInput from 'ui/shared/form/FormInput';
+import FormikInput from 'ui/shared/form/formik/FormikInput';
 import ModifierEmailModal from './ModifierEmailModal';
 
 import {useAuth, UserData} from 'core-logic/api/auth/AuthProvider';
@@ -46,7 +46,7 @@ export const MonCompte = ({user}: {user: UserData}) => {
         >
           {({values, isValid, handleBlur, resetForm}) => (
             <Form>
-              <FormInput
+              <FormikInput
                 data-test="prenom"
                 name="prenom"
                 label="Prénom"
@@ -57,7 +57,7 @@ export const MonCompte = ({user}: {user: UserData}) => {
                     handleUpdateDCP({prenom: values.prenom});
                 }}
               />
-              <FormInput
+              <FormikInput
                 data-test="nom"
                 name="nom"
                 label="Nom"
@@ -68,7 +68,7 @@ export const MonCompte = ({user}: {user: UserData}) => {
                     handleUpdateDCP({nom: values.nom});
                 }}
               />
-              <FormInput
+              <FormikInput
                 data-test="email"
                 name="email"
                 label="Email"

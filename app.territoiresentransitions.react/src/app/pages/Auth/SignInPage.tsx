@@ -7,7 +7,7 @@ import {signUpPath} from 'app/paths';
 import {ErrorMessage} from 'ui/forms/ErrorMessage';
 import {PasswordRecovery} from './PasswordRecovery';
 import {useAuth} from 'core-logic/api/auth/AuthProvider';
-import FormInput from 'ui/shared/form/FormInput';
+import FormikInput from 'ui/shared/form/formik/FormikInput';
 
 export interface SignInCredentials {
   email: string;
@@ -39,8 +39,12 @@ export const SignInPage = () => {
         >
           {({values}) => (
             <Form>
-              <FormInput name="email" label="Email" />
-              <FormInput type="password" name="password" label="Mot de passe" />
+              <FormikInput name="email" label="Email" />
+              <FormikInput
+                type="password"
+                name="password"
+                label="Mot de passe"
+              />
               <PasswordRecovery email={values.email} />
               <Spacer size={3} />
               <AuthError message={authError} />
