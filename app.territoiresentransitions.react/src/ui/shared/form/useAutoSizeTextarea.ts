@@ -5,7 +5,7 @@ import {useEffect, useRef} from 'react';
  * copié/adapté depuis: https://www.kindacode.com/article/react-typescript-create-an-autosize-textarea-from-scratch/
  * (il ne parait pas nécessaire d'ajouter une dépendance supplémentaire pour cette fonctionnalité)
  */
-export const useAutoSizeTextarea = (value: string, minHeight?: string) => {
+export const useAutoSizeTextarea = (value?: string, minHeight?: string) => {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   // Permet de set la taille du textarea au changement de valeur
