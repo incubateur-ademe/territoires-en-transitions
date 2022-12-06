@@ -3,10 +3,7 @@ import {AnyIndicateurRepository} from 'core-logic/api/repositories/AnyIndicateur
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {Editable} from 'ui/shared/Editable';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {
-  onlyNumericWithFloatRegExp,
-  setInputFilter,
-} from 'ui/shared/input/utils';
+import {onlyNumericWithFloatRegExp, setInputFilter} from 'ui/shared/form/utils';
 
 // Here we take advantage of IndicateurPersonnaliseValue and IndicateurValue
 // having the same shape.
