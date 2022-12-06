@@ -150,3 +150,6 @@ evaluation/client_scores [evaluation/client_scores@v1.14.0] 2022-11-29T17:44:36Z
 collectivite/historique [collectivite/historique@v1.14.0] 2022-12-01T14:38:28Z Florian <florian@derfurth.com> # Ajoute une vue des utilisateurs pour l'historique
 referentiel/vues [referentiel/vues@v1.14.0] 2022-12-08T09:43:40Z Florian <florian@derfurth.com> # Ajoute la colonne phase.
 @v1.15.0 2022-12-08T15:44:17Z Florian <florian@derfurth.com> # Améliorations des scores, de l'audit et de l'historique.
+
+stats/vues_BI 2022-12-06T16:18:25Z Florian <florian@derfurth.com> # Les premières vues matérialisées pour une utilisation BI.
+cron/refresh_stats_views [stats/vues_BI] 2022-12-06T17:02:25Z Florian <florian@derfurth.com> # Appelle la fonction de rafraichissement des vues stats.
