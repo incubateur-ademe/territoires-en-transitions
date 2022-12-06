@@ -1,6 +1,6 @@
 import {useState} from 'react';
+import Textarea from 'ui/shared/form/Textarea';
 import ActionDiscussionCommentaire from './ActionDiscussionCommentaire';
-import ActionDiscussionTextarea from './ActionDiscussionTextarea';
 import {TActionDiscussion} from './data/types';
 import {useAddCommentaireToDiscussion} from './data/useAddCommentaireToDiscussion';
 
@@ -20,9 +20,10 @@ const ActionDiscussion = ({discussion}: ActionDiscussionProps) => {
       <div className="p-4 border-l-4 border-yellow-400">
         <ActionDiscussionCommentaireListe discussion={discussion} />
         {discussion.status === 'ouvert' && (
-          <ActionDiscussionTextarea
-            commentaire={nouveauCommentaire}
-            onChange={setNouveauCommentaire}
+          <Textarea
+            className="resize-none"
+            value={nouveauCommentaire}
+            onInputChange={setNouveauCommentaire}
             placeholder="Répondre..."
           />
         )}
