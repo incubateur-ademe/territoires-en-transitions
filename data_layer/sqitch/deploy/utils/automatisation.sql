@@ -46,15 +46,26 @@ select dcp.email,
        coalesce(c.code, e.siren, '') as code_siren_insee,
        pcm.collectivite_id,
        pcm.user_id,
-       pcm.fonction,
+       case
+           when pcm.fonction='referent'  then 'Referent.e'
+           when pcm.fonction='conseiller'  then 'Conseiller.e'
+           when pcm.fonction='technique'  then 'Equipe technique'
+           when pcm.fonction='politique'  then 'Equipe politique'
+           when pcm.fonction='partenaire'  then 'Partenaire'
+           else '--None--'
+           end as fonction,
        pcm.champ_intervention,
        pcm.details_fonction,
-       d.niveau_access
+       case
+           when 'admin' = any(d.niveau_access) then 'Admin'
+           when 'edition' = any(d.niveau_access) then 'Édition'
+           when 'lecture' = any(d.niveau_access) then 'Lecture'
+           end as niveau_access
 from private_collectivite_membre pcm
          join dcp on dcp.user_id = pcm.user_id
          left join commune c on pcm.collectivite_id = c.collectivite_id
          left join epci e on pcm.collectivite_id = e.collectivite_id
-         left join lateral (select array_agg(distinct pud.niveau_acces) as niveau_access
+         left join lateral (select array_agg(pud.niveau_acces) as niveau_access
                             from private_utilisateur_droit pud
                             where pud.user_id = pcm.user_id) as d on true;
 
