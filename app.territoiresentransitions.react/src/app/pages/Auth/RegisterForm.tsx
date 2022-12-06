@@ -12,7 +12,7 @@ import {signInPath} from 'app/paths';
 import {Spacer} from 'ui/shared/Spacer';
 import {ValiderButton} from 'ui/shared/ValiderButton';
 import {PasswordStrengthMeter} from 'ui/forms/PasswordStrengthMeter';
-import FormInput from 'ui/shared/form/FormInput';
+import FormikInput from 'ui/shared/form/formik/FormikInput';
 
 type FormState = 'ready' | 'success' | 'failure';
 
@@ -94,7 +94,11 @@ const RegistrationForm = () => {
         Le compte n'a pas pu être créé. Un compte existe peut-être déjà avec la
         même adresse email, essayez de vous connecter et/ou de renouveler votre
         mot de passe. Si le problème persiste,&nbsp;
-        <a href="mailto:contact@territoiresentransitions.fr" target="_blank" rel="noreferrer">
+        <a
+          href="mailto:contact@territoiresentransitions.fr"
+          target="_blank"
+          rel="noreferrer"
+        >
           contactez-nous
         </a>
         .
@@ -151,8 +155,8 @@ const RegistrationForm = () => {
 
             return (
               <Form>
-                <FormInput name="email" label="Email" />
-                <FormInput
+                <FormikInput name="email" label="Email" />
+                <FormikInput
                   type="password"
                   name="password"
                   label="Mot de passe"
@@ -160,9 +164,9 @@ const RegistrationForm = () => {
                 {result.score > 0 && (
                   <PasswordStrengthMeter strength={result} className="pt-2" />
                 )}
-                <FormInput name="prenom" label="Prénom" />
-                <FormInput name="nom" label="Nom" />
-                <FormInput
+                <FormikInput name="prenom" label="Prénom" />
+                <FormikInput name="nom" label="Nom" />
+                <FormikInput
                   name="telephone"
                   label="Numéro de téléphone professionnel"
                 />

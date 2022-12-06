@@ -12,7 +12,7 @@ import {Spacer} from 'ui/shared/Spacer';
 import {ValiderButton} from 'ui/shared/ValiderButton';
 import {PasswordStrengthMeter} from 'ui/forms/PasswordStrengthMeter';
 import {passwordValidator} from './RegisterForm';
-import FormInput from 'ui/shared/form/FormInput';
+import FormikInput from 'ui/shared/form/formik/FormikInput';
 
 type FormState = 'ready' | 'success' | 'failure';
 
@@ -109,7 +109,7 @@ const ResetPasswordForm = ({
 
             return (
               <Form>
-                <FormInput
+                <FormikInput
                   type="password"
                   name="password"
                   label="Nouveau mot de passe"

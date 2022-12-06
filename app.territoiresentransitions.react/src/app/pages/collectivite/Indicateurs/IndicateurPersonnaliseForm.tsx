@@ -3,7 +3,7 @@ import * as Yup from 'yup';
 import {Form, Formik} from 'formik';
 import {IndicateurPersonnaliseDefinitionWrite} from 'generated/dataLayer/indicateur_personnalise_definition_write';
 import {ValiderButton} from 'ui/shared/ValiderButton';
-import FormInput from 'ui/shared/form/FormInput';
+import FormikInput from 'ui/shared/form/formik/FormikInput';
 
 type FormState = 'ready' | 'saving';
 
@@ -29,26 +29,26 @@ export const IndicateurPersonnaliseForm = (props: {
     props.onSave(data);
   };
 
-    return (
-      <Formik<IndicateurPersonnaliseDefinitionWrite>
-        initialValues={props.indicateur}
-        validationSchema={validation}
-        onSubmit={save}
-      >
-        <Form>
-          <FormInput name="titre" label="Titre" />
-          <FormInput type="area" name="description" label="Description" />
-          <FormInput name="unite" label="Unité" />
-          <FormInput type="area" name="commentaire" label="Commentaire" />
-          <div className="flex flex-row-reverse pt-5">
-            {state === 'ready' && <ValiderButton />}
-            {state === 'saving' && (
-              <button className="fr-btn" type="submit" disabled>
-                Enregistrement en cours...
-              </button>
-            )}
-          </div>
-        </Form>
-      </Formik>
-    );
+  return (
+    <Formik<IndicateurPersonnaliseDefinitionWrite>
+      initialValues={props.indicateur}
+      validationSchema={validation}
+      onSubmit={save}
+    >
+      <Form>
+        <FormikInput name="titre" label="Titre" />
+        <FormikInput type="area" name="description" label="Description" />
+        <FormikInput name="unite" label="Unité" />
+        <FormikInput type="area" name="commentaire" label="Commentaire" />
+        <div className="flex flex-row-reverse pt-5">
+          {state === 'ready' && <ValiderButton />}
+          {state === 'saving' && (
+            <button className="fr-btn" type="submit" disabled>
+              Enregistrement en cours...
+            </button>
+          )}
+        </div>
+      </Form>
+    </Formik>
+  );
 };

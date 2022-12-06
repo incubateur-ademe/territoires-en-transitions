@@ -5,7 +5,7 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {Spacer} from 'ui/shared/Spacer';
 import {UiDialogButton} from 'ui/UiDialogButton';
 import {ErrorMessage} from 'ui/forms/ErrorMessage';
-import FormInput from 'ui/shared/form/FormInput';
+import FormikInput from 'ui/shared/form/formik/FormikInput';
 
 interface IPasswordRecovery {
   email: string;
@@ -84,7 +84,7 @@ export const PasswordRecovery = ({
             Nous allons vous envoyer un email, merci d’indiquer l’adresse avec
             laquelle vous avez créé votre compte Territoires en Transitions.
           </p>
-          <FormInput name="email" label="Adresse email" />
+          <FormikInput name="email" label="Adresse email" />
           {error ? <ErrorMessage message={error} /> : null}
           <Spacer size={4} />
           <div className="flex justify-between">

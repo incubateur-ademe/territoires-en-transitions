@@ -1,5 +1,5 @@
 import {MembreFonction} from 'generated/dataLayer/membres';
-import {SelectOption} from 'ui/shared/form/FormSelect';
+import {SelectOption} from 'ui/shared/form/formik/FormikSelect';
 
 export const collectiviteFonctionOptions: SelectOption<MembreFonction>[] = [
   {

@@ -6,7 +6,7 @@ import {useRecoveryToken} from 'core-logic/hooks/useRecoveryToken';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useHistory} from 'react-router-dom';
 import {resetPwdPath} from 'app/paths';
-import FormInput from 'ui/shared/form/FormInput';
+import FormikInput from 'ui/shared/form/formik/FormikInput';
 
 const validation = Yup.object({
   email: emailValidator,
@@ -43,8 +43,8 @@ const OTPForm = ({
         return (
           <Form data-test="OTPForm">
             <div className="flex flex-col gap-6">
-              <FormInput name="email" label="Votre adresse email" />
-              <FormInput name="code" label="Le code reçu par email" />
+              <FormikInput name="email" label="Votre adresse email" />
+              <FormikInput name="code" label="Le code reçu par email" />
               <div className="max-w-2xl flex flex-row-reverse">
                 <ValiderButton />
               </div>
