@@ -1,6 +1,7 @@
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import React, {ChangeEvent, useState} from 'react';
-import {AutoTextArea} from 'ui/shared/AutoTextArea';
+import FormField from 'ui/shared/form/FormField';
+import Textarea from 'ui/shared/form/Textarea';
 import {TActionAuditStatut} from './types';
 import {useActionAuditStatut} from './useActionAuditStatut';
 import {useAudit, useIsAuditeur} from './useAudit';
@@ -26,17 +27,22 @@ export const ActionAuditDetailBase = (props: TActionAuditDetailBaseProps) => {
 
   return (
     <>
-      <AutoTextArea
-        data-test="avis"
-        value={avis}
-        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-          setAvis(event.currentTarget.value)
-        }
-        onBlur={() => avis.trim() !== avisInitial && onChange({avis})}
+      <FormField
         label="Notes de l’auditeur, auditrice"
         hint="Remarques sur l’action, questions pour la séance d’audit"
-        disabled={readonly}
-      />
+      >
+        <Textarea
+          data-test="avis"
+          className="fr-input !outline-none"
+          value={avis}
+          onInputChange={() => null}
+          onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) =>
+            setAvis(event.currentTarget.value)
+          }
+          onBlur={() => avis.trim() !== avisInitial && onChange({avis})}
+          disabled={readonly}
+        />
+      </FormField>
       <div className="fr-checkbox-group fr-checkbox-inline">
         <input
           type="checkbox"
