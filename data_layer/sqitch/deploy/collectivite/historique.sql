@@ -107,7 +107,7 @@ select -- toutes les colonnes des données historisées
        h.type,
        h.collectivite_id,
        coalesce(h.modified_by_id, '99999999-9999-9999-9999-999999999999') as modified_by_id,
-       coalesce(h.previous_modified_by_id, '99999999-9999-9999-9999-999999999999') as previous_modified_by_id,
+       h.previous_modified_by_id,
        h.modified_at,
        h.previous_modified_at,
        h.action_id,
