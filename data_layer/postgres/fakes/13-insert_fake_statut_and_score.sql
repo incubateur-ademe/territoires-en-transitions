@@ -2,13 +2,13 @@
 -- depends on:
 -- - 11-insert_fake_epcis.sql
 -- - 10-insert_fake_user.sql
--- insert into
---     action_statut(collectivite_id, action_id, avancement, concerne, modified_by, modified_at)
---     values (1, 'cae_1.1.1.1.1', 'fait', true, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9', now() - interval '1 month');
---
--- insert into
---     action_statut(collectivite_id, action_id, avancement, avancement_detaille, concerne, modified_by, modified_at)
---     values (1, 'cae_1.1.1.1.2', 'detaille', '{ 0.2, 0.7, 0.1}' , true, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',now() - interval '1 month');
+insert into
+    action_statut(collectivite_id, action_id, avancement, concerne, modified_by)
+    values (1, 'cae_1.1.1.1.1', 'fait', true, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9');
+
+insert into
+    action_statut(collectivite_id, action_id, avancement, avancement_detaille, concerne, modified_by)
+    values (1, 'cae_1.1.1.1.2', 'detaille', '{ 0.2, 0.7, 0.1}' , true, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9');
 
 insert into public.action_statut (collectivite_id, action_id, avancement, avancement_detaille, concerne, modified_by, modified_at) values (10, 'cae_1.1.1.2.1', 'fait', '{1,0,0}', true, '5f407fc6-3634-45ff-a988-301e9088096a', '2022-12-05 15:05:20.501494 +00:00');
 insert into public.action_statut (collectivite_id, action_id, avancement, avancement_detaille, concerne, modified_by, modified_at) values (10, 'cae_1.1.1.1.1', 'programme', '{0,1,0}', true, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9', '2022-12-05 15:08:26.650617 +00:00');
