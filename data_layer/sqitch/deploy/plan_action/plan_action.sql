@@ -422,6 +422,41 @@ from fiche_action fa
     -- TODO fiches liées (à calculer dans la vue selon action et indicateurs?)
 ;
 
+/*
+/**
+  PARAM :
+    - pa_id : id du plan d'action
+ */
+create or replace function recursive_plan_action(pa_id integer) returns jsonb as
+$$
+declare
+    pa_enfant_id integer;
+    id_loop integer;
+    enfants jsonb[];
+    fiches fiche_action[];
+    to_return jsonb;
+begin
+   fiches = (select *
+             from fiche_action fa
+                 join fiche_action_plan_action fapa on fa.id = fapa.fiche_id) ;
+
+    id_loop = 1;
+    for pa_enfant_id in
+        select pa.id
+        from plan_action pa
+        where pa.parent = pa_id
+        loop
+            enfants[id_loop] = recursive_plan_action(pa_enfant_id);
+            id_loop = id_loop + 1;
+        end loop;
+
+    to_return = jsonb_build_object('id', pa_id,
+                                    'fiches', fiches
+                                  'enfants', enfants);
+    return to_return;
+end;
+$$ language plpgsql;
+*/
 
 -- TODO droits
 /*
