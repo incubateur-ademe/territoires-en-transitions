@@ -8,7 +8,6 @@ Fonctionnalité: Modifier l'état d'avancement et visualiser l'évolution des sc
     Etant donné que je suis connecté en tant que "yili"
 
     Quand je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "2"
-    Alors aucun score n'est affiché
     Et l'état d'avancement des tâches est éditable
 
     Quand j'assigne la valeur "Fait" à l'état d'avancement de la tâche "eci_1.1.1.1"
