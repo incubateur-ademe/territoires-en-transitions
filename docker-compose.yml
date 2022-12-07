@@ -77,9 +77,10 @@ services:
 
   realtime:
     container_name: supabase-realtime
-    image: supabase/realtime:v0.22.4
+    image: supabase/realtime:v0.25.1
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     restart: unless-stopped
     environment:
       DB_HOST: db
@@ -137,7 +138,12 @@ services:
 
   db:
     container_name: supabase-db
-    image: supabase/postgres:14.1.0.21
+    image: supabase/postgres:14.1.0.89
+    healthcheck:
+      test: pg_isready -U postgres -h localhost
+      interval: 5s
+      timeout: 5s
+      retries: 10
     command: postgres -c config_file=/etc/postgresql/postgresql.conf
     restart: unless-stopped
     ports:
