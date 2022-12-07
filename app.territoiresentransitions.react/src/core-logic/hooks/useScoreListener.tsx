@@ -55,7 +55,10 @@ export const ScoreListenerProvider = ({children}: { children: ReactNode }) => {
     ) {
       // Recharge les données de client_scores après un changement.
       const invalidate = (payload: Record<string, any>) => {
-        const {collectivite_id, referentiel} = payload.record;
+        // La payload de l'environnement de développement (supabase/realtime:v0.25.1) contient la clef record
+        // celle de prod les clefs new/old.
+        const row = payload.new || payload.record;
+        const {collectivite_id, referentiel} = row;
         const key = getScoreQueryKey(collectivite_id, referentiel);
         return queryClient.invalidateQueries(key);
       };
