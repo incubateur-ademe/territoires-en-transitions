@@ -6,10 +6,7 @@ import {
 import {supabase} from "../../lib/supabase.ts";
 import {signIn, signOut} from "../../lib/auth.ts";
 import {testReset} from "../../lib/rpcs/testReset.ts";
-import {FicheActionWrite} from "../../lib/types/fiche_action/ficheAction.ts";
-import {FicheActionThematiques} from "../../lib/types/fiche_action/enums/ficheActionThematiques.ts";
-import {FicheActionPiliersEci} from "../../lib/types/fiche_action/enums/ficheActionPiliersEci.ts";
-import {PartenairesTags} from "../../lib/types/fiche_action/ficheActionTags.ts";
+import {Database} from "../../lib/database.types.ts";
 
 Deno.test("Création fiches et plan actions", async () => {
     await testReset(); // TODO ajouter fiches aux resets
@@ -19,15 +16,15 @@ Deno.test("Création fiches et plan actions", async () => {
         titre : "fiche test",
         description : "description test",
         thematiques: [
-            "Bâtiments" as FicheActionThematiques
+            "Bâtiments" as Database["public"]["Enums"]["fiche_action_thematiques"]
         ],
         piliers_eci: [
-            "Écoconception" as FicheActionPiliersEci,
-            "Recyclage" as FicheActionPiliersEci
+            "Écoconception" as Database["public"]["Enums"]["fiche_action_piliers_eci"],
+            "Recyclage" as Database["public"]["Enums"]["fiche_action_piliers_eci"]
         ],
         collectivite_id : 1
     };
-    const insertFiche = await supabase.from<FicheActionWrite>("fiche_action").upsert(fiche);
+    const insertFiche = await supabase.from("fiche_action").upsert(fiche).select();
 
     assertEquals(insertFiche.data!.length, 1);
     assertObjectMatch(insertFiche.data![0], fiche);
@@ -36,7 +33,7 @@ Deno.test("Création fiches et plan actions", async () => {
         collectivite_id: 1,
         nom : "partenaire test"
     }
-    const insertPartenaire = await supabase.from<PartenairesTags>("partenaires_tags").upsert(partenaire);
+    const insertPartenaire = await supabase.from("partenaires_tags").upsert(partenaire).select();
     assertEquals(insertPartenaire.data!.length, 1);
     assertObjectMatch(insertPartenaire.data![0], partenaire);
 
