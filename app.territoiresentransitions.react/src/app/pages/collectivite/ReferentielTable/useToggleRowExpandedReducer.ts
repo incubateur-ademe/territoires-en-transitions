@@ -74,7 +74,7 @@ export const getRowsByAxe = <ActionSubset extends IAction>(
   clickedId: string
 ) => {
   const axeId = clickedId.split('.')[0] + '.';
-  return rows.filter(({identifiant}) => identifiant.startsWith(axeId));
+  return rows.filter(({identifiant}) => identifiant?.startsWith(axeId));
 };
 
 // niveau de profondeur en fonction du nombre de points dans l'identifiant
