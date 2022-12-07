@@ -9,6 +9,11 @@ create table automatisation_uri (
 );
 alter table automatisation_uri enable row level security;
 
+create policy read_for_all
+    on automatisation_uri
+    for select
+    using (true);
+
 -- Vue d'un utilisateur pour un crm
 create view users_crm as
 select p.prenom                              as prenom,
@@ -80,13 +85,14 @@ begin
                         where u.email = new.email));
     uri = (select au.uri from automatisation_uri au where au.uri_type = 'utilisateur_upsert' limit 1);
     if uri is not null then
-        perform http_post(
+        perform net.http_post(
                 uri,
-                to_send::varchar,
-                'application/json'::varchar
+                to_send
             );
     end if;
     return new;
+exception
+    when others then return new;
 end;
 $$ language plpgsql security definer;
 comment on function send_upsert_users_json_n8n is
@@ -103,13 +109,14 @@ begin
                         where u.email = new.email));
     uri = (select au.uri from automatisation_uri au where au.uri_type = 'utilisateur_insert' limit 1);
     if uri is not null then
-        perform http_post(
+        perform net.http_post(
                 uri,
-                to_send::varchar,
-                'application/json'::varchar
+                to_send
             );
     end if;
     return new;
+exception
+    when others then return new;
 end;
 $$ language plpgsql security definer;
 comment on function send_insert_users_json_n8n is
@@ -126,13 +133,14 @@ begin
                         where c.collectivite_id = new.collectivite_id));
     uri = (select au.uri from automatisation_uri au where au.uri_type = 'collectivite_upsert' limit 1);
     if uri is not null then
-        perform http_post(
+        perform net.http_post(
                 uri::varchar,
-                to_send::varchar,
-                'application/json'::varchar
+                to_send
             );
     end if;
     return new;
+exception
+    when others then return new;
 end;
 $$ language plpgsql security definer;
 comment on function send_upsert_collectivites_json_n8n is
@@ -150,13 +158,14 @@ begin
                           and c.collectivite_id =new.collectivite_id));
     uri = (select au.uri from automatisation_uri au where au.uri_type = 'collectivite_utilisateur_upsert' limit 1);
     if uri is not null then
-        perform http_post(
+        perform net.http_post(
                 uri,
-                to_send::varchar,
-                'application/json'::varchar
+                to_send
             );
     end if;
     return new;
+exception
+    when others then return new;
 end;
 $$ language plpgsql security definer;
 comment on function send_upsert_collectivite_membre_json_n8n is
