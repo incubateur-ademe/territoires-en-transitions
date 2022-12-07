@@ -2,7 +2,6 @@
 
 BEGIN;
 
-create schema if not exists net;
-create extension pg_net with schema net;
+create extension pg_net;
 
 COMMIT;
