@@ -1,0 +1,68 @@
+/** Surcharge les styles des tableaux Référentiel pour la vue "Comparaison" **/
+
+/* pas de bordure basse dans les lignes d'en-tête */
+.comparaison-table .header .row {
+  border-bottom: 0;
+  align-items: flex-end;
+}
+
+/* pas de marge entre les lignes de l'en-tête */
+.comparaison-table .header .row:nth-child(1) {
+  margin-bottom: 0;
+}
+
+/* en-tête des groupes de colonnes avant/après audit */
+.comparaison-table .header .row:nth-child(1) .cell {
+  font-weight: bold;
+  text-align: left;
+}
+
+/* cellules d'en-têtes points/scores */
+.comparaison-table .header .row:nth-child(2) .cell {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 4.8rem;
+  line-height: 1rem;
+  color: var(--text-title-grey);
+}
+
+/* cellule d'en-tête "total" */
+.comparaison-table .header .row:nth-child(2) .cell:nth-child(1) {
+  justify-content: flex-end;
+  font-weight: bold;
+  font-size: 0.75rem;
+}
+
+/* bordure à gauche des groupes de colonnes avant/après audit */
+.comparaison-table .header .row .cell:nth-child(3),
+.comparaison-table .header .row:nth-child(1) .cell:nth-child(4),
+.comparaison-table .header .row:nth-child(2) .cell:nth-child(6) {
+  border-left: 1px solid #cecece;
+}
+/* assure que les libellés d'en-tête "% réalisé" sont sur 2 lignes */
+.comparaison-table .header .row:nth-child(2) .cell:nth-child(5),
+.comparaison-table .header .row:nth-child(2) .cell:nth-child(8) {
+  padding-left: 2rem;
+}
+
+/* espacement dans les cellules précédant la bordure des groupes de colonnes */
+.comparaison-table .header .row .cell:nth-child(2),
+.comparaison-table .header .row .cell:nth-child(5) {
+  padding-right: 1rem;
+  align-items: flex-end;
+}
+.comparaison-table .body .row .cell:nth-child(2),
+.comparaison-table .body .row .cell:nth-child(5) {
+  padding-right: 1.85rem;
+}
+
+/* colonne "Potentiel max" légèrement grisée */
+.comparaison-table .header .row .cell:nth-child(2),
+.comparaison-table .body .row.d3 .cell:nth-child(2) {
+  color: var(--text-mention-grey);
+}
+.comparaison-table .header .row .cell:nth-child(2),
+.comparaison-table .body .row .cell:nth-child(2) {
+  font-weight: 400;
+}
