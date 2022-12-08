@@ -8,1982 +8,71 @@ export type Json =
 
 export interface Database {
   public: {
-    Tables: {
-      abstract_any_indicateur_value: {
-        Row: {
-          modified_at: string
-          valeur: number | null
-          annee: number
-        }
-        Insert: {
-          modified_at?: string
-          valeur?: number | null
-          annee: number
-        }
-        Update: {
-          modified_at?: string
-          valeur?: number | null
-          annee?: number
-        }
-      }
-      abstract_modified_at: {
-        Row: {
-          modified_at: string
-        }
-        Insert: {
-          modified_at?: string
-        }
-        Update: {
-          modified_at?: string
-        }
-      }
-      action_commentaire: {
-        Row: {
-          collectivite_id: number
-          action_id: string
-          commentaire: string
-          modified_by: string
-          modified_at: string
-        }
-        Insert: {
-          collectivite_id: number
-          action_id: string
-          commentaire: string
-          modified_by?: string
-          modified_at?: string
-        }
-        Update: {
-          collectivite_id?: number
-          action_id?: string
-          commentaire?: string
-          modified_by?: string
-          modified_at?: string
-        }
-      }
-      action_computed_points: {
-        Row: {
-          modified_at: string
-          action_id: string
-          value: number
-        }
-        Insert: {
-          modified_at?: string
-          action_id: string
-          value: number
-        }
-        Update: {
-          modified_at?: string
-          action_id?: string
-          value?: number
-        }
-      }
-      action_definition: {
-        Row: {
-          modified_at: string
-          action_id: string
-          referentiel: Database["public"]["Enums"]["referentiel"]
-          identifiant: string
-          nom: string
-          description: string
-          contexte: string
-          exemples: string
-          ressources: string
-          reduction_potentiel: string
-          perimetre_evaluation: string
-          preuve: string | null
-          points: number | null
-          pourcentage: number | null
-          categorie: Database["public"]["Enums"]["action_categorie"] | null
-        }
-        Insert: {
-          modified_at?: string
-          action_id: string
-          referentiel: Database["public"]["Enums"]["referentiel"]
-          identifiant: string
-          nom: string
-          description: string
-          contexte: string
-          exemples: string
-          ressources: string
-          reduction_potentiel: string
-          perimetre_evaluation: string
-          preuve?: string | null
-          points?: number | null
-          pourcentage?: number | null
-          categorie?: Database["public"]["Enums"]["action_categorie"] | null
-        }
-        Update: {
-          modified_at?: string
-          action_id?: string
-          referentiel?: Database["public"]["Enums"]["referentiel"]
-          identifiant?: string
-          nom?: string
-          description?: string
-          contexte?: string
-          exemples?: string
-          ressources?: string
-          reduction_potentiel?: string
-          perimetre_evaluation?: string
-          preuve?: string | null
-          points?: number | null
-          pourcentage?: number | null
-          categorie?: Database["public"]["Enums"]["action_categorie"] | null
-        }
-      }
-      action_discussion: {
-        Row: {
-          id: number
-          collectivite_id: number
-          action_id: string
-          created_by: string
-          created_at: string
-          modified_at: string
-          status: Database["public"]["Enums"]["action_discussion_statut"]
-        }
-        Insert: {
-          id?: number
-          collectivite_id: number
-          action_id: string
-          created_by?: string
-          created_at?: string
-          modified_at?: string
-          status?: Database["public"]["Enums"]["action_discussion_statut"]
-        }
-        Update: {
-          id?: number
-          collectivite_id?: number
-          action_id?: string
-          created_by?: string
-          created_at?: string
-          modified_at?: string
-          status?: Database["public"]["Enums"]["action_discussion_statut"]
-        }
-      }
-      action_discussion_commentaire: {
-        Row: {
-          id: number
-          created_by: string
-          created_at: string
-          discussion_id: number
-          message: string
-        }
-        Insert: {
-          id?: number
-          created_by?: string
-          created_at?: string
-          discussion_id: number
-          message: string
-        }
-        Update: {
-          id?: number
-          created_by?: string
-          created_at?: string
-          discussion_id?: number
-          message?: string
-        }
-      }
-      action_relation: {
-        Row: {
-          id: string
-          referentiel: Database["public"]["Enums"]["referentiel"]
-          parent: string | null
-        }
-        Insert: {
-          id: string
-          referentiel: Database["public"]["Enums"]["referentiel"]
-          parent?: string | null
-        }
-        Update: {
-          id?: string
-          referentiel?: Database["public"]["Enums"]["referentiel"]
-          parent?: string | null
-        }
-      }
-      action_statut: {
-        Row: {
-          collectivite_id: number
-          action_id: string
-          avancement: Database["public"]["Enums"]["avancement"]
-          avancement_detaille: number[] | null
-          concerne: boolean
-          modified_by: string
-          modified_at: string
-        }
-        Insert: {
-          collectivite_id: number
-          action_id: string
-          avancement: Database["public"]["Enums"]["avancement"]
-          avancement_detaille?: number[] | null
-          concerne: boolean
-          modified_by?: string
-          modified_at?: string
-        }
-        Update: {
-          collectivite_id?: number
-          action_id?: string
-          avancement?: Database["public"]["Enums"]["avancement"]
-          avancement_detaille?: number[] | null
-          concerne?: boolean
-          modified_by?: string
-          modified_at?: string
-        }
-      }
-      audit: {
-        Row: {
-          id: number
-          collectivite_id: number
-          referentiel: Database["public"]["Enums"]["referentiel"]
-          demande_id: number | null
-          date_debut: string
-          date_fin: string | null
-        }
-        Insert: {
-          id?: number
-          collectivite_id: number
-          referentiel: Database["public"]["Enums"]["referentiel"]
-          demande_id?: number | null
-          date_debut?: string
-          date_fin?: string | null
-        }
-        Update: {
-          id?: number
-          collectivite_id?: number
-          referentiel?: Database["public"]["Enums"]["referentiel"]
-          demande_id?: number | null
-          date_debut?: string
-          date_fin?: string | null
-        }
-      }
-      audit_auditeur: {
-        Row: {
-          audit_id: number
-          auditeur: string
-        }
-        Insert: {
-          audit_id: number
-          auditeur: string
-        }
-        Update: {
-          audit_id?: number
-          auditeur?: string
-        }
-      }
-      client_scores: {
-        Row: {
-          collectivite_id: number
-          referentiel: Database["public"]["Enums"]["referentiel"]
-          scores: Json
-          modified_at: string
-          payload_timestamp: string | null
-        }
-        Insert: {
-          collectivite_id: number
-          referentiel: Database["public"]["Enums"]["referentiel"]
-          scores: Json
-          modified_at: string
-          payload_timestamp?: string | null
-        }
-        Update: {
-          collectivite_id?: number
-          referentiel?: Database["public"]["Enums"]["referentiel"]
-          scores?: Json
-          modified_at?: string
-          payload_timestamp?: string | null
-        }
-      }
-      client_scores_update: {
-        Row: {
-          collectivite_id: number
-          referentiel: Database["public"]["Enums"]["referentiel"]
-          modified_at: string
-        }
-        Insert: {
-          collectivite_id: number
-          referentiel: Database["public"]["Enums"]["referentiel"]
-          modified_at: string
-        }
-        Update: {
-          collectivite_id?: number
-          referentiel?: Database["public"]["Enums"]["referentiel"]
-          modified_at?: string
-        }
-      }
-      collectivite: {
-        Row: {
-          id: number
-          created_at: string
-          modified_at: string
-        }
-        Insert: {
-          id?: number
-          created_at?: string
-          modified_at?: string
-        }
-        Update: {
-          id?: number
-          created_at?: string
-          modified_at?: string
-        }
-      }
-      collectivite_bucket: {
-        Row: {
-          collectivite_id: number
-          bucket_id: string
-        }
-        Insert: {
-          collectivite_id: number
-          bucket_id: string
-        }
-        Update: {
-          collectivite_id?: number
-          bucket_id?: string
-        }
-      }
-      collectivite_test: {
-        Row: {
-          id: number
-          collectivite_id: number | null
-          nom: string
-        }
-        Insert: {
-          id?: number
-          collectivite_id?: number | null
-          nom: string
-        }
-        Update: {
-          id?: number
-          collectivite_id?: number | null
-          nom?: string
-        }
-      }
-      commune: {
-        Row: {
-          id: number
-          collectivite_id: number | null
-          nom: string
-          code: string
-        }
-        Insert: {
-          id?: number
-          collectivite_id?: number | null
-          nom: string
-          code: string
-        }
-        Update: {
-          id?: number
-          collectivite_id?: number | null
-          nom?: string
-          code?: string
-        }
-      }
-      dcp: {
-        Row: {
-          user_id: string | null
-          nom: string
-          prenom: string
-          email: string
-          limited: boolean
-          deleted: boolean
-          created_at: string
-          modified_at: string
-          telephone: string | null
-        }
-        Insert: {
-          user_id?: string | null
-          nom: string
-          prenom: string
-          email: string
-          limited?: boolean
-          deleted?: boolean
-          created_at?: string
-          modified_at?: string
-          telephone?: string | null
-        }
-        Update: {
-          user_id?: string | null
-          nom?: string
-          prenom?: string
-          email?: string
-          limited?: boolean
-          deleted?: boolean
-          created_at?: string
-          modified_at?: string
-          telephone?: string | null
-        }
-      }
-      epci: {
-        Row: {
-          id: number
-          collectivite_id: number | null
-          nom: string
-          siren: string
-          nature: Database["public"]["Enums"]["nature"]
-        }
-        Insert: {
-          id?: number
-          collectivite_id?: number | null
-          nom: string
-          siren: string
-          nature: Database["public"]["Enums"]["nature"]
-        }
-        Update: {
-          id?: number
-          collectivite_id?: number | null
-          nom?: string
-          siren?: string
-          nature?: Database["public"]["Enums"]["nature"]
-        }
-      }
-      fiche_action: {
-        Row: {
-          modified_at: string
-          uid: string
-          collectivite_id: number | null
-          avancement: Database["public"]["Enums"]["fiche_action_avancement"]
-          numerotation: string
-          titre: string
-          description: string
-          structure_pilote: string
-          personne_referente: string
-          elu_referent: string
-          partenaires: string
-          budget_global: number
-          commentaire: string
-          date_fin: string
-          date_debut: string
-          en_retard: boolean
-          action_ids: unknown[]
-          indicateur_ids: unknown[]
-          indicateur_personnalise_ids: number[]
-        }
-        Insert: {
-          modified_at?: string
-          uid: string
-          collectivite_id?: number | null
-          avancement: Database["public"]["Enums"]["fiche_action_avancement"]
-          numerotation: string
-          titre: string
-          description: string
-          structure_pilote: string
-          personne_referente: string
-          elu_referent: string
-          partenaires: string
-          budget_global: number
-          commentaire: string
-          date_fin: string
-          date_debut: string
-          en_retard: boolean
-          action_ids: unknown[]
-          indicateur_ids: unknown[]
-          indicateur_personnalise_ids: number[]
-        }
-        Update: {
-          modified_at?: string
-          uid?: string
-          collectivite_id?: number | null
-          avancement?: Database["public"]["Enums"]["fiche_action_avancement"]
-          numerotation?: string
-          titre?: string
-          description?: string
-          structure_pilote?: string
-          personne_referente?: string
-          elu_referent?: string
-          partenaires?: string
-          budget_global?: number
-          commentaire?: string
-          date_fin?: string
-          date_debut?: string
-          en_retard?: boolean
-          action_ids?: unknown[]
-          indicateur_ids?: unknown[]
-          indicateur_personnalise_ids?: number[]
-        }
-      }
-      fiche_action_action: {
-        Row: {
-          fiche_action_uid: string
-          action_id: string
-        }
-        Insert: {
-          fiche_action_uid: string
-          action_id: string
-        }
-        Update: {
-          fiche_action_uid?: string
-          action_id?: string
-        }
-      }
-      fiche_action_indicateur: {
-        Row: {
-          fiche_action_uid: string
-          indicateur_id: string
-        }
-        Insert: {
-          fiche_action_uid: string
-          indicateur_id: string
-        }
-        Update: {
-          fiche_action_uid?: string
-          indicateur_id?: string
-        }
-      }
-      fiche_action_indicateur_personnalise: {
-        Row: {
-          fiche_action_uid: string
-          indicateur_personnalise_id: number
-        }
-        Insert: {
-          fiche_action_uid: string
-          indicateur_personnalise_id: number
-        }
-        Update: {
-          fiche_action_uid?: string
-          indicateur_personnalise_id?: number
-        }
-      }
-      filtre_intervalle: {
-        Row: {
-          type: Database["public"]["Enums"]["collectivite_filtre_type"]
-          id: string
-          libelle: string
-          intervalle: unknown
-        }
-        Insert: {
-          type: Database["public"]["Enums"]["collectivite_filtre_type"]
-          id: string
-          libelle: string
-          intervalle: unknown
-        }
-        Update: {
-          type?: Database["public"]["Enums"]["collectivite_filtre_type"]
-          id?: string
-          libelle?: string
-          intervalle?: unknown
-        }
-      }
-      indicateur_action: {
-        Row: {
-          modified_at: string
-          indicateur_id: string
-          action_id: string
-        }
-        Insert: {
-          modified_at?: string
-          indicateur_id: string
-          action_id: string
-        }
-        Update: {
-          modified_at?: string
-          indicateur_id?: string
-          action_id?: string
-        }
-      }
-      indicateur_commentaire: {
-        Row: {
-          modified_at: string
-          collectivite_id: number
-          indicateur_id: string
-          commentaire: string
-          modified_by: string
-        }
-        Insert: {
-          modified_at?: string
-          collectivite_id: number
-          indicateur_id: string
-          commentaire: string
-          modified_by?: string
-        }
-        Update: {
-          modified_at?: string
-          collectivite_id?: number
-          indicateur_id?: string
-          commentaire?: string
-          modified_by?: string
-        }
-      }
-      indicateur_definition: {
-        Row: {
-          modified_at: string
-          id: string
-          indicateur_group: Database["public"]["Enums"]["indicateur_group"]
-          identifiant: string
-          valeur_indicateur: string | null
-          nom: string
-          description: string
-          unite: string
-          obligation_eci: boolean
-          parent: number | null
-        }
-        Insert: {
-          modified_at?: string
-          id: string
-          indicateur_group: Database["public"]["Enums"]["indicateur_group"]
-          identifiant: string
-          valeur_indicateur?: string | null
-          nom: string
-          description: string
-          unite: string
-          obligation_eci: boolean
-          parent?: number | null
-        }
-        Update: {
-          modified_at?: string
-          id?: string
-          indicateur_group?: Database["public"]["Enums"]["indicateur_group"]
-          identifiant?: string
-          valeur_indicateur?: string | null
-          nom?: string
-          description?: string
-          unite?: string
-          obligation_eci?: boolean
-          parent?: number | null
-        }
-      }
-      indicateur_objectif: {
-        Row: {
-          modified_at: string
-          valeur: number | null
-          annee: number
-          collectivite_id: number
-          indicateur_id: string
-        }
-        Insert: {
-          modified_at?: string
-          valeur?: number | null
-          annee: number
-          collectivite_id: number
-          indicateur_id: string
-        }
-        Update: {
-          modified_at?: string
-          valeur?: number | null
-          annee?: number
-          collectivite_id?: number
-          indicateur_id?: string
-        }
-      }
-      indicateur_parent: {
-        Row: {
-          id: number
-          numero: string
-          nom: string
-        }
-        Insert: {
-          id?: number
-          numero: string
-          nom: string
-        }
-        Update: {
-          id?: number
-          numero?: string
-          nom?: string
-        }
-      }
-      indicateur_personnalise_definition: {
-        Row: {
-          modified_at: string
-          id: number
-          collectivite_id: number | null
-          titre: string
-          description: string
-          unite: string
-          commentaire: string
-          modified_by: string
-        }
-        Insert: {
-          modified_at?: string
-          id?: number
-          collectivite_id?: number | null
-          titre: string
-          description: string
-          unite: string
-          commentaire: string
-          modified_by?: string
-        }
-        Update: {
-          modified_at?: string
-          id?: number
-          collectivite_id?: number | null
-          titre?: string
-          description?: string
-          unite?: string
-          commentaire?: string
-          modified_by?: string
-        }
-      }
-      indicateur_personnalise_objectif: {
-        Row: {
-          modified_at: string
-          valeur: number | null
-          annee: number
-          collectivite_id: number
-          indicateur_id: number
-        }
-        Insert: {
-          modified_at?: string
-          valeur?: number | null
-          annee: number
-          collectivite_id: number
-          indicateur_id: number
-        }
-        Update: {
-          modified_at?: string
-          valeur?: number | null
-          annee?: number
-          collectivite_id?: number
-          indicateur_id?: number
-        }
-      }
-      indicateur_personnalise_resultat: {
-        Row: {
-          modified_at: string
-          valeur: number | null
-          annee: number
-          collectivite_id: number
-          indicateur_id: number
-        }
-        Insert: {
-          modified_at?: string
-          valeur?: number | null
-          annee: number
-          collectivite_id: number
-          indicateur_id: number
-        }
-        Update: {
-          modified_at?: string
-          valeur?: number | null
-          annee?: number
-          collectivite_id?: number
-          indicateur_id?: number
-        }
-      }
-      indicateur_resultat: {
-        Row: {
-          modified_at: string
-          valeur: number | null
-          annee: number
-          collectivite_id: number
-          indicateur_id: string
-        }
-        Insert: {
-          modified_at?: string
-          valeur?: number | null
-          annee: number
-          collectivite_id: number
-          indicateur_id: string
-        }
-        Update: {
-          modified_at?: string
-          valeur?: number | null
-          annee?: number
-          collectivite_id?: number
-          indicateur_id?: string
-        }
-      }
-      indicateurs_json: {
-        Row: {
-          indicateurs: Json
-          created_at: string
-        }
-        Insert: {
-          indicateurs: Json
-          created_at?: string
-        }
-        Update: {
-          indicateurs?: Json
-          created_at?: string
-        }
-      }
-      labellisation: {
-        Row: {
-          id: number
-          collectivite_id: number | null
-          referentiel: Database["public"]["Enums"]["referentiel"]
-          obtenue_le: string
-          annee: number | null
-          etoiles: number
-          score_realise: number | null
-          score_programme: number | null
-        }
-        Insert: {
-          id?: number
-          collectivite_id?: number | null
-          referentiel: Database["public"]["Enums"]["referentiel"]
-          obtenue_le: string
-          annee?: number | null
-          etoiles: number
-          score_realise?: number | null
-          score_programme?: number | null
-        }
-        Update: {
-          id?: number
-          collectivite_id?: number | null
-          referentiel?: Database["public"]["Enums"]["referentiel"]
-          obtenue_le?: string
-          annee?: number | null
-          etoiles?: number
-          score_realise?: number | null
-          score_programme?: number | null
-        }
-      }
-      labellisation_action_critere: {
-        Row: {
-          etoile: "1" | "2" | "3" | "4" | "5"
-          prio: number
-          referentiel: Database["public"]["Enums"]["referentiel"]
-          action_id: string
-          formulation: string
-          min_realise_percentage: number | null
-          min_programme_percentage: number | null
-          min_realise_score: number | null
-          min_programme_score: number | null
-        }
-        Insert: {
-          etoile: "1" | "2" | "3" | "4" | "5"
-          prio: number
-          referentiel: Database["public"]["Enums"]["referentiel"]
-          action_id: string
-          formulation: string
-          min_realise_percentage?: number | null
-          min_programme_percentage?: number | null
-          min_realise_score?: number | null
-          min_programme_score?: number | null
-        }
-        Update: {
-          etoile?: "1" | "2" | "3" | "4" | "5"
-          prio?: number
-          referentiel?: Database["public"]["Enums"]["referentiel"]
-          action_id?: string
-          formulation?: string
-          min_realise_percentage?: number | null
-          min_programme_percentage?: number | null
-          min_realise_score?: number | null
-          min_programme_score?: number | null
-        }
-      }
-      labellisation_calendrier: {
-        Row: {
-          referentiel: Database["public"]["Enums"]["referentiel"]
-          information: string
-        }
-        Insert: {
-          referentiel: Database["public"]["Enums"]["referentiel"]
-          information: string
-        }
-        Update: {
-          referentiel?: Database["public"]["Enums"]["referentiel"]
-          information?: string
-        }
-      }
-      labellisation_fichier_critere: {
-        Row: {
-          referentiel: Database["public"]["Enums"]["referentiel"]
-          etoile: "1" | "2" | "3" | "4" | "5"
-          description: string
-        }
-        Insert: {
-          referentiel: Database["public"]["Enums"]["referentiel"]
-          etoile: "1" | "2" | "3" | "4" | "5"
-          description: string
-        }
-        Update: {
-          referentiel?: Database["public"]["Enums"]["referentiel"]
-          etoile?: "1" | "2" | "3" | "4" | "5"
-          description?: string
-        }
-      }
-      maintenance: {
-        Row: {
-          id: number
-          begins_at: string
-          ends_at: string
-        }
-        Insert: {
-          id?: number
-          begins_at: string
-          ends_at: string
-        }
-        Update: {
-          id?: number
-          begins_at?: string
-          ends_at?: string
-        }
-      }
-      personnalisation: {
-        Row: {
-          action_id: string
-          titre: string
-          description: string
-        }
-        Insert: {
-          action_id: string
-          titre: string
-          description: string
-        }
-        Update: {
-          action_id?: string
-          titre?: string
-          description?: string
-        }
-      }
-      personnalisation_consequence: {
-        Row: {
-          modified_at: string
-          collectivite_id: number
-          consequences: Json
-          payload_timestamp: string | null
-        }
-        Insert: {
-          modified_at?: string
-          collectivite_id: number
-          consequences: Json
-          payload_timestamp?: string | null
-        }
-        Update: {
-          modified_at?: string
-          collectivite_id?: number
-          consequences?: Json
-          payload_timestamp?: string | null
-        }
-      }
-      personnalisation_regle: {
-        Row: {
-          action_id: string
-          type: Database["public"]["Enums"]["regle_type"]
-          formule: string
-          description: string
-          modified_at: string
-        }
-        Insert: {
-          action_id: string
-          type: Database["public"]["Enums"]["regle_type"]
-          formule: string
-          description: string
-          modified_at?: string
-        }
-        Update: {
-          action_id?: string
-          type?: Database["public"]["Enums"]["regle_type"]
-          formule?: string
-          description?: string
-          modified_at?: string
-        }
-      }
-      personnalisations_json: {
-        Row: {
-          questions: Json
-          regles: Json
-          created_at: string
-        }
-        Insert: {
-          questions: Json
-          regles: Json
-          created_at?: string
-        }
-        Update: {
-          questions?: Json
-          regles?: Json
-          created_at?: string
-        }
-      }
-      plan_action: {
-        Row: {
-          uid: string
-          collectivite_id: number | null
-          nom: string
-          categories: Json
-          fiches_by_category: Json
-          created_at: string
-          modified_at: string
-        }
-        Insert: {
-          uid: string
-          collectivite_id?: number | null
-          nom: string
-          categories: Json
-          fiches_by_category: Json
-          created_at?: string
-          modified_at?: string
-        }
-        Update: {
-          uid?: string
-          collectivite_id?: number | null
-          nom?: string
-          categories?: Json
-          fiches_by_category?: Json
-          created_at?: string
-          modified_at?: string
-        }
-      }
-      pre_audit_scores: {
-        Row: {
-          collectivite_id: number
-          referentiel: Database["public"]["Enums"]["referentiel"]
-          scores: Json
-          modified_at: string
-          payload_timestamp: string | null
-          audit_id: number
-        }
-        Insert: {
-          collectivite_id: number
-          referentiel: Database["public"]["Enums"]["referentiel"]
-          scores: Json
-          modified_at: string
-          payload_timestamp?: string | null
-          audit_id: number
-        }
-        Update: {
-          collectivite_id?: number
-          referentiel?: Database["public"]["Enums"]["referentiel"]
-          scores?: Json
-          modified_at?: string
-          payload_timestamp?: string | null
-          audit_id?: number
-        }
-      }
-      preuve_action: {
-        Row: {
-          preuve_id: string
-          action_id: string
-        }
-        Insert: {
-          preuve_id: string
-          action_id: string
-        }
-        Update: {
-          preuve_id?: string
-          action_id?: string
-        }
-      }
-      preuve_complementaire: {
-        Row: {
-          id: number
-          collectivite_id: number
-          fichier_id: number | null
-          url: string | null
-          titre: string
-          commentaire: string
-          modified_by: string
-          modified_at: string
-          lien: Json | null
-          action_id: string
-        }
-        Insert: {
-          id?: number
-          collectivite_id: number
-          fichier_id?: number | null
-          url?: string | null
-          titre?: string
-          commentaire?: string
-          modified_by?: string
-          modified_at?: string
-          lien?: Json | null
-          action_id: string
-        }
-        Update: {
-          id?: number
-          collectivite_id?: number
-          fichier_id?: number | null
-          url?: string | null
-          titre?: string
-          commentaire?: string
-          modified_by?: string
-          modified_at?: string
-          lien?: Json | null
-          action_id?: string
-        }
-      }
-      preuve_labellisation: {
-        Row: {
-          id: number
-          collectivite_id: number
-          fichier_id: number | null
-          url: string | null
-          titre: string
-          commentaire: string
-          modified_by: string
-          modified_at: string
-          lien: Json | null
-          demande_id: number
-        }
-        Insert: {
-          id?: number
-          collectivite_id: number
-          fichier_id?: number | null
-          url?: string | null
-          titre?: string
-          commentaire?: string
-          modified_by?: string
-          modified_at?: string
-          lien?: Json | null
-          demande_id: number
-        }
-        Update: {
-          id?: number
-          collectivite_id?: number
-          fichier_id?: number | null
-          url?: string | null
-          titre?: string
-          commentaire?: string
-          modified_by?: string
-          modified_at?: string
-          lien?: Json | null
-          demande_id?: number
-        }
-      }
-      preuve_rapport: {
-        Row: {
-          id: number
-          collectivite_id: number
-          fichier_id: number | null
-          url: string | null
-          titre: string
-          commentaire: string
-          modified_by: string
-          modified_at: string
-          lien: Json | null
-          date: string
-        }
-        Insert: {
-          id?: number
-          collectivite_id: number
-          fichier_id?: number | null
-          url?: string | null
-          titre?: string
-          commentaire?: string
-          modified_by?: string
-          modified_at?: string
-          lien?: Json | null
-          date: string
-        }
-        Update: {
-          id?: number
-          collectivite_id?: number
-          fichier_id?: number | null
-          url?: string | null
-          titre?: string
-          commentaire?: string
-          modified_by?: string
-          modified_at?: string
-          lien?: Json | null
-          date?: string
-        }
-      }
-      preuve_reglementaire: {
-        Row: {
-          id: number
-          collectivite_id: number
-          fichier_id: number | null
-          url: string | null
-          titre: string
-          commentaire: string
-          modified_by: string
-          modified_at: string
-          lien: Json | null
-          preuve_id: string
-        }
-        Insert: {
-          id?: number
-          collectivite_id: number
-          fichier_id?: number | null
-          url?: string | null
-          titre?: string
-          commentaire?: string
-          modified_by?: string
-          modified_at?: string
-          lien?: Json | null
-          preuve_id: string
-        }
-        Update: {
-          id?: number
-          collectivite_id?: number
-          fichier_id?: number | null
-          url?: string | null
-          titre?: string
-          commentaire?: string
-          modified_by?: string
-          modified_at?: string
-          lien?: Json | null
-          preuve_id?: string
-        }
-      }
-      preuve_reglementaire_definition: {
-        Row: {
-          id: string
-          nom: string
-          description: string
-        }
-        Insert: {
-          id: string
-          nom: string
-          description: string
-        }
-        Update: {
-          id?: string
-          nom?: string
-          description?: string
-        }
-      }
-      preuve_reglementaire_json: {
-        Row: {
-          preuves: Json
-          created_at: string
-        }
-        Insert: {
-          preuves: Json
-          created_at?: string
-        }
-        Update: {
-          preuves?: Json
-          created_at?: string
-        }
-      }
-      private_collectivite_membre: {
-        Row: {
-          user_id: string
-          collectivite_id: number
-          fonction: Database["public"]["Enums"]["membre_fonction"] | null
-          details_fonction: string | null
-          champ_intervention:
-            | Database["public"]["Enums"]["referentiel"][]
-            | null
-          created_at: string
-          modified_at: string
-        }
-        Insert: {
-          user_id: string
-          collectivite_id: number
-          fonction?: Database["public"]["Enums"]["membre_fonction"] | null
-          details_fonction?: string | null
-          champ_intervention?:
-            | Database["public"]["Enums"]["referentiel"][]
-            | null
-          created_at?: string
-          modified_at?: string
-        }
-        Update: {
-          user_id?: string
-          collectivite_id?: number
-          fonction?: Database["public"]["Enums"]["membre_fonction"] | null
-          details_fonction?: string | null
-          champ_intervention?:
-            | Database["public"]["Enums"]["referentiel"][]
-            | null
-          created_at?: string
-          modified_at?: string
-        }
-      }
-      private_utilisateur_droit: {
-        Row: {
-          id: number
-          user_id: string
-          collectivite_id: number
-          active: boolean
-          created_at: string
-          modified_at: string
-          niveau_acces: Database["public"]["Enums"]["niveau_acces"]
-          invitation_id: string | null
-        }
-        Insert: {
-          id?: number
-          user_id: string
-          collectivite_id: number
-          active: boolean
-          created_at?: string
-          modified_at?: string
-          niveau_acces?: Database["public"]["Enums"]["niveau_acces"]
-          invitation_id?: string | null
-        }
-        Update: {
-          id?: number
-          user_id?: string
-          collectivite_id?: number
-          active?: boolean
-          created_at?: string
-          modified_at?: string
-          niveau_acces?: Database["public"]["Enums"]["niveau_acces"]
-          invitation_id?: string | null
-        }
-      }
-      question: {
-        Row: {
-          id: string
-          thematique_id: string | null
-          ordonnancement: number | null
-          types_collectivites_concernees:
-            | Database["public"]["Enums"]["type_collectivite"][]
-            | null
-          type: Database["public"]["Enums"]["question_type"]
-          description: string
-          formulation: string
-        }
-        Insert: {
-          id: string
-          thematique_id?: string | null
-          ordonnancement?: number | null
-          types_collectivites_concernees?:
-            | Database["public"]["Enums"]["type_collectivite"][]
-            | null
-          type: Database["public"]["Enums"]["question_type"]
-          description: string
-          formulation: string
-        }
-        Update: {
-          id?: string
-          thematique_id?: string | null
-          ordonnancement?: number | null
-          types_collectivites_concernees?:
-            | Database["public"]["Enums"]["type_collectivite"][]
-            | null
-          type?: Database["public"]["Enums"]["question_type"]
-          description?: string
-          formulation?: string
-        }
-      }
-      question_action: {
-        Row: {
-          question_id: string
-          action_id: string
-        }
-        Insert: {
-          question_id: string
-          action_id: string
-        }
-        Update: {
-          question_id?: string
-          action_id?: string
-        }
-      }
-      question_choix: {
-        Row: {
-          question_id: string | null
-          id: string
-          ordonnancement: number | null
-          formulation: string | null
-        }
-        Insert: {
-          question_id?: string | null
-          id: string
-          ordonnancement?: number | null
-          formulation?: string | null
-        }
-        Update: {
-          question_id?: string | null
-          id?: string
-          ordonnancement?: number | null
-          formulation?: string | null
-        }
-      }
-      question_thematique: {
-        Row: {
-          id: string
-          nom: string | null
-        }
-        Insert: {
-          id: string
-          nom?: string | null
-        }
-        Update: {
-          id?: string
-          nom?: string | null
-        }
-      }
-      referentiel_json: {
-        Row: {
-          definitions: Json
-          children: Json
-          created_at: string
-        }
-        Insert: {
-          definitions: Json
-          children: Json
-          created_at?: string
-        }
-        Update: {
-          definitions?: Json
-          children?: Json
-          created_at?: string
-        }
-      }
-      reponse_binaire: {
-        Row: {
-          modified_at: string
-          collectivite_id: number
-          question_id: string
-          reponse: boolean | null
-        }
-        Insert: {
-          modified_at?: string
-          collectivite_id: number
-          question_id: string
-          reponse?: boolean | null
-        }
-        Update: {
-          modified_at?: string
-          collectivite_id?: number
-          question_id?: string
-          reponse?: boolean | null
-        }
-      }
-      reponse_choix: {
-        Row: {
-          modified_at: string
-          collectivite_id: number
-          question_id: string
-          reponse: string | null
-        }
-        Insert: {
-          modified_at?: string
-          collectivite_id: number
-          question_id: string
-          reponse?: string | null
-        }
-        Update: {
-          modified_at?: string
-          collectivite_id?: number
-          question_id?: string
-          reponse?: string | null
-        }
-      }
-      reponse_proportion: {
-        Row: {
-          modified_at: string
-          collectivite_id: number
-          question_id: string
-          reponse: number | null
-        }
-        Insert: {
-          modified_at?: string
-          collectivite_id: number
-          question_id: string
-          reponse?: number | null
-        }
-        Update: {
-          modified_at?: string
-          collectivite_id?: number
-          question_id?: string
-          reponse?: number | null
-        }
-      }
-      type_tabular_score: {
-        Row: {
-          referentiel: Database["public"]["Enums"]["referentiel"] | null
-          action_id: string | null
-          score_realise: number | null
-          score_programme: number | null
-          score_realise_plus_programme: number | null
-          score_pas_fait: number | null
-          score_non_renseigne: number | null
-          points_restants: number | null
-          points_realises: number | null
-          points_programmes: number | null
-          points_max_personnalises: number | null
-          points_max_referentiel: number | null
-        }
-        Insert: {
-          referentiel?: Database["public"]["Enums"]["referentiel"] | null
-          action_id?: string | null
-          score_realise?: number | null
-          score_programme?: number | null
-          score_realise_plus_programme?: number | null
-          score_pas_fait?: number | null
-          score_non_renseigne?: number | null
-          points_restants?: number | null
-          points_realises?: number | null
-          points_programmes?: number | null
-          points_max_personnalises?: number | null
-          points_max_referentiel?: number | null
-        }
-        Update: {
-          referentiel?: Database["public"]["Enums"]["referentiel"] | null
-          action_id?: string | null
-          score_realise?: number | null
-          score_programme?: number | null
-          score_realise_plus_programme?: number | null
-          score_pas_fait?: number | null
-          score_non_renseigne?: number | null
-          points_restants?: number | null
-          points_realises?: number | null
-          points_programmes?: number | null
-          points_max_personnalises?: number | null
-          points_max_referentiel?: number | null
-        }
-      }
-    }
-    Views: {
-      action_audit_state: {
-        Row: {
-          action_id: string | null
-          state_id: number | null
-          statut: Database["public"]["Enums"]["audit_statut"] | null
-          avis: string | null
-          ordre_du_jour: boolean | null
-          audit_id: number | null
-          collectivite_id: number | null
-          referentiel: Database["public"]["Enums"]["referentiel"] | null
-        }
-      }
-      action_children: {
-        Row: {
-          id: string | null
-          children: unknown[] | null
-          depth: number | null
-        }
-      }
-      action_definition_summary: {
-        Row: {
-          id: string | null
-          referentiel: Database["public"]["Enums"]["referentiel"] | null
-          children: unknown[] | null
-          depth: number | null
-          type: Database["public"]["Enums"]["action_type"] | null
-          identifiant: string | null
-          nom: string | null
-          description: string | null
-          have_exemples: boolean | null
-          have_preuve: boolean | null
-          have_ressources: boolean | null
-          have_reduction_potentiel: boolean | null
-          have_perimetre_evaluation: boolean | null
-          have_contexte: boolean | null
-          have_questions: boolean | null
-        }
-      }
-      action_discussion_feed: {
-        Row: {
-          id: number | null
-          collectivite_id: number | null
-          action_id: string | null
-          created_by: string | null
-          created_at: string | null
-          modified_at: string | null
-          status: Database["public"]["Enums"]["action_discussion_statut"] | null
-          commentaires: Json[] | null
-        }
-      }
-      action_title: {
-        Row: {
-          id: string | null
-          referentiel: Database["public"]["Enums"]["referentiel"] | null
-          children: unknown[] | null
-          type: Database["public"]["Enums"]["action_type"] | null
-          identifiant: string | null
-          nom: string | null
-        }
-      }
-      active_collectivite: {
-        Row: {
-          collectivite_id: number | null
-          nom: string | null
-        }
-      }
-      bibliotheque_fichier: {
-        Row: {
-          id: number | null
-          collectivite_id: number | null
-          hash: string | null
-          filename: string | null
-          bucket_id: string | null
-          file_id: string | null
-          filesize: number | null
-        }
-      }
-      business_action_children: {
-        Row: {
-          referentiel: Database["public"]["Enums"]["referentiel"] | null
-          id: string | null
-          parent: string | null
-          children: unknown[] | null
-        }
-      }
-      business_action_statut: {
-        Row: {
-          collectivite_id: number | null
-          referentiel: Database["public"]["Enums"]["referentiel"] | null
-          action_id: string | null
-          avancement: Database["public"]["Enums"]["avancement"] | null
-          avancement_detaille: number[] | null
-          concerne: boolean | null
-        }
-      }
-      business_reponse: {
-        Row: {
-          collectivite_id: number | null
-          reponses: Json[] | null
-        }
-      }
-      client_action_statut: {
-        Row: {
-          collectivite_id: number | null
-          modified_by: string | null
-          action_id: string | null
-          avancement: Database["public"]["Enums"]["avancement"] | null
-          concerne: boolean | null
-        }
-        Insert: {
-          collectivite_id?: number | null
-          modified_by?: string | null
-          action_id?: string | null
-          avancement?: Database["public"]["Enums"]["avancement"] | null
-          concerne?: boolean | null
-        }
-        Update: {
-          collectivite_id?: number | null
-          modified_by?: string | null
-          action_id?: string | null
-          avancement?: Database["public"]["Enums"]["avancement"] | null
-          concerne?: boolean | null
-        }
-      }
-      collectivite_carte_identite: {
-        Row: {
-          collectivite_id: number | null
-          nom: string | null
-          type_collectivite:
-            | Database["public"]["Enums"]["type_collectivite"]
-            | null
-          code_siren_insee: string | null
-          region_name: string | null
-          departement_name: string | null
-          population_source: string | null
-          population_totale: number | null
-        }
-      }
-      collectivite_identite: {
-        Row: {
-          id: number | null
-          population: string[] | null
-          type: Database["public"]["Enums"]["type_collectivite"][] | null
-          localisation: string[] | null
-        }
-      }
-      collectivite_niveau_acces: {
-        Row: {
-          collectivite_id: number | null
-          nom: string | null
-          niveau_acces: Database["public"]["Enums"]["niveau_acces"] | null
-          est_auditeur: boolean | null
-        }
-      }
-      comparaison_scores_audit: {
-        Row: {
-          collectivite_id: number | null
-          referentiel: Database["public"]["Enums"]["referentiel"] | null
-          action_id: string | null
-          courant: unknown | null
-          pre_audit: unknown | null
-        }
-      }
-      departement: {
-        Row: {
-          code: string | null
-          libelle: string | null
-          region_code: string | null
-        }
-        Insert: {
-          code?: string | null
-          libelle?: string | null
-          region_code?: string | null
-        }
-        Update: {
-          code?: string | null
-          libelle?: string | null
-          region_code?: string | null
-        }
-      }
-      historique: {
-        Row: {
-          type: string | null
-          collectivite_id: number | null
-          modified_by_id: string | null
-          previous_modified_by_id: string | null
-          modified_at: string | null
-          previous_modified_at: string | null
-          action_id: string | null
-          avancement: Database["public"]["Enums"]["avancement"] | null
-          previous_avancement: Database["public"]["Enums"]["avancement"] | null
-          avancement_detaille: number[] | null
-          previous_avancement_detaille: number[] | null
-          concerne: boolean | null
-          previous_concerne: boolean | null
-          precision: string | null
-          previous_precision: string | null
-          question_id: string | null
-          question_type: Database["public"]["Enums"]["question_type"] | null
-          reponse: Json | null
-          previous_reponse: Json | null
-          modified_by_nom: string | null
-          tache_identifiant: string | null
-          tache_nom: string | null
-          action_identifiant: string | null
-          action_nom: string | null
-          question_formulation: string | null
-          thematique_id: string | null
-          thematique_nom: string | null
-          action_ids: unknown[] | null
-        }
-      }
-      mes_collectivites: {
-        Row: {
-          collectivite_id: number | null
-          nom: string | null
-          niveau_acces: Database["public"]["Enums"]["niveau_acces"] | null
-          est_auditeur: boolean | null
-        }
-      }
-      named_collectivite: {
-        Row: {
-          collectivite_id: number | null
-          nom: string | null
-        }
-      }
-      ongoing_maintenance: {
-        Row: {
-          now: string | null
-          begins_at: string | null
-          ends_at: string | null
-        }
-      }
-      preuve: {
-        Row: {
-          preuve_type: Database["public"]["Enums"]["preuve_type"] | null
-          id: number | null
-          collectivite_id: number | null
-          fichier: Json | null
-          lien: Json | null
-          commentaire: string | null
-          created_at: string | null
-          created_by: string | null
-          created_by_nom: string | null
-          action: Json | null
-          preuve_reglementaire: Json | null
-          demande: Json | null
-          rapport: Json | null
-        }
-      }
-      question_display: {
-        Row: {
-          id: string | null
-          action_ids: unknown[] | null
-          collectivite_id: number | null
-          thematique_id: string | null
-          type: Database["public"]["Enums"]["question_type"] | null
-          thematique_nom: string | null
-          description: string | null
-          types_collectivites_concernees:
-            | Database["public"]["Enums"]["type_collectivite"][]
-            | null
-          formulation: string | null
-          ordonnancement: number | null
-          choix: Json[] | null
-          population: string[] | null
-          localisation: string[] | null
-        }
-      }
-      question_engine: {
-        Row: {
-          id: string | null
-          type: Database["public"]["Enums"]["question_type"] | null
-          choix_ids: unknown[] | null
-        }
-      }
-      question_thematique_completude: {
-        Row: {
-          collectivite_id: number | null
-          id: string | null
-          nom: string | null
-          referentiels: Database["public"]["Enums"]["referentiel"][] | null
-          completude:
-            | Database["public"]["Enums"]["thematique_completude"]
-            | null
-        }
-      }
-      question_thematique_display: {
-        Row: {
-          id: string | null
-          nom: string | null
-          referentiels: Database["public"]["Enums"]["referentiel"][] | null
-        }
-      }
-      region: {
-        Row: {
-          code: string | null
-          libelle: string | null
-        }
-        Insert: {
-          code?: string | null
-          libelle?: string | null
-        }
-        Update: {
-          code?: string | null
-          libelle?: string | null
-        }
-      }
-      reponse_display: {
-        Row: {
-          question_id: string | null
-          collectivite_id: number | null
-          reponse: Json | null
-        }
-      }
-      retool_active_collectivite: {
-        Row: {
-          collectivite_id: number | null
-          nom: string | null
-        }
-      }
-      retool_completude: {
-        Row: {
-          collectivite_id: number | null
-          nom: string | null
-          region_name: string | null
-          departement_name: string | null
-          type_collectivite:
-            | Database["public"]["Enums"]["type_collectivite"]
-            | null
-          population_totale: number | null
-          code_siren_insee: string | null
-          completude_eci: number | null
-          completude_cae: number | null
-        }
-      }
-      retool_completude_compute: {
-        Row: {
-          collectivite_id: number | null
-          nom: string | null
-          completude_eci: number | null
-          completude_cae: number | null
-        }
-      }
-      retool_labellisation: {
-        Row: {
-          id: number | null
-          collectivite_id: number | null
-          referentiel: Database["public"]["Enums"]["referentiel"] | null
-          obtenue_le: string | null
-          annee: number | null
-          etoiles: number | null
-          score_realise: number | null
-          score_programme: number | null
-          collectivite_nom: string | null
-        }
-      }
-      retool_labellisation_demande: {
-        Row: {
-          id: number | null
-          en_cours: boolean | null
-          collectivite_id: number | null
-          referentiel: Database["public"]["Enums"]["referentiel"] | null
-          etoiles: "1" | "2" | "3" | "4" | "5" | null
-          date: string | null
-          nom: string | null
-        }
-      }
-      retool_last_activity: {
-        Row: {
-          collectivite_id: number | null
-          nom: string | null
-          statut: string | null
-          commentaire: string | null
-          plan_action: string | null
-          fiche_action: string | null
-          indicateur: string | null
-          indicateur_commentaire: string | null
-          indicateur_perso: string | null
-          indicateur_perso_resultat: string | null
-        }
-      }
-      retool_preuves: {
-        Row: {
-          collectivite_id: number | null
-          nom: string | null
-          referentiel: string | null
-          action: string | null
-          preuve_type: Database["public"]["Enums"]["preuve_type"] | null
-          fichier: string | null
-          lien: string | null
-          created_at: string | null
-        }
-      }
-      retool_score: {
-        Row: {
-          collectivite_id: number | null
-          Collectivité: string | null
-          referentiel: Database["public"]["Enums"]["referentiel"] | null
-          Identifiant: string | null
-          Titre: string | null
-          "Points potentiels": number | null
-          "Points realisés": number | null
-          "Pourcentage réalisé": number | null
-          "Points programmés": number | null
-          "Pourcentage programmé": number | null
-          "Pourcentage non renseigné": number | null
-          Avancement: string | null
-          "Commentaires fusionnés": string | null
-          Commentaire: string | null
-          "Modifié le": string | null
-        }
-      }
-      retool_user_collectivites_list: {
-        Row: {
-          prenom: string | null
-          nom: string | null
-          email: string | null
-          creation: string | null
-          derniere_connexion: string | null
-          collectivites: string[] | null
-          nb_collectivite: number | null
-        }
-      }
-      retool_user_list: {
-        Row: {
-          droit_id: number | null
-          collectivite_id: number | null
-          user_id: string | null
-          collectivite: string | null
-          niveau_acces: Database["public"]["Enums"]["niveau_acces"] | null
-          active: boolean | null
-          prenom: string | null
-          nom: string | null
-          email: string | null
-          telephone: string | null
-          fonction: Database["public"]["Enums"]["membre_fonction"] | null
-          details_fonction: string | null
-          champ_intervention:
-            | Database["public"]["Enums"]["referentiel"][]
-            | null
-        }
-      }
-      stats_active_real_collectivites: {
-        Row: {
-          collectivite_id: number | null
-          nom: string | null
-        }
-      }
-      stats_functionnalities_usage_proportion: {
-        Row: {
-          fiche_action_avg: number | null
-          cae_statuses_avg: number | null
-          eci_statuses_avg: number | null
-          indicateur_referentiel_avg: number | null
-          indicateur_personnalise_avg: number | null
-        }
-      }
-      suivi_audit: {
-        Row: {
-          collectivite_id: number | null
-          referentiel: Database["public"]["Enums"]["referentiel"] | null
-          action_id: string | null
-          have_children: boolean | null
-          type: Database["public"]["Enums"]["action_type"] | null
-          statut: Database["public"]["Enums"]["audit_statut"] | null
-          statuts: Database["public"]["Enums"]["audit_statut"][] | null
-          avis: string | null
-          ordre_du_jour: boolean | null
-          ordres_du_jour: boolean[] | null
-        }
-      }
-    }
+    Enums: {
+      action_categorie: "bases" | "mise en œuvre" | "effets"
+      action_discussion_statut: "ouvert" | "ferme"
+      action_type:
+        | "referentiel"
+        | "axe"
+        | "sous-axe"
+        | "action"
+        | "sous-action"
+        | "tache"
+      audit_statut: "non_audite" | "en_cours" | "audite"
+      avancement:
+        | "fait"
+        | "pas_fait"
+        | "programme"
+        | "non_renseigne"
+        | "detaille"
+      collectivite_filtre_type: "population" | "score" | "remplissage"
+      fiche_action_avancement:
+        | "pas_fait"
+        | "fait"
+        | "en_cours"
+        | "non_renseigne"
+      filterable_type_collectivite:
+        | "commune"
+        | "syndicat"
+        | "CU"
+        | "CC"
+        | "POLEM"
+        | "METRO"
+        | "CA"
+        | "EPT"
+        | "PETR"
+      indicateur_group: "cae" | "crte" | "eci"
+      membre_fonction:
+        | "referent"
+        | "conseiller"
+        | "technique"
+        | "politique"
+        | "partenaire"
+      nature:
+        | "SMF"
+        | "CU"
+        | "CC"
+        | "SIVOM"
+        | "POLEM"
+        | "METRO"
+        | "SMO"
+        | "CA"
+        | "EPT"
+        | "SIVU"
+        | "PETR"
+      niveau_acces: "admin" | "edition" | "lecture"
+      preuve_type:
+        | "complementaire"
+        | "reglementaire"
+        | "labellisation"
+        | "rapport"
+      question_type: "choix" | "binaire" | "proportion"
+      referentiel: "eci" | "cae"
+      regle_type: "score" | "desactivation" | "reduction"
+      role_name: "agent" | "referent" | "conseiller" | "auditeur" | "aucun"
+      thematique_completude: "complete" | "a_completer"
+      type_collectivite: "EPCI" | "commune" | "syndicat"
+    },
     Functions: {
       action_contexte: {
         Args: { id: unknown }
@@ -1991,8 +80,8 @@ export interface Database {
       }
       action_down_to_tache: {
         Args: {
+          identifiant: string,
           referentiel: Database["public"]["Enums"]["referentiel"]
-          identifiant: string
         }
         Returns: unknown
       }
@@ -2017,7 +106,7 @@ export interface Database {
         Returns: Record<string, unknown>[]
       }
       add_bibliotheque_fichier: {
-        Args: { collectivite_id: number; hash: string; filename: string }
+        Args: { collectivite_id: number; filename: string, hash: string; }
         Returns: unknown
       }
       add_user: {
@@ -2030,18 +119,18 @@ export interface Database {
       }
       business_insert_actions: {
         Args: {
-          relations: unknown
+          computed_points: unknown,
           definitions: unknown
-          computed_points: unknown
+          relations: unknown
         }
         Returns: undefined
       }
       business_update_actions: {
-        Args: { definitions: unknown; computed_points: unknown }
+        Args: { computed_points: unknown, definitions: unknown; }
         Returns: undefined
       }
       business_upsert_indicateurs: {
-        Args: { indicateur_definitions: unknown; indicateur_actions: unknown }
+        Args: { indicateur_actions: unknown, indicateur_definitions: unknown; }
         Returns: undefined
       }
       claim_collectivite: {
@@ -2156,22 +245,22 @@ export interface Database {
         Args: { "": unknown }
         Returns: unknown
       }
-      gbt_macad_compress: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
-      gbt_macad_fetch: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
       gbt_macad8_compress: {
         Args: { "": unknown }
         Returns: unknown
-      }
+      },
       gbt_macad8_fetch: {
         Args: { "": unknown }
         Returns: unknown
-      }
+      },
+      gbt_macad_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      },
+      gbt_macad_fetch: {
+        Args: { "": unknown }
+        Returns: unknown
+      },
       gbt_numeric_compress: {
         Args: { "": unknown }
         Returns: unknown
@@ -2228,46 +317,46 @@ export interface Database {
         Args: { "": unknown }
         Returns: unknown
       }
-      gbtreekey_var_in: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
-      gbtreekey_var_out: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
       gbtreekey16_in: {
         Args: { "": unknown }
         Returns: unknown
-      }
+      },
       gbtreekey16_out: {
         Args: { "": unknown }
         Returns: unknown
-      }
+      },
       gbtreekey32_in: {
         Args: { "": unknown }
         Returns: unknown
-      }
+      },
       gbtreekey32_out: {
         Args: { "": unknown }
         Returns: unknown
-      }
+      },
       gbtreekey4_in: {
         Args: { "": unknown }
         Returns: unknown
-      }
+      },
       gbtreekey4_out: {
         Args: { "": unknown }
         Returns: unknown
-      }
+      },
       gbtreekey8_in: {
         Args: { "": unknown }
         Returns: unknown
-      }
+      },
       gbtreekey8_out: {
         Args: { "": unknown }
         Returns: unknown
-      }
+      },
+      gbtreekey_var_in: {
+        Args: { "": unknown }
+        Returns: unknown
+      },
+      gbtreekey_var_out: {
+        Args: { "": unknown }
+        Returns: unknown
+      },
       have_admin_acces: {
         Args: { id: number }
         Returns: boolean
@@ -2289,7 +378,7 @@ export interface Database {
         Returns: boolean
       }
       have_one_of_niveaux_acces: {
-        Args: { niveaux: unknown; id: number }
+        Args: { id: number, niveaux: unknown; }
         Returns: boolean
       }
       is_agent_of: {
@@ -2319,8 +408,8 @@ export interface Database {
       labellisation_demande: {
         Args: {
           collectivite_id: number
+          etoiles: "1" | "2" | "3" | "4" | "5",
           referentiel: Database["public"]["Enums"]["referentiel"]
-          etoiles: "1" | "2" | "3" | "4" | "5"
         }
         Returns: unknown
       }
@@ -2331,8 +420,8 @@ export interface Database {
       labellisation_submit_demande: {
         Args: {
           collectivite_id: number
+          etoiles: "1" | "2" | "3" | "4" | "5",
           referentiel: Database["public"]["Enums"]["referentiel"]
-          etoiles: "1" | "2" | "3" | "4" | "5"
         }
         Returns: unknown
       }
@@ -2381,9 +470,9 @@ export interface Database {
       }
       test_attach_user: {
         Args: {
+          collectivite_id: number,
+          niveau: Database["public"]["Enums"]["niveau_acces"],
           user_id: string
-          collectivite_id: number
-          niveau: Database["public"]["Enums"]["niveau_acces"]
         }
         Returns: undefined
       }
@@ -2392,7 +481,7 @@ export interface Database {
         Returns: undefined
       }
       test_create_user: {
-        Args: { user_id: string; prenom: string; nom: string; email: string }
+        Args: { email: string, nom: string; prenom: string; user_id: string; }
         Returns: undefined
       }
       test_fulfill: {
@@ -2453,25 +542,25 @@ export interface Database {
       }
       update_collectivite_membre_champ_intervention: {
         Args: {
-          collectivite_id: number
+          champ_intervention: unknown,
+          collectivite_id: number,
           membre_id: string
-          champ_intervention: unknown
         }
         Returns: Json
       }
       update_collectivite_membre_details_fonction: {
         Args: {
           collectivite_id: number
+          details_fonction: string,
           membre_id: string
-          details_fonction: string
         }
         Returns: Json
       }
       update_collectivite_membre_fonction: {
         Args: {
           collectivite_id: number
+          fonction: Database["public"]["Enums"]["membre_fonction"],
           membre_id: string
-          fonction: Database["public"]["Enums"]["membre_fonction"]
         }
         Returns: Json
       }
@@ -2485,78 +574,2035 @@ export interface Database {
       }
       update_fiche_relationships: {
         Args: {
-          fiche_action_uid: string
-          action_ids: unknown
+          action_ids: unknown,
+          fiche_action_uid: string,
           indicateur_ids: unknown
           indicateur_personnalise_ids: unknown
         }
         Returns: undefined
       }
-    }
-    Enums: {
-      action_categorie: "bases" | "mise en œuvre" | "effets"
-      action_discussion_statut: "ouvert" | "ferme"
-      action_type:
-        | "referentiel"
-        | "axe"
-        | "sous-axe"
-        | "action"
-        | "sous-action"
-        | "tache"
-      audit_statut: "non_audite" | "en_cours" | "audite"
-      avancement:
-        | "fait"
-        | "pas_fait"
-        | "programme"
-        | "non_renseigne"
-        | "detaille"
-      collectivite_filtre_type: "population" | "score" | "remplissage"
-      fiche_action_avancement:
-        | "pas_fait"
-        | "fait"
-        | "en_cours"
-        | "non_renseigne"
-      filterable_type_collectivite:
-        | "commune"
-        | "syndicat"
-        | "CU"
-        | "CC"
-        | "POLEM"
-        | "METRO"
-        | "CA"
-        | "EPT"
-        | "PETR"
-      indicateur_group: "cae" | "crte" | "eci"
-      membre_fonction:
-        | "referent"
-        | "conseiller"
-        | "technique"
-        | "politique"
-        | "partenaire"
-      nature:
-        | "SMF"
-        | "CU"
-        | "CC"
-        | "SIVOM"
-        | "POLEM"
-        | "METRO"
-        | "SMO"
-        | "CA"
-        | "EPT"
-        | "SIVU"
-        | "PETR"
-      niveau_acces: "admin" | "edition" | "lecture"
-      preuve_type:
-        | "complementaire"
-        | "reglementaire"
-        | "labellisation"
-        | "rapport"
-      question_type: "choix" | "binaire" | "proportion"
-      referentiel: "eci" | "cae"
-      regle_type: "score" | "desactivation" | "reduction"
-      role_name: "agent" | "referent" | "conseiller" | "auditeur" | "aucun"
-      thematique_completude: "complete" | "a_completer"
-      type_collectivite: "EPCI" | "commune" | "syndicat"
+    },
+    Tables: {
+      abstract_any_indicateur_value: {
+        Insert: {
+          annee: number,
+          modified_at?: string,
+          valeur?: number | null
+        },
+        Row: {
+          annee: number,
+          modified_at: string,
+          valeur: number | null
+        },
+        Update: {
+          annee?: number,
+          modified_at?: string,
+          valeur?: number | null
+        }
+      }
+      abstract_modified_at: {
+        Insert: {
+          modified_at?: string
+        },
+        Row: {
+          modified_at: string
+        },
+        Update: {
+          modified_at?: string
+        }
+      }
+      action_commentaire: {
+        Insert: {
+          action_id: string,
+          collectivite_id: number,
+          commentaire: string
+          modified_at?: string,
+          modified_by?: string
+        },
+        Row: {
+          action_id: string,
+          collectivite_id: number,
+          commentaire: string
+          modified_at: string,
+          modified_by: string
+        },
+        Update: {
+          action_id?: string,
+          collectivite_id?: number,
+          commentaire?: string
+          modified_at?: string,
+          modified_by?: string
+        }
+      }
+      action_computed_points: {
+        Insert: {
+          action_id: string
+          modified_at?: string,
+          value: number
+        },
+        Row: {
+          action_id: string
+          modified_at: string,
+          value: number
+        },
+        Update: {
+          action_id?: string
+          modified_at?: string,
+          value?: number
+        }
+      }
+      action_definition: {
+        Insert: {
+          action_id: string
+          categorie?: Database["public"]["Enums"]["action_categorie"] | null,
+          contexte: string,
+          description: string,
+          exemples: string,
+          identifiant: string,
+          modified_at?: string,
+          nom: string,
+          perimetre_evaluation: string,
+          points?: number | null,
+          pourcentage?: number | null,
+          preuve?: string | null,
+          reduction_potentiel: string,
+          referentiel: Database["public"]["Enums"]["referentiel"],
+          ressources: string
+        },
+        Row: {
+          action_id: string
+          categorie: Database["public"]["Enums"]["action_categorie"] | null,
+          contexte: string,
+          description: string,
+          exemples: string,
+          identifiant: string,
+          modified_at: string,
+          nom: string,
+          perimetre_evaluation: string,
+          points: number | null,
+          pourcentage: number | null,
+          preuve: string | null,
+          reduction_potentiel: string,
+          referentiel: Database["public"]["Enums"]["referentiel"],
+          ressources: string
+        },
+        Update: {
+          action_id?: string
+          categorie?: Database["public"]["Enums"]["action_categorie"] | null,
+          contexte?: string,
+          description?: string,
+          exemples?: string,
+          identifiant?: string,
+          modified_at?: string,
+          nom?: string,
+          perimetre_evaluation?: string,
+          points?: number | null,
+          pourcentage?: number | null,
+          preuve?: string | null,
+          reduction_potentiel?: string,
+          referentiel?: Database["public"]["Enums"]["referentiel"],
+          ressources?: string
+        }
+      }
+      action_discussion: {
+        Insert: {
+          action_id: string,
+          collectivite_id: number,
+          created_at?: string,
+          created_by?: string
+          id?: number,
+          modified_at?: string
+          status?: Database["public"]["Enums"]["action_discussion_statut"]
+        },
+        Row: {
+          action_id: string,
+          collectivite_id: number,
+          created_at: string,
+          created_by: string
+          id: number,
+          modified_at: string
+          status: Database["public"]["Enums"]["action_discussion_statut"]
+        },
+        Update: {
+          action_id?: string,
+          collectivite_id?: number,
+          created_at?: string,
+          created_by?: string
+          id?: number,
+          modified_at?: string
+          status?: Database["public"]["Enums"]["action_discussion_statut"]
+        }
+      }
+      action_discussion_commentaire: {
+        Insert: {
+          created_at?: string,
+          created_by?: string,
+          discussion_id: number,
+          id?: number,
+          message: string
+        },
+        Row: {
+          created_at: string,
+          created_by: string,
+          discussion_id: number,
+          id: number,
+          message: string
+        },
+        Update: {
+          created_at?: string,
+          created_by?: string,
+          discussion_id?: number,
+          id?: number,
+          message?: string
+        }
+      }
+      action_relation: {
+        Insert: {
+          id: string
+          parent?: string | null,
+          referentiel: Database["public"]["Enums"]["referentiel"]
+        },
+        Row: {
+          id: string
+          parent: string | null,
+          referentiel: Database["public"]["Enums"]["referentiel"]
+        },
+        Update: {
+          id?: string
+          parent?: string | null,
+          referentiel?: Database["public"]["Enums"]["referentiel"]
+        }
+      }
+      action_statut: {
+        Insert: {
+          action_id: string,
+          avancement: Database["public"]["Enums"]["avancement"],
+          avancement_detaille?: number[] | null,
+          collectivite_id: number,
+          concerne: boolean
+          modified_at?: string,
+          modified_by?: string
+        },
+        Row: {
+          action_id: string,
+          avancement: Database["public"]["Enums"]["avancement"],
+          avancement_detaille: number[] | null,
+          collectivite_id: number,
+          concerne: boolean
+          modified_at: string,
+          modified_by: string
+        },
+        Update: {
+          action_id?: string,
+          avancement?: Database["public"]["Enums"]["avancement"],
+          avancement_detaille?: number[] | null,
+          collectivite_id?: number,
+          concerne?: boolean
+          modified_at?: string,
+          modified_by?: string
+        }
+      }
+      audit: {
+        Insert: {
+          collectivite_id: number
+          date_debut?: string,
+          date_fin?: string | null,
+          demande_id?: number | null,
+          id?: number
+          referentiel: Database["public"]["Enums"]["referentiel"]
+        },
+        Row: {
+          collectivite_id: number
+          date_debut: string,
+          date_fin: string | null,
+          demande_id: number | null,
+          id: number
+          referentiel: Database["public"]["Enums"]["referentiel"]
+        },
+        Update: {
+          collectivite_id?: number
+          date_debut?: string,
+          date_fin?: string | null,
+          demande_id?: number | null,
+          id?: number
+          referentiel?: Database["public"]["Enums"]["referentiel"]
+        }
+      }
+      audit_auditeur: {
+        Insert: {
+          audit_id: number
+          auditeur: string
+        },
+        Row: {
+          audit_id: number
+          auditeur: string
+        },
+        Update: {
+          audit_id?: number
+          auditeur?: string
+        }
+      }
+      client_scores: {
+        Insert: {
+          collectivite_id: number
+          modified_at: string,
+          payload_timestamp?: string | null,
+          referentiel: Database["public"]["Enums"]["referentiel"],
+          scores: Json
+        },
+        Row: {
+          collectivite_id: number
+          modified_at: string,
+          payload_timestamp: string | null,
+          referentiel: Database["public"]["Enums"]["referentiel"],
+          scores: Json
+        },
+        Update: {
+          collectivite_id?: number
+          modified_at?: string,
+          payload_timestamp?: string | null,
+          referentiel?: Database["public"]["Enums"]["referentiel"],
+          scores?: Json
+        }
+      }
+      client_scores_update: {
+        Insert: {
+          collectivite_id: number
+          modified_at: string,
+          referentiel: Database["public"]["Enums"]["referentiel"]
+        },
+        Row: {
+          collectivite_id: number
+          modified_at: string,
+          referentiel: Database["public"]["Enums"]["referentiel"]
+        },
+        Update: {
+          collectivite_id?: number
+          modified_at?: string,
+          referentiel?: Database["public"]["Enums"]["referentiel"]
+        }
+      }
+      collectivite: {
+        Insert: {
+          created_at?: string,
+          id?: number,
+          modified_at?: string
+        },
+        Row: {
+          created_at: string,
+          id: number,
+          modified_at: string
+        },
+        Update: {
+          created_at?: string,
+          id?: number,
+          modified_at?: string
+        }
+      }
+      collectivite_bucket: {
+        Insert: {
+          bucket_id: string,
+          collectivite_id: number
+        },
+        Row: {
+          bucket_id: string,
+          collectivite_id: number
+        },
+        Update: {
+          bucket_id?: string,
+          collectivite_id?: number
+        }
+      }
+      collectivite_test: {
+        Insert: {
+          collectivite_id?: number | null
+          id?: number,
+          nom: string
+        },
+        Row: {
+          collectivite_id: number | null
+          id: number,
+          nom: string
+        },
+        Update: {
+          collectivite_id?: number | null
+          id?: number,
+          nom?: string
+        }
+      }
+      commune: {
+        Insert: {
+          code: string,
+          collectivite_id?: number | null,
+          id?: number,
+          nom: string
+        },
+        Row: {
+          code: string,
+          collectivite_id: number | null,
+          id: number,
+          nom: string
+        },
+        Update: {
+          code?: string,
+          collectivite_id?: number | null,
+          id?: number,
+          nom?: string
+        }
+      }
+      dcp: {
+        Insert: {
+          created_at?: string,
+          deleted?: boolean,
+          email: string,
+          limited?: boolean,
+          modified_at?: string,
+          nom: string,
+          prenom: string,
+          telephone?: string | null,
+          user_id?: string | null
+        },
+        Row: {
+          created_at: string,
+          deleted: boolean,
+          email: string,
+          limited: boolean,
+          modified_at: string,
+          nom: string,
+          prenom: string,
+          telephone: string | null,
+          user_id: string | null
+        },
+        Update: {
+          created_at?: string,
+          deleted?: boolean,
+          email?: string,
+          limited?: boolean,
+          modified_at?: string,
+          nom?: string,
+          prenom?: string,
+          telephone?: string | null,
+          user_id?: string | null
+        }
+      }
+      epci: {
+        Insert: {
+          collectivite_id?: number | null
+          id?: number,
+          nature: Database["public"]["Enums"]["nature"],
+          nom: string,
+          siren: string
+        },
+        Row: {
+          collectivite_id: number | null
+          id: number,
+          nature: Database["public"]["Enums"]["nature"],
+          nom: string,
+          siren: string
+        },
+        Update: {
+          collectivite_id?: number | null
+          id?: number,
+          nature?: Database["public"]["Enums"]["nature"],
+          nom?: string,
+          siren?: string
+        }
+      }
+      fiche_action: {
+        Insert: {
+          action_ids: unknown[],
+          avancement: Database["public"]["Enums"]["fiche_action_avancement"],
+          budget_global: number,
+          collectivite_id?: number | null,
+          commentaire: string,
+          date_debut: string,
+          date_fin: string,
+          description: string,
+          elu_referent: string
+          en_retard: boolean,
+          indicateur_ids: unknown[],
+          indicateur_personnalise_ids: number[],
+          modified_at?: string,
+          numerotation: string,
+          partenaires: string,
+          personne_referente: string,
+          structure_pilote: string,
+          titre: string,
+          uid: string
+        },
+        Row: {
+          action_ids: unknown[],
+          avancement: Database["public"]["Enums"]["fiche_action_avancement"],
+          budget_global: number,
+          collectivite_id: number | null,
+          commentaire: string,
+          date_debut: string,
+          date_fin: string,
+          description: string,
+          elu_referent: string
+          en_retard: boolean,
+          indicateur_ids: unknown[],
+          indicateur_personnalise_ids: number[],
+          modified_at: string,
+          numerotation: string,
+          partenaires: string,
+          personne_referente: string,
+          structure_pilote: string,
+          titre: string,
+          uid: string
+        },
+        Update: {
+          action_ids?: unknown[],
+          avancement?: Database["public"]["Enums"]["fiche_action_avancement"],
+          budget_global?: number,
+          collectivite_id?: number | null,
+          commentaire?: string,
+          date_debut?: string,
+          date_fin?: string,
+          description?: string,
+          elu_referent?: string
+          en_retard?: boolean,
+          indicateur_ids?: unknown[],
+          indicateur_personnalise_ids?: number[],
+          modified_at?: string,
+          numerotation?: string,
+          partenaires?: string,
+          personne_referente?: string,
+          structure_pilote?: string,
+          titre?: string,
+          uid?: string
+        }
+      }
+      fiche_action_action: {
+        Insert: {
+          action_id: string,
+          fiche_action_uid: string
+        },
+        Row: {
+          action_id: string,
+          fiche_action_uid: string
+        },
+        Update: {
+          action_id?: string,
+          fiche_action_uid?: string
+        }
+      }
+      fiche_action_indicateur: {
+        Insert: {
+          fiche_action_uid: string
+          indicateur_id: string
+        },
+        Row: {
+          fiche_action_uid: string
+          indicateur_id: string
+        },
+        Update: {
+          fiche_action_uid?: string
+          indicateur_id?: string
+        }
+      }
+      fiche_action_indicateur_personnalise: {
+        Insert: {
+          fiche_action_uid: string
+          indicateur_personnalise_id: number
+        },
+        Row: {
+          fiche_action_uid: string
+          indicateur_personnalise_id: number
+        },
+        Update: {
+          fiche_action_uid?: string
+          indicateur_personnalise_id?: number
+        }
+      }
+      filtre_intervalle: {
+        Insert: {
+          id: string,
+          intervalle: unknown,
+          libelle: string
+          type: Database["public"]["Enums"]["collectivite_filtre_type"]
+        },
+        Row: {
+          id: string,
+          intervalle: unknown,
+          libelle: string
+          type: Database["public"]["Enums"]["collectivite_filtre_type"]
+        },
+        Update: {
+          id?: string,
+          intervalle?: unknown,
+          libelle?: string
+          type?: Database["public"]["Enums"]["collectivite_filtre_type"]
+        }
+      }
+      indicateur_action: {
+        Insert: {
+          action_id: string,
+          indicateur_id: string,
+          modified_at?: string
+        },
+        Row: {
+          action_id: string,
+          indicateur_id: string,
+          modified_at: string
+        },
+        Update: {
+          action_id?: string,
+          indicateur_id?: string,
+          modified_at?: string
+        }
+      }
+      indicateur_commentaire: {
+        Insert: {
+          collectivite_id: number
+          commentaire: string,
+          indicateur_id: string,
+          modified_at?: string
+          modified_by?: string
+        },
+        Row: {
+          collectivite_id: number
+          commentaire: string,
+          indicateur_id: string,
+          modified_at: string
+          modified_by: string
+        },
+        Update: {
+          collectivite_id?: number
+          commentaire?: string,
+          indicateur_id?: string,
+          modified_at?: string
+          modified_by?: string
+        }
+      }
+      indicateur_definition: {
+        Insert: {
+          description: string,
+          id: string,
+          identifiant: string
+          indicateur_group: Database["public"]["Enums"]["indicateur_group"],
+          modified_at?: string,
+          nom: string,
+          obligation_eci: boolean,
+          parent?: number | null,
+          unite: string,
+          valeur_indicateur?: string | null
+        },
+        Row: {
+          description: string,
+          id: string,
+          identifiant: string
+          indicateur_group: Database["public"]["Enums"]["indicateur_group"],
+          modified_at: string,
+          nom: string,
+          obligation_eci: boolean,
+          parent: number | null,
+          unite: string,
+          valeur_indicateur: string | null
+        },
+        Update: {
+          description?: string,
+          id?: string,
+          identifiant?: string
+          indicateur_group?: Database["public"]["Enums"]["indicateur_group"],
+          modified_at?: string,
+          nom?: string,
+          obligation_eci?: boolean,
+          parent?: number | null,
+          unite?: string,
+          valeur_indicateur?: string | null
+        }
+      }
+      indicateur_objectif: {
+        Insert: {
+          annee: number,
+          collectivite_id: number,
+          indicateur_id: string,
+          modified_at?: string,
+          valeur?: number | null
+        },
+        Row: {
+          annee: number,
+          collectivite_id: number,
+          indicateur_id: string,
+          modified_at: string,
+          valeur: number | null
+        },
+        Update: {
+          annee?: number,
+          collectivite_id?: number,
+          indicateur_id?: string,
+          modified_at?: string,
+          valeur?: number | null
+        }
+      }
+      indicateur_parent: {
+        Insert: {
+          id?: number,
+          nom: string
+          numero: string
+        },
+        Row: {
+          id: number,
+          nom: string
+          numero: string
+        },
+        Update: {
+          id?: number,
+          nom?: string
+          numero?: string
+        }
+      }
+      indicateur_personnalise_definition: {
+        Insert: {
+          collectivite_id?: number | null
+          commentaire: string,
+          description: string
+          id?: number,
+          modified_at?: string,
+          modified_by?: string,
+          titre: string,
+          unite: string
+        },
+        Row: {
+          collectivite_id: number | null
+          commentaire: string,
+          description: string
+          id: number,
+          modified_at: string,
+          modified_by: string,
+          titre: string,
+          unite: string
+        },
+        Update: {
+          collectivite_id?: number | null
+          commentaire?: string,
+          description?: string
+          id?: number,
+          modified_at?: string,
+          modified_by?: string,
+          titre?: string,
+          unite?: string
+        }
+      }
+      indicateur_personnalise_objectif: {
+        Insert: {
+          annee: number,
+          collectivite_id: number,
+          indicateur_id: number,
+          modified_at?: string,
+          valeur?: number | null
+        },
+        Row: {
+          annee: number,
+          collectivite_id: number,
+          indicateur_id: number,
+          modified_at: string,
+          valeur: number | null
+        },
+        Update: {
+          annee?: number,
+          collectivite_id?: number,
+          indicateur_id?: number,
+          modified_at?: string,
+          valeur?: number | null
+        }
+      }
+      indicateur_personnalise_resultat: {
+        Insert: {
+          annee: number,
+          collectivite_id: number,
+          indicateur_id: number,
+          modified_at?: string,
+          valeur?: number | null
+        },
+        Row: {
+          annee: number,
+          collectivite_id: number,
+          indicateur_id: number,
+          modified_at: string,
+          valeur: number | null
+        },
+        Update: {
+          annee?: number,
+          collectivite_id?: number,
+          indicateur_id?: number,
+          modified_at?: string,
+          valeur?: number | null
+        }
+      }
+      indicateur_resultat: {
+        Insert: {
+          annee: number,
+          collectivite_id: number,
+          indicateur_id: string,
+          modified_at?: string,
+          valeur?: number | null
+        },
+        Row: {
+          annee: number,
+          collectivite_id: number,
+          indicateur_id: string,
+          modified_at: string,
+          valeur: number | null
+        },
+        Update: {
+          annee?: number,
+          collectivite_id?: number,
+          indicateur_id?: string,
+          modified_at?: string,
+          valeur?: number | null
+        }
+      }
+      indicateurs_json: {
+        Insert: {
+          created_at?: string,
+          indicateurs: Json
+        },
+        Row: {
+          created_at: string,
+          indicateurs: Json
+        },
+        Update: {
+          created_at?: string,
+          indicateurs?: Json
+        }
+      }
+      labellisation: {
+        Insert: {
+          annee?: number | null,
+          collectivite_id?: number | null,
+          etoiles: number,
+          id?: number,
+          obtenue_le: string,
+          referentiel: Database["public"]["Enums"]["referentiel"],
+          score_programme?: number | null,
+          score_realise?: number | null
+        },
+        Row: {
+          annee: number | null,
+          collectivite_id: number | null,
+          etoiles: number,
+          id: number,
+          obtenue_le: string,
+          referentiel: Database["public"]["Enums"]["referentiel"],
+          score_programme: number | null,
+          score_realise: number | null
+        },
+        Update: {
+          annee?: number | null,
+          collectivite_id?: number | null,
+          etoiles?: number,
+          id?: number,
+          obtenue_le?: string,
+          referentiel?: Database["public"]["Enums"]["referentiel"],
+          score_programme?: number | null,
+          score_realise?: number | null
+        }
+      }
+      labellisation_action_critere: {
+        Insert: {
+          action_id: string,
+          etoile: "1" | "2" | "3" | "4" | "5",
+          formulation: string,
+          min_programme_percentage?: number | null,
+          min_programme_score?: number | null,
+          min_realise_percentage?: number | null
+          min_realise_score?: number | null,
+          prio: number,
+          referentiel: Database["public"]["Enums"]["referentiel"]
+        },
+        Row: {
+          action_id: string,
+          etoile: "1" | "2" | "3" | "4" | "5",
+          formulation: string,
+          min_programme_percentage: number | null,
+          min_programme_score: number | null,
+          min_realise_percentage: number | null
+          min_realise_score: number | null,
+          prio: number,
+          referentiel: Database["public"]["Enums"]["referentiel"]
+        },
+        Update: {
+          action_id?: string,
+          etoile?: "1" | "2" | "3" | "4" | "5",
+          formulation?: string,
+          min_programme_percentage?: number | null,
+          min_programme_score?: number | null,
+          min_realise_percentage?: number | null
+          min_realise_score?: number | null,
+          prio?: number,
+          referentiel?: Database["public"]["Enums"]["referentiel"]
+        }
+      }
+      labellisation_calendrier: {
+        Insert: {
+          information: string,
+          referentiel: Database["public"]["Enums"]["referentiel"]
+        },
+        Row: {
+          information: string,
+          referentiel: Database["public"]["Enums"]["referentiel"]
+        },
+        Update: {
+          information?: string,
+          referentiel?: Database["public"]["Enums"]["referentiel"]
+        }
+      }
+      labellisation_fichier_critere: {
+        Insert: {
+          description: string,
+          etoile: "1" | "2" | "3" | "4" | "5"
+          referentiel: Database["public"]["Enums"]["referentiel"]
+        },
+        Row: {
+          description: string,
+          etoile: "1" | "2" | "3" | "4" | "5"
+          referentiel: Database["public"]["Enums"]["referentiel"]
+        },
+        Update: {
+          description?: string,
+          etoile?: "1" | "2" | "3" | "4" | "5"
+          referentiel?: Database["public"]["Enums"]["referentiel"]
+        }
+      }
+      maintenance: {
+        Insert: {
+          begins_at: string
+          ends_at: string
+          id?: number
+        },
+        Row: {
+          begins_at: string
+          ends_at: string
+          id: number
+        },
+        Update: {
+          begins_at?: string
+          ends_at?: string
+          id?: number
+        }
+      }
+      personnalisation: {
+        Insert: {
+          action_id: string
+          description: string,
+          titre: string
+        },
+        Row: {
+          action_id: string
+          description: string,
+          titre: string
+        },
+        Update: {
+          action_id?: string
+          description?: string,
+          titre?: string
+        }
+      }
+      personnalisation_consequence: {
+        Insert: {
+          collectivite_id: number
+          consequences: Json
+          modified_at?: string
+          payload_timestamp?: string | null
+        },
+        Row: {
+          collectivite_id: number
+          consequences: Json
+          modified_at: string
+          payload_timestamp: string | null
+        },
+        Update: {
+          collectivite_id?: number
+          consequences?: Json
+          modified_at?: string
+          payload_timestamp?: string | null
+        }
+      }
+      personnalisation_regle: {
+        Insert: {
+          action_id: string
+          description: string,
+          formule: string
+          modified_at?: string,
+          type: Database["public"]["Enums"]["regle_type"]
+        },
+        Row: {
+          action_id: string
+          description: string,
+          formule: string
+          modified_at: string,
+          type: Database["public"]["Enums"]["regle_type"]
+        },
+        Update: {
+          action_id?: string
+          description?: string,
+          formule?: string
+          modified_at?: string,
+          type?: Database["public"]["Enums"]["regle_type"]
+        }
+      }
+      personnalisations_json: {
+        Insert: {
+          created_at?: string,
+          questions: Json,
+          regles: Json
+        },
+        Row: {
+          created_at: string,
+          questions: Json,
+          regles: Json
+        },
+        Update: {
+          created_at?: string,
+          questions?: Json,
+          regles?: Json
+        }
+      }
+      plan_action: {
+        Insert: {
+          categories: Json,
+          collectivite_id?: number | null
+          created_at?: string,
+          fiches_by_category: Json,
+          modified_at?: string,
+          nom: string,
+          uid: string
+        },
+        Row: {
+          categories: Json,
+          collectivite_id: number | null
+          created_at: string,
+          fiches_by_category: Json,
+          modified_at: string,
+          nom: string,
+          uid: string
+        },
+        Update: {
+          categories?: Json,
+          collectivite_id?: number | null
+          created_at?: string,
+          fiches_by_category?: Json,
+          modified_at?: string,
+          nom?: string,
+          uid?: string
+        }
+      }
+      pre_audit_scores: {
+        Insert: {
+          audit_id: number,
+          collectivite_id: number,
+          modified_at: string,
+          payload_timestamp?: string | null,
+          referentiel: Database["public"]["Enums"]["referentiel"],
+          scores: Json
+        },
+        Row: {
+          audit_id: number,
+          collectivite_id: number,
+          modified_at: string,
+          payload_timestamp: string | null,
+          referentiel: Database["public"]["Enums"]["referentiel"],
+          scores: Json
+        },
+        Update: {
+          audit_id?: number,
+          collectivite_id?: number,
+          modified_at?: string,
+          payload_timestamp?: string | null,
+          referentiel?: Database["public"]["Enums"]["referentiel"],
+          scores?: Json
+        }
+      }
+      preuve_action: {
+        Insert: {
+          action_id: string,
+          preuve_id: string
+        },
+        Row: {
+          action_id: string,
+          preuve_id: string
+        },
+        Update: {
+          action_id?: string,
+          preuve_id?: string
+        }
+      }
+      preuve_complementaire: {
+        Insert: {
+          action_id: string,
+          collectivite_id: number,
+          commentaire?: string,
+          fichier_id?: number | null,
+          id?: number
+          lien?: Json | null,
+          modified_at?: string,
+          modified_by?: string
+          titre?: string,
+          url?: string | null
+        },
+        Row: {
+          action_id: string,
+          collectivite_id: number,
+          commentaire: string,
+          fichier_id: number | null,
+          id: number
+          lien: Json | null,
+          modified_at: string,
+          modified_by: string
+          titre: string,
+          url: string | null
+        },
+        Update: {
+          action_id?: string,
+          collectivite_id?: number,
+          commentaire?: string,
+          fichier_id?: number | null,
+          id?: number
+          lien?: Json | null,
+          modified_at?: string,
+          modified_by?: string
+          titre?: string,
+          url?: string | null
+        }
+      }
+      preuve_labellisation: {
+        Insert: {
+          collectivite_id: number
+          commentaire?: string,
+          demande_id: number,
+          fichier_id?: number | null,
+          id?: number
+          lien?: Json | null,
+          modified_at?: string,
+          modified_by?: string
+          titre?: string,
+          url?: string | null
+        },
+        Row: {
+          collectivite_id: number
+          commentaire: string,
+          demande_id: number,
+          fichier_id: number | null,
+          id: number
+          lien: Json | null,
+          modified_at: string,
+          modified_by: string
+          titre: string,
+          url: string | null
+        },
+        Update: {
+          collectivite_id?: number
+          commentaire?: string,
+          demande_id?: number,
+          fichier_id?: number | null,
+          id?: number
+          lien?: Json | null,
+          modified_at?: string,
+          modified_by?: string
+          titre?: string,
+          url?: string | null
+        }
+      }
+      preuve_rapport: {
+        Insert: {
+          collectivite_id: number
+          commentaire?: string,
+          date: string,
+          fichier_id?: number | null,
+          id?: number
+          lien?: Json | null,
+          modified_at?: string,
+          modified_by?: string
+          titre?: string,
+          url?: string | null
+        },
+        Row: {
+          collectivite_id: number
+          commentaire: string,
+          date: string,
+          fichier_id: number | null,
+          id: number
+          lien: Json | null,
+          modified_at: string,
+          modified_by: string
+          titre: string,
+          url: string | null
+        },
+        Update: {
+          collectivite_id?: number
+          commentaire?: string,
+          date?: string,
+          fichier_id?: number | null,
+          id?: number
+          lien?: Json | null,
+          modified_at?: string,
+          modified_by?: string
+          titre?: string,
+          url?: string | null
+        }
+      }
+      preuve_reglementaire: {
+        Insert: {
+          collectivite_id: number
+          commentaire?: string,
+          fichier_id?: number | null,
+          id?: number,
+          lien?: Json | null,
+          modified_at?: string,
+          modified_by?: string,
+          preuve_id: string,
+          titre?: string,
+          url?: string | null
+        },
+        Row: {
+          collectivite_id: number
+          commentaire: string,
+          fichier_id: number | null,
+          id: number,
+          lien: Json | null,
+          modified_at: string,
+          modified_by: string,
+          preuve_id: string,
+          titre: string,
+          url: string | null
+        },
+        Update: {
+          collectivite_id?: number
+          commentaire?: string,
+          fichier_id?: number | null,
+          id?: number,
+          lien?: Json | null,
+          modified_at?: string,
+          modified_by?: string,
+          preuve_id?: string,
+          titre?: string,
+          url?: string | null
+        }
+      }
+      preuve_reglementaire_definition: {
+        Insert: {
+          description: string,
+          id: string,
+          nom: string
+        },
+        Row: {
+          description: string,
+          id: string,
+          nom: string
+        },
+        Update: {
+          description?: string,
+          id?: string,
+          nom?: string
+        }
+      }
+      preuve_reglementaire_json: {
+        Insert: {
+          created_at?: string,
+          preuves: Json
+        },
+        Row: {
+          created_at: string,
+          preuves: Json
+        },
+        Update: {
+          created_at?: string,
+          preuves?: Json
+        }
+      }
+      private_collectivite_membre: {
+        Insert: {
+          champ_intervention?:
+            | Database["public"]["Enums"]["referentiel"][]
+            | null,
+          collectivite_id: number
+          created_at?: string,
+          details_fonction?: string | null
+          fonction?: Database["public"]["Enums"]["membre_fonction"] | null,
+          modified_at?: string,
+          user_id: string
+        },
+        Row: {
+          champ_intervention:
+            | Database["public"]["Enums"]["referentiel"][]
+            | null,
+          collectivite_id: number
+          created_at: string,
+          details_fonction: string | null
+          fonction: Database["public"]["Enums"]["membre_fonction"] | null,
+          modified_at: string,
+          user_id: string
+        },
+        Update: {
+          champ_intervention?:
+            | Database["public"]["Enums"]["referentiel"][]
+            | null,
+          collectivite_id?: number
+          created_at?: string,
+          details_fonction?: string | null
+          fonction?: Database["public"]["Enums"]["membre_fonction"] | null,
+          modified_at?: string,
+          user_id?: string
+        }
+      }
+      private_utilisateur_droit: {
+        Insert: {
+          active: boolean,
+          collectivite_id: number
+          created_at?: string,
+          id?: number
+          invitation_id?: string | null,
+          modified_at?: string
+          niveau_acces?: Database["public"]["Enums"]["niveau_acces"]
+          user_id: string
+        },
+        Row: {
+          active: boolean,
+          collectivite_id: number
+          created_at: string,
+          id: number
+          invitation_id: string | null,
+          modified_at: string
+          niveau_acces: Database["public"]["Enums"]["niveau_acces"]
+          user_id: string
+        },
+        Update: {
+          active?: boolean,
+          collectivite_id?: number
+          created_at?: string,
+          id?: number
+          invitation_id?: string | null,
+          modified_at?: string
+          niveau_acces?: Database["public"]["Enums"]["niveau_acces"]
+          user_id?: string
+        }
+      }
+      question: {
+        Insert: {
+          description: string,
+          formulation: string,
+          id: string,
+          ordonnancement?: number | null,
+          thematique_id?: string | null,
+          type: Database["public"]["Enums"]["question_type"],
+          types_collectivites_concernees?:
+            | Database["public"]["Enums"]["type_collectivite"][]
+            | null
+        },
+        Row: {
+          description: string,
+          formulation: string,
+          id: string,
+          ordonnancement: number | null,
+          thematique_id: string | null,
+          type: Database["public"]["Enums"]["question_type"],
+          types_collectivites_concernees:
+            | Database["public"]["Enums"]["type_collectivite"][]
+            | null
+        },
+        Update: {
+          description?: string,
+          formulation?: string,
+          id?: string,
+          ordonnancement?: number | null,
+          thematique_id?: string | null,
+          type?: Database["public"]["Enums"]["question_type"],
+          types_collectivites_concernees?:
+            | Database["public"]["Enums"]["type_collectivite"][]
+            | null
+        }
+      }
+      question_action: {
+        Insert: {
+          action_id: string,
+          question_id: string
+        },
+        Row: {
+          action_id: string,
+          question_id: string
+        },
+        Update: {
+          action_id?: string,
+          question_id?: string
+        }
+      }
+      question_choix: {
+        Insert: {
+          formulation?: string | null,
+          id: string
+          ordonnancement?: number | null
+          question_id?: string | null
+        },
+        Row: {
+          formulation: string | null,
+          id: string
+          ordonnancement: number | null
+          question_id: string | null
+        },
+        Update: {
+          formulation?: string | null,
+          id?: string
+          ordonnancement?: number | null
+          question_id?: string | null
+        }
+      }
+      question_thematique: {
+        Insert: {
+          id: string
+          nom?: string | null
+        },
+        Row: {
+          id: string
+          nom: string | null
+        },
+        Update: {
+          id?: string
+          nom?: string | null
+        }
+      }
+      referentiel_json: {
+        Insert: {
+          children: Json,
+          created_at?: string,
+          definitions: Json
+        },
+        Row: {
+          children: Json,
+          created_at: string,
+          definitions: Json
+        },
+        Update: {
+          children?: Json,
+          created_at?: string,
+          definitions?: Json
+        }
+      }
+      reponse_binaire: {
+        Insert: {
+          collectivite_id: number
+          modified_at?: string,
+          question_id: string,
+          reponse?: boolean | null
+        },
+        Row: {
+          collectivite_id: number
+          modified_at: string,
+          question_id: string,
+          reponse: boolean | null
+        },
+        Update: {
+          collectivite_id?: number
+          modified_at?: string,
+          question_id?: string,
+          reponse?: boolean | null
+        }
+      }
+      reponse_choix: {
+        Insert: {
+          collectivite_id: number
+          modified_at?: string,
+          question_id: string,
+          reponse?: string | null
+        },
+        Row: {
+          collectivite_id: number
+          modified_at: string,
+          question_id: string,
+          reponse: string | null
+        },
+        Update: {
+          collectivite_id?: number
+          modified_at?: string,
+          question_id?: string,
+          reponse?: string | null
+        }
+      }
+      reponse_proportion: {
+        Insert: {
+          collectivite_id: number
+          modified_at?: string,
+          question_id: string,
+          reponse?: number | null
+        },
+        Row: {
+          collectivite_id: number
+          modified_at: string,
+          question_id: string,
+          reponse: number | null
+        },
+        Update: {
+          collectivite_id?: number
+          modified_at?: string,
+          question_id?: string,
+          reponse?: number | null
+        }
+      }
+      type_tabular_score: {
+        Insert: {
+          action_id?: string | null,
+          points_max_personnalises?: number | null,
+          points_max_referentiel?: number | null,
+          points_programmes?: number | null,
+          points_realises?: number | null,
+          points_restants?: number | null,
+          referentiel?: Database["public"]["Enums"]["referentiel"] | null,
+          score_non_renseigne?: number | null,
+          score_pas_fait?: number | null,
+          score_programme?: number | null,
+          score_realise?: number | null,
+          score_realise_plus_programme?: number | null
+        },
+        Row: {
+          action_id: string | null,
+          points_max_personnalises: number | null,
+          points_max_referentiel: number | null,
+          points_programmes: number | null,
+          points_realises: number | null,
+          points_restants: number | null,
+          referentiel: Database["public"]["Enums"]["referentiel"] | null,
+          score_non_renseigne: number | null,
+          score_pas_fait: number | null,
+          score_programme: number | null,
+          score_realise: number | null,
+          score_realise_plus_programme: number | null
+        },
+        Update: {
+          action_id?: string | null,
+          points_max_personnalises?: number | null,
+          points_max_referentiel?: number | null,
+          points_programmes?: number | null,
+          points_realises?: number | null,
+          points_restants?: number | null,
+          referentiel?: Database["public"]["Enums"]["referentiel"] | null,
+          score_non_renseigne?: number | null,
+          score_pas_fait?: number | null,
+          score_programme?: number | null,
+          score_realise?: number | null,
+          score_realise_plus_programme?: number | null
+        }
+      }
+    },
+    Views: {
+      action_audit_state: {
+        Row: {
+          action_id: string | null
+          audit_id: number | null,
+          avis: string | null,
+          collectivite_id: number | null,
+          ordre_du_jour: boolean | null
+          referentiel: Database["public"]["Enums"]["referentiel"] | null,
+          state_id: number | null,
+          statut: Database["public"]["Enums"]["audit_statut"] | null
+        }
+      }
+      action_children: {
+        Row: {
+          children: unknown[] | null,
+          depth: number | null,
+          id: string | null
+        }
+      }
+      action_definition_summary: {
+        Row: {
+          children: unknown[] | null,
+          depth: number | null,
+          description: string | null,
+          have_contexte: boolean | null,
+          have_exemples: boolean | null,
+          have_perimetre_evaluation: boolean | null,
+          have_preuve: boolean | null,
+          have_questions: boolean | null,
+          have_reduction_potentiel: boolean | null,
+          have_ressources: boolean | null,
+          id: string | null,
+          identifiant: string | null,
+          nom: string | null,
+          phase: Database["public"]["Enums"]["action_categorie"] | null,
+          referentiel: Database["public"]["Enums"]["referentiel"] | null,
+          type: Database["public"]["Enums"]["action_type"] | null
+        }
+      }
+      action_discussion_feed: {
+        Row: {
+          action_id: string | null,
+          collectivite_id: number | null
+          commentaires: Json[] | null,
+          created_at: string | null,
+          created_by: string | null,
+          id: number | null,
+          modified_at: string | null,
+          status: Database["public"]["Enums"]["action_discussion_statut"] | null
+        }
+      }
+      action_statuts: {
+        Row: {
+          action_id: string | null,
+          ascendants: unknown[] | null,
+          avancement: Database["public"]["Enums"]["avancement"] | null,
+          avancement_descendants:
+            | Database["public"]["Enums"]["avancement"][]
+            | null,
+          avancement_detaille: number[] | null,
+          collectivite_id: number | null,
+          depth: number | null
+          descendants: unknown[] | null,
+          description: string | null,
+          have_children: boolean | null,
+          have_contexte: boolean | null,
+          have_exemples: boolean | null
+          have_perimetre_evaluation: boolean | null,
+          have_preuve: boolean | null,
+          have_reduction_potentiel: boolean | null
+          have_ressources: boolean | null,
+          identifiant: string | null,
+          nom: string | null,
+          non_concerne: boolean | null,
+          phase: Database["public"]["Enums"]["action_categorie"] | null,
+          points_max_personnalises: number | null,
+          points_max_referentiel: number | null,
+          points_programmes: number | null,
+          points_realises: number | null,
+          points_restants: number | null,
+          referentiel: Database["public"]["Enums"]["referentiel"] | null,
+          score_non_renseigne: number | null,
+          score_pas_fait: number | null,
+          score_programme: number | null,
+          score_realise: number | null,
+          score_realise_plus_programme: number | null,
+          type: Database["public"]["Enums"]["action_type"] | null
+        }
+      }
+      action_title: {
+        Row: {
+          children: unknown[] | null,
+          id: string | null,
+          identifiant: string | null,
+          nom: string | null,
+          referentiel: Database["public"]["Enums"]["referentiel"] | null,
+          type: Database["public"]["Enums"]["action_type"] | null
+        }
+      }
+      active_collectivite: {
+        Row: {
+          collectivite_id: number | null
+          nom: string | null
+        }
+      }
+      bibliotheque_fichier: {
+        Row: {
+          bucket_id: string | null,
+          collectivite_id: number | null
+          file_id: string | null,
+          filename: string | null
+          filesize: number | null,
+          hash: string | null,
+          id: number | null
+        }
+      }
+      business_action_children: {
+        Row: {
+          children: unknown[] | null,
+          id: string | null
+          parent: string | null
+          referentiel: Database["public"]["Enums"]["referentiel"] | null
+        }
+      }
+      business_action_statut: {
+        Row: {
+          action_id: string | null,
+          avancement: Database["public"]["Enums"]["avancement"] | null,
+          avancement_detaille: number[] | null,
+          collectivite_id: number | null,
+          concerne: boolean | null,
+          referentiel: Database["public"]["Enums"]["referentiel"] | null
+        }
+      }
+      business_reponse: {
+        Row: {
+          collectivite_id: number | null
+          reponses: Json[] | null
+        }
+      }
+      client_action_statut: {
+        Insert: {
+          action_id?: string | null,
+          avancement?: Database["public"]["Enums"]["avancement"] | null,
+          collectivite_id?: number | null,
+          concerne?: boolean | null,
+          modified_by?: string | null
+        },
+        Row: {
+          action_id: string | null,
+          avancement: Database["public"]["Enums"]["avancement"] | null,
+          collectivite_id: number | null,
+          concerne: boolean | null,
+          modified_by: string | null
+        },
+        Update: {
+          action_id?: string | null,
+          avancement?: Database["public"]["Enums"]["avancement"] | null,
+          collectivite_id?: number | null,
+          concerne?: boolean | null,
+          modified_by?: string | null
+        }
+      }
+      collectivite_carte_identite: {
+        Row: {
+          code_siren_insee: string | null,
+          collectivite_id: number | null,
+          departement_name: string | null,
+          nom: string | null,
+          population_source: string | null,
+          population_totale: number | null,
+          region_name: string | null,
+          type_collectivite:
+            | Database["public"]["Enums"]["type_collectivite"]
+            | null
+        }
+      }
+      collectivite_identite: {
+        Row: {
+          id: number | null
+          localisation: string[] | null,
+          population: string[] | null,
+          type: Database["public"]["Enums"]["type_collectivite"][] | null
+        }
+      }
+      collectivite_niveau_acces: {
+        Row: {
+          collectivite_id: number | null
+          est_auditeur: boolean | null,
+          niveau_acces: Database["public"]["Enums"]["niveau_acces"] | null
+          nom: string | null
+        }
+      }
+      comparaison_scores_audit: {
+        Row: {
+          action_id: string | null,
+          collectivite_id: number | null,
+          courant: unknown | null,
+          pre_audit: unknown | null,
+          referentiel: Database["public"]["Enums"]["referentiel"] | null
+        }
+      }
+      departement: {
+        Insert: {
+          code?: string | null
+          libelle?: string | null
+          region_code?: string | null
+        },
+        Row: {
+          code: string | null
+          libelle: string | null
+          region_code: string | null
+        },
+        Update: {
+          code?: string | null
+          libelle?: string | null
+          region_code?: string | null
+        }
+      }
+      historique: {
+        Row: {
+          action_id: string | null,
+          action_identifiant: string | null,
+          action_ids: unknown[] | null,
+          action_nom: string | null,
+          avancement: Database["public"]["Enums"]["avancement"] | null,
+          avancement_detaille: number[] | null,
+          collectivite_id: number | null,
+          concerne: boolean | null,
+          modified_at: string | null,
+          modified_by_id: string | null,
+          modified_by_nom: string | null,
+          precision: string | null,
+          previous_avancement: Database["public"]["Enums"]["avancement"] | null,
+          previous_avancement_detaille: number[] | null,
+          previous_concerne: boolean | null,
+          previous_modified_at: string | null,
+          previous_modified_by_id: string | null,
+          previous_precision: string | null,
+          previous_reponse: Json | null
+          question_formulation: string | null,
+          question_id: string | null,
+          question_type: Database["public"]["Enums"]["question_type"] | null,
+          reponse: Json | null,
+          tache_identifiant: string | null,
+          tache_nom: string | null,
+          thematique_id: string | null
+          thematique_nom: string | null
+          type: string | null
+        }
+      }
+      historique_utilisateur: {
+        Row: {
+          collectivite_id: number | null
+          modified_by_id: string | null
+          modified_by_nom: string | null
+        }
+      }
+      mes_collectivites: {
+        Row: {
+          collectivite_id: number | null
+          est_auditeur: boolean | null,
+          niveau_acces: Database["public"]["Enums"]["niveau_acces"] | null
+          nom: string | null
+        }
+      }
+      named_collectivite: {
+        Row: {
+          collectivite_id: number | null
+          nom: string | null
+        }
+      }
+      ongoing_maintenance: {
+        Row: {
+          begins_at: string | null,
+          ends_at: string | null,
+          now: string | null
+        }
+      }
+      preuve: {
+        Row: {
+          action: Json | null,
+          collectivite_id: number | null,
+          commentaire: string | null,
+          created_at: string | null,
+          created_by: string | null,
+          created_by_nom: string | null,
+          demande: Json | null,
+          fichier: Json | null,
+          id: number | null,
+          lien: Json | null,
+          preuve_reglementaire: Json | null
+          preuve_type: Database["public"]["Enums"]["preuve_type"] | null,
+          rapport: Json | null
+        }
+      }
+      question_display: {
+        Row: {
+          action_ids: unknown[] | null,
+          choix: Json[] | null,
+          collectivite_id: number | null
+          description: string | null,
+          formulation: string | null,
+          id: string | null,
+          localisation: string[] | null,
+          ordonnancement: number | null,
+          population: string[] | null,
+          thematique_id: string | null,
+          thematique_nom: string | null,
+          type: Database["public"]["Enums"]["question_type"] | null,
+          types_collectivites_concernees:
+            | Database["public"]["Enums"]["type_collectivite"][]
+            | null
+        }
+      }
+      question_engine: {
+        Row: {
+          choix_ids: unknown[] | null,
+          id: string | null,
+          type: Database["public"]["Enums"]["question_type"] | null
+        }
+      }
+      question_thematique_completude: {
+        Row: {
+          collectivite_id: number | null
+          completude:
+            | Database["public"]["Enums"]["thematique_completude"]
+            | null,
+          id: string | null,
+          nom: string | null,
+          referentiels: Database["public"]["Enums"]["referentiel"][] | null
+        }
+      }
+      question_thematique_display: {
+        Row: {
+          id: string | null
+          nom: string | null
+          referentiels: Database["public"]["Enums"]["referentiel"][] | null
+        }
+      }
+      region: {
+        Insert: {
+          code?: string | null
+          libelle?: string | null
+        },
+        Row: {
+          code: string | null
+          libelle: string | null
+        },
+        Update: {
+          code?: string | null
+          libelle?: string | null
+        }
+      }
+      reponse_display: {
+        Row: {
+          collectivite_id: number | null,
+          question_id: string | null,
+          reponse: Json | null
+        }
+      }
+      retool_active_collectivite: {
+        Row: {
+          collectivite_id: number | null
+          nom: string | null
+        }
+      }
+      retool_completude: {
+        Row: {
+          code_siren_insee: string | null,
+          collectivite_id: number | null,
+          completude_cae: number | null,
+          completude_eci: number | null,
+          departement_name: string | null,
+          nom: string | null,
+          population_totale: number | null,
+          region_name: string | null,
+          type_collectivite:
+            | Database["public"]["Enums"]["type_collectivite"]
+            | null
+        }
+      }
+      retool_completude_compute: {
+        Row: {
+          collectivite_id: number | null
+          completude_cae: number | null,
+          completude_eci: number | null
+          nom: string | null
+        }
+      }
+      retool_labellisation: {
+        Row: {
+          annee: number | null,
+          collectivite_id: number | null
+          collectivite_nom: string | null,
+          etoiles: number | null,
+          id: number | null,
+          obtenue_le: string | null,
+          referentiel: Database["public"]["Enums"]["referentiel"] | null,
+          score_programme: number | null
+          score_realise: number | null
+        }
+      }
+      retool_labellisation_demande: {
+        Row: {
+          collectivite_id: number | null,
+          date: string | null,
+          en_cours: boolean | null,
+          etoiles: "1" | "2" | "3" | "4" | "5" | null,
+          id: number | null,
+          nom: string | null,
+          referentiel: Database["public"]["Enums"]["referentiel"] | null
+        }
+      }
+      retool_last_activity: {
+        Row: {
+          collectivite_id: number | null
+          commentaire: string | null,
+          fiche_action: string | null,
+          indicateur: string | null,
+          indicateur_commentaire: string | null,
+          indicateur_perso: string | null,
+          indicateur_perso_resultat: string | null,
+          nom: string | null,
+          plan_action: string | null,
+          statut: string | null
+        }
+      }
+      retool_preuves: {
+        Row: {
+          action: string | null,
+          collectivite_id: number | null,
+          created_at: string | null,
+          fichier: string | null,
+          lien: string | null,
+          nom: string | null,
+          preuve_type: Database["public"]["Enums"]["preuve_type"] | null,
+          referentiel: string | null
+        }
+      }
+      retool_score: {
+        Row: {
+          Avancement: string | null,
+          Collectivité: string | null
+          Commentaire: string | null,
+          "Commentaires fusionnés": string | null,
+          Identifiant: string | null,
+          "Modifié le": string | null,
+          "Points potentiels": number | null,
+          "Points programmés": number | null,
+          "Points realisés": number | null,
+          "Pourcentage non renseigné": number | null,
+          "Pourcentage programmé": number | null,
+          "Pourcentage réalisé": number | null,
+          Titre: string | null,
+          collectivite_id: number | null,
+          referentiel: Database["public"]["Enums"]["referentiel"] | null
+        }
+      }
+      retool_user_collectivites_list: {
+        Row: {
+          collectivites: string[] | null,
+          creation: string | null,
+          derniere_connexion: string | null,
+          email: string | null,
+          nb_collectivite: number | null,
+          nom: string | null,
+          prenom: string | null
+        }
+      }
+      retool_user_list: {
+        Row: {
+          active: boolean | null,
+          champ_intervention:
+            | Database["public"]["Enums"]["referentiel"][]
+            | null,
+          collectivite: string | null,
+          collectivite_id: number | null,
+          details_fonction: string | null,
+          droit_id: number | null,
+          email: string | null,
+          fonction: Database["public"]["Enums"]["membre_fonction"] | null,
+          niveau_acces: Database["public"]["Enums"]["niveau_acces"] | null,
+          nom: string | null,
+          prenom: string | null,
+          telephone: string | null,
+          user_id: string | null
+        }
+      }
+      stats_active_real_collectivites: {
+        Row: {
+          collectivite_id: number | null
+          nom: string | null
+        }
+      }
+      stats_functionnalities_usage_proportion: {
+        Row: {
+          cae_statuses_avg: number | null,
+          eci_statuses_avg: number | null,
+          fiche_action_avg: number | null,
+          indicateur_personnalise_avg: number | null,
+          indicateur_referentiel_avg: number | null
+        }
+      }
+      suivi_audit: {
+        Row: {
+          action_id: string | null,
+          avis: string | null,
+          collectivite_id: number | null,
+          have_children: boolean | null
+          ordre_du_jour: boolean | null,
+          ordres_du_jour: boolean[] | null,
+          referentiel: Database["public"]["Enums"]["referentiel"] | null,
+          statut: Database["public"]["Enums"]["audit_statut"] | null,
+          statuts: Database["public"]["Enums"]["audit_statut"][] | null,
+          type: Database["public"]["Enums"]["action_type"] | null
+        }
+      }
     }
   }
 }
