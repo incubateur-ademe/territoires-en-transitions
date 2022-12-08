@@ -149,3 +149,4 @@ evaluation/score_service [evaluation/score_service@v1.14.0 pg_net_extension] 202
 evaluation/client_scores [evaluation/client_scores@v1.14.0] 2022-11-29T17:44:36Z Florian <florian@derfurth.com> # Ajoute la table client_score_update pour alleger les payloads
 collectivite/historique [collectivite/historique@v1.14.0] 2022-12-01T14:38:28Z Florian <florian@derfurth.com> # Ajoute une vue des utilisateurs pour l'historique
 referentiel/vues [referentiel/vues@v1.14.0] 2022-12-08T09:43:40Z Florian <florian@derfurth.com> # Ajoute la colonne phase.
+@v1.15.0 2022-12-08T15:44:17Z Florian <florian@derfurth.com> # Améliorations des scores, de l'audit et de l'historique.
