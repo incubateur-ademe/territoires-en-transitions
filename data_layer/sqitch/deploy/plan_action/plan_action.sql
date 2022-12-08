@@ -1,6 +1,15 @@
 -- Deploy tet:plan_action to pg
 
 BEGIN;
+-- TODO transformation du type
+create type migration.fiche_action_avancement as enum ('pas_fait', 'fait', 'en_cours', 'non_renseigne');
+create table migration.fiche_action as select * from public.fiche_action;
+alter table migration.fiche_action alter column avancement type migration.fiche_action_avancement;
+create table migration.fiche_action_action as select * from public.fiche_action_action;
+create table migration.fiche_action_indicateur as select * from public.fiche_action_indicateur;
+create table migration.fiche_action_indicateur_personnalise as select * from public.fiche_action_indicateur_personnalise;
+create table migration.plan_action as select * from public.plan_action;
+
 
 drop trigger after_collectivite_insert on collectivite;
 drop function after_collectivite_insert_default_plan();
@@ -160,13 +169,26 @@ create table fiche_action_referents(
     -- unique au lieu de primary key pour autoriser le null sur utilisateur ou tags
     unique(fiche_id, utilisateur, tags)
 );
--- TODO Indicateurs liés
+
 -- Actions liées
 create table fiche_action_action(
                                     fiche_id integer references fiche_action not null,
                                     action_id action_id references action_relation not null,
                                     primary key (fiche_id, action_id)
 );
+
+-- Indicateurs liées TODO à revoir avec les nouveaux indicateurs
+create table fiche_action_indicateur(
+                                        fiche_id integer references fiche_action not null,
+                                        indicateur_id integer references indicateur_definition,
+                                        primary key (fiche_id, indicateur_id)
+);
+create table fiche_action_indicateur_personnalise(
+                                                    fiche_id integer references fiche_action not null,
+                                                    indicateur_id integer references indicateur_personnalise_definition,
+                                                    primary key (fiche_id, indicateur_id)
+);
+
 -- Documents et liens (voir preuve)
 create table annexes(
                         id        serial primary key,
@@ -318,6 +340,42 @@ begin
         end loop;
 end $$ language plpgsql;
 
+-- Modifie les indicateurs d'une fiche
+create function upsert_fiche_action_indicateur(
+    fiche_action_id integer,
+    indicateurs integer[]
+) returns void as $$
+declare
+    indicateur integer;
+begin
+    -- Empty before upsert
+    delete from fiche_action_indicateur where fiche_id = fiche_action_id;
+    -- Create links
+    foreach indicateur in array indicateurs
+        loop
+            insert into fiche_action_indicateur (fiche_id, indicateur_id)
+            values (fiche_action_id, indicateur);
+        end loop;
+end $$ language plpgsql;
+
+-- Modifie les indicateurs d'une fiche
+create function upsert_fiche_action_indicateur_personnalise(
+    fiche_action_id integer,
+    indicateurs integer[]
+) returns void as $$
+declare
+    indicateur integer;
+begin
+    -- Empty before upsert
+    delete from fiche_action_indicateur_personnalise where fiche_id = fiche_action_id;
+    -- Create links
+    foreach indicateur in array indicateurs
+        loop
+            insert into fiche_action_indicateur_personnalise (fiche_id, indicateur_id)
+            values (fiche_action_id, indicateur);
+        end loop;
+end $$ language plpgsql;
+
 -- Modifie les données liées à la fiche action
 create function upsert_fiche_action_liens(
     fiche_action_id integer,
@@ -329,7 +387,9 @@ create function upsert_fiche_action_liens(
     referents_users uuid[],
     annexes integer[],
     plans_action integer[],
-    actions action_id[]
+    actions action_id[],
+    indicateurs integer[],
+    indicateurs_personnalise integer[]
 ) returns void as $$
 begin
     execute upsert_fiche_action_partenaires(fiche_action_id, partenaires);
@@ -339,6 +399,8 @@ begin
     execute upsert_fiche_action_annexes(fiche_action_id, annexes);
     execute upsert_fiche_action_plan_action(fiche_action_id, plans_action);
     execute upsert_fiche_action_action(fiche_action_id, actions);
+    execute upsert_fiche_action_indicateur(fiche_action_id, indicateurs);
+    execute upsert_fiche_action_indicateur_personnalise(fiche_action_id, indicateurs_personnalise);
 end $$ language plpgsql;
 
 
@@ -353,7 +415,9 @@ select fa.*,
        ru.referents_users,
        anne.annexes,
        pla.plans_action,
-       act.actions
+       act.actions,
+       ind.indicateurs,
+       indper.indicateurs_personalise
 from fiche_action fa
     -- partenaires
     left join lateral (
@@ -418,15 +482,24 @@ from fiche_action fa
         join fiche_action_action faa on faa.action_id = ar.id
         where faa.fiche_id = fa.id
     ) as act on true
-    -- TODO indicateurs
+    -- indicateurs
+    left join lateral (
+    select array_agg(to_json(ad.*)) as indicateurs
+    from indicateur_definition ad
+             join fiche_action_indicateur fai on fai.indicateur_id = ad.id
+    where fai.fiche_id = fa.id
+    ) as ind on true
+    -- indicateurs personalise
+    left join lateral (
+    select array_agg(to_json(apd.*)) as indicateurs_personalise
+    from indicateur_personnalise_definition apd
+             join fiche_action_indicateur_personnalise faip on faip.indicateur_id = apd.id
+    where faip.fiche_id = fa.id
+    ) as indper on true
     -- TODO fiches liées (à calculer dans la vue selon action et indicateurs?)
 ;
 
-/*
-/**
-  PARAM :
-    - pa_id : id du plan d'action
- */
+-- Fonction récursive pour afficher un plan d'action
 create or replace function recursive_plan_action(pa_id integer) returns jsonb as
 $$
 declare
@@ -436,9 +509,9 @@ declare
     fiches fiche_action[];
     to_return jsonb;
 begin
-   fiches = (select *
-             from fiche_action fa
-                 join fiche_action_plan_action fapa on fa.id = fapa.fiche_id) ;
+    fiches = to_jsonb((select array_agg(fa.*)
+                       from fiche_action fa
+                                join fiche_action_plan_action fapa on fa.id = fapa.fiche_id)) ;
 
     id_loop = 1;
     for pa_enfant_id in
@@ -451,12 +524,11 @@ begin
         end loop;
 
     to_return = jsonb_build_object('id', pa_id,
-                                    'fiches', fiches
+                                    'fiches', fiches,
                                   'enfants', enfants);
     return to_return;
 end;
 $$ language plpgsql;
-*/
 
 -- TODO droits
 /*
@@ -472,8 +544,12 @@ alter table users_tags enable row level security;
 alter table fiche_action_pilotes enable row level security;
 alter table fiche_action_referents enable row level security;
 alter table fiche_action_action enable row level security;
+alter table fiche_action_indicateur enable row level security;
+alter table fiche_action_indicateur_personalise enable row lebel security;
 alter table annexes enable row level security;
 alter table fiche_action_annexes enable row level security;
  */
+
+-- TODO transfert donnees
 
 COMMIT;
