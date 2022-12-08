@@ -22,7 +22,7 @@ values
     (3,'fiche 3','test description',array[]::fiche_action_thematiques[],array[]::fiche_action_piliers_eci[],2)
 ;
 
-select ok((select count(*)=1 from fiche_action), 'Il devrait y avoir une fiche action');
+select ok((select count(*)=3 from fiche_action), 'Il devrait y avoir une fiche action');
 
 insert into partenaires_tags (id, nom, collectivite_id)
 values (1, 'ptag1', 1), (2, 'ptag2', 1), (3, 'ptag3', 2);
@@ -47,7 +47,9 @@ select upsert_fiche_action_liens(
     array[]::uuid[],
     array[]::integer[],
     array[]::integer[],
-    array[]::action_id[]
+    array[]::action_id[],
+    array[]::integer[],
+    array[]::integer[]
 );
 select upsert_fiche_action_liens(
     2,
@@ -59,7 +61,9 @@ select upsert_fiche_action_liens(
     array[]::uuid[],
     array[]::integer[],
     array[]::integer[],
-    array[]::action_id[]
+    array[]::action_id[],
+    array[]::integer[],
+    array[]::integer[]
 );
 
 select ok ((select count(*)=3 from fiche_action_partenaires_tags),
@@ -76,6 +80,10 @@ select ok ((select count(*)=0 from fiche_action_plan_action),
            'Il devrait y avoir 0 entrées dans fiche_action_plan_action');
 select ok ((select count(*)=0 from fiche_action_action),
            'Il devrait y avoir 0 entrées dans fiche_action_action');
+select ok ((select count(*)=0 from fiche_action_indicateur),
+           'Il devrait y avoir 0 entrées dans fiche_action_indicateur');
+select ok ((select count(*)=0 from fiche_action_indicateur_personnalise),
+           'Il devrait y avoir 0 entrées dans fiche_action_action_personalise');
 
 select upsert_fiche_action_partenaires(1, array [2]);
 select ok ((select count(*)=2 from fiche_action_partenaires_tags),
