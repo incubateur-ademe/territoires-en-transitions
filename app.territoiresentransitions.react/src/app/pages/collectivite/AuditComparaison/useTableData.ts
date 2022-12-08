@@ -1,7 +1,6 @@
-import {useQuery} from 'react-query';
 import {TableOptions} from 'react-table';
 import {useCollectiviteId, useReferentielId} from 'core-logic/hooks/params';
-import {fetchComparaisonScoreAudit} from './queries';
+import {useComparaisonScoreAudit} from './useComparaisonScoreAudit';
 import {TComparaisonScoreAudit, TScoreAuditRowData} from './types';
 import {useReferentiel} from '../ReferentielTable/useReferentiel';
 
@@ -29,9 +28,9 @@ export const useTableData: UseTableData = () => {
   const referentiel = useReferentielId();
 
   // chargement des données
-  const {data, isLoading} = useQuery(
-    ['action_statuts', collectivite_id, referentiel],
-    () => fetchComparaisonScoreAudit(collectivite_id, referentiel)
+  const {data, isLoading} = useComparaisonScoreAudit(
+    collectivite_id,
+    referentiel
   );
 
   // chargement du référentiel
