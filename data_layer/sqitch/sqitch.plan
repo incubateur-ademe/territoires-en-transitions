@@ -150,3 +150,4 @@ evaluation/client_scores [evaluation/client_scores@v1.14.0] 2022-11-29T17:44:36Z
 collectivite/historique [collectivite/historique@v1.14.0] 2022-12-01T14:38:28Z Florian <florian@derfurth.com> # Ajoute une vue des utilisateurs pour l'historique
 automatisation_schema 2022-12-07T15:05:42Z Amandine Jacquelin <conta@LanceLibre> # Ajout du schema automatisation
 automatisation/automatisation [automatisation_schema] 2022-11-29T15:13:51Z Amandine Jacquelin <conta@LanceLibre> # Envoie JSON à n8n puis à Salesforce quand nouveau utilisateur et collectivité
+referentiel/vues [referentiel/vues@v1.14.0] 2022-12-08T09:43:40Z Florian <florian@derfurth.com> # Ajoute la colonne phase.
