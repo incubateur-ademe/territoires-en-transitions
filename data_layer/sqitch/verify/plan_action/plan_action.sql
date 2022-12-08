@@ -69,6 +69,14 @@ select fiche_id, action_id
 from fiche_action_action
 where false;
 
+select fiche_id, indicateur_id
+from fiche_action_indicateur
+where false;
+
+select fiche_id, indicateur_id
+from fiche_action_indicateur_personnalise
+where false;
+
 select
     id,
     collectivite_id,
@@ -95,5 +103,9 @@ select has_function_privilege('upsert_fiche_action_pilotes(integer, integer[], u
 select has_function_privilege('upsert_fiche_action_structures(integer, integer[])', 'execute');
 select has_function_privilege('upsert_fiche_action_partenaires(integer, integer[])', 'execute');
 select has_function_privilege('upsert_fiche_action_action(integer, action_id[])', 'execute');
+select has_function_privilege('upsert_fiche_action_indicateur(integer, integer[])', 'execute');
+select has_function_privilege('upsert_fiche_action_indicateur_personnalise(integer, integer[])', 'execute');
+
+select has_function_privilege('recursive_plan_action(integer)', 'execute');
 
 ROLLBACK;
