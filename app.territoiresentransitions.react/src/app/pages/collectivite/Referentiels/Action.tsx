@@ -191,27 +191,39 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
           </section>
         </Tab>
         <Tab label="Preuves" icon="fr-fi-file-line">
-          <section>
-            <ActionPreuvePanel withSubActions showWarning action={action} />
-            <DownloadDocs action={action} />
-          </section>
+          {activeTab === TABS_INDEX['preuves'] ? (
+            <section>
+              <ActionPreuvePanel withSubActions showWarning action={action} />
+              <DownloadDocs action={action} />
+            </section>
+          ) : (
+            '...'
+          )}
         </Tab>
         <Tab label="Indicateurs" icon="fr-fi-line-chart-fill">
-          <section>
-            {actionLinkedIndicateurDefinitions.length === 0 && (
-              <p>Cette action ne comporte pas d'indicateur</p>
-            )}
+          {activeTab === TABS_INDEX['indicateurs'] ? (
+            <section>
+              {actionLinkedIndicateurDefinitions.length === 0 && (
+                <p>Cette action ne comporte pas d'indicateur</p>
+              )}
 
-            {actionLinkedIndicateurDefinitions.map(definition => (
-              <IndicateurReferentielCard
-                key={definition.id}
-                definition={definition}
-              />
-            ))}
-          </section>
+              {actionLinkedIndicateurDefinitions.map(definition => (
+                <IndicateurReferentielCard
+                  key={definition.id}
+                  definition={definition}
+                />
+              ))}
+            </section>
+          ) : (
+            '...'
+          )}
         </Tab>
         <Tab label="Historique" icon="fr-fi-history-line">
-          <HistoriqueListe actionId={action.id} />
+          {activeTab === TABS_INDEX['historique'] ? (
+            <HistoriqueListe actionId={action.id} />
+          ) : (
+            '...'
+          )}
         </Tab>
       </Tabs>
       <ActionNav actionId={action.id} />

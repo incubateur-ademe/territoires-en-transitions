@@ -71,10 +71,14 @@ const ReferentielTabs = () => {
           <Progression />
         </Tab>
         <Tab label="Aide à la priorisation">
-          <AidePriorisation />
+          {activeTab === TABS_INDEX['priorisation'] ? (
+            <AidePriorisation />
+          ) : (
+            '...'
+          )}
         </Tab>
         <Tab label="Détail des tâches">
-          <DetailTacheTable />
+          {activeTab === TABS_INDEX['detail'] ? <DetailTacheTable /> : '...'}
         </Tab>
       </Tabs>
     </main>
