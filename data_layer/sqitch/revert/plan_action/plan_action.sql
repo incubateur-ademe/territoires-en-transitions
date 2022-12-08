@@ -2,7 +2,10 @@
 
 BEGIN;
 --drop view fiches_action;
+drop function recursive_plan_action;
 drop function upsert_fiche_action_liens;
+drop function upsert_fiche_action_indicateur_personnalise;
+drop function upsert_fiche_action_indicateur;
 drop function upsert_fiche_action_action;
 drop function upsert_fiche_action_plan_action;
 drop function upsert_fiche_action_annexes;
@@ -12,6 +15,8 @@ drop function upsert_fiche_action_structures;
 drop function upsert_fiche_action_partenaires;
 drop table fiche_action_annexes;
 drop table annexes;
+drop table fiche_action_indicateur_personnalise;
+drop table fiche_action_indicateur;
 drop table fiche_action_action;
 drop table fiche_action_referents;
 drop table fiche_action_pilotes;
@@ -265,5 +270,13 @@ create trigger after_collectivite_insert
     on collectivite
     for each row
 execute procedure after_collectivite_insert_default_plan();
+
+-- TODO recupère les données avant migration
+drop table migration.plan_action;
+drop table migration.fiche_action_indicateur_personnalise;
+drop table migration.fiche_action_indicateur;
+drop table migration.fiche_action_action;
+drop table migration.fiche_action;
+drop type migration.fiche_action_avancement;
 
 COMMIT;
