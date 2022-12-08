@@ -1,18 +1,36 @@
--- Revert tet:referentiel/vues from pg
+-- Deploy tet:referentiel/vues to pg
+-- requires: referentiel/contenu
+-- requires: utils/naturalsort
 
 BEGIN;
 
-drop function action_perimetre_evaluation(id action_id);
-drop function action_reduction_potentiel(id action_id);
-drop function action_ressources(id action_id);
-drop function action_preuve(id action_id);
-drop function action_contexte(id action_id);
-drop function action_exemples(id action_id);
-drop function action_down_to_tache(referentiel referentiel, identifiant text);
-drop function referentiel_down_to_action(referentiel referentiel);
-drop view action_title;
-drop view action_definition_summary;
-drop view action_children;
-drop view business_action_children;
+create or replace view action_definition_summary
+as
+select id,
+       action_definition.referentiel,
+       action_children.children,
+       action_children.depth,
+       coalesce(
+               case
+                   when referentiel = 'cae'
+                       then ('{"axe", "sous-axe", "action", "sous-action", "tache"}'::action_type[])[action_children.depth]
+                   else ('{"axe", "action", "sous-action", "tache"}'::action_type[])[action_children.depth]
+                   end
+           , 'referentiel') as type,
+       identifiant,
+       nom,
+       description,
+       exemples != '' as have_exemples,
+       preuve != '' as have_preuve,
+       ressources != '' as have_ressources,
+       reduction_potentiel != '' as have_reduction_potentiel,
+       perimetre_evaluation != '' as have_perimetre_evaluation,
+       contexte != '' as have_contexte,
+       id in (select action_id from question_action ) as have_questions
+from action_definition
+         join action_children on action_id = action_children.id
+order by naturalsort(action_id);
+comment on view action_definition_summary is
+    'The minimum information to display an action';
 
 COMMIT;
