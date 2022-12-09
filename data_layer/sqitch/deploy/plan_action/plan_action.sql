@@ -1,10 +1,13 @@
 -- Deploy tet:plan_action to pg
 
 BEGIN;
--- TODO transformation du type
 create type migration.fiche_action_avancement as enum ('pas_fait', 'fait', 'en_cours', 'non_renseigne');
 create table migration.fiche_action as select * from public.fiche_action;
-alter table migration.fiche_action alter column avancement type migration.fiche_action_avancement;
+alter table migration.fiche_action drop column avancement;
+alter table migration.fiche_action add column avancement  migration.fiche_action_avancement not null;
+update migration.fiche_action m set avancement = (select p.avancement::text::migration.fiche_action_avancement
+                                                  from public.fiche_action p
+                                                  where p.uid = m.uid);
 create table migration.fiche_action_action as select * from public.fiche_action_action;
 create table migration.fiche_action_indicateur as select * from public.fiche_action_indicateur;
 create table migration.fiche_action_indicateur_personnalise as select * from public.fiche_action_indicateur_personnalise;
@@ -155,19 +158,19 @@ create table users_tags(
 );
 -- Personne pilote (lien auth.users + tags)
 create table fiche_action_pilotes(
-    fiche_id integer references fiche_action not null,
-    utilisateur uuid references auth.users,
-    tags integer references users_tags,
+                                     fiche_id integer references fiche_action not null,
+                                     utilisateur uuid references auth.users,
+                                     tags integer references users_tags,
     -- unique au lieu de primary key pour autoriser le null sur utilisateur ou tags
-    unique(fiche_id, utilisateur, tags)
+                                     unique(fiche_id, utilisateur, tags)
 );
 -- Elu.e référent.e (lien auth.users + tags)
 create table fiche_action_referents(
-    fiche_id integer references fiche_action not null,
-    utilisateur uuid references auth.users,
-    tags integer references users_tags,
+                                       fiche_id integer references fiche_action not null,
+                                       utilisateur uuid references auth.users,
+                                       tags integer references users_tags,
     -- unique au lieu de primary key pour autoriser le null sur utilisateur ou tags
-    unique(fiche_id, utilisateur, tags)
+                                       unique(fiche_id, utilisateur, tags)
 );
 
 -- Actions liées
@@ -180,13 +183,13 @@ create table fiche_action_action(
 -- Indicateurs liées TODO à revoir avec les nouveaux indicateurs
 create table fiche_action_indicateur(
                                         fiche_id integer references fiche_action not null,
-                                        indicateur_id integer references indicateur_definition,
+                                        indicateur_id indicateur_id references indicateur_definition,
                                         primary key (fiche_id, indicateur_id)
 );
 create table fiche_action_indicateur_personnalise(
-                                                    fiche_id integer references fiche_action not null,
-                                                    indicateur_id integer references indicateur_personnalise_definition,
-                                                    primary key (fiche_id, indicateur_id)
+                                                     fiche_id integer references fiche_action not null,
+                                                     indicateur_id integer references indicateur_personnalise_definition,
+                                                     primary key (fiche_id, indicateur_id)
 );
 
 -- Documents et liens (voir preuve)
@@ -343,10 +346,10 @@ end $$ language plpgsql;
 -- Modifie les indicateurs d'une fiche
 create function upsert_fiche_action_indicateur(
     fiche_action_id integer,
-    indicateurs integer[]
+    indicateurs indicateur_id[]
 ) returns void as $$
 declare
-    indicateur integer;
+    indicateur indicateur_id;
 begin
     -- Empty before upsert
     delete from fiche_action_indicateur where fiche_id = fiche_action_id;
@@ -388,7 +391,7 @@ create function upsert_fiche_action_liens(
     annexes integer[],
     plans_action integer[],
     actions action_id[],
-    indicateurs integer[],
+    indicateurs indicateur_id[],
     indicateurs_personnalise integer[]
 ) returns void as $$
 begin
@@ -419,100 +422,102 @@ select fa.*,
        ind.indicateurs,
        indper.indicateurs_personalise
 from fiche_action fa
-    -- partenaires
-    left join lateral (
-        select array_agg(to_json(pt.*)) as partenaires
-        from partenaires_tags pt
-        join fiche_action_partenaires_tags fapt on fapt.partenaires_tags_id = pt.id
-        where fapt.fiche_id = fa.id
+         -- partenaires
+         left join lateral (
+    select array_agg(to_json(pt.*)) as partenaires
+    from partenaires_tags pt
+             join fiche_action_partenaires_tags fapt on fapt.partenaires_tags_id = pt.id
+    where fapt.fiche_id = fa.id
     ) as p on true
     -- structures
-    left join lateral (
-        select array_agg(to_json(st.*)) as structures
-        from structures_tags st
-        join fiche_action_structures_tags fast on fast.structures_tags_id = st.id
-        where fast.fiche_id = fa.id
+         left join lateral (
+    select array_agg(to_json(st.*)) as structures
+    from structures_tags st
+             join fiche_action_structures_tags fast on fast.structures_tags_id = st.id
+    where fast.fiche_id = fa.id
     ) as s on true
     -- pilotes tags
-    left join lateral (
+         left join lateral (
     select array_agg(to_json(ut.*)) as pilotes_tags
-        from users_tags ut
-        join fiche_action_pilotes fap on fap.tags = ut.id
-        where fap.fiche_id = fa.id
+    from users_tags ut
+             join fiche_action_pilotes fap on fap.tags = ut.id
+    where fap.fiche_id = fa.id
     ) as pt on true
     -- pilotes users
-    left join lateral (
-        select array_agg(to_json(au.*)) as pilotes_users
-        from auth.users au
-        join fiche_action_pilotes fap on fap.utilisateur = au.id
-        where fap.fiche_id = fa.id
+         left join lateral (
+    select array_agg(to_json(au.*)) as pilotes_users
+    from auth.users au
+             join fiche_action_pilotes fap on fap.utilisateur = au.id
+    where fap.fiche_id = fa.id
     ) as pu on true
     -- referents tags
-    left join lateral (
-        select array_agg(to_json(ut.*)) as referents_tags
-        from users_tags ut
-        join fiche_action_referents far on far.tags = ut.id
-        where far.fiche_id = fa.id
+         left join lateral (
+    select array_agg(to_json(ut.*)) as referents_tags
+    from users_tags ut
+             join fiche_action_referents far on far.tags = ut.id
+    where far.fiche_id = fa.id
     ) as rt on true
     -- referents users
-    left join lateral (
-        select array_agg(to_json(au.*)) as referents_users
-        from auth.users au
-        join fiche_action_referents far on far.utilisateur = au.id
-        where far.fiche_id = fa.id
+         left join lateral (
+    select array_agg(to_json(au.*)) as referents_users
+    from auth.users au
+             join fiche_action_referents far on far.utilisateur = au.id
+    where far.fiche_id = fa.id
     ) as ru on true
     -- annexes
-    left join lateral (
-        select array_agg(to_json(a.*)) as annexes
-        from annexes a
-        join fiche_action_annexes faa on faa.annexe_id = a.id
-        where faa.fiche_id = fa.id
+         left join lateral (
+    select array_agg(to_json(a.*)) as annexes
+    from annexes a
+             join fiche_action_annexes faa on faa.annexe_id = a.id
+    where faa.fiche_id = fa.id
     ) as anne on true
     -- plans action
-    left join lateral (
-        select array_agg(to_json(pa.*)) as plans_action
-        from plan_action pa
-        join fiche_action_plan_action fapa on fapa.plan_id = pa.id
-        where fapa.fiche_id = fa.id
+         left join lateral (
+    select array_agg(to_json(pa.*)) as plans_action
+    from plan_action pa
+             join fiche_action_plan_action fapa on fapa.plan_id = pa.id
+    where fapa.fiche_id = fa.id
     ) as pla on true
     -- plans action
-    left join lateral (
-        select array_agg(to_json(ar.*)) as actions
-        from action_relation ar
-        join fiche_action_action faa on faa.action_id = ar.id
-        where faa.fiche_id = fa.id
+         left join lateral (
+    select array_agg(to_json(ar.*)) as actions
+    from action_relation ar
+             join fiche_action_action faa on faa.action_id = ar.id
+    where faa.fiche_id = fa.id
     ) as act on true
     -- indicateurs
-    left join lateral (
+         left join lateral (
     select array_agg(to_json(ad.*)) as indicateurs
     from indicateur_definition ad
              join fiche_action_indicateur fai on fai.indicateur_id = ad.id
     where fai.fiche_id = fa.id
     ) as ind on true
     -- indicateurs personalise
-    left join lateral (
+         left join lateral (
     select array_agg(to_json(apd.*)) as indicateurs_personalise
     from indicateur_personnalise_definition apd
              join fiche_action_indicateur_personnalise faip on faip.indicateur_id = apd.id
     where faip.fiche_id = fa.id
     ) as indper on true
-    -- TODO fiches liées (à calculer dans la vue selon action et indicateurs?)
+-- TODO fiches liées (à calculer dans la vue selon action et indicateurs?)
 ;
 
 -- Fonction récursive pour afficher un plan d'action
 create or replace function recursive_plan_action(pa_id integer) returns jsonb as
 $$
 declare
-    pa_enfant_id integer;
-    id_loop integer;
-    enfants jsonb[];
-    fiches fiche_action[];
-    to_return jsonb;
+    pa_enfant_id integer; -- Id d'un plan d'action enfant du plan d'action courant
+    pa_nom text; -- Nom du plan d'action courant
+    id_loop integer; -- Indice pour parcourir une boucle
+    enfants jsonb[]; -- Plans d'actions enfants du plan d'action courant;
+    fiches jsonb; -- Fiches actions du plan d'action courant
+    to_return jsonb; -- JSON retournant le plan d'action courant, ses fiches et ses enfants
 begin
     fiches = to_jsonb((select array_agg(fa.*)
-                       from fiche_action fa
-                                join fiche_action_plan_action fapa on fa.id = fapa.fiche_id)) ;
-
+                       from fiches_action fa
+                                join fiche_action_plan_action fapa on fa.id = fapa.fiche_id
+                       where fapa.plan_id = pa_id)) ;
+    pa_nom = (select nom from plan_action where id = pa_id);
     id_loop = 1;
     for pa_enfant_id in
         select pa.id
@@ -524,32 +529,285 @@ begin
         end loop;
 
     to_return = jsonb_build_object('id', pa_id,
-                                    'fiches', fiches,
-                                  'enfants', enfants);
+                                   'nom', pa_nom,
+                                   'fiches', fiches,
+                                   'enfants', enfants);
     return to_return;
 end;
 $$ language plpgsql;
+comment on function recursive_plan_action is
+    'Fonction retournant un JSON contenant le plan d''action passé en paramètre,
+    ses fiches et ses plans d''actions enfants de manière récursive';
 
--- TODO droits
-/*
+-- Droits
 alter table fiche_action enable row level security;
-alter table plan_action enable row level security;
-alter table fiche_action_plan_action enable row level security;
-alter table tags enable row level security;
-alter table partenaires_tags enable row level security;
-alter table fiche_action_partenaires_tags enable row level security;
-alter table structures_tags enable row level security;
-alter table fiche_action_structures_tags enable row level security;
-alter table users_tags enable row level security;
-alter table fiche_action_pilotes enable row level security;
-alter table fiche_action_referents enable row level security;
-alter table fiche_action_action enable row level security;
-alter table fiche_action_indicateur enable row level security;
-alter table fiche_action_indicateur_personalise enable row lebel security;
-alter table annexes enable row level security;
-alter table fiche_action_annexes enable row level security;
- */
+create policy allow_read on fiche_action
+    for select using(is_authenticated());
+create policy allow_insert on fiche_action
+    for insert with check(have_edition_acces(collectivite_id));
+create policy allow_update on fiche_action
+    for update using(have_edition_acces(collectivite_id));
 
--- TODO transfert donnees
+alter table plan_action enable row level security;
+create policy allow_read on plan_action
+    for select using(is_authenticated());
+create policy allow_insert on plan_action
+    for insert with check(have_edition_acces(collectivite_id));
+create policy allow_update on plan_action
+    for update using(have_edition_acces(collectivite_id));
+
+alter table fiche_action_plan_action enable row level security;
+create policy allow_read on fiche_action_plan_action
+    for select using(is_authenticated());
+create policy allow_insert on fiche_action_plan_action
+    for insert with check(have_edition_acces((select fa.collectivite_id
+                                              from fiche_action fa
+                                              where fa.id = fiche_id
+                                              limit 1)));
+create policy allow_update on fiche_action_plan_action
+    for update using(have_edition_acces((select fa.collectivite_id
+                                         from fiche_action fa
+                                         where fa.id = fiche_id
+                                         limit 1)));
+
+alter table tags enable row level security;
+
+alter table partenaires_tags enable row level security;
+create policy allow_read on partenaires_tags
+    for select using(is_authenticated());
+create policy allow_insert on partenaires_tags
+    for insert with check(have_edition_acces(collectivite_id));
+create policy allow_update on partenaires_tags
+    for update using(have_edition_acces(collectivite_id));
+
+alter table fiche_action_partenaires_tags enable row level security;
+create policy allow_read on fiche_action_partenaires_tags
+    for select using(is_authenticated());
+create policy allow_insert on fiche_action_partenaires_tags
+    for insert with check(have_edition_acces((select fa.collectivite_id
+                                              from fiche_action fa
+                                              where fa.id = fiche_id
+                                              limit 1)));
+create policy allow_update on fiche_action_partenaires_tags
+    for update using(have_edition_acces((select fa.collectivite_id
+                                         from fiche_action fa
+                                         where fa.id = fiche_id
+                                         limit 1)));
+
+alter table structures_tags enable row level security;
+create policy allow_read on structures_tags
+    for select using(is_authenticated());
+create policy allow_insert on structures_tags
+    for insert with check(have_edition_acces(collectivite_id));
+create policy allow_update on structures_tags
+    for update using(have_edition_acces(collectivite_id));
+
+alter table fiche_action_structures_tags enable row level security;
+create policy allow_read on fiche_action_structures_tags
+    for select using(is_authenticated());
+create policy allow_insert on fiche_action_structures_tags
+    for insert with check(have_edition_acces((select fa.collectivite_id
+                                              from fiche_action fa
+                                              where fa.id = fiche_id
+                                              limit 1)));
+create policy allow_update on fiche_action_structures_tags
+    for update using(have_edition_acces((select fa.collectivite_id
+                                         from fiche_action fa
+                                         where fa.id = fiche_id
+                                         limit 1)));
+
+alter table users_tags enable row level security;
+create policy allow_read on users_tags
+    for select using(is_authenticated());
+create policy allow_insert on users_tags
+    for insert with check(have_edition_acces(collectivite_id));
+create policy allow_update on users_tags
+    for update using(have_edition_acces(collectivite_id));
+
+alter table fiche_action_pilotes enable row level security;
+create policy allow_read on fiche_action_pilotes
+    for select using(is_authenticated());
+create policy allow_insert on fiche_action_pilotes
+    for insert with check(have_edition_acces((select fa.collectivite_id
+                                              from fiche_action fa
+                                              where fa.id = fiche_id
+                                              limit 1)));
+create policy allow_update on fiche_action_pilotes
+    for update using(have_edition_acces((select fa.collectivite_id
+                                         from fiche_action fa
+                                         where fa.id = fiche_id
+                                         limit 1)));
+
+alter table fiche_action_referents enable row level security;
+create policy allow_read on fiche_action_referents
+    for select using(is_authenticated());
+create policy allow_insert on fiche_action_referents
+    for insert with check(have_edition_acces((select fa.collectivite_id
+                                              from fiche_action fa
+                                              where fa.id = fiche_id
+                                              limit 1)));
+create policy allow_update on fiche_action_referents
+    for update using(have_edition_acces((select fa.collectivite_id
+                                         from fiche_action fa
+                                         where fa.id = fiche_id
+                                         limit 1)));
+
+alter table fiche_action_action enable row level security;
+create policy allow_read on fiche_action_action
+    for select using(is_authenticated());
+create policy allow_insert on fiche_action_action
+    for insert with check(have_edition_acces((select fa.collectivite_id
+                                              from fiche_action fa
+                                              where fa.id = fiche_id
+                                              limit 1)));
+create policy allow_update on fiche_action_action
+    for update using(have_edition_acces((select fa.collectivite_id
+                                         from fiche_action fa
+                                         where fa.id = fiche_id
+                                         limit 1)));
+
+alter table fiche_action_indicateur enable row level security;
+create policy allow_read on fiche_action_indicateur
+    for select using(is_authenticated());
+create policy allow_insert on fiche_action_indicateur
+    for insert with check(have_edition_acces((select fa.collectivite_id
+                                              from fiche_action fa
+                                              where fa.id = fiche_id
+                                              limit 1)));
+create policy allow_update on fiche_action_indicateur
+    for update using(have_edition_acces((select fa.collectivite_id
+                                         from fiche_action fa
+                                         where fa.id = fiche_id
+                                         limit 1)));
+
+alter table fiche_action_indicateur_personnalise enable row level security;
+create policy allow_read on fiche_action_indicateur_personnalise
+    for select using(is_authenticated());
+create policy allow_insert on fiche_action_indicateur_personnalise
+    for insert with check(have_edition_acces((select fa.collectivite_id
+                                              from fiche_action fa
+                                              where fa.id = fiche_id
+                                              limit 1)));
+create policy allow_update on fiche_action_indicateur_personnalise
+    for update using(have_edition_acces((select fa.collectivite_id
+                                         from fiche_action fa
+                                         where fa.id = fiche_id
+                                         limit 1)));
+
+alter table annexes enable row level security;
+create policy allow_read on annexes
+    for select using(is_authenticated());
+create policy allow_insert on annexes
+    for insert with check(have_edition_acces(collectivite_id));
+create policy allow_update on annexes
+    for update using(have_edition_acces(collectivite_id));
+
+alter table fiche_action_annexes enable row level security;
+create policy allow_read on fiche_action_annexes
+    for select using(is_authenticated());
+create policy allow_insert on fiche_action_annexes
+    for insert with check(have_edition_acces((select fa.collectivite_id
+                                              from fiche_action fa
+                                              where fa.id = fiche_id
+                                              limit 1)));
+create policy allow_update on fiche_action_annexes
+    for update using(have_edition_acces((select fa.collectivite_id
+                                         from fiche_action fa
+                                         where fa.id = fiche_id
+                                         limit 1)));
+
+/*
+-- Transfert donnees
+do $$
+    declare
+        mpa migration.plan_action;
+        mfa migration.fiche_action;
+        id_loop_pa integer;
+        id_loop_fa integer;
+        st fiche_action_statuts;
+        part_ids integer[];
+        stru_ids integer[];
+        refe_ids integer[];
+    begin
+        id_loop_pa = 1;
+        for mpa in select * from migration.plan_action
+            loop
+            -- TODO récupérer categories en tant que plan_action enfant et les fiches liées au catégories
+                insert into plan_action (id, nom, collectivite_id, parent)
+                values (id_loop_pa, mpa.nom, mpa.collectivite_id, null);
+                id_loop_pa = id_loop_pa + 1;
+            end loop;
+
+        id_loop_fa = 1;
+        for mfa in select * from migration.fiche_action
+            loop
+                --Transforme fiche_action_avancement en fiche_action_statuts
+                st = (
+                    select case
+                               when mfa.avancement = 'pas_fait'::migration.fiche_action_avancement
+                                   then 'À venir'::public.fiche_action_statuts
+                               when mfa.avancement = 'fait'::migration.fiche_action_avancement
+                                   then 'Réalisé'::public.fiche_action_statuts
+                               when mfa.avancement = 'en_cours'::migration.fiche_action_avancement
+                                   then 'En cours'::public.fiche_action_statuts
+                               when mfa.avancement = 'non_renseigne'::migration.fiche_action_avancement
+                                   then 'En pause'::public.fiche_action_statuts
+                               end as st
+                );
+                -- Fiche action
+                insert into public.fiche_action(id, titre, description, budget_previsionnel, statut, amelioration_continue, collectivite_id)
+                values(id_loop_fa, mfa.titre, mfa.description, mfa.budget_global, mfa.date_fin is null, mfa.collectivite_id);
+
+                -- Structures
+                insert into structures_tags (nom, collectivite_id)
+                values(mfa.structure_pilote, mfa.collectivite_id)
+                on conflict do nothing;
+                stru_ids = (select array_agg(t.id)
+                            from structures_tags t
+                            where t.nom = mfa.structure_pilote
+                              and t.collectivite_id = mfa.collectivite_id);
+
+                -- Referents
+                insert into users_tags (nom, collectivite_id)
+                values(mfa.elu_referent, mfa.collectivite_id),
+                      (mfa.personne_referente, mfa.collectivite_id)
+                on conflict do nothing;
+                refe_ids =(select array_agg(t.id)
+                           from users_tags t
+                           where (t.nom = mfa.elu_referent or t.nom = mfa.personne_referente)
+                             and t.collectivite_id = mfa.collectivite_id);
+
+                -- Partenaires
+                insert into partenaires_tags (nom, collectivite_id)
+                values(mfa.partenaires, mfa.collectivite_id)
+                on conflict do nothing;
+                part_ids =(select array_agg(t.id)
+                           from partenaires_tags t
+                           where t.nom = mfa.partenaires
+                             and t.collectivite_id = mfa.collectivite_id);
+
+                -- Plan action
+                select * from migration.fiche_action_
+
+                select upsert_fiche_action_liens(
+                               id_loop_fa,
+                               part_ids,
+                               stru_ids,
+                               array[]::integer[],
+                               array[]::uuid[],
+                               refe_ids,
+                               array[]::uuid[],
+                               array[]::integer[],
+                               array []::integer[],
+                               mfa.action_ids,
+                               mfa.indicateur_ids,
+                               mfa.indicateur_personnalise_ids
+                           );
+
+                id_loop_fa = id_loop_fa +1;
+            end loop;
+    end
+$$;
+ */
 
 COMMIT;
