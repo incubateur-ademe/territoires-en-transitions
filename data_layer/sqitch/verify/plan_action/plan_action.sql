@@ -103,7 +103,7 @@ select has_function_privilege('upsert_fiche_action_pilotes(integer, integer[], u
 select has_function_privilege('upsert_fiche_action_structures(integer, integer[])', 'execute');
 select has_function_privilege('upsert_fiche_action_partenaires(integer, integer[])', 'execute');
 select has_function_privilege('upsert_fiche_action_action(integer, action_id[])', 'execute');
-select has_function_privilege('upsert_fiche_action_indicateur(integer, integer[])', 'execute');
+select has_function_privilege('upsert_fiche_action_indicateur(integer, indicateur_id[])', 'execute');
 select has_function_privilege('upsert_fiche_action_indicateur_personnalise(integer, integer[])', 'execute');
 
 select has_function_privilege('recursive_plan_action(integer)', 'execute');
