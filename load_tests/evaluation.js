@@ -41,7 +41,7 @@ export default function() {
 
   const loginResponse = http.post(loginUrl, credentials, loginParams);
   check(loginResponse, {
-    'logged in successfully': (resp) => resp.json('access_token') !== '',
+    'logged in successfully': (resp) => resp.json('access_token') && resp.json('access_token') !== '',
   });
   const userToken = loginResponse.json('access_token');
 
@@ -93,20 +93,18 @@ const referentielsTaches =
         'eci_1.1.1.1',
         'eci_1.1.1.2',
         'eci_1.1.1.3',
+        'eci_1.1.1.4',
         'eci_1.1.2.1',
-        'eci_1.1.2.2',
-        'eci_1.1.2.3',
       ],
     },
     {
       'referentiel': 'cae',
       'action_id': [
-        'cae_1.1.1.3.1',
-        'cae_1.1.1.3.2',
-        'cae_1.1.1.3.3',
-        'cae_1.1.1.4.1',
-        'cae_1.1.1.4.2',
-        'cae_1.1.1.4.3',
+        'cae_1.1.1.1.1',
+        'cae_1.1.1.1.2',
+        'cae_1.1.1.2.1',
+        'cae_1.1.1.2.2',
+        'cae_1.1.1.2.3',
       ],
     },
   ];
