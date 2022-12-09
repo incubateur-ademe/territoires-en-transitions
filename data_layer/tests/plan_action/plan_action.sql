@@ -1,7 +1,21 @@
 begin;
-select plan(10);
+select plan(11);
 
-truncate table fiche_action cascade;
+truncate fiche_action_annexes;
+truncate annexes cascade;
+truncate fiche_action_indicateur_personnalise;
+truncate fiche_action_indicateur;
+truncate fiche_action_action;
+truncate fiche_action_referents;
+truncate fiche_action_pilotes;
+truncate users_tags cascade;
+truncate fiche_action_structures_tags;
+truncate structures_tags cascade;
+truncate fiche_action_partenaires_tags;
+truncate partenaires_tags cascade;
+truncate fiche_action_plan_action;
+truncate plan_action cascade;
+truncate fiche_action cascade;
 
 insert into fiche_action (id, titre, description, thematiques, piliers_eci, collectivite_id)
 values
@@ -22,7 +36,7 @@ values
     (3,'fiche 3','test description',array[]::fiche_action_thematiques[],array[]::fiche_action_piliers_eci[],2)
 ;
 
-select ok((select count(*)=3 from fiche_action), 'Il devrait y avoir une fiche action');
+select ok((select count(*)=3 from fiche_action), 'Il devrait y avoir trois fiches action');
 
 insert into partenaires_tags (id, nom, collectivite_id)
 values (1, 'ptag1', 1), (2, 'ptag2', 1), (3, 'ptag3', 2);
@@ -33,9 +47,16 @@ values (1, 'stag1', 1), (2, 'stag2', 2), (3, 'stag3', 2);
 insert into users_tags(id, nom, collectivite_id)
 values (1, 'user1', 1), (2, 'user2', 1), (3, 'user3', 2);
 
+insert into plan_action
+values (1,'Test 1',1,null),
+       (2, 'Test 1.1', 1, 1),
+       (3, 'Test 1.2', 1, 1),
+       (4, 'Test 1.1.1', 1, 2),
+       (5,'Test 2',2,null);
+
+select ok((select count(*)=5 from plan_action), 'Il devrait y avoir cinq plans action');
+
 -- TODO annexes
--- TODO plan actions
--- TODO indicateurs
 
 select upsert_fiche_action_liens(
     1,
@@ -46,9 +67,9 @@ select upsert_fiche_action_liens(
     array[2],
     array[]::uuid[],
     array[]::integer[],
-    array[]::integer[],
+    array [3, 5],
     array[]::action_id[],
-    array[]::integer[],
+    array[]::indicateur_id[],
     array[]::integer[]
 );
 select upsert_fiche_action_liens(
@@ -60,11 +81,12 @@ select upsert_fiche_action_liens(
     array[1],
     array[]::uuid[],
     array[]::integer[],
-    array[]::integer[],
+    array [4],
     array[]::action_id[],
-    array[]::integer[],
+    array[]::indicateur_id[],
     array[]::integer[]
 );
+select upsert_fiche_action_plan_action(3, array [4]);
 
 select ok ((select count(*)=3 from fiche_action_partenaires_tags),
     'Il devrait y avoir 3 entrées dans fiche_action_partenaires_tags');
@@ -76,8 +98,8 @@ select ok ((select count(*)=2 from fiche_action_referents),
            'Il devrait y avoir 2 entrées dans fiche_action_referents');
 select ok ((select count(*)=0 from fiche_action_annexes),
            'Il devrait y avoir 0 entrées dans fiche_action_annexes');
-select ok ((select count(*)=0 from fiche_action_plan_action),
-           'Il devrait y avoir 0 entrées dans fiche_action_plan_action');
+select ok ((select count(*)=4 from fiche_action_plan_action),
+           'Il devrait y avoir 4 entrées dans fiche_action_plan_action');
 select ok ((select count(*)=0 from fiche_action_action),
            'Il devrait y avoir 0 entrées dans fiche_action_action');
 select ok ((select count(*)=0 from fiche_action_indicateur),
@@ -91,4 +113,6 @@ select ok ((select count(*)=2 from fiche_action_partenaires_tags),
 
 select ok ((select count(*)=3 from fiches_action),
             'Il devrait y avoir 3 entrées dans la vue');
+
+select isnt_empty('select recursive_plan_action(1)', 'La fonction devrait retourner un jsonb');
 rollback;

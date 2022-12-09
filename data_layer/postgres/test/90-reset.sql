@@ -23,6 +23,8 @@ $$
     select test_reset_reponse();
 -- 10-action.sql
     select test_reset_action_statut_and_desc();
+-- 11-plan_action.sql
+    select test_reset_plan_action();
 $$ language sql security definer;
 comment on function test_reset is
     'Reinitialise les données fake.';
