@@ -20,64 +20,67 @@ values (default,
         'commentaire',
         '17440546-f389-4d4f-bfdb-b0c94a1bd0f9');
 
-/*
-insert into fiche_action
-(collectivite_id,
- uid,
- avancement,
- numerotation,
- titre,
- description,
- structure_pilote,
- personne_referente,
- elu_referent,
- partenaires,
- budget_global,
- commentaire,
- date_fin,
- date_debut,
- action_ids,
- indicateur_ids,
- indicateur_personnalise_ids,
- en_retard)
-values (1,
-        '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
-        'pas_fait',
-        'A0',
-        'titre',
+insert into fiche_action (id, titre, description, thematiques, piliers_eci, collectivite_id)
+values
+    (
+        1,
+        'fiche 1',
         'description',
-        'pilote',
-        'référente',
-        'référent',
-        'partenaires',
-        0,
-        'commentaire',
-        'fin',
-        'début',
-        array []::action_id[],
-        array []::indicateur_id[],
-        array []::integer[],
-        false);
+        array[
+            'Bâtiments'::fiche_action_thematiques
+            ],
+        array[
+            'Écoconception'::fiche_action_piliers_eci,
+            'Recyclage'::fiche_action_piliers_eci
+            ],
+        1
+    ),
+    (2,'fiche 2','description',array[]::fiche_action_thematiques[],array[]::fiche_action_piliers_eci[],1),
+    (3,'fiche 3','description',array[]::fiche_action_thematiques[],array[]::fiche_action_piliers_eci[],2)
+;
+insert into partenaires_tags (id, nom, collectivite_id)
+values (1, 'ptag1', 1), (2, 'ptag2', 1), (3, 'ptag3', 2);
+
+insert into structures_tags (id, nom, collectivite_id)
+values (1, 'stag1', 1), (2, 'stag2', 2), (3, 'stag3', 2);
+
+insert into users_tags(id, nom, collectivite_id)
+values (1, 'user1', 1), (2, 'user2', 1), (3, 'user3', 2);
 
 insert into plan_action
-(collectivite_id,
- uid,
- nom,
- categories,
- fiches_by_category)
-values (1,
-        '29770546-f389-4d4f-bfdb-b0c94a1bd0f9',
-        'Plan d''action de test',
-        '[
-          {
-            "nom": "1. Yolo",
-            "uid": "ef599348-6ab9-4dc7-bf62-41b9a17ea5fa"
-          }
-        ]',
-        '[
-          {
-            "fiche_uid": "17440546-f389-4d4f-bfdb-b0c94a1bd0f9",
-            "category_uid": "ef599348-6ab9-4dc7-bf62-41b9a17ea5fa"
-          }
-        ]');
-*/
+values (1,'Plan 1',1,null),
+       (2, 'Plan 1.1', 1, 1),
+       (3, 'Plan 1.2', 1, 1),
+       (4, 'Plan 1.1.1', 1, 2),
+       (5,'Plan 2',2,null);
+
+select upsert_fiche_action_liens(
+               1,
+               array [1, 2],
+               array [1],
+               array[1],
+               array['298235a0-60e7-4ceb-9172-0a991cce0386'::uuid],
+               array[2],
+               array[]::uuid[],
+               array[]::integer[],
+               array [3, 5],
+               array[]::action_id[],
+               array[]::indicateur_id[],
+               array[]::integer[]
+           );
+select upsert_fiche_action_liens(
+               2,
+               array [1],
+               array [1],
+               array[2],
+               array[]::uuid[],
+               array[1],
+               array[]::uuid[],
+               array[]::integer[],
+               array [4],
+               array[]::action_id[],
+               array[]::indicateur_id[],
+               array[]::integer[]
+           );
+select upsert_fiche_action_plan_action(3, array [4]);
+

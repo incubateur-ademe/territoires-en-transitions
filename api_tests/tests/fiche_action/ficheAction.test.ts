@@ -9,7 +9,7 @@ import {testReset} from "../../lib/rpcs/testReset.ts";
 import {Database} from "../../lib/database.types.ts";
 
 Deno.test("Création fiches et plan actions", async () => {
-    await testReset(); // TODO ajouter fiches aux resets
+    await testReset();
     await signIn("yolododo");
 
     const fiche = {
