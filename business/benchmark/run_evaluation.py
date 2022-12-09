@@ -2,18 +2,11 @@ import json
 import time
 from typing import List, Dict
 
-from business.evaluation.adapters.supabase_action_statut_repo import (
-    SupabaseActionStatutRepository,
-)
-from business.utils.models.action_statut import ActionStatut
-from business.evaluation.domain.evaluation import (
-    ActionPointTree,
-    compute_referentiel_scores_for_collectivite,
-)
-from business.personnalisation.models import ActionPersonnalisationConsequence
-from business.referentiel.domain.models.action_children import ActionChildren
-from business.referentiel.domain.models.action_computed_point import ActionComputedPoint
-from business.utils.action_id import ActionId
+from business.evaluation.evaluation.action_point_tree import ActionPointTree
+from business.evaluation.evaluation.compute_scores import compute_scores
+from business.utils.models.action_statut import ActionStatut, DetailedAvancement
+from business.utils.models.actions import ActionChildren, ActionComputedPoint, ActionId
+from business.utils.models.personnalisation import ActionPersonnalisationConsequence
 
 
 def all_children_from_referentiel(referentiel: str):
@@ -54,14 +47,21 @@ def action_statuts(referentiel: str) -> List[ActionStatut]:
     with open("./benchmark/action_statut.json", "r") as read_file:
         data = json.load(read_file)
         return [
-            SupabaseActionStatutRepository.action_statut_from_row(row)
+            ActionStatut(action_id=row["action_id"],
+                         detailed_avancement=DetailedAvancement(
+                             fait=1.0 if row["avancement"] == 'fait' else 0.0,
+                             programme=1.0 if row["avancement"] == 'programme' else 0.0,
+                             pas_fait=1.0 if row["avancement"] == 'pas_fait' else 0.0,
+                         ),
+                         concerne=row["concerne"]
+                         )
             for row in data
             if str.startswith(row["action_id"], referentiel)
         ]
 
 
 def action_consequences(
-    referentiel: str,
+        referentiel: str,
 ) -> Dict[ActionId, ActionPersonnalisationConsequence]:
     with open("./benchmark/consequences.json", "r") as read_file:
         data = json.load(read_file)
@@ -87,12 +87,11 @@ def run(referentiel: str, action_level: int, times: int):
     }
 
     for _ in range(times):
-        compute_referentiel_scores_for_collectivite(
+        compute_scores(
             tree,
             statuts,
             personnalisation_consequences,
             action_level,
-            referentiel,
         )
 
 
