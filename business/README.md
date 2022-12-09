@@ -33,3 +33,5 @@ pipenv run pytest tests
 
 ### Lancer les services
 Chaque dossier comporte un README avec des instructions de lancement du service. 
+- [Référentiel](./business/referentiel/README.md)
+- [Évaluation](./business/evaluation/README.md)
