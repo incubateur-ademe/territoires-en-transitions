@@ -53,7 +53,6 @@ with
                           from collectivite c
                                    left join epci e on c.id = e.collectivite_id),
     info as (
-
 -- coalesce null values from epci or collectivite data.
         select c.collectivite_id,
                c.nom,
@@ -65,11 +64,11 @@ with
                coalesce(mc.departement_name, me.departement_name, '') as departement_name,
                coalesce(mc.departement_code, me.departement_code, '') as departement_code,
                coalesce(mc.population, me.population, 0)::int4        as population_totale
-
         from named_collectivite c
                  left join meta_commune mc on mc.collectivite_id = c.collectivite_id
                  left join meta_epci me on me.collectivite_id = c.collectivite_id
-                 left join type_collectivite tc on tc.collectivite_id = c.collectivite_id)
+                 left join type_collectivite tc on tc.collectivite_id = c.collectivite_id
+        where c.collectivite_id not in (select t.collectivite_id from collectivite_test t))
 select info.collectivite_id,
        info.nom,
        info.type_collectivite,
