@@ -160,6 +160,35 @@ comment on materialized view stats.collectivite_labellisation
     is 'Les collectivités liées aux données utilisateurs.';
 
 
+create materialized view stats.collectivite_plan_action
+as
+with fa as (select collectivite_id,
+                   count(*) as count
+            from fiche_action f
+            group by f.collectivite_id),
+     pa as (select collectivite_id,
+                   count(*) as count
+            from plan_action p
+            group by p.collectivite_id)
+select c.*,
+       coalesce(fa.count, 0) as fiches,
+       coalesce(pa.count, 0) as plans
+from stats.collectivite c
+         left join pa on pa.collectivite_id = c.collectivite_id
+         left join fa on pa.collectivite_id = fa.collectivite_id
+order by fiches desc;
+
+
+create materialized view stats.collectivite_action_statut
+as
+with statut_count as (select collectivite_id, count(*) as count
+                      from action_statut
+                      group by collectivite_id)
+select c.*, coalesce(count, 0) as statuts
+from statut_count
+         join stats.collectivite c using (collectivite_id);
+
+
 create function
     stats.refresh_views()
     returns void
@@ -170,6 +199,8 @@ begin
     refresh materialized view stats.collectivite_referentiel;
     refresh materialized view stats.collectivite_labellisation;
     refresh materialized view stats.collectivite_utilisateur;
+    refresh materialized view stats.collectivite_plan_action;
+    refresh materialized view stats.collectivite_action_statut;
 end ;
 $$ language plpgsql security definer;
 comment on function stats.refresh_views is
