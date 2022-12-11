@@ -139,3 +139,65 @@ $$;
 comment on function test_generate_fake_scores is
     'Génère des faux scores au même format que `client_scores`. '
         'Utilise une liste de statuts pour produire un résultat qui ressemble aux scores calculés par le service d''évaluation.';
+
+
+create function test.after_statut_write_generate_fake_scores() returns trigger as
+$$
+declare
+    relation action_relation%ROWTYPE;
+    statuts  test.statut_detaille[];
+begin
+    -- détermine le référentiel du statut.
+    select * into relation from action_relation where id = new.action_id limit 1;
+
+    -- convertit les statuts en statuts détaillés
+    select into statuts array_agg(d.*)
+    from action_statut s
+             join action_relation r on s.action_id = r.id
+             join test.statut_to_detaille(s) d on true
+    where s.collectivite_id = new.collectivite_id
+      and r.referentiel = relation.referentiel;
+
+    -- génère les scores pour les enregistrer dans client_scores
+    insert into client_scores (collectivite_id, referentiel, scores, modified_at, payload_timestamp)
+    select new.collectivite_id, relation.referentiel, fake, now(), now()
+    from test_generate_fake_scores(new.collectivite_id, relation.referentiel, statuts) as fake
+    on conflict (collectivite_id, referentiel) do update set scores            = excluded.scores,
+                                                             modified_at       = excluded.modified_at,
+                                                             payload_timestamp = excluded.payload_timestamp;
+    return new;
+end
+$$ language plpgsql security definer;
+
+
+create function
+    test_enable_fake_score_generation()
+    returns void
+as
+$$
+begin
+    perform test.disable_evaluation_api();
+    drop trigger if exists generate_fake_scores on action_statut;
+    create trigger generate_fake_scores
+        after insert or update
+        on action_statut
+        for each row
+    execute procedure test.after_statut_write_generate_fake_scores();
+end;
+$$ language plpgsql;
+comment on function test_enable_fake_score_generation is
+    'Désactive les appels aux service de notation et génère des faux scores à la place.';
+
+
+create function
+    test_disable_fake_score_generation()
+    returns void
+as
+$$
+begin
+    perform test.enable_evaluation_api();
+    drop trigger if exists generate_fake_scores on action_statut;
+end;
+$$ language plpgsql;
+comment on function test_enable_fake_score_generation is
+    'Réactive les appels aux service de notation.';
