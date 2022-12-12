@@ -153,3 +153,5 @@ referentiel/vues [referentiel/vues@v1.14.0] 2022-12-08T09:43:40Z Florian <floria
 
 stats/vues_BI 2022-12-06T16:18:25Z Florian <florian@derfurth.com> # Les premières vues matérialisées pour une utilisation BI.
 cron/refresh_stats_views [stats/vues_BI] 2022-12-06T17:02:25Z Florian <florian@derfurth.com> # Appelle la fonction de rafraichissement des vues stats.
+automatisation_schema 2022-12-07T15:05:42Z Amandine Jacquelin <conta@LanceLibre> # Ajout du schema automatisation
+automatisation/crm [automatisation_schema] 2022-11-29T15:13:51Z Amandine Jacquelin <conta@LanceLibre> # Envoie JSON à n8n puis à Salesforce quand nouveau utilisateur et collectivité
