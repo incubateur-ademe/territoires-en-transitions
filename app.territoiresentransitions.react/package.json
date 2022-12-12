@@ -59,6 +59,7 @@
     "date-fns": "^2.16.1",
     "dompurify": "^2.4.0",
     "dotenv": "^16.0.3",
+    "exceljs": "^4.3.0",
     "express": "^4.17.1",
     "formik": "^2.2.9",
     "fuzzy-search": "^3.2.1",
