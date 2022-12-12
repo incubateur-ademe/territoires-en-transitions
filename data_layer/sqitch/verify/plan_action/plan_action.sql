@@ -95,7 +95,7 @@ from fiche_action_annexes
 where false;
 
 
-select has_function_privilege('upsert_fiche_action_liens(integer,integer[],integer[],integer[],uuid[],integer[],uuid[], integer[], integer[], action_id[])', 'execute');
+select has_function_privilege('upsert_fiche_action_liens(integer,integer[],integer[],integer[],uuid[],integer[],uuid[], integer[], integer[], action_id[], indicateur_id[], integer[])', 'execute');
 select has_function_privilege('upsert_fiche_action_plan_action(integer, integer[])', 'execute');
 select has_function_privilege('upsert_fiche_action_annexes(integer, integer[])', 'execute');
 select has_function_privilege('upsert_fiche_action_referents(integer, integer[], uuid[])', 'execute');

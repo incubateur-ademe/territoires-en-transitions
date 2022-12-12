@@ -1,7 +1,7 @@
 -- Deploy tet:plan_action to pg
 
 BEGIN;
---drop view fiches_action;
+drop view fiches_action;
 drop function recursive_plan_action;
 drop function upsert_fiche_action_liens;
 drop function upsert_fiche_action_indicateur_personnalise;
@@ -14,27 +14,27 @@ drop function upsert_fiche_action_pilotes;
 drop function upsert_fiche_action_structures;
 drop function upsert_fiche_action_partenaires;
 drop table fiche_action_annexes;
-drop table annexes;
+drop table annexes cascade;
 drop table fiche_action_indicateur_personnalise;
 drop table fiche_action_indicateur;
 drop table fiche_action_action;
 drop table fiche_action_referents;
 drop table fiche_action_pilotes;
-drop table users_tags;
+drop table users_tags cascade;
 drop table fiche_action_structures_tags;
-drop table structures_tags;
+drop table structures_tags cascade;
 drop table fiche_action_partenaires_tags;
-drop table partenaires_tags;
+drop table partenaires_tags cascade;
 drop table tags;
 drop table fiche_action_plan_action;
-drop table plan_action;
-drop table fiche_action;
-drop type fiche_action_niveaux_priorite;
-drop type fiche_action_statuts;
-drop type fiche_action_cibles;
-drop type fiche_action_resultats_attendus;
-drop type fiche_action_piliers_eci;
-drop type fiche_action_thematiques;
+drop table plan_action cascade;
+drop table fiche_action cascade;
+drop type fiche_action_niveaux_priorite cascade;
+drop type fiche_action_statuts cascade;
+drop type fiche_action_cibles cascade;
+drop type fiche_action_resultats_attendus cascade;
+drop type fiche_action_piliers_eci cascade;
+drop type fiche_action_thematiques cascade;
 
 create type fiche_action_avancement as enum ('pas_fait', 'fait', 'en_cours', 'non_renseigne');
 
@@ -80,14 +80,12 @@ create policy allow_read
 
 create policy allow_insert
     on fiche_action
-    for insert
-    with check (is_amongst_role_on(array ['agent'::role_name, 'referent'::role_name, 'conseiller'::role_name],
-                                   collectivite_id));
+    with check (have_edition_acces(collectivite_id));
+
 create policy allow_update
     on fiche_action
-    for update
-    using (is_amongst_role_on(array ['agent'::role_name, 'referent'::role_name, 'conseiller'::role_name],
-                              collectivite_id));
+    using (have_edition_acces(collectivite_id));
+
 
 create table fiche_action_action
 (
@@ -234,16 +232,15 @@ create policy allow_read
     for select
     using (is_authenticated());
 
+
 create policy allow_insert
     on plan_action
-    for insert
-    with check (is_amongst_role_on(array ['agent'::role_name, 'referent'::role_name, 'conseiller'::role_name],
-                                   collectivite_id));
+    with check (have_edition_acces(collectivite_id));
+
 create policy allow_update
     on plan_action
-    for update
-    using (is_amongst_role_on(array ['agent'::role_name, 'referent'::role_name, 'conseiller'::role_name],
-                              collectivite_id));
+    using (have_edition_acces(collectivite_id));
+
 
 
 -- plan d'action par défaut
