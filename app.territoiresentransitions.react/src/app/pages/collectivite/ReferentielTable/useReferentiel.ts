@@ -3,11 +3,18 @@ import {useQuery} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {IActionStatutsRead} from 'generated/dataLayer/action_statuts_read';
 import {useToggleRowExpandedReducer} from './useToggleRowExpandedReducer';
+import {indexBy} from 'utils/indexBy';
 
 // les informations du référentiel à précharger
 export type ActionReferentiel = Pick<
   IActionStatutsRead,
-  'action_id' | 'identifiant' | 'nom' | 'depth' | 'have_children' | 'type'
+  | 'action_id'
+  | 'identifiant'
+  | 'nom'
+  | 'depth'
+  | 'have_children'
+  | 'type'
+  | 'phase'
 >;
 
 export type IAction = Pick<IActionStatutsRead, 'action_id'>;
@@ -24,10 +31,7 @@ export const useReferentiel = <ActionSubset extends IAction>(
   actions?: ActionSubset[] | 'all'
 ) => {
   // chargement du référentiel
-  const {mergeActions, isLoading, total} = useReferentielData(
-    referentiel,
-    collectivite_id
-  );
+  const {mergeActions, isLoading, total} = useReferentielData(referentiel);
 
   // agrège les lignes fournies avec celles du référentiel
   const rows: TActionsSubset<ActionSubset> = useMemo(
@@ -84,27 +88,15 @@ export const useReferentiel = <ActionSubset extends IAction>(
  * Charge l'arborescence d'un référentiel et renvoi une fonction permettant de
  * créer une copie des données fusionnées avec celles de l'arborescence
  */
-const useReferentielData = (
-  referentiel: string | null,
-  collectivite_id: number | null
-) => {
+export const useReferentielData = (referentiel: string | null) => {
   // chargement du référentiel et indexation par id
   const {data, isLoading} = useQuery(
-    ['actions_referentiel', referentiel],
-    () => fetchActionsReferentiel(referentiel, collectivite_id),
+    ['action_referentiel', referentiel],
+    () => fetchActionsReferentiel(referentiel),
     {
       // il n'est pas nécessaire de recharger trop systématiquement ici
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
-      // transforme les données chargées
-      select: useCallback(
-        data => ({
-          actionById: data?.reduce(byActionId, {}) || {},
-          total: data?.filter(isTache)?.length || 0,
-          rows: data,
-        }),
-        []
-      ),
     }
   );
   const {actionById, total, rows} = data || {};
@@ -121,7 +113,7 @@ const useReferentielData = (
 
       // uniquement les lignes du référentiel
       if (actions === 'all') {
-        return rows;
+        return rows as TActionsSubset<ActionSubset>;
       }
 
       // fusionne dans chaque ligne les données complémentaires
@@ -137,20 +129,18 @@ const useReferentielData = (
     isLoading,
     actionById,
     mergeActions,
-    total,
+    total: total || 0,
+    rows: rows || [],
   };
 };
 
 // toutes les entrées d'un référentiel
-const fetchActionsReferentiel = async (
-  referentiel: string | null,
-  collectivite_id: number | null
-): Promise<ActionReferentiel[]> => {
+const fetchActionsReferentiel = async (referentiel: string | null) => {
   // la requête
   const query = supabaseClient
-    .from('action_statuts')
-    .select('action_id,identifiant,have_children,nom,depth,type')
-    .match({referentiel, collectivite_id})
+    .from('action_referentiel')
+    .select('action_id,identifiant,have_children,nom,depth,type,phase')
+    .match({referentiel})
     .gt('depth', 0);
 
   // attends les données
@@ -160,19 +150,14 @@ const fetchActionsReferentiel = async (
     throw new Error(error.message);
   }
 
-  // renvoi les lignes
-  return data as ActionReferentiel[];
+  // transforme les données chargées
+  const rows = (data || []) as ActionReferentiel[];
+  return {
+    actionById: indexBy(rows, 'action_id'),
+    total: rows.filter(isTache).length || 0,
+    rows,
+  };
 };
-
-// indexe les lignes par ID
-type ActionsById = Record<string, ActionReferentiel>;
-const byActionId = (
-  dict: ActionsById,
-  action: ActionReferentiel
-): ActionsById => ({
-  ...dict,
-  [action.action_id]: action,
-});
 
 // détermine si une action est une tâche (n'a pas de descendants)
 const isTache = (action: ActionReferentiel) => action.have_children === false;
