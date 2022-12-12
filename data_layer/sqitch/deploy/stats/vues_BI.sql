@@ -156,7 +156,7 @@ select c.*,
        u.date_activation
 from utilisateurs u
          join stats.collectivite c using (collectivite_id);
-comment on materialized view stats.collectivite_labellisation
+comment on materialized view stats.collectivite_utilisateur
     is 'Les collectivités liées aux données utilisateurs.';
 
 
