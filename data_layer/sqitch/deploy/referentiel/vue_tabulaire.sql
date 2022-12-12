@@ -54,7 +54,7 @@ comment on materialized view action_referentiel
     is 'La vue matérialisée utilisée comme tronc commun pour les vues tabulaires dans le client.';
 
 
-create table type_tabular_score
+create type tabular_score as
 (
     referentiel                  referentiel,
     action_id                    action_id,
@@ -69,18 +69,21 @@ create table type_tabular_score
     points_realises              double precision,
     points_programmes            double precision,
     points_max_personnalises     double precision,
-    points_max_referentiel       double precision
+    points_max_referentiel       double precision,
+    -- avancement reconstitué
+    avancement                   avancement,
+    -- booléens
+    concerne                     bool,
+    desactive                    bool
 );
-comment on table type_tabular_score
-    is 'Un score utilisé pour être affiché dans le client. '
-        'Cette table sert uniquement à typer les données, pas pour stocker.';
-alter table type_tabular_score enable row level security;
+comment on type tabular_score
+    is 'Un score utilisé pour être affiché dans le client. ';
 
 create function
     private.to_tabular_score(
     action_score private.action_score
 )
-    returns type_tabular_score
+    returns tabular_score
 begin
     atomic
     select action_score.referentiel,
@@ -107,7 +110,17 @@ begin
            action_score.point_fait,
            action_score.point_programme,
            action_score.point_potentiel,
-           action_score.point_referentiel;
+           action_score.point_referentiel,
+           -- avancement reconstitué
+           case
+               when action_score.point_fait = 1 then 'fait'
+               when action_score.point_programme = 1 then 'programme'
+               when action_score.point_pas_fait = 1 then 'pas_fait'
+               when action_score.point_non_renseigne = 1 then 'non_renseigne'
+               else 'detaille' end::avancement,
+           -- booléens
+           action_score.concerne,
+           action_score.desactive;
 end;
 comment on function private.to_tabular_score is
     'Convertit un action score en score pour les vues tabulaires.';
