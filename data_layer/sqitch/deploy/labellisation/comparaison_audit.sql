@@ -216,8 +216,7 @@ begin
     atomic
     select referentiel,
            private.collectivite_scores(collectivite_id, referentiel) as courant,
-           private.collectivite_scores(collectivite_id, referentiel) as pre_audit;
-
+           private.collectivite_scores_pre_audit(collectivite_id, referentiel) as pre_audit;
 end;
 
 
