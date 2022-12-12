@@ -484,9 +484,25 @@ export interface Database {
         Args: { email: string, nom: string; prenom: string; user_id: string; }
         Returns: undefined
       }
+      test_disable_fake_score_generation: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      test_enable_fake_score_generation: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       test_fulfill: {
         Args: { collectivite_id: number; etoile: "1" | "2" | "3" | "4" | "5" }
         Returns: undefined
+      }
+      test_generate_fake_scores: {
+        Args: {
+          collectivite_id: number
+          referentiel: Database["public"]["Enums"]["referentiel"]
+          statuts: unknown
+        }
+        Returns: Json
       }
       test_remove_user: {
         Args: { email: string }
@@ -2042,6 +2058,9 @@ export interface Database {
       type_tabular_score: {
         Insert: {
           action_id?: string | null,
+          avancement?: Database["public"]["Enums"]["avancement"] | null,
+          concerne?: boolean | null,
+          desactive?: boolean | null,
           points_max_personnalises?: number | null,
           points_max_referentiel?: number | null,
           points_programmes?: number | null,
@@ -2056,6 +2075,9 @@ export interface Database {
         },
         Row: {
           action_id: string | null,
+          avancement: Database["public"]["Enums"]["avancement"] | null,
+          concerne: boolean | null,
+          desactive: boolean | null,
           points_max_personnalises: number | null,
           points_max_referentiel: number | null,
           points_programmes: number | null,
@@ -2070,6 +2092,9 @@ export interface Database {
         },
         Update: {
           action_id?: string | null,
+          avancement?: Database["public"]["Enums"]["avancement"] | null,
+          concerne?: boolean | null,
+          desactive?: boolean | null,
           points_max_personnalises?: number | null,
           points_max_referentiel?: number | null,
           points_programmes?: number | null,
