@@ -13,9 +13,10 @@ import {useMutation, useQuery} from 'react-query';
  */
 export const useActionCommentaire = (action_id: string) => {
   const collectivite_id = useCollectiviteId();
-  const {data, isLoading} = useQuery(
-    ['action_commentaire', collectivite_id],
-    () => (collectivite_id ? read({collectivite_id, action_id}) : null)
+  const referentiel = action_id.split('_')[0];
+  const {data, isLoading} = useReferentielCommentaires(
+    collectivite_id,
+    referentiel
   );
   return {
     actionCommentaire:
@@ -29,11 +30,31 @@ type CommentaireParams = {
   action_id: string;
 };
 
-const read = async ({collectivite_id}: CommentaireParams) => {
+/**
+ * Permet de charger les commentaires (précisions) d'une collectivité pour
+ * toutes les actions d'un référentiel.
+ *
+ * @param action_id
+ * @return Un ActionCommentaireRead et un bool isLoading.
+ */
+export const useReferentielCommentaires = (
+  collectivite_id: number | null,
+  referentiel: string | null
+) => {
+  return useQuery(['action_commentaire', collectivite_id, referentiel], () =>
+    collectivite_id && referentiel ? read({collectivite_id, referentiel}) : null
+  );
+};
+
+const read = async ({
+  collectivite_id,
+  referentiel,
+}: Pick<CommentaireParams, 'collectivite_id'> & {referentiel: string}) => {
   const {data} = await supabaseClient
     .from('action_commentaire')
     .select()
-    .eq('collectivite_id', collectivite_id);
+    .eq('collectivite_id', collectivite_id)
+    .ilike('action_id', `${referentiel}%`);
 
   return data;
 };
