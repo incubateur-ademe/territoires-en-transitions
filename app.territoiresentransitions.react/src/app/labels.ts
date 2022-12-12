@@ -1,4 +1,5 @@
 import {FicheActionAvancement} from 'generated/dataLayer/fiche_action_write';
+import {Database} from 'types/database.types';
 import type {ReferentielOfIndicateur} from 'types/litterals';
 
 // Define all labels from app
@@ -33,4 +34,15 @@ export const epciCard_AxisShortLabel: Record<string, string> = {
   eci_3: "Autres piliers de l'économie circulaire",
   eci_4: 'Outils financiers du changement de comportement',
   eci_5: 'Coopération et engagement',
+};
+
+export const avancementToLabel: Record<
+  Database['public']['Enums']['avancement'],
+  string
+> = {
+  non_renseigne: 'Non renseigné',
+  fait: 'Fait',
+  pas_fait: 'Pas fait',
+  detaille: 'Détaillé',
+  programme: 'Programmé',
 };

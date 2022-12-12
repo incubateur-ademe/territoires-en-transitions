@@ -2,6 +2,7 @@ import SelectDropdown from 'ui/shared/select/SelectDropdown';
 import ActionStatutBadge from 'ui/shared/actions/ActionStatutBadge';
 import {ActionAvancement} from 'generated/dataLayer/action_statut_read';
 import {useEditActionStatutIsDisabled} from 'core-logic/hooks/useActionStatut';
+import {avancementToLabel} from 'app/labels';
 
 export type TSelectStatutProps = {
   className?: string;
@@ -9,28 +10,15 @@ export type TSelectStatutProps = {
   onChange: (value: string) => void;
 };
 
-export const ITEMS: {value: ActionAvancement; label: string}[] = [
-  {
-    value: 'non_renseigne',
-    label: 'Non renseigné',
-  },
-  {
-    value: 'pas_fait',
-    label: 'Pas fait',
-  },
-  {
-    value: 'programme',
-    label: 'Programmé',
-  },
-  {
-    value: 'detaille',
-    label: 'Détaillé',
-  },
-  {
-    value: 'fait',
-    label: 'Fait',
-  },
-];
+export const ITEMS: {value: ActionAvancement; label: string}[] = (
+  [
+    'non_renseigne',
+    'pas_fait',
+    'programme',
+    'detaille',
+    'fait',
+  ] as ActionAvancement[]
+).map(value => ({value, label: avancementToLabel[value]}));
 
 /**
  * Affiche le filtre par statuts

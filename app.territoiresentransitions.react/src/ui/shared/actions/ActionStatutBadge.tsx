@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import {ActionAvancement} from 'generated/dataLayer/action_statut_read';
+import {avancementToLabel} from 'app/labels';
 
 type Props = {
   className?: string;
@@ -26,11 +27,7 @@ const ActionStatutBadge = ({className, statut, barre, small}: Props) => {
         {'text-green-700 bg-green-200': statut === 'fait'}
       )}
     >
-      {statut === 'non_renseigne' && 'Non renseigné'}
-      {statut === 'pas_fait' && 'Pas fait'}
-      {statut === 'programme' && 'Programmé'}
-      {statut === 'detaille' && 'Détaillé'}
-      {statut === 'fait' && 'Fait'}
+      {avancementToLabel[statut]}
     </span>
   );
 };
