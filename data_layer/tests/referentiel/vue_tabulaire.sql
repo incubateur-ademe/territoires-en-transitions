@@ -25,12 +25,20 @@ begin
     on conflict (collectivite_id, action_id) do update set avancement = excluded.avancement;
 end;
 
+select test.identify_as('yolo@dodo.com');
+
 insert into statut_sequence
 values (2, 'eci_1.1.1.1', 'fait', null),
        (2, 'eci_1.1.2.1', 'programme', null),
        (2, 'eci_1.1.3.1', 'pas_fait', null),
-       (2, 'eci_1.1.4.1', 'detaille', '{ 0.2, 0.7, 0.1}');
-select test.identify_as('yolo@dodo.com');
+       (2, 'eci_1.1.4.1', 'detaille', '{ 0.2, 0.7, 0.1}'),
+
+       -- les actions réglementaires qui comptent pour zéro points.
+       (2, 'eci_2.1.0', 'fait', null),
+       (2, 'eci_2.2.0', 'programme', null),
+       (2, 'eci_2.3.0', 'pas_fait', null),
+       (2, 'eci_2.4.0', 'detaille', '{ 0.2, 0.7, 0.1}')
+;
 select insert_sequence();
 
 -- teste la vue action_statuts dont les statuts sont _récupérés_ de la table action_statut.
