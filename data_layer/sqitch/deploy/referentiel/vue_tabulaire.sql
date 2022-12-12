@@ -88,7 +88,7 @@ begin
     atomic
     select action_score.referentiel,
            action_score.action_id,
--- score [0.0, 1.0]
+           -- score [0.0, 1.0]
            case
                when action_score.point_potentiel = 0 then 0
                else action_score.point_fait / action_score.point_potentiel end,
@@ -105,7 +105,7 @@ begin
            case
                when action_score.point_potentiel = 0 then 0
                else action_score.point_non_renseigne / action_score.point_potentiel end,
--- points
+           -- points
            greatest(action_score.point_potentiel - action_score.point_fait, 0),
            action_score.point_fait,
            action_score.point_programme,
@@ -113,10 +113,12 @@ begin
            action_score.point_referentiel,
            -- avancement reconstitué
            case
-               when action_score.point_fait = 1 then 'fait'
-               when action_score.point_programme = 1 then 'programme'
-               when action_score.point_pas_fait = 1 then 'pas_fait'
-               when action_score.point_non_renseigne = 1 then 'non_renseigne'
+               when action_score.fait_taches_avancement = 1 then 'fait'
+               when action_score.programme_taches_avancement = 1 then 'programme'
+               when action_score.pas_fait_taches_avancement = 1 then 'pas_fait'
+               when action_score.fait_taches_avancement +
+                    action_score.programme_taches_avancement +
+                    action_score.pas_fait_taches_avancement = 0 then 'non_renseigne'
                else 'detaille' end::avancement,
            -- booléens
            action_score.concerne,
