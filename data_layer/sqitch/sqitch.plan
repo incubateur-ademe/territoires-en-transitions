@@ -155,3 +155,4 @@ stats/vues_BI 2022-12-06T16:18:25Z Florian <florian@derfurth.com> # Les premièr
 cron/refresh_stats_views [stats/vues_BI] 2022-12-06T17:02:25Z Florian <florian@derfurth.com> # Appelle la fonction de rafraichissement des vues stats.
 automatisation_schema 2022-12-07T15:05:42Z Amandine Jacquelin <conta@LanceLibre> # Ajout du schema automatisation
 automatisation/crm [automatisation_schema] 2022-11-29T15:13:51Z Amandine Jacquelin <conta@LanceLibre> # Envoie JSON à n8n puis à Salesforce quand nouveau utilisateur et collectivité
+@v1.16.0 2022-12-12T08:46:49Z Florian <florian@derfurth.com> # Statistiques et automatisation.
