@@ -168,7 +168,7 @@ create function
     collectivite_id integer,
     referentiel referentiel
 )
-    returns setof type_tabular_score
+    returns setof tabular_score
 begin
     atomic
     select sc.*
@@ -187,7 +187,7 @@ create function
     collectivite_id integer,
     referentiel referentiel
 )
-    returns setof type_tabular_score
+    returns setof tabular_score
 begin
     atomic
     select sc.*
@@ -209,8 +209,8 @@ create function
     returns table
             (
                 referentiel referentiel,
-                courant     type_tabular_score,
-                pre_audit   type_tabular_score
+                courant     tabular_score,
+                pre_audit   tabular_score
             )
 begin
     atomic

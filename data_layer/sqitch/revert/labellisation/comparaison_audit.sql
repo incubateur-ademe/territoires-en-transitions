@@ -3,8 +3,9 @@
 BEGIN;
 
 drop view comparaison_scores_audit;
-drop function private.collectivite_scores;
+drop function private.collectivite_score_comparaison;
 drop function private.collectivite_scores_pre_audit;
+drop function private.collectivite_scores;
 
 drop trigger after_write_update_audit_scores on audit;
 drop trigger after_write_update_audit_scores on personnalisation_consequence;
