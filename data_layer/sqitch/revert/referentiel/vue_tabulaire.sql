@@ -105,5 +105,6 @@ order by c.id,
 drop materialized view action_referentiel;
 drop materialized view private.action_node;
 drop function private.to_tabular_score;
+drop type tabular_score;
 
 COMMIT;
