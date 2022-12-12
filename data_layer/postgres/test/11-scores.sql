@@ -29,7 +29,8 @@ comment on type test.statut_detaille
 create function
     test.statut_to_detaille(statut action_statut)
     returns test.statut_detaille
-    language sql immutable
+    language sql
+    immutable
 begin
     atomic
     select statut.collectivite_id,
@@ -87,10 +88,10 @@ begin
            p.parent,
            p.value,
            p.depth,
-           coalesce(s.fait, .0) * p.value,
-           coalesce(s.programme, .0) * p.value,
-           coalesce(s.pas_fait, .0) * p.value,
-           case when s is null then 0 else p.value end
+           coalesce(s.fait, .0),
+           coalesce(s.programme, .0),
+           coalesce(s.pas_fait, .0),
+           case when s is null then 0 else 1 end
     from test.referentiel_points p
              left join statut_detaille s
                        on s.action_id = p.action_id
@@ -118,17 +119,17 @@ begin
                               points                               as point_referentiel,
                               points                               as point_potentiel,
                               points - fait - programme - pas_fait as point_non_renseigne,
-                              fait                                 as point_fait,
-                              programme                            as point_programme,
-                              pas_fait                             as point_pas_fait,
+                              fait * p.value                       as point_fait,
+                              programme * p.value                  as point_programme,
+                              pas_fait * p.value                   as point_pas_fait,
                               taches                               as total_taches_count,
                               completed                            as completed_taches_count,
                               null                                 as point_potentiel_perso,
+                              fait                                 as fait_taches_avancement,
+                              programme                            as programme_taches_avancement,
+                              pas_fait                             as pas_fait_taches_avancement,
                               -- on ne calcule pas l'avancement car on ne s'en sert pas
-                              .0                                   as fait_taches_avancement,
-                              .0                                   as pas_fait_taches_avancement,
-                              .0                                   as programme_taches_avancement,
-                              .0                                   as pas_concerne_taches_avancement
+                              1                                    as pas_concerne_taches_avancement
                        from fake_scores
                                 join test.referentiel_points p using (action_id))
     select into scores json_agg(to_json(converted))
@@ -177,6 +178,8 @@ as
 $$
 begin
     perform test.disable_evaluation_api();
+    alter table client_scores
+        disable trigger check_payload_timestamp;
     drop trigger if exists generate_fake_scores on action_statut;
     create trigger generate_fake_scores
         after insert or update
@@ -196,6 +199,8 @@ as
 $$
 begin
     perform test.enable_evaluation_api();
+    alter table client_scores
+        enable trigger check_payload_timestamp;
     drop trigger if exists generate_fake_scores on action_statut;
 end;
 $$ language plpgsql;
