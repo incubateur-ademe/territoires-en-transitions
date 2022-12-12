@@ -31,7 +31,7 @@ const useDailyCounts = (
 ) => {
   const {data} = useQuery([view], async () => {
     const {data, error} = await supabaseClient.from(view).select();
-    return !data?.length || error ? undefined : data[0];
+    return !data?.length || error ? undefined : data;
   });
   return (data as DailyCount[]) || [];
 };
