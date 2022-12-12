@@ -1,5 +1,5 @@
 begin;
-select plan(11);
+select plan(14);
 
 truncate fiche_action_annexes;
 truncate annexes cascade;
