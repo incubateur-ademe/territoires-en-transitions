@@ -4,6 +4,8 @@ import {useCollectiviteId, useReferentielId} from 'core-logic/hooks/params';
 import {TAudit} from './types';
 import {Referentiel} from 'types/litterals';
 import {useAuth} from 'core-logic/api/auth/AuthProvider';
+import {useCollectiviteMembres} from '../Users/useCollectiviteMembres';
+import {Membre} from '../Users/types';
 
 // charge les données
 export const fetch = async (
@@ -46,4 +48,23 @@ export const useIsAuditeur = () => {
     return false;
   }
   return audit.auditeurs.findIndex(({id}) => id === user.id) !== -1;
+};
+
+/** Liste des auditeurs */
+export const useAuditeurs = () => {
+  const {data: audit, isLoading: isLoadingAudit} = useAudit();
+  const {membres, isLoading: isLoadingMembres} = useCollectiviteMembres();
+  const isLoading = isLoadingAudit || isLoadingMembres;
+
+  if (isLoading || !audit || !audit.auditeurs?.length) {
+    return {isLoading};
+  }
+
+  const data = audit.auditeurs
+    .map(({id}) => membres.find(m => m.user_id === id))
+    .filter(m => !!m) as Membre[];
+  return {
+    isLoading: false,
+    data,
+  };
 };
