@@ -41,7 +41,7 @@ values (2, 'eci_1.1.1.1', 'fait', null),
 ;
 select insert_sequence();
 
--- teste la vue action_statuts dont les statuts sont _récupérés_ de la table action_statut.
+-- teste la vue action_statuts dont les statuts sont _récupérés_ de la table action_statuts.
 select bag_eq(
                'select s.avancement, s.avancement_detaille from action_statuts s join statut_sequence using (action_id) where s.collectivite_id = 2;',
                'select avancement, avancement_detaille from statut_sequence;',
