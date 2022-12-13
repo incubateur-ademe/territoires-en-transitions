@@ -58,9 +58,7 @@ const clickOnDropdownValue = (champ, email, value) => {
         .find(`[data-test="${champ}-dropdown"] [aria-label="ouvrir le menu"]`)
         .click();
     });
-    cy.root()
-      .get(`#floating-ui-root [data-test="${FIELD[champ][value]}"]`)
-      .click();
+    cy.root().get(`[data-test="${FIELD[champ][value]}"]`).click();
   }
 };
 
