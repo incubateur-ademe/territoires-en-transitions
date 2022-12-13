@@ -14,6 +14,7 @@ create table migration.fiche_action_indicateur_personnalise as select * from pub
 create table migration.plan_action as select * from public.plan_action;
 
 
+drop materialized view stats.collectivite_plan_action cascade;
 drop trigger after_collectivite_insert on collectivite;
 drop function after_collectivite_insert_default_plan();
 drop table plan_action cascade;
@@ -809,5 +810,24 @@ do $$
     end
 $$;
  */
+
+create materialized view stats.collectivite_plan_action
+as
+with fa as (select collectivite_id,
+                   count(*) as count
+            from fiche_action f
+            group by f.collectivite_id),
+     pa as (select collectivite_id,
+                   count(*) as count
+            from plan_action p
+            where p.parent is null
+            group by p.collectivite_id)
+select c.*,
+       coalesce(fa.count, 0) as fiches,
+       coalesce(pa.count, 0) as plans
+from stats.collectivite c
+         left join pa on pa.collectivite_id = c.collectivite_id
+         left join fa on pa.collectivite_id = fa.collectivite_id
+order by fiches desc;
 
 COMMIT;

@@ -1,6 +1,8 @@
 -- Deploy tet:plan_action to pg
 
 BEGIN;
+
+drop materialized view stats.collectivite_plan_action cascade;
 drop view fiches_action;
 drop function recursive_plan_action;
 drop function upsert_fiche_action_liens;
@@ -275,5 +277,24 @@ drop table migration.fiche_action_indicateur;
 drop table migration.fiche_action_action;
 drop table migration.fiche_action;
 drop type migration.fiche_action_avancement;
+
+create materialized view stats.collectivite_plan_action
+as
+with fa as (select collectivite_id,
+                   count(*) as count
+            from fiche_action f
+            group by f.collectivite_id),
+     pa as (select collectivite_id,
+                   count(*) as count
+            from plan_action p
+            group by p.collectivite_id)
+select c.*,
+       coalesce(fa.count, 0) as fiches,
+       coalesce(pa.count, 0) as plans
+from stats.collectivite c
+         left join pa on pa.collectivite_id = c.collectivite_id
+         left join fa on pa.collectivite_id = fa.collectivite_id
+order by fiches desc;
+
 
 COMMIT;
