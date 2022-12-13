@@ -9,7 +9,7 @@ import {
   useId,
   useInteractions,
   useRole,
-} from '@floating-ui/react-dom-interactions';
+} from '@floating-ui/react';
 import classNames from 'classnames';
 
 export type ModalProps = {
