@@ -72,9 +72,11 @@ export const LabellisationTabs = (props: TLabellisationTabsProps) => {
           <AuditSuivi />
         </Tab>
         <Tab label="Cycles et comparaison">
-          <AuditComparaison />
+          {activeTab === TABS_INDEX['cycles'] ? <AuditComparaison /> : '...'}
         </Tab>
-        <Tab label="Critères de labellisation">{children}</Tab>
+        <Tab label="Critères de labellisation">
+          {activeTab === TABS_INDEX['criteres'] ? children : '...'}
+        </Tab>
       </Tabs>
     </>
   ) : (
