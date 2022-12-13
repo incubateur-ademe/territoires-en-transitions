@@ -32,6 +32,7 @@ const Textarea = <T extends HTMLTextAreaElement>({
       )}
       onChange={textareaChange}
       value={value}
+      placeholder={placeholder}
       {...props}
     />
   );
