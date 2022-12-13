@@ -13,18 +13,12 @@ export const useComparaisonScoreAudit = (
 
 export const fetchComparaisonScoreAudit = async (
   collectivite_id: number | null,
-  referentiel: string | null,
-  /** indique que les données doivent être chargées en format csv */
-  csv?: boolean
+  referentiel: string | null
 ) => {
   const query = supabaseClient
     .from('comparaison_scores_audit')
     .select('action_id,courant,pre_audit')
     .match({collectivite_id, referentiel});
-
-  if (csv) {
-    query.csv();
-  }
 
   const {error, data} = await query;
   if (error) {
