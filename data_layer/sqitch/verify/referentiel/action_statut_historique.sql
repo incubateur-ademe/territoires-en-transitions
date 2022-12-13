@@ -2,6 +2,6 @@
 
 BEGIN;
 
-select has_function_privilege('historique.action_statut_at(int, timestamp with time zone)', 'execute');
+select has_function_privilege('historique.action_statuts_at(int, referentiel, timestamp with time zone)', 'execute');
 
 ROLLBACK;
