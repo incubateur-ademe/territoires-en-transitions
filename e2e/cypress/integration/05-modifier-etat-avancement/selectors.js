@@ -6,7 +6,7 @@ export const LocalSelectors = {
     selector: '[data-test=action-audit-statut-ro]',
   },
   'avis audit': {
-    selector: '[data-test=avis] textarea',
+    selector: '[data-test=avis]',
   },
   "ajouter à l'ordre du jour": {
     selector: '#ordre_du_jour',
