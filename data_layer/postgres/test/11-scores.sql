@@ -142,6 +142,40 @@ comment on function test_generate_fake_scores is
         'Utilise une liste de statuts pour produire un résultat qui ressemble aux scores calculés par le service d''évaluation.';
 
 
+create function
+    test.statuts_detailles_of(collectivite_id integer, referentiel referentiel)
+    returns test.statut_detaille[]
+begin
+    atomic
+    select array_agg(d.*)
+    from action_statut s
+             join action_relation r on s.action_id = r.id
+             join test.statut_to_detaille(s) d on true
+    where s.collectivite_id = statuts_detailles_of.collectivite_id
+      and r.referentiel = statuts_detailles_of.referentiel;
+end;
+
+create function
+    test.statuts_detailles_of(collectivite_id integer, referentiel referentiel, "time" timestamp with time zone)
+    returns test.statut_detaille[]
+begin
+    atomic
+    select array_agg(d.*)
+    from historique.action_statuts_at(
+                 statuts_detailles_of.collectivite_id,
+                 statuts_detailles_of.referentiel,
+                 statuts_detailles_of.time
+             ) s
+             join action_relation r on s.action_id = r.id
+             join test.statut_to_detaille(s) d on true
+    where s.collectivite_id = statuts_detailles_of.collectivite_id
+      and r.referentiel = statuts_detailles_of.referentiel;
+end;
+
+comment on function test.statuts_detailles_of is
+    'Les statuts détaillés d''une collectivité pour un référentiel.';
+
+
 create function test.after_statut_write_generate_fake_scores() returns trigger as
 $$
 declare
@@ -152,12 +186,10 @@ begin
     select * into relation from action_relation where id = new.action_id limit 1;
 
     -- convertit les statuts en statuts détaillés
-    select into statuts array_agg(d.*)
-    from action_statut s
-             join action_relation r on s.action_id = r.id
-             join test.statut_to_detaille(s) d on true
-    where s.collectivite_id = new.collectivite_id
-      and r.referentiel = relation.referentiel;
+    select into statuts test.statuts_detailles_of(
+                                new.collectivite_id,
+                                relation.referentiel
+                            );
 
     -- génère les scores pour les enregistrer dans client_scores
     insert into client_scores (collectivite_id, referentiel, scores, modified_at, payload_timestamp)
@@ -177,9 +209,12 @@ create function
 as
 $$
 begin
-    perform test.disable_evaluation_api();
+    -- désactive le trigger des payload qui nous gêne quand plusieurs tests se passent dans la même transaction
     alter table client_scores
         disable trigger check_payload_timestamp;
+
+    -- désactive l'API et ajoute un trigger
+    perform test.disable_evaluation_api();
     drop trigger if exists generate_fake_scores on action_statut;
     create trigger generate_fake_scores
         after insert or update
