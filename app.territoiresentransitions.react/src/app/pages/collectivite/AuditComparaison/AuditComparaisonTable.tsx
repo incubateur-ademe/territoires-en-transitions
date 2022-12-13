@@ -12,6 +12,7 @@ import {TableData} from './useTableData';
 import {CellAction} from '../ReferentielTable/CellAction';
 import ReferentielTable from '../ReferentielTable';
 import {CellPercent, CellPoints} from '../AidePriorisation/Cells';
+import {toFixed} from 'utils/toFixed';
 import './styles.css';
 
 export type TDetailTacheTableProps = {
@@ -36,14 +37,23 @@ const getDifference = (
     return undefined;
   }
 
-  const previous = pre_audit[field] as number;
-  const current = courant[field] as number;
+  const previous = toFixed(pre_audit[field] as number);
+  const current = toFixed(courant[field] as number);
 
   if (previous === current) {
     return undefined;
   }
 
   return previous < current ? 'up' : 'down';
+};
+
+/** Vérifie si la valeur courante d'un champ d'une ligne donnée diffère de sa valeur avant audit */
+const getDifferenceOnRow = (
+  field: keyof TScoreAudit,
+  row: TCellProps['row']
+) => {
+  const {pre_audit, courant} = row.original;
+  return getDifference(field, pre_audit, courant);
 };
 
 /** Affiche une cellule d'en-tête avec un libellé et une valeur */
@@ -61,7 +71,9 @@ const Header = (props: {
       {value ? (
         <Cell
           value={value[field]}
-          difference={getDifference(field, previous, value)}
+          difference={
+            previous ? getDifference(field, previous, value) : undefined
+          }
         />
       ) : null}
     </>
@@ -159,10 +171,9 @@ const getColumns = (headerData?: TComparaisonScoreAudit): TColumn[] => {
           Cell: (props: TCellProps) => (
             <CellPoints
               {...props}
-              difference={getDifference(
+              difference={getDifferenceOnRow(
                 'points_max_personnalises',
-                pre_audit,
-                courant
+                props.row
               )}
             />
           ),
@@ -182,7 +193,7 @@ const getColumns = (headerData?: TComparaisonScoreAudit): TColumn[] => {
           Cell: (props: TCellProps) => (
             <CellPoints
               {...props}
-              difference={getDifference('points_realises', pre_audit, courant)}
+              difference={getDifferenceOnRow('points_realises', props.row)}
             />
           ),
           width: 100,
@@ -201,7 +212,7 @@ const getColumns = (headerData?: TComparaisonScoreAudit): TColumn[] => {
           Cell: (props: TCellProps) => (
             <CellPercent
               {...props}
-              difference={getDifference('score_realise', pre_audit, courant)}
+              difference={getDifferenceOnRow('score_realise', props.row)}
             />
           ),
           width: 110,
