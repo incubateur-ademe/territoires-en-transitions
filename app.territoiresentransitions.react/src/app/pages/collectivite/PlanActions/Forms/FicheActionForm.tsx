@@ -19,7 +19,7 @@ import {useAllIndicateurDefinitions} from 'core-logic/hooks/indicateur_definitio
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useActionTitleList} from 'core-logic/hooks/referentiel';
 import {ExpensiveActionReferentielAvancementCard} from 'ui/referentiels/ExpensiveActionReferentielAvancementCard';
-import FormInput from 'ui/shared/form/FormInput';
+import FormikInput from 'ui/shared/form/formik/FormikInput';
 
 /**
  * Stores both plan and category uid, represents the user's selection of a
@@ -215,12 +215,12 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
       {() => (
         <Form className="fiche-action">
           <div className="max-w-2xl">
-            <FormInput
+            <FormikInput
               name="numerotation"
               label="Numérotation de l'action"
               hint="ex: 1.2.3, A.1.a, 1.1 permet le classement"
             />
-            <FormInput name="titre" label="Titre *" hint="Champ requis" />
+            <FormikInput name="titre" label="Titre *" hint="Champ requis" />
             <Spacer />
             <Field
               name="planCategories"
@@ -229,7 +229,7 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
               component={PlanCategoriesSelectionField}
             />
             <Spacer />
-            <FormInput type="area" name="description" label="Description" />
+            <FormikInput type="area" name="description" label="Description" />
             <Spacer />
             <Field
               name="avancement"
@@ -243,17 +243,17 @@ export const FicheActionForm = (props: FicheActionFormProps) => {
             </label>
             <Spacer />
 
-            <FormInput name="structure_pilote" label="Structure pilote" />
+            <FormikInput name="structure_pilote" label="Structure pilote" />
             <Spacer />
-            <FormInput name="personne_referente" label="Personne référente" />
+            <FormikInput name="personne_referente" label="Personne référente" />
             <Spacer />
-            <FormInput name="elu_referent" label="Élu référent" />
-            <Spacer />
-
-            <FormInput name="partenaires" label="Partenaires" />
+            <FormikInput name="elu_referent" label="Élu référent" />
             <Spacer />
 
-            <FormInput
+            <FormikInput name="partenaires" label="Partenaires" />
+            <Spacer />
+
+            <FormikInput
               name="budget_global"
               label="Budget global"
               hint="Ce champ ne doit comporter que des chiffres sans espaces"
