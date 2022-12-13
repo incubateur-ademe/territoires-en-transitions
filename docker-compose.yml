@@ -300,6 +300,8 @@ services:
   sqitch-test:
     container_name: tet-sqitch-test
     build: ./data_layer/loader/.
+    profiles:
+      - donotstart
     depends_on:
       - db
       - auth
