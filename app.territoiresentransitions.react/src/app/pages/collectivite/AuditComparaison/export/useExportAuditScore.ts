@@ -37,7 +37,7 @@ export const useExportAuditScores = (
   return {exportAuditScores, isLoading};
 };
 
-const FORMAT_PERCENT = '0.00%';
+const FORMAT_PERCENT = 'percent';
 
 // insère les données dans le modèle et sauvegarde le fichier xls résultant
 const updateAndSaveXLS = async (
@@ -190,8 +190,16 @@ const setNumValue = (cell: Cell, value: number | null, numFmt?: string) => {
   cell.style = {
     ...cell.style,
     alignment: {horizontal: 'center'},
-    numFmt: numFmt || '.##',
+    numFmt: getNumberFormat(value, numFmt),
   };
+};
+
+const getNumberFormat = (value: number | null, numFmt?: string) => {
+  const suffix = numFmt === FORMAT_PERCENT ? '%' : '';
+  if (value === null || Number.isInteger(value)) {
+    return '0' + suffix;
+  }
+  return '0.0#' + suffix;
 };
 
 const formatStatut = (score: TScoreAudit) => {
