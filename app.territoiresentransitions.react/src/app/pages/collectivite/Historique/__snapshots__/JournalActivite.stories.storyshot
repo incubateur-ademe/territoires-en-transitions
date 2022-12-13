@@ -39,7 +39,6 @@ exports[`Storyshots app/pages/collectivite/Historique/JournalActivite Exemple 1 
             className="flex items-center w-full p-2 text-left text-sm"
             data-test="filtre-membre"
             disabled={true}
-            onBlur={[Function]}
             onClick={[Function]}
             onKeyDown={[Function]}
             onKeyUp={[Function]}

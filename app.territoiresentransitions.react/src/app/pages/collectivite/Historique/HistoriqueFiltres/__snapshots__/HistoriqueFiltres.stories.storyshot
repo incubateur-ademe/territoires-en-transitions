@@ -29,7 +29,6 @@ exports[`Storyshots app/pages/collectivite/Historique/HistoriqueFiltres Avec Fil
           className="flex items-center w-full p-2 text-left text-sm"
           data-test="filtre-membre"
           disabled={true}
-          onBlur={[Function]}
           onClick={[Function]}
           onKeyDown={[Function]}
           onKeyUp={[Function]}
@@ -187,7 +186,6 @@ exports[`Storyshots app/pages/collectivite/Historique/HistoriqueFiltres Defaut 1
           className="flex items-center w-full p-2 text-left text-sm"
           data-test="filtre-membre"
           disabled={true}
-          onBlur={[Function]}
           onClick={[Function]}
           onKeyDown={[Function]}
           onKeyUp={[Function]}
