@@ -100,8 +100,11 @@
 .referentiel-table .body .cell {
   padding: 0.15rem 1rem;
   border: 1px;
+  display: flex;
+  align-items: center;
 }
 .referentiel-table .body .cell:first-of-type {
+  display: inline;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
