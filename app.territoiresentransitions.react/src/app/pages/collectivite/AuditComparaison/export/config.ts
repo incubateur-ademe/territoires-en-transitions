@@ -6,11 +6,17 @@ import {Worksheet} from 'exceljs';
 export const MIME_XLSX =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
-// les cellules du cartouche d'information
-const info_cells = {
-  collectivite: 'A1',
-  auditeurs: 'B2',
-  exportedAt: 'B3',
+const common = {
+  // les cellules du cartouche d'information
+  info_cells: {
+    collectivite: 'A1',
+    auditeurs: 'B2',
+    exportedAt: 'B3',
+  },
+  // numéro de la ligne "total" du tableau de données
+  total_row: 8,
+  // numéro de la 1ère ligne "action"
+  first_data_row: 9,
 };
 
 export type Config = typeof cae;
@@ -31,10 +37,7 @@ export const getActionIdentifiant = (
 
 // configuration de base pour CAE
 const cae = {
-  info_cells,
-
-  // numéro de la 1ère ligne du tableau de données
-  first_data_row: 9,
+  ...common,
 
   // les colonnes du tableau de données
   data_cols: {
@@ -64,10 +67,7 @@ const cae = {
 
 // configuration ECi
 export const eci: Config = {
-  info_cells,
-
-  // numéro de la 1ère ligne du tableau de données
-  first_data_row: 9,
+  ...common,
 
   // les colonnes du tableau de données
   data_cols: {

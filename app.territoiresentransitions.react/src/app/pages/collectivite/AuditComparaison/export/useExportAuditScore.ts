@@ -1,4 +1,4 @@
-import {Cell, Workbook} from 'exceljs';
+import {Cell, Workbook, Worksheet} from 'exceljs';
 import {format} from 'date-fns';
 import {saveBlob} from 'ui/shared/preuves/Bibliotheque/saveBlob';
 import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
@@ -21,13 +21,13 @@ export const useExportAuditScores = (
 
   const exportAuditScores = () => {
     // charge le modèle si nécessaire et insère les données
-    if (data) {
+    if (data && referentiel) {
       if (template) {
-        updateAndSaveXLS(template, data);
+        updateAndSaveXLS(referentiel, template, data);
       } else {
         loadTemplate().then(({data: fetchedTemplate}) => {
           if (fetchedTemplate) {
-            updateAndSaveXLS(fetchedTemplate, data);
+            updateAndSaveXLS(referentiel, fetchedTemplate, data);
           }
         });
       }
@@ -41,6 +41,7 @@ const FORMAT_PERCENT = 'percent';
 
 // insère les données dans le modèle et sauvegarde le fichier xls résultant
 const updateAndSaveXLS = async (
+  referentiel: string,
   template: ArrayBuffer,
   data: {
     config: Config;
@@ -89,6 +90,12 @@ const updateAndSaveXLS = async (
     'dd/MM/yyyy'
   );
 
+  // remplace les valeurs de la ligne "total"
+  const total = scoresByActionId[referentiel];
+  if (total) {
+    setScoreIntoRow(worksheet, data_cols, config.total_row, total);
+  }
+
   // remplace les valeurs de chaque ligne/action
   let row = first_data_row;
   let identifiant = getActionIdentifiant(worksheet, row, data_cols.identifiant);
@@ -106,66 +113,9 @@ const updateAndSaveXLS = async (
         if (data_cols.phase) {
           worksheet.getCell(data_cols.phase + row).value = action.phase;
         }
-        setNumValue(
-          worksheet.getCell(data_cols.points_max_referentiel + row),
-          score.pre_audit.points_max_referentiel
-        );
 
-        // score avant audit
-        setNumValue(
-          worksheet.getCell(data_cols.pre_audit.points_max_personnalises + row),
-          score.pre_audit.points_max_personnalises
-        );
-        setNumValue(
-          worksheet.getCell(data_cols.pre_audit.points_realises + row),
-          score.pre_audit.points_realises
-        );
-        setNumValue(
-          worksheet.getCell(data_cols.pre_audit.score_realise + row),
-          score.pre_audit.score_realise,
-          FORMAT_PERCENT
-        );
-        setNumValue(
-          worksheet.getCell(data_cols.pre_audit.points_programmes + row),
-          score.pre_audit.points_programmes
-        );
-        setNumValue(
-          worksheet.getCell(data_cols.pre_audit.score_programme + row),
-          score.pre_audit.score_programme,
-          FORMAT_PERCENT
-        );
-        if (!action.have_children) {
-          worksheet.getCell(data_cols.pre_audit.statut + row).value =
-            formatStatut(score.pre_audit);
-        }
-
-        // score après audit
-        setNumValue(
-          worksheet.getCell(data_cols.courant.points_max_personnalises + row),
-          score.courant.points_max_personnalises
-        );
-        setNumValue(
-          worksheet.getCell(data_cols.courant.points_realises + row),
-          score.courant.points_realises
-        );
-        setNumValue(
-          worksheet.getCell(data_cols.courant.score_realise + row),
-          score.courant.score_realise,
-          FORMAT_PERCENT
-        );
-        setNumValue(
-          worksheet.getCell(data_cols.courant.points_programmes + row),
-          score.courant.points_programmes
-        );
-        setNumValue(
-          worksheet.getCell(data_cols.courant.score_programme + row),
-          score.courant.score_programme,
-          FORMAT_PERCENT
-        );
-        if (!action.have_children) {
-          worksheet.getCell(data_cols.courant.statut + row).value =
-            formatStatut(score.courant);
-        }
+        // scores avant audit et courant
+        setScoreIntoRow(worksheet, data_cols, row, score, action);
 
         // commentaire de la collectivité
         const commentaire =
@@ -197,6 +147,7 @@ const setNumValue = (cell: Cell, value: number | null, numFmt?: string) => {
   };
 };
 
+// génère le format utilisé pour les nombres
 const getNumberFormat = (value: number | null, numFmt?: string) => {
   const suffix = numFmt === FORMAT_PERCENT ? '%' : '';
   if (value === null || Number.isInteger(value)) {
@@ -205,6 +156,7 @@ const getNumberFormat = (value: number | null, numFmt?: string) => {
   return '0.0#' + suffix;
 };
 
+// formate le statut d'avancmement d'une action
 const formatStatut = (score: TScoreAudit) => {
   const {concerne, desactive, avancement} = score;
   if (concerne === false || desactive === true) {
@@ -216,4 +168,71 @@ const formatStatut = (score: TScoreAudit) => {
   }
 
   return avancementToLabel[avancement];
+};
+
+// écrit les données de score d'une ligne dans la feuille de calcul
+const setScoreIntoRow = (
+  worksheet: Worksheet,
+  data_cols: Config['data_cols'],
+  row: number,
+  score: TComparaisonScoreAudit,
+  action?: ActionReferentiel
+) => {
+  // score avant audit
+  setNumValue(
+    worksheet.getCell(data_cols.pre_audit.points_max_personnalises + row),
+    score.pre_audit.points_max_personnalises
+  );
+  setNumValue(
+    worksheet.getCell(data_cols.pre_audit.points_realises + row),
+    score.pre_audit.points_realises
+  );
+  setNumValue(
+    worksheet.getCell(data_cols.pre_audit.score_realise + row),
+    score.pre_audit.score_realise,
+    FORMAT_PERCENT
+  );
+  setNumValue(
+    worksheet.getCell(data_cols.pre_audit.points_programmes + row),
+    score.pre_audit.points_programmes
+  );
+  setNumValue(
+    worksheet.getCell(data_cols.pre_audit.score_programme + row),
+    score.pre_audit.score_programme,
+    FORMAT_PERCENT
+  );
+  if (action && !action.have_children) {
+    worksheet.getCell(data_cols.pre_audit.statut + row).value = formatStatut(
+      score.pre_audit
+    );
+  }
+
+  // score après audit
+  setNumValue(
+    worksheet.getCell(data_cols.courant.points_max_personnalises + row),
+    score.courant.points_max_personnalises
+  );
+  setNumValue(
+    worksheet.getCell(data_cols.courant.points_realises + row),
+    score.courant.points_realises
+  );
+  setNumValue(
+    worksheet.getCell(data_cols.courant.score_realise + row),
+    score.courant.score_realise,
+    FORMAT_PERCENT
+  );
+  setNumValue(
+    worksheet.getCell(data_cols.courant.points_programmes + row),
+    score.courant.points_programmes
+  );
+  setNumValue(
+    worksheet.getCell(data_cols.courant.score_programme + row),
+    score.courant.score_programme,
+    FORMAT_PERCENT
+  );
+  if (action && !action.have_children) {
+    worksheet.getCell(data_cols.courant.statut + row).value = formatStatut(
+      score.courant
+    );
+  }
 };
