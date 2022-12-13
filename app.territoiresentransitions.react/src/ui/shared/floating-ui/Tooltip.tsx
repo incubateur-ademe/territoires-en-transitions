@@ -12,7 +12,7 @@ import {
   useRole,
   useDismiss,
   useClick,
-} from '@floating-ui/react-dom-interactions';
+} from '@floating-ui/react';
 import DOMPurify from 'dompurify';
 
 export type TTooltipProps = {
