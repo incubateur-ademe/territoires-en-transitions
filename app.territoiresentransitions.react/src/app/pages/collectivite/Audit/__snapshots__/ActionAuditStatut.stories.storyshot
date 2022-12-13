@@ -12,13 +12,12 @@ exports[`Storyshots app/pages/collectivite/Audit/ActionAuditStatut Audite 1`] = 
       aria-label="ouvrir le menu"
       className="flex items-center w-full p-2 text-left text-sm w-full"
       data-test="action-audit-statut"
-      onBlur={[Function]}
       onClick={[Function]}
-      onFocus={[Function]}
       onKeyDown={[Function]}
       onKeyUp={[Function]}
       onMouseDown={[Function]}
       onPointerDown={[Function]}
+      toggleOpen={[Function]}
     >
       <span
         className="mr-auto"
@@ -30,7 +29,7 @@ exports[`Storyshots app/pages/collectivite/Audit/ActionAuditStatut Audite 1`] = 
         </p>
       </span>
       <span
-        className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+        className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
       />
     </button>
   </div>
@@ -49,13 +48,12 @@ exports[`Storyshots app/pages/collectivite/Audit/ActionAuditStatut En Cours 1`] 
       aria-label="ouvrir le menu"
       className="flex items-center w-full p-2 text-left text-sm w-full"
       data-test="action-audit-statut"
-      onBlur={[Function]}
       onClick={[Function]}
-      onFocus={[Function]}
       onKeyDown={[Function]}
       onKeyUp={[Function]}
       onMouseDown={[Function]}
       onPointerDown={[Function]}
+      toggleOpen={[Function]}
     >
       <span
         className="mr-auto"
@@ -67,7 +65,7 @@ exports[`Storyshots app/pages/collectivite/Audit/ActionAuditStatut En Cours 1`] 
         </p>
       </span>
       <span
-        className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+        className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
       />
     </button>
   </div>
@@ -86,13 +84,12 @@ exports[`Storyshots app/pages/collectivite/Audit/ActionAuditStatut Non Audite 1`
       aria-label="ouvrir le menu"
       className="flex items-center w-full p-2 text-left text-sm w-full"
       data-test="action-audit-statut"
-      onBlur={[Function]}
       onClick={[Function]}
-      onFocus={[Function]}
       onKeyDown={[Function]}
       onKeyUp={[Function]}
       onMouseDown={[Function]}
       onPointerDown={[Function]}
+      toggleOpen={[Function]}
     >
       <span
         className="mr-auto"
@@ -104,7 +101,7 @@ exports[`Storyshots app/pages/collectivite/Audit/ActionAuditStatut Non Audite 1`
         </p>
       </span>
       <span
-        className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+        className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
       />
     </button>
   </div>

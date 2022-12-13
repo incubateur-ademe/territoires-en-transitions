@@ -5,13 +5,12 @@ exports[`Storyshots app/pages/collectivite/DetailTaches/FiltreStatut All 1`] = `
   aria-expanded={false}
   aria-label="ouvrir le menu"
   className="flex items-center w-full p-2 text-left text-sm"
-  onBlur={[Function]}
   onClick={[Function]}
-  onFocus={[Function]}
   onKeyDown={[Function]}
   onKeyUp={[Function]}
   onMouseDown={[Function]}
   onPointerDown={[Function]}
+  toggleOpen={[Function]}
 >
   <span
     className="fr-fi--sm w-full text-center text-bf500 font-bold fr-fi-filter-line"
@@ -20,7 +19,7 @@ exports[`Storyshots app/pages/collectivite/DetailTaches/FiltreStatut All 1`] = `
     Statut
   </span>
   <span
-    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
   />
 </button>
 `;
@@ -30,13 +29,12 @@ exports[`Storyshots app/pages/collectivite/DetailTaches/FiltreStatut Multi Selec
   aria-expanded={false}
   aria-label="ouvrir le menu"
   className="flex items-center w-full p-2 text-left text-sm"
-  onBlur={[Function]}
   onClick={[Function]}
-  onFocus={[Function]}
   onKeyDown={[Function]}
   onKeyUp={[Function]}
   onMouseDown={[Function]}
   onPointerDown={[Function]}
+  toggleOpen={[Function]}
 >
   <span
     className="fr-fi--sm w-full text-center text-bf500 font-bold fr-fi-filter-fill"
@@ -45,7 +43,7 @@ exports[`Storyshots app/pages/collectivite/DetailTaches/FiltreStatut Multi Selec
     Statut
   </span>
   <span
-    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
   />
 </button>
 `;

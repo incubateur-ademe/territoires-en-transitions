@@ -31,11 +31,11 @@ exports[`Storyshots app/pages/collectivite/Historique/HistoriqueFiltres Avec Fil
           disabled={true}
           onBlur={[Function]}
           onClick={[Function]}
-          onFocus={[Function]}
           onKeyDown={[Function]}
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onPointerDown={[Function]}
+          toggleOpen={[Function]}
         >
           <span
             className="mr-auto text-gray-500 italic line-clamp-1"
@@ -43,7 +43,7 @@ exports[`Storyshots app/pages/collectivite/Historique/HistoriqueFiltres Avec Fil
             Sélectionner des options
           </span>
           <span
-            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
           />
         </button>
       </div>
@@ -64,13 +64,12 @@ exports[`Storyshots app/pages/collectivite/Historique/HistoriqueFiltres Avec Fil
           aria-label="ouvrir le menu"
           className="flex items-center w-full p-2 text-left text-sm"
           data-test="filtre-type"
-          onBlur={[Function]}
           onClick={[Function]}
-          onFocus={[Function]}
           onKeyDown={[Function]}
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onPointerDown={[Function]}
+          toggleOpen={[Function]}
         >
           <span
             className="mr-auto flex line-clamp-1"
@@ -80,7 +79,7 @@ exports[`Storyshots app/pages/collectivite/Historique/HistoriqueFiltres Avec Fil
             </span>
           </span>
           <span
-            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
           />
         </button>
       </div>
@@ -190,11 +189,11 @@ exports[`Storyshots app/pages/collectivite/Historique/HistoriqueFiltres Defaut 1
           disabled={true}
           onBlur={[Function]}
           onClick={[Function]}
-          onFocus={[Function]}
           onKeyDown={[Function]}
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onPointerDown={[Function]}
+          toggleOpen={[Function]}
         >
           <span
             className="mr-auto text-gray-500 italic line-clamp-1"
@@ -202,7 +201,7 @@ exports[`Storyshots app/pages/collectivite/Historique/HistoriqueFiltres Defaut 1
             Sélectionner des options
           </span>
           <span
-            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
           />
         </button>
       </div>
@@ -223,13 +222,12 @@ exports[`Storyshots app/pages/collectivite/Historique/HistoriqueFiltres Defaut 1
           aria-label="ouvrir le menu"
           className="flex items-center w-full p-2 text-left text-sm"
           data-test="filtre-type"
-          onBlur={[Function]}
           onClick={[Function]}
-          onFocus={[Function]}
           onKeyDown={[Function]}
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onPointerDown={[Function]}
+          toggleOpen={[Function]}
         >
           <span
             className="mr-auto text-gray-500 italic line-clamp-1"
@@ -237,7 +235,7 @@ exports[`Storyshots app/pages/collectivite/Historique/HistoriqueFiltres Defaut 1
             Sélectionner des options
           </span>
           <span
-            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+            className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
           />
         </button>
       </div>
