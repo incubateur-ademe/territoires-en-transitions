@@ -1,29 +1,62 @@
 import {CellProps} from 'react-table';
 import {getMaxDepth, PriorisationRow} from './queries';
 import {toLocaleFixed} from 'utils/toFixed';
-import classNames from 'classnames';
+import {ReactComponent as Up} from './up.svg';
+import {ReactComponent as Down} from './down.svg';
+
+const PICTOS = {
+  up: Up,
+  down: Down,
+};
+
+const PICTO_COLORS = {
+  up: {
+    default: '#18753C',
+    alt: '#B8FEC9',
+  },
+  down: {
+    default: '#CE0500',
+    alt: '#FFE8E5',
+  },
+};
 
 type TCellProps = CellProps<PriorisationRow> & {
   referentiel: string | null;
-  modified?: boolean;
+  difference?: keyof typeof PICTOS;
 };
-type TCellValueProps = Pick<TCellProps, 'value' | 'modified'>;
+type TCellValueProps = Pick<TCellProps, 'value' | 'difference'>;
 
 const isNullable = (value: number | undefined | null): boolean =>
   !value || isNaN(value);
 
 /**
- * Affiche une cellule contenant une valeur
+ * Affiche une cellule contenant une valeur, éventuellemeent précédée d'un picto
+ * up/down pour refléter que cette valeur a augmentée ou diminuée par rapport à
+ * sa valeur antérieure.
  */
-const CellValue = (props: Omit<TCellValueProps, 'value'> & {children: any}) => {
-  const {children, modified} = props;
+const CellValue = (
+  props: Omit<TCellValueProps, 'value'> & {
+    children: any;
+    row?: TCellProps['row'];
+  }
+) => {
+  const {children, difference, row} = props;
+  const Picto = difference ? PICTOS[difference] : null;
+  const fill = difference
+    ? PICTO_COLORS[difference][
+        row && (row.original.type === 'axe' || row.original.type === 'sous-axe')
+          ? 'alt'
+          : 'default'
+      ]
+    : null;
 
   return (
     <span
-      className={classNames('cell-value inline-block w-full text-right', {
-        modified,
-      })}
+      className={'cell-value flex justify-end items-baseline w-full text-right'}
     >
+      {Picto ? (
+        <Picto style={fill ? {fill, marginRight: 6} : undefined} />
+      ) : null}
       {children}
     </span>
   );
