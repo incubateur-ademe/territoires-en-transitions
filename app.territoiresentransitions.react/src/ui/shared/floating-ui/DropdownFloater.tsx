@@ -1,4 +1,4 @@
-import {cloneElement, useLayoutEffect, useState} from 'react';
+import {cloneElement, useState} from 'react';
 import {
   useFloating,
   offset,
@@ -7,10 +7,11 @@ import {
   shift,
   useClick,
   FloatingPortal,
-  useFocus,
   FloatingFocusManager,
   Placement,
-} from '@floating-ui/react-dom-interactions';
+  autoUpdate,
+  size,
+} from '@floating-ui/react';
 
 type DropdownFloaterProps = {
   children: JSX.Element;
@@ -26,39 +27,57 @@ const DropdownFloater = ({
   'data-test': dataTest,
 }: DropdownFloaterProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const toggleOpen = (open: boolean) => setIsOpen(open);
 
   const {x, y, strategy, reference, floating, context} = useFloating({
     open: isOpen,
     onOpenChange: setIsOpen,
     placement: placement ?? 'bottom',
-    middleware: [offset(4), shift()],
+    whileElementsMounted: autoUpdate,
+    middleware: [
+      offset(4),
+      shift(),
+      size({
+        apply({rects, elements}) {
+          Object.assign(elements.floating.style, {
+            minWidth: `${rects.reference.width}px`,
+          });
+        },
+      }),
+    ],
   });
+
+  const click = useClick(context, {keyboardHandlers: false});
+  const dismiss = useDismiss(context);
 
   const {getReferenceProps, getFloatingProps} = useInteractions([
-    useClick(context),
-    useDismiss(context),
-    useFocus(context),
+    click,
+    dismiss,
   ]);
-
-  const [floatingMinWidth, setFloatingMinWidth] = useState<string | undefined>(
-    undefined
-  );
-
-  useLayoutEffect(() => {
-    setFloatingMinWidth(
-      `${context.refs.reference.current?.getBoundingClientRect().width}px`
-    );
-  });
 
   return (
     <>
       {cloneElement(
         children,
-        getReferenceProps({ref: reference, isOpen, ...children.props})
+        getReferenceProps({
+          ref: reference,
+          isOpen,
+          toggleOpen,
+          onKeyDown(evt) {
+            if (evt.key === 'Enter' && evt.target instanceof HTMLInputElement) {
+              setIsOpen(!isOpen);
+            }
+          },
+          ...children.props,
+        })
       )}
       {isOpen && (
         <FloatingPortal>
-          <FloatingFocusManager context={context}>
+          <FloatingFocusManager
+            context={context}
+            modal={false}
+            initialFocus={-1}
+          >
             <div
               data-test={dataTest}
               className="w-max bg-white shadow-md z-50"
@@ -68,14 +87,11 @@ const DropdownFloater = ({
                   position: strategy,
                   top: y ?? '',
                   left: x ?? '',
-                  minWidth: floatingMinWidth,
                 },
               })}
             >
               {render({
-                close: () => {
-                  setIsOpen(false);
-                },
+                close: () => setIsOpen(false),
               })}
             </div>
           </FloatingFocusManager>
