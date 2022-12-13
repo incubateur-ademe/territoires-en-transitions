@@ -1,4 +1,4 @@
-import {Placement} from '@floating-ui/react-dom-interactions';
+import {Placement} from '@floating-ui/react';
 import classNames from 'classnames';
 
 /** constante pour gérer la sélection de tous les filtres */
@@ -12,13 +12,17 @@ export const getIsAllSelected = (values: string[]) =>
 export const isValidFilter = (values: string[] | undefined | null) =>
   values?.length && !values.includes(ITEM_ALL);
 
+/** Extrait le label d'une option dans une liste d'options */
+export const getOptionLabel = (optionValue: string, options: TOption[]) =>
+  options.find((v: TOption) => v.value === optionValue)?.label!;
+
 /* Class génériques */
 export const buttonDisplayedClassname =
   'flex items-center w-full p-2 text-left text-sm';
 export const buttonDisplayedPlaceholderClassname =
   'mr-auto text-gray-500 italic line-clamp-1';
 export const buttonDisplayedIconClassname =
-  'fr-fi-arrow-down-s-line mt-1 ml-1 scale-90';
+  'fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto';
 export const optionButtonClassname =
   'flex items-center w-full p-2 text-left text-sm';
 export const optionCheckMarkClassname = 'block fr-fi-check-line scale-75';
@@ -27,9 +31,11 @@ export const optionCheckMarkClassname = 'block fr-fi-check-line scale-75';
  * Types partagés entre tous les composants selects
  * (Select, MultiSelect, MultiSelectFilter)
  */
+type TOption = {value: string; label: string};
+
 export type TSelectBase = {
   /** Liste des options */
-  options: Array<{value: string; label: string}>;
+  options: Array<TOption>;
   /** Class pour customiser le bouton d'ouverture du menu */
   buttonClassName?: string;
   /** Text affiché dans l'input quand il n'y a rien sélectionné */
@@ -45,6 +51,7 @@ export type TSelectBase = {
 export type TSelectSelectionButtonBase = {
   /** Donné par le DropdownFloater */
   isOpen?: boolean;
+  toggleOpen?: (open: boolean) => void;
 };
 
 export type TSelectDropdownBase<T extends string> = {
@@ -63,7 +70,7 @@ export const Checkmark = ({isSelected}: {isSelected: boolean}) => (
 /** Affiche l'icône plier/déplier */
 export const ExpandCollapseIcon = ({isOpen}: {isOpen: boolean | undefined}) => (
   <span
-    className={classNames('fr-fi-arrow-down-s-line mt-1 ml-1 scale-90', {
+    className={classNames(buttonDisplayedIconClassname, {
       'rotate-180': isOpen,
     })}
   />
