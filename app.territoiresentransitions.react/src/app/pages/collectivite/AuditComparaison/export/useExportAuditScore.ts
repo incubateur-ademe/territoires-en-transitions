@@ -23,11 +23,11 @@ export const useExportAuditScores = (
     // charge le modèle si nécessaire et insère les données
     if (data) {
       if (template) {
-        fillTemplateWithData(template, data);
+        updateAndSaveXLS(template, data);
       } else {
         loadTemplate().then(({data: fetchedTemplate}) => {
           if (fetchedTemplate) {
-            fillTemplateWithData(fetchedTemplate, data);
+            updateAndSaveXLS(fetchedTemplate, data);
           }
         });
       }
@@ -39,8 +39,8 @@ export const useExportAuditScores = (
 
 const FORMAT_PERCENT = '0.00%';
 
-// insère les données dans le modèle
-const fillTemplateWithData = async (
+// insère les données dans le modèle et sauvegarde le fichier xls résultant
+const updateAndSaveXLS = async (
   template: ArrayBuffer,
   data: {
     config: Config;
