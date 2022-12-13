@@ -134,8 +134,10 @@ const updateAndSaveXLS = async (
           score.pre_audit.score_programme,
           FORMAT_PERCENT
         );
-        worksheet.getCell(data_cols.pre_audit.statut + row).value =
-          formatStatut(score.pre_audit);
+        if (!action.have_children) {
+          worksheet.getCell(data_cols.pre_audit.statut + row).value =
+            formatStatut(score.pre_audit);
+        }
 
         // score après audit
         setNumValue(
@@ -160,9 +162,10 @@ const updateAndSaveXLS = async (
           score.courant.score_programme,
           FORMAT_PERCENT
         );
-        worksheet.getCell(data_cols.courant.statut + row).value = formatStatut(
-          score.courant
-        );
+        if (!action.have_children) {
+          worksheet.getCell(data_cols.courant.statut + row).value =
+            formatStatut(score.courant);
+        }
 
         // commentaire de la collectivité
         const commentaire =
