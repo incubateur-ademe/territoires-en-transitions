@@ -122,7 +122,7 @@ const getColumns = (headerData?: TComparaisonScoreAudit): TColumn[] => {
             />
           ),
           Cell: CellPercent,
-          width: 96,
+          width: 105,
         },
       ],
     },
@@ -169,7 +169,7 @@ const getColumns = (headerData?: TComparaisonScoreAudit): TColumn[] => {
             />
           ),
           Cell: CellPercent,
-          width: 80,
+          width: 95,
         },
       ],
     },
