@@ -5,6 +5,7 @@ truncate action_statut;
 truncate client_scores;
 truncate historique.action_statut;
 truncate audit cascade;
+select test.disable_evaluation_api();
 
 create temporary table statut_sequence
 (
@@ -49,6 +50,9 @@ select bag_eq(
 -- on crée un audit une semaine dans le passé
 insert into audit(id, collectivite_id, referentiel, date_debut)
 values (1, 2, 'eci', now() - interval '1 week');
+--
+
+
 
 -- on y assigne un auditeur
 insert into audit_auditeur (audit_id, auditeur)
