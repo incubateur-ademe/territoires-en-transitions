@@ -73,7 +73,7 @@ Given(/je clique sur "([^"]+)" dans une discussion/, value => {
 When('je change la vue du feed à "Fermés"', () => {
   cy.get('[data-test=ActionDiscussionsChangeVue]').contains('Ouverts').click();
   cy.root()
-    .get(`#floating-ui-root [data-test="ActionDiscussionsChangeVueMenu"]`)
+    .get(`[data-test="ActionDiscussionsChangeVueMenu"]`)
     .contains('Fermés')
     .click();
   cy.wait(100);
@@ -82,7 +82,7 @@ When('je change la vue du feed à "Fermés"', () => {
 When('je change la vue du feed à "Ouverts"', () => {
   cy.get('[data-test=ActionDiscussionsChangeVue]').contains('Fermés').click();
   cy.root()
-    .get(`#floating-ui-root [data-test="ActionDiscussionsChangeVueMenu"]`)
+    .get(`[data-test="ActionDiscussionsChangeVueMenu"]`)
     .contains('Ouverts')
     .click();
 });
@@ -96,7 +96,7 @@ Given(
       .last()
       .click();
     cy.root()
-      .get(`#floating-ui-root [data-test="ActionDiscussionCommentaireMenu"]`)
+      .get(`[data-test="ActionDiscussionCommentaireMenu"]`)
       .contains(button)
       .click();
     cy.wait(100);
