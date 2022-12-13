@@ -27,10 +27,12 @@ exports[`Storyshots app/pages/Profil/MonCompte Defaut 1`] = `
         className="fr-input-group flex-grow"
       >
         <label
-          className="fr-label"
+          className="fr-label mb-2"
           htmlFor="prenom"
         >
-          Prénom
+          <div>
+            Prénom
+          </div>
         </label>
         <input
           className="fr-input"
@@ -49,10 +51,12 @@ exports[`Storyshots app/pages/Profil/MonCompte Defaut 1`] = `
         className="fr-input-group flex-grow"
       >
         <label
-          className="fr-label"
+          className="fr-label mb-2"
           htmlFor="nom"
         >
-          Nom
+          <div>
+            Nom
+          </div>
         </label>
         <input
           className="fr-input"
@@ -71,10 +75,12 @@ exports[`Storyshots app/pages/Profil/MonCompte Defaut 1`] = `
         className="fr-input-group flex-grow"
       >
         <label
-          className="fr-label"
+          className="fr-label mb-2"
           htmlFor="email"
         >
-          Email
+          <div>
+            Email
+          </div>
         </label>
         <input
           className="fr-input"

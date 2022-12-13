@@ -107,13 +107,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   aria-expanded={false}
                   aria-label="ouvrir le menu"
                   className="flex items-center w-full p-2 text-left text-sm"
-                  onBlur={[Function]}
                   onClick={[Function]}
-                  onFocus={[Function]}
                   onKeyDown={[Function]}
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  toggleOpen={[Function]}
                 >
                   <span
                     className="mr-auto flex line-clamp-1"
@@ -121,7 +120,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Référent·e
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -136,13 +135,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   aria-expanded={false}
                   aria-label="ouvrir le menu"
                   className="flex items-center w-full p-2 text-left text-sm"
-                  onBlur={[Function]}
                   onClick={[Function]}
-                  onFocus={[Function]}
                   onKeyDown={[Function]}
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  toggleOpen={[Function]}
                 >
                   <span
                     className="mr-auto flex flex-col gap-2"
@@ -152,7 +150,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     </div>
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -182,13 +180,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   aria-expanded={false}
                   aria-label="ouvrir le menu"
                   className="flex items-center w-full p-2 text-left text-sm"
-                  onBlur={[Function]}
                   onClick={[Function]}
-                  onFocus={[Function]}
                   onKeyDown={[Function]}
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  toggleOpen={[Function]}
                 >
                   <span
                     className="mr-auto"
@@ -196,7 +193,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Admin
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -232,13 +229,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   aria-expanded={false}
                   aria-label="ouvrir le menu"
                   className="flex items-center w-full p-2 text-left text-sm"
-                  onBlur={[Function]}
                   onClick={[Function]}
-                  onFocus={[Function]}
                   onKeyDown={[Function]}
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  toggleOpen={[Function]}
                 >
                   <span
                     className="mr-auto flex line-clamp-1"
@@ -246,7 +242,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Équipe technique
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -261,13 +257,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   aria-expanded={false}
                   aria-label="ouvrir le menu"
                   className="flex items-center w-full p-2 text-left text-sm"
-                  onBlur={[Function]}
                   onClick={[Function]}
-                  onFocus={[Function]}
                   onKeyDown={[Function]}
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  toggleOpen={[Function]}
                 >
                   <span
                     className="mr-auto flex flex-col gap-2"
@@ -280,7 +275,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     </div>
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -310,13 +305,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   aria-expanded={false}
                   aria-label="ouvrir le menu"
                   className="flex items-center w-full p-2 text-left text-sm"
-                  onBlur={[Function]}
                   onClick={[Function]}
-                  onFocus={[Function]}
                   onKeyDown={[Function]}
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  toggleOpen={[Function]}
                 >
                   <span
                     className="mr-auto"
@@ -324,7 +318,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Édition
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -360,13 +354,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   aria-expanded={false}
                   aria-label="ouvrir le menu"
                   className="flex items-center w-full p-2 text-left text-sm"
-                  onBlur={[Function]}
                   onClick={[Function]}
-                  onFocus={[Function]}
                   onKeyDown={[Function]}
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  toggleOpen={[Function]}
                 >
                   <span
                     className="mr-auto flex line-clamp-1"
@@ -374,7 +367,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Équipe politique
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -389,13 +382,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   aria-expanded={false}
                   aria-label="ouvrir le menu"
                   className="flex items-center w-full p-2 text-left text-sm"
-                  onBlur={[Function]}
                   onClick={[Function]}
-                  onFocus={[Function]}
                   onKeyDown={[Function]}
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  toggleOpen={[Function]}
                 >
                   <span
                     className="mr-auto flex flex-col gap-2"
@@ -405,7 +397,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     </div>
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -435,13 +427,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   aria-expanded={false}
                   aria-label="ouvrir le menu"
                   className="flex items-center w-full p-2 text-left text-sm"
-                  onBlur={[Function]}
                   onClick={[Function]}
-                  onFocus={[Function]}
                   onKeyDown={[Function]}
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  toggleOpen={[Function]}
                 >
                   <span
                     className="mr-auto"
@@ -449,7 +440,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Lecture
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -484,13 +475,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   aria-expanded={false}
                   aria-label="ouvrir le menu"
                   className="flex items-center w-full p-2 text-left text-sm"
-                  onBlur={[Function]}
                   onClick={[Function]}
-                  onFocus={[Function]}
                   onKeyDown={[Function]}
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  toggleOpen={[Function]}
                 >
                   <span
                     className="mr-auto"
@@ -498,7 +488,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Lecture
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -533,10 +523,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
         className="fr-input-group flex-grow"
       >
         <label
-          className="fr-label"
+          className="fr-label mb-2"
           htmlFor="email"
         >
-          Adresse email de la personne à inviter
+          <div>
+            Adresse email de la personne à inviter
+          </div>
         </label>
         <input
           className="fr-input"
@@ -551,13 +543,15 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
         />
       </div>
       <div
-        className="fr-select-group flex-grow"
+        className="fr-input-group flex-grow"
       >
         <label
-          className="fr-label"
+          className="fr-label mb-2"
           htmlFor="Niveau d’accès pour cette collectivité"
         >
-          Niveau d’accès pour cette collectivité
+          <div>
+            Niveau d’accès pour cette collectivité
+          </div>
         </label>
         <select
           className="fr-select"
@@ -727,13 +721,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   aria-expanded={false}
                   aria-label="ouvrir le menu"
                   className="flex items-center w-full p-2 text-left text-sm"
-                  onBlur={[Function]}
                   onClick={[Function]}
-                  onFocus={[Function]}
                   onKeyDown={[Function]}
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  toggleOpen={[Function]}
                 >
                   <span
                     className="mr-auto flex line-clamp-1"
@@ -741,7 +734,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Référent·e
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -756,13 +749,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   aria-expanded={false}
                   aria-label="ouvrir le menu"
                   className="flex items-center w-full p-2 text-left text-sm"
-                  onBlur={[Function]}
                   onClick={[Function]}
-                  onFocus={[Function]}
                   onKeyDown={[Function]}
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  toggleOpen={[Function]}
                 >
                   <span
                     className="mr-auto flex flex-col gap-2"
@@ -772,7 +764,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     </div>
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -802,13 +794,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   aria-expanded={false}
                   aria-label="ouvrir le menu"
                   className="flex items-center w-full p-2 text-left text-sm"
-                  onBlur={[Function]}
                   onClick={[Function]}
-                  onFocus={[Function]}
                   onKeyDown={[Function]}
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  toggleOpen={[Function]}
                 >
                   <span
                     className="mr-auto"
@@ -816,7 +807,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Admin
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -852,13 +843,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   aria-expanded={false}
                   aria-label="ouvrir le menu"
                   className="flex items-center w-full p-2 text-left text-sm"
-                  onBlur={[Function]}
                   onClick={[Function]}
-                  onFocus={[Function]}
                   onKeyDown={[Function]}
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  toggleOpen={[Function]}
                 >
                   <span
                     className="mr-auto flex line-clamp-1"
@@ -866,7 +856,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Équipe technique
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -881,13 +871,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   aria-expanded={false}
                   aria-label="ouvrir le menu"
                   className="flex items-center w-full p-2 text-left text-sm"
-                  onBlur={[Function]}
                   onClick={[Function]}
-                  onFocus={[Function]}
                   onKeyDown={[Function]}
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  toggleOpen={[Function]}
                 >
                   <span
                     className="mr-auto flex flex-col gap-2"
@@ -900,7 +889,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     </div>
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -930,13 +919,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   aria-expanded={false}
                   aria-label="ouvrir le menu"
                   className="flex items-center w-full p-2 text-left text-sm"
-                  onBlur={[Function]}
                   onClick={[Function]}
-                  onFocus={[Function]}
                   onKeyDown={[Function]}
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  toggleOpen={[Function]}
                 >
                   <span
                     className="mr-auto"
@@ -944,7 +932,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Édition
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -980,13 +968,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   aria-expanded={false}
                   aria-label="ouvrir le menu"
                   className="flex items-center w-full p-2 text-left text-sm"
-                  onBlur={[Function]}
                   onClick={[Function]}
-                  onFocus={[Function]}
                   onKeyDown={[Function]}
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  toggleOpen={[Function]}
                 >
                   <span
                     className="mr-auto flex line-clamp-1"
@@ -994,7 +981,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Équipe politique
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -1009,13 +996,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   aria-expanded={false}
                   aria-label="ouvrir le menu"
                   className="flex items-center w-full p-2 text-left text-sm"
-                  onBlur={[Function]}
                   onClick={[Function]}
-                  onFocus={[Function]}
                   onKeyDown={[Function]}
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  toggleOpen={[Function]}
                 >
                   <span
                     className="mr-auto flex flex-col gap-2"
@@ -1025,7 +1011,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     </div>
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -1055,13 +1041,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   aria-expanded={false}
                   aria-label="ouvrir le menu"
                   className="flex items-center w-full p-2 text-left text-sm"
-                  onBlur={[Function]}
                   onClick={[Function]}
-                  onFocus={[Function]}
                   onKeyDown={[Function]}
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  toggleOpen={[Function]}
                 >
                   <span
                     className="mr-auto"
@@ -1069,7 +1054,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Lecture
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -1104,13 +1089,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   aria-expanded={false}
                   aria-label="ouvrir le menu"
                   className="flex items-center w-full p-2 text-left text-sm"
-                  onBlur={[Function]}
                   onClick={[Function]}
-                  onFocus={[Function]}
                   onKeyDown={[Function]}
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  toggleOpen={[Function]}
                 >
                   <span
                     className="mr-auto"
@@ -1118,7 +1102,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Lecture
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -1153,10 +1137,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
         className="fr-input-group flex-grow"
       >
         <label
-          className="fr-label"
+          className="fr-label mb-2"
           htmlFor="email"
         >
-          Adresse email de la personne à inviter
+          <div>
+            Adresse email de la personne à inviter
+          </div>
         </label>
         <input
           className="fr-input"
@@ -1171,13 +1157,15 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
         />
       </div>
       <div
-        className="fr-select-group flex-grow"
+        className="fr-input-group flex-grow"
       >
         <label
-          className="fr-label"
+          className="fr-label mb-2"
           htmlFor="Niveau d’accès pour cette collectivité"
         >
-          Niveau d’accès pour cette collectivité
+          <div>
+            Niveau d’accès pour cette collectivité
+          </div>
         </label>
         <select
           className="fr-select"
@@ -1347,13 +1335,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   aria-expanded={false}
                   aria-label="ouvrir le menu"
                   className="flex items-center w-full p-2 text-left text-sm"
-                  onBlur={[Function]}
                   onClick={[Function]}
-                  onFocus={[Function]}
                   onKeyDown={[Function]}
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  toggleOpen={[Function]}
                 >
                   <span
                     className="mr-auto flex line-clamp-1"
@@ -1361,7 +1348,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Référent·e
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -1376,13 +1363,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   aria-expanded={false}
                   aria-label="ouvrir le menu"
                   className="flex items-center w-full p-2 text-left text-sm"
-                  onBlur={[Function]}
                   onClick={[Function]}
-                  onFocus={[Function]}
                   onKeyDown={[Function]}
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  toggleOpen={[Function]}
                 >
                   <span
                     className="mr-auto flex flex-col gap-2"
@@ -1392,7 +1378,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     </div>
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -1422,13 +1408,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   aria-expanded={false}
                   aria-label="ouvrir le menu"
                   className="flex items-center w-full p-2 text-left text-sm"
-                  onBlur={[Function]}
                   onClick={[Function]}
-                  onFocus={[Function]}
                   onKeyDown={[Function]}
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  toggleOpen={[Function]}
                 >
                   <span
                     className="mr-auto"
@@ -1436,7 +1421,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Admin
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -1472,13 +1457,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   aria-expanded={false}
                   aria-label="ouvrir le menu"
                   className="flex items-center w-full p-2 text-left text-sm"
-                  onBlur={[Function]}
                   onClick={[Function]}
-                  onFocus={[Function]}
                   onKeyDown={[Function]}
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  toggleOpen={[Function]}
                 >
                   <span
                     className="mr-auto flex line-clamp-1"
@@ -1486,7 +1470,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Équipe technique
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -1501,13 +1485,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   aria-expanded={false}
                   aria-label="ouvrir le menu"
                   className="flex items-center w-full p-2 text-left text-sm"
-                  onBlur={[Function]}
                   onClick={[Function]}
-                  onFocus={[Function]}
                   onKeyDown={[Function]}
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  toggleOpen={[Function]}
                 >
                   <span
                     className="mr-auto flex flex-col gap-2"
@@ -1520,7 +1503,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     </div>
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -1550,13 +1533,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   aria-expanded={false}
                   aria-label="ouvrir le menu"
                   className="flex items-center w-full p-2 text-left text-sm"
-                  onBlur={[Function]}
                   onClick={[Function]}
-                  onFocus={[Function]}
                   onKeyDown={[Function]}
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  toggleOpen={[Function]}
                 >
                   <span
                     className="mr-auto"
@@ -1564,7 +1546,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Édition
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -1600,13 +1582,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   aria-expanded={false}
                   aria-label="ouvrir le menu"
                   className="flex items-center w-full p-2 text-left text-sm"
-                  onBlur={[Function]}
                   onClick={[Function]}
-                  onFocus={[Function]}
                   onKeyDown={[Function]}
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  toggleOpen={[Function]}
                 >
                   <span
                     className="mr-auto flex line-clamp-1"
@@ -1614,7 +1595,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Équipe politique
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -1629,13 +1610,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   aria-expanded={false}
                   aria-label="ouvrir le menu"
                   className="flex items-center w-full p-2 text-left text-sm"
-                  onBlur={[Function]}
                   onClick={[Function]}
-                  onFocus={[Function]}
                   onKeyDown={[Function]}
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  toggleOpen={[Function]}
                 >
                   <span
                     className="mr-auto flex flex-col gap-2"
@@ -1645,7 +1625,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     </div>
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -1675,13 +1655,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   aria-expanded={false}
                   aria-label="ouvrir le menu"
                   className="flex items-center w-full p-2 text-left text-sm"
-                  onBlur={[Function]}
                   onClick={[Function]}
-                  onFocus={[Function]}
                   onKeyDown={[Function]}
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  toggleOpen={[Function]}
                 >
                   <span
                     className="mr-auto"
@@ -1689,7 +1668,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Lecture
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -1724,13 +1703,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   aria-expanded={false}
                   aria-label="ouvrir le menu"
                   className="flex items-center w-full p-2 text-left text-sm"
-                  onBlur={[Function]}
                   onClick={[Function]}
-                  onFocus={[Function]}
                   onKeyDown={[Function]}
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  toggleOpen={[Function]}
                 >
                   <span
                     className="mr-auto"
@@ -1738,7 +1716,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Lecture
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -1773,10 +1751,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
         className="fr-input-group flex-grow"
       >
         <label
-          className="fr-label"
+          className="fr-label mb-2"
           htmlFor="email"
         >
-          Adresse email de la personne à inviter
+          <div>
+            Adresse email de la personne à inviter
+          </div>
         </label>
         <input
           className="fr-input"
@@ -1791,13 +1771,15 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
         />
       </div>
       <div
-        className="fr-select-group flex-grow"
+        className="fr-input-group flex-grow"
       >
         <label
-          className="fr-label"
+          className="fr-label mb-2"
           htmlFor="Niveau d’accès pour cette collectivité"
         >
-          Niveau d’accès pour cette collectivité
+          <div>
+            Niveau d’accès pour cette collectivité
+          </div>
         </label>
         <select
           className="fr-select"
@@ -2080,13 +2062,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Que Lecteur 1`]
                   aria-expanded={false}
                   aria-label="ouvrir le menu"
                   className="flex items-center w-full p-2 text-left text-sm"
-                  onBlur={[Function]}
                   onClick={[Function]}
-                  onFocus={[Function]}
                   onKeyDown={[Function]}
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  toggleOpen={[Function]}
                 >
                   <span
                     className="mr-auto flex line-clamp-1"
@@ -2094,7 +2075,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Que Lecteur 1`]
                     Équipe politique
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -2109,13 +2090,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Que Lecteur 1`]
                   aria-expanded={false}
                   aria-label="ouvrir le menu"
                   className="flex items-center w-full p-2 text-left text-sm"
-                  onBlur={[Function]}
                   onClick={[Function]}
-                  onFocus={[Function]}
                   onKeyDown={[Function]}
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  toggleOpen={[Function]}
                 >
                   <span
                     className="mr-auto flex flex-col gap-2"
@@ -2125,7 +2105,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Que Lecteur 1`]
                     </div>
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -2155,13 +2135,12 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Que Lecteur 1`]
                   aria-expanded={false}
                   aria-label="ouvrir le menu"
                   className="flex items-center w-full p-2 text-left text-sm"
-                  onBlur={[Function]}
                   onClick={[Function]}
-                  onFocus={[Function]}
                   onKeyDown={[Function]}
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  toggleOpen={[Function]}
                 >
                   <span
                     className="mr-auto"
@@ -2169,7 +2148,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Que Lecteur 1`]
                     Lecture
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
                   />
                 </button>
               </div>

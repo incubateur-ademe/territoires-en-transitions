@@ -1,0 +1,236 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots ui/shared/form/formik/FormikForm Defaut 1`] = `
+<form
+  action="#"
+  onReset={[Function]}
+  onSubmit={[Function]}
+>
+  <div
+    className="fr-input-group flex-grow"
+  >
+    <label
+      className="fr-label mb-2"
+      htmlFor="input"
+    >
+      <div>
+        Basique input
+      </div>
+    </label>
+    <input
+      className="fr-input"
+      id="input"
+      label="Basique input"
+      name="input"
+      onBlur={[Function]}
+      onChange={[Function]}
+      onKeyDown={[Function]}
+      type="text"
+      value=""
+    />
+  </div>
+  <div
+    className="fr-input-group flex-grow"
+  >
+    <label
+      className="fr-label mb-2"
+      htmlFor="inputDisabled"
+    >
+      <div>
+        Input désactivé
+      </div>
+    </label>
+    <input
+      className="fr-input"
+      disabled={true}
+      id="inputDisabled"
+      label="Input désactivé"
+      name="inputDisabled"
+      onBlur={[Function]}
+      onChange={[Function]}
+      onKeyDown={[Function]}
+      type="text"
+    />
+  </div>
+  <div
+    className="fr-input-group flex-grow"
+  >
+    <label
+      className="fr-label mb-2"
+      htmlFor="email"
+    >
+      <div>
+        Adresse email avec hint *
+      </div>
+      <span
+        className="fr-hint-text !mt-1 !mb-0"
+      >
+        Entrez une adresse valide
+      </span>
+    </label>
+    <input
+      className="fr-input"
+      hint="Entrez une adresse valide"
+      id="email"
+      label="Adresse email avec hint *"
+      name="email"
+      onBlur={[Function]}
+      onChange={[Function]}
+      onKeyDown={[Function]}
+      placeholder="yolo@dodo.com"
+      type="text"
+      value=""
+    />
+  </div>
+  <div
+    className="fr-input-group flex-grow"
+  >
+    <label
+      className="fr-label mb-2"
+      htmlFor="password"
+    >
+      <div>
+        Mot de passe *
+      </div>
+    </label>
+    <input
+      className="fr-input"
+      id="password"
+      label="Mot de passe *"
+      name="password"
+      onBlur={[Function]}
+      onChange={[Function]}
+      type="password"
+    />
+  </div>
+  <div
+    className="fr-input-group flex-grow"
+  >
+    <label
+      className="fr-label mb-2"
+      htmlFor="textarea"
+    >
+      <div>
+        Text area
+      </div>
+    </label>
+    <textarea
+      className="w-full py-2 px-3 text-sm cursor-text rounded-lg outline outline-offset-0 !outline-1 outline-gray-300 focus:outline-blue-500 fr-input !outline-none"
+      id="textarea"
+      label="Text area"
+      name="textarea"
+      onBlur={[Function]}
+      onChange={[Function]}
+      type="area"
+    />
+  </div>
+  <div
+    className="fr-input-group flex-grow"
+  >
+    <label
+      className="fr-label mb-2"
+      htmlFor="Basique elect"
+    >
+      <div>
+        Basique elect
+      </div>
+    </label>
+    <select
+      className="fr-select"
+      id="Basique elect"
+      label="Basique elect"
+      name="select"
+      onBlur={[Function]}
+      onChange={[Function]}
+      options={
+        Array [
+          Object {
+            "label": "Valeur 1",
+            "value": "valeur1",
+          },
+          Object {
+            "label": "Valeur 2",
+            "value": "valeur2",
+          },
+        ]
+      }
+      value=""
+    >
+      <option
+        disabled={true}
+        hidden={true}
+        value=""
+      >
+        Sélectionnez une option
+      </option>
+      <option
+        value="valeur1"
+      >
+        Valeur 1
+      </option>
+      <option
+        value="valeur2"
+      >
+        Valeur 2
+      </option>
+    </select>
+  </div>
+  <div
+    className="fr-input-group flex-grow"
+  >
+    <label
+      className="fr-label mb-2"
+      htmlFor="Select désactivé"
+    >
+      <div>
+        Select désactivé
+      </div>
+      <span
+        className="fr-hint-text !mt-1 !mb-0"
+      >
+        Selecteur avec hint
+      </span>
+    </label>
+    <select
+      className="fr-select"
+      disabled={true}
+      hint="Selecteur avec hint"
+      id="Select désactivé"
+      label="Select désactivé"
+      name="selectDisabled"
+      onBlur={[Function]}
+      onChange={[Function]}
+      options={
+        Array [
+          Object {
+            "label": "Valeur 1",
+            "value": "valeur1",
+          },
+          Object {
+            "label": "Valeur 2",
+            "value": "valeur2",
+          },
+        ]
+      }
+    >
+      <option
+        disabled={true}
+        hidden={true}
+        value=""
+      >
+        Sélectionnez une option
+      </option>
+      <option
+        value="valeur1"
+      >
+        Valeur 1
+      </option>
+      <option
+        value="valeur2"
+      >
+        Valeur 2
+      </option>
+    </select>
+  </div>
+</form>
+`;

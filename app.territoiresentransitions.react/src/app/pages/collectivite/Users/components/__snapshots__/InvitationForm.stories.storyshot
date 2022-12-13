@@ -16,10 +16,12 @@ exports[`Storyshots app/pages/collectivite/Users/components/InvitationForm As Ad
       className="fr-input-group flex-grow"
     >
       <label
-        className="fr-label"
+        className="fr-label mb-2"
         htmlFor="email"
       >
-        Adresse email de la personne à inviter
+        <div>
+          Adresse email de la personne à inviter
+        </div>
       </label>
       <input
         className="fr-input"
@@ -34,13 +36,15 @@ exports[`Storyshots app/pages/collectivite/Users/components/InvitationForm As Ad
       />
     </div>
     <div
-      className="fr-select-group flex-grow"
+      className="fr-input-group flex-grow"
     >
       <label
-        className="fr-label"
+        className="fr-label mb-2"
         htmlFor="Niveau d’accès pour cette collectivité"
       >
-        Niveau d’accès pour cette collectivité
+        <div>
+          Niveau d’accès pour cette collectivité
+        </div>
       </label>
       <select
         className="fr-select"
@@ -109,10 +113,12 @@ exports[`Storyshots app/pages/collectivite/Users/components/InvitationForm As Ed
       className="fr-input-group flex-grow"
     >
       <label
-        className="fr-label"
+        className="fr-label mb-2"
         htmlFor="email"
       >
-        Adresse email de la personne à inviter
+        <div>
+          Adresse email de la personne à inviter
+        </div>
       </label>
       <input
         className="fr-input"
@@ -127,13 +133,15 @@ exports[`Storyshots app/pages/collectivite/Users/components/InvitationForm As Ed
       />
     </div>
     <div
-      className="fr-select-group flex-grow"
+      className="fr-input-group flex-grow"
     >
       <label
-        className="fr-label"
+        className="fr-label mb-2"
         htmlFor="Niveau d’accès pour cette collectivité"
       >
-        Niveau d’accès pour cette collectivité
+        <div>
+          Niveau d’accès pour cette collectivité
+        </div>
       </label>
       <select
         className="fr-select"

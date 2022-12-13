@@ -92,13 +92,12 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
                 Aide
               </a>
               <div
-                onBlur={[Function]}
                 onClick={[Function]}
-                onFocus={[Function]}
                 onKeyDown={[Function]}
                 onKeyUp={[Function]}
                 onMouseDown={[Function]}
                 onPointerDown={[Function]}
+                toggleOpen={[Function]}
               >
                 <button
                   className="fr-link"
@@ -152,13 +151,12 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
         </a>
         <div
           className="flex"
-          onBlur={[Function]}
           onClick={[Function]}
-          onFocus={[Function]}
           onKeyDown={[Function]}
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onPointerDown={[Function]}
+          toggleOpen={[Function]}
         >
           <button
             className="flex items-center p-4"
@@ -171,13 +169,12 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
         </div>
         <div
           className="flex"
-          onBlur={[Function]}
           onClick={[Function]}
-          onFocus={[Function]}
           onKeyDown={[Function]}
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onPointerDown={[Function]}
+          toggleOpen={[Function]}
         >
           <button
             className="flex items-center p-4"
@@ -190,13 +187,12 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
         </div>
         <div
           className="flex"
-          onBlur={[Function]}
           onClick={[Function]}
-          onFocus={[Function]}
           onKeyDown={[Function]}
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onPointerDown={[Function]}
+          toggleOpen={[Function]}
         >
           <button
             className="flex items-center p-4"
@@ -209,13 +205,12 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
         </div>
         <div
           className="flex"
-          onBlur={[Function]}
           onClick={[Function]}
-          onFocus={[Function]}
           onKeyDown={[Function]}
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onPointerDown={[Function]}
+          toggleOpen={[Function]}
         >
           <button
             className="flex items-center p-4"
@@ -229,13 +224,12 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
         <div
           className="flex ml-auto pl-2 w-full max-w-sm"
           data-test="CollectiviteSwitchDropdown"
-          onBlur={[Function]}
           onClick={[Function]}
-          onFocus={[Function]}
           onKeyDown={[Function]}
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onPointerDown={[Function]}
+          toggleOpen={[Function]}
         >
           <div
             className="w-full mt-auto mb-2 border border-gray-300"

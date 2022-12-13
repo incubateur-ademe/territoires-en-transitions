@@ -37,13 +37,12 @@ exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/Action
         </div>
         <div
           className="ml-auto border border-gray-200"
-          onBlur={[Function]}
           onClick={[Function]}
-          onFocus={[Function]}
           onKeyDown={[Function]}
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onPointerDown={[Function]}
+          toggleOpen={[Function]}
         >
           <button
             className="w-24 flex items-center justify-between py-0.5 pl-2 pr-1 text-sm capitalize hover:bg-gray-100"
@@ -62,16 +61,12 @@ exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/Action
       className="py-3 px-4 bg-gray-100"
       data-test="ActionDiscussionsNouvelleDiscussion"
     >
-      <div
-        className="flex rounded-lg bg-white border border-white"
-      >
-        <textarea
-          className="w-full py-2 px-3 text-sm cursor-text rounded-lg outline !outline-1 outline-gray-300 focus:outline-blue-500"
-          onChange={[Function]}
-          placeholder="Écrire un nouveau commentaire..."
-          value=""
-        />
-      </div>
+      <textarea
+        className="w-full py-2 px-3 text-sm cursor-text rounded-lg outline outline-offset-0 !outline-1 outline-gray-300 focus:outline-blue-500 bg-white"
+        onChange={[Function]}
+        placeholder="Écrire un nouveau commentaire..."
+        value=""
+      />
     </div>
     <div
       data-test="ActionDiscussionsFeed"
@@ -265,13 +260,12 @@ exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/Action
         </div>
         <div
           className="ml-auto border border-gray-200"
-          onBlur={[Function]}
           onClick={[Function]}
-          onFocus={[Function]}
           onKeyDown={[Function]}
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onPointerDown={[Function]}
+          toggleOpen={[Function]}
         >
           <button
             className="w-24 flex items-center justify-between py-0.5 pl-2 pr-1 text-sm capitalize hover:bg-gray-100"
@@ -290,16 +284,12 @@ exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/Action
       className="py-3 px-4 bg-gray-100"
       data-test="ActionDiscussionsNouvelleDiscussion"
     >
-      <div
-        className="flex rounded-lg bg-white border border-white"
-      >
-        <textarea
-          className="w-full py-2 px-3 text-sm cursor-text rounded-lg outline !outline-1 outline-gray-300 focus:outline-blue-500"
-          onChange={[Function]}
-          placeholder="Écrire un nouveau commentaire..."
-          value=""
-        />
-      </div>
+      <textarea
+        className="w-full py-2 px-3 text-sm cursor-text rounded-lg outline outline-offset-0 !outline-1 outline-gray-300 focus:outline-blue-500 bg-white"
+        onChange={[Function]}
+        placeholder="Écrire un nouveau commentaire..."
+        value=""
+      />
     </div>
     <div
       data-test="ActionDiscussionsFeed"
@@ -358,16 +348,12 @@ exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/Action
               </div>
             </div>
           </div>
-          <div
-            className="flex rounded-lg bg-white border border-white"
-          >
-            <textarea
-              className="w-full py-2 px-3 text-sm cursor-text rounded-lg outline !outline-1 outline-gray-300 focus:outline-blue-500"
-              onChange={[Function]}
-              placeholder="Répondre..."
-              value=""
-            />
-          </div>
+          <textarea
+            className="w-full py-2 px-3 text-sm cursor-text rounded-lg outline outline-offset-0 !outline-1 outline-gray-300 focus:outline-blue-500 resize-none"
+            onChange={[Function]}
+            placeholder="Répondre..."
+            value=""
+          />
         </div>
       </div>
       <div
@@ -459,16 +445,12 @@ exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/Action
               />
             </div>
           </div>
-          <div
-            className="flex rounded-lg bg-white border border-white"
-          >
-            <textarea
-              className="w-full py-2 px-3 text-sm cursor-text rounded-lg outline !outline-1 outline-gray-300 focus:outline-blue-500"
-              onChange={[Function]}
-              placeholder="Répondre..."
-              value=""
-            />
-          </div>
+          <textarea
+            className="w-full py-2 px-3 text-sm cursor-text rounded-lg outline outline-offset-0 !outline-1 outline-gray-300 focus:outline-blue-500 resize-none"
+            onChange={[Function]}
+            placeholder="Répondre..."
+            value=""
+          />
         </div>
       </div>
     </div>

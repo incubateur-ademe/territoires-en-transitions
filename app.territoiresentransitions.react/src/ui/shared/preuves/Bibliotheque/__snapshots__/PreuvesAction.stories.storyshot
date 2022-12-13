@@ -137,6 +137,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
             onKeyDown={[Function]}
             onKeyUp={[Function]}
             onMouseDown={[Function]}
+            onMouseLeave={[Function]}
             onPointerDown={[Function]}
           />
         </span>
@@ -183,6 +184,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
             onKeyDown={[Function]}
             onKeyUp={[Function]}
             onMouseDown={[Function]}
+            onMouseLeave={[Function]}
             onPointerDown={[Function]}
           />
         </span>
@@ -279,6 +281,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
             onKeyDown={[Function]}
             onKeyUp={[Function]}
             onMouseDown={[Function]}
+            onMouseLeave={[Function]}
             onPointerDown={[Function]}
           />
         </span>
@@ -645,6 +648,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
             onKeyDown={[Function]}
             onKeyUp={[Function]}
             onMouseDown={[Function]}
+            onMouseLeave={[Function]}
             onPointerDown={[Function]}
           />
         </span>
@@ -691,6 +695,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
             onKeyDown={[Function]}
             onKeyUp={[Function]}
             onMouseDown={[Function]}
+            onMouseLeave={[Function]}
             onPointerDown={[Function]}
           />
         </span>
@@ -787,6 +792,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
             onKeyDown={[Function]}
             onKeyUp={[Function]}
             onMouseDown={[Function]}
+            onMouseLeave={[Function]}
             onPointerDown={[Function]}
           />
         </span>

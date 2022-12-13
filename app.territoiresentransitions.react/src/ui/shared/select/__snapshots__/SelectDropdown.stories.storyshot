@@ -5,13 +5,12 @@ exports[`Storyshots ui/shared/select/SelectDropdown Aucune Option Selectionee 1`
   aria-expanded={false}
   aria-label="ouvrir le menu"
   className="flex items-center w-full p-2 text-left text-sm"
-  onBlur={[Function]}
   onClick={[Function]}
-  onFocus={[Function]}
   onKeyDown={[Function]}
   onKeyUp={[Function]}
   onMouseDown={[Function]}
   onPointerDown={[Function]}
+  toggleOpen={[Function]}
 >
   <span
     className="mr-auto text-gray-500 italic line-clamp-1"
@@ -19,7 +18,7 @@ exports[`Storyshots ui/shared/select/SelectDropdown Aucune Option Selectionee 1`
     
   </span>
   <span
-    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
   />
 </button>
 `;
@@ -29,13 +28,12 @@ exports[`Storyshots ui/shared/select/SelectDropdown Avec Placeholder 1`] = `
   aria-expanded={false}
   aria-label="ouvrir le menu"
   className="flex items-center w-full p-2 text-left text-sm"
-  onBlur={[Function]}
   onClick={[Function]}
-  onFocus={[Function]}
   onKeyDown={[Function]}
   onKeyUp={[Function]}
   onMouseDown={[Function]}
   onPointerDown={[Function]}
+  toggleOpen={[Function]}
 >
   <span
     className="mr-auto text-gray-500 italic line-clamp-1"
@@ -43,7 +41,7 @@ exports[`Storyshots ui/shared/select/SelectDropdown Avec Placeholder 1`] = `
     Sélectionner une option
   </span>
   <span
-    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
   />
 </button>
 `;
@@ -53,13 +51,12 @@ exports[`Storyshots ui/shared/select/SelectDropdown Custom Option Et Selection 1
   aria-expanded={false}
   aria-label="ouvrir le menu"
   className="flex items-center w-full p-2 text-left text-sm"
-  onBlur={[Function]}
   onClick={[Function]}
-  onFocus={[Function]}
   onKeyDown={[Function]}
   onKeyUp={[Function]}
   onMouseDown={[Function]}
   onPointerDown={[Function]}
+  toggleOpen={[Function]}
 >
   <span
     className="mr-auto py-1 px-2 rounded bg-teal-600 text-white"
@@ -67,7 +64,7 @@ exports[`Storyshots ui/shared/select/SelectDropdown Custom Option Et Selection 1
     option2
   </span>
   <span
-    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
   />
 </button>
 `;
@@ -77,13 +74,12 @@ exports[`Storyshots ui/shared/select/SelectDropdown Option Selectionee 1`] = `
   aria-expanded={false}
   aria-label="ouvrir le menu"
   className="flex items-center w-full p-2 text-left text-sm"
-  onBlur={[Function]}
   onClick={[Function]}
-  onFocus={[Function]}
   onKeyDown={[Function]}
   onKeyUp={[Function]}
   onMouseDown={[Function]}
   onPointerDown={[Function]}
+  toggleOpen={[Function]}
 >
   <span
     className="mr-auto flex line-clamp-1"
@@ -91,7 +87,7 @@ exports[`Storyshots ui/shared/select/SelectDropdown Option Selectionee 1`] = `
     Option 2
   </span>
   <span
-    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90"
+    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
   />
 </button>
 `;
