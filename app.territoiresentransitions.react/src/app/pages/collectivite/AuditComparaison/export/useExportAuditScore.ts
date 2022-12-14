@@ -3,12 +3,12 @@ import {format} from 'date-fns';
 import {saveBlob} from 'ui/shared/preuves/Bibliotheque/saveBlob';
 import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {ActionReferentiel} from '../../ReferentielTable/useReferentiel';
-import {Membre} from '../../Users/types';
 import {TComparaisonScoreAudit, TScoreAudit} from '../types';
 import {Config, MIME_XLSX, getActionIdentifiant} from './config';
 import {useExportData} from './useExportData';
 import {Database} from 'types/database.types';
 import {avancementToLabel} from 'app/labels';
+import {TAuditeur} from '../../Audit/useAudit';
 
 export const useExportAuditScores = (
   referentiel: string | null,
@@ -52,7 +52,7 @@ const updateAndSaveXLS = async (
       string,
       Database['public']['Tables']['action_commentaire']['Row']
     >;
-    auditeurs: Membre[];
+    auditeurs: TAuditeur[];
   }
 ) => {
   const {
@@ -83,7 +83,7 @@ const updateAndSaveXLS = async (
   // remplace les valeurs dans le cartouche d'en-tête
   worksheet.getCell(info_cells.collectivite).value = collectivite.nom;
   worksheet.getCell(info_cells.auditeurs).value = auditeurs
-    .map(({prenom, nom}) => `${prenom} ${nom}`)
+    ?.map(({prenom, nom}) => `${prenom} ${nom}`)
     .join(' / ');
   worksheet.getCell(info_cells.exportedAt).value = format(
     exportedAt,
