@@ -2,73 +2,20 @@
 
 BEGIN;
 
--- les différents type de preuves.
-create type preuve_type as enum ('complementaire', 'reglementaire', 'labellisation', 'rapport');
+alter type preuve_type add value if not exists 'audit' after 'labellisation';
 
--- table de base pour les preuves, elle contient les colones et les contraintes
--- qui sont copiées avec `like labellisation.preuve_base including ...`
-create table labellisation.preuve_base
+commit;
+
+begin;
+
+create table preuve_audit
 (
-    collectivite_id integer references collectivite not null,
-
-    fichier_id      integer references labellisation.bibliotheque_fichier,
-    url             text,
-    titre           text                            not null default '',
-
-    commentaire     text                            not null default '',
-
-    modified_by     uuid references auth.users      not null default auth.uid(),
-    modified_at     timestamptz                     not null default CURRENT_TIMESTAMP,
-
-    check ( (fichier_id is not null and url is null) or (url is not null and fichier_id is null) ), -- xor on null
-    lien            jsonb generated always as (
-                        case
-                            when url is not null then
-                                jsonb_object(array ['url', url, 'titre', titre])
-                            end
-                        ) stored
-);
-comment on column labellisation.preuve_base.fichier_id
-    is 'L''id du fichier dans la bibliothèque, null si la preuve est un lien.';
-comment on column labellisation.preuve_base.url
-    is 'L''url du lien, null si la preuve est un fichier.';
-comment on column labellisation.preuve_base.titre
-    is 'Le titre du lien.';
-comment on column labellisation.preuve_base.lien
-    is 'Le lien au format json, null si la preuve est un fichier.';
-
-
--- Une preuve complémentaire est attachée directement à une action.
-create table preuve_complementaire
-(
-    id        serial primary key,                 -- on ne copie pas l'index pour des raisons de permissions.
-    like labellisation.preuve_base including all, -- on copie les colonnes et toutes les contraintes.
-    action_id action_id references action_relation not null
-);
-
--- Une preuve rattachée à la definition d'une preuve réglementaire.
-create table preuve_reglementaire
-(
-    id        serial primary key,
+    id       serial primary key,
     like labellisation.preuve_base including all,
-    preuve_id preuve_id references preuve_reglementaire_definition not null
+    audit_id integer references audit not null
 );
-
--- Une preuve rattachée à une demande de labellisation.
-create table preuve_labellisation
-(
-    id         serial primary key,
-    like labellisation.preuve_base including all,
-    demande_id integer references labellisation.demande not null
-);
-
--- Une preuve rattachée à une collectivité.
-create table preuve_rapport
-(
-    id   serial primary key,
-    like labellisation.preuve_base including all,
-    date timestamptz not null
-);
+comment on table preuve_audit is
+    'Permet de stocker les rapports d''audit';
 
 do
 $$
@@ -78,58 +25,25 @@ $$
         -- Pour chaque type, et donc chaque table nommée preuve_[type]
         foreach name in array enum_range(NULL::preuve_type)
             loop
-                -- On ajoute les triggers
-                perform private.add_modified_at_trigger('public', 'preuve_' || name);
-                perform utilisateur.add_modified_by_trigger('public', 'preuve_' || name);
+                -- On drop les anciennes policies
+                execute format('drop policy if exists allow_read on preuve_%I;', name);
+                execute format('drop policy if exists allow_insert on preuve_%I;', name);
+                execute format('drop policy if exists allow_update on preuve_%I;', name);
 
-                -- Et les RLS
-                execute format('alter table preuve_%I
-                    enable row level security;', name);
                 --- Tous les membres de Territoires en transitions peuvent lire.
                 execute format('create policy allow_read
-                    on preuve_%I using (is_authenticated());', name);
+                    on preuve_%I for select
+                    using (is_authenticated());', name);
                 --- Seuls les membres ayant un accès en édition peuvent écrire.
                 execute format('create policy allow_insert
-                    on preuve_%I
+                    on preuve_%I for insert
                     with check (have_edition_acces(collectivite_id));', name);
                 execute format('create policy allow_update
-                    on preuve_%I
+                    on preuve_%I for update
                     using (have_edition_acces(collectivite_id));', name);
             end loop;
     end;
 $$;
-
--- Vue partielle `bibliotheque_fichier` en json.
-create view labellisation.bibliotheque_fichier_snippet as
-select id,
-       jsonb_build_object(
-               'filename', filename,
-               'hash', hash,
-               'bucket_id', bucket_id,
-               'filesize', filesize) as snippet
-from public.bibliotheque_fichier;
-
-
--- Vue partielle de `action_definition` en json.
-create view labellisation.action_snippet as
-with ref as (select unnest(enum_range(null::referentiel)) as referentiel)
-select s.action_id,
-       c.id  as collectivite_id,
-       jsonb_build_object(
-               'action_id', s.action_id,
-               'identifiant', ad.identifiant,
-               'referentiel', s.referentiel,
-               'desactive', s.desactive,
-               'concerne', s.concerne,
-               'nom', ad.nom,
-               'description', ad.description
-           ) as snippet
-from collectivite c
-         join ref r on true
-         left join lateral (
-    select *
-    from private.action_score(c.id, r.referentiel)) as s on true
-         left join action_definition ad on s.action_id = ad.action_id;
 
 
 -- La vue utilisée par le client qui regroupe tout les types de preuves.
@@ -149,7 +63,8 @@ select -- champs communs
        snippet.snippet                             as action,
        null:: jsonb                                as preuve_reglementaire,
        null:: jsonb                                as demande,
-       null:: jsonb                                as rapport
+       null:: jsonb                                as rapport,
+       null:: jsonb                                 as audit
 from preuve_complementaire pc
          left join labellisation.bibliotheque_fichier_snippet fs
                    on fs.id = pc.fichier_id
@@ -169,10 +84,11 @@ select 'reglementaire',
        pr.modified_by,
        utilisateur.modified_by_nom(pr.modified_by),
        snippet.snippet,
-       (select jsonb_build_object(
-                       'id', prd.id,
-                       'nom', prd.nom,
-                       'description', prd.description)),
+       jsonb_build_object(
+               'id', prd.id,
+               'nom', prd.nom,
+               'description', prd.description),
+       null,
        null,
        null
 from collectivite c -- toutes les collectivités ...
@@ -186,7 +102,35 @@ union all
 
 select 'labellisation',
        p.id,
-       d.collectivite_id,
+       coalesce(d.collectivite_id, pa.collectivite_id),
+       fs.snippet,
+       coalesce(p.lien, pa.lien),
+       coalesce(p.commentaire, pa.commentaire),
+       coalesce(p.modified_at, pa.modified_at),
+       coalesce(p.modified_by, pa.modified_by),
+       utilisateur.modified_by_nom(coalesce(p.modified_by, pa.modified_by)),
+       null,
+       null,
+       jsonb_build_object(
+               'en_cours', d.en_cours,
+               'referentiel', d.referentiel,
+               'etoiles', d.etoiles,
+               'date', d.date,
+               'id', d.id,
+               'audit_id', pa.audit_id
+           ),
+       null,
+       null
+from labellisation.demande d
+         left join preuve_labellisation p on p.demande_id = d.id
+         left join audit a on d.id = a.demande_id
+         left join preuve_audit pa on a.id = pa.audit_id
+         left join labellisation.bibliotheque_fichier_snippet fs on fs.id = p.fichier_id
+union all
+
+select 'audit',
+       p.id,
+       a.collectivite_id,
        fs.snippet,
        p.lien,
        p.commentaire,
@@ -195,17 +139,13 @@ select 'labellisation',
        utilisateur.modified_by_nom(p.modified_by),
        null,
        null,
-       (select jsonb_build_object(
-                       'en_cours', d.en_cours,
-                       'referentiel', d.referentiel,
-                       'etoiles', d.etoiles,
-                       'date', d.date,
-                       'id', d.id
-                   )),
-       null
-from labellisation.demande d
-         join preuve_labellisation p on p.demande_id = d.id
+       null,
+       null,
+       jsonb_build_object('id', a.id, 'referentiel', a.referentiel, 'date_debut', a.date_debut, 'date_fin', a.date_fin)
+from audit a
+         join preuve_audit p on p.audit_id = a.id
          left join labellisation.bibliotheque_fichier_snippet fs on fs.id = p.fichier_id
+where a.demande_id is null
 
 union all
 select 'rapport',
@@ -220,38 +160,12 @@ select 'rapport',
        null,
        null,
        null,
-       jsonb_build_object('date', p.date)
+       jsonb_build_object('date', p.date),
+       null
 from preuve_rapport p
          left join labellisation.bibliotheque_fichier_snippet fs on fs.id = p.fichier_id
 ;
 
--- Mets à jour la fonction critère fichier.
-create or replace function
-    labellisation.critere_fichier(collectivite_id integer)
-    returns table
-            (
-                referentiel   referentiel,
-                preuve_nombre integer,
-                atteint       bool
-            )
-as
-$$
-with ref as (select unnest(enum_range(null::referentiel)) as referentiel)
-select r.referentiel,
-       count(pd.fichier_id),
-       count(pd.fichier_id) > 0
-from ref r
-         left join lateral (select *
-                            from labellisation.demande ld
-                            where ld.referentiel = r.referentiel
-                              and ld.collectivite_id = critere_fichier.collectivite_id) ld on true
-         left join preuve_labellisation pd on ld.id = pd.demande_id
-group by r.referentiel;
-$$ language sql;
 
--- Archive les contenus des utilisateurs
-alter table labellisation_preuve_fichier set schema archive;
-alter table  preuve_lien set schema archive;
-alter table  preuve_fichier set schema archive;
 
 COMMIT;
