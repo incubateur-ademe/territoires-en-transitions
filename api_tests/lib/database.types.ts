@@ -405,6 +405,14 @@ export interface Database {
         Args: Record<PropertyKey, never>;
         Returns: boolean;
       };
+      json_matches_schema: {
+        Args: {instance: Json; schema: Json};
+        Returns: boolean;
+      };
+      jsonb_matches_schema: {
+        Args: {instance: Json; schema: Json};
+        Returns: boolean;
+      };
       labellisation_demande: {
         Args: {
           collectivite_id: number;
@@ -1370,6 +1378,20 @@ export interface Database {
           valeur?: number | null;
         };
       };
+      indicateur_terristory_json: {
+        Insert: {
+          created_at?: string;
+          indicateurs: Json;
+        };
+        Row: {
+          created_at: string;
+          indicateurs: Json;
+        };
+        Update: {
+          created_at?: string;
+          indicateurs?: Json;
+        };
+      };
       indicateurs_json: {
         Insert: {
           created_at?: string;
@@ -2215,6 +2237,14 @@ export interface Database {
         Row: {
           collectivite_id: number | null;
           nom: string | null;
+        };
+      };
+      auditeurs: {
+        Row: {
+          audit_id: number | null;
+          collectivite_id: number | null;
+          noms: Json | null;
+          referentiel: Database['public']['Enums']['referentiel'] | null;
         };
       };
       bibliotheque_fichier: {
