@@ -96,7 +96,7 @@ begin
              left join statut_detaille s
                        on s.action_id = p.action_id
                            and s.collectivite_id = test_generate_fake_scores.collectivite_id
-                           and p.referentiel = test_generate_fake_scores.referentiel;
+    where p.referentiel = test_generate_fake_scores.referentiel;
 
     -- puis pour chaque niveau on calcule les totaux pour obtenir une _approximation_
     for d in select generate_series(1, max(depth)) as depth from fake_scores order by depth desc
@@ -155,25 +155,25 @@ begin
       and r.referentiel = statuts_detailles_of.referentiel;
 end;
 
-create function
-    test.statuts_detailles_of(collectivite_id integer, referentiel referentiel, "time" timestamp with time zone)
-    returns test.statut_detaille[]
-begin
-    atomic
-    select array_agg(d.*)
-    from historique.action_statuts_at(
-                 statuts_detailles_of.collectivite_id,
-                 statuts_detailles_of.referentiel,
-                 statuts_detailles_of.time
-             ) s
-             join action_relation r on s.action_id = r.id
-             join test.statut_to_detaille(s) d on true
-    where s.collectivite_id = statuts_detailles_of.collectivite_id
-      and r.referentiel = statuts_detailles_of.referentiel;
-end;
-
-comment on function test.statuts_detailles_of is
-    'Les statuts détaillés d''une collectivité pour un référentiel.';
+-- create function
+--     test.statuts_detailles_of(collectivite_id integer, referentiel referentiel, "time" timestamp with time zone)
+--     returns test.statut_detaille[]
+-- begin
+--     atomic
+--     select array_agg(d.*)
+--     from historique.action_statuts_at(
+--                  statuts_detailles_of.collectivite_id,
+--                  statuts_detailles_of.referentiel,
+--                  statuts_detailles_of.time
+--              ) s
+--              join action_relation r on s.action_id = r.id
+--              join test.statut_to_detaille(s) d on true
+--     where s.collectivite_id = statuts_detailles_of.collectivite_id
+--       and r.referentiel = statuts_detailles_of.referentiel;
+-- end;
+--
+-- comment on function test.statuts_detailles_of is
+--     'Les statuts détaillés d''une collectivité pour un référentiel.';
 
 
 create function test.after_statut_write_generate_fake_scores() returns trigger as
