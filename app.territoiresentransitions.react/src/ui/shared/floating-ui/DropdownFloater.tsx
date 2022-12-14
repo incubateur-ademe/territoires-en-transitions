@@ -27,7 +27,6 @@ const DropdownFloater = ({
   'data-test': dataTest,
 }: DropdownFloaterProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const toggleOpen = (open: boolean) => setIsOpen(open);
 
   const {x, y, strategy, reference, floating, context} = useFloating({
     open: isOpen,
@@ -62,7 +61,6 @@ const DropdownFloater = ({
         getReferenceProps({
           ref: reference,
           isOpen,
-          toggleOpen,
           onKeyDown(evt) {
             if (evt.key === 'Enter' && evt.target instanceof HTMLInputElement) {
               setIsOpen(!isOpen);

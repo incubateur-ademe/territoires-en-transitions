@@ -98,7 +98,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                 onKeyUp={[Function]}
                 onMouseDown={[Function]}
                 onPointerDown={[Function]}
-                toggleOpen={[Function]}
               >
                 <span
                   className="mr-auto flex line-clamp-1"
@@ -126,7 +125,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                 onKeyUp={[Function]}
                 onMouseDown={[Function]}
                 onPointerDown={[Function]}
-                toggleOpen={[Function]}
               >
                 <span
                   className="mr-auto flex flex-col gap-2"
@@ -171,7 +169,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                 onKeyUp={[Function]}
                 onMouseDown={[Function]}
                 onPointerDown={[Function]}
-                toggleOpen={[Function]}
               >
                 <span
                   className="mr-auto"
@@ -220,7 +217,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                 onKeyUp={[Function]}
                 onMouseDown={[Function]}
                 onPointerDown={[Function]}
-                toggleOpen={[Function]}
               >
                 <span
                   className="mr-auto flex line-clamp-1"
@@ -248,7 +244,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                 onKeyUp={[Function]}
                 onMouseDown={[Function]}
                 onPointerDown={[Function]}
-                toggleOpen={[Function]}
               >
                 <span
                   className="mr-auto flex flex-col gap-2"
@@ -296,7 +291,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                 onKeyUp={[Function]}
                 onMouseDown={[Function]}
                 onPointerDown={[Function]}
-                toggleOpen={[Function]}
               >
                 <span
                   className="mr-auto"
@@ -345,7 +339,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                 onKeyUp={[Function]}
                 onMouseDown={[Function]}
                 onPointerDown={[Function]}
-                toggleOpen={[Function]}
               >
                 <span
                   className="mr-auto flex line-clamp-1"
@@ -373,7 +366,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                 onKeyUp={[Function]}
                 onMouseDown={[Function]}
                 onPointerDown={[Function]}
-                toggleOpen={[Function]}
               >
                 <span
                   className="mr-auto flex flex-col gap-2"
@@ -418,7 +410,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                 onKeyUp={[Function]}
                 onMouseDown={[Function]}
                 onPointerDown={[Function]}
-                toggleOpen={[Function]}
               >
                 <span
                   className="mr-auto"
@@ -466,7 +457,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                 onKeyUp={[Function]}
                 onMouseDown={[Function]}
                 onPointerDown={[Function]}
-                toggleOpen={[Function]}
               >
                 <span
                   className="mr-auto"
@@ -638,7 +628,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
                 onKeyUp={[Function]}
                 onMouseDown={[Function]}
                 onPointerDown={[Function]}
-                toggleOpen={[Function]}
               >
                 <span
                   className="mr-auto flex line-clamp-1"
@@ -666,7 +655,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
                 onKeyUp={[Function]}
                 onMouseDown={[Function]}
                 onPointerDown={[Function]}
-                toggleOpen={[Function]}
               >
                 <span
                   className="mr-auto flex flex-col gap-2"
@@ -714,7 +702,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
                 onKeyUp={[Function]}
                 onMouseDown={[Function]}
                 onPointerDown={[Function]}
-                toggleOpen={[Function]}
               >
                 <span
                   className="mr-auto"
@@ -1026,7 +1013,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
                 onKeyUp={[Function]}
                 onMouseDown={[Function]}
                 onPointerDown={[Function]}
-                toggleOpen={[Function]}
               >
                 <span
                   className="mr-auto flex line-clamp-1"
@@ -1054,7 +1040,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
                 onKeyUp={[Function]}
                 onMouseDown={[Function]}
                 onPointerDown={[Function]}
-                toggleOpen={[Function]}
               >
                 <span
                   className="mr-auto flex flex-col gap-2"
@@ -1099,7 +1084,6 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
                 onKeyUp={[Function]}
                 onMouseDown={[Function]}
                 onPointerDown={[Function]}
-                toggleOpen={[Function]}
               >
                 <span
                   className="mr-auto"

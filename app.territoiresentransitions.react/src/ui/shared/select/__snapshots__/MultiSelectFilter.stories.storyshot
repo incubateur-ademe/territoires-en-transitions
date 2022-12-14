@@ -10,7 +10,6 @@ exports[`Storyshots ui/shared/select/MultiSelectFilter Aucune Option Selectionee
   onKeyUp={[Function]}
   onMouseDown={[Function]}
   onPointerDown={[Function]}
-  toggleOpen={[Function]}
 >
   <span
     className="mr-auto flex line-clamp-1"
@@ -35,7 +34,6 @@ exports[`Storyshots ui/shared/select/MultiSelectFilter Custom Option Et Selectio
   onKeyUp={[Function]}
   onMouseDown={[Function]}
   onPointerDown={[Function]}
-  toggleOpen={[Function]}
 >
   <span
     className="fr-fi-filter-fill fr-fi--sm w-full text-center text-bf500 font-bold"
@@ -58,7 +56,6 @@ exports[`Storyshots ui/shared/select/MultiSelectFilter Plusieurs Options Selecti
   onKeyUp={[Function]}
   onMouseDown={[Function]}
   onPointerDown={[Function]}
-  toggleOpen={[Function]}
 >
   <span
     className="mr-auto flex line-clamp-1"

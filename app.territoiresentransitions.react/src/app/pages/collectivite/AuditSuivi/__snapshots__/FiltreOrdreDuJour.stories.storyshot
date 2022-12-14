@@ -10,7 +10,6 @@ exports[`Storyshots app/pages/collectivite/AuditSuivi/FiltreOrdreDuJour Selectio
   onKeyUp={[Function]}
   onMouseDown={[Function]}
   onPointerDown={[Function]}
-  toggleOpen={[Function]}
 >
   <span
     className="fr-fi--sm w-full text-center text-bf500 font-bold fr-fi-filter-fill"
@@ -34,7 +33,6 @@ exports[`Storyshots app/pages/collectivite/AuditSuivi/FiltreOrdreDuJour Tous 1`]
   onKeyUp={[Function]}
   onMouseDown={[Function]}
   onPointerDown={[Function]}
-  toggleOpen={[Function]}
 >
   <span
     className="fr-fi--sm w-full text-center text-bf500 font-bold fr-fi-filter-line"

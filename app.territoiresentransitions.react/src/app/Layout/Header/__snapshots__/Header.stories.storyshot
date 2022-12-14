@@ -97,7 +97,6 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
                 onKeyUp={[Function]}
                 onMouseDown={[Function]}
                 onPointerDown={[Function]}
-                toggleOpen={[Function]}
               >
                 <button
                   className="fr-link"
@@ -156,7 +155,6 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onPointerDown={[Function]}
-          toggleOpen={[Function]}
         >
           <button
             className="flex items-center p-4"
@@ -174,7 +172,6 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onPointerDown={[Function]}
-          toggleOpen={[Function]}
         >
           <button
             className="flex items-center p-4"
@@ -192,7 +189,6 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onPointerDown={[Function]}
-          toggleOpen={[Function]}
         >
           <button
             className="flex items-center p-4"
@@ -210,7 +206,6 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onPointerDown={[Function]}
-          toggleOpen={[Function]}
         >
           <button
             className="flex items-center p-4"
@@ -229,7 +224,6 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onPointerDown={[Function]}
-          toggleOpen={[Function]}
         >
           <div
             className="w-full mt-auto mb-2 border border-gray-300"
