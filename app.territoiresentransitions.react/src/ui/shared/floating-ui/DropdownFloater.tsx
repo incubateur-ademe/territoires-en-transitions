@@ -17,6 +17,8 @@ type DropdownFloaterProps = {
   children: JSX.Element;
   render: (data: {close: () => void}) => React.ReactNode;
   placement?: Placement;
+  /** Whether to toggle the open state with repeated clicks. Default `true` */
+  toggle?: boolean;
   'data-test'?: string;
 };
 
@@ -24,6 +26,7 @@ const DropdownFloater = ({
   render,
   children,
   placement,
+  toggle = true,
   'data-test': dataTest,
 }: DropdownFloaterProps) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -46,7 +49,7 @@ const DropdownFloater = ({
     ],
   });
 
-  const click = useClick(context, {keyboardHandlers: false});
+  const click = useClick(context, {keyboardHandlers: false, toggle});
   const dismiss = useDismiss(context);
 
   const {getReferenceProps, getFloatingProps} = useInteractions([
