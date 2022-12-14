@@ -114,6 +114,12 @@ const updateAndSaveXLS = async (
           worksheet.getCell(data_cols.phase + row).value = action.phase;
         }
 
+        // points max réf.
+        setNumValue(
+          worksheet.getCell(data_cols.points_max_referentiel + row),
+          score.pre_audit.points_max_referentiel
+        );
+
         // scores avant audit et courant
         setScoreIntoRow(worksheet, data_cols, row, score, action);
 
