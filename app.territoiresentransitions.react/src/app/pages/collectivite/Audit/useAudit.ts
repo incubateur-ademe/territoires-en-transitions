@@ -4,8 +4,6 @@ import {useCollectiviteId, useReferentielId} from 'core-logic/hooks/params';
 import {TAudit} from './types';
 import {Referentiel} from 'types/litterals';
 import {useAuth} from 'core-logic/api/auth/AuthProvider';
-import {useCollectiviteMembres} from '../Users/useCollectiviteMembres';
-import {Membre} from '../Users/types';
 
 // charge les données
 export const fetch = async (
@@ -52,19 +50,27 @@ export const useIsAuditeur = () => {
 
 /** Liste des auditeurs */
 export const useAuditeurs = () => {
-  const {data: audit, isLoading: isLoadingAudit} = useAudit();
-  const {membres, isLoading: isLoadingMembres} = useCollectiviteMembres();
-  const isLoading = isLoadingAudit || isLoadingMembres;
+  const collectivite_id = useCollectiviteId();
+  const referentiel = useReferentielId() as Referentiel;
+  return useQuery(['auditeurs', collectivite_id, referentiel], () =>
+    collectivite_id ? fetchAuditeurs(collectivite_id, referentiel) : null
+  );
+};
 
-  if (isLoading || !audit || !audit.auditeurs?.length) {
-    return {isLoading};
+export type TAuditeur = {nom: string; prenom: string};
+const fetchAuditeurs = async (
+  collectivite_id: number,
+  referentiel: Referentiel
+) => {
+  const {data, error} = await supabaseClient
+    .from('auditeurs')
+    .select('noms')
+    .match({collectivite_id, referentiel})
+    .limit(1);
+
+  if (error || !data?.length) {
+    return null;
   }
 
-  const data = audit.auditeurs
-    .map(({id}) => membres.find(m => m.user_id === id))
-    .filter(m => !!m) as Membre[];
-  return {
-    isLoading: false,
-    data,
-  };
+  return data[0].noms as TAuditeur[];
 };
