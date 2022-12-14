@@ -114,12 +114,6 @@ const updateAndSaveXLS = async (
           worksheet.getCell(data_cols.phase + row).value = action.phase;
         }
 
-        // points max réf.
-        setNumValue(
-          worksheet.getCell(data_cols.points_max_referentiel + row),
-          score.pre_audit.points_max_referentiel
-        );
-
         // scores avant audit et courant
         setScoreIntoRow(worksheet, data_cols, row, score, action);
 
@@ -184,6 +178,12 @@ const setScoreIntoRow = (
   score: TComparaisonScoreAudit,
   action?: ActionReferentiel
 ) => {
+  // points max réf.
+  setNumValue(
+    worksheet.getCell(data_cols.points_max_referentiel + row),
+    score.pre_audit.points_max_referentiel
+  );
+
   // score avant audit
   setNumValue(
     worksheet.getCell(data_cols.pre_audit.points_max_personnalises + row),
