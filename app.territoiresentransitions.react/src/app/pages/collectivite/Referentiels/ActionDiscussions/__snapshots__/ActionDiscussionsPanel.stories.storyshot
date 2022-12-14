@@ -42,7 +42,6 @@ exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/Action
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onPointerDown={[Function]}
-          toggleOpen={[Function]}
         >
           <button
             className="w-24 flex items-center justify-between py-0.5 pl-2 pr-1 text-sm capitalize hover:bg-gray-100"
@@ -265,7 +264,6 @@ exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/Action
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onPointerDown={[Function]}
-          toggleOpen={[Function]}
         >
           <button
             className="w-24 flex items-center justify-between py-0.5 pl-2 pr-1 text-sm capitalize hover:bg-gray-100"

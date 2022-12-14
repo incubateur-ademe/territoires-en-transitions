@@ -10,7 +10,6 @@ exports[`Storyshots ui/shared/select/SelectDropdown Aucune Option Selectionee 1`
   onKeyUp={[Function]}
   onMouseDown={[Function]}
   onPointerDown={[Function]}
-  toggleOpen={[Function]}
 >
   <span
     className="mr-auto text-gray-500 italic line-clamp-1"
@@ -33,7 +32,6 @@ exports[`Storyshots ui/shared/select/SelectDropdown Avec Placeholder 1`] = `
   onKeyUp={[Function]}
   onMouseDown={[Function]}
   onPointerDown={[Function]}
-  toggleOpen={[Function]}
 >
   <span
     className="mr-auto text-gray-500 italic line-clamp-1"
@@ -56,7 +54,6 @@ exports[`Storyshots ui/shared/select/SelectDropdown Custom Option Et Selection 1
   onKeyUp={[Function]}
   onMouseDown={[Function]}
   onPointerDown={[Function]}
-  toggleOpen={[Function]}
 >
   <span
     className="mr-auto py-1 px-2 rounded bg-teal-600 text-white"
@@ -79,7 +76,6 @@ exports[`Storyshots ui/shared/select/SelectDropdown Option Selectionee 1`] = `
   onKeyUp={[Function]}
   onMouseDown={[Function]}
   onPointerDown={[Function]}
-  toggleOpen={[Function]}
 >
   <span
     className="mr-auto flex line-clamp-1"
