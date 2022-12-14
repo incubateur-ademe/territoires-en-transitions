@@ -214,9 +214,13 @@ create function
             )
 begin
     atomic
+    with courant as (select private.collectivite_scores(collectivite_id, referentiel) as score),
+         pre_audit as (select private.collectivite_scores_pre_audit(collectivite_id, referentiel) as score)
     select referentiel,
-           private.collectivite_scores(collectivite_id, referentiel) as courant,
-           private.collectivite_scores_pre_audit(collectivite_id, referentiel) as pre_audit;
+           courant.score,
+           pre_audit.score
+    from courant
+             join pre_audit on (pre_audit.score).action_id = (courant.score).action_id;
 end;
 
 
