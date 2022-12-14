@@ -164,3 +164,4 @@ evaluation/score_service [evaluation/score_service@v1.15.0] 2022-11-30T14:31:12Z
 referentiel/vue_tabulaire [referentiel/vue_tabulaire@v1.15.0] 2022-12-01T15:35:13Z Florian <florian@derfurth.com> # Améliore les vues tabulaires
 referentiel/contenu_json [referentiel/contenu_json@v1.15.0] 2022-12-01T16:02:41Z Florian <florian@derfurth.com> # Met à jour le trigger post contenu.
 labellisation/comparaison_audit [evaluation/score_service referentiel/action_statut_historique] 2022-11-30T09:40:18Z Florian <florian@derfurth.com> # Permet de calculer les scores pre-audit
+labellisation/audit [labellisation/audit@v1.16.0] 2022-12-14T14:00:38Z Florian <florian@derfurth.com> # Permet d'afficher les noms des auditeurs pour un audit
