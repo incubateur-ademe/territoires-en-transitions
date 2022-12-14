@@ -17,7 +17,6 @@ exports[`Storyshots app/pages/collectivite/Audit/ActionAuditStatut Audite 1`] = 
       onKeyUp={[Function]}
       onMouseDown={[Function]}
       onPointerDown={[Function]}
-      toggleOpen={[Function]}
     >
       <span
         className="mr-auto"
@@ -53,7 +52,6 @@ exports[`Storyshots app/pages/collectivite/Audit/ActionAuditStatut En Cours 1`] 
       onKeyUp={[Function]}
       onMouseDown={[Function]}
       onPointerDown={[Function]}
-      toggleOpen={[Function]}
     >
       <span
         className="mr-auto"
@@ -89,7 +87,6 @@ exports[`Storyshots app/pages/collectivite/Audit/ActionAuditStatut Non Audite 1`
       onKeyUp={[Function]}
       onMouseDown={[Function]}
       onPointerDown={[Function]}
-      toggleOpen={[Function]}
     >
       <span
         className="mr-auto"

@@ -10,7 +10,6 @@ exports[`Storyshots ui/shared/select/MultiSelectDropdown Aucune Option Selection
   onKeyUp={[Function]}
   onMouseDown={[Function]}
   onPointerDown={[Function]}
-  toggleOpen={[Function]}
 >
   <span
     className="mr-auto text-gray-500 italic line-clamp-1"
@@ -33,7 +32,6 @@ exports[`Storyshots ui/shared/select/MultiSelectDropdown Custom Option Et Select
   onKeyUp={[Function]}
   onMouseDown={[Function]}
   onPointerDown={[Function]}
-  toggleOpen={[Function]}
 >
   <span
     className="mr-auto"
@@ -65,7 +63,6 @@ exports[`Storyshots ui/shared/select/MultiSelectDropdown Plusieurs Options Selec
   onKeyUp={[Function]}
   onMouseDown={[Function]}
   onPointerDown={[Function]}
-  toggleOpen={[Function]}
 >
   <span
     className="mr-auto flex line-clamp-1"
@@ -94,7 +91,6 @@ exports[`Storyshots ui/shared/select/MultiSelectDropdown Une Option Selectionee 
   onKeyUp={[Function]}
   onMouseDown={[Function]}
   onPointerDown={[Function]}
-  toggleOpen={[Function]}
 >
   <span
     className="mr-auto flex line-clamp-1"
