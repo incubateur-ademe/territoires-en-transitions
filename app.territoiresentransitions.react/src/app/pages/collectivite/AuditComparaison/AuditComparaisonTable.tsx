@@ -37,8 +37,8 @@ const getDifference = (
     return undefined;
   }
 
-  const previous = toFixed(pre_audit[field] as number);
-  const current = toFixed(courant[field] as number);
+  const previous = toFixed(pre_audit[field] as number, 3);
+  const current = toFixed(courant[field] as number, 3);
 
   if (previous === current) {
     return undefined;
