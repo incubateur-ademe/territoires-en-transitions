@@ -10,7 +10,6 @@
   font-size: 0.875rem;
   line-height: 1.25rem;
   background-color: var(--background-disabled-grey);
-  overflow-x: scroll;
 }
 
 /** en-tête */
@@ -41,8 +40,6 @@
 
 /** zone scrollable */
 .referentiel-table .body {
-  max-height: 84vh;
-  overflow-y: auto;
   border-radius: 8px;
 }
 
