@@ -144,13 +144,17 @@ comment on trigger after_write_update_audit_scores on audit is
 create function labellisation.update_audit_score_on_personnalisation() returns trigger as
 $$
 begin
-    with ref as (select unnest(enum_range(null::referentiel)) as referentiel),
-         audit as (select ca.id
-                   from ref
-                            join labellisation.current_audit(new.collectivite_id, ref.referentiel) ca on true)
-    select labellisation.evaluate_audit_statuts(audit.id, 'pre_audit_scores')
-    from audit;
+    perform (with ref as (select unnest(enum_range(null::referentiel)) as referentiel),
+                  audit as (select ca.id
+                            from ref
+                                     join labellisation.current_audit(new.collectivite_id, ref.referentiel) ca on true),
+                  query as (select labellisation.evaluate_audit_statuts(audit.id, 'pre_audit_scores') as id
+                            from audit)
+             select count(query)
+             from query);
     return new;
+exception
+    when others then return new;
 end
 $$ language plpgsql;
 
