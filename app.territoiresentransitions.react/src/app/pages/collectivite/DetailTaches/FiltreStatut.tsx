@@ -1,11 +1,13 @@
-import {MultiSelectFilter} from 'ui/shared/select/MultiSelectFilter';
+import {
+  MultiSelectFilter,
+  MultiSelectFilterTitle,
+} from 'ui/shared/select/MultiSelectFilter';
 import ActionStatutBadge from 'ui/shared/actions/ActionStatutBadge';
 
 import {ITEM_ALL} from 'ui/shared/select/commons';
 import {TFiltreProps} from './filters';
 import {ITEMS} from './SelectStatut';
 import {ActionAvancement} from 'generated/dataLayer/action_statut_read';
-import {MultiSelectFilterTitle} from 'ui/shared/select/MultiSelectFilterTitle';
 
 const items = [{value: ITEM_ALL, label: 'Tous les statuts'}, ...ITEMS];
 const FILTER_NAME = 'statut';

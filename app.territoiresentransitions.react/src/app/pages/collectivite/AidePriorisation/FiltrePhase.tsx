@@ -1,6 +1,8 @@
 import {ITEM_ALL} from 'ui/shared/select/commons';
-import {MultiSelectFilter} from 'ui/shared/select/MultiSelectFilter';
-import {MultiSelectFilterTitle} from 'ui/shared/select/MultiSelectFilterTitle';
+import {
+  MultiSelectFilter,
+  MultiSelectFilterTitle,
+} from 'ui/shared/select/MultiSelectFilter';
 import {TFiltreProps} from './filters';
 
 export const PHASE = 'phase';
