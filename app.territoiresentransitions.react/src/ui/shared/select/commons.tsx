@@ -51,7 +51,6 @@ export type TSelectBase = {
 export type TSelectSelectionButtonBase = {
   /** Donné par le DropdownFloater */
   isOpen?: boolean;
-  toggleOpen?: (open: boolean) => void;
 };
 
 export type TSelectDropdownBase<T extends string> = {
