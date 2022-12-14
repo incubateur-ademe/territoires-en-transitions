@@ -47,6 +47,9 @@ cd ./app.territoiresentransitions.react
 # On doit appliquer la commande plusieurs fois pour que toutes les erreurs
 # soient corrigées (peut-être à cause de la taille du fichier ?)
 repeat_command 5 ./node_modules/.bin/eslint src/types/database.types.ts --fix
+
+echo "Mise en forme du fichier généré"
+./node_modules/.bin/prettier -w src/types/database.types.ts
 cd -
 
 # fait une copie du fichier, ainsi mis à jour, pour les tests de l'API
