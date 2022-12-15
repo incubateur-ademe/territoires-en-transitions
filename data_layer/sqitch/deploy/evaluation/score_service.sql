@@ -8,7 +8,7 @@ BEGIN;
 create function evaluation.convert_statut(
     action_id action_id,
     avancement avancement,
-    avancement_detaille numeric[],
+    avancement_detaille double precision[],
     concerne boolean
 )
     returns jsonb
