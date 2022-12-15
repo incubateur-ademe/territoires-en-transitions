@@ -3,7 +3,7 @@ import {FieldProps} from 'formik';
 import {v4 as uuid} from 'uuid';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
-import {shortenLabel} from 'app/pages/collectivite/PlanActions/legacy/Forms/utils';
+import {shortenLabel} from 'app/pages/collectivite/PlansActions/legacy/Forms/utils';
 import {compareIndexes} from 'utils/compareIndexes';
 import {useIndicateurPersonnaliseDefinitionList} from 'core-logic/hooks/indicateur_personnalise_definition';
 import {useCollectiviteId} from 'core-logic/hooks/params';

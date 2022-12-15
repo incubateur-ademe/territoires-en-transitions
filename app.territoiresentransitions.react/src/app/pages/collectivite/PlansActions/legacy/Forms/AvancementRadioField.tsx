@@ -8,7 +8,7 @@ import {
   FicheActionAvancementRenseigne,
 } from 'app/labels';
 import * as R from 'ramda';
-import {FicheAvancementRadioButton} from 'app/pages/collectivite/PlanActions/legacy/Forms/FicheAvancementRadioButton';
+import {FicheAvancementRadioButton} from 'app/pages/collectivite/PlansActions/legacy/Forms/FicheAvancementRadioButton';
 
 type AvancementRadioFieldProps = {
   id?: string;
