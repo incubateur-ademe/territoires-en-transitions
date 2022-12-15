@@ -1,18 +1,18 @@
 import {lazy, Suspense} from 'react';
 import {renderLoader} from 'utils/renderLoader';
 
-const PlanActions = lazy(
-  () => import('app/pages/collectivite/PlanActions/PlanActions')
+const FicheActionEditor = lazy(
+  () => import('app/pages/collectivite/PlanActions/legacy/FicheActionEditor')
 );
 
 /**
  * Indicateurs page show both indicateurs personnalisés and indicateurs référentiel.
  */
-export const PlanActionPage = () => {
+export const FicheActionPage = () => {
   return (
     <div className="my-5 flex flex-col">
       <Suspense fallback={renderLoader()}>
-        <PlanActions />
+        <FicheActionEditor />
       </Suspense>
     </div>
   );

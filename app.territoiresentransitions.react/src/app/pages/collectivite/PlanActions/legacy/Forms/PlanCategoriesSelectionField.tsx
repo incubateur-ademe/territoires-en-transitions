@@ -4,21 +4,21 @@ import {v4 as uuid} from 'uuid';
 import {
   CategoryNode,
   nestPlanCategories,
-} from 'app/pages/collectivite/PlanActions/sorting';
+} from 'app/pages/collectivite/PlanActions/legacy/sorting';
 import {
   PlanActionStructure,
   PlanActionTyped,
 } from 'types/PlanActionTypedInterface';
 import {Menu, MenuItem} from '@material-ui/core';
 import NestedMenuItem from 'app/pages/collectivite/Referentiels/NestedMenuItem';
-import {PlanCategorieSelection} from 'app/pages/collectivite/PlanActions/Forms/FicheActionForm';
+import {PlanCategorieSelection} from 'app/pages/collectivite/PlanActions/legacy/Forms/FicheActionForm';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 import * as R from 'ramda';
 import {usePlanActionList} from 'core-logic/hooks/plan_action';
 import {PlanActionRead} from 'generated/dataLayer/plan_action_read';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {ModifierArboDialogButton} from '../ModifierArboDialogButton';
+import {ModifierArboDialogButton} from '../../legacy/ModifierArboDialogButton';
 
 type LinkedPlanCategoriesFieldProps = {
   ficheUid: string;
