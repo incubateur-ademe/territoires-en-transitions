@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import * as Yup from 'yup';
 import {Field, Form, Formik, useFormikContext} from 'formik';
-import {ActionsField} from 'app/pages/collectivite/PlanActions/Forms/ActionsField';
-import {IndicateursField} from 'app/pages/collectivite/PlanActions/Forms/IndicateursField';
-import {IndicateursPersonnalisesField} from 'app/pages/collectivite/PlanActions/Forms/IndicateursPersonnalisesField';
+import {ActionsField} from 'app/pages/collectivite/PlanActions/legacy/Forms/ActionsField';
+import {IndicateursField} from 'app/pages/collectivite/PlanActions/legacy/Forms/IndicateursField';
+import {IndicateursPersonnalisesField} from 'app/pages/collectivite/PlanActions/legacy/Forms/IndicateursPersonnalisesField';
 import {Spacer} from 'ui/shared/Spacer';
 import {IndicateurPersonnaliseCreationDialog} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCreationDialog';
-import {AvancementRadioField} from 'app/pages/collectivite/PlanActions/Forms/AvancementRadioField';
-import {PlanCategoriesSelectionField} from 'app/pages/collectivite/PlanActions/Forms/PlanCategoriesSelectionField';
+import {AvancementRadioField} from 'app/pages/collectivite/PlanActions/legacy/Forms/AvancementRadioField';
+import {PlanCategoriesSelectionField} from 'app/pages/collectivite/PlanActions/legacy/Forms/PlanCategoriesSelectionField';
 import {IndicateurPersonnaliseCard} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCard';
 import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
 import {FicheActionWrite} from 'generated/dataLayer/fiche_action_write';

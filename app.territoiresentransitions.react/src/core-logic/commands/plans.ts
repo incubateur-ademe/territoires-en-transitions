@@ -1,5 +1,5 @@
 import {v4 as uuid} from 'uuid';
-import {FicheActionFormData} from 'app/pages/collectivite/PlanActions/Forms/FicheActionForm';
+import {FicheActionFormData} from 'app/pages/collectivite/PlanActions/legacy/Forms/FicheActionForm';
 import {PlanActionStructure} from 'types/PlanActionTypedInterface';
 import {planActionRepository} from 'core-logic/api/repositories/PlanActionRepository';
 

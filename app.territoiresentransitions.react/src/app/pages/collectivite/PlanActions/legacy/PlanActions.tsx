@@ -11,7 +11,7 @@ import {
 } from './sorting';
 import {useState} from 'react';
 import {PlanCreationForm} from './Forms/PlanCreationForm';
-import {defaultDisplayCategorie} from 'app/pages/collectivite/PlanActions/defaultDisplayCategorie';
+import {defaultDisplayCategorie} from 'app/pages/collectivite/PlanActions/legacy/defaultDisplayCategorie';
 import {LazyDetailsWithChevron} from 'ui/shared/LazyDetails';
 import {usePlanAction} from 'core-logic/hooks/plan_action';
 import {PlanActionRead} from 'generated/dataLayer/plan_action_read';

@@ -4,7 +4,7 @@ import {v4 as uuid} from 'uuid';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 import {useActionTitleList} from 'core-logic/hooks/referentiel';
-import {shortenLabel} from 'app/pages/collectivite/PlanActions/Forms/utils';
+import {shortenLabel} from 'app/pages/collectivite/PlanActions/legacy/Forms/utils';
 
 type ActionsFieldProps = {
   label: string;
