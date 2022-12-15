@@ -10,29 +10,42 @@ select action_id,
        ascendants,
        depth,
        type
-from action_hierarchy
+from private.action_hierarchy
 where false;
 
-select collectivite_id,
+select action_id,
        referentiel,
-       action_id,
-       concerne,
-       desactive,
-       point_fait,
-       point_pas_fait,
-       point_potentiel,
-       point_programme,
-       point_referentiel,
-       total_taches_count,
-       point_non_renseigne,
-       point_potentiel_perso,
-       completed_taches_count,
-       fait_taches_avancement,
-       pas_fait_taches_avancement,
-       programme_taches_avancement,
-       pas_concerne_taches_avancement
-from private.action_scores
+       descendants,
+       leaves,
+       have_children,
+       ascendants,
+       depth,
+       type
+from private.action_node
 where false;
+
+select action_id,
+       referentiel,
+       descendants,
+       leaves,
+       have_children,
+       ascendants,
+       depth,
+       type,
+       identifiant,
+       nom,
+       description,
+       phase,
+       have_exemples,
+       have_preuve,
+       have_ressources,
+       have_reduction_potentiel,
+       have_perimetre_evaluation,
+       have_contexte
+from action_referentiel
+where false;
+
+select has_function_privilege('private.to_tabular_score(private.action_score)', 'execute');
 
 select collectivite_id,
        action_id,
