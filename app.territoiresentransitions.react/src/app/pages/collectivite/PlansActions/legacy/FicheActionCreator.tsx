@@ -3,7 +3,7 @@ import {
   FicheActionForm,
   FicheActionFormData,
   PlanCategorieSelection,
-} from 'app/pages/collectivite/PlanActions/legacy/Forms/FicheActionForm';
+} from 'app/pages/collectivite/PlansActions/legacy/Forms/FicheActionForm';
 import {v4 as uuid} from 'uuid';
 import {useQuery} from 'core-logic/hooks/query';
 import {updatePlansOnFicheSave} from 'core-logic/commands/plans';

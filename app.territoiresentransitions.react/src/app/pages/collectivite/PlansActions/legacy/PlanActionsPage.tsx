@@ -2,7 +2,7 @@ import {lazy, Suspense} from 'react';
 import {renderLoader} from 'utils/renderLoader';
 
 const PlanActions = lazy(
-  () => import('app/pages/collectivite/PlanActions/legacy/PlanActions')
+  () => import('app/pages/collectivite/PlansActions/legacy/PlanActions')
 );
 
 /**
