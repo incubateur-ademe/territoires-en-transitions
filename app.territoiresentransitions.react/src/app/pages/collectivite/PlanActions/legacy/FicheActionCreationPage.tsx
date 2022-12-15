@@ -2,7 +2,7 @@ import {lazy, Suspense} from 'react';
 import {renderLoader} from 'utils/renderLoader';
 
 const FicheActionCreator = lazy(
-  () => import('app/pages/collectivite/PlanActions/FicheActionCreator')
+  () => import('app/pages/collectivite/PlanActions/legacy/FicheActionCreator')
 );
 
 /**
