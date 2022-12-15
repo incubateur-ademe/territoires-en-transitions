@@ -2,13 +2,13 @@ import {Categorie} from 'types/PlanActionTypedInterface';
 import {
   CategoryNode,
   nestPlanCategories,
-} from 'app/pages/collectivite/PlanActions/legacy/sorting';
+} from 'app/pages/collectivite/PlansActions/legacy/sorting';
 import React, {useState} from 'react';
 import {IconButton} from '@material-ui/core';
 import {v4 as uuid} from 'uuid';
 import {planActionWriteEndpoint} from 'core-logic/api/endpoints/PlanActionWriteEndpoint';
 import {PlanActionRead} from 'generated/dataLayer/plan_action_read';
-import {LabeledTextInput} from 'app/pages/collectivite/PlanActions/legacy/Forms/LabeledTextInput';
+import {LabeledTextInput} from 'app/pages/collectivite/PlansActions/legacy/Forms/LabeledTextInput';
 
 /**
  * A title that is editable in place, as the title display is replaced with an

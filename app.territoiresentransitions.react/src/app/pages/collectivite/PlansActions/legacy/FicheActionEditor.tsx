@@ -3,7 +3,7 @@ import {useFicheAction} from 'core-logic/hooks/fiche_action';
 import {
   FicheActionForm,
   FicheActionFormData,
-} from 'app/pages/collectivite/PlanActions/legacy/Forms/FicheActionForm';
+} from 'app/pages/collectivite/PlansActions/legacy/Forms/FicheActionForm';
 import {updatePlansOnFicheSave} from 'core-logic/commands/plans';
 import {makeCollectiviteDefaultPlanActionUrl} from 'app/paths';
 import {ficheActionRepository} from 'core-logic/api/repositories/FicheActionRepository';
