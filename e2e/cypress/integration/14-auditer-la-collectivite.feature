@@ -6,7 +6,7 @@ Fonctionnalité: Auditer la collectivité
     Etant donné que je suis connecté en tant que "youlou"
 
     Quand je suis sur la page "Labellisation ECi" de la collectivité "1"
-    Alors je vois 2 onglets
+    Alors je vois 3 onglets
     Et l'onglet "Suivi de l'audit" est sélectionné
     Et le tableau de suivi de l'audit contient les lignes suivantes :
       | identifiant | inscrit séance audit | avancement     |
@@ -58,7 +58,7 @@ Fonctionnalité: Auditer la collectivité
     Etant donné que je suis connecté en tant que "yolo"
 
     Quand je suis sur la page "Labellisation ECi" de la collectivité "1"
-    Alors je vois 2 onglets
+    Alors je vois 3 onglets
     Et l'onglet "Suivi de l'audit" est sélectionné
     Et le tableau de suivi de l'audit contient les lignes suivantes :
       | identifiant | inscrit séance audit | avancement     |
