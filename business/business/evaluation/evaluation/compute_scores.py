@@ -1,7 +1,6 @@
 from copy import copy
 from typing import Dict, List
 
-
 from business.utils.models.action_statut import (
     ActionStatut,
 )
@@ -16,36 +15,37 @@ from .compute_scores_utils import *
 
 
 def compute_scores(
-    point_tree_referentiel: ActionPointTree,
-    statuses: List[ActionStatut],
-    personnalisation_consequences: dict[ActionId, ActionPersonnalisationConsequence],
-    action_level: int,
+        referentiel_tree: ActionPointTree,
+        statuses: List[ActionStatut],
+        personnalisation_consequences: dict[ActionId, ActionPersonnalisationConsequence],
+        action_level: int,
 ) -> Dict[ActionId, ActionScore]:
-
-    # 0. Build point tree personnalise
-    point_tree_personnalise = build_point_tree_personnalise(
-        point_tree_referentiel, personnalisation_consequences
+    # 0. Construit l'arbre personnalisé en appliquant la personnalisation au référentiel.
+    personnalise_tree = build_point_personnalisation_tree(
+        referentiel_tree, personnalisation_consequences
     )
 
-    # 1. First, calculate all potentiels after 'non concernee' action's points redistribution
-    actions_desactivees_ids = compute_actions_desactivees_ids(
-        point_tree_personnalise,
+    # 1. Première passe, calcule la redistribution des potentiels des actions désactivés ou non concernées
+    action_desactive_ids = compute_actions_desactivees_ids(
+        personnalise_tree,
         [
             action_id
             for action_id, consequence in personnalisation_consequences.items()
             if consequence.desactive
         ],
     )
-    scores: Dict[ActionId, ActionScore] = {}
-    actions_non_concernes_ids = (
-        compute_actions_non_concernes_ids(point_tree_personnalise, statuses)
-        + actions_desactivees_ids
+
+    action_non_concerne_ids = (
+            compute_actions_non_concernes_ids(personnalise_tree, statuses)
+            + action_desactive_ids
     )
+
     potentiels = compute_potentiels(
-        point_tree_personnalise,
-        actions_non_concernes_ids,
+        personnalise_tree,
+        action_non_concerne_ids,
         action_level,
     )
+
     # 2. Estimate tache points based on statuses
     action_personnalises_ids = list(personnalisation_consequences.keys())
 
@@ -54,58 +54,61 @@ def compute_scores(
         for action_status in statuses
         if action_status.is_renseigne
     }
-    point_tree_referentiel.map_on_taches(
+
+    scores: Dict[ActionId, ActionScore] = {}
+
+    referentiel_tree.map_on_taches(
         lambda tache: update_scores_from_tache_given_statuses(
-            point_tree_referentiel,
-            point_tree_personnalise,
+            referentiel_tree,
+            personnalise_tree,
             scores,
             potentiels,
             tache,
             status_by_action_id,
-            actions_non_concernes_ids,
+            action_non_concerne_ids,
             action_personnalises_ids,
-            actions_desactivees_ids,
+            action_desactive_ids,
         )
     )
     # 3. Infer all action points based on their children's
-    point_tree_referentiel.map_from_sous_actions_to_root(
+    referentiel_tree.map_from_sous_actions_to_root(
         lambda action_id: update_scores_for_action_given_children_scores(
-            point_tree_referentiel,
-            point_tree_personnalise,
+            referentiel_tree,
+            personnalise_tree,
             scores,
             potentiels,
             action_personnalises_ids,
-            actions_desactivees_ids,
+            action_desactive_ids,
             action_id,
         )
     )
 
     # 4. Apply potentiel reduction a posteriori (from formules)
     for (
-        action_id,
-        personnalisation_consequence,
+            action_id,
+            personnalisation_consequence,
     ) in personnalisation_consequences.items():
         if (
-            personnalisation_consequence.score_formule is not None
-            and scores[action_id].point_potentiel
-            != 0.0  # if point_potentiel equals 0., no worthy reduction
+                personnalisation_consequence.score_formule is not None
+                and scores[action_id].point_potentiel
+                != 0.0  # if point_potentiel equals 0., no worthy reduction
         ):
             original_score = (
-                scores[action_id].point_fait / scores[action_id].point_potentiel
+                    scores[action_id].point_fait / scores[action_id].point_potentiel
             )
-            overrided_score = execute_score_personnalisation_override_regle(
+            overriden_score = execute_score_personnalisation_override_regle(
                 personnalisation_consequence.score_formule, scores
             )
-            if overrided_score is not None and original_score > 0:
-                override_factor = overrided_score / original_score
-                point_tree_referentiel.map_from_action_to_taches(
+            if overriden_score is not None and original_score > 0:
+                override_factor = overriden_score / original_score
+                referentiel_tree.map_from_action_to_taches(
                     lambda action_id: apply_factor_to_score_realise(scores, action_id, override_factor),  # type: ignore
                     action_id,
                     include_action=True,
                 )
-                point_tree_referentiel.map_from_action_to_root(
+                referentiel_tree.map_from_action_to_root(
                     lambda action_id: set_points_to_children_sum(
-                        scores, action_id, point_tree_referentiel
+                        scores, action_id, referentiel_tree
                     ),
                     action_id,
                     include_action=False,
@@ -116,13 +119,13 @@ def compute_scores(
 
 
 def apply_factor_to_score_realise(
-    scores: Dict[ActionId, ActionScore], action_id: ActionId, factor: float
+        scores: Dict[ActionId, ActionScore], action_id: ActionId, factor: float
 ):
     scores[action_id].point_fait *= factor
 
 
 def set_points_to_children_sum(
-    scores: Dict[ActionId, ActionScore], action_id: ActionId, tree: ActionTree
+        scores: Dict[ActionId, ActionScore], action_id: ActionId, tree: ActionTree
 ):
     children = tree.get_children(action_id)
     children_scores = [scores[child_id] for child_id in children]  # type: ignore
