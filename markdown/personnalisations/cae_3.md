@@ -54,7 +54,7 @@ action_id: cae_3.2.1
 ### Réduction de potentiel
 ```formule
 si reponse(recuperation_cogeneration, OUI) et identite(localisation,DOM) alors 10/12
-sinon si reponse(recuperation_cogeneration, NON) et identite(localisation,DOM) alors 2/10
+sinon si reponse(recuperation_cogeneration, NON) et identite(localisation,DOM) alors 2.4/12
 sinon si reponse(recuperation_cogeneration, NON) alors 2/12
 ```
 Le nombre de point max pour l'action 3.2.1 est de 12 points en Métropole et de 10 points pour les collectivités DOM.
