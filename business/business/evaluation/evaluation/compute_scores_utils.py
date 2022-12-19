@@ -29,7 +29,6 @@ def update_scores_from_tache_given_statuses(
     tache_points_personnalise = point_tree_personnalise.get_action_point(tache_id)
     tache_points_referentiel = point_tree_referentiel.get_action_point(tache_id)
 
-    # TODO : find a softer way to tell that points cannot be None once they have been filled by referentiel constructor.
     assert tache_points_referentiel is not None
     assert tache_points_personnalise is not None
 
@@ -344,14 +343,19 @@ def compute_potentiels(
     )
 
     def _resize_children_potentiels(action_id: ActionId):
+        """Ajuste les potentiels des enfants d'une action"""
         action_potentiel = potentiels[action_id]
         action_referentiel_points = point_tree_personnalise.get_action_point(action_id)
+
+        # Si un potentiel a été modifié
         if action_potentiel != action_referentiel_points:
             children = point_tree_personnalise.get_children(action_id)
             if not children:
                 return
 
+            # pour chaque enfant
             for child_id in children:
+                # on ajuste son potentiel avec le même facteur de potentiel que son parent
                 new_child_potentiel = (
                     (
                         potentiels[child_id]
@@ -363,6 +367,8 @@ def compute_potentiels(
                 )
                 potentiels[child_id] = new_child_potentiel
 
+    # On ajuste les potentiels des enfants en partant du niveau de l'action
+    # - les points des actions n'étant pas redistribués.
     point_tree_personnalise.map_from_actions_to_taches(
         lambda action_id: _resize_children_potentiels(
             action_id,
