@@ -11,7 +11,7 @@ create table test.sequence_statut
     action_id           action_id,
     avancement          avancement,
     concerne            bool      default true,
-    avancement_detaille numeric[] default null,
+    avancement_detaille double precision[] default null,
     modified_at         timestamptz
 );
 
