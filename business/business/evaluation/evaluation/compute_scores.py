@@ -28,11 +28,7 @@ def compute_scores(
     # 1. Première passe, calcule la redistribution des potentiels des actions désactivés ou non concernées
     action_desactive_ids = compute_actions_desactivees_ids(
         personnalise_tree,
-        [
-            action_id
-            for action_id, consequence in personnalisation_consequences.items()
-            if consequence.desactive
-        ],
+        personnalisation_consequences,
     )
 
     action_non_concerne_ids = (
