@@ -6,55 +6,55 @@ comment on table test.fiche_action is
     'Copie de la table fiche_action.';
 
 -- Table plan_action
-create table test.plan_action as
-select * from public.plan_action;
-comment on table test.plan_action is
-    'Copie de la table plan_action.';
+create table test.axe as
+select * from public.axe;
+comment on table test.axe is
+    'Copie de la table axe.';
 
-create table test.fiche_action_plan_action as
-select * from public.fiche_action_plan_action;
-comment on table test.fiche_action_plan_action is
-    'Copie de la table fiche_action_plan_action.';
+create table test.fiche_action_axe as
+select * from public.fiche_action_axe;
+comment on table test.fiche_action_axe is
+    'Copie de la table fiche_action_axe.';
 
 -- Partenaires (FicheActionTags)
-create table test.partenaires_tags as
-select * from public.partenaires_tags;
-comment on table test.partenaires_tags is
-    'Copie de la table partenaires_tags.';
+create table test.partenaire_tag as
+select * from public.partenaire_tag;
+comment on table test.partenaire_tag is
+    'Copie de la table partenaire_tag.';
 
-create table test.fiche_action_partenaires_tags as
-select * from public.fiche_action_partenaires_tags;
-comment on table test.fiche_action_partenaires_tags is
-    'Copie de la table fiche_action_partenaires_tags.';
+create table test.fiche_action_partenaire_tag as
+select * from public.fiche_action_partenaire_tag;
+comment on table test.fiche_action_partenaire_tag is
+    'Copie de la table fiche_action_partenaire_tag.';
 
 -- Structure pilote (FicheActionTags)
-create table test.structures_tags as
-select * from public.structures_tags;
-comment on table test.structures_tags is
-    'Copie de la table structures_tags.';
+create table test.structure_tag as
+select * from public.structure_tag;
+comment on table test.structure_tag is
+    'Copie de la table structure_tag.';
 
-create table test.fiche_action_structures_tags as
-select * from public.fiche_action_structures_tags;
-comment on table test.fiche_action_structures_tags is
-    'Copie de la table fiche_action_structures_tags.';
+create table test.fiche_action_structure_tag as
+select * from public.fiche_action_structure_tag;
+comment on table test.fiche_action_structure_tag is
+    'Copie de la table fiche_action_structure_tag.';
 
 -- Utilisateurs non enregistrés
-create table test.users_tags as
-select * from public.users_tags;
-comment on table test.users_tags is
-    'Copie de la table users_tags.';
+create table test.personne_tag as
+select * from public.personne_tag;
+comment on table test.personne_tag is
+    'Copie de la table personne_tag.';
 
 -- Personne pilote (lien auth.users + tags)
-create table test.fiche_action_pilotes as
-select * from public.fiche_action_pilotes;
-comment on table test.fiche_action_pilotes is
-    'Copie de la table fiche_action_pilotes.';
+create table test.fiche_action_pilote as
+select * from public.fiche_action_pilote;
+comment on table test.fiche_action_pilote is
+    'Copie de la table fiche_action_pilote.';
 
 -- Elu.e référent.e (lien auth.users + tags)
-create table test.fiche_action_referents as
-select * from public.fiche_action_referents;
-comment on table test.fiche_action_referents is
-    'Copie de la table fiche_action_referents.';
+create table test.fiche_action_referent as
+select * from public.fiche_action_referent;
+comment on table test.fiche_action_referent is
+    'Copie de la table fiche_action_referent.';
 
 -- Actions liées
 create table test.fiche_action_action as
@@ -67,11 +67,6 @@ create table test.fiche_action_indicateur as
 select * from public.fiche_action_indicateur;
 comment on table test.fiche_action_indicateur is
     'Copie de la table fiche_action_indicateur.';
-
-create table test.fiche_action_indicateur_personnalise as
-select * from public.fiche_action_indicateur_personnalise;
-comment on table test.fiche_action_indicateur_personnalise is
-    'Copie de la table fiche_action_indicateur_personnalise.';
 
 -- TODO gérer les liens
 /*
@@ -95,50 +90,49 @@ $$
     -- Vide les tables des audits
 --truncate fiche_action_annexes;
 --truncate annexes cascade;
-truncate fiche_action_indicateur_personnalise;
 truncate fiche_action_indicateur;
 truncate fiche_action_action;
-truncate fiche_action_referents;
-truncate fiche_action_pilotes;
-truncate users_tags cascade;
-truncate fiche_action_structures_tags;
-truncate structures_tags cascade;
-truncate fiche_action_partenaires_tags;
-truncate partenaires_tags cascade;
-truncate fiche_action_plan_action;
-truncate plan_action cascade;
+truncate fiche_action_referent;
+truncate fiche_action_pilote;
+truncate personne_tag cascade;
+truncate fiche_action_structure_tag;
+truncate structure_tag cascade;
+truncate fiche_action_partenaire_tag;
+truncate partenaire_tag cascade;
+truncate fiche_action_axe;
+truncate axe cascade;
 truncate fiche_action cascade;
 
 
     insert into public.fiche_action
     select * from test.fiche_action;
 
-    insert into public.plan_action
-    select * from test.plan_action;
+    insert into public.axe
+    select * from test.axe;
 
-    insert into public.fiche_action_plan_action
-    select * from test.fiche_action_plan_action;
+    insert into public.fiche_action_axe
+    select * from test.fiche_action_axe;
 
-    insert into public.partenaires_tags
-    select * from test.partenaires_tags;
+    insert into public.partenaire_tag
+    select * from test.partenaire_tag;
 
-    insert into public.fiche_action_partenaires_tags
-    select * from test.fiche_action_partenaires_tags;
+    insert into public.fiche_action_partenaire_tag
+    select * from test.fiche_action_partenaire_tag;
 
-    insert into public.structures_tags
-    select * from test.structures_tags;
+    insert into public.structure_tag
+    select * from test.structure_tag;
 
-    insert into public.fiche_action_structures_tags
-    select * from test.fiche_action_structures_tags;
+    insert into public.fiche_action_structure_tag
+    select * from test.fiche_action_structure_tag;
 
-    insert into public.users_tags
-    select * from test.users_tags;
+    insert into public.personne_tag
+    select * from test.personne_tag;
 
-    insert into public.fiche_action_pilotes
-    select * from test.fiche_action_pilotes;
+    insert into public.fiche_action_pilote
+    select * from test.fiche_action_pilote;
 
-    insert into public.fiche_action_referents
-    select * from test.fiche_action_referents;
+    insert into public.fiche_action_referent
+    select * from test.fiche_action_referent;
 
     insert into public.fiche_action_action
     select * from test.fiche_action_action;
@@ -146,15 +140,12 @@ truncate fiche_action cascade;
     insert into public.fiche_action_indicateur
     select * from test.fiche_action_indicateur;
 
-    insert into public.fiche_action_indicateur_personnalise
-    select * from test.fiche_action_indicateur_personnalise;
-
     /*
-    insert into public.annexes
-    select * from test.annexes;
+    insert into public.annexe
+    select * from test.annexe;
 
-    insert into public.fiche_action_annexes
-    select * from test.fiche_action_annexes;
+    insert into public.fiche_action_annexe
+    select * from test.fiche_action_annexe;
      */
 
 $$ language sql security definer;
