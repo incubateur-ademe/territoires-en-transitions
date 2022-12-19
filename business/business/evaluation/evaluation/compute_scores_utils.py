@@ -224,7 +224,7 @@ def _get_non_concerne_action_ids(
 
 @timeit("compute_actions_non_concernes_ids")
 def compute_actions_non_concernes_ids(
-        point_tree: ActionPointTree, statuses: List[ActionStatut]
+        point_tree: ActionPointTree, statuses: List[ActionStatut],
 ):
     taches_non_concernes_ids = [
         action_status.action_id
@@ -245,16 +245,21 @@ def compute_actions_non_concernes_ids(
 @timeit("compute_actions_desactivees_ids")
 def compute_actions_desactivees_ids(
         point_tree_personnalise: ActionPointTree,
-        actions_personnalises_desactivees_ids: List[ActionId],
+        personnalisation_consequences: dict[ActionId, ActionPersonnalisationConsequence]
 ) -> List[ActionId]:
     """Propage la désactivation des parents aux enfants."""
-    all_actions_desactivees_ids = []
-    for action_id in actions_personnalises_desactivees_ids:
+    desactivations = [
+        action_id
+        for action_id, consequence in personnalisation_consequences.items()
+        if consequence.desactive
+    ]
+    action_desactive_ids = []
+    for action_id in desactivations:
         point_tree_personnalise.map_from_action_to_taches(
-            lambda child_id: all_actions_desactivees_ids.append(child_id),
+            lambda child_id: action_desactive_ids.append(child_id),
             action_id,
         )
-    return all_actions_desactivees_ids
+    return action_desactive_ids
 
 
 def _get_action_potentiel_after_redistribution_for_level_greater_than_action_level(
