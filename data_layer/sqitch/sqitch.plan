@@ -168,3 +168,4 @@ labellisation/audit [labellisation/audit@v1.16.0] 2022-12-14T14:00:38Z Florian <
 referentiel/action_statut [referentiel/action_statut@v1.17.0] 2022-12-19T10:08:22Z Florian <florian@derfurth.com> # Répare la vérification de la somme des statuts détaillés
 json_schema 2022-11-14T09:06:51Z Amandine Jacquelin <conta@LanceLibre> # Ajout de l'extension json_schema
 indicateur/indicateur_terristory_json [json_schema] 2022-11-09T13:39:16Z Amandine Jacquelin <conta@LanceLibre> # Indicateur venant de terristory via json
+@v1.18.0 2022-12-20T15:44:33Z Florian <florian@derfurth.com> # API entrante terristory.
