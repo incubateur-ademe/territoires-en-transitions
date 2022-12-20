@@ -64,6 +64,13 @@ identite(type, EPCI)
 action_id: cae_1.2.2.1
 ```
 ## Règles
+
+### Réduction de potentiel
+```formule
+si reponse(AOM_1, OUI) et identite(population, plus_de_100000) alors 0.0
+```
+Pour une collectivité AOM, de plus de 100 000 habitants, le potentiel passe de 10% à 0%.
+
 ### Désactivation
 ```formule
 reponse(AOM_1, OUI) et identite(population, plus_de_100000)
@@ -77,7 +84,7 @@ action_id: cae_1.2.2.5
 ## Règles
 ### Réduction de potentiel
 ```formule
-si reponse(AOM_1, OUI) et identite(population, plus_de_100000) alors 4.8/12
+si reponse(AOM_1, OUI) et identite(population, plus_de_100000) alors 0.4/0.3
 ```
 Pour une collectivité AOM, de plus de 100 000 habitants, la 1.2.2.5 est notée sur 40 % (au lieu de 30 %).
 
