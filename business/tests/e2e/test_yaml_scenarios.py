@@ -83,6 +83,7 @@ def test_scores_should_match_yaml_expectations(test_post_personnalize, test_post
             ref_scores = test_post_evaluate(ref, ref_statuts, ref_consequences)
             scores = scores | ref_scores
 
+        failures = 0
         # Pour chaque score du yaml
         for action_id in data['Scores'].keys():
             have = vars(scores[action_id])
@@ -92,5 +93,8 @@ def test_scores_should_match_yaml_expectations(test_post_personnalize, test_post
             print(f'- have {have}')
             print(f'- want {want}')
             # On compare chaque valeur avec l'objet obtenu par l'API
-            for k in [k for k in want.keys() if k != 'test']:
-                assert have[k] == want[k], f'Erreur sur "{k}" de "{action_id}" pour: {test}'
+            for k in [k for k in want.keys() if k != 'test' and have[k] != want[k]]:
+                print(f'> Erreur sur "{k}" de "{action_id}"')
+                failures += 1
+
+        assert failures == 0, f'{failures} comparaisons ont échouées pour {data["Test"]}'
