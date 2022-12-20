@@ -61,6 +61,7 @@ class ActionTree:
         action_id: ActionId,
         include_action: bool = True,
     ):
+        """Appelle la fonction callback en partant de [action_id] jusqu'aux tâches."""
         if include_action:
             callback(action_id)
         for action_child in self.get_children(action_id):
