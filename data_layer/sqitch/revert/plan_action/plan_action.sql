@@ -1,53 +1,63 @@
 -- Deploy tet:plan_action to pg
 
 BEGIN;
-drop table fiche_action_annexes;
-drop table annexes;
+
+drop materialized view stats.collectivite_plan_action cascade;
+drop function plan_action(pa_id integer);
+drop view fiches_action;
+drop function enlever_annexe(id_fiche integer, annexe annexe, supprimer boolean);
+drop function ajouter_annexe(id_fiche integer, annexe annexe);
+drop table fiche_action_annexe;
+drop table annexe cascade;
+drop function indicateurs_collectivite(id_collectivite integer);
+drop function enlever_indicateur(id_fiche integer, indicateur indicateur_global);
+drop function ajouter_indicateur(id_fiche integer, indicateur indicateur_global);
+drop type indicateur_global;
+drop table fiche_action_indicateur;
+drop function enlever_action(id_fiche integer, id_action action_id);
+drop function ajouter_action(id_fiche integer, id_action action_id);
 drop table fiche_action_action;
-drop table fiche_action_referents;
-drop table fiche_action_pilotes;
-drop table users_tags;
-drop table fiche_action_structures_tags;
-drop table structures_tags;
-drop table fiche_action_partenaires_tags;
-drop table partenaires_tags;
-drop table tags;
-drop table fiche_action_plan_action;
-drop table plan_action;
-drop table fiche_action;
-drop type fiche_action_niveaux_priorite;
-drop type fiche_action_statuts;
-drop type fiche_action_cibles;
-drop type fiche_action_resultats_attendus;
-drop type fiche_action_piliers_eci;
-drop type fiche_action_thematiques;
+drop function enlever_referent(id_fiche integer, referent personne);
+drop function ajouter_referent(id_fiche integer, referent personne);
+drop table fiche_action_referent;
+drop function enlever_pilote(id_fiche integer, pilote personne);
+drop function ajouter_pilote(id_fiche integer, pilote personne);
+drop table fiche_action_pilote;
+drop function personnes_collectivite(id_collectivite integer);
+drop type personne;
+drop table personne_tag cascade;
+drop function enlever_structure(id_fiche integer, structure structure_tag);
+drop function ajouter_structure(id_fiche integer, structure structure_tag);
+drop table fiche_action_structure_tag;
+drop table structure_tag cascade;
+drop function enlever_partenaire(id_fiche integer, partenaire partenaire_tag);
+drop function ajouter_partenaire(id_fiche integer, partenaire partenaire_tag);
+drop table fiche_action_partenaire_tag;
+drop table partenaire_tag cascade;
+drop function plans_action_collectivite(id_collectivite integer);
+drop function enlever_fiche_action_d_un_axe(id_fiche integer, id_axe integer);
+drop function ajouter_fiche_action_dans_un_axe(id_fiche integer, id_axe integer);
+drop table fiche_action_axe;
+drop table axe cascade;
+drop function peut_modifier_la_fiche(id_fiche integer);
+drop table fiche_action cascade;
+drop table tag;
+drop type fiche_action_niveaux_priorite cascade;
+drop type fiche_action_statuts cascade;
+drop type fiche_action_cibles cascade;
+drop type fiche_action_resultats_attendus cascade;
+drop type fiche_action_piliers_eci cascade;
+drop type fiche_action_thematiques cascade;
 
 create type fiche_action_avancement as enum ('pas_fait', 'fait', 'en_cours', 'non_renseigne');
 
 -- fiche action
-create table fiche_action
-(
-    uid                         uuid primary key,
-    collectivite_id             integer references collectivite,
-    avancement                  fiche_action_avancement not null,
-    numerotation                text                    not null,
-    titre                       text                    not null,
-    description                 text                    not null,
-    structure_pilote            text                    not null,
-    personne_referente          text                    not null,
-    elu_referent                text                    not null,
-    partenaires                 text                    not null,
-    budget_global               integer                 not null,
-    commentaire                 text                    not null,
-    date_fin                    text                    not null,
-    date_debut                  text                    not null,
-    en_retard                   boolean                 not null,
-    -- relations to other tables
-    action_ids                  action_id[]             not null,
-    indicateur_ids              indicateur_id[]         not null,
-    indicateur_personnalise_ids integer[]               not null
-) inherits (abstract_modified_at);
-comment on table fiche_action is 'Fiche action used by the client';
+create table public.fiche_action as select * from migration.fiche_action;
+alter table fiche_action drop column avancement;
+alter table fiche_action add column avancement  fiche_action_avancement not null;
+update fiche_action p set avancement = (select m.avancement::text::fiche_action_avancement
+                                                  from migration.fiche_action m
+                                                  where m.uid = p.uid);
 
 create trigger set_modified_at_before_fiche_action_update
     before update
@@ -66,22 +76,15 @@ create policy allow_read
 
 create policy allow_insert
     on fiche_action
-    for insert
-    with check (is_amongst_role_on(array ['agent'::role_name, 'referent'::role_name, 'conseiller'::role_name],
-                                   collectivite_id));
+    with check (have_edition_acces(collectivite_id));
+
 create policy allow_update
     on fiche_action
-    for update
-    using (is_amongst_role_on(array ['agent'::role_name, 'referent'::role_name, 'conseiller'::role_name],
-                              collectivite_id));
+    using (have_edition_acces(collectivite_id));
 
-create table fiche_action_action
-(
-    fiche_action_uid uuid references fiche_action,
-    action_id        action_id references action_relation,
-    primary key (fiche_action_uid, action_id)
-);
-comment on table fiche_action is
+
+create table fiche_action_action as select * from migration.fiche_action_action;
+comment on table fiche_action_action is
     'Many-to-many relationship between fiche action and referentiel action';
 alter table fiche_action_action
     enable row level security;
@@ -92,12 +95,7 @@ create policy allow_read
     using (is_authenticated());
 
 
-create table fiche_action_indicateur
-(
-    fiche_action_uid uuid references fiche_action,
-    indicateur_id    indicateur_id references indicateur_definition,
-    primary key (fiche_action_uid, indicateur_id)
-);
+create table fiche_action_indicateur as select * from migration.fiche_action_indicateur;
 comment on table fiche_action_indicateur is
     'Many-to-many relationship between fiche action and referentiel indicateur';
 alter table fiche_action_indicateur
@@ -107,12 +105,7 @@ create policy allow_read
     for select
     using (is_authenticated());
 
-create table fiche_action_indicateur_personnalise
-(
-    fiche_action_uid           uuid references fiche_action,
-    indicateur_personnalise_id integer references indicateur_personnalise_definition,
-    primary key (fiche_action_uid, indicateur_personnalise_id)
-);
+create table fiche_action_indicateur_personnalise as select * from migration.fiche_action_indicateur_personnalise;
 comment on table fiche_action_indicateur_personnalise is
     'Many-to-many relationship between fiche action and indicateur personnalisé';
 alter table fiche_action_indicateur_personnalise
@@ -193,16 +186,7 @@ comment on function after_fiche_action_write_save_relationships is
         'from fiche action data on insert or update to ensure they are correct';
 
 -- plan d'action
-create table plan_action
-(
-    uid                uuid primary key,
-    collectivite_id    integer references collectivite,
-    nom                varchar(300)                                       not null,
-    categories         jsonb                                              not null,
-    fiches_by_category jsonb                                              not null,
-    created_at         timestamp with time zone default CURRENT_TIMESTAMP not null,
-    modified_at        timestamp with time zone default CURRENT_TIMESTAMP not null
-);
+create table public.plan_action as select * from migration.plan_action;
 
 create trigger set_modified_at_before_plan_action_update
     before update
@@ -220,16 +204,15 @@ create policy allow_read
     for select
     using (is_authenticated());
 
+
 create policy allow_insert
     on plan_action
-    for insert
-    with check (is_amongst_role_on(array ['agent'::role_name, 'referent'::role_name, 'conseiller'::role_name],
-                                   collectivite_id));
+    with check (have_edition_acces(collectivite_id));
+
 create policy allow_update
     on plan_action
-    for update
-    using (is_amongst_role_on(array ['agent'::role_name, 'referent'::role_name, 'conseiller'::role_name],
-                              collectivite_id));
+    using (have_edition_acces(collectivite_id));
+
 
 
 -- plan d'action par défaut
@@ -256,5 +239,31 @@ create trigger after_collectivite_insert
     on collectivite
     for each row
 execute procedure after_collectivite_insert_default_plan();
+
+drop table migration.plan_action;
+drop table migration.fiche_action_indicateur_personnalise;
+drop table migration.fiche_action_indicateur;
+drop table migration.fiche_action_action;
+drop table migration.fiche_action;
+drop type migration.fiche_action_avancement;
+
+create materialized view stats.collectivite_plan_action
+as
+with fa as (select collectivite_id,
+                   count(*) as count
+            from fiche_action f
+            group by f.collectivite_id),
+     pa as (select collectivite_id,
+                   count(*) as count
+            from plan_action p
+            group by p.collectivite_id)
+select c.*,
+       coalesce(fa.count, 0) as fiches,
+       coalesce(pa.count, 0) as plans
+from stats.collectivite c
+         left join pa on pa.collectivite_id = c.collectivite_id
+         left join fa on pa.collectivite_id = fa.collectivite_id
+order by fiches desc;
+
 
 COMMIT;
