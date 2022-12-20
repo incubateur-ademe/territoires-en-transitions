@@ -253,13 +253,13 @@ def compute_actions_desactivees_ids(
         for action_id, consequence in personnalisation_consequences.items()
         if consequence.desactive
     ]
-    action_desactive_ids = []
+    action_desactive_ids = set()
     for action_id in desactivations:
         point_tree_personnalise.map_from_action_to_taches(
-            lambda child_id: action_desactive_ids.append(child_id),
+            lambda child_id: action_desactive_ids.add(child_id),
             action_id,
         )
-    return action_desactive_ids
+    return list(action_desactive_ids)
 
 
 def _get_action_potentiel_after_redistribution_for_level_greater_than_action_level(
@@ -295,9 +295,8 @@ def _get_action_potentiel_after_redistribution_for_level_greater_than_action_lev
             if point_tree_personnalise.get_action_point(action_id) != 0
         ]
         if action_id in actions_to_redistribute_amongst:
-            return original_action_potentiel + points_non_concerne_to_redistribute / (
-                len(actions_to_redistribute_amongst)
-            )
+            additional_potentiel = points_non_concerne_to_redistribute / len(actions_to_redistribute_amongst)
+            return original_action_potentiel + additional_potentiel
     return original_action_potentiel
 
 
@@ -383,21 +382,22 @@ def compute_potentiels(
 
 @timeit("build_point_tree_personnalise")
 def build_point_personnalisation_tree(
-        point_tree_referentiel: ActionPointTree,
+        referentiel_tree: ActionPointTree,
         personnalisation_consequences: Dict[ActionId, ActionPersonnalisationConsequence],
 ) -> ActionPointTree:
-    point_tree_personnalise = point_tree_referentiel.clone()
+    """Applique les potentiels personnalisés sur une copie de l'arbre du référentiel."""
+    personnalise_tree = referentiel_tree.clone()
     for action_id, consequence in personnalisation_consequences.items():
         if consequence.potentiel_perso is not None:
             factor = float(consequence.potentiel_perso)
             personnalisation = (
-                lambda action_id: point_tree_personnalise.set_action_point(
+                lambda action_id: personnalise_tree.set_action_point(
                     action_id,
-                    point_tree_personnalise.get_action_point(action_id) * factor,
+                    personnalise_tree.get_action_point(action_id) * factor,
                 )
             )
-            point_tree_personnalise.map_from_action_to_taches(
+            personnalise_tree.map_from_action_to_taches(
                 personnalisation,
                 action_id,
             )
-    return point_tree_personnalise
+    return personnalise_tree
