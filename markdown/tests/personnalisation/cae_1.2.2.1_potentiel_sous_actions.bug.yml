@@ -1,4 +1,6 @@
 Test:
+  # Pas de fix pour le moment, car ce cas ne se présente pas en réalité
+  # Néanmoins le désactivé ne fait pas la même chose que le non concerné.
   La redistribution des points non concernés
   des tâches de la sous-action cae_1.2.2.1
   avec deux tâches sur trois non-concernée
@@ -14,7 +16,7 @@ Scores:
   cae_1.2.2:
     test: le potentiel de l'action ne devrait pas changer
     point_referentiel: 12
-    point_potentiel: 12
+    point_potentiel: 12 # BUG est à 10.8
   cae_1.2.2.1:
     test:
       Le potentiel devrait être à 0 car 3/3 tâches sont déclarées non-concernées
