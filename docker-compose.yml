@@ -248,6 +248,8 @@ services:
       - donotstart
     command: >
       bash -c "pytest tests"
+    volumes:
+      - ./markdown:/markdown
 
   business-parse-content:
     container_name: tet-business-parse-content
