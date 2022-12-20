@@ -20,7 +20,7 @@ def compute_scores(
         personnalisation_consequences: dict[ActionId, ActionPersonnalisationConsequence],
         action_level: int,
 ) -> Dict[ActionId, ActionScore]:
-    # 0. Construit l'arbre personnalisé en appliquant la personnalisation au référentiel.
+    # 0. Construit l'arbre personnalisé en appliquant la pondération due aux conséquences.
     personnalise_tree = build_point_personnalisation_tree(
         referentiel_tree, personnalisation_consequences
     )
