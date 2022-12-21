@@ -171,3 +171,4 @@ indicateur/indicateur_terristory_json [json_schema] 2022-11-09T13:39:16Z Amandin
 @v1.18.0 2022-12-20T15:44:33Z Florian <florian@derfurth.com> # API entrante terristory.
 
 stats/vues_BI [stats/vues_BI@v1.17.0] 2022-12-17T15:33:17Z Florian <florian@derfurth.com> # Ajoute des vues
+@v1.19.0 2022-12-21T13:29:28Z Florian <florian@derfurth.com> # Nouvelles vues BI.
