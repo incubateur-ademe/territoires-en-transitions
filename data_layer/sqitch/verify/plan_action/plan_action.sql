@@ -123,6 +123,7 @@ where false;
 select has_function_privilege('ajouter_annexe(integer, annexe)', 'execute');
 select has_function_privilege('enlever_annexe(integer, annexe, boolean)', 'execute');
 
+select has_function_privilege('delete_fiche_action()', 'execute');
 select has_function_privilege('upsert_fiche_action()', 'execute');
 
 select has_function_privilege('plan_action(integer)', 'execute');
