@@ -7,6 +7,7 @@ import {CollectiviteNavItems} from '../makeCollectiviteNavItems';
 import {MesCollectivitesRead} from 'generated/dataLayer';
 import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {allCollectivitesPath} from 'app/paths';
+import {Aide} from '../Aide';
 
 type Props = {
   auth: TAuthContext;
@@ -60,15 +61,7 @@ const MobileNavigation = ({
                 Collectivités engagées
               </Link>
             )}
-            <a
-              data-test="help"
-              className="fr-link block w-full !p-4"
-              href="https://aide.territoiresentransitions.fr/fr/"
-              target="_blank" rel="noreferrer"
-            >
-              <div className="fr-fi-question-line mr-2" />
-              Aide
-            </a>
+            <Aide />
             <MobileHeaderNavigation
               auth={auth}
               toggleMobileNavigation={toggleMobileNavigation}
