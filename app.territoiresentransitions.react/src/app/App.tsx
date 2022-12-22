@@ -17,6 +17,7 @@ import {ProfilPage} from './pages/Profil/ProfilPage';
 import Layout from 'app/Layout';
 import {AuthProvider} from 'core-logic/api/auth/AuthProvider';
 import {ScoreListenerProvider} from 'core-logic/hooks/useScoreListener';
+import {VisitTracker} from 'app/VisitTracker';
 
 const theme = createTheme({
   palette: {
@@ -41,6 +42,7 @@ export const App = () => {
                 <ScrollToTop />
                 <Toasters />
                 <Redirector />
+                <VisitTracker />
                 <Switch>
                   <Route exact path="/">
                     <Home />
