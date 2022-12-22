@@ -2,6 +2,7 @@ import {Link} from 'react-router-dom';
 import {allCollectivitesPath, signInPath, signUpPath} from 'app/paths';
 import {TAuthContext} from 'core-logic/api/auth/AuthProvider';
 import HeaderNavigationProfileDropdown from './HeaderNavigationProfileDropdown';
+import {Aide} from '../Aide';
 
 type Props = {
   auth: TAuthContext;
@@ -18,15 +19,7 @@ const HeaderNavigation = ({auth}: Props) => {
               Collectivités engagées
             </Link>
           )}
-          <a
-            data-test="help"
-            className="fr-link"
-            href="https://aide.territoiresentransitions.fr/fr/"
-            target="_blank" rel="noreferrer"
-          >
-            <div className="fr-fi-question-line mr-2" />
-            Aide
-          </a>
+          <Aide />
           {isConnected && user ? (
             <HeaderNavigationProfileDropdown user={user} auth={auth} />
           ) : (
