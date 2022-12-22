@@ -101,7 +101,7 @@ select ok ((select count(*)=1 from fiche_action_action),
            'Il devrait y avoir 1 entrées dans fiche_action_action');
 -- Test indicateur
 select ajouter_indicateur(1, (select pe.*::indicateur_global from (select 'eci_5' as indicateur_id, null as indicateur_personnalise_id, null as nom, null as description, null as unite) pe limit 1));
-select ajouter_indicateur(2, (select pe.*::indicateur_global from (select null as indicateur_id, 1 as indicateur_personnalise_id, null as nom, null as description, null as unite) pe limit 1));
+select ajouter_indicateur(2, (select pe.*::indicateur_global from (select null as indicateur_id, 0 as indicateur_personnalise_id, null as nom, null as description, null as unite) pe limit 1));
 select ajouter_indicateur(3, (select pe.*::indicateur_global from (select 'eci_5' as indicateur_id, null as indicateur_personnalise_id, null as nom, null as description, null as unite) pe limit 1));
 select enlever_indicateur(3, (select pe.*::indicateur_global from (select 'eci_5' as indicateur_id, null as indicateur_personnalise_id, null as nom, null as description, null as unite) pe limit 1));
 select ok ((select count(*)=2 from fiche_action_indicateur),
