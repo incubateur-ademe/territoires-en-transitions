@@ -644,21 +644,21 @@ select fa.*,
 from fiche_action fa
          -- partenaires
          left join lateral (
-    select array_agg(to_json(pt.*)) as partenaires
+    select array_agg(pt.*::partenaire_tag) as partenaires
     from partenaire_tag pt
              join fiche_action_partenaire_tag fapt on fapt.partenaire_tag_id = pt.id
     where fapt.fiche_id = fa.id
     ) as p on true
     -- structures
          left join lateral (
-    select array_agg(to_json(st.*)) as structures
+    select array_agg(st.*::structure_tag) as structures
     from structure_tag st
              join fiche_action_structure_tag fast on fast.structure_tag_id = st.id
     where fast.fiche_id = fa.id
     ) as s on true
     -- pilotes
          left join lateral (
-    select array_agg(to_json(pil.*)) as pilotes
+    select array_agg(pil.*::personne) as pilotes
     from (
              select coalesce(pt.nom, concat(dcp.prenom, ' ', dcp.nom)) as nom,
                     pt.collectivite_id,
@@ -672,7 +672,7 @@ from fiche_action fa
     ) as pi on true
     -- referents
          left join lateral (
-    select array_agg(to_json(ref.*)) as referents
+    select array_agg(ref.*::personne) as referents
     from (
              select coalesce(pt.nom, concat(dcp.prenom, ' ', dcp.nom)) as nom,
                     pt.collectivite_id,
@@ -686,28 +686,28 @@ from fiche_action fa
     ) as re on true
     -- annexes
          left join lateral (
-    select array_agg(to_json(a.*)) as annexes
+    select array_agg(a.*::annexe) as annexes
     from annexe a
              join fiche_action_annexe faa on faa.annexe_id = a.id
     where faa.fiche_id = fa.id
     ) as anne on true
     -- axes
          left join lateral (
-    select array_agg(to_json(pa.*)) as axes
+    select array_agg(pa.*::axe) as axes
     from axe pa
              join fiche_action_axe fapa on fapa.axe_id = pa.id
     where fapa.fiche_id = fa.id
     ) as pla on true
     -- actions
          left join lateral (
-    select array_agg(to_json(ar.*)) as actions
+    select array_agg(ar.*::action_relation) as actions
     from action_relation ar
              join fiche_action_action faa on faa.action_id = ar.id
     where faa.fiche_id = fa.id
     ) as act on true
     -- indicateurs
          left join lateral (
-    select array_agg(to_json(indi.*)) as indicateurs
+    select array_agg(indi.*::indicateur_global) as indicateurs
     from (
              select fai.indicateur_id,
                     fai.indicateur_personnalise_id,
@@ -728,14 +728,14 @@ create or replace function upsert_fiche_action()
 $$
 declare
     id_fiche integer;
-    axe jsonb;
-    partenaire jsonb;
-    structure jsonb;
-    pilote jsonb;
-    referent jsonb;
-    action jsonb;
-    indicateur jsonb;
-    annexe jsonb;
+    axe axe;
+    partenaire partenaire_tag;
+    structure structure_tag;
+    pilote personne;
+    referent personne;
+    action action_relation;
+    indicateur indicateur_global;
+    annexe annexe;
 begin
     id_fiche = new.id;
     -- Fiche action
@@ -809,105 +809,107 @@ begin
 
     -- Axes
     delete from fiche_action_axe where fiche_id = id_fiche;
-    foreach axe in array new.axes
-        loop
-            perform ajouter_fiche_action_dans_un_axe(id_fiche, (axe ->> 'id')::integer);
-        end loop;
+    if new.axes is not null then
+        foreach axe in array new.axes::axe[]
+            loop
+                perform ajouter_fiche_action_dans_un_axe(id_fiche, axe.id);
+            end loop;
+    end if;
 
     -- Partenaires
     delete from fiche_action_partenaire_tag where fiche_id = id_fiche;
-    foreach partenaire in array new.partenaires
-        loop
-            perform ajouter_partenaire(
-                    id_fiche,
-                    (
-                        select a.*::partenaire_tag
-                        from jsonb_populate_record(null::partenaire_tag, partenaire) a
-                    )
-                );
-        end loop;
+    if new.partenaires is not null then
+        foreach partenaire in array new.partenaires::partenaire_tag[]
+            loop
+                perform ajouter_partenaire(id_fiche,partenaire);
+            end loop;
+    end if;
 
     -- Structures
     delete from fiche_action_structure_tag where fiche_id = id_fiche;
-    foreach structure in array new.structures
-        loop
-            perform ajouter_structure(
-                    id_fiche,
-                    (
-                        select a.*::structure_tag
-                        from jsonb_populate_record(null::structure_tag, structure) a
-                    )
-                );
-        end loop;
+    if new.structures is not null then
+        foreach structure in array new.structures::structure_tag[]
+            loop
+                perform ajouter_structure(id_fiche,structure);
+            end loop;
+    end if;
 
     -- Pilotes
     delete from fiche_action_pilote where fiche_id = id_fiche;
-    foreach pilote in array new.pilotes
-        loop
-            perform ajouter_pilote(
-                    id_fiche,
-                    (
-                        select a.*::personne
-                        from jsonb_populate_record(null::personne, pilote) a
-                    )
-                );
-        end loop;
+    if new.pilotes is not null then
+        foreach pilote in array new.pilotes::personne[]
+            loop
+                perform ajouter_pilote(id_fiche,pilote);
+            end loop;
+    end if;
 
     -- Referents
     delete from fiche_action_referent where fiche_id = id_fiche;
-    foreach referent in array new.referents
-        loop
-            perform ajouter_referent(
-                    id_fiche,
-                    (
-                        select a.*::personne
-                        from jsonb_populate_record(null::personne, referent) a
-                    )
-                );
-        end loop;
+    if new.referents is not null then
+        foreach referent in array new.referents::personne[]
+            loop
+                perform ajouter_referent(id_fiche,referent);
+            end loop;
+    end if;
 
     -- Actions
     delete from fiche_action_action where fiche_id = id_fiche;
-    foreach action in array new.actions
-        loop
-            perform ajouter_action(id_fiche, (action ->> 'action_id')::action_id);
-        end loop;
+    if new.actions is not null then
+        foreach action in array new.actions::action_relation[]
+            loop
+                perform ajouter_action(id_fiche, action.id);
+            end loop;
+    end if;
 
     -- Indicateurs
     delete from fiche_action_indicateur where fiche_id = id_fiche;
-    foreach indicateur in array new.indicateurs
-        loop
-            perform ajouter_indicateur(
-                    id_fiche,
-                    (
-                        select a.*::indicateur_global
-                        from jsonb_populate_record(null::indicateur_global, indicateur) a
-                    )
-                );
-        end loop;
+    if new.indicateurs is not null then
+        foreach indicateur in array new.indicateurs::indicateur_global[]
+            loop
+                perform ajouter_indicateur(id_fiche,indicateur);
+            end loop;
+    end if;
 
     -- Annexes
     delete from fiche_action_annexe where fiche_id = id_fiche;
-    foreach annexe in array new.annexes
-        loop
-            perform ajouter_annexe(
-                    id_fiche,
-                    (
-                        select a.*::annexe
-                        from jsonb_populate_record(null::annexe, indicateur) a
-                    )
-                );
-        end loop;
+    if new.annexes is not null then
+        foreach annexe in array new.annexes::annexe[]
+            loop
+                perform ajouter_annexe(id_fiche,annexe);
+            end loop;
+    end if;
 
-        return new;
+    return new;
+end;
+$$ language plpgsql;
+
+create or replace function delete_fiche_action()
+    returns trigger as
+$$
+declare
+begin
+    delete from fiche_action_partenaire_tag where fiche_id = old.id;
+    delete from fiche_action_structure_tag where fiche_id = old.id;
+    delete from fiche_action_pilote where fiche_id = old.id;
+    delete from fiche_action_referent where fiche_id = old.id;
+    delete from fiche_action_annexe where fiche_id = old.id;
+    delete from fiche_action_indicateur where fiche_id = old.id;
+    delete from fiche_action_action where fiche_id = old.id;
+    delete from fiche_action_axe where fiche_id = old.id;
 end;
 $$ language plpgsql;
 
 create trigger upsert
-    instead of insert
+    instead of insert or update
     on fiches_action
     for each row
 execute procedure upsert_fiche_action();
+
+create trigger delete
+    before delete
+    on fiche_action
+    for each row
+execute procedure delete_fiche_action();
 
 -- Fonction récursive pour afficher un plan d'action
 create or replace function plan_action(pa_id integer) returns jsonb as

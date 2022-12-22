@@ -111,4 +111,9 @@ select ok ((select count(*)=3 from fiches_action),
             'Il devrait y avoir 3 entrées dans la vue');
 
 select isnt_empty('select plan_action(1)', 'La fonction devrait retourner un jsonb');
+
+update fiches_action
+set objectifs = 'objectif'
+where id=1;
+
 rollback;

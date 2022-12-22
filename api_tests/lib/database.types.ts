@@ -325,25 +325,25 @@ export interface Database {
       }
       client_scores: {
         Row: {
+          modified_at: string
           collectivite_id: number
           referentiel: Database["public"]["Enums"]["referentiel"]
           scores: Json
           payload_timestamp: string | null
-          modified_at: string
         }
         Insert: {
+          modified_at: string
           collectivite_id: number
           referentiel: Database["public"]["Enums"]["referentiel"]
           scores: Json
           payload_timestamp?: string | null
-          modified_at: string
         }
         Update: {
+          modified_at?: string
           collectivite_id?: number
           referentiel?: Database["public"]["Enums"]["referentiel"]
           scores?: Json
           payload_timestamp?: string | null
-          modified_at?: string
         }
       }
       client_scores_update: {
@@ -1658,12 +1658,12 @@ export interface Database {
         Row: {
           nom: string
           collectivite_id: number
-          id: number
+          id?: number | null
         }
         Insert: {
           nom: string
           collectivite_id: number
-          id?: number
+          id?: number | null
         }
         Update: {
           nom?: string
@@ -2000,14 +2000,96 @@ export interface Database {
           notes_complementaires: string | null
           maj_termine: boolean | null
           collectivite_id: number | null
-          partenaires: Json[] | null
-          structures: Json[] | null
-          pilotes: Json[] | null
-          referents: Json[] | null
-          annexes: Json[] | null
-          axes: Json[] | null
-          actions: Json[] | null
-          indicateurs: Json[] | null
+          partenaires: unknown[] | null
+          structures: unknown[] | null
+          pilotes: unknown[] | null
+          referents: unknown[] | null
+          annexes: unknown[] | null
+          axes: unknown[] | null
+          actions: unknown[] | null
+          indicateurs: unknown[] | null
+        }
+        Insert: {
+          id?: number | null
+          titre: string | null
+          description: string | null
+          thematiques:
+              | Database["public"]["Enums"]["fiche_action_thematiques"][]
+              | null
+          sous_thematiques:
+              | Database["public"]["Enums"]["fiche_action_thematiques"][]
+              | null
+          piliers_eci:
+              | Database["public"]["Enums"]["fiche_action_piliers_eci"][]
+              | null
+          objectifs: string | null
+          resultats_attendus:
+              | Database["public"]["Enums"]["fiche_action_resultats_attendus"][]
+              | null
+          cibles: Database["public"]["Enums"]["fiche_action_cibles"][] | null
+          ressources: string | null
+          financements: string | null
+          budget_previsionnel: number | null
+          statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
+          niveau_priorite:
+              | Database["public"]["Enums"]["fiche_action_niveaux_priorite"]
+              | null
+          date_debut: string | null
+          date_fin_provisoire: string | null
+          amelioration_continue: boolean | null
+          calendrier: string | null
+          notes_complementaires: string | null
+          maj_termine: boolean | null
+          collectivite_id: number | null
+          partenaires: unknown[] | null
+          structures: unknown[] | null
+          pilotes: unknown[] | null
+          referents: unknown[] | null
+          annexes: unknown[] | null
+          axes: unknown[] | null
+          actions: unknown[] | null
+          indicateurs: unknown[] | null
+        }
+        Update: {
+          id: number | null
+          titre: string | null
+          description: string | null
+          thematiques:
+              | Database["public"]["Enums"]["fiche_action_thematiques"][]
+              | null
+          sous_thematiques:
+              | Database["public"]["Enums"]["fiche_action_thematiques"][]
+              | null
+          piliers_eci:
+              | Database["public"]["Enums"]["fiche_action_piliers_eci"][]
+              | null
+          objectifs: string | null
+          resultats_attendus:
+              | Database["public"]["Enums"]["fiche_action_resultats_attendus"][]
+              | null
+          cibles: Database["public"]["Enums"]["fiche_action_cibles"][] | null
+          ressources: string | null
+          financements: string | null
+          budget_previsionnel: number | null
+          statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
+          niveau_priorite:
+              | Database["public"]["Enums"]["fiche_action_niveaux_priorite"]
+              | null
+          date_debut: string | null
+          date_fin_provisoire: string | null
+          amelioration_continue: boolean | null
+          calendrier: string | null
+          notes_complementaires: string | null
+          maj_termine: boolean | null
+          collectivite_id: number | null
+          partenaires: unknown[] | null
+          structures: unknown[] | null
+          pilotes: unknown[] | null
+          referents: unknown[] | null
+          annexes: unknown[] | null
+          axes: unknown[] | null
+          actions: unknown[] | null
+          indicateurs: unknown[] | null
         }
       }
       historique: {
