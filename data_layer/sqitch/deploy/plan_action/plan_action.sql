@@ -222,13 +222,11 @@ create function ajouter_partenaire(
 declare
     id_tag integer;
 begin
-    id_tag = partenaire.id;
-    if id_tag is null then
         insert into partenaire_tag (nom, collectivite_id)
         values(partenaire.nom, partenaire.collectivite_id)
+        on conflict (nom, collectivite_id) do update set nom = partenaire.nom
         returning id into id_tag;
         partenaire.id = id_tag;
-    end if;
     insert into fiche_action_partenaire_tag
     values (id_fiche, id_tag);
     return partenaire;
@@ -271,20 +269,18 @@ create policy allow_insert on fiche_action_structure_tag for insert with check(p
 create policy allow_update on fiche_action_structure_tag for update using(peut_modifier_la_fiche(fiche_id));
 create policy allow_delete on fiche_action_structure_tag for delete using(peut_modifier_la_fiche(fiche_id));
 
-create function ajouter_structure(
+create or replace function ajouter_structure(
     id_fiche integer,
     structure structure_tag
 ) returns structure_tag as $$
 declare
     id_tag integer;
 begin
-    id_tag = structure.id;
-    if id_tag is null then
-        insert into structure_tag (nom, collectivite_id)
-        values (structure.nom, structure.collectivite_id)
-        returning id into id_tag;
-        structure.id = id_tag;
-    end if;
+    insert into structure_tag (nom, collectivite_id)
+    values (structure.nom, structure.collectivite_id)
+    on conflict (nom, collectivite_id) do update set nom = structure.nom
+    returning id into id_tag;
+    structure.id = id_tag;
     insert into fiche_action_structure_tag
     values (id_fiche, id_tag);
     return structure;
@@ -366,13 +362,11 @@ declare
     id_tag integer;
 begin
     if pilote.utilisateur_uuid is null then
-        id_tag = pilote.personne_tag_id;
-        if id_tag is null then
             insert into personne_tag (nom, collectivite_id)
             values (pilote.nom,  pilote.collectivite_id)
+            on conflict (nom, collectivite_id) do update set nom = pilote.nom
             returning id into id_tag;
             pilote.personne_tag_id = id_tag;
-        end if;
         insert into fiche_action_pilote (fiche_id, utilisateur_uuid, personne_tag_id)
         values (id_fiche, null, id_tag);
     else
@@ -828,7 +822,7 @@ begin
     -- Structures
     delete from fiche_action_structure_tag where fiche_id = id_fiche;
     if new.structures is not null then
-        foreach structure in array new.structures::structure_tag[]
+        foreach structure in array new.structures
             loop
                 perform ajouter_structure(id_fiche,structure);
             end loop;
@@ -949,7 +943,7 @@ comment on function plan_action is
     ses fiches et ses plans d''actions enfants de manière récursive';
 
 -- Transfert donnees
-/*do $$
+do $$
     declare
         mpa migration.plan_action;
         mfa migration.fiche_action;
@@ -1114,8 +1108,6 @@ comment on function plan_action is
             end loop;
     end
 $$;
-
- */
 
 create materialized view stats.collectivite_plan_action
 as

@@ -139,7 +139,7 @@ Deno.test("Création fiches et plan actions", async () => {
 
     // ANNEXE
     // TODO pas testé
-    const annexe = {collectivite_id: 1} as Database["public"]["Tables"]["annexe"]["Insert"];;
+    const annexe = {collectivite_id: 1} as Database["public"]["Tables"]["annexe"]["Insert"];
     // Creation et ajout annexe à la fiche
     const insertAnnexe = await supabase.rpc("ajouter_annexe",
         { "id_fiche": fId, "annexe" : annexe }).select();
@@ -226,7 +226,7 @@ Deno.test("Création fiches et plan actions", async () => {
         collectivite_id : 1,
         partenaires: partenairesVue,
         structures: [
-            {collectivite_id: 1, nom : "structure test"} as Database["public"]["Tables"]["structure_tag"]["Insert"]
+            {collectivite_id: 1, nom : "structure test test"} as Database["public"]["Tables"]["structure_tag"]["Insert"]
         ],
         pilotes: pilotesVue,
         referents: referentsVue,
