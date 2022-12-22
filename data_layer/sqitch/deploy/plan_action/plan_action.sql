@@ -4,7 +4,7 @@ BEGIN;
 create type migration.fiche_action_avancement as enum ('pas_fait', 'fait', 'en_cours', 'non_renseigne');
 create table migration.fiche_action as select * from public.fiche_action;
 alter table migration.fiche_action drop column avancement;
-alter table migration.fiche_action add column avancement  migration.fiche_action_avancement not null;
+alter table migration.fiche_action add column avancement  migration.fiche_action_avancement;
 update migration.fiche_action m set avancement = (select p.avancement::text::migration.fiche_action_avancement
                                                   from public.fiche_action p
                                                   where p.uid = m.uid);
@@ -103,6 +103,7 @@ create table fiche_action
     titre                   varchar(300),
     description             varchar(20000),
     thematiques             fiche_action_thematiques[],
+    sous_thematiques        fiche_action_thematiques[],
     piliers_eci             fiche_action_piliers_eci[],
     objectifs               varchar(10000),
     resultats_attendus      fiche_action_resultats_attendus[],
@@ -637,7 +638,7 @@ select fa.*,
        pi.pilotes,
        re.referents,
        anne.annexes,
-       pla.plans_action,
+       pla.axes,
        act.actions,
        ind.indicateurs
 from fiche_action fa
@@ -690,9 +691,9 @@ from fiche_action fa
              join fiche_action_annexe faa on faa.annexe_id = a.id
     where faa.fiche_id = fa.id
     ) as anne on true
-    -- plans action
+    -- axes
          left join lateral (
-    select array_agg(to_json(pa.*)) as plans_action
+    select array_agg(to_json(pa.*)) as axes
     from axe pa
              join fiche_action_axe fapa on fapa.axe_id = pa.id
     where fapa.fiche_id = fa.id
@@ -721,6 +722,192 @@ from fiche_action fa
     ) as ind on true
 -- TODO fiches liées (à calculer dans la vue selon action et indicateurs?)
 ;
+
+create or replace function upsert_fiche_action()
+    returns trigger as
+$$
+declare
+    id_fiche integer;
+    axe jsonb;
+    partenaire jsonb;
+    structure jsonb;
+    pilote jsonb;
+    referent jsonb;
+    action jsonb;
+    indicateur jsonb;
+    annexe jsonb;
+begin
+    id_fiche = new.id;
+    -- Fiche action
+    if id_fiche is null then
+        insert into fiche_action (titre,
+                                  description,
+                                  thematiques,
+                                  sous_thematiques,
+                                  piliers_eci,
+                                  objectifs,
+                                  resultats_attendus,
+                                  cibles,
+                                  ressources,
+                                  financements,
+                                  budget_previsionnel,
+                                  statut,
+                                  niveau_priorite,
+                                  date_debut,
+                                  date_fin_provisoire,
+                                  amelioration_continue,
+                                  calendrier,
+                                  notes_complementaires,
+                                  maj_termine,
+                                  collectivite_id)
+        values (new.titre,
+                new.description,
+                new.thematiques,
+                new.sous_thematiques,
+                new.piliers_eci,
+                new.objectifs,
+                new.resultats_attendus,
+                new.cibles,
+                new.ressources,
+                new.financements,
+                new.budget_previsionnel,
+                new.statut,
+                new.niveau_priorite,
+                new.date_debut,
+                new.date_fin_provisoire,
+                new.amelioration_continue,
+                new.calendrier,
+                new.notes_complementaires,
+                new.maj_termine,
+                new.collectivite_id)
+        returning id into id_fiche;
+    else
+        update fiche_action
+        set
+            titre = new.titre,
+            description= new.description,
+            thematiques= new.thematiques,
+            sous_thematiques= new.sous_thematiques,
+            piliers_eci= new.piliers_eci,
+            objectifs= new.objectifs,
+            resultats_attendus= new.resultats_attendus,
+            cibles= new.cibles,
+            ressources= new.ressources,
+            financements= new.financements,
+            budget_previsionnel= new.budget_previsionnel,
+            statut= new.statut,
+            niveau_priorite= new.niveau_priorite,
+            date_debut= new.date_debut,
+            date_fin_provisoire= new.date_fin_provisoire,
+            amelioration_continue= new.amelioration_continue,
+            calendrier= new.calendrier,
+            notes_complementaires= new.notes_complementaires,
+            maj_termine= new.maj_termine,
+            collectivite_id = new.collectivite_id
+        where id = id_fiche;
+    end if;
+
+    -- Axes
+    delete from fiche_action_axe where fiche_id = id_fiche;
+    foreach axe in array new.axes
+        loop
+            perform ajouter_fiche_action_dans_un_axe(id_fiche, (axe ->> 'id')::integer);
+        end loop;
+
+    -- Partenaires
+    delete from fiche_action_partenaire_tag where fiche_id = id_fiche;
+    foreach partenaire in array new.partenaires
+        loop
+            perform ajouter_partenaire(
+                    id_fiche,
+                    (
+                        select a.*::partenaire_tag
+                        from jsonb_populate_record(null::partenaire_tag, partenaire) a
+                    )
+                );
+        end loop;
+
+    -- Structures
+    delete from fiche_action_structure_tag where fiche_id = id_fiche;
+    foreach structure in array new.structures
+        loop
+            perform ajouter_structure(
+                    id_fiche,
+                    (
+                        select a.*::structure_tag
+                        from jsonb_populate_record(null::structure_tag, structure) a
+                    )
+                );
+        end loop;
+
+    -- Pilotes
+    delete from fiche_action_pilote where fiche_id = id_fiche;
+    foreach pilote in array new.pilotes
+        loop
+            perform ajouter_pilote(
+                    id_fiche,
+                    (
+                        select a.*::personne
+                        from jsonb_populate_record(null::personne, pilote) a
+                    )
+                );
+        end loop;
+
+    -- Referents
+    delete from fiche_action_referent where fiche_id = id_fiche;
+    foreach referent in array new.referents
+        loop
+            perform ajouter_referent(
+                    id_fiche,
+                    (
+                        select a.*::personne
+                        from jsonb_populate_record(null::personne, referent) a
+                    )
+                );
+        end loop;
+
+    -- Actions
+    delete from fiche_action_action where fiche_id = id_fiche;
+    foreach action in array new.actions
+        loop
+            perform ajouter_action(id_fiche, (action ->> 'action_id')::action_id);
+        end loop;
+
+    -- Indicateurs
+    delete from fiche_action_indicateur where fiche_id = id_fiche;
+    foreach indicateur in array new.indicateurs
+        loop
+            perform ajouter_indicateur(
+                    id_fiche,
+                    (
+                        select a.*::indicateur_global
+                        from jsonb_populate_record(null::indicateur_global, indicateur) a
+                    )
+                );
+        end loop;
+
+    -- Annexes
+    delete from fiche_action_annexe where fiche_id = id_fiche;
+    foreach annexe in array new.annexes
+        loop
+            perform ajouter_annexe(
+                    id_fiche,
+                    (
+                        select a.*::annexe
+                        from jsonb_populate_record(null::annexe, indicateur) a
+                    )
+                );
+        end loop;
+
+        return new;
+end;
+$$ language plpgsql;
+
+create trigger upsert
+    instead of insert
+    on fiches_action
+    for each row
+execute procedure upsert_fiche_action();
 
 -- Fonction récursive pour afficher un plan d'action
 create or replace function plan_action(pa_id integer) returns jsonb as
@@ -760,7 +947,7 @@ comment on function plan_action is
     ses fiches et ses plans d''actions enfants de manière récursive';
 
 -- Transfert donnees
-do $$
+/*do $$
     declare
         mpa migration.plan_action;
         mfa migration.fiche_action;
@@ -801,7 +988,7 @@ do $$
                 -- Fiche action
                 insert into public.fiche_action
                 (titre, description, budget_previsionnel, statut, collectivite_id, date_debut, date_fin_provisoire)
-                values(mfa.titre, mfa.description, mfa.budget_global, mfa.collectivite_id,
+                values(mfa.titre, mfa.description, mfa.budget_global, st, mfa.collectivite_id,
                        to_date(mfa.date_debut, 'YYYY-MM-DD'), to_date(mfa.date_fin, 'YYYY-MM-DD'))
                 returning id into fiche_id;
 
@@ -812,7 +999,7 @@ do $$
                         if elem <> '' then
                             insert into partenaire_tag (nom, collectivite_id)
                             values(elem, mfa.collectivite_id)
-                            on conflict do update set nom = elem
+                            on conflict (nom, collectivite_id) do update set nom = elem
                             returning id into elem_id;
 
                             insert into fiche_action_partenaire_tag (fiche_id, partenaire_tag_id)
@@ -827,7 +1014,7 @@ do $$
                         if elem <> '' then
                             insert into structure_tag (nom, collectivite_id)
                             values(elem, mfa.collectivite_id)
-                            on conflict do update set nom = elem
+                            on conflict (nom, collectivite_id) do update set nom = elem
                             returning id into elem_id;
 
                             insert into fiche_action_structure_tag (fiche_id, structure_tag_id)
@@ -842,7 +1029,7 @@ do $$
                         if elem <> '' then
                             insert into personne_tag (nom, collectivite_id)
                             values(elem, mfa.collectivite_id)
-                            on conflict do update set nom = elem
+                            on conflict (nom, collectivite_id) do update set nom = elem
                             returning id into elem_id;
 
                             insert into fiche_action_referent (fiche_id, utilisateur_uuid, personne_tag_id)
@@ -857,7 +1044,7 @@ do $$
                         if elem <> '' then
                             insert into personne_tag (nom, collectivite_id)
                             values(elem, mfa.collectivite_id)
-                            on conflict do update set nom = elem
+                            on conflict (nom, collectivite_id) do update set nom = elem
                             returning id into elem_id;
 
                             insert into fiche_action_pilote (fiche_id, utilisateur_uuid, personne_tag_id)
@@ -925,6 +1112,8 @@ do $$
             end loop;
     end
 $$;
+
+ */
 
 create materialized view stats.collectivite_plan_action
 as
