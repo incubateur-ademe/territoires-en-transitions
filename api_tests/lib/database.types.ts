@@ -3,119 +3,224 @@ export type Json =
   | number
   | boolean
   | null
-  | {[key: string]: Json}
+  | { [key: string]: Json }
   | Json[];
 
 export interface Database {
   public: {
     Enums: {
-      action_categorie: 'bases' | 'mise en œuvre' | 'effets';
-      action_discussion_statut: 'ouvert' | 'ferme';
+      action_categorie: "bases" | "mise en œuvre" | "effets";
+      action_discussion_statut: "ouvert" | "ferme";
       action_type:
-        | 'referentiel'
-        | 'axe'
-        | 'sous-axe'
-        | 'action'
-        | 'sous-action'
-        | 'tache';
-      audit_statut: 'non_audite' | 'en_cours' | 'audite';
+        | "referentiel"
+        | "axe"
+        | "sous-axe"
+        | "action"
+        | "sous-action"
+        | "tache";
+      audit_statut: "non_audite" | "en_cours" | "audite";
       avancement:
-        | 'fait'
-        | 'pas_fait'
-        | 'programme'
-        | 'non_renseigne'
-        | 'detaille';
-      collectivite_filtre_type: 'population' | 'score' | 'remplissage';
+        | "fait"
+        | "pas_fait"
+        | "programme"
+        | "non_renseigne"
+        | "detaille";
+      collectivite_filtre_type: "population" | "score" | "remplissage";
       fiche_action_avancement:
-        | 'pas_fait'
-        | 'fait'
-        | 'en_cours'
-        | 'non_renseigne';
+        | "pas_fait"
+        | "fait"
+        | "en_cours"
+        | "non_renseigne";
       filterable_type_collectivite:
-        | 'commune'
-        | 'syndicat'
-        | 'CU'
-        | 'CC'
-        | 'POLEM'
-        | 'METRO'
-        | 'CA'
-        | 'EPT'
-        | 'PETR';
-      indicateur_group: 'cae' | 'crte' | 'eci';
+        | "commune"
+        | "syndicat"
+        | "CU"
+        | "CC"
+        | "POLEM"
+        | "METRO"
+        | "CA"
+        | "EPT"
+        | "PETR";
+      indicateur_group: "cae" | "crte" | "eci";
       membre_fonction:
-        | 'referent'
-        | 'conseiller'
-        | 'technique'
-        | 'politique'
-        | 'partenaire';
+        | "referent"
+        | "conseiller"
+        | "technique"
+        | "politique"
+        | "partenaire";
       nature:
-        | 'SMF'
-        | 'CU'
-        | 'CC'
-        | 'SIVOM'
-        | 'POLEM'
-        | 'METRO'
-        | 'SMO'
-        | 'CA'
-        | 'EPT'
-        | 'SIVU'
-        | 'PETR';
-      niveau_acces: 'admin' | 'edition' | 'lecture';
+        | "SMF"
+        | "CU"
+        | "CC"
+        | "SIVOM"
+        | "POLEM"
+        | "METRO"
+        | "SMO"
+        | "CA"
+        | "EPT"
+        | "SIVU"
+        | "PETR";
+      niveau_acces: "admin" | "edition" | "lecture";
       preuve_type:
-        | 'complementaire'
-        | 'reglementaire'
-        | 'labellisation'
-        | 'rapport';
-      question_type: 'choix' | 'binaire' | 'proportion';
-      referentiel: 'eci' | 'cae';
-      regle_type: 'score' | 'desactivation' | 'reduction';
-      role_name: 'agent' | 'referent' | 'conseiller' | 'auditeur' | 'aucun';
-      thematique_completude: 'complete' | 'a_completer';
-      type_collectivite: 'EPCI' | 'commune' | 'syndicat';
+        | "complementaire"
+        | "reglementaire"
+        | "labellisation"
+        | "rapport";
+      question_type: "choix" | "binaire" | "proportion";
+      referentiel: "eci" | "cae";
+      regle_type: "score" | "desactivation" | "reduction";
+      role_name: "agent" | "referent" | "conseiller" | "auditeur" | "aucun";
+      thematique_completude: "complete" | "a_completer";
+      type_collectivite: "EPCI" | "commune" | "syndicat";
+      usage_action: "clic" | "vue" | "telechargement" | "saisie";
+      usage_emplacement: "header";
+      usage_fonction: "aide" | "preuve" | "tableau_de_bord";
     };
     Functions: {
       action_contexte: {
-        Args: {id: unknown};
+        Args: { id: unknown };
         Returns: Record<string, unknown>[];
       };
       action_down_to_tache: {
         Args: {
           identifiant: string;
-          referentiel: Database['public']['Enums']['referentiel'];
+          referentiel: Database["public"]["Enums"]["referentiel"];
         };
         Returns: unknown;
       };
       action_exemples: {
-        Args: {id: unknown};
+        Args: { id: unknown };
         Returns: Record<string, unknown>[];
       };
       action_perimetre_evaluation: {
-        Args: {id: unknown};
+        Args: { id: unknown };
         Returns: Record<string, unknown>[];
       };
       action_preuve: {
-        Args: {id: unknown};
+        Args: { id: unknown };
         Returns: Record<string, unknown>[];
       };
       action_reduction_potentiel: {
-        Args: {id: unknown};
+        Args: { id: unknown };
         Returns: Record<string, unknown>[];
       };
       action_ressources: {
-        Args: {id: unknown};
+        Args: { id: unknown };
         Returns: Record<string, unknown>[];
       };
       add_bibliotheque_fichier: {
-        Args: {collectivite_id: number; filename: string; hash: string};
+        Args: { collectivite_id: number; filename: string; hash: string };
         Returns: unknown;
+      };
+      add_compression_policy: {
+        Args: {
+          compress_after: unknown;
+          hypertable: unknown;
+          if_not_exists: boolean;
+        };
+        Returns: number;
+      };
+      add_continuous_aggregate_policy: {
+        Args: {
+          continuous_aggregate: unknown;
+          end_offset: unknown;
+          if_not_exists: boolean;
+          schedule_interval: unknown;
+          start_offset: unknown;
+        };
+        Returns: number;
+      };
+      add_data_node: {
+        Args: {
+          bootstrap: boolean;
+          database: unknown;
+          host: string;
+          if_not_exists: boolean;
+          node_name: unknown;
+          password: string;
+          port: number;
+        };
+        Returns: Record<string, unknown>[];
+      };
+      add_dimension: {
+        Args: {
+          chunk_time_interval: unknown;
+          column_name: unknown;
+          hypertable: unknown;
+          if_not_exists: boolean;
+          number_partitions: number;
+          partitioning_func: unknown;
+        };
+        Returns: Record<string, unknown>[];
+      };
+      add_job: {
+        Args: {
+          config: Json;
+          initial_start: string;
+          proc: unknown;
+          schedule_interval: unknown;
+          scheduled: boolean;
+        };
+        Returns: number;
+      };
+      add_reorder_policy: {
+        Args: {
+          hypertable: unknown;
+          if_not_exists: boolean;
+          index_name: unknown;
+        };
+        Returns: number;
+      };
+      add_retention_policy: {
+        Args: {
+          drop_after: unknown;
+          if_not_exists: boolean;
+          relation: unknown;
+        };
+        Returns: number;
       };
       add_user: {
         Args: {
           collectivite_id: number;
           email: string;
-          niveau: Database['public']['Enums']['niveau_acces'];
+          niveau: Database["public"]["Enums"]["niveau_acces"];
         };
         Returns: Json;
+      };
+      alter_job: {
+        Args: {
+          config: Json;
+          if_exists: boolean;
+          job_id: number;
+          max_retries: number;
+          max_runtime: unknown;
+          next_start: string;
+          retry_period: unknown;
+          schedule_interval: unknown;
+          scheduled: boolean;
+        };
+        Returns: Record<string, unknown>[];
+      };
+      approximate_row_count: {
+        Args: { relation: unknown };
+        Returns: number;
+      };
+      attach_data_node: {
+        Args: {
+          hypertable: unknown;
+          if_not_attached: boolean;
+          node_name: unknown;
+          repartition: boolean;
+        };
+        Returns: Record<string, unknown>[];
+      };
+      attach_tablespace: {
+        Args: {
+          hypertable: unknown;
+          if_not_attached: boolean;
+          tablespace: unknown;
+        };
+        Returns: undefined;
       };
       business_insert_actions: {
         Args: {
@@ -126,267 +231,435 @@ export interface Database {
         Returns: undefined;
       };
       business_update_actions: {
-        Args: {computed_points: unknown; definitions: unknown};
+        Args: { computed_points: unknown; definitions: unknown };
         Returns: undefined;
       };
       business_upsert_indicateurs: {
-        Args: {indicateur_actions: unknown; indicateur_definitions: unknown};
+        Args: { indicateur_actions: unknown; indicateur_definitions: unknown };
         Returns: undefined;
       };
+      chunk_compression_stats: {
+        Args: { hypertable: unknown };
+        Returns: Record<string, unknown>[];
+      };
+      chunks_detailed_size: {
+        Args: { hypertable: unknown };
+        Returns: Record<string, unknown>[];
+      };
       claim_collectivite: {
-        Args: {id: number};
+        Args: { id: number };
         Returns: Json;
       };
       collectivite_membres: {
-        Args: {id: number};
+        Args: { id: number };
         Returns: Record<string, unknown>[];
       };
+      compress_chunk: {
+        Args: { if_not_compressed: boolean; uncompressed_chunk: unknown };
+        Returns: unknown;
+      };
       consume_invitation: {
-        Args: {id: string};
+        Args: { id: string };
         Returns: undefined;
       };
+      create_distributed_hypertable: {
+        Args: {
+          associated_schema_name: unknown;
+          associated_table_prefix: unknown;
+          chunk_sizing_func: unknown;
+          chunk_target_size: string;
+          chunk_time_interval: unknown;
+          create_default_indexes: boolean;
+          data_nodes: unknown;
+          if_not_exists: boolean;
+          migrate_data: boolean;
+          number_partitions: number;
+          partitioning_column: unknown;
+          partitioning_func: unknown;
+          relation: unknown;
+          replication_factor: number;
+          time_column_name: unknown;
+          time_partitioning_func: unknown;
+        };
+        Returns: Record<string, unknown>[];
+      };
+      create_distributed_restore_point: {
+        Args: { name: string };
+        Returns: Record<string, unknown>[];
+      };
+      create_hypertable: {
+        Args: {
+          associated_schema_name: unknown;
+          associated_table_prefix: unknown;
+          chunk_sizing_func: unknown;
+          chunk_target_size: string;
+          chunk_time_interval: unknown;
+          create_default_indexes: boolean;
+          data_nodes: unknown;
+          if_not_exists: boolean;
+          migrate_data: boolean;
+          number_partitions: number;
+          partitioning_column: unknown;
+          partitioning_func: unknown;
+          relation: unknown;
+          replication_factor: number;
+          time_column_name: unknown;
+          time_partitioning_func: unknown;
+        };
+        Returns: Record<string, unknown>[];
+      };
+      decompress_chunk: {
+        Args: { if_compressed: boolean; uncompressed_chunk: unknown };
+        Returns: unknown;
+      };
+      delete_data_node: {
+        Args: {
+          drop_database: boolean;
+          force: boolean;
+          if_exists: boolean;
+          node_name: unknown;
+          repartition: boolean;
+        };
+        Returns: boolean;
+      };
+      delete_job: {
+        Args: { job_id: number };
+        Returns: undefined;
+      };
+      detach_data_node: {
+        Args: {
+          force: boolean;
+          hypertable: unknown;
+          if_attached: boolean;
+          node_name: unknown;
+          repartition: boolean;
+        };
+        Returns: number;
+      };
+      detach_tablespace: {
+        Args: {
+          hypertable: unknown;
+          if_attached: boolean;
+          tablespace: unknown;
+        };
+        Returns: number;
+      };
+      detach_tablespaces: {
+        Args: { hypertable: unknown };
+        Returns: number;
+      };
+      drop_chunks: {
+        Args: {
+          newer_than: unknown;
+          older_than: unknown;
+          relation: unknown;
+          verbose: boolean;
+        };
+        Returns: string;
+      };
       est_auditeur: {
-        Args: {col: number};
+        Args: { col: number };
         Returns: boolean;
       };
       gbt_bit_compress: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_bpchar_compress: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_bytea_compress: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_cash_compress: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_cash_fetch: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_date_compress: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_date_fetch: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_decompress: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_enum_compress: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_enum_fetch: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_float4_compress: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_float4_fetch: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_float8_compress: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_float8_fetch: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_inet_compress: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_int2_compress: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_int2_fetch: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_int4_compress: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_int4_fetch: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_int8_compress: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_int8_fetch: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_intv_compress: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_intv_decompress: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_intv_fetch: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_macad8_compress: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_macad8_fetch: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_macad_compress: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_macad_fetch: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_numeric_compress: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_oid_compress: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_oid_fetch: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_text_compress: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_time_compress: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_time_fetch: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_timetz_compress: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_ts_compress: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_ts_fetch: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_tstz_compress: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_uuid_compress: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_uuid_fetch: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_var_decompress: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbt_var_fetch: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbtreekey16_in: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbtreekey16_out: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbtreekey32_in: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbtreekey32_out: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbtreekey4_in: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbtreekey4_out: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbtreekey8_in: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbtreekey8_out: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbtreekey_var_in: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       gbtreekey_var_out: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
+      get_telemetry_report: {
+        Args: Record<PropertyKey, never>;
+        Returns: Json;
+      };
       have_admin_acces: {
-        Args: {id: number};
+        Args: { id: number };
         Returns: boolean;
       };
       have_discussion_edition_acces: {
-        Args: {id: number};
+        Args: { id: number };
         Returns: boolean;
       };
       have_discussion_lecture_acces: {
-        Args: {id: number};
+        Args: { id: number };
         Returns: boolean;
       };
       have_edition_acces: {
-        Args: {id: number};
+        Args: { id: number };
         Returns: boolean;
       };
       have_lecture_acces: {
-        Args: {id: number};
+        Args: { id: number };
         Returns: boolean;
       };
       have_one_of_niveaux_acces: {
-        Args: {id: number; niveaux: unknown};
+        Args: { id: number; niveaux: unknown };
         Returns: boolean;
       };
+      hypertable_compression_stats: {
+        Args: { hypertable: unknown };
+        Returns: Record<string, unknown>[];
+      };
+      hypertable_detailed_size: {
+        Args: { hypertable: unknown };
+        Returns: Record<string, unknown>[];
+      };
+      hypertable_index_size: {
+        Args: { index_name: unknown };
+        Returns: number;
+      };
+      hypertable_size: {
+        Args: { hypertable: unknown };
+        Returns: number;
+      };
+      interpolate:
+        | {
+          Args: {
+            next: Record<string, unknown>[];
+            prev: Record<string, unknown>[];
+            value: number;
+          };
+          Returns: number;
+        }
+        | {
+          Args: {
+            next: Record<string, unknown>[];
+            prev: Record<string, unknown>[];
+            value: number;
+          };
+          Returns: number;
+        }
+        | {
+          Args: {
+            next: Record<string, unknown>[];
+            prev: Record<string, unknown>[];
+            value: number;
+          };
+          Returns: number;
+        }
+        | {
+          Args: {
+            next: Record<string, unknown>[];
+            prev: Record<string, unknown>[];
+            value: number;
+          };
+          Returns: number;
+        }
+        | {
+          Args: {
+            next: Record<string, unknown>[];
+            prev: Record<string, unknown>[];
+            value: number;
+          };
+          Returns: number;
+        };
       is_agent_of: {
-        Args: {id: number};
+        Args: { id: number };
         Returns: boolean;
       };
       is_any_role_on: {
-        Args: {id: number};
+        Args: { id: number };
         Returns: boolean;
       };
       is_authenticated: {
@@ -394,11 +667,11 @@ export interface Database {
         Returns: boolean;
       };
       is_bucket_writer: {
-        Args: {id: string};
+        Args: { id: string };
         Returns: boolean;
       };
       is_referent_of: {
-        Args: {id: number};
+        Args: { id: number };
         Returns: boolean;
       };
       is_service_role: {
@@ -406,64 +679,138 @@ export interface Database {
         Returns: boolean;
       };
       json_matches_schema: {
-        Args: {instance: Json; schema: Json};
+        Args: { instance: Json; schema: Json };
         Returns: boolean;
       };
       jsonb_matches_schema: {
-        Args: {instance: Json; schema: Json};
+        Args: { instance: Json; schema: Json };
         Returns: boolean;
       };
       labellisation_demande: {
         Args: {
           collectivite_id: number;
-          etoiles: '1' | '2' | '3' | '4' | '5';
-          referentiel: Database['public']['Enums']['referentiel'];
+          etoiles: "1" | "2" | "3" | "4" | "5";
+          referentiel: Database["public"]["Enums"]["referentiel"];
         };
         Returns: unknown;
       };
       labellisation_parcours: {
-        Args: {collectivite_id: number};
+        Args: { collectivite_id: number };
         Returns: Record<string, unknown>[];
       };
       labellisation_submit_demande: {
         Args: {
           collectivite_id: number;
-          etoiles: '1' | '2' | '3' | '4' | '5';
-          referentiel: Database['public']['Enums']['referentiel'];
+          etoiles: "1" | "2" | "3" | "4" | "5";
+          referentiel: Database["public"]["Enums"]["referentiel"];
         };
         Returns: unknown;
       };
+      locf: {
+        Args: { prev: unknown; treat_null_as_missing: boolean; value: unknown };
+        Returns: unknown;
+      };
+      move_chunk: {
+        Args: {
+          chunk: unknown;
+          destination_tablespace: unknown;
+          index_destination_tablespace: unknown;
+          reorder_index: unknown;
+          verbose: boolean;
+        };
+        Returns: undefined;
+      };
       naturalsort: {
-        Args: {'': string};
+        Args: { "": string };
         Returns: string;
       };
       quit_collectivite: {
-        Args: {id: number};
+        Args: { id: number };
         Returns: Json;
       };
       referent_contact: {
-        Args: {id: number};
+        Args: { id: number };
         Returns: Json;
       };
       referent_contacts: {
-        Args: {id: number};
+        Args: { id: number };
         Returns: Record<string, unknown>[];
       };
       referentiel_down_to_action: {
-        Args: {referentiel: Database['public']['Enums']['referentiel']};
+        Args: { referentiel: Database["public"]["Enums"]["referentiel"] };
         Returns: unknown;
       };
+      remove_compression_policy: {
+        Args: { hypertable: unknown; if_exists: boolean };
+        Returns: boolean;
+      };
+      remove_continuous_aggregate_policy: {
+        Args: { continuous_aggregate: unknown; if_not_exists: boolean };
+        Returns: undefined;
+      };
       remove_membre_from_collectivite: {
-        Args: {collectivite_id: number; email: string};
+        Args: { collectivite_id: number; email: string };
         Returns: Json;
+      };
+      remove_reorder_policy: {
+        Args: { hypertable: unknown; if_exists: boolean };
+        Returns: undefined;
+      };
+      remove_retention_policy: {
+        Args: { if_exists: boolean; relation: unknown };
+        Returns: undefined;
+      };
+      reorder_chunk: {
+        Args: { chunk: unknown; index: unknown; verbose: boolean };
+        Returns: undefined;
       };
       retool_user_list: {
         Args: Record<PropertyKey, never>;
         Returns: Record<string, unknown>[];
       };
       save_reponse: {
-        Args: {'': Json};
+        Args: { "": Json };
         Returns: undefined;
+      };
+      set_adaptive_chunking: {
+        Args: { chunk_target_size: string; hypertable: unknown };
+        Returns: Record<string, unknown>[];
+      };
+      set_chunk_time_interval: {
+        Args: {
+          chunk_time_interval: unknown;
+          dimension_name: unknown;
+          hypertable: unknown;
+        };
+        Returns: undefined;
+      };
+      set_integer_now_func: {
+        Args: {
+          hypertable: unknown;
+          integer_now_func: unknown;
+          replace_if_exists: boolean;
+        };
+        Returns: undefined;
+      };
+      set_number_partitions: {
+        Args: {
+          dimension_name: unknown;
+          hypertable: unknown;
+          number_partitions: number;
+        };
+        Returns: undefined;
+      };
+      set_replication_factor: {
+        Args: { hypertable: unknown; replication_factor: number };
+        Returns: undefined;
+      };
+      show_chunks: {
+        Args: { newer_than: unknown; older_than: unknown; relation: unknown };
+        Returns: unknown;
+      };
+      show_tablespaces: {
+        Args: { hypertable: unknown };
+        Returns: unknown;
       };
       teapot: {
         Args: Record<PropertyKey, never>;
@@ -472,14 +819,14 @@ export interface Database {
       test_add_random_user: {
         Args: {
           collectivite_id: number;
-          niveau: Database['public']['Enums']['niveau_acces'];
+          niveau: Database["public"]["Enums"]["niveau_acces"];
         };
         Returns: Record<string, unknown>[];
       };
       test_attach_user: {
         Args: {
           collectivite_id: number;
-          niveau: Database['public']['Enums']['niveau_acces'];
+          niveau: Database["public"]["Enums"]["niveau_acces"];
           user_id: string;
         };
         Returns: undefined;
@@ -489,7 +836,7 @@ export interface Database {
         Returns: undefined;
       };
       test_create_user: {
-        Args: {email: string; nom: string; prenom: string; user_id: string};
+        Args: { email: string; nom: string; prenom: string; user_id: string };
         Returns: undefined;
       };
       test_disable_fake_score_generation: {
@@ -501,19 +848,19 @@ export interface Database {
         Returns: undefined;
       };
       test_fulfill: {
-        Args: {collectivite_id: number; etoile: '1' | '2' | '3' | '4' | '5'};
+        Args: { collectivite_id: number; etoile: "1" | "2" | "3" | "4" | "5" };
         Returns: undefined;
       };
       test_generate_fake_scores: {
         Args: {
           collectivite_id: number;
-          referentiel: Database['public']['Enums']['referentiel'];
+          referentiel: Database["public"]["Enums"]["referentiel"];
           statuts: unknown;
         };
         Returns: Json;
       };
       test_remove_user: {
-        Args: {email: string};
+        Args: { email: string };
         Returns: undefined;
       };
       test_reset: {
@@ -553,15 +900,143 @@ export interface Database {
         Returns: undefined;
       };
       test_write_scores: {
-        Args: {collectivite_id: number; scores: unknown};
+        Args: { collectivite_id: number; scores: unknown };
         Returns: undefined;
       };
+      time_bucket:
+        | {
+          Args: { bucket_width: unknown; ts: string };
+          Returns: string;
+        }
+        | {
+          Args: { bucket_width: unknown; ts: string };
+          Returns: string;
+        }
+        | {
+          Args: { bucket_width: unknown; ts: string };
+          Returns: string;
+        }
+        | {
+          Args: { bucket_width: unknown; origin: string; ts: string };
+          Returns: string;
+        }
+        | {
+          Args: { bucket_width: unknown; origin: string; ts: string };
+          Returns: string;
+        }
+        | {
+          Args: { bucket_width: unknown; origin: string; ts: string };
+          Returns: string;
+        }
+        | {
+          Args: { bucket_width: number; ts: number };
+          Returns: number;
+        }
+        | {
+          Args: { bucket_width: number; ts: number };
+          Returns: number;
+        }
+        | {
+          Args: { bucket_width: number; ts: number };
+          Returns: number;
+        }
+        | {
+          Args: { bucket_width: number; offset: number; ts: number };
+          Returns: number;
+        }
+        | {
+          Args: { bucket_width: number; offset: number; ts: number };
+          Returns: number;
+        }
+        | {
+          Args: { bucket_width: number; offset: number; ts: number };
+          Returns: number;
+        }
+        | {
+          Args: { bucket_width: unknown; offset: unknown; ts: string };
+          Returns: string;
+        }
+        | {
+          Args: { bucket_width: unknown; offset: unknown; ts: string };
+          Returns: string;
+        }
+        | {
+          Args: { bucket_width: unknown; offset: unknown; ts: string };
+          Returns: string;
+        };
+      time_bucket_gapfill:
+        | {
+          Args: {
+            bucket_width: unknown;
+            finish: string;
+            start: string;
+            ts: string;
+          };
+          Returns: string;
+        }
+        | {
+          Args: {
+            bucket_width: unknown;
+            finish: string;
+            start: string;
+            ts: string;
+          };
+          Returns: string;
+        }
+        | {
+          Args: {
+            bucket_width: number;
+            finish: number;
+            start: number;
+            ts: number;
+          };
+          Returns: number;
+        }
+        | {
+          Args: {
+            bucket_width: number;
+            finish: number;
+            start: number;
+            ts: number;
+          };
+          Returns: number;
+        }
+        | {
+          Args: {
+            bucket_width: number;
+            finish: number;
+            start: number;
+            ts: number;
+          };
+          Returns: number;
+        }
+        | {
+          Args: {
+            bucket_width: unknown;
+            finish: string;
+            start: string;
+            ts: string;
+          };
+          Returns: string;
+        };
+      timescaledb_fdw_handler: {
+        Args: Record<PropertyKey, never>;
+        Returns: unknown;
+      };
+      timescaledb_post_restore: {
+        Args: Record<PropertyKey, never>;
+        Returns: boolean;
+      };
+      timescaledb_pre_restore: {
+        Args: Record<PropertyKey, never>;
+        Returns: boolean;
+      };
       unaccent: {
-        Args: {'': string};
+        Args: { "": string };
         Returns: string;
       };
       unaccent_init: {
-        Args: {'': unknown};
+        Args: { "": unknown };
         Returns: unknown;
       };
       update_collectivite_membre_champ_intervention: {
@@ -583,7 +1058,7 @@ export interface Database {
       update_collectivite_membre_fonction: {
         Args: {
           collectivite_id: number;
-          fonction: Database['public']['Enums']['membre_fonction'];
+          fonction: Database["public"]["Enums"]["membre_fonction"];
           membre_id: string;
         };
         Returns: Json;
@@ -592,7 +1067,7 @@ export interface Database {
         Args: {
           collectivite_id: number;
           membre_id: string;
-          niveau_acces: Database['public']['Enums']['niveau_acces'];
+          niveau_acces: Database["public"]["Enums"]["niveau_acces"];
         };
         Returns: Json;
       };
@@ -678,7 +1153,7 @@ export interface Database {
       action_definition: {
         Insert: {
           action_id: string;
-          categorie?: Database['public']['Enums']['action_categorie'] | null;
+          categorie?: Database["public"]["Enums"]["action_categorie"] | null;
           contexte: string;
           description: string;
           exemples: string;
@@ -690,12 +1165,12 @@ export interface Database {
           pourcentage?: number | null;
           preuve?: string | null;
           reduction_potentiel: string;
-          referentiel: Database['public']['Enums']['referentiel'];
+          referentiel: Database["public"]["Enums"]["referentiel"];
           ressources: string;
         };
         Row: {
           action_id: string;
-          categorie: Database['public']['Enums']['action_categorie'] | null;
+          categorie: Database["public"]["Enums"]["action_categorie"] | null;
           contexte: string;
           description: string;
           exemples: string;
@@ -707,12 +1182,12 @@ export interface Database {
           pourcentage: number | null;
           preuve: string | null;
           reduction_potentiel: string;
-          referentiel: Database['public']['Enums']['referentiel'];
+          referentiel: Database["public"]["Enums"]["referentiel"];
           ressources: string;
         };
         Update: {
           action_id?: string;
-          categorie?: Database['public']['Enums']['action_categorie'] | null;
+          categorie?: Database["public"]["Enums"]["action_categorie"] | null;
           contexte?: string;
           description?: string;
           exemples?: string;
@@ -724,7 +1199,7 @@ export interface Database {
           pourcentage?: number | null;
           preuve?: string | null;
           reduction_potentiel?: string;
-          referentiel?: Database['public']['Enums']['referentiel'];
+          referentiel?: Database["public"]["Enums"]["referentiel"];
           ressources?: string;
         };
       };
@@ -736,7 +1211,7 @@ export interface Database {
           created_by?: string;
           id?: number;
           modified_at?: string;
-          status?: Database['public']['Enums']['action_discussion_statut'];
+          status?: Database["public"]["Enums"]["action_discussion_statut"];
         };
         Row: {
           action_id: string;
@@ -745,7 +1220,7 @@ export interface Database {
           created_by: string;
           id: number;
           modified_at: string;
-          status: Database['public']['Enums']['action_discussion_statut'];
+          status: Database["public"]["Enums"]["action_discussion_statut"];
         };
         Update: {
           action_id?: string;
@@ -754,7 +1229,7 @@ export interface Database {
           created_by?: string;
           id?: number;
           modified_at?: string;
-          status?: Database['public']['Enums']['action_discussion_statut'];
+          status?: Database["public"]["Enums"]["action_discussion_statut"];
         };
       };
       action_discussion_commentaire: {
@@ -784,23 +1259,23 @@ export interface Database {
         Insert: {
           id: string;
           parent?: string | null;
-          referentiel: Database['public']['Enums']['referentiel'];
+          referentiel: Database["public"]["Enums"]["referentiel"];
         };
         Row: {
           id: string;
           parent: string | null;
-          referentiel: Database['public']['Enums']['referentiel'];
+          referentiel: Database["public"]["Enums"]["referentiel"];
         };
         Update: {
           id?: string;
           parent?: string | null;
-          referentiel?: Database['public']['Enums']['referentiel'];
+          referentiel?: Database["public"]["Enums"]["referentiel"];
         };
       };
       action_statut: {
         Insert: {
           action_id: string;
-          avancement: Database['public']['Enums']['avancement'];
+          avancement: Database["public"]["Enums"]["avancement"];
           avancement_detaille?: number[] | null;
           collectivite_id: number;
           concerne: boolean;
@@ -809,7 +1284,7 @@ export interface Database {
         };
         Row: {
           action_id: string;
-          avancement: Database['public']['Enums']['avancement'];
+          avancement: Database["public"]["Enums"]["avancement"];
           avancement_detaille: number[] | null;
           collectivite_id: number;
           concerne: boolean;
@@ -818,7 +1293,7 @@ export interface Database {
         };
         Update: {
           action_id?: string;
-          avancement?: Database['public']['Enums']['avancement'];
+          avancement?: Database["public"]["Enums"]["avancement"];
           avancement_detaille?: number[] | null;
           collectivite_id?: number;
           concerne?: boolean;
@@ -833,7 +1308,7 @@ export interface Database {
           date_fin?: string | null;
           demande_id?: number | null;
           id?: number;
-          referentiel: Database['public']['Enums']['referentiel'];
+          referentiel: Database["public"]["Enums"]["referentiel"];
         };
         Row: {
           collectivite_id: number;
@@ -841,7 +1316,7 @@ export interface Database {
           date_fin: string | null;
           demande_id: number | null;
           id: number;
-          referentiel: Database['public']['Enums']['referentiel'];
+          referentiel: Database["public"]["Enums"]["referentiel"];
         };
         Update: {
           collectivite_id?: number;
@@ -849,7 +1324,7 @@ export interface Database {
           date_fin?: string | null;
           demande_id?: number | null;
           id?: number;
-          referentiel?: Database['public']['Enums']['referentiel'];
+          referentiel?: Database["public"]["Enums"]["referentiel"];
         };
       };
       audit_auditeur: {
@@ -871,21 +1346,21 @@ export interface Database {
           collectivite_id: number;
           modified_at: string;
           payload_timestamp?: string | null;
-          referentiel: Database['public']['Enums']['referentiel'];
+          referentiel: Database["public"]["Enums"]["referentiel"];
           scores: Json;
         };
         Row: {
           collectivite_id: number;
           modified_at: string;
           payload_timestamp: string | null;
-          referentiel: Database['public']['Enums']['referentiel'];
+          referentiel: Database["public"]["Enums"]["referentiel"];
           scores: Json;
         };
         Update: {
           collectivite_id?: number;
           modified_at?: string;
           payload_timestamp?: string | null;
-          referentiel?: Database['public']['Enums']['referentiel'];
+          referentiel?: Database["public"]["Enums"]["referentiel"];
           scores?: Json;
         };
       };
@@ -893,17 +1368,17 @@ export interface Database {
         Insert: {
           collectivite_id: number;
           modified_at: string;
-          referentiel: Database['public']['Enums']['referentiel'];
+          referentiel: Database["public"]["Enums"]["referentiel"];
         };
         Row: {
           collectivite_id: number;
           modified_at: string;
-          referentiel: Database['public']['Enums']['referentiel'];
+          referentiel: Database["public"]["Enums"]["referentiel"];
         };
         Update: {
           collectivite_id?: number;
           modified_at?: string;
-          referentiel?: Database['public']['Enums']['referentiel'];
+          referentiel?: Database["public"]["Enums"]["referentiel"];
         };
       };
       collectivite: {
@@ -1013,21 +1488,21 @@ export interface Database {
         Insert: {
           collectivite_id?: number | null;
           id?: number;
-          nature: Database['public']['Enums']['nature'];
+          nature: Database["public"]["Enums"]["nature"];
           nom: string;
           siren: string;
         };
         Row: {
           collectivite_id: number | null;
           id: number;
-          nature: Database['public']['Enums']['nature'];
+          nature: Database["public"]["Enums"]["nature"];
           nom: string;
           siren: string;
         };
         Update: {
           collectivite_id?: number | null;
           id?: number;
-          nature?: Database['public']['Enums']['nature'];
+          nature?: Database["public"]["Enums"]["nature"];
           nom?: string;
           siren?: string;
         };
@@ -1035,7 +1510,7 @@ export interface Database {
       fiche_action: {
         Insert: {
           action_ids: unknown[];
-          avancement: Database['public']['Enums']['fiche_action_avancement'];
+          avancement: Database["public"]["Enums"]["fiche_action_avancement"];
           budget_global: number;
           collectivite_id?: number | null;
           commentaire: string;
@@ -1056,7 +1531,7 @@ export interface Database {
         };
         Row: {
           action_ids: unknown[];
-          avancement: Database['public']['Enums']['fiche_action_avancement'];
+          avancement: Database["public"]["Enums"]["fiche_action_avancement"];
           budget_global: number;
           collectivite_id: number | null;
           commentaire: string;
@@ -1077,7 +1552,7 @@ export interface Database {
         };
         Update: {
           action_ids?: unknown[];
-          avancement?: Database['public']['Enums']['fiche_action_avancement'];
+          avancement?: Database["public"]["Enums"]["fiche_action_avancement"];
           budget_global?: number;
           collectivite_id?: number | null;
           commentaire?: string;
@@ -1144,19 +1619,19 @@ export interface Database {
           id: string;
           intervalle: unknown;
           libelle: string;
-          type: Database['public']['Enums']['collectivite_filtre_type'];
+          type: Database["public"]["Enums"]["collectivite_filtre_type"];
         };
         Row: {
           id: string;
           intervalle: unknown;
           libelle: string;
-          type: Database['public']['Enums']['collectivite_filtre_type'];
+          type: Database["public"]["Enums"]["collectivite_filtre_type"];
         };
         Update: {
           id?: string;
           intervalle?: unknown;
           libelle?: string;
-          type?: Database['public']['Enums']['collectivite_filtre_type'];
+          type?: Database["public"]["Enums"]["collectivite_filtre_type"];
         };
       };
       indicateur_action: {
@@ -1204,7 +1679,7 @@ export interface Database {
           description: string;
           id: string;
           identifiant: string;
-          indicateur_group: Database['public']['Enums']['indicateur_group'];
+          indicateur_group: Database["public"]["Enums"]["indicateur_group"];
           modified_at?: string;
           nom: string;
           obligation_eci: boolean;
@@ -1216,7 +1691,7 @@ export interface Database {
           description: string;
           id: string;
           identifiant: string;
-          indicateur_group: Database['public']['Enums']['indicateur_group'];
+          indicateur_group: Database["public"]["Enums"]["indicateur_group"];
           modified_at: string;
           nom: string;
           obligation_eci: boolean;
@@ -1228,7 +1703,7 @@ export interface Database {
           description?: string;
           id?: string;
           identifiant?: string;
-          indicateur_group?: Database['public']['Enums']['indicateur_group'];
+          indicateur_group?: Database["public"]["Enums"]["indicateur_group"];
           modified_at?: string;
           nom?: string;
           obligation_eci?: boolean;
@@ -1413,7 +1888,7 @@ export interface Database {
           etoiles: number;
           id?: number;
           obtenue_le: string;
-          referentiel: Database['public']['Enums']['referentiel'];
+          referentiel: Database["public"]["Enums"]["referentiel"];
           score_programme?: number | null;
           score_realise?: number | null;
         };
@@ -1423,7 +1898,7 @@ export interface Database {
           etoiles: number;
           id: number;
           obtenue_le: string;
-          referentiel: Database['public']['Enums']['referentiel'];
+          referentiel: Database["public"]["Enums"]["referentiel"];
           score_programme: number | null;
           score_realise: number | null;
         };
@@ -1433,7 +1908,7 @@ export interface Database {
           etoiles?: number;
           id?: number;
           obtenue_le?: string;
-          referentiel?: Database['public']['Enums']['referentiel'];
+          referentiel?: Database["public"]["Enums"]["referentiel"];
           score_programme?: number | null;
           score_realise?: number | null;
         };
@@ -1441,67 +1916,67 @@ export interface Database {
       labellisation_action_critere: {
         Insert: {
           action_id: string;
-          etoile: '1' | '2' | '3' | '4' | '5';
+          etoile: "1" | "2" | "3" | "4" | "5";
           formulation: string;
           min_programme_percentage?: number | null;
           min_programme_score?: number | null;
           min_realise_percentage?: number | null;
           min_realise_score?: number | null;
           prio: number;
-          referentiel: Database['public']['Enums']['referentiel'];
+          referentiel: Database["public"]["Enums"]["referentiel"];
         };
         Row: {
           action_id: string;
-          etoile: '1' | '2' | '3' | '4' | '5';
+          etoile: "1" | "2" | "3" | "4" | "5";
           formulation: string;
           min_programme_percentage: number | null;
           min_programme_score: number | null;
           min_realise_percentage: number | null;
           min_realise_score: number | null;
           prio: number;
-          referentiel: Database['public']['Enums']['referentiel'];
+          referentiel: Database["public"]["Enums"]["referentiel"];
         };
         Update: {
           action_id?: string;
-          etoile?: '1' | '2' | '3' | '4' | '5';
+          etoile?: "1" | "2" | "3" | "4" | "5";
           formulation?: string;
           min_programme_percentage?: number | null;
           min_programme_score?: number | null;
           min_realise_percentage?: number | null;
           min_realise_score?: number | null;
           prio?: number;
-          referentiel?: Database['public']['Enums']['referentiel'];
+          referentiel?: Database["public"]["Enums"]["referentiel"];
         };
       };
       labellisation_calendrier: {
         Insert: {
           information: string;
-          referentiel: Database['public']['Enums']['referentiel'];
+          referentiel: Database["public"]["Enums"]["referentiel"];
         };
         Row: {
           information: string;
-          referentiel: Database['public']['Enums']['referentiel'];
+          referentiel: Database["public"]["Enums"]["referentiel"];
         };
         Update: {
           information?: string;
-          referentiel?: Database['public']['Enums']['referentiel'];
+          referentiel?: Database["public"]["Enums"]["referentiel"];
         };
       };
       labellisation_fichier_critere: {
         Insert: {
           description: string;
-          etoile: '1' | '2' | '3' | '4' | '5';
-          referentiel: Database['public']['Enums']['referentiel'];
+          etoile: "1" | "2" | "3" | "4" | "5";
+          referentiel: Database["public"]["Enums"]["referentiel"];
         };
         Row: {
           description: string;
-          etoile: '1' | '2' | '3' | '4' | '5';
-          referentiel: Database['public']['Enums']['referentiel'];
+          etoile: "1" | "2" | "3" | "4" | "5";
+          referentiel: Database["public"]["Enums"]["referentiel"];
         };
         Update: {
           description?: string;
-          etoile?: '1' | '2' | '3' | '4' | '5';
-          referentiel?: Database['public']['Enums']['referentiel'];
+          etoile?: "1" | "2" | "3" | "4" | "5";
+          referentiel?: Database["public"]["Enums"]["referentiel"];
         };
       };
       maintenance: {
@@ -1564,21 +2039,21 @@ export interface Database {
           description: string;
           formule: string;
           modified_at?: string;
-          type: Database['public']['Enums']['regle_type'];
+          type: Database["public"]["Enums"]["regle_type"];
         };
         Row: {
           action_id: string;
           description: string;
           formule: string;
           modified_at: string;
-          type: Database['public']['Enums']['regle_type'];
+          type: Database["public"]["Enums"]["regle_type"];
         };
         Update: {
           action_id?: string;
           description?: string;
           formule?: string;
           modified_at?: string;
-          type?: Database['public']['Enums']['regle_type'];
+          type?: Database["public"]["Enums"]["regle_type"];
         };
       };
       personnalisations_json: {
@@ -1633,7 +2108,7 @@ export interface Database {
           collectivite_id: number;
           modified_at: string;
           payload_timestamp?: string | null;
-          referentiel: Database['public']['Enums']['referentiel'];
+          referentiel: Database["public"]["Enums"]["referentiel"];
           scores: Json;
         };
         Row: {
@@ -1641,7 +2116,7 @@ export interface Database {
           collectivite_id: number;
           modified_at: string;
           payload_timestamp: string | null;
-          referentiel: Database['public']['Enums']['referentiel'];
+          referentiel: Database["public"]["Enums"]["referentiel"];
           scores: Json;
         };
         Update: {
@@ -1649,7 +2124,7 @@ export interface Database {
           collectivite_id?: number;
           modified_at?: string;
           payload_timestamp?: string | null;
-          referentiel?: Database['public']['Enums']['referentiel'];
+          referentiel?: Database["public"]["Enums"]["referentiel"];
           scores?: Json;
         };
       };
@@ -1853,34 +2328,34 @@ export interface Database {
       private_collectivite_membre: {
         Insert: {
           champ_intervention?:
-            | Database['public']['Enums']['referentiel'][]
+            | Database["public"]["Enums"]["referentiel"][]
             | null;
           collectivite_id: number;
           created_at?: string;
           details_fonction?: string | null;
-          fonction?: Database['public']['Enums']['membre_fonction'] | null;
+          fonction?: Database["public"]["Enums"]["membre_fonction"] | null;
           modified_at?: string;
           user_id: string;
         };
         Row: {
           champ_intervention:
-            | Database['public']['Enums']['referentiel'][]
+            | Database["public"]["Enums"]["referentiel"][]
             | null;
           collectivite_id: number;
           created_at: string;
           details_fonction: string | null;
-          fonction: Database['public']['Enums']['membre_fonction'] | null;
+          fonction: Database["public"]["Enums"]["membre_fonction"] | null;
           modified_at: string;
           user_id: string;
         };
         Update: {
           champ_intervention?:
-            | Database['public']['Enums']['referentiel'][]
+            | Database["public"]["Enums"]["referentiel"][]
             | null;
           collectivite_id?: number;
           created_at?: string;
           details_fonction?: string | null;
-          fonction?: Database['public']['Enums']['membre_fonction'] | null;
+          fonction?: Database["public"]["Enums"]["membre_fonction"] | null;
           modified_at?: string;
           user_id?: string;
         };
@@ -1893,7 +2368,7 @@ export interface Database {
           id?: number;
           invitation_id?: string | null;
           modified_at?: string;
-          niveau_acces?: Database['public']['Enums']['niveau_acces'];
+          niveau_acces?: Database["public"]["Enums"]["niveau_acces"];
           user_id: string;
         };
         Row: {
@@ -1903,7 +2378,7 @@ export interface Database {
           id: number;
           invitation_id: string | null;
           modified_at: string;
-          niveau_acces: Database['public']['Enums']['niveau_acces'];
+          niveau_acces: Database["public"]["Enums"]["niveau_acces"];
           user_id: string;
         };
         Update: {
@@ -1913,7 +2388,7 @@ export interface Database {
           id?: number;
           invitation_id?: string | null;
           modified_at?: string;
-          niveau_acces?: Database['public']['Enums']['niveau_acces'];
+          niveau_acces?: Database["public"]["Enums"]["niveau_acces"];
           user_id?: string;
         };
       };
@@ -1924,9 +2399,9 @@ export interface Database {
           id: string;
           ordonnancement?: number | null;
           thematique_id?: string | null;
-          type: Database['public']['Enums']['question_type'];
+          type: Database["public"]["Enums"]["question_type"];
           types_collectivites_concernees?:
-            | Database['public']['Enums']['type_collectivite'][]
+            | Database["public"]["Enums"]["type_collectivite"][]
             | null;
         };
         Row: {
@@ -1935,9 +2410,9 @@ export interface Database {
           id: string;
           ordonnancement: number | null;
           thematique_id: string | null;
-          type: Database['public']['Enums']['question_type'];
+          type: Database["public"]["Enums"]["question_type"];
           types_collectivites_concernees:
-            | Database['public']['Enums']['type_collectivite'][]
+            | Database["public"]["Enums"]["type_collectivite"][]
             | null;
         };
         Update: {
@@ -1946,9 +2421,9 @@ export interface Database {
           id?: string;
           ordonnancement?: number | null;
           thematique_id?: string | null;
-          type?: Database['public']['Enums']['question_type'];
+          type?: Database["public"]["Enums"]["question_type"];
           types_collectivites_concernees?:
-            | Database['public']['Enums']['type_collectivite'][]
+            | Database["public"]["Enums"]["type_collectivite"][]
             | null;
         };
       };
@@ -2080,7 +2555,7 @@ export interface Database {
       type_tabular_score: {
         Insert: {
           action_id?: string | null;
-          avancement?: Database['public']['Enums']['avancement'] | null;
+          avancement?: Database["public"]["Enums"]["avancement"] | null;
           concerne?: boolean | null;
           desactive?: boolean | null;
           points_max_personnalises?: number | null;
@@ -2088,7 +2563,7 @@ export interface Database {
           points_programmes?: number | null;
           points_realises?: number | null;
           points_restants?: number | null;
-          referentiel?: Database['public']['Enums']['referentiel'] | null;
+          referentiel?: Database["public"]["Enums"]["referentiel"] | null;
           score_non_renseigne?: number | null;
           score_pas_fait?: number | null;
           score_programme?: number | null;
@@ -2097,7 +2572,7 @@ export interface Database {
         };
         Row: {
           action_id: string | null;
-          avancement: Database['public']['Enums']['avancement'] | null;
+          avancement: Database["public"]["Enums"]["avancement"] | null;
           concerne: boolean | null;
           desactive: boolean | null;
           points_max_personnalises: number | null;
@@ -2105,7 +2580,7 @@ export interface Database {
           points_programmes: number | null;
           points_realises: number | null;
           points_restants: number | null;
-          referentiel: Database['public']['Enums']['referentiel'] | null;
+          referentiel: Database["public"]["Enums"]["referentiel"] | null;
           score_non_renseigne: number | null;
           score_pas_fait: number | null;
           score_programme: number | null;
@@ -2114,7 +2589,7 @@ export interface Database {
         };
         Update: {
           action_id?: string | null;
-          avancement?: Database['public']['Enums']['avancement'] | null;
+          avancement?: Database["public"]["Enums"]["avancement"] | null;
           concerne?: boolean | null;
           desactive?: boolean | null;
           points_max_personnalises?: number | null;
@@ -2122,12 +2597,38 @@ export interface Database {
           points_programmes?: number | null;
           points_realises?: number | null;
           points_restants?: number | null;
-          referentiel?: Database['public']['Enums']['referentiel'] | null;
+          referentiel?: Database["public"]["Enums"]["referentiel"] | null;
           score_non_renseigne?: number | null;
           score_pas_fait?: number | null;
           score_programme?: number | null;
           score_realise?: number | null;
           score_realise_plus_programme?: number | null;
+        };
+      };
+      usage: {
+        Insert: {
+          action: Database["public"]["Enums"]["usage_action"];
+          collectivite_id?: number | null;
+          emplacement?: Database["public"]["Enums"]["usage_emplacement"] | null;
+          fonction: Database["public"]["Enums"]["usage_fonction"];
+          time?: string;
+          user_id?: string | null;
+        };
+        Row: {
+          action: Database["public"]["Enums"]["usage_action"];
+          collectivite_id: number | null;
+          emplacement: Database["public"]["Enums"]["usage_emplacement"] | null;
+          fonction: Database["public"]["Enums"]["usage_fonction"];
+          time: string;
+          user_id: string | null;
+        };
+        Update: {
+          action?: Database["public"]["Enums"]["usage_action"];
+          collectivite_id?: number | null;
+          emplacement?: Database["public"]["Enums"]["usage_emplacement"] | null;
+          fonction?: Database["public"]["Enums"]["usage_fonction"];
+          time?: string;
+          user_id?: string | null;
         };
       };
     };
@@ -2139,9 +2640,9 @@ export interface Database {
           avis: string | null;
           collectivite_id: number | null;
           ordre_du_jour: boolean | null;
-          referentiel: Database['public']['Enums']['referentiel'] | null;
+          referentiel: Database["public"]["Enums"]["referentiel"] | null;
           state_id: number | null;
-          statut: Database['public']['Enums']['audit_statut'] | null;
+          statut: Database["public"]["Enums"]["audit_statut"] | null;
         };
       };
       action_children: {
@@ -2166,9 +2667,9 @@ export interface Database {
           id: string | null;
           identifiant: string | null;
           nom: string | null;
-          phase: Database['public']['Enums']['action_categorie'] | null;
-          referentiel: Database['public']['Enums']['referentiel'] | null;
-          type: Database['public']['Enums']['action_type'] | null;
+          phase: Database["public"]["Enums"]["action_categorie"] | null;
+          referentiel: Database["public"]["Enums"]["referentiel"] | null;
+          type: Database["public"]["Enums"]["action_type"] | null;
         };
       };
       action_discussion_feed: {
@@ -2181,7 +2682,7 @@ export interface Database {
           id: number | null;
           modified_at: string | null;
           status:
-            | Database['public']['Enums']['action_discussion_statut']
+            | Database["public"]["Enums"]["action_discussion_statut"]
             | null;
         };
       };
@@ -2189,9 +2690,9 @@ export interface Database {
         Row: {
           action_id: string | null;
           ascendants: unknown[] | null;
-          avancement: Database['public']['Enums']['avancement'] | null;
+          avancement: Database["public"]["Enums"]["avancement"] | null;
           avancement_descendants:
-            | Database['public']['Enums']['avancement'][]
+            | Database["public"]["Enums"]["avancement"][]
             | null;
           avancement_detaille: number[] | null;
           collectivite_id: number | null;
@@ -2208,19 +2709,19 @@ export interface Database {
           identifiant: string | null;
           nom: string | null;
           non_concerne: boolean | null;
-          phase: Database['public']['Enums']['action_categorie'] | null;
+          phase: Database["public"]["Enums"]["action_categorie"] | null;
           points_max_personnalises: number | null;
           points_max_referentiel: number | null;
           points_programmes: number | null;
           points_realises: number | null;
           points_restants: number | null;
-          referentiel: Database['public']['Enums']['referentiel'] | null;
+          referentiel: Database["public"]["Enums"]["referentiel"] | null;
           score_non_renseigne: number | null;
           score_pas_fait: number | null;
           score_programme: number | null;
           score_realise: number | null;
           score_realise_plus_programme: number | null;
-          type: Database['public']['Enums']['action_type'] | null;
+          type: Database["public"]["Enums"]["action_type"] | null;
         };
       };
       action_title: {
@@ -2229,8 +2730,8 @@ export interface Database {
           id: string | null;
           identifiant: string | null;
           nom: string | null;
-          referentiel: Database['public']['Enums']['referentiel'] | null;
-          type: Database['public']['Enums']['action_type'] | null;
+          referentiel: Database["public"]["Enums"]["referentiel"] | null;
+          type: Database["public"]["Enums"]["action_type"] | null;
         };
       };
       active_collectivite: {
@@ -2244,7 +2745,7 @@ export interface Database {
           audit_id: number | null;
           collectivite_id: number | null;
           noms: Json | null;
-          referentiel: Database['public']['Enums']['referentiel'] | null;
+          referentiel: Database["public"]["Enums"]["referentiel"] | null;
         };
       };
       bibliotheque_fichier: {
@@ -2263,17 +2764,17 @@ export interface Database {
           children: unknown[] | null;
           id: string | null;
           parent: string | null;
-          referentiel: Database['public']['Enums']['referentiel'] | null;
+          referentiel: Database["public"]["Enums"]["referentiel"] | null;
         };
       };
       business_action_statut: {
         Row: {
           action_id: string | null;
-          avancement: Database['public']['Enums']['avancement'] | null;
+          avancement: Database["public"]["Enums"]["avancement"] | null;
           avancement_detaille: number[] | null;
           collectivite_id: number | null;
           concerne: boolean | null;
-          referentiel: Database['public']['Enums']['referentiel'] | null;
+          referentiel: Database["public"]["Enums"]["referentiel"] | null;
         };
       };
       business_reponse: {
@@ -2285,21 +2786,21 @@ export interface Database {
       client_action_statut: {
         Insert: {
           action_id?: string | null;
-          avancement?: Database['public']['Enums']['avancement'] | null;
+          avancement?: Database["public"]["Enums"]["avancement"] | null;
           collectivite_id?: number | null;
           concerne?: boolean | null;
           modified_by?: string | null;
         };
         Row: {
           action_id: string | null;
-          avancement: Database['public']['Enums']['avancement'] | null;
+          avancement: Database["public"]["Enums"]["avancement"] | null;
           collectivite_id: number | null;
           concerne: boolean | null;
           modified_by: string | null;
         };
         Update: {
           action_id?: string | null;
-          avancement?: Database['public']['Enums']['avancement'] | null;
+          avancement?: Database["public"]["Enums"]["avancement"] | null;
           collectivite_id?: number | null;
           concerne?: boolean | null;
           modified_by?: string | null;
@@ -2315,7 +2816,7 @@ export interface Database {
           population_totale: number | null;
           region_name: string | null;
           type_collectivite:
-            | Database['public']['Enums']['type_collectivite']
+            | Database["public"]["Enums"]["type_collectivite"]
             | null;
         };
       };
@@ -2324,14 +2825,14 @@ export interface Database {
           id: number | null;
           localisation: string[] | null;
           population: string[] | null;
-          type: Database['public']['Enums']['type_collectivite'][] | null;
+          type: Database["public"]["Enums"]["type_collectivite"][] | null;
         };
       };
       collectivite_niveau_acces: {
         Row: {
           collectivite_id: number | null;
           est_auditeur: boolean | null;
-          niveau_acces: Database['public']['Enums']['niveau_acces'] | null;
+          niveau_acces: Database["public"]["Enums"]["niveau_acces"] | null;
           nom: string | null;
         };
       };
@@ -2341,7 +2842,7 @@ export interface Database {
           collectivite_id: number | null;
           courant: unknown | null;
           pre_audit: unknown | null;
-          referentiel: Database['public']['Enums']['referentiel'] | null;
+          referentiel: Database["public"]["Enums"]["referentiel"] | null;
         };
       };
       departement: {
@@ -2367,7 +2868,7 @@ export interface Database {
           action_identifiant: string | null;
           action_ids: unknown[] | null;
           action_nom: string | null;
-          avancement: Database['public']['Enums']['avancement'] | null;
+          avancement: Database["public"]["Enums"]["avancement"] | null;
           avancement_detaille: number[] | null;
           collectivite_id: number | null;
           concerne: boolean | null;
@@ -2375,7 +2876,7 @@ export interface Database {
           modified_by_id: string | null;
           modified_by_nom: string | null;
           precision: string | null;
-          previous_avancement: Database['public']['Enums']['avancement'] | null;
+          previous_avancement: Database["public"]["Enums"]["avancement"] | null;
           previous_avancement_detaille: number[] | null;
           previous_concerne: boolean | null;
           previous_modified_at: string | null;
@@ -2384,7 +2885,7 @@ export interface Database {
           previous_reponse: Json | null;
           question_formulation: string | null;
           question_id: string | null;
-          question_type: Database['public']['Enums']['question_type'] | null;
+          question_type: Database["public"]["Enums"]["question_type"] | null;
           reponse: Json | null;
           tache_identifiant: string | null;
           tache_nom: string | null;
@@ -2404,7 +2905,7 @@ export interface Database {
         Row: {
           collectivite_id: number | null;
           est_auditeur: boolean | null;
-          niveau_acces: Database['public']['Enums']['niveau_acces'] | null;
+          niveau_acces: Database["public"]["Enums"]["niveau_acces"] | null;
           nom: string | null;
         };
       };
@@ -2434,7 +2935,7 @@ export interface Database {
           id: number | null;
           lien: Json | null;
           preuve_reglementaire: Json | null;
-          preuve_type: Database['public']['Enums']['preuve_type'] | null;
+          preuve_type: Database["public"]["Enums"]["preuve_type"] | null;
           rapport: Json | null;
         };
       };
@@ -2451,9 +2952,9 @@ export interface Database {
           population: string[] | null;
           thematique_id: string | null;
           thematique_nom: string | null;
-          type: Database['public']['Enums']['question_type'] | null;
+          type: Database["public"]["Enums"]["question_type"] | null;
           types_collectivites_concernees:
-            | Database['public']['Enums']['type_collectivite'][]
+            | Database["public"]["Enums"]["type_collectivite"][]
             | null;
         };
       };
@@ -2461,25 +2962,25 @@ export interface Database {
         Row: {
           choix_ids: unknown[] | null;
           id: string | null;
-          type: Database['public']['Enums']['question_type'] | null;
+          type: Database["public"]["Enums"]["question_type"] | null;
         };
       };
       question_thematique_completude: {
         Row: {
           collectivite_id: number | null;
           completude:
-            | Database['public']['Enums']['thematique_completude']
+            | Database["public"]["Enums"]["thematique_completude"]
             | null;
           id: string | null;
           nom: string | null;
-          referentiels: Database['public']['Enums']['referentiel'][] | null;
+          referentiels: Database["public"]["Enums"]["referentiel"][] | null;
         };
       };
       question_thematique_display: {
         Row: {
           id: string | null;
           nom: string | null;
-          referentiels: Database['public']['Enums']['referentiel'][] | null;
+          referentiels: Database["public"]["Enums"]["referentiel"][] | null;
         };
       };
       region: {
@@ -2520,7 +3021,7 @@ export interface Database {
           population_totale: number | null;
           region_name: string | null;
           type_collectivite:
-            | Database['public']['Enums']['type_collectivite']
+            | Database["public"]["Enums"]["type_collectivite"]
             | null;
         };
       };
@@ -2540,7 +3041,7 @@ export interface Database {
           etoiles: number | null;
           id: number | null;
           obtenue_le: string | null;
-          referentiel: Database['public']['Enums']['referentiel'] | null;
+          referentiel: Database["public"]["Enums"]["referentiel"] | null;
           score_programme: number | null;
           score_realise: number | null;
         };
@@ -2550,10 +3051,10 @@ export interface Database {
           collectivite_id: number | null;
           date: string | null;
           en_cours: boolean | null;
-          etoiles: '1' | '2' | '3' | '4' | '5' | null;
+          etoiles: "1" | "2" | "3" | "4" | "5" | null;
           id: number | null;
           nom: string | null;
-          referentiel: Database['public']['Enums']['referentiel'] | null;
+          referentiel: Database["public"]["Enums"]["referentiel"] | null;
         };
       };
       retool_last_activity: {
@@ -2578,7 +3079,7 @@ export interface Database {
           fichier: string | null;
           lien: string | null;
           nom: string | null;
-          preuve_type: Database['public']['Enums']['preuve_type'] | null;
+          preuve_type: Database["public"]["Enums"]["preuve_type"] | null;
           referentiel: string | null;
         };
       };
@@ -2587,18 +3088,18 @@ export interface Database {
           Avancement: string | null;
           Collectivité: string | null;
           Commentaire: string | null;
-          'Commentaires fusionnés': string | null;
+          "Commentaires fusionnés": string | null;
           Identifiant: string | null;
-          'Modifié le': string | null;
-          'Points potentiels': number | null;
-          'Points programmés': number | null;
-          'Points realisés': number | null;
-          'Pourcentage non renseigné': number | null;
-          'Pourcentage programmé': number | null;
-          'Pourcentage réalisé': number | null;
+          "Modifié le": string | null;
+          "Points potentiels": number | null;
+          "Points programmés": number | null;
+          "Points realisés": number | null;
+          "Pourcentage non renseigné": number | null;
+          "Pourcentage programmé": number | null;
+          "Pourcentage réalisé": number | null;
           Titre: string | null;
           collectivite_id: number | null;
-          referentiel: Database['public']['Enums']['referentiel'] | null;
+          referentiel: Database["public"]["Enums"]["referentiel"] | null;
         };
       };
       retool_user_collectivites_list: {
@@ -2616,15 +3117,15 @@ export interface Database {
         Row: {
           active: boolean | null;
           champ_intervention:
-            | Database['public']['Enums']['referentiel'][]
+            | Database["public"]["Enums"]["referentiel"][]
             | null;
           collectivite: string | null;
           collectivite_id: number | null;
           details_fonction: string | null;
           droit_id: number | null;
           email: string | null;
-          fonction: Database['public']['Enums']['membre_fonction'] | null;
-          niveau_acces: Database['public']['Enums']['niveau_acces'] | null;
+          fonction: Database["public"]["Enums"]["membre_fonction"] | null;
+          niveau_acces: Database["public"]["Enums"]["niveau_acces"] | null;
           nom: string | null;
           prenom: string | null;
           telephone: string | null;
@@ -2654,10 +3155,10 @@ export interface Database {
           have_children: boolean | null;
           ordre_du_jour: boolean | null;
           ordres_du_jour: boolean[] | null;
-          referentiel: Database['public']['Enums']['referentiel'] | null;
-          statut: Database['public']['Enums']['audit_statut'] | null;
-          statuts: Database['public']['Enums']['audit_statut'][] | null;
-          type: Database['public']['Enums']['action_type'] | null;
+          referentiel: Database["public"]["Enums"]["referentiel"] | null;
+          statut: Database["public"]["Enums"]["audit_statut"] | null;
+          statuts: Database["public"]["Enums"]["audit_statut"][] | null;
+          type: Database["public"]["Enums"]["action_type"] | null;
         };
       };
     };
