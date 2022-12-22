@@ -1,11 +1,11 @@
 -- Deploy tet:plan_action to pg
 
 BEGIN;
-
+rollback;
 drop materialized view stats.collectivite_plan_action cascade;
 drop function plan_action(pa_id integer);
-drop function delete_fiche_action();
-drop function upsert_fiche_action();
+drop function delete_fiche_action() cascade;
+drop function upsert_fiche_action() cascade;
 drop view fiches_action;
 drop function enlever_annexe(id_fiche integer, annexe annexe, supprimer boolean);
 drop function ajouter_annexe(id_fiche integer, annexe annexe);
