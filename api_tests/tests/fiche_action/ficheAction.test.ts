@@ -6,9 +6,10 @@ import {
 import {supabase} from "../../lib/supabase.ts";
 import {signIn, signOut} from "../../lib/auth.ts";
 import {testReset} from "../../lib/rpcs/testReset.ts";
-import {Json, Database} from "../../lib/database.types.ts";
+import {Database} from "../../lib/database.types.ts";
 import {IndicateurGlobal} from "../../lib/types/fiche_action/indicateurGlobal.ts";
 import {Personne} from "../../lib/types/fiche_action/personne.ts";
+import {FicheActionVueInsert, FicheActionVueRow, FicheActionVueUpdate} from "../../lib/types/fiche_action/ficheActionVue.ts";
 
 Deno.test("Création fiches et plan actions", async () => {
     await testReset();
@@ -68,6 +69,7 @@ Deno.test("Création fiches et plan actions", async () => {
     const insertPartenaire = await supabase.rpc("ajouter_partenaire",
         { "id_fiche": fId, "partenaire": partenaire }).select();
     const partenaireSave = insertPartenaire.data! as unknown as Database["public"]["Tables"]["partenaire_tag"]["Row"];
+    console.log(partenaireSave);
     assertObjectMatch(partenaireSave, partenaire);
     const lienPartenaire = await supabase.from("fiche_action_partenaire_tag")
         .select().eq("fiche_id", fId);
@@ -174,7 +176,7 @@ Deno.test("Création fiches et plan actions", async () => {
     assertExists(vue.data);
     console.log(vue.data!);
     // Récupérer les types liés dans la vue
-    const fichesVue:Database["public"]["Views"]["fiches_action"]["Row"]  = vue.data![0] as Database["public"]["Views"]["fiches_action"]["Row"];
+    const fichesVue:FicheActionVueRow  = vue.data![0] as FicheActionVueRow;
     const partenairesVue = vue.data![0].partenaires! as Database["public"]["Tables"]["partenaire_tag"]["Row"][];
     const structuresVue = vue.data![0].structures! as Database["public"]["Tables"]["structure_tag"]["Row"][];
     const pilotesVue = vue.data![0].pilotes! as Personne[];
@@ -193,7 +195,7 @@ Deno.test("Création fiches et plan actions", async () => {
 
     // Insérer dans la vue
     const ficheVue = {
-        id: fId,
+        id : fId,
         titre : "fiche test",
         description : "description test",
         thematiques: [
@@ -203,7 +205,7 @@ Deno.test("Création fiches et plan actions", async () => {
         piliers_eci: [
             "Écoconception" as Database["public"]["Enums"]["fiche_action_piliers_eci"]
         ],
-        objectifs: null,
+        objectifs: "verif",
         resultats_attendus: [
             "Sensibilisation" as Database["public"]["Enums"]["fiche_action_resultats_attendus"]
         ],
@@ -222,18 +224,26 @@ Deno.test("Création fiches et plan actions", async () => {
         notes_complementaires:  null,
         maj_termine: null,
         collectivite_id : 1,
-        partenaires: vue.data![0].partenaires!,
-        structures: vue.data![0].structures!,
-        pilotes: vue.data![0].pilotes!,
-        referents: vue.data![0].referents!,
-        annexes: vue.data![0].annexes!,
-        axes: vue.data![0].axes!,
-        actions: vue.data![0].actions!,
-        indicateurs: vue.data![0].indicateurs!
+        partenaires: partenairesVue,
+        structures: [
+            {collectivite_id: 1, nom : "structure test"} as Database["public"]["Tables"]["structure_tag"]["Insert"]
+        ],
+        pilotes: pilotesVue,
+        referents: referentsVue,
+        annexes: annexesVue,
+        axes: axesVue,
+        actions: actionVue,
+        indicateurs: indicateursVue
+    } as FicheActionVueUpdate
 
-    }
 
-    const insertVue = await supabase.from("fiches_action").upsert(ficheVue).select();
-    assertEquals(insertVue.data!.length, 1);
+    await supabase.from("fiches_action").update(ficheVue);
+    const checkVue = await supabase.from("fiches_action")
+        .select().eq("id", fId);
+    console.log(checkVue.data![0].objectifs);
+    console.log(checkVue.status);
+    const objectiVerif:string = checkVue.data![0].objectifs as string;
+    assertEquals(objectiVerif, "verif");
+    assertEquals(checkVue.data![0].structures!.length, 1);
     await signOut();
 });
