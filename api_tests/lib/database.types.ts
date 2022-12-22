@@ -11,19 +11,19 @@ export interface Database {
     Tables: {
       abstract_any_indicateur_value: {
         Row: {
-          modified_at: string
           valeur: number | null
           annee: number
+          modified_at: string
         }
         Insert: {
-          modified_at?: string
           valeur?: number | null
           annee: number
+          modified_at?: string
         }
         Update: {
-          modified_at?: string
           valeur?: number | null
           annee?: number
+          modified_at?: string
         }
       }
       abstract_modified_at: {
@@ -62,24 +62,23 @@ export interface Database {
       }
       action_computed_points: {
         Row: {
-          modified_at: string
           action_id: string
           value: number
+          modified_at: string
         }
         Insert: {
-          modified_at?: string
           action_id: string
           value: number
+          modified_at?: string
         }
         Update: {
-          modified_at?: string
           action_id?: string
           value?: number
+          modified_at?: string
         }
       }
       action_definition: {
         Row: {
-          modified_at: string
           action_id: string
           referentiel: Database["public"]["Enums"]["referentiel"]
           identifiant: string
@@ -90,13 +89,13 @@ export interface Database {
           ressources: string
           reduction_potentiel: string
           perimetre_evaluation: string
-          preuve: string | null
           points: number | null
           pourcentage: number | null
           categorie: Database["public"]["Enums"]["action_categorie"] | null
+          modified_at: string
+          preuve: string | null
         }
         Insert: {
-          modified_at?: string
           action_id: string
           referentiel: Database["public"]["Enums"]["referentiel"]
           identifiant: string
@@ -107,13 +106,13 @@ export interface Database {
           ressources: string
           reduction_potentiel: string
           perimetre_evaluation: string
-          preuve?: string | null
           points?: number | null
           pourcentage?: number | null
           categorie?: Database["public"]["Enums"]["action_categorie"] | null
+          modified_at?: string
+          preuve?: string | null
         }
         Update: {
-          modified_at?: string
           action_id?: string
           referentiel?: Database["public"]["Enums"]["referentiel"]
           identifiant?: string
@@ -124,35 +123,36 @@ export interface Database {
           ressources?: string
           reduction_potentiel?: string
           perimetre_evaluation?: string
-          preuve?: string | null
           points?: number | null
           pourcentage?: number | null
           categorie?: Database["public"]["Enums"]["action_categorie"] | null
+          modified_at?: string
+          preuve?: string | null
         }
       }
       action_discussion: {
         Row: {
-          id: number
           collectivite_id: number
           action_id: string
+          id: number
           created_by: string
           created_at: string
           modified_at: string
           status: Database["public"]["Enums"]["action_discussion_statut"]
         }
         Insert: {
-          id?: number
           collectivite_id: number
           action_id: string
+          id?: number
           created_by?: string
           created_at?: string
           modified_at?: string
           status?: Database["public"]["Enums"]["action_discussion_statut"]
         }
         Update: {
-          id?: number
           collectivite_id?: number
           action_id?: string
+          id?: number
           created_by?: string
           created_at?: string
           modified_at?: string
@@ -161,25 +161,25 @@ export interface Database {
       }
       action_discussion_commentaire: {
         Row: {
+          discussion_id: number
+          message: string
           id: number
           created_by: string
           created_at: string
-          discussion_id: number
-          message: string
         }
         Insert: {
-          id?: number
-          created_by?: string
-          created_at?: string
           discussion_id: number
           message: string
-        }
-        Update: {
           id?: number
           created_by?: string
           created_at?: string
+        }
+        Update: {
           discussion_id?: number
           message?: string
+          id?: number
+          created_by?: string
+          created_at?: string
         }
       }
       action_relation: {
@@ -230,10 +230,10 @@ export interface Database {
       }
       annexe: {
         Row: {
-          id: number
           collectivite_id: number
           fichier_id: number | null
           url: string | null
+          id: number
           titre: string
           commentaire: string
           modified_by: string
@@ -241,10 +241,10 @@ export interface Database {
           lien: Json | null
         }
         Insert: {
-          id?: number
           collectivite_id: number
           fichier_id?: number | null
           url?: string | null
+          id?: number
           titre?: string
           commentaire?: string
           modified_by?: string
@@ -252,10 +252,10 @@ export interface Database {
           lien?: Json | null
         }
         Update: {
-          id?: number
           collectivite_id?: number
           fichier_id?: number | null
           url?: string | null
+          id?: number
           titre?: string
           commentaire?: string
           modified_by?: string
@@ -265,28 +265,28 @@ export interface Database {
       }
       audit: {
         Row: {
-          id: number
           collectivite_id: number
           referentiel: Database["public"]["Enums"]["referentiel"]
           demande_id: number | null
-          date_debut: string
           date_fin: string | null
+          id: number
+          date_debut: string
         }
         Insert: {
-          id?: number
           collectivite_id: number
           referentiel: Database["public"]["Enums"]["referentiel"]
           demande_id?: number | null
-          date_debut?: string
           date_fin?: string | null
+          id?: number
+          date_debut?: string
         }
         Update: {
-          id?: number
           collectivite_id?: number
           referentiel?: Database["public"]["Enums"]["referentiel"]
           demande_id?: number | null
-          date_debut?: string
           date_fin?: string | null
+          id?: number
+          date_debut?: string
         }
       }
       audit_auditeur: {
@@ -305,22 +305,22 @@ export interface Database {
       }
       axe: {
         Row: {
-          id: number
           nom: string | null
           collectivite_id: number
           parent: number | null
+          id: number
         }
         Insert: {
-          id?: number
           nom?: string | null
           collectivite_id: number
           parent?: number | null
+          id?: number
         }
         Update: {
-          id?: number
           nom?: string | null
           collectivite_id?: number
           parent?: number | null
+          id?: number
         }
       }
       client_scores: {
@@ -328,22 +328,22 @@ export interface Database {
           collectivite_id: number
           referentiel: Database["public"]["Enums"]["referentiel"]
           scores: Json
-          modified_at: string
           payload_timestamp: string | null
+          modified_at: string
         }
         Insert: {
           collectivite_id: number
           referentiel: Database["public"]["Enums"]["referentiel"]
           scores: Json
-          modified_at: string
           payload_timestamp?: string | null
+          modified_at: string
         }
         Update: {
           collectivite_id?: number
           referentiel?: Database["public"]["Enums"]["referentiel"]
           scores?: Json
-          modified_at?: string
           payload_timestamp?: string | null
+          modified_at?: string
         }
       }
       client_scores_update: {
@@ -396,39 +396,39 @@ export interface Database {
       }
       collectivite_test: {
         Row: {
-          id: number
           collectivite_id: number | null
           nom: string
+          id: number
         }
         Insert: {
-          id?: number
           collectivite_id?: number | null
           nom: string
+          id?: number
         }
         Update: {
-          id?: number
           collectivite_id?: number | null
           nom?: string
+          id?: number
         }
       }
       commune: {
         Row: {
-          id: number
           collectivite_id: number | null
           nom: string
           code: string
+          id: number
         }
         Insert: {
-          id?: number
           collectivite_id?: number | null
           nom: string
           code: string
+          id?: number
         }
         Update: {
-          id?: number
           collectivite_id?: number | null
           nom?: string
           code?: string
+          id?: number
         }
       }
       dcp: {
@@ -468,33 +468,35 @@ export interface Database {
       }
       epci: {
         Row: {
-          id: number
           collectivite_id: number | null
           nom: string
           siren: string
           nature: Database["public"]["Enums"]["nature"]
+          id: number
         }
         Insert: {
-          id?: number
           collectivite_id?: number | null
           nom: string
           siren: string
           nature: Database["public"]["Enums"]["nature"]
+          id?: number
         }
         Update: {
-          id?: number
           collectivite_id?: number | null
           nom?: string
           siren?: string
           nature?: Database["public"]["Enums"]["nature"]
+          id?: number
         }
       }
       fiche_action: {
         Row: {
-          id: number
           titre: string | null
           description: string | null
           thematiques:
+            | Database["public"]["Enums"]["fiche_action_thematiques"][]
+            | null
+          sous_thematiques:
             | Database["public"]["Enums"]["fiche_action_thematiques"][]
             | null
           piliers_eci:
@@ -519,12 +521,15 @@ export interface Database {
           notes_complementaires: string | null
           maj_termine: boolean | null
           collectivite_id: number
+          id: number
         }
         Insert: {
-          id?: number
           titre?: string | null
           description?: string | null
           thematiques?:
+            | Database["public"]["Enums"]["fiche_action_thematiques"][]
+            | null
+          sous_thematiques?:
             | Database["public"]["Enums"]["fiche_action_thematiques"][]
             | null
           piliers_eci?:
@@ -549,12 +554,15 @@ export interface Database {
           notes_complementaires?: string | null
           maj_termine?: boolean | null
           collectivite_id: number
+          id?: number
         }
         Update: {
-          id?: number
           titre?: string | null
           description?: string | null
           thematiques?:
+            | Database["public"]["Enums"]["fiche_action_thematiques"][]
+            | null
+          sous_thematiques?:
             | Database["public"]["Enums"]["fiche_action_thematiques"][]
             | null
           piliers_eci?:
@@ -579,6 +587,7 @@ export interface Database {
           notes_complementaires?: string | null
           maj_termine?: boolean | null
           collectivite_id?: number
+          id?: number
         }
       }
       fiche_action_action: {
@@ -724,47 +733,46 @@ export interface Database {
       }
       indicateur_action: {
         Row: {
-          modified_at: string
           indicateur_id: string
           action_id: string
+          modified_at: string
         }
         Insert: {
-          modified_at?: string
           indicateur_id: string
           action_id: string
+          modified_at?: string
         }
         Update: {
-          modified_at?: string
           indicateur_id?: string
           action_id?: string
+          modified_at?: string
         }
       }
       indicateur_commentaire: {
         Row: {
-          modified_at: string
           collectivite_id: number
           indicateur_id: string
           commentaire: string
+          modified_at: string
           modified_by: string
         }
         Insert: {
-          modified_at?: string
           collectivite_id: number
           indicateur_id: string
           commentaire: string
+          modified_at?: string
           modified_by?: string
         }
         Update: {
-          modified_at?: string
           collectivite_id?: number
           indicateur_id?: string
           commentaire?: string
+          modified_at?: string
           modified_by?: string
         }
       }
       indicateur_definition: {
         Row: {
-          modified_at: string
           id: string
           indicateur_group: Database["public"]["Enums"]["indicateur_group"]
           identifiant: string
@@ -774,9 +782,9 @@ export interface Database {
           unite: string
           obligation_eci: boolean
           parent: number | null
+          modified_at: string
         }
         Insert: {
-          modified_at?: string
           id: string
           indicateur_group: Database["public"]["Enums"]["indicateur_group"]
           identifiant: string
@@ -786,9 +794,9 @@ export interface Database {
           unite: string
           obligation_eci: boolean
           parent?: number | null
+          modified_at?: string
         }
         Update: {
-          modified_at?: string
           id?: string
           indicateur_group?: Database["public"]["Enums"]["indicateur_group"]
           identifiant?: string
@@ -798,147 +806,148 @@ export interface Database {
           unite?: string
           obligation_eci?: boolean
           parent?: number | null
+          modified_at?: string
         }
       }
       indicateur_objectif: {
         Row: {
-          modified_at: string
           valeur: number | null
           annee: number
           collectivite_id: number
           indicateur_id: string
+          modified_at: string
         }
         Insert: {
-          modified_at?: string
           valeur?: number | null
           annee: number
           collectivite_id: number
           indicateur_id: string
+          modified_at?: string
         }
         Update: {
-          modified_at?: string
           valeur?: number | null
           annee?: number
           collectivite_id?: number
           indicateur_id?: string
+          modified_at?: string
         }
       }
       indicateur_parent: {
         Row: {
-          id: number
           numero: string
           nom: string
+          id: number
         }
         Insert: {
-          id?: number
           numero: string
           nom: string
+          id?: number
         }
         Update: {
-          id?: number
           numero?: string
           nom?: string
+          id?: number
         }
       }
       indicateur_personnalise_definition: {
         Row: {
-          modified_at: string
-          id: number
           collectivite_id: number | null
           titre: string
           description: string
           unite: string
           commentaire: string
+          modified_at: string
+          id: number
           modified_by: string
         }
         Insert: {
-          modified_at?: string
-          id?: number
           collectivite_id?: number | null
           titre: string
           description: string
           unite: string
           commentaire: string
+          modified_at?: string
+          id?: number
           modified_by?: string
         }
         Update: {
-          modified_at?: string
-          id?: number
           collectivite_id?: number | null
           titre?: string
           description?: string
           unite?: string
           commentaire?: string
+          modified_at?: string
+          id?: number
           modified_by?: string
         }
       }
       indicateur_personnalise_objectif: {
         Row: {
-          modified_at: string
           valeur: number | null
           annee: number
           collectivite_id: number
           indicateur_id: number
+          modified_at: string
         }
         Insert: {
-          modified_at?: string
           valeur?: number | null
           annee: number
           collectivite_id: number
           indicateur_id: number
+          modified_at?: string
         }
         Update: {
-          modified_at?: string
           valeur?: number | null
           annee?: number
           collectivite_id?: number
           indicateur_id?: number
+          modified_at?: string
         }
       }
       indicateur_personnalise_resultat: {
         Row: {
-          modified_at: string
           valeur: number | null
           annee: number
           collectivite_id: number
           indicateur_id: number
+          modified_at: string
         }
         Insert: {
-          modified_at?: string
           valeur?: number | null
           annee: number
           collectivite_id: number
           indicateur_id: number
+          modified_at?: string
         }
         Update: {
-          modified_at?: string
           valeur?: number | null
           annee?: number
           collectivite_id?: number
           indicateur_id?: number
+          modified_at?: string
         }
       }
       indicateur_resultat: {
         Row: {
-          modified_at: string
           valeur: number | null
           annee: number
           collectivite_id: number
           indicateur_id: string
+          modified_at: string
         }
         Insert: {
-          modified_at?: string
           valeur?: number | null
           annee: number
           collectivite_id: number
           indicateur_id: string
+          modified_at?: string
         }
         Update: {
-          modified_at?: string
           valeur?: number | null
           annee?: number
           collectivite_id?: number
           indicateur_id?: string
+          modified_at?: string
         }
       }
       indicateur_terristory_json: {
@@ -971,34 +980,34 @@ export interface Database {
       }
       labellisation: {
         Row: {
-          id: number
           collectivite_id: number | null
           referentiel: Database["public"]["Enums"]["referentiel"]
           obtenue_le: string
-          annee: number | null
           etoiles: number
           score_realise: number | null
           score_programme: number | null
+          id: number
+          annee: number | null
         }
         Insert: {
-          id?: number
           collectivite_id?: number | null
           referentiel: Database["public"]["Enums"]["referentiel"]
           obtenue_le: string
-          annee?: number | null
           etoiles: number
           score_realise?: number | null
           score_programme?: number | null
+          id?: number
+          annee?: number | null
         }
         Update: {
-          id?: number
           collectivite_id?: number | null
           referentiel?: Database["public"]["Enums"]["referentiel"]
           obtenue_le?: string
-          annee?: number | null
           etoiles?: number
           score_realise?: number | null
           score_programme?: number | null
+          id?: number
+          annee?: number | null
         }
       }
       labellisation_action_critere: {
@@ -1069,36 +1078,36 @@ export interface Database {
       }
       maintenance: {
         Row: {
-          id: number
           begins_at: string
           ends_at: string
+          id: number
         }
         Insert: {
-          id?: number
           begins_at: string
           ends_at: string
+          id?: number
         }
         Update: {
-          id?: number
           begins_at?: string
           ends_at?: string
+          id?: number
         }
       }
       partenaire_tag: {
         Row: {
-          id: number
           nom: string
           collectivite_id: number
+          id: number
         }
         Insert: {
-          id?: number
           nom: string
           collectivite_id: number
+          id?: number
         }
         Update: {
-          id?: number
           nom?: string
           collectivite_id?: number
+          id?: number
         }
       }
       personnalisation: {
@@ -1120,21 +1129,21 @@ export interface Database {
       }
       personnalisation_consequence: {
         Row: {
-          modified_at: string
           collectivite_id: number
           consequences: Json
+          modified_at: string
           payload_timestamp: string | null
         }
         Insert: {
-          modified_at?: string
           collectivite_id: number
           consequences: Json
+          modified_at?: string
           payload_timestamp?: string | null
         }
         Update: {
-          modified_at?: string
           collectivite_id?: number
           consequences?: Json
+          modified_at?: string
           payload_timestamp?: string | null
         }
       }
@@ -1180,19 +1189,45 @@ export interface Database {
       }
       personne_tag: {
         Row: {
-          id: number
           nom: string
           collectivite_id: number
+          id: number
         }
         Insert: {
-          id?: number
           nom: string
           collectivite_id: number
+          id?: number
         }
         Update: {
-          id?: number
           nom?: string
           collectivite_id?: number
+          id?: number
+        }
+      }
+      pre_audit_scores: {
+        Row: {
+          collectivite_id: number
+          referentiel: Database["public"]["Enums"]["referentiel"]
+          scores: Json
+          modified_at: string
+          payload_timestamp: string | null
+          audit_id: number
+        }
+        Insert: {
+          collectivite_id: number
+          referentiel: Database["public"]["Enums"]["referentiel"]
+          scores: Json
+          modified_at: string
+          payload_timestamp?: string | null
+          audit_id: number
+        }
+        Update: {
+          collectivite_id?: number
+          referentiel?: Database["public"]["Enums"]["referentiel"]
+          scores?: Json
+          modified_at?: string
+          payload_timestamp?: string | null
+          audit_id?: number
         }
       }
       preuve_action: {
@@ -1211,154 +1246,154 @@ export interface Database {
       }
       preuve_complementaire: {
         Row: {
-          id: number
           collectivite_id: number
           fichier_id: number | null
           url: string | null
+          action_id: string
+          id: number
           titre: string
           commentaire: string
           modified_by: string
           modified_at: string
           lien: Json | null
-          action_id: string
         }
         Insert: {
-          id?: number
           collectivite_id: number
           fichier_id?: number | null
           url?: string | null
+          action_id: string
+          id?: number
           titre?: string
           commentaire?: string
           modified_by?: string
           modified_at?: string
           lien?: Json | null
-          action_id: string
         }
         Update: {
-          id?: number
           collectivite_id?: number
           fichier_id?: number | null
           url?: string | null
+          action_id?: string
+          id?: number
           titre?: string
           commentaire?: string
           modified_by?: string
           modified_at?: string
           lien?: Json | null
-          action_id?: string
         }
       }
       preuve_labellisation: {
         Row: {
-          id: number
           collectivite_id: number
           fichier_id: number | null
           url: string | null
+          demande_id: number
+          id: number
           titre: string
           commentaire: string
           modified_by: string
           modified_at: string
           lien: Json | null
-          demande_id: number
         }
         Insert: {
-          id?: number
           collectivite_id: number
           fichier_id?: number | null
           url?: string | null
+          demande_id: number
+          id?: number
           titre?: string
           commentaire?: string
           modified_by?: string
           modified_at?: string
           lien?: Json | null
-          demande_id: number
         }
         Update: {
-          id?: number
           collectivite_id?: number
           fichier_id?: number | null
           url?: string | null
+          demande_id?: number
+          id?: number
           titre?: string
           commentaire?: string
           modified_by?: string
           modified_at?: string
           lien?: Json | null
-          demande_id?: number
         }
       }
       preuve_rapport: {
         Row: {
-          id: number
           collectivite_id: number
           fichier_id: number | null
           url: string | null
+          date: string
+          id: number
           titre: string
           commentaire: string
           modified_by: string
           modified_at: string
           lien: Json | null
-          date: string
         }
         Insert: {
-          id?: number
           collectivite_id: number
           fichier_id?: number | null
           url?: string | null
+          date: string
+          id?: number
           titre?: string
           commentaire?: string
           modified_by?: string
           modified_at?: string
           lien?: Json | null
-          date: string
         }
         Update: {
-          id?: number
           collectivite_id?: number
           fichier_id?: number | null
           url?: string | null
+          date?: string
+          id?: number
           titre?: string
           commentaire?: string
           modified_by?: string
           modified_at?: string
           lien?: Json | null
-          date?: string
         }
       }
       preuve_reglementaire: {
         Row: {
-          id: number
           collectivite_id: number
           fichier_id: number | null
           url: string | null
+          preuve_id: string
+          id: number
           titre: string
           commentaire: string
           modified_by: string
           modified_at: string
           lien: Json | null
-          preuve_id: string
         }
         Insert: {
-          id?: number
           collectivite_id: number
           fichier_id?: number | null
           url?: string | null
+          preuve_id: string
+          id?: number
           titre?: string
           commentaire?: string
           modified_by?: string
           modified_at?: string
           lien?: Json | null
-          preuve_id: string
         }
         Update: {
-          id?: number
           collectivite_id?: number
           fichier_id?: number | null
           url?: string | null
+          preuve_id?: string
+          id?: number
           titre?: string
           commentaire?: string
           modified_by?: string
           modified_at?: string
           lien?: Json | null
-          preuve_id?: string
         }
       }
       preuve_reglementaire_definition: {
@@ -1429,30 +1464,30 @@ export interface Database {
       }
       private_utilisateur_droit: {
         Row: {
-          id: number
           user_id: string
           collectivite_id: number
           active: boolean
+          id: number
           created_at: string
           modified_at: string
           niveau_acces: Database["public"]["Enums"]["niveau_acces"]
           invitation_id: string | null
         }
         Insert: {
-          id?: number
           user_id: string
           collectivite_id: number
           active: boolean
+          id?: number
           created_at?: string
           modified_at?: string
           niveau_acces?: Database["public"]["Enums"]["niveau_acces"]
           invitation_id?: string | null
         }
         Update: {
-          id?: number
           user_id?: string
           collectivite_id?: number
           active?: boolean
+          id?: number
           created_at?: string
           modified_at?: string
           niveau_acces?: Database["public"]["Enums"]["niveau_acces"]
@@ -1561,79 +1596,79 @@ export interface Database {
       }
       reponse_binaire: {
         Row: {
-          modified_at: string
           collectivite_id: number
           question_id: string
           reponse: boolean | null
+          modified_at: string
         }
         Insert: {
-          modified_at?: string
           collectivite_id: number
           question_id: string
           reponse?: boolean | null
+          modified_at?: string
         }
         Update: {
-          modified_at?: string
           collectivite_id?: number
           question_id?: string
           reponse?: boolean | null
+          modified_at?: string
         }
       }
       reponse_choix: {
         Row: {
-          modified_at: string
           collectivite_id: number
           question_id: string
           reponse: string | null
+          modified_at: string
         }
         Insert: {
-          modified_at?: string
           collectivite_id: number
           question_id: string
           reponse?: string | null
+          modified_at?: string
         }
         Update: {
-          modified_at?: string
           collectivite_id?: number
           question_id?: string
           reponse?: string | null
+          modified_at?: string
         }
       }
       reponse_proportion: {
         Row: {
-          modified_at: string
           collectivite_id: number
           question_id: string
           reponse: number | null
+          modified_at: string
         }
         Insert: {
-          modified_at?: string
           collectivite_id: number
           question_id: string
           reponse?: number | null
+          modified_at?: string
         }
         Update: {
-          modified_at?: string
           collectivite_id?: number
           question_id?: string
           reponse?: number | null
+          modified_at?: string
         }
       }
       structure_tag: {
         Row: {
-          id: number
           nom: string
           collectivite_id: number
+          id: number
         }
         Insert: {
-          id?: number
           nom: string
           collectivite_id: number
+          id?: number
         }
         Update: {
-          id?: number
           nom?: string
           collectivite_id?: number
+          id?: number
         }
       }
       tag: {
@@ -1648,6 +1683,59 @@ export interface Database {
         Update: {
           nom?: string
           collectivite_id?: number
+        }
+      }
+      type_tabular_score: {
+        Row: {
+          referentiel: Database["public"]["Enums"]["referentiel"] | null
+          action_id: string | null
+          score_realise: number | null
+          score_programme: number | null
+          score_realise_plus_programme: number | null
+          score_pas_fait: number | null
+          score_non_renseigne: number | null
+          points_restants: number | null
+          points_realises: number | null
+          points_programmes: number | null
+          points_max_personnalises: number | null
+          points_max_referentiel: number | null
+          avancement: Database["public"]["Enums"]["avancement"] | null
+          concerne: boolean | null
+          desactive: boolean | null
+        }
+        Insert: {
+          referentiel?: Database["public"]["Enums"]["referentiel"] | null
+          action_id?: string | null
+          score_realise?: number | null
+          score_programme?: number | null
+          score_realise_plus_programme?: number | null
+          score_pas_fait?: number | null
+          score_non_renseigne?: number | null
+          points_restants?: number | null
+          points_realises?: number | null
+          points_programmes?: number | null
+          points_max_personnalises?: number | null
+          points_max_referentiel?: number | null
+          avancement?: Database["public"]["Enums"]["avancement"] | null
+          concerne?: boolean | null
+          desactive?: boolean | null
+        }
+        Update: {
+          referentiel?: Database["public"]["Enums"]["referentiel"] | null
+          action_id?: string | null
+          score_realise?: number | null
+          score_programme?: number | null
+          score_realise_plus_programme?: number | null
+          score_pas_fait?: number | null
+          score_non_renseigne?: number | null
+          points_restants?: number | null
+          points_realises?: number | null
+          points_programmes?: number | null
+          points_max_personnalises?: number | null
+          points_max_referentiel?: number | null
+          avancement?: Database["public"]["Enums"]["avancement"] | null
+          concerne?: boolean | null
+          desactive?: boolean | null
         }
       }
     }
@@ -1703,18 +1791,6 @@ export interface Database {
           commentaires: Json[] | null
         }
       }
-      action_hierarchy: {
-        Row: {
-          action_id: string | null
-          referentiel: Database["public"]["Enums"]["referentiel"] | null
-          descendants: unknown[] | null
-          leaves: unknown[] | null
-          have_children: boolean | null
-          ascendants: unknown[] | null
-          depth: number | null
-          type: Database["public"]["Enums"]["action_type"] | null
-        }
-      }
       action_statuts: {
         Row: {
           collectivite_id: number | null
@@ -1767,6 +1843,14 @@ export interface Database {
         Row: {
           collectivite_id: number | null
           nom: string | null
+        }
+      }
+      auditeurs: {
+        Row: {
+          collectivite_id: number | null
+          audit_id: number | null
+          referentiel: Database["public"]["Enums"]["referentiel"] | null
+          noms: Json | null
         }
       }
       bibliotheque_fichier: {
@@ -1857,6 +1941,15 @@ export interface Database {
           est_auditeur: boolean | null
         }
       }
+      comparaison_scores_audit: {
+        Row: {
+          collectivite_id: number | null
+          referentiel: Database["public"]["Enums"]["referentiel"] | null
+          action_id: string | null
+          courant: unknown | null
+          pre_audit: unknown | null
+        }
+      }
       departement: {
         Row: {
           code: string | null
@@ -1880,6 +1973,9 @@ export interface Database {
           titre: string | null
           description: string | null
           thematiques:
+            | Database["public"]["Enums"]["fiche_action_thematiques"][]
+            | null
+          sous_thematiques:
             | Database["public"]["Enums"]["fiche_action_thematiques"][]
             | null
           piliers_eci:
@@ -1909,7 +2005,7 @@ export interface Database {
           pilotes: Json[] | null
           referents: Json[] | null
           annexes: Json[] | null
-          plans_action: Json[] | null
+          axes: Json[] | null
           actions: Json[] | null
           indicateurs: Json[] | null
         }
@@ -2694,9 +2790,25 @@ export interface Database {
         Args: { user_id: string; prenom: string; nom: string; email: string }
         Returns: undefined
       }
+      test_disable_fake_score_generation: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      test_enable_fake_score_generation: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       test_fulfill: {
         Args: { collectivite_id: number; etoile: "1" | "2" | "3" | "4" | "5" }
         Returns: undefined
+      }
+      test_generate_fake_scores: {
+        Args: {
+          collectivite_id: number
+          referentiel: Database["public"]["Enums"]["referentiel"]
+          statuts: unknown
+        }
+        Returns: Json
       }
       test_remove_user: {
         Args: { email: string }

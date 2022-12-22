@@ -4,6 +4,7 @@ BEGIN;
 
 drop materialized view stats.collectivite_plan_action cascade;
 drop function plan_action(pa_id integer);
+drop function upsert_fiche_action();
 drop view fiches_action;
 drop function enlever_annexe(id_fiche integer, annexe annexe, supprimer boolean);
 drop function ajouter_annexe(id_fiche integer, annexe annexe);
@@ -54,7 +55,7 @@ create type fiche_action_avancement as enum ('pas_fait', 'fait', 'en_cours', 'no
 -- fiche action
 create table public.fiche_action as select * from migration.fiche_action;
 alter table fiche_action drop column avancement;
-alter table fiche_action add column avancement  fiche_action_avancement not null;
+alter table fiche_action add column avancement  fiche_action_avancement;
 update fiche_action p set avancement = (select m.avancement::text::fiche_action_avancement
                                                   from migration.fiche_action m
                                                   where m.uid = p.uid);

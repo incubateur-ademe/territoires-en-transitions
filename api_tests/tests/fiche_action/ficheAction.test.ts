@@ -6,7 +6,7 @@ import {
 import {supabase} from "../../lib/supabase.ts";
 import {signIn, signOut} from "../../lib/auth.ts";
 import {testReset} from "../../lib/rpcs/testReset.ts";
-import {Database} from "../../lib/database.types.ts";
+import {Json, Database} from "../../lib/database.types.ts";
 import {IndicateurGlobal} from "../../lib/types/fiche_action/indicateurGlobal.ts";
 import {Personne} from "../../lib/types/fiche_action/personne.ts";
 
@@ -174,13 +174,16 @@ Deno.test("Création fiches et plan actions", async () => {
     assertExists(vue.data);
     console.log(vue.data!);
     // Récupérer les types liés dans la vue
+    const fichesVue:Database["public"]["Views"]["fiches_action"]["Row"]  = vue.data![0] as Database["public"]["Views"]["fiches_action"]["Row"];
     const partenairesVue = vue.data![0].partenaires! as Database["public"]["Tables"]["partenaire_tag"]["Row"][];
     const structuresVue = vue.data![0].structures! as Database["public"]["Tables"]["structure_tag"]["Row"][];
     const pilotesVue = vue.data![0].pilotes! as Personne[];
     const referentsVue = vue.data![0].referents! as Personne[];
     const indicateursVue = vue.data![0].indicateurs! as IndicateurGlobal[];
-    const annexesVue = vue.data![0].annexes! as Database["public"]["Tables"]["action_relation"]["Row"][][];
-    const actionVue = vue.data![0].actions! as Database["public"]["Tables"]["annexe"]["Row"][][];
+    const annexesVue = vue.data![0].annexes! as Database["public"]["Tables"]["action_relation"]["Row"][];
+    const actionVue = vue.data![0].actions! as Database["public"]["Tables"]["annexe"]["Row"][];
+    const axesVue = vue.data![0].actions! as Database["public"]["Tables"]["axe"]["Row"][];
+    console.log(fichesVue);
 
     // Appeler la vue donnant l'ensemble d'un plan action
     const planentier =  await supabase.rpc("plan_action",
@@ -188,5 +191,49 @@ Deno.test("Création fiches et plan actions", async () => {
     assertExists(planentier.data);
     console.log(planentier);
 
+    // Insérer dans la vue
+    const ficheVue = {
+        id: fId,
+        titre : "fiche test",
+        description : "description test",
+        thematiques: [
+            "Bâtiments" as Database["public"]["Enums"]["fiche_action_thematiques"]
+        ],
+        sous_thematiques: [] as Database["public"]["Enums"]["fiche_action_thematiques"][] ,
+        piliers_eci: [
+            "Écoconception" as Database["public"]["Enums"]["fiche_action_piliers_eci"]
+        ],
+        objectifs: null,
+        resultats_attendus: [
+            "Sensibilisation" as Database["public"]["Enums"]["fiche_action_resultats_attendus"]
+        ],
+        cibles: [
+            "Grand public et associations" as Database["public"]["Enums"]["fiche_action_cibles"]
+        ],
+        ressources: null,
+        financements: null,
+        budget_previsionnel: null,
+        statut: 'En cours' as Database["public"]["Enums"]["fiche_action_statuts"] ,
+        niveau_priorite: 'Bas' as Database["public"]["Enums"]["fiche_action_niveaux_priorite"],
+        date_debut: null,
+        date_fin_provisoire: null,
+        amelioration_continue: null,
+        calendrier: null,
+        notes_complementaires:  null,
+        maj_termine: null,
+        collectivite_id : 1,
+        partenaires: vue.data![0].partenaires!,
+        structures: vue.data![0].structures!,
+        pilotes: vue.data![0].pilotes!,
+        referents: vue.data![0].referents!,
+        annexes: vue.data![0].annexes!,
+        axes: vue.data![0].axes!,
+        actions: vue.data![0].actions!,
+        indicateurs: vue.data![0].indicateurs!
+
+    }
+
+    const insertVue = await supabase.from("fiches_action").upsert(ficheVue).select();
+    assertEquals(insertVue.data!.length, 1);
     await signOut();
 });
