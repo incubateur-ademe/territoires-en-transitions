@@ -75,6 +75,44 @@ export interface Database {
       usage_action: 'clic' | 'vue' | 'telechargement' | 'saisie';
       usage_emplacement: 'header';
       usage_fonction: 'aide' | 'preuve' | 'tableau_de_bord';
+      visite_onglet:
+        | 'progression'
+        | 'priorisation'
+        | 'detail'
+        | 'suivi'
+        | 'preuve'
+        | 'indicateur'
+        | 'historique'
+        | 'comparaison'
+        | 'critere';
+      visite_page:
+        | 'autre'
+        | 'signin'
+        | 'signup'
+        | 'recover'
+        | 'recover_landing'
+        | 'mon_compte'
+        | 'mes_collectivites'
+        | 'rejoindre'
+        | 'toutes_collectivites'
+        | 'tableau_de_bord'
+        | 'referentiel'
+        | 'indicateur'
+        | 'action'
+        | 'labellisation'
+        | 'personnalisation'
+        | 'membre'
+        | 'bibliotheque'
+        | 'historique'
+        | 'plan'
+        | 'fiche';
+      visite_tag:
+        | 'cae'
+        | 'eci'
+        | 'crte'
+        | 'referentiel'
+        | 'thematique'
+        | 'personnalise';
     };
     Functions: {
       action_contexte: {
@@ -2619,6 +2657,32 @@ export interface Database {
           collectivite_id?: number | null;
           emplacement?: Database['public']['Enums']['usage_emplacement'] | null;
           fonction?: Database['public']['Enums']['usage_fonction'];
+          time?: string;
+          user_id?: string | null;
+        };
+      };
+      visite: {
+        Insert: {
+          collectivite_id?: number | null;
+          onglet?: Database['public']['Enums']['visite_onglet'] | null;
+          page: Database['public']['Enums']['visite_page'];
+          tag?: Database['public']['Enums']['visite_tag'] | null;
+          time?: string;
+          user_id?: string | null;
+        };
+        Row: {
+          collectivite_id: number | null;
+          onglet: Database['public']['Enums']['visite_onglet'] | null;
+          page: Database['public']['Enums']['visite_page'];
+          tag: Database['public']['Enums']['visite_tag'] | null;
+          time: string;
+          user_id: string | null;
+        };
+        Update: {
+          collectivite_id?: number | null;
+          onglet?: Database['public']['Enums']['visite_onglet'] | null;
+          page?: Database['public']['Enums']['visite_page'];
+          tag?: Database['public']['Enums']['visite_tag'] | null;
           time?: string;
           user_id?: string | null;
         };
