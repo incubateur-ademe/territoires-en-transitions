@@ -173,4 +173,6 @@ indicateur/indicateur_terristory_json [json_schema] 2022-11-09T13:39:16Z Amandin
 stats/vues_BI [stats/vues_BI@v1.17.0] 2022-12-17T15:33:17Z Florian <florian@derfurth.com> # Ajoute des vues
 @v1.19.0 2022-12-21T13:29:28Z Florian <florian@derfurth.com> # Nouvelles vues BI.
 
-stats/vues_BI [stats/vues_BI@v1.19.0] 2022-12-21T14:55:43Z Florian <florian@derfurth.com> # Recontistue les connections à partir des logs
+stats/vues_BI [stats/vues_BI@v1.19.0] 2022-12-21T14:55:43Z Florian <florian@derfurth.com> # Reconstitue les connections à partir des logs
+timescaledb 2022-12-21T19:13:26Z Florian <florian@derfurth.com> # Ajoute l'extension TimescaleDB
+utilisateur/usage 2022-12-21T18:40:08Z Florian <florian@derfurth.com> # Permet d'enregistrer les métriques d'usage.
