@@ -11,10 +11,10 @@ Deno.test(
 
     const { data } = await supabase.from("historique_utilisateur")
       .select("modified_by_id, modified_by_nom")
-      .eq("collectivite_id", 1);
+      .eq("collectivite_id", 10);
 
     assertEquals(data, [{
-      modified_by_id: null,
+      modified_by_id: "99999999-9999-9999-9999-999999999999",
       modified_by_nom: "Équipe territoires en transitions",
     }]);
 
