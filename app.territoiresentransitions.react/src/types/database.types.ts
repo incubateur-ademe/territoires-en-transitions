@@ -73,8 +73,7 @@ export interface Database {
       thematique_completude: 'complete' | 'a_completer';
       type_collectivite: 'EPCI' | 'commune' | 'syndicat';
       usage_action: 'clic' | 'vue' | 'telechargement' | 'saisie';
-      usage_emplacement: 'header';
-      usage_fonction: 'aide' | 'preuve' | 'tableau_de_bord';
+      usage_fonction: 'aide' | 'preuve' | 'graphique';
       visite_onglet:
         | 'progression'
         | 'priorisation'
@@ -2639,24 +2638,24 @@ export interface Database {
         Insert: {
           action: Database['public']['Enums']['usage_action'];
           collectivite_id?: number | null;
-          emplacement?: Database['public']['Enums']['usage_emplacement'] | null;
           fonction: Database['public']['Enums']['usage_fonction'];
+          page?: Database['public']['Enums']['visite_page'] | null;
           time?: string;
           user_id?: string | null;
         };
         Row: {
           action: Database['public']['Enums']['usage_action'];
           collectivite_id: number | null;
-          emplacement: Database['public']['Enums']['usage_emplacement'] | null;
           fonction: Database['public']['Enums']['usage_fonction'];
+          page: Database['public']['Enums']['visite_page'] | null;
           time: string;
           user_id: string | null;
         };
         Update: {
           action?: Database['public']['Enums']['usage_action'];
           collectivite_id?: number | null;
-          emplacement?: Database['public']['Enums']['usage_emplacement'] | null;
           fonction?: Database['public']['Enums']['usage_fonction'];
+          page?: Database['public']['Enums']['visite_page'] | null;
           time?: string;
           user_id?: string | null;
         };

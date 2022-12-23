@@ -175,5 +175,5 @@ stats/vues_BI [stats/vues_BI@v1.17.0] 2022-12-17T15:33:17Z Florian <florian@derf
 
 stats/vues_BI [stats/vues_BI@v1.19.0] 2022-12-21T14:55:43Z Florian <florian@derfurth.com> # Reconstitue les connections à partir des logs
 timescaledb 2022-12-21T19:13:26Z Florian <florian@derfurth.com> # Ajoute l'extension TimescaleDB
-utilisateur/usage 2022-12-21T18:40:08Z Florian <florian@derfurth.com> # Permet d'enregistrer les métriques d'usage.
 utilisateur/visite 2022-12-22T15:07:56Z Florian <florian@derfurth.com> # Permet de suivre les visites sur les pages
+utilisateur/usage 2022-12-21T18:40:08Z Florian <florian@derfurth.com> # Permet d'enregistrer les métriques d'usage

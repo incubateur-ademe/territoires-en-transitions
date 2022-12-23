@@ -5,14 +5,13 @@ BEGIN;
 -- on utilise des enums pour utiliser 63 octets max par colonne.
 create type usage_fonction as enum ('aide', 'preuve', 'graphique');
 create type usage_action as enum ('clic', 'vue', 'telechargement', 'saisie');
-create type usage_emplacement as enum ('header', 'tableau_de_bord');
 
 create table usage
 (
     time            timestamp with time zone default current_timestamp not null,
     fonction        usage_fonction                                     not null,
     action          usage_action                                       not null,
-    emplacement     usage_emplacement,
+    page            visite_page,
     user_id         uuid,
     collectivite_id integer
 );
