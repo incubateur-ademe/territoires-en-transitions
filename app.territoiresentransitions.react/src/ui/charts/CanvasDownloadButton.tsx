@@ -1,29 +1,35 @@
+import {useTracker} from "core-logic/hooks/useTracker";
+
 export type TCanvasDownloadButtonProps = {
-  fileName: string;
-  canvasId: string;
-  buttonText: string;
+    fileName: string;
+    canvasId: string;
+    buttonText: string;
 };
 
 export const CanvasDownloadButton = (props: TCanvasDownloadButtonProps) => {
-  const linkId = `download_${props.canvasId}`;
-  return (
-    <a
-      className="fr-btn fr-btn--secondary"
-      id={linkId}
-      href="/"
-      download={`${props.fileName}`}
-      onClick={() => {
+    const linkId = `download_${props.canvasId}`;
+    const tracker = useTracker();
+    const onClick = () => {
         const canvas = document.getElementById(
-          props.canvasId
+            props.canvasId
         ) as HTMLCanvasElement;
         if (canvas) {
-          (document.getElementById(linkId) as HTMLLinkElement).href =
-            canvas.toDataURL();
+            (document.getElementById(linkId) as HTMLLinkElement).href =
+                canvas.toDataURL();
         }
-      }}
-    >
-      <div className="fr-fi-download-line mr-2 text-xs"></div>
-      {props.buttonText}
-    </a>
-  );
+        tracker({fonction: 'graphique', action: 'telechargement', emplacement: 'tableau_de_bord'});
+    };
+
+    return (
+        <a
+            className="fr-btn fr-btn--secondary"
+            id={linkId}
+            href="/"
+            download={`${props.fileName}`}
+            onClick={onClick}
+        >
+            <div className="fr-fi-download-line mr-2 text-xs"></div>
+            {props.buttonText}
+        </a>
+    );
 };

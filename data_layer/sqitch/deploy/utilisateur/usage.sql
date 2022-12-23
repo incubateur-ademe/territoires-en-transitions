@@ -3,9 +3,9 @@
 BEGIN;
 
 -- on utilise des enums pour utiliser 63 octets max par colonne.
-create type usage_fonction as enum ('aide', 'preuve', 'tableau_de_bord');
+create type usage_fonction as enum ('aide', 'preuve', 'graphique');
 create type usage_action as enum ('clic', 'vue', 'telechargement', 'saisie');
-create type usage_emplacement as enum ('header');
+create type usage_emplacement as enum ('header', 'tableau_de_bord');
 
 create table usage
 (
