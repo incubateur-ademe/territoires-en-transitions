@@ -10,9 +10,24 @@ create type usage_fonction as enum (
     'decrocher_les_etoiles',
     'rejoindre_une_collectivite',
     'collectivite_carte',
-    'pagination'
+    'pagination',
+    'filtre',
+    'recherche',
+    'filtre_region',
+    'filtre_departement',
+    'filtre_type',
+    'filtre_population',
+    'filtre_referentiel',
+    'filtre_niveau',
+    'filtre_remplissage'
     );
-create type usage_action as enum ('clic', 'vue', 'telechargement', 'saisie');
+create type usage_action as enum (
+    'clic',
+    'vue',
+    'telechargement',
+    'saisie',
+    'selection'
+    );
 
 create table usage
 (
