@@ -6,7 +6,7 @@ import {useTracker} from 'core-logic/hooks/useTracker';
 export const Aide = () => {
   const tracker = useTracker();
   const onClick = async () => {
-    await tracker({fonction: 'aide', action: 'clic', emplacement: 'header'});
+    await tracker({fonction: 'aide', action: 'clic'});
   };
   return <a
     data-test="help"

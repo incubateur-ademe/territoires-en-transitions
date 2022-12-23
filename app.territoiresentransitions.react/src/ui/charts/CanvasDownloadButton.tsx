@@ -17,7 +17,7 @@ export const CanvasDownloadButton = (props: TCanvasDownloadButtonProps) => {
             (document.getElementById(linkId) as HTMLLinkElement).href =
                 canvas.toDataURL();
         }
-        tracker({fonction: 'graphique', action: 'telechargement', emplacement: 'tableau_de_bord'});
+        tracker({fonction: 'graphique', action: 'telechargement'});
     };
 
     return (
