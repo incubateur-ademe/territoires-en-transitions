@@ -2,6 +2,6 @@
 
 BEGIN;
 
-drop view stats_unique_active_users;
+
 
 ROLLBACK;
