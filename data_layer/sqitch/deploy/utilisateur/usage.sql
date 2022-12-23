@@ -9,7 +9,8 @@ create type usage_fonction as enum (
     'graphique',
     'decrocher_les_etoiles',
     'rejoindre_une_collectivite',
-    'collectivite_carte'
+    'collectivite_carte',
+    'pagination'
     );
 create type usage_action as enum ('clic', 'vue', 'telechargement', 'saisie');
 

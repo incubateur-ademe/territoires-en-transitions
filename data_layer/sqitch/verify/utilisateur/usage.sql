@@ -2,7 +2,7 @@
 
 BEGIN;
 
-select time, fonction, action, emplacement, user_id, collectivite_id
+select time, fonction, action, page, user_id, collectivite_id
 from usage
 where false;
 
