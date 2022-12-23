@@ -72,8 +72,24 @@ export interface Database {
       role_name: 'agent' | 'referent' | 'conseiller' | 'auditeur' | 'aucun';
       thematique_completude: 'complete' | 'a_completer';
       type_collectivite: 'EPCI' | 'commune' | 'syndicat';
-      usage_action: 'clic' | 'vue' | 'telechargement' | 'saisie';
-      usage_fonction: 'aide' | 'preuve' | 'graphique';
+      usage_action: 'clic' | 'vue' | 'telechargement' | 'saisie' | 'selection';
+      usage_fonction:
+        | 'aide'
+        | 'preuve'
+        | 'graphique'
+        | 'decrocher_les_etoiles'
+        | 'rejoindre_une_collectivite'
+        | 'collectivite_carte'
+        | 'pagination'
+        | 'filtre'
+        | 'recherche'
+        | 'filtre_region'
+        | 'filtre_departement'
+        | 'filtre_type'
+        | 'filtre_population'
+        | 'filtre_referentiel'
+        | 'filtre_niveau'
+        | 'filtre_remplissage';
       visite_onglet:
         | 'progression'
         | 'priorisation'
