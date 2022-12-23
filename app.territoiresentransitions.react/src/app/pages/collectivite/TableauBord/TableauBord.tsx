@@ -26,6 +26,7 @@ import {
   LabellisationParNiveauRead,
   useLabellisationParNiveau,
 } from './useLabellisationParNiveau';
+import {BoutonAidesTerritoires} from "ui/shared/BoutonAidesTerritoires/BoutonAidesTerritoires";
 
 const remplissageColor = '#2F4077';
 
@@ -365,6 +366,7 @@ export const TableauBord = ({
   return (
     <div data-test="TableauBord" className="bg-grey975">
       <div className="fr-container pt-9 pb-16">
+        <BoutonAidesTerritoires />
         <main className="flex flex-row gap-4">
           <section style={{width: '600px'}} className="bg-white p-4">
             <div className="flex gap-4 justify-center font-bold text-center text-2xl text-gray">
