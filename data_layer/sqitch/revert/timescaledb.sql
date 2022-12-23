@@ -2,6 +2,6 @@
 
 BEGIN;
 
--- XXX Add DDLs here.
+drop extension if exists timescaledb;
 
 COMMIT;
