@@ -2,6 +2,10 @@
 
 BEGIN;
 
--- XXX Add DDLs here.
+drop table usage;
+
+drop type usage_action;
+drop type usage_fonction;
+drop type usage_emplacement;
 
 COMMIT;
