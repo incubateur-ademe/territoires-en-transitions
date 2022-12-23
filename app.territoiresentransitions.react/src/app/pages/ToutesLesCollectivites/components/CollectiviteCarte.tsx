@@ -8,6 +8,7 @@ import {Card} from '@material-ui/core';
 import {Link} from 'react-router-dom';
 import {makeCollectiviteTableauBordUrl} from 'app/paths';
 import classNames from 'classnames';
+import {useTracker} from 'core-logic/hooks/useTracker';
 
 export type TCollectiviteCarteProps = {
   collectivite: CollectiviteCarteRead;
@@ -23,9 +24,11 @@ export type TCollectiviteCarteProps = {
  */
 export const CollectiviteCarte = (props: TCollectiviteCarteProps) => {
   const {collectivite} = props;
+  const tracker = useTracker();
 
   return (
     <Link
+      onClick={() => tracker({fonction: 'collectivite_carte', action: 'clic'})}
       to={
         props.isCardClickable
           ? makeCollectiviteTableauBordUrl({
