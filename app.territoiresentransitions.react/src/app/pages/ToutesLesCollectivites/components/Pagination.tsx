@@ -1,5 +1,6 @@
 import {useEffect, useState} from 'react';
 import useWindowSize from 'utils/useWindowSize';
+import {useTracker} from 'core-logic/hooks/useTracker';
 
 export type TPaginationProps = {
   selectedPage: number;
@@ -19,11 +20,13 @@ export const Pagination = (props: TPaginationProps) => {
     number[]
   >([]);
 
+  const tracker = useTracker();
   const windowSize = useWindowSize();
   const isMobile = windowSize.width < 992;
 
   const setSelectedPageAndScrollToTop = (page: number) => {
     setSelectedPage(page);
+    tracker({fonction: 'pagination', action: 'clic'});
     window.scrollTo(0, 0);
     props.onChange(page);
   };
