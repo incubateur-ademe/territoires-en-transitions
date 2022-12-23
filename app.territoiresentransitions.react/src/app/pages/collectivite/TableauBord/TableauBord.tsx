@@ -26,6 +26,7 @@ import {
   LabellisationParNiveauRead,
   useLabellisationParNiveau,
 } from './useLabellisationParNiveau';
+import {useTracker} from 'core-logic/hooks/useTracker';
 
 const remplissageColor = '#2F4077';
 
@@ -232,6 +233,7 @@ const ReferentielSection = ({
   collectiviteId: number;
 }) => {
   const referentielRoot = actions.find(a => a.type === 'referentiel');
+  const tracker = useTracker();
   if (!referentielRoot) return null;
 
   const rootScore = scores.find(
@@ -300,6 +302,7 @@ const ReferentielSection = ({
         {!demande || demande.en_cours ? (
           <Link
             className="fr-btn"
+            onClick={() => tracker({fonction: 'decrocher_les_etoiles', action: 'clic'})}
             to={makeCollectiviteLabellisationUrl({
               collectiviteId,
               referentielId,
