@@ -178,3 +178,5 @@ timescaledb 2022-12-21T19:13:26Z Florian <florian@derfurth.com> # Ajoute l'exten
 utilisateur/visite 2022-12-22T15:07:56Z Florian <florian@derfurth.com> # Permet de suivre les visites sur les pages
 utilisateur/usage 2022-12-21T18:40:08Z Florian <florian@derfurth.com> # Permet d'enregistrer les métriques d'usage
 @v1.20.0 2022-12-23T17:00:52Z Florian <florian@derfurth.com> # Suivi des usages et des visites.
+
+stats/geojson 2023-01-02T14:07:57Z Florian <florian@derfurth.com> # Les contours administratifs au format GeoJSON.
