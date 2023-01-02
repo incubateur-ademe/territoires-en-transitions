@@ -6,9 +6,15 @@ import * as Plot from '@observablehq/plot';
 import { supabase } from './initSupabase';
 
 function useActiveUsers() {
-  return useSWR('stats_unique_active_users', () =>
-    supabase.from('stats_unique_active_users').select()
-  );
+  return useSWR('stats_unique_active_users', async () => {
+    const { data, error } = await supabase
+      .from('stats_unique_active_users')
+      .select();
+    if (error) {
+      throw new Error('stats_unique_active_users');
+    }
+    return data?.map((d) => ({ ...d, date: new Date(d.date) })) || [];
+  });
 }
 
 export default function ActiveUsers() {
@@ -17,20 +23,22 @@ export default function ActiveUsers() {
 
   useEffect(() => {
     if (data === undefined) return;
+
     const chart = Plot.plot({
-      style: {
-        background: 'transparent',
-      },
-      y: {
-        grid: true,
-      },
-      color: {
-        type: 'diverging',
-        scheme: 'burd',
-      },
+      y: { label: "Nombre d'utilisateurs actifs", grid: true },
       marks: [
-        Plot.ruleY([0]),
-        Plot.dot(data, { x: 'Date', y: 'Anomaly', stroke: 'Anomaly' }),
+        Plot.line(data, {
+          x: 'date',
+          y: 'count',
+          stroke: '#4e79a7',
+          marker: 'circle',
+        }),
+        Plot.line(data, {
+          x: 'date',
+          y: 'cumulated_count',
+          stroke: '#e15759',
+          marker: 'circle',
+        }),
       ],
     });
     if (ref.current) {
