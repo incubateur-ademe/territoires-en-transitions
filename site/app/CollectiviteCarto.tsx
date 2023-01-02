@@ -22,7 +22,17 @@ const Map = () => {
   const { data } = useCarteCollectiviteActive();
   if (!data) return null;
 
-  const geo = data.data.map(d => d.geojson)
+  // Les données geojson.
+  const geo = data.data.map(d => d.geojson);
+
+  function onEachFeature(feature, layer){
+    // Bind un popup pour chaque feature lors du chargement.
+    if(feature.properties) {
+      // Affiche la raison sociale pour les EPCIs et le libellé pour les communes.
+      layer.bindPopup(feature.properties['raison_sociale'] || feature.properties['libelle'])
+    }
+  }
+
   return (
     <MapContainer
       center={[48.833, 2.333]} zoom={5} scrollWheelZoom={false}
@@ -35,7 +45,7 @@ const Map = () => {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <GeoJSON attribution="&copy; credits due..." data={geo} />
+      <GeoJSON data={geo} onEachFeature={onEachFeature} />
     </MapContainer>
   )
 }
