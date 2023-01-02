@@ -1021,39 +1021,39 @@ export interface Database {
           }
         | {
             Args: {
+              bucket_width: number;
+              finish: number;
+              start: number;
+              ts: number;
+            };
+            Returns: number;
+          }
+        | {
+            Args: {
+              bucket_width: number;
+              finish: number;
+              start: number;
+              ts: number;
+            };
+            Returns: number;
+          }
+        | {
+            Args: {
+              bucket_width: number;
+              finish: number;
+              start: number;
+              ts: number;
+            };
+            Returns: number;
+          }
+        | {
+            Args: {
               bucket_width: unknown;
               finish: string;
               start: string;
               ts: string;
             };
             Returns: string;
-          }
-        | {
-            Args: {
-              bucket_width: number;
-              finish: number;
-              start: number;
-              ts: number;
-            };
-            Returns: number;
-          }
-        | {
-            Args: {
-              bucket_width: number;
-              finish: number;
-              start: number;
-              ts: number;
-            };
-            Returns: number;
-          }
-        | {
-            Args: {
-              bucket_width: number;
-              finish: number;
-              start: number;
-              ts: number;
-            };
-            Returns: number;
           }
         | {
             Args: {
@@ -3207,6 +3207,23 @@ export interface Database {
         Row: {
           collectivite_id: number | null;
           nom: string | null;
+        };
+      };
+      stats_carte_collectivite_active: {
+        Row: {
+          code_siren_insee: string | null;
+          collectivite_id: number | null;
+          departement_code: string | null;
+          departement_name: string | null;
+          geojson: Json | null;
+          nature_collectivite: string | null;
+          nom: string | null;
+          population_totale: number | null;
+          region_code: string | null;
+          region_name: string | null;
+          type_collectivite:
+            | Database['public']['Enums']['type_collectivite']
+            | null;
         };
       };
       stats_functionnalities_usage_proportion: {
