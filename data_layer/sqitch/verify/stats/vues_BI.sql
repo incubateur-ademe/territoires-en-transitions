@@ -2,12 +2,30 @@
 
 BEGIN;
 
-select utilisateur, created_at
-from stats.connection
-where false;
+select collectivite_id,
+       nom,
+       type_collectivite,
+       nature_collectivite,
+       code_siren_insee,
+       region_name,
+       region_code,
+       departement_name,
+       departement_code,
+       population_totale,
+       geojson
+from public.stats_carte_collectivite_active where false;
 
-select mois, connections, utilisateurs_uniques, total_connections, total_utilisateurs_uniques
-from stats.evolution_connection
-where false;
+select collectivite_id,
+       nom,
+       type_collectivite,
+       nature_collectivite,
+       code_siren_insee,
+       region_name,
+       region_code,
+       departement_name,
+       departement_code,
+       population_totale,
+       geojson
+from stats.carte_collectivite_active where false;
 
 ROLLBACK;
