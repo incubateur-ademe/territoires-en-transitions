@@ -3,7 +3,7 @@ import {useCollectiviteId, useReferentielId} from 'core-logic/hooks/params';
 import {referentielToName} from 'app/labels';
 import {usePreuves} from 'ui/shared/preuves/Bibliotheque/usePreuves';
 import {useParcoursLabellisation} from './useParcoursLabellisation';
-import {Header} from './Header';
+import {HeaderLabellisation} from './HeaderLabellisation';
 import {ReferentielOfIndicateur} from 'types/litterals';
 import {
   makeCollectiviteReferentielUrl,
@@ -11,7 +11,6 @@ import {
 } from 'app/paths';
 import {TPreuveLabellisation} from 'ui/shared/preuves/Bibliotheque/types';
 import {LabellisationTabs} from './LabellisationTabs';
-import {CriteresLabellisation} from './CriteresLabellisation';
 
 const ParcoursLabellisation = () => {
   const collectiviteId = useCollectiviteId();
@@ -54,25 +53,16 @@ const ParcoursLabellisation = () => {
   return collectiviteId && parcours ? (
     <>
       <Title referentiel={parcours.referentiel} />
-      <Header parcours={parcours} demande={demande} preuves={preuves} />
+      <HeaderLabellisation
+        parcours={parcours}
+        demande={demande}
+        preuves={preuves}
+      />
       <main
         className="fr-container mt-9 mb-16"
         data-test={`labellisation-${parcours.referentiel}`}
       >
-        <LabellisationTabs>
-          <CriteresLabellisation
-            collectiviteId={collectiviteId}
-            parcours={parcours}
-            demande={demande}
-            preuves={preuves}
-          />
-        </LabellisationTabs>
-        {/*parcours.referentiel === 'cae' ? (
-          <>
-            <h2 className="fr-mt-4w">Calendrier de labellisation</h2>
-            <p>{parcours.calendrier}</p>
-          </>
-        ) : null*/}
+        <LabellisationTabs />
       </main>
     </>
   ) : (
