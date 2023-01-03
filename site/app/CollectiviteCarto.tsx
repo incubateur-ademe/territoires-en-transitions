@@ -7,9 +7,7 @@ import {
 } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 
-import { useEffect, useRef } from 'react';
 import useSWR from 'swr';
-import * as Plot from '@observablehq/plot';
 import { supabase } from './initSupabase';
 
 function useCarteCollectiviteActive() {
