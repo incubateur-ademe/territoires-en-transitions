@@ -1,82 +1,23 @@
-/*insert into indicateur_definition
-values (default,
-        'ind0',
-        'cae',
-        'r',
-        null,
-        'Radioactivité',
-        'description',
-        'sv',
-        true,
-        null);
+truncate table axe cascade;
 
-insert into indicateur_personnalise_definition
-values (default,
-        1,
-        1,
-        'Voltage',
-        'Tension',
-        'V',
-        'commentaire',
-        '17440546-f389-4d4f-bfdb-b0c94a1bd0f9');
+insert into public.axe (id, nom, collectivite_id, parent)
+values (1, 'Plan', 1, null);
 
-insert into fiche_action
-(collectivite_id,
- uid,
- avancement,
- numerotation,
- titre,
- description,
- structure_pilote,
- personne_referente,
- elu_referent,
- partenaires,
- budget_global,
- commentaire,
- date_fin,
- date_debut,
- action_ids,
- indicateur_ids,
- indicateur_personnalise_ids,
- en_retard)
+insert into public.axe (id, nom, collectivite_id, parent)
+values (2, 'Axe', 1, 1);
+
+insert into fiche_action (id, titre, description, thematiques, piliers_eci, collectivite_id)
 values (1,
-        '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
-        'pas_fait',
-        'A0',
-        'titre',
-        'description',
-        'pilote',
-        'référente',
-        'référent',
-        'partenaires',
-        0,
-        'commentaire',
-        'fin',
-        'début',
-        array []::action_id[],
-        array []::indicateur_id[],
-        array []::integer[],
-        false);
-
-insert into plan_action
-(collectivite_id,
- uid,
- nom,
- categories,
- fiches_by_category)
-values (1,
-        '29770546-f389-4d4f-bfdb-b0c94a1bd0f9',
-        'Plan d''action de test',
-        '[
-          {
-            "nom": "1. Yolo",
-            "uid": "ef599348-6ab9-4dc7-bf62-41b9a17ea5fa"
-          }
-        ]',
-        '[
-          {
-            "fiche_uid": "17440546-f389-4d4f-bfdb-b0c94a1bd0f9",
-            "category_uid": "ef599348-6ab9-4dc7-bf62-41b9a17ea5fa"
-          }
-        ]');*/
-
+        'fiche 1',
+        'test description',
+        array [
+            'Bâtiments'::fiche_action_thematiques
+            ],
+        array [
+            'Écoconception'::fiche_action_piliers_eci,
+            'Recyclage'::fiche_action_piliers_eci
+            ],
+        1),
+       (2, 'fiche 2', 'test description', array []::fiche_action_thematiques[], array []::fiche_action_piliers_eci[],1),
+       (3, 'fiche 3', 'test description', array []::fiche_action_thematiques[], array []::fiche_action_piliers_eci[], 2)
+;
