@@ -60,6 +60,21 @@ export const useAddPreuveLabellisation = () =>
     }
   );
 
+/** Ajoute un rapport d'audit */
+type TAddPreuveAuditArgs = {
+  collectivite_id: number;
+  audit_id: number;
+} & TFileOrLink;
+export const useAddPreuveAudit = () =>
+  useMutation(
+    async (preuve: TAddPreuveAuditArgs) =>
+      supabaseClient.from('preuve_audit').insert(preuve),
+    {
+      mutationKey: 'add_preuve_audit',
+      onSuccess: useRefetchPreuves(),
+    }
+  );
+
 /** Ajoute un rapport de visite annuelle */
 type TAddPreuveRapportArgs = {
   collectivite_id: number;
