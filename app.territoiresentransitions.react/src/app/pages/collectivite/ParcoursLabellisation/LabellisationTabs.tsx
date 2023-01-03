@@ -1,4 +1,3 @@
-import {ReactElement} from 'react';
 import {Tab} from '@dataesr/react-dsfr';
 import Tabs from 'ui/shared/Tabs';
 import Alerte from 'ui/shared/Alerte';
@@ -16,10 +15,7 @@ import {
 } from 'app/paths';
 import {useHistory} from 'react-router-dom';
 import AuditComparaison from '../AuditComparaison';
-
-export type TLabellisationTabsProps = {
-  children: ReactElement;
-};
+import CriteresLabellisation from './CriteresLabellisation';
 
 // index des onglets de la page Labellisation
 const TABS_INDEX: Record<LabellisationVueParamOption, number> = {
@@ -33,10 +29,9 @@ const TABS_INDEX: Record<LabellisationVueParamOption, number> = {
  * de labellisation".
  *
  * Dans le cas où il n'y a pas d'audit en cours, seul le contenu de l'onglet
- * "Critèères de labellisation" est visible (sans les onglets).
+ * "Critères de labellisation" est visible (sans les onglets).
  */
-export const LabellisationTabs = (props: TLabellisationTabsProps) => {
-  const {children} = props;
+export const LabellisationTabs = () => {
   const history = useHistory();
   const {data: audit} = useAudit();
   const collectiviteId = useCollectiviteId();
@@ -75,12 +70,16 @@ export const LabellisationTabs = (props: TLabellisationTabsProps) => {
           {activeTab === TABS_INDEX['cycles'] ? <AuditComparaison /> : '...'}
         </Tab>
         <Tab label="Critères de labellisation">
-          {activeTab === TABS_INDEX['criteres'] ? children : '...'}
+          {activeTab === TABS_INDEX['criteres'] ? (
+            <CriteresLabellisation />
+          ) : (
+            '...'
+          )}
         </Tab>
       </Tabs>
     </>
   ) : (
-    children
+    <CriteresLabellisation />
   );
 };
 
