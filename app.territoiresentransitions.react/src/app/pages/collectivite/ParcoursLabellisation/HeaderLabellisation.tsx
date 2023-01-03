@@ -10,13 +10,13 @@ import {TPreuve} from 'ui/shared/preuves/Bibliotheque/types';
 import {DemandeLabellisationModal} from './DemandeLabellisationModal';
 import {numLabels} from './numLabels';
 
-export type THeaderProps = {
+export type THeaderLabellisationProps = {
   parcours: LabellisationParcoursRead;
   demande: LabellisationDemandeRead | null;
   preuves: TPreuve[];
 };
 
-export const Header = (props: THeaderProps) => {
+export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
   const {parcours, demande, preuves} = props;
   const {
     etoiles,
