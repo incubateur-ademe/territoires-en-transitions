@@ -26,6 +26,7 @@ export const preuveReglementaireNonRenseignee: TPreuveReglementaire = {
       'PCAET avec EES et résumé non technique ; éventuel bilan intermédiaire Preuve identique à la 1.1.1.3',
   },
   demande: null,
+  audit: null,
   rapport: null,
 };
 
@@ -59,6 +60,7 @@ export const preuveReglementaireLien: TPreuveReglementaire = {
       'PCAET avec EES et résumé non technique ; éventuel bilan intermédiaire Preuve identique à la 1.1.1.3',
   },
   demande: null,
+  audit: null,
   rapport: null,
 };
 
@@ -90,6 +92,7 @@ export const preuveReglementaireLienSansDescription: TPreuveReglementaire = {
     description: '',
   },
   demande: null,
+  audit: null,
   rapport: null,
 };
 
@@ -125,6 +128,7 @@ export const preuveReglementaireFichier: TPreuveReglementaire = {
       'PCAET avec EES et résumé non technique ; éventuel bilan intermédiaire Preuve identique à la 1.1.1.3',
   },
   demande: null,
+  audit: null,
   rapport: null,
 };
 
@@ -153,6 +157,7 @@ export const preuveComplementaireLien: TPreuveComplementaire = {
   },
   preuve_reglementaire: null,
   demande: null,
+  audit: null,
   rapport: null,
 };
 
@@ -183,5 +188,6 @@ export const preuveComplementaireFichier: TPreuveComplementaire = {
   },
   preuve_reglementaire: null,
   demande: null,
+  audit: null,
   rapport: null,
 };
