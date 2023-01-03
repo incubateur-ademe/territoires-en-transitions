@@ -37,7 +37,7 @@ const MultiSelectDropdown = <T extends string>({
   values,
   options,
   buttonClassName,
-  placeholderText,
+  placeholderText = 'Sélectionnez une ou plusieurs options',
   onSelect,
   renderSelection,
   renderOption,
@@ -136,7 +136,7 @@ const MultiSelectButton = forwardRef(
         )
       ) : (
         <span className={buttonDisplayedPlaceholderClassname}>
-          {placeholderText ?? ''}
+          {placeholderText}
         </span>
       )}
       <ExpandCollapseIcon isOpen={isOpen} />
