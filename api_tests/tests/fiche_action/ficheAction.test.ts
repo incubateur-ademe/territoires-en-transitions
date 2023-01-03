@@ -1,3 +1,5 @@
+// deno-lint-ignore-file
+
 import {
     assertEquals,
     assertObjectMatch,
@@ -10,6 +12,8 @@ import {Database} from "../../lib/database.types.ts";
 import {IndicateurGlobal} from "../../lib/types/fiche_action/indicateurGlobal.ts";
 import {Personne} from "../../lib/types/fiche_action/personne.ts";
 import {FicheActionVueInsert, FicheActionVueRow, FicheActionVueUpdate} from "../../lib/types/fiche_action/ficheActionVue.ts";
+
+
 
 Deno.test("Création fiches et plan actions", async () => {
     await testReset();
@@ -236,8 +240,9 @@ Deno.test("Création fiches et plan actions", async () => {
         indicateurs: indicateursVue
     } as FicheActionVueUpdate
 
+    // Utilise `as never`, l'upsert dans les vues n'étant pas prévu par la lib Supabase.
+    await supabase.from("fiches_action").update(ficheVue as never);
 
-    await supabase.from("fiches_action").update(ficheVue);
     const checkVue = await supabase.from("fiches_action")
         .select().eq("id", fId);
     console.log(checkVue.data![0].objectifs);
