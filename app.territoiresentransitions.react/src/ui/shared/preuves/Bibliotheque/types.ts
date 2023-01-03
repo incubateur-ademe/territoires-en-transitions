@@ -1,4 +1,5 @@
 import {TEtoiles} from 'generated/dataLayer/labellisation_parcours_read';
+import {Database} from 'types/database.types';
 import {Referentiel} from 'types/litterals';
 
 // un fichier de la bibliothèque
@@ -60,6 +61,7 @@ type TPreuveReglementaireFields = {
     description: string;
   };
   demande: null;
+  audit: null;
   rapport: null;
 };
 
@@ -69,6 +71,7 @@ type TPreuveComplementaireFields = {
   action: TPreuveAction;
   preuve_reglementaire: null;
   demande: null;
+  audit: null;
   rapport: null;
 };
 
@@ -83,17 +86,30 @@ export type TPreuveAction = {
   desactive: boolean;
 };
 
+type TLabellisationDemande = {
+  en_cours: boolean;
+  referentiel: Referentiel;
+  etoiles: TEtoiles;
+  date: string;
+};
+
 // champs propres aux preuves pour la labellisation
 type TPreuveLabellisationFields = {
   preuve_type: 'labellisation';
   action: null;
   preuve_reglementaire: null;
-  demande: {
-    en_cours: boolean;
-    referentiel: Referentiel;
-    etoiles: TEtoiles;
-    date: string;
-  };
+  demande: TLabellisationDemande;
+  audit: null;
+  rapport: null;
+};
+
+// champs propres aux rapports d'audit
+type TPreuveAuditFields = {
+  preuve_type: 'audit';
+  action: null;
+  preuve_reglementaire: null;
+  demande: TLabellisationDemande | null;
+  audit: Database['public']['Tables']['audit']['Row'];
   rapport: null;
 };
 
@@ -103,6 +119,7 @@ type TPreuveRapportFields = {
   action: null;
   preuve_reglementaire: null;
   demande: null;
+  audit: null;
   rapport: {
     date: string;
   };
@@ -112,6 +129,7 @@ type TPreuveRapportFields = {
 export type TPreuveReglementaire = TPreuveBase & TPreuveReglementaireFields;
 export type TPreuveComplementaire = TPreuveBase & TPreuveComplementaireFields;
 export type TPreuveLabellisation = TPreuveBase & TPreuveLabellisationFields;
+export type TPreuveAudit = TPreuveBase & TPreuveAuditFields;
 export type TPreuveRapport = TPreuveBase & TPreuveRapportFields;
 
 // une preuve
@@ -119,6 +137,7 @@ export type TPreuve =
   | TPreuveReglementaire
   | TPreuveComplementaire
   | TPreuveLabellisation
+  | TPreuveAudit
   | TPreuveRapport;
 
 // identifiants des types de preuves
@@ -129,6 +148,7 @@ export type TPreuvesParType = {
   reglementaire: TPreuveReglementaire[] | undefined;
   complementaire: TPreuveComplementaire[] | undefined;
   labellisation: TPreuveLabellisation[] | undefined;
+  audit: TPreuveAudit[] | undefined;
   rapport: TPreuveRapport[] | undefined;
 };
 
