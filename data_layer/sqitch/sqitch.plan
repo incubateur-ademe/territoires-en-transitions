@@ -184,3 +184,4 @@ stats/vues_BI [stats/vues_BI@v1.20.0] 2023-01-02T15:04:55Z Florian <florian@derf
 
 labellisation/preuve_v2 [labellisation/preuve_v2@v1.16.0] 2022-12-14T09:57:16Z Florian <florian@derfurth.com> # Permet de joindre le rapport d'audit en tant que preuve
 labellisation/cot 2023-01-03T16:00:37Z Florian <florian@derfurth.com> # Permet l'ajout de Contrats d'Objectifs Territoriaux (COT)
+labellisation/audit [labellisation/cot labellisation/audit@v1.20.0] 2023-01-03T16:34:33Z Florian <florian@derfurth.com> # Ajoute la vue audits pour le client.
