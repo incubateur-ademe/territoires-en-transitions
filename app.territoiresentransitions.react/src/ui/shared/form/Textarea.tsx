@@ -2,8 +2,8 @@ import classNames from 'classnames';
 import React, {TextareaHTMLAttributes} from 'react';
 import {useAutoSizeTextarea} from 'ui/shared/form/useAutoSizeTextarea';
 
-type Props<T> = {
-  onInputChange: (value: string) => void;
+export type TTextarea<T> = {
+  onInputChange?: (value: string) => void;
   /** Minimum height pour le textarea. Valeur défaut "2.25rem" */
   minHeight?: string;
 } & TextareaHTMLAttributes<T>;
@@ -16,10 +16,10 @@ const Textarea = <T extends HTMLTextAreaElement>({
   className,
   minHeight = '2.25rem',
   ...props
-}: Props<T>) => {
+}: TTextarea<T>) => {
   // Appelée au changement de valeur du textarea
   const textareaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    onInputChange(event.target.value);
+    onInputChange && onInputChange(event.target.value);
   };
 
   const textareaRef = useAutoSizeTextarea(value?.toString(), minHeight);
