@@ -2,8 +2,8 @@
 
 BEGIN;
 
-select collectivite_id, referentiel, audit, is_cot
-from audits
+select collectivite_id, audit_id, referentiel, noms
+from auditeurs
 where false;
 
 ROLLBACK;
