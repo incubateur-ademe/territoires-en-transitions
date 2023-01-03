@@ -8,6 +8,8 @@ import {fetchParcours, getReferentielParcours} from './queries';
 import {useDemandeLabellisation} from './useDemandeLabellisation';
 import {ReferentielParamOption} from 'app/paths';
 import {RealtimeChannel} from '@supabase/supabase-js';
+import {Database} from 'types/database.types';
+import {useAudit} from '../Audit/useAudit';
 
 type SubToRef = {
   ref: string;
@@ -20,6 +22,7 @@ export const useParcoursLabellisation = (
 ): {
   parcours: LabellisationParcoursRead | null;
   demande: LabellisationDemandeRead | null;
+  audit: Database['public']['Tables']['audit']['Row'] | null;
 } => {
   const collectivite_id = useCollectiviteId();
   const [subscription, setSubscription] = useState<SubToRef | null>(null);
@@ -38,6 +41,9 @@ export const useParcoursLabellisation = (
     referentiel as ReferentielParamOption,
     etoiles
   );
+
+  // charge les données de l'audit
+  const {data: audit} = useAudit();
 
   // recharge les données après un changement de statut d'une action
   const refetch = () => {
@@ -82,5 +88,9 @@ export const useParcoursLabellisation = (
   }, [collectivite_id, referentiel]);
 
   // renvoie le parcours correspondant au référentiel courant
-  return {parcours: parcours || null, demande: demande || null};
+  return {
+    parcours: parcours || null,
+    demande: demande || null,
+    audit: audit || null,
+  };
 };
