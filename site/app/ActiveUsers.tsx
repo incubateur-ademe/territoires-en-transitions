@@ -1,9 +1,8 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
 import useSWR from 'swr';
-import * as Plot from '@observablehq/plot';
 import { supabase } from './initSupabase';
+import { ResponsiveLine } from '@nivo/line';
 
 function useActiveUsers() {
   return useSWR('stats_unique_active_users', async () => {
@@ -13,39 +12,71 @@ function useActiveUsers() {
     if (error) {
       throw new Error('stats_unique_active_users');
     }
-    return data?.map((d) => ({ ...d, date: new Date(d.date) })) || [];
+    if (!data) {
+      return [];
+    }
+    return [
+      {
+        id: 'count',
+        data: data.map((d) => ({ x: d.date, y: d.count })),
+      },
+      {
+        id: 'cumulated_count',
+        data: data.map((d) => ({ x: d.date, y: d.cumulated_count })),
+      },
+    ];
   });
 }
 
 export default function ActiveUsers() {
   const { data } = useActiveUsers();
-  const ref = useRef();
 
-  useEffect(() => {
-    if (data === undefined) return;
+  if (!data) {
+    return null;
+  }
 
-    const chart = Plot.plot({
-      y: { label: "Nombre d'utilisateurs actifs", grid: true },
-      marks: [
-        Plot.line(data, {
-          x: 'date',
-          y: 'count',
-          stroke: '#4e79a7',
-          marker: 'circle',
-        }),
-        Plot.line(data, {
-          x: 'date',
-          y: 'cumulated_count',
-          stroke: '#e15759',
-          marker: 'circle',
-        }),
-      ],
-    });
-    if (ref.current) {
-      ref.current.append(chart);
-    }
-    return () => chart.remove();
-  }, [data]);
-
-  return <div ref={ref} />;
+  return (
+    <div style={{ height: 400 }}>
+      <ResponsiveLine
+        data={data}
+        margin={{ top: 55, right: 110, bottom: 50, left: 60 }}
+        xScale={{ type: 'point' }}
+        yScale={{
+          type: 'linear',
+          min: 'auto',
+          max: 'auto',
+          stacked: false,
+          reverse: false,
+        }}
+        yFormat=" >-.2f"
+        axisTop={null}
+        axisRight={null}
+        axisBottom={{
+          legendPosition: 'end',
+          tickSize: 5,
+          tickPadding: 5,
+          tickRotation: -35,
+          format: (v) =>
+            new Date(v).toLocaleDateString('fr', {
+              month: 'short',
+              year: 'numeric',
+            }),
+        }}
+        axisLeft={{
+          tickSize: 4,
+          tickPadding: 5,
+          tickRotation: 0,
+          legend: "Nombre d'utilisateurs actifs",
+          legendOffset: -35,
+          legendPosition: 'middle',
+        }}
+        pointColor={{ theme: 'background' }}
+        pointBorderWidth={3}
+        pointBorderColor={{ from: 'serieColor' }}
+        pointLabelYOffset={-12}
+        crosshairType="cross"
+        useMesh={true}
+      />
+    </div>
+  );
 }
