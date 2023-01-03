@@ -890,6 +890,7 @@ begin
     delete from fiche_action_indicateur where fiche_id = old.id;
     delete from fiche_action_action where fiche_id = old.id;
     delete from fiche_action_axe where fiche_id = old.id;
+    return new;
 end;
 $$ language plpgsql;
 
