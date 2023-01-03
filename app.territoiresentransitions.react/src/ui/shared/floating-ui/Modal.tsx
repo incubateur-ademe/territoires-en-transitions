@@ -12,13 +12,15 @@ import {
 } from '@floating-ui/react';
 import classNames from 'classnames';
 
+export type RenderProps = {
+  close: () => void;
+  labelId: string;
+  descriptionId: string;
+};
+
 export type ModalProps = {
   /* où il faut mettre le contenu de la modale */
-  render: (props: {
-    close: () => void;
-    labelId: string;
-    descriptionId: string;
-  }) => React.ReactNode;
+  render: (props: RenderProps) => React.ReactNode;
   /* l'élément qui permet d'afficher la modale au click */
   children?: JSX.Element;
   /* s'il n'y a pas d'élément permettant d'afficher la modale,
