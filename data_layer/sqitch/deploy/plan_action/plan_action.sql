@@ -88,13 +88,15 @@ create type fiche_action_niveaux_priorite as enum(
     );
 
 -- TAG
-create table tag -- table abstraite
+create table private.tag -- table abstraite
 (
     nom text not null,
     collectivite_id integer references collectivite not null,
     unique(nom, collectivite_id)
 );
-alter table tag enable row level security;
+comment on table private.tag is
+'Table abstraite.';
+alter table private.tag enable row level security;
 
 -- FICHE ACTION
 create table fiche_action
@@ -141,6 +143,11 @@ create table axe
     collectivite_id integer references collectivite not null,
     parent integer references axe
 );
+comment on table axe is
+'Les axes des plans d''action.';
+comment on column axe.parent is
+'Le parent de l''axe, lorsque qu''il est `null` alors l''axe est à la racine et on le considère en tant que plan d''action.';
+
 alter table axe enable row level security;
 create policy allow_read on axe for select using(is_authenticated());
 create policy allow_insert on axe for insert with check(have_edition_acces(collectivite_id));
@@ -196,7 +203,7 @@ comment on function plans_action_collectivite is 'Liste les plans action d''une 
 create table partenaire_tag
 (
     id serial primary key,
-    like tag including all
+    like private.tag including all
 );
 alter table partenaire_tag enable row level security;
 create policy allow_read on partenaire_tag for select using(is_authenticated());
@@ -249,7 +256,7 @@ comment on function enlever_partenaire is 'Enlever un partenaire à la fiche';
 create table structure_tag
 (
     id serial primary key,
-    like tag including all
+    like private.tag including all
 );
 alter table structure_tag enable row level security;
 create policy allow_read on structure_tag for select using(is_authenticated());
@@ -303,7 +310,7 @@ comment on function enlever_structure is 'Enlever une structure à la fiche';
 create table personne_tag
 (
     id serial primary key,
-    like tag including all
+    like private.tag including all
 );
 alter table personne_tag enable row level security;
 create policy allow_read on personne_tag for select using(is_authenticated());
