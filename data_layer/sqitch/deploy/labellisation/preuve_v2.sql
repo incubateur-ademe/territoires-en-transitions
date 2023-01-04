@@ -14,6 +14,8 @@ create table preuve_audit
     like labellisation.preuve_base including all,
     audit_id integer references audit not null
 );
+alter table preuve_audit
+    enable row level security;
 comment on table preuve_audit is
     'Permet de stocker les rapports d''audit';
 
@@ -64,7 +66,7 @@ select -- champs communs
        null:: jsonb                                as preuve_reglementaire,
        null:: jsonb                                as demande,
        null:: jsonb                                as rapport,
-       null:: jsonb                                 as audit
+       null:: jsonb                                as audit
 from preuve_complementaire pc
          left join labellisation.bibliotheque_fichier_snippet fs
                    on fs.id = pc.fichier_id
