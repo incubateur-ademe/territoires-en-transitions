@@ -14,7 +14,9 @@ create table migration.fiche_action_indicateur_personnalise as select * from pub
 create table migration.plan_action as select * from public.plan_action;
 
 
+-- fixme Déplacer dans vuesBI car on casse la fonction refresh.
 drop materialized view stats.collectivite_plan_action cascade;
+
 drop trigger after_collectivite_insert on collectivite;
 drop function after_collectivite_insert_default_plan();
 drop table plan_action cascade;
