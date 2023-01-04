@@ -21,3 +21,15 @@ values (1,
        (2, 'fiche 2', 'test description', array []::fiche_action_thematiques[], array []::fiche_action_piliers_eci[],1),
        (3, 'fiche 3', 'test description', array []::fiche_action_thematiques[], array []::fiche_action_piliers_eci[], 2)
 ;
+
+insert into personne_tag (nom, collectivite_id)
+values ('Yo Low', 1),
+       ('Judes Low', 1);
+
+insert into structure_tag (nom, collectivite_id)
+values ('Disneyland', 1),
+       ('Parc Estérix', 1);
+
+insert into partenaire_tag (nom, collectivite_id)
+values ('Particulier', 1),
+       ('Particulière', 1);
