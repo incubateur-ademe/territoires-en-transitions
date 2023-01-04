@@ -1,5 +1,5 @@
 begin;
-select plan(8);
+select plan(10);
 
 truncate labellisation.action_audit_state;
 truncate audit cascade;
@@ -68,34 +68,29 @@ select throws_ok(
 
 -- Test vue pour une collectivite et un referentiel
 select bag_eq(
-                   'select audit_id,
-                          action_id,
-                          id,
-                          collectivite_id,
-                          ordre_du_jour,
-                          avis,
-                          statut
-                   from labellisation.action_audit_state;',
-                   'select audit_id,
-                          action_id,
-                          state_id,
-                          collectivite_id,
-                          ordre_du_jour,
-                          avis,
-                          statut
-                   from public.action_audit_state;',
-                   'La vue devrait contenir les données de la table.'
+               'select audit_id,
+                      action_id,
+                      id,
+                      collectivite_id,
+                      ordre_du_jour,
+                      avis,
+                      statut
+               from labellisation.action_audit_state;',
+               'select audit_id,
+                      action_id,
+                      state_id,
+                      collectivite_id,
+                      ordre_du_jour,
+                      avis,
+                      statut
+               from public.action_audit_state;',
+               'La vue devrait contenir les données de la table.'
            );
-
-/*insert into audit(collectivite_id, referentiel, date_debut, date_fin)
-values (1, 'eci', default, null),
-       (1, 'cae', default, null),
-       (2, 'eci', now() - interval '3 day', now() - interval '1 day');*/
 
 -- Test contrainte audit_existant - creation impossible - nouveau maintenant et audit en cours
 prepare my_thrower_audit_en_cours as
     insert into audit(collectivite_id, referentiel, date_debut, date_fin)
-    values(1, 'eci', default, null);
+    values (1, 'eci', default, null);
 select throws_ok(
                'my_thrower_audit_en_cours',
                'conflicting key value violates exclusion constraint "audit_existant"',
@@ -104,11 +99,43 @@ select throws_ok(
 -- Test contrainte audit_existant - creation impossible - nouveau début avant-hier, et audit terminé hier
 prepare my_thrower_audit_existant as
     insert into audit(collectivite_id, referentiel, date_debut, date_fin)
-    values(2, 'eci', now() - interval '2 day', null);
+    values (2, 'eci', now() - interval '2 day', null);
 select throws_ok(
                'my_thrower_audit_existant',
                'conflicting key value violates exclusion constraint "audit_existant"',
                'On ne devrait pas pouvoir insérer un audit en même temps qu''un audit existant'
+           );
+
+
+-- Teste la clôture d'un audit COT
+truncate audit cascade;
+truncate cot;
+
+-- La collectivité 1 est COT
+insert into cot
+values (1, true);
+
+-- On crée un audit COT (1) et un non-COT (2).
+insert into audit(id, collectivite_id, referentiel, date_debut, date_fin)
+values (1, 1, 'eci', now() - interval '1 day', null),
+       (2, 2, 'eci', now() - interval '1 day', null);
+
+-- On valide les deux audits en tant qu'auditeur.
+select test.identify_as('youlou@doudou.com');
+update audit
+set valide = true
+where true;
+
+select bag_eq(
+               'select date_fin, valide from audit where id = 1',
+               'select now(), true',
+               'La date de fin de l''audit devrait être égale à now après la validation d''un audit COT.'
+           );
+
+select bag_eq(
+               'select date_fin, valide from audit where id = 2',
+               'select null::timestamp with time zone, true',
+               'La date de fin devrait être null après la validation d''un audit non-COT.'
            );
 
 rollback;
