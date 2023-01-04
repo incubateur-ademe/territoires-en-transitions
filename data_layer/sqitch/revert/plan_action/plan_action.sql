@@ -43,7 +43,7 @@ drop table fiche_action_axe;
 drop table axe cascade;
 drop function peut_modifier_la_fiche(id_fiche integer);
 drop table fiche_action cascade;
-drop table tag;
+drop table private.tag;
 drop type fiche_action_niveaux_priorite cascade;
 drop type fiche_action_statuts cascade;
 drop type fiche_action_cibles cascade;
