@@ -1,33 +1,38 @@
 import PreuveDoc from 'ui/shared/preuves/Bibliotheque/PreuveDoc';
-import {TPreuvesParType} from 'ui/shared/preuves/Bibliotheque/types';
+import {
+  TPreuveAuditEtLabellisation,
+  TPreuveRapport,
+} from 'ui/shared/preuves/Bibliotheque/types';
 import {usePreuvesParType} from 'ui/shared/preuves/Bibliotheque/usePreuves';
 import {AddRapportVisite} from './AddRapportVisite';
 import {PreuvesLabellisation} from './PreuveLabellisation';
 import {PreuvesTabs} from './PreuvesTabs';
 
 type TBibliothequeDocsProps = {
-  preuves: TPreuvesParType;
+  labellisationEtAudit?: TPreuveAuditEtLabellisation[];
+  rapports?: TPreuveRapport[];
 };
 
-export const BibliothequeDocs = ({preuves}: TBibliothequeDocsProps) => {
-  const {labellisation, rapport} = preuves;
-
+export const BibliothequeDocs = ({
+  labellisationEtAudit,
+  rapports,
+}: TBibliothequeDocsProps) => {
   return (
     <main data-test="BibliothequeDocs" className="fr-container mt-9 mb-16">
       <h1 className="text-center fr-mt-4w fr-mb-4w">
         Bibliothèque de documents
       </h1>
 
-      {labellisation?.length ? (
+      {labellisationEtAudit?.length ? (
         <section className="fr-mt-4w" data-test="labellisation">
-          <PreuvesLabellisation preuves={labellisation} />
+          <PreuvesLabellisation preuves={labellisationEtAudit} />
         </section>
       ) : null}
 
       <section className="fr-mt-4w" data-test="rapports">
         <h2>Rapports de visite annuelle</h2>
         <AddRapportVisite />
-        {rapport?.map(preuve => (
+        {rapports?.map(preuve => (
           <div className="py-4" key={preuve.id}>
             <PreuveDoc preuve={preuve} />
           </div>
@@ -44,9 +49,18 @@ export const BibliothequeDocs = ({preuves}: TBibliothequeDocsProps) => {
 
 const BibliothequeDocsConnected = () => {
   const preuves = usePreuvesParType({
-    preuve_types: ['labellisation', 'rapport'],
+    preuve_types: ['audit', 'labellisation', 'rapport'],
   });
-  return <BibliothequeDocs preuves={preuves} />;
+
+  const {labellisation, rapport, audit} = preuves;
+  const labellisationEtAudit = [...(labellisation || []), ...(audit || [])];
+
+  return (
+    <BibliothequeDocs
+      labellisationEtAudit={labellisationEtAudit}
+      rapports={rapport}
+    />
+  );
 };
 
 export default BibliothequeDocsConnected;
