@@ -353,12 +353,37 @@ Deno.test('Vue personne pilote', async () => {
   await signOut();
 });
 
+Deno.test('Vue personne référente', async () => {
+  await testReset();
+  await signIn('yolododo');
+
+  // Une fiche dans les données de test
+  const selectResponse1 = await supabase.from('fiche_action_personne_referente').
+    select().
+    eq('collectivite_id', 1);
+  assertExists(selectResponse1.data);
+  assertEquals(4, selectResponse1.data.length);
+
+  await signOut();
+});
+
 Deno.test('Plan d\'action' , async () => {
   await testReset();
   await signIn('yolododo');
 
   // Une fiche dans les données de test
   const selectResponse1 = await supabase.rpc('plan_action', {'id': 1});
+  assertExists(selectResponse1.data);
+  console.log(selectResponse1)
+
+  await signOut();
+});
+Deno.test('Plan d\'actions d\'une collectivité' , async () => {
+  await testReset();
+  await signIn('yolododo');
+
+  // La liste des axes sans parents qui sont donc des plans.
+  const selectResponse1 = await supabase.from('axe').select().eq('collectivite_id', 1).is('parent', null);
   assertExists(selectResponse1.data);
   console.log(selectResponse1)
 
