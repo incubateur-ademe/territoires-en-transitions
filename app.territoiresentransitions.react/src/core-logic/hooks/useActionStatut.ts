@@ -79,6 +79,6 @@ export const useEditActionStatutIsDisabled = (actionId: string) => {
       collectivite.readonly ||
       !score ||
       score.desactive ||
-      (audit && !isAuditeur)
+      (audit && (!isAuditeur || audit.valide))
   );
 };
