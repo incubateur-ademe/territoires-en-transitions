@@ -325,7 +325,7 @@ create type personne as
     nom text,
     collectivite_id integer,
     tag_id integer,
-    utilisateur_id uuid
+    user_id uuid
 );
 
 create function personnes_collectivite(
@@ -335,7 +335,7 @@ select
     pt.nom,
     pt.collectivite_id,
     pt.id as tag_id,
-    null::uuid as utilisateur_id
+    null::uuid as user_id
 from personne_tag pt
 where pt.collectivite_id = id_collectivite
 union
@@ -343,7 +343,7 @@ select
     concat(cm.prenom, ' ', cm.nom) as nom,
     id_collectivite as collectivite_id,
     null::integer as tag_id,
-    cm.user_id::uuid as utilisateur_id
+    cm.user_id::uuid as user_id
 from collectivite_membres(id_collectivite) cm;
 $$ language sql;
 comment on function personnes_collectivite is 'Liste les personnes (tags et utilisateurs) d''une collectivite';
@@ -352,10 +352,10 @@ comment on function personnes_collectivite is 'Liste les personnes (tags et util
 create table fiche_action_pilote
 (
     fiche_id integer references fiche_action not null,
-    utilisateur_id uuid references auth.users,
+    user_id uuid references auth.users,
     tag_id integer references personne_tag,
     -- unique au lieu de primary key pour autoriser le null sur utilisateur ou tags
-    unique(fiche_id, utilisateur_id, tag_id)
+    unique(fiche_id, user_id, tag_id)
 );
 alter table fiche_action_pilote enable row level security;
 create policy allow_read on fiche_action_pilote for select using(is_authenticated());
@@ -389,17 +389,17 @@ create function ajouter_pilote(
 declare
     id_tag integer;
 begin
-    if pilote.utilisateur_id is null then
+    if pilote.user_id is null then
             insert into personne_tag (nom, collectivite_id)
             values (pilote.nom,  pilote.collectivite_id)
             on conflict (nom, collectivite_id) do update set nom = pilote.nom
             returning id into id_tag;
             pilote.tag_id = id_tag;
-        insert into fiche_action_pilote (fiche_id, utilisateur_id, tag_id)
+        insert into fiche_action_pilote (fiche_id, user_id, tag_id)
         values (id_fiche, null, id_tag);
     else
-        insert into fiche_action_pilote (fiche_id, utilisateur_id, tag_id)
-        values (id_fiche, pilote.utilisateur_id, null);
+        insert into fiche_action_pilote (fiche_id, user_id, tag_id)
+        values (id_fiche, pilote.user_id, null);
     end if;
     return pilote;
 end;
@@ -411,12 +411,12 @@ create function enlever_pilote(
     pilote personne
 ) returns void as $$
 begin
-    if pilote.utilisateur_id is null then
+    if pilote.user_id is null then
         delete from fiche_action_pilote
         where fiche_id = id_fiche and tag_id = pilote.tag_id;
     else
         delete from fiche_action_pilote
-        where fiche_id = id_fiche and utilisateur_id = pilote.utilisateur_id;
+        where fiche_id = id_fiche and user_id = pilote.user_id;
     end if;
 
 end;
@@ -427,10 +427,10 @@ comment on function enlever_pilote is 'Enlever un pilote à la fiche';
 create table fiche_action_referent
 (
     fiche_id integer references fiche_action not null,
-    utilisateur_id uuid references auth.users,
+    user_id uuid references auth.users,
     tag_id integer references personne_tag,
     -- unique au lieu de primary key pour autoriser le null sur utilisateur ou tag
-    unique(fiche_id, utilisateur_id, tag_id)
+    unique(fiche_id, user_id, tag_id)
 );
 alter table fiche_action_referent enable row level security;
 create policy allow_read on fiche_action_referent for select using(is_authenticated());
@@ -445,7 +445,7 @@ create function ajouter_referent(
 declare
     id_tag integer;
 begin
-    if referent.utilisateur_id is null then
+    if referent.user_id is null then
         id_tag = referent.tag_id;
         if id_tag is null then
             insert into personne_tag (nom, collectivite_id)
@@ -453,11 +453,11 @@ begin
             returning id into id_tag;
             referent.tag_id = id_tag;
         end if;
-        insert into fiche_action_referent (fiche_id, utilisateur_id, tag_id)
+        insert into fiche_action_referent (fiche_id, user_id, tag_id)
         values (id_fiche, null, id_tag);
     else
-        insert into fiche_action_referent (fiche_id, utilisateur_id, tag_id)
-        values (id_fiche, referent.utilisateur_id, null);
+        insert into fiche_action_referent (fiche_id, user_id, tag_id)
+        values (id_fiche, referent.user_id, null);
     end if;
     return referent;
 end;
@@ -469,12 +469,12 @@ create function enlever_referent(
     referent personne
 ) returns void as $$
 begin
-    if referent.utilisateur_id is null then
+    if referent.user_id is null then
         delete from fiche_action_referent
         where fiche_id = id_fiche and tag_id = referent.tag_id;
     else
         delete from fiche_action_referent
-        where fiche_id = id_fiche and utilisateur_id = referent.utilisateur_id;
+        where fiche_id = id_fiche and user_id = referent.user_id;
     end if;
 
 end;
@@ -685,10 +685,10 @@ from fiche_action fa
              select coalesce(pt.nom, concat(dcp.prenom, ' ', dcp.nom)) as nom,
                     pt.collectivite_id,
                     fap.tag_id,
-                    fap.utilisateur_id
+                    fap.user_id
              from fiche_action_pilote fap
                       left join personne_tag pt on fap.tag_id = pt.id
-                      left join dcp on fap.utilisateur_id = dcp.user_id
+                      left join dcp on fap.user_id = dcp.user_id
              where fap.fiche_id = fa.id
          ) pil
     ) as pi on true
@@ -699,10 +699,10 @@ from fiche_action fa
              select coalesce(pt.nom, concat(dcp.prenom, ' ', dcp.nom)) as nom,
                     pt.collectivite_id,
                     far.tag_id,
-                    far.utilisateur_id
+                    far.user_id
              from fiche_action_referent far
                       left join personne_tag pt on far.tag_id = pt.id
-                      left join dcp on far.utilisateur_id = dcp.user_id
+                      left join dcp on far.user_id = dcp.user_id
              where far.fiche_id = fa.id
          ) ref
     ) as re on true
@@ -936,7 +936,7 @@ create trigger delete
 execute procedure delete_fiche_action();
 
 -- Fonction récursive pour afficher un plan d'action
-create or replace function plan_action(pa_id integer) returns jsonb as
+create or replace function plan_action(id integer) returns jsonb as
 $$
 declare
     pa_enfant_id integer; -- Id d'un plan d'action enfant du plan d'action courant
@@ -949,19 +949,19 @@ begin
     fiches = to_jsonb((select array_agg(fa.*)
                        from fiches_action fa
                                 join fiche_action_axe fapa on fa.id = fapa.fiche_id
-                       where fapa.axe_id = pa_id)) ;
-    pa_nom = (select nom from axe where id = pa_id);
+                       where fapa.axe_id = plan_action.id)) ;
+    pa_nom = (select nom from axe where axe.id = plan_action.id);
     id_loop = 1;
     for pa_enfant_id in
         select pa.id
         from axe pa
-        where pa.parent = pa_id
+        where pa.parent = plan_action.id
         loop
             enfants[id_loop] = plan_action(pa_enfant_id);
             id_loop = id_loop + 1;
         end loop;
 
-    to_return = jsonb_build_object('id', pa_id,
+    to_return = jsonb_build_object('id', id,
                                    'nom', pa_nom,
                                    'fiches', fiches,
                                    'enfants', enfants);
@@ -1058,7 +1058,7 @@ do $$
                             on conflict (nom, collectivite_id) do update set nom = elem
                             returning id into elem_id;
 
-                            insert into fiche_action_referent (fiche_id, utilisateur_id, tag_id)
+                            insert into fiche_action_referent (fiche_id, user_id, tag_id)
                             values (fiche_id, null, elem_id);
                         end if;
                     end loop;
@@ -1073,7 +1073,7 @@ do $$
                             on conflict (nom, collectivite_id) do update set nom = elem
                             returning id into elem_id;
 
-                            insert into fiche_action_pilote (fiche_id, utilisateur_id, tag_id)
+                            insert into fiche_action_pilote (fiche_id, user_id, tag_id)
                             values (fiche_id, null, elem_id);
                         end if;
                     end loop;

@@ -885,7 +885,7 @@ export interface Database {
         Returns: boolean;
       };
       plan_action: {
-        Args: {pa_id: number};
+        Args: {id: number};
         Returns: Json;
       };
       plans_action_collectivite: {
@@ -1903,34 +1903,34 @@ export interface Database {
         Insert: {
           fiche_id: number;
           tag_id?: number | null;
-          utilisateur_id?: string | null;
+          user_id?: string | null;
         };
         Row: {
           fiche_id: number;
           tag_id: number | null;
-          utilisateur_id: string | null;
+          user_id: string | null;
         };
         Update: {
           fiche_id?: number;
           tag_id?: number | null;
-          utilisateur_id?: string | null;
+          user_id?: string | null;
         };
       };
       fiche_action_referent: {
         Insert: {
           fiche_id: number;
           tag_id?: number | null;
-          utilisateur_id?: string | null;
+          user_id?: string | null;
         };
         Row: {
           fiche_id: number;
           tag_id: number | null;
-          utilisateur_id: string | null;
+          user_id: string | null;
         };
         Update: {
           fiche_id?: number;
           tag_id?: number | null;
-          utilisateur_id?: string | null;
+          user_id?: string | null;
         };
       };
       fiche_action_structure_tag: {

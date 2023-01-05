@@ -132,7 +132,7 @@ Deno.test('Création fiches et plan actions', async () => {
   const piloteUtilisateur = {
     collectivite_id: 1,
     nom: 'pilote test2',
-    utilisateur_id: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
+    user_id: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
   } as Personne;
   // Création et ajout tag pilote à la fiche
   const insertPiloteTag = await supabase.rpc('ajouter_pilote',
@@ -150,7 +150,7 @@ Deno.test('Création fiches et plan actions', async () => {
   const referentUtilisateur = {
     collectivite_id: 1,
     nom: 'referent test2',
-    utilisateur_id: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
+    user_id: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
   } as Personne;
   // Création et ajout tag referent à la fiche
   const insertReferentTag = await supabase.rpc('ajouter_referent',
@@ -220,7 +220,7 @@ Deno.test('Création fiches et plan actions', async () => {
 
   // Appeler la vue donnant l'ensemble d'un plan action
   const planentier = await supabase.rpc('plan_action',
-    {'pa_id': insertPlanAction.data![0].id}).select();
+    {'id': insertPlanAction.data![0].id}).select();
   assertExists(planentier.data);
   // console.logplanentier);
 
@@ -349,6 +349,18 @@ Deno.test('Vue personne pilote', async () => {
     eq('collectivite_id', 1);
   assertExists(selectResponse1.data);
   assertEquals(4, selectResponse1.data.length);
+
+  await signOut();
+});
+
+Deno.test('Plan d\'action' , async () => {
+  await testReset();
+  await signIn('yolododo');
+
+  // Une fiche dans les données de test
+  const selectResponse1 = await supabase.rpc('plan_action', {'id': 1});
+  assertExists(selectResponse1.data);
+  console.log(selectResponse1)
 
   await signOut();
 });
