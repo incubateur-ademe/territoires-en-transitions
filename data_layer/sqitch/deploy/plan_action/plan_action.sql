@@ -363,6 +363,25 @@ create policy allow_insert on fiche_action_pilote for insert with check(peut_mod
 create policy allow_update on fiche_action_pilote for update using(peut_modifier_la_fiche(fiche_id));
 create policy allow_delete on fiche_action_pilote for delete using(peut_modifier_la_fiche(fiche_id));
 
+create view fiche_action_personne_pilote
+as
+select t.collectivite_id,
+       t.nom,
+       null::uuid as user_id,
+       t.id       as tag_id
+from personne_tag t
+where have_lecture_acces(t.collectivite_id)
+union all
+select m.collectivite_id,
+       dcp.nom || ' ' || dcp.prenom,
+       m.user_id,
+       null
+from private_collectivite_membre m
+         join utilisateur.dcp_display dcp on dcp.user_id = m.user_id
+where have_lecture_acces(m.collectivite_id); -- protège les DCPs
+comment on view fiche_action_personne_pilote is
+    'Permet de lister les pilotes possibles pour les fiches actions.';
+
 create function ajouter_pilote(
     id_fiche integer,
     pilote personne
