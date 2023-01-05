@@ -784,6 +784,7 @@ begin
                 new.maj_termine,
                 new.collectivite_id)
         returning id into id_fiche;
+        new.id = id_fiche;
     else
         update fiche_action
         set
