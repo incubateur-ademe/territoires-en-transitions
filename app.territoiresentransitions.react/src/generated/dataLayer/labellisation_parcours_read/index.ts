@@ -14,6 +14,8 @@ export interface LabellisationParcoursRead {
   criteres_action: CritereLabellisationAction[];
   /** Critère lié au score */
   critere_score: CritereLabellisationScore;
+  /** Indique que les critères action, score et fichiers de labellisation sont tous atteints */
+  rempli: boolean;
   /** Dates des prochaines sessions d'audit (exemple: Les prochaines sessions 
       d’audit sont planifiées du 23 avril au 23 juin 2022 et du 5 novembre 2022 
       au 5 janvier 2023.) */
