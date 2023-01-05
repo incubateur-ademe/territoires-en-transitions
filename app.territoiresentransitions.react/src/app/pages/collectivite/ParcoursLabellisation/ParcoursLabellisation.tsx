@@ -1,27 +1,27 @@
 import {Link} from 'react-router-dom';
 import {useCollectiviteId, useReferentielId} from 'core-logic/hooks/params';
 import {referentielToName} from 'app/labels';
-import {usePreuves} from 'ui/shared/preuves/Bibliotheque/usePreuves';
 import {useParcoursLabellisation} from './useParcoursLabellisation';
-import {HeaderLabellisation} from './HeaderLabellisation';
+import HeaderLabellisation from './HeaderLabellisation';
 import {ReferentielOfIndicateur} from 'types/litterals';
 import {
   makeCollectiviteReferentielUrl,
   ReferentielParamOption,
 } from 'app/paths';
-import {TPreuveLabellisation} from 'ui/shared/preuves/Bibliotheque/types';
 import {LabellisationTabs} from './LabellisationTabs';
+import {useIsUnchangedReferentiel} from './useIsUnchangedReferentiel';
 
 const ParcoursLabellisation = () => {
   const collectiviteId = useCollectiviteId();
   const referentiel = useReferentielId();
-  const {parcours, demande} = useParcoursLabellisation(referentiel);
-  const preuves = usePreuves({
-    demande_id: demande?.id,
-  }) as TPreuveLabellisation[];
+  const {parcours} = useParcoursLabellisation(referentiel);
+  const isUnchangedReferentiel = useIsUnchangedReferentiel(
+    collectiviteId,
+    referentiel
+  );
 
   // cas particulier : le référentiel n'est pas du tout renseigné
-  if (!parcours) {
+  if (isUnchangedReferentiel) {
     return (
       <>
         <Title referentiel={referentiel} />
@@ -53,11 +53,7 @@ const ParcoursLabellisation = () => {
   return collectiviteId && parcours ? (
     <>
       <Title referentiel={parcours.referentiel} />
-      <HeaderLabellisation
-        parcours={parcours}
-        demande={demande}
-        preuves={preuves}
-      />
+      <HeaderLabellisation />
       <main
         className="fr-container mt-9 mb-16"
         data-test={`labellisation-${parcours.referentiel}`}
