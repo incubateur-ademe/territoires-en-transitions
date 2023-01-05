@@ -4,6 +4,7 @@ import {useCollectiviteId, useReferentielId} from 'core-logic/hooks/params';
 import {TAudit} from './types';
 import {Referentiel} from 'types/litterals';
 import {useAuth} from 'core-logic/api/auth/AuthProvider';
+import {usePreuvesParType} from 'ui/shared/preuves/Bibliotheque/usePreuves';
 
 // charge les données
 export const fetch = async (
@@ -73,4 +74,23 @@ const fetchAuditeurs = async (
   }
 
   return data[0].noms as TAuditeur[];
+};
+
+/** Rapport associé à un audit */
+export const useRapportAudit = (audit_id?: number) => {
+  const {audit} = usePreuvesParType({preuve_types: ['audit'], audit_id});
+  return audit?.length ? audit[0] : null;
+};
+
+/** Détermine si un COT est actif pour la collectivité */
+export const useHasActiveCOT = () => {
+  const collectivite_id = useCollectiviteId();
+  const {data} = useQuery(['is_cot', collectivite_id], async () => {
+    const {count} = await supabaseClient
+      .from('cot')
+      .select(undefined, {head: true, count: 'exact'})
+      .match({collectivite_id, actif: true});
+    return Boolean(count);
+  });
+  return data || false;
 };

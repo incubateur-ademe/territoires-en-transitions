@@ -12,6 +12,7 @@ type TFilters = {
   action?: TActionDef;
   withSubActions?: boolean;
   demande_id?: number;
+  audit_id?: number;
   preuve_types?: TPreuveType[];
 };
 
@@ -48,6 +49,12 @@ const fetch = async (collectivite_id: number, filters?: TFilters) => {
   const demande_id = filters?.demande_id;
   if (demande_id) {
     query.eq('demande->>id' as 'demande', demande_id);
+  }
+
+  // ou par audit
+  const audit_id = filters?.audit_id;
+  if (audit_id) {
+    query.eq('audit->>id' as 'audit', audit_id);
   }
 
   // ou par type(s)
