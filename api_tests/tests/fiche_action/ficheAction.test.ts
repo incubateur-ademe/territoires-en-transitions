@@ -252,3 +252,27 @@ Deno.test("Création fiches et plan actions", async () => {
     assertEquals(checkVue.data![0].structures!.length, 1);
     await signOut();
 });
+
+
+Deno.test("Création d'une fiche en utilisant la vue", async () => {
+    await testReset();
+    await signIn("yolododo");
+
+    // Une fiche dans les données de test
+    const selectResponse1 = await supabase.from("fiches_action").select().eq('collectivite_id', 2);
+    assertExists(selectResponse1.data);
+    assertEquals(1, selectResponse1.data.length);
+
+    // La fiche est insérée et est renvoyée avec un id
+    const insertResponse =
+      await supabase.from("fiches_action").insert({'collectivite_id': 2} as never).select();
+    assertExists(insertResponse.data);
+    assertExists(insertResponse.data[0]['id']);
+
+    // La fiche est présente dans la vue.
+    const selectResponse2 =  await supabase.from("fiches_action").select().eq('collectivite_id', 2);
+    assertExists(selectResponse2.data);
+    assertEquals(2, selectResponse2.data.length);
+
+    await signOut();
+});
