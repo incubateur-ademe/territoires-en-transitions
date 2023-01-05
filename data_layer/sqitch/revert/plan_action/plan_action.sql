@@ -24,6 +24,7 @@ drop function ajouter_referent(id_fiche integer, referent personne);
 drop table fiche_action_referent;
 drop function enlever_pilote(id_fiche integer, pilote personne);
 drop function ajouter_pilote(id_fiche integer, pilote personne);
+drop view fiche_action_personne_pilote;
 drop table fiche_action_pilote;
 drop function personnes_collectivite(id_collectivite integer);
 drop type personne;
