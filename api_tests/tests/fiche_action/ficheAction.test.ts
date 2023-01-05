@@ -73,7 +73,7 @@ Deno.test("Création fiches et plan actions", async () => {
     const insertPartenaire = await supabase.rpc("ajouter_partenaire",
         { "id_fiche": fId, "partenaire": partenaire }).select();
     const partenaireSave = insertPartenaire.data! as unknown as Database["public"]["Tables"]["partenaire_tag"]["Row"];
-    console.log(partenaireSave);
+    // console.logpartenaireSave);
     assertObjectMatch(partenaireSave, partenaire);
     const lienPartenaire = await supabase.from("fiche_action_partenaire_tag")
         .select().eq("fiche_id", fId);
@@ -88,7 +88,7 @@ Deno.test("Création fiches et plan actions", async () => {
     assertEquals(enlever.status, 200);
     const lienPartenaire2 = await supabase.from("fiche_action_partenaire_tag")
         .select().eq("fiche_id", fId);
-    console.log(lienPartenaire2);
+    // console.loglienPartenaire2);
     assertEquals(lienPartenaire2.data!.length, 0);
 
 
@@ -178,7 +178,7 @@ Deno.test("Création fiches et plan actions", async () => {
     const vue = await supabase.from("fiches_action")
         .select().eq("id", fId);
     assertExists(vue.data);
-    console.log(vue.data!);
+    // console.logvue.data!);
     // Récupérer les types liés dans la vue
     const fichesVue:FicheActionVueRow  = vue.data![0] as FicheActionVueRow;
     const partenairesVue = vue.data![0].partenaires! as Database["public"]["Tables"]["partenaire_tag"]["Row"][];
@@ -189,13 +189,13 @@ Deno.test("Création fiches et plan actions", async () => {
     const annexesVue = vue.data![0].annexes! as Database["public"]["Tables"]["action_relation"]["Row"][];
     const actionVue = vue.data![0].actions! as Database["public"]["Tables"]["annexe"]["Row"][];
     const axesVue = vue.data![0].actions! as Database["public"]["Tables"]["axe"]["Row"][];
-    console.log(fichesVue);
+    // console.logfichesVue);
 
     // Appeler la vue donnant l'ensemble d'un plan action
     const planentier =  await supabase.rpc("plan_action",
         { "pa_id": insertPlanAction.data![0].id }).select();
     assertExists(planentier.data);
-    console.log(planentier);
+    // console.logplanentier);
 
     // Insérer dans la vue
     const ficheVue = {
@@ -245,8 +245,8 @@ Deno.test("Création fiches et plan actions", async () => {
 
     const checkVue = await supabase.from("fiches_action")
         .select().eq("id", fId);
-    console.log(checkVue.data![0].objectifs);
-    console.log(checkVue.status);
+    // console.logcheckVue.data![0].objectifs);
+    // console.logcheckVue.status);
     const objectiVerif:string = checkVue.data![0].objectifs as string;
     assertEquals(objectiVerif, "verif");
     assertEquals(checkVue.data![0].structures!.length, 1);
