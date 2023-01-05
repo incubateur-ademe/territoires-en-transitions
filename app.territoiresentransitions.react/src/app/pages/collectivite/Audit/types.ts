@@ -1,15 +1,10 @@
+import {Database} from 'types/database.types';
 import {Referentiel} from 'types/litterals';
 
 export type TAuditStatut = 'non_audite' | 'en_cours' | 'audite';
 
 // statut de l'audit en cours
-export type TAudit = {
-  id: number;
-  collectivite_id: number;
-  referentiel: Referentiel;
-  demande_id: number | null;
-  date_debut: string;
-  date_fin: string | null;
+export type TAudit = Database['public']['Tables']['audit']['Row'] & {
   auditeurs: Record<'id', string>[];
 };
 
