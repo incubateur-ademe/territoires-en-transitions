@@ -1902,35 +1902,35 @@ export interface Database {
       fiche_action_pilote: {
         Insert: {
           fiche_id: number;
-          personne_tag_id?: number | null;
-          utilisateur_uuid?: string | null;
+          tag_id?: number | null;
+          utilisateur_id?: string | null;
         };
         Row: {
           fiche_id: number;
-          personne_tag_id: number | null;
-          utilisateur_uuid: string | null;
+          tag_id: number | null;
+          utilisateur_id: string | null;
         };
         Update: {
           fiche_id?: number;
-          personne_tag_id?: number | null;
-          utilisateur_uuid?: string | null;
+          tag_id?: number | null;
+          utilisateur_id?: string | null;
         };
       };
       fiche_action_referent: {
         Insert: {
           fiche_id: number;
-          personne_tag_id?: number | null;
-          utilisateur_uuid?: string | null;
+          tag_id?: number | null;
+          utilisateur_id?: string | null;
         };
         Row: {
           fiche_id: number;
-          personne_tag_id: number | null;
-          utilisateur_uuid: string | null;
+          tag_id: number | null;
+          utilisateur_id: string | null;
         };
         Update: {
           fiche_id?: number;
-          personne_tag_id?: number | null;
-          utilisateur_uuid?: string | null;
+          tag_id?: number | null;
+          utilisateur_id?: string | null;
         };
       };
       fiche_action_structure_tag: {
@@ -2907,20 +2907,6 @@ export interface Database {
           nom?: string;
         };
       };
-      tag: {
-        Insert: {
-          collectivite_id: number;
-          nom: string;
-        };
-        Row: {
-          collectivite_id: number;
-          nom: string;
-        };
-        Update: {
-          collectivite_id?: number;
-          nom?: string;
-        };
-      };
       type_tabular_score: {
         Insert: {
           action_id?: string | null;
@@ -3255,6 +3241,14 @@ export interface Database {
           code?: string | null;
           libelle?: string | null;
           region_code?: string | null;
+        };
+      };
+      fiche_action_personne_pilote: {
+        Row: {
+          collectivite_id: number | null;
+          nom: string | null;
+          tag_id: number | null;
+          user_id: string | null;
         };
       };
       fiches_action: {

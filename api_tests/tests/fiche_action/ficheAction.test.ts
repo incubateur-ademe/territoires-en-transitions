@@ -132,7 +132,7 @@ Deno.test('Création fiches et plan actions', async () => {
   const piloteUtilisateur = {
     collectivite_id: 1,
     nom: 'pilote test2',
-    utilisateur_uuid: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
+    utilisateur_id: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
   } as Personne;
   // Création et ajout tag pilote à la fiche
   const insertPiloteTag = await supabase.rpc('ajouter_pilote',
@@ -150,7 +150,7 @@ Deno.test('Création fiches et plan actions', async () => {
   const referentUtilisateur = {
     collectivite_id: 1,
     nom: 'referent test2',
-    utilisateur_uuid: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
+    utilisateur_id: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
   } as Personne;
   // Création et ajout tag referent à la fiche
   const insertReferentTag = await supabase.rpc('ajouter_referent',

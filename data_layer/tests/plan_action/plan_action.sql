@@ -76,15 +76,15 @@ select ok ((select count(*)=3 from fiche_action_structure_tag),
            'Il devrait y avoir 3 entrées dans fiche_action_structure_tag');
 
 -- Test personne
-select ajouter_pilote(1, (select pe.*::personne from (select 'pe1' as nom, 1 as collectivite_id, null as personne_tag_id, null as utilisateur_uuid) pe limit 1));
-select ajouter_pilote(1, (select pe.*::personne from (select null as nom, 1 as collectivite_id, null as personne_tag_id, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9' as utilisateur_uuid) pe limit 1));
-select enlever_pilote(3, (select ajouter_pilote(3, (select pe.*::personne from (select 'pe2' as nom, 1 as collectivite_id, null as personne_tag_id, null as utilisateur_uuid) pe limit 1))));
+select ajouter_pilote(1, (select pe.*::personne from (select 'pe1' as nom, 1 as collectivite_id, null as tag_id, null as utilisateur_id) pe limit 1));
+select ajouter_pilote(1, (select pe.*::personne from (select null as nom, 1 as collectivite_id, null as tag_id, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9' as utilisateur_id) pe limit 1));
+select enlever_pilote(3, (select ajouter_pilote(3, (select pe.*::personne from (select 'pe2' as nom, 1 as collectivite_id, null as tag_id, null as utilisateur_id) pe limit 1))));
 select ok ((select count(*)=2 from personne_tag),
            'Il devrait y avoir 2 entrées dans personne_tag');
 select ok ((select count(*)=2 from fiche_action_pilote),
            'Il devrait y avoir 2 entrées dans fiche_action_pilote');
-select enlever_referent(3, (select ajouter_referent(3, (select pe.*::personne from (select 'pe3' as nom, 1 as collectivite_id, null as personne_tag_id, null as utilisateur_uuid) pe limit 1))));
-select ajouter_referent(1, (select pe.*::personne from (select pt.nom, pt.collectivite_id, pt.id as personne_tag_id, null as utilisateur_uuid from personne_tag pt where nom = 'pe2') pe limit 1));
+select enlever_referent(3, (select ajouter_referent(3, (select pe.*::personne from (select 'pe3' as nom, 1 as collectivite_id, null as tag_id, null as utilisateur_id) pe limit 1))));
+select ajouter_referent(1, (select pe.*::personne from (select pt.nom, pt.collectivite_id, pt.id as tag_id, null as utilisateur_id from personne_tag pt where nom = 'pe2') pe limit 1));
 select ok ((select count(*)=3 from personne_tag),
            'Il devrait y avoir 3 entrées dans personne_tag');
 select ok ((select count(*)=1 from fiche_action_referent),
