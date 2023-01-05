@@ -11,7 +11,7 @@ exports[`Storyshots app/pages/collectivite/Audit/ValiderAudit Audit Labellisatio
   <button
     aria-expanded="false"
     aria-haspopup="dialog"
-    className="fr-btn fr-btn--sm fr-btn--secondary"
+    className="fr-btn fr-btn--sm fr-btn--secondary fr-mb-2w"
     data-test="AddRapportButton"
     onClick={[Function]}
     onKeyDown={[Function]}
@@ -57,7 +57,7 @@ exports[`Storyshots app/pages/collectivite/Audit/ValiderAudit Audit Sans Labelli
   <button
     aria-expanded="false"
     aria-haspopup="dialog"
-    className="fr-btn fr-btn--sm fr-btn--secondary"
+    className="fr-btn fr-btn--sm fr-btn--secondary fr-mb-2w"
     data-test="AddRapportButton"
     onClick={[Function]}
     onKeyDown={[Function]}
