@@ -39,7 +39,7 @@ export const AddRapportButton = (props: TAddDocsButtonProps) => {
     >
       <button
         data-test="AddRapportButton"
-        className="fr-btn fr-btn--sm fr-btn--secondary"
+        className="fr-btn fr-btn--sm fr-btn--secondary fr-mb-2w"
         onClick={() => setOpened(true)}
       >
         Ajouter le rapport d'audit
