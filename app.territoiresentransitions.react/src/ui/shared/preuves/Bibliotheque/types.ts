@@ -131,6 +131,7 @@ export type TPreuveComplementaire = TPreuveBase & TPreuveComplementaireFields;
 export type TPreuveLabellisation = TPreuveBase & TPreuveLabellisationFields;
 export type TPreuveAudit = TPreuveBase & TPreuveAuditFields;
 export type TPreuveRapport = TPreuveBase & TPreuveRapportFields;
+export type TPreuveAuditEtLabellisation = TPreuveLabellisation | TPreuveAudit;
 
 // une preuve
 export type TPreuve =
