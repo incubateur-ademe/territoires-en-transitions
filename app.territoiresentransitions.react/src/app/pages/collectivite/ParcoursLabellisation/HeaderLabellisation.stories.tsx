@@ -10,98 +10,147 @@ export default {
 } as Meta;
 
 const Template: Story<THeaderLabellisationProps> = args => (
-  <HeaderLabellisation demande={{en_cours: true}} {...args} />
+  <HeaderLabellisation {...args} />
 );
 
 export const RemplissageIncomplet = Template.bind({});
 RemplissageIncomplet.args = {
+  demande: {en_cours: true},
   parcours: {
     etoiles: '1',
-    completude_ok: false,
+    rempli: true,
   },
 };
 
-export const CritereScoreNonAtteint = Template.bind({});
-CritereScoreNonAtteint.args = {
+export const CriteresNonRemplis = Template.bind({});
+CriteresNonRemplis.args = {
+  demande: {en_cours: true},
   parcours: {
     etoiles: '1',
     completude_ok: true,
-    critere_score: {
-      atteint: false,
-    },
   },
 };
 
-export const CritereActionNonRempli = Template.bind({});
-CritereActionNonRempli.args = {
+export const CriteresRemplis = Template.bind({});
+CriteresRemplis.args = {
+  demande: {en_cours: true},
   parcours: {
     etoiles: '1',
     completude_ok: true,
-    critere_score: {
-      atteint: true,
-    },
-    criteres_action: [{rempli: false}],
+    rempli: true,
   },
-};
-
-export const CriterePreuvesNonRempli = Template.bind({});
-CriterePreuvesNonRempli.args = {
-  parcours: {
-    etoiles: '1',
-    completude_ok: true,
-    critere_score: {
-      atteint: true,
-    },
-    criteres_action: [{rempli: true}],
-  },
-};
-
-export const OK = Template.bind({});
-OK.args = {
-  parcours: {
-    etoiles: '1',
-    completude_ok: true,
-    critere_score: {
-      atteint: true,
-    },
-    criteres_action: [{rempli: true}],
-  },
-  preuves: [{filename: 'fichier.doc'}],
-};
-
-export const OK_2eme_etoile = Template.bind({});
-OK_2eme_etoile.args = {
-  parcours: {
-    etoiles: '2',
-    completude_ok: true,
-    critere_score: {
-      atteint: true,
-    },
-    criteres_action: [{rempli: true}],
-    derniere_labellisation: {
-      etoiles: '1',
-      obtenue_le: '2022-12-15T15:05:47.110Z',
-    },
-  },
-  preuves: [{filename: 'fichier.doc'}],
 };
 
 export const DemandeEnvoyee = Template.bind({});
 DemandeEnvoyee.args = {
-  demande: {
-    en_cours: false,
-  },
+  demande: {en_cours: false},
   parcours: {
     etoiles: '1',
     completude_ok: true,
-    critere_score: {
-      atteint: true,
-    },
-    criteres_action: [{rempli: true}],
+    rempli: true,
     derniere_demande: {
       etoiles: '1',
       demandee_le: '2022-12-15T15:05:47.110Z',
     },
   },
-  preuves: [{filename: 'fichier.doc'}],
+};
+
+export const CriteresRemplis_2emeEtoile = Template.bind({});
+CriteresRemplis_2emeEtoile.args = {
+  demande: {en_cours: true},
+  parcours: {
+    etoiles: '2',
+    completude_ok: true,
+    rempli: true,
+    derniere_labellisation: {
+      etoiles: '1',
+      obtenue_le: '2022-12-15T15:05:47.110Z',
+    },
+  },
+};
+
+export const DemandeEnvoyee_2emeEtoile = Template.bind({});
+DemandeEnvoyee_2emeEtoile.args = {
+  demande: {en_cours: false},
+  parcours: {
+    etoiles: '2',
+    completude_ok: true,
+    rempli: true,
+    derniere_labellisation: {
+      etoiles: '1',
+      obtenue_le: '2021-12-15T15:05:47.110Z',
+    },
+    derniere_demande: {
+      etoiles: '2',
+      demandee_le: '2022-12-15T15:05:47.110Z',
+    },
+  },
+};
+
+export const AuditEnCours = Template.bind({});
+AuditEnCours.args = {
+  demande: {en_cours: false},
+  isAuditeur: false,
+  parcours: {
+    etoiles: '2',
+    completude_ok: true,
+    rempli: true,
+    derniere_labellisation: {
+      etoiles: '1',
+      obtenue_le: '2021-12-15T15:05:47.110Z',
+    },
+    derniere_demande: {
+      etoiles: '2',
+      demandee_le: '2022-12-15T15:05:47.110Z',
+    },
+  },
+  audit: {
+    date_debut: '2023-01-04T18:16:31.559Z',
+  },
+};
+
+export const AuditEnCours_Auditeur = Template.bind({});
+AuditEnCours_Auditeur.args = {
+  demande: {en_cours: false},
+  isAuditeur: true,
+  parcours: {
+    etoiles: '2',
+    completude_ok: true,
+    rempli: true,
+    derniere_labellisation: {
+      etoiles: '1',
+      obtenue_le: '2021-12-15T15:05:47.110Z',
+    },
+    derniere_demande: {
+      etoiles: '2',
+      demandee_le: '2022-12-15T15:05:47.110Z',
+    },
+  },
+  audit: {
+    date_debut: '2023-01-04T18:16:31.559Z',
+  },
+};
+
+export const AuditValide = Template.bind({});
+AuditValide.storyName = 'Audit validé';
+AuditValide.args = {
+  demande: {en_cours: false},
+  isAuditeur: false,
+  parcours: {
+    etoiles: '2',
+    completude_ok: true,
+    rempli: true,
+    derniere_labellisation: {
+      etoiles: '1',
+      obtenue_le: '2021-12-15T15:05:47.110Z',
+    },
+    derniere_demande: {
+      etoiles: '2',
+      demandee_le: '2022-12-15T15:05:47.110Z',
+    },
+  },
+  audit: {
+    date_debut: '2023-01-04T18:16:31.559Z',
+    valide: true,
+  },
 };

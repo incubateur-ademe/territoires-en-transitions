@@ -2,32 +2,47 @@
  * Affiche l'en-tête de page contenant l'objectif et le bouton pour candidater
  */
 
-import {LabellisationDemandeRead} from 'generated/dataLayer/labellisation_demande_read';
-import {LabellisationParcoursRead} from 'generated/dataLayer/labellisation_parcours_read';
 import {useState} from 'react';
+import {useReferentielId} from 'core-logic/hooks/params';
 import {PageHeaderLeft} from 'ui/PageHeader';
-import {TPreuve} from 'ui/shared/preuves/Bibliotheque/types';
+import {useHasActiveCOT, useIsAuditeur} from '../Audit/useAudit';
+import {ValiderAudit} from '../Audit/ValiderAudit';
 import {DemandeLabellisationModal} from './DemandeLabellisationModal';
 import {numLabels} from './numLabels';
+import {useParcoursLabellisation} from './useParcoursLabellisation';
+import {useValidateAudit} from './useValidateAudit';
+
+type TParcoursLabellisation = ReturnType<typeof useParcoursLabellisation>;
 
 export type THeaderLabellisationProps = {
-  parcours: LabellisationParcoursRead;
-  demande: LabellisationDemandeRead | null;
-  preuves: TPreuve[];
+  parcours: TParcoursLabellisation['parcours'];
+  demande: TParcoursLabellisation['demande'];
+  audit: TParcoursLabellisation['audit'];
+  isAuditeur: boolean;
+  onStartAudit: () => void;
+  onValidateAudit: ReturnType<typeof useValidateAudit>['mutate'];
 };
 
 export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
-  const {parcours, demande, preuves} = props;
+  const [opened, setOpened] = useState(false);
+  const {parcours, demande, audit, isAuditeur, onStartAudit, onValidateAudit} =
+    props;
+
+  if (!parcours) {
+    return null;
+  }
+
   const {
     etoiles,
     completude_ok,
-    critere_score,
-    criteres_action,
+    rempli,
     derniere_demande,
     derniere_labellisation,
   } = parcours;
 
   const demande_envoyee = demande && !demande.en_cours && derniere_demande;
+  const audit_en_cours = audit && !audit.valide;
+  const audit_valide = audit && audit.valide;
 
   // on peut soumettre la demande de labellisation si...
   const canSubmit =
@@ -35,23 +50,12 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
     !demande_envoyee &&
     // et le référentiel est rempli
     completude_ok &&
-    // et le score nécessaire est atteint
-    critere_score?.atteint &&
-    // et il n'y a pas de critère action non rempli
-    !criteres_action.find(c => !c.rempli) &&
-    // et le critère preuves est rempli
-    preuves?.length > 0;
-  const [opened, setOpened] = useState(false);
+    // et tous les critères sont atteints
+    rempli;
 
   return (
     <PageHeaderLeft>
-      {demande_envoyee ? (
-        <p className="m-0">
-          Votre demande pour la {numLabels[derniere_demande.etoiles]} étoile a
-          été envoyée
-        </p>
-      ) : null}
-      {derniere_labellisation && !demande_envoyee ? (
+      {derniere_labellisation ? (
         <p className="m-0">
           <span className="capitalize">
             {numLabels[derniere_labellisation.etoiles]}
@@ -64,14 +68,38 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
         </p>
       ) : null}
       <h2 className="fr-mb-2w">Objectif : {numLabels[etoiles]} étoile</h2>
-      <button
-        className="fr-btn self-start"
-        disabled={!canSubmit}
-        onClick={() => setOpened(true)}
-      >
-        {etoiles === '1' ? 'Demander la première étoile' : 'Demander un audit'}
-      </button>
-      {demande ? (
+      {!demande_envoyee && !audit_en_cours && !isAuditeur ? (
+        <button
+          className="fr-btn self-start"
+          disabled={!canSubmit}
+          onClick={() => setOpened(true)}
+        >
+          {etoiles === '1'
+            ? 'Demander la première étoile'
+            : 'Demander un audit'}
+        </button>
+      ) : null}
+      {demande_envoyee && !audit_en_cours && isAuditeur ? (
+        <button className="fr-btn self-start" onClick={onStartAudit}>
+          Commencer l'audit
+        </button>
+      ) : null}
+      {demande_envoyee && !audit ? (
+        <p className="m-0 fr-text-mention--grey">Demande envoyée</p>
+      ) : null}
+      {audit_valide ? (
+        <p className="m-0 fr-text-mention--grey">Labellisation en cours</p>
+      ) : null}
+      {audit_en_cours && !isAuditeur ? (
+        <p className="m-0 fr-text-mention--grey">Audit en cours</p>
+      ) : null}
+      {audit_en_cours && isAuditeur ? (
+        <ValiderAudit
+          audit={audit}
+          onValidate={audit => audit && onValidateAudit(audit)}
+        />
+      ) : null}
+      {demande && !demande_envoyee ? (
         <DemandeLabellisationModal
           demande={demande}
           parcours={parcours}
@@ -82,3 +110,29 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
     </PageHeaderLeft>
   );
 };
+
+const HeaderLabellisationConnected = () => {
+  const hasActiveCOT = useHasActiveCOT();
+
+  const referentiel = useReferentielId();
+  const parcoursLabellisation = useParcoursLabellisation(referentiel);
+  const isAuditeur = useIsAuditeur();
+  const {parcours, demande, audit} = parcoursLabellisation;
+  const onStartAudit = () => {
+    console.log('TODO');
+  };
+  const {mutate: onValidateAudit} = useValidateAudit();
+
+  return parcours || hasActiveCOT ? (
+    <HeaderLabellisation
+      parcours={parcours}
+      demande={demande}
+      audit={audit}
+      isAuditeur={isAuditeur}
+      onStartAudit={onStartAudit}
+      onValidateAudit={onValidateAudit}
+    />
+  ) : null;
+};
+
+export default HeaderLabellisationConnected;
