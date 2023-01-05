@@ -253,7 +253,6 @@ Deno.test("Création fiches et plan actions", async () => {
     await signOut();
 });
 
-
 Deno.test("Création d'une fiche en utilisant la vue", async () => {
     await testReset();
     await signIn("yolododo");
@@ -273,6 +272,28 @@ Deno.test("Création d'une fiche en utilisant la vue", async () => {
     const selectResponse2 =  await supabase.from("fiches_action").select().eq('collectivite_id', 2);
     assertExists(selectResponse2.data);
     assertEquals(2, selectResponse2.data.length);
+
+    await signOut();
+});
+
+Deno.test("Suppression d'une fiche", async () => {
+    await testReset();
+    await signIn("yolododo");
+
+    // Une fiche dans les données de test
+    const selectResponse1 = await supabase.from("fiches_action").select().eq('collectivite_id', 2);
+    assertExists(selectResponse1.data);
+    assertEquals(1, selectResponse1.data.length);
+
+    const id = selectResponse1.data[0]['id'];
+    assertExists(id);
+
+    const deleteResponse = await supabase.from("fiche_action").delete().eq('id', id);
+    assertEquals(204, deleteResponse.status);
+
+    const selectResponse2 = await supabase.from("fiches_action").select().eq('collectivite_id', 2);
+    assertExists(selectResponse2.data);
+    assertEquals(0, selectResponse2.data.length);
 
     await signOut();
 });
