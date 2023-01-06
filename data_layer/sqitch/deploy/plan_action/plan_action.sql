@@ -992,8 +992,12 @@ comment on function plan_action is
     'Fonction retournant un JSON contenant le plan d''action passé en paramètre,
     ses fiches et ses plans d''actions enfants de manière récursive';
 
--- Transfert donnees
-do $$
+-- Transfert données
+create function migration.migrate_plans()
+    returns void
+    language plpgsql
+as
+$$
     declare
         mpa migration.plan_action;
         mfa migration.fiche_action;
