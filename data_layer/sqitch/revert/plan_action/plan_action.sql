@@ -1,7 +1,7 @@
 -- Deploy tet:plan_action to pg
 
 BEGIN;
-rollback;
+drop function migration.migrate_plans;
 drop materialized view stats.collectivite_plan_action cascade;
 drop function plan_action(pa_id integer);
 drop function delete_fiche_action() cascade;
@@ -11,7 +11,7 @@ drop function enlever_annexe(id_fiche integer, annexe annexe, supprimer boolean)
 drop function ajouter_annexe(id_fiche integer, annexe annexe);
 drop table fiche_action_annexe;
 drop table annexe cascade;
-drop function indicateurs_collectivite(id_collectivite integer);
+drop function indicateurs_collectivite(collectivite_id integer);
 drop function enlever_indicateur(id_fiche integer, indicateur indicateur_generique);
 drop function ajouter_indicateur(id_fiche integer, indicateur indicateur_generique);
 drop type indicateur_generique;
