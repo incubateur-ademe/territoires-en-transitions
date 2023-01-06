@@ -16,5 +16,5 @@ export const useValidateAudit = () => {
 };
 
 const validateAudit = async (
-  audit: Database['public']['Tables']['audit']['Row']
-) => supabaseClient.from('audit').update({id: audit.id, valide: true});
+  audit: Database['public']['Tables']['audit']['Row'],
+) => supabaseClient.from('audit').update({valide: true}).eq('id', audit.id);
