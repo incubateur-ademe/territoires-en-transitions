@@ -3,7 +3,7 @@
 BEGIN;
 
 select nom, collectivite_id
-from tag
+from private.tag
 where false;
 
 select
