@@ -72,7 +72,7 @@ Deno.test('Création fiches et plan actions', async () => {
     {'id_fiche': fId, id_axe: insertAxe.data![0].id});
   // Récupérer la liste d'indicateur possible pour la collectivité
   const plansActionCol = await supabase.rpc('plans_action_collectivite',
-    {'id_collectivite': 1}).select();
+    {'collectivite_id': 1}).select();
   const plansActionColData = plansActionCol.data! as Database['public']['Tables']['axe']['Row'][];
 
   // PARTENAIRE

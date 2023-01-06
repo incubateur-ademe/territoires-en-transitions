@@ -589,7 +589,7 @@ $$ language plpgsql;
 comment on function enlever_indicateur is 'Enlever une indicateur à la fiche';
 
 create function indicateurs_collectivite(
-    id_collectivite integer
+    collectivite_id integer
 ) returns setof indicateur_generique as $$
 select
     null as indicateur_id,
@@ -598,7 +598,7 @@ select
     ipd.description,
     ipd.unite
 from indicateur_personnalise_definition ipd
-where ipd.collectivite_id = id_collectivite
+where ipd.collectivite_id = indicateurs_collectivite.collectivite_id
 union
 select
     id.id as tag_id,
