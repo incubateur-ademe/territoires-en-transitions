@@ -9,7 +9,7 @@ $$
         name text;
     begin
         -- Pour chaque type, et donc chaque table nommée preuve_[type]
-        foreach name in array enum_range(NULL::preuve_type)
+        for name in (values ('complementaire'), ('reglementaire'), ('labellisation'), ('rapport'))
             loop
                 -- On drop les anciennes policies
                 execute format('drop policy if exists allow_read on preuve_%I;', name);
