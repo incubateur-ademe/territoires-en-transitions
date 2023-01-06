@@ -55,4 +55,22 @@ from collectivite c
          left join labellisation.demande d on d.id = (a).audit.demande_id
          left join cot on c.id = cot.collectivite_id;
 
+create view audit_en_cours
+as
+select id, collectivite_id, referentiel, demande_id, date_debut, date_fin, valide
+from audit a
+where (a.date_fin is null and now() >= a.date_debut)
+   or (a.date_fin is not null and now() between a.date_debut and a.date_fin);
+
+create or replace function labellisation.current_audit(col integer, ref referentiel)
+    returns audit as
+$$
+select *
+from audit_en_cours a
+where a.collectivite_id = col
+  and a.referentiel = ref
+order by date_debut desc
+limit 1
+$$ language sql;
+
 COMMIT;
