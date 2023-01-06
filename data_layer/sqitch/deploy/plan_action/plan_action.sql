@@ -552,7 +552,7 @@ create policy allow_insert on fiche_action_indicateur for insert with check(peut
 create policy allow_update on fiche_action_indicateur for update using(peut_modifier_la_fiche(fiche_id));
 create policy allow_delete on fiche_action_indicateur for delete using(peut_modifier_la_fiche(fiche_id));
 
-create type indicateur_global as
+create type indicateur_generique as
 (
     indicateur_id indicateur_id,
     indicateur_personnalise_id integer,
@@ -563,7 +563,7 @@ create type indicateur_global as
 
 create function ajouter_indicateur(
     id_fiche integer,
-    indicateur indicateur_global
+    indicateur indicateur_generique
 ) returns void as $$
 begin
     insert into fiche_action_indicateur (fiche_id, indicateur_id, indicateur_personnalise_id)
@@ -574,7 +574,7 @@ comment on function ajouter_indicateur is 'Ajouter une indicateur à la fiche';
 
 create function enlever_indicateur(
     id_fiche integer,
-    indicateur indicateur_global
+    indicateur indicateur_generique
 ) returns void as $$
 begin
     if indicateur.indicateur_id is null then
@@ -590,7 +590,7 @@ comment on function enlever_indicateur is 'Enlever une indicateur à la fiche';
 
 create function indicateurs_collectivite(
     id_collectivite integer
-) returns setof indicateur_global as $$
+) returns setof indicateur_generique as $$
 select
     null as indicateur_id,
     ipd.id as indicateur_personnalise_id,
@@ -749,7 +749,7 @@ from fiche_action fa
     ) as act on true
     -- indicateurs
          left join lateral (
-    select array_agg(indi.*::indicateur_global) as indicateurs
+    select array_agg(indi.*::indicateur_generique) as indicateurs
     from (
              select fai.indicateur_id,
                     fai.indicateur_personnalise_id,
@@ -776,7 +776,7 @@ declare
     pilote personne;
     referent personne;
     action action_relation;
-    indicateur indicateur_global;
+    indicateur indicateur_generique;
     annexe annexe;
 begin
     id_fiche = new.id;
@@ -907,7 +907,7 @@ begin
     -- Indicateurs
     delete from fiche_action_indicateur where fiche_id = id_fiche;
     if new.indicateurs is not null then
-        foreach indicateur in array new.indicateurs::indicateur_global[]
+        foreach indicateur in array new.indicateurs::indicateur_generique[]
             loop
                 perform ajouter_indicateur(id_fiche,indicateur);
             end loop;
