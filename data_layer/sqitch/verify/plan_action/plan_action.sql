@@ -74,14 +74,14 @@ where false;
 
 select has_function_privilege('personnes_collectivite(integer)', 'execute');
 
-select fiche_id, utilisateur_uuid, personne_tag_id
+select fiche_id, user_id, tag_id
 from fiche_action_pilote
 where false;
 
 select has_function_privilege('ajouter_pilote(integer, personne)', 'execute');
 select has_function_privilege('enlever_pilote(integer, personne)', 'execute');
 
-select fiche_id, utilisateur_uuid, personne_tag_id
+select fiche_id, user_id, tag_id
 from fiche_action_referent
 where false;
 
@@ -99,8 +99,8 @@ select fiche_id, indicateur_id
 from fiche_action_indicateur
 where false;
 
-select has_function_privilege('ajouter_indicateur(integer, indicateur_global)', 'execute');
-select has_function_privilege('enlever_indicateur(integer, indicateur_global)', 'execute');
+select has_function_privilege('ajouter_indicateur(integer, indicateur_generique)', 'execute');
+select has_function_privilege('enlever_indicateur(integer, indicateur_generique)', 'execute');
 select has_function_privilege('indicateurs_collectivite(integer)', 'execute');
 
 select
