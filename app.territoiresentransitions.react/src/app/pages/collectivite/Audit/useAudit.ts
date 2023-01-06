@@ -13,7 +13,7 @@ export const fetch = async (
 ) => {
   // lit le statut de l'audit en cours (s'il existe)
   const {data, error} = await supabaseClient
-    .from('audit')
+    .from('audit_en_cours')
     .select(
       'id,collectivite_id,referentiel,demande_id,date_debut,date_fin,auditeurs:audit_auditeur (id:auditeur)'
     )
