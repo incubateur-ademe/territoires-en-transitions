@@ -2,23 +2,7 @@
 
 BEGIN;
 
-alter type preuve_type add value if not exists 'audit' after 'labellisation';
-
-commit;
-
-begin;
-
-create table preuve_audit
-(
-    id       serial primary key,
-    like labellisation.preuve_base including all,
-    audit_id integer references audit not null
-);
-alter table preuve_audit
-    enable row level security;
-comment on table preuve_audit is
-    'Permet de stocker les rapports d''audit';
-
+-- répare les anciennes permissions
 do
 $$
     declare
@@ -46,6 +30,35 @@ $$
             end loop;
     end;
 $$;
+
+alter type preuve_type add value if not exists 'audit' after 'labellisation';
+
+-- commit la transaction pour utiliser le nouveau type de preuve
+commit;
+
+begin;
+
+create table preuve_audit
+(
+    id       serial primary key,
+    like labellisation.preuve_base including all,
+    audit_id integer references audit not null
+);
+alter table preuve_audit
+    enable row level security;
+comment on table preuve_audit is
+    'Permet de stocker les rapports d''audit';
+
+create policy allow_read
+    on preuve_audit for select using (is_authenticated());
+create policy allow_insert
+    on preuve_audit for insert
+    -- seuls les auditeurs peuvent ajouter les preuves d'audit.
+    with check (have_edition_acces(collectivite_id) and est_auditeur(collectivite_id));
+create policy allow_update
+    on preuve_audit for update
+    -- seuls les auditeurs peuvent éditer les preuves d'audit.
+    using (have_edition_acces(collectivite_id) and est_auditeur(collectivite_id));
 
 
 -- La vue utilisée par le client qui regroupe tout les types de preuves.
