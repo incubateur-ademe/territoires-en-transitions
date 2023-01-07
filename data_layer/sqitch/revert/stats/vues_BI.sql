@@ -27,5 +27,7 @@ drop view public.stats_carte_collectivite_active;
 drop materialized view stats.carte_collectivite_active;
 drop view stats_evolution_total_activation_par_type;
 drop materialized view stats.evolution_total_activation_par_type;
+drop view stats_collectivite_actives_et_total_par_type;
+drop materialized view stats.collectivite_actives_et_total_par_type;
 
 COMMIT;

@@ -53,6 +53,19 @@ select *
 from stats.evolution_total_activation_par_type;
 
 
+create materialized view stats.collectivite_actives_et_total_par_type
+as
+select type_collectivite,
+       count(*)                                                                                             as total,
+       count(*) filter ( where collectivite_id in (select collectivite_id from stats.collectivite_active) ) as actives
+from stats.collectivite
+group by type_collectivite;
+
+create view stats_collectivite_actives_et_total_par_type
+as
+select *
+from stats.collectivite_actives_et_total_par_type;
+
 
 create or replace function
     stats.refresh_views()
@@ -74,6 +87,7 @@ begin
     refresh materialized view stats.evolution_connection;
     refresh materialized view stats.carte_collectivite_active;
     refresh materialized view stats.evolution_total_activation_par_type;
+    refresh materialized view stats.collectivite_actives_et_total_par_type;
 end ;
 $$ language plpgsql security definer;
 
