@@ -29,6 +29,31 @@ from stats.carte_collectivite_active;
 comment on view public.stats_carte_collectivite_active
     is 'Les collectivités actives avec leurs contours.';
 
+-- Evolution des collectivités activées.
+create materialized view stats.evolution_total_activation_par_type
+as
+select m.first_day                              as mois,
+       (select count(*)
+        from stats.collectivite_utilisateur cu
+        where cu.date_activation <= m.last_day) as total,
+       (select count(*) filter ( where cu.type_collectivite = 'EPCI' )
+        from stats.collectivite_utilisateur cu
+        where cu.date_activation <= m.last_day) as total_epci,
+       (select count(*) filter ( where cu.type_collectivite = 'syndicat' )
+        from stats.collectivite_utilisateur cu
+        where cu.date_activation <= m.last_day) as total_syndicat,
+       (select count(*) filter ( where cu.type_collectivite = 'commune' )
+        from stats.collectivite_utilisateur cu
+        where cu.date_activation <= m.last_day) as total_commune
+from stats.monthly_bucket m;
+
+create view stats_evolution_total_activation_par_type
+as
+select *
+from stats.evolution_total_activation_par_type;
+
+
+
 create or replace function
     stats.refresh_views()
     returns void
@@ -48,6 +73,7 @@ begin
     refresh materialized view stats.connection;
     refresh materialized view stats.evolution_connection;
     refresh materialized view stats.carte_collectivite_active;
+    refresh materialized view stats.evolution_total_activation_par_type;
 end ;
 $$ language plpgsql security definer;
 

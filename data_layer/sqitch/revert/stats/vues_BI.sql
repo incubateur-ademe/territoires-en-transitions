@@ -25,5 +25,7 @@ $$ language plpgsql security definer;
 
 drop view public.stats_carte_collectivite_active;
 drop materialized view stats.carte_collectivite_active;
+drop view stats_evolution_total_activation_par_type;
+drop materialized view stats.evolution_total_activation_par_type;
 
 COMMIT;
