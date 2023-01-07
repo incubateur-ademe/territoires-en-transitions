@@ -1,5 +1,7 @@
 import ActiveUsers from './ActiveUsers';
 import Map from './CollectiviteCarto';
+import EvolutionTotalActivationParType
+  from './EvolutionTotalActivationParType';
 
 export default function Home() {
   return <div className="fr-container">
@@ -8,6 +10,7 @@ export default function Home() {
     <h2>Déployer la transition écologique sur la totalité du territoire national</h2>
     <p>La transition écologique nécessite d’être déployée sur la totalité des intercommunalités (1254 EPCI à fiscalité propre au 1er janvier 2022) ainsi que leurs communes et syndicats associés qui ont une responsabilité directe ainsi qu’une influence forte sur la planification et la mise en œuvre de la transition écologique à l’échelle locale.
       <br/>Les statistiques suivantes présentent le nombre de collectivités activées sur la plateforme. Une collectivité est considérée comme activée lorsqu’au moins une personne utilisatrice a été rattachée à cette collectivité sur la plateforme.</p>
+    <EvolutionTotalActivationParType />
 
     <Map />
     <h2>Outiller les personnes chargées de la planification écologique</h2>
