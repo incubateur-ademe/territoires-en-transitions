@@ -64,6 +64,8 @@ export default function ActiveUsers() {
 
         // on interpole la ligne de façon bien passer sur les points
         curve="monotoneX"
+        lineWidth={4}
+        pointSize={10}
 
         yFormat=" >-.0f"
         axisTop={null}
@@ -88,7 +90,7 @@ export default function ActiveUsers() {
           legendPosition: 'middle',
         }}
         pointColor={{ theme: 'background' }}
-        pointBorderWidth={3}
+        pointBorderWidth={4}
         pointBorderColor={{ from: 'serieColor' }}
         pointLabelYOffset={-12}
 
