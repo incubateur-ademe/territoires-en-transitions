@@ -35,5 +35,7 @@ drop materialized view stats.evolution_nombre_utilisateur_par_collectivite;
 drop view stats_carte_epci_par_departement;
 drop materialized view stats.carte_epci_par_departement;
 drop materialized view stats.pourcentage_completude;
+drop view stats_evolution_collectivite_avec_minimum_fiches;
+drop materialized view stats.evolution_collectivite_avec_minimum_fiches;
 
 COMMIT;
