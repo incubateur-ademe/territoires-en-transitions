@@ -52,10 +52,10 @@ export default function EvolutionTotalActivationParType() {
 
   return <div>
     <div className="fr-grid-row fr-grid-row--center">
-      <h3>{data.courant.total} collectivités activées
+      <h6>{data.courant.total} collectivités activées
         dont {data.courant.total_epci} EPCIs,&nbsp;
         {data.courant.total_syndicat} syndicats et&nbsp;
-        {data.courant.total_commune} communes</h3>
+        {data.courant.total_commune} communes</h6>
     </div>
 
     <div style={{height: 450}}>

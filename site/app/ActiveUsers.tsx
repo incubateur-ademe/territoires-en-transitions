@@ -45,8 +45,8 @@ export default function ActiveUsers() {
 
   return <div>
     <div className="fr-grid-row fr-grid-row--center">
-      <h3>{data.courant.total_utilisateurs} utilisateurs
-        dont {data.courant.utilisateurs} nouveaux utilisateurs le mois dernier</h3>
+      <h6>{data.courant.total_utilisateurs} utilisateurs
+        dont {data.courant.utilisateurs} nouveaux utilisateurs le mois dernier</h6>
     </div>
     <div style={{ height: 450 }}>
       <ResponsiveLine
