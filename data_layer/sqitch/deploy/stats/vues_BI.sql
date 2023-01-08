@@ -66,6 +66,11 @@ as
 select *
 from stats.collectivite_actives_et_total_par_type;
 
+-- expose les stats du nombre d'utilisateurs à l'API
+create view stats_evolution_utilisateur
+as
+select * from stats.evolution_utilisateur;
+
 
 create or replace function
     stats.refresh_views()
