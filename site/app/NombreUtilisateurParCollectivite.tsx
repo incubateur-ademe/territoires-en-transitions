@@ -45,8 +45,8 @@ export default function NombreUtilisateurParCollectivite() {
 
   return <div>
     <div className="fr-grid-row fr-grid-row--center">
-      <h3>{data.courant.moyen.toFixed(2)} utilisateurs en moyenne par collectivité,&nbsp;
-        {data.courant.maximum} maximum</h3>
+      <h6>{data.courant.moyen.toFixed(2)} utilisateurs en moyenne par collectivité,&nbsp;
+        {data.courant.maximum} maximum</h6>
     </div>
 
     <div style={{ height: 200 }}>
