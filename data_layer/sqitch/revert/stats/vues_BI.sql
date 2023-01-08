@@ -30,5 +30,7 @@ drop materialized view stats.evolution_total_activation_par_type;
 drop view stats_collectivite_actives_et_total_par_type;
 drop materialized view stats.collectivite_actives_et_total_par_type;
 drop view stats_evolution_utilisateur;
+drop view stats_evolution_nombre_utilisateur_par_collectivite;
+drop materialized view stats.evolution_nombre_utilisateur_par_collectivite;
 
 COMMIT;
