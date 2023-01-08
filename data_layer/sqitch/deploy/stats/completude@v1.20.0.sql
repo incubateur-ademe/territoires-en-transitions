@@ -3,7 +3,6 @@
 
 BEGIN;
 
-drop materialized view stats_tranche_completude;
 create materialized view stats_tranche_completude
 as
 with completude as (
