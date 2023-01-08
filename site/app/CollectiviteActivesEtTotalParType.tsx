@@ -47,7 +47,7 @@ export default function CollectiviteActivesEtTotalParType() {
   }
 
   return (
-    <div style={{height: 450}}>
+    <div style={{height: 100 + '%'}}>
       <ResponsiveWaffleHtml
         data={data.categories}
         total={data.total}

@@ -1,5 +1,5 @@
 import ActiveUsers from './ActiveUsers';
-import Map from './CollectiviteCarto';
+import CarteEpciParDepartement from './CarteEpciParDepartement';
 import EvolutionTotalActivationParType
   from './EvolutionTotalActivationParType';
 import CollectiviteActivesEtTotalParType
@@ -34,12 +34,15 @@ export default function Home() {
       <div className="fr-grid-row fr-grid-row--center">
         <h3>Progression de l’activation des EPCI sur le territoire national</h3>
         <div className="fr-col-4 fr-ratio-1x1">
-          <h4>todo choropleth départements</h4>
+          <em>Nombre EPCI actives</em>
+          <CarteEpciParDepartement valeur={'actives'} maximum={'actives_max'} />
         </div>
         <div className="fr-col-4 fr-ratio-1x1">
-          <h4>todo choropleth régions</h4>
+          <em>Pourcentage EPCI actives</em>
+          <CarteEpciParDepartement valeur={'ratio'} maximum={'ratio_max'} />
         </div>
         <div className="fr-col-4 fr-ratio-1x1">
+          <em>Adoption globale</em>
           <CollectiviteActivesEtTotalParType />
         </div>
       </div>
