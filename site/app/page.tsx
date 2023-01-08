@@ -4,6 +4,8 @@ import EvolutionTotalActivationParType
   from './EvolutionTotalActivationParType';
 import CollectiviteActivesEtTotalParType
   from './CollectiviteActivesEtTotalParType';
+import NombreUtilisateurParCollectivite
+  from './NombreUtilisateurParCollectivite';
 
 export default function Home() {
   return <div className="fr-container-fluid">
@@ -54,6 +56,7 @@ export default function Home() {
         collaboration entre les personnes qui travaillent au sein d’une même
         équipe pour faire avancer l’action de la collectivité.</p>
       <ActiveUsers />
+      <NombreUtilisateurParCollectivite />
     </section>
 
     <section className="fr-container">
