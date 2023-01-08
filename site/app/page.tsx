@@ -30,11 +30,15 @@ export default function Home() {
 
 
       <div className="fr-grid-row fr-grid-row--center">
-        <div className="fr-col-6">
-          <CollectiviteActivesEtTotalParType />
+        <h3>Progression de l’activation des EPCI sur le territoire national</h3>
+        <div className="fr-col-4 fr-ratio-1x1">
+          <h4>todo choropleth départements</h4>
         </div>
-        <div className="fr-col-6 fr-ratio-1x1">
-          <Map />
+        <div className="fr-col-4 fr-ratio-1x1">
+          <h4>todo choropleth régions</h4>
+        </div>
+        <div className="fr-col-4 fr-ratio-1x1">
+          <CollectiviteActivesEtTotalParType />
         </div>
       </div>
     </section>

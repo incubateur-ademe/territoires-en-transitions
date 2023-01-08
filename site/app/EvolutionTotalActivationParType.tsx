@@ -50,16 +50,20 @@ export default function EvolutionTotalActivationParType() {
     return null;
   }
 
-  return (
-    <div style={{height: 450}}>
-      <h4>{data.courant.total} collectivités
+  return <div>
+    <div className="fr-grid-row fr-grid-row--center">
+      <h3>{data.courant.total} collectivités activées
         dont {data.courant.total_epci} EPCIs,&nbsp;
         {data.courant.total_syndicat} syndicats et&nbsp;
-        {data.courant.total_commune} communes</h4>
+        {data.courant.total_commune} communes</h3>
+    </div>
 
+    <div style={{height: 450}}>
       <ResponsiveLine
         data={data['evolution']}
-        margin={{top: 55, right: 110, bottom: 50, left: 60}}
+
+        // les marges servent aux légendes
+        margin={{top: 5, right: 5, bottom: 50, left: 50}}
         xScale={{type: 'point'}}
         yScale={{
           type: 'linear',
@@ -134,5 +138,5 @@ export default function EvolutionTotalActivationParType() {
         }}
       />
     </div>
-  );
+  </div>;
 }
