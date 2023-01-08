@@ -97,6 +97,29 @@ as
 select *
 from stats.evolution_nombre_utilisateur_par_collectivite;
 
+create materialized view stats.carte_epci_par_departement
+as
+with epcis_departement as (select c.departement_code                                                    as insee,
+                                  count(*)                                                              as total,
+                                  count(*)
+                                  filter ( where collectivite_id in (table stats.collectivite_active) ) as actives
+                           from stats.collectivite c
+                           where type_collectivite = 'EPCI'
+                           group by c.departement_code)
+select insee,
+       libelle,
+       total,
+       actives,
+       geojson
+from epcis_departement
+         join stats.departement_geojson using (insee);
+
+create view stats_carte_epci_par_departement
+as
+select *
+from stats.carte_epci_par_departement;
+
+
 create or replace function
     stats.refresh_views()
     returns void
@@ -119,6 +142,7 @@ begin
     refresh materialized view stats.evolution_total_activation_par_type;
     refresh materialized view stats.collectivite_actives_et_total_par_type;
     refresh materialized view stats.evolution_nombre_utilisateur_par_collectivite;
+    refresh materialized view stats.carte_epci_par_departement;
 end ;
 $$ language plpgsql security definer;
 
