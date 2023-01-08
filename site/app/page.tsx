@@ -9,6 +9,8 @@ import NombreUtilisateurParCollectivite
   from './NombreUtilisateurParCollectivite';
 import TrancheCompletude
   from './TrancheCompletude';
+import EvolutionFiches
+  from './EvolutionFiches';
 
 const display = {marginTop: fr.spacing('20v')};
 const chartHead = {marginTop: fr.spacing('10v'), textAlign: 'center'};
@@ -112,6 +114,18 @@ export default function Home() {
         vélo, etc. Elles ont besoin d’un outil qui leur permette de suivre la
         progression des actions prévues dans ces plans.</p>
 
+      <h6 style={chartHead}>
+        Évolution de l&apos;utilisation des plans d&apos;action</h6>
+      <div className="fr-grid-row fr-grid-row--center fr-grid-row--gutters">
+        <div className="fr-col-6 fr-ratio-3x2">
+          <em style={chartTitle}>Nombre de collectivités avec 5+ fiches</em>
+          <EvolutionFiches vue='stats_evolution_collectivite_avec_minimum_fiches' />
+        </div>
+        <div className="fr-col-6 fr-ratio-3x2">
+          <em style={chartTitle}>Nombre de fiches action crées</em>
+          <EvolutionFiches vue='stats_evolution_nombre_fiches' />
+        </div>
+      </div>
     </section>
 
     <section className="fr-container">
