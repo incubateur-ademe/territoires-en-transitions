@@ -79,6 +79,8 @@ export default function EvolutionTotalActivationParType() {
 
         // on interpole la ligne de façon bien passer sur les points
         curve="monotoneX"
+        enablePoints={false}
+
 
         yFormat=" >-.0f"
         axisTop={null}
