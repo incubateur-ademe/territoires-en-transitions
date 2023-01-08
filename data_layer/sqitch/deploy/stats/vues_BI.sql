@@ -141,6 +141,25 @@ from stats.collectivite_active c
          left join cae on cae.collectivite_id = c.collectivite_id
 order by c.collectivite_id;
 
+create materialized view stats.evolution_collectivite_avec_minimum_fiches
+as
+with fiche_collecticite as (select first_day                                               as mois,
+                                   collectivite_id,
+                                   count(*) filter ( where fa.modified_at <= mb.last_day ) as fiches
+                            from stats.monthly_bucket mb
+                                     join stats.collectivite_active ca on true
+                                     join fiche_action fa using (collectivite_id)
+                            group by mb.first_day, collectivite_id)
+select mois,
+       count(*) filter ( where fiches > 5 ) as collectivites
+from fiche_collecticite
+group by mois
+order by mois;
+
+create view stats_evolution_collectivite_avec_minimum_fiches
+as
+select *
+from stats.evolution_collectivite_avec_minimum_fiches;
 
 create or replace function
     stats.refresh_views()
@@ -166,6 +185,7 @@ begin
     refresh materialized view stats.evolution_nombre_utilisateur_par_collectivite;
     refresh materialized view stats.carte_epci_par_departement;
     refresh materialized view stats.pourcentage_completude;
+    refresh materialized view stats.evolution_collectivite_avec_minimum_fiches;
 end ;
 $$ language plpgsql security definer;
 
