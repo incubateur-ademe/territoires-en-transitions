@@ -189,3 +189,4 @@ labellisation/audit [labellisation/cot labellisation/audit@v1.20.0] 2023-01-03T1
 stats/utilisation 2023-01-10T14:36:45Z Florian <florian@derfurth.com> # Les statistiques de l'utilisation de notre application.
 cron/refresh_stats_views_utilisation 2023-01-10T14:59:08Z Florian <florian@derfurth.com> # Rafraîchit les vues des stats d'utilisation.
 stats/completude [stats/vues_BI stats/completude@v1.20.0] 2023-01-08T18:10:47Z Florian <florian@derfurth.com> # Corrige la vue completude.
+stats/vues_BI [stats/vues_BI@v1.21.0] 2023-01-09T15:56:44Z Florian <florian@derfurth.com> # Ajoute les vues pour la page stats.
