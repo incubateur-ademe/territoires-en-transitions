@@ -119,6 +119,28 @@ as
 select *
 from stats.carte_epci_par_departement;
 
+create materialized view stats.pourcentage_completude
+as
+with score as (select collectivite_id, jsonb_array_elements(scores) as o from client_scores),
+     eci as (select collectivite_id,
+                    (o ->> 'completed_taches_count')::integer as completed_taches_count,
+                    (o ->> 'total_taches_count')::integer     as total_taches_count
+             from score
+             where o @> '{"action_id": "eci"}'),
+     cae as (select collectivite_id,
+                    (o ->> 'completed_taches_count')::integer as completed_taches_count,
+                    (o ->> 'total_taches_count')::integer     as total_taches_count
+             from score
+             where o @> '{"action_id": "cae"}')
+
+select c.collectivite_id,
+       (eci.completed_taches_count::float / eci.total_taches_count::float) * 100 as completude_eci,
+       (cae.completed_taches_count::float / cae.total_taches_count::float) * 100 as completude_cae
+from stats.collectivite_active c
+         left join eci on eci.collectivite_id = c.collectivite_id
+         left join cae on cae.collectivite_id = c.collectivite_id
+order by c.collectivite_id;
+
 
 create or replace function
     stats.refresh_views()
@@ -143,6 +165,7 @@ begin
     refresh materialized view stats.collectivite_actives_et_total_par_type;
     refresh materialized view stats.evolution_nombre_utilisateur_par_collectivite;
     refresh materialized view stats.carte_epci_par_departement;
+    refresh materialized view stats.pourcentage_completude;
 end ;
 $$ language plpgsql security definer;
 
