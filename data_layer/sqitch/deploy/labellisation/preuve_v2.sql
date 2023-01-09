@@ -27,6 +27,9 @@ $$
                 execute format('create policy allow_update
                     on preuve_%I for update
                     using (have_edition_acces(collectivite_id));', name);
+                execute format('create policy allow_delete
+                    on preuve_%I for delete
+                    using (have_edition_acces(collectivite_id));', name);
             end loop;
     end;
 $$;
@@ -58,6 +61,10 @@ create policy allow_insert
 create policy allow_update
     on preuve_audit for update
     -- seuls les auditeurs peuvent éditer les preuves d'audit.
+    using (have_edition_acces(collectivite_id) and est_auditeur(collectivite_id));
+create policy allow_delete
+    on preuve_audit for delete
+    -- seuls les auditeurs peuvent supprimer les preuves d'audit.
     using (have_edition_acces(collectivite_id) and est_auditeur(collectivite_id));
 
 
