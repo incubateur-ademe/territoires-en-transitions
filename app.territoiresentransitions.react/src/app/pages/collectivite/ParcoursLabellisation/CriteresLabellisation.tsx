@@ -57,6 +57,7 @@ const CriteresLabellisationConnected = () => {
   const {parcours, demande} = useParcoursLabellisation(referentiel);
   const preuves = usePreuves({
     demande_id: demande?.id,
+    preuve_types: ['labellisation'],
   }) as TPreuveLabellisation[];
 
   return collectiviteId && parcours ? (
