@@ -199,7 +199,7 @@ Deno.test('Création fiches et plan actions', async () => {
     {'id_fiche': fId, 'indicateur': indicateur});
   // Récupérer la liste d'indicateur possible pour la collectivité
   const indicateursCol = await supabase.rpc('indicateurs_collectivite',
-    {'id_collectivite': 1}).select();
+    {'collectivite_id': 1}).select();
   const indicateursColData = indicateursCol.data! as IndicateurGlobal[];
 
   // Appeler la vue listant les fiches actions
@@ -222,7 +222,7 @@ Deno.test('Création fiches et plan actions', async () => {
   const planentier = await supabase.rpc('plan_action',
     {'id': insertPlanAction.data![0].id}).select();
   assertExists(planentier.data);
-  // console.logplanentier);
+  // console.log(planentier!);
 
   // Insérer dans la vue
   const ficheVue = {
@@ -289,9 +289,9 @@ Deno.test('Création d\'une fiche en utilisant la vue', async () => {
   // Une fiche dans les données de test
   const selectResponse1 = await supabase.from('fiches_action').
     select().
-    eq('collectivite_id', 2);
+    eq('collectivite_id', 1);
   assertExists(selectResponse1.data);
-  assertEquals(1, selectResponse1.data.length);
+  assertEquals(13, selectResponse1.data.length);
 
   // La fiche est insérée et est renvoyée avec un id
   const insertResponse =
@@ -306,7 +306,7 @@ Deno.test('Création d\'une fiche en utilisant la vue', async () => {
     select().
     eq('collectivite_id', 2);
   assertExists(selectResponse2.data);
-  assertEquals(2, selectResponse2.data.length);
+  assertEquals(1, selectResponse2.data.length);
 
   await signOut();
 });
@@ -318,9 +318,9 @@ Deno.test('Suppression d\'une fiche', async () => {
   // Une fiche dans les données de test
   const selectResponse1 = await supabase.from('fiches_action').
     select().
-    eq('collectivite_id', 2);
+    eq('collectivite_id', 1);
   assertExists(selectResponse1.data);
-  assertEquals(1, selectResponse1.data.length);
+  assertEquals(13, selectResponse1.data.length);
 
   const id = selectResponse1.data[0]['id'];
   assertExists(id);
@@ -348,7 +348,7 @@ Deno.test('Vue personne pilote', async () => {
     select().
     eq('collectivite_id', 1);
   assertExists(selectResponse1.data);
-  assertEquals(4, selectResponse1.data.length);
+  assertEquals(6, selectResponse1.data.length);
 
   await signOut();
 });
@@ -362,7 +362,7 @@ Deno.test('Vue personne référente', async () => {
     select().
     eq('collectivite_id', 1);
   assertExists(selectResponse1.data);
-  assertEquals(4, selectResponse1.data.length);
+  assertEquals(6, selectResponse1.data.length);
 
   await signOut();
 });
