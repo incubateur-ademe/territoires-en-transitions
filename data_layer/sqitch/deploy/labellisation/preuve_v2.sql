@@ -15,6 +15,7 @@ $$
                 execute format('drop policy if exists allow_read on preuve_%I;', name);
                 execute format('drop policy if exists allow_insert on preuve_%I;', name);
                 execute format('drop policy if exists allow_update on preuve_%I;', name);
+                execute format('drop policy if exists allow_delete on preuve_%I;', name);
 
                 --- Tous les membres de Territoires en transitions peuvent lire.
                 execute format('create policy allow_read
