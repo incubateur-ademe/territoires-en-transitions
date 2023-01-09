@@ -36,5 +36,7 @@ drop view stats_evolution_resultat_indicateur_referentiel;
 drop materialized view stats.evolution_resultat_indicateur_referentiel;
 drop view stats_evolution_resultat_indicateur_personnalise;
 drop materialized view stats.evolution_resultat_indicateur_personnalise;
+drop view stats_engagement_collectivite;
+drop materialized view stats.engagement_collectivite;
 
 COMMIT;

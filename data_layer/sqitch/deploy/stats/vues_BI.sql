@@ -8,7 +8,7 @@ with indicateurs as (select collectivite_id,
                             indicateur_id,
                             min(modified_at) as first_modified_at
                      from indicateur_resultat
-                     join stats.collectivite_active using (collectivite_id)
+                              join stats.collectivite_active using (collectivite_id)
                      group by collectivite_id, indicateur_id)
 select first_day as mois,
        count(*)  as indicateurs
@@ -19,7 +19,8 @@ order by first_day;
 
 create view stats_evolution_indicateur_referentiel
 as
-select * from stats.evolution_indicateur_referentiel;
+select *
+from stats.evolution_indicateur_referentiel;
 
 create materialized view stats.evolution_resultat_indicateur_referentiel
 as
@@ -33,7 +34,8 @@ order by first_day;
 
 create view stats_evolution_resultat_indicateur_referentiel
 as
-select * from stats.evolution_resultat_indicateur_referentiel;
+select *
+from stats.evolution_resultat_indicateur_referentiel;
 
 create materialized view stats.evolution_resultat_indicateur_personnalise
 as
@@ -47,7 +49,30 @@ order by first_day;
 
 create view stats_evolution_resultat_indicateur_personnalise
 as
-select * from stats.evolution_resultat_indicateur_personnalise;
+select *
+from stats.evolution_resultat_indicateur_personnalise;
+
+create materialized view stats.engagement_collectivite
+as
+select collectivite_id,
+       coalesce(cot.actif, false) as cot,
+       coalesce(eci.etoiles, 0)   as etoiles_eci,
+       coalesce(cae.etoiles, 0)   as etoiles_cae
+from stats.collectivite c
+         left join cot using (collectivite_id)
+         left join lateral (select etoiles
+                            from labellisation l
+                            where l.collectivite_id = c.collectivite_id
+                              and referentiel = 'eci') eci on true
+         left join lateral (select etoiles
+                            from labellisation l
+                            where l.collectivite_id = c.collectivite_id
+                              and referentiel = 'cae') cae on true;
+
+create view stats_engagement_collectivite
+as
+select *
+from stats.engagement_collectivite;
 
 
 create or replace function
@@ -78,6 +103,7 @@ begin
     refresh materialized view stats.evolution_indicateur_referentiel;
     refresh materialized view stats.evolution_resultat_indicateur_referentiel;
     refresh materialized view stats.evolution_resultat_indicateur_personnalise;
+    refresh materialized view stats.engagement_collectivite;
 end ;
 $$ language plpgsql security definer;
 
