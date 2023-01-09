@@ -76,10 +76,10 @@ const fetchAuditeurs = async (
   return data[0].noms as TAuditeur[];
 };
 
-/** Rapport associé à un audit */
-export const useRapportAudit = (audit_id?: number) => {
+/** Rapport(s) associé(s) à un audit */
+export const useRapportsAudit = (audit_id?: number) => {
   const {audit} = usePreuvesParType({preuve_types: ['audit'], audit_id});
-  return audit?.length ? audit[0] : null;
+  return audit || [];
 };
 
 /** Détermine si un COT est actif pour la collectivité */
