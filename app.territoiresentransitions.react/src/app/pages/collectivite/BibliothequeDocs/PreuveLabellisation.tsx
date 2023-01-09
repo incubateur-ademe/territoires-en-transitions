@@ -3,8 +3,13 @@ import {Fragment} from 'react';
 import {Referentiel} from 'types/litterals';
 import PreuveDoc from 'ui/shared/preuves/Bibliotheque/PreuveDoc';
 import {TPreuveAuditEtLabellisation} from 'ui/shared/preuves/Bibliotheque/types';
+import {useIsAuditAuditeur} from '../Audit/useAudit';
 import {numLabels} from '../ParcoursLabellisation/numLabels';
 
+/**
+ * Affiche les documents d'audit et labellisation, groupés par référentiel et
+ * par demande de labellisation ou d'audit.
+ */
 export const PreuvesLabellisation = ({
   preuves,
 }: {
@@ -24,17 +29,11 @@ export const PreuvesLabellisation = ({
               </h2>
               {parDate.map(([date, preuvesDate]) => {
                 return (
-                  <Fragment key={date}>
-                    <Title date={date} preuves={preuvesDate} />
-                    {preuvesDate.map(preuve => (
-                      <PreuveDoc
-                        key={preuve.id}
-                        preuve={preuve}
-                        readonly={!preuve.demande?.en_cours}
-                        classComment="pb-0 mb-2"
-                      />
-                    ))}
-                  </Fragment>
+                  <DocsAuditOuLabellisation
+                    key={date}
+                    date={date}
+                    preuves={preuves}
+                  />
                 );
               })}
             </Fragment>
@@ -45,6 +44,42 @@ export const PreuvesLabellisation = ({
   );
 };
 
+/**
+ * Affiche le sous-ensemble des documents d'une demande de labellisation ou
+ * d'audit.
+ */
+const DocsAuditOuLabellisation = (props: {
+  date: string;
+  preuves: TPreuveAuditEtLabellisation[];
+}) => {
+  const {date, preuves} = props;
+
+  // les documents ne sont pas éditables si la demande ou l'audit sont en cours,
+  // sauf si l'utilisateur courant est l'auditeur, ou si l'audit est validé
+  const {audit, demande} = preuves[0];
+  const en_cours = isEnCours(audit, demande);
+  const isAuditeur = useIsAuditAuditeur(audit?.id);
+  const readonly = (en_cours && !isAuditeur) || audit?.valide;
+
+  return (
+    <Fragment>
+      <Title date={date} preuves={preuves} />
+      {preuves.map(preuve => (
+        <PreuveDoc
+          key={preuve.id}
+          preuve={preuve}
+          readonly={readonly}
+          classComment="pb-0 mb-2"
+        />
+      ))}
+    </Fragment>
+  );
+};
+
+/**
+ * Affiche le titre d'un sous-ensemble de documents d'une demande de
+ * labellisation ou d'audit.
+ */
 const Title = (props: {
   date: string;
   preuves: TPreuveAuditEtLabellisation[];
@@ -56,7 +91,7 @@ const Title = (props: {
 
   const etoile = demande?.etoiles;
   const labelEtoile = etoile ? (numLabels[etoile] as string) : null;
-  const en_cours = demande?.en_cours || (audit && !audit.valide);
+  const en_cours = isEnCours(audit, demande);
   const label = annee + (en_cours ? ' (en cours)' : '') + ' - ';
 
   if (etoile) {
@@ -79,6 +114,12 @@ const Title = (props: {
 
   return null;
 };
+
+// détermine un statut "en cours" à partir d'un audit et/ou une demande d'audit/labellisation
+const isEnCours = (
+  audit: {valide: boolean} | null | undefined,
+  demande: {en_cours: boolean} | null | undefined
+) => (!audit && demande?.en_cours) || (audit && !audit.valide) || false;
 
 // groupe les preuves par référentiel
 type TPreuvesParReferentiel = Record<
