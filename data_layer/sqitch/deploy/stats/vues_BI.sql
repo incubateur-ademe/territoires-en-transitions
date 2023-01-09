@@ -21,6 +21,21 @@ create view stats_evolution_indicateur_referentiel
 as
 select * from stats.evolution_indicateur_referentiel;
 
+create materialized view stats.evolution_resultat_indicateur_referentiel
+as
+select first_day as mois,
+       count(*)  as resultats
+from stats.monthly_bucket m
+         left join indicateur_resultat ir on ir.modified_at <= last_day
+         join stats.collectivite_active using (collectivite_id)
+group by first_day
+order by first_day;
+
+create view stats_evolution_resultat_indicateur_referentiel
+as
+select * from stats.evolution_resultat_indicateur_referentiel;
+
+
 create or replace function
     stats.refresh_views()
     returns void
@@ -47,6 +62,7 @@ begin
     refresh materialized view stats.pourcentage_completude;
     refresh materialized view stats.evolution_collectivite_avec_minimum_fiches;
     refresh materialized view stats.evolution_indicateur_referentiel;
+    refresh materialized view stats.evolution_resultat_indicateur_referentiel;
 end ;
 $$ language plpgsql security definer;
 
