@@ -191,11 +191,11 @@ $$ language plpgsql;
 comment on function enlever_fiche_action_d_un_axe is 'Enlever une fiche action d''un axe';
 
 create function plans_action_collectivite(
-    id_collectivite integer
+    collectivite_id integer
 ) returns setof axe as $$
 select axe.*
 from axe
-where axe.collectivite_id = id_collectivite
+where axe.collectivite_id = plans_action_collectivite.collectivite_id
   and axe.parent = null;
 $$ language sql;
 comment on function plans_action_collectivite is 'Liste les plans action d''une collectivite';
@@ -470,6 +470,7 @@ begin
         if id_tag is null then
             insert into personne_tag (nom, collectivite_id)
             values (referent.nom,  referent.collectivite_id)
+            on conflict (nom, collectivite_id) do update set nom = referent.nom
             returning id into id_tag;
             referent.tag_id = id_tag;
         end if;
@@ -981,7 +982,7 @@ begin
             id_loop = id_loop + 1;
         end loop;
 
-    to_return = jsonb_build_object('id', id,
+    to_return = jsonb_build_object('id', plan_action.id,
                                    'nom', pa_nom,
                                    'fiches', fiches,
                                    'enfants', enfants);
