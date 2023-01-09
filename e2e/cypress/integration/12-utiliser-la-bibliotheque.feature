@@ -30,10 +30,10 @@ Fonctionnalité: Utiliser la bibliothèque de documents de la collectivité
   Scénario: Ajouter un document de labellisation et le visualiser dans la bibliothèque
     Etant donné que je suis connecté en tant que "yolo"
 
-    Quand je suis sur la page "Bibliothèque de documents" de la collectivité "1"
+    Quand je suis sur la page "Bibliothèque de documents" de la collectivité "2"
     Alors il n'y a pas de documents de labellisation
 
-    Quand je suis sur la page "Labellisation CAE" de la collectivité "1"
+    Quand je suis sur la page "Labellisation CAE" de la collectivité "2"
     Alors la liste des documents de la page Labellisation est vide
 
     Quand je clique sur le bouton "Ajouter un document de labellisation"
@@ -45,7 +45,7 @@ Fonctionnalité: Utiliser la bibliothèque de documents de la collectivité
       | Titre                 | Commentaire |
       | doc labellisation.pdf |             |
 
-    Quand je suis sur la page "Bibliothèque de documents" de la collectivité "1"
+    Quand je suis sur la page "Bibliothèque de documents" de la collectivité "2"
     Alors la liste des documents de labellisation contient les lignes suivantes :
       | Titre                 | Commentaire |
       | doc labellisation.pdf |             |
