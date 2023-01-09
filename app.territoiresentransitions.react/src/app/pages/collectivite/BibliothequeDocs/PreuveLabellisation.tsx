@@ -57,9 +57,11 @@ const DocsAuditOuLabellisation = (props: {
   // les documents ne sont pas éditables si la demande ou l'audit sont en cours,
   // sauf si l'utilisateur courant est l'auditeur, ou si l'audit est validé
   const {audit, demande} = preuves[0];
-  const en_cours = isEnCours(audit, demande);
   const isAuditeur = useIsAuditAuditeur(audit?.id);
-  const readonly = (en_cours && !isAuditeur) || audit?.valide;
+  const readonly =
+    (!audit && !demande?.en_cours) ||
+    (audit && (audit.valide || !isAuditeur)) ||
+    false;
 
   return (
     <Fragment>
@@ -91,7 +93,7 @@ const Title = (props: {
 
   const etoile = demande?.etoiles;
   const labelEtoile = etoile ? (numLabels[etoile] as string) : null;
-  const en_cours = isEnCours(audit, demande);
+  const en_cours = (!audit && demande?.en_cours) || (audit && !audit.valide);
   const label = annee + (en_cours ? ' (en cours)' : '') + ' - ';
 
   if (etoile) {
@@ -114,12 +116,6 @@ const Title = (props: {
 
   return null;
 };
-
-// détermine un statut "en cours" à partir d'un audit et/ou une demande d'audit/labellisation
-const isEnCours = (
-  audit: {valide: boolean} | null | undefined,
-  demande: {en_cours: boolean} | null | undefined
-) => (!audit && demande?.en_cours) || (audit && !audit.valide) || false;
 
 // groupe les preuves par référentiel
 type TPreuvesParReferentiel = Record<
