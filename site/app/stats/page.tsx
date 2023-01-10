@@ -1,5 +1,6 @@
 'use client';
 
+import { CSSProperties } from 'react';
 import { fr } from '@codegouvfr/react-dsfr';
 import { ThemeProvider } from '@nivo/core';
 import { theme } from './shared';
@@ -11,7 +12,7 @@ import NombreUtilisateurParCollectivite from './NombreUtilisateurParCollectivite
 import TrancheCompletude from './TrancheCompletude';
 import EvolutionFiches from './EvolutionFiches';
 import IndicateursRenseignes from './IndicateursRenseignes';
-import { CSSProperties } from 'react';
+import ValeursIndicateursRenseignees from './ValeursIndicateursRenseignees';
 
 type TextAlign = CSSProperties['textAlign'];
 const display = { marginTop: fr.spacing('20v') };
@@ -163,6 +164,13 @@ export default function Stats() {
                 Nombre d’indicateurs des référentiels renseignés
               </em>
               <IndicateursRenseignes />
+            </div>
+            <div className="fr-col-6 fr-ratio-3x2">
+              <em style={chartTitle}>
+                Nombre total de valeurs d’indicateurs des référentiels
+                renseignés
+              </em>
+              <ValeursIndicateursRenseignees />
             </div>
           </div>
         </section>
