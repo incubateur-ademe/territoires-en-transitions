@@ -15,7 +15,12 @@ with bounds as (select unnest('{0, 20, 50, 80,  100}'::numeric[]) as bound),
      completude as (select coalesce(completude_eci, .0) as completude_eci,
                            coalesce(completude_cae, .0) as completude_cae
                     from stats.pourcentage_completude)
-select lower_bound, upper_bound, eci, cae
+select lower_bound,
+       upper_bound,
+       eci,
+       cae,
+       -- compatibilité avec la version pre 1.20.0
+       lower_bound::int || ':' || coalesce(upper_bound::int, 100 ) as bucket
 from ranges r
          left join lateral (select count(*) filter ( where r.range @> c.completude_eci::numeric ) as eci,
                                    count(*) filter ( where r.range @> c.completude_cae::numeric ) as cae
