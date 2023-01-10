@@ -3,14 +3,21 @@
 import useSWR from 'swr';
 import { supabase } from '../initSupabase';
 import { ResponsiveLine } from '@nivo/line';
-import { colors, dateAsMonthAndYear, theme } from './shared';
+import {
+  axisBottomAsDate,
+  axisLeftMiddleLabel,
+  colors,
+  dateAsMonthAndYear,
+  fromMonth,
+  theme,
+} from './shared';
 
 function useEvolutionTotalActivationParType() {
   return useSWR('stats_evolution_total_activation_par_type', async () => {
     const { data, error } = await supabase
       .from('stats_evolution_total_activation_par_type')
       .select()
-      .gte('mois', '2022-01-01');
+      .gte('mois', fromMonth);
     if (error) {
       throw new Error(error.message);
     }
@@ -84,21 +91,8 @@ export default function EvolutionTotalActivationParType() {
           yFormat=" >-.0f"
           axisTop={null}
           axisRight={null}
-          axisBottom={{
-            legendPosition: 'end',
-            tickSize: 5,
-            tickPadding: 5,
-            tickRotation: -35,
-            format: dateAsMonthAndYear,
-          }}
-          axisLeft={{
-            tickSize: 4,
-            tickPadding: 5,
-            tickRotation: 0,
-            legend: 'Évolution des collectivités activées',
-            legendOffset: -35,
-            legendPosition: 'middle',
-          }}
+          axisBottom={axisBottomAsDate}
+          axisLeft={axisLeftMiddleLabel('Évolution des collectivités activées')}
           pointColor={{ theme: 'background' }}
           pointBorderWidth={3}
           pointBorderColor={{ from: 'serieColor' }}
