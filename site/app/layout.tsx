@@ -4,6 +4,7 @@ import { getColorSchemeHtmlAttributes } from '@codegouvfr/react-dsfr/next-appdir
 import StartDsfr from './StartDsfr';
 import { defaultColorScheme } from './defaultColorScheme';
 import AppHeader from './AppHeader';
+import AppFooter from './AppFooter';
 
 export default function RootLayout({ children }: { children: JSX.Element }) {
   return (
@@ -16,6 +17,7 @@ export default function RootLayout({ children }: { children: JSX.Element }) {
         <DsfrProvider defaultColorScheme={defaultColorScheme}>
           <AppHeader />
           {children}
+          <AppFooter />
         </DsfrProvider>
       </body>
     </html>
