@@ -17,7 +17,7 @@ truncate axe cascade;
 truncate fiche_action cascade;
 
 -- Test fiche_action
-insert into fiche_action (id, titre, description, thematiques, piliers_eci, collectivite_id)
+insert into fiche_action (id, titre, description, thematiques, piliers_eci, collectivite_id, modified_by)
 values
     (
        1,
@@ -30,20 +30,21 @@ values
            'Écoconception'::fiche_action_piliers_eci,
            'Recyclage'::fiche_action_piliers_eci
         ],
-       1
+       1,
+       '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'
     ),
-    (2,'fiche 2','test description',array[]::fiche_action_thematiques[],array[]::fiche_action_piliers_eci[],1),
-    (3,'fiche 3','test description',array[]::fiche_action_thematiques[],array[]::fiche_action_piliers_eci[],2)
+    (2,'fiche 2','test description',array[]::fiche_action_thematiques[],array[]::fiche_action_piliers_eci[],1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'),
+    (3,'fiche 3','test description',array[]::fiche_action_thematiques[],array[]::fiche_action_piliers_eci[],2, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9')
 ;
 select ok((select count(*)=3 from fiche_action), 'Il devrait y avoir trois fiches action');
 
 -- Test axe
-insert into axe
-values (1,'Test 1',1,null),
-       (2, 'Test 1.1', 1, 1),
-       (3, 'Test 1.2', 1, 1),
-       (4, 'Test 1.1.1', 1, 2),
-       (5,'Test 2',2,null);
+insert into axe (id, nom, collectivite_id, parent, modified_by)
+values (1,'Test 1',1,null, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'),
+       (2, 'Test 1.1', 1, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'),
+       (3, 'Test 1.2', 1, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'),
+       (4, 'Test 1.1.1', 1, 2, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'),
+       (5,'Test 2',2,null, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9');
 
 select ok((select count(*)=5 from axe), 'Il devrait y avoir cinq axes');
 select ajouter_fiche_action_dans_un_axe(1, 4);
