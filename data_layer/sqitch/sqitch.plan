@@ -187,3 +187,4 @@ labellisation/audit [labellisation/cot labellisation/audit@v1.20.0] 2023-01-03T1
 @v1.21.0 2023-01-09T15:05:28Z Florian <florian@derfurth.com> # Validation des audits améliorations BI
 
 stats/utilisation 2023-01-10T14:36:45Z Florian <florian@derfurth.com> # Les statistiques de l'utilisation de notre application.
+cron/refresh_stats_views_utilisation 2023-01-10T14:59:08Z Florian <florian@derfurth.com> # Rafraîchit les vues des stats d'utilisation.
