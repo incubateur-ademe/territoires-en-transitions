@@ -34,7 +34,7 @@ repeat_command() {
     return 1
   fi
 
-  echo "La commande a renvoyé le code de sortie 0 après ${try_count} essais"
+  echo "La commande terminée avec succès après ${try_count} essais"
   return 0
 }
 
@@ -54,5 +54,7 @@ cd -
 
 # fait une copie du fichier, ainsi mis à jour, pour les tests de l'API
 cp ./app.territoiresentransitions.react/src/types/database.types.ts ./api_tests/lib/database.types.ts 
+# et une pour le site statique
+cp ./app.territoiresentransitions.react/src/types/database.types.ts ./site/app/database.types.ts 
 
 echo "Terminé"
