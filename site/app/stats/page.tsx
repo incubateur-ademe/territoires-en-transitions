@@ -13,6 +13,7 @@ import TrancheCompletude from './TrancheCompletude';
 import EvolutionFiches from './EvolutionFiches';
 import IndicateursRenseignes from './IndicateursRenseignes';
 import ValeursIndicateursRenseignees from './ValeursIndicateursRenseignees';
+import ValeursIndicateursPersoRenseignees from './ValeursIndicateursPersoRenseignees';
 
 type TextAlign = CSSProperties['textAlign'];
 const display = { marginTop: fr.spacing('20v') };
@@ -159,18 +160,25 @@ export default function Stats() {
             d’impact de référence ou personnalisés.
           </p>
           <div className="fr-grid-row fr-grid-row--center fr-grid-row--gutters">
-            <div className="fr-col-6 fr-ratio-3x2">
+            <div className="fr-col-4 fr-ratio-1x1">
               <em style={chartTitle}>
                 Nombre d’indicateurs des référentiels renseignés
               </em>
               <IndicateursRenseignes />
             </div>
-            <div className="fr-col-6 fr-ratio-3x2">
+            <div className="fr-col-4 fr-ratio-1x1">
               <em style={chartTitle}>
                 Nombre total de valeurs d’indicateurs des référentiels
                 renseignés
               </em>
               <ValeursIndicateursRenseignees />
+            </div>
+            <div className="fr-col-4 fr-ratio-1x1">
+              <em style={chartTitle}>
+                Nombre total de valeurs d’indicateurs personnalisés des
+                référentiels renseignés
+              </em>
+              <ValeursIndicateursPersoRenseignees />
             </div>
           </div>
         </section>
