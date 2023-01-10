@@ -3,7 +3,7 @@
 import useSWR from 'swr';
 import { ResponsiveWaffleHtml } from '@nivo/waffle';
 import { supabase } from '../initSupabase';
-import { colors } from './shared';
+import { colors, theme } from './shared';
 
 function useCollectiviteActivesEtTotalParType() {
   return useSWR('stats_collectivite_actives_et_total_par_type', async () => {
@@ -16,7 +16,7 @@ function useCollectiviteActivesEtTotalParType() {
     if (!data) {
       return null;
     }
-    const epcis = data.filter((d) => d.type_collectivite == 'EPCI')[0];
+    const epcis = data.filter((d) => d.type_collectivite === 'EPCI')[0];
 
     return {
       categories: [
@@ -28,7 +28,7 @@ function useCollectiviteActivesEtTotalParType() {
         {
           id: epcis.type_collectivite + '_restantes',
           label: epcis.type_collectivite + ' inactifs',
-          value: epcis.total - epcis.actives,
+          value: (epcis.total || 0) - (epcis.actives || 0),
         },
       ],
       total: epcis.total,
@@ -47,8 +47,9 @@ export default function CollectiviteActivesEtTotalParType() {
     <div style={{ height: 100 + '%' }}>
       <ResponsiveWaffleHtml
         colors={colors}
+        theme={theme}
         data={data.categories}
-        total={data.total}
+        total={data.total || 0}
         rows={10}
         columns={10}
         margin={{ top: 10, right: 10, bottom: 10, left: 10 }}

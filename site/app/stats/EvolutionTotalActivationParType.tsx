@@ -6,9 +6,12 @@ import { ResponsiveLine } from '@nivo/line';
 import {
   axisBottomAsDate,
   axisLeftMiddleLabel,
+  bottomLegend,
   colors,
   dateAsMonthAndYear,
   fromMonth,
+  getLabelsById,
+  getLegendData,
   theme,
 } from './shared';
 
@@ -29,14 +32,17 @@ function useEvolutionTotalActivationParType() {
       evolution: [
         {
           id: 'total_epci',
+          label: 'EPCI',
           data: data.map((d) => ({ x: d.mois, y: d.total_epci })),
         },
         {
           id: 'total_syndicat',
+          label: 'syndicats',
           data: data.map((d) => ({ x: d.mois, y: d.total_syndicat })),
         },
         {
           id: 'total_commune',
+          label: 'communes',
           data: data.map((d) => ({ x: d.mois, y: d.total_commune })),
         },
       ],
@@ -44,36 +50,34 @@ function useEvolutionTotalActivationParType() {
   });
 }
 
-const labels = {
-  total_epci: 'EPCIs',
-  total_syndicat: 'syndicats',
-  total_commune: 'communes',
-};
-
 export default function EvolutionTotalActivationParType() {
   const { data } = useEvolutionTotalActivationParType();
 
   if (!data) {
     return null;
   }
+  const { courant, evolution } = data;
+  const legendData = getLegendData(evolution);
+  const labelById = getLabelsById(evolution);
 
   return (
     <div>
       <div className="fr-grid-row fr-grid-row--center">
         <h6>
-          {data.courant.total} collectivités activées dont{' '}
-          {data.courant.total_epci} EPCI,&nbsp;
-          {data.courant.total_syndicat} syndicats et&nbsp;
-          {data.courant.total_commune} communes
+          {courant.total} collectivités activées dont {courant.total_epci}{' '}
+          EPCI,&nbsp;
+          {courant.total_syndicat} syndicats et&nbsp;
+          {courant.total_commune} communes
         </h6>
       </div>
 
       <div style={{ height: 450 }}>
         <ResponsiveLine
           colors={colors}
-          data={data['evolution']}
+          theme={theme}
+          data={evolution}
           // les marges servent aux légendes
-          margin={{ top: 5, right: 5, bottom: 50, left: 50 }}
+          margin={{ top: 5, right: 5, bottom: 80, left: 50 }}
           xScale={{ type: 'point' }}
           yScale={{
             type: 'linear',
@@ -102,10 +106,12 @@ export default function EvolutionTotalActivationParType() {
             return (
               <div style={theme.tooltip?.container}>
                 <div>
-                  Collectivités :
                   <strong>
-                    {slice.points.map((p) => p.data.y).reduce((a, b) => a + b)}
-                  </strong>
+                    {slice.points
+                      .map((p) => p.data.y as number)
+                      .reduce((a, b) => a + b, 0)}
+                  </strong>{' '}
+                  collectivités, dont :
                 </div>
                 {slice.points.map((point) => (
                   <div
@@ -115,12 +121,13 @@ export default function EvolutionTotalActivationParType() {
                       padding: '3px 0',
                     }}
                   >
-                    dont {labels[point.serieId]} {point.data.yFormatted}
+                    {point.data.yFormatted} {labelById[point.serieId]}
                   </div>
                 ))}
               </div>
             );
           }}
+          legends={[{ ...bottomLegend, translateY: 80, data: legendData }]}
         />
       </div>
     </div>

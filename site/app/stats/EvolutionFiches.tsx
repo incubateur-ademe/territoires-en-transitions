@@ -8,6 +8,7 @@ import {
   axisLeftMiddleLabel,
   colors,
   fromMonth,
+  theme,
 } from './shared';
 
 type Vue =
@@ -67,6 +68,7 @@ export default function EvolutionFiches(props: Props) {
     <div style={{ height: 100 + '%' }}>
       <ResponsiveLine
         colors={colors}
+        theme={theme}
         data={data.evolution}
         // les marges servent aux légendes
         margin={{ top: 5, right: 5, bottom: 50, left: 50 }}
@@ -102,7 +104,8 @@ export default function EvolutionFiches(props: Props) {
             >
               {slice.points.map((point) => (
                 <div key={point.id}>
-                  {labels[point.serieId]}: {point.data.yFormatted}
+                  {labels[point.serieId as keyof typeof labels]}:{' '}
+                  {point.data.yFormatted}
                 </div>
               ))}
             </div>

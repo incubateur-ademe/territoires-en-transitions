@@ -1,11 +1,10 @@
 'use client';
-import { useTheme } from '@nivo/core';
 import { SliceTooltipProps } from '@nivo/line';
+import { theme } from './shared';
 
 export const SliceTooltip = (
   props: SliceTooltipProps & { labels: Record<string, string> }
 ) => {
-  const theme = useTheme();
   const { slice, labels } = props;
 
   return (

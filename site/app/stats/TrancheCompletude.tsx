@@ -3,7 +3,7 @@
 import useSWR from 'swr';
 import { ResponsivePie } from '@nivo/pie';
 import { supabase } from '../initSupabase';
-import { bottomLegend, colors } from './shared';
+import { bottomLegend, colors, theme } from './shared';
 
 function useTrancheCompletude() {
   return useSWR('stats_tranche_completude', async () => {
@@ -42,6 +42,7 @@ export default function TrancheCompletude(props: Props) {
     <div style={{ height: 450 }}>
       <ResponsivePie
         colors={colors}
+        theme={theme}
         data={data}
         value={props.referentiel}
         margin={{ top: 40, right: 85, bottom: 80, left: 85 }}

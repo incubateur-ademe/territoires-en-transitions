@@ -6,12 +6,10 @@ import { supabase } from '../initSupabase';
 import {
   axisBottomAsDate,
   axisLeftMiddleLabel,
-  bottomLegend,
   colors,
-  dateAsMonthAndYear,
   fromMonth,
+  theme,
 } from './shared';
-import { SliceTooltip } from './SliceTooltip';
 
 function useValeursIndicateursRenseignees() {
   return useSWR('stats_evolution_resultat_indicateur_referentiel', async () => {
@@ -27,8 +25,7 @@ function useValeursIndicateursRenseignees() {
     }
     return [
       {
-        id: 'indicateurs',
-        label: "Valeurs d'indicateurs renseignées",
+        id: 'Valeurs renseignées',
         data: data.map((d) => ({ x: d.mois, y: d.resultats })),
       },
     ];
@@ -47,6 +44,7 @@ export default function ValeursIndicateursRenseignees() {
       <div style={{ height: 450 }}>
         <ResponsiveLine
           colors={colors}
+          theme={theme}
           data={data}
           // les marges servent aux légendes
           margin={{ top: 5, right: 5, bottom: 85, left: 50 }}

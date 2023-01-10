@@ -7,6 +7,7 @@
 import { Theme } from '@nivo/core';
 import { AxisProps } from '@nivo/axes';
 import { LegendProps } from '@nivo/legends';
+import { Serie } from '@nivo/line';
 
 export const colors = ['#21AB8E', '#FFCA00', '#FF732C', '#FFB7AE', '#34BAB5'];
 const fontFamily = '"Marianne", arial, sans-serif';
@@ -19,6 +20,7 @@ export const theme: Theme = {
   axis: {
     legend: {
       text: {
+        fontFamily,
         fontSize: 14,
       },
     },
@@ -63,7 +65,7 @@ export const bottomLegend: LegendProps = {
   translateX: 0,
   translateY: 56,
   itemsSpacing: 16,
-  itemWidth: 100,
+  itemWidth: 140,
   itemHeight: 18,
   itemTextColor: '#999',
   itemDirection: 'left-to-right',
@@ -79,3 +81,13 @@ export const bottomLegend: LegendProps = {
     },
   ],
 };
+
+export const getLegendData = (data: Serie[]) =>
+  data.map(({ id, label }, index) => ({
+    id,
+    label,
+    color: colors[index],
+  }));
+
+export const getLabelsById = (data: Serie[]): Record<string, string> =>
+  data.reduce((byId, { id, label }) => ({ ...byId, [id]: label }), {});
