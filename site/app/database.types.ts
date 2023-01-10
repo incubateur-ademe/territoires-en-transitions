@@ -65,7 +65,8 @@ export interface Database {
         | 'complementaire'
         | 'reglementaire'
         | 'labellisation'
-        | 'rapport';
+        | 'rapport'
+        | 'audit';
       question_type: 'choix' | 'binaire' | 'proportion';
       referentiel: 'eci' | 'cae';
       regle_type: 'score' | 'desactivation' | 'reduction';
@@ -1354,6 +1355,7 @@ export interface Database {
           demande_id?: number | null;
           id?: number;
           referentiel: Database['public']['Enums']['referentiel'];
+          valide?: boolean;
         };
         Row: {
           collectivite_id: number;
@@ -1362,6 +1364,7 @@ export interface Database {
           demande_id: number | null;
           id: number;
           referentiel: Database['public']['Enums']['referentiel'];
+          valide: boolean;
         };
         Update: {
           collectivite_id?: number;
@@ -1370,6 +1373,7 @@ export interface Database {
           demande_id?: number | null;
           id?: number;
           referentiel?: Database['public']['Enums']['referentiel'];
+          valide?: boolean;
         };
       };
       audit_auditeur: {
@@ -1492,6 +1496,20 @@ export interface Database {
           collectivite_id?: number | null;
           id?: number;
           nom?: string;
+        };
+      };
+      cot: {
+        Insert: {
+          actif: boolean;
+          collectivite_id: number;
+        };
+        Row: {
+          actif: boolean;
+          collectivite_id: number;
+        };
+        Update: {
+          actif?: boolean;
+          collectivite_id?: number;
         };
       };
       dcp: {
@@ -2187,6 +2205,44 @@ export interface Database {
           preuve_id?: string;
         };
       };
+      preuve_audit: {
+        Insert: {
+          audit_id: number;
+          collectivite_id: number;
+          commentaire?: string;
+          fichier_id?: number | null;
+          id?: number;
+          lien?: Json | null;
+          modified_at?: string;
+          modified_by?: string;
+          titre?: string;
+          url?: string | null;
+        };
+        Row: {
+          audit_id: number;
+          collectivite_id: number;
+          commentaire: string;
+          fichier_id: number | null;
+          id: number;
+          lien: Json | null;
+          modified_at: string;
+          modified_by: string;
+          titre: string;
+          url: string | null;
+        };
+        Update: {
+          audit_id?: number;
+          collectivite_id?: number;
+          commentaire?: string;
+          fichier_id?: number | null;
+          id?: number;
+          lien?: Json | null;
+          modified_at?: string;
+          modified_by?: string;
+          titre?: string;
+          url?: string | null;
+        };
+      };
       preuve_complementaire: {
         Insert: {
           action_id: string;
@@ -2811,11 +2867,49 @@ export interface Database {
           nom: string | null;
         };
       };
+      audit_en_cours: {
+        Insert: {
+          collectivite_id?: number | null;
+          date_debut?: string | null;
+          date_fin?: string | null;
+          demande_id?: number | null;
+          id?: number | null;
+          referentiel?: Database['public']['Enums']['referentiel'] | null;
+          valide?: boolean | null;
+        };
+        Row: {
+          collectivite_id: number | null;
+          date_debut: string | null;
+          date_fin: string | null;
+          demande_id: number | null;
+          id: number | null;
+          referentiel: Database['public']['Enums']['referentiel'] | null;
+          valide: boolean | null;
+        };
+        Update: {
+          collectivite_id?: number | null;
+          date_debut?: string | null;
+          date_fin?: string | null;
+          demande_id?: number | null;
+          id?: number | null;
+          referentiel?: Database['public']['Enums']['referentiel'] | null;
+          valide?: boolean | null;
+        };
+      };
       auditeurs: {
         Row: {
           audit_id: number | null;
           collectivite_id: number | null;
           noms: Json | null;
+          referentiel: Database['public']['Enums']['referentiel'] | null;
+        };
+      };
+      audits: {
+        Row: {
+          audit: unknown | null;
+          collectivite_id: number | null;
+          demande: unknown | null;
+          is_cot: boolean | null;
           referentiel: Database['public']['Enums']['referentiel'] | null;
         };
       };
@@ -2996,6 +3090,7 @@ export interface Database {
       preuve: {
         Row: {
           action: Json | null;
+          audit: Json | null;
           collectivite_id: number | null;
           commentaire: string | null;
           created_at: string | null;
@@ -3224,6 +3319,80 @@ export interface Database {
           type_collectivite:
             | Database['public']['Enums']['type_collectivite']
             | null;
+        };
+      };
+      stats_carte_epci_par_departement: {
+        Row: {
+          actives: number | null;
+          geojson: Json | null;
+          insee: string | null;
+          libelle: string | null;
+          total: number | null;
+        };
+      };
+      stats_collectivite_actives_et_total_par_type: {
+        Row: {
+          actives: number | null;
+          total: number | null;
+          type_collectivite:
+            | Database['public']['Enums']['type_collectivite']
+            | null;
+        };
+      };
+      stats_engagement_collectivite: {
+        Row: {
+          collectivite_id: number | null;
+          cot: boolean | null;
+          etoiles_cae: number | null;
+          etoiles_eci: number | null;
+        };
+      };
+      stats_evolution_collectivite_avec_minimum_fiches: {
+        Row: {
+          collectivites: number | null;
+          mois: string | null;
+        };
+      };
+      stats_evolution_indicateur_referentiel: {
+        Row: {
+          indicateurs: number | null;
+          mois: string | null;
+        };
+      };
+      stats_evolution_nombre_utilisateur_par_collectivite: {
+        Row: {
+          maximum: number | null;
+          median: number | null;
+          mois: string | null;
+          moyen: number | null;
+        };
+      };
+      stats_evolution_resultat_indicateur_personnalise: {
+        Row: {
+          mois: string | null;
+          resultats: number | null;
+        };
+      };
+      stats_evolution_resultat_indicateur_referentiel: {
+        Row: {
+          mois: string | null;
+          resultats: number | null;
+        };
+      };
+      stats_evolution_total_activation_par_type: {
+        Row: {
+          mois: string | null;
+          total: number | null;
+          total_commune: number | null;
+          total_epci: number | null;
+          total_syndicat: number | null;
+        };
+      };
+      stats_evolution_utilisateur: {
+        Row: {
+          mois: string | null;
+          total_utilisateurs: number | null;
+          utilisateurs: number | null;
         };
       };
       stats_functionnalities_usage_proportion: {

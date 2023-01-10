@@ -2867,6 +2867,35 @@ export interface Database {
           nom: string | null;
         };
       };
+      audit_en_cours: {
+        Insert: {
+          collectivite_id?: number | null;
+          date_debut?: string | null;
+          date_fin?: string | null;
+          demande_id?: number | null;
+          id?: number | null;
+          referentiel?: Database['public']['Enums']['referentiel'] | null;
+          valide?: boolean | null;
+        };
+        Row: {
+          collectivite_id: number | null;
+          date_debut: string | null;
+          date_fin: string | null;
+          demande_id: number | null;
+          id: number | null;
+          referentiel: Database['public']['Enums']['referentiel'] | null;
+          valide: boolean | null;
+        };
+        Update: {
+          collectivite_id?: number | null;
+          date_debut?: string | null;
+          date_fin?: string | null;
+          demande_id?: number | null;
+          id?: number | null;
+          referentiel?: Database['public']['Enums']['referentiel'] | null;
+          valide?: boolean | null;
+        };
+      };
       auditeurs: {
         Row: {
           audit_id: number | null;
@@ -3290,6 +3319,80 @@ export interface Database {
           type_collectivite:
             | Database['public']['Enums']['type_collectivite']
             | null;
+        };
+      };
+      stats_carte_epci_par_departement: {
+        Row: {
+          actives: number | null;
+          geojson: Json | null;
+          insee: string | null;
+          libelle: string | null;
+          total: number | null;
+        };
+      };
+      stats_collectivite_actives_et_total_par_type: {
+        Row: {
+          actives: number | null;
+          total: number | null;
+          type_collectivite:
+            | Database['public']['Enums']['type_collectivite']
+            | null;
+        };
+      };
+      stats_engagement_collectivite: {
+        Row: {
+          collectivite_id: number | null;
+          cot: boolean | null;
+          etoiles_cae: number | null;
+          etoiles_eci: number | null;
+        };
+      };
+      stats_evolution_collectivite_avec_minimum_fiches: {
+        Row: {
+          collectivites: number | null;
+          mois: string | null;
+        };
+      };
+      stats_evolution_indicateur_referentiel: {
+        Row: {
+          indicateurs: number | null;
+          mois: string | null;
+        };
+      };
+      stats_evolution_nombre_utilisateur_par_collectivite: {
+        Row: {
+          maximum: number | null;
+          median: number | null;
+          mois: string | null;
+          moyen: number | null;
+        };
+      };
+      stats_evolution_resultat_indicateur_personnalise: {
+        Row: {
+          mois: string | null;
+          resultats: number | null;
+        };
+      };
+      stats_evolution_resultat_indicateur_referentiel: {
+        Row: {
+          mois: string | null;
+          resultats: number | null;
+        };
+      };
+      stats_evolution_total_activation_par_type: {
+        Row: {
+          mois: string | null;
+          total: number | null;
+          total_commune: number | null;
+          total_epci: number | null;
+          total_syndicat: number | null;
+        };
+      };
+      stats_evolution_utilisateur: {
+        Row: {
+          mois: string | null;
+          total_utilisateurs: number | null;
+          utilisateurs: number | null;
         };
       };
       stats_functionnalities_usage_proportion: {
