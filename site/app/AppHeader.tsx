@@ -16,7 +16,7 @@ const AppHeader = () => (
     navigation={[
       {
         linkProps: {
-          href: '#',
+          href: '/stats',
           target: '_self',
         },
         text: 'Stats',

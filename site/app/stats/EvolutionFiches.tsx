@@ -1,60 +1,70 @@
 'use client';
 
 import useSWR from 'swr';
-import { supabase } from './initSupabase';
+import { supabase } from '../initSupabase';
 import { ResponsiveLine } from '@nivo/line';
+import { colors } from './shared';
 
-function useNombreUtilisateurParCollectivite() {
-  return useSWR('stats_evolution_nombre_utilisateur_par_collectivite', async () => {
+type Vue =
+  | 'stats_evolution_nombre_fiches'
+  | 'stats_evolution_collectivite_avec_minimum_fiches';
+
+const colonneValeur = {
+  stats_evolution_nombre_fiches: 'fiches',
+  stats_evolution_collectivite_avec_minimum_fiches: 'collectivites',
+};
+
+const legende = {
+  stats_evolution_nombre_fiches: 'Nombre total de fiches',
+  stats_evolution_collectivite_avec_minimum_fiches:
+    'Collectivités avec cinq fiches ou plus',
+};
+
+const labels = {
+  fiches: 'Fiches',
+  collectivites: 'Collectivités',
+};
+
+function useEvolutionFiches(vue: Vue) {
+  return useSWR(vue, async () => {
     const { data, error } = await supabase
-      .from('stats_evolution_nombre_utilisateur_par_collectivite')
+      .from(vue)
       .select()
       .gte('mois', '2022-01-01');
     if (error) {
-      throw new Error('stats_evolution_nombre_utilisateur_par_collectivite');
+      throw new Error(vue);
     }
     if (!data) {
       return [];
     }
     return {
-      'courant': data[data.length - 1],
-      'evolution': [
-      {
-        id: 'moyen',
-        data: data.map((d) => ({ x: d.mois, y: d.moyen })),
-      },
-      {
-        id: 'maximum',
-        data: data.map((d) => ({ x: d.mois, y: d.maximum })),
-      },
-    ]};
+      evolution: [
+        {
+          id: colonneValeur[vue],
+          data: data.map((d) => ({ x: d.mois, y: d[colonneValeur[vue]] })),
+        },
+      ],
+    };
   });
 }
 
-const labels = {
-  'moyen': 'Nombre moyen d\'utilisateurs',
-  'maximum': 'Nombre maximum d\'utilisateurs',
-};
+type Props = { vue: Vue };
 
-export default function NombreUtilisateurParCollectivite() {
-  const { data } = useNombreUtilisateurParCollectivite();
+export default function EvolutionFiches(props: Props) {
+  const { vue } = props;
+  const { data } = useEvolutionFiches(vue);
 
   if (!data) {
     return null;
   }
 
-  return <div>
-    <div className="fr-grid-row fr-grid-row--center">
-      <h6>{data.courant.moyen.toFixed(2)} utilisateurs en moyenne par collectivité,&nbsp;
-        {data.courant.maximum} maximum</h6>
-    </div>
-
-    <div style={{ height: 200 }}>
+  return (
+    <div style={{ height: 100 + '%' }}>
       <ResponsiveLine
+        colors={colors}
         data={data.evolution}
-
         // les marges servent aux légendes
-        margin={{top: 5, right: 5, bottom: 50, left: 50}}
+        margin={{ top: 5, right: 5, bottom: 50, left: 50 }}
         xScale={{ type: 'point' }}
         yScale={{
           type: 'linear',
@@ -62,13 +72,11 @@ export default function NombreUtilisateurParCollectivite() {
           max: 'auto',
           stacked: false,
         }}
-
         // on interpole la ligne de façon bien passer sur les points
         curve="monotoneX"
+        lineWidth={4}
         enablePoints={false}
-        enableGridY={false}
-
-        yFormat=" >-.2f"
+        yFormat=" >-.0f"
         axisTop={null}
         axisRight={null}
         axisBottom={{
@@ -86,17 +94,16 @@ export default function NombreUtilisateurParCollectivite() {
           tickSize: 4,
           tickPadding: 5,
           tickRotation: 0,
-          legend: "Nombre d'utilisateurs moyen",
+          legend: legende[vue],
           legendOffset: -35,
           legendPosition: 'middle',
         }}
         pointColor={{ theme: 'background' }}
-        pointBorderWidth={3}
+        pointBorderWidth={4}
         pointBorderColor={{ from: 'serieColor' }}
         pointLabelYOffset={-12}
-
         enableSlices="x"
-        sliceTooltip={({slice}) => {
+        sliceTooltip={({ slice }) => {
           return (
             <div
               style={{
@@ -105,14 +112,8 @@ export default function NombreUtilisateurParCollectivite() {
                 border: '1px solid #ccc',
               }}
             >
-              {slice.points.map(point => (
-                <div
-                  key={point.id}
-                  style={{
-                    color: point.serieColor,
-                    padding: '3px 0',
-                  }}
-                >
+              {slice.points.map((point) => (
+                <div key={point.id}>
                   {labels[point.serieId]}: {point.data.yFormatted}
                 </div>
               ))}
@@ -121,5 +122,5 @@ export default function NombreUtilisateurParCollectivite() {
         }}
       />
     </div>
-  </div>;
+  );
 }
