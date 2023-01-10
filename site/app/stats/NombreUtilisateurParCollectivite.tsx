@@ -8,6 +8,7 @@ import {
   axisLeftMiddleLabel,
   colors,
   fromMonth,
+  theme,
 } from './shared';
 
 function useNombreUtilisateurParCollectivite() {
@@ -66,6 +67,7 @@ export default function NombreUtilisateurParCollectivite() {
       <div style={{ height: 200 }}>
         <ResponsiveLine
           colors={colors}
+          theme={theme}
           data={data.evolution}
           // les marges servent aux légendes
           margin={{ top: 5, right: 5, bottom: 50, left: 50 }}
@@ -107,7 +109,8 @@ export default function NombreUtilisateurParCollectivite() {
                       padding: '3px 0',
                     }}
                   >
-                    {labels[point.serieId]}: {point.data.yFormatted}
+                    {labels[point.serieId as keyof typeof labels]}:{' '}
+                    {point.data.yFormatted}
                   </div>
                 ))}
               </div>

@@ -3,7 +3,7 @@
 import useSWR from 'swr';
 import { ResponsiveChoropleth } from '@nivo/geo';
 import { supabase } from '../initSupabase';
-import { bottomLegend } from './shared';
+import { bottomLegend, theme } from './shared';
 
 function useCarteEpciParDepartement() {
   return useSWR('stats_carte_epci_par_departement', async () => {
@@ -62,6 +62,7 @@ export default function CarteEpciParDepartement(props: Props) {
     <div style={{ height: 400 + 'px', width: 400 + 'px' }}>
       <ResponsiveChoropleth
         colors="nivo"
+        theme={theme}
         data={data.valeurs}
         features={data.geojson.features}
         margin={{ top: 0, right: 0, bottom: 60, left: 0 }}

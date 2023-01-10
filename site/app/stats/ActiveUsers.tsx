@@ -8,8 +8,10 @@ import {
   axisLeftMiddleLabel,
   bottomLegend,
   colors,
-  dateAsMonthAndYear,
   fromMonth,
+  getLabelsById,
+  getLegendData,
+  theme,
 } from './shared';
 import { SliceTooltip } from './SliceTooltip';
 
@@ -51,15 +53,8 @@ export default function ActiveUsers() {
   }
 
   const { courant, evolution } = data;
-  const legendData = evolution.map(({ id, label }, index) => ({
-    id,
-    label,
-    color: colors[index],
-  }));
-  const labelById = evolution.reduce(
-    (byId, { id, label }) => ({ ...byId, [id]: label }),
-    {}
-  );
+  const legendData = getLegendData(evolution);
+  const labelById = getLabelsById(evolution);
 
   return (
     <div>
@@ -71,6 +66,7 @@ export default function ActiveUsers() {
       </div>
       <div style={{ height: 450 }}>
         <ResponsiveLine
+          theme={theme}
           colors={colors}
           data={evolution}
           // les marges servent aux légendes
