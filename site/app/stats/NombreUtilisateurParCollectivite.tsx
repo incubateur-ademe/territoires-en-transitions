@@ -1,9 +1,14 @@
 'use client';
 
 import useSWR from 'swr';
-import { supabase } from '../initSupabase';
 import { ResponsiveLine } from '@nivo/line';
-import { colors } from './shared';
+import { supabase } from '../initSupabase';
+import {
+  axisBottomAsDate,
+  axisLeftMiddleLabel,
+  colors,
+  fromMonth,
+} from './shared';
 
 function useNombreUtilisateurParCollectivite() {
   return useSWR(
@@ -12,7 +17,7 @@ function useNombreUtilisateurParCollectivite() {
       const { data, error } = await supabase
         .from('stats_evolution_nombre_utilisateur_par_collectivite')
         .select()
-        .gte('mois', '2022-01-01');
+        .gte('mois', fromMonth);
       if (error) {
         throw new Error('stats_evolution_nombre_utilisateur_par_collectivite');
       }
@@ -52,7 +57,7 @@ export default function NombreUtilisateurParCollectivite() {
     <div>
       <div className="fr-grid-row fr-grid-row--center">
         <h6>
-          {data.courant?.moyen.toFixed(2)} utilisateurs en moyenne par
+          {data.courant?.moyen?.toFixed(2)} utilisateurs en moyenne par
           collectivité,&nbsp;
           {data.courant?.maximum} maximum
         </h6>
@@ -78,25 +83,8 @@ export default function NombreUtilisateurParCollectivite() {
           yFormat=" >-.2f"
           axisTop={null}
           axisRight={null}
-          axisBottom={{
-            legendPosition: 'end',
-            tickSize: 5,
-            tickPadding: 5,
-            tickRotation: -35,
-            format: (v) =>
-              new Date(v).toLocaleDateString('fr', {
-                month: 'short',
-                year: 'numeric',
-              }),
-          }}
-          axisLeft={{
-            tickSize: 4,
-            tickPadding: 5,
-            tickRotation: 0,
-            legend: "Nombre d'utilisateurs moyen",
-            legendOffset: -35,
-            legendPosition: 'middle',
-          }}
+          axisBottom={axisBottomAsDate}
+          axisLeft={axisLeftMiddleLabel("Nombre d'utilisateurs moyen")}
           pointColor={{ theme: 'background' }}
           pointBorderWidth={3}
           pointBorderColor={{ from: 'serieColor' }}

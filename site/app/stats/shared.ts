@@ -5,10 +5,13 @@
  * https://github.com/plouc/nivo/blob/master/packages/core/src/theming/defaultTheme.js
  */
 import { Theme } from '@nivo/core';
+import { AxisProps } from '@nivo/axes';
 import { LegendProps } from '@nivo/legends';
 
 export const colors = ['#21AB8E', '#FFCA00', '#FF732C', '#FFB7AE', '#34BAB5'];
 const fontFamily = '"Marianne", arial, sans-serif';
+
+export const fromMonth = '2022-01-01';
 
 export const theme: Theme = {
   fontFamily,
@@ -35,6 +38,23 @@ export const dateAsMonthAndYear = (v: string) =>
     month: 'short',
     year: 'numeric',
   });
+
+export const axisBottomAsDate: AxisProps = {
+  legendPosition: 'end',
+  tickSize: 5,
+  tickPadding: 12,
+  tickRotation: -35,
+  format: dateAsMonthAndYear,
+};
+
+export const axisLeftMiddleLabel = (legend: string): AxisProps => ({
+  tickSize: 4,
+  tickPadding: 5,
+  tickRotation: 0,
+  legend,
+  legendOffset: -35,
+  legendPosition: 'middle',
+});
 
 export const bottomLegend: LegendProps = {
   anchor: 'bottom',

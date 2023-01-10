@@ -3,7 +3,12 @@
 import useSWR from 'swr';
 import { supabase } from '../initSupabase';
 import { ResponsiveLine } from '@nivo/line';
-import { colors } from './shared';
+import {
+  axisBottomAsDate,
+  axisLeftMiddleLabel,
+  colors,
+  fromMonth,
+} from './shared';
 
 type Vue =
   | 'stats_evolution_nombre_fiches'
@@ -30,12 +35,12 @@ function useEvolutionFiches(vue: Vue) {
     const { data, error } = await supabase
       .from(vue)
       .select()
-      .gte('mois', '2022-01-01');
+      .gte('mois', fromMonth);
     if (error) {
       throw new Error(vue);
     }
     if (!data) {
-      return [];
+      return null;
     }
     return {
       evolution: [
@@ -79,25 +84,8 @@ export default function EvolutionFiches(props: Props) {
         yFormat=" >-.0f"
         axisTop={null}
         axisRight={null}
-        axisBottom={{
-          legendPosition: 'end',
-          tickSize: 5,
-          tickPadding: 5,
-          tickRotation: -35,
-          format: (v) =>
-            new Date(v).toLocaleDateString('fr', {
-              month: 'short',
-              year: 'numeric',
-            }),
-        }}
-        axisLeft={{
-          tickSize: 4,
-          tickPadding: 5,
-          tickRotation: 0,
-          legend: legende[vue],
-          legendOffset: -35,
-          legendPosition: 'middle',
-        }}
+        axisBottom={axisBottomAsDate}
+        axisLeft={axisLeftMiddleLabel(legende[vue])}
         pointColor={{ theme: 'background' }}
         pointBorderWidth={4}
         pointBorderColor={{ from: 'serieColor' }}

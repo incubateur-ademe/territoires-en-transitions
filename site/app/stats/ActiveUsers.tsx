@@ -3,7 +3,14 @@
 import useSWR from 'swr';
 import { ResponsiveLine } from '@nivo/line';
 import { supabase } from '../initSupabase';
-import { bottomLegend, colors, dateAsMonthAndYear } from './shared';
+import {
+  axisBottomAsDate,
+  axisLeftMiddleLabel,
+  bottomLegend,
+  colors,
+  dateAsMonthAndYear,
+  fromMonth,
+} from './shared';
 import { SliceTooltip } from './SliceTooltip';
 
 function useActiveUsers() {
@@ -11,7 +18,7 @@ function useActiveUsers() {
     const { data, error } = await supabase
       .from('stats_evolution_utilisateur')
       .select()
-      .gte('mois', '2022-01-01');
+      .gte('mois', fromMonth);
     if (error) {
       throw new Error('stats_evolution_utilisateur');
     }
@@ -82,21 +89,8 @@ export default function ActiveUsers() {
           yFormat=" >-.0f"
           axisTop={null}
           axisRight={null}
-          axisBottom={{
-            legendPosition: 'end',
-            tickSize: 5,
-            tickPadding: 12,
-            tickRotation: -35,
-            format: dateAsMonthAndYear,
-          }}
-          axisLeft={{
-            tickSize: 4,
-            tickPadding: 5,
-            tickRotation: 0,
-            legend: "Nombre d'utilisateurs actifs",
-            legendOffset: -35,
-            legendPosition: 'middle',
-          }}
+          axisBottom={axisBottomAsDate}
+          axisLeft={axisLeftMiddleLabel("Nombre d'utilisateurs actifs")}
           pointColor={{ theme: 'background' }}
           pointBorderWidth={4}
           pointBorderColor={{ from: 'serieColor' }}
