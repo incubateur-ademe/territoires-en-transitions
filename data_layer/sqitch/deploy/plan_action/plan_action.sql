@@ -97,7 +97,7 @@ create table private.tag -- table abstraite
     unique(nom, collectivite_id)
 );
 comment on table private.tag is
-'Table abstraite.';
+    'Table abstraite.';
 alter table private.tag enable row level security;
 
 -- FICHE ACTION
@@ -123,13 +123,29 @@ create table fiche_action
     calendrier              varchar(10000),
     notes_complementaires   varchar(20000),
     maj_termine             boolean,-- Mise à jour de la fiche terminée
-    collectivite_id         integer references collectivite not null
-);
+    collectivite_id         integer references collectivite not null,
+    created_at              timestamp with time zone default CURRENT_TIMESTAMP not null,
+    modified_by             uuid references auth.users default auth.uid()
+) inherits (abstract_modified_at);
 alter table fiche_action enable row level security;
 create policy allow_read on fiche_action for select using(is_authenticated());
 create policy allow_insert on fiche_action for insert with check(have_edition_acces(collectivite_id));
 create policy allow_update on fiche_action for update using(have_edition_acces(collectivite_id));
 create policy allow_delete on fiche_action for delete using(have_edition_acces(collectivite_id));
+
+create trigger set_modified_at_before_fiche_action
+    before update
+    on
+        fiche_action
+    for each row
+execute procedure update_modified_at();
+create trigger set_modified_by_before_fiche_action
+    before update
+    on
+        fiche_action
+    for each row
+execute procedure utilisateur.update_modified_by();
+
 
 create function peut_modifier_la_fiche(id_fiche integer) returns boolean as $$
 begin
@@ -140,21 +156,36 @@ $$language plpgsql;
 -- AXE
 create table axe
 (
-    id serial primary key,
-    nom text,
+    id              serial primary key,
+    nom             text,
     collectivite_id integer references collectivite not null,
-    parent integer references axe
-);
+    parent          integer references axe,
+    created_at      timestamp with time zone default CURRENT_TIMESTAMP not null,
+    modified_by     uuid references auth.users default auth.uid()
+) inherits (abstract_modified_at);
 comment on table axe is
-'Les axes des plans d''action.';
+    'Les axes des plans d''action.';
 comment on column axe.parent is
-'Le parent de l''axe, lorsque qu''il est `null` alors l''axe est à la racine et on le considère en tant que plan d''action.';
+    'Le parent de l''axe, lorsque qu''il est `null` alors l''axe est à la racine et on le considère en tant que plan d''action.';
 
 alter table axe enable row level security;
 create policy allow_read on axe for select using(is_authenticated());
 create policy allow_insert on axe for insert with check(have_edition_acces(collectivite_id));
 create policy allow_update on axe for update using(have_edition_acces(collectivite_id));
 create policy allow_delete on axe for delete using(have_edition_acces(collectivite_id));
+
+create trigger set_modified_at_before_axe
+    before update
+    on
+        axe
+    for each row
+execute procedure update_modified_at();
+create trigger set_modified_by_before_axe
+    before update
+    on
+        axe
+    for each row
+execute procedure utilisateur.update_modified_by();
 
 create table fiche_action_axe
 (
@@ -231,11 +262,11 @@ create function ajouter_partenaire(
 declare
     id_tag integer;
 begin
-        insert into partenaire_tag (nom, collectivite_id)
-        values(partenaire.nom, partenaire.collectivite_id)
-        on conflict (nom, collectivite_id) do update set nom = partenaire.nom
-        returning id into id_tag;
-        partenaire.id = id_tag;
+    insert into partenaire_tag (nom, collectivite_id)
+    values(partenaire.nom, partenaire.collectivite_id)
+    on conflict (nom, collectivite_id) do update set nom = partenaire.nom
+    returning id into id_tag;
+    partenaire.id = id_tag;
     insert into fiche_action_partenaire_tag
     values (id_fiche, id_tag);
     return partenaire;
@@ -390,11 +421,11 @@ declare
     id_tag integer;
 begin
     if pilote.user_id is null then
-            insert into personne_tag (nom, collectivite_id)
-            values (pilote.nom,  pilote.collectivite_id)
-            on conflict (nom, collectivite_id) do update set nom = pilote.nom
-            returning id into id_tag;
-            pilote.tag_id = id_tag;
+        insert into personne_tag (nom, collectivite_id)
+        values (pilote.nom,  pilote.collectivite_id)
+        on conflict (nom, collectivite_id) do update set nom = pilote.nom
+        returning id into id_tag;
+        pilote.tag_id = id_tag;
         insert into fiche_action_pilote (fiche_id, user_id, tag_id)
         values (id_fiche, null, id_tag);
     else
@@ -999,169 +1030,169 @@ create function migration.migrate_plans()
     language plpgsql
 as
 $$
-    declare
-        mpa migration.plan_action;
-        mfa migration.fiche_action;
-        st fiche_action_statuts;
-        fiche_id integer;
-        plan_action_id integer;
-        elem text;
-        elem_id integer;
-        action_id action_id;
-        indicateur_id indicateur_id;
-        fiche_migration jsonb[];
-        fiche_iteration integer;
-        categorie jsonb;
-        fiche_axe jsonb;
-        axe_id integer;
-        axe_migration jsonb[];
-        axe_iteration integer;
-        axe_a_lier integer;
-        fiche_a_lier integer;
-    begin
-        -- TODO ne pas migrer ceux à supprimer
-        fiche_iteration = 1;
-        for mfa in select * from migration.fiche_action
-            loop
-                --Transforme fiche_action_avancement en fiche_action_statuts
-                st = (
-                    select case
-                               when mfa.avancement = 'pas_fait'::migration.fiche_action_avancement
-                                   then 'À venir'::public.fiche_action_statuts
-                               when mfa.avancement = 'fait'::migration.fiche_action_avancement
-                                   then 'Réalisé'::public.fiche_action_statuts
-                               when mfa.avancement = 'en_cours'::migration.fiche_action_avancement
-                                   then 'En cours'::public.fiche_action_statuts
-                               when mfa.avancement = 'non_renseigne'::migration.fiche_action_avancement
-                                   then 'En pause'::public.fiche_action_statuts
-                               end as st
-                );
-                -- Fiche action
-                insert into public.fiche_action
-                (titre, description, budget_previsionnel, statut, collectivite_id, date_debut, date_fin_provisoire)
-                values(mfa.titre, mfa.description, mfa.budget_global, st, mfa.collectivite_id,
-                       to_date(mfa.date_debut, 'YYYY-MM-DD'), to_date(mfa.date_fin, 'YYYY-MM-DD'))
-                returning id into fiche_id;
+declare
+    mpa migration.plan_action;
+    mfa migration.fiche_action;
+    st fiche_action_statuts;
+    fiche_id integer;
+    plan_action_id integer;
+    elem text;
+    elem_id integer;
+    action_id action_id;
+    indicateur_id indicateur_id;
+    fiche_migration jsonb[];
+    fiche_iteration integer;
+    categorie jsonb;
+    fiche_axe jsonb;
+    axe_id integer;
+    axe_migration jsonb[];
+    axe_iteration integer;
+    axe_a_lier integer;
+    fiche_a_lier integer;
+begin
+    -- TODO ne pas migrer ceux à supprimer
+    fiche_iteration = 1;
+    for mfa in select * from migration.fiche_action
+        loop
+            --Transforme fiche_action_avancement en fiche_action_statuts
+            st = (
+                select case
+                           when mfa.avancement = 'pas_fait'::migration.fiche_action_avancement
+                               then 'À venir'::public.fiche_action_statuts
+                           when mfa.avancement = 'fait'::migration.fiche_action_avancement
+                               then 'Réalisé'::public.fiche_action_statuts
+                           when mfa.avancement = 'en_cours'::migration.fiche_action_avancement
+                               then 'En cours'::public.fiche_action_statuts
+                           when mfa.avancement = 'non_renseigne'::migration.fiche_action_avancement
+                               then 'En pause'::public.fiche_action_statuts
+                           end as st
+            );
+            -- Fiche action
+            insert into public.fiche_action
+            (titre, description, budget_previsionnel, statut, collectivite_id, date_debut, date_fin_provisoire)
+            values(mfa.titre, mfa.description, mfa.budget_global, st, mfa.collectivite_id,
+                   to_date(mfa.date_debut, 'YYYY-MM-DD'), to_date(mfa.date_fin, 'YYYY-MM-DD'))
+            returning id into fiche_id;
 
-                -- Partenaires
-                for elem in select regexp_split_to_array(replace(mfa.partenaires, ' et ', '-'), E'[-,/+]')
-                    loop
-                        elem = trim(elem);
-                        if elem <> '' then
-                            insert into partenaire_tag (nom, collectivite_id)
-                            values(elem, mfa.collectivite_id)
-                            on conflict (nom, collectivite_id) do update set nom = elem
-                            returning id into elem_id;
+            -- Partenaires
+            for elem in select regexp_split_to_array(replace(mfa.partenaires, ' et ', '-'), E'[-,/+]')
+                loop
+                    elem = trim(elem);
+                    if elem <> '' then
+                        insert into partenaire_tag (nom, collectivite_id)
+                        values(elem, mfa.collectivite_id)
+                        on conflict (nom, collectivite_id) do update set nom = elem
+                        returning id into elem_id;
 
-                            insert into fiche_action_partenaire_tag (fiche_id, partenaire_tag_id)
-                            values (fiche_id, elem_id);
-                        end if;
-                    end loop;
+                        insert into fiche_action_partenaire_tag (fiche_id, partenaire_tag_id)
+                        values (fiche_id, elem_id);
+                    end if;
+                end loop;
 
-                -- Structures
-                for elem in select regexp_split_to_array(replace(mfa.structure_pilote, ' et ', '-'), E'[-,/+]')
-                    loop
-                        elem = trim(elem);
-                        if elem <> '' then
-                            insert into structure_tag (nom, collectivite_id)
-                            values(elem, mfa.collectivite_id)
-                            on conflict (nom, collectivite_id) do update set nom = elem
-                            returning id into elem_id;
+            -- Structures
+            for elem in select regexp_split_to_array(replace(mfa.structure_pilote, ' et ', '-'), E'[-,/+]')
+                loop
+                    elem = trim(elem);
+                    if elem <> '' then
+                        insert into structure_tag (nom, collectivite_id)
+                        values(elem, mfa.collectivite_id)
+                        on conflict (nom, collectivite_id) do update set nom = elem
+                        returning id into elem_id;
 
-                            insert into fiche_action_structure_tag (fiche_id, structure_tag_id)
-                            values (fiche_id, elem_id);
-                        end if;
-                    end loop;
+                        insert into fiche_action_structure_tag (fiche_id, structure_tag_id)
+                        values (fiche_id, elem_id);
+                    end if;
+                end loop;
 
-                -- Referents
-                for elem in select regexp_split_to_array(replace(mfa.elu_referent, ' et ', ' / '), E' / ')
-                    loop
-                        elem = trim(elem);
-                        if elem <> '' then
-                            insert into personne_tag (nom, collectivite_id)
-                            values(elem, mfa.collectivite_id)
-                            on conflict (nom, collectivite_id) do update set nom = elem
-                            returning id into elem_id;
+            -- Referents
+            for elem in select regexp_split_to_array(replace(mfa.elu_referent, ' et ', ' / '), E' / ')
+                loop
+                    elem = trim(elem);
+                    if elem <> '' then
+                        insert into personne_tag (nom, collectivite_id)
+                        values(elem, mfa.collectivite_id)
+                        on conflict (nom, collectivite_id) do update set nom = elem
+                        returning id into elem_id;
 
-                            insert into fiche_action_referent (fiche_id, user_id, tag_id)
-                            values (fiche_id, null, elem_id);
-                        end if;
-                    end loop;
-
-                -- Pilotes
-                for elem in select regexp_split_to_array(replace(mfa.personne_referente, ' et ', ' / '), E' / ')
-                    loop
-                        elem = trim(elem);
-                        if elem <> '' then
-                            insert into personne_tag (nom, collectivite_id)
-                            values(elem, mfa.collectivite_id)
-                            on conflict (nom, collectivite_id) do update set nom = elem
-                            returning id into elem_id;
-
-                            insert into fiche_action_pilote (fiche_id, user_id, tag_id)
-                            values (fiche_id, null, elem_id);
-                        end if;
-                    end loop;
-
-                -- Actions
-                foreach action_id in array mfa.action_ids
-                    loop
-                        perform ajouter_action(fiche_id, action_id);
-                    end loop;
-
-                -- Indicateurs
-                foreach indicateur_id in array mfa.indicateur_ids
-                    loop
-                        insert into fiche_action_indicateur (fiche_id, indicateur_id, indicateur_personnalise_id)
-                        values (fiche_id, indicateur_id, null);
-                    end loop;
-                foreach elem_id in array mfa.indicateur_personnalise_ids
-                    loop
-                        insert into fiche_action_indicateur (fiche_id, indicateur_id, indicateur_personnalise_id)
+                        insert into fiche_action_referent (fiche_id, user_id, tag_id)
                         values (fiche_id, null, elem_id);
-                    end loop;
+                    end if;
+                end loop;
 
-                fiche_migration[fiche_iteration] = jsonb_build_object('old', mfa.uid, 'new', fiche_id);
-                fiche_iteration = fiche_iteration+1;
-            end loop;
+            -- Pilotes
+            for elem in select regexp_split_to_array(replace(mfa.personne_referente, ' et ', ' / '), E' / ')
+                loop
+                    elem = trim(elem);
+                    if elem <> '' then
+                        insert into personne_tag (nom, collectivite_id)
+                        values(elem, mfa.collectivite_id)
+                        on conflict (nom, collectivite_id) do update set nom = elem
+                        returning id into elem_id;
 
-        -- Plans action
-        axe_iteration = 1;
-        for mpa in select * from migration.plan_action
-            loop
-                -- Ajout du plan d'action
-                insert into axe (nom, collectivite_id, parent)
-                values (mpa.nom, mpa.collectivite_id, null)
-                returning id into plan_action_id;
-                -- Ajout des axes du plan d'action
-                for categorie in select json_array_elements(mpa.categories)
-                    loop
-                        insert into axe (nom, collectivite_id, parent)
-                        values (categorie ->> 'nom', mpa.collectivite_id, plan_action_id)
-                        returning id into axe_id;
-                        axe_migration[axe_iteration] = json_build_object('old', categorie ->> 'uid',
-                                                                         'new', axe_id,
-                                                                         'plan', plan_action_id);
-                        axe_iteration = axe_iteration +1;
-                    end loop;
-                -- Ajout des fiches aux axes
-                for fiche_axe in select json_array_elements(mpa.fiches_by_category)
-                    loop
-                        select fm ->> 'new'
-                        from json_array_elements(fiche_migration) fm
-                        where fm ->> 'old' = fiche_axe ->> 'fiche_uid'
-                        limit 1 into fiche_a_lier;
+                        insert into fiche_action_pilote (fiche_id, user_id, tag_id)
+                        values (fiche_id, null, elem_id);
+                    end if;
+                end loop;
 
-                        select am ->> 'new'
-                        from json_array_elements(axe_migration) am
-                        where am ->> 'old' = fiche_axe ->> 'category_uid'
-                          and am ->> 'plan' = plan_action_id
-                        limit 1 into axe_a_lier;
+            -- Actions
+            foreach action_id in array mfa.action_ids
+                loop
+                    perform ajouter_action(fiche_id, action_id);
+                end loop;
 
-                        perform ajouter_fiche_action_dans_un_axe(fiche_a_lier, axe_a_lier);
-                    end loop;
-            end loop;
-    end
+            -- Indicateurs
+            foreach indicateur_id in array mfa.indicateur_ids
+                loop
+                    insert into fiche_action_indicateur (fiche_id, indicateur_id, indicateur_personnalise_id)
+                    values (fiche_id, indicateur_id, null);
+                end loop;
+            foreach elem_id in array mfa.indicateur_personnalise_ids
+                loop
+                    insert into fiche_action_indicateur (fiche_id, indicateur_id, indicateur_personnalise_id)
+                    values (fiche_id, null, elem_id);
+                end loop;
+
+            fiche_migration[fiche_iteration] = jsonb_build_object('old', mfa.uid, 'new', fiche_id);
+            fiche_iteration = fiche_iteration+1;
+        end loop;
+
+    -- Plans action
+    axe_iteration = 1;
+    for mpa in select * from migration.plan_action
+        loop
+            -- Ajout du plan d'action
+            insert into axe (nom, collectivite_id, parent)
+            values (mpa.nom, mpa.collectivite_id, null)
+            returning id into plan_action_id;
+            -- Ajout des axes du plan d'action
+            for categorie in select json_array_elements(mpa.categories)
+                loop
+                    insert into axe (nom, collectivite_id, parent)
+                    values (categorie ->> 'nom', mpa.collectivite_id, plan_action_id)
+                    returning id into axe_id;
+                    axe_migration[axe_iteration] = json_build_object('old', categorie ->> 'uid',
+                                                                     'new', axe_id,
+                                                                     'plan', plan_action_id);
+                    axe_iteration = axe_iteration +1;
+                end loop;
+            -- Ajout des fiches aux axes
+            for fiche_axe in select json_array_elements(mpa.fiches_by_category)
+                loop
+                    select fm ->> 'new'
+                    from json_array_elements(fiche_migration) fm
+                    where fm ->> 'old' = fiche_axe ->> 'fiche_uid'
+                    limit 1 into fiche_a_lier;
+
+                    select am ->> 'new'
+                    from json_array_elements(axe_migration) am
+                    where am ->> 'old' = fiche_axe ->> 'category_uid'
+                      and am ->> 'plan' = plan_action_id
+                    limit 1 into axe_a_lier;
+
+                    perform ajouter_fiche_action_dans_un_axe(fiche_a_lier, axe_a_lier);
+                end loop;
+        end loop;
+end
 $$;
 
 create materialized view stats.collectivite_plan_action
