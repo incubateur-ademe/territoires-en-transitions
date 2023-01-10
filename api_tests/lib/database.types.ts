@@ -308,41 +308,50 @@ export interface Database {
           nom: string | null
           collectivite_id: number
           parent: number | null
+          modified_at: string
           id: number
+          created_at: string
+          modified_by: string | null
         }
         Insert: {
           nom?: string | null
           collectivite_id: number
           parent?: number | null
+          modified_at?: string
           id?: number
+          created_at?: string
+          modified_by?: string | null
         }
         Update: {
           nom?: string | null
           collectivite_id?: number
           parent?: number | null
+          modified_at?: string
           id?: number
+          created_at?: string
+          modified_by?: string | null
         }
       }
       client_scores: {
         Row: {
-          modified_at: string
           collectivite_id: number
           referentiel: Database["public"]["Enums"]["referentiel"]
           scores: Json
+          modified_at: string
           payload_timestamp: string | null
         }
         Insert: {
-          modified_at: string
           collectivite_id: number
           referentiel: Database["public"]["Enums"]["referentiel"]
           scores: Json
+          modified_at: string
           payload_timestamp?: string | null
         }
         Update: {
-          modified_at?: string
           collectivite_id?: number
           referentiel?: Database["public"]["Enums"]["referentiel"]
           scores?: Json
+          modified_at?: string
           payload_timestamp?: string | null
         }
       }
@@ -521,7 +530,10 @@ export interface Database {
           notes_complementaires: string | null
           maj_termine: boolean | null
           collectivite_id: number
+          modified_at: string
           id: number
+          created_at: string
+          modified_by: string | null
         }
         Insert: {
           titre?: string | null
@@ -554,7 +566,10 @@ export interface Database {
           notes_complementaires?: string | null
           maj_termine?: boolean | null
           collectivite_id: number
+          modified_at?: string
           id?: number
+          created_at?: string
+          modified_by?: string | null
         }
         Update: {
           titre?: string | null
@@ -587,7 +602,10 @@ export interface Database {
           notes_complementaires?: string | null
           maj_termine?: boolean | null
           collectivite_id?: number
+          modified_at?: string
           id?: number
+          created_at?: string
+          modified_by?: string | null
         }
       }
       fiche_action_action: {
@@ -855,9 +873,9 @@ export interface Database {
           titre: string
           description: string
           unite: string
+          commentaire: string
           modified_at: string
           id: number
-          commentaire: string
           modified_by: string
         }
         Insert: {
@@ -865,9 +883,9 @@ export interface Database {
           titre: string
           description: string
           unite: string
+          commentaire: string
           modified_at?: string
           id?: number
-          commentaire: string
           modified_by?: string
         }
         Update: {
@@ -875,9 +893,9 @@ export interface Database {
           titre?: string
           description?: string
           unite?: string
+          commentaire?: string
           modified_at?: string
           id?: number
-          commentaire?: string
           modified_by?: string
         }
       }
@@ -984,30 +1002,30 @@ export interface Database {
           referentiel: Database["public"]["Enums"]["referentiel"]
           obtenue_le: string
           etoiles: number
-          id: number
-          annee: number | null
           score_realise: number | null
           score_programme: number | null
+          id: number
+          annee: number | null
         }
         Insert: {
           collectivite_id?: number | null
           referentiel: Database["public"]["Enums"]["referentiel"]
           obtenue_le: string
           etoiles: number
-          id?: number
-          annee?: number | null
           score_realise?: number | null
           score_programme?: number | null
+          id?: number
+          annee?: number | null
         }
         Update: {
           collectivite_id?: number | null
           referentiel?: Database["public"]["Enums"]["referentiel"]
           obtenue_le?: string
           etoiles?: number
-          id?: number
-          annee?: number | null
           score_realise?: number | null
           score_programme?: number | null
+          id?: number
+          annee?: number | null
         }
       }
       labellisation_action_critere: {
@@ -2023,6 +2041,7 @@ export interface Database {
       }
       fiches_action: {
         Row: {
+          modified_at: string | null
           id: number | null
           titre: string | null
           description: string | null
@@ -2054,6 +2073,8 @@ export interface Database {
           notes_complementaires: string | null
           maj_termine: boolean | null
           collectivite_id: number | null
+          created_at: string | null
+          modified_by: string | null
           partenaires: unknown[] | null
           structures: unknown[] | null
           pilotes: unknown[] | null
@@ -3329,39 +3350,39 @@ export interface Database {
       time_bucket_gapfill:
         | {
             Args: {
-              bucket_width: number
-              ts: number
-              start: number
-              finish: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              start: number
-              finish: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              start: number
-              finish: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
               bucket_width: unknown
               ts: string
               start: string
               finish: string
             }
             Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              start: number
+              finish: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              start: number
+              finish: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              start: number
+              finish: number
+            }
+            Returns: number
           }
         | {
             Args: {

@@ -27,13 +27,16 @@ select
     calendrier,
     notes_complementaires,
     maj_termine,
-    collectivite_id
+    collectivite_id,
+    created_at,
+    modified_at,
+    modified_by
 from fiche_action
 where false;
 
 select has_function_privilege('peut_modifier_la_fiche(integer)', 'execute');
 
-select id, nom, collectivite_id, parent
+select id, nom, collectivite_id, parent, created_at, modified_at, modified_by
 from axe
 where false;
 
