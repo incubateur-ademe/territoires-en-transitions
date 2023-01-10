@@ -10,6 +10,7 @@ import CollectiviteActivesEtTotalParType from './CollectiviteActivesEtTotalParTy
 import NombreUtilisateurParCollectivite from './NombreUtilisateurParCollectivite';
 import TrancheCompletude from './TrancheCompletude';
 import EvolutionFiches from './EvolutionFiches';
+import IndicateursRenseignes from './IndicateursRenseignes';
 import { CSSProperties } from 'react';
 
 type TextAlign = CSSProperties['textAlign'];
@@ -156,6 +157,14 @@ export default function Stats() {
             mesurent la progression au moyen d’indicateurs de réalisation et
             d’impact de référence ou personnalisés.
           </p>
+          <div className="fr-grid-row fr-grid-row--center fr-grid-row--gutters">
+            <div className="fr-col-6 fr-ratio-3x2">
+              <em style={chartTitle}>
+                Nombre d’indicateurs des référentiels renseignés
+              </em>
+              <IndicateursRenseignes />
+            </div>
+          </div>
         </section>
 
         <section className="fr-container">
