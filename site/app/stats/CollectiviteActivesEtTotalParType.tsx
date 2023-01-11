@@ -1,9 +1,9 @@
 'use client';
 
 import useSWR from 'swr';
-import { ResponsiveWaffleHtml } from '@nivo/waffle';
+import { ResponsiveWaffle } from '@nivo/waffle';
 import { supabase } from '../initSupabase';
-import { colors, theme } from './shared';
+import { bottomLegend, getLegendData, theme } from './shared';
 
 function useCollectiviteActivesEtTotalParType() {
   return useSWR('stats_collectivite_actives_et_total_par_type', async () => {
@@ -43,17 +43,22 @@ export default function CollectiviteActivesEtTotalParType() {
     return null;
   }
 
+  const { categories } = data;
+  const legendData = getLegendData(categories);
+  console.log(legendData);
+
   return (
-    <div style={{ height: 100 + '%' }}>
-      <ResponsiveWaffleHtml
-        colors={colors}
+    <div style={{ height: 400 }}>
+      <ResponsiveWaffle
+        colors={['#21AB8E', '#FF732C']}
         theme={theme}
         data={data.categories}
         total={data.total || 0}
         rows={10}
         columns={10}
-        margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
+        margin={{ top: 10, right: 30, bottom: 10, left: 30 }}
         animate={false}
+        legends={[{ ...bottomLegend, translateY: 5 }]}
       />
     </div>
   );

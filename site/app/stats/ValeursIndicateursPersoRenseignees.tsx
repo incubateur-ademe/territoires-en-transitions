@@ -49,7 +49,7 @@ export default function ValeursIndicateursPersoRenseignees() {
         theme={theme}
         data={data}
         // les marges servent aux légendes
-        margin={{ top: 5, right: 5, bottom: 85, left: 50 }}
+        margin={{ top: 5, right: 5, bottom: 85, left: 55 }}
         xScale={{ type: 'point' }}
         yScale={{
           type: 'linear',
@@ -63,9 +63,12 @@ export default function ValeursIndicateursPersoRenseignees() {
         pointSize={4}
         yFormat=" >-.0f"
         axisBottom={axisBottomAsDate}
-        axisLeft={axisLeftMiddleLabel(
-          'Valeurs d’indicateurs personnalisés des référentiels renseignés'
-        )}
+        axisLeft={{
+          ...axisLeftMiddleLabel(
+            'Valeurs d’indicateurs personnalisés renseignées'
+          ),
+          legendOffset: -50,
+        }}
         pointBorderWidth={4}
         pointBorderColor={{ from: 'serieColor' }}
         pointLabelYOffset={-12}

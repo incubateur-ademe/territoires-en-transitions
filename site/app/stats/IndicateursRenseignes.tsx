@@ -47,7 +47,7 @@ export default function IndicateursRenseignes() {
           theme={theme}
           data={data}
           // les marges servent aux légendes
-          margin={{ top: 5, right: 5, bottom: 85, left: 50 }}
+          margin={{ top: 5, right: 5, bottom: 85, left: 55 }}
           xScale={{ type: 'point' }}
           yScale={{
             type: 'linear',
@@ -61,9 +61,12 @@ export default function IndicateursRenseignes() {
           pointSize={4}
           yFormat=" >-.0f"
           axisBottom={axisBottomAsDate}
-          axisLeft={axisLeftMiddleLabel(
-            'Nombre d’indicateurs des référentiels renseignés'
-          )}
+          axisLeft={{
+            ...axisLeftMiddleLabel(
+              'Nombre d’indicateurs des référentiels renseignés'
+            ),
+            legendOffset: -50,
+          }}
           pointBorderWidth={4}
           pointBorderColor={{ from: 'serieColor' }}
           pointLabelYOffset={-12}

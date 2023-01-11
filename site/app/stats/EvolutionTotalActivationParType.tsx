@@ -81,7 +81,7 @@ export default function EvolutionTotalActivationParType() {
           xScale={{ type: 'point' }}
           yScale={{
             type: 'linear',
-            min: 'auto',
+            min: 0,
             max: 'auto',
             // on empile les lignes pour représenter le total
             stacked: true,
@@ -93,8 +93,6 @@ export default function EvolutionTotalActivationParType() {
           curve="monotoneX"
           enablePoints={false}
           yFormat=" >-.0f"
-          axisTop={null}
-          axisRight={null}
           axisBottom={axisBottomAsDate}
           axisLeft={axisLeftMiddleLabel('Évolution des collectivités activées')}
           pointColor={{ theme: 'background' }}
@@ -127,7 +125,15 @@ export default function EvolutionTotalActivationParType() {
               </div>
             );
           }}
-          legends={[{ ...bottomLegend, translateY: 80, data: legendData }]}
+          legends={[
+            {
+              ...bottomLegend,
+              translateY: 80,
+              itemWidth: 88,
+              itemsSpacing: 8,
+              data: legendData,
+            },
+          ]}
         />
       </div>
     </div>
