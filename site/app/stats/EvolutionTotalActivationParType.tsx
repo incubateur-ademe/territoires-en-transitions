@@ -71,7 +71,7 @@ export default function EvolutionTotalActivationParType() {
         </h6>
       </div>
 
-      <div style={{ height: 450 }}>
+      <div style={{ height: 400 }}>
         <ResponsiveLine
           colors={colors}
           theme={theme}
@@ -128,9 +128,10 @@ export default function EvolutionTotalActivationParType() {
           legends={[
             {
               ...bottomLegend,
+              translateX: -20,
               translateY: 80,
-              itemWidth: 88,
-              itemsSpacing: 8,
+              itemWidth: 100,
+              itemsSpacing: 12,
               data: legendData,
             },
           ]}

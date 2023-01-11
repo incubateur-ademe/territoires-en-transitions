@@ -25,6 +25,7 @@ function useCarteEpciParDepartement() {
       valeurs: data.map((d) => {
         return {
           id: d.insee,
+          label: d.insee + ' %',
           total: d.total,
           actives: d.actives,
           ratio: ((d.actives || 0) / (d.total || 1)) * 100,

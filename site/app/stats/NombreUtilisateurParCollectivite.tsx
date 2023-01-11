@@ -69,13 +69,13 @@ export default function NombreUtilisateurParCollectivite() {
         </h6>
       </div>
 
-      <div style={{ height: 350 }}>
+      <div style={{ height: 400 }}>
         <ResponsiveLine
           colors={colors}
           theme={theme}
           data={evolution}
           // les marges servent aux légendes
-          margin={{ top: 5, right: 5, bottom: 85, left: 50 }}
+          margin={{ top: 5, right: 5, bottom: 120, left: 50 }}
           xScale={{ type: 'point' }}
           yScale={{
             type: 'linear',
@@ -89,7 +89,9 @@ export default function NombreUtilisateurParCollectivite() {
           pointSize={4}
           yFormat=" >-.2f"
           axisBottom={axisBottomAsDate}
-          axisLeft={axisLeftMiddleLabel("Nombre d'utilisateurs moyen")}
+          axisLeft={axisLeftMiddleLabel(
+            "Nombre d'utilisateurs par collectivité"
+          )}
           pointColor={{ theme: 'background' }}
           pointBorderWidth={4}
           pointBorderColor={{ from: 'serieColor' }}
@@ -102,7 +104,9 @@ export default function NombreUtilisateurParCollectivite() {
             {
               ...bottomLegend,
               data: legendData,
-              translateY: 85,
+              direction: 'column',
+              translateX: -20,
+              translateY: 120,
               itemWidth: 230,
             },
           ]}

@@ -41,7 +41,7 @@ export default function IndicateursRenseignes() {
 
   return (
     <div>
-      <div style={{ height: 450 }}>
+      <div style={{ height: 400 }}>
         <ResponsiveLine
           colors={colors}
           theme={theme}
