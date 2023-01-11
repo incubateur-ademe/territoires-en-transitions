@@ -7,7 +7,6 @@ import {
   axisBottomAsDate,
   axisLeftMiddleLabel,
   bottomLegend,
-  colors,
   fromMonth,
   getLabelsById,
   getLegendData,
@@ -56,7 +55,8 @@ export default function NombreUtilisateurParCollectivite() {
   }
 
   const { courant, evolution } = data;
-  const legendData = getLegendData(evolution);
+  const colors = ['#FF732C', '#7AB1E8'];
+  const legendData = getLegendData(evolution, colors);
   const labelById = getLabelsById(evolution);
 
   return (
