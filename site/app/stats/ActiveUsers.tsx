@@ -64,7 +64,7 @@ export default function ActiveUsers() {
           {courant?.utilisateurs} nouveaux utilisateurs le mois dernier
         </h6>
       </div>
-      <div style={{ height: 450 }}>
+      <div style={{ height: 400 }}>
         <ResponsiveLine
           theme={theme}
           colors={colors}

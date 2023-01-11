@@ -21,12 +21,12 @@ function useCollectiviteActivesEtTotalParType() {
     return {
       categories: [
         {
-          id: epcis.type_collectivite + '_activees',
+          id: epcis.type_collectivite + ' activés',
           label: epcis.type_collectivite + ' activés',
           value: epcis.actives,
         },
         {
-          id: epcis.type_collectivite + '_restantes',
+          id: epcis.type_collectivite + ' inactifs',
           label: epcis.type_collectivite + ' inactifs',
           value: (epcis.total || 0) - (epcis.actives || 0),
         },
@@ -56,8 +56,9 @@ export default function CollectiviteActivesEtTotalParType() {
         total={data.total || 0}
         rows={10}
         columns={10}
-        margin={{ top: 10, right: 30, bottom: 10, left: 30 }}
+        margin={{ top: 0, right: 30, bottom: 10, left: 30 }}
         animate={false}
+        // @ts-ignore: la propriété `legends` est absente du typage (@nivo/waffle:0.80.0) mais bien supportée
         legends={[{ ...bottomLegend, translateY: 5 }]}
       />
     </div>

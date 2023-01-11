@@ -71,7 +71,7 @@ export default function EvolutionFiches(props: Props) {
         theme={theme}
         data={data.evolution}
         // les marges servent aux légendes
-        margin={{ top: 5, right: 5, bottom: 50, left: 50 }}
+        margin={{ top: 5, right: 5, bottom: 55, left: 50 }}
         xScale={{ type: 'point' }}
         yScale={{
           type: 'linear',
@@ -82,7 +82,7 @@ export default function EvolutionFiches(props: Props) {
         // on interpole la ligne de façon bien passer sur les points
         curve="monotoneX"
         lineWidth={4}
-        enablePoints={false}
+        enablePoints={true}
         yFormat=" >-.0f"
         axisTop={null}
         axisRight={null}

@@ -107,11 +107,11 @@ export default function Stats() {
           États des lieux réalisés ventilés par taux de progression
         </h6>
         <div className="fr-grid-row fr-grid-row--center fr-grid-row--gutters">
-          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-5 fr-col-lg-5">
+          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-5 fr-col-lg-5 fr-ratio-1x1">
             <em style={chartTitle}>Économie circulaire</em>
             <TrancheCompletude referentiel="eci" />
           </div>
-          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-5 fr-col-lg-5">
+          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-5 fr-col-lg-5 fr-ratio-1x1">
             <em style={chartTitle}>Climat Air Énergie</em>
             <TrancheCompletude referentiel="cae" />
           </div>
@@ -137,11 +137,11 @@ export default function Stats() {
           Évolution de l&apos;utilisation des plans d&apos;action
         </h6>
         <div className="fr-grid-row fr-grid-row--center fr-grid-row--gutters">
-          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-6 fr-col-lg-6">
+          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-6 fr-col-lg-6 fr-ratio-1x1">
             <em style={chartTitle}>Nombre de collectivités avec 5+ fiches</em>
             <EvolutionFiches vue="stats_evolution_collectivite_avec_minimum_fiches" />
           </div>
-          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-6 fr-col-lg-6">
+          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-6 fr-col-lg-6 fr-ratio-1x1">
             <em style={chartTitle}>Nombre de fiches action créées</em>
             <EvolutionFiches vue="stats_evolution_nombre_fiches" />
           </div>

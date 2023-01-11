@@ -43,7 +43,7 @@ export default function ValeursIndicateursPersoRenseignees() {
   }
 
   return (
-    <div style={{ height: 450 }}>
+    <div style={{ height: 400 }}>
       <ResponsiveLine
         colors={colors}
         theme={theme}
