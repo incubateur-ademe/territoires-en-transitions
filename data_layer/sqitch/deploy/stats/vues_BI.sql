@@ -75,6 +75,69 @@ select *
 from stats.engagement_collectivite;
 
 
+drop function stats.refresh_views();
+drop view stats_carte_epci_par_departement;
+drop materialized view stats.carte_epci_par_departement;
+drop view stats_collectivite_actives_et_total_par_type;
+drop materialized view stats.collectivite_actives_et_total_par_type;
+
+create function
+    stats.is_fiscalite_propre(nature varchar)
+    returns bool
+begin
+    atomic
+    return nature = 'CU'
+        or nature = 'CC'
+        or nature = 'CA'
+        or nature = 'METRO';
+end;
+comment on function stats.is_fiscalite_propre is
+    'Vrai si la nature correspond aux EPCI à fiscalité propre.';
+
+
+create materialized view stats.carte_epci_par_departement
+as
+with epcis_departement as (select c.departement_code                                                    as insee,
+                                  count(*)                                                              as total,
+                                  count(*)
+                                  filter ( where collectivite_id in (table stats.collectivite_active) ) as actives
+                           from stats.collectivite c
+                           where stats.is_fiscalite_propre(nature_collectivite)
+                           group by c.departement_code)
+select insee,
+       libelle,
+       total,
+       actives,
+       geojson
+from epcis_departement
+         join stats.departement_geojson using (insee);
+
+create view stats_carte_epci_par_departement
+as
+select *
+from stats.carte_epci_par_departement;
+
+create materialized view stats.collectivite_actives_et_total_par_type
+as
+with collectivite as (select c.collectivite_id,
+                             case
+                                 when stats.is_fiscalite_propre(c.nature_collectivite) then 'EPCI'
+                                 when c.type_collectivite = 'syndicat' then 'syndicat'
+                                 when c.type_collectivite = 'commune' then 'commune' end as typologie
+                      from stats.collectivite c)
+
+select typologie,
+       count(*)                                                                                             as total,
+       count(*) filter ( where collectivite_id in (select collectivite_id from stats.collectivite_active) ) as actives
+from collectivite
+group by typologie;
+
+create view stats_collectivite_actives_et_total_par_type
+as
+select typologie as type_collectivite, total, actives
+from stats.collectivite_actives_et_total_par_type;
+
+
 create or replace function
     stats.refresh_views()
     returns void
