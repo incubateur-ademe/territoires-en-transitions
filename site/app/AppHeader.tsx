@@ -69,7 +69,9 @@ function Body() {
                title="Accueil - Système de Design de l'État"
                className="router-link-exact-active router-link-active">
               <p className="fr-header__service-title">
+                <span style={{fontSize: 'x-large', fontWeight: 'bold'}}>
                 Territoires en Transitions
+                </span>
                 <br />
                 <span style={{fontSize: 'small', fontWeight: 'normal'}}>
                 Accompagner la transition écologique des collectivités
