@@ -21,14 +21,13 @@ function useCarteEpciParDepartement() {
     return {
       actives_max: actives_max,
       total_max: total_max,
-      ratio_max: (actives_max / total_max) * 100,
+      ratio_max: actives_max / total_max,
       valeurs: data.map((d) => {
         return {
           id: d.insee,
-          label: d.insee + ' %',
           total: d.total,
           actives: d.actives,
-          ratio: ((d.actives || 0) / (d.total || 1)) * 100,
+          ratio: (d.actives || 0) / (d.total || 1),
         };
       }),
       geojson: {
@@ -71,7 +70,7 @@ export default function CarteEpciParDepartement(props: Props) {
         unknownColor="#666666"
         label="properties.libelle"
         value={valeur}
-        valueFormat=">-.0f"
+        valueFormat={'>-.0' + (valeur === 'ratio' ? '%' : 'f')}
         projectionScale={1300}
         projectionTranslation={[0.35, 3.5]}
         projectionRotation={[0, 0, 0]}
