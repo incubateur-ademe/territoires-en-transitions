@@ -62,14 +62,15 @@ export default function NombreUtilisateurParCollectivite() {
   return (
     <div>
       <div className="fr-grid-row fr-grid-row--center">
-        <h6>
-          {courant?.moyen?.toFixed(2)} utilisateurs en moyenne par
-          collectivité,&nbsp;
-          {courant?.maximum} maximum
+        <h6 style={{textAlign: 'center'}}>
+          Chaque collectivité compte en moyenne&nbsp;
+          {courant?.moyen?.toFixed(2)} utilisateurs.
+          <br />
+          Avec un maximum de {courant?.maximum} utilisateurs 💪
         </h6>
       </div>
 
-      <div style={{ height: 400 }}>
+      <div style={{ height: 300 }}>
         <ResponsiveLine
           colors={colors}
           theme={theme}
@@ -85,12 +86,13 @@ export default function NombreUtilisateurParCollectivite() {
           }}
           // on interpole la ligne de façon bien passer sur les points
           curve="monotoneX"
-          lineWidth={4}
-          pointSize={4}
+          lineWidth={2}
+          pointSize={0}
+          enableGridY={false}
           yFormat=" >-.2f"
           axisBottom={axisBottomAsDate}
           axisLeft={axisLeftMiddleLabel(
-            "Nombre d'utilisateurs par collectivité"
+            "Utilisateurs/collectivité"
           )}
           pointColor={{ theme: 'background' }}
           pointBorderWidth={4}
