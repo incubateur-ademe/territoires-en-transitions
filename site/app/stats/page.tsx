@@ -57,15 +57,15 @@ export default function Stats() {
           Progression de l’activation des EPCI sur le territoire national
         </h6>
         <div className="fr-grid-row fr-grid-row--center">
-          <div className="fr-col-4 fr-ratio-1x1">
+          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4 fr-ratio-1x1">
             <em style={chartTitle}>Nombre EPCI actifs</em>
             <CarteEpciParDepartement valeur="actives" maximum="actives_max" />
           </div>
-          <div className="fr-col-4 fr-ratio-1x1">
+          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4 fr-ratio-1x1">
             <em style={chartTitle}>Pourcentage EPCI actifs</em>
             <CarteEpciParDepartement valeur="ratio" maximum="ratio_max" />
           </div>
-          <div className="fr-col-4 fr-ratio-1x1">
+          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4 fr-ratio-1x1">
             <em style={chartTitle}>Progression globale</em>
             <CollectiviteActivesEtTotalParType />
           </div>
@@ -107,11 +107,11 @@ export default function Stats() {
           États des lieux réalisés ventilés par taux de progression
         </h6>
         <div className="fr-grid-row fr-grid-row--center fr-grid-row--gutters">
-          <div className="fr-col-5 fr-ratio-1x1">
+          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-5 fr-col-lg-5">
             <em style={chartTitle}>Économie circulaire</em>
             <TrancheCompletude referentiel="eci" />
           </div>
-          <div className="fr-col-5 fr-ratio-1x1">
+          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-5 fr-col-lg-5">
             <em style={chartTitle}>Climat Air Énergie</em>
             <TrancheCompletude referentiel="cae" />
           </div>
@@ -137,12 +137,12 @@ export default function Stats() {
           Évolution de l&apos;utilisation des plans d&apos;action
         </h6>
         <div className="fr-grid-row fr-grid-row--center fr-grid-row--gutters">
-          <div className="fr-col-6 fr-ratio-3x2">
+          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-6 fr-col-lg-6">
             <em style={chartTitle}>Nombre de collectivités avec 5+ fiches</em>
             <EvolutionFiches vue="stats_evolution_collectivite_avec_minimum_fiches" />
           </div>
-          <div className="fr-col-6 fr-ratio-3x2">
-            <em style={chartTitle}>Nombre de fiches action crées</em>
+          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-6 fr-col-lg-6">
+            <em style={chartTitle}>Nombre de fiches action créées</em>
             <EvolutionFiches vue="stats_evolution_nombre_fiches" />
           </div>
         </div>
@@ -159,19 +159,19 @@ export default function Stats() {
           d’impact de référence ou personnalisés.
         </p>
         <div className="fr-grid-row fr-grid-row--center fr-grid-row--gutters">
-          <div className="fr-col-4 fr-ratio-1x1">
+          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4">
             <em style={chartTitle}>
               Nombre d’indicateurs des référentiels renseignés
             </em>
             <IndicateursRenseignes />
           </div>
-          <div className="fr-col-4 fr-ratio-1x1">
+          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4">
             <em style={chartTitle}>
               Nombre total de valeurs d’indicateurs des référentiels renseignés
             </em>
             <ValeursIndicateursRenseignees />
           </div>
-          <div className="fr-col-4 fr-ratio-1x1">
+          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4">
             <em style={chartTitle}>
               Nombre total de valeurs d’indicateurs personnalisés des
               référentiels renseignés
@@ -192,19 +192,19 @@ export default function Stats() {
           la labellisation “Territoire Engagé Transition Ecologique”.
         </p>
         <div className="fr-grid-row fr-grid-row--center fr-grid-row--gutters">
-          <div className="fr-col-4 fr-ratio-1x1">
+          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4">
             <em style={chartTitle}>
               Nombre de collectivités engagées dans le programme
             </em>
             <NombreCollectivitesEngagees />
           </div>
-          <div className="fr-col-4 fr-ratio-1x1">
+          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4">
             <em style={chartTitle}>
               Nombre de labellisés ECI par niveau de labellisation
             </em>
             <CollectivitesLabellisees referentiel="eci" />
           </div>
-          <div className="fr-col-4 fr-ratio-1x1">
+          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4">
             <em style={chartTitle}>
               Nombre de labellisés CAE par niveau de labellisation
             </em>

@@ -25,6 +25,11 @@ export const theme: Theme = {
       },
     },
   },
+  legends: {
+    text: {
+      fontSize: 14,
+    },
+  },
   tooltip: {
     container: {
       fontSize: 14,
@@ -54,7 +59,7 @@ export const axisLeftMiddleLabel = (legend: string): AxisProps => ({
   tickPadding: 5,
   tickRotation: 0,
   legend,
-  legendOffset: -35,
+  legendOffset: -45,
   legendPosition: 'middle',
 });
 
@@ -67,7 +72,6 @@ export const bottomLegend: LegendProps = {
   itemsSpacing: 16,
   itemWidth: 140,
   itemHeight: 18,
-  itemTextColor: '#999',
   itemDirection: 'left-to-right',
   itemOpacity: 1,
   symbolSize: 18,
@@ -82,12 +86,12 @@ export const bottomLegend: LegendProps = {
   ],
 };
 
-export const getLegendData = (data: Serie[]) =>
+export const getLegendData = (data: Pick<Serie, 'id'|'label'>[]) =>
   data.map(({ id, label }, index) => ({
     id,
     label,
     color: colors[index],
   }));
 
-export const getLabelsById = (data: Serie[]): Record<string, string> =>
+export const getLabelsById = (data: Pick<Serie, 'id'|'label'>[]): Record<string, string> =>
   data.reduce((byId, { id, label }) => ({ ...byId, [id]: label }), {});

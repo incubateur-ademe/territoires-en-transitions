@@ -6,10 +6,14 @@ import { supabase } from '../initSupabase';
 import {
   axisBottomAsDate,
   axisLeftMiddleLabel,
+  bottomLegend,
   colors,
   fromMonth,
+  getLabelsById,
+  getLegendData,
   theme,
 } from './shared';
+import { SliceTooltip } from './SliceTooltip';
 
 function useNombreUtilisateurParCollectivite() {
   return useSWR(
@@ -30,10 +34,12 @@ function useNombreUtilisateurParCollectivite() {
         evolution: [
           {
             id: 'moyen',
+            label: "Nombre moyen d'utilisateurs",
             data: data.map((d) => ({ x: d.mois, y: d.moyen })),
           },
           {
             id: 'maximum',
+            label: "Nombre maximum d'utilisateurs",
             data: data.map((d) => ({ x: d.mois, y: d.maximum })),
           },
         ],
@@ -42,11 +48,6 @@ function useNombreUtilisateurParCollectivite() {
   );
 }
 
-const labels = {
-  moyen: "Nombre moyen d'utilisateurs",
-  maximum: "Nombre maximum d'utilisateurs",
-};
-
 export default function NombreUtilisateurParCollectivite() {
   const { data } = useNombreUtilisateurParCollectivite();
 
@@ -54,68 +55,57 @@ export default function NombreUtilisateurParCollectivite() {
     return null;
   }
 
+  const { courant, evolution } = data;
+  const legendData = getLegendData(evolution);
+  const labelById = getLabelsById(evolution);
+
   return (
     <div>
       <div className="fr-grid-row fr-grid-row--center">
         <h6>
-          {data.courant?.moyen?.toFixed(2)} utilisateurs en moyenne par
+          {courant?.moyen?.toFixed(2)} utilisateurs en moyenne par
           collectivité,&nbsp;
-          {data.courant?.maximum} maximum
+          {courant?.maximum} maximum
         </h6>
       </div>
 
-      <div style={{ height: 200 }}>
+      <div style={{ height: 350 }}>
         <ResponsiveLine
           colors={colors}
           theme={theme}
-          data={data.evolution}
+          data={evolution}
           // les marges servent aux légendes
-          margin={{ top: 5, right: 5, bottom: 50, left: 50 }}
+          margin={{ top: 5, right: 5, bottom: 85, left: 50 }}
           xScale={{ type: 'point' }}
           yScale={{
             type: 'linear',
-            min: 'auto',
+            min: 0,
             max: 'auto',
             stacked: false,
           }}
           // on interpole la ligne de façon bien passer sur les points
           curve="monotoneX"
-          enablePoints={false}
-          enableGridY={false}
+          lineWidth={4}
+          pointSize={4}
           yFormat=" >-.2f"
-          axisTop={null}
-          axisRight={null}
           axisBottom={axisBottomAsDate}
           axisLeft={axisLeftMiddleLabel("Nombre d'utilisateurs moyen")}
           pointColor={{ theme: 'background' }}
-          pointBorderWidth={3}
+          pointBorderWidth={4}
           pointBorderColor={{ from: 'serieColor' }}
           pointLabelYOffset={-12}
           enableSlices="x"
-          sliceTooltip={({ slice }) => {
-            return (
-              <div
-                style={{
-                  background: 'white',
-                  padding: '9px 12px',
-                  border: '1px solid #ccc',
-                }}
-              >
-                {slice.points.map((point) => (
-                  <div
-                    key={point.id}
-                    style={{
-                      color: point.serieColor,
-                      padding: '3px 0',
-                    }}
-                  >
-                    {labels[point.serieId as keyof typeof labels]}:{' '}
-                    {point.data.yFormatted}
-                  </div>
-                ))}
-              </div>
-            );
-          }}
+          sliceTooltip={(props) => (
+            <SliceTooltip {...props} labels={labelById} />
+          )}
+          legends={[
+            {
+              ...bottomLegend,
+              data: legendData,
+              translateY: 85,
+              itemWidth: 230,
+            },
+          ]}
         />
       </div>
     </div>

@@ -74,7 +74,7 @@ export default function ActiveUsers() {
           xScale={{ type: 'point' }}
           yScale={{
             type: 'linear',
-            min: 'auto',
+            min: 0,
             max: 'auto',
             stacked: false,
           }}
@@ -83,8 +83,6 @@ export default function ActiveUsers() {
           lineWidth={4}
           pointSize={4}
           yFormat=" >-.0f"
-          axisTop={null}
-          axisRight={null}
           axisBottom={axisBottomAsDate}
           axisLeft={axisLeftMiddleLabel("Nombre d'utilisateurs actifs")}
           pointColor={{ theme: 'background' }}
@@ -95,7 +93,14 @@ export default function ActiveUsers() {
           sliceTooltip={(props) => (
             <SliceTooltip {...props} labels={labelById} />
           )}
-          legends={[{ ...bottomLegend, translateY: 75, data: legendData }]}
+          legends={[
+            {
+              ...bottomLegend,
+              data: legendData,
+              translateY: 85,
+              itemWidth: 180,
+            },
+          ]}
         />
       </div>
     </div>

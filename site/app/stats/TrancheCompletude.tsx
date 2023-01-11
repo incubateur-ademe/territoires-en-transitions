@@ -10,7 +10,8 @@ function useTrancheCompletude() {
     const { data, error } = await supabase
       .from('stats_tranche_completude')
       .select()
-      .gt('lower_bound', 0);
+      .gt('lower_bound', 0)
+      .order('lower_bound', { ascending: false });
     if (error) {
       throw new Error('stats_tranche_completude');
     }
@@ -39,13 +40,13 @@ export default function TrancheCompletude(props: Props) {
   }
 
   return (
-    <div style={{ height: 450 }}>
+    <div style={{ height: 300 }}>
       <ResponsivePie
-        colors={colors}
+        colors={['#21AB8E', '#34BAB5', '#FFCA00', '#FFB7AE', '#FF732C']}
         theme={theme}
         data={data}
         value={props.referentiel}
-        margin={{ top: 40, right: 85, bottom: 80, left: 85 }}
+        margin={{ top: 40, right: 85, bottom: 25, left: 85 }}
         innerRadius={0.5}
         padAngle={0.7}
         cornerRadius={3}
@@ -56,7 +57,7 @@ export default function TrancheCompletude(props: Props) {
           modifiers: [['darker', 0.2]],
         }}
         arcLinkLabel="label"
-        arcLinkLabelsDiagonalLength={0}
+        arcLinkLabelsDiagonalLength={10}
         arcLinkLabelsSkipAngle={10}
         arcLinkLabelsTextColor="#333333"
         arcLinkLabelsThickness={2}
@@ -67,7 +68,6 @@ export default function TrancheCompletude(props: Props) {
           modifiers: [['darker', 2]],
         }}
         tooltip={() => null}
-        legends={[bottomLegend]}
       />
     </div>
   );

@@ -47,7 +47,7 @@ export default function ValeursIndicateursRenseignees() {
           theme={theme}
           data={data}
           // les marges servent aux légendes
-          margin={{ top: 5, right: 5, bottom: 85, left: 50 }}
+          margin={{ top: 5, right: 5, bottom: 85, left: 60 }}
           xScale={{ type: 'point' }}
           yScale={{
             type: 'linear',
@@ -61,9 +61,10 @@ export default function ValeursIndicateursRenseignees() {
           pointSize={4}
           yFormat=" >-.0f"
           axisBottom={axisBottomAsDate}
-          axisLeft={axisLeftMiddleLabel(
-            'Nombre total de valeurs d’indicateurs des référentiels renseignés'
-          )}
+          axisLeft={{
+            ...axisLeftMiddleLabel('Valeurs d’indicateurs renseignées'),
+            legendOffset: -55,
+          }}
           pointBorderWidth={4}
           pointBorderColor={{ from: 'serieColor' }}
           pointLabelYOffset={-12}

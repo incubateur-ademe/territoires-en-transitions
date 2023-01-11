@@ -59,7 +59,7 @@ export default function CarteEpciParDepartement(props: Props) {
   // la taille est absolue, car Nivo ne peut pas centrer la carte un point
   // et les offsets sont relatifs à la taille.
   return (
-    <div style={{ height: 400 + 'px', width: 400 + 'px' }}>
+    <div style={{ height: 400 }}>
       <ResponsiveChoropleth
         colors="nivo"
         theme={theme}
