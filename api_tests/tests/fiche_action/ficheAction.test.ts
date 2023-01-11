@@ -27,9 +27,6 @@ Deno.test('Création fiches et plan actions', async () => {
   const fiche = {
     titre: 'fiche test',
     description: 'description test',
-    thematiques: [
-      'Bâtiments' as Database['public']['Enums']['fiche_action_thematiques'],
-    ],
     piliers_eci: [
       'Écoconception' as Database['public']['Enums']['fiche_action_piliers_eci'],
       'Recyclage' as Database['public']['Enums']['fiche_action_piliers_eci'],
@@ -38,11 +35,36 @@ Deno.test('Création fiches et plan actions', async () => {
   } as Database['public']['Tables']['fiche_action']['Insert'];
   // Création fiche action
   const insertFiche = await supabase.from('fiche_action').
-    upsert(fiche).
-    select();
+  upsert(fiche).
+  select();
   assertEquals(insertFiche.data!.length, 1);
   assertObjectMatch(insertFiche.data![0], fiche);
   const fId = insertFiche.data![0].id;
+  console.log(fId)
+
+  // THEMATIQUES
+  // Récupérer les thématiques
+  const thematiques = await supabase.from('thematique').select();
+  assertEquals(thematiques.data!.length, 10);
+  // Ajout thématique à la fiche
+  await supabase.rpc('ajouter_thematique',
+      {'fiche_id': fId, thematique: thematiques.data![0].thematique});
+  await supabase.rpc('ajouter_thematique',
+      {'fiche_id': fId, thematique: thematiques.data![1].thematique});
+  // Enlever thématique à la fiche
+  await supabase.rpc('enlever_thematique',
+      {'fiche_id': fId, thematique: thematiques.data![1].thematique});
+  // Récupérer les sous-thématiques d'une thématique
+  const sousThematiques = await supabase.from('sous_thematique').
+  select().eq('thematique', thematiques.data![0].thematique);
+  assertEquals(sousThematiques.data!.length, 13);
+  // Ajout sous-thématique à la fiche
+  await supabase.rpc('ajouter_sous_thematique',
+      {'fiche_id': fId, thematique_id: sousThematiques.data![0].id});
+  // Enlever sous-thématique à la fiche
+  await supabase.rpc('enlever_sous_thematique',
+      {'fiche_id': fId, thematique_id: sousThematiques.data![0].id});
+
 
   // PLAN ACTION
   // Création plan action et axe
@@ -52,8 +74,8 @@ Deno.test('Création fiches et plan actions', async () => {
     parent: null,
   } as Database['public']['Tables']['axe']['Insert'];
   const insertPlanAction = await supabase.from('axe').
-    upsert(planAction).
-    select();
+  upsert(planAction).
+  select();
   assertEquals(insertPlanAction.data!.length, 1);
   assertObjectMatch(insertPlanAction.data![0], planAction);
   const axe = {
@@ -66,13 +88,13 @@ Deno.test('Création fiches et plan actions', async () => {
   assertObjectMatch(insertAxe.data![0], axe);
   // Ajout fiche à l'axe
   await supabase.rpc('ajouter_fiche_action_dans_un_axe',
-    {'id_fiche': fId, id_axe: insertAxe.data![0].id});
+      {'fiche_id': fId, axe_id: insertAxe.data![0].id});
   // Enlever fiche d'un axe
   await supabase.rpc('enlever_fiche_action_d_un_axe',
-    {'id_fiche': fId, id_axe: insertAxe.data![0].id});
+      {'fiche_id': fId, axe_id: insertAxe.data![0].id});
   // Récupérer la liste d'indicateur possible pour la collectivité
   const plansActionCol = await supabase.rpc('plans_action_collectivite',
-    {'collectivite_id': 1}).select();
+      {'collectivite_id': 1}).select();
   const plansActionColData = plansActionCol.data! as Database['public']['Tables']['axe']['Row'][];
 
   // PARTENAIRE
@@ -82,26 +104,26 @@ Deno.test('Création fiches et plan actions', async () => {
   } as Database['public']['Tables']['partenaire_tag']['Insert'];
   // Création et ajout partenaire à la fiche
   const insertPartenaire = await supabase.rpc('ajouter_partenaire',
-    {'id_fiche': fId, 'partenaire': partenaire}).select();
+      {'fiche_id': fId, 'partenaire': partenaire}).select();
   const partenaireSave = insertPartenaire.data! as unknown as Database['public']['Tables']['partenaire_tag']['Row'];
   // console.logpartenaireSave);
   assertObjectMatch(partenaireSave, partenaire);
   const lienPartenaire = await supabase.from('fiche_action_partenaire_tag').
-    select().
-    eq('fiche_id', fId);
+  select().
+  eq('fiche_id', fId);
   assertEquals(lienPartenaire.data!.length, 1);
   // Récupérer les tags de la fiche
   const partTags = await supabase.from('fiche_action_partenaire_tag').
-    select('partenaire_tag:partenaire_tag_id(*)').
-    eq('fiche_id', fId);
+  select('partenaire_tag:partenaire_tag_id(*)').
+  eq('fiche_id', fId);
   const partTagsData = partTags.data![0].partenaire_tag as Database['public']['Tables']['partenaire_tag']['Row'][];
   // Enlever partenaire de la fiche
   const enlever = await supabase.rpc('enlever_partenaire',
-    {'id_fiche': fId, 'partenaire': partenaireSave});
+      {'fiche_id': fId, 'partenaire': partenaireSave});
   assertEquals(enlever.status, 200);
   const lienPartenaire2 = await supabase.from('fiche_action_partenaire_tag').
-    select().
-    eq('fiche_id', fId);
+  select().
+  eq('fiche_id', fId);
   // console.loglienPartenaire2);
   assertEquals(lienPartenaire2.data!.length, 0);
 
@@ -113,18 +135,18 @@ Deno.test('Création fiches et plan actions', async () => {
   ;
   // Création et ajout structure à la fiche
   const insertStructure = await supabase.rpc('ajouter_structure',
-    {'id_fiche': fId, 'structure': structure}).select();
+      {'fiche_id': fId, 'structure': structure}).select();
   assertObjectMatch(insertStructure.data!, structure);
   const lienStructure1 = await supabase.from('fiche_action_structure_tag').
-    select().
-    eq('fiche_id', fId);
+  select().
+  eq('fiche_id', fId);
   assertEquals(lienStructure1.data!.length, 1);
   // Enlever structure de la fiche
   await supabase.rpc('enlever_structure',
-    {'id_fiche': fId, 'structure': insertStructure.data!});
+      {'fiche_id': fId, 'structure': insertStructure.data!});
   const lienStructure2 = await supabase.from('fiche_action_structure_tag').
-    select().
-    eq('fiche_id', fId);
+  select().
+  eq('fiche_id', fId);
   assertEquals(lienStructure2.data!.length, 0);
 
   // PILOTE
@@ -136,14 +158,14 @@ Deno.test('Création fiches et plan actions', async () => {
   } as Personne;
   // Création et ajout tag pilote à la fiche
   const insertPiloteTag = await supabase.rpc('ajouter_pilote',
-    {'id_fiche': fId, 'pilote': piloteTag}).select();
+      {'fiche_id': fId, 'pilote': piloteTag}).select();
   assertObjectMatch(insertPiloteTag.data!, piloteTag);
   // Création et ajout utilisateur pilote
   await supabase.rpc('ajouter_pilote',
-    {'id_fiche': fId, 'pilote': piloteUtilisateur});
+      {'fiche_id': fId, 'pilote': piloteUtilisateur});
   // Enlever pilote
   await supabase.rpc('enlever_pilote',
-    {'id_fiche': fId, 'pilote': insertPiloteTag.data!});
+      {'fiche_id': fId, 'pilote': insertPiloteTag.data!});
 
   // REFERENT
   const referentTag = {collectivite_id: 1, nom: 'referent test'} as Personne;
@@ -154,18 +176,18 @@ Deno.test('Création fiches et plan actions', async () => {
   } as Personne;
   // Création et ajout tag referent à la fiche
   const insertReferentTag = await supabase.rpc('ajouter_referent',
-    {'id_fiche': fId, 'referent': referentTag}).select();
+      {'fiche_id': fId, 'referent': referentTag}).select();
   assertObjectMatch(insertReferentTag.data!, referentTag);
   // Création et ajout utilisateur referent
   await supabase.rpc('ajouter_referent',
-    {'id_fiche': fId, 'referent': referentUtilisateur});
+      {'fiche_id': fId, 'referent': referentUtilisateur});
   // Enlever referent
   await supabase.rpc('enlever_referent',
-    {'id_fiche': fId, 'referent': insertReferentTag.data!});
+      {'fiche_id': fId, 'referent': insertReferentTag.data!});
 
   // Récupérer la liste de personnes possible pour la collectivité
   const personnesCol = await supabase.rpc('personnes_collectivite',
-    {'id_collectivite': 1}).select();
+      {'collectivite_id': 1}).select();
   const personnesColData = personnesCol.data! as Personne[];
 
   // ANNEXE
@@ -173,33 +195,33 @@ Deno.test('Création fiches et plan actions', async () => {
   const annexe = {collectivite_id: 1} as Database['public']['Tables']['annexe']['Insert'];
   // Creation et ajout annexe à la fiche
   const insertAnnexe = await supabase.rpc('ajouter_annexe',
-    {'id_fiche': fId, 'annexe': annexe}).select();
+      {'fiche_id': fId, 'annexe': annexe}).select();
   // Enlever annexe à la fiche
   await supabase.rpc('enlever_annexe',
-    {'id_fiche': fId, 'annexe': insertAnnexe.data!, 'supprimer': false});
+      {'fiche_id': fId, 'annexe': insertAnnexe.data!, 'supprimer': false});
 
   // ACTION
   // Ajout action à la fiche
   await supabase.rpc('ajouter_action',
-    {'id_fiche': fId, 'id_action': 'eci_2.2'});
+      {'fiche_id': fId, 'action_id': 'eci_2.2'});
   // Enlever action à la fiche
   await supabase.rpc('enlever_action',
-    {'id_fiche': fId, 'id_action': 'eci_2.2'});
+      {'fiche_id': fId, 'action_id': 'eci_2.2'});
 
   // INDICATEUR
   // Ajout indicateur à la fiche
   const indicateur = {indicateur_id: 'eci_5'} as IndicateurGlobal;
   const indicateurPerso = {indicateur_personnalise_id: 1} as IndicateurGlobal;
   await supabase.rpc('ajouter_indicateur',
-    {'id_fiche': fId, 'indicateur': indicateur});
+      {'fiche_id': fId, 'indicateur': indicateur});
   await supabase.rpc('ajouter_indicateur',
-    {'id_fiche': fId, 'indicateur': indicateurPerso});
+      {'fiche_id': fId, 'indicateur': indicateurPerso});
   // Enlever un indicateur à la fiche
   await supabase.rpc('enlever_indicateur',
-    {'id_fiche': fId, 'indicateur': indicateur});
+      {'fiche_id': fId, 'indicateur': indicateur});
   // Récupérer la liste d'indicateur possible pour la collectivité
-  const indicateursCol = await supabase.rpc('indicateurs_collectivite',
-    {'collectivite_id': 1}).select();
+  const indicateursCol = await supabase.from('indicateurs_collectivite')
+      .select().or('collectivite_id.is.null, collectivite_id.eq.1');
   const indicateursColData = indicateursCol.data! as IndicateurGlobal[];
 
   // Appeler la vue listant les fiches actions
@@ -208,6 +230,8 @@ Deno.test('Création fiches et plan actions', async () => {
   // console.logvue.data!);
   // Récupérer les types liés dans la vue
   const fichesVue: FicheActionVueRow = vue.data![0] as FicheActionVueRow;
+  const thematiquesVue = vue.data![0].thematiques! as Database['public']['Tables']['thematique']['Row'][];
+  const sousThematiquesVue = vue.data![0].sous_thematiques! as Database['public']['Tables']['sous_thematique']['Row'][];
   const partenairesVue = vue.data![0].partenaires! as Database['public']['Tables']['partenaire_tag']['Row'][];
   const structuresVue = vue.data![0].structures! as Database['public']['Tables']['structure_tag']['Row'][];
   const pilotesVue = vue.data![0].pilotes! as Personne[];
@@ -216,11 +240,11 @@ Deno.test('Création fiches et plan actions', async () => {
   const annexesVue = vue.data![0].annexes! as Database['public']['Tables']['action_relation']['Row'][];
   const actionVue = vue.data![0].actions! as Database['public']['Tables']['annexe']['Row'][];
   const axesVue = vue.data![0].actions! as Database['public']['Tables']['axe']['Row'][];
-  // console.logfichesVue);
+  // console.log(thematiquesVue);
 
   // Appeler la vue donnant l'ensemble d'un plan action
   const planentier = await supabase.rpc('plan_action',
-    {'id': insertPlanAction.data![0].id}).select();
+      {'id': insertPlanAction.data![0].id}).select();
   assertExists(planentier.data);
   // console.log(planentier!);
 
@@ -229,10 +253,6 @@ Deno.test('Création fiches et plan actions', async () => {
     id: fId,
     titre: 'fiche test',
     description: 'description test',
-    thematiques: [
-      'Bâtiments' as Database['public']['Enums']['fiche_action_thematiques'],
-    ],
-    sous_thematiques: [] as Database['public']['Enums']['fiche_action_thematiques'][],
     piliers_eci: [
       'Écoconception' as Database['public']['Enums']['fiche_action_piliers_eci'],
     ],
@@ -255,6 +275,8 @@ Deno.test('Création fiches et plan actions', async () => {
     notes_complementaires: null,
     maj_termine: null,
     collectivite_id: 1,
+    thematiques: thematiquesVue,
+    sous_thematiques: sousThematiquesVue,
     partenaires: partenairesVue,
     structures: [
       {
@@ -274,7 +296,7 @@ Deno.test('Création fiches et plan actions', async () => {
   await supabase.from('fiches_action').update(ficheVue as never);
 
   const checkVue = await supabase.from('fiches_action').select().eq('id', fId);
-  // console.logcheckVue.data![0].objectifs);
+  // console.log(checkVue.data![0]);
   // console.logcheckVue.status);
   const objectiVerif: string = checkVue.data![0].objectifs as string;
   assertEquals(objectiVerif, 'verif');
@@ -288,14 +310,14 @@ Deno.test('Création d\'une fiche en utilisant la vue', async () => {
 
   // Une fiche dans les données de test
   const selectResponse1 = await supabase.from('fiches_action').
-    select().
-    eq('collectivite_id', 1);
+  select().
+  eq('collectivite_id', 1);
   assertExists(selectResponse1.data);
   assertEquals(13, selectResponse1.data.length);
 
   // La fiche est insérée et est renvoyée avec un id
   const insertResponse =
-    await supabase.from('fiches_action').
+      await supabase.from('fiches_action').
       insert({'collectivite_id': 2} as never).
       select();
   assertExists(insertResponse.data);
@@ -303,8 +325,8 @@ Deno.test('Création d\'une fiche en utilisant la vue', async () => {
 
   // La fiche est présente dans la vue.
   const selectResponse2 = await supabase.from('fiches_action').
-    select().
-    eq('collectivite_id', 2);
+  select().
+  eq('collectivite_id', 2);
   assertExists(selectResponse2.data);
   assertEquals(1, selectResponse2.data.length);
 
@@ -317,8 +339,8 @@ Deno.test('Suppression d\'une fiche', async () => {
 
   // Une fiche dans les données de test
   const selectResponse1 = await supabase.from('fiches_action').
-    select().
-    eq('collectivite_id', 1);
+  select().
+  eq('collectivite_id', 1);
   assertExists(selectResponse1.data);
   assertEquals(13, selectResponse1.data.length);
 
@@ -326,13 +348,13 @@ Deno.test('Suppression d\'une fiche', async () => {
   assertExists(id);
 
   const deleteResponse = await supabase.from('fiche_action').
-    delete().
-    eq('id', id);
+  delete().
+  eq('id', id);
   assertEquals(204, deleteResponse.status);
 
   const selectResponse2 = await supabase.from('fiches_action').
-    select().
-    eq('collectivite_id', 2);
+  select().
+  eq('collectivite_id', 2);
   assertExists(selectResponse2.data);
   assertEquals(0, selectResponse2.data.length);
 
@@ -345,8 +367,8 @@ Deno.test('Vue personne pilote', async () => {
 
   // Une fiche dans les données de test
   const selectResponse1 = await supabase.from('fiche_action_personne_pilote').
-    select().
-    eq('collectivite_id', 1);
+  select().
+  eq('collectivite_id', 1);
   assertExists(selectResponse1.data);
   assertEquals(6, selectResponse1.data.length);
 
@@ -359,8 +381,8 @@ Deno.test('Vue personne référente', async () => {
 
   // Une fiche dans les données de test
   const selectResponse1 = await supabase.from('fiche_action_personne_referente').
-    select().
-    eq('collectivite_id', 1);
+  select().
+  eq('collectivite_id', 1);
   assertExists(selectResponse1.data);
   assertEquals(6, selectResponse1.data.length);
 

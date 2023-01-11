@@ -3,6 +3,8 @@ import {Personne} from "./personne.ts";
 import {IndicateurGlobal} from "./indicateurGlobal.ts";
 
 export type FicheActionVueRow = Database["public"]["Views"]["fiches_action"]["Row"] & {
+    thematiques: Database["public"]["Tables"]["thematique"]["Insert"][] | null,
+    sous_thematiques: Database["public"]["Tables"]["sous_thematique"]["Insert"][] | null,
     partenaires: Database["public"]["Tables"]["partenaire_tag"]["Insert"][] | null,
     structures: Database["public"]["Tables"]["structure_tag"]["Insert"][] | null,
     pilotes: Personne[] | null,

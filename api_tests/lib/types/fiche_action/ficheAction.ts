@@ -9,7 +9,6 @@ export type FicheAction = {
     /*id : number;*/
     titre : string;
     description : string;
-    thematiques: FicheActionThematiques[];
     piliers_eci: FicheActionPiliersEci[];
     /*objectifs: string;
     resultats_attendus: FicheActionResultatsAttendus[];
