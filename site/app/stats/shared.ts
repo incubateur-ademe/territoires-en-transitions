@@ -86,12 +86,17 @@ export const bottomLegend: LegendProps = {
   ],
 };
 
-export const getLegendData = (data: Pick<Serie, 'id'|'label'>[]) =>
+export const getLegendData = (
+  data: Pick<Serie, 'id' | 'label'>[],
+  palette?: string[]
+) =>
   data.map(({ id, label }, index) => ({
     id,
     label,
-    color: colors[index],
+    color: (palette || colors)[index],
   }));
 
-export const getLabelsById = (data: Pick<Serie, 'id'|'label'>[]): Record<string, string> =>
+export const getLabelsById = (
+  data: Pick<Serie, 'id' | 'label'>[]
+): Record<string, string> =>
   data.reduce((byId, { id, label }) => ({ ...byId, [id]: label }), {});
