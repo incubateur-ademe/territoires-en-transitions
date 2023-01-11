@@ -25,30 +25,55 @@ values ('Plan Vélo 2020-2024',1,null, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), 
        ('4.4 : Inclure de nouvelles mobilités dans l’organisation de la mobilité', 1, 16, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'); -- id 22
 
 
-insert into fiche_action (titre, description, thematiques, piliers_eci, collectivite_id, modified_by)
+insert into fiche_action (titre, description, piliers_eci, collectivite_id, modified_by)
 values ('Permis vélo CM2 école TET 2020-2024',
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-        array [
-            'Bâtiments'::fiche_action_thematiques
-            ],
         array [
             'Écoconception'::fiche_action_piliers_eci,
             'Recyclage'::fiche_action_piliers_eci
             ],
         1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 1
-       ('Casques et gilets réfléchissants gratuits pour les mineurs 2020-2024', '', array []::fiche_action_thematiques[], array []::fiche_action_piliers_eci[],1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 2
-       ('Course de vélo 2020-2024', '', array []::fiche_action_thematiques[], array []::fiche_action_piliers_eci[], 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 3
-       ('Ramassage scolaire à vélo 2020-2024', '', array []::fiche_action_thematiques[], array []::fiche_action_piliers_eci[], 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 4
-       ('Ajouter caméra de surveillance au parking à vélo 2020-2024', '', array []::fiche_action_thematiques[], array []::fiche_action_piliers_eci[], 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 5,
-       ('Arranger la piste cyclable 2020-2024', '', array []::fiche_action_thematiques[], array []::fiche_action_piliers_eci[], 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 6
-       ('Permis vélo CM2 école TET 2024-2028','', array []::fiche_action_thematiques[], array []::fiche_action_piliers_eci[], 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 7
-       ('Casques et gilets réfléchissants gratuits pour les mineurs 2024-2028', '', array []::fiche_action_thematiques[], array []::fiche_action_piliers_eci[],1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 8
-       ('Course de vélo 2024-2028', '', array []::fiche_action_thematiques[], array []::fiche_action_piliers_eci[], 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 9
-       ('Ramassage scolaire à vélo 2024-2028', '', array []::fiche_action_thematiques[], array []::fiche_action_piliers_eci[], 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 10
-       ('Ajouter caméra de surveillance au parking à vélo 2024-2028', '', array []::fiche_action_thematiques[], array []::fiche_action_piliers_eci[], 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 11,
-       ('Arranger la piste cyclable 2024-2028', '', array []::fiche_action_thematiques[], array []::fiche_action_piliers_eci[], 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 12
-       ('Envoyer les nouvelles consignes de tri', '', array []::fiche_action_thematiques[], array []::fiche_action_piliers_eci[], 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9') -- id 13
+       ('Casques et gilets réfléchissants gratuits pour les mineurs 2020-2024', '', array []::fiche_action_piliers_eci[],1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 2
+       ('Course de vélo 2020-2024', '', array []::fiche_action_piliers_eci[], 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 3
+       ('Ramassage scolaire à vélo 2020-2024', '', array []::fiche_action_piliers_eci[], 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 4
+       ('Ajouter caméra de surveillance au parking à vélo 2020-2024', '', array []::fiche_action_piliers_eci[], 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 5,
+       ('Arranger la piste cyclable 2020-2024', '', array []::fiche_action_piliers_eci[], 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 6
+       ('Permis vélo CM2 école TET 2024-2028','', array []::fiche_action_piliers_eci[], 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 7
+       ('Casques et gilets réfléchissants gratuits pour les mineurs 2024-2028', '', array []::fiche_action_piliers_eci[],1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 8
+       ('Course de vélo 2024-2028', '', array []::fiche_action_piliers_eci[], 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 9
+       ('Ramassage scolaire à vélo 2024-2028', '', array []::fiche_action_piliers_eci[], 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 10
+       ('Ajouter caméra de surveillance au parking à vélo 2024-2028', '', array []::fiche_action_piliers_eci[], 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 11,
+       ('Arranger la piste cyclable 2024-2028', '', array []::fiche_action_piliers_eci[], 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 12
+       ('Envoyer les nouvelles consignes de tri', '', array []::fiche_action_piliers_eci[], 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9') -- id 13
 ;
+
+select ajouter_thematique(1, 'Activités économiques');
+select ajouter_thematique(2, 'Activités économiques');
+select ajouter_thematique(3, 'Activités économiques');
+select ajouter_thematique(4, 'Activités économiques');
+select ajouter_thematique(5, 'Activités économiques');
+select ajouter_thematique(6, 'Activités économiques');
+select ajouter_thematique(7, 'Activités économiques');
+select ajouter_thematique(8, 'Activités économiques');
+select ajouter_thematique(9, 'Activités économiques');
+select ajouter_thematique(10, 'Activités économiques');
+select ajouter_thematique(11, 'Activités économiques');
+select ajouter_thematique(12, 'Activités économiques');
+select ajouter_thematique(13, 'Activités économiques');
+
+select ajouter_sous_thematique(1, 1);
+select ajouter_sous_thematique(2, 1);
+select ajouter_sous_thematique(3, 1);
+select ajouter_sous_thematique(4, 1);
+select ajouter_sous_thematique(5, 1);
+select ajouter_sous_thematique(6, 1);
+select ajouter_sous_thematique(7, 1);
+select ajouter_sous_thematique(8, 1);
+select ajouter_sous_thematique(9, 1);
+select ajouter_sous_thematique(10, 1);
+select ajouter_sous_thematique(11, 1);
+select ajouter_sous_thematique(12, 1);
+select ajouter_sous_thematique(13, 1);
 
 select ajouter_fiche_action_dans_un_axe(1, 9);
 select ajouter_fiche_action_dans_un_axe(2, 6);

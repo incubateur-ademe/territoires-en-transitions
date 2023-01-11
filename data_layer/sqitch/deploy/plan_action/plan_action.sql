@@ -30,25 +30,6 @@ drop table fiche_action_action;
 drop table fiche_action cascade;
 drop type fiche_action_avancement;
 
-create type fiche_action_thematiques as enum(
-    'Agriculture et alimentation',
-    'Bâtiments',
-    'Consommation responsable',
-    'Déchets',
-    'Développement économique',
-    'Eau',
-    'Forêts, biodiversité et espaces verts',
-    'Formation, sensibilisation, communication',
-    'Gestion, production et distribution de l’énergie',
-    'Mobilité',
-    'Organisation interne',
-    'Partenariats et coopération',
-    'Précarité énergétique',
-    'Stratégie',
-    'Tourisme',
-    'Urbanisme et aménagement'
-    );
-
 create type fiche_action_piliers_eci as enum (
     'Approvisionnement durable',
     'Écoconception',
@@ -61,12 +42,16 @@ create type fiche_action_piliers_eci as enum (
 
 create type fiche_action_resultats_attendus as enum (
     'Adaptation au changement climatique',
-    'Sensibilisation',
-    'Réduction des polluants atmosphériques',
-    'Réduction des émissions de gaz à effet de serre',
-    'Sobriété énergétique',
+    'Allongement de la durée d’usage',
+    'Amélioration de la qualité de vie',
+    'Développement des énergies renouvelables',
     'Efficacité énergétique',
-    'Développement des énergies renouvelables'
+    'Préservation de la biodiversité',
+    'Réduction des consommations énergétiques',
+    'Réduction des déchets',
+    'Réduction des émissions de gaz à effet de serre',
+    'Réduction des polluants atmosphériques',
+    'Sobriété énergétique'
     );
 
 create type fiche_action_cibles as enum(
@@ -104,10 +89,8 @@ alter table private.tag enable row level security;
 create table fiche_action
 (
     id                      serial primary key,
-    titre                   varchar(300),
+    titre                   varchar(300) default 'Nouvelle fiche',
     description             varchar(20000),
-    thematiques             fiche_action_thematiques[],
-    sous_thematiques        fiche_action_thematiques[],
     piliers_eci             fiche_action_piliers_eci[],
     objectifs               varchar(10000),
     resultats_attendus      fiche_action_resultats_attendus[],
@@ -147,11 +130,210 @@ create trigger set_modified_by_before_fiche_action
 execute procedure utilisateur.update_modified_by();
 
 
-create function peut_modifier_la_fiche(id_fiche integer) returns boolean as $$
+create function peut_modifier_la_fiche(fiche_id integer) returns boolean as $$
 begin
-    return have_edition_acces((select fa.collectivite_id from fiche_action fa where fa.id = id_fiche limit 1));
+    return have_edition_acces((select fa.collectivite_id from fiche_action fa where fa.id = fiche_id limit 1));
 end;
 $$language plpgsql;
+
+create table thematique
+(
+    thematique text primary key
+);
+insert into thematique
+values
+    ('Activités économiques'),
+    ('Culture, identité collective, sport'),
+    ('Eau, milieux aquatiques et assainissement'),
+    ('Économie circulaire et déchets'),
+    ('Énergie et climat'),
+    ('Mobilité et transport'),
+    ('Nature, environnement, air'),
+    ('Solidarité et lien social'),
+    ('Stratégie, organisation interne, coopération et valorisation'),
+    ('Urbanisme, logement, aménagement, bâtiments');
+alter table thematique enable row level security;
+create policy allow_read on thematique for select using(is_authenticated());
+
+create table fiche_action_thematique
+(
+    fiche_id integer references fiche_action not null,
+    thematique text references thematique not null,
+    primary key (fiche_id, thematique)
+);
+alter table fiche_action_thematique enable row level security;
+create policy allow_read on fiche_action_thematique for select using(is_authenticated());
+create policy allow_insert on fiche_action_thematique for insert with check(peut_modifier_la_fiche(fiche_id));
+create policy allow_update on fiche_action_thematique for update using(peut_modifier_la_fiche(fiche_id));
+create policy allow_delete on fiche_action_thematique for delete using(peut_modifier_la_fiche(fiche_id));
+
+create function ajouter_thematique(
+    fiche_id integer,
+    thematique text
+) returns void as $$
+begin
+    insert into fiche_action_thematique
+    values (ajouter_thematique.fiche_id, ajouter_thematique.thematique);
+end;
+$$ language plpgsql;
+comment on function ajouter_thematique is 'Ajouter une thématique à la fiche';
+
+create function enlever_thematique(
+    fiche_id integer,
+    thematique text
+) returns void as $$
+begin
+    delete from fiche_action_thematique
+    where fiche_action_thematique.fiche_id = enlever_thematique.fiche_id
+      and fiche_action_thematique.thematique = enlever_thematique.thematique;
+end;
+$$ language plpgsql;
+comment on function enlever_thematique is 'Enlever une thématique de la fiche';
+
+
+create table sous_thematique
+(
+    id serial primary key,
+    thematique text not null,
+    sous_thematique text not null,
+    unique (thematique, sous_thematique)
+);
+insert into sous_thematique (thematique, sous_thematique)
+values
+    ('Activités économiques', 'Agriculture et alimentation'),
+    ('Activités économiques', 'Artisanat'),
+    ('Activités économiques', 'Attractivité et revitalisation économique'),
+    ('Activités économiques', 'Commerces et services'),
+    ('Activités économiques', 'Economie locale et circuits courts'),
+    ('Activités économiques', 'Economie sociale et solidaire'),
+    ('Activités économiques', 'Emploi'),
+    ('Activités économiques', 'Fiscalité des entreprises'),
+    ('Activités économiques', 'Formation professionnelle'),
+    ('Activités économiques', 'Industrie'),
+    ('Activités économiques', 'Technologies numériques et numérisation'),
+    ('Activités économiques', 'Tiers-lieux'),
+    ('Activités économiques', 'Tourisme'),
+    ('Culture, identité collective, sport', 'Bibliothèques et livres'),
+    ('Culture, identité collective, sport', 'Culture et identité collective'),
+    ('Culture, identité collective, sport', 'Médias et communication'),
+    ('Culture, identité collective, sport', 'Musée'),
+    ('Culture, identité collective, sport', 'Patrimoine et monuments historiques'),
+    ('Culture, identité collective, sport', 'Spectacle vivant'),
+    ('Culture, identité collective, sport', 'Sports et loisirs'),
+    ('Eau, milieux aquatiques et assainissement', 'Assainissement des eaux'),
+    ('Eau, milieux aquatiques et assainissement', 'Cours d’eau, canaux, plans d’eau'),
+    ('Eau, milieux aquatiques et assainissement', 'Eau de pluie'),
+    ('Eau, milieux aquatiques et assainissement', 'Eau potable'),
+    ('Eau, milieux aquatiques et assainissement', 'Eau souterraine'),
+    ('Eau, milieux aquatiques et assainissement', 'Mers et océans'),
+    ('Économie circulaire et déchets', 'Allongement de la durée d’usage'),
+    ('Économie circulaire et déchets', 'Consommation responsable et achats durables'),
+    ('Économie circulaire et déchets', 'Éco-conception'),
+    ('Économie circulaire et déchets', 'Écologie industrielle et territoriale'),
+    ('Économie circulaire et déchets', 'Économie de la fonctionnalité'),
+    ('Économie circulaire et déchets', 'Gestion des déchets : collecte'),
+    ('Économie circulaire et déchets', 'Gestion des déchets : recyclage et valorisation des déchets'),
+    ('Économie circulaire et déchets', 'Innovation, créativité et recherche'),
+    ('Économie circulaire et déchets', 'Production responsable'),
+    ('Énergie et climat', 'Adaptation au changement climatique'),
+    ('Énergie et climat', 'Développement des énergies renouvelables'),
+    ('Énergie et climat', 'Distribution de l’énergie'),
+    ('Énergie et climat', 'Efficacité énergétique'),
+    ('Énergie et climat', 'Gestion de l’énergie : maîtrise et réduction des consommations énergétiques'),
+    ('Énergie et climat', 'Réduction des émissions de gaz à effet de serre'),
+    ('Énergie et climat', 'Rénovation énergétique'),
+    ('Énergie et climat', 'Réseaux de chaleur'),
+    ('Énergie et climat', 'Sobriété énergétique'),
+    ('Mobilité et transport', 'Connaissance de la mobilité'),
+    ('Mobilité et transport', 'Information voyageur, billettique multimodale'),
+    ('Mobilité et transport', 'Limitation des déplacements subis'),
+    ('Mobilité et transport', 'Logistique urbaine'),
+    ('Mobilité et transport', 'Mobilité et véhicules autonomes'),
+    ('Mobilité et transport', 'Mobilité fluviale'),
+    ('Mobilité et transport', 'Mobilité partagée'),
+    ('Mobilité et transport', 'Mobilité pour tous'),
+    ('Mobilité et transport', 'Modes actifs : vélo, marche et aménagements associés'),
+    ('Mobilité et transport', 'Transports collectifs et optimisation des trafics routiers'),
+    ('Nature, environnement, air', 'Biodiversité'),
+    ('Nature, environnement, air', 'Forêts'),
+    ('Nature, environnement, air', 'Milieux humides'),
+    ('Nature, environnement, air', 'Montagne'),
+    ('Nature, environnement, air', 'Qualité de l’air'),
+    ('Nature, environnement, air', 'Risques naturels'),
+    ('Nature, environnement, air', 'Sols'),
+    ('Nature, environnement, air', 'Solutions d’adaptation fondées sur la nature'),
+    ('Solidarité et lien social', 'Accès aux services'),
+    ('Solidarité et lien social', 'Citoyenneté'),
+    ('Solidarité et lien social', 'Cohésion sociale et inclusion'),
+    ('Solidarité et lien social', 'Education et renforcement des compétences'),
+    ('Solidarité et lien social', 'Egalité des chances'),
+    ('Solidarité et lien social', 'Famille et enfance'),
+    ('Solidarité et lien social', 'Handicap'),
+    ('Solidarité et lien social', 'Inclusion numérique'),
+    ('Solidarité et lien social', 'Jeunesse'),
+    ('Solidarité et lien social', 'Lutte contre la précarité des conditions de vie (insécurité alimentaire, précarité énergétique, sanitaire, liée au logement, à la mobilité…)'),
+    ('Solidarité et lien social', 'Personnes âgées'),
+    ('Solidarité et lien social', 'Protection animale'),
+    ('Solidarité et lien social', 'Santé'),
+    ('Solidarité et lien social', 'Sécurité'),
+    ('Stratégie, organisation interne, coopération et valorisation', 'Animation et mise en réseau'),
+    ('Stratégie, organisation interne, coopération et valorisation', 'Appui méthodologique'),
+    ('Stratégie, organisation interne, coopération et valorisation', 'Budget et financement'),
+    ('Stratégie, organisation interne, coopération et valorisation', 'Communication, formation et sensibilisation'),
+    ('Stratégie, organisation interne, coopération et valorisation', 'Diagnostic, objectifs et stratégie'),
+    ('Stratégie, organisation interne, coopération et valorisation', 'Organisation interne'),
+    ('Stratégie, organisation interne, coopération et valorisation', 'Partenariats et coopération (publique, privé, associatif, international, infra et supra collectivité)'),
+    ('Stratégie, organisation interne, coopération et valorisation', 'Prévention des risques professionnels'),
+    ('Stratégie, organisation interne, coopération et valorisation', 'Valorisation d’actions'),
+    ('Urbanisme, logement, aménagement, bâtiments', 'Accessibilité'),
+    ('Urbanisme, logement, aménagement, bâtiments', 'Architecture'),
+    ('Urbanisme, logement, aménagement, bâtiments', 'Bâtiments et construction'),
+    ('Urbanisme, logement, aménagement, bâtiments', 'Cimetières et funéraire'),
+    ('Urbanisme, logement, aménagement, bâtiments', 'Equipement public'),
+    ('Urbanisme, logement, aménagement, bâtiments', 'Espace public'),
+    ('Urbanisme, logement, aménagement, bâtiments', 'Espaces verts'),
+    ('Urbanisme, logement, aménagement, bâtiments', 'Foncier'),
+    ('Urbanisme, logement, aménagement, bâtiments', 'Friche'),
+    ('Urbanisme, logement, aménagement, bâtiments', 'Logement et habitat'),
+    ('Urbanisme, logement, aménagement, bâtiments', 'Paysage'),
+    ('Urbanisme, logement, aménagement, bâtiments', 'Réhabilitation'),
+    ('Urbanisme, logement, aménagement, bâtiments', 'Voirie et réseaux');
+alter table sous_thematique enable row level security;
+create policy allow_read on sous_thematique for select using(is_authenticated());
+create table fiche_action_sous_thematique
+(
+    fiche_id integer references fiche_action not null,
+    thematique_id integer references sous_thematique not null,
+    primary key (fiche_id, thematique_id)
+);
+alter table fiche_action_sous_thematique enable row level security;
+create policy allow_read on fiche_action_sous_thematique for select using(is_authenticated());
+create policy allow_insert on fiche_action_sous_thematique for insert with check(peut_modifier_la_fiche(fiche_id));
+create policy allow_update on fiche_action_sous_thematique for update using(peut_modifier_la_fiche(fiche_id));
+create policy allow_delete on fiche_action_sous_thematique for delete using(peut_modifier_la_fiche(fiche_id));
+
+create function ajouter_sous_thematique(
+    fiche_id integer,
+    thematique_id integer
+) returns void as $$
+begin
+    insert into fiche_action_sous_thematique
+    values (ajouter_sous_thematique.fiche_id, ajouter_sous_thematique.thematique_id);
+end;
+$$ language plpgsql;
+comment on function ajouter_sous_thematique is 'Ajouter une sous-thématique à la fiche';
+
+create function enlever_sous_thematique(
+    fiche_id integer,
+    thematique_id integer
+) returns void as $$
+begin
+    delete from fiche_action_sous_thematique
+    where fiche_action_sous_thematique.fiche_id = enlever_sous_thematique.fiche_id
+      and fiche_action_sous_thematique.thematique_id = enlever_sous_thematique.thematique_id;
+end;
+$$ language plpgsql;
+comment on function enlever_sous_thematique is 'Enlever une sous-thématique de la fiche';
 
 -- AXE
 create table axe
@@ -200,23 +382,24 @@ create policy allow_update on fiche_action_axe for update using(peut_modifier_la
 create policy allow_delete on fiche_action_axe for delete using(peut_modifier_la_fiche(fiche_id));
 
 create function ajouter_fiche_action_dans_un_axe(
-    id_fiche integer,
-    id_axe integer
+    fiche_id integer,
+    axe_id integer
 ) returns void as $$
 begin
     insert into fiche_action_axe
-    values (id_fiche, id_axe);
+    values (ajouter_fiche_action_dans_un_axe.fiche_id, ajouter_fiche_action_dans_un_axe.axe_id);
 end;
 $$ language plpgsql;
 comment on function ajouter_fiche_action_dans_un_axe is 'Ajouter une fiche action dans un axe';
 
 create function enlever_fiche_action_d_un_axe(
-    id_fiche integer,
-    id_axe integer
+    fiche_id integer,
+    axe_id integer
 ) returns void as $$
 begin
     delete from fiche_action_axe
-    where fiche_id = id_fiche and axe_id = id_axe;
+    where fiche_action_axe.fiche_id = enlever_fiche_action_d_un_axe.fiche_id
+      and fiche_action_axe.axe_id = enlever_fiche_action_d_un_axe.axe_id;
 end;
 $$ language plpgsql;
 comment on function enlever_fiche_action_d_un_axe is 'Enlever une fiche action d''un axe';
@@ -227,7 +410,7 @@ create function plans_action_collectivite(
 select axe.*
 from axe
 where axe.collectivite_id = plans_action_collectivite.collectivite_id
-  and axe.parent = null;
+  and axe.parent is null;
 $$ language sql;
 comment on function plans_action_collectivite is 'Liste les plans action d''une collectivite';
 
@@ -256,12 +439,14 @@ create policy allow_update on fiche_action_partenaire_tag for update using(peut_
 create policy allow_delete on fiche_action_partenaire_tag for delete using(peut_modifier_la_fiche(fiche_id));
 
 create function ajouter_partenaire(
-    id_fiche integer,
+    fiche_id integer,
     partenaire partenaire_tag
 ) returns partenaire_tag as $$
 declare
     id_tag integer;
+    id_fiche integer;
 begin
+    id_fiche = fiche_id; -- Ne veut pas prendre ajoute_partenaire.fiche_id
     insert into partenaire_tag (nom, collectivite_id)
     values(partenaire.nom, partenaire.collectivite_id)
     on conflict (nom, collectivite_id) do update set nom = partenaire.nom
@@ -275,12 +460,13 @@ $$ language plpgsql;
 comment on function ajouter_partenaire is 'Ajouter un partenaire à la fiche';
 
 create function enlever_partenaire(
-    id_fiche integer,
+    fiche_id integer,
     partenaire partenaire_tag
 ) returns void as $$
 begin
     delete from fiche_action_partenaire_tag
-    where fiche_id = id_fiche and partenaire_tag_id = partenaire.id;
+    where fiche_action_partenaire_tag.fiche_id = enlever_partenaire.fiche_id
+      and partenaire_tag_id = partenaire.id;
 end;
 $$ language plpgsql;
 comment on function enlever_partenaire is 'Enlever un partenaire à la fiche';
@@ -310,12 +496,14 @@ create policy allow_update on fiche_action_structure_tag for update using(peut_m
 create policy allow_delete on fiche_action_structure_tag for delete using(peut_modifier_la_fiche(fiche_id));
 
 create or replace function ajouter_structure(
-    id_fiche integer,
+    fiche_id integer,
     structure structure_tag
 ) returns structure_tag as $$
 declare
     id_tag integer;
+    id_fiche integer;
 begin
+    id_fiche = fiche_id; -- Ne veut pas prendre ajouter_structure.fiche_id
     insert into structure_tag (nom, collectivite_id)
     values (structure.nom, structure.collectivite_id)
     on conflict (nom, collectivite_id) do update set nom = structure.nom
@@ -329,12 +517,13 @@ $$ language plpgsql;
 comment on function ajouter_structure is 'Ajouter une structure à la fiche';
 
 create function enlever_structure(
-    id_fiche integer,
+    fiche_id integer,
     structure structure_tag
 ) returns void as $$
 begin
     delete from fiche_action_structure_tag
-    where fiche_id = id_fiche and structure_tag_id = structure.id;
+    where fiche_action_structure_tag.fiche_id = enlever_structure.fiche_id
+      and structure_tag_id = structure.id;
 end;
 $$ language plpgsql;
 comment on function enlever_structure is 'Enlever une structure à la fiche';
@@ -360,7 +549,7 @@ create type personne as
 );
 
 create function personnes_collectivite(
-    id_collectivite integer
+    collectivite_id integer
 ) returns setof personne as $$
 select
     pt.nom,
@@ -368,14 +557,14 @@ select
     pt.id as tag_id,
     null::uuid as user_id
 from personne_tag pt
-where pt.collectivite_id = id_collectivite
+where pt.collectivite_id = personnes_collectivite.collectivite_id
 union
 select
     concat(cm.prenom, ' ', cm.nom) as nom,
-    id_collectivite as collectivite_id,
+    personnes_collectivite.collectivite_id,
     null::integer as tag_id,
     cm.user_id::uuid as user_id
-from collectivite_membres(id_collectivite) cm;
+from collectivite_membres(personnes_collectivite.collectivite_id) cm;
 $$ language sql;
 comment on function personnes_collectivite is 'Liste les personnes (tags et utilisateurs) d''une collectivite';
 
@@ -414,12 +603,14 @@ comment on view fiche_action_personne_pilote is
     'Permet de lister les pilotes possibles pour les fiches actions.';
 
 create function ajouter_pilote(
-    id_fiche integer,
+    fiche_id integer,
     pilote personne
 ) returns personne as $$
 declare
     id_tag integer;
+    id_fiche integer;
 begin
+    id_fiche = fiche_id; -- Ne veut pas prendre ajouter_pilote.fiche_id
     if pilote.user_id is null then
         insert into personne_tag (nom, collectivite_id)
         values (pilote.nom,  pilote.collectivite_id)
@@ -438,16 +629,18 @@ $$ language plpgsql;
 comment on function ajouter_pilote is 'Ajouter un pilote à la fiche';
 
 create function enlever_pilote(
-    id_fiche integer,
+    fiche_id integer,
     pilote personne
 ) returns void as $$
 begin
     if pilote.user_id is null then
         delete from fiche_action_pilote
-        where fiche_id = id_fiche and tag_id = pilote.tag_id;
+        where fiche_action_pilote.fiche_id = enlever_pilote.fiche_id
+          and tag_id = pilote.tag_id;
     else
         delete from fiche_action_pilote
-        where fiche_id = id_fiche and user_id = pilote.user_id;
+        where fiche_action_pilote.fiche_id = enlever_pilote.fiche_id
+          and user_id = pilote.user_id;
     end if;
 
 end;
@@ -490,12 +683,14 @@ comment on view fiche_action_personne_referente is
 
 
 create function ajouter_referent(
-    id_fiche integer,
+    fiche_id integer,
     referent personne
 ) returns personne as $$
 declare
     id_tag integer;
+    id_fiche integer;
 begin
+    id_fiche = fiche_id; -- Ne veut pas prendre ajouter_referent.fiche_id
     if referent.user_id is null then
         id_tag = referent.tag_id;
         if id_tag is null then
@@ -517,16 +712,18 @@ $$ language plpgsql;
 comment on function ajouter_referent is 'Ajouter un referent à la fiche';
 
 create function enlever_referent(
-    id_fiche integer,
+    fiche_id integer,
     referent personne
 ) returns void as $$
 begin
     if referent.user_id is null then
         delete from fiche_action_referent
-        where fiche_id = id_fiche and tag_id = referent.tag_id;
+        where fiche_action_referent.fiche_id = enlever_referent.fiche_id
+          and tag_id = referent.tag_id;
     else
         delete from fiche_action_referent
-        where fiche_id = id_fiche and user_id = referent.user_id;
+        where fiche_action_referent.fiche_id = enlever_referent.fiche_id
+          and user_id = referent.user_id;
     end if;
 
 end;
@@ -547,23 +744,24 @@ create policy allow_update on fiche_action_action for update using(peut_modifier
 create policy allow_delete on fiche_action_action for delete using(peut_modifier_la_fiche(fiche_id));
 
 create function ajouter_action(
-    id_fiche integer,
-    id_action action_id
+    fiche_id integer,
+    action_id action_id
 ) returns void as $$
 begin
     insert into fiche_action_action
-    values (id_fiche, id_action);
+    values (ajouter_action.fiche_id, ajouter_action.action_id);
 end;
 $$ language plpgsql;
 comment on function ajouter_action is 'Ajouter une action à la fiche';
 
 create function enlever_action(
-    id_fiche integer,
-    id_action action_id
+    fiche_id integer,
+    action_id action_id
 ) returns void as $$
 begin
     delete from fiche_action_action
-    where fiche_id = id_fiche and action_id = id_action;
+    where fiche_action_action.fiche_id = enlever_action.fiche_id
+      and fiche_action_action.action_id = enlever_action.action_id;
 end;
 $$ language plpgsql;
 comment on function enlever_action is 'Enlever une action à la fiche';
@@ -594,53 +792,53 @@ create type indicateur_generique as
 );
 
 create function ajouter_indicateur(
-    id_fiche integer,
+    fiche_id integer,
     indicateur indicateur_generique
 ) returns void as $$
 begin
     insert into fiche_action_indicateur (fiche_id, indicateur_id, indicateur_personnalise_id)
-    values (id_fiche, indicateur.indicateur_id, indicateur.indicateur_personnalise_id);
+    values (ajouter_indicateur.fiche_id, indicateur.indicateur_id, indicateur.indicateur_personnalise_id);
 end;
 $$ language plpgsql;
 comment on function ajouter_indicateur is 'Ajouter une indicateur à la fiche';
 
 create function enlever_indicateur(
-    id_fiche integer,
+    fiche_id integer,
     indicateur indicateur_generique
 ) returns void as $$
 begin
     if indicateur.indicateur_id is null then
         delete from fiche_action_indicateur
-        where fiche_id = id_fiche and indicateur_personnalise_id = indicateur.indicateur_personnalise_id;
+        where fiche_action_indicateur.fiche_id = enlever_indicateur.fiche_id
+          and indicateur_personnalise_id = indicateur.indicateur_personnalise_id;
     else
         delete from fiche_action_indicateur
-        where fiche_id = id_fiche and indicateur_id = indicateur.indicateur_id;
+        where fiche_action_indicateur.fiche_id = enlever_indicateur.fiche_id
+          and indicateur_id = indicateur.indicateur_id;
     end if;
 end;
 $$ language plpgsql;
 comment on function enlever_indicateur is 'Enlever une indicateur à la fiche';
 
-create function indicateurs_collectivite(
-    collectivite_id integer
-) returns setof indicateur_generique as $$
+create view indicateurs_collectivite as
 select
     null as indicateur_id,
     ipd.id as indicateur_personnalise_id,
     ipd.titre as nom,
     ipd.description,
-    ipd.unite
+    ipd.unite,
+    ipd.collectivite_id
 from indicateur_personnalise_definition ipd
-where ipd.collectivite_id = indicateurs_collectivite.collectivite_id
 union
 select
     id.id as tag_id,
     null as indicateur_personnalise_id,
-    id.nom,
+    concat(id.indicateur_group, ' ', id.identifiant, ' - ', id.nom) as nom,
     id.description,
-    id.unite
-from indicateur_definition id
-$$ language sql;
-comment on function indicateurs_collectivite is 'Liste les indicateurs (globaux et personnalisés) d''une collectivite';
+    id.unite,
+    null as collectivite_id
+from indicateur_definition id;
+comment on view indicateurs_collectivite is 'Liste les indicateurs (globaux et personnalisés) d''une collectivite';
 
 -- DOCUMENT ET LIEN
 create table annexe
@@ -667,12 +865,14 @@ create policy allow_update on fiche_action_annexe for update using(peut_modifier
 create policy allow_delete on fiche_action_annexe for delete using(peut_modifier_la_fiche(fiche_id));
 
 create function ajouter_annexe(
-    id_fiche integer,
+    fiche_id integer,
     annexe annexe
 ) returns annexe as $$
 declare
     id_annexe integer;
+    id_fiche integer;
 begin
+    id_fiche = fiche_id; -- Ne veut pas prendre ajouter_annexe.fiche_id
     id_annexe = annexe.id;
     if id_annexe is null then
         insert into annexe (collectivite_id, fichier_id, url, titre, commentaire)
@@ -688,13 +888,14 @@ $$ language plpgsql;
 comment on function ajouter_annexe is 'Ajouter une annexe à la fiche';
 
 create function enlever_annexe(
-    id_fiche integer,
+    fiche_id integer,
     annexe annexe,
     supprimer boolean
 ) returns void as $$
 begin
     delete from fiche_action_annexe
-    where fiche_id = id_fiche and annexe_id = annexe.id;
+    where fiche_action_annexe.fiche_id = enlever_annexe.fiche_id
+      and annexe_id = annexe.id;
     if supprimer then
         delete from annexe where id = annexe.id;
     end if;
@@ -707,6 +908,8 @@ comment on function enlever_annexe is 'Enlever une annexe à la fiche';
 -- Vue listant les fiches actions et ses données liées
 create view fiches_action as
 select fa.*,
+       t.thematiques,
+       st.sous_thematiques,
        p.partenaires,
        s.structures,
        pi.pilotes,
@@ -716,7 +919,21 @@ select fa.*,
        act.actions,
        ind.indicateurs
 from fiche_action fa
-         -- partenaires
+         -- thematiques
+         left join lateral (
+    select array_agg(th.*::thematique) as thematiques
+    from thematique th
+             join fiche_action_thematique fath on fath.thematique = th.thematique
+    where fath.fiche_id = fa.id
+    ) as t on true
+    -- sous-thematiques
+         left join lateral (
+    select array_agg(sth.*::sous_thematique) as sous_thematiques
+    from sous_thematique sth
+             join fiche_action_sous_thematique fasth on fasth.thematique_id = sth.id
+    where fasth.fiche_id = fa.id
+    ) as st on true
+    -- partenaires
          left join lateral (
     select array_agg(pt.*::partenaire_tag) as partenaires
     from partenaire_tag pt
@@ -802,6 +1019,8 @@ create or replace function upsert_fiche_action()
 $$
 declare
     id_fiche integer;
+    thematique thematique;
+    sous_thematique sous_thematique;
     axe axe;
     partenaire partenaire_tag;
     structure structure_tag;
@@ -816,8 +1035,6 @@ begin
     if id_fiche is null then
         insert into fiche_action (titre,
                                   description,
-                                  thematiques,
-                                  sous_thematiques,
                                   piliers_eci,
                                   objectifs,
                                   resultats_attendus,
@@ -836,8 +1053,6 @@ begin
                                   collectivite_id)
         values (new.titre,
                 new.description,
-                new.thematiques,
-                new.sous_thematiques,
                 new.piliers_eci,
                 new.objectifs,
                 new.resultats_attendus,
@@ -861,8 +1076,6 @@ begin
         set
             titre = new.titre,
             description= new.description,
-            thematiques= new.thematiques,
-            sous_thematiques= new.sous_thematiques,
             piliers_eci= new.piliers_eci,
             objectifs= new.objectifs,
             resultats_attendus= new.resultats_attendus,
@@ -880,6 +1093,22 @@ begin
             maj_termine= new.maj_termine,
             collectivite_id = new.collectivite_id
         where id = id_fiche;
+    end if;
+
+    -- Thématiques
+    delete from fiche_action_thematique where fiche_id = id_fiche;
+    if new.thematiques is not null then
+        foreach thematique in array new.thematiques::thematique[]
+            loop
+                perform ajouter_thematique(id_fiche, thematique.thematique);
+            end loop;
+    end if;
+    delete from fiche_action_sous_thematique where fiche_id = id_fiche;
+    if new.sous_thematiques is not null then
+        foreach sous_thematique in array new.sous_thematiques::sous_thematique[]
+            loop
+                perform ajouter_sous_thematique(id_fiche, sous_thematique.id);
+            end loop;
     end if;
 
     -- Axes
@@ -953,7 +1182,6 @@ begin
                 perform ajouter_annexe(id_fiche,annexe);
             end loop;
     end if;
-
     return new;
 end;
 $$ language plpgsql;
@@ -963,6 +1191,8 @@ create or replace function delete_fiche_action()
 $$
 declare
 begin
+    delete from fiche_action_thematique where fiche_id = old.id;
+    delete from fiche_action_sous_thematique where fiche_id = old.id;
     delete from fiche_action_partenaire_tag where fiche_id = old.id;
     delete from fiche_action_structure_tag where fiche_id = old.id;
     delete from fiche_action_pilote where fiche_id = old.id;
@@ -1143,12 +1373,12 @@ begin
             -- Indicateurs
             foreach indicateur_id in array mfa.indicateur_ids
                 loop
-                    insert into fiche_action_indicateur (fiche_id, indicateur_id, indicateur_personnalise_id)
+                    insert into fiche_action_indicateur (fiche_action_uid, indicateur_id, indicateur_id)
                     values (fiche_id, indicateur_id, null);
                 end loop;
             foreach elem_id in array mfa.indicateur_personnalise_ids
                 loop
-                    insert into fiche_action_indicateur (fiche_id, indicateur_id, indicateur_personnalise_id)
+                    insert into fiche_action_indicateur (fiche_action_uid, indicateur_id, indicateur_id)
                     values (fiche_id, null, elem_id);
                 end loop;
 

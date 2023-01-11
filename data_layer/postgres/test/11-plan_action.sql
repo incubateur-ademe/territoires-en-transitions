@@ -16,6 +16,25 @@ select * from public.fiche_action_axe;
 comment on table test.fiche_action_axe is
     'Copie de la table fiche_action_axe.';
 
+-- Table thematique
+create table test.thematique as
+select * from public.thematique;
+comment on table test.thematique is
+    'Copie de la table thematique';
+
+create table test.fiche_action_thematique as
+select * from public.fiche_action_thematique;
+comment on table test.fiche_action_thematique is 'Copie de la table fiche_action_thematique';
+
+create table test.sous_thematique as
+select * from public.sous_thematique;
+comment on table test.sous_thematique is
+    'Copie de la table sous_thematique';
+
+create table test.fiche_action_sous_thematique as
+select * from public.fiche_action_sous_thematique;
+comment on table test.fiche_action_sous_thematique is 'Copie de la table fiche_action_sous_thematique';
+
 -- Partenaires (FicheActionTags)
 create table test.partenaire_tag as
 select * from public.partenaire_tag;
@@ -101,44 +120,62 @@ truncate fiche_action_partenaire_tag;
 truncate partenaire_tag cascade;
 truncate fiche_action_axe;
 truncate axe cascade;
+truncate fiche_action_sous_thematique;
+truncate sous_thematique cascade;
+truncate fiche_action_thematique;
+truncate thematique cascade;
 truncate fiche_action cascade;
 
 
-    insert into public.fiche_action
-    select * from test.fiche_action;
+insert into public.fiche_action
+select * from test.fiche_action;
 
-    insert into public.axe
-    select * from test.axe;
 
-    insert into public.fiche_action_axe
-    select * from test.fiche_action_axe;
+insert into public.thematique
+select * from test.thematique;
 
-    insert into public.partenaire_tag
-    select * from test.partenaire_tag;
+insert into public.fiche_action_thematique
+select * from test.fiche_action_thematique;
 
-    insert into public.fiche_action_partenaire_tag
-    select * from test.fiche_action_partenaire_tag;
+insert into public.sous_thematique
+select * from test.sous_thematique;
 
-    insert into public.structure_tag
-    select * from test.structure_tag;
+insert into public.fiche_action_sous_thematique
+select * from test.fiche_action_sous_thematique;
 
-    insert into public.fiche_action_structure_tag
-    select * from test.fiche_action_structure_tag;
 
-    insert into public.personne_tag
-    select * from test.personne_tag;
+insert into public.axe
+select * from test.axe;
 
-    insert into public.fiche_action_pilote
-    select * from test.fiche_action_pilote;
+insert into public.fiche_action_axe
+select * from test.fiche_action_axe;
 
-    insert into public.fiche_action_referent
-    select * from test.fiche_action_referent;
+insert into public.partenaire_tag
+select * from test.partenaire_tag;
 
-    insert into public.fiche_action_action
-    select * from test.fiche_action_action;
+insert into public.fiche_action_partenaire_tag
+select * from test.fiche_action_partenaire_tag;
 
-    insert into public.fiche_action_indicateur
-    select * from test.fiche_action_indicateur;
+insert into public.structure_tag
+select * from test.structure_tag;
+
+insert into public.fiche_action_structure_tag
+select * from test.fiche_action_structure_tag;
+
+insert into public.personne_tag
+select * from test.personne_tag;
+
+insert into public.fiche_action_pilote
+select * from test.fiche_action_pilote;
+
+insert into public.fiche_action_referent
+select * from test.fiche_action_referent;
+
+insert into public.fiche_action_action
+select * from test.fiche_action_action;
+
+insert into public.fiche_action_indicateur
+select * from test.fiche_action_indicateur;
 
     /*
     insert into public.annexe
