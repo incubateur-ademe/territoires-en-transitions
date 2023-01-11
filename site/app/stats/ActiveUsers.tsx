@@ -60,8 +60,9 @@ export default function ActiveUsers() {
     <div>
       <div className="fr-grid-row fr-grid-row--center">
         <h6>
-          {courant?.total_utilisateurs} utilisateurs dont{' '}
-          {courant?.utilisateurs} nouveaux utilisateurs le mois dernier
+          Aujourd&apos;hui notre plateforme est utilisée par&nbsp;
+          {courant?.total_utilisateurs} personnes, dont&nbsp;
+          {courant?.utilisateurs} nous ont rejoint le mois dernier
         </h6>
       </div>
       <div style={{ height: 400 }}>
