@@ -16,9 +16,9 @@ import NombreCollectivitesEngagees from './NombreCollectivitesEngagees';
 import CollectivitesLabellisees from './CollectivitesLabellisees';
 
 type TextAlign = CSSProperties['textAlign'];
-const display = { marginTop: fr.spacing('20v') };
+const display = { marginTop: fr.spacing('4w') };
 const chartHead = {
-  marginTop: fr.spacing('10v'),
+  marginTop: fr.spacing('2w'),
   textAlign: 'center' as TextAlign,
 };
 const chartTitle = { textAlign: 'center' as TextAlign, display: 'block' };
