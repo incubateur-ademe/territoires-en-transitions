@@ -12,6 +12,8 @@ import EvolutionFiches from './EvolutionFiches';
 import IndicateursRenseignes from './IndicateursRenseignes';
 import ValeursIndicateursRenseignees from './ValeursIndicateursRenseignees';
 import ValeursIndicateursPersoRenseignees from './ValeursIndicateursPersoRenseignees';
+import NombreCollectivitesEngagees from './NombreCollectivitesEngagees';
+import CollectivitesLabellisees from './CollectivitesLabellisees';
 
 type TextAlign = CSSProperties['textAlign'];
 const display = { marginTop: fr.spacing('20v') };
@@ -189,6 +191,26 @@ export default function Stats() {
           nationaux. Elles obtiennent ainsi un score qui leur permet d’accéder à
           la labellisation “Territoire Engagé Transition Ecologique”.
         </p>
+        <div className="fr-grid-row fr-grid-row--center fr-grid-row--gutters">
+          <div className="fr-col-4 fr-ratio-1x1">
+            <em style={chartTitle}>
+              Nombre de collectivités engagées dans le programme
+            </em>
+            <NombreCollectivitesEngagees />
+          </div>
+          <div className="fr-col-4 fr-ratio-1x1">
+            <em style={chartTitle}>
+              Nombre de labellisés ECI par niveau de labellisation
+            </em>
+            <CollectivitesLabellisees referentiel="eci" />
+          </div>
+          <div className="fr-col-4 fr-ratio-1x1">
+            <em style={chartTitle}>
+              Nombre de labellisés CAE par niveau de labellisation
+            </em>
+            <CollectivitesLabellisees referentiel="cae" />
+          </div>
+        </div>
       </section>
     </div>
   );
