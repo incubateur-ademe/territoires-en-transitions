@@ -191,3 +191,5 @@ cron/refresh_stats_views_utilisation 2023-01-10T14:59:08Z Florian <florian@derfu
 stats/completude [stats/vues_BI stats/completude@v1.20.0] 2023-01-08T18:10:47Z Florian <florian@derfurth.com> # Corrige la vue completude.
 stats/vues_BI [stats/vues_BI@v1.21.0] 2023-01-09T15:56:44Z Florian <florian@derfurth.com> # Ajoute les vues pour la page stats.
 @v1.22.0 2023-01-11T09:24:08Z Florian <florian@derfurth.com> # Statistiques d'utilisation et vues stats publiques.
+
+stats/labellisation 2023-01-11T10:02:39Z Florian <florian@derfurth.com> # Stats de labellisation publiques
