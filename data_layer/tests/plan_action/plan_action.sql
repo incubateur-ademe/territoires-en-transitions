@@ -1,5 +1,5 @@
 begin;
-select plan(16);
+select plan(19);
 
 truncate fiche_action_annexe;
 truncate annexe cascade;
@@ -17,26 +17,34 @@ truncate axe cascade;
 truncate fiche_action cascade;
 
 -- Test fiche_action
-insert into fiche_action (id, titre, description, thematiques, piliers_eci, collectivite_id, modified_by)
+insert into fiche_action (id, titre, description, piliers_eci, collectivite_id, modified_by)
 values
     (
-       1,
-       'fiche 1',
-       'test description',
-       array[
-           'Bâtiments'::fiche_action_thematiques
-        ],
-       array[
-           'Écoconception'::fiche_action_piliers_eci,
-           'Recyclage'::fiche_action_piliers_eci
-        ],
-       1,
-       '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'
+        1,
+        'fiche 1',
+        'test description',
+        array[
+            'Écoconception'::fiche_action_piliers_eci,
+            'Recyclage'::fiche_action_piliers_eci
+            ],
+        1,
+        '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'
     ),
-    (2,'fiche 2','test description',array[]::fiche_action_thematiques[],array[]::fiche_action_piliers_eci[],1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'),
-    (3,'fiche 3','test description',array[]::fiche_action_thematiques[],array[]::fiche_action_piliers_eci[],2, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9')
+    (2,'fiche 2','test description',array[]::fiche_action_piliers_eci[],1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'),
+    (3,'fiche 3','test description',array[]::fiche_action_piliers_eci[],2, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9')
 ;
 select ok((select count(*)=3 from fiche_action), 'Il devrait y avoir trois fiches action');
+
+-- Test thematique
+select ajouter_thematique(1, 'Activités économiques');
+select ajouter_thematique(1, 'Énergie et climat');
+select enlever_thematique (1, 'Énergie et climat');
+select ok((select count(*)=1 from fiche_action_thematique), 'Il devrait y avoir une thématique');
+
+select ajouter_sous_thematique(1, 1);
+select ajouter_sous_thematique(1, 2);
+select enlever_sous_thematique (1, 2);
+select ok((select count(*)=1 from fiche_action_sous_thematique), 'Il devrait y avoir une sous_thématique');
 
 -- Test axe
 insert into axe (id, nom, collectivite_id, parent, modified_by)
@@ -64,7 +72,7 @@ select enlever_partenaire(3, (select ajouter_partenaire(3, (select pt.*::partena
 select ok ((select count(*)=4 from partenaire_tag),
            'Il devrait y avoir 3 entrées dans partenaire_tag');
 select ok ((select count(*)=3 from fiche_action_partenaire_tag),
-    'Il devrait y avoir 3 entrées dans fiche_action_partenaire_tag');
+           'Il devrait y avoir 3 entrées dans fiche_action_partenaire_tag');
 
 -- Test structure
 select ajouter_structure(1, (select st.*::structure_tag from (select null as id, 'stru1' as nom, 1 as collectivite_id) st limit 1));
@@ -91,9 +99,41 @@ select ok ((select count(*)=3 from personne_tag),
 select ok ((select count(*)=1 from fiche_action_referent),
            'Il devrait y avoir 1 entrées dans fiche_action_referent');
 
--- Test annexe TODO
-select ok ((select count(*)=0 from fiche_action_annexe),
-           'Il devrait y avoir 0 entrées dans fiche_action_annexe');
+-- Test annexe
+-- Un faux fichier.
+select cb.collectivite_id,
+       cb.bucket_id,
+       'e9df071601f3f72b5430a55cd7ea584be5c2a36bb4226b621c4dca50088ef8b9'            as hash,
+       'yo.pdf'                                                                      as filename,
+       jsonb_build_object('size', 34, 'mimetype', '*/*', 'cacheControl', 'no-cache') as metadata
+into test.file
+from collectivite_bucket cb
+where collectivite_id = 1;
+
+-- En tant que yolo
+select test.identify_as('yolo@dodo.com');
+
+-- On ajoute le fichier dans le bucket.
+insert into storage.objects (bucket_id, name, owner, metadata)
+select bucket_id, hash, auth.uid(), metadata
+from test.file;
+
+-- Puis à la bibliothèque
+select add_bibliotheque_fichier(
+               f.collectivite_id,
+               f.hash,
+               f.filename
+           )
+from test.file f;
+
+insert into annexe (collectivite_id, fichier_id, url)
+select collectivite_id, id, null
+from bibliotheque_fichier;
+
+select ajouter_annexe(1, (select a.*::annexe from (select null as id, bf.collectivite_id, bf.id as fichier_id, null as url, '' as titre, '' as commentaire, null as modified_by, null as modified_at, null as lien from bibliotheque_fichier bf limit 1) a limit 1));
+
+select ok ((select count(*)=1 from fiche_action_annexe),
+           'Il devrait y avoir 1 entrée dans fiche_action_annexe');
 -- Test action
 select ajouter_action(1, 'eci_2.1');
 select ajouter_action(3, 'eci_2.2');
@@ -109,12 +149,14 @@ select ok ((select count(*)=2 from fiche_action_indicateur),
            'Il devrait y avoir 2 entrées dans fiche_action_indicateur');
 
 select ok ((select count(*)=3 from fiches_action),
-            'Il devrait y avoir 3 entrées dans la vue');
+           'Il devrait y avoir 3 entrées dans la vue');
 
 select isnt_empty('select plan_action(1)', 'La fonction devrait retourner un jsonb');
 
 update fiches_action
 set objectifs = 'objectif'
 where id=1;
+
+select ok((select objectifs = 'objectif' from fiches_action where id = 1));
 
 rollback;

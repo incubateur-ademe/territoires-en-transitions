@@ -500,14 +500,7 @@ export interface Database {
       }
       fiche_action: {
         Row: {
-          titre: string | null
           description: string | null
-          thematiques:
-            | Database["public"]["Enums"]["fiche_action_thematiques"][]
-            | null
-          sous_thematiques:
-            | Database["public"]["Enums"]["fiche_action_thematiques"][]
-            | null
           piliers_eci:
             | Database["public"]["Enums"]["fiche_action_piliers_eci"][]
             | null
@@ -532,18 +525,12 @@ export interface Database {
           collectivite_id: number
           modified_at: string
           id: number
+          titre: string | null
           created_at: string
           modified_by: string | null
         }
         Insert: {
-          titre?: string | null
           description?: string | null
-          thematiques?:
-            | Database["public"]["Enums"]["fiche_action_thematiques"][]
-            | null
-          sous_thematiques?:
-            | Database["public"]["Enums"]["fiche_action_thematiques"][]
-            | null
           piliers_eci?:
             | Database["public"]["Enums"]["fiche_action_piliers_eci"][]
             | null
@@ -568,18 +555,12 @@ export interface Database {
           collectivite_id: number
           modified_at?: string
           id?: number
+          titre?: string | null
           created_at?: string
           modified_by?: string | null
         }
         Update: {
-          titre?: string | null
           description?: string | null
-          thematiques?:
-            | Database["public"]["Enums"]["fiche_action_thematiques"][]
-            | null
-          sous_thematiques?:
-            | Database["public"]["Enums"]["fiche_action_thematiques"][]
-            | null
           piliers_eci?:
             | Database["public"]["Enums"]["fiche_action_piliers_eci"][]
             | null
@@ -604,6 +585,7 @@ export interface Database {
           collectivite_id?: number
           modified_at?: string
           id?: number
+          titre?: string | null
           created_at?: string
           modified_by?: string | null
         }
@@ -715,6 +697,20 @@ export interface Database {
           tag_id?: number | null
         }
       }
+      fiche_action_sous_thematique: {
+        Row: {
+          fiche_id: number
+          thematique_id: number
+        }
+        Insert: {
+          fiche_id: number
+          thematique_id: number
+        }
+        Update: {
+          fiche_id?: number
+          thematique_id?: number
+        }
+      }
       fiche_action_structure_tag: {
         Row: {
           fiche_id: number
@@ -727,6 +723,20 @@ export interface Database {
         Update: {
           fiche_id?: number
           structure_tag_id?: number
+        }
+      }
+      fiche_action_thematique: {
+        Row: {
+          fiche_id: number
+          thematique: string
+        }
+        Insert: {
+          fiche_id: number
+          thematique: string
+        }
+        Update: {
+          fiche_id?: number
+          thematique?: string
         }
       }
       filtre_intervalle: {
@@ -1672,6 +1682,23 @@ export interface Database {
           modified_at?: string
         }
       }
+      sous_thematique: {
+        Row: {
+          thematique: string
+          sous_thematique: string
+          id: number
+        }
+        Insert: {
+          thematique: string
+          sous_thematique: string
+          id?: number
+        }
+        Update: {
+          thematique?: string
+          sous_thematique?: string
+          id?: number
+        }
+      }
       structure_tag: {
         Row: {
           nom: string
@@ -1687,6 +1714,17 @@ export interface Database {
           nom?: string
           collectivite_id?: number
           id?: number
+        }
+      }
+      thematique: {
+        Row: {
+          thematique: string
+        }
+        Insert: {
+          thematique: string
+        }
+        Update: {
+          thematique?: string
         }
       }
       type_tabular_score: {
@@ -2045,12 +2083,6 @@ export interface Database {
           id: number | null
           titre: string | null
           description: string | null
-          thematiques:
-            | Database["public"]["Enums"]["fiche_action_thematiques"][]
-            | null
-          sous_thematiques:
-            | Database["public"]["Enums"]["fiche_action_thematiques"][]
-            | null
           piliers_eci:
             | Database["public"]["Enums"]["fiche_action_piliers_eci"][]
             | null
@@ -2075,6 +2107,8 @@ export interface Database {
           collectivite_id: number | null
           created_at: string | null
           modified_by: string | null
+          thematiques: unknown[] | null
+          sous_thematiques: unknown[] | null
           partenaires: unknown[] | null
           structures: unknown[] | null
           pilotes: unknown[] | null
@@ -2122,6 +2156,16 @@ export interface Database {
           collectivite_id: number | null
           modified_by_id: string | null
           modified_by_nom: string | null
+        }
+      }
+      indicateurs_collectivite: {
+        Row: {
+          indicateur_id: string | null
+          indicateur_personnalise_id: number | null
+          nom: string | null
+          description: string | null
+          unite: string | null
+          collectivite_id: number | null
         }
       }
       mes_collectivites: {
@@ -2487,36 +2531,44 @@ export interface Database {
         Returns: Json
       }
       ajouter_action: {
-        Args: { id_fiche: number; id_action: unknown }
+        Args: { fiche_id: number; action_id: unknown }
         Returns: undefined
       }
       ajouter_annexe: {
-        Args: { id_fiche: number; annexe: unknown }
+        Args: { fiche_id: number; annexe: unknown }
         Returns: unknown
       }
       ajouter_fiche_action_dans_un_axe: {
-        Args: { id_fiche: number; id_axe: number }
+        Args: { fiche_id: number; axe_id: number }
         Returns: undefined
       }
       ajouter_indicateur: {
-        Args: { id_fiche: number; indicateur: unknown }
+        Args: { fiche_id: number; indicateur: unknown }
         Returns: undefined
       }
       ajouter_partenaire: {
-        Args: { id_fiche: number; partenaire: unknown }
+        Args: { fiche_id: number; partenaire: unknown }
         Returns: unknown
       }
       ajouter_pilote: {
-        Args: { id_fiche: number; pilote: unknown }
+        Args: { fiche_id: number; pilote: unknown }
         Returns: unknown
       }
       ajouter_referent: {
-        Args: { id_fiche: number; referent: unknown }
+        Args: { fiche_id: number; referent: unknown }
         Returns: unknown
       }
+      ajouter_sous_thematique: {
+        Args: { fiche_id: number; thematique_id: number }
+        Returns: undefined
+      }
       ajouter_structure: {
-        Args: { id_fiche: number; structure: unknown }
+        Args: { fiche_id: number; structure: unknown }
         Returns: unknown
+      }
+      ajouter_thematique: {
+        Args: { fiche_id: number; thematique: string }
+        Returns: undefined
       }
       alter_job: {
         Args: {
@@ -2685,35 +2737,43 @@ export interface Database {
         Returns: string
       }
       enlever_action: {
-        Args: { id_fiche: number; id_action: unknown }
+        Args: { fiche_id: number; action_id: unknown }
         Returns: undefined
       }
       enlever_annexe: {
-        Args: { id_fiche: number; annexe: unknown; supprimer: boolean }
+        Args: { fiche_id: number; annexe: unknown; supprimer: boolean }
         Returns: undefined
       }
       enlever_fiche_action_d_un_axe: {
-        Args: { id_fiche: number; id_axe: number }
+        Args: { fiche_id: number; axe_id: number }
         Returns: undefined
       }
       enlever_indicateur: {
-        Args: { id_fiche: number; indicateur: unknown }
+        Args: { fiche_id: number; indicateur: unknown }
         Returns: undefined
       }
       enlever_partenaire: {
-        Args: { id_fiche: number; partenaire: unknown }
+        Args: { fiche_id: number; partenaire: unknown }
         Returns: undefined
       }
       enlever_pilote: {
-        Args: { id_fiche: number; pilote: unknown }
+        Args: { fiche_id: number; pilote: unknown }
         Returns: undefined
       }
       enlever_referent: {
-        Args: { id_fiche: number; referent: unknown }
+        Args: { fiche_id: number; referent: unknown }
+        Returns: undefined
+      }
+      enlever_sous_thematique: {
+        Args: { fiche_id: number; thematique_id: number }
         Returns: undefined
       }
       enlever_structure: {
-        Args: { id_fiche: number; structure: unknown }
+        Args: { fiche_id: number; structure: unknown }
+        Returns: undefined
+      }
+      enlever_thematique: {
+        Args: { fiche_id: number; thematique: string }
         Returns: undefined
       }
       est_auditeur: {
@@ -2972,10 +3032,6 @@ export interface Database {
         Args: { hypertable: unknown }
         Returns: number
       }
-      indicateurs_collectivite: {
-        Args: { collectivite_id: number }
-        Returns: unknown
-      }
       interpolate:
         | {
             Args: {
@@ -3088,11 +3144,11 @@ export interface Database {
         Returns: string
       }
       personnes_collectivite: {
-        Args: { id_collectivite: number }
+        Args: { collectivite_id: number }
         Returns: unknown
       }
       peut_modifier_la_fiche: {
-        Args: { id_fiche: number }
+        Args: { fiche_id: number }
         Returns: boolean
       }
       plan_action: {
@@ -3488,35 +3544,22 @@ export interface Database {
         | "Recyclage"
       fiche_action_resultats_attendus:
         | "Adaptation au changement climatique"
-        | "Sensibilisation"
-        | "Réduction des polluants atmosphériques"
-        | "Réduction des émissions de gaz à effet de serre"
-        | "Sobriété énergétique"
-        | "Efficacité énergétique"
+        | "Allongement de la durée d’usage"
+        | "Amélioration de la qualité de vie"
         | "Développement des énergies renouvelables"
+        | "Efficacité énergétique"
+        | "Préservation de la biodiversité"
+        | "Réduction des consommations énergétiques"
+        | "Réduction des déchets"
+        | "Réduction des émissions de gaz à effet de serre"
+        | "Réduction des polluants atmosphériques"
+        | "Sobriété énergétique"
       fiche_action_statuts:
         | "À venir"
         | "En cours"
         | "Réalisé"
         | "En pause"
         | "Abandonné"
-      fiche_action_thematiques:
-        | "Agriculture et alimentation"
-        | "Bâtiments"
-        | "Consommation responsable"
-        | "Déchets"
-        | "Développement économique"
-        | "Eau"
-        | "Forêts, biodiversité et espaces verts"
-        | "Formation, sensibilisation, communication"
-        | "Gestion, production et distribution de l’énergie"
-        | "Mobilité"
-        | "Organisation interne"
-        | "Partenariats et coopération"
-        | "Précarité énergétique"
-        | "Stratégie"
-        | "Tourisme"
-        | "Urbanisme et aménagement"
       filterable_type_collectivite:
         | "commune"
         | "syndicat"

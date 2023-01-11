@@ -10,8 +10,6 @@ select
     id,
     titre,
     description,
-    thematiques,
-    sous_thematiques,
     piliers_eci,
     objectifs,
     resultats_attendus,
@@ -35,6 +33,28 @@ from fiche_action
 where false;
 
 select has_function_privilege('peut_modifier_la_fiche(integer)', 'execute');
+
+select thematique
+from thematique
+where false;
+
+select fiche_id, thematique
+from fiche_action_thematique
+where false;
+
+select has_function_privilege('ajouter_thematique(integer, text)', 'execute');
+select has_function_privilege('enlever_thematique(integer, text)', 'execute');
+
+select id, thematique, sous_thematique
+from sous_thematique
+where false;
+
+select fiche_id, thematique_id
+from fiche_action_sous_thematique
+where false;
+
+select has_function_privilege('ajouter_sous_thematique(integer, integer)', 'execute');
+select has_function_privilege('enlever_sous_thematique(integer, integer)', 'execute');
 
 select id, nom, collectivite_id, parent, created_at, modified_at, modified_by
 from axe
@@ -104,7 +124,6 @@ where false;
 
 select has_function_privilege('ajouter_indicateur(integer, indicateur_generique)', 'execute');
 select has_function_privilege('enlever_indicateur(integer, indicateur_generique)', 'execute');
-select has_function_privilege('indicateurs_collectivite(integer)', 'execute');
 
 select
     id,
