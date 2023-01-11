@@ -65,7 +65,7 @@ export default function EvolutionFiches(props: Props) {
   }
 
   return (
-    <div style={{ height: 100 + '%' }}>
+    <div style={{ height: 400 }}>
       <ResponsiveLine
         colors={colors}
         theme={theme}
