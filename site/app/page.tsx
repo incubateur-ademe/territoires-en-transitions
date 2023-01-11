@@ -1,10 +1,10 @@
 import {fr} from '@codegouvfr/react-dsfr';
 
 export default function Accueil() {
-  return <div id="contenu" className="fr-container-fluid">
+  return <div  className="fr-container-fluid fr-mt-3w fr-mt-md-9w fr-mb-3w fr-mb-md-9w">
     <div className="container fr-container">
       <div className="fr-grid-row fr-grid-row--gutters">
-        <div className="fr-mt-3w fr-mt-md-9w fr-mb-5w text-center"><h2
+        <div className="fr-mb-5w text-center"><h2
           className="">Pilotez efficacement la transition
           écologique de votre collectivité</h2><p
           className="">Territoires en Transitions est une
@@ -16,10 +16,8 @@ export default function Accueil() {
     </div>
 
     <div className="container fr-container  ">
-      <div className="fr-grid-row fr-grid-row--gutters"></div>
       <div className="fr-grid-row fr-grid-row--gutters">
-        <div
-          className="Cards fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4 ">
+        <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4">
           <div className="fr-card fr-card--no-arrow">
             <div className="fr-card__body"><h3
               className="fr-card__title">Situez-vous par rapport aux
@@ -28,13 +26,10 @@ export default function Accueil() {
                 économie circulaire et climat-air-énergie et faites labelliser
                 le score de performance de vos actions réalisées.
               </p></div>
-            <div className="fr-card__img">
-              <img src="accueil/picto-4.svg" title="Titre" alt="" />
-            </div>
+              <img src="accueil/picto-4.svg" title="Titre" alt="" className=" fr-ratio-1x1" />
           </div>
         </div>
-        <div
-          className="Cards fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4 ">
+        <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4 ">
           <div className="fr-card fr-card--no-arrow">
             <div className="fr-card__body"><h3
               className="fr-card__title">Gérez votre plan d&apos;actions </h3>
@@ -46,7 +41,7 @@ export default function Accueil() {
                 économie circulaire.
               </p></div>
             <div className="fr-card__img">
-              <img src="accueil/picto-1.svg" title="Titre" alt="" />
+              <img src="accueil/picto-1.svg" title="Titre" alt="" className=" fr-ratio-1x1" />
             </div>
           </div>
         </div>
@@ -61,7 +56,7 @@ export default function Accueil() {
                 collectivités.
               </p></div>
             <div className="fr-card__img">
-              <img src="accueil/picto-2.svg" title="Titre" alt="" />
+              <img src="accueil/picto-2.svg" title="Titre" alt="" className=" fr-ratio-1x1" />
             </div>
           </div>
         </div>
