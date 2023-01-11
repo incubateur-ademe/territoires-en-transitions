@@ -5,49 +5,46 @@ import { ResponsivePie } from '@nivo/pie';
 import { supabase } from '../initSupabase';
 import { bottomLegend, colors, theme } from './shared';
 
-function useCollectivitesLabellisees() {
-  /*
-  return useSWR('stats_collectivites_labellisees', async () => {
+function useCollectivitesLabellisees(referentiel: Props['referentiel']) {
+  const { data } = useSWR('stats_labellisation_par_niveau', async () => {
     const { data, error } = await supabase
-      .from('stats_engagement_collectivite')
+      .from('stats_labellisation_par_niveau')
       .select()
-      .or('etoiles_cae.gte.1, etoiles_eci.gte.1')
-      .
+      .gte('etoiles', 1);
     if (error) {
-      throw new Error('stats_collectivites_labellisees');
+      throw new Error('stats_labellisation_par_niveau');
     }
     if (!data) {
       return null;
     }
-    return data.map((d) => {
-      return {
-        id: d.lower_bound,
-        label:
-          d.lower_bound + `${d.upper_bound ? '-' + d.upper_bound : ''}` + '%',
-        eci: d.eci,
-        cae: d.cae,
-      };
-    });
-  });*/
-  return { data: null };
+    return data;
+  });
+
+  return data
+    ?.filter((d) => d.referentiel === referentiel)
+    .map((d) => ({
+      id: d.etoiles,
+      label: `${d.etoiles} étoile${d.etoiles > 1 ? 's' : ''}`,
+      value: d.labellisations,
+    }));
 }
 
 type Props = { referentiel: 'eci' | 'cae' };
 
 export default function CollectivitesLabellisees(props: Props) {
-  const { data } = useCollectivitesLabellisees();
+  const { referentiel } = props;
+  const data = useCollectivitesLabellisees(referentiel);
 
   if (!data) {
     return null;
   }
 
   return (
-    <div style={{ height: 450 }}>
+    <div style={{ height: 300 }}>
       <ResponsivePie
-        colors={colors}
+        colors={['#21AB8E', '#34BAB5', '#FFCA00', '#FFB7AE', '#FF732C']}
         theme={theme}
         data={data}
-        value={props.referentiel}
         margin={{ top: 40, right: 85, bottom: 80, left: 85 }}
         innerRadius={0.5}
         padAngle={0.7}
@@ -59,8 +56,8 @@ export default function CollectivitesLabellisees(props: Props) {
           modifiers: [['darker', 0.2]],
         }}
         arcLinkLabel="label"
-        arcLinkLabelsDiagonalLength={0}
-        arcLinkLabelsSkipAngle={10}
+        arcLinkLabelsDiagonalLength={16}
+        arcLinkLabelsStraightLength={14}
         arcLinkLabelsTextColor="#333333"
         arcLinkLabelsThickness={2}
         arcLinkLabelsColor={{ from: 'color' }}
@@ -70,7 +67,7 @@ export default function CollectivitesLabellisees(props: Props) {
           modifiers: [['darker', 2]],
         }}
         tooltip={() => null}
-        legends={[bottomLegend]}
+        startAngle={-10}
       />
     </div>
   );

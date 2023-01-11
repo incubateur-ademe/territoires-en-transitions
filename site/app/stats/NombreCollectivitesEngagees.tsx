@@ -24,11 +24,13 @@ export default function NombreCollectivitesEngagees() {
   return (
     <div
       style={{
-        paddingTop: '4rem',
         color: colors[0],
         fontSize: '4rem',
         fontWeight: 'bold',
-        textAlign: 'center',
+        height: 250,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
       }}
     >
       {data}
