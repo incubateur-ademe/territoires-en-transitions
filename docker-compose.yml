@@ -314,7 +314,7 @@ services:
       - | 
         sh /scripts/wait_for_supabase.sh
         sqitch deploy --chdir /sqitch || exit 1 
-        sqitch revert --to @v1.12.0 --y --chdir /sqitch || exit 1
+        sqitch revert --to @v1.22.0 --y --chdir /sqitch || exit 1
         sqitch deploy --chdir /sqitch || exit 1
     environment:
       SQITCH_TARGET: db:pg://db/postgres
