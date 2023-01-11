@@ -18,7 +18,7 @@ import CollectivitesLabellisees from './CollectivitesLabellisees';
 type TextAlign = CSSProperties['textAlign'];
 const display = { marginTop: fr.spacing('4w') };
 const chartHead = {
-  marginTop: fr.spacing('2w'),
+  marginTop: fr.spacing('4w'),
   textAlign: 'center' as TextAlign,
 };
 const chartTitle = { textAlign: 'center' as TextAlign, display: 'block' };
@@ -100,18 +100,18 @@ export default function Stats() {
           L’état des lieux est une étape incontournable dans toute démarche de
           planification. Pour accompagner les collectivités dans cet exercice,
           la plateforme Territoires en Transitions s’appuie sur les référentiels
-          Climat, Air, Energie et Economie Circulaire de l'ADEME.
+          Climat, Air, Energie et Economie Circulaire de l’ADEME.
         </p>
 
         <h6 style={chartHead}>
           États des lieux réalisés ventilés par taux de progression
         </h6>
         <div className="fr-grid-row fr-grid-row--center fr-grid-row--gutters">
-          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-5 fr-col-lg-5 fr-ratio-1x1">
+          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-5 fr-col-lg-5 fr-responsive-img">
             <em style={chartTitle}>Économie circulaire</em>
             <TrancheCompletude referentiel="eci" />
           </div>
-          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-5 fr-col-lg-5 fr-ratio-1x1">
+          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-5 fr-col-lg-5 fr-responsive-img">
             <em style={chartTitle}>Climat Air Énergie</em>
             <TrancheCompletude referentiel="cae" />
           </div>
