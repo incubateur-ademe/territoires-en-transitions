@@ -5,7 +5,6 @@ import MultiSelectDropdown from './MultiSelectDropdown';
 type TMultiSelectTagsDropdown<T extends string> = TSelectBase & {
   values?: T[];
   onSelect: (values: T[]) => void;
-  onRemoveTag?: (newValues: T[]) => void;
 };
 
 const MultiSelectTagsDropdown = <T extends string>({
@@ -14,14 +13,15 @@ const MultiSelectTagsDropdown = <T extends string>({
   buttonClassName,
   placeholderText,
   onSelect,
-  onRemoveTag,
   disabled,
+  containerWidthMatchButton,
   'data-test': dataTest,
 }: TMultiSelectTagsDropdown<T>) => {
   return (
     <MultiSelectDropdown
       data-test={dataTest}
       buttonClassName={buttonClassName}
+      containerWidthMatchButton={containerWidthMatchButton}
       values={values}
       options={options}
       onSelect={onSelect}

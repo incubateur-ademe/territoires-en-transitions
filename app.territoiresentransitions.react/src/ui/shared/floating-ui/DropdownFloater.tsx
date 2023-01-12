@@ -19,6 +19,10 @@ type DropdownFloaterProps = {
   placement?: Placement;
   /** Whether to toggle the open state with repeated clicks. Default `true` */
   toggle?: boolean;
+  /** Whether to toggle the open state with 'enter' keydown. Default `true` */
+  enterToToggle?: boolean;
+  /** Wheter to set the options width as the open button. Default `false` */
+  containerWidthMatchButton?: boolean;
   'data-test'?: string;
 };
 
@@ -27,6 +31,8 @@ const DropdownFloater = ({
   children,
   placement,
   toggle = true,
+  enterToToggle = true,
+  containerWidthMatchButton = false,
   'data-test': dataTest,
 }: DropdownFloaterProps) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -40,9 +46,14 @@ const DropdownFloater = ({
       offset(4),
       shift(),
       size({
-        apply({rects, elements}) {
+        apply({rects, elements, availableHeight}) {
           Object.assign(elements.floating.style, {
+            maxHeight: `${availableHeight}px`,
+            overflowY: 'auto',
             minWidth: `${rects.reference.width}px`,
+            width: containerWidthMatchButton
+              ? `${rects.reference.width}px`
+              : 'auto',
           });
         },
       }),
@@ -65,7 +76,11 @@ const DropdownFloater = ({
           ref: reference,
           isOpen,
           onKeyDown(evt) {
-            if (evt.key === 'Enter' && evt.target instanceof HTMLInputElement) {
+            if (
+              enterToToggle &&
+              evt.key === 'Enter' &&
+              evt.target instanceof HTMLInputElement
+            ) {
               setIsOpen(!isOpen);
             }
           },
