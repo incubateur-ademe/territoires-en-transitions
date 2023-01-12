@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import Tag from 'ui/shared/Tag';
 import {getOptionLabel, TSelectBase} from './commons';
 import MultiSelectDropdown from './MultiSelectDropdown';
@@ -20,7 +21,9 @@ const MultiSelectTagsDropdown = <T extends string>({
   return (
     <MultiSelectDropdown
       data-test={dataTest}
-      buttonClassName={buttonClassName}
+      buttonClassName={classNames(`${buttonClassName}`, {
+        'cursor-default': values && values?.length > 0,
+      })}
       containerWidthMatchButton={containerWidthMatchButton}
       values={values}
       options={options}
