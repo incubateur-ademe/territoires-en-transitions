@@ -1,10 +1,10 @@
 'use client';
 
-import { fr } from '@codegouvfr/react-dsfr';
-import { ChartHead, SectionHead, ChartTitle } from './headings';
-import { EtatDesLieux } from './EtatDesLieux';
-import { EvolutionPlansAction } from './EvolutionPlansAction';
-import { EvolutionIndicateurs } from './EvolutionIndicateurs';
+import {fr} from '@codegouvfr/react-dsfr';
+import {ChartHead, SectionHead, ChartTitle} from './headings';
+import {EtatDesLieux} from './EtatDesLieux';
+import {EvolutionPlansAction} from './EvolutionPlansAction';
+import {EvolutionIndicateurs} from './EvolutionIndicateurs';
 import ActiveUsers from './ActiveUsers';
 import CarteEpciParDepartement from './CarteEpciParDepartement';
 import EvolutionTotalActivationParType from './EvolutionTotalActivationParType';
@@ -134,24 +134,19 @@ export default function Stats() {
           nationaux. Elles obtiennent ainsi un score qui leur permet d’accéder à
           la labellisation “Territoire Engagé Transition Ecologique”.
         </p>
+        <NombreCollectivitesEngagees />
         <div className="fr-grid-row fr-grid-row--center fr-grid-row--gutters">
-          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4">
-            <ChartTitle>
-              Nombre de collectivités engagées dans le programme
-            </ChartTitle>
-            <NombreCollectivitesEngagees />
-          </div>
-          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4">
-            <ChartTitle>
-              Nombre de labellisés ECI par niveau de labellisation
-            </ChartTitle>
-            <CollectivitesLabellisees referentiel="eci" />
-          </div>
-          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4">
+          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-5 fr-col-lg-5">
             <ChartTitle>
               Nombre de labellisés CAE par niveau de labellisation
             </ChartTitle>
             <CollectivitesLabellisees referentiel="cae" />
+          </div>
+          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-5 fr-col-lg-5">
+            <ChartTitle>
+              Nombre de labellisés ECI par niveau de labellisation
+            </ChartTitle>
+            <CollectivitesLabellisees referentiel="eci" />
           </div>
         </div>
       </section>
