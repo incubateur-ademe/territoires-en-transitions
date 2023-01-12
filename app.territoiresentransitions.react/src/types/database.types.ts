@@ -220,7 +220,15 @@ export interface Database {
           password: string;
           port: number;
         };
-        Returns: Record<string, unknown>[];
+        Returns: {
+          database: unknown;
+          database_created: boolean;
+          extension_created: boolean;
+          host: string;
+          node_created: boolean;
+          node_name: unknown;
+          port: number;
+        }[];
       };
       add_dimension: {
         Args: {
@@ -231,7 +239,13 @@ export interface Database {
           number_partitions: number;
           partitioning_func: unknown;
         };
-        Returns: Record<string, unknown>[];
+        Returns: {
+          column_name: unknown;
+          created: boolean;
+          dimension_id: number;
+          schema_name: unknown;
+          table_name: unknown;
+        }[];
       };
       add_job: {
         Args: {
@@ -315,7 +329,16 @@ export interface Database {
           schedule_interval: unknown;
           scheduled: boolean;
         };
-        Returns: Record<string, unknown>[];
+        Returns: {
+          config: Json;
+          job_id: number;
+          max_retries: number;
+          max_runtime: unknown;
+          next_start: string;
+          retry_period: unknown;
+          schedule_interval: unknown;
+          scheduled: boolean;
+        }[];
       };
       approximate_row_count: {
         Args: {relation: unknown};
@@ -328,7 +351,11 @@ export interface Database {
           node_name: unknown;
           repartition: boolean;
         };
-        Returns: Record<string, unknown>[];
+        Returns: {
+          hypertable_id: number;
+          node_hypertable_id: number;
+          node_name: unknown;
+        }[];
       };
       attach_tablespace: {
         Args: {
@@ -340,27 +367,51 @@ export interface Database {
       };
       business_insert_actions: {
         Args: {
-          computed_points: unknown;
-          definitions: unknown;
-          relations: unknown;
+          computed_points: unknown[];
+          definitions: unknown[];
+          relations: unknown[];
         };
         Returns: undefined;
       };
       business_update_actions: {
-        Args: {computed_points: unknown; definitions: unknown};
+        Args: {computed_points: unknown[]; definitions: unknown[]};
         Returns: undefined;
       };
       business_upsert_indicateurs: {
-        Args: {indicateur_actions: unknown; indicateur_definitions: unknown};
+        Args: {
+          indicateur_actions: unknown[];
+          indicateur_definitions: unknown[];
+        };
         Returns: undefined;
       };
       chunk_compression_stats: {
         Args: {hypertable: unknown};
-        Returns: Record<string, unknown>[];
+        Returns: {
+          after_compression_index_bytes: number;
+          after_compression_table_bytes: number;
+          after_compression_toast_bytes: number;
+          after_compression_total_bytes: number;
+          before_compression_index_bytes: number;
+          before_compression_table_bytes: number;
+          before_compression_toast_bytes: number;
+          before_compression_total_bytes: number;
+          chunk_name: unknown;
+          chunk_schema: unknown;
+          compression_status: string;
+          node_name: unknown;
+        }[];
       };
       chunks_detailed_size: {
         Args: {hypertable: unknown};
-        Returns: Record<string, unknown>[];
+        Returns: {
+          chunk_name: unknown;
+          chunk_schema: unknown;
+          index_bytes: number;
+          node_name: unknown;
+          table_bytes: number;
+          toast_bytes: number;
+          total_bytes: number;
+        }[];
       };
       claim_collectivite: {
         Args: {id: number};
@@ -368,7 +419,17 @@ export interface Database {
       };
       collectivite_membres: {
         Args: {id: number};
-        Returns: Record<string, unknown>[];
+        Returns: {
+          champ_intervention: Database['public']['Enums']['referentiel'][];
+          details_fonction: string;
+          email: string;
+          fonction: Database['public']['Enums']['membre_fonction'];
+          niveau_acces: Database['public']['Enums']['niveau_acces'];
+          nom: string;
+          prenom: string;
+          telephone: string;
+          user_id: string;
+        }[];
       };
       compress_chunk: {
         Args: {if_not_compressed: boolean; uncompressed_chunk: unknown};
@@ -386,7 +447,7 @@ export interface Database {
           chunk_target_size: string;
           chunk_time_interval: unknown;
           create_default_indexes: boolean;
-          data_nodes: unknown;
+          data_nodes: unknown[];
           if_not_exists: boolean;
           migrate_data: boolean;
           number_partitions: number;
@@ -397,11 +458,20 @@ export interface Database {
           time_column_name: unknown;
           time_partitioning_func: unknown;
         };
-        Returns: Record<string, unknown>[];
+        Returns: {
+          created: boolean;
+          hypertable_id: number;
+          schema_name: unknown;
+          table_name: unknown;
+        }[];
       };
       create_distributed_restore_point: {
         Args: {name: string};
-        Returns: Record<string, unknown>[];
+        Returns: {
+          node_name: unknown;
+          node_type: string;
+          restore_point: unknown;
+        }[];
       };
       create_hypertable: {
         Args: {
@@ -411,7 +481,7 @@ export interface Database {
           chunk_target_size: string;
           chunk_time_interval: unknown;
           create_default_indexes: boolean;
-          data_nodes: unknown;
+          data_nodes: unknown[];
           if_not_exists: boolean;
           migrate_data: boolean;
           number_partitions: number;
@@ -422,7 +492,12 @@ export interface Database {
           time_column_name: unknown;
           time_partitioning_func: unknown;
         };
-        Returns: Record<string, unknown>[];
+        Returns: {
+          created: boolean;
+          hypertable_id: number;
+          schema_name: unknown;
+          table_name: unknown;
+        }[];
       };
       decompress_chunk: {
         Args: {if_compressed: boolean; uncompressed_chunk: unknown};
@@ -746,16 +821,37 @@ export interface Database {
         Returns: boolean;
       };
       have_one_of_niveaux_acces: {
-        Args: {id: number; niveaux: unknown};
+        Args: {
+          id: number;
+          niveaux: Database['public']['Enums']['niveau_acces'][];
+        };
         Returns: boolean;
       };
       hypertable_compression_stats: {
         Args: {hypertable: unknown};
-        Returns: Record<string, unknown>[];
+        Returns: {
+          after_compression_index_bytes: number;
+          after_compression_table_bytes: number;
+          after_compression_toast_bytes: number;
+          after_compression_total_bytes: number;
+          before_compression_index_bytes: number;
+          before_compression_table_bytes: number;
+          before_compression_toast_bytes: number;
+          before_compression_total_bytes: number;
+          node_name: unknown;
+          number_compressed_chunks: number;
+          total_chunks: number;
+        }[];
       };
       hypertable_detailed_size: {
         Args: {hypertable: unknown};
-        Returns: Record<string, unknown>[];
+        Returns: {
+          index_bytes: number;
+          node_name: unknown;
+          table_bytes: number;
+          toast_bytes: number;
+          total_bytes: number;
+        }[];
       };
       hypertable_index_size: {
         Args: {index_name: unknown};
@@ -848,7 +944,17 @@ export interface Database {
       };
       labellisation_parcours: {
         Args: {collectivite_id: number};
-        Returns: Record<string, unknown>[];
+        Returns: {
+          calendrier: string;
+          completude_ok: boolean;
+          critere_score: Json;
+          criteres_action: Json;
+          derniere_demande: Json;
+          derniere_labellisation: Json;
+          etoiles: '1' | '2' | '3' | '4' | '5';
+          referentiel: Database['public']['Enums']['referentiel'];
+          rempli: boolean;
+        }[];
       };
       labellisation_submit_demande: {
         Args: {
@@ -902,7 +1008,7 @@ export interface Database {
       };
       referent_contacts: {
         Args: {id: number};
-        Returns: Record<string, unknown>[];
+        Returns: {email: string; nom: string; prenom: string}[];
       };
       referentiel_down_to_action: {
         Args: {referentiel: Database['public']['Enums']['referentiel']};
@@ -934,7 +1040,13 @@ export interface Database {
       };
       retool_user_list: {
         Args: Record<PropertyKey, never>;
-        Returns: Record<string, unknown>[];
+        Returns: {
+          collectivite: string;
+          droit_id: number;
+          email: string;
+          nom: string;
+          prenom: string;
+        }[];
       };
       save_reponse: {
         Args: {'': Json};
@@ -1023,7 +1135,7 @@ export interface Database {
         Args: {
           collectivite_id: number;
           referentiel: Database['public']['Enums']['referentiel'];
-          statuts: unknown;
+          statuts: unknown[];
         };
         Returns: Json;
       };
@@ -1072,7 +1184,7 @@ export interface Database {
         Returns: undefined;
       };
       test_write_scores: {
-        Args: {collectivite_id: number; scores: unknown};
+        Args: {collectivite_id: number; scores: unknown[]};
         Returns: undefined;
       };
       time_bucket:
@@ -1213,7 +1325,7 @@ export interface Database {
       };
       update_collectivite_membre_champ_intervention: {
         Args: {
-          champ_intervention: unknown;
+          champ_intervention: Database['public']['Enums']['referentiel'][];
           collectivite_id: number;
           membre_id: string;
         };
