@@ -3,12 +3,12 @@
 import { fr } from '@codegouvfr/react-dsfr';
 import { ChartHead, SectionHead, ChartTitle } from './headings';
 import { EtatDesLieux } from './EtatDesLieux';
+import { EvolutionPlansAction } from './EvolutionPlansAction';
 import ActiveUsers from './ActiveUsers';
 import CarteEpciParDepartement from './CarteEpciParDepartement';
 import EvolutionTotalActivationParType from './EvolutionTotalActivationParType';
 import CollectiviteActivesEtTotalParType from './CollectiviteActivesEtTotalParType';
 import NombreUtilisateurParCollectivite from './NombreUtilisateurParCollectivite';
-import EvolutionFiches from './EvolutionFiches';
 import IndicateursRenseignes from './IndicateursRenseignes';
 import ValeursIndicateursRenseignees from './ValeursIndicateursRenseignees';
 import ValeursIndicateursPersoRenseignees from './ValeursIndicateursPersoRenseignees';
@@ -110,20 +110,7 @@ export default function Stats() {
           leur permette de suivre la progression des actions prévues dans ces
           plans.
         </p>
-
-        <ChartHead>
-          Évolution de l&apos;utilisation des plans d&apos;action
-        </ChartHead>
-        <div className="fr-grid-row fr-grid-row--center fr-grid-row--gutters">
-          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-6 fr-col-lg-6 fr-ratio-16x9">
-            <ChartTitle>Nombre de collectivités avec 5+ fiches</ChartTitle>
-            <EvolutionFiches vue="stats_evolution_collectivite_avec_minimum_fiches" />
-          </div>
-          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-6 fr-col-lg-6 fr-ratio-16x9">
-            <ChartTitle>Nombre de fiches action créées</ChartTitle>
-            <EvolutionFiches vue="stats_evolution_nombre_fiches" />
-          </div>
-        </div>
+        <EvolutionPlansAction />
       </section>
 
       <section className="fr-container">
