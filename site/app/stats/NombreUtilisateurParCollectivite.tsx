@@ -13,6 +13,7 @@ import {
   theme,
 } from './shared';
 import { SliceTooltip } from './SliceTooltip';
+import { ChartHead } from './headings';
 
 function useNombreUtilisateurParCollectivite() {
   return useSWR(
@@ -61,14 +62,13 @@ export default function NombreUtilisateurParCollectivite() {
 
   return (
     <div>
-      <div className="fr-grid-row fr-grid-row--center">
-        <h6 style={{textAlign: 'center'}}>
-          Chaque collectivité compte en moyenne&nbsp;
-          {courant?.moyen?.toFixed(2)} utilisateurs.
-          <br />
-          Avec un maximum de {courant?.maximum} utilisateurs 💪
-        </h6>
-      </div>
+      <ChartHead>
+        Chaque collectivité compte en moyenne&nbsp;
+        {courant?.moyen?.toFixed(2)} utilisateurs.
+        <br />
+        Avec un maximum de {courant?.maximum} utilisateurs 💪
+      </ChartHead>
+      <div className="fr-grid-row fr-grid-row--center"></div>
 
       <div style={{ height: 300 }}>
         <ResponsiveLine
@@ -91,9 +91,7 @@ export default function NombreUtilisateurParCollectivite() {
           enableGridY={false}
           yFormat=" >-.2f"
           axisBottom={axisBottomAsDate}
-          axisLeft={axisLeftMiddleLabel(
-            "Utilisateurs/collectivité"
-          )}
+          axisLeft={axisLeftMiddleLabel('Utilisateurs/collectivité')}
           pointColor={{ theme: 'background' }}
           pointBorderWidth={4}
           pointBorderColor={{ from: 'serieColor' }}
