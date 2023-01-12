@@ -10,12 +10,10 @@ as
 with membres as (select c.collectivite_id,
                         mb.first_day                                                                  as mois,
                         count(*)
-                        filter ( where active and pud.created_at <= mb.last_day and pcm is not null ) as nombre
+                        filter ( where active and pud.created_at <= mb.last_day ) as nombre
                  from stats.monthly_bucket mb
                           join stats.collectivite_active c on true
                           join private_utilisateur_droit pud on pud.collectivite_id = c.collectivite_id
-                          join private_collectivite_membre pcm
-                               on pcm.collectivite_id = pud.collectivite_id and pcm.user_id = pud.user_id
                  group by c.collectivite_id,
                           mb.first_day)
 select mois,
