@@ -1,13 +1,8 @@
-import {Route, useRouteMatch} from 'react-router-dom';
+import {Route} from 'react-router-dom';
 
-import {PlanActionPage} from 'app/pages/collectivite/PlanActions/PlanActionsPage';
-import {FicheActionPage} from 'app/pages/collectivite/PlanActions/FicheActionPage';
-import {FicheActionCreationPage} from 'app/pages/collectivite/PlanActions/FicheActionCreationPage';
 import {
   collectiviteActionPath,
   collectiviteIndicateurPath as collectiviteIndicateursPath,
-  collectiviteNouvelleFichePath,
-  collectivitePlanActionPath,
   collectiviteReferentielPath,
   collectiviteTableauBordPath,
   collectiviteUsersPath,
@@ -17,6 +12,7 @@ import {
   collectiviteAllCollectivitesPath,
   collectiviteJournalPath,
   collectiviteBibliothequePath,
+  CollectivitePlansActionsBasePath,
 } from 'app/paths';
 import {ReferentielsPage} from 'app/pages/collectivite/Referentiels/ReferentielsPage';
 import {ActionPage} from 'app/pages/collectivite/Referentiels/ActionPage';
@@ -29,6 +25,7 @@ import {ParcoursLabellisationPage} from './ParcoursLabellisation/ParcoursLabelli
 import {ToutesLesCollectivitesPage} from '../ToutesLesCollectivites/ToutesLesCollectivitesPage';
 import {JournalActivitePage} from './Historique/JournalActivitePage';
 import {BibliothequeDocsPage} from './BibliothequeDocs/BibliothequeDocsPage';
+import {PlansActionsPage} from './PlansActions/PlansActionsPage';
 
 /**
  * Routes starting with collectivite/:collectiviteId/ see App.ts Router.
@@ -36,7 +33,6 @@ import {BibliothequeDocsPage} from './BibliothequeDocs/BibliothequeDocsPage';
  * Is responsible for setting the current collectivite id.
  */
 export const CollectiviteRoutes = () => {
-  const {path} = useRouteMatch();
   return (
     <>
       <Route path={collectiviteReferentielPath}>
@@ -51,15 +47,11 @@ export const CollectiviteRoutes = () => {
       <Route path={collectiviteIndicateursPath}>
         <IndicateursPage />
       </Route>
-      <Route path={collectivitePlanActionPath}>
-        <PlanActionPage />
+
+      <Route path={CollectivitePlansActionsBasePath}>
+        <PlansActionsPage />
       </Route>
-      <Route path={`${path}/fiche/:ficheUid`}>
-        <FicheActionPage />
-      </Route>
-      <Route path={collectiviteNouvelleFichePath}>
-        <FicheActionCreationPage />
-      </Route>
+
       <Route path={collectiviteUsersPath}>
         <MembresPage />
       </Route>
