@@ -2,12 +2,8 @@
 
 BEGIN;
 
-select mois, fiches
-from stats.evolution_nombre_fiches
-where false;
-
-select mois, fiches
-from stats_evolution_nombre_fiches
+select moyen, maximum, median
+from stats.evolution_nombre_utilisateur_par_collectivite
 where false;
 
 ROLLBACK;

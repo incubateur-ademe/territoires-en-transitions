@@ -195,3 +195,4 @@ stats/vues_BI [stats/vues_BI@v1.21.0] 2023-01-09T15:56:44Z Florian <florian@derf
 stats/labellisation 2023-01-11T10:02:39Z Florian <florian@derfurth.com> # Stats de labellisation publiques
 stats/vues_BI [stats/vues_BI@v1.22.0] 2023-01-11T13:10:10Z Florian <florian@derfurth.com> # Ajoute la vue de l'évolution du nombre de fiches
 @v1.23.0 2023-01-11T13:32:04Z Florian <florian@derfurth.com> # Ajoute des vues statistiques
+stats/vues_BI [stats/vues_BI@v1.23.0] 2023-01-12T08:15:17Z Florian <florian@derfurth.com> # Améliore le comptage des utilisateurs par collectivité.
