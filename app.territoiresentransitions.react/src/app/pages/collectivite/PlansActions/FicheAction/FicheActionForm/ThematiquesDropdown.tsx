@@ -2,6 +2,7 @@ import {TOption} from 'ui/shared/select/commons';
 import MultiSelectTagsDropdown from 'ui/shared/select/MultiSelectTagsDropdown';
 import {useThematiqueListe} from '../data/options/useThematiqueListe';
 import {TThematiqueRow} from '../data/types/alias';
+import {selectButtonClassNames} from './FicheActionForm';
 
 type Props = {
   thematiques: TThematiqueRow[] | null;
@@ -27,7 +28,7 @@ const ThematiquesDropdown = ({thematiques, onSelect}: Props) => {
 
   return (
     <MultiSelectTagsDropdown
-      buttonClassName="fr-select !flex !px-4"
+      buttonClassName={selectButtonClassNames}
       values={thematiques?.map((t: TThematiqueRow) => t.thematique)}
       options={options}
       onSelect={values => onSelect(formatThematiques(values))}
