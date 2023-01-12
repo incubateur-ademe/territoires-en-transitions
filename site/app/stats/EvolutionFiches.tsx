@@ -31,7 +31,7 @@ const labels = {
   collectivites: 'Collectivités',
 };
 
-function useEvolutionFiches(vue: Vue) {
+export function useEvolutionFiches(vue: Vue) {
   return useSWR(vue, async () => {
     const { data, error } = await supabase
       .from(vue)
@@ -50,6 +50,7 @@ function useEvolutionFiches(vue: Vue) {
           data: data.map((d) => ({ x: d.mois, y: d[colonneValeur[vue]] })),
         },
       ],
+      last: data[data.length - 1][colonneValeur[vue]],
     };
   });
 }
@@ -65,7 +66,7 @@ export default function EvolutionFiches(props: Props) {
   }
 
   return (
-    <div style={{ height: 100 + '%', maxHeight: 400 + 'px'}}>
+    <div style={{ height: 100 + '%', maxHeight: 400 + 'px' }}>
       <ResponsiveLine
         colors={colors}
         theme={theme}
