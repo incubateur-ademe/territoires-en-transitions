@@ -41,35 +41,22 @@ export interface Database {
         | 'Recyclage';
       fiche_action_resultats_attendus:
         | 'Adaptation au changement climatique'
-        | 'Sensibilisation'
-        | 'Réduction des polluants atmosphériques'
-        | 'Réduction des émissions de gaz à effet de serre'
-        | 'Sobriété énergétique'
+        | 'Allongement de la durée d’usage'
+        | 'Amélioration de la qualité de vie'
+        | 'Développement des énergies renouvelables'
         | 'Efficacité énergétique'
-        | 'Développement des énergies renouvelables';
+        | 'Préservation de la biodiversité'
+        | 'Réduction des consommations énergétiques'
+        | 'Réduction des déchets'
+        | 'Réduction des émissions de gaz à effet de serre'
+        | 'Réduction des polluants atmosphériques'
+        | 'Sobriété énergétique';
       fiche_action_statuts:
         | 'À venir'
         | 'En cours'
         | 'Réalisé'
         | 'En pause'
         | 'Abandonné';
-      fiche_action_thematiques:
-        | 'Agriculture et alimentation'
-        | 'Bâtiments'
-        | 'Consommation responsable'
-        | 'Déchets'
-        | 'Développement économique'
-        | 'Eau'
-        | 'Forêts, biodiversité et espaces verts'
-        | 'Formation, sensibilisation, communication'
-        | 'Gestion, production et distribution de l’énergie'
-        | 'Mobilité'
-        | 'Organisation interne'
-        | 'Partenariats et coopération'
-        | 'Précarité énergétique'
-        | 'Stratégie'
-        | 'Tourisme'
-        | 'Urbanisme et aménagement';
       filterable_type_collectivite:
         | 'commune'
         | 'syndicat'
@@ -232,7 +219,15 @@ export interface Database {
           password: string;
           port: number;
         };
-        Returns: Record<string, unknown>[];
+        Returns: {
+          database: unknown;
+          database_created: boolean;
+          extension_created: boolean;
+          host: string;
+          node_created: boolean;
+          node_name: unknown;
+          port: number;
+        }[];
       };
       add_dimension: {
         Args: {
@@ -243,7 +238,13 @@ export interface Database {
           number_partitions: number;
           partitioning_func: unknown;
         };
-        Returns: Record<string, unknown>[];
+        Returns: {
+          column_name: unknown;
+          created: boolean;
+          dimension_id: number;
+          schema_name: unknown;
+          table_name: unknown;
+        }[];
       };
       add_job: {
         Args: {
@@ -276,36 +277,44 @@ export interface Database {
         Returns: Json;
       };
       ajouter_action: {
-        Args: {id_action: unknown; id_fiche: number};
+        Args: {action_id: unknown; fiche_id: number};
         Returns: undefined;
       };
       ajouter_annexe: {
-        Args: {annexe: unknown; id_fiche: number};
+        Args: {annexe: unknown; fiche_id: number};
         Returns: unknown;
       };
       ajouter_fiche_action_dans_un_axe: {
-        Args: {id_axe: number; id_fiche: number};
+        Args: {axe_id: number; fiche_id: number};
         Returns: undefined;
       };
       ajouter_indicateur: {
-        Args: {id_fiche: number; indicateur: unknown};
+        Args: {fiche_id: number; indicateur: unknown};
         Returns: undefined;
       };
       ajouter_partenaire: {
-        Args: {id_fiche: number; partenaire: unknown};
+        Args: {fiche_id: number; partenaire: unknown};
         Returns: unknown;
       };
       ajouter_pilote: {
-        Args: {id_fiche: number; pilote: unknown};
+        Args: {fiche_id: number; pilote: unknown};
         Returns: unknown;
       };
       ajouter_referent: {
-        Args: {id_fiche: number; referent: unknown};
+        Args: {fiche_id: number; referent: unknown};
         Returns: unknown;
       };
+      ajouter_sous_thematique: {
+        Args: {fiche_id: number; thematique_id: number};
+        Returns: undefined;
+      };
       ajouter_structure: {
-        Args: {id_fiche: number; structure: unknown};
+        Args: {fiche_id: number; structure: unknown};
         Returns: unknown;
+      };
+      ajouter_thematique: {
+        Args: {fiche_id: number; thematique: string};
+        Returns: undefined;
       };
       alter_job: {
         Args: {
@@ -319,7 +328,16 @@ export interface Database {
           schedule_interval: unknown;
           scheduled: boolean;
         };
-        Returns: Record<string, unknown>[];
+        Returns: {
+          config: Json;
+          job_id: number;
+          max_retries: number;
+          max_runtime: unknown;
+          next_start: string;
+          retry_period: unknown;
+          schedule_interval: unknown;
+          scheduled: boolean;
+        }[];
       };
       approximate_row_count: {
         Args: {relation: unknown};
@@ -332,7 +350,11 @@ export interface Database {
           node_name: unknown;
           repartition: boolean;
         };
-        Returns: Record<string, unknown>[];
+        Returns: {
+          hypertable_id: number;
+          node_hypertable_id: number;
+          node_name: unknown;
+        }[];
       };
       attach_tablespace: {
         Args: {
@@ -344,27 +366,51 @@ export interface Database {
       };
       business_insert_actions: {
         Args: {
-          computed_points: unknown;
-          definitions: unknown;
-          relations: unknown;
+          computed_points: unknown[];
+          definitions: unknown[];
+          relations: unknown[];
         };
         Returns: undefined;
       };
       business_update_actions: {
-        Args: {computed_points: unknown; definitions: unknown};
+        Args: {computed_points: unknown[]; definitions: unknown[]};
         Returns: undefined;
       };
       business_upsert_indicateurs: {
-        Args: {indicateur_actions: unknown; indicateur_definitions: unknown};
+        Args: {
+          indicateur_actions: unknown[];
+          indicateur_definitions: unknown[];
+        };
         Returns: undefined;
       };
       chunk_compression_stats: {
         Args: {hypertable: unknown};
-        Returns: Record<string, unknown>[];
+        Returns: {
+          after_compression_index_bytes: number;
+          after_compression_table_bytes: number;
+          after_compression_toast_bytes: number;
+          after_compression_total_bytes: number;
+          before_compression_index_bytes: number;
+          before_compression_table_bytes: number;
+          before_compression_toast_bytes: number;
+          before_compression_total_bytes: number;
+          chunk_name: unknown;
+          chunk_schema: unknown;
+          compression_status: string;
+          node_name: unknown;
+        }[];
       };
       chunks_detailed_size: {
         Args: {hypertable: unknown};
-        Returns: Record<string, unknown>[];
+        Returns: {
+          chunk_name: unknown;
+          chunk_schema: unknown;
+          index_bytes: number;
+          node_name: unknown;
+          table_bytes: number;
+          toast_bytes: number;
+          total_bytes: number;
+        }[];
       };
       claim_collectivite: {
         Args: {id: number};
@@ -372,7 +418,17 @@ export interface Database {
       };
       collectivite_membres: {
         Args: {id: number};
-        Returns: Record<string, unknown>[];
+        Returns: {
+          champ_intervention: Database['public']['Enums']['referentiel'][];
+          details_fonction: string;
+          email: string;
+          fonction: Database['public']['Enums']['membre_fonction'];
+          niveau_acces: Database['public']['Enums']['niveau_acces'];
+          nom: string;
+          prenom: string;
+          telephone: string;
+          user_id: string;
+        }[];
       };
       compress_chunk: {
         Args: {if_not_compressed: boolean; uncompressed_chunk: unknown};
@@ -390,7 +446,7 @@ export interface Database {
           chunk_target_size: string;
           chunk_time_interval: unknown;
           create_default_indexes: boolean;
-          data_nodes: unknown;
+          data_nodes: unknown[];
           if_not_exists: boolean;
           migrate_data: boolean;
           number_partitions: number;
@@ -401,11 +457,20 @@ export interface Database {
           time_column_name: unknown;
           time_partitioning_func: unknown;
         };
-        Returns: Record<string, unknown>[];
+        Returns: {
+          created: boolean;
+          hypertable_id: number;
+          schema_name: unknown;
+          table_name: unknown;
+        }[];
       };
       create_distributed_restore_point: {
         Args: {name: string};
-        Returns: Record<string, unknown>[];
+        Returns: {
+          node_name: unknown;
+          node_type: string;
+          restore_point: unknown;
+        }[];
       };
       create_hypertable: {
         Args: {
@@ -415,7 +480,7 @@ export interface Database {
           chunk_target_size: string;
           chunk_time_interval: unknown;
           create_default_indexes: boolean;
-          data_nodes: unknown;
+          data_nodes: unknown[];
           if_not_exists: boolean;
           migrate_data: boolean;
           number_partitions: number;
@@ -426,7 +491,12 @@ export interface Database {
           time_column_name: unknown;
           time_partitioning_func: unknown;
         };
-        Returns: Record<string, unknown>[];
+        Returns: {
+          created: boolean;
+          hypertable_id: number;
+          schema_name: unknown;
+          table_name: unknown;
+        }[];
       };
       decompress_chunk: {
         Args: {if_compressed: boolean; uncompressed_chunk: unknown};
@@ -474,35 +544,43 @@ export interface Database {
         Returns: string;
       };
       enlever_action: {
-        Args: {id_action: unknown; id_fiche: number};
+        Args: {action_id: unknown; fiche_id: number};
         Returns: undefined;
       };
       enlever_annexe: {
-        Args: {annexe: unknown; id_fiche: number; supprimer: boolean};
+        Args: {annexe: unknown; fiche_id: number; supprimer: boolean};
         Returns: undefined;
       };
       enlever_fiche_action_d_un_axe: {
-        Args: {id_axe: number; id_fiche: number};
+        Args: {axe_id: number; fiche_id: number};
         Returns: undefined;
       };
       enlever_indicateur: {
-        Args: {id_fiche: number; indicateur: unknown};
+        Args: {fiche_id: number; indicateur: unknown};
         Returns: undefined;
       };
       enlever_partenaire: {
-        Args: {id_fiche: number; partenaire: unknown};
+        Args: {fiche_id: number; partenaire: unknown};
         Returns: undefined;
       };
       enlever_pilote: {
-        Args: {id_fiche: number; pilote: unknown};
+        Args: {fiche_id: number; pilote: unknown};
         Returns: undefined;
       };
       enlever_referent: {
-        Args: {id_fiche: number; referent: unknown};
+        Args: {fiche_id: number; referent: unknown};
+        Returns: undefined;
+      };
+      enlever_sous_thematique: {
+        Args: {fiche_id: number; thematique_id: number};
         Returns: undefined;
       };
       enlever_structure: {
-        Args: {id_fiche: number; structure: unknown};
+        Args: {fiche_id: number; structure: unknown};
+        Returns: undefined;
+      };
+      enlever_thematique: {
+        Args: {fiche_id: number; thematique: string};
         Returns: undefined;
       };
       est_auditeur: {
@@ -742,16 +820,37 @@ export interface Database {
         Returns: boolean;
       };
       have_one_of_niveaux_acces: {
-        Args: {id: number; niveaux: unknown};
+        Args: {
+          id: number;
+          niveaux: Database['public']['Enums']['niveau_acces'][];
+        };
         Returns: boolean;
       };
       hypertable_compression_stats: {
         Args: {hypertable: unknown};
-        Returns: Record<string, unknown>[];
+        Returns: {
+          after_compression_index_bytes: number;
+          after_compression_table_bytes: number;
+          after_compression_toast_bytes: number;
+          after_compression_total_bytes: number;
+          before_compression_index_bytes: number;
+          before_compression_table_bytes: number;
+          before_compression_toast_bytes: number;
+          before_compression_total_bytes: number;
+          node_name: unknown;
+          number_compressed_chunks: number;
+          total_chunks: number;
+        }[];
       };
       hypertable_detailed_size: {
         Args: {hypertable: unknown};
-        Returns: Record<string, unknown>[];
+        Returns: {
+          index_bytes: number;
+          node_name: unknown;
+          table_bytes: number;
+          toast_bytes: number;
+          total_bytes: number;
+        }[];
       };
       hypertable_index_size: {
         Args: {index_name: unknown};
@@ -760,10 +859,6 @@ export interface Database {
       hypertable_size: {
         Args: {hypertable: unknown};
         Returns: number;
-      };
-      indicateurs_collectivite: {
-        Args: {id_collectivite: number};
-        Returns: unknown;
       };
       interpolate:
         | {
@@ -848,7 +943,17 @@ export interface Database {
       };
       labellisation_parcours: {
         Args: {collectivite_id: number};
-        Returns: Record<string, unknown>[];
+        Returns: {
+          calendrier: string;
+          completude_ok: boolean;
+          critere_score: Json;
+          criteres_action: Json;
+          derniere_demande: Json;
+          derniere_labellisation: Json;
+          etoiles: '1' | '2' | '3' | '4' | '5';
+          referentiel: Database['public']['Enums']['referentiel'];
+          rempli: boolean;
+        }[];
       };
       labellisation_submit_demande: {
         Args: {
@@ -877,11 +982,11 @@ export interface Database {
         Returns: string;
       };
       personnes_collectivite: {
-        Args: {id_collectivite: number};
+        Args: {collectivite_id: number};
         Returns: unknown;
       };
       peut_modifier_la_fiche: {
-        Args: {id_fiche: number};
+        Args: {fiche_id: number};
         Returns: boolean;
       };
       plan_action: {
@@ -889,7 +994,7 @@ export interface Database {
         Returns: Json;
       };
       plans_action_collectivite: {
-        Args: {id_collectivite: number};
+        Args: {collectivite_id: number};
         Returns: unknown;
       };
       quit_collectivite: {
@@ -902,7 +1007,7 @@ export interface Database {
       };
       referent_contacts: {
         Args: {id: number};
-        Returns: Record<string, unknown>[];
+        Returns: {email: string; nom: string; prenom: string}[];
       };
       referentiel_down_to_action: {
         Args: {referentiel: Database['public']['Enums']['referentiel']};
@@ -934,7 +1039,13 @@ export interface Database {
       };
       retool_user_list: {
         Args: Record<PropertyKey, never>;
-        Returns: Record<string, unknown>[];
+        Returns: {
+          collectivite: string;
+          droit_id: number;
+          email: string;
+          nom: string;
+          prenom: string;
+        }[];
       };
       save_reponse: {
         Args: {'': Json};
@@ -1023,7 +1134,7 @@ export interface Database {
         Args: {
           collectivite_id: number;
           referentiel: Database['public']['Enums']['referentiel'];
-          statuts: unknown;
+          statuts: unknown[];
         };
         Returns: Json;
       };
@@ -1072,7 +1183,7 @@ export interface Database {
         Returns: undefined;
       };
       test_write_scores: {
-        Args: {collectivite_id: number; scores: unknown};
+        Args: {collectivite_id: number; scores: unknown[]};
         Returns: undefined;
       };
       time_bucket:
@@ -1213,7 +1324,7 @@ export interface Database {
       };
       update_collectivite_membre_champ_intervention: {
         Args: {
-          champ_intervention: unknown;
+          champ_intervention: Database['public']['Enums']['referentiel'][];
           collectivite_id: number;
           membre_id: string;
         };
@@ -1542,19 +1653,28 @@ export interface Database {
       axe: {
         Insert: {
           collectivite_id: number;
+          created_at?: string;
           id?: number;
+          modified_at?: string;
+          modified_by?: string | null;
           nom?: string | null;
           parent?: number | null;
         };
         Row: {
           collectivite_id: number;
+          created_at: string;
           id: number;
+          modified_at: string;
+          modified_by: string | null;
           nom: string | null;
           parent: number | null;
         };
         Update: {
           collectivite_id?: number;
+          created_at?: string;
           id?: number;
+          modified_at?: string;
+          modified_by?: string | null;
           nom?: string | null;
           parent?: number | null;
         };
@@ -1732,12 +1852,15 @@ export interface Database {
           calendrier?: string | null;
           cibles?: Database['public']['Enums']['fiche_action_cibles'][] | null;
           collectivite_id: number;
+          created_at?: string;
           date_debut?: string | null;
           date_fin_provisoire?: string | null;
           description?: string | null;
           financements?: string | null;
           id?: number;
           maj_termine?: boolean | null;
+          modified_at?: string;
+          modified_by?: string | null;
           niveau_priorite?:
             | Database['public']['Enums']['fiche_action_niveaux_priorite']
             | null;
@@ -1750,13 +1873,7 @@ export interface Database {
           resultats_attendus?:
             | Database['public']['Enums']['fiche_action_resultats_attendus'][]
             | null;
-          sous_thematiques?:
-            | Database['public']['Enums']['fiche_action_thematiques'][]
-            | null;
           statut?: Database['public']['Enums']['fiche_action_statuts'] | null;
-          thematiques?:
-            | Database['public']['Enums']['fiche_action_thematiques'][]
-            | null;
           titre?: string | null;
         };
         Row: {
@@ -1765,12 +1882,15 @@ export interface Database {
           calendrier: string | null;
           cibles: Database['public']['Enums']['fiche_action_cibles'][] | null;
           collectivite_id: number;
+          created_at: string;
           date_debut: string | null;
           date_fin_provisoire: string | null;
           description: string | null;
           financements: string | null;
           id: number;
           maj_termine: boolean | null;
+          modified_at: string;
+          modified_by: string | null;
           niveau_priorite:
             | Database['public']['Enums']['fiche_action_niveaux_priorite']
             | null;
@@ -1783,13 +1903,7 @@ export interface Database {
           resultats_attendus:
             | Database['public']['Enums']['fiche_action_resultats_attendus'][]
             | null;
-          sous_thematiques:
-            | Database['public']['Enums']['fiche_action_thematiques'][]
-            | null;
           statut: Database['public']['Enums']['fiche_action_statuts'] | null;
-          thematiques:
-            | Database['public']['Enums']['fiche_action_thematiques'][]
-            | null;
           titre: string | null;
         };
         Update: {
@@ -1798,12 +1912,15 @@ export interface Database {
           calendrier?: string | null;
           cibles?: Database['public']['Enums']['fiche_action_cibles'][] | null;
           collectivite_id?: number;
+          created_at?: string;
           date_debut?: string | null;
           date_fin_provisoire?: string | null;
           description?: string | null;
           financements?: string | null;
           id?: number;
           maj_termine?: boolean | null;
+          modified_at?: string;
+          modified_by?: string | null;
           niveau_priorite?:
             | Database['public']['Enums']['fiche_action_niveaux_priorite']
             | null;
@@ -1816,13 +1933,7 @@ export interface Database {
           resultats_attendus?:
             | Database['public']['Enums']['fiche_action_resultats_attendus'][]
             | null;
-          sous_thematiques?:
-            | Database['public']['Enums']['fiche_action_thematiques'][]
-            | null;
           statut?: Database['public']['Enums']['fiche_action_statuts'] | null;
-          thematiques?:
-            | Database['public']['Enums']['fiche_action_thematiques'][]
-            | null;
           titre?: string | null;
         };
       };
@@ -1933,6 +2044,20 @@ export interface Database {
           user_id?: string | null;
         };
       };
+      fiche_action_sous_thematique: {
+        Insert: {
+          fiche_id: number;
+          thematique_id: number;
+        };
+        Row: {
+          fiche_id: number;
+          thematique_id: number;
+        };
+        Update: {
+          fiche_id?: number;
+          thematique_id?: number;
+        };
+      };
       fiche_action_structure_tag: {
         Insert: {
           fiche_id: number;
@@ -1945,6 +2070,20 @@ export interface Database {
         Update: {
           fiche_id?: number;
           structure_tag_id?: number;
+        };
+      };
+      fiche_action_thematique: {
+        Insert: {
+          fiche_id: number;
+          thematique: string;
+        };
+        Row: {
+          fiche_id: number;
+          thematique: string;
+        };
+        Update: {
+          fiche_id?: number;
+          thematique?: string;
         };
       };
       filtre_intervalle: {
@@ -2890,6 +3029,23 @@ export interface Database {
           reponse?: number | null;
         };
       };
+      sous_thematique: {
+        Insert: {
+          id?: number;
+          sous_thematique: string;
+          thematique: string;
+        };
+        Row: {
+          id: number;
+          sous_thematique: string;
+          thematique: string;
+        };
+        Update: {
+          id?: number;
+          sous_thematique?: string;
+          thematique?: string;
+        };
+      };
       structure_tag: {
         Insert: {
           collectivite_id: number;
@@ -2905,6 +3061,17 @@ export interface Database {
           collectivite_id?: number;
           id?: number;
           nom?: string;
+        };
+      };
+      thematique: {
+        Insert: {
+          thematique: string;
+        };
+        Row: {
+          thematique: string;
+        };
+        Update: {
+          thematique?: string;
         };
       };
       type_tabular_score: {
@@ -3251,6 +3418,14 @@ export interface Database {
           user_id: string | null;
         };
       };
+      fiche_action_personne_referente: {
+        Row: {
+          collectivite_id: number | null;
+          nom: string | null;
+          tag_id: number | null;
+          user_id: string | null;
+        };
+      };
       fiches_action: {
         Row: {
           actions: unknown[] | null;
@@ -3261,6 +3436,7 @@ export interface Database {
           calendrier: string | null;
           cibles: Database['public']['Enums']['fiche_action_cibles'][] | null;
           collectivite_id: number | null;
+          created_at: string | null;
           date_debut: string | null;
           date_fin_provisoire: string | null;
           description: string | null;
@@ -3268,6 +3444,8 @@ export interface Database {
           id: number | null;
           indicateurs: unknown[] | null;
           maj_termine: boolean | null;
+          modified_at: string | null;
+          modified_by: string | null;
           niveau_priorite:
             | Database['public']['Enums']['fiche_action_niveaux_priorite']
             | null;
@@ -3283,14 +3461,10 @@ export interface Database {
           resultats_attendus:
             | Database['public']['Enums']['fiche_action_resultats_attendus'][]
             | null;
-          sous_thematiques:
-            | Database['public']['Enums']['fiche_action_thematiques'][]
-            | null;
+          sous_thematiques: unknown[] | null;
           statut: Database['public']['Enums']['fiche_action_statuts'] | null;
           structures: unknown[] | null;
-          thematiques:
-            | Database['public']['Enums']['fiche_action_thematiques'][]
-            | null;
+          thematiques: unknown[] | null;
           titre: string | null;
         };
       };
@@ -3331,6 +3505,16 @@ export interface Database {
           collectivite_id: number | null;
           modified_by_id: string | null;
           modified_by_nom: string | null;
+        };
+      };
+      indicateurs_collectivite: {
+        Row: {
+          collectivite_id: number | null;
+          description: string | null;
+          indicateur_id: string | null;
+          indicateur_personnalise_id: number | null;
+          nom: string | null;
+          unite: string | null;
         };
       };
       mes_collectivites: {
