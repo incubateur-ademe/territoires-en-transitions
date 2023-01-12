@@ -34,7 +34,7 @@ type TFicheActionForm = {
   fiche: FicheActionVueRow;
 };
 
-const selectButtonClassNames = 'fr-select !flex !px-4';
+export const selectButtonClassNames = 'fr-select !flex !px-4 !bg-none';
 
 const FicheActionForm = ({fiche}: TFicheActionForm) => {
   const {mutate: updateFiche} = useEditFicheAction();
