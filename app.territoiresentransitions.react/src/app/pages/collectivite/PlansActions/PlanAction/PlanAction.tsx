@@ -13,7 +13,7 @@ type PlanActionProps = {
 export const PlanAction = ({plan}: PlanActionProps) => {
   const collectivite_id = useCollectiviteId();
 
-  const displaySousAxe = (axe: any) => (
+  const displaySousAxe = (axe: TPlanAction) => (
     <PlanActionSousAxe
       plan_id={plan.id}
       axe={axe}
@@ -32,6 +32,7 @@ export const PlanAction = ({plan}: PlanActionProps) => {
         <PlanActionHeader plan={plan} collectivite_id={collectivite_id!} />
         {plan.enfants.map(enfant => (
           <PlanActionAxe
+            key={enfant.id}
             plan_id={plan.id}
             axe={enfant}
             displayAxe={displaySousAxe}
