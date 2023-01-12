@@ -17,15 +17,15 @@ const Tag = ({className, title, onCloseClick}: TTag) => {
     >
       <span className="mb-1 text-sm">{title}</span>
       {onCloseClick && (
-        <button
-          className="ml-1 rounded-full"
+        <div
+          className="ml-1 rounded-full cursor-pointer"
           onClick={evt => {
             evt.stopPropagation();
             onCloseClick();
           }}
         >
           <div className="fr-fi-close-line flex m-auto scale-75" />
-        </button>
+        </div>
       )}
     </div>
   );
