@@ -91,7 +91,8 @@ export interface Database {
         | 'complementaire'
         | 'reglementaire'
         | 'labellisation'
-        | 'rapport';
+        | 'rapport'
+        | 'audit';
       question_type: 'choix' | 'binaire' | 'proportion';
       referentiel: 'eci' | 'cae';
       regle_type: 'score' | 'desactivation' | 'reduction';
@@ -219,15 +220,7 @@ export interface Database {
           password: string;
           port: number;
         };
-        Returns: {
-          database: unknown;
-          database_created: boolean;
-          extension_created: boolean;
-          host: string;
-          node_created: boolean;
-          node_name: unknown;
-          port: number;
-        }[];
+        Returns: Record<string, unknown>[];
       };
       add_dimension: {
         Args: {
@@ -238,13 +231,7 @@ export interface Database {
           number_partitions: number;
           partitioning_func: unknown;
         };
-        Returns: {
-          column_name: unknown;
-          created: boolean;
-          dimension_id: number;
-          schema_name: unknown;
-          table_name: unknown;
-        }[];
+        Returns: Record<string, unknown>[];
       };
       add_job: {
         Args: {
@@ -328,16 +315,7 @@ export interface Database {
           schedule_interval: unknown;
           scheduled: boolean;
         };
-        Returns: {
-          config: Json;
-          job_id: number;
-          max_retries: number;
-          max_runtime: unknown;
-          next_start: string;
-          retry_period: unknown;
-          schedule_interval: unknown;
-          scheduled: boolean;
-        }[];
+        Returns: Record<string, unknown>[];
       };
       approximate_row_count: {
         Args: {relation: unknown};
@@ -350,11 +328,7 @@ export interface Database {
           node_name: unknown;
           repartition: boolean;
         };
-        Returns: {
-          hypertable_id: number;
-          node_hypertable_id: number;
-          node_name: unknown;
-        }[];
+        Returns: Record<string, unknown>[];
       };
       attach_tablespace: {
         Args: {
@@ -366,51 +340,27 @@ export interface Database {
       };
       business_insert_actions: {
         Args: {
-          computed_points: unknown[];
-          definitions: unknown[];
-          relations: unknown[];
+          computed_points: unknown;
+          definitions: unknown;
+          relations: unknown;
         };
         Returns: undefined;
       };
       business_update_actions: {
-        Args: {computed_points: unknown[]; definitions: unknown[]};
+        Args: {computed_points: unknown; definitions: unknown};
         Returns: undefined;
       };
       business_upsert_indicateurs: {
-        Args: {
-          indicateur_actions: unknown[];
-          indicateur_definitions: unknown[];
-        };
+        Args: {indicateur_actions: unknown; indicateur_definitions: unknown};
         Returns: undefined;
       };
       chunk_compression_stats: {
         Args: {hypertable: unknown};
-        Returns: {
-          after_compression_index_bytes: number;
-          after_compression_table_bytes: number;
-          after_compression_toast_bytes: number;
-          after_compression_total_bytes: number;
-          before_compression_index_bytes: number;
-          before_compression_table_bytes: number;
-          before_compression_toast_bytes: number;
-          before_compression_total_bytes: number;
-          chunk_name: unknown;
-          chunk_schema: unknown;
-          compression_status: string;
-          node_name: unknown;
-        }[];
+        Returns: Record<string, unknown>[];
       };
       chunks_detailed_size: {
         Args: {hypertable: unknown};
-        Returns: {
-          chunk_name: unknown;
-          chunk_schema: unknown;
-          index_bytes: number;
-          node_name: unknown;
-          table_bytes: number;
-          toast_bytes: number;
-          total_bytes: number;
-        }[];
+        Returns: Record<string, unknown>[];
       };
       claim_collectivite: {
         Args: {id: number};
@@ -418,17 +368,7 @@ export interface Database {
       };
       collectivite_membres: {
         Args: {id: number};
-        Returns: {
-          champ_intervention: Database['public']['Enums']['referentiel'][];
-          details_fonction: string;
-          email: string;
-          fonction: Database['public']['Enums']['membre_fonction'];
-          niveau_acces: Database['public']['Enums']['niveau_acces'];
-          nom: string;
-          prenom: string;
-          telephone: string;
-          user_id: string;
-        }[];
+        Returns: Record<string, unknown>[];
       };
       compress_chunk: {
         Args: {if_not_compressed: boolean; uncompressed_chunk: unknown};
@@ -446,7 +386,7 @@ export interface Database {
           chunk_target_size: string;
           chunk_time_interval: unknown;
           create_default_indexes: boolean;
-          data_nodes: unknown[];
+          data_nodes: unknown;
           if_not_exists: boolean;
           migrate_data: boolean;
           number_partitions: number;
@@ -457,20 +397,11 @@ export interface Database {
           time_column_name: unknown;
           time_partitioning_func: unknown;
         };
-        Returns: {
-          created: boolean;
-          hypertable_id: number;
-          schema_name: unknown;
-          table_name: unknown;
-        }[];
+        Returns: Record<string, unknown>[];
       };
       create_distributed_restore_point: {
         Args: {name: string};
-        Returns: {
-          node_name: unknown;
-          node_type: string;
-          restore_point: unknown;
-        }[];
+        Returns: Record<string, unknown>[];
       };
       create_hypertable: {
         Args: {
@@ -480,7 +411,7 @@ export interface Database {
           chunk_target_size: string;
           chunk_time_interval: unknown;
           create_default_indexes: boolean;
-          data_nodes: unknown[];
+          data_nodes: unknown;
           if_not_exists: boolean;
           migrate_data: boolean;
           number_partitions: number;
@@ -491,12 +422,7 @@ export interface Database {
           time_column_name: unknown;
           time_partitioning_func: unknown;
         };
-        Returns: {
-          created: boolean;
-          hypertable_id: number;
-          schema_name: unknown;
-          table_name: unknown;
-        }[];
+        Returns: Record<string, unknown>[];
       };
       decompress_chunk: {
         Args: {if_compressed: boolean; uncompressed_chunk: unknown};
@@ -820,37 +746,16 @@ export interface Database {
         Returns: boolean;
       };
       have_one_of_niveaux_acces: {
-        Args: {
-          id: number;
-          niveaux: Database['public']['Enums']['niveau_acces'][];
-        };
+        Args: {id: number; niveaux: unknown};
         Returns: boolean;
       };
       hypertable_compression_stats: {
         Args: {hypertable: unknown};
-        Returns: {
-          after_compression_index_bytes: number;
-          after_compression_table_bytes: number;
-          after_compression_toast_bytes: number;
-          after_compression_total_bytes: number;
-          before_compression_index_bytes: number;
-          before_compression_table_bytes: number;
-          before_compression_toast_bytes: number;
-          before_compression_total_bytes: number;
-          node_name: unknown;
-          number_compressed_chunks: number;
-          total_chunks: number;
-        }[];
+        Returns: Record<string, unknown>[];
       };
       hypertable_detailed_size: {
         Args: {hypertable: unknown};
-        Returns: {
-          index_bytes: number;
-          node_name: unknown;
-          table_bytes: number;
-          toast_bytes: number;
-          total_bytes: number;
-        }[];
+        Returns: Record<string, unknown>[];
       };
       hypertable_index_size: {
         Args: {index_name: unknown};
@@ -943,17 +848,7 @@ export interface Database {
       };
       labellisation_parcours: {
         Args: {collectivite_id: number};
-        Returns: {
-          calendrier: string;
-          completude_ok: boolean;
-          critere_score: Json;
-          criteres_action: Json;
-          derniere_demande: Json;
-          derniere_labellisation: Json;
-          etoiles: '1' | '2' | '3' | '4' | '5';
-          referentiel: Database['public']['Enums']['referentiel'];
-          rempli: boolean;
-        }[];
+        Returns: Record<string, unknown>[];
       };
       labellisation_submit_demande: {
         Args: {
@@ -1007,7 +902,7 @@ export interface Database {
       };
       referent_contacts: {
         Args: {id: number};
-        Returns: {email: string; nom: string; prenom: string}[];
+        Returns: Record<string, unknown>[];
       };
       referentiel_down_to_action: {
         Args: {referentiel: Database['public']['Enums']['referentiel']};
@@ -1039,13 +934,7 @@ export interface Database {
       };
       retool_user_list: {
         Args: Record<PropertyKey, never>;
-        Returns: {
-          collectivite: string;
-          droit_id: number;
-          email: string;
-          nom: string;
-          prenom: string;
-        }[];
+        Returns: Record<string, unknown>[];
       };
       save_reponse: {
         Args: {'': Json};
@@ -1134,7 +1023,7 @@ export interface Database {
         Args: {
           collectivite_id: number;
           referentiel: Database['public']['Enums']['referentiel'];
-          statuts: unknown[];
+          statuts: unknown;
         };
         Returns: Json;
       };
@@ -1183,7 +1072,7 @@ export interface Database {
         Returns: undefined;
       };
       test_write_scores: {
-        Args: {collectivite_id: number; scores: unknown[]};
+        Args: {collectivite_id: number; scores: unknown};
         Returns: undefined;
       };
       time_bucket:
@@ -1324,7 +1213,7 @@ export interface Database {
       };
       update_collectivite_membre_champ_intervention: {
         Args: {
-          champ_intervention: Database['public']['Enums']['referentiel'][];
+          champ_intervention: unknown;
           collectivite_id: number;
           membre_id: string;
         };
@@ -1618,6 +1507,7 @@ export interface Database {
           demande_id?: number | null;
           id?: number;
           referentiel: Database['public']['Enums']['referentiel'];
+          valide?: boolean;
         };
         Row: {
           collectivite_id: number;
@@ -1626,6 +1516,7 @@ export interface Database {
           demande_id: number | null;
           id: number;
           referentiel: Database['public']['Enums']['referentiel'];
+          valide: boolean;
         };
         Update: {
           collectivite_id?: number;
@@ -1634,6 +1525,7 @@ export interface Database {
           demande_id?: number | null;
           id?: number;
           referentiel?: Database['public']['Enums']['referentiel'];
+          valide?: boolean;
         };
       };
       audit_auditeur: {
@@ -1785,6 +1677,20 @@ export interface Database {
           collectivite_id?: number | null;
           id?: number;
           nom?: string;
+        };
+      };
+      cot: {
+        Insert: {
+          actif: boolean;
+          collectivite_id: number;
+        };
+        Row: {
+          actif: boolean;
+          collectivite_id: number;
+        };
+        Update: {
+          actif?: boolean;
+          collectivite_id?: number;
         };
       };
       dcp: {
@@ -2619,6 +2525,44 @@ export interface Database {
           preuve_id?: string;
         };
       };
+      preuve_audit: {
+        Insert: {
+          audit_id: number;
+          collectivite_id: number;
+          commentaire?: string;
+          fichier_id?: number | null;
+          id?: number;
+          lien?: Json | null;
+          modified_at?: string;
+          modified_by?: string;
+          titre?: string;
+          url?: string | null;
+        };
+        Row: {
+          audit_id: number;
+          collectivite_id: number;
+          commentaire: string;
+          fichier_id: number | null;
+          id: number;
+          lien: Json | null;
+          modified_at: string;
+          modified_by: string;
+          titre: string;
+          url: string | null;
+        };
+        Update: {
+          audit_id?: number;
+          collectivite_id?: number;
+          commentaire?: string;
+          fichier_id?: number | null;
+          id?: number;
+          lien?: Json | null;
+          modified_at?: string;
+          modified_by?: string;
+          titre?: string;
+          url?: string | null;
+        };
+      };
       preuve_complementaire: {
         Insert: {
           action_id: string;
@@ -3288,11 +3232,49 @@ export interface Database {
           nom: string | null;
         };
       };
+      audit_en_cours: {
+        Insert: {
+          collectivite_id?: number | null;
+          date_debut?: string | null;
+          date_fin?: string | null;
+          demande_id?: number | null;
+          id?: number | null;
+          referentiel?: Database['public']['Enums']['referentiel'] | null;
+          valide?: boolean | null;
+        };
+        Row: {
+          collectivite_id: number | null;
+          date_debut: string | null;
+          date_fin: string | null;
+          demande_id: number | null;
+          id: number | null;
+          referentiel: Database['public']['Enums']['referentiel'] | null;
+          valide: boolean | null;
+        };
+        Update: {
+          collectivite_id?: number | null;
+          date_debut?: string | null;
+          date_fin?: string | null;
+          demande_id?: number | null;
+          id?: number | null;
+          referentiel?: Database['public']['Enums']['referentiel'] | null;
+          valide?: boolean | null;
+        };
+      };
       auditeurs: {
         Row: {
           audit_id: number | null;
           collectivite_id: number | null;
           noms: Json | null;
+          referentiel: Database['public']['Enums']['referentiel'] | null;
+        };
+      };
+      audits: {
+        Row: {
+          audit: unknown | null;
+          collectivite_id: number | null;
+          demande: unknown | null;
+          is_cot: boolean | null;
           referentiel: Database['public']['Enums']['referentiel'] | null;
         };
       };
@@ -3541,6 +3523,7 @@ export interface Database {
       preuve: {
         Row: {
           action: Json | null;
+          audit: Json | null;
           collectivite_id: number | null;
           commentaire: string | null;
           created_at: string | null;
@@ -3755,6 +3738,91 @@ export interface Database {
           type_collectivite:
             | Database['public']['Enums']['type_collectivite']
             | null;
+        };
+      };
+      stats_carte_epci_par_departement: {
+        Row: {
+          actives: number | null;
+          geojson: Json | null;
+          insee: string | null;
+          libelle: string | null;
+          total: number | null;
+        };
+      };
+      stats_collectivite_actives_et_total_par_type: {
+        Row: {
+          actives: number | null;
+          total: number | null;
+          type_collectivite: string | null;
+        };
+      };
+      stats_engagement_collectivite: {
+        Row: {
+          collectivite_id: number | null;
+          cot: boolean | null;
+          etoiles_cae: number | null;
+          etoiles_eci: number | null;
+        };
+      };
+      stats_evolution_collectivite_avec_minimum_fiches: {
+        Row: {
+          collectivites: number | null;
+          mois: string | null;
+        };
+      };
+      stats_evolution_indicateur_referentiel: {
+        Row: {
+          indicateurs: number | null;
+          mois: string | null;
+        };
+      };
+      stats_evolution_nombre_fiches: {
+        Row: {
+          fiches: number | null;
+          mois: string | null;
+        };
+      };
+      stats_evolution_nombre_utilisateur_par_collectivite: {
+        Row: {
+          maximum: number | null;
+          median: number | null;
+          mois: string | null;
+          moyen: number | null;
+        };
+      };
+      stats_evolution_resultat_indicateur_personnalise: {
+        Row: {
+          mois: string | null;
+          resultats: number | null;
+        };
+      };
+      stats_evolution_resultat_indicateur_referentiel: {
+        Row: {
+          mois: string | null;
+          resultats: number | null;
+        };
+      };
+      stats_evolution_total_activation_par_type: {
+        Row: {
+          mois: string | null;
+          total: number | null;
+          total_commune: number | null;
+          total_epci: number | null;
+          total_syndicat: number | null;
+        };
+      };
+      stats_evolution_utilisateur: {
+        Row: {
+          mois: string | null;
+          total_utilisateurs: number | null;
+          utilisateurs: number | null;
+        };
+      };
+      stats_labellisation_par_niveau: {
+        Row: {
+          etoiles: number | null;
+          labellisations: number | null;
+          referentiel: Database['public']['Enums']['referentiel'] | null;
         };
       };
       suivi_audit: {
