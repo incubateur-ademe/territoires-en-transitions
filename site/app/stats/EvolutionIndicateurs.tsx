@@ -1,5 +1,4 @@
 import React, { ReactNode } from 'react';
-import { ChartHead, ChartTitle } from './headings';
 import IndicateursRenseignes from './IndicateursRenseignes';
 import ValeursIndicateursRenseignees from './ValeursIndicateursRenseignees';
 import ValeursIndicateursPersoRenseignees from './ValeursIndicateursPersoRenseignees';
@@ -7,7 +6,7 @@ import ValeursIndicateursPersoRenseignees from './ValeursIndicateursPersoRenseig
 export function EvolutionIndicateurs({}) {
   return (
     <>
-      <ChartHead>xxx collectivités ont renseigné des indicateurs </ChartHead>
+      {/* <ChartHead>xxx collectivités ont renseigné des indicateurs </ChartHead> */}
       <div className="fr-grid-row fr-grid-row--center fr-grid-row--gutters">
         <Column>
           <IndicateursRenseignes />
