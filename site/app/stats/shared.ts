@@ -4,7 +4,7 @@
  * Surcharge les valeurs par défaut définies dans :
  * https://github.com/plouc/nivo/blob/master/packages/core/src/theming/defaultTheme.js
  */
-import { Theme } from '@nivo/core';
+import { DatumValue, Theme } from '@nivo/core';
 import { AxisProps } from '@nivo/axes';
 import { LegendProps } from '@nivo/legends';
 import { Serie } from '@nivo/line';
@@ -45,6 +45,9 @@ export const dateAsMonthAndYear = (v: string) =>
     month: 'short',
     year: 'numeric',
   });
+
+export const formatInteger = (value: DatumValue | number | null) =>
+  value === null ? '' : Number(value).toLocaleString('fr-FR');
 
 export const axisBottomAsDate: AxisProps = {
   legendPosition: 'end',
