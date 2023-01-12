@@ -4,14 +4,12 @@ import { fr } from '@codegouvfr/react-dsfr';
 import { ChartHead, SectionHead, ChartTitle } from './headings';
 import { EtatDesLieux } from './EtatDesLieux';
 import { EvolutionPlansAction } from './EvolutionPlansAction';
+import { EvolutionIndicateurs } from './EvolutionIndicateurs';
 import ActiveUsers from './ActiveUsers';
 import CarteEpciParDepartement from './CarteEpciParDepartement';
 import EvolutionTotalActivationParType from './EvolutionTotalActivationParType';
 import CollectiviteActivesEtTotalParType from './CollectiviteActivesEtTotalParType';
 import NombreUtilisateurParCollectivite from './NombreUtilisateurParCollectivite';
-import IndicateursRenseignes from './IndicateursRenseignes';
-import ValeursIndicateursRenseignees from './ValeursIndicateursRenseignees';
-import ValeursIndicateursPersoRenseignees from './ValeursIndicateursPersoRenseignees';
 import NombreCollectivitesEngagees from './NombreCollectivitesEngagees';
 import CollectivitesLabellisees from './CollectivitesLabellisees';
 
@@ -123,27 +121,7 @@ export default function Stats() {
           mesurent la progression au moyen d’indicateurs de réalisation et
           d’impact de référence ou personnalisés.
         </p>
-        <div className="fr-grid-row fr-grid-row--center fr-grid-row--gutters">
-          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4">
-            <ChartTitle>
-              Nombre d’indicateurs des référentiels renseignés
-            </ChartTitle>
-            <IndicateursRenseignes />
-          </div>
-          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4">
-            <ChartTitle>
-              Nombre total de valeurs d’indicateurs des référentiels renseignés
-            </ChartTitle>
-            <ValeursIndicateursRenseignees />
-          </div>
-          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4">
-            <ChartTitle>
-              Nombre total de valeurs d’indicateurs personnalisés des
-              référentiels renseignés
-            </ChartTitle>
-            <ValeursIndicateursPersoRenseignees />
-          </div>
-        </div>
+        <EvolutionIndicateurs />
       </section>
 
       <section className="fr-container">
