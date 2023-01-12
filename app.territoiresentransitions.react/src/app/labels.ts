@@ -1,4 +1,3 @@
-import {FicheActionAvancement} from 'generated/dataLayer/fiche_action_write';
 import {Database} from 'types/database.types';
 import type {ReferentielOfIndicateur} from 'types/litterals';
 
@@ -7,25 +6,6 @@ export const referentielToName: Record<ReferentielOfIndicateur, string> = {
   cae: 'Climat Air Énergie',
   eci: 'Économie Circulaire',
   crte: 'Contrat Relance Transition Écologique',
-};
-
-type OmitLiteral<
-  Literals extends string | number,
-  ExcludedLiterals extends Literals
-> = keyof Omit<{[Key in Literals]: never}, ExcludedLiterals>;
-
-export type FicheActionAvancementRenseigne = OmitLiteral<
-  FicheActionAvancement,
-  'non_renseigne'
->;
-
-export const ficheActionAvancementLabels: Record<
-  FicheActionAvancementRenseigne,
-  string
-> = {
-  pas_fait: 'Pas faite',
-  en_cours: 'En cours',
-  fait: 'Faite',
 };
 
 export const epciCard_AxisShortLabel: Record<string, string> = {

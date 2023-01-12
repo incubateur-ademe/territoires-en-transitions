@@ -54,12 +54,6 @@ export const collectiviteBibliothequePath = `${collectivitePath}/bibliotheque`;
 export const collectivitePersoRefThematiquePath = `${collectivitePersoRefPath}/:${thematiqueParam}`;
 export const collectiviteJournalPath = `${collectivitePath}/historique`;
 
-// Plans d'action legacy
-export const planActionParam = 'planActionUid';
-export const planActionDefaultId = 'plan_collectivite';
-// export const collectivitePlanActionPath = `${collectivitePath}/plan_action/:${planActionParam}`;
-export const collectiviteNouvelleFichePath = `${collectivitePath}/nouvelle_fiche`;
-// Nouveaux plans d'action
 const ficheParam = 'ficheUid';
 const planParam = 'planUid';
 export const CollectivitePlansActionsBasePath = `${collectivitePath}/plans`;
@@ -206,16 +200,6 @@ export const makeCollectivitePlanActionUrl = ({
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
     .replace(`:${planParam}`, planActionUid);
 
-export const makeCollectiviteDefaultPlanActionUrl = ({
-  collectiviteId,
-}: {
-  collectiviteId: number;
-}) =>
-  makeCollectivitePlanActionUrl({
-    collectiviteId,
-    planActionUid: planActionDefaultId,
-  });
-
 export const makeCollectiviteTableauBordUrl = ({
   collectiviteId,
 }: {
@@ -225,15 +209,6 @@ export const makeCollectiviteTableauBordUrl = ({
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );
-
-export const makeCollectiviteNouvelleFicheUrl = (props: {
-  collectiviteId: number;
-  planActionUid: string;
-}) =>
-  `${collectiviteNouvelleFichePath.replace(
-    `:${collectiviteParam}`,
-    props.collectiviteId.toString()
-  )}?plan_uid=${props.planActionUid}`;
 
 export const makeCollectiviteUsersUrl = ({
   collectiviteId,
