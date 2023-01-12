@@ -1,0 +1,42 @@
+import {InputHTMLAttributes, useLayoutEffect, useRef, useState} from 'react';
+import {onlyNumericRegExp, setInputFilter} from 'ui/shared/form/utils';
+
+type Props<T> = {
+  budget: number | null;
+} & InputHTMLAttributes<T>;
+
+const FicheActionFormBudgetInput = <T extends HTMLInputElement>({
+  budget,
+  onBlur,
+}: Props<T>) => {
+  const [value, setValue] = useState(budget?.toString());
+
+  /** Ajoute le filtre numérique sur l'input budget */
+  const inputBudgetRef = useRef<HTMLInputElement>(null);
+  useLayoutEffect(() => {
+    setInputFilter(
+      inputBudgetRef,
+      value => onlyNumericRegExp.test(value),
+      'Nombre uniquement'
+    );
+  }, [inputBudgetRef.current]);
+
+  return (
+    <div className="flex items-baseline mt-3">
+      <input
+        ref={inputBudgetRef}
+        type="text"
+        id="budget-previsionnel"
+        className="w-28 py-1 px-3 text-sm rounded-md focus:!outline focus:!outline-1 focus:outline-blue-500"
+        value={value}
+        onChange={e => setValue(e.target.value.replace(',', '.'))}
+        onBlur={onBlur}
+        maxLength={20}
+        placeholder="Écrire ici..."
+      />
+      <span className="ml-2 text-sm">€ TTC</span>
+    </div>
+  );
+};
+
+export default FicheActionFormBudgetInput;
