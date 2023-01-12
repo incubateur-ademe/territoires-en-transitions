@@ -3,6 +3,7 @@ import {TOption} from 'ui/shared/select/commons';
 import MultiSelectTagsDropdown from 'ui/shared/select/MultiSelectTagsDropdown';
 import {useSousThematiqueListe} from '../data/options/useSousThematiqueListe';
 import {TSousThematiqueRow} from '../data/types/alias';
+import {selectButtonClassNames} from './FicheActionForm';
 
 type Props = {
   thematiques: string[];
@@ -59,7 +60,7 @@ const SousThematiquesDropdown = ({
     <MultiSelectTagsDropdown
       disabled={thematiques.length === 0}
       containerWidthMatchButton
-      buttonClassName="fr-select !flex !px-4"
+      buttonClassName={selectButtonClassNames}
       values={sousThematiques?.map((t: TSousThematiqueRow) => t.id.toString())}
       options={options}
       onSelect={values => onSelect(formatThematiques(values))}
