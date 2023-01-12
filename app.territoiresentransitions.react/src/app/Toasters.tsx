@@ -6,8 +6,6 @@ import {
   DataLayerWriteEndpoint,
 } from 'core-logic/api/dataLayerEndpoint';
 import {PostgrestResponse} from '@supabase/supabase-js';
-import {planActionWriteEndpoint} from 'core-logic/api/endpoints/PlanActionWriteEndpoint';
-import {ficheActionWriteEndpoint} from 'core-logic/api/endpoints/FicheActionWriteEndpoint';
 import {actionStatutWriteEndpoint} from 'core-logic/api/endpoints/ActionStatutWriteEndpoint';
 import {actionCommentaireWriteEndpoint} from 'core-logic/api/endpoints/ActionCommentaireWriteEndpoint';
 import {indicateurPersonnaliseDefinitionWriteEndpoint} from 'core-logic/api/endpoints/IndicateurPersonnaliseDefinitionWriteEndpoint';
@@ -131,20 +129,6 @@ export const Toasters = () => {
         composer={makeComposer({
           storeSuccess: 'Le commentaire est enregistré',
           storeError: "Le commentaire n'a pas été enregistré",
-        })}
-      />
-      <EndpointToaster
-        endpoint={ficheActionWriteEndpoint}
-        composer={makeComposer({
-          storeSuccess: 'La fiche est enregistrée',
-          storeError: "La fiche n'a pas été enregistrée",
-        })}
-      />
-      <EndpointToaster
-        endpoint={planActionWriteEndpoint}
-        composer={makeComposer({
-          storeSuccess: "Le plan d'action est enregistré",
-          storeError: "Le plan d'action n'a pas été enregistré",
         })}
       />
 
