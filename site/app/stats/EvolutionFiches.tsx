@@ -1,8 +1,8 @@
 'use client';
 
 import useSWR from 'swr';
-import { supabase } from '../initSupabase';
-import { ResponsiveLine } from '@nivo/line';
+import {supabase} from '../initSupabase';
+import {ResponsiveLine} from '@nivo/line';
 import {
   axisBottomAsDate,
   axisLeftMiddleLabel,
@@ -33,7 +33,7 @@ const labels = {
 
 export function useEvolutionFiches(vue: Vue) {
   return useSWR(vue, async () => {
-    const { data, error } = await supabase
+    const {data, error} = await supabase
       .from(vue)
       .select()
       .gte('mois', fromMonth);
@@ -46,8 +46,8 @@ export function useEvolutionFiches(vue: Vue) {
     return {
       evolution: [
         {
-          id: colonneValeur[vue],
-          data: data.map((d) => ({ x: d.mois, y: d[colonneValeur[vue]] })),
+          id: labels[colonneValeur[vue] as keyof typeof labels],
+          data: data.map(d => ({x: d.mois, y: d[colonneValeur[vue]]})),
         },
       ],
       last: data[data.length - 1][colonneValeur[vue]],
@@ -55,25 +55,25 @@ export function useEvolutionFiches(vue: Vue) {
   });
 }
 
-type Props = { vue: Vue };
+type Props = {vue: Vue};
 
 export default function EvolutionFiches(props: Props) {
-  const { vue } = props;
-  const { data } = useEvolutionFiches(vue);
+  const {vue} = props;
+  const {data} = useEvolutionFiches(vue);
 
   if (!data) {
     return null;
   }
 
   return (
-    <div style={{ height: 100 + '%', maxHeight: 400 + 'px' }}>
+    <div style={{height: 100 + '%', maxHeight: 400 + 'px'}}>
       <ResponsiveLine
         colors={colors}
         theme={theme}
         data={data.evolution}
         // les marges servent aux légendes
-        margin={{ top: 5, right: 5, bottom: 55, left: 50 }}
-        xScale={{ type: 'point' }}
+        margin={{top: 5, right: 5, bottom: 55, left: 50}}
+        xScale={{type: 'point'}}
         yScale={{
           type: 'linear',
           min: 'auto',
@@ -89,29 +89,11 @@ export default function EvolutionFiches(props: Props) {
         axisRight={null}
         axisBottom={axisBottomAsDate}
         axisLeft={axisLeftMiddleLabel(legende[vue])}
-        pointColor={{ theme: 'background' }}
+        pointColor={{theme: 'background'}}
         pointBorderWidth={4}
-        pointBorderColor={{ from: 'serieColor' }}
+        pointBorderColor={{from: 'serieColor'}}
         pointLabelYOffset={-12}
         enableSlices="x"
-        sliceTooltip={({ slice }) => {
-          return (
-            <div
-              style={{
-                background: 'white',
-                padding: '9px 12px',
-                border: '1px solid #ccc',
-              }}
-            >
-              {slice.points.map((point) => (
-                <div key={point.id}>
-                  {labels[point.serieId as keyof typeof labels]}:{' '}
-                  {point.data.yFormatted}
-                </div>
-              ))}
-            </div>
-          );
-        }}
       />
     </div>
   );
