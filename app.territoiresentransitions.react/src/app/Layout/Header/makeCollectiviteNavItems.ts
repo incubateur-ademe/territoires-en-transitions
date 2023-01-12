@@ -2,15 +2,14 @@ import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {NiveauAcces} from 'generated/dataLayer';
 import {
   makeCollectiviteBibliothequeUrl,
+  makeCollectiviteFichesNonClasseesUrl,
   makeCollectiviteIndicateursUrl,
   makeCollectiviteJournalUrl,
   makeCollectiviteLabellisationUrl,
   makeCollectivitePersoRefUrl,
-  makeCollectivitePlanActionUrl,
   makeCollectiviteReferentielUrl,
   makeCollectiviteTableauBordUrl,
   makeCollectiviteUsersUrl,
-  planActionDefaultId,
 } from 'app/paths';
 
 export interface CollectiviteNavSingle {
@@ -133,9 +132,8 @@ export const makeCollectiviteNavItems = (
       listPathsAndLabels: [
         {
           label: "Plans d'action",
-          path: makeCollectivitePlanActionUrl({
+          path: makeCollectiviteFichesNonClasseesUrl({
             collectiviteId,
-            planActionUid: planActionDefaultId,
           }),
         },
         {
