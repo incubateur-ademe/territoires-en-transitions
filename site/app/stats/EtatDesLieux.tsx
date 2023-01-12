@@ -19,12 +19,12 @@ export function EtatDesLieux() {
       </ChartHead>
       <div className="fr-grid-row fr-grid-row--center fr-grid-row--gutters">
         <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-5 fr-col-lg-5 fr-responsive-img">
-          <ChartTitle>Économie circulaire</ChartTitle>
-          <TrancheCompletude referentiel="eci" />
-        </div>
-        <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-5 fr-col-lg-5 fr-responsive-img">
           <ChartTitle>Climat Air Énergie</ChartTitle>
           <TrancheCompletude referentiel="cae" />
+        </div>
+        <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-5 fr-col-lg-5 fr-responsive-img">
+          <ChartTitle>Économie circulaire</ChartTitle>
+          <TrancheCompletude referentiel="eci" />
         </div>
       </div>
     </>
