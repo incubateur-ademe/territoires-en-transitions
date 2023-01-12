@@ -3,32 +3,36 @@
 import useSWR from 'swr';
 import {ResponsivePie} from '@nivo/pie';
 import {supabase} from '../initSupabase';
-import {bottomLegend, colors, theme} from './shared';
+import {theme} from './shared';
 
 function useCollectivitesLabellisees(referentiel: Props['referentiel']) {
-  const {data} = useSWR('stats_labellisation_par_niveau-' + referentiel, async () => {
-    const {data, error} = await supabase.from('stats_labellisation_par_niveau').
-      select()
-      .gte('etoiles', 1)
-      .eq('referentiel', referentiel)
-      .order('etoiles', {ascending: true});
-    if (error) {
-      throw new Error('stats_labellisation_par_niveau');
+  const {data} = useSWR(
+    'stats_labellisation_par_niveau-' + referentiel,
+    async () => {
+      const {data, error} = await supabase
+        .from('stats_labellisation_par_niveau')
+        .select()
+        .gte('etoiles', 1)
+        .eq('referentiel', referentiel)
+        .order('etoiles', {ascending: true});
+      if (error) {
+        throw new Error('stats_labellisation_par_niveau');
+      }
+      if (!data) {
+        return null;
+      }
+      return data;
     }
-    if (!data) {
-      return null;
-    }
-    return data;
-  });
+  );
 
-  return data?.map((d) => ({
+  return data?.map(d => ({
     id: d.etoiles,
     label: `${d.etoiles} étoile${d.etoiles > 1 ? 's' : ''}`,
     value: d.labellisations,
   }));
 }
 
-type Props = { referentiel: 'eci' | 'cae' };
+type Props = {referentiel: 'eci' | 'cae'};
 
 export default function CollectivitesLabellisees(props: Props) {
   const {referentiel} = props;
