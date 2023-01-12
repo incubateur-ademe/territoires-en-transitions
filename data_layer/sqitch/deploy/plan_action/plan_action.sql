@@ -13,7 +13,7 @@ create table migration.fiche_action_indicateur as select * from public.fiche_act
 create table migration.fiche_action_indicateur_personnalise as select * from public.fiche_action_indicateur_personnalise;
 create table migration.plan_action as select * from public.plan_action;
 
-drop materialized view stats.collectivite_plan_action cascade;
+drop materialized view stats.collectivite_plan_action;
 
 drop trigger after_collectivite_insert on collectivite;
 drop function after_collectivite_insert_default_plan();
