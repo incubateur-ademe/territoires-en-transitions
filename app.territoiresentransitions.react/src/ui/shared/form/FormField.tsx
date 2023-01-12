@@ -21,9 +21,10 @@ const FormField = ({
 }: Props) => {
   return (
     <div
-      className={classNames(`fr-input-group flex-grow ${className}`, {
+      className={classNames(`fr-input-group flex-grow`, {
         'fr-input-group--error': errorMessage,
         'fr-input-group--disabled': disabled,
+        className,
       })}
     >
       <label htmlFor={htmlFor} className="fr-label mb-2">
