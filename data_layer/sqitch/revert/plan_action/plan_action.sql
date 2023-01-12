@@ -1,8 +1,6 @@
 -- Deploy tet:plan_action to pg
 
 BEGIN;
-drop function migration.migrate_plans;
-drop materialized view stats.collectivite_plan_action cascade;
 drop function plan_action(pa_id integer);
 drop function delete_fiche_action() cascade;
 drop function upsert_fiche_action() cascade;

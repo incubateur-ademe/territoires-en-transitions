@@ -337,22 +337,22 @@ export interface Database {
           collectivite_id: number
           referentiel: Database["public"]["Enums"]["referentiel"]
           scores: Json
-          modified_at: string
           payload_timestamp: string | null
+          modified_at: string
         }
         Insert: {
           collectivite_id: number
           referentiel: Database["public"]["Enums"]["referentiel"]
           scores: Json
-          modified_at: string
           payload_timestamp?: string | null
+          modified_at: string
         }
         Update: {
           collectivite_id?: number
           referentiel?: Database["public"]["Enums"]["referentiel"]
           scores?: Json
-          modified_at?: string
           payload_timestamp?: string | null
+          modified_at?: string
         }
       }
       client_scores_update: {

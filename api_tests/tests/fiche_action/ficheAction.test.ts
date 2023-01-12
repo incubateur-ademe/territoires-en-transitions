@@ -293,8 +293,8 @@ Deno.test('Création fiches et plan actions', async () => {
   } as FicheActionVueUpdate;
 
   // Utilise `as never`, l'upsert dans les vues n'étant pas prévu par la lib Supabase.
-  await supabase.from('fiches_action').update(ficheVue as never);
-
+  const check = await supabase.from('fiches_action').update(ficheVue as never).select();
+  console.log(check.data!);
   const checkVue = await supabase.from('fiches_action').select().eq('id', fId);
   // console.log(checkVue.data![0]);
   // console.logcheckVue.status);
