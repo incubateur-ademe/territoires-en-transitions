@@ -19,7 +19,9 @@ export const ValiderAudit = (props: TValiderAuditProps) => (
     disableDismiss
     render={modalProps => <ValiderAuditModal {...modalProps} {...props} />}
   >
-    <button className="fr-btn">Valider l'audit</button>
+    <button className="fr-btn" data-test="ValiderAuditBtn">
+      Valider l'audit
+    </button>
   </Modal>
 );
 
@@ -40,7 +42,7 @@ export const ValiderAuditModal = (props: RenderProps & TValiderAuditProps) => {
   const canValidate = Boolean(rapports?.length);
 
   return (
-    <div>
+    <div data-test="ValiderAuditModal">
       <h4>Valider l'audit</h4>
       <p>
         Pour clôturer l’audit, merci de joindre votre rapport définitif
@@ -48,14 +50,19 @@ export const ValiderAuditModal = (props: RenderProps & TValiderAuditProps) => {
         de la communauté).
       </p>
       <AddRapportButton audit_id={audit_id} />
-      {rapports?.map(rapport => (
-        <PreuveDoc key={rapport.id} preuve={rapport} />
-      ))}
+      {rapports?.length ? (
+        <div data-test="rapports-audit">
+          {rapports.map(rapport => (
+            <PreuveDoc key={rapport.id} preuve={rapport} />
+          ))}
+        </div>
+      ) : null}
       <p className="fr-mt-4w">
         {demande_id ? auditLabellisation : auditSansLabellisation}
       </p>
       <div className="flex">
         <button
+          data-test="validate"
           className="fr-btn fr-btn--sm fr-mr-2w"
           onClick={() => {
             onValidate(audit);
