@@ -28,7 +28,8 @@ function useActiveUsers() {
       return null;
     }
     return {
-      courant: data[data.length - 2],
+      precedent: data[data.length - 2],
+      courant: data[data.length - 1],
       evolution: [
         {
           id: 'utilisateurs',
@@ -52,7 +53,7 @@ export default function ActiveUsers() {
     return null;
   }
 
-  const { courant, evolution } = data;
+  const { precedent, courant, evolution } = data;
   const legendData = getLegendData(evolution);
   const labelById = getLabelsById(evolution);
 
@@ -60,9 +61,9 @@ export default function ActiveUsers() {
     <div>
       <div className="fr-grid-row fr-grid-row--center">
         <h6>
-          Aujourd&apos;hui notre plateforme est utilisée par&nbsp;
+          Notre plateforme est utilisée par&nbsp;
           {courant?.total_utilisateurs} personnes, dont&nbsp;
-          {courant?.utilisateurs} nous ont rejoint le mois dernier
+          {precedent?.utilisateurs} nous ont rejoint le mois dernier
         </h6>
       </div>
       <div style={{ height: 400 }}>
