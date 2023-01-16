@@ -23,11 +23,12 @@ export const useUpdateActionAuditStatut = () => {
     {
       mutationKey: 'update_action_audit_state',
       onSuccess: (data: unknown, variables: TActionAuditStatut) => {
-        const {collectivite_id, referentiel} = variables;
+        const {collectivite_id, referentiel, action_id} = variables;
         queryClient.invalidateQueries([
           'action_audit_state',
           collectivite_id,
           referentiel,
+          action_id,
         ]);
       },
     }
