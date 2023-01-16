@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import {MenuPrincipal} from './MenuPrincipal';
 
 function Brand() {
   return (
@@ -11,7 +12,7 @@ function Brand() {
         </p>
       </div>
       <div className="fr-header__operator">
-        <div className="fr-grid-row" style={{ minWidth: 160 + 'px' }}>
+        <div className="fr-grid-row" style={{minWidth: 160 + 'px'}}>
           <Image src="/ademe.jpg" alt="ADEME" width="70" height="80" />
           <Image
             src="/territoire-engage.jpg"
@@ -60,23 +61,6 @@ function Links() {
   );
 }
 
-function Items() {
-  return (
-    <ul className="fr-nav__list">
-      <li className="fr-nav__item">
-        <a
-          href="/stats"
-          target="_self"
-          aria-controls="modal-header__menu"
-          className="fr-nav__link"
-        >
-          Statistiques publiques
-        </a>
-      </li>
-    </ul>
-  );
-}
-
 function Body() {
   return (
     <div className="fr-header__body">
@@ -92,11 +76,11 @@ function Body() {
                 className="router-link-exact-active router-link-active"
               >
                 <p className="fr-header__service-title">
-                  <span style={{ fontSize: 'x-large', fontWeight: 'bold' }}>
+                  <span style={{fontSize: 'x-large', fontWeight: 'bold'}}>
                     Territoires en Transitions
                   </span>
                   <br />
-                  <span style={{ fontSize: 'small', fontWeight: 'normal' }}>
+                  <span style={{fontSize: 'small', fontWeight: 'normal'}}>
                     Accompagner la transition écologique des collectivités
                   </span>
                 </p>
@@ -137,7 +121,7 @@ function Menu() {
           aria-label="Menu principal"
           className="fr-nav"
         >
-          <Items />
+          <MenuPrincipal />
         </nav>
       </div>
     </div>
