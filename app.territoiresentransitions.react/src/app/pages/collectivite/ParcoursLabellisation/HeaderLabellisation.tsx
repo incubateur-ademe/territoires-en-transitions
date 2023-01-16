@@ -2,7 +2,7 @@
  * Affiche l'en-tête de page contenant l'objectif et le bouton pour candidater
  */
 
-import {useState} from 'react';
+import {ReactNode, useState} from 'react';
 import {useReferentielId} from 'core-logic/hooks/params';
 import {PageHeaderLeft} from 'ui/PageHeader';
 import {useHasActiveCOT, useIsAuditeur} from '../Audit/useAudit';
@@ -85,13 +85,13 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
         </button>
       ) : null}
       {demande_envoyee && !audit ? (
-        <p className="m-0 fr-text-mention--grey">Demande envoyée</p>
+        <HeaderMessage>Demande envoyée</HeaderMessage>
       ) : null}
       {audit_valide ? (
-        <p className="m-0 fr-text-mention--grey">Labellisation en cours</p>
+        <HeaderMessage>Labellisation en cours</HeaderMessage>
       ) : null}
       {audit_en_cours && !isAuditeur ? (
-        <p className="m-0 fr-text-mention--grey">Audit en cours</p>
+        <HeaderMessage>Audit en cours</HeaderMessage>
       ) : null}
       {audit_en_cours && isAuditeur ? (
         <ValiderAudit
@@ -110,6 +110,12 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
     </PageHeaderLeft>
   );
 };
+
+const HeaderMessage = ({children}: {children: ReactNode}) => (
+  <p className="m-0 fr-text-mention--grey" data-test="HeaderMessage">
+    {children}
+  </p>
+);
 
 const HeaderLabellisationConnected = () => {
   const hasActiveCOT = useHasActiveCOT();
