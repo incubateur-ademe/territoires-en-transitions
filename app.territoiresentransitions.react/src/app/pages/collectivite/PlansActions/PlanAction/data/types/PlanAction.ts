@@ -4,5 +4,5 @@ export type TPlanAction = {
   nom: string;
   id: number;
   fiches: TFicheAction[] | null;
-  enfants: TPlanAction[];
+  enfants?: TPlanAction[];
 };
