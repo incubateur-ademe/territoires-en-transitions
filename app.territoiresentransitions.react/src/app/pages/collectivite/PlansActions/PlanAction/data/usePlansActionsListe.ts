@@ -1,10 +1,10 @@
 import {useQuery} from 'react-query';
 
 import {supabaseClient} from 'core-logic/api/supabase';
-import {TPlanActionRow} from './types/alias';
+import {TPlanActionAxeRow} from './types/alias';
 
 type TFetchedData = {
-  plans: TPlanActionRow[];
+  plans: TPlanActionAxeRow[];
 };
 
 const fetchPlansActionsListe = async (
@@ -21,7 +21,7 @@ const fetchPlansActionsListe = async (
     throw new Error(error.message);
   }
 
-  return {plans: (data as TPlanActionRow[]) || []};
+  return {plans: (data as TPlanActionAxeRow[]) || []};
 };
 
 export const usePlansActionsListe = (collectivite_id: number) => {
