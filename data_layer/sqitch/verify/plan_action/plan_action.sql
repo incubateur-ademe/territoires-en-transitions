@@ -150,4 +150,36 @@ select has_function_privilege('upsert_fiche_action()', 'execute');
 
 select has_function_privilege('plan_action(integer)', 'execute');
 
+select 
+    axe,
+    sous_axe,
+    sous_sous_axe,
+    num_action,
+    titre,
+    description,
+    objectifs,
+    resultats_attendus,
+    cibles,
+    structure_pilote,
+    moyens,
+    partenaires,
+    personne_referente,
+    elu_referent,
+    financements,
+    budget,
+    statut,
+    priorite,
+    date_debut,
+    date_fin,
+    amelioration_continue,
+    calendrier,
+    notes,
+    collectivite_id,
+    plan_nom
+from fiche_action_import_csv
+where false;
+
+select has_function_privilege('upsert_axe(text, integer, integer)', 'execute');
+select has_function_privilege('import_plan_action_csv()', 'execute');
+
 ROLLBACK;

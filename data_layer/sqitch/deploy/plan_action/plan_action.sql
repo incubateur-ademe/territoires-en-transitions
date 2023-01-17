@@ -1,6 +1,7 @@
 -- Deploy tet:plan_action to pg
 
 BEGIN;
+
 create type migration.fiche_action_avancement as enum ('pas_fait', 'fait', 'en_cours', 'non_renseigne');
 create table migration.fiche_action as select * from public.fiche_action;
 alter table migration.fiche_action drop column avancement;
@@ -1254,5 +1255,198 @@ $$ language plpgsql;
 comment on function plan_action is
     'Fonction retournant un JSON contenant le plan d''action passé en paramètre,
     ses fiches et ses plans d''actions enfants de manière récursive';
+
+-- Import CSV
+create table if not exists fiche_action_import_csv
+(
+    axe text,
+    sous_axe text,
+    sous_sous_axe text,
+    num_action text,
+    titre text,
+    description text,
+    objectifs text,
+    resultats_attendus text,
+    cibles text,
+    structure_pilote text,
+    moyens text,
+    partenaires text,
+    personne_referente text,
+    elu_referent text,
+    financements text,
+    budget text,
+    statut text,
+    priorite text,
+    date_debut text,
+    date_fin text,
+    amelioration_continue text,
+    calendrier text,
+    notes text,
+    collectivite_id text,
+    plan_nom text
+);
+alter table fiche_action_import_csv enable row level security;
+create policy allow_read on fiche_action_import_csv for select using(is_authenticated());
+create policy allow_insert on fiche_action_import_csv for insert with check(have_edition_acces(collectivite_id::integer));
+create policy allow_update on fiche_action_import_csv for update using(have_edition_acces(collectivite_id::integer));
+create policy allow_delete on fiche_action_import_csv for delete using(have_edition_acces(collectivite_id::integer));
+
+
+create function upsert_axe(nom text, collectivite_id integer, parent integer) returns integer as
+$$
+declare
+    existing_axe_id integer;
+    axe_id integer;
+begin
+    select a.id from axe a
+    where a.nom = trim(upsert_axe.nom)
+      and a.collectivite_id =  upsert_axe.collectivite_id
+      and ((a.parent is null and upsert_axe.parent is null)
+        or (a.parent = upsert_axe.parent))
+    limit 1
+    into existing_axe_id;
+    if existing_axe_id is null then
+        insert into axe (nom, collectivite_id, parent)
+        values (trim(upsert_axe.nom), upsert_axe.collectivite_id, parent)
+        returning id into axe_id;
+    else
+        axe_id = existing_axe_id;
+    end if;
+    return axe_id;
+end;
+$$ language plpgsql;;
+
+create or replace function import_plan_action_csv() returns trigger as
+$$
+declare
+    axe_id integer;
+    fiche_id integer;
+    elem_id integer;
+    elem text;
+    collectivite_id integer;
+    date_d timestamp;
+    date_f timestamp;
+    regex_split text = E'\(et/ou|[–,/+?&;]| - | -|- |^-| et (?!de)\)(?![^(]*[)])(?![^«]*[»])';
+    regex_date text = E'^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[012])/([0-9]{4})$';
+begin
+    collectivite_id = new.collectivite_id::integer;
+
+    -- Fiche action
+    if regexp_match(new.date_debut, regex_date) is not null then
+        date_d = to_date(trim(new.date_debut), 'DD/MM/YYYY');
+    else
+        date_d = null;
+    end if;
+    if regexp_match(new.date_fin, regex_date) is not null then
+        date_f = to_date(trim(new.date_fin), 'DD/MM/YYYY');
+    else
+        date_f = null;
+    end if;
+    insert into fiche_action (titre, description, piliers_eci, objectifs, resultats_attendus, cibles, ressources, financements, budget_previsionnel, statut, niveau_priorite, date_debut, date_fin_provisoire, amelioration_continue, calendrier, notes_complementaires, maj_termine, collectivite_id)
+    values (
+               left(concat(new.num_action, ' - ', trim(new.titre)), 300),
+               new.description, null,
+               new.objectifs,
+               array[]::fiche_action_resultats_attendus[],
+               regexp_split_to_array(new.cibles, '-')::fiche_action_cibles[],
+               new.moyens,
+               new.financements,
+               new.budget::integer,
+               trim(new.statut)::fiche_action_statuts,
+               trim(new.priorite)::fiche_action_niveaux_priorite,
+               date_d,
+               date_f,
+               not (new.amelioration_continue = 'FAUX'),
+               new.calendrier, new.notes,
+               true,
+               collectivite_id)
+    returning id into fiche_id;
+
+    -- Plan et axes
+    if new.plan_nom is not null and trim(new.plan_nom) <> '' then
+        axe_id = upsert_axe(new.plan_nom, collectivite_id, null);
+        if new.axe is not null and trim(new.axe) <> '' then
+            axe_id = upsert_axe(new.axe, collectivite_id, axe_id);
+            if new.sous_axe is not null and trim(new.sous_axe) <> '' then
+                axe_id = upsert_axe(new.sous_axe, collectivite_id, axe_id);
+                if new.sous_sous_axe is not null and trim(new.sous_sous_axe) <> '' then
+                    axe_id = upsert_axe(new.sous_sous_axe, collectivite_id, axe_id);
+                end if;
+            end if;
+        end if;
+    end if;
+    if axe_id is not null then
+        perform ajouter_fiche_action_dans_un_axe(fiche_id, axe_id);
+    end if;
+
+    -- Partenaires
+    for elem in select trim(unnest(regexp_split_to_array(new.partenaires, regex_split)))
+        loop
+            if elem <> '' then
+                insert into partenaire_tag (nom, collectivite_id)
+                values(elem, collectivite_id)
+                on conflict (nom, collectivite_id) do update set nom = elem
+                returning id into elem_id;
+
+                insert into fiche_action_partenaire_tag (fiche_id, partenaire_tag_id)
+                values (fiche_id, elem_id);
+            end if;
+        end loop;
+
+    -- Structures
+    for elem in select trim(unnest(regexp_split_to_array(new.structure_pilote, regex_split)))
+        loop
+            elem = trim(elem);
+            if elem <> '' then
+                insert into structure_tag (nom, collectivite_id)
+                values(elem, collectivite_id)
+                on conflict (nom, collectivite_id) do update set nom = elem
+                returning id into elem_id;
+
+                insert into fiche_action_structure_tag (fiche_id, structure_tag_id)
+                values (fiche_id, elem_id);
+            end if;
+        end loop;
+
+    -- Referents
+    for elem in select trim(unnest(regexp_split_to_array(new.elu_referent, regex_split)))
+        loop
+            elem = trim(elem);
+            if elem <> '' then
+                insert into personne_tag (nom, collectivite_id)
+                values(elem, collectivite_id)
+                on conflict (nom, collectivite_id) do update set nom = elem
+                returning id into elem_id;
+
+                insert into fiche_action_referent (fiche_id, user_id, tag_id)
+                values (fiche_id, null, elem_id);
+            end if;
+        end loop;
+
+    -- Pilotes
+    for elem in select trim(unnest(regexp_split_to_array(new.personne_referente, regex_split)))
+        loop
+            elem = trim(elem);
+            if elem <> '' then
+                insert into personne_tag (nom, collectivite_id)
+                values(elem, collectivite_id)
+                on conflict (nom, collectivite_id) do update set nom = elem
+                returning id into elem_id;
+
+                insert into fiche_action_pilote (fiche_id, user_id, tag_id)
+                values (fiche_id, null, elem_id);
+            end if;
+            return new;
+        end loop;
+end;
+$$ language plpgsql;
+comment on function import_plan_action_csv is 'Fonction important un plan d action format csv';
+
+create trigger after_insert_import_csv
+    after insert
+    on
+        fiche_action_import_csv
+    for each row
+execute procedure import_plan_action_csv();
 
 COMMIT;
