@@ -7,6 +7,7 @@ import {
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useCreateFicheAction} from './FicheAction/data/useUpsertFicheAction';
 import {usePlansActionsListe} from './PlanAction/data/usePlansActionsListe';
+import {useCreatePlanAction} from './PlanAction/data/useUpsertAxe';
 
 const PlansActionsNavigation = () => {
   const collectivite_id = useCollectiviteId();
@@ -14,6 +15,8 @@ const PlansActionsNavigation = () => {
   const data = usePlansActionsListe(collectivite_id!);
 
   const {mutate: createFicheAction} = useCreateFicheAction();
+
+  const {mutate: createPlanAction} = useCreatePlanAction();
 
   if (!collectivite_id) return null;
 
@@ -36,7 +39,7 @@ const PlansActionsNavigation = () => {
                   target="_self"
                   aria-current="page"
                 >
-                  {plan.nom}
+                  {plan.nom && plan.nom.length >= 0 ? plan.nom : 'Sans titre'}
                 </NavLink>
               </li>
             ))}
@@ -55,6 +58,14 @@ const PlansActionsNavigation = () => {
           <li className="fr-sidemenu_item mt-6">
             <button className="fr-btn" onClick={() => createFicheAction()}>
               Créer une fiche action
+            </button>
+          </li>
+          <li className="fr-sidemenu_item mt-6">
+            <button
+              className="fr-btn fr-btn--secondary"
+              onClick={() => createPlanAction()}
+            >
+              Ajouter un plan d'action
             </button>
           </li>
         </ul>
