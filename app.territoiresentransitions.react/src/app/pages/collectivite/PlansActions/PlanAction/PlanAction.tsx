@@ -12,6 +12,7 @@ import {makeCollectivitePlanActionFicheUrl} from 'app/paths';
 import {usePlanAction} from './data/usePlanAction';
 import {useEditAxe} from './data/useEditAxe';
 import {TPlanAction} from './data/types/PlanAction';
+import Textarea from 'ui/shared/form/Textarea';
 
 type PlanActionProps = {
   plan: TPlanAction;
@@ -24,7 +25,7 @@ export const PlanAction = ({plan}: PlanActionProps) => {
 
   const [titre, setTitre] = useState(plan.nom);
 
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const handleEditButtonClick = () => {
     if (inputRef && inputRef.current) {
@@ -44,11 +45,10 @@ export const PlanAction = ({plan}: PlanActionProps) => {
   return (
     <div className="w-full">
       <div className="bg-indigo-400">
-        <h4 className="max-w-4xl flex items-center mx-auto m-0 py-8 px-10 text-white">
-          <input
+        <h4 className="group max-w-4xl flex items-center mx-auto m-0 py-8 px-10 text-white">
+          <Textarea
             ref={inputRef}
-            type="text"
-            className="w-full placeholder:text-white focus:placeholder:text-gray-200"
+            className="w-full placeholder:text-white focus:placeholder:text-gray-200 !outline-none !resize-none !text-2xl"
             value={titre}
             placeholder={'Sans titre'}
             onChange={evt => setTitre(evt.target.value)}
@@ -60,7 +60,7 @@ export const PlanAction = ({plan}: PlanActionProps) => {
             }
           />
           <button
-            className="fr-fi-edit-line w-10 h-10"
+            className="fr-fi-edit-line group-hover:block hidden w-8 h-8"
             onClick={handleEditButtonClick}
           />
         </h4>
