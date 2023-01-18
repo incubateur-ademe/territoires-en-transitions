@@ -3,7 +3,7 @@
 BEGIN;
 drop function import_plan_action_csv();
 drop function upsert_axe(nom text, collectivite_id integer, parent integer);
-drop table fiche_action_import_csv;
+drop table fiche_action_import_csv cascade;
 drop function plan_action(pa_id integer);
 drop function delete_fiche_action() cascade;
 drop function upsert_fiche_action() cascade;

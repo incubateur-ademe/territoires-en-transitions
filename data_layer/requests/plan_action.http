@@ -19,8 +19,8 @@ Content-Type: application/json
 
 ### Insérer un csv
 POST {{api}}/rest/v1/fiche_action_import_csv
-apikey: {{anon}}
-Authorization: Bearer {{auth_token}}
+apikey: {{service}}
+Authorization: Bearer {{service}}
 Prefer: params=multiple-objects, return=representation, resolution=merge-duplicates
 Content-Type: text/csv
 
