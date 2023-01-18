@@ -213,3 +213,4 @@ utilisateur/dcp [utilisateur/dcp@v2.1.1] 2023-01-30T16:24:43Z Amandine Jacquelin
 @v2.1.2 2023-02-01T14:42:06Z Florian <florian@derfurth.com> # Permet d'upsert les DCPs à partir de retool.
 
 labellisation/demande [labellisation/demande@v1.24.0] 2023-01-18T11:00:08Z Florian <florian@derfurth.com> # Permet de créer un audit lors d'une demande.
+labellisation/parcours [labellisation/parcours@v1.24.0] 2023-01-18T16:13:05Z Florian <florian@derfurth.com> # Ajoute des données au parcours.
