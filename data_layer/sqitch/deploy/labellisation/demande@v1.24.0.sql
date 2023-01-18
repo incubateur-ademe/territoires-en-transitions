@@ -4,35 +4,6 @@
 
 BEGIN;
 
-drop function labellisation_submit_demande;
-drop function labellisation_demande;
-
-alter table labellisation.demande
-    drop column sujet;
-
-drop type labellisation.sujet_demande;
-
-alter table labellisation.demande
-    disable row level security;
-
-alter table audit
-    alter column date_debut set not null;
-
-alter table audit
-    alter column date_debut set default CURRENT_TIMESTAMP;
-
-drop policy allow_insert
-    on labellisation.demande;
-
-drop policy allow_read
-    on labellisation.demande;
-
-drop policy allow_update
-    on labellisation.demande;
-
-drop trigger after_write_demande on labellisation.demande;
-drop function labellisation.validation_demande;
-
 create or replace function
     labellisation_demande(collectivite_id integer, referentiel referentiel, etoiles labellisation.etoile)
     returns labellisation.demande
@@ -82,7 +53,7 @@ from labellisation.demande ld
 where ld.collectivite_id = labellisation_submit_demande.collectivite_id
   and ld.referentiel = labellisation_submit_demande.referentiel
   and ld.etoiles = labellisation_submit_demande.etoiles
-$$ language sql security definer;
+$$ language sql security definer ;
 comment on function labellisation_submit_demande is
     'Soumet une demande de labellisation pour une collectivité, un référentiel et un nombre d''étoiles donnés.'
         'Met à jour ou créé une demande qui n''est pas en cours.';
