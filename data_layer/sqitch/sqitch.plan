@@ -227,3 +227,4 @@ utilisateur/visite [utilisateur/visite@v2.2.0] 2023-02-13T09:45:02Z Florian <flo
 @v2.3.0 2023-02-17T14:39:23Z Florian <florian@derfurth.com> # Améliorations de la fonctionnalité plan d'action
 
 labellisation/demande [labellisation/demande@v1.24.0] 2023-01-18T11:00:08Z Florian <florian@derfurth.com> # Permet de créer un audit lors d'une demande.
+labellisation/parcours [labellisation/parcours@v1.24.0] 2023-01-18T16:13:05Z Florian <florian@derfurth.com> # Ajoute des données au parcours.
