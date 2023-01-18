@@ -233,3 +233,4 @@ utilisateur/dcp [utilisateur/dcp@v2.2.2] 2023-02-16T14:10:59Z Marc Rutkowski <ma
 @v2.4.0 2023-02-21T08:30:02Z Florian <florian@derfurth.com> # Acceptation des CGU
 
 labellisation/demande [labellisation/demande@v1.24.0] 2023-01-18T11:00:08Z Florian <florian@derfurth.com> # Permet de créer un audit lors d'une demande.
+labellisation/parcours [labellisation/parcours@v1.24.0] 2023-01-18T16:13:05Z Florian <florian@derfurth.com> # Ajoute des données au parcours.
