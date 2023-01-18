@@ -8,6 +8,7 @@ import {makeCollectivitePlanActionFicheUrl} from 'app/paths';
 import {TFicheAction} from '../FicheAction/data/types/alias';
 import {TPlanAction} from './data/types/PlanAction';
 import {useEditAxe} from './data/useEditAxe';
+import Textarea from 'ui/shared/form/Textarea';
 
 type Props = {
   plan_id: number;
@@ -23,7 +24,7 @@ const PlanActionAxe = ({plan_id, axe, displayAxe}: Props) => {
   const [isEditable, setIsEditable] = useState(false);
   const [nom, setNom] = useState(axe.nom);
 
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const handleEditButtonClick = () => {
     setIsEditable(true);
@@ -38,7 +39,9 @@ const PlanActionAxe = ({plan_id, axe, displayAxe}: Props) => {
     <div>
       <div className="group relative flex items-center">
         <button
-          className="flex items-center py-3 pr-4 w-full"
+          className={classNames('flex items-center py-3 pr-4 w-full', {
+            'hover:!bg-none active:!bg-none': isEditable,
+          })}
           onClick={() => !isEditable && setIsOpen(!isOpen)}
         >
           <div
@@ -49,11 +52,10 @@ const PlanActionAxe = ({plan_id, axe, displayAxe}: Props) => {
               }
             )}
           />
-          <input
+          <Textarea
             ref={inputRef}
-            type="text"
             className={classNames(
-              'w-full mb-0 text-left disabled:cursor-pointer disabled:text-gray-900',
+              'w-full mb-0 text-left disabled:cursor-pointer disabled:text-gray-900 !text-base !outline-none !resize-none',
               {
                 'font-bold': isOpen && !isEditable,
                 'placeholder:text-gray-900': !isEditable,
@@ -75,7 +77,7 @@ const PlanActionAxe = ({plan_id, axe, displayAxe}: Props) => {
           />
         </button>
         <button
-          className="fr-fi-edit-line hidden group-hover:block p-2 text-gray-500 scale-90"
+          className="fr-fi-edit-line invisible group-hover:visible p-2 text-gray-500 scale-90"
           onClick={handleEditButtonClick}
         />
       </div>
