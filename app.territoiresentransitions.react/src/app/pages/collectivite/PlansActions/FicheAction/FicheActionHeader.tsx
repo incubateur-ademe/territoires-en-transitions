@@ -32,7 +32,7 @@ const FicheActionHeader = ({fiche}: TFicheActionHeader) => {
         <div className="flex items-center">
           {!fiche.axes ? (
             <Link
-              className="p-1 underline text-gray-500 !shadow-none hover:text-gray-600"
+              className="p-1 underline text-xs text-gray-500 !shadow-none hover:text-gray-600"
               to={() =>
                 makeCollectiviteFichesNonClasseesUrl({
                   collectiviteId: fiche.collectivite_id!,
