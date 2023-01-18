@@ -27,6 +27,7 @@ export const useDeleteFicheAction = () => {
   const history = useHistory();
 
   return useMutation(deleteFicheAction, {
+    meta: {disableToast: true},
     onSuccess: () => {
       queryClient.invalidateQueries(['fiches_non_classees', collectivite_id]);
       history.push(
