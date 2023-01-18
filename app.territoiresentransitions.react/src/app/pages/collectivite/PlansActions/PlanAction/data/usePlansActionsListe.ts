@@ -14,7 +14,8 @@ const fetchPlansActionsListe = async (
     .from('axe')
     .select()
     .eq('collectivite_id', collectivite_id)
-    .is('parent', null);
+    .is('parent', null)
+    .order('created_at', {ascending: true});
 
   const {error, data} = await query;
   if (error) {
