@@ -2,7 +2,7 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {useMutation, useQueryClient} from 'react-query';
 
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {TPlanActionAxeRow, TPlanActionAxeUpdate} from './types/alias';
+import {TPlanActionAxeRow} from './types/alias';
 import {useHistory} from 'react-router-dom';
 import {makeCollectivitePlanActionUrl} from 'app/paths';
 
