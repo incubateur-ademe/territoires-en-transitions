@@ -1240,6 +1240,7 @@ begin
         select pa.id
         from axe pa
         where pa.parent = plan_action.id
+        order by pa.created_at desc
         loop
             enfants[id_loop] = plan_action(pa_enfant_id);
             id_loop = id_loop + 1;
