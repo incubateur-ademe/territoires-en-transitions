@@ -1323,54 +1323,44 @@ declare
     fiche_id integer;
     elem_id integer;
     elem text;
-    collectivite_id integer;
-    date_d timestamp;
-    date_f timestamp;
+    col_id integer;
     regex_split text = E'\(et/ou|[–,/+?&;]| - | -|- |^-| et (?!de)\)(?![^(]*[)])(?![^«]*[»])';
     regex_date text = E'^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[012])/([0-9]{4})$';
 begin
-    collectivite_id = new.collectivite_id::integer;
+    col_id = new.collectivite_id::integer;
 
     -- Fiche action
-    if regexp_match(new.date_debut, regex_date) is not null then
-        date_d = to_date(trim(new.date_debut), 'DD/MM/YYYY');
-    else
-        date_d = null;
-    end if;
-    if regexp_match(new.date_fin, regex_date) is not null then
-        date_f = to_date(trim(new.date_fin), 'DD/MM/YYYY');
-    else
-        date_f = null;
-    end if;
     insert into fiche_action (titre, description, piliers_eci, objectifs, resultats_attendus, cibles, ressources, financements, budget_previsionnel, statut, niveau_priorite, date_debut, date_fin_provisoire, amelioration_continue, calendrier, notes_complementaires, maj_termine, collectivite_id)
     values (
-               left(concat(new.num_action, ' - ', trim(new.titre)), 300),
-               new.description, null,
+               left(case when new.num_action ='' then trim(new.titre) else concat(new.num_action, ' - ', trim(new.titre)) end, 300),
+               new.description,
+               null,
                new.objectifs,
-               array[]::fiche_action_resultats_attendus[],
-               regexp_split_to_array(new.cibles, '-')::fiche_action_cibles[],
+               case when new.resultats_attendus <> '' then regexp_split_to_array(new.resultats_attendus, '-')::fiche_action_resultats_attendus[] else array[]::fiche_action_resultats_attendus[] end,
+               case when new.cibles <> '' then regexp_split_to_array(new.cibles, '-')::fiche_action_cibles[] else array[]::fiche_action_cibles[] end,
                new.moyens,
                new.financements,
-               new.budget::integer,
-               trim(new.statut)::fiche_action_statuts,
-               trim(new.priorite)::fiche_action_niveaux_priorite,
-               date_d,
-               date_f,
+               case when new.budget <> '' then new.budget::integer end,
+               case when new.statut <> '' then trim(new.statut)::fiche_action_statuts end,
+               case when new.priorite <> '' then trim(new.priorite)::fiche_action_niveaux_priorite end,
+               case when regexp_match(new.date_debut, regex_date) is not null then to_date(trim(new.date_debut), 'DD/MM/YYYY') end,
+               case when regexp_match(new.date_fin, regex_date) is not null then to_date(trim(new.date_fin), 'DD/MM/YYYY') end,
                not (new.amelioration_continue = 'FAUX'),
-               new.calendrier, new.notes,
+               new.calendrier,
+               new.notes,
                true,
-               collectivite_id)
+               col_id)
     returning id into fiche_id;
 
     -- Plan et axes
     if new.plan_nom is not null and trim(new.plan_nom) <> '' then
-        axe_id = upsert_axe(new.plan_nom, collectivite_id, null);
+        axe_id = upsert_axe(new.plan_nom, col_id, null);
         if new.axe is not null and trim(new.axe) <> '' then
-            axe_id = upsert_axe(new.axe, collectivite_id, axe_id);
+            axe_id = upsert_axe(new.axe, col_id, axe_id);
             if new.sous_axe is not null and trim(new.sous_axe) <> '' then
-                axe_id = upsert_axe(new.sous_axe, collectivite_id, axe_id);
+                axe_id = upsert_axe(new.sous_axe, col_id, axe_id);
                 if new.sous_sous_axe is not null and trim(new.sous_sous_axe) <> '' then
-                    axe_id = upsert_axe(new.sous_sous_axe, collectivite_id, axe_id);
+                    axe_id = upsert_axe(new.sous_sous_axe, col_id, axe_id);
                 end if;
             end if;
         end if;
@@ -1384,7 +1374,7 @@ begin
         loop
             if elem <> '' then
                 insert into partenaire_tag (nom, collectivite_id)
-                values(elem, collectivite_id)
+                values(elem, col_id)
                 on conflict (nom, collectivite_id) do update set nom = elem
                 returning id into elem_id;
 
@@ -1399,7 +1389,7 @@ begin
             elem = trim(elem);
             if elem <> '' then
                 insert into structure_tag (nom, collectivite_id)
-                values(elem, collectivite_id)
+                values(elem, col_id)
                 on conflict (nom, collectivite_id) do update set nom = elem
                 returning id into elem_id;
 
@@ -1414,7 +1404,7 @@ begin
             elem = trim(elem);
             if elem <> '' then
                 insert into personne_tag (nom, collectivite_id)
-                values(elem, collectivite_id)
+                values(elem, col_id)
                 on conflict (nom, collectivite_id) do update set nom = elem
                 returning id into elem_id;
 
@@ -1429,7 +1419,7 @@ begin
             elem = trim(elem);
             if elem <> '' then
                 insert into personne_tag (nom, collectivite_id)
-                values(elem, collectivite_id)
+                values(elem, col_id)
                 on conflict (nom, collectivite_id) do update set nom = elem
                 returning id into elem_id;
 
