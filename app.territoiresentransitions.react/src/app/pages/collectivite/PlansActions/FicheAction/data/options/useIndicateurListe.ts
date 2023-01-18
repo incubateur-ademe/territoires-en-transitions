@@ -12,7 +12,8 @@ const fetchIndicateurListe = async (
   const query = supabaseClient
     .from('indicateurs_collectivite')
     .select()
-    .or(`collectivite_id.is.null, collectivite_id.eq.${collectivite_id}`);
+    .or(`collectivite_id.is.null, collectivite_id.eq.${collectivite_id}`)
+    .order('nom', {ascending: true});
 
   const {error, data} = await query;
 
