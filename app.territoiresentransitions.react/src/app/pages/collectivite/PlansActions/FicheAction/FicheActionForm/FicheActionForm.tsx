@@ -229,6 +229,7 @@ const FicheActionForm = ({fiche}: TFicheActionForm) => {
           <FormField label="Date de fin prévisionnelle">
             <FicheActionFormDateInput
               initialValue={fiche.date_fin_provisoire}
+              disabled={fiche.amelioration_continue ?? false}
               onBlur={e =>
                 updateFiche({
                   ...fiche,
@@ -239,12 +240,13 @@ const FicheActionForm = ({fiche}: TFicheActionForm) => {
             />
             <Checkbox
               label="Action en amélioration continue, sans date de fin"
-              onCheck={() =>
+              onCheck={() => {
                 updateFiche({
                   ...fiche,
                   amelioration_continue: !fiche.amelioration_continue,
-                })
-              }
+                  date_fin_provisoire: null,
+                });
+              }}
               checked={fiche.amelioration_continue ?? false}
             />
           </FormField>
