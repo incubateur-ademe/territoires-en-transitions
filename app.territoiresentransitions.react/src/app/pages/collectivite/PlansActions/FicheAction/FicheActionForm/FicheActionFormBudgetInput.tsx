@@ -27,7 +27,7 @@ const FicheActionFormBudgetInput = <T extends HTMLInputElement>({
         ref={inputBudgetRef}
         type="text"
         id="budget-previsionnel"
-        className="w-28 py-1 px-3 text-sm rounded-md focus:!outline focus:!outline-1 focus:outline-blue-500"
+        className="w-52 py-1 px-3 text-sm rounded-md focus:!outline focus:!outline-1 focus:outline-blue-500"
         value={value}
         onChange={e => setValue(e.target.value.replace(',', '.'))}
         onBlur={onBlur}
