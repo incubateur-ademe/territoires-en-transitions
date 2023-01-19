@@ -249,8 +249,9 @@ exports[`Storyshots app/Layout Exemple 1`] = `
           >
             <a
               className="fr-footer__bottom-link"
-              href="https://territoiresentransitions.fr/mentions-legales/"
-              target="_self"
+              href="https://territoiresentransitions.fr/mentions"
+              rel="noopener noreferrer"
+              target="_blank"
             >
               Mentions légales
             </a>
@@ -272,8 +273,9 @@ exports[`Storyshots app/Layout Exemple 1`] = `
           >
             <a
               className="fr-footer__bottom-link"
-              href="/statistics"
-              onClick={[Function]}
+              href="https://territoiresentransitions.fr/stats"
+              rel="noopener noreferrer"
+              target="_blank"
             >
               Statistiques
             </a>
