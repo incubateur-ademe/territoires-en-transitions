@@ -2,11 +2,75 @@
 
 BEGIN;
 
-drop view retool_preuves;
-drop view preuve;
+-- répare les anciennes permissions
+do
+$$
+    declare
+        name text;
+    begin
+        -- Pour chaque type, et donc chaque table nommée preuve_[type]
+        for name in (values ('complementaire'), ('reglementaire'), ('labellisation'), ('rapport'))
+            loop
+                -- On drop les anciennes policies
+                execute format('drop policy if exists allow_read on preuve_%I;', name);
+                execute format('drop policy if exists allow_insert on preuve_%I;', name);
+                execute format('drop policy if exists allow_update on preuve_%I;', name);
+                execute format('drop policy if exists allow_delete on preuve_%I;', name);
+
+                --- Tous les membres de Territoires en transitions peuvent lire.
+                execute format('create policy allow_read
+                    on preuve_%I for select
+                    using (is_authenticated());', name);
+                --- Seuls les membres ayant un accès en édition peuvent écrire.
+                execute format('create policy allow_insert
+                    on preuve_%I for insert
+                    with check (have_edition_acces(collectivite_id));', name);
+                execute format('create policy allow_update
+                    on preuve_%I for update
+                    using (have_edition_acces(collectivite_id));', name);
+                execute format('create policy allow_delete
+                    on preuve_%I for delete
+                    using (have_edition_acces(collectivite_id));', name);
+            end loop;
+    end;
+$$;
+
+alter type preuve_type add value if not exists 'audit' after 'labellisation';
+
+-- commit la transaction pour utiliser le nouveau type de preuve
+commit;
+
+begin;
+
+create table preuve_audit
+(
+    id       serial primary key,
+    like labellisation.preuve_base including all,
+    audit_id integer references audit not null
+);
+alter table preuve_audit
+    enable row level security;
+comment on table preuve_audit is
+    'Permet de stocker les rapports d''audit';
+
+create policy allow_read
+    on preuve_audit for select using (is_authenticated());
+create policy allow_insert
+    on preuve_audit for insert
+    -- seuls les auditeurs peuvent ajouter les preuves d'audit.
+    with check (have_edition_acces(collectivite_id) and est_auditeur(collectivite_id));
+create policy allow_update
+    on preuve_audit for update
+    -- seuls les auditeurs peuvent éditer les preuves d'audit.
+    using (have_edition_acces(collectivite_id) and est_auditeur(collectivite_id));
+create policy allow_delete
+    on preuve_audit for delete
+    -- seuls les auditeurs peuvent supprimer les preuves d'audit.
+    using (have_edition_acces(collectivite_id) and est_auditeur(collectivite_id));
+
 
 -- La vue utilisée par le client qui regroupe tout les types de preuves.
-create view preuve
+create or replace view preuve
 as
 -- Les preuves complémentaires.
 select -- champs communs
@@ -125,20 +189,6 @@ from preuve_rapport p
          left join labellisation.bibliotheque_fichier_snippet fs on fs.id = p.fichier_id
 ;
 
-create view retool_preuves
-as
-select preuve.collectivite_id,
-       nc.nom,
-       action ->> 'referentiel' as referentiel,
-       action ->> 'identifiant' as action,
-       preuve_type,
-       fichier ->> 'filename'   as fichier,
-       lien ->> 'url'           as lien,
-       created_at
-from preuve
-         join named_collectivite nc on nc.collectivite_id = preuve.collectivite_id
-    and created_at is not null
-where is_service_role()
-order by collectivite_id, referentiel, naturalsort(action ->> 'identifiant');
+
 
 COMMIT;
