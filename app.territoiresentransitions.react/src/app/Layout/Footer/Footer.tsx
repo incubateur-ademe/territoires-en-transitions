@@ -77,8 +77,9 @@ const Footer = () => {
             <li className="fr-footer__bottom-item">
               <a
                 className="fr-footer__bottom-link"
-                href="https://territoiresentransitions.fr/mentions-legales/"
-                target="_self"
+                href="https://territoiresentransitions.fr/mentions"
+                rel="noopener noreferrer"
+                target="_blank"
               >
                 Mentions légales
               </a>
@@ -94,9 +95,14 @@ const Footer = () => {
               </a>
             </li>
             <li className="fr-footer__bottom-item">
-              <Link className="fr-footer__bottom-link" to="/statistics">
+              <a
+                className="fr-footer__bottom-link"
+                href="https://territoiresentransitions.fr/stats"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
                 Statistiques
-              </Link>
+              </a>
             </li>
           </ul>
         </div>
