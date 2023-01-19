@@ -202,3 +202,5 @@ stats/vues_BI [stats/vues_BI@v1.23.0] 2023-01-12T08:15:17Z Florian <florian@derf
 plan_action/plan_action [plan_action/plan_action@v1.10.0] 2022-11-16T15:11:47Z Amandine Jacquelin <conta@LanceLibre> # Refonte des tables fiches et plans action
 stats/vues_BI [stats/vues_BI@v1.24.0] 2023-01-12T14:55:10Z Florian <florian@derfurth.com> # Vues stats des nouveaux plans d'action
 @v2.0.0 2023-01-19T14:03:06Z Florian <florian@derfurth.com> # Plans d'action v2
+
+labellisation/preuve_v2 [labellisation/preuve_v2@v2.0.0] 2023-01-19T14:40:16Z Florian <florian@derfurth.com> # Regroupe les preuves audit même celles qui concernent une labellisation.
