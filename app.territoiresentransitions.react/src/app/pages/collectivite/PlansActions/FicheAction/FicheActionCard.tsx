@@ -27,7 +27,7 @@ const FicheActionCard = ({ficheAction, link}: TFicheActionCard) => {
               )}
               {ficheAction.pilotes && (
                 <span>
-                  Pilote:{' '}
+                  Pilote{ficheAction.pilotes.length > 1 && 's'}:{' '}
                   {ficheAction.pilotes?.map(
                     (pilote: any, index, array) =>
                       `${pilote.nom}${index < array.length - 1 ? ', ' : ''}`
