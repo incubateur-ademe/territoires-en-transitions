@@ -2,8 +2,8 @@
 
 BEGIN;
 
-drop view stats_evolution_collectivite_avec_minimum_fiches;
-drop materialized view stats.evolution_collectivite_avec_minimum_fiches;
+drop view if exists stats_evolution_collectivite_avec_minimum_fiches;
+drop materialized view if exists stats.evolution_collectivite_avec_minimum_fiches;
 
 create materialized view stats.evolution_collectivite_avec_minimum_fiches
 as
@@ -25,8 +25,8 @@ as
 select mois, collectivites
 from stats.evolution_collectivite_avec_minimum_fiches;
 
-drop view stats_evolution_nombre_fiches;
-drop materialized view stats.evolution_nombre_fiches;
+drop view if exists stats_evolution_nombre_fiches;
+drop materialized view if exists stats.evolution_nombre_fiches;
 
 create materialized view stats.evolution_nombre_fiches
 as
@@ -43,7 +43,7 @@ as
 select mois, fiches
 from stats.evolution_nombre_fiches;
 
-drop materialized view stats.collectivite_plan_action;
+drop materialized view if exists stats.collectivite_plan_action;
 
 -- non réversible car dépendante du plan d'action.
 --
