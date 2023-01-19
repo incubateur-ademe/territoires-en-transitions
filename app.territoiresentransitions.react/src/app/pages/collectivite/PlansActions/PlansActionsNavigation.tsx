@@ -21,7 +21,7 @@ const PlansActionsNavigation = () => {
   if (!collectivite_id) return null;
 
   return (
-    <nav className="fr-sidemenu flex w-max py-8 md:px-8 border-r border-gray-100 whitespace-nowrap">
+    <nav className="fr-sidemenu flex w-80 shrink-0 py-8 md:px-8 border-r border-gray-100">
       <div className="fr-sidemenu-wrapper">
         <ul className="fr-sidemenu_list">
           {data &&
