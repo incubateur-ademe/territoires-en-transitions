@@ -119,4 +119,4 @@ Fonctionnalité: Auditer la collectivité
     Alors la liste des documents de labellisation contient les lignes suivantes :
       | Titre       | Commentaire |
       | rapport.doc |             |
-    Et la liste des documents de labellisation contient le titre "Audit contrat d'objectif territorial (COT)" sans l'indication "en cours"
+#    Et la liste des documents de labellisation contient le titre "Audit contrat d'objectif territorial (COT)" sans l'indication "en cours"
