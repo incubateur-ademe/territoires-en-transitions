@@ -1,4 +1,3 @@
-import {Link} from 'react-router-dom';
 import LogoRepubliqueFrancaise from 'ui/logo/LogoRepubliqueFrancaise';
 import ademeLogoImage from 'app/static/img/ademe.jpg';
 
