@@ -41,7 +41,7 @@ const FicheActionForm = ({fiche}: TFicheActionForm) => {
 
   return (
     <div className="flex flex-col gap-6">
-      <Section icon={<PictoInformation />} title="Présentation">
+      <Section isDefaultOpen icon={<PictoInformation />} title="Présentation">
         <FormField
           label="Nom de la fiche"
           hint="Exemple : 1.3.2.5 Limiter les émissions liées au chauffage résidentiel au bois"

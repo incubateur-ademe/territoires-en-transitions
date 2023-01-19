@@ -2,13 +2,14 @@ import classNames from 'classnames';
 import {useState} from 'react';
 
 type Props = {
+  isDefaultOpen?: boolean;
   title: string;
   icon: React.ReactNode;
   children: React.ReactNode;
 };
 
-const Section = ({icon, title, children}: Props) => {
-  const [isOpen, setIsOpen] = useState(false);
+const Section = ({isDefaultOpen, icon, title, children}: Props) => {
+  const [isOpen, setIsOpen] = useState(isDefaultOpen);
 
   return (
     <div className="rounded-lg border border-gray-300">
