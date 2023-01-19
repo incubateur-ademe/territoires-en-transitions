@@ -1,4 +1,4 @@
-import {useQueries, useQuery, useQueryClient} from 'react-query';
+import {useQuery, useQueryClient} from 'react-query';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {supabaseClient} from 'core-logic/api/supabase';
@@ -53,7 +53,7 @@ export const DownloadDocs = (props: TDownloadDocsProps) => {
 
 /**
  * Renvoie une instance de `useQuery` permettant de déclencher (en appelant la
- * fonction `refetch`) la génération et le téléchargement d'un zip et contenant
+ * fonction `refetch`) la génération et le téléchargement d'un zip contenant
  * tous les fichiers associés à une sous-action.
  */
 const useDownloadDocs = (action: ActionDefinitionSummary) => {
@@ -74,58 +74,54 @@ const useDownloadDocs = (action: ActionDefinitionSummary) => {
     }, {} as Record<string, TFichier>)
   );
 
-  // génère les URLs de téléchargement
-  const signedUrls = useSignedUrls(fichiers);
-  // et le nom du fichier cible
+  // le nom du fichier cible
   const filename = `${referentiel}_${identifiant}_${nom}.zip`;
 
-  const canFetch = collectivite && signedUrls?.length;
+  const canFetch = collectivite && fichiers?.length;
 
-  // appelle le endpoint de génération du zip
+  // pour déclencher la génération du zip
   const query = useQuery(
-    ['zip-action', signedUrls],
+    ['zip-action', fichiers],
     async ({signal}) => {
-      if (canFetch) {
-        const response = await fetch(URL, {
-          signal,
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({signedUrls}),
-        });
-        // sauvegarde si le téléchargement a réussi
-        if (response.status === 200) {
-          const blob = await response.blob();
-          await saveBlob(blob, filename);
+      if (collectivite) {
+        // génère les URLs de téléchargement
+        const signedUrls = await getSignedUrls(fichiers);
+        if (signedUrls?.length) {
+          // et appelle le endpoint de génération du zip
+          const response = await fetch(URL, {
+            signal,
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({signedUrls}),
+          });
+          // sauvegarde le fichier si le téléchargement a réussi
+          if (response.status === 200) {
+            const blob = await response.blob();
+            await saveBlob(blob, filename);
+          }
         }
       }
     },
-    {enabled: false}
+    {enabled: false, staleTime: 0}
   );
 
   return canFetch ? query : null;
 };
 
 // crée une url signée temporaire pour chaque fichier
-// on n'utilise pas `createSignedUrls` (au pluriel) car cela semble ne pas
-// fonctionner correctement en environnement local (mais fonctionne sur sandbox)
-const useSignedUrls = (fichiers: TFichier[]) => {
-  return useQueries(
-    fichiers.map(({bucket_id, hash}) => {
-      return {
-        queryKey: ['signed-urls', bucket_id, hash],
-        queryFn: () =>
-          supabaseClient.storage
-            .from(bucket_id)
-            .createSignedUrl(hash, LINKS_EXPIRES_IN_SEC),
-        staleTime: LINKS_EXPIRES_IN_SEC * 1000,
-      };
-    })
-  )
-    .map((reply, index) => {
-      const {data} = reply;
+const getSignedUrls = async (fichiers: TFichier[]) => {
+  const signedUrls = await Promise.all(
+    fichiers.map(({bucket_id, hash}) =>
+      supabaseClient.storage
+        .from(bucket_id)
+        .createSignedUrl(hash, LINKS_EXPIRES_IN_SEC)
+    )
+  );
+  return signedUrls
+    .map(({data}, index) => {
       return {
         filename: fichiers[index].filename,
-        url: data?.data?.signedUrl || null,
+        url: data?.signedUrl || null,
       };
     })
     .filter(fichier => Boolean(fichier.url));
