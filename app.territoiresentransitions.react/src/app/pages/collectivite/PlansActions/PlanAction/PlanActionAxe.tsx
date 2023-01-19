@@ -8,7 +8,7 @@ import {makeCollectivitePlanActionFicheUrl} from 'app/paths';
 import {TFicheAction} from '../FicheAction/data/types/alias';
 import {TPlanAction} from './data/types/PlanAction';
 import {useEditAxe} from './data/useEditAxe';
-import Textarea from 'ui/shared/form/Textarea';
+import TextareaControlled from 'ui/shared/form/TextareaControlled';
 
 type Props = {
   plan_id: number;
@@ -22,7 +22,6 @@ const PlanActionAxe = ({plan_id, axe, displayAxe}: Props) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const [isEditable, setIsEditable] = useState(false);
-  const [nom, setNom] = useState(axe.nom);
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -52,7 +51,27 @@ const PlanActionAxe = ({plan_id, axe, displayAxe}: Props) => {
               }
             )}
           />
-          <Textarea
+          <TextareaControlled
+            ref={inputRef}
+            className={classNames(
+              'w-full mb-0 text-left disabled:cursor-pointer disabled:text-gray-900 !text-base !outline-none !resize-none',
+              {
+                'font-bold': isOpen && !isEditable,
+                'placeholder:text-gray-900': !isEditable,
+              }
+            )}
+            initialValue={axe.nom}
+            placeholder={'Sans titre'}
+            disabled={!isEditable}
+            onBlur={e => {
+              e.target.value &&
+                e.target.value.length > 0 &&
+                e.target.value !== axe.nom &&
+                updatePlan({id: axe.id, nom: e.target.value ?? null});
+              setIsEditable(false);
+            }}
+          />
+          {/* <Textarea
             ref={inputRef}
             className={classNames(
               'w-full mb-0 text-left disabled:cursor-pointer disabled:text-gray-900 !text-base !outline-none !resize-none',
@@ -74,7 +93,7 @@ const PlanActionAxe = ({plan_id, axe, displayAxe}: Props) => {
                 updatePlan({id: axe.id, nom: nom ?? null});
               setIsEditable(false);
             }}
-          />
+          /> */}
         </button>
         <button
           className="fr-fi-edit-line invisible group-hover:visible p-2 text-gray-500 scale-90"
