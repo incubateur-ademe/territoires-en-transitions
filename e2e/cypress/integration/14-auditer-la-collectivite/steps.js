@@ -1,5 +1,6 @@
 /// <reference types="Cypress" />
 import '../05-modifier-etat-avancement/steps';
+import '../12-utiliser-la-bibliotheque/steps';
 import {LocalSelectors as LocalSelectorsPreuves} from '../04-associer-des-preuves-aux-actions/selectors';
 import {LocalSelectors as LocalSelectorsStatut} from '../05-modifier-etat-avancement/selectors';
 import {LocalSelectors} from './selectors';
@@ -101,4 +102,13 @@ When("l'en-tête contient {string}", text =>
 
 When("l'en-tête ne contient pas de message", text =>
   cy.get('[data-test=HeaderMessage]').should('not.exist')
+);
+
+When(
+  `la liste des documents de labellisation contient le titre {string} sans l'indication {string}`,
+  (titre, indication) => {
+    cy.get('[data-test=labellisation]')
+      .should('contain.text', titre)
+      .should('not.contain.text', indication);
+  }
 );

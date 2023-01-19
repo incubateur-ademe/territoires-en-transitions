@@ -90,6 +90,9 @@ Fonctionnalité: Auditer la collectivité
   Scénario: Ajouter un rapport et valider l'audit
     Etant donné que je suis connecté en tant que "youlou"
 
+    Quand je suis sur la page "Bibliothèque de documents" de la collectivité "1"
+    Alors il n'y a pas de documents de labellisation
+
     Quand je suis sur la page "Labellisation ECi" de la collectivité "1"
     Alors le bouton "Valider l'audit" est visible
     Et l'en-tête ne contient pas de message
@@ -112,3 +115,8 @@ Fonctionnalité: Auditer la collectivité
     Et le bouton "Valider l'audit" est absent
     Et l'en-tête contient "Labellisation en cours"
 
+    Quand je suis sur la page "Bibliothèque de documents" de la collectivité "1"
+    Alors la liste des documents de labellisation contient les lignes suivantes :
+      | Titre       | Commentaire |
+      | rapport.doc |             |
+    Et la liste des documents de labellisation contient le titre "Audit contrat d'objectif territorial (COT)" sans l'indication "en cours"
