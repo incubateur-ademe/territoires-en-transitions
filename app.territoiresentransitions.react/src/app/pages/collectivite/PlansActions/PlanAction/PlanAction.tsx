@@ -1,4 +1,4 @@
-import {useRef, useState} from 'react';
+import {useRef} from 'react';
 import {useParams} from 'react-router-dom';
 
 import PlanActionHeader from './PlanActionHeader';
@@ -12,7 +12,7 @@ import {makeCollectivitePlanActionFicheUrl} from 'app/paths';
 import {usePlanAction} from './data/usePlanAction';
 import {useEditAxe} from './data/useEditAxe';
 import {TPlanAction} from './data/types/PlanAction';
-import Textarea from 'ui/shared/form/Textarea';
+import TextareaControlled from 'ui/shared/form/TextareaControlled';
 
 type PlanActionProps = {
   plan: TPlanAction;
@@ -22,8 +22,6 @@ export const PlanAction = ({plan}: PlanActionProps) => {
   const collectivite_id = useCollectiviteId();
 
   const {mutate: updatePlan} = useEditAxe(plan.id);
-
-  const [titre, setTitre] = useState(plan.nom);
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -46,17 +44,16 @@ export const PlanAction = ({plan}: PlanActionProps) => {
     <div className="w-full">
       <div className="bg-indigo-400">
         <h4 className="group max-w-4xl flex items-center mx-auto m-0 py-8 px-10 text-white">
-          <Textarea
+          <TextareaControlled
             ref={inputRef}
             className="w-full placeholder:text-white focus:placeholder:text-gray-200 !outline-none !resize-none !text-2xl"
-            value={titre}
+            initialValue={plan.nom}
             placeholder={'Sans titre'}
-            onChange={evt => setTitre(evt.target.value)}
-            onBlur={() =>
-              titre &&
-              titre.length > 0 &&
-              titre !== plan.nom &&
-              updatePlan({id: plan.id, nom: titre})
+            onBlur={e =>
+              e.target.value &&
+              e.target.value.length > 0 &&
+              e.target.value !== plan.nom &&
+              updatePlan({id: plan.id, nom: e.target.value})
             }
           />
           <button
