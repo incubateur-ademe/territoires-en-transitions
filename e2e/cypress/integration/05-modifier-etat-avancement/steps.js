@@ -27,11 +27,18 @@ When('les scores sont affichés avec les valeurs suivantes :', dataTable => {
 When(
   /j'assigne la valeur "([^"]+)" à l'état d'avancement de la tâche "([^"]+)"/,
   (avancement, tache) => {
+    // le composant ne doit pas être désactivé
+    cy.get(`[data-test="task-${tache}"] .MuiInput-root`).should(
+      'not.have.class',
+      'Mui-disabled'
+    );
     // ouvre le composant Select
     cy.get(`[data-test="task-${tache}"]`).click();
+    // la liste déroulante doit être visible
+    cy.get('.MuiPaper-root').should('be.visible');
     // et sélectionne l'option voulue
     cy.get(
-      `.MuiPopover-root [role=option][data-value=${avancementToValue[avancement]}]`
+      `.MuiPaper-root [role=option][data-value="${avancementToValue[avancement]}"]`
     ).click();
   }
 );
