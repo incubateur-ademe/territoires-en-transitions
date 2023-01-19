@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Storyshots app/pages/collectivite/Audit/ValiderAudit Audit Labellisation 1`] = `
-<div>
+<div
+  data-test="ValiderAuditModal"
+>
   <h4>
     Valider l'audit
   </h4>
@@ -31,6 +33,7 @@ exports[`Storyshots app/pages/collectivite/Audit/ValiderAudit Audit Labellisatio
   >
     <button
       className="fr-btn fr-btn--sm fr-mr-2w"
+      data-test="validate"
       disabled={true}
       onClick={[Function]}
     >
@@ -47,7 +50,9 @@ exports[`Storyshots app/pages/collectivite/Audit/ValiderAudit Audit Labellisatio
 `;
 
 exports[`Storyshots app/pages/collectivite/Audit/ValiderAudit Audit Sans Labellisation 1`] = `
-<div>
+<div
+  data-test="ValiderAuditModal"
+>
   <h4>
     Valider l'audit
   </h4>
@@ -77,6 +82,7 @@ exports[`Storyshots app/pages/collectivite/Audit/ValiderAudit Audit Sans Labelli
   >
     <button
       className="fr-btn fr-btn--sm fr-mr-2w"
+      data-test="validate"
       disabled={true}
       onClick={[Function]}
     >
