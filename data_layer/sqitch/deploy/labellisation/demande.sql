@@ -17,7 +17,8 @@ alter table labellisation.demande
     add column sujet labellisation.sujet_demande
         default 'cot' not null;
 
-alter table labellisation.demande enable row level security;
+alter table labellisation.demande
+    enable row level security;
 
 alter table audit
     alter column date_debut drop not null;
@@ -28,17 +29,17 @@ alter table audit
 create policy allow_read
     on labellisation.demande
     for select
-    using(is_authenticated());
+    using (is_authenticated());
 
 create policy allow_insert
     on labellisation.demande
     for insert
-    with check(have_edition_acces(collectivite_id));
+    with check (have_edition_acces(collectivite_id));
 
 create policy allow_update
     on labellisation.demande
     for update
-    using(have_edition_acces(collectivite_id));
+    using (have_edition_acces(collectivite_id));
 
 create function
     labellisation.validation_demande()
@@ -70,19 +71,17 @@ create function
     labellisation_demande(
     collectivite_id integer,
     referentiel referentiel,
-    etoiles labellisation.etoile,
-    sujet labellisation.sujet_demande
+    etoiles labellisation.etoile
 )
     returns labellisation.demande
 begin
     atomic
     with data as (select labellisation_demande.collectivite_id,
                          labellisation_demande.referentiel,
-                         labellisation_demande.etoiles,
-                         labellisation_demande.sujet
+                         labellisation_demande.etoiles
                   where have_edition_acces(labellisation_demande.collectivite_id))
     insert
-    into labellisation.demande (collectivite_id, referentiel, etoiles, sujet)
+    into labellisation.demande (collectivite_id, referentiel, etoiles)
     select *
     from data
     on conflict do nothing;
@@ -97,21 +96,29 @@ comment on function labellisation_demande is
     'Renvoie la demande de labellisation pour une collectivité, un référentiel et un nombre d''étoiles donnés.'
         'Crée une demande en cours si aucune demande correspondante n''existe.';
 
+drop function labellisation_submit_demande;
 create or replace function
-    labellisation_submit_demande(collectivite_id integer, referentiel referentiel, etoiles labellisation.etoile)
+    labellisation_submit_demande(
+    collectivite_id integer,
+    referentiel referentiel,
+    etoiles labellisation.etoile,
+    sujet labellisation.sujet_demande
+)
     returns labellisation.demande
 begin
     atomic
     with data as (select labellisation_submit_demande.collectivite_id,
                          labellisation_submit_demande.referentiel,
-                         labellisation_submit_demande.etoiles
+                         labellisation_submit_demande.etoiles,
+                         labellisation_submit_demande.sujet
                   where is_any_role_on(labellisation_submit_demande.collectivite_id))
 
     insert
-    into labellisation.demande (collectivite_id, referentiel, etoiles, en_cours)
+    into labellisation.demande (collectivite_id, referentiel, etoiles, sujet, en_cours)
     select *, false
     from data
-    on conflict (collectivite_id, referentiel, etoiles) do update set en_cours = false;
+    on conflict (collectivite_id, referentiel, etoiles) do update set en_cours = excluded.en_cours,
+                                                                      sujet    = excluded.sujet;
 
     select *
     from labellisation.demande ld

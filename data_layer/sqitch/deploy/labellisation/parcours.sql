@@ -3,19 +3,22 @@
 
 BEGIN;
 
+drop function labellisation_parcours;
+
 create or replace function
     labellisation_parcours(collectivite_id integer)
     returns table
             (
-                referentiel            referentiel,
-                etoiles                labellisation.etoile,
-                completude_ok          boolean,
-                critere_score          jsonb,
-                criteres_action        jsonb,
-                rempli                 boolean,
-                calendrier             text,
-                derniere_demande       jsonb,
-                derniere_labellisation jsonb
+                referentiel     referentiel,
+                etoiles         labellisation.etoile,
+                completude_ok   boolean,
+                critere_score   jsonb,
+                criteres_action jsonb,
+                rempli          boolean,
+                calendrier      text,
+                demande         jsonb,
+                labellisation   jsonb,
+                audit           jsonb
             )
     security definer
 begin
@@ -70,22 +73,9 @@ begin
            criteres.atteints and cs.atteint and cf.atteint as rempli,
            calendrier.information,
 
-           case
-               when demande.etoiles is null
-                   then null
-               else jsonb_build_object(
-                       'demandee_le', demande.date,
-                       'etoiles', demande.etoiles,
-                       'sujet', demande.sujet,
-                       'audit', to_jsonb(audit)
-                   )
-               end                                         as derniere_demande,
-
-           case
-               when obtention.etoiles is null
-                   then null
-               else jsonb_build_object('obtenue_le', obtention.date, 'etoiles', obtention.etoiles)
-               end                                         as derniere_labellisation
+           to_jsonb(demande),
+           to_jsonb(labellisation),
+           to_jsonb(audit)
 
     from etoiles as e
              join criteres on criteres.referentiel = e.referentiel
@@ -107,10 +97,10 @@ begin
                                 from audit a
                                 where a.demande_id = demande.id) audit on true
 
-             left join lateral (select l.obtenue_le as date, l.etoiles
+             left join lateral (select l.*
                                 from labellisation l
                                 where l.collectivite_id = labellisation_parcours.collectivite_id
-                                  and l.referentiel = e.referentiel) obtention on true;
+                                  and l.referentiel = e.referentiel) labellisation on true;
 end;
 comment on function labellisation_parcours is
     'Renvoie le parcours de labellisation de chaque référentiel pour une collectivité donnée.';
