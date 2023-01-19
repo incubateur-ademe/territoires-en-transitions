@@ -3,6 +3,8 @@
 
 BEGIN;
 
+drop function labellisation_parcours;
+
 create or replace function
     labellisation_parcours(collectivite_id integer)
     returns table
@@ -68,7 +70,7 @@ select e.referentiel,
        criteres.atteints and cs.atteint and cf.atteint as rempli,
        calendrier.information,
 
-       case                                     
+       case
            when demande.etoiles is null
                then null
            else jsonb_build_object('demandee_le', demande.date, 'etoiles', demande.etoiles)
