@@ -71,29 +71,6 @@ const PlanActionAxe = ({plan_id, axe, displayAxe}: Props) => {
               setIsEditable(false);
             }}
           />
-          {/* <Textarea
-            ref={inputRef}
-            className={classNames(
-              'w-full mb-0 text-left disabled:cursor-pointer disabled:text-gray-900 !text-base !outline-none !resize-none',
-              {
-                'font-bold': isOpen && !isEditable,
-                'placeholder:text-gray-900': !isEditable,
-              }
-            )}
-            value={nom}
-            placeholder={'Sans titre'}
-            disabled={!isEditable}
-            onChange={e => {
-              setNom(e.target.value);
-            }}
-            onBlur={e => {
-              nom &&
-                nom.length > 0 &&
-                nom !== axe.nom &&
-                updatePlan({id: axe.id, nom: nom ?? null});
-              setIsEditable(false);
-            }}
-          /> */}
         </button>
         <button
           className="fr-fi-edit-line invisible group-hover:visible p-2 text-gray-500 scale-90"
