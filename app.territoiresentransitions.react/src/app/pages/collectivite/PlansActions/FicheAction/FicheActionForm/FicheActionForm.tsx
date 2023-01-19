@@ -53,7 +53,7 @@ const FicheActionForm = ({fiche}: TFicheActionForm) => {
             onBlur={e => updateFiche({...fiche, titre: e.target.value})}
             placeholder="Écrire ici..."
             maxLength={300}
-            className="outline-transparent"
+            className="outline-transparent resize-none"
           />
         </FormField>
         <FormField label="Description de l'action" htmlFor="description">
@@ -63,7 +63,7 @@ const FicheActionForm = ({fiche}: TFicheActionForm) => {
             onBlur={e => updateFiche({...fiche, description: e.target.value})}
             placeholder="Écrire ici..."
             maxLength={20000}
-            className="outline-transparent"
+            className="outline-transparent resize-none"
           />
         </FormField>
         <FormField label="Thématique">
@@ -94,7 +94,7 @@ const FicheActionForm = ({fiche}: TFicheActionForm) => {
             onBlur={e => updateFiche({...fiche, objectifs: e.target.value})}
             placeholder="Écrire ici..."
             maxLength={10000}
-            className="outline-transparent"
+            className="outline-transparent resize-none"
           />
         </FormField>
         <FormField label="Indicateurs liés">
@@ -140,7 +140,7 @@ const FicheActionForm = ({fiche}: TFicheActionForm) => {
             onBlur={e => updateFiche({...fiche, ressources: e.target.value})}
             placeholder="Écrire ici..."
             maxLength={10000}
-            className="outline-transparent"
+            className="outline-transparent resize-none"
           />
         </FormField>
         <FormField label="Partenaires">
@@ -170,7 +170,7 @@ const FicheActionForm = ({fiche}: TFicheActionForm) => {
             initialValue={fiche.financements ?? ''}
             onBlur={e => updateFiche({...fiche, financements: e.target.value})}
             placeholder="Écrire ici..."
-            className="outline-transparent"
+            className="outline-transparent resize-none"
           />
         </FormField>
         <FormField
@@ -262,7 +262,7 @@ const FicheActionForm = ({fiche}: TFicheActionForm) => {
             initialValue={fiche.calendrier ?? ''}
             onBlur={e => updateFiche({...fiche, calendrier: e.target.value})}
             placeholder="Écrire ici..."
-            className="outline-transparent"
+            className="outline-transparent resize-none"
           />
         </FormField>
       </Section>
@@ -283,7 +283,7 @@ const FicheActionForm = ({fiche}: TFicheActionForm) => {
             }
             placeholder="Écrire ici..."
             maxLength={20000}
-            className="outline-transparent"
+            className="outline-transparent resize-none"
           />
         </FormField>
       </Section>
