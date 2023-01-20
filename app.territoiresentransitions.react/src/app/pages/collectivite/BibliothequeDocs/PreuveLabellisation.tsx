@@ -141,7 +141,7 @@ const groupByReferentiel = (
 type TPreuvesParDate = Record<string, TPreuveAuditEtLabellisation[]>;
 const groupByDate = (preuves: TPreuveAuditEtLabellisation[]): TPreuvesParDate =>
   preuves.reduce((dict, preuve) => {
-    const date = preuve.demande?.date || preuve.audit?.date_debut;
+    const date = preuve.created_at;
     if (!date) {
       return dict;
     }
@@ -159,6 +159,8 @@ type TPreuvesParReferentielEtDate = Record<
 const groupByReferentielEtDate = (
   preuves: TPreuveAuditEtLabellisation[]
 ): TPreuvesParReferentielEtDate => {
+  const parReferentiel = groupByReferentiel(preuves);
+
   return Object.entries(groupByReferentiel(preuves)).reduce(
     (dict, [referentiel, preuvesReferentiel]) => ({
       ...dict,
