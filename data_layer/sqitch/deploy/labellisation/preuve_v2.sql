@@ -109,7 +109,7 @@ select 'audit',
        null,
        null,
        null,
-       to_jsonb(p) || jsonb_build_object('referentiel', a.referentiel)
+       to_jsonb(p) || to_jsonb(a)
 from audit a
          join preuve_audit p on p.audit_id = a.id
          left join labellisation.bibliotheque_fichier_snippet fs on fs.id = p.fichier_id
