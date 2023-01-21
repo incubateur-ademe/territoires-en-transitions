@@ -117,6 +117,7 @@ Fonctionnalité: Auditer la collectivité
 
     Quand je suis sur la page "Bibliothèque de documents" de la collectivité "1"
     Alors la liste des documents de labellisation contient les lignes suivantes :
-      | Titre       | Commentaire |
-      | rapport.doc |             |
+      # audit validé => le document est en lecture seule
+      | Titre       | Commentaire | Lecture seule |
+      | rapport.doc |             | oui           |
 #    Et la liste des documents de labellisation contient le titre "Audit contrat d'objectif territorial (COT)" sans l'indication "en cours"
