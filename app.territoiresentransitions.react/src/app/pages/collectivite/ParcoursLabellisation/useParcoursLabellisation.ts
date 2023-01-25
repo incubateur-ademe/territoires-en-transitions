@@ -1,96 +1,85 @@
-import {useEffect, useState} from 'react';
-import {useQuery, useQueryClient} from 'react-query';
+import {useQuery} from 'react-query';
 import {LabellisationParcoursRead} from 'generated/dataLayer/labellisation_parcours_read';
-import {useCollectiviteId} from 'core-logic/hooks/params';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {LabellisationDemandeRead} from 'generated/dataLayer/labellisation_demande_read';
-import {fetchParcours, getReferentielParcours} from './queries';
-import {useDemandeLabellisation} from './useDemandeLabellisation';
-import {ReferentielParamOption} from 'app/paths';
-import {RealtimeChannel} from '@supabase/supabase-js';
-import {Database} from 'types/database.types';
-import {useAudit} from '../Audit/useAudit';
+import {useCollectiviteId} from 'core-logic/hooks/params';
+import {useIsAuditeur} from '../Audit/useAudit';
 
-type SubToRef = {
-  ref: string;
-  sub: RealtimeChannel;
+export type TParcoursLabellisation = {
+  parcours: LabellisationParcoursRead | null;
+  demandeEnvoyee: boolean;
+  auditEnCours: boolean;
+  auditValide: boolean;
+  isAuditeur: boolean;
 };
 
-/** Renvoie les données de labellisation de la collectivité courante */
+/** Renvoie les données de labellisation/audit de la collectivité courante */
 export const useParcoursLabellisation = (
   referentiel: string | null
-): {
-  parcours: LabellisationParcoursRead | null;
-  demande: LabellisationDemandeRead | null;
-  audit: Database['public']['Tables']['audit']['Row'] | null;
-} => {
+): TParcoursLabellisation => {
   const collectivite_id = useCollectiviteId();
-  const [subscription, setSubscription] = useState<SubToRef | null>(null);
-  const queryClient = useQueryClient();
+  const isAuditeur = useIsAuditeur();
 
   // charge les données du parcours
   const {data: parcoursList} = useQuery(
     ['labellisation_parcours', collectivite_id],
     () => fetchParcours(collectivite_id)
   );
-  const parcours = getReferentielParcours(parcoursList, referentiel);
-  const {etoiles} = parcours || {};
 
-  // charge les données de la demande
-  const demande = useDemandeLabellisation(
-    referentiel as ReferentielParamOption,
-    etoiles
+  // extrait le parcours correspondant au référentiel courant
+  const parcours = getReferentielParcours(parcoursList, referentiel);
+
+  // états dérivés
+  const {demande} = parcours || {};
+  const {audit} = demande || {};
+  const demandeEnvoyee = Boolean(demande?.demandee_le);
+  const auditEnCours = Boolean(audit?.date_debut && !audit?.valide);
+  const auditValide = Boolean(audit?.valide);
+
+  return {
+    parcours,
+    demandeEnvoyee,
+    auditEnCours,
+    auditValide,
+    isAuditeur,
+  };
+};
+
+// charge les parcours (eci/cae) de labellisation d'une collectivité donnée
+const fetchParcours = async (
+  collectivite_id: number | null
+): Promise<LabellisationParcoursRead[] | null> => {
+  if (!collectivite_id) {
+    return null;
+  }
+
+  const {data, error} = await supabaseClient
+    .rpc('labellisation_parcours', {
+      collectivite_id,
+    })
+    .select();
+
+  if (error || !data) {
+    return null;
+  }
+  return data as unknown as LabellisationParcoursRead[];
+};
+
+export const getReferentielParcours = (
+  parcoursList: LabellisationParcoursRead[] | null | undefined,
+  referentiel: string | null
+) => {
+  const parcours: LabellisationParcoursRead | undefined = parcoursList?.find(
+    p => p.referentiel === referentiel
   );
 
-  // charge les données de l'audit
-  const {data: audit} = useAudit();
+  if (!parcours) {
+    return null;
+  }
 
-  // recharge les données après un changement de statut d'une action
-  const refetch = () => {
-    queryClient.invalidateQueries(['labellisation_parcours', collectivite_id]);
-  };
-
-  // souscrit aux changements de statuts dans un référentiel
-  const subscribe = (ref: string) => {
-    const subscribeTo = `public:action_statut:collectivite_id=eq.${collectivite_id}`;
-    const sub = supabaseClient
-      .channel(subscribeTo)
-      .on(
-        'postgres_changes',
-        {event: 'INSERT', schema: 'public', table: 'action_statut'},
-        refetch
-      )
-      .on(
-        'postgres_changes',
-        {event: 'UPDATE', schema: 'public', table: 'action_statut'},
-        refetch
-      )
-      .subscribe();
-    setSubscription({sub, ref});
-  };
-
-  // souscrit aux changements de statuts si ce n'est pas déjà fait
-  useEffect(() => {
-    if (collectivite_id && referentiel) {
-      if (subscription && subscription.ref !== referentiel) {
-        subscription.sub.unsubscribe();
-      }
-      subscribe(referentiel);
-    }
-
-    // supprime la souscription quand le composant est démonté
-    return () => {
-      if (subscription) {
-        subscription.sub.unsubscribe();
-        setSubscription(null);
-      }
-    };
-  }, [collectivite_id, referentiel]);
-
-  // renvoie le parcours correspondant au référentiel courant
+  const {criteres_action} = parcours;
   return {
-    parcours: parcours || null,
-    demande: demande || null,
-    audit: audit || null,
+    ...parcours,
+    // trie les critères action
+    criteres_action: criteres_action.sort((a, b) => a.prio - b.prio),
   };
 };

@@ -75,6 +75,10 @@ export const useTableData: UseTableData = () => {
         {
           onSuccess: () => {
             queryClient.invalidateQueries('action_statuts');
+            queryClient.invalidateQueries([
+              'labellisation_parcours',
+              collectivite_id,
+            ]);
           },
         }
       );

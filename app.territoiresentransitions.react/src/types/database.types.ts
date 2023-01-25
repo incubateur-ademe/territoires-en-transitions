@@ -843,6 +843,7 @@ export interface Database {
           collectivite_id: number;
           etoiles: '1' | '2' | '3' | '4' | '5';
           referentiel: Database['public']['Enums']['referentiel'];
+          sujet: 'labellisation' | 'labellisation_cot' | 'cot';
         };
         Returns: unknown;
       };
@@ -1506,7 +1507,7 @@ export interface Database {
       audit: {
         Insert: {
           collectivite_id: number;
-          date_debut?: string;
+          date_debut?: string | null;
           date_fin?: string | null;
           demande_id?: number | null;
           id?: number;
@@ -1515,7 +1516,7 @@ export interface Database {
         };
         Row: {
           collectivite_id: number;
-          date_debut: string;
+          date_debut: string | null;
           date_fin: string | null;
           demande_id: number | null;
           id: number;
@@ -1524,7 +1525,7 @@ export interface Database {
         };
         Update: {
           collectivite_id?: number;
-          date_debut?: string;
+          date_debut?: string | null;
           date_fin?: string | null;
           demande_id?: number | null;
           id?: number;

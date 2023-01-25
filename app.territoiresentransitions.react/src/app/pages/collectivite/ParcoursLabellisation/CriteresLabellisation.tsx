@@ -1,5 +1,4 @@
 import {LabellisationParcoursRead} from 'generated/dataLayer/labellisation_parcours_read';
-import {LabellisationDemandeRead} from 'generated/dataLayer/labellisation_demande_read';
 import {CritereScore} from './CritereScore';
 import {CriteresAction} from './CriteresAction';
 import {CriterePreuves} from './CriterePreuves';
@@ -13,7 +12,6 @@ import {usePreuves} from 'ui/shared/preuves/Bibliotheque/usePreuves';
 export type TCriteresLabellisationProps = {
   collectiviteId: number;
   parcours: LabellisationParcoursRead;
-  demande: LabellisationDemandeRead | null;
   preuves: TPreuveLabellisation[];
 };
 
@@ -54,7 +52,8 @@ export const CriteresLabellisation = (props: TCriteresLabellisationProps) => {
 const CriteresLabellisationConnected = () => {
   const collectiviteId = useCollectiviteId();
   const referentiel = useReferentielId();
-  const {parcours, demande} = useParcoursLabellisation(referentiel);
+  const {parcours} = useParcoursLabellisation(referentiel);
+  const {demande} = parcours || {};
   const preuves = usePreuves({
     demande_id: demande?.id,
     preuve_types: ['labellisation'],
@@ -64,7 +63,6 @@ const CriteresLabellisationConnected = () => {
     <CriteresLabellisation
       collectiviteId={collectiviteId}
       parcours={parcours}
-      demande={demande}
       preuves={preuves}
     />
   ) : null;

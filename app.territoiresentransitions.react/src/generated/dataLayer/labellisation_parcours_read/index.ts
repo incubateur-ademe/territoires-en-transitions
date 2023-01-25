@@ -1,9 +1,12 @@
 import {ReferentielParamOption} from 'app/paths';
+import {Database} from 'types/database.types';
 
 export type TEtoiles = '1' | '2' | '3' | '4' | '5';
+export type TSujetDemande = 'labellisation' | 'labellisation_cot' | 'cot';
 
 /** Avancement courant de la collectivité dans le parcours de labellisation */
 export interface LabellisationParcoursRead {
+  collectivite_id: number;
   /** Référentiel concerné */
   referentiel: ReferentielParamOption;
   /** Nombre d'étoiles atteignables */
@@ -17,24 +20,34 @@ export interface LabellisationParcoursRead {
   /** Indique que les critères action, score et fichiers de labellisation sont tous atteints */
   rempli: boolean;
   /** Dates des prochaines sessions d'audit (exemple: Les prochaines sessions 
-      d’audit sont planifiées du 23 avril au 23 juin 2022 et du 5 novembre 2022 
-      au 5 janvier 2023.) */
+   d’audit sont planifiées du 23 avril au 23 juin 2022 et du 5 novembre 2022 
+   au 5 janvier 2023.) */
   calendrier: string;
-  /** Information à propos de la dernière demande de labellisation pour l'étoile
-      précédente */
-  derniere_demande: {
-    /** Etoiles demandées */
-    etoiles: TEtoiles;
-    /** Date/heure de la dernière demande */
+  /** Indique si la collectivité est sous COT ou non */
+  cot: boolean;
+  /** Demande de labellisation associée au parcours */
+  demande: {
+    id: number;
+    /** Type d'audit/labellisation demandée */
+    sujet: TSujetDemande | null;
+    /** Etoiles demandées (null si sujet=cot) */
+    etoiles: TEtoiles | null;
+    /** Date/heure de la demande */
     demandee_le: Date;
-  };
-  /** Information à propos de la dernière labellisation obtenue */
+    /** demande en cours (pas encore envoyée) */
+    en_cours: boolean;
+    /** Audit associé à la demande (null si pas encore demandé) */
+    audit: Database['public']['Tables']['audit']['Row'] | null;
+  } | null;
+  /** Dernière labellisation obtenue */
   derniere_labellisation: {
-    /** Etoiles obtenues */
-    etoiles: TEtoiles;
+    /** Type d'audit/labellisation demandée */
+    sujet: TSujetDemande;
+    /** Etoiles obtenues (null si sujet=cot) */
+    etoiles: TEtoiles | null;
     /** Date/heure d'obtentien */
     obtenue_le: Date;
-  };
+  } | null;
 }
 
 /** Un critère de labellisation associé à une action */

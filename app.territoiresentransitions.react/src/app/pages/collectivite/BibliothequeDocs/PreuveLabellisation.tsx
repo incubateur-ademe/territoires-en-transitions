@@ -3,7 +3,7 @@ import {Fragment} from 'react';
 import {Referentiel} from 'types/litterals';
 import PreuveDoc from 'ui/shared/preuves/Bibliotheque/PreuveDoc';
 import {TPreuveAuditEtLabellisation} from 'ui/shared/preuves/Bibliotheque/types';
-import {useIsAuditAuditeur} from '../Audit/useAudit';
+import {useHasActiveCOT, useIsAuditAuditeur} from '../Audit/useAudit';
 import {numLabels} from '../ParcoursLabellisation/numLabels';
 
 /**
@@ -96,6 +96,9 @@ const Title = (props: {
   const en_cours = (!audit && demande?.en_cours) || (audit && !audit.valide);
   const label = annee + (en_cours ? ' (en cours)' : '') + ' - ';
 
+  const hasActiveCOT = useHasActiveCOT();
+  console.log({hasActiveCOT});
+
   if (etoile) {
     return (
       <h3>
@@ -159,8 +162,6 @@ type TPreuvesParReferentielEtDate = Record<
 const groupByReferentielEtDate = (
   preuves: TPreuveAuditEtLabellisation[]
 ): TPreuvesParReferentielEtDate => {
-  const parReferentiel = groupByReferentiel(preuves);
-
   return Object.entries(groupByReferentiel(preuves)).reduce(
     (dict, [referentiel, preuvesReferentiel]) => ({
       ...dict,

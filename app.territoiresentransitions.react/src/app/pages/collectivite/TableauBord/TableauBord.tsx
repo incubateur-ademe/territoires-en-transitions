@@ -27,6 +27,7 @@ import {
   useLabellisationParNiveau,
 } from './useLabellisationParNiveau';
 import {useTracker} from 'core-logic/hooks/useTracker';
+import {LabellisationParcoursRead} from 'generated/dataLayer/labellisation_parcours_read';
 
 const remplissageColor = '#2F4077';
 
@@ -302,7 +303,9 @@ const ReferentielSection = ({
         {!demande || demande.en_cours ? (
           <Link
             className="fr-btn"
-            onClick={() => tracker({fonction: 'decrocher_les_etoiles', action: 'clic'})}
+            onClick={() =>
+              tracker({fonction: 'decrocher_les_etoiles', action: 'clic'})
+            }
             to={makeCollectiviteLabellisationUrl({
               collectiviteId,
               referentielId,
@@ -346,8 +349,8 @@ export type TTableauBordProps = {
   scores: ReferentielsActionScores;
   actions: {eci: ActionDefinitionSummary[]; cae: ActionDefinitionSummary[]};
   demande: {
-    eci: LabellisationDemandeRead | null;
-    cae: LabellisationDemandeRead | null;
+    eci: LabellisationParcoursRead['demande'] | null;
+    cae: LabellisationParcoursRead['demande'] | null;
   };
   labellisationParNiveau: {
     eci: LabellisationParNiveauRead | null;
@@ -411,8 +414,10 @@ const TableauBordConnected = () => {
   const eci_labellisationParNiveau = useLabellisationParNiveau('eci');
   const cae_labellisationParNiveau = useLabellisationParNiveau('cae');
 
-  const {demande: eci_demande} = useParcoursLabellisation('eci');
-  const {demande: cae_demande} = useParcoursLabellisation('cae');
+  const eci_demande =
+    useParcoursLabellisation('eci')?.parcours?.demande || null;
+  const cae_demande =
+    useParcoursLabellisation('cae')?.parcours?.demande || null;
 
   const eciIndicateurCounts = useIndicateurCounts('eci');
   const caeIndicateurCounts = useIndicateurCounts('cae');

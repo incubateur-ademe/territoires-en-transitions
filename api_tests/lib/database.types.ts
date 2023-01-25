@@ -843,6 +843,7 @@ export interface Database {
           collectivite_id: number;
           etoiles: '1' | '2' | '3' | '4' | '5';
           referentiel: Database['public']['Enums']['referentiel'];
+          sujet: 'labellisation' | 'labellisation_cot' | 'cot';
         };
         Returns: unknown;
       };
@@ -1243,6 +1244,10 @@ export interface Database {
         };
         Returns: Json;
       };
+      upsert_axe: {
+        Args: {collectivite_id: number; nom: string; parent: number};
+        Returns: number;
+      };
     };
     Tables: {
       abstract_any_indicateur_value: {
@@ -1502,7 +1507,7 @@ export interface Database {
       audit: {
         Insert: {
           collectivite_id: number;
-          date_debut?: string;
+          date_debut?: string | null;
           date_fin?: string | null;
           demande_id?: number | null;
           id?: number;
@@ -1511,7 +1516,7 @@ export interface Database {
         };
         Row: {
           collectivite_id: number;
-          date_debut: string;
+          date_debut: string | null;
           date_fin: string | null;
           demande_id: number | null;
           id: number;
@@ -1520,7 +1525,7 @@ export interface Database {
         };
         Update: {
           collectivite_id?: number;
-          date_debut?: string;
+          date_debut?: string | null;
           date_fin?: string | null;
           demande_id?: number | null;
           id?: number;
@@ -1883,6 +1888,89 @@ export interface Database {
         Update: {
           axe_id?: number;
           fiche_id?: number;
+        };
+      };
+      fiche_action_import_csv: {
+        Insert: {
+          amelioration_continue?: string | null;
+          axe?: string | null;
+          budget?: string | null;
+          calendrier?: string | null;
+          cibles?: string | null;
+          collectivite_id?: string | null;
+          date_debut?: string | null;
+          date_fin?: string | null;
+          description?: string | null;
+          elu_referent?: string | null;
+          financements?: string | null;
+          moyens?: string | null;
+          notes?: string | null;
+          num_action?: string | null;
+          objectifs?: string | null;
+          partenaires?: string | null;
+          personne_referente?: string | null;
+          plan_nom?: string | null;
+          priorite?: string | null;
+          resultats_attendus?: string | null;
+          sous_axe?: string | null;
+          sous_sous_axe?: string | null;
+          statut?: string | null;
+          structure_pilote?: string | null;
+          titre?: string | null;
+        };
+        Row: {
+          amelioration_continue: string | null;
+          axe: string | null;
+          budget: string | null;
+          calendrier: string | null;
+          cibles: string | null;
+          collectivite_id: string | null;
+          date_debut: string | null;
+          date_fin: string | null;
+          description: string | null;
+          elu_referent: string | null;
+          financements: string | null;
+          moyens: string | null;
+          notes: string | null;
+          num_action: string | null;
+          objectifs: string | null;
+          partenaires: string | null;
+          personne_referente: string | null;
+          plan_nom: string | null;
+          priorite: string | null;
+          resultats_attendus: string | null;
+          sous_axe: string | null;
+          sous_sous_axe: string | null;
+          statut: string | null;
+          structure_pilote: string | null;
+          titre: string | null;
+        };
+        Update: {
+          amelioration_continue?: string | null;
+          axe?: string | null;
+          budget?: string | null;
+          calendrier?: string | null;
+          cibles?: string | null;
+          collectivite_id?: string | null;
+          date_debut?: string | null;
+          date_fin?: string | null;
+          description?: string | null;
+          elu_referent?: string | null;
+          financements?: string | null;
+          moyens?: string | null;
+          notes?: string | null;
+          num_action?: string | null;
+          objectifs?: string | null;
+          partenaires?: string | null;
+          personne_referente?: string | null;
+          plan_nom?: string | null;
+          priorite?: string | null;
+          resultats_attendus?: string | null;
+          sous_axe?: string | null;
+          sous_sous_axe?: string | null;
+          statut?: string | null;
+          structure_pilote?: string | null;
+          titre?: string | null;
         };
       };
       fiche_action_indicateur: {

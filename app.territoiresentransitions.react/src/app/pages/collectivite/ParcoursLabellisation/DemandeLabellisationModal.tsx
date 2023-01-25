@@ -1,13 +1,12 @@
 import Dialog from '@material-ui/core/Dialog';
-import {LabellisationDemandeRead} from 'generated/dataLayer/labellisation_demande_read';
-import {LabellisationParcoursRead} from 'generated/dataLayer/labellisation_parcours_read';
+import {useState} from 'react';
 import {CloseDialogButton} from 'ui/shared/CloseDialogButton';
 import {numLabels} from './numLabels';
 import {useEnvoiDemande} from './useEnvoiDemande';
+import {TParcoursLabellisation} from './useParcoursLabellisation';
 
 export type TDemandeLabellisationModalProps = {
-  parcours: LabellisationParcoursRead;
-  demande: LabellisationDemandeRead;
+  parcoursLabellisation: TParcoursLabellisation;
   opened: boolean;
   setOpened: (opened: boolean) => void;
 };
@@ -46,8 +45,11 @@ const submittedEtoile1 =
 const submittedAutresEtoiles =
   'Votre demande d’audit a bien été envoyée. Vous recevrez prochainement un mail du Bureau d’Appui.';
 
-const getMessage = (parcours: LabellisationParcoursRead) => {
-  const {etoiles, referentiel} = parcours;
+const getMessage = (parcours: TParcoursLabellisation['parcours']) => {
+  const {etoiles, referentiel} = parcours || {};
+  if (!etoiles) {
+    return null;
+  }
   if (etoiles === '1') {
     return messageEtoile_1;
   }
@@ -61,44 +63,54 @@ const getMessage = (parcours: LabellisationParcoursRead) => {
 };
 
 /**
- * Affiche la modale d'envoie de la demande de labellisation
+ * Affiche la modale d'envoie de la demande d'audit
  */
 export const DemandeLabellisationModal = (
   props: TDemandeLabellisationModalProps
 ) => {
-  const {parcours, demande, opened, setOpened} = props;
-  const {etoiles} = parcours;
   const {isLoading, envoiDemande} = useEnvoiDemande();
-
+  const {parcoursLabellisation, opened, setOpened} = props;
+  const {parcours, demandeEnvoyee} = parcoursLabellisation;
+  const {etoiles, cot} = parcours || {};
   const onClose = () => setOpened(false);
+
+  if (!parcours) {
+    return null;
+  }
+
+  // affiche le sélecteur de sujet de demande d'audit pour les COT
+  if (cot) {
+    return <DemandeAuditModal {...props} />;
+  }
+
   return (
     <Dialog
       data-test="DemandeLabellisationModal"
       open={opened}
       onClose={onClose}
       maxWidth="md"
-      fullWidth={true}
+      fullWidth
     >
       <div className="p-7 flex flex-col">
         <CloseDialogButton setOpened={setOpened} />
         <h3>
           {etoiles === '1'
             ? 'Demander la première étoile'
-            : `Demander un audit pour la ${numLabels[etoiles]} étoile`}
+            : `Demander un audit pour la ${numLabels[etoiles!]} étoile`}
         </h3>
         <div className="w-full">
           {isLoading ? 'Envoi en cours...' : null}
-          {!demande.en_cours ? (
+          {demandeEnvoyee ? (
             <div className="fr-alert fr-alert--success">
               {etoiles === '1' ? submittedEtoile1 : submittedAutresEtoiles}
             </div>
           ) : null}
-          {demande.en_cours && !isLoading ? (
+          {!demandeEnvoyee && !isLoading ? (
             <>
-              {getMessage(parcours).map((line, index) => (
+              {getMessage(parcours)?.map((line, index) => (
                 <p key={index}>{line}</p>
               ))}
-              <button className="fr-btn" onClick={() => envoiDemande(demande)}>
+              <button className="fr-btn" onClick={() => envoiDemande(parcours)}>
                 Envoyer ma demande
               </button>
               {etoiles !== '1' ? (
@@ -116,3 +128,107 @@ export const DemandeLabellisationModal = (
     </Dialog>
   );
 };
+
+/**
+ * Affiche la modale de sélection du type d'audit souhaité et d'envoie de la
+ * demande d'audit
+ */
+const DemandeAuditModal = (props: TDemandeLabellisationModalProps) => {
+  const [sujet, setSujet] = useState<string | null>(null);
+  const {isLoading, envoiDemande} = useEnvoiDemande();
+  const {parcoursLabellisation, opened, setOpened} = props;
+  const {parcours, demandeEnvoyee} = parcoursLabellisation;
+  const {collectivite_id, referentiel, etoiles} = parcours || {};
+  const onClose = () => setOpened(false);
+
+  if (!collectivite_id || !referentiel) {
+    return null;
+  }
+
+  return (
+    <Dialog
+      data-test="DemandeAuditModal"
+      open={opened}
+      onClose={onClose}
+      maxWidth="md"
+      fullWidth
+    >
+      <div className="p-7 flex flex-col">
+        <CloseDialogButton setOpened={setOpened} />
+        <h3>Demander un audit</h3>
+        <div className="w-full">
+          {isLoading ? 'Envoi en cours...' : null}
+          {demandeEnvoyee ? (
+            <div className="fr-alert fr-alert--success">
+              {submittedAutresEtoiles}
+            </div>
+          ) : null}
+          {demandeEnvoyee && !isLoading ? (
+            <>
+              <div className="fr-radio-group fr-radio-group--sm">
+                <RadioButton value="cot" sujet={sujet} setSujet={setSujet}>
+                  Audit COT <b>sans</b> labellisation
+                </RadioButton>
+                <RadioButton
+                  value="labellisation_cot"
+                  sujet={sujet}
+                  setSujet={setSujet}
+                >
+                  Audit COT <b>avec</b> labellisation
+                </RadioButton>
+                <RadioButton
+                  value="labellisation"
+                  sujet={sujet}
+                  setSujet={setSujet}
+                >
+                  Audit <b>de</b> labellisation
+                </RadioButton>
+              </div>
+              <button
+                className="fr-btn"
+                onClick={() =>
+                  envoiDemande({collectivite_id, etoiles, referentiel, sujet})
+                }
+              >
+                Envoyer ma demande
+              </button>
+              {etoiles !== '1' ? (
+                <button
+                  className="fr-btn fr-btn--secondary fr-ml-4w"
+                  onClick={onClose}
+                >
+                  Annuler
+                </button>
+              ) : null}
+            </>
+          ) : null}
+        </div>
+      </div>
+    </Dialog>
+  );
+};
+
+const RadioButton = ({
+  value,
+  children,
+  sujet,
+  setSujet,
+}: {
+  value: string;
+  children: React.ReactNode;
+  sujet: string | null;
+  setSujet: (value: string) => void;
+}) => (
+  <>
+    <input
+      type="radio"
+      id={value}
+      value={value}
+      checked={sujet === value}
+      onChange={() => setSujet(value)}
+    />
+    <label className="fr-label" htmlFor={value}>
+      {children}
+    </label>
+  </>
+);

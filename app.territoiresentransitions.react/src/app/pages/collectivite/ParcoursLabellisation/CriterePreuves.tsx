@@ -1,7 +1,6 @@
 /**
  * Affiche le critère Fichiers
  */
-import {LabellisationDemandeRead} from 'generated/dataLayer/labellisation_demande_read';
 import {LabellisationParcoursRead} from 'generated/dataLayer/labellisation_parcours_read';
 import {referentielToName} from 'app/labels';
 import PreuveDoc from 'ui/shared/preuves/Bibliotheque/PreuveDoc';
@@ -18,12 +17,11 @@ export type TCriterePreuvesProps = {
   collectiviteId: number;
   parcours: LabellisationParcoursRead;
   preuves: TPreuveLabellisation[];
-  demande: LabellisationDemandeRead | null;
 };
 
 export const CriterePreuves = (props: TCriterePreuvesProps) => {
-  const {parcours, preuves, demande} = props;
-  const {referentiel, etoiles} = parcours;
+  const {parcours, preuves} = props;
+  const {referentiel, etoiles, demande} = parcours;
 
   // critère nécessitant l'ajout d'une ou plusieurs preuves
   const rempli = preuves.length > 0;
@@ -54,7 +52,11 @@ export const CriterePreuves = (props: TCriterePreuvesProps) => {
           acte d’engagement
         </a>{' '}
         dans le programme affirmant votre adhésion{' '}
-        <a href={REGLEMENTS[referentiel]} target="_blank" rel="noopener noreferrer">
+        <a
+          href={REGLEMENTS[referentiel]}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           au règlement du label
         </a>
       </li>
@@ -71,7 +73,8 @@ export const CriterePreuves = (props: TCriterePreuvesProps) => {
  * Affiche les fichiers attachés à la demande
  */
 const LabellisationPreuves = (props: TCriterePreuvesProps) => {
-  const {preuves, demande} = props;
+  const {preuves, parcours} = props;
+  const {demande} = parcours;
   if (!preuves.length) {
     return null;
   }
