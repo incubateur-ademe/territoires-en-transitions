@@ -7,6 +7,217 @@ export type Json =
   | Json[];
 
 export interface Database {
+  labellisation: {
+    Enums: {
+      etoile: '1' | '2' | '3' | '4' | '5';
+      sujet_demande: 'labellisation' | 'labellisation_cot' | 'cot';
+    };
+    Functions: {
+      audit_evaluation_payload: {
+        Args: {audit: unknown};
+        Returns: Record<string, unknown>[];
+      };
+      critere_action: {
+        Args: {collectivite_id: number};
+        Returns: Record<string, unknown>[];
+      };
+      critere_fichier: {
+        Args: {collectivite_id: number};
+        Returns: Record<string, unknown>[];
+      };
+      critere_score_global: {
+        Args: {collectivite_id: number};
+        Returns: Record<string, unknown>[];
+      };
+      current_audit: {
+        Args: {col: number; ref: Database['public']['Enums']['referentiel']};
+        Returns: unknown;
+      };
+      etoiles: {
+        Args: {collectivite_id: number};
+        Returns: Record<string, unknown>[];
+      };
+      evaluate_audit_statuts: {
+        Args: {audit_id: number; scores_table: string};
+        Returns: number;
+      };
+      pre_audit_service_statuts: {
+        Args: {audit_id: number};
+        Returns: Json;
+      };
+      referentiel_score: {
+        Args: {collectivite_id: number};
+        Returns: Record<string, unknown>[];
+      };
+      upsert_preuves_reglementaire: {
+        Args: {preuves: Json};
+        Returns: undefined;
+      };
+    };
+    Tables: {
+      action_audit_state: {
+        Insert: {
+          action_id: string;
+          audit_id?: number | null;
+          avis?: string;
+          collectivite_id: number;
+          id?: number;
+          modified_at?: string;
+          modified_by?: string;
+          ordre_du_jour?: boolean;
+          statut?: Database['public']['Enums']['audit_statut'];
+        };
+        Row: {
+          action_id: string;
+          audit_id: number | null;
+          avis: string;
+          collectivite_id: number;
+          id: number;
+          modified_at: string;
+          modified_by: string;
+          ordre_du_jour: boolean;
+          statut: Database['public']['Enums']['audit_statut'];
+        };
+        Update: {
+          action_id?: string;
+          audit_id?: number | null;
+          avis?: string;
+          collectivite_id?: number;
+          id?: number;
+          modified_at?: string;
+          modified_by?: string;
+          ordre_du_jour?: boolean;
+          statut?: Database['public']['Enums']['audit_statut'];
+        };
+      };
+      bibliotheque_fichier: {
+        Insert: {
+          collectivite_id?: number | null;
+          filename?: string | null;
+          hash?: string | null;
+          id?: number;
+        };
+        Row: {
+          collectivite_id: number | null;
+          filename: string | null;
+          hash: string | null;
+          id: number;
+        };
+        Update: {
+          collectivite_id?: number | null;
+          filename?: string | null;
+          hash?: string | null;
+          id?: number;
+        };
+      };
+      demande: {
+        Insert: {
+          collectivite_id: number;
+          date?: string;
+          en_cours?: boolean;
+          etoiles: Database['labellisation']['Enums']['etoile'];
+          id?: number;
+          referentiel: Database['public']['Enums']['referentiel'];
+          sujet?: Database['labellisation']['Enums']['sujet_demande'];
+        };
+        Row: {
+          collectivite_id: number;
+          date: string;
+          en_cours: boolean;
+          etoiles: Database['labellisation']['Enums']['etoile'];
+          id: number;
+          referentiel: Database['public']['Enums']['referentiel'];
+          sujet: Database['labellisation']['Enums']['sujet_demande'];
+        };
+        Update: {
+          collectivite_id?: number;
+          date?: string;
+          en_cours?: boolean;
+          etoiles?: Database['labellisation']['Enums']['etoile'];
+          id?: number;
+          referentiel?: Database['public']['Enums']['referentiel'];
+          sujet?: Database['labellisation']['Enums']['sujet_demande'];
+        };
+      };
+      etoile_meta: {
+        Insert: {
+          etoile: Database['labellisation']['Enums']['etoile'];
+          long_label: string;
+          min_realise_percentage: number;
+          min_realise_score?: number | null;
+          prochaine_etoile?:
+            | Database['labellisation']['Enums']['etoile']
+            | null;
+          short_label: string;
+        };
+        Row: {
+          etoile: Database['labellisation']['Enums']['etoile'];
+          long_label: string;
+          min_realise_percentage: number;
+          min_realise_score: number | null;
+          prochaine_etoile: Database['labellisation']['Enums']['etoile'] | null;
+          short_label: string;
+        };
+        Update: {
+          etoile?: Database['labellisation']['Enums']['etoile'];
+          long_label?: string;
+          min_realise_percentage?: number;
+          min_realise_score?: number | null;
+          prochaine_etoile?:
+            | Database['labellisation']['Enums']['etoile']
+            | null;
+          short_label?: string;
+        };
+      };
+      preuve_base: {
+        Insert: {
+          collectivite_id: number;
+          commentaire?: string;
+          fichier_id?: number | null;
+          lien?: Json | null;
+          modified_at?: string;
+          modified_by?: string;
+          titre?: string;
+          url?: string | null;
+        };
+        Row: {
+          collectivite_id: number;
+          commentaire: string;
+          fichier_id: number | null;
+          lien: Json | null;
+          modified_at: string;
+          modified_by: string;
+          titre: string;
+          url: string | null;
+        };
+        Update: {
+          collectivite_id?: number;
+          commentaire?: string;
+          fichier_id?: number | null;
+          lien?: Json | null;
+          modified_at?: string;
+          modified_by?: string;
+          titre?: string;
+          url?: string | null;
+        };
+      };
+    };
+    Views: {
+      action_snippet: {
+        Row: {
+          action_id: string | null;
+          collectivite_id: number | null;
+          snippet: Json | null;
+        };
+      };
+      bibliotheque_fichier_snippet: {
+        Row: {
+          id: number | null;
+          snippet: Json | null;
+        };
+      };
+    };
+  };
   public: {
     Enums: {
       action_categorie: 'bases' | 'mise en œuvre' | 'effets';
@@ -859,7 +1070,7 @@ export interface Database {
       labellisation_demande: {
         Args: {
           collectivite_id: number;
-          etoiles: '1' | '2' | '3' | '4' | '5';
+          etoiles: Database['labellisation']['Enums']['etoile'];
           referentiel: Database['public']['Enums']['referentiel'];
         };
         Returns: unknown;
@@ -871,8 +1082,9 @@ export interface Database {
       labellisation_submit_demande: {
         Args: {
           collectivite_id: number;
-          etoiles: '1' | '2' | '3' | '4' | '5';
+          etoiles: Database['labellisation']['Enums']['etoile'];
           referentiel: Database['public']['Enums']['referentiel'];
+          sujet: Database['labellisation']['Enums']['sujet_demande'];
         };
         Returns: unknown;
       };
@@ -1038,7 +1250,10 @@ export interface Database {
         Returns: undefined;
       };
       test_fulfill: {
-        Args: {collectivite_id: number; etoile: '1' | '2' | '3' | '4' | '5'};
+        Args: {
+          collectivite_id: number;
+          etoile: Database['labellisation']['Enums']['etoile'];
+        };
         Returns: undefined;
       };
       test_generate_fake_scores: {
@@ -1532,7 +1747,7 @@ export interface Database {
       audit: {
         Insert: {
           collectivite_id: number;
-          date_debut?: string;
+          date_debut?: string | null;
           date_fin?: string | null;
           demande_id?: number | null;
           id?: number;
@@ -1541,7 +1756,7 @@ export interface Database {
         };
         Row: {
           collectivite_id: number;
-          date_debut: string;
+          date_debut: string | null;
           date_fin: string | null;
           demande_id: number | null;
           id: number;
@@ -1550,7 +1765,7 @@ export interface Database {
         };
         Update: {
           collectivite_id?: number;
-          date_debut?: string;
+          date_debut?: string | null;
           date_fin?: string | null;
           demande_id?: number | null;
           id?: number;
@@ -2479,7 +2694,7 @@ export interface Database {
       labellisation_action_critere: {
         Insert: {
           action_id: string;
-          etoile: '1' | '2' | '3' | '4' | '5';
+          etoile: Database['labellisation']['Enums']['etoile'];
           formulation: string;
           min_programme_percentage?: number | null;
           min_programme_score?: number | null;
@@ -2490,7 +2705,7 @@ export interface Database {
         };
         Row: {
           action_id: string;
-          etoile: '1' | '2' | '3' | '4' | '5';
+          etoile: Database['labellisation']['Enums']['etoile'];
           formulation: string;
           min_programme_percentage: number | null;
           min_programme_score: number | null;
@@ -2501,7 +2716,7 @@ export interface Database {
         };
         Update: {
           action_id?: string;
-          etoile?: '1' | '2' | '3' | '4' | '5';
+          etoile?: Database['labellisation']['Enums']['etoile'];
           formulation?: string;
           min_programme_percentage?: number | null;
           min_programme_score?: number | null;
@@ -2528,17 +2743,17 @@ export interface Database {
       labellisation_fichier_critere: {
         Insert: {
           description: string;
-          etoile: '1' | '2' | '3' | '4' | '5';
+          etoile: Database['labellisation']['Enums']['etoile'];
           referentiel: Database['public']['Enums']['referentiel'];
         };
         Row: {
           description: string;
-          etoile: '1' | '2' | '3' | '4' | '5';
+          etoile: Database['labellisation']['Enums']['etoile'];
           referentiel: Database['public']['Enums']['referentiel'];
         };
         Update: {
           description?: string;
-          etoile?: '1' | '2' | '3' | '4' | '5';
+          etoile?: Database['labellisation']['Enums']['etoile'];
           referentiel?: Database['public']['Enums']['referentiel'];
         };
       };
@@ -3896,7 +4111,7 @@ export interface Database {
           collectivite_id: number | null;
           date: string | null;
           en_cours: boolean | null;
-          etoiles: '1' | '2' | '3' | '4' | '5' | null;
+          etoiles: Database['labellisation']['Enums']['etoile'] | null;
           id: number | null;
           nom: string | null;
           referentiel: Database['public']['Enums']['referentiel'] | null;
@@ -4062,6 +4277,13 @@ export interface Database {
           mois: string | null;
           total_utilisateurs: number | null;
           utilisateurs: number | null;
+        };
+      };
+      stats_labellisation_par_niveau: {
+        Row: {
+          etoiles: number | null;
+          labellisations: number | null;
+          referentiel: Database['public']['Enums']['referentiel'] | null;
         };
       };
       stats_labellisation_par_niveau: {
