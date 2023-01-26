@@ -128,7 +128,7 @@ select ok((select etoiles = '5'
                       and completude_ok
                       and not rempli
                       and calendrier is not null
-                      and derniere_demande is null
+                      and demande is null
            from labellisation_parcours(1)
            where referentiel = 'eci'),
           'Labellisation parcours function should output correct state for 100% fait test data but no demande.');
@@ -159,7 +159,7 @@ select ok((select etoiles = '5'
                       and completude_ok
                       and rempli
                       and calendrier is not null
-                      and derniere_demande is not null
+                      and demande is not null
            from labellisation_parcours(1)
            where referentiel = 'eci'),
           'Labellisation parcours function should output correct state for 100% fait test data with demande fichier.');
@@ -218,7 +218,7 @@ select ok((select etoiles = '1'
                       and not completude_ok
                       and not rempli
                       and calendrier is not null
-                      and derniere_demande is null
+                      and demande is null
            from labellisation_parcours(1)
            where referentiel = 'eci'),
           'Labellisation parcours function should output correct state for 0% fait, not complete, no demande.');
@@ -275,7 +275,7 @@ select ok((select etoiles = '1'
                       and completude_ok
                       and not rempli
                       and calendrier is not null
-                      and derniere_demande is null
+                      and demande is null
            from labellisation_parcours(1)
            where referentiel = 'eci'),
           'Labellisation parcours function should output correct state for 0% fait, complete, no demande.');
@@ -309,7 +309,7 @@ select ok((select etoiles = '1'
                       and completude_ok
                       and not rempli
                       and calendrier is not null
-                      and derniere_demande is null
+                      and demande is null
            from labellisation_parcours(1)
            where referentiel = 'eci'),
           'Labellisation parcours function should output correct state for 0% fait, complete, no demande.');
@@ -334,7 +334,7 @@ select ok((select etoiles = '1'
                       and completude_ok
                       and rempli
                       and calendrier is not null
-                      and derniere_demande is not null -- actually current demande
+                      and demande is not null -- actually current demande
            from labellisation_parcours(1)
            where referentiel = 'eci'),
           'Labellisation parcours function should output correct state for 0% fait, complete, no demande.');
@@ -364,7 +364,7 @@ select ok((select etoiles = '2'
                       and completude_ok
                       and rempli
                       and calendrier is not null
-                      and derniere_demande is null
+                      and demande is null
            from labellisation_parcours(1)
            where referentiel = 'eci'),
           'Labellisation parcours function with etoile 2 fulfilled requirements.');
@@ -394,7 +394,7 @@ select ok((select etoiles = '3'
                       and completude_ok
                       and rempli
                       and calendrier is not null
-                      and derniere_demande is null
+                      and demande is null
            from labellisation_parcours(1)
            where referentiel = 'eci'),
           'Labellisation parcours function with etoile 3 requirements.');

@@ -9,8 +9,8 @@ select test.identify_as('youlou@doudou.com');
 
 -- Crée des audits de test
 insert into audit(collectivite_id, referentiel, date_debut, date_fin)
-values (1, 'eci', default, null),
-       (1, 'cae', default, null),
+values (1, 'eci', now(), null),
+       (1, 'cae', now(), null),
        (2, 'eci', now() - interval '3 day', now() - interval '1 day');
 
 -- Test fonction labellisation.current_audit - audit existant
