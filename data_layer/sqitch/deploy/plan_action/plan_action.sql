@@ -1229,11 +1229,13 @@ declare
 begin
     fiches = to_jsonb((select array_agg(ff.*)
                        from(
-                               select * from fiches_action fa
+                               select fa.* from fiches_action fa
                                                  join fiche_action_axe fapa on fa.id = fapa.fiche_id
                                where fapa.axe_id = plan_action.id
                                order by fa.modified_at desc
                            )ff)) ;
+
+
     pa_nom = (select nom from axe where axe.id = plan_action.id);
     id_loop = 1;
     for pa_enfant_id in
