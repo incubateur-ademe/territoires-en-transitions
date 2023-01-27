@@ -165,7 +165,12 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Fichier 1
             className="invisible group-hover:visible"
           >
             <button
-              className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line undefined"
+              className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-edit-line"
+              onClick={[Function]}
+              title="Renommer"
+            />
+            <button
+              className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line"
               onClick={[Function]}
               title="Décrire"
             />
@@ -265,7 +270,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Lien 1`] 
             className="invisible group-hover:visible"
           >
             <button
-              className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line undefined"
+              className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line"
               onClick={[Function]}
               title="Décrire"
             />
@@ -358,7 +363,12 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Multiple 
             className="invisible group-hover:visible"
           >
             <button
-              className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line undefined"
+              className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-edit-line"
+              onClick={[Function]}
+              title="Renommer"
+            />
+            <button
+              className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line"
               onClick={[Function]}
               title="Décrire"
             />
@@ -404,7 +414,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Multiple 
             className="invisible group-hover:visible"
           >
             <button
-              className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line undefined"
+              className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line"
               onClick={[Function]}
               title="Décrire"
             />

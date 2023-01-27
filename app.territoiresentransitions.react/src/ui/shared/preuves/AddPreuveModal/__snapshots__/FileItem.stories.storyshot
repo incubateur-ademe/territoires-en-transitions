@@ -376,7 +376,7 @@ exports[`Storyshots ui/shared/preuves/AddPreuveModal/FileItem Running 1`] = `
         </div>
       </div>
       <button
-        className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-close-line undefined"
+        className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-close-line"
         onClick={[Function]}
       />
     </div>
@@ -435,7 +435,7 @@ exports[`Storyshots ui/shared/preuves/AddPreuveModal/FileItem Running 2 1`] = `
         </div>
       </div>
       <button
-        className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-close-line undefined"
+        className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-close-line"
         onClick={[Function]}
       />
     </div>
