@@ -1,7 +1,7 @@
-export const noPreuvesComplementaires = (parent) =>
+export const noPreuvesComplementaires = parent =>
   parent.find('[data-test^=preuves] [data-test=item]').should('not.exist');
 
-export const makeCheckPreuveRows = (dataTable) => () => {
+export const makeCheckPreuveRows = dataTable => () => {
   const rows = dataTable.rows();
   // vérifie le nombre de lignes
   cy.root().get('[data-test=item]').should('have.length', rows.length);
@@ -26,7 +26,8 @@ export const checkPreuveRow = ([titre, commentaire, readonly], index) => {
     } else {
       // sinon ils sont présents mais masqués (visibles au survol)
       cy.get('button')
-        .should('have.length', 2) // on attends 2 boutons: Décrire et Supprimer
+        .should('have.length.gte', 2) // on attends 2 ou 3 boutons: Décrire et Supprimer + Renommer pour les fichiers
+        .should('have.length.lte', 3)
         .should('be.hidden')
         .should('be.enabled');
     }

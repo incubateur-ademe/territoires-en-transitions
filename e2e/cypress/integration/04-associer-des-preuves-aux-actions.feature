@@ -44,6 +44,14 @@ Fonctionnalité: Associer des preuves aux actions
     Quand je clique sur la preuve "bien nommé.doc" de l'action "1.1.1"
     Alors le fichier "bien nommé.doc" doit avoir été téléchargé
 
+    Quand je clique sur le bouton "Renommer" de la preuve "bien nommé.doc" de l'action "1.1.1"
+    Et que je saisi "nouveau nom" comme nom de la preuve "bien nommé.doc" de l'action "1.1.1"
+    Alors la liste des preuves complémentaires de la sous-action "1.1.1" contient les lignes suivantes :
+      | Titre           | Commentaire |
+      | nouveau nom.doc | une phrase  |
+    Quand je clique sur la preuve "nouveau nom.doc" de l'action "1.1.1"
+    Alors le fichier "nouveau nom.doc" doit avoir été téléchargé
+
   Scénario: Visualiser une erreur lors de l'ajout d'un fichier preuve trop lourd
     Etant donné que je suis connecté en tant que "yolo"
     Et que je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "1"

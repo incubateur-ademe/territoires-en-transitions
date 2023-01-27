@@ -96,25 +96,29 @@ When(
       .find(`[data-test^=preuves] > div`)
       .contains(preuve)
       .parent()
-      //      .trigger('mouseover')
       .find(`button[title=${btn}]`)
-      .click({force: true});
+      .click({force: true}); // force car les boutons ne sont visibles qu'au survol (difficile à simuler dans cypress)
   }
 );
 
+const updateCommentOrName = (newValue, preuve, action) => {
+  getPreuvePanel(action).within(() => {
+    // efface le contenu du champ commentaire
+    const inputSelector = '[data-test^=preuves] input';
+    cy.get(inputSelector).clear();
+    // saisi une nouvelle valeur + ENTREE
+    cy.get(inputSelector).type(newValue + '{enter}');
+    // le champ doit avoir disparu (le nouveau commentaire est en lecture seule)
+    cy.get(inputSelector).should('not.exist');
+  });
+};
 When(
   /je saisi "([^"]+)" comme commentaire de la preuve "([^"]+)" de l'action "([^"]+)"/,
-  (commentaire, preuve, action) => {
-    getPreuvePanel(action).within(() => {
-      // efface le contenu du champ commentaire
-      const inputSelector = '[data-test^=preuves] input';
-      cy.get(inputSelector).clear();
-      // saisi une nouvelle valeur + ENTREE
-      cy.get(inputSelector).type(commentaire + '{enter}');
-      // le champ doit avoir disparu (le nouveau commentaire est en lecture seule)
-      cy.get(inputSelector).should('not.exist');
-    });
-  }
+  updateCommentOrName
+);
+When(
+  /je saisi "([^"]+)" comme nom de la preuve "([^"]+)" de l'action "([^"]+)"/,
+  updateCommentOrName
 );
 
 When(/l'ouverture du lien "([^"]+)" doit avoir été demandée/, url => {
