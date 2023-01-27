@@ -1,19 +1,32 @@
-import {useState} from 'react';
 import {useMutation} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {TPreuve, TEditHandlers} from './types';
+import {
+  useEditFilenameState,
+  useEditState,
+} from 'core-logic/hooks/useEditState';
 import {useRefetchPreuves} from './useAddPreuves';
+import {TPreuve, TEditHandlers} from './types';
 
 type TEditPreuve = (preuve: TPreuve) => TEditHandlers;
 
 /** Renvoie les gestionnaires d'événement nécessaires à l'édition des preuves
  * (édition commentaire & suppression) */
 export const useEditPreuve: TEditPreuve = preuve => {
-  const [isEditingComment, setEditingComment] = useState(false);
   const {mutate: removePreuve} = useRemovePreuve();
-  const {mutate: updateComment} = useUpdatePreuveCommentaire();
-  const {commentaire} = preuve;
-  const [updatedComment, setUpdatedComment] = useState(commentaire);
+  const {mutate: updatePreuveCommentaire} = useUpdatePreuveCommentaire();
+  const {mutate: updateBibliothequeFichierFilename} =
+    useUpdateBibliothequeFichierFilename();
+  const {commentaire, fichier} = preuve;
+  const editComment = useEditState({
+    initialValue: commentaire,
+    onUpdate: updatedComment =>
+      updatePreuveCommentaire({...preuve, commentaire: updatedComment}),
+  });
+  const editFilename = useEditFilenameState({
+    initialValue: fichier?.filename,
+    onUpdate: updatedFilename =>
+      updateBibliothequeFichierFilename({...preuve, updatedFilename}),
+  });
 
   const remove = () => {
     // eslint-disable-next-line no-restricted-globals
@@ -22,18 +35,10 @@ export const useEditPreuve: TEditPreuve = preuve => {
     }
   };
 
-  const update = () => {
-    setEditingComment(false);
-    updateComment({...preuve, commentaire: updatedComment});
-  };
-
   return {
     remove,
-    update,
-    isEditingComment,
-    setEditingComment,
-    updatedComment,
-    setUpdatedComment,
+    editComment,
+    editFilename,
   };
 };
 
@@ -66,6 +71,27 @@ const useUpdatePreuveCommentaire = () =>
     },
     {
       mutationKey: 'update_preuve_commentaire',
+      onSuccess: useRefetchPreuves(),
+    }
+  );
+
+// renvoie une fonction de renommage d'un fichier de la bibliothèque
+const useUpdateBibliothequeFichierFilename = () =>
+  useMutation(
+    async (preuve: TPreuve & {updatedFilename: string}) => {
+      if (!preuve?.fichier) {
+        return null;
+      }
+      const {collectivite_id, fichier, updatedFilename} = preuve;
+      const {hash} = fichier;
+      return supabaseClient.rpc('update_bibliotheque_fichier_filename', {
+        collectivite_id,
+        filename: updatedFilename,
+        hash,
+      });
+    },
+    {
+      mutationKey: 'update_bibliotheque_fichier_filename',
       onSuccess: useRefetchPreuves(),
     }
   );
