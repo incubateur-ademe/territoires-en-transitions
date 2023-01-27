@@ -11,11 +11,27 @@ export default {
 
 const handlers = {
   isEditingComment: false,
-  updatedComment: '',
   remove: action('remove'),
-  update: action('update'),
-  setEditingComment: action('setEditingComment'),
-  setUpdatedComment: action('setUpdatedComment'),
+  editComment: {
+    value: '',
+    setValue: action('setCommentValue'),
+    enter: action('enterEditComment'),
+    exit: action('exitEditComment'),
+  },
+  editFilename: {
+    value: '',
+    setValue: action('setFilenameValue'),
+    enter: action('enterEditFilename'),
+    exit: action('exitEditFilename'),
+  },
+};
+
+const handlerWithEditCommentOn = {
+  ...handlers,
+  editComment: {
+    ...handlers.editComment,
+    isEditing: true,
+  },
 };
 
 const Template: Story<TPreuveDocProps> = args => <PreuveDoc {...args} />;
@@ -23,15 +39,12 @@ const Template: Story<TPreuveDocProps> = args => <PreuveDoc {...args} />;
 export const PreuveFichier = Template.bind({});
 PreuveFichier.args = {
   handlers,
-  preuve: preuveComplementaireFichier,
+  preuve: {...preuveComplementaireFichier, commentaire: null},
 };
 
 export const PreuveFichierEditionCommentaire = Template.bind({});
 PreuveFichierEditionCommentaire.args = {
-  handlers: {
-    ...handlers,
-    isEditingComment: true,
-  },
+  handlers: handlerWithEditCommentOn,
   preuve: {
     ...preuveComplementaireFichier,
   },
@@ -48,6 +61,22 @@ PreuveFichierCommentee.args = {
   },
 };
 
+export const PreuveFichierEditionNom = Template.bind({});
+PreuveFichierEditionNom.args = {
+  handlers: {
+    ...handlers,
+    editFilename: {
+      ...handlers.editFilename,
+      isEditing: true,
+    },
+  },
+  preuve: {
+    ...preuveComplementaireFichier,
+  },
+};
+// storyshot désactivé car le TextInput a un id qui change tout le temps
+PreuveFichierEditionNom.parameters = {storyshots: false};
+
 export const PreuveLien = Template.bind({});
 PreuveLien.args = {
   handlers,
@@ -56,10 +85,7 @@ PreuveLien.args = {
 
 export const PreuveLienEditionCommentaire = Template.bind({});
 PreuveLienEditionCommentaire.args = {
-  handlers: {
-    ...handlers,
-    isEditingComment: true,
-  },
+  handlers: handlerWithEditCommentOn,
   preuve: preuveComplementaireLien,
 };
 // storyshot désactivé car le TextInput a un id qui change tout le temps

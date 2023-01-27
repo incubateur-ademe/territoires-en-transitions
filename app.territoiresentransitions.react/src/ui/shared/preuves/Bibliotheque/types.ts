@@ -1,3 +1,4 @@
+import {TEditState} from 'core-logic/hooks/useEditState';
 import {TEtoiles} from 'generated/dataLayer/labellisation_parcours_read';
 import {Database} from 'types/database.types';
 import {Referentiel} from 'types/litterals';
@@ -156,9 +157,6 @@ export type TPreuvesParType = {
 // gestionnaires pour l'édition d'une preuve
 export type TEditHandlers = {
   remove: () => void;
-  update: () => void;
-  isEditingComment: boolean;
-  setEditingComment: (editing: boolean) => void;
-  updatedComment: string | null;
-  setUpdatedComment: (comment: string) => void;
+  editComment: TEditState;
+  editFilename: TEditState;
 };

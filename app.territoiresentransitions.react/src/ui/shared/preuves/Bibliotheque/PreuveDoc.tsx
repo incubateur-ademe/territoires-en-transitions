@@ -3,12 +3,17 @@ import {TextInput} from '@dataesr/react-dsfr';
 import classNames from 'classnames';
 import {format} from 'date-fns';
 import {fr} from 'date-fns/locale';
-import {ButtonComment, ButtonRemove} from 'ui/shared/SmallIconButton';
+import {
+  ButtonComment,
+  ButtonEdit,
+  ButtonRemove,
+} from 'ui/shared/SmallIconButton';
 import {formatFileSize, getExtension} from 'utils/file';
 import {TPreuve, TEditHandlers} from './types';
 import {openPreuve} from './openPreuve';
 import {useEditPreuve} from './useEditPreuve';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import {TEditState} from 'core-logic/hooks/useEditState';
 
 export type TPreuveDocProps = {
   classComment?: string;
@@ -43,29 +48,32 @@ export const PreuveDoc = ({
   readonly,
   handlers,
 }: TPreuveDocProps) => {
-  const {commentaire} = preuve;
-  const dateVisite = preuve.rapport?.date;
+  const {commentaire, fichier, rapport} = preuve;
+  const dateVisite = rapport?.date;
 
-  const {
-    remove,
-    update,
-    isEditingComment,
-    setEditingComment,
-    updatedComment,
-    setUpdatedComment,
-  } = handlers;
+  const {remove, editComment, editFilename} = handlers;
+  const isEditing = editComment.isEditing || editFilename.isEditing;
 
   return (
     <div data-test="item">
       <div className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0 cursor-pointer">
         <PreuveTitle preuve={preuve} />
-        {!readonly ? (
+        {!readonly && !isEditing ? (
           <div className="invisible group-hover:visible">
+            {fichier ? (
+              <ButtonEdit
+                title="Renommer"
+                onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                  e.preventDefault();
+                  editFilename.enter();
+                }}
+              />
+            ) : null}
             <ButtonComment
               title="Décrire"
               onClick={(e: MouseEvent<HTMLButtonElement>) => {
                 e.preventDefault();
-                setEditingComment(true);
+                editComment.enter();
               }}
             />
             <ButtonRemove
@@ -79,35 +87,26 @@ export const PreuveDoc = ({
           </div>
         ) : null}
       </div>
-      {!isEditingComment && commentaire && !readonly ? (
+      {commentaire && !readonly && !isEditing ? (
         <p
           data-test="comment"
           className={`text-xs fr-text-mention--grey mb-0 ${classComment || ''}`}
           onClick={(e: MouseEvent<HTMLParagraphElement>) => {
             e.preventDefault();
-            setEditingComment(true);
+            editComment.enter();
           }}
         >
           {commentaire}
         </p>
       ) : null}
-      {isEditingComment ? (
-        <TextInput
-          autoFocus
-          placeholder="Écrire un commentaire..."
-          className="fr-my-2v"
-          value={updatedComment}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setUpdatedComment(e.target.value)
-          }
-          onBlur={update}
-          onKeyUp={(e: KeyboardEvent) => {
-            if (e.key === 'Enter') {
-              update();
-            }
-          }}
-        />
-      ) : null}
+      <TextInputWithEditState
+        editState={editComment}
+        placeholder="Écrire un commentaire..."
+      />
+      <TextInputWithEditState
+        editState={editFilename}
+        placeholder="Renommer le fichier..."
+      />
       {dateVisite ? (
         <p className="text-xs grey625 mb-0">
           Visite effectuée le {formatDate(dateVisite)}
@@ -151,6 +150,33 @@ const PreuveTitle = ({preuve}: {preuve: TPreuve}) => {
       {formatTitle(preuve)}
     </a>
   );
+};
+
+// affiche un champ d'édition associé à un gestionnaire d'édition
+const TextInputWithEditState = ({
+  editState,
+  placeholder,
+}: {
+  editState: TEditState;
+  placeholder: string;
+}) => {
+  return editState.isEditing ? (
+    <TextInput
+      autoFocus
+      className="fr-my-2v"
+      placeholder={placeholder}
+      value={editState.value}
+      onChange={(e: ChangeEvent<HTMLInputElement>) =>
+        editState.setValue(e.target.value)
+      }
+      onBlur={editState.exit}
+      onKeyUp={(e: KeyboardEvent) => {
+        if (e.key === 'Enter') {
+          editState.exit();
+        }
+      }}
+    />
+  ) : null;
 };
 
 // formate le titre en fonction du type (fichier ou lien)
