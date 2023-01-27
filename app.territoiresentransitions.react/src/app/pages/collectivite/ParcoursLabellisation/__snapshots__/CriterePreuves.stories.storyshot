@@ -248,7 +248,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves 
           className="invisible group-hover:visible"
         >
           <button
-            className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line undefined"
+            className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line"
             onClick={[Function]}
             title="Décrire"
           />
