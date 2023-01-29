@@ -205,4 +205,6 @@ stats/vues_BI [stats/vues_BI@v1.24.0] 2023-01-12T14:55:10Z Florian <florian@derf
 
 labellisation/preuve_v2 [labellisation/preuve_v2@v2.0.0] 2023-01-19T14:40:16Z Florian <florian@derfurth.com> # Regroupe les preuves audit même celles qui concernent une labellisation.
 @v2.1.0 2023-01-23T08:50:12Z Florian <florian@derfurth.com> # Changement dans la vue preuve pour la confirmation de l'audit.
+
 plan_action/plan_action [plan_action/plan_action@v2.1.0] 2023-01-27T10:14:51Z Amandine Jacquelin <conta@LanceLibre> # Optimisation de la vue pour les fiches action
+@v2.1.1 2023-01-29T10:41:02Z Florian <florian@derfurth.com> # Répare la fonctionalité plan d'action
