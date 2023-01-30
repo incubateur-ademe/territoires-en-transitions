@@ -18,6 +18,11 @@ alter table labellisation.demande
         default 'cot' not null;
 
 alter table labellisation.demande
+    alter column etoiles drop not null;
+comment on column labellisation.demande.etoiles is
+    'Le nombre d''étoiles si la demande d''audit concerne une labellisation.';
+
+alter table labellisation.demande
     enable row level security;
 
 alter table audit
@@ -101,12 +106,19 @@ create or replace function
     labellisation_submit_demande(
     collectivite_id integer,
     referentiel referentiel,
-    etoiles labellisation.etoile,
-    sujet labellisation.sujet_demande
+    sujet labellisation.sujet_demande,
+    etoiles labellisation.etoile default null
 )
     returns labellisation.demande
+as
+$$
 begin
-    atomic
+    if (labellisation_submit_demande.sujet = 'cot' and labellisation_submit_demande.etoiles is not null)
+        or (labellisation_submit_demande.sujet != 'cot' and labellisation_submit_demande.etoiles is null)
+    then
+        raise exception 'Seulement si le sujet de la demande est "cot", étoiles devrait être null.';
+    end if;
+
     with data as (select labellisation_submit_demande.collectivite_id,
                          labellisation_submit_demande.referentiel,
                          labellisation_submit_demande.etoiles,
@@ -126,6 +138,8 @@ begin
       and ld.referentiel = labellisation_submit_demande.referentiel
       and ld.etoiles = labellisation_submit_demande.etoiles;
 end;
+$$
+    language plpgsql;
 comment on function labellisation_submit_demande is
     'Soumet une demande de labellisation pour une collectivité, un référentiel et un nombre d''étoiles donnés.'
         'Met à jour ou créé une demande qui n''est pas en cours.';
