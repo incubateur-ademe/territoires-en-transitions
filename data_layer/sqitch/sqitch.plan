@@ -208,3 +208,5 @@ labellisation/preuve_v2 [labellisation/preuve_v2@v2.0.0] 2023-01-19T14:40:16Z Fl
 
 plan_action/plan_action [plan_action/plan_action@v2.1.0] 2023-01-27T10:14:51Z Amandine Jacquelin <conta@LanceLibre> # Optimisation de la vue pour les fiches action
 @v2.1.1 2023-01-29T10:41:02Z Florian <florian@derfurth.com> # Répare la fonctionnalité plan d'action
+
+utilisateur/dcp [utilisateur/dcp@v2.1.1] 2023-01-30T16:24:43Z Amandine Jacquelin <conta@LanceLibre> # Ajoute une clé primaire à la table dcp
