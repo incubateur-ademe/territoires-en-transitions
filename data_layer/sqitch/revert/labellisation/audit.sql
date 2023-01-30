@@ -1,25 +1,32 @@
 -- Deploy tet:labellisation/audit to pg
 BEGIN;
 
-drop view audits;
-drop trigger on_audit_update on audit;
-drop function labellisation.update_audit;
-
-create or replace function labellisation.current_audit(col integer, ref referentiel)
-    returns audit as
+create or replace function
+    labellisation.update_audit()
+    returns trigger
+as
 $$
-select *
-from audit a
-where a.collectivite_id = col
-  and a.referentiel = ref
-  and (
-        (a.date_fin is null and now() >= a.date_debut)
-        or (a.date_fin is not null and now() between a.date_debut and a.date_fin)
-    )
-order by date_debut desc
-limit 1
-$$ language sql;
+begin
+    -- si l'utilisateur n'est ni éditeur ni service
+    if not (have_edition_acces(new.collectivite_id) or is_service_role())
+    then -- alors on renvoie un code 403
+        perform set_config('response.status', '403', true);
+        raise 'L''utilisateur n''a pas de droit en édition sur la collectivité.';
+    end if;
 
-drop view audit_en_cours;
+    -- si la collectivité est COT
+    -- et que l'audit n'est pas dans le cadre d'une demande de labellisation
+    -- et que l'audit passe en 'validé'
+    if (new.collectivite_id in (select collectivite_id from cot)
+        and new.demande_id is null
+        and new.valide
+        and not old.valide)
+    then -- alors on termine l'audit
+        new.date_fin = now();
+    end if;
+
+    return new;
+end ;
+$$ language plpgsql;
 
 COMMIT;
