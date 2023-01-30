@@ -2,12 +2,6 @@
 
 BEGIN;
 
-select collectivite_id, referentiel, audit, is_cot
-from audits
-where false;
-
-select id, collectivite_id, referentiel, demande_id, date_debut, date_fin, valide
-from audit_en_cours
-where false;
+select has_function_privilege('labellisation.update_audit()', 'execute');
 
 ROLLBACK;
