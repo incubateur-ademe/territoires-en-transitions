@@ -115,7 +115,7 @@ export interface Database {
           collectivite_id: number;
           date?: string;
           en_cours?: boolean;
-          etoiles: Database['labellisation']['Enums']['etoile'];
+          etoiles?: Database['labellisation']['Enums']['etoile'] | null;
           id?: number;
           referentiel: Database['public']['Enums']['referentiel'];
           sujet?: Database['labellisation']['Enums']['sujet_demande'];
@@ -124,7 +124,7 @@ export interface Database {
           collectivite_id: number;
           date: string;
           en_cours: boolean;
-          etoiles: Database['labellisation']['Enums']['etoile'];
+          etoiles: Database['labellisation']['Enums']['etoile'] | null;
           id: number;
           referentiel: Database['public']['Enums']['referentiel'];
           sujet: Database['labellisation']['Enums']['sujet_demande'];
@@ -133,7 +133,7 @@ export interface Database {
           collectivite_id?: number;
           date?: string;
           en_cours?: boolean;
-          etoiles?: Database['labellisation']['Enums']['etoile'];
+          etoiles?: Database['labellisation']['Enums']['etoile'] | null;
           id?: number;
           referentiel?: Database['public']['Enums']['referentiel'];
           sujet?: Database['labellisation']['Enums']['sujet_demande'];
@@ -1385,39 +1385,39 @@ export interface Database {
           }
         | {
             Args: {
-              bucket_width: number;
-              finish: number;
-              start: number;
-              ts: number;
-            };
-            Returns: number;
-          }
-        | {
-            Args: {
-              bucket_width: number;
-              finish: number;
-              start: number;
-              ts: number;
-            };
-            Returns: number;
-          }
-        | {
-            Args: {
-              bucket_width: number;
-              finish: number;
-              start: number;
-              ts: number;
-            };
-            Returns: number;
-          }
-        | {
-            Args: {
               bucket_width: unknown;
               finish: string;
               start: string;
               ts: string;
             };
             Returns: string;
+          }
+        | {
+            Args: {
+              bucket_width: number;
+              finish: number;
+              start: number;
+              ts: number;
+            };
+            Returns: number;
+          }
+        | {
+            Args: {
+              bucket_width: number;
+              finish: number;
+              start: number;
+              ts: number;
+            };
+            Returns: number;
+          }
+        | {
+            Args: {
+              bucket_width: number;
+              finish: number;
+              start: number;
+              ts: number;
+            };
+            Returns: number;
           }
         | {
             Args: {
@@ -3758,6 +3758,7 @@ export interface Database {
           code_siren_insee: string | null;
           collectivite_id: number | null;
           departement_name: string | null;
+          is_cot: boolean | null;
           nom: string | null;
           population_source: string | null;
           population_totale: number | null;
