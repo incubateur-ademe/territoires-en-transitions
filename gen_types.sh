@@ -39,7 +39,7 @@ repeat_command() {
 }
 
 echo "Génère les types TS à partir de la base de données"
-supabase gen types typescript --db-url postgresql://postgres:${POSTGRES_PASSWORD}@host.docker.internal:${POSTGRES_PORT}/postgres > ./app.territoiresentransitions.react/src/types/database.types.ts
+supabase gen types typescript  --schema public  --schema labellisation --db-url postgresql://postgres:${POSTGRES_PASSWORD}@host.docker.internal:${POSTGRES_PORT}/postgres > ./app.territoiresentransitions.react/src/types/database.types.ts
 
 echo "Tri par ordre alphabétique les types générés pour que le git diff soit consistant"
 cd ./app.territoiresentransitions.react
@@ -53,8 +53,8 @@ echo "Mise en forme du fichier généré"
 cd -
 
 # fait une copie du fichier, ainsi mis à jour, pour les tests de l'API
-cp ./app.territoiresentransitions.react/src/types/database.types.ts ./api_tests/lib/database.types.ts 
+cp ./app.territoiresentransitions.react/src/types/database.types.ts ./api_tests/lib/database.types.ts
 # et une pour le site statique
-cp ./app.territoiresentransitions.react/src/types/database.types.ts ./site/app/database.types.ts 
+cp ./app.territoiresentransitions.react/src/types/database.types.ts ./site/app/database.types.ts
 
 echo "Terminé"
