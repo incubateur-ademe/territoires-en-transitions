@@ -1,7 +1,9 @@
--- Revert tet:dcp from pg
+-- Deploy tet:dcp to pg
+-- requires: base
 
 BEGIN;
 
-drop table dcp;
+alter table dcp
+    drop constraint dcp_pkey;
 
 COMMIT;
