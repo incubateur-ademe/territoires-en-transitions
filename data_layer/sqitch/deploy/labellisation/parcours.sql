@@ -16,9 +16,9 @@ create or replace function
                 criteres_action jsonb,
                 rempli          boolean,
                 calendrier      text,
-                demande         jsonb,
-                labellisation   jsonb,
-                audit           jsonb
+                demande         jsonb, -- labellisation.demande
+                labellisation   jsonb, -- labellisation
+                audit           jsonb  -- audit
             )
     security definer
 begin
