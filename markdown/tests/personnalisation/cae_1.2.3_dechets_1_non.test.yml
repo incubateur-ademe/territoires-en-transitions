@@ -1,0 +1,13 @@
+Test:
+  Pour une collectivité ne possédant que partiellement les compétences 
+  collecte, traitement des déchets et plan de prévention des déchets, 
+  le score de la 1.2.3 est réduit de 25 %
+Réponses:
+  dechets_1: OUI
+  dechets_2: NON
+  dechets_3: NON
+Scores:
+  cae_1.2.3:
+    test: le score de la 1.2.3 est réduit de 25 %
+    point_referentiel: 10
+    point_potentiel: 7.5
