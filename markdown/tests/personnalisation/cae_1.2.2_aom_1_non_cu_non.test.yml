@@ -1,0 +1,12 @@
+Test:
+  Pour une collectivité n'ayant 
+  pas de centre urbain de plus de 5000 habitants ET n'ayant pas la compétence AOM, 
+  le score de la 1.2.2 est réduit à 2 points.
+Réponses:
+  AOM_1: NON
+  centre_urbain: NON
+Scores:
+  cae_1.2.2:
+    test: le score de la 1.2.2 est réduit de 50 %
+    point_referentiel: 12
+    point_potentiel: 2

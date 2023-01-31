@@ -1,0 +1,10 @@
+Test:
+  Pour une collectivité n'ayant pas la compétence AOM, 
+  le score de la 1.2.2 est réduit de 50 %.
+Réponses:
+  AOM_1: NON
+Scores:
+  cae_1.2.2:
+    test: le score de la 1.2.2 est réduit de 50 %
+    point_referentiel: 12
+    point_potentiel: 6
