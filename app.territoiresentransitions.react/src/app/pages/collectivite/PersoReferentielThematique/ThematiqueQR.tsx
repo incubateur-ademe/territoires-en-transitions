@@ -5,7 +5,6 @@
 import {useState} from 'react';
 import {QuestionReponseList} from '../PersoPotentielModal/PersoPotentielQR';
 import {SwitchLabelLeft} from 'ui/shared/SwitchLabelLeft';
-import {CarteIdentiteRead} from 'generated/dataLayer/carte_identite_read';
 import {TQuestionThematiqueRead} from 'generated/dataLayer/question_thematique_read';
 import {
   TChangeReponse,
@@ -16,6 +15,7 @@ import {
   makeCollectivitePersoRefThematiqueUrl,
 } from 'app/paths';
 import {CarteIdentite} from './CarteIdentite';
+import {TCarteIdentite} from './useCarteIdentite';
 
 export type TThematiqueQRProps = {
   thematique: TQuestionThematiqueRead;
@@ -24,7 +24,7 @@ export type TThematiqueQRProps = {
     nom: string;
   };
   /** Carte d'identité de la collectivité */
-  identite?: CarteIdentiteRead;
+  identite?: TCarteIdentite;
   /** Identifiant de la thématique suivante */
   nextThematiqueId?: string | null;
   /** Liste des questions/réponses associées à la thématique */
