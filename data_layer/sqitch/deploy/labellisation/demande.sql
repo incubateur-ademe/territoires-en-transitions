@@ -22,29 +22,11 @@ alter table labellisation.demande
 comment on column labellisation.demande.etoiles is
     'Le nombre d''étoiles si la demande d''audit concerne une labellisation.';
 
-alter table labellisation.demande
-    enable row level security;
-
 alter table audit
     alter column date_debut drop not null;
 
 alter table audit
     alter column date_debut set default null;
-
-create policy allow_read
-    on labellisation.demande
-    for select
-    using (is_authenticated());
-
-create policy allow_insert
-    on labellisation.demande
-    for insert
-    with check (have_edition_acces(collectivite_id));
-
-create policy allow_update
-    on labellisation.demande
-    for update
-    using (have_edition_acces(collectivite_id));
 
 create function
     labellisation.validation_demande()
@@ -79,6 +61,7 @@ create function
     etoiles labellisation.etoile
 )
     returns labellisation.demande
+    security definer
 begin
     atomic
     with data as (select labellisation_demande.collectivite_id,
@@ -89,13 +72,17 @@ begin
     into labellisation.demande (collectivite_id, referentiel, etoiles)
     select *
     from data
+         -- Insert uniquement si l'utilisateur en cours a les droits en édition.
+    where have_edition_acces(labellisation_demande.collectivite_id)
     on conflict do nothing;
 
     select *
     from labellisation.demande ld
     where ld.collectivite_id = labellisation_demande.collectivite_id
       and ld.referentiel = labellisation_demande.referentiel
-      and ld.etoiles = labellisation_demande.etoiles;
+      and ld.etoiles = labellisation_demande.etoiles
+      -- Ne renvoie des données seulement si l'utilisateur est connecté.
+      and is_authenticated();
 end;
 comment on function labellisation_demande is
     'Renvoie la demande de labellisation pour une collectivité, un référentiel et un nombre d''étoiles donnés.'
