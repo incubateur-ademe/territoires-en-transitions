@@ -1,4 +1,4 @@
-import {TEtoiles} from 'generated/dataLayer/labellisation_parcours_read';
+import {TEtoiles} from 'app/pages/collectivite/ParcoursLabellisation/types';
 import {Database} from 'types/database.types';
 import {Referentiel} from 'types/litterals';
 
