@@ -2,13 +2,13 @@ import {
   makeCollectiviteReferentielUrl,
   ReferentielParamOption,
 } from 'app/paths';
-import {LabellisationParcoursRead} from 'generated/dataLayer/labellisation_parcours_read';
+import {TLabellisationParcours} from 'app/pages/collectivite/ParcoursLabellisation/types';
 import {toLocaleFixed} from 'utils/toFixed';
 import {CritereRempli} from './CritereRempli';
 
 export type TCritereScoreProps = {
   collectiviteId: number;
-  parcours: LabellisationParcoursRead;
+  parcours: TLabellisationParcours;
 };
 
 /**
@@ -36,7 +36,8 @@ export const CritereScore = (props: TCritereScoreProps) => {
           href={makeCollectiviteReferentielUrl({
             collectiviteId,
             referentielId,
-          })} rel="noreferrer"
+          })}
+          rel="noreferrer"
         >
           Mettre à jour
         </a>
