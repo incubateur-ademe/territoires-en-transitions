@@ -1,11 +1,11 @@
-import {LabellisationParcoursRead} from 'generated/dataLayer/labellisation_parcours_read';
+import {TLabellisationParcours} from 'app/pages/collectivite/ParcoursLabellisation/types';
 import {referentielToName} from 'app/labels';
 import {makeCollectiviteTacheUrl} from 'app/paths';
 import './CriteresAction.css';
 
 export type TCriteresActionProps = {
   collectiviteId: number;
-  parcours: LabellisationParcoursRead;
+  parcours: TLabellisationParcours;
 };
 
 type TCriteresActionTable = TCriteresActionProps;
@@ -86,7 +86,12 @@ const CritereActionRow = (props: TCriteresActionTable & {rowIndex: number}) => {
         <span>{action_identifiant}</span>
       </td>
       <td className="pl-4 pr-8">
-        <a href={pathname} target="_blank" className="hover:underline" rel="noreferrer">
+        <a
+          href={pathname}
+          target="_blank"
+          className="hover:underline"
+          rel="noreferrer"
+        >
           {formulation}
         </a>
       </td>
