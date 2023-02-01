@@ -2,12 +2,12 @@ import {
   makeCollectiviteReferentielUrl,
   ReferentielParamOption,
 } from 'app/paths';
-import {LabellisationParcoursRead} from 'generated/dataLayer/labellisation_parcours_read';
+import {TLabellisationParcours} from 'app/pages/collectivite/ParcoursLabellisation/types';
 import {CritereRempli} from './CritereRempli';
 
 export type TCritereScoreProps = {
   collectiviteId: number;
-  parcours: LabellisationParcoursRead;
+  parcours: TLabellisationParcours;
 };
 
 /**
@@ -31,7 +31,8 @@ export const CritereCompletude = (props: TCritereScoreProps) => {
             collectiviteId,
             referentielId,
             referentielVue: 'detail',
-          })} rel="noreferrer"
+          })}
+          rel="noreferrer"
         >
           Mettre à jour
         </a>
