@@ -15,15 +15,17 @@ const Template: Story<TCriterePreuvesProps> = args => (
 export const PremiereEtoileECI = Template.bind({});
 PremiereEtoileECI.args = {
   collectiviteId: 1,
-  parcours: fixture.parcours1,
-  preuves: [],
-  demande: {
-    id: 1,
-    en_cours: true,
-    collectivite_id: 1,
-    referentiel: 'eci',
-    etoiles: '1',
+  parcours: {
+    ...fixture.parcours1,
+    demande: {
+      id: 1,
+      en_cours: true,
+      collectivite_id: 1,
+      referentiel: 'eci',
+      etoiles: '1',
+    },
   },
+  preuves: [],
 };
 
 // le critère est considéré comme rempli si il y a au moins un ffichier
@@ -38,15 +40,17 @@ const FILE1 = {
 export const PremiereEtoileECIRempli = Template.bind({});
 PremiereEtoileECIRempli.args = {
   collectiviteId: 1,
-  parcours: fixture.parcours1,
-  preuves: [FILE1],
-  demande: {
-    id: 1,
-    en_cours: true,
-    collectivite_id: 1,
-    referentiel: 'eci',
-    etoiles: '1',
+  parcours: {
+    ...fixture.parcours1,
+    demande: {
+      id: 1,
+      en_cours: true,
+      collectivite_id: 1,
+      referentiel: 'eci',
+      etoiles: '1',
+    },
   },
+  preuves: [FILE1],
 };
 
 export const AutresEtoilesECI = Template.bind({});
@@ -61,29 +65,32 @@ AutresEtoilesECI.args = {
       score_fait: 0.2,
       score_a_realiser: 0.35,
     },
+    demande: {
+      id: 2,
+      en_cours: true,
+      collectivite_id: 1,
+      referentiel: 'eci',
+      etoiles: '2',
+    },
   },
   preuves: [],
-  demande: {
-    id: 2,
-    en_cours: true,
-    collectivite_id: 1,
-    referentiel: 'eci',
-    etoiles: '2',
-  },
 };
 
 export const PremiereEtoileCAE = Template.bind({});
 PremiereEtoileCAE.args = {
   collectiviteId: 1,
-  parcours: {...fixture.parcours1, referentiel: 'cae'},
-  preuves: [],
-  demande: {
-    id: 1,
-    en_cours: true,
-    collectivite_id: 1,
+  parcours: {
+    ...fixture.parcours1,
     referentiel: 'cae',
-    etoiles: '1',
+    demande: {
+      id: 1,
+      en_cours: true,
+      collectivite_id: 1,
+      referentiel: 'cae',
+      etoiles: '1',
+    },
   },
+  preuves: [],
 };
 
 // pas d'autres docs de candidature pour le référentiel CAE
@@ -100,13 +107,13 @@ AutresEtoilesCAE.args = {
       score_fait: 0.2,
       score_a_realiser: 0.35,
     },
+    demande: {
+      id: 2,
+      en_cours: true,
+      collectivite_id: 1,
+      referentiel: 'cae',
+      etoiles: '2',
+    },
   },
   preuves: [],
-  demande: {
-    id: 2,
-    en_cours: true,
-    collectivite_id: 1,
-    referentiel: 'cae',
-    etoiles: '2',
-  },
 };
