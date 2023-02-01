@@ -1,30 +1,33 @@
-import {labellisationReadEndpoint} from 'core-logic/api/endpoints/LabellisationReadEndpoint';
+import {useQuery} from 'react-query';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {LabellisationRead} from 'generated/dataLayer/labellisation_read';
-import {useEffect, useState} from 'react';
+import {supabaseClient} from 'core-logic/api/supabase';
+import {Database} from 'types/database.types';
 
-export const useLabellisationParNiveau = (referentiel: string) => {
-  const [labellisation, setLabellisation] =
-    useState<LabellisationParNiveauRead | null>(null);
-
+export const useLabellisationParNiveau = (
+  referentiel: Database['public']['Enums']['referentiel']
+) => {
   const collectivite_id = useCollectiviteId()!;
-  useEffect(() => {
-    labellisationReadEndpoint
-      .getBy({collectivite_id, referentiel})
-      .then(res => setLabellisation(res.reduce(parNiveau, {})));
-  }, [collectivite_id]);
-
-  return labellisation;
+  const {data} = useQuery(
+    ['labellisation', collectivite_id, referentiel],
+    async () => {
+      const {data} = await supabaseClient
+        .from('labellisation')
+        .select()
+        .match({collectivite_id, referentiel})
+        .order('obtenue_le', {ascending: false});
+      return data?.reduce(parNiveau, {}) || {};
+    }
+  );
+  return data || {};
 };
+
+type TLabellisation = Database['public']['Tables']['labellisation']['Row'];
 
 export type LabellisationParNiveauRead = {
-  [key: number]: LabellisationRead;
+  [key: number]: TLabellisation;
 };
 
-const parNiveau = (
-  dict: LabellisationParNiveauRead,
-  item: LabellisationRead
-) => {
+const parNiveau = (dict: LabellisationParNiveauRead, item: TLabellisation) => {
   const {etoiles} = item;
   const index = etoiles || 0; // pour gérer la valeur null
   return dict[index] ? dict : {...dict, [index]: item};
