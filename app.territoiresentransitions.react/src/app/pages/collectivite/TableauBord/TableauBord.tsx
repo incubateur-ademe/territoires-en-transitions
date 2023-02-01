@@ -1,4 +1,4 @@
-import {useParcoursLabellisation} from 'app/pages/collectivite/ParcoursLabellisation/useParcoursLabellisation';
+import {useCycleLabellisation} from 'app/pages/collectivite/ParcoursLabellisation/useCycleLabellisation';
 import {
   makeCollectiviteLabellisationUrl,
   makeCollectiviteReferentielUrl,
@@ -11,7 +11,7 @@ import {useAllIndicateurDefinitionsForGroup} from 'core-logic/hooks/indicateur_d
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useReferentielDownToAction} from 'core-logic/hooks/referentiel';
 import {ReferentielsActionScores, useScores} from 'core-logic/hooks/scoreHooks';
-import {LabellisationDemandeRead} from 'generated/dataLayer/labellisation_demande_read';
+import {TLabellisationDemande} from 'app/pages/collectivite/ParcoursLabellisation/types';
 import {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
 import {ActionScore} from 'types/ClientScore';
@@ -27,6 +27,7 @@ import {
   useLabellisationParNiveau,
 } from './useLabellisationParNiveau';
 import {useTracker} from 'core-logic/hooks/useTracker';
+import {TLabellisationParcours} from 'app/pages/collectivite/ParcoursLabellisation/types';
 
 const remplissageColor = '#2F4077';
 
@@ -225,7 +226,7 @@ const ReferentielSection = ({
   collectiviteId,
 }: {
   actions: ActionDefinitionSummary[];
-  demande: LabellisationDemandeRead | null;
+  demande: TLabellisationDemande | null;
   labellisationParNiveau: LabellisationParNiveauRead | null;
   scores: ActionScore[];
   referentielId: ReferentielParamOption;
@@ -302,7 +303,9 @@ const ReferentielSection = ({
         {!demande || demande.en_cours ? (
           <Link
             className="fr-btn"
-            onClick={() => tracker({fonction: 'decrocher_les_etoiles', action: 'clic'})}
+            onClick={() =>
+              tracker({fonction: 'decrocher_les_etoiles', action: 'clic'})
+            }
             to={makeCollectiviteLabellisationUrl({
               collectiviteId,
               referentielId,
@@ -346,8 +349,8 @@ export type TTableauBordProps = {
   scores: ReferentielsActionScores;
   actions: {eci: ActionDefinitionSummary[]; cae: ActionDefinitionSummary[]};
   demande: {
-    eci: LabellisationDemandeRead | null;
-    cae: LabellisationDemandeRead | null;
+    eci: TLabellisationParcours['demande'] | null;
+    cae: TLabellisationParcours['demande'] | null;
   };
   labellisationParNiveau: {
     eci: LabellisationParNiveauRead | null;
@@ -411,8 +414,8 @@ const TableauBordConnected = () => {
   const eci_labellisationParNiveau = useLabellisationParNiveau('eci');
   const cae_labellisationParNiveau = useLabellisationParNiveau('cae');
 
-  const {demande: eci_demande} = useParcoursLabellisation('eci');
-  const {demande: cae_demande} = useParcoursLabellisation('cae');
+  const eci_demande = useCycleLabellisation('eci')?.parcours?.demande || null;
+  const cae_demande = useCycleLabellisation('cae')?.parcours?.demande || null;
 
   const eciIndicateurCounts = useIndicateurCounts('eci');
   const caeIndicateurCounts = useIndicateurCounts('cae');
