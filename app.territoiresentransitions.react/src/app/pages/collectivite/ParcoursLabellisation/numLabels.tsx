@@ -1,4 +1,6 @@
-export const numLabels = {
+import {TEtoiles} from './types';
+
+export const numLabels: Record<TEtoiles, string> = {
   1: 'première',
   2: 'deuxième',
   3: 'troisième',

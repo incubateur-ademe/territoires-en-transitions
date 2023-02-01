@@ -37,7 +37,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
 </div>
 `;
 
-exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisation Audit En Cours Auditeur 1`] = `
+exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisation Audit en cours (auditeur) 1`] = `
 <div
   className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
 >
@@ -81,6 +81,43 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
 </div>
 `;
 
+exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisation Audit validé (auditeur) 1`] = `
+<div
+  className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
+>
+  <div
+    className="fr-container fr-my-2w"
+  >
+    <p
+      className="m-0"
+    >
+      <span
+        className="capitalize"
+      >
+        première
+      </span>
+       
+      étoile depuis le
+       
+      15 décembre 2021
+    </p>
+    <h2
+      className="fr-mb-2w"
+    >
+      Objectif : 
+      deuxième
+       étoile
+    </h2>
+    <p
+      className="m-0 fr-text-mention--grey"
+      data-test="HeaderMessage"
+    >
+      Labellisation en cours
+    </p>
+  </div>
+</div>
+`;
+
 exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisation Audit validé 1`] = `
 <div
   className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
@@ -118,56 +155,6 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
 </div>
 `;
 
-exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisation Criteres Non Remplis 1`] = `
-<div
-  className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
->
-  <div
-    className="fr-container fr-my-2w"
-  >
-    <h2
-      className="fr-mb-2w"
-    >
-      Objectif : 
-      première
-       étoile
-    </h2>
-    <button
-      className="fr-btn self-start"
-      disabled={true}
-      onClick={[Function]}
-    >
-      Demander la première étoile
-    </button>
-  </div>
-</div>
-`;
-
-exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisation Criteres Remplis 1`] = `
-<div
-  className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
->
-  <div
-    className="fr-container fr-my-2w"
-  >
-    <h2
-      className="fr-mb-2w"
-    >
-      Objectif : 
-      première
-       étoile
-    </h2>
-    <button
-      className="fr-btn self-start"
-      disabled={false}
-      onClick={[Function]}
-    >
-      Demander la première étoile
-    </button>
-  </div>
-</div>
-`;
-
 exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisation Criteres Remplis 2 Eme Etoile 1`] = `
 <div
   className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
@@ -197,7 +184,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
     </h2>
     <button
       className="fr-btn self-start"
-      disabled={false}
+      disabled={true}
       onClick={[Function]}
     >
       Demander un audit
@@ -267,7 +254,81 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
 </div>
 `;
 
-exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisation Remplissage Incomplet 1`] = `
+exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisation Demande Envoyee COT 1`] = `
+<div
+  className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
+>
+  <div
+    className="fr-container fr-my-2w"
+  >
+    <h2
+      className="fr-mb-2w"
+    >
+      Objectif : 
+      première
+       étoile
+    </h2>
+    <p
+      className="m-0 fr-text-mention--grey"
+      data-test="HeaderMessage"
+    >
+      Demande envoyée
+    </p>
+  </div>
+</div>
+`;
+
+exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisation Labellisable 1`] = `
+<div
+  className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
+>
+  <div
+    className="fr-container fr-my-2w"
+  >
+    <h2
+      className="fr-mb-2w"
+    >
+      Objectif : 
+      première
+       étoile
+    </h2>
+    <button
+      className="fr-btn self-start"
+      disabled={false}
+      onClick={[Function]}
+    >
+      Demander la première étoile
+    </button>
+  </div>
+</div>
+`;
+
+exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisation Labellisable COT 1`] = `
+<div
+  className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
+>
+  <div
+    className="fr-container fr-my-2w"
+  >
+    <h2
+      className="fr-mb-2w"
+    >
+      Objectif : 
+      première
+       étoile
+    </h2>
+    <button
+      className="fr-btn self-start"
+      disabled={false}
+      onClick={[Function]}
+    >
+      Demander un audit
+    </button>
+  </div>
+</div>
+`;
+
+exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisation Non Labellisable 1`] = `
 <div
   className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
 >
@@ -287,6 +348,31 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
       onClick={[Function]}
     >
       Demander la première étoile
+    </button>
+  </div>
+</div>
+`;
+
+exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisation Non Labellisable COT 1`] = `
+<div
+  className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
+>
+  <div
+    className="fr-container fr-my-2w"
+  >
+    <h2
+      className="fr-mb-2w"
+    >
+      Objectif : 
+      première
+       étoile
+    </h2>
+    <button
+      className="fr-btn self-start"
+      disabled={false}
+      onClick={[Function]}
+    >
+      Demander un audit
     </button>
   </div>
 </div>
