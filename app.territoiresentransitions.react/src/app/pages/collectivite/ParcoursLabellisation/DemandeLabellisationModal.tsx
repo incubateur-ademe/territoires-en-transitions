@@ -1,13 +1,13 @@
 import Dialog from '@material-ui/core/Dialog';
-import {LabellisationDemandeRead} from 'generated/dataLayer/labellisation_demande_read';
-import {LabellisationParcoursRead} from 'generated/dataLayer/labellisation_parcours_read';
+import {useState} from 'react';
 import {CloseDialogButton} from 'ui/shared/CloseDialogButton';
 import {numLabels} from './numLabels';
+import {TSujetDemande} from './types';
 import {useEnvoiDemande} from './useEnvoiDemande';
+import {TCycleLabellisation} from './useCycleLabellisation';
 
 export type TDemandeLabellisationModalProps = {
-  parcours: LabellisationParcoursRead;
-  demande: LabellisationDemandeRead;
+  parcoursLabellisation: TCycleLabellisation;
   opened: boolean;
   setOpened: (opened: boolean) => void;
 };
@@ -46,8 +46,11 @@ const submittedEtoile1 =
 const submittedAutresEtoiles =
   'Votre demande d’audit a bien été envoyée. Vous recevrez prochainement un mail du Bureau d’Appui.';
 
-const getMessage = (parcours: LabellisationParcoursRead) => {
-  const {etoiles, referentiel} = parcours;
+const getMessage = (parcours: TCycleLabellisation['parcours']) => {
+  const {etoiles, referentiel} = parcours || {};
+  if (!etoiles) {
+    return null;
+  }
   if (etoiles === '1') {
     return messageEtoile_1;
   }
@@ -61,44 +64,73 @@ const getMessage = (parcours: LabellisationParcoursRead) => {
 };
 
 /**
- * Affiche la modale d'envoie de la demande de labellisation
+ * Affiche la modale d'envoie de la demande d'audit
  */
 export const DemandeLabellisationModal = (
   props: TDemandeLabellisationModalProps
 ) => {
-  const {parcours, demande, opened, setOpened} = props;
-  const {etoiles} = parcours;
   const {isLoading, envoiDemande} = useEnvoiDemande();
-
+  const {parcoursLabellisation, opened, setOpened} = props;
+  const {parcours, status, isCOT} = parcoursLabellisation;
+  const {collectivite_id, referentiel, etoiles} = parcours || {};
   const onClose = () => setOpened(false);
+
+  // n'affiche rien si les donnnées ne sont pas valides
+  if (
+    !parcours ||
+    !collectivite_id ||
+    (status !== 'non_demandee' && status !== 'demande_envoyee')
+  ) {
+    return null;
+  }
+
+  // affiche le sélecteur de sujet de demande d'audit pour les COT
+  if (isCOT) {
+    return <DemandeAuditModal {...props} />;
+  }
+
+  const canSubmit = referentiel && etoiles;
+
   return (
     <Dialog
       data-test="DemandeLabellisationModal"
       open={opened}
       onClose={onClose}
       maxWidth="md"
-      fullWidth={true}
+      fullWidth
     >
       <div className="p-7 flex flex-col">
         <CloseDialogButton setOpened={setOpened} />
         <h3>
           {etoiles === '1'
             ? 'Demander la première étoile'
-            : `Demander un audit pour la ${numLabels[etoiles]} étoile`}
+            : `Demander un audit pour la ${numLabels[etoiles!]} étoile`}
         </h3>
         <div className="w-full">
           {isLoading ? 'Envoi en cours...' : null}
-          {!demande.en_cours ? (
+          {status === 'demande_envoyee' ? (
             <div className="fr-alert fr-alert--success">
               {etoiles === '1' ? submittedEtoile1 : submittedAutresEtoiles}
             </div>
           ) : null}
-          {demande.en_cours && !isLoading ? (
+          {status === 'non_demandee' && !isLoading ? (
             <>
-              {getMessage(parcours).map((line, index) => (
+              {getMessage(parcours)?.map((line, index) => (
                 <p key={index}>{line}</p>
               ))}
-              <button className="fr-btn" onClick={() => envoiDemande(demande)}>
+              <button
+                className="fr-btn"
+                disabled={!canSubmit}
+                onClick={() =>
+                  canSubmit &&
+                  envoiDemande({
+                    collectivite_id,
+                    referentiel,
+                    etoiles,
+                    sujet: 'labellisation',
+                  })
+                }
+              >
                 Envoyer ma demande
               </button>
               {etoiles !== '1' ? (
@@ -116,3 +148,122 @@ export const DemandeLabellisationModal = (
     </Dialog>
   );
 };
+
+/**
+ * Affiche la modale de sélection du type d'audit souhaité et d'envoie de la
+ * demande d'audit
+ */
+const DemandeAuditModal = (props: TDemandeLabellisationModalProps) => {
+  const {isLoading, envoiDemande} = useEnvoiDemande();
+  const {parcoursLabellisation, opened, setOpened} = props;
+  const {parcours, status, labellisable} = parcoursLabellisation;
+  const {collectivite_id, referentiel, etoiles} = parcours || {};
+  const [sujet, setSujet] = useState<TSujetDemande | null>(
+    !labellisable ? 'cot' : null
+  );
+  const onClose = () => setOpened(false);
+
+  if (!collectivite_id || !referentiel) {
+    return null;
+  }
+
+  return (
+    <Dialog
+      data-test="DemandeAuditModal"
+      open={opened}
+      onClose={onClose}
+      maxWidth="md"
+      fullWidth
+    >
+      <div className="p-7 flex flex-col">
+        <CloseDialogButton setOpened={setOpened} />
+        <h3>Demander un audit</h3>
+        <div className="w-full">
+          {isLoading ? 'Envoi en cours...' : null}
+          {status === 'demande_envoyee' ? (
+            <div className="fr-alert fr-alert--success">
+              {submittedAutresEtoiles}
+            </div>
+          ) : null}
+          {status === 'non_demandee' && !isLoading ? (
+            <fieldset className="fr-fieldset">
+              <legend className="fr-fieldset__legend fr-text--regular">
+                Quel type d’audit souhaitez-vous demander ?
+              </legend>
+              <div className="fr-radio-group fr-radio-group--sm fr-mb-4w">
+                <RadioButton value="cot" sujet={sujet} setSujet={setSujet}>
+                  Audit COT <b>sans</b> labellisation
+                </RadioButton>
+                <RadioButton
+                  disabled={!labellisable}
+                  value="labellisation_cot"
+                  sujet={sujet}
+                  setSujet={setSujet}
+                >
+                  Audit COT <b>avec</b> labellisation
+                </RadioButton>
+                <RadioButton
+                  disabled={!labellisable}
+                  value="labellisation"
+                  sujet={sujet}
+                  setSujet={setSujet}
+                >
+                  Audit <b>de</b> labellisation
+                </RadioButton>
+              </div>
+              <button
+                className="fr-btn"
+                disabled={!sujet}
+                onClick={() =>
+                  sujet &&
+                  envoiDemande({
+                    collectivite_id,
+                    etoiles: etoiles || null,
+                    referentiel,
+                    sujet,
+                  })
+                }
+              >
+                Envoyer ma demande
+              </button>
+              <button
+                className="fr-btn fr-btn--secondary fr-ml-4w"
+                onClick={onClose}
+              >
+                Annuler
+              </button>
+            </fieldset>
+          ) : null}
+        </div>
+      </div>
+    </Dialog>
+  );
+};
+
+const RadioButton = ({
+  disabled,
+  value,
+  children,
+  sujet,
+  setSujet,
+}: {
+  disabled?: boolean;
+  value: TSujetDemande;
+  children: React.ReactNode;
+  sujet: TSujetDemande | null;
+  setSujet: (value: TSujetDemande) => void;
+}) => (
+  <>
+    <input
+      type="radio"
+      id={value}
+      disabled={disabled}
+      value={value}
+      checked={sujet === value}
+      onChange={() => setSujet(value)}
+    />
+    <label className="fr-label" htmlFor={value}>
+      <span>{children}</span>
+    </label>
+  </>
+);
