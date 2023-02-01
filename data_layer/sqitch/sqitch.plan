@@ -211,3 +211,5 @@ plan_action/plan_action [plan_action/plan_action@v2.1.0] 2023-01-27T10:14:51Z Am
 
 utilisateur/dcp [utilisateur/dcp@v2.1.1] 2023-01-30T16:24:43Z Amandine Jacquelin <conta@LanceLibre> # Ajoute une clé primaire à la table dcp
 @v2.1.2 2023-02-01T14:42:06Z Florian <florian@derfurth.com> # Permet d'upsert les DCPs à partir de retool.
+
+labellisation/fichier_preuve [labellisation/fichier_preuve@v2.1.0] 2023-01-26T13:11:42Z Amandine Jacquelin <conta@LanceLibre> # Ajouter update du nom d'un labellisation.bibliotheque_fichier

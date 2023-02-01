@@ -1,6 +1,6 @@
 begin;
 
-select plan(4);
+select plan(6);
 select test.disable_evaluation_api();
 
 truncate storage.objects cascade;
@@ -74,5 +74,25 @@ select is(
                ('403'),
                'La réponse lorsque un non-membre de la collectivité tente d''ajouter un fichier devrait être 403'
            );
+
+-- En tant que yolo
+select test.identify_as('yolo@dodo.com');
+
+select update_bibliotheque_fichier_filename(
+               f.collectivite_id,
+               f.hash,
+               'test'
+           )
+from test.file f;
+
+select is(
+               (select current_setting('response.status')),
+               ('201'),
+               'La réponse lorsque le fichier est modifié à la bibliothèque devrait être 201'
+           );
+
+select ok((select filename = 'test'
+           from labellisation.bibliotheque_fichier limit 1),
+          'Le fichier devrait être renommé en <<test>>');
 
 rollback;
