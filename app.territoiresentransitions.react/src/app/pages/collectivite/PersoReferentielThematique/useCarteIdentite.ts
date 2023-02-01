@@ -1,25 +1,26 @@
-import {useEffect, useState} from 'react';
-import {CarteIdentiteRead} from 'generated/dataLayer/carte_identite_read';
-import {carteIdentiteReadEndpoint} from 'core-logic/api/endpoints/CarteIdentititeReadEndpoint';
+import {useQuery} from 'react-query';
+import {supabaseClient} from 'core-logic/api/supabase';
+import {Database} from 'types/database.types';
 
-type TUseCarteIdentite = (collectivite_id?: number) => CarteIdentiteRead | null;
+export type TCarteIdentite =
+  Database['public']['Views']['collectivite_carte_identite']['Row'];
+type TUseCarteIdentite = (
+  collectivite_id?: number | null
+) => TCarteIdentite | null;
 
 export const useCarteIdentite: TUseCarteIdentite = collectivite_id => {
-  const [data, setData] = useState<CarteIdentiteRead | null>(null);
+  const {data} = useQuery(
+    ['collectivite_carte_identite', collectivite_id],
+    () => (collectivite_id ? fetchCarteIdentite(collectivite_id) : null)
+  );
 
-  // charge les données
-  const fetch = async () => {
-    if (collectivite_id) {
-      const results = await carteIdentiteReadEndpoint.getBy({
-        collectivite_id,
-      });
+  return data || null;
+};
 
-      setData(results?.length > 0 ? results[0] : null);
-    }
-  };
-  useEffect(() => {
-    fetch();
-  }, [collectivite_id]);
-
-  return data;
+const fetchCarteIdentite = async (collectivite_id: number) => {
+  const {data} = await supabaseClient
+    .from('collectivite_carte_identite')
+    .select()
+    .eq('collectivite_id', collectivite_id);
+  return data?.[0] || null;
 };
