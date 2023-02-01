@@ -1,5 +1,4 @@
-import {LabellisationParcoursRead} from 'generated/dataLayer/labellisation_parcours_read';
-import {LabellisationDemandeRead} from 'generated/dataLayer/labellisation_demande_read';
+import {TLabellisationParcours} from 'app/pages/collectivite/ParcoursLabellisation/types';
 import {CritereScore} from './CritereScore';
 import {CriteresAction} from './CriteresAction';
 import {CriterePreuves} from './CriterePreuves';
@@ -7,13 +6,14 @@ import {numLabels} from './numLabels';
 import {CritereCompletude} from './CritereCompletude';
 import {TPreuveLabellisation} from 'ui/shared/preuves/Bibliotheque/types';
 import {useCollectiviteId, useReferentielId} from 'core-logic/hooks/params';
-import {useParcoursLabellisation} from './useParcoursLabellisation';
+import {useCycleLabellisation} from './useCycleLabellisation';
 import {usePreuves} from 'ui/shared/preuves/Bibliotheque/usePreuves';
+import {useDemandeLabellisation} from './useDemandeLabellisation';
+import {Referentiel} from 'types/litterals';
 
 export type TCriteresLabellisationProps = {
   collectiviteId: number;
-  parcours: LabellisationParcoursRead;
-  demande: LabellisationDemandeRead | null;
+  parcours: TLabellisationParcours;
   preuves: TPreuveLabellisation[];
 };
 
@@ -54,7 +54,13 @@ export const CriteresLabellisation = (props: TCriteresLabellisationProps) => {
 const CriteresLabellisationConnected = () => {
   const collectiviteId = useCollectiviteId();
   const referentiel = useReferentielId();
-  const {parcours, demande} = useParcoursLabellisation(referentiel);
+
+  const {parcours} = useCycleLabellisation(referentiel);
+
+  // on s'assure que la demande existe pour avoir l'id nécessaire pour attacher les preuves
+  const etoiles = parcours?.etoiles;
+  const demande = useDemandeLabellisation(referentiel as Referentiel, etoiles);
+
   const preuves = usePreuves({
     demande_id: demande?.id,
     preuve_types: ['labellisation'],
@@ -64,7 +70,6 @@ const CriteresLabellisationConnected = () => {
     <CriteresLabellisation
       collectiviteId={collectiviteId}
       parcours={parcours}
-      demande={demande}
       preuves={preuves}
     />
   ) : null;
