@@ -2,10 +2,10 @@
  * Affiche les informations administratives d'une collectivité
  */
 
-import {CarteIdentiteRead} from 'generated/dataLayer/carte_identite_read';
+import {TCarteIdentite} from './useCarteIdentite';
 
 export type TCarteIdentiteProps = {
-  identite: CarteIdentiteRead;
+  identite: TCarteIdentite;
 };
 
 export const CarteIdentite = (props: TCarteIdentiteProps) => {
