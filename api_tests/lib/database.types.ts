@@ -1077,19 +1077,19 @@ export interface Database {
       };
       time_bucket:
         | {
-            Args: {bucket_width: unknown; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; ts: string};
-            Returns: string;
-          }
-        | {
             Args: {bucket_width: unknown; origin: string; ts: string};
+            Returns: string;
+          }
+        | {
+            Args: {bucket_width: unknown; ts: string};
+            Returns: string;
+          }
+        | {
+            Args: {bucket_width: unknown; ts: string};
+            Returns: string;
+          }
+        | {
+            Args: {bucket_width: unknown; ts: string};
             Returns: string;
           }
         | {
@@ -1139,39 +1139,39 @@ export interface Database {
       time_bucket_gapfill:
         | {
             Args: {
+              bucket_width: number;
+              finish: number;
+              start: number;
+              ts: number;
+            };
+            Returns: number;
+          }
+        | {
+            Args: {
+              bucket_width: number;
+              finish: number;
+              start: number;
+              ts: number;
+            };
+            Returns: number;
+          }
+        | {
+            Args: {
+              bucket_width: number;
+              finish: number;
+              start: number;
+              ts: number;
+            };
+            Returns: number;
+          }
+        | {
+            Args: {
               bucket_width: unknown;
               finish: string;
               start: string;
               ts: string;
             };
             Returns: string;
-          }
-        | {
-            Args: {
-              bucket_width: number;
-              finish: number;
-              start: number;
-              ts: number;
-            };
-            Returns: number;
-          }
-        | {
-            Args: {
-              bucket_width: number;
-              finish: number;
-              start: number;
-              ts: number;
-            };
-            Returns: number;
-          }
-        | {
-            Args: {
-              bucket_width: number;
-              finish: number;
-              start: number;
-              ts: number;
-            };
-            Returns: number;
           }
         | {
             Args: {
@@ -1211,6 +1211,10 @@ export interface Database {
         Args: {'': unknown};
         Returns: unknown;
       };
+      update_bibliotheque_fichier_filename: {
+        Args: {collectivite_id: number; filename: string; hash: string};
+        Returns: undefined;
+      };
       update_collectivite_membre_champ_intervention: {
         Args: {
           champ_intervention: unknown;
@@ -1242,6 +1246,10 @@ export interface Database {
           niveau_acces: Database['public']['Enums']['niveau_acces'];
         };
         Returns: Json;
+      };
+      upsert_axe: {
+        Args: {collectivite_id: number; nom: string; parent: number};
+        Returns: number;
       };
     };
     Tables: {
@@ -1883,6 +1891,89 @@ export interface Database {
         Update: {
           axe_id?: number;
           fiche_id?: number;
+        };
+      };
+      fiche_action_import_csv: {
+        Insert: {
+          amelioration_continue?: string | null;
+          axe?: string | null;
+          budget?: string | null;
+          calendrier?: string | null;
+          cibles?: string | null;
+          collectivite_id?: string | null;
+          date_debut?: string | null;
+          date_fin?: string | null;
+          description?: string | null;
+          elu_referent?: string | null;
+          financements?: string | null;
+          moyens?: string | null;
+          notes?: string | null;
+          num_action?: string | null;
+          objectifs?: string | null;
+          partenaires?: string | null;
+          personne_referente?: string | null;
+          plan_nom?: string | null;
+          priorite?: string | null;
+          resultats_attendus?: string | null;
+          sous_axe?: string | null;
+          sous_sous_axe?: string | null;
+          statut?: string | null;
+          structure_pilote?: string | null;
+          titre?: string | null;
+        };
+        Row: {
+          amelioration_continue: string | null;
+          axe: string | null;
+          budget: string | null;
+          calendrier: string | null;
+          cibles: string | null;
+          collectivite_id: string | null;
+          date_debut: string | null;
+          date_fin: string | null;
+          description: string | null;
+          elu_referent: string | null;
+          financements: string | null;
+          moyens: string | null;
+          notes: string | null;
+          num_action: string | null;
+          objectifs: string | null;
+          partenaires: string | null;
+          personne_referente: string | null;
+          plan_nom: string | null;
+          priorite: string | null;
+          resultats_attendus: string | null;
+          sous_axe: string | null;
+          sous_sous_axe: string | null;
+          statut: string | null;
+          structure_pilote: string | null;
+          titre: string | null;
+        };
+        Update: {
+          amelioration_continue?: string | null;
+          axe?: string | null;
+          budget?: string | null;
+          calendrier?: string | null;
+          cibles?: string | null;
+          collectivite_id?: string | null;
+          date_debut?: string | null;
+          date_fin?: string | null;
+          description?: string | null;
+          elu_referent?: string | null;
+          financements?: string | null;
+          moyens?: string | null;
+          notes?: string | null;
+          num_action?: string | null;
+          objectifs?: string | null;
+          partenaires?: string | null;
+          personne_referente?: string | null;
+          plan_nom?: string | null;
+          priorite?: string | null;
+          resultats_attendus?: string | null;
+          sous_axe?: string | null;
+          sous_sous_axe?: string | null;
+          statut?: string | null;
+          structure_pilote?: string | null;
+          titre?: string | null;
         };
       };
       fiche_action_indicateur: {
