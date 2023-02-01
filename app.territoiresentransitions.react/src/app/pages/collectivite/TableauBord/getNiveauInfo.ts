@@ -35,7 +35,7 @@ export const getNiveauInfo = (
     const year = new Date(obtenue_le).getFullYear();
 
     // pas de score affiché pour la 1ère étoile (ou si il n'y a pas de score)
-    if (niveau === 1 || !score_realise) {
+    if (niveau === 1 || !score_realise || !score_programme) {
       return {obtenu, message: `Reconnaissance obtenue en ${year}`};
     }
 
