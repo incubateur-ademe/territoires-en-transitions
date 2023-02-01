@@ -2,113 +2,121 @@
 
 BEGIN;
 
-create or replace view fiches_action as
-select fa.*,
-       t.thematiques,
-       st.sous_thematiques,
-       p.partenaires,
-       s.structures,
-       pi.pilotes,
-       re.referents,
-       anne.annexes,
-       pla.axes,
-       act.actions,
-       ind.indicateurs
-from fiche_action fa
-         -- thematiques
-         left join lateral (
-    select array_agg(th.*::thematique) as thematiques
-    from thematique th
-             join fiche_action_thematique fath on fath.thematique = th.thematique
-    where fath.fiche_id = fa.id
-    ) as t on true
-    -- sous-thematiques
-         left join lateral (
-    select array_agg(sth.*::sous_thematique) as sous_thematiques
-    from sous_thematique sth
-             join fiche_action_sous_thematique fasth on fasth.thematique_id = sth.id
-    where fasth.fiche_id = fa.id
-    ) as st on true
-    -- partenaires
-         left join lateral (
-    select array_agg(pt.*::partenaire_tag) as partenaires
-    from partenaire_tag pt
-             join fiche_action_partenaire_tag fapt on fapt.partenaire_tag_id = pt.id
-    where fapt.fiche_id = fa.id
-    ) as p on true
-    -- structures
-         left join lateral (
-    select array_agg(st.*::structure_tag) as structures
-    from structure_tag st
-             join fiche_action_structure_tag fast on fast.structure_tag_id = st.id
-    where fast.fiche_id = fa.id
-    ) as s on true
-    -- pilotes
-         left join lateral (
-    select array_agg(pil.*::personne) as pilotes
-    from (
-             select coalesce(pt.nom, concat(dcp.prenom, ' ', dcp.nom)) as nom,
-                    pt.collectivite_id,
-                    fap.tag_id,
-                    fap.user_id
-             from fiche_action_pilote fap
-                      left join personne_tag pt on fap.tag_id = pt.id
-                      left join dcp on fap.user_id = dcp.user_id
-             where fap.fiche_id = fa.id
-         ) pil
-    ) as pi on true
-    -- referents
-         left join lateral (
-    select array_agg(ref.*::personne) as referents
-    from (
-             select coalesce(pt.nom, concat(dcp.prenom, ' ', dcp.nom)) as nom,
-                    pt.collectivite_id,
-                    far.tag_id,
-                    far.user_id
-             from fiche_action_referent far
-                      left join personne_tag pt on far.tag_id = pt.id
-                      left join dcp on far.user_id = dcp.user_id
-             where far.fiche_id = fa.id
-         ) ref
-    ) as re on true
-    -- annexes
-         left join lateral (
-    select array_agg(a.*::annexe) as annexes
-    from annexe a
-             join fiche_action_annexe faa on faa.annexe_id = a.id
-    where faa.fiche_id = fa.id
-    ) as anne on true
-    -- axes
-         left join lateral (
-    select array_agg(pa.*::axe) as axes
-    from axe pa
-             join fiche_action_axe fapa on fapa.axe_id = pa.id
-    where fapa.fiche_id = fa.id
-    ) as pla on true
-    -- actions
-         left join lateral (
-    select array_agg(ar.*::action_relation) as actions
-    from action_relation ar
-             join fiche_action_action faa on faa.action_id = ar.id
-    where faa.fiche_id = fa.id
-    ) as act on true
-    -- indicateurs
-         left join lateral (
-    select array_agg(indi.*::indicateur_generique) as indicateurs
-    from (
-             select fai.indicateur_id,
-                    fai.indicateur_personnalise_id,
-                    coalesce(id.nom, ipd.titre) as nom,
-                    coalesce(id.description, ipd.description) as description,
-                    coalesce(id.unite, ipd.unite) as unite
-             from fiche_action_indicateur fai
-                      left join indicateur_definition id on fai.indicateur_id = id.id
-                      left join indicateur_personnalise_definition ipd on fai.indicateur_personnalise_id = ipd.id
-             where fai.fiche_id = fa.id
-         ) indi
-    ) as ind on true
--- TODO fiches liées (à calculer dans la vue selon action et indicateurs?)
-;
+create or replace function import_plan_action_csv() returns trigger as
+$$
+declare
+    axe_id integer;
+    fiche_id integer;
+    elem_id integer;
+    elem text;
+    col_id integer;
+    regex_split text = E'\(et/ou|[–,/+?&;]| - | -|- |^-| et (?!de)\)(?![^(]*[)])(?![^«]*[»])';
+    regex_date text = E'^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[012])/([0-9]{4})$';
+begin
+    col_id = new.collectivite_id::integer;
+
+    -- Fiche action
+    insert into fiche_action (titre, description, piliers_eci, objectifs, resultats_attendus, cibles, ressources, financements, budget_previsionnel, statut, niveau_priorite, date_debut, date_fin_provisoire, amelioration_continue, calendrier, notes_complementaires, maj_termine, collectivite_id)
+    values (
+               left(case when new.num_action ='' then trim(new.titre) else concat(new.num_action, ' - ', trim(new.titre)) end, 300),
+               new.description,
+               null,
+               new.objectifs,
+               case when new.resultats_attendus <> '' then regexp_split_to_array(new.resultats_attendus, '-')::fiche_action_resultats_attendus[] else array[]::fiche_action_resultats_attendus[] end,
+               case when new.cibles <> '' then regexp_split_to_array(new.cibles, '-')::fiche_action_cibles[] else array[]::fiche_action_cibles[] end,
+               new.moyens,
+               new.financements,
+               case when new.budget <> '' then new.budget::integer end,
+               case when new.statut <> '' then trim(new.statut)::fiche_action_statuts end,
+               case when new.priorite <> '' then trim(new.priorite)::fiche_action_niveaux_priorite end,
+               case when regexp_match(new.date_debut, regex_date) is not null then to_date(trim(new.date_debut), 'DD/MM/YYYY') end,
+               case when regexp_match(new.date_fin, regex_date) is not null then to_date(trim(new.date_fin), 'DD/MM/YYYY') end,
+               not (new.amelioration_continue = 'FAUX'),
+               new.calendrier,
+               new.notes,
+               true,
+               col_id)
+    returning id into fiche_id;
+
+    -- Plan et axes
+    if new.plan_nom is not null and trim(new.plan_nom) <> '' then
+        axe_id = upsert_axe(new.plan_nom, col_id, null);
+        if new.axe is not null and trim(new.axe) <> '' then
+            axe_id = upsert_axe(new.axe, col_id, axe_id);
+            if new.sous_axe is not null and trim(new.sous_axe) <> '' then
+                axe_id = upsert_axe(new.sous_axe, col_id, axe_id);
+                if new.sous_sous_axe is not null and trim(new.sous_sous_axe) <> '' then
+                    axe_id = upsert_axe(new.sous_sous_axe, col_id, axe_id);
+                end if;
+            end if;
+        end if;
+    end if;
+    if axe_id is not null then
+        perform ajouter_fiche_action_dans_un_axe(fiche_id, axe_id);
+    end if;
+
+    -- Partenaires
+    for elem in select trim(unnest(regexp_split_to_array(new.partenaires, regex_split)))
+        loop
+            if elem <> '' then
+                insert into partenaire_tag (nom, collectivite_id)
+                values(elem, col_id)
+                on conflict (nom, collectivite_id) do update set nom = elem
+                returning id into elem_id;
+
+                insert into fiche_action_partenaire_tag (fiche_id, partenaire_tag_id)
+                values (fiche_id, elem_id);
+            end if;
+        end loop;
+
+    -- Structures
+    for elem in select trim(unnest(regexp_split_to_array(new.structure_pilote, regex_split)))
+        loop
+            elem = trim(elem);
+            if elem <> '' then
+                insert into structure_tag (nom, collectivite_id)
+                values(elem, col_id)
+                on conflict (nom, collectivite_id) do update set nom = elem
+                returning id into elem_id;
+
+                insert into fiche_action_structure_tag (fiche_id, structure_tag_id)
+                values (fiche_id, elem_id);
+            end if;
+        end loop;
+
+    -- Referents
+    for elem in select trim(unnest(regexp_split_to_array(new.elu_referent, regex_split)))
+        loop
+            elem = trim(elem);
+            if elem <> '' then
+                insert into personne_tag (nom, collectivite_id)
+                values(elem, col_id)
+                on conflict (nom, collectivite_id) do update set nom = elem
+                returning id into elem_id;
+
+                insert into fiche_action_referent (fiche_id, user_id, tag_id)
+                values (fiche_id, null, elem_id);
+            end if;
+        end loop;
+
+    -- Pilotes
+    for elem in select trim(unnest(regexp_split_to_array(new.personne_referente, regex_split)))
+        loop
+            elem = trim(elem);
+            if elem <> '' then
+                insert into personne_tag (nom, collectivite_id)
+                values(elem, col_id)
+                on conflict (nom, collectivite_id) do update set nom = elem
+                returning id into elem_id;
+
+                insert into fiche_action_pilote (fiche_id, user_id, tag_id)
+                values (fiche_id, null, elem_id);
+            end if;
+            return new;
+        end loop;
+end;
+$$ language plpgsql;
+comment on function import_plan_action_csv is 'Fonction important un plan d action format csv';
 
 
 COMMIT;
