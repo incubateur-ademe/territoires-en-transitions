@@ -1237,6 +1237,10 @@ export interface Database {
         Args: Record<PropertyKey, never>;
         Returns: undefined;
       };
+      test_create_collectivite: {
+        Args: {nom: string};
+        Returns: unknown;
+      };
       test_create_user: {
         Args: {email: string; nom: string; prenom: string; user_id: string};
         Returns: undefined;
@@ -1307,6 +1311,14 @@ export interface Database {
       test_reset_users: {
         Args: Record<PropertyKey, never>;
         Returns: undefined;
+      };
+      test_set_auditeur: {
+        Args: {demande_id: number; user_id: string};
+        Returns: unknown;
+      };
+      test_set_cot: {
+        Args: {actif: boolean; collectivite_id: number};
+        Returns: unknown;
       };
       test_write_scores: {
         Args: {collectivite_id: number; scores: unknown};
@@ -4278,13 +4290,6 @@ export interface Database {
           mois: string | null;
           total_utilisateurs: number | null;
           utilisateurs: number | null;
-        };
-      };
-      stats_labellisation_par_niveau: {
-        Row: {
-          etoiles: number | null;
-          labellisations: number | null;
-          referentiel: Database['public']['Enums']['referentiel'] | null;
         };
       };
       stats_labellisation_par_niveau: {
