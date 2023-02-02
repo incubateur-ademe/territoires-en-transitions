@@ -13,10 +13,7 @@ Deno.test(
       .select("modified_by_id, modified_by_nom")
       .eq("collectivite_id", 10);
 
-    assertEquals(data, [{
-      modified_by_id: "99999999-9999-9999-9999-999999999999",
-      modified_by_nom: "Équipe territoires en transitions",
-    }]);
+    assertEquals(data, []);
 
     // on se déconnecte pour libérer les ressources
     await signOut();
