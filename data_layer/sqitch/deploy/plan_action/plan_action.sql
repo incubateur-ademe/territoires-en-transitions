@@ -26,23 +26,35 @@ create policy allow_insert on fiche_action_financeur_tag for insert with check(p
 create policy allow_update on fiche_action_financeur_tag for update using(peut_modifier_la_fiche(fiche_id));
 create policy allow_delete on fiche_action_financeur_tag for delete using(peut_modifier_la_fiche(fiche_id));
 
-create function ajouter_financeur(
+create type financeur_montant as
+(
+    financeur_tag financeur_tag,
+    montant_ttc integer,
+    id integer
+);
+
+create or replace function ajouter_financeur(
     fiche_id integer,
-    financeur financeur_tag,
-    montant integer
-) returns financeur_tag as $$
+    financeur financeur_montant
+) returns financeur_montant as $$
 declare
     id_tag integer;
     id_fiche integer;
+    id_montant integer;
+    tag_financeur financeur_tag;
 begin
     id_fiche = fiche_id; -- Ne veut pas prendre ajoute_financeur.fiche_id
+    tag_financeur = financeur.financeur_tag;
     insert into financeur_tag (nom, collectivite_id)
-    values(financeur.nom, financeur.collectivite_id)
-    on conflict (nom, collectivite_id) do update set nom = financeur.nom
+    values(tag_financeur.nom, tag_financeur.collectivite_id)
+    on conflict (nom, collectivite_id) do update set nom = tag_financeur.nom
     returning id into id_tag;
-    financeur.id = id_tag;
+    tag_financeur.id = id_tag;
     insert into fiche_action_financeur_tag (fiche_id, financeur_tag_id, montant_ttc)
-    values (id_fiche, id_tag, montant);
+    values (id_fiche, id_tag, financeur.montant_ttc)
+    returning id into id_montant;
+    financeur.id = id_montant;
+    financeur.financeur_tag = tag_financeur;
     return financeur;
 end;
 $$ language plpgsql;
@@ -152,13 +164,10 @@ select fa.*,
        ser.services,
        -- financeurs
        (
-       select array_agg(fin.*) as financeurs
-        from (select ft.id,
-                     ft.nom,
-                     ft.collectivite_id,
+       select array_agg(fin.*::financeur_montant) as financeurs
+        from (select ft as financeur_tag,
                      faft.montant_ttc,
                      faft.id
-              -- ??
               from financeur_tag ft
                        join fiche_action_financeur_tag faft on ft.id = faft.financeur_tag_id
               where faft.fiche_id = fa.id
@@ -216,7 +225,7 @@ from fiche_action fa
 ) as act on act.fiche_id = fa.id
     -- services
          left join (
-    select fast.fiche_id, array_agg(st.*::structure_tag) as services
+    select fast.fiche_id, array_agg(st.*::service_tag) as services
     from service_tag st
              join fiche_action_service_tag fast on fast.service_tag_id = st.id
     group by fast.fiche_id
@@ -240,7 +249,7 @@ declare
     indicateur indicateur_generique;
     annexe annexe;
     service service_tag;
-    financeur fiche_action_financeur_tag;
+    financeur financeur_montant;
 begin
     id_fiche = new.id;
     -- Fiche action
@@ -408,7 +417,7 @@ begin
     -- Financeurs
     delete from fiche_action_financeur_tag where fiche_id = id_fiche;
     if new.financeurs is not null then
-        foreach financeur in array new.financeurs
+        foreach financeur in array new.financeurs::financeur_montant[]
             loop
                 perform ajouter_financeur(id_fiche,financeur);
             end loop;
@@ -617,5 +626,58 @@ begin
 end;
 $$ language plpgsql;
 comment on function import_plan_action_csv is 'Fonction important un plan d action format csv';
+
+
+-- Fonction récursive pour afficher un plan d'action et ses axes
+create or replace function plan_action_profondeur(id integer, profondeur integer) returns jsonb as
+$$
+declare
+    pa_enfant_id integer; -- Id d'un plan d'action enfant du plan d'action courant
+    pa_nom text; -- Nom du plan d'action courant
+    id_loop integer; -- Indice pour parcourir une boucle
+    enfants jsonb[]; -- Plans d'actions enfants du plan d'action courant;
+    to_return jsonb; -- JSON retournant le plan d'action courant, ses fiches et ses enfants
+begin
+    pa_nom = (select nom from axe where axe.id = plan_action_profondeur.id);
+    id_loop = 1;
+    for pa_enfant_id in
+        select pa.id
+        from axe pa
+        where pa.parent = plan_action_profondeur.id
+        order by pa.created_at asc
+        loop
+            enfants[id_loop] = plan_action_profondeur(pa_enfant_id, profondeur +1);
+            id_loop = id_loop + 1;
+        end loop;
+
+    to_return = jsonb_build_object('id', plan_action_profondeur.id,
+                                   'nom', pa_nom,
+                                   'enfants', enfants);
+    return to_return;
+end;
+$$ language plpgsql;
+comment on function plan_action is
+    'Fonction retournant un JSON contenant le plan d''action passé en paramètre,
+    et ses plans d''actions enfants de manière récursive';
+
+create view plan_action_profondeur as
+select a.collectivite_id, a.id, plan_action_profondeur(a.id, 0) as plan
+from axe a
+where a.parent is null;
+
+create view plan_action_chemin as
+with recursive chemin_plan_action as (
+    select id as axe_id, collectivite_id,nom, parent, array[axe] as chemin
+    from axe
+    where parent is null
+
+    union all
+
+    select a.id as axe_id, a.collectivite_id, a.nom, a.parent, p.chemin || a
+    from axe a
+             join chemin_plan_action p on a.parent = p.axe_id
+)
+select chemin[1].id as plan_id, axe_id, collectivite_id, chemin
+from chemin_plan_action;
 
 COMMIT;
