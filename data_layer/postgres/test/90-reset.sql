@@ -25,6 +25,8 @@ $$
     select test_reset_action_statut_and_desc();
 -- 11-plan_action.sql
     select test_reset_plan_action();
+-- Supprime toutes les collectivités de test.
+    delete from collectivite_test cascade;
 $$ language sql security definer;
 comment on function test_reset is
     'Reinitialise les données fake.';
