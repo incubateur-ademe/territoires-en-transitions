@@ -1,11 +1,11 @@
 import {RejoindreOuActiverDialogContent} from 'app/pages/collectivite/RejoindreCetteCollectiviteDialog/RejoindreOuActiverDialogContent';
-import {allCollectiviteReadEndpoint} from 'core-logic/api/endpoints/CollectiviteReadEndpoints';
 import {ReferentContact} from 'core-logic/api/procedures/collectiviteProcedures';
 import {AllCollectiviteRead} from 'generated/dataLayer/all_collectivite_read';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {AutocompleteInput} from 'ui/AutocompleteInput';
 import {Spacer} from 'ui/shared/Spacer';
 import {UiDialogButton} from 'ui/UiDialogButton';
+import {useAllCollectivites} from './useAllCollectivites';
 
 export type TAssocierCollectiviteDialogProps = {
   getReferentContacts: (collectiviteId: number) => Promise<ReferentContact[]>;
@@ -13,19 +13,10 @@ export type TAssocierCollectiviteDialogProps = {
 export const AssocierCollectiviteDialog = ({
   getReferentContacts,
 }: TAssocierCollectiviteDialogProps) => {
-  const [opened, setOpened] = React.useState<boolean>(false);
-  const [allCollectiviteReads, setAllCollectiviteReads] = useState<
-    AllCollectiviteRead[]
-  >([]);
-
-  useEffect(() => {
-    allCollectiviteReadEndpoint
-      .getBy({})
-      .then(data => setAllCollectiviteReads(data));
-  }, []);
-
+  const [opened, setOpened] = React.useState(false);
   const [selectedCollectivite, setSelectedCollectivite] =
     React.useState<AllCollectiviteRead>();
+  const allCollectivites = useAllCollectivites();
 
   useEffect(() => {
     // uniquement à l'ouverture du dialogue
@@ -47,14 +38,10 @@ export const AssocierCollectiviteDialog = ({
         <div className="flex flex-row justify-center">
           <AutocompleteInput
             label="Nom de la collectivité"
-            options={allCollectiviteReads.map(
-              (collectiviteRead: AllCollectiviteRead) => {
-                return {
-                  value: collectiviteRead.collectivite_id.toString(),
-                  label: collectiviteRead.nom,
-                };
-              }
-            )}
+            options={allCollectivites.map(({collectivite_id, nom}) => ({
+              value: collectivite_id.toString(),
+              label: nom,
+            }))}
             onChange={collectiviteId => {
               if (!collectiviteId) {
                 setSelectedCollectivite(undefined);
@@ -66,9 +53,9 @@ export const AssocierCollectiviteDialog = ({
                 parsedCollectiviteId !== selectedCollectivite?.collectivite_id
               ) {
                 setSelectedCollectivite(
-                  allCollectiviteReads.find(
+                  allCollectivites.find(
                     c => c.collectivite_id === parsedCollectiviteId
-                  )
+                  ) || undefined
                 );
               }
             }}
