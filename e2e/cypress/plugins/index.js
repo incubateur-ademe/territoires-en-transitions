@@ -16,9 +16,8 @@
  * @type {Cypress.PluginConfig}
  */
 
-const { isFileExist, findFiles } = require('cy-verify-downloads');
+const {isFileExist, findFiles} = require('cy-verify-downloads');
 const cucumber = require('cypress-cucumber-preprocessor').default;
-const pg = require('./pg');
 const supabase = require('./supabase');
 const clipboard = require('./clipboard');
 const validateZip = require('./validateZip');
@@ -37,9 +36,7 @@ module.exports = (on, config) => {
   // pré-traitement des fichiers Gherkin
   on('file:preprocessor', cucumber());
   // pour vérifier les fichiers téléchargés
-  on('task', { isFileExist, findFiles });
-  // pour accéder au client postgres
-  pg(on, config);
+  on('task', {isFileExist, findFiles});
   // pour accéder au client supabase
   supabase(on, config);
   // pour accéder au contenu du presse-papier
