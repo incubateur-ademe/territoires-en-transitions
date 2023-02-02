@@ -3,6 +3,7 @@ create function
     nom varchar(300)
 )
     returns collectivite_test
+    security definer
 begin
     atomic
     insert into collectivite_test (nom)
@@ -15,6 +16,7 @@ comment on function test_create_collectivite is
 create function
     test_set_cot(collectivite_id integer, actif bool)
     returns cot
+    security definer
 begin
     atomic
     insert into cot
@@ -28,6 +30,7 @@ comment on function test_set_cot is
 create function
     test_set_auditeur(demande_id integer, user_id uuid)
     returns audit_auditeur
+    security definer
 begin
     atomic
     with new_audit as (

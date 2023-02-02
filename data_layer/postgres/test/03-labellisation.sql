@@ -101,6 +101,7 @@ create or replace function
     etoile labellisation.etoile
 )
     returns void
+    security definer
 as
 $$
 truncate private.action_score; -- use action_score as a temp table
