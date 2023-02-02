@@ -1,4 +1,4 @@
 export type FicheActionNiveauxPriorite =
-    "Élevé"|
-    "Moyen"|
-    "Bas";
+  | "Élevé"
+  | "Moyen"
+  | "Bas";
