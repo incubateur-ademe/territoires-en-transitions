@@ -1,16 +1,16 @@
-import {FicheActionThematiques} from "./enums/ficheActionThematiques.ts";
-import {FicheActionPiliersEci} from "./enums/ficheActionPiliersEci.ts";
-import {FicheActionResultatsAttendus} from "./enums/ficheActionResultatsAttendus.ts";
-import {FicheActionCibles} from "./enums/ficheActionCibles.ts";
-import {FicheActionStatuts} from "./enums/ficheActionStatuts.ts";
-import {FicheActionNiveauxPriorite} from "./enums/ficheActionNiveauxPriorite.ts";
+import { FicheActionThematiques } from "./enums/ficheActionThematiques.ts";
+import { FicheActionPiliersEci } from "./enums/ficheActionPiliersEci.ts";
+import { FicheActionResultatsAttendus } from "./enums/ficheActionResultatsAttendus.ts";
+import { FicheActionCibles } from "./enums/ficheActionCibles.ts";
+import { FicheActionStatuts } from "./enums/ficheActionStatuts.ts";
+import { FicheActionNiveauxPriorite } from "./enums/ficheActionNiveauxPriorite.ts";
 
 export type FicheAction = {
-    /*id : number;*/
-    titre : string;
-    description : string;
-    piliers_eci: FicheActionPiliersEci[];
-    /*objectifs: string;
+  /*id : number;*/
+  titre: string;
+  description: string;
+  piliers_eci: FicheActionPiliersEci[];
+  /*objectifs: string;
     resultats_attendus: FicheActionResultatsAttendus[];
     cibles: FicheActionCibles[];
     ressources: string;
@@ -25,4 +25,4 @@ export type FicheAction = {
     notes_complementaires: string;
     maj_termine: boolean;
     collectivite_id: number;*/
-}
+};
