@@ -52,7 +52,7 @@ const SelectCreateTagsDropdown = <T extends string>({
       enterToToggle={false}
       render={() => (
         <div data-test={`${dataTest}-options`}>
-          {inputValue.length > 0 && isNotSimilar && (
+          {inputValue.trim().length > 0 && isNotSimilar && (
             <button
               className={classNames('pl-10', optionButtonClassname)}
               onClick={() => {
