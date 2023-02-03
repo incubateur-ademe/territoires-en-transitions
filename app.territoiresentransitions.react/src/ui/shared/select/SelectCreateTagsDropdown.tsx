@@ -37,6 +37,14 @@ const SelectCreateTagsDropdown = <T extends string>({
     setInputValue(value);
   };
 
+  const filteredOptions = options.filter(option =>
+    option.label.toLowerCase().includes(inputValue.toLowerCase().trim())
+  );
+
+  const isNotSimilar =
+    inputValue.toLowerCase().trim() !==
+    filteredOptions[0]?.label.toLowerCase().trim();
+
   return (
     <DropdownFloater
       placement={placement}
@@ -44,7 +52,22 @@ const SelectCreateTagsDropdown = <T extends string>({
       enterToToggle={false}
       render={() => (
         <div data-test={`${dataTest}-options`}>
-          {options.map(({label, value: v}) => {
+          {inputValue.length > 0 && isNotSimilar && (
+            <button
+              className={classNames('pl-10', optionButtonClassname)}
+              onClick={() => {
+                onCreateClick(inputValue);
+                onInputChange('');
+              }}
+            >
+              <span className="mr-2">Créer</span>{' '}
+              <Tag
+                title={inputValue}
+                className="bg-indigo-100 text-indigo-700"
+              />
+            </button>
+          )}
+          {filteredOptions.map(({label, value: v}) => {
             return (
               <button
                 key={v}
@@ -65,21 +88,6 @@ const SelectCreateTagsDropdown = <T extends string>({
               </button>
             );
           })}
-          {inputValue.length > 0 && (
-            <button
-              className={classNames('pl-10', optionButtonClassname)}
-              onClick={() => {
-                onCreateClick(inputValue);
-                onInputChange('');
-              }}
-            >
-              <span className="mr-2">Créer</span>{' '}
-              <Tag
-                title={inputValue}
-                className="bg-indigo-100 text-indigo-700"
-              />
-            </button>
-          )}
         </div>
       )}
     >
