@@ -1,0 +1,98 @@
+Test:
+  La 6.1.2 est évaluée sur 3 points pour les communes
+Collectivité:
+  type:
+    - commune
+Scores:
+  cae_6.1.2:
+    point_referentiel: 4.0
+    point_potentiel: 3.0
+
+Test:
+  La 6.1.2 est évaluée sur 3 points pour les communes
+Collectivité:
+  type:
+    - EPCI
+Scores:
+  cae_6.1.2:
+    point_referentiel: 4.0
+    point_potentiel: 4.0
+
+
+Test:
+  La 6.1.2.3.1 est désactivée pour les communes
+Collectivité:
+  type:
+    - commune
+Scores:
+  cae_6.1.2.3.1:
+    point_referentiel: 0.8
+    point_potentiel: 0.0
+    desactive: yes
+
+Test:
+  La 6.1.2.3.2 est désactivée pour les EPCI
+Collectivité:
+  type:
+    - EPCI
+Scores:
+  cae_6.1.2.3.2:
+    point_referentiel: 0.8
+    point_potentiel: 0.0
+    desactive: yes
+
+Test:
+  La 6.1.2.4.1 est désactivée pour les communes
+Collectivité:
+  type:
+    - commune
+Scores:
+  cae_6.1.2.4.1:
+    point_referentiel: 0.16
+    point_potentiel: 0.0
+    desactive: yes
+    
+
+Test:
+  La 6.1.2.4.2 est désactivée pour les communes
+Collectivité:
+  type:
+    - commune
+Scores:
+  cae_6.1.2.4.2:
+    point_referentiel: 0.16
+    point_potentiel: 0.0
+    desactive: yes
+  
+ Test:
+  La 6.1.2.4.3 est désactivée pour les communes
+Collectivité:
+  type:
+    - commune
+Scores:
+  cae_6.1.2.4.3:
+    point_referentiel: 0.16
+    point_potentiel: 0.0
+    desactive: yes
+
+Test:
+  La 6.1.2.4.4 est désactivée pour les EPCI
+Collectivité:
+  type:
+    - EPCI
+Scores:
+  cae_6.1.2.4.4:
+    point_referentiel: 0.8
+    point_potentiel: 0.0
+    desactive: yes
+
+Test:
+  La 6.1.2.4.5 est désactivée pour les EPCI
+Collectivité:
+  type:
+    - EPCI
+Scores:
+  cae_6.1.2.4.5:
+    point_referentiel: 0.8
+    point_potentiel: 0.0
+    desactive: yes
