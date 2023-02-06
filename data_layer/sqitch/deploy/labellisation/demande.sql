@@ -97,6 +97,7 @@ create function
     etoiles labellisation.etoile default null
 )
     returns labellisation.demande
+    security definer
 as
 $$
 #variable_conflict use_column -- résout l'ambiguïté du `on conflict`
@@ -121,6 +122,7 @@ begin
         (collectivite_id, referentiel, etoiles)
         do update set en_cours = excluded.en_cours,
                       sujet    = excluded.sujet
+    where have_edition_acces(labellisation_submit_demande.collectivite_id)
     returning * into demande;
 
     return demande;
