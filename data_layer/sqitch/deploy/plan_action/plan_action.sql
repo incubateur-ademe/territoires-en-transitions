@@ -164,14 +164,14 @@ select fa.*,
        ser.services,
        -- financeurs
        (
-       select array_agg(fin.*::financeur_montant) as financeurs
-        from (select ft as financeur_tag,
-                     faft.montant_ttc,
-                     faft.id
-              from financeur_tag ft
-                       join fiche_action_financeur_tag faft on ft.id = faft.financeur_tag_id
-              where faft.fiche_id = fa.id
-             ) fin
+           select array_agg(fin.*::financeur_montant) as financeurs
+           from (select ft as financeur_tag,
+                        faft.montant_ttc,
+                        faft.id
+                 from financeur_tag ft
+                          join fiche_action_financeur_tag faft on ft.id = faft.financeur_tag_id
+                 where faft.fiche_id = fa.id
+                ) fin
        ) as financeurs
 from fiche_action fa
          -- thematiques
@@ -652,6 +652,7 @@ begin
 
     to_return = jsonb_build_object('id', plan_action_profondeur.id,
                                    'nom', pa_nom,
+                                   'profondeur', plan_action_profondeur.profondeur,
                                    'enfants', enfants);
     return to_return;
 end;
