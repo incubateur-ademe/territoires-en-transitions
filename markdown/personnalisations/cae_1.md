@@ -21,6 +21,16 @@ identite(population, moins_de_50000)
 ```
 Les collectivités de moins de 50 000 habitants ne sont pas concernées par l'obligation BEGES.
 
+# Personnalisation cae 1.1.2.1 liee obligation bilan GES "territoire"
+```yaml
+action_id: cae_1.1.2.1
+```
+## Règles
+### Désactivation
+```formule
+si identite(type, EPCI) et identite(population, plus_de_20000) alors VRAI
+```
+Seuls les EPCI à fiscalité propre de plus de 20 000 habitants ne sont pas évaluées sur cette action.
 
 # Réduction potentiel cae 1.2.2 liee AOM
 ```yaml
