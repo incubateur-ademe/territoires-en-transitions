@@ -50,15 +50,25 @@ type TAddPreuveLabellisationArgs = {
   collectivite_id: number;
   demande_id: number;
 } & TFileOrLink;
-export const useAddPreuveLabellisation = () =>
-  useMutation(
+export const useAddPreuveLabellisation = () => {
+  const queryClient = useQueryClient();
+  return useMutation(
     async (preuve: TAddPreuveLabellisationArgs) =>
       supabaseClient.from('preuve_labellisation').insert(preuve),
     {
       mutationKey: 'add_preuve_labellisation',
-      onSuccess: useRefetchPreuves(),
+      onSuccess: (data: unknown, variables: {collectivite_id: number}) => {
+        const {collectivite_id} = variables;
+        console.log('add_preuve_labellisation succeed');
+        queryClient.invalidateQueries([
+          'labellisation_parcours',
+          collectivite_id,
+        ]);
+        queryClient.invalidateQueries(['preuve', collectivite_id]);
+      },
     }
   );
+};
 
 /** Ajoute un rapport d'audit */
 type TAddPreuveAuditArgs = {
