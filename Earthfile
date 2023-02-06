@@ -48,3 +48,7 @@ dev:
     RUN docker run -p 8888:8888 -d --name business_territoiresentransitions.fr business:latest
     RUN earthly --push +deploy --DB_URL=$PG_URL
     RUN earthly --push +seed --DB_URL=$PG_URL
+
+stop:
+    LOCALLY
+    RUN docker ps --filter name=_territoiresentransitions.fr --filter status=running -aq | xargs docker stop | xargs docker rm
