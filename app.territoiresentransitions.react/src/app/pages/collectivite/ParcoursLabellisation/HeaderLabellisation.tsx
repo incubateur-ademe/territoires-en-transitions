@@ -43,6 +43,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
       {status === 'non_demandee' && !isAuditeur ? (
         <button
           className="fr-btn self-start"
+          data-test="SubmitDemandeBtn"
           disabled={!canSubmitDemande}
           onClick={() => setOpened(true)}
         >
