@@ -122,6 +122,23 @@ select ajouter_structure(11, (select pt.*::structure_tag from (select null as id
 select ajouter_structure(12, (select pt.*::structure_tag from (select null as id, 'Ultra structure' as nom, 1 as collectivite_id) pt limit 1));
 select ajouter_structure(13, (select pt.*::structure_tag from (select null as id, 'Giga structure' as nom, 1 as collectivite_id) pt limit 1));
 
+select ajouter_service(1, (select pt.*::service_tag from (select null as id, 'Super service' as nom, 1 as collectivite_id) pt limit 1));
+select ajouter_service(1, (select pt.*::service_tag from (select null as id, 'Ultra service' as nom, 1 as collectivite_id) pt limit 1));
+select ajouter_service(2, (select pt.*::service_tag from (select null as id, 'Giga service' as nom, 1 as collectivite_id) pt limit 1));
+select ajouter_service(3, (select pt.*::service_tag from (select null as id, 'Super service' as nom, 1 as collectivite_id) pt limit 1));
+select ajouter_service(4, (select pt.*::service_tag from (select null as id, 'Ultra service' as nom, 1 as collectivite_id) pt limit 1));
+select ajouter_service(5, (select pt.*::service_tag from (select null as id, 'Giga service' as nom, 1 as collectivite_id) pt limit 1));
+select ajouter_service(6, (select pt.*::service_tag from (select null as id, 'Super service' as nom, 1 as collectivite_id) pt limit 1));
+select ajouter_service(7, (select pt.*::service_tag from (select null as id, 'Ultra service' as nom, 1 as collectivite_id) pt limit 1));
+select ajouter_service(7, (select pt.*::service_tag from (select null as id, 'Giga service' as nom, 1 as collectivite_id) pt limit 1));
+select ajouter_service(8, (select pt.*::service_tag from (select null as id, 'Super service' as nom, 1 as collectivite_id) pt limit 1));
+select ajouter_service(9, (select pt.*::service_tag from (select null as id, 'Ultra service' as nom, 1 as collectivite_id) pt limit 1));
+select ajouter_service(10, (select pt.*::service_tag from (select null as id, 'Giga service' as nom, 1 as collectivite_id) pt limit 1));
+select ajouter_service(11, (select pt.*::service_tag from (select null as id, 'Giga service' as nom, 1 as collectivite_id) pt limit 1));
+select ajouter_service(11, (select pt.*::service_tag from (select null as id, 'Super service' as nom, 1 as collectivite_id) pt limit 1));
+select ajouter_service(12, (select pt.*::service_tag from (select null as id, 'Ultra service' as nom, 1 as collectivite_id) pt limit 1));
+select ajouter_service(13, (select pt.*::service_tag from (select null as id, 'Giga service' as nom, 1 as collectivite_id) pt limit 1));
+
 select ajouter_pilote(1, (select pe.*::personne from (select 'Lou Piote' as nom, 1 as collectivite_id, null as tag_id, null as user_id) pe limit 1));
 select ajouter_pilote(1, (select pe.*::personne from (select null as nom, 1 as collectivite_id, null as tag_id, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9' as user_id) pe limit 1));
 select ajouter_pilote(2, (select pe.*::personne from (select 'Lou Piote' as nom, 1 as collectivite_id, null as tag_id, null as user_id) pe limit 1));
@@ -151,3 +168,10 @@ values ('Disneyland', 1),
 insert into partenaire_tag (nom, collectivite_id)
 values ('Particulier', 1),
        ('Particulière', 1);
+
+select ajouter_financeur(1,(select pt.*::financeur_montant from (select (select fi::financeur_tag from (select null as id, 'Balthazar Picsou' as nom, 1 as collectivite_id) fi) as financeur, 10000 as montant_ttc, null as id) pt limit 1));
+select ajouter_financeur(1,(select pt.*::financeur_montant from (select (select fi::financeur_tag from (select null as id, 'Smaug' as nom, 1 as collectivite_id) fi) as financeur, 500 as montant_ttc, null as id) pt limit 1));
+select ajouter_financeur(2,(select pt.*::financeur_montant from (select (select fi::financeur_tag from (select null as id, 'Balthazar Picsou' as nom, 1 as collectivite_id) fi) as financeur, 20000 as montant_ttc, null as id) pt limit 1));
+select ajouter_financeur(2,(select pt.*::financeur_montant from (select (select fi::financeur_tag from (select null as id, 'Ras al Ghul' as nom, 1 as collectivite_id) fi) as financeur, 2000 as montant_ttc, null as id) pt limit 1));
+select ajouter_financeur(3,(select pt.*::financeur_montant from (select (select fi::financeur_tag from (select null as id, 'Smaug' as nom, 1 as collectivite_id) fi) as financeur, 3000 as montant_ttc, null as id) pt limit 1));
+select ajouter_financeur(4, (select pt.*::financeur_montant from (select (select fi::financeur_tag from (select null as id, 'Tony Stark' as nom, 1 as collectivite_id) fi) as financeur, 999 as montant_ttc, null as id) pt limit 1));
