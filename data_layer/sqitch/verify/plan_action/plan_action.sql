@@ -111,5 +111,6 @@ select plan_id, axe_id, collectivite_id, chemin
         where false;
 
 select has_function_privilege('plan_action_profondeur(integer, integer)', 'execute');
+select has_function_privilege('plan_action(integer)', 'execute');
 
 ROLLBACK;

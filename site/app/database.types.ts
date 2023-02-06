@@ -1164,39 +1164,39 @@ export interface Database {
           }
         | {
             Args: {
-              bucket_width: number;
-              finish: number;
-              start: number;
-              ts: number;
-            };
-            Returns: number;
-          }
-        | {
-            Args: {
-              bucket_width: number;
-              finish: number;
-              start: number;
-              ts: number;
-            };
-            Returns: number;
-          }
-        | {
-            Args: {
-              bucket_width: number;
-              finish: number;
-              start: number;
-              ts: number;
-            };
-            Returns: number;
-          }
-        | {
-            Args: {
               bucket_width: unknown;
               finish: string;
               start: string;
               ts: string;
             };
             Returns: string;
+          }
+        | {
+            Args: {
+              bucket_width: number;
+              finish: number;
+              start: number;
+              ts: number;
+            };
+            Returns: number;
+          }
+        | {
+            Args: {
+              bucket_width: number;
+              finish: number;
+              start: number;
+              ts: number;
+            };
+            Returns: number;
+          }
+        | {
+            Args: {
+              bucket_width: number;
+              finish: number;
+              start: number;
+              ts: number;
+            };
+            Returns: number;
           }
         | {
             Args: {
@@ -1226,6 +1226,10 @@ export interface Database {
       unaccent_init: {
         Args: {'': unknown};
         Returns: unknown;
+      };
+      update_bibliotheque_fichier_filename: {
+        Args: {collectivite_id: number; filename: string; hash: string};
+        Returns: undefined;
       };
       update_collectivite_membre_champ_intervention: {
         Args: {
@@ -1723,7 +1727,7 @@ export interface Database {
           nom: string;
           prenom: string;
           telephone?: string | null;
-          user_id?: string | null;
+          user_id: string;
         };
         Row: {
           created_at: string;
@@ -1734,7 +1738,7 @@ export interface Database {
           nom: string;
           prenom: string;
           telephone: string | null;
-          user_id: string | null;
+          user_id: string;
         };
         Update: {
           created_at?: string;
@@ -1745,7 +1749,7 @@ export interface Database {
           nom?: string;
           prenom?: string;
           telephone?: string | null;
-          user_id?: string | null;
+          user_id?: string;
         };
       };
       epci: {
@@ -3712,6 +3716,23 @@ export interface Database {
           begins_at: string | null;
           ends_at: string | null;
           now: string | null;
+        };
+      };
+      plan_action: {
+        Insert: {
+          collectivite_id?: number | null;
+          id?: number | null;
+          plan?: never;
+        };
+        Row: {
+          collectivite_id: number | null;
+          id: number | null;
+          plan: Json | null;
+        };
+        Update: {
+          collectivite_id?: number | null;
+          id?: number | null;
+          plan?: never;
         };
       };
       plan_action_chemin: {
