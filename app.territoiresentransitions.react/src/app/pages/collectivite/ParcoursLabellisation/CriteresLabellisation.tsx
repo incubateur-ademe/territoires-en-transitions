@@ -69,7 +69,7 @@ const CriteresLabellisationConnected = () => {
   return collectiviteId && parcours ? (
     <CriteresLabellisation
       collectiviteId={collectiviteId}
-      parcours={parcours}
+      parcours={{...parcours, demande}}
       preuves={preuves}
     />
   ) : null;
