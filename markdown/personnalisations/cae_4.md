@@ -110,6 +110,10 @@ action_id: cae_4.2.3
 ```formule
 si reponse(AOM_1, NON) et reponse (voirie_1, voirie_1_c) et reponse(centre_polarite, NON) alors 0
 sinon si reponse(AOM_1, NON) et reponse (voirie_1, voirie_1_c) et identite(population, moins_de_10000) alors 0
+sinon si identite(population, moins_de_10000) et reponse(AOM_1, NON) alors 0.25
+sinon si reponse(centre_polarite, NON) et reponse(AOM_1, NON) alors 0.25
+sinon si identite(population, moins_de_10000) et reponse (voirie_1, voirie_1_c) alors 0.25
+sinon si reponse(centre_polarite, NON) et reponse (voirie_1, voirie_1_c) alors 0.25
 sinon si identite(population, moins_de_10000) ou reponse(centre_polarite, NON) alors 0.5
 sinon si reponse(AOM_1, NON) et reponse (voirie_1, voirie_1_c) alors 0.5 
 sinon si reponse(AOM_1, NON) alors 0.75
