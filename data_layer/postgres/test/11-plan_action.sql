@@ -87,6 +87,28 @@ select * from public.fiche_action_indicateur;
 comment on table test.fiche_action_indicateur is
     'Copie de la table fiche_action_indicateur.';
 
+-- Service
+create table test.service_tag as
+select * from public.service_tag;
+comment on table test.service_tag is
+    'Copie de la table service_tag.';
+
+create table test.fiche_action_service_tag as
+select * from public.fiche_action_service_tag;
+comment on table test.fiche_action_service_tag is
+    'Copie de la table fiche_action_service_tag.';
+
+-- Financeur
+create table test.financeur_tag as
+select * from public.financeur_tag;
+comment on table test.financeur_tag is
+    'Copie de la table financeur_tag.';
+
+create table test.fiche_action_financeur_tag as
+select * from public.fiche_action_financeur_tag;
+comment on table test.fiche_action_financeur_tag is
+    'Copie de la table fiche_action_financeur_tag.';
+
 -- TODO gérer les liens
 /*
 -- Documents et liens (voir preuve)
@@ -109,6 +131,10 @@ $$
     -- Vide les tables des audits
 --truncate fiche_action_annexes;
 --truncate annexes cascade;
+truncate fiche_action_financeur_tag;
+truncate financeur_tag cascade;
+truncate fiche_action_service_tag;
+truncate service_tag cascade;
 truncate fiche_action_indicateur;
 truncate fiche_action_action;
 truncate fiche_action_referent;
@@ -129,7 +155,6 @@ truncate fiche_action cascade;
 
 insert into public.fiche_action
 select * from test.fiche_action;
-
 
 insert into public.thematique
 select * from test.thematique;
@@ -176,6 +201,18 @@ select * from test.fiche_action_action;
 
 insert into public.fiche_action_indicateur
 select * from test.fiche_action_indicateur;
+
+insert into public.service_tag
+select * from test.service_tag;
+
+insert into public.fiche_action_service_tag
+select * from test.fiche_action_service_tag;
+
+insert into public.financeur_tag
+select * from test.financeur_tag;
+
+insert into public.fiche_action_financeur_tag
+select * from test.fiche_action_financeur_tag;
 
     /*
     insert into public.annexe
