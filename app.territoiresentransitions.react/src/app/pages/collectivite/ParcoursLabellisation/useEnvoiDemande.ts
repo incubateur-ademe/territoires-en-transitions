@@ -6,15 +6,10 @@ export const useEnvoiDemande = () => {
   const queryClient = useQueryClient();
   const {isLoading, mutate: envoiDemande} = useMutation(submitDemande, {
     mutationKey: 'submit_demande',
-    onSuccess: (
-      _,
-      {collectivite_id, referentiel, etoiles}: TLabellisationSubmitDemande
-    ) => {
+    onSuccess: (_, {collectivite_id}: TLabellisationSubmitDemande) => {
       queryClient.invalidateQueries([
-        'labellisation_demande',
+        'labellisation_parcours',
         collectivite_id,
-        referentiel,
-        etoiles,
       ]);
     },
   });
