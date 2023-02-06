@@ -1,0 +1,68 @@
+Test:
+  Le potentiel de la 4.3.2.2 est augmenté à 10 % pour les collectivités DOM
+  la règle `Personnalisation cae 4.3.2.2 liee DOM`
+Collectivité:
+  localisation:
+    - DOM
+Scores:
+  cae_4.3.2.2:
+    point_referentiel: 14
+    point_potentiel: 1.4
+
+Test:
+  Le potentiel de la 4.3.2.2 est augmenté à 10 % pour les collectivités DOM
+  la règle `Personnalisation cae 4.3.2.2 liee DOM`
+Scores:
+  cae_4.3.2.2:
+    point_referentiel: 14
+    point_potentiel: 0.7
+
+Test:
+  Le potentiel de la 4.3.2.3 est augmenté à 20 % pour les collectivités DOM
+  la règle `Personnalisation cae 4.3.2.3 liee DOM`
+Collectivité:
+  localisation:
+    - DOM
+Scores:
+  cae_4.3.2.3:
+    point_referentiel: 14
+    point_potentiel: 2.8
+
+Test:
+  Le potentiel de la 4.3.2.3 est augmenté à 20 % pour les collectivités DOM
+  la règle `Personnalisation cae 4.3.2.3 liee DOM`
+Scores:
+  cae_4.3.2.3:
+    point_referentiel: 14
+    point_potentiel: 1.4
+
+Test:
+  Le potentiel de la 4.3.2.6 est réduit à 0 et l'action est désactivée
+  la règle `Personnalisation cae 4.3.2.6 liee DOM`
+Collectivité:
+  localisation:
+    - DOM
+Scores:
+  cae_4.3.2.6:
+    point_referentiel: 14
+    point_potentiel: 0
+    desactive: yes
+
+Test:
+  Le potentiel de la 4.3.2.7 est réduit à 20 % pour les collectivités DOM
+  la règle `Personnalisation cae 4.3.2.7 liee DOM`
+Collectivité:
+  localisation:
+    - DOM
+Scores:
+  cae_4.3.2.7:
+    point_referentiel: 14
+    point_potentiel: 2.8
+
+Test:
+  Le potentiel de la 4.3.2.7 est réduit à 20 % pour les collectivités DOM
+  la règle `Personnalisation cae 4.3.2.7 liee DOM`
+Scores:
+  cae_4.3.2.7:
+    point_referentiel: 14
+    point_potentiel: 4.2
