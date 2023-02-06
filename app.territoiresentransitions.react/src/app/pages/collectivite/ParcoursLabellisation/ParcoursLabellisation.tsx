@@ -25,7 +25,10 @@ const ParcoursLabellisation = () => {
     return (
       <>
         <Title referentiel={referentiel} />
-        <main className="fr-container mt-9 mb-16">
+        <main
+          className="fr-container mt-9 mb-16"
+          data-test={`labellisation-${referentiel}`}
+        >
           <p>
             Ce référentiel n’est pas encore renseigné pour votre collectivité.
             Pour commencer à visualiser votre progression, mettez à jour les
