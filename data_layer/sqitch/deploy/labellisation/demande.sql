@@ -89,7 +89,7 @@ comment on function labellisation_demande is
         'Crée une demande en cours si aucune demande correspondante n''existe.';
 
 drop function labellisation_submit_demande;
-create or replace function
+create function
     labellisation_submit_demande(
     collectivite_id integer,
     referentiel referentiel,
@@ -99,6 +99,9 @@ create or replace function
     returns labellisation.demande
 as
 $$
+#variable_conflict use_column -- résout l'ambiguïté du `on conflict`
+declare
+    demande labellisation.demande;
 begin
     if (labellisation_submit_demande.sujet = 'cot' and labellisation_submit_demande.etoiles is not null)
         or (labellisation_submit_demande.sujet != 'cot' and labellisation_submit_demande.etoiles is null)
@@ -106,25 +109,22 @@ begin
         raise exception 'Seulement si le sujet de la demande est "cot", étoiles devrait être null.';
     end if;
 
-    with data as (select labellisation_submit_demande.collectivite_id,
-                         labellisation_submit_demande.referentiel,
-                         labellisation_submit_demande.etoiles,
-                         labellisation_submit_demande.sujet
-                  where is_any_role_on(labellisation_submit_demande.collectivite_id))
-
     insert
     into labellisation.demande (collectivite_id, referentiel, etoiles, sujet, en_cours)
-    select *, false
-    from data
-    on conflict (collectivite_id, referentiel, etoiles) do update set en_cours = excluded.en_cours,
-                                                                      sujet    = excluded.sujet;
+    values (labellisation_submit_demande.collectivite_id,
+            labellisation_submit_demande.referentiel,
+            labellisation_submit_demande.etoiles,
+            labellisation_submit_demande.sujet,
+            false)
+    on conflict
+        -- la liste de colonnes est ambiguë.
+        (collectivite_id, referentiel, etoiles)
+        do update set en_cours = excluded.en_cours,
+                      sujet    = excluded.sujet
+    returning * into demande;
 
-    select *
-    from labellisation.demande ld
-    where ld.collectivite_id = labellisation_submit_demande.collectivite_id
-      and ld.referentiel = labellisation_submit_demande.referentiel
-      and ld.etoiles = labellisation_submit_demande.etoiles;
-end;
+    return demande;
+end ;
 $$
     language plpgsql;
 comment on function labellisation_submit_demande is
