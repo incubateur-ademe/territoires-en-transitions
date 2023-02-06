@@ -18,7 +18,7 @@ import {
   FicheActionVueRow,
   FicheActionVueUpdate,
 } from '../../lib/types/fiche_action/ficheActionVue.ts';
-import {FinanceurMontant} from "../../lib/types/fiche_action/FinanceurMontant.ts";
+import {FinanceurMontant} from "../../lib/types/fiche_action/financeurMontant.ts";
 
 Deno.test('Création fiches et plan actions', async () => {
   await testReset();
@@ -258,11 +258,11 @@ Deno.test('Création fiches et plan actions', async () => {
   } as FinanceurMontant
   // Création et ajout service à la fiche
   const insertFinanceur = await supabase.rpc('ajouter_financeur',
-      {'fiche_id': fId, 'financeur': service}).select();
+      {'fiche_id': fId, 'financeur': financeur_montant}).select();
   console.log('insert ' +insertFinanceur.data!);
   console.log('compare ' +financeur_montant);
   assertObjectMatch(insertFinanceur.data!, financeur_montant);
-  const lienFinanceur1 = await supabase.from('fiche_action_service_tag').
+  const lienFinanceur1 = await supabase.from('fiche_action_financeur_tag').
   select().
   eq('fiche_id', fId);
   assertEquals(lienFinanceur1.data!.length, 1);
@@ -303,7 +303,7 @@ Deno.test('Création fiches et plan actions', async () => {
     ],
     objectifs: 'verif',
     resultats_attendus: [
-      'Sensibilisation' as Database['public']['Enums']['fiche_action_resultats_attendus'],
+      'Sobriété énergétique' as Database['public']['Enums']['fiche_action_resultats_attendus'],
     ],
     cibles: [
       'Grand public et associations' as Database['public']['Enums']['fiche_action_cibles'],
@@ -340,14 +340,19 @@ Deno.test('Création fiches et plan actions', async () => {
   } as FicheActionVueUpdate;
 
   // Utilise `as never`, l'upsert dans les vues n'étant pas prévu par la lib Supabase.
-  const check = await supabase.from('fiches_action').update(ficheVue as never).select();
-  console.log(check.data!);
+  const check = await supabase.from('fiches_action').insert(ficheVue as never).select();
   const checkVue = await supabase.from('fiches_action').select().eq('id', fId);
   // console.log(checkVue.data![0]);
   // console.logcheckVue.status);
   const objectiVerif: string = checkVue.data![0].objectifs as string;
-  // assertEquals(objectiVerif, 'verif');
-  // assertEquals(checkVue.data![0].structures!.length, 1);
+  assertEquals(objectiVerif, 'verif');
+  assertEquals(checkVue.data![0].structures!.length, 1);
+
+  const planActionProfondeur = await supabase.from('plan_action_profondeur').select().eq('collectivite_id', 1);
+  console.log(planActionProfondeur);
+  const planActionChemin = await supabase.from('plan_action_chemin').select().eq('collectivite_id', 1);
+  console.log(planActionChemin);
+
   await signOut();
 });
 
