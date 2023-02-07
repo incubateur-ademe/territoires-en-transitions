@@ -1071,6 +1071,10 @@ export interface Database {
         Args: {instance: Json; schema: Json};
         Returns: boolean;
       };
+      labellisation_commencer_audit: {
+        Args: {audit_id: number};
+        Returns: unknown;
+      };
       labellisation_demande: {
         Args: {
           collectivite_id: number;
@@ -1330,19 +1334,19 @@ export interface Database {
       };
       time_bucket:
         | {
-            Args: {bucket_width: unknown; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; ts: string};
-            Returns: string;
-          }
-        | {
             Args: {bucket_width: unknown; origin: string; ts: string};
+            Returns: string;
+          }
+        | {
+            Args: {bucket_width: unknown; ts: string};
+            Returns: string;
+          }
+        | {
+            Args: {bucket_width: unknown; ts: string};
+            Returns: string;
+          }
+        | {
+            Args: {bucket_width: unknown; ts: string};
             Returns: string;
           }
         | {
@@ -1392,39 +1396,39 @@ export interface Database {
       time_bucket_gapfill:
         | {
             Args: {
+              bucket_width: number;
+              finish: number;
+              start: number;
+              ts: number;
+            };
+            Returns: number;
+          }
+        | {
+            Args: {
+              bucket_width: number;
+              finish: number;
+              start: number;
+              ts: number;
+            };
+            Returns: number;
+          }
+        | {
+            Args: {
+              bucket_width: number;
+              finish: number;
+              start: number;
+              ts: number;
+            };
+            Returns: number;
+          }
+        | {
+            Args: {
               bucket_width: unknown;
               finish: string;
               start: string;
               ts: string;
             };
             Returns: string;
-          }
-        | {
-            Args: {
-              bucket_width: number;
-              finish: number;
-              start: number;
-              ts: number;
-            };
-            Returns: number;
-          }
-        | {
-            Args: {
-              bucket_width: number;
-              finish: number;
-              start: number;
-              ts: number;
-            };
-            Returns: number;
-          }
-        | {
-            Args: {
-              bucket_width: number;
-              finish: number;
-              start: number;
-              ts: number;
-            };
-            Returns: number;
           }
         | {
             Args: {
