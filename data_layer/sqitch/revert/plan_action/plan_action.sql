@@ -2,6 +2,7 @@
 
 BEGIN;
 
+drop function delete_axe_all;
 drop view plan_action;
 
 -- Fonction récursive pour afficher un plan d'action

@@ -436,6 +436,10 @@ export interface Database {
         Args: {if_compressed: boolean; uncompressed_chunk: unknown};
         Returns: unknown;
       };
+      delete_axe_all: {
+        Args: {axe_id: number};
+        Returns: undefined;
+      };
       delete_data_node: {
         Args: {
           drop_database: boolean;
@@ -1164,39 +1168,39 @@ export interface Database {
           }
         | {
             Args: {
+              bucket_width: number;
+              finish: number;
+              start: number;
+              ts: number;
+            };
+            Returns: number;
+          }
+        | {
+            Args: {
+              bucket_width: number;
+              finish: number;
+              start: number;
+              ts: number;
+            };
+            Returns: number;
+          }
+        | {
+            Args: {
+              bucket_width: number;
+              finish: number;
+              start: number;
+              ts: number;
+            };
+            Returns: number;
+          }
+        | {
+            Args: {
               bucket_width: unknown;
               finish: string;
               start: string;
               ts: string;
             };
             Returns: string;
-          }
-        | {
-            Args: {
-              bucket_width: number;
-              finish: number;
-              start: number;
-              ts: number;
-            };
-            Returns: number;
-          }
-        | {
-            Args: {
-              bucket_width: number;
-              finish: number;
-              start: number;
-              ts: number;
-            };
-            Returns: number;
-          }
-        | {
-            Args: {
-              bucket_width: number;
-              finish: number;
-              start: number;
-              ts: number;
-            };
-            Returns: number;
           }
         | {
             Args: {

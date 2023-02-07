@@ -660,11 +660,13 @@ comment on function plan_action is
     'Fonction retournant un JSON contenant le plan d''action passé en paramètre,
     et ses plans d''actions enfants de manière récursive';
 
+-- Vue pour afficher les axes d'un plan et leur profondeur
 create view plan_action_profondeur as
 select a.collectivite_id, a.id, plan_action_profondeur(a.id, 0) as plan
 from axe a
 where a.parent is null;
 
+-- Vue pour afficher le chemin d'un axe (plan - axe - sous-axe - etc.)
 create view plan_action_chemin as
 with recursive chemin_plan_action as (
     select id as axe_id, collectivite_id,nom, parent, array[axe] as chemin
@@ -680,7 +682,7 @@ with recursive chemin_plan_action as (
 select chemin[1].id as plan_id, axe_id, collectivite_id, chemin
 from chemin_plan_action;
 
--- Fonction récursive pour afficher un plan d'action
+-- Fonction récursive pour afficher un plan d'action, ses axes, et ses fiches
 create or replace function plan_action(id integer) returns jsonb as
 $$
 declare
@@ -720,9 +722,29 @@ comment on function plan_action is
     'Fonction retournant un JSON contenant le plan d''action passé en paramètre,
     ses fiches et ses plans d''actions enfants de manière récursive';
 
+-- Vue pour afficher les plan d'actions complet
 create view plan_action as
 select a.collectivite_id, a.id, plan_action(a.id) as plan
 from axe a
 where a.parent is null;
+
+-- Fonction pour supprimer de manière récursive un axe, ses enfants et ses fiches
+create function delete_axe_all(axe_id integer) returns void as
+$$
+declare
+    pa_enfant_id integer; -- Id d'un plan d'action enfant du plan d'action courant
+begin
+    for pa_enfant_id in select pa.id from axe pa where pa.parent = delete_axe_all.axe_id
+        loop
+            execute delete_axe_all(pa_enfant_id);
+        end loop;
+    delete from fiche_action
+    where id in (select faa.fiche_id
+                 from fiche_action_axe faa
+                 where faa.axe_id = delete_axe_all.axe_id);
+    delete from axe where id = delete_axe_all.axe_id;
+end;
+$$ language plpgsql;
+
 
 COMMIT;

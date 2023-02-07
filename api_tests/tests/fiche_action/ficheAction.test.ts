@@ -463,3 +463,16 @@ Deno.test('Plan d\'actions d\'une collectivité' , async () => {
 
   await signOut();
 });
+Deno.test('Supprimer un axe et ses élements' , async () => {
+  await testReset();
+  await signIn('yolododo');
+
+  // Supprimer
+  await supabase.rpc('delete_axe_all', {'axe_id': 1});
+  const deletedAxe = await supabase.from('axe').
+  select().
+  eq('id', 9);
+  assertEquals(deletedAxe.data!.length, 0);
+
+  await signOut();
+});

@@ -1,5 +1,5 @@
 begin;
-select plan(25);
+select plan(30);
 
 truncate fiche_action_financeur_tag;
 truncate financeur_tag cascade;
@@ -233,5 +233,19 @@ select ok ((select count(*)=2 from fiche_action_financeur_tag),
 -- VUE PLAN ACTION
 select ok((select count(*)=2 from plan_action_profondeur), 'La fonction devrait retourner deux jsonb');
 select ok((select count(*)=4 from plan_action_chemin where collectivite_id = 1), 'La fonction devrait retourner quatre chemins');
+
+-- Test supression cascade
+select enlever_fiche_action_d_un_axe(3, 3);
+select ok ((select count(*)=1 from axe where id = 4),
+           'L''axe id 4 devrait exister');
+select ok ((select count(*)=1 from fiche_action where id = 1),
+           'La fiche id 1 devrait exister');
+select delete_axe_all(1);
+select ok ((select count(*)=0 from axe where id = 4),
+           'L''axe id 4 ne devrait plus exister');
+select ok ((select count(*)=0 from fiche_action where id = 1),
+           'La fiche id 1 ne devrait plus exister');
+select ok ((select count(*)=1 from fiche_action where id = 3),
+           'La fiche id 3 devrait exister');
 
 rollback;
