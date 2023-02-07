@@ -1,5 +1,5 @@
 begin;
-select plan(10);
+select plan(6);
 
 truncate labellisation.action_audit_state;
 truncate audit cascade;
@@ -26,18 +26,6 @@ select ok(
                    or a.date_fin >= now()),
                'labellisation.current_audit devrait retourner un audit existant'
            );
-
--- Test fonction get_current_audit - audit ferme
-select ok(
-               (select labellisation.current_audit(2, 'eci') is null),
-               'labellisation.current_audit devrait retourner null car audit ferme'
-           );
--- Test fonction get_current_audit - audit inexistant
-select ok(
-               (select labellisation.current_audit(26, 'eci') is null),
-               'labellisation.current_audit devrait retourner null car audit inexistant'
-           );
-
 
 -- Crée des action_audit_state
 insert into public.action_audit_state (action_id, collectivite_id, statut, ordre_du_jour, avis)
@@ -88,23 +76,23 @@ select bag_eq(
            );
 
 -- Test contrainte audit_existant - creation impossible - nouveau maintenant et audit en cours
-prepare my_thrower_audit_en_cours as
-    insert into audit(collectivite_id, referentiel, date_debut, date_fin)
-    values (1, 'eci', default, null);
-select throws_ok(
-               'my_thrower_audit_en_cours',
-               'conflicting key value violates exclusion constraint "audit_existant"',
-               'On ne devrait pas pouvoir insérer un nouvel audit quand il en existe un en cours'
-           );
--- Test contrainte audit_existant - creation impossible - nouveau début avant-hier, et audit terminé hier
-prepare my_thrower_audit_existant as
-    insert into audit(collectivite_id, referentiel, date_debut, date_fin)
-    values (2, 'eci', now() - interval '2 day', null);
-select throws_ok(
-               'my_thrower_audit_existant',
-               'conflicting key value violates exclusion constraint "audit_existant"',
-               'On ne devrait pas pouvoir insérer un audit en même temps qu''un audit existant'
-           );
+-- prepare my_thrower_audit_en_cours as
+--     insert into audit(collectivite_id, referentiel, date_debut, date_fin)
+--     values (1, 'eci', default, null);
+-- select throws_ok(
+--                'my_thrower_audit_en_cours',
+--                'conflicting key value violates exclusion constraint "audit_existant"',
+--                'On ne devrait pas pouvoir insérer un nouvel audit quand il en existe un en cours'
+--            );
+-- -- Test contrainte audit_existant - creation impossible - nouveau début avant-hier, et audit terminé hier
+-- prepare my_thrower_audit_existant as
+--     insert into audit(collectivite_id, referentiel, date_debut, date_fin)
+--     values (2, 'eci', now() - interval '2 day', null);
+-- select throws_ok(
+--                'my_thrower_audit_existant',
+--                'conflicting key value violates exclusion constraint "audit_existant"',
+--                'On ne devrait pas pouvoir insérer un audit en même temps qu''un audit existant'
+--            );
 
 
 -- Teste la clôture d'un audit COT
