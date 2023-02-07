@@ -2,6 +2,6 @@
 
 BEGIN;
 
--- XXX Add verifications here.
+select has_function_privilege('supprimer_score_avant_audit()', 'execute');
 
 ROLLBACK;
