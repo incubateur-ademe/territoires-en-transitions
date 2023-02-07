@@ -1052,7 +1052,6 @@ export interface Database {
       labellisation_demande: {
         Args: {
           collectivite_id: number;
-          etoiles: Database['labellisation']['Enums']['etoile'];
           referentiel: Database['public']['Enums']['referentiel'];
         };
         Returns: unknown;
@@ -1291,7 +1290,7 @@ export interface Database {
         Returns: undefined;
       };
       test_set_auditeur: {
-        Args: {demande_id: number; user_id: string};
+        Args: {audit_en_cours: boolean; demande_id: number; user_id: string};
         Returns: unknown;
       };
       test_set_cot: {
@@ -1375,39 +1374,39 @@ export interface Database {
           }
         | {
             Args: {
+              bucket_width: number;
+              finish: number;
+              start: number;
+              ts: number;
+            };
+            Returns: number;
+          }
+        | {
+            Args: {
+              bucket_width: number;
+              finish: number;
+              start: number;
+              ts: number;
+            };
+            Returns: number;
+          }
+        | {
+            Args: {
+              bucket_width: number;
+              finish: number;
+              start: number;
+              ts: number;
+            };
+            Returns: number;
+          }
+        | {
+            Args: {
               bucket_width: unknown;
               finish: string;
               start: string;
               ts: string;
             };
             Returns: string;
-          }
-        | {
-            Args: {
-              bucket_width: number;
-              finish: number;
-              start: number;
-              ts: number;
-            };
-            Returns: number;
-          }
-        | {
-            Args: {
-              bucket_width: number;
-              finish: number;
-              start: number;
-              ts: number;
-            };
-            Returns: number;
-          }
-        | {
-            Args: {
-              bucket_width: number;
-              finish: number;
-              start: number;
-              ts: number;
-            };
-            Returns: number;
           }
         | {
             Args: {
