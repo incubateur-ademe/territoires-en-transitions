@@ -61,9 +61,7 @@ export const CriterePreuves = (props: TCriterePreuvesProps) => {
         </a>
       </li>
       {rempli ? <CritereRempli className="fr-mb-2w" /> : null}
-      {demande && demande.en_cours ? (
-        <AddDocsButton demande_id={demande.id} />
-      ) : null}
+      {!demande || demande?.en_cours ? <AddDocsButton /> : null}
       {demande ? <LabellisationPreuves {...props} /> : null}
     </>
   );
