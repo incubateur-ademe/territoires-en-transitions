@@ -57,8 +57,7 @@ drop function labellisation_demande;
 create function
     labellisation_demande(
     collectivite_id integer,
-    referentiel referentiel,
-    etoiles labellisation.etoile
+    referentiel referentiel
 )
     returns labellisation.demande
     security definer
@@ -66,7 +65,7 @@ begin
     atomic
     with data as (select labellisation_demande.collectivite_id,
                          labellisation_demande.referentiel,
-                         labellisation_demande.etoiles
+                         (select etoile_objectif from labellisation.etoiles(labellisation_demande.collectivite_id))
                   where have_edition_acces(labellisation_demande.collectivite_id))
     insert
     into labellisation.demande (collectivite_id, referentiel, etoiles)
@@ -80,7 +79,7 @@ begin
     from labellisation.demande ld
     where ld.collectivite_id = labellisation_demande.collectivite_id
       and ld.referentiel = labellisation_demande.referentiel
-      and ld.etoiles = labellisation_demande.etoiles
+      and ld.etoiles = (select etoile_objectif from labellisation.etoiles(labellisation_demande.collectivite_id))
       -- Ne renvoie des données seulement si l'utilisateur est connecté.
       and is_authenticated();
 end;
@@ -100,7 +99,7 @@ create function
     security definer
 as
 $$
-#variable_conflict use_column -- résout l'ambiguïté du `on conflict`
+    # variable_conflict use_column -- résout l'ambiguïté du `on conflict`
 declare
     demande labellisation.demande;
 begin
