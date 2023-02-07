@@ -16,4 +16,3 @@ export async function testSetCot(
   // @ts-ignore
   return data;
 }
-

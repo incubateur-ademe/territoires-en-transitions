@@ -2,7 +2,7 @@ import { supabase } from "../supabase.ts";
 import { Database } from "../database.types.ts";
 
 export async function testCreateCollectivite(
-  nom: string
+  nom: string,
 ): Promise<Database["public"]["Tables"]["collectivite_test"]["Row"]> {
   const { data } = await supabase.rpc(
     "test_create_collectivite",
