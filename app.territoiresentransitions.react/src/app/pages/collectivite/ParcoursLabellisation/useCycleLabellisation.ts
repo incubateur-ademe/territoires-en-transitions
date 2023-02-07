@@ -75,7 +75,7 @@ const getParcoursStatus = (
   if (audit?.date_debut) {
     return 'audit_en_cours';
   }
-  if (demande && demande.en_cours) {
+  if (demande && !demande.en_cours) {
     return 'demande_envoyee';
   }
   return 'non_demandee';
