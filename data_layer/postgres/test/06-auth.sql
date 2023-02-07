@@ -29,7 +29,7 @@ from private_utilisateur_droit
 where user_id not in (select id from test.auth_users);
 
 delete
-from auth.users
+from auth.users cascade
 where id not in (select id from test.auth_users);
 
 -- Restaure la copie.
