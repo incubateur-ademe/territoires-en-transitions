@@ -595,7 +595,7 @@ begin
         returning id into elem_id;
 
         insert into fiche_action_financeur_tag (fiche_id, financeur_tag_id, montant_ttc)
-        values (fiche_id, elem_id, new.montant_un);
+        values (fiche_id, elem_id, case when new.montant_un <> '' then new.montant_un::integer end);
     end if;
 
     -- Financeur 2
@@ -607,7 +607,7 @@ begin
         returning id into elem_id;
 
         insert into fiche_action_financeur_tag (fiche_id, financeur_tag_id, montant_ttc)
-        values (fiche_id, elem_id, new.montant_deux);
+        values (fiche_id, elem_id, case when new.montant_deux <> '' then new.montant_deux::integer end);
     end if;
 
     -- Financeur 3
@@ -619,7 +619,7 @@ begin
         returning id into elem_id;
 
         insert into fiche_action_financeur_tag (fiche_id, financeur_tag_id, montant_ttc)
-        values (fiche_id, elem_id, new.montant_trois);
+        values (fiche_id, elem_id, case when new.montant_trois <> '' then new.montant_trois::integer end);
     end if;
 
     return new;
