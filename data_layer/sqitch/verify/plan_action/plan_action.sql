@@ -112,5 +112,6 @@ select plan_id, axe_id, collectivite_id, chemin
 
 select has_function_privilege('plan_action_profondeur(integer, integer)', 'execute');
 select has_function_privilege('plan_action(integer)', 'execute');
+select has_function_privilege('delete_axe_all(integer)', 'execute');
 
 ROLLBACK;
