@@ -87,20 +87,13 @@ begin
              left join labellisation_calendrier calendrier
                        on calendrier.referentiel = e.referentiel
 
-             left join lateral (select ld.*
-                                from labellisation.demande ld
-                                where ld.collectivite_id = labellisation_parcours.collectivite_id
-                                  and ld.referentiel = e.referentiel
-                                  -- soit la demande qui correspond au nombre d'étoiles soit la demande cot
-                                  and (ld.etoiles = e.etoile_objectif or ld.etoiles is null)
-                                  -- pas les demandes déjà utilisées pour un audit terminé
-                                  and ld.id not in (select demande_id from audit where date_fin is not null)
-                                order by ld.date desc
-                                limit 1) demande on true
+             left join lateral (select *
+                                from labellisation_demande(labellisation_parcours.collectivite_id,
+                                                           e.referentiel)) demande on true
 
-             left join lateral (select a.*
-                                from audit a
-                                where a.demande_id = demande.id) audit on true
+             left join lateral (select *
+                                from labellisation.current_audit(labellisation_parcours.collectivite_id,
+                                                                 e.referentiel)) audit on true
 
              left join lateral (select l.*
                                 from labellisation l

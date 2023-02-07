@@ -54,35 +54,48 @@ create trigger after_write_demande
 execute procedure labellisation.validation_demande();
 
 drop function labellisation_demande;
-create function
+create or replace function
     labellisation_demande(
     collectivite_id integer,
     referentiel referentiel
 )
     returns labellisation.demande
     security definer
+as
+$$
+declare
+    current_audit audit;
+    found         labellisation.demande;
 begin
-    atomic
-    with data as (select labellisation_demande.collectivite_id,
-                         labellisation_demande.referentiel,
-                         (select etoile_objectif from labellisation.etoiles(labellisation_demande.collectivite_id))
-                  where have_edition_acces(labellisation_demande.collectivite_id))
-    insert
-    into labellisation.demande (collectivite_id, referentiel, etoiles)
     select *
-    from data
-         -- Insert uniquement si l'utilisateur en cours a les droits en édition.
-    where have_edition_acces(labellisation_demande.collectivite_id)
-    on conflict do nothing;
+    into current_audit
+    from labellisation.current_audit(labellisation_demande.collectivite_id, labellisation_demande.referentiel);
+
+    if current_audit.demande_id is null
+    then
+        with demande as (
+            insert into labellisation.demande (collectivite_id, referentiel, etoiles, sujet)
+                values (labellisation_demande.collectivite_id, labellisation_demande.referentiel, null, 'cot')
+                returning id),
+             audit as (
+                 update audit
+                     set demande_id = demande.id
+                     from demande
+                     where audit.id = current_audit.id
+                     returning *)
+        select audit.*
+        from audit
+        into current_audit;
+    end if;
 
     select *
-    from labellisation.demande ld
-    where ld.collectivite_id = labellisation_demande.collectivite_id
-      and ld.referentiel = labellisation_demande.referentiel
-      and ld.etoiles = (select etoile_objectif from labellisation.etoiles(labellisation_demande.collectivite_id))
-      -- Ne renvoie des données seulement si l'utilisateur est connecté.
-      and is_authenticated();
+    into found
+    from labellisation.demande
+    where id = current_audit.demande_id;
+
+    return found;
 end;
+$$ language plpgsql;
 comment on function labellisation_demande is
     'Renvoie la demande de labellisation pour une collectivité, un référentiel et un nombre d''étoiles donnés.'
         'Crée une demande en cours si aucune demande correspondante n''existe.';
@@ -99,7 +112,6 @@ create function
     security definer
 as
 $$
-    # variable_conflict use_column -- résout l'ambiguïté du `on conflict`
 declare
     demande labellisation.demande;
 begin
@@ -109,19 +121,18 @@ begin
         raise exception 'Seulement si le sujet de la demande est "cot", étoiles devrait être null.';
     end if;
 
-    insert
-    into labellisation.demande (collectivite_id, referentiel, etoiles, sujet, en_cours)
-    values (labellisation_submit_demande.collectivite_id,
-            labellisation_submit_demande.referentiel,
-            labellisation_submit_demande.etoiles,
-            labellisation_submit_demande.sujet,
-            false)
-    on conflict
-        -- la liste de colonnes est ambiguë.
-        (collectivite_id, referentiel, etoiles)
-        do update set en_cours = excluded.en_cours,
-                      sujet    = excluded.sujet
-    where have_edition_acces(labellisation_submit_demande.collectivite_id)
+    select *
+    from labellisation_demande(
+            labellisation_submit_demande.collectivite_id,
+            labellisation_submit_demande.referentiel
+        )
+    into demande;
+
+    update labellisation.demande ld
+    set etoiles  = labellisation_submit_demande.etoiles,
+        sujet    = labellisation_submit_demande.sujet,
+        en_cours = false
+    where ld.id = demande.id
     returning * into demande;
 
     return demande;
