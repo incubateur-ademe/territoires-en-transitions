@@ -4,8 +4,7 @@
 BEGIN;
 
 drop function labellisation_parcours;
-
-create or replace function
+create function
     labellisation_parcours(collectivite_id integer)
     returns table
             (
@@ -87,11 +86,17 @@ begin
                        on cf.referentiel = e.referentiel
              left join labellisation_calendrier calendrier
                        on calendrier.referentiel = e.referentiel
+
              left join lateral (select ld.*
                                 from labellisation.demande ld
                                 where ld.collectivite_id = labellisation_parcours.collectivite_id
                                   and ld.referentiel = e.referentiel
-                                  and ld.etoiles = e.etoile_objectif) demande on true
+                                  -- soit la demande qui correspond au nombre d'étoiles soit la demande cot
+                                  and (ld.etoiles = e.etoile_objectif or ld.etoiles is null)
+                                  -- pas les demandes déjà utilisées pour un audit terminé
+                                  and ld.id not in (select demande_id from audit where date_fin is not null)
+                                order by ld.date desc
+                                limit 1) demande on true
 
              left join lateral (select a.*
                                 from audit a
