@@ -28,15 +28,17 @@ comment on function test_set_cot is
     'Change le statut COT d''une collectivité.';
 
 create function
-    test_set_auditeur(demande_id integer, user_id uuid)
+    test_set_auditeur(demande_id integer, user_id uuid, audit_en_cours bool default false)
     returns audit_auditeur
     security definer
 begin
     atomic
     with new_audit as (
-
-        insert into audit (collectivite_id, referentiel, demande_id)
-            select collectivite_id, referentiel, id
+        insert into audit (collectivite_id, referentiel, demande_id, date_debut)
+            select collectivite_id,
+                   referentiel,
+                   id,
+                   case when audit_en_cours then now() - interval '1 day' end
             from labellisation.demande ld
             where ld.id = test_set_auditeur.demande_id
             returning *)
@@ -47,5 +49,6 @@ begin
     returning *;
 end;
 comment on function test_set_auditeur is
-    'Ajoute un utilisateur en tant qu''auditeur à une collectivité.'
-        'L''utilisateur doit avoir des droits en écriture et une demande d''audit doit être validé.';
+    'Ajoute un utilisateur en tant qu''auditeur à une collectivité. '
+        'L''utilisateur doit avoir des droits en écriture et une demande d''audit doit être validé. '
+        'Dans le cas ou l''audit demandé est cours, l''audit date de la veille.';
