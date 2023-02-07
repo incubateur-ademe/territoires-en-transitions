@@ -138,7 +138,17 @@ Given(
 );
 Given(/le "([^"]*)" vérifie la condition "([^"]*)"/, verifyExpectation);
 Given(/^le "([^"]*)" est ([^"]*)$/, verifyExpectation);
+Given(/"([^"]*)" contient "([^"]*)"$/, function (elem, value) {
+  checkExpectation(resolveSelector(this, elem).selector, 'contient', value);
+});
 Given(/^le bouton "([^"]*)" est ([^"]*)$/, verifyExpectation);
+Given(
+  /^le bouton "([^"]*)" est ([^"]*) et ([^"]*)$/,
+  (elem, expectation1, expectation2) => {
+    verifyExpectation(elem, expectation1);
+    verifyExpectation(elem, expectation2);
+  }
+);
 Given(
   /^le bouton "([^"]*)" du "([^"]*)" est ([^"]*)$/,
   childrenVerifyExpectation
@@ -164,6 +174,10 @@ Given(
 );
 Given(/^je clique sur le bouton "([^"]*)"$/, function (btnName) {
   cy.get(resolveSelector(this, btnName).selector).click();
+});
+Given(/^je clique sur le bouton radio "([^"]*)"$/, function (btnName) {
+  // le bouton radio natif est masqué par la version stylé alors on clique sur le parent
+  cy.get(resolveSelector(this, btnName).selector).parent().click();
 });
 
 Given(/^je clique sur la case "([^"]*)"$/, function (checkbox) {
@@ -273,6 +287,9 @@ When(/je clique sur l'onglet "([^"]+)"/, tabName => {
 
 When(/je vois (\d+) onglets?/, count =>
   cy.get('.fr-tabs__tab').should('have.length', count)
+);
+When('je ne vois aucun onglet', () =>
+  cy.get('.fr-tabs__tab').should('have.length', 0)
 );
 
 When(/l'onglet "([^"]+)" est sélectionné/, tabName =>
