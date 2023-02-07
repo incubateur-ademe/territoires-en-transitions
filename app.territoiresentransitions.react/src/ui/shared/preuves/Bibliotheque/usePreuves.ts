@@ -18,6 +18,15 @@ type TFilters = {
 
 // charge les données
 const fetch = async (collectivite_id: number, filters?: TFilters) => {
+  // évite d'essayer de charger les preuves de labellisation lorsque la demande
+  // n'est pas disponible
+  if (
+    filters?.preuve_types?.includes('labellisation') &&
+    !filters?.demande_id
+  ) {
+    return [];
+  }
+
   // lit la liste des preuves de la collectivité
   const query = supabaseClient
     .from('preuve')
