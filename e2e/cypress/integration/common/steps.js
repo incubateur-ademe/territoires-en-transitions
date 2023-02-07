@@ -10,7 +10,12 @@ import {Expectations} from './expectations';
 // avant chaque test
 beforeEach(function () {
   // réinitialise les données fake
-  cy.task('supabase_rpc', {name: 'test_reset'});
+  cy.task('supabase_rpc', {name: 'test_reset'}).then(ret =>
+    assert(
+      ret.status === 200,
+      'les données de test sont réinitialisées correctement'
+    )
+  );
 
   // charge l'appli
   cy.visit('/');
