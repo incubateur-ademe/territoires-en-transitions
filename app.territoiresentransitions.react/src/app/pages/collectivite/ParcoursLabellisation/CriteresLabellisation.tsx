@@ -8,8 +8,6 @@ import {TPreuveLabellisation} from 'ui/shared/preuves/Bibliotheque/types';
 import {useCollectiviteId, useReferentielId} from 'core-logic/hooks/params';
 import {useCycleLabellisation} from './useCycleLabellisation';
 import {usePreuves} from 'ui/shared/preuves/Bibliotheque/usePreuves';
-import {useDemandeLabellisation} from './useDemandeLabellisation';
-import {Referentiel} from 'types/litterals';
 
 export type TCriteresLabellisationProps = {
   collectiviteId: number;
@@ -54,22 +52,17 @@ export const CriteresLabellisation = (props: TCriteresLabellisationProps) => {
 const CriteresLabellisationConnected = () => {
   const collectiviteId = useCollectiviteId();
   const referentiel = useReferentielId();
-
   const {parcours} = useCycleLabellisation(referentiel);
 
-  // on s'assure que la demande existe pour avoir l'id nécessaire pour attacher les preuves
-  const etoiles = parcours?.etoiles;
-  const demande = useDemandeLabellisation(referentiel as Referentiel, etoiles);
-
   const preuves = usePreuves({
-    demande_id: demande?.id,
+    demande_id: parcours?.demande?.id,
     preuve_types: ['labellisation'],
   }) as TPreuveLabellisation[];
 
   return collectiviteId && parcours ? (
     <CriteresLabellisation
       collectiviteId={collectiviteId}
-      parcours={{...parcours, demande}}
+      parcours={parcours}
       preuves={preuves}
     />
   ) : null;
