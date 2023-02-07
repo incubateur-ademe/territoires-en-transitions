@@ -11,7 +11,7 @@ export type TSetFilters = (newFilter: TFilters | null) => void;
 
 // valeurs par défaut des filtres
 export const initialFilters: TFilters = {
-  score_realise: ['0'],
+  score_realise: ['0', '1'],
   score_programme: [ITEM_ALL],
   phase: ['bases'],
 };
