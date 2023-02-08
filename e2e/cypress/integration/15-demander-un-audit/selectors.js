@@ -23,4 +23,7 @@ export const LocalSelectors = {
   'Ajouter un document de labellisation': {
     selector: '[data-test=AddDocsButton]',
   },
+  "dialogue d'envoi de la demande": {
+    selector: '[data-test=DemandeLabellisationModal]',
+  },
 };
