@@ -4,6 +4,7 @@ select plan(12);
 
 truncate storage.objects cascade;
 truncate labellisation.bibliotheque_fichier cascade;
+truncate labellisation.demande cascade ;
 truncate client_scores;
 
 -- La collectivite doit avoir des scores pour apparaître dans la vue preuves
