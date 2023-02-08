@@ -2,6 +2,8 @@
 
 BEGIN;
 
-select has_function_privilege('supprimer_score_avant_audit()', 'execute');
+select collectivite_id, referentiel, scores, modified_at, payload_timestamp, audit_id
+    from pre_audit_scores
+        where false;
 
 ROLLBACK;
