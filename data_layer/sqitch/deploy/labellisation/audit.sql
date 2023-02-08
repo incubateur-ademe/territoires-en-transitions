@@ -4,6 +4,7 @@ BEGIN;
 create or replace function
     labellisation.update_audit()
     returns trigger
+    security definer
 as
 $$
 begin
