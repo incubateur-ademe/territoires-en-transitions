@@ -119,6 +119,7 @@ export const DemandeLabellisationModal = (
               ))}
               <button
                 className="fr-btn"
+                data-test="EnvoyerDemandeBtn"
                 disabled={!canSubmit}
                 onClick={() =>
                   canSubmit &&
