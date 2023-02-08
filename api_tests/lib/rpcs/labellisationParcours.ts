@@ -1,15 +1,15 @@
 import { supabase } from "../supabase.ts";
 import { Database } from "../database.types.ts";
 
-export type TEtoiles = Database['labellisation']['Enums']['etoile'];
-export type TSujetDemande = Database['labellisation']['Enums']['sujet_demande'];
+export type TEtoiles = Database["labellisation"]["Enums"]["etoile"];
+export type TSujetDemande = Database["labellisation"]["Enums"]["sujet_demande"];
 
 // typage d'une demande d'audit (tel qu'exporté par gen_types)
 export type TLabellisationDemande =
-  Database['labellisation']['Tables']['demande']['Row'];
+  Database["labellisation"]["Tables"]["demande"]["Row"];
 // et surchargé pour gérer le cas sujet="cot" (audit SANS labellisation)
-type TDemandeAudit = Omit<TLabellisationDemande, 'etoiles'> & {
-  etoiles: TLabellisationDemande['etoiles'] | null;
+type TDemandeAudit = Omit<TLabellisationDemande, "etoiles"> & {
+  etoiles: TLabellisationDemande["etoiles"] | null;
 };
 
 /**
@@ -19,7 +19,7 @@ type TDemandeAudit = Omit<TLabellisationDemande, 'etoiles'> & {
 export type TLabellisationParcours = {
   collectivite_id: number;
   /** Référentiel concerné */
-  referentiel: Database['public']['Enums']['referentiel'];
+  referentiel: Database["public"]["Enums"]["referentiel"];
   /** Nombre d'étoiles atteignables */
   etoiles: TEtoiles;
   /** Vrai si le critère de remplissage du référentiel est rempli */
@@ -37,9 +37,9 @@ export type TLabellisationParcours = {
   /** Demande de labellisation associée au parcours */
   demande: TDemandeAudit | null;
   /** Dernière labellisation obtenue */
-  labellisation: Database['public']['Tables']['labellisation']['Row'] | null;
+  labellisation: Database["public"]["Tables"]["labellisation"]["Row"] | null;
   /** Audit associée à la demande */
-  audit: Database['public']['Tables']['audit']['Row'] | null;
+  audit: Database["public"]["Tables"]["audit"]["Row"] | null;
 };
 
 /** Critère de labellisation associé à une action */
