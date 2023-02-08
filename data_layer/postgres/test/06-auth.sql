@@ -33,7 +33,11 @@ from audit_auditeur
 where auditeur not in (select id from test.auth_users);
 
 delete
-from auth.users cascade
+from storage.objects
+where owner not in (select id from test.auth_users);
+
+delete
+from auth.users
 where id not in (select id from test.auth_users);
 
 -- Restaure la copie.
