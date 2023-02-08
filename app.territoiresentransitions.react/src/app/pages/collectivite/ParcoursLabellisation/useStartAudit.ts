@@ -23,8 +23,4 @@ const startAudit = async ({
   collectivite_id: number;
   referentiel: Database['public']['Enums']['referentiel'];
   audit_id: number;
-}) =>
-  supabaseClient
-    .from('audit')
-    .update({date_debut: new Date().toISOString()})
-    .eq('id', audit_id);
+}) => supabaseClient.rpc('labellisation_commencer_audit', {audit_id});
