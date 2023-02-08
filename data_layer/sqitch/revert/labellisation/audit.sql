@@ -105,4 +105,15 @@ begin
 end;
 $$ language plpgsql security definer;
 
+create or replace function est_auditeur(col integer) returns boolean as
+$$
+with
+    ref as (select unnest(enum_range(null::referentiel)) as referentiel),
+    audit_en_cours as (
+        select auditeur
+        from ref left join labellisation.current_audit(est_auditeur.col,ref.referentiel) on true
+    )
+select coalesce(bool_or(auth.uid()=audit_en_cours.auditeur), false) from audit_en_cours;
+$$ language sql;
+
 COMMIT;
