@@ -2,20 +2,9 @@
 
 BEGIN;
 
-create function supprimer_score_avant_audit() returns trigger as
-$$
-begin
-    delete
-    from pre_audit_scores
-    where audit_id = old.id;
-    return old;
-end
-$$ security definer language plpgsql;
-
-create trigger supprimer_score_avant_audit
-    before delete
-    on audit
-    for each row
-execute procedure supprimer_score_avant_audit();
+-- Ne peut pas ajouter la contrainte on delete cascade sans devoir recréer entièrement la contrainte
+alter table pre_audit_scores
+    drop constraint pre_audit_scores_audit_id_fkey,
+    add constraint pre_audit_scores_audit_id_fkey foreign key (audit_id) references audit on delete cascade;
 
 COMMIT;

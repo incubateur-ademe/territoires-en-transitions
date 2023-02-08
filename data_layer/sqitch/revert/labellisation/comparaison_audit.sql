@@ -2,7 +2,8 @@
 
 BEGIN;
 
-drop trigger supprimer_score_avant_audit on audit ;
-drop function supprimer_score_avant_audit;
+alter table pre_audit_scores
+    drop constraint pre_audit_scores_audit_id_fkey,
+    add constraint pre_audit_scores_audit_id_fkey foreign key (audit_id) references audit;
 
 COMMIT;
