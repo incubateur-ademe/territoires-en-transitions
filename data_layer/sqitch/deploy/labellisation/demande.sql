@@ -28,31 +28,6 @@ alter table audit
 alter table audit
     alter column date_debut set default null;
 
-create function
-    labellisation.validation_demande()
-    returns trigger
-as
-$$
-begin
-    -- dans le cas ou une demande n'est plus en cours.
-    if old.en_cours and not new.en_cours
-    then
-        -- on crée un audit.
-        insert into audit (collectivite_id, referentiel, demande_id)
-        select new.collectivite_id, new.referentiel, new.id;
-    end if;
-    return new;
-end;
-$$ language plpgsql;
-comment on function labellisation.validation_demande is
-    'Créé un audit si la demande est validée.';
-
-create trigger after_write_demande
-    after insert or update
-    on labellisation.demande
-    for each row
-execute procedure labellisation.validation_demande();
-
 drop function labellisation_demande;
 create or replace function
     labellisation_demande(
