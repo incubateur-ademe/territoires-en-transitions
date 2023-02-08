@@ -19,7 +19,8 @@ begin
     -- et que l'audit n'est pas dans le cadre d'une demande de labellisation
     -- et que l'audit passe en 'validé'
     if (new.collectivite_id in (select collectivite_id from cot)
-        and (new.demande_id is null or (select sujet = 'cot' from labellisation.demande ld where ld.id = new.demande_id))
+        and
+        (new.demande_id is null or (select sujet = 'cot' from labellisation.demande ld where ld.id = new.demande_id))
         and new.valide
         and not old.valide)
     then -- alors on termine l'audit
@@ -30,7 +31,16 @@ begin
 end ;
 $$ language plpgsql;
 
-alter table audit drop constraint audit_existant;
+alter table audit
+    drop constraint audit_existant;
+alter table audit
+    add constraint
+        audit_existant exclude using GIST (
+        -- Audit unique pour une collectivité, un référentiel, et une période de temps
+        collectivite_id with =,
+        referentiel with =,
+        tstzrange(date_debut, date_fin) with &&
+        ) where (date_debut is not null and date_fin is not null);
 
 create function
     labellisation_commencer_audit(audit_id integer)
@@ -52,7 +62,7 @@ create or replace function labellisation.current_audit(col integer, ref referent
     security definer
 as
 $$
-# variable_conflict use_column
+    # variable_conflict use_column
 declare
     found audit;
 begin
@@ -111,7 +121,7 @@ begin
         raise 'Pas d''audit en cours.';
     end if;
 
-    if not (select bool_or(auth.uid() = auditeur) from audit_auditeur where audit_id=found_audit.id)
+    if not (select bool_or(auth.uid() = auditeur) from audit_auditeur where audit_id = found_audit.id)
     then
         perform set_config('response.status', '403', true);
         raise 'L''utilisateur n''est pas auditeur sur l''audit de la collectivité.';
@@ -127,7 +137,8 @@ begin
     if existing_audit_state is null
     then
         insert into labellisation.action_audit_state (audit_id, action_id, collectivite_id, avis, ordre_du_jour, statut)
-        values (found_audit.id, new.action_id, new.collectivite_id, coalesce(new.avis, ''), new.ordre_du_jour, new.statut);
+        values (found_audit.id, new.action_id, new.collectivite_id, coalesce(new.avis, ''), new.ordre_du_jour,
+                new.statut);
     else
         update labellisation.action_audit_state
         set avis          = coalesce(new.avis, ''),
