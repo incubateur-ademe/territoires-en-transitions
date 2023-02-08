@@ -3,7 +3,7 @@ import {useCollectiviteId, useReferentielId} from 'core-logic/hooks/params';
 import {Referentiel} from 'types/litterals';
 import {TAddFileFromLib} from 'ui/shared/preuves/AddPreuveModal/AddFile';
 import {useAddPreuveLabellisation} from 'ui/shared/preuves/Bibliotheque/useAddPreuves';
-import {TEtoiles, TLabellisationDemande} from './types';
+import {TLabellisationDemande} from './types';
 import {useCycleLabellisation} from './useCycleLabellisation';
 
 type TAddDocs = () => {
@@ -32,11 +32,7 @@ export const useAddPreuveToDemande: TAddDocs = () => {
       if (demande_id) {
         addPreuve({...args, demande_id});
       } else {
-        const demande = await createDemande(
-          collectivite_id,
-          referentiel,
-          parcours?.etoiles
-        );
+        const demande = await createDemande(collectivite_id, referentiel);
         if (demande?.id) {
           addPreuve({...args, demande_id: demande.id});
         }
@@ -52,17 +48,15 @@ export const useAddPreuveToDemande: TAddDocs = () => {
 // collectivité pour un référentiel et un niveau
 export const createDemande = async (
   collectivite_id: number | null,
-  referentiel: Referentiel | null,
-  etoiles: TEtoiles | undefined
+  referentiel: Referentiel | null
 ) => {
-  if (!collectivite_id || !referentiel || !etoiles) {
+  if (!collectivite_id || !referentiel) {
     return null;
   }
   const {error, data} = await supabaseClient
     .rpc('labellisation_demande', {
       collectivite_id,
       referentiel,
-      etoiles,
     })
     .select();
 
