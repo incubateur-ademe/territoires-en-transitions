@@ -197,8 +197,8 @@ Given(/^je clique sur le bouton "([^"]*)"$/, function (btnName) {
   cy.get(resolveSelector(this, btnName).selector).click();
 });
 Given(/^je clique sur le bouton radio "([^"]*)"$/, function (btnName) {
-  // le bouton radio natif est masqué par la version stylé alors on clique sur le parent
-  cy.get(resolveSelector(this, btnName).selector).parent().click();
+  // le bouton radio natif est masqué par la version stylé alors on clique sur le libellé qui le suit immédiatement
+  cy.get(resolveSelector(this, btnName).selector + '+label').click();
 });
 
 Given(/^je clique sur la case "([^"]*)"$/, function (checkbox) {
