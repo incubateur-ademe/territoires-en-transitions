@@ -45,13 +45,11 @@ alter table audit
         where (date_debut is not null and date_fin is not null);
 alter table audit
     add constraint
-        -- contrainte complémentaire qui évite la duplication de plage infinies.
-        audit_en_attente unique (
-                                 collectivite_id,
-                                 referentiel,
-                                 date_debut,
-                                 date_fin
-            );
+        audit_en_attente
+        -- Contrainte complémentaire pour éviter la duplication de plage infinies.
+        -- Nouvelle feature de pg15, pour que unique s'applique aux nulls
+        -- https://www.postgresql.org/docs/15/ddl-constraints.html
+        unique nulls not distinct (collectivite_id, referentiel, date_debut, date_fin);
 
 create function
     labellisation_commencer_audit(audit_id integer)
