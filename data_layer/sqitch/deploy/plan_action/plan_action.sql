@@ -729,19 +729,35 @@ from axe a
 where a.parent is null;
 
 -- Fonction pour supprimer de manière récursive un axe, ses enfants et ses fiches
-create function delete_axe_all(axe_id integer) returns void as
+create or replace function delete_axe_all(axe_id integer) returns void as
 $$
 declare
     pa_enfant_id integer; -- Id d'un plan d'action enfant du plan d'action courant
+    facs fiche_action[];
+    fac fiche_action;
 begin
     for pa_enfant_id in select pa.id from axe pa where pa.parent = delete_axe_all.axe_id
         loop
             execute delete_axe_all(pa_enfant_id);
         end loop;
-    delete from fiche_action
-    where id in (select faa.fiche_id
-                 from fiche_action_axe faa
-                 where faa.axe_id = delete_axe_all.axe_id);
+    select array_agg(fa.*)
+    from fiche_action fa
+             join fiche_action_axe faa on fa.id = faa.fiche_id
+    where faa.axe_id = delete_axe_all.axe_id into facs;
+    if facs is not null then
+        foreach fac in array facs
+            loop
+                if (select count(*)>1 from fiche_action_axe where fiche_id= fac.id) then
+                    delete from fiche_action_axe
+                    where fiche_action_axe.fiche_id = fac.id
+                      and fiche_action_axe.axe_id = delete_axe_all.axe_id;
+                else
+                    delete from fiche_action
+                    where id = fac.id;
+                end if;
+
+            end loop;
+    end if;
     delete from axe where id = delete_axe_all.axe_id;
 end;
 $$ language plpgsql;

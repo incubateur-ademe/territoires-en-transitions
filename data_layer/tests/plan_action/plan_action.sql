@@ -1,5 +1,5 @@
 begin;
-select plan(30);
+select plan(34);
 
 truncate fiche_action_financeur_tag;
 truncate financeur_tag cascade;
@@ -240,11 +240,19 @@ select ok ((select count(*)=1 from axe where id = 4),
            'L''axe id 4 devrait exister');
 select ok ((select count(*)=1 from fiche_action where id = 1),
            'La fiche id 1 devrait exister');
+select ok ((select count(*)=1 from fiche_action where id = 2),
+           'La fiche id 2 devrait exister');
+select ok ((select count(*)=2 from fiche_action_axe where fiche_id = 1),
+           'La fiche id 1 devrait être dans 2 plans');
 select delete_axe_all(1);
 select ok ((select count(*)=0 from axe where id = 4),
            'L''axe id 4 ne devrait plus exister');
-select ok ((select count(*)=0 from fiche_action where id = 1),
-           'La fiche id 1 ne devrait plus exister');
+select ok ((select count(*)=1 from fiche_action where id = 1),
+           'La fiche id 1 devrait toujours exister');
+select ok ((select count(*)=1 from fiche_action_axe where fiche_id = 1),
+           'La fiche id 1 devrait être dans 1 plan');
+select ok ((select count(*)=0 from fiche_action where id = 2),
+           'La fiche id 2 ne devrait plus exister');
 select ok ((select count(*)=1 from fiche_action where id = 3),
            'La fiche id 3 devrait exister');
 
