@@ -145,6 +145,11 @@ async function commencer_audit(
     "valide": false,
   });
 
+  const parcours = await labellisationParcours(collectivite.collectivite_id!);
+  assertExists(parcours);
+  // @ts-ignore
+  assertObjectMatch(parcours[0]!.audit, auditCommence);
+
   const auditEnCours = await supabase.from("audit_en_cours")
     .select("*,auditeurs:audit_auditeur (id:auditeur)")
     .eq("collectivite_id", collectivite.collectivite_id!)
@@ -230,7 +235,6 @@ async function ajouter_auditeur(
   assertExists(auditAuditeur);
   assertEquals(auditeur.user_id, auditAuditeur.auditeur);
 
-  console.log(auditeur, auditAuditeur);
   return { auditeur, auditAuditeur };
 }
 
