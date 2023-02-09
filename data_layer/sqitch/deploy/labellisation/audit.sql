@@ -40,7 +40,18 @@ alter table audit
         collectivite_id with =,
         referentiel with =,
         tstzrange(date_debut, date_fin) with &&
-        ) where (date_debut is not null and date_fin is not null);
+        )
+        -- on exclut les plages infinies qui se superposent à toutes les autres.
+        where (date_debut is not null and date_fin is not null);
+alter table audit
+    add constraint
+        -- contrainte complémentaire qui évite la duplication de plage infinies.
+        audit_en_attente unique (
+                                 collectivite_id,
+                                 referentiel,
+                                 date_debut,
+                                 date_fin
+            );
 
 create function
     labellisation_commencer_audit(audit_id integer)
@@ -71,11 +82,7 @@ begin
     from audit a
     where a.collectivite_id = current_audit.col
       and a.referentiel = current_audit.ref
-      and (
-            (now() between date_debut and date_fin)
-            or (date_debut <= now() and date_fin is null)
-            or (date_debut is null)
-        )
+      and now() <@ tstzrange(date_debut, date_fin)
     order by date_debut desc
     limit 1;
 
