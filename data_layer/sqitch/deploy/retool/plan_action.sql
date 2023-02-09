@@ -33,7 +33,7 @@ create view retool_plan_action_hebdo as
 with
     weeks as (
         select *
-        from generate_series(DATE '2021-01-04', now(), '7 day') day
+        from generate_series(DATE '2023-01-02', now(), '7 day') day
     ),
     collectivites_by_weeks as (
         select nc.*, w.day
@@ -61,12 +61,14 @@ with
     )
 select c.collectivite_id,
        c.nom,
-       concat(c.day::date, ' - ', (c.day + interval '1' day)::date) as date_range,
+       concat(c.day::date, ' - ', (c.day + interval '6' day)::date) as date_range,
        p.nb_plans,
-       f.nb_fiches
+       f.nb_fiches,
+       c.day
 from collectivites_by_weeks c
          join plans p on c.collectivite_id = p.collectivite_id and c.day = p.day
          join fiches f on c.collectivite_id = f.collectivite_id and c.day = f.day
+where p.nb_plans <> 0 or f.nb_fiches <> 0
 order by c.collectivite_id, c.day;
 
 COMMIT;
