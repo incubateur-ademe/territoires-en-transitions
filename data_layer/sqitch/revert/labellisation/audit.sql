@@ -8,6 +8,7 @@ alter table audit
         referentiel with =,
         tstzrange(date_debut, date_fin) with &&
         );
+alter table audit drop constraint audit_en_attente;
 
 create or replace function
     labellisation.update_audit()
