@@ -265,6 +265,19 @@ Deno.test("Scénario de demande d'audit COT", async () => {
     email: auditeur.email,
     password: auditeur.password,
   });
+
+  // On récupère sa liste de collectivité.
+  const mesCollectivitesResponse = await supabase
+  .from('mes_collectivites')
+  .select();
+  const collectivites = mesCollectivitesResponse.data;
+  assertExists(collectivites);
+  assertObjectMatch(collectivites[0], {
+    collectivite_id: collectivite.collectivite_id,
+    niveau_acces: 'edition',
+    est_auditeur: true,
+  });
+
   const demande = await verifier_avant_commencement(collectivite);
   const auditEnCours = await commencer_audit(
     auditAuditeur,

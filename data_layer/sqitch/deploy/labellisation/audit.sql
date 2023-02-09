@@ -157,8 +157,8 @@ create or replace
 begin
     atomic
     with audit_en_cours as (select auditeur
-                            from audit_en_cours aec
-                                     join audit_auditeur aa on aa.audit_id = aec.id)
+                            from audit a
+                                     join audit_auditeur aa on aa.audit_id = a.id)
     select coalesce(bool_or(auth.uid() = audit_en_cours.auditeur), false)
     from audit_en_cours;
 end;
