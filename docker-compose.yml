@@ -138,7 +138,7 @@ services:
 
   db:
     container_name: supabase-db
-    image: supabase/postgres:14.1.0.89
+    image: supabase/postgres:15.1.0.38
     healthcheck:
       test: pg_isready -U postgres -h localhost
       interval: 5s
