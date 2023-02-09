@@ -33,22 +33,14 @@ create function
     security definer
 begin
     atomic
-    with new_audit as (
-        insert into audit (collectivite_id, referentiel, demande_id, date_debut)
-            select collectivite_id,
-                   referentiel,
-                   id,
-                   case when audit_en_cours then now() - interval '1 day' end
-            from labellisation.demande ld
-            where ld.id = test_set_auditeur.demande_id
-            returning *)
     insert
     into audit_auditeur (audit_id, auditeur)
-    select id, test_set_auditeur.user_id
-    from new_audit
+    select a.id, test_set_auditeur.user_id
+    from labellisation.demande d
+             join labellisation.current_audit(d.collectivite_id, d.referentiel) a on true
+    where d.id = test_set_auditeur.demande_id
     returning *;
 end;
 comment on function test_set_auditeur is
     'Ajoute un utilisateur en tant qu''auditeur à une collectivité. '
-        'L''utilisateur doit avoir des droits en écriture et une demande d''audit doit être validé. '
-        'Dans le cas ou l''audit demandé est cours, l''audit date de la veille.';
+        'L''utilisateur doit avoir des droits en écriture et une demande d''audit doit être validé.';
