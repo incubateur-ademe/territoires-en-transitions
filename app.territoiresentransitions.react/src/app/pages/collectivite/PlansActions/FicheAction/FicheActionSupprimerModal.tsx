@@ -9,7 +9,7 @@ const FicheActionSupprimerModal = ({onDelete}: Props) => {
     <Modal
       render={({labelId, descriptionId, close}) => {
         return (
-          <div data-test="modification-email-modal">
+          <div data-test="supprimer-fiche-modale">
             <h4 id={labelId} className="fr-h4">
               Supprimer la fiche action
             </h4>
@@ -37,10 +37,7 @@ const FicheActionSupprimerModal = ({onDelete}: Props) => {
       }}
     >
       <div className="inline-flex border border-red-700">
-        <button
-          className="fr-btn fr-btn--secondary fr-text-default--error !shadow-none"
-          // onClick={() => deleteFiche(fiche.id!)}
-        >
+        <button className="fr-btn fr-btn--secondary fr-text-default--error !shadow-none">
           Supprimer cette fiche
         </button>
       </div>
