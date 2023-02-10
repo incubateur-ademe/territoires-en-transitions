@@ -1,4 +1,4 @@
-import FicheActionHeader from './FicheActionHeader';
+import FicheActionHeader from './FicheActionHeader/FicheActionHeader';
 import FicheActionForm from './FicheActionForm/FicheActionForm';
 import FicheActionFooter from './FicheActionFooter';
 
