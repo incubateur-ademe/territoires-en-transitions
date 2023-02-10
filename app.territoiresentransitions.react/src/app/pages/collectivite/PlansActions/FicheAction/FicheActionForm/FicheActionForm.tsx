@@ -29,19 +29,25 @@ import IndicateursDropdown from './IndicateursDropdown';
 import ThematiquesDropdown from './ThematiquesDropdown';
 import SousThematiquesDropdown from './SousThematiquesDropdown';
 import {TSousThematiqueRow, TThematiqueRow} from '../data/types/alias';
+import {DSFRbuttonClassname} from 'ui/shared/select/commons';
+import FicheActionRangerModal from '../FicheActionRangerModal/FicheActionRangerModal';
+import {usePlanActionProfondeur} from '../../PlanAction/data/usePlanActionProfondeur';
 
 type TFicheActionForm = {
   fiche: FicheActionVueRow;
 };
 
-export const selectButtonClassNames = 'fr-select !flex !px-4 !bg-none';
-
 const FicheActionForm = ({fiche}: TFicheActionForm) => {
   const {mutate: updateFiche} = useEditFicheAction();
+
+  const plansProfondeur = usePlanActionProfondeur();
 
   return (
     <div className="flex flex-col gap-6">
       <Section isDefaultOpen icon={<PictoInformation />} title="Présentation">
+        {plansProfondeur?.plans && plansProfondeur.plans.length > 0 && (
+          <FicheActionRangerModal fiche={fiche} />
+        )}
         <FormField
           label="Nom de la fiche"
           hint="Exemple : 1.3.2.5 Limiter les émissions liées au chauffage résidentiel au bois"
@@ -105,7 +111,7 @@ const FicheActionForm = ({fiche}: TFicheActionForm) => {
         </FormField>
         <FormField label="Résultats attendus">
           <MultiSelectDropdown
-            buttonClassName={selectButtonClassNames}
+            buttonClassName={DSFRbuttonClassname}
             values={fiche.resultats_attendus ?? []}
             options={ficheActionResultatsAttendusOptions}
             onSelect={values =>
@@ -118,7 +124,7 @@ const FicheActionForm = ({fiche}: TFicheActionForm) => {
       <Section icon={<PictoCommunity />} title="Acteurs">
         <FormField label="Cibles">
           <MultiSelectTagsDropdown
-            buttonClassName={selectButtonClassNames}
+            buttonClassName={DSFRbuttonClassname}
             values={fiche.cibles ?? []}
             options={ficheActionCiblesOptions}
             onSelect={values => updateFiche({...fiche, cibles: values})}
@@ -190,7 +196,7 @@ const FicheActionForm = ({fiche}: TFicheActionForm) => {
         <div className="grid grid-cols-2 gap-4">
           <FormField label="Statut">
             <SelectDropdown
-              buttonClassName={selectButtonClassNames}
+              buttonClassName={DSFRbuttonClassname}
               value={fiche.statut ?? undefined}
               options={ficheActionStatutOptions}
               onSelect={value => updateFiche({...fiche, statut: value})}
@@ -203,7 +209,7 @@ const FicheActionForm = ({fiche}: TFicheActionForm) => {
           </FormField>
           <FormField label="Niveau de priorité">
             <SelectDropdown
-              buttonClassName={selectButtonClassNames}
+              buttonClassName={DSFRbuttonClassname}
               value={fiche.niveau_priorite ?? undefined}
               options={ficheActionNiveauPrioriteOptions}
               onSelect={value =>
