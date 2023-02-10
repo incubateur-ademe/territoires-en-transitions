@@ -11,8 +11,6 @@ $$
     select test_reset_membres();
 -- 05-history.sql
     select test_clear_history();
--- 06-auth.sql
-    select test_reset_users();
 -- 06-preuve.sql
     select test_reset_preuves();
 -- 07-audit.sql
@@ -25,6 +23,8 @@ $$
     select test_reset_action_statut_and_desc();
 -- 11-plan_action.sql
     select test_reset_plan_action();
+-- 06-auth.sql
+    select test_reset_users();
 -- Supprime toutes les collectivités de test.
     delete from collectivite_test cascade;
 $$ language sql security definer;
