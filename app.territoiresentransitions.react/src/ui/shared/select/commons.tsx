@@ -17,6 +17,7 @@ export const getOptionLabel = (optionValue: string, options: TOption[]) =>
   options.find((v: TOption) => v.value === optionValue)?.label!;
 
 /* Class génériques */
+export const DSFRbuttonClassname = 'fr-select !flex !px-4 !bg-none';
 export const buttonDisplayedClassname =
   'flex items-center w-full p-2 text-left text-sm';
 export const buttonDisplayedPlaceholderClassname =
