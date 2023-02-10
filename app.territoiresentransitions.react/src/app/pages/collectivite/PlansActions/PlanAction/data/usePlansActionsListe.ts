@@ -25,6 +25,9 @@ const fetchPlansActionsListe = async (
   return {plans: (data as TPlanActionAxeRow[]) || []};
 };
 
+/** Récupère uniquement les axes racines des plans d'action.
+ * Ce hook ne donne pas les enfants de ces axes.
+ */
 export const usePlansActionsListe = (collectivite_id: number) => {
   const {data} = useQuery(['plans_actions', collectivite_id], () =>
     fetchPlansActionsListe(collectivite_id)
