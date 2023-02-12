@@ -13,6 +13,10 @@ export const useValidateAudit = () => {
     onSuccess: (data, variables) => {
       const {collectivite_id, referentiel} = variables;
       queryClient.invalidateQueries(['audit', collectivite_id, referentiel]);
+      queryClient.invalidateQueries([
+        'labellisation_parcours',
+        collectivite_id,
+      ]);
     },
   });
 };
