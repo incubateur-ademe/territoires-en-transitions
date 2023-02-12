@@ -24,7 +24,6 @@ export const RegionFiltre = (props: TRegionFiltreProps) => {
 
   const handleChange: SelectInputProps['onChange'] = event => {
     const selection = event.target.value as string[];
-    console.log('event', selection);
     updateCodes(selection);
   };
 
