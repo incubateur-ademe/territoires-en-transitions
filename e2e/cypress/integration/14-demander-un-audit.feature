@@ -63,10 +63,9 @@ Fonctionnalité: Demander un audit
     Alors le bouton "Envoyer ma demande" est activé
 
     Quand je clique sur le bouton "Envoyer ma demande"
-    Alors le "choix du type d'audit/labellisation COT" contient "Envoi en cours"
+    Alors le "choix du type d'audit/labellisation COT" contient "Votre demande d’audit a bien été envoyée."
 
-    Quand le "choix du type d'audit/labellisation COT" contient "Votre demande d’audit a bien été envoyée."
-    Et que je clique en dehors de la boîte de dialogue
+    Quand je clique en dehors de la boîte de dialogue
     Alors le "choix du type d'audit/labellisation COT" est absent
     Et le bouton "Demander un audit" est absent
     Et le "message d'en-tête" contient "Demande envoyée"
@@ -104,10 +103,9 @@ Fonctionnalité: Demander un audit
     Alors le bouton "Envoyer ma demande" est activé
 
     Quand je clique sur le bouton "Envoyer ma demande"
-    Alors le "choix du type d'audit/labellisation COT" contient "Envoi en cours"
+    Alors le "choix du type d'audit/labellisation COT" contient "Votre demande d’audit a bien été envoyée."
 
-    Quand le "choix du type d'audit/labellisation COT" contient "Votre demande d’audit a bien été envoyée."
-    Et que je clique en dehors de la boîte de dialogue
+    Quand je clique en dehors de la boîte de dialogue
     Alors le "choix du type d'audit/labellisation COT" est absent
     Et le bouton "Demander un audit" est absent
     Et le "message d'en-tête" contient "Demande envoyée"
@@ -140,10 +138,9 @@ Fonctionnalité: Demander un audit
     Et le "dialogue d'envoi de la demande" est visible
 
     Quand je clique sur le bouton "Envoyer ma demande"
-    Alors le "dialogue d'envoi de la demande" contient "Envoi en cours"
+    Alors le "dialogue d'envoi de la demande" contient "Votre demande d’audit a bien été envoyée."
 
-    Quand le "dialogue d'envoi de la demande" contient "Votre demande d’audit a bien été envoyée."
-    Et que je clique en dehors de la boîte de dialogue
+    Quand je clique en dehors de la boîte de dialogue
     Alors le "dialogue d'envoi de la demande" est absent
     Et le bouton "Demander un audit" est absent
     Et le "message d'en-tête" contient "Demande envoyée"
