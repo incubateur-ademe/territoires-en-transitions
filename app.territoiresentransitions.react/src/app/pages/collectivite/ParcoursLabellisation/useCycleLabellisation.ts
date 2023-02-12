@@ -72,7 +72,7 @@ const getParcoursStatus = (
   if (audit?.valide) {
     return 'audit_valide';
   }
-  if (audit?.date_debut) {
+  if (audit?.date_debut && !audit?.valide) {
     return 'audit_en_cours';
   }
   if (demande && !demande.en_cours) {
