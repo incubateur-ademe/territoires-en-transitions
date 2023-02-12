@@ -3,6 +3,7 @@ import '../05-modifier-etat-avancement/steps';
 import '../12-utiliser-la-bibliotheque/steps';
 import {LocalSelectors as LocalSelectorsPreuves} from '../04-associer-des-preuves-aux-actions/selectors';
 import {LocalSelectors as LocalSelectorsStatut} from '../05-modifier-etat-avancement/selectors';
+import {LocalSelectors as LocalSelectorsLabellisation} from '../14-demander-un-audit/selectors';
 import {LocalSelectors} from './selectors';
 import {makeCheckPreuveRows} from '../04-associer-des-preuves-aux-actions/checkPreuves';
 
@@ -11,6 +12,7 @@ beforeEach(() => {
   cy.wrap({
     ...LocalSelectorsPreuves,
     ...LocalSelectorsStatut,
+    ...LocalSelectorsLabellisation,
     ...LocalSelectors,
   }).as('LocalSelectors');
 });
@@ -22,7 +24,7 @@ When(
   dataTable => {
     const rows = dataTable.rows();
 
-    cy.get(`${suiviAuditTable}`).within(() => {
+    cy.get(suiviAuditTable).within(() => {
       // vérifie le nombre de lignes
       cy.get('[role=row] .identifiant').should('have.length.gte', rows.length);
 
@@ -84,6 +86,13 @@ When(
     });
   }
 );
+
+When("le tableau de suivi de l'audit ne contient pas de résultat", () => {
+  cy.get('[data-test=DetailTacheTable] [role=row] .identifiant').should(
+    'have.length.gte',
+    0
+  );
+});
 
 When("il n'y a pas de rapports d'audit", () => {
   cy.get('[data-test=rapports-audit]').should('not.exist');

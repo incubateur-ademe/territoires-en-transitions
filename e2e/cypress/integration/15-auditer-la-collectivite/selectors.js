@@ -9,4 +9,10 @@ export const LocalSelectors = {
       Valider: '[data-test=validate]',
     },
   },
+  "Commencer l'audit": {
+    selector: '[data-test=StartAuditBtn]',
+  },
+  'Désactiver tous les filtres': {
+    selector: '[data-test=DisableAllFilters]',
+  },
 };
