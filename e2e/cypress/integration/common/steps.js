@@ -6,6 +6,7 @@
 
 import {Selectors} from './selectors';
 import {Expectations} from './expectations';
+import {waitForApp, logout} from './shared';
 
 // avant chaque test
 beforeEach(function () {
@@ -27,16 +28,6 @@ beforeEach(function () {
     cy.stub(win, 'open').callsFake(stub);
   });
 });
-
-// attends que l'appli expose un objet `e2e` permettant de la contrôler, il est
-// nécessaire de rappeler cette fonction si on veut que la promesse
-// `cy.get('@auth')` soit bien résolue une 2ème fois dans le même scénario
-// (utilisée avec le step "je me reconnecte en tant que ...")
-function waitForApp() {
-  cy.window({log: false}).its('e2e.history').as('history');
-  cy.window({log: false}).its('e2e.auth').as('auth');
-  cy.window({log: false}).its('e2e.supabaseClient').as('supabaseClient');
-}
 
 Given("j'ouvre le site", () => {
   cy.get('[data-test=home]').should('be.visible');
@@ -102,10 +93,6 @@ Given('les informations des membres sont réinitialisées', () => {
 });
 
 Given('je me déconnecte', logout);
-function logout() {
-  cy.get('[data-test=connectedMenu]').click();
-  cy.get('[data-test=logoutBtn]').click();
-}
 
 // Met en pause le déroulement d'un scénario.
 // Associé avec le tag @focus cela permet de debugger facilement les tests.
