@@ -3,6 +3,7 @@ import {Table} from './Table';
 import {getFilterInfoMessage, noFilters} from './filters';
 import {getMaxDepth} from './queries';
 import {useReferentielId} from 'core-logic/hooks/params';
+import {DisableAllFilters} from '../ReferentielTable/DisableAllFilters';
 
 const AidePriorisation = () => {
   const tableData = useTableData();
@@ -18,14 +19,10 @@ const AidePriorisation = () => {
     <>
       <p>
         {filtersCount} {labelFilters}
-        {filtersCount > 0 ? (
-          <button
-            className="fr-link fr-link--icon-left fr-fi-close-circle-fill fr-ml-2w"
-            onClick={() => setFilters(noFilters)}
-          >
-            Désactiver tous les filtres
-          </button>
-        ) : null}
+        <DisableAllFilters
+          filtersCount={filtersCount}
+          onClick={() => setFilters(noFilters)}
+        />
         {filterInfoMessage ? (
           <>
             <br />
