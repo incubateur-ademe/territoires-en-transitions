@@ -1,6 +1,7 @@
 import {useTableData} from './useTableData';
 import {Table} from './Table';
 import {noFilters} from './filters';
+import {DisableAllFilters} from '../ReferentielTable/DisableAllFilters';
 
 const AuditSuivi = () => {
   const tableData = useTableData();
@@ -11,14 +12,10 @@ const AuditSuivi = () => {
     <>
       <p>
         {filtersCount} {labelFilters}
-        {filtersCount > 0 ? (
-          <button
-            className="fr-link fr-link--icon-left fr-fi-close-circle-fill fr-ml-2w"
-            onClick={() => setFilters(noFilters)}
-          >
-            Désactiver tous les filtres
-          </button>
-        ) : null}
+        <DisableAllFilters
+          filtersCount={filtersCount}
+          onClick={() => setFilters(noFilters)}
+        />
       </p>
       <Table tableData={tableData} />
     </>
