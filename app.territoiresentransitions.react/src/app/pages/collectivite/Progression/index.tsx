@@ -5,6 +5,7 @@ import {getMaxDepth} from './queries';
 import {useReferentielId} from 'core-logic/hooks/params';
 import {getFilterInfoMessage} from '../AidePriorisation/filters';
 import {ColumnSelector} from './ColumnSelector';
+import {DisableAllFilters} from '../ReferentielTable/DisableAllFilters';
 
 const Progression = () => {
   const tableData = useTableData();
@@ -26,14 +27,10 @@ const Progression = () => {
         />
         <div className="pl-12">
           {filtersCount} {labelFilters}
-          {filtersCount > 0 ? (
-            <button
-              className="fr-link fr-link--icon-left fr-fi-close-circle-fill fr-ml-2w"
-              onClick={() => setFilters(noFilters)}
-            >
-              Désactiver tous les filtres
-            </button>
-          ) : null}
+          <DisableAllFilters
+            filtersCount={filtersCount}
+            onClick={() => setFilters(noFilters)}
+          />
         </div>
       </div>
       {filterInfoMessage ? <p>{filterInfoMessage}</p> : null}
