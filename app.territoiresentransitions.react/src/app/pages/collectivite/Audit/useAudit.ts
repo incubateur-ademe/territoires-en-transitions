@@ -5,6 +5,7 @@ import {TAudit} from './types';
 import {Referentiel} from 'types/litterals';
 import {useAuth} from 'core-logic/api/auth/AuthProvider';
 import {usePreuvesParType} from 'ui/shared/preuves/Bibliotheque/usePreuves';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
 // charge les données
 export const fetch = async (
@@ -37,14 +38,10 @@ export const useAudit = () => {
 };
 
 /** Indique si l'utilisateur courant est l'auditeur pour la
- * collectivité et le référentiel courant */
+ * collectivité courante */
 export const useIsAuditeur = () => {
-  const {user} = useAuth();
-  const {data: audit} = useAudit();
-  if (!audit || !user || !audit.auditeurs?.length) {
-    return false;
-  }
-  return audit.auditeurs.findIndex(({id}) => id === user.id) !== -1;
+  const collectivite = useCurrentCollectivite();
+  return collectivite?.est_auditeur || false;
 };
 
 /** Liste des auditeurs pour la collectivité et le référentiel courant */
