@@ -7,7 +7,7 @@ ENV LANG fr_FR.UTF-8
 WORKDIR "/app"
 COPY ./package.json ./
 COPY ./package-lock.json ./
-RUN npm i
+RUN npm ci
 COPY . .
 RUN npm run build
 EXPOSE 3000
