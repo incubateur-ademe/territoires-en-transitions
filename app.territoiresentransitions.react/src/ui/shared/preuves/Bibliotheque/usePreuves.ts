@@ -18,15 +18,6 @@ type TFilters = {
 
 // charge les données
 const fetch = async (collectivite_id: number, filters?: TFilters) => {
-  // évite d'essayer de charger les preuves de labellisation lorsque la demande
-  // n'est pas disponible
-  if (
-    filters?.preuve_types?.includes('labellisation') &&
-    !filters?.demande_id
-  ) {
-    return [];
-  }
-
   // lit la liste des preuves de la collectivité
   const query = supabaseClient
     .from('preuve')
@@ -92,9 +83,9 @@ const fetch = async (collectivite_id: number, filters?: TFilters) => {
  */
 export const usePreuves = (filters?: TFilters) => {
   const collectivite_id = useCollectiviteId();
-  const {data} = useQuery(['preuve', collectivite_id, filters], () =>
-    collectivite_id ? fetch(collectivite_id, filters) : []
-  );
+  const {data} = useQuery(['preuve', collectivite_id, filters], () => {
+    return collectivite_id ? fetch(collectivite_id, filters) : [];
+  });
   return (data as TPreuve[]) || [];
 };
 
