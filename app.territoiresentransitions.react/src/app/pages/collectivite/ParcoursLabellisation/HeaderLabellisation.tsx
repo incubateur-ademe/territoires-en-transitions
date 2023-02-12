@@ -55,6 +55,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
       {status === 'demande_envoyee' && isAuditeur ? (
         <button
           className="fr-btn self-start"
+          data-test="StartAuditBtn"
           onClick={() =>
             audit &&
             referentiel &&
@@ -91,7 +92,7 @@ const getHeaderMessageContent = (
 ) => {
   const {status, isAuditeur} = parcoursLabellisation;
 
-  if (status === 'demande_envoyee') {
+  if (status === 'demande_envoyee' && !isAuditeur) {
     return 'Demande envoyée';
   }
 
