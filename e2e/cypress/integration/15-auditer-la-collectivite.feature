@@ -2,22 +2,42 @@
 
 Fonctionnalité: Auditer la collectivité
 
-  Scénario: Suivre l'audit en tant qu'auditeur
-    Etant donné que je suis connecté en tant que "youlou"
+  Scénario: Démarrer un audit
+    Etant donné une collectivité nommée "Le Bois Joli"
+    Et un utilisateur avec les droits en "edition"
+    Et un score permettant d'obtenir la 2ème étoile
 
-    Quand je suis sur la page "Labellisation ECi" de la collectivité "1"
+    Quand je suis connecté avec les droits en "edition"
+    Et que je demande un audit de labellisation "eci" pour la 2ème étoile
+    Et que je suis sur la page "Labellisation ECi" de la collectivité courante
+    Alors le bouton "Demander un audit" est absent
+    Et le "message d'en-tête" contient "Demande envoyée"
+
+    Quand je me reconnecte en tant qu'auditeur de la collectivité
+    Et que je suis sur la page "Labellisation ECi" de la collectivité courante
+    Alors le bouton "Commencer l'audit" est visible
+    Et le "message d'en-tête" est absent
+
+    Quand je clique sur le bouton "Commencer l'audit"
+    Alors le bouton "Commencer l'audit" est absent
+    Et le bouton "Valider l'audit" est visible
+
+  Scénario: Suivre l'audit en tant qu'auditeur
+    Etant donné une collectivité nommée "Collectivité de test"
+    Et un score permettant d'obtenir la 3ème étoile
+    Et avec un audit demandé pour la labellisation "eci" 3ème étoile
+
+    Quand je suis connecté en tant qu'auditeur de la collectivité
+    Et que l'audit est commencé
+    Et que je suis sur la page "Labellisation ECi" de la collectivité courante
     Alors je vois 3 onglets
     Et l'onglet "Suivi de l'audit" est sélectionné
     Et le tableau de suivi de l'audit contient les lignes suivantes :
-      | identifiant | inscrit séance audit | avancement     |
-      | 1.1         |                      | Non audité     |
-      | 1.2         |                      | Non audité     |
-      | 1.3         |                      | Non audité     |
-      | 2.1         |                      | Non audité     |
-      | 2.2         | oui                  | Audit en cours |
-      | 2.3         |                      | Audité         |
-      | 2.4         | oui                  | Non audité     |
-      | 2.5         |                      | Non audité     |
+      | identifiant | inscrit séance audit | avancement |
+      | 1.1         |                      | Non audité |
+      | 1.2         |                      | Non audité |
+      | 1.3         |                      | Non audité |
+      | 2.1         |                      | Non audité |
 
     Quand je clique sur la ligne du tableau de suivi de l'audit contenant l'identifiant "2.1"
     Alors l'état d'avancement des tâches est éditable
@@ -39,39 +59,38 @@ Fonctionnalité: Auditer la collectivité
       | avis audit                | contient  | mon commentaire d'audit |
       | ajouter à l'ordre du jour | coché     |                         |
 
-    Quand je suis sur la page "Labellisation ECi" de la collectivité "1"
+    Et que je suis sur la page "Labellisation ECi" de la collectivité courante
     Alors le tableau de suivi de l'audit contient les lignes suivantes :
       | identifiant | inscrit séance audit | avancement     |
       | 1.1         |                      | Non audité     |
       | 1.2         |                      | Non audité     |
       | 1.3         |                      | Non audité     |
       | 2.1         | oui                  | Audit en cours |
-      | 2.2         | oui                  | Audit en cours |
-      | 2.3         |                      | Audité         |
-      | 2.4         | oui                  | Non audité     |
-      | 2.5         |                      | Non audité     |
 
-    Quand je visite l'onglet "detail" du référentiel "eci" de la collectivité "1"
+    Quand je visite l'onglet "detail" du référentiel "eci" de la collectivité courante
+    Alors le tableau de suivi de l'audit ne contient pas de résultat
+
+    Quand je clique sur le bouton "Désactiver tous les filtres"
     Alors l'état d'avancement est éditable depuis le tableau de détail des tâches
 
   Scénario: Suivre l'audit en tant que non auditeur
-    Etant donné que je suis connecté en tant que "yolo"
+    Etant donné une collectivité nommée "Collectivité de test"
+    Et un score permettant d'obtenir la 3ème étoile
+    Et avec un audit en cours pour la labellisation "eci" 3ème étoile
+    Et un utilisateur avec les droits en "edition"
 
-    Quand je suis sur la page "Labellisation ECi" de la collectivité "1"
+    Quand je suis connecté avec les droits en "edition"
+    Et que je suis sur la page "Labellisation ECi" de la collectivité courante
     Alors le bouton "Valider l'audit" est absent
     Et l'en-tête contient "Audit en cours"
     Et je vois 3 onglets
     Et l'onglet "Suivi de l'audit" est sélectionné
     Et le tableau de suivi de l'audit contient les lignes suivantes :
-      | identifiant | inscrit séance audit | avancement     |
-      | 1.1         |                      | Non audité     |
-      | 1.2         |                      | Non audité     |
-      | 1.3         |                      | Non audité     |
-      | 2.1         |                      | Non audité     |
-      | 2.2         | oui                  | Audit en cours |
-      | 2.3         |                      | Audité         |
-      | 2.4         | oui                  | Non audité     |
-      | 2.5         |                      | Non audité     |
+      | identifiant | inscrit séance audit | avancement |
+      | 1.1         |                      | Non audité |
+      | 1.2         |                      | Non audité |
+      | 1.3         |                      | Non audité |
+      | 2.1         |                      | Non audité |
 
     Quand je clique sur la ligne du tableau de suivi de l'audit contenant l'identifiant "2.1"
     Alors l'état d'avancement des tâches n'est pas éditable
@@ -84,16 +103,23 @@ Fonctionnalité: Auditer la collectivité
       | ajouter à l'ordre du jour       | décoché   |            |
       | ajouter à l'ordre du jour       | désactivé |            |
 
-    Quand je visite l'onglet "detail" du référentiel "eci" de la collectivité "1"
+    Quand je visite l'onglet "detail" du référentiel "eci" de la collectivité courante
+    Alors le tableau de suivi de l'audit ne contient pas de résultat
+
+    Quand je clique sur le bouton "Désactiver tous les filtres"
     Alors l'état d'avancement n'est pas éditable depuis le tableau de détail des tâches
 
   Scénario: Ajouter un rapport et valider l'audit
-    Etant donné que je suis connecté en tant que "youlou"
+    Etant donné une collectivité nommée "Collectivité de test"
+    Et un score permettant d'obtenir la 3ème étoile
+    Et avec un audit demandé pour la labellisation "eci" 3ème étoile
 
-    Quand je suis sur la page "Bibliothèque de documents" de la collectivité "1"
+    Quand je suis connecté en tant qu'auditeur de la collectivité
+    Et que l'audit est commencé
+    Quand je suis sur la page "Bibliothèque de documents" de la collectivité courante
     Alors il n'y a pas de documents de labellisation
 
-    Quand je suis sur la page "Labellisation ECi" de la collectivité "1"
+    Quand je suis sur la page "Labellisation ECi" de la collectivité courante
     Alors le bouton "Valider l'audit" est visible
     Et l'en-tête ne contient pas de message
 
@@ -115,9 +141,9 @@ Fonctionnalité: Auditer la collectivité
     Et le bouton "Valider l'audit" est absent
     Et l'en-tête contient "Labellisation en cours"
 
-    Quand je suis sur la page "Bibliothèque de documents" de la collectivité "1"
+    Quand je suis sur la page "Bibliothèque de documents" de la collectivité courante
     Alors la liste des documents de labellisation contient les lignes suivantes :
       # audit validé => le document est en lecture seule
       | Titre       | Commentaire | Lecture seule |
       | rapport.doc |             | oui           |
-#    Et la liste des documents de labellisation contient le titre "Audit contrat d'objectif territorial (COT)" sans l'indication "en cours"
+    Et la liste des documents de labellisation contient le titre "Audit contrat d'objectif territorial (COT)" sans l'indication "en cours"
