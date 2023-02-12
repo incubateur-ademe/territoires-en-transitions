@@ -1,6 +1,7 @@
 import {useTableData} from './useTableData';
 import {DetailTacheTable} from './DetailTacheTable';
 import {noFilters} from './filters';
+import {DisableAllFilters} from '../ReferentielTable/DisableAllFilters';
 
 const DetailTaches = () => {
   const tableData = useTableData();
@@ -12,14 +13,10 @@ const DetailTaches = () => {
     <>
       <p>
         {filtersCount} {labelFilters} ; {count} {labelTaches} sur {total}
-        {filtersCount > 0 ? (
-          <button
-            className="fr-link fr-link--icon-left fr-fi-close-circle-fill fr-ml-2w"
-            onClick={() => setFilters(noFilters)}
-          >
-            Désactiver tous les filtres
-          </button>
-        ) : null}
+        <DisableAllFilters
+          filtersCount={filtersCount}
+          onClick={() => setFilters(noFilters)}
+        />
       </p>
       <DetailTacheTable tableData={tableData} />
     </>
