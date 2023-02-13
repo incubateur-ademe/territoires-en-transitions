@@ -5,8 +5,8 @@ import {FicheActionVueRow} from './types/ficheActionVue';
 import {TProfondeurAxe} from '../../PlanAction/data/types/profondeurPlan';
 import {TPlanActionAxeInsert} from '../../PlanAction/data/types/alias';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useHistory} from 'react-router-dom';
-import {makeCollectivitePlanActionFicheUrl} from 'app/paths';
+// import {useHistory} from 'react-router-dom';
+// import {makeCollectivitePlanActionFicheUrl} from 'app/paths';
 
 type Args = {
   planAction_id: number;
@@ -16,13 +16,13 @@ type Args = {
 
 export const useAddFicheToAxe = () => {
   const queryClient = useQueryClient();
-  const history = useHistory();
+  // const history = useHistory();
   const collectivite_id = useCollectiviteId();
 
   return useMutation(
     async ({axe, fiche_id}: Args) => {
       await supabaseClient.rpc('ajouter_fiche_action_dans_un_axe', {
-        axe_id: axe.id,
+        axe_id: axe.axe.id,
         fiche_id,
       });
     },
@@ -42,8 +42,8 @@ export const useAddFicheToAxe = () => {
         queryClient.setQueryData(ficheActionKey, (old: any) => {
           const formatedNewAxe: TPlanActionAxeInsert = {
             collectivite_id: collectivite_id!,
-            id: args.axe.id,
-            nom: args.axe.nom,
+            id: args.axe.axe.id,
+            nom: args.axe.axe.nom,
           };
           return {
             fiche: {
@@ -59,7 +59,7 @@ export const useAddFicheToAxe = () => {
         return {previousAction};
       },
       onSettled: (data, err, args, context) => {
-        const {fiche_id, planAction_id} = args;
+        const {fiche_id} = args;
 
         if (err) {
           queryClient.setQueryData(
