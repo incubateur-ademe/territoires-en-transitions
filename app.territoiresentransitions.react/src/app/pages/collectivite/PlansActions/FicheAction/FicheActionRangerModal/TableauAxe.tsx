@@ -19,7 +19,7 @@ const TableauAxe = ({
 }: Props) => {
   return (
     <button
-      key={axe.id}
+      key={axe.axe.id}
       className={classNames(
         'flex items-center gap-1 py-2 px-4 text-sm text-left rounded-lg',
         {
@@ -29,7 +29,7 @@ const TableauAxe = ({
       )}
       onClick={() => selectAxe(axe)}
     >
-      {axe.nom}
+      {axe.axe.nom}
       {axe.enfants && (
         <span className="fr-fi-arrow-right-s-line mt-1 ml-auto scale-90" />
       )}

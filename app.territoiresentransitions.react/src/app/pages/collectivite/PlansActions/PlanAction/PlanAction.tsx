@@ -21,7 +21,7 @@ type PlanActionProps = {
 export const PlanAction = ({plan}: PlanActionProps) => {
   const collectivite_id = useCollectiviteId();
 
-  const {mutate: updatePlan} = useEditAxe(plan.id);
+  const {mutate: updatePlan} = useEditAxe(plan.axe.id);
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -33,8 +33,8 @@ export const PlanAction = ({plan}: PlanActionProps) => {
 
   const displaySousAxe = (axe: TPlanAction) => (
     <PlanActionAxe
-      key={axe.id}
-      plan_id={plan.id}
+      key={axe.axe.id}
+      plan_id={plan.axe.id}
       axe={axe}
       displayAxe={displaySousAxe}
     />
@@ -47,13 +47,13 @@ export const PlanAction = ({plan}: PlanActionProps) => {
           <TextareaControlled
             ref={inputRef}
             className="w-full placeholder:text-white focus:placeholder:text-gray-200 !outline-none !resize-none !text-2xl"
-            initialValue={plan.nom}
+            initialValue={plan.axe.nom}
             placeholder={'Sans titre'}
             onBlur={e =>
               e.target.value &&
               e.target.value.length > 0 &&
-              e.target.value !== plan.nom &&
-              updatePlan({id: plan.id, nom: e.target.value})
+              e.target.value !== plan.axe.nom &&
+              updatePlan({id: plan.axe.id, nom: e.target.value})
             }
           />
           <button
@@ -67,7 +67,7 @@ export const PlanAction = ({plan}: PlanActionProps) => {
         {plan.enfants || plan.fiches ? (
           <>
             <div className="mb-4">
-              <AxeActions planActionId={plan.id} axeId={plan.id} />
+              <AxeActions planActionId={plan.axe.id} axeId={plan.axe.id} />
               {plan.fiches && (
                 <div className="grid grid-cols-2 gap-4 mt-6">
                   {plan.fiches.map(fiche => (
@@ -76,7 +76,7 @@ export const PlanAction = ({plan}: PlanActionProps) => {
                       ficheAction={fiche}
                       link={makeCollectivitePlanActionFicheUrl({
                         collectiviteId: fiche.collectivite_id!,
-                        planActionUid: plan.id.toString(),
+                        planActionUid: plan.axe.id.toString(),
                         ficheUid: fiche.id!.toString(),
                       })}
                     />
@@ -87,8 +87,8 @@ export const PlanAction = ({plan}: PlanActionProps) => {
             {plan.enfants &&
               plan.enfants.map(enfant => (
                 <PlanActionAxe
-                  key={enfant.id}
-                  plan_id={plan.id}
+                  key={enfant.axe.id}
+                  plan_id={plan.axe.id}
                   axe={enfant}
                   displayAxe={displaySousAxe}
                 />
@@ -101,7 +101,7 @@ export const PlanAction = ({plan}: PlanActionProps) => {
               <div className="my-6 text-gray-500">
                 Aucune arborescence pour l'instant
               </div>
-              <AxeActions planActionId={plan.id} axeId={plan.id} />
+              <AxeActions planActionId={plan.axe.id} axeId={plan.axe.id} />
             </div>
           </div>
         )}

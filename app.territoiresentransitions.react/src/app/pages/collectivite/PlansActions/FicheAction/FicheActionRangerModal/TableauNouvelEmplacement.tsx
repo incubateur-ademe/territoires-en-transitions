@@ -27,7 +27,7 @@ const TableauNouvelEmplacement = ({fiche}: Props) => {
   ): boolean => {
     const getAllAxeIds = (plan: TProfondeurAxe): number[] => {
       let ids: number[] = [];
-      ids.push(plan.id);
+      ids.push(plan.axe.id);
       if (plan.enfants) {
         plan.enfants.forEach(enfant => {
           ids = ids.concat(getAllAxeIds(enfant));
@@ -86,7 +86,9 @@ const TableauNouvelEmplacement = ({fiche}: Props) => {
       if (clickedAxe.profondeur === selectedAxes.length - 1) {
         // on le retire des axes sélectionnés,
         setSelectedAxes(
-          selectedAxes.filter((axe: TProfondeurAxe) => axe.id !== clickedAxe.id)
+          selectedAxes.filter(
+            (axe: TProfondeurAxe) => axe.axe.id !== clickedAxe.axe.id
+          )
         );
       }
       // Et que ce n'est pas le dernier sous-axe sélectionné
@@ -128,7 +130,7 @@ const TableauNouvelEmplacement = ({fiche}: Props) => {
                       .find(axe => axe.profondeur === colonne - 1)
                       ?.enfants?.map(axe => (
                         <TableauAxe
-                          key={axe.id}
+                          key={axe.axe.id}
                           axe={axe}
                           selectAxe={selectAxe}
                           isSelected={
@@ -148,7 +150,7 @@ const TableauNouvelEmplacement = ({fiche}: Props) => {
               addFicheToAxe({
                 axe: selectedAxes[selectedAxes.length - 1],
                 fiche_id: fiche.id!,
-                planAction_id: selectedAxes[0].id,
+                planAction_id: selectedAxes[0].axe.id,
               });
               setSelectedAxes([]);
             }}

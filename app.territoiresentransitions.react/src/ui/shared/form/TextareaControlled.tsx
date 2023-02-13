@@ -3,7 +3,7 @@ import {ForwardedRef, forwardRef, useEffect, useState} from 'react';
 import Textarea, {TTextarea} from './Textarea';
 
 type Props<T> = {
-  initialValue?: string;
+  initialValue?: string | null;
 } & TTextarea<T>;
 
 /** Composant générique Textarea avec un state interne pour avoir une valeur initiale */

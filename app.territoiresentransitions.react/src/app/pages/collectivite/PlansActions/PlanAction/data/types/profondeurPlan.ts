@@ -1,4 +1,5 @@
 import {Database} from 'types/database.types';
+import {TPlanActionAxeRow} from './alias';
 
 export type TProfondeurPlan =
   Database['public']['Views']['plan_action_profondeur']['Row'] & {
@@ -6,8 +7,7 @@ export type TProfondeurPlan =
   };
 
 export type TProfondeurAxe = {
-  id: number;
-  nom: string;
+  axe: TPlanActionAxeRow;
   profondeur: number;
   enfants: TProfondeurAxe[];
 };

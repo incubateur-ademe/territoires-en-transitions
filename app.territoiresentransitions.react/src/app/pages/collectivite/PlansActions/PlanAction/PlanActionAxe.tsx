@@ -60,14 +60,14 @@ const PlanActionAxe = ({plan_id, axe, displayAxe}: Props) => {
                 'placeholder:text-gray-900': !isEditable,
               }
             )}
-            initialValue={axe.nom}
+            initialValue={axe.axe.nom}
             placeholder={'Sans titre'}
             disabled={!isEditable}
             onBlur={e => {
               e.target.value &&
                 e.target.value.length > 0 &&
-                e.target.value !== axe.nom &&
-                updatePlan({id: axe.id, nom: e.target.value ?? null});
+                e.target.value !== axe.axe.nom &&
+                updatePlan({id: axe.axe.id, nom: e.target.value ?? null});
               setIsEditable(false);
             }}
           />
@@ -79,7 +79,7 @@ const PlanActionAxe = ({plan_id, axe, displayAxe}: Props) => {
       </div>
       {isOpen && (
         <div className="flex flex-col gap-4 mt-3 ml-12">
-          <AxeActions planActionId={plan_id} axeId={axe.id} />
+          <AxeActions planActionId={plan_id} axeId={axe.axe.id} />
           {axe.fiches && (
             <div className="grid grid-cols-2 gap-4">
               {axe.fiches.map((fiche: TFicheAction) => (
