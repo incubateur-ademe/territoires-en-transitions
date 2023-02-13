@@ -147,7 +147,9 @@ export interface Database {
         | 'bibliotheque'
         | 'historique'
         | 'plan'
-        | 'fiche';
+        | 'fiche'
+        | 'plan_axe'
+        | 'fiches_non_classees';
       visite_tag:
         | 'cae'
         | 'eci'
