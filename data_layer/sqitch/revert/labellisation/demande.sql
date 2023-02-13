@@ -21,17 +21,6 @@ alter table audit
 alter table audit
     alter column date_debut set default CURRENT_TIMESTAMP;
 
-drop policy allow_insert
-    on labellisation.demande;
-
-drop policy allow_read
-    on labellisation.demande;
-
-drop policy allow_update
-    on labellisation.demande;
-
-drop trigger after_write_demande on labellisation.demande;
-drop function labellisation.validation_demande;
 
 create or replace function
     labellisation_demande(collectivite_id integer, referentiel referentiel, etoiles labellisation.etoile)
