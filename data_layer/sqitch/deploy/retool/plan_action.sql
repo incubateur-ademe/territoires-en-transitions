@@ -42,21 +42,23 @@ with
         order by nc.collectivite_id
     ),
     plans as (
-        select cw.collectivite_id, cw.day, count(p.id) as nb_plans
+        select cw.collectivite_id, cw.day, count(p.id) as nb_plans, array_agg(distinct dcp.email) as contributeurs
         from collectivites_by_weeks cw
                  left join (select * from axe where parent is null) p
                            on p.collectivite_id = cw.collectivite_id
                                and p.created_at >= cw.day
                                and p.created_at < cw.day + interval '7 day'
+                 left join dcp on p.modified_by = dcp.user_id
         group by cw.collectivite_id, cw.day
     ),
     fiches as (
-        select cw.collectivite_id, cw.day, count(f.id) as nb_fiches
+        select cw.collectivite_id, cw.day, count(f.id) as nb_fiches, array_agg(distinct dcp.email) as contributeurs
         from collectivites_by_weeks cw
                  left join fiche_action f
                            on f.collectivite_id = cw.collectivite_id
                                and f.created_at >= cw.day
                                and f.created_at < cw.day + interval '7 day'
+                 left join dcp on f.modified_by = dcp.user_id
         group by cw.collectivite_id, cw.day
     )
 select c.collectivite_id,
@@ -64,11 +66,15 @@ select c.collectivite_id,
        concat(c.day::date, ' - ', (c.day + interval '6' day)::date) as date_range,
        p.nb_plans,
        f.nb_fiches,
+       (
+           select array_remove(array_agg(distinct val), null)
+           from unnest(array_cat(p.contributeurs, f.contributeurs)) val
+       ) as contributeurs,
        c.day
 from collectivites_by_weeks c
          join plans p on c.collectivite_id = p.collectivite_id and c.day = p.day
          join fiches f on c.collectivite_id = f.collectivite_id and c.day = f.day
 where p.nb_plans <> 0 or f.nb_fiches <> 0
-order by c.collectivite_id, c.day;
+order by c.day desc, c.collectivite_id;
 
 COMMIT;
