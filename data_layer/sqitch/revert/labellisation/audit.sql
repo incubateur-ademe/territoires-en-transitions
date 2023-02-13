@@ -2,6 +2,7 @@
 BEGIN;
 
 alter table audit
+    drop constraint audit_existant,
     add constraint audit_existant exclude using GIST (
         -- Audit unique pour une collectivité, un référentiel, et une période de temps
         collectivite_id with =,
@@ -111,8 +112,10 @@ $$
 with
     ref as (select unnest(enum_range(null::referentiel)) as referentiel),
     audit_en_cours as (
-        select auditeur
-        from ref left join labellisation.current_audit(est_auditeur.col,ref.referentiel) on true
+        select aa.auditeur
+        from ref
+                 left join labellisation.current_audit(est_auditeur.col,ref.referentiel) a on true
+                 left join audit_auditeur aa on a.id = aa.audit_id
     )
 select coalesce(bool_or(auth.uid()=audit_en_cours.auditeur), false) from audit_en_cours;
 $$ language sql;
