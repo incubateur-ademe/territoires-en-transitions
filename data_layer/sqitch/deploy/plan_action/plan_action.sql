@@ -656,7 +656,7 @@ begin
     return to_return;
 end;
 $$ language plpgsql;
-comment on function plan_action is
+comment on function plan_action_profondeur is
     'Fonction retournant un JSON contenant le plan d''action passé en paramètre,
     et ses plans d''actions enfants de manière récursive';
 
@@ -729,7 +729,7 @@ from axe a
 where a.parent is null;
 
 -- Fonction pour supprimer de manière récursive un axe, ses enfants et ses fiches
-create or replace function delete_axe_all(axe_id integer) returns void as
+create function delete_axe_all(axe_id integer) returns void as
 $$
 declare
     pa_enfant_id integer; -- Id d'un plan d'action enfant du plan d'action courant
@@ -761,6 +761,7 @@ begin
     delete from axe where id = delete_axe_all.axe_id;
 end;
 $$ language plpgsql;
+comment on function delete_axe_all is 'Fonction pour supprimer de manière récursive un axe, ses enfants et ses fiches';
 
 
 COMMIT;
