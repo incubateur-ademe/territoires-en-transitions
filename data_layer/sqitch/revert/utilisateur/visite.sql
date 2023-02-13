@@ -1,11 +1,7 @@
--- Revert tet:utilisateur/visite from pg
+-- Deploy tet:utilisateur/visite to pg
 
 BEGIN;
 
-drop table visite;
-
-drop type visite_page;
-drop type visite_tag;
-drop type visite_onglet;
+-- on ne drop pas les valeurs de l'enum
 
 COMMIT;
