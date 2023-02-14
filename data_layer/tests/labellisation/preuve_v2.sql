@@ -1,10 +1,10 @@
 begin;
 
-select plan(12);
+select plan(13);
 
 truncate storage.objects cascade;
 truncate labellisation.bibliotheque_fichier cascade;
-truncate labellisation.demande cascade ;
+truncate labellisation.demande cascade;
 truncate client_scores;
 
 -- La collectivite doit avoir des scores pour apparaître dans la vue preuves
@@ -90,6 +90,11 @@ select bag_eq(
 insert into labellisation.demande (id, collectivite_id, referentiel, etoiles)
 values (100, 1, 'eci', '5');
 
+select is_empty(
+               $$select * from preuve p where collectivite_id = 1 and preuve_type = 'labellisation'$$,
+               'Il ne devrait pas y avoir de preuve de labellisation sans demande'
+           );
+
 -- Yolo ajoute la preuve à la demande
 insert into preuve_labellisation (collectivite_id, fichier_id, demande_id)
 select collectivite_id, id, 100
@@ -134,5 +139,32 @@ select is_empty(
                'select * from preuve p where collectivite_id = 2 and fichier is not null;',
                'La collectivité #2 ne devrait pas avoir de fichiers dans sa vue preuve'
            );
+
+-- Audit
+select *
+into test_audit
+from labellisation.current_audit(1, 'eci');
+
+select is_empty(
+               $$select * from preuve p where collectivite_id = 1 and preuve_type = 'audit'$$,
+               'Il ne devrait pas y avoir de preuve d''audit avant d''avoir ajouté la preuve'
+           );
+
+
+insert into preuve_audit (collectivite_id, fichier_id, audit_id)
+select f.collectivite_id, f.id, a.id
+from bibliotheque_fichier f
+         join test_audit a on f.collectivite_id = a.collectivite_id;
+
+select bag_eq(
+               $$select demande,
+                        audit
+                from preuve p
+                where collectivite_id = 1
+                  and preuve_type = 'audit'$$,
+               $$select null::jsonb, to_jsonb(labellisation.current_audit(1, 'eci'));$$,
+               'La preuve attachée à l''audit devrait être dans la liste de preuves.'
+           );
+
 
 rollback;

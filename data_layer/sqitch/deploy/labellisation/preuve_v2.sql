@@ -73,8 +73,7 @@ select 'labellisation',
        null,
        null
 from labellisation.demande d
-         left join preuve_labellisation p on p.demande_id = d.id
-         left join audit a on d.id = a.demande_id
+         join preuve_labellisation p on p.demande_id = d.id
          left join labellisation.bibliotheque_fichier_snippet fs on fs.id = p.fichier_id
 
 union all
@@ -107,11 +106,12 @@ select 'audit',
        utilisateur.modified_by_nom(p.modified_by),
        null,
        null,
+       case when d is not null then to_jsonb(d) end,
        null,
-       null,
-       to_jsonb(p) || to_jsonb(a)
+       to_jsonb(a)
 from audit a
          join preuve_audit p on p.audit_id = a.id
+         left join labellisation.demande d on a.demande_id = d.id
          left join labellisation.bibliotheque_fichier_snippet fs on fs.id = p.fichier_id
 ;
 
