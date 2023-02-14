@@ -1,4 +1,4 @@
--- Revert tet:referentiel/preuve from pg
+-- Deploy tet:labellisation/preuve_v2 to pg
 
 BEGIN;
 
@@ -20,8 +20,6 @@ select -- champs communs
        pc.modified_by                              as created_by,
        utilisateur.modified_by_nom(pc.modified_by) as created_by_nom,
        snippet.snippet                             as action,
-
-       -- utilise des jsonb car le client utilise l'opérateur `->>`
        null:: jsonb                                as preuve_reglementaire,
        null:: jsonb                                as demande,
        null:: jsonb                                as rapport,
@@ -45,7 +43,10 @@ select 'reglementaire',
        pr.modified_by,
        utilisateur.modified_by_nom(pr.modified_by),
        snippet.snippet,
-       to_jsonb(prd),
+       jsonb_build_object(
+               'id', prd.id,
+               'nom', prd.nom,
+               'description', prd.description),
        null,
        null,
        null
@@ -60,39 +61,29 @@ union all
 
 select 'labellisation',
        p.id,
-       d.collectivite_id,
+       coalesce(d.collectivite_id, pa.collectivite_id),
        fs.snippet,
-       p.lien,
-       p.commentaire,
-       p.modified_at,
-       p.modified_by,
-       utilisateur.modified_by_nom(p.modified_by),
+       coalesce(p.lien, pa.lien),
+       coalesce(p.commentaire, pa.commentaire),
+       coalesce(p.modified_at, pa.modified_at),
+       coalesce(p.modified_by, pa.modified_by),
+       utilisateur.modified_by_nom(coalesce(p.modified_by, pa.modified_by)),
        null,
        null,
-       to_jsonb(d),
+       jsonb_build_object(
+               'en_cours', d.en_cours,
+               'referentiel', d.referentiel,
+               'etoiles', d.etoiles,
+               'date', d.date,
+               'id', d.id,
+               'audit_id', pa.audit_id
+           ),
        null,
        null
 from labellisation.demande d
          left join preuve_labellisation p on p.demande_id = d.id
          left join audit a on d.id = a.demande_id
-         left join labellisation.bibliotheque_fichier_snippet fs on fs.id = p.fichier_id
-
-union all
-select 'rapport',
-       p.id,
-       p.collectivite_id,
-       fs.snippet,
-       p.lien,
-       p.commentaire,
-       p.modified_at,
-       p.modified_by,
-       utilisateur.modified_by_nom(p.modified_by),
-       null,
-       null,
-       null,
-       to_jsonb(p),
-       null
-from preuve_rapport p
+         left join preuve_audit pa on a.id = pa.audit_id
          left join labellisation.bibliotheque_fichier_snippet fs on fs.id = p.fichier_id
 union all
 
@@ -109,9 +100,28 @@ select 'audit',
        null,
        null,
        null,
-       to_jsonb(p) || to_jsonb(a)
+       jsonb_build_object('id', a.id, 'referentiel', a.referentiel, 'date_debut', a.date_debut, 'date_fin', a.date_fin)
 from audit a
          join preuve_audit p on p.audit_id = a.id
+         left join labellisation.bibliotheque_fichier_snippet fs on fs.id = p.fichier_id
+where a.demande_id is null
+
+union all
+select 'rapport',
+       p.id,
+       p.collectivite_id,
+       fs.snippet,
+       p.lien,
+       p.commentaire,
+       p.modified_at,
+       p.modified_by,
+       utilisateur.modified_by_nom(p.modified_by),
+       null,
+       null,
+       null,
+       jsonb_build_object('date', p.date),
+       null
+from preuve_rapport p
          left join labellisation.bibliotheque_fichier_snippet fs on fs.id = p.fichier_id
 ;
 
