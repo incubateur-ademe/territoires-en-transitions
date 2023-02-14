@@ -101,6 +101,11 @@ const AppFooter = () => {
                 Statistiques
               </a>
             </li>
+            <li className="fr-footer__bottom-item">
+              <a href="/cgu" className="fr-footer__bottom-link">
+                Conditions générales d’utilisation
+              </a>
+            </li>
           </ul>
         </div>
       </div>
