@@ -115,13 +115,14 @@ Given(
   /avec un audit demandé pour la labellisation "(eci|cae)" (1|2|3|4|5)è(?:r|m)e étoile/,
   envoyerDemande
 );
-function envoyerDemande(referentiel, etoile) {
+Given('avec un audit COT sans labellisation demandé', (referentiel) => envoyerDemande('cae', null, 'cot'));
+function envoyerDemande(referentiel, etoile, sujet = 'labellisation') {
   return cy.get('@collectivite').then(function ({collectivite_id}) {
     return labellisationDemande(collectivite_id, referentiel).then(function () {
       return labellisationSubmitDemande(
         collectivite_id,
         referentiel,
-        'labellisation',
+        sujet,
         etoile
       );
     });

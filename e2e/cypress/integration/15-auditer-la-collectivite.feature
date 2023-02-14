@@ -146,4 +146,45 @@ Fonctionnalité: Auditer la collectivité
       # audit validé => le document est en lecture seule
       | Titre       | Commentaire | Lecture seule |
       | rapport.doc |             | oui           |
+  # commenté, en attente de résolution:
+  #Et la liste des documents de labellisation contient le titre "3ème étoile" sans l'indication "en cours"
+
+  Scénario: Ajouter un rapport et valider un audit COT sans labellisation
+    Etant donné une collectivité nommée "Collectivité de test"
+    Et un score permettant d'obtenir la 3ème étoile
+    Et avec un COT actif
+    Et avec un audit COT sans labellisation demandé
+
+    Quand je suis connecté en tant qu'auditeur de la collectivité
+    Et que l'audit est commencé
+    Quand je suis sur la page "Bibliothèque de documents" de la collectivité courante
+    Alors il n'y a pas de documents de labellisation
+
+    Quand je suis sur la page "Labellisation CAE" de la collectivité courante
+    Alors le bouton "Valider l'audit" est visible
+    Et l'en-tête ne contient pas de message
+
+    Quand je clique sur le bouton "Valider l'audit"
+    Alors le "dialogue de validation" est visible
+
+    Quand je clique sur le bouton "Ajouter le rapport" du "dialogue de validation"
+    Alors le "dialogue d'ajout d'une preuve" est visible
+    Et il n'y a pas de rapports d'audit
+
+    Quand je transfère à partir du "dialogue d'ajout d'une preuve" le fichier nommé "rapport.doc" et contenant "le rapport d'audit"
+    Et que je clique sur le bouton "Ajouter" du "formulaire Fichier"
+    Alors la liste des rapports d'audit contient les lignes suivantes :
+      | Titre       | Commentaire |
+      | rapport.doc |             |
+
+    Quand je clique sur le bouton "Valider" du "dialogue de validation"
+    Alors le "dialogue de validation" est absent
+    Et le bouton "Valider l'audit" est absent
+    Et l'en-tête ne contient pas de message
+
+    Quand je suis sur la page "Bibliothèque de documents" de la collectivité courante
+    Alors la liste des documents de labellisation contient les lignes suivantes :
+      # audit validé => le document est en lecture seule
+      | Titre       | Commentaire | Lecture seule |
+      | rapport.doc |             | oui           |
     Et la liste des documents de labellisation contient le titre "Audit contrat d'objectif territorial (COT)" sans l'indication "en cours"
