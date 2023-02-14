@@ -6,8 +6,9 @@ const nextConfig = {
     // Required:
     appDir: true,
     esmExternals: 'loose',
+    mdxRs: true,
   },
-  webpack: (config) => {
+  webpack: config => {
     config.module.rules.push({
       test: /\.woff2$/,
       type: 'asset/resource',
@@ -17,4 +18,5 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+const withMDX = require('@next/mdx')();
+module.exports = withMDX(nextConfig);

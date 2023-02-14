@@ -13,6 +13,7 @@
   "dependencies": {
     "@codegouvfr/react-dsfr": "^0.22.3",
     "@next/font": "13.1.1",
+    "@next/mdx": "^13.1.6",
     "@nivo/core": "^0.80.0",
     "@nivo/geo": "^0.80.0",
     "@nivo/legends": "^0.80.0",
