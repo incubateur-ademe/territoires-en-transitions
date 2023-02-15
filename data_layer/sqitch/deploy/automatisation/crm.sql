@@ -2,7 +2,8 @@
 
 BEGIN;
 alter type automatisation.automatisation_type
-    add value 'plan_action_insert',
+    add value 'plan_action_insert';
+alter type automatisation.automatisation_type
     add value 'collectivite_utilisateur_delete';
 
 -- Vue activite collectivite sur plan d'action
@@ -25,15 +26,14 @@ create or replace function automatisation.send_collectivite_plan_action_json_n8n
 declare
     to_send jsonb;
     uri text;
-    rec record;
+    rec automatisation.collectivite_plan_action;
 begin
-    select *
+    select c.*
     from automatisation.collectivite_plan_action c
     where c.collectivite_id = new.collectivite_id
     limit 1 into rec;
     if (rec.nb_fiches = 0 and rec.nb_axes = 1) or (rec.nb_fiches=1 and rec.nb_axes = 0) then
-        to_send = to_jsonb((select jsonb_build_array(c.*)
-                            from rec c));
+        to_send = to_jsonb((select jsonb_build_array(rec)));
         uri = (select au.uri from automatisation.automatisation_uri au where au.uri_type = 'plan_action_insert' limit 1);
         if uri is not null then
             perform net.http_post(
@@ -58,9 +58,8 @@ declare
 begin
     if (select count(p.*)=0 from private_utilisateur_droit p where p.collectivite_id = old.collectivite_id) then
         to_send = to_jsonb((select jsonb_build_array(c.*)
-                            from automatisation.collectivite_membre_crm c
-                            where c.user_id = new.user_id
-                              and c.collectivite_id =new.collectivite_id));
+                            from collectivite_card c
+                              where c.collectivite_id =old.collectivite_id));
         uri = (select au.uri from automatisation.automatisation_uri au where au.uri_type = 'collectivite_utilisateur_delete' limit 1);
         if uri is not null then
             perform net.http_post(
