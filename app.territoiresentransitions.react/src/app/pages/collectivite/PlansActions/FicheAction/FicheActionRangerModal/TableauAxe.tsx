@@ -29,7 +29,7 @@ const TableauAxe = ({
       )}
       onClick={() => selectAxe(axe)}
     >
-      {axe.axe.nom}
+      {axe.axe.nom ?? 'Sans titre'}
       {axe.enfants && (
         <span className="fr-fi-arrow-right-s-line mt-1 ml-auto scale-90" />
       )}
