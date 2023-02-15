@@ -4,8 +4,8 @@
 import Link from 'next/link';
 
 // surcharge les ancres pour ouvrir les liens vers des domaines externes dans un nouvel onglet
-const A = ({children, href, ...props}: React.ComponentPropsWithoutRef<'a'>) => {
-  return !href || href?.startsWith('/') ? (
+/*const A = ({children, href, ...props}: React.ComponentPropsWithoutRef<'a'>) => {
+  return !href || href?.startsWith('/') || href?.includes('localhost') ? (
     <Link href={href || ''}>
       <a>{children}</a>
     </Link>
@@ -15,7 +15,9 @@ const A = ({children, href, ...props}: React.ComponentPropsWithoutRef<'a'>) => {
     </a>
   );
 };
+*/
 
 export function useMDXComponents(components: any) {
-  return {a: A, ...components};
+  //return {a: A, ...components};
+  return components;
 }

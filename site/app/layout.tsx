@@ -1,14 +1,15 @@
-import { DsfrHead } from '@codegouvfr/react-dsfr/next-appdir/DsfrHead';
-import { DsfrProvider } from '@codegouvfr/react-dsfr/next-appdir/DsfrProvider';
-import { getColorSchemeHtmlAttributes } from '@codegouvfr/react-dsfr/next-appdir/getColorSchemeHtmlAttributes';
+import {DsfrHead} from '@codegouvfr/react-dsfr/next-appdir/DsfrHead';
+import {DsfrProvider} from '@codegouvfr/react-dsfr/next-appdir/DsfrProvider';
+import {getColorSchemeHtmlAttributes} from '@codegouvfr/react-dsfr/next-appdir/getColorSchemeHtmlAttributes';
 import StartDsfr from './StartDsfr';
-import { defaultColorScheme } from './defaultColorScheme';
+import {defaultColorScheme} from './defaultColorScheme';
 import AppHeader from './AppHeader';
 import AppFooter from './AppFooter';
+import './global.css';
 
-export default function RootLayout({ children }: { children: JSX.Element }) {
+export default function RootLayout({children}: {children: JSX.Element}) {
   return (
-    <html {...getColorSchemeHtmlAttributes({ defaultColorScheme })}>
+    <html {...getColorSchemeHtmlAttributes({defaultColorScheme})}>
       <head>
         <StartDsfr />
         <DsfrHead defaultColorScheme={defaultColorScheme} />
