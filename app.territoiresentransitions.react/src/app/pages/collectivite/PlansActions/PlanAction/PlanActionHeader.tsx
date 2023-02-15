@@ -10,13 +10,7 @@ const PlanActionHeader = ({collectivite_id, plan}: TPlanActionHeader) => {
     <div className="">
       <div className="py-6 flex justify-between">
         {/** Actions */}
-        {/* <div className="flex items-center gap-4">
-          <div className="border border-gray-300">
-            <button className="p-2">
-              Modifier
-            </button>
-          </div>
-        </div> */}
+        <div className="flex items-center gap-4 ml-auto" />
       </div>
     </div>
   );
