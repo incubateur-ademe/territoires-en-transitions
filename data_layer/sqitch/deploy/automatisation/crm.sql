@@ -2,9 +2,9 @@
 
 BEGIN;
 alter type automatisation.automatisation_type
-    add value 'plan_action_insert';
+    add value if not exists 'plan_action_insert';
 alter type automatisation.automatisation_type
-    add value 'collectivite_utilisateur_delete';
+    add value if not exists 'collectivite_utilisateur_delete';
 
 -- Vue activite collectivite sur plan d'action
 create view automatisation.collectivite_plan_action as
