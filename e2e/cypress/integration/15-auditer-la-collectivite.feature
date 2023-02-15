@@ -146,8 +146,7 @@ Fonctionnalité: Auditer la collectivité
       # audit validé => le document est en lecture seule
       | Titre       | Commentaire | Lecture seule |
       | rapport.doc |             | oui           |
-  # commenté, en attente de résolution:
-  #Et la liste des documents de labellisation contient le titre "3ème étoile" sans l'indication "en cours"
+    Et la liste des documents de labellisation contient le titre "troisième étoile" sans l'indication "en cours"
 
   Scénario: Ajouter un rapport et valider un audit COT sans labellisation
     Etant donné une collectivité nommée "Collectivité de test"
@@ -184,7 +183,6 @@ Fonctionnalité: Auditer la collectivité
 
     Quand je suis sur la page "Bibliothèque de documents" de la collectivité courante
     Alors la liste des documents de labellisation contient les lignes suivantes :
-      # audit validé => le document est en lecture seule
       | Titre       | Commentaire | Lecture seule |
       | rapport.doc |             | oui           |
     Et la liste des documents de labellisation contient le titre "Audit contrat d'objectif territorial (COT)" sans l'indication "en cours"

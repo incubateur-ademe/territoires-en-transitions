@@ -93,7 +93,16 @@ Fonctionnalité: Demander un audit
       | Titre                 | Commentaire |
       | doc labellisation.pdf |             |
 
-    Quand je clique sur le bouton "Demander un audit"
+    Quand je suis sur la page "Bibliothèque de documents" de la collectivité courante
+    Alors la liste des documents de labellisation contient les lignes suivantes :
+      | Titre                 | Commentaire |
+      | doc labellisation.pdf |             |
+    # l'assertion suivante ne passe pas car la demande n'est pas encore envoyée
+    # et la vue preuve ne renvoi donc pas l'étoile objectif :
+    #Et la liste des documents de labellisation contient le titre "troisième étoile" avec l'indication "en cours"
+
+    Quand je suis sur la page "Labellisation ECi" de la collectivité courante
+    Et que je clique sur le bouton "Demander un audit"
     Alors le "choix du type d'audit/labellisation COT" est visible
     Et le bouton "Audit COT sans labellisation" est activé et décoché
     Et le bouton "Audit COT avec labellisation" est activé et décoché
@@ -112,6 +121,12 @@ Fonctionnalité: Demander un audit
     Et la liste des documents de la page Labellisation contient les lignes suivantes :
       | Titre                 | Commentaire | Lecture seule |
       | doc labellisation.pdf |             | oui           |
+
+    Quand je suis sur la page "Bibliothèque de documents" de la collectivité courante
+    Alors la liste des documents de labellisation contient les lignes suivantes :
+      | Titre                 | Commentaire | Lecture seule |
+      | doc labellisation.pdf |             | oui           |
+    Et la liste des documents de labellisation contient le titre "troisième étoile" sans l'indication "en cours"
 
   Scénario: Demander un audit de labellisation (pour une collectivité sans COT)
     On teste l'envoi d'une demande d'audit de labellisation pour une collectivité sans COT.
