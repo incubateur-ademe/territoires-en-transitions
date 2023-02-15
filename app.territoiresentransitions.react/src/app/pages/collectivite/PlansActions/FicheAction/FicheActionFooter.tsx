@@ -12,7 +12,10 @@ const FicheActionFooter = ({fiche}: TFicheActionFooter) => {
 
   return (
     <div className="pt-16">
-      <FicheActionSupprimerModal onDelete={() => deleteFiche(fiche.id!)} />
+      <FicheActionSupprimerModal
+        fiche={fiche}
+        onDelete={() => deleteFiche(fiche.id!)}
+      />
       <div className="flex justify-end gap-6 my-8">
         {/* <button className="fr-btn fr-btn--secondary fr-fi-arrow-left-line fr-btn--icon-left">
           Fiche précédente

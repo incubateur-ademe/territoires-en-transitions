@@ -1,10 +1,13 @@
 import Modal from 'ui/shared/floating-ui/Modal';
+import {TFicheAction} from './data/types/alias';
 
 type Props = {
+  fiche: TFicheAction;
   onDelete: () => void;
 };
 
-const FicheActionSupprimerModal = ({onDelete}: Props) => {
+const FicheActionSupprimerModal = ({fiche, onDelete}: Props) => {
+  const isFicheInMultipleAxes = fiche.axes && fiche.axes.length > 1;
   return (
     <Modal
       render={({labelId, descriptionId, close}) => {
@@ -14,9 +17,18 @@ const FicheActionSupprimerModal = ({onDelete}: Props) => {
               Supprimer la fiche action
             </h4>
             <p id={descriptionId}>
-              Êtes-vous certain de vouloir supprimer cette fiche action?
+              {isFicheInMultipleAxes ? (
+                <span>
+                  Cette fiche action est présente dans plusieurs plans.
+                  <br />
+                  Êtes-vous certain de vouloir supprimer cette fiche action de
+                  tous les plans?
+                </span>
+              ) : (
+                'Êtes-vous certain de vouloir supprimer cette fiche action?'
+              )}
             </p>
-            <div className="mt-2 fr-btns-group fr-btns-group--left fr-btns-group--inline-reverse fr-btns-group--inline-lg">
+            <div className="mt-8 fr-btns-group fr-btns-group--left fr-btns-group--inline-reverse fr-btns-group--inline-lg">
               <button
                 onClick={close}
                 className="fr-btn fr-btn--secondary"
