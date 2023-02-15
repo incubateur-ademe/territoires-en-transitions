@@ -1,6 +1,14 @@
 import classNames from 'classnames';
 import {TFicheActionStatuts} from '../data/types/alias';
 
+const statusToColor: Record<TFicheActionStatuts, string> = {
+  'À venir': 'text-blue-600 bg-blue-100',
+  'En cours': 'text-indigo-800 bg-indigo-100',
+  Réalisé: 'text-green-700 bg-green-200',
+  'En pause': 'text-amber-700 bg-orange-100',
+  Abandonné: 'text-rose-700 bg-rose-100',
+};
+
 type Props = {
   className?: string;
   statut: TFicheActionStatuts;
@@ -16,11 +24,7 @@ const FicheActionBadgeStatut = ({className, statut, small}: Props) => {
         className,
         'w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md',
         {'!text-xs !px-1': small},
-        {'text-blue-600 bg-blue-100': statut === 'À venir'},
-        {'text-indigo-800 bg-indigo-100': statut === 'En cours'},
-        {'text-green-700 bg-green-200': statut === 'Réalisé'},
-        {'text-amber-700 bg-orange-100': statut === 'En pause'},
-        {'text-rose-700 bg-rose-100': statut === 'Abandonné'}
+        statusToColor[statut]
       )}
     >
       {statut}

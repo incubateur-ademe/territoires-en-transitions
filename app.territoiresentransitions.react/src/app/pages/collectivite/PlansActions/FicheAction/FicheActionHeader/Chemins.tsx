@@ -35,7 +35,7 @@ const Chemins = ({fiche}: Props) => {
           titreFiche={fiche.titre ?? 'Sans titre'}
         />
       ) : (
-        <CheminPlans
+        <CheminPlusieursPlans
           collectiviteId={fiche.collectivite_id!}
           axes={fiche.axes}
           titreFiche={fiche.titre ?? 'Sans titre'}
@@ -72,14 +72,18 @@ const Chemin = ({collectiviteId, axe_id, titreFiche}: CheminProps) => {
   );
 };
 
-type CheminPlansProps = {
+type CheminPlusieursPlansProps = {
   collectiviteId: number;
   axes: TAxeInsert[];
   titreFiche: string;
 };
 
 /** Cache les différents fils d'ariane derrière un toggle */
-const CheminPlans = ({collectiviteId, axes, titreFiche}: CheminPlansProps) => {
+const CheminPlusieursPlans = ({
+  collectiviteId,
+  axes,
+  titreFiche,
+}: CheminPlusieursPlansProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (

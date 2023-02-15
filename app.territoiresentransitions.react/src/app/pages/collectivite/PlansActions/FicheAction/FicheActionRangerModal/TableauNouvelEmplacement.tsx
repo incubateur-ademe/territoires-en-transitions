@@ -3,57 +3,19 @@ import SpinnerLoader from 'ui/shared/SpinnerLoader';
 
 import {TProfondeurAxe} from '../../PlanAction/data/types/profondeurPlan';
 import {usePlanActionProfondeur} from '../../PlanAction/data/usePlanActionProfondeur';
+import {checkAxeExistInPlanProfondeur} from '../../PlanAction/data/utils';
 import {TAxeInsert} from '../data/types/alias';
 import {FicheActionVueRow} from '../data/types/ficheActionVue';
 import {useAddFicheToAxe} from '../data/useAddFicheToAxe';
 import TableauAxe from './TableauAxe';
 
-type Props = {
-  fiche: FicheActionVueRow;
-};
-
-const TableauNouvelEmplacement = ({fiche}: Props) => {
-  const plansProfondeur = usePlanActionProfondeur();
-
-  // Tableau contenant les ids des axes de la fiche
-  const ficheAxesIds = fiche.axes
-    ? fiche.axes.map((axe: TAxeInsert) => axe.id)
-    : [];
-
-  // fonction recursive qui vérifie si un axe est présent dans un plan
-  const checkAxeExistInPlan = (
-    plan: TProfondeurAxe,
-    axeId: number
-  ): boolean => {
-    const getAllAxeIds = (plan: TProfondeurAxe): number[] => {
-      let ids: number[] = [];
-      ids.push(plan.axe.id);
-      if (plan.enfants) {
-        plan.enfants.forEach(enfant => {
-          ids = ids.concat(getAllAxeIds(enfant));
-        });
-      }
-      return ids;
-    };
-
-    return getAllAxeIds(plan).includes(axeId);
-  };
-
-  // On retire les plans qui contiennent déjà la fiche
-  const plans = plansProfondeur?.plans.filter(
-    plan =>
-      !ficheAxesIds
-        .map(id => checkAxeExistInPlan(plan.plan, id!))
-        .includes(true)
-  );
-
-  const {mutate: addFicheToAxe, isLoading} = useAddFicheToAxe();
-
-  // L'axe sélectionné et ceux dont il est l'enfant
-  const [selectedAxes, setSelectedAxes] = useState<TProfondeurAxe[]>([]);
-
-  // Détermine le nombre de colonne en fonction de la profondeur des axes sélectionnés
-  const colonnes = selectedAxes.reduce(
+/**
+ * Renvoi un tableau de chiffre, représentant les différentes colonnes: [0,1,2,3],
+ * en fonction de la profondeur des axes sélectionnés et leurs enfants.
+ * Permet de faire un .map() sur ce tableau afin de générer les colonnes en HTML.
+ */
+const generateColonnes = (axes: TProfondeurAxe[]) =>
+  axes.reduce(
     (acc: number[], curr) => {
       if (!acc.includes(curr.profondeur)) {
         acc.push(curr.profondeur);
@@ -69,6 +31,30 @@ const TableauNouvelEmplacement = ({fiche}: Props) => {
     },
     [0]
   );
+
+type Props = {
+  fiche: FicheActionVueRow;
+};
+
+const TableauNouvelEmplacement = ({fiche}: Props) => {
+  const plansProfondeur = usePlanActionProfondeur();
+  const {mutate: addFicheToAxe, isLoading} = useAddFicheToAxe();
+
+  // Tableau contenant les ids des axes de la fiche
+  const ficheAxesIds = fiche.axes
+    ? fiche.axes.map((axe: TAxeInsert) => axe.id)
+    : [];
+
+  // On retire les plans qui contiennent déjà la fiche
+  const plans = plansProfondeur?.plans.filter(
+    plan =>
+      !ficheAxesIds
+        .map(id => checkAxeExistInPlanProfondeur(plan.plan, id!))
+        .includes(true)
+  );
+
+  // L'axe sélectionné et ceux dont il est l'enfant
+  const [selectedAxes, setSelectedAxes] = useState<TProfondeurAxe[]>([]);
 
   const selectAxe = (clickedAxe: TProfondeurAxe) => {
     // Si l'axe cliqué n'est pas déjà sélectionné
@@ -108,13 +94,14 @@ const TableauNouvelEmplacement = ({fiche}: Props) => {
       {plans && plans.length > 0 ? (
         <div className="flex flex-col">
           <div className="grid grid-flow-col auto-cols-[16rem] gap-4 overflow-x-auto pb-6 mb-2">
-            {colonnes.map(colonne => (
+            {generateColonnes(selectedAxes).map(colonne => (
               <div
                 key={colonne}
                 className="flex flex-col gap-4 pr-4 border-r border-gray-200"
               >
                 {colonne === 0
-                  ? plans.map(plan => (
+                  ? // Dans la 1ere colonne, on affiche les plans d'actions
+                    plans.map(plan => (
                       <TableauAxe
                         key={plan.id}
                         axe={plan.plan}
@@ -126,7 +113,10 @@ const TableauNouvelEmplacement = ({fiche}: Props) => {
                         containSelectedAxe={selectedAxes.includes(plan.plan)}
                       />
                     ))
-                  : selectedAxes
+                  : // Pour les autres colonnes, on cherche dans les axes sélectionnés
+                    // l'axe qui à une profondeur correspondant à la colonne précédemment affichée
+                    // afin d'afficher les axes enfants s'il y en a.
+                    selectedAxes
                       .find(axe => axe.profondeur === colonne - 1)
                       ?.enfants?.map(axe => (
                         <TableauAxe
