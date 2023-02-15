@@ -9,15 +9,16 @@ import {TFicheAction} from '../FicheAction/data/types/alias';
 import {TPlanAction} from './data/types/PlanAction';
 import {useEditAxe} from './data/useEditAxe';
 import TextareaControlled from 'ui/shared/form/TextareaControlled';
+import SupprimerAxeModal from './SupprimerAxeModal';
 
 type Props = {
-  plan_id: number;
+  planActionGlobal: TPlanAction;
   axe: TPlanAction;
   displayAxe: (axe: TPlanAction) => void;
 };
 
-const PlanActionAxe = ({plan_id, axe, displayAxe}: Props) => {
-  const {mutate: updatePlan} = useEditAxe(plan_id);
+const PlanActionAxe = ({planActionGlobal, axe, displayAxe}: Props) => {
+  const {mutate: updatePlan} = useEditAxe(planActionGlobal.axe.id);
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -76,10 +77,19 @@ const PlanActionAxe = ({plan_id, axe, displayAxe}: Props) => {
           className="fr-fi-edit-line invisible group-hover:visible p-2 text-gray-500 scale-90"
           onClick={handleEditButtonClick}
         />
+        <SupprimerAxeModal axe={axe.axe} plan={planActionGlobal}>
+          <button
+            className="invisible group-hover:visible fr-btn fr-btn--secondary fr-text-default--error fr-fi-delete-line !shadow-none p-2 text-gray-500 scale-90"
+            onClick={handleEditButtonClick}
+          />
+        </SupprimerAxeModal>
       </div>
       {isOpen && (
         <div className="flex flex-col gap-4 mt-3 ml-12">
-          <AxeActions planActionId={plan_id} axeId={axe.axe.id} />
+          <AxeActions
+            planActionId={planActionGlobal.axe.id}
+            axeId={axe.axe.id}
+          />
           {axe.fiches && (
             <div className="grid grid-cols-2 gap-4">
               {axe.fiches.map((fiche: TFicheAction) => (
@@ -88,7 +98,7 @@ const PlanActionAxe = ({plan_id, axe, displayAxe}: Props) => {
                   ficheAction={fiche}
                   link={makeCollectivitePlanActionFicheUrl({
                     collectiviteId: fiche.collectivite_id!,
-                    planActionUid: plan_id.toString(),
+                    planActionUid: planActionGlobal.axe.id.toString(),
                     ficheUid: fiche.id!.toString(),
                   })}
                 />

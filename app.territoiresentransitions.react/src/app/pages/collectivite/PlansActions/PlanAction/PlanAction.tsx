@@ -13,6 +13,7 @@ import {usePlanAction} from './data/usePlanAction';
 import {useEditAxe} from './data/useEditAxe';
 import {TPlanAction} from './data/types/PlanAction';
 import TextareaControlled from 'ui/shared/form/TextareaControlled';
+import PlanActionFooter from './PlanActionFooter';
 
 type PlanActionProps = {
   plan: TPlanAction;
@@ -34,7 +35,7 @@ export const PlanAction = ({plan}: PlanActionProps) => {
   const displaySousAxe = (axe: TPlanAction) => (
     <PlanActionAxe
       key={axe.axe.id}
-      plan_id={plan.axe.id}
+      planActionGlobal={plan}
       axe={axe}
       displayAxe={displaySousAxe}
     />
@@ -68,6 +69,7 @@ export const PlanAction = ({plan}: PlanActionProps) => {
           <>
             <div className="mb-4">
               <AxeActions planActionId={plan.axe.id} axeId={plan.axe.id} />
+              {/** Affichage des fiches */}
               {plan.fiches && (
                 <div className="grid grid-cols-2 gap-4 mt-6">
                   {plan.fiches.map(fiche => (
@@ -84,11 +86,12 @@ export const PlanAction = ({plan}: PlanActionProps) => {
                 </div>
               )}
             </div>
+            {/** Affichage des sous-axes */}
             {plan.enfants &&
               plan.enfants.map(enfant => (
                 <PlanActionAxe
                   key={enfant.axe.id}
-                  plan_id={plan.axe.id}
+                  planActionGlobal={plan}
                   axe={enfant}
                   displayAxe={displaySousAxe}
                 />
@@ -96,7 +99,7 @@ export const PlanAction = ({plan}: PlanActionProps) => {
           </>
         ) : (
           <div>
-            <div className="flex flex-col items-center mt-8">
+            <div className="flex flex-col items-center my-8">
               <PictoLeaf className="w-24 fill-gray-400" />
               <div className="my-6 text-gray-500">
                 Aucune arborescence pour l'instant
@@ -105,6 +108,7 @@ export const PlanAction = ({plan}: PlanActionProps) => {
             </div>
           </div>
         )}
+        <PlanActionFooter plan={plan} />
       </div>
     </div>
   );
