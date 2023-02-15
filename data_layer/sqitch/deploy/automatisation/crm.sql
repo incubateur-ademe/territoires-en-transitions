@@ -1,203 +1,101 @@
 -- Deploy tet:utils/automatisation to pg
 
 BEGIN;
+alter type automatisation.automatisation_type
+    add value 'plan_action_insert',
+    add value 'collectivite_utilisateur_delete';
 
-create type automatisation.automatisation_type as enum ('utilisateur_upsert', 'utilisateur_insert','collectivite_upsert', 'collectivite_utilisateur_upsert');
-create table automatisation.automatisation_uri (
-                                                   uri_type automatisation.automatisation_type primary key,
-                                                   uri text not null
-);
-alter table automatisation.automatisation_uri enable row level security;
-
-create policy read_for_all
-    on automatisation.automatisation_uri
-    for select
-    using (true);
-
--- Vue d'un utilisateur pour un crm
-create view automatisation.users_crm as
-select p.prenom                              as prenom,
-       p.nom                                 as nom,
-       p.email                               as email,
-       p.telephone                           as telephone,
-       u.created_at                          as creation,
-       u.last_sign_in_at                     as derniere_connexion
-from dcp p
-         join auth.users u on u.id = p.user_id;
-
--- Vue d'un utilisateur pour un crm
-create view automatisation.collectivites_crm as
-select unaccent(c.nom) as nom,
-       concat('https://app.territoiresentransitions.fr/collectivite/', c.collectivite_id, '/tableau_bord') as lien_plateforme,
-       c.collectivite_id,
+-- Vue activite collectivite sur plan d'action
+create view automatisation.collectivite_plan_action as
+select c.collectivite_id,
+       c.nom ,
        c.code_siren_insee,
-       c.completude_cae,
-       c.completude_eci,
-       dep.libelle as departement_name,
-       reg.libelle as region_name,
-       c.population as population_totale,
-       c.type_collectivite,
-       c.etoiles_cae,
-       c.etoiles_eci,
-       lc.data as date_dernier_score
-       -- TODO nb fiche action
-       -- TODO nb plan action
+       count(distinct a) as nb_axes,
+       count(distinct f) as nb_fiches,
+       max(dcp.email),
+       concat('https://app.territoiresentransitions.fr/collectivite/', c.collectivite_id, '/plans') as lien_plateforme
 from collectivite_card c
-         join imports.departement dep on c.departement_code = dep.code
-         join imports.region reg on c.region_code = reg.code
-         join evaluation.late_collectivite lc on c.collectivite_id = lc.collectivite_id;
+         left join axe a on c.collectivite_id = a.collectivite_id
+         left join fiche_action f on c.collectivite_id = f.collectivite_id
+         left join dcp on a.modified_by = dcp.user_id or f.modified_by = dcp.user_id
+group by c.collectivite_id, c.nom, c.code_siren_insee;
 
--- Vue lien collectivite - utilisateur pour un crm
-create view automatisation.collectivite_membre_crm as
-select dcp.email,
-       coalesce(c.code, e.siren, '')::text as code_siren_insee,
-       col.id as collectivite_id,
-       dcp.user_id,
-       case
-           when pcm.fonction='referent'  then 'Referent.e'
-           when pcm.fonction='conseiller'  then 'Conseiller.e'
-           when pcm.fonction='technique'  then 'Equipe technique'
-           when pcm.fonction='politique'  then 'Equipe politique'
-           when pcm.fonction='partenaire'  then 'Partenaire'
-           end as fonction,
-       pcm.champ_intervention,
-       pcm.details_fonction,
-       case
-           when 'admin' = any(d.niveau_access) then 'Admin'
-           when 'edition' = any(d.niveau_access) then 'Édition'
-           when 'lecture' = any(d.niveau_access) then 'Lecture'
-           end as niveau_access
-from collectivite col
-         cross join dcp
-         left join commune c on col.id = c.collectivite_id
-         left join epci e on col.id = e.collectivite_id
-         left join private_collectivite_membre pcm
-                   on pcm.collectivite_id = col.id and pcm.user_id = dcp.user_id
-         left join lateral (select array_agg(pud.niveau_acces) as niveau_access
-                            from private_utilisateur_droit pud
-                            where pud.user_id = dcp.user_id
-                              and pud.collectivite_id = col.id) as d on true;
-
--- Envoie l'utilisateur modifié à n8n
-create or replace function automatisation.send_upsert_users_json_n8n() returns trigger as $$
+-- Envoie les informations de la collectivité qui test pour la première fois les plans d'actions à n8n
+create or replace function automatisation.send_collectivite_plan_action_json_n8n() returns trigger as $$
 declare
     to_send jsonb;
     uri text;
+    rec record;
 begin
-    to_send = to_jsonb((select jsonb_build_array(u.*)
-                        from automatisation.users_crm u
-                        where u.email = new.email));
-    uri = (select au.uri from automatisation.automatisation_uri au where au.uri_type = 'utilisateur_upsert' limit 1);
-    if uri is not null then
-        perform net.http_post(
-                uri,
-                to_send
-            );
+    select *
+    from automatisation.collectivite_plan_action c
+    where c.collectivite_id = new.collectivite_id
+    limit 1 into rec;
+    if (rec.nb_fiches = 0 and rec.nb_axes = 1) or (rec.nb_fiches=1 and rec.nb_axes = 0) then
+        to_send = to_jsonb((select jsonb_build_array(c.*)
+                            from rec c));
+        uri = (select au.uri from automatisation.automatisation_uri au where au.uri_type = 'plan_action_insert' limit 1);
+        if uri is not null then
+            perform net.http_post(
+                    uri,
+                    to_send
+                );
+        end if;
     end if;
     return new;
 exception
     when others then return new;
 end;
 $$ language plpgsql security definer;
-comment on function automatisation.send_upsert_users_json_n8n is
-    'Envoie le json de l''enregistrement dcp upsert à n8n';
+comment on function automatisation.send_collectivite_plan_action_json_n8n is
+    'Envoie les informations de la collectivité qui test pour la première fois les plans d''actions à n8n';
 
--- Envoie l'utilisateur modifié à n8n
-create or replace function automatisation.send_insert_users_json_n8n() returns trigger as $$
+-- Envoie l'information qu'une collectivité est devenu inactive suite à la suppression de tous ses utilisateurs
+create or replace function automatisation.send_delete_collectivite_membre_json_n8n() returns trigger as $$
 declare
     to_send jsonb;
     uri text;
 begin
-    to_send = to_jsonb((select jsonb_build_array(u.*)
-                        from automatisation.users_crm u
-                        where u.email = new.email));
-    uri = (select au.uri from automatisation.automatisation_uri au where au.uri_type = 'utilisateur_insert' limit 1);
-    if uri is not null then
-        perform net.http_post(
-                uri,
-                to_send
-            );
+    if (select count(p.*)=0 from private_utilisateur_droit p where p.collectivite_id = old.collectivite_id) then
+        to_send = to_jsonb((select jsonb_build_array(c.*)
+                            from automatisation.collectivite_membre_crm c
+                            where c.user_id = new.user_id
+                              and c.collectivite_id =new.collectivite_id));
+        uri = (select au.uri from automatisation.automatisation_uri au where au.uri_type = 'collectivite_utilisateur_delete' limit 1);
+        if uri is not null then
+            perform net.http_post(
+                    uri,
+                    to_send
+                );
+        end if;
     end if;
-    return new;
+    return old;
 exception
-    when others then return new;
+    when others then return old;
 end;
 $$ language plpgsql security definer;
-comment on function automatisation.send_insert_users_json_n8n is
-    'Envoie le json de l''enregistrement dcp insert à n8n';
+comment on function automatisation.send_delete_collectivite_membre_json_n8n is
+    'Envoie l''information qu''une collectivité est devenu inactive suite à la suppression de tous ses utilisateurs';
 
--- Envoie la collectivite modifié à n8n
-create or replace function automatisation.send_upsert_collectivites_json_n8n(duree interval) returns void as $$
-declare
-    to_send jsonb;
-    uri text;
-begin
-    to_send = to_jsonb((select to_jsonb(array_agg(c.*))
-                        from automatisation.collectivites_crm c
-                        where c.date_dernier_score>now()-duree));
-    uri = (select au.uri from automatisation.automatisation_uri au where au.uri_type = 'collectivite_upsert' limit 1);
-    if uri is not null then
-        perform net.http_post(
-                uri::varchar,
-                to_send
-            );
-    end if;
-end;
-$$ language plpgsql security definer;
-comment on function automatisation.send_upsert_collectivites_json_n8n is
-    'Envoie le json de l''enregistrement collectivite upsert à n8n';
-
--- Envoie le lien collectivite utilisateur modifié à n8n
-create or replace function automatisation.send_upsert_collectivite_membre_json_n8n() returns trigger as $$
-declare
-    to_send jsonb;
-    uri text;
-begin
-    to_send = to_jsonb((select jsonb_build_array(c.*)
-                        from automatisation.collectivite_membre_crm c
-                        where c.user_id = new.user_id
-                          and c.collectivite_id =new.collectivite_id));
-    uri = (select au.uri from automatisation.automatisation_uri au where au.uri_type = 'collectivite_utilisateur_upsert' limit 1);
-    if uri is not null then
-        perform net.http_post(
-                uri,
-                to_send
-            );
-    end if;
-    return new;
-exception
-    when others then return new;
-end;
-$$ language plpgsql security definer;
-comment on function automatisation.send_upsert_collectivite_membre_json_n8n is
-    'Envoie le json de lien entre collectivite et utilisateur upsert à n8n';
-
--- Trigger sur la table dcp
-create trigger dcp_upsert_automatisation
-    after insert or update
-    on dcp
-    for each row
-execute procedure automatisation.send_upsert_users_json_n8n();
-
--- Trigger sur la table dcp
-create trigger dcp_insert_automatisation
+-- Trigger sur la table axe
+create trigger axe_insert_automatisation
     after insert
-    on dcp
+    on axe
     for each row
-execute procedure automatisation.send_insert_users_json_n8n();
+execute procedure automatisation.send_collectivite_plan_action_json_n8n();
 
--- Trigger sur la table private_collectivite_membre
-create trigger collectivite_membre_upsert_automatisation
-    after insert or update
-    on private_collectivite_membre
+-- Trigger sur la table fiche_action
+create trigger fiche_action_insert_automatisation
+    after insert
+    on fiche_action
     for each row
-execute procedure automatisation.send_upsert_collectivite_membre_json_n8n();
+execute procedure automatisation.send_collectivite_plan_action_json_n8n();
 
 -- Trigger sur la table private_utilisateur_droit
-create trigger utilisateur_droit_upsert_automatisation
-    after insert or update
+create trigger utilisateur_droit_delete_automatisation
+    after delete
     on private_utilisateur_droit
     for each row
-execute procedure automatisation.send_upsert_collectivite_membre_json_n8n();
+execute procedure automatisation.send_delete_collectivite_membre_json_n8n();
 
 COMMIT;
