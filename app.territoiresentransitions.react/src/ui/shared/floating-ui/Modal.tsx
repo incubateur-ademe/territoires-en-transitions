@@ -110,10 +110,10 @@ const Modal = ({
               >
                 <button
                   onClick={handleCloseClick}
-                  className="flex items-center ml-auto mb-2 px-2 py-2 md:-mr-4 fr-btn--secondary !shadow-none"
+                  className="flex items-center ml-auto mb-2 pl-2 py-0.5 md:-mr-4 fr-btn--secondary !shadow-none"
                 >
-                  <span className="-mt-1">Fermer</span>
-                  <div className="fr-fi-close-line ml-2" />
+                  <span className="-mt-1 text-sm underline">Fermer</span>
+                  <div className="fr-fi-close-line ml-0.5 scale-75" />
                 </button>
                 {render({
                   close: () => setOpen(false),

@@ -9,6 +9,7 @@ import {
 } from '../../PlanAction/data/usePlanActionChemin';
 import {TAxeInsert, TAxeRow} from '../data/types/alias';
 import {useState} from 'react';
+import classNames from 'classnames';
 
 type Props = {
   fiche: FicheActionVueRow;
@@ -89,10 +90,18 @@ const CheminPlusieursPlans = ({
   return (
     <div>
       <button
-        className="p-1 underline text-xs text-gray-500 hover:text-gray-600"
+        className="flex items-center p-1 text-gray-500 hover:text-gray-600"
         onClick={() => setIsOpen(!isOpen)}
       >
-        Voir tous les emplacements pour cette fiche
+        <span className="underline text-xs">
+          Voir tous les emplacements pour cette fiche
+        </span>
+
+        <div
+          className={classNames('fr-fi-arrow-down-s-line mt-1 ml-1 scale-75', {
+            'rotate-180': isOpen,
+          })}
+        />
       </button>
       {isOpen && (
         <div className="flex flex-col gap-4 mt-4">

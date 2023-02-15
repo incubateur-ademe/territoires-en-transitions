@@ -1,3 +1,4 @@
+import IconFolderLine from 'ui/icons/IconFolderLine';
 import Alerte from 'ui/shared/Alerte';
 import Modal from 'ui/shared/floating-ui/Modal';
 import {TPlanActionAxeInsert} from '../../PlanAction/data/types/alias';
@@ -20,7 +21,7 @@ const FicheActionRangerModal = ({fiche}: Props) => {
             <h4 id={labelId} className="fr-h4 !mb-8">
               Ranger la fiche dans un ou plusieurs plans d’action
             </h4>
-            <h6 className="text-lg">
+            <h6 className="text-lg mb-3">
               Emplacements sélectionnés pour cette fiche
             </h6>
             <div className="flex flex-col gap-2 mb-6">
@@ -40,24 +41,24 @@ const FicheActionRangerModal = ({fiche}: Props) => {
               classname="inline-block mb-8 mr-auto"
               state="information"
               description="Le contenu de la fiche sera mis à jour de manière synchronisée quel que soit l’emplacement"
+              small
             />
             <h6 className="text-lg">Sélectionner un nouvel emplacement</h6>
 
             <TableauNouvelEmplacement fiche={fiche} />
             <button
               onClick={close}
-              className="fr-btn fr-btn--secondary mt-8 ml-auto"
+              className="fr-btn fr-btn--secondary mt-8 ml-auto fr-btn--icon-right fr-fi-arrow-right-line"
               aria-label="Annuler"
             >
               Retour à la fiche
-              <div className="fr-fi-arrow-right-line ml-2 mt-1 scale-75" />
             </button>
           </div>
         );
       }}
     >
       <button className="fr-btn w-max mb-6 !shadow-none">
-        <div className="fr-fi-file-line -ml-2 mt-1 mr-2 scale-75" />
+        <IconFolderLine className="fill-white w-4 -ml-2 mt-0.5 mr-2" />
         Ranger la fiche
       </button>
     </Modal>
