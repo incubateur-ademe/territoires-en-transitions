@@ -218,3 +218,5 @@ retool/utilisateur [retool/utilisateur@v2.1.2] 2023-02-01T20:48:24Z Amandine Jac
 
 retool/plan_action 2023-02-08T16:23:07Z Amandine Jacquelin <conta@LanceLibre> # Ajout vue pour retool sur les plans d'action
 @v2.2.1 2023-02-15T08:36:00Z Amandine Jacquelin <conta@LanceLibre> # Ajout vue pour retool sur les plans d'action
+
+automatisation/crm [automatisation/crm@v2.2.0] 2023-02-14T13:38:42Z Amandine Jacquelin <conta@LanceLibre> # Ajoute envoie plan_action
