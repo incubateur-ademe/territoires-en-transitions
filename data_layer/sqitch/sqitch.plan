@@ -217,3 +217,4 @@ retool/utilisateur [retool/utilisateur@v2.1.2] 2023-02-01T20:48:24Z Amandine Jac
 @v2.2.0 2023-02-02T14:40:43Z Florian <florian@derfurth.com> # Permet de renommer les fichiers de la bibliothèque
 
 retool/plan_action 2023-02-08T16:23:07Z Amandine Jacquelin <conta@LanceLibre> # Ajout vue pour retool sur les plans d'action
+@v2.2.1 2023-02-15T08:36:00Z Amandine Jacquelin <conta@LanceLibre> # Ajout vue pour retool sur les plans d'action
