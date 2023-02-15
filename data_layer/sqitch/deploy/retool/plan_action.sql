@@ -48,7 +48,7 @@ with
                            on p.collectivite_id = cw.collectivite_id
                                and p.created_at >= cw.day
                                and p.created_at < cw.day + interval '7 day'
-                 left join dcp on p.modified_by = dcp.user_id
+                 left join (select * from dcp where limited = false and deleted = false) dcp on p.modified_by = dcp.user_id
         group by cw.collectivite_id, cw.day
     ),
     fiches as (
@@ -58,7 +58,7 @@ with
                            on f.collectivite_id = cw.collectivite_id
                                and f.created_at >= cw.day
                                and f.created_at < cw.day + interval '7 day'
-                 left join dcp on f.modified_by = dcp.user_id
+                 left join (select * from dcp where limited = false and deleted = false) dcp on f.modified_by = dcp.user_id
         group by cw.collectivite_id, cw.day
     )
 select c.collectivite_id,
@@ -75,6 +75,7 @@ from collectivites_by_weeks c
          join plans p on c.collectivite_id = p.collectivite_id and c.day = p.day
          join fiches f on c.collectivite_id = f.collectivite_id and c.day = f.day
 where p.nb_plans <> 0 or f.nb_fiches <> 0
+    and is_service_role()
 order by c.day desc, c.collectivite_id;
 
 COMMIT;
