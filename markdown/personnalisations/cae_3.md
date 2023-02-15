@@ -159,6 +159,16 @@ sinon si identite(type, commune) et reponse(assainissement_1, NON) et reponse(as
 Pour un EPCI, en cas de compétence "assainissement" partagée ou variable sur le territoire, la réduction de potentielle est proportionnelle à la part des communes ayant délégué leur compétence assainissement, dans la limite de moins 50%. Des actions sont possibles sur d’autres compétences, notamment « gestion des milieux aquatiques et prévention des inondations ».
 Pour les communes sans compétence assainissement, le score de la 3.3.3 est réduit de 50 %.
 
+# Réduction potentiel cae 3.3.3.3.4
+```yaml
+action_id: cae_3.3.3.3.4
+```
+## Règles
+### Désactivation
+```formule
+identite(localisation,DOM)
+```
+
 
 # Réduction potentiel cae 3.3.5 liee dechets 
 ```yaml
