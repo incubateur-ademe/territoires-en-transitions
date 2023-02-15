@@ -69,11 +69,7 @@ const fetch = async (collectivite_id: number, filters?: TFilters) => {
     return [];
   }
 
-  // filtre supplémentaire pour éviter les preuves labellisation vides (?)
-  return data.filter(
-    ({preuve_type, fichier, lien}) =>
-      preuve_type !== 'labellisation' || fichier || lien
-  );
+  return data;
 };
 
 /**

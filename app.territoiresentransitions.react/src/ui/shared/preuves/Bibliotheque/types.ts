@@ -87,12 +87,8 @@ export type TPreuveAction = {
   desactive: boolean;
 };
 
-type TLabellisationDemande = {
-  en_cours: boolean;
-  referentiel: Referentiel;
-  etoiles: TEtoiles;
-  date: string;
-};
+type TLabellisationDemande =
+  Database['labellisation']['Tables']['demande']['Row'];
 
 // champs propres aux preuves pour la labellisation
 type TPreuveLabellisationFields = {
