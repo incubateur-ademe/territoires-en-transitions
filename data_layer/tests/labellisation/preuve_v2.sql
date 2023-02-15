@@ -1,6 +1,6 @@
 begin;
 
-select plan(13);
+select plan(15);
 
 truncate storage.objects cascade;
 truncate labellisation.bibliotheque_fichier cascade;
