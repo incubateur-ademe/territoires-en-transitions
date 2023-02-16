@@ -23,7 +23,7 @@ body,
 h1 {
   counter-reset: h2counter;
 }
-nav.md-toc + h2:before {
+nav.md-toc ~ h2:before {
   counter-increment: h2counter;
-  content: counter(h2counter) '.\0000a0\0000a0';
+  content: counter(h2counter) '.\0000a0';
 }
