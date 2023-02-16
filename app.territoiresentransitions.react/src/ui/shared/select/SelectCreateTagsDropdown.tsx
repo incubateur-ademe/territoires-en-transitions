@@ -29,6 +29,7 @@ const SelectCreateTagsDropdown = <T extends string>({
   renderOption,
   placement,
   placeholderText,
+  disabled,
   'data-test': dataTest,
 }: TSelectCreateTagsDropdown<T>) => {
   const [inputValue, setInputValue] = useState('');
@@ -100,6 +101,7 @@ const SelectCreateTagsDropdown = <T extends string>({
         onInputChange={onInputChange}
         onSelect={onSelect as (values: string[]) => void}
         placeholderText={placeholderText}
+        disabled={disabled}
       />
     </DropdownFloater>
   );
@@ -133,6 +135,7 @@ const SelectCreateTagsButton = forwardRef(
       inputValue,
       onInputChange,
       onSelect,
+      disabled,
       ...props
     }: TSelectCreateTagsButtonProps<T>,
     ref?: Ref<HTMLDivElement>
@@ -180,6 +183,7 @@ const SelectCreateTagsButton = forwardRef(
               value={inputValue}
               placeholder={placeholderText}
               onChange={e => onInputChange(e.target.value)}
+              disabled={disabled}
             />
           </div>
           <ExpandCollapseIcon isOpen={isOpen} />
