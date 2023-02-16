@@ -5,17 +5,20 @@ import FicheActionSupprimerModal from './FicheActionSupprimerModal';
 
 type TFicheActionFooter = {
   fiche: TFicheAction;
+  isReadonly: boolean;
 };
 
-const FicheActionFooter = ({fiche}: TFicheActionFooter) => {
+const FicheActionFooter = ({fiche, isReadonly}: TFicheActionFooter) => {
   const {mutate: deleteFiche} = useDeleteFicheAction();
 
   return (
     <div className="pt-16">
-      <FicheActionSupprimerModal
-        fiche={fiche}
-        onDelete={() => deleteFiche(fiche.id!)}
-      />
+      {!isReadonly && (
+        <FicheActionSupprimerModal
+          fiche={fiche}
+          onDelete={() => deleteFiche(fiche.id!)}
+        />
+      )}
       <div className="flex justify-end gap-6 my-8">
         {/* <button className="fr-btn fr-btn--secondary fr-fi-arrow-left-line fr-btn--icon-left">
           Fiche précédente

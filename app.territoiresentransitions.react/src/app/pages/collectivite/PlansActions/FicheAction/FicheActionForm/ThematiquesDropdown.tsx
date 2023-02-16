@@ -6,9 +6,10 @@ import {TThematiqueRow} from '../data/types/alias';
 type Props = {
   thematiques: TThematiqueRow[] | null;
   onSelect: (thematique: TThematiqueRow[]) => void;
+  isReadonly: boolean;
 };
 
-const ThematiquesDropdown = ({thematiques, onSelect}: Props) => {
+const ThematiquesDropdown = ({thematiques, onSelect, isReadonly}: Props) => {
   const {data: thematiqueListe} = useThematiqueListe();
 
   const options: TOption[] = thematiqueListe
@@ -31,6 +32,7 @@ const ThematiquesDropdown = ({thematiques, onSelect}: Props) => {
       values={thematiques?.map((t: TThematiqueRow) => t.thematique)}
       options={options}
       onSelect={values => onSelect(formatThematiques(values))}
+      disabled={isReadonly}
     />
   );
 };

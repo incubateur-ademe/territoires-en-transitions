@@ -7,9 +7,10 @@ import {TPartenaireInsert} from '../data/types/alias';
 type Props = {
   partenaires: TPartenaireInsert[] | null;
   onSelect: (partenaires: TPartenaireInsert[]) => void;
+  isReadonly: boolean;
 };
 
-const PartenairesDropdown = ({partenaires, onSelect}: Props) => {
+const PartenairesDropdown = ({partenaires, onSelect, isReadonly}: Props) => {
   const collectivite_id = useCollectiviteId();
 
   const {data: partenaireListe} = usePartenaireListe();
@@ -46,6 +47,7 @@ const PartenairesDropdown = ({partenaires, onSelect}: Props) => {
         )
       }
       placeholderText="Créer un tag..."
+      disabled={isReadonly}
     />
   );
 };

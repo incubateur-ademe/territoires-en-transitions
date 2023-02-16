@@ -7,9 +7,14 @@ import {Personne} from '../data/types/personne';
 type Props = {
   personnes: Personne[] | null;
   onSelect: (personnes: Personne[]) => void;
+  isReadonly: boolean;
 };
 
-const PersonneReferenteDropdown = ({personnes, onSelect}: Props) => {
+const PersonneReferenteDropdown = ({
+  personnes,
+  onSelect,
+  isReadonly,
+}: Props) => {
   const collectivite_id = useCollectiviteId();
 
   const {data: personneListe} = usePersonneReferenteListe();
@@ -52,6 +57,7 @@ const PersonneReferenteDropdown = ({personnes, onSelect}: Props) => {
         )
       }
       placeholderText="Créer un tag..."
+      disabled={isReadonly}
     />
   );
 };
