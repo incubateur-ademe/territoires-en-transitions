@@ -18,6 +18,7 @@ import Layout from 'app/Layout';
 import {AuthProvider} from 'core-logic/api/auth/AuthProvider';
 import {ScoreListenerProvider} from 'core-logic/hooks/useScoreListener';
 import {VisitTracker} from 'app/VisitTracker';
+import AccepterCGUModal from './pages/Auth/AccepterCGUModal';
 
 const theme = createTheme({
   palette: {
@@ -43,6 +44,7 @@ export const App = () => {
                 <Toasters />
                 <Redirector />
                 <VisitTracker />
+                <AccepterCGUModal />
                 <Switch>
                   <Route exact path="/">
                     <Home />
