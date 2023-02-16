@@ -78,10 +78,7 @@ const PlanActionAxe = ({planActionGlobal, axe, displayAxe}: Props) => {
           onClick={handleEditButtonClick}
         />
         <SupprimerAxeModal axe={axe.axe} plan={planActionGlobal}>
-          <button
-            className="invisible group-hover:visible fr-btn fr-btn--secondary fr-text-default--error fr-fi-delete-line !shadow-none p-2 text-gray-500 scale-90"
-            onClick={handleEditButtonClick}
-          />
+          <button className="invisible group-hover:visible fr-btn fr-btn--secondary fr-text-default--error fr-fi-delete-line !shadow-none p-2 text-gray-500 scale-90" />
         </SupprimerAxeModal>
       </div>
       {isOpen && (
