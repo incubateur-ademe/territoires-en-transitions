@@ -17,7 +17,7 @@ export const FicheAction = ({fiche}: FicheActionProps) => {
     <div className="w-full">
       <div className="bg-indigo-400">
         <h5 className="max-w-4xl mx-auto m-0 py-8 px-10 text-white">
-          {fiche.titre ?? 'Sans titre'}
+          {fiche.titre && fiche.titre.length > 0 ? fiche.titre : 'Sans titre'}
         </h5>
       </div>
       <div className="max-w-4xl mx-auto px-10">
