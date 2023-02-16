@@ -4,6 +4,6 @@
 BEGIN;
 
 alter table dcp
-    drop column cgu_acceptees_le;
-    drop function accepter_cgu;
+    drop constraint dcp_pkey;
+
 COMMIT;

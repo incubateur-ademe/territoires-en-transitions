@@ -228,3 +228,5 @@ utilisateur/visite [utilisateur/visite@v2.2.0] 2023-02-13T09:45:02Z Florian <flo
 
 labellisation/comparaison_audit [labellisation/comparaison_audit@v2.2.0] 2023-02-07T13:13:47Z Amandine Jacquelin <conta@LanceLibre> # Ajoute une contrainte pour supprimer les scores pre-audit quand on supprime l'audit
 @v2.3.1 2023-02-20T12:38:17Z Florian <florian@derfurth.com> # Permet la suppression des audits depuis retool
+
+utilisateur/dcp [utilisateur/dcp@v2.2.2] 2023-02-16T14:10:59Z Marc Rutkowski <marc@attractive-media.fr> # ajoute la date d'acceptation des CGU aux DCP

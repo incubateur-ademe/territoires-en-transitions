@@ -64,6 +64,7 @@ create function
     test_add_random_user(
     in collectivite_id integer,
     in niveau niveau_acces,
+    in cgu_acceptees boolean default true,
     out user_id uuid,
     out prenom text,
     out nom text,
@@ -87,6 +88,13 @@ begin
     if collectivite_id is not null
     then
         perform test_attach_user(user_id, collectivite_id, niveau);
+    end if;
+
+    if cgu_acceptees
+    then
+        update dcp
+        set cgu_acceptees_le = now()
+        where dcp.user_id = user_id;
     end if;
 end;
 $$ language plpgsql security definer;
