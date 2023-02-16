@@ -20,7 +20,11 @@ export type TAuthContext = {
   isConnected: boolean;
 };
 export type UserData = User & DCP;
-export type DCP = {nom?: string; prenom?: string};
+export type DCP = {
+  nom?: string;
+  prenom?: string;
+  cgu_acceptees_le?: string | null;
+};
 
 // crée le contexte
 export const AuthContext = createContext<TAuthContext | null>(null);
@@ -139,7 +143,7 @@ const clearCrispUserData = () => {
 const fetchDCP = async (user_id: string) => {
   const {data} = await supabaseClient
     .from('dcp')
-    .select('user_id,nom,prenom')
+    .select('user_id,nom,prenom,cgu_acceptees_le')
     .match({user_id});
 
   return data?.length ? data[0] : null;
