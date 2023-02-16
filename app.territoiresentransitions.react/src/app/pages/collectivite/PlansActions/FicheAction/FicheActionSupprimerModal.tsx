@@ -21,11 +21,11 @@ const FicheActionSupprimerModal = ({fiche, onDelete}: Props) => {
                 <span>
                   Cette fiche action est présente dans plusieurs plans.
                   <br />
-                  Êtes-vous certain de vouloir supprimer cette fiche action de
-                  tous les plans?
+                  Souhaitez-vous vraiment supprimer cette fiche de tous les
+                  plans ?
                 </span>
               ) : (
-                'Êtes-vous certain de vouloir supprimer cette fiche action?'
+                'Souhaitez-vous vraiment supprimer cette fiche action ?'
               )}
             </p>
             <div className="mt-8 fr-btns-group fr-btns-group--left fr-btns-group--inline-reverse fr-btns-group--inline-lg">
