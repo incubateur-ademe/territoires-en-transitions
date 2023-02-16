@@ -26,7 +26,7 @@ begin
             '',
             'authenticated',
             email,
-            '$2a$10$xNAngHNv3/rrb4umkwlJAOaD2sY.HLhinrWvHQpwklJ3i.x.KMrqq',
+            '$2a$10$2vx75sXRW3bc1ZJgPFIetul1wg3k475446Nr2z/6Db0Y/eC9QN9Zm',
             now(),
             null,
             '', null,
