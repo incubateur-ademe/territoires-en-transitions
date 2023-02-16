@@ -35,4 +35,5 @@ export const registerUser = async (inscription: InscriptionUtilisateur) => {
     user_id: data.user.id,
   };
   await supabaseClient.from('dcp').insert([dcp]);
+  await supabaseClient.rpc('accepter_cgu');
 };
