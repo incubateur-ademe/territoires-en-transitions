@@ -2,9 +2,10 @@ type TCheckbox = {
   label: string;
   onCheck: () => void;
   checked: boolean;
+  disabled?: boolean;
 };
 
-const Checkbox = ({label, checked, onCheck}: TCheckbox) => {
+const Checkbox = ({label, checked, onCheck, disabled}: TCheckbox) => {
   return (
     <div className="fr-checkbox-group fr-checkbox-group--sm">
       <input
@@ -14,6 +15,7 @@ const Checkbox = ({label, checked, onCheck}: TCheckbox) => {
         className="!w-4"
         onChange={onCheck}
         checked={checked}
+        disabled={disabled}
       />
       <label className="fr-label !text-sm" htmlFor="checkbox">
         {label}

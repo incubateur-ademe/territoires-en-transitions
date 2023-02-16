@@ -39,6 +39,7 @@ const SelectDropdown = <T extends string>({
   renderOption,
   placeholderText,
   placement,
+  disabled,
   'data-test': dataTest,
 }: TSelectDropdownProps<T>) => {
   return (
@@ -78,6 +79,7 @@ const SelectDropdown = <T extends string>({
         }
         buttonClassName={buttonClassName}
         placeholderText={placeholderText}
+        disabled={disabled}
       />
     </DropdownFloater>
   );
@@ -95,6 +97,7 @@ const SelectButtton = forwardRef(
       buttonClassName,
       placeholderText,
       renderSelection,
+      disabled,
       'data-test': dataTest,
       ...props
     }: TSelectButtonProps<T>,
@@ -106,6 +109,7 @@ const SelectButtton = forwardRef(
       aria-expanded={isOpen}
       aria-label="ouvrir le menu"
       className={classNames(buttonDisplayedClassname, buttonClassName)}
+      disabled={disabled}
       {...props}
     >
       {value ? (
