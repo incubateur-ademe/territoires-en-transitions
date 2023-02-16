@@ -4,6 +4,5 @@
 BEGIN;
 
 alter table dcp
-    drop column cgu_acceptees_le;
-    drop function accepter_cgu;
+    add primary key (user_id);
 COMMIT;

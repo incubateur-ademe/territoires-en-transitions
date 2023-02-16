@@ -159,6 +159,10 @@ export interface Database {
         | 'personnalise';
     };
     Functions: {
+      accepter_cgu: {
+        Args: Record<PropertyKey, never>;
+        Returns: unknown;
+      };
       action_contexte: {
         Args: {id: unknown};
         Returns: Record<string, unknown>[];
@@ -1008,6 +1012,7 @@ export interface Database {
       };
       test_add_random_user: {
         Args: {
+          cgu_acceptees: boolean;
           collectivite_id: number;
           niveau: Database['public']['Enums']['niveau_acces'];
         };
@@ -1725,6 +1730,7 @@ export interface Database {
       };
       dcp: {
         Insert: {
+          cgu_acceptees_le?: string | null;
           created_at?: string;
           deleted?: boolean;
           email: string;
@@ -1736,6 +1742,7 @@ export interface Database {
           user_id: string;
         };
         Row: {
+          cgu_acceptees_le: string | null;
           created_at: string;
           deleted: boolean;
           email: string;
@@ -1747,6 +1754,7 @@ export interface Database {
           user_id: string;
         };
         Update: {
+          cgu_acceptees_le?: string | null;
           created_at?: string;
           deleted?: boolean;
           email?: string;
@@ -3900,6 +3908,27 @@ export interface Database {
           id: number | null;
           nom: string | null;
           referentiel: Database['public']['Enums']['referentiel'] | null;
+        };
+      };
+      retool_plan_action_hebdo: {
+        Row: {
+          collectivite_id: number | null;
+          contributeurs: string[] | null;
+          date_range: string | null;
+          day: string | null;
+          nb_fiches: number | null;
+          nb_plans: number | null;
+          nom: string | null;
+        };
+      };
+      retool_plan_action_usage: {
+        Row: {
+          collectivite_id: number | null;
+          derniere_modif: string | null;
+          nb_fiches: number | null;
+          nb_plans: number | null;
+          nb_utilisateurs: string | null;
+          nom: string | null;
         };
       };
       retool_preuves: {

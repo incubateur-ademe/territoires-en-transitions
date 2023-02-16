@@ -10,10 +10,7 @@ select user_id,
        limited,
        deleted,
        created_at,
-       modified_at,
-       cgu_acceptees_le
-from dcp where false;
-
-select has_function_privilege('accepter_cgu()', 'execute');
+       modified_at
+from dcp;
 
 ROLLBACK;
