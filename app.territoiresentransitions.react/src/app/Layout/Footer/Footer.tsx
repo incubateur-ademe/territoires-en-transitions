@@ -103,6 +103,16 @@ const Footer = () => {
                 Statistiques
               </a>
             </li>
+            <li className="fr-footer__bottom-item">
+              <a
+                className="fr-footer__bottom-link"
+                href="https://territoiresentransitions.fr/cgu"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                Conditions générales d’utilisation
+              </a>
+            </li>
           </ul>
         </div>
       </div>
