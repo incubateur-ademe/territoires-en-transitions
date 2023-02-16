@@ -1,0 +1,16 @@
+Test:
+  Si une collectivité de plus de 10 000 habitants n'est pas AOM, 
+  alors le score est réduit de 25 %
+Collectivité:
+  population:
+    - plus_de_100000
+Réponses:
+  AOM_1: NON
+  voirie_1: voirie_1_a
+  centre_polarite: OUI
+Scores:
+  cae_4.2.2:
+    point_referentiel: 6
+    point_potentiel: 4.5
+
+
