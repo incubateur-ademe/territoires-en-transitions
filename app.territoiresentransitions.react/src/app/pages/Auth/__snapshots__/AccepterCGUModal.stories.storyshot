@@ -3,6 +3,7 @@
 exports[`Storyshots app/pages/Auth/AccepterCGUModal Exemple 1 1`] = `
 <div
   className="fr-mb-4w"
+  data-test="AccepterCGU"
 >
   <div
     className="flex flex-col fr-mb-2w"
@@ -31,6 +32,7 @@ exports[`Storyshots app/pages/Auth/AccepterCGUModal Exemple 1 1`] = `
   </p>
   <button
     className="fr-btn fr-btn--icon-right fr-fi-arrow-right-line"
+    data-test="AccepterCGUBtn"
     onClick={[Function]}
   >
     Accepter et poursuivre
