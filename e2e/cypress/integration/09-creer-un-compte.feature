@@ -1,8 +1,8 @@
 # language: fr
 
-Fonctionnalité: Création de compte
+Fonctionnalité: Créer un compte
 
-  Scénario: Nono Dodo créé un compte
+  Scénario: Créer un compte et se connecter
     Etant donné que j'ouvre le site
     Alors la page vérifie les conditions suivantes :
       | Elément                 | Condition |
