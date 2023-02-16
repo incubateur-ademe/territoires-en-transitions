@@ -18,6 +18,19 @@ export const Defaut = () => (
   </Modal>
 );
 
+export const SansLeBoutonFermer = () => (
+  <Modal
+    externalOpen
+    setExternalOpen={() => null}
+    noCloseButton
+    render={({labelId, descriptionId}) => {
+      return <div>basic</div>;
+    }}
+  >
+    <button className="p-2 bg-gray-200">trigger me</button>
+  </Modal>
+);
+
 export const Petite = () => (
   <Modal
     size="sm"
