@@ -18,7 +18,7 @@ const PlanChemin = ({fiche, axe_id}: Props) => {
   const {mutate: removeFiche} = useRemoveFicheFromAxe();
 
   return (
-    <div className="group flex items-center py-1 px-2 rounded-sm hover:bg-bf925">
+    <div className="group flex items-center py-1 px-2 rounded-sm hover:bg-bf975">
       <div className="py-0.5">
         <FilAriane
           links={
