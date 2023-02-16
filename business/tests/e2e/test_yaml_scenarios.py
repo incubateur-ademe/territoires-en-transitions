@@ -15,7 +15,7 @@ def test_yaml_files_should_be_present():
     assert len(paths) > 0, f'Des tests yaml devraient être présents dans {yaml_tests_dir}'
 
 
-@pytest.mark.parametrize("name, path", paths)
+@pytest.mark.parametrize("name, path", sorted(paths))
 def test_scores_should_match_yaml_expectations(test_post_personnalize, test_post_evaluate, name, path):
     path_in_str = str(path)
     print('')
