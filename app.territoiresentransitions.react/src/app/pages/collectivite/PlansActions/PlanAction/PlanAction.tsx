@@ -88,6 +88,7 @@ export const PlanAction = ({plan}: PlanActionProps) => {
             </div>
             {/** Affichage des sous-axes */}
             {plan.enfants &&
+              plan.enfants.length > 0 &&
               plan.enfants.map(enfant => (
                 <PlanActionAxe
                   key={enfant.axe.id}
@@ -117,9 +118,9 @@ export const PlanAction = ({plan}: PlanActionProps) => {
 const PlanActionConnected = () => {
   const {planUid} = useParams<{planUid: string}>();
 
-  const data = usePlanAction(parseInt(planUid));
+  const {data} = usePlanAction(parseInt(planUid));
 
-  return data ? <PlanAction plan={data.plan} /> : <div></div>;
+  return data ? <PlanAction plan={data} /> : <div></div>;
 };
 
 export default PlanActionConnected;
