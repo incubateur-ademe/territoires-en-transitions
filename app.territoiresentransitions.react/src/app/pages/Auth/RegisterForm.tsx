@@ -57,30 +57,44 @@ const validation = Yup.object({
 });
 
 const CGU = ({showWarning}: {showWarning?: boolean}) => (
-  <label className="cgu">
+  <div className="border-t border-t-[#ddd] pt-4">
+    <label className="cgu">
+      <Field type="checkbox" name="vie_privee_conditions" />
+      <span className="ml-2">
+        J’accepte le cadre d’utilisation de la plateforme (obligatoire){' '}
+      </span>
+    </label>
+
+    <ul className="fr-ml-5w">
+      <li>
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-bf500"
+          href="https://territoiresentransitions.fr/cgu"
+        >
+          les conditions générales
+        </a>
+      </li>
+      <li>
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-bf500"
+          href={politique_vie_privee}
+        >
+          la politique de protection des données de l'ADEME
+        </a>
+      </li>
+    </ul>
     {showWarning && (
-      <div
-        className="mb-2 text-sm opacity-80 text-red-500"
-        data-test="cgu_error"
-      >
-        L'acceptation de la politique de protection des données à caractère
-        personnel est nécessaire pour créer un compte.
+      <div className="fr-error-text" data-test="cgu_error">
+        Validation obligatoire pour la création de votre compte.
       </div>
     )}
-    <Field type="checkbox" name="vie_privee_conditions" />
-    <span className="ml-2">
-      J'accepte la{' '}
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        className=" text-blue-600"
-        href={politique_vie_privee}
-      >
-        politique de protection des données à caractère personnel de l'ADEME
-      </a>
-    </span>{' '}
-  </label>
+  </div>
 );
+
 /**
  * The user registration form.
  */
