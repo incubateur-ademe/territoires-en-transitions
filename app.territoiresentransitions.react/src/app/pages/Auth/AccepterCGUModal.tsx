@@ -16,7 +16,7 @@ export type TAccepterCGUProps = {
 export const AccepterCGUContent = (props: TAccepterCGUProps) => {
   const {isLoading, onOK} = props;
   return (
-    <div className="fr-mb-4w">
+    <div className="fr-mb-4w" data-test="AccepterCGU">
       <div className="flex flex-col fr-mb-2w">
         <ContractSVG className="self-center" />
       </div>
@@ -37,6 +37,7 @@ export const AccepterCGUContent = (props: TAccepterCGUProps) => {
       </p>
       <button
         className="fr-btn fr-btn--icon-right fr-fi-arrow-right-line"
+        data-test="AccepterCGUBtn"
         disabled={isLoading}
         onClick={onOK}
       >

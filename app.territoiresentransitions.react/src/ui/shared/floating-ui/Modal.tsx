@@ -115,6 +115,7 @@ const Modal = ({
                   <button
                     onClick={handleCloseClick}
                     className="flex items-center ml-auto mb-2 px-2 py-2 md:-mr-4 fr-btn--secondary !shadow-none"
+                    data-test="close-modal"
                   >
                     <span className="-mt-1">Fermer</span>
                     <div className="fr-fi-close-line ml-2" />
