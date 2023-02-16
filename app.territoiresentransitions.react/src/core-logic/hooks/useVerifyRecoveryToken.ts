@@ -1,5 +1,4 @@
 import {useQuery, useQueryClient} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
 import {ENV} from 'environmentVariables';
 import {useRecoveryToken} from './useRecoveryToken';
 
