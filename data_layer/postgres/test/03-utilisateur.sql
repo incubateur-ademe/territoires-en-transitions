@@ -75,26 +75,29 @@ as
 $$
 declare
     user_count integer;
+declare
+    new_user_id alias for user_id;
 begin
     select gen_random_uuid() into user_id;
+
     select 'Y' || test.random_voyelle() || 'l' || test.random_voyelle() into prenom;
     select 'D' || test.random_voyelle() || 'd' || test.random_voyelle() into nom;
     select count(*) from auth.users into user_count; -- pour être certain que le mail est unique
     select lower(prenom || '_' || user_count || '@' || nom || '.fr') into email;
     select 'yolododo' into password;
 
-    perform test_create_user(user_id, prenom, nom, email);
+    perform test_create_user(new_user_id, prenom, nom, email);
 
     if collectivite_id is not null
     then
-        perform test_attach_user(user_id, collectivite_id, niveau);
+        perform test_attach_user(new_user_id, collectivite_id, niveau);
     end if;
 
     if cgu_acceptees
     then
         update dcp
-        set cgu_acceptees_le = now()
-        where dcp.user_id = user_id;
+            set cgu_acceptees_le = now()
+            where dcp.user_id = new_user_id;
     end if;
 end;
 $$ language plpgsql security definer;
