@@ -36,7 +36,9 @@ const FicheActionCard = ({ficheAction, link}: TFicheActionCard) => {
               )}
             </div>
             <div className="mb-auto font-bold line-clamp-3">
-              {ficheAction.titre ?? 'Sans titre'}
+              {ficheAction.titre && ficheAction.titre.length > 0
+                ? ficheAction.titre
+                : 'Sans titre'}
             </div>
             <span className="fr-fi-arrow-right-line ml-auto mt-4 text-bf500 scale-75" />
           </div>
