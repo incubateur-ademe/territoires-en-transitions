@@ -1,0 +1,12 @@
+Test:
+  Le potentiel des sous-actions la 4.3.2 pour les collectivités hors DOM.
+Scores:
+  cae_4.3.2.2:
+    point_referentiel: 14
+    point_potentiel: 0.7
+  cae_4.3.2.3:
+    point_referentiel: 14
+    point_potentiel: 1.4
+  cae_4.3.2.7:
+    point_referentiel: 14
+    point_potentiel: 4.2
