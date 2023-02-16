@@ -60,7 +60,11 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
           <TextareaControlled
             id="title"
             initialValue={fiche.titre ?? ''}
-            onBlur={e => updateFiche({...fiche, titre: e.target.value})}
+            onBlur={e => {
+              e.target.value.trim().length > 0 &&
+                e.target.value.trim() !== fiche.titre &&
+                updateFiche({...fiche, titre: e.target.value.trim()});
+            }}
             placeholder="Écrire ici..."
             maxLength={300}
             className="outline-transparent resize-none"
@@ -71,7 +75,11 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
           <TextareaControlled
             id="description"
             initialValue={fiche.description ?? ''}
-            onBlur={e => updateFiche({...fiche, description: e.target.value})}
+            onBlur={e => {
+              e.target.value.trim().length > 0 &&
+                e.target.value.trim() !== fiche.description &&
+                updateFiche({...fiche, description: e.target.value.trim()});
+            }}
             placeholder="Écrire ici..."
             maxLength={20000}
             className="outline-transparent resize-none"
@@ -104,7 +112,11 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
         <FormField label="Objectifs">
           <TextareaControlled
             initialValue={fiche.objectifs ?? ''}
-            onBlur={e => updateFiche({...fiche, objectifs: e.target.value})}
+            onBlur={e => {
+              e.target.value.trim().length > 0 &&
+                e.target.value.trim() !== fiche.objectifs &&
+                updateFiche({...fiche, objectifs: e.target.value.trim()});
+            }}
             placeholder="Écrire ici..."
             maxLength={10000}
             className="outline-transparent resize-none"
@@ -155,7 +167,11 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
           <TextareaControlled
             id="moyens-humains-tech"
             initialValue={fiche.ressources ?? ''}
-            onBlur={e => updateFiche({...fiche, ressources: e.target.value})}
+            onBlur={e => {
+              e.target.value.trim().length > 0 &&
+                e.target.value.trim() !== fiche.ressources &&
+                updateFiche({...fiche, ressources: e.target.value.trim()});
+            }}
             placeholder="Écrire ici..."
             maxLength={10000}
             className="outline-transparent resize-none"
@@ -197,7 +213,11 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
           <TextareaControlled
             id="financements"
             initialValue={fiche.financements ?? ''}
-            onBlur={e => updateFiche({...fiche, financements: e.target.value})}
+            onBlur={e =>
+              e.target.value.trim().length > 0 &&
+              e.target.value.trim() !== fiche.financements &&
+              updateFiche({...fiche, financements: e.target.value.trim()})
+            }
             placeholder="Écrire ici..."
             className="outline-transparent resize-none"
             disabled={isReadonly}
@@ -210,10 +230,12 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
           <FicheActionFormBudgetInput
             budget={fiche.budget_previsionnel}
             onBlur={e => {
-              updateFiche({
-                ...fiche,
-                budget_previsionnel: parseInt(e.target.value),
-              });
+              e.target.value.trim().length > 0 &&
+                parseInt(e.target.value) !== fiche.budget_previsionnel &&
+                updateFiche({
+                  ...fiche,
+                  budget_previsionnel: parseInt(e.target.value),
+                });
             }}
             disabled={isReadonly}
           />
@@ -295,7 +317,11 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
           <TextareaControlled
             id="calendrier"
             initialValue={fiche.calendrier ?? ''}
-            onBlur={e => updateFiche({...fiche, calendrier: e.target.value})}
+            onBlur={e =>
+              e.target.value.trim().length > 0 &&
+              e.target.value.trim() !== fiche.calendrier &&
+              updateFiche({...fiche, calendrier: e.target.value.trim()})
+            }
             placeholder="Écrire ici..."
             className="outline-transparent resize-none"
             disabled={isReadonly}
@@ -315,7 +341,12 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
             id="notes-complementaires"
             initialValue={fiche.notes_complementaires ?? ''}
             onBlur={e =>
-              updateFiche({...fiche, notes_complementaires: e.target.value})
+              e.target.value.trim().length > 0 &&
+              e.target.value.trim() !== fiche.notes_complementaires &&
+              updateFiche({
+                ...fiche,
+                notes_complementaires: e.target.value.trim(),
+              })
             }
             placeholder="Écrire ici..."
             maxLength={20000}
