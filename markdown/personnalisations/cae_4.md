@@ -155,7 +155,7 @@ action_id: cae_4.3.1.2
 ## Règles
 ### Réduction de potentiel
 ```formule
-si identite(localisation, DOM) alors 3,6/12
+si identite(localisation, DOM) alors 3.6/12
 ```
 Pour une collectivité hors Métropole, la 4.3.1.2 est notée sur 30 % (au lieu de 20 %).
 
@@ -166,7 +166,7 @@ action_id: cae_4.3.1.4
 ## Règles
 ### Réduction de potentiel
 ```formule
-si identite(localisation, DOM) alors 2,4/12
+si identite(localisation, DOM) alors 2.4/12
 ```
 Pour une collectivité hors Métropole, la 4.3.1.2 est notée sur 20 % (au lieu de 30 %).
 
@@ -191,7 +191,7 @@ action_id: cae_4.3.2.2
 ## Règles
 ### Réduction de potentiel
 ```formule
-si identite(localisation, DOM) alors 1,4/14
+si identite(localisation, DOM) alors 1.4/14
 ```
 Pour une collectivité hors Métropole, la 4.3.2.2 est notée sur 10 % (au lieu de 5 %).
 
@@ -202,7 +202,7 @@ action_id: cae_4.3.2.3
 ## Règles
 ### Réduction de potentiel
 ```formule
-si identite(localisation, DOM) alors 2,8/14
+si identite(localisation, DOM) alors 2.8/14
 ```
 Pour une collectivité hors Métropole, la 4.3.2.3 est notée sur 20 % (au lieu de 10 %).
 
@@ -228,7 +228,7 @@ action_id: cae_4.3.2.7
 ## Règles
 ### Réduction de potentiel
 ```formule
-si identite(localisation, DOM) alors 2,8/14
+si identite(localisation, DOM) alors 2.8/14
 ```
 Pour une collectivité hors Métropole, la 4.3.2.7 est notée sur 20 % (au lieu de 30 %).
 
