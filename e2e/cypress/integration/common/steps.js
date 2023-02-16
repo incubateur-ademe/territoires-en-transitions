@@ -61,6 +61,22 @@ Given('je me reconnecte en tant que {string}', function (userName) {
   login(userName);
 });
 
+Given(
+  "je suis connecté en tant qu'utilisateur de la collectivité {int} n'ayant pas encore accepté les CGU",
+  function (collectivite_id) {
+    return cy
+      .task('supabase_rpc', {
+        name: 'test_add_random_user',
+        params: {collectivite_id, niveau: 'edition', cgu_acceptees: false},
+      })
+      .then(({data: user}) => {
+        cy.get('@auth').then(auth => auth.connect(user));
+        cy.get(SignInPage.selector).should('not.exist');
+        cy.get('[data-test=connectedMenu]').should('be.visible');
+      });
+  }
+);
+
 Given('les discussions sont réinitialisées', () => {
   cy.task('supabase_rpc', {name: 'test_reset_discussion_et_commentaires'});
 });

@@ -1,5 +1,5 @@
-import { LocalSelectors } from './selectors';
-import { LocalMocks } from './mocks';
+import {LocalSelectors} from './selectors';
+import {LocalMocks} from './mocks';
 
 // enregistre les définitions locales
 beforeEach(() => {
@@ -15,8 +15,7 @@ Given(
     cy.task('supabase_generateLink', {
       type: 'recovery',
       email: 'yolo@dodo.com',
-    }).then((res) => {
-
+    }).then(res => {
       // extrait le OTP
       const email_otp = res?.data?.email_otp;
       assert(email_otp, 'OTP non trouvé');
@@ -29,14 +28,14 @@ Given(
 
 When('je vais vérifier les données envoyées à la chatbox', () => {
   // attend que le client crisp soit chargé
-  cy.window({ log: false })
+  cy.window({log: false})
     .its('$crisp')
     // et enregistre un espion pour sa méthode `push`
-    .then(($crisp) => cy.spy($crisp, 'push').as('crisp.push'));
+    .then($crisp => cy.spy($crisp, 'push').as('crisp.push'));
 });
 
-When('les données suivantes ont été envoyées à la chatbox :', (dataTable) => {
-  const { nom, prenom, email } = dataTable.rowsHash();
+When('les données suivantes ont été envoyées à la chatbox :', dataTable => {
+  const {nom, prenom, email} = dataTable.rowsHash();
   // vérifie que l'identité de l'utilisateur est associée à la session crisp
   cy.get('@crisp.push').should('be.calledWith', [
     'set',

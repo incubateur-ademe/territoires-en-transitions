@@ -205,3 +205,20 @@ Fonctionnalité: Accéder au site et se connecter
       | formulaire de connexion                    | absent    |
       | formulaire de réinitialisation du mdp      | absent    |
       | réinitialisation du mot de passe en erreur | visible   |
+
+  Scénario: Se connecter et accepter les CGU
+    Etant donné que je suis connecté en tant qu'utilisateur de la collectivité 1 n'ayant pas encore accepté les CGU
+    Alors le "dialogue de validation des CGU" est visible
+    Et le bouton "Fermer" du "dialogue de validation des CGU" est absent
+
+    # on vérifie qu'on ne peut pas fermer la modale en cliquant en dehors
+    Quand je clique en dehors de la boîte de dialogue
+    Alors le "dialogue de validation des CGU" est visible
+
+    # et quelle est toujours affichée si on recharge la page
+    Quand je recharge la page
+    Alors le "dialogue de validation des CGU" est visible
+
+    # puis on accepte les CGU
+    Quand je clique sur le bouton "Valider les CGU"
+    Alors le "dialogue de validation des CGU" est absent

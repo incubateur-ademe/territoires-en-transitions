@@ -32,4 +32,13 @@ export const LocalSelectors = {
   'réinitialisation du mot de passe en erreur': {
     selector: '[data-test=ResetPasswordFailed]',
   },
+  'dialogue de validation des CGU': {
+    selector: '[data-test=AccepterCGU]',
+    children: {
+      Fermer: '[data-test=close-modal]',
+    },
+  },
+  'Valider les CGU': {
+    selector: '[data-test=AccepterCGUBtn]',
+  },
 };
