@@ -6,9 +6,10 @@ import {IndicateurGlobal} from '../data/types/indicateurGlobal';
 type Props = {
   indicateurs: IndicateurGlobal[] | null;
   onSelect: (indicateurs: IndicateurGlobal[]) => void;
+  isReadonly: boolean;
 };
 
-const IndicateursDropdown = ({indicateurs, onSelect}: Props) => {
+const IndicateursDropdown = ({indicateurs, onSelect, isReadonly}: Props) => {
   const {data: indicateurListe} = useIndicateurListe();
 
   const formatOptions = (indicateurs?: IndicateurGlobal[] | null): TOption[] =>
@@ -46,6 +47,7 @@ const IndicateursDropdown = ({indicateurs, onSelect}: Props) => {
           ? 'Recherchez par mots-clés'
           : 'Recherchez par mots-clés ou sélectionnez dans la liste'
       }
+      disabled={isReadonly}
     />
   );
 };

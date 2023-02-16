@@ -7,9 +7,10 @@ import {Personne} from '../data/types/personne';
 type Props = {
   personnes: Personne[] | null;
   onSelect: (personnes: Personne[]) => void;
+  isReadonly: boolean;
 };
 
-const PersonnePiloteDropdown = ({personnes, onSelect}: Props) => {
+const PersonnePiloteDropdown = ({personnes, onSelect, isReadonly}: Props) => {
   const collectivite_id = useCollectiviteId();
 
   const {data: personneListe} = usePersonnePiloteListe();
@@ -52,6 +53,7 @@ const PersonnePiloteDropdown = ({personnes, onSelect}: Props) => {
         )
       }
       placeholderText="Créer un tag..."
+      disabled={isReadonly}
     />
   );
 };

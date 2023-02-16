@@ -7,9 +7,10 @@ import {TFicheActionStructureInsert} from '../data/types/alias';
 type Props = {
   structures: TFicheActionStructureInsert[] | null;
   onSelect: (structures: TFicheActionStructureInsert[]) => void;
+  isReadonly: boolean;
 };
 
-const StructurePiloteDropdown = ({structures, onSelect}: Props) => {
+const StructurePiloteDropdown = ({structures, onSelect, isReadonly}: Props) => {
   const collectivite_id = useCollectiviteId();
 
   const {data: structureListe} = useStructurePiloteListe();
@@ -48,6 +49,7 @@ const StructurePiloteDropdown = ({structures, onSelect}: Props) => {
         )
       }
       placeholderText="Créer un tag..."
+      disabled={isReadonly}
     />
   );
 };

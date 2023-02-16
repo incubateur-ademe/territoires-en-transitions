@@ -8,6 +8,7 @@ type Props<T> = {
 const FicheActionFormBudgetInput = <T extends HTMLInputElement>({
   budget,
   onBlur,
+  disabled,
 }: Props<T>) => {
   const [value, setValue] = useState(budget?.toString());
 
@@ -33,6 +34,7 @@ const FicheActionFormBudgetInput = <T extends HTMLInputElement>({
         onBlur={onBlur}
         maxLength={20}
         placeholder="Écrire ici..."
+        disabled={disabled}
       />
       <span className="ml-2 text-sm">€ TTC</span>
     </div>
