@@ -275,7 +275,7 @@ def test_cae_335_with_score_taken_into_account(
     """
     # Cas 1 :  Si commune avec compétence déchets, il n'y a pas de réduction de potentiel.
     # ------
-    reponses = [Reponse("dechets_2", "OUI")]
+    reponses = [Reponse("dechets_1", "NON"), Reponse("dechets_2", "OUI"), Reponse("dechets_3", "NON")]
     statuts = [  # Quand reponse(dechets_2, OUI), cae_1.2.3 est réduit de 0.75, et est donc notée sur 7.5 points au lieu de 10 points.
         # La sous-action cae_1.2.3.3 représente 30% de l'action donc est noté sur 30% de 7.5 points, ce qui fait 2.25 points.
         ActionStatut(ActionId("cae_1.2.3.3.1"), DetailedAvancement(1, 0, 0), True),
