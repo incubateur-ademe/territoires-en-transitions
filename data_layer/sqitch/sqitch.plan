@@ -223,4 +223,5 @@ automatisation/crm [automatisation/crm@v2.2.0] 2023-02-14T13:38:42Z Amandine Jac
 @v2.2.2 2023-02-15T15:49:36Z Amandine Jacquelin <conta@LanceLibre> # Ajout automatisation avec crm sur les plans d'action et les collectivites inactives
 
 plan_action/plan_action [plan_action/plan_action@v2.1.1] 2023-01-31T15:33:46Z Amandine Jacquelin <conta@LanceLibre> # Modifie la fonction d'import et ajoute de nouveaux champs aux axes et fiches
-utilisateur/visite [utilisateur/visite@v2.2.0] 2023-02-13T09:45:02Z Florian <florian@derfurth.com> # Ajoute nouvelles pages au tracker
+utilisateur/visite [utilisateur/visite@v2.2.0] 2023-02-13T09:45:02Z Florian <florian@derfurth.com> # Ajoute de nouvelles pages au tracker
+@v2.3.0 2023-02-17T14:39:23Z Florian <florian@derfurth.com> # Améliorations de la fonctionnalité plan d'action
