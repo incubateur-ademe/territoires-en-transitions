@@ -15,11 +15,11 @@ Scores:
     desactive: yes
   cae_6.1.2.4.4:
     test: La 6.1.2.4.4 est désactivée pour les EPCI
-    point_referentiel: 0.8
+    point_referentiel: 0.16
     point_potentiel: 0.0
     desactive: yes
   cae_6.1.2.4.5:
     test: La 6.1.2.4.5 est désactivée pour les EPCI
-    point_referentiel: 0.8
+    point_referentiel: 0.16
     point_potentiel: 0.0
     desactive: yes
