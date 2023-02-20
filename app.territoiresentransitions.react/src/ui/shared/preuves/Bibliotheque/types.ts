@@ -1,7 +1,5 @@
 import {TEditState} from 'core-logic/hooks/useEditState';
-import {TEtoiles} from 'generated/dataLayer/labellisation_parcours_read';
 import {Database} from 'types/database.types';
-import {Referentiel} from 'types/litterals';
 
 // un fichier de la bibliothèque
 export type TBibliothequeFichier = {
