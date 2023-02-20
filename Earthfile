@@ -54,8 +54,8 @@ dev:
 
 stop:
     LOCALLY
-    RUN docker ps --filter name=_territoiresentransitions.fr --filter status=running -aq | xargs docker stop | xargs docker rm
+    RUN docker ps --filter name=transitions --filter status=running -aq | xargs docker stop | xargs docker rm
 
 stats:
     LOCALLY
-    RUN docker stats $(docker ps --format '{{.Names}}' --filter name=_territoiresentransitions.fr)
+    RUN docker stats $(docker ps --format '{{.Names}}' --filter name=transitions)
