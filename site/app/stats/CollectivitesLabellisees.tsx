@@ -27,7 +27,7 @@ function useCollectivitesLabellisees(referentiel: Props['referentiel']) {
 
   return data?.map(d => ({
     id: d.etoiles,
-    label: `${d.etoiles} étoile${d.etoiles > 1 ? 's' : ''}`,
+    label: `${d.etoiles} étoile${(d.etoiles || 0) > 1 ? 's' : ''}`,
     value: d.labellisations,
   }));
 }

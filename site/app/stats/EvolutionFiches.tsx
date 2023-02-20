@@ -47,9 +47,11 @@ export function useEvolutionFiches(vue: Vue) {
       evolution: [
         {
           id: labels[colonneValeur[vue] as keyof typeof labels],
+          // @ts-ignore
           data: data.map(d => ({x: d.mois, y: d[colonneValeur[vue]]})),
         },
       ],
+      // @ts-ignore
       last: data[data.length - 1][colonneValeur[vue]],
     };
   });
