@@ -61,7 +61,7 @@ const PlanActionAxe = ({
           <TextareaControlled
             ref={inputRef}
             className={classNames(
-              'w-full mb-0 text-left disabled:cursor-pointer disabled:text-gray-900 !text-base !outline-none !resize-none',
+              'w-full mb-0 text-left disabled:pointer-events-none disabled:cursor-pointer disabled:text-gray-900 !text-base !outline-none !resize-none',
               {
                 'font-bold': isOpen && !isEditable,
                 'placeholder:text-gray-900': !isEditable,
