@@ -14,5 +14,6 @@ begin atomic
     where user_id = auth.uid()
     returning *;
 end;
+comment on function accepter_cgu is 'Inscrit la date à laquelle l''utilisateur a acceptée les CGU.';
 
 COMMIT;
