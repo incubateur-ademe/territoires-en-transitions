@@ -30,10 +30,13 @@ business-docker:
     FROM DOCKERFILE ./business/
     SAVE IMAGE business:latest
 
-save-env:
+setup-env:
     LOCALLY
+    RUN earthly +stop
+    RUN supabase start
     RUN supabase status -o env --override-name auth.anon_key=SUPABASE_ANON_KEY --override-name auth.service_role_key=SUPABASE_SERVICE_ROLE_KEY > .env
     RUN export $(cat .env | xargs) && sh ./make_dot_env.sh
+    RUN earthly +stop
 
 dev:
     LOCALLY
