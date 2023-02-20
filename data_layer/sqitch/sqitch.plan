@@ -226,4 +226,5 @@ plan_action/plan_action [plan_action/plan_action@v2.1.1] 2023-01-31T15:33:46Z Am
 utilisateur/visite [utilisateur/visite@v2.2.0] 2023-02-13T09:45:02Z Florian <florian@derfurth.com> # Ajoute de nouvelles pages au tracker
 @v2.3.0 2023-02-17T14:39:23Z Florian <florian@derfurth.com> # Améliorations de la fonctionnalité plan d'action
 
-labellisation/comparaison_audit [labellisation/comparaison_audit@v2.2.0] 2023-02-07T13:13:47Z Amandine Jacquelin <conta@LanceLibre> # Ajoute un trigger pour supprimer les scores quand on supprime l'audit
+labellisation/comparaison_audit [labellisation/comparaison_audit@v2.2.0] 2023-02-07T13:13:47Z Amandine Jacquelin <conta@LanceLibre> # Ajoute une contrainte pour supprimer les scores pre-audit quand on supprime l'audit
+@v2.3.1 2023-02-20T12:38:17Z Florian <florian@derfurth.com> # Permet la suppression des audits depuis retool
