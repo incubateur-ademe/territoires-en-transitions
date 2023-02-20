@@ -7,20 +7,22 @@ import PictoLeaf from 'ui/pictogrammes/PictoLeaf';
 import {AxeActions} from './AxeActions';
 import FicheActionCard from '../FicheAction/FicheActionCard';
 
-import {useCollectiviteId} from 'core-logic/hooks/params';
 import {makeCollectivitePlanActionFicheUrl} from 'app/paths';
 import {usePlanAction} from './data/usePlanAction';
 import {useEditAxe} from './data/useEditAxe';
 import {TPlanAction} from './data/types/PlanAction';
 import TextareaControlled from 'ui/shared/form/TextareaControlled';
 import PlanActionFooter from './PlanActionFooter';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
 type PlanActionProps = {
   plan: TPlanAction;
 };
 
 export const PlanAction = ({plan}: PlanActionProps) => {
-  const collectivite_id = useCollectiviteId();
+  const collectivite = useCurrentCollectivite();
+
+  const isReadonly = collectivite?.readonly ?? false;
 
   const {mutate: updatePlan} = useEditAxe(plan.axe.id);
 
@@ -38,6 +40,7 @@ export const PlanAction = ({plan}: PlanActionProps) => {
       planActionGlobal={plan}
       axe={axe}
       displayAxe={displaySousAxe}
+      isReadonly={isReadonly}
     />
   );
 
@@ -47,7 +50,7 @@ export const PlanAction = ({plan}: PlanActionProps) => {
         <h4 className="group max-w-4xl flex items-center mx-auto m-0 py-8 px-10 text-white">
           <TextareaControlled
             ref={inputRef}
-            className="w-full placeholder:text-white focus:placeholder:text-gray-200 !outline-none !resize-none !text-2xl"
+            className="w-full placeholder:text-white focus:placeholder:text-gray-200 disabled:text-white !outline-none !resize-none !text-2xl"
             initialValue={plan.axe.nom}
             placeholder={'Sans titre'}
             onBlur={e =>
@@ -56,19 +59,27 @@ export const PlanAction = ({plan}: PlanActionProps) => {
               e.target.value !== plan.axe.nom &&
               updatePlan({id: plan.axe.id, nom: e.target.value})
             }
+            disabled={isReadonly}
           />
-          <button
-            className="fr-fi-edit-line group-hover:block hidden w-8 h-8"
-            onClick={handleEditButtonClick}
-          />
+          {!isReadonly && (
+            <button
+              className="fr-fi-edit-line group-hover:block hidden w-8 h-8"
+              onClick={handleEditButtonClick}
+            />
+          )}
         </h4>
       </div>
       <div className="max-w-4xl mx-auto px-10">
-        <PlanActionHeader plan={plan} collectivite_id={collectivite_id!} />
+        <PlanActionHeader
+          plan={plan}
+          collectivite_id={collectivite?.collectivite_id!}
+        />
         {plan.enfants || plan.fiches ? (
           <>
             <div className="mb-4">
-              <AxeActions planActionId={plan.axe.id} axeId={plan.axe.id} />
+              {!isReadonly && (
+                <AxeActions planActionId={plan.axe.id} axeId={plan.axe.id} />
+              )}
               {/** Affichage des fiches */}
               {plan.fiches && (
                 <div className="grid grid-cols-2 gap-4 mt-6">
@@ -95,6 +106,7 @@ export const PlanAction = ({plan}: PlanActionProps) => {
                   planActionGlobal={plan}
                   axe={enfant}
                   displayAxe={displaySousAxe}
+                  isReadonly={isReadonly}
                 />
               ))}
           </>
@@ -105,11 +117,13 @@ export const PlanAction = ({plan}: PlanActionProps) => {
               <div className="my-6 text-gray-500">
                 Aucune arborescence pour l'instant
               </div>
-              <AxeActions planActionId={plan.axe.id} axeId={plan.axe.id} />
+              {!isReadonly && (
+                <AxeActions planActionId={plan.axe.id} axeId={plan.axe.id} />
+              )}
             </div>
           </div>
         )}
-        <PlanActionFooter plan={plan} />
+        <PlanActionFooter plan={plan} isReadonly={isReadonly} />
       </div>
     </div>
   );
