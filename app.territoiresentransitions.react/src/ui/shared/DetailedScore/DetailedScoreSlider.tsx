@@ -1,7 +1,8 @@
-import {ChangeEvent, useState} from 'react';
+import {ChangeEvent, useEffect, useState} from 'react';
 import SliderBase from '@material-ui/core/Slider';
 import {withStyles} from '@material-ui/core/styles';
 import {actionAvancementColors} from 'app/theme';
+import {Tooltip} from '../floating-ui/Tooltip';
 
 export type AvancementValues = [number, number, number];
 type SliderValues = [number, number];
@@ -71,6 +72,9 @@ const avancementToSliderValues = ([
   (done + scheduled) * 100, // not done
 ];
 
+const DEFAULT_STEP_INC = 10;
+const EXTENDED_STEP_INC = 25;
+
 /**
  * Affiche le slider de définition de l'état d'avancement détaillé d'une tâche
  */
@@ -79,6 +83,23 @@ export const DetailedScoreSlider = (props: TSliderProps) => {
   const [currentValue, setCurrentValue] = useState<SliderValues>(
     avancementToSliderValues(value)
   );
+  const [step, setStep] = useState(DEFAULT_STEP_INC);
+
+  // écoute l'état courant des touches pour changer le pas du slider quand la
+  // touche SHIFT est enfoncée
+  useEffect(() => {
+    const onKeyUpOrDown = (e: KeyboardEvent) => {
+      setStep(e.shiftKey ? EXTENDED_STEP_INC : DEFAULT_STEP_INC);
+    };
+
+    document.addEventListener('keydown', onKeyUpOrDown);
+    document.addEventListener('keyup', onKeyUpOrDown);
+
+    return () => {
+      document.removeEventListener('keydown', onKeyUpOrDown);
+      document.removeEventListener('keyup', onKeyUpOrDown);
+    };
+  }, []);
 
   const handleChange = (e: ChangeEvent<{}>, newValue: number | number[]) => {
     onChange(
@@ -125,7 +146,16 @@ export const DetailedScoreSlider = (props: TSliderProps) => {
           backgroundColor: actionAvancementColors.pas_fait,
         }}
       />
-      <Slider marks step={10} value={currentValue} onChange={handleChange} />
+      <Tooltip
+        label={`Tenir la touche SHIFT enfoncée pour un pas de ${EXTENDED_STEP_INC}% au lieu de ${DEFAULT_STEP_INC}%`}
+      >
+        <Slider
+          marks
+          step={step}
+          value={currentValue}
+          onChange={handleChange}
+        />
+      </Tooltip>
     </div>
   );
 };
