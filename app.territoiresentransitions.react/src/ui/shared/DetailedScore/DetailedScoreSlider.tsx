@@ -28,7 +28,7 @@ const Slider = withStyles({
     marginTop: -11,
     marginLeft: -10,
     boxShadow: '#ebebeb 0 2px 2px',
-    '&:focus, &:hover, &$active': {
+    '&:focus, &:hover, &:active': {
       boxShadow: '#ccc 0 2px 3px 1px',
     },
   },
@@ -71,16 +71,49 @@ const avancementToSliderValues = ([
   (done + scheduled) * 100, // not done
 ];
 
+// pas par défaut et pas étendu (de 25 en 25)
+const DEFAULT_STEP_INC = 10;
+const EXTENDED_STEP_INC = 25;
+
+// valeurs initiales des statuts en fonction de la valeur de pas
+const DEFAULT_VALUES_BY_STEP: Record<number, SliderValues> = {
+  [DEFAULT_STEP_INC]: [30, 70],
+  [EXTENDED_STEP_INC]: [25, 75],
+};
+
+// valeur initiale du pas en fonction des valeurs initiales des statuts
+const getDefaultStep = (value: SliderValues) => {
+  if (
+    value[0] % EXTENDED_STEP_INC === 0 &&
+    value[1] % EXTENDED_STEP_INC === 0
+  ) {
+    return EXTENDED_STEP_INC;
+  }
+  return DEFAULT_STEP_INC;
+};
+
 /**
  * Affiche le slider de définition de l'état d'avancement détaillé d'une tâche
  */
 export const DetailedScoreSlider = (props: TSliderProps) => {
   const {value, onChange} = props;
+
+  // valeur d'avancements en fonction des valeurs stockées dans la base
   const [currentValue, setCurrentValue] = useState<SliderValues>(
     avancementToSliderValues(value)
   );
 
-  const handleChange = (e: ChangeEvent<{}>, newValue: number | number[]) => {
+  // valeur initiale du pas
+  const [step, setStep] = useState(getDefaultStep(currentValue));
+
+  // convesion entre les valeurs du curseurs et les valeurs d'avancement
+  const [done, scheduled, notDone] = sliderValuesToAvancement(currentValue);
+
+  // met à jour les valeurs courantes lorsque les curseurs sont bougés
+  const handleChange = (
+    e: ChangeEvent<{}> | null,
+    newValue: number | number[]
+  ) => {
     onChange(
       sliderValuesToAvancement(newValue as SliderValues).map(
         v => v / 100
@@ -89,7 +122,12 @@ export const DetailedScoreSlider = (props: TSliderProps) => {
     setCurrentValue(newValue as SliderValues);
   };
 
-  const [done, scheduled, notDone] = sliderValuesToAvancement(currentValue);
+  // met à jour la valeur du pas et revient aux valeurs d'avancement par défaut
+  // associées, lorsqu'un bouton radio est cliqué
+  const handleChangeStep = (step: number) => {
+    setStep(step);
+    handleChange(null, DEFAULT_VALUES_BY_STEP[step]);
+  };
 
   return (
     <div className="w-full relative">
@@ -125,7 +163,46 @@ export const DetailedScoreSlider = (props: TSliderProps) => {
           backgroundColor: actionAvancementColors.pas_fait,
         }}
       />
-      <Slider marks step={10} value={currentValue} onChange={handleChange} />
+      <Slider marks step={step} value={currentValue} onChange={handleChange} />
+
+      <fieldset
+        className="fr-fieldset fr-fieldset--inline fr-mt-4w"
+        aria-labelledby="radio-valid-inline-legend radio-valid-inline-desc-valid"
+        role="group"
+      >
+        <div className="fr-fieldset__content">
+          <legend
+            className="fr-fieldset__legend fr-text--regular fr-mr-2w"
+            id="radio-valid-inline-legend"
+          >
+            Pas de notation :
+          </legend>
+          <div className="fr-radio-group">
+            <input
+              type="radio"
+              id="default_step"
+              name="radio-valid"
+              checked={step === DEFAULT_STEP_INC}
+              onChange={() => handleChangeStep(DEFAULT_STEP_INC)}
+            />
+            <label className="fr-label" htmlFor="default_step">
+              de {DEFAULT_STEP_INC} en {DEFAULT_STEP_INC}
+            </label>
+          </div>
+          <div className="fr-radio-group">
+            <input
+              type="radio"
+              id="extended_step"
+              name="radio-valid"
+              checked={step === EXTENDED_STEP_INC}
+              onChange={() => handleChangeStep(EXTENDED_STEP_INC)}
+            />
+            <label className="fr-label" htmlFor="extended_step">
+              de {EXTENDED_STEP_INC} en {EXTENDED_STEP_INC}
+            </label>
+          </div>
+        </div>
+      </fieldset>
     </div>
   );
 };
