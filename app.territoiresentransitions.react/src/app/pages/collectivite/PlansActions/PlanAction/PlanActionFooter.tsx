@@ -6,26 +6,29 @@ import SupprimerAxeModal from './SupprimerAxeModal';
 
 type TPlanActionFooter = {
   plan: TPlanAction;
+  isReadonly: boolean;
 };
 
-const PlanActionFooter = ({plan}: TPlanActionFooter) => {
+const PlanActionFooter = ({plan, isReadonly}: TPlanActionFooter) => {
   const collectivite_id = useCollectiviteId();
 
   return (
     <div className="flex flex-col gap-8 items-start pt-12">
-      <SupprimerAxeModal
-        axe={plan.axe}
-        plan={plan}
-        redirectURL={makeCollectiviteFichesNonClasseesUrl({
-          collectiviteId: collectivite_id!,
-        })}
-      >
-        <div className="inline-flex border border-red-700">
-          <button className="fr-btn fr-btn--secondary fr-btn--sm fr-text-default--error !shadow-none">
-            Supprimer ce plan d’action
-          </button>
-        </div>
-      </SupprimerAxeModal>
+      {!isReadonly && (
+        <SupprimerAxeModal
+          axe={plan.axe}
+          plan={plan}
+          redirectURL={makeCollectiviteFichesNonClasseesUrl({
+            collectiviteId: collectivite_id!,
+          })}
+        >
+          <div className="inline-flex border border-red-700">
+            <button className="fr-btn fr-btn--secondary fr-btn--sm fr-text-default--error !shadow-none">
+              Supprimer ce plan d’action
+            </button>
+          </div>
+        </SupprimerAxeModal>
+      )}
       <ScrollTopButton />
     </div>
   );

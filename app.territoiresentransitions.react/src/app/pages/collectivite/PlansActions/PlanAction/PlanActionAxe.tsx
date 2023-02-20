@@ -15,9 +15,15 @@ type Props = {
   planActionGlobal: TPlanAction;
   axe: TPlanAction;
   displayAxe: (axe: TPlanAction) => void;
+  isReadonly: boolean;
 };
 
-const PlanActionAxe = ({planActionGlobal, axe, displayAxe}: Props) => {
+const PlanActionAxe = ({
+  planActionGlobal,
+  axe,
+  displayAxe,
+  isReadonly,
+}: Props) => {
   const {mutate: updatePlan} = useEditAxe(planActionGlobal.axe.id);
 
   const [isOpen, setIsOpen] = useState(false);
@@ -73,20 +79,26 @@ const PlanActionAxe = ({planActionGlobal, axe, displayAxe}: Props) => {
             }}
           />
         </button>
-        <button
-          className="fr-fi-edit-line invisible group-hover:visible p-2 text-gray-500 scale-90"
-          onClick={handleEditButtonClick}
-        />
-        <SupprimerAxeModal axe={axe.axe} plan={planActionGlobal}>
-          <button className="invisible group-hover:visible fr-btn fr-btn--secondary fr-text-default--error fr-fi-delete-line !shadow-none p-2 text-gray-500 scale-90" />
-        </SupprimerAxeModal>
+        {!isReadonly && (
+          <>
+            <button
+              className="fr-fi-edit-line invisible group-hover:visible p-2 text-gray-500 scale-90"
+              onClick={handleEditButtonClick}
+            />
+            <SupprimerAxeModal axe={axe.axe} plan={planActionGlobal}>
+              <button className="invisible group-hover:visible fr-btn fr-btn--secondary fr-text-default--error fr-fi-delete-line !shadow-none p-2 text-gray-500 scale-90" />
+            </SupprimerAxeModal>
+          </>
+        )}
       </div>
       {isOpen && (
         <div className="flex flex-col gap-4 mt-3 ml-12">
-          <AxeActions
-            planActionId={planActionGlobal.axe.id}
-            axeId={axe.axe.id}
-          />
+          {!isReadonly && (
+            <AxeActions
+              planActionId={planActionGlobal.axe.id}
+              axeId={axe.axe.id}
+            />
+          )}
           {axe.fiches && (
             <div className="grid grid-cols-2 gap-4">
               {axe.fiches.map((fiche: TFicheAction) => (
