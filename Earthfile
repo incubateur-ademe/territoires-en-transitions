@@ -26,6 +26,15 @@ seed:
     COPY ./data_layer/seed /seed
     RUN --push sh ./seed/seed.sh
 
+load-contents:
+    FROM alpine/curl
+    ARG --required SUPABASE_SERVICE_ROLE_KEY
+    ARG --required API_URL
+    ARG URL=$(echo $API_URL | sed "s/localhost/host.docker.internal/")
+    ARG SERVICE_ROLE_KEY=$(echo $SUPABASE_SERVICE_ROLE_KEY)
+    COPY ./data_layer/content /content
+    RUN --push sh ./content/load.sh
+
 business-docker:
     FROM DOCKERFILE ./business/
     SAVE IMAGE business:latest
@@ -51,6 +60,7 @@ dev:
     RUN docker run -p 8888:8888 -d --name business_territoiresentransitions.fr business:latest
     RUN earthly --push +deploy --DB_URL=$PG_URL
     RUN earthly --push +seed --DB_URL=$PG_URL
+    RUN earthly --push +load-contents
 
 stop:
     LOCALLY
