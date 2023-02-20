@@ -90,7 +90,7 @@ const Modal = ({
               display: 'grid',
               placeItems: 'center',
               background: 'hsla(0deg, 0%, 8.6%, 0.375)',
-              zIndex: 50,
+              zIndex: 40,
             }}
           >
             <FloatingFocusManager context={context}>
