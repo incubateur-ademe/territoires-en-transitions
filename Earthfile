@@ -14,10 +14,11 @@ sqitch:
     COPY ./data_layer/sqitch ./data_layer/sqitch
 
 deploy:
-    ARG DB_URL
+    ARG --required DB_URL
     ARG MODE=change
     FROM +sqitch
-    RUN --push sqitch deploy db:$DB_URL --mode $MODE
+    ARG PG_URL=$(echo $DB_URL | sed "s/localhost/host.docker.internal/")
+    RUN --push sqitch deploy db:$PG_URL --mode $MODE
 
 seed:
     ARG --required DB_URL
