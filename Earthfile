@@ -20,9 +20,10 @@ deploy:
     RUN --push sqitch deploy db:$DB_URL --mode $MODE
 
 seed:
-    ARG DB_URL
+    ARG --required DB_URL
     ARG SKIP_TEST_DOMAIN=0
     FROM +postgres
+    ARG PG_URL=$(echo $DB_URL | sed "s/localhost/host.docker.internal/")
     COPY ./data_layer/seed /seed
     RUN --push sh ./seed/seed.sh
 
