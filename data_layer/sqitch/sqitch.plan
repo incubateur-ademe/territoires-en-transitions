@@ -230,3 +230,4 @@ labellisation/comparaison_audit [labellisation/comparaison_audit@v2.2.0] 2023-02
 @v2.3.1 2023-02-20T12:38:17Z Florian <florian@derfurth.com> # Permet la suppression des audits depuis retool
 
 utilisateur/dcp [utilisateur/dcp@v2.2.2] 2023-02-16T14:10:59Z Marc Rutkowski <marc@attractive-media.fr> # ajoute la date d'acceptation des CGU aux DCP
+@v2.4.0 2023-02-21T08:30:02Z Florian <florian@derfurth.com> # Acceptation des CGU
