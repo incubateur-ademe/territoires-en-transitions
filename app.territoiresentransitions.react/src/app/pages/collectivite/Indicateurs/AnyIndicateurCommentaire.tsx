@@ -1,4 +1,4 @@
-import {TextInput} from '@dataesr/react-dsfr';
+import Textarea from 'ui/shared/form/Textarea';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
 export const AnyIndicateurCommentaire = ({
@@ -11,13 +11,20 @@ export const AnyIndicateurCommentaire = ({
   const collectivite = useCurrentCollectivite();
 
   return collectivite ? (
-    <TextInput
-      textarea
-      defaultValue={value}
-      onBlur={handleSave}
-      label="Précisions sur l'indicateur"
-      hint="Renseignez ici les informations que vous souhaitez préciser vis-à-vis de l'indicateur. Analyse de la tendance d'évolution, éléments de contexte sur l'évolution des valeurs, sources, etc."
-      disabled={collectivite.readonly}
-    />
+    <>
+      <label className="fr-label" htmlFor="file-upload">
+        Précisions sur l'indicateur
+        <p className="fr-hint-text">
+          Renseignez ici les informations que vous souhaitez préciser vis-à-vis
+          de l'indicateur. Analyse de la tendance d'évolution, éléments de
+          contexte sur l'évolution des valeurs, sources, etc.
+        </p>
+      </label>
+      <Textarea
+        defaultValue={value}
+        onBlur={handleSave}
+        disabled={collectivite.readonly}
+      />
+    </>
   ) : null;
 };
