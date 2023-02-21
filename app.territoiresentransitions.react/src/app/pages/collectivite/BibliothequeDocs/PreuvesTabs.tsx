@@ -3,7 +3,7 @@
  * par référentiel et niveau
  */
 
-import {Tabs, Tab} from '@dataesr/react-dsfr';
+import {Tabs, Tab} from 'ui/shared/Tabs';
 import {referentielToName} from 'app/labels';
 import {Referentiel} from 'types/litterals';
 import {useTableData} from './useTableData';
@@ -11,9 +11,11 @@ import {PreuvesTable} from './PreuvesTable';
 
 const REFERENTIELS: Referentiel[] = ['cae', 'eci'];
 
-const PreuvesTab = (props: { referentielId: Referentiel }) => {
+const PreuvesTab = (props: {referentielId: Referentiel}) => {
   const tableData = useTableData(props.referentielId);
-  return <PreuvesTable tableData={tableData} referentielId={props.referentielId} />
+  return (
+    <PreuvesTable tableData={tableData} referentielId={props.referentielId} />
+  );
 };
 
 export const PreuvesTabs = () => {

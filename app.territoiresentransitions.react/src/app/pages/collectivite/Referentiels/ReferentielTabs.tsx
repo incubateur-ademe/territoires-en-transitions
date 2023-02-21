@@ -1,6 +1,5 @@
 import {useHistory} from 'react-router-dom';
-import {Tab} from '@dataesr/react-dsfr';
-import Tabs from 'ui/shared/Tabs';
+import {Tabs, Tab} from 'ui/shared/Tabs';
 import {referentielToName} from 'app/labels';
 import {
   makeCollectiviteReferentielUrl,
@@ -66,7 +65,11 @@ const ReferentielTabs = () => {
         Référentiel{' '}
         {referentielToName[referentielId as ReferentielOfIndicateur]}
       </h1>
-      <Tabs className="w-full" activeTab={activeTab} onChange={handleChange}>
+      <Tabs
+        className="w-full"
+        defaultActiveTab={activeTab}
+        onChange={handleChange}
+      >
         <Tab label="Progression">
           <Progression />
         </Tab>

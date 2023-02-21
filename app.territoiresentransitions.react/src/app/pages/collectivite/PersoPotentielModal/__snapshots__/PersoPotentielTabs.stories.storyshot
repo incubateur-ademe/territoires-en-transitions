@@ -19,14 +19,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         onClick={[Function]}
         onKeyDown={[Function]}
         role="tab"
-        tabIndex={-1}
         type="button"
       >
-        <span>
-          <span
-            className="ri-sm icon-left ds-fr--v-middle fr-fi-settings-line flex"
-          />
-        </span>
+        <span
+          className="ri-sm icon-left ds-fr--v-middle fr-fi-settings-line flex"
+        />
          Personnalisation du potentiel
       </button>
     </li>
@@ -41,14 +38,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         onClick={[Function]}
         onKeyDown={[Function]}
         role="tab"
-        tabIndex={0}
         type="button"
       >
-        <span>
-          <span
-            className="ri-sm icon-left ds-fr--v-middle fr-fi-information-line"
-          />
-        </span>
+        <span
+          className="ri-sm icon-left ds-fr--v-middle fr-fi-information-line"
+        />
          Règles applicables
       </button>
     </li>
@@ -56,9 +50,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
   <div
     aria-labelledby="fr-tab-0"
     className="fr-tabs__panel "
+    icon="fr-fi-settings-line flex"
     id="fr-tabpanel-0"
+    label=" Personnalisation du potentiel"
     role="tabpanel"
-    tabIndex="0"
+    tabIndex={0}
   >
     <div
       data-test="PersoPotentielQR"
@@ -334,9 +330,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
   <div
     aria-labelledby="fr-tab-1"
     className="fr-tabs__panel fr-tabs__panel--selected"
+    icon="fr-fi-information-line"
     id="fr-tabpanel-1"
+    label=" Règles applicables"
     role="tabpanel"
-    tabIndex="0"
+    tabIndex={1}
   >
     <div
       className="p-mb-0"
@@ -389,14 +387,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         onClick={[Function]}
         onKeyDown={[Function]}
         role="tab"
-        tabIndex={0}
         type="button"
       >
-        <span>
-          <span
-            className="ri-sm icon-left ds-fr--v-middle fr-fi-settings-line flex"
-          />
-        </span>
+        <span
+          className="ri-sm icon-left ds-fr--v-middle fr-fi-settings-line flex"
+        />
          Personnalisation du potentiel
       </button>
     </li>
@@ -411,14 +406,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         onClick={[Function]}
         onKeyDown={[Function]}
         role="tab"
-        tabIndex={-1}
         type="button"
       >
-        <span>
-          <span
-            className="ri-sm icon-left ds-fr--v-middle fr-fi-information-line"
-          />
-        </span>
+        <span
+          className="ri-sm icon-left ds-fr--v-middle fr-fi-information-line"
+        />
          Règles applicables
       </button>
     </li>
@@ -426,9 +418,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
   <div
     aria-labelledby="fr-tab-0"
     className="fr-tabs__panel fr-tabs__panel--selected"
+    icon="fr-fi-settings-line flex"
     id="fr-tabpanel-0"
+    label=" Personnalisation du potentiel"
     role="tabpanel"
-    tabIndex="0"
+    tabIndex={0}
   >
     <div
       data-test="PersoPotentielQR"
@@ -704,9 +698,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
   <div
     aria-labelledby="fr-tab-1"
     className="fr-tabs__panel "
+    icon="fr-fi-information-line"
     id="fr-tabpanel-1"
+    label=" Règles applicables"
     role="tabpanel"
-    tabIndex="0"
+    tabIndex={1}
   >
     <div
       className="p-mb-0"
@@ -759,14 +755,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         onClick={[Function]}
         onKeyDown={[Function]}
         role="tab"
-        tabIndex={0}
         type="button"
       >
-        <span>
-          <span
-            className="ri-sm icon-left ds-fr--v-middle fr-fi-settings-line flex"
-          />
-        </span>
+        <span
+          className="ri-sm icon-left ds-fr--v-middle fr-fi-settings-line flex"
+        />
          Personnalisation du potentiel
       </button>
     </li>
@@ -781,14 +774,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         onClick={[Function]}
         onKeyDown={[Function]}
         role="tab"
-        tabIndex={-1}
         type="button"
       >
-        <span>
-          <span
-            className="ri-sm icon-left ds-fr--v-middle fr-fi-information-line"
-          />
-        </span>
+        <span
+          className="ri-sm icon-left ds-fr--v-middle fr-fi-information-line"
+        />
          Règles applicables
       </button>
     </li>
@@ -796,9 +786,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
   <div
     aria-labelledby="fr-tab-0"
     className="fr-tabs__panel fr-tabs__panel--selected"
+    icon="fr-fi-settings-line flex"
     id="fr-tabpanel-0"
+    label=" Personnalisation du potentiel"
     role="tabpanel"
-    tabIndex="0"
+    tabIndex={0}
   >
     <div
       data-test="PersoPotentielQR"
@@ -909,9 +901,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
   <div
     aria-labelledby="fr-tab-1"
     className="fr-tabs__panel "
+    icon="fr-fi-information-line"
     id="fr-tabpanel-1"
+    label=" Règles applicables"
     role="tabpanel"
-    tabIndex="0"
+    tabIndex={1}
   >
     <div
       className="p-mb-0"
@@ -964,14 +958,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         onClick={[Function]}
         onKeyDown={[Function]}
         role="tab"
-        tabIndex={0}
         type="button"
       >
-        <span>
-          <span
-            className="ri-sm icon-left ds-fr--v-middle fr-fi-settings-line flex"
-          />
-        </span>
+        <span
+          className="ri-sm icon-left ds-fr--v-middle fr-fi-settings-line flex"
+        />
          Personnalisation du potentiel
       </button>
     </li>
@@ -986,14 +977,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         onClick={[Function]}
         onKeyDown={[Function]}
         role="tab"
-        tabIndex={-1}
         type="button"
       >
-        <span>
-          <span
-            className="ri-sm icon-left ds-fr--v-middle fr-fi-information-line"
-          />
-        </span>
+        <span
+          className="ri-sm icon-left ds-fr--v-middle fr-fi-information-line"
+        />
          Règles applicables
       </button>
     </li>
@@ -1001,9 +989,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
   <div
     aria-labelledby="fr-tab-0"
     className="fr-tabs__panel fr-tabs__panel--selected"
+    icon="fr-fi-settings-line flex"
     id="fr-tabpanel-0"
+    label=" Personnalisation du potentiel"
     role="tabpanel"
-    tabIndex="0"
+    tabIndex={0}
   >
     <div
       data-test="PersoPotentielQR"
@@ -1077,9 +1067,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
   <div
     aria-labelledby="fr-tab-1"
     className="fr-tabs__panel "
+    icon="fr-fi-information-line"
     id="fr-tabpanel-1"
+    label=" Règles applicables"
     role="tabpanel"
-    tabIndex="0"
+    tabIndex={1}
   >
     <div
       className="p-mb-0"
@@ -1132,14 +1124,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         onClick={[Function]}
         onKeyDown={[Function]}
         role="tab"
-        tabIndex={0}
         type="button"
       >
-        <span>
-          <span
-            className="ri-sm icon-left ds-fr--v-middle fr-fi-settings-line flex"
-          />
-        </span>
+        <span
+          className="ri-sm icon-left ds-fr--v-middle fr-fi-settings-line flex"
+        />
          Personnalisation du potentiel
       </button>
     </li>
@@ -1154,14 +1143,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         onClick={[Function]}
         onKeyDown={[Function]}
         role="tab"
-        tabIndex={-1}
         type="button"
       >
-        <span>
-          <span
-            className="ri-sm icon-left ds-fr--v-middle fr-fi-information-line"
-          />
-        </span>
+        <span
+          className="ri-sm icon-left ds-fr--v-middle fr-fi-information-line"
+        />
          Règles applicables
       </button>
     </li>
@@ -1169,9 +1155,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
   <div
     aria-labelledby="fr-tab-0"
     className="fr-tabs__panel fr-tabs__panel--selected"
+    icon="fr-fi-settings-line flex"
     id="fr-tabpanel-0"
+    label=" Personnalisation du potentiel"
     role="tabpanel"
-    tabIndex="0"
+    tabIndex={0}
   >
     <div
       data-test="PersoPotentielQR"
@@ -1328,9 +1316,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
   <div
     aria-labelledby="fr-tab-1"
     className="fr-tabs__panel "
+    icon="fr-fi-information-line"
     id="fr-tabpanel-1"
+    label=" Règles applicables"
     role="tabpanel"
-    tabIndex="0"
+    tabIndex={1}
   >
     <div
       className="p-mb-0"
@@ -1383,14 +1373,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         onClick={[Function]}
         onKeyDown={[Function]}
         role="tab"
-        tabIndex={0}
         type="button"
       >
-        <span>
-          <span
-            className="ri-sm icon-left ds-fr--v-middle fr-fi-settings-line flex"
-          />
-        </span>
+        <span
+          className="ri-sm icon-left ds-fr--v-middle fr-fi-settings-line flex"
+        />
          Personnalisation du potentiel
       </button>
     </li>
@@ -1405,14 +1392,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         onClick={[Function]}
         onKeyDown={[Function]}
         role="tab"
-        tabIndex={-1}
         type="button"
       >
-        <span>
-          <span
-            className="ri-sm icon-left ds-fr--v-middle fr-fi-information-line"
-          />
-        </span>
+        <span
+          className="ri-sm icon-left ds-fr--v-middle fr-fi-information-line"
+        />
          Règles applicables
       </button>
     </li>
@@ -1420,9 +1404,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
   <div
     aria-labelledby="fr-tab-0"
     className="fr-tabs__panel fr-tabs__panel--selected"
+    icon="fr-fi-settings-line flex"
     id="fr-tabpanel-0"
+    label=" Personnalisation du potentiel"
     role="tabpanel"
-    tabIndex="0"
+    tabIndex={0}
   >
     <div
       data-test="PersoPotentielQR"
@@ -1549,9 +1535,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
   <div
     aria-labelledby="fr-tab-1"
     className="fr-tabs__panel "
+    icon="fr-fi-information-line"
     id="fr-tabpanel-1"
+    label=" Règles applicables"
     role="tabpanel"
-    tabIndex="0"
+    tabIndex={1}
   >
     <div
       className="p-mb-0"
@@ -1604,14 +1592,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         onClick={[Function]}
         onKeyDown={[Function]}
         role="tab"
-        tabIndex={0}
         type="button"
       >
-        <span>
-          <span
-            className="ri-sm icon-left ds-fr--v-middle fr-fi-settings-line flex"
-          />
-        </span>
+        <span
+          className="ri-sm icon-left ds-fr--v-middle fr-fi-settings-line flex"
+        />
          Personnalisation du potentiel
       </button>
     </li>
@@ -1626,14 +1611,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         onClick={[Function]}
         onKeyDown={[Function]}
         role="tab"
-        tabIndex={-1}
         type="button"
       >
-        <span>
-          <span
-            className="ri-sm icon-left ds-fr--v-middle fr-fi-information-line"
-          />
-        </span>
+        <span
+          className="ri-sm icon-left ds-fr--v-middle fr-fi-information-line"
+        />
          Règles applicables
       </button>
     </li>
@@ -1641,9 +1623,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
   <div
     aria-labelledby="fr-tab-0"
     className="fr-tabs__panel fr-tabs__panel--selected"
+    icon="fr-fi-settings-line flex"
     id="fr-tabpanel-0"
+    label=" Personnalisation du potentiel"
     role="tabpanel"
-    tabIndex="0"
+    tabIndex={0}
   >
     <div
       data-test="PersoPotentielQR"
@@ -1767,9 +1751,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
   <div
     aria-labelledby="fr-tab-1"
     className="fr-tabs__panel "
+    icon="fr-fi-information-line"
     id="fr-tabpanel-1"
+    label=" Règles applicables"
     role="tabpanel"
-    tabIndex="0"
+    tabIndex={1}
   >
     <div
       className="p-mb-0"
@@ -1822,14 +1808,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         onClick={[Function]}
         onKeyDown={[Function]}
         role="tab"
-        tabIndex={0}
         type="button"
       >
-        <span>
-          <span
-            className="ri-sm icon-left ds-fr--v-middle fr-fi-settings-line flex"
-          />
-        </span>
+        <span
+          className="ri-sm icon-left ds-fr--v-middle fr-fi-settings-line flex"
+        />
          Personnalisation du potentiel
       </button>
     </li>
@@ -1844,14 +1827,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         onClick={[Function]}
         onKeyDown={[Function]}
         role="tab"
-        tabIndex={-1}
         type="button"
       >
-        <span>
-          <span
-            className="ri-sm icon-left ds-fr--v-middle fr-fi-information-line"
-          />
-        </span>
+        <span
+          className="ri-sm icon-left ds-fr--v-middle fr-fi-information-line"
+        />
          Règles applicables
       </button>
     </li>
@@ -1859,9 +1839,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
   <div
     aria-labelledby="fr-tab-0"
     className="fr-tabs__panel fr-tabs__panel--selected"
+    icon="fr-fi-settings-line flex"
     id="fr-tabpanel-0"
+    label=" Personnalisation du potentiel"
     role="tabpanel"
-    tabIndex="0"
+    tabIndex={0}
   >
     <div
       data-test="PersoPotentielQR"
@@ -1985,9 +1967,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
   <div
     aria-labelledby="fr-tab-1"
     className="fr-tabs__panel "
+    icon="fr-fi-information-line"
     id="fr-tabpanel-1"
+    label=" Règles applicables"
     role="tabpanel"
-    tabIndex="0"
+    tabIndex={1}
   >
     <div
       className="p-mb-0"
