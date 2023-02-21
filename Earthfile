@@ -54,6 +54,36 @@ business-start:
     RUN docker rm business_territoiresentransitions.fr || exit 0
     RUN docker run -p 8888:8888 -d --name business_territoiresentransitions.fr business:latest
 
+react:
+    FROM node:16
+    ARG APP_DIR="./app.territoiresentransitions.react"
+    ENV LANG fr_FR.UTF-8
+    RUN apt-get update && apt-get install -y locales && rm -rf /var/lib/apt/lists/* && locale-gen "fr_FR.UTF-8"
+    WORKDIR "/app"
+    COPY $APP_DIR/package.json ./
+    COPY $APP_DIR/package-lock.json ./
+    RUN npm i
+    COPY $APP_DIR .
+    EXPOSE 3000
+    CMD npm start
+
+client-build:
+    FROM +react
+    ARG --required SUPABASE_ANON_KEY
+    ARG --required API_URL
+    ARG REACT_APP_SUPABASE_URL=$API_URL
+    ARG REACT_APP_SUPABASE_KEY=$SUPABASE_ANON_KEY
+    ARG ZIP_ORIGIN_OVERRIDE="http://kong:8000"
+    RUN npm run build
+    SAVE IMAGE client:latest
+
+client-start:
+    FROM +client-build
+    LOCALLY
+    RUN docker stop client_territoiresentransitions || exit 0
+    RUN docker rm client_territoiresentransitions || exit 0
+    RUN docker run -p 3000:3000 -d --name client_territoiresentransitions client:latest
+
 setup-env:
     LOCALLY
     RUN earthly +stop
@@ -67,6 +97,7 @@ dev:
     ARG stop=yes
     ARG datalayer=yes
     ARG business=yes
+    ARG client=no
 
     IF [ "$stop" = "yes" ]
         RUN earthly --push +stop
@@ -82,6 +113,10 @@ dev:
     IF [ "$business" = "yes" ]
         RUN earthly +business-start
         RUN earthly --push +update-scores
+    END
+
+    IF [ "$client" = "yes" ]
+        RUN earthly +client-start
     END
 
 stop:
