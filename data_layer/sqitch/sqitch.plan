@@ -238,3 +238,5 @@ labellisation/parcours [labellisation/parcours@v1.24.0] 2023-01-18T16:13:05Z Flo
 collectivite/identite [collectivite/identite@v1.24.0] 2023-01-30T14:38:15Z Florian <florian@derfurth.com> # Ajoute la propriété COT à l'identité des collectivités
 labellisation/preuve_v2 [labellisation/preuve_v2@v2.1.2] 2023-02-14T15:05:53Z Florian <florian@derfurth.com> # Les preuves d'audit
 @v2.5.0 2023-02-24T09:29:16Z Florian <florian@derfurth.com> # Permet de demander et de commencer un audit
+
+plan_action/plan_action [plan_action/plan_action@v2.4.0] 2023-02-21T17:17:13Z Amandine Jacquelin <conta@LanceLibre> # Change l'ordre des fiches et axes dans la rpc plan_action
