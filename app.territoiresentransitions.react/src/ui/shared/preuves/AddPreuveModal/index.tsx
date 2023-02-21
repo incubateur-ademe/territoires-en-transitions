@@ -1,7 +1,7 @@
 /**
  * Affiche le sélecteur de ressources (fichiers ou liens)
  */
-import {Tabs, Tab} from '@dataesr/react-dsfr';
+import {Tabs, Tab} from 'ui/shared/Tabs';
 import {AddLink, TAddLink} from './AddLink';
 import {AddFile, TAddFileFromLib} from './AddFile';
 import AddFromLib from './AddFromLib';

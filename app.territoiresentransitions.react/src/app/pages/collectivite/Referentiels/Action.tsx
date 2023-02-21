@@ -6,8 +6,7 @@ import {indicateurActionReadEndpoint} from 'core-logic/api/endpoints/IndicateurA
 import {useEffect, useState} from 'react';
 import {useAllIndicateurDefinitions} from 'core-logic/hooks/indicateur_definition';
 import {addTargetToContentAnchors} from 'utils/content';
-import Tabs from 'ui/shared/Tabs';
-import {Tab} from '@dataesr/react-dsfr';
+import {Tabs, Tab} from 'ui/shared/Tabs';
 import {ActionReferentielDisplayTitle} from 'ui/referentiels/ActionReferentielDisplayTitle';
 import {Spacer} from 'ui/shared/Spacer';
 import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
@@ -152,7 +151,7 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
         </div>
       </div>
 
-      <Tabs activeTab={activeTab} onChange={handleChange}>
+      <Tabs defaultActiveTab={activeTab} onChange={handleChange}>
         <Tab label="Suivi de l'action" icon="fr-fi-seedling-fill">
           <section>
             <div

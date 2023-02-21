@@ -1,5 +1,4 @@
-import {Tab} from '@dataesr/react-dsfr';
-import Tabs from 'ui/shared/Tabs';
+import {Tabs, Tab} from 'ui/shared/Tabs';
 import Alerte from 'ui/shared/Alerte';
 import {useAudit} from '../Audit/useAudit';
 import AuditSuivi from '../AuditSuivi';
@@ -62,7 +61,11 @@ export const LabellisationTabs = () => {
   return audit ? (
     <>
       <EnSavoirPlus />
-      <Tabs activeTab={activeTab} onChange={handleChange} className="w-full">
+      <Tabs
+        defaultActiveTab={activeTab}
+        onChange={handleChange}
+        className="w-full"
+      >
         <Tab label="Suivi de l'audit">
           <AuditSuivi />
         </Tab>

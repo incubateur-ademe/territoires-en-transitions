@@ -2,7 +2,7 @@
  * Affiche le dialogue de personnalisation du potentiel de points d'une sous-action
  */
 
-import {Tabs, Tab} from '@dataesr/react-dsfr';
+import {Tabs, Tab} from 'ui/shared/Tabs';
 import {PersoPotentielQR, TPersoPotentielQRProps} from './PersoPotentielQR';
 import {PersoPotentielDoc, TPersoPotentielDocProps} from './PersoPotentielDoc';
 
