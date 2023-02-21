@@ -3,6 +3,7 @@ import {TOption} from 'ui/shared/select/commons';
 import SelectCreateTagsDropdown from 'ui/shared/select/SelectCreateTagsDropdown';
 import {usePersonneReferenteListe} from '../data/options/usePersonneReferenteListe';
 import {Personne} from '../data/types/personne';
+import {formatNewTag} from '../data/utils';
 
 type Props = {
   personnes: Personne[] | null;
@@ -35,11 +36,6 @@ const PersonneReferenteDropdown = ({
       )
     ) ?? [];
 
-  const formatNewPersonneReferente = (inputValue: string) => ({
-    collectivite_id: collectivite_id!,
-    nom: inputValue,
-  });
-
   // On invalide la liste des options dans useEditFicheAction
 
   return (
@@ -52,8 +48,8 @@ const PersonneReferenteDropdown = ({
       onCreateClick={inputValue =>
         onSelect(
           personnes
-            ? [...personnes, formatNewPersonneReferente(inputValue)]
-            : [formatNewPersonneReferente(inputValue)]
+            ? [...personnes, formatNewTag(inputValue, collectivite_id!)]
+            : [formatNewTag(inputValue, collectivite_id!)]
         )
       }
       placeholderText="Créer un tag..."

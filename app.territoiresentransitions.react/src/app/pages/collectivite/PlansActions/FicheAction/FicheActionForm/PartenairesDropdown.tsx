@@ -3,6 +3,7 @@ import {TOption} from 'ui/shared/select/commons';
 import SelectCreateTagsDropdown from 'ui/shared/select/SelectCreateTagsDropdown';
 import {usePartenaireListe} from '../data/options/usePartenaireListe';
 import {TPartenaireInsert} from '../data/types/alias';
+import {formatNewTag} from '../data/utils';
 
 type Props = {
   partenaires: TPartenaireInsert[] | null;
@@ -27,11 +28,6 @@ const PartenairesDropdown = ({partenaires, onSelect, isReadonly}: Props) => {
       values.some(v => v === partenaire.id?.toString())
     ) ?? [];
 
-  const formatNewPartenaire = (inputValue: string) => ({
-    collectivite_id: collectivite_id!,
-    nom: inputValue,
-  });
-
   // On invalide la liste des options dans useEditFicheAction
 
   return (
@@ -42,8 +38,8 @@ const PartenairesDropdown = ({partenaires, onSelect, isReadonly}: Props) => {
       onCreateClick={inputValue =>
         onSelect(
           partenaires
-            ? [...partenaires, formatNewPartenaire(inputValue)]
-            : [formatNewPartenaire(inputValue)]
+            ? [...partenaires, formatNewTag(inputValue, collectivite_id!)]
+            : [formatNewTag(inputValue, collectivite_id!)]
         )
       }
       placeholderText="Créer un tag..."
