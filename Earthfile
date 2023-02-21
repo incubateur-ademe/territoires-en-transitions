@@ -33,7 +33,7 @@ load-contents:
     ARG --required SUPABASE_SERVICE_ROLE_KEY
     ARG --required API_URL
     ARG URL=$(echo $API_URL | sed "s/localhost/host.docker.internal/")
-    ARG SERVICE_ROLE_KEY=$(echo $SUPABASE_SERVICE_ROLE_KEY)
+    ARG SERVICE_ROLE_KEY=$SUPABASE_SERVICE_ROLE_KEY
     COPY ./data_layer/content /content
     RUN --push sh ./content/load.sh
 
@@ -45,14 +45,28 @@ update-scores:
     RUN --push psql $PG_URL -v ON_ERROR_STOP=1 -c "select evaluation.update_late_collectivite_scores($count);" || exit 1
 
 business-build:
-    FROM DOCKERFILE ./business/
+    FROM python:3.9
+    ARG --required SUPABASE_SERVICE_ROLE_KEY
+    ARG --required API_URL
+    ARG APP_DIR="./business"
+    ARG URL=$(echo $API_URL | sed "s/localhost/host.docker.internal/")
+    ENV SUPABASE_URL=$URL
+    ENV SUPABASE_KEY=$SUPABASE_SERVICE_ROLE_KEY
+    WORKDIR /business
+    COPY $APP_DIR/requirements.txt .
+    RUN pip install -r requirements.txt
+    COPY $APP_DIR .
+    RUN pip install -e .
+    EXPOSE 8888
+    CMD ["uvicorn", "evaluation_api:app", "--host", "0.0.0.0", "--port", "8888"]
     SAVE IMAGE business:latest
 
 business-start:
+    FROM +business-build
     LOCALLY
-    RUN earthly +business-build
-    RUN docker rm business_territoiresentransitions.fr || exit 0
-    RUN docker run -p 8888:8888 -d --name business_territoiresentransitions.fr business:latest
+    RUN docker stop business_territoiresentransitions || exit 0
+    RUN docker rm business_territoiresentransitions || exit 0
+    RUN docker run -p 8888:8888 -d --name business_territoiresentransitions business:latest
 
 react:
     FROM node:16
