@@ -32,6 +32,7 @@ import {TSousThematiqueRow, TThematiqueRow} from '../data/types/alias';
 import {DSFRbuttonClassname} from 'ui/shared/select/commons';
 import FicheActionRangerModal from '../FicheActionRangerModal/FicheActionRangerModal';
 import {usePlanActionProfondeur} from '../../PlanAction/data/usePlanActionProfondeur';
+import ServicePiloteDropdown from './ServicePiloteDropdown';
 
 type TFicheActionForm = {
   fiche: FicheActionVueRow;
@@ -172,6 +173,13 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
           <PersonnePiloteDropdown
             personnes={fiche.pilotes}
             onSelect={pilotes => updateFiche({...fiche, pilotes})}
+            isReadonly={isReadonly}
+          />
+        </FormField>
+        <FormField label="Direction ou service pilote">
+          <ServicePiloteDropdown
+            services={fiche.services}
+            onSelect={services => updateFiche({...fiche, services})}
             isReadonly={isReadonly}
           />
         </FormField>

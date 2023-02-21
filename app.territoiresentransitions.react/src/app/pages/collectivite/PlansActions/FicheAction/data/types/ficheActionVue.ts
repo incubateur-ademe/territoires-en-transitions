@@ -20,6 +20,7 @@ export type FicheActionVueRow =
     axes: Database['public']['Tables']['axe']['Insert'][] | null;
     actions: Database['public']['Tables']['action_relation']['Insert'][] | null;
     indicateurs: IndicateurGlobal[] | null;
+    services: Database['public']['Tables']['service_tag']['Insert'][] | null;
   };
 
 export type FicheActionVueInsert = FicheActionVueRow;
