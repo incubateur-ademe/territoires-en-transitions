@@ -3,6 +3,7 @@ import {TOption} from 'ui/shared/select/commons';
 import SelectCreateTagsDropdown from 'ui/shared/select/SelectCreateTagsDropdown';
 import {useStructurePiloteListe} from '../data/options/useStructurePiloteListe';
 import {TFicheActionStructureInsert} from '../data/types/alias';
+import {formatNewTag} from '../data/utils';
 
 type Props = {
   structures: TFicheActionStructureInsert[] | null;
@@ -27,11 +28,6 @@ const StructurePiloteDropdown = ({structures, onSelect, isReadonly}: Props) => {
       values.some(v => v === structure.id?.toString())
     ) ?? [];
 
-  const formatNewStructure = (inputValue: string) => ({
-    collectivite_id: collectivite_id!,
-    nom: inputValue,
-  });
-
   // On invalide la liste des options dans useEditFicheAction
 
   return (
@@ -44,8 +40,8 @@ const StructurePiloteDropdown = ({structures, onSelect, isReadonly}: Props) => {
       onCreateClick={inputValue =>
         onSelect(
           structures
-            ? [...structures, formatNewStructure(inputValue)]
-            : [formatNewStructure(inputValue)]
+            ? [...structures, formatNewTag(inputValue, collectivite_id!)]
+            : [formatNewTag(inputValue, collectivite_id!)]
         )
       }
       placeholderText="Créer un tag..."

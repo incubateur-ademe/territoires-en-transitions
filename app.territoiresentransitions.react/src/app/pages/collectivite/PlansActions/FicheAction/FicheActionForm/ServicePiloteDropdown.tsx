@@ -3,6 +3,7 @@ import {TOption} from 'ui/shared/select/commons';
 import SelectCreateTagsDropdown from 'ui/shared/select/SelectCreateTagsDropdown';
 import {useServicePiloteListe} from '../data/options/useServicePiloteListe';
 import {TFicheActionServicePiloteInsert} from '../data/types/alias';
+import {formatNewTag} from '../data/utils';
 
 type Props = {
   services: TFicheActionServicePiloteInsert[] | null;
@@ -27,11 +28,6 @@ const ServicePiloteDropdown = ({services, onSelect, isReadonly}: Props) => {
       values.some(v => v === service.id.toString())
     ) ?? [];
 
-  const formatNewServicePilote = (inputValue: string) => ({
-    collectivite_id: collectivite_id!,
-    nom: inputValue,
-  });
-
   // On invalide la liste des options dans useEditFicheAction
 
   return (
@@ -44,8 +40,8 @@ const ServicePiloteDropdown = ({services, onSelect, isReadonly}: Props) => {
       onCreateClick={inputValue =>
         onSelect(
           services
-            ? [...services, formatNewServicePilote(inputValue)]
-            : [formatNewServicePilote(inputValue)]
+            ? [...services, formatNewTag(inputValue, collectivite_id!)]
+            : [formatNewTag(inputValue, collectivite_id!)]
         )
       }
       placeholderText="Créer un tag..."
