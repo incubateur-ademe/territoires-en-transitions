@@ -1,5 +1,4 @@
-import {ChangeEvent, MouseEvent} from 'react';
-import {TextInput} from '@dataesr/react-dsfr';
+import {ChangeEvent, KeyboardEvent, MouseEvent} from 'react';
 import classNames from 'classnames';
 import {format} from 'date-fns';
 import {fr} from 'date-fns/locale';
@@ -161,9 +160,9 @@ const TextInputWithEditState = ({
   placeholder: string;
 }) => {
   return editState.isEditing ? (
-    <TextInput
+    <input
       autoFocus
-      className="fr-my-2v"
+      className="fr-input fr-my-2v"
       placeholder={placeholder}
       value={editState.value}
       onChange={(e: ChangeEvent<HTMLInputElement>) =>
