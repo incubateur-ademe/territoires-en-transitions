@@ -68,6 +68,11 @@ business-start:
     RUN docker rm business_territoiresentransitions || exit 0
     RUN docker run -p 8888:8888 -d --name business_territoiresentransitions business:latest
 
+business-test:
+    FROM +business-build
+    COPY ./markdown /markdown
+    RUN pytest tests
+
 react:
     FROM node:16
     ARG APP_DIR="./app.territoiresentransitions.react"
