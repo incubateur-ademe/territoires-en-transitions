@@ -4,7 +4,7 @@ create function
 as
 $$
 insert into evaluation.service_configuration
-values ('http://business:8888/dl_evaluation/', 'http://business:8888/dl_personnalisation/');
+values ('http://host.docker.internal:8888/dl_evaluation/', 'http://host.docker.internal:8888/dl_personnalisation/');
 $$ language sql;
 comment on function test.enable_evaluation_api is
     'Ajoute la configuration pour se connecter au business depuis Docker.';
