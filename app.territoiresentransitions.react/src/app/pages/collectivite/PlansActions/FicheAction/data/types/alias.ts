@@ -24,6 +24,11 @@ export type TFicheActionStructureRow =
 export type TFicheActionStructureInsert =
   Database['public']['Tables']['structure_tag']['Insert'];
 
+export type TFicheActionServicePiloteRow =
+  Database['public']['Tables']['service_tag']['Row'];
+export type TFicheActionServicePiloteInsert =
+  Database['public']['Tables']['service_tag']['Insert'];
+
 export type TFicheActionPersonnePiloteRow =
   Database['public']['Tables']['personne_tag']['Row'];
 export type TFicheActionPersonnePiloteInsert =
