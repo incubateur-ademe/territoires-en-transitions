@@ -1,8 +1,8 @@
 /**
  * Affiche le composant d'upload de fichiers
  */
-import {File as InputFile} from '@dataesr/react-dsfr';
 import {ChangeEvent, FormEvent, useState} from 'react';
+import InputFile from 'ui/shared/InputFile';
 import {HINT, EXPECTED_FORMATS_LIST} from './constants';
 import {filesToUploadList} from './filesToUploadList';
 import {TFileItem} from './FileItem';

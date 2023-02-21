@@ -21,13 +21,14 @@ exports[`Storyshots ui/shared/preuves/AddPreuveModal/AddFile Exemple 1 1`] = `
         htmlFor="file-upload"
       >
         Ajouter un ou plusieurs fichier(s)
-        <span
+        <p
           className="fr-hint-text"
         >
           Taille maximale par fichier : 20 Mo.  Formats supportés : pdf, doc, docx, odt, ods, xls, xlsx, ppt, pptx, jpeg, jpg, png.
-        </span>
+        </p>
       </label>
       <input
+        accept=".pdf,.doc,.docx,.odt,.ods,.xls,.xlsx,.ppt,.pptx,.jpeg,.jpg,.png"
         aria-describedby="Taille maximale par fichier : 20 Mo.  Formats supportés : pdf, doc, docx, odt, ods, xls, xlsx, ppt, pptx, jpeg, jpg, png."
         className="fr-upload"
         multiple={true}
