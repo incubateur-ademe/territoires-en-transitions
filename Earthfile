@@ -64,15 +64,25 @@ setup-env:
 
 dev:
     LOCALLY
-    RUN earthly --push +stop
+    ARG stop=yes
+    ARG datalayer=yes
+    ARG business=yes
 
-    RUN supabase start
-    RUN earthly --push +deploy
-    RUN earthly --push +seed
-    RUN earthly --push +load-contents
+    IF [ "$stop" = "yes" ]
+        RUN earthly --push +stop
+    END
 
-    RUN earthly +business-start
-    RUN earthly --push +update-scores
+    IF [ "$datalayer" = "yes" ]
+        RUN supabase start
+        RUN earthly --push +deploy
+        RUN earthly --push +seed
+        RUN earthly --push +load-contents
+    END
+
+    IF [ "$business" = "yes" ]
+        RUN earthly +business-start
+        RUN earthly --push +update-scores
+    END
 
 stop:
     LOCALLY
