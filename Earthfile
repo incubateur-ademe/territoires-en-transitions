@@ -37,9 +37,22 @@ load-contents:
     COPY ./data_layer/content /content
     RUN --push sh ./content/load.sh
 
-business-docker:
+update-scores:
+    FROM +postgres
+    ARG --required DB_URL
+    ARG count=20
+    ARG PG_URL=$(echo $DB_URL | sed "s/localhost/host.docker.internal/")
+    RUN --push psql $PG_URL -v ON_ERROR_STOP=1 -c "select evaluation.update_late_collectivite_scores($count);" || exit 1
+
+business-build:
     FROM DOCKERFILE ./business/
     SAVE IMAGE business:latest
+
+business-start:
+    LOCALLY
+    RUN earthly +business-build
+    RUN docker rm business_territoiresentransitions.fr || exit 0
+    RUN docker run -p 8888:8888 -d --name business_territoiresentransitions.fr business:latest
 
 setup-env:
     LOCALLY
@@ -51,18 +64,15 @@ setup-env:
 
 dev:
     LOCALLY
-    ARG DB_URL="postgresql://postgres:postgres@localhost:54322/postgres"
-    RUN earthly +stop
+    RUN earthly --push +stop
+
     RUN supabase start
-
-    FROM +business-docker
-    ARG PG_URL=$(echo $DB_URL | sed "s/localhost/host.docker.internal/")
-
-    LOCALLY
-    RUN docker run -p 8888:8888 -d --name business_territoiresentransitions.fr business:latest
-    RUN earthly --push +deploy --DB_URL=$PG_URL
-    RUN earthly --push +seed --DB_URL=$PG_URL
+    RUN earthly --push +deploy
+    RUN earthly --push +seed
     RUN earthly --push +load-contents
+
+    RUN earthly +business-start
+    RUN earthly --push +update-scores
 
 stop:
     LOCALLY
