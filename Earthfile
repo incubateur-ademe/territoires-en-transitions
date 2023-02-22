@@ -157,4 +157,11 @@ stop:
 
 stats:
     LOCALLY
-    RUN docker stats $(docker ps --format '{{.Names}}' --filter name=transitions)
+    RUN docker stats $(docker ps --format '{{.Names}}' --filter name=transitions) || exit 0
+
+test:
+    FROM +dev
+    LOCALLY
+    RUN earthly +business-test
+    RUN earthly +client-test
+
