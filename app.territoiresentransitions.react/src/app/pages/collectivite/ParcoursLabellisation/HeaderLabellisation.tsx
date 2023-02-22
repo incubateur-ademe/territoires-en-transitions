@@ -33,8 +33,9 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
   }
 
   const headerMessageContent = getHeaderMessageContent(parcoursLabellisation);
-  const {collectivite_id, referentiel, etoiles, audit} = parcours;
-  const canSubmitDemande = labellisable || isCOT;
+  const {collectivite_id, referentiel, etoiles, audit, completude_ok} =
+    parcours;
+  const canSubmitDemande = labellisable || (isCOT && completude_ok);
 
   return (
     <PageHeaderLeft>

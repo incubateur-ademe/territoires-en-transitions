@@ -24,6 +24,18 @@ NonLabellisable.args = {
   },
 };
 
+export const NonAuditableCOT = Template.bind({});
+NonAuditableCOT.args = {
+  parcoursLabellisation: {
+    status: 'non_demandee',
+    isCOT: true,
+    parcours: {
+      etoiles: '1',
+      completude_ok: false,
+    },
+  },
+};
+
 export const NonLabellisableCOT = Template.bind({});
 NonLabellisableCOT.args = {
   parcoursLabellisation: {
