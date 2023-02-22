@@ -22,7 +22,8 @@ const Tab = ({
   <div
     id={`fr-tabpanel-${index}`}
     className={classNames(
-      `fr-tabs__panel ${activeTab === index ? 'fr-tabs__panel--selected' : ''}`,
+      'fr-tabs__panel',
+      {'fr-tabs__panel--selected': activeTab === index},
       className
     )}
     role="tabpanel"
@@ -30,7 +31,7 @@ const Tab = ({
     tabIndex={index}
     {...remainingProps}
   >
-    {children}
+    {index === activeTab ? children : null}
   </div>
 );
 
