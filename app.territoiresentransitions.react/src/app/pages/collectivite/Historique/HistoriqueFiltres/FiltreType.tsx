@@ -1,7 +1,7 @@
+import {getIsAllSelected} from 'ui/shared/filters/commons';
 import FilterField from 'ui/shared/filters/FilterField';
 import {MultiSelectFilter} from 'ui/shared/select/MultiSelectFilter';
 import {filtresTypeOptions, TFiltreProps} from '../filters';
-import {getIsAllSelected} from 'ui/shared/select/commons';
 
 const FiltreType = ({filters, setFilters}: TFiltreProps) => {
   return (

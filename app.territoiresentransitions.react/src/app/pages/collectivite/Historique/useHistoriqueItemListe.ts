@@ -3,9 +3,9 @@ import {useQuery, useQueryClient} from 'react-query';
 
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useSearchParams} from 'core-logic/hooks/query';
-import {isValidFilter} from 'ui/shared/select/commons';
 import {TFilters, NB_ITEMS_PER_PAGE, nameToShortNames} from './filters';
 import {THistoriqueItem, THistoriqueProps} from './types';
+import {isValidFilter} from 'ui/shared/filters/commons';
 
 type TFetchedData = {items: THistoriqueItem[]; total: number};
 

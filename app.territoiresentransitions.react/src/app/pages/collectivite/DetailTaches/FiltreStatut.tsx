@@ -4,7 +4,7 @@ import {
 } from 'ui/shared/select/MultiSelectFilter';
 import ActionStatutBadge from 'ui/shared/actions/ActionStatutBadge';
 
-import {ITEM_ALL} from 'ui/shared/select/commons';
+import {ITEM_ALL} from 'ui/shared/filters/commons';
 import {TFiltreProps} from './filters';
 import {ITEMS} from './SelectStatut';
 import {ActionAvancement} from 'generated/dataLayer/action_statut_read';

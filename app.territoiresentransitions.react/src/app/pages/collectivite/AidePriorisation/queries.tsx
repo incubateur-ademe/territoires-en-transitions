@@ -4,7 +4,7 @@ import {ActionReferentiel} from 'app/pages/collectivite/ReferentielTable/useRefe
 import {boundariesToQueryFilter} from 'ui/shared/boundariesToQueryFilter';
 import {filterToBoundaries, TFilters} from './filters';
 import {percentBoundaries} from './FiltrePourcentage';
-import {ITEM_ALL} from 'ui/shared/select/commons';
+import {ITEM_ALL} from 'ui/shared/filters/commons';
 
 // un sous-ensemble des champs pour alimenter notre table
 export type PriorisationRow = ActionReferentiel &

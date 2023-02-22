@@ -1,9 +1,9 @@
 import {MultiSelectFilter} from 'ui/shared/select/MultiSelectFilter';
-import {getIsAllSelected, ITEM_ALL} from 'ui/shared/select/commons';
 import {TFiltreProps} from '../filters';
 import {useHistoriqueUtilisateurListe} from '../useHistoriqueUtilisateurListe';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import FilterField from 'ui/shared/filters/FilterField';
+import {getIsAllSelected, ITEM_ALL} from 'ui/shared/filters/commons';
 
 const FiltreMembre = ({filters, setFilters}: TFiltreProps) => {
   const collectivite_id = useCollectiviteId();

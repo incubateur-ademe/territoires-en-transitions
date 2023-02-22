@@ -2,7 +2,7 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {TFilters} from './filters';
 import {TActionAuditStatut} from '../Audit/types';
 import {ActionReferentiel} from '../ReferentielTable/useReferentiel';
-import {ITEM_ALL} from 'ui/shared/select/commons';
+import {ITEM_ALL} from 'ui/shared/filters/commons';
 
 // un sous-ensemble des champs pour alimenter notre table
 export type TAuditSuiviRow = ActionReferentiel &
