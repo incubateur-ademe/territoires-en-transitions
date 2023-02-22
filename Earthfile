@@ -116,6 +116,12 @@ client-test:
     LOCALLY
     RUN docker run --rm --name client_test_territoiresentransitions client-test:latest
 
+api-test:
+    FROM denoland/deno
+    WORKDIR tests
+    COPY ./api_tests .
+    RUN deno test --allow-net --allow-env --allow-read tests/ --location 'http://localhost'
+
 setup-env:
     LOCALLY
     RUN earthly +stop
@@ -164,4 +170,6 @@ test:
     LOCALLY
     RUN earthly +business-test
     RUN earthly +client-test
+    # les tests ne passent pas pour le moment
+    # RUN earthly +api-test
 
