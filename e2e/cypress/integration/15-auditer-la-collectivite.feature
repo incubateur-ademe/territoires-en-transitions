@@ -141,6 +141,18 @@ Fonctionnalité: Auditer la collectivité
     Et le bouton "Valider l'audit" est absent
     Et l'en-tête contient "Labellisation en cours"
 
+    # on vérifie que le statut d'audit, l'avis et la case "ordre du jour" sont en lecture seule après validation de l'audit
+    Quand je clique sur la ligne du tableau de suivi de l'audit contenant l'identifiant "2.1"
+    Alors l'état d'avancement des tâches n'est pas éditable
+    Et la page vérifie les conditions suivantes :
+      | Elément                         | Condition | Valeur     |
+      | état audit action               | absent    |            |
+      | état audit action lecture seule | contient  | Non audité |
+      | avis audit                      | vide      |            |
+      | avis audit                      | désactivé |            |
+      | ajouter à l'ordre du jour       | décoché   |            |
+      | ajouter à l'ordre du jour       | désactivé |            |
+
     Quand je suis sur la page "Bibliothèque de documents" de la collectivité courante
     Alors la liste des documents de labellisation contient les lignes suivantes :
       # audit validé => le document est en lecture seule

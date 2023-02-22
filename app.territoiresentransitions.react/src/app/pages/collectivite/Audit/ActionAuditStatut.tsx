@@ -78,7 +78,7 @@ const ActionAuditStatut = (props: TActionAuditStatutProps) => {
   return audit && auditStatut ? (
     <ActionAuditStatutBase
       auditStatut={auditStatut}
-      readonly={!isAuditeur}
+      readonly={!isAuditeur || audit?.valide}
       onChange={handleChange}
     />
   ) : null;
