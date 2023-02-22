@@ -13,7 +13,7 @@ Fonctionnalité: Associer des preuves aux actions
     Et le "formulaire Lien" est visible
 
     Quand je clique sur l'onglet "Fichier" du "dialogue d'ajout d'une preuve"
-    Alors le "formulaire Lien" est masqué
+    Alors le "formulaire Lien" est absent
     Et le "formulaire Fichier" est visible
     Et le bouton "Ajouter" du "formulaire Fichier" est désactivé
 
@@ -63,7 +63,7 @@ Fonctionnalité: Associer des preuves aux actions
     Et le "formulaire Lien" est visible
 
     Quand je clique sur l'onglet "Fichier" du "dialogue d'ajout d'une preuve"
-    Alors le "formulaire Lien" est masqué
+    Alors le "formulaire Lien" est absent
     Et le "formulaire Fichier" est visible
     Et le bouton "Ajouter" du "formulaire Fichier" est désactivé
 
@@ -84,7 +84,7 @@ Fonctionnalité: Associer des preuves aux actions
     Et le "formulaire Lien" est visible
 
     Quand je clique sur l'onglet "Fichier" du "dialogue d'ajout d'une preuve"
-    Alors le "formulaire Lien" est masqué
+    Alors le "formulaire Lien" est absent
     Et le "formulaire Fichier" est visible
     Et le bouton "Ajouter" du "formulaire Fichier" est désactivé
 
