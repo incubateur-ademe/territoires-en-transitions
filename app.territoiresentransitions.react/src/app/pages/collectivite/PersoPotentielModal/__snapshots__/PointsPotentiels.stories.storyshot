@@ -5,8 +5,8 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels 
   className="fr-highlight"
   style={
     Object {
-      "border": "1px solid var(--yellow-moutarde-850)",
-      "boxShadow": "inset 0.25rem 0 0 0 var(--yellow-moutarde-850)",
+      "border": "1px solid var(--yellow-moutarde-850-200)",
+      "boxShadow": "inset 0.25rem 0 0 0 var(--yellow-moutarde-850-200)",
       "marginLeft": 0,
       "maxWidth": "fit-content",
       "paddingBottom": "1rem",
@@ -47,8 +47,8 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels 
   className="fr-highlight"
   style={
     Object {
-      "border": "1px solid var(--yellow-moutarde-850)",
-      "boxShadow": "inset 0.25rem 0 0 0 var(--yellow-moutarde-850)",
+      "border": "1px solid var(--yellow-moutarde-850-200)",
+      "boxShadow": "inset 0.25rem 0 0 0 var(--yellow-moutarde-850-200)",
       "marginLeft": 0,
       "maxWidth": "fit-content",
       "paddingBottom": "1rem",
@@ -95,8 +95,8 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels 
   className="fr-highlight"
   style={
     Object {
-      "border": "1px solid var(--yellow-moutarde-850)",
-      "boxShadow": "inset 0.25rem 0 0 0 var(--yellow-moutarde-850)",
+      "border": "1px solid var(--yellow-moutarde-850-200)",
+      "boxShadow": "inset 0.25rem 0 0 0 var(--yellow-moutarde-850-200)",
       "marginLeft": 0,
       "maxWidth": "fit-content",
       "paddingBottom": "1rem",
@@ -137,8 +137,8 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels 
   className="fr-highlight"
   style={
     Object {
-      "border": "1px solid var(--yellow-moutarde-850)",
-      "boxShadow": "inset 0.25rem 0 0 0 var(--yellow-moutarde-850)",
+      "border": "1px solid var(--yellow-moutarde-850-200)",
+      "boxShadow": "inset 0.25rem 0 0 0 var(--yellow-moutarde-850-200)",
       "marginLeft": 0,
       "maxWidth": "fit-content",
       "paddingBottom": "1rem",
@@ -185,8 +185,8 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels 
   className="fr-highlight"
   style={
     Object {
-      "border": "1px solid var(--yellow-moutarde-850)",
-      "boxShadow": "inset 0.25rem 0 0 0 var(--yellow-moutarde-850)",
+      "border": "1px solid var(--yellow-moutarde-850-200)",
+      "boxShadow": "inset 0.25rem 0 0 0 var(--yellow-moutarde-850-200)",
       "marginLeft": 0,
       "maxWidth": "fit-content",
       "paddingBottom": "1rem",
@@ -233,8 +233,8 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels 
   className="fr-highlight"
   style={
     Object {
-      "border": "1px solid var(--yellow-moutarde-850)",
-      "boxShadow": "inset 0.25rem 0 0 0 var(--yellow-moutarde-850)",
+      "border": "1px solid var(--yellow-moutarde-850-200)",
+      "boxShadow": "inset 0.25rem 0 0 0 var(--yellow-moutarde-850-200)",
       "marginLeft": 0,
       "maxWidth": "fit-content",
       "paddingBottom": "1rem",
@@ -275,8 +275,8 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels 
   className="fr-highlight"
   style={
     Object {
-      "border": "1px solid var(--yellow-moutarde-850)",
-      "boxShadow": "inset 0.25rem 0 0 0 var(--yellow-moutarde-850)",
+      "border": "1px solid var(--yellow-moutarde-850-200)",
+      "boxShadow": "inset 0.25rem 0 0 0 var(--yellow-moutarde-850-200)",
       "marginLeft": 0,
       "maxWidth": "fit-content",
       "paddingBottom": "1rem",
