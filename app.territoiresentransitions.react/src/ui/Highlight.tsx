@@ -6,7 +6,7 @@ import {ReactNode} from 'react';
 */
 
 export const YellowHighlight = (props: {children: ReactNode}) => (
-  <Highlight color="var(--yellow-moutarde-850)" {...props} />
+  <Highlight color="var(--yellow-moutarde-850-200)" {...props} />
 );
 
 const Highlight = ({color, children}: {color: string; children: ReactNode}) => (
