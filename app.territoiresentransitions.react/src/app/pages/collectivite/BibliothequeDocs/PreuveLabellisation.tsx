@@ -5,6 +5,7 @@ import PreuveDoc from 'ui/shared/preuves/Bibliotheque/PreuveDoc';
 import {TPreuveAuditEtLabellisation} from 'ui/shared/preuves/Bibliotheque/types';
 import {useIsAuditAuditeur} from '../Audit/useAudit';
 import {numLabels} from '../ParcoursLabellisation/numLabels';
+import {groupeParReferentielEtDemande} from './groupeParReferentielEtDemande';
 
 /**
  * Affiche les documents d'audit et labellisation, groupés par référentiel et
@@ -15,24 +16,24 @@ export const PreuvesLabellisation = ({
 }: {
   preuves: TPreuveAuditEtLabellisation[];
 }) => {
-  const parReferentiel = groupByReferentielEtDate(preuves);
+  const parReferentiel = groupeParReferentielEtDemande(preuves);
   return (
     <>
       {Object.entries(parReferentiel).map(
         ([referentiel, preuvesReferentiel]) => {
-          const parDate = Object.entries(preuvesReferentiel);
+          const parDemande = Object.entries(preuvesReferentiel);
           return (
             <Fragment key={referentiel}>
               <h2>
                 Documents d'audit et de labellisation - Référentiel{' '}
                 {referentielToName[referentiel as Referentiel]}
               </h2>
-              {parDate.map(([date, preuvesDate]) => {
+              {parDemande.map(([demande_id, docs]) => {
                 return (
                   <DocsAuditOuLabellisation
-                    key={date}
-                    date={date}
-                    preuves={preuves}
+                    key={demande_id}
+                    date={demande_id}
+                    preuves={docs}
                   />
                 );
               })}
@@ -115,55 +116,4 @@ const Title = (props: {
   }
 
   return null;
-};
-
-// groupe les preuves par référentiel
-type TPreuvesParReferentiel = Record<
-  Referentiel,
-  TPreuveAuditEtLabellisation[]
->;
-const groupByReferentiel = (
-  preuves: TPreuveAuditEtLabellisation[]
-): TPreuvesParReferentiel =>
-  preuves.reduce((dict, preuve) => {
-    const referentiel =
-      preuve.demande?.referentiel || preuve.audit?.referentiel;
-    if (!referentiel) {
-      return dict;
-    }
-    return {
-      ...dict,
-      [referentiel]: [...(dict[referentiel] || []), preuve],
-    };
-  }, {} as TPreuvesParReferentiel);
-
-// groupe les preuves par date de la demande
-type TPreuvesParDate = Record<string, TPreuveAuditEtLabellisation[]>;
-const groupByDate = (preuves: TPreuveAuditEtLabellisation[]): TPreuvesParDate =>
-  preuves.reduce((dict, preuve) => {
-    const date = preuve.created_at;
-    if (!date) {
-      return dict;
-    }
-    return {
-      ...dict,
-      [date]: [...(dict[date] || []), preuve],
-    };
-  }, {} as TPreuvesParDate);
-
-// groupe les preuves par référentiel et par étoile demandée
-type TPreuvesParReferentielEtDate = Record<
-  string,
-  Record<string, TPreuveAuditEtLabellisation[]>
->;
-const groupByReferentielEtDate = (
-  preuves: TPreuveAuditEtLabellisation[]
-): TPreuvesParReferentielEtDate => {
-  return Object.entries(groupByReferentiel(preuves)).reduce(
-    (dict, [referentiel, preuvesReferentiel]) => ({
-      ...dict,
-      [referentiel]: groupByDate(preuvesReferentiel),
-    }),
-    {} as TPreuvesParReferentielEtDate
-  );
 };
