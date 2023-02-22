@@ -2,8 +2,6 @@
 
 import classNames from 'classnames';
 
-import '@gouvfr/dsfr/dist/component/link/link.css';
-
 interface InputFileProps {
   className?: string;
   label: string;
