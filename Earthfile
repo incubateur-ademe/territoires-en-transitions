@@ -103,6 +103,25 @@ client-start:
     RUN docker rm client_territoiresentransitions || exit 0
     RUN docker run -p 3000:3000 -d --name client_territoiresentransitions client:latest
 
+client-test-build:
+    FROM +react
+    ARG --required SUPABASE_ANON_KEY
+    ARG --required API_URL
+    ARG URL=$(echo $API_URL | sed "s/localhost/host.docker.internal/")
+    ARG ZIP_ORIGIN_OVERRIDE="http://kong:8000"
+    ENV REACT_APP_SUPABASE_KEY=$SUPABASE_ANON_KEY
+    ENV REACT_APP_SUPABASE_URL=$URL
+    ENV CI=true
+    CMD npm run test
+    SAVE IMAGE client-test:latest
+
+client-test:
+    FROM +client-test-build
+    LOCALLY
+    RUN docker stop client_test || exit 0
+    RUN docker rm client_test || exit 0
+    RUN docker run --name client_test client-test:latest
+
 setup-env:
     LOCALLY
     RUN earthly +stop
