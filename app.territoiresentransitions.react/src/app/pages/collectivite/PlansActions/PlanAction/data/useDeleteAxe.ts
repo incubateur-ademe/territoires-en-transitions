@@ -32,7 +32,6 @@ export const useDeleteAxe = (
 
         // Optimistically update to the new value
         queryClient.setQueryData(planActionKey, (old: any | TPlanAction) => {
-          console.log(old);
           return removeAxeFromPlan(old, axe_id);
         });
 
