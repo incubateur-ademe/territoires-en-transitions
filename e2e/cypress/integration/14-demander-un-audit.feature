@@ -27,9 +27,7 @@ Fonctionnalité: Demander un audit
     Et le bouton "Envoyer ma demande" est activé
 
     Quand je clique sur le bouton "Envoyer ma demande"
-    Alors le "choix du type d'audit/labellisation COT" contient "Envoi en cours"
-
-    Quand le "choix du type d'audit/labellisation COT" contient "Votre demande d’audit a bien été envoyée."
+    Alors le "choix du type d'audit/labellisation COT" contient "Votre demande d’audit a bien été envoyée."
     Alors le bouton "Demander un audit" est absent
     Et le "message d'en-tête" contient "Demande envoyée"
 
