@@ -34,18 +34,21 @@ export const getAxeinPlan = (
  * Fonction récursive qui vérifie si des fiches sont présentes dans un axe et ses sous-axes.
  * Dès que le script rencontre une fiche dans l'arbre, il retourne `true`.
  * @param plan plan ou axe sous forme de TPlanAction
- * @return boolean
+ * @return true si existe, sinon undefined
  */
-export const checkAxeHasFiche = (plan?: TPlanAction | null): boolean => {
+export const checkAxeHasFiche = (
+  plan?: TPlanAction | null
+): boolean | undefined => {
   if (plan && plan.fiches && plan.fiches?.length > 0) {
     return true;
   }
   if (plan && plan.enfants && plan.enfants.length > 0) {
     for (let i = 0; i < plan.enfants.length; i++) {
-      return checkAxeHasFiche(plan.enfants[i]);
+      if (checkAxeHasFiche(plan.enfants[i])) {
+        return true;
+      }
     }
   }
-  return false;
 };
 
 /**
@@ -76,7 +79,7 @@ export const checkAxeExistInPlanProfondeur = (
  * Fonction recursive qui supprime un axe et son arborescence d'un plan.
  * @param plan plan d'action complet
  * @param axe_id id de l'axe à supprimer
- * @return plan as TPlanAction | undefined
+ * @return plan d'action complet dans l'axe as TPlanAction | undefined
  */
 export const removeAxeFromPlan = (
   plan: TPlanAction,
