@@ -13,6 +13,37 @@ sqitch:
     COPY sqitch.conf ./sqitch.conf
     COPY ./data_layer/sqitch ./data_layer/sqitch
 
+pg-tap:
+    FROM +postgres
+    RUN apt-get update
+    RUN apt-get install cpanminus -y
+    RUN cpanm TAP::Parser::SourceHandler::pgTAP
+    RUN echo "$PGHOST on $PGPORT as $PGUSER using $PGPASSWORD for $PGDATABASE"
+
+db-test-build:
+    ARG --required DB_URL
+    FROM +pg-tap
+    ARG PG_URL=$(echo $DB_URL | sed "s/localhost/host.docker.internal/")
+    ARG PGHOST=$(echo $PG_URL | cut -d@ -f2 | cut -d: -f1)
+    ARG PGPORT=$(echo $PG_URL | cut -d: -f4 | cut -d/ -f1)
+    ARG PGUSER=$(echo $PG_URL | cut -d: -f3 | cut -d@ -f1)
+    ARG PGPASSWORD=$(echo $PG_URL | cut -d: -f3 | cut -d@ -f1)
+    ARG PGDATABASE=$(echo $PG_URL | cut -d/ -f4)
+    ENV PGHOST=$PGHOST
+    ENV PGPORT=$PGPORT
+    ENV PGUSER=$PGUSER
+    ENV PGPASSWORD=$PGPASSWORD
+    ENV PGDATABASE=$PGDATABASE
+    COPY ./data_layer/tests /tests
+    RUN echo "$PGHOST on $PGPORT as $PGUSER using $PGPASSWORD for $PGDATABASE"
+    CMD pg_prove tests/**/*.sql
+    SAVE IMAGE pgtap:latest
+
+db-test:
+    FROM +db-test-build
+    LOCALLY
+    RUN docker run --rm --name pgtap_territoiresentransitions pgtap:latest
+
 deploy:
     ARG --required DB_URL
     ARG MODE=change
@@ -172,11 +203,12 @@ stop:
 
 stats:
     LOCALLY
-    RUN docker stats $(docker ps --format '{{.Names}}' --filter name=transitions) || exit 0
+    RUN docker stats $(docker ps --format '{{.Names}}' --filter name=transitions) || exit 1
 
 test:
     FROM +dev
     LOCALLY
+    RUN earthly +db-test
     RUN earthly +business-test
     RUN earthly +client-test
     # les tests ne passent pas pour le moment
