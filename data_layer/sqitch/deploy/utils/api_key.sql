@@ -255,7 +255,7 @@ DECLARE
         -- The JWT secret for local development with [Supabase CLI](https://supabase.com/docs/guides/local-development)
         -- has the constant value "super-secret-jwt-token-with-at-least-32-characters-long" as an undocumented "feature".
         -- https://github.com/supabase/supabase-js/issues/25#issuecomment-1019935888
-            'super-secret-jwt-token-with-at-least-32-characters-long');
+            'your-super-secret-jwt-token-with-at-least-32-characters-long');
 BEGIN
     INSERT INTO api_auth.tokens (
         user_id,
@@ -519,13 +519,13 @@ BEGIN
         content
     FROM
         -- Post request to enable write access
-        http ( --
+        extensions.http ( --
                 ( --
                  'POST', --
                  FORMAT('%s/rest/v1/rpc/api_auth_log_request', supabase_url), --
                  ( --
                      SELECT
-                         array_agg(http_header (key, value #>> '{}'))
+                         array_agg(extensions.http_header (key, value #>> '{}'))
                      FROM jsonb_each( --
                              jsonb_build_object(
                                  -- Request expects to find its endpoint in the "public" schema.
@@ -542,7 +542,7 @@ BEGIN
                          'user_agent', current_setting('request.headers')::json ->> 'user-agent', --
                          'origin', current_setting('request.headers')::json ->> 'origin', --
                          'ip', current_setting('request.headers')::json ->> 'x-real-ip') --
-                    )::http_request) INTO response_status,
+                    )::extensions.http_request) INTO response_status,
         response_content;
     IF NOT (coalesce((response_status), -1) BETWEEN 200 AND 299) THEN
         -- Show extra details in local and development environments
