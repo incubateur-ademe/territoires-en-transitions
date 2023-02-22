@@ -20,6 +20,15 @@ deploy:
     ARG PG_URL=$(echo $DB_URL | sed "s/localhost/host.docker.internal/")
     RUN --push sqitch deploy db:$PG_URL --mode $MODE
 
+deploy-test:
+    ARG --required DB_URL
+    ARG tag="v2.2.0"
+    FROM +sqitch
+    ARG PG_URL=$(echo $DB_URL | sed "s/localhost/host.docker.internal/")
+    RUN --push sqitch deploy db:$PG_URL --mode change
+    RUN --push sqitch revert db:$PG_URL --to @$tag --y
+    RUN --push sqitch deploy db:$PG_URL --mode change --verify
+
 seed:
     ARG --required DB_URL
     ARG SKIP_TEST_DOMAIN=0
@@ -172,4 +181,5 @@ test:
     RUN earthly +client-test
     # les tests ne passent pas pour le moment
     # RUN earthly +api-test
+    RUN earthly --push +deploy-test
 
