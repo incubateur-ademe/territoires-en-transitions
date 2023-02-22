@@ -106,7 +106,7 @@ export const DemandeLabellisationModal = (
             : `Demander un audit pour la ${numLabels[etoiles!]} étoile`}
         </h3>
         <div className="w-full">
-          {isLoading ? 'Envoi en cours...' : null}
+          {status === 'non_demandee' && isLoading ? 'Envoi en cours...' : null}
           {status === 'demande_envoyee' ? (
             <div className="fr-alert fr-alert--success">
               {etoiles === '1' ? submittedEtoile1 : submittedAutresEtoiles}

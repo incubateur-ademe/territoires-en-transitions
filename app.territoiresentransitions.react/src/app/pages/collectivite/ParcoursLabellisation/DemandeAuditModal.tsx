@@ -48,7 +48,7 @@ export const DemandeAuditModal = (props: TDemandeLabellisationModalProps) => {
         <CloseDialogButton setOpened={setOpened} />
         <h3>Demander un audit</h3>
         <div className="w-full">
-          {isLoading ? 'Envoi en cours...' : null}
+          {status === 'non_demandee' && isLoading ? 'Envoi en cours...' : null}
           {status === 'demande_envoyee' ? (
             <div className="fr-alert fr-alert--success">
               {submittedAutresEtoiles}
