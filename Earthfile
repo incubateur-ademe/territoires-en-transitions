@@ -64,9 +64,7 @@ business-build:
 business-start:
     FROM +business-build
     LOCALLY
-    RUN docker stop business_territoiresentransitions || exit 0
-    RUN docker rm business_territoiresentransitions || exit 0
-    RUN docker run -p 8888:8888 -d --name business_territoiresentransitions business:latest
+    RUN docker run -p 8888:8888 -d --rm --name business_territoiresentransitions business:latest
 
 business-test:
     FROM +business-build
@@ -99,9 +97,7 @@ client-build:
 client-start:
     FROM +client-build
     LOCALLY
-    RUN docker stop client_territoiresentransitions || exit 0
-    RUN docker rm client_territoiresentransitions || exit 0
-    RUN docker run -p 3000:3000 -d --name client_territoiresentransitions client:latest
+    RUN docker run -p 3000:3000 -d --rm --name client_territoiresentransitions client:latest
 
 client-test-build:
     FROM +react
@@ -118,9 +114,7 @@ client-test-build:
 client-test:
     FROM +client-test-build
     LOCALLY
-    RUN docker stop client_test || exit 0
-    RUN docker rm client_test || exit 0
-    RUN docker run --name client_test client-test:latest
+    RUN docker run --rm --name client_test_territoiresentransitions client-test:latest
 
 setup-env:
     LOCALLY
