@@ -122,8 +122,8 @@ Fonctionnalité: Demander un audit
 
     Quand je suis sur la page "Bibliothèque de documents" de la collectivité courante
     Alors la liste des documents de labellisation contient les lignes suivantes :
-      | Titre                 | Commentaire | Lecture seule |
-      | doc labellisation.pdf |             | oui           |
+      | Titre                 | Commentaire |
+      | doc labellisation.pdf |             |
     Et la liste des documents de labellisation contient le titre "troisième étoile" sans l'indication "en cours"
 
   Scénario: Demander un audit de labellisation (pour une collectivité sans COT)

@@ -4,6 +4,7 @@ import {Referentiel} from 'types/litterals';
 import PreuveDoc from 'ui/shared/preuves/Bibliotheque/PreuveDoc';
 import {TPreuveAuditEtLabellisation} from 'ui/shared/preuves/Bibliotheque/types';
 import {useIsAuditAuditeur} from '../Audit/useAudit';
+import {getParcoursStatus} from '../ParcoursLabellisation/getParcoursStatus';
 import {numLabels} from '../ParcoursLabellisation/numLabels';
 import {groupeParReferentielEtDemande} from './groupeParReferentielEtDemande';
 
@@ -55,27 +56,37 @@ const DocsAuditOuLabellisation = (props: {
 }) => {
   const {date, preuves} = props;
 
-  // les documents ne sont pas éditables si la demande ou l'audit sont en cours,
-  // sauf si l'utilisateur courant est l'auditeur, ou si l'audit est validé
-  const {audit, demande} = preuves[0];
-  const isAuditeur = useIsAuditAuditeur(audit?.id);
-  const readonly =
-    (!audit && !demande?.en_cours) ||
-    (audit && (audit.valide || !isAuditeur)) ||
-    false;
-
   return (
     <Fragment>
       <Title date={date} preuves={preuves} />
       {preuves.map(preuve => (
-        <PreuveDoc
-          key={preuve.id}
-          preuve={preuve}
-          readonly={readonly}
-          classComment="pb-0 mb-2"
-        />
+        <DocAuditOuLabellisation key={preuve.id} preuve={preuve} />
       ))}
     </Fragment>
+  );
+};
+
+const DocAuditOuLabellisation = ({
+  preuve,
+}: {
+  preuve: TPreuveAuditEtLabellisation;
+}) => {
+  const {audit} = preuve;
+  const isAuditeur = useIsAuditAuditeur(audit?.id);
+  const status = getParcoursStatus(preuve);
+
+  // le document n'est pas éditable si...
+  const readonly =
+    // ... c'est le rapport d’un audit en cours et l'utilisateur n'est pas auditeur
+    (preuve.preuve_type === 'audit' &&
+      status === 'audit_en_cours' &&
+      !isAuditeur) ||
+    //... ou si l'audit est validé
+    status === 'audit_valide' ||
+    false;
+
+  return (
+    <PreuveDoc preuve={preuve} readonly={readonly} classComment="pb-0 mb-2" />
   );
 };
 
