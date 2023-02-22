@@ -4,10 +4,13 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useIsAuditeur} from '../Audit/useAudit';
 import {useCarteIdentite} from '../PersoReferentielThematique/useCarteIdentite';
+import {usePreuves} from 'ui/shared/preuves/Bibliotheque/usePreuves';
+import {TPreuveLabellisation} from 'ui/shared/preuves/Bibliotheque/types';
 
 // données du cycle de labellisation/audit actuel d'une collectivité
 export type TCycleLabellisation = {
   parcours: TLabellisationParcours | null;
+  preuves: TPreuveLabellisation[];
   status: TCycleLabellisationStatus;
   isAuditeur: boolean;
   isCOT: boolean;
@@ -39,6 +42,12 @@ export const useCycleLabellisation = (
   const parcours = getReferentielParcours(parcoursList, referentiel);
   const {completude_ok, rempli} = parcours || {};
 
+  // charge les documents de labellisation
+  const preuves = usePreuves({
+    demande_id: parcours?.demande?.id,
+    preuve_types: ['labellisation'],
+  }) as TPreuveLabellisation[];
+
   // états dérivés
   const status = getParcoursStatus(parcours);
   const isCOT = Boolean(identite?.is_cot);
@@ -54,6 +63,7 @@ export const useCycleLabellisation = (
 
   return {
     parcours,
+    preuves,
     status,
     isAuditeur,
     isCOT,

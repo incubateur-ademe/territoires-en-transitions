@@ -86,6 +86,8 @@ Etoile_2_3_4_5_Envoyee.args = {
 };
 
 export const NonLabellisableCOT = Template.bind({});
+NonLabellisableCOT.storyName =
+  'Non labellisable COT (critère fichier non atteint)';
 NonLabellisableCOT.args = {
   parcoursLabellisation: {
     status: 'non_demandee',
@@ -95,6 +97,22 @@ NonLabellisableCOT.args = {
       referentiel: 'eci',
       etoiles: '1',
     },
+  },
+};
+
+export const NonLabellisableCOT2 = Template.bind({});
+NonLabellisableCOT2.storyName =
+  'Non labellisable COT (critère fichier atteint)';
+NonLabellisableCOT2.args = {
+  parcoursLabellisation: {
+    status: 'non_demandee',
+    isCOT: true,
+    parcours: {
+      collectivite_id: 1,
+      referentiel: 'eci',
+      etoiles: '1',
+    },
+    preuves: ['fichier'],
   },
 };
 
@@ -109,5 +127,6 @@ LabellisableCOT.args = {
       referentiel: 'eci',
       etoiles: '1',
     },
+    preuves: ['fichier'],
   },
 };

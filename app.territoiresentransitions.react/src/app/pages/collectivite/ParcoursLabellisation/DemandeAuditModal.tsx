@@ -15,7 +15,7 @@ import {
 export const DemandeAuditModal = (props: TDemandeLabellisationModalProps) => {
   const {isLoading, envoiDemande} = useEnvoiDemande();
   const {parcoursLabellisation, opened, setOpened} = props;
-  const {parcours, status, labellisable} = parcoursLabellisation;
+  const {parcours, status, labellisable, preuves} = parcoursLabellisation;
   const {collectivite_id, referentiel, etoiles} = parcours || {};
   const [sujet, setSujet] = useState<TSujetDemande | null>(
     !labellisable ? 'cot' : null
@@ -25,6 +25,16 @@ export const DemandeAuditModal = (props: TDemandeLabellisationModalProps) => {
   if (!collectivite_id || !referentiel) {
     return null;
   }
+
+  // on doit afficher un meesage d'aide si la collectivité est non labellisable
+  // car le critère fichier n'est pas atteint
+  const aide =
+    !labellisable && !preuves?.length ? (
+      <p className="fr-text--sm fr-mt-2w">
+        * Pour passer en CNL penser à joindre les documents de labellisation.
+      </p>
+    ) : null;
+  const asterique = aide ? <sup>*</sup> : null;
 
   return (
     <Dialog
@@ -59,7 +69,7 @@ export const DemandeAuditModal = (props: TDemandeLabellisationModalProps) => {
                   sujet={sujet}
                   setSujet={setSujet}
                 >
-                  Audit COT <b>avec</b> labellisation
+                  Audit COT <b>avec</b> labellisation{asterique}
                 </RadioButton>
                 <RadioButton
                   disabled={!labellisable}
@@ -67,8 +77,9 @@ export const DemandeAuditModal = (props: TDemandeLabellisationModalProps) => {
                   sujet={sujet}
                   setSujet={setSujet}
                 >
-                  Audit <b>de</b> labellisation
+                  Audit <b>de</b> labellisation{asterique}
                 </RadioButton>
+                {aide}
               </div>
               <button
                 className="fr-btn"
