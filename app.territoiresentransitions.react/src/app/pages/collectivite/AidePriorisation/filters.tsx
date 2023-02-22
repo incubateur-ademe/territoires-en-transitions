@@ -1,5 +1,5 @@
-import {ITEM_ALL} from 'ui/shared/select/commons';
 import {TBoundary} from 'ui/shared/boundariesToQueryFilter';
+import {ITEM_ALL} from 'ui/shared/filters/commons';
 
 export type TFilters = {
   score_realise: string[];

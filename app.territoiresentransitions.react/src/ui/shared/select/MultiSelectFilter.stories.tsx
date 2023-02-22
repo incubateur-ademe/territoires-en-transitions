@@ -1,8 +1,8 @@
 import React from 'react';
 import {useState} from 'react';
 import {MultiSelectFilter} from './MultiSelectFilter';
-import {ITEM_ALL} from './commons';
 import classNames from 'classnames';
+import {ITEM_ALL} from '../filters/commons';
 
 export default {
   component: MultiSelectFilter,

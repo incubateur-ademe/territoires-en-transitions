@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import MultiSelectDropdown, {
   TMultiSelectDropdownProps,
 } from 'ui/shared/select/MultiSelectDropdown';
-import {getIsAllSelected, ITEM_ALL} from './commons';
+import {getIsAllSelected, ITEM_ALL} from '../filters/commons';
 
 /** Uncontroled multi select filter */
 export const MultiSelectFilter = <T extends string>({

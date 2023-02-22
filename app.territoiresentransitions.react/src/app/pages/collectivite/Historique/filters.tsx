@@ -1,4 +1,4 @@
-import {ITEM_ALL} from 'ui/shared/select/commons';
+import {ITEM_ALL} from 'ui/shared/filters/commons';
 import {HistoriqueType} from './types';
 
 export const NB_ITEMS_PER_PAGE = 10;

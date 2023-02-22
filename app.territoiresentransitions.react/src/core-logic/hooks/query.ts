@@ -1,6 +1,6 @@
 import {useEffect, useMemo, useState} from 'react';
 import {useHistory, useLocation} from 'react-router-dom';
-import {ITEM_ALL} from 'ui/shared/select/commons';
+import {ITEM_ALL} from 'ui/shared/filters/commons';
 
 export const useQuery = (): URLSearchParams => {
   const {search} = useLocation();

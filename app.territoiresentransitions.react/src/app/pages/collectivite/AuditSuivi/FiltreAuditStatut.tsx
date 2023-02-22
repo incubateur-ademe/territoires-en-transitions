@@ -2,10 +2,10 @@ import {
   MultiSelectFilter,
   MultiSelectFilterTitle,
 } from 'ui/shared/select/MultiSelectFilter';
-import {ITEM_ALL} from 'ui/shared/select/commons';
 import {TFiltreProps} from './filters';
 import {BadgeAuditStatut} from 'app/pages/collectivite/Audit/BadgeAuditStatut';
 import {TAuditStatut} from 'app/pages/collectivite/Audit/types';
+import {ITEM_ALL} from 'ui/shared/filters/commons';
 
 export const FILTER = 'statut';
 
