@@ -103,6 +103,118 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves 
 </ul>
 `;
 
+exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves CAE Score Superieur A 35 Pourcent 1`] = `
+<ul>
+  <li
+    className="fr-mb-1w"
+  >
+    Ajouter les documents officiels de candidature
+  </li>
+  <ul>
+    <li>
+      <b>
+        Dossier de demande de labellisation
+      </b>
+       (et Request for Award pour les candidatures 5 étoiles)
+    </li>
+    <li>
+      <b>
+        Autres documents annexes
+      </b>
+       si non renseignés dans la plateforme (programme politique - plan d’action, délibération de la politique climat air énergie, tableau de recueil des indicateurs…)
+    </li>
+  </ul>
+  <button
+    aria-expanded="false"
+    aria-haspopup="dialog"
+    className="fr-btn fr-btn--sm fr-btn--secondary"
+    data-test="AddDocsButton"
+    onClick={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    onMouseDown={[Function]}
+    onPointerDown={[Function]}
+  >
+    + Ajouter
+  </button>
+</ul>
+`;
+
+exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves CAE Score Superieur A 35 Pourcent Rempli 1`] = `
+<ul>
+  <li
+    className="fr-mb-1w"
+  >
+    Ajouter les documents officiels de candidature
+  </li>
+  <ul>
+    <li>
+      <b>
+        Dossier de demande de labellisation
+      </b>
+       (et Request for Award pour les candidatures 5 étoiles)
+    </li>
+    <li>
+      <b>
+        Autres documents annexes
+      </b>
+       si non renseignés dans la plateforme (programme politique - plan d’action, délibération de la politique climat air énergie, tableau de recueil des indicateurs…)
+    </li>
+  </ul>
+  <i
+    className="flex fr-icon fr-fi-checkbox-circle-fill before:text-[#5FD68C] before:pr-3 fr-text--sm fr-mb-0 fr-ml-3w fr-mb-2w"
+  >
+    Terminé
+  </i>
+  <button
+    aria-expanded="false"
+    aria-haspopup="dialog"
+    className="fr-btn fr-btn--sm fr-btn--secondary"
+    data-test="AddDocsButton"
+    onClick={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    onMouseDown={[Function]}
+    onPointerDown={[Function]}
+  >
+    + Ajouter
+  </button>
+  <div
+    className="mt-2"
+    data-test="LabellisationPreuves"
+  >
+    <div
+      data-test="item"
+    >
+      <div
+        className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0 cursor-pointer"
+      >
+        <a
+          className="fr-text--sm fr-mb-1v"
+          data-test="name"
+          href="#"
+          onClick={[Function]}
+        />
+        <div
+          className="invisible group-hover:visible"
+        >
+          <button
+            className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line"
+            onClick={[Function]}
+            title="Décrire"
+          />
+          <button
+            className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
+            onClick={[Function]}
+            title="Supprimer"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</ul>
+`;
+
 exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves Premiere Etoile CAE 1`] = `
 <ul>
   <li
