@@ -5,6 +5,7 @@ import {useCarteIdentite} from '../PersoReferentielThematique/useCarteIdentite';
 import {usePreuves} from 'ui/shared/preuves/Bibliotheque/usePreuves';
 import {TPreuveLabellisation} from 'ui/shared/preuves/Bibliotheque/types';
 import {useLabellisationParcours} from './useLabellisationParcours';
+import {getParcoursStatus} from './getParcoursStatus';
 
 // données du cycle de labellisation/audit actuel d'une collectivité
 export type TCycleLabellisation = {
@@ -17,7 +18,7 @@ export type TCycleLabellisation = {
 };
 
 // état consolidé du cycle de labellisation/audit
-type TCycleLabellisationStatus =
+export type TCycleLabellisationStatus =
   | 'non_demandee'
   | 'demande_envoyee'
   | 'audit_en_cours'
@@ -62,24 +63,4 @@ export const useCycleLabellisation = (
     isCOT,
     labellisable,
   };
-};
-
-// détermine l'état consolidé du cycle
-const getParcoursStatus = (
-  parcours: TLabellisationParcours | null
-): TCycleLabellisationStatus => {
-  if (!parcours) {
-    return 'non_demandee';
-  }
-  const {demande, audit} = parcours;
-  if (audit?.valide) {
-    return 'audit_valide';
-  }
-  if (audit?.date_debut && !audit?.valide) {
-    return 'audit_en_cours';
-  }
-  if (demande && !demande.en_cours) {
-    return 'demande_envoyee';
-  }
-  return 'non_demandee';
 };
