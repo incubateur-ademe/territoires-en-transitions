@@ -28,7 +28,7 @@ PremiereEtoileECI.args = {
   preuves: [],
 };
 
-// le critère est considéré comme rempli si il y a au moins un ffichier
+// le critère est considéré comme rempli si il y a au moins un fichier
 const FILE1 = {
   collectivite_id: 1,
   bucket_id: 'some-uuid',
@@ -116,4 +116,34 @@ AutresEtoilesCAE.args = {
     },
   },
   preuves: [],
+};
+
+export const CAEScoreSuperieurA35Pourcent = Template.bind({});
+CAEScoreSuperieurA35Pourcent.args = {
+  collectiviteId: 1,
+  parcours: {
+    ...fixture.parcours1,
+    referentiel: 'cae',
+    etoiles: '2',
+    critere_score: {
+      atteint: false,
+      etoiles: '2',
+      score_fait: 0.36,
+      score_a_realiser: 0.35,
+    },
+    demande: {
+      id: 2,
+      en_cours: true,
+      collectivite_id: 1,
+      referentiel: 'cae',
+      etoiles: '2',
+    },
+  },
+  preuves: [],
+};
+
+export const CAEScoreSuperieurA35PourcentRempli = Template.bind({});
+CAEScoreSuperieurA35PourcentRempli.args = {
+  ...CAEScoreSuperieurA35Pourcent.args,
+  preuves: [FILE1],
 };
