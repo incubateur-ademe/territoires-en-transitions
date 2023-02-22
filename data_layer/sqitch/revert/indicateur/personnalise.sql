@@ -1,9 +1,17 @@
--- Revert tet:indicateur/personnalise from pg
+-- Deploy tet:indicateur/personnalise to pg
 
 BEGIN;
 
-drop table indicateur_personnalise_objectif;
-drop table indicateur_personnalise_resultat;
-drop table indicateur_personnalise_definition;
+alter policy allow_read
+    on indicateur_personnalise_definition
+    using (is_authenticated());
+
+alter policy allow_read
+    on indicateur_personnalise_resultat
+    using (is_authenticated());
+
+alter policy allow_read
+    on indicateur_personnalise_objectif
+    using (is_authenticated());
 
 COMMIT;

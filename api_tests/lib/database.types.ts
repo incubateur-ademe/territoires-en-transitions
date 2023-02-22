@@ -767,6 +767,10 @@ export interface Database {
         Args: {id: number};
         Returns: boolean;
       };
+      have_lecture_access_with_restreint: {
+        Args: {collectivite_id: number};
+        Returns: boolean;
+      };
       have_one_of_niveaux_acces: {
         Args: {id: number; niveaux: unknown};
         Returns: boolean;
@@ -901,6 +905,10 @@ export interface Database {
       personnes_collectivite: {
         Args: {collectivite_id: number};
         Returns: unknown;
+      };
+      peut_lire_la_fiche: {
+        Args: {fiche_id: number};
+        Returns: boolean;
       };
       peut_modifier_la_fiche: {
         Args: {fiche_id: number};
@@ -1648,16 +1656,19 @@ export interface Database {
       };
       collectivite: {
         Insert: {
+          access_restreint?: boolean;
           created_at?: string;
           id?: number;
           modified_at?: string;
         };
         Row: {
+          access_restreint: boolean;
           created_at: string;
           id: number;
           modified_at: string;
         };
         Update: {
+          access_restreint?: boolean;
           created_at?: string;
           id?: number;
           modified_at?: string;

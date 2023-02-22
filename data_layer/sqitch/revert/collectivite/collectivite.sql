@@ -1,13 +1,11 @@
--- Revert tet:collectivites from pg
+-- Deploy tet:collectivites to pg
+-- requires: base
+-- requires: imports
 
 BEGIN;
 
-drop view named_collectivite;
-drop table collectivite_test;
-drop table commune;
-drop table epci;
-drop function before_write_create_collectivite;
-drop table collectivite;
-drop extension unaccent;
+drop function have_lecture_access_with_restreint;
+alter table collectivite
+    drop column access_restreint;
 
 COMMIT;

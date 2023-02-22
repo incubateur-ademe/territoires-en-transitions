@@ -231,3 +231,8 @@ labellisation/comparaison_audit [labellisation/comparaison_audit@v2.2.0] 2023-02
 
 utilisateur/dcp [utilisateur/dcp@v2.2.2] 2023-02-16T14:10:59Z Marc Rutkowski <marc@attractive-media.fr> # ajoute la date d'acceptation des CGU aux DCP
 @v2.4.0 2023-02-21T08:30:02Z Florian <florian@derfurth.com> # Acceptation des CGU
+
+collectivite/collectivite [collectivite/collectivite@v2.4.0] 2023-02-22T14:17:11Z Amandine Jacquelin <conta@LanceLibre> # Ajout booléen accès limité
+plan_action/plan_action [plan_action/plan_action@v2.4.0] 2023-02-22T14:44:24Z Amandine Jacquelin <conta@LanceLibre> # Change les droits pour inserer acces_restreint de collectivite
+indicateur/referentiel [indicateur/referentiel@v2.4.0] 2023-02-22T16:43:16Z Amandine Jacquelin <conta@LanceLibre> # Change les droits pour inserer acces_restreint de collectivite
+indicateur/personnalise [indicateur/personnalise@v2.4.0] 2023-02-22T16:43:35Z Amandine Jacquelin <conta@LanceLibre> # Change les droits pour inserer acces_restreint de collectivite
