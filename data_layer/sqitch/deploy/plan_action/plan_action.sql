@@ -2,11 +2,11 @@
 
 BEGIN;
 
-create function peut_lire_la_fiche(fiche_id integer) returns boolean as $$
+create or replace function peut_lire_la_fiche(fiche_id integer) returns boolean as $$
 begin
     return have_lecture_access_with_restreint((select fa.collectivite_id from fiche_action fa where fa.id = fiche_id limit 1));
 end;
-$$language plpgsql;
+$$language plpgsql security definer;
 
 -- fiche_action
 alter policy allow_read on fiche_action using(peut_lire_la_fiche(id));
@@ -43,5 +43,11 @@ alter policy allow_read on fiche_action_indicateur using(peut_lire_la_fiche(fich
 alter policy allow_read on fiche_action_action using(peut_lire_la_fiche(fiche_id));
 -- fiches_action
 alter view fiches_action set (security_invoker = on);
+-- plan_action
+alter view plan_action set (security_invoker = on);
+-- plan_action_chemin
+alter view plan_action_chemin set (security_invoker = on);
+-- plan_action_profondeur
+alter view plan_action_profondeur set (security_invoker = on);
 
 COMMIT;

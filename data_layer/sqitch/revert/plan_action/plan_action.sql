@@ -37,6 +37,12 @@ alter policy allow_read on fiche_action_indicateur using(is_authenticated());
 alter policy allow_read on fiche_action_action using(is_authenticated());
 -- fiches_action
 alter view fiches_action set (security_invoker = off);
+-- plan_action
+alter view plan_action set (security_invoker = off);
+-- plan_action_chemin
+alter view plan_action_chemin set (security_invoker = off);
+-- plan_action_profondeur
+alter view plan_action_profondeur set (security_invoker = off);
 
 drop function peut_lire_la_fiche;
 
