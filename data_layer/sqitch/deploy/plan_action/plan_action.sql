@@ -6,19 +6,18 @@ create or replace function plan_action(id integer) returns jsonb as
 $$
 declare
     pa_enfant_id integer; -- Id d'un plan d'action enfant du plan d'action courant
-    pa_axe axe; -- Axe courant
-    id_loop integer; -- Indice pour parcourir une boucle
-    enfants jsonb[]; -- Plans d'actions enfants du plan d'action courant;
-    fiches jsonb; -- Fiches actions du plan d'action courant
-    to_return jsonb; -- JSON retournant le plan d'action courant, ses fiches et ses enfants
+    pa_axe       axe; -- Axe courant
+    id_loop      integer; -- Indice pour parcourir une boucle
+    enfants      jsonb[]; -- Plans d'actions enfants du plan d'action courant;
+    fiches       jsonb; -- Fiches actions du plan d'action courant
+    to_return    jsonb; -- JSON retournant le plan d'action courant, ses fiches et ses enfants
 begin
     fiches = to_jsonb((select array_agg(ff.*)
-                       from(
-                               select * from fiches_action fa
-                                                 join fiche_action_axe fapa on fa.id = fapa.fiche_id
-                               where fapa.axe_id = plan_action.id
-                               order by naturalsort(lower(fa.titre))
-                           )ff)) ;
+                       from (select *
+                             from fiches_action fa
+                                      join fiche_action_axe fapa on fa.id = fapa.fiche_id
+                             where fapa.axe_id = plan_action.id
+                             order by naturalsort(lower(fa.titre))) ff));
     select * from axe where axe.id = plan_action.id limit 1 into pa_axe;
     id_loop = 1;
     for pa_enfant_id in
@@ -46,10 +45,10 @@ create or replace function plan_action_profondeur(id integer, profondeur integer
 $$
 declare
     pa_enfant_id integer; -- Id d'un plan d'action enfant du plan d'action courant
-    pa_axe axe; -- Axe courant
-    id_loop integer; -- Indice pour parcourir une boucle
-    enfants jsonb[]; -- Plans d'actions enfants du plan d'action courant;
-    to_return jsonb; -- JSON retournant le plan d'action courant, ses fiches et ses enfants
+    pa_axe       axe; -- Axe courant
+    id_loop      integer; -- Indice pour parcourir une boucle
+    enfants      jsonb[]; -- Plans d'actions enfants du plan d'action courant;
+    to_return    jsonb; -- JSON retournant le plan d'action courant, ses fiches et ses enfants
 begin
     select * from axe where axe.id = plan_action_profondeur.id limit 1 into pa_axe;
     id_loop = 1;
@@ -59,7 +58,7 @@ begin
         where pa.parent = plan_action_profondeur.id
         order by naturalsort(lower(pa.nom))
         loop
-            enfants[id_loop] = plan_action_profondeur(pa_enfant_id, profondeur +1);
+            enfants[id_loop] = plan_action_profondeur(pa_enfant_id, profondeur + 1);
             id_loop = id_loop + 1;
         end loop;
 
@@ -131,7 +130,10 @@ begin
           and case
                   when pilote_tag_id is null then true
                   else fa.id in
-                       (select fap.fiche_id from fiche_action_pilote fap where fap.tag_id = pilote_tag_id)
+                       (select fap.fiche_id
+                        from fiche_action_pilote fap
+                                 join personne_tag pt on fap.tag_id = pt.id
+                        where pt.id = pilote_tag_id)
             end
           and case
                   when pilote_user_id is null then true
@@ -141,7 +143,10 @@ begin
           and case
                   when referent_tag_id is null then true
                   else fa.id in
-                       (select far.fiche_id from fiche_action_referent far where far.tag_id = referent_tag_id)
+                       (select far.fiche_id
+                        from fiche_action_referent far
+                                 join personne_tag pt on far.tag_id = pt.id
+                        where pt.id = referent_tag_id)
             end
           and case
                   when referent_user_id is null then true
