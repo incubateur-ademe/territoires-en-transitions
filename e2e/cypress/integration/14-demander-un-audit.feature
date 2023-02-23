@@ -124,7 +124,7 @@ Fonctionnalité: Demander un audit
     Alors la liste des documents de labellisation contient les lignes suivantes :
       | Titre                 | Commentaire |
       | doc labellisation.pdf |             |
-    Et la liste des documents de labellisation contient le titre "troisième étoile" sans l'indication "en cours"
+    Et la liste des documents de labellisation contient le titre "troisième étoile" avec l'indication "en cours"
 
   Scénario: Demander un audit de labellisation (pour une collectivité sans COT)
     On teste l'envoi d'une demande d'audit de labellisation pour une collectivité sans COT.

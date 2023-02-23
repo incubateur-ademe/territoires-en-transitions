@@ -22,19 +22,21 @@ export const PreuvesLabellisation = ({
     <>
       {Object.entries(parReferentiel).map(
         ([referentiel, preuvesReferentiel]) => {
-          const parDemande = Object.entries(preuvesReferentiel);
+          const parDemande = Object.entries(preuvesReferentiel)
+            .map(addInfoToEntry)
+            .sort((a, b) => b.info.timestamp - a.info.timestamp);
           return (
             <Fragment key={referentiel}>
               <h2>
                 Documents d'audit et de labellisation - Référentiel{' '}
                 {referentielToName[referentiel as Referentiel]}
               </h2>
-              {parDemande.map(([demande_id, docs]) => {
+              {parDemande.map(({id, docs}, index) => {
                 return (
                   <DocsAuditOuLabellisation
-                    key={demande_id}
-                    date={demande_id}
+                    key={id}
                     preuves={docs}
+                    className={index ? 'fr-mt-3w' : undefined}
                   />
                 );
               })}
@@ -51,14 +53,16 @@ export const PreuvesLabellisation = ({
  * d'audit.
  */
 const DocsAuditOuLabellisation = (props: {
-  date: string;
+  className?: string;
   preuves: TPreuveAuditEtLabellisation[];
 }) => {
-  const {date, preuves} = props;
+  const {className, preuves} = props;
 
   return (
     <Fragment>
-      <Title date={date} preuves={preuves} />
+      <h3 className={className}>
+        <Title preuves={preuves} />
+      </h3>
       {preuves.map(preuve => (
         <DocAuditOuLabellisation key={preuve.id} preuve={preuve} />
       ))}
@@ -94,37 +98,56 @@ const DocAuditOuLabellisation = ({
  * Affiche le titre d'un sous-ensemble de documents d'une demande de
  * labellisation ou d'audit.
  */
-const Title = (props: {
-  date: string;
-  preuves: TPreuveAuditEtLabellisation[];
-}) => {
-  const {date, preuves} = props;
-  const annee = new Date(date).getFullYear();
-  const demande = preuves.find(p => p.demande)?.demande;
-  const audit = preuves?.find(p => p.audit)?.audit;
-
-  const etoile = demande?.etoiles;
+const Title = (props: {preuves: TPreuveAuditEtLabellisation[]}) => {
+  const {preuves} = props;
+  const {etoile, status, annee, audit} = getCycleInfo(preuves);
   const labelEtoile = etoile ? (numLabels[etoile] as string) : null;
-  const en_cours = (!audit && demande?.en_cours) || (audit && !audit.valide);
+  const en_cours = status === 'demande_envoyee' || status === 'audit_en_cours';
   const label = annee + (en_cours ? ' (en cours)' : '') + ' - ';
 
   if (etoile) {
     return (
-      <h3>
+      <>
         {label}
         <span className="capitalize">{labelEtoile}</span> étoile
-      </h3>
+      </>
     );
   }
 
   if (audit) {
     return (
-      <h3>
+      <>
         {label}
         <span>Audit contrat d'objectif territorial (COT)</span>
-      </h3>
+      </>
     );
   }
 
   return null;
+};
+
+// donne les infos du cycle d'audit/labellisation associé à un sous-ensemble de preuves
+const getCycleInfo = (preuves: TPreuveAuditEtLabellisation[]) => {
+  const demande = preuves.find(p => p.demande)?.demande || null;
+  const audit = preuves?.find(p => p.audit)?.audit || null;
+  const d = audit?.date_fin || audit?.date_debut || demande?.date;
+  const date = d ? new Date(d) : new Date();
+  const annee = date.getFullYear();
+  const status = getParcoursStatus({demande, audit});
+  const timestamp = date.getTime();
+
+  const etoile = demande?.etoiles;
+  return {timestamp, annee, audit, demande, etoile, status};
+};
+
+// ajoute les infos du cycle d'audit/labellisation associé à un sous-ensemble de preuves
+const addInfoToEntry = (
+  entry: [id: string, docs: TPreuveAuditEtLabellisation[]]
+) => {
+  const [id, docs] = entry;
+  return {
+    id,
+    docs,
+    info: getCycleInfo(docs),
+  };
 };
