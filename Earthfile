@@ -162,6 +162,15 @@ api-test:
     COPY ./api_tests .
     RUN deno test --allow-net --allow-env --allow-read tests/ --location 'http://localhost'
 
+cypress-wip:
+    FROM cypress/included:12.3.0
+    ENV ELECTRON_EXTRA_LAUNCH_ARGS="--disable-gpu"
+    WORKDIR /e2e
+    COPY ./e2e/package.json /e2e/package.json
+    RUN npm install
+    COPY ./e2e/ /e2e
+    RUN npm test
+
 setup-env:
     LOCALLY
     RUN earthly +stop
