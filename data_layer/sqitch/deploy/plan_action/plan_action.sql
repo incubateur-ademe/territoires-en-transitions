@@ -107,7 +107,7 @@ create function
     niveau_priorite fiche_action_niveaux_priorite default null,
     statut fiche_action_statuts default null,
     referent_tag_id integer default null,
-    referent_user_id integer default null
+    referent_user_id uuid default null
 )
     returns setof fiches_action
 as
