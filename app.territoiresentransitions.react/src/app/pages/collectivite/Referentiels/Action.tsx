@@ -23,11 +23,7 @@ import {
   makeCollectiviteActionUrl,
   ReferentielParamOption,
 } from 'app/paths';
-import {
-  useActionVue,
-  useCollectiviteId,
-  useReferentielId,
-} from 'core-logic/hooks/params';
+import {useActionVue, useReferentielId} from 'core-logic/hooks/params';
 import HistoriqueListe from 'app/pages/collectivite/Historique/HistoriqueListe';
 import ScrollTopButton from 'ui/shared/ScrollTopButton';
 import ActionNav from './ActionNav';
@@ -36,6 +32,7 @@ import {DownloadDocs} from './DownloadDocs';
 import DOMPurify from 'dompurify';
 import ActionAuditStatut from '../Audit/ActionAuditStatut';
 import {ActionAuditDetail} from '../Audit/ActionAuditDetail';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
 const useActionLinkedIndicateurDefinitions = (actionId: string) => {
   const [linkedIndicateurDefinitions, setLinkedIndicateurDefinitions] =
@@ -86,17 +83,23 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
   const children = useActionSummaryChildren(action);
   const actionVue = useActionVue();
   const history = useHistory();
-  const collectiviteId = useCollectiviteId();
+  const collectivite = useCurrentCollectivite();
+  const collectiviteId = collectivite?.collectivite_id;
   const referentielId = useReferentielId() as ReferentielParamOption;
 
   const actionLinkedIndicateurDefinitions =
     useActionLinkedIndicateurDefinitions(action?.id);
 
-  if (!action) {
+  if (!action || !collectivite) {
     return <Link to="./referentiels" />;
   }
 
   const activeTab = actionVue ? TABS_INDEX[actionVue] : TABS_INDEX['suivi'];
+
+  // le contenu de l'onglet Indicateurs n'est pas affiché si la collectivité est
+  // en accès restreint
+  const noIndicateursTab =
+    collectivite.acces_restreint && collectivite.readonly;
 
   // synchronise l'url lors du passage d'un onglet à l'autre
   const handleChange = (activeTab: number) => {
@@ -200,7 +203,7 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
           )}
         </Tab>
         <Tab label="Indicateurs" icon="fr-fi-line-chart-fill">
-          {activeTab === TABS_INDEX['indicateurs'] ? (
+          {activeTab === TABS_INDEX['indicateurs'] && !noIndicateursTab ? (
             <section>
               {actionLinkedIndicateurDefinitions.length === 0 && (
                 <p>Cette action ne comporte pas d'indicateur</p>
