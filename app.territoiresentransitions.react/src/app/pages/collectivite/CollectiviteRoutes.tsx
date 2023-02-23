@@ -1,4 +1,4 @@
-import {Route} from 'react-router-dom';
+import {Redirect, Route, RouteProps} from 'react-router-dom';
 
 import {
   collectiviteActionPath,
@@ -13,6 +13,7 @@ import {
   collectiviteJournalPath,
   collectiviteBibliothequePath,
   CollectivitePlansActionsBasePath,
+  makeCollectiviteTableauBordUrl,
 } from 'app/paths';
 import {ReferentielsPage} from 'app/pages/collectivite/Referentiels/ReferentielsPage';
 import {ActionPage} from 'app/pages/collectivite/Referentiels/ActionPage';
@@ -26,6 +27,7 @@ import {ToutesLesCollectivitesPage} from '../ToutesLesCollectivites/ToutesLesCol
 import {JournalActivitePage} from './Historique/JournalActivitePage';
 import {BibliothequeDocsPage} from './BibliothequeDocs/BibliothequeDocsPage';
 import {PlansActionsPage} from './PlansActions/PlansActionsPage';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
 /**
  * Routes starting with collectivite/:collectiviteId/ see App.ts Router.
@@ -44,13 +46,13 @@ export const CollectiviteRoutes = () => {
       <Route path={collectiviteActionPath}>
         <ActionPage />
       </Route>
-      <Route path={collectiviteIndicateursPath}>
-        <IndicateursPage />
-      </Route>
 
-      <Route path={CollectivitePlansActionsBasePath}>
+      <RouteEnAccesRestreint path={collectiviteIndicateursPath}>
+        <IndicateursPage />
+      </RouteEnAccesRestreint>
+      <RouteEnAccesRestreint path={CollectivitePlansActionsBasePath}>
         <PlansActionsPage />
-      </Route>
+      </RouteEnAccesRestreint>
 
       <Route path={collectiviteUsersPath}>
         <MembresPage />
@@ -74,5 +76,32 @@ export const CollectiviteRoutes = () => {
         <ToutesLesCollectivitesPage />
       </Route>
     </>
+  );
+};
+
+// protège une route quand la collectivité est en accès restreint (redirige vers
+// le tableau de bord)
+const RouteEnAccesRestreint = (props: RouteProps) => {
+  const {children, ...other} = props;
+  const collectivite = useCurrentCollectivite();
+  if (!collectivite) {
+    return null;
+  }
+
+  return (
+    <Route
+      {...other}
+      render={({location}) =>
+        collectivite.acces_restreint && collectivite.readonly ? (
+          <Redirect
+            to={makeCollectiviteTableauBordUrl({
+              collectiviteId: collectivite.collectivite_id,
+            })}
+          />
+        ) : (
+          children
+        )
+      }
+    />
   );
 };
