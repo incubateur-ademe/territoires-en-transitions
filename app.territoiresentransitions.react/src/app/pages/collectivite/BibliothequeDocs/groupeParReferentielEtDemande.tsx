@@ -27,7 +27,8 @@ const groupeParDemande = (
   preuves: TPreuveAuditEtLabellisation[]
 ): TPreuvesParDemande =>
   preuves.reduce((dict, preuve) => {
-    const id = preuve.demande?.id || preuve.audit?.id;
+    const id =
+      preuve.demande?.id || preuve.audit?.demande_id || preuve.audit?.id;
     if (!id) {
       return dict;
     }
