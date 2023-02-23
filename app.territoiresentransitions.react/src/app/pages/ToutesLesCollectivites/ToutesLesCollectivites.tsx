@@ -10,7 +10,6 @@ import {
 import {TCollectivitesFilters} from 'app/pages/ToutesLesCollectivites/filtreLibelles';
 import {FiltresColonne} from 'app/pages/ToutesLesCollectivites/components/FiltresColonne';
 import {CollectiviteCarteRead} from 'generated/dataLayer/collectivite_carte_read';
-import {DesactiverLesFiltres} from './components/DesactiverLesFiltres';
 import {TrierParFiltre} from 'app/pages/ToutesLesCollectivites/components/Filtres';
 import {RegionRead} from 'generated/dataLayer/region_read';
 import {Link} from 'react-router-dom';
@@ -22,6 +21,7 @@ import classNames from 'classnames';
 import './ToutesLesCollectivites.css';
 import AssocierCollectiviteBandeau from 'ui/collectivites/AssocierCollectiviteBandeau';
 import {useOwnedCollectivites} from 'core-logic/hooks/useOwnedCollectivites';
+import {DesactiverLesFiltres} from 'ui/shared/filters/DesactiverLesFiltres';
 
 export type TRenderToutesCollectivitesProps = {
   regions: RegionRead[];
