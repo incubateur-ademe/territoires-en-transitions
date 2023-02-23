@@ -8,12 +8,14 @@ type Props = {
   thematiques: string[];
   sousThematiques: TSousThematiqueRow[] | null;
   onSelect: (thematique: TSousThematiqueRow[]) => void;
+  isReadonly: boolean;
 };
 
 const SousThematiquesDropdown = ({
   thematiques,
   sousThematiques,
   onSelect,
+  isReadonly,
 }: Props) => {
   const {data: sousThematiqueListe} = useSousThematiqueListe();
 
@@ -57,7 +59,7 @@ const SousThematiquesDropdown = ({
   // On invalide la liste des options dans useEditFicheAction
   return (
     <MultiSelectTagsDropdown
-      disabled={thematiques.length === 0}
+      disabled={thematiques.length === 0 || isReadonly}
       containerWidthMatchButton
       buttonClassName={DSFRbuttonClassname}
       values={sousThematiques?.map((t: TSousThematiqueRow) => t.id.toString())}
