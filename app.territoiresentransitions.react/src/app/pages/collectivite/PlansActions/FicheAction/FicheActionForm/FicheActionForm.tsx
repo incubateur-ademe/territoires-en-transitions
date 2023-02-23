@@ -104,6 +104,7 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
             onSelect={sous_thematiques =>
               updateFiche({...fiche, sous_thematiques})
             }
+            isReadonly={isReadonly}
           />
         </FormField>
       </Section>
