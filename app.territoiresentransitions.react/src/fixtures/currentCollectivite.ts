@@ -11,6 +11,7 @@ export const fakeCurrentCollectiviteAdmin: CurrentCollectivite = {
   isAdmin: true,
   est_auditeur: false,
   readonly: false,
+  acces_restreint: false,
 };
 
 export const fakeCurrentCollectiviteLecture: CurrentCollectivite = {
@@ -19,4 +20,5 @@ export const fakeCurrentCollectiviteLecture: CurrentCollectivite = {
   isAdmin: false,
   est_auditeur: false,
   readonly: true,
+  acces_restreint: false,
 };
