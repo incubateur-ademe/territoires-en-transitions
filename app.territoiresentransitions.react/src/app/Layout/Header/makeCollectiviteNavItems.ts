@@ -19,6 +19,7 @@ export interface CollectiviteNavSingle {
   alternativeActivePath?: string[];
   niveauAcces?: NiveauAcces | null;
   isAuditeur?: boolean;
+  acces_restreint?: boolean;
 }
 
 export interface CollectiviteNavDropdown {
@@ -28,6 +29,7 @@ export interface CollectiviteNavDropdown {
   menuLabel: string;
   niveauAcces?: NiveauAcces | null;
   listPathsAndLabels: CollectiviteNavSingle[];
+  acces_restreint?: boolean;
 }
 
 export type CollectiviteNavItems = (
@@ -45,8 +47,9 @@ export const makeCollectiviteNavItems = (
   collectivite: CurrentCollectivite
 ): CollectiviteNavItems => {
   const collectiviteId = collectivite.collectivite_id;
+  const acces_restreint = collectivite.acces_restreint && collectivite.readonly;
 
-  const common = [
+  const common = filtreItemsEnAccesRestreint([
     {
       label: 'Tableau de bord',
       path: makeCollectiviteTableauBordUrl({collectiviteId}),
@@ -74,6 +77,7 @@ export const makeCollectiviteNavItems = (
           ],
         },
         {
+          acces_restreint,
           label: 'Indicateurs',
           path: makeCollectiviteIndicateursUrl({
             collectiviteId,
@@ -112,6 +116,7 @@ export const makeCollectiviteNavItems = (
           ],
         },
         {
+          acces_restreint,
           label: 'Indicateurs',
           path: makeCollectiviteIndicateursUrl({
             collectiviteId,
@@ -129,6 +134,7 @@ export const makeCollectiviteNavItems = (
     },
     {
       menuLabel: 'Pilotage',
+      acces_restreint,
       listPathsAndLabels: [
         {
           label: "Plans d'action",
@@ -153,13 +159,13 @@ export const makeCollectiviteNavItems = (
         },
       ],
     },
-  ];
+  ]);
 
   if (collectivite.niveau_acces === null) {
     return common;
   }
 
-  return [
+  return filtreItemsEnAccesRestreint([
     ...common,
     {
       menuLabel: 'Paramètres',
@@ -190,5 +196,24 @@ export const makeCollectiviteNavItems = (
         },
       ],
     },
-  ];
+  ]);
 };
+
+// filtre les items (et sous-items) marqués comme étant en accès restreint (la
+// collectivité a le flag acces_restreint et l'utilisateur courant n'est pas
+// membre la collectivité)
+const filtreItemsEnAccesRestreint = (
+  items: CollectiviteNavItems
+): CollectiviteNavItems =>
+  items
+    ?.filter(item => !item.acces_restreint)
+    .map(item => {
+      return isSingleNavItemDropdown(item)
+        ? {
+            ...item,
+            listPathsAndLabels: filtreItemsEnAccesRestreint(
+              (item as unknown as CollectiviteNavDropdown).listPathsAndLabels
+            ) as CollectiviteNavSingle[],
+          }
+        : item;
+    });
