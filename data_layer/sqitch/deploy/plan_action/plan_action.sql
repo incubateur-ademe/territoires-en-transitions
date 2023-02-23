@@ -17,7 +17,7 @@ begin
                                select * from fiches_action fa
                                                  join fiche_action_axe fapa on fa.id = fapa.fiche_id
                                where fapa.axe_id = plan_action.id
-                               order by naturalsort(fa.titre)
+                               order by naturalsort(lower(fa.titre))
                            )ff)) ;
     select * from axe where axe.id = plan_action.id limit 1 into pa_axe;
     id_loop = 1;
@@ -25,7 +25,7 @@ begin
         select pa.id
         from axe pa
         where pa.parent = plan_action.id
-        order by naturalsort(pa.nom)
+        order by naturalsort(lower(pa.nom))
         loop
             enfants[id_loop] = plan_action(pa_enfant_id);
             id_loop = id_loop + 1;
@@ -57,7 +57,7 @@ begin
         select pa.id
         from axe pa
         where pa.parent = plan_action_profondeur.id
-        order by naturalsort(pa.nom)
+        order by naturalsort(lower(pa.nom))
         loop
             enfants[id_loop] = plan_action_profondeur(pa_enfant_id, profondeur +1);
             id_loop = id_loop + 1;
