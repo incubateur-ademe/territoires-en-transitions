@@ -236,3 +236,4 @@ collectivite/collectivite [collectivite/collectivite@v2.4.0] 2023-02-22T14:17:11
 plan_action/plan_action [plan_action/plan_action@v2.4.0] 2023-02-22T14:44:24Z Amandine Jacquelin <conta@LanceLibre> # Change les droits pour inserer acces_restreint de collectivite
 indicateur/referentiel [indicateur/referentiel@v2.4.0] 2023-02-22T16:43:16Z Amandine Jacquelin <conta@LanceLibre> # Change les droits pour inserer acces_restreint de collectivite
 indicateur/personnalise [indicateur/personnalise@v2.4.0] 2023-02-22T16:43:35Z Amandine Jacquelin <conta@LanceLibre> # Change les droits pour inserer acces_restreint de collectivite
+collectivite/mes_collectivites_v2 [collectivite/mes_collectivites_v2@v2.4.0] 2023-02-23T13:16:06Z Amandine Jacquelin <conta@LanceLibre> # Ajoute acces_restreint à collectivite_niveau_acces

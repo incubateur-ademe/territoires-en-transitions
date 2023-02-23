@@ -35,6 +35,8 @@ alter policy allow_read on fiche_action_annexe using(is_authenticated());
 alter policy allow_read on fiche_action_indicateur using(is_authenticated());
 -- action
 alter policy allow_read on fiche_action_action using(is_authenticated());
+-- fiches_action
+alter view fiches_action set (security_invoker = off);
 
 drop function peut_lire_la_fiche;
 

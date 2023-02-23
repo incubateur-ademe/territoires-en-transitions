@@ -7,17 +7,17 @@ BEGIN;
 alter table collectivite
     add column access_restreint boolean default false not null;
 
-create function have_lecture_access_with_restreint(collectivite_id integer) returns boolean as $$
+create or replace function have_lecture_access_with_restreint(collectivite_id integer) returns boolean as $$
 begin
-    if (
-        select access_restreint
-        from collectivite
-        where id = have_lecture_access_with_restreint.collectivite_id limit 1
-    ) then
-        return have_lecture_acces(have_lecture_access_with_restreint.collectivite_id);
-    else
-        return is_authenticated();
-    end if;
+    return (
+        select case when coalesce((select access_restreint
+                          from collectivite
+                          where id = have_lecture_access_with_restreint.collectivite_id
+                          limit 1), false)
+                        then have_lecture_acces(have_lecture_access_with_restreint.collectivite_id)
+                    else is_authenticated() end
+    );
+
 end;
 $$language plpgsql;
 comment on function have_lecture_access_with_restreint

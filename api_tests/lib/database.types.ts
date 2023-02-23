@@ -203,6 +203,9 @@ export interface Database {
           compress_after: unknown;
           hypertable: unknown;
           if_not_exists: boolean;
+          initial_start: string;
+          schedule_interval: unknown;
+          timezone: string;
         };
         Returns: number;
       };
@@ -211,8 +214,10 @@ export interface Database {
           continuous_aggregate: unknown;
           end_offset: unknown;
           if_not_exists: boolean;
+          initial_start: string;
           schedule_interval: unknown;
           start_offset: unknown;
+          timezone: string;
         };
         Returns: number;
       };
@@ -241,11 +246,14 @@ export interface Database {
       };
       add_job: {
         Args: {
+          check_config: unknown;
           config: Json;
+          fixed_schedule: boolean;
           initial_start: string;
           proc: unknown;
           schedule_interval: unknown;
           scheduled: boolean;
+          timezone: string;
         };
         Returns: number;
       };
@@ -254,11 +262,20 @@ export interface Database {
           hypertable: unknown;
           if_not_exists: boolean;
           index_name: unknown;
+          initial_start: string;
+          timezone: string;
         };
         Returns: number;
       };
       add_retention_policy: {
-        Args: {drop_after: unknown; if_not_exists: boolean; relation: unknown};
+        Args: {
+          drop_after: unknown;
+          if_not_exists: boolean;
+          initial_start: string;
+          relation: unknown;
+          schedule_interval: unknown;
+          timezone: string;
+        };
         Returns: number;
       };
       add_user: {
@@ -317,8 +334,19 @@ export interface Database {
         Args: {fiche_id: number; thematique: string};
         Returns: undefined;
       };
+      alter_data_node: {
+        Args: {
+          available: boolean;
+          database: unknown;
+          host: string;
+          node_name: unknown;
+          port: number;
+        };
+        Returns: Record<string, unknown>[];
+      };
       alter_job: {
         Args: {
+          check_config: unknown;
           config: Json;
           if_exists: boolean;
           job_id: number;
@@ -426,6 +454,7 @@ export interface Database {
           chunk_time_interval: unknown;
           create_default_indexes: boolean;
           data_nodes: unknown;
+          distributed: boolean;
           if_not_exists: boolean;
           migrate_data: boolean;
           number_partitions: number;
@@ -462,6 +491,7 @@ export interface Database {
       };
       detach_data_node: {
         Args: {
+          drop_remote_data: boolean;
           force: boolean;
           hypertable: unknown;
           if_attached: boolean;
@@ -536,6 +566,14 @@ export interface Database {
         Returns: boolean;
       };
       gbt_bit_compress: {
+        Args: {'': unknown};
+        Returns: unknown;
+      };
+      gbt_bool_compress: {
+        Args: {'': unknown};
+        Returns: unknown;
+      };
+      gbt_bool_fetch: {
         Args: {'': unknown};
         Returns: unknown;
       };
@@ -708,6 +746,14 @@ export interface Database {
         Returns: unknown;
       };
       gbtreekey16_out: {
+        Args: {'': unknown};
+        Returns: unknown;
+      };
+      gbtreekey2_in: {
+        Args: {'': unknown};
+        Returns: unknown;
+      };
+      gbtreekey2_out: {
         Args: {'': unknown};
         Returns: unknown;
       };
@@ -947,7 +993,11 @@ export interface Database {
         Returns: boolean;
       };
       remove_continuous_aggregate_policy: {
-        Args: {continuous_aggregate: unknown; if_not_exists: boolean};
+        Args: {
+          continuous_aggregate: unknown;
+          if_exists: boolean;
+          if_not_exists: boolean;
+        };
         Returns: undefined;
       };
       remove_membre_from_collectivite: {
@@ -1034,6 +1084,10 @@ export interface Database {
         };
         Returns: undefined;
       };
+      test_changer_acces_restreint_collectivite: {
+        Args: {access_restreint: boolean; collectivite_id: number};
+        Returns: undefined;
+      };
       test_clear_history: {
         Args: Record<PropertyKey, never>;
         Returns: undefined;
@@ -1112,6 +1166,14 @@ export interface Database {
       };
       time_bucket:
         | {
+            Args: {bucket_width: unknown; origin: string; ts: string};
+            Returns: string;
+          }
+        | {
+            Args: {bucket_width: unknown; origin: string; ts: string};
+            Returns: string;
+          }
+        | {
             Args: {bucket_width: unknown; ts: string};
             Returns: string;
           }
@@ -1128,11 +1190,25 @@ export interface Database {
             Returns: string;
           }
         | {
-            Args: {bucket_width: unknown; origin: string; ts: string};
+            Args: {bucket_width: unknown; offset: unknown; ts: string};
             Returns: string;
           }
         | {
-            Args: {bucket_width: unknown; origin: string; ts: string};
+            Args: {bucket_width: unknown; offset: unknown; ts: string};
+            Returns: string;
+          }
+        | {
+            Args: {bucket_width: unknown; offset: unknown; ts: string};
+            Returns: string;
+          }
+        | {
+            Args: {
+              bucket_width: unknown;
+              offset: unknown;
+              origin: string;
+              timezone: string;
+              ts: string;
+            };
             Returns: string;
           }
         | {
@@ -1158,31 +1234,10 @@ export interface Database {
         | {
             Args: {bucket_width: number; offset: number; ts: number};
             Returns: number;
-          }
-        | {
-            Args: {bucket_width: unknown; offset: unknown; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; offset: unknown; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; offset: unknown; ts: string};
-            Returns: string;
           };
       time_bucket_gapfill:
         | {
             Args: {
-              bucket_width: unknown;
-              finish: string;
-              start: string;
-              ts: string;
-            };
-            Returns: string;
-          }
-        | {
-            Args: {
               bucket_width: number;
               finish: number;
               start: number;
@@ -1222,6 +1277,25 @@ export interface Database {
               bucket_width: unknown;
               finish: string;
               start: string;
+              ts: string;
+            };
+            Returns: string;
+          }
+        | {
+            Args: {
+              bucket_width: unknown;
+              finish: string;
+              start: string;
+              ts: string;
+            };
+            Returns: string;
+          }
+        | {
+            Args: {
+              bucket_width: unknown;
+              finish: string;
+              start: string;
+              timezone: string;
               ts: string;
             };
             Returns: string;
@@ -3581,6 +3655,7 @@ export interface Database {
       };
       collectivite_niveau_acces: {
         Row: {
+          access_restreint: boolean | null;
           collectivite_id: number | null;
           est_auditeur: boolean | null;
           niveau_acces: Database['public']['Enums']['niveau_acces'] | null;

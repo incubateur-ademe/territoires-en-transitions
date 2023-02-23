@@ -41,5 +41,7 @@ alter policy allow_read on fiche_action_annexe using(peut_lire_la_fiche(fiche_id
 alter policy allow_read on fiche_action_indicateur using(peut_lire_la_fiche(fiche_id));
 -- action
 alter policy allow_read on fiche_action_action using(peut_lire_la_fiche(fiche_id));
+-- fiches_action
+alter view fiches_action set (security_invoker = on);
 
 COMMIT;
