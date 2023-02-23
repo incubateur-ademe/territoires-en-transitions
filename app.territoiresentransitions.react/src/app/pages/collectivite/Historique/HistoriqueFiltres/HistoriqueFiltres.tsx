@@ -1,9 +1,9 @@
-import {DesactiverLesFiltres} from 'app/pages/ToutesLesCollectivites/components/DesactiverLesFiltres';
 import FiltreMembre from './FiltreMembre';
 import FiltreType from './FiltreType';
 
 import {TFilters, TInitialFilters} from '../filters';
 import {FiltreDateDebut, FiltreDateFin} from './FiltreDate';
+import {DesactiverLesFiltres} from 'ui/shared/filters/DesactiverLesFiltres';
 
 export type HistoriqueFiltresProps = {
   itemsNumber: number;
