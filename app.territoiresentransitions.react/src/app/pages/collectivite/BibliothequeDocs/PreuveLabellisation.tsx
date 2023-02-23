@@ -31,11 +31,12 @@ export const PreuvesLabellisation = ({
                 Documents d'audit et de labellisation - Référentiel{' '}
                 {referentielToName[referentiel as Referentiel]}
               </h2>
-              {parDemande.map(({id, docs}, index) => {
+              {parDemande.map(({id, docs, info}, index) => {
                 return (
                   <DocsAuditOuLabellisation
                     key={id}
                     preuves={docs}
+                    info={info}
                     className={index ? 'fr-mt-3w' : undefined}
                   />
                 );
@@ -55,16 +56,17 @@ export const PreuvesLabellisation = ({
 const DocsAuditOuLabellisation = (props: {
   className?: string;
   preuves: TPreuveAuditEtLabellisation[];
+  info: TCycleInfo;
 }) => {
-  const {className, preuves} = props;
+  const {className, preuves, info} = props;
 
   return (
     <Fragment>
       <h3 className={className}>
-        <Title preuves={preuves} />
+        <Title info={info} />
       </h3>
       {preuves.map(preuve => (
-        <DocAuditOuLabellisation key={preuve.id} preuve={preuve} />
+        <DocAuditOuLabellisation key={preuve.id} preuve={preuve} info={info} />
       ))}
     </Fragment>
   );
@@ -72,12 +74,14 @@ const DocsAuditOuLabellisation = (props: {
 
 const DocAuditOuLabellisation = ({
   preuve,
+  info,
 }: {
   preuve: TPreuveAuditEtLabellisation;
+  info: TCycleInfo;
 }) => {
   const {audit} = preuve;
+  const {status} = info;
   const isAuditeur = useIsAuditAuditeur(audit?.id);
-  const status = getParcoursStatus(preuve);
 
   // le document n'est pas éditable si...
   const readonly =
@@ -98,9 +102,9 @@ const DocAuditOuLabellisation = ({
  * Affiche le titre d'un sous-ensemble de documents d'une demande de
  * labellisation ou d'audit.
  */
-const Title = (props: {preuves: TPreuveAuditEtLabellisation[]}) => {
-  const {preuves} = props;
-  const {etoile, status, annee, audit} = getCycleInfo(preuves);
+const Title = (props: {info: TCycleInfo}) => {
+  const {info} = props;
+  const {etoile, status, annee, audit} = info;
   const labelEtoile = etoile ? (numLabels[etoile] as string) : null;
   const en_cours = status === 'demande_envoyee' || status === 'audit_en_cours';
   const label = annee + (en_cours ? ' (en cours)' : '') + ' - ';
@@ -139,6 +143,7 @@ const getCycleInfo = (preuves: TPreuveAuditEtLabellisation[]) => {
   const etoile = demande?.etoiles;
   return {timestamp, annee, audit, demande, etoile, status};
 };
+type TCycleInfo = ReturnType<typeof getCycleInfo>;
 
 // ajoute les infos du cycle d'audit/labellisation associé à un sous-ensemble de preuves
 const addInfoToEntry = (
