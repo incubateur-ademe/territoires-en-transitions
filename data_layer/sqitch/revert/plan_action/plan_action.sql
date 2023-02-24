@@ -2,6 +2,9 @@
 
 BEGIN;
 
+drop function filter_fiches_action;
+drop view axe_descendants;
+
 -- Fonction récursive pour afficher un plan d'action et ses axes
 create or replace function plan_action_profondeur(id integer, profondeur integer) returns jsonb as
 $$
