@@ -96,6 +96,7 @@ with recursive
 select id as axe_id, descendants, parents, depth
 from parents
          left join descendants using (id);
+alter view axe_descendants set (security_invoker = on);
 
 create function
     filter_fiches_action(
