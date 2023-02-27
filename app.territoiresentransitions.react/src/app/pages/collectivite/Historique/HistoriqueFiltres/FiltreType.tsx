@@ -1,12 +1,11 @@
+import FilterField from 'ui/shared/filters/FilterField';
 import {MultiSelectFilter} from 'ui/shared/select/MultiSelectFilter';
-import HistoriqueFiltreField from './HistoriqueFiltreField';
-
 import {filtresTypeOptions, TFiltreProps} from '../filters';
 import {getIsAllSelected} from 'ui/shared/select/commons';
 
 const FiltreType = ({filters, setFilters}: TFiltreProps) => {
   return (
-    <HistoriqueFiltreField title="Type d'élément modifié">
+    <FilterField title="Type d'élément modifié">
       <MultiSelectFilter
         data-test="filtre-type"
         values={
@@ -26,7 +25,7 @@ const FiltreType = ({filters, setFilters}: TFiltreProps) => {
         }}
         placeholderText="Sélectionner des options"
       />
-    </HistoriqueFiltreField>
+    </FilterField>
   );
 };
 

@@ -1,10 +1,9 @@
 import {MultiSelectFilter} from 'ui/shared/select/MultiSelectFilter';
-import HistoriqueFiltreField from './HistoriqueFiltreField';
-
 import {getIsAllSelected, ITEM_ALL} from 'ui/shared/select/commons';
 import {TFiltreProps} from '../filters';
 import {useHistoriqueUtilisateurListe} from '../useHistoriqueUtilisateurListe';
 import {useCollectiviteId} from 'core-logic/hooks/params';
+import FilterField from 'ui/shared/filters/FilterField';
 
 const FiltreMembre = ({filters, setFilters}: TFiltreProps) => {
   const collectivite_id = useCollectiviteId();
@@ -23,7 +22,7 @@ const FiltreMembre = ({filters, setFilters}: TFiltreProps) => {
     );
 
   return (
-    <HistoriqueFiltreField title="Membre">
+    <FilterField title="Membre">
       <MultiSelectFilter
         data-test="filtre-membre"
         values={
@@ -47,7 +46,7 @@ const FiltreMembre = ({filters, setFilters}: TFiltreProps) => {
         placeholderText="Sélectionner des options"
         disabled={memberList.length === 0}
       />
-    </HistoriqueFiltreField>
+    </FilterField>
   );
 };
 

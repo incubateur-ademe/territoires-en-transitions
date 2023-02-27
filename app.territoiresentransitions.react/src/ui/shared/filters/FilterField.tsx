@@ -1,12 +1,9 @@
-type HistoriqueFiltreFieldProps = {
+type FilterFieldProps = {
   title: string;
   children: React.ReactNode;
 };
 
-const HistoriqueFiltreField = ({
-  title,
-  children,
-}: HistoriqueFiltreFieldProps) => {
+const FilterField = ({title, children}: FilterFieldProps) => {
   return (
     <div className="w-full">
       <p className="mb-2 font-medium">{title}</p>
@@ -15,4 +12,4 @@ const HistoriqueFiltreField = ({
   );
 };
 
-export default HistoriqueFiltreField;
+export default FilterField;
