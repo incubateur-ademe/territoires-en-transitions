@@ -12,6 +12,8 @@ programmes:
   - pcaet
 climat_pratic_ids:
   - strategie
+valeur_seuil: 0.1
+valeur_cible: 280
 ```
 ## Description
 Description de l'indicateur 1.a

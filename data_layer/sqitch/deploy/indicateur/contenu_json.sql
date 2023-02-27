@@ -2,14 +2,6 @@
 
 BEGIN;
 
-create table indicateurs_json
-(
-    indicateurs jsonb       not null,
-    created_at  timestamptz not null default now()
-);
-alter table indicateurs_json
-    enable row level security;
-
 create or replace function
     private.upsert_indicateurs(indicateurs jsonb)
     returns void
@@ -21,7 +13,7 @@ begin
     for indicateur in select * from jsonb_array_elements(indicateurs)
         loop
             insert into indicateur_definition
-            (id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent)
+            (id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent, valeur_seuil, valeur_cible)
             values ((indicateur ->> 'indicateur_id')::indicateur_id,
                     (indicateur ->> 'indicateur_group')::indicateur_group,
                     indicateur ->> 'identifiant',
@@ -30,7 +22,9 @@ begin
                     indicateur ->> 'description',
                     indicateur ->> 'unite',
                     (indicateur ->> 'obligation_eci')::bool,
-                    null)
+                    null,
+                    (indicateur ->> 'valeur_seuil')::float,
+                    (indicateur ->> 'valeur_cible')::float)
             on conflict (id) do update
                 set indicateur_group  = excluded.indicateur_group,
                     identifiant       = excluded.identifiant,
@@ -39,7 +33,9 @@ begin
                     description       = excluded.description,
                     unite             = excluded.unite,
                     obligation_eci    = excluded.obligation_eci,
-                    parent            = excluded.parent;
+                    parent            = excluded.parent,
+                    valeur_seuil      = excluded.valeur_seuil,
+                    valeur_cible      = excluded.valeur_cible;
 
             -- les liens entre indicateur et action
             if indicateur -> 'action_ids' != 'null'
@@ -61,24 +57,5 @@ end ;
 $$ language plpgsql security definer;
 comment on function private.upsert_indicateurs is
     'Mets à jour les définitions des indicateurs ansi que les liens avec les actions.';
-
--- Trigger pour mettre à jour le contenu suite à l'insertion de json.
-create function
-    private.upsert_indicateurs_after_json_insert()
-    returns trigger
-as
-$$
-declare
-begin
-    perform private.upsert_indicateurs(new.indicateurs);
-    return new;
-end;
-$$ language plpgsql;
-
-create trigger after_indicateurs_json
-    after insert
-    on indicateurs_json
-    for each row
-execute procedure private.upsert_indicateurs_after_json_insert();
 
 COMMIT;

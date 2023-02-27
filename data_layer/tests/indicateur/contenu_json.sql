@@ -21,7 +21,9 @@ values ('
     "action_ids": null,
     "description": "<p>Poids de déchets envoyés en décharge / Poids de déchets produits sur le territoire</p>\n",
     "valeur_indicateur": null,
-    "obligation_eci": false
+    "obligation_eci": false,
+    "valeur_seuil" : null,
+    "valeur_cible" : null
   },
   {
     "indicateur_id": "eci_18",
@@ -34,7 +36,9 @@ values ('
     ],
     "description": "<p>Synergie est considérée comme opérationnelle à partir d&#x27;au moins un échange matière réalisé ou d&#x27;un service de mutualisation utilisé par au moins deux entités</p>\n",
     "valeur_indicateur": null,
-    "obligation_eci": false
+    "obligation_eci": false,
+    "valeur_seuil" : null,
+    "valeur_cible" : null
   }
 ]
 '::jsonb);

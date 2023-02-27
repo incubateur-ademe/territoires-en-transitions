@@ -24,6 +24,8 @@ def test_parse_markdown_indicateurs_from_ok_folder():
             climat_pratic_ids=["strategie"],
             source=None,
             obligation_eci=None,
+            valeur_seuil=0.1,
+            valeur_cible=280
         ),
         MarkdownIndicateur(
             id="cae_1.b",
@@ -38,5 +40,7 @@ def test_parse_markdown_indicateurs_from_ok_folder():
             climat_pratic_ids=["strategie"],
             source=None,
             obligation_eci=None,
+            valeur_seuil=None,
+            valeur_cible=None
         ),
     ]

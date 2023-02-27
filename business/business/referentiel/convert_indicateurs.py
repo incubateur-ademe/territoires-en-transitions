@@ -29,6 +29,8 @@ class MarkdownIndicateur:
     climat_pratic_ids: Optional[List[str]]
     source: Optional[str]
     obligation_eci: Optional[bool]
+    valeur_seuil: Optional[float]
+    valeur_cible: Optional[float]
 
 
 IndicateurGroup = Literal["eci", "cae", "crte"]
@@ -47,6 +49,8 @@ class Indicateur:
     description: str
     valeur_indicateur: Optional[str] = None
     obligation_eci: bool = False
+    valeur_seuil: Optional[float] = None
+    valeur_cible: Optional[float] = None
 
 
 def parse_markdown_indicateurs_from_folder(
@@ -106,6 +110,8 @@ def convert_indicateurs_markdown_folder_to_json(folder_path: str, json_filename:
             description=md_indicateur.description,
             valeur_indicateur=None,
             obligation_eci=False,
+            valeur_seuil=md_indicateur.valeur_seuil,
+            valeur_cible=md_indicateur.valeur_cible
         )
         for md_indicateur in md_indicateurs
     ]
