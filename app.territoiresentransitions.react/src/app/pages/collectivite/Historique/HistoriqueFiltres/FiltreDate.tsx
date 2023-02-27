@@ -1,23 +1,22 @@
-import HistoriqueFiltreField from './HistoriqueFiltreField';
-
 import {TFiltreProps} from '../filters';
+import FilterField from 'ui/shared/filters/FilterField';
 
 export const FiltreDateDebut = ({filters, setFilters}: TFiltreProps) => {
   return (
-    <HistoriqueFiltreField title="Date de début">
+    <FilterField title="Date de début">
       <InputDate
         value={filters.startDate || ''}
         onChange={(newDate: string) =>
           setFilters({...filters, startDate: newDate})
         }
       />
-    </HistoriqueFiltreField>
+    </FilterField>
   );
 };
 
 export const FiltreDateFin = ({filters, setFilters}: TFiltreProps) => {
   return (
-    <HistoriqueFiltreField title="Date de fin">
+    <FilterField title="Date de fin">
       <InputDate
         dataTest="filtre-end-date"
         value={filters.endDate || ''}
@@ -25,7 +24,7 @@ export const FiltreDateFin = ({filters, setFilters}: TFiltreProps) => {
           setFilters({...filters, endDate: newDate});
         }}
       />
-    </HistoriqueFiltreField>
+    </FilterField>
   );
 };
 
