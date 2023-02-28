@@ -778,14 +778,12 @@ export interface Database {
       };
       filter_fiches_action: {
         Args: {
-          axe_id: number;
+          axes_id: unknown;
           collectivite_id: number;
-          niveau_priorite: Database['public']['Enums']['fiche_action_niveaux_priorite'];
-          pilote_tag_id: number;
-          pilote_user_id: string;
-          referent_tag_id: number;
-          referent_user_id: string;
-          statut: Database['public']['Enums']['fiche_action_statuts'];
+          niveaux_priorite: unknown;
+          pilotes: unknown;
+          referents: unknown;
+          statuts: unknown;
         };
         Returns: unknown;
       };
@@ -1397,31 +1395,31 @@ export interface Database {
       };
       time_bucket:
         | {
-            Args: {bucket_width: unknown; origin: string; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; origin: string; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; origin: string; ts: string};
-            Returns: string;
-          }
-        | {
             Args: {bucket_width: unknown; offset: unknown; ts: string};
+            Returns: string;
+          }
+        | {
+            Args: {bucket_width: unknown; ts: string};
+            Returns: string;
+          }
+        | {
+            Args: {bucket_width: unknown; ts: string};
+            Returns: string;
+          }
+        | {
+            Args: {bucket_width: unknown; ts: string};
+            Returns: string;
+          }
+        | {
+            Args: {bucket_width: unknown; origin: string; ts: string};
+            Returns: string;
+          }
+        | {
+            Args: {bucket_width: unknown; origin: string; ts: string};
+            Returns: string;
+          }
+        | {
+            Args: {bucket_width: unknown; origin: string; ts: string};
             Returns: string;
           }
         | {
