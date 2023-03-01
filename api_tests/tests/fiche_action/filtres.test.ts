@@ -8,6 +8,7 @@ import {
   assertExists,
 } from 'https://deno.land/std@0.113.0/testing/asserts.ts';
 import {assertObjectMatch} from 'https://deno.land/std/testing/asserts.ts';
+import {Personne} from "../../lib/types/fiche_action/personne.ts";
 
 Deno.test('Fiches par axe', async () => {
   await testReset();
@@ -16,9 +17,9 @@ Deno.test('Fiches par axe', async () => {
   // les fiches de l'axe "Développer une culture vélo" qui compte des sous axes avec des fiches
   const filterResponse = await supabase.rpc('filter_fiches_action', {
     collectivite_id: 1,
-    axe_id: 16,
+    axes_id: [16],
     // @ts-ignore
-    pilote_tag_id: null, niveau_priorite: null,  pilote_user_id: null, referent_tag_id: null, referent_user_id: null, statut: null,
+    pilotes: null, niveaux_priorite: null, statuts: null, referents: null
   });
   assertExists(filterResponse.data);
   assertEquals(filterResponse.data.length, 6);
@@ -45,10 +46,10 @@ Deno.test('Fiches par pilote', async () => {
   // on filtre avec l'axe et le tag pilote.
   const filterResponse = await supabase.rpc('filter_fiches_action', {
     collectivite_id: 1,
-    axe_id: 16,
-    pilote_tag_id: 1,
+    axes_id: [16],
+    pilotes: permisVelo.pilotes as Personne[],
     // @ts-ignore
-    niveau_priorite: null,  pilote_user_id: null, referent_tag_id: null, referent_user_id: null, statut: null,
+    niveaux_priorite: null, statuts: null, referents: null,
   });
   assertExists(filterResponse.data);
   assertEquals(filterResponse.data.length, 1);
