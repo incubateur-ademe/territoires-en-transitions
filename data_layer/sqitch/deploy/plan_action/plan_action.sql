@@ -49,11 +49,11 @@ begin
                         or far.user_id in (select (re::personne).user_id from unnest(referents) re))
             end
           and case
-                  when niveau_priorite is null then true
+                  when niveaux_priorite is null then true
                   else fa.niveau_priorite in (select * from unnest(niveaux_priorite::fiche_action_niveaux_priorite[]))
             end
           and case
-                  when statut is null then true
+                  when statuts is null then true
                   else fa.statut in (select * from unnest(statuts::fiche_action_statuts[]))
             end;
 end;
