@@ -34,7 +34,6 @@ const PlanChemin = ({fiche, axe_id}: Props) => {
         />
       </div>
       <button
-        className="rounded-full"
         onClick={() =>
           removeFiche({
             axe_id,
@@ -42,7 +41,7 @@ const PlanChemin = ({fiche, axe_id}: Props) => {
           })
         }
       >
-        <div className="fr-fi-delete-line invisible group-hover:visible scale-75" />
+        <div className="fr-fi-delete-line invisible text-bf500 group-hover:visible scale-75" />
       </button>
     </div>
   );
