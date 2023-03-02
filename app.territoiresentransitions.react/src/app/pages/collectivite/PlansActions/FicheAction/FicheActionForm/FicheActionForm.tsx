@@ -61,9 +61,13 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
             id="title"
             initialValue={fiche.titre ?? ''}
             onBlur={e => {
-              e.target.value.trim().length > 0 &&
-                e.target.value.trim() !== fiche.titre &&
-                updateFiche({...fiche, titre: e.target.value.trim()});
+              if (fiche.titre) {
+                e.target.value !== fiche.titre &&
+                  updateFiche({...fiche, titre: e.target.value.trim()});
+              } else {
+                e.target.value.trim().length > 0 &&
+                  updateFiche({...fiche, titre: e.target.value.trim()});
+              }
             }}
             placeholder="Écrire ici..."
             maxLength={300}
