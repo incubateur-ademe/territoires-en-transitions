@@ -7,18 +7,18 @@ import {
 import {useCreateFicheAction} from './FicheAction/data/useUpsertFicheAction';
 import {usePlansActionsListe} from './PlanAction/data/usePlansActionsListe';
 import {useCreatePlanAction} from './PlanAction/data/useUpsertAxe';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
-const PlansActionsNavigation = () => {
-  const collectivite = useCurrentCollectivite();
+type Props = {
+  collectivite: CurrentCollectivite;
+};
 
-  const data = usePlansActionsListe(collectivite?.collectivite_id!);
+const PlansActionsNavigation = ({collectivite}: Props) => {
+  const data = usePlansActionsListe(collectivite.collectivite_id);
 
   const {mutate: createFicheAction} = useCreateFicheAction();
 
   const {mutate: createPlanAction} = useCreatePlanAction();
-
-  if (!collectivite?.collectivite_id) return null;
 
   return (
     <nav className="fr-sidemenu flex w-80 shrink-0 py-8 md:px-8 border-r border-gray-100">
@@ -55,7 +55,7 @@ const PlansActionsNavigation = () => {
               Fiches non classées
             </NavLink>
           </li>
-          {!collectivite?.readonly && (
+          {!collectivite.readonly && (
             <>
               <li className="fr-sidemenu_item mt-6">
                 <button className="fr-btn" onClick={() => createFicheAction()}>

@@ -13,14 +13,16 @@ import {
   makeCollectivitePlanActionUrl,
 } from 'app/paths';
 import {usePlansActionsListe} from './PlanAction/data/usePlansActionsListe';
-import {useCollectiviteId} from 'core-logic/hooks/params';
+
+type Props = {
+  collectivite_id: number;
+};
 
 /**
  * Routes starting with collectivite/:collectiviteId/plans see CollectiviteRoutes.tsx
  */
-export const PlansActionsRoutes = () => {
-  const collectivite_id = useCollectiviteId();
-  const data = usePlansActionsListe(collectivite_id!);
+export const PlansActionsRoutes = ({collectivite_id}: Props) => {
+  const data = usePlansActionsListe(collectivite_id);
 
   return (
     <>
@@ -31,11 +33,11 @@ export const PlansActionsRoutes = () => {
           to={
             data && data.plans.length > 0
               ? makeCollectivitePlanActionUrl({
-                  collectiviteId: collectivite_id!,
+                  collectiviteId: collectivite_id,
                   planActionUid: data.plans[0].id.toString(),
                 })
               : makeCollectiviteFichesNonClasseesUrl({
-                  collectiviteId: collectivite_id!,
+                  collectiviteId: collectivite_id,
                 })
           }
         />
