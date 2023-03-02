@@ -22,7 +22,8 @@ export const generateFilArianeLinks = ({
     ...chemin.map((axe, i) =>
       i === 0
         ? {
-            displayedName: axe.nom ?? 'Sans titre',
+            displayedName:
+              axe.nom && axe.nom.length > 0 ? axe.nom : 'Sans titre',
             path: !noLinks
               ? makeCollectivitePlanActionUrl({
                   collectiviteId,
