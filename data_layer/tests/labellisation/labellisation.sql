@@ -128,7 +128,7 @@ select ok((select etoiles = '5'
                       and completude_ok
                       and not rempli
                       and calendrier is not null
-                      and demande is not null
+                      and demande is null
            from labellisation_parcours(1)
            where referentiel = 'eci'),
           'Labellisation parcours function should output correct state for 100% fait test data but no demande.');
@@ -139,13 +139,10 @@ select ok((select preuve_nombre = 0
            where referentiel = 'eci'),
           'Labellisation critere fichier function should output correct state when no file have been inserted.');
 
--- Puis ajoute une demande pour eci, avec un id de 100
-insert into labellisation.demande (id, collectivite_id, referentiel, etoiles)
-values (100, 1, 'eci', '5');
-
+-- Puis ajoute une demande pour eci
 -- Yolo ajoute la preuve à la demande
 insert into preuve_labellisation (collectivite_id, fichier_id, demande_id)
-select collectivite_id, id, 100
+select collectivite_id, id, (select id from labellisation_demande(1, 'eci') limit 1)::integer
 from bibliotheque_fichier;
 
 select ok((select preuve_nombre = 1
@@ -218,7 +215,7 @@ select ok((select etoiles = '1'
                       and not completude_ok
                       and not rempli
                       and calendrier is not null
-                      and demande is not null
+                      and demande is null
            from labellisation_parcours(1)
            where referentiel = 'eci'),
           'Labellisation parcours function should output correct state for 0% fait, not complete, no demande.');
@@ -275,7 +272,7 @@ select ok((select etoiles = '1'
                       and completude_ok
                       and not rempli
                       and calendrier is not null
-                      and demande is not null
+                      and demande is null
            from labellisation_parcours(1)
            where referentiel = 'eci'),
           'Labellisation parcours function should output correct state for 0% fait, complete, no demande.');
@@ -309,19 +306,16 @@ select ok((select etoiles = '1'
                       and completude_ok
                       and not rempli
                       and calendrier is not null
-                      and demande is not null
+                      and demande is null
            from labellisation_parcours(1)
            where referentiel = 'eci'),
           'Labellisation parcours function should output correct state for 0% fait, complete, no demande.');
 
 -- Yolo crée une demande
-truncate labellisation.demande cascade;
-insert into labellisation.demande (id, collectivite_id, referentiel, etoiles)
-values (100, 1, 'eci', '1');
-
 -- Puis ajoute la preuve à la demande
+truncate labellisation.demande cascade;
 insert into preuve_labellisation (collectivite_id, fichier_id, demande_id)
-select collectivite_id, id, 100
+select collectivite_id, id, (select id from labellisation_demande(1,'eci') limit 1)::integer
 from bibliotheque_fichier;
 
 select ok((select preuve_nombre = 1
@@ -337,7 +331,7 @@ select ok((select etoiles = '1'
                       and demande is not null -- actually current demande
            from labellisation_parcours(1)
            where referentiel = 'eci'),
-          'Labellisation parcours function should output correct state for 0% fait, complete, no demande.');
+          'Labellisation parcours function should output correct state for 0% fait, complete, with demande.');
 
 
 -----------------------------------------------------------------

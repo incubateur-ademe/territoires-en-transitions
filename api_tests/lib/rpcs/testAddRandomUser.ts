@@ -8,7 +8,7 @@ export async function testAddRandomUser(
 ): Promise<RandomUser> {
   const { data } = await supabase.rpc(
     "test_add_random_user",
-    { "collectivite_id": collectiviteId, "niveau": niveau },
+    { "cgu_acceptees": true, "collectivite_id": collectiviteId, "niveau": niveau },
   ).single();
   if (!data) {
     throw `La RPC 'test_add_random_user' devrait renvoyer un utilisateur.`;
