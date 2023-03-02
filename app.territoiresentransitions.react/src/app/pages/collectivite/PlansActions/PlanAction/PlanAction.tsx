@@ -14,6 +14,9 @@ import {TPlanAction} from './data/types/PlanAction';
 import TextareaControlled from 'ui/shared/form/TextareaControlled';
 import PlanActionFooter from './PlanActionFooter';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import PlanActionFiltres from './PlanActionFiltres/PlanActionFiltres';
+import {useFichesActionFiltresListe} from '../FicheAction/data/useFichesActionFiltresListe';
+import {checkAxeHasFiche} from './data/utils';
 
 type PlanActionProps = {
   plan: TPlanAction;
@@ -27,6 +30,8 @@ export const PlanAction = ({plan}: PlanActionProps) => {
   const {mutate: updatePlan} = useEditAxe(plan.axe.id);
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const {items: fichesActionsListe, ...ficheFilters} =
+    useFichesActionFiltresListe(plan.axe.id);
 
   const handleEditButtonClick = () => {
     if (inputRef && inputRef.current) {
@@ -74,7 +79,39 @@ export const PlanAction = ({plan}: PlanActionProps) => {
           plan={plan}
           collectivite_id={collectivite?.collectivite_id!}
         />
-        {plan.enfants || plan.fiches ? (
+        {/** On vérifie si le plan contient des fiches pour afficher les filtres de fiche */}
+        {checkAxeHasFiche(plan) && (
+          <PlanActionFiltres
+            itemsNumber={ficheFilters.total}
+            initialFilters={ficheFilters.initialFilters}
+            filters={ficheFilters.filters}
+            setFilters={ficheFilters.setFilters}
+          />
+        )}
+        {/** Si il y a d'autres filtres activés en plus de la collectivite et le plan,
+         alors on affiche les fiches filtrées, sinon le plan d'action */}
+        {Object.keys(ficheFilters.filters).length > 2 ? (
+          fichesActionsListe.length > 0 ? (
+            <div className="grid grid-cols-2 gap-4">
+              {fichesActionsListe.map(fiche => (
+                <FicheActionCard
+                  key={fiche.id}
+                  ficheAction={fiche}
+                  link={makeCollectivitePlanActionFicheUrl({
+                    collectiviteId: collectivite!.collectivite_id!,
+                    planActionUid: plan.axe.id.toString(),
+                    ficheUid: fiche.id!.toString(),
+                  })}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="mt-16 mb-8">
+              Aucune fiche ne correspond à votre recherche
+            </div>
+          )
+        ) : // Affiche les fiches et sous-axes s'il y en a, sinon un état vide
+        plan.enfants || plan.fiches ? (
           <>
             <div className="mb-4">
               {!isReadonly && (
