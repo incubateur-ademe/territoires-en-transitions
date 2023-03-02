@@ -1,4 +1,3 @@
-import {useRef} from 'react';
 import {useParams} from 'react-router-dom';
 
 import PlanActionHeader from './PlanActionHeader';
@@ -11,12 +10,12 @@ import {makeCollectivitePlanActionFicheUrl} from 'app/paths';
 import {usePlanAction} from './data/usePlanAction';
 import {useEditAxe} from './data/useEditAxe';
 import {TPlanAction} from './data/types/PlanAction';
-import TextareaControlled from 'ui/shared/form/TextareaControlled';
 import PlanActionFooter from './PlanActionFooter';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import PlanActionFiltres from './PlanActionFiltres/PlanActionFiltres';
 import {useFichesActionFiltresListe} from '../FicheAction/data/useFichesActionFiltresListe';
 import {checkAxeHasFiche} from './data/utils';
+import HeaderTitle from '../components/HeaderTitle';
 
 type PlanActionProps = {
   plan: TPlanAction;
@@ -29,15 +28,8 @@ export const PlanAction = ({plan}: PlanActionProps) => {
 
   const {mutate: updatePlan} = useEditAxe(plan.axe.id);
 
-  const inputRef = useRef<HTMLTextAreaElement>(null);
   const {items: fichesActionsListe, ...ficheFilters} =
     useFichesActionFiltresListe(plan.axe.id);
-
-  const handleEditButtonClick = () => {
-    if (inputRef && inputRef.current) {
-      inputRef.current.focus();
-    }
-  };
 
   const displaySousAxe = (axe: TPlanAction) => (
     <PlanActionAxe
@@ -51,29 +43,12 @@ export const PlanAction = ({plan}: PlanActionProps) => {
 
   return (
     <div className="w-full">
-      <div className="bg-indigo-400">
-        <h4 className="group max-w-4xl flex items-center mx-auto m-0 py-8 px-10 text-white">
-          <TextareaControlled
-            ref={inputRef}
-            className="w-full placeholder:text-white focus:placeholder:text-gray-200 disabled:text-white !outline-none !resize-none !text-2xl"
-            initialValue={plan.axe.nom}
-            placeholder={'Sans titre'}
-            onBlur={e =>
-              e.target.value &&
-              e.target.value.length > 0 &&
-              e.target.value !== plan.axe.nom &&
-              updatePlan({id: plan.axe.id, nom: e.target.value})
-            }
-            disabled={isReadonly}
-          />
-          {!isReadonly && (
-            <button
-              className="fr-fi-edit-line group-hover:block hidden w-8 h-8"
-              onClick={handleEditButtonClick}
-            />
-          )}
-        </h4>
-      </div>
+      <HeaderTitle
+        type="plan"
+        titre={plan.axe.nom}
+        onUpdate={nom => updatePlan({id: plan.axe.id, nom})}
+        isReadonly={isReadonly}
+      />
       <div className="max-w-4xl mx-auto px-10">
         <PlanActionHeader
           plan={plan}
@@ -169,9 +144,14 @@ export const PlanAction = ({plan}: PlanActionProps) => {
 const PlanActionConnected = () => {
   const {planUid} = useParams<{planUid: string}>();
 
-  const {data} = usePlanAction(parseInt(planUid));
+  const {data, isLoading} = usePlanAction(parseInt(planUid));
 
-  return data ? <PlanAction plan={data} /> : <div></div>;
+  // return data ? <PlanAction plan={data} /> : <div></div>;
+  return !isLoading && data ? (
+    <PlanAction plan={data} />
+  ) : (
+    <div className="h-[6.75rem] w-full mr-6 bg-indigo-700" />
+  );
 };
 
 export default PlanActionConnected;

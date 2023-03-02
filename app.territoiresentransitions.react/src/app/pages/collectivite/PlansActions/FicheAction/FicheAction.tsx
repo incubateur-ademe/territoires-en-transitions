@@ -6,6 +6,8 @@ import {useParams} from 'react-router-dom';
 import {useFicheAction} from './data/useFicheAction';
 import {FicheActionVueRow} from './data/types/ficheActionVue';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import HeaderTitle from '../components/HeaderTitle';
+import {useEditFicheAction} from './data/useUpsertFicheAction';
 
 type FicheActionProps = {
   fiche: FicheActionVueRow;
@@ -13,13 +15,14 @@ type FicheActionProps = {
 
 export const FicheAction = ({fiche}: FicheActionProps) => {
   const collectivite = useCurrentCollectivite();
+  const {mutate: updateFiche} = useEditFicheAction();
   return (
     <div className="w-full">
-      <div className="bg-indigo-400">
-        <h5 className="max-w-4xl mx-auto m-0 py-8 px-10 text-white">
-          {fiche.titre && fiche.titre.length > 0 ? fiche.titre : 'Sans titre'}
-        </h5>
-      </div>
+      <HeaderTitle
+        titre={fiche.titre}
+        onUpdate={titre => updateFiche({...fiche, titre: titre})}
+        isReadonly={collectivite?.readonly ?? false}
+      />
       <div className="max-w-4xl mx-auto px-10">
         <FicheActionHeader fiche={fiche} />
         <FicheActionForm
