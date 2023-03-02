@@ -3,7 +3,7 @@ import {TOption} from 'ui/shared/select/commons';
 import SelectCreateTagsDropdown from 'ui/shared/select/SelectCreateTagsDropdown';
 import {usePersonnePiloteListe} from '../data/options/usePersonnePiloteListe';
 import {Personne} from '../data/types/personne';
-import {formatNewTag} from '../data/utils';
+import {formatNewTag, getPersonneId} from '../data/utils';
 
 type Props = {
   personnes: Personne[] | null;
@@ -18,27 +18,21 @@ const PersonnePiloteDropdown = ({personnes, onSelect, isReadonly}: Props) => {
 
   const options: TOption[] = personneListe
     ? personneListe.map(personne => ({
-        value: personne.tag_id
-          ? personne.tag_id!.toString()
-          : personne.user_id!,
+        value: getPersonneId(personne),
         label: personne.nom!,
       }))
     : [];
 
   const formatPersonnePilote = (values: string[]) =>
     personneListe?.filter(personne =>
-      values.some(
-        v => v === personne.user_id || v === personne.tag_id?.toString()
-      )
+      values.some(v => v === getPersonneId(personne))
     ) ?? [];
 
   // On invalide la liste des options dans useEditFicheAction
 
   return (
     <SelectCreateTagsDropdown
-      values={personnes?.map((personne: Personne) =>
-        personne.tag_id ? personne.tag_id!.toString() : personne.user_id!
-      )}
+      values={personnes?.map((personne: Personne) => getPersonneId(personne))}
       options={options}
       onSelect={values => onSelect(formatPersonnePilote(values))}
       onCreateClick={inputValue =>
