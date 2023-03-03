@@ -48,3 +48,8 @@ Content-Type: application/json
 GET {{api}}/rest/v1/retool_score?collectivite_id=eq.2765&referentiel=eq.eci
 apikey: {{service}}
 Authorization: Bearer {{service}}
+
+### Read stats usages
+GET {{api}}/rest/v1/retool_stats_usages
+apikey: {{service}}
+Authorization: Bearer {{service}}
