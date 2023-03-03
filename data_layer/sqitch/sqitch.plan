@@ -256,3 +256,5 @@ collectivite/mes_collectivites_v2 [collectivite/mes_collectivites_v2@v2.8.0] 202
 indicateur/personnalise [indicateur/personnalise@v2.8.0] 2023-03-10T08:39:46Z Florian <florian@derfurth.com> # Change les droits pour inserer acces_restreint de collectivite
 indicateur/referentiel [indicateur/referentiel@v2.8.0] 2023-03-10T08:40:53Z Florian <florian@derfurth.com> # Change les droits pour inserer acces_restreint de collectivite
 @v2.9.0 2023-03-13T12:49:51Z Florian <florian@derfurth.com> # Permet de restreindre l'accès à certaines collectivités
+
+stats/locales 2023-03-03T15:25:54Z Florian <florian@derfurth.com> # Vues filtrables par région et département.
