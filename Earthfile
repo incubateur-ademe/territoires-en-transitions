@@ -1,4 +1,4 @@
-VERSION 0.6
+VERSION 0.7
 
 postgres:
     FROM postgres:15
@@ -175,8 +175,8 @@ setup-env:
     LOCALLY
     RUN earthly +stop
     RUN supabase start
-    RUN supabase status -o env --override-name auth.anon_key=SUPABASE_ANON_KEY --override-name auth.service_role_key=SUPABASE_SERVICE_ROLE_KEY > .env
-    RUN export $(cat .env | xargs) && sh ./make_dot_env.sh
+    RUN supabase status -o env --override-name auth.anon_key=SUPABASE_ANON_KEY --override-name auth.service_role_key=SUPABASE_SERVICE_ROLE_KEY > .arg
+    RUN export $(cat .arg | xargs) && sh ./make_dot_env.sh
     RUN earthly +stop
 
 dev:
