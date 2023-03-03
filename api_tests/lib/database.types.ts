@@ -1411,19 +1411,19 @@ export interface Database {
             Returns: string;
           }
         | {
-            Args: {bucket_width: unknown; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; ts: string};
-            Returns: string;
-          }
-        | {
             Args: {bucket_width: unknown; origin: string; ts: string};
+            Returns: string;
+          }
+        | {
+            Args: {bucket_width: unknown; ts: string};
+            Returns: string;
+          }
+        | {
+            Args: {bucket_width: unknown; ts: string};
+            Returns: string;
+          }
+        | {
+            Args: {bucket_width: unknown; ts: string};
             Returns: string;
           }
         | {
@@ -4604,6 +4604,46 @@ export interface Database {
           etoiles: number | null;
           labellisations: number | null;
           referentiel: Database['public']['Enums']['referentiel'] | null;
+        };
+      };
+      stats_locales_collectivite_actives_et_total_par_type: {
+        Row: {
+          actives: number | null;
+          code_departement: string | null;
+          code_region: string | null;
+          total: number | null;
+          typologie: string | null;
+        };
+      };
+      stats_locales_evolution_nombre_utilisateur_par_collectivite: {
+        Row: {
+          code_departement: string | null;
+          code_region: string | null;
+          maximum: number | null;
+          median: number | null;
+          mois: string | null;
+          moyen: number | null;
+        };
+      };
+      stats_locales_evolution_total_activation: {
+        Row: {
+          code_departement: string | null;
+          code_region: string | null;
+          mois: string | null;
+          total: number | null;
+          total_commune: number | null;
+          total_epci: number | null;
+          total_syndicat: number | null;
+        };
+      };
+      stats_locales_tranche_completude: {
+        Row: {
+          cae: number | null;
+          code_departement: string | null;
+          code_region: string | null;
+          eci: number | null;
+          lower_bound: number | null;
+          upper_bound: number | null;
         };
       };
       suivi_audit: {
