@@ -12,6 +12,7 @@ import CollectiviteActivesEtTotalParType from './CollectiviteActivesEtTotalParTy
 import NombreUtilisateurParCollectivite from './NombreUtilisateurParCollectivite';
 import NombreCollectivitesEngagees from './NombreCollectivitesEngagees';
 import CollectivitesLabellisees from './CollectivitesLabellisees';
+import EvolutionTotalActivationParRegionSelection from './EvolutionTotalActivationParRegionSelection.tsx';
 
 export default function Stats() {
   return (
@@ -42,6 +43,8 @@ export default function Stats() {
         </p>
 
         <EvolutionTotalActivationParType />
+
+        <EvolutionTotalActivationParRegionSelection />
 
         <ChartHead>
           Progression de l’activation des EPCI sur le territoire national
