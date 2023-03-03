@@ -49,6 +49,9 @@ echo "Enabling evaluation API..."
 psql -v ON_ERROR_STOP=1 -c 'select test.enable_evaluation_api();' || exit 1
 fi
 
+echo "Refreshing stats materialized views..."
+psql -v ON_ERROR_STOP=1 -c 'select stats.refresh_views();' || exit 1
+
 echo "Loading content with curl..."
 sh /scripts/load_json_content.sh || exit 1
 
