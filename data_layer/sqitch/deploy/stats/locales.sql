@@ -29,7 +29,7 @@ union all
 select m.first_day as mois,
        r.code,
        null,
-       (select count(*)
+       (select count(*) filter ( where cu.region_code = r.code)
         from stats.collectivite_utilisateur cu
         where cu.date_activation <= m.last_day),
        (select count(*) filter ( where cu.type_collectivite = 'EPCI' and cu.region_code = r.code)
@@ -50,7 +50,7 @@ union all
 select m.first_day as mois,
        null,
        d.code,
-       (select count(*)
+       (select count(*) filter ( where departement_code = d.code)
         from stats.collectivite_utilisateur cu
         where cu.date_activation <= m.last_day),
        (select count(*) filter ( where cu.type_collectivite = 'EPCI' and departement_code = d.code)
