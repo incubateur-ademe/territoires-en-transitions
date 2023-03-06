@@ -40,7 +40,7 @@ const messageEtoile_5 = [
   Ligne2,
 ];
 
-const submittedEtoile1 =
+export const submittedEtoile1 =
   'Votre demande de labellisation a bien été envoyée. Vous recevrez dans les 48h ouvrées un mail de l’ADEME.';
 export const submittedAutresEtoiles =
   'Votre demande d’audit a bien été envoyée. Vous recevrez prochainement un mail du Bureau d’Appui.';

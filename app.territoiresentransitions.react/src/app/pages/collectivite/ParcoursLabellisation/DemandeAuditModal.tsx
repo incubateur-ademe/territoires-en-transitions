@@ -6,6 +6,7 @@ import {useEnvoiDemande} from './useEnvoiDemande';
 import {
   TDemandeLabellisationModalProps,
   submittedAutresEtoiles,
+  submittedEtoile1,
 } from './DemandeLabellisationModal';
 
 /**
@@ -51,7 +52,7 @@ export const DemandeAuditModal = (props: TDemandeLabellisationModalProps) => {
           {status === 'non_demandee' && isLoading ? 'Envoi en cours...' : null}
           {status === 'demande_envoyee' ? (
             <div className="fr-alert fr-alert--success">
-              {submittedAutresEtoiles}
+              {etoiles === '1' ? submittedEtoile1 : submittedAutresEtoiles}
             </div>
           ) : null}
           {status === 'non_demandee' && !isLoading ? (
@@ -63,22 +64,36 @@ export const DemandeAuditModal = (props: TDemandeLabellisationModalProps) => {
                 <RadioButton value="cot" sujet={sujet} setSujet={setSujet}>
                   Audit COT <b>sans</b> labellisation
                 </RadioButton>
-                <RadioButton
-                  disabled={!labellisable}
-                  value="labellisation_cot"
-                  sujet={sujet}
-                  setSujet={setSujet}
-                >
-                  Audit COT <b>avec</b> labellisation{asterique}
-                </RadioButton>
-                <RadioButton
-                  disabled={!labellisable}
-                  value="labellisation"
-                  sujet={sujet}
-                  setSujet={setSujet}
-                >
-                  Audit <b>de</b> labellisation{asterique}
-                </RadioButton>
+                {etoiles === '1' ? (
+                  <RadioButton
+                    disabled={!labellisable}
+                    value="labellisation"
+                    sujet={sujet}
+                    setSujet={setSujet}
+                    dataTest="etoile1"
+                  >
+                    Demande de première étoile{asterique}
+                  </RadioButton>
+                ) : (
+                  <>
+                    <RadioButton
+                      disabled={!labellisable}
+                      value="labellisation_cot"
+                      sujet={sujet}
+                      setSujet={setSujet}
+                    >
+                      Audit COT <b>avec</b> labellisation{asterique}
+                    </RadioButton>
+                    <RadioButton
+                      disabled={!labellisable}
+                      value="labellisation"
+                      sujet={sujet}
+                      setSujet={setSujet}
+                    >
+                      Audit <b>de</b> labellisation{asterique}
+                    </RadioButton>
+                  </>
+                )}
                 {aide}
               </div>
               <button
@@ -117,15 +132,18 @@ const RadioButton = ({
   children,
   sujet,
   setSujet,
+  dataTest,
 }: {
   disabled?: boolean;
   value: TSujetDemande;
   children: React.ReactNode;
   sujet: TSujetDemande | null;
   setSujet: (value: TSujetDemande) => void;
+  dataTest?: string;
 }) => (
   <>
     <input
+      data-test={dataTest}
       type="radio"
       id={value}
       disabled={disabled}

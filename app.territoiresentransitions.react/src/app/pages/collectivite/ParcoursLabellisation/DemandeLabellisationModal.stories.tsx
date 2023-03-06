@@ -95,7 +95,7 @@ NonLabellisableCOT.args = {
     parcours: {
       collectivite_id: 1,
       referentiel: 'eci',
-      etoiles: '1',
+      etoiles: '2',
     },
   },
 };
@@ -110,13 +110,14 @@ NonLabellisableCOT2.args = {
     parcours: {
       collectivite_id: 1,
       referentiel: 'eci',
-      etoiles: '1',
+      etoiles: '2',
     },
     preuves: ['fichier'],
   },
 };
 
 export const LabellisableCOT = Template.bind({});
+LabellisableCOT.storyName = 'Labellisable COT 1ère étoile';
 LabellisableCOT.args = {
   parcoursLabellisation: {
     status: 'non_demandee',
@@ -126,6 +127,22 @@ LabellisableCOT.args = {
       collectivite_id: 1,
       referentiel: 'eci',
       etoiles: '1',
+    },
+    preuves: ['fichier'],
+  },
+};
+
+export const LabellisableCOT2 = Template.bind({});
+LabellisableCOT2.storyName = 'Labellisable COT 2+ étoiles';
+LabellisableCOT2.args = {
+  parcoursLabellisation: {
+    status: 'non_demandee',
+    labellisable: true,
+    isCOT: true,
+    parcours: {
+      collectivite_id: 1,
+      referentiel: 'eci',
+      etoiles: '2',
     },
     preuves: ['fichier'],
   },
