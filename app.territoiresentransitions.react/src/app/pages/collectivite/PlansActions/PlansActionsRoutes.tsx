@@ -41,8 +41,8 @@ export const PlansActionsRoutes = ({collectivite_id}: Props) => {
                 })
           }
         />
-        {/* <FichesNonClassees /> */}
       </Route>
+      {/* <FichesNonClassees /> */}
       <Route exact path={[CollectiviteFichesNonClasseesPath]}>
         <FichesNonClassees />
       </Route>

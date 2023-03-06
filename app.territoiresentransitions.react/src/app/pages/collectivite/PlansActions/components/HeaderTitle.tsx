@@ -14,7 +14,7 @@ const HeaderTitle = ({
   titre,
   onUpdate,
   type = 'fiche',
-  bgColorClassName = 'bg-indigo-400',
+  bgColorClassName,
   isReadonly,
 }: Props) => {
   const titreInputRef = useRef<HTMLTextAreaElement>(null);
@@ -25,13 +25,12 @@ const HeaderTitle = ({
     }
   };
 
-  const isLoading = true;
-
   return (
     <div
       className={classNames(
         'group flex items-center mx-auto py-6 px-10 xl:mr-6',
         {'bg-indigo-700': type === 'plan'},
+        {'bg-indigo-400': type === 'fiche'},
         bgColorClassName
       )}
     >
