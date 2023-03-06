@@ -21,25 +21,22 @@ const PlanActionFiltres = ({
   filters,
   setFilters,
 }: Props) => {
-  const [isMoreFiltersOpen, setIsMoreFiltersOpen] = useState(false);
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   return (
     <div className="mb-8">
-      <div className="mb-4 font-bold">Filtrer les fiches</div>
-      <div className="grid sm:grid-cols-2 gap-x-8 gap-y-6">
-        <FiltrePersonnesPilotes filters={filters} setFilters={setFilters} />
-        <FiltreStatuts filters={filters} setFilters={setFilters} />
-      </div>
-      <div className="mt-4 border-y border-gray-200">
+      <div className="border-y border-gray-200">
         <button
           className="flex items-center justify-between py-3 px-4 w-full"
-          onClick={() => setIsMoreFiltersOpen(!isMoreFiltersOpen)}
+          onClick={() => setIsFiltersOpen(!isFiltersOpen)}
         >
-          <span>Plus de filtres</span>
-          <span className="mb-1">{isMoreFiltersOpen ? '-' : '+'}</span>
+          <span className="font-bold">Filtrer les fiches</span>
+          <span className="mb-1">{isFiltersOpen ? '-' : '+'}</span>
         </button>
       </div>
-      {isMoreFiltersOpen && (
+      {isFiltersOpen && (
         <div className="mt-6 grid sm:grid-cols-2 gap-x-8 gap-y-6">
+          <FiltrePersonnesPilotes filters={filters} setFilters={setFilters} />
+          <FiltreStatuts filters={filters} setFilters={setFilters} />
           <FiltreReferents filters={filters} setFilters={setFilters} />
           <FiltrePriorites filters={filters} setFilters={setFilters} />
         </div>
