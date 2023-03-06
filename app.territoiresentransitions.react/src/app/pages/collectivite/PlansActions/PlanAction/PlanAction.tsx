@@ -146,11 +146,10 @@ const PlanActionConnected = () => {
 
   const {data, isLoading} = usePlanAction(parseInt(planUid));
 
-  // return data ? <PlanAction plan={data} /> : <div></div>;
   return !isLoading && data ? (
     <PlanAction plan={data} />
   ) : (
-    <div className="h-[6.75rem] w-full mr-6 bg-indigo-700" />
+    <div className="h-[6.75rem] w-full bg-indigo-700 xl:mr-6" />
   );
 };
 
