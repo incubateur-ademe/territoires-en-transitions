@@ -2,8 +2,10 @@
 
 BEGIN;
 
-select mois, total, total_epci, total_syndicat, total_commune, region_code
-from stats_evolution_total_activation_par_region
+select mois, code_region, code_departement, total, total_epci, total_syndicat, total_commune
+from stats_evolution_total_activation_locales
 where false;
+
+select has_function_privilege('stats.refresh_stats_locales()', 'execute');
 
 ROLLBACK;

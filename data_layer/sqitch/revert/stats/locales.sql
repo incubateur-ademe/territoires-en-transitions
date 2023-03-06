@@ -2,6 +2,7 @@
 
 BEGIN;
 
-drop view stats_evolution_total_activation_par_region;
+drop function stats.refresh_stats_locales;
+drop materialized view stats_evolution_total_activation_locales;
 
 COMMIT;
