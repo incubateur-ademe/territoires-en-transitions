@@ -258,3 +258,4 @@ indicateur/referentiel [indicateur/referentiel@v2.8.0] 2023-03-10T08:40:53Z Flor
 @v2.9.0 2023-03-13T12:49:51Z Florian <florian@derfurth.com> # Permet de restreindre l'accès à certaines collectivités
 
 stats/locales 2023-03-03T15:25:54Z Florian <florian@derfurth.com> # Vues filtrables par région et département.
+cron/refresh_stats_views_locales 2023-03-06T15:22:42Z Florian <florian@derfurth.com> # Automatise le rafraichissement des vues stats locales.
