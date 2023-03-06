@@ -241,4 +241,6 @@ labellisation/preuve_v2 [labellisation/preuve_v2@v2.1.2] 2023-02-14T15:05:53Z Fl
 
 plan_action/plan_action [plan_action/plan_action@v2.4.0] 2023-02-21T17:17:13Z Amandine Jacquelin <conta@LanceLibre> # Améliore l'ordonnancement de la RPC plan_action et ajoute la RPC filter_fiches_action
 @v2.6.0 2023-02-24T13:27:14Z Florian <florian@derfurth.com> # Améliore l'ordonnancement des fiches, permet de les filtrer
+
 plan_action/plan_action [plan_action/plan_action@v2.6.0] 2023-02-28T15:26:24Z Amandine Jacquelin <conta@LanceLibre> # Modifie la fonction de filtre des fiches
+@v2.7.0 2023-03-06T10:43:13Z Florian <florian@derfurth.com> # Permet de filtrer les fiches avec plusieurs critères
