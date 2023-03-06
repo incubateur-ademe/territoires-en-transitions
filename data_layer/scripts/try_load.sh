@@ -51,6 +51,7 @@ fi
 
 echo "Refreshing stats materialized views..."
 psql -v ON_ERROR_STOP=1 -c 'select stats.refresh_views();' || exit 1
+psql -v ON_ERROR_STOP=1 -c 'select stats.refresh_views_utilisation();' || exit 1
 
 echo "Loading content with curl..."
 sh /scripts/load_json_content.sh || exit 1
