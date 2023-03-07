@@ -23,15 +23,17 @@ import {
  * @param codeDepartement le code du département ou ''
  */
 function useEvolutionTotalActivation(
-  codeRegion: string, codeDepartement: string) {
+  codeRegion: string,
+  codeDepartement: string
+) {
   return useSWR(
-    `stats_evolution_total_activation-${codeRegion}-${codeDepartement}`,
+    `stats_locales_evolution_total_activation-${codeRegion}-${codeDepartement}`,
     async () => {
-
       // Notre selection de base.
       let select = supabase
         // depuis la vue
-        .from('stats_evolution_total_activation_locales').select()
+        .from('stats_locales_evolution_total_activation')
+        .select()
         // à partir du mois par défaut
         .gte('mois', fromMonth);
 
@@ -60,26 +62,32 @@ function useEvolutionTotalActivation(
           {
             id: 'total_epci',
             label: 'EPCI',
-            data: data.map((d) => ({x: d.mois, y: d.total_epci})),
+            data: data.map(d => ({x: d.mois, y: d.total_epci})),
           },
           {
             id: 'total_syndicat',
             label: 'syndicats',
-            data: data.map((d) => ({x: d.mois, y: d.total_syndicat})),
+            data: data.map(d => ({x: d.mois, y: d.total_syndicat})),
           },
           {
             id: 'total_commune',
             label: 'communes',
-            data: data.map((d) => ({x: d.mois, y: d.total_commune})),
+            data: data.map(d => ({x: d.mois, y: d.total_commune})),
           },
         ],
       };
-    });
+    }
+  );
 }
 
-export default function EvolutionTotalActivationParType(props: { region?: string, departement?: string }) {
-  const {data} = useEvolutionTotalActivation(props.region ?? '',
-    props.departement ?? '');
+export default function EvolutionTotalActivationParType(props: {
+  region?: string;
+  departement?: string;
+}) {
+  const {data} = useEvolutionTotalActivation(
+    props.region ?? '',
+    props.departement ?? ''
+  );
 
   if (!data) {
     return null;
@@ -133,12 +141,13 @@ export default function EvolutionTotalActivationParType(props: { region?: string
               <div style={theme.tooltip?.container}>
                 <div>
                   <strong>
-                    {slice.points.map((p) => p.data.y as number).
-                      reduce((a, b) => a + b, 0)}
+                    {slice.points
+                      .map(p => p.data.y as number)
+                      .reduce((a, b) => a + b, 0)}
                   </strong>{' '}
                   collectivités, dont :
                 </div>
-                {slice.points.map((point) => (
+                {slice.points.map(point => (
                   <div
                     key={point.id}
                     style={{
