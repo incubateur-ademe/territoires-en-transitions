@@ -7,7 +7,7 @@ type RegionStatsProps = {
 };
 
 const RegionStats = ({params: {regionCode}}: RegionStatsProps) => {
-  return <StatisticsDisplay regionCode={parseInt(regionCode)} />;
+  return <StatisticsDisplay regionCode={regionCode} />;
 };
 
 export default RegionStats;

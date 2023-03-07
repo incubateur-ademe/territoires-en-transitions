@@ -1,11 +1,12 @@
 'use client';
 
 import {fr} from '@codegouvfr/react-dsfr';
-import EvolutionTotalActivationParRegion from './EvolutionTotalActivationParRegion';
+import EvolutionTotalActivationParType from './EvolutionTotalActivationParType';
 import {SectionHead} from './headings';
+import RegionAndDeptFilters from './RegionAndDeptFilters';
 
 type StatisticsDisplayProps = {
-  regionCode: number;
+  regionCode: string;
 };
 
 const StatisticsDisplay = ({regionCode}: StatisticsDisplayProps) => {
@@ -13,6 +14,8 @@ const StatisticsDisplay = ({regionCode}: StatisticsDisplayProps) => {
     <div className="fr-container-fluid">
       <section className="fr-container">
         <h1 className={fr.cx('fr-mt-4w')}>Statistiques</h1>
+        <RegionAndDeptFilters />
+
         <p>
           Cette page présente les statistiques de déploiement et d’usage
           régionales de la plateforme Territoires en Transitions.
@@ -34,7 +37,7 @@ const StatisticsDisplay = ({regionCode}: StatisticsDisplayProps) => {
           cette collectivité sur la plateforme.
         </p>
 
-        <EvolutionTotalActivationParRegion region={regionCode} />
+        <EvolutionTotalActivationParType region={regionCode} />
       </section>
 
       <section className="fr-container">
