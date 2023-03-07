@@ -244,3 +244,5 @@ plan_action/plan_action [plan_action/plan_action@v2.4.0] 2023-02-21T17:17:13Z Am
 
 plan_action/plan_action [plan_action/plan_action@v2.6.0] 2023-02-28T15:26:24Z Amandine Jacquelin <conta@LanceLibre> # Modifie la fonction de filtre des fiches
 @v2.7.0 2023-03-06T10:43:13Z Florian <florian@derfurth.com> # Permet de filtrer les fiches avec plusieurs critères
+
+retool/audit 2023-03-06T16:30:07Z Amandine Jacquelin <conta@LanceLibre> # Ajout d'une vue retool pour les audits
