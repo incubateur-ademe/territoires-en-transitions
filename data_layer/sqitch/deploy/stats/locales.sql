@@ -13,7 +13,7 @@ select -- permet de filtrer
        (select count(*) as count
         from stats.collectivite_utilisateur cu
         where cu.date_activation <= m.last_day) as total,
-       (select count(*) filter (where cu.type_collectivite = 'epci'::type_collectivite) as count
+       (select count(*) filter (where cu.type_collectivite = 'EPCI'::type_collectivite) as count
         from stats.collectivite_utilisateur cu
         where cu.date_activation <= m.last_day) as total_epci,
        (select count(*) filter (where cu.type_collectivite = 'syndicat'::type_collectivite) as count
@@ -67,7 +67,9 @@ from imports.departement d
          join stats.monthly_bucket m on true;
 
 -- on créé un vue car les vues matérialisées ne sont pas exportées dans les types.
-create view stats_evolution_total_activation_locales as select * from stats.evolution_total_activation_locales;
+create view stats_evolution_total_activation_locales as
+select *
+from stats.evolution_total_activation_locales;
 
 
 create materialized view stats.collectivite_actives_locales_et_total_par_type
@@ -82,8 +84,8 @@ with collectivite_typologie as (select c.collectivite_id,
                                 from stats.collectivite c)
 
 select typologie,
-       null:: varchar(2)                        as code_region,
-       null::varchar(2)                         as code_departement,
+       null:: varchar(2)                                                                                    as code_region,
+       null::varchar(2)                                                                                     as code_departement,
        count(*)                                                                                             as total,
        count(*) filter ( where collectivite_id in (select collectivite_id from stats.collectivite_active) ) as actives
 from collectivite_typologie
@@ -109,9 +111,57 @@ select typologie,
 from collectivite_typologie
 group by typologie, departement_code;
 
-create view stats_collectivite_actives_locales_et_total_par_type as select * from stats.collectivite_actives_locales_et_total_par_type;
+create view stats_collectivite_actives_locales_et_total_par_type as
+select *
+from stats.collectivite_actives_locales_et_total_par_type;
 
 
+create materialized view stats.evolution_locale_nombre_utilisateur_par_collectivite
+as
+with membres as (select c                                                         as collectivite,
+                        mb.first_day                                              as mois,
+                        count(*)
+                        filter ( where active and pud.created_at <= mb.last_day ) as nombre
+                 from stats.monthly_bucket mb
+                          join stats.collectivite c on true
+                          left join private_utilisateur_droit pud using (collectivite_id)
+                 group by c,
+                          mb.first_day)
+select mois,
+       null:: varchar(2)                                                                 as code_region,
+       null::varchar(2)                                                                  as code_departement,
+       avg(nombre) filter ( where nombre > 0 )                                           as moyen,
+       max(nombre) filter ( where nombre > 0 )                                           as maximum,
+       percentile_cont(0.5) within group ( order by nombre ) filter ( where nombre > 0 ) as median
+from membres
+group by mois
+
+union all
+
+select mois,
+       (membres.collectivite).region_code,
+       null,
+       avg(nombre) filter ( where nombre > 0 ),
+       max(nombre) filter ( where nombre > 0 ),
+       percentile_cont(0.5) within group ( order by nombre ) filter ( where nombre > 0 )
+from membres
+group by mois, (membres.collectivite).region_code
+
+union all
+
+select mois,
+       null,
+       (membres.collectivite).departement_code,
+       avg(nombre) filter ( where nombre > 0 ),
+       max(nombre) filter ( where nombre > 0 ),
+       percentile_cont(0.5) within group ( order by nombre ) filter ( where nombre > 0 )
+from membres
+group by mois, (membres.collectivite).departement_code;
+
+
+create view stats_evolution_locale_nombre_utilisateur_par_collectivite as
+select *
+from stats.evolution_locale_nombre_utilisateur_par_collectivite;
 
 create function
     stats.refresh_stats_locales()
@@ -121,6 +171,7 @@ $$
 begin
     refresh materialized view stats.evolution_total_activation_locales;
     refresh materialized view stats.collectivite_actives_locales_et_total_par_type;
+    refresh materialized view stats.evolution_locale_nombre_utilisateur_par_collectivite;
 end
 $$ language plpgsql;
 comment on function stats.refresh_stats_locales is
