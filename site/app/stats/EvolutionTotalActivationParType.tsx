@@ -100,10 +100,10 @@ export default function EvolutionTotalActivationParType(props: {
     <div>
       <div className="fr-grid-row fr-grid-row--center">
         <h6>
-          {courant.total} collectivités activées dont {courant.total_epci}{' '}
+          {courant?.total} collectivités activées dont {courant?.total_epci}{' '}
           EPCI,&nbsp;
-          {courant.total_syndicat} syndicats et&nbsp;
-          {courant.total_commune} communes
+          {courant?.total_syndicat} syndicats et&nbsp;
+          {courant?.total_commune} communes
         </h6>
       </div>
 

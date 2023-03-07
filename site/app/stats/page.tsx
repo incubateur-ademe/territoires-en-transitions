@@ -12,13 +12,15 @@ import CollectiviteActivesEtTotalParType from './CollectiviteActivesEtTotalParTy
 import NombreUtilisateurParCollectivite from './NombreUtilisateurParCollectivite';
 import NombreCollectivitesEngagees from './NombreCollectivitesEngagees';
 import CollectivitesLabellisees from './CollectivitesLabellisees';
-import EvolutionTotalActivationParRegionSelection from './EvolutionTotalActivationParRegionSelection.tsx';
+import EvolutionTotalActivationParRegionSelection from './EvolutionTotalActivationParRegionSelection';
+import RegionAndDeptFilters from './RegionAndDeptFilters';
 
 export default function Stats() {
   return (
     <div className="fr-container-fluid">
       <section className="fr-container">
         <h1 className={fr.cx('fr-mt-4w')}>Statistiques</h1>
+        <RegionAndDeptFilters />
         <p>
           Territoires en Transitions est une plateforme publique gratuite et
           open-source développée avec ses utilisateurs afin d’aider les
