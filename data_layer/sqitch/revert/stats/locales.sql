@@ -3,11 +3,14 @@
 BEGIN;
 
 drop function stats.refresh_stats_locales;
-drop view stats_evolution_total_activation_locales;
-drop materialized view stats.evolution_total_activation_locales;
-drop view stats_collectivite_actives_locales_et_total_par_type;
-drop materialized view stats.collectivite_actives_locales_et_total_par_type;
-drop view stats_evolution_locale_nombre_utilisateur_par_collectivite;
-drop materialized view stats.evolution_locale_nombre_utilisateur_par_collectivite;
+drop view stats_locales_evolution_total_activation;
+drop materialized view stats.locales_evolution_total_activation;
+drop view stats_locales_collectivite_actives_et_total_par_type;
+drop materialized view stats.locales_collectivite_actives_et_total_par_type;
+drop view stats_locales_evolution_nombre_utilisateur_par_collectivite;
+drop materialized view stats.locales_evolution_nombre_utilisateur_par_collectivite;
+drop view stats_locales_tranche_completude;
+drop materialized view stats.locales_tranche_completude;
+drop materialized view stats.locales_pourcentage_completude;
 
 COMMIT;
