@@ -93,6 +93,7 @@ export const useEditFicheAction = () => {
       queryClient.invalidateQueries(['personnes_pilotes', collectivite_id]);
       queryClient.invalidateQueries(['services_pilotes', collectivite_id]);
       queryClient.invalidateQueries(['personnes_referentes', collectivite_id]);
+      queryClient.invalidateQueries(['financeurs', collectivite_id]);
     },
   });
 };
