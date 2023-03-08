@@ -48,7 +48,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
         <>
           {etoiles === '1' && isCOT ? (
             <button
-              className="fr-btn self-start"
+              className="fr-btn self-start fr-mr-2w"
               data-test="1ereEtoileCOT"
               disabled={!labellisable}
               onClick={() => setOpened_1ereEtoileCOT(true)}
@@ -57,7 +57,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
             </button>
           ) : null}
           <button
-            className="fr-btn fr-ml-2w self-start"
+            className="fr-btn self-start"
             data-test="SubmitDemandeBtn"
             disabled={!canSubmitDemande}
             onClick={() => setOpened(true)}
