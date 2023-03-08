@@ -59,7 +59,11 @@ const initState = (pathName: string, stateName: string): string => {
 
 const emptyString = '';
 
-const RegionAndDeptFilters = () => {
+type RegionAndDeptFiltersProps = {
+  onChange: (title: string | null) => void;
+};
+
+const RegionAndDeptFilters = ({onChange}: RegionAndDeptFiltersProps) => {
   const router = useRouter();
   const pathName = usePathname() ?? '';
 
@@ -76,18 +80,39 @@ const RegionAndDeptFilters = () => {
   const departments = useDepartment(selectedRegion).data;
 
   useEffect(() => {
+    if (!!selectedDepartment) {
+      onChange(
+        departments?.find(dept => dept.code === selectedDepartment)?.libelle ??
+          null
+      );
+    } else if (!!selectedRegion) {
+      onChange(
+        regions?.find(region => region.code === selectedRegion)?.libelle ?? null
+      );
+    }
+  });
+
+  useEffect(() => {
     if (
       selectedDepartment !== emptyString &&
       selectedDepartment !== prevSelectedDepartment
     ) {
+      onChange(
+        departments?.find(dept => dept.code === selectedDepartment)?.libelle ??
+          null
+      );
       router.push(`/stats/departement/${selectedDepartment}`);
     } else if (selectedRegion !== emptyString) {
       setSelectedDepartment(emptyString);
+      onChange(
+        regions?.find(region => region.code === selectedRegion)?.libelle ?? null
+      );
       router.push(`/stats/region/${selectedRegion}`);
     } else if (
       selectedRegion === emptyString &&
       selectedDepartment === emptyString
     ) {
+      onChange(null);
       router.push('/stats');
     }
   }, [selectedDepartment, selectedRegion]);
