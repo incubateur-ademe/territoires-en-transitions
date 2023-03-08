@@ -1,8 +1,8 @@
 'use client';
 
 import useSWR from 'swr';
-import { ResponsiveLine } from '@nivo/line';
-import { supabase } from '../initSupabase';
+import {ResponsiveLine} from '@nivo/line';
+import {supabase} from '../initSupabase';
 import {
   axisBottomAsDate,
   axisLeftMiddleLabel,
@@ -12,17 +12,20 @@ import {
   getLegendData,
   theme,
 } from './shared';
-import { SliceTooltip } from './SliceTooltip';
-import { ChartHead } from './headings';
+import {SliceTooltip} from './SliceTooltip';
+import {ChartHead} from './headings';
 
 function useNombreUtilisateurParCollectivite() {
   return useSWR(
-    'stats_evolution_nombre_utilisateur_par_collectivite',
+    'stats_locales_evolution_nombre_utilisateur_par_collectivite',
     async () => {
-      const { data, error } = await supabase
-        .from('stats_evolution_nombre_utilisateur_par_collectivite')
+      const {data, error} = await supabase
+        .from('stats_locales_evolution_nombre_utilisateur_par_collectivite')
         .select()
-        .gte('mois', fromMonth);
+        .gte('mois', fromMonth)
+        // les stats nationales pour le moment.
+        .is('code_region', null)
+        .is('code_departement', null);
       if (error) {
         throw new Error('stats_evolution_nombre_utilisateur_par_collectivite');
       }
@@ -35,12 +38,12 @@ function useNombreUtilisateurParCollectivite() {
           {
             id: 'moyen',
             label: "Nombre moyen d'utilisateurs",
-            data: data.map((d) => ({ x: d.mois, y: d.moyen })),
+            data: data.map(d => ({x: d.mois, y: d.moyen})),
           },
           {
             id: 'maximum',
             label: "Nombre maximum d'utilisateurs",
-            data: data.map((d) => ({ x: d.mois, y: d.maximum })),
+            data: data.map(d => ({x: d.mois, y: d.maximum})),
           },
         ],
       };
@@ -49,13 +52,13 @@ function useNombreUtilisateurParCollectivite() {
 }
 
 export default function NombreUtilisateurParCollectivite() {
-  const { data } = useNombreUtilisateurParCollectivite();
+  const {data} = useNombreUtilisateurParCollectivite();
 
   if (!data) {
     return null;
   }
 
-  const { courant, evolution } = data;
+  const {courant, evolution} = data;
   const colors = ['#FF732C', '#7AB1E8'];
   const legendData = getLegendData(evolution, colors);
   const labelById = getLabelsById(evolution);
@@ -70,14 +73,14 @@ export default function NombreUtilisateurParCollectivite() {
       </ChartHead>
       <div className="fr-grid-row fr-grid-row--center"></div>
 
-      <div style={{ height: 300 }}>
+      <div style={{height: 300}}>
         <ResponsiveLine
           colors={colors}
           theme={theme}
           data={evolution}
           // les marges servent aux légendes
-          margin={{ top: 5, right: 5, bottom: 120, left: 50 }}
-          xScale={{ type: 'point' }}
+          margin={{top: 5, right: 5, bottom: 120, left: 50}}
+          xScale={{type: 'point'}}
           yScale={{
             type: 'linear',
             min: 0,
@@ -92,14 +95,12 @@ export default function NombreUtilisateurParCollectivite() {
           yFormat=" >-.2f"
           axisBottom={axisBottomAsDate}
           axisLeft={axisLeftMiddleLabel('Utilisateurs/collectivité')}
-          pointColor={{ theme: 'background' }}
+          pointColor={{theme: 'background'}}
           pointBorderWidth={4}
-          pointBorderColor={{ from: 'serieColor' }}
+          pointBorderColor={{from: 'serieColor'}}
           pointLabelYOffset={-12}
           enableSlices="x"
-          sliceTooltip={(props) => (
-            <SliceTooltip {...props} labels={labelById} />
-          )}
+          sliceTooltip={props => <SliceTooltip {...props} labels={labelById} />}
           legends={[
             {
               ...bottomLegend,

@@ -1,17 +1,20 @@
 'use client';
 
 import useSWR from 'swr';
-import { ResponsivePie } from '@nivo/pie';
-import { supabase } from '../initSupabase';
-import { bottomLegend, colors, theme } from './shared';
+import {ResponsivePie} from '@nivo/pie';
+import {supabase} from '../initSupabase';
+import {bottomLegend, colors, theme} from './shared';
 
 export function useTrancheCompletude() {
-  return useSWR('stats_tranche_completude', async () => {
-    const { data, error } = await supabase
-      .from('stats_tranche_completude')
+  return useSWR('stats_locales_tranche_completude', async () => {
+    const {data, error} = await supabase
+      .from('stats_locales_tranche_completude')
       .select()
       .gt('lower_bound', 0)
-      .order('lower_bound', { ascending: false });
+      .order('lower_bound', {ascending: false})
+      // stats nationales
+      .is('code_region', null)
+      .is('code_departement', null);
     if (error) {
       throw new Error('stats_tranche_completude');
     }
@@ -19,7 +22,7 @@ export function useTrancheCompletude() {
       return null;
     }
     return {
-      tranches: data.map((d) => {
+      tranches: data.map(d => {
         return {
           id: d.lower_bound,
           label:
@@ -29,34 +32,34 @@ export function useTrancheCompletude() {
         };
       }),
       inities: getSum(data),
-      termines: getSum(data.filter((d) => d.lower_bound === 100)),
-      presqueTermines: getSum(data.filter((d) => d.lower_bound >= 80)),
+      termines: getSum(data.filter(d => d.lower_bound === 100)),
+      presqueTermines: getSum(data.filter(d => d.lower_bound >= 80)),
     };
   });
 }
 
 // somme des compteurs par référentiel pour calculer les décomptes
 // initiés/terminés/remplis à 80% et plus
-const getSum = (data: Array<{ cae: number; eci: number }>) =>
+const getSum = (data: Array<{cae: number; eci: number}>) =>
   data.reduce((cnt, d) => cnt + d.cae + d.eci, 0);
 
-type Props = { referentiel: 'eci' | 'cae' };
+type Props = {referentiel: 'eci' | 'cae'};
 
 export default function TrancheCompletude(props: Props) {
-  const { data } = useTrancheCompletude();
+  const {data} = useTrancheCompletude();
 
   if (!data) {
     return null;
   }
 
   return (
-    <div style={{ height: 300 }}>
+    <div style={{height: 300}}>
       <ResponsivePie
         colors={['#21AB8E', '#34BAB5', '#FFCA00', '#FFB7AE', '#FF732C']}
         theme={theme}
         data={data.tranches}
         value={props.referentiel}
-        margin={{ top: 40, right: 85, bottom: 25, left: 85 }}
+        margin={{top: 40, right: 85, bottom: 25, left: 85}}
         innerRadius={0.5}
         padAngle={0.7}
         cornerRadius={3}
@@ -71,7 +74,7 @@ export default function TrancheCompletude(props: Props) {
         arcLinkLabelsSkipAngle={10}
         arcLinkLabelsTextColor="#333333"
         arcLinkLabelsThickness={2}
-        arcLinkLabelsColor={{ from: 'color' }}
+        arcLinkLabelsColor={{from: 'color'}}
         arcLabelsSkipAngle={10}
         arcLabelsTextColor={{
           from: 'color',
