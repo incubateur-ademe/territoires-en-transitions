@@ -14,6 +14,9 @@ export const LocalSelectors = {
   'Audit de labellisation': {
     selector: 'input[type=radio][value=labellisation]',
   },
+  'Demander la 1ère étoile': {
+    selector: '[data-test=1ereEtoileCOT]',
+  },
   'Envoyer ma demande': {
     selector: '[data-test=EnvoyerDemandeBtn]',
   },
