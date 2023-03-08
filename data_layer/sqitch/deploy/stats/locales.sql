@@ -285,6 +285,9 @@ from stats.locales_evolution_nombre_fiches;
 -- todo stats_evolution_collectivite_avec_minimum_fiches
 -- todo stats_engagement_collectivite
 -- todo stats_labellisation_par_niveau
+-- todo stats_evolution_indicateur_referentiel
+-- todo stats_evolution_resultat_indicateur_personnalise
+-- todo stats_evolution_resultat_indicateur_referentiel
 
 create function
     stats.refresh_stats_locales()
