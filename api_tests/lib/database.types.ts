@@ -607,6 +607,10 @@ export interface Database {
         Args: {indicateur_actions: unknown; indicateur_definitions: unknown};
         Returns: undefined;
       };
+      can_read_acces_restreint: {
+        Args: {collectivite_id: number};
+        Returns: boolean;
+      };
       chunk_compression_stats: {
         Args: {hypertable: unknown};
         Returns: Record<string, unknown>[];
@@ -1035,10 +1039,6 @@ export interface Database {
         Args: {id: number};
         Returns: boolean;
       };
-      have_lecture_access_with_restreint: {
-        Args: {collectivite_id: number};
-        Returns: boolean;
-      };
       have_one_of_niveaux_acces: {
         Args: {id: number; niveaux: unknown};
         Returns: boolean;
@@ -1407,23 +1407,23 @@ export interface Database {
       };
       time_bucket:
         | {
+            Args: {bucket_width: unknown; ts: string};
+            Returns: string;
+          }
+        | {
+            Args: {bucket_width: unknown; ts: string};
+            Returns: string;
+          }
+        | {
+            Args: {bucket_width: unknown; ts: string};
+            Returns: string;
+          }
+        | {
             Args: {bucket_width: unknown; origin: string; ts: string};
             Returns: string;
           }
         | {
             Args: {bucket_width: unknown; origin: string; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; ts: string};
             Returns: string;
           }
         | {
@@ -4615,6 +4615,48 @@ export interface Database {
           typologie: string | null;
         };
       };
+      stats_locales_engagement_collectivite: {
+        Row: {
+          code_departement: string | null;
+          code_region: string | null;
+          collectivite_id: number | null;
+          cot: boolean | null;
+          etoiles_cae: number | null;
+          etoiles_eci: number | null;
+        };
+      };
+      stats_locales_evolution_collectivite_avec_indicateur: {
+        Row: {
+          code_departement: string | null;
+          code_region: string | null;
+          collectivites: number | null;
+          mois: string | null;
+        };
+      };
+      stats_locales_evolution_collectivite_avec_minimum_fiches: {
+        Row: {
+          code_departement: string | null;
+          code_region: string | null;
+          collectivites: number | null;
+          mois: string | null;
+        };
+      };
+      stats_locales_evolution_indicateur_referentiel: {
+        Row: {
+          code_departement: string | null;
+          code_region: string | null;
+          indicateurs: number | null;
+          mois: string | null;
+        };
+      };
+      stats_locales_evolution_nombre_fiches: {
+        Row: {
+          code_departement: string | null;
+          code_region: string | null;
+          fiches: number | null;
+          mois: string | null;
+        };
+      };
       stats_locales_evolution_nombre_utilisateur_par_collectivite: {
         Row: {
           code_departement: string | null;
@@ -4623,6 +4665,22 @@ export interface Database {
           median: number | null;
           mois: string | null;
           moyen: number | null;
+        };
+      };
+      stats_locales_evolution_resultat_indicateur_personnalise: {
+        Row: {
+          code_departement: string | null;
+          code_region: string | null;
+          indicateurs: number | null;
+          mois: string | null;
+        };
+      };
+      stats_locales_evolution_resultat_indicateur_referentiel: {
+        Row: {
+          code_departement: string | null;
+          code_region: string | null;
+          indicateurs: number | null;
+          mois: string | null;
         };
       };
       stats_locales_evolution_total_activation: {
@@ -4634,6 +4692,24 @@ export interface Database {
           total_commune: number | null;
           total_epci: number | null;
           total_syndicat: number | null;
+        };
+      };
+      stats_locales_evolution_utilisateur: {
+        Row: {
+          code_departement: string | null;
+          code_region: string | null;
+          mois: string | null;
+          total_utilisateurs: number | null;
+          utilisateurs: number | null;
+        };
+      };
+      stats_locales_labellisation_par_niveau: {
+        Row: {
+          code_departement: string | null;
+          code_region: string | null;
+          etoiles: number | null;
+          labellisations: number | null;
+          referentiel: Database['public']['Enums']['referentiel'] | null;
         };
       };
       stats_locales_tranche_completude: {
