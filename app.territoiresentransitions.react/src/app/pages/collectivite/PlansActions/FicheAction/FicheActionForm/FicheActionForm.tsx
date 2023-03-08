@@ -81,9 +81,13 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
             id="description"
             initialValue={fiche.description ?? ''}
             onBlur={e => {
-              e.target.value.trim().length > 0 &&
-                e.target.value.trim() !== fiche.description &&
-                updateFiche({...fiche, description: e.target.value.trim()});
+              if (fiche.description) {
+                e.target.value !== fiche.description &&
+                  updateFiche({...fiche, description: e.target.value.trim()});
+              } else {
+                e.target.value.trim().length > 0 &&
+                  updateFiche({...fiche, description: e.target.value.trim()});
+              }
             }}
             placeholder="Écrire ici..."
             maxLength={20000}
@@ -119,9 +123,13 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
           <TextareaControlled
             initialValue={fiche.objectifs ?? ''}
             onBlur={e => {
-              e.target.value.trim().length > 0 &&
-                e.target.value.trim() !== fiche.objectifs &&
-                updateFiche({...fiche, objectifs: e.target.value.trim()});
+              if (fiche.objectifs) {
+                e.target.value !== fiche.objectifs &&
+                  updateFiche({...fiche, objectifs: e.target.value.trim()});
+              } else {
+                e.target.value.trim().length > 0 &&
+                  updateFiche({...fiche, objectifs: e.target.value.trim()});
+              }
             }}
             placeholder="Écrire ici..."
             maxLength={10000}
@@ -174,9 +182,13 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
             id="moyens-humains-tech"
             initialValue={fiche.ressources ?? ''}
             onBlur={e => {
-              e.target.value.trim().length > 0 &&
-                e.target.value.trim() !== fiche.ressources &&
-                updateFiche({...fiche, ressources: e.target.value.trim()});
+              if (fiche.ressources) {
+                e.target.value !== fiche.ressources &&
+                  updateFiche({...fiche, ressources: e.target.value.trim()});
+              } else {
+                e.target.value.trim().length > 0 &&
+                  updateFiche({...fiche, ressources: e.target.value.trim()});
+              }
             }}
             placeholder="Écrire ici..."
             maxLength={10000}
@@ -222,11 +234,19 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
           <FicheActionFormBudgetInput
             budget={fiche.budget_previsionnel}
             onBlur={e => {
-              parseInt(e.target.value) !== fiche.budget_previsionnel &&
-                updateFiche({
-                  ...fiche,
-                  budget_previsionnel: parseInt(e.target.value.trim()),
-                });
+              if (fiche.budget_previsionnel) {
+                parseInt(e.target.value) !== fiche.budget_previsionnel &&
+                  updateFiche({
+                    ...fiche,
+                    budget_previsionnel: parseInt(e.target.value.trim()),
+                  });
+              } else {
+                e.target.value.length > 0 &&
+                  updateFiche({
+                    ...fiche,
+                    budget_previsionnel: parseInt(e.target.value.trim()),
+                  });
+              }
             }}
             disabled={isReadonly}
           />
@@ -246,11 +266,15 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
           <TextareaControlled
             id="financements"
             initialValue={fiche.financements ?? ''}
-            onBlur={e =>
-              e.target.value.trim().length > 0 &&
-              e.target.value.trim() !== fiche.financements &&
-              updateFiche({...fiche, financements: e.target.value.trim()})
-            }
+            onBlur={e => {
+              if (fiche.financements) {
+                e.target.value !== fiche.financements &&
+                  updateFiche({...fiche, financements: e.target.value.trim()});
+              } else {
+                e.target.value.trim().length > 0 &&
+                  updateFiche({...fiche, financements: e.target.value.trim()});
+              }
+            }}
             placeholder="Écrire ici..."
             className="outline-transparent resize-none"
             disabled={isReadonly}
@@ -333,11 +357,15 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
           <TextareaControlled
             id="calendrier"
             initialValue={fiche.calendrier ?? ''}
-            onBlur={e =>
-              e.target.value.trim().length > 0 &&
-              e.target.value.trim() !== fiche.calendrier &&
-              updateFiche({...fiche, calendrier: e.target.value.trim()})
-            }
+            onBlur={e => {
+              if (fiche.calendrier) {
+                e.target.value !== fiche.calendrier &&
+                  updateFiche({...fiche, calendrier: e.target.value.trim()});
+              } else {
+                e.target.value.trim().length > 0 &&
+                  updateFiche({...fiche, calendrier: e.target.value.trim()});
+              }
+            }}
             placeholder="Écrire ici..."
             className="outline-transparent resize-none"
             disabled={isReadonly}
@@ -356,14 +384,21 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
           <TextareaControlled
             id="notes-complementaires"
             initialValue={fiche.notes_complementaires ?? ''}
-            onBlur={e =>
-              e.target.value.trim().length > 0 &&
-              e.target.value.trim() !== fiche.notes_complementaires &&
-              updateFiche({
-                ...fiche,
-                notes_complementaires: e.target.value.trim(),
-              })
-            }
+            onBlur={e => {
+              if (fiche.notes_complementaires) {
+                e.target.value !== fiche.notes_complementaires &&
+                  updateFiche({
+                    ...fiche,
+                    notes_complementaires: e.target.value.trim(),
+                  });
+              } else {
+                e.target.value.trim().length > 0 &&
+                  updateFiche({
+                    ...fiche,
+                    notes_complementaires: e.target.value.trim(),
+                  });
+              }
+            }}
             placeholder="Écrire ici..."
             maxLength={20000}
             className="outline-transparent resize-none"
