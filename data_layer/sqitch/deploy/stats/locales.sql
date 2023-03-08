@@ -118,21 +118,21 @@ from stats.locales_collectivite_actives_et_total_par_type;
 
 create materialized view stats.locales_evolution_nombre_utilisateur_par_collectivite
 as
-with membres as (select c                                                         as collectivite,
-                        mb.first_day                                              as mois,
-                        count(*)
-                        filter ( where active and pud.created_at <= mb.last_day ) as nombre
+with membres as (select c                                                                      as collectivite,
+                        mb.first_day                                                           as mois,
+                        coalesce(count(*)
+                                 filter ( where active and pud.created_at <= mb.last_day ), 0) as nombre
                  from stats.monthly_bucket mb
                           join stats.collectivite c on true
                           left join private_utilisateur_droit pud using (collectivite_id)
                  group by c,
                           mb.first_day)
 select mois,
-       null:: varchar(2)                                                                 as code_region,
-       null::varchar(2)                                                                  as code_departement,
-       avg(nombre) filter ( where nombre > 0 )                                           as moyen,
-       max(nombre) filter ( where nombre > 0 )                                           as maximum,
-       percentile_cont(0.5) within group ( order by nombre ) filter ( where nombre > 0 ) as median
+       null:: varchar(2)                                                                              as code_region,
+       null::varchar(2)                                                                               as code_departement,
+       coalesce(avg(nombre) filter ( where nombre > 0 ), 0)                                           as moyen,
+       coalesce(max(nombre) filter ( where nombre > 0 ), 0)                                           as maximum,
+       coalesce(percentile_cont(0.5) within group ( order by nombre ) filter ( where nombre > 0 ), 0) as median
 from membres
 group by mois
 
@@ -141,9 +141,9 @@ union all
 select mois,
        (membres.collectivite).region_code,
        null,
-       avg(nombre) filter ( where nombre > 0 ),
-       max(nombre) filter ( where nombre > 0 ),
-       percentile_cont(0.5) within group ( order by nombre ) filter ( where nombre > 0 )
+       coalesce(avg(nombre) filter ( where nombre > 0 ), 0),
+       coalesce(max(nombre) filter ( where nombre > 0 ), 0),
+       coalesce(percentile_cont(0.5) within group ( order by nombre ) filter ( where nombre > 0 ), 0)
 from membres
 group by mois, (membres.collectivite).region_code
 
@@ -152,9 +152,9 @@ union all
 select mois,
        null,
        (membres.collectivite).departement_code,
-       avg(nombre) filter ( where nombre > 0 ),
-       max(nombre) filter ( where nombre > 0 ),
-       percentile_cont(0.5) within group ( order by nombre ) filter ( where nombre > 0 )
+       coalesce(avg(nombre) filter ( where nombre > 0 ), 0),
+       coalesce(max(nombre) filter ( where nombre > 0 ), 0),
+       coalesce(percentile_cont(0.5) within group ( order by nombre ) filter ( where nombre > 0 ), 0)
 from membres
 group by mois, (membres.collectivite).departement_code;
 
@@ -239,8 +239,52 @@ from imports.departement d
                                                            c.departement_code = d.code) as cae
                             from stats.locales_pourcentage_completude c) in_range on true;
 
-create view stats_locales_tranche_completude as select * from stats.locales_tranche_completude;
+create view stats_locales_tranche_completude as
+select *
+from stats.locales_tranche_completude;
 
+create materialized view stats.locales_evolution_nombre_fiches
+as
+select first_day                                               as mois,
+       null::varchar(2)                                        as code_region,
+       null::varchar(2)                                        as code_departement,
+       count(*) filter ( where fa.modified_at <= mb.last_day ) as fiches
+from stats.monthly_bucket mb
+         join stats.collectivite ca on true
+         join fiche_action fa using (collectivite_id)
+group by mb.first_day
+
+union all
+
+select first_day,
+       ca.region_code,
+       null,
+       count(*) filter ( where fa.modified_at <= mb.last_day )
+from stats.monthly_bucket mb
+         join stats.collectivite ca on true
+         left join fiche_action fa using (collectivite_id)
+group by mb.first_day, ca.region_code
+
+union all
+
+select first_day,
+       null,
+       ca.departement_code,
+       count(*) filter ( where fa.modified_at <= mb.last_day )
+from stats.monthly_bucket mb
+         join stats.collectivite ca on true
+         left join fiche_action fa using (collectivite_id)
+group by mb.first_day, ca.departement_code
+
+order by mois;
+
+create view stats_locales_evolution_nombre_fiches as
+select *
+from stats.locales_evolution_nombre_fiches;
+
+-- todo stats_evolution_collectivite_avec_minimum_fiches
+-- todo stats_engagement_collectivite
+-- todo stats_labellisation_par_niveau
 
 create function
     stats.refresh_stats_locales()
@@ -253,6 +297,7 @@ begin
     refresh materialized view stats.locales_evolution_nombre_utilisateur_par_collectivite;
     refresh materialized view stats.locales_pourcentage_completude;
     refresh materialized view stats.locales_tranche_completude;
+    refresh materialized view stats.evolution_nombre_fiches;
 end
 $$ language plpgsql;
 comment on function stats.refresh_stats_locales is
