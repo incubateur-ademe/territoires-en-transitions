@@ -1,6 +1,7 @@
 import {Personne} from './personne';
 import {IndicateurGlobal} from './indicateurGlobal';
 import {Database} from 'types/database.types';
+import {FinanceurMontant} from './financeurMontant';
 
 export type FicheActionVueRow =
   Database['public']['Views']['fiches_action']['Row'] & {
@@ -21,6 +22,7 @@ export type FicheActionVueRow =
     actions: Database['public']['Tables']['action_relation']['Insert'][] | null;
     indicateurs: IndicateurGlobal[] | null;
     services: Database['public']['Tables']['service_tag']['Insert'][] | null;
+    financeurs: FinanceurMontant[] | null;
   };
 
 export type FicheActionVueInsert = FicheActionVueRow;
