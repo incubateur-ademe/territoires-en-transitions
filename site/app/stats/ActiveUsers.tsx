@@ -16,40 +16,36 @@ import {
 import {SliceTooltip} from './SliceTooltip';
 
 function useActiveUsers() {
-  return useSWR(
-    // todo @derfurth changer la vue
-    'stats_locales_evolution_nombre_utilisateur_par_collectivite',
-    async () => {
-      const {data, error} = await supabase
-        .from('stats_locales_evolution_nombre_utilisateur_par_collectivite')
-        .select()
-        .gte('mois', fromMonth)
-        .is('code_region', null)
-        .is('code_departement', null);
-      if (error) {
-        throw new Error('stats_evolution_utilisateur');
-      }
-      if (!data) {
-        return null;
-      }
-      return {
-        precedent: data[data.length - 2],
-        courant: data[data.length - 1],
-        evolution: [
-          {
-            id: 'utilisateurs',
-            label: 'Nouveaux utilisateurs',
-            data: data.map(d => ({x: d.mois, y: d.utilisateurs})),
-          },
-          {
-            id: 'total_utilisateurs',
-            label: 'Total utilisateurs',
-            data: data.map(d => ({x: d.mois, y: d.total_utilisateurs})),
-          },
-        ],
-      };
+  return useSWR('stats_locales_evolution_utilisateur', async () => {
+    const {data, error} = await supabase
+      .from('stats_locales_evolution_utilisateur')
+      .select()
+      .gte('mois', fromMonth)
+      .is('code_region', null)
+      .is('code_departement', null);
+    if (error) {
+      throw new Error('stats_evolution_utilisateur');
     }
-  );
+    if (!data) {
+      return null;
+    }
+    return {
+      precedent: data[data.length - 2],
+      courant: data[data.length - 1],
+      evolution: [
+        {
+          id: 'utilisateurs',
+          label: 'Nouveaux utilisateurs',
+          data: data.map(d => ({x: d.mois, y: d.utilisateurs})),
+        },
+        {
+          id: 'total_utilisateurs',
+          label: 'Total utilisateurs',
+          data: data.map(d => ({x: d.mois, y: d.total_utilisateurs})),
+        },
+      ],
+    };
+  });
 }
 
 export default function ActiveUsers() {
