@@ -1,28 +1,49 @@
 'use client';
 
-import {fr} from '@codegouvfr/react-dsfr';
+import ActiveUsers from './ActiveUsers';
+import CarteEpciParDepartement from './CarteEpciParDepartement';
+import CollectiviteActivesEtTotalParType from './CollectiviteActivesEtTotalParType';
+import CollectivitesLabellisees from './CollectivitesLabellisees';
+import {EtatDesLieux} from './EtatDesLieux';
+import {EvolutionIndicateurs} from './EvolutionIndicateurs';
+import {EvolutionPlansAction} from './EvolutionPlansAction';
 import EvolutionTotalActivationParType from './EvolutionTotalActivationParType';
-import {SectionHead} from './headings';
-import RegionAndDeptFilters from './RegionAndDeptFilters';
+import {ChartHead, ChartTitle, SectionHead} from './headings';
+import NombreCollectivitesEngagees from './NombreCollectivitesEngagees';
+import NombreUtilisateurParCollectivite from './NombreUtilisateurParCollectivite';
 
 type StatisticsDisplayProps = {
-  regionCode: string;
+  regionCode?: string;
+  departmentCode?: string;
 };
 
-const StatisticsDisplay = ({regionCode}: StatisticsDisplayProps) => {
+const StatisticsDisplay = ({
+  regionCode,
+  departmentCode,
+}: StatisticsDisplayProps) => {
+  const nationalStats: boolean = !regionCode && !departmentCode;
+
   return (
     <div className="fr-container-fluid">
       <section className="fr-container">
-        <h1 className={fr.cx('fr-mt-4w')}>Statistiques</h1>
-        <RegionAndDeptFilters />
-
-        <p>
-          Cette page présente les statistiques de déploiement et d’usage
-          régionales de la plateforme Territoires en Transitions.
-        </p>
+        {nationalStats ? (
+          <p>
+            Territoires en Transitions est une plateforme publique gratuite et
+            open-source développée avec ses utilisateurs afin d’aider les
+            collectivités dans le pilotage et la priorisation de leur transition
+            écologique.
+          </p>
+        ) : (
+          <p>
+            Cette page présente les statistiques de déploiement et d’usage{' '}
+            {!!regionCode ? 'régionales' : 'départementales'} de la plateforme
+            Territoires en Transitions.
+          </p>
+        )}
 
         <SectionHead>
           Déployer la transition écologique sur la totalité du territoire
+          {nationalStats && ' national'}
         </SectionHead>
         <p>
           La transition écologique nécessite d’être déployée sur la totalité des
@@ -37,7 +58,35 @@ const StatisticsDisplay = ({regionCode}: StatisticsDisplayProps) => {
           cette collectivité sur la plateforme.
         </p>
 
-        <EvolutionTotalActivationParType region={regionCode} />
+        <EvolutionTotalActivationParType
+          region={regionCode}
+          departement={departmentCode}
+        />
+
+        <ChartHead>
+          Progression de l’activation des EPCI
+          {nationalStats && ' sur le territoire national'}
+        </ChartHead>
+        <div className="fr-grid-row fr-grid-row--center">
+          {nationalStats && (
+            <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4 fr-ratio-1x1">
+              <ChartTitle>Nombre EPCI actifs</ChartTitle>
+              <CarteEpciParDepartement valeur="actives" maximum="actives_max" />
+            </div>
+          )}
+          {nationalStats && (
+            <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4 fr-ratio-1x1">
+              <ChartTitle>Pourcentage EPCI actifs</ChartTitle>
+              <CarteEpciParDepartement valeur="ratio" maximum="ratio_max" />
+            </div>
+          )}
+          {nationalStats && (
+            <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4 fr-ratio-1x1">
+              <ChartTitle>Progression globale</ChartTitle>
+              <CollectiviteActivesEtTotalParType />
+            </div>
+          )}
+        </div>
       </section>
 
       <section className="fr-container">
@@ -54,6 +103,8 @@ const StatisticsDisplay = ({regionCode}: StatisticsDisplayProps) => {
           collaboration entre les personnes qui travaillent au sein d’une même
           équipe pour faire avancer l’action de la collectivité.
         </p>
+        {nationalStats && <ActiveUsers />}
+        {nationalStats && <NombreUtilisateurParCollectivite />}
       </section>
 
       <section className="fr-container">
@@ -67,6 +118,7 @@ const StatisticsDisplay = ({regionCode}: StatisticsDisplayProps) => {
           la plateforme Territoires en Transitions s’appuie sur les référentiels
           Climat, Air, Energie et Economie Circulaire de l’ADEME.
         </p>
+        {nationalStats && <EtatDesLieux />}
       </section>
 
       <section className="fr-container">
@@ -83,6 +135,7 @@ const StatisticsDisplay = ({regionCode}: StatisticsDisplayProps) => {
           leur permette de suivre la progression des actions prévues dans ces
           plans.
         </p>
+        {nationalStats && <EvolutionPlansAction />}
       </section>
 
       <section className="fr-container">
@@ -95,6 +148,7 @@ const StatisticsDisplay = ({regionCode}: StatisticsDisplayProps) => {
           mesurent la progression au moyen d’indicateurs de réalisation et
           d’impact de référence ou personnalisés.
         </p>
+        {nationalStats && <EvolutionIndicateurs />}
       </section>
 
       <section className="fr-container">
@@ -107,6 +161,23 @@ const StatisticsDisplay = ({regionCode}: StatisticsDisplayProps) => {
           nationaux. Elles obtiennent ainsi un score qui leur permet d’accéder à
           la labellisation “Territoire Engagé Transition Ecologique”.
         </p>
+        {nationalStats && <NombreCollectivitesEngagees />}
+        {nationalStats && (
+          <div className="fr-grid-row fr-grid-row--center fr-grid-row--gutters">
+            <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-5 fr-col-lg-5">
+              <ChartTitle>
+                Nombre de labellisés CAE par niveau de labellisation
+              </ChartTitle>
+              <CollectivitesLabellisees referentiel="cae" />
+            </div>
+            <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-5 fr-col-lg-5">
+              <ChartTitle>
+                Nombre de labellisés ECI par niveau de labellisation
+              </ChartTitle>
+              <CollectivitesLabellisees referentiel="eci" />
+            </div>
+          </div>
+        )}
       </section>
     </div>
   );
