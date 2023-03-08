@@ -176,15 +176,16 @@ const SelectCreateTagsButton = forwardRef(
                   }
                 />
               ))}
-            <input
-              type="text"
-              ref={inputRef}
-              className={`grow text-sm placeholder:text-gray-500 placeholder:italic`}
-              value={inputValue}
-              placeholder={placeholderText}
-              onChange={e => onInputChange(e.target.value)}
-              disabled={disabled}
-            />
+            {!disabled && (
+              <input
+                type="text"
+                ref={inputRef}
+                className={`grow text-sm placeholder:text-gray-500 placeholder:italic`}
+                value={inputValue}
+                placeholder={placeholderText}
+                onChange={e => onInputChange(e.target.value)}
+              />
+            )}
           </div>
           <ExpandCollapseIcon isOpen={isOpen} />
         </div>

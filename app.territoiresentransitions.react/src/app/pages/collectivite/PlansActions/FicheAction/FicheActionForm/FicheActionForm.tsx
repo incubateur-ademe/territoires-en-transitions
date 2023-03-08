@@ -33,6 +33,7 @@ import {DSFRbuttonClassname} from 'ui/shared/select/commons';
 import FicheActionRangerModal from '../FicheActionRangerModal/FicheActionRangerModal';
 import {usePlanActionProfondeur} from '../../PlanAction/data/usePlanActionProfondeur';
 import ServicePiloteDropdown from './ServicePiloteDropdown';
+import Financeurs from './Financeurs';
 
 type TFicheActionForm = {
   fiche: FicheActionVueRow;
@@ -214,7 +215,34 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
       </Section>
 
       <Section icon={<PictoCalendar />} title="Modalités de mise en œuvre">
-        <FormField label="Financements" htmlFor="financements">
+        <FormField
+          label="Budget prévisionnel total "
+          htmlFor="budget-previsionnel"
+        >
+          <FicheActionFormBudgetInput
+            budget={fiche.budget_previsionnel}
+            onBlur={e => {
+              parseInt(e.target.value) !== fiche.budget_previsionnel &&
+                updateFiche({
+                  ...fiche,
+                  budget_previsionnel: parseInt(e.target.value.trim()),
+                });
+            }}
+            disabled={isReadonly}
+          />
+        </FormField>
+        <div className="mb-6 pt-6 border-y border-gray-300">
+          <Financeurs
+            fiche={fiche}
+            onUpdate={newFiche => updateFiche(newFiche)}
+            isReadonly={isReadonly}
+          />
+        </div>
+        <FormField
+          label="Financements"
+          htmlFor="financements"
+          hint="Programmes de financements, etc."
+        >
           <TextareaControlled
             id="financements"
             initialValue={fiche.financements ?? ''}
@@ -225,23 +253,6 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
             }
             placeholder="Écrire ici..."
             className="outline-transparent resize-none"
-            disabled={isReadonly}
-          />
-        </FormField>
-        <FormField
-          label="Budget prévisionnel total "
-          htmlFor="budget-previsionnel"
-        >
-          <FicheActionFormBudgetInput
-            budget={fiche.budget_previsionnel}
-            onBlur={e => {
-              e.target.value.trim().length > 0 &&
-                parseInt(e.target.value) !== fiche.budget_previsionnel &&
-                updateFiche({
-                  ...fiche,
-                  budget_previsionnel: parseInt(e.target.value),
-                });
-            }}
             disabled={isReadonly}
           />
         </FormField>
