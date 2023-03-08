@@ -5,6 +5,7 @@ import {TSujetDemande} from './types';
 import {useEnvoiDemande} from './useEnvoiDemande';
 import {
   TDemandeLabellisationModalProps,
+  submittedEtoile1,
   submittedAutresEtoiles,
 } from './DemandeLabellisationModal';
 
@@ -51,7 +52,7 @@ export const DemandeAuditModal = (props: TDemandeLabellisationModalProps) => {
           {status === 'non_demandee' && isLoading ? 'Envoi en cours...' : null}
           {status === 'demande_envoyee' ? (
             <div className="fr-alert fr-alert--success">
-              {submittedAutresEtoiles}
+              {etoiles === '1' ? submittedEtoile1 : submittedAutresEtoiles}
             </div>
           ) : null}
           {status === 'non_demandee' && !isLoading ? (

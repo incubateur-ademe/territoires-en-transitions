@@ -3,7 +3,6 @@ import {CloseDialogButton} from 'ui/shared/CloseDialogButton';
 import {numLabels} from './numLabels';
 import {useEnvoiDemande} from './useEnvoiDemande';
 import {TCycleLabellisation} from './useCycleLabellisation';
-import {DemandeAuditModal} from './DemandeAuditModal';
 
 export type TDemandeLabellisationModalProps = {
   parcoursLabellisation: TCycleLabellisation;
@@ -40,7 +39,7 @@ const messageEtoile_5 = [
   Ligne2,
 ];
 
-const submittedEtoile1 =
+export const submittedEtoile1 =
   'Votre demande de labellisation a bien été envoyée. Vous recevrez dans les 48h ouvrées un mail de l’ADEME.';
 export const submittedAutresEtoiles =
   'Votre demande d’audit a bien été envoyée. Vous recevrez prochainement un mail du Bureau d’Appui.';
@@ -70,7 +69,7 @@ export const DemandeLabellisationModal = (
 ) => {
   const {isLoading, envoiDemande} = useEnvoiDemande();
   const {parcoursLabellisation, opened, setOpened} = props;
-  const {parcours, status, isCOT} = parcoursLabellisation;
+  const {parcours, status} = parcoursLabellisation;
   const {collectivite_id, referentiel, etoiles} = parcours || {};
   const onClose = () => setOpened(false);
 
@@ -81,11 +80,6 @@ export const DemandeLabellisationModal = (
     (status !== 'non_demandee' && status !== 'demande_envoyee')
   ) {
     return null;
-  }
-
-  // affiche le sélecteur de sujet de demande d'audit pour les COT
-  if (isCOT) {
-    return <DemandeAuditModal {...props} />;
   }
 
   const canSubmit = referentiel && etoiles;
