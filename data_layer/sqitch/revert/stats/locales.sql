@@ -12,5 +12,7 @@ drop materialized view stats.locales_evolution_nombre_utilisateur_par_collectivi
 drop view stats_locales_tranche_completude;
 drop materialized view stats.locales_tranche_completude;
 drop materialized view stats.locales_pourcentage_completude;
+drop view stats_locales_evolution_nombre_fiches;
+drop materialized view stats.locales_evolution_nombre_fiches;
 
 COMMIT;

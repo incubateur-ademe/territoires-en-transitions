@@ -14,6 +14,10 @@ select mois, code_region, code_departement, moyen, maximum, median
 from stats_locales_evolution_nombre_utilisateur_par_collectivite
 where false;
 
+select mois, code_region, code_departement, fiches
+from stats_locales_evolution_nombre_fiches
+where false;
+
 select has_function_privilege('stats.refresh_stats_locales()', 'execute');
 
 ROLLBACK;
