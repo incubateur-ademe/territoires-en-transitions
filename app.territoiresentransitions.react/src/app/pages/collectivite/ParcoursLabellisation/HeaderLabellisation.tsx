@@ -7,6 +7,7 @@ import {useReferentielId} from 'core-logic/hooks/params';
 import {PageHeaderLeft} from 'ui/PageHeader';
 import {ValiderAudit} from '../Audit/ValiderAudit';
 import {DemandeLabellisationModal} from './DemandeLabellisationModal';
+import {DemandeAuditModal} from './DemandeAuditModal';
 import {numLabels} from './numLabels';
 import {
   useCycleLabellisation,
@@ -24,6 +25,7 @@ export type THeaderLabellisationProps = {
 
 export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
   const [opened, setOpened] = useState(false);
+  const [opened_1ereEtoileCOT, setOpened_1ereEtoileCOT] = useState(false);
   const {parcoursLabellisation, onStartAudit, onValidateAudit} = props;
   const {parcours, status, isAuditeur, isCOT, labellisable} =
     parcoursLabellisation;
@@ -36,22 +38,35 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
   const {collectivite_id, referentiel, etoiles, audit, completude_ok} =
     parcours;
   const canSubmitDemande = labellisable || (isCOT && completude_ok);
+  const DemandeModal = isCOT ? DemandeAuditModal : DemandeLabellisationModal;
 
   return (
     <PageHeaderLeft>
       <DerniereLabellisation parcoursLabellisation={parcoursLabellisation} />
       <h2 className="fr-mb-2w">Objectif : {numLabels[etoiles]} étoile</h2>
       {status === 'non_demandee' && !isAuditeur ? (
-        <button
-          className="fr-btn self-start"
-          data-test="SubmitDemandeBtn"
-          disabled={!canSubmitDemande}
-          onClick={() => setOpened(true)}
-        >
-          {etoiles === '1' && !isCOT
-            ? 'Demander la première étoile'
-            : 'Demander un audit'}
-        </button>
+        <>
+          {etoiles === '1' && isCOT ? (
+            <button
+              className="fr-btn self-start"
+              data-test="1ereEtoileCOT"
+              disabled={!labellisable}
+              onClick={() => setOpened_1ereEtoileCOT(true)}
+            >
+              Demander la première étoile
+            </button>
+          ) : null}
+          <button
+            className="fr-btn fr-ml-2w self-start"
+            data-test="SubmitDemandeBtn"
+            disabled={!canSubmitDemande}
+            onClick={() => setOpened(true)}
+          >
+            {etoiles === '1' && !isCOT
+              ? 'Demander la première étoile'
+              : 'Demander un audit'}
+          </button>
+        </>
       ) : null}
       {status === 'demande_envoyee' && isAuditeur ? (
         <button
@@ -76,11 +91,20 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
         />
       ) : null}
       {status === 'non_demandee' || status === 'demande_envoyee' ? (
-        <DemandeLabellisationModal
-          parcoursLabellisation={parcoursLabellisation}
-          opened={opened}
-          setOpened={setOpened}
-        />
+        <>
+          <DemandeModal
+            parcoursLabellisation={parcoursLabellisation}
+            opened={opened}
+            setOpened={setOpened}
+          />
+          {etoiles === '1' && isCOT ? (
+            <DemandeLabellisationModal
+              parcoursLabellisation={parcoursLabellisation}
+              opened={opened_1ereEtoileCOT}
+              setOpened={setOpened_1ereEtoileCOT}
+            />
+          ) : null}
+        </>
       ) : null}
     </PageHeaderLeft>
   );
