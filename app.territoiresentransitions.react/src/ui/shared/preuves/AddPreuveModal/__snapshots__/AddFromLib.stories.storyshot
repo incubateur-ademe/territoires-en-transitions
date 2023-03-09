@@ -39,81 +39,93 @@ Array [
       onChange={[Function]}
     >
       <div
-        className="fr-fieldset__content overflow-auto"
+        className="overflow-auto"
         style={
           Object {
-            "height": 220,
+            "height": "12rem",
           }
         }
       >
         <div
-          className="fr-checkbox-group"
+          className="fr-fieldset__element"
         >
-          <input
-            className="py-0"
-            id="1"
-            name="exemple 1"
-            type="checkbox"
-          />
-          <label
-            className="fr-label"
-            htmlFor="1"
+          <div
+            className="fr-checkbox-group"
           >
-            exemple 1
-          </label>
+            <input
+              id="1"
+              name="exemple 1"
+              type="checkbox"
+            />
+            <label
+              className="fr-label"
+              htmlFor="1"
+            >
+              exemple 1
+            </label>
+          </div>
         </div>
         <div
-          className="fr-checkbox-group"
+          className="fr-fieldset__element"
         >
-          <input
-            className="py-0"
-            id="2"
-            name="exemple 2"
-            type="checkbox"
-          />
-          <label
-            className="fr-label"
-            htmlFor="2"
+          <div
+            className="fr-checkbox-group"
           >
-            exemple 2
-          </label>
+            <input
+              id="2"
+              name="exemple 2"
+              type="checkbox"
+            />
+            <label
+              className="fr-label"
+              htmlFor="2"
+            >
+              exemple 2
+            </label>
+          </div>
         </div>
         <div
-          className="fr-checkbox-group"
+          className="fr-fieldset__element"
         >
-          <input
-            className="py-0"
-            id="3"
-            name="exemple 3"
-            type="checkbox"
-          />
-          <label
-            className="fr-label"
-            htmlFor="3"
+          <div
+            className="fr-checkbox-group"
           >
-            exemple 3
-          </label>
+            <input
+              id="3"
+              name="exemple 3"
+              type="checkbox"
+            />
+            <label
+              className="fr-label"
+              htmlFor="3"
+            >
+              exemple 3
+            </label>
+          </div>
         </div>
         <div
-          className="fr-checkbox-group"
+          className="fr-fieldset__element"
         >
-          <input
-            className="py-0"
-            id="4"
-            name="exemple 4"
-            type="checkbox"
-          />
-          <label
-            className="fr-label"
-            htmlFor="4"
+          <div
+            className="fr-checkbox-group"
           >
-            exemple 4
-          </label>
+            <input
+              id="4"
+              name="exemple 4"
+              type="checkbox"
+            />
+            <label
+              className="fr-label"
+              htmlFor="4"
+            >
+              exemple 4
+            </label>
+          </div>
         </div>
       </div>
     </fieldset>
     <div
-      className="flex justify-center fr-mt-2w"
+      className="flex justify-center"
     >
       <nav
         aria-label="Pagination"

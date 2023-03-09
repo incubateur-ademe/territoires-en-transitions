@@ -70,26 +70,20 @@ export const AddFromLib = (props: TAddFromLibProps) => {
           <>
             <p className="fr-mt-2w">Sélectionner les fichiers à ajouter</p>
             <fieldset className="fr-fieldset" onChange={onChange}>
-              <div
-                className="fr-fieldset__content overflow-auto"
-                style={{height: 220}}
-              >
+              <div className="overflow-auto" style={{height: '12rem'}}>
                 {fichiers.map(({id, filename}) => (
-                  <div key={id} className="fr-checkbox-group">
-                    <input
-                      type="checkbox"
-                      name={filename}
-                      id={`${id}`}
-                      className="py-0"
-                    />
-                    <label className="fr-label" htmlFor={`${id}`}>
-                      {filename}
-                    </label>
+                  <div key={id} className="fr-fieldset__element">
+                    <div className="fr-checkbox-group">
+                      <input type="checkbox" name={filename} id={`${id}`} />
+                      <label className="fr-label" htmlFor={`${id}`}>
+                        {filename}
+                      </label>
+                    </div>
                   </div>
                 ))}
               </div>
             </fieldset>
-            <div className="flex justify-center fr-mt-2w">
+            <div className="flex justify-center">
               <Pagination
                 nbOfPages={Math.ceil(total / NB_ITEMS_PER_PAGE)}
                 selectedPage={filters.page ?? 1}
