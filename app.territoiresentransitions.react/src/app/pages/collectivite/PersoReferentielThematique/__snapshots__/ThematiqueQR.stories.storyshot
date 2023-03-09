@@ -35,7 +35,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
         className="fr-fieldset"
       >
         <legend
-          className="fr-fieldset__legend fr-text--regular pt-6"
+          className="fr-fieldset__legend fr-fieldset__legend--regular"
           dangerouslySetInnerHTML={
             Object {
               "__html": "La collectivité a-t-elle la compétence <b>voirie</b> ?",
@@ -77,56 +77,80 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
           <div
             className="fr-radio-group fr-radio-group--sm vertical"
           >
-            <input
-              checked={false}
-              disabled={false}
-              id="q1-c1"
-              onChange={[Function]}
-              type="radio"
-              value="c1"
-            />
-            <label
-              className="fr-label"
-              htmlFor="q1-c1"
+            <div
+              className="fr-fieldset__element fr-fieldset__element--inline"
             >
-              Oui, pour l’ensemble de la collectivité
-            </label>
+              <div
+                className="fr-radio-group"
+              >
+                <input
+                  checked={false}
+                  disabled={false}
+                  id="q1-c1"
+                  onChange={[Function]}
+                  type="radio"
+                  value="c1"
+                />
+                <label
+                  className="fr-label"
+                  htmlFor="q1-c1"
+                >
+                  Oui, pour l’ensemble de la collectivité
+                </label>
+              </div>
+            </div>
           </div>
           <div
             className="fr-radio-group fr-radio-group--sm vertical"
           >
-            <input
-              checked={false}
-              disabled={false}
-              id="q1-c2"
-              onChange={[Function]}
-              type="radio"
-              value="c2"
-            />
-            <label
-              className="fr-label"
-              htmlFor="q1-c2"
+            <div
+              className="fr-fieldset__element fr-fieldset__element--inline"
             >
-              Oui, uniquement sur trottoirs, parkings ou zones d'activités ou  industrielles
-            </label>
+              <div
+                className="fr-radio-group"
+              >
+                <input
+                  checked={false}
+                  disabled={false}
+                  id="q1-c2"
+                  onChange={[Function]}
+                  type="radio"
+                  value="c2"
+                />
+                <label
+                  className="fr-label"
+                  htmlFor="q1-c2"
+                >
+                  Oui, uniquement sur trottoirs, parkings ou zones d'activités ou  industrielles
+                </label>
+              </div>
+            </div>
           </div>
           <div
             className="fr-radio-group fr-radio-group--sm vertical"
           >
-            <input
-              checked={false}
-              disabled={false}
-              id="q1-c3"
-              onChange={[Function]}
-              type="radio"
-              value="c3"
-            />
-            <label
-              className="fr-label"
-              htmlFor="q1-c3"
+            <div
+              className="fr-fieldset__element fr-fieldset__element--inline"
             >
-              Non
-            </label>
+              <div
+                className="fr-radio-group"
+              >
+                <input
+                  checked={false}
+                  disabled={false}
+                  id="q1-c3"
+                  onChange={[Function]}
+                  type="radio"
+                  value="c3"
+                />
+                <label
+                  className="fr-label"
+                  htmlFor="q1-c3"
+                >
+                  Non
+                </label>
+              </div>
+            </div>
           </div>
         </div>
       </fieldset>
@@ -134,7 +158,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
         className="fr-fieldset"
       >
         <legend
-          className="fr-fieldset__legend fr-text--regular pt-6"
+          className="fr-fieldset__legend fr-fieldset__legend--regular"
           dangerouslySetInnerHTML={
             Object {
               "__html": "La collectivité a-t-elle conclu <b>des ventes ou des contrats d’utilisation</b> sur les dix dernières années ?",
@@ -148,38 +172,54 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
           <div
             className="fr-radio-group fr-radio-group--sm"
           >
-            <input
-              checked={false}
-              disabled={false}
-              id="q2-oui"
-              onChange={[Function]}
-              type="radio"
-              value="oui"
-            />
-            <label
-              className="fr-label"
-              htmlFor="q2-oui"
+            <div
+              className="fr-fieldset__element fr-fieldset__element--inline"
             >
-              Oui
-            </label>
+              <div
+                className="fr-radio-group"
+              >
+                <input
+                  checked={false}
+                  disabled={false}
+                  id="q2-oui"
+                  onChange={[Function]}
+                  type="radio"
+                  value="oui"
+                />
+                <label
+                  className="fr-label"
+                  htmlFor="q2-oui"
+                >
+                  Oui
+                </label>
+              </div>
+            </div>
           </div>
           <div
             className="fr-radio-group fr-radio-group--sm"
           >
-            <input
-              checked={false}
-              disabled={false}
-              id="q2-non"
-              onChange={[Function]}
-              type="radio"
-              value="non"
-            />
-            <label
-              className="fr-label"
-              htmlFor="q2-non"
+            <div
+              className="fr-fieldset__element fr-fieldset__element--inline"
             >
-              Non
-            </label>
+              <div
+                className="fr-radio-group"
+              >
+                <input
+                  checked={false}
+                  disabled={false}
+                  id="q2-non"
+                  onChange={[Function]}
+                  type="radio"
+                  value="non"
+                />
+                <label
+                  className="fr-label"
+                  htmlFor="q2-non"
+                >
+                  Non
+                </label>
+              </div>
+            </div>
           </div>
         </div>
       </fieldset>
@@ -187,7 +227,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
         className="fr-fieldset"
       >
         <legend
-          className="fr-fieldset__legend fr-text--regular pt-6"
+          className="fr-fieldset__legend fr-fieldset__legend--regular"
           dangerouslySetInnerHTML={
             Object {
               "__html": "Quelle est la part de la collectivité dans l’EPCI compétent en matière de <b>politique du logement et cadre de vie ?</b>",
@@ -250,18 +290,22 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
         </section>
       </fieldset>
     </div>
-    <a
-      className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-arrow-left-line self-start fr-mt-5w"
-      href="/collectivite/1/personnalisation"
+    <div
+      className="flex fr-pt-4w"
     >
-      Revenir au sommaire
-    </a>
-    <a
-      className="fr-btn fr-btn--icon-right fr-fi-arrow-right-line self-start fr-mt-5w fr-ml-3w"
-      href="/collectivite/1/personnalisation/dechets"
-    >
-      Afficher la catégorie suivante
-    </a>
+      <a
+        className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-arrow-left-line self-start"
+        href="/collectivite/1/personnalisation"
+      >
+        Revenir au sommaire
+      </a>
+      <a
+        className="fr-btn fr-btn--icon-right fr-fi-arrow-right-line self-start fr-ml-3w"
+        href="/collectivite/1/personnalisation/dechets"
+      >
+        Afficher la catégorie suivante
+      </a>
+    </div>
   </div>
 </div>
 `;
@@ -301,7 +345,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
         className="fr-fieldset"
       >
         <legend
-          className="fr-fieldset__legend fr-text--regular pt-6"
+          className="fr-fieldset__legend fr-fieldset__legend--regular"
           dangerouslySetInnerHTML={
             Object {
               "__html": "La collectivité a-t-elle la compétence <b>voirie</b> ?",
@@ -343,56 +387,80 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
           <div
             className="fr-radio-group fr-radio-group--sm vertical"
           >
-            <input
-              checked={false}
-              disabled={false}
-              id="q1-c1"
-              onChange={[Function]}
-              type="radio"
-              value="c1"
-            />
-            <label
-              className="fr-label"
-              htmlFor="q1-c1"
+            <div
+              className="fr-fieldset__element fr-fieldset__element--inline"
             >
-              Oui, pour l’ensemble de la collectivité
-            </label>
+              <div
+                className="fr-radio-group"
+              >
+                <input
+                  checked={false}
+                  disabled={false}
+                  id="q1-c1"
+                  onChange={[Function]}
+                  type="radio"
+                  value="c1"
+                />
+                <label
+                  className="fr-label"
+                  htmlFor="q1-c1"
+                >
+                  Oui, pour l’ensemble de la collectivité
+                </label>
+              </div>
+            </div>
           </div>
           <div
             className="fr-radio-group fr-radio-group--sm vertical"
           >
-            <input
-              checked={false}
-              disabled={false}
-              id="q1-c2"
-              onChange={[Function]}
-              type="radio"
-              value="c2"
-            />
-            <label
-              className="fr-label"
-              htmlFor="q1-c2"
+            <div
+              className="fr-fieldset__element fr-fieldset__element--inline"
             >
-              Oui, uniquement sur trottoirs, parkings ou zones d'activités ou  industrielles
-            </label>
+              <div
+                className="fr-radio-group"
+              >
+                <input
+                  checked={false}
+                  disabled={false}
+                  id="q1-c2"
+                  onChange={[Function]}
+                  type="radio"
+                  value="c2"
+                />
+                <label
+                  className="fr-label"
+                  htmlFor="q1-c2"
+                >
+                  Oui, uniquement sur trottoirs, parkings ou zones d'activités ou  industrielles
+                </label>
+              </div>
+            </div>
           </div>
           <div
             className="fr-radio-group fr-radio-group--sm vertical"
           >
-            <input
-              checked={false}
-              disabled={false}
-              id="q1-c3"
-              onChange={[Function]}
-              type="radio"
-              value="c3"
-            />
-            <label
-              className="fr-label"
-              htmlFor="q1-c3"
+            <div
+              className="fr-fieldset__element fr-fieldset__element--inline"
             >
-              Non
-            </label>
+              <div
+                className="fr-radio-group"
+              >
+                <input
+                  checked={false}
+                  disabled={false}
+                  id="q1-c3"
+                  onChange={[Function]}
+                  type="radio"
+                  value="c3"
+                />
+                <label
+                  className="fr-label"
+                  htmlFor="q1-c3"
+                >
+                  Non
+                </label>
+              </div>
+            </div>
           </div>
         </div>
       </fieldset>
@@ -400,7 +468,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
         className="fr-fieldset"
       >
         <legend
-          className="fr-fieldset__legend fr-text--regular pt-6"
+          className="fr-fieldset__legend fr-fieldset__legend--regular"
           dangerouslySetInnerHTML={
             Object {
               "__html": "La collectivité a-t-elle conclu <b>des ventes ou des contrats d’utilisation</b> sur les dix dernières années ?",
@@ -414,38 +482,54 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
           <div
             className="fr-radio-group fr-radio-group--sm"
           >
-            <input
-              checked={false}
-              disabled={false}
-              id="q2-oui"
-              onChange={[Function]}
-              type="radio"
-              value="oui"
-            />
-            <label
-              className="fr-label"
-              htmlFor="q2-oui"
+            <div
+              className="fr-fieldset__element fr-fieldset__element--inline"
             >
-              Oui
-            </label>
+              <div
+                className="fr-radio-group"
+              >
+                <input
+                  checked={false}
+                  disabled={false}
+                  id="q2-oui"
+                  onChange={[Function]}
+                  type="radio"
+                  value="oui"
+                />
+                <label
+                  className="fr-label"
+                  htmlFor="q2-oui"
+                >
+                  Oui
+                </label>
+              </div>
+            </div>
           </div>
           <div
             className="fr-radio-group fr-radio-group--sm"
           >
-            <input
-              checked={false}
-              disabled={false}
-              id="q2-non"
-              onChange={[Function]}
-              type="radio"
-              value="non"
-            />
-            <label
-              className="fr-label"
-              htmlFor="q2-non"
+            <div
+              className="fr-fieldset__element fr-fieldset__element--inline"
             >
-              Non
-            </label>
+              <div
+                className="fr-radio-group"
+              >
+                <input
+                  checked={false}
+                  disabled={false}
+                  id="q2-non"
+                  onChange={[Function]}
+                  type="radio"
+                  value="non"
+                />
+                <label
+                  className="fr-label"
+                  htmlFor="q2-non"
+                >
+                  Non
+                </label>
+              </div>
+            </div>
           </div>
         </div>
       </fieldset>
@@ -453,7 +537,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
         className="fr-fieldset"
       >
         <legend
-          className="fr-fieldset__legend fr-text--regular pt-6"
+          className="fr-fieldset__legend fr-fieldset__legend--regular"
           dangerouslySetInnerHTML={
             Object {
               "__html": "Quelle est la part de la collectivité dans l’EPCI compétent en matière de <b>politique du logement et cadre de vie ?</b>",
@@ -516,12 +600,16 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
         </section>
       </fieldset>
     </div>
-    <a
-      className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-arrow-left-line self-start fr-mt-5w"
-      href="/collectivite/1/personnalisation"
+    <div
+      className="flex fr-pt-4w"
     >
-      Revenir au sommaire
-    </a>
+      <a
+        className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-arrow-left-line self-start"
+        href="/collectivite/1/personnalisation"
+      >
+        Revenir au sommaire
+      </a>
+    </div>
   </div>
 </div>
 `;
@@ -646,7 +734,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
         className="fr-fieldset"
       >
         <legend
-          className="fr-fieldset__legend fr-text--regular pt-6"
+          className="fr-fieldset__legend fr-fieldset__legend--regular"
           dangerouslySetInnerHTML={
             Object {
               "__html": "La collectivité a-t-elle la compétence <b>voirie</b> ?",
@@ -688,56 +776,80 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
           <div
             className="fr-radio-group fr-radio-group--sm vertical"
           >
-            <input
-              checked={false}
-              disabled={false}
-              id="q1-c1"
-              onChange={[Function]}
-              type="radio"
-              value="c1"
-            />
-            <label
-              className="fr-label"
-              htmlFor="q1-c1"
+            <div
+              className="fr-fieldset__element fr-fieldset__element--inline"
             >
-              Oui, pour l’ensemble de la collectivité
-            </label>
+              <div
+                className="fr-radio-group"
+              >
+                <input
+                  checked={false}
+                  disabled={false}
+                  id="q1-c1"
+                  onChange={[Function]}
+                  type="radio"
+                  value="c1"
+                />
+                <label
+                  className="fr-label"
+                  htmlFor="q1-c1"
+                >
+                  Oui, pour l’ensemble de la collectivité
+                </label>
+              </div>
+            </div>
           </div>
           <div
             className="fr-radio-group fr-radio-group--sm vertical"
           >
-            <input
-              checked={false}
-              disabled={false}
-              id="q1-c2"
-              onChange={[Function]}
-              type="radio"
-              value="c2"
-            />
-            <label
-              className="fr-label"
-              htmlFor="q1-c2"
+            <div
+              className="fr-fieldset__element fr-fieldset__element--inline"
             >
-              Oui, uniquement sur trottoirs, parkings ou zones d'activités ou  industrielles
-            </label>
+              <div
+                className="fr-radio-group"
+              >
+                <input
+                  checked={false}
+                  disabled={false}
+                  id="q1-c2"
+                  onChange={[Function]}
+                  type="radio"
+                  value="c2"
+                />
+                <label
+                  className="fr-label"
+                  htmlFor="q1-c2"
+                >
+                  Oui, uniquement sur trottoirs, parkings ou zones d'activités ou  industrielles
+                </label>
+              </div>
+            </div>
           </div>
           <div
             className="fr-radio-group fr-radio-group--sm vertical"
           >
-            <input
-              checked={false}
-              disabled={false}
-              id="q1-c3"
-              onChange={[Function]}
-              type="radio"
-              value="c3"
-            />
-            <label
-              className="fr-label"
-              htmlFor="q1-c3"
+            <div
+              className="fr-fieldset__element fr-fieldset__element--inline"
             >
-              Non
-            </label>
+              <div
+                className="fr-radio-group"
+              >
+                <input
+                  checked={false}
+                  disabled={false}
+                  id="q1-c3"
+                  onChange={[Function]}
+                  type="radio"
+                  value="c3"
+                />
+                <label
+                  className="fr-label"
+                  htmlFor="q1-c3"
+                >
+                  Non
+                </label>
+              </div>
+            </div>
           </div>
         </div>
       </fieldset>
@@ -745,7 +857,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
         className="fr-fieldset"
       >
         <legend
-          className="fr-fieldset__legend fr-text--regular pt-6"
+          className="fr-fieldset__legend fr-fieldset__legend--regular"
           dangerouslySetInnerHTML={
             Object {
               "__html": "La collectivité a-t-elle conclu <b>des ventes ou des contrats d’utilisation</b> sur les dix dernières années ?",
@@ -759,38 +871,54 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
           <div
             className="fr-radio-group fr-radio-group--sm"
           >
-            <input
-              checked={false}
-              disabled={false}
-              id="q2-oui"
-              onChange={[Function]}
-              type="radio"
-              value="oui"
-            />
-            <label
-              className="fr-label"
-              htmlFor="q2-oui"
+            <div
+              className="fr-fieldset__element fr-fieldset__element--inline"
             >
-              Oui
-            </label>
+              <div
+                className="fr-radio-group"
+              >
+                <input
+                  checked={false}
+                  disabled={false}
+                  id="q2-oui"
+                  onChange={[Function]}
+                  type="radio"
+                  value="oui"
+                />
+                <label
+                  className="fr-label"
+                  htmlFor="q2-oui"
+                >
+                  Oui
+                </label>
+              </div>
+            </div>
           </div>
           <div
             className="fr-radio-group fr-radio-group--sm"
           >
-            <input
-              checked={false}
-              disabled={false}
-              id="q2-non"
-              onChange={[Function]}
-              type="radio"
-              value="non"
-            />
-            <label
-              className="fr-label"
-              htmlFor="q2-non"
+            <div
+              className="fr-fieldset__element fr-fieldset__element--inline"
             >
-              Non
-            </label>
+              <div
+                className="fr-radio-group"
+              >
+                <input
+                  checked={false}
+                  disabled={false}
+                  id="q2-non"
+                  onChange={[Function]}
+                  type="radio"
+                  value="non"
+                />
+                <label
+                  className="fr-label"
+                  htmlFor="q2-non"
+                >
+                  Non
+                </label>
+              </div>
+            </div>
           </div>
         </div>
       </fieldset>
@@ -798,7 +926,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
         className="fr-fieldset"
       >
         <legend
-          className="fr-fieldset__legend fr-text--regular pt-6"
+          className="fr-fieldset__legend fr-fieldset__legend--regular"
           dangerouslySetInnerHTML={
             Object {
               "__html": "Quelle est la part de la collectivité dans l’EPCI compétent en matière de <b>politique du logement et cadre de vie ?</b>",
@@ -861,12 +989,16 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
         </section>
       </fieldset>
     </div>
-    <a
-      className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-arrow-left-line self-start fr-mt-5w"
-      href="/collectivite/1/personnalisation"
+    <div
+      className="flex fr-pt-4w"
     >
-      Revenir au sommaire
-    </a>
+      <a
+        className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-arrow-left-line self-start"
+        href="/collectivite/1/personnalisation"
+      >
+        Revenir au sommaire
+      </a>
+    </div>
   </div>
 </div>
 `;

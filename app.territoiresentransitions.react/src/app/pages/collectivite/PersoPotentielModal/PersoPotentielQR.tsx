@@ -61,7 +61,7 @@ const QuestionReponse = (props: TQuestionReponseProps) => {
   return (
     <>
       <legend
-        className="fr-fieldset__legend fr-text--regular pt-6"
+        className="fr-fieldset__legend fr-fieldset__legend--regular"
         dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(formulation)}}
       />
       {description ? (

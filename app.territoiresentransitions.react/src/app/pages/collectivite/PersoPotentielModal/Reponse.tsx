@@ -164,29 +164,31 @@ const RadioButton = ({
   const eltId = `${questionId}-${choiceId}`;
 
   return (
-    <>
-      <input
-        type="radio"
-        disabled={disabled}
-        id={eltId}
-        checked={reponse?.toString() === choiceId}
-        value={choiceId}
-        onChange={() => onChange(choiceId)}
-      />
-      <label className="fr-label" htmlFor={eltId}>
-        {label}
-        {hasReponse && (
-          <button
-            className="fr-link fr-link--icon-left fr-fi-edit-line fr-ml-3w"
-            onClick={e => {
-              e.preventDefault();
-              onChange(null);
-            }}
-          >
-            Modifier
-          </button>
-        )}
-      </label>
-    </>
+    <div className="fr-fieldset__element fr-fieldset__element--inline">
+      <div className="fr-radio-group">
+        <input
+          type="radio"
+          disabled={disabled}
+          id={eltId}
+          checked={reponse?.toString() === choiceId}
+          value={choiceId}
+          onChange={() => onChange(choiceId)}
+        />
+        <label className="fr-label" htmlFor={eltId}>
+          {label}
+          {hasReponse && (
+            <button
+              className="fr-link fr-link--icon-left fr-fi-edit-line fr-ml-3w"
+              onClick={e => {
+                e.preventDefault();
+                onChange(null);
+              }}
+            >
+              Modifier
+            </button>
+          )}
+        </label>
+      </div>
+    </div>
   );
 };
