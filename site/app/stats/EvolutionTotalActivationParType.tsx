@@ -8,12 +8,12 @@ import {
   axisLeftMiddleLabel,
   bottomLegend,
   colors,
-  dateAsMonthAndYear,
   fromMonth,
   getLabelsById,
   getLegendData,
   theme,
 } from './shared';
+import {addLocalFilters} from './utils';
 
 /**
  * L'évolution des activations par type de collectivité
@@ -37,16 +37,7 @@ function useEvolutionTotalActivation(
         // à partir du mois par défaut
         .gte('mois', fromMonth);
 
-      if (codeDepartement) {
-        // si le département est spécifié, on filtre avec le code département
-        select = select.eq('code_departement', codeDepartement);
-      } else if (codeRegion) {
-        // si la région est spécifiée sans le département, on filtre avec le code région
-        select = select.eq('code_region', codeRegion);
-      } else {
-        // si ni la région ni le département ne sont spécifiés
-        select = select.is('code_region', null).is('code_departement', null);
-      }
+      select = addLocalFilters(select, codeDepartement, codeRegion);
 
       const {data, error} = await select;
 

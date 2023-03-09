@@ -3,7 +3,8 @@
 import useSWR from 'swr';
 import {ResponsivePie} from '@nivo/pie';
 import {supabase} from '../initSupabase';
-import {bottomLegend, colors, theme} from './shared';
+import {theme} from './shared';
+import {addLocalFilters} from './utils';
 
 export function useTrancheCompletude(
   codeRegion: string,
@@ -18,13 +19,7 @@ export function useTrancheCompletude(
         .gt('lower_bound', 0)
         .order('lower_bound', {ascending: false});
 
-      if (codeDepartement) {
-        select = select.eq('code_departement', codeDepartement);
-      } else if (codeRegion) {
-        select = select.eq('code_region', codeRegion);
-      } else {
-        select = select.is('code_region', null).is('code_departement', null);
-      }
+      select = addLocalFilters(select, codeDepartement, codeRegion);
 
       const {data, error} = await select;
 
@@ -48,7 +43,9 @@ export function useTrancheCompletude(
         }),
         inities: getSum(data),
         termines: getSum(data.filter(d => d.lower_bound === 100)),
-        presqueTermines: getSum(data.filter(d => d.lower_bound >= 80)),
+        presqueTermines: getSum(
+          data.filter(d => d.lower_bound !== null && d.lower_bound >= 80)
+        ),
       };
     }
   );
@@ -56,8 +53,8 @@ export function useTrancheCompletude(
 
 // somme des compteurs par référentiel pour calculer les décomptes
 // initiés/terminés/remplis à 80% et plus
-const getSum = (data: Array<{cae: number; eci: number}>) =>
-  data.reduce((cnt, d) => cnt + d.cae + d.eci, 0);
+const getSum = (data: Array<{cae: number | null; eci: number | null}>) =>
+  data.reduce((cnt, d) => cnt + (d.cae ?? 0) + (d.eci ?? 0), 0);
 
 type Props = {referentiel: 'eci' | 'cae'; region?: string; department?: string};
 
