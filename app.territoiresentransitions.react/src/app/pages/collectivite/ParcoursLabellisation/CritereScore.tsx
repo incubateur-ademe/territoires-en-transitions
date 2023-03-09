@@ -22,7 +22,7 @@ export const CritereScore = (props: TCritereScoreProps) => {
 
   return (
     <>
-      <li className="fr-mb-1w">
+      <li className="fr-mt-2w fr-mb-1w">
         {`Atteindre un score d’au moins ${toLocaleFixed(
           score_a_realiser * 100
         )} % d’actions réalisées et le prouver (via les documents preuves ou un texte justificatif)`}
