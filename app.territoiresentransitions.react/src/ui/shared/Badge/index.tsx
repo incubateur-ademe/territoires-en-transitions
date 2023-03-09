@@ -3,7 +3,6 @@
  */
 
 import {ReactNode} from 'react';
-import './badge.css';
 
 export type TBadgeProps = {
   className?: string;
