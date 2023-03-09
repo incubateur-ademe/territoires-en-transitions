@@ -166,17 +166,17 @@ export const DetailedScoreSlider = (props: TSliderProps) => {
       <Slider marks step={step} value={currentValue} onChange={handleChange} />
 
       <fieldset
-        className="fr-fieldset fr-fieldset--inline fr-mt-4w"
+        className="fr-fieldset fr-mt-4w"
         aria-labelledby="radio-valid-inline-legend radio-valid-inline-desc-valid"
         role="group"
       >
-        <div className="fr-fieldset__content">
-          <legend
-            className="fr-fieldset__legend fr-text--regular fr-mr-2w"
-            id="radio-valid-inline-legend"
-          >
-            Pas de notation :
-          </legend>
+        <legend
+          className="fr-fieldset__legend fr-text--regular fr-mr-2w"
+          id="radio-valid-inline-legend"
+        >
+          Pas de notation :
+        </legend>
+        <div className="fr-fieldset__element fr-fieldset--inline">
           <div className="fr-radio-group">
             <input
               type="radio"
