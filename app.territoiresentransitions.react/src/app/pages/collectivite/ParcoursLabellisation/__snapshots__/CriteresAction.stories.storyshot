@@ -638,7 +638,7 @@ Array [
             className="text-center w-[56px]"
           >
             <i
-              className="fr-icon fr-fi-checkbox-circle-fill before:text-[#5FD68C]"
+              className="fr-icon fr-icon-checkbox-circle-fill before:text-[#5FD68C]"
             />
           </td>
           <td
