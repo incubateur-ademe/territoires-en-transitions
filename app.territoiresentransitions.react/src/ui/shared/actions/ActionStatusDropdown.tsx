@@ -196,7 +196,7 @@ export const ActionStatusDropdown = ({actionId}: {actionId: string}) => {
               >
                 <div className="p-7 flex flex-col items-center">
                   <CloseDialogButton setOpened={setOpened} />
-                  <h3 className="pb-4">Préciser l’avancement de cette tâche</h3>
+                  <h3 className="py-4">Préciser l’avancement de cette tâche</h3>
                   <div className="w-full">
                     <DetailedScore
                       avancement={
