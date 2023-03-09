@@ -36,8 +36,8 @@ details > .content p {
   font-size: 18px;
 }
 
-main a[href] {
-  box-shadow: none;
+a[href] {
+  background-image: none;
 }
 
 /** réduit l'espacement des label+bouton radio utilisés en liste verticale **/

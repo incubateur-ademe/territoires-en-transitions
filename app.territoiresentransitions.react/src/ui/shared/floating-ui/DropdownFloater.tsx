@@ -96,7 +96,7 @@ const DropdownFloater = ({
           >
             <div
               data-test={dataTest}
-              className="w-max bg-white shadow-md z-50"
+              className="w-max bg-white shadow-md z-[1000]"
               {...getFloatingProps({
                 ref: floating,
                 style: {

@@ -31,7 +31,7 @@ export const Header = ({
 
   return (
     <>
-      <header role="banner" className="header fr-header ">
+      <header role="banner" className="header fr-header">
         <div className="fr-header__body">
           <div className="fr-container">
             <div className="fr-header__body-row header__row">
@@ -40,14 +40,16 @@ export const Header = ({
                   <div className="fr-header__logo">
                     <LogoRepubliqueFrancaise />
                   </div>
-                </div>
-                <div className="fr-header__ademe shrink-0">
-                  <img
-                    src={ademeLogoImage}
-                    alt="logo ADEME"
-                    loading="lazy"
-                    className="h-20"
-                  />
+                  <div className="fr-header__operator !shrink-0 fr-mr-2w fr-ml-n2w">
+                    <a href="/" title="Accueil">
+                      <img
+                        src={ademeLogoImage}
+                        alt="logo ADEME"
+                        loading="lazy"
+                        className="h-20"
+                      />
+                    </a>
+                  </div>
                 </div>
                 <div className="fr-header__service">
                   <a href="/" title="Accueil">
@@ -55,7 +57,7 @@ export const Header = ({
                       Territoires en Transitions
                     </p>
                   </a>
-                  <p className="text-sm">
+                  <p className="fr-header__service-tagline">
                     Accompagner la transition écologique des collectivités
                   </p>
                 </div>

@@ -8,14 +8,17 @@ export const Aide = () => {
   const onClick = async () => {
     await tracker({fonction: 'aide', action: 'clic'});
   };
-  return <a
-    data-test="help"
-    className="fr-link"
-    href="https://aide.territoiresentransitions.fr/fr/"
-    target="_blank" rel="noreferrer"
-    onClick={onClick}
-  >
-    <div className="fr-fi-question-line mr-2" />
-    Aide
-  </a>;
+  return (
+    <a
+      data-test="help"
+      className="fr-btn"
+      href="https://aide.territoiresentransitions.fr/fr/"
+      target="_blank"
+      rel="noreferrer"
+      onClick={onClick}
+    >
+      <div className="fr-fi-question-line mr-2" />
+      Aide
+    </a>
+  );
 };
