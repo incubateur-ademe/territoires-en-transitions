@@ -201,16 +201,18 @@ const ChiffreCles = ({
         </div>
       </div>
       {completed_taches_count < total_taches_count ? (
-        <Link
-          className="fr-link fr-link--icon-right fr-fi-arrow-right-line fr-mt-2w"
-          to={makeCollectiviteReferentielUrl({
-            collectiviteId,
-            referentielId: referentiel,
-            referentielVue: 'detail',
-          })}
-        >
-          Voir les statuts non renseignés
-        </Link>
+        <div className=" fr-mt-2w">
+          <Link
+            className="fr-link fr-link--icon-right fr-fi-arrow-right-line"
+            to={makeCollectiviteReferentielUrl({
+              collectiviteId,
+              referentielId: referentiel,
+              referentielVue: 'detail',
+            })}
+          >
+            Voir les statuts non renseignés
+          </Link>
+        </div>
       ) : null}
     </div>
   );
