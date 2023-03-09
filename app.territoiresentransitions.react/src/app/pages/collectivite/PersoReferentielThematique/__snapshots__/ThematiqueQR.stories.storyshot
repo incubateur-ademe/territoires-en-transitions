@@ -54,10 +54,10 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
               className="fr-accordion__btn"
               onClick={[Function]}
             >
-              En savoir plus
               <i
-                className="fr-fi-information-fill fr-text-default--info fr-mr-3v"
+                className="fr-fi-information-fill text-[#0063cb] fr-mr-3v"
               />
+              En savoir plus
             </button>
           </h3>
           <div
@@ -232,10 +232,10 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
               className="fr-accordion__btn"
               onClick={[Function]}
             >
-              Comment calculer la part ?
               <i
-                className="fr-fi-information-fill fr-text-default--info fr-mr-3v"
+                className="fr-fi-information-fill text-[#0063cb] fr-mr-3v"
               />
+              Comment calculer la part ?
             </button>
           </h3>
           <div
@@ -320,10 +320,10 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
               className="fr-accordion__btn"
               onClick={[Function]}
             >
-              En savoir plus
               <i
-                className="fr-fi-information-fill fr-text-default--info fr-mr-3v"
+                className="fr-fi-information-fill text-[#0063cb] fr-mr-3v"
               />
+              En savoir plus
             </button>
           </h3>
           <div
@@ -498,10 +498,10 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
               className="fr-accordion__btn"
               onClick={[Function]}
             >
-              Comment calculer la part ?
               <i
-                className="fr-fi-information-fill fr-text-default--info fr-mr-3v"
+                className="fr-fi-information-fill text-[#0063cb] fr-mr-3v"
               />
+              Comment calculer la part ?
             </button>
           </h3>
           <div
@@ -665,10 +665,10 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
               className="fr-accordion__btn"
               onClick={[Function]}
             >
-              En savoir plus
               <i
-                className="fr-fi-information-fill fr-text-default--info fr-mr-3v"
+                className="fr-fi-information-fill text-[#0063cb] fr-mr-3v"
               />
+              En savoir plus
             </button>
           </h3>
           <div
@@ -843,10 +843,10 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
               className="fr-accordion__btn"
               onClick={[Function]}
             >
-              Comment calculer la part ?
               <i
-                className="fr-fi-information-fill fr-text-default--info fr-mr-3v"
+                className="fr-fi-information-fill text-[#0063cb] fr-mr-3v"
               />
+              Comment calculer la part ?
             </button>
           </h3>
           <div
