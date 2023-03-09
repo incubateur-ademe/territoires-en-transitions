@@ -137,6 +137,8 @@ services:
       PG_META_DB_PASSWORD: ${POSTGRES_PASSWORD}
 
   db:
+    logging:
+      driver: none
     container_name: supabase-db
     image: supabase/postgres:15.1.0.38
     healthcheck:
@@ -231,7 +233,7 @@ services:
     container_name: tet-business
     build: ./business/.
     ports: # expose le port pour tester de l'extérieur.
-      - "8888:8888"
+      - '8888:8888'
     depends_on:
       - kong
     restart: unless-stopped
@@ -311,7 +313,7 @@ services:
     command:
       - sh
       - -c
-      - | 
+      - |
         sh /scripts/wait_for_supabase.sh
         sqitch deploy --chdir /sqitch || exit 1 
         sqitch revert --to @v2.0.0 --y --chdir /sqitch || exit 1
