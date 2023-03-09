@@ -14,7 +14,14 @@ drop materialized view stats.locales_tranche_completude;
 drop materialized view stats.locales_pourcentage_completude;
 drop view stats_locales_evolution_nombre_fiches;
 drop materialized view stats.locales_evolution_nombre_fiches;
-drop materialized view stats.locales_evolution_utilisateur;
 drop view stats_locales_evolution_utilisateur;
+drop materialized view stats.locales_evolution_utilisateur;
+drop view stats_locales_evolution_collectivite_avec_minimum_fiches;
+drop materialized view stats.locales_evolution_collectivite_avec_minimum_fiches;
+
+drop view stats_locales_engagement_collectivite;
+drop materialized view stats.locales_engagement_collectivite;
+drop view stats_locales_labellisation_par_niveau;
+drop materialized view stats.locales_labellisation_par_niveau;
 
 COMMIT;
