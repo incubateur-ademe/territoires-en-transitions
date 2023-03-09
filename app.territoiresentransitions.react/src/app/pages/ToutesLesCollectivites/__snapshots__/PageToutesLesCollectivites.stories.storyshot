@@ -915,7 +915,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                 className="text-bf500 border-bf500"
               >
                 <span
-                  className="fr-fi-close-circle-fill mr-1"
+                  className="fr-icon-close-circle-fill mr-1"
                   style={
                     Object {
                       "fontSize": ".7rem",
@@ -7170,7 +7170,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
               className="text-bf500 border-bf500"
             >
               <span
-                className="fr-fi-close-circle-fill mr-1"
+                className="fr-icon-close-circle-fill mr-1"
                 style={
                   Object {
                     "fontSize": ".7rem",

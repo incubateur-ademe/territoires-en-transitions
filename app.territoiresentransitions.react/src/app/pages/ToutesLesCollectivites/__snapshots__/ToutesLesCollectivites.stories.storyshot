@@ -846,7 +846,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
               onClick={[Function]}
             >
               <span
-                className="fr-fi-close-circle-fill mr-1 scale-90"
+                className="fr-icon-close-circle-fill mr-1 scale-90"
               />
               <span
                 className="text-sm"
@@ -7044,7 +7044,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Sans Resultats 1`] = `
               onClick={[Function]}
             >
               <span
-                className="fr-fi-close-circle-fill mr-1 scale-90"
+                className="fr-icon-close-circle-fill mr-1 scale-90"
               />
               <span
                 className="text-sm"

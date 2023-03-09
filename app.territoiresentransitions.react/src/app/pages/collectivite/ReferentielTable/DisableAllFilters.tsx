@@ -16,7 +16,7 @@ export const DisableAllFilters = (props: TDisableAllFiltersProps) => {
 
   return (
     <button
-      className="fr-link fr-link--icon-left fr-fi-close-circle-fill fr-ml-2w"
+      className="fr-link fr-link--icon-left fr-icon-close-circle-fill fr-ml-2w"
       data-test="DisableAllFilters"
       onClick={onClick}
     >
