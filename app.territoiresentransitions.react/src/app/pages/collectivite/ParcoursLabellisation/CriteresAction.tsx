@@ -79,7 +79,7 @@ const CritereActionRow = (props: TCriteresActionTable & {rowIndex: number}) => {
     <tr>
       <td className="text-center w-[56px]">
         {rempli ? (
-          <i className="fr-icon fr-fi-checkbox-circle-fill before:text-[#5FD68C]" />
+          <i className="fr-icon fr-icon-checkbox-circle-fill before:text-[#5FD68C]" />
         ) : null}
       </td>
       <td className="text-right text-xs w-[40px] text-grey625">
