@@ -32,8 +32,8 @@ export const ActionDiscussionsPanel = ({
       >
         <button
           className={classNames('p-2 text-bf500', {
-            'fr-fi-chat-quote-line': !isOpen,
-            'fr-fi-chat-quote-fill bg-gray-200': isOpen,
+            'fr-icon-quote-line': !isOpen,
+            'fr-icon-quote-fill bg-gray-200': isOpen,
           })}
           onClick={() => setIsOpen(!isOpen)}
         />

@@ -9,7 +9,7 @@ exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/Action
     data-test="ActionDiscussionsButton"
   >
     <button
-      className="p-2 text-bf500 fr-fi-chat-quote-line"
+      className="p-2 text-bf500 fr-icon-quote-line"
       onClick={[Function]}
     />
   </div>
@@ -231,7 +231,7 @@ exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/Action
     data-test="ActionDiscussionsButton"
   >
     <button
-      className="p-2 text-bf500 fr-fi-chat-quote-line"
+      className="p-2 text-bf500 fr-icon-quote-line"
       onClick={[Function]}
     />
   </div>
