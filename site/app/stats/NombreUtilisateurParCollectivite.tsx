@@ -15,21 +15,32 @@ import {
 import {SliceTooltip} from './SliceTooltip';
 import {ChartHead} from './headings';
 
-function useNombreUtilisateurParCollectivite() {
+function useNombreUtilisateurParCollectivite(
+  codeRegion: string,
+  codeDepartement: string
+) {
   return useSWR(
-    'stats_locales_evolution_nombre_utilisateur_par_collectivite',
+    `stats_locales_evolution_nombre_utilisateur_par_collectivite-${codeRegion}-${codeDepartement}`,
     async () => {
-      const {data, error} = await supabase
+      let select = supabase
         .from('stats_locales_evolution_nombre_utilisateur_par_collectivite')
         .select()
-        .gte('mois', fromMonth)
-        // les stats nationales pour le moment.
-        .is('code_region', null)
-        .is('code_departement', null);
+        .gte('mois', fromMonth);
+
+      if (codeDepartement) {
+        select = select.eq('code_departement', codeDepartement);
+      } else if (codeRegion) {
+        select = select.eq('code_region', codeRegion);
+      } else {
+        select = select.is('code_region', null).is('code_departement', null);
+      }
+
+      const {data, error} = await select;
+
       if (error) {
         throw new Error('stats_evolution_nombre_utilisateur_par_collectivite');
       }
-      if (!data) {
+      if (!data || !data.length) {
         return null;
       }
       return {
@@ -51,12 +62,18 @@ function useNombreUtilisateurParCollectivite() {
   );
 }
 
-export default function NombreUtilisateurParCollectivite() {
-  const {data} = useNombreUtilisateurParCollectivite();
+type NombreUtilisateurParCollectiviteProps = {
+  region?: string;
+  department?: string;
+};
 
-  if (!data) {
-    return null;
-  }
+export default function NombreUtilisateurParCollectivite({
+  region = '',
+  department = '',
+}: NombreUtilisateurParCollectiviteProps) {
+  const {data} = useNombreUtilisateurParCollectivite(region, department);
+
+  if (!data) return null;
 
   const {courant, evolution} = data;
   const colors = ['#FF732C', '#7AB1E8'];
@@ -111,6 +128,7 @@ export default function NombreUtilisateurParCollectivite() {
               itemWidth: 230,
             },
           ]}
+          animate={false}
         />
       </div>
     </div>

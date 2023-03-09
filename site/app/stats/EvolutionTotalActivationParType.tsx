@@ -53,7 +53,7 @@ function useEvolutionTotalActivation(
       if (error) {
         throw new Error(error.message);
       }
-      if (!data) {
+      if (!data || !data.length) {
         return null;
       }
       return {
@@ -80,18 +80,19 @@ function useEvolutionTotalActivation(
   );
 }
 
-export default function EvolutionTotalActivationParType(props: {
+type EvolutionTotalActivationParTypeProps = {
   region?: string;
-  departement?: string;
-}) {
-  const {data} = useEvolutionTotalActivation(
-    props.region ?? '',
-    props.departement ?? ''
-  );
+  department?: string;
+};
 
-  if (!data) {
-    return null;
-  }
+export default function EvolutionTotalActivationParType({
+  region = '',
+  department = '',
+}: EvolutionTotalActivationParTypeProps) {
+  const {data} = useEvolutionTotalActivation(region, department);
+
+  if (!data) return null;
+
   const {courant, evolution} = data;
   const legendData = getLegendData(evolution);
   const labelById = getLabelsById(evolution);
@@ -100,10 +101,10 @@ export default function EvolutionTotalActivationParType(props: {
     <div>
       <div className="fr-grid-row fr-grid-row--center">
         <h6>
-          {courant?.total} collectivités activées dont {courant?.total_epci}{' '}
+          {courant.total} collectivités activées dont {courant.total_epci}{' '}
           EPCI,&nbsp;
-          {courant?.total_syndicat} syndicats et&nbsp;
-          {courant?.total_commune} communes
+          {courant.total_syndicat} syndicats et&nbsp;
+          {courant.total_commune} communes
         </h6>
       </div>
 
@@ -171,6 +172,7 @@ export default function EvolutionTotalActivationParType(props: {
               data: legendData,
             },
           ]}
+          animate={false}
         />
       </div>
     </div>

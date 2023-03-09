@@ -60,7 +60,7 @@ const StatisticsDisplay = ({
 
         <EvolutionTotalActivationParType
           region={regionCode}
-          departement={departmentCode}
+          department={departmentCode}
         />
 
         <ChartHead>
@@ -80,12 +80,13 @@ const StatisticsDisplay = ({
               <CarteEpciParDepartement valeur="ratio" maximum="ratio_max" />
             </div>
           )}
-          {nationalStats && (
-            <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4 fr-ratio-1x1">
-              <ChartTitle>Progression globale</ChartTitle>
-              <CollectiviteActivesEtTotalParType />
-            </div>
-          )}
+          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4 fr-ratio-1x1">
+            <ChartTitle>Progression globale</ChartTitle>
+            <CollectiviteActivesEtTotalParType
+              region={regionCode}
+              department={departmentCode}
+            />
+          </div>
         </div>
       </section>
 
@@ -104,7 +105,10 @@ const StatisticsDisplay = ({
           équipe pour faire avancer l’action de la collectivité.
         </p>
         {nationalStats && <ActiveUsers />}
-        {nationalStats && <NombreUtilisateurParCollectivite />}
+        <NombreUtilisateurParCollectivite
+          region={regionCode}
+          department={departmentCode}
+        />
       </section>
 
       <section className="fr-container">
@@ -118,7 +122,7 @@ const StatisticsDisplay = ({
           la plateforme Territoires en Transitions s’appuie sur les référentiels
           Climat, Air, Energie et Economie Circulaire de l’ADEME.
         </p>
-        {nationalStats && <EtatDesLieux />}
+        <EtatDesLieux region={regionCode} department={departmentCode} />
       </section>
 
       <section className="fr-container">

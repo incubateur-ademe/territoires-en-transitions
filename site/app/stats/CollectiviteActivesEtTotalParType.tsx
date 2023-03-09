@@ -5,22 +5,34 @@ import {ResponsiveWaffle} from '@nivo/waffle';
 import {supabase} from '../initSupabase';
 import {bottomLegend, theme} from './shared';
 
-function useCollectiviteActivesEtTotalParType() {
+function useCollectiviteActivesEtTotalParType(
+  codeRegion: string,
+  codeDepartement: string
+) {
   return useSWR(
-    `stats_locales_collectivite_actives_et_total_par_type`,
+    `stats_locales_collectivite_actives_et_total_par_type-${codeRegion}-${codeDepartement}`,
     async () => {
-      const {data, error} = await supabase
+      let select = supabase
         .from('stats_locales_collectivite_actives_et_total_par_type')
-        .select()
-        // sélectionne les stats nationales
-        .is('code_region', null)
-        .is('code_departement', null);
+        .select();
+
+      if (codeDepartement) {
+        select = select.eq('code_departement', codeDepartement);
+      } else if (codeRegion) {
+        select = select.eq('code_region', codeRegion);
+      } else {
+        select = select.is('code_region', null).is('code_departement', null);
+      }
+
+      const {data, error} = await select;
+
       if (error) {
         throw new Error(error.message);
       }
-      if (!data) {
+      if (!data || !data.length) {
         return null;
       }
+
       const epcis = data.filter(d => d.typologie === 'EPCI')[0];
 
       return {
@@ -42,14 +54,21 @@ function useCollectiviteActivesEtTotalParType() {
   );
 }
 
-export default function CollectiviteActivesEtTotalParType() {
-  const {data} = useCollectiviteActivesEtTotalParType();
+type CollectiviteActivesEtTotalParTypeProps = {
+  region?: string;
+  department?: string;
+};
 
-  if (!data) {
-    return null;
-  }
+export default function CollectiviteActivesEtTotalParType({
+  region = '',
+  department = '',
+}: CollectiviteActivesEtTotalParTypeProps) {
+  const {data} = useCollectiviteActivesEtTotalParType(region, department);
+
+  if (!data) return null;
 
   const {categories, total} = data;
+
   return (
     <div style={{height: 400}}>
       <ResponsiveWaffle
