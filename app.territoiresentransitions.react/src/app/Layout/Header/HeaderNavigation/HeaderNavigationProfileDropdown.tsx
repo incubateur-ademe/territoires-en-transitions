@@ -22,7 +22,7 @@ const HeaderNavigationProfileDropdown = ({
         render={({close}) => (
           <nav>
             <ul className="m-0 p-0">
-              <li className="fr-nav__item pb-0 border-b border-gray-200">
+              <li className="fr-nav__item">
                 <NavLink
                   to={monComptePath}
                   className="fr-nav__link before:!hidden !shadow-none"
@@ -62,7 +62,7 @@ const HeaderNavigationProfileDropdownButtonDisplayed = forwardRef(
     <div ref={ref} {...props}>
       <button
         data-test="connectedMenu"
-        className="fr-link"
+        className="fr-btn"
         style={{maxWidth: '15rem'}}
       >
         <div className="fr-fi-account-line mr-2" />
