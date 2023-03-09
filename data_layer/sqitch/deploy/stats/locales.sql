@@ -346,9 +346,115 @@ create view stats_locales_evolution_nombre_fiches as
 select *
 from stats.locales_evolution_nombre_fiches;
 
--- todo stats_evolution_collectivite_avec_minimum_fiches
--- todo stats_engagement_collectivite
--- todo stats_labellisation_par_niveau
+create materialized view stats.locales_evolution_collectivite_avec_minimum_fiches
+as
+with fiche_collectivite as (select first_day                                                            as mois,
+                                   c.collectivite_id,
+                                   c.region_code,
+                                   c.departement_code,
+                                   coalesce(count(*) filter ( where fa.modified_at <= mb.last_day ), 0) as fiches
+                            from stats.monthly_bucket mb
+                                     join stats.collectivite c on true
+                                     left join fiche_action fa using (collectivite_id)
+                            group by mb.first_day, c.collectivite_id, c.departement_code, c.region_code)
+select mois,
+       null:: varchar(2)                    as code_region,
+       null::varchar(2)                     as code_departement,
+       count(*) filter ( where fiches > 5 ) as collectivites
+from fiche_collectivite
+group by mois
+
+union all
+
+select mois,
+       region_code,
+       null,
+       count(*) filter ( where fiches > 5 )
+from fiche_collectivite
+group by mois, region_code
+
+union all
+
+select mois,
+       null,
+       departement_code,
+       count(*) filter ( where fiches > 5 )
+from fiche_collectivite
+group by mois, departement_code
+
+order by mois;
+
+create view stats_locales_evolution_collectivite_avec_minimum_fiches
+as
+select *
+from stats.locales_evolution_collectivite_avec_minimum_fiches;
+
+
+create materialized view stats.locales_engagement_collectivite
+as
+select collectivite_id,
+       c.region_code              as code_region,
+       c.departement_code         as code_departement,
+       coalesce(cot.actif, false) as cot,
+       coalesce(eci.etoiles, 0)   as etoiles_eci,
+       coalesce(cae.etoiles, 0)   as etoiles_cae
+from stats.collectivite c
+         left join cot using (collectivite_id)
+         left join lateral (select etoiles
+                            from labellisation l
+                            where l.collectivite_id = c.collectivite_id
+                              and referentiel = 'eci') eci on true
+         left join lateral (select etoiles
+                            from labellisation l
+                            where l.collectivite_id = c.collectivite_id
+                              and referentiel = 'cae') cae on true;
+
+create view stats_locales_engagement_collectivite
+as
+select *
+from stats.locales_engagement_collectivite;
+
+create materialized view stats.locales_labellisation_par_niveau
+as
+with labellisation_locales as (select l.etoiles, l.referentiel, c.region_code, c.departement_code
+                               from labellisation l
+                                        join stats.collectivite c using (collectivite_id))
+
+select null:: varchar(2) as code_region,
+       null::varchar(2)  as code_departement,
+       referentiel,
+       etoiles,
+       count(*)          as labellisations
+from labellisation_locales
+group by referentiel, etoiles
+
+union all
+
+select r.code,
+       null,
+       referentiel,
+       etoiles,
+       coalesce(count(l), 0)
+from imports.region r
+         join labellisation_locales l on l.region_code = r.code
+group by referentiel, etoiles, r.code
+
+union all
+
+select null,
+       d.code,
+       referentiel,
+       etoiles,
+       coalesce(count(l), 0)
+from imports.departement d
+         join labellisation_locales l on l.departement_code = d.code
+group by referentiel, etoiles, d.code;
+
+create view stats_locales_labellisation_par_niveau
+as
+select *
+from stats.locales_labellisation_par_niveau;
+
 -- todo stats_evolution_indicateur_referentiel
 -- todo stats_evolution_resultat_indicateur_personnalise
 -- todo stats_evolution_resultat_indicateur_referentiel
@@ -366,6 +472,9 @@ begin
     refresh materialized view stats.locales_pourcentage_completude;
     refresh materialized view stats.locales_tranche_completude;
     refresh materialized view stats.evolution_nombre_fiches;
+    refresh materialized view stats.locales_evolution_collectivite_avec_minimum_fiches;
+    refresh materialized view stats.locales_engagement_collectivite;
+    refresh materialized view stats.locales_labellisation_par_niveau;
 end
 $$ language plpgsql;
 comment on function stats.refresh_stats_locales is
