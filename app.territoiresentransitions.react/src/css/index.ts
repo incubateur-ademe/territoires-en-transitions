@@ -9,6 +9,7 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-document/icons-document.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-user/icons-user.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-system/icons-system.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-editor/icons-editor.css';
+import '@gouvfr/dsfr/dist/utility/icons/icons-business/icons-business.css';
 
 // patches
 import 'css/app.css';
