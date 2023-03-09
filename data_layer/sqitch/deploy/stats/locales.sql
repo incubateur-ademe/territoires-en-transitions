@@ -455,9 +455,155 @@ as
 select *
 from stats.locales_labellisation_par_niveau;
 
--- todo stats_evolution_indicateur_referentiel
--- todo stats_evolution_resultat_indicateur_personnalise
--- todo stats_evolution_resultat_indicateur_referentiel
+
+create materialized view stats.locales_evolution_indicateur_referentiel
+as
+with indicateurs as (select collectivite_id,
+                            region_code,
+                            departement_code,
+                            indicateur_id,
+                            min(modified_at) as first_modified_at
+                     from indicateur_resultat
+                              join stats.collectivite using (collectivite_id)
+                     group by collectivite_id,
+                              region_code,
+                              departement_code,
+                              indicateur_id)
+select first_day         as mois,
+       null:: varchar(2) as code_region,
+       null::varchar(2)  as code_departement,
+       count(i)          as indicateurs
+from stats.monthly_bucket m
+         left join indicateurs i on i.first_modified_at <= last_day
+group by first_day
+
+union all
+
+select first_day,
+       r.code,
+       null,
+       count(i)
+from imports.region r
+         join stats.monthly_bucket m on true
+         left join indicateurs i
+                   on i.first_modified_at <= last_day
+                       and i.region_code = r.code
+group by first_day, r.code
+
+union all
+
+select first_day,
+       null,
+       d.code,
+       count(i)
+from imports.departement d
+         join stats.monthly_bucket m on true
+         left join indicateurs i
+                   on i.first_modified_at <= last_day
+                       and i.departement_code = d.code
+group by first_day, d.code;
+
+create view stats_locales_evolution_indicateur_referentiel
+as
+select *
+from stats.locales_evolution_indicateur_referentiel;
+
+
+create materialized view stats.locales_evolution_resultat_indicateur_personnalise
+as
+with resultats as (select collectivite_id,
+                            region_code,
+                            departement_code,
+                            modified_at
+                     from indicateur_resultat
+                              join stats.collectivite using (collectivite_id))
+select first_day         as mois,
+       null:: varchar(2) as code_region,
+       null::varchar(2)  as code_departement,
+       count(i)          as indicateurs
+from stats.monthly_bucket m
+         left join resultats i on i.modified_at <= last_day
+group by first_day
+
+union all
+
+select first_day,
+       r.code,
+       null,
+       count(i)
+from imports.region r
+         join stats.monthly_bucket m on true
+         left join resultats i
+                   on i.modified_at <= last_day
+                       and i.region_code = r.code
+group by first_day, r.code
+
+union all
+
+select first_day,
+       null,
+       d.code,
+       count(i)
+from imports.departement d
+         join stats.monthly_bucket m on true
+         left join resultats i
+                   on i.modified_at <= last_day
+                       and i.departement_code = d.code
+group by first_day, d.code;
+
+create view stats_locales_evolution_resultat_indicateur_personnalise
+as
+select *
+from stats.locales_evolution_resultat_indicateur_personnalise;
+
+
+create materialized view stats.locales_evolution_resultat_indicateur_referentiel
+as
+with resultats as (select collectivite_id,
+                          region_code,
+                          departement_code,
+                          modified_at
+                   from indicateur_resultat
+                            join stats.collectivite using (collectivite_id))
+select first_day         as mois,
+       null:: varchar(2) as code_region,
+       null::varchar(2)  as code_departement,
+       count(i)          as indicateurs
+from stats.monthly_bucket m
+         left join resultats i on i.modified_at <= last_day
+group by first_day
+
+union all
+
+select first_day,
+       r.code,
+       null,
+       count(i)
+from imports.region r
+         join stats.monthly_bucket m on true
+         left join resultats i
+                   on i.modified_at <= last_day
+                       and i.region_code = r.code
+group by first_day, r.code
+
+union all
+
+select first_day,
+       null,
+       d.code,
+       count(i)
+from imports.departement d
+         join stats.monthly_bucket m on true
+         left join resultats i
+                   on i.modified_at <= last_day
+                       and i.departement_code = d.code
+group by first_day, d.code;
+
+create view stats_locales_evolution_resultat_indicateur_referentiel
+as
+select *
+from stats.locales_evolution_resultat_indicateur_referentiel;
+
 
 create function
     stats.refresh_stats_locales()
@@ -475,6 +621,9 @@ begin
     refresh materialized view stats.locales_evolution_collectivite_avec_minimum_fiches;
     refresh materialized view stats.locales_engagement_collectivite;
     refresh materialized view stats.locales_labellisation_par_niveau;
+    refresh materialized view stats.locales_evolution_indicateur_referentiel;
+    refresh materialized view stats.locales_evolution_resultat_indicateur_personnalise;
+    refresh materialized view  stats.locales_evolution_resultat_indicateur_referentiel;
 end
 $$ language plpgsql;
 comment on function stats.refresh_stats_locales is
