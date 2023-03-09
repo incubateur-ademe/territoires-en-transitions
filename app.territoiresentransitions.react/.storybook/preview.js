@@ -10,8 +10,7 @@ import {defaults} from 'react-chartjs-2';
 defaults.font = {...defaults.font, family: 'Marianne', size: 14};
 
 // charge les styles de l'appli
-import '../src/css/tailwind.css';
-import '../src/css/app.css';
+import '../src/css';
 
 // pour faire fonctionner storybook avec react-router
 addDecorator(StoryRouter());
