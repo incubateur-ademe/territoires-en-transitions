@@ -4,6 +4,7 @@ import useSWR from 'swr';
 import {ResponsiveWaffle} from '@nivo/waffle';
 import {supabase} from '../initSupabase';
 import {bottomLegend, theme} from './shared';
+import {addLocalFilters} from './utils';
 
 function useCollectiviteActivesEtTotalParType(
   codeRegion: string,
@@ -15,14 +16,7 @@ function useCollectiviteActivesEtTotalParType(
       let select = supabase
         .from('stats_locales_collectivite_actives_et_total_par_type')
         .select();
-
-      if (codeDepartement) {
-        select = select.eq('code_departement', codeDepartement);
-      } else if (codeRegion) {
-        select = select.eq('code_region', codeRegion);
-      } else {
-        select = select.is('code_region', null).is('code_departement', null);
-      }
+      select = addLocalFilters(select, codeDepartement, codeRegion);
 
       const {data, error} = await select;
 

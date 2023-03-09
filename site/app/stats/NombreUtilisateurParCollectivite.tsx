@@ -14,6 +14,7 @@ import {
 } from './shared';
 import {SliceTooltip} from './SliceTooltip';
 import {ChartHead} from './headings';
+import {addLocalFilters} from './utils';
 
 function useNombreUtilisateurParCollectivite(
   codeRegion: string,
@@ -27,13 +28,7 @@ function useNombreUtilisateurParCollectivite(
         .select()
         .gte('mois', fromMonth);
 
-      if (codeDepartement) {
-        select = select.eq('code_departement', codeDepartement);
-      } else if (codeRegion) {
-        select = select.eq('code_region', codeRegion);
-      } else {
-        select = select.is('code_region', null).is('code_departement', null);
-      }
+      select = addLocalFilters(select, codeDepartement, codeRegion);
 
       const {data, error} = await select;
 
