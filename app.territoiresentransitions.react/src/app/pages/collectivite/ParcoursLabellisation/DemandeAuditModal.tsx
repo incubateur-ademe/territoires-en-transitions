@@ -1,5 +1,6 @@
 import Dialog from '@material-ui/core/Dialog';
 import {useState} from 'react';
+import classNames from 'classnames';
 import {CloseDialogButton} from 'ui/shared/CloseDialogButton';
 import {TSujetDemande} from './types';
 import {useEnvoiDemande} from './useEnvoiDemande';
@@ -31,7 +32,7 @@ export const DemandeAuditModal = (props: TDemandeLabellisationModalProps) => {
   // car le critère fichier n'est pas atteint
   const aide =
     !labellisable && !preuves?.length ? (
-      <p className="fr-text--sm fr-mt-2w">
+      <p className="fr-text--sm">
         * Pour passer en CNL penser à joindre les documents de labellisation.
       </p>
     ) : null;
@@ -57,53 +58,53 @@ export const DemandeAuditModal = (props: TDemandeLabellisationModalProps) => {
           ) : null}
           {status === 'non_demandee' && !isLoading ? (
             <fieldset className="fr-fieldset">
-              <legend className="fr-fieldset__legend fr-text--regular">
+              <legend className="fr-fieldset__legend fr-fieldset__legend--regular">
                 Quel type d’audit souhaitez-vous demander ?
               </legend>
-              <div className="fr-radio-group fr-radio-group--sm fr-mb-4w">
-                <RadioButton value="cot" sujet={sujet} setSujet={setSujet}>
-                  Audit COT <b>sans</b> labellisation
-                </RadioButton>
-                <RadioButton
-                  disabled={!labellisable}
-                  value="labellisation_cot"
-                  sujet={sujet}
-                  setSujet={setSujet}
+              <RadioButton value="cot" sujet={sujet} setSujet={setSujet}>
+                Audit COT <b>sans</b> labellisation
+              </RadioButton>
+              <RadioButton
+                disabled={!labellisable}
+                value="labellisation_cot"
+                sujet={sujet}
+                setSujet={setSujet}
+              >
+                Audit COT <b>avec</b> labellisation{asterique}
+              </RadioButton>
+              <RadioButton
+                disabled={!labellisable}
+                value="labellisation"
+                sujet={sujet}
+                setSujet={setSujet}
+              >
+                Audit <b>de</b> labellisation{asterique}
+              </RadioButton>
+              {aide}
+              <div className={classNames({'fr-mt-2w': !aide})}>
+                <button
+                  className="fr-btn"
+                  data-test="EnvoyerDemandeBtn"
+                  disabled={!sujet}
+                  onClick={() =>
+                    sujet &&
+                    envoiDemande({
+                      collectivite_id,
+                      etoiles: etoiles || null,
+                      referentiel,
+                      sujet,
+                    })
+                  }
                 >
-                  Audit COT <b>avec</b> labellisation{asterique}
-                </RadioButton>
-                <RadioButton
-                  disabled={!labellisable}
-                  value="labellisation"
-                  sujet={sujet}
-                  setSujet={setSujet}
+                  Envoyer ma demande
+                </button>
+                <button
+                  className="fr-btn fr-btn--secondary fr-ml-4w"
+                  onClick={onClose}
                 >
-                  Audit <b>de</b> labellisation{asterique}
-                </RadioButton>
-                {aide}
+                  Annuler
+                </button>
               </div>
-              <button
-                className="fr-btn"
-                data-test="EnvoyerDemandeBtn"
-                disabled={!sujet}
-                onClick={() =>
-                  sujet &&
-                  envoiDemande({
-                    collectivite_id,
-                    etoiles: etoiles || null,
-                    referentiel,
-                    sujet,
-                  })
-                }
-              >
-                Envoyer ma demande
-              </button>
-              <button
-                className="fr-btn fr-btn--secondary fr-ml-4w"
-                onClick={onClose}
-              >
-                Annuler
-              </button>
             </fieldset>
           ) : null}
         </div>
@@ -125,17 +126,19 @@ const RadioButton = ({
   sujet: TSujetDemande | null;
   setSujet: (value: TSujetDemande) => void;
 }) => (
-  <>
-    <input
-      type="radio"
-      id={value}
-      disabled={disabled}
-      value={value}
-      checked={sujet === value}
-      onChange={() => setSujet(value)}
-    />
-    <label className="fr-label" htmlFor={value}>
-      <span>{children}</span>
-    </label>
-  </>
+  <div className="fr-fieldset__element">
+    <div className="fr-radio-group">
+      <input
+        type="radio"
+        id={value}
+        disabled={disabled}
+        value={value}
+        checked={sujet === value}
+        onChange={() => setSujet(value)}
+      />
+      <label className="fr-label" htmlFor={value}>
+        <span>{children}</span>
+      </label>
+    </div>
+  </div>
 );
