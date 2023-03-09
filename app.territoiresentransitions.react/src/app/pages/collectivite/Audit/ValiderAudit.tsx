@@ -57,7 +57,7 @@ export const ValiderAuditModal = (props: RenderProps & TValiderAuditProps) => {
           ))}
         </div>
       ) : null}
-      <p className="fr-mt-4w">
+      <p className="fr-mt-2w">
         {demande_id ? auditLabellisation : auditSansLabellisation}
       </p>
       <div className="flex">

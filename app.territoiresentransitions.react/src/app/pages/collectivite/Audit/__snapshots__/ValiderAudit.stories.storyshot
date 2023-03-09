@@ -24,7 +24,7 @@ exports[`Storyshots app/pages/collectivite/Audit/ValiderAudit Audit Labellisatio
     Ajouter le rapport d'audit
   </button>
   <p
-    className="fr-mt-4w"
+    className="fr-mt-2w"
   >
     Suite à cette validation, plus aucune modification ne sera possible dans le cadre de l’audit et le secrétariat de la Commission nationale du label (CNL) sera notifié pour réceptionner le dossier de candidature complet et le transmettre aux membres de la CNL.
   </p>
@@ -73,7 +73,7 @@ exports[`Storyshots app/pages/collectivite/Audit/ValiderAudit Audit Sans Labelli
     Ajouter le rapport d'audit
   </button>
   <p
-    className="fr-mt-4w"
+    className="fr-mt-2w"
   >
     Suite à cette validation, et après vérification par l'équipe Territoires en Transitions, un nouveau cycle va démarrer avec le score validé par l'audit.
   </p>
