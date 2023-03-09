@@ -5,37 +5,53 @@ import {ResponsivePie} from '@nivo/pie';
 import {supabase} from '../initSupabase';
 import {bottomLegend, colors, theme} from './shared';
 
-export function useTrancheCompletude() {
-  return useSWR('stats_locales_tranche_completude', async () => {
-    const {data, error} = await supabase
-      .from('stats_locales_tranche_completude')
-      .select()
-      .gt('lower_bound', 0)
-      .order('lower_bound', {ascending: false})
-      // stats nationales
-      .is('code_region', null)
-      .is('code_departement', null);
-    if (error) {
-      throw new Error('stats_tranche_completude');
+export function useTrancheCompletude(
+  codeRegion: string,
+  codeDepartement: string
+) {
+  return useSWR(
+    `stats_locales_tranche_completude-${codeRegion}-${codeDepartement}`,
+    async () => {
+      let select = supabase
+        .from('stats_locales_tranche_completude')
+        .select()
+        .gt('lower_bound', 0)
+        .order('lower_bound', {ascending: false});
+
+      if (codeDepartement) {
+        select = select.eq('code_departement', codeDepartement);
+      } else if (codeRegion) {
+        select = select.eq('code_region', codeRegion);
+      } else {
+        select = select.is('code_region', null).is('code_departement', null);
+      }
+
+      const {data, error} = await select;
+
+      if (error) {
+        throw new Error('stats_tranche_completude');
+      }
+      if (!data || !data.length) {
+        return null;
+      }
+      return {
+        tranches: data.map(d => {
+          return {
+            id: d.lower_bound,
+            label:
+              d.lower_bound +
+              `${d.upper_bound ? '-' + d.upper_bound : ''}` +
+              '%',
+            eci: d.eci,
+            cae: d.cae,
+          };
+        }),
+        inities: getSum(data),
+        termines: getSum(data.filter(d => d.lower_bound === 100)),
+        presqueTermines: getSum(data.filter(d => d.lower_bound >= 80)),
+      };
     }
-    if (!data) {
-      return null;
-    }
-    return {
-      tranches: data.map(d => {
-        return {
-          id: d.lower_bound,
-          label:
-            d.lower_bound + `${d.upper_bound ? '-' + d.upper_bound : ''}` + '%',
-          eci: d.eci,
-          cae: d.cae,
-        };
-      }),
-      inities: getSum(data),
-      termines: getSum(data.filter(d => d.lower_bound === 100)),
-      presqueTermines: getSum(data.filter(d => d.lower_bound >= 80)),
-    };
-  });
+  );
 }
 
 // somme des compteurs par référentiel pour calculer les décomptes
@@ -43,14 +59,16 @@ export function useTrancheCompletude() {
 const getSum = (data: Array<{cae: number; eci: number}>) =>
   data.reduce((cnt, d) => cnt + d.cae + d.eci, 0);
 
-type Props = {referentiel: 'eci' | 'cae'};
+type Props = {referentiel: 'eci' | 'cae'; region?: string; department?: string};
 
-export default function TrancheCompletude(props: Props) {
-  const {data} = useTrancheCompletude();
+export default function TrancheCompletude({
+  referentiel,
+  region = '',
+  department = '',
+}: Props) {
+  const {data} = useTrancheCompletude(region, department);
 
-  if (!data) {
-    return null;
-  }
+  if (!data) return null;
 
   return (
     <div style={{height: 300}}>
@@ -58,7 +76,7 @@ export default function TrancheCompletude(props: Props) {
         colors={['#21AB8E', '#34BAB5', '#FFCA00', '#FFB7AE', '#FF732C']}
         theme={theme}
         data={data.tranches}
-        value={props.referentiel}
+        value={referentiel}
         margin={{top: 40, right: 85, bottom: 25, left: 85}}
         innerRadius={0.5}
         padAngle={0.7}
@@ -81,6 +99,7 @@ export default function TrancheCompletude(props: Props) {
           modifiers: [['darker', 2]],
         }}
         tooltip={() => null}
+        animate={false}
       />
     </div>
   );
