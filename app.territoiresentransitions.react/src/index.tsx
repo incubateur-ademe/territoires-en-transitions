@@ -4,9 +4,7 @@ import {defaults} from 'react-chartjs-2';
 import {App} from 'app/App';
 import reportWebVitals from './reportWebVitals';
 
-import 'css/tailwind.css';
-import 'app/static/_app/assets/css/dsfr.css';
-import 'css/app.css';
+import 'css';
 
 // typo par défaut pour les graphiques
 defaults.font = {...defaults.font, family: 'Marianne', size: 14};
