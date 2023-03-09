@@ -2,7 +2,7 @@
 
 exports[`Storyshots app/Layout/Header Connected 1`] = `
 <header
-  className="header fr-header "
+  className="header fr-header"
   role="banner"
 >
   <div
@@ -32,16 +32,21 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
                 française
               </p>
             </div>
-          </div>
-          <div
-            className="fr-header__ademe shrink-0"
-          >
-            <img
-              alt="logo ADEME"
-              className="h-20"
-              loading="lazy"
-              src="ademe.jpg"
-            />
+            <div
+              className="fr-header__operator !shrink-0 fr-mr-2w fr-ml-n2w"
+            >
+              <a
+                href="/"
+                title="Accueil"
+              >
+                <img
+                  alt="logo ADEME"
+                  className="h-20"
+                  loading="lazy"
+                  src="ademe.jpg"
+                />
+              </a>
+            </div>
           </div>
           <div
             className="fr-header__service"
@@ -57,7 +62,7 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
               </p>
             </a>
             <p
-              className="text-sm"
+              className="fr-header__service-tagline"
             >
               Accompagner la transition écologique des collectivités
             </p>
@@ -70,17 +75,17 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
             className="fr-header__tools-links"
           >
             <ul
-              className="fr-links-group"
+              className="fr-btns-group"
             >
               <a
-                className="fr-link"
+                className="fr-btn"
                 href="/toutes_collectivites"
                 onClick={[Function]}
               >
                 Collectivités engagées
               </a>
               <a
-                className="fr-link"
+                className="fr-btn"
                 data-test="help"
                 href="https://aide.territoiresentransitions.fr/fr/"
                 onClick={[Function]}
@@ -100,7 +105,7 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
                 onPointerDown={[Function]}
               >
                 <button
-                  className="fr-link"
+                  className="fr-btn"
                   data-test="connectedMenu"
                   style={
                     Object {
@@ -256,7 +261,7 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
 
 exports[`Storyshots app/Layout/Header Not Connected 1`] = `
 <header
-  className="header fr-header "
+  className="header fr-header"
   role="banner"
 >
   <div
@@ -286,16 +291,21 @@ exports[`Storyshots app/Layout/Header Not Connected 1`] = `
                 française
               </p>
             </div>
-          </div>
-          <div
-            className="fr-header__ademe shrink-0"
-          >
-            <img
-              alt="logo ADEME"
-              className="h-20"
-              loading="lazy"
-              src="ademe.jpg"
-            />
+            <div
+              className="fr-header__operator !shrink-0 fr-mr-2w fr-ml-n2w"
+            >
+              <a
+                href="/"
+                title="Accueil"
+              >
+                <img
+                  alt="logo ADEME"
+                  className="h-20"
+                  loading="lazy"
+                  src="ademe.jpg"
+                />
+              </a>
+            </div>
           </div>
           <div
             className="fr-header__service"
@@ -311,7 +321,7 @@ exports[`Storyshots app/Layout/Header Not Connected 1`] = `
               </p>
             </a>
             <p
-              className="text-sm"
+              className="fr-header__service-tagline"
             >
               Accompagner la transition écologique des collectivités
             </p>
@@ -324,10 +334,10 @@ exports[`Storyshots app/Layout/Header Not Connected 1`] = `
             className="fr-header__tools-links"
           >
             <ul
-              className="fr-links-group"
+              className="fr-btns-group"
             >
               <a
-                className="fr-link"
+                className="fr-btn"
                 data-test="help"
                 href="https://aide.territoiresentransitions.fr/fr/"
                 onClick={[Function]}
@@ -340,7 +350,7 @@ exports[`Storyshots app/Layout/Header Not Connected 1`] = `
                 Aide
               </a>
               <a
-                className="fr-link"
+                className="fr-btn"
                 data-test="signup"
                 href="/auth/signup"
                 onClick={[Function]}
@@ -351,7 +361,7 @@ exports[`Storyshots app/Layout/Header Not Connected 1`] = `
                 Créer un compte
               </a>
               <a
-                className="fr-link"
+                className="fr-btn"
                 data-test="signin"
                 href="/auth/signin"
                 onClick={[Function]}

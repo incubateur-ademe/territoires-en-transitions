@@ -13,9 +13,9 @@ const HeaderNavigation = ({auth}: Props) => {
   return (
     <div className="fr-header__tools hidden lg:block">
       <div className="fr-header__tools-links">
-        <ul className="fr-links-group">
+        <ul className="fr-btns-group">
           {isConnected && (
-            <Link to={allCollectivitesPath} className="fr-link">
+            <Link to={allCollectivitesPath} className="fr-btn">
               Collectivités engagées
             </Link>
           )}
@@ -24,11 +24,11 @@ const HeaderNavigation = ({auth}: Props) => {
             <HeaderNavigationProfileDropdown user={user} auth={auth} />
           ) : (
             <>
-              <Link data-test="signup" className="fr-link" to={signUpPath}>
+              <Link data-test="signup" className="fr-btn" to={signUpPath}>
                 <div className="fr-fi-add-line mr-2" />
                 Créer un compte
               </Link>
-              <Link data-test="signin" className="fr-link" to={signInPath}>
+              <Link data-test="signin" className="fr-btn" to={signInPath}>
                 <div className="fr-fi-account-line mr-2" />
                 Se connecter
               </Link>
