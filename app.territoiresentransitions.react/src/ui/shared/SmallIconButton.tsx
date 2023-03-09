@@ -37,7 +37,7 @@ export const ButtonComment = ({
   ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
   <SmallIconButton
-    className={classNames('fr-fi-chat-quote-line', className)}
+    className={classNames('fr-icon-quote-line', className)}
     {...props}
   />
 );

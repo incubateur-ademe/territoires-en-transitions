@@ -12,7 +12,7 @@ const FicheActionHeader = ({fiche}: TFicheActionHeader) => {
         {/* <div className="flex items-center gap-4">
           <div className="border border-gray-300">
             <button className="p-2">
-              <div className="fr-fi-chat-quote-line" />
+              <div className="fr-icon-quote-line" />
             </button>
           </div>
         </div> */}

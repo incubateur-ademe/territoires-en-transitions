@@ -61,7 +61,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Message Av
                 title="Renommer"
               />
               <button
-                className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line"
+                className="ml-1 px-1 w-7 text-sm inline-block text-center fr-icon-quote-line"
                 onClick={[Function]}
                 title="Décrire"
               />
@@ -228,7 +228,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
                   title="Renommer"
                 />
                 <button
-                  className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line"
+                  className="ml-1 px-1 w-7 text-sm inline-block text-center fr-icon-quote-line"
                   onClick={[Function]}
                   title="Décrire"
                 />
@@ -325,7 +325,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
                 className="invisible group-hover:visible"
               >
                 <button
-                  className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line"
+                  className="ml-1 px-1 w-7 text-sm inline-block text-center fr-icon-quote-line"
                   onClick={[Function]}
                   title="Décrire"
                 />
@@ -404,7 +404,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
                 className="invisible group-hover:visible"
               >
                 <button
-                  className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line"
+                  className="ml-1 px-1 w-7 text-sm inline-block text-center fr-icon-quote-line"
                   onClick={[Function]}
                   title="Décrire"
                 />
@@ -500,7 +500,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
                 title="Renommer"
               />
               <button
-                className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line"
+                className="ml-1 px-1 w-7 text-sm inline-block text-center fr-icon-quote-line"
                 onClick={[Function]}
                 title="Décrire"
               />
@@ -562,7 +562,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
               className="invisible group-hover:visible"
             >
               <button
-                className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line"
+                className="ml-1 px-1 w-7 text-sm inline-block text-center fr-icon-quote-line"
                 onClick={[Function]}
                 title="Décrire"
               />
@@ -749,7 +749,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
                   title="Renommer"
                 />
                 <button
-                  className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line"
+                  className="ml-1 px-1 w-7 text-sm inline-block text-center fr-icon-quote-line"
                   onClick={[Function]}
                   title="Décrire"
                 />
@@ -846,7 +846,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
                 className="invisible group-hover:visible"
               >
                 <button
-                  className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line"
+                  className="ml-1 px-1 w-7 text-sm inline-block text-center fr-icon-quote-line"
                   onClick={[Function]}
                   title="Décrire"
                 />
@@ -925,7 +925,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
                 className="invisible group-hover:visible"
               >
                 <button
-                  className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-chat-quote-line"
+                  className="ml-1 px-1 w-7 text-sm inline-block text-center fr-icon-quote-line"
                   onClick={[Function]}
                   title="Décrire"
                 />
