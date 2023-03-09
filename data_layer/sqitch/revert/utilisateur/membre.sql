@@ -1,52 +1,37 @@
--- Revert tet:utilisateur/membre from pg
+-- Deploy tet:utilisateur/membre to pg
 
 BEGIN;
 
-drop table if exists test.private_collectivite_membre;
-
-drop table private_collectivite_membre;
-drop function collectivite_membres;
-drop function update_collectivite_membre_details_fonction;
-drop function update_collectivite_membre_fonction;
-drop function update_collectivite_membre_champ_intervention;
-drop function update_collectivite_membre_niveau_acces;
-drop function remove_membre_from_collectivite;
-drop type membre_fonction;
-
--- restore previous version
-create or replace function remove_user_from_collectivite(
-    collectivite_id integer,
-    user_id uuid
-) returns json as
+create or replace function update_collectivite_membre_niveau_acces(collectivite_id integer, membre_id uuid, niveau_acces niveau_acces)
+    returns json
+as
 $$
 declare
-    can_remove bool;
+    invitation_id uuid;
 begin
-    select is_referent_of(collectivite_id) or is_service_role() into can_remove;
-
-    if not can_remove
+    if have_admin_acces(update_collectivite_membre_niveau_acces.collectivite_id)
     then
-        -- current user cannot remove anyone
-        -- return an error with a reason
-        perform set_config('response.status', '401', true);
-        return json_build_object('message', 'Vous n''avez pas le droit de retirer des droits pour cette collectivité.');
+        if membre_id in (select user_id
+                         from private_collectivite_membre pcm
+                         where pcm.collectivite_id = update_collectivite_membre_niveau_acces.collectivite_id)
+        then
+            update private_utilisateur_droit
+            set niveau_acces = update_collectivite_membre_niveau_acces.niveau_acces,
+                modified_at  = now()
+            where user_id = membre_id
+              and private_utilisateur_droit.collectivite_id = update_collectivite_membre_niveau_acces.collectivite_id;
+        else
+            return json_build_object('error', 'Cet utilisateur n''est pas membre de la collectivité.');
+        end if;
+        return json_build_object('message', 'Le niveau d''acces du membre a été mise à jour.');
     else
-        -- deactivate the droits
-        update private_utilisateur_droit d
-        set active      = false,
-            modified_at = now()
-        where d.collectivite_id = remove_user_from_collectivite.collectivite_id
-          and d.user_id = remove_user_from_collectivite.user_id;
-
-        -- return success with a message
-        perform set_config('response.status', '200', true);
-        return json_build_object('message', 'Les droits on étés retirés à l''utilisateur.');
+        perform set_config('response.status', '401', true);
+        return json_build_object('error',
+                                 'Vous n''avez pas les droits admin, vous ne pouvez pas éditer le niveau d''acces de ce membre.');
     end if;
 end
 $$ language plpgsql security definer;
-comment on function remove_user_from_collectivite is
-    'Removes a user from a Collectivité: '
-        'Will succeed with a code 200 if user have a droit on this collectivité.'
-        'Otherwise it will fail wit a code 40x.';
+comment on function update_collectivite_membre_niveau_acces is
+    'Met à jour le niveau d''acces d''un membre si l''utilisateur connecté est admin';
 
 COMMIT;
