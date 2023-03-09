@@ -28,8 +28,8 @@ export const Accordion = (props: TAccordionProps) => {
           aria-expanded={expanded}
           onClick={() => toggle()}
         >
+          <i className="fr-fi-information-fill text-[#0063cb] fr-mr-3v" />
           {titre}
-          <i className="fr-fi-information-fill fr-text-default--info fr-mr-3v" />
         </button>
       </h3>
       <div
