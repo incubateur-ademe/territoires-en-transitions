@@ -61,7 +61,7 @@ const SelectDate = ({setDate}: {setDate: (value: string) => void}) => {
 
   return (
     <fieldset className="fr-fieldset h-52" data-test="date-visite">
-      <label className="fr-label mb-2">
+      <label className="fr-label mb-2 fr-mr-2w">
         Date de la visite annuelle (obligatoire)
       </label>
       <div className="fr-input-wrap fr-fi-calendar-line max-w-min">
@@ -78,7 +78,7 @@ const SelectDate = ({setDate}: {setDate: (value: string) => void}) => {
       </div>
       <br />
       <button
-        className="fr-btn fr-mt-2w"
+        className="fr-btn fr-mt-2w fr-ml-2w"
         disabled={!isValid}
         onClick={() => value && setDate(value)}
       >
