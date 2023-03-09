@@ -7,7 +7,7 @@ export const DesactiverLesFiltres = (props: {onClick: () => void}) => {
         onClick={props.onClick}
         className="flex items-center text-bf500 hover:!bg-none"
       >
-        <span className="fr-fi-close-circle-fill mr-1 scale-90"></span>
+        <span className="fr-icon-close-circle-fill mr-1 scale-90"></span>
         <span className="text-sm">Désactiver tous les filtres</span>
       </button>
     </div>
