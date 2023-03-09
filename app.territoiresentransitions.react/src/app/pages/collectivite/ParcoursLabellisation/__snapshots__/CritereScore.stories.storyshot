@@ -3,7 +3,7 @@
 exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CritereScore Niveau 1 Atteint 1`] = `
 <ul>
   <li
-    className="fr-mb-1w"
+    className="fr-mt-2w fr-mb-1w"
   >
     Atteindre un score d’au moins 0 % d’actions réalisées et le prouver (via les documents preuves ou un texte justificatif)
   </li>
@@ -18,7 +18,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CritereScore Ni
 exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CritereScore Niveau 1 Non Atteint 1`] = `
 <ul>
   <li
-    className="fr-mb-1w"
+    className="fr-mt-2w fr-mb-1w"
   >
     Atteindre un score d’au moins 0 % d’actions réalisées et le prouver (via les documents preuves ou un texte justificatif)
   </li>
@@ -36,7 +36,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CritereScore Ni
 exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CritereScore Niveau Suivant Atteint 1`] = `
 <ul>
   <li
-    className="fr-mb-1w"
+    className="fr-mt-2w fr-mb-1w"
   >
     Atteindre un score d’au moins 35 % d’actions réalisées et le prouver (via les documents preuves ou un texte justificatif)
   </li>
@@ -51,7 +51,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CritereScore Ni
 exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CritereScore Niveau Suivant Non Atteint 1`] = `
 <ul>
   <li
-    className="fr-mb-1w"
+    className="fr-mt-2w fr-mb-1w"
   >
     Atteindre un score d’au moins 0 % d’actions réalisées et le prouver (via les documents preuves ou un texte justificatif)
   </li>
