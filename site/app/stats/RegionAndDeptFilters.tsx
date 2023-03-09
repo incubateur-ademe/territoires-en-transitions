@@ -6,14 +6,6 @@ import {useEffect, useRef, useState} from 'react';
 import {usePathname, useRouter} from 'next/navigation';
 import Select from '../Select';
 
-const usePrevious = (value: any) => {
-  const ref = useRef();
-  useEffect(() => {
-    ref.current = value;
-  }, [value]);
-  return ref.current;
-};
-
 /**
  * Toutes les régions.
  */
@@ -44,78 +36,82 @@ function useDepartment(regionCode: string) {
   });
 }
 
-const initState = (pathName: string, stateName: string): string => {
-  const pathArray = pathName.split('/');
-  if (pathArray.length === 4) {
-    if (
-      (pathArray[2] === 'region' && stateName === 'selectedRegion') ||
-      (pathArray[2] === 'departement' && stateName === 'selectedDepartment')
-    ) {
-      return pathArray[3];
-    }
-  }
-  return emptyString;
-};
-
 const emptyString = '';
 
 type RegionAndDeptFiltersProps = {
-  onChange: (title: string | null) => void;
+  onChange: (value: string | null) => void;
 };
 
 const RegionAndDeptFilters = ({onChange}: RegionAndDeptFiltersProps) => {
   const router = useRouter();
   const pathName = usePathname() ?? '';
 
-  const [selectedRegion, setSelectedRegion] = useState<string>(
-    initState(pathName, 'selectedRegion')
-  );
-  const [selectedDepartment, setSelectedDepartment] = useState<string>(
-    initState(pathName, 'selectedDepartment')
-  );
-
-  const prevSelectedDepartment = usePrevious(selectedDepartment);
+  const [selectedRegion, setSelectedRegion] = useState<string>(emptyString);
+  const [selectedDepartment, setSelectedDepartment] =
+    useState<string>(emptyString);
 
   const regions = useRegion().data;
   const departments = useDepartment(selectedRegion).data;
 
-  useEffect(() => {
-    if (!!selectedDepartment) {
-      onChange(
-        departments?.find(dept => dept.code === selectedDepartment)?.libelle ??
-          null
-      );
-    } else if (!!selectedRegion) {
-      onChange(
-        regions?.find(region => region.code === selectedRegion)?.libelle ?? null
-      );
-    }
-  });
+  const changeDepartmentName = () => {
+    const newDepartment = departments?.find(
+      dept => dept.code === selectedDepartment
+    );
+    onChange(newDepartment?.libelle ?? null);
+  };
+
+  const changeRegionName = () => {
+    const newRegion = regions?.find(region => region.code === selectedRegion);
+    onChange(newRegion?.libelle ?? null);
+  };
 
   useEffect(() => {
-    if (
-      selectedDepartment !== emptyString &&
-      selectedDepartment !== prevSelectedDepartment
-    ) {
-      onChange(
-        departments?.find(dept => dept.code === selectedDepartment)?.libelle ??
-          null
-      );
-      router.push(`/stats/departement/${selectedDepartment}`);
-    } else if (selectedRegion !== emptyString) {
+    // Mise à jour des states selectedDepartment et selectedRegion
+    // + du titre lors du changement d'url
+    const pathArray = pathName.split('/');
+
+    if (pathArray.length === 2 && pathArray[1] === 'stats') {
       setSelectedDepartment(emptyString);
-      onChange(
-        regions?.find(region => region.code === selectedRegion)?.libelle ?? null
-      );
-      router.push(`/stats/region/${selectedRegion}`);
-    } else if (
-      selectedRegion === emptyString &&
-      selectedDepartment === emptyString
-    ) {
+      setSelectedRegion(emptyString);
       onChange(null);
-      router.push('/stats');
+    } else if (pathArray.length === 4 && pathArray[1] === 'stats') {
+      if (pathArray[2] === 'region') {
+        setSelectedRegion(pathArray[3]);
+        setSelectedDepartment(emptyString);
+        changeRegionName();
+      } else if (pathArray[2] === 'departement') {
+        setSelectedDepartment(pathArray[3]);
+        changeDepartmentName();
+      }
     }
-  }, [selectedDepartment, selectedRegion]);
+  }, [pathName]);
+
+  useEffect(() => {
+    // Permet la mise à jour du titre quand l'url
+    // est mis à jour manuellement
+    if (selectedDepartment) changeDepartmentName();
+    else if (selectedRegion) changeRegionName();
+  }, [regions, departments]);
+
+  useEffect(() => {
+    // Redirige vers la nouvelle page stats quand
+    // selectedDepartment est modifié
+    if (!!selectedDepartment) {
+      router.push(`/stats/departement/${selectedDepartment}`);
+    } else {
+      if (!!selectedRegion) {
+        router.push(`/stats/region/${selectedRegion}`);
+      } else router.push(`/stats/`);
+    }
+  }, [selectedDepartment]);
+
+  useEffect(() => {
+    // Redirige vers la nouvelle page stats quand
+    // selectedRegion est modifié
+    if (!!selectedRegion) {
+      router.push(`/stats/region/${selectedRegion}`);
+    } else router.push(`/stats/`);
+  }, [selectedRegion]);
 
   if (!regions || !departments) return null;
 
@@ -158,6 +154,7 @@ const RegionAndDeptFilters = ({onChange}: RegionAndDeptFiltersProps) => {
       />
 
       <button
+        className="fr-btn fr-btn--secondary"
         onClick={() => {
           setSelectedRegion(emptyString);
           setSelectedDepartment(emptyString);
