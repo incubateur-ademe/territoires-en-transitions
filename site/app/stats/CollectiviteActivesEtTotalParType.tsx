@@ -16,6 +16,7 @@ function useCollectiviteActivesEtTotalParType(
       let select = supabase
         .from('stats_locales_collectivite_actives_et_total_par_type')
         .select();
+
       select = addLocalFilters(select, codeDepartement, codeRegion);
 
       const {data, error} = await select;

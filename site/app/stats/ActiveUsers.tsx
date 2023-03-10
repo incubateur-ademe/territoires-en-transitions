@@ -14,42 +14,57 @@ import {
   theme,
 } from './shared';
 import {SliceTooltip} from './SliceTooltip';
+import {addLocalFilters} from './utils';
 
-function useActiveUsers() {
-  return useSWR('stats_locales_evolution_utilisateur', async () => {
-    const {data, error} = await supabase
-      .from('stats_locales_evolution_utilisateur')
-      .select()
-      .gte('mois', fromMonth)
-      .is('code_region', null)
-      .is('code_departement', null);
-    if (error) {
-      throw new Error('stats_evolution_utilisateur');
+function useActiveUsers(codeRegion: string, codeDepartement: string) {
+  return useSWR(
+    `stats_locales_evolution_utilisateur-${codeRegion}-${codeDepartement}`,
+    async () => {
+      let select = supabase
+        .from('stats_locales_evolution_utilisateur')
+        .select()
+        .gte('mois', fromMonth);
+
+      select = addLocalFilters(select, codeDepartement, codeRegion);
+
+      const {data, error} = await select;
+
+      if (error) {
+        throw new Error('stats_evolution_utilisateur');
+      }
+      if (!data || !data.length) {
+        return null;
+      }
+      return {
+        precedent: data[data.length - 2],
+        courant: data[data.length - 1],
+        evolution: [
+          {
+            id: 'utilisateurs',
+            label: 'Nouveaux utilisateurs',
+            data: data.map(d => ({x: d.mois, y: d.utilisateurs})),
+          },
+          {
+            id: 'total_utilisateurs',
+            label: 'Total utilisateurs',
+            data: data.map(d => ({x: d.mois, y: d.total_utilisateurs})),
+          },
+        ],
+      };
     }
-    if (!data) {
-      return null;
-    }
-    return {
-      precedent: data[data.length - 2],
-      courant: data[data.length - 1],
-      evolution: [
-        {
-          id: 'utilisateurs',
-          label: 'Nouveaux utilisateurs',
-          data: data.map(d => ({x: d.mois, y: d.utilisateurs})),
-        },
-        {
-          id: 'total_utilisateurs',
-          label: 'Total utilisateurs',
-          data: data.map(d => ({x: d.mois, y: d.total_utilisateurs})),
-        },
-      ],
-    };
-  });
+  );
 }
 
-export default function ActiveUsers() {
-  const {data} = useActiveUsers();
+type ActiveUsersProps = {
+  region?: string;
+  department?: string;
+};
+
+export default function ActiveUsers({
+  region = '',
+  department = '',
+}: ActiveUsersProps) {
+  const {data} = useActiveUsers(region, department);
 
   if (!data) {
     return null;
@@ -103,6 +118,7 @@ export default function ActiveUsers() {
               itemWidth: 180,
             },
           ]}
+          animate={false}
         />
       </div>
     </div>

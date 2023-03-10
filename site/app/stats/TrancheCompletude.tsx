@@ -37,8 +37,8 @@ export function useTrancheCompletude(
               d.lower_bound +
               `${d.upper_bound ? '-' + d.upper_bound : ''}` +
               '%',
-            eci: d.eci,
-            cae: d.cae,
+            eci: d.eci ?? 0,
+            cae: d.cae ?? 0,
           };
         }),
         inities: getSum(data),
@@ -63,9 +63,24 @@ export default function TrancheCompletude({
   region = '',
   department = '',
 }: Props) {
-  const {data} = useTrancheCompletude(region, department);
+  let {data} = useTrancheCompletude(region, department);
 
   if (!data) return null;
+
+  if (
+    (referentiel === 'eci' &&
+      !data.tranches.filter(tr => tr.eci !== 0).length) ||
+    (referentiel === 'cae' && !data.tranches.filter(tr => tr.cae !== 0).length)
+  ) {
+    data.tranches = [
+      {
+        id: 1,
+        label: 'NA',
+        eci: 1,
+        cae: 1,
+      },
+    ];
+  }
 
   return (
     <div style={{height: 300}}>
@@ -97,6 +112,7 @@ export default function TrancheCompletude({
         }}
         tooltip={() => null}
         animate={false}
+        enableArcLabels={!data.tranches.filter(tr => tr.label === 'NA').length}
       />
     </div>
   );
