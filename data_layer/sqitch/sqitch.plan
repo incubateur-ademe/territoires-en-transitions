@@ -250,3 +250,8 @@ retool/usage 2023-03-03T16:11:19Z Amandine Jacquelin <conta@LanceLibre> # Ajout 
 @v2.8.0 2023-03-09T15:33:43Z Florian <florian@derfurth.com> # Vues retool
 
 utilisateur/membre [utilisateur/membre@v2.7.0] 2023-03-09T14:42:30Z Florian <florian@derfurth.com> # Permet de changer les droits utilisateurs en l'absence de membre.
+collectivite/collectivite [collectivite/collectivite@v2.8.0] 2023-03-10T08:41:38Z Florian <florian@derfurth.com> # Ajout booléen accès limité
+plan_action/plan_action [plan_action/plan_action@v2.8.0] 2023-03-10T08:36:15Z Florian <florian@derfurth.com> # Prépare le rebase
+collectivite/mes_collectivites_v2 [collectivite/mes_collectivites_v2@v2.8.0] 2023-03-10T08:38:49Z Florian <florian@derfurth.com> # Ajoute acces_restreint à collectivite_niveau_acces
+indicateur/personnalise [indicateur/personnalise@v2.8.0] 2023-03-10T08:39:46Z Florian <florian@derfurth.com> # Change les droits pour inserer acces_restreint de collectivite
+indicateur/referentiel [indicateur/referentiel@v2.8.0] 2023-03-10T08:40:53Z Florian <florian@derfurth.com> # Change les droits pour inserer acces_restreint de collectivite

@@ -1,10 +1,18 @@
--- Revert tet:indicateur/referentiel from pg
+-- Deploy tet:indicateur/referentiel to pg
+-- requires: referentiel/contenu
 
 BEGIN;
 
-drop table indicateur_commentaire;
-drop table indicateur_objectif;
-drop table indicateur_resultat;
-drop table abstract_any_indicateur_value;
+alter policy allow_read
+    on indicateur_resultat
+    using (is_authenticated());
+
+alter policy allow_read
+    on indicateur_objectif
+    using (is_authenticated());
+
+alter policy allow_read
+    on indicateur_commentaire
+    using (is_authenticated());
 
 COMMIT;

@@ -2,63 +2,44 @@
 
 BEGIN;
 
-drop function filter_fiches_action;
-
-create or replace function
-    filter_fiches_action(
-    collectivite_id integer,
-    axes_id integer[] default null,
-    pilotes personne[] default null,
-    niveaux_priorite fiche_action_niveaux_priorite[] default null,
-    statuts fiche_action_statuts[] default null,
-    referents personne[] default null
-)
-    returns setof fiches_action
-as
-$$
-    # variable_conflict use_variable
+create function peut_lire_la_fiche(fiche_id integer) returns boolean as $$
 begin
-    return query
-        select *
-        from fiches_action fa
-        where fa.collectivite_id = collectivite_id
-          and case
-                  when axes_id is null then true
-                  else fa.id in (with child as (select unnest(array_append(a.descendants, a.axe_id)) as axe_id
-                                                from axe_descendants a
-                                                where a.descendants && (axes_id::integer[])
-                                                   or a.axe_id in (select * from unnest(axes_id::integer[])))
-                                 select fiche_id
-                                 from child
-                                          join fiche_action_axe using (axe_id))
-            end
-          and case
-                  when pilotes is null then true
-                  else fa.id in
-                       (select fap.fiche_id
-                        from fiche_action_pilote fap
-                        where fap.tag_id in (select (pi::personne).tag_id from unnest(pilotes) pi)
-                        or fap.user_id in (select (pi::personne).user_id from unnest(pilotes) pi))
-            end
-          and case
-                  when referents is null then true
-                  else fa.id in
-                       (select far.fiche_id
-                        from fiche_action_referent far
-                        where far.tag_id in (select (re::personne).tag_id from unnest(referents) re)
-                        or far.user_id in (select (re::personne).user_id from unnest(referents) re))
-            end
-          and case
-                  when niveaux_priorite is null then true
-                  else fa.niveau_priorite in (select * from unnest(niveaux_priorite::fiche_action_niveaux_priorite[]))
-            end
-          and case
-                  when statuts is null then true
-                  else fa.statut in (select * from unnest(statuts::fiche_action_statuts[]))
-            end;
+    return have_lecture_access_with_restreint((select fa.collectivite_id from fiche_action fa where fa.id = fiche_id limit 1));
 end;
-$$ language plpgsql;
-comment on function filter_fiches_action is
-    'Filtre la vue pour le client.';
+$$language plpgsql;
+
+-- fiche_action
+alter policy allow_read on fiche_action using(peut_lire_la_fiche(id));
+-- axe
+alter policy allow_read on axe using(have_lecture_access_with_restreint(collectivite_id));
+alter policy allow_read on fiche_action_axe using(peut_lire_la_fiche(fiche_id));
+-- financeur
+alter policy allow_read on financeur_tag using(have_lecture_access_with_restreint(collectivite_id));
+alter policy allow_read on fiche_action_financeur_tag using(peut_lire_la_fiche(fiche_id));
+-- service
+alter policy allow_read on service_tag using(have_lecture_access_with_restreint(collectivite_id));
+alter policy allow_read on fiche_action_service_tag using(peut_lire_la_fiche(fiche_id));
+-- partenaire
+alter policy allow_read on partenaire_tag using(have_lecture_access_with_restreint(collectivite_id));
+alter policy allow_read on fiche_action_partenaire_tag using(peut_lire_la_fiche(fiche_id));
+-- pilote
+alter policy allow_read on personne_tag using(have_lecture_access_with_restreint(collectivite_id));
+alter policy allow_read on fiche_action_pilote using(peut_lire_la_fiche(fiche_id));
+-- referent
+alter policy allow_read on fiche_action_referent using(peut_lire_la_fiche(fiche_id));
+-- thematique
+alter policy allow_read on fiche_action_thematique using(peut_lire_la_fiche(fiche_id));
+-- sous-thematique
+alter policy allow_read on fiche_action_sous_thematique using(peut_lire_la_fiche(fiche_id));
+-- structure
+alter policy allow_read on structure_tag using(have_lecture_access_with_restreint(collectivite_id));
+alter policy allow_read on fiche_action_structure_tag using(peut_lire_la_fiche(fiche_id));
+-- annexe
+alter policy allow_read on annexe using(have_lecture_access_with_restreint(collectivite_id));
+alter policy allow_read on fiche_action_annexe using(peut_lire_la_fiche(fiche_id));
+-- indicateur
+alter policy allow_read on fiche_action_indicateur using(peut_lire_la_fiche(fiche_id));
+-- action
+alter policy allow_read on fiche_action_action using(peut_lire_la_fiche(fiche_id));
 
 COMMIT;
