@@ -1,75 +1,41 @@
 -- Deploy tet:plan_action to pg
 
 BEGIN;
-drop function filter_fiches_action;
 
-create function
-    filter_fiches_action(
-    collectivite_id integer,
-    axe_id integer default null,
-    pilote_tag_id integer default null,
-    pilote_user_id uuid default null,
-    niveau_priorite fiche_action_niveaux_priorite default null,
-    statut fiche_action_statuts default null,
-    referent_tag_id integer default null,
-    referent_user_id uuid default null
-)
-    returns setof fiches_action
-as
-$$
-    # variable_conflict use_variable
-begin
-    return query
-        select *
-        from fiches_action fa
-        where fa.collectivite_id = collectivite_id
-          and case
-                  when axe_id is null then true
-                  else fa.id in (with child as (select unnest(descendants) as axe_id
-                                                from axe_descendants a
-                                                where axe_id = any (a.descendants)
-                                                   or axe_id = a.axe_id)
-                                 select fiche_id
-                                 from child
-                                          join fiche_action_axe using (axe_id))
-            end
-          and case
-                  when pilote_tag_id is null then true
-                  else fa.id in
-                       (select fap.fiche_id
-                        from fiche_action_pilote fap
-                                 join personne_tag pt on fap.tag_id = pt.id
-                        where pt.id = pilote_tag_id)
-            end
-          and case
-                  when pilote_user_id is null then true
-                  else fa.id in
-                       (select fap.fiche_id from fiche_action_pilote fap where fap.user_id = pilote_user_id)
-            end
-          and case
-                  when referent_tag_id is null then true
-                  else fa.id in
-                       (select far.fiche_id
-                        from fiche_action_referent far
-                                 join personne_tag pt on far.tag_id = pt.id
-                        where pt.id = referent_tag_id)
-            end
-          and case
-                  when referent_user_id is null then true
-                  else fa.id in
-                       (select far.fiche_id from fiche_action_referent far where far.user_id = referent_user_id)
-            end
-          and case
-                  when niveau_priorite is null then true
-                  else fa.niveau_priorite = niveau_priorite
-            end
-          and case
-                  when statut is null then true
-                  else statut = fa.statut
-            end;
-end;
-$$ language plpgsql;
-comment on function filter_fiches_action is
-    'Filtre la vue pour le client.';
+-- fiche_action
+alter policy allow_read on fiche_action using(is_authenticated());
+-- axe
+alter policy allow_read on axe using(is_authenticated());
+alter policy allow_read on fiche_action_axe using(is_authenticated());
+-- financeur
+alter policy allow_read on financeur_tag using(is_authenticated());
+alter policy allow_read on fiche_action_financeur_tag using(is_authenticated());
+-- service
+alter policy allow_read on service_tag using(is_authenticated());
+alter policy allow_read on fiche_action_service_tag using(is_authenticated());
+-- partenaire
+alter policy allow_read on partenaire_tag using(is_authenticated());
+alter policy allow_read on fiche_action_partenaire_tag using(is_authenticated());
+-- pilote
+alter policy allow_read on personne_tag using(is_authenticated());
+alter policy allow_read on fiche_action_pilote using(is_authenticated());
+-- referent
+alter policy allow_read on fiche_action_referent using(is_authenticated());
+-- thematique
+alter policy allow_read on fiche_action_thematique using(is_authenticated());
+-- sous-thematique
+alter policy allow_read on fiche_action_sous_thematique using(is_authenticated());
+-- structure
+alter policy allow_read on structure_tag using(is_authenticated());
+alter policy allow_read on fiche_action_structure_tag using(is_authenticated());
+-- annexe
+alter policy allow_read on annexe using(is_authenticated());
+alter policy allow_read on fiche_action_annexe using(is_authenticated());
+-- indicateur
+alter policy allow_read on fiche_action_indicateur using(is_authenticated());
+-- action
+alter policy allow_read on fiche_action_action using(is_authenticated());
+
+drop function peut_lire_la_fiche;
 
 COMMIT;

@@ -3,6 +3,10 @@
 
 BEGIN;
 
+drop view mes_collectivites;
+drop view collectivite_niveau_acces;
+drop function if exists est_auditeur;
+
 -- permet au client d'afficher les noms des collectivités et de les filtrer sur les critères de droits.
 create or replace view collectivite_niveau_acces
 as
@@ -12,12 +16,16 @@ with current_droits as (select *
                           and active)
 select named_collectivite.collectivite_id,
        named_collectivite.nom,
-       niveau_acces,
-       est_auditeur(named_collectivite.collectivite_id) as est_auditeur,
-       c.access_restreint
+       niveau_acces
 from named_collectivite
          left join current_droits on named_collectivite.collectivite_id = current_droits.collectivite_id
-        left join collectivite c on named_collectivite.collectivite_id = c.id
+order by unaccent(nom);
+
+create or replace view mes_collectivites
+as
+select *
+from collectivite_niveau_acces
+where niveau_acces is not null
 order by unaccent(nom);
 
 COMMIT;
