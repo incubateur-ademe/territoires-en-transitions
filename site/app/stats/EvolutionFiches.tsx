@@ -10,19 +10,20 @@ import {
   fromMonth,
   theme,
 } from './shared';
+import {addLocalFilters} from './utils';
 
 type Vue =
-  | 'stats_evolution_nombre_fiches'
-  | 'stats_evolution_collectivite_avec_minimum_fiches';
+  | 'stats_locales_evolution_nombre_fiches'
+  | 'stats_locales_evolution_collectivite_avec_minimum_fiches';
 
 const colonneValeur = {
-  stats_evolution_nombre_fiches: 'fiches',
-  stats_evolution_collectivite_avec_minimum_fiches: 'collectivites',
+  stats_locales_evolution_nombre_fiches: 'fiches',
+  stats_locales_evolution_collectivite_avec_minimum_fiches: 'collectivites',
 };
 
 const legende = {
-  stats_evolution_nombre_fiches: 'Nombre total de fiches',
-  stats_evolution_collectivite_avec_minimum_fiches:
+  stats_locales_evolution_nombre_fiches: 'Nombre total de fiches',
+  stats_locales_evolution_collectivite_avec_minimum_fiches:
     'Collectivités avec cinq fiches ou plus',
 };
 
@@ -31,16 +32,22 @@ const labels = {
   collectivites: 'Collectivités',
 };
 
-export function useEvolutionFiches(vue: Vue) {
-  return useSWR(vue, async () => {
-    const {data, error} = await supabase
-      .from(vue)
-      .select()
-      .gte('mois', fromMonth);
+export function useEvolutionFiches(
+  vue: Vue,
+  codeRegion: string,
+  codeDepartement: string
+) {
+  return useSWR(`${vue}-${codeRegion}-${codeDepartement}`, async () => {
+    let select = supabase.from(vue).select().gte('mois', fromMonth);
+
+    select = addLocalFilters(select, codeDepartement, codeRegion);
+
+    const {data, error} = await select;
+
     if (error) {
       throw new Error(vue);
     }
-    if (!data) {
+    if (!data || !data.length) {
       return null;
     }
     return {
@@ -57,11 +64,14 @@ export function useEvolutionFiches(vue: Vue) {
   });
 }
 
-type Props = {vue: Vue};
+type Props = {vue: Vue; region?: string; department?: string};
 
-export default function EvolutionFiches(props: Props) {
-  const {vue} = props;
-  const {data} = useEvolutionFiches(vue);
+export default function EvolutionFiches({
+  vue,
+  region = '',
+  department = '',
+}: Props) {
+  const {data} = useEvolutionFiches(vue, region, department);
 
   if (!data) {
     return null;
@@ -96,6 +106,7 @@ export default function EvolutionFiches(props: Props) {
         pointBorderColor={{from: 'serieColor'}}
         pointLabelYOffset={-12}
         enableSlices="x"
+        animate={false}
       />
     </div>
   );

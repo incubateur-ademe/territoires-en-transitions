@@ -29,12 +29,9 @@ function useEvolutionTotalActivation(
   return useSWR(
     `stats_locales_evolution_total_activation-${codeRegion}-${codeDepartement}`,
     async () => {
-      // Notre selection de base.
       let select = supabase
-        // depuis la vue
         .from('stats_locales_evolution_total_activation')
         .select()
-        // à partir du mois par défaut
         .gte('mois', fromMonth);
 
       select = addLocalFilters(select, codeDepartement, codeRegion);

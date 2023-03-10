@@ -4,17 +4,27 @@ import useSWR from 'swr';
 import {ResponsivePie} from '@nivo/pie';
 import {supabase} from '../initSupabase';
 import {theme} from './shared';
+import {addLocalFilters} from './utils';
 
-function useCollectivitesLabellisees(referentiel: Props['referentiel']) {
+function useCollectivitesLabellisees(
+  referentiel: Props['referentiel'],
+  codeRegion: string,
+  codeDepartement: string
+) {
   const {data} = useSWR(
-    'stats_labellisation_par_niveau-' + referentiel,
+    `stats_locales_labellisation_par_niveau-${referentiel}-${codeRegion}-${codeDepartement}`,
     async () => {
-      const {data, error} = await supabase
-        .from('stats_labellisation_par_niveau')
+      let select = supabase
+        .from('stats_locales_labellisation_par_niveau')
         .select()
         .gte('etoiles', 1)
         .eq('referentiel', referentiel)
         .order('etoiles', {ascending: true});
+
+      select = addLocalFilters(select, codeDepartement, codeRegion);
+
+      const {data, error} = await select;
+
       if (error) {
         throw new Error('stats_labellisation_par_niveau');
       }
@@ -32,14 +42,25 @@ function useCollectivitesLabellisees(referentiel: Props['referentiel']) {
   }));
 }
 
-type Props = {referentiel: 'eci' | 'cae'};
+type Props = {referentiel: 'eci' | 'cae'; region?: string; department?: string};
 
-export default function CollectivitesLabellisees(props: Props) {
-  const {referentiel} = props;
-  const data = useCollectivitesLabellisees(referentiel);
+export default function CollectivitesLabellisees({
+  referentiel,
+  region = '',
+  department = '',
+}: Props) {
+  let data = useCollectivitesLabellisees(referentiel, region, department);
 
-  if (!data) {
-    return null;
+  if (!data) return null;
+
+  if (!data.length) {
+    data = [
+      {
+        id: 1,
+        label: 'NA',
+        value: 1,
+      },
+    ];
   }
 
   return (
@@ -71,6 +92,8 @@ export default function CollectivitesLabellisees(props: Props) {
         }}
         tooltip={() => null}
         startAngle={-10}
+        enableArcLabels={!data.filter(d => d.label === 'NA').length}
+        animate={false}
       />
     </div>
   );

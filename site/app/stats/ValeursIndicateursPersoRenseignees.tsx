@@ -1,8 +1,8 @@
 'use client';
 
 import useSWR from 'swr';
-import { ResponsiveLine } from '@nivo/line';
-import { supabase } from '../initSupabase';
+import {ResponsiveLine} from '@nivo/line';
+import {supabase} from '../initSupabase';
 import {
   axisBottomAsDate,
   axisLeftMiddleLabel,
@@ -11,39 +11,56 @@ import {
   fromMonth,
   theme,
 } from './shared';
-import { ChartTitle } from './headings';
+import {ChartTitle} from './headings';
+import {addLocalFilters} from './utils';
 
-function useValeursIndicateursPersoRenseignees() {
+function useValeursIndicateursPersoRenseignees(
+  codeRegion: string,
+  codeDepartement: string
+) {
   return useSWR(
-    'stats_evolution_resultat_indicateur_personnalise',
+    `stats_locales_evolution_resultat_indicateur_personnalise-${codeRegion}-${codeDepartement}`,
     async () => {
-      const { data, error } = await supabase
-        .from('stats_evolution_resultat_indicateur_personnalise')
+      let select = supabase
+        .from('stats_locales_evolution_resultat_indicateur_personnalise')
         .select()
         .gte('mois', fromMonth);
+
+      select = addLocalFilters(select, codeDepartement, codeRegion);
+
+      const {data, error} = await select;
+
       if (error) {
-        throw new Error('stats_evolution_resultat_indicateur_personnalise');
+        throw new Error(
+          'stats_locales_evolution_resultat_indicateur_personnalise'
+        );
       }
-      if (!data) {
+      if (!data || !data.length) {
         return null;
       }
       return [
         {
           id: 'Valeurs renseignées',
-          data: data.map((d) => ({ x: d.mois, y: d.resultats })),
-          last: data[data.length - 1].resultats,
+          data: data.map(d => ({x: d.mois, y: d.indicateurs})),
+          last: data[data.length - 1].indicateurs,
         },
       ];
     }
   );
 }
 
-export default function ValeursIndicateursPersoRenseignees() {
-  const { data } = useValeursIndicateursPersoRenseignees();
+type ValeursIndicateursPersoRenseigneesProps = {
+  region?: string;
+  department?: string;
+};
 
-  if (!data) {
-    return null;
-  }
+export default function ValeursIndicateursPersoRenseignees({
+  region = '',
+  department = '',
+}: ValeursIndicateursPersoRenseigneesProps) {
+  const {data} = useValeursIndicateursPersoRenseignees(region, department);
+
+  if (!data) return null;
 
   return (
     <>
@@ -51,14 +68,14 @@ export default function ValeursIndicateursPersoRenseignees() {
         <b>{formatInteger(data[0].last)}</b> indicateurs personnalisés
         renseignés
       </ChartTitle>
-      <div style={{ height: 100 + '%', maxHeight: 400 + 'px' }}>
+      <div style={{height: 100 + '%', maxHeight: 400 + 'px'}}>
         <ResponsiveLine
           colors={colors}
           theme={theme}
           data={data}
           // les marges servent aux légendes
-          margin={{ top: 5, right: 5, bottom: 85, left: 55 }}
-          xScale={{ type: 'point' }}
+          margin={{top: 5, right: 5, bottom: 85, left: 55}}
+          xScale={{type: 'point'}}
           yScale={{
             type: 'linear',
             min: 'auto',
@@ -78,9 +95,10 @@ export default function ValeursIndicateursPersoRenseignees() {
             legendOffset: -50,
           }}
           pointBorderWidth={4}
-          pointBorderColor={{ from: 'serieColor' }}
+          pointBorderColor={{from: 'serieColor'}}
           pointLabelYOffset={-12}
           enableSlices="x"
+          animate={false}
         />
       </div>
     </>

@@ -104,7 +104,7 @@ const StatisticsDisplay = ({
           collaboration entre les personnes qui travaillent au sein d’une même
           équipe pour faire avancer l’action de la collectivité.
         </p>
-        {nationalStats && <ActiveUsers />}
+        <ActiveUsers region={regionCode} department={departmentCode} />
         <NombreUtilisateurParCollectivite
           region={regionCode}
           department={departmentCode}
@@ -139,7 +139,7 @@ const StatisticsDisplay = ({
           leur permette de suivre la progression des actions prévues dans ces
           plans.
         </p>
-        {nationalStats && <EvolutionPlansAction />}
+        <EvolutionPlansAction region={regionCode} department={departmentCode} />
       </section>
 
       <section className="fr-container">
@@ -152,7 +152,7 @@ const StatisticsDisplay = ({
           mesurent la progression au moyen d’indicateurs de réalisation et
           d’impact de référence ou personnalisés.
         </p>
-        {nationalStats && <EvolutionIndicateurs />}
+        <EvolutionIndicateurs region={regionCode} department={departmentCode} />
       </section>
 
       <section className="fr-container">
@@ -165,23 +165,32 @@ const StatisticsDisplay = ({
           nationaux. Elles obtiennent ainsi un score qui leur permet d’accéder à
           la labellisation “Territoire Engagé Transition Ecologique”.
         </p>
-        {nationalStats && <NombreCollectivitesEngagees />}
-        {nationalStats && (
-          <div className="fr-grid-row fr-grid-row--center fr-grid-row--gutters">
-            <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-5 fr-col-lg-5">
-              <ChartTitle>
-                Nombre de labellisés CAE par niveau de labellisation
-              </ChartTitle>
-              <CollectivitesLabellisees referentiel="cae" />
-            </div>
-            <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-5 fr-col-lg-5">
-              <ChartTitle>
-                Nombre de labellisés ECI par niveau de labellisation
-              </ChartTitle>
-              <CollectivitesLabellisees referentiel="eci" />
-            </div>
+        <NombreCollectivitesEngagees
+          region={regionCode}
+          department={departmentCode}
+        />
+        <div className="fr-grid-row fr-grid-row--center fr-grid-row--gutters">
+          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-5 fr-col-lg-5">
+            <ChartTitle>
+              Nombre de labellisés CAE par niveau de labellisation
+            </ChartTitle>
+            <CollectivitesLabellisees
+              referentiel="cae"
+              region={regionCode}
+              department={departmentCode}
+            />
           </div>
-        )}
+          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-5 fr-col-lg-5">
+            <ChartTitle>
+              Nombre de labellisés ECI par niveau de labellisation
+            </ChartTitle>
+            <CollectivitesLabellisees
+              referentiel="eci"
+              region={regionCode}
+              department={departmentCode}
+            />
+          </div>
+        </div>
       </section>
     </div>
   );
