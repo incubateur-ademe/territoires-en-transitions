@@ -85,7 +85,11 @@ export default function TrancheCompletude({
   return (
     <div style={{height: 300}}>
       <ResponsivePie
-        colors={['#21AB8E', '#34BAB5', '#FFCA00', '#FFB7AE', '#FF732C']}
+        colors={
+          !data.tranches.filter(tr => tr.label === 'NA').length
+            ? ['#21AB8E', '#34BAB5', '#FFCA00', '#FFB7AE', '#FF732C']
+            : ['#CCC']
+        }
         theme={theme}
         data={data.tranches}
         value={referentiel}
