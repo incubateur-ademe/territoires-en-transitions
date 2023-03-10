@@ -1035,6 +1035,10 @@ export interface Database {
         Args: {id: number};
         Returns: boolean;
       };
+      have_lecture_access_with_restreint: {
+        Args: {collectivite_id: number};
+        Returns: boolean;
+      };
       have_one_of_niveaux_acces: {
         Args: {id: number; niveaux: unknown};
         Returns: boolean;
@@ -1174,6 +1178,10 @@ export interface Database {
         Args: {collectivite_id: number};
         Returns: unknown;
       };
+      peut_lire_la_fiche: {
+        Args: {fiche_id: number};
+        Returns: boolean;
+      };
       peut_modifier_la_fiche: {
         Args: {fiche_id: number};
         Returns: boolean;
@@ -1302,6 +1310,10 @@ export interface Database {
         };
         Returns: undefined;
       };
+      test_changer_acces_restreint_collectivite: {
+        Args: {access_restreint: boolean; collectivite_id: number};
+        Returns: undefined;
+      };
       test_clear_history: {
         Args: Record<PropertyKey, never>;
         Returns: undefined;
@@ -1395,31 +1407,31 @@ export interface Database {
       };
       time_bucket:
         | {
+            Args: {bucket_width: unknown; origin: string; ts: string};
+            Returns: string;
+          }
+        | {
+            Args: {bucket_width: unknown; ts: string};
+            Returns: string;
+          }
+        | {
+            Args: {bucket_width: unknown; ts: string};
+            Returns: string;
+          }
+        | {
+            Args: {bucket_width: unknown; ts: string};
+            Returns: string;
+          }
+        | {
+            Args: {bucket_width: unknown; origin: string; ts: string};
+            Returns: string;
+          }
+        | {
+            Args: {bucket_width: unknown; origin: string; ts: string};
+            Returns: string;
+          }
+        | {
             Args: {bucket_width: unknown; offset: unknown; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; origin: string; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; origin: string; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; origin: string; ts: string};
             Returns: string;
           }
         | {
@@ -1959,16 +1971,19 @@ export interface Database {
       };
       collectivite: {
         Insert: {
+          access_restreint?: boolean;
           created_at?: string;
           id?: number;
           modified_at?: string;
         };
         Row: {
+          access_restreint: boolean;
           created_at: string;
           id: number;
           modified_at: string;
         };
         Update: {
+          access_restreint?: boolean;
           created_at?: string;
           id?: number;
           modified_at?: string;
@@ -3890,6 +3905,7 @@ export interface Database {
       };
       collectivite_niveau_acces: {
         Row: {
+          access_restreint: boolean | null;
           collectivite_id: number | null;
           est_auditeur: boolean | null;
           niveau_acces: Database['public']['Enums']['niveau_acces'] | null;
@@ -4183,6 +4199,16 @@ export interface Database {
           nom: string | null;
         };
       };
+      retool_audit: {
+        Row: {
+          collectivite_id: number | null;
+          date_debut: string | null;
+          date_fin: string | null;
+          nom: string | null;
+          referentiel: Database['public']['Enums']['referentiel'] | null;
+          type_audit: string | null;
+        };
+      };
       retool_completude: {
         Row: {
           code_siren_insee: string | null;
@@ -4280,6 +4306,166 @@ export interface Database {
           Titre: string | null;
           collectivite_id: number | null;
           referentiel: Database['public']['Enums']['referentiel'] | null;
+        };
+      };
+      retool_stats_usages: {
+        Row: {
+          admin_champs_intervention_1:
+            | Database['public']['Enums']['referentiel'][]
+            | null;
+          admin_champs_intervention_10:
+            | Database['public']['Enums']['referentiel'][]
+            | null;
+          admin_champs_intervention_2:
+            | Database['public']['Enums']['referentiel'][]
+            | null;
+          admin_champs_intervention_3:
+            | Database['public']['Enums']['referentiel'][]
+            | null;
+          admin_champs_intervention_4:
+            | Database['public']['Enums']['referentiel'][]
+            | null;
+          admin_champs_intervention_5:
+            | Database['public']['Enums']['referentiel'][]
+            | null;
+          admin_champs_intervention_6:
+            | Database['public']['Enums']['referentiel'][]
+            | null;
+          admin_champs_intervention_7:
+            | Database['public']['Enums']['referentiel'][]
+            | null;
+          admin_champs_intervention_8:
+            | Database['public']['Enums']['referentiel'][]
+            | null;
+          admin_champs_intervention_9:
+            | Database['public']['Enums']['referentiel'][]
+            | null;
+          admin_derniere_connexion_1: string | null;
+          admin_derniere_connexion_10: string | null;
+          admin_derniere_connexion_2: string | null;
+          admin_derniere_connexion_3: string | null;
+          admin_derniere_connexion_4: string | null;
+          admin_derniere_connexion_5: string | null;
+          admin_derniere_connexion_6: string | null;
+          admin_derniere_connexion_7: string | null;
+          admin_derniere_connexion_8: string | null;
+          admin_derniere_connexion_9: string | null;
+          admin_detail_fonction_1: string | null;
+          admin_detail_fonction_10: string | null;
+          admin_detail_fonction_2: string | null;
+          admin_detail_fonction_3: string | null;
+          admin_detail_fonction_4: string | null;
+          admin_detail_fonction_5: string | null;
+          admin_detail_fonction_6: string | null;
+          admin_detail_fonction_7: string | null;
+          admin_detail_fonction_8: string | null;
+          admin_detail_fonction_9: string | null;
+          admin_email_1: string | null;
+          admin_email_10: string | null;
+          admin_email_2: string | null;
+          admin_email_3: string | null;
+          admin_email_4: string | null;
+          admin_email_5: string | null;
+          admin_email_6: string | null;
+          admin_email_7: string | null;
+          admin_email_8: string | null;
+          admin_email_9: string | null;
+          admin_fonction_1:
+            | Database['public']['Enums']['membre_fonction']
+            | null;
+          admin_fonction_10:
+            | Database['public']['Enums']['membre_fonction']
+            | null;
+          admin_fonction_2:
+            | Database['public']['Enums']['membre_fonction']
+            | null;
+          admin_fonction_3:
+            | Database['public']['Enums']['membre_fonction']
+            | null;
+          admin_fonction_4:
+            | Database['public']['Enums']['membre_fonction']
+            | null;
+          admin_fonction_5:
+            | Database['public']['Enums']['membre_fonction']
+            | null;
+          admin_fonction_6:
+            | Database['public']['Enums']['membre_fonction']
+            | null;
+          admin_fonction_7:
+            | Database['public']['Enums']['membre_fonction']
+            | null;
+          admin_fonction_8:
+            | Database['public']['Enums']['membre_fonction']
+            | null;
+          admin_fonction_9:
+            | Database['public']['Enums']['membre_fonction']
+            | null;
+          admin_nom_1: string | null;
+          admin_nom_10: string | null;
+          admin_nom_2: string | null;
+          admin_nom_3: string | null;
+          admin_nom_4: string | null;
+          admin_nom_5: string | null;
+          admin_nom_6: string | null;
+          admin_nom_7: string | null;
+          admin_nom_8: string | null;
+          admin_nom_9: string | null;
+          admin_prenom_2: string | null;
+          admin_prenom_10: string | null;
+          region_code: string | null;
+          admin_prenom_1: string | null;
+          admin_prenom_4: string | null;
+          admin_prenom_5: string | null;
+          completude_cae: number | null;
+          admin_prenom_7: string | null;
+          admin_prenom_8: string | null;
+          nb_indicateurs: number | null;
+          departement_name: string | null;
+          admin_prenom_3: string | null;
+          admin_telephone_2: string | null;
+          realise_courant_cae: number | null;
+          admin_telephone_4: string | null;
+          admin_telephone_3: string | null;
+          admin_telephone_6: string | null;
+          nb_indicateurs_cae: number | null;
+          admin_telephone_8: string | null;
+          admin_telephone_1: string | null;
+          code_siren_insee: string | null;
+          collectivite_id: number | null;
+          nb_lecture: number | null;
+          completude_eci: number | null;
+          nb_ecriture: number | null;
+          departement_code: string | null;
+          type_collectivite:
+            | Database['public']['Enums']['filterable_type_collectivite']
+            | null;
+          nature_collectivite: Database['public']['Enums']['nature'] | null;
+          admin_telephone_7: string | null;
+          niveau_label_eci: number | null;
+          programme_courant_eci: number | null;
+          admin_prenom_6: string | null;
+          admin_telephone_5: string | null;
+          nb_indicateurs_eci: number | null;
+          nb_indicateurs_personnalises: number | null;
+          programme_courant_cae: number | null;
+          admin_prenom_9: string | null;
+          nb_users_actifs: number | null;
+          nb_valeurs_indicateurs: number | null;
+          region_name: string | null;
+          realise_label_cae: number | null;
+          nom: string | null;
+          population_totale: number | null;
+          realise_label_eci: number | null;
+          admin_telephone_9: string | null;
+          programme_label_cae: number | null;
+          programme_label_eci: number | null;
+          nb_plans: number | null;
+          cot: boolean | null;
+          realise_courant_eci: number | null;
+          nb_fiches: number | null;
+          nb_admin: number | null;
+          admin_telephone_10: string | null;
+          niveau_label_cae: number | null;
         };
       };
       retool_user_collectivites_list: {
