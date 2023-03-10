@@ -549,7 +549,9 @@ from imports.departement d
          left join resultats i
                    on i.modified_at <= last_day
                        and i.departement_code = d.code
-group by first_day, d.code;
+group by first_day, d.code
+
+order by mois;
 
 create view stats_locales_evolution_resultat_indicateur_personnalise
 as
@@ -597,7 +599,9 @@ from imports.departement d
          left join resultats i
                    on i.modified_at <= last_day
                        and i.departement_code = d.code
-group by first_day, d.code;
+group by first_day, d.code
+
+order by mois;
 
 create view stats_locales_evolution_resultat_indicateur_referentiel
 as
