@@ -64,7 +64,7 @@ const StatisticsDisplay = ({
         />
 
         <ChartHead>
-          Progression de l’activation des EPCI
+          Progression de l’activation des EPCI à fiscalité propre
           {nationalStats && ' sur le territoire national'}
         </ChartHead>
         <div className="fr-grid-row fr-grid-row--center">
