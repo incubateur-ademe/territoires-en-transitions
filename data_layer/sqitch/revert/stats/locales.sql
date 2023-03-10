@@ -28,5 +28,7 @@ drop view stats_locales_evolution_resultat_indicateur_referentiel;
 drop materialized view stats.locales_evolution_resultat_indicateur_referentiel;
 drop view stats_locales_evolution_resultat_indicateur_personnalise;
 drop materialized view stats.locales_evolution_resultat_indicateur_personnalise;
+drop view stats_locales_evolution_collectivite_avec_indicateur;
+drop materialized view stats.locales_evolution_collectivite_avec_indicateur_referentiel;
 
 COMMIT;
