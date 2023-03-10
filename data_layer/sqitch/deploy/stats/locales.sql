@@ -627,7 +627,8 @@ begin
     refresh materialized view stats.locales_labellisation_par_niveau;
     refresh materialized view stats.locales_evolution_indicateur_referentiel;
     refresh materialized view stats.locales_evolution_resultat_indicateur_personnalise;
-    refresh materialized view  stats.locales_evolution_resultat_indicateur_referentiel;
+    refresh materialized view stats.locales_evolution_resultat_indicateur_referentiel;
+    refresh materialized view stats.locales_evolution_nombre_fiches;
 end
 $$ language plpgsql;
 comment on function stats.refresh_stats_locales is
