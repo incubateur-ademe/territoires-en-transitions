@@ -390,6 +390,50 @@ select *
 from stats.locales_evolution_collectivite_avec_minimum_fiches;
 
 
+create materialized view stats.locales_evolution_collectivite_avec_indicateur_referentiel
+as
+with indicateur_collectivite as (select first_day                                                            as mois,
+                                        c.collectivite_id,
+                                        c.region_code,
+                                        c.departement_code,
+                                        coalesce(count(*) filter ( where ir.modified_at <= mb.last_day ), 0) as resultats
+                                 from stats.monthly_bucket mb
+                                          join stats.collectivite c on true
+                                          left join indicateur_resultat ir using (collectivite_id)
+                                 group by mb.first_day, c.collectivite_id, c.departement_code, c.region_code)
+select mois,
+       null:: varchar(2)                       as code_region,
+       null::varchar(2)                        as code_departement,
+       count(*) filter ( where resultats > 0 ) as collectivites
+from indicateur_collectivite
+group by mois
+
+union all
+
+select mois,
+       region_code,
+       null,
+       count(*) filter ( where resultats > 0 )
+from indicateur_collectivite
+group by mois, region_code
+
+union all
+
+select mois,
+       null,
+       departement_code,
+       count(*) filter ( where resultats > 0 )
+from indicateur_collectivite
+group by mois, departement_code
+
+order by mois;
+
+create view stats_locales_evolution_collectivite_avec_indicateur
+as
+select *
+from stats.locales_evolution_collectivite_avec_indicateur_referentiel;
+
+
 create materialized view stats.locales_engagement_collectivite
 as
 select collectivite_id,
@@ -512,11 +556,11 @@ from stats.locales_evolution_indicateur_referentiel;
 create materialized view stats.locales_evolution_resultat_indicateur_personnalise
 as
 with resultats as (select collectivite_id,
-                            region_code,
-                            departement_code,
-                            modified_at
-                     from indicateur_resultat
-                              join stats.collectivite using (collectivite_id))
+                          region_code,
+                          departement_code,
+                          modified_at
+                   from indicateur_resultat
+                            join stats.collectivite using (collectivite_id))
 select first_day         as mois,
        null:: varchar(2) as code_region,
        null::varchar(2)  as code_departement,
@@ -629,6 +673,7 @@ begin
     refresh materialized view stats.locales_evolution_resultat_indicateur_personnalise;
     refresh materialized view stats.locales_evolution_resultat_indicateur_referentiel;
     refresh materialized view stats.locales_evolution_nombre_fiches;
+    refresh materialized view stats.locales_evolution_collectivite_avec_indicateur_referentiel;
 end
 $$ language plpgsql;
 comment on function stats.refresh_stats_locales is
