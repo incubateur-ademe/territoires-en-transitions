@@ -4,7 +4,7 @@
 
 BEGIN;
 
-drop function have_lecture_access_with_restreint;
+drop function can_read_acces_restreint;
 alter table collectivite
     drop column access_restreint;
 
