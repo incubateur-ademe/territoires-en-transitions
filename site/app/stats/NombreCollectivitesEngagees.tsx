@@ -4,7 +4,6 @@ import useSWR from 'swr';
 import {supabase} from '../initSupabase';
 import {ChartHead} from './headings';
 import {formatInteger} from './shared';
-import {addLocalFilters} from './utils';
 
 // Nombre de collectivités engagées dans le programme (COT ou labellisée 1ère étoile dans un des deux référentiels)
 function useCollectivitesEngagees(codeRegion: string, codeDepartement: string) {
@@ -27,6 +26,12 @@ function useCollectivitesEngagees(codeRegion: string, codeDepartement: string) {
           'and',
           `(or(etoiles_eci.gte.1, etoiles_cae.gte.1, cot.eq.true),code_region.eq.${codeRegion})`
         );
+      } else {
+        // @ts-ignore
+        select.url.searchParams.append(
+          'and',
+          `(or(etoiles_eci.gte.1, etoiles_cae.gte.1, cot.eq.true))`
+        );
       }
 
       const {count, error} = await select;
@@ -45,8 +50,7 @@ function useTerritoiresLabellises(codeRegion: string, codeDepartement: string) {
     async () => {
       let select = supabase
         .from('stats_locales_engagement_collectivite')
-        .select(undefined, {head: true, count: 'exact'})
-        .or('etoiles_eci.gte.1, etoiles_cae.gte.1');
+        .select(undefined, {head: true, count: 'exact'});
 
       if (codeDepartement) {
         // @ts-ignore
@@ -59,6 +63,12 @@ function useTerritoiresLabellises(codeRegion: string, codeDepartement: string) {
         select.url.searchParams.append(
           'and',
           `(or(etoiles_eci.gte.1, etoiles_cae.gte.1),code_region.eq.${codeRegion})`
+        );
+      } else {
+        // @ts-ignore
+        select.url.searchParams.append(
+          'and',
+          `(or(etoiles_eci.gte.1, etoiles_cae.gte.1))`
         );
       }
 
@@ -81,7 +91,12 @@ function useTerritoiresCOT(codeRegion: string, codeDepartement: string) {
         .select(undefined, {head: true, count: 'exact'})
         .eq('cot', true);
 
-      select = addLocalFilters(select, codeDepartement, codeRegion);
+      if (codeDepartement) {
+        select = select.eq('code_departement', codeDepartement);
+      } else if (codeRegion) {
+        select = select.eq('code_region', codeRegion);
+      }
+
       const {count, error} = await select;
 
       if (error) {
