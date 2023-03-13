@@ -79,8 +79,11 @@ export default function ActiveUsers({
       <div className="fr-grid-row fr-grid-row--center">
         <h6>
           Notre plateforme est utilisée par&nbsp;
-          {courant?.total_utilisateurs} personnes, dont&nbsp;
-          {precedent?.utilisateurs} nous ont rejoint le mois dernier
+          {courant?.total_utilisateurs} personne
+          {courant?.total_utilisateurs !== 1 && 's'}, dont&nbsp;
+          {precedent?.utilisateurs}
+          {precedent?.utilisateurs === 1 ? ' nous a' : ' nous ont'} rejoint le
+          mois dernier
         </h6>
       </div>
       <div style={{height: 400}}>

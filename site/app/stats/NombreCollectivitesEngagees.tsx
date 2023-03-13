@@ -13,10 +13,20 @@ function useCollectivitesEngagees(codeRegion: string, codeDepartement: string) {
     async () => {
       let select = supabase
         .from('stats_locales_engagement_collectivite')
-        .select(undefined, {head: true, count: 'estimated'})
-        .or('etoiles_eci.gte.1, etoiles_cae.gte.1, cot.eq.true');
+        .select(undefined, {head: true, count: 'exact'});
 
-      select = addLocalFilters(select, codeDepartement, codeRegion);
+      if (codeDepartement) {
+        select.url.searchParams.append(
+          'and',
+          `(or(etoiles_eci.gte.1, etoiles_cae.gte.1, cot.eq.true),code_departement.eq.${codeDepartement})`
+        );
+      } else if (codeRegion) {
+        select.url.searchParams.append(
+          'and',
+          `(or(etoiles_eci.gte.1, etoiles_cae.gte.1, cot.eq.true),code_region.eq.${codeRegion})`
+        );
+      }
+
       const {count, error} = await select;
 
       if (error) {
@@ -33,10 +43,21 @@ function useTerritoiresLabellises(codeRegion: string, codeDepartement: string) {
     async () => {
       let select = supabase
         .from('stats_locales_engagement_collectivite')
-        .select(undefined, {head: true, count: 'estimated'})
+        .select(undefined, {head: true, count: 'exact'})
         .or('etoiles_eci.gte.1, etoiles_cae.gte.1');
 
-      select = addLocalFilters(select, codeDepartement, codeRegion);
+      if (codeDepartement) {
+        select.url.searchParams.append(
+          'and',
+          `(or(etoiles_eci.gte.1, etoiles_cae.gte.1),code_departement.eq.${codeDepartement})`
+        );
+      } else if (codeRegion) {
+        select.url.searchParams.append(
+          'and',
+          `(or(etoiles_eci.gte.1, etoiles_cae.gte.1),code_region.eq.${codeRegion})`
+        );
+      }
+
       const {count, error} = await select;
 
       if (error) {
@@ -53,7 +74,7 @@ function useTerritoiresCOT(codeRegion: string, codeDepartement: string) {
     async () => {
       let select = supabase
         .from('stats_locales_engagement_collectivite')
-        .select(undefined, {head: true, count: 'estimated'})
+        .select(undefined, {head: true, count: 'exact'})
         .eq('cot', true);
 
       select = addLocalFilters(select, codeDepartement, codeRegion);
@@ -82,9 +103,13 @@ export default function NombreCollectivitesEngagees({
 
   return (
     <ChartHead>
-      {formatInteger(engages || 0)} Territoires Engagés Transition Écologique,
-      dont {formatInteger(labellises || 0)} collectivités labellisées et{' '}
-      {formatInteger(cot || 0)} en Contrat d’Objectif Territorial (COT)
+      {formatInteger(engages || 0)}{' '}
+      {engages === 1 ? 'Territoire Engagé ' : 'Territoires Engagés '}
+      Transition Écologique, dont {formatInteger(labellises || 0)}{' '}
+      {labellises === 1
+        ? 'collectivité labellisée'
+        : 'collectivités labellisées'}{' '}
+      et {formatInteger(cot || 0)} en Contrat d’Objectif Territorial (COT)
     </ChartHead>
   );
 }
