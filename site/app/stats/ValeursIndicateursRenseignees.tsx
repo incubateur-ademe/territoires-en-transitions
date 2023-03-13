@@ -68,7 +68,7 @@ export default function ValeursIndicateursRenseignees({
         <b>{formatInteger(data[0].last)}</b> valeurs d’indicateurs des
         référentiels renseignés
       </ChartTitle>
-      <div style={{height: 100 + '%', maxHeight: 400 + 'px'}}>
+      <div style={{height: '400px'}}>
         <ResponsiveLine
           colors={colors}
           theme={theme}

@@ -2,6 +2,12 @@
 
 import StatisticsDisplay from '../../StatisticsDisplay';
 
+/**
+ * Page de statistiques départementales
+ *
+ * @param params - URL param, permettant de récupérer departmentCode
+ */
+
 type RegionStatsProps = {
   params: {departmentCode: string};
 };
