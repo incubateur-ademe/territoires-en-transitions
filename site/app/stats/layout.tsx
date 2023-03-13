@@ -4,6 +4,12 @@ import {fr} from '@codegouvfr/react-dsfr';
 import {useState} from 'react';
 import RegionAndDeptFilters from './RegionAndDeptFilters';
 
+/**
+ * Layout de la page Statistiques
+ *
+ * @param children - Composant enfant à inclure dans le layout
+ */
+
 const StatsLayout = ({children}: {children: JSX.Element}) => {
   const [title, setTitle] = useState<string | null>(null);
 

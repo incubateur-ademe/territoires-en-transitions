@@ -12,6 +12,13 @@ import {ChartHead, ChartTitle, SectionHead} from './headings';
 import NombreCollectivitesEngagees from './NombreCollectivitesEngagees';
 import NombreUtilisateurParCollectivite from './NombreUtilisateurParCollectivite';
 
+/**
+ * Affiche le contenu de la page statisques
+ *
+ * @param regionCode - (optionnel) Code de la région à afficher
+ * @param depatmentCpde - (optionnel) Code du département à afficher
+ */
+
 type StatisticsDisplayProps = {
   regionCode?: string;
   departmentCode?: string;

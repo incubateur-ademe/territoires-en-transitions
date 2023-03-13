@@ -38,6 +38,12 @@ function useDepartment(regionCode: string) {
 
 const emptyString = '';
 
+/**
+ * Filtre de la page statistiques, par région et par département
+ *
+ * @param onChange - Renvoie au composant parent le nom du nouvel élément sélectionné
+ */
+
 type RegionAndDeptFiltersProps = {
   onChange: (value: string | null) => void;
 };

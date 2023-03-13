@@ -2,6 +2,12 @@
 
 import StatisticsDisplay from '../../StatisticsDisplay';
 
+/**
+ * Page de statistiques régionales
+ *
+ * @param params - URL param, permettant de récupérer regionCode
+ */
+
 type RegionStatsProps = {
   params: {regionCode: string};
 };
