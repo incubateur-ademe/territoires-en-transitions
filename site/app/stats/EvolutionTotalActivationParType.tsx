@@ -89,10 +89,14 @@ export default function EvolutionTotalActivationParType({
     <div>
       <div className="fr-grid-row fr-grid-row--center">
         <h6>
-          {courant.total} collectivités activées dont {courant.total_epci}{' '}
-          EPCI,&nbsp;
-          {courant.total_syndicat} syndicats et&nbsp;
-          {courant.total_commune} communes
+          {courant.total}{' '}
+          {courant.total !== 1
+            ? 'collectivités activées'
+            : 'collectivité activée'}{' '}
+          dont {courant.total_epci} EPCI,&nbsp;
+          {courant.total_syndicat} syndicat{courant.total_syndicat !== 1 && 's'}{' '}
+          et&nbsp;
+          {courant.total_commune} commune{courant.total_commune !== 1 && 's'}
         </h6>
       </div>
 

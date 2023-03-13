@@ -79,9 +79,10 @@ export default function NombreUtilisateurParCollectivite({
     <div>
       <ChartHead>
         Chaque collectivité compte en moyenne&nbsp;
-        {courant?.moyen?.toFixed(2)} utilisateurs.
+        {courant?.moyen?.toFixed(2)} utilisateur{courant?.moyen !== 1 && 's'}
         <br />
-        Avec un maximum de {courant?.maximum} utilisateurs 💪
+        Avec un maximum de {courant?.maximum} utilisateur
+        {courant?.maximum !== 1 && 's'} 💪
       </ChartHead>
       <div className="fr-grid-row fr-grid-row--center"></div>
 

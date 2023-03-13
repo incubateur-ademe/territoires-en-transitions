@@ -29,8 +29,12 @@ export function EvolutionPlansAction({
           <>
             Évolution de l&apos;utilisation des plans d&apos;action
             <br />
-            {collectivites.last} collectivités ont créé des plans d’actions et{' '}
-            {fiches.last} fiches actions ont été créées
+            {collectivites.last} collectivité
+            {collectivites.last !== 1 && 's'}
+            {collectivites.last === 1 ? ' a ' : ' ont '}
+            créé des plans d’actions et {fiches.last} fiche
+            {fiches.last !== 1 && 's'} actions
+            {fiches.last === 1 ? ' a été créée' : ' ont été créées'}
           </>
         </ChartHead>
       )}
