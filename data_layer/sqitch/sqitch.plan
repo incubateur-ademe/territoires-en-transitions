@@ -255,3 +255,4 @@ plan_action/plan_action [plan_action/plan_action@v2.8.0] 2023-03-10T08:36:15Z Fl
 collectivite/mes_collectivites_v2 [collectivite/mes_collectivites_v2@v2.8.0] 2023-03-10T08:38:49Z Florian <florian@derfurth.com> # Ajoute acces_restreint à collectivite_niveau_acces
 indicateur/personnalise [indicateur/personnalise@v2.8.0] 2023-03-10T08:39:46Z Florian <florian@derfurth.com> # Change les droits pour inserer acces_restreint de collectivite
 indicateur/referentiel [indicateur/referentiel@v2.8.0] 2023-03-10T08:40:53Z Florian <florian@derfurth.com> # Change les droits pour inserer acces_restreint de collectivite
+@v2.9.0 2023-03-13T12:49:51Z Florian <florian@derfurth.com> # Permet de restreindre l'accès à certaines collectivités
