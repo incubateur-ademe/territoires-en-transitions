@@ -120,7 +120,7 @@ create materialized view stats.locales_evolution_utilisateur
 as
 with premier_rattachements as (
     -- retrouve les collectivités des premiers rattachements des utilisateurs actifs.
-    select u.premier_rattachement as date,
+    select u.premier_rattachement::date as date,
            pud.collectivite_id,
            c.region_code,
            c.departement_code
