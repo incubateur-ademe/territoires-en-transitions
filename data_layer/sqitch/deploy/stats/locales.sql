@@ -447,11 +447,15 @@ from stats.collectivite c
          left join lateral (select etoiles
                             from labellisation l
                             where l.collectivite_id = c.collectivite_id
-                              and referentiel = 'eci') eci on true
+                              and referentiel = 'eci'
+                            order by l.obtenue_le desc
+                            limit 1) eci on true
          left join lateral (select etoiles
                             from labellisation l
                             where l.collectivite_id = c.collectivite_id
-                              and referentiel = 'cae') cae on true;
+                              and referentiel = 'cae'
+                            order by l.obtenue_le desc
+                            limit 1) cae on true;
 
 create view stats_locales_engagement_collectivite
 as
