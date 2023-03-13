@@ -563,7 +563,7 @@ with resultats as (select collectivite_id,
                           region_code,
                           departement_code,
                           modified_at
-                   from indicateur_resultat
+                   from indicateur_personnalise_resultat
                             join stats.collectivite using (collectivite_id))
 select first_day         as mois,
        null:: varchar(2) as code_region,
