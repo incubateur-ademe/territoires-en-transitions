@@ -16,11 +16,13 @@ function useCollectivitesEngagees(codeRegion: string, codeDepartement: string) {
         .select(undefined, {head: true, count: 'exact'});
 
       if (codeDepartement) {
+        // @ts-ignore
         select.url.searchParams.append(
           'and',
           `(or(etoiles_eci.gte.1, etoiles_cae.gte.1, cot.eq.true),code_departement.eq.${codeDepartement})`
         );
       } else if (codeRegion) {
+        // @ts-ignore
         select.url.searchParams.append(
           'and',
           `(or(etoiles_eci.gte.1, etoiles_cae.gte.1, cot.eq.true),code_region.eq.${codeRegion})`
@@ -47,11 +49,13 @@ function useTerritoiresLabellises(codeRegion: string, codeDepartement: string) {
         .or('etoiles_eci.gte.1, etoiles_cae.gte.1');
 
       if (codeDepartement) {
+        // @ts-ignore
         select.url.searchParams.append(
           'and',
           `(or(etoiles_eci.gte.1, etoiles_cae.gte.1),code_departement.eq.${codeDepartement})`
         );
       } else if (codeRegion) {
+        // @ts-ignore
         select.url.searchParams.append(
           'and',
           `(or(etoiles_eci.gte.1, etoiles_cae.gte.1),code_region.eq.${codeRegion})`

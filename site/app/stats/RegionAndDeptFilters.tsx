@@ -137,6 +137,7 @@ const RegionAndDeptFilters = ({onChange}: RegionAndDeptFiltersProps) => {
         name="region"
         label="Région"
         emptyOptionLabel="Toutes les régions"
+        // @ts-ignore
         options={regions.map(region => ({
           value: region.code,
           name: region.libelle,
@@ -150,6 +151,7 @@ const RegionAndDeptFilters = ({onChange}: RegionAndDeptFiltersProps) => {
         name="department"
         label="Département"
         emptyOptionLabel="Tous les départements"
+        // @ts-ignore
         options={departments.map(department => ({
           value: department.code,
           name: department.libelle,

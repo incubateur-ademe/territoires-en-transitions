@@ -10,7 +10,7 @@ import RegionAndDeptFilters from './RegionAndDeptFilters';
  * @param children - Composant enfant à inclure dans le layout
  */
 
-const StatsLayout = ({children}: {children: JSX.Element}) => {
+const StatsLayout = ({children}: {children: React.ReactNode}) => {
   const [title, setTitle] = useState<string | null>(null);
 
   return (
