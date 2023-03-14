@@ -1,0 +1,34 @@
+-- Revert tet:stats/locale from pg
+
+BEGIN;
+
+drop function stats.refresh_stats_locales;
+drop view stats_locales_evolution_total_activation;
+drop materialized view stats.locales_evolution_total_activation;
+drop view stats_locales_collectivite_actives_et_total_par_type;
+drop materialized view stats.locales_collectivite_actives_et_total_par_type;
+drop view stats_locales_evolution_nombre_utilisateur_par_collectivite;
+drop materialized view stats.locales_evolution_nombre_utilisateur_par_collectivite;
+drop view stats_locales_tranche_completude;
+drop materialized view stats.locales_tranche_completude;
+drop materialized view stats.locales_pourcentage_completude;
+drop view stats_locales_evolution_nombre_fiches;
+drop materialized view stats.locales_evolution_nombre_fiches;
+drop view stats_locales_evolution_utilisateur;
+drop materialized view stats.locales_evolution_utilisateur;
+drop view stats_locales_evolution_collectivite_avec_minimum_fiches;
+drop materialized view stats.locales_evolution_collectivite_avec_minimum_fiches;
+drop view stats_locales_engagement_collectivite;
+drop materialized view stats.locales_engagement_collectivite;
+drop view stats_locales_labellisation_par_niveau;
+drop materialized view stats.locales_labellisation_par_niveau;
+drop view stats_locales_evolution_indicateur_referentiel;
+drop materialized view stats.locales_evolution_indicateur_referentiel;
+drop view stats_locales_evolution_resultat_indicateur_referentiel;
+drop materialized view stats.locales_evolution_resultat_indicateur_referentiel;
+drop view stats_locales_evolution_resultat_indicateur_personnalise;
+drop materialized view stats.locales_evolution_resultat_indicateur_personnalise;
+drop view stats_locales_evolution_collectivite_avec_indicateur;
+drop materialized view stats.locales_evolution_collectivite_avec_indicateur_referentiel;
+
+COMMIT;
