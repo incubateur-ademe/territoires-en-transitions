@@ -78,7 +78,7 @@ export default function ActiveUsers({
     <div>
       <div className="fr-grid-row fr-grid-row--center">
         <h6>
-          Notre plateforme est utilisée par&nbsp;
+          La plateforme est utilisée par&nbsp;
           {courant?.total_utilisateurs} personne
           {courant?.total_utilisateurs !== 1 && 's'}, dont&nbsp;
           {precedent?.utilisateurs}
