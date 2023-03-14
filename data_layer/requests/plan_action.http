@@ -25,3 +25,38 @@ Prefer: params=multiple-objects, return=representation, resolution=merge-duplica
 Content-Type: text/csv
 
 < ./test_plan_action.csv
+
+
+### une fiche
+GET {{api}}/rest/v1/fiches_action?select=*&id=eq.2760
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+
+### toute les fiches
+GET {{api}}/rest/v1/fiches_action
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+
+### plan
+POST {{api}}/rest/v1/rpc/plan_action
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{"id": 1}
+
+### peut_lire_la_fiche
+POST {{api}}/rest/v1/rpc/peut_lire_la_fiche
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{"fiche_id": 6419}
+
+### can_read_acces_restreint
+POST {{api}}/rest/v1/rpc/can_read_acces_restreint
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{"collectivite_id": 5460}
