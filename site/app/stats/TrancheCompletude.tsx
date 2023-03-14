@@ -64,15 +64,18 @@ export default function TrancheCompletude({
   department = '',
 }: Props) {
   let {data} = useTrancheCompletude(region, department);
-
   if (!data) return null;
 
+  let tranches = data.tranches;
+
+  // Si le référentiel ne contient pas de données,
+  // on affiche une seule tranche : NA
   if (
     (referentiel === 'eci' &&
       !data.tranches.filter(tr => tr.eci !== 0).length) ||
     (referentiel === 'cae' && !data.tranches.filter(tr => tr.cae !== 0).length)
   ) {
-    data.tranches = [
+    tranches = [
       {
         id: 1,
         label: 'NA',
@@ -86,12 +89,12 @@ export default function TrancheCompletude({
     <div style={{height: 300}}>
       <ResponsivePie
         colors={
-          !data.tranches.filter(tr => tr.label === 'NA').length
+          !tranches.filter(tr => tr.label === 'NA').length
             ? ['#21AB8E', '#34BAB5', '#FFCA00', '#FFB7AE', '#FF732C']
             : ['#CCC']
         }
         theme={theme}
-        data={data.tranches}
+        data={tranches}
         value={referentiel}
         margin={{top: 40, right: 85, bottom: 25, left: 85}}
         innerRadius={0.5}
