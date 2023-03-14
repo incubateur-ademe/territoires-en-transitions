@@ -261,3 +261,5 @@ stats/locales 2023-03-03T15:25:54Z Florian <florian@derfurth.com> # Vues filtrab
 cron/refresh_stats_views_locales 2023-03-06T15:22:42Z Florian <florian@derfurth.com> # Automatise le rafraichissement des vues stats locales.
 plan_action/plan_action [plan_action/plan_action@v2.9.0] 2023-03-14T09:35:51Z Florian <florian@derfurth.com> # Répare la fonction peut_lire_la_fiche
 @v2.10.0 2023-03-14T09:45:47Z Florian <florian@derfurth.com> # Statistiques régionales
+
+stats/locales [stats/locales@v2.10.0] 2023-03-14T13:45:55Z Florian <florian@derfurth.com> # Répare les stats
