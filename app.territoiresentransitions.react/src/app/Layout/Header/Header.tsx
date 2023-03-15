@@ -1,197 +1,133 @@
-import LogoRepubliqueFrancaise from 'ui/logo/LogoRepubliqueFrancaise';
-import {useAuth, TAuthContext} from 'core-logic/api/auth/AuthProvider';
-import {useMaintenance, Maintenance} from 'app/Layout/useMaintenance';
-import HeaderNavigation from './HeaderNavigation';
-import CollectiviteNavigation from './CollectiviteNavigation';
-import MobileNavigation from './MobileNavigation';
-import {makeCollectiviteNavItems} from './makeCollectiviteNavItems';
-import ademeLogoImage from 'app/static/img/ademe.jpg';
 import {useState} from 'react';
-import {useOwnedCollectivites} from 'core-logic/hooks/useOwnedCollectivites';
-import {
-  CurrentCollectivite,
-  useCurrentCollectivite,
-} from 'core-logic/hooks/useCurrentCollectivite';
-import {MesCollectivitesRead} from 'generated/dataLayer';
+import {Link} from 'react-router-dom';
+import classNames from 'classnames';
+import {HeaderProps, HeaderPropsWithModalState} from './types';
+import {MenuPrincipal} from './MenuPrincipal';
+import {AccesRapide} from './AccesRapide';
+import {MaintenanceNotice} from './MaintenanceNotice';
+import ademeSrc from 'app/static/img/ademe.jpg';
 
-export const Header = ({
-  auth,
-  currentCollectivite,
-  ownedCollectivites,
-  maintenance,
-}: {
-  auth: TAuthContext;
-  currentCollectivite: CurrentCollectivite | null;
-  maintenance: ReturnType<typeof useMaintenance>;
-  ownedCollectivites: MesCollectivitesRead[] | null;
-}) => {
-  const collectiviteNav = currentCollectivite
-    ? makeCollectiviteNavItems(currentCollectivite)
-    : null;
+/**
+ * Affiche l'en-tête
+ */
+export const Header = (props: HeaderProps) => {
+  const {maintenance} = props;
+  // état ouverture menu mobile
+  const [modalOpened, setModalOpened] = useState(false);
+  // id du menu ouvert
+  const [openedId, setOpenedId] = useState<string | null>(null);
+
+  const propsWithState = {
+    ...props,
+    modalOpened,
+    setModalOpened,
+    openedId,
+    setOpenedId,
+  };
 
   return (
     <>
-      <header role="banner" className="header fr-header">
-        <div className="fr-header__body">
-          <div className="fr-container">
-            <div className="fr-header__body-row header__row">
-              <div className="fr-header__brand fr-enlarge-link pointer-events-none lg:pointer-events-auto">
-                <div className="fr-header__brand-top !w-auto">
-                  <div className="fr-header__logo">
-                    <LogoRepubliqueFrancaise />
-                  </div>
-                  <div className="fr-header__operator !shrink-0 fr-mr-2w fr-ml-n2w">
-                    <a href="/" title="Accueil">
-                      <img
-                        src={ademeLogoImage}
-                        alt="logo ADEME"
-                        loading="lazy"
-                        className="h-20"
-                      />
-                    </a>
-                  </div>
-                </div>
-                <div className="fr-header__service">
-                  <a href="/" title="Accueil">
-                    <p className="fr-header__service-title pointer-events-auto">
-                      Territoires en Transitions
-                    </p>
-                  </a>
-                  <p className="fr-header__service-tagline">
-                    Accompagner la transition écologique des collectivités
-                  </p>
-                </div>
-              </div>
-              <HeaderNavigation auth={auth} />
-              <MobileNavigation
-                auth={auth}
-                collectiviteNav={collectiviteNav}
-                currentCollectivite={currentCollectivite}
-                ownedCollectivites={ownedCollectivites}
-              />
-            </div>
-          </div>
-        </div>
-        {collectiviteNav && currentCollectivite && ownedCollectivites ? (
-          <CollectiviteNavigation
-            collectiviteNav={collectiviteNav}
-            currentCollectivite={currentCollectivite}
-            ownedCollectivites={ownedCollectivites}
-          />
-        ) : null}
+      <header role="banner" className="fr-header">
+        <Body {...propsWithState} />
+        <Menu {...propsWithState} />
       </header>
-      <MaintenanceBanner maintenance={maintenance} />
+      <MaintenanceNotice maintenance={maintenance} />
     </>
   );
 };
 
-// TODO : Upgrade dsfr to 1.6.0 to use official banner : https://gouvfr.atlassian.net/wiki/spaces/DB/pages/992903190/Bandeau+d+information+importante#
-const InformationBanner = ({message}: {message: string}) => {
-  const [showBanner, setShowBanner] = useState(true);
-  if (!showBanner) return null;
+/** Affiche les blocs "marque", "service" et les liens "accès rapides". Sur
+ *  mobile, Le bloc "accès rapides" est masqué (mais est afiché par la modale
+ *  incluse dans Menu). */
+const Body = (props: HeaderPropsWithModalState) => {
   return (
-    <div
-      style={{
-        height: '56px',
-        padding: '12px, 120px, 12px, 120px',
-        backgroundColor: '#E8EDFF',
-        display: 'flex',
-        justifyContent: 'space-evenly',
-        justifyItems: 'center',
-        fontFamily: 'Marianne',
-        fontSize: '16px',
-        fontWeight: 700,
-        lineHeight: '24px',
-        textAlign: 'left',
-        color: '#0063CB',
-      }}
-    >
-      <div className="flex items-center gap-7">
-        {' '}
-        <div className=" fr-fi-information-fill"></div>
-        <div>{message}</div>
+    <div className="fr-header__body">
+      <div className="fr-container">
+        <div className="fr-header__body-row">
+          <div className="fr-header__brand fr-enlarge-link">
+            <Brand {...props} />
+            <div className="fr-header__service">
+              <Link to="/" title="Accueil - Territoires en Transitions">
+                <p className="fr-header__service-title">
+                  Territoires en Transitions
+                </p>
+                <p className="fr-header__service-tagline">
+                  Accompagner la transition écologique des collectivités
+                </p>
+              </Link>
+            </div>
+          </div>
+          <div className="fr-header__tools">
+            <div className="fr-header__tools-links">
+              <AccesRapide {...props} />
+            </div>
+          </div>
+        </div>
       </div>
-      <button
-        title="Masquer le message"
-        onClick={() => {
-          setShowBanner(false);
-        }}
-      >
-        x
-      </button>
     </div>
   );
 };
 
-// TODO : Upgrade dsfr to 1.6.0 to use official banner : https://gouvfr.atlassian.net/wiki/spaces/DB/pages/992903190/Bandeau+d+information+importante#
-const AlertBanner = ({message}: {message: string}) => {
+/** Affiche les liens de la navigation principale. Les liens sont présentés dans
+ * une modale sur mobile, accompagnés des liens "accès rapides". */
+const Menu = (props: HeaderPropsWithModalState) => {
+  const {modalOpened, setModalOpened} = props;
+
   return (
     <div
-      style={{
-        height: '56px',
-        padding: '12px, 120px, 12px, 120px',
-        backgroundColor: '#FFE8E5',
-        display: 'flex',
-        gap: '28px',
-        alignContent: 'center',
-        justifyContent: 'center',
-        alignItems: 'center',
-        fontFamily: 'Marianne',
-        fontSize: '16px',
-        fontWeight: 700,
-        lineHeight: '24px',
-        color: '#B34000',
-      }}
+      id="modal-header__menu"
+      className={classNames('fr-header__menu fr-modal', {
+        'fr-modal--opened': modalOpened,
+      })}
+      role={modalOpened ? 'dialog' : undefined}
     >
-      <div className=" fr-fi-alert-fill"></div>
-      <div>{message}</div>
+      <div className="fr-container">
+        <button
+          aria-controls="modal-header__menu"
+          className="fr-btn fr-btn--close"
+          onClick={() => setModalOpened(false)}
+        >
+          Fermer
+        </button>
+        <MenuPrincipal {...props} />
+        <div className="fr-header__menu-links">
+          <AccesRapide {...props} />
+        </div>
+      </div>
     </div>
   );
 };
 
-const MaintenanceBanner = ({
-  maintenance,
-}: {
-  maintenance: Maintenance | null;
-}) => {
-  const {now, begins_at, ends_at} = maintenance || {};
-  if (!now || !begins_at || !ends_at) return null;
-
-  const ongoing = new Date(now) > new Date(begins_at);
-  const formatedDate = new Date(begins_at).toLocaleString('fr', {
-    dateStyle: 'short',
-  });
-  const formatedBeginsAt = new Date(begins_at).toLocaleTimeString([], {
-    timeStyle: 'short',
-  });
-  const formatedEndsAt = new Date(ends_at).toLocaleTimeString([], {
-    timeStyle: 'short',
-  });
-  if (ongoing)
-    return (
-      <AlertBanner message="Une mise en production est en cours. Merci de ne pas utiliser la plateforme pour éviter toute perte d'informations." />
-    );
-  return (
-    <InformationBanner
-      message={`Une mise en production est prévue le ${formatedDate} de ${formatedBeginsAt} à ${formatedEndsAt}. Le fonctionnement de la plateforme pourra en être altéré sur ce laps de temps.`}
-    />
-  );
-};
-
-const HeaderConnected = () => {
-  const auth = useAuth();
-  const currentCollectivite = useCurrentCollectivite();
-  const ownedCollectivites = useOwnedCollectivites();
-  const maintenance = useMaintenance();
+/** Affiche le bloc "marque" */
+const Brand = (props: HeaderPropsWithModalState) => {
+  const {modalOpened, setModalOpened} = props;
 
   return (
-    <Header
-      auth={auth}
-      currentCollectivite={currentCollectivite as CurrentCollectivite}
-      ownedCollectivites={ownedCollectivites as CurrentCollectivite[]}
-      maintenance={maintenance}
-    />
+    <div className="fr-header__brand-top">
+      <div className="fr-header__logo">
+        <p className="fr-logo">
+          République
+          <br />
+          Française
+        </p>
+      </div>
+      <div className="fr-header__operator">
+        <div className="fr-grid-row">
+          <img src={ademeSrc} alt="ADEME" width="70" height="80" />
+        </div>
+      </div>
+      <div className="fr-header__navbar">
+        <button
+          data-fr-opened={modalOpened}
+          aria-controls="modal-header__menu"
+          aria-haspopup="menu"
+          title="Menu"
+          className="fr-btn--menu fr-btn"
+          onClick={() => setModalOpened(!modalOpened)}
+        >
+          Menu
+        </button>
+      </div>
+    </div>
   );
 };
-
-export default HeaderConnected;

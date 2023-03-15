@@ -83,12 +83,15 @@ export const makeCollectiviteReferentielUrl = ({
 }: {
   collectiviteId: number;
   referentielId: ReferentielParamOption;
-  referentielVue?: ReferentielVueParamOption;
+  referentielVue?: ReferentielVueParamOption | '';
 }) =>
   collectiviteReferentielPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
     .replace(`:${referentielParam}`, referentielId)
-    .replace(`:${referentielVueParam}`, referentielVue || 'progression');
+    .replace(
+      `:${referentielVueParam}`,
+      referentielVue === undefined ? 'progression' : referentielVue
+    );
 
 export const makeCollectiviteActionUrl = ({
   collectiviteId,
