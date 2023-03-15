@@ -272,3 +272,4 @@ referentiel/vue_tabulaire [referentiel/vue_tabulaire@v2.11.0] 2023-03-15T15:44:1
 @v2.13 2023-03-20T16:43:25Z Florian <florian@derfurth.com> # Export Excel
 
 labellisation/prerequis [labellisation/prerequis@v2.11.0] 2023-03-15T10:06:02Z Florian <florian@derfurth.com> # Améliore la fonction étoiles
+labellisation/parcours [labellisation/parcours@v2.11.0] 2023-03-15T10:39:41Z Florian <florian@derfurth.com> # Répare la fonction labellisation parcours
