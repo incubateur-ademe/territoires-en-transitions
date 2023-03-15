@@ -92,9 +92,6 @@ from collectivite c
     where c.id = statut.collectivite_id
       and statut.action_id = any (d.leaves)
     ) cs on true
--- on fini par exclure les désactivés et les non concernés.
-where sc is null
-   or (ccc.concerne and not ccc.desactive)
 order by c.id,
          naturalsort(d.identifiant);
 
