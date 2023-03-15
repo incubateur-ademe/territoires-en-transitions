@@ -5,84 +5,76 @@
 
 BEGIN;
 
-alter view private.action_hierarchy set schema public;
-comment on view public.action_hierarchy is 'Vue dynamique qui calcule la hiérarchie des actions.';
-
-create or replace view action_statuts
+drop view action_statuts;
+create view action_statuts
 as
-select
-    -- client will filter on:
-    c.id                                                                   as collectivite_id,
-    d.action_id,
-    d.referentiel,
-    h.type,
-    h.descendants,
-    h.ascendants,
-    h.depth,
-    h.have_children,
+select -- Le client filtre sur:
+       c.id                                               as collectivite_id,
+       d.action_id,
+       d.referentiel,
+       d.type,
+       d.descendants,
+       d.ascendants,
+       d.depth,
+       d.have_children,
 
-    -- and optionally retrieve:
-    d.identifiant,
-    d.nom,
-    d.description,
-    d.exemples != ''                                                       as have_exemples,
-    d.preuve != ''                                                         as have_preuve,
-    d.ressources != ''                                                     as have_ressources,
-    d.reduction_potentiel != ''                                            as have_reduction_potentiel,
-    d.perimetre_evaluation != ''                                           as have_perimetre_evaluation,
-    d.contexte != ''                                                       as have_contexte,
-    d.categorie                                                            as phase,
+       -- et éventuellement sélectionne:
+       d.identifiant,
+       d.nom,
+       d.description,
+       d.have_exemples,
+       d.have_preuve,
+       d.have_ressources,
+       d.have_reduction_potentiel,
+       d.have_perimetre_evaluation,
+       d.have_contexte,
+       d.phase,
 
-    -- score [0.0, 1.0]
-    case
-        when sc.point_potentiel = 0 then 0
-        else sc.point_fait / sc.point_potentiel end                        as score_realise,
-    case
-        when sc.point_potentiel = 0 then 0
-        else sc.point_programme / sc.point_potentiel end                   as score_programme,
-    case
-        when sc.point_potentiel = 0 then 0
-        else (sc.point_fait + sc.point_programme) / sc.point_potentiel end as score_realise_plus_programme,
-    case
-        when sc.point_potentiel = 0 then 0
-        else sc.point_pas_fait / sc.point_potentiel end                    as score_pas_fait,
-    case
-        when sc.point_potentiel = 0 then 0
-        else sc.point_non_renseigne / sc.point_potentiel end               as score_non_renseigne,
+       -- les scores [0.0, 1.0]
+       sc.score_realise,
+       sc.score_programme,
+       sc.score_realise_plus_programme,
+       sc.score_pas_fait,
+       sc.score_non_renseigne,
 
-    -- points
-    greatest(sc.point_potentiel - sc.point_fait, 0)                        as points_restants,
-    sc.point_fait                                                          as points_realises,
-    sc.point_programme                                                     as points_programmes,
-    sc.point_potentiel                                                     as points_max_personnalises,
-    sc.point_referentiel                                                   as points_max_referentiel,
+       -- les points
+       sc.points_restants,
+       sc.points_realises,
+       sc.points_programmes,
+       sc.points_max_personnalises,
+       sc.points_max_referentiel,
 
-    -- action statuts
-    s.avancement,
-    s.avancement_detaille,
+       -- les statuts saisis
+       s.avancement,
+       s.avancement_detaille,
 
-    -- children status: the set of statuts of all children
-    cs.avancements                                                         as avancement_descendants,
-    coalesce((not s.concerne), cs.non_concerne, false)                     as non_concerne
+       -- les statuts des enfants
+       cs.avancements                                     as avancement_descendants,
+       coalesce((not s.concerne), cs.non_concerne, false) as non_concerne
 
+-- pour chaque collectivité
 from collectivite c
-         -- definitions
-         left join action_definition d on true
-         join public.action_hierarchy h on d.action_id = h.action_id
-    -- collectivité data
+         -- on prend les scores au format json pour chaque référentiel
+         join client_scores on client_scores.collectivite_id = c.id
+    -- que l'on explose en lignes, une par action
+         join private.convert_client_scores(client_scores.scores) ccc on true
+    -- puis on converti chacune de ces lignes au format approprié pour les vues tabulaires du client
+         join private.to_tabular_score(ccc) sc on true
+    -- on y join la définition de l'action
+         join action_referentiel d on sc.action_id = d.action_id
+    -- et les statuts saisis si ils existent (left join)
          left join action_statut s on c.id = s.collectivite_id and s.action_id = d.action_id
-         left join private.action_scores sc on c.id = sc.collectivite_id and sc.action_id = d.action_id
-    -- loop on every row to aggregate descendants statuts
+    -- pour chacune de ces lignes on agrège les avancements des descendants, afin de pouvoir les filtrer
          left join lateral (
     select case
                -- aucun descendant
-               when not h.have_children then
+               when not d.have_children then
                    '{}'::avancement[]
                -- aucun statut pour les enfants
-               when sc.point_non_renseigne = sc.point_potentiel then
+               when ccc.point_non_renseigne = ccc.point_potentiel then
                    '{non_renseigne}'::avancement[]
                -- des statuts mais pas pour chaque enfant
-               when sc.point_non_renseigne > 0.0 then
+               when ccc.point_non_renseigne > 0.0 then
                        '{non_renseigne}'::avancement[] ||
                        array_agg(distinct statut.avancement) filter ( where statut.concerne )
                -- des statuts pour chaque enfant
@@ -94,17 +86,12 @@ from collectivite c
                as non_concerne
     from action_statut statut
     where c.id = statut.collectivite_id
-      and statut.action_id = any (h.leaves)
+      and statut.action_id = any (d.leaves)
     ) cs on true
--- remove `desactive` and `non concernes` in one fell swoop.
+-- on fini par exclure les désactivés et les non concernés.
 where sc is null
-   or (sc.concerne and not sc.desactive)
+   or (ccc.concerne and not ccc.desactive)
 order by c.id,
          naturalsort(d.identifiant);
-
-drop materialized view action_referentiel;
-drop materialized view private.action_node;
-drop function private.to_tabular_score;
-drop type tabular_score;
 
 COMMIT;
