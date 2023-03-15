@@ -439,6 +439,7 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
         </ul>
         <ul
           className="fr-nav__list"
+          data-test="SelectCollectivite"
         >
           <li
             className="fr-nav__item"

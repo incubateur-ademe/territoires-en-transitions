@@ -10,6 +10,6 @@ export function waitForApp() {
 
 // déconnecte via l'ui
 export function logout() {
-  cy.get('[data-test=connectedMenu]').click();
+  cy.get('.fr-header__tools-links [data-test=connectedMenu]').click();
   cy.get('[data-test=logoutBtn]').click();
 }

@@ -56,8 +56,9 @@ Given(/je clique sur le lien du formulaire/, () => {
 Given(
   /la collectivité "([^"]+)" apparait dans le dropdown de sélection avec les droits d'accès relatifs à ma Fonction/,
   value => {
-    cy.get('[data-test="CollectiviteSwitchDropdown"]')
-      .find('span')
-      .should('have.text', value);
+    cy.get('[data-test="SelectCollectivite"] button b').should(
+      'have.text',
+      value
+    );
   }
 );
