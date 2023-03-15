@@ -98,10 +98,9 @@ begin
              left join lateral (select l.*
                                 from labellisation l
                                 where l.collectivite_id = labellisation_parcours.collectivite_id
-                                  and l.referentiel = e.referentiel) labellisation on true;
+                                  and l.referentiel = e.referentiel
+                                order by l.obtenue_le desc
+                                limit 1) labellisation on true;
 end;
-comment on function labellisation_parcours is
-    'Renvoie le parcours de labellisation de chaque référentiel pour une collectivité donnée.';
-
 
 COMMIT;
