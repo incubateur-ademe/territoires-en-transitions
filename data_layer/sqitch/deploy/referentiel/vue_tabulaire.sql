@@ -5,130 +5,8 @@
 
 BEGIN;
 
-alter view action_hierarchy set schema private;
-comment on view private.action_hierarchy
-    is 'Vue dynamique qui calcule la hiérarchie des actions. Dépréciée, préférer `private.action_node`.';
-
-create materialized view private.action_node
-as
-select action_id,
-       referentiel,
-       descendants,
-       leaves,
-       have_children,
-       ascendants,
-       depth,
-       type
-from private.action_hierarchy;
-comment on materialized view private.action_node
-    is 'La vue matérialisée des actions.';
-
-create materialized view action_referentiel
-as
-select -- les champs dérivés des relations.
-       ah.action_id,
-       ah.referentiel,
-       ah.descendants,
-       ah.leaves,
-       ah.have_children,
-       ah.ascendants,
-       ah.depth,
-       ah.type,
-
-       -- les champs descriptions
-       ad.identifiant,
-       ad.nom,
-       ad.description,
-       ad.categorie                  as phase,
-
-       -- les champs dérivés des descriptions
-       ad.exemples != ''             as have_exemples,
-       ad.preuve != ''               as have_preuve,
-       ad.ressources != ''           as have_ressources,
-       ad.reduction_potentiel != ''  as have_reduction_potentiel,
-       ad.perimetre_evaluation != '' as have_perimetre_evaluation,
-       ad.contexte != ''             as have_contexte
-from private.action_hierarchy ah
-         left join action_definition ad on ah.action_id = ad.action_id;
-comment on materialized view action_referentiel
-    is 'La vue matérialisée utilisée comme tronc commun pour les vues tabulaires dans le client.';
-
-
-create type tabular_score as
-(
-    referentiel                  referentiel,
-    action_id                    action_id,
-    -- score
-    score_realise                double precision,
-    score_programme              double precision,
-    score_realise_plus_programme double precision,
-    score_pas_fait               double precision,
-    score_non_renseigne          double precision,
-    -- points
-    points_restants              double precision,
-    points_realises              double precision,
-    points_programmes            double precision,
-    points_max_personnalises     double precision,
-    points_max_referentiel       double precision,
-    -- avancement reconstitué
-    avancement                   avancement,
-    -- booléens
-    concerne                     bool,
-    desactive                    bool
-);
-comment on type tabular_score
-    is 'Un score utilisé pour être affiché dans le client. ';
-
-create function
-    private.to_tabular_score(
-    action_score private.action_score
-)
-    returns tabular_score
-begin
-    atomic
-    select action_score.referentiel,
-           action_score.action_id,
-           -- score [0.0, 1.0]
-           case
-               when action_score.point_potentiel = 0 then 0
-               else action_score.point_fait / action_score.point_potentiel end,
-           case
-               when action_score.point_potentiel = 0 then 0
-               else action_score.point_programme / action_score.point_potentiel end,
-           case
-               when action_score.point_potentiel = 0 then 0
-               else (action_score.point_fait + action_score.point_programme) /
-                    action_score.point_potentiel end,
-           case
-               when action_score.point_potentiel = 0 then 0
-               else action_score.point_pas_fait / action_score.point_potentiel end,
-           case
-               when action_score.point_potentiel = 0 then 0
-               else action_score.point_non_renseigne / action_score.point_potentiel end,
-           -- points
-           greatest(action_score.point_potentiel - action_score.point_fait, 0),
-           action_score.point_fait,
-           action_score.point_programme,
-           action_score.point_potentiel,
-           action_score.point_referentiel,
-           -- avancement reconstitué
-           case
-               when action_score.fait_taches_avancement = 1 then 'fait'
-               when action_score.programme_taches_avancement = 1 then 'programme'
-               when action_score.pas_fait_taches_avancement = 1 then 'pas_fait'
-               when action_score.fait_taches_avancement +
-                    action_score.programme_taches_avancement +
-                    action_score.pas_fait_taches_avancement = 0 then 'non_renseigne'
-               else 'detaille' end::avancement,
-           -- booléens
-           action_score.concerne,
-           action_score.desactive;
-end;
-comment on function private.to_tabular_score is
-    'Convertit un action score en score pour les vues tabulaires.';
-
-
-create or replace view action_statuts
+drop view action_statuts;
+create view action_statuts
 as
 select -- Le client filtre sur:
        c.id                                               as collectivite_id,
@@ -165,6 +43,10 @@ select -- Le client filtre sur:
        sc.points_programmes,
        sc.points_max_personnalises,
        sc.points_max_referentiel,
+
+       -- les flags
+       sc.concerne,
+       sc.desactive,
 
        -- les statuts saisis
        s.avancement,

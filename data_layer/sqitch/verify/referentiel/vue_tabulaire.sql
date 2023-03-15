@@ -2,51 +2,6 @@
 
 BEGIN;
 
-select action_id,
-       referentiel,
-       descendants,
-       leaves,
-       have_children,
-       ascendants,
-       depth,
-       type
-from private.action_hierarchy
-where false;
-
-select action_id,
-       referentiel,
-       descendants,
-       leaves,
-       have_children,
-       ascendants,
-       depth,
-       type
-from private.action_node
-where false;
-
-select action_id,
-       referentiel,
-       descendants,
-       leaves,
-       have_children,
-       ascendants,
-       depth,
-       type,
-       identifiant,
-       nom,
-       description,
-       phase,
-       have_exemples,
-       have_preuve,
-       have_ressources,
-       have_reduction_potentiel,
-       have_perimetre_evaluation,
-       have_contexte
-from action_referentiel
-where false;
-
-select has_function_privilege('private.to_tabular_score(private.action_score)', 'execute');
-
 select collectivite_id,
        action_id,
        referentiel,
@@ -75,6 +30,8 @@ select collectivite_id,
        points_programmes,
        points_max_personnalises,
        points_max_referentiel,
+       concerne,
+       desactive,
        avancement,
        avancement_detaille,
        avancement_descendants,
