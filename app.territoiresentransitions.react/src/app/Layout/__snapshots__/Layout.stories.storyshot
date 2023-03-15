@@ -5,7 +5,7 @@ exports[`Storyshots app/Layout Exemple 1`] = `
   className="overflow-hidden"
 >
   <header
-    className="header fr-header"
+    className="fr-header"
     role="banner"
   >
     <div
@@ -15,40 +15,52 @@ exports[`Storyshots app/Layout Exemple 1`] = `
         className="fr-container"
       >
         <div
-          className="fr-header__body-row header__row"
+          className="fr-header__body-row"
         >
           <div
-            className="fr-header__brand fr-enlarge-link pointer-events-none lg:pointer-events-auto"
+            className="fr-header__brand fr-enlarge-link"
           >
             <div
-              className="fr-header__brand-top !w-auto"
+              className="fr-header__brand-top"
             >
               <div
                 className="fr-header__logo"
               >
                 <p
                   className="fr-logo"
-                  title="république française"
                 >
-                  république
+                  République
                   <br />
-                  française
+                  Française
                 </p>
               </div>
               <div
-                className="fr-header__operator !shrink-0 fr-mr-2w fr-ml-n2w"
+                className="fr-header__operator"
               >
-                <a
-                  href="/"
-                  title="Accueil"
+                <div
+                  className="fr-grid-row"
                 >
                   <img
-                    alt="logo ADEME"
-                    className="h-20"
-                    loading="lazy"
+                    alt="ADEME"
+                    height="80"
                     src="ademe.jpg"
+                    width="70"
                   />
-                </a>
+                </div>
+              </div>
+              <div
+                className="fr-header__navbar"
+              >
+                <button
+                  aria-controls="modal-header__menu"
+                  aria-haspopup="menu"
+                  className="fr-btn--menu fr-btn"
+                  data-fr-opened={false}
+                  onClick={[Function]}
+                  title="Menu"
+                >
+                  Menu
+                </button>
               </div>
             </div>
             <div
@@ -56,23 +68,24 @@ exports[`Storyshots app/Layout Exemple 1`] = `
             >
               <a
                 href="/"
-                title="Accueil"
+                onClick={[Function]}
+                title="Accueil - Territoires en Transitions"
               >
                 <p
-                  className="fr-header__service-title pointer-events-auto"
+                  className="fr-header__service-title"
                 >
                   Territoires en Transitions
                 </p>
+                <p
+                  className="fr-header__service-tagline"
+                >
+                  Accompagner la transition écologique des collectivités
+                </p>
               </a>
-              <p
-                className="fr-header__service-tagline"
-              >
-                Accompagner la transition écologique des collectivités
-              </p>
             </div>
           </div>
           <div
-            className="fr-header__tools hidden lg:block"
+            className="fr-header__tools"
           >
             <div
               className="fr-header__tools-links"
@@ -80,48 +93,375 @@ exports[`Storyshots app/Layout Exemple 1`] = `
               <ul
                 className="fr-btns-group"
               >
-                <a
-                  className="fr-btn"
-                  data-test="help"
-                  href="https://aide.territoiresentransitions.fr/fr/"
-                  onClick={[Function]}
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  <div
-                    className="fr-fi-question-line mr-2"
-                  />
-                  Aide
-                </a>
-                <a
-                  className="fr-btn"
-                  data-test="signup"
-                  href="/auth/signup"
+                <li
                   onClick={[Function]}
                 >
-                  <div
-                    className="fr-fi-add-line mr-2"
-                  />
-                  Créer un compte
-                </a>
-                <a
-                  className="fr-btn"
-                  data-test="signin"
-                  href="/auth/signin"
-                  onClick={[Function]}
-                >
-                  <div
-                    className="fr-fi-account-line mr-2"
-                  />
-                  Se connecter
-                </a>
+                  <button
+                    className="fr-btn fr-fi-question-line"
+                    data-test="help"
+                    onClick={[Function]}
+                  >
+                    Aide
+                  </button>
+                </li>
+                <li>
+                  <a
+                    className="fr-btn fr-icon-add-circle-line"
+                    data-test="signup"
+                    href="/auth/signup"
+                    onClick={[Function]}
+                  >
+                    Créer un compte
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="fr-btn fr-icon-account-line"
+                    data-test="signin"
+                    href="/auth/signin"
+                    onClick={[Function]}
+                  >
+                    Se connecter
+                  </a>
+                </li>
               </ul>
             </div>
           </div>
-          <button
-            className="fr-fi-menu-fill absolute top-6 right-6 z-10 lg:hidden"
-            onClick={[Function]}
-          />
+        </div>
+      </div>
+    </div>
+    <div
+      className="fr-header__menu fr-modal"
+      id="modal-header__menu"
+    >
+      <div
+        className="fr-container"
+      >
+        <button
+          aria-controls="modal-header__menu"
+          className="fr-btn fr-btn--close"
+          onClick={[Function]}
+        >
+          Fermer
+        </button>
+        <nav
+          aria-label="Menu principal"
+          className="fr-nav flex !justify-between"
+          role="navigation"
+        >
+          <ul
+            className="fr-nav__list"
+          >
+            <li
+              className="fr-nav__item"
+            >
+              <a
+                aria-controls="modal-header__menu"
+                className="fr-nav__link"
+                href="/collectivite/1/tableau_bord"
+                onClick={[Function]}
+                target="_self"
+              >
+                Tableau de bord
+              </a>
+            </li>
+            <li
+              className="fr-nav__item"
+            >
+              <button
+                aria-controls="floating-ui-4"
+                aria-expanded={false}
+                className="fr-nav__btn"
+                onClick={[Function]}
+              >
+                Climat Air Énergie
+              </button>
+              <div
+                className="fr-menu fr-collapse"
+                id="floating-ui-4"
+              >
+                <ul
+                  className="fr-menu__list"
+                  onClickCapture={[Function]}
+                >
+                  <li
+                    className="fr-nav__item"
+                  >
+                    <a
+                      aria-controls="modal-header__menu"
+                      className="fr-nav__link"
+                      href="/collectivite/1/referentiels/cae/progression"
+                      onClick={[Function]}
+                      target="_self"
+                    >
+                      Référentiel
+                    </a>
+                  </li>
+                  <li
+                    className="fr-nav__item"
+                  >
+                    <a
+                      aria-controls="modal-header__menu"
+                      className="fr-nav__link"
+                      href="/collectivite/1/indicateurs/cae"
+                      onClick={[Function]}
+                      target="_self"
+                    >
+                      Indicateurs
+                    </a>
+                  </li>
+                  <li
+                    className="fr-nav__item"
+                  >
+                    <a
+                      aria-controls="modal-header__menu"
+                      className="fr-nav__link"
+                      href="/collectivite/1/labellisation/cae/suivi"
+                      onClick={[Function]}
+                      target="_self"
+                    >
+                      Labellisation
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+            <li
+              className="fr-nav__item"
+            >
+              <button
+                aria-controls="floating-ui-5"
+                aria-expanded={false}
+                className="fr-nav__btn"
+                onClick={[Function]}
+              >
+                Économie Circulaire
+              </button>
+              <div
+                className="fr-menu fr-collapse"
+                id="floating-ui-5"
+              >
+                <ul
+                  className="fr-menu__list"
+                  onClickCapture={[Function]}
+                >
+                  <li
+                    className="fr-nav__item"
+                  >
+                    <a
+                      aria-controls="modal-header__menu"
+                      className="fr-nav__link"
+                      href="/collectivite/1/referentiels/eci/progression"
+                      onClick={[Function]}
+                      target="_self"
+                    >
+                      Référentiel
+                    </a>
+                  </li>
+                  <li
+                    className="fr-nav__item"
+                  >
+                    <a
+                      aria-controls="modal-header__menu"
+                      className="fr-nav__link"
+                      href="/collectivite/1/indicateurs/eci"
+                      onClick={[Function]}
+                      target="_self"
+                    >
+                      Indicateurs
+                    </a>
+                  </li>
+                  <li
+                    className="fr-nav__item"
+                  >
+                    <a
+                      aria-controls="modal-header__menu"
+                      className="fr-nav__link"
+                      href="/collectivite/1/labellisation/eci/suivi"
+                      onClick={[Function]}
+                      target="_self"
+                    >
+                      Labellisation
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+            <li
+              className="fr-nav__item"
+            >
+              <button
+                aria-controls="floating-ui-6"
+                aria-expanded={false}
+                className="fr-nav__btn"
+                onClick={[Function]}
+              >
+                Pilotage
+              </button>
+              <div
+                className="fr-menu fr-collapse"
+                id="floating-ui-6"
+              >
+                <ul
+                  className="fr-menu__list"
+                  onClickCapture={[Function]}
+                >
+                  <li
+                    className="fr-nav__item"
+                  >
+                    <a
+                      aria-controls="modal-header__menu"
+                      className="fr-nav__link"
+                      href="/collectivite/1/plans"
+                      onClick={[Function]}
+                      target="_self"
+                    >
+                      Plans d'action
+                    </a>
+                  </li>
+                  <li
+                    className="fr-nav__item"
+                  >
+                    <a
+                      aria-controls="modal-header__menu"
+                      className="fr-nav__link"
+                      href="/collectivite/1/indicateurs/crte"
+                      onClick={[Function]}
+                      target="_self"
+                    >
+                      Indicateurs contrat de relance et de transition écologique (CRTE)
+                    </a>
+                  </li>
+                  <li
+                    className="fr-nav__item"
+                  >
+                    <a
+                      aria-controls="modal-header__menu"
+                      className="fr-nav__link"
+                      href="/collectivite/1/indicateurs/perso"
+                      onClick={[Function]}
+                      target="_self"
+                    >
+                      Indicateurs personnalisés
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+            <li
+              className="fr-nav__item"
+            >
+              <button
+                aria-controls="floating-ui-7"
+                aria-expanded={false}
+                className="fr-nav__btn"
+                onClick={[Function]}
+              >
+                Paramètres
+              </button>
+              <div
+                className="fr-menu fr-collapse"
+                id="floating-ui-7"
+              >
+                <ul
+                  className="fr-menu__list"
+                  onClickCapture={[Function]}
+                >
+                  <li
+                    className="fr-nav__item"
+                  >
+                    <a
+                      aria-controls="modal-header__menu"
+                      className="fr-nav__link"
+                      href="/collectivite/1/personnalisation"
+                      onClick={[Function]}
+                      target="_self"
+                    >
+                      Personnalisation des référentiels
+                    </a>
+                  </li>
+                  <li
+                    className="fr-nav__item"
+                  >
+                    <a
+                      aria-controls="modal-header__menu"
+                      className="fr-nav__link"
+                      href="/collectivite/1/users"
+                      onClick={[Function]}
+                      target="_self"
+                    >
+                      Gestion des membres
+                    </a>
+                  </li>
+                  <li
+                    className="fr-nav__item"
+                  >
+                    <a
+                      aria-controls="modal-header__menu"
+                      className="fr-nav__link"
+                      href="/collectivite/1/bibliotheque"
+                      onClick={[Function]}
+                      target="_self"
+                    >
+                      Bibliothèque de documents
+                    </a>
+                  </li>
+                  <li
+                    className="fr-nav__item"
+                  >
+                    <a
+                      aria-controls="modal-header__menu"
+                      className="fr-nav__link"
+                      href="/collectivite/1/historique"
+                      onClick={[Function]}
+                      target="_self"
+                    >
+                      Journal d'activité
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+          </ul>
+        </nav>
+        <div
+          className="fr-header__menu-links"
+        >
+          <ul
+            className="fr-btns-group"
+          >
+            <li
+              onClick={[Function]}
+            >
+              <button
+                className="fr-btn fr-fi-question-line"
+                data-test="help"
+                onClick={[Function]}
+              >
+                Aide
+              </button>
+            </li>
+            <li>
+              <a
+                className="fr-btn fr-icon-add-circle-line"
+                data-test="signup"
+                href="/auth/signup"
+                onClick={[Function]}
+              >
+                Créer un compte
+              </a>
+            </li>
+            <li>
+              <a
+                className="fr-btn fr-icon-account-line"
+                data-test="signin"
+                href="/auth/signin"
+                onClick={[Function]}
+              >
+                Se connecter
+              </a>
+            </li>
+          </ul>
         </div>
       </div>
     </div>

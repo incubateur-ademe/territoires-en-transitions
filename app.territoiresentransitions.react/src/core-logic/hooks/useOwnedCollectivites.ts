@@ -23,3 +23,5 @@ export const useOwnedCollectivites = () => {
   );
   return data || null;
 };
+
+export type TMesCollectivites = ReturnType<typeof useOwnedCollectivites>;

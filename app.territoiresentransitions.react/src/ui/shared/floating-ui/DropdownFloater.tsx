@@ -23,6 +23,10 @@ type DropdownFloaterProps = {
   enterToToggle?: boolean;
   /** Wheter to set the options width as the open button. Default `false` */
   containerWidthMatchButton?: boolean;
+  /** Placement offset */
+  offsetValue?: number;
+  /** z-index */
+  zIndex?: number;
   'data-test'?: string;
 };
 
@@ -33,6 +37,8 @@ const DropdownFloater = ({
   toggle = true,
   enterToToggle = true,
   containerWidthMatchButton = false,
+  offsetValue = 4,
+  zIndex = 50,
   'data-test': dataTest,
 }: DropdownFloaterProps) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -43,7 +49,7 @@ const DropdownFloater = ({
     placement: placement ?? 'bottom',
     whileElementsMounted: autoUpdate,
     middleware: [
-      offset(4),
+      offset(offsetValue),
       shift(),
       size({
         apply({rects, elements, availableHeight}) {
@@ -96,13 +102,14 @@ const DropdownFloater = ({
           >
             <div
               data-test={dataTest}
-              className="w-max bg-white shadow-md z-[1000]"
+              className="w-max bg-white shadow-md"
               {...getFloatingProps({
                 ref: floating,
                 style: {
                   position: strategy,
                   top: y ?? '',
                   left: x ?? '',
+                  zIndex,
                 },
               })}
             >
