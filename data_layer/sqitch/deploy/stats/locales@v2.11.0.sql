@@ -58,20 +58,71 @@ select m.first_day,
         from premier_rattachements pr
         where pr.date >= m.first_day
           and pr.date <= m.last_day
-          and pr.departement_code = d.code),
+          and pr.region_code = d.code),
        (select count(distinct user_id)
         from premier_rattachements pr
         where pr.date <= m.last_day
-          and pr.departement_code = d.code)
+          and pr.region_code = d.code)
 from stats.monthly_bucket m
          join departement d on true
 
 order by mois;
 
+
 create view stats_locales_evolution_utilisateur as
 select *
 from stats.locales_evolution_utilisateur;
 
+
+drop view stats_locales_evolution_nombre_utilisateur_par_collectivite;
+drop materialized view stats.locales_evolution_nombre_utilisateur_par_collectivite;
+
+create materialized view stats.locales_evolution_nombre_utilisateur_par_collectivite
+as
+with membres as (select c                                                                      as collectivite,
+                        mb.first_day                                                           as mois,
+                        coalesce(count(*)
+                                 filter ( where active and pud.created_at <= mb.last_day ), 0) as nombre
+                 from stats.monthly_bucket mb
+                          join stats.collectivite c on true
+                          left join private_utilisateur_droit pud using (collectivite_id)
+                 where active
+                 group by c,
+                          mb.first_day)
+select mois,
+       null:: varchar(2)                                                                              as code_region,
+       null::varchar(2)                                                                               as code_departement,
+       coalesce(avg(nombre) filter ( where nombre > 0 ), 0)                                           as moyen,
+       coalesce(max(nombre) filter ( where nombre > 0 ), 0)                                           as maximum,
+       coalesce(percentile_cont(0.5) within group ( order by nombre ) filter ( where nombre > 0 ), 0) as median
+from membres
+group by mois
+
+union all
+
+select mois,
+       (membres.collectivite).region_code,
+       null,
+       coalesce(avg(nombre) filter ( where nombre > 0 ), 0),
+       coalesce(max(nombre) filter ( where nombre > 0 ), 0),
+       coalesce(percentile_cont(0.5) within group ( order by nombre ) filter ( where nombre > 0 ), 0)
+from membres
+group by mois, (membres.collectivite).region_code
+
+union all
+
+select mois,
+       null,
+       (membres.collectivite).departement_code,
+       coalesce(avg(nombre) filter ( where nombre > 0 ), 0),
+       coalesce(max(nombre) filter ( where nombre > 0 ), 0),
+       coalesce(percentile_cont(0.5) within group ( order by nombre ) filter ( where nombre > 0 ), 0)
+from membres
+group by mois, (membres.collectivite).departement_code;
+
+create view stats_locales_evolution_nombre_utilisateur_par_collectivite as
+select *
+from stats.locales_evolution_nombre_utilisateur_par_collectivite;
 
 
 create function
