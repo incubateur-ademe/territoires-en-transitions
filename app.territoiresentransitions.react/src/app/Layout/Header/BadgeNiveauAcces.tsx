@@ -15,7 +15,7 @@ export const BadgeNiveauAcces = (props: Props) => {
   return (
     <span
       className={classNames(
-        'fr-badge fr-badge--sm fr-badge--no-icon',
+        'fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none',
         {
           'fr-badge--info': acces !== null,
           'fr-badge--new': acces === null,
