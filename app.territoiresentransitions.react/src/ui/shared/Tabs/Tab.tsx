@@ -9,6 +9,11 @@ interface TabProps {
   index?: number;
   activeTab?: number;
   label: string;
+  /**
+   * Préfixe de l'icône associée à l'onglet. Si par exemple icon="archive" alors
+   * l'icône associée sera "fr-icon-archive-line" quand l'onglet est inactif et
+   * "fr-icon-archive-fill" quand il est actif
+   */
   icon?: string;
 }
 

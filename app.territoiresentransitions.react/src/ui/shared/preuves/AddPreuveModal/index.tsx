@@ -28,14 +28,14 @@ export const AddPreuveModal = (props: TAddPreuveModalProps) => {
   return (
     <Tabs data-test="AddPreuveModal" defaultActiveTab={defaultActiveTab}>
       {addLink ? (
-        <Tab label="&nbsp;Lien" icon="fr-fi-links-fill">
+        <Tab label="&nbsp;Lien" icon="links">
           <AddLink {...props} onAddLink={addLink} />
         </Tab>
       ) : null}
-      <Tab label="&nbsp;Fichier" icon="fr-fi-upload-2-fill">
+      <Tab label="&nbsp;Fichier" icon="upload-2">
         <AddFile {...props} onAddFileFromLib={addFileFromLib} />
       </Tab>
-      <Tab label="&nbsp;Bibliothèque" icon="fr-fi-archive-line flex">
+      <Tab label="&nbsp;Bibliothèque" icon="archive">
         <AddFromLib {...props} onAddFileFromLib={addFileFromLib} />
       </Tab>
     </Tabs>

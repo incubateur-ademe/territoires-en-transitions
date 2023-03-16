@@ -14,7 +14,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
       <button
         aria-controls="fr-tabpanel-0"
         aria-selected="false"
-        className="fr-tabs__tab fr-fi-settings-line flex fr-tabs__tab--icon-left"
+        className="fr-tabs__tab fr-icon-settings-5-line fr-tabs__tab--icon-left"
         id="fr-tab-0"
         onClick={[Function]}
         onKeyDown={[Function]}
@@ -22,7 +22,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         tabIndex={-1}
         type="button"
       >
-         Personnalisation du potentiel
+        Personnalisation du potentiel
       </button>
     </li>
     <li
@@ -31,7 +31,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
       <button
         aria-controls="fr-tabpanel-1"
         aria-selected="true"
-        className="fr-tabs__tab fr-fi-information-line fr-tabs__tab--icon-left"
+        className="fr-tabs__tab fr-icon-information-fill fr-tabs__tab--icon-left"
         id="fr-tab-1"
         onClick={[Function]}
         onKeyDown={[Function]}
@@ -39,25 +39,25 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         tabIndex={0}
         type="button"
       >
-         Règles applicables
+        Règles applicables
       </button>
     </li>
   </ul>
   <div
     aria-labelledby="fr-tab-0"
     className="fr-tabs__panel border"
-    icon="fr-fi-settings-line flex"
+    icon="settings-5"
     id="fr-tabpanel-0"
-    label=" Personnalisation du potentiel"
+    label="Personnalisation du potentiel"
     role="tabpanel"
     tabIndex={0}
   />
   <div
     aria-labelledby="fr-tab-1"
     className="fr-tabs__panel border fr-tabs__panel--selected"
-    icon="fr-fi-information-line"
+    icon="information"
     id="fr-tabpanel-1"
-    label=" Règles applicables"
+    label="Règles applicables"
     role="tabpanel"
     tabIndex={1}
   >
@@ -107,7 +107,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
       <button
         aria-controls="fr-tabpanel-0"
         aria-selected="true"
-        className="fr-tabs__tab fr-fi-settings-line flex fr-tabs__tab--icon-left"
+        className="fr-tabs__tab fr-icon-settings-5-fill fr-tabs__tab--icon-left"
         id="fr-tab-0"
         onClick={[Function]}
         onKeyDown={[Function]}
@@ -115,7 +115,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         tabIndex={0}
         type="button"
       >
-         Personnalisation du potentiel
+        Personnalisation du potentiel
       </button>
     </li>
     <li
@@ -124,7 +124,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
       <button
         aria-controls="fr-tabpanel-1"
         aria-selected="false"
-        className="fr-tabs__tab fr-fi-information-line fr-tabs__tab--icon-left"
+        className="fr-tabs__tab fr-icon-information-line fr-tabs__tab--icon-left"
         id="fr-tab-1"
         onClick={[Function]}
         onKeyDown={[Function]}
@@ -132,16 +132,16 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         tabIndex={-1}
         type="button"
       >
-         Règles applicables
+        Règles applicables
       </button>
     </li>
   </ul>
   <div
     aria-labelledby="fr-tab-0"
     className="fr-tabs__panel border fr-tabs__panel--selected"
-    icon="fr-fi-settings-line flex"
+    icon="settings-5"
     id="fr-tabpanel-0"
-    label=" Personnalisation du potentiel"
+    label="Personnalisation du potentiel"
     role="tabpanel"
     tabIndex={0}
   >
@@ -459,9 +459,9 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
   <div
     aria-labelledby="fr-tab-1"
     className="fr-tabs__panel border"
-    icon="fr-fi-information-line"
+    icon="information"
     id="fr-tabpanel-1"
-    label=" Règles applicables"
+    label="Règles applicables"
     role="tabpanel"
     tabIndex={1}
   />
@@ -482,7 +482,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
       <button
         aria-controls="fr-tabpanel-0"
         aria-selected="true"
-        className="fr-tabs__tab fr-fi-settings-line flex fr-tabs__tab--icon-left"
+        className="fr-tabs__tab fr-icon-settings-5-fill fr-tabs__tab--icon-left"
         id="fr-tab-0"
         onClick={[Function]}
         onKeyDown={[Function]}
@@ -490,7 +490,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         tabIndex={0}
         type="button"
       >
-         Personnalisation du potentiel
+        Personnalisation du potentiel
       </button>
     </li>
     <li
@@ -499,7 +499,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
       <button
         aria-controls="fr-tabpanel-1"
         aria-selected="false"
-        className="fr-tabs__tab fr-fi-information-line fr-tabs__tab--icon-left"
+        className="fr-tabs__tab fr-icon-information-line fr-tabs__tab--icon-left"
         id="fr-tab-1"
         onClick={[Function]}
         onKeyDown={[Function]}
@@ -507,16 +507,16 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         tabIndex={-1}
         type="button"
       >
-         Règles applicables
+        Règles applicables
       </button>
     </li>
   </ul>
   <div
     aria-labelledby="fr-tab-0"
     className="fr-tabs__panel border fr-tabs__panel--selected"
-    icon="fr-fi-settings-line flex"
+    icon="settings-5"
     id="fr-tabpanel-0"
-    label=" Personnalisation du potentiel"
+    label="Personnalisation du potentiel"
     role="tabpanel"
     tabIndex={0}
   >
@@ -645,9 +645,9 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
   <div
     aria-labelledby="fr-tab-1"
     className="fr-tabs__panel border"
-    icon="fr-fi-information-line"
+    icon="information"
     id="fr-tabpanel-1"
-    label=" Règles applicables"
+    label="Règles applicables"
     role="tabpanel"
     tabIndex={1}
   />
@@ -668,7 +668,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
       <button
         aria-controls="fr-tabpanel-0"
         aria-selected="true"
-        className="fr-tabs__tab fr-fi-settings-line flex fr-tabs__tab--icon-left"
+        className="fr-tabs__tab fr-icon-settings-5-fill fr-tabs__tab--icon-left"
         id="fr-tab-0"
         onClick={[Function]}
         onKeyDown={[Function]}
@@ -676,7 +676,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         tabIndex={0}
         type="button"
       >
-         Personnalisation du potentiel
+        Personnalisation du potentiel
       </button>
     </li>
     <li
@@ -685,7 +685,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
       <button
         aria-controls="fr-tabpanel-1"
         aria-selected="false"
-        className="fr-tabs__tab fr-fi-information-line fr-tabs__tab--icon-left"
+        className="fr-tabs__tab fr-icon-information-line fr-tabs__tab--icon-left"
         id="fr-tab-1"
         onClick={[Function]}
         onKeyDown={[Function]}
@@ -693,16 +693,16 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         tabIndex={-1}
         type="button"
       >
-         Règles applicables
+        Règles applicables
       </button>
     </li>
   </ul>
   <div
     aria-labelledby="fr-tab-0"
     className="fr-tabs__panel border fr-tabs__panel--selected"
-    icon="fr-fi-settings-line flex"
+    icon="settings-5"
     id="fr-tabpanel-0"
-    label=" Personnalisation du potentiel"
+    label="Personnalisation du potentiel"
     role="tabpanel"
     tabIndex={0}
   >
@@ -778,9 +778,9 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
   <div
     aria-labelledby="fr-tab-1"
     className="fr-tabs__panel border"
-    icon="fr-fi-information-line"
+    icon="information"
     id="fr-tabpanel-1"
-    label=" Règles applicables"
+    label="Règles applicables"
     role="tabpanel"
     tabIndex={1}
   />
@@ -801,7 +801,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
       <button
         aria-controls="fr-tabpanel-0"
         aria-selected="true"
-        className="fr-tabs__tab fr-fi-settings-line flex fr-tabs__tab--icon-left"
+        className="fr-tabs__tab fr-icon-settings-5-fill fr-tabs__tab--icon-left"
         id="fr-tab-0"
         onClick={[Function]}
         onKeyDown={[Function]}
@@ -809,7 +809,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         tabIndex={0}
         type="button"
       >
-         Personnalisation du potentiel
+        Personnalisation du potentiel
       </button>
     </li>
     <li
@@ -818,7 +818,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
       <button
         aria-controls="fr-tabpanel-1"
         aria-selected="false"
-        className="fr-tabs__tab fr-fi-information-line fr-tabs__tab--icon-left"
+        className="fr-tabs__tab fr-icon-information-line fr-tabs__tab--icon-left"
         id="fr-tab-1"
         onClick={[Function]}
         onKeyDown={[Function]}
@@ -826,16 +826,16 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         tabIndex={-1}
         type="button"
       >
-         Règles applicables
+        Règles applicables
       </button>
     </li>
   </ul>
   <div
     aria-labelledby="fr-tab-0"
     className="fr-tabs__panel border fr-tabs__panel--selected"
-    icon="fr-fi-settings-line flex"
+    icon="settings-5"
     id="fr-tabpanel-0"
-    label=" Personnalisation du potentiel"
+    label="Personnalisation du potentiel"
     role="tabpanel"
     tabIndex={0}
   >
@@ -1018,9 +1018,9 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
   <div
     aria-labelledby="fr-tab-1"
     className="fr-tabs__panel border"
-    icon="fr-fi-information-line"
+    icon="information"
     id="fr-tabpanel-1"
-    label=" Règles applicables"
+    label="Règles applicables"
     role="tabpanel"
     tabIndex={1}
   />
@@ -1041,7 +1041,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
       <button
         aria-controls="fr-tabpanel-0"
         aria-selected="true"
-        className="fr-tabs__tab fr-fi-settings-line flex fr-tabs__tab--icon-left"
+        className="fr-tabs__tab fr-icon-settings-5-fill fr-tabs__tab--icon-left"
         id="fr-tab-0"
         onClick={[Function]}
         onKeyDown={[Function]}
@@ -1049,7 +1049,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         tabIndex={0}
         type="button"
       >
-         Personnalisation du potentiel
+        Personnalisation du potentiel
       </button>
     </li>
     <li
@@ -1058,7 +1058,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
       <button
         aria-controls="fr-tabpanel-1"
         aria-selected="false"
-        className="fr-tabs__tab fr-fi-information-line fr-tabs__tab--icon-left"
+        className="fr-tabs__tab fr-icon-information-line fr-tabs__tab--icon-left"
         id="fr-tab-1"
         onClick={[Function]}
         onKeyDown={[Function]}
@@ -1066,16 +1066,16 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         tabIndex={-1}
         type="button"
       >
-         Règles applicables
+        Règles applicables
       </button>
     </li>
   </ul>
   <div
     aria-labelledby="fr-tab-0"
     className="fr-tabs__panel border fr-tabs__panel--selected"
-    icon="fr-fi-settings-line flex"
+    icon="settings-5"
     id="fr-tabpanel-0"
-    label=" Personnalisation du potentiel"
+    label="Personnalisation du potentiel"
     role="tabpanel"
     tabIndex={0}
   >
@@ -1212,9 +1212,9 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
   <div
     aria-labelledby="fr-tab-1"
     className="fr-tabs__panel border"
-    icon="fr-fi-information-line"
+    icon="information"
     id="fr-tabpanel-1"
-    label=" Règles applicables"
+    label="Règles applicables"
     role="tabpanel"
     tabIndex={1}
   />
@@ -1235,7 +1235,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
       <button
         aria-controls="fr-tabpanel-0"
         aria-selected="true"
-        className="fr-tabs__tab fr-fi-settings-line flex fr-tabs__tab--icon-left"
+        className="fr-tabs__tab fr-icon-settings-5-fill fr-tabs__tab--icon-left"
         id="fr-tab-0"
         onClick={[Function]}
         onKeyDown={[Function]}
@@ -1243,7 +1243,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         tabIndex={0}
         type="button"
       >
-         Personnalisation du potentiel
+        Personnalisation du potentiel
       </button>
     </li>
     <li
@@ -1252,7 +1252,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
       <button
         aria-controls="fr-tabpanel-1"
         aria-selected="false"
-        className="fr-tabs__tab fr-fi-information-line fr-tabs__tab--icon-left"
+        className="fr-tabs__tab fr-icon-information-line fr-tabs__tab--icon-left"
         id="fr-tab-1"
         onClick={[Function]}
         onKeyDown={[Function]}
@@ -1260,16 +1260,16 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         tabIndex={-1}
         type="button"
       >
-         Règles applicables
+        Règles applicables
       </button>
     </li>
   </ul>
   <div
     aria-labelledby="fr-tab-0"
     className="fr-tabs__panel border fr-tabs__panel--selected"
-    icon="fr-fi-settings-line flex"
+    icon="settings-5"
     id="fr-tabpanel-0"
-    label=" Personnalisation du potentiel"
+    label="Personnalisation du potentiel"
     role="tabpanel"
     tabIndex={0}
   >
@@ -1395,9 +1395,9 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
   <div
     aria-labelledby="fr-tab-1"
     className="fr-tabs__panel border"
-    icon="fr-fi-information-line"
+    icon="information"
     id="fr-tabpanel-1"
-    label=" Règles applicables"
+    label="Règles applicables"
     role="tabpanel"
     tabIndex={1}
   />
@@ -1418,7 +1418,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
       <button
         aria-controls="fr-tabpanel-0"
         aria-selected="true"
-        className="fr-tabs__tab fr-fi-settings-line flex fr-tabs__tab--icon-left"
+        className="fr-tabs__tab fr-icon-settings-5-fill fr-tabs__tab--icon-left"
         id="fr-tab-0"
         onClick={[Function]}
         onKeyDown={[Function]}
@@ -1426,7 +1426,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         tabIndex={0}
         type="button"
       >
-         Personnalisation du potentiel
+        Personnalisation du potentiel
       </button>
     </li>
     <li
@@ -1435,7 +1435,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
       <button
         aria-controls="fr-tabpanel-1"
         aria-selected="false"
-        className="fr-tabs__tab fr-fi-information-line fr-tabs__tab--icon-left"
+        className="fr-tabs__tab fr-icon-information-line fr-tabs__tab--icon-left"
         id="fr-tab-1"
         onClick={[Function]}
         onKeyDown={[Function]}
@@ -1443,16 +1443,16 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         tabIndex={-1}
         type="button"
       >
-         Règles applicables
+        Règles applicables
       </button>
     </li>
   </ul>
   <div
     aria-labelledby="fr-tab-0"
     className="fr-tabs__panel border fr-tabs__panel--selected"
-    icon="fr-fi-settings-line flex"
+    icon="settings-5"
     id="fr-tabpanel-0"
-    label=" Personnalisation du potentiel"
+    label="Personnalisation du potentiel"
     role="tabpanel"
     tabIndex={0}
   >
@@ -1578,9 +1578,9 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
   <div
     aria-labelledby="fr-tab-1"
     className="fr-tabs__panel border"
-    icon="fr-fi-information-line"
+    icon="information"
     id="fr-tabpanel-1"
-    label=" Règles applicables"
+    label="Règles applicables"
     role="tabpanel"
     tabIndex={1}
   />
