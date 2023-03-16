@@ -16,9 +16,15 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
   // enregistre un écouter d'événemens pour fermer un éventuel sous-menu ouvert
   // quand on clique en dehors
   useEffect(() => {
-    const onClickBackground = () => setOpenedId(null);
-    document.body.addEventListener('click', onClickBackground, {capture: true});
-    return () => document.body.removeEventListener('click', onClickBackground);
+    const onClickOutside = (evt: globalThis.MouseEvent) => {
+      // referme le menu ouvert quand on a cliqué en dehors d'un item de navigation
+      const el = evt.target as HTMLElement;
+      if (!el.className.includes('fr-nav')) setOpenedId(null);
+    };
+    document.body.addEventListener('mousedown', onClickOutside, {
+      capture: true,
+    });
+    return () => document.body.removeEventListener('mousedown', onClickOutside);
   }, []);
 
   if (!currentCollectivite) {
