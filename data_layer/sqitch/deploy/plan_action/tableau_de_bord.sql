@@ -34,6 +34,7 @@ with
                     then faa is null
                 else fa.collectivite_id = plan_action_tableau_de_bord.collectivite_id
                 end
+        and is_authenticated()
 
     ),
     personnes as (
@@ -78,7 +79,7 @@ select
                  group by coalesce(niveau_priorite::text, 'non défini')
              ) t
     )
-$$ language sql;
+$$ language sql security definer;
 comment on function plan_action_tableau_de_bord is
     'Retourne les données pour faire des diagrammes circulaires sur les
     statuts, pilotes, référents, et priorités des fiches actions,
