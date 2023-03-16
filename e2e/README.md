@@ -32,6 +32,19 @@ puis sélectionner une fonctionnalité à tester dans la liste.
 npm test
 ```
 
+### Exécuter un test donné depuis la ligne de commandes
+
+```sh
+# exécute les scénarios des fichiers `.feature` commençant par "15" ("15-auditer-la-collectivite.feature")
+npm test -- -s "cypress/integration/**/15*"
+```
+
+### Exécuter un test donné depuis la ligne de commandes et générer une vidéo
+
+```sh
+npm test -- -s "cypress/integration/**/15*" --config video=true
+```
+
 ## Organisation des tests
 
 Les tests sont organisés en fonctionnalités et scénarios.
@@ -96,3 +109,44 @@ C'est pour cela que l'on s'autorise à placer des attributs `data-test="SomeComp
 Ceux-ci peuvent alors être ciblés avec la syntaxe `[data-test=SomeComponent]`.
 
 Par convention, on défini les sélecteurs dans le fichier `common/selectors.js` (commun à tous les tests) et dans un éventuel `<ma-feature>/selectors.js` pour les éléments propre à une fonctionnalité.
+
+### Exécuter un seul scénario d'une fonctionnalité
+
+Afin de faciliter l'écriture et la mise au point d'un scénario il est possible d'isoler celui-ci en ajoutant une directive `@focus` avant sa déclaration, comme dans l'exemple suivant.
+
+```gherkin
+# language: fr
+
+Fonctionnalité: Nom de la fonctionnalité à tester
+
+    Scénario: 1er scénario (sera sauté)
+        Etant donné que l'application est dans un état particulier
+        Et que tel élément est présent
+        # etc.
+
+    @focus
+    Scénario: 2ème scénario isolé pour mise au point
+        Etant donné que l'application est dans un état particulier
+        Et que tel élément est présent
+        # etc.
+```
+
+### Mettre en pause en scénario
+
+Pour mettre en pause le scénario, ajouter dans celui-ci une étape `* pause` comme dans l'exemple suivant.
+Puis dans l'interface Cypress, utiliser la commande "suivant" pour continuer l'exécution du scénario en mode pas à pas ([cf doc](https://docs.cypress.io/api/commands/pause)).
+
+```gherkin
+# language: fr
+
+Fonctionnalité: Nom de la fonctionnalité à tester
+
+    Scénario: Nom d'un test
+        Etant donné que l'application est dans un état particulier
+        Et que tel élément est présent
+        * pause # <- le scénario sera mis en pause ici
+        
+        Alors telle attente doit être satisfaite
+        Et telle autre aussi
+        # etc.
+```
