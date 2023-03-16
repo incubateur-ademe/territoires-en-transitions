@@ -1904,6 +1904,10 @@ export interface Database {
         };
         Returns: Json;
       };
+      plan_action_tableau_de_bord: {
+        Args: {collectivite_id: number; plan_id: number; sans_plan: boolean};
+        Returns: unknown;
+      };
       plans_action_collectivite: {
         Args: {
           collectivite_id: number;
