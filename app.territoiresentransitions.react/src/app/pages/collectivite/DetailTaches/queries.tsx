@@ -17,7 +17,7 @@ export const fetchActionStatutsList = async (
   let query = supabaseClient
     .from('action_statuts')
     .select('action_id,avancement')
-    .match({collectivite_id, referentiel})
+    .match({collectivite_id, referentiel, concerne: true, desactive: false})
     .gt('depth', 0);
 
   // construit les filtres complémentaires sauf si "tous" est inclut

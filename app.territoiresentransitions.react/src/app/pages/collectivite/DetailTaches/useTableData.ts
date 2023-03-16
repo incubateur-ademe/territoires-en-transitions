@@ -53,7 +53,7 @@ export const useTableData: UseTableData = () => {
 
   // chargement des données en fonction des filtres
   const {data, isLoading} = useQuery(
-    ['action_statuts', collectivite_id, referentiel, filters],
+    ['detail_taches', collectivite_id, referentiel, filters],
     () => fetchActionStatutsList(collectivite_id, referentiel, filters)
   );
   const {rows: actionsStatut} = data || {};
@@ -74,7 +74,7 @@ export const useTableData: UseTableData = () => {
         {collectivite_id, action_id, avancement},
         {
           onSuccess: () => {
-            queryClient.invalidateQueries('action_statuts');
+            queryClient.invalidateQueries('detail_taches');
           },
         }
       );

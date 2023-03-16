@@ -15,7 +15,12 @@ export const useIsUnchangedReferentiel = (
       const {count} = await supabaseClient
         .from('action_statuts')
         .select('*', {head: true, count: 'exact'})
-        .match({collectivite_id, referentiel});
+        .match({
+          collectivite_id,
+          referentiel,
+          concerne: true,
+          desactive: false,
+        });
       return count || 0;
     }
   );
