@@ -75,25 +75,31 @@ const Tabs = ({
   return (
     <div className={_className} {...remainingProps}>
       <ul className="fr-tabs__list" role="tablist">
-        {tabsPanel.map((element, index) => (
-          <li role="presentation" key={element.props.label}>
-            <button
-              type="button"
-              role="tab"
-              id={`fr-tab-${index}`}
-              tabIndex={activeTab === index ? 0 : -1}
-              aria-selected={activeTab === index ? 'true' : 'false'}
-              aria-controls={`fr-tabpanel-${index}`}
-              className={classNames('fr-tabs__tab', element.props.icon, {
-                'fr-tabs__tab--icon-left': element.props.icon,
-              })}
-              onClick={() => changeTab(index)}
-              onKeyDown={e => onKeyDownTab(e, index)}
-            >
-              {element.props.label}
-            </button>
-          </li>
-        ))}
+        {tabsPanel.map((element, index) => {
+          const isActive = activeTab === index;
+          const icon = element.props.icon
+            ? `fr-icon-${element.props.icon}-${isActive ? 'fill' : 'line'}`
+            : undefined;
+          return (
+            <li role="presentation" key={element.props.label}>
+              <button
+                type="button"
+                role="tab"
+                id={`fr-tab-${index}`}
+                tabIndex={isActive ? 0 : -1}
+                aria-selected={isActive ? 'true' : 'false'}
+                aria-controls={`fr-tabpanel-${index}`}
+                className={classNames('fr-tabs__tab', icon, {
+                  'fr-tabs__tab--icon-left': icon,
+                })}
+                onClick={() => changeTab(index)}
+                onKeyDown={e => onKeyDownTab(e, index)}
+              >
+                {element.props.label}
+              </button>
+            </li>
+          );
+        })}
       </ul>
       {tabsPanel}
     </div>
