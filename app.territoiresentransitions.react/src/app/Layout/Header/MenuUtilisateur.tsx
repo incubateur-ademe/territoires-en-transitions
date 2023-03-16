@@ -1,5 +1,5 @@
 import {forwardRef, Ref} from 'react';
-import {Link, useHistory} from 'react-router-dom';
+import {Link, useHistory, useLocation} from 'react-router-dom';
 import classNames from 'classnames';
 import {monComptePath, signUpPath} from 'app/paths';
 import {TAuthContext, UserData} from 'core-logic/api/auth/AuthProvider';
@@ -12,9 +12,12 @@ import {HeaderPropsWithModalState} from './types';
 const MenuUtilisateur = (props: HeaderPropsWithModalState) => {
   const {auth, setModalOpened} = props;
   const {user} = auth;
+  const {pathname} = useLocation();
   if (!user) {
     return null;
   }
+  const isMonComptePath = pathname === monComptePath;
+
   return (
     <DropdownFloater
       placement="bottom"
@@ -44,7 +47,7 @@ const MenuUtilisateur = (props: HeaderPropsWithModalState) => {
         </nav>
       )}
     >
-      <MenuUtilisateurBtn user={user} />
+      <MenuUtilisateurBtn user={user} isMonComptePath={isMonComptePath} />
     </DropdownFloater>
   );
 };
@@ -56,10 +59,12 @@ const MenuUtilisateurBtn = forwardRef(
   (
     {
       user,
+      isMonComptePath,
       isOpen,
       ...props
     }: {
       isOpen?: boolean;
+      isMonComptePath: boolean;
       user: UserData;
     },
     ref?: Ref<HTMLDivElement>
@@ -67,7 +72,9 @@ const MenuUtilisateurBtn = forwardRef(
     <div ref={ref} {...props}>
       <button
         data-test="connectedMenu"
-        className="fr-btn fr-fi-account-line"
+        className={`fr-btn fr-icon-account-${
+          isMonComptePath ? 'fill' : 'line'
+        }`}
         style={{maxWidth: '15rem'}}
       >
         <span className="line-clamp-1">{user.prenom}</span>

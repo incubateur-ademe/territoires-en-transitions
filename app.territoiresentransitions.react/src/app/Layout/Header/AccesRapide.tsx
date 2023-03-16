@@ -3,7 +3,6 @@ import {useTracker} from 'core-logic/hooks/useTracker';
 import {HeaderPropsWithModalState} from './types';
 import {allCollectivitesPath, signInPath, signUpPath} from 'app/paths';
 import MenuUtilisateur from './MenuUtilisateur';
-import classNames from 'classnames';
 
 /** liens en "accès rapide" */
 export const AccesRapide = (props: HeaderPropsWithModalState) => {
@@ -18,10 +17,9 @@ export const AccesRapide = (props: HeaderPropsWithModalState) => {
         <li>
           <Link
             to={allCollectivitesPath}
-            className={classNames('fr-btn', {
-              'fr-icon-seedling-fill': isAllCollectivitesPath,
-              'fr-icon-seedling-line': !isAllCollectivitesPath,
-            })}
+            className={`fr-btn fr-icon-seedling-${
+              isAllCollectivitesPath ? 'fill' : 'line'
+            }`}
             onClick={() => setModalOpened(false)}
           >
             Collectivités engagées
