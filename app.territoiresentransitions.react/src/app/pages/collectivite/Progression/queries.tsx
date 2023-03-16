@@ -47,7 +47,7 @@ export const fetchRows = async (
   const query = supabaseClient
     .from('action_statuts')
     .select(['action_id', ...visibleColumns].join(','))
-    .match({collectivite_id, referentiel})
+    .match({collectivite_id, referentiel, concerne: true, desactive: false})
     .gte('depth', 0);
 
   // croise la liste des colonnes affichées avec la liste des filtres
@@ -111,7 +111,13 @@ export const fetchHeaderRow = async (
   const query = supabaseClient
     .from('action_statuts')
     .select(headerRowCols)
-    .match({collectivite_id, referentiel, depth: 0});
+    .match({
+      collectivite_id,
+      referentiel,
+      depth: 0,
+      concerne: true,
+      desactive: false,
+    });
 
   // attends les données
   const {error, data} = await query;
