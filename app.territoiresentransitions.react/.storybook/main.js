@@ -16,14 +16,7 @@ module.exports = {
   core: {
     builder: 'webpack5',
   },
-  staticDirs: [
-    '../public',
-    '../src/app/static/_app/assets/css',
-    {
-      from: '../src/app/static/_app/assets/fonts',
-      to: '/fonts',
-    },
-  ],
+  staticDirs: ['../public'],
   typescript: {
     reactDocgen: 'react-docgen-typescript',
     reactDocgenTypescriptOptions: {
