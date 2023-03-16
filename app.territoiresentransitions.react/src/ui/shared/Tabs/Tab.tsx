@@ -22,7 +22,7 @@ const Tab = ({
   <div
     id={`fr-tabpanel-${index}`}
     className={classNames(
-      'fr-tabs__panel',
+      'fr-tabs__panel border',
       {'fr-tabs__panel--selected': activeTab === index},
       className
     )}

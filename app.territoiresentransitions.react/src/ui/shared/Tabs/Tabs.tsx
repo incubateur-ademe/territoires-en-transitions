@@ -81,19 +81,15 @@ const Tabs = ({
               type="button"
               role="tab"
               id={`fr-tab-${index}`}
+              tabIndex={activeTab === index ? 0 : -1}
               aria-selected={activeTab === index ? 'true' : 'false'}
               aria-controls={`fr-tabpanel-${index}`}
-              className={classNames('fr-tabs__tab', {
+              className={classNames('fr-tabs__tab', element.props.icon, {
                 'fr-tabs__tab--icon-left': element.props.icon,
               })}
               onClick={() => changeTab(index)}
               onKeyDown={e => onKeyDownTab(e, index)}
             >
-              {element.props.icon && (
-                <span
-                  className={`ri-sm icon-left ds-fr--v-middle ${element.props.icon}`}
-                />
-              )}
               {element.props.label}
             </button>
           </li>
