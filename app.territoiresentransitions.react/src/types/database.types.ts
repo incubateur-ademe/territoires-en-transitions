@@ -1229,6 +1229,10 @@ export interface Database {
         Args: {id: number; profondeur: number};
         Returns: Json;
       };
+      plan_action_tableau_de_bord: {
+        Args: {collectivite_id: number; plan_id: number; sans_plan: boolean};
+        Returns: unknown;
+      };
       plans_action_collectivite: {
         Args: {collectivite_id: number};
         Returns: unknown;
@@ -1442,31 +1446,31 @@ export interface Database {
       };
       time_bucket:
         | {
-            Args: {bucket_width: unknown; origin: string; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; origin: string; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; origin: string; ts: string};
-            Returns: string;
-          }
-        | {
             Args: {bucket_width: unknown; offset: unknown; ts: string};
+            Returns: string;
+          }
+        | {
+            Args: {bucket_width: unknown; ts: string};
+            Returns: string;
+          }
+        | {
+            Args: {bucket_width: unknown; ts: string};
+            Returns: string;
+          }
+        | {
+            Args: {bucket_width: unknown; ts: string};
+            Returns: string;
+          }
+        | {
+            Args: {bucket_width: unknown; origin: string; ts: string};
+            Returns: string;
+          }
+        | {
+            Args: {bucket_width: unknown; origin: string; ts: string};
+            Returns: string;
+          }
+        | {
+            Args: {bucket_width: unknown; origin: string; ts: string};
             Returns: string;
           }
         | {
