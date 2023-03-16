@@ -485,7 +485,7 @@ exports[`Storyshots app/Layout Exemple 1`] = `
     </p>
   </div>
   <footer
-    className="footer fr-footer fr-mt-10w"
+    className="fr-footer fr-mt-4w"
     id="footer"
     role="contentinfo"
   >
@@ -493,10 +493,10 @@ exports[`Storyshots app/Layout Exemple 1`] = `
       className="fr-container"
     >
       <div
-        className="lg:flex"
+        className="fr-footer__body"
       >
         <div
-          className="fr-footer__brand shrink-0"
+          className="fr-footer__brand fr-enlarge-link"
         >
           <p
             className="fr-logo"
@@ -506,46 +506,37 @@ exports[`Storyshots app/Layout Exemple 1`] = `
             <br />
             française
           </p>
-          <div
-            className="px-6"
+          <a
+            className="fr-footer__brand-link"
+            href="https://territoiresentransitions.fr"
+            title="Accueil - Territoires en Transitions"
           >
             <img
               alt="ADEME"
-              className="w-32"
+              className="fr-footer__logo"
+              height="146"
               loading="lazy"
               src="ademe.svg"
+              width="128"
             />
-          </div>
+          </a>
         </div>
         <div
-          className="fr-footer__content !mt-6 !flex-initial lg:!mt-0 lg:!ml-6"
+          className="fr-footer__content"
         >
-          <h5
-            className="w-full mb-4"
-          >
-            <a
-              href="https://territoiresentransitions.fr"
-              title="Accueil"
-            >
-              Territoires en Transitions
-            </a>
-          </h5>
           <p
             className="fr-footer__content-desc"
           >
-            Territoires en transitions accompagne les collectivités afin de les aider à piloter plus facilement leur transition écologique.
-          </p>
-          <p
-            className="fr-footer__content-desc"
-          >
-            Vous rencontrez une difficulté ? Une suggestion pour nous aider à améliorer l'outil ?
-            <br />
-            Écrivez-nous à : 
+            Territoires en Transitions est une startup d'État portée par l'Agence de la Transition Écologique (ADEME) avec le soutien de l'Agence Nationale de la Cohésion des Territoires (ANCT). Le code source est en
+             
             <a
-              href="mailto:aide@territoiresentransitions.fr?subject=Aide sur app.territoiresentransitions.fr"
+              href="https://github.com/betagouv/territoires-en-transitions"
+              rel="noreferrer"
+              target="_blank"
             >
-              aide@territoiresentransitions.fr
+              licence libre
             </a>
+            .
           </p>
           <ul
             className="fr-footer__content-list"
@@ -556,6 +547,8 @@ exports[`Storyshots app/Layout Exemple 1`] = `
               <a
                 className="fr-footer__content-link"
                 href="https://www.ademe.fr/"
+                rel="noreferrer"
+                target="_blank"
               >
                 ademe.fr
               </a>
@@ -566,6 +559,8 @@ exports[`Storyshots app/Layout Exemple 1`] = `
               <a
                 className="fr-footer__content-link"
                 href="https://beta.gouv.fr/"
+                rel="noreferrer"
+                target="_blank"
               >
                 beta.gouv
               </a>
@@ -576,6 +571,8 @@ exports[`Storyshots app/Layout Exemple 1`] = `
               <a
                 className="fr-footer__content-link"
                 href="https://territoireengagetransitionecologique.ademe.fr"
+                rel="noreferrer"
+                target="_blank"
               >
                 territoireengagetransitionecologique.ademe.fr
               </a>
@@ -594,9 +591,36 @@ exports[`Storyshots app/Layout Exemple 1`] = `
           >
             <a
               className="fr-footer__bottom-link"
+              href="https://aide.territoiresentransitions.fr/fr/article/comment-contacter-lequipe-territoires-en-transitions-ngu7tg/"
+            >
+              Nous contacter
+            </a>
+          </li>
+          <li
+            className="fr-footer__bottom-item"
+          >
+            <a
+              className="fr-footer__bottom-link"
+              href="https://territoiresentransitions.fr/stats"
+            >
+              Statistiques
+            </a>
+          </li>
+          <li
+            className="fr-footer__bottom-item"
+          >
+            <span
+              className="fr-footer__bottom-link"
+            >
+              Accessibilité : partiellement conforme
+            </span>
+          </li>
+          <li
+            className="fr-footer__bottom-item"
+          >
+            <a
+              className="fr-footer__bottom-link"
               href="https://territoiresentransitions.fr/mentions"
-              rel="noopener noreferrer"
-              target="_blank"
             >
               Mentions légales
             </a>
@@ -606,23 +630,9 @@ exports[`Storyshots app/Layout Exemple 1`] = `
           >
             <a
               className="fr-footer__bottom-link"
-              href="https://www.ademe.fr/lademe/infos-pratiques/politique-protection-donnees-a-caractere-personnel"
-              rel="external noreferrer"
-              target="_blank"
+              href="https://www.ademe.fr/donnees-personnelles/"
             >
-              Protection des données
-            </a>
-          </li>
-          <li
-            className="fr-footer__bottom-item"
-          >
-            <a
-              className="fr-footer__bottom-link"
-              href="https://territoiresentransitions.fr/stats"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              Statistiques
+              Données personnelles
             </a>
           </li>
           <li
@@ -631,13 +641,26 @@ exports[`Storyshots app/Layout Exemple 1`] = `
             <a
               className="fr-footer__bottom-link"
               href="https://territoiresentransitions.fr/cgu"
-              rel="noopener noreferrer"
-              target="_blank"
             >
               Conditions générales d’utilisation
             </a>
           </li>
         </ul>
+        <div
+          className="fr-footer__bottom-copy"
+        >
+          <p>
+            Sauf mention contraire, tous les contenus de ce site sont sous
+             
+            <a
+              href="https://github.com/etalab/licence-ouverte/blob/master/LO.md"
+              rel="noreferrer"
+              target="_blank"
+            >
+              licence etalab-2.0
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   </footer>

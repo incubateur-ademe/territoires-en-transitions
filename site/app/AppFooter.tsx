@@ -20,34 +20,26 @@ const AppFooter = () => {
             </a>
           </div>
           <div className="fr-footer__content">
-            <p className="fr-footer__content-desc fr-mb-2w">
-              <span style={{fontSize: 'x-large', fontWeight: 'bold'}}>
-                Territoires en Transitions
-              </span>
-              <br />
-              <span>
-                Accompagner la transition écologique des collectivités
-              </span>
-            </p>
             <p className="fr-footer__content-desc">
-              Territoires en transitions accompagne les collectivités afin de
-              les aider à piloter plus facilement leur transition écologique.{' '}
-            </p>
-            <p className="fr-footer__content-desc">
-              Vous rencontrez une difficulté ? Une suggestion pour nous aider à
-              améliorer l&apos;outil ?
-              <br />
-              Écrivez-nous à&nbsp;:&nbsp;
-              <a href="mailto:aide@territoiresentransitions.fr?subject=Aide sur app.territoiresentransitions.fr">
-                aide@territoiresentransitions.fr
+              Territoires en Transitions est une startup d'État portée par
+              l'Agence de la Transition Écologique (ADEME) avec le soutien de
+              l'Agence Nationale de la Cohésion des Territoires (ANCT). Le code
+              source est en{' '}
+              <a
+                href="https://github.com/betagouv/territoires-en-transitions"
+                target="_blank"
+                rel="noreferrer"
+              >
+                licence libre
               </a>
+              .
             </p>
             <ul className="fr-footer__content-list">
               <li className="fr-footer__content-item">
                 <a
                   className="fr-footer__content-link"
+                  href="https://www.ademe.fr/"
                   target="_blank"
-                  href="https://beta.gouv.fr"
                   rel="noreferrer"
                 >
                   ademe.fr
@@ -56,8 +48,8 @@ const AppFooter = () => {
               <li className="fr-footer__content-item">
                 <a
                   className="fr-footer__content-link"
+                  href="https://beta.gouv.fr/"
                   target="_blank"
-                  href="https://gouvernement.fr"
                   rel="noreferrer"
                 >
                   beta.gouv
@@ -66,8 +58,8 @@ const AppFooter = () => {
               <li className="fr-footer__content-item">
                 <a
                   className="fr-footer__content-link"
-                  target="_blank"
                   href="https://territoireengagetransitionecologique.ademe.fr"
+                  target="_blank"
                   rel="noreferrer"
                 >
                   territoireengagetransitionecologique.ademe.fr
@@ -79,34 +71,63 @@ const AppFooter = () => {
         <div className="fr-footer__bottom">
           <ul className="fr-footer__bottom-list">
             <li className="fr-footer__bottom-item">
+              <a
+                className="fr-footer__bottom-link"
+                href="https://aide.territoiresentransitions.fr/fr/article/comment-contacter-lequipe-territoires-en-transitions-ngu7tg/"
+              >
+                Nous contacter
+              </a>
+            </li>
+            <li className="fr-footer__bottom-item">
+              <a
+                className="fr-footer__bottom-link"
+                href="/stats"
+              >
+                Statistiques
+              </a>
+            </li>
+            <li className="fr-footer__bottom-item">
               <span className="fr-footer__bottom-link">
-                Accessibilité: non conforme
+                Accessibilité : partiellement conforme
               </span>
             </li>
             <li className="fr-footer__bottom-item">
-              <a href="/mentions" className="fr-footer__bottom-link">
+              <a
+                className="fr-footer__bottom-link"
+                href="/mentions"
+              >
                 Mentions légales
               </a>
             </li>
             <li className="fr-footer__bottom-item">
               <a
-                href="https://expertises.ademe.fr/lademe/infos-pratiques/politique-protection-donnees-a-caractere-personnel"
                 className="fr-footer__bottom-link"
+                href="https://www.ademe.fr/donnees-personnelles/"
               >
                 Données personnelles
               </a>
             </li>
             <li className="fr-footer__bottom-item">
-              <a href="/stats" className="fr-footer__bottom-link">
-                Statistiques
-              </a>
-            </li>
-            <li className="fr-footer__bottom-item">
-              <a href="/cgu" className="fr-footer__bottom-link">
+              <a
+                className="fr-footer__bottom-link"
+                href="/cgu"
+              >
                 Conditions générales d’utilisation
               </a>
             </li>
           </ul>
+          <div className="fr-footer__bottom-copy">
+            <p>
+              Sauf mention contraire, tous les contenus de ce site sont sous{' '}
+              <a
+                href="https://github.com/etalab/licence-ouverte/blob/master/LO.md"
+                target="_blank"
+                rel="noreferrer"
+              >
+                licence etalab-2.0
+              </a>
+            </p>
+          </div>
         </div>
       </div>
     </footer>
