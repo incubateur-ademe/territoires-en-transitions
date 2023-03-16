@@ -30,9 +30,9 @@ export const SelectCollectivite = (props: HeaderPropsWithModalState) => {
 
   return (
     <ul className="fr-nav__list" data-test={ID}>
-      <li className="fr-nav__item">
+      <li className="fr-nav__item !relative">
         <button
-          className="fr-nav__btn min-w-max"
+          className="fr-nav__btn min-w-[15rem]"
           aria-controls={ID}
           aria-expanded={opened}
           onClick={() => setOpenedId(opened ? null : ID)}
@@ -45,7 +45,9 @@ export const SelectCollectivite = (props: HeaderPropsWithModalState) => {
           />
         </button>
         <div
-          className={classNames('fr-menu', {'fr-collapse': !opened})}
+          className={classNames('fr-menu right-0', {
+            'fr-collapse': !opened,
+          })}
           id={ID}
         >
           <ul
@@ -68,7 +70,7 @@ export const SelectCollectivite = (props: HeaderPropsWithModalState) => {
                     <BadgeNiveauAcces
                       acces={niveau_acces}
                       isAuditeur={est_auditeur || false}
-                      className="ml-4"
+                      className="float-right"
                     />
                   </Link>
                 </li>
