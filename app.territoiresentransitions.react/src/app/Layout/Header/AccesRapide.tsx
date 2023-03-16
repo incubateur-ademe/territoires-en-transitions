@@ -1,13 +1,16 @@
-import {Link} from 'react-router-dom';
+import {Link, useLocation} from 'react-router-dom';
 import {useTracker} from 'core-logic/hooks/useTracker';
 import {HeaderPropsWithModalState} from './types';
 import {allCollectivitesPath, signInPath, signUpPath} from 'app/paths';
 import MenuUtilisateur from './MenuUtilisateur';
+import classNames from 'classnames';
 
 /** liens en "accès rapide" */
 export const AccesRapide = (props: HeaderPropsWithModalState) => {
   const {auth, setModalOpened} = props;
   const {isConnected, user} = auth;
+  const {pathname} = useLocation();
+  const isAllCollectivitesPath = pathname === allCollectivitesPath;
 
   return (
     <ul className="fr-btns-group">
@@ -15,7 +18,10 @@ export const AccesRapide = (props: HeaderPropsWithModalState) => {
         <li>
           <Link
             to={allCollectivitesPath}
-            className="fr-btn fr-icon-seedling-fill"
+            className={classNames('fr-btn', {
+              'fr-icon-seedling-fill': isAllCollectivitesPath,
+              'fr-icon-seedling-line': !isAllCollectivitesPath,
+            })}
             onClick={() => setModalOpened(false)}
           >
             Collectivités engagées
