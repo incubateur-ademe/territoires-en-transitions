@@ -46,7 +46,7 @@ cd ./app.territoiresentransitions.react
 # Le tri est fait avec eslint et le plugin `typescript-sort-keys` (cf .eslintrc.json)
 # On doit appliquer la commande plusieurs fois pour que toutes les erreurs
 # soient corrigées (peut-être à cause de la taille du fichier ?)
-repeat_command 5 ./node_modules/.bin/eslint src/types/database.types.ts --fix
+repeat_command 10 ./node_modules/.bin/eslint src/types/database.types.ts --fix
 
 echo "Mise en forme du fichier généré"
 ./node_modules/.bin/prettier -w src/types/database.types.ts
