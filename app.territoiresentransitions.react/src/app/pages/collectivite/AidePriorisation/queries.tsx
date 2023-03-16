@@ -32,7 +32,7 @@ export const fetchRows = async (
   const query = supabaseClient
     .from('action_statuts')
     .select('action_id,phase,score_realise,score_programme,points_restants')
-    .match({collectivite_id, referentiel})
+    .match({collectivite_id, referentiel, concerne: true, desactive: false})
     .gt('depth', 0);
 
   // applique les filtres
