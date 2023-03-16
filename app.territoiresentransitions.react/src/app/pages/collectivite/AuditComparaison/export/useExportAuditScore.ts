@@ -1,13 +1,19 @@
-import {Cell, Workbook, Worksheet} from 'exceljs';
+import {Workbook, Worksheet} from 'exceljs';
 import {format} from 'date-fns';
 import {saveBlob} from 'ui/shared/preuves/Bibliotheque/saveBlob';
 import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {ActionReferentiel} from '../../ReferentielTable/useReferentiel';
-import {TComparaisonScoreAudit, TScoreAudit} from '../types';
-import {Config, MIME_XLSX, getActionIdentifiant} from './config';
+import {TComparaisonScoreAudit} from '../types';
+import {Config} from './config';
+import {
+  MIME_XLSX,
+  getActionIdentifiant,
+  setNumValue,
+  FORMAT_PERCENT,
+  formatActionStatut,
+} from 'utils/exportXLSX';
 import {useExportData} from './useExportData';
 import {Database} from 'types/database.types';
-import {avancementToLabel} from 'app/labels';
 import {TAuditeur} from '../../Audit/useAudit';
 
 export const useExportAuditScores = (
@@ -36,8 +42,6 @@ export const useExportAuditScores = (
 
   return {exportAuditScores, isLoading};
 };
-
-const FORMAT_PERCENT = 'percent';
 
 // insère les données dans le modèle et sauvegarde le fichier xls résultant
 const updateAndSaveXLS = async (
@@ -137,39 +141,6 @@ const updateAndSaveXLS = async (
   saveBlob(blob, filename);
 };
 
-// fixe la valeur numérique d'une cellule
-const setNumValue = (cell: Cell, value: number | null, numFmt?: string) => {
-  cell.value = value;
-  cell.style = {
-    ...cell.style,
-    alignment: {horizontal: 'center'},
-    numFmt: getNumberFormat(value, numFmt),
-  };
-};
-
-// génère le format utilisé pour les nombres
-const getNumberFormat = (value: number | null, numFmt?: string) => {
-  const suffix = numFmt === FORMAT_PERCENT ? '%' : '';
-  if (value === null || Number.isInteger(value)) {
-    return '0' + suffix;
-  }
-  return '0.0#' + suffix;
-};
-
-// formate le statut d'avancmement d'une action
-const formatStatut = (score: TScoreAudit) => {
-  const {concerne, desactive, avancement} = score;
-  if (concerne === false || desactive === true) {
-    return 'Non concerné';
-  }
-
-  if (!avancement || !avancementToLabel[avancement]) {
-    return avancementToLabel['non_renseigne'];
-  }
-
-  return avancementToLabel[avancement];
-};
-
 // écrit les données de score d'une ligne dans la feuille de calcul
 const setScoreIntoRow = (
   worksheet: Worksheet,
@@ -208,9 +179,8 @@ const setScoreIntoRow = (
     FORMAT_PERCENT
   );
   if (action && !action.have_children) {
-    worksheet.getCell(data_cols.pre_audit.statut + row).value = formatStatut(
-      score.pre_audit
-    );
+    worksheet.getCell(data_cols.pre_audit.statut + row).value =
+      formatActionStatut(score.pre_audit);
   }
 
   // score après audit
@@ -237,8 +207,7 @@ const setScoreIntoRow = (
     FORMAT_PERCENT
   );
   if (action && !action.have_children) {
-    worksheet.getCell(data_cols.courant.statut + row).value = formatStatut(
-      score.courant
-    );
+    worksheet.getCell(data_cols.courant.statut + row).value =
+      formatActionStatut(score.courant);
   }
 };
