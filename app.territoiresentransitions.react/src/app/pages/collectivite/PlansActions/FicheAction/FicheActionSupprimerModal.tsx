@@ -48,8 +48,8 @@ const FicheActionSupprimerModal = ({fiche, onDelete}: Props) => {
         );
       }}
     >
-      <div className="inline-flex border border-red-700">
-        <button className="fr-btn fr-btn--secondary fr-text-default--error !shadow-none">
+      <div className="inline-flex border border-[#ce0500]">
+        <button className="fr-btn fr-btn--secondary fr-label--error !shadow-none">
           Supprimer cette fiche
         </button>
       </div>
