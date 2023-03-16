@@ -266,3 +266,4 @@ stats/locales [stats/locales@v2.10.0] 2023-03-14T13:45:55Z Florian <florian@derf
 @v2.11.0 2023-03-15T09:26:50Z Florian <florian@derfurth.com> # Répare les stats
 
 stats/locales [stats/locales@v2.11.0] 2023-03-16T08:16:27Z Florian <florian@derfurth.com> # Répare les départements
+@v2.11.1 2023-03-16T09:12:30Z Florian <florian@derfurth.com> # Répare les stats locales.
