@@ -43,7 +43,7 @@ exports[`Storyshots app/Layout Exemple 1`] = `
                   <img
                     alt="ADEME"
                     height="80"
-                    src="ademe.jpg"
+                    src="ademe.svg"
                     width="70"
                   />
                 </div>
@@ -513,7 +513,7 @@ exports[`Storyshots app/Layout Exemple 1`] = `
               alt="ADEME"
               className="w-32"
               loading="lazy"
-              src="ademe.jpg"
+              src="ademe.svg"
             />
           </div>
         </div>
