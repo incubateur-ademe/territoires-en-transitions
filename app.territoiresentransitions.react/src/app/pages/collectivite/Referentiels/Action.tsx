@@ -155,7 +155,14 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
       </div>
 
       <Tabs defaultActiveTab={activeTab} onChange={handleChange}>
-        <Tab label="Suivi de l'action" icon="fr-fi-seedling-fill">
+        <Tab
+          label="Suivi de l'action"
+          icon={
+            activeTab === TABS_INDEX['suivi']
+              ? 'fr-icon-seedling-fill'
+              : 'fr-icon-seedling-line'
+          }
+        >
           <section>
             <div
               className="htmlContent"
