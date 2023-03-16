@@ -59,6 +59,7 @@ export const collectiviteJournalPath = `${collectivitePath}/historique`;
 const ficheParam = 'ficheUid';
 const planParam = 'planUid';
 export const CollectivitePlansActionsBasePath = `${collectivitePath}/plans`;
+export const collectivitePlansActionsSynthesePath = `${CollectivitePlansActionsBasePath}/synthese`;
 export const collectivitePlanActionPath = `${CollectivitePlansActionsBasePath}/plan/:${planParam}`;
 export const collectivitePlanActionFichePath = `${collectivitePlanActionPath}/fiche/:${ficheParam}`;
 export const CollectiviteFichesNonClasseesPath = `${CollectivitePlansActionsBasePath}/fiches`;
@@ -155,6 +156,16 @@ export const makeCollectivitePlansActionsBaseUrl = ({
   collectiviteId: number;
 }) =>
   CollectivitePlansActionsBasePath.replace(
+    `:${collectiviteParam}`,
+    collectiviteId.toString()
+  );
+
+export const makeCollectivitePlansActionsSyntheseUrl = ({
+  collectiviteId,
+}: {
+  collectiviteId: number;
+}) =>
+  collectivitePlansActionsSynthesePath.replace(
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );

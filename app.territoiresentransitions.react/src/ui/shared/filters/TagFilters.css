@@ -1,0 +1,47 @@
+.tag-filters input[type='radio'] {
+  display: none;
+}
+
+/* Mise en forme du label */
+
+.tag-filters label {
+  display: block;
+  position: relative;
+  padding: 0.25rem 1rem;
+  margin: 0;
+  background-color: var(--background-action-low-blue-france);
+  color: var(--text-action-high-blue-france);
+  border-radius: 1rem;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 24px;
+}
+
+.tag-filters label:hover {
+  background-color: #c1c1fb;
+}
+
+.tag-filters input[type='radio']:checked + label {
+  background-color: var(--background-action-high-blue-france);
+  color: var(--text-inverted-grey);
+}
+
+/* Mise en forme de l'icône checkbox */
+
+.tag-filters label span {
+  display: none;
+}
+
+.tag-filters input[type='radio']:checked + label span {
+  display: block;
+  position: absolute;
+  top: -9px;
+  right: -12px;
+}
+
+.tag-filters input[type='radio']:checked + label span::before {
+  background-color: #fff;
+  border-radius: 1rem;
+  color: var(--text-action-high-blue-france);
+}

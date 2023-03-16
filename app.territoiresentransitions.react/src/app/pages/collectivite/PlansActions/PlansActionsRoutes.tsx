@@ -9,10 +9,10 @@ import {
   collectivitePlanActionFichePath,
   collectivitePlanActionPath,
   CollectivitePlansActionsBasePath,
-  makeCollectiviteFichesNonClasseesUrl,
-  makeCollectivitePlanActionUrl,
+  collectivitePlansActionsSynthesePath,
+  makeCollectivitePlansActionsSyntheseUrl,
 } from 'app/paths';
-import {usePlansActionsListe} from './PlanAction/data/usePlansActionsListe';
+import {SynthesePage} from './Synthese/SynthesePage';
 
 type Props = {
   collectivite_id: number;
@@ -22,25 +22,19 @@ type Props = {
  * Routes starting with collectivite/:collectiviteId/plans see CollectiviteRoutes.tsx
  */
 export const PlansActionsRoutes = ({collectivite_id}: Props) => {
-  const data = usePlansActionsListe(collectivite_id);
-
   return (
     <>
       <Route exact path={[CollectivitePlansActionsBasePath]}>
-        {/** S'il existe au moins 1 plan, on redirige vers le 1er plan de la liste,
-         * sinon vers les fiches non classées */}
+        {/* Redirection vers la page de synthèse */}
         <Redirect
-          to={
-            data && data.plans.length > 0
-              ? makeCollectivitePlanActionUrl({
-                  collectiviteId: collectivite_id,
-                  planActionUid: data.plans[0].id.toString(),
-                })
-              : makeCollectiviteFichesNonClasseesUrl({
-                  collectiviteId: collectivite_id,
-                })
-          }
+          to={makeCollectivitePlansActionsSyntheseUrl({
+            collectiviteId: collectivite_id,
+          })}
         />
+      </Route>
+      {/* Synthèse */}
+      <Route exact path={[collectivitePlansActionsSynthesePath]}>
+        <SynthesePage collectiviteId={collectivite_id} />
       </Route>
       {/* <FichesNonClassees /> */}
       <Route exact path={[CollectiviteFichesNonClasseesPath]}>
