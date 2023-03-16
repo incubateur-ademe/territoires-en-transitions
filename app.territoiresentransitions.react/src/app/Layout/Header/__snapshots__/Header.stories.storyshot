@@ -451,12 +451,12 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
               onClick={[Function]}
             >
               <b
-                className="mr-auto"
+                className="mr-auto pointer-events-none"
               >
                 Collectivité test
               </b>
               <span
-                className="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--info ml-4"
+                className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--info ml-4"
               >
                 admin
               </span>
@@ -481,7 +481,7 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
                   >
                     Collectivité test 2
                     <span
-                      className="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--info float-right"
+                      className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--info float-right"
                     >
                       édition
                     </span>
@@ -499,7 +499,7 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
                   >
                     Collectivité test 3
                     <span
-                      className="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--info float-right"
+                      className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--info float-right"
                     >
                       lecture
                     </span>

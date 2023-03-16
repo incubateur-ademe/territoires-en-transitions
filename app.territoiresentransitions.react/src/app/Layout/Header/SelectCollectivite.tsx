@@ -37,7 +37,9 @@ export const SelectCollectivite = (props: HeaderPropsWithModalState) => {
           aria-expanded={opened}
           onClick={() => setOpenedId(opened ? null : ID)}
         >
-          <b className="mr-auto">{currentCollectivite.nom}</b>
+          <b className="mr-auto pointer-events-none">
+            {currentCollectivite.nom}
+          </b>
           <BadgeNiveauAcces
             acces={currentCollectivite.niveau_acces}
             isAuditeur={currentCollectivite.est_auditeur}
