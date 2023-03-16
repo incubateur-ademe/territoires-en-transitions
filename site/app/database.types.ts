@@ -5637,4 +5637,57 @@ export interface Database {
       };
     };
   };
+  typage: {
+    Enums: {
+      [_ in never]: never;
+    };
+    Functions: {
+      [_ in never]: never;
+    };
+    Tables: {
+      graphique_tranche: {
+        Insert: {
+          label: string;
+          value: number;
+        };
+        Row: {
+          label: string;
+          value: number;
+        };
+        Update: {
+          label?: string;
+          value?: number;
+        };
+      };
+      plan_action_tableau_de_bord: {
+        Insert: {
+          collectivite_id: number;
+          pilotes?: unknown[] | null;
+          plan_id?: number | null;
+          priorites?: unknown[] | null;
+          referents?: unknown[] | null;
+          statuts?: unknown[] | null;
+        };
+        Row: {
+          collectivite_id: number;
+          pilotes: unknown[] | null;
+          plan_id: number | null;
+          priorites: unknown[] | null;
+          referents: unknown[] | null;
+          statuts: unknown[] | null;
+        };
+        Update: {
+          collectivite_id?: number;
+          pilotes?: unknown[] | null;
+          plan_id?: number | null;
+          priorites?: unknown[] | null;
+          referents?: unknown[] | null;
+          statuts?: unknown[] | null;
+        };
+      };
+    };
+    Views: {
+      [_ in never]: never;
+    };
+  };
 }
