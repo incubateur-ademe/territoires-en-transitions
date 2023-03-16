@@ -5,7 +5,7 @@ import {HeaderProps, HeaderPropsWithModalState} from './types';
 import {MenuPrincipal} from './MenuPrincipal';
 import {AccesRapide} from './AccesRapide';
 import {MaintenanceNotice} from './MaintenanceNotice';
-import ademeSrc from 'app/static/img/ademe.jpg';
+import ademeSrc from 'app/static/img/ademe.svg';
 
 /**
  * Affiche l'en-tête

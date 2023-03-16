@@ -30,7 +30,7 @@ exports[`Storyshots app/Layout/Footer Exemple 1`] = `
             alt="ADEME"
             className="w-32"
             loading="lazy"
-            src="ademe.jpg"
+            src="ademe.svg"
           />
         </div>
       </div>

@@ -40,7 +40,7 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
                 <img
                   alt="ADEME"
                   height="80"
-                  src="ademe.jpg"
+                  src="ademe.svg"
                   width="70"
                 />
               </div>
@@ -92,7 +92,7 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
             >
               <li>
                 <a
-                  className="fr-btn fr-icon-seedling-fill"
+                  className="fr-btn fr-icon-seedling-line"
                   href="/toutes_collectivites"
                   onClick={[Function]}
                 >
@@ -442,12 +442,12 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
           data-test="SelectCollectivite"
         >
           <li
-            className="fr-nav__item"
+            className="fr-nav__item !relative"
           >
             <button
               aria-controls="SelectCollectivite"
               aria-expanded={false}
-              className="fr-nav__btn min-w-max"
+              className="fr-nav__btn min-w-[15rem]"
               onClick={[Function]}
             >
               <b
@@ -462,7 +462,7 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
               </span>
             </button>
             <div
-              className="fr-menu fr-collapse"
+              className="fr-menu right-0 fr-collapse"
               id="SelectCollectivite"
             >
               <ul
@@ -481,7 +481,7 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
                   >
                     Collectivité test 2
                     <span
-                      className="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--info ml-4"
+                      className="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--info float-right"
                     >
                       édition
                     </span>
@@ -499,7 +499,7 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
                   >
                     Collectivité test 3
                     <span
-                      className="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--info ml-4"
+                      className="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--info float-right"
                     >
                       lecture
                     </span>
@@ -518,7 +518,7 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
         >
           <li>
             <a
-              className="fr-btn fr-icon-seedling-fill"
+              className="fr-btn fr-icon-seedling-line"
               href="/toutes_collectivites"
               onClick={[Function]}
             >
@@ -611,7 +611,7 @@ exports[`Storyshots app/Layout/Header Not Connected 1`] = `
                 <img
                   alt="ADEME"
                   height="80"
-                  src="ademe.jpg"
+                  src="ademe.svg"
                   width="70"
                 />
               </div>

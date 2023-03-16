@@ -1,5 +1,5 @@
 import LogoRepubliqueFrancaise from 'ui/logo/LogoRepubliqueFrancaise';
-import ademeLogoImage from 'app/static/img/ademe.jpg';
+import ademeLogoImage from 'app/static/img/ademe.svg';
 
 const Footer = () => {
   return (
