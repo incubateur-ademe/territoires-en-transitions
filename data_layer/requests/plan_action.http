@@ -24,7 +24,17 @@ Authorization: Bearer {{service}}
 Prefer: params=multiple-objects, return=representation, resolution=merge-duplicates
 Content-Type: text/csv
 
-< ./test_plan_action.csv
+< ./tpa.csv
+
+
+### Appeler un plan d'action
+POST {{api}}/auth/v1/rpc/plan_action
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{"id" : 1}
+
 
 
 ### une fiche
@@ -60,3 +70,11 @@ Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {"collectivite_id": 5460}
+
+### tableau de bord
+POST {{api}}/rest/v1/rpc/plan_action_tableau_de_bord
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{"collectivite_id": 1, "plan_id": 12, "sans_plan": false}
