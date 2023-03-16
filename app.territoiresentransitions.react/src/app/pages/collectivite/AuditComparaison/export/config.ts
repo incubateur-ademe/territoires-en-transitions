@@ -1,11 +1,6 @@
 /**
  * Configuration des exports
  */
-import {Worksheet} from 'exceljs';
-
-export const MIME_XLSX =
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-
 const common = {
   // les cellules du cartouche d'information
   info_cells: {
@@ -20,20 +15,6 @@ const common = {
 };
 
 export type Config = typeof cae;
-
-// regex pour extraire les identifiants
-const RE_IDENTIFIANT = /(\d+\.?)+/;
-
-// extrait l'identifiant d'une ligne du tableau
-export const getActionIdentifiant = (
-  worksheet: Worksheet,
-  row: number,
-  col: string
-) => {
-  const value = worksheet.getCell(col + row).text;
-  const matches = value.match(RE_IDENTIFIANT);
-  return matches?.length ? matches[0] : null;
-};
 
 // configuration de base pour CAE
 const cae = {

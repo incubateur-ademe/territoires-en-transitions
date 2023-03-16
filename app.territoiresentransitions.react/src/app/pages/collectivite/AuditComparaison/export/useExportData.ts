@@ -2,11 +2,11 @@ import {useMemo} from 'react';
 import {useReferentielCommentaires} from 'core-logic/hooks/useActionCommentaire';
 import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {indexBy} from 'utils/indexBy';
+import {useExportTemplate} from 'utils/exportXLSX';
 import {useAuditeurs} from '../../Audit/useAudit';
 import {useReferentielData} from '../../ReferentielTable/useReferentiel';
 import {useComparaisonScoreAudit} from '../useComparaisonScoreAudit';
 import {configParReferentiel} from './config';
-import {useExportTemplate} from './useExportTemplate';
 
 /** Fourni les données nécessaires à l'export des scores pendant l'audit */
 export const useExportData = (
@@ -18,7 +18,7 @@ export const useExportData = (
     refetch: loadTemplate,
     data: template,
     isLoading: isLoadingTemplate,
-  } = useExportTemplate(referentiel);
+  } = useExportTemplate('export_audit', referentiel);
 
   // chargement du référentiel
   const {rows, isLoading: isLoadingReferentiel} =
