@@ -18,8 +18,9 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
   useEffect(() => {
     const onClickOutside = (evt: globalThis.MouseEvent) => {
       // referme le menu ouvert quand on a cliqué en dehors d'un item de navigation
-      const el = evt.target as HTMLElement;
-      if (!el.className.includes('fr-nav')) setOpenedId(null);
+      const className = (evt.target as HTMLElement)?.className;
+      if (typeof className === 'string' && !className.startsWith('fr-nav_'))
+        setOpenedId(null);
     };
     document.body.addEventListener('mousedown', onClickOutside, {
       capture: true,
