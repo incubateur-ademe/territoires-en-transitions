@@ -15,11 +15,10 @@
   cursor: pointer;
   font-size: 14px;
   font-weight: 400;
-  line-height: 24px;
 }
 
 .tag-filters label:hover {
-  background-color: #c1c1fb;
+  background-color: var(--background-action-low-blue-france-hover);
 }
 
 .tag-filters input[type='radio']:checked + label {
@@ -34,14 +33,13 @@
 }
 
 .tag-filters input[type='radio']:checked + label span {
-  display: block;
+  display: flex;
   position: absolute;
   top: -9px;
   right: -12px;
-}
-
-.tag-filters input[type='radio']:checked + label span::before {
   background-color: #fff;
   border-radius: 1rem;
+  border-width: 1px;
+  border-color: #fff;
   color: var(--text-action-high-blue-france);
 }

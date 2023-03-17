@@ -20,32 +20,22 @@ const SyntheseGraphsList = ({
         {
           title: "Répartition par statut d'avancement",
           data: data.statuts.map(st => ({
-            value: st.value,
-            id: st.label,
+            ...st,
             // @ts-ignore
             color: StatusColor[st.label] ?? '#ccc',
           })),
         },
         {
           title: 'Répartition par personne pilote',
-          data: data.pilotes.map(pi => ({
-            value: pi.value,
-            id: pi.label,
-          })),
+          data: data.pilotes,
         },
         {
           title: 'Répartition par élu.e référent.e',
-          data: data.referents.map(ref => ({
-            value: ref.value,
-            id: ref.label,
-          })),
+          data: data.referents,
         },
         {
           title: 'Répartition par échéance',
-          data: data.priorites.map(pr => ({
-            value: pr.value,
-            id: pr.label,
-          })),
+          data: data.priorites,
         },
         // {
         //   title: 'Répartition par direction pilote',
