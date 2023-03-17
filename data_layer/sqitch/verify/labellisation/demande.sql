@@ -9,7 +9,8 @@ select id,
        etoiles,
        date,
        sujet,
-       modified_at
+       modified_at,
+       envoyee_le
 from labellisation.demande
 where false;
 
