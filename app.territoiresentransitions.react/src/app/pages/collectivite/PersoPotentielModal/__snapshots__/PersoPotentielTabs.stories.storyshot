@@ -196,7 +196,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         className="fr-form-group "
       >
         <fieldset
-          className="fr-fieldset"
+          className="fr-fieldset !flex-col !items-stretch"
         >
           <legend
             className="fr-fieldset__legend fr-fieldset__legend--regular"
@@ -215,7 +215,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
               <button
                 aria-controls="accordion-q1"
                 aria-expanded={false}
-                className="fr-accordion__btn"
+                className="fr-accordion__btn font-normal"
                 onClick={[Function]}
               >
                 <i
@@ -235,91 +235,79 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
             />
           </section>
           <div
-            className="fr-fieldset__content pl-4"
+            className="flex pl-4 flex-col"
             data-test="reponse"
           >
             <div
-              className="fr-radio-group fr-radio-group--sm vertical"
+              className="fr-fieldset__element fr-fieldset__element--inline"
             >
               <div
-                className="fr-fieldset__element fr-fieldset__element--inline"
+                className="fr-radio-group fr-radio-group--sm"
               >
-                <div
-                  className="fr-radio-group"
+                <input
+                  checked={false}
+                  disabled={false}
+                  id="q1-c1"
+                  onChange={[Function]}
+                  type="radio"
+                  value="c1"
+                />
+                <label
+                  className="fr-label"
+                  htmlFor="q1-c1"
                 >
-                  <input
-                    checked={false}
-                    disabled={false}
-                    id="q1-c1"
-                    onChange={[Function]}
-                    type="radio"
-                    value="c1"
-                  />
-                  <label
-                    className="fr-label"
-                    htmlFor="q1-c1"
-                  >
-                    Oui, pour l’ensemble de la collectivité
-                  </label>
-                </div>
+                  Oui, pour l’ensemble de la collectivité
+                </label>
               </div>
             </div>
             <div
-              className="fr-radio-group fr-radio-group--sm vertical"
+              className="fr-fieldset__element fr-fieldset__element--inline"
             >
               <div
-                className="fr-fieldset__element fr-fieldset__element--inline"
+                className="fr-radio-group fr-radio-group--sm"
               >
-                <div
-                  className="fr-radio-group"
+                <input
+                  checked={false}
+                  disabled={false}
+                  id="q1-c2"
+                  onChange={[Function]}
+                  type="radio"
+                  value="c2"
+                />
+                <label
+                  className="fr-label"
+                  htmlFor="q1-c2"
                 >
-                  <input
-                    checked={false}
-                    disabled={false}
-                    id="q1-c2"
-                    onChange={[Function]}
-                    type="radio"
-                    value="c2"
-                  />
-                  <label
-                    className="fr-label"
-                    htmlFor="q1-c2"
-                  >
-                    Oui, uniquement sur trottoirs, parkings ou zones d'activités ou  industrielles
-                  </label>
-                </div>
+                  Oui, uniquement sur trottoirs, parkings ou zones d'activités ou  industrielles
+                </label>
               </div>
             </div>
             <div
-              className="fr-radio-group fr-radio-group--sm vertical"
+              className="fr-fieldset__element fr-fieldset__element--inline"
             >
               <div
-                className="fr-fieldset__element fr-fieldset__element--inline"
+                className="fr-radio-group fr-radio-group--sm"
               >
-                <div
-                  className="fr-radio-group"
+                <input
+                  checked={false}
+                  disabled={false}
+                  id="q1-c3"
+                  onChange={[Function]}
+                  type="radio"
+                  value="c3"
+                />
+                <label
+                  className="fr-label"
+                  htmlFor="q1-c3"
                 >
-                  <input
-                    checked={false}
-                    disabled={false}
-                    id="q1-c3"
-                    onChange={[Function]}
-                    type="radio"
-                    value="c3"
-                  />
-                  <label
-                    className="fr-label"
-                    htmlFor="q1-c3"
-                  >
-                    Non
-                  </label>
-                </div>
+                  Non
+                </label>
               </div>
             </div>
           </div>
         </fieldset>
         <fieldset
-          className="fr-fieldset"
+          className="fr-fieldset !flex-col !items-stretch"
         >
           <legend
             className="fr-fieldset__legend fr-fieldset__legend--regular"
@@ -330,65 +318,57 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
             }
           />
           <div
-            className="fr-fieldset__content pl-4 fr-fieldset--inline inline-radio"
+            className="flex pl-4"
             data-test="reponse"
           >
             <div
-              className="fr-radio-group fr-radio-group--sm"
+              className="fr-fieldset__element fr-fieldset__element--inline"
             >
               <div
-                className="fr-fieldset__element fr-fieldset__element--inline"
+                className="fr-radio-group fr-radio-group--sm"
               >
-                <div
-                  className="fr-radio-group"
+                <input
+                  checked={false}
+                  disabled={false}
+                  id="q2-oui"
+                  onChange={[Function]}
+                  type="radio"
+                  value="oui"
+                />
+                <label
+                  className="fr-label"
+                  htmlFor="q2-oui"
                 >
-                  <input
-                    checked={false}
-                    disabled={false}
-                    id="q2-oui"
-                    onChange={[Function]}
-                    type="radio"
-                    value="oui"
-                  />
-                  <label
-                    className="fr-label"
-                    htmlFor="q2-oui"
-                  >
-                    Oui
-                  </label>
-                </div>
+                  Oui
+                </label>
               </div>
             </div>
             <div
-              className="fr-radio-group fr-radio-group--sm"
+              className="fr-fieldset__element fr-fieldset__element--inline"
             >
               <div
-                className="fr-fieldset__element fr-fieldset__element--inline"
+                className="fr-radio-group fr-radio-group--sm"
               >
-                <div
-                  className="fr-radio-group"
+                <input
+                  checked={false}
+                  disabled={false}
+                  id="q2-non"
+                  onChange={[Function]}
+                  type="radio"
+                  value="non"
+                />
+                <label
+                  className="fr-label"
+                  htmlFor="q2-non"
                 >
-                  <input
-                    checked={false}
-                    disabled={false}
-                    id="q2-non"
-                    onChange={[Function]}
-                    type="radio"
-                    value="non"
-                  />
-                  <label
-                    className="fr-label"
-                    htmlFor="q2-non"
-                  >
-                    Non
-                  </label>
-                </div>
+                  Non
+                </label>
               </div>
             </div>
           </div>
         </fieldset>
         <fieldset
-          className="fr-fieldset"
+          className="fr-fieldset !flex-col !items-stretch"
         >
           <legend
             className="fr-fieldset__legend fr-fieldset__legend--regular"
@@ -399,7 +379,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
             }
           />
           <div
-            className="fr-fieldset__content pl-4 fr-fieldset--inline"
+            className="flex pl-4 flex-col"
             data-test="reponse"
           >
             <label
@@ -433,7 +413,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
               <button
                 aria-controls="accordion-part-q3"
                 aria-expanded={false}
-                className="fr-accordion__btn"
+                className="fr-accordion__btn font-normal"
                 onClick={[Function]}
               >
                 <i
@@ -571,7 +551,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         className="fr-form-group "
       >
         <fieldset
-          className="fr-fieldset"
+          className="fr-fieldset !flex-col !items-stretch"
         >
           <legend
             className="fr-fieldset__legend fr-fieldset__legend--regular"
@@ -582,59 +562,51 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
             }
           />
           <div
-            className="fr-fieldset__content pl-4 fr-fieldset--inline inline-radio"
+            className="flex pl-4"
             data-test="reponse"
           >
             <div
-              className="fr-radio-group fr-radio-group--sm"
+              className="fr-fieldset__element fr-fieldset__element--inline"
             >
               <div
-                className="fr-fieldset__element fr-fieldset__element--inline"
+                className="fr-radio-group fr-radio-group--sm"
               >
-                <div
-                  className="fr-radio-group"
+                <input
+                  checked={false}
+                  disabled={false}
+                  id="q2-oui"
+                  onChange={[Function]}
+                  type="radio"
+                  value="oui"
+                />
+                <label
+                  className="fr-label"
+                  htmlFor="q2-oui"
                 >
-                  <input
-                    checked={false}
-                    disabled={false}
-                    id="q2-oui"
-                    onChange={[Function]}
-                    type="radio"
-                    value="oui"
-                  />
-                  <label
-                    className="fr-label"
-                    htmlFor="q2-oui"
-                  >
-                    Oui
-                  </label>
-                </div>
+                  Oui
+                </label>
               </div>
             </div>
             <div
-              className="fr-radio-group fr-radio-group--sm"
+              className="fr-fieldset__element fr-fieldset__element--inline"
             >
               <div
-                className="fr-fieldset__element fr-fieldset__element--inline"
+                className="fr-radio-group fr-radio-group--sm"
               >
-                <div
-                  className="fr-radio-group"
+                <input
+                  checked={false}
+                  disabled={false}
+                  id="q2-non"
+                  onChange={[Function]}
+                  type="radio"
+                  value="non"
+                />
+                <label
+                  className="fr-label"
+                  htmlFor="q2-non"
                 >
-                  <input
-                    checked={false}
-                    disabled={false}
-                    id="q2-non"
-                    onChange={[Function]}
-                    type="radio"
-                    value="non"
-                  />
-                  <label
-                    className="fr-label"
-                    htmlFor="q2-non"
-                  >
-                    Non
-                  </label>
-                </div>
+                  Non
+                </label>
               </div>
             </div>
           </div>
@@ -757,7 +729,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         className="fr-form-group "
       >
         <fieldset
-          className="fr-fieldset"
+          className="fr-fieldset !flex-col !items-stretch"
         >
           <legend
             className="fr-fieldset__legend fr-fieldset__legend--regular"
@@ -768,7 +740,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
             }
           />
           <div
-            className="fr-fieldset__content pl-4 fr-fieldset--inline inline-radio"
+            className="flex pl-4"
             data-test="reponse"
           />
         </fieldset>
@@ -890,7 +862,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         className="fr-form-group "
       >
         <fieldset
-          className="fr-fieldset"
+          className="fr-fieldset !flex-col !items-stretch"
         >
           <legend
             className="fr-fieldset__legend fr-fieldset__legend--regular"
@@ -909,7 +881,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
               <button
                 aria-controls="accordion-q1"
                 aria-expanded={false}
-                className="fr-accordion__btn"
+                className="fr-accordion__btn font-normal"
                 onClick={[Function]}
               >
                 <i
@@ -929,85 +901,73 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
             />
           </section>
           <div
-            className="fr-fieldset__content pl-4"
+            className="flex pl-4 flex-col"
             data-test="reponse"
           >
             <div
-              className="fr-radio-group fr-radio-group--sm vertical"
+              className="fr-fieldset__element fr-fieldset__element--inline"
             >
               <div
-                className="fr-fieldset__element fr-fieldset__element--inline"
+                className="fr-radio-group fr-radio-group--sm"
               >
-                <div
-                  className="fr-radio-group"
+                <input
+                  checked={false}
+                  disabled={false}
+                  id="q1-c1"
+                  onChange={[Function]}
+                  type="radio"
+                  value="c1"
+                />
+                <label
+                  className="fr-label"
+                  htmlFor="q1-c1"
                 >
-                  <input
-                    checked={false}
-                    disabled={false}
-                    id="q1-c1"
-                    onChange={[Function]}
-                    type="radio"
-                    value="c1"
-                  />
-                  <label
-                    className="fr-label"
-                    htmlFor="q1-c1"
-                  >
-                    Oui, pour l’ensemble de la collectivité
-                  </label>
-                </div>
+                  Oui, pour l’ensemble de la collectivité
+                </label>
               </div>
             </div>
             <div
-              className="fr-radio-group fr-radio-group--sm vertical"
+              className="fr-fieldset__element fr-fieldset__element--inline"
             >
               <div
-                className="fr-fieldset__element fr-fieldset__element--inline"
+                className="fr-radio-group fr-radio-group--sm"
               >
-                <div
-                  className="fr-radio-group"
+                <input
+                  checked={false}
+                  disabled={false}
+                  id="q1-c2"
+                  onChange={[Function]}
+                  type="radio"
+                  value="c2"
+                />
+                <label
+                  className="fr-label"
+                  htmlFor="q1-c2"
                 >
-                  <input
-                    checked={false}
-                    disabled={false}
-                    id="q1-c2"
-                    onChange={[Function]}
-                    type="radio"
-                    value="c2"
-                  />
-                  <label
-                    className="fr-label"
-                    htmlFor="q1-c2"
-                  >
-                    Oui, uniquement sur trottoirs, parkings ou zones d'activités ou  industrielles
-                  </label>
-                </div>
+                  Oui, uniquement sur trottoirs, parkings ou zones d'activités ou  industrielles
+                </label>
               </div>
             </div>
             <div
-              className="fr-radio-group fr-radio-group--sm vertical"
+              className="fr-fieldset__element fr-fieldset__element--inline"
             >
               <div
-                className="fr-fieldset__element fr-fieldset__element--inline"
+                className="fr-radio-group fr-radio-group--sm"
               >
-                <div
-                  className="fr-radio-group"
+                <input
+                  checked={false}
+                  disabled={false}
+                  id="q1-c3"
+                  onChange={[Function]}
+                  type="radio"
+                  value="c3"
+                />
+                <label
+                  className="fr-label"
+                  htmlFor="q1-c3"
                 >
-                  <input
-                    checked={false}
-                    disabled={false}
-                    id="q1-c3"
-                    onChange={[Function]}
-                    type="radio"
-                    value="c3"
-                  />
-                  <label
-                    className="fr-label"
-                    htmlFor="q1-c3"
-                  >
-                    Non
-                  </label>
-                </div>
+                  Non
+                </label>
               </div>
             </div>
           </div>
@@ -1130,7 +1090,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         className="fr-form-group "
       >
         <fieldset
-          className="fr-fieldset"
+          className="fr-fieldset !flex-col !items-stretch"
         >
           <legend
             className="fr-fieldset__legend fr-fieldset__legend--regular"
@@ -1149,7 +1109,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
               <button
                 aria-controls="accordion-q1"
                 aria-expanded={false}
-                className="fr-accordion__btn"
+                className="fr-accordion__btn font-normal"
                 onClick={[Function]}
               >
                 <i
@@ -1169,39 +1129,35 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
             />
           </section>
           <div
-            className="fr-fieldset__content pl-4"
+            className="flex pl-4 flex-col"
             data-test="reponse"
           >
             <div
-              className="fr-radio-group fr-radio-group--sm "
+              className="fr-fieldset__element fr-fieldset__element--inline"
             >
               <div
-                className="fr-fieldset__element fr-fieldset__element--inline"
+                className="fr-radio-group fr-radio-group--sm"
               >
-                <div
-                  className="fr-radio-group"
+                <input
+                  checked={true}
+                  disabled={false}
+                  id="q1-c3"
+                  onChange={[Function]}
+                  type="radio"
+                  value="c3"
+                />
+                <label
+                  className="fr-label"
+                  htmlFor="q1-c3"
                 >
-                  <input
-                    checked={true}
-                    disabled={false}
-                    id="q1-c3"
-                    onChange={[Function]}
-                    type="radio"
-                    value="c3"
-                  />
-                  <label
-                    className="fr-label"
-                    htmlFor="q1-c3"
+                  Non
+                  <button
+                    className="fr-link fr-link--icon-left fr-fi-edit-line fr-ml-3w"
+                    onClick={[Function]}
                   >
-                    Non
-                    <button
-                      className="fr-link fr-link--icon-left fr-fi-edit-line fr-ml-3w"
-                      onClick={[Function]}
-                    >
-                      Modifier
-                    </button>
-                  </label>
-                </div>
+                    Modifier
+                  </button>
+                </label>
               </div>
             </div>
           </div>
@@ -1324,7 +1280,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         className="fr-form-group "
       >
         <fieldset
-          className="fr-fieldset"
+          className="fr-fieldset !flex-col !items-stretch"
         >
           <legend
             className="fr-fieldset__legend fr-fieldset__legend--regular"
@@ -1335,7 +1291,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
             }
           />
           <div
-            className="fr-fieldset__content pl-4 fr-fieldset--inline"
+            className="flex pl-4 flex-col"
             data-test="reponse"
           >
             <label
@@ -1369,7 +1325,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
               <button
                 aria-controls="accordion-part-q3"
                 aria-expanded={false}
-                className="fr-accordion__btn"
+                className="fr-accordion__btn font-normal"
                 onClick={[Function]}
               >
                 <i
@@ -1507,7 +1463,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         className="fr-form-group "
       >
         <fieldset
-          className="fr-fieldset"
+          className="fr-fieldset !flex-col !items-stretch"
         >
           <legend
             className="fr-fieldset__legend fr-fieldset__legend--regular"
@@ -1518,7 +1474,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
             }
           />
           <div
-            className="fr-fieldset__content pl-4 fr-fieldset--inline"
+            className="flex pl-4 flex-col"
             data-test="reponse"
           >
             <label
@@ -1552,7 +1508,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
               <button
                 aria-controls="accordion-part-q3"
                 aria-expanded={false}
-                className="fr-accordion__btn"
+                className="fr-accordion__btn font-normal"
                 onClick={[Function]}
               >
                 <i

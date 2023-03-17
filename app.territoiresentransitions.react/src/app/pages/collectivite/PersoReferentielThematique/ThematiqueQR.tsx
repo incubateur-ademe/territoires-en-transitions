@@ -60,9 +60,7 @@ export const ThematiqueQR = (props: TThematiqueQRProps) => {
         {identite ? (
           <>
             <CarteIdentite identite={identite} />
-            <h3 className="fr-mb-0">
-              Questions pour la personnalisation des référentiels
-            </h3>
+            <h3>Questions pour la personnalisation des référentiels</h3>
           </>
         ) : null}
         <QuestionReponseList questionReponses={qrList} onChange={onChange} />

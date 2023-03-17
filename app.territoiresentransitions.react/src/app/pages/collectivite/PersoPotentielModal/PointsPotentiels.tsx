@@ -28,7 +28,7 @@ export const PointsPotentiels = ({
         <TweenText text={getLabel(actionDef, actionScore)} align-left />
         {typeof onEdit === 'function' ? (
           <button
-            className="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-settings-5-line fr-ml-10v"
+            className="fr-btn fr-btn--tertiary fr-btn--icon-left !shadow-none fr-icon-settings-5-line fr-ml-10v"
             onClick={onEdit}
           >
             Personnaliser

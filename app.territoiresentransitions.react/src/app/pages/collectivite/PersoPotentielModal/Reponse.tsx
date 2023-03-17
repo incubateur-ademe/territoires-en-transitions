@@ -13,10 +13,7 @@ const ReponseContainer = ({
   children: ReactNode;
   className?: string;
 }) => (
-  <div
-    data-test="reponse"
-    className={classNames('fr-fieldset__content pl-4', className)}
-  >
+  <div data-test="reponse" className={classNames('flex pl-4', className)}>
     {children}
   </div>
 );
@@ -24,29 +21,21 @@ const ReponseContainer = ({
 /** Affiche une réponse donnant le choix entre plusieurs énoncés */
 const ReponseChoix = ({qr, onChange}: TQuestionReponseProps) => {
   const {id: questionId, choix, reponse} = qr;
-  const hasReponse = reponse !== null && reponse !== undefined;
   const choices = getFilteredChoices(reponse, choix || []);
   const collectivite = useCurrentCollectivite();
 
   return collectivite ? (
-    <ReponseContainer>
+    <ReponseContainer className="flex-col">
       {choices?.map(({id: choiceId, label}) => {
         return (
-          <div
-            key={choiceId}
-            className={`fr-radio-group fr-radio-group--sm ${
-              hasReponse ? '' : 'vertical'
-            }`}
-          >
-            <RadioButton
-              disabled={collectivite.readonly}
-              questionId={questionId}
-              choiceId={choiceId}
-              label={label}
-              reponse={reponse}
-              onChange={onChange}
-            />
-          </div>
+          <RadioButton
+            disabled={collectivite.readonly}
+            questionId={questionId}
+            choiceId={choiceId}
+            label={label}
+            reponse={reponse}
+            onChange={onChange}
+          />
         );
       })}
     </ReponseContainer>
@@ -63,18 +52,17 @@ const ReponseBinaire = ({qr, onChange}: TQuestionReponseProps) => {
   const collectivite = useCurrentCollectivite();
 
   return collectivite ? (
-    <ReponseContainer className="fr-fieldset--inline inline-radio">
+    <ReponseContainer>
       {choices?.map(({id: choiceId, label}) => (
-        <div key={choiceId} className="fr-radio-group fr-radio-group--sm">
-          <RadioButton
-            disabled={collectivite.readonly}
-            questionId={questionId}
-            choiceId={choiceId}
-            label={label}
-            reponse={reponse}
-            onChange={onChange}
-          />
-        </div>
+        <RadioButton
+          key={choiceId}
+          disabled={collectivite.readonly}
+          questionId={questionId}
+          choiceId={choiceId}
+          label={label}
+          reponse={reponse}
+          onChange={onChange}
+        />
       ))}
     </ReponseContainer>
   ) : null;
@@ -97,7 +85,7 @@ const ReponseProportion = ({qr, onChange}: TQuestionReponseProps) => {
   const collectivite = useCurrentCollectivite();
 
   return collectivite ? (
-    <ReponseContainer className="fr-fieldset--inline">
+    <ReponseContainer className="flex-col">
       <label className="fr-label" htmlFor={questionId}>
         Part en pourcentage
       </label>
@@ -165,7 +153,7 @@ const RadioButton = ({
 
   return (
     <div className="fr-fieldset__element fr-fieldset__element--inline">
-      <div className="fr-radio-group">
+      <div className="fr-radio-group fr-radio-group--sm">
         <input
           type="radio"
           disabled={disabled}

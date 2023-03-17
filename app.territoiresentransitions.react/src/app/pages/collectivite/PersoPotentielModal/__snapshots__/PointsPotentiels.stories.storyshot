@@ -81,7 +81,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels 
       </div>
     </div>
     <button
-      className="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-settings-5-line fr-ml-10v"
+      className="fr-btn fr-btn--tertiary fr-btn--icon-left !shadow-none fr-icon-settings-5-line fr-ml-10v"
       onClick={[Function]}
     >
       Personnaliser
@@ -171,7 +171,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels 
       </div>
     </div>
     <button
-      className="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-settings-5-line fr-ml-10v"
+      className="fr-btn fr-btn--tertiary fr-btn--icon-left !shadow-none fr-icon-settings-5-line fr-ml-10v"
       onClick={[Function]}
     >
       Personnaliser
@@ -219,7 +219,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels 
       </div>
     </div>
     <button
-      className="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-settings-5-line fr-ml-10v"
+      className="fr-btn fr-btn--tertiary fr-btn--icon-left !shadow-none fr-icon-settings-5-line fr-ml-10v"
       onClick={[Function]}
     >
       Personnaliser

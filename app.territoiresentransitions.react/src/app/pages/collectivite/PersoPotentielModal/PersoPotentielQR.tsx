@@ -106,7 +106,7 @@ export const QuestionReponseList = (props: TQuestionReponseListProps) => {
       {questionReponses.map((qr, index) => {
         const {id} = qr;
         return (
-          <fieldset key={id} className="fr-fieldset">
+          <fieldset key={id} className="fr-fieldset !flex-col !items-stretch">
             <QuestionReponse
               qr={qr}
               onChange={(reponse: TReponse) => onChange(qr, reponse)}
