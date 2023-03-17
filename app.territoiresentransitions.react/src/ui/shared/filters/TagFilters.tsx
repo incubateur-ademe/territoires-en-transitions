@@ -3,22 +3,18 @@ import './TagFilters.css';
 
 type TagFiltersProps = {
   name: string;
-  options: string[];
-  defaultOption?: string;
+  options: {id: string; name: string}[];
   className?: string;
-  onChange: (value: string) => void;
+  onChange: (id: string) => void;
 };
 
 const TagFilters = ({
   name,
   options,
-  defaultOption,
   className = '',
   onChange,
 }: TagFiltersProps) => {
-  const [selectedOption, setSelectedOption] = useState<string | null>(
-    defaultOption ?? null
-  );
+  const [selectedOption, setSelectedOption] = useState<string>('default');
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSelectedOption(event.target.value);
@@ -27,18 +23,18 @@ const TagFilters = ({
 
   return (
     <div className={`flex flex-wrap gap-4 ${className} tag-filters`}>
-      {[defaultOption, ...options].map(opt => (
-        <Fragment key={opt}>
+      {options.map(opt => (
+        <Fragment key={opt.id}>
           <input
             type="radio"
             name={name}
-            id={opt}
-            value={opt}
-            checked={selectedOption === opt}
+            id={opt.id}
+            value={opt.id}
+            checked={selectedOption === opt.id}
             onChange={handleChange}
           />
-          <label htmlFor={opt}>
-            {opt}
+          <label htmlFor={opt.id}>
+            {opt.name}
             <span
               className="fr-fi-checkbox-circle-line scale-75"
               aria-hidden="true"
