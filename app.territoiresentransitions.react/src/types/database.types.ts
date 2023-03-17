@@ -5647,15 +5647,15 @@ export interface Database {
     Tables: {
       graphique_tranche: {
         Insert: {
-          label: string;
+          id: string;
           value: number;
         };
         Row: {
-          label: string;
+          id: string;
           value: number;
         };
         Update: {
-          label?: string;
+          id?: string;
           value?: number;
         };
       };
