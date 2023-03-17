@@ -2,13 +2,13 @@ begin;
 select plan(6);
 
 truncate labellisation.action_audit_state;
-truncate audit cascade;
+truncate labellisation.audit cascade;
 
 -- En tant qu'auditeur
 select test.identify_as('youlou@doudou.com');
 
 -- Crée des audits de test
-insert into audit(collectivite_id, referentiel, date_debut, date_fin)
+insert into labellisation.audit(collectivite_id, referentiel, date_debut, date_fin)
 values (1, 'eci', now(), null),
        (1, 'cae', now(), null),
        (2, 'eci', now() - interval '3 day', now() - interval '1 day');
@@ -16,7 +16,7 @@ values (1, 'eci', now(), null),
 -- Test fonction labellisation.current_audit - audit existant
 select ok(
                (select a.id = current.id
-                from audit a
+                from labellisation.audit a
                          left join lateral ( select *
                                              from labellisation.current_audit(a.collectivite_id, a.referentiel) ) as current
                                    on true
@@ -77,7 +77,7 @@ select bag_eq(
 
 -- Test contrainte audit_existant - creation impossible - nouveau maintenant et audit en cours
 -- prepare my_thrower_audit_en_cours as
---     insert into audit(collectivite_id, referentiel, date_debut, date_fin)
+--     insert into labellisation.audit(collectivite_id, referentiel, date_debut, date_fin)
 --     values (1, 'eci', default, null);
 -- select throws_ok(
 --                'my_thrower_audit_en_cours',
@@ -86,7 +86,7 @@ select bag_eq(
 --            );
 -- -- Test contrainte audit_existant - creation impossible - nouveau début avant-hier, et audit terminé hier
 -- prepare my_thrower_audit_existant as
---     insert into audit(collectivite_id, referentiel, date_debut, date_fin)
+--     insert into labellisation.audit(collectivite_id, referentiel, date_debut, date_fin)
 --     values (2, 'eci', now() - interval '2 day', null);
 -- select throws_ok(
 --                'my_thrower_audit_existant',
@@ -96,7 +96,7 @@ select bag_eq(
 
 
 -- Teste la clôture d'un audit COT
-truncate audit cascade;
+truncate labellisation.audit cascade;
 truncate cot;
 
 -- La collectivité 1 est COT
@@ -104,24 +104,24 @@ insert into cot
 values (1, true);
 
 -- On crée un audit COT (1) et un non-COT (2).
-insert into audit(id, collectivite_id, referentiel, date_debut, date_fin)
+insert into labellisation.audit(id, collectivite_id, referentiel, date_debut, date_fin)
 values (1, 1, 'eci', now() - interval '1 day', null),
        (2, 2, 'eci', now() - interval '1 day', null);
 
 -- On valide les deux audits en tant qu'auditeur.
 select test.identify_as('youlou@doudou.com');
-update audit
+update labellisation.audit
 set valide = true
 where true;
 
 select bag_eq(
-               'select date_fin, valide from audit where id = 1',
+               'select date_fin, valide from labellisation.audit where id = 1',
                'select now(), true',
                'La date de fin de l''audit devrait être égale à now après la validation d''un audit COT.'
            );
 
 select bag_eq(
-               'select date_fin, valide from audit where id = 2',
+               'select date_fin, valide from labellisation.audit where id = 2',
                'select null::timestamp with time zone, true',
                'La date de fin devrait être null après la validation d''un audit non-COT.'
            );

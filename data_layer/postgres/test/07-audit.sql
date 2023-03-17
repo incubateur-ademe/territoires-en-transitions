@@ -33,7 +33,7 @@ $$
     -- Vide les tables des audits
 truncate labellisation.action_audit_state;
 truncate audit_auditeur;
-truncate audit cascade;
+truncate labellisation.audit cascade;
 
     -- Restaure les audits
 insert into public.audit
