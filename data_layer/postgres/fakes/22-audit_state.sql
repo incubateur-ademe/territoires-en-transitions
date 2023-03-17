@@ -1,4 +1,4 @@
-insert into audit(collectivite_id, referentiel, date_debut)
+insert into labellisation.audit(collectivite_id, referentiel, date_debut)
 values (1, 'eci', now() - interval '1 day'),
        (10, 'cae', now() - interval '1 day');
 

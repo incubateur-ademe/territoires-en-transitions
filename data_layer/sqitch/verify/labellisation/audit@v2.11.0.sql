@@ -4,8 +4,5 @@ BEGIN;
 
 select has_function_privilege('labellisation.update_audit()', 'execute');
 select has_function_privilege('labellisation_commencer_audit(integer)', 'execute');
-select audit_id, auditeur, created_at
-from audit_auditeur
-where false;
 
 ROLLBACK;
