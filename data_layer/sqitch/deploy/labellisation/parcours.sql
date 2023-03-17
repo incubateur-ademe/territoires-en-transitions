@@ -87,15 +87,34 @@ begin
              left join labellisation_calendrier calendrier
                        on calendrier.referentiel = e.referentiel
 
-             left join lateral (select *
+             left join lateral (select d.id,
+                                       d.en_cours,
+                                       d.collectivite_id,
+                                       d.referentiel,
+                                       d.etoiles,
+                                       d.date,
+                                       d.sujet
                                 from labellisation_demande(labellisation_parcours.collectivite_id,
-                                                           e.referentiel)) demande on true
+                                                           e.referentiel) d) demande on true
 
-             left join lateral (select *
+             left join lateral (select a.id,
+                                       a.collectivite_id,
+                                       a.referentiel,
+                                       a.demande_id,
+                                       a.date_debut,
+                                       a.date_fin,
+                                       a.valide
                                 from labellisation.current_audit(labellisation_parcours.collectivite_id,
-                                                                 e.referentiel)) audit on true
+                                                                 e.referentiel) a) audit on true
 
-             left join lateral (select l.*
+             left join lateral (select l.id,
+                                       l.collectivite_id,
+                                       l.referentiel,
+                                       l.obtenue_le,
+                                       l.annee,
+                                       l.etoiles,
+                                       l.score_realise,
+                                       l.score_programme
                                 from labellisation l
                                 where l.collectivite_id = labellisation_parcours.collectivite_id
                                   and l.referentiel = e.referentiel
