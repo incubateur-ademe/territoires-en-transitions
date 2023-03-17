@@ -15,8 +15,8 @@ select has_function('test_fulfill');
 -- truncate data
 truncate action_statut;
 truncate client_scores;
-truncate labellisation cascade ;
-truncate labellisation.demande cascade ;
+truncate labellisation cascade;
+truncate labellisation.demande cascade;
 
 truncate storage.objects cascade;
 truncate labellisation.bibliotheque_fichier cascade;
@@ -59,14 +59,15 @@ from labellisation_action_critere lac
 on conflict do nothing;
 
 -- Set every requirement at .0.
-truncate private.action_score; --- use action_score as a temp table
+truncate private.action_score;
+--- use action_score as a temp table
 
 -- all scores at 0
 insert into private.action_score (referentiel, action_id, point_fait, point_programme, point_potentiel)
 select ar.referentiel, ar.id, .0, .0, 10
 from action_relation as ar;
 
-select test_write_scores( 1,(select array_agg(s) from private.action_score s));
+select test_write_scores(1, (select array_agg(s) from private.action_score s));
 
 -- test base prérequis functions
 select ok((select bool_and(ss.complete) and sum(ss.proportion_fait) = 0
@@ -168,7 +169,7 @@ select ok((select etoiles = '5'
 ------------------------------------------------------
 ------- Scenario: nothing is done nor complete -------
 ------------------------------------------------------
-truncate labellisation.demande cascade ;
+truncate labellisation.demande cascade;
 truncate labellisation cascade;
 
 -- pas_fait statut on all requirements
@@ -179,7 +180,8 @@ from labellisation_action_critere lac
 on conflict do nothing;
 
 -- fake scoring, score and completion at 0
-truncate private.action_score; -- use action_score as a temp table
+truncate private.action_score;
+-- use action_score as a temp table
 
 -- zero the required actions scores
 insert into private.action_score (referentiel, action_id, point_fait, point_programme, point_potentiel,
@@ -193,9 +195,10 @@ insert into private.action_score (referentiel, action_id, point_fait, point_prog
 values ('eci', 'eci', .0, .0, 10, 0, 4),
        ('cae', 'cae', .0, .0, 10, 0, 4);
 
-select test_write_scores( 1,(select array_agg(s) from private.action_score s));
+select test_write_scores(1, (select array_agg(s) from private.action_score s));
 
-truncate private.action_score; -- clean up
+truncate private.action_score;
+-- clean up
 
 -- tests
 select ok((select bool_and(score_fait = 0
@@ -208,7 +211,7 @@ select ok((select bool_and(score_fait = 0
 
 select ok((select etoile_labellise is null
                       and prochaine_etoile_labellisation is null
-                      and etoile_score_possible = '1'
+                      and etoile_score_possible is null
                       and etoile_objectif = '1'
            from labellisation.etoiles(1)
            where referentiel = 'eci'),
@@ -243,7 +246,7 @@ insert into private.action_score (referentiel, action_id, point_fait, point_prog
 values ('eci', 'eci', .0, .0, 10, 4, 4),
        ('cae', 'cae', .0, .0, 10, 4, 4);
 
-select test_write_scores( 1,(select array_agg(s) from private.action_score s));
+select test_write_scores(1, (select array_agg(s) from private.action_score s));
 
 
 -- tests
