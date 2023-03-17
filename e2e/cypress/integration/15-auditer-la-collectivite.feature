@@ -20,6 +20,10 @@ Fonctionnalité: Auditer la collectivité
 
     Quand je clique sur le bouton "Commencer l'audit"
     Alors le bouton "Commencer l'audit" est absent
+
+    ## On revient sur la page
+    ## le parcours arrive avant le commencement de l'audit
+    Et que je suis sur la page "Labellisation ECi" de la collectivité courante
     Et le bouton "Valider l'audit" est visible
 
   Scénario: Suivre l'audit en tant qu'auditeur
