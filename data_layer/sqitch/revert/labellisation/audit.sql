@@ -2,7 +2,7 @@
 BEGIN;
 
 drop view public.audit;
-alter table audit
+alter table labellisation.audit
     set schema public;
 
 alter table audit_auditeur
@@ -38,7 +38,9 @@ begin
 end ;
 $$ language plpgsql;
 
-create or replace function
+drop function labellisation_commencer_audit(integer, timestamptz);
+
+create function
     labellisation_commencer_audit(audit_id integer)
     returns audit
 begin
