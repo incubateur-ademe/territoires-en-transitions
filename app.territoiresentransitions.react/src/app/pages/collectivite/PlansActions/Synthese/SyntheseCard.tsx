@@ -19,7 +19,7 @@ const SyntheseCard = ({title, data}: SyntheseCardProps) => {
         borderBottomWidth: '4px',
       }}
     >
-      <div className="mb-auto font-bold line-clamp-3 px-6">{title}</div>
+      <div className="mb-auto font-bold px-6">{title}</div>
       <DoughnutChart data={data} />
     </div>
   );
