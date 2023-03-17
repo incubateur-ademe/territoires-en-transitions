@@ -54,7 +54,7 @@ async function envoyer_demande(
     { collectivite_id: number | null; id: number; nom: string }
   >,
   sujet: Database["labellisation"]["Enums"]["sujet_demande"],
-  etoiles?: Database["labellisation"]["Enums"]["etoile"]
+  etoiles?: Database["labellisation"]["Enums"]["etoile"],
 ) {
   // Obtient la demande de labellisation.
   const demandeLabellisation = await labellisationDemande(
@@ -272,13 +272,13 @@ Deno.test("Scénario de demande d'audit COT", async () => {
 
   // On récupère sa liste de collectivité.
   const mesCollectivitesResponse = await supabase
-  .from('mes_collectivites')
-  .select();
+    .from("mes_collectivites")
+    .select();
   const collectivites = mesCollectivitesResponse.data;
   assertExists(collectivites);
   assertObjectMatch(collectivites[0], {
     collectivite_id: collectivite.collectivite_id,
-    niveau_acces: 'edition',
+    niveau_acces: "edition",
     est_auditeur: true,
   });
 
@@ -320,7 +320,7 @@ Deno.test("Scénario de demande d'audit de labellisation", async () => {
   const demandeLabellisation = await envoyer_demande(
     collectivite,
     "labellisation",
-    "2"
+    "2",
   );
   const { auditeur, auditAuditeur } = await ajouter_auditeur(
     collectivite,
