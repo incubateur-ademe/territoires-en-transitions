@@ -4,10 +4,10 @@ import {supabaseClient} from 'core-logic/api/supabase';
 export type TPlanActionTableauDeBord = {
   collectivite_id: number;
   plan_id: number;
-  pilotes: {label: string; value: number}[];
-  priorites: {label: string; value: number}[];
-  referents: {label: string; value: number}[];
-  statuts: {label: string; value: number}[];
+  pilotes: {id: string; value: number}[];
+  priorites: {id: string; value: number}[];
+  referents: {id: string; value: number}[];
+  statuts: {id: string; value: number}[];
 };
 
 const fetchDashboardData = async (

@@ -49,7 +49,7 @@ const DoughnutChart = ({data}: DoughnutChartProps) => {
         modifiers: [['darker', 0.2]],
       }}
       arcLinkLabelsDiagonalLength={10}
-      arcLinkLabelsStraightLength={15}
+      arcLinkLabelsStraightLength={5}
       arcLinkLabelsTextColor="#333"
       arcLinkLabelsThickness={2}
       arcLinkLabelsColor={{from: 'color'}}
