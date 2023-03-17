@@ -23,7 +23,7 @@ export const Accordion = (props: TAccordionProps) => {
     <section className={`fr-accordion ${className || ''}`}>
       <h3 className="fr-accordion__title">
         <button
-          className="fr-accordion__btn"
+          className="fr-accordion__btn font-normal"
           aria-controls={id}
           aria-expanded={expanded}
           onClick={() => toggle()}

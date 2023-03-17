@@ -10,7 +10,7 @@ exports[`Storyshots ui/Accordion Exemple 1 1`] = `
     <button
       aria-controls="id1"
       aria-expanded={false}
-      className="fr-accordion__btn"
+      className="fr-accordion__btn font-normal"
       onClick={[Function]}
     >
       <i
