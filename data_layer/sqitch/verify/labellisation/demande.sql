@@ -2,7 +2,15 @@
 
 BEGIN;
 
-select has_function_privilege('labellisation_demande(integer, referentiel)', 'execute');
-select has_function_privilege('labellisation_submit_demande(integer, referentiel, labellisation.sujet_demande, labellisation.etoile)', 'execute');
+select id,
+       en_cours,
+       collectivite_id,
+       referentiel,
+       etoiles,
+       date,
+       sujet,
+       modified_at
+from labellisation.demande
+where false;
 
 ROLLBACK;
