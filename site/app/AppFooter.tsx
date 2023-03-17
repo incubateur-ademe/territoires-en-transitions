@@ -23,16 +23,15 @@ const AppFooter = () => {
             <p className="fr-footer__content-desc">
               Territoires en Transitions est une startup d'État portée par
               l'Agence de la Transition Écologique (ADEME) avec le soutien de
-              l'Agence Nationale de la Cohésion des Territoires (ANCT). Le code
-              source est en{' '}
+              l'Agence Nationale de la Cohésion des Territoires (ANCT).{' '}
               <a
                 href="https://github.com/betagouv/territoires-en-transitions"
                 target="_blank"
                 rel="noreferrer"
               >
-                licence libre
-              </a>
-              .
+                Le code source
+              </a>{' '}
+              est en licence libre.
             </p>
             <ul className="fr-footer__content-list">
               <li className="fr-footer__content-item">
@@ -79,10 +78,7 @@ const AppFooter = () => {
               </a>
             </li>
             <li className="fr-footer__bottom-item">
-              <a
-                className="fr-footer__bottom-link"
-                href="/stats"
-              >
+              <a className="fr-footer__bottom-link" href="/stats">
                 Statistiques
               </a>
             </li>
@@ -92,10 +88,7 @@ const AppFooter = () => {
               </span>
             </li>
             <li className="fr-footer__bottom-item">
-              <a
-                className="fr-footer__bottom-link"
-                href="/mentions"
-              >
+              <a className="fr-footer__bottom-link" href="/mentions">
                 Mentions légales
               </a>
             </li>
@@ -108,10 +101,7 @@ const AppFooter = () => {
               </a>
             </li>
             <li className="fr-footer__bottom-item">
-              <a
-                className="fr-footer__bottom-link"
-                href="/cgu"
-              >
+              <a className="fr-footer__bottom-link" href="/cgu">
                 Conditions générales d’utilisation
               </a>
             </li>
