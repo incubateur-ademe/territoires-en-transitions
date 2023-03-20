@@ -51,7 +51,7 @@ $$
 declare
     audit labellisation.audit;
 begin
-    -- si l'utilisateur n'est ni éditeur ni service
+    -- si l'utilisateur n'est ni auditeur ni service
     if not (audit_id in (select aa.audit_id from audit_auditeur aa where aa.auditeur = auth.uid()) or is_service_role())
     then -- alors on renvoie un code 403
         perform set_config('response.status', '403', true);
