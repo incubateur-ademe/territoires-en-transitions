@@ -269,3 +269,4 @@ stats/locales [stats/locales@v2.11.0] 2023-03-16T08:16:27Z Florian <florian@derf
 @v2.11.1 2023-03-16T09:12:30Z Florian <florian@derfurth.com> # Répare les stats locales.
 
 referentiel/vue_tabulaire [referentiel/vue_tabulaire@v2.11.0] 2023-03-15T15:44:15Z Florian <florian@derfurth.com> # Ajoute les colonnes à la vue action_statuts pour l'export Excel
+@v2.13 2023-03-20T16:43:25Z Florian <florian@derfurth.com> # Export Excel
