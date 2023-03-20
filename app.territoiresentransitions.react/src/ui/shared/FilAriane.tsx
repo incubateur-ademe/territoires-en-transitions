@@ -16,7 +16,7 @@ const FilAriane = ({links}: Props) => {
         <div key={i} className="flex items-center shrink-0">
           {link.path ? (
             <Link
-              className="p-1 underline shrink-0 text-gray-500 !shadow-none hover:text-gray-600"
+              className="p-1 shrink-0 text-gray-500 !shadow-none hover:text-gray-600"
               to={link.path}
             >
               {link.displayedName}
