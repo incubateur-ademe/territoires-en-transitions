@@ -1,5 +1,6 @@
 import {makeCollectiviteFichesNonClasseesUrl} from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
+import {BoutonAttention} from 'ui/BoutonAttention';
 import ScrollTopButton from 'ui/shared/ScrollTopButton';
 import {TPlanAction} from './data/types/PlanAction';
 import SupprimerAxeModal from './SupprimerAxeModal';
@@ -22,11 +23,9 @@ const PlanActionFooter = ({plan, isReadonly}: TPlanActionFooter) => {
             collectiviteId: collectivite_id!,
           })}
         >
-          <div className="inline-flex border border-red-700">
-            <button className="fr-btn fr-btn--secondary fr-btn--sm fr-text-default--error !shadow-none">
-              Supprimer ce plan d’action
-            </button>
-          </div>
+          <BoutonAttention className="fr-btn--sm">
+            Supprimer ce plan d’action
+          </BoutonAttention>
         </SupprimerAxeModal>
       )}
       <ScrollTopButton />
