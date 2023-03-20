@@ -90,6 +90,35 @@ export interface Database {
           statut?: Database['public']['Enums']['audit_statut'];
         };
       };
+      audit: {
+        Insert: {
+          collectivite_id: number;
+          date_debut?: string | null;
+          date_fin?: string | null;
+          demande_id?: number | null;
+          id?: number;
+          referentiel: Database['public']['Enums']['referentiel'];
+          valide?: boolean;
+        };
+        Row: {
+          collectivite_id: number;
+          date_debut: string | null;
+          date_fin: string | null;
+          demande_id: number | null;
+          id: number;
+          referentiel: Database['public']['Enums']['referentiel'];
+          valide: boolean;
+        };
+        Update: {
+          collectivite_id?: number;
+          date_debut?: string | null;
+          date_fin?: string | null;
+          demande_id?: number | null;
+          id?: number;
+          referentiel?: Database['public']['Enums']['referentiel'];
+          valide?: boolean;
+        };
+      };
       bibliotheque_fichier: {
         Insert: {
           collectivite_id?: number | null;
@@ -115,8 +144,10 @@ export interface Database {
           collectivite_id: number;
           date?: string;
           en_cours?: boolean;
+          envoyee_le?: string | null;
           etoiles?: Database['labellisation']['Enums']['etoile'] | null;
           id?: number;
+          modified_at?: string | null;
           referentiel: Database['public']['Enums']['referentiel'];
           sujet?: Database['labellisation']['Enums']['sujet_demande'];
         };
@@ -124,8 +155,10 @@ export interface Database {
           collectivite_id: number;
           date: string;
           en_cours: boolean;
+          envoyee_le: string | null;
           etoiles: Database['labellisation']['Enums']['etoile'] | null;
           id: number;
+          modified_at: string | null;
           referentiel: Database['public']['Enums']['referentiel'];
           sujet: Database['labellisation']['Enums']['sujet_demande'];
         };
@@ -133,8 +166,10 @@ export interface Database {
           collectivite_id?: number;
           date?: string;
           en_cours?: boolean;
+          envoyee_le?: string | null;
           etoiles?: Database['labellisation']['Enums']['etoile'] | null;
           id?: number;
+          modified_at?: string | null;
           referentiel?: Database['public']['Enums']['referentiel'];
           sujet?: Database['labellisation']['Enums']['sujet_demande'];
         };
@@ -1133,7 +1168,7 @@ export interface Database {
         Returns: boolean;
       };
       labellisation_commencer_audit: {
-        Args: {audit_id: number};
+        Args: {audit_id: number; date_debut: string};
         Returns: unknown;
       };
       labellisation_demande: {
@@ -1411,19 +1446,19 @@ export interface Database {
             Returns: string;
           }
         | {
+            Args: {bucket_width: unknown; ts: string};
+            Returns: string;
+          }
+        | {
+            Args: {bucket_width: unknown; ts: string};
+            Returns: string;
+          }
+        | {
+            Args: {bucket_width: unknown; ts: string};
+            Returns: string;
+          }
+        | {
             Args: {bucket_width: unknown; origin: string; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; ts: string};
             Returns: string;
           }
         | {
@@ -1857,47 +1892,21 @@ export interface Database {
           url?: string | null;
         };
       };
-      audit: {
-        Insert: {
-          collectivite_id: number;
-          date_debut?: string | null;
-          date_fin?: string | null;
-          demande_id?: number | null;
-          id?: number;
-          referentiel: Database['public']['Enums']['referentiel'];
-          valide?: boolean;
-        };
-        Row: {
-          collectivite_id: number;
-          date_debut: string | null;
-          date_fin: string | null;
-          demande_id: number | null;
-          id: number;
-          referentiel: Database['public']['Enums']['referentiel'];
-          valide: boolean;
-        };
-        Update: {
-          collectivite_id?: number;
-          date_debut?: string | null;
-          date_fin?: string | null;
-          demande_id?: number | null;
-          id?: number;
-          referentiel?: Database['public']['Enums']['referentiel'];
-          valide?: boolean;
-        };
-      };
       audit_auditeur: {
         Insert: {
           audit_id: number;
           auditeur: string;
+          created_at?: string | null;
         };
         Row: {
           audit_id: number;
           auditeur: string;
+          created_at: string | null;
         };
         Update: {
           audit_id?: number;
           auditeur?: string;
+          created_at?: string | null;
         };
       };
       axe: {
@@ -3768,6 +3777,35 @@ export interface Database {
         Row: {
           collectivite_id: number | null;
           nom: string | null;
+        };
+      };
+      audit: {
+        Insert: {
+          collectivite_id?: number | null;
+          date_debut?: string | null;
+          date_fin?: string | null;
+          demande_id?: number | null;
+          id?: number | null;
+          referentiel?: Database['public']['Enums']['referentiel'] | null;
+          valide?: boolean | null;
+        };
+        Row: {
+          collectivite_id: number | null;
+          date_debut: string | null;
+          date_fin: string | null;
+          demande_id: number | null;
+          id: number | null;
+          referentiel: Database['public']['Enums']['referentiel'] | null;
+          valide: boolean | null;
+        };
+        Update: {
+          collectivite_id?: number | null;
+          date_debut?: string | null;
+          date_fin?: string | null;
+          demande_id?: number | null;
+          id?: number | null;
+          referentiel?: Database['public']['Enums']['referentiel'] | null;
+          valide?: boolean | null;
         };
       };
       audit_en_cours: {
