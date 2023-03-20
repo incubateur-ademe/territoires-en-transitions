@@ -119,7 +119,7 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
                   onPointerDown={[Function]}
                 >
                   <button
-                    className="fr-btn fr-icon-account-line"
+                    className="user-menu fr-btn fr-icon-account-line"
                     data-test="connectedMenu"
                     style={
                       Object {
@@ -132,8 +132,8 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
                     >
                       Yolo
                     </span>
-                    <div
-                      className="fr-fi-arrow-down-s-line ml-2 scale-90"
+                    <i
+                      className="fr-fi-arrow-down-s-line ml-2 transition-all"
                     />
                   </button>
                 </div>
@@ -545,7 +545,7 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
               onPointerDown={[Function]}
             >
               <button
-                className="fr-btn fr-icon-account-line"
+                className="user-menu fr-btn fr-icon-account-line"
                 data-test="connectedMenu"
                 style={
                   Object {
@@ -558,8 +558,8 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
                 >
                   Yolo
                 </span>
-                <div
-                  className="fr-fi-arrow-down-s-line ml-2 scale-90"
+                <i
+                  className="fr-fi-arrow-down-s-line ml-2 transition-all"
                 />
               </button>
             </div>
