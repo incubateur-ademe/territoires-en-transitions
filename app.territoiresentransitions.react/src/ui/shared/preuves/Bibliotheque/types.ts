@@ -1,5 +1,6 @@
 import {TEditState} from 'core-logic/hooks/useEditState';
 import {Database} from 'types/database.types';
+import {TAudit} from 'app/pages/collectivite/Audit/types';
 
 // un fichier de la bibliothèque
 export type TBibliothequeFichier = {
@@ -104,7 +105,7 @@ type TPreuveAuditFields = {
   action: null;
   preuve_reglementaire: null;
   demande: TLabellisationDemande | null;
-  audit: Database['public']['Tables']['audit']['Row'];
+  audit: TAudit;
   rapport: null;
 };
 

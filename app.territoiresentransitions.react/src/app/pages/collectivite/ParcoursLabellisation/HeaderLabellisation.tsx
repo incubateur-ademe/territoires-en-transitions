@@ -75,7 +75,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
           onClick={() =>
             audit &&
             referentiel &&
-            onStartAudit({collectivite_id, referentiel, audit_id: audit.id})
+            onStartAudit({collectivite_id, referentiel, audit_id: audit.id!})
           }
         >
           Commencer l'audit

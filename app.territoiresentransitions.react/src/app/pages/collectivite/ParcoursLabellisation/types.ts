@@ -1,4 +1,5 @@
 import {Database} from 'types/database.types';
+import {TAudit} from 'app/pages/collectivite/Audit/types';
 
 export type TEtoiles = Database['labellisation']['Enums']['etoile'];
 export type TSujetDemande = Database['labellisation']['Enums']['sujet_demande'];
@@ -29,8 +30,8 @@ export type TLabellisationParcours = {
   critere_score: TCritereScore;
   /** Indique que les critères action, score et fichiers de labellisation sont tous atteints */
   rempli: boolean;
-  /** Dates des prochaines sessions d'audit (exemple: Les prochaines sessions 
-   d’audit sont planifiées du 23 avril au 23 juin 2022 et du 5 novembre 2022 
+  /** Dates des prochaines sessions d'audit (exemple: Les prochaines sessions
+   d’audit sont planifiées du 23 avril au 23 juin 2022 et du 5 novembre 2022
    au 5 janvier 2023.) */
   calendrier: string;
   /** Demande de labellisation associée au parcours */
@@ -38,7 +39,7 @@ export type TLabellisationParcours = {
   /** Dernière labellisation obtenue */
   labellisation: Database['public']['Tables']['labellisation']['Row'] | null;
   /** Audit associée à la demande */
-  audit: Database['public']['Tables']['audit']['Row'] | null;
+  audit: TAudit | null;
 };
 
 /** Critère de labellisation associé à une action */

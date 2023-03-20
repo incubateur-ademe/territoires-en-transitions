@@ -3,11 +3,11 @@ import Modal, {RenderProps} from 'ui/shared/floating-ui/Modal';
 import PreuveDoc from 'ui/shared/preuves/Bibliotheque/PreuveDoc';
 import {AddRapportButton} from './AddRapportButton';
 import {useRapportsAudit} from './useAudit';
+import {TAudit} from 'app/pages/collectivite/Audit/types';
 
-type TAuditRow = Database['public']['Tables']['audit']['Row'];
 export type TValiderAuditProps = {
-  audit: TAuditRow;
-  onValidate: (audit?: TAuditRow) => void;
+  audit: TAudit;
+  onValidate: (audit?: TAudit) => void;
 };
 
 /**
@@ -38,7 +38,7 @@ export const ValiderAuditModal = (props: RenderProps & TValiderAuditProps) => {
   const {id: audit_id, demande_id} = audit;
 
   // on peut valider seulement si au moins un rapport a été attaché à l'audit
-  const rapports = useRapportsAudit(audit_id);
+  const rapports = useRapportsAudit(audit_id!);
   const canValidate = Boolean(rapports?.length);
 
   return (
@@ -49,7 +49,7 @@ export const ValiderAuditModal = (props: RenderProps & TValiderAuditProps) => {
         (disponible dans la bibliothèque de documents et visible par les membres
         de la communauté).
       </p>
-      <AddRapportButton audit_id={audit_id} />
+      <AddRapportButton audit_id={audit_id!} />
       {rapports?.length ? (
         <div data-test="rapports-audit">
           {rapports.map(rapport => (
