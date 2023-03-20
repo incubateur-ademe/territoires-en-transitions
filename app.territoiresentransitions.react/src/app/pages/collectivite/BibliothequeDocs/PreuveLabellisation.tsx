@@ -81,7 +81,7 @@ const DocAuditOuLabellisation = ({
 }) => {
   const {audit} = preuve;
   const {status} = info;
-  const isAuditeur = useIsAuditAuditeur(audit?.id);
+  const isAuditeur = useIsAuditAuditeur(audit?.id!);
 
   // le document n'est pas éditable si...
   const readonly =

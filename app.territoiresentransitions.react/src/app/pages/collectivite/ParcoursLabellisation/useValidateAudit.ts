@@ -1,6 +1,6 @@
 import {useMutation, useQueryClient} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {Database} from 'types/database.types';
+import {TAudit} from 'app/pages/collectivite/Audit/types';
 
 export type TValidateAudit = ReturnType<typeof useValidateAudit>['mutate'];
 
@@ -21,6 +21,5 @@ export const useValidateAudit = () => {
   });
 };
 
-const validateAudit = async (
-  audit: Database['public']['Tables']['audit']['Row']
-) => supabaseClient.from('audit').update({valide: true}).eq('id', audit.id);
+const validateAudit = async (audit: TAudit) =>
+  supabaseClient.from('audit').update({valide: true}).eq('id', audit.id);
