@@ -126,7 +126,7 @@ const updateAndSaveXLS = async (
           commentairesByActionId[action.action_id]?.commentaire;
         const cell = worksheet.getCell(data_cols.commentaire + row);
         cell.value = commentaire;
-        cell.alignment = {horizontal: 'left'};
+        cell.alignment = {horizontal: 'left', wrapText: true};
       }
     }
 
