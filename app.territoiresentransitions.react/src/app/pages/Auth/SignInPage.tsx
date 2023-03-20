@@ -50,7 +50,7 @@ export const SignInPage = () => {
               <AuthError message={authError} />
               <div className="flex flex-row-reverse justify-between">
                 <ValiderButton />
-                <Link className="fr-link" to={signUpPath}>
+                <Link className="fr-btn fr-btn--secondary" to={signUpPath}>
                   Créer un compte
                 </Link>
               </div>
