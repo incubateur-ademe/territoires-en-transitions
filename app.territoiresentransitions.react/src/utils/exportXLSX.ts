@@ -79,9 +79,16 @@ export const setNumValue = (
 export const FORMAT_PERCENT = 'percent';
 export const getNumberFormat = (value: number | null, numFmt?: string) => {
   const suffix = numFmt === FORMAT_PERCENT ? '%' : '';
+
+  // pas de virgule si le nombre est entier (ou null => forcé à 0)
   if (value === null || Number.isInteger(value)) {
     return '0' + suffix;
   }
+  if (numFmt === FORMAT_PERCENT) {
+    // un seul chiffre après la virgule pour les pourcentages
+    return '0.#' + suffix;
+  }
+  // deux chiffres après la virgule
   return '0.0#' + suffix;
 };
 
