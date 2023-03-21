@@ -96,7 +96,7 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
                   href="/toutes_collectivites"
                   onClick={[Function]}
                 >
-                  Collectivités engagées
+                  Collectivités
                 </a>
               </li>
               <li
@@ -522,7 +522,7 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
               href="/toutes_collectivites"
               onClick={[Function]}
             >
-              Collectivités engagées
+              Collectivités
             </a>
           </li>
           <li
