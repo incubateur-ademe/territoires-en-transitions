@@ -30,7 +30,7 @@ export const Redirector = () => {
 
   // Quand l'utilisateur connecté
   // - est associé à aucune collectivité :
-  //    on redirige vers la page "Collectivités engagées"
+  //    on redirige vers la page "Collectivités"
   // - est associé à une ou plus collectivité(s) :
   //    on redirige vers le tableau de bord de la première collectivité
   useEffect(() => {

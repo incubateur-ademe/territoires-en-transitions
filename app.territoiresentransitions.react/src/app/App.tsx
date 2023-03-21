@@ -4,7 +4,6 @@ import {ReactQueryDevtools} from 'react-query/devtools';
 import {E2E} from './E2E';
 import {AuthRoutes} from 'app/pages/Auth/AuthRoutes';
 import {CollectiviteRoutes} from 'app/pages/collectivite/CollectiviteRoutes';
-import StatisticsPage from 'app/pages/StatisticsPage';
 import Home from 'app/pages/Home';
 import {Redirector} from 'app/Redirector';
 import {Toasters} from 'app/Toasters';
@@ -61,9 +60,6 @@ export const App = () => {
                   </Route>
                   <Route path={'/collectivite/:collectiviteId'}>
                     <CollectiviteRoutes />
-                  </Route>
-                  <Route path={'/statistics'}>
-                    <StatisticsPage />
                   </Route>
                 </Switch>
               </Layout>
