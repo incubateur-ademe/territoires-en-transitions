@@ -1,6 +1,5 @@
 import {useMutation, useQueryClient} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {TAudit} from 'app/pages/collectivite/Audit/types';
 import {Database} from 'types/database.types';
 
 export type TStartAudit = ReturnType<typeof useStartAudit>['mutate'];

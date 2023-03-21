@@ -1,4 +1,3 @@
-import {Database} from 'types/database.types';
 import Modal, {RenderProps} from 'ui/shared/floating-ui/Modal';
 import PreuveDoc from 'ui/shared/preuves/Bibliotheque/PreuveDoc';
 import {AddRapportButton} from './AddRapportButton';
