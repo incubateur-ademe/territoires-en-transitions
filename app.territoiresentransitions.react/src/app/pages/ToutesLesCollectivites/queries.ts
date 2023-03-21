@@ -133,6 +133,7 @@ const buildQueryFromFilters = (filters: TCollectivitesFilters) => {
       NB_CARDS_PER_PAGE * filters.page - 1
     );
   }
+  query.limit(NB_CARDS_PER_PAGE);
   return query;
 };
 
