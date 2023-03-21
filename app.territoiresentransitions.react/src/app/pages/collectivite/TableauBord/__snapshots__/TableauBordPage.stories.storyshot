@@ -539,7 +539,7 @@ exports[`Storyshots app/pages/collectivite/TableauBord/TableauBordPage Referenti
                           }
                         >
                           <div>
-                            20%
+                            4%
                           </div>
                           <div
                             style={
@@ -1081,7 +1081,7 @@ exports[`Storyshots app/pages/collectivite/TableauBord/TableauBordPage Referenti
                           }
                         >
                           <div>
-                            60%
+                            30%
                           </div>
                           <div
                             style={
