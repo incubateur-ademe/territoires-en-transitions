@@ -12,7 +12,6 @@ import {FiltresColonne} from 'app/pages/ToutesLesCollectivites/components/Filtre
 import {CollectiviteCarteRead} from 'generated/dataLayer/collectivite_carte_read';
 import {TrierParFiltre} from 'app/pages/ToutesLesCollectivites/components/Filtres';
 import {RegionRead} from 'generated/dataLayer/region_read';
-import {Link} from 'react-router-dom';
 import {DepartementRead} from 'generated/dataLayer/departement_read';
 import {Pagination} from 'app/pages/ToutesLesCollectivites/components/Pagination';
 import {NB_CARDS_PER_PAGE} from 'app/pages/ToutesLesCollectivites/queries';
@@ -53,10 +52,11 @@ export const RenderToutesLesCollectivites = (
       >
         <div className="text-center mb-8 md:mb-16">
           <div className="font-bold text-black md:text-4xl text-3xl mb-6">
-            Collectivités engagées
+            Collectivités
           </div>
           <p className="mb-0">
-            Consultez les <Link to="/statistics">statistiques</Link>{' '}
+            Consultez les{' '}
+            <a href="https://territoiresentransitions.fr/stats">statistiques</a>{' '}
             d'utilisation de la plateforme.
           </p>
         </div>

@@ -22,7 +22,7 @@ export const AccesRapide = (props: HeaderPropsWithModalState) => {
             }`}
             onClick={() => setModalOpened(false)}
           >
-            Collectivités engagées
+            Collectivités
           </Link>
         </li>
       )}

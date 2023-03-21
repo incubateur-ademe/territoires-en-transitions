@@ -11,15 +11,15 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
     <div
       className="font-bold text-black md:text-4xl text-3xl mb-6"
     >
-      Collectivités engagées
+      Collectivités
     </div>
     <p
       className="mb-0"
     >
-      Consultez les 
+      Consultez les
+       
       <a
-        href="/statistics"
-        onClick={[Function]}
+        href="https://territoiresentransitions.fr/stats"
       >
         statistiques
       </a>
@@ -3121,15 +3121,15 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
     <div
       className="font-bold text-black md:text-4xl text-3xl mb-6"
     >
-      Collectivités engagées
+      Collectivités
     </div>
     <p
       className="mb-0"
     >
-      Consultez les 
+      Consultez les
+       
       <a
-        href="/statistics"
-        onClick={[Function]}
+        href="https://territoiresentransitions.fr/stats"
       >
         statistiques
       </a>
@@ -6216,15 +6216,15 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Sans Resultats 1`] = `
     <div
       className="font-bold text-black md:text-4xl text-3xl mb-6"
     >
-      Collectivités engagées
+      Collectivités
     </div>
     <p
       className="mb-0"
     >
-      Consultez les 
+      Consultez les
+       
       <a
-        href="/statistics"
-        onClick={[Function]}
+        href="https://territoiresentransitions.fr/stats"
       >
         statistiques
       </a>
