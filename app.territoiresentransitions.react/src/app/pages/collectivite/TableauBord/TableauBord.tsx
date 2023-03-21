@@ -118,10 +118,7 @@ const ChiffreCles = ({
   const {realisePoints, realisePercentage} = scoreRealise(rootScore);
   const {completed_taches_count, total_taches_count} = rootScore;
 
-  const previsionnelPoints = toFixed(
-    rootScore.point_fait + rootScore.point_programme,
-    1
-  );
+  const previsionnelPoints = toFixed(rootScore.point_programme, 1);
   const previsionnelPercentage =
     (previsionnelPoints / rootScore.point_potentiel) * 100;
 
