@@ -6,6 +6,7 @@ import {
 import Modification from 'app/pages/collectivite/Historique/Modification';
 import {THistoriqueItem, THistoriqueItemProps} from '../types';
 import {toPercentString} from 'utils/score';
+import {usePersoFilters} from '../../PersoReferentiel/usePersoFilters';
 
 /**
  * Modification d'une réponse à une question de personnalisation du référentiel
@@ -13,6 +14,7 @@ import {toPercentString} from 'utils/score';
 const HistoriqueItemReponse = (props: THistoriqueItemProps) => {
   const {item} = props;
   const {collectivite_id, thematique_nom, thematique_id} = item;
+  const [{referentiels}] = usePersoFilters();
 
   return (
     <Modification
@@ -24,6 +26,7 @@ const HistoriqueItemReponse = (props: THistoriqueItemProps) => {
       pageLink={makeCollectivitePersoRefThematiqueUrl({
         collectiviteId: collectivite_id,
         thematiqueId: thematique_id!,
+        referentiels,
       })}
     />
   );

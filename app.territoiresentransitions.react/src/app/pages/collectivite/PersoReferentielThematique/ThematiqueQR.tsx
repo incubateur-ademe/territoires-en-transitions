@@ -16,6 +16,7 @@ import {
 } from 'app/paths';
 import {CarteIdentite} from './CarteIdentite';
 import {TCarteIdentite} from './useCarteIdentite';
+import {usePersoFilters} from '../PersoReferentiel/usePersoFilters';
 
 export type TThematiqueQRProps = {
   thematique: TQuestionThematiqueRead;
@@ -37,6 +38,7 @@ export const ThematiqueQR = (props: TThematiqueQRProps) => {
   const {collectivite, identite, nextThematiqueId, questionReponses, onChange} =
     props;
   const [onlyNoResponse, setOnlyNoResponse] = useState(false);
+  const [{referentiels}] = usePersoFilters();
 
   const qrList = onlyNoResponse
     ? questionReponses.filter(
@@ -69,6 +71,7 @@ export const ThematiqueQR = (props: TThematiqueQRProps) => {
             className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-arrow-left-line self-start"
             href={makeCollectivitePersoRefUrl({
               collectiviteId: collectivite.id,
+              referentiels,
             })}
           >
             Revenir au sommaire
@@ -79,6 +82,7 @@ export const ThematiqueQR = (props: TThematiqueQRProps) => {
               href={makeCollectivitePersoRefThematiqueUrl({
                 collectiviteId: collectivite.id,
                 thematiqueId: nextThematiqueId,
+                referentiels,
               })}
             >
               Afficher la catégorie suivante

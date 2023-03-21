@@ -75,7 +75,7 @@ exports[`Storyshots app/pages/collectivite/Historique/reponse/HistoriqueItemRepo
       </div>
       <a
         className="flex items-center ml-auto fr-btn fr-btn--secondary !px-4 border border-bf500"
-        href="/collectivite/1/personnalisation/dechets"
+        href="/collectivite/1/personnalisation/dechets?r=eci,cae"
         onClick={[Function]}
       >
         Voir la page
@@ -164,7 +164,7 @@ exports[`Storyshots app/pages/collectivite/Historique/reponse/HistoriqueItemRepo
       </div>
       <a
         className="flex items-center ml-auto fr-btn fr-btn--secondary !px-4 border border-bf500"
-        href="/collectivite/1/personnalisation/mobilite"
+        href="/collectivite/1/personnalisation/mobilite?r=eci,cae"
         onClick={[Function]}
       >
         Voir la page
@@ -253,7 +253,7 @@ exports[`Storyshots app/pages/collectivite/Historique/reponse/HistoriqueItemRepo
       </div>
       <a
         className="flex items-center ml-auto fr-btn fr-btn--secondary !px-4 border border-bf500"
-        href="/collectivite/1/personnalisation/developpement_economique"
+        href="/collectivite/1/personnalisation/developpement_economique?r=eci,cae"
         onClick={[Function]}
       >
         Voir la page
@@ -342,7 +342,7 @@ exports[`Storyshots app/pages/collectivite/Historique/reponse/HistoriqueItemRepo
       </div>
       <a
         className="flex items-center ml-auto fr-btn fr-btn--secondary !px-4 border border-bf500"
-        href="/collectivite/1/personnalisation/dechets"
+        href="/collectivite/1/personnalisation/dechets?r=eci,cae"
         onClick={[Function]}
       >
         Voir la page
@@ -431,7 +431,7 @@ exports[`Storyshots app/pages/collectivite/Historique/reponse/HistoriqueItemRepo
       </div>
       <a
         className="flex items-center ml-auto fr-btn fr-btn--secondary !px-4 border border-bf500"
-        href="/collectivite/1/personnalisation/mobilite"
+        href="/collectivite/1/personnalisation/mobilite?r=eci,cae"
         onClick={[Function]}
       >
         Voir la page
@@ -520,7 +520,7 @@ exports[`Storyshots app/pages/collectivite/Historique/reponse/HistoriqueItemRepo
       </div>
       <a
         className="flex items-center ml-auto fr-btn fr-btn--secondary !px-4 border border-bf500"
-        href="/collectivite/1/personnalisation/developpement_economique"
+        href="/collectivite/1/personnalisation/developpement_economique?r=eci,cae"
         onClick={[Function]}
       >
         Voir la page

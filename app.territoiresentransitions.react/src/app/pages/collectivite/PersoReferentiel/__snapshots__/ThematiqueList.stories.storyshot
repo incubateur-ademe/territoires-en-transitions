@@ -9,7 +9,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentiel/ThematiqueList Exemp
   >
     <a
       className="flex justify-between"
-      href="/collectivite/1/personnalisation/dechets"
+      href="/collectivite/1/personnalisation/dechets?r=eci,cae"
       style={
         Object {
           "boxShadow": "none",
@@ -29,7 +29,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentiel/ThematiqueList Exemp
   >
     <a
       className="flex justify-between"
-      href="/collectivite/1/personnalisation/energie"
+      href="/collectivite/1/personnalisation/energie?r=eci,cae"
       style={
         Object {
           "boxShadow": "none",
@@ -49,7 +49,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentiel/ThematiqueList Exemp
   >
     <a
       className="flex justify-between"
-      href="/collectivite/1/personnalisation/mobilite"
+      href="/collectivite/1/personnalisation/mobilite?r=eci,cae"
       style={
         Object {
           "boxShadow": "none",

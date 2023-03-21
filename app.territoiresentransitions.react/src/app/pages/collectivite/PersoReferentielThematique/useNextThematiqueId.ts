@@ -1,3 +1,4 @@
+import {usePersoFilters} from '../PersoReferentiel/usePersoFilters';
 import {useQuestionThematiqueCompletude} from '../PersoReferentiel/useQuestionThematiqueCompletude';
 
 type TUseNextThematiqueLink = (
@@ -9,7 +10,8 @@ export const useNextThematiqueId: TUseNextThematiqueLink = (
   collectivite_id,
   thematique_id
 ) => {
-  const data = useQuestionThematiqueCompletude(collectivite_id);
+  const [{referentiels}] = usePersoFilters();
+  const data = useQuestionThematiqueCompletude(collectivite_id, referentiels);
 
   // données non valides ou pas encore chargée
   if (!data || !thematique_id) {
