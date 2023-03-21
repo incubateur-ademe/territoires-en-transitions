@@ -1,3 +1,5 @@
+import {Referentiel} from 'types/litterals';
+
 export const authBasePath = '/auth';
 export const signInPath = `${authBasePath}/signin`;
 export const signUpPath = `${authBasePath}/signup`;
@@ -225,13 +227,15 @@ export const makeCollectiviteUsersUrl = ({
 
 export const makeCollectivitePersoRefUrl = ({
   collectiviteId,
+  referentiels,
 }: {
   collectiviteId: number;
+  referentiels?: Referentiel[];
 }) =>
   collectivitePersoRefPath.replace(
     `:${collectiviteParam}`,
     collectiviteId.toString()
-  );
+  ) + (referentiels ? '?r=' + referentiels.join(',') : '');
 
 export const makeCollectiviteBibliothequeUrl = ({
   collectiviteId,
@@ -246,13 +250,17 @@ export const makeCollectiviteBibliothequeUrl = ({
 export const makeCollectivitePersoRefThematiqueUrl = ({
   collectiviteId,
   thematiqueId,
+  referentiels,
 }: {
   collectiviteId: number;
   thematiqueId: string;
+  referentiels: Referentiel[];
 }) =>
   collectivitePersoRefThematiquePath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .replace(`:${thematiqueParam}`, thematiqueId);
+    .replace(`:${thematiqueParam}`, thematiqueId) +
+  '?r=' +
+  referentiels.join(',');
 
 export const makeCollectiviteJournalUrl = ({
   collectiviteId,

@@ -1,6 +1,7 @@
 import {makeCollectivitePersoRefThematiqueUrl} from 'app/paths';
 import {TQuestionThematiqueCompletudeRead} from 'generated/dataLayer/question_thematique_completude_read';
 import {Badge} from 'ui/shared/Badge';
+import {usePersoFilters} from './usePersoFilters';
 
 export type TThematiqueListProps = {
   collectivite: {
@@ -30,9 +31,11 @@ export const ThematiqueList = (props: TThematiqueListProps) => {
  */
 const Item = (props: TQuestionThematiqueCompletudeRead) => {
   const {collectivite_id, id, nom, completude} = props;
+  const [{referentiels}] = usePersoFilters();
   const url = makeCollectivitePersoRefThematiqueUrl({
     collectiviteId: collectivite_id,
     thematiqueId: id,
+    referentiels,
   });
 
   return (

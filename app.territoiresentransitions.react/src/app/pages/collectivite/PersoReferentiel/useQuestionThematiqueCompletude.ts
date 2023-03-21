@@ -12,7 +12,7 @@ type TUseQuestionThematiqueCompletude = (
 export const useQuestionThematiqueCompletude: TUseQuestionThematiqueCompletude =
   (collectivite_id, filters) => {
     const {data} = useQuery(
-      ['question_thematique_completude', collectivite_id, filters],
+      ['question_thematique_completude', collectivite_id],
       () => (collectivite_id ? fetch(collectivite_id) : []),
       {enabled: !!collectivite_id}
     );

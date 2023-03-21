@@ -1,16 +1,19 @@
-import {useState} from 'react';
-import {Referentiel} from 'types/litterals';
 import Thematiques from './Thematiques';
 import {useQuestionThematiqueCompletude} from './useQuestionThematiqueCompletude';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import {usePersoFilters} from './usePersoFilters';
 
 const PersoReferentiel = () => {
   const collectivite = useCurrentCollectivite();
   const {collectivite_id, nom} = collectivite || {};
-  const [selected, setSelected] = useState<Referentiel[]>(['eci', 'cae']);
+
+  // filtre initial
+  const [filters, setFilters] = usePersoFilters();
+  const {referentiels} = filters;
+
   const thematiques = useQuestionThematiqueCompletude(
     collectivite_id || 0,
-    selected
+    referentiels
   );
 
   if (!collectivite_id) {
@@ -21,8 +24,8 @@ const PersoReferentiel = () => {
     <main data-test="personnalisation" className="fr-container mt-9 mb-16">
       <Thematiques
         collectivite={{id: collectivite_id, nom: nom || ''}}
-        selected={selected}
-        onChange={setSelected}
+        selected={referentiels}
+        onChange={newSelection => setFilters({referentiels: newSelection})}
         items={thematiques}
       />
     </main>
