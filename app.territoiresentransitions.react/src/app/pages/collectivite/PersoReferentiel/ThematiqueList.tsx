@@ -1,7 +1,7 @@
 import {makeCollectivitePersoRefThematiqueUrl} from 'app/paths';
 import {TQuestionThematiqueCompletudeRead} from 'generated/dataLayer/question_thematique_completude_read';
+import {Referentiel} from 'types/litterals';
 import {Badge} from 'ui/shared/Badge';
-import {usePersoFilters} from './usePersoFilters';
 
 export type TThematiqueListProps = {
   collectivite: {
@@ -10,17 +10,23 @@ export type TThematiqueListProps = {
   };
   items: TQuestionThematiqueCompletudeRead[];
   className?: string;
+  referentiels: Referentiel[];
 };
 
 /**
  * Affiche ...
  */
 export const ThematiqueList = (props: TThematiqueListProps) => {
-  const {collectivite, items, className} = props;
+  const {collectivite, items, className, referentiels} = props;
   return (
     <ul className={`w-full border pl-0 ${className || ''}`}>
       {items.map(item => (
-        <Item key={item.id} {...item} collectivite_id={collectivite.id} />
+        <Item
+          key={item.id}
+          {...item}
+          collectivite_id={collectivite.id}
+          referentielsSelected={referentiels}
+        />
       ))}
     </ul>
   );
@@ -29,13 +35,16 @@ export const ThematiqueList = (props: TThematiqueListProps) => {
 /**
  * Affiche un item de la liste des personnalisations par thématique
  */
-const Item = (props: TQuestionThematiqueCompletudeRead) => {
-  const {collectivite_id, id, nom, completude} = props;
-  const [{referentiels}] = usePersoFilters();
+const Item = (
+  props: TQuestionThematiqueCompletudeRead & {
+    referentielsSelected: Referentiel[];
+  }
+) => {
+  const {collectivite_id, id, nom, completude, referentielsSelected} = props;
   const url = makeCollectivitePersoRefThematiqueUrl({
     collectiviteId: collectivite_id,
     thematiqueId: id,
-    referentiels,
+    referentiels: referentielsSelected,
   });
 
   return (

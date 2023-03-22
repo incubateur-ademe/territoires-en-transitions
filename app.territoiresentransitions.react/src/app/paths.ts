@@ -254,13 +254,12 @@ export const makeCollectivitePersoRefThematiqueUrl = ({
 }: {
   collectiviteId: number;
   thematiqueId: string;
-  referentiels: Referentiel[];
+  referentiels?: Referentiel[];
 }) =>
   collectivitePersoRefThematiquePath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
     .replace(`:${thematiqueParam}`, thematiqueId) +
-  '?r=' +
-  referentiels.join(',');
+  (referentiels ? '?r=' + referentiels.join(',') : '');
 
 export const makeCollectiviteJournalUrl = ({
   collectiviteId,
