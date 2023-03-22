@@ -8,7 +8,7 @@ import {ThematiqueList, TThematiqueListProps} from './ThematiqueList';
 export type TThematiquesProps = TThematiqueFilterProps & TThematiqueListProps;
 
 const Thematique = (props: TThematiquesProps) => {
-  const {collectivite, selected, items, onChange} = props;
+  const {collectivite, referentiels, items, onChange} = props;
   return (
     <>
       <div className="flex flex-col items-center">
@@ -25,12 +25,13 @@ const Thematique = (props: TThematiquesProps) => {
         concernent pas votre collectivité et d'adapter les points des actions
         des référentiels à votre contexte.
       </p>
-      <ThematiqueFilter selected={selected || []} onChange={onChange} />
+      <ThematiqueFilter referentiels={referentiels || []} onChange={onChange} />
       {items?.length > 0 && (
         <ThematiqueList
           className="mt-8"
           collectivite={collectivite}
           items={items}
+          referentiels={referentiels || []}
         />
       )}
     </>

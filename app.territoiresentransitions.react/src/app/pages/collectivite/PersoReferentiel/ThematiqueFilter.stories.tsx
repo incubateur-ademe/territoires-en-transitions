@@ -11,20 +11,20 @@ const Template: Story<TThematiqueFilterProps> = args => (
 
 export const SelectionVide = Template.bind({});
 SelectionVide.args = {
-  selected: [],
+  referentiels: [],
 };
 
 export const CAESeulement = Template.bind({});
 CAESeulement.args = {
-  selected: ['cae'],
+  referentiels: ['cae'],
 };
 
 export const ECISeulement = Template.bind({});
 ECISeulement.args = {
-  selected: ['eci'],
+  referentiels: ['eci'],
 };
 
 export const CAEEtECI = Template.bind({});
 CAEEtECI.args = {
-  selected: ['cae', 'eci'],
+  referentiels: ['cae', 'eci'],
 };

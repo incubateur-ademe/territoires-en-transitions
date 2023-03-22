@@ -7,28 +7,28 @@ import {FormEvent} from 'react';
 import {Referentiel} from 'types/litterals';
 
 export type TThematiqueFilterProps = {
-  selected: Referentiel[];
+  referentiels: Referentiel[];
   onChange: (newSelection: Referentiel[]) => void;
 };
 
-const referentiels: Referentiel[] = ['cae', 'eci'];
+const referentielOptions: Referentiel[] = ['cae', 'eci'];
 
 export const ThematiqueFilter = (props: TThematiqueFilterProps) => {
-  const {selected, onChange} = props;
+  const {referentiels, onChange} = props;
   return (
     <fieldset className="fr-fieldset fr-fieldset--inline">
       <legend className="fr-fieldset__legend font-bold">
         Référentiels à personnaliser
       </legend>
       <div className="fr-fieldset__content">
-        {referentiels.map(referentiel => {
-          const checked = selected.includes(referentiel);
+        {referentielOptions.map(referentiel => {
+          const checked = referentiels.includes(referentiel);
           const handleChange = (e: FormEvent<HTMLInputElement>) => {
             const {checked: isCheckedNow} = e.currentTarget;
             onChange(
               isCheckedNow
-                ? [...selected, referentiel]
-                : selected.filter(r => r !== referentiel)
+                ? [...referentiels, referentiel]
+                : referentiels.filter(r => r !== referentiel)
             );
           };
 

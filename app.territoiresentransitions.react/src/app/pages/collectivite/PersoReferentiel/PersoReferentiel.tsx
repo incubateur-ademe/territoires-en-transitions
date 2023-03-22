@@ -24,7 +24,7 @@ const PersoReferentiel = () => {
     <main data-test="personnalisation" className="fr-container mt-9 mb-16">
       <Thematiques
         collectivite={{id: collectivite_id, nom: nom || ''}}
-        selected={referentiels}
+        referentiels={referentiels}
         onChange={newSelection => setFilters({referentiels: newSelection})}
         items={thematiques}
       />

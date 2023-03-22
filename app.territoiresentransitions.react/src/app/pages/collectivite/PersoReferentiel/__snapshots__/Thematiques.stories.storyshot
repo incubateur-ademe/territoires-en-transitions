@@ -35,7 +35,7 @@ Array [
         className="fr-checkbox-group fr-checkbox-inline"
       >
         <input
-          checked={true}
+          checked={false}
           className="py-0"
           id="cae"
           name="cae"
@@ -53,7 +53,7 @@ Array [
         className="fr-checkbox-group fr-checkbox-inline"
       >
         <input
-          checked={true}
+          checked={false}
           className="py-0"
           id="eci"
           name="eci"
@@ -77,7 +77,7 @@ Array [
     >
       <a
         className="flex justify-between"
-        href="/collectivite/1/personnalisation/dechets?r=eci,cae"
+        href="/collectivite/1/personnalisation/dechets?r="
         style={
           Object {
             "boxShadow": "none",
@@ -97,7 +97,7 @@ Array [
     >
       <a
         className="flex justify-between"
-        href="/collectivite/1/personnalisation/energie?r=eci,cae"
+        href="/collectivite/1/personnalisation/energie?r="
         style={
           Object {
             "boxShadow": "none",
@@ -117,7 +117,7 @@ Array [
     >
       <a
         className="flex justify-between"
-        href="/collectivite/1/personnalisation/mobilite?r=eci,cae"
+        href="/collectivite/1/personnalisation/mobilite?r="
         style={
           Object {
             "boxShadow": "none",
