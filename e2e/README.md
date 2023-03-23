@@ -16,6 +16,8 @@ nvm install 16
 nvm use 16
 ```
 
+Dans vscode, l'extension [Cucumber (Gherkin) Full Support](https://marketplace.visualstudio.com/items?itemName=alexkrechik.cucumberautocomplete) permet notamment d'avoir la coloration syntaxique des scénarios de test.
+
 ## Commandes
 
 ### Démarrer le gestionnaire de tests
@@ -45,6 +47,16 @@ npm test -- -s "cypress/integration/**/15*"
 npm test -- -s "cypress/integration/**/15*" --config video=true
 ```
 
+### Générer un rapport de test
+
+```sh
+npm run report
+```
+
+Génère un rapport dans le répertoire `report`. Ouvrir le fichier `report/index.html` pour consulter ce rapport.
+
+Cette commande est lancée après l'exécution des tests en intégration continue (CI) et le rapport produit est attaché à l'action GitHub associée. Ceci permet de faciliter le diagnostique, le rapport contenant les captures d'écran des étapes de test en erreur.
+
 ## Organisation des tests
 
 Les tests sont organisés en fonctionnalités et scénarios.
@@ -72,12 +84,12 @@ Un fichier `.feature` est ainsi réalisé sur le modèle suivant :
 ```gherkin
 # language: fr
 
-Fonctionnalité: Nom de la fonctionnalité à tester
+Fonctionnalité: Tester telle partie de la plateforme
 
-    Scénario: Nom d'un test
+    Scénario: Tester un comportement de cette partie
         # étapes :
         Etant donné que l'application est dans un état particulier
-        Et que tel élément est présent 
+        Et que tel élément est présent
         
         Alors telle attente doit être satisfaite
         Et telle autre aussi
@@ -85,14 +97,15 @@ Fonctionnalité: Nom de la fonctionnalité à tester
         Quand je réalise une action
         Et une autre
         Alors une nouvelle attente doit être satisfaite
-        # etc.
-```
+        # etc.```
 
 ### Définition d'une étape de scénario
 
-La [définition d'une étape de scénario](https://cucumber.io/docs/cucumber/step-definitions/), permet d'associer une phrase en langage naturel et une ou plusieurs opérations (attentes, actions).
+La [définition d'une étape de scénario](https://cucumber.io/docs/cucumber/step-definitions/?lang=javascript), permet d'associer une phrase en langage naturel et une ou plusieurs opérations (attentes, actions).
 
 La fonction globale `Given` permet de réaliser cette implémentation.
+
+La phrase d'une étape de test peut être exprimée avec une expression régulière (regex) ou une expression Cucumber, ce dernier mode étant plus lisible mais un peu moins puissant.
 
 Les définitions du sous-dossier `cypress/integration/common` sont communes à toutes les fonctionnalités.
 
@@ -131,7 +144,7 @@ Fonctionnalité: Nom de la fonctionnalité à tester
         # etc.
 ```
 
-### Mettre en pause en scénario
+### Mettre en pause un scénario
 
 Pour mettre en pause le scénario, ajouter dans celui-ci une étape `* pause` comme dans l'exemple suivant.
 Puis dans l'interface Cypress, utiliser la commande "suivant" pour continuer l'exécution du scénario en mode pas à pas ([cf doc](https://docs.cypress.io/api/commands/pause)).
