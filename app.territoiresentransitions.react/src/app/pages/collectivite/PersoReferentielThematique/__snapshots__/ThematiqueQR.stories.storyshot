@@ -275,12 +275,14 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
     >
       <a
         className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-arrow-left-line self-start"
+        data-test="btn-toc"
         href="/collectivite/1/personnalisation?r=eci,cae"
       >
         Revenir au sommaire
       </a>
       <a
         className="fr-btn fr-btn--icon-right fr-fi-arrow-right-line self-start fr-ml-3w"
+        data-test="btn-next"
         href="/collectivite/1/personnalisation/dechets?r=eci,cae"
       >
         Afficher la catégorie suivante
@@ -565,6 +567,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
     >
       <a
         className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-arrow-left-line self-start"
+        data-test="btn-toc"
         href="/collectivite/1/personnalisation?r=eci,cae"
       >
         Revenir au sommaire
@@ -932,6 +935,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
     >
       <a
         className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-arrow-left-line self-start"
+        data-test="btn-toc"
         href="/collectivite/1/personnalisation?r=eci,cae"
       >
         Revenir au sommaire

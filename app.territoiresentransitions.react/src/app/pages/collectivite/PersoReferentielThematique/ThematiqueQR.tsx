@@ -69,6 +69,7 @@ export const ThematiqueQR = (props: TThematiqueQRProps) => {
         <div className="flex fr-pt-4w">
           <a
             className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-arrow-left-line self-start"
+            data-test="btn-toc"
             href={makeCollectivitePersoRefUrl({
               collectiviteId: collectivite.id,
               referentiels,
@@ -79,6 +80,7 @@ export const ThematiqueQR = (props: TThematiqueQRProps) => {
           {nextThematiqueId ? (
             <a
               className="fr-btn fr-btn--icon-right fr-fi-arrow-right-line self-start fr-ml-3w"
+              data-test="btn-next"
               href={makeCollectivitePersoRefThematiqueUrl({
                 collectiviteId: collectivite.id,
                 thematiqueId: nextThematiqueId,
