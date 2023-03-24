@@ -2,6 +2,57 @@
 
 Fonctionnalité: Personnaliser le référentiel
 
+  Scénario: Filtrer et naviguer entre les thématiques de personnalisation
+    Etant donné une collectivité nommée "Ma collectivité"
+    Et un utilisateur avec les droits en "edition"
+
+    Quand je suis connecté avec les droits en "edition"
+    Et que je suis sur la page "Personnalisation des référentiels" de la collectivité courante
+    # vérifie les filtres et le nombre de thématiques avant filtrage
+    Alors la case "Climat Air Energie" est cochée
+    Et la case "Economie Circulaire" est cochée
+    Et la page contient plus de 5 thématiques
+
+    # et après filtrage
+    Quand je clique sur la case "Climat Air Energie"
+    Alors la case "Climat Air Energie" est décochée
+    Et la case "Economie Circulaire" est cochée
+    Et la page contient moins de 5 thématiques
+
+    # on navigue dans les thématiques
+    Quand je clique sur la dernière thématique
+    Alors le bouton "Revenir au sommaire" est affiché
+    Et le bouton "Catégorie suivante" est absent
+
+    # et on vérifie que le filtrage est conservé quand on revient au sommaire
+    Quand je clique sur le bouton "Revenir au sommaire"
+    Alors la case "Climat Air Energie" est décochée
+    Et la case "Economie Circulaire" est cochée
+    Et la page contient moins de 5 thématiques
+
+    # quand on navigue de thématique...
+    Quand je clique sur l'avant-dernière thématique
+    Alors le bouton "Revenir au sommaire" est affiché
+    Et le bouton "Catégorie suivante" est affiché
+
+    # ... en thématique
+    Quand je clique sur le bouton "Catégorie suivante"
+    Alors le bouton "Revenir au sommaire" est affiché
+    Et le bouton "Catégorie suivante" est absent
+
+    # puis on vérifie à nouveau le filtrage quand on revient au sommaire
+    Quand je clique sur le bouton "Revenir au sommaire"
+    Alors la case "Climat Air Energie" est décochée
+    Et la case "Economie Circulaire" est cochée
+    Et la page contient moins de 5 thématiques
+
+    # puis après retour à l'état initial
+    Quand je clique sur la case "Climat Air Energie"
+    Alors la case "Climat Air Energie" est cochée
+    Et la case "Economie Circulaire" est cochée
+    Et la page contient plus de 5 thématiques
+
+
   Scénario: Personnaliser le potentiel de points d'une action à partir de la vue Action
     Etant donné que je suis connecté en tant que "yolo"
 
@@ -140,3 +191,4 @@ Fonctionnalité: Personnaliser le référentiel
       Si la commune a transféré la compétence voirie
       part: non définie
       """
+
