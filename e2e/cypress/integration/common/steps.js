@@ -119,7 +119,7 @@ export const checkExpectation = (selector, expectation, value) => {
 // un nom d'élément dans la page
 export const resolveSelector = (context, elem) => {
   const s = context.LocalSelectors?.[elem] || Selectors[elem];
-  assert(s, 'sélecteur non trouvé');
+  assert(s, 'le sélecteur est défini localement ou globalement');
   return s;
 };
 
@@ -150,6 +150,7 @@ Given(/"([^"]*)" contient "([^"]*)"$/, function (elem, value) {
   checkExpectation(resolveSelector(this, elem).selector, 'contient', value);
 });
 Given(/^le bouton "([^"]*)" est ([^"]*)$/, verifyExpectation);
+Given(/^la case "([^"]*)" est ([^"]*)$/, verifyExpectation);
 Given(
   /^le bouton "([^"]*)" est ([^"]*) et ([^"]*)$/,
   (elem, expectation1, expectation2) => {
