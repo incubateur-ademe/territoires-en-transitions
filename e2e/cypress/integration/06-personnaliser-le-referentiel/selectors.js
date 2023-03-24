@@ -12,4 +12,16 @@ export const LocalSelectors = {
       cartouche: '[data-test=PointsPotentiels]',
     },
   },
+  'Economie Circulaire': {
+    selector: 'input[type=checkbox][name=eci]',
+  },
+  'Climat Air Energie': {
+    selector: 'input[type=checkbox][name=cae]',
+  },
+  'Revenir au sommaire': {
+    selector: '[data-test=btn-toc]',
+  },
+  'Catégorie suivante': {
+    selector: '[data-test=btn-next]',
+  },
 };

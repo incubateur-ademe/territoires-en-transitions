@@ -34,6 +34,20 @@ Given('je clique sur la thématique {string}', thematique => {
   cy.get('[data-test=personnalisation] a').contains(thematique).click();
 });
 
+Given("je clique sur l'avant-dernière thématique", thematique => {
+  cy.get('[data-test=personnalisation] a:nth(-2)').click();
+});
+Given('je clique sur la dernière thématique', thematique => {
+  cy.get('[data-test=personnalisation] a:nth(-1)').click();
+});
+
+Given('la page contient plus de {int} thématiques', count =>
+  cy.get('[data-test=personnalisation] a').should('have.length.gt', count)
+);
+Given('la page contient moins de {int} thématiques', count =>
+  cy.get('[data-test=personnalisation] a').should('have.length.lt', count)
+);
+
 const checkQuestionsReponses = dataString => {
   const qr = parseQuestionsReponses(dataString);
 
