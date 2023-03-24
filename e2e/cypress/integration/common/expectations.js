@@ -14,4 +14,6 @@ export const Expectations = {
   plusieurs: {cond: 'have.length.greaterThan', value: 0},
   coché: 'be.checked',
   décoché: 'not.be.checked',
+  cochée: 'be.checked',
+  décochée: 'not.be.checked',
 };
