@@ -1,6 +1,15 @@
 import {StatusColor} from 'ui/charts/chartsTheme';
+import ChartWrapper from 'ui/charts/ChartWrapper';
+import DoughnutChart from 'ui/charts/DoughnutChart';
 import {usePlanActionTableauDeBord} from './data/usePlanActionTableauDeBord';
-import SyntheseCard from './SyntheseCard';
+
+/**
+ * Liste des graphes affichés dans la page Synthèse
+ *
+ * @param collectiviteId - (number) id de la collectivité affichée
+ * @param planId - (number | null) id du plan d'action affiché
+ * @param withoutPlan - (boolean | null) affichage des données sans plan d'action
+ */
 
 type SyntheseGraphsListProps = {
   collectiviteId: number;
@@ -52,7 +61,9 @@ const SyntheseGraphsList = ({
     <div className="fr-grid-row fr-grid-row--gutters">
       {graphsData.map(graph => (
         <div key={graph.title} className="fr-col-sm-12 fr-col-xl-6">
-          <SyntheseCard title={graph.title} data={graph.data} />
+          <ChartWrapper title={graph.title} customClass="border-b-4">
+            <DoughnutChart data={graph.data} />
+          </ChartWrapper>
         </div>
       ))}
     </div>

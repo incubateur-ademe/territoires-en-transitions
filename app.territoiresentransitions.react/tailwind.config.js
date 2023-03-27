@@ -18,6 +18,7 @@ module.exports = {
         // nomenclature tailwind proposée: t = text -> tDefaultInfo
         tDefaultInfo: '#0063CB',
         bf925: '#E3E3FD',
+        bf925hover: '#C1C1FB',
         bf975: '#f5f5fe',
         grey425: '#666',
         grey625: '#929292',

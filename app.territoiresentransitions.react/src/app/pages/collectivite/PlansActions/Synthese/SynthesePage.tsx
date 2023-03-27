@@ -5,6 +5,12 @@ const Synthese = lazy(
   () => import('app/pages/collectivite/PlansActions/Synthese/Synthese')
 );
 
+/**
+ * Page Synthèse des plans d'action
+ *
+ * @param collectiviteId - (number) id de la collectivité affichée
+ */
+
 type SynthesePageProps = {
   collectiviteId: number;
 };

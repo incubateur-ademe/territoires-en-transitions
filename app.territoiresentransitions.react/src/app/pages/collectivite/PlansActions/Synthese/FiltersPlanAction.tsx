@@ -2,6 +2,14 @@ import TagFilters from 'ui/shared/filters/TagFilters';
 import {useFichesNonClasseesListe} from '../FicheAction/data/useFichesNonClasseesListe';
 import {usePlansActionsListe} from '../PlanAction/data/usePlansActionsListe';
 
+/**
+ * Filtres tags par plan d'action
+ *
+ * @param collectiviteId - (number) id de la collectivité affichée
+ * @param onChangePlan - action lancée lors du changement de plan d'action
+ * @param onChangeWithoutPlan - action lancée lors du toggle avec / sans plan d'action
+ */
+
 type FiltersPlanActionProps = {
   collectiviteId: number;
   onChangePlan: (id: number | null) => void;

@@ -26,6 +26,7 @@ const TagFilters = ({
       {options.map(opt => (
         <Fragment key={opt.id}>
           <input
+            className="hidden"
             type="radio"
             name={name}
             id={opt.id}
@@ -33,10 +34,13 @@ const TagFilters = ({
             checked={selectedOption === opt.id}
             onChange={handleChange}
           />
-          <label htmlFor={opt.id}>
+          <label
+            htmlFor={opt.id}
+            className="block relative m-0 px-4 py-1 rounded-2xl text-sm text-bf500 bg-bf925 hover:bg-bf925hover cursor-pointer"
+          >
             {opt.name}
             <span
-              className="fr-fi-checkbox-circle-line scale-75"
+              className="fr-fi-checkbox-circle-line scale-75 hidden"
               aria-hidden="true"
             ></span>
           </label>
