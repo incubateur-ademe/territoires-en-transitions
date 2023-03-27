@@ -277,5 +277,4 @@ labellisation/audit [labellisation/audit@v2.11.0] 2023-03-15T13:51:17Z Florian <
 labellisation/demande [labellisation/demande@v2.11.0] 2023-03-16T10:54:35Z Florian <florian@derfurth.com> # Ajoute le modified at à la demande
 @v2.14 2023-03-21T09:22:15Z Florian <florian@derfurth.com> # Répare le parcours d'audit
 
-typage_schema 2023-03-15T14:35:31Z Amandine Jacquelin <conta@LanceLibre> # Ajout du schema typage pour transférer des types au front
 plan_action/tableau_de_bord 2023-03-15T14:34:05Z Amandine Jacquelin <conta@LanceLibre> # Vues, tables, et fonctions pour le tableau de bord des plans d'actions
