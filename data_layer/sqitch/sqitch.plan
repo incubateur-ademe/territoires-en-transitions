@@ -278,3 +278,4 @@ labellisation/demande [labellisation/demande@v2.11.0] 2023-03-16T10:54:35Z Flori
 @v2.14 2023-03-21T09:22:15Z Florian <florian@derfurth.com> # Répare le parcours d'audit
 
 labellisation/comparaison_audit [labellisation/comparaison_audit@v2.14] 2023-03-27T14:08:29Z Florian <florian@derfurth.com> # Renvoie uniquement les scores de l'audit en cours.
+collectivite/mes_collectivites_v2 [collectivite/mes_collectivites_v2@v2.14] 2023-03-27T14:32:43Z Florian <florian@derfurth.com> # Ajoute la colonne est_auditeur_courant
