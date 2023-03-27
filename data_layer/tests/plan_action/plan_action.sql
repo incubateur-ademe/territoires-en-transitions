@@ -5,7 +5,6 @@ truncate fiche_action_financeur_tag;
 truncate financeur_tag cascade;
 truncate fiche_action_service_tag;
 truncate service_tag cascade;
-truncate fiche_action_annexe;
 truncate annexe cascade;
 truncate fiche_action_indicateur;
 truncate fiche_action_action;
@@ -130,14 +129,14 @@ select add_bibliotheque_fichier(
            )
 from test.file f;
 
-insert into annexe (collectivite_id, fichier_id, url)
-select collectivite_id, id, null
+insert into annexe (collectivite_id, fichier_id, url, fiche_id)
+select collectivite_id, id, null, 1
 from bibliotheque_fichier;
 
-select ajouter_annexe(1, (select a.*::annexe from (select null as id, bf.collectivite_id, bf.id as fichier_id, null as url, '' as titre, '' as commentaire, null as modified_by, null as modified_at, null as lien from bibliotheque_fichier bf limit 1) a limit 1));
+select ajouter_annexe((select a.*::annexe from (select null as id, bf.collectivite_id, bf.id as fichier_id, null as url, '' as titre, '' as commentaire, null as modified_by, null as modified_at, null as lien, 1 as fiche_id from bibliotheque_fichier bf limit 1) a limit 1));
 
-select ok ((select count(*)=1 from fiche_action_annexe),
-           'Il devrait y avoir 1 entrée dans fiche_action_annexe');
+select ok ((select count(*)=2 from annexe),
+           'Il devrait y avoir 2 entrée dans annexe');
 -- Test action
 select ajouter_action(1, 'eci_2.1');
 select ajouter_action(3, 'eci_2.2');
