@@ -25,7 +25,7 @@ const membreFonctions: {value: MembreFonction; label: string}[] = [
   {value: 'referent', label: 'Référent·e'},
   {value: 'technique', label: 'Équipe technique'},
   {value: 'politique', label: 'Équipe politique'},
-  {value: 'conseiller', label: 'Conseiller·e'},
+  {value: 'conseiller', label: "Bureau d'études"},
   {value: 'partenaire', label: 'Partenaire'},
 ];
 

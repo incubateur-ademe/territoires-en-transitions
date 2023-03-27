@@ -4,7 +4,7 @@ import {SelectOption} from 'ui/shared/form/formik/FormikSelect';
 export const collectiviteFonctionOptions: SelectOption<MembreFonction>[] = [
   {
     value: 'conseiller',
-    label: 'Conseiller·e',
+    label: "Bureau d'études",
   },
   {
     value: 'politique',
