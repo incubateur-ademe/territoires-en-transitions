@@ -2,18 +2,20 @@
 
 BEGIN;
 
-create table typage.graphique_tranche (
-                                          id text primary key,
-                                          value integer not null
+create type graphique_tranche as
+(
+    id text,
+    value integer
 );
 
-create table typage.plan_action_tableau_de_bord (
-                                                    collectivite_id integer references collectivite not null,
-                                                    plan_id integer references axe,
-                                                    statuts typage.graphique_tranche[],
-                                                    pilotes typage.graphique_tranche[],
-                                                    referents typage.graphique_tranche[],
-                                                    priorites typage.graphique_tranche[]
+create type plan_action_tableau_de_bord as
+(
+    collectivite_id integer,
+    plan_id integer,
+    statuts graphique_tranche[],
+    pilotes graphique_tranche[],
+    referents graphique_tranche[],
+    priorites graphique_tranche[]
 );
 
 
@@ -22,7 +24,7 @@ create function plan_action_tableau_de_bord(
     plan_id integer default null,
     sans_plan boolean default false
 )
-    returns typage.plan_action_tableau_de_bord as
+    returns plan_action_tableau_de_bord as
 $$
 with
     fiches as (
@@ -49,7 +51,7 @@ select
     plan_action_tableau_de_bord.collectivite_id,
     plan_action_tableau_de_bord.plan_id,
     (
-        select array_agg((t.*)::typage.graphique_tranche) as statuts
+        select array_agg((t.*)::graphique_tranche) as statuts
         from (
                  select coalesce(statut::text, 'NC') as id, count(*) as value
                  from fiches
@@ -57,7 +59,7 @@ select
              ) t
     ),
     (
-        select array_agg((t.*)::typage.graphique_tranche) as pilotes
+        select array_agg((t.*)::graphique_tranche) as pilotes
         from (
                  select coalesce(p.nom, 'NC') as id, count(f.*) as value
                  from fiches f
@@ -67,7 +69,7 @@ select
              ) t
     ),
     (
-        select array_agg((t.*)::typage.graphique_tranche) as referents
+        select array_agg((t.*)::graphique_tranche) as referents
         from (select coalesce(p.nom, 'NC') as id, count(f.*) as value
               from fiches f
                        left join fiche_action_referent far on far.fiche_id = f.id
@@ -76,7 +78,7 @@ select
              ) t
     ),
     (
-        select array_agg((t.*)::typage.graphique_tranche) as priorites
+        select array_agg((t.*)::graphique_tranche) as priorites
         from (
                  select coalesce(niveau_priorite::text, 'NC') as id, count(*) as value
                  from fiches
