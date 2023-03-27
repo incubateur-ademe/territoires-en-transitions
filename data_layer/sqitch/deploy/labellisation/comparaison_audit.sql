@@ -2,9 +2,20 @@
 
 BEGIN;
 
--- Ne peut pas ajouter la contrainte on delete cascade sans devoir recréer entièrement la contrainte
-alter table pre_audit_scores
-    drop constraint pre_audit_scores_audit_id_fkey,
-    add constraint pre_audit_scores_audit_id_fkey foreign key (audit_id) references audit on delete cascade;
+create or replace function
+    private.collectivite_scores_pre_audit(
+    collectivite_id integer,
+    referentiel referentiel
+)
+    returns setof tabular_score
+begin
+    atomic
+    select sc.*
+    from labellisation.current_audit(collectivite_scores_pre_audit.collectivite_id,
+                                     collectivite_scores_pre_audit.referentiel) ca
+             join pre_audit_scores pas on pas.audit_id = ca.id
+             join private.convert_client_scores(pas.scores) ccc on true
+             join private.to_tabular_score(ccc) sc on true;
+end;
 
 COMMIT;
