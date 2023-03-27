@@ -5,7 +5,7 @@ BEGIN;
 
 alter function est_auditeur(integer) set schema private;
 
-create function est_auditeur(collectivite integer, referentiel referentiel)
+create or replace function est_auditeur(collectivite integer, referentiel referentiel)
     returns boolean
 begin
     atomic
