@@ -2,7 +2,8 @@
 
 BEGIN;
 
-create view retool_stats_usages as
+drop view retool_stats_usages;
+create materialized view retool_stats_usages as
 with
     collectivites as (select cc.collectivite_id, cc.code_siren_insee, cc.nom, cc.region_code, cc.departement_code,
                              ir.libelle as region_name, id.libelle as departement_name, cc.type_collectivite,
@@ -19,7 +20,8 @@ with
                      pud.collectivite_id,
                      dcp.email, dcp.telephone, dcp.prenom, dcp.nom, au.last_sign_in_at
               from private_utilisateur_droit pud
-                       left join private_collectivite_membre pc on pud.user_id = pc.user_id and pud.collectivite_id = pc.collectivite_id
+                       left join private_collectivite_membre pc on pud.user_id = pc.user_id
+                  and pud.collectivite_id = pc.collectivite_id
                        join dcp on pud.user_id = dcp.user_id
                        join auth.users au on pud.user_id = au.id
               where pud.niveau_acces = 'admin'
@@ -121,7 +123,6 @@ with
                         left join lateral (select * from admin where admin.collectivite_id = collectivites.collectivite_id limit 1 offset 8) pcm_9 on true
                         left join lateral (select * from admin where admin.collectivite_id = collectivites.collectivite_id limit 1 offset 9) pcm_10 on true
     ),
-
     courant as (select collectivite_id, action_id,
                        case when point_potentiel = 0::double precision then 0::double precision
                             else point_fait / point_potentiel * 100::double precision
@@ -130,22 +131,33 @@ with
                            when point_potentiel = 0::double precision then 0::double precision
                            else point_programme / point_potentiel * 100::double precision
                            end as programme
-                from private.action_scores),
+                from private.action_scores
+                where action_id = 'eci' or action_id = 'cae'),
     courant_eci as (select * from courant where action_id = 'eci'),
     courant_cae as (select * from courant where action_id = 'cae'),
-    label as (select collectivite_id, etoiles, score_realise::double precision as score_realise, score_programme::double precision as score_programme, referentiel from labellisation order by annee desc),
+    label as (
+        select l.collectivite_id, l.etoiles, l.score_realise::double precision as score_realise,
+               l.score_programme::double precision as score_programme, l.referentiel, l.annee
+        from labellisation l
+                 join (
+            select collectivite_id, referentiel, max(annee) AS annee
+            from labellisation
+            group by collectivite_id, referentiel
+        ) lmax on l.collectivite_id =lmax.collectivite_id
+            and l.referentiel = lmax.referentiel
+            and l.annee = lmax.annee
+    ),
     label_eci as (select collectivites.collectivite_id, l.etoiles, l.score_realise, l.score_programme, l.referentiel
                   from collectivites
-                           left join lateral (select * from label
-                                              where collectivites.collectivite_id = label.collectivite_id
-                                                and referentiel = 'eci' limit 1
-                      ) l on true),
+                           left join (select * from label where referentiel = 'eci') l
+                                     using(collectivite_id)
+
+    ),
     label_cae as (select collectivites.collectivite_id, l.etoiles, l.score_realise, l.score_programme, l.referentiel
                   from collectivites
-                           left join lateral (select * from label
-                                              where collectivites.collectivite_id = label.collectivite_id
-                                                and referentiel = 'cae' limit 1
-                      ) l on true),
+                           left join (select * from label where referentiel = 'cae') l
+                                     using(collectivite_id)
+    ),
     droits as (select collectivite_id, id, niveau_acces
                from private_utilisateur_droit where active = true),
     stats_droits as (select collectivite_id,
