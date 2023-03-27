@@ -109,19 +109,6 @@ select * from public.fiche_action_financeur_tag;
 comment on table test.fiche_action_financeur_tag is
     'Copie de la table fiche_action_financeur_tag.';
 
--- TODO gérer les liens
-/*
--- Documents et liens (voir preuve)
-create table test.annexes as
-select * from public.annexes;
-comment on table test.annexes is
-    'Copie de la table annexes.';
-
-create table test.fiche_action_annexes as
-select * from public.fiche_action_annexes;
-comment on table test.fiche_action_annexes is
-    'Copie de la table fiche_action_annexes.';
- */
 
 create function
     test_reset_plan_action()
@@ -129,8 +116,7 @@ create function
 as
 $$
     -- Vide les tables des audits
---truncate fiche_action_annexes;
---truncate annexes cascade;
+    truncate annexe cascade;
 truncate fiche_action_financeur_tag;
 truncate financeur_tag cascade;
 truncate fiche_action_service_tag;
@@ -213,14 +199,6 @@ select * from test.financeur_tag;
 
 insert into public.fiche_action_financeur_tag
 select * from test.fiche_action_financeur_tag;
-
-    /*
-    insert into public.annexe
-    select * from test.annexe;
-
-    insert into public.fiche_action_annexe
-    select * from test.fiche_action_annexe;
-     */
 
 $$ language sql security definer;
 comment on function test_reset_audit is
