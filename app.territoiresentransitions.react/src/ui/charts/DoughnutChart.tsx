@@ -1,6 +1,12 @@
 import {ResponsivePie} from '@nivo/pie';
 import {defaultColors, theme} from './chartsTheme';
 
+/**
+ * Graphe donut générique à partir du composant nivo/pie
+ *
+ * @param data - tableau de données à afficher
+ */
+
 type DoughnutChartProps = {
   data: {
     id: string;

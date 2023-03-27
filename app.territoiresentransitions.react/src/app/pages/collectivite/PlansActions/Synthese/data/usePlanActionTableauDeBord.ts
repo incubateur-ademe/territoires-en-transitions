@@ -31,6 +31,14 @@ const fetchDashboardData = async (
   return data as unknown as TPlanActionTableauDeBord;
 };
 
+/**
+ * Hook permettant la récupération des données pour la synthèse des plans d'action (graphes)
+ *
+ * @param collectivite_id - (number) id de la collectivité à récupérer
+ * @param plan_id - (number | null) id du plan d'action à récupérer
+ * @param sans_plan - (boolean | null) données avec ou sans plan d'action
+ */
+
 export const usePlanActionTableauDeBord = (
   collectivite_id: number,
   plan_id: number | null,

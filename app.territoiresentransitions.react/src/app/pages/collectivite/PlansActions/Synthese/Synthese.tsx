@@ -3,6 +3,12 @@ import HeaderTitle from '../components/HeaderTitle';
 import FiltersPlanAction from './FiltersPlanAction';
 import SyntheseGraphsList from './SyntheseGraphsList';
 
+/**
+ * Contenu de la page Synthèse
+ *
+ * @param collectiviteId - (number) id de la collectivité affichée
+ */
+
 type SyntheseProps = {
   collectiviteId: number;
 };
