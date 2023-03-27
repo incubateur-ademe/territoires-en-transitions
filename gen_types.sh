@@ -1,5 +1,4 @@
 #!/bin/sh
-
 ###
 ### Génère les types TS à partir de la base de données
 ###
@@ -39,7 +38,7 @@ repeat_command() {
 }
 
 echo "Génère les types TS à partir de la base de données"
-supabase gen types typescript  --schema public  --schema labellisation --schema typage --db-url postgresql://postgres:${POSTGRES_PASSWORD}@host.docker.internal:${POSTGRES_PORT}/postgres > ./app.territoiresentransitions.react/src/types/database.types.ts
+supabase gen types typescript  --schema public  --schema labellisation --db-url postgresql://postgres:${POSTGRES_PASSWORD}@host.docker.internal:${POSTGRES_PORT}/postgres > ./app.territoiresentransitions.react/src/types/database.types.ts
 
 echo "Tri par ordre alphabétique les types générés pour que le git diff soit consistant"
 cd ./app.territoiresentransitions.react
