@@ -43,14 +43,15 @@ const applyFilter = (
   if (!filters) {
     return thematiques;
   }
+  const filtersWithoutEmptyEntries = filters.filter(f => Boolean(f));
   // aucun référentiel sélectionné => affiche uniquement la thématique identité :
-  if (filters.length === 0) {
+  if (filtersWithoutEmptyEntries.length === 0) {
     const identite = thematiques?.find(({id}) => id === 'identite');
     return identite ? [identite] : [];
   }
   return thematiques?.length
     ? thematiques.filter(({referentiels}) =>
-        filters.find(r => referentiels.includes(r))
+        filtersWithoutEmptyEntries.find(r => referentiels.includes(r))
       )
     : [];
 };
