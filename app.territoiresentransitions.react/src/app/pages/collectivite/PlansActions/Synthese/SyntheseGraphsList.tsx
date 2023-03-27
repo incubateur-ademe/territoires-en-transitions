@@ -86,7 +86,11 @@ const SyntheseGraphsList = ({
         graph =>
           !!graph.data.length && (
             <div key={graph.title} className="fr-col-sm-12 fr-col-xl-6">
-              <ChartWrapper title={graph.title} customClass="border-b-4">
+              <ChartWrapper
+                title={graph.title}
+                customClass="border-b-4"
+                customStyle={{height: '350px'}}
+              >
                 <DoughnutChart
                   data={graph.data}
                   label={graph.id === 'statuts' || graph.id === 'priorites'}
