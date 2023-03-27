@@ -281,3 +281,6 @@ labellisation/comparaison_audit [labellisation/comparaison_audit@v2.14] 2023-03-
 collectivite/mes_collectivites_v2 [collectivite/mes_collectivites_v2@v2.14] 2023-03-27T14:32:43Z Florian <florian@derfurth.com> # Ajoute la colonne est_auditeur_courant
 labellisation/audit [labellisation/audit@v2.14] 2023-03-27T15:38:30Z Florian <florian@derfurth.com> # Ajoute la fonction pour clôturer l'audit
 @v2.15.0 2023-03-30T07:30:45Z Florian <florian@derfurth.com> # Répare et améliore le flow d'audit
+
+retool/usage [retool/usage@v2.14] 2023-03-27T13:41:04Z Amandine Jacquelin <conta@LanceLibre> # Améliore les performances de retool_stats_usages
+cron/refresh_retool_stats_usages 2023-03-27T13:47:43Z Amandine Jacquelin <conta@LanceLibre> # Refresh pour vue retool_stats_usages
