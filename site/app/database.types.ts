@@ -812,7 +812,10 @@ export interface Database {
         Returns: undefined;
       };
       est_auditeur: {
-        Args: {col: number};
+        Args: {
+          collectivite: number;
+          referentiel: Database['public']['Enums']['referentiel'];
+        };
         Returns: boolean;
       };
       filter_fiches_action: {
@@ -1167,6 +1170,10 @@ export interface Database {
         Args: {instance: Json; schema: Json};
         Returns: boolean;
       };
+      labellisation_cloturer_audit: {
+        Args: {audit_id: number; date_fin: string};
+        Returns: unknown;
+      };
       labellisation_commencer_audit: {
         Args: {audit_id: number; date_debut: string};
         Returns: unknown;
@@ -1442,19 +1449,23 @@ export interface Database {
       };
       time_bucket:
         | {
+            Args: {bucket_width: number; ts: number};
+            Returns: number;
+          }
+        | {
+            Args: {bucket_width: unknown; ts: string};
+            Returns: string;
+          }
+        | {
+            Args: {bucket_width: unknown; ts: string};
+            Returns: string;
+          }
+        | {
+            Args: {bucket_width: unknown; ts: string};
+            Returns: string;
+          }
+        | {
             Args: {bucket_width: unknown; origin: string; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; ts: string};
             Returns: string;
           }
         | {
@@ -1486,10 +1497,6 @@ export interface Database {
               ts: string;
             };
             Returns: string;
-          }
-        | {
-            Args: {bucket_width: number; ts: number};
-            Returns: number;
           }
         | {
             Args: {bucket_width: number; ts: number};
