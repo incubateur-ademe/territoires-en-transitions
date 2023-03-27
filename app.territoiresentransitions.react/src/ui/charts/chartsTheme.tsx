@@ -24,6 +24,11 @@ export const theme: Theme = {
       border: '1px solid #ccc',
     },
   },
+  labels: {
+    text: {
+      fontFamily: '"Marianne", arial, sans-serif',
+    },
+  },
 };
 
 export const defaultColors = [
@@ -57,4 +62,13 @@ export const enum StatusColor {
   'Réalisé' = '#34CB6A',
   'NC' = '#CCC',
   'Sans statut' = '#CCC',
+}
+
+export const enum ActionStatusColor {
+  'Fait' = '#34CB6A',
+  'Détaillé' = '#CE70CC',
+  'Programmé' = '#7AB1E8',
+  'Pas fait' = '#F95C5E',
+  'Non renseigné' = '#FFE552',
+  'Non concerné' = '#929292',
 }

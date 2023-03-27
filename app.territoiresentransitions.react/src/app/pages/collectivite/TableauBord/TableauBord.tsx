@@ -28,6 +28,8 @@ import {
 } from './useLabellisationParNiveau';
 import {useTracker} from 'core-logic/hooks/useTracker';
 import {TLabellisationParcours} from 'app/pages/collectivite/ParcoursLabellisation/types';
+import ProgressionReferentiel from '../EtatDesLieux/Synthese/ProgressionReferentiel';
+import {useProgressionReferentiel} from '../EtatDesLieux/Synthese/data/useProgressionReferentiel';
 
 const remplissageColor = '#2F4077';
 
@@ -232,6 +234,8 @@ const ReferentielSection = ({
   indicateurCounts: IndicateurCounts;
   collectiviteId: number;
 }) => {
+  const {table: score} = useProgressionReferentiel(referentielId);
+
   const referentielRoot = actions.find(a => a.type === 'referentiel');
   const tracker = useTracker();
   if (!referentielRoot) return null;
@@ -339,6 +343,17 @@ const ReferentielSection = ({
       <ReferentielAxisAvancementStackedBar
         data={axisAvancementSamples}
         referentiel={referentielId}
+      />
+      <Spacer />
+      <ProgressionReferentiel
+        score={score}
+        title="Progression par axes en valeur absolue"
+      />
+      <Spacer />
+      <ProgressionReferentiel
+        score={score}
+        percentage
+        title="Progression par axes en valeur relative"
       />
     </div>
   );
