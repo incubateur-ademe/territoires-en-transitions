@@ -2,8 +2,6 @@
 
 BEGIN;
 
-select collectivite_id, referentiel, scores, modified_at, payload_timestamp, audit_id
-    from pre_audit_scores
-        where false;
+select has_function_privilege('private.collectivite_scores_pre_audit(integer, referentiel)', 'execute');
 
 ROLLBACK;

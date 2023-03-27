@@ -276,3 +276,5 @@ labellisation/parcours [labellisation/parcours@v2.11.0] 2023-03-15T10:39:41Z Flo
 labellisation/audit [labellisation/audit@v2.11.0] 2023-03-15T13:51:17Z Florian <florian@derfurth.com> # Déplace la table audit
 labellisation/demande [labellisation/demande@v2.11.0] 2023-03-16T10:54:35Z Florian <florian@derfurth.com> # Ajoute le modified at à la demande
 @v2.14 2023-03-21T09:22:15Z Florian <florian@derfurth.com> # Répare le parcours d'audit
+
+labellisation/comparaison_audit [labellisation/comparaison_audit@v2.14] 2023-03-27T14:08:29Z Florian <florian@derfurth.com> # Renvoie uniquement les scores de l'audit en cours.
