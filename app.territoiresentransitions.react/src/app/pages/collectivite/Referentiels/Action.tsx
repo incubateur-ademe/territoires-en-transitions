@@ -1,10 +1,7 @@
 import {Link, useHistory} from 'react-router-dom';
 import {DescriptionContextAndRessourcesDialogButton} from './_DescriptionContextAndRessourcesDialogButton';
 import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
-import {IndicateurDefinitionRead} from 'generated/dataLayer/indicateur_definition_read';
-import {indicateurActionReadEndpoint} from 'core-logic/api/endpoints/IndicateurActionReadEndpoint';
-import {useEffect, useState} from 'react';
-import {useAllIndicateurDefinitions} from 'core-logic/hooks/indicateur_definition';
+import {useState} from 'react';
 import {addTargetToContentAnchors} from 'utils/content';
 import {Tabs, Tab} from 'ui/shared/Tabs';
 import {ActionReferentielDisplayTitle} from 'ui/referentiels/ActionReferentielDisplayTitle';
@@ -33,33 +30,7 @@ import DOMPurify from 'dompurify';
 import ActionAuditStatut from '../Audit/ActionAuditStatut';
 import {ActionAuditDetail} from '../Audit/ActionAuditDetail';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-
-const useActionLinkedIndicateurDefinitions = (actionId: string) => {
-  const [linkedIndicateurDefinitions, setLinkedIndicateurDefinitions] =
-    useState<IndicateurDefinitionRead[]>([]);
-
-  const allIndicateurDefinitions = useAllIndicateurDefinitions();
-
-  useEffect(() => {
-    indicateurActionReadEndpoint.getBy({}).then(allIndicateurActions => {
-      const linkedIndicateurDefinitions = allIndicateurActions
-        .filter(indicateurAction => indicateurAction.action_id === actionId)
-        .map(linkedIndicateurAction =>
-          allIndicateurDefinitions.find(
-            indicateurDefinition =>
-              indicateurDefinition.id === linkedIndicateurAction.indicateur_id
-          )
-        );
-
-      setLinkedIndicateurDefinitions(
-        linkedIndicateurDefinitions.filter(
-          definition => !!definition
-        ) as IndicateurDefinitionRead[]
-      );
-    });
-  }, [allIndicateurDefinitions]);
-  return linkedIndicateurDefinitions;
-};
+import {useActionLinkedIndicateurDefinitions} from './useActionLinkedIndicateurDefinitions';
 
 // index des onglets de la page Action
 const TABS_INDEX: Record<ActionVueParamOption, number> = {
