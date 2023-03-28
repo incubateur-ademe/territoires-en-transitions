@@ -2,7 +2,7 @@
 
 BEGIN;
 
-select label, value
+select id, value
 from typage.graphique_tranche
 where false;
 
