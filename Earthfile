@@ -143,9 +143,13 @@ client-test:
 
 api-test:
     FROM denoland/deno
+    ARG --required ANON_KEY
+    ARG --required API_URL
     WORKDIR tests
     COPY ./api_tests .
-    RUN deno test --allow-net --allow-env --allow-read tests/ --location 'http://localhost'
+    ARG URL=$(echo $API_URL | sed "s/localhost/host.docker.internal/")
+    RUN deno cache tests/smoke.test.ts
+    RUN SUPABASE_URL=$URL SUPABASE_KEY=$ANON_KEY deno test --allow-net --allow-env --allow-read tests/smoke.test.ts --location 'http://localhost'
 
 cypress-wip:
     FROM cypress/included:12.3.0
@@ -206,7 +210,6 @@ test:
     RUN earthly --push +db-test
     RUN earthly --push +business-test
     RUN earthly --push +client-test
-    # les tests ne passent pas pour le moment
-    # RUN earthly --push +api-test
+    RUN earthly --push +api-test
     RUN earthly --push +deploy-test
 
