@@ -45,7 +45,7 @@ deploy:
 
 deploy-test:
     ARG --required DB_URL
-    ARG tag="v2.13"
+    ARG tag="v2.14"
     FROM +sqitch
     ARG PG_URL=$(echo $DB_URL | sed "s/localhost/host.docker.internal/")
     RUN --push sqitch deploy db:$PG_URL --mode change
