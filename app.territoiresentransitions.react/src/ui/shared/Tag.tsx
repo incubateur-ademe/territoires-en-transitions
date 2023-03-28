@@ -15,7 +15,7 @@ const Tag = ({className, title, onCloseClick}: TTag) => {
         className
       )}
     >
-      <span className="mb-1 text-sm">{title}</span>
+      <span className="text-sm">{title}</span>
       {onCloseClick && (
         <div
           className="ml-1 rounded-full cursor-pointer"
