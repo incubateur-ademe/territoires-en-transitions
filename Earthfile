@@ -148,8 +148,11 @@ api-test:
     WORKDIR tests
     COPY ./api_tests .
     ARG URL=$(echo $API_URL | sed "s/localhost/host.docker.internal/")
+    ENV SUPABASE_URL=$URL
+    ENV SUPABASE_KEY=$ANON_KEY
     RUN deno cache tests/smoke.test.ts
-    RUN SUPABASE_URL=$URL SUPABASE_KEY=$ANON_KEY deno test --allow-net --allow-env --allow-read tests/smoke.test.ts --location 'http://localhost'
+    RUN deno test --allow-net --allow-env --allow-read tests/smoke.test.ts --location 'http://localhost'
+    RUN deno test --allow-net --allow-env --allow-read tests/test/utilisateur.test.ts --location 'http://localhost'
 
 cypress-wip:
     FROM cypress/included:12.3.0
