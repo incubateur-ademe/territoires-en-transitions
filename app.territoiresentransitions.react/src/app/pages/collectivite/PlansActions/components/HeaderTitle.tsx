@@ -42,6 +42,7 @@ const HeaderTitle = ({
       >
         {onUpdate ? (
           <TextareaControlled
+            data-test="HeaderTitleInput"
             ref={titreInputRef}
             className={classNames(
               'w-full placeholder:text-white focus:placeholder:text-gray-200 disabled:text-white !outline-none !resize-none',

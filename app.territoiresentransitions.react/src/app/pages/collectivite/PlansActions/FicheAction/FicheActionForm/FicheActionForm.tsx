@@ -157,7 +157,11 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
         </FormField>
       </Section>
 
-      <Section icon={<PictoCommunity />} title="Acteurs">
+      <Section
+        icon={<PictoCommunity />}
+        title="Acteurs"
+        dataTest="section-acteurs"
+      >
         <FormField label="Cibles">
           <MultiSelectTagsDropdown
             buttonClassName={DSFRbuttonClassname}
@@ -226,7 +230,11 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
         </FormField>
       </Section>
 
-      <Section icon={<PictoCalendar />} title="Modalités de mise en œuvre">
+      <Section
+        dataTest="section-modalites"
+        icon={<PictoCalendar />}
+        title="Modalités de mise en œuvre"
+      >
         <FormField
           label="Budget prévisionnel total "
           htmlFor="budget-previsionnel"
@@ -283,6 +291,7 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
         <div className="grid grid-cols-2 gap-4">
           <FormField label="Statut">
             <SelectDropdown
+              data-test="Statut"
               buttonClassName={DSFRbuttonClassname}
               value={fiche.statut ?? undefined}
               options={ficheActionStatutOptions}

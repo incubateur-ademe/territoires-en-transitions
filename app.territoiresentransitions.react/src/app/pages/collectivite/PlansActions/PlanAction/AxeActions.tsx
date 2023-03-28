@@ -13,6 +13,7 @@ export const AxeActions = ({axeId, planActionId}: Props) => {
   return (
     <div className="flex items-center gap-6">
       <button
+        data-test="AjouterAxe"
         className="fr-btn fr-btn--secondary fr-btn--sm"
         onClick={() => addAxe()}
       >

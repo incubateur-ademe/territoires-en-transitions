@@ -32,6 +32,7 @@ const PersonnePiloteDropdown = ({personnes, onSelect, isReadonly}: Props) => {
 
   return (
     <SelectCreateTagsDropdown
+      data-test="PersonnePilote"
       values={personnes?.map((personne: Personne) => getPersonneId(personne))}
       options={options}
       onSelect={values => onSelect(formatPersonnePilote(values))}

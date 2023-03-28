@@ -17,7 +17,7 @@ export const FicheAction = ({fiche}: FicheActionProps) => {
   const collectivite = useCurrentCollectivite();
   const {mutate: updateFiche} = useEditFicheAction();
   return (
-    <div className="w-full">
+    <div data-test="FicheAction" className="w-full">
       <HeaderTitle
         titre={fiche.titre}
         onUpdate={titre => updateFiche({...fiche, titre: titre})}

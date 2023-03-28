@@ -23,7 +23,10 @@ const PlanActionFooter = ({plan, isReadonly}: TPlanActionFooter) => {
             collectiviteId: collectivite_id!,
           })}
         >
-          <BoutonAttention className="fr-btn--sm">
+          <BoutonAttention
+            data-test="SupprimerPlanBouton"
+            className="fr-btn--sm"
+          >
             Supprimer ce plan d’action
           </BoutonAttention>
         </SupprimerAxeModal>

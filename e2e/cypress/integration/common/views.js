@@ -46,4 +46,12 @@ export const CollectivitePages = {
     route: 'action/eci/eci_3.1',
     selector: '[data-test=Action]',
   },
+  'Plans action': {
+    route: 'plans',
+    selector: '[data-test=PlansAction]',
+  },
+  'Fiches non classees': {
+    route: 'plans/fiches',
+    selector: '[data-test=FichesNonClassees]',
+  },
 };

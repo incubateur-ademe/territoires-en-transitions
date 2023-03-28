@@ -17,7 +17,7 @@ const FicheActionRangerModal = ({fiche}: Props) => {
       size="xl"
       render={({labelId, close}) => {
         return (
-          <div data-test="ranger-fiche-modale" className="flex flex-col mb-6">
+          <div data-test="RangerFicheModale" className="flex flex-col mb-6">
             <h4 id={labelId} className="fr-h4 !mb-8">
               Ranger la fiche dans un ou plusieurs plans d’action
             </h4>

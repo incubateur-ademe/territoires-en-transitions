@@ -178,6 +178,7 @@ const SelectCreateTagsButton = forwardRef(
               ))}
             {!disabled && (
               <input
+                data-test={`${dataTest}-input`}
                 type="text"
                 ref={inputRef}
                 className={`grow text-sm placeholder:text-gray-500 placeholder:italic`}

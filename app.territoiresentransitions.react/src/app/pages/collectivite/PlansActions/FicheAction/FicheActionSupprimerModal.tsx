@@ -49,7 +49,9 @@ const FicheActionSupprimerModal = ({fiche, onDelete}: Props) => {
         );
       }}
     >
-      <BoutonAttention>Supprimer cette fiche</BoutonAttention>
+      <BoutonAttention data-test="SupprimerFicheBouton">
+        Supprimer cette fiche
+      </BoutonAttention>
     </Modal>
   );
 };

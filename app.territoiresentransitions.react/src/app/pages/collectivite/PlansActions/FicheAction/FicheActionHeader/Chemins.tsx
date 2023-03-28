@@ -17,7 +17,7 @@ type Props = {
 
 const Chemins = ({fiche}: Props) => {
   return (
-    <div className="flex items-center">
+    <div data-test="FicheFilAriane" className="flex items-center">
       {!fiche.axes || fiche.axes.length === 0 ? (
         <Link
           className="p-1 text-xs text-gray-500 !shadow-none hover:text-gray-600"

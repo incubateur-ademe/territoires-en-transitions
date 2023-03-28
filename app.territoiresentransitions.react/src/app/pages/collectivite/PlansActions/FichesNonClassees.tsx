@@ -15,7 +15,7 @@ const FichesNonClassees = () => {
   if (!collectivite_id || !data) return null;
 
   return (
-    <div className="p-10 grow">
+    <div data-test="FichesNonClassees" className="p-10 grow">
       {data.fiches.length === 0 ? (
         <div className="flex flex-col items-center mt-8">
           <PictoLeaf className="w-24 fill-gray-400" />

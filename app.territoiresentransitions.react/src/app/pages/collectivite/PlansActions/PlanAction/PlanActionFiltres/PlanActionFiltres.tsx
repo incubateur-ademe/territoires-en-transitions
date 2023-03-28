@@ -26,6 +26,7 @@ const PlanActionFiltres = ({
     <div className="mb-8">
       <div className="border-y border-gray-200">
         <button
+          data-test="FiltrerFichesBouton"
           className="flex items-center justify-between py-3 px-4 w-full"
           onClick={() => setIsFiltersOpen(!isFiltersOpen)}
         >

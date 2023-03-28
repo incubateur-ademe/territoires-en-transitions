@@ -42,7 +42,7 @@ const PlanActionAxe = ({
   };
 
   return (
-    <div>
+    <div data-test="Axe">
       <div className="group relative flex items-center">
         <button
           className={classNames('flex items-center py-3 pr-4 w-full', {
@@ -59,6 +59,7 @@ const PlanActionAxe = ({
             )}
           />
           <TextareaControlled
+            data-test="TitreAxeInput"
             ref={inputRef}
             className={classNames(
               'w-full mb-0 text-left disabled:pointer-events-none disabled:cursor-pointer disabled:text-gray-900 !text-base !outline-none !resize-none',
@@ -82,11 +83,15 @@ const PlanActionAxe = ({
         {!isReadonly && (
           <>
             <button
+              data-test="EditerTitreAxeBouton"
               className="fr-fi-edit-line invisible group-hover:visible p-2 text-gray-500 scale-90"
               onClick={handleEditButtonClick}
             />
             <SupprimerAxeModal axe={axe.axe} plan={planActionGlobal}>
-              <button className="invisible group-hover:visible fr-btn fr-btn--secondary fr-text-default--error fr-fi-delete-line !shadow-none p-2 text-gray-500 scale-90" />
+              <button
+                data-test="SupprimerAxeBouton"
+                className="invisible group-hover:visible fr-btn fr-btn--secondary fr-text-default--error fr-fi-delete-line !shadow-none p-2 text-gray-500 scale-90"
+              />
             </SupprimerAxeModal>
           </>
         )}
