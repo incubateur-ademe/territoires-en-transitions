@@ -17,6 +17,8 @@ if __name__ == '__main__':
                          "financeur_deux", "montant_deux", "financeur_trois", "montant_trois", "budget", "statut",
                          "priorite", "date_debut", "date_fin", "amelioration_continue", "calendrier", "notes",
                          "collectivite_id", "plan_nom"]
+        sheet['date_debut'] = sheet['date_debut'].dt.strftime('%d/%m/%Y')
+        sheet['date_fin'] = sheet['date_fin'].dt.strftime('%d/%m/%Y')
         sheet = sheet[sheet['axe'].notna()]
         save_path = Path("./").joinpath(path.parts[-1].replace('.xlsx', '.csv'))
         sheet.to_csv(save_path, index=False, header=True, encoding='UTF-8')
