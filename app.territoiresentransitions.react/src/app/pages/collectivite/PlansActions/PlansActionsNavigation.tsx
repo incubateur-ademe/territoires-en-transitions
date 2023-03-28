@@ -21,7 +21,10 @@ const PlansActionsNavigation = ({collectivite}: Props) => {
   const {mutate: createPlanAction} = useCreatePlanAction();
 
   return (
-    <nav className="fr-sidemenu flex w-80 shrink-0 py-8 md:px-8 border-r border-gray-100">
+    <nav
+      data-test="PlansActionNavigation"
+      className="fr-sidemenu flex w-80 shrink-0 py-8 md:px-8 border-r border-gray-100"
+    >
       <div className="fr-sidemenu-wrapper">
         <ul className="fr-sidemenu_list">
           {data &&
@@ -58,12 +61,17 @@ const PlansActionsNavigation = ({collectivite}: Props) => {
           {!collectivite.readonly && (
             <>
               <li className="fr-sidemenu_item mt-6">
-                <button className="fr-btn" onClick={() => createFicheAction()}>
+                <button
+                  data-test="CreerFicheAction"
+                  className="fr-btn"
+                  onClick={() => createFicheAction()}
+                >
                   Créer une fiche action
                 </button>
               </li>
               <li className="fr-sidemenu_item mt-6">
                 <button
+                  data-test="AjouterPlanAction"
                   className="fr-btn fr-btn--secondary"
                   onClick={() => createPlanAction()}
                 >

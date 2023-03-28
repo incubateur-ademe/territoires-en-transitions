@@ -6,7 +6,7 @@ const PlansActions = () => {
   const collectivite = useCurrentCollectivite();
 
   return (
-    <div className="fr-container !px-0">
+    <div data-test="PlansAction" className="fr-container !px-0">
       <div className="flex items-start">
         {collectivite && (
           <>

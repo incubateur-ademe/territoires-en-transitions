@@ -42,7 +42,7 @@ export const PlanAction = ({plan}: PlanActionProps) => {
   );
 
   return (
-    <div className="w-full">
+    <div data-test="PlanAction" className="w-full">
       <HeaderTitle
         type="plan"
         titre={plan.axe.nom}

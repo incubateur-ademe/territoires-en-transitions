@@ -24,7 +24,7 @@ const SupprimerAxeModal = ({children, plan, axe, redirectURL}: Props) => {
     <Modal
       render={({labelId, descriptionId, close}) => {
         return (
-          <div data-test="supprimer-fiche-modale">
+          <div data-test="SupprimerFicheModale">
             <h6 id={labelId} className="fr-h6">
               {isPlan
                 ? 'Souhaitez-vous vraiment supprimer ce plan ?'

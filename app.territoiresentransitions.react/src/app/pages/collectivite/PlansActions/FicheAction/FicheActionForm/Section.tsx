@@ -2,18 +2,20 @@ import classNames from 'classnames';
 import {useState} from 'react';
 
 type Props = {
+  dataTest?: string;
   isDefaultOpen?: boolean;
   title: string;
   icon: React.ReactNode;
   children: React.ReactNode;
 };
 
-const Section = ({isDefaultOpen, icon, title, children}: Props) => {
+const Section = ({dataTest, isDefaultOpen, icon, title, children}: Props) => {
   const [isOpen, setIsOpen] = useState(isDefaultOpen);
 
   return (
     <div className="rounded-lg border border-gray-300">
       <button
+        data-test={dataTest}
         className={classNames('w-full flex items-center gap-3 py-4 px-6', {
           'bg-indigo-100': isOpen,
         })}

@@ -19,6 +19,7 @@ const TableauAxe = ({
 }: Props) => {
   return (
     <button
+      data-test="TableauAxe"
       key={axe.axe.id}
       className={classNames(
         'flex items-center gap-1 py-2 px-4 text-sm text-left rounded-lg',

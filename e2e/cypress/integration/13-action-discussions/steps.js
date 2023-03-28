@@ -4,7 +4,7 @@ import {LocalSelectors} from './selectors';
 
 beforeEach(() => {
   // enregistre les définitions locales
-  cy.wrap({LocalSelectors}).as('LocalSelectors');
+  cy.wrap(LocalSelectors).as('LocalSelectors');
 });
 
 // Génériques

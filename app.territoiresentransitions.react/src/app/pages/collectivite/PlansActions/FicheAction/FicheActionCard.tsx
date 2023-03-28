@@ -10,7 +10,7 @@ type TFicheActionCard = {
 
 const FicheActionCard = ({ficheAction, link}: TFicheActionCard) => {
   return (
-    <div className="border border-gray-200">
+    <div data-test="FicheActionCarte" className="border border-gray-200">
       {ficheAction.id && (
         <NavLink to={link}>
           <div className="flex flex-col h-full p-6">

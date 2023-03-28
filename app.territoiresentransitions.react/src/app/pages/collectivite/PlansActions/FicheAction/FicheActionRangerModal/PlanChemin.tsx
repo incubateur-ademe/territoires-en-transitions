@@ -18,7 +18,10 @@ const PlanChemin = ({fiche, axe_id}: Props) => {
   const {mutate: removeFiche} = useRemoveFicheFromAxe();
 
   return (
-    <div className="group flex items-center py-1 px-2 rounded-sm hover:bg-bf975">
+    <div
+      data-test="PlanChemin"
+      className="group flex items-center py-1 px-2 rounded-sm hover:bg-bf975"
+    >
       <div className="py-0.5">
         <FilAriane
           links={
@@ -34,6 +37,7 @@ const PlanChemin = ({fiche, axe_id}: Props) => {
         />
       </div>
       <button
+        data-test="EnleverFichePlanBouton"
         onClick={() =>
           removeFiche({
             axe_id,
