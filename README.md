@@ -91,38 +91,60 @@ Chacun de ses éléments a un périmètre définit :
 
 ## Lancer le projet en local pour le développement
 
-Le `client`, le `data layer` et le `business` peuvent être lancés à partir de docker-compose.
+### Dépendances
 
-### Variables d'environnement
+- Docker, permet de lancer les conteneurs qui composent le produit. Installation simple avec [Docker Desktop](https://docs.docker.com/desktop/).
+- [Earthly](https://earthly.dev/get-earthly) qui permet de lancer le projet et la CI en local comme en remote.
+- [Supabase CLI](https://supabase.com/docs/guides/cli) pour lancer le datalayer et générer les types.
 
-#### Option 1 : à la main 
-- Ajouter les variables d'environnement SUPABASE_SERVICE_ROLE_KEY et SUPABASE_ANON_KEY dans les .env de chaque projet 
-- Remplacer dans la configuration kong les champs ${SUPABASE_SERVICE_ROLE_KEY} et  ${SUPABASE_ANON_KEY}) par ces variables
 
-#### Option 2 : grâce à l'utilitaire make_dot_env.sh
-- Renseigner dans votre environnement les variables SUPABASE_SERVICE_ROLE_KEY et SUPABASE_ANON_KEY (ex : export SUPABASE_SERVICE_ROLE_KEY=...)
-- Lancer `make_dot_env.sh` qui se chargera d'ajouter les variables dans le fichier `.env` et dans la configuration kong. 
+### Set up
 
-### Lancer les différents services
+Une fois les dépendances il suffit de lancer la commande `setup-env` avec `earthly` pour configurer les variables d'environnement de chaque projet.
 
-- le `client` et donc le `datalayer` et le `business` dont il dépend
-  `docker-compose up client --build`
-- le `business` et donc le `datalayer` dont il dépend
-  `docker-compose up client --build`
-- le `datalayer` qui est en fait supabase et les modèles/fonctions est démarré avec le container `loader` dont le role
-  est de charger les modèles, les fonctions et les données `docker-compose up loader`
+```shell
+earthly +setup-env
+```
+
+### Lancer les différents services en local
+
+Pour lancer les services en local avec docker, on utilise la commande `dev` :
+
+```shell
+earthly +dev
+```
+
+Par default le client n'est pas lancé, on peut néanmoins spécifier les options suivantes :
+
+- `stop` : commence par stopper les services.
+- `datalayer` : lance supabase.
+- `business` : build et lance le business.
+- `client` : build et lance le client
+
+On peut écrire par exemple :
+
+```shell
+earthly +dev --stop=yes --datalayer=yes --business=yes --client=no
+```
 
 ### Lancer les tests
 
 Les trois services sont des projets indépendants qui peuvent-être testés en local sous reserve que les dépendances de
 développement soient installées.
 
-Néanmoins, on peut lancer les tests à partir de docker compose :
-- `docker-compose run client-test`
-- `docker-compose run business-test`
-- `docker-compose run datalayer-test`
-- `docker-compose run datalayer-api-test`
-- `docker-compose run sqitch-test`
+Néanmoins, on peut lancer les tests avec `earthly` en utilisant des conteneurs :
+
+```shell
+# Lance le projet suivi de tout les tests.
+earthly +dev
+
+# Lance les tests indépendamment
+earthly --push +db-test
+earthly --push +business-test
+earthly --push +client-test
+earthly --push +api-test
+earthly --push +deploy-test
+```
 
 ## Déploiement
 
