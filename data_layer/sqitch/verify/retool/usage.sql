@@ -37,6 +37,7 @@ select
     nb_admin,
     nb_ecriture,
     nb_lecture,
+    date_activation,
     admin_prenom_1,
     admin_nom_1,
     admin_fonction_1,
