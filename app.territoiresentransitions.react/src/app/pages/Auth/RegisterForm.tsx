@@ -155,35 +155,44 @@ const RegistrationForm = () => {
   };
 
   return (
-    <section className="max-w-2xl mx-auto p-5" data-test="SignUpPage">
+    <section className="max-w-3xl mx-auto p-5" data-test="SignUpPage">
       <Spacer />
       <h2 className="fr-h2 flex justify-center">Créer un compte</h2>
-      <div className="mx-auto">
+      <p>
+        Territoires en transitions est un outil public et gratuit destiné aux
+        membres des collectivités travaillant sur les sujets climat, air,
+        énergie et économie circulaire, ainsi qu’à leurs partenaires.
+      </p>
+      <div className="p-4 md:p-14 lg:px-24 bg-gray-100">
         <Formik<InscriptionUtilisateur>
           initialValues={initialData}
           validationSchema={validation}
           onSubmit={register}
+          validateOnMount
         >
           {({errors, touched, values}) => {
             const result = getScore(values.password, values);
 
             return (
               <Form>
-                <FormikInput name="email" label="Email" />
+                <FormikInput name="prenom" label="Prénom (obligatoire)" />
+                <FormikInput name="nom" label="Nom (obligatoire)" />
                 <FormikInput
-                  type="password"
-                  name="password"
-                  label="Mot de passe"
+                  name="email"
+                  label="Adresse email professionnelle (obligatoire)"
                 />
-                {result.score > 0 && (
-                  <PasswordStrengthMeter strength={result} className="pt-2" />
-                )}
-                <FormikInput name="prenom" label="Prénom" />
-                <FormikInput name="nom" label="Nom" />
                 <FormikInput
                   name="telephone"
                   label="Numéro de téléphone professionnel"
                 />
+                <FormikInput
+                  type="password"
+                  name="password"
+                  label="Mot de passe (obligatoire)"
+                />
+                {result.score > 0 && (
+                  <PasswordStrengthMeter strength={result} className="py-2" />
+                )}
                 <CGU
                   showWarning={
                     !!errors.vie_privee_conditions &&
