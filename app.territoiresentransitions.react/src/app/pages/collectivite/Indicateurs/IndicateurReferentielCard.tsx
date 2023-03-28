@@ -3,7 +3,6 @@ import {AnyIndicateurValues} from 'app/pages/collectivite/Indicateurs/AnyIndicat
 
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {AnyIndicateurLineChartExpandable} from './AnyIndicateurLineChartExpandable';
-import {inferIndicateurTitle} from 'utils/indicateurs';
 import {AnyIndicateurCard} from 'app/pages/collectivite/Indicateurs/AnyIndicateurCard';
 import {Spacer} from 'ui/shared/Spacer';
 import {
@@ -12,10 +11,11 @@ import {
 } from 'core-logic/api/repositories/AnyIndicateurRepository';
 import {indicateurCommentaireRepository} from 'core-logic/api/repositories/IndicateurCommentaireRepository';
 import {useAnyIndicateurValuesForAllYears} from 'core-logic/hooks/indicateur_values';
-import {IndicateurDefinitionRead} from 'generated/dataLayer/indicateur_definition_read';
+import {TIndicateurDefinition} from 'app/pages/collectivite/Indicateurs/useAllIndicateurDefinitions';
 import {AnyIndicateurCommentaire} from 'app/pages/collectivite/Indicateurs/AnyIndicateurCommentaire';
+import {ReferentielOfIndicateur} from 'types/litterals';
 
-const Commentaire = (props: {definition: IndicateurDefinitionRead}) => {
+const Commentaire = (props: {definition: TIndicateurDefinition}) => {
   const indicateurId = props.definition.id;
   const [value, setValue] = React.useState('');
   const collectiviteId = useCollectiviteId()!;
@@ -42,7 +42,7 @@ const Commentaire = (props: {definition: IndicateurDefinitionRead}) => {
 };
 
 export const IndicateurReferentielCardContent = (props: {
-  definition: IndicateurDefinitionRead;
+  definition: TIndicateurDefinition;
 }) => {
   return (
     <div>
@@ -66,14 +66,14 @@ export const IndicateurReferentielCardContent = (props: {
 };
 
 const IndicateurReferentielCardHeaderTitle = (props: {
-  definition: IndicateurDefinitionRead;
+  definition: TIndicateurDefinition;
 }) => <div>{inferIndicateurTitle(props.definition)}</div>;
 
 export const IndicateurReferentielCard = ({
   definition,
   hideIfNoValues = false,
 }: {
-  definition: IndicateurDefinitionRead;
+  definition: TIndicateurDefinition;
   startOpen?: boolean;
   hideIfNoValues?: boolean;
 }) => {
@@ -106,3 +106,20 @@ export const IndicateurReferentielCard = ({
     </AnyIndicateurCard>
   );
 };
+
+// formate l'identifiant et le nom d'un indicateur
+export const inferIndicateurTitle = (
+  definition: TIndicateurDefinition,
+  withReferentielPrefix = false
+) => {
+  const indicateurId = definition.id;
+  const id_groups = indicateurId.match(indicateurIdRegexp)?.groups;
+  if (!id_groups) return indicateurId;
+  const ref = id_groups['ref'] as ReferentielOfIndicateur;
+  return `${withReferentielPrefix ? ref.toUpperCase() + ' ' : ''}${
+    definition.identifiant
+  } - ${definition.nom}`;
+};
+
+const indicateurIdRegexp =
+  '(?<ref>eci|cae|crte)_(?<number>[0-9]{1,3})(?<literal>.+)?';

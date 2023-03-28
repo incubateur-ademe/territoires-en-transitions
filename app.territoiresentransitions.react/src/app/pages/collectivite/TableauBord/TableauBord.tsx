@@ -7,7 +7,7 @@ import {
 import {actionAvancementColors} from 'app/theme';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {indicateurResultatRepository} from 'core-logic/api/repositories/AnyIndicateurRepository';
-import {useAllIndicateurDefinitionsForGroup} from 'core-logic/hooks/indicateur_definition';
+import {useAllIndicateurDefinitionsForGroup} from 'app/pages/collectivite/Indicateurs/useAllIndicateurDefinitions';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useReferentielDownToAction} from 'core-logic/hooks/referentiel';
 import {ReferentielsActionScores, useScores} from 'core-logic/hooks/scoreHooks';
