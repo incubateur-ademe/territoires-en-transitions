@@ -70,10 +70,9 @@ seed:
 
 load-contents:
     FROM alpine/curl
-    ARG --required SUPABASE_SERVICE_ROLE_KEY
+    ARG --required SERVICE_ROLE_KEY
     ARG --required API_URL
     ARG URL=$(echo $API_URL | sed "s/localhost/host.docker.internal/")
-    ARG SERVICE_ROLE_KEY=$SUPABASE_SERVICE_ROLE_KEY
     COPY ./data_layer/content /content
     RUN --push sh ./content/load.sh
 
@@ -86,12 +85,12 @@ update-scores:
 
 business-build:
     FROM python:3.9
-    ARG --required SUPABASE_SERVICE_ROLE_KEY
+    ARG --required SERVICE_ROLE_KEY
     ARG --required API_URL
     ARG APP_DIR="./business"
     ARG URL=$(echo $API_URL | sed "s/localhost/host.docker.internal/")
     ENV SUPABASE_URL=$URL
-    ENV SUPABASE_KEY=$SUPABASE_SERVICE_ROLE_KEY
+    ENV SUPABASE_KEY=$SERVICE_ROLE_KEY
     WORKDIR /business
     COPY $APP_DIR/requirements.txt .
     RUN pip install -r requirements.txt
@@ -126,10 +125,10 @@ react:
 
 client-build:
     FROM +react
-    ARG --required SUPABASE_ANON_KEY
+    ARG --required ANON_KEY
     ARG --required API_URL
     ARG REACT_APP_SUPABASE_URL=$API_URL
-    ARG REACT_APP_SUPABASE_KEY=$SUPABASE_ANON_KEY
+    ARG REACT_APP_SUPABASE_KEY=$ANON_KEY
     ARG ZIP_ORIGIN_OVERRIDE="http://kong:8000"
     RUN npm run build
     SAVE IMAGE client:latest
@@ -141,11 +140,11 @@ client-start:
 
 client-test-build:
     FROM +react
-    ARG --required SUPABASE_ANON_KEY
+    ARG --required ANON_KEY
     ARG --required API_URL
     ARG URL=$(echo $API_URL | sed "s/localhost/host.docker.internal/")
     ARG ZIP_ORIGIN_OVERRIDE="http://kong:8000"
-    ENV REACT_APP_SUPABASE_KEY=$SUPABASE_ANON_KEY
+    ENV REACT_APP_SUPABASE_KEY=$ANON_KEY
     ENV REACT_APP_SUPABASE_URL=$URL
     ENV CI=true
     CMD npm run test
@@ -175,7 +174,7 @@ setup-env:
     LOCALLY
     RUN earthly +stop
     RUN supabase start
-    RUN supabase status -o env --override-name auth.anon_key=SUPABASE_ANON_KEY --override-name auth.service_role_key=SUPABASE_SERVICE_ROLE_KEY > .arg
+    RUN supabase status -o env > .arg
     RUN export $(cat .arg | xargs) && sh ./make_dot_env.sh
     RUN earthly +stop
 
