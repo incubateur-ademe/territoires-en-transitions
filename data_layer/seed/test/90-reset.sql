@@ -26,7 +26,9 @@ $$
 -- 06-auth.sql
     select test_reset_users();
 -- Supprime toutes les collectivités de test.
-    delete from collectivite_test cascade;
+    delete from collectivite_test cascade where true;
+-- Renvoie un code 200
+    select set_config('response.status', '200', true);
 $$ language sql security definer;
 comment on function test_reset is
     'Reinitialise les données fake.';
