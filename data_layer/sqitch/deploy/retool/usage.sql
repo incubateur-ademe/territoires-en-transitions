@@ -16,12 +16,17 @@ with
                                left join imports.departement id on cc.departement_code = id.code
                                left join epci using (collectivite_id)
                                left join cot using (collectivite_id)),
+    activation as (
+        select c.collectivite_id, min(pud.created_at) as date_activation
+        from collectivites c
+                 left join private_utilisateur_droit pud on c.collectivite_id = pud.collectivite_id
+        group by c.collectivite_id
+    ),
     admin as (select pud.user_id, pc.fonction, pc.details_fonction, pc.champ_intervention,
                      pud.collectivite_id,
                      dcp.email, dcp.telephone, dcp.prenom, dcp.nom, au.last_sign_in_at
               from private_utilisateur_droit pud
-                       left join private_collectivite_membre pc on pud.user_id = pc.user_id
-                  and pud.collectivite_id = pc.collectivite_id
+                       left join private_collectivite_membre pc on pud.user_id = pc.user_id and pud.collectivite_id = pc.collectivite_id
                        join dcp on pud.user_id = dcp.user_id
                        join auth.users au on pud.user_id = au.id
               where pud.niveau_acces = 'admin'
@@ -219,6 +224,7 @@ select
     stats_droits.nb_admin,
     stats_droits.nb_ecriture,
     stats_droits.nb_lecture,
+    activation.date_activation,
     admins.admin_prenom_1,
     admins.admin_nom_1,
     admins.admin_fonction_1,
@@ -311,6 +317,7 @@ from collectivites cc
          left join courant_cae ccae using (collectivite_id)
          left join admins using (collectivite_id)
          left join stats_droits using (collectivite_id)
+         left join activation using (collectivite_id)
 where is_service_role() -- Protect the DCPs.
 order by collectivite_id;
 
