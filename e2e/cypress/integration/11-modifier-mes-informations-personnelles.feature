@@ -21,7 +21,7 @@ Fonctionnalité: Modifier mes informations personnelles
     Alors la modale de modification d'email est affichée
 
     Quand je clique sur le bouton confirmer de la modale de modification d'email
-    Alors ma boite de reception contient un mail adressé à "yolo@doudou.com"
+    Alors la boite de reception de "yolo@doudou.com" contient un mail intitulé "Confirm Email Change"
 
     Quand je suis sur la page "Gestion des membres" de la collectivité "1"
     Alors le tableau des membres doit contenir les informations suivantes
@@ -29,4 +29,4 @@ Fonctionnalité: Modifier mes informations personnelles
       | Yolosan Dodoran | yolo@dodo.com | Référent·e       | Climat Air ÉnergieÉconomie Circulaire | Référent YOLO de cette collectivité  | Admin   |
 
     # Vide la boite à la fin du test pour ne pas caser le `@history`
-    Alors je vide ma boite de reception
+    Alors je vide la boite de reception de "yolo@doudou.com"
