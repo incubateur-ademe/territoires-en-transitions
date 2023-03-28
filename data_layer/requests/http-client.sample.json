@@ -1,15 +1,8 @@
 {
   "local": {
-    "api": "http://localhost:8000",
-    "anon": "${SUPABASE_ANON_KEY}",
-    "service": "${SUPABASE_SERVICE_ROLE_KEY}",
-    "yolo_mail": "yolo@dodo.com",
-    "yolo_pass": "yolododo"
-  },
-  "docker": {
-    "api": "http://kong:8000",
-    "anon": "${SUPABASE_ANON_KEY}",
-    "service": "${SUPABASE_SERVICE_ROLE_KEY}",
+    "api": "${API_URL}",
+    "anon": "${ANON_KEY}",
+    "service": "${SERVICE_ROLE_KEY}",
     "yolo_mail": "yolo@dodo.com",
     "yolo_pass": "yolododo"
   }
