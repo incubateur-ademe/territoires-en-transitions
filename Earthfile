@@ -19,7 +19,7 @@ pg-tap:
     RUN apt-get install cpanminus -y
     RUN cpanm TAP::Parser::SourceHandler::pgTAP
 
-db-test-build:
+db-test:
     ARG --required DB_URL
     FROM +pg-tap
     ARG PG_URL=$(echo $DB_URL | sed "s/localhost/host.docker.internal/")
@@ -34,13 +34,7 @@ db-test-build:
     ENV PGPASSWORD=$PGPASSWORD
     ENV PGDATABASE=$PGDATABASE
     COPY ./data_layer/tests /tests
-    CMD pg_prove tests/**/*.sql
-    SAVE IMAGE pgtap:latest
-
-db-test:
-    FROM +db-test-build
-    LOCALLY
-    RUN docker run --rm --name pgtap_territoiresentransitions pgtap:latest
+    RUN --push pg_prove tests/**/*.sql
 
 deploy:
     ARG --required DB_URL
@@ -51,7 +45,7 @@ deploy:
 
 deploy-test:
     ARG --required DB_URL
-    ARG tag="v2.2.0"
+    ARG tag="v2.13"
     FROM +sqitch
     ARG PG_URL=$(echo $DB_URL | sed "s/localhost/host.docker.internal/")
     RUN --push sqitch deploy db:$PG_URL --mode change
@@ -136,7 +130,7 @@ client-start:
     LOCALLY
     RUN docker run -p 3000:3000 -d --rm --name client_territoiresentransitions client:latest
 
-client-test-build:
+client-test:
     FROM +react
     ARG --required ANON_KEY
     ARG --required API_URL
@@ -145,13 +139,7 @@ client-test-build:
     ENV REACT_APP_SUPABASE_KEY=$ANON_KEY
     ENV REACT_APP_SUPABASE_URL=$URL
     ENV CI=true
-    CMD npm run test
-    SAVE IMAGE client-test:latest
-
-client-test:
-    FROM +client-test-build
-    LOCALLY
-    RUN docker run --rm --name client_test_territoiresentransitions client-test:latest
+    RUN --push npm run test
 
 api-test:
     FROM denoland/deno
@@ -205,7 +193,8 @@ dev:
 
 stop:
     LOCALLY
-    RUN docker ps --filter name=transitions --filter status=running -aq | xargs docker stop | xargs docker rm
+    RUN supabase stop
+    RUN docker ps --filter name=transitions --filter status=running -aq | xargs docker stop | xargs docker rm | exit 0
 
 stats:
     LOCALLY
@@ -214,10 +203,10 @@ stats:
 test:
     FROM +dev
     LOCALLY
-    RUN earthly +db-test
-    RUN earthly +business-test
-    RUN earthly +client-test
+    RUN earthly --push +db-test
+    RUN earthly --push +business-test
+    RUN earthly --push +client-test
     # les tests ne passent pas pour le moment
-    # RUN earthly +api-test
+    # RUN earthly --push +api-test
     RUN earthly --push +deploy-test
 
