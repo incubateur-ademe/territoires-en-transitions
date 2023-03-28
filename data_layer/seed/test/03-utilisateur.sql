@@ -23,10 +23,10 @@ begin
     insert into auth.users
     values ('00000000-0000-0000-0000-000000000000',
             user_id,
-            '',
+            'authenticated',
             'authenticated',
             email,
-            '$2a$10$2vx75sXRW3bc1ZJgPFIetul1wg3k475446Nr2z/6Db0Y/eC9QN9Zm',
+            '$2a$10$zHta6/ak2n7cONYwYodHJOJ0cmnhyXKUomwX0D4X0j3sQqWfXNs0C',
             now(),
             null,
             '', null,
