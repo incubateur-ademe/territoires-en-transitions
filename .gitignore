@@ -2,8 +2,11 @@
 .vscode/
 .idea/
 
-#  Generated files
+# Generated files
 
 # Docker data
 docker-data
 .env
+
+# Earthly
+.arg
