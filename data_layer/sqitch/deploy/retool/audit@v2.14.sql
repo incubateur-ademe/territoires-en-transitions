@@ -2,8 +2,7 @@
 
 BEGIN;
 
-drop view retool_audit;
-create or replace view retool_audit as
+create view retool_audit as
 select a.collectivite_id,
        nc.nom,
        a.referentiel,
@@ -13,10 +12,10 @@ select a.collectivite_id,
            when d is null then 'sans labellisation'
            else d.sujet::text
            end as type_audit
-from labellisation.audit a
+from audit a
          join named_collectivite nc using (collectivite_id)
          left join (
-    select id, sujet
+    select *
     from labellisation.demande
     where en_cours = false
 ) d on a.demande_id = d.id
