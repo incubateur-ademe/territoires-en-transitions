@@ -18,7 +18,6 @@ pg-tap:
     RUN apt-get update
     RUN apt-get install cpanminus -y
     RUN cpanm TAP::Parser::SourceHandler::pgTAP
-    RUN echo "$PGHOST on $PGPORT as $PGUSER using $PGPASSWORD for $PGDATABASE"
 
 db-test-build:
     ARG --required DB_URL
@@ -35,7 +34,6 @@ db-test-build:
     ENV PGPASSWORD=$PGPASSWORD
     ENV PGDATABASE=$PGDATABASE
     COPY ./data_layer/tests /tests
-    RUN echo "$PGHOST on $PGPORT as $PGUSER using $PGPASSWORD for $PGDATABASE"
     CMD pg_prove tests/**/*.sql
     SAVE IMAGE pgtap:latest
 
