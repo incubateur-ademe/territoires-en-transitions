@@ -2,7 +2,13 @@
 
 BEGIN;
 
-create or replace view retool_labellisation_demande
+create view retool_labellisation
+as
+select l.*, nom as collectivite_nom
+from labellisation l
+         join named_collectivite nc on l.collectivite_id = nc.collectivite_id;
+
+create view retool_labellisation_demande
 as
 select ld.id,
        ld.en_cours,
@@ -10,10 +16,7 @@ select ld.id,
        ld.referentiel,
        ld.etoiles,
        ld.date,
-       nc.nom,
-       ld.sujet,
-       ld.envoyee_le,
-       ld.modified_at
+       nc.nom
 from labellisation.demande ld
          left join named_collectivite nc on ld.collectivite_id = nc.collectivite_id;
 

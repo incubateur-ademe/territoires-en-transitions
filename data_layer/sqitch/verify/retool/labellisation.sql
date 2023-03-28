@@ -2,19 +2,16 @@
 
 BEGIN;
 
-select id,
+
+select id, en_cours,
        collectivite_id,
        referentiel,
-       obtenue_le,
-       annee,
        etoiles,
-       score_realise,
-       score_programme,
-       collectivite_nom
-from retool_labellisation
-where false;
-
-select id, en_cours, collectivite_id, referentiel, etoiles, date, nom
+       nom,
+       sujet,
+       envoyee_le,
+       date,
+       modified_at
 from retool_labellisation_demande
 where false;
 
