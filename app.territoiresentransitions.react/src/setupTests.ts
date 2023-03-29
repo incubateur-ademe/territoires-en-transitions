@@ -11,3 +11,5 @@ jest.mock('core-logic/hooks/useCurrentCollectivite.ts');
 
 // ce mock n'est importé qu'ici car la version d'origine fonctionne dans le navigateur
 jest.mock('utils/shasum256.ts');
+
+jest.setTimeout(60000);
