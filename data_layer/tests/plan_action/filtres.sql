@@ -4,6 +4,7 @@ select plan(1);
 update fiche_action set statut = 'En cours' where id = 1 or id = 2 or id = 5;
 update fiche_action set niveau_priorite = 'Moyen' where id = 1 or id = 6;
 update fiche_action set niveau_priorite = 'Bas' where id = 2;
+select test.identify_as('yolo@dodo.com');
 select ok ((select count(*)=2 from filter_fiches_action(
         collectivite_id := 1,
         axes_id := (array [1, 12])::integer[],
