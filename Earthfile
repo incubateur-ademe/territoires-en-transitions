@@ -93,7 +93,7 @@ business-build:
     SAVE IMAGE business:latest
 
 business-start:
-    FROM +business-build
+    BUILD +business-build
     LOCALLY
     RUN docker run -p 8888:8888 -d --rm --name business_territoiresentransitions business:latest
 
@@ -126,7 +126,7 @@ client-build:
     SAVE IMAGE client:latest
 
 client-start:
-    FROM +client-build
+    BUILD +client-build
     LOCALLY
     RUN docker run -p 3000:3000 -d --rm --name client_territoiresentransitions client:latest
 
