@@ -142,6 +142,15 @@ client-test:
     ENV CI=true
     RUN --push npm run test
 
+curl-test:
+    FROM alpine/curl
+    ARG --required ANON_KEY
+    ARG --required API_URL
+    ARG URL=$(echo $API_URL | sed "s/localhost/host.docker.internal/")
+    RUN --push curl -X GET --location "${URL}/rest/v1/collectivite_card?select=nom" \
+        -H "apikey: ${ANON_KEY}" \
+        -H "Accept: text/csv"
+
 api-test:
     FROM denoland/deno
     ARG --required ANON_KEY
