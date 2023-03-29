@@ -7,3 +7,6 @@
 # Docker data
 docker-data
 .env
+
+# Earthly
+.arg

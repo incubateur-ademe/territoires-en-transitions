@@ -34,10 +34,27 @@ export const defaultColors = [
   '#FFB7AE',
 ];
 
+export const nivoColorsSet = [
+  '#8dd3c7',
+  '#ffffb3',
+  '#bebada',
+  '#fb8072',
+  '#80b1d3',
+  '#fdb462',
+  '#b3de69',
+  '#fccde5',
+  '#d9d9d9',
+  '#bc80bd',
+  '#ccebc5',
+  '#ffed6f',
+];
+
 export const enum StatusColor {
   'Abandonné' = '#F95C5E',
   'En pause' = '#FF9575',
-  'A venir' = '#7AB1E8',
+  'À venir' = '#7AB1E8',
   'En cours' = '#869ECE',
   'Réalisé' = '#34CB6A',
+  'NC' = '#CCC',
+  'Sans statut' = '#CCC',
 }
