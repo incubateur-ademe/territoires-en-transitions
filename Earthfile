@@ -191,11 +191,13 @@ dev:
     END
 
     IF [ "$business" = "yes" ]
+        RUN earthly +business-build
         RUN earthly +business-start
         RUN earthly --push +update-scores
     END
 
     IF [ "$client" = "yes" ]
+        RUN earthly +client-build
         RUN earthly +client-start
     END
 
