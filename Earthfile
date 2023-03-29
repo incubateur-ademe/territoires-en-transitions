@@ -119,9 +119,10 @@ client-build:
     FROM +react
     ARG --required ANON_KEY
     ARG --required API_URL
-    ARG REACT_APP_SUPABASE_URL=$API_URL
-    ARG REACT_APP_SUPABASE_KEY=$ANON_KEY
-    ARG ZIP_ORIGIN_OVERRIDE="http://kong:8000"
+    ARG URL=$(echo $API_URL | sed "s/localhost/host.docker.internal/")
+    ENV REACT_APP_SUPABASE_URL=$API_URL
+    ENV REACT_APP_SUPABASE_KEY=$ANON_KEY
+    ENV ZIP_ORIGIN_OVERRIDE=$URL
     RUN npm run build
     SAVE IMAGE client:latest
 
@@ -135,7 +136,7 @@ client-test:
     ARG --required ANON_KEY
     ARG --required API_URL
     ARG URL=$(echo $API_URL | sed "s/localhost/host.docker.internal/")
-    ARG ZIP_ORIGIN_OVERRIDE="http://kong:8000"
+    ARG ZIP_ORIGIN_OVERRIDE=$URL
     ENV REACT_APP_SUPABASE_KEY=$ANON_KEY
     ENV REACT_APP_SUPABASE_URL=$URL
     ENV CI=true
