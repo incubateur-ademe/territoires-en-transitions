@@ -35,18 +35,14 @@ When(
 When(
   /la carte de la fiche créée est présente et affiche le titre "([^"]*)", le pilote "([^"]*)" et le statut "([^"]*)"/,
   (titre, pilote, statut) => {
-    cy.get('[data-test=FicheActionCarte]').contains(titre).should('be.visible');
-    cy.get('[data-test=FicheActionCarte]')
-      .contains(pilote)
-      .should('be.visible');
-    cy.get('[data-test=FicheActionCarte]')
-      .contains(statut)
-      .should('be.visible');
+    cy.get('[data-test=ActionCarte]').contains(titre).should('be.visible');
+    cy.get('[data-test=ActionCarte]').contains(pilote).should('be.visible');
+    cy.get('[data-test=ActionCarte]').contains(statut).should('be.visible');
   }
 );
 
 When(/je navigue sur la fiche "([^"]*)"/, titre => {
-  cy.get('[data-test=FicheActionCarte]').contains(titre).click();
+  cy.get('[data-test=ActionCarte]').contains(titre).click();
 });
 
 When(/je supprime la fiche/, () => {

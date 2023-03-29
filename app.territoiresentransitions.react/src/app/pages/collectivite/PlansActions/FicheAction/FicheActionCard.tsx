@@ -1,7 +1,7 @@
-import {NavLink} from 'react-router-dom';
+import ActionCard from '../components/ActionCard';
+import FicheActionBadgeStatut from './FicheActionForm/FicheActionBadgeStatut';
 
 import {TFicheAction} from './data/types/alias';
-import FicheActionBadgeStatut from './FicheActionForm/FicheActionBadgeStatut';
 
 type TFicheActionCard = {
   link: string;
@@ -9,42 +9,43 @@ type TFicheActionCard = {
 };
 
 const FicheActionCard = ({ficheAction, link}: TFicheActionCard) => {
+  const generateDetails = (ficheAction: TFicheAction) => {
+    let details = '';
+    if (!ficheAction.axes) {
+      details = details + 'Fiche non classée';
+      // on affiche la barre uniquement si "Fiche non classée" est présent
+      if (ficheAction.pilotes) {
+        details = details + ' | ';
+      }
+    }
+    if (ficheAction.pilotes) {
+      details =
+        details + `Pilote${ficheAction.pilotes.length > 1 ? 's' : ''}: `;
+
+      ficheAction.pilotes.forEach(
+        (pilote: any, index: number, array: unknown[]) =>
+          (details =
+            details + `${pilote.nom}${index < array.length - 1 ? ', ' : ''}`)
+      );
+    }
+    return details;
+  };
+
   return (
-    <div data-test="FicheActionCarte" className="border border-gray-200">
-      {ficheAction.id && (
-        <NavLink to={link}>
-          <div className="flex flex-col h-full p-6">
-            {ficheAction.statut && (
-              <div className="mb-4">
-                <FicheActionBadgeStatut statut={ficheAction.statut} small />
-              </div>
-            )}
-            <div className="-mt-2 mb-3 text-xs text-gray-500">
-              {!ficheAction.axes && (
-                <span>
-                  Fiche non classée{ficheAction.pilotes && <span> | </span>}
-                </span>
-              )}
-              {ficheAction.pilotes && (
-                <span>
-                  Pilote{ficheAction.pilotes.length > 1 && 's'}:{' '}
-                  {ficheAction.pilotes?.map(
-                    (pilote: any, index, array) =>
-                      `${pilote.nom}${index < array.length - 1 ? ', ' : ''}`
-                  )}
-                </span>
-              )}
-            </div>
-            <div className="mb-auto font-bold line-clamp-3">
-              {ficheAction.titre && ficheAction.titre.length > 0
-                ? ficheAction.titre
-                : 'Sans titre'}
-            </div>
-            <span className="fr-fi-arrow-right-line ml-auto mt-4 text-bf500 scale-75" />
-          </div>
-        </NavLink>
-      )}
-    </div>
+    <ActionCard
+      link={link}
+      statutBadge={
+        ficheAction.statut && (
+          <FicheActionBadgeStatut statut={ficheAction.statut} small />
+        )
+      }
+      details={generateDetails(ficheAction)}
+      title={
+        ficheAction.titre && ficheAction.titre.length > 0
+          ? ficheAction.titre
+          : 'Sans titre'
+      }
+    />
   );
 };
 
