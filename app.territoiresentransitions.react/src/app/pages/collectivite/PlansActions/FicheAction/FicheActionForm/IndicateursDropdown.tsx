@@ -31,7 +31,6 @@ const IndicateursDropdown = ({indicateurs, onSelect, isReadonly}: Props) => {
       )
     ) ?? [];
 
-  // On invalide la liste des options dans useEditFicheAction
   return (
     <AutocompleteInputSelect
       containerWidthMatchButton
