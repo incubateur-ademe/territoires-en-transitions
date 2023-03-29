@@ -104,5 +104,6 @@ Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {
-  "audit_id": 1
+  "collectivite_id": 1,
+  "referentiel": "eci"
 }
