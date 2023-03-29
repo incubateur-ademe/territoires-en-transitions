@@ -95,3 +95,14 @@ Authorization: Bearer {{auth_token}}
 GET {{api}}/rest/v1/suivi_audit?select=action_id,statut,ordre_du_jour&collectivite_id=eq.1&referentiel=eq.eci&or=(and(or(ordre_du_jour.in.(false),+ordres_du_jour.ov.{false})))
 apikey: {{anon}}
 Authorization: Bearer {{auth_token}}
+
+
+### La vue de suivi de l'audit, filtre pas à l'ordre du jour
+POST {{api}}/rest/v1/rpc/labellisation_peut_commencer_audit
+apikey: {{anon}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "audit_id": 1
+}
