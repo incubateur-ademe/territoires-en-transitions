@@ -27,8 +27,14 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
   const [opened, setOpened] = useState(false);
   const [opened_1ereEtoileCOT, setOpened_1ereEtoileCOT] = useState(false);
   const {parcoursLabellisation, onStartAudit, onValidateAudit} = props;
-  const {parcours, status, isAuditeur, isCOT, labellisable} =
-    parcoursLabellisation;
+  const {
+    parcours,
+    status,
+    isAuditeur,
+    isCOT,
+    labellisable,
+    peutCommencerAudit,
+  } = parcoursLabellisation;
 
   if (!parcours) {
     return null;
@@ -68,7 +74,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
           </button>
         </>
       ) : null}
-      {status === 'demande_envoyee' && isAuditeur ? (
+      {peutCommencerAudit ? (
         <button
           className="fr-btn self-start"
           data-test="StartAuditBtn"
@@ -115,9 +121,9 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
 const getHeaderMessageContent = (
   parcoursLabellisation: TCycleLabellisation
 ) => {
-  const {status, isAuditeur} = parcoursLabellisation;
+  const {status, isAuditeur, peutCommencerAudit} = parcoursLabellisation;
 
-  if (status === 'demande_envoyee' && !isAuditeur) {
+  if (status === 'demande_envoyee' && !peutCommencerAudit) {
     return 'Demande envoyée';
   }
 
