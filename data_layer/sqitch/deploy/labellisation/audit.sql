@@ -29,5 +29,17 @@ $$ language plpgsql security definer;
 comment on function labellisation_cloturer_audit is
     'Clôture un audit.';
 
+create function
+    labellisation_peut_commencer_audit(audit_id integer)
+    returns bool
+begin
+    atomic
+    select count(*) > 0
+    from audit_auditeur aa
+    where aa.audit_id = labellisation_peut_commencer_audit.audit_id
+      and aa.auditeur = auth.uid();
+end;
+comment on function labellisation_peut_commencer_audit is
+    'Vrai si l''utilisateur peut commencer un audit.';
 
 COMMIT;
