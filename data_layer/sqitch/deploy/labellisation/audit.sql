@@ -39,7 +39,7 @@ begin
              join audit_auditeur aa on a.id = aa.audit_id
     where a.collectivite_id = labellisation_peut_commencer_audit.collectivite_id
       and a.referentiel = labellisation_peut_commencer_audit.referentiel
-      and now() <@ tstzrange(a.date_debut, a.date_fin)
+      and a.date_debut is null
       and aa.auditeur = auth.uid();
 end;
 comment on function labellisation_peut_commencer_audit is
