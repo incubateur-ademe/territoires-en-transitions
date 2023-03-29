@@ -6,6 +6,7 @@ import {usePreuves} from 'ui/shared/preuves/Bibliotheque/usePreuves';
 import {TPreuveLabellisation} from 'ui/shared/preuves/Bibliotheque/types';
 import {useLabellisationParcours} from './useLabellisationParcours';
 import {getParcoursStatus} from './getParcoursStatus';
+import {usePeutCommencerAudit} from './usePeutCommencerAudit';
 
 // données du cycle de labellisation/audit actuel d'une collectivité
 export type TCycleLabellisation = {
@@ -15,6 +16,7 @@ export type TCycleLabellisation = {
   isAuditeur: boolean;
   isCOT: boolean;
   labellisable: boolean;
+  peutCommencerAudit: boolean;
 };
 
 // état consolidé du cycle de labellisation/audit
@@ -42,6 +44,9 @@ export const useCycleLabellisation = (
     preuve_types: ['labellisation'],
   }) as TPreuveLabellisation[];
 
+  // vérifie si l'utilisateur courant peut commencer l'audit
+  const peutCommencerAudit = usePeutCommencerAudit();
+
   // états dérivés
   const status = getParcoursStatus(parcours);
   const isCOT = Boolean(identite?.is_cot);
@@ -62,5 +67,6 @@ export const useCycleLabellisation = (
     isAuditeur,
     isCOT,
     labellisable,
+    peutCommencerAudit,
   };
 };
