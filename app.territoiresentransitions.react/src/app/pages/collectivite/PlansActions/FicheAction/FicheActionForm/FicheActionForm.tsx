@@ -34,6 +34,8 @@ import FicheActionRangerModal from '../FicheActionRangerModal/FicheActionRangerM
 import {usePlanActionProfondeur} from '../../PlanAction/data/usePlanActionProfondeur';
 import ServicePiloteDropdown from './ServicePiloteDropdown';
 import Financeurs from './Financeurs';
+import PictoLeaf from 'ui/pictogrammes/PictoLeaf';
+import ActionsLiees from './ActionsLiees';
 
 type TFicheActionForm = {
   fiche: FicheActionVueRow;
@@ -381,9 +383,13 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
           />
         </FormField>
       </Section>
-      {/* <Section icon={<PictoLeaf />} title="Actions et fiches liées">
-        Hello
-      </Section> */}
+      <Section icon={<PictoLeaf />} title="Actions et fiches liées">
+        <ActionsLiees
+          actions={fiche.actions}
+          onSelect={actions => updateFiche({...fiche, actions})}
+          isReadonly={isReadonly}
+        />
+      </Section>
       <Section icon={<PictoDocument />} title="Notes">
         <FormField
           label="Notes complémentaires"

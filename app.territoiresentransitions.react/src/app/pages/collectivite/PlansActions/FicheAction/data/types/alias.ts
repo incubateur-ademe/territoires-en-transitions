@@ -54,3 +54,6 @@ export type TFicheActionResultatsAttendus =
   Database['public']['Enums']['fiche_action_resultats_attendus'];
 export type TFicheActionStatuts =
   Database['public']['Enums']['fiche_action_statuts'];
+
+export type TActionRelationInsert =
+  Database['public']['Tables']['action_relation']['Insert'];
