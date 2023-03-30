@@ -109,6 +109,7 @@ Fonctionnalité: Associer des preuves aux actions
       | mon.doc |             |
 
     Quand je clique sur le bouton "Supprimer" de la preuve "mon.doc" de l'action "1.1.1"
+    Et que je confirme la suppression de la preuve
     Alors la liste des preuves complémentaires de la sous-action "1.1.1" est vide
 
   Scénario: Ajouter un lien comme preuve complémentaire à une sous-action
@@ -210,11 +211,13 @@ Fonctionnalité: Associer des preuves aux actions
       | Exemple2 | mon commentaire |
 
     Quand je clique sur le bouton "Supprimer" de la preuve "Exemple1" de l'action "1.1.1"
+    Et que je confirme la suppression de la preuve
     Alors la liste des preuves complémentaires de la sous-action "1.1.1" contient les lignes suivantes :
       | Titre    | Commentaire     |
       | Exemple2 | mon commentaire |
 
     Quand je clique sur le bouton "Supprimer" de la preuve "Exemple2" de l'action "1.1.1"
+    Et que je confirme la suppression de la preuve
     Alors la liste des preuves complémentaires de la sous-action "1.1.1" est vide
 
   Scénario: Ajouter une preuve réglementaire à une sous-action

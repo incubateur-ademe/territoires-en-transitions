@@ -215,6 +215,14 @@ When(
   }
 );
 
+When('je confirme la suppression de la preuve', () => {
+  cy.get('[data-test=ConfirmSupprPreuve]').within(() => {
+    cy.root().should('be.visible');
+    cy.get('button[data-test=ok]').click();
+    cy.root().should('not.exist');
+  });
+});
+
 const getAddPreuveButton = action =>
   getPreuvePanel(action).find('[data-test=AddPreuveComplementaire]');
 
