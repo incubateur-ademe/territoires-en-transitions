@@ -66,8 +66,14 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Message Av
                 title="Décrire"
               />
               <button
+                aria-expanded="false"
+                aria-haspopup="dialog"
                 className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
                 onClick={[Function]}
+                onKeyDown={[Function]}
+                onKeyUp={[Function]}
+                onMouseDown={[Function]}
+                onPointerDown={[Function]}
                 title="Supprimer"
               />
             </div>
@@ -233,8 +239,14 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
                   title="Décrire"
                 />
                 <button
+                  aria-expanded="false"
+                  aria-haspopup="dialog"
                   className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
                   onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
                   title="Supprimer"
                 />
               </div>
@@ -330,8 +342,14 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
                   title="Décrire"
                 />
                 <button
+                  aria-expanded="false"
+                  aria-haspopup="dialog"
                   className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
                   onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
                   title="Supprimer"
                 />
               </div>
@@ -409,8 +427,14 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
                   title="Décrire"
                 />
                 <button
+                  aria-expanded="false"
+                  aria-haspopup="dialog"
                   className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
                   onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
                   title="Supprimer"
                 />
               </div>
@@ -505,8 +529,14 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
                 title="Décrire"
               />
               <button
+                aria-expanded="false"
+                aria-haspopup="dialog"
                 className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
                 onClick={[Function]}
+                onKeyDown={[Function]}
+                onKeyUp={[Function]}
+                onMouseDown={[Function]}
+                onPointerDown={[Function]}
                 title="Supprimer"
               />
             </div>
@@ -567,8 +597,14 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
                 title="Décrire"
               />
               <button
+                aria-expanded="false"
+                aria-haspopup="dialog"
                 className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
                 onClick={[Function]}
+                onKeyDown={[Function]}
+                onKeyUp={[Function]}
+                onMouseDown={[Function]}
+                onPointerDown={[Function]}
                 title="Supprimer"
               />
             </div>
@@ -754,8 +790,14 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
                   title="Décrire"
                 />
                 <button
+                  aria-expanded="false"
+                  aria-haspopup="dialog"
                   className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
                   onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
                   title="Supprimer"
                 />
               </div>
@@ -851,8 +893,14 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
                   title="Décrire"
                 />
                 <button
+                  aria-expanded="false"
+                  aria-haspopup="dialog"
                   className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
                   onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
                   title="Supprimer"
                 />
               </div>
@@ -930,8 +978,14 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
                   title="Décrire"
                 />
                 <button
+                  aria-expanded="false"
+                  aria-haspopup="dialog"
                   className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
                   onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
                   title="Supprimer"
                 />
               </div>
