@@ -16,11 +16,15 @@ as
 $$
     # variable_conflict use_variable
 begin
+    if not can_read_acces_restreint(filter_fiches_action.collectivite_id) then
+        perform set_config('response.status', '403', true);
+        raise 'L''utilisateur n''a pas de droit en lecture sur la collectivité.';
+    end if;
+
     return query
         select *
         from fiches_action fa
         where fa.collectivite_id = collectivite_id
-        and peut_lire_la_fiche(fa.id)
           and case
                   when axes_id is null then true
                   else fa.id in (with child as (select unnest(array_append(a.descendants, a.axe_id)) as axe_id
@@ -56,7 +60,8 @@ begin
                   else fa.statut in (select * from unnest(statuts::fiche_action_statuts[]))
             end;
 end;
-$$ language plpgsql security definer stable;
+$$ language plpgsql security definer
+                    stable;
 comment on function filter_fiches_action is
     'Filtre la vue pour le client.';
 
@@ -98,7 +103,8 @@ begin
                                    'enfants', enfants);
     return to_return;
 end;
-$$ language plpgsql security definer stable;
+$$ language plpgsql security definer
+                    stable;
 comment on function plan_action is
     'Fonction retournant un JSON contenant le plan d''action passé en paramètre,
     ses fiches et ses plans d''actions enfants de manière récursive';
@@ -134,7 +140,8 @@ begin
                                    'enfants', enfants);
     return to_return;
 end;
-$$ language plpgsql security definer stable;
+$$ language plpgsql security definer
+                    stable;
 comment on function plan_action_profondeur is
     'Fonction retournant un JSON contenant le plan d''action passé en paramètre,
     et ses plans d''actions enfants de manière récursive';
