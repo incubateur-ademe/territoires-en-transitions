@@ -1,5 +1,3 @@
-import {NavLink} from 'react-router-dom';
-
 import {
   makeCollectiviteFichesNonClasseesUrl,
   makeCollectivitePlanActionUrl,
@@ -8,6 +6,8 @@ import {useCreateFicheAction} from './FicheAction/data/useUpsertFicheAction';
 import {usePlansActionsListe} from './PlanAction/data/usePlansActionsListe';
 import {useCreatePlanAction} from './PlanAction/data/useUpsertAxe';
 import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import SideNav, {TSideNavLink} from 'ui/shared/SideNav';
+import {TPlanActionAxeRow} from './PlanAction/data/types/alias';
 
 type Props = {
   collectivite: CurrentCollectivite;
@@ -20,69 +20,54 @@ const PlansActionsNavigation = ({collectivite}: Props) => {
 
   const {mutate: createPlanAction} = useCreatePlanAction();
 
+  const generateLinks = (plans?: TPlanActionAxeRow[]) => {
+    const plansLinks: TSideNavLink[] = plans
+      ? plans.map(plan => ({
+          link: makeCollectivitePlanActionUrl({
+            collectiviteId: collectivite.collectivite_id,
+            planActionUid: plan.id.toString(),
+          }),
+          displayName:
+            plan.nom && plan.nom.length >= 0 ? plan.nom : 'Sans titre',
+        }))
+      : [];
+
+    plansLinks.push({
+      link: makeCollectiviteFichesNonClasseesUrl({
+        collectiviteId: collectivite.collectivite_id,
+      }),
+      displayName: 'Fiches non classées',
+    });
+
+    return plansLinks;
+  };
+
   return (
-    <nav
-      data-test="PlansActionNavigation"
-      className="fr-sidemenu flex w-80 shrink-0 py-8 md:px-8 border-r border-gray-100"
-    >
-      <div className="fr-sidemenu-wrapper">
-        <ul className="fr-sidemenu_list">
-          {data &&
-            data.plans.map(plan => (
-              <li
-                key={plan.id}
-                className="fr-sidemnu_item fr-sidemenu_item--active"
-              >
-                <NavLink
-                  className="fr-sidemenu__link"
-                  to={makeCollectivitePlanActionUrl({
-                    collectiviteId: collectivite.collectivite_id,
-                    planActionUid: plan.id.toString(),
-                  })}
-                  target="_self"
-                  aria-current="page"
-                >
-                  {plan.nom && plan.nom.length >= 0 ? plan.nom : 'Sans titre'}
-                </NavLink>
-              </li>
-            ))}
-          <li className="fr-sidemenu_item fr-sidemenu_item--active">
-            <NavLink
-              className="fr-sidemenu__link"
-              to={makeCollectiviteFichesNonClasseesUrl({
-                collectiviteId: collectivite.collectivite_id,
-              })}
-              target="_self"
-              aria-current="page"
+    <div data-test="PlansActionNavigation">
+      <SideNav links={generateLinks(data?.plans)} />
+      {!collectivite.readonly && (
+        <ul className="mb-8 -mt-2 px-8">
+          <li className="fr-sidemenu_item p-0 list-none">
+            <button
+              data-test="CreerFicheAction"
+              className="fr-btn"
+              onClick={() => createFicheAction()}
             >
-              Fiches non classées
-            </NavLink>
+              Créer une fiche action
+            </button>
           </li>
-          {!collectivite.readonly && (
-            <>
-              <li className="fr-sidemenu_item mt-6">
-                <button
-                  data-test="CreerFicheAction"
-                  className="fr-btn"
-                  onClick={() => createFicheAction()}
-                >
-                  Créer une fiche action
-                </button>
-              </li>
-              <li className="fr-sidemenu_item mt-6">
-                <button
-                  data-test="AjouterPlanAction"
-                  className="fr-btn fr-btn--secondary"
-                  onClick={() => createPlanAction()}
-                >
-                  Ajouter un plan d'action
-                </button>
-              </li>
-            </>
-          )}
+          <li className="fr-sidemenu_item mt-6 p-0 list-none">
+            <button
+              data-test="AjouterPlanAction"
+              className="fr-btn fr-btn--secondary"
+              onClick={() => createPlanAction()}
+            >
+              Ajouter un plan d'action
+            </button>
+          </li>
         </ul>
-      </div>
-    </nav>
+      )}
+    </div>
   );
 };
 
