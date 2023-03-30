@@ -35,8 +35,14 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveComplementaire Action D
             title="Décrire"
           />
           <button
+            aria-expanded="false"
+            aria-haspopup="dialog"
             className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
             onClick={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onPointerDown={[Function]}
             title="Supprimer"
           />
         </div>
@@ -110,8 +116,14 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveComplementaire Action N
             title="Décrire"
           />
           <button
+            aria-expanded="false"
+            aria-haspopup="dialog"
             className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
             onClick={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onPointerDown={[Function]}
             title="Supprimer"
           />
         </div>
@@ -185,8 +197,14 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveComplementaire Fichier 
             title="Décrire"
           />
           <button
+            aria-expanded="false"
+            aria-haspopup="dialog"
             className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
             onClick={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onPointerDown={[Function]}
             title="Supprimer"
           />
         </div>
@@ -250,8 +268,14 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveComplementaire Lien 1`]
             title="Décrire"
           />
           <button
+            aria-expanded="false"
+            aria-haspopup="dialog"
             className="ml-1 px-1 w-7 text-sm inline-block text-center fr-fi-delete-line fr-fi-delete-line"
             onClick={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onPointerDown={[Function]}
             title="Supprimer"
           />
         </div>
