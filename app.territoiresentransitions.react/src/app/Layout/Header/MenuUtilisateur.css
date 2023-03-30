@@ -13,3 +13,11 @@
 .user-menu i::before {
   --icon-size: 1rem;
 }
+
+button.user-menu[aria-expanded='true'] {
+  color: var(--text-active-blue-france);
+  background-color: var(--background-open-blue-france);
+  --idle: transparent;
+  --hover: var(--background-open-blue-france-hover);
+  --active: var(--background-open-blue-france-active);
+}
