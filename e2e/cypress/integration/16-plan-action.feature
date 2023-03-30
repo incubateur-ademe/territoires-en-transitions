@@ -26,7 +26,7 @@ Fonctionnalité: Plan d'action
     Et que je supprime la fiche
     Et que je suis sur la page "Fiches non classees" de la collectivité "1"
     Alors la fiche "Fiche test" n'est plus présente
-    
+
   Scénario: Plan d'action
     Etant donné que je suis connecté en tant que "yolo"
     Et que je suis sur la page "Plans action" de la collectivité "1"
@@ -39,7 +39,7 @@ Fonctionnalité: Plan d'action
     Alors le nom du plan d'action est changé en "Plan test" dans la navigation
     # ajouter un nouveau titre et lui donner ce contenu "Axe 1: les tests passent"
     Quand j'ajoute un nouveau titre
-    Et que je le nommme "Axe 1: les tests passent"
+    Et que je le nomme "Axe 1: les tests passent"
     # ajouter une fiche au nouvel axe créé
     Quand j'ajoute une fiche à "Axe 1: les tests passent"
     Et que je reviens sur le plan d'action "Plan test"
@@ -47,7 +47,7 @@ Fonctionnalité: Plan d'action
     Alors le "Filtrer les fiches" est visible
     # ajouter un deuxième axe "Axe 2"
     Quand j'ajoute un nouveau titre
-    Et que je le nommme "Axe 2"
+    Et que je le nomme "Axe 2"
     # supprimer "Axe 2"
     Quand je veux supprimer le dernier axe
     Alors le texte "Il n'y a aucune fiche dans ce niveau et son arborescence" est visible
@@ -69,7 +69,7 @@ Fonctionnalité: Plan d'action
     Alors le texte "Il n'y a aucune fiche dans ce plan et son arborescence" est visible
     Quand je supprime l'axe depuis la modale
     Alors le plan n'est plus présent dans la navigation
- 
+
   Scénario: Ranger une fiche action
     Etant donné que je suis connecté en tant que "yolo"
     Et que je suis sur la page "Plans action" de la collectivité "1"
@@ -77,7 +77,7 @@ Fonctionnalité: Plan d'action
     Quand je clique sur le bouton "Ajouter un plan d'action"
     # ajouter un nouveau titre et lui donner ce contenu "Axe 1: les tests passent"
     Quand j'ajoute un nouveau titre
-    Et que je le nommme "Axe 1: les tests passent"
+    Et que je le nomme "Axe 1: les tests passent"
     # ajouter une fiche au nouvel axe créé
     Quand j'ajoute une fiche à "Axe 1: les tests passent"
     # ouvrir la modale "Ranger la fiche"
