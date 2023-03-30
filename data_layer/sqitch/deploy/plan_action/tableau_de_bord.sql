@@ -28,7 +28,7 @@ create function plan_action_tableau_de_bord(
 $$
 with
     fiches as (
-        select fa.*
+        select distinct fa.*
         from fiche_action fa
                  left join fiche_action_axe faa on faa.fiche_id = fa.id
                  left join plan_action_chemin pac on faa.axe_id = pac.axe_id
@@ -38,8 +38,9 @@ with
                     then pac.plan_id = plan_action_tableau_de_bord.plan_id
                 when sans_plan
                     then faa is null
-                else fa.collectivite_id = plan_action_tableau_de_bord.collectivite_id
+                else true
                 end
+          and fa.collectivite_id = plan_action_tableau_de_bord.collectivite_id
           and is_authenticated()
 
     ),
