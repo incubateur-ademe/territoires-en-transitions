@@ -119,6 +119,7 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
                   onPointerDown={[Function]}
                 >
                   <button
+                    aria-expanded={false}
                     className="user-menu fr-btn fr-icon-account-line"
                     data-test="connectedMenu"
                     style={
@@ -545,6 +546,7 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
               onPointerDown={[Function]}
             >
               <button
+                aria-expanded={false}
                 className="user-menu fr-btn fr-icon-account-line"
                 data-test="connectedMenu"
                 style={

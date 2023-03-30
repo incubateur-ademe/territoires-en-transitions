@@ -77,6 +77,7 @@ const MenuUtilisateurBtn = forwardRef(
           isUserPath ? 'fill' : 'line'
         }`}
         style={{maxWidth: '15rem'}}
+        aria-expanded={isOpen}
       >
         <span className="line-clamp-1">{user.prenom}</span>
         <i
