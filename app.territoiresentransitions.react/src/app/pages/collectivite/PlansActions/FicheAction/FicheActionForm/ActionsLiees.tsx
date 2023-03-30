@@ -1,4 +1,4 @@
-import {makeCollectiviteActionUrl} from 'app/paths';
+import {makeCollectiviteTacheUrl} from 'app/paths';
 import {IActionStatutsRead} from 'generated/dataLayer/action_statuts_read';
 import ActionStatutBadge from 'ui/shared/actions/ActionStatutBadge';
 import FormField from 'ui/shared/form/FormField';
@@ -7,6 +7,7 @@ import {TOption} from 'ui/shared/select/commons';
 import ActionCard from '../../components/ActionCard';
 import {useActionListe} from '../data/options/useActionListe';
 import {TActionRelationInsert} from '../data/types/alias';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 
 type Props = {
   actions: TActionRelationInsert[] | null;
@@ -16,6 +17,7 @@ type Props = {
 
 const ActionsLiees = ({actions, onSelect, isReadonly}: Props) => {
   const {data: actionListe} = useActionListe();
+  const collectiviteId = useCollectiviteId()!;
 
   const actionsLiees =
     actionListe?.filter((action: IActionStatutsRead) =>
@@ -23,13 +25,8 @@ const ActionsLiees = ({actions, onSelect, isReadonly}: Props) => {
     ) ?? [];
 
   const formatOptions = (actions?: IActionStatutsRead[] | null): TOption[] => {
-    // On enlève les référentiels et les axes de la liste d'options
-    const filteredActions = actions?.filter(option =>
-      option.identifiant.includes('.')
-    );
-
-    const options = filteredActions
-      ? filteredActions.map((action: IActionStatutsRead) => ({
+    const options = actions
+      ? actions.map((action: IActionStatutsRead) => ({
           value: action.action_id,
           label: `${action.referentiel} ${action.identifiant} - ${action.nom}`,
         }))
@@ -72,8 +69,8 @@ const ActionsLiees = ({actions, onSelect, isReadonly}: Props) => {
         {actionsLiees.map(action => (
           <ActionCard
             key={action.action_id}
-            link={makeCollectiviteActionUrl({
-              collectiviteId: action.collectivite_id,
+            link={makeCollectiviteTacheUrl({
+              collectiviteId: collectiviteId,
               actionId: action.action_id,
               referentielId: action.referentiel,
             })}
