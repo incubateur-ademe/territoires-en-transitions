@@ -341,10 +341,6 @@ export interface Database {
         id: number;
         montant_ttc: number;
       };
-      graphique_tranche: {
-        id: string;
-        value: number;
-      };
       indicateur_generique: {
         description: string;
         indicateur_id: unknown;
@@ -357,14 +353,6 @@ export interface Database {
         nom: string;
         tag_id: number;
         user_id: string;
-      };
-      plan_action_tableau_de_bord: {
-        collectivite_id: number;
-        pilotes: unknown;
-        plan_id: number;
-        priorites: unknown;
-        referents: unknown;
-        statuts: unknown;
       };
       tabular_score: {
         action_id: unknown;
@@ -1231,6 +1219,7 @@ export interface Database {
           date_debut: string | null;
           date_fin_provisoire: string | null;
           description: string | null;
+          fiches_liees: unknown[] | null;
           financements: string | null;
           financeurs:
             | Database['public']['CompositeTypes']['financeur_montant'][]
@@ -1916,14 +1905,6 @@ export interface Database {
         };
         Returns: Json;
       };
-      plan_action_tableau_de_bord: {
-        Args: {
-          collectivite_id: number;
-          plan_id?: number;
-          sans_plan?: boolean;
-        };
-        Returns: Database['public']['CompositeTypes']['plan_action_tableau_de_bord'];
-      };
       plans_action_collectivite: {
         Args: {
           collectivite_id: number;
@@ -2247,28 +2228,28 @@ export interface Database {
         | {
             Args: {
               bucket_width: unknown;
+              ts: string;
+            };
+            Returns: string;
+          }
+        | {
+            Args: {
+              bucket_width: unknown;
+              ts: string;
+            };
+            Returns: string;
+          }
+        | {
+            Args: {
+              bucket_width: unknown;
+              ts: string;
+            };
+            Returns: string;
+          }
+        | {
+            Args: {
+              bucket_width: unknown;
               origin: string;
-              ts: string;
-            };
-            Returns: string;
-          }
-        | {
-            Args: {
-              bucket_width: unknown;
-              ts: string;
-            };
-            Returns: string;
-          }
-        | {
-            Args: {
-              bucket_width: unknown;
-              ts: string;
-            };
-            Returns: string;
-          }
-        | {
-            Args: {
-              bucket_width: unknown;
               ts: string;
             };
             Returns: string;
@@ -3266,6 +3247,20 @@ export interface Database {
           fiche_id?: number;
           indicateur_id?: string | null;
           indicateur_personnalise_id?: number | null;
+        };
+      };
+      fiche_action_lien: {
+        Insert: {
+          fiche_deux: number;
+          fiche_une: number;
+        };
+        Row: {
+          fiche_deux: number;
+          fiche_une: number;
+        };
+        Update: {
+          fiche_deux?: number;
+          fiche_une?: number;
         };
       };
       fiche_action_partenaire_tag: {
@@ -4865,6 +4860,16 @@ export interface Database {
           user_id: string | null;
         };
       };
+      fiche_resume: {
+        Row: {
+          fiche_id: number | null;
+          fiche_nom: string | null;
+          fiche_statut:
+            | Database['public']['Enums']['fiche_action_statuts']
+            | null;
+          plans: unknown[] | null;
+        };
+      };
       fiches_action: {
         Row: {
           actions: unknown[] | null;
@@ -4879,6 +4884,7 @@ export interface Database {
           date_debut: string | null;
           date_fin_provisoire: string | null;
           description: string | null;
+          fiches_liees: unknown[] | null;
           financements: string | null;
           financeurs:
             | Database['public']['CompositeTypes']['financeur_montant'][]
@@ -4911,6 +4917,12 @@ export interface Database {
           structures: unknown[] | null;
           thematiques: unknown[] | null;
           titre: string | null;
+        };
+      };
+      fiches_liees_par_fiche: {
+        Row: {
+          fiche_id: number | null;
+          fiche_liee_id: number | null;
         };
       };
       historique: {
@@ -5350,7 +5362,6 @@ export interface Database {
           completude_cae: number | null;
           completude_eci: number | null;
           cot: boolean | null;
-          date_activation: string | null;
           departement_code: string | null;
           departement_name: string | null;
           nature_collectivite: Database['public']['Enums']['nature'] | null;
