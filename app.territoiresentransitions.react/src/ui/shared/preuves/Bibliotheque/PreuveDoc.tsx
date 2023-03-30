@@ -2,17 +2,14 @@ import {ChangeEvent, KeyboardEvent, MouseEvent} from 'react';
 import classNames from 'classnames';
 import {format} from 'date-fns';
 import {fr} from 'date-fns/locale';
-import {
-  ButtonComment,
-  ButtonEdit,
-  ButtonRemove,
-} from 'ui/shared/SmallIconButton';
+import {ButtonComment, ButtonEdit} from 'ui/shared/SmallIconButton';
 import {formatFileSize, getExtension} from 'utils/file';
 import {TPreuve, TEditHandlers} from './types';
 import {openPreuve} from './openPreuve';
 import {useEditPreuve} from './useEditPreuve';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {TEditState} from 'core-logic/hooks/useEditState';
+import {ConfirmSupprPreuveBtn} from './ConfirmSupprPreuveBtn';
 
 export type TPreuveDocProps = {
   classComment?: string;
@@ -75,14 +72,7 @@ export const PreuveDoc = ({
                 editComment.enter();
               }}
             />
-            <ButtonRemove
-              title="Supprimer"
-              className="fr-fi-delete-line"
-              onClick={(e: MouseEvent<HTMLButtonElement>) => {
-                e.preventDefault();
-                remove();
-              }}
-            />
+            <ConfirmSupprPreuveBtn removePreuve={remove} />
           </div>
         ) : null}
       </div>
