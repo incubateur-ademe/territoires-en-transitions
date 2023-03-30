@@ -73,7 +73,7 @@ When(/j'ajoute un nouveau titre/, () => {
   cy.get('[data-test=AjouterAxe]').click();
 });
 
-When(/je le nommme "([^"]*)"/, titre => {
+When(/je le nomme "([^"]*)"/, titre => {
   cy.get('[data-test=EditerTitreAxeBouton]').last().click({force: true});
   cy.get('[data-test=TitreAxeInput]').last().clear().type(titre);
   cy.get('body').click(10, 10);
