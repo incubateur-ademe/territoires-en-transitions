@@ -11,9 +11,9 @@ const fetchActionListe = async (
 ): Promise<TFetchedData> => {
   const query = supabaseClient
     .from('action_statuts')
-    .select()
+    .select('action_id, referentiel, nom, identifiant, avancement')
     .match({collectivite_id, concerne: true})
-    .order('action_id', {ascending: true});
+    .in('type', ['action', 'sous-action', 'tache']);
 
   const {error, data} = await query;
 
