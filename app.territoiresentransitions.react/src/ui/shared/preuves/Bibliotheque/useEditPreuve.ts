@@ -29,10 +29,7 @@ export const useEditPreuve: TEditPreuve = preuve => {
   });
 
   const remove = () => {
-    // eslint-disable-next-line no-restricted-globals
-    if (confirm('Voulez-vous vraiment supprimer cette preuve ?')) {
-      removePreuve(preuve);
-    }
+    removePreuve(preuve);
   };
 
   return {
