@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo "Getting content at $URL/rest/v1/..."
+echo "Essaye avec curl de télécharger les noms depuis la vue collectivite_card."
 
 curl -X GET \
      -H "apikey: $ANON_KEY" \

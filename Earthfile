@@ -12,6 +12,7 @@ sqitch:
     CMD ["help"]
     COPY sqitch.conf ./sqitch.conf
     COPY ./data_layer/sqitch ./data_layer/sqitch
+    SAVE IMAGE sqitch:latest
 
 pg-tap:
     FROM +postgres
@@ -38,19 +39,32 @@ db-test:
 
 deploy:
     ARG --required DB_URL
-    ARG MODE=change
-    FROM +sqitch
-    ARG PG_URL=$(echo $DB_URL | sed "s/localhost/host.docker.internal/")
-    RUN --push sqitch deploy db:$PG_URL --mode $MODE
+    ARG network=host
+    LOCALLY
+    RUN earthly +sqitch
+    RUN docker run --rm \
+        --network $network \
+        --env SQITCH_TARGET=db:$DB_URL \
+        sqitch:latest deploy --mode change
 
 deploy-test:
     ARG --required DB_URL
-    ARG tag="v2.14"
-    FROM +sqitch
-    ARG PG_URL=$(echo $DB_URL | sed "s/localhost/host.docker.internal/")
-    RUN --push sqitch deploy db:$PG_URL --mode change
-    RUN --push sqitch revert db:$PG_URL --to @$tag --y
-    RUN --push sqitch deploy db:$PG_URL --mode change --verify
+    ARG network=host
+    ARG tag=v2.14
+    LOCALLY
+    RUN earthly +sqitch
+    RUN docker run --rm \
+        --network $network \
+        --env SQITCH_TARGET=db:$DB_URL \
+        sqitch:latest deploy --mode change
+    RUN docker run --rm \
+        --network $network \
+        --env SQITCH_TARGET=db:$DB_URL \
+        sqitch:latest revert --to @$tag --y
+    RUN docker run --rm \
+        --network $network \
+        --env SQITCH_TARGET=db:$DB_URL \
+        sqitch:latest deploy --mode change --verify
 
 seed:
     ARG --required DB_URL
@@ -201,7 +215,7 @@ dev:
 
     IF [ "$datalayer" = "yes" ]
         RUN supabase start
-        RUN earthly --push +deploy
+        RUN earthly +deploy
         RUN earthly --push +seed
         RUN earthly --push +load-contents
     END
