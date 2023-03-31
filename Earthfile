@@ -142,14 +142,21 @@ client-test:
     ENV CI=true
     RUN --push npm run test
 
-curl-test:
+curl-test-build:
     FROM curlimages/curl
-    ARG --required ANON_KEY
-    ARG --required API_URL
-    ARG URL=$(echo $API_URL | sed "s/localhost/host.docker.internal/")
-    RUN --push curl -X GET --location "${URL}/rest/v1/collectivite_card?select=nom" \
-        -H "apikey: ${ANON_KEY}" \
-        -H "Accept: text/csv"
+    COPY ./data_layer/scripts/curl_test.sh /curl_test.sh
+    ENTRYPOINT sh ./curl_test.sh
+    SAVE IMAGE curl-test:latest
+
+curl-test:
+    BUILD +curl-test-build
+    LOCALLY
+    RUN docker run --rm \
+        --name curl_test_tet \
+        --network supabase_network_tet \
+        --env ANON_KEY=${ANON_KEY} \
+        --env URL="http://supabase_kong_tet:8000" \
+        curl-test:latest
 
 api-test:
     FROM denoland/deno
