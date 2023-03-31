@@ -95,7 +95,7 @@ business-build:
 business-start:
     BUILD +business-build
     LOCALLY
-    RUN docker run -p 8888:8888 -d --rm --name business_territoiresentransitions business:latest
+    RUN docker run -p 8888:8888 -d --rm --name business_tet business:latest
 
 business-test:
     FROM +business-build
@@ -129,7 +129,7 @@ client-build:
 client-start:
     BUILD +client-build
     LOCALLY
-    RUN docker run -p 3000:3000 -d --rm --name client_territoiresentransitions client:latest
+    RUN docker run -p 3000:3000 -d --rm --name client_tet client:latest
 
 client-test:
     FROM +react
@@ -213,7 +213,7 @@ dev:
 stop:
     LOCALLY
     RUN supabase stop
-    RUN docker ps --filter name=transitions --filter status=running -aq | xargs docker stop | xargs docker rm | exit 0
+    RUN docker ps --filter name=_tet --filter status=running -aq | xargs docker stop | xargs docker rm | exit 0
 
 stats:
     LOCALLY
