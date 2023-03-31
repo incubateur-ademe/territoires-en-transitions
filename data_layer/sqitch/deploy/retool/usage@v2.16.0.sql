@@ -3,7 +3,6 @@
 BEGIN;
 
 drop view retool_stats_usages;
-drop materialized view stats.retool_stats_usages;
 create materialized view retool_stats_usages as
 with
     collectivites as (select cc.collectivite_id, cc.code_siren_insee, cc.nom, cc.region_code, cc.departement_code,
