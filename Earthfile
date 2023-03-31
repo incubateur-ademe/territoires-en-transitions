@@ -61,7 +61,7 @@ seed:
     RUN --push sh ./seed/seed.sh
 
 load-contents:
-    FROM alpine/curl
+    FROM curlimages/curl
     ARG --required SERVICE_ROLE_KEY
     ARG --required API_URL
     ARG URL=$(echo $API_URL | sed "s/localhost/host.docker.internal/")
@@ -143,7 +143,7 @@ client-test:
     RUN --push npm run test
 
 curl-test:
-    FROM alpine/curl
+    FROM curlimages/curl
     ARG --required ANON_KEY
     ARG --required API_URL
     ARG URL=$(echo $API_URL | sed "s/localhost/host.docker.internal/")
