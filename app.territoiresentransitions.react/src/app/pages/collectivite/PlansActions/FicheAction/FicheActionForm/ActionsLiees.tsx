@@ -6,8 +6,8 @@ import AutocompleteInputSelect from 'ui/shared/select/AutocompleteInputSelect';
 import {TOption} from 'ui/shared/select/commons';
 import ActionCard from '../../components/ActionCard';
 import {useActionListe} from '../data/options/useActionListe';
-import {TActionRelationInsert} from '../data/types/alias';
 import {useCollectiviteId} from 'core-logic/hooks/params';
+import {TActionRelationInsert} from 'types/alias';
 
 type Props = {
   actions: TActionRelationInsert[] | null;

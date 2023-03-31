@@ -1,5 +1,5 @@
-import {TFicheActionNiveauxPriorite, TFicheActionStatuts} from './types/alias';
-import {Personne} from './types/personne';
+import {TFicheActionNiveauxPriorite, TFicheActionStatuts} from 'types/alias';
+import {Personne} from './types';
 
 export const NB_ITEMS_PER_PAGE = 20;
 

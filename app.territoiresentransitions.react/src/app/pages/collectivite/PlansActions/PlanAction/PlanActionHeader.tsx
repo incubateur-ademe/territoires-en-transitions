@@ -1,7 +1,7 @@
-import {TPlanAction} from './data/types/PlanAction';
+import {PlanAction} from './data/types';
 
 type TPlanActionHeader = {
-  plan: TPlanAction;
+  plan: PlanAction;
   collectivite_id: number;
 };
 

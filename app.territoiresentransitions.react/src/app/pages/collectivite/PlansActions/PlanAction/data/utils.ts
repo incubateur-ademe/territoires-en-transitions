@@ -1,17 +1,17 @@
-import {TPlanActionAxeRow} from './types/alias';
-import {TPlanAction} from './types/PlanAction';
-import {TProfondeurAxe} from './types/profondeurPlan';
+import {TAxeRow} from 'types/alias';
+import {PlanAction} from './types';
+import {TProfondeurAxe} from './types';
 
 /**
  * Fonction récursive qui trouve un axe dans un plan et le retourne.
  * @param plan plan action complet
  * @param axe axe à récupérer
- * @return axe as TPlanAction | null
+ * @return axe as PlanAction | null
  */
 export const getAxeinPlan = (
-  plan: TPlanAction,
-  axe: TPlanActionAxeRow
-): TPlanAction | null => {
+  plan: PlanAction,
+  axe: TAxeRow
+): PlanAction | null => {
   if (plan.axe.id === axe.id) {
     return plan;
   }
@@ -33,11 +33,11 @@ export const getAxeinPlan = (
 /**
  * Fonction récursive qui vérifie si des fiches sont présentes dans un axe et ses sous-axes.
  * Dès que le script rencontre une fiche dans l'arbre, il retourne `true`.
- * @param plan plan ou axe sous forme de TPlanAction
+ * @param plan plan ou axe sous forme de PlanAction
  * @return true si existe, sinon undefined
  */
 export const checkAxeHasFiche = (
-  plan?: TPlanAction | null
+  plan?: PlanAction | null
 ): boolean | undefined => {
   if (plan && plan.fiches && plan.fiches?.length > 0) {
     return true;
@@ -79,12 +79,12 @@ export const checkAxeExistInPlanProfondeur = (
  * Fonction recursive qui supprime un axe et son arborescence d'un plan.
  * @param plan plan d'action complet
  * @param axe_id id de l'axe à supprimer
- * @return plan d'action complet dans l'axe as TPlanAction | undefined
+ * @return plan d'action complet dans l'axe as PlanAction | undefined
  */
 export const removeAxeFromPlan = (
-  plan: TPlanAction,
+  plan: PlanAction,
   axe_id: number
-): TPlanAction | undefined => {
+): PlanAction | undefined => {
   if (plan.axe.id === axe_id) {
     return undefined;
   }

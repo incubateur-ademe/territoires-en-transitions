@@ -7,10 +7,10 @@ import {
   makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
 } from 'app/paths';
-import {FicheActionVueRow} from './types/ficheActionVue';
+import {FicheAction} from './types';
 
 /** Upsert une fiche action pour une collectivité */
-const upsertFicheAction = async (fiche: FicheActionVueRow) => {
+const upsertFicheAction = async (fiche: FicheAction) => {
   let query = supabaseClient
     .from('fiches_action')
     .insert(fiche as any)

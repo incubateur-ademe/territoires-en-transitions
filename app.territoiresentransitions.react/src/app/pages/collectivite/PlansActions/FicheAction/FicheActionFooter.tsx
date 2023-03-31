@@ -1,10 +1,10 @@
 import ScrollTopButton from 'ui/shared/ScrollTopButton';
-import {TFicheAction} from './data/types/alias';
+import {FicheAction} from './data/types';
 import {useDeleteFicheAction} from './data/useDeleteFicheAction';
 import FicheActionSupprimerModal from './FicheActionSupprimerModal';
 
 type TFicheActionFooter = {
-  fiche: TFicheAction;
+  fiche: FicheAction;
   isReadonly: boolean;
 };
 

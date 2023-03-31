@@ -2,11 +2,11 @@ import {makeCollectiviteFichesNonClasseesUrl} from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {BoutonAttention} from 'ui/BoutonAttention';
 import ScrollTopButton from 'ui/shared/ScrollTopButton';
-import {TPlanAction} from './data/types/PlanAction';
+import {PlanAction} from './data/types';
 import SupprimerAxeModal from './SupprimerAxeModal';
 
 type TPlanActionFooter = {
-  plan: TPlanAction;
+  plan: PlanAction;
   isReadonly: boolean;
 };
 

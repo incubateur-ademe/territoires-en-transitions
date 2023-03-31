@@ -1,12 +1,10 @@
 import {useMutation, useQueryClient} from 'react-query';
 
 import {supabaseClient} from 'core-logic/api/supabase';
-import {FicheActionVueRow} from './types/ficheActionVue';
-import {TProfondeurAxe} from '../../PlanAction/data/types/profondeurPlan';
-import {TPlanActionAxeInsert} from '../../PlanAction/data/types/alias';
+import {FicheAction} from './types';
+import {TProfondeurAxe} from '../../PlanAction/data/types';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-// import {useHistory} from 'react-router-dom';
-// import {makeCollectivitePlanActionFicheUrl} from 'app/paths';
+import {TAxeInsert} from 'types/alias';
 
 type Args = {
   planAction_id: number;
@@ -16,7 +14,6 @@ type Args = {
 
 export const useAddFicheToAxe = () => {
   const queryClient = useQueryClient();
-  // const history = useHistory();
   const collectivite_id = useCollectiviteId();
 
   return useMutation(
@@ -35,12 +32,12 @@ export const useAddFicheToAxe = () => {
         await queryClient.cancelQueries({queryKey: ficheActionKey});
 
         // Snapshot the previous value
-        const previousAction: {fiche: FicheActionVueRow} | undefined =
+        const previousAction: {fiche: FicheAction} | undefined =
           queryClient.getQueryData(ficheActionKey);
 
         // Optimistically update to the new value
         queryClient.setQueryData(ficheActionKey, (old: any) => {
-          const formatedNewAxe: TPlanActionAxeInsert = {
+          const formatedNewAxe: TAxeInsert = {
             collectivite_id: collectivite_id!,
             id: args.axe.axe.id,
             nom: args.axe.axe.nom,
@@ -67,13 +64,7 @@ export const useAddFicheToAxe = () => {
             context?.previousAction
           );
         }
-        // history.push(
-        //   makeCollectivitePlanActionFicheUrl({
-        //     collectiviteId: collectivite_id!,
-        //     planActionUid: planAction_id.toString(),
-        //     ficheUid: fiche_id.toString(),
-        //   })
-        // );
+
         queryClient.invalidateQueries(['fiche_action', fiche_id.toString()]);
         queryClient.invalidateQueries(['plans_actions', collectivite_id]);
       },

@@ -2,7 +2,7 @@ import {useQuery} from 'react-query';
 
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {TProfondeurPlan} from './types/profondeurPlan';
+import {TProfondeurPlan} from './types';
 
 type TFetchedData = {
   plans: TProfondeurPlan[];

@@ -1,9 +1,9 @@
 import {BoutonAttention} from 'ui/BoutonAttention';
 import Modal from 'ui/shared/floating-ui/Modal';
-import {TFicheAction} from './data/types/alias';
+import {FicheAction} from './data/types';
 
 type Props = {
-  fiche: TFicheAction;
+  fiche: FicheAction;
   onDelete: () => void;
 };
 

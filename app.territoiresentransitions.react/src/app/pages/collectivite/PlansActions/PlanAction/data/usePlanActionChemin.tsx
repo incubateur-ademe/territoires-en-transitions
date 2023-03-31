@@ -1,9 +1,9 @@
 import {useQuery} from 'react-query';
 
 import {supabaseClient} from 'core-logic/api/supabase';
-import {TAxeRow} from '../../FicheAction/data/types/alias';
 import {TFilArianeLink} from 'ui/shared/FilAriane';
 import {makeCollectivitePlanActionUrl} from 'app/paths';
+import {TAxeRow} from 'types/alias';
 
 type FilArianeArgs = {
   collectiviteId: number;

@@ -1,7 +1,7 @@
 import {useQuery} from 'react-query';
 
 import {supabaseClient} from 'core-logic/api/supabase';
-import {TThematiqueRow} from '../types/alias';
+import {TThematiqueRow} from 'types/alias';
 
 type TFetchedData = TThematiqueRow[];
 

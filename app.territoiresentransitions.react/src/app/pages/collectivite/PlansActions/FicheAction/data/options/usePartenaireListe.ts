@@ -1,8 +1,8 @@
 import {useQuery} from 'react-query';
 
 import {supabaseClient} from 'core-logic/api/supabase';
-import {TPartenaireRow} from '../types/alias';
 import {useCollectiviteId} from 'core-logic/hooks/params';
+import {TPartenaireRow} from 'types/alias';
 
 type TFetchedData = TPartenaireRow[];
 

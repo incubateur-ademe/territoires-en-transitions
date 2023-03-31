@@ -1,10 +1,10 @@
 import {useQuery} from 'react-query';
 
 import {supabaseClient} from 'core-logic/api/supabase';
-import {TFicheAction} from './types/alias';
+import {FicheAction} from './types';
 
 type TFetchedData = {
-  fiches: TFicheAction[];
+  fiches: FicheAction[];
 };
 
 const fetchFichesNonClassees = async (
@@ -22,7 +22,7 @@ const fetchFichesNonClassees = async (
     throw new Error(error.message);
   }
 
-  return {fiches: (data as TFicheAction[]) || []};
+  return {fiches: (data as FicheAction[]) || []};
 };
 
 export const useFichesNonClasseesListe = (collectivite_id: number) => {

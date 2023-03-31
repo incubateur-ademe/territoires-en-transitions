@@ -1,10 +1,10 @@
 import {useQuery} from 'react-query';
 
 import {supabaseClient} from 'core-logic/api/supabase';
-import {TPlanActionAxeRow} from './types/alias';
+import {TAxeRow} from 'types/alias';
 
 type TFetchedData = {
-  plans: TPlanActionAxeRow[];
+  plans: TAxeRow[];
 };
 
 const fetchPlansActionsListe = async (
@@ -22,7 +22,7 @@ const fetchPlansActionsListe = async (
     throw new Error(error.message);
   }
 
-  return {plans: (data as TPlanActionAxeRow[]) || []};
+  return {plans: (data as TAxeRow[]) || []};
 };
 
 /** Récupère uniquement les axes racines des plans d'action.

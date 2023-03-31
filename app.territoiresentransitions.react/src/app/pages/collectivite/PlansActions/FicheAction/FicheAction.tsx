@@ -4,13 +4,13 @@ import FicheActionFooter from './FicheActionFooter';
 
 import {useParams} from 'react-router-dom';
 import {useFicheAction} from './data/useFicheAction';
-import {FicheActionVueRow} from './data/types/ficheActionVue';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import HeaderTitle from '../components/HeaderTitle';
 import {useEditFicheAction} from './data/useUpsertFicheAction';
+import {FicheAction as FicheActionType} from './data/types';
 
 type FicheActionProps = {
-  fiche: FicheActionVueRow;
+  fiche: FicheActionType;
 };
 
 export const FicheAction = ({fiche}: FicheActionProps) => {

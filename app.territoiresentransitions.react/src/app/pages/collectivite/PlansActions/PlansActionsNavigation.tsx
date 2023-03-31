@@ -7,7 +7,7 @@ import {usePlansActionsListe} from './PlanAction/data/usePlansActionsListe';
 import {useCreatePlanAction} from './PlanAction/data/useUpsertAxe';
 import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import SideNav, {TSideNavLink} from 'ui/shared/SideNav';
-import {TPlanActionAxeRow} from './PlanAction/data/types/alias';
+import {TAxeRow} from 'types/alias';
 
 type Props = {
   collectivite: CurrentCollectivite;
@@ -20,7 +20,7 @@ const PlansActionsNavigation = ({collectivite}: Props) => {
 
   const {mutate: createPlanAction} = useCreatePlanAction();
 
-  const generateLinks = (plans?: TPlanActionAxeRow[]) => {
+  const generateLinks = (plans?: TAxeRow[]) => {
     const plansLinks: TSideNavLink[] = plans
       ? plans.map(plan => ({
           link: makeCollectivitePlanActionUrl({

@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import {TFicheActionStatuts} from '../data/types/alias';
+import {TFicheActionStatuts} from 'types/alias';
 
 const statusToColor: Record<TFicheActionStatuts, string> = {
   'À venir': 'text-blue-600 bg-blue-100',

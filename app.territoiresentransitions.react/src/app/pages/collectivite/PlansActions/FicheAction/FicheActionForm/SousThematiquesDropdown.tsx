@@ -2,7 +2,7 @@ import {useEffect} from 'react';
 import {DSFRbuttonClassname, TOption} from 'ui/shared/select/commons';
 import MultiSelectTagsDropdown from 'ui/shared/select/MultiSelectTagsDropdown';
 import {useSousThematiqueListe} from '../data/options/useSousThematiqueListe';
-import {TSousThematiqueRow} from '../data/types/alias';
+import {TSousThematiqueRow} from 'types/alias';
 
 type Props = {
   thematiques: string[];

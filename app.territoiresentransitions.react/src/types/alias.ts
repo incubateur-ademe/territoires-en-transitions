@@ -1,6 +1,5 @@
 import {Database} from 'types/database.types';
 
-// export type TFicheAction = Database['public']['Tables']['fiche_action']['Row'];
 export type TFicheAction = Database['public']['Views']['fiches_action']['Row'];
 export type TFicheActionInsert =
   Database['public']['Tables']['fiche_action']['Insert'];
@@ -9,6 +8,13 @@ export type TFicheActionUpdate =
 
 export type TAxeRow = Database['public']['Tables']['axe']['Row'];
 export type TAxeInsert = Database['public']['Tables']['axe']['Insert'];
+export type TAxeUpdate = Database['public']['Tables']['axe']['Update'];
+
+export type TPlanActionChemin =
+  Database['public']['Views']['plan_action_chemin']['Row'];
+
+export type TPlanActionProfondeur =
+  Database['public']['Views']['plan_action_profondeur']['Row'];
 
 export type TThematiqueRow = Database['public']['Tables']['thematique']['Row'];
 export type TThematiqueInsert =
@@ -39,10 +45,26 @@ export type TPartenaireRow =
 export type TPartenaireInsert =
   Database['public']['Tables']['partenaire_tag']['Insert'];
 
-export type TFinanceurRow =
+export type TFinanceurTagRow =
   Database['public']['Tables']['financeur_tag']['Row'];
-export type TFinanceurInsert =
+export type TFinanceurTagInsert =
   Database['public']['Tables']['financeur_tag']['Insert'];
+
+export type TAnnexeRow = Database['public']['Tables']['annexe']['Row'];
+export type TAnnexeInsert = Database['public']['Tables']['annexe']['Insert'];
+
+export type TActionRow = Database['public']['Tables']['action_relation']['Row'];
+export type TActionInsert =
+  Database['public']['Tables']['action_relation']['Insert'];
+
+export type TPersonneTagInsert =
+  Database['public']['Tables']['personne_tag']['Insert'];
+
+export type TPersonne = Database['public']['CompositeTypes']['personne'];
+export type TIndicateur =
+  Database['public']['CompositeTypes']['indicateur_generique'];
+export type TFinanceurMontant =
+  Database['public']['CompositeTypes']['financeur_montant'];
 
 export type TFicheActionCibles =
   Database['public']['Enums']['fiche_action_cibles'];

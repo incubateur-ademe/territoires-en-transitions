@@ -3,37 +3,9 @@ import {
   TFicheActionNiveauxPriorite,
   TFicheActionResultatsAttendus,
   TFicheActionStatuts,
-} from '../types/alias';
+} from 'types/alias';
 
-// type Options<T extends string> = {value: T; label: T}[];
 type Options<T extends string> = {value: T; label: T}[];
-
-// export const ficheActionThematiquesOptions: Options<TFicheActionThematiques> = [
-//   {value: 'Agriculture et alimentation', label: 'Agriculture et alimentation'},
-//   {value: 'Bâtiments', label: 'Bâtiments'},
-//   {value: 'Déchets', label: 'Déchets'},
-//   {value: 'Développement économique', label: 'Développement économique'},
-//   {value: 'Eau', label: 'Eau'},
-//   {
-//     value: 'Forêts, biodiversité et espaces verts',
-//     label: 'Forêts, biodiversité et espaces verts',
-//   },
-//   {
-//     value: 'Formation, sensibilisation, communication',
-//     label: 'Formation, sensibilisation, communication',
-//   },
-//   {
-//     value: 'Gestion, production et distribution de l’énergie',
-//     label: 'Gestion, production et distribution de l’énergie',
-//   },
-//   {value: 'Mobilité', label: 'Mobilité'},
-//   {value: 'Organisation interne', label: 'Organisation interne'},
-//   {value: 'Partenariats et coopération', label: 'Partenariats et coopération'},
-//   {value: 'Précarité énergétique', label: 'Précarité énergétique'},
-//   {value: 'Stratégie', label: 'Stratégie'},
-//   {value: 'Tourisme', label: 'Tourisme'},
-//   {value: 'Urbanisme et aménagement', label: 'Urbanisme et aménagement'},
-// ];
 
 export const ficheActionResultatsAttendusOptions: Options<TFicheActionResultatsAttendus> =
   [

@@ -2,9 +2,9 @@ import {useQuery} from 'react-query';
 
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {IndicateurGlobal} from '../types/indicateurGlobal';
+import {Indicateur} from '../types';
 
-type TFetchedData = IndicateurGlobal[];
+type TFetchedData = Indicateur[];
 
 const fetchIndicateurListe = async (
   collectivite_id: number
@@ -21,7 +21,7 @@ const fetchIndicateurListe = async (
     throw new Error(error.message);
   }
 
-  return data;
+  return data as Indicateur[];
 };
 
 export const useIndicateurListe = () => {

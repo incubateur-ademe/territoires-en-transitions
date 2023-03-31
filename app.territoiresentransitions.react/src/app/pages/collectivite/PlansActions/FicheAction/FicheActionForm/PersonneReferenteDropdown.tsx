@@ -2,7 +2,7 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import {TOption} from 'ui/shared/select/commons';
 import SelectCreateTagsDropdown from 'ui/shared/select/SelectCreateTagsDropdown';
 import {usePersonneReferenteListe} from '../data/options/usePersonneReferenteListe';
-import {Personne} from '../data/types/personne';
+import {Personne} from '../data/types';
 import {formatNewTag, getPersonneId} from '../data/utils';
 
 type Props = {
