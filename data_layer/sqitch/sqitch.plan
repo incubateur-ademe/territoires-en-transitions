@@ -290,3 +290,4 @@ plan_action/plan_action [plan_action/plan_action@v2.14] 2023-03-29T08:39:34Z Ama
 
 retool/usage [retool/usage@v2.16.0] 2023-03-31T09:05:55Z Florian <florian@derfurth.com> # Déplace la vue matérialisée dans le schéma stats
 cron/refresh_retool_stats_usages [cron/refresh_retool_stats_usages@v2.16.0] 2023-03-31T09:11:02Z Florian <florian@derfurth.com> # Met à jour la fonction de rafraichissement.
+@v2.16.1 2023-03-31T09:34:42Z Florian <florian@derfurth.com> # Répare la vue stats d'usage pour l'utiliser dans retool.
