@@ -63,7 +63,7 @@ const FiltersPlanAction = ({
       <TagFilters
         name="plans_actions"
         options={filters}
-        className="py-10"
+        className="pb-10"
         onChange={handleChangeFilter}
       />
     ) : (
