@@ -2,7 +2,7 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import {TOption} from 'ui/shared/select/commons';
 import SelectCreateTagsDropdown from 'ui/shared/select/SelectCreateTagsDropdown';
 import {usePartenaireListe} from '../data/options/usePartenaireListe';
-import {TPartenaireInsert} from '../data/types/alias';
+import {TPartenaireInsert} from 'types/alias';
 import {formatNewTag} from '../data/utils';
 
 type Props = {

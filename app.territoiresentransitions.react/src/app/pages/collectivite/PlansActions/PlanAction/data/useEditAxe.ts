@@ -2,9 +2,9 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {useMutation, useQueryClient} from 'react-query';
 
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {TPlanActionAxeUpdate} from './types/alias';
+import {TAxeUpdate} from 'types/alias';
 
-const updateAxe = async (axe: TPlanActionAxeUpdate) => {
+const updateAxe = async (axe: TAxeUpdate) => {
   let query = supabaseClient.from('axe').update(axe).eq('id', axe.id);
 
   const {error, data} = await query;

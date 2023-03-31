@@ -1,13 +1,13 @@
+import {TAxeRow} from 'types/alias';
 import Modal from 'ui/shared/floating-ui/Modal';
-import {TPlanActionAxeRow} from './data/types/alias';
-import {TPlanAction} from './data/types/PlanAction';
+import {PlanAction} from './data/types';
 import {useDeleteAxe} from './data/useDeleteAxe';
 import {checkAxeHasFiche, getAxeinPlan} from './data/utils';
 
 type Props = {
   children: JSX.Element;
-  plan: TPlanAction;
-  axe: TPlanActionAxeRow;
+  plan: PlanAction;
+  axe: TAxeRow;
   redirectURL?: string;
 };
 

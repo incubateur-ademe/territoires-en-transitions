@@ -1,8 +1,8 @@
 import {useQuery} from 'react-query';
 
 import {supabaseClient} from 'core-logic/api/supabase';
-import {TFicheActionStructureRow} from '../types/alias';
 import {useCollectiviteId} from 'core-logic/hooks/params';
+import {TFicheActionStructureRow} from 'types/alias';
 
 type TFetchedData = TFicheActionStructureRow[];
 

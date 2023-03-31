@@ -3,12 +3,12 @@ import {
   generateFilArianeLinks,
   usePlanActionChemin,
 } from '../../PlanAction/data/usePlanActionChemin';
-import {TAxeRow} from '../data/types/alias';
-import {FicheActionVueRow} from '../data/types/ficheActionVue';
+import {TAxeRow} from 'types/alias';
+import {FicheAction} from '../data/types';
 import {useRemoveFicheFromAxe} from '../data/useRemoveFicheFromAxe';
 
 type Props = {
-  fiche: FicheActionVueRow;
+  fiche: FicheAction;
   axe_id: number;
 };
 

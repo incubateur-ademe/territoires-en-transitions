@@ -5,16 +5,16 @@ import FicheActionCard from '../FicheAction/FicheActionCard';
 import {AxeActions} from './AxeActions';
 
 import {makeCollectivitePlanActionFicheUrl} from 'app/paths';
-import {TFicheAction} from '../FicheAction/data/types/alias';
-import {TPlanAction} from './data/types/PlanAction';
+import {PlanAction} from './data/types';
 import {useEditAxe} from './data/useEditAxe';
 import TextareaControlled from 'ui/shared/form/TextareaControlled';
 import SupprimerAxeModal from './SupprimerAxeModal';
+import {FicheAction} from '../FicheAction/data/types';
 
 type Props = {
-  planActionGlobal: TPlanAction;
-  axe: TPlanAction;
-  displayAxe: (axe: TPlanAction) => void;
+  planActionGlobal: PlanAction;
+  axe: PlanAction;
+  displayAxe: (axe: PlanAction) => void;
   isReadonly: boolean;
 };
 
@@ -106,7 +106,7 @@ const PlanActionAxe = ({
           )}
           {axe.fiches && (
             <div className="grid grid-cols-2 gap-4">
-              {axe.fiches.map((fiche: TFicheAction) => (
+              {axe.fiches.map((fiche: FicheAction) => (
                 <FicheActionCard
                   key={fiche.id}
                   ficheAction={fiche}
@@ -121,7 +121,7 @@ const PlanActionAxe = ({
           )}
           <div>
             {axe.enfants &&
-              axe.enfants.map((axe: TPlanAction) => displayAxe(axe))}
+              axe.enfants.map((axe: PlanAction) => displayAxe(axe))}
           </div>
         </div>
       )}

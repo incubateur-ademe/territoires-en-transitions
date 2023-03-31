@@ -15,7 +15,7 @@ import {
   ficheActionResultatsAttendusOptions,
   ficheActionStatutOptions,
 } from '../data/options/listesStatiques';
-import {FicheActionVueRow} from '../data/types/ficheActionVue';
+import {FicheAction} from '../data/types';
 import {useEditFicheAction} from '../data/useUpsertFicheAction';
 import FicheActionBadgeStatut from './FicheActionBadgeStatut';
 import FicheActionFormBudgetInput from './FicheActionFormBudgetInput';
@@ -28,7 +28,7 @@ import PersonneReferenteDropdown from './PersonneReferenteDropdown';
 import IndicateursDropdown from './IndicateursDropdown';
 import ThematiquesDropdown from './ThematiquesDropdown';
 import SousThematiquesDropdown from './SousThematiquesDropdown';
-import {TSousThematiqueRow, TThematiqueRow} from '../data/types/alias';
+import {TSousThematiqueRow, TThematiqueRow} from 'types/alias';
 import {DSFRbuttonClassname} from 'ui/shared/select/commons';
 import FicheActionRangerModal from '../FicheActionRangerModal/FicheActionRangerModal';
 import {usePlanActionProfondeur} from '../../PlanAction/data/usePlanActionProfondeur';
@@ -38,7 +38,7 @@ import PictoLeaf from 'ui/pictogrammes/PictoLeaf';
 import ActionsLiees from './ActionsLiees';
 
 type TFicheActionForm = {
-  fiche: FicheActionVueRow;
+  fiche: FicheAction;
   isReadonly: boolean;
 };
 

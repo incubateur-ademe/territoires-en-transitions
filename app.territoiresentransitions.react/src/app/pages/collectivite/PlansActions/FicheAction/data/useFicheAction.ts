@@ -1,10 +1,10 @@
 import {useQuery} from 'react-query';
 
 import {supabaseClient} from 'core-logic/api/supabase';
-import {FicheActionVueRow} from './types/ficheActionVue';
+import {FicheAction} from './types';
 
 type TFetchedData = {
-  fiche: FicheActionVueRow;
+  fiche: FicheAction;
 };
 
 const fetchFicheAction = async (fiche_id: string): Promise<TFetchedData> => {
@@ -18,7 +18,7 @@ const fetchFicheAction = async (fiche_id: string): Promise<TFetchedData> => {
     throw new Error(error.message);
   }
 
-  return {fiche: data[0] as FicheActionVueRow};
+  return {fiche: data[0] as FicheAction};
 };
 
 export const useFicheAction = (fiche_id: string) => {

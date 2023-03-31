@@ -1,15 +1,14 @@
 import ActionCard from '../components/ActionCard';
+import {FicheAction} from './data/types';
 import FicheActionBadgeStatut from './FicheActionForm/FicheActionBadgeStatut';
 
-import {TFicheAction} from './data/types/alias';
-
-type TFicheActionCard = {
+type Props = {
   link: string;
-  ficheAction: TFicheAction;
+  ficheAction: FicheAction;
 };
 
-const FicheActionCard = ({ficheAction, link}: TFicheActionCard) => {
-  const generateDetails = (ficheAction: TFicheAction) => {
+const FicheActionCard = ({ficheAction, link}: Props) => {
+  const generateDetails = (ficheAction: FicheAction) => {
     let details = '';
     if (!ficheAction.axes) {
       details = details + 'Fiche non classée';

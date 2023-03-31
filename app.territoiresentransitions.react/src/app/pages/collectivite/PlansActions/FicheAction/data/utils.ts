@@ -1,4 +1,4 @@
-import {Personne} from './types/personne';
+import {Personne} from './types';
 
 /**
  * Formate un nouveau tag qui nécessite un type minimum collectivite_id, nom

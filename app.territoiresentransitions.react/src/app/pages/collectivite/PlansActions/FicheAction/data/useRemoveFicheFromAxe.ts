@@ -1,7 +1,7 @@
 import {useMutation, useQueryClient} from 'react-query';
 
 import {supabaseClient} from 'core-logic/api/supabase';
-import {FicheActionVueRow} from './types/ficheActionVue';
+import {FicheAction} from './types';
 
 type Args = {
   axe_id: number;
@@ -25,7 +25,7 @@ export const useRemoveFicheFromAxe = () => {
 
         await queryClient.cancelQueries({queryKey: ficheActionKey});
 
-        const previousAction: {fiche: FicheActionVueRow} | undefined =
+        const previousAction: {fiche: FicheAction} | undefined =
           queryClient.getQueryData(ficheActionKey);
 
         queryClient.setQueryData(ficheActionKey, (old: any) => {

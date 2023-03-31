@@ -8,6 +8,9 @@ export type Json =
 
 export interface Database {
   labellisation: {
+    CompositeTypes: {
+      [_ in never]: never;
+    };
     Enums: {
       etoile: '1' | '2' | '3' | '4' | '5';
       sujet_demande: 'labellisation' | 'labellisation_cot' | 'cot';
@@ -18,46 +21,117 @@ export interface Database {
           collectivite_id: number;
           referentiel: Database['public']['Enums']['referentiel'];
         };
-        Returns: unknown;
+        Returns: {
+          collectivite_id: number;
+          date_debut: string | null;
+          date_fin: string | null;
+          demande_id: number | null;
+          id: number;
+          referentiel: Database['public']['Enums']['referentiel'];
+          valide: boolean;
+        };
       };
       audit_evaluation_payload: {
-        Args: {audit: unknown};
-        Returns: Record<string, unknown>[];
+        Args: {
+          audit: unknown;
+        };
+        Returns: Record<string, unknown>;
       };
       critere_action: {
-        Args: {collectivite_id: number};
-        Returns: Record<string, unknown>[];
+        Args: {
+          collectivite_id: number;
+        };
+        Returns: {
+          action_id: unknown;
+          atteint: boolean;
+          etoiles: Database['labellisation']['Enums']['etoile'];
+          formulation: string;
+          min_score_programme: number;
+          min_score_realise: number;
+          prio: number;
+          referentiel: Database['public']['Enums']['referentiel'];
+          score_programme: number;
+          score_realise: number;
+        }[];
       };
       critere_fichier: {
-        Args: {collectivite_id: number};
-        Returns: Record<string, unknown>[];
+        Args: {
+          collectivite_id: number;
+        };
+        Returns: {
+          atteint: boolean;
+          preuve_nombre: number;
+          referentiel: Database['public']['Enums']['referentiel'];
+        }[];
       };
       critere_score_global: {
-        Args: {collectivite_id: number};
-        Returns: Record<string, unknown>[];
+        Args: {
+          collectivite_id: number;
+        };
+        Returns: {
+          atteint: boolean;
+          etoile_objectif: Database['labellisation']['Enums']['etoile'];
+          referentiel: Database['public']['Enums']['referentiel'];
+          score_a_realiser: number;
+          score_fait: number;
+        }[];
       };
       current_audit: {
-        Args: {col: number; ref: Database['public']['Enums']['referentiel']};
-        Returns: unknown;
+        Args: {
+          col: number;
+          ref: Database['public']['Enums']['referentiel'];
+        };
+        Returns: {
+          collectivite_id: number;
+          date_debut: string | null;
+          date_fin: string | null;
+          demande_id: number | null;
+          id: number;
+          referentiel: Database['public']['Enums']['referentiel'];
+          valide: boolean;
+        };
       };
       etoiles: {
-        Args: {collectivite_id: number};
-        Returns: Record<string, unknown>[];
+        Args: {
+          collectivite_id: number;
+        };
+        Returns: {
+          etoile_labellise: Database['labellisation']['Enums']['etoile'];
+          etoile_objectif: Database['labellisation']['Enums']['etoile'];
+          etoile_score_possible: Database['labellisation']['Enums']['etoile'];
+          prochaine_etoile_labellisation: Database['labellisation']['Enums']['etoile'];
+          referentiel: Database['public']['Enums']['referentiel'];
+        }[];
       };
       evaluate_audit_statuts: {
-        Args: {audit_id: number; scores_table: string};
+        Args: {
+          audit_id: number;
+          scores_table: string;
+        };
         Returns: number;
       };
       pre_audit_service_statuts: {
-        Args: {audit_id: number};
+        Args: {
+          audit_id: number;
+        };
         Returns: Json;
       };
       referentiel_score: {
-        Args: {collectivite_id: number};
-        Returns: Record<string, unknown>[];
+        Args: {
+          collectivite_id: number;
+        };
+        Returns: {
+          complet: boolean;
+          completude: number;
+          referentiel: Database['public']['Enums']['referentiel'];
+          score_fait: number;
+          score_programme: number;
+        }[];
       };
       upsert_preuves_reglementaire: {
-        Args: {preuves: Json};
+        Args: {
+          preuves: Json;
+        };
         Returns: undefined;
       };
     };
@@ -261,6 +335,43 @@ export interface Database {
     };
   };
   public: {
+    CompositeTypes: {
+      financeur_montant: {
+        financeur_tag: unknown;
+        id: number;
+        montant_ttc: number;
+      };
+      indicateur_generique: {
+        description: string;
+        indicateur_id: unknown;
+        indicateur_personnalise_id: number;
+        nom: string;
+        unite: string;
+      };
+      personne: {
+        collectivite_id: number;
+        nom: string;
+        tag_id: number;
+        user_id: string;
+      };
+      tabular_score: {
+        action_id: unknown;
+        avancement: Database['public']['Enums']['avancement'];
+        concerne: boolean;
+        desactive: boolean;
+        points_max_personnalises: number;
+        points_max_referentiel: number;
+        points_programmes: number;
+        points_realises: number;
+        points_restants: number;
+        referentiel: Database['public']['Enums']['referentiel'];
+        score_non_renseigne: number;
+        score_pas_fait: number;
+        score_programme: number;
+        score_realise: number;
+        score_realise_plus_programme: number;
+      };
+    };
     Enums: {
       action_categorie: 'bases' | 'mise en œuvre' | 'effets';
       action_discussion_statut: 'ouvert' | 'ferme';
@@ -344,8 +455,8 @@ export interface Database {
         | 'complementaire'
         | 'reglementaire'
         | 'labellisation'
-        | 'rapport'
-        | 'audit';
+        | 'audit'
+        | 'rapport';
       question_type: 'choix' | 'binaire' | 'proportion';
       referentiel: 'eci' | 'cae';
       regle_type: 'score' | 'desactivation' | 'reduction';
@@ -414,51 +525,103 @@ export interface Database {
     Functions: {
       accepter_cgu: {
         Args: Record<PropertyKey, never>;
-        Returns: unknown;
+        Returns: {
+          cgu_acceptees_le: string | null;
+          created_at: string;
+          deleted: boolean;
+          email: string;
+          limited: boolean;
+          modified_at: string;
+          nom: string;
+          prenom: string;
+          telephone: string | null;
+          user_id: string;
+        };
       };
       action_contexte: {
-        Args: {id: unknown};
-        Returns: Record<string, unknown>[];
+        Args: {
+          id: unknown;
+        };
+        Returns: Record<string, unknown>;
       };
       action_down_to_tache: {
         Args: {
           identifiant: string;
           referentiel: Database['public']['Enums']['referentiel'];
         };
-        Returns: unknown;
+        Returns: {
+          children: unknown[] | null;
+          depth: number | null;
+          description: string | null;
+          have_contexte: boolean | null;
+          have_exemples: boolean | null;
+          have_perimetre_evaluation: boolean | null;
+          have_preuve: boolean | null;
+          have_questions: boolean | null;
+          have_reduction_potentiel: boolean | null;
+          have_ressources: boolean | null;
+          id: string | null;
+          identifiant: string | null;
+          nom: string | null;
+          phase: Database['public']['Enums']['action_categorie'] | null;
+          referentiel: Database['public']['Enums']['referentiel'] | null;
+          type: Database['public']['Enums']['action_type'] | null;
+        }[];
       };
       action_exemples: {
-        Args: {id: unknown};
-        Returns: Record<string, unknown>[];
+        Args: {
+          id: unknown;
+        };
+        Returns: Record<string, unknown>;
       };
       action_perimetre_evaluation: {
-        Args: {id: unknown};
-        Returns: Record<string, unknown>[];
+        Args: {
+          id: unknown;
+        };
+        Returns: Record<string, unknown>;
       };
       action_preuve: {
-        Args: {id: unknown};
-        Returns: Record<string, unknown>[];
+        Args: {
+          id: unknown;
+        };
+        Returns: Record<string, unknown>;
       };
       action_reduction_potentiel: {
-        Args: {id: unknown};
-        Returns: Record<string, unknown>[];
+        Args: {
+          id: unknown;
+        };
+        Returns: Record<string, unknown>;
       };
       action_ressources: {
-        Args: {id: unknown};
-        Returns: Record<string, unknown>[];
+        Args: {
+          id: unknown;
+        };
+        Returns: Record<string, unknown>;
       };
       add_bibliotheque_fichier: {
-        Args: {collectivite_id: number; filename: string; hash: string};
-        Returns: unknown;
+        Args: {
+          collectivite_id: number;
+          filename: string;
+          hash: string;
+        };
+        Returns: {
+          bucket_id: string | null;
+          collectivite_id: number | null;
+          file_id: string | null;
+          filename: string | null;
+          filesize: number | null;
+          hash: string | null;
+          id: number | null;
+        };
       };
       add_compression_policy: {
         Args: {
           compress_after: unknown;
           hypertable: unknown;
-          if_not_exists: boolean;
-          initial_start: string;
-          schedule_interval: unknown;
-          timezone: string;
+          if_not_exists?: boolean;
+          initial_start?: string;
+          schedule_interval?: unknown;
+          timezone?: string;
         };
         Returns: number;
       };
@@ -466,68 +629,82 @@ export interface Database {
         Args: {
           continuous_aggregate: unknown;
           end_offset: unknown;
-          if_not_exists: boolean;
-          initial_start: string;
+          if_not_exists?: boolean;
+          initial_start?: string;
           schedule_interval: unknown;
           start_offset: unknown;
-          timezone: string;
+          timezone?: string;
         };
         Returns: number;
       };
       add_data_node: {
         Args: {
-          bootstrap: boolean;
-          database: unknown;
+          bootstrap?: boolean;
+          database?: unknown;
           host: string;
-          if_not_exists: boolean;
+          if_not_exists?: boolean;
           node_name: unknown;
-          password: string;
-          port: number;
+          password?: string;
+          port?: number;
         };
-        Returns: Record<string, unknown>[];
+        Returns: {
+          database: unknown;
+          database_created: boolean;
+          extension_created: boolean;
+          host: string;
+          node_created: boolean;
+          node_name: unknown;
+          port: number;
+        }[];
       };
       add_dimension: {
         Args: {
-          chunk_time_interval: unknown;
+          chunk_time_interval?: unknown;
           column_name: unknown;
           hypertable: unknown;
-          if_not_exists: boolean;
-          number_partitions: number;
-          partitioning_func: unknown;
+          if_not_exists?: boolean;
+          number_partitions?: number;
+          partitioning_func?: unknown;
         };
-        Returns: Record<string, unknown>[];
+        Returns: {
+          column_name: unknown;
+          created: boolean;
+          dimension_id: number;
+          schema_name: unknown;
+          table_name: unknown;
+        }[];
       };
       add_job: {
         Args: {
-          check_config: unknown;
-          config: Json;
-          fixed_schedule: boolean;
-          initial_start: string;
+          check_config?: unknown;
+          config?: Json;
+          fixed_schedule?: boolean;
+          initial_start?: string;
           proc: unknown;
           schedule_interval: unknown;
-          scheduled: boolean;
-          timezone: string;
+          scheduled?: boolean;
+          timezone?: string;
         };
         Returns: number;
       };
       add_reorder_policy: {
         Args: {
           hypertable: unknown;
-          if_not_exists: boolean;
+          if_not_exists?: boolean;
           index_name: unknown;
-          initial_start: string;
-          timezone: string;
+          initial_start?: string;
+          timezone?: string;
         };
         Returns: number;
       };
       add_retention_policy: {
         Args: {
           drop_after: unknown;
-          if_not_exists: boolean;
-          initial_start: string;
+          if_not_exists?: boolean;
+          initial_start?: string;
           relation: unknown;
-          schedule_interval: unknown;
-          timezone: string;
+          schedule_interval?: unknown;
+          timezone?: string;
         };
         Returns: number;
       };
@@ -540,68 +717,143 @@ export interface Database {
         Returns: Json;
       };
       ajouter_action: {
-        Args: {action_id: unknown; fiche_id: number};
+        Args: {
+          action_id: unknown;
+          fiche_id: number;
+        };
         Returns: undefined;
       };
       ajouter_annexe: {
-        Args: {annexe: unknown; fiche_id: number};
-        Returns: unknown;
+        Args: {
+          annexe: unknown;
+          fiche_id: number;
+        };
+        Returns: {
+          collectivite_id: number;
+          commentaire: string;
+          fichier_id: number | null;
+          id: number;
+          lien: Json | null;
+          modified_at: string;
+          modified_by: string;
+          titre: string;
+          url: string | null;
+        };
       };
       ajouter_fiche_action_dans_un_axe: {
-        Args: {axe_id: number; fiche_id: number};
+        Args: {
+          axe_id: number;
+          fiche_id: number;
+        };
         Returns: undefined;
       };
       ajouter_financeur: {
-        Args: {fiche_id: number; financeur: unknown};
-        Returns: unknown;
+        Args: {
+          fiche_id: number;
+          financeur: Database['public']['CompositeTypes']['financeur_montant'];
+        };
+        Returns: Database['public']['CompositeTypes']['financeur_montant'];
       };
       ajouter_indicateur: {
-        Args: {fiche_id: number; indicateur: unknown};
+        Args: {
+          fiche_id: number;
+          indicateur: Database['public']['CompositeTypes']['indicateur_generique'];
+        };
         Returns: undefined;
       };
       ajouter_partenaire: {
-        Args: {fiche_id: number; partenaire: unknown};
-        Returns: unknown;
+        Args: {
+          fiche_id: number;
+          partenaire: unknown;
+        };
+        Returns: {
+          collectivite_id: number;
+          id: number;
+          nom: string;
+        };
       };
       ajouter_pilote: {
-        Args: {fiche_id: number; pilote: unknown};
-        Returns: unknown;
+        Args: {
+          fiche_id: number;
+          pilote: Database['public']['CompositeTypes']['personne'];
+        };
+        Returns: Database['public']['CompositeTypes']['personne'];
       };
       ajouter_referent: {
-        Args: {fiche_id: number; referent: unknown};
-        Returns: unknown;
+        Args: {
+          fiche_id: number;
+          referent: Database['public']['CompositeTypes']['personne'];
+        };
+        Returns: Database['public']['CompositeTypes']['personne'];
       };
       ajouter_service: {
-        Args: {fiche_id: number; service: unknown};
-        Returns: unknown;
+        Args: {
+          fiche_id: number;
+          service: unknown;
+        };
+        Returns: {
+          collectivite_id: number;
+          id: number;
+          nom: string;
+        };
       };
       ajouter_sous_thematique: {
-        Args: {fiche_id: number; thematique_id: number};
+        Args: {
+          fiche_id: number;
+          thematique_id: number;
+        };
         Returns: undefined;
       };
       ajouter_structure: {
-        Args: {fiche_id: number; structure: unknown};
-        Returns: unknown;
+        Args: {
+          fiche_id: number;
+          structure: unknown;
+        };
+        Returns: {
+          collectivite_id: number;
+          id: number;
+          nom: string;
+        };
       };
       ajouter_thematique: {
-        Args: {fiche_id: number; thematique: string};
+        Args: {
+          fiche_id: number;
+          thematique: string;
+        };
         Returns: undefined;
       };
       alter_data_node: {
         Args: {
+          available?: boolean;
+          database?: unknown;
+          host?: string;
+          node_name: unknown;
+          port?: number;
+        };
+        Returns: {
           available: boolean;
           database: unknown;
           host: string;
           node_name: unknown;
           port: number;
-        };
-        Returns: Record<string, unknown>[];
+        }[];
       };
       alter_job: {
         Args: {
-          check_config: unknown;
+          check_config?: unknown;
+          config?: Json;
+          if_exists?: boolean;
+          job_id: number;
+          max_retries?: number;
+          max_runtime?: unknown;
+          next_start?: string;
+          retry_period?: unknown;
+          schedule_interval?: unknown;
+          scheduled?: boolean;
+        };
+        Returns: {
+          check_config: string;
           config: Json;
-          if_exists: boolean;
           job_id: number;
           max_retries: number;
           max_runtime: unknown;
@@ -609,213 +861,333 @@ export interface Database {
           retry_period: unknown;
           schedule_interval: unknown;
           scheduled: boolean;
-        };
-        Returns: Record<string, unknown>[];
+        }[];
       };
       approximate_row_count: {
-        Args: {relation: unknown};
+        Args: {
+          relation: unknown;
+        };
         Returns: number;
       };
       attach_data_node: {
         Args: {
           hypertable: unknown;
-          if_not_attached: boolean;
+          if_not_attached?: boolean;
           node_name: unknown;
-          repartition: boolean;
+          repartition?: boolean;
         };
-        Returns: Record<string, unknown>[];
+        Returns: {
+          hypertable_id: number;
+          node_hypertable_id: number;
+          node_name: unknown;
+        }[];
       };
       attach_tablespace: {
         Args: {
           hypertable: unknown;
-          if_not_attached: boolean;
+          if_not_attached?: boolean;
           tablespace: unknown;
         };
         Returns: undefined;
       };
       business_insert_actions: {
         Args: {
-          computed_points: unknown;
-          definitions: unknown;
-          relations: unknown;
+          computed_points: unknown[];
+          definitions: unknown[];
+          relations: unknown[];
         };
         Returns: undefined;
       };
       business_update_actions: {
-        Args: {computed_points: unknown; definitions: unknown};
+        Args: {
+          computed_points: unknown[];
+          definitions: unknown[];
+        };
         Returns: undefined;
       };
       business_upsert_indicateurs: {
-        Args: {indicateur_actions: unknown; indicateur_definitions: unknown};
+        Args: {
+          indicateur_actions: unknown[];
+          indicateur_definitions: unknown[];
+        };
         Returns: undefined;
       };
       can_read_acces_restreint: {
-        Args: {collectivite_id: number};
+        Args: {
+          collectivite_id: number;
+        };
         Returns: boolean;
       };
       chunk_compression_stats: {
-        Args: {hypertable: unknown};
-        Returns: Record<string, unknown>[];
+        Args: {
+          hypertable: unknown;
+        };
+        Returns: {
+          after_compression_index_bytes: number;
+          after_compression_table_bytes: number;
+          after_compression_toast_bytes: number;
+          after_compression_total_bytes: number;
+          before_compression_index_bytes: number;
+          before_compression_table_bytes: number;
+          before_compression_toast_bytes: number;
+          before_compression_total_bytes: number;
+          chunk_name: unknown;
+          chunk_schema: unknown;
+          compression_status: string;
+          node_name: unknown;
+        }[];
       };
       chunks_detailed_size: {
-        Args: {hypertable: unknown};
-        Returns: Record<string, unknown>[];
+        Args: {
+          hypertable: unknown;
+        };
+        Returns: {
+          chunk_name: unknown;
+          chunk_schema: unknown;
+          index_bytes: number;
+          node_name: unknown;
+          table_bytes: number;
+          toast_bytes: number;
+          total_bytes: number;
+        }[];
       };
       claim_collectivite: {
-        Args: {id: number};
+        Args: {
+          id: number;
+        };
         Returns: Json;
       };
       collectivite_membres: {
-        Args: {id: number};
-        Returns: Record<string, unknown>[];
+        Args: {
+          id: number;
+        };
+        Returns: {
+          champ_intervention: Database['public']['Enums']['referentiel'][];
+          details_fonction: string;
+          email: string;
+          fonction: Database['public']['Enums']['membre_fonction'];
+          niveau_acces: Database['public']['Enums']['niveau_acces'];
+          nom: string;
+          prenom: string;
+          telephone: string;
+          user_id: string;
+        }[];
       };
       compress_chunk: {
-        Args: {if_not_compressed: boolean; uncompressed_chunk: unknown};
+        Args: {
+          if_not_compressed?: boolean;
+          uncompressed_chunk: unknown;
+        };
         Returns: unknown;
       };
       consume_invitation: {
-        Args: {id: string};
+        Args: {
+          id: string;
+        };
         Returns: undefined;
       };
       create_distributed_hypertable: {
         Args: {
-          associated_schema_name: unknown;
-          associated_table_prefix: unknown;
-          chunk_sizing_func: unknown;
-          chunk_target_size: string;
-          chunk_time_interval: unknown;
-          create_default_indexes: boolean;
-          data_nodes: unknown;
-          if_not_exists: boolean;
-          migrate_data: boolean;
-          number_partitions: number;
-          partitioning_column: unknown;
-          partitioning_func: unknown;
+          associated_schema_name?: unknown;
+          associated_table_prefix?: unknown;
+          chunk_sizing_func?: unknown;
+          chunk_target_size?: string;
+          chunk_time_interval?: unknown;
+          create_default_indexes?: boolean;
+          data_nodes?: unknown[];
+          if_not_exists?: boolean;
+          migrate_data?: boolean;
+          number_partitions?: number;
+          partitioning_column?: unknown;
+          partitioning_func?: unknown;
           relation: unknown;
-          replication_factor: number;
+          replication_factor?: number;
           time_column_name: unknown;
-          time_partitioning_func: unknown;
+          time_partitioning_func?: unknown;
         };
-        Returns: Record<string, unknown>[];
+        Returns: {
+          created: boolean;
+          hypertable_id: number;
+          schema_name: unknown;
+          table_name: unknown;
+        }[];
       };
       create_distributed_restore_point: {
-        Args: {name: string};
-        Returns: Record<string, unknown>[];
+        Args: {
+          name: string;
+        };
+        Returns: {
+          node_name: unknown;
+          node_type: string;
+          restore_point: unknown;
+        }[];
       };
       create_hypertable: {
         Args: {
-          associated_schema_name: unknown;
-          associated_table_prefix: unknown;
-          chunk_sizing_func: unknown;
-          chunk_target_size: string;
-          chunk_time_interval: unknown;
-          create_default_indexes: boolean;
-          data_nodes: unknown;
-          distributed: boolean;
-          if_not_exists: boolean;
-          migrate_data: boolean;
-          number_partitions: number;
-          partitioning_column: unknown;
-          partitioning_func: unknown;
+          associated_schema_name?: unknown;
+          associated_table_prefix?: unknown;
+          chunk_sizing_func?: unknown;
+          chunk_target_size?: string;
+          chunk_time_interval?: unknown;
+          create_default_indexes?: boolean;
+          data_nodes?: unknown[];
+          distributed?: boolean;
+          if_not_exists?: boolean;
+          migrate_data?: boolean;
+          number_partitions?: number;
+          partitioning_column?: unknown;
+          partitioning_func?: unknown;
           relation: unknown;
-          replication_factor: number;
+          replication_factor?: number;
           time_column_name: unknown;
-          time_partitioning_func: unknown;
+          time_partitioning_func?: unknown;
         };
-        Returns: Record<string, unknown>[];
+        Returns: {
+          created: boolean;
+          hypertable_id: number;
+          schema_name: unknown;
+          table_name: unknown;
+        }[];
       };
       decompress_chunk: {
-        Args: {if_compressed: boolean; uncompressed_chunk: unknown};
+        Args: {
+          if_compressed?: boolean;
+          uncompressed_chunk: unknown;
+        };
         Returns: unknown;
       };
       delete_axe_all: {
-        Args: {axe_id: number};
+        Args: {
+          axe_id: number;
+        };
         Returns: undefined;
       };
       delete_data_node: {
         Args: {
-          drop_database: boolean;
-          force: boolean;
-          if_exists: boolean;
+          drop_database?: boolean;
+          force?: boolean;
+          if_exists?: boolean;
           node_name: unknown;
-          repartition: boolean;
+          repartition?: boolean;
         };
         Returns: boolean;
       };
       delete_job: {
-        Args: {job_id: number};
+        Args: {
+          job_id: number;
+        };
         Returns: undefined;
       };
       detach_data_node: {
         Args: {
-          drop_remote_data: boolean;
-          force: boolean;
-          hypertable: unknown;
-          if_attached: boolean;
+          drop_remote_data?: boolean;
+          force?: boolean;
+          hypertable?: unknown;
+          if_attached?: boolean;
           node_name: unknown;
-          repartition: boolean;
+          repartition?: boolean;
         };
         Returns: number;
       };
       detach_tablespace: {
-        Args: {hypertable: unknown; if_attached: boolean; tablespace: unknown};
+        Args: {
+          hypertable?: unknown;
+          if_attached?: boolean;
+          tablespace: unknown;
+        };
         Returns: number;
       };
       detach_tablespaces: {
-        Args: {hypertable: unknown};
+        Args: {
+          hypertable: unknown;
+        };
         Returns: number;
       };
       drop_chunks: {
         Args: {
-          newer_than: unknown;
-          older_than: unknown;
+          newer_than?: unknown;
+          older_than?: unknown;
           relation: unknown;
-          verbose: boolean;
+          verbose?: boolean;
         };
-        Returns: string;
+        Returns: string[];
       };
       enlever_action: {
-        Args: {action_id: unknown; fiche_id: number};
+        Args: {
+          action_id: unknown;
+          fiche_id: number;
+        };
         Returns: undefined;
       };
       enlever_annexe: {
-        Args: {annexe: unknown; fiche_id: number; supprimer: boolean};
+        Args: {
+          annexe: unknown;
+          fiche_id: number;
+          supprimer: boolean;
+        };
         Returns: undefined;
       };
       enlever_fiche_action_d_un_axe: {
-        Args: {axe_id: number; fiche_id: number};
+        Args: {
+          axe_id: number;
+          fiche_id: number;
+        };
         Returns: undefined;
       };
       enlever_indicateur: {
-        Args: {fiche_id: number; indicateur: unknown};
+        Args: {
+          fiche_id: number;
+          indicateur: Database['public']['CompositeTypes']['indicateur_generique'];
+        };
         Returns: undefined;
       };
       enlever_partenaire: {
-        Args: {fiche_id: number; partenaire: unknown};
+        Args: {
+          fiche_id: number;
+          partenaire: unknown;
+        };
         Returns: undefined;
       };
       enlever_pilote: {
-        Args: {fiche_id: number; pilote: unknown};
+        Args: {
+          fiche_id: number;
+          pilote: Database['public']['CompositeTypes']['personne'];
+        };
         Returns: undefined;
       };
       enlever_referent: {
-        Args: {fiche_id: number; referent: unknown};
+        Args: {
+          fiche_id: number;
+          referent: Database['public']['CompositeTypes']['personne'];
+        };
         Returns: undefined;
       };
       enlever_service: {
-        Args: {fiche_id: number; service: unknown};
+        Args: {
+          fiche_id: number;
+          service: unknown;
+        };
         Returns: undefined;
       };
       enlever_sous_thematique: {
-        Args: {fiche_id: number; thematique_id: number};
+        Args: {
+          fiche_id: number;
+          thematique_id: number;
+        };
         Returns: undefined;
       };
       enlever_structure: {
-        Args: {fiche_id: number; structure: unknown};
+        Args: {
+          fiche_id: number;
+          structure: unknown;
+        };
         Returns: undefined;
       };
       enlever_thematique: {
-        Args: {fiche_id: number; thematique: string};
+        Args: {
+          fiche_id: number;
+          thematique: string;
+        };
         Returns: undefined;
       };
       est_auditeur: {
@@ -827,237 +1199,394 @@ export interface Database {
       };
       filter_fiches_action: {
         Args: {
-          axes_id: unknown;
+          axes_id?: number[];
           collectivite_id: number;
-          niveaux_priorite: unknown;
-          pilotes: unknown;
-          referents: unknown;
-          statuts: unknown;
+          niveaux_priorite?: Database['public']['Enums']['fiche_action_niveaux_priorite'][];
+          pilotes?: Database['public']['CompositeTypes']['personne'][];
+          referents?: Database['public']['CompositeTypes']['personne'][];
+          statuts?: Database['public']['Enums']['fiche_action_statuts'][];
+        };
+        Returns: {
+          actions: unknown[] | null;
+          amelioration_continue: boolean | null;
+          annexes: unknown[] | null;
+          axes: unknown[] | null;
+          budget_previsionnel: number | null;
+          calendrier: string | null;
+          cibles: Database['public']['Enums']['fiche_action_cibles'][] | null;
+          collectivite_id: number | null;
+          created_at: string | null;
+          date_debut: string | null;
+          date_fin_provisoire: string | null;
+          description: string | null;
+          financements: string | null;
+          financeurs:
+            | Database['public']['CompositeTypes']['financeur_montant'][]
+            | null;
+          id: number | null;
+          indicateurs:
+            | Database['public']['CompositeTypes']['indicateur_generique'][]
+            | null;
+          maj_termine: boolean | null;
+          modified_at: string | null;
+          modified_by: string | null;
+          niveau_priorite:
+            | Database['public']['Enums']['fiche_action_niveaux_priorite']
+            | null;
+          notes_complementaires: string | null;
+          objectifs: string | null;
+          partenaires: unknown[] | null;
+          piliers_eci:
+            | Database['public']['Enums']['fiche_action_piliers_eci'][]
+            | null;
+          pilotes: Database['public']['CompositeTypes']['personne'][] | null;
+          referents: Database['public']['CompositeTypes']['personne'][] | null;
+          ressources: string | null;
+          resultats_attendus:
+            | Database['public']['Enums']['fiche_action_resultats_attendus'][]
+            | null;
+          services: unknown[] | null;
+          sous_thematiques: unknown[] | null;
+          statut: Database['public']['Enums']['fiche_action_statuts'] | null;
+          structures: unknown[] | null;
+          thematiques: unknown[] | null;
+          titre: string | null;
+        }[];
+      };
+      gbt_bit_compress: {
+        Args: {
+          '': unknown;
         };
         Returns: unknown;
       };
-      gbt_bit_compress: {
-        Args: {'': unknown};
-        Returns: unknown;
-      };
       gbt_bool_compress: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_bool_fetch: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_bpchar_compress: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_bytea_compress: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_cash_compress: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_cash_fetch: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_date_compress: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_date_fetch: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_decompress: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_enum_compress: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_enum_fetch: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_float4_compress: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_float4_fetch: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_float8_compress: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_float8_fetch: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_inet_compress: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_int2_compress: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_int2_fetch: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_int4_compress: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_int4_fetch: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_int8_compress: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_int8_fetch: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_intv_compress: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_intv_decompress: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_intv_fetch: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_macad8_compress: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_macad8_fetch: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_macad_compress: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_macad_fetch: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_numeric_compress: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_oid_compress: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_oid_fetch: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_text_compress: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_time_compress: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_time_fetch: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_timetz_compress: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_ts_compress: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_ts_fetch: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_tstz_compress: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_uuid_compress: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_uuid_fetch: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_var_decompress: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbt_var_fetch: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbtreekey16_in: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbtreekey16_out: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbtreekey2_in: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbtreekey2_out: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbtreekey32_in: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbtreekey32_out: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbtreekey4_in: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbtreekey4_out: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbtreekey8_in: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbtreekey8_out: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbtreekey_var_in: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       gbtreekey_var_out: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       get_telemetry_report: {
@@ -1065,92 +1594,135 @@ export interface Database {
         Returns: Json;
       };
       have_admin_acces: {
-        Args: {id: number};
+        Args: {
+          id: number;
+        };
         Returns: boolean;
       };
       have_discussion_edition_acces: {
-        Args: {id: number};
+        Args: {
+          id: number;
+        };
         Returns: boolean;
       };
       have_discussion_lecture_acces: {
-        Args: {id: number};
+        Args: {
+          id: number;
+        };
         Returns: boolean;
       };
       have_edition_acces: {
-        Args: {id: number};
+        Args: {
+          id: number;
+        };
         Returns: boolean;
       };
       have_lecture_acces: {
-        Args: {id: number};
+        Args: {
+          id: number;
+        };
         Returns: boolean;
       };
       have_one_of_niveaux_acces: {
-        Args: {id: number; niveaux: unknown};
+        Args: {
+          id: number;
+          niveaux: Database['public']['Enums']['niveau_acces'][];
+        };
         Returns: boolean;
       };
       hypertable_compression_stats: {
-        Args: {hypertable: unknown};
-        Returns: Record<string, unknown>[];
+        Args: {
+          hypertable: unknown;
+        };
+        Returns: {
+          after_compression_index_bytes: number;
+          after_compression_table_bytes: number;
+          after_compression_toast_bytes: number;
+          after_compression_total_bytes: number;
+          before_compression_index_bytes: number;
+          before_compression_table_bytes: number;
+          before_compression_toast_bytes: number;
+          before_compression_total_bytes: number;
+          node_name: unknown;
+          number_compressed_chunks: number;
+          total_chunks: number;
+        }[];
       };
       hypertable_detailed_size: {
-        Args: {hypertable: unknown};
-        Returns: Record<string, unknown>[];
+        Args: {
+          hypertable: unknown;
+        };
+        Returns: {
+          index_bytes: number;
+          node_name: unknown;
+          table_bytes: number;
+          toast_bytes: number;
+          total_bytes: number;
+        }[];
       };
       hypertable_index_size: {
-        Args: {index_name: unknown};
+        Args: {
+          index_name: unknown;
+        };
         Returns: number;
       };
       hypertable_size: {
-        Args: {hypertable: unknown};
+        Args: {
+          hypertable: unknown;
+        };
         Returns: number;
       };
       interpolate:
         | {
             Args: {
-              next: Record<string, unknown>[];
-              prev: Record<string, unknown>[];
+              next?: Record<string, unknown>;
+              prev?: Record<string, unknown>;
               value: number;
             };
             Returns: number;
           }
         | {
             Args: {
-              next: Record<string, unknown>[];
-              prev: Record<string, unknown>[];
+              next?: Record<string, unknown>;
+              prev?: Record<string, unknown>;
               value: number;
             };
             Returns: number;
           }
         | {
             Args: {
-              next: Record<string, unknown>[];
-              prev: Record<string, unknown>[];
+              next?: Record<string, unknown>;
+              prev?: Record<string, unknown>;
               value: number;
             };
             Returns: number;
           }
         | {
             Args: {
-              next: Record<string, unknown>[];
-              prev: Record<string, unknown>[];
+              next?: Record<string, unknown>;
+              prev?: Record<string, unknown>;
               value: number;
             };
             Returns: number;
           }
         | {
             Args: {
-              next: Record<string, unknown>[];
-              prev: Record<string, unknown>[];
+              next?: Record<string, unknown>;
+              prev?: Record<string, unknown>;
               value: number;
             };
             Returns: number;
           };
       is_agent_of: {
-        Args: {id: number};
+        Args: {
+          id: number;
+        };
         Returns: boolean;
       };
       is_any_role_on: {
-        Args: {id: number};
+        Args: {
+          id: number;
+        };
         Returns: boolean;
       };
       is_authenticated: {
@@ -1158,11 +1730,15 @@ export interface Database {
         Returns: boolean;
       };
       is_bucket_writer: {
-        Args: {id: string};
+        Args: {
+          id: string;
+        };
         Returns: boolean;
       };
       is_referent_of: {
-        Args: {id: number};
+        Args: {
+          id: number;
+        };
         Returns: boolean;
       };
       is_service_role: {
@@ -1170,31 +1746,82 @@ export interface Database {
         Returns: boolean;
       };
       json_matches_schema: {
-        Args: {instance: Json; schema: Json};
+        Args: {
+          instance: Json;
+          schema: Json;
+        };
         Returns: boolean;
       };
       jsonb_matches_schema: {
-        Args: {instance: Json; schema: Json};
+        Args: {
+          instance: Json;
+          schema: Json;
+        };
         Returns: boolean;
       };
       labellisation_cloturer_audit: {
-        Args: {audit_id: number; date_fin: string};
-        Returns: unknown;
+        Args: {
+          audit_id: number;
+          date_fin?: string;
+        };
+        Returns: {
+          collectivite_id: number;
+          date_debut: string | null;
+          date_fin: string | null;
+          demande_id: number | null;
+          id: number;
+          referentiel: Database['public']['Enums']['referentiel'];
+          valide: boolean;
+        };
       };
       labellisation_commencer_audit: {
-        Args: {audit_id: number; date_debut: string};
-        Returns: unknown;
+        Args: {
+          audit_id: number;
+          date_debut?: string;
+        };
+        Returns: {
+          collectivite_id: number;
+          date_debut: string | null;
+          date_fin: string | null;
+          demande_id: number | null;
+          id: number;
+          referentiel: Database['public']['Enums']['referentiel'];
+          valide: boolean;
+        };
       };
       labellisation_demande: {
         Args: {
           collectivite_id: number;
           referentiel: Database['public']['Enums']['referentiel'];
         };
-        Returns: unknown;
+        Returns: {
+          collectivite_id: number;
+          date: string;
+          en_cours: boolean;
+          envoyee_le: string | null;
+          etoiles: Database['labellisation']['Enums']['etoile'] | null;
+          id: number;
+          modified_at: string | null;
+          referentiel: Database['public']['Enums']['referentiel'];
+          sujet: Database['labellisation']['Enums']['sujet_demande'];
+        };
       };
       labellisation_parcours: {
-        Args: {collectivite_id: number};
-        Returns: Record<string, unknown>[];
+        Args: {
+          collectivite_id: number;
+        };
+        Returns: {
+          audit: Json;
+          calendrier: string;
+          completude_ok: boolean;
+          critere_score: Json;
+          criteres_action: Json;
+          demande: Json;
+          etoiles: Database['labellisation']['Enums']['etoile'];
+          labellisation: Json;
+          referentiel: Database['public']['Enums']['referentiel'];
+          rempli: boolean;
+        }[];
       };
       labellisation_peut_commencer_audit: {
         Args: {
@@ -1206,114 +1833,207 @@ export interface Database {
       labellisation_submit_demande: {
         Args: {
           collectivite_id: number;
-          etoiles: Database['labellisation']['Enums']['etoile'];
+          etoiles?: Database['labellisation']['Enums']['etoile'];
           referentiel: Database['public']['Enums']['referentiel'];
           sujet: Database['labellisation']['Enums']['sujet_demande'];
         };
-        Returns: unknown;
+        Returns: {
+          collectivite_id: number;
+          date: string;
+          en_cours: boolean;
+          envoyee_le: string | null;
+          etoiles: Database['labellisation']['Enums']['etoile'] | null;
+          id: number;
+          modified_at: string | null;
+          referentiel: Database['public']['Enums']['referentiel'];
+          sujet: Database['labellisation']['Enums']['sujet_demande'];
+        };
       };
       locf: {
-        Args: {prev: unknown; treat_null_as_missing: boolean; value: unknown};
+        Args: {
+          prev?: unknown;
+          treat_null_as_missing?: boolean;
+          value: unknown;
+        };
         Returns: unknown;
       };
       move_chunk: {
         Args: {
           chunk: unknown;
           destination_tablespace: unknown;
-          index_destination_tablespace: unknown;
-          reorder_index: unknown;
-          verbose: boolean;
+          index_destination_tablespace?: unknown;
+          reorder_index?: unknown;
+          verbose?: boolean;
         };
         Returns: undefined;
       };
       naturalsort: {
-        Args: {'': string};
+        Args: {
+          '': string;
+        };
         Returns: string;
       };
       personnes_collectivite: {
-        Args: {collectivite_id: number};
-        Returns: unknown;
+        Args: {
+          collectivite_id: number;
+        };
+        Returns: Database['public']['CompositeTypes']['personne'][];
       };
       peut_lire_la_fiche: {
-        Args: {fiche_id: number};
+        Args: {
+          fiche_id: number;
+        };
         Returns: boolean;
       };
       peut_modifier_la_fiche: {
-        Args: {fiche_id: number};
+        Args: {
+          fiche_id: number;
+        };
         Returns: boolean;
       };
       plan_action: {
-        Args: {id: number};
+        Args: {
+          id: number;
+        };
         Returns: Json;
       };
       plan_action_profondeur: {
-        Args: {id: number; profondeur: number};
+        Args: {
+          id: number;
+          profondeur: number;
+        };
         Returns: Json;
       };
       plans_action_collectivite: {
-        Args: {collectivite_id: number};
-        Returns: unknown;
+        Args: {
+          collectivite_id: number;
+        };
+        Returns: {
+          collectivite_id: number;
+          created_at: string;
+          id: number;
+          modified_at: string;
+          modified_by: string | null;
+          nom: string | null;
+          parent: number | null;
+        }[];
       };
       quit_collectivite: {
-        Args: {id: number};
+        Args: {
+          id: number;
+        };
         Returns: Json;
       };
       referent_contact: {
-        Args: {id: number};
+        Args: {
+          id: number;
+        };
         Returns: Json;
       };
       referent_contacts: {
-        Args: {id: number};
-        Returns: Record<string, unknown>[];
+        Args: {
+          id: number;
+        };
+        Returns: {
+          email: string;
+          nom: string;
+          prenom: string;
+        }[];
       };
       referentiel_down_to_action: {
-        Args: {referentiel: Database['public']['Enums']['referentiel']};
-        Returns: unknown;
+        Args: {
+          referentiel: Database['public']['Enums']['referentiel'];
+        };
+        Returns: {
+          children: unknown[] | null;
+          depth: number | null;
+          description: string | null;
+          have_contexte: boolean | null;
+          have_exemples: boolean | null;
+          have_perimetre_evaluation: boolean | null;
+          have_preuve: boolean | null;
+          have_questions: boolean | null;
+          have_reduction_potentiel: boolean | null;
+          have_ressources: boolean | null;
+          id: string | null;
+          identifiant: string | null;
+          nom: string | null;
+          phase: Database['public']['Enums']['action_categorie'] | null;
+          referentiel: Database['public']['Enums']['referentiel'] | null;
+          type: Database['public']['Enums']['action_type'] | null;
+        }[];
       };
       remove_compression_policy: {
-        Args: {hypertable: unknown; if_exists: boolean};
+        Args: {
+          hypertable: unknown;
+          if_exists?: boolean;
+        };
         Returns: boolean;
       };
       remove_continuous_aggregate_policy: {
         Args: {
           continuous_aggregate: unknown;
-          if_exists: boolean;
-          if_not_exists: boolean;
+          if_exists?: boolean;
+          if_not_exists?: boolean;
         };
         Returns: undefined;
       };
       remove_membre_from_collectivite: {
-        Args: {collectivite_id: number; email: string};
+        Args: {
+          collectivite_id: number;
+          email: string;
+        };
         Returns: Json;
       };
       remove_reorder_policy: {
-        Args: {hypertable: unknown; if_exists: boolean};
+        Args: {
+          hypertable: unknown;
+          if_exists?: boolean;
+        };
         Returns: undefined;
       };
       remove_retention_policy: {
-        Args: {if_exists: boolean; relation: unknown};
+        Args: {
+          if_exists?: boolean;
+          relation: unknown;
+        };
         Returns: undefined;
       };
       reorder_chunk: {
-        Args: {chunk: unknown; index: unknown; verbose: boolean};
+        Args: {
+          chunk: unknown;
+          index?: unknown;
+          verbose?: boolean;
+        };
         Returns: undefined;
       };
       retool_user_list: {
         Args: Record<PropertyKey, never>;
-        Returns: Record<string, unknown>[];
+        Returns: {
+          collectivite: string;
+          droit_id: number;
+          email: string;
+          nom: string;
+          prenom: string;
+        }[];
       };
       save_reponse: {
-        Args: {'': Json};
+        Args: {
+          '': Json;
+        };
         Returns: undefined;
       };
       set_adaptive_chunking: {
-        Args: {chunk_target_size: string; hypertable: unknown};
-        Returns: Record<string, unknown>[];
+        Args: {
+          chunk_target_size: string;
+          hypertable: unknown;
+        };
+        Returns: Record<string, unknown>;
       };
       set_chunk_time_interval: {
         Args: {
           chunk_time_interval: unknown;
-          dimension_name: unknown;
+          dimension_name?: unknown;
           hypertable: unknown;
         };
         Returns: undefined;
@@ -1322,29 +2042,38 @@ export interface Database {
         Args: {
           hypertable: unknown;
           integer_now_func: unknown;
-          replace_if_exists: boolean;
+          replace_if_exists?: boolean;
         };
         Returns: undefined;
       };
       set_number_partitions: {
         Args: {
-          dimension_name: unknown;
+          dimension_name?: unknown;
           hypertable: unknown;
           number_partitions: number;
         };
         Returns: undefined;
       };
       set_replication_factor: {
-        Args: {hypertable: unknown; replication_factor: number};
+        Args: {
+          hypertable: unknown;
+          replication_factor: number;
+        };
         Returns: undefined;
       };
       show_chunks: {
-        Args: {newer_than: unknown; older_than: unknown; relation: unknown};
-        Returns: unknown;
+        Args: {
+          newer_than?: unknown;
+          older_than?: unknown;
+          relation: unknown;
+        };
+        Returns: unknown[];
       };
       show_tablespaces: {
-        Args: {hypertable: unknown};
-        Returns: unknown;
+        Args: {
+          hypertable: unknown;
+        };
+        Returns: unknown[];
       };
       teapot: {
         Args: Record<PropertyKey, never>;
@@ -1352,11 +2081,11 @@ export interface Database {
       };
       test_add_random_user: {
         Args: {
-          cgu_acceptees: boolean;
+          cgu_acceptees?: boolean;
           collectivite_id: number;
           niveau: Database['public']['Enums']['niveau_acces'];
         };
-        Returns: Record<string, unknown>[];
+        Returns: Record<string, unknown>;
       };
       test_attach_user: {
         Args: {
@@ -1367,7 +2096,10 @@ export interface Database {
         Returns: undefined;
       };
       test_changer_acces_restreint_collectivite: {
-        Args: {access_restreint: boolean; collectivite_id: number};
+        Args: {
+          access_restreint: boolean;
+          collectivite_id: number;
+        };
         Returns: undefined;
       };
       test_clear_history: {
@@ -1375,11 +2107,22 @@ export interface Database {
         Returns: undefined;
       };
       test_create_collectivite: {
-        Args: {nom: string};
-        Returns: unknown;
+        Args: {
+          nom: string;
+        };
+        Returns: {
+          collectivite_id: number | null;
+          id: number;
+          nom: string;
+        };
       };
       test_create_user: {
-        Args: {email: string; nom: string; prenom: string; user_id: string};
+        Args: {
+          email: string;
+          nom: string;
+          prenom: string;
+          user_id: string;
+        };
         Returns: undefined;
       };
       test_disable_fake_score_generation: {
@@ -1401,12 +2144,14 @@ export interface Database {
         Args: {
           collectivite_id: number;
           referentiel: Database['public']['Enums']['referentiel'];
-          statuts: unknown;
+          statuts: unknown[];
         };
         Returns: Json;
       };
       test_remove_user: {
-        Args: {email: string};
+        Args: {
+          email: string;
+        };
         Returns: undefined;
       };
       test_reset: {
@@ -1450,94 +2195,165 @@ export interface Database {
         Returns: undefined;
       };
       test_set_auditeur: {
-        Args: {audit_en_cours: boolean; demande_id: number; user_id: string};
-        Returns: unknown;
+        Args: {
+          audit_en_cours?: boolean;
+          demande_id: number;
+          user_id: string;
+        };
+        Returns: {
+          audit_id: number;
+          auditeur: string;
+          created_at: string | null;
+        };
       };
       test_set_cot: {
-        Args: {actif: boolean; collectivite_id: number};
-        Returns: unknown;
+        Args: {
+          actif: boolean;
+          collectivite_id: number;
+        };
+        Returns: {
+          actif: boolean;
+          collectivite_id: number;
+        };
       };
       test_write_scores: {
-        Args: {collectivite_id: number; scores: unknown};
+        Args: {
+          collectivite_id: number;
+          scores?: unknown[];
+        };
         Returns: undefined;
       };
       time_bucket:
         | {
-            Args: {bucket_width: unknown; origin: string; ts: string};
+            Args: {
+              bucket_width: unknown;
+              origin: string;
+              ts: string;
+            };
             Returns: string;
           }
         | {
-            Args: {bucket_width: unknown; origin: string; ts: string};
+            Args: {
+              bucket_width: unknown;
+              origin: string;
+              ts: string;
+            };
             Returns: string;
           }
         | {
-            Args: {bucket_width: unknown; ts: string};
+            Args: {
+              bucket_width: unknown;
+              ts: string;
+            };
             Returns: string;
           }
         | {
-            Args: {bucket_width: unknown; ts: string};
+            Args: {
+              bucket_width: unknown;
+              ts: string;
+            };
             Returns: string;
           }
         | {
-            Args: {bucket_width: unknown; ts: string};
+            Args: {
+              bucket_width: unknown;
+              ts: string;
+            };
             Returns: string;
           }
         | {
-            Args: {bucket_width: unknown; origin: string; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; offset: unknown; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; offset: unknown; ts: string};
-            Returns: string;
-          }
-        | {
-            Args: {bucket_width: unknown; offset: unknown; ts: string};
+            Args: {
+              bucket_width: unknown;
+              origin: string;
+              ts: string;
+            };
             Returns: string;
           }
         | {
             Args: {
               bucket_width: unknown;
               offset: unknown;
-              origin: string;
+              ts: string;
+            };
+            Returns: string;
+          }
+        | {
+            Args: {
+              bucket_width: unknown;
+              offset: unknown;
+              ts: string;
+            };
+            Returns: string;
+          }
+        | {
+            Args: {
+              bucket_width: unknown;
+              offset: unknown;
+              ts: string;
+            };
+            Returns: string;
+          }
+        | {
+            Args: {
+              bucket_width: unknown;
+              offset?: unknown;
+              origin?: string;
               timezone: string;
               ts: string;
             };
             Returns: string;
           }
         | {
-            Args: {bucket_width: number; ts: number};
+            Args: {
+              bucket_width: number;
+              ts: number;
+            };
             Returns: number;
           }
         | {
-            Args: {bucket_width: number; ts: number};
+            Args: {
+              bucket_width: number;
+              ts: number;
+            };
             Returns: number;
           }
         | {
-            Args: {bucket_width: number; ts: number};
+            Args: {
+              bucket_width: number;
+              ts: number;
+            };
             Returns: number;
           }
         | {
-            Args: {bucket_width: number; offset: number; ts: number};
+            Args: {
+              bucket_width: number;
+              offset: number;
+              ts: number;
+            };
             Returns: number;
           }
         | {
-            Args: {bucket_width: number; offset: number; ts: number};
+            Args: {
+              bucket_width: number;
+              offset: number;
+              ts: number;
+            };
             Returns: number;
           }
         | {
-            Args: {bucket_width: number; offset: number; ts: number};
+            Args: {
+              bucket_width: number;
+              offset: number;
+              ts: number;
+            };
             Returns: number;
           };
       time_bucket_gapfill:
         | {
             Args: {
               bucket_width: number;
-              finish: number;
-              start: number;
+              finish?: number;
+              start?: number;
               ts: number;
             };
             Returns: number;
@@ -1545,8 +2361,8 @@ export interface Database {
         | {
             Args: {
               bucket_width: number;
-              finish: number;
-              start: number;
+              finish?: number;
+              start?: number;
               ts: number;
             };
             Returns: number;
@@ -1554,8 +2370,8 @@ export interface Database {
         | {
             Args: {
               bucket_width: number;
-              finish: number;
-              start: number;
+              finish?: number;
+              start?: number;
               ts: number;
             };
             Returns: number;
@@ -1563,8 +2379,8 @@ export interface Database {
         | {
             Args: {
               bucket_width: unknown;
-              finish: string;
-              start: string;
+              finish?: string;
+              start?: string;
               ts: string;
             };
             Returns: string;
@@ -1572,8 +2388,8 @@ export interface Database {
         | {
             Args: {
               bucket_width: unknown;
-              finish: string;
-              start: string;
+              finish?: string;
+              start?: string;
               ts: string;
             };
             Returns: string;
@@ -1581,8 +2397,8 @@ export interface Database {
         | {
             Args: {
               bucket_width: unknown;
-              finish: string;
-              start: string;
+              finish?: string;
+              start?: string;
               ts: string;
             };
             Returns: string;
@@ -1590,8 +2406,8 @@ export interface Database {
         | {
             Args: {
               bucket_width: unknown;
-              finish: string;
-              start: string;
+              finish?: string;
+              start?: string;
               timezone: string;
               ts: string;
             };
@@ -1610,20 +2426,28 @@ export interface Database {
         Returns: boolean;
       };
       unaccent: {
-        Args: {'': string};
+        Args: {
+          '': string;
+        };
         Returns: string;
       };
       unaccent_init: {
-        Args: {'': unknown};
+        Args: {
+          '': unknown;
+        };
         Returns: unknown;
       };
       update_bibliotheque_fichier_filename: {
-        Args: {collectivite_id: number; filename: string; hash: string};
+        Args: {
+          collectivite_id: number;
+          filename: string;
+          hash: string;
+        };
         Returns: undefined;
       };
       update_collectivite_membre_champ_intervention: {
         Args: {
-          champ_intervention: unknown;
+          champ_intervention: Database['public']['Enums']['referentiel'][];
           collectivite_id: number;
           membre_id: string;
         };
@@ -1654,7 +2478,11 @@ export interface Database {
         Returns: Json;
       };
       upsert_axe: {
-        Args: {collectivite_id: number; nom: string; parent: number};
+        Args: {
+          collectivite_id: number;
+          nom: string;
+          parent: number;
+        };
         Returns: number;
       };
     };
@@ -3977,8 +4805,10 @@ export interface Database {
         Row: {
           action_id: string | null;
           collectivite_id: number | null;
-          courant: unknown | null;
-          pre_audit: unknown | null;
+          courant: Database['public']['CompositeTypes']['tabular_score'] | null;
+          pre_audit:
+            | Database['public']['CompositeTypes']['tabular_score']
+            | null;
           referentiel: Database['public']['Enums']['referentiel'] | null;
         };
       };
@@ -4030,9 +4860,13 @@ export interface Database {
           date_fin_provisoire: string | null;
           description: string | null;
           financements: string | null;
-          financeurs: unknown[] | null;
+          financeurs:
+            | Database['public']['CompositeTypes']['financeur_montant'][]
+            | null;
           id: number | null;
-          indicateurs: unknown[] | null;
+          indicateurs:
+            | Database['public']['CompositeTypes']['indicateur_generique'][]
+            | null;
           maj_termine: boolean | null;
           modified_at: string | null;
           modified_by: string | null;
@@ -4045,8 +4879,8 @@ export interface Database {
           piliers_eci:
             | Database['public']['Enums']['fiche_action_piliers_eci'][]
             | null;
-          pilotes: unknown[] | null;
-          referents: unknown[] | null;
+          pilotes: Database['public']['CompositeTypes']['personne'][] | null;
+          referents: Database['public']['CompositeTypes']['personne'][] | null;
           ressources: string | null;
           resultats_attendus:
             | Database['public']['Enums']['fiche_action_resultats_attendus'][]

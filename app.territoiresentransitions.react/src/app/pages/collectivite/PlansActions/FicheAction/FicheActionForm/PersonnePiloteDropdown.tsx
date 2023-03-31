@@ -2,7 +2,7 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import {TOption} from 'ui/shared/select/commons';
 import SelectCreateTagsDropdown from 'ui/shared/select/SelectCreateTagsDropdown';
 import {usePersonnePiloteListe} from '../data/options/usePersonnePiloteListe';
-import {Personne} from '../data/types/personne';
+import {Personne} from '../data/types';
 import {formatNewTag, getPersonneId} from '../data/utils';
 
 type Props = {
@@ -29,7 +29,6 @@ const PersonnePiloteDropdown = ({personnes, onSelect, isReadonly}: Props) => {
     ) ?? [];
 
   // On invalide la liste des options dans useEditFicheAction
-
   return (
     <SelectCreateTagsDropdown
       data-test="PersonnePilote"

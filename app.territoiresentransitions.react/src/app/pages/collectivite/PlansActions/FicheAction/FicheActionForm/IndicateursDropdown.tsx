@@ -1,20 +1,20 @@
 import AutocompleteInputSelect from 'ui/shared/select/AutocompleteInputSelect';
 import {TOption} from 'ui/shared/select/commons';
 import {useIndicateurListe} from '../data/options/useIndicateurListe';
-import {IndicateurGlobal} from '../data/types/indicateurGlobal';
+import {Indicateur} from '../data/types';
 
 type Props = {
-  indicateurs: IndicateurGlobal[] | null;
-  onSelect: (indicateurs: IndicateurGlobal[]) => void;
+  indicateurs: Indicateur[] | null;
+  onSelect: (indicateurs: Indicateur[]) => void;
   isReadonly: boolean;
 };
 
 const IndicateursDropdown = ({indicateurs, onSelect, isReadonly}: Props) => {
   const {data: indicateurListe} = useIndicateurListe();
 
-  const formatOptions = (indicateurs?: IndicateurGlobal[] | null): TOption[] =>
+  const formatOptions = (indicateurs?: Indicateur[] | null): TOption[] =>
     indicateurs
-      ? indicateurs.map((indicateur: IndicateurGlobal) => ({
+      ? indicateurs.map((indicateur: Indicateur) => ({
           value: indicateur.indicateur_personnalise_id
             ? indicateur.indicateur_personnalise_id.toString()
             : indicateur.indicateur_id!,
@@ -23,7 +23,7 @@ const IndicateursDropdown = ({indicateurs, onSelect, isReadonly}: Props) => {
       : [];
 
   const formatIndicateurs = (values: string[]) =>
-    indicateurListe?.filter((indicateur: IndicateurGlobal) =>
+    indicateurListe?.filter((indicateur: Indicateur) =>
       values.some(
         v =>
           v === indicateur.indicateur_id ||
@@ -34,7 +34,7 @@ const IndicateursDropdown = ({indicateurs, onSelect, isReadonly}: Props) => {
   return (
     <AutocompleteInputSelect
       containerWidthMatchButton
-      values={indicateurs?.map((indicateur: IndicateurGlobal) =>
+      values={indicateurs?.map((indicateur: Indicateur) =>
         indicateur.indicateur_personnalise_id
           ? indicateur.indicateur_personnalise_id.toString()
           : indicateur.indicateur_id!

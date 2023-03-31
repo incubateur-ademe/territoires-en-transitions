@@ -2,7 +2,7 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import {TOption} from 'ui/shared/select/commons';
 import SelectCreateTagsDropdown from 'ui/shared/select/SelectCreateTagsDropdown';
 import {useStructurePiloteListe} from '../data/options/useStructurePiloteListe';
-import {TFicheActionStructureInsert} from '../data/types/alias';
+import {TFicheActionStructureInsert} from 'types/alias';
 import {formatNewTag} from '../data/utils';
 
 type Props = {

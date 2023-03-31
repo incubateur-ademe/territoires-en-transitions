@@ -1,11 +1,11 @@
 import {useState} from 'react';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 
-import {TProfondeurAxe} from '../../PlanAction/data/types/profondeurPlan';
+import {TProfondeurAxe} from '../../PlanAction/data/types';
 import {usePlanActionProfondeur} from '../../PlanAction/data/usePlanActionProfondeur';
 import {checkAxeExistInPlanProfondeur} from '../../PlanAction/data/utils';
-import {TAxeInsert} from '../data/types/alias';
-import {FicheActionVueRow} from '../data/types/ficheActionVue';
+import {TAxeInsert} from 'types/alias';
+import {FicheAction} from '../data/types';
 import {useAddFicheToAxe} from '../data/useAddFicheToAxe';
 import TableauAxe from './TableauAxe';
 
@@ -33,7 +33,7 @@ const generateColonnes = (axes: TProfondeurAxe[]) =>
   );
 
 type Props = {
-  fiche: FicheActionVueRow;
+  fiche: FicheAction;
 };
 
 const TableauNouvelEmplacement = ({fiche}: Props) => {

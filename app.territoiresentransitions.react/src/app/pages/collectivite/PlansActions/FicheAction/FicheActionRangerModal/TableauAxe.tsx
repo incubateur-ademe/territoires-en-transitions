@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 
-import {TProfondeurAxe} from '../../PlanAction/data/types/profondeurPlan';
+import {TProfondeurAxe} from '../../PlanAction/data/types';
 
 type Props = {
   axe: TProfondeurAxe;

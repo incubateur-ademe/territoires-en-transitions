@@ -9,7 +9,7 @@ import FicheActionCard from '../FicheAction/FicheActionCard';
 import {makeCollectivitePlanActionFicheUrl} from 'app/paths';
 import {usePlanAction} from './data/usePlanAction';
 import {useEditAxe} from './data/useEditAxe';
-import {TPlanAction} from './data/types/PlanAction';
+import {PlanAction as PlanActionType} from './data/types';
 import PlanActionFooter from './PlanActionFooter';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import PlanActionFiltres from './PlanActionFiltres/PlanActionFiltres';
@@ -18,7 +18,7 @@ import {checkAxeHasFiche} from './data/utils';
 import HeaderTitle from '../components/HeaderTitle';
 
 type PlanActionProps = {
-  plan: TPlanAction;
+  plan: PlanActionType;
 };
 
 export const PlanAction = ({plan}: PlanActionProps) => {
@@ -31,7 +31,7 @@ export const PlanAction = ({plan}: PlanActionProps) => {
   const {items: fichesActionsListe, ...ficheFilters} =
     useFichesActionFiltresListe(plan.axe.id);
 
-  const displaySousAxe = (axe: TPlanAction) => (
+  const displaySousAxe = (axe: PlanActionType) => (
     <PlanActionAxe
       key={axe.axe.id}
       planActionGlobal={plan}

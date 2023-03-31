@@ -2,12 +2,13 @@ import {useQuery} from 'react-query';
 
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useSearchParams} from 'core-logic/hooks/query';
-import {TFicheAction} from './types/alias';
 import {nameToShortNames, TFilters} from './filters';
 import {useCollectiviteId} from 'core-logic/hooks/params';
+import {FicheAction} from './types';
+import {TPersonne} from 'types/alias';
 
 export type TFichesActionsListe = {
-  items: TFicheAction[];
+  items: FicheAction[];
   total: number;
   initialFilters: TFilters;
   filters: TFilters;
@@ -15,7 +16,7 @@ export type TFichesActionsListe = {
   setFilters: (filters: TFilters) => void;
 };
 
-type TFetchedData = {items: TFicheAction[]; total: number};
+type TFetchedData = {items: FicheAction[]; total: number};
 
 export const fetchFichesActionFiltresListe = async (
   filters: TFilters
@@ -27,11 +28,11 @@ export const fetchFichesActionFiltresListe = async (
     'filter_fiches_action',
     {
       collectivite_id: collectivite_id!,
-      axes_id: axes_id, // number[]
-      pilotes: pilotes ?? null, // Personne[] | null
-      referents: referents ?? null, // Personne[] | null
-      statuts: statuts ?? null, // TFicheActionStatuts[] | null
-      niveaux_priorite: priorites ?? null, // TFicheActionNiveauxPriorite[] | null
+      axes_id: axes_id,
+      pilotes: pilotes as unknown as TPersonne[],
+      referents: referents as unknown as TPersonne[],
+      statuts: statuts,
+      niveaux_priorite: priorites,
     },
     {count: 'exact'}
   );
@@ -40,7 +41,7 @@ export const fetchFichesActionFiltresListe = async (
     throw new Error(error.message);
   }
 
-  return {items: (data as TFicheAction[]) || [], total: count || 0};
+  return {items: (data as unknown as FicheAction[]) || [], total: count || 0};
 };
 
 /**

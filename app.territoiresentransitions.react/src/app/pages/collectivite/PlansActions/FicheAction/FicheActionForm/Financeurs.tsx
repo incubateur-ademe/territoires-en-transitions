@@ -2,14 +2,13 @@ import FormField from 'ui/shared/form/FormField';
 import SelectCreateTagsDropdown from 'ui/shared/select/SelectCreateTagsDropdown';
 import {TOption} from 'ui/shared/select/commons';
 import {useFinanceurListe} from '../data/options/useFinanceurListe';
-import {FicheActionVueRow} from '../data/types/ficheActionVue';
-import {FinanceurMontant} from '../data/types/financeurMontant';
 import {formatNewTag} from '../data/utils';
 import FicheActionFormBudgetInput from './FicheActionFormBudgetInput';
+import {FicheAction, Financeur} from '../data/types';
 
 type Props = {
-  fiche: FicheActionVueRow;
-  onUpdate: (newFiche: FicheActionVueRow) => void;
+  fiche: FicheAction;
+  onUpdate: (newFiche: FicheAction) => void;
   isReadonly: boolean;
 };
 
@@ -25,13 +24,13 @@ const Financeurs = ({fiche, onUpdate, isReadonly}: Props) => {
     : [];
 
   /** Cette fonction est utilisée aussi bien pour mettre à jour un tag financeur que le montant associé */
-  const updateFinanceur = (newFinanceur: FinanceurMontant) => {
+  const updateFinanceur = (newFinanceur: Financeur) => {
     // Si le financeur existe déjà (il a un id) et que la fiche à déjà des financeurs,
     // on le remplace dans la liste de financeurs
     if (newFinanceur.id && fiche.financeurs) {
       onUpdate({
         ...fiche,
-        financeurs: fiche.financeurs.map((f: FinanceurMontant) =>
+        financeurs: fiche.financeurs.map((f: Financeur) =>
           f.id === newFinanceur.id ? newFinanceur : f
         ),
       });
@@ -47,7 +46,7 @@ const Financeurs = ({fiche, onUpdate, isReadonly}: Props) => {
   };
 
   /** Gère la sélection / déselection des tags */
-  const onSelect = (values: string[], financeur?: FinanceurMontant) => {
+  const onSelect = (values: string[], financeur?: Financeur) => {
     // Si on sélectionne un tag
     if (values && values.length > 0 && financeurTagListe) {
       // On récupère uniquement le dernier financeur sélectionné
@@ -64,9 +63,8 @@ const Financeurs = ({fiche, onUpdate, isReadonly}: Props) => {
       onUpdate({
         ...fiche,
         financeurs:
-          fiche.financeurs?.filter(
-            (f: FinanceurMontant) => f.id !== financeur!.id
-          ) ?? null,
+          fiche.financeurs?.filter((f: Financeur) => f.id !== financeur!.id) ??
+          null,
       });
     }
   };
@@ -74,7 +72,7 @@ const Financeurs = ({fiche, onUpdate, isReadonly}: Props) => {
   return (
     <div>
       {/** Liste des financeurs */}
-      {fiche.financeurs?.map((financeur: FinanceurMontant, i) => (
+      {fiche.financeurs?.map((financeur: Financeur, i) => (
         <div key={financeur.id} className="grid grid-cols-2 gap-4">
           <FormField label={`Financeur ${i + 1}`}>
             <SelectCreateTagsDropdown

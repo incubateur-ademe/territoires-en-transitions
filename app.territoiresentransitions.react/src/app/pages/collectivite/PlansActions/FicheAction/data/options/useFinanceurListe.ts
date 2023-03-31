@@ -2,7 +2,7 @@ import {useQuery} from 'react-query';
 
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {TFinanceurRow} from '../types/alias';
+import {TFinanceurTagRow} from 'types/alias';
 
 export const useFinanceurListe = () => {
   const collectivite_id = useCollectiviteId();
@@ -13,6 +13,6 @@ export const useFinanceurListe = () => {
       .select()
       .eq('collectivite_id', collectivite_id)
       .order('nom');
-    return data as unknown as TFinanceurRow[];
+    return data as unknown as TFinanceurTagRow[];
   });
 };

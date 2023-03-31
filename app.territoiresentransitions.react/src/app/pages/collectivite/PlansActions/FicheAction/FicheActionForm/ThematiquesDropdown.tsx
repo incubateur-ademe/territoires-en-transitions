@@ -1,7 +1,7 @@
 import {DSFRbuttonClassname, TOption} from 'ui/shared/select/commons';
 import MultiSelectTagsDropdown from 'ui/shared/select/MultiSelectTagsDropdown';
 import {useThematiqueListe} from '../data/options/useThematiqueListe';
-import {TThematiqueRow} from '../data/types/alias';
+import {TThematiqueRow} from 'types/alias';
 
 type Props = {
   thematiques: TThematiqueRow[] | null;

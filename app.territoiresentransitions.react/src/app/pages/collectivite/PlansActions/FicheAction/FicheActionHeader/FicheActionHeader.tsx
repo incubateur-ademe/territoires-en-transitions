@@ -1,7 +1,7 @@
-import {FicheActionVueRow} from '../data/types/ficheActionVue';
+import {FicheAction} from '../data/types';
 import Chemins from './Chemins';
 
-type TFicheActionHeader = {fiche: FicheActionVueRow};
+type TFicheActionHeader = {fiche: FicheAction};
 
 const FicheActionHeader = ({fiche}: TFicheActionHeader) => {
   return (

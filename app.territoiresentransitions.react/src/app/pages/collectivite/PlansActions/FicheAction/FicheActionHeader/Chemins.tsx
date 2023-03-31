@@ -2,17 +2,17 @@ import {Link} from 'react-router-dom';
 
 import FilAriane from 'ui/shared/FilAriane';
 import {makeCollectiviteFichesNonClasseesUrl} from 'app/paths';
-import {FicheActionVueRow} from '../data/types/ficheActionVue';
+import {FicheAction} from '../data/types';
 import {
   generateFilArianeLinks,
   usePlanActionChemin,
 } from '../../PlanAction/data/usePlanActionChemin';
-import {TAxeInsert, TAxeRow} from '../data/types/alias';
+import {TAxeInsert, TAxeRow} from 'types/alias';
 import {useState} from 'react';
 import classNames from 'classnames';
 
 type Props = {
-  fiche: FicheActionVueRow;
+  fiche: FicheAction;
 };
 
 const Chemins = ({fiche}: Props) => {

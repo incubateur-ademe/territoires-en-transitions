@@ -1,14 +1,14 @@
+import {TAxeInsert} from 'types/alias';
 import IconFolderLine from 'ui/icons/IconFolderLine';
 import Alerte from 'ui/shared/Alerte';
 import Modal from 'ui/shared/floating-ui/Modal';
-import {TPlanActionAxeInsert} from '../../PlanAction/data/types/alias';
-import {FicheActionVueRow} from '../data/types/ficheActionVue';
+import {FicheAction} from '../data/types';
 import PlanChemin from './PlanChemin';
 
 import TableauNouvelEmplacement from './TableauNouvelEmplacement';
 
 type Props = {
-  fiche: FicheActionVueRow;
+  fiche: FicheAction;
 };
 
 const FicheActionRangerModal = ({fiche}: Props) => {
@@ -26,7 +26,7 @@ const FicheActionRangerModal = ({fiche}: Props) => {
             </h6>
             <div className="flex flex-col gap-2 mb-6">
               {fiche.axes ? (
-                fiche.axes.map((axe: TPlanActionAxeInsert) => (
+                fiche.axes.map((axe: TAxeInsert) => (
                   <div key={axe.id} className="mr-auto">
                     <PlanChemin fiche={fiche} axe_id={axe.id!} />
                   </div>
