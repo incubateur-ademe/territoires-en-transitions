@@ -2,7 +2,7 @@ import {StatusColor} from 'ui/charts/chartsTheme';
 import ChartWrapper from 'ui/charts/ChartWrapper';
 import DoughnutChart from 'ui/charts/DoughnutChart';
 import {usePlanActionTableauDeBord} from './data/usePlanActionTableauDeBord';
-import noResultIllustration from 'app/static/img/no-results-astronaut-bro.svg';
+import PictoLeaf from 'ui/pictogrammes/PictoLeaf';
 
 /**
  * Liste des graphes affichés dans la page Synthèse
@@ -97,21 +97,9 @@ const SyntheseGraphsList = ({
       )}
     </div>
   ) : (
-    <div
-      className="flex flex-col gap-4 mt-10 md:mt-16"
-      style={{color: '#6A6AF4'}}
-    >
-      <div style={{fontSize: '22px', fontWeight: 'bold'}}>
-        Aucun plan n’est encore renseigné pour votre collectivité.
-      </div>
-      <div style={{fontSize: '20px'}}>
-        Pour commencer à visualiser votre progression, créez un plan.
-      </div>
-      <img
-        alt=""
-        style={{width: 400, alignSelf: 'center'}}
-        src={noResultIllustration}
-      />
+    <div className="flex flex-col items-center mt-8">
+      <PictoLeaf className="w-24 fill-gray-400" />
+      <div className="my-6 text-gray-500">Aucune fiche n'est renseignée</div>
     </div>
   );
 };

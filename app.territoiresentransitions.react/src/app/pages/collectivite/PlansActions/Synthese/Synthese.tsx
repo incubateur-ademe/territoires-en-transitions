@@ -24,7 +24,7 @@ const Synthese = ({collectiviteId}: SyntheseProps): JSX.Element => {
         titre="Synthèse des fiches action"
         isReadonly={true}
       />
-      <div className="max-w-4xl mx-auto px-10">
+      <div className="max-w-4xl mx-auto p-10">
         {/* Filtres par plan d'actions */}
         <FiltersPlanAction
           collectiviteId={collectiviteId}
