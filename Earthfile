@@ -213,7 +213,7 @@ dev:
 stop:
     LOCALLY
     RUN supabase stop
-    RUN docker ps --filter name=_tet --filter status=running -aq | xargs docker stop | xargs docker rm | exit 0
+    RUN docker ps --filter name=_tet --filter status=running -aq | xargs docker stop | xargs docker rm || exit 0
 
 stats:
     LOCALLY
