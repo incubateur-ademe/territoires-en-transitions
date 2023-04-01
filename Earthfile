@@ -67,13 +67,23 @@ deploy-test:
         --env SQITCH_TARGET=db:$DB_URL \
         sqitch:latest deploy --mode change --verify
 
+seed-build:
+    FROM +postgres
+    ENV SKIP_TEST_DOMAIN=0
+    ENV PG_URL
+    COPY ./data_layer/seed /seed
+    ENTRYPOINT sh ./seed/seed.sh
+    SAVE IMAGE seed:latest
+
 seed:
     ARG --required DB_URL
-    ARG SKIP_TEST_DOMAIN=0
-    FROM +postgres
-    ARG PG_URL=$(echo $DB_URL | sed "s/localhost/host.docker.internal/")
-    COPY ./data_layer/seed /seed
-    RUN --push sh ./seed/seed.sh
+    ARG network=host
+    LOCALLY
+    RUN earthly +seed-build
+    RUN docker run --rm \
+        --network $network \
+        --env PG_URL=$DB_URL \
+        seed:latest deploy --mode change
 
 load-contents:
     FROM curlimages/curl
@@ -217,7 +227,7 @@ dev:
     IF [ "$datalayer" = "yes" ]
         RUN supabase start
         RUN earthly +deploy
-        RUN earthly --push +seed
+        RUN earthly +seed
         RUN earthly --push +load-contents
     END
 
