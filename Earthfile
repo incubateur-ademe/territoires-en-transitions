@@ -3,6 +3,11 @@ VERSION 0.7
 postgres:
     FROM postgres:15
 
+psql-build:
+    FROM +postgres
+    ENTRYPOINT ["psql"]
+    SAVE IMAGE psql:latest
+
 sqitch:
     FROM +postgres
     RUN apt-get update
@@ -94,11 +99,15 @@ load-contents:
     RUN --push sh ./content/load.sh
 
 update-scores:
-    FROM +postgres
     ARG --required DB_URL
     ARG count=20
-    ARG PG_URL=$(echo $DB_URL | sed "s/localhost/host.docker.internal/")
-    RUN --push psql $PG_URL -v ON_ERROR_STOP=1 -c "select evaluation.update_late_collectivite_scores($count);" || exit 1
+    ARG network=host
+    LOCALLY
+    RUN earthly +psql-build
+    RUN docker run --rm \
+        --network $network \
+        psql:latest $DB_URL -v ON_ERROR_STOP=1 \
+        -c "select evaluation.update_late_collectivite_scores($count);"
 
 business-build:
     FROM python:3.9
@@ -234,7 +243,7 @@ dev:
     IF [ "$business" = "yes" ]
         RUN earthly +business-build
         RUN earthly +business-start
-        RUN earthly --push +update-scores
+        RUN earthly +update-scores
     END
 
     IF [ "$client" = "yes" ]
