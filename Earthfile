@@ -19,23 +19,24 @@ pg-tap:
     RUN apt-get update
     RUN apt-get install cpanminus -y
     RUN cpanm TAP::Parser::SourceHandler::pgTAP
+    ENTRYPOINT ["pg_prove"]
+    CMD ["./tests/collectivite/identite.sql"]
+    COPY ./data_layer/tests ./tests
+    SAVE IMAGE pg-tap:latest
 
 db-test:
     ARG --required DB_URL
-    FROM +pg-tap
-    ARG PG_URL=$(echo $DB_URL | sed "s/localhost/host.docker.internal/")
-    ARG PGHOST=$(echo $PG_URL | cut -d@ -f2 | cut -d: -f1)
-    ARG PGPORT=$(echo $PG_URL | cut -d: -f4 | cut -d/ -f1)
-    ARG PGUSER=$(echo $PG_URL | cut -d: -f3 | cut -d@ -f1)
-    ARG PGPASSWORD=$(echo $PG_URL | cut -d: -f3 | cut -d@ -f1)
-    ARG PGDATABASE=$(echo $PG_URL | cut -d/ -f4)
-    ENV PGHOST=$PGHOST
-    ENV PGPORT=$PGPORT
-    ENV PGUSER=$PGUSER
-    ENV PGPASSWORD=$PGPASSWORD
-    ENV PGDATABASE=$PGDATABASE
-    COPY ./data_layer/tests /tests
-    RUN --push pg_prove tests/**/*.sql
+    ARG network=host
+    LOCALLY
+    RUN earthly +pg-tap
+    RUN docker run --rm \
+        --network $network \
+        --env PGHOST=$(echo $DB_URL | cut -d@ -f2 | cut -d: -f1) \
+        --env PGPORT=$(echo $DB_URL | cut -d: -f4 | cut -d/ -f1) \
+        --env PGUSER=$(echo $DB_URL | cut -d: -f3 | cut -d@ -f1) \
+        --env PGPASSWORD=$(echo $DB_URL | cut -d: -f3 | cut -d@ -f1) \
+        --env PGDATABASE=$(echo $DB_URL | cut -d/ -f4) \
+        pg-tap:latest
 
 deploy:
     ARG --required DB_URL
