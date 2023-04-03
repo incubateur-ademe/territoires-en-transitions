@@ -332,9 +332,10 @@ stats:
 
 test:
     LOCALLY
+    RUN earthly +curl-test
     RUN earthly +db-test
     RUN earthly +business-test
-    RUN earthly +client-test
     RUN earthly +api-test
     RUN earthly +deploy-test
+    RUN earthly +client-test
 
