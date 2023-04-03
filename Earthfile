@@ -8,7 +8,7 @@ psql-build:
     ENTRYPOINT ["psql"]
     SAVE IMAGE psql:latest
 
-sqitch:
+sqitch-build:
     FROM +postgres
     RUN apt-get update
     RUN apt-get install -y curl build-essential cpanminus perl perl-doc libdbd-pg-perl postgresql-client
@@ -19,7 +19,7 @@ sqitch:
     COPY ./data_layer/sqitch ./data_layer/sqitch
     SAVE IMAGE sqitch:latest
 
-pg-tap:
+pg-tap-build:
     FROM +postgres
     RUN apt-get update
     RUN apt-get install cpanminus -y
@@ -33,7 +33,7 @@ db-test:
     ARG --required DB_URL
     ARG network=host
     LOCALLY
-    RUN earthly +pg-tap
+    RUN earthly +pg-tap-build
     RUN docker run --rm \
         --network $network \
         --env PGHOST=$(echo $DB_URL | cut -d@ -f2 | cut -d: -f1) \
@@ -47,7 +47,7 @@ deploy:
     ARG --required DB_URL
     ARG network=host
     LOCALLY
-    RUN earthly +sqitch
+    RUN earthly +sqitch-build
     RUN docker run --rm \
         --network $network \
         --env SQITCH_TARGET=db:$DB_URL \
@@ -58,7 +58,7 @@ deploy-test:
     ARG network=host
     ARG tag=v2.14
     LOCALLY
-    RUN earthly +sqitch
+    RUN earthly +sqitch-build
     RUN docker run --rm \
         --network $network \
         --env SQITCH_TARGET=db:$DB_URL \
