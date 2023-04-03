@@ -123,25 +123,29 @@ update-scores:
 
 business-build:
     FROM python:3.9
-    ARG --required SERVICE_ROLE_KEY
-    ARG --required API_URL
-    ARG APP_DIR="./business"
-    ARG URL=$(echo $API_URL | sed "s/localhost/host.docker.internal/")
-    ENV SUPABASE_URL=$URL
-    ENV SUPABASE_KEY=$SERVICE_ROLE_KEY
+    ENV SUPABASE_URL
+    ENV SUPABASE_KEY
     WORKDIR /business
-    COPY $APP_DIR/requirements.txt .
+    COPY ./business/requirements.txt .
     RUN pip install -r requirements.txt
-    COPY $APP_DIR .
+    COPY ./business .
     RUN pip install -e .
     EXPOSE 8888
     CMD ["uvicorn", "evaluation_api:app", "--host", "0.0.0.0", "--port", "8888"]
     SAVE IMAGE business:latest
 
-business-start:
-    BUILD +business-build
+business:
+    ARG --required SERVICE_ROLE_KEY
+    ARG network=supabase_network_tet
     LOCALLY
-    RUN docker run -p 8888:8888 -d --rm --name business_tet business:latest
+    RUN earthly +business-build
+    RUN docker run -d --rm \
+        --name business_tet \
+        --network $network \
+        --publish 8888:8888 \
+        --env SUPABASE_URL="http://supabase_kong_tet:8000" \
+        --env SUPABASE_KEY=$SERVICE_ROLE_KEY \
+        business:latest
 
 business-test:
     FROM +business-build
@@ -264,7 +268,7 @@ dev:
 
     IF [ "$business" = "yes" ]
         RUN earthly +business-build
-        RUN earthly +business-start
+        RUN earthly +business
         RUN earthly +update-scores
     END
 
