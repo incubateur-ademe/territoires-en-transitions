@@ -204,16 +204,28 @@ client:
         --publish 3000:3000 \
         client:latest
 
-client-test:
-    FROM +react
-    ARG --required ANON_KEY
-    ARG --required API_URL
-    ARG URL=$(echo $API_URL | sed "s/localhost/host.docker.internal/")
-    ARG ZIP_ORIGIN_OVERRIDE=$URL
-    ENV REACT_APP_SUPABASE_KEY=$ANON_KEY
-    ENV REACT_APP_SUPABASE_URL=$URL
+client-test-build:
+    FROM +client-deps
+    ENV REACT_APP_SUPABASE_URL
+    ENV REACT_APP_SUPABASE_KEY
+    ENV ZIP_ORIGIN_OVERRIDE
     ENV CI=true
-    RUN --push npm run test
+    CMD npm run test
+    SAVE IMAGE client-test:latest
+
+client-test:
+    ARG --required ANON_KEY
+    ARG url=http://supabase_kong_tet:8000
+    ARG network=supabase_network_tet
+    LOCALLY
+    RUN earthly +client-test-build
+    RUN docker run --rm \
+        --name client-test_tet \
+        --network $network \
+        --env REACT_APP_SUPABASE_URL=$url \
+        --env REACT_APP_SUPABASE_KEY=$ANON_KEY \
+        --env ZIP_ORIGIN_OVERRIDE=$url \
+        client-test:latest
 
 curl-test-build:
     FROM curlimages/curl
