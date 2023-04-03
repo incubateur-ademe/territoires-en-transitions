@@ -226,18 +226,29 @@ curl-test:
         --env URL=$API_URL \
         curl-test:latest
 
-api-test:
+api-test-build:
     FROM denoland/deno
-    ARG --required ANON_KEY
-    ARG --required API_URL
+    ENV SUPABASE_URL
+    ENV SUPABASE_KEY
     WORKDIR tests
     COPY ./api_tests .
-    ARG URL=$(echo $API_URL | sed "s/localhost/host.docker.internal/")
-    ENV SUPABASE_URL=$URL
-    ENV SUPABASE_KEY=$ANON_KEY
     RUN deno cache tests/smoke.test.ts
-    RUN deno test --allow-net --allow-env --allow-read tests/smoke.test.ts --location 'http://localhost'
-    RUN deno test --allow-net --allow-env --allow-read tests/test/utilisateur.test.ts --location 'http://localhost'
+    CMD deno test --allow-net --allow-env --allow-read tests/smoke.test.ts --location 'http://localhost' && \
+        deno test --allow-net --allow-env --allow-read tests/test/utilisateur.test.ts --location 'http://localhost'
+    SAVE IMAGE api-test:latest
+
+api-test:
+    ARG --required ANON_KEY
+    ARG --required API_URL
+    ARG network=host
+    LOCALLY
+    RUN earthly +api-test-build
+    RUN docker run --rm \
+        --name api_test_tet \
+        --network $network \
+        --env SUPABASE_KEY=$ANON_KEY \
+        --env SUPABASE_URL=$API_URL \
+        api-test:latest
 
 cypress-wip:
     FROM cypress/included:12.3.0
