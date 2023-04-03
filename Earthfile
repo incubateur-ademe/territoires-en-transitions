@@ -195,13 +195,23 @@ curl-test-build:
     SAVE IMAGE curl-test:latest
 
 curl-test:
-    BUILD +curl-test-build
+    ARG --required SERVICE_ROLE_KEY
+    ARG --required API_URL
+    ARG network=supabase_network_tet
+    ARG internal_url=http://supabase_kong_tet:8000
     LOCALLY
+    RUN earthly +curl-test-build
     RUN docker run --rm \
         --name curl_test_tet \
-        --network supabase_network_tet \
-        --env ANON_KEY=${ANON_KEY} \
-        --env URL="http://supabase_kong_tet:8000" \
+        --network $network \
+        --env API_KEY=$SERVICE_ROLE_KEY \
+        --env URL=$internal_url \
+        curl-test:latest
+    RUN docker run --rm \
+        --name curl_test_tet \
+        --network host \
+        --env API_KEY=$SERVICE_ROLE_KEY \
+        --env URL=$API_URL \
         curl-test:latest
 
 api-test:
