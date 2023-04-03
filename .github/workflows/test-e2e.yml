@@ -14,7 +14,7 @@ jobs:
   end-to-end-test:
     name: End-to-end tests
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
     env:
       e2e-directory: ./e2e
       datalayer-directory: ./data_layer
@@ -31,8 +31,13 @@ jobs:
       GIT_SHA: ${{github.sha}}
 
     steps:
-      # cf. https://github.com/actions/checkout
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      - uses: earthly/actions/setup-earthly@v1
+        with:
+          version: v0.7.0
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
 
       # fixe la langue de l'environnement de test : permet de faire passer les
       # tests de composant utilisant des fonctions telles que toLocaleString()
@@ -41,32 +46,11 @@ jobs:
           sudo locale-gen ${{env.LANG}}
           sudo update-locale LANG=${{env.LANG}}
 
-      # Copy all projet .sample.env into .env with the variables
-      - name: Make .env files
-        run: sh make_dot_env.sh
-
-      # Build docker
-      - name: Build docker
-        run: docker-compose build
-        working-directory: ${{env.project-docker-directory}}
-
-      # Tear down docker
-      - name: Down docker
-        run: docker-compose down
-        working-directory: ${{env.project-docker-directory}}
-
-      # Launch docker
-      - name: Launch docker
-        run: docker-compose up -d
-        working-directory: ${{env.project-docker-directory}}
-        env:
-          # pour que les urls téléchargées depuis le serveur node (front) soit ré-écrites
-          ZIP_ORIGIN_OVERRIDE: http://kong:8000
-
-      # Wait for the rest container
-      - name: Wait for rest
-        run: sh scripts/wait_for_rest.sh
-        working-directory: ${{env.datalayer-directory}}
+      - run: supabase start
+      - run: supabase status
+      - run: docker network ls
+      - run: earthly +setup-env
+      - run: earthly +dev --client=yes
 
       # Wait for the front container
       - name: Wait for front
