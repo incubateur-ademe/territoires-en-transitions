@@ -341,6 +341,10 @@ export interface Database {
         id: number;
         montant_ttc: number;
       };
+      graphique_tranche: {
+        id: string;
+        value: number;
+      };
       indicateur_generique: {
         description: string;
         indicateur_id: unknown;
@@ -353,6 +357,14 @@ export interface Database {
         nom: string;
         tag_id: number;
         user_id: string;
+      };
+      plan_action_tableau_de_bord: {
+        collectivite_id: number;
+        pilotes: unknown;
+        plan_id: number;
+        priorites: unknown;
+        referents: unknown;
+        statuts: unknown;
       };
       tabular_score: {
         action_id: unknown;
@@ -1905,8 +1917,12 @@ export interface Database {
         Returns: Json;
       };
       plan_action_tableau_de_bord: {
-        Args: {collectivite_id: number; plan_id: number; sans_plan: boolean};
-        Returns: unknown;
+        Args: {
+          collectivite_id: number;
+          plan_id?: number;
+          sans_plan?: boolean;
+        };
+        Returns: Database['public']['CompositeTypes']['plan_action_tableau_de_bord'];
       };
       plans_action_collectivite: {
         Args: {
@@ -2239,28 +2255,28 @@ export interface Database {
         | {
             Args: {
               bucket_width: unknown;
+              ts: string;
+            };
+            Returns: string;
+          }
+        | {
+            Args: {
+              bucket_width: unknown;
+              ts: string;
+            };
+            Returns: string;
+          }
+        | {
+            Args: {
+              bucket_width: unknown;
+              ts: string;
+            };
+            Returns: string;
+          }
+        | {
+            Args: {
+              bucket_width: unknown;
               origin: string;
-              ts: string;
-            };
-            Returns: string;
-          }
-        | {
-            Args: {
-              bucket_width: unknown;
-              ts: string;
-            };
-            Returns: string;
-          }
-        | {
-            Args: {
-              bucket_width: unknown;
-              ts: string;
-            };
-            Returns: string;
-          }
-        | {
-            Args: {
-              bucket_width: unknown;
               ts: string;
             };
             Returns: string;
@@ -5334,6 +5350,7 @@ export interface Database {
           completude_cae: number | null;
           completude_eci: number | null;
           cot: boolean | null;
+          date_activation: string | null;
           departement_code: string | null;
           departement_name: string | null;
           nature_collectivite: Database['public']['Enums']['nature'] | null;
@@ -5635,59 +5652,6 @@ export interface Database {
           type: Database['public']['Enums']['action_type'] | null;
         };
       };
-    };
-  };
-  typage: {
-    Enums: {
-      [_ in never]: never;
-    };
-    Functions: {
-      [_ in never]: never;
-    };
-    Tables: {
-      graphique_tranche: {
-        Insert: {
-          id: string;
-          value: number;
-        };
-        Row: {
-          id: string;
-          value: number;
-        };
-        Update: {
-          id?: string;
-          value?: number;
-        };
-      };
-      plan_action_tableau_de_bord: {
-        Insert: {
-          collectivite_id: number;
-          pilotes?: unknown[] | null;
-          plan_id?: number | null;
-          priorites?: unknown[] | null;
-          referents?: unknown[] | null;
-          statuts?: unknown[] | null;
-        };
-        Row: {
-          collectivite_id: number;
-          pilotes: unknown[] | null;
-          plan_id: number | null;
-          priorites: unknown[] | null;
-          referents: unknown[] | null;
-          statuts: unknown[] | null;
-        };
-        Update: {
-          collectivite_id?: number;
-          pilotes?: unknown[] | null;
-          plan_id?: number | null;
-          priorites?: unknown[] | null;
-          referents?: unknown[] | null;
-          statuts?: unknown[] | null;
-        };
-      };
-    };
-    Views: {
-      [_ in never]: never;
     };
   };
 }
