@@ -90,13 +90,25 @@ seed:
         --env PG_URL=$DB_URL \
         seed:latest deploy --mode change
 
-load-contents:
+load-json-build:
     FROM curlimages/curl
+    ENV SERVICE_ROLE_KEY
+    ENV API_URL
+    COPY ./data_layer/content /content
+    ENTRYPOINT sh ./content/load.sh
+    SAVE IMAGE load-json:latest
+
+load-json:
     ARG --required SERVICE_ROLE_KEY
     ARG --required API_URL
-    ARG URL=$(echo $API_URL | sed "s/localhost/host.docker.internal/")
-    COPY ./data_layer/content /content
-    RUN --push sh ./content/load.sh
+    ARG network=host
+    LOCALLY
+    RUN earthly +load-json-build
+    RUN docker run --rm \
+        --network $network \
+        --env API_URL=$API_URL \
+        --env SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY \
+        load-json:latest deploy --mode change
 
 update-scores:
     ARG --required DB_URL
@@ -237,7 +249,7 @@ dev:
         RUN supabase start
         RUN earthly +deploy
         RUN earthly +seed
-        RUN earthly --push +load-contents
+        RUN earthly +load-json
     END
 
     IF [ "$business" = "yes" ]
