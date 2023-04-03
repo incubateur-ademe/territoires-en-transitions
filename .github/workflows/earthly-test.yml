@@ -29,13 +29,6 @@ jobs:
       - run: supabase status
       - run: docker network ls
       - run: earthly +setup-env
-      - run: earthly +business-build
-      - run: earthly +client-build
-
       - run: earthly +dev
-      - run: earthly +db-test
-      - run: earthly +business-test
-      - run: earthly +client-test
-      - run: earthly +api-test
-      - run: earthly +deploy-test
+      - run: earthly +test
 
