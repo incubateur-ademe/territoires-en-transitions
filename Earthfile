@@ -136,6 +136,7 @@ business-build:
 
 business:
     ARG --required SERVICE_ROLE_KEY
+    ARG url=http://supabase_kong_tet:8000
     ARG network=supabase_network_tet
     LOCALLY
     RUN earthly +business-build
@@ -143,14 +144,28 @@ business:
         --name business_tet \
         --network $network \
         --publish 8888:8888 \
-        --env SUPABASE_URL="http://supabase_kong_tet:8000" \
+        --env SUPABASE_URL=$url \
         --env SUPABASE_KEY=$SERVICE_ROLE_KEY \
         business:latest
 
-business-test:
+business-test-build:
     FROM +business-build
     COPY ./markdown /markdown
-    RUN pytest tests
+    CMD pytest tests
+    SAVE IMAGE business-test:latest
+
+business-test:
+    ARG --required SERVICE_ROLE_KEY
+    ARG url=http://supabase_kong_tet:8000
+    ARG network=supabase_network_tet
+    LOCALLY
+    RUN earthly +business-test-build
+    RUN docker run --rm \
+        --name business-test_tet \
+        --network $network \
+        --env SUPABASE_URL=$url \
+        --env SUPABASE_KEY=$SERVICE_ROLE_KEY \
+        business-test:latest
 
 client-deps:
     FROM node:16
@@ -304,11 +319,10 @@ stats:
     RUN docker stats $(docker ps --format '{{.Names}}' --filter name=transitions) || exit 1
 
 test:
-    FROM +dev
     LOCALLY
-    RUN earthly --push +db-test
-    RUN earthly --push +business-test
-    RUN earthly --push +client-test
-    RUN earthly --push +api-test
-    RUN earthly --push +deploy-test
+    RUN earthly +db-test
+    RUN earthly +business-test
+    RUN earthly +client-test
+    RUN earthly +api-test
+    RUN earthly +deploy-test
 
