@@ -1,9 +1,22 @@
 #!/bin/sh
 
-echo "Essaye avec curl de télécharger les noms depuis la vue collectivite_card."
+until curl --fail -X POST "$URL/rest/v1/rpc/is_authenticated" \
+            -H "Content-Type: application/json" \
+            -H "apikey: $API_KEY" \
+            -H "Authorization: Bearer $API_KEY"; do
+    sleep 1
+    echo "Attends que la rpc is_authenticated soit disponible."
+done
 
-curl -X GET \
+echo "Télécharge les noms depuis la vue collectivite_card."
+curl -v -X GET \
      -H "apikey: $API_KEY" \
      -H "Authorization: Bearer $API_KEY" \
      -H "Accept: text/csv" \
 "$URL/rest/v1/collectivite_card?select=nom"
+
+echo "Appelle la RPC test_reset."
+curl -v -X POST \
+     -H "apikey: $API_KEY" \
+     -H "Authorization: Bearer $API_KEY" \
+"$URL/rest/v1/rpc/test_reset"
