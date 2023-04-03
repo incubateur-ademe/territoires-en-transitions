@@ -152,7 +152,7 @@ business-test:
     COPY ./markdown /markdown
     RUN pytest tests
 
-react:
+client-deps:
     FROM node:16
     ARG APP_DIR="./app.territoiresentransitions.react"
     ENV LANG fr_FR.UTF-8
@@ -166,20 +166,28 @@ react:
     CMD npm start
 
 client-build:
-    FROM +react
+    FROM +client-deps
     ARG --required ANON_KEY
-    ARG --required API_URL
-    ARG URL=$(echo $API_URL | sed "s/localhost/host.docker.internal/")
-    ENV REACT_APP_SUPABASE_URL=$API_URL
+    ARG --required BROWSER_API_URL
+    ARG --required SERVER_API_URL
+    ENV REACT_APP_SUPABASE_URL=$BROWSER_API_URL
     ENV REACT_APP_SUPABASE_KEY=$ANON_KEY
-    ENV ZIP_ORIGIN_OVERRIDE=$URL
+    ENV ZIP_ORIGIN_OVERRIDE=$SERVER_API_URL
     RUN npm run build
     SAVE IMAGE client:latest
 
-client-start:
-    BUILD +client-build
+client:
+    ARG --required ANON_KEY
+    ARG --required API_URL
+    ARG internal_url=http://supabase_kong_tet:8000
+    ARG network=supabase_network_tet
     LOCALLY
-    RUN docker run -p 3000:3000 -d --rm --name client_tet client:latest
+    RUN earthly +client-build --ANON_KEY=$ANON_KEY --BROWSER_API_URL=$API_URL --SERVER_API_URL=$internal_url
+    RUN docker run -d --rm \
+        --name client_tet \
+        --network $network \
+        --publish 3000:3000 \
+        client:latest
 
 client-test:
     FROM +react
@@ -267,14 +275,12 @@ dev:
     END
 
     IF [ "$business" = "yes" ]
-        RUN earthly +business-build
         RUN earthly +business
         RUN earthly +update-scores
     END
 
     IF [ "$client" = "yes" ]
-        RUN earthly +client-build
-        RUN earthly +client-start
+        RUN earthly +client
     END
 
 stop:
