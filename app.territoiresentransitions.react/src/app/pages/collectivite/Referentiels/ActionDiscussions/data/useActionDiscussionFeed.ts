@@ -47,5 +47,18 @@ const fetch = async (
     return [];
   }
 
-  return data;
+  // renvoi les discussions après avoir trié à l'intérieur de chacune les commentaires
+  return (data as TActionDiscussion[]).map(sortCommentaires);
 };
+
+// tri les commentaires (à l'intérieur d'une discussion) par date de création asc.
+const sortCommentaires = ({
+  commentaires,
+  ...discussion
+}: TActionDiscussion) => ({
+  ...discussion,
+  commentaires: commentaires?.sort(
+    (a, b) =>
+      new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+  ),
+});
