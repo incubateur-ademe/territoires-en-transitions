@@ -265,7 +265,7 @@ api-test-build:
     SAVE IMAGE api-test:latest
 
 api-test:
-    ARG --required ANON_KEY
+    ARG --required SERVICE_ROLE_KEY
     ARG --required API_URL
     ARG network=host
     LOCALLY
@@ -273,7 +273,7 @@ api-test:
     RUN docker run --rm \
         --name api_test_tet \
         --network $network \
-        --env SUPABASE_KEY=$ANON_KEY \
+        --env SUPABASE_KEY=$SERVICE_ROLE_KEY \
         --env SUPABASE_URL=$API_URL \
         api-test:latest
 
