@@ -29,9 +29,15 @@ as
 $$
 
 -- désactive temporairement les triggers pour accélérer les inserts
-alter table reponse_binaire disable trigger all;
-alter table reponse_choix disable trigger all;
-alter table reponse_proportion disable trigger all;
+alter table reponse_binaire disable trigger after_reponse_insert;
+alter table reponse_binaire disable trigger save_history;
+alter table reponse_binaire disable trigger set_modified_at_before_reponse_binaire_update;
+alter table reponse_choix disable trigger after_reponse_insert;
+alter table reponse_choix disable trigger save_history;
+alter table reponse_choix disable trigger set_modified_at_before_reponse_choix_update;
+alter table reponse_proportion disable trigger after_reponse_insert;
+alter table reponse_proportion disable trigger save_history;
+alter table reponse_proportion disable trigger set_modified_at_before_reponse_proportion_update;
 
     -- Vide les tables des réponses
 truncate reponse_binaire;
