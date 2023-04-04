@@ -39,7 +39,7 @@ const DoughnutChart = ({data, label = false}: DoughnutChartProps) => {
       data={isDefaultData() ? defaultData : localData}
       theme={theme}
       colors={{datum: 'data.color'}}
-      margin={{top: 30, right: 50, bottom: 70, left: 50}}
+      margin={{top: 40, right: 50, bottom: 60, left: 50}}
       innerRadius={0.5}
       padAngle={0.7}
       cornerRadius={3}
@@ -105,33 +105,6 @@ const DoughnutChart = ({data, label = false}: DoughnutChartProps) => {
           </div>
         );
       }}
-      legends={[
-        {
-          data: label
-            ? []
-            : localData.slice(0, 3).map(d => ({
-                id: d.id,
-                label: `${
-                  d.id.length > 10 && data.length > 1
-                    ? `${d.id.slice(0, 10)}...`
-                    : d.id
-                }`,
-                color: d.color,
-              })),
-          anchor: 'bottom',
-          direction: 'row',
-          justify: false,
-          translateX: 0,
-          translateY: 56,
-          itemsSpacing: 0,
-          itemWidth: 120,
-          itemHeight: 18,
-          itemDirection: 'left-to-right',
-          itemOpacity: 1,
-          symbolSize: 18,
-          symbolShape: 'circle',
-        },
-      ]}
     />
   );
 };
