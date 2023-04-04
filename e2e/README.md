@@ -47,15 +47,9 @@ npm test -- -s "cypress/integration/**/15*"
 npm test -- -s "cypress/integration/**/15*" --config video=true
 ```
 
-### Générer un rapport de test
+## Rapport de test
 
-```sh
-npm run report
-```
-
-Génère un rapport dans le répertoire `report`. Ouvrir le fichier `report/index.html` pour consulter ce rapport.
-
-Cette commande est lancée après l'exécution des tests en intégration continue (CI) et le rapport produit est attaché à l'action GitHub associée. Ceci permet de faciliter le diagnostique, le rapport contenant les captures d'écran des étapes de test en erreur.
+Un rapport de test au format HTML est généré lors de l'exécution des tests. Ouvrir le fichier `cucumber-report.html` pour consulter ce rapport.
 
 ## Organisation des tests
 
