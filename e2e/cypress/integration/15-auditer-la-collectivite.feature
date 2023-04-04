@@ -195,6 +195,7 @@ Fonctionnalité: Auditer la collectivité
     Quand je clique sur le bouton "Valider" du "dialogue de validation"
     Alors le "dialogue de validation" est absent
     Et le bouton "Valider l'audit" est absent
+    Et le bouton "Demander un audit" est visible
     Et l'en-tête ne contient pas de message
 
     Quand je suis sur la page "Bibliothèque de documents" de la collectivité courante
