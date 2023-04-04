@@ -2,9 +2,8 @@ node_modules
 
 cypress/videos
 cypress/screenshots
-cypress/cucumber-json
 cypress/logs
 cypress/downloads
-report*
-coverage*
+cucumber-report.html
+cucumber-messages.ndjson
 .env
