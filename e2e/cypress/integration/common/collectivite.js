@@ -1,11 +1,12 @@
 /**
  * Génère une collectivité et diverses données de test (utilisateur, scores, etc.)
  */
+import {defineStep} from '@badeball/cypress-cucumber-preprocessor';
 import {Views, CollectivitePages} from './views';
 import {waitForApp, logout} from './shared';
 
 // crée une collectivité de test
-Given('une collectivité nommée {string}', createCollectivite);
+defineStep('une collectivité nommée {string}', createCollectivite);
 function createCollectivite(nom) {
   cy.task('supabase_rpc', {
     name: 'test_create_collectivite',
@@ -16,7 +17,7 @@ function createCollectivite(nom) {
 }
 
 // passe cette collectivité en COT
-Given('avec un COT actif', setCOT);
+defineStep('avec un COT actif', setCOT);
 function setCOT() {
   const {collectivite_id} = this.collectivite;
   cy.task('supabase_rpc', {
@@ -26,7 +27,7 @@ function setCOT() {
 }
 
 // crée un utilisateur de la collectivité
-Given('un utilisateur avec les droits en {string}', addUserWithProfile);
+defineStep('un utilisateur avec les droits en {string}', addUserWithProfile);
 function addUserWithProfile(niveau) {
   const {collectivite_id} = this.collectivite;
   addRandomUser(collectivite_id, niveau, `user_${niveau}`);
@@ -43,30 +44,40 @@ function addRandomUser(collectivite_id, niveau, alias) {
 }
 
 // connecte un utilisateur de la collectivité de test
-Given('je suis connecté avec les droits en {string}', loginWithProfile);
+defineStep('je suis connecté avec les droits en {string}', loginWithProfile);
 function loginWithProfile(niveau) {
-  return loginAs(`@user_${niveau}`);
+  return loginAs.call(this, `@user_${niveau}`);
 }
 function loginAs(userAlias) {
-  cy.get(userAlias).then(login);
+  cy.get(userAlias).then(function (user) {
+    login.call(this, user);
+  });
   cy.get('[data-test=connectedMenu]').should('be.visible');
 }
 function login({email, password}) {
-  this.auth.disconnect();
-  this.auth.connect({email, password});
+  cy.get('@auth').then(auth => {
+    auth.disconnect();
+    auth.connect({email, password});
+  });
 }
 
 // ajoute un auditeur et le connecte
-Given("je suis connecté en tant qu'auditeur de la collectivité", function () {
-  addAuditeur.call(this);
-  loginAs('@auditeur');
-});
-Given("je me reconnecte en tant qu'auditeur de la collectivité", function () {
-  logout();
-  waitForApp();
-  addAuditeur.call(this);
-  loginAs('@auditeur');
-});
+defineStep(
+  "je suis connecté en tant qu'auditeur de la collectivité",
+  function () {
+    addAuditeur.call(this);
+    loginAs.call(this, '@auditeur');
+  }
+);
+defineStep(
+  "je me reconnecte en tant qu'auditeur de la collectivité",
+  function () {
+    logout();
+    waitForApp();
+    addAuditeur.call(this);
+    loginAs.call(this, '@auditeur');
+  }
+);
 function addAuditeur() {
   const {collectivite_id} = this.collectivite;
   const {id: demande_id} = this.demande_envoyee;
@@ -84,7 +95,7 @@ function setAuditeur(demande_id, user_id) {
     .as('audit_auditeur');
 }
 
-Given("l'audit est commencé", commencerAudit);
+defineStep("l'audit est commencé", commencerAudit);
 function commencerAudit() {
   cy.get('@audit_auditeur').then(({audit_id}) => {
     cy.task('supabase_rpc', {
@@ -95,9 +106,9 @@ function commencerAudit() {
 }
 
 // rend la collectivité de test labellisable au niveau voulu
-Given("un score permettant d'obtenir la {int}ème étoile", fulfill);
-Given("le score permet d'obtenir la {int}ème étoile", fulfill);
-Given("le score permet d'obtenir la {int}ère étoile", fulfill);
+defineStep("un score permettant d'obtenir la {int}ème étoile", fulfill);
+defineStep("le score permet d'obtenir la {int}ème étoile", fulfill);
+defineStep("le score permet d'obtenir la {int}ère étoile", fulfill);
 function fulfill(etoile) {
   cy.get('@collectivite').then(({collectivite_id}) =>
     cy.task('supabase_rpc', {
@@ -108,15 +119,15 @@ function fulfill(etoile) {
 }
 
 // envoi une demande d'audit
-Given(
+defineStep(
   /je demande un audit de labellisation "(eci|cae)" pour la (1|2|3|4|5)è(?:r|m)e étoile/,
   envoyerDemande
 );
-Given(
+defineStep(
   /avec un audit demandé pour la labellisation "(eci|cae)" (1|2|3|4|5)è(?:r|m)e étoile/,
   envoyerDemande
 );
-Given('avec un audit COT sans labellisation demandé', referentiel =>
+defineStep('avec un audit COT sans labellisation demandé', referentiel =>
   envoyerDemande('cae', null, 'cot')
 );
 function envoyerDemande(referentiel, etoile, sujet = 'labellisation') {
@@ -156,7 +167,7 @@ function labellisationSubmitDemande(
     .as('demande_envoyee');
 }
 
-Given(
+defineStep(
   /avec un audit en cours pour la labellisation "(eci|cae)" (1|2|3|4|5)è(?:r|m)e étoile/,
   function (referentiel, etoile) {
     envoyerDemande(referentiel, etoile).then(function () {
@@ -167,7 +178,10 @@ Given(
 );
 
 // visite une page de la collectivité
-Given('je suis sur la page {string} de la collectivité courante', visitPage);
+defineStep(
+  'je suis sur la page {string} de la collectivité courante',
+  visitPage
+);
 function visitPage(page) {
   cy.get('@collectivite').then(({collectivite_id}) => {
     const {route, selector} = CollectivitePages[page];
@@ -176,7 +190,7 @@ function visitPage(page) {
   });
 }
 
-When(
+defineStep(
   /je visite l'onglet "([^"]*)" du référentiel "([^"]*)" de la collectivité courante/,
   function (tabName, referentiel) {
     const {collectivite_id} = this.collectivite;

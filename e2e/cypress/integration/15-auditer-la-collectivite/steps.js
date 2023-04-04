@@ -1,4 +1,4 @@
-/// <reference types="Cypress" />
+import {defineStep} from '@badeball/cypress-cucumber-preprocessor';
 import '../05-modifier-etat-avancement/steps';
 import '../12-utiliser-la-bibliotheque/steps';
 import '../14-demander-un-audit/steps';
@@ -15,12 +15,12 @@ beforeEach(() => {
     ...LocalSelectorsStatut,
     ...LocalSelectorsLabellisation,
     ...LocalSelectors,
-  }).as('LocalSelectors');
+  }).as('LocalSelectors', {type: 'static'});
 });
 
 const suiviAuditTable = '[data-test="suivi-audit"]';
 
-When(
+defineStep(
   "le tableau de suivi de l'audit contient les lignes suivantes :",
   dataTable => {
     const rows = dataTable.rows();
@@ -54,7 +54,7 @@ const checkRow = ([identifiant, odj, avancement]) =>
       cy.get('[role=cell]:nth(2)').should('have.text', avancement);
     });
 
-When(
+defineStep(
   "je clique sur la ligne du tableau de suivi de l'audit contenant l'identifiant {string}",
   identifiant =>
     cy
@@ -64,7 +64,7 @@ When(
       .click()
 );
 
-When(
+defineStep(
   "l'état d'avancement n'est pas éditable depuis le tableau de détail des tâches",
   () => {
     cy.get('[data-test=DetailTacheTable]').within(() => {
@@ -76,7 +76,7 @@ When(
   }
 );
 
-When(
+defineStep(
   "l'état d'avancement est éditable depuis le tableau de détail des tâches",
   () => {
     cy.get('[data-test=DetailTacheTable]').within(() => {
@@ -88,28 +88,28 @@ When(
   }
 );
 
-When("le tableau de suivi de l'audit ne contient pas de résultat", () => {
+defineStep("le tableau de suivi de l'audit ne contient pas de résultat", () => {
   cy.get('[data-test=DetailTacheTable] [role=row] .identifiant').should(
     'have.length.gte',
     0
   );
 });
 
-When("il n'y a pas de rapports d'audit", () => {
+defineStep("il n'y a pas de rapports d'audit", () => {
   cy.get('[data-test=rapports-audit]').should('not.exist');
 });
 
-When(
+defineStep(
   "la liste des rapports d'audit contient les lignes suivantes :",
   dataTable => {
     cy.get('[data-test=rapports-audit]').within(makeCheckPreuveRows(dataTable));
   }
 );
 
-When("l'en-tête contient {string}", text =>
+defineStep("l'en-tête contient {string}", text =>
   cy.get('[data-test=HeaderMessage]').should('contain.text', text)
 );
 
-When("l'en-tête ne contient pas de message", text =>
+defineStep("l'en-tête ne contient pas de message", text =>
   cy.get('[data-test=HeaderMessage]').should('not.exist')
 );

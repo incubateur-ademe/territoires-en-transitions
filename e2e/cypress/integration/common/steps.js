@@ -1,4 +1,4 @@
-/// <reference types="Cypress" />
+import {defineStep} from '@badeball/cypress-cucumber-preprocessor';
 
 /**
  * Définitions de "steps" communes à tous les tests
@@ -29,7 +29,7 @@ beforeEach(function () {
   });
 });
 
-Given("j'ouvre le site", () => {
+defineStep("j'ouvre le site", () => {
   cy.get('[data-test=home]').should('be.visible');
 });
 
@@ -43,7 +43,7 @@ const genUser = userName => {
 };
 
 const SignInPage = Selectors['formulaire de connexion'];
-Given(/je suis connecté en tant que "([^"]*)"/, login);
+defineStep(/je suis connecté en tant que "([^"]*)"/, login);
 function login(userName) {
   const u = genUser(userName);
   cy.get('@auth').then(auth => auth.connect(u));
@@ -51,13 +51,13 @@ function login(userName) {
   cy.get('[data-test=connectedMenu]').should('be.visible');
 }
 
-Given('je me reconnecte en tant que {string}', function (userName) {
+defineStep('je me reconnecte en tant que {string}', function (userName) {
   logout();
   waitForApp();
   login(userName);
 });
 
-Given(
+defineStep(
   "je suis connecté en tant qu'utilisateur de la collectivité {int} n'ayant pas encore accepté les CGU",
   function (collectivite_id) {
     return cy
@@ -73,30 +73,30 @@ Given(
   }
 );
 
-Given('les discussions sont réinitialisées', () => {
+defineStep('les discussions sont réinitialisées', () => {
   cy.task('supabase_rpc', {name: 'test_reset_discussion_et_commentaires'});
 });
 
-Given('les droits utilisateur sont réinitialisés', () => {
+defineStep('les droits utilisateur sont réinitialisés', () => {
   cy.task('supabase_rpc', {name: 'test_reset_droits'});
 });
 
-Given(/l'utilisateur "([^"]*)" est supprimé/, email => {
+defineStep(/l'utilisateur "([^"]*)" est supprimé/, email => {
   cy.task('supabase_rpc', {
     name: 'test_remove_user',
     params: {email: email},
   });
 });
 
-Given('les informations des membres sont réinitialisées', () => {
+defineStep('les informations des membres sont réinitialisées', () => {
   cy.task('supabase_rpc', {name: 'test_reset_membres'});
 });
 
-Given('je me déconnecte', logout);
+defineStep('je me déconnecte', logout);
 
 // Met en pause le déroulement d'un scénario.
 // Associé avec le tag @focus cela permet de debugger facilement les tests.
-Given('pause', () => cy.pause());
+defineStep('pause', () => cy.pause());
 
 // utilitaire pour vérifier quelques attentes d'affichage génériques à partir d'une table de correspondances
 export const checkExpectation = (selector, expectation, value) => {
@@ -126,39 +126,39 @@ export const resolveSelector = (context, elem) => {
 // on utilise "function" (plutôt qu'une arrow function) pour que "this" donne
 // accès au contexte de manière synchrone
 // Ref: https://docs.cypress.io/guides/core-concepts/variables-and-aliases#Sharing-Context
-Given(/la page vérifie les conditions suivantes/, function (dataTable) {
+defineStep(/la page vérifie les conditions suivantes/, function (dataTable) {
   const rows = dataTable.rows();
-  cy.wrap(rows).each(([elem, expectation, value]) => {
+  cy.wrap(rows).each(function ([elem, expectation, value]) {
     checkExpectation(resolveSelector(this, elem).selector, expectation, value);
   });
 });
-Given(
+defineStep(
   /le "([^"]*)" vérifie les conditions suivantes/,
   function (parentName, dataTable) {
     const parent = resolveSelector(this, parentName);
-    cy.get(parent.selector).within(() => {
+    cy.get(parent.selector).within(function () {
       const rows = dataTable.rows();
-      cy.wrap(rows).each(([elem, expectation, value]) => {
+      cy.wrap(rows).each(function ([elem, expectation, value]) {
         checkExpectation(parent.children[elem], expectation, value);
       });
     });
   }
 );
-Given(/le "([^"]*)" vérifie la condition "([^"]*)"/, verifyExpectation);
-Given(/^le "([^"]*)" est ([^"]*)$/, verifyExpectation);
-Given(/"([^"]*)" contient "([^"]*)"$/, function (elem, value) {
+defineStep(/le "([^"]*)" vérifie la condition "([^"]*)"/, verifyExpectation);
+defineStep(/^le "([^"]*)" est ([^"]*)$/, verifyExpectation);
+defineStep(/"([^"]*)" contient "([^"]*)"$/, function (elem, value) {
   checkExpectation(resolveSelector(this, elem).selector, 'contient', value);
 });
-Given(/^le bouton "([^"]*)" est ([^"]*)$/, verifyExpectation);
-Given(/^la case "([^"]*)" est ([^"]*)$/, verifyExpectation);
-Given(
-  /^le bouton "([^"]*)" est ([^"]*) et ([^"]*)$/,
-  (elem, expectation1, expectation2) => {
-    verifyExpectation(elem, expectation1);
-    verifyExpectation(elem, expectation2);
+defineStep(/^la case "([^"]*)" est ([^"]*)$/, verifyExpectation);
+defineStep('le bouton {string} est {word}', verifyExpectation);
+defineStep(
+  'le bouton {string} est {word} et {word}',
+  function (elem, expectation1, expectation2) {
+    checkExpectation(resolveSelector(this, elem).selector, expectation1);
+    checkExpectation(resolveSelector(this, elem).selector, expectation2);
   }
 );
-Given(
+defineStep(
   /^le bouton "([^"]*)" du "([^"]*)" est ([^"]*)$/,
   childrenVerifyExpectation
 );
@@ -175,21 +175,27 @@ function handleClickOnElement(subElement, elem) {
   const parent = resolveSelector(this, elem);
   cy.get(parent.selector).find(parent.children[subElement]).click();
 }
-Given(/je clique sur le bouton "([^"]*)" du "([^"]*)"/, handleClickOnElement);
-Given(/je clique sur l'onglet "([^"]*)" du "([^"]*)"/, handleClickOnElement);
-Given(
+defineStep(
+  /je clique sur le bouton "([^"]*)" du "([^"]*)"/,
+  handleClickOnElement
+);
+defineStep(
+  /je clique sur l'onglet "([^"]*)" du "([^"]*)"/,
+  handleClickOnElement
+);
+defineStep(
   /je clique sur le bouton "([^"]*)" de la page "([^"]*)"/,
   handleClickOnElement
 );
-Given(/^je clique sur le bouton "([^"]*)"$/, function (btnName) {
+defineStep(/^je clique sur le bouton "([^"]*)"$/, function (btnName) {
   cy.get(resolveSelector(this, btnName).selector).click();
 });
-Given(/^je clique sur le bouton radio "([^"]*)"$/, function (btnName) {
+defineStep(/^je clique sur le bouton radio "([^"]*)"$/, function (btnName) {
   // le bouton radio natif est masqué par la version stylé alors on clique sur le libellé qui le suit immédiatement
   cy.get(resolveSelector(this, btnName).selector + '+label').click();
 });
 
-Given(/^je clique sur la case "([^"]*)"$/, function (checkbox) {
+defineStep(/^je clique sur la case "([^"]*)"$/, function (checkbox) {
   cy.get(resolveSelector(this, checkbox).selector)
     .parent()
     .should('have.class', 'fr-checkbox-group')
@@ -201,19 +207,22 @@ function fillFormWithValues(elem, dataTable) {
   cy.get(parent.selector).within(() => {
     const rows = dataTable.rows();
     cy.wrap(rows).each(([field, value]) => {
-      cy.get(parent.children[field]).clear().type(value);
+      cy.get(parent.children[field]).type('{selectall}{backspace}' + value);
     });
   });
 }
-Given(/je remplis le "([^"]*)" avec les valeurs suivantes/, fillFormWithValues);
+defineStep(
+  /je remplis le "([^"]*)" avec les valeurs suivantes/,
+  fillFormWithValues
+);
 
-Given(/l'appel à "([^"]*)" va répondre "([^"]*)"/, function (name, reply) {
+defineStep(/l'appel à "([^"]*)" va répondre "([^"]*)"/, function (name, reply) {
   const r = this.LocalMocks?.[name]?.[reply];
   assert(r, 'mock non trouvé');
   cy.intercept(...r).as(name);
 });
 
-Given(
+defineStep(
   "je sélectionne l'option {string} dans la liste déroulante {string}",
   selectDropdownValue
 );
@@ -224,23 +233,27 @@ function selectDropdownValue(value, dropdown) {
   cy.get(`[data-test="${value}"]`).should('be.visible').click();
 }
 
-Given('je saisi la valeur {string} dans le champ {string}', fillInput);
+defineStep('je saisi la valeur {string} dans le champ {string}', fillInput);
 function fillInput(value, input) {
-  cy.get(resolveSelector(this, input).selector).clear().type(value);
+  cy.get(resolveSelector(this, input).selector).type(
+    '{selectall}{backspace}' + value
+  );
 }
 
-Given('je clique en dehors de la boîte de dialogue', () =>
+defineStep('je clique en dehors de la boîte de dialogue', () =>
   cy.get('body').click(10, 10)
 );
 
-Given('je valide le formulaire', () => cy.get('button[type=submit]').click());
+defineStep('je valide le formulaire', () =>
+  cy.get('button[type=submit]').click()
+);
 
 const transateTypes = {
   succès: 'success',
   information: 'info',
   erreur: 'error',
 };
-Given(
+defineStep(
   /une alerte de "([^"]*)" est affichée et contient "([^"]*)"/,
   (type, message) => {
     cy.get(`.fr-alert--${transateTypes[type]}`).should('be.visible');
@@ -248,7 +261,7 @@ Given(
   }
 );
 
-Given('je recharge la page', () => {
+defineStep('je recharge la page', () => {
   cy.reload();
 });
 
@@ -256,7 +269,7 @@ Given('je recharge la page', () => {
 // pour valider la modification des informations des membres ou
 // les informations de l'utilisateur courant
 const tableauMembresSelector = Selectors['tableau des membres'];
-Given(
+defineStep(
   'le tableau des membres doit contenir les informations suivantes',
   dataTable => {
     cy.get(tableauMembresSelector.selector).within(() => {
@@ -290,18 +303,18 @@ Given(
   }
 );
 
-When(/je clique sur l'onglet "([^"]+)"/, tabName => {
+defineStep(/je clique sur l'onglet "([^"]+)"$/, tabName => {
   cy.get('.fr-tabs__tab').contains(tabName).click();
 });
 
-When(/je vois (\d+) onglets?/, count =>
+defineStep(/je vois (\d+) onglets?/, count =>
   cy.get('.fr-tabs__tab').should('have.length', count)
 );
-When('je ne vois aucun onglet', () =>
+defineStep('je ne vois aucun onglet', () =>
   cy.get('.fr-tabs__tab').should('have.length', 0)
 );
 
-When(/l'onglet "([^"]+)" est sélectionné/, tabName =>
+defineStep(/l'onglet "([^"]+)" est sélectionné/, tabName =>
   cy
     .get('.fr-tabs__tab')
     .contains(tabName)

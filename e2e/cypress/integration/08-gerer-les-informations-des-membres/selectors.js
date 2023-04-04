@@ -1,5 +1,5 @@
 export const LocalSelectors = {
   modale: {
-    selector: "[data-test=Modal]",
+    selector: '[data-test=Modal]',
   },
 };
