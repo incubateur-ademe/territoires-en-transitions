@@ -53,7 +53,7 @@ Fonctionnalité: Demander un audit
 
     Quand je clique sur le bouton "Demander un audit"
     Alors le "choix du type d'audit/labellisation COT" est visible
-    Et le bouton "Audit COT sans labellisation" est activé et décoché
+    Et le bouton "Audit COT sans labellisation" est activé
     Et le bouton "Audit COT avec labellisation" est activé et décoché
     Et le bouton "Audit de labellisation" est activé et décoché
 
