@@ -32,7 +32,7 @@ Fonctionnalité: Utiliser les discussions dans une action d'un référentiel
     
     Alors un bouton contenant "1 autre réponse" est visible
 
-    Quand je clique sur le bouton "1 autre réponse"
+    Quand je clique sur le bouton "1 autre réponse" de la 1ère discussion
     Alors le commentaire "Ma réponse" est visible
 
   Scénario: Fermer et reouvrir une discussion
