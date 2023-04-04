@@ -1,8 +1,8 @@
 # language: fr
 
-Fonctionnalité: Plan d'action
+Fonctionnalité: Gérer les fiches et les plans d'action
 
-  Scénario: Fiche action
+  Scénario: Ajouter, éditer et supprimer une fiche action
     Etant donné que je suis connecté en tant que "yolo"
     Et que je suis sur la page "Plans action" de la collectivité "1"
     # créer une fiche depuis la barre de navigation latérale
