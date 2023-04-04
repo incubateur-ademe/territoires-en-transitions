@@ -6,35 +6,31 @@
   },
   "private": true,
   "scripts": {
-    "start": "cross-env TZ=Europe/Paris cypress open --env coverage=false",
-    "pretest": "rimraf cypress/cucumber-json && rimraf .nyc_output && rimraf report",
-    "test": "cross-env TZ=Europe/Paris cypress run --env coverage=false",
-    "report": "node scripts/embedScreenshots.js && node scripts/genReport.js"
+    "start": "cross-env TZ=Europe/Paris cypress open",
+    "test": "cross-env TZ=Europe/Paris cypress run"
   },
   "cypress-cucumber-preprocessor": {
-    "nonGlobalStepDefinitions": true,
-    "cucumberJson": {
-      "generate": true,
-      "outputFolder": "cypress/cucumber-json",
-      "filePrefix": "",
-      "fileSuffix": ".cucumber"
+    "stepDefinitions": [
+      "cypress/integration/[filepath]/**/*.{js,ts}",
+      "cypress/integration/common/**/*.{js,ts}"
+    ],
+    "html": {
+      "enabled": true
     }
   },
-  "devDependencies": {
-    "cross-env": "^7.0.3",
-    "cy-verify-downloads": "^0.1.5",
-    "cypress": "^9.7.0",
-    "cypress-cucumber-preprocessor": "^4.3.1",
-    "multiple-cucumber-html-reporter": "^1.19.0",
-    "rimraf": "^3.0.2"
-  },
   "dependencies": {
+    "@badeball/cypress-cucumber-preprocessor": "^16.0.3",
+    "@bahmutov/cypress-esbuild-preprocessor": "^2.2.0",
+    "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
     "@supabase/supabase-js": "^1.35.4",
-    "adm-zip": "^0.5.9",
+    "adm-zip": "^0.5.10",
     "clipboardy": "^3.0.0",
-    "cypress-real-events": "^1.7.1",
-    "dotenv": "^16.0.0",
-    "pg": "^8.7.3",
-    "prettier": "^2.7.1"
+    "cross-env": "^7.0.3",
+    "cy-verify-downloads": "^0.1.14",
+    "cypress": "^12.9.0",
+    "cypress-real-events": "^1.7.6",
+    "dotenv": "^16.0.3",
+    "esbuild": "^0.17.15",
+    "prettier": "^2.8.7"
   }
 }
