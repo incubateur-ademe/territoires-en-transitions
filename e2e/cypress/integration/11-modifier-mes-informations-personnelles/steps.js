@@ -29,11 +29,13 @@ defineStep("la modale de modification d'email est affichée", () => {
   );
 });
 
-defineStep(/je vide la boite de reception de "([^"]+)"/, email => {
-  cy.origin(`http://localhost:54324/`, {args: {email}}, ({email}) => {
-    cy.visit('/');
-    cy.get(`[ng-click="deleteAll()"]`).click();
-    cy.get(`[ng-click="deleteAllConfirm()"]`).click();
+const INBUCKET_URL = 'http://localhost:54324/';
+
+defineStep(/je vide la boîte de réception de "([^"]+)"/, email => {
+  cy.origin(INBUCKET_URL, {args: {email}}, ({email}) => {
+    cy.visit(`/m/${email}`);
+    cy.get(`.fa-trash`).click();
+    cy.get(`.danger`).click();
   });
   cy.visit('/');
 });
@@ -48,15 +50,11 @@ defineStep(
 );
 
 defineStep(
-  /la boite de reception de "([^"]+)" contient un mail intitulé "([^"]+)"/,
+  /la boîte de réception de "([^"]+)" contient un mail intitulé "([^"]+)"/,
   (email, titre) => {
-    cy.origin(
-      `http://localhost:54324/`,
-      {args: {email, titre}},
-      ({email, titre}) => {
-        cy.visit(`/m/${email}`);
-        cy.get('.message-list').contains(titre);
-      }
-    );
+    cy.origin(INBUCKET_URL, {args: {email, titre}}, ({email, titre}) => {
+      cy.visit(`/m/${email}`);
+      cy.get('.message-list').contains(titre);
+    });
   }
 );
