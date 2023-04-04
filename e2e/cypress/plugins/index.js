@@ -1,29 +1,24 @@
-/// <reference types="cypress" />
-// ***********************************************************
-// This example plugins/index.js can be used to load plugins
-//
-// You can change the location of this file or turn off loading
-// the plugins file with the 'pluginsFile' configuration option.
-//
-// You can read more here:
-// https://on.cypress.io/plugins-guide
-// ***********************************************************
-
-// This function is called when a project is opened or re-opened (e.g. due to
-// the project's config changing)
-
-/**
- * @type {Cypress.PluginConfig}
- */
+const createBundler = require('@bahmutov/cypress-esbuild-preprocessor');
+const {
+  addCucumberPreprocessorPlugin,
+} = require('@badeball/cypress-cucumber-preprocessor');
+const {
+  createEsbuildPlugin,
+} = require('@badeball/cypress-cucumber-preprocessor/esbuild');
+const {
+  NodeModulesPolyfillPlugin,
+} = require('@esbuild-plugins/node-modules-polyfill');
 
 const {isFileExist, findFiles} = require('cy-verify-downloads');
-const cucumber = require('cypress-cucumber-preprocessor').default;
 const supabase = require('./supabase');
 const clipboard = require('./clipboard');
 const validateZip = require('./validateZip');
 
-// eslint-disable-next-line no-unused-vars
-module.exports = (on, config) => {
+/** Ajoute les plugins dans la configuration */
+module.exports = async (on, config) => {
+  // pour permettre la génération des rapports de tests
+  await addCucumberPreprocessorPlugin(on, config);
+
   // init. avant lancement du navigateur
   on('before:browser:launch', (browser, launchOptions) => {
     if (browser.family === 'firefox') {
@@ -33,8 +28,22 @@ module.exports = (on, config) => {
     }
   });
 
-  // pré-traitement des fichiers Gherkin
-  on('file:preprocessor', cucumber());
+  // pré-traitement des scénarios de tests
+  on(
+    'file:preprocessor',
+    // on utilise le bundler esbuild (nettement plus rapide que webpack+babel)
+    createBundler({
+      plugins: [
+        // ajoute un polyfill pour les modules node js (path, fs, etc.) afin
+        // d'éviter une erreurs avec les commandes fournies par cy-verify-downloads
+        // Ref: https://github.com/elaichenkov/cy-verify-downloads/issues/51#issuecomment-1237978973
+        NodeModulesPolyfillPlugin(),
+        // ajoute le pré-processeur Gherkin
+        createEsbuildPlugin(config),
+      ],
+    })
+  );
+
   // pour vérifier les fichiers téléchargés
   on('task', {isFileExist, findFiles});
   // pour accéder au client supabase
@@ -43,4 +52,7 @@ module.exports = (on, config) => {
   clipboard(on, config);
   // pour vérifier le contenu d'un zip
   validateZip(on, config);
+
+  // renvoie la configuration mise à jour par les plugins
+  return config;
 };
