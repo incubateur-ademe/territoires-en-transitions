@@ -2,15 +2,24 @@
 
 BEGIN;
 
-select id,
-       collectivite_id,
+select collectivite_id,
+       nom,
+       type_collectivite,
+       nature_collectivite,
+       code_siren_insee,
+       region_name,
+       region_code,
+       departement_name,
+       departement_code,
+       population_totale,
+       departement_iso_3166,
+       region_iso_3166,
        referentiel,
-       obtenue_le,
-       annee,
        etoiles,
+       score_programme,
        score_realise,
-       score_programme
-from labellisation
+       annee
+from stats_derniere_labellisation
 where false;
 
 ROLLBACK;

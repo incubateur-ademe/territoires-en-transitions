@@ -298,3 +298,5 @@ retool/audit [retool/audit@v2.14] 2023-03-28T13:40:03Z Amandine Jacquelin <conta
 
 plan_action/tableau_de_bord 2023-03-15T14:34:05Z Amandine Jacquelin <conta@LanceLibre> # Vues, tables, et fonctions pour le tableau de bord des plans d'actions
 @v2.17.0 2023-04-05T07:20:03Z Florian <florian@derfurth.com> # Synthèse plans d'action
+
+stats/labellisation [stats/labellisation@v2.16.3] 2023-04-04T14:26:11Z Florian <florian@derfurth.com> # Ajoute une vue publique des labellisations

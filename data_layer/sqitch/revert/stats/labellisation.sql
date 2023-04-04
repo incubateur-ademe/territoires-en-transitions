@@ -1,7 +1,7 @@
--- Revert tet:stats/labellisation from pg
+-- Deploy tet:stats/labellisation to pg
 
 BEGIN;
 
-drop view stats_labellisation_par_niveau;
+drop materialized view stats_derniere_labellisation;
 
 COMMIT;
