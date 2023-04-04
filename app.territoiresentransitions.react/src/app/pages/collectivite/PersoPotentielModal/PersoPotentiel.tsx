@@ -34,7 +34,7 @@ export const PersoPotentiel = (props: TPersoPotentielButtonProps) => {
   }
 
   return (
-    <div onClick={event => event.stopPropagation()}>
+    <div data-test="PersoPotentiel" onClick={event => event.stopPropagation()}>
       <PointsPotentiels
         actionDef={props.actionDef}
         actionScore={actionScore}
