@@ -56,19 +56,12 @@ jobs:
           # pass GitHub token to allow accurately detecting a build vs a re-run build
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
-      - name: Generate test report
-        if: failure()
-        run: npm run report
-        working-directory: ${{env.e2e-directory}}
-        env:
-          BROWSER: chrome
-
       - name: Upload report to GitHub
         if: failure()
         uses: actions/upload-artifact@master
         with:
           name: report-chrome
-          path: ${{env.e2e-directory}}/report
+          path: ${{env.e2e-directory}}/cucumber-report.html
 
       - name: Collect docker logs on failure
         if: failure()
