@@ -345,16 +345,9 @@ const ReferentielSection = ({
         referentiel={referentielId}
       />
       <Spacer />
-      <ProgressionReferentiel
-        score={score}
-        title="Progression par axes en valeur absolue"
-      />
+      <ProgressionReferentiel score={score} />
       <Spacer />
-      <ProgressionReferentiel
-        score={score}
-        percentage
-        title="Progression par axes en valeur relative"
-      />
+      <ProgressionReferentiel score={score} percentage />
     </div>
   );
 };

@@ -69,6 +69,6 @@ export const enum ActionStatusColor {
   'Détaillé' = '#CE70CC',
   'Programmé' = '#7AB1E8',
   'Pas fait' = '#F95C5E',
-  'Non renseigné' = '#FFE552',
+  'Non renseigné' = '#E5E5E5',
   'Non concerné' = '#929292',
 }

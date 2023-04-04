@@ -10,6 +10,7 @@ type BarChartProps = {
   inverted?: boolean;
   customColors?: boolean;
   unit?: string;
+  onSelectIndex: (index: string | number) => void;
 };
 
 const BarChart = ({
@@ -21,6 +22,7 @@ const BarChart = ({
   inverted = false,
   customColors = false,
   unit = '',
+  onSelectIndex,
 }: BarChartProps) => {
   let localData = [];
   let localIndexTitles: string[] = [];
@@ -40,7 +42,7 @@ const BarChart = ({
       data={localData}
       keys={keys}
       indexBy={indexBy}
-      margin={{top: 30, right: 60, bottom: 70, left: 60}}
+      margin={{top: 50, right: 60, bottom: 70, left: 70}}
       layout={layout}
       colors={
         customColors
@@ -70,7 +72,7 @@ const BarChart = ({
       axisLeft={{
         tickSize: 5,
         tickPadding: 5,
-        tickRotation: 0,
+        tickRotation: -45,
         legend:
           layout === 'horizontal'
             ? `${indexBy.slice(0, 1).toUpperCase()}${indexBy
@@ -78,7 +80,7 @@ const BarChart = ({
                 .toLowerCase()}`
             : `${unit.slice(0, 1).toUpperCase()}${unit.slice(1).toLowerCase()}`,
         legendPosition: 'middle',
-        legendOffset: -40,
+        legendOffset: -50,
       }}
       enableGridX={true}
       enableGridY={false}
@@ -127,6 +129,7 @@ const BarChart = ({
           </div>
         );
       }}
+      onClick={({indexValue}) => onSelectIndex(indexValue)}
     />
   );
 };
