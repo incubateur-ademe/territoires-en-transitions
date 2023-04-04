@@ -1,3 +1,4 @@
+import {defineStep} from '@badeball/cypress-cucumber-preprocessor';
 import {LocalSelectors} from './selectors';
 
 // enregistre les définitions locales
@@ -39,12 +40,8 @@ Given(/une alerte contient le titre "([^"]+)"/, value => {
   cy.get(`.fr-alert`).find('h3').should('have.text', value);
 });
 
-Given(/je clique sur le bouton "Rejoindre en tant qu'admin"/, () => {
-  cy.get('[data-test="BtnActiverCollectivite"]').click();
+defineStep(/une alerte contient le message "([^"]+)"/, value => {
   cy.wait(500); // attente de la requete
-});
-
-Given(/une alerte contient le message "([^"]+)"/, value => {
   cy.get(`.fr-alert`).find('p').should('have.text', value);
 });
 
