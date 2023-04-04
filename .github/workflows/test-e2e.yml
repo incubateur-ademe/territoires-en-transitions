@@ -19,7 +19,7 @@ jobs:
       e2e-directory: ./e2e
       datalayer-directory: ./data_layer
       project-docker-directory: ./
-      CYPRESS_IMAGE: 'cypress/browsers:node12.16.1-chrome80-ff73'
+      CYPRESS_IMAGE: 'cypress/browsers:node16.16.0-chrome107-ff107'
       LANG: 'fr_FR.UTF-8'
       REACT_APP_CRISP_WEBSITE_ID: 96fe7866-d005-4623-80b1-bd772e99855c
       GIT_HEAD_REF: ${{github.head_ref}}
@@ -48,8 +48,7 @@ jobs:
 
       # run tests into electron
       - name: Cypress run
-        # utilise la v3 pour être en node 16 et cypress v9
-        uses: cypress-io/github-action@v3
+        uses: cypress-io/github-action@v5
         with:
           working-directory: ${{env.e2e-directory}}
         env:
