@@ -37,7 +37,7 @@ jobs:
           version: v0.7.0
       - uses: supabase/setup-cli@v1
         with:
-          version: latest
+          version: 1.46.5
 
       # fixe la langue de l'environnement de test : permet de faire passer les
       # tests de composant utilisant des fonctions telles que toLocaleString()
@@ -46,16 +46,10 @@ jobs:
           sudo locale-gen ${{env.LANG}}
           sudo update-locale LANG=${{env.LANG}}
 
-      - run: supabase start
-      - run: supabase status
-      - run: docker network ls
       - run: earthly +setup-env
       - run: earthly +dev --client=yes
-
-      # Wait for the front container
-      - name: Wait for front
-        run: sh scripts/wait_for_front.sh
-        working-directory: ${{env.datalayer-directory}}
+      - run: docker restart supabase_rest_tet
+      - run: earthly +curl-test
 
       # run tests into electron
       - name: Cypress run

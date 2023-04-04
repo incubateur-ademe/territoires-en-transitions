@@ -23,12 +23,10 @@ jobs:
           version: v0.7.0
       - uses: supabase/setup-cli@v1
         with:
-          version: latest
+          version: 1.46.5
 
-      - run: supabase start
-      - run: supabase status
-      - run: docker network ls
       - run: earthly +setup-env
       - run: earthly +dev
+      - run: docker restart supabase_rest_tet
       - run: earthly +test
 
