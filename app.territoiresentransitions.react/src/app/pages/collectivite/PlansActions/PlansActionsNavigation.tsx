@@ -77,7 +77,7 @@ const PlansActionsNavigation = ({collectivite}: Props) => {
           <li className="fr-sidemenu_item p-0 list-none">
             <button
               data-test="CreerFicheAction"
-              className="fr-btn"
+              className="fr-btn fr-btn--secondary"
               onClick={() => createFicheAction()}
             >
               Créer une fiche action
@@ -86,7 +86,7 @@ const PlansActionsNavigation = ({collectivite}: Props) => {
           <li className="fr-sidemenu_item mt-6 p-0 list-none">
             <button
               data-test="AjouterPlanAction"
-              className="fr-btn fr-btn--secondary"
+              className="fr-btn fr-btn--tertiary"
               onClick={() => createPlanAction()}
             >
               Ajouter un plan d'action
