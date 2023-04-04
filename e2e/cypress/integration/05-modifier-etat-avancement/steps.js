@@ -1,30 +1,33 @@
-/// <reference types="Cypress" />
+import {defineStep} from '@badeball/cypress-cucumber-preprocessor';
 import {LocalSelectors} from './selectors';
 
 // enregistre les définitions locales
 beforeEach(() => {
-  cy.wrap(LocalSelectors).as('LocalSelectors');
+  cy.wrap(LocalSelectors).as('LocalSelectors', {type: 'static'});
 });
 
-When("aucun score n'est affiché", () => {
+defineStep("aucun score n'est affiché", () => {
   cy.get('[data-test^=score-]').should('not.exist');
 });
 
 /*
-When('tous les scores sont à 0', () => {
+defineStep('tous les scores sont à 0', () => {
   cy.get('[data-test^=score-]').each((el) =>
     cy.wrap(el).should('have.text', '0 %')
   );
 });
 */
 
-When('les scores sont affichés avec les valeurs suivantes :', dataTable => {
-  cy.wrap(dataTable.rows()).each(([action, score]) => {
-    cy.get(`[data-test="score-${action}"]`).should('contain.text', score);
-  });
-});
+defineStep(
+  'les scores sont affichés avec les valeurs suivantes :',
+  dataTable => {
+    cy.wrap(dataTable.rows()).each(([action, score]) => {
+      cy.get(`[data-test="score-${action}"]`).should('contain.text', score);
+    });
+  }
+);
 
-When(
+defineStep(
   /j'assigne la valeur "([^"]+)" à l'état d'avancement de la tâche "([^"]+)"/,
   (avancement, tache) => {
     // le composant ne doit pas être désactivé
@@ -43,7 +46,7 @@ When(
   }
 );
 
-When("l'état d'avancement des tâches n'est pas éditable", () => {
+defineStep("l'état d'avancement des tâches n'est pas éditable", () => {
   // tous les Select sont désactivés
   cy.get(`[data-test^="task-"] .MuiInput-root`).should(
     'have.class',
@@ -51,7 +54,7 @@ When("l'état d'avancement des tâches n'est pas éditable", () => {
   );
 });
 
-When("l'état d'avancement des tâches est éditable", () => {
+defineStep("l'état d'avancement des tâches est éditable", () => {
   // tous les Select sont activés
   cy.get(`[data-test^="task-"] .MuiInput-root`).should(
     'not.have.class',
@@ -68,19 +71,21 @@ const avancementToValue = {
   'Non concerné': 5,
 };
 
-When(
+defineStep(
   /je saisi "([^"]+)" dans le champ "Précisions" de la tâche "([^"]+)"/,
   (commentaire, tache) => {
-    cy.get(`[data-test="comm-${tache}"]`).clear().type(commentaire).blur();
+    cy.get(`[data-test="comm-${tache}"]`)
+      .type('{selectall}{backspace}' + commentaire)
+      .blur();
   }
 );
 
-When("aucun historique n'est affiché", () => {
+defineStep("aucun historique n'est affiché", () => {
   cy.get('[data-test^=action-statut-]').should('not.exist');
   cy.get('[data-test=empty_history]').should('be.visible');
 });
 
-When(/l'historique contient (\d+) entrées?/, count => {
+defineStep(/l'historique contient (\d+) entrées?/, count => {
   cy.get('[data-test=empty_history]').should('not.exist');
   cy.get('[data-test=Historique] [data-test=item]').should(
     'have.length',
@@ -88,7 +93,7 @@ When(/l'historique contient (\d+) entrées?/, count => {
   );
 });
 
-When(
+defineStep(
   /l'entrée (\d+) de l'historique est affichée avec les valeurs suivantes/,
   (num, dataTable) => {
     cy.get(`[data-test=Historique] [data-test=item]:nth(${num - 1})`)
@@ -102,15 +107,18 @@ When(
   }
 );
 
-When(/le détail de l'entrée (\d+) de l'historique n'est pas affiché/, num => {
-  cy.get(
-    `[data-test=Historique] [data-test=item]:nth(${
-      num - 1
-    }) [data-test=detail-on]`
-  ).should('not.exist');
-});
+defineStep(
+  /le détail de l'entrée (\d+) de l'historique n'est pas affiché/,
+  num => {
+    cy.get(
+      `[data-test=Historique] [data-test=item]:nth(${
+        num - 1
+      }) [data-test=detail-on]`
+    ).should('not.exist');
+  }
+);
 
-When(
+defineStep(
   /le détail de l'entrée (\d+) est affiché avec les valeurs suivantes/,
   (num, dataTable) => {
     cy.get(
@@ -131,23 +139,29 @@ When(
   }
 );
 
-When(/je clique sur le bouton "Afficher le détail" de l'entrée (\d+)/, num => {
-  cy.get(
-    `[data-test=Historique] [data-test=item]:nth(${
-      num - 1
-    }) [data-test=detail-off] button`
-  ).click();
-});
+defineStep(
+  /je clique sur le bouton "Afficher le détail" de l'entrée (\d+)/,
+  num => {
+    cy.get(
+      `[data-test=Historique] [data-test=item]:nth(${
+        num - 1
+      }) [data-test=detail-off] button`
+    ).click();
+  }
+);
 
-When(/je clique sur le bouton "Masquer le détail" de l'entrée (\d+)/, num => {
-  cy.get(
-    `[data-test=Historique] [data-test=item]:nth(${
-      num - 1
-    }) [data-test=detail-on] button`
-  ).click();
-});
+defineStep(
+  /je clique sur le bouton "Masquer le détail" de l'entrée (\d+)/,
+  num => {
+    cy.get(
+      `[data-test=Historique] [data-test=item]:nth(${
+        num - 1
+      }) [data-test=detail-on] button`
+    ).click();
+  }
+);
 
-When(
+defineStep(
   /je filtre l'historique avec le filtre "([^"]+)" par l'option "([^"]+)"/,
   (filtre, option) => {
     cy.get(`[data-test=filtre-${filtre}]`).click();
@@ -159,10 +173,10 @@ When(
   }
 );
 
-When(/je filtre l'historique avec comme date de fin "([^"]+)"/, date => {
+defineStep(/je filtre l'historique avec comme date de fin "([^"]+)"/, date => {
   cy.get('[data-test=filtre-end-date]').type(date);
 });
 
-When('je désactive tous les filtres', () => {
+defineStep('je désactive tous les filtres', () => {
   cy.get('[data-test=desactiver-les-filtres]').click();
 });

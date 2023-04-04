@@ -1,60 +1,62 @@
-/// <reference types="Cypress" />
+import {defineStep} from '@badeball/cypress-cucumber-preprocessor';
 import '../04-associer-des-preuves-aux-actions/steps';
 import {
   makeCheckPreuveRows,
   checkPreuvesComplementaires,
   noPreuvesComplementaires,
 } from '../04-associer-des-preuves-aux-actions/checkPreuves';
-import { LocalSelectors as LocalSelectorsPreuves } from '../04-associer-des-preuves-aux-actions/selectors';
-import { LocalSelectors } from './selectors';
+import {LocalSelectors as LocalSelectorsPreuves} from '../04-associer-des-preuves-aux-actions/selectors';
+import {LocalSelectors} from './selectors';
 
 beforeEach(() => {
   // enregistre les définitions locales
-  cy.wrap({ ...LocalSelectorsPreuves, ...LocalSelectors }).as('LocalSelectors');
+  cy.wrap({...LocalSelectorsPreuves, ...LocalSelectors}).as('LocalSelectors', {
+    type: 'static',
+  });
 });
 
-When("il n'y a pas de documents de labellisation", () => {
+defineStep("il n'y a pas de documents de labellisation", () => {
   getLib().find('[data-test=labellisation]').should('not.exist');
 });
-When(
+defineStep(
   'la liste des documents de labellisation contient les lignes suivantes :',
-  (dataTable) => {
+  dataTable => {
     getLib()
       .find('[data-test=labellisation]')
       .within(makeCheckPreuveRows(dataTable));
   }
 );
 
-When('la liste des documents de la page Labellisation est vide', () => {
+defineStep('la liste des documents de la page Labellisation est vide', () => {
   cy.get('[data-test=LabellisationPreuves]').should('not.exist');
 });
-When(
+defineStep(
   'la liste des documents de la page Labellisation contient les lignes suivantes :',
-  (dataTable) => {
+  dataTable => {
     cy.get('[data-test=LabellisationPreuves]').within(
       makeCheckPreuveRows(dataTable)
     );
   }
 );
 
-When("il n'y a pas de rapports de visite annuelle", () => {
+defineStep("il n'y a pas de rapports de visite annuelle", () => {
   getLib().find('[data-test=rapports] [data-test=item]').should('not.exist');
 });
 
-When(
+defineStep(
   'la liste des rapports de visite contient les lignes suivantes :',
-  (dataTable) => {
+  dataTable => {
     getLib()
       .find('[data-test=rapports]')
       .within(makeCheckPreuveRows(dataTable));
   }
 );
 
-When('je saisi comme date de visite {string}', (date) =>
+defineStep('je saisi comme date de visite {string}', date =>
   cy.get('[data-test=date-visite] input[type=date]').type(date)
 );
 
-When(
+defineStep(
   'je déplie la sous-action {string} du référentiel {string}',
   (actionId, referentiel) => {
     getRefentielIdentifiants(referentiel)
@@ -65,14 +67,14 @@ When(
   }
 );
 
-When(
+defineStep(
   'la liste des preuves complémentaires associées à la sous-action {string} est vide',
-  (actionId) => {
+  actionId => {
     noPreuvesComplementaires(cy.get(`[data-test="preuves-${actionId}"]`));
   }
 );
 
-When(
+defineStep(
   'la liste des preuves complémentaires associées à la sous-action {string} contient les lignes suivantes :',
   (actionId, dataTable) => {
     checkPreuvesComplementaires(
@@ -82,9 +84,9 @@ When(
   }
 );
 
-When(
+defineStep(
   'je clique sur le bouton "Ajouter une preuve" de la sous-action {string}',
-  (actionId) => {
+  actionId => {
     cy.get(
       `[data-test="preuves-${actionId}"] [data-test=AddPreuveComplementaire]`
     ).click();
@@ -92,7 +94,7 @@ When(
 );
 
 const getLib = () => cy.get('[data-test=BibliothequeDocs]');
-const getRefentielIdentifiants = (referentiel) =>
+const getRefentielIdentifiants = referentiel =>
   getLib().find(
     `[role=tabpanel][data-test=${referentiel}] .referentiel-table .identifiant`
   );

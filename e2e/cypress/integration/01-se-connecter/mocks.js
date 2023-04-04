@@ -4,16 +4,16 @@
 
 export const LocalMocks = {
   'auth.resetPasswordForEmail': {
-    ok: ['/auth/v*/recover', { statusCode: 200, body: {} }],
-    error: ['/auth/v*/recover', { statusCode: 400, body: {} }],
+    ok: ['/auth/v*/recover', {statusCode: 200, body: {}}],
+    error: ['/auth/v*/recover', {statusCode: 400, body: {}}],
   },
   'auth.updateUserPassword': {
-    ok: ['PUT', '/auth/v*/user', { statusCode: 200, body: {} }],
+    ok: ['PUT', '/auth/v*/user', {statusCode: 200, body: {}}],
     error: [
       '/auth/v*/user',
       {
         statusCode: 400,
-        body: { error: 'some API error here' },
+        body: {error: 'some API error here'},
       },
     ],
   },

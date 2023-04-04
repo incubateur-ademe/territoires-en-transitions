@@ -1,4 +1,4 @@
-/// <reference types="Cypress" />
+import {defineStep} from '@badeball/cypress-cucumber-preprocessor';
 
 import {LocalSelectors} from './selectors';
 import {
@@ -9,10 +9,10 @@ import {
 
 beforeEach(() => {
   // enregistre les définitions locales
-  cy.wrap(LocalSelectors).as('LocalSelectors');
+  cy.wrap(LocalSelectors).as('LocalSelectors', {type: 'static'});
 });
 
-When(/je déplie le panneau Preuves de l'action "([^"]+)"/, action =>
+defineStep(/je déplie le panneau Preuves de l'action "([^"]+)"/, action =>
   getPreuvePanel(action).within(() => {
     // la liste des preuves attendues n'existe pas
     cy.get('[data-test^=preuves]').should('not.exist');
@@ -23,7 +23,7 @@ When(/je déplie le panneau Preuves de l'action "([^"]+)"/, action =>
   })
 );
 
-When(
+defineStep(
   /la table des preuves complémentaires est initialisée avec les données suivantes/,
   dataTable => {
     cy.get('@supabaseClient').then(client =>
@@ -31,7 +31,7 @@ When(
     );
   }
 );
-When(
+defineStep(
   /la table des preuves réglementaires est initialisée avec les données suivantes/,
   dataTable => {
     cy.get('@supabaseClient').then(client =>
@@ -40,46 +40,46 @@ When(
   }
 );
 
-When(
+defineStep(
   /la liste des preuves complémentaires de la sous-action "([^"]+)" est vide/,
   action => {
     noPreuvesComplementaires(getPreuvePanel(action));
   }
 );
 
-When(/la liste des preuves complémentaires de l'action est vide/, () => {
+defineStep(/la liste des preuves complémentaires de l'action est vide/, () => {
   noPreuvesComplementaires(getPreuveTab());
 });
 
-When(
+defineStep(
   /la liste des preuves complémentaires de la sous-action "([^"]+)" contient les lignes suivantes/,
   (action, dataTable) => {
     checkPreuvesComplementaires(getPreuvePanel(action), dataTable);
   }
 );
 
-When(
+defineStep(
   /la liste des preuves complémentaires de l'action contient les lignes suivantes/,
   dataTable => {
     checkPreuvesComplementaires(getPreuveTab(), dataTable);
   }
 );
 
-When(
+defineStep(
   /la liste des preuves attendues de la sous-action "([^"]+)" contient les lignes suivantes/,
   (action, dataTable) => {
     checkPreuvesReglementaires(getPreuvePanel(action), dataTable);
   }
 );
 
-When(
+defineStep(
   /la liste des preuves attendues de l'action contient les lignes suivantes/,
   dataTable => {
     checkPreuvesReglementaires(getPreuveTab(), dataTable);
   }
 );
 
-When(
+defineStep(
   /je clique sur la preuve "([^"]+)" de l'action "([^"]+)"/,
   (preuve, action) => {
     getPreuvePanel(action)
@@ -89,7 +89,7 @@ When(
   }
 );
 
-When(
+defineStep(
   /je clique sur le bouton "([^"]+)" de la preuve "([^"]+)" de l'action "([^"]+)"/,
   (btn, preuve, action) => {
     getPreuvePanel(action)
@@ -112,20 +112,20 @@ const updateCommentOrName = (newValue, preuve, action) => {
     cy.get(inputSelector).should('not.exist');
   });
 };
-When(
+defineStep(
   /je saisi "([^"]+)" comme commentaire de la preuve "([^"]+)" de l'action "([^"]+)"/,
   updateCommentOrName
 );
-When(
+defineStep(
   /je saisi "([^"]+)" comme nom de la preuve "([^"]+)" de l'action "([^"]+)"/,
   updateCommentOrName
 );
 
-When(/l'ouverture du lien "([^"]+)" doit avoir été demandée/, url => {
+defineStep(/l'ouverture du lien "([^"]+)" doit avoir été demandée/, url => {
   cy.get('@open').should('have.been.calledOnceWithExactly', url);
 });
 
-When(
+defineStep(
   /clique sur le bouton "Ajouter une preuve" à l'action "([^"]+)"/,
   action => {
     // utilise le paramètre "force" pour le clic (sinon il ne se produit jamais ?)
@@ -133,7 +133,7 @@ When(
   }
 );
 
-When(
+defineStep(
   /clique sur le (\d)(?:er|ème) bouton "Ajouter une preuve réglementaire" à l'action "([^"]+)"/,
   (num, action) => {
     // utilise le paramètre "force" pour le clic (sinon il ne se produit jamais ?)
@@ -145,7 +145,7 @@ When(
   }
 );
 
-When(
+defineStep(
   /le bouton "Ajouter une preuve" à l'action "([^"]+)" est (visible|absent)/,
   (action, status) => {
     getAddPreuveButton(action).should(
@@ -154,14 +154,14 @@ When(
   }
 );
 
-When(
+defineStep(
   "je clique sur le bouton d'ajout d'une preuve complémentaire à l'action",
   () => {
     getPreuveTab().find('[data-test=AddPreuveComplementaire]').click();
   }
 );
 
-When(
+defineStep(
   /je sélectionne la sous-action "([^"]+)" dans la liste déroulante/,
   value => {
     cy.get('[data-test=SelectSubAction]').should('be.visible').click();
@@ -171,12 +171,12 @@ When(
   }
 );
 
-When(/la liste déroulante des sous-actions est visible/, () => {
+defineStep(/la liste déroulante des sous-actions est visible/, () => {
   cy.get('[data-test=SelectSubAction]').should('be.visible');
 });
 
 let cnt = 1;
-When(
+defineStep(
   "je peux télécharger toutes les preuves sous la forme d'un fichier nommé {string} et contenant les fichiers suivants :",
   (downloadedFile, dataTable) => {
     // chemin du fichier téléchargé
@@ -215,7 +215,7 @@ When(
   }
 );
 
-When('je confirme la suppression de la preuve', () => {
+defineStep('je confirme la suppression de la preuve', () => {
   cy.get('[data-test=ConfirmSupprPreuve]').within(() => {
     cy.root().should('be.visible');
     cy.get('button[data-test=ok]').click();

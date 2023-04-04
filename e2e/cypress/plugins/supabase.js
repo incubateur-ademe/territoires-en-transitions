@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { createClient } = require('@supabase/supabase-js');
+const {createClient} = require('@supabase/supabase-js');
 
 /**
  * Expose le client Supabase afin de pouvoir l'utiliser dans les scénarios de tests
@@ -11,11 +11,11 @@ module.exports = (on, config) => {
   );
 
   on('task', {
-    supabase_rpc: async ({ name, params }) => {
+    supabase_rpc: async ({name, params}) => {
       const res = await supabase.rpc(name, params);
       return res || null;
     },
-    supabase_generateLink: async ({ type, email }) => {
+    supabase_generateLink: async ({type, email}) => {
       const res = await supabase.auth.api.generateLink(type, email);
       return res || null;
     },
