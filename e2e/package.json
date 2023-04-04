@@ -6,6 +6,8 @@
   },
   "private": true,
   "scripts": {
+    "format": "prettier cypress --check",
+    "format-write": "prettier cypress --write",
     "start": "cross-env TZ=Europe/Paris cypress open",
     "test": "cross-env TZ=Europe/Paris cypress run"
   },
