@@ -76,7 +76,10 @@ defineStep(/j'ajoute un nouveau titre/, () => {
 });
 
 defineStep(/je le nomme "([^"]*)"/, titre => {
-  cy.get('[data-test=EditerTitreAxeBouton]').last().click({force: true});
+  // autorise un timeout un peu plus long car le back peut être lent à répondre en CI
+  cy.get('[data-test=EditerTitreAxeBouton]', {timeout: 10000})
+    .last()
+    .click({force: true});
   cy.get('[data-test=TitreAxeInput]')
     .last()
     .type('{selectall}{backspace}' + titre);
