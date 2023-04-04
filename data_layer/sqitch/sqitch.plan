@@ -294,3 +294,4 @@ cron/refresh_retool_stats_usages [cron/refresh_retool_stats_usages@v2.16.0] 2023
 
 retool/labellisation [retool/labellisation@v2.14] 2023-03-28T13:34:55Z Amandine Jacquelin <conta@LanceLibre> # Ajoute le sujet de la demande et la date d'envoie
 retool/audit [retool/audit@v2.14] 2023-03-28T13:40:03Z Amandine Jacquelin <conta@LanceLibre> # Ajoute les dates de demande et d'acceptation d'audit
+@v2.16.3 2023-04-04T07:56:33Z Florian <florian@derfurth.com> # Améliorations des vues Retool
