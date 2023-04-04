@@ -30,4 +30,7 @@ export const LocalSelectors = {
   'formulaire rejoindre une collectivité': {
     selector: '[data-test=formulaire-RejoindreUneCollectivite]',
   },
+  "Rejoindre en tant qu'admin": {
+    selector: '[data-test="BtnActiverCollectivite"]',
+  },
 };
