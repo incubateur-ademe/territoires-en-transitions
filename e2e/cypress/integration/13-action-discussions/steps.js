@@ -1,4 +1,4 @@
-/// <reference types="Cypress" />
+import {defineStep} from '@badeball/cypress-cucumber-preprocessor';
 
 import {LocalSelectors} from './selectors';
 
@@ -57,7 +57,7 @@ Given(/un bouton contenant "([^"]+)" est visible/, value => {
   getFirstDiscussion().contains(value);
 });
 
-Given(/je clique sur le bouton "([^"]+)"/, value => {
+defineStep(/je clique sur le bouton "([^"]+)" de la 1ère discussion/, value => {
   getFirstDiscussion().contains(value).click();
 });
 
