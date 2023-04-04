@@ -1,6 +1,7 @@
+import {defineStep} from '@badeball/cypress-cucumber-preprocessor';
 import {resolveSelector} from './steps';
 
-Given(
+defineStep(
   /je transfère à partir du "([^"]*)" le fichier nommé "([^"]*)" et contenant "([^"]*)"/,
   function (elem, fileName, fileContent) {
     const parent = resolveSelector(this, elem);
@@ -14,7 +15,7 @@ Given(
   }
 );
 
-Given(
+defineStep(
   /je transfère à partir du "([^"]*)" le fichier nommé "([^"]*)" et d'un poids de "([^"]*)" Mo/,
   function (elem, fileName, fileSize) {
     const parent = resolveSelector(this, elem);
@@ -28,7 +29,7 @@ Given(
   }
 );
 
-Given(
+defineStep(
   /la liste des fichiers transférés contient les entrées suivantes/,
   dataTable => {
     // dans la liste d'items affichée
@@ -70,10 +71,10 @@ Given(
   }
 );
 
-Given('tous les transferts sont terminés', () => {
+defineStep('tous les transferts sont terminés', () => {
   cy.get('[data-test*=file-running]', {timeout: 10000}).should('not.exist');
 });
 
-Given('le fichier {string} doit avoir été téléchargé', fileName => {
+defineStep('le fichier {string} doit avoir été téléchargé', fileName => {
   cy.verifyDownload(fileName);
 });

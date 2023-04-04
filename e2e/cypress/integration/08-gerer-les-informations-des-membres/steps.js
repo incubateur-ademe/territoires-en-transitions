@@ -1,4 +1,4 @@
-/// <reference types="Cypress" />
+import {defineStep} from '@badeball/cypress-cucumber-preprocessor';
 
 import {Selectors} from '../common/selectors';
 import {LocalSelectors} from './selectors';
@@ -7,17 +7,17 @@ const tableauMembresSelector = Selectors['tableau des membres'];
 
 beforeEach(() => {
   // enregistre les définitions locales
-  cy.wrap(LocalSelectors).as('LocalSelectors');
+  cy.wrap(LocalSelectors).as('LocalSelectors', {type: 'static'});
 });
 
-Given('le tableau charge les informations', () => {
+defineStep('le tableau charge les informations', () => {
   cy.get(tableauMembresSelector.selector).within(() => {
     cy.get('[data-test=Loading]').should('be.visible');
     cy.get('[data-test=Loading]').should('not.exist');
   });
 });
 
-Given(
+defineStep(
   /le tableau des membres ne doit pas contenir l'utilisateur "([^"]+)"/,
   mail => {
     cy.get(tableauMembresSelector.selector).should('not.contain', mail);
@@ -62,21 +62,21 @@ const clickOnDropdownValue = (champ, email, value) => {
   }
 };
 
-When(
+defineStep(
   /je modifie le champ "([^"]+)" de "([^"]+)" en "([^"]+)"/,
   clickOnDropdownValue
 );
-When(
+defineStep(
   /je clique sur la valeur "([^"]+)" du champ "([^"]+)" de "([^"]+)"/,
   (value, champ, email) => clickOnDropdownValue(champ, email, value)
 );
 
 const getUtilisateurRow = email => cy.get(`[data-test="MembreRow-${email}"]`);
 
-Given(/je vois une modale intitulée "([^"]+)"/, titre => {
+defineStep(/je vois une modale intitulée "([^"]+)"/, titre => {
   cy.get(LocalSelectors['modale'].selector).should('contain', titre);
 });
 
-Given(/je clique sur le bouton "([^"]+)" de la modale/, ariaLabel => {
+defineStep(/je clique sur le bouton "([^"]+)" de la modale/, ariaLabel => {
   cy.get(`[aria-label="${ariaLabel}"]`).click();
 });

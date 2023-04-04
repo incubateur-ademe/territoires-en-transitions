@@ -9,10 +9,10 @@ const fs = require('fs');
  */
 module.exports = (on, config) => {
   on('task', {
-    validateZip: async ({ filename, expectedFiles, removeAfter }) => {
+    validateZip: async ({filename, expectedFiles, removeAfter}) => {
       const zip = new AdmZip(filename);
       const zipEntries = zip.getEntries();
-      const names = zipEntries.map((entry) => entry.entryName);
+      const names = zipEntries.map(entry => entry.entryName);
       const list = names.join(',');
       const expectedList = expectedFiles.map(([name]) => name).join(',');
 

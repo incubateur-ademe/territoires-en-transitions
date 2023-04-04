@@ -4,56 +4,59 @@ import {LocalSelectors} from './selectors';
 
 beforeEach(() => {
   // enregistre les définitions locales
-  cy.wrap(LocalSelectors).as('LocalSelectors');
+  cy.wrap(LocalSelectors).as('LocalSelectors', {type: 'static'});
 });
 
 // Génériques
 const getFirstDiscussion = () =>
   cy.get('[data-test=ActionDiscussionsFeed]').first();
 
-Given(/le commentaire "([^"]+)" n'est plus visible/, value => {
+defineStep(/le commentaire "([^"]+)" n'est plus visible/, value => {
   getFirstDiscussion().contains(value).should('not.exist');
 });
 
-Given(/le commentaire "([^"]+)" est visible/, value => {
+defineStep(/le commentaire "([^"]+)" est visible/, value => {
   getFirstDiscussion().contains(value).should('be.visible');
 });
 
 // Scénario: Consulter les discussions d'une action
-When("je clique sur l'icône commentaires", () => {
+defineStep("je clique sur l'icône commentaires", () => {
   cy.get('[data-test=ActionDiscussionsButton]').click();
 });
 
-When('le panel-action-discussions est visible', () => {
+defineStep('le panel-action-discussions est visible', () => {
   cy.get('[data-test=ActionDiscussionsPanel]').should('be.visible');
 });
 
-When('il affiche les discussions ouvertes', () => {
+defineStep('il affiche les discussions ouvertes', () => {
   cy.get('[data-test=ActionDiscussionsChangeVue]').contains('Ouverts');
 });
 
 // Scénario: Créer une discussion
-Given(/je saisis "([^"]+)" dans le champs nouvelle discussion/, value => {
+defineStep(/je saisis "([^"]+)" dans le champs nouvelle discussion/, value => {
   cy.get(`[data-test=ActionDiscussionsNouvelleDiscussion] textarea`).type(
     value
   );
 });
 
-When('je clique sur "publier" une nouvelle discussion', () => {
+defineStep('je clique sur "publier" une nouvelle discussion', () => {
   cy.get('[data-test=ActionDiscussionsNouvelleDiscussion] button').click();
 });
 
 // Scénario: Répondre à un commentaire
-Given(/je saisis "([^"]+)" dans le champ répondre d'une discussion/, value => {
-  getFirstDiscussion().find('textarea').first().type(value);
-});
+defineStep(
+  /je saisis "([^"]+)" dans le champ répondre d'une discussion/,
+  value => {
+    getFirstDiscussion().find('textarea').first().type(value);
+  }
+);
 
-When('je clique sur "publier" une nouvelle réponse', () => {
+defineStep('je clique sur "publier" une nouvelle réponse', () => {
   getFirstDiscussion().contains('Publier').click();
 });
 
 // Visualiser les réponses à un commentaire
-Given(/un bouton contenant "([^"]+)" est visible/, value => {
+defineStep(/un bouton contenant "([^"]+)" est visible/, value => {
   getFirstDiscussion().contains(value);
 });
 
@@ -62,15 +65,15 @@ defineStep(/je clique sur le bouton "([^"]+)" de la 1ère discussion/, value => 
 });
 
 // Scénario: Fermer et reouvrir une discussion
-// When('je clique sur "Fermer" dans une discussion', () => {
+// defineStep('je clique sur "Fermer" dans une discussion', () => {
 //   getFirstDiscussion().contains('Fermer').click();
 // });
 
-Given(/je clique sur "([^"]+)" dans une discussion/, value => {
+defineStep(/je clique sur "([^"]+)" dans une discussion/, value => {
   getFirstDiscussion().contains(value).click();
 });
 
-When('je change la vue du feed à "Fermés"', () => {
+defineStep('je change la vue du feed à "Fermés"', () => {
   cy.get('[data-test=ActionDiscussionsChangeVue]').contains('Ouverts').click();
   cy.root()
     .get(`[data-test="ActionDiscussionsChangeVueMenu"]`)
@@ -79,7 +82,7 @@ When('je change la vue du feed à "Fermés"', () => {
   cy.wait(100);
 });
 
-When('je change la vue du feed à "Ouverts"', () => {
+defineStep('je change la vue du feed à "Ouverts"', () => {
   cy.get('[data-test=ActionDiscussionsChangeVue]').contains('Fermés').click();
   cy.root()
     .get(`[data-test="ActionDiscussionsChangeVueMenu"]`)
@@ -88,7 +91,7 @@ When('je change la vue du feed à "Ouverts"', () => {
 });
 
 // Scénario: Supprimer un commentaire
-Given(
+defineStep(
   /je clique sur "([^"]+)" du commentaire "([^"]+)"/,
   (button, commentaire) => {
     getFirstDiscussion()

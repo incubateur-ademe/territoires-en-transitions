@@ -1,13 +1,12 @@
-/// <reference types="Cypress" />
+import {defineStep} from '@badeball/cypress-cucumber-preprocessor';
 
-import { LocalSelectors } from './selectors';
+import {LocalSelectors} from './selectors';
 
 beforeEach(() => {
   // enregistre les définitions locales
-  cy.wrap(LocalSelectors).as('LocalSelectors');
+  cy.wrap(LocalSelectors).as('LocalSelectors', {type: 'static'});
 });
 
-Given(/le bouton compte contient le texte "([^"]+)"/, (message) => {
+defineStep(/le bouton compte contient le texte "([^"]+)"/, message => {
   cy.get('[data-test="connectedMenu"] button').should('contain', message);
 });
-

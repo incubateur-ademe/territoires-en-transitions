@@ -1,42 +1,44 @@
-/// <reference types="Cypress" />
+import {defineStep} from '@badeball/cypress-cucumber-preprocessor';
 
 import {LocalSelectors} from './selectors';
 
 beforeEach(() => {
   // enregistre les définitions locales
-  cy.wrap(LocalSelectors).as('LocalSelectors');
+  cy.wrap(LocalSelectors).as('LocalSelectors', {type: 'static'});
 });
 
-Given('un formulaire de modification de compte est affiché', () => {
+defineStep('un formulaire de modification de compte est affiché', () => {
   cy.get(
     LocalSelectors['formulaire de modification de compte'].selector
   ).should('be.visible');
 });
 
-Given(/je modifie le champ "([^"]+)" en "([^"]+)"/, (champ, value) => {
-  cy.get(`[data-test="${champ}"]`).clear().type(value).blur();
+defineStep(/je modifie le champ "([^"]+)" en "([^"]+)"/, (champ, value) => {
+  cy.get(`[data-test="${champ}"]`)
+    .type('{selectall}{backspace}' + value)
+    .blur();
 });
 
-Given(/le champ "([^"]+)" doit contenir "([^"]+)"/, (champ, value) => {
+defineStep(/le champ "([^"]+)" doit contenir "([^"]+)"/, (champ, value) => {
   cy.get(`[data-test="${champ}"]`).should('have.value', value);
 });
 
-Given("la modale de modification d'email est affichée", () => {
+defineStep("la modale de modification d'email est affichée", () => {
   cy.get(LocalSelectors["modale de modification d'email"].selector).should(
     'be.visible'
   );
 });
 
-Given(/je vide la boite de reception de "([^"]+)"/, email => {
+defineStep(/je vide la boite de reception de "([^"]+)"/, email => {
   cy.origin(`http://localhost:54324/`, {args: {email}}, ({email}) => {
-    cy.visit(`/m/${email}`);
-    cy.get(`.fa-trash`).click();
-    cy.get(`.danger`).click();
+    cy.visit('/');
+    cy.get(`[ng-click="deleteAll()"]`).click();
+    cy.get(`[ng-click="deleteAllConfirm()"]`).click();
   });
   cy.visit('/');
 });
 
-Given(
+defineStep(
   "je clique sur le bouton confirmer de la modale de modification d'email",
   () => {
     cy.get(LocalSelectors["modale de modification d'email"].selector)
@@ -45,7 +47,7 @@ Given(
   }
 );
 
-Given(
+defineStep(
   /la boite de reception de "([^"]+)" contient un mail intitulé "([^"]+)"/,
   (email, titre) => {
     cy.origin(

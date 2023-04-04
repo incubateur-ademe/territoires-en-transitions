@@ -10,7 +10,7 @@ module.exports = (on, config) => {
       // clipboardy est exposé en ESM uniquement, il faut donc utilier un import
       // dynamique pour que ça fonctionne
       // Ref: https://github.com/sindresorhus/clipboardy/issues/77
-      import('clipboardy').then(({ default: clipboardy }) =>
+      import('clipboardy').then(({default: clipboardy}) =>
         clipboardy.readSync()
       ),
   });
