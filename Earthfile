@@ -300,6 +300,7 @@ dev:
     ARG datalayer=yes
     ARG business=yes
     ARG client=no
+    ARG eco=no
 
     IF [ "$stop" = "yes" ]
         RUN earthly +stop --npx=$npx
@@ -312,6 +313,12 @@ dev:
             RUN docker stop supabase_pg_meta_tet
         ELSE
             RUN npx supabase start
+        END
+
+        IF [ "$eco" = "yes" ]
+            RUN docker stop storage_imgproxy_tet
+            RUN docker stop supabase_studio_tet
+            RUN docker stop supabase_pg_meta_tet
         END
 
         RUN earthly +deploy
