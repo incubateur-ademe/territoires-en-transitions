@@ -289,8 +289,8 @@ cypress-wip:
 setup-env:
     LOCALLY
     RUN earthly +stop
-    RUN supabase start
-    RUN supabase status -o env > .arg
+    RUN npx supabase start
+    RUN npx supabase status -o env > .arg
     RUN export $(cat .arg | xargs) && sh ./make_dot_env.sh
     RUN earthly +stop
 
@@ -302,11 +302,18 @@ dev:
     ARG client=no
 
     IF [ "$stop" = "yes" ]
-        RUN earthly --push +stop
+        RUN earthly +stop --npx=$npx
     END
 
     IF [ "$datalayer" = "yes" ]
-        RUN supabase start
+        IF [ "$CI" = "true" ]
+            RUN supabase start
+            RUN docker stop supabase_studio_tet
+            RUN docker stop supabase_pg_meta_tet
+        ELSE
+            RUN npx supabase start
+        END
+
         RUN earthly +deploy
         RUN earthly +seed
         RUN earthly +load-json
@@ -323,7 +330,11 @@ dev:
 
 stop:
     LOCALLY
-    RUN supabase stop
+    IF [ "$CI" = "true" ]
+        RUN supabase stop
+    ELSE
+        RUN npx supabase stop
+    END
     RUN docker ps --filter name=_tet --filter status=running -aq | xargs docker stop | xargs docker rm || exit 0
 
 stats:
