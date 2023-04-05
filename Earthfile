@@ -289,6 +289,7 @@ cypress-wip:
 setup-env:
     LOCALLY
     RUN earthly +stop
+    RUN npm install
     RUN npx supabase start
     RUN npx supabase status -o env > .arg
     RUN export $(cat .arg | xargs) && sh ./make_dot_env.sh
