@@ -103,7 +103,7 @@ const AutoCompleteInputField = <T extends string>({
       })}
     >
       <label className="fr-label" htmlFor={field.name}>
-        {props.label}
+        <div className="font-medium">{props.label}</div>
         {props.hint && <span className="fr-hint-text">{props.hint}</span>}
       </label>
       <Autocomplete
