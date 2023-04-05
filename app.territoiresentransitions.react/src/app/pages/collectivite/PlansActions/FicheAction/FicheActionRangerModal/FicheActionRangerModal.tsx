@@ -48,7 +48,7 @@ const FicheActionRangerModal = ({fiche}: Props) => {
             <TableauNouvelEmplacement fiche={fiche} />
             <button
               onClick={close}
-              className="fr-btn fr-btn--secondary mt-8 ml-auto fr-btn--icon-right fr-fi-arrow-right-line"
+              className="fr-btn fr-btn--tertiary mt-8 ml-auto fr-btn--icon-right fr-fi-arrow-right-line"
               aria-label="Annuler"
             >
               Retour à la fiche
