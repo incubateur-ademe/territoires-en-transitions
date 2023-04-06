@@ -113,3 +113,81 @@ defineStep("l'en-tête contient {string}", text =>
 defineStep("l'en-tête ne contient pas de message", text =>
   cy.get('[data-test=HeaderMessage]').should('not.exist')
 );
+
+defineStep(
+  'je déplie le sous-axe {string} du tableau de comparaison des scores',
+  (actionId, referentiel) => {
+    const indexes = actionId.split('.').map(idx => parseInt(idx));
+
+    // déplie l'axe
+    const axeIdx = indexes[0] - 1;
+    cy.get(
+      `.comparaison-table .body [role=row]:nth(${axeIdx}) button[data-test=btn-expand]`
+    ).click();
+
+    // déplie le sous-axe
+    const sousAxeIdx = indexes[1]; // pas de -1 ici pour tenir compte de la ligne précédente
+    cy.get(
+      `.comparaison-table .body [role=row]:nth(${
+        axeIdx + sousAxeIdx
+      }) button[data-test=btn-expand]`
+    ).click();
+  }
+);
+
+defineStep(
+  "le potentiel de l'action {string} est de {string} avant audit et {string} pendant l'audit",
+  comparePotentiels
+);
+defineStep(
+  "le potentiel de l'action {string} est de {string} avant et pendant l'audit",
+  (identifiant, score) => comparePotentiels(identifiant, score, score)
+);
+
+function comparePotentiels(identifiant, scoreAvant, scorePendant) {
+  // sélectionne la ligne de la table...
+  cy.get('.comparaison-table .body [role=row]')
+    // ...qui contient l'identifiant
+    .contains(identifiant)
+    // puis dans les cellules adjacentes
+    .parent('.cell')
+    .siblings()
+    .then(cells => {
+      // vérifie les scores
+      cy.wrap(cells[1]).should('have.text', scoreAvant);
+      cy.wrap(cells[4]).should('have.text', scorePendant);
+
+      // et la présence ou non du picto "augmentation" ou "diminution"
+      const avant = toFloat(scoreAvant);
+      const pendant = toFloat(scorePendant);
+      if (pendant === avant) {
+        // scores identiques => pas de picto
+        cy.wrap(cells[4]).find('svg').should('have.length', 0);
+      } else {
+        // scores différents
+        cy.wrap(cells[4])
+          .find('svg')
+          // un picto attendu
+          .should('have.length', 1)
+          // avec un data-test différent suivant augmentation ou diminution
+          .within(() =>
+            cy
+              .root()
+              .should('have.attr', 'data-test', pendant > avant ? 'up' : 'down')
+          );
+      }
+    });
+}
+
+const toFloat = s => parseFloat(s.replace(',', '.'));
+
+defineStep("j'attends que les scores soient calculés", () => {
+  // ça peut être très lent en CI :(
+  // idéalement il faudrait écouter les màj des scores comme dans l'app mais ce
+  // n'est pas évident à faire
+  cy.wait(10000);
+});
+
+defineStep('le potentiel de points est {string}', score => {
+  cy.get('[data-test=PointsPotentiels]').should('contain.text', score);
+});
