@@ -4,7 +4,7 @@ BEGIN;
 
 create table fiche_action_lien
 (
-    fiche_une integer references fiche_action,
+    fiche_une  integer references fiche_action,
     fiche_deux integer references fiche_action,
     primary key (fiche_une, fiche_deux)
 );
@@ -16,10 +16,13 @@ create unique index on fiche_action_lien (least(fiche_une, fiche_deux), greatest
 alter table fiche_action_lien
     enable row level security;
 
-create policy allow_read on fiche_action_lien using(peut_lire_la_fiche(fiche_une) and peut_lire_la_fiche(fiche_deux));
-create policy allow_insert on fiche_action_lien for insert with check(peut_modifier_la_fiche(fiche_une) and peut_modifier_la_fiche(fiche_deux));
-create policy allow_update on fiche_action_lien for update using(peut_modifier_la_fiche(fiche_une) and peut_modifier_la_fiche(fiche_deux));
-create policy allow_delete on fiche_action_lien for delete using(peut_modifier_la_fiche(fiche_une) and peut_modifier_la_fiche(fiche_deux));
+create policy allow_read on fiche_action_lien using (peut_lire_la_fiche(fiche_une) and peut_lire_la_fiche(fiche_deux));
+create policy allow_insert on fiche_action_lien for insert with check (peut_modifier_la_fiche(fiche_une) and
+                                                                       peut_modifier_la_fiche(fiche_deux));
+create policy allow_update on fiche_action_lien for update using (peut_modifier_la_fiche(fiche_une) and
+                                                                  peut_modifier_la_fiche(fiche_deux));
+create policy allow_delete on fiche_action_lien for delete using (peut_modifier_la_fiche(fiche_une) and
+                                                                  peut_modifier_la_fiche(fiche_deux));
 
 create view fiches_liees_par_fiche as
 (
@@ -34,12 +37,11 @@ comment on view fiches_liees_par_fiche is
 
 create view fiche_resume as
 (
-select
-    array_agg(a.*) as plans,
-    fa.titre as fiche_nom,
-    fa.id as fiche_id,
-    fa.statut as fiche_statut
-    fa.collectivite_id
+select array_agg(a.*) as plans,
+       fa.titre       as fiche_nom,
+       fa.id          as fiche_id,
+       fa.statut      as fiche_statut,
+       fa.collectivite_id
 from fiche_action fa
          left join fiche_action_axe faa on fa.id = faa.fiche_id
          left join plan_action_chemin pac on faa.axe_id = pac.axe_id
@@ -147,20 +149,20 @@ create or replace function upsert_fiche_action()
     returns trigger as
 $$
 declare
-    id_fiche integer;
-    thematique thematique;
+    id_fiche        integer;
+    thematique      thematique;
     sous_thematique sous_thematique;
-    axe axe;
-    partenaire partenaire_tag;
-    structure structure_tag;
-    pilote personne;
-    referent personne;
-    action action_relation;
-    indicateur indicateur_generique;
-    annexe annexe;
-    service service_tag;
-    financeur financeur_montant;
-    fiche_liee fiche_resume;
+    axe             axe;
+    partenaire      partenaire_tag;
+    structure       structure_tag;
+    pilote          personne;
+    referent        personne;
+    action          action_relation;
+    indicateur      indicateur_generique;
+    annexe          annexe;
+    service         service_tag;
+    financeur       financeur_montant;
+    fiche_liee      fiche_resume;
 begin
     id_fiche = new.id;
     -- Fiche action
@@ -205,8 +207,7 @@ begin
         new.id = id_fiche;
     else
         update fiche_action
-        set
-            titre = new.titre,
+        set titre                = new.titre,
             description= new.description,
             piliers_eci= new.piliers_eci,
             objectifs= new.objectifs,
@@ -223,7 +224,7 @@ begin
             calendrier= new.calendrier,
             notes_complementaires= new.notes_complementaires,
             maj_termine= new.maj_termine,
-            collectivite_id = new.collectivite_id
+            collectivite_id      = new.collectivite_id
         where id = id_fiche;
     end if;
 
@@ -257,7 +258,7 @@ begin
     if new.partenaires is not null then
         foreach partenaire in array new.partenaires::partenaire_tag[]
             loop
-                perform ajouter_partenaire(id_fiche,partenaire);
+                perform ajouter_partenaire(id_fiche, partenaire);
             end loop;
     end if;
 
@@ -266,7 +267,7 @@ begin
     if new.structures is not null then
         foreach structure in array new.structures
             loop
-                perform ajouter_structure(id_fiche,structure);
+                perform ajouter_structure(id_fiche, structure);
             end loop;
     end if;
 
@@ -275,7 +276,7 @@ begin
     if new.pilotes is not null then
         foreach pilote in array new.pilotes::personne[]
             loop
-                perform ajouter_pilote(id_fiche,pilote);
+                perform ajouter_pilote(id_fiche, pilote);
             end loop;
     end if;
 
@@ -284,7 +285,7 @@ begin
     if new.referents is not null then
         foreach referent in array new.referents::personne[]
             loop
-                perform ajouter_referent(id_fiche,referent);
+                perform ajouter_referent(id_fiche, referent);
             end loop;
     end if;
 
@@ -302,7 +303,7 @@ begin
     if new.indicateurs is not null then
         foreach indicateur in array new.indicateurs::indicateur_generique[]
             loop
-                perform ajouter_indicateur(id_fiche,indicateur);
+                perform ajouter_indicateur(id_fiche, indicateur);
             end loop;
     end if;
 
@@ -311,7 +312,7 @@ begin
     if new.annexes is not null then
         foreach annexe in array new.annexes::annexe[]
             loop
-                perform ajouter_annexe(id_fiche,annexe);
+                perform ajouter_annexe(id_fiche, annexe);
             end loop;
     end if;
 
@@ -321,7 +322,7 @@ begin
     if new.services is not null then
         foreach service in array new.services
             loop
-                perform ajouter_service(id_fiche,service);
+                perform ajouter_service(id_fiche, service);
             end loop;
     end if;
 
@@ -330,7 +331,7 @@ begin
     if new.financeurs is not null then
         foreach financeur in array new.financeurs::financeur_montant[]
             loop
-                perform ajouter_financeur(id_fiche,financeur);
+                perform ajouter_financeur(id_fiche, financeur);
             end loop;
     end if;
 
