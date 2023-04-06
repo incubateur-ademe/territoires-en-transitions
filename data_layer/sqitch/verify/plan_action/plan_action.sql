@@ -13,7 +13,8 @@ where false;
 select plans,
        fiche_nom,
        fiche_id,
-       fiche_statut
+       fiche_statut,
+       collectivite_id
 from fiche_resume
 where false;
 

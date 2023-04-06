@@ -39,11 +39,12 @@ select
     fa.titre as fiche_nom,
     fa.id as fiche_id,
     fa.statut as fiche_statut
+    fa.collectivite_id
 from fiche_action fa
          left join fiche_action_axe faa on fa.id = faa.fiche_id
          left join plan_action_chemin pac on faa.axe_id = pac.axe_id
          left join axe a on pac.plan_id = a.id
-group by fa.titre, fa.id, fa.statut
+group by fa.titre, fa.id, fa.statut, fa.collectivite_id
     );
 
 create or replace view fiches_action as
