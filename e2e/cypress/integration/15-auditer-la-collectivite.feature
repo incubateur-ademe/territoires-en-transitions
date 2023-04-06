@@ -120,7 +120,7 @@ Fonctionnalité: Auditer la collectivité
 
     Quand je suis connecté en tant qu'auditeur de la collectivité
     Et que l'audit est commencé
-    Quand je suis sur la page "Bibliothèque de documents" de la collectivité courante
+    Et que je suis sur la page "Bibliothèque de documents" de la collectivité courante
     Alors il n'y a pas de documents de labellisation
 
     Quand je suis sur la page "Labellisation ECi" de la collectivité courante
@@ -143,6 +143,7 @@ Fonctionnalité: Auditer la collectivité
     Quand je clique sur le bouton "Valider" du "dialogue de validation"
     Alors le "dialogue de validation" est absent
     Et le bouton "Valider l'audit" est absent
+    Et le bouton "Demander un audit" est absent
     Et l'en-tête contient "Labellisation en cours"
 
     # on vérifie que le statut d'audit, l'avis et la case "ordre du jour" sont en lecture seule après validation de l'audit
@@ -172,7 +173,7 @@ Fonctionnalité: Auditer la collectivité
 
     Quand je suis connecté en tant qu'auditeur de la collectivité
     Et que l'audit est commencé
-    Quand je suis sur la page "Bibliothèque de documents" de la collectivité courante
+    Et que je suis sur la page "Bibliothèque de documents" de la collectivité courante
     Alors il n'y a pas de documents de labellisation
 
     Quand je suis sur la page "Labellisation CAE" de la collectivité courante
