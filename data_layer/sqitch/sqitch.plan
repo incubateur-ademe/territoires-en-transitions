@@ -301,3 +301,4 @@ plan_action/tableau_de_bord 2023-03-15T14:34:05Z Amandine Jacquelin <conta@Lance
 
 stats/labellisation [stats/labellisation@v2.16.3] 2023-04-04T14:26:11Z Florian <florian@derfurth.com> # Ajoute une vue publique des labellisations
 cron/refresh_stats_labellisation 2023-04-04T17:27:02Z Florian <florian@derfurth.com> # Rafraichit la vue stats_derniere_labellisation
+@v2.18.0 2023-04-06T12:00:16Z Florian <florian@derfurth.com> # API Terristory
