@@ -286,6 +286,16 @@ cypress-wip:
     COPY ./e2e/ /e2e
     RUN npm test
 
+gen-types:
+    LOCALLY
+    IF [ "$CI" = "true" ]
+        RUN supabase gen types typescript --local --schema public --schema labellisation > ./app.territoiresentransitions.react/src/types/database.types.ts
+    ELSE
+        RUN npx supabase gen types typescript --local --schema public --schema labellisation > ./app.territoiresentransitions.react/src/types/database.types.ts
+    END
+    RUN cp ./app.territoiresentransitions.react/src/types/database.types.ts ./api_tests/lib/database.types.ts
+    RUN cp ./app.territoiresentransitions.react/src/types/database.types.ts ./site/app/database.types.ts
+
 setup-env:
     LOCALLY
     RUN earthly +stop
