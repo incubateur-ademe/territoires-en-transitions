@@ -12,11 +12,16 @@ export const useValidateAudit = () => {
     mutationKey: 'validateAudit',
     onSuccess: (data, variables) => {
       const {collectivite_id, referentiel} = variables;
-      queryClient.invalidateQueries(['audit', collectivite_id, referentiel]);
-      queryClient.invalidateQueries([
-        'labellisation_parcours',
-        collectivite_id,
-      ]);
+      queryClient.invalidateQueries(
+        ['audit', collectivite_id, referentiel],
+        undefined,
+        {cancelRefetch: true}
+      );
+      queryClient.invalidateQueries(
+        ['labellisation_parcours', collectivite_id],
+        undefined,
+        {cancelRefetch: true}
+      );
     },
   });
 };
