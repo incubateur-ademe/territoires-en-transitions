@@ -6282,28 +6282,28 @@ export interface Database {
             Args: {
               bucket_width: unknown
               ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
               origin: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
             }
             Returns: string
           }
@@ -6405,39 +6405,39 @@ export interface Database {
       time_bucket_gapfill:
         | {
             Args: {
+              bucket_width: number
+              ts: number
+              start?: number
+              finish?: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              start?: number
+              finish?: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              start?: number
+              finish?: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
               bucket_width: unknown
               ts: string
               start?: string
               finish?: string
             }
             Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              start?: number
-              finish?: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              start?: number
-              finish?: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              start?: number
-              finish?: number
-            }
-            Returns: number
           }
         | {
             Args: {
@@ -6620,8 +6620,16 @@ export interface Database {
       collectivite_filtre_type: "population" | "score" | "remplissage"
       fiche_action_cibles:
         | "Grand public et associations"
+        | "Public Scolaire"
         | "Autres collectivités du territoire"
         | "Acteurs économiques"
+        | "Acteurs économiques du secteur primaire"
+        | "Acteurs économiques du secteur secondaire"
+        | "Acteurs économiques du secteur tertiaire"
+        | "Partenaires"
+        | "Collectivité elle-même"
+        | "Elus locaux"
+        | "Agents"
       fiche_action_niveaux_priorite: "Élevé" | "Moyen" | "Bas"
       fiche_action_piliers_eci:
         | "Approvisionnement durable"
