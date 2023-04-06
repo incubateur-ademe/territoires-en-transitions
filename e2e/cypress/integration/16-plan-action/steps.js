@@ -73,22 +73,43 @@ defineStep(/je veux supprimer le plan/, () => {
 
 defineStep(/j'ajoute un nouveau titre/, () => {
   cy.get('[data-test=AjouterAxe]').click();
+  // attends que le dernier axe ajouté (celui avec un titre vide) soit visible
+  // autorise un timeout un peu plus long car le back peut être lent à répondre en CI
+  cy.get('[data-test=Axe]:nth(-1) textarea', {timeout: 10000}).should(
+    'have.text',
+    ''
+  );
 });
 
 defineStep(/je le nomme "([^"]*)"/, titre => {
-  // autorise un timeout un peu plus long car le back peut être lent à répondre en CI
-  cy.get('[data-test=EditerTitreAxeBouton]', {timeout: 10000})
+  // sélectionne le dernier axe ajouté
+  cy.get('[data-test=Axe]')
     .last()
-    .click({force: true});
-  cy.get('[data-test=TitreAxeInput]')
-    .last()
-    .type('{selectall}{backspace}' + titre);
+    .within(() => {
+      cy.get('[data-test=EditerTitreAxeBouton]').last().click({force: true});
+      cy.get('[data-test=TitreAxeInput]').type(
+        '{selectall}{backspace}' + titre
+      );
+    });
   cy.get('body').click(10, 10);
 });
 
 defineStep(/j'ajoute une fiche à "([^"]*)"/, titre => {
-  cy.get('[data-test=Axe]').contains(titre).click();
-  cy.get('[data-test=Axe]').contains('Créer une fiche action').click();
+  // sélectionne l'axe qui contient le titre donné
+  cy.get('[data-test=Axe]')
+    .contains(titre)
+    .within(() => {
+      // le déplie
+      cy.root().click();
+      // et demande la création de la fiche
+      cy.root()
+        .parents('[data-test=Axe]')
+        .find('button')
+        .contains('Créer une fiche action')
+        .click();
+    });
+  // puis attend que la fiche soit visible
+  cy.get('[data-test=FicheAction]').should('be.visible');
 });
 
 defineStep(/je reviens sur le plan d'action "([^"]*)"/, titre => {
