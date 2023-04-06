@@ -51,8 +51,8 @@ function loginWithProfile(niveau) {
 function loginAs(userAlias) {
   cy.get(userAlias).then(function (user) {
     login.call(this, user);
+    cy.get('[data-test=connectedMenu]').should('contain.text', user.prenom);
   });
-  cy.get('[data-test=connectedMenu]').should('be.visible');
 }
 function login({email, password}) {
   cy.get('@auth').then(auth => {
@@ -182,6 +182,10 @@ defineStep(
   'je suis sur la page {string} de la collectivité courante',
   visitPage
 );
+defineStep(
+  'je retourne sur la page {string} de la collectivité courante',
+  visitPage
+);
 function visitPage(page) {
   cy.get('@collectivite').then(({collectivite_id}) => {
     const {route, selector} = CollectivitePages[page];
@@ -197,5 +201,56 @@ defineStep(
     cy.visit(
       `/collectivite/${collectivite_id}/referentiels/${referentiel}/${tabName}`
     );
+  }
+);
+
+defineStep(
+  "je visite l'action {string} de la collectivité courante",
+  function (action) {
+    cy.get('@collectivite').then(({collectivite_id}) => {
+      const [referentiel, identifiant] = action.split('_');
+      cy.visit(
+        `/collectivite/${collectivite_id}/action/${referentiel}/${action}`
+      );
+      cy.get(`[data-test="Action-${identifiant}"]`).should('be.visible');
+    });
+  }
+);
+
+defineStep('avec comme réponses initiales :', function (dataTable) {
+  const {collectivite_id} = this.collectivite;
+
+  cy.wrap(dataTable.rows()).each(([question_id, reponse]) =>
+    saveReponse(collectivite_id, question_id, reponse)
+  );
+});
+const saveReponse = (collectivite_id, question_id, reponse) => {
+  cy.task('supabase_rpc', {
+    name: 'save_reponse',
+    params: {
+      collectivite_id,
+      question_id,
+      reponse: transformReponse(reponse),
+    },
+  });
+};
+
+const transformReponse = reponse => {
+  if (reponse.toLowerCase() === 'oui') {
+    return true;
+  }
+  if (reponse.toLowerCase() === 'non') {
+    return false;
+  }
+  return reponse;
+};
+
+defineStep(
+  'je change la réponse à la question {string} depuis la thématique {string} en {string}',
+  function (question_id, thematique, reponse) {
+    const {collectivite_id} = this.collectivite;
+    cy.visit(`/collectivite/${collectivite_id}/personnalisation/${thematique}`);
+    cy.get(`label[for^=${question_id}] button`).click();
+    cy.get(`input[id=${question_id}-${reponse}]`).parent().click();
   }
 );
