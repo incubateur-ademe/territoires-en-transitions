@@ -1,8 +1,8 @@
 import {useEffect, useState} from 'react';
 import {TableOptions} from 'react-table';
-import BarChart from 'ui/charts/BarChart';
 import {ActionStatusColor} from 'ui/charts/chartsTheme';
-import ChartWrapper from 'ui/charts/ChartWrapper';
+import ChartCard from 'ui/charts/ChartCard';
+import FilArianeButtons from 'ui/shared/FilArianeButtons';
 import {ProgressionRow} from './data/queries';
 
 // Définition des couleurs des graphes
@@ -13,23 +13,33 @@ const customColors = {
   'Non renseigné_color': ActionStatusColor['Non renseigné'],
 };
 
-/**
- * Affichage des scores et navigation parmi les axes
- *
- * @param score
- * @param percentage
- */
+const legend = [
+  {name: 'Fait', color: customColors.Fait_color},
+  {name: 'Programmé', color: customColors.Programmé_color},
+  {name: 'Pas fait', color: customColors['Pas fait_color']},
+  {name: 'Non renseigné', color: customColors['Non renseigné_color']},
+];
 
 type ProgressionReferentielProps = {
   score: Pick<
     TableOptions<ProgressionRow>,
     'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded'
   >;
+  referentiel: string;
   percentage?: boolean;
 };
 
+/**
+ * Affichage des scores et navigation parmi les axes
+ *
+ * @param score
+ * @param referentiel
+ * @param percentage
+ */
+
 const ProgressionReferentiel = ({
   score,
+  referentiel,
   percentage = false,
 }: ProgressionReferentielProps): JSX.Element => {
   // Associe la data des scores à un nom d'affichage pour le breadcrumb
@@ -37,6 +47,7 @@ const ProgressionReferentiel = ({
     {scoreData: readonly ProgressionRow[]; name: string}[]
   >([{scoreData: score.data, name: 'Vue globale'}]);
 
+  // Donnée observée
   const [indexBy, setIndexBy] = useState<string>('');
 
   // Mise à jour lors du changement de valeur des scores en props
@@ -144,53 +155,46 @@ const ProgressionReferentiel = ({
     setIndexBy(newScore[newScore.length - 1].scoreData[0].type);
   };
 
-  return (
-    <ChartWrapper
-      title={`Progression ${!!indexBy ? `par ${indexBy}` : ''} en valeur ${
-        percentage ? 'relative' : 'absolue'
-      }`}
-      customStyle={{position: 'relative'}}
-    >
-      {displayedScore.length > 1 && (
-        <div className="flex items-center flex-wrap gap-y-0.5 pr-6 text-xs text-gray-500 absolute left-6 top-14 z-10">
-          {displayedScore.map((dispScore, index) => (
-            <div key={dispScore.name} className="flex items-center shrink-0">
-              <button
-                disabled={index === displayedScore.length - 1}
-                style={{
-                  cursor:
-                    index === displayedScore.length - 1 ? 'default' : 'pointer',
-                }}
-                onClick={() => handleOpenParentIndex(index)}
-              >
-                <span
-                  className={
-                    index + 1 < displayedScore.length ? 'underline' : ''
-                  }
-                >
-                  {dispScore.name}
-                </span>
-              </button>
-              {index + 1 < displayedScore.length && (
-                <div className="fr-fi-arrow-down-s-line scale-75 shrink-0 -rotate-90" />
-              )}
-            </div>
-          ))}
-        </div>
-      )}
+  // Props du graphe
+  const chartProps = {
+    data: getFormattedScore(),
+    indexBy: indexBy,
+    indexTitles: getIndexTitles(),
+    keys: ['Fait', 'Programmé', 'Pas fait', 'Non renseigné'],
+    layout: 'horizontal' as 'horizontal' | 'vertical',
+    inverted: true,
+    customColors: true,
+    unit: percentage ? '%' : 'points',
+    onSelectIndex: handleOpenChildIndex,
+  };
 
-      <BarChart
-        data={getFormattedScore()}
-        indexBy={indexBy}
-        indexTitles={getIndexTitles()}
-        keys={['Fait', 'Programmé', 'Pas fait', 'Non renseigné']}
-        layout="horizontal"
-        inverted
-        customColors
-        unit={percentage ? '%' : 'points'}
-        onSelectIndex={handleOpenChildIndex}
-      />
-    </ChartWrapper>
+  const title = `Progression ${!!indexBy ? `par ${indexBy}` : ''} en valeur ${
+    percentage ? 'relative' : 'absolue'
+  }`;
+  const fileName = `${referentiel}-${indexBy}-valeur-${
+    percentage ? 'relative' : 'absolue'
+  }`;
+
+  return (
+    <ChartCard
+      chartType="bar"
+      chartProps={chartProps}
+      chartInfo={{
+        title,
+        legend,
+        expandable: true,
+        downloadedFileName: fileName,
+        additionalInfo: getIndexTitles().filter(title => title !== 'Total'),
+      }}
+      topElement={
+        displayedScore.length > 1 ? (
+          <FilArianeButtons
+            displayedNames={displayedScore.map(dispScore => dispScore.name)}
+            handleClick={handleOpenParentIndex}
+          />
+        ) : undefined
+      }
+    />
   );
 };
 

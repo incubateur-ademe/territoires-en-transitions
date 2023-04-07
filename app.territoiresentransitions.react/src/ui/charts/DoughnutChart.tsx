@@ -9,7 +9,7 @@ import {defaultColors, nivoColorsSet, theme} from './chartsTheme';
  * graphe au lieu de la légende
  */
 
-type DoughnutChartProps = {
+export type DoughnutChartProps = {
   data: {
     id: string;
     value: number;
