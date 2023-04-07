@@ -2,7 +2,7 @@ from datetime import datetime
 import os
 import json
 from dataclasses import asdict, dataclass
-from typing import Union
+from typing import Union, Optional
 from urllib.parse import urljoin
 from fastapi import BackgroundTasks, APIRouter
 import requests
@@ -115,7 +115,7 @@ class DatalayerEvaluationPayload:
 class DatalayerPersonnalisationPayload:
     timestamp: datetime
     collectivite_id: int
-    consequences_table: str
+    consequences_table: str  # optionnelle
     payload: PersonnalizePayload
     evaluation_payloads: list[DatalayerEvaluationPayload]
 
@@ -136,26 +136,34 @@ async def personnalize_then_post_consequences(
         payload: DatalayerPersonnalisationPayload,
 ):
     consequences = await personnalize(payload.payload)
-    response = requests.post(
-        f'{supabase_rest_url}/{payload.consequences_table}?on_conflict=collectivite_id',
-        data=json.dumps(
-            {
-                "consequences": {
-                    action_id: asdict(consequence)
-                    for action_id, consequence in consequences.items()
-                },
-                "collectivite_id": payload.collectivite_id,
-                "payload_timestamp": payload.timestamp.isoformat(),
-            }
-        ),
-        headers=supabase_headers(),
-    )
-    print(f'{response.url} replied with a code {response.status_code} in {response.elapsed}')
+    response: Optional[requests.Response] = None
 
-    # si les personnalisations sont insérées ou si des plus récentes existent
-    if response.status_code == 201 or response.status_code == 400:
+    # Si le nom d'une table est présent
+    if payload.consequences_table:
+        # on enregistre les conséquences du calcul de la personnalisation
+        response = requests.post(
+            f'{supabase_rest_url}/{payload.consequences_table}?on_conflict=collectivite_id',
+            data=json.dumps(
+                {
+                    "consequences": {
+                        action_id: asdict(consequence)
+                        for action_id, consequence in consequences.items()
+                    },
+                    "collectivite_id": payload.collectivite_id,
+                    "payload_timestamp": payload.timestamp.isoformat(),
+                }
+            ),
+            headers=supabase_headers(),
+        )
+        print(f'{response.url} replied with a code {response.status_code} in {response.elapsed}')
+
+    # S'il n'y pas de nom de table
+    # ou si les personnalisations ont été insérées
+    # ou si des personnalisations plus récentes existaient
+    if not payload.consequences_table or response.status_code == 201 or response.status_code == 400:
         for evaluation_payload in payload.evaluation_payloads:
-            # reprend les conséquences calculées pour le référentiel de la payload
+            # on reprend les conséquences calculées pour le référentiel de la payload
+            # pour calculer les scores.
             evaluation_payload.payload.consequences = {
                 action_id: consequence
                 for action_id, consequence in consequences.items()
