@@ -45,11 +45,6 @@ export type TSelectSelectionButtonBase = {
   isOpen?: boolean;
 };
 
-export type TSelectDropdownBase<T extends string> = {
-  /** fait le rendu d'une option de la liste (optionnel) */
-  renderOption?: (value: T) => React.ReactElement;
-};
-
 /** Affiche une marque de sélection (ou seulement son emplacement) devant un
  * item de la liste */
 export const Checkmark = ({isSelected}: {isSelected: boolean}) => (

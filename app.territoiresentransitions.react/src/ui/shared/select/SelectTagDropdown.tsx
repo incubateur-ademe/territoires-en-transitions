@@ -31,7 +31,9 @@ const SelectTagDropdown = <T extends string>({
           onCloseClick={() => onSelect(null)}
         />
       )}
-      renderOption={option => <Tag title={getOptionLabel(option, options)} />}
+      renderOption={option => (
+        <Tag title={getOptionLabel(option.value, options)} />
+      )}
     />
   );
 };

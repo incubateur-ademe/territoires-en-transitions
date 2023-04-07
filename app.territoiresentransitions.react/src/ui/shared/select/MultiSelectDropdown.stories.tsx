@@ -77,9 +77,9 @@ export const CustomOptionEtSelection = () => {
           ))}
         </span>
       )}
-      renderOption={value => (
+      renderOption={option => (
         <span className="mr-auto py-1 px-2 rounded bg-teal-600 text-white">
-          {value}
+          {option.value}
         </span>
       )}
     />

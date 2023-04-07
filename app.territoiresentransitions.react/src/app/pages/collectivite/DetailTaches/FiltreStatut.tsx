@@ -27,10 +27,10 @@ export const FiltreStatut = (props: TFiltreProps) => {
         <MultiSelectFilterTitle values={values} label="Statut" />
       )}
       renderOption={option =>
-        option === ITEM_ALL ? (
+        option.value === ITEM_ALL ? (
           <span className="leading-6">Tous les statuts</span>
         ) : (
-          <ActionStatutBadge statut={option as ActionAvancement} small />
+          <ActionStatutBadge statut={option.value as ActionAvancement} small />
         )
       }
     />

@@ -41,7 +41,9 @@ export const ActionAuditStatutBase = (props: TActionAuditStatutBaseProps) => {
             value={statut}
             options={options}
             onSelect={onChange}
-            renderOption={statut => <BadgeAuditStatut statut={statut} />}
+            renderOption={option => (
+              <BadgeAuditStatut statut={option.value as TAuditStatut} />
+            )}
             renderSelection={statut => (
               <span className="mr-auto">
                 <BadgeAuditStatut statut={statut} />

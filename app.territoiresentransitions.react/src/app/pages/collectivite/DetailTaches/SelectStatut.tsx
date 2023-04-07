@@ -40,7 +40,7 @@ const SelectStatutBase = (props: TSelectStatutProps & {disabled?: boolean}) => {
       onSelect={onChange}
       buttonClassName="px-2 py-1"
       renderOption={option => (
-        <ActionStatutBadge statut={option as ActionAvancement} small />
+        <ActionStatutBadge statut={option.value as ActionAvancement} small />
       )}
       renderSelection={value => (
         <ActionStatutBadge

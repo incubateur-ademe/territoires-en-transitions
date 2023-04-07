@@ -28,7 +28,11 @@ import PersonneReferenteDropdown from './PersonneReferenteDropdown';
 import IndicateursDropdown from './IndicateursDropdown';
 import ThematiquesDropdown from './ThematiquesDropdown';
 import SousThematiquesDropdown from './SousThematiquesDropdown';
-import {TSousThematiqueRow, TThematiqueRow} from 'types/alias';
+import {
+  TFicheActionStatuts,
+  TSousThematiqueRow,
+  TThematiqueRow,
+} from 'types/alias';
 import {DSFRbuttonClassname} from 'ui/shared/select/commons';
 import FicheActionRangerModal from '../FicheActionRangerModal/FicheActionRangerModal';
 import {usePlanActionProfondeur} from '../../PlanAction/data/usePlanActionProfondeur';
@@ -302,7 +306,9 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
               placeholderText="Sélectionnez une option"
               renderSelection={v => <FicheActionBadgeStatut statut={v} />}
               renderOption={option => (
-                <FicheActionBadgeStatut statut={option} />
+                <FicheActionBadgeStatut
+                  statut={option.value as TFicheActionStatuts}
+                />
               )}
               disabled={isReadonly}
             />
