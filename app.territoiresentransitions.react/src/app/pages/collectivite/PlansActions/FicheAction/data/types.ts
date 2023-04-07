@@ -12,6 +12,8 @@ import {
   TPersonne,
   TFinanceurTagInsert,
   TFinanceurMontant,
+  TFicheResume,
+  TFicheActionStatuts,
 } from 'types/alias';
 
 export type FicheAction = Omit<
@@ -28,6 +30,7 @@ export type FicheAction = Omit<
   | 'indicateurs'
   | 'services'
   | 'financeurs'
+  | 'fiches_liees'
 > & {
   thematiques: TThematiqueInsert[] | null;
   sous_thematiques: TSousThematiqueInsert[] | null;
@@ -41,6 +44,7 @@ export type FicheAction = Omit<
   indicateurs: Indicateur[] | null;
   services: TFicheActionServicePiloteInsert[] | null;
   financeurs: Financeur[];
+  fiches_liees: FicheResume[] | null;
 };
 
 export type Personne = Omit<TPersonne, 'tag_id' | 'user_id'> & {
@@ -63,4 +67,14 @@ export type Financeur = Omit<
   id?: number;
   montant_ttc?: number;
   financeur_tag: TFinanceurTagInsert;
+};
+
+export type FicheResume = Omit<
+  TFicheResume,
+  'fiche_id' | 'fiche_nom' | 'fiche_statut' | 'plans'
+> & {
+  fiche_id?: number | null;
+  fiche_nom?: string | null;
+  fiche_statut: TFicheActionStatuts | null;
+  plans: TAxeInsert[] | null;
 };
