@@ -318,3 +318,5 @@ plan_action/export 2023-04-20T13:57:47Z Florian <florian@derfurth.com> # RPC pla
 stats/locales [stats/locales@v2.22.0] 2023-04-21T14:07:44Z Florian <florian@derfurth.com> # Corrige le comptage des labellisés
 labellisation/cot [labellisation/cot@v2.21.0] 2023-04-18T13:27:48Z Amandine Jacquelin <conta@LanceLibre> # Ajout du signataire
 @v2.23.0 2023-04-24T14:54:21Z Florian <florian@derfurth.com> # Corrige les stats et ajoute le signataire COT
+
+evaluation/reponse_historique [evaluation/reponse_historique@v2.18.0] 2023-04-07T09:43:18Z Florian <florian@derfurth.com> # Ajoute une fonction pour construire l'état des réponses pour un moment donnée
