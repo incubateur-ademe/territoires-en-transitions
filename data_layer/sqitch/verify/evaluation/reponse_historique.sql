@@ -2,6 +2,6 @@
 
 BEGIN;
 
--- XXX Add verifications here.
+select has_function_privilege('historique.reponses_at(int, timestamp with time zone)', 'execute');
 
 ROLLBACK;
