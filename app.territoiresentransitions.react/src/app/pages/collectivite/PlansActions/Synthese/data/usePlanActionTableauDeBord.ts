@@ -80,15 +80,14 @@ const sortByValue = (
 const sortByPriority = (
   data: {id: string; value: number}[]
 ): {id: string; value: number}[] => {
-  const rank = {Bas: 1, Moyen: 2, Élevé: 3, NC: 4};
-  // @ts-ignore
+  const rank: {[key: string]: number} = {Bas: 1, Moyen: 2, Élevé: 3, NC: 4};
   return data.sort((a, b) => rank[a.id] - rank[b.id]);
 };
 
 const sortByStatus = (
   data: {id: string; value: number}[]
 ): {id: string; value: number}[] => {
-  const rank = {
+  const rank: {[key: string]: number} = {
     'À venir': 1,
     'En cours': 2,
     Réalisé: 3,
@@ -96,6 +95,5 @@ const sortByStatus = (
     Abandonné: 5,
     NC: 6,
   };
-  // @ts-ignore
   return data.sort((a, b) => rank[a.id] - rank[b.id]);
 };

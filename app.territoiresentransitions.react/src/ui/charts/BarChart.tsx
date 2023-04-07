@@ -1,7 +1,7 @@
-import {ResponsiveBar} from '@nivo/bar';
+import {ComputedDatum, ResponsiveBar} from '@nivo/bar';
 import {defaultColors} from './chartsTheme';
 
-type BarChartProps = {
+export type BarChartProps = {
   data: {}[];
   indexBy: string;
   keys: string[];
@@ -46,8 +46,13 @@ const BarChart = ({
       layout={layout}
       colors={
         customColors
-          ? //@ts-ignore
-            ({id, data}) => `${data[`${id}_color`]}`
+          ? ({
+              id,
+              data,
+            }: {
+              id: string | number;
+              data: {[key: string]: string};
+            }) => `${data[`${id}_color`]}`
           : defaultColors
       }
       borderColor={{
@@ -82,11 +87,17 @@ const BarChart = ({
         legendPosition: 'middle',
         legendOffset: -50,
       }}
-      enableGridX={true}
-      enableGridY={false}
-      label={d =>
-        d.value ? (d.value >= 5 ? `${Math.round(d.value)}` : '') : ''
+      label={(d: ComputedDatum<{}>) =>
+        d.value
+          ? Math.round(d.value) !== 0
+            ? `${Math.round(d.value)}`
+            : ''
+          : ''
       }
+      enableGridX={layout === 'horizontal'}
+      enableGridY={layout === 'vertical'}
+      labelSkipWidth={layout === 'horizontal' ? 10 : 0}
+      labelSkipHeight={layout !== 'horizontal' ? 10 : 0}
       tooltip={({id, value, index, indexValue, color}) => {
         return (
           <div
