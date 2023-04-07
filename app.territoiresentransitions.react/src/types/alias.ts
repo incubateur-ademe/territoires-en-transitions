@@ -60,6 +60,8 @@ export type TActionInsert =
 export type TPersonneTagInsert =
   Database['public']['Tables']['personne_tag']['Insert'];
 
+export type TFicheResume = Database['public']['Views']['fiche_resume']['Row'];
+
 export type TPersonne = Database['public']['CompositeTypes']['personne'];
 export type TIndicateur =
   Database['public']['CompositeTypes']['indicateur_generique'];

@@ -3,7 +3,7 @@ import {NavLink} from 'react-router-dom';
 type TActionCard = {
   link: string;
   statutBadge?: JSX.Element | null;
-  details?: string;
+  details?: string | null;
   title: string;
 };
 
