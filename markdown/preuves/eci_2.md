@@ -7,6 +7,13 @@ id: plpdma
 ## Description
 Preuve identique à la cae_1.2.3.1 -->
 
+#  Délibération approuvant le PLPDMA ou une délibération récente prise pour le lancement de l’élaboration du PLPDMA.
+```yaml
+actions: 
+  - eci_2.1.0
+id: delib_PLPDMA
+```
+
 # Délibération de création de la CCES avec sa composition 
 ```yaml
 actions: 
@@ -15,7 +22,7 @@ actions:
 id: delib_cces
 ```
 
-# Compte-rendu de la dernière réunion de la Commission consultative d’évaluation et de suivi (CCES) avec la liste des participants 
+# Compte-rendu de la dernière réunion de la Commission consultative d’élaboration et de suivi (CCES) avec la liste des participants 
 ```yaml
 actions: 
   - eci_2.1.0
