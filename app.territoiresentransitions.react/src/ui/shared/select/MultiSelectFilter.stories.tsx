@@ -56,14 +56,14 @@ export const CustomOptionEtSelection = () => {
           &nbsp;Custom open button
         </span>
       )}
-      renderOption={value => (
+      renderOption={option => (
         <span
           className={classNames({
             'mr-auto py-1 px-2 rounded bg-teal-600 text-white':
-              value !== 'tous',
+              option.value !== 'tous',
           })}
         >
-          {value}
+          {option.label}
         </span>
       )}
     />

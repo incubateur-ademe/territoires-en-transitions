@@ -9,8 +9,8 @@ import {
   Checkmark,
   ExpandCollapseIcon,
   TSelectBase,
-  TSelectDropdownBase,
   TSelectSelectionButtonBase,
+  TOption,
 } from 'ui/shared/select/commons';
 
 type TSelectDropdownBaseProps<T extends string> = TSelectBase & {
@@ -24,11 +24,12 @@ type TSelectButtonProps<T extends string> = TSelectDropdownBaseProps<T> &
   TSelectSelectionButtonBase;
 
 export type TSelectDropdownProps<T extends string> =
-  TSelectDropdownBaseProps<T> &
-    TSelectDropdownBase<T> & {
-      /** appelée quand l'option sélectionnée change (reçoit la nouvelle valeur) */
-      onSelect: (value: T) => void;
-    };
+  TSelectDropdownBaseProps<T> & {
+    /** fait le rendu d'une option de la liste (optionnel) */
+    renderOption?: (option: TOption) => React.ReactElement;
+    /** appelée quand l'option sélectionnée change (reçoit la nouvelle valeur) */
+    onSelect: (value: T) => void;
+  };
 
 const SelectDropdown = <T extends string>({
   value,
@@ -47,22 +48,22 @@ const SelectDropdown = <T extends string>({
       placement={placement}
       render={({close}) => (
         <div data-test={`${dataTest}-options`}>
-          {options.map(v => {
+          {options.map(option => {
             return (
               <button
-                key={v.value}
-                data-test={v.value}
+                key={option.value}
+                data-test={option.value}
                 className={optionButtonClassname}
                 onClick={() => {
-                  onSelect(v.value as T);
+                  onSelect(option.value as T);
                   close();
                 }}
               >
-                <Checkmark isSelected={value === v.value} />
+                <Checkmark isSelected={value === option.value} />
                 {renderOption ? (
-                  renderOption(v.value as T)
+                  renderOption(option)
                 ) : (
-                  <span>{v.label}</span>
+                  <span>{option.label}</span>
                 )}
               </button>
             );

@@ -360,9 +360,9 @@ const AccesDropdown = ({
             {niveauAcces.find(v => v.value === value)?.label}
           </span>
         )}
-        renderOption={value => (
+        renderOption={option => (
           <AccessDropdownLabel
-            option={value}
+            option={option.value as TNiveauAcces}
             isCurrentUser={isCurrentUser}
             currentUserAccess={currentUserAccess}
           />

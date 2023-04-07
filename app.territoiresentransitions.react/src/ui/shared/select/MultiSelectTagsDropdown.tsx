@@ -41,7 +41,7 @@ const MultiSelectTagsDropdown = <T extends string>({
           ))}
         </div>
       )}
-      renderOption={option => <Tag title={getOptionLabel(option, options)} />}
+      renderOption={option => <Tag title={option.label} />}
     />
   );
 };

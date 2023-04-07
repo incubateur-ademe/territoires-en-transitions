@@ -49,16 +49,16 @@ export const MultiSelectFilter = <T extends string>({
       values={values}
       options={options}
       onSelect={handleChange}
-      renderOption={v =>
+      renderOption={option =>
         renderOption ? (
-          renderOption(v)
+          renderOption(option)
         ) : (
           <span
             className={classNames('pr-4 py-1', {
-              'fr-text-mention--grey': v === ITEM_ALL,
+              'fr-text-mention--grey': option.label === ITEM_ALL,
             })}
           >
-            {labels.get(v)}
+            {option.label}
           </span>
         )
       }

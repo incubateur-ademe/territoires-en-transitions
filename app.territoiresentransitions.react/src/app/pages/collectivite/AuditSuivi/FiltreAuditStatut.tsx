@@ -30,11 +30,11 @@ export const FiltreAuditStatut = (props: TFiltreProps) => {
       values={filters[FILTER]}
       options={filterItems}
       onSelect={newValues => setFilters({...filters, [FILTER]: newValues})}
-      renderOption={(value: string) =>
-        value === ITEM_ALL ? (
+      renderOption={option =>
+        option.value === ITEM_ALL ? (
           <span className="pr-4 py-1 fr-text-mention--grey">Tous</span>
         ) : (
-          <BadgeAuditStatut statut={value as TAuditStatut} />
+          <BadgeAuditStatut statut={option.value as TAuditStatut} />
         )
       }
     />

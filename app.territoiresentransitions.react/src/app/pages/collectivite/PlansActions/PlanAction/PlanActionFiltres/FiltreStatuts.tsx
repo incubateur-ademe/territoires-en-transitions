@@ -5,6 +5,7 @@ import {TFiltreProps} from '../../FicheAction/data/filters';
 import {getIsAllSelected, ITEM_ALL} from 'ui/shared/filters/commons';
 import {ficheActionStatutOptions} from '../../FicheAction/data/options/listesStatiques';
 import FicheActionBadgeStatut from '../../FicheAction/FicheActionForm/FicheActionBadgeStatut';
+import {TFicheActionStatuts} from 'types/alias';
 
 const FiltreStatuts = ({filters, setFilters}: TFiltreProps) => {
   // Initialisation du tableau d'options pour le multi-select
@@ -37,7 +38,11 @@ const FiltreStatuts = ({filters, setFilters}: TFiltreProps) => {
             ))}
           </div>
         )}
-        renderOption={option => <FicheActionBadgeStatut statut={option} />}
+        renderOption={option => (
+          <FicheActionBadgeStatut
+            statut={option.value as TFicheActionStatuts}
+          />
+        )}
         placeholderText="Sélectionner des options"
         disabled={options.length === 0}
       />
