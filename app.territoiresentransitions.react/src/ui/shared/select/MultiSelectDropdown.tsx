@@ -5,13 +5,12 @@ import DropdownFloater from 'ui/shared/floating-ui/DropdownFloater';
 import {
   buttonDisplayedClassname,
   buttonDisplayedPlaceholderClassname,
-  Checkmark,
   ExpandCollapseIcon,
-  optionButtonClassname,
+  TOption,
   TSelectBase,
-  TSelectDropdownBase,
   TSelectSelectionButtonBase,
 } from 'ui/shared/select/commons';
+import MultiSelectOptions from './MultiSelectOptions';
 
 type TMultiSelectDropdownBaseProps<T extends string> = TSelectBase & {
   /** valeurs des options sélectionnées */
@@ -24,11 +23,12 @@ export type TMultiSelectButtonProps<T extends string> =
   TMultiSelectDropdownBaseProps<T> & TSelectSelectionButtonBase;
 
 export type TMultiSelectDropdownProps<T extends string> =
-  TMultiSelectDropdownBaseProps<T> &
-    TSelectDropdownBase<T> & {
-      /** appelée quand les options sélectionnées changent (reçoit les nouvelles valeurs) */
-      onSelect: (values: T[]) => void;
-    };
+  TMultiSelectDropdownBaseProps<T> & {
+    /** fait le rendu d'une option de la liste (optionnel) */
+    renderOption?: (option: TOption) => React.ReactElement;
+    /** appelée quand les options sélectionnées changent (reçoit les nouvelles valeurs) */
+    onSelect: (values: T[]) => void;
+  };
 
 /**
  * Permet de sélectionner plusieurs éléments dans une liste déroulante.
@@ -50,33 +50,12 @@ const MultiSelectDropdown = <T extends string>({
     containerWidthMatchButton={containerWidthMatchButton}
     placement={placement}
     render={() => (
-      <div data-test={`${dataTest}-options`}>
-        {options.map(({label, value: v}) => {
-          return (
-            <button
-              key={v}
-              data-test={v}
-              className={optionButtonClassname}
-              onClick={() => {
-                if (values?.includes(v as T)) {
-                  onSelect(
-                    values.filter(selectedValue => selectedValue !== (v as T))
-                  );
-                } else {
-                  onSelect([...(values || []), v as T]);
-                }
-              }}
-            >
-              <Checkmark isSelected={values?.includes(v as T) || false} />
-              {renderOption ? (
-                renderOption(v as T)
-              ) : (
-                <span className="leading-6">{label}</span>
-              )}
-            </button>
-          );
-        })}
-      </div>
+      <MultiSelectOptions
+        values={values}
+        options={options}
+        onSelect={onSelect}
+        renderOption={renderOption}
+      />
     )}
   >
     <MultiSelectButton

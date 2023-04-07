@@ -7,13 +7,12 @@ import Tag from 'ui/shared/Tag';
 
 import {
   buttonDisplayedClassname,
-  Checkmark,
   ExpandCollapseIcon,
   getOptionLabel,
-  optionButtonClassname,
   TSelectBase,
   TSelectSelectionButtonBase,
 } from './commons';
+import MultiSelectOptions from './MultiSelectOptions';
 
 /** Sélecteur avec un input dans le bouton d'ouverture pour faire une recherche dans la liste d'options */
 const AutocompleteInputSelect = <T extends string>({
@@ -44,35 +43,15 @@ const AutocompleteInputSelect = <T extends string>({
       toggle={false}
       enterToToggle={false}
       render={() => (
-        <div data-test={`${dataTest}-options`}>
-          {searchedOptions.map(({label, value: v}) => {
-            return (
-              <button
-                key={v}
-                data-test={v}
-                className={optionButtonClassname}
-                onClick={() => {
-                  if (values?.includes(v as T)) {
-                    onSelect(
-                      values.filter(selectedValue => selectedValue !== (v as T))
-                    );
-                    onInputChange('');
-                  } else {
-                    onSelect([...(values || []), v as T]);
-                    onInputChange('');
-                  }
-                }}
-              >
-                <Checkmark isSelected={values?.includes(v as T) || false} />
-                {renderOption ? (
-                  renderOption(v as T)
-                ) : (
-                  <span className="leading-6">{label}</span>
-                )}
-              </button>
-            );
-          })}
-        </div>
+        <MultiSelectOptions
+          values={values}
+          options={searchedOptions}
+          onSelect={values => {
+            onSelect(values);
+            onInputChange('');
+          }}
+          renderOption={renderOption}
+        />
       )}
     >
       <AutocompleteButton
