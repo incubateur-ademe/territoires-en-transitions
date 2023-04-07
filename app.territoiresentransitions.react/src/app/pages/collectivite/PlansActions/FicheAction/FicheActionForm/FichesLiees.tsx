@@ -10,6 +10,7 @@ import {
 } from 'app/paths';
 import FicheActionBadgeStatut from './FicheActionBadgeStatut';
 import {FicheResume} from '../data/types';
+import {TAxeInsert} from 'types/alias';
 
 type Props = {
   fiches: FicheResume[] | null;
@@ -50,6 +51,18 @@ const FichesLiees = ({fiches, onSelect, isReadonly}: Props) => {
     return selectedFiches;
   };
 
+  const generateCardDetails = (plans: TAxeInsert[] | [null] | null) => {
+    if (plans && plans[0]) {
+      if (plans[0].nom) {
+        return plans[0].nom;
+      } else {
+        return 'Sans titre';
+      }
+    } else {
+      return 'Fiches non classées';
+    }
+  };
+
   return (
     <>
       <FormField label="Fiches liées">
@@ -86,7 +99,7 @@ const FichesLiees = ({fiches, onSelect, isReadonly}: Props) => {
                   <FicheActionBadgeStatut statut={fiche.fiche_statut} small />
                 )
               }
-              details={fiche.plans && fiche.plans[0].nom}
+              details={generateCardDetails(fiche.plans)}
               title={fiche.fiche_nom ?? 'Sans titre'}
             />
           ))}

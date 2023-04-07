@@ -76,5 +76,5 @@ export type FicheResume = Omit<
   fiche_id?: number | null;
   fiche_nom?: string | null;
   fiche_statut: TFicheActionStatuts | null;
-  plans: TAxeInsert[] | null;
+  plans: TAxeInsert[] | [null] | null;
 };
