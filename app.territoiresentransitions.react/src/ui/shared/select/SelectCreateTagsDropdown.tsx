@@ -4,10 +4,10 @@ import classNames from 'classnames';
 import DropdownFloater from 'ui/shared/floating-ui/DropdownFloater';
 import {TMultiSelectDropdownProps} from 'ui/shared/select/MultiSelectDropdown';
 import Tag from 'ui/shared/Tag';
+import MultiSelectOptions from './MultiSelectOptions';
 
 import {
   buttonDisplayedClassname,
-  Checkmark,
   ExpandCollapseIcon,
   getOptionLabel,
   optionButtonClassname,
@@ -26,7 +26,6 @@ const SelectCreateTagsDropdown = <T extends string>({
   options,
   onSelect,
   onCreateClick,
-  renderOption,
   placement,
   placeholderText,
   disabled,
@@ -52,7 +51,7 @@ const SelectCreateTagsDropdown = <T extends string>({
       toggle={false}
       enterToToggle={false}
       render={() => (
-        <div data-test={`${dataTest}-options`}>
+        <div>
           {inputValue.trim().length > 0 && isNotSimilar && (
             <button
               className={classNames('pl-10', optionButtonClassname)}
@@ -68,27 +67,12 @@ const SelectCreateTagsDropdown = <T extends string>({
               />
             </button>
           )}
-          {filteredOptions.map(({label, value: v}) => {
-            return (
-              <button
-                key={v}
-                data-test={v}
-                className={optionButtonClassname}
-                onClick={() => {
-                  if (values?.includes(v as T)) {
-                    onSelect(
-                      values.filter(selectedValue => selectedValue !== (v as T))
-                    );
-                  } else {
-                    onSelect([...(values || []), v as T]);
-                  }
-                }}
-              >
-                <Checkmark isSelected={values?.includes(v as T) || false} />
-                {renderOption ? renderOption(v as T) : <Tag title={label} />}
-              </button>
-            );
-          })}
+          <MultiSelectOptions
+            values={values}
+            options={filteredOptions}
+            onSelect={onSelect}
+            renderOption={option => <Tag title={option.label} />}
+          />
         </div>
       )}
     >
