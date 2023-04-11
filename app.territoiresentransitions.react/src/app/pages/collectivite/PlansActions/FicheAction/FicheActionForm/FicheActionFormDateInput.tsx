@@ -1,5 +1,5 @@
 import {InputHTMLAttributes, useEffect, useState} from 'react';
-import {format} from 'date-fns';
+import {format, isValid} from 'date-fns';
 
 type Props<T> = {
   initialValue?: string | null;
@@ -14,7 +14,8 @@ const FicheActionFormDateInput = <T extends HTMLInputElement>({
   const [value, setValue] = useState('');
 
   useEffect(() => {
-    setValue(initialValue ? format(new Date(initialValue), 'yyyy-MM-dd') : '');
+    const d = initialValue ? new Date(initialValue) : undefined;
+    setValue(d && isValid(d) ? format(d, 'yyyy-MM-dd') : '');
   }, [initialValue]);
 
   return (
