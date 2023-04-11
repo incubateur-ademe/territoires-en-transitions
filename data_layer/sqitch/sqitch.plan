@@ -304,3 +304,4 @@ cron/refresh_stats_labellisation 2023-04-04T17:27:02Z Florian <florian@derfurth.
 @v2.18.0 2023-04-06T12:00:16Z Florian <florian@derfurth.com> # API Terristory
 
 stats/reporting 2023-04-11T13:13:51Z Florian <florian@derfurth.com> # Premières vues pour export ADEME
+@v2.19.0 2023-04-11T14:45:13Z Florian <florian@derfurth.com> # Reporting ADEME
