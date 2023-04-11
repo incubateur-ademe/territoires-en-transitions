@@ -28,8 +28,7 @@ from stats.collectivite c
          join private.convert_client_scores(cs.scores) ccc on true
     -- puis on converti chacune de ces lignes au format approprié pour les vues tabulaires du client
          join private.to_tabular_score(ccc) ts on true
-order by naturalsort(ts.action_id),
-         c.collectivite_id;
+order by c.collectivite_id;
 
 create view stats.report_question
 as
