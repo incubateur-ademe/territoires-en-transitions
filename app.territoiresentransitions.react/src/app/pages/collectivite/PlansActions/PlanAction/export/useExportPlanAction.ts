@@ -186,6 +186,15 @@ const ecritPlan = (
     );
   });
 
+  // mais si il n'y a ni fiches ni sous-niveaux, on ajoute une ligne avec le
+  // chemin dans l'arbo.
+  if (!fiches?.length && !enfants?.length) {
+    worksheet.getCell(data_cols.nom_axe + ligne_courante).value = nom_axe;
+    worksheet.getCell(data_cols.sous_axe1 + ligne_courante).value = sous_axe1;
+    worksheet.getCell(data_cols.sous_axe2 + ligne_courante).value = sous_axe2;
+    ligne_courante += 1;
+  }
+
   return ligne_courante;
 };
 
