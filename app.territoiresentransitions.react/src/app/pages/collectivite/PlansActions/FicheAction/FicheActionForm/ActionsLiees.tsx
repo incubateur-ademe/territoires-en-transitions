@@ -8,6 +8,7 @@ import ActionCard from '../../components/ActionCard';
 import {useActionListe} from '../data/options/useActionListe';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {TActionRelationInsert} from 'types/alias';
+import {referentielToName} from 'app/labels';
 
 type Props = {
   actions: TActionRelationInsert[] | null;
@@ -76,11 +77,7 @@ const ActionsLiees = ({actions, onSelect, isReadonly}: Props) => {
                   <ActionStatutBadge statut={action.avancement} small />
                 )
               }
-              details={`Référentiel ${
-                action.referentiel === 'cae'
-                  ? 'Climat Air Énergie'
-                  : 'Économie circulaire'
-              }`}
+              details={`Référentiel ${referentielToName[action.referentiel]}`}
               title={`${action.identifiant} ${action.nom}`}
             />
           ))}
