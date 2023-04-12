@@ -320,3 +320,4 @@ labellisation/cot [labellisation/cot@v2.21.0] 2023-04-18T13:27:48Z Amandine Jacq
 @v2.23.0 2023-04-24T14:54:21Z Florian <florian@derfurth.com> # Corrige les stats et ajoute le signataire COT
 
 evaluation/reponse_historique [evaluation/reponse_historique@v2.18.0] 2023-04-07T09:43:18Z Florian <florian@derfurth.com> # Ajoute une fonction pour construire l'état des réponses pour un moment donnée
+labellisation/comparaison_audit [labellisation/comparaison_audit@v2.18.0] 2023-04-12T09:19:41Z Florian <florian@derfurth.com> # Utilise les réponses historisées dans la payload
