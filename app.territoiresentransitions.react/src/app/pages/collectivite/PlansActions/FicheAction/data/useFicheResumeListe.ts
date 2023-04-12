@@ -12,7 +12,8 @@ const fetchFicheResumeListe = async (
   const query = supabaseClient
     .from('fiche_resume')
     .select()
-    .match({collectivite_id});
+    .match({collectivite_id})
+    .order('plans', {ascending: true});
 
   const {error, data} = await query;
 
