@@ -6,11 +6,12 @@ import {
   buttonDisplayedClassname,
   buttonDisplayedPlaceholderClassname,
   ExpandCollapseIcon,
+  getOptions,
   TOption,
   TSelectBase,
   TSelectSelectionButtonBase,
 } from 'ui/shared/select/commons';
-import MultiSelectOptions from './MultiSelectOptions';
+import Options from './Options';
 
 type TMultiSelectDropdownBaseProps<T extends string> = TSelectBase & {
   /** valeurs des options sélectionnées */
@@ -50,7 +51,7 @@ const MultiSelectDropdown = <T extends string>({
     containerWidthMatchButton={containerWidthMatchButton}
     placement={placement}
     render={() => (
-      <MultiSelectOptions
+      <Options
         values={values}
         options={options}
         onSelect={onSelect}
@@ -109,7 +110,8 @@ const MultiSelectButton = forwardRef(
           <span className="mr-auto flex line-clamp-1">
             {values.sort().map((value, index) => (
               <span key={value}>
-                {options.find(({value: v}) => v === value)?.label || ''}
+                {getOptions(options).find(({value: v}) => v === value)?.label ||
+                  ''}
                 {values.length !== index + 1 && ', '}
               </span>
             ))}

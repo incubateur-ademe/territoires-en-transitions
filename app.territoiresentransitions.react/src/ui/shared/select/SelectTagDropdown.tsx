@@ -1,5 +1,5 @@
 import Tag from 'ui/shared/Tag';
-import {getOptionLabel, TSelectBase} from './commons';
+import {getOptionLabel, getOptions, TSelectBase} from './commons';
 import SelectDropdown from './SelectDropdown';
 
 type TSelectTagDropdown<T extends string> = TSelectBase & {
@@ -27,12 +27,12 @@ const SelectTagDropdown = <T extends string>({
       disabled={disabled}
       renderSelection={v => (
         <Tag
-          title={getOptionLabel(v, options)}
+          title={getOptionLabel(v, getOptions(options))}
           onCloseClick={() => onSelect(null)}
         />
       )}
       renderOption={option => (
-        <Tag title={getOptionLabel(option.value, options)} />
+        <Tag title={getOptionLabel(option.value, getOptions(options))} />
       )}
     />
   );

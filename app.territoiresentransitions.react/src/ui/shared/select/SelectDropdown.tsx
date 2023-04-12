@@ -5,13 +5,13 @@ import DropdownFloater from 'ui/shared/floating-ui/DropdownFloater';
 import {
   buttonDisplayedClassname,
   buttonDisplayedPlaceholderClassname,
-  optionButtonClassname,
-  Checkmark,
   ExpandCollapseIcon,
   TSelectBase,
   TSelectSelectionButtonBase,
   TOption,
+  getOptions,
 } from 'ui/shared/select/commons';
+import Options from './Options';
 
 type TSelectDropdownBaseProps<T extends string> = TSelectBase & {
   /** valeurs des options sélectionnées */
@@ -48,26 +48,17 @@ const SelectDropdown = <T extends string>({
       placement={placement}
       render={({close}) => (
         <div data-test={`${dataTest}-options`}>
-          {options.map(option => {
-            return (
-              <button
-                key={option.value}
-                data-test={option.value}
-                className={optionButtonClassname}
-                onClick={() => {
-                  onSelect(option.value as T);
-                  close();
-                }}
-              >
-                <Checkmark isSelected={value === option.value} />
-                {renderOption ? (
-                  renderOption(option)
-                ) : (
-                  <span>{option.label}</span>
-                )}
-              </button>
-            );
-          })}
+          <Options
+            values={value && [value]}
+            options={options}
+            onSelect={values => {
+              // comme les options peuvent etre utilisées pour un select simple ou multiple,
+              // on ne sélectionne que la dernière valeur du tableau
+              onSelect(values[values.length - 1]);
+              close();
+            }}
+            renderOption={renderOption}
+          />
         </div>
       )}
     >
@@ -118,7 +109,7 @@ const SelectButtton = forwardRef(
           renderSelection(value)
         ) : (
           <span className="mr-auto flex line-clamp-1">
-            {options.find(({value: v}) => v === value)?.label || ''}
+            {getOptions(options).find(({value: v}) => v === value)?.label || ''}
           </span>
         )
       ) : (

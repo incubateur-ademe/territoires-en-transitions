@@ -4,12 +4,14 @@ import classNames from 'classnames';
 import DropdownFloater from 'ui/shared/floating-ui/DropdownFloater';
 import {TMultiSelectDropdownProps} from 'ui/shared/select/MultiSelectDropdown';
 import Tag from 'ui/shared/Tag';
-import MultiSelectOptions from './MultiSelectOptions';
+import Options from './Options';
 
 import {
   buttonDisplayedClassname,
   ExpandCollapseIcon,
+  filterOptions,
   getOptionLabel,
+  getOptions,
   optionButtonClassname,
   TSelectBase,
   TSelectSelectionButtonBase,
@@ -37,13 +39,11 @@ const SelectCreateTagsDropdown = <T extends string>({
     setInputValue(value);
   };
 
-  const filteredOptions = options.filter(option =>
-    option.label.toLowerCase().includes(inputValue.toLowerCase().trim())
-  );
+  const filteredOptions = filterOptions(options, inputValue);
 
   const isNotSimilar =
     inputValue.toLowerCase().trim() !==
-    filteredOptions[0]?.label.toLowerCase().trim();
+    getOptions(filteredOptions)[0]?.label.toLowerCase().trim();
 
   return (
     <DropdownFloater
@@ -67,9 +67,9 @@ const SelectCreateTagsDropdown = <T extends string>({
               />
             </button>
           )}
-          <MultiSelectOptions
+          <Options
             values={values}
-            options={filteredOptions}
+            options={filterOptions(options, inputValue)}
             onSelect={onSelect}
             renderOption={option => <Tag title={option.label} />}
           />
@@ -154,7 +154,7 @@ const SelectCreateTagsButton = forwardRef(
               values.map(v => (
                 <Tag
                   key={v}
-                  title={getOptionLabel(v, options)}
+                  title={getOptionLabel(v, getOptions(options))}
                   onCloseClick={() =>
                     onSelect(values.filter(value => value !== v))
                   }

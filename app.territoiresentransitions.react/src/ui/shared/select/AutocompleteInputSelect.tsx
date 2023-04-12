@@ -8,11 +8,13 @@ import Tag from 'ui/shared/Tag';
 import {
   buttonDisplayedClassname,
   ExpandCollapseIcon,
+  filterOptions,
   getOptionLabel,
+  getOptions,
   TSelectBase,
   TSelectSelectionButtonBase,
 } from './commons';
-import MultiSelectOptions from './MultiSelectOptions';
+import Options from './Options';
 
 /** Sélecteur avec un input dans le bouton d'ouverture pour faire une recherche dans la liste d'options */
 const AutocompleteInputSelect = <T extends string>({
@@ -32,10 +34,6 @@ const AutocompleteInputSelect = <T extends string>({
     setInputValue(value);
   };
 
-  const searchedOptions = options.filter(option =>
-    option.label.toLowerCase().includes(inputValue.toLowerCase())
-  );
-
   return (
     <DropdownFloater
       containerWidthMatchButton={containerWidthMatchButton}
@@ -43,9 +41,9 @@ const AutocompleteInputSelect = <T extends string>({
       toggle={false}
       enterToToggle={false}
       render={() => (
-        <MultiSelectOptions
+        <Options
           values={values}
-          options={searchedOptions}
+          options={filterOptions(options, inputValue)}
           onSelect={values => {
             onSelect(values);
             onInputChange('');
@@ -132,7 +130,7 @@ const AutocompleteButton = forwardRef(
               values.map(v => (
                 <Tag
                   key={v}
-                  title={getOptionLabel(v, options)}
+                  title={getOptionLabel(v, getOptions(options))}
                   onCloseClick={() =>
                     onSelect(values.filter(value => value !== v))
                   }

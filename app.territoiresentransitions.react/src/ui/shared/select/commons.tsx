@@ -1,31 +1,20 @@
 import {Placement} from '@floating-ui/react';
 import classNames from 'classnames';
 
-/** Extrait le label d'une option dans une liste d'options */
-export const getOptionLabel = (optionValue: string, options: TOption[]) =>
-  options.find((v: TOption) => v.value === optionValue)?.label!;
-
-/* Class génériques */
-export const DSFRbuttonClassname = 'fr-select !flex !px-4 !bg-none';
-export const buttonDisplayedClassname =
-  'flex items-center w-full p-2 text-left text-sm';
-export const buttonDisplayedPlaceholderClassname =
-  'mr-auto text-gray-500 italic line-clamp-1';
-export const buttonDisplayedIconClassname =
-  'fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto';
-export const optionButtonClassname =
-  'flex items-center w-full p-2 text-left text-sm';
-export const optionCheckMarkClassname = 'block fr-fi-check-line scale-75';
-
 /**
  * Types partagés entre tous les composants selects
  * (Select, MultiSelect, MultiSelectFilter)
  */
+export type TSelectOption = TOption | TOptionSection;
 export type TOption = {value: string; label: string};
+export type TOptionSection = {
+  title: string;
+  options: TOption[];
+};
 
 export type TSelectBase = {
   /** Liste des options */
-  options: Array<TOption>;
+  options: Array<TSelectOption>;
   /** Class pour customiser le bouton d'ouverture du menu */
   buttonClassName?: string;
   /** Text affiché dans l'input quand il n'y a rien sélectionné */
@@ -44,6 +33,83 @@ export type TSelectSelectionButtonBase = {
   /** Donné par le DropdownFloater */
   isOpen?: boolean;
 };
+
+// Type guards
+export function isOptionSection(
+  option: TSelectOption
+): option is TOptionSection {
+  return (option as TOptionSection).title !== undefined;
+}
+
+export function isOption(option: TSelectOption): option is TOption {
+  return (option as TOption).value !== undefined;
+}
+
+/** Extrait le label d'une option dans une liste d'options */
+export const getOptionLabel = (optionValue: string, options: TOption[]) =>
+  options.find((v: TOption) => v.value === optionValue)?.label!;
+
+/** Renvoie un tableau d'options, quelles soient dans une section ou non */
+export const getOptions = (selectOptions: TSelectOption[]): TOption[] => {
+  if (selectOptions.length > 0) {
+    if (isOptionSection(selectOptions[0])) {
+      return selectOptions.reduce(
+        (acc: TOption[], v) =>
+          isOptionSection(v) ? acc.concat(v.options) : acc,
+        []
+      );
+    } else {
+      return selectOptions as unknown as TOption[];
+    }
+  } else {
+    return [];
+  }
+};
+
+/**
+ * Filtre les options, quelles soient dans une section ou non.
+ * Utilisée dans les sélecteurs avec saisie.
+ * Renvoi une liste d'options ou des sections avec les options filtrées
+ */
+export const filterOptions = (
+  options: TSelectOption[],
+  filterValue: string
+): TSelectOption[] =>
+  options.reduce((acc: TSelectOption[], currentOption) => {
+    if (isOption(currentOption)) {
+      if (
+        currentOption.label.toLowerCase().includes(filterValue.toLowerCase())
+      ) {
+        return [...acc, currentOption];
+      }
+    }
+
+    if (isOptionSection(currentOption)) {
+      return [
+        ...acc,
+        {
+          title: currentOption.title,
+          options: currentOption.options.filter(option =>
+            option.label.toLowerCase().includes(filterValue.toLowerCase())
+          ),
+        },
+      ];
+    }
+
+    return acc;
+  }, []);
+
+/* Class génériques */
+export const DSFRbuttonClassname = 'fr-select !flex !px-4 !bg-none';
+export const buttonDisplayedClassname =
+  'flex items-center w-full p-2 text-left text-sm';
+export const buttonDisplayedPlaceholderClassname =
+  'mr-auto text-gray-500 italic line-clamp-1';
+export const buttonDisplayedIconClassname =
+  'fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto';
+export const optionButtonClassname =
+  'flex items-center w-full p-2 text-left text-sm';
+export const optionCheckMarkClassname = 'block fr-fi-check-line scale-75';
 
 /** Affiche une marque de sélection (ou seulement son emplacement) devant un
  * item de la liste */
