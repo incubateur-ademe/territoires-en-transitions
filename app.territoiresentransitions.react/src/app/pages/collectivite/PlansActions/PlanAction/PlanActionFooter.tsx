@@ -22,7 +22,7 @@ const PlanActionFooter = ({plan, isReadonly}: TPlanActionFooter) => {
         {checkAxeHasFiche(plan) ? (
           <button
             data-test="export-pa"
-            className="fr-btn fr-btn--sm fr-btn--icon-left fr-fi-download-line"
+            className="fr-btn fr-btn--icon-left fr-fi-download-line"
             disabled={isLoading}
             onClick={() => {
               exportPlanAction();
@@ -39,10 +39,7 @@ const PlanActionFooter = ({plan, isReadonly}: TPlanActionFooter) => {
               collectiviteId: collectivite_id!,
             })}
           >
-            <BoutonAttention
-              data-test="SupprimerPlanBouton"
-              className="fr-btn--sm"
-            >
+            <BoutonAttention data-test="SupprimerPlanBouton">
               Supprimer ce plan d’action
             </BoutonAttention>
           </SupprimerAxeModal>
