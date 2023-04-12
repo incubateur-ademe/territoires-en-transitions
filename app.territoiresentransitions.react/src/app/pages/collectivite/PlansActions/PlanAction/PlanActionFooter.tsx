@@ -3,6 +3,8 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import {BoutonAttention} from 'ui/BoutonAttention';
 import ScrollTopButton from 'ui/shared/ScrollTopButton';
 import {PlanAction} from './data/types';
+import {checkAxeHasFiche} from './data/utils';
+import {useExportPlanAction} from './export/useExportPlanAction';
 import SupprimerAxeModal from './SupprimerAxeModal';
 
 type TPlanActionFooter = {
@@ -12,25 +14,40 @@ type TPlanActionFooter = {
 
 const PlanActionFooter = ({plan, isReadonly}: TPlanActionFooter) => {
   const collectivite_id = useCollectiviteId();
+  const {exportPlanAction, isLoading} = useExportPlanAction(plan.axe.id);
 
   return (
     <div className="flex flex-col gap-8 items-start pt-12">
-      {!isReadonly && (
-        <SupprimerAxeModal
-          axe={plan.axe}
-          plan={plan}
-          redirectURL={makeCollectiviteFichesNonClasseesUrl({
-            collectiviteId: collectivite_id!,
-          })}
-        >
-          <BoutonAttention
-            data-test="SupprimerPlanBouton"
-            className="fr-btn--sm"
+      <div className="flex gap-4">
+        {checkAxeHasFiche(plan) ? (
+          <button
+            data-test="export-pa"
+            className="fr-btn fr-btn--sm fr-btn--icon-left fr-fi-download-line"
+            disabled={isLoading}
+            onClick={() => {
+              exportPlanAction();
+            }}
           >
-            Supprimer ce plan d’action
-          </BoutonAttention>
-        </SupprimerAxeModal>
-      )}
+            Exporter
+          </button>
+        ) : null}
+        {!isReadonly && (
+          <SupprimerAxeModal
+            axe={plan.axe}
+            plan={plan}
+            redirectURL={makeCollectiviteFichesNonClasseesUrl({
+              collectiviteId: collectivite_id!,
+            })}
+          >
+            <BoutonAttention
+              data-test="SupprimerPlanBouton"
+              className="fr-btn--sm"
+            >
+              Supprimer ce plan d’action
+            </BoutonAttention>
+          </SupprimerAxeModal>
+        )}
+      </div>
       <ScrollTopButton />
     </div>
   );
