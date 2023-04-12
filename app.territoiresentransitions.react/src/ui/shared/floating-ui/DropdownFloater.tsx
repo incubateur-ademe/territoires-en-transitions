@@ -17,11 +17,11 @@ type DropdownFloaterProps = {
   children: JSX.Element;
   render: (data: {close: () => void}) => React.ReactNode;
   placement?: Placement;
-  /** Whether to toggle the open state with repeated clicks. Default `true` */
+  /** Toggle l'état d'ouverture avec des clics répétés sur le bouton d'ouverture. Défaut `true` */
   toggle?: boolean;
-  /** Whether to toggle the open state with 'enter' keydown. Default `true` */
+  /** Toggle l'état d'ouverture en appuyant sur la touche 'enter'. Défaut `true` */
   enterToToggle?: boolean;
-  /** Wheter to set the options width as the open button. Default `false` */
+  /** Pour que la largeur des options soit égale au bouton d'ouverture. Défaut `false` */
   containerWidthMatchButton?: boolean;
   /** Placement offset */
   offsetValue?: number;
