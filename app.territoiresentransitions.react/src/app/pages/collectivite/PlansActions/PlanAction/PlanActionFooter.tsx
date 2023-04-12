@@ -19,7 +19,7 @@ const PlanActionFooter = ({plan, isReadonly}: TPlanActionFooter) => {
   return (
     <div className="flex flex-col gap-8 items-start pt-12">
       <div className="flex gap-4">
-        {checkAxeHasFiche(plan) ? (
+        {checkAxeHasFiche(plan) && !isReadonly ? (
           <button
             data-test="export-pa"
             className="fr-btn fr-btn--icon-left fr-fi-download-line"
