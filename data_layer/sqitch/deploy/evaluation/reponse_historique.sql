@@ -51,20 +51,19 @@ begin
     from question q
              left join ranked_rb rb
                        on rb.question_id = q.id
-                           and rb.reponse is not null
                            and rank = 1
              left join ranked_rp rp
                        on rp.question_id = q.id
-                           and rp.reponse is not null
                            and rp.rank = 1
              left join ranked_rc rc
                        on rc.question_id = q.id
-                           and rc.reponse is not null
-                           and rc.rank = 1;
+                           and rc.rank = 1
+    where rb.reponse is not null
+       or rp.reponse is not null
+       or rc.reponse is not null;
 end;
 comment on function historique.reponses_at is
     'Les réponses d''une collectivité à un moment donné pour toutes les questions. '
-        'Combine les valeurs répondues avec celles par défaut. '
         'Utilisée pour construire la payload envoyée au business.';
 
 COMMIT;
