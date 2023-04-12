@@ -14,28 +14,6 @@ exports[`Storyshots ui/shared/select/SelectDropdown Aucune Option Selectionee 1`
   <span
     className="mr-auto text-gray-500 italic line-clamp-1"
   >
-    
-  </span>
-  <span
-    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
-  />
-</button>
-`;
-
-exports[`Storyshots ui/shared/select/SelectDropdown Avec Placeholder 1`] = `
-<button
-  aria-expanded={false}
-  aria-label="ouvrir le menu"
-  className="flex items-center w-full p-2 text-left text-sm"
-  onClick={[Function]}
-  onKeyDown={[Function]}
-  onKeyUp={[Function]}
-  onMouseDown={[Function]}
-  onPointerDown={[Function]}
->
-  <span
-    className="mr-auto text-gray-500 italic line-clamp-1"
-  >
     Sélectionner une option
   </span>
   <span
