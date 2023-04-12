@@ -516,7 +516,9 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
           className="fr-label mb-2"
           htmlFor="email"
         >
-          <div>
+          <div
+            className="font-medium"
+          >
             Adresse email de la personne à inviter
           </div>
         </label>
@@ -539,7 +541,9 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
           className="fr-label mb-2"
           htmlFor="Niveau d’accès pour cette collectivité"
         >
-          <div>
+          <div
+            className="font-medium"
+          >
             Niveau d’accès pour cette collectivité
           </div>
         </label>
@@ -1120,7 +1124,9 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
           className="fr-label mb-2"
           htmlFor="email"
         >
-          <div>
+          <div
+            className="font-medium"
+          >
             Adresse email de la personne à inviter
           </div>
         </label>
@@ -1143,7 +1149,9 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
           className="fr-label mb-2"
           htmlFor="Niveau d’accès pour cette collectivité"
         >
-          <div>
+          <div
+            className="font-medium"
+          >
             Niveau d’accès pour cette collectivité
           </div>
         </label>
@@ -1724,7 +1732,9 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
           className="fr-label mb-2"
           htmlFor="email"
         >
-          <div>
+          <div
+            className="font-medium"
+          >
             Adresse email de la personne à inviter
           </div>
         </label>
@@ -1747,7 +1757,9 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
           className="fr-label mb-2"
           htmlFor="Niveau d’accès pour cette collectivité"
         >
-          <div>
+          <div
+            className="font-medium"
+          >
             Niveau d’accès pour cette collectivité
           </div>
         </label>

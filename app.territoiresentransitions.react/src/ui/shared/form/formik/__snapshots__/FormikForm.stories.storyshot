@@ -13,7 +13,9 @@ exports[`Storyshots ui/shared/form/formik/FormikForm Defaut 1`] = `
       className="fr-label mb-2"
       htmlFor="input"
     >
-      <div>
+      <div
+        className="font-medium"
+      >
         Basique input
       </div>
     </label>
@@ -36,7 +38,9 @@ exports[`Storyshots ui/shared/form/formik/FormikForm Defaut 1`] = `
       className="fr-label mb-2"
       htmlFor="inputDisabled"
     >
-      <div>
+      <div
+        className="font-medium"
+      >
         Input désactivé
       </div>
     </label>
@@ -59,7 +63,9 @@ exports[`Storyshots ui/shared/form/formik/FormikForm Defaut 1`] = `
       className="fr-label mb-2"
       htmlFor="email"
     >
-      <div>
+      <div
+        className="font-medium"
+      >
         Adresse email avec hint *
       </div>
       <span
@@ -89,7 +95,9 @@ exports[`Storyshots ui/shared/form/formik/FormikForm Defaut 1`] = `
       className="fr-label mb-2"
       htmlFor="password"
     >
-      <div>
+      <div
+        className="font-medium"
+      >
         Mot de passe *
       </div>
     </label>
@@ -110,7 +118,9 @@ exports[`Storyshots ui/shared/form/formik/FormikForm Defaut 1`] = `
       className="fr-label mb-2"
       htmlFor="textarea"
     >
-      <div>
+      <div
+        className="font-medium"
+      >
         Text area
       </div>
     </label>
@@ -131,7 +141,9 @@ exports[`Storyshots ui/shared/form/formik/FormikForm Defaut 1`] = `
       className="fr-label mb-2"
       htmlFor="Basique elect"
     >
-      <div>
+      <div
+        className="font-medium"
+      >
         Basique elect
       </div>
     </label>
@@ -182,7 +194,9 @@ exports[`Storyshots ui/shared/form/formik/FormikForm Defaut 1`] = `
       className="fr-label mb-2"
       htmlFor="Select désactivé"
     >
-      <div>
+      <div
+        className="font-medium"
+      >
         Select désactivé
       </div>
       <span

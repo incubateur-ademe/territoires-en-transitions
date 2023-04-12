@@ -30,7 +30,9 @@ exports[`Storyshots app/pages/Profil/MonCompte Defaut 1`] = `
           className="fr-label mb-2"
           htmlFor="prenom"
         >
-          <div>
+          <div
+            className="font-medium"
+          >
             Prénom
           </div>
         </label>
@@ -54,7 +56,9 @@ exports[`Storyshots app/pages/Profil/MonCompte Defaut 1`] = `
           className="fr-label mb-2"
           htmlFor="nom"
         >
-          <div>
+          <div
+            className="font-medium"
+          >
             Nom
           </div>
         </label>
@@ -78,7 +82,9 @@ exports[`Storyshots app/pages/Profil/MonCompte Defaut 1`] = `
           className="fr-label mb-2"
           htmlFor="email"
         >
-          <div>
+          <div
+            className="font-medium"
+          >
             Email
           </div>
         </label>
