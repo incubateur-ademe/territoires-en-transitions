@@ -54,6 +54,7 @@ const SelectCreateTagsDropdown = <T extends string>({
         <div>
           {inputValue.trim().length > 0 && isNotSimilar && (
             <button
+              data-test={`${dataTest}-creer-tag`}
               className={classNames('pl-10', optionButtonClassname)}
               onClick={() => {
                 onCreateClick(inputValue);
@@ -68,6 +69,7 @@ const SelectCreateTagsDropdown = <T extends string>({
             </button>
           )}
           <Options
+            dataTest={dataTest}
             values={values}
             options={filterOptions(options, inputValue)}
             onSelect={onSelect}
