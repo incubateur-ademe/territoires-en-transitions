@@ -24,27 +24,31 @@ export const getActionIdentifiant = (
   return matches?.length ? matches[0] : null;
 };
 
-/** Fourni le modèle de fichier nécessaire à un export */
+/** Fourni le modèle de fichier nécessaire à un export du référentiel */
 export const useExportTemplate = (
   /** préfixe du fichier template (par ex. "export_audit" pour charger `export_audit_<referentiel>.xlsx`) */
   filePrefix: string,
   referentiel: string | null
 ) =>
+  useExportTemplateBase(
+    referentiel ? `${filePrefix}_${referentiel}.xlsx` : null
+  );
+
+/** Fourni le modèle de fichier nécessaire à un export (le fichier doit se
+ * trouver dans le répertoire "public") */
+export const useExportTemplateBase = (fileName: string | null) =>
   useQuery(
-    [filePrefix, referentiel],
+    ['exportTemplate', fileName],
     async () => {
-      if (!referentiel) {
+      if (!fileName) {
         return null;
       }
-      const response = await fetch(
-        `${process.env.PUBLIC_URL}/${filePrefix}_${referentiel}.xlsx`,
-        {
-          headers: {
-            'Content-Type': MIME_XLSX,
-            Accept: MIME_XLSX,
-          },
-        }
-      );
+      const response = await fetch(`${process.env.PUBLIC_URL}/${fileName}`, {
+        headers: {
+          'Content-Type': MIME_XLSX,
+          Accept: MIME_XLSX,
+        },
+      });
       if (response.ok) {
         const buffer = await response.arrayBuffer();
         return buffer;
@@ -108,4 +112,9 @@ export const formatActionStatut = (score: {
   }
 
   return avancementToLabel[avancement];
+};
+
+export const setEuroValue = (cell: Cell, value: number | undefined | null) => {
+  cell.numFmt = '#,##0.00 [$€-1]';
+  cell.value = value || null;
 };
