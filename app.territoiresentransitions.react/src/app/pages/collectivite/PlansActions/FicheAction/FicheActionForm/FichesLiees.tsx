@@ -13,14 +13,24 @@ import {FicheResume} from '../data/types';
 import {TAxeInsert} from 'types/alias';
 
 type Props = {
+  ficheCouranteId: number | null;
   fiches: FicheResume[] | null;
   onSelect: (fiches: FicheResume[]) => void;
   isReadonly: boolean;
 };
 
-const FichesLiees = ({fiches, onSelect, isReadonly}: Props) => {
+const FichesLiees = ({
+  ficheCouranteId,
+  fiches,
+  onSelect,
+  isReadonly,
+}: Props) => {
   const {data: ficheListe} = useFicheResumeListe();
   const collectiviteId = useCollectiviteId()!;
+
+  const ficheListeSansFicheCourante = ficheListe?.filter(
+    fiche => fiche.fiche_id !== ficheCouranteId
+  );
 
   const formatOptions = (fiches?: FicheResume[] | null): any[] => {
     /** Récupère tous les plans liés aux fiches */
@@ -79,7 +89,7 @@ const FichesLiees = ({fiches, onSelect, isReadonly}: Props) => {
 
   const formatSelectedFiches = (values: string[]): FicheResume[] => {
     const selectedFiches =
-      ficheListe
+      ficheListeSansFicheCourante
         ?.filter((fiche: FicheResume) =>
           values.some(v => v === fiche.fiche_id!.toString())
         )
@@ -115,7 +125,7 @@ const FichesLiees = ({fiches, onSelect, isReadonly}: Props) => {
           values={fiches?.map((fiche: FicheResume) =>
             fiche.fiche_id!.toString()
           )}
-          options={formatOptions(ficheListe)}
+          options={formatOptions(ficheListeSansFicheCourante)}
           onSelect={values => onSelect(formatSelectedFiches(values))}
           placeholderText="Recherchez par mots-clés"
           disabled={isReadonly}
