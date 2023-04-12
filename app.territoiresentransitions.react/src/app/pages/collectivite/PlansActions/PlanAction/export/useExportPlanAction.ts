@@ -161,15 +161,14 @@ const ecritPlan = (
       formatDate(fiche.date_fin_provisoire);
     worksheet.getCell(data_cols.amelioration_continue + ligne_courante).value =
       fiche.amelioration_continue ? 'VRAI' : 'FAUX';
-    worksheet.getCell(data_cols.calendrier + ligne_courante).value = formatDate(
-      fiche.calendrier
-    );
+    worksheet.getCell(data_cols.calendrier + ligne_courante).value =
+      fiche.calendrier;
     worksheet.getCell(data_cols.actions + ligne_courante).value = fiche.actions
       ?.map(({id}) => getActionLabel(id))
       .filter(s => !!s)
       .join(',');
     worksheet.getCell(data_cols.notes_complementaires + ligne_courante).value =
-      formatDate(fiche.notes_complementaires);
+      fiche.notes_complementaires;
 
     // ligne suivante
     ligne_courante += 1;
