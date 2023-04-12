@@ -42,6 +42,7 @@ const AutocompleteInputSelect = <T extends string>({
       enterToToggle={false}
       render={() => (
         <Options
+          dataTest={dataTest}
           values={values}
           options={filterOptions(options, inputValue)}
           onSelect={values => {

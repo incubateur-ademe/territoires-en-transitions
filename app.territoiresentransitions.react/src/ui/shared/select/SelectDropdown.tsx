@@ -49,6 +49,7 @@ const SelectDropdown = <T extends string>({
       render={({close}) => (
         <div data-test={`${dataTest}-options`}>
           <Options
+            dataTest={dataTest}
             values={value && [value]}
             options={options}
             onSelect={values => {

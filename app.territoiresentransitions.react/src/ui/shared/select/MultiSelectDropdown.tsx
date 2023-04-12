@@ -52,6 +52,7 @@ const MultiSelectDropdown = <T extends string>({
     placement={placement}
     render={() => (
       <Options
+        dataTest={dataTest}
         values={values}
         options={options}
         onSelect={onSelect}
