@@ -19,7 +19,7 @@ defineStep(
     cy.get(`[data-test=${selecteur}-input]`).type(
       '{selectall}{backspace}' + tag
     );
-    cy.get(`[data-test=${selecteur}-options]`).contains('Créer').click();
+    cy.get(`[data-test=${selecteur}-creer-tag]`).click();
     cy.get('body').click(10, 10);
     cy.get(`[data-test=${selecteur}]`).contains(tag).should('be.visible');
   }
