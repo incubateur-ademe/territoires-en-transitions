@@ -397,6 +397,7 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
           isReadonly={isReadonly}
         />
         <FichesLiees
+          ficheCouranteId={fiche.id}
           fiches={fiche.fiches_liees}
           onSelect={fiches_liees => updateFiche({...fiche, fiches_liees})}
           isReadonly={isReadonly}
