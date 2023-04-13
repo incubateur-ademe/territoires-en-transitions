@@ -5,6 +5,25 @@ BEGIN;
 alter table annexe
     add column fiche_id integer references fiche_action not null;
 
+create view bibliotheque_annexe
+as
+select a.id,
+       a.collectivite_id,
+       a.fiche_id,
+       fs.snippet                                 as fichier,
+       a.lien,
+       a.commentaire,
+       a.modified_at                              as created_at,
+       a.modified_by                              as created_by,
+       utilisateur.modified_by_nom(a.modified_by) as created_by_nom
+from annexe a
+         left join labellisation.bibliotheque_fichier_snippet fs
+                   on fs.id = a.fichier_id;
+comment on view bibliotheque_annexe is
+    'Les fichiers ou les liens pour les annexes des fiches action dans un format similaire à la vue `preuve`';
+
+-- Permet aux RLS de la table de s'appliquer aux requêtes de la vue.
+    alter view bibliotheque_annexe set (security_invoker = on);
 
 drop trigger upsert on fiches_action;
 drop function upsert_fiche_action;
@@ -19,7 +38,8 @@ begin
     id_annexe = annexe.id;
     if id_annexe is null then
         insert into annexe (collectivite_id, fichier_id, url, titre, commentaire, fiche_id)
-        values (annexe.collectivite_id, annexe.fichier_id, annexe.url, annexe.titre, annexe.commentaire, annexe.fiche_id)
+        values (annexe.collectivite_id, annexe.fichier_id, annexe.url, annexe.titre, annexe.commentaire,
+                annexe.fiche_id)
         returning id into id_annexe;
         annexe.id = id_annexe;
     end if;
@@ -36,132 +56,107 @@ select fa.*,
        st.sous_thematiques,
        p.partenaires,
        s.structures,
-       (
-           select array_agg(pil.*::personne)
-           from (
-                    select coalesce(pt.nom, concat(dcp.prenom, ' ', dcp.nom)) as nom, pt.collectivite_id, fap.tag_id, fap.user_id
-                    from fiche_action_pilote fap
-                             left join personne_tag pt on fap.tag_id = pt.id
-                             left join dcp on fap.user_id = dcp.user_id
-                    where fap.fiche_id = fa.id
-                ) pil
-       ) as pilotes,
-       (
-           select array_agg(ref.*::personne)
-           from (
-                    select coalesce(pt.nom, concat(dcp.prenom, ' ', dcp.nom)) as nom, pt.collectivite_id, far.tag_id, far.user_id
-                    from fiche_action_referent far
-                             left join personne_tag pt on far.tag_id = pt.id
-                             left join dcp on far.user_id = dcp.user_id
-                    where far.fiche_id = fa.id
-                ) ref
-       ) as referents,
+       (select array_agg(pil.*::personne)
+        from (select coalesce(pt.nom, concat(dcp.prenom, ' ', dcp.nom)) as nom,
+                     pt.collectivite_id,
+                     fap.tag_id,
+                     fap.user_id
+              from fiche_action_pilote fap
+                       left join personne_tag pt on fap.tag_id = pt.id
+                       left join dcp on fap.user_id = dcp.user_id
+              where fap.fiche_id = fa.id) pil)  as pilotes,
+       (select array_agg(ref.*::personne)
+        from (select coalesce(pt.nom, concat(dcp.prenom, ' ', dcp.nom)) as nom,
+                     pt.collectivite_id,
+                     far.tag_id,
+                     far.user_id
+              from fiche_action_referent far
+                       left join personne_tag pt on far.tag_id = pt.id
+                       left join dcp on far.user_id = dcp.user_id
+              where far.fiche_id = fa.id) ref)  as referents,
        anne.annexes,
        pla.axes,
        act.actions,
-       (
-           select array_agg(indi.*::indicateur_generique)
-           from (
-                    select fai.indicateur_id,
-                           fai.indicateur_personnalise_id,
-                           coalesce(id.nom, ipd.titre) as nom,
-                           coalesce(id.description, ipd.description) as description,
-                           coalesce(id.unite, ipd.unite) as unite
-                    from fiche_action_indicateur fai
-                             left join indicateur_definition id on fai.indicateur_id = id.id
-                             left join indicateur_personnalise_definition ipd on fai.indicateur_personnalise_id = ipd.id
-                    where fai.fiche_id = fa.id
-                ) indi
-       ) as indicateurs,
+       (select array_agg(indi.*::indicateur_generique)
+        from (select fai.indicateur_id,
+                     fai.indicateur_personnalise_id,
+                     coalesce(id.nom, ipd.titre)               as nom,
+                     coalesce(id.description, ipd.description) as description,
+                     coalesce(id.unite, ipd.unite)             as unite
+              from fiche_action_indicateur fai
+                       left join indicateur_definition id on fai.indicateur_id = id.id
+                       left join indicateur_personnalise_definition ipd on fai.indicateur_personnalise_id = ipd.id
+              where fai.fiche_id = fa.id) indi) as indicateurs,
        ser.services,
        -- financeurs
-       (
-           select array_agg(fin.*::financeur_montant) as financeurs
-           from (select ft as financeur_tag,
-                        faft.montant_ttc,
-                        faft.id
-                 from financeur_tag ft
-                          join fiche_action_financeur_tag faft on ft.id = faft.financeur_tag_id
-                 where faft.fiche_id = fa.id
-                ) fin
-       ) as financeurs
+       (select array_agg(fin.*::financeur_montant) as financeurs
+        from (select ft as financeur_tag,
+                     faft.montant_ttc,
+                     faft.id
+              from financeur_tag ft
+                       join fiche_action_financeur_tag faft on ft.id = faft.financeur_tag_id
+              where faft.fiche_id = fa.id) fin) as financeurs
 from fiche_action fa
          -- thematiques
-         left join (
-    select fath.fiche_id, array_agg(th.*::thematique) as thematiques
-    from thematique th
-             join fiche_action_thematique fath on fath.thematique = th.thematique
-    group by fath.fiche_id
-) as t on t.fiche_id = fa.id
+         left join (select fath.fiche_id, array_agg(th.*::thematique) as thematiques
+                    from thematique th
+                             join fiche_action_thematique fath on fath.thematique = th.thematique
+                    group by fath.fiche_id) as t on t.fiche_id = fa.id
     -- sous-thematiques
-         left join (
-    select fasth.fiche_id, array_agg(sth.*::sous_thematique) as sous_thematiques
-    from sous_thematique sth
-             join fiche_action_sous_thematique fasth on fasth.thematique_id = sth.id
-    group by fasth.fiche_id
-) as st on st.fiche_id = fa.id
+         left join (select fasth.fiche_id, array_agg(sth.*::sous_thematique) as sous_thematiques
+                    from sous_thematique sth
+                             join fiche_action_sous_thematique fasth on fasth.thematique_id = sth.id
+                    group by fasth.fiche_id) as st on st.fiche_id = fa.id
     -- partenaires
-         left join (
-    select fapt.fiche_id, array_agg(pt.*::partenaire_tag) as partenaires
-    from partenaire_tag pt
-             join fiche_action_partenaire_tag fapt on fapt.partenaire_tag_id = pt.id
-    group by fapt.fiche_id
-) as p on p.fiche_id = fa.id
+         left join (select fapt.fiche_id, array_agg(pt.*::partenaire_tag) as partenaires
+                    from partenaire_tag pt
+                             join fiche_action_partenaire_tag fapt on fapt.partenaire_tag_id = pt.id
+                    group by fapt.fiche_id) as p on p.fiche_id = fa.id
     -- structures
-         left join (
-    select fast.fiche_id, array_agg(st.*::structure_tag) as structures
-    from structure_tag st
-             join fiche_action_structure_tag fast on fast.structure_tag_id = st.id
-    group by fast.fiche_id
-) as s on s.fiche_id = fa.id
+         left join (select fast.fiche_id, array_agg(st.*::structure_tag) as structures
+                    from structure_tag st
+                             join fiche_action_structure_tag fast on fast.structure_tag_id = st.id
+                    group by fast.fiche_id) as s on s.fiche_id = fa.id
     -- annexes
-         left join (
-    select a.fiche_id, array_agg(a.*::annexe) as annexes
-    from annexe a
-    group by a.fiche_id
-) as anne on anne.fiche_id = fa.id
+         left join (select a.fiche_id, array_agg(a.*::annexe) as annexes
+                    from annexe a
+                    group by a.fiche_id) as anne on anne.fiche_id = fa.id
     -- axes
-         left join (
-    select fapa.fiche_id, array_agg(pa.*::axe) as axes
-    from axe pa
-             join fiche_action_axe fapa on fapa.axe_id = pa.id
-    group by fapa.fiche_id
-) as pla on pla.fiche_id = fa.id
+         left join (select fapa.fiche_id, array_agg(pa.*::axe) as axes
+                    from axe pa
+                             join fiche_action_axe fapa on fapa.axe_id = pa.id
+                    group by fapa.fiche_id) as pla on pla.fiche_id = fa.id
     -- actions
-         left join (
-    select faa.fiche_id, array_agg(ar.*::action_relation) as actions
-    from action_relation ar
-             join fiche_action_action faa on faa.action_id = ar.id
-    group by faa.fiche_id
-) as act on act.fiche_id = fa.id
+         left join (select faa.fiche_id, array_agg(ar.*::action_relation) as actions
+                    from action_relation ar
+                             join fiche_action_action faa on faa.action_id = ar.id
+                    group by faa.fiche_id) as act on act.fiche_id = fa.id
     -- services
-         left join (
-    select fast.fiche_id, array_agg(st.*::service_tag) as services
-    from service_tag st
-             join fiche_action_service_tag fast on fast.service_tag_id = st.id
-    group by fast.fiche_id
-) as ser on ser.fiche_id = fa.id
+         left join (select fast.fiche_id, array_agg(st.*::service_tag) as services
+                    from service_tag st
+                             join fiche_action_service_tag fast on fast.service_tag_id = st.id
+                    group by fast.fiche_id) as ser on ser.fiche_id = fa.id
 ;
 
 create function upsert_fiche_action()
     returns trigger as
 $$
 declare
-    id_fiche integer;
-    thematique thematique;
-    sous_thematique sous_thematique;
-    axe axe;
-    partenaire partenaire_tag;
-    structure structure_tag;
-    pilote personne;
-    referent personne;
-    action action_relation;
-    indicateur indicateur_generique;
-    annexe annexe;
-    service service_tag;
-    financeur financeur_montant;
+    id_fiche         integer;
+    thematique       thematique;
+    sous_thematique  sous_thematique;
+    axe              axe;
+    partenaire       partenaire_tag;
+    structure        structure_tag;
+    pilote           personne;
+    referent         personne;
+    action           action_relation;
+    indicateur       indicateur_generique;
+    annexe           annexe;
+    service          service_tag;
+    financeur        financeur_montant;
     annexes_a_garder integer[];
-    annexe_en_cours annexe;
+    annexe_en_cours  annexe;
 begin
     id_fiche = new.id;
     -- Fiche action
@@ -206,8 +201,7 @@ begin
         new.id = id_fiche;
     else
         update fiche_action
-        set
-            titre = new.titre,
+        set titre                = new.titre,
             description= new.description,
             piliers_eci= new.piliers_eci,
             objectifs= new.objectifs,
@@ -224,7 +218,7 @@ begin
             calendrier= new.calendrier,
             notes_complementaires= new.notes_complementaires,
             maj_termine= new.maj_termine,
-            collectivite_id = new.collectivite_id
+            collectivite_id      = new.collectivite_id
         where id = id_fiche;
     end if;
 
@@ -258,7 +252,7 @@ begin
     if new.partenaires is not null then
         foreach partenaire in array new.partenaires::partenaire_tag[]
             loop
-                perform ajouter_partenaire(id_fiche,partenaire);
+                perform ajouter_partenaire(id_fiche, partenaire);
             end loop;
     end if;
 
@@ -267,7 +261,7 @@ begin
     if new.structures is not null then
         foreach structure in array new.structures
             loop
-                perform ajouter_structure(id_fiche,structure);
+                perform ajouter_structure(id_fiche, structure);
             end loop;
     end if;
 
@@ -276,7 +270,7 @@ begin
     if new.pilotes is not null then
         foreach pilote in array new.pilotes::personne[]
             loop
-                perform ajouter_pilote(id_fiche,pilote);
+                perform ajouter_pilote(id_fiche, pilote);
             end loop;
     end if;
 
@@ -285,7 +279,7 @@ begin
     if new.referents is not null then
         foreach referent in array new.referents::personne[]
             loop
-                perform ajouter_referent(id_fiche,referent);
+                perform ajouter_referent(id_fiche, referent);
             end loop;
     end if;
 
@@ -303,7 +297,7 @@ begin
     if new.indicateurs is not null then
         foreach indicateur in array new.indicateurs::indicateur_generique[]
             loop
-                perform ajouter_indicateur(id_fiche,indicateur);
+                perform ajouter_indicateur(id_fiche, indicateur);
             end loop;
     end if;
 
@@ -315,7 +309,7 @@ begin
                 annexes_a_garder = array_append(annexes_a_garder, annexe_en_cours.id);
             end loop;
     end if;
-    delete from annexe where fiche_id = id_fiche and (id != all(coalesce(annexes_a_garder, array[]::integer[])));
+    delete from annexe where fiche_id = id_fiche and (id != all (coalesce(annexes_a_garder, array []::integer[])));
 
 
     -- Services
@@ -323,7 +317,7 @@ begin
     if new.services is not null then
         foreach service in array new.services
             loop
-                perform ajouter_service(id_fiche,service);
+                perform ajouter_service(id_fiche, service);
             end loop;
     end if;
 
@@ -332,7 +326,7 @@ begin
     if new.financeurs is not null then
         foreach financeur in array new.financeurs::financeur_montant[]
             loop
-                perform ajouter_financeur(id_fiche,financeur);
+                perform ajouter_financeur(id_fiche, financeur);
             end loop;
     end if;
 
