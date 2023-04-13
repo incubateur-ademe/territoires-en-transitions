@@ -73,7 +73,9 @@ const FichesLiees = ({
               options:
                 fiches
                   ?.filter(
-                    fiche => fiche.plans && fiche.plans[0]?.id === plan.id
+                    fiche =>
+                      fiche.plans &&
+                      fiche.plans.some(p => p && p.id === plan.id)
                   )
                   .map(fiche => ({
                     value: fiche.fiche_id!.toString(),
