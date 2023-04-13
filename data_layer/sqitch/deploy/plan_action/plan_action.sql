@@ -9,6 +9,7 @@ create view bibliotheque_annexe
 as
 select a.id,
        a.collectivite_id,
+       plan.ids                                   as plan_ids,
        a.fiche_id,
        fs.snippet                                 as fichier,
        a.lien,
@@ -18,35 +19,22 @@ select a.id,
        utilisateur.modified_by_nom(a.modified_by) as created_by_nom
 from annexe a
          left join labellisation.bibliotheque_fichier_snippet fs
-                   on fs.id = a.fichier_id;
+                   on fs.id = a.fichier_id
+         join lateral (
+    select array_agg(d.parents[1]) as ids
+    from fiche_action_axe faa
+             join axe_descendants d on faa.axe_id = d.axe_id
+    where a.fiche_id = faa.fiche_id
+    ) plan on true;
 comment on view bibliotheque_annexe is
     'Les fichiers ou les liens pour les annexes des fiches action dans un format similaire à la vue `preuve`';
 
 -- Permet aux RLS de la table de s'appliquer aux requêtes de la vue.
-    alter view bibliotheque_annexe set (security_invoker = on);
+-- alter view bibliotheque_annexe set (security_invoker = on);
 
 drop trigger upsert on fiches_action;
 drop function upsert_fiche_action;
-drop function ajouter_annexe;
-create function ajouter_annexe(annexe annexe) returns annexe
-    language plpgsql
-as
-$$
-declare
-    id_annexe integer;
-begin
-    id_annexe = annexe.id;
-    if id_annexe is null then
-        insert into annexe (collectivite_id, fichier_id, url, titre, commentaire, fiche_id)
-        values (annexe.collectivite_id, annexe.fichier_id, annexe.url, annexe.titre, annexe.commentaire,
-                annexe.fiche_id)
-        returning id into id_annexe;
-        annexe.id = id_annexe;
-    end if;
-    return annexe;
-end;
-$$;
-
+drop function if exists ajouter_annexe;
 drop function if exists enlever_annexe;
 
 -- Vue listant les fiches actions et ses données liées

@@ -17,6 +17,6 @@ where false;
 
 select has_function_privilege('ajouter_annexe(annexe)', 'execute');
 select has_function_privilege('upsert_fiche_action()', 'execute');
-select has_function_privilege('delete_fiche_action()', 'execute')
+select has_function_privilege('delete_fiche_action()', 'execute');
 
 ROLLBACK;
