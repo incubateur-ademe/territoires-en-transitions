@@ -13,7 +13,7 @@ const fetchActionListe = async (
     .from('action_statuts')
     .select('action_id, referentiel, nom, identifiant, avancement')
     .match({collectivite_id, concerne: true})
-    .in('type', ['action', 'sous-action', 'tache'])
+    .in('type', ['action', 'sous-action'])
     .order('action_id', {ascending: true});
 
   const {error, data} = await query;
