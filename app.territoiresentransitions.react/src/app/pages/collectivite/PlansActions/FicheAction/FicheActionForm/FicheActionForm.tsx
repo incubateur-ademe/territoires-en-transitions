@@ -40,6 +40,11 @@ import ServicePiloteDropdown from './ServicePiloteDropdown';
 import Financeurs from './Financeurs';
 import PictoLeaf from 'ui/pictogrammes/PictoLeaf';
 import ActionsLiees from './ActionsLiees';
+import PictoBook from 'ui/pictogrammes/PictoBook';
+import {AddAnnexeButton} from './AddAnnexeButton';
+import PreuveDoc from 'ui/shared/preuves/Bibliotheque/PreuveDoc';
+import {useAnnexesFicheAction} from '../data/useAnnexesFicheAction';
+import {TPreuve} from 'ui/shared/preuves/Bibliotheque/types';
 import FichesLiees from './FichesLiees';
 
 type TFicheActionForm = {
@@ -49,8 +54,8 @@ type TFicheActionForm = {
 
 const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
   const {mutate: updateFiche} = useEditFicheAction();
-
   const plansProfondeur = usePlanActionProfondeur();
+  const {data: annexes} = useAnnexesFicheAction(fiche.id);
 
   return (
     <div className="flex flex-col gap-6">
@@ -434,9 +439,14 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
           />
         </FormField>
       </Section>
-      {/* <Section icon={<PictoBook />} title="Documents et liens">
-        Hello
-      </Section> */}
+      <Section icon={<PictoBook />} title="Documents et liens">
+        {annexes?.map(doc => (
+          <PreuveDoc preuve={doc as unknown as TPreuve} />
+        ))}
+        <div className={annexes?.length ? 'fr-mt-2w' : undefined}>
+          <AddAnnexeButton fiche_id={fiche.id!} />
+        </div>
+      </Section>
       {/* <Checkbox
         label="Mise à jour de la fiche terminée"
         onCheck={() =>

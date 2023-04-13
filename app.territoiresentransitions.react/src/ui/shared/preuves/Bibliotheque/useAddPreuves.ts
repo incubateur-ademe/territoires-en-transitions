@@ -91,12 +91,28 @@ export const useAddPreuveRapport = () =>
     }
   );
 
+/** Ajoute une annexe à une fiche action */
+type TAddPreuveAnnexeArgs = {
+  collectivite_id: number;
+  fiche_id: number;
+} & TFileOrLink;
+export const useAddPreuveAnnexe = () =>
+  useMutation(
+    async (preuve: TAddPreuveAnnexeArgs) =>
+      supabaseClient.from('annexe').insert(preuve),
+    {
+      mutationKey: 'add_annexe',
+      onSuccess: useRefetchPreuves(),
+    }
+  );
+
 // recharge la liste des preuves
 export const useRefetchPreuves = (invalidateParcours: boolean = false) => {
   const queryClient = useQueryClient();
   return (data: unknown, variables: {collectivite_id: number}) => {
     const {collectivite_id} = variables;
     queryClient.invalidateQueries(['preuve', collectivite_id]);
+    queryClient.invalidateQueries(['annexes_fiche_action']);
     if (invalidateParcours) {
       queryClient.invalidateQueries([
         'labellisation_parcours',
