@@ -25,7 +25,6 @@ import StructurePiloteDropdown from './StructurePiloteDropdown';
 import PartenairesDropdown from './PartenairesDropdown';
 import PersonnePiloteDropdown from './PersonnePiloteDropdown';
 import PersonneReferenteDropdown from './PersonneReferenteDropdown';
-import IndicateursDropdown from './IndicateursDropdown';
 import ThematiquesDropdown from './ThematiquesDropdown';
 import SousThematiquesDropdown from './SousThematiquesDropdown';
 import {
@@ -41,6 +40,7 @@ import Financeurs from './Financeurs';
 import PictoLeaf from 'ui/pictogrammes/PictoLeaf';
 import ActionsLiees from './ActionsLiees';
 import FichesLiees from './FichesLiees';
+import IndicateursLies from './IndicateursLies';
 
 type TFicheActionForm = {
   fiche: FicheAction;
@@ -144,13 +144,11 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
             disabled={isReadonly}
           />
         </FormField>
-        <FormField label="Indicateurs liés">
-          <IndicateursDropdown
-            indicateurs={fiche.indicateurs}
-            onSelect={indicateurs => updateFiche({...fiche, indicateurs})}
-            isReadonly={isReadonly}
-          />
-        </FormField>
+        <IndicateursLies
+          indicateurs={fiche.indicateurs}
+          onSelect={indicateurs => updateFiche({...fiche, indicateurs})}
+          isReadonly={isReadonly}
+        />
         <FormField label="Résultats attendus">
           <MultiSelectDropdown
             buttonClassName={DSFRbuttonClassname}
