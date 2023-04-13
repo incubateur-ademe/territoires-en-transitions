@@ -85,15 +85,20 @@ export const filterOptions = (
     }
 
     if (isOptionSection(currentOption)) {
-      return [
-        ...acc,
-        {
-          title: currentOption.title,
-          options: currentOption.options.filter(option =>
-            option.label.toLowerCase().includes(filterValue.toLowerCase())
-          ),
-        },
-      ];
+      const filteredOptions = currentOption.options.filter(option =>
+        option.label.toLowerCase().includes(filterValue.toLowerCase())
+      );
+      if (filteredOptions.length > 0) {
+        return [
+          ...acc,
+          {
+            title: currentOption.title,
+            options: filteredOptions,
+          },
+        ];
+      } else {
+        return acc;
+      }
     }
 
     return acc;
