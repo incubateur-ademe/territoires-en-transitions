@@ -94,7 +94,7 @@ export const useEditFicheAction = () => {
       // Snapshot the previous value
       const previousAction: {fiche: FicheAction} | undefined =
         queryClient.getQueryData(ficheActionKey);
-      console.log(fiche);
+
       // Optimistically update to the new value
       queryClient.setQueryData(ficheActionKey, fiche);
 
