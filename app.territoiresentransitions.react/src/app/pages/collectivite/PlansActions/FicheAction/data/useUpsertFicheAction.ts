@@ -85,6 +85,32 @@ export const useEditFicheAction = () => {
   const collectivite_id = useCollectiviteId();
 
   return useMutation(upsertFicheAction, {
+    onMutate: async fiche => {
+      const ficheActionKey = ['fiche_action', fiche.id];
+      // Cancel any outgoing refetches
+      // (so they don't overwrite our optimistic update)
+      await queryClient.cancelQueries({queryKey: ficheActionKey});
+
+      // Snapshot the previous value
+      const previousAction: {fiche: FicheAction} | undefined =
+        queryClient.getQueryData(ficheActionKey);
+      console.log(fiche);
+      // Optimistically update to the new value
+      queryClient.setQueryData(ficheActionKey, fiche);
+
+      // Return a context object with the snapshotted value
+      return {previousAction};
+    },
+    onSettled: (data, err, fiche, context) => {
+      if (err) {
+        queryClient.setQueryData(
+          ['fiche_action', fiche.id],
+          context?.previousAction
+        );
+      }
+      queryClient.invalidateQueries(['fiche_action', fiche.id]);
+    },
+
     onSuccess: data => {
       queryClient.invalidateQueries(['fiches_non_classees', collectivite_id]);
       queryClient.invalidateQueries(['fiche_action', data[0].id!.toString()]);
