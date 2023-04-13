@@ -119,7 +119,7 @@ const FichesLiees = ({
 
   return (
     <>
-      <FormField label="Fiches liées">
+      <FormField label="Fiches des plans liées">
         <AutocompleteInputSelect
           containerWidthMatchButton
           values={fiches?.map((fiche: FicheResume) =>
