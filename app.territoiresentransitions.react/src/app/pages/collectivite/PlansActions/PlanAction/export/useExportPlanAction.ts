@@ -14,15 +14,21 @@ export const useExportPlanAction = (planId: number) => {
     if (template) {
       updateAndSaveXLS(data);
     } else {
-      loadTemplate().then(() => updateAndSaveXLS(data));
+      loadTemplate().then(({data: fetchedTemplate}) =>
+        updateAndSaveXLS(data, fetchedTemplate)
+      );
     }
   };
   return {exportPlanAction, isLoading};
 };
 
 // insère les données dans le modèle et sauvegarde le fichier xls résultant
-const updateAndSaveXLS = async (data: TExportData) => {
-  const {config, planAction, template} = data;
+const updateAndSaveXLS = async (
+  data: TExportData,
+  fetchedTemplate?: ArrayBuffer | null
+) => {
+  const {config, planAction, template: cachedTemplate} = data;
+  const template = fetchedTemplate || cachedTemplate;
   if (!planAction || !template) {
     return;
   }
@@ -68,7 +74,7 @@ const ecritPlan = (
   data: TExportData
 ) => {
   const {enfants, fiches} = plan;
-  const {config, getActionLabel} = data;
+  const {config, getActionLabel, getAnnexeLabel} = data;
   const {data_cols} = config;
   let ligne_courante = ligne;
 
@@ -169,6 +175,12 @@ const ecritPlan = (
       .join(',');
     worksheet.getCell(data_cols.notes_complementaires + ligne_courante).value =
       fiche.notes_complementaires;
+
+    // libellés (nom du fichier ou titre du lien) des annexes
+    worksheet.getCell(data_cols.annexes + ligne_courante).value = fiche?.annexes
+      ?.map(({id}) => getAnnexeLabel(id!))
+      .filter(s => !!s)
+      .join('\n');
 
     // ligne suivante
     ligne_courante += 1;

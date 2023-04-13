@@ -2,6 +2,7 @@ import {useExportTemplateBase} from 'utils/exportXLSX';
 import {usePlanAction} from '../data/usePlanAction';
 import {useActionListe} from '../../FicheAction/data/options/useActionListe';
 import {ConfigPlanAction} from './config';
+import {useAnnexesPlanAction} from '../data/useAnnexesPlanAction';
 
 /** Fourni les données nécessaires à l'export d'un plan d'action */
 export const useExportData = (plan_id: number) => {
@@ -28,8 +29,20 @@ export const useExportData = (plan_id: number) => {
       : null;
   };
 
+  // charge les annexes associées aux fiches du plan d'action
+  const {data: annexes, isLoading: isLoadingAnnexes} =
+    useAnnexesPlanAction(plan_id);
+  // fonction exportée pour donner accès au libellé (nom du fichier ou titre du lien) d'une annexe
+  const getAnnexeLabel = (annexe_id: number) => {
+    const annexe = annexes?.find(({id}) => id === annexe_id);
+    return annexe?.lien?.url || annexe?.fichier?.filename || null;
+  };
+
   const isLoading =
-    isLoadingTemplate || isLoadingPlanAction || isLoadingActions;
+    isLoadingTemplate ||
+    isLoadingPlanAction ||
+    isLoadingActions ||
+    isLoadingAnnexes;
 
   const isValidData = Boolean(planAction && actionListe);
 
@@ -39,6 +52,7 @@ export const useExportData = (plan_id: number) => {
     loadTemplate,
     template: template || null,
     getActionLabel,
+    getAnnexeLabel,
     config: ConfigPlanAction,
     planAction,
   };
