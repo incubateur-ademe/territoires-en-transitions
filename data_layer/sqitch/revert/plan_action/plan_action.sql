@@ -2,6 +2,8 @@
 
 BEGIN;
 
+drop view bibliotheque_annexe;
+
 create table fiche_action_annexe
 (
     fiche_id  integer not null references fiche_action,
