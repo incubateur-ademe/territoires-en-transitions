@@ -27,11 +27,9 @@ const ActionReferentielRecursiveCard = ({
   const myRef = useScrollIntoView(action.id);
   const children = useActionSummaryChildren(action);
 
-  if (action.children.length === 0) return <div> {card({action})}</div>;
-
   return (
     <div id={action.id} ref={myRef}>
-      <div> {card({action})}</div>{' '}
+      {card({action})}
       {children.map(subaction => (
         <ActionReferentielRecursiveCard
           key={subaction.id}
@@ -55,7 +53,11 @@ export const ActionReferentielAvancementCard = ({
   const isSubAction = action.type === 'sous-action';
 
   return (
-    <div className="pt-8 flex flex-row justify-between" ref={myRef}>
+    <div
+      id={action.type === 'tache' ? action.id : undefined}
+      className="pt-8 flex flex-row justify-between"
+      ref={myRef}
+    >
       <div className="flex flex-col w-4/5">
         <ActionReferentielDisplayTitle action={action} />
         <Spacer size={1} />
@@ -116,7 +118,7 @@ const useScrollIntoView = (anchor: string) => {
       setTimeout(() => {
         myRef?.current?.scrollIntoView({
           behavior: 'smooth',
-          block: 'center',
+          block: 'start',
         });
       }, 0);
     }
