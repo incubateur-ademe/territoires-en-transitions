@@ -52,7 +52,7 @@ const ActionsLiees = ({actions, onSelect, isReadonly}: Props) => {
 
   return (
     <>
-      <FormField label="Actions liées">
+      <FormField label="Actions des référentiels liées">
         <AutocompleteInputSelect
           containerWidthMatchButton
           values={actions?.map((action: TActionRelationInsert) => action.id)}
