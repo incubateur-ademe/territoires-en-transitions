@@ -43,7 +43,7 @@ const getTooltip = (
       <span style={{paddingBottom: '3px'}}>
         {id} :{' '}
         <strong>
-          {value} ({percentage}%)
+          {Math.round(value * 10) / 10} ({percentage}%)
         </strong>
       </span>
     </div>
@@ -102,6 +102,7 @@ const DonutChart = ({data, label = false}: DonutChartProps) => {
       arcLinkLabelsThickness={2}
       arcLinkLabelsColor={{from: 'color'}}
       enableArcLabels={isDefaultData() ? false : true}
+      arcLabel={d => `${Math.round(d.value)}`}
       arcLabelsSkipAngle={12}
       arcLabelsTextColor={{from: 'color', modifiers: [['darker', 2]]}}
       animate={false}

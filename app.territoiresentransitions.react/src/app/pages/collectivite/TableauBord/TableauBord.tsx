@@ -27,6 +27,8 @@ import {useTracker} from 'core-logic/hooks/useTracker';
 import {TLabellisationParcours} from 'app/pages/collectivite/ParcoursLabellisation/types';
 import ProgressionReferentiel from '../EtatDesLieux/Synthese/ProgressionReferentiel';
 import {useProgressionReferentiel} from '../EtatDesLieux/Synthese/data/useProgressionReferentiel';
+import ProgressionParPhase from '../EtatDesLieux/Synthese/ProgressionParPhase';
+import {useRepartitionPhases} from '../EtatDesLieux/Synthese/data/useRepartitionPhases';
 
 const remplissageColor = '#2F4077';
 
@@ -208,6 +210,7 @@ const ReferentielSection = ({
   collectiviteId: number;
 }) => {
   const {table: progressionScore} = useProgressionReferentiel(referentielId);
+  const repartitionPhases = useRepartitionPhases(referentielId);
 
   const referentielRoot = actions.find(a => a.type === 'referentiel');
   const tracker = useTracker();
@@ -291,6 +294,11 @@ const ReferentielSection = ({
         score={progressionScore}
         referentiel={referentielId}
         percentage
+      />
+      <Spacer />
+      <ProgressionParPhase
+        repartitionPhases={repartitionPhases}
+        referentiel={referentielId}
       />
     </div>
   );
