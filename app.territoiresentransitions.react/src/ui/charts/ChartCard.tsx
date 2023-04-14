@@ -1,5 +1,6 @@
+import {useTracker} from 'core-logic/hooks/useTracker';
 import {useRef, useState} from 'react';
-import DownloadButton from 'ui/charts/DownloadButton';
+import DownloadButton from 'ui/DownloadButton';
 import Modal from 'ui/shared/floating-ui/Modal';
 import BarChart, {BarChartProps} from './BarChart';
 import DaughnutChart, {DoughnutChartProps} from './DoughnutChart';
@@ -21,6 +22,8 @@ const ChartCardModalContent = ({
   chartInfo,
   topElement,
 }: ChartCardModalContentProps) => {
+  const tracker = useTracker();
+
   // Référence utilisée pour le téléchargement du graphe
   const chartWrapperRef = useRef<HTMLDivElement>(null);
 
@@ -33,6 +36,9 @@ const ChartCardModalContent = ({
             containerRef={chartWrapperRef}
             fileName={chartInfo.downloadedFileName}
             fileType="png"
+            onClick={() =>
+              tracker({fonction: 'graphique', action: 'telechargement'})
+            }
           />
         </div>
       )}

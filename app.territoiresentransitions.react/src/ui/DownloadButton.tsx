@@ -1,6 +1,5 @@
-import {useTracker} from 'core-logic/hooks/useTracker';
 import {MutableRefObject} from 'react';
-import {downloadFromCanvas} from './utils';
+import {downloadFromCanvas} from '../utils/downloadFromCanvas';
 import html2canvas from 'html2canvas';
 
 /**
@@ -9,28 +8,29 @@ import html2canvas from 'html2canvas';
  * @param containerRef MutableRefObject<HTMLDivElement | null>
  * @param fileName string
  * @param fileType 'png' | 'jpg' | 'jpeg'
+ * @param onClick
  */
 
 type DownloadButtonProps = {
   containerRef: MutableRefObject<HTMLDivElement | null>;
   fileName: string;
   fileType: 'png' | 'jpg' | 'jpeg';
+  onClick?: () => void;
 };
 
 const DownloadButton = ({
   containerRef,
   fileName,
   fileType,
+  onClick,
 }: DownloadButtonProps): JSX.Element => {
-  const tracker = useTracker();
-
   const handleDownload = () => {
     if (containerRef && containerRef.current) {
       html2canvas(containerRef.current).then(canvas => {
         downloadFromCanvas(canvas, fileName, fileType);
       });
+      if (onClick) onClick();
     }
-    tracker({fonction: 'graphique', action: 'telechargement'});
   };
 
   return (
