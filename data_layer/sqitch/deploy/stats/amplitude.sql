@@ -67,8 +67,11 @@ begin
                    'fonctions',
                    (select array_agg(distinct m.fonction)
                     from private_collectivite_membre m
+                             join private_utilisateur_droit pud
+                                  on m.user_id = pud.user_id and m.collectivite_id = pud.collectivite_id
                     where m.user_id = v.user_id
-                      and m.fonction is not null),
+                      and m.fonction is not null
+                      and pud.active),
                    'auditeur', (v.user_id in ( table auditeurs))
                )                                            as user_properties,
 
