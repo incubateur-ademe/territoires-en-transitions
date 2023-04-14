@@ -117,7 +117,7 @@ const Modal = ({
                       className="flex items-center ml-auto mb-2 pl-2 py-0.5 md:-mr-4 fr-btn--secondary !shadow-none"
                       data-test="close-modal"
                     >
-                      <span className="-mt-1 text-sm underline">Fermer</span>
+                      <span className="text-sm underline">Fermer</span>
                       <div className="fr-fi-close-line ml-0.5 scale-75" />
                     </button>
                   )}

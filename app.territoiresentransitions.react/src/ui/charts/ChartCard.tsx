@@ -26,8 +26,9 @@ const ChartCardModalContent = ({
 
   return (
     <div className="relative">
+      {/* Bouton de téléchargement, affiché si un nom de fichier est fourni */}
       {chartInfo?.downloadedFileName && (
-        <div className="absolute right-0 top-0 z-10">
+        <div className="absolute -mr-2 right-0 top-3 z-10">
           <DownloadButton
             containerRef={chartWrapperRef}
             fileName={chartInfo.downloadedFileName}
@@ -48,7 +49,7 @@ const ChartCardModalContent = ({
 
         {/* Légende */}
         {chartInfo?.legend && (
-          <div className="flex flex-row flex-wrap items-center justify-center gap-8 mt-6">
+          <div className="flex flex-row flex-wrap items-center justify-center gap-x-8 gap-y-3 mt-6">
             {chartInfo.legend.map(l => (
               <div key={l.name} className="flex flex-row items-center gap-3">
                 <div
