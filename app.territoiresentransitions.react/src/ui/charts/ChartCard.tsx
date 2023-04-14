@@ -137,7 +137,7 @@ const ChartCard = ({
 
   return (
     <div
-      className={`border border-gray-200 flex flex-col w-full h-96 relative ${
+      className={`border border-gray-200 bg-white flex flex-col w-full h-96 relative ${
         chartInfo?.title || chartInfo?.expandable ? 'pt-6' : ''
       }`}
       style={customStyle}

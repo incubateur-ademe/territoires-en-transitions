@@ -7,7 +7,7 @@ export type TActionPhaseBadgeProps = {
   className?: string;
 };
 
-const phaseToLabel: Record<
+export const phaseToLabel: Record<
   Database['public']['Enums']['action_categorie'],
   string
 > = {

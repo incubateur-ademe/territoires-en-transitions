@@ -39,3 +39,29 @@ export const fetchRows = async (
 
   return data as ProgressionRow[];
 };
+
+export type PhasesRow = ActionReferentiel &
+  Pick<IActionStatutsRead, 'points_realises' | 'phase'>;
+
+/**
+ * Récupère les points faits par phase pour un référentiel donné
+ *
+ * @param collectivite_id
+ * @param referentiel
+ */
+
+export const fetchPhases = async (
+  collectivite_id: number | null,
+  referentiel: string | null
+) => {
+  const {error, data} = await supabaseClient
+    .from('action_statuts')
+    .select('points_realises,phase')
+    .not('phase', 'is', null)
+    .match({collectivite_id, referentiel, concerne: true, desactive: false})
+    .gt('depth', 0);
+
+  if (error) throw new Error(error.message);
+
+  return data as PhasesRow[];
+};
