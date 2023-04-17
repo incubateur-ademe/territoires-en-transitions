@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import {useRef} from 'react';
+import {useEffect, useRef} from 'react';
 import TextareaControlled from 'ui/shared/form/TextareaControlled';
 
 type Props = {
@@ -24,6 +24,33 @@ const HeaderTitle = ({
       titreInputRef.current.focus();
     }
   };
+
+  const handleChangeTitle = () => {
+    if (titreInputRef.current && onUpdate) {
+      if (titre) {
+        titreInputRef.current.value !== titre &&
+          onUpdate(titreInputRef.current.value.trim());
+      } else {
+        titreInputRef.current.value.trim().length > 0 &&
+          onUpdate(titreInputRef.current.value.trim());
+      }
+    }
+  };
+
+  const handleEnterKeydown = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleChangeTitle();
+      titreInputRef.current?.blur();
+    }
+  };
+
+  useEffect(() => {
+    titreInputRef.current?.addEventListener('keydown', handleEnterKeydown);
+    return () => {
+      titreInputRef.current?.removeEventListener('keydown', handleEnterKeydown);
+    };
+  }, []);
 
   return (
     <div
@@ -53,14 +80,7 @@ const HeaderTitle = ({
             )}
             initialValue={titre}
             placeholder={'Sans titre'}
-            onBlur={e => {
-              if (titre) {
-                e.target.value !== titre && onUpdate(e.target.value.trim());
-              } else {
-                e.target.value.trim().length > 0 &&
-                  onUpdate(e.target.value.trim());
-              }
-            }}
+            onBlur={handleChangeTitle}
             disabled={isReadonly}
           />
         ) : (
