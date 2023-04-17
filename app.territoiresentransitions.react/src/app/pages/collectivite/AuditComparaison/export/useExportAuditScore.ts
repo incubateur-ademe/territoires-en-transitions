@@ -15,6 +15,7 @@ import {
 import {useExportData} from './useExportData';
 import {Database} from 'types/database.types';
 import {TAuditeur} from '../../Audit/useAudit';
+import {TPreuve} from 'ui/shared/preuves/Bibliotheque/types';
 
 export const useExportAuditScores = (
   referentiel: string | null,
@@ -57,6 +58,7 @@ const updateAndSaveXLS = async (
       Database['public']['Tables']['action_commentaire']['Row']
     >;
     auditeurs: TAuditeur[];
+    getPreuvesByActionId: (action_id: string) => TPreuve[];
   }
 ) => {
   const {
@@ -66,6 +68,7 @@ const updateAndSaveXLS = async (
     scoresByActionId,
     commentairesByActionId,
     auditeurs,
+    getPreuvesByActionId,
   } = data;
 
   const {first_data_row, data_cols, info_cells} = config;
@@ -127,6 +130,13 @@ const updateAndSaveXLS = async (
         const cell = worksheet.getCell(data_cols.commentaire + row);
         cell.value = commentaire;
         cell.alignment = {horizontal: 'left', wrapText: true};
+
+        // documents liés
+        const preuves = getPreuvesByActionId(action.action_id);
+        worksheet.getCell(data_cols.documents + row).value = preuves
+          ?.map(p => p?.lien?.url || p?.fichier?.filename || null)
+          .filter(s => !!s)
+          .join('\n');
       }
     }
 

@@ -7,6 +7,7 @@ import {useAuditeurs} from '../../Audit/useAudit';
 import {useReferentielData} from '../../ReferentielTable/useReferentiel';
 import {useComparaisonScoreAudit} from '../useComparaisonScoreAudit';
 import {configParReferentiel} from './config';
+import {usePreuves} from 'ui/shared/preuves/Bibliotheque/usePreuves';
 
 /** Fourni les données nécessaires à l'export des scores pendant l'audit */
 export const useExportData = (
@@ -52,6 +53,13 @@ export const useExportData = (
   // chargement de la liste des auditeurs
   const {data: auditeurs, isLoading: isLoadingAuditeurs} = useAuditeurs();
 
+  // chargement des preuves (attendues et complémentaires) associées à la collectivité
+  const preuves = usePreuves({
+    preuve_types: ['reglementaire', 'complementaire'],
+  });
+  const getPreuvesByActionId = (action_id: string) =>
+    preuves?.filter(p => p.action?.action_id === action_id) || [];
+
   const isLoading =
     isLoadingTemplate ||
     isLoadingReferentiel ||
@@ -84,6 +92,7 @@ export const useExportData = (
             scoresByActionId,
             commentairesByActionId,
             auditeurs,
+            getPreuvesByActionId,
           },
   };
 };
