@@ -307,3 +307,4 @@ stats/reporting 2023-04-11T13:13:51Z Florian <florian@derfurth.com> # Premières
 @v2.19.0 2023-04-11T14:45:13Z Florian <florian@derfurth.com> # Reporting ADEME
 
 plan_action/plan_action [plan_action/plan_action@v2.17.0] 2023-03-30T12:09:08Z Amandine Jacquelin <conta@LanceLibre> # Ajoute les fiches liées
+@v2.21.0 2023-04-17T08:11:27Z Florian <florian@derfurth.com> # Fiches liées dans les plans d'action
