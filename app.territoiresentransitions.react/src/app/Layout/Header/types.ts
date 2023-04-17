@@ -14,7 +14,7 @@ export type TNavDropdown = {
   title: string;
   items: TNavItem[];
   // optionnel : pour gérer l'état "actif' quand le sous-menu contient une vue avec des onglets
-  urlPrefix?: string;
+  urlPrefix?: string[];
   // indique que l'item n'est pas affiché quand la collectivité est en accès restreint
   acces_restreint?: boolean;
 };

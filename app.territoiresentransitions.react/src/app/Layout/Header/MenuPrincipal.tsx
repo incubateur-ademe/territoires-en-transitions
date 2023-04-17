@@ -96,7 +96,7 @@ const NavDropdown = (
   // vérifie si le menu contient un item correspondant au chemin courant
   const {pathname} = useLocation();
   const current =
-    (urlPrefix && pathname.startsWith(urlPrefix)) ||
+    (urlPrefix && urlPrefix.find(url => pathname.startsWith(url))) ||
     items.findIndex(({to}) => pathname.startsWith(to)) !== -1
       ? 'true'
       : undefined;
