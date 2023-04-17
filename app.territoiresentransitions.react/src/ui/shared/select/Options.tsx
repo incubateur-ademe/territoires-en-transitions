@@ -23,7 +23,7 @@ const Options = <T extends string>({
 }: Props<T>) => {
   return (
     <div data-test={`${dataTest}-options`}>
-      {options.length < 0 ? (
+      {options.length > 0 ? (
         options.map((option, i) => {
           if (isOptionSection(option)) {
             return (
