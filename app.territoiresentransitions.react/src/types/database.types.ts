@@ -555,6 +555,7 @@ export interface Database {
         Row: {
           collectivite_id: number
           commentaire: string
+          fiche_id: number
           fichier_id: number | null
           id: number
           lien: Json | null
@@ -566,6 +567,7 @@ export interface Database {
         Insert: {
           collectivite_id: number
           commentaire?: string
+          fiche_id: number
           fichier_id?: number | null
           id?: number
           lien?: Json | null
@@ -577,6 +579,7 @@ export interface Database {
         Update: {
           collectivite_id?: number
           commentaire?: string
+          fiche_id?: number
           fichier_id?: number | null
           id?: number
           lien?: Json | null
@@ -921,20 +924,6 @@ export interface Database {
         }
         Update: {
           action_id?: string
-          fiche_id?: number
-        }
-      }
-      fiche_action_annexe: {
-        Row: {
-          annexe_id: number
-          fiche_id: number
-        }
-        Insert: {
-          annexe_id: number
-          fiche_id: number
-        }
-        Update: {
-          annexe_id?: number
           fiche_id?: number
         }
       }
@@ -2568,6 +2557,20 @@ export interface Database {
           parents: number[] | null
         }
       }
+      bibliotheque_annexe: {
+        Row: {
+          collectivite_id: number | null
+          commentaire: string | null
+          created_at: string | null
+          created_by: string | null
+          created_by_nom: string | null
+          fiche_id: number | null
+          fichier: Json | null
+          id: number | null
+          lien: Json | null
+          plan_ids: number[] | null
+        }
+      }
       bibliotheque_fichier: {
         Row: {
           bucket_id: string | null
@@ -3655,13 +3658,13 @@ export interface Database {
       _get_note:
         | {
             Args: {
-              "": string
+              "": number
             }
             Returns: string
           }
         | {
             Args: {
-              "": number
+              "": string
             }
             Returns: string
           }
@@ -4032,23 +4035,6 @@ export interface Database {
           action_id: unknown
         }
         Returns: undefined
-      }
-      ajouter_annexe: {
-        Args: {
-          fiche_id: number
-          annexe: unknown
-        }
-        Returns: {
-          collectivite_id: number
-          commentaire: string
-          fichier_id: number | null
-          id: number
-          lien: Json | null
-          modified_at: string
-          modified_by: string
-          titre: string
-          url: string | null
-        }
       }
       ajouter_fiche_action_dans_un_axe: {
         Args: {
@@ -4535,14 +4521,6 @@ export interface Database {
         Args: {
           fiche_id: number
           action_id: unknown
-        }
-        Returns: undefined
-      }
-      enlever_annexe: {
-        Args: {
-          fiche_id: number
-          annexe: unknown
-          supprimer: boolean
         }
         Returns: undefined
       }
@@ -6394,39 +6372,39 @@ export interface Database {
       time_bucket_gapfill:
         | {
             Args: {
+              bucket_width: number
+              ts: number
+              start?: number
+              finish?: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              start?: number
+              finish?: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              start?: number
+              finish?: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
               bucket_width: unknown
               ts: string
               start?: string
               finish?: string
             }
             Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              start?: number
-              finish?: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              start?: number
-              finish?: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              start?: number
-              finish?: number
-            }
-            Returns: number
           }
         | {
             Args: {
