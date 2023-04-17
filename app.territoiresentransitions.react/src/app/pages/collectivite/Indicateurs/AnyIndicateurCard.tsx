@@ -4,6 +4,7 @@ import {Chevron} from 'ui/shared/Chevron';
 import {AnyIndicateurRepository} from 'core-logic/api/repositories/AnyIndicateurRepository';
 import {RenderMarkdownText} from 'ui/shared/RenderMarkdownText';
 import {Spacer} from 'ui/shared/Spacer';
+import {useScrollIntoView} from 'utils/useScrollIntoView';
 
 export const AnyIndicateurCard = <T extends string | number>({
   children,
@@ -19,8 +20,13 @@ export const AnyIndicateurCard = <T extends string | number>({
   indicateurResultatRepo: AnyIndicateurRepository<T>;
 }) => {
   const [opened, setOpened] = useState(false);
+  const myRef = useScrollIntoView(indicateurId.toString());
   return (
-    <div className="mt-2  px-5 py-4 mb-5 ">
+    <div
+      ref={myRef}
+      id={indicateurId.toString()}
+      className="mt-2 px-5 py-4 mb-5 "
+    >
       <section className="flex flex-col">
         <header className="w-full cursor-pointer mb-5">
           <div
