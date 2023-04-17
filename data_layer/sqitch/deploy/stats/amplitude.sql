@@ -139,7 +139,7 @@ begin
                                    'events', batch
                                )
                        )
-            from amplitude_configuration ac
+            from stats.amplitude_configuration ac
             order by id desc
             limit 1
             into response;
