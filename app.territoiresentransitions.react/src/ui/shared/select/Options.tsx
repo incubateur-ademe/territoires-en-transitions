@@ -23,36 +23,42 @@ const Options = <T extends string>({
 }: Props<T>) => {
   return (
     <div data-test={`${dataTest}-options`}>
-      {options.map((option, i) => {
-        if (isOptionSection(option)) {
-          return (
-            <div key={option.title + i}>
-              <div className="w-full p-1 pl-10 text-left text-sm italic text-gray-500 bg-gray-100 border-y border-gray-200">
-                {option.title}
+      {options.length < 0 ? (
+        options.map((option, i) => {
+          if (isOptionSection(option)) {
+            return (
+              <div key={option.title + i}>
+                <div className="w-full p-1 pl-10 text-left text-sm italic text-gray-500 bg-gray-100 border-y border-gray-200">
+                  {option.title}
+                </div>
+                {option.options.map((option, i) => (
+                  <Option
+                    key={`${option.value}`}
+                    option={option}
+                    values={values}
+                    onSelect={onSelect}
+                    renderOption={renderOption}
+                  />
+                ))}
               </div>
-              {option.options.map((option, i) => (
-                <Option
-                  key={`${option.value}`}
-                  option={option}
-                  values={values}
-                  onSelect={onSelect}
-                  renderOption={renderOption}
-                />
-              ))}
-            </div>
-          );
-        } else {
-          return (
-            <Option
-              key={option.value}
-              option={option}
-              values={values}
-              onSelect={onSelect}
-              renderOption={renderOption}
-            />
-          );
-        }
-      })}
+            );
+          } else {
+            return (
+              <Option
+                key={option.value}
+                option={option}
+                values={values}
+                onSelect={onSelect}
+                renderOption={renderOption}
+              />
+            );
+          }
+        })
+      ) : (
+        <div className="p-4 text-sm text-gray-500">
+          Aucune option disponnible
+        </div>
+      )}
     </div>
   );
 };
