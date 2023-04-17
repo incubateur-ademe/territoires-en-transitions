@@ -355,10 +355,6 @@ stop:
     END
     RUN docker ps --filter name=_tet --filter status=running -aq | xargs docker stop | xargs docker rm || exit 0
 
-stats:
-    LOCALLY
-    RUN docker stats $(docker ps --format '{{.Names}}' --filter name=transitions) || exit 1
-
 test:
     LOCALLY
     RUN earthly +curl-test
