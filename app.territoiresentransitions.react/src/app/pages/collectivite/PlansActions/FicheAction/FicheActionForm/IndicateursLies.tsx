@@ -52,10 +52,10 @@ const IndicateursLies = ({indicateurs, onSelect, isReadonly}: Props) => {
               className="border border-gray-200"
             >
               <NavLink
-                to={makeCollectiviteIndicateursUrl({
+                to={`${makeCollectiviteIndicateursUrl({
                   collectiviteId: collectiviteId!,
-                  indicateurView: getIndicateurGroup(indicateur.indicateur_id), // TODO ajouter le referentiel dans la query
-                })}
+                  indicateurView: getIndicateurGroup(indicateur.indicateur_id),
+                })}#${indicateur.indicateur_id}`}
               >
                 <div className="flex h-full py-4 px-6">
                   <div className="mb-auto pr-2 font-bold line-clamp-3">
