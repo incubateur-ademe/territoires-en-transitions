@@ -35,6 +35,24 @@ comment on view bibliotheque_annexe is
 drop trigger upsert on fiches_action;
 drop function upsert_fiche_action;
 drop function if exists ajouter_annexe;
+create function private.ajouter_annexe(annexe annexe) returns annexe
+    language plpgsql
+as
+$$
+declare
+    id_annexe integer;
+begin
+    id_annexe = annexe.id;
+    if id_annexe is null then
+        insert into annexe (collectivite_id, fichier_id, url, titre, commentaire, fiche_id)
+        values (annexe.collectivite_id, annexe.fichier_id, annexe.url, annexe.titre, annexe.commentaire, annexe.fiche_id)
+        returning id into id_annexe;
+        annexe.id = id_annexe;
+    end if;
+    return annexe;
+end;
+$$;
+
 drop function if exists enlever_annexe;
 
 -- Vue listant les fiches actions et ses données liées
@@ -83,7 +101,8 @@ select fa.*,
                      faft.id
               from financeur_tag ft
                        join fiche_action_financeur_tag faft on ft.id = faft.financeur_tag_id
-              where faft.fiche_id = fa.id) fin) as financeurs
+              where faft.fiche_id = fa.id) fin) as financeurs,
+       fic.fiches_liees
 from fiche_action fa
          -- thematiques
          left join (select fath.fiche_id, array_agg(th.*::thematique) as thematiques
@@ -124,9 +143,14 @@ from fiche_action fa
                     from service_tag st
                              join fiche_action_service_tag fast on fast.service_tag_id = st.id
                     group by fast.fiche_id) as ser on ser.fiche_id = fa.id
+    -- fiches liees
+         left join (select falpf.fiche_id, array_agg(fr.*) as fiches_liees
+                    from fiche_resume fr
+                             join fiches_liees_par_fiche falpf on falpf.fiche_liee_id = fr.fiche_id
+                    group by falpf.fiche_id) as fic on fic.fiche_id = fa.id
 ;
 
-create function upsert_fiche_action()
+create or replace function upsert_fiche_action()
     returns trigger as
 $$
 declare
@@ -143,6 +167,7 @@ declare
     annexe           annexe;
     service          service_tag;
     financeur        financeur_montant;
+    fiche_liee      fiche_resume;
     annexes_a_garder integer[];
     annexe_en_cours  annexe;
 begin
@@ -293,7 +318,7 @@ begin
     if new.annexes is not null then
         foreach annexe in array new.annexes::annexe[]
             loop
-                annexe_en_cours = ajouter_annexe(annexe);
+                annexe_en_cours = private.ajouter_annexe(annexe);
                 annexes_a_garder = array_append(annexes_a_garder, annexe_en_cours.id);
             end loop;
     end if;
@@ -315,6 +340,16 @@ begin
         foreach financeur in array new.financeurs::financeur_montant[]
             loop
                 perform ajouter_financeur(id_fiche, financeur);
+            end loop;
+    end if;
+
+    -- Fiches liees
+    delete from fiche_action_lien where fiche_une = id_fiche or fiche_deux = id_fiche;
+    if new.fiches_liees is not null then
+        foreach fiche_liee in array new.fiches_liees::fiche_resume[]
+            loop
+                insert into fiche_action_lien (fiche_une, fiche_deux)
+                values (id_fiche, fiche_liee.fiche_id);
             end loop;
     end if;
 
@@ -345,6 +380,7 @@ begin
     delete from fiche_action_axe where fiche_id = old.id;
     delete from fiche_action_financeur_tag where fiche_id = old.id;
     delete from fiche_action_service_tag where fiche_id = old.id;
+    delete from fiche_action_lien where fiche_une = old.id or fiche_deux = old.id;
     return old;
 end;
 $$ language plpgsql;
