@@ -43,6 +43,7 @@ const cae = {
       statut: 'P',
     },
     commentaire: 'Q',
+    documents: 'R',
   },
 };
 
@@ -73,6 +74,7 @@ export const eci: Config = {
       statut: 'O',
     },
     commentaire: 'P',
+    documents: 'Q',
   },
 };
 
