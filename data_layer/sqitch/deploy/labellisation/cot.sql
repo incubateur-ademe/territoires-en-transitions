@@ -2,21 +2,30 @@
 
 BEGIN;
 
-create table cot
-(
-    collectivite_id integer references collectivite primary key,
-    actif           bool not null
-);
-comment on table cot is
-    'Le Contrat d''objectifs territorial rattaché à une collectivité.';
-comment on column cot.actif is
-    'Vrai si un Contrat d''objectif existe. '
-        'A pour conséquence la modification des possibilités d''audit.';
-
 alter table cot
-    enable row level security;
-create policy allow_read_for_all
+    add column
+        signataire integer references collectivite;
+
+update cot set signataire = cot.collectivite_id;
+
+create function before_insert_add_default_signataire() returns trigger
+as
+$$
+begin
+    if new.signataire is null then
+        new.signataire = new.collectivite_id;
+    end if;
+    return new;
+end;
+$$ language plpgsql;
+
+create trigger before_insert
+    before insert
     on cot
-    for select using (true);
+    for each row
+execute procedure before_insert_add_default_signataire();
+
+
+
 
 COMMIT;
