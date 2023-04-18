@@ -145,3 +145,31 @@ $$ language sql;
 comment on function test_fulfill is
     'Insert des faux scores pour q''une collectivité atteigne une étoile. '
         'Attention les scores ne sont pas cohérents, le score d''un référentiel n''est pas égal la somme de ses axes.';
+
+create or replace function
+    test_max_fulfill(collectivite_id integer, referentiel referentiel)
+    returns void
+as
+$$
+    alter table action_statut
+        disable trigger after_action_statut_insert;
+
+    insert into action_statut (collectivite_id, action_id, avancement, avancement_detaille, concerne)
+    select test_max_fulfill.collectivite_id,
+           a.action_id,
+           'fait',
+           null,
+           true
+    from private.action_hierarchy a
+    where type = 'tache'
+      and a.referentiel = test_max_fulfill.referentiel
+    on conflict do nothing;
+
+    alter table action_statut
+        enable trigger after_action_statut_insert;
+
+    select evaluation.evaluate_statuts(test_max_fulfill.collectivite_id, test_max_fulfill.referentiel, 'client_scores');
+    $$ language sql security definer;
+comment on function test_max_fulfill is
+    'Mets toutes les tâches avec le statuts fait pour une collectivité et un référentiel donné '
+        'puis mets à jour les scores.';
