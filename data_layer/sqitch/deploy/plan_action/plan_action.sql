@@ -25,7 +25,8 @@ from annexe a
     from fiche_action_axe faa
              join axe_descendants d on faa.axe_id = d.axe_id
     where a.fiche_id = faa.fiche_id
-    ) plan on true;
+    ) plan on true
+where can_read_acces_restreint(a.collectivite_id);
 comment on view bibliotheque_annexe is
     'Les fichiers ou les liens pour les annexes des fiches action dans un format similaire à la vue `preuve`';
 
