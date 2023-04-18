@@ -1,6 +1,6 @@
-import {ActionAvancement} from 'generated/dataLayer/action_statut_read';
 import {QuestionType} from 'generated/dataLayer/question_read';
 import {TFilters, TInitialFilters} from './filters';
+import {TActionAvancement} from 'types/alias';
 
 /* Types des données reçu par le data layer */
 export type HistoriqueType =
@@ -31,8 +31,8 @@ export type THistoriqueItem = {
   tache_nom: string | null;
 
   /** modif. d'un statut d'action */
-  avancement: ActionAvancement | null;
-  previous_avancement: ActionAvancement | null;
+  avancement: TActionAvancement | null;
+  previous_avancement: TActionAvancement | null;
   avancement_detaille: number[] | null;
   previous_avancement_detaille: number[] | null;
   concerne: boolean | null;

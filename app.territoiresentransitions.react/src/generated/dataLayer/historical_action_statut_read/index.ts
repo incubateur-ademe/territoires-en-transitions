@@ -1,4 +1,4 @@
-import {ActionAvancement} from 'generated/dataLayer/action_statut_read';
+import {TActionAvancement} from 'types/alias';
 
 export interface IHistoricalActionStatutRead {
   tache_id: string; // cae_1.2.3.1
@@ -8,8 +8,8 @@ export interface IHistoricalActionStatutRead {
   action_identifiant: string; // 1.2.3
   action_nom: string;
   collectivite_id: number;
-  avancement: ActionAvancement;
-  previous_avancement: ActionAvancement | null;
+  avancement: TActionAvancement;
+  previous_avancement: TActionAvancement | null;
   avancement_detaille: null | number[];
   previous_avancement_detaille: null | number[];
   concerne: boolean;

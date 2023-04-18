@@ -81,3 +81,6 @@ export type TFicheActionStatuts =
 
 export type TActionRelationInsert =
   Database['public']['Tables']['action_relation']['Insert'];
+
+export type TActionAvancement = Database['public']['Enums']['avancement'];
+export type TActionAvancementExt = TActionAvancement | 'non_concerne';

@@ -1,4 +1,4 @@
-import {Database} from 'types/database.types';
+import {TActionAvancementExt} from 'types/alias';
 import type {ReferentielOfIndicateur} from 'types/litterals';
 
 // Define all labels from app
@@ -16,13 +16,11 @@ export const epciCard_AxisShortLabel: Record<string, string> = {
   eci_5: 'Coopération et engagement',
 };
 
-export const avancementToLabel: Record<
-  Database['public']['Enums']['avancement'],
-  string
-> = {
+export const avancementToLabel: Record<TActionAvancementExt, string> = {
   non_renseigne: 'Non renseigné',
   fait: 'Fait',
   pas_fait: 'Pas fait',
   detaille: 'Détaillé',
   programme: 'Programmé',
+  non_concerne: 'Non concerné',
 };

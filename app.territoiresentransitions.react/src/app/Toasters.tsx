@@ -6,7 +6,6 @@ import {
   DataLayerWriteEndpoint,
 } from 'core-logic/api/dataLayerEndpoint';
 import {PostgrestResponse} from '@supabase/supabase-js';
-import {actionStatutWriteEndpoint} from 'core-logic/api/endpoints/ActionStatutWriteEndpoint';
 import {actionCommentaireWriteEndpoint} from 'core-logic/api/endpoints/ActionCommentaireWriteEndpoint';
 import {indicateurPersonnaliseDefinitionWriteEndpoint} from 'core-logic/api/endpoints/IndicateurPersonnaliseDefinitionWriteEndpoint';
 import {
@@ -118,13 +117,6 @@ export const Toasters = () => {
     <>
       {renderToast()}
       <EndpointToaster
-        endpoint={actionStatutWriteEndpoint}
-        composer={makeComposer({
-          storeSuccess: "Le statut de l'action est enregistré",
-          storeError: "Le statut de l'action n'a pas été enregistré",
-        })}
-      />
-      <EndpointToaster
         endpoint={actionCommentaireWriteEndpoint}
         composer={makeComposer({
           storeSuccess: 'Le commentaire est enregistré',
@@ -192,14 +184,6 @@ export const Toasters = () => {
         composer={makeComposer({
           storeSuccess: "Le commentaire de l'action est enregistré",
           storeError: "Le commentaire de l'action n'a pas été enregistré",
-        })}
-      />
-
-      <EndpointToaster
-        endpoint={actionStatutWriteEndpoint}
-        composer={makeComposer({
-          storeSuccess: "Le statut de l'action est enregistré",
-          storeError: "Le statut de l'action n'a pas été enregistré",
         })}
       />
     </>

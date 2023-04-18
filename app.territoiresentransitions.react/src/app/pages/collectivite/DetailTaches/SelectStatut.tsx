@@ -1,8 +1,8 @@
 import SelectDropdown from 'ui/shared/select/SelectDropdown';
 import ActionStatutBadge from 'ui/shared/actions/ActionStatutBadge';
-import {ActionAvancement} from 'generated/dataLayer/action_statut_read';
 import {useEditActionStatutIsDisabled} from 'core-logic/hooks/useActionStatut';
 import {avancementToLabel} from 'app/labels';
+import {TActionAvancement} from 'types/alias';
 
 export type TSelectStatutProps = {
   className?: string;
@@ -10,14 +10,14 @@ export type TSelectStatutProps = {
   onChange: (value: string) => void;
 };
 
-export const ITEMS: {value: ActionAvancement; label: string}[] = (
+export const ITEMS: {value: TActionAvancement; label: string}[] = (
   [
     'non_renseigne',
     'pas_fait',
     'programme',
     'detaille',
     'fait',
-  ] as ActionAvancement[]
+  ] as TActionAvancement[]
 ).map(value => ({value, label: avancementToLabel[value]}));
 
 /**
@@ -28,7 +28,7 @@ const SelectStatutBase = (props: TSelectStatutProps & {disabled?: boolean}) => {
 
   return disabled ? (
     <ActionStatutBadge
-      statut={value as ActionAvancement}
+      statut={value as TActionAvancement}
       small
       className="mr-auto"
     />
@@ -40,11 +40,11 @@ const SelectStatutBase = (props: TSelectStatutProps & {disabled?: boolean}) => {
       onSelect={onChange}
       buttonClassName="px-2 py-1"
       renderOption={option => (
-        <ActionStatutBadge statut={option.value as ActionAvancement} small />
+        <ActionStatutBadge statut={option.value as TActionAvancement} small />
       )}
       renderSelection={value => (
         <ActionStatutBadge
-          statut={value as ActionAvancement}
+          statut={value as TActionAvancement}
           small
           className="mr-auto"
         />
