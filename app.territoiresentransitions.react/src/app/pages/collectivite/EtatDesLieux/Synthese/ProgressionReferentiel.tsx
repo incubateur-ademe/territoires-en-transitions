@@ -1,25 +1,40 @@
+import {avancementToLabel} from 'app/labels';
+import {actionAvancementColors_new} from 'app/theme';
 import {useEffect, useState} from 'react';
 import {TableOptions} from 'react-table';
 import ChartCard from 'ui/charts/ChartCard';
-import {ActionStatusColor} from 'ui/charts/chartsTheme';
 import FilArianeButtons from 'ui/shared/FilArianeButtons';
 import {ProgressionRow} from './data/queries';
 import {getFormattedScore, getIndexTitles} from './utils';
 
 // Définition des couleurs des graphes
 const customColors = {
-  Fait_color: ActionStatusColor.Fait,
-  Programmé_color: ActionStatusColor.Programmé,
-  'Pas fait_color': ActionStatusColor['Pas fait'],
-  'Non renseigné_color': ActionStatusColor['Non renseigné'],
+  [`${avancementToLabel.fait}_color`]: actionAvancementColors_new.fait,
+  [`${avancementToLabel.programme}_color`]:
+    actionAvancementColors_new.programme,
+  [`${avancementToLabel.pas_fait}_color`]: actionAvancementColors_new.pas_fait,
+  [`${avancementToLabel.non_renseigne}_color`]:
+    actionAvancementColors_new.non_renseigne,
 };
 
 // Définition de la légende des graphes
 const legend = [
-  {name: 'Fait', color: customColors.Fait_color},
-  {name: 'Programmé', color: customColors.Programmé_color},
-  {name: 'Pas fait', color: customColors['Pas fait_color']},
-  {name: 'Non renseigné', color: customColors['Non renseigné_color']},
+  {
+    name: avancementToLabel.fait,
+    color: customColors[`${avancementToLabel.fait}_color`],
+  },
+  {
+    name: avancementToLabel.programme,
+    color: customColors[`${avancementToLabel.programme}_color`],
+  },
+  {
+    name: avancementToLabel.pas_fait,
+    color: customColors[`${avancementToLabel.pas_fait}_color`],
+  },
+  {
+    name: avancementToLabel.non_renseigne,
+    color: customColors[`${avancementToLabel.non_renseigne}_color`],
+  },
 ];
 
 type ProgressionReferentielProps = {
@@ -101,7 +116,12 @@ const ProgressionReferentiel = ({
       scoreBreadcrumb[scoreBreadcrumb.length - 1].scoreData,
       percentage
     ),
-    keys: ['Fait', 'Programmé', 'Pas fait', 'Non renseigné'],
+    keys: [
+      avancementToLabel.fait,
+      avancementToLabel.programme,
+      avancementToLabel.pas_fait,
+      avancementToLabel.non_renseigne,
+    ],
     layout: 'horizontal' as 'horizontal' | 'vertical',
     inverted: true,
     customColors: true,
@@ -112,9 +132,14 @@ const ProgressionReferentiel = ({
   const title = `Progression ${!!indexBy ? `par ${indexBy}` : ''} en valeur ${
     percentage ? 'relative' : 'absolue'
   }`;
-  const fileName = `${referentiel}-${indexBy}-valeur-${
-    percentage ? 'relative' : 'absolue'
-  }`;
+
+  const fileName = `${referentiel}-${
+    indexBy === 'axe'
+      ? 'référentiel'
+      : `axe${scoreBreadcrumb[scoreBreadcrumb.length - 1].name
+          .split('.')
+          .join('-')}`
+  }-${percentage ? 'pourcentage' : 'points'}`;
 
   return (
     <ChartCard

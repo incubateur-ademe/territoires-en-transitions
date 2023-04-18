@@ -11,3 +11,16 @@ export const actionAvancementColors: Record<
   non_concerne: '#D3D3D3',
   detaille: '#E7A969',
 };
+
+// Couleurs statuts actions référentiels
+export const actionAvancementColors_new: Record<
+  ActionAvancement | 'non_concerne',
+  string
+> = {
+  non_concerne: '#929292',
+  non_renseigne: '#E5E5E5',
+  pas_fait: '#F95C5E',
+  programme: '#7AB1E8',
+  detaille: '#000091',
+  fait: '#34CB6A',
+};

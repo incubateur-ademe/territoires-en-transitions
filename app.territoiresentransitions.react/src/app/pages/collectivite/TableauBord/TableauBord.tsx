@@ -4,7 +4,7 @@ import {
   makeCollectiviteReferentielUrl,
   ReferentielParamOption,
 } from 'app/paths';
-import {actionAvancementColors} from 'app/theme';
+import {actionAvancementColors_new} from 'app/theme';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {indicateurResultatRepository} from 'core-logic/api/repositories/AnyIndicateurRepository';
 import {useAllIndicateurDefinitionsForGroup} from 'app/pages/collectivite/Indicateurs/useAllIndicateurDefinitions';
@@ -152,7 +152,7 @@ const ChiffreCles = ({
                 0
               )} potentiels.`}
               smallText="réalisé"
-              hexColor={actionAvancementColors.fait}
+              hexColor={actionAvancementColors_new.fait} // en attendant l'harmonisation des couleurs
               doughnutFillPercentage={realisePercentage}
               widthPx={widthPx}
             />
@@ -165,7 +165,7 @@ const ChiffreCles = ({
                 0
               )} potentiels.`}
               smallText="programmé"
-              hexColor={actionAvancementColors.programme}
+              hexColor={actionAvancementColors_new.programme} // en attendant l'harmonisation des couleurs
               doughnutFillPercentage={previsionnelPercentage}
               widthPx={widthPx}
             />
