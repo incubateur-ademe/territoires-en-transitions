@@ -750,14 +750,17 @@ export interface Database {
         Row: {
           actif: boolean
           collectivite_id: number
+          signataire: number | null
         }
         Insert: {
           actif: boolean
           collectivite_id: number
+          signataire?: number | null
         }
         Update: {
           actif?: boolean
           collectivite_id?: number
+          signataire?: number | null
         }
       }
       dcp: {
@@ -6232,6 +6235,7 @@ export interface Database {
         Returns: {
           actif: boolean
           collectivite_id: number
+          signataire: number | null
         }
       }
       test_write_scores: {
@@ -6252,28 +6256,28 @@ export interface Database {
             Args: {
               bucket_width: unknown
               ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
               origin: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
             }
             Returns: string
           }
@@ -6375,39 +6379,39 @@ export interface Database {
       time_bucket_gapfill:
         | {
             Args: {
+              bucket_width: number
+              ts: number
+              start?: number
+              finish?: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              start?: number
+              finish?: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              start?: number
+              finish?: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
               bucket_width: unknown
               ts: string
               start?: string
               finish?: string
             }
             Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              start?: number
-              finish?: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              start?: number
-              finish?: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              start?: number
-              finish?: number
-            }
-            Returns: number
           }
         | {
             Args: {
