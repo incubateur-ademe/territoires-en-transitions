@@ -39,7 +39,7 @@ export type TLabellisationParcours = {
   /** Dernière labellisation obtenue */
   labellisation: Database["public"]["Tables"]["labellisation"]["Row"] | null;
   /** Audit associée à la demande */
-  audit: Database["public"]["Tables"]["audit"]["Row"] | null;
+  audit: Database["public"]["Views"]["audit"]["Row"] | null;
 };
 
 /** Critère de labellisation associé à une action */
@@ -70,7 +70,7 @@ type TCritereScore = {
 };
 
 export async function labellisationParcours(
-  collectivite_id: number,
+  collectivite_id: number
 ): Promise<TLabellisationParcours[]> {
   const { data, error } = await supabase
     .rpc("labellisation_parcours", { collectivite_id })
