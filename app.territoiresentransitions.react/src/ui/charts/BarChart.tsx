@@ -1,5 +1,72 @@
-import {ComputedDatum, ResponsiveBar} from '@nivo/bar';
+import {BarTooltipProps, ComputedDatum, ResponsiveBar} from '@nivo/bar';
 import {defaultColors} from './chartsTheme';
+
+const getCustomColor = ({
+  id,
+  data,
+}: {
+  id: string | number;
+  data: {[key: string]: string};
+}) => `${data[`${id}_color`]}`;
+
+const upperCaseFirstLetter = (value: string): string => {
+  return `${value.slice(0, 1).toUpperCase()}${value.slice(1).toLowerCase()}`;
+};
+
+const getLabel = (d: ComputedDatum<{}>) => {
+  if (d.value) {
+    const roundedValue = Math.round(d.value);
+    if (roundedValue !== 0) return roundedValue.toString();
+  }
+  return '';
+};
+
+const getTooltip = (
+  {id, value, index, indexValue, color}: BarTooltipProps<{}>,
+  localIndexTitles: string[],
+  unit: string
+) => {
+  return (
+    <div
+      style={{
+        fontFamily: '"Marianne", arial, sans-serif',
+        fontSize: 14,
+        background: '#fff',
+        padding: '9px 12px',
+        border: '1px solid #ccc',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'start',
+      }}
+    >
+      <div>
+        {localIndexTitles.length ? localIndexTitles[index] : indexValue}
+      </div>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+        }}
+      >
+        <div
+          style={{
+            backgroundColor: color,
+            width: '12px',
+            height: '12px',
+            marginRight: '7px',
+          }}
+        ></div>
+        <span>
+          {id} :{' '}
+          <strong>
+            {Math.round(value * 100) / 100} {unit}
+          </strong>
+        </span>
+      </div>
+    </div>
+  );
+};
 
 export type BarChartProps = {
   data: {}[];
@@ -12,6 +79,20 @@ export type BarChartProps = {
   unit?: string;
   onSelectIndex: (index: string | number) => void;
 };
+
+/**
+ * Graphe bar générique à partir du composant nivo/bar
+ *
+ * @param data - tableau de données à afficher
+ * @param indexBy string - élément de data utilisé pour indexer les autres données
+ * @param keys string[] - éléments utilisés pour déterminer chaque série de données
+ * @param indexTitles string[] (optionnel) - permet d'afficher des valeurs différentes de indexBy dans la tooltip
+ * @param layout 'horizontal' | 'vertical' (optionnel) - orientation du graphe, par défaut vertical
+ * @param inverted boolean (optionnel) - inverse l'ordre d'affichage des valeurs sur l'axe indexBy
+ * @param customColors boolean (optionnel) - signale la présence de couleurs custom dans le tableau data
+ * @param unit string (optionnel) - unité des éléments listés dans keys
+ * @param onSelectIndex renvoie l'index de l'élément sur lequel on a cliqué
+ */
 
 const BarChart = ({
   data,
@@ -44,21 +125,8 @@ const BarChart = ({
       indexBy={indexBy}
       margin={{top: 50, right: 60, bottom: 70, left: 70}}
       layout={layout}
-      colors={
-        customColors
-          ? ({
-              id,
-              data,
-            }: {
-              id: string | number;
-              data: {[key: string]: string};
-            }) => `${data[`${id}_color`]}`
-          : defaultColors
-      }
-      borderColor={{
-        from: 'color',
-        modifiers: [['darker', 1.6]],
-      }}
+      colors={customColors ? getCustomColor : defaultColors}
+      borderColor={{from: 'color', modifiers: [['darker', 1.6]]}}
       axisTop={null}
       axisRight={null}
       axisBottom={{
@@ -67,10 +135,8 @@ const BarChart = ({
         tickRotation: 0,
         legend:
           layout === 'horizontal'
-            ? `${unit.slice(0, 1).toUpperCase()}${unit.slice(1).toLowerCase()}`
-            : `${indexBy.slice(0, 1).toUpperCase()}${indexBy
-                .slice(1)
-                .toLowerCase()}`,
+            ? upperCaseFirstLetter(unit)
+            : upperCaseFirstLetter(indexBy),
         legendPosition: 'middle',
         legendOffset: 45,
       }}
@@ -80,66 +146,17 @@ const BarChart = ({
         tickRotation: -45,
         legend:
           layout === 'horizontal'
-            ? `${indexBy.slice(0, 1).toUpperCase()}${indexBy
-                .slice(1)
-                .toLowerCase()}`
-            : `${unit.slice(0, 1).toUpperCase()}${unit.slice(1).toLowerCase()}`,
+            ? upperCaseFirstLetter(indexBy)
+            : upperCaseFirstLetter(unit),
         legendPosition: 'middle',
         legendOffset: -50,
       }}
-      label={(d: ComputedDatum<{}>) =>
-        d.value
-          ? Math.round(d.value) !== 0
-            ? `${Math.round(d.value)}`
-            : ''
-          : ''
-      }
+      label={getLabel}
       enableGridX={layout === 'horizontal'}
       enableGridY={layout === 'vertical'}
       labelSkipWidth={layout === 'horizontal' ? 10 : 0}
       labelSkipHeight={layout !== 'horizontal' ? 10 : 0}
-      tooltip={({id, value, index, indexValue, color}) => {
-        return (
-          <div
-            style={{
-              fontFamily: '"Marianne", arial, sans-serif',
-              fontSize: 14,
-              background: '#fff',
-              padding: '9px 12px',
-              border: '1px solid #ccc',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'start',
-            }}
-          >
-            <div>
-              {localIndexTitles.length ? localIndexTitles[index] : indexValue}
-            </div>
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}
-            >
-              <div
-                style={{
-                  backgroundColor: color,
-                  width: '12px',
-                  height: '12px',
-                  marginRight: '7px',
-                }}
-              ></div>
-              <span>
-                {id} :{' '}
-                <strong>
-                  {Math.round(value * 100) / 100} {unit}
-                </strong>
-              </span>
-            </div>
-          </div>
-        );
-      }}
+      tooltip={d => getTooltip(d, localIndexTitles, unit)}
       onClick={({indexValue}) => onSelectIndex(indexValue)}
     />
   );

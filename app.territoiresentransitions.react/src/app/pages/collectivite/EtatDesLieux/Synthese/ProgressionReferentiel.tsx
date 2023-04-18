@@ -1,9 +1,10 @@
 import {useEffect, useState} from 'react';
 import {TableOptions} from 'react-table';
-import {ActionStatusColor} from 'ui/charts/chartsTheme';
 import ChartCard from 'ui/charts/ChartCard';
+import {ActionStatusColor} from 'ui/charts/chartsTheme';
 import FilArianeButtons from 'ui/shared/FilArianeButtons';
 import {ProgressionRow} from './data/queries';
+import {getFormattedScore, getIndexTitles} from './utils';
 
 // Définition des couleurs des graphes
 const customColors = {
@@ -13,6 +14,7 @@ const customColors = {
   'Non renseigné_color': ActionStatusColor['Non renseigné'],
 };
 
+// Définition de la légende des graphes
 const legend = [
   {name: 'Fait', color: customColors.Fait_color},
   {name: 'Programmé', color: customColors.Programmé_color},
@@ -43,91 +45,22 @@ const ProgressionReferentiel = ({
   percentage = false,
 }: ProgressionReferentielProps): JSX.Element => {
   // Associe la data des scores à un nom d'affichage pour le breadcrumb
-  const [displayedScore, setDisplayedScore] = useState<
-    {scoreData: readonly ProgressionRow[]; name: string}[]
-  >([{scoreData: score.data, name: 'Vue globale'}]);
+  const [scoreBreadcrumb, setScoreBreadcrumb] = useState([
+    {scoreData: score.data, name: 'Vue globale'},
+  ]);
 
-  // Donnée observée
-  const [indexBy, setIndexBy] = useState<string>('');
+  // Donnée actuellement observée dans le tableau scoreBreadcrumb
+  const [indexBy, setIndexBy] = useState('');
 
   // Mise à jour lors du changement de valeur des scores en props
   useEffect(() => {
-    setDisplayedScore([{scoreData: score.data, name: 'Vue globale'}]);
+    setScoreBreadcrumb([{scoreData: score.data, name: 'Vue globale'}]);
     setIndexBy(score.data[0]?.type ?? '');
   }, [score.data]);
 
-  // Calcul des scores moyens en % pour la ligne "Total"
-  const getAverageScore = (key: string): number => {
-    const {scoreData} = displayedScore[displayedScore.length - 1];
-    return (
-      // @ts-ignore
-      (scoreData.reduce((res, currVal) => res + currVal[key], 0) /
-        (scoreData.length || 1)) *
-      100
-    );
-  };
-
-  // Mise en forme des scores pour les graphes
-  const getFormattedScore = () => {
-    const {scoreData} = displayedScore[displayedScore.length - 1];
-    const formattedScore = [];
-
-    if (percentage) {
-      // Formate les scores (%) pour un affichage sur 100
-      formattedScore.push(
-        ...scoreData.map(d => ({
-          [indexBy]: `${d.action_id.split('_')[1]}`,
-          Fait: d.score_realise * 100,
-          Programmé: d.score_programme * 100,
-          'Pas fait': d.score_pas_fait * 100,
-          'Non renseigné': d.score_non_renseigne * 100,
-          ...customColors,
-        }))
-      );
-
-      // Calcul des scores totaux
-      formattedScore.push({
-        [indexBy]: 'Total',
-        Fait: getAverageScore('score_realise'),
-        Programmé: getAverageScore('score_programme'),
-        'Pas fait': getAverageScore('score_pas_fait'),
-        'Non renseigné': getAverageScore('score_non_renseigne'),
-        ...customColors,
-      });
-    } else {
-      // Formate les scores en points
-      formattedScore.push(
-        ...scoreData.map(d => ({
-          [indexBy]: `${d.action_id.split('_')[1]}`,
-          Fait: d.points_realises,
-          Programmé: d.points_programmes,
-          'Pas fait': d.score_pas_fait * d.points_max_personnalises,
-          'Non renseigné':
-            d.points_max_personnalises -
-            d.points_realises -
-            d.points_programmes -
-            d.score_pas_fait * d.points_max_personnalises,
-          ...customColors,
-        }))
-      );
-    }
-
-    return formattedScore;
-  };
-
-  // Définition des titres des axes pour les graphes
-  const getIndexTitles = () => {
-    let indexTitles = displayedScore[displayedScore.length - 1].scoreData.map(
-      d => `${d.action_id.split('_')[1]}. ${d.nom}`
-    );
-    if (percentage) indexTitles.push('Total');
-
-    return indexTitles;
-  };
-
   // Affichage de l'axe enfant
   const handleOpenChildIndex = (index: string | number) => {
-    const {scoreData} = displayedScore[displayedScore.length - 1];
+    const {scoreData} = scoreBreadcrumb[scoreBreadcrumb.length - 1];
 
     if (score.getSubRows !== undefined) {
       const relativeIndex = scoreData.findIndex(
@@ -138,7 +71,7 @@ const ProgressionReferentiel = ({
       if (currentRow) {
         const subRows = score.getSubRows(currentRow, relativeIndex);
         if (!!subRows && subRows.length > 0) {
-          setDisplayedScore(prevDisplayedScore => [
+          setScoreBreadcrumb(prevDisplayedScore => [
             ...prevDisplayedScore,
             {scoreData: subRows, name: index.toString()},
           ]);
@@ -150,16 +83,24 @@ const ProgressionReferentiel = ({
 
   // Affichage d'un axe parent
   const handleOpenParentIndex = (index: number) => {
-    const newScore = displayedScore.slice(0, index + 1);
-    setDisplayedScore(newScore);
+    const newScore = scoreBreadcrumb.slice(0, index + 1);
+    setScoreBreadcrumb(newScore);
     setIndexBy(newScore[newScore.length - 1].scoreData[0].type);
   };
 
   // Props du graphe
   const chartProps = {
-    data: getFormattedScore(),
+    data: getFormattedScore(
+      scoreBreadcrumb[scoreBreadcrumb.length - 1].scoreData,
+      indexBy,
+      percentage,
+      customColors
+    ),
     indexBy: indexBy,
-    indexTitles: getIndexTitles(),
+    indexTitles: getIndexTitles(
+      scoreBreadcrumb[scoreBreadcrumb.length - 1].scoreData,
+      percentage
+    ),
     keys: ['Fait', 'Programmé', 'Pas fait', 'Non renseigné'],
     layout: 'horizontal' as 'horizontal' | 'vertical',
     inverted: true,
@@ -184,12 +125,17 @@ const ProgressionReferentiel = ({
         legend,
         expandable: true,
         downloadedFileName: fileName,
-        additionalInfo: getIndexTitles().filter(title => title !== 'Total'),
+        additionalInfo: getIndexTitles(
+          scoreBreadcrumb[scoreBreadcrumb.length - 1].scoreData,
+          false
+        ),
       }}
       topElement={
-        displayedScore.length > 1 ? (
+        scoreBreadcrumb.length > 1 ? (
           <FilArianeButtons
-            displayedNames={displayedScore.map(dispScore => dispScore.name)}
+            displayedNames={scoreBreadcrumb.map(
+              currentScore => currentScore.name
+            )}
             handleClick={handleOpenParentIndex}
           />
         ) : undefined

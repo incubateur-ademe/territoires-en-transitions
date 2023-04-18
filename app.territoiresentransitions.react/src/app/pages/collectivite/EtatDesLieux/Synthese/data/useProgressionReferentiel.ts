@@ -14,10 +14,6 @@ export type TableData = {
   >;
   /** Indique que le chargement des données est en cours */
   isLoading: boolean;
-  /** Nombre de lignes après filtrage */
-  count: number;
-  /** Nombre total de lignes */
-  total: number;
 };
 
 /**
@@ -33,24 +29,20 @@ export const useProgressionReferentiel: UseTableData = (
   const collectiviteId = useCollectiviteId();
 
   // Chargement des données
-  const {data, isLoading} = useQuery(
+  const {data: actionsStatut, isLoading} = useQuery(
     ['progression_referentiel', collectiviteId, referentiel],
     () => fetchRows(collectiviteId, referentiel)
   );
-  const {rows: actionsStatut} = data || {};
 
   // Chargement du référentiel
-  const {
-    table,
-    total,
-    count,
-    isLoading: isLoadingReferentiel,
-  } = useReferentiel(referentiel, collectiviteId, actionsStatut);
+  const {table, isLoading: isLoadingReferentiel} = useReferentiel(
+    referentiel,
+    collectiviteId,
+    actionsStatut
+  );
 
   return {
     table,
     isLoading: isLoading || isLoadingReferentiel,
-    count,
-    total,
   };
 };
