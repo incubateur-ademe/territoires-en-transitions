@@ -261,7 +261,8 @@ api-test-build:
     COPY ./api_tests .
     RUN deno cache tests/smoke.test.ts
     CMD deno test --allow-net --allow-env --allow-read tests/smoke.test.ts --location 'http://localhost' && \
-        deno test --allow-net --allow-env --allow-read tests/test/utilisateur.test.ts --location 'http://localhost'
+        deno test --allow-net --allow-env --allow-read tests/test/utilisateur.test.ts --location 'http://localhost' && \
+        deno test --allow-net --allow-env --allow-read tests/test/audit.test.ts --location 'http://localhost'
     SAVE IMAGE api-test:latest
 
 api-test:
