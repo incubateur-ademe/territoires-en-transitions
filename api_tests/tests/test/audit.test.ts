@@ -13,12 +13,8 @@ import { testReset } from "../../lib/rpcs/testReset.ts";
 import { testFullfill } from "../../lib/rpcs/testFullfill.ts";
 import { testSetAuditeur } from "../../lib/rpcs/testSetAuditeur.ts";
 import { labellisationDemande } from "../../lib/rpcs/labellisationDemande.ts";
-import {
-  labellisationSubmitDemande,
-} from "../../lib/rpcs/labellisationSubmitDemande.ts";
-import {
-  labellisationCommencerAudit,
-} from "../../lib/rpcs/labellisationCommencerAudit.ts";
+import { labellisationSubmitDemande } from "../../lib/rpcs/labellisationSubmitDemande.ts";
+import { labellisationCommencerAudit } from "../../lib/rpcs/labellisationCommencerAudit.ts";
 import {
   labellisationParcours,
   TLabellisationDemande,
@@ -36,30 +32,34 @@ async function creer_collectivite() {
 }
 
 async function ajouter_editeur(
-  collectivite: NonNullable<
-    { collectivite_id: number | null; id: number; nom: string }
-  >,
+  collectivite: NonNullable<{
+    collectivite_id: number | null;
+    id: number;
+    nom: string;
+  }>
 ) {
   // On crée un utilisateur random, pour la collectivité de test.
   const editeur = await testAddRandomUser(
     collectivite.collectivite_id!,
-    "edition",
+    "edition"
   );
   assertExists(editeur);
   return editeur;
 }
 
 async function envoyer_demande(
-  collectivite: NonNullable<
-    { collectivite_id: number | null; id: number; nom: string }
-  >,
+  collectivite: NonNullable<{
+    collectivite_id: number | null;
+    id: number;
+    nom: string;
+  }>,
   sujet: Database["labellisation"]["Enums"]["sujet_demande"],
-  etoiles?: Database["labellisation"]["Enums"]["etoile"],
+  etoiles?: Database["labellisation"]["Enums"]["etoile"]
 ) {
   // Obtient la demande de labellisation.
   const demandeLabellisation = await labellisationDemande(
     collectivite.collectivite_id!,
-    "eci",
+    "eci"
   );
   assertExists(demandeLabellisation);
   assertObjectMatch(demandeLabellisation, {
@@ -73,7 +73,7 @@ async function envoyer_demande(
     collectivite.collectivite_id!,
     "eci",
     sujet,
-    etoiles,
+    etoiles
   );
   assertExists(demandeLabellisationEnvoyee);
   assertObjectMatch(demandeLabellisationEnvoyee, {
@@ -87,18 +87,20 @@ async function envoyer_demande(
 }
 
 async function verifier_avant_commencement(
-  collectivite: NonNullable<
-    { collectivite_id: number | null; id: number; nom: string }
-  >,
+  collectivite: NonNullable<{
+    collectivite_id: number | null;
+    id: number;
+    nom: string;
+  }>
 ) {
   const parcours = await labellisationParcours(collectivite.collectivite_id!);
   assertExists(parcours);
   assertObjectMatch(parcours[0], {
-    "referentiel": "eci",
-    "etoiles": "2",
-    "completude_ok": true,
+    referentiel: "eci",
+    etoiles: "2",
+    completude_ok: true,
     // "demande": ...
-    "labellisation": null,
+    labellisation: null,
   });
 
   const demande = parcours[0]!.demande;
@@ -108,12 +110,13 @@ async function verifier_avant_commencement(
     // "date": "2023-02-07T19:30:56.554121+00:00",
     // "sujet": "cot",
     // "etoiles": null,
-    "en_cours": false,
-    "referentiel": "eci",
-    "collectivite_id": collectivite.collectivite_id!,
+    en_cours: false,
+    referentiel: "eci",
+    collectivite_id: collectivite.collectivite_id!,
   });
 
-  const auditPasEnCours = await supabase.from("audit_en_cours")
+  const auditPasEnCours = await supabase
+    .from("audit_en_cours")
     .select()
     .eq("collectivite_id", collectivite.collectivite_id!)
     .eq("referentiel", "eci");
@@ -123,26 +126,28 @@ async function verifier_avant_commencement(
 
 async function commencer_audit(
   auditAuditeur: NonNullable<{ audit_id: number; auditeur: string }>,
-  collectivite: NonNullable<
-    { collectivite_id: number | null; id: number; nom: string }
-  >,
+  collectivite: NonNullable<{
+    collectivite_id: number | null;
+    id: number;
+    nom: string;
+  }>,
   demande: Omit<TLabellisationDemande, "etoiles"> & {
     etoiles: TLabellisationDemande["etoiles"] | null;
   } & {},
-  auditeur: RandomUser & {},
+  auditeur: RandomUser & {}
 ) {
   const auditCommence = await labellisationCommencerAudit(
-    auditAuditeur.audit_id,
+    auditAuditeur.audit_id
   );
   assertExists(auditCommence);
   assertObjectMatch(auditCommence, {
     // "id"
-    "collectivite_id": collectivite.collectivite_id!,
-    "referentiel": "eci",
-    "demande_id": demande.id,
+    collectivite_id: collectivite.collectivite_id!,
+    referentiel: "eci",
+    demande_id: demande.id,
     // "date_debut"
-    "date_fin": null,
-    "valide": false,
+    date_fin: null,
+    valide: false,
   });
 
   const parcours = await labellisationParcours(collectivite.collectivite_id!);
@@ -150,7 +155,8 @@ async function commencer_audit(
   // @ts-ignore
   assertObjectMatch(parcours[0]!.audit, auditCommence);
 
-  const auditEnCours = await supabase.from("audit_en_cours")
+  const auditEnCours = await supabase
+    .from("audit_en_cours")
     .select("*,auditeurs:audit_auditeur (id:auditeur)")
     .eq("collectivite_id", collectivite.collectivite_id!)
     .eq("referentiel", "eci")
@@ -160,15 +166,15 @@ async function commencer_audit(
   assertExists(auditEnCours.data);
   assertObjectMatch(auditEnCours.data[0], {
     // "id": 131,
-    "collectivite_id": collectivite.collectivite_id!,
-    "referentiel": "eci",
-    "demande_id": demande.id,
+    collectivite_id: collectivite.collectivite_id!,
+    referentiel: "eci",
+    demande_id: demande.id,
     // "date_debut": "2023-02-08T08:31:49.250353+00:00",
-    "date_fin": null,
-    "valide": false,
-    "auditeurs": [
+    date_fin: null,
+    valide: false,
+    auditeurs: [
       {
-        "id": auditeur.user_id,
+        id: auditeur.user_id,
       },
     ],
   });
@@ -180,57 +186,60 @@ async function commencer_audit(
 async function valider_audit(
   // @ts-ignore
   auditEnCours,
-  collectivite: NonNullable<
-    { collectivite_id: number | null; id: number; nom: string }
-  >,
+  collectivite: NonNullable<{
+    collectivite_id: number | null;
+    id: number;
+    nom: string;
+  }>,
   demande: Omit<TLabellisationDemande, "etoiles"> & {
     etoiles: TLabellisationDemande["etoiles"] | null;
-  } & {},
+  } & {}
 ) {
-  const auditValide = await supabase.from("audit").update({ valide: true }).eq(
-    "id",
-    auditEnCours.data![0]!.id,
-  ).select();
+  const auditValide = await supabase
+    .from("audit")
+    .update({ valide: true })
+    .eq("id", auditEnCours.data![0]!.id)
+    .select();
   assertExists(auditValide);
   assertExists(auditValide.data);
   assertObjectMatch(auditValide.data[0], {
     // "id": 147,
-    "collectivite_id": collectivite.collectivite_id!,
-    "referentiel": "eci",
-    "demande_id": demande.id,
+    collectivite_id: collectivite.collectivite_id!,
+    referentiel: "eci",
+    demande_id: demande.id,
     // "date_debut": "2023-02-08T08:41:26.794506+00:00",
     // "date_fin": "2023-02-08T08:41:26.823115+00:00",
-    "valide": true,
+    valide: true,
   });
   return auditValide;
 }
 
 async function ajouter_auditeur(
-  collectivite: NonNullable<
-    { collectivite_id: number | null; id: number; nom: string }
-  >,
-  demandeLabellisation: NonNullable<
-    {
-      collectivite_id: number;
-      date: string;
-      en_cours: boolean;
-      etoiles: Database["labellisation"]["Enums"]["etoile"] | null;
-      id: number;
-      referentiel: Database["public"]["Enums"]["referentiel"];
-      sujet: Database["labellisation"]["Enums"]["sujet_demande"];
-    }
-  >,
+  collectivite: NonNullable<{
+    collectivite_id: number | null;
+    id: number;
+    nom: string;
+  }>,
+  demandeLabellisation: NonNullable<{
+    collectivite_id: number;
+    date: string;
+    en_cours: boolean;
+    etoiles: Database["labellisation"]["Enums"]["etoile"] | null;
+    id: number;
+    referentiel: Database["public"]["Enums"]["referentiel"];
+    sujet: Database["labellisation"]["Enums"]["sujet_demande"];
+  }>
 ) {
   // Créé un auditeur
   const auditeur = await testAddRandomUser(
     collectivite.collectivite_id!,
-    "edition",
+    "edition"
   );
   assertExists(auditeur);
 
   const auditAuditeur = await testSetAuditeur(
     demandeLabellisation.id!,
-    auditeur.user_id,
+    auditeur.user_id
   );
   assertExists(auditAuditeur);
   assertEquals(auditeur.user_id, auditAuditeur.auditeur);
@@ -262,7 +271,7 @@ Deno.test("Scénario de demande d'audit COT", async () => {
   const demandeLabellisation = await envoyer_demande(collectivite, "cot");
   const { auditeur, auditAuditeur } = await ajouter_auditeur(
     collectivite,
-    demandeLabellisation,
+    demandeLabellisation
   );
 
   await supabase.auth.signInWithPassword({
@@ -271,15 +280,15 @@ Deno.test("Scénario de demande d'audit COT", async () => {
   });
 
   // On récupère sa liste de collectivité.
-  const mesCollectivitesResponse = await supabase
+  const mesCollectivitesAvantAuditResponse = await supabase
     .from("mes_collectivites")
     .select();
-  const collectivites = mesCollectivitesResponse.data;
-  assertExists(collectivites);
-  assertObjectMatch(collectivites[0], {
+  const collectivitesAvantAudit = mesCollectivitesAvantAuditResponse.data;
+  assertExists(collectivitesAvantAudit);
+  assertObjectMatch(collectivitesAvantAudit[0], {
     collectivite_id: collectivite.collectivite_id,
     niveau_acces: "edition",
-    est_auditeur: true,
+    est_auditeur: false, // l'audit n'est encore commencé
   });
 
   const demande = await verifier_avant_commencement(collectivite);
@@ -287,14 +296,27 @@ Deno.test("Scénario de demande d'audit COT", async () => {
     auditAuditeur,
     collectivite,
     demande,
-    auditeur,
+    auditeur
   );
+
+  const mesCollectivitesPendantAuditResponse = await supabase
+    .from("mes_collectivites")
+    .select();
+  const collectivitesPendantAudit = mesCollectivitesPendantAuditResponse.data;
+  assertExists(collectivitesPendantAudit);
+  assertObjectMatch(collectivitesPendantAudit[0], {
+    collectivite_id: collectivite.collectivite_id,
+    niveau_acces: "edition",
+    est_auditeur: true,
+  });
+
   const auditValide = await valider_audit(auditEnCours, collectivite, demande);
 
   // Une fois l'audit COT valide, il est clôturé automatiquement.
   assertExists(auditValide.data[0]!.date_fin);
 
-  const auditPlusEnCours = await supabase.from("audit_en_cours")
+  const auditPlusEnCours = await supabase
+    .from("audit_en_cours")
     .select()
     .eq("collectivite_id", collectivite.collectivite_id!)
     .eq("referentiel", "eci");
@@ -320,11 +342,11 @@ Deno.test("Scénario de demande d'audit de labellisation", async () => {
   const demandeLabellisation = await envoyer_demande(
     collectivite,
     "labellisation",
-    "2",
+    "2"
   );
   const { auditeur, auditAuditeur } = await ajouter_auditeur(
     collectivite,
-    demandeLabellisation,
+    demandeLabellisation
   );
 
   await supabase.auth.signInWithPassword({
@@ -336,12 +358,13 @@ Deno.test("Scénario de demande d'audit de labellisation", async () => {
     auditAuditeur,
     collectivite,
     demande,
-    auditeur,
+    auditeur
   );
   const auditValide = await valider_audit(auditEnCours, collectivite, demande);
   assertEquals(auditValide.data[0]!.date_fin, null);
 
-  const auditToujoursEnCours = await supabase.from("audit_en_cours")
+  const auditToujoursEnCours = await supabase
+    .from("audit_en_cours")
     .select()
     .eq("collectivite_id", collectivite.collectivite_id!)
     .eq("referentiel", "eci");
