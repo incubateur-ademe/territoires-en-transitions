@@ -173,6 +173,8 @@ const ecritPlan = (
       ?.map(({id}) => getActionLabel(id))
       .filter(s => !!s)
       .join(',');
+    worksheet.getCell(data_cols.fiches_liees + ligne_courante).value =
+      fiche.fiches_liees?.map(f => f.titre).join('\n');
     worksheet.getCell(data_cols.notes_complementaires + ligne_courante).value =
       fiche.notes_complementaires;
 
