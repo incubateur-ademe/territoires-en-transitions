@@ -63,12 +63,3 @@ export const enum StatusColor {
   'NC' = '#CCC',
   'Sans statut' = '#CCC',
 }
-
-export const enum ActionStatusColor {
-  'Fait' = '#34CB6A',
-  'Détaillé' = '#CE70CC',
-  'Programmé' = '#7AB1E8',
-  'Pas fait' = '#F95C5E',
-  'Non renseigné' = '#E5E5E5',
-  'Non concerné' = '#929292',
-}

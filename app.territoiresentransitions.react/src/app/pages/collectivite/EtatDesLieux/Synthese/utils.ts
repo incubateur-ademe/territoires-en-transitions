@@ -1,3 +1,4 @@
+import {avancementToLabel} from 'app/labels';
 import {ProgressionRow} from './data/queries';
 
 /**
@@ -21,27 +22,8 @@ export const getIndexTitles = (
 };
 
 /**
- * Calcule les scores moyens en % pour la ligne "Total"
- *
- * @param scoreData readonly ProgressionRow[]
- * @param key string
- * @returns number
- */
-
-const getAverageScore = (
-  scoreData: readonly ProgressionRow[],
-  key: string
-): number => {
-  return (
-    // @ts-ignore
-    (scoreData.reduce((res, currVal) => res + currVal[key], 0) /
-      (scoreData.length || 1)) *
-    100
-  );
-};
-
-/**
  * Met en forme les scores pour les graphes de progression des scores
+ *
  * @param scoreData readonly ProgressionRow[]
  * @param indexBy string
  * @param percentage boolean
@@ -61,21 +43,51 @@ export const getFormattedScore = (
     formattedScore.push(
       ...scoreData.map(d => ({
         [indexBy]: `${d.action_id.split('_')[1]}`,
-        Fait: d.score_realise * 100,
-        Programmé: d.score_programme * 100,
-        'Pas fait': d.score_pas_fait * 100,
-        'Non renseigné': d.score_non_renseigne * 100,
+        [avancementToLabel.fait]: d.score_realise * 100,
+        [avancementToLabel.programme]: d.score_programme * 100,
+        [avancementToLabel.pas_fait]: d.score_pas_fait * 100,
+        [avancementToLabel.non_renseigne]: d.score_non_renseigne * 100,
         ...customColors,
       }))
     );
 
     // Calcul des scores totaux
+    const totalPointsMaxPersonnalises =
+      scoreData.reduce(
+        (res, currVal) => res + currVal.points_max_personnalises,
+        0
+      ) || 1;
+
     formattedScore.push({
       [indexBy]: 'Total',
-      Fait: getAverageScore(scoreData, 'score_realise'),
-      Programmé: getAverageScore(scoreData, 'score_programme'),
-      'Pas fait': getAverageScore(scoreData, 'score_pas_fait'),
-      'Non renseigné': getAverageScore(scoreData, 'score_non_renseigne'),
+      [avancementToLabel.fait]:
+        (scoreData.reduce((res, currVal) => res + currVal.points_realises, 0) /
+          totalPointsMaxPersonnalises) *
+        100,
+      [avancementToLabel.programme]:
+        (scoreData.reduce(
+          (res, currVal) => res + currVal.points_programmes,
+          0
+        ) /
+          totalPointsMaxPersonnalises) *
+        100,
+      [avancementToLabel.pas_fait]:
+        (scoreData.reduce(
+          (res, currVal) =>
+            res + currVal.score_pas_fait * currVal.points_max_personnalises,
+          0
+        ) /
+          totalPointsMaxPersonnalises) *
+        100,
+      [avancementToLabel.non_renseigne]:
+        (scoreData.reduce(
+          (res, currVal) =>
+            res +
+            currVal.score_non_renseigne * currVal.points_max_personnalises,
+          0
+        ) /
+          totalPointsMaxPersonnalises) *
+        100,
       ...customColors,
     });
   } else {
@@ -83,14 +95,12 @@ export const getFormattedScore = (
     formattedScore.push(
       ...scoreData.map(d => ({
         [indexBy]: `${d.action_id.split('_')[1]}`,
-        Fait: d.points_realises,
-        Programmé: d.points_programmes,
-        'Pas fait': d.score_pas_fait * d.points_max_personnalises,
-        'Non renseigné':
-          d.points_max_personnalises -
-          d.points_realises -
-          d.points_programmes -
+        [avancementToLabel.fait]: d.points_realises,
+        [avancementToLabel.programme]: d.points_programmes,
+        [avancementToLabel.pas_fait]:
           d.score_pas_fait * d.points_max_personnalises,
+        [avancementToLabel.non_renseigne]:
+          d.score_non_renseigne * d.points_max_personnalises,
         ...customColors,
       }))
     );

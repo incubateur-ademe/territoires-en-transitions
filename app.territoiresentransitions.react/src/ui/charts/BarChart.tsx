@@ -60,7 +60,7 @@ const getTooltip = (
         <span>
           {id} :{' '}
           <strong>
-            {Math.round(value * 100) / 100} {unit}
+            {Math.round(value * 10) / 10} {unit}
           </strong>
         </span>
       </div>

@@ -32,7 +32,7 @@ export const fetchRows = async (
     .select(
       'action_id,score_realise,score_programme,score_pas_fait,score_non_renseigne,points_realises,points_programmes,points_max_personnalises'
     )
-    .match({collectivite_id, referentiel, concerne: true, desactive: false})
+    .match({collectivite_id, referentiel})
     .gt('depth', 0);
 
   if (error) throw new Error(error.message);
