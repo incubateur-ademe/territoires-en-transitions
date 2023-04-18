@@ -48,7 +48,8 @@ export const ConfigPlanAction = {
     amelioration_continue: 'AD',
     calendrier: 'AE',
     actions: 'AF',
-    notes_complementaires: 'AG',
-    annexes: 'AH',
+    fiches_liees: 'AG',
+    notes_complementaires: 'AH',
+    annexes: 'AI',
   },
 };
