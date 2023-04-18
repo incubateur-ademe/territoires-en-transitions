@@ -3,7 +3,7 @@ import {useRef, useState} from 'react';
 import DownloadButton from 'ui/DownloadButton';
 import Modal from 'ui/shared/floating-ui/Modal';
 import BarChart, {BarChartProps} from './BarChart';
-import DaughnutChart, {DoughnutChartProps} from './DoughnutChart';
+import DonutChart, {DonutChartProps} from './DonutChart';
 
 type ChartCardModalContentProps = {
   chart: JSX.Element;
@@ -89,8 +89,8 @@ const ChartCardModalContent = ({
 };
 
 type ChartCardProps = {
-  chartType: 'bar' | 'daughnut';
-  chartProps: BarChartProps | DoughnutChartProps;
+  chartType: 'bar' | 'donut';
+  chartProps: BarChartProps | DonutChartProps;
   chartInfo?: {
     title?: string;
     legend?: {name: string; color: string}[];
@@ -128,8 +128,8 @@ const ChartCard = ({
     case 'bar':
       chart = <BarChart {...(chartProps as BarChartProps)} />;
       break;
-    case 'daughnut':
-      chart = <DaughnutChart {...(chartProps as DoughnutChartProps)} />;
+    case 'donut':
+      chart = <DonutChart {...(chartProps as DonutChartProps)} />;
       break;
     default:
       break;

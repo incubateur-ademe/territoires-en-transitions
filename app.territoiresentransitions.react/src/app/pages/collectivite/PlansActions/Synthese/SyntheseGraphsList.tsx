@@ -86,7 +86,7 @@ const SyntheseGraphsList = ({
           !!graph.data.length && (
             <div key={graph.title} className="fr-col-sm-12 fr-col-xl-6">
               <ChartCard
-                chartType="daughnut"
+                chartType="donut"
                 chartProps={{
                   data: graph.data,
                   label: graph.id === 'statuts' || graph.id === 'priorites',
