@@ -329,3 +329,4 @@ stats/amplitude 2023-04-14T08:17:31Z Florian <florian@derfurth.com> # Envoie des
 @v2.25.0 2023-04-27T09:24:49Z Florian <florian@derfurth.com> # Integration Amplitude de test
 
 plan_action/plan_action [plan_action/plan_action@v2.24.0] 2023-04-25T09:47:28Z Florian <florian@derfurth.com> # Nouvelle fonction pour des plans plus performants
+plan_action/tags 2023-04-18T14:20:39Z Florian <florian@derfurth.com> # Ajoute la possibilité de supprimer des tags
