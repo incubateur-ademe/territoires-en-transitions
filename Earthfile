@@ -299,9 +299,14 @@ gen-types:
 setup-env:
     LOCALLY
     RUN earthly +stop
-    RUN npm install
-    RUN npx supabase start
-    RUN npx supabase status -o env > .arg
+    IF [ "$CI" = "true" ]
+        RUN supabase start
+        RUN supabase status -o env > .arg
+    ELSE
+        RUN npm install
+        RUN npx supabase start
+        RUN npx supabase status -o env > .arg
+    END
     RUN export $(cat .arg | xargs) && sh ./make_dot_env.sh
     RUN earthly +stop
 
