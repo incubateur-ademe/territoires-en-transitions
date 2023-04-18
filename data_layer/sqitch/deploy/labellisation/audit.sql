@@ -1,48 +1,56 @@
 -- Deploy tet:labellisation/audit to pg
 BEGIN;
 
-create function labellisation_cloturer_audit(
-    audit_id integer,
-    date_fin timestamptz default current_timestamp
-)
+create or replace function labellisation.current_audit(col integer, ref referentiel)
     returns labellisation.audit
+    security definer
 as
 $$
+    # variable_conflict use_column
 declare
-    audit labellisation.audit;
+    found labellisation.audit;
 begin
-    -- si l'utilisateur n'est pas le service role
-    if not is_service_role()
-    then -- alors on renvoie un code 403
-        perform set_config('response.status', '403', true);
-        raise 'Seul le service role peut clôturer l''audit.';
+    select *
+    into found
+    from labellisation.audit a
+    where a.collectivite_id = current_audit.col
+      and a.referentiel = current_audit.ref
+      and now() <@ tstzrange(date_debut, date_fin)
+      -- les audits avec une date de début sont prioritaires sur ceux avec une plage infinie,
+      -- ces derniers comprenant toujours `now()`.
+    order by date_debut desc nulls last
+    limit 1;
+
+    if found is null
+        -- si l'audit n'existe pas.
+    then
+        insert
+        into labellisation.audit (collectivite_id, referentiel, demande_id, date_debut, date_fin)
+        select current_audit.col,
+               current_audit.ref,
+               null,
+               null,
+               null
+        on conflict do nothing
+        returning * into found; -- null en cas de conflit
     end if;
 
-    update labellisation.audit
-    set date_fin = labellisation_cloturer_audit.date_fin
-    where id = audit_id
-    returning * into audit;
+    if found is null
+        -- l'audit n'existait pas et n'a pas pu être créé
+        -- car il vient d'être créé dans un autre appel
+    then
+        select *
+        into found
+        from labellisation.audit a
+        where a.collectivite_id = current_audit.col
+          and a.referentiel = current_audit.ref
+          and now() <@ tstzrange(date_debut, date_fin)
+        order by date_debut desc nulls last
+        limit 1;
+    end if;
 
-    return audit;
+    return found;
 end;
-$$ language plpgsql security definer;
-comment on function labellisation_cloturer_audit is
-    'Clôture un audit.';
-
-create function
-    labellisation_peut_commencer_audit(collectivite_id integer, referentiel referentiel)
-    returns bool
-begin
-    atomic
-    select count(*) > 0
-    from audit a
-             join audit_auditeur aa on a.id = aa.audit_id
-    where a.collectivite_id = labellisation_peut_commencer_audit.collectivite_id
-      and a.referentiel = labellisation_peut_commencer_audit.referentiel
-      and a.date_debut is null
-      and aa.auditeur = auth.uid();
-end;
-comment on function labellisation_peut_commencer_audit is
-    'Vrai si l''utilisateur peut commencer un audit.';
+$$ language plpgsql;
 
 COMMIT;
