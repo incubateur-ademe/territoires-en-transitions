@@ -3,23 +3,23 @@ import {
   assertExists,
   assertObjectMatch,
 } from "https://deno.land/std@0.163.0/testing/asserts.ts";
-import { supabase } from "../../lib/supabase.ts";
-import { signOut } from "../../lib/auth.ts";
-import { testAddRandomUser } from "../../lib/rpcs/testAddRandomUser.ts";
-import { RandomUser } from "../../lib/types/randomUser.ts";
-import { testCreateCollectivite } from "../../lib/rpcs/testCreateCollectivite.ts";
-import { testSetCot } from "../../lib/rpcs/testSetCot.ts";
-import { testReset } from "../../lib/rpcs/testReset.ts";
-import { testFullfill } from "../../lib/rpcs/testFullfill.ts";
-import { testSetAuditeur } from "../../lib/rpcs/testSetAuditeur.ts";
-import { labellisationDemande } from "../../lib/rpcs/labellisationDemande.ts";
-import { labellisationSubmitDemande } from "../../lib/rpcs/labellisationSubmitDemande.ts";
-import { labellisationCommencerAudit } from "../../lib/rpcs/labellisationCommencerAudit.ts";
+import { supabase } from "/lib/supabase.ts";
+import { signOut } from "/lib/auth.ts";
+import { testAddRandomUser } from "/lib/rpcs/testAddRandomUser.ts";
+import { RandomUser } from "/lib/types/randomUser.ts";
+import { testCreateCollectivite } from "/lib/rpcs/testCreateCollectivite.ts";
+import { testSetCot } from "/lib/rpcs/testSetCot.ts";
+import { testReset } from "/lib/rpcs/testReset.ts";
+import { testFullfill } from "/lib/rpcs/testFullfill.ts";
+import { testSetAuditeur } from "/lib/rpcs/testSetAuditeur.ts";
+import { labellisationDemande } from "/lib/rpcs/labellisationDemande.ts";
+import { labellisationSubmitDemande } from "/lib/rpcs/labellisationSubmitDemande.ts";
+import { labellisationCommencerAudit } from "/lib/rpcs/labellisationCommencerAudit.ts";
 import {
   labellisationParcours,
   TLabellisationDemande,
-} from "../../lib/rpcs/labellisationParcours.ts";
-import { Database } from "../../lib/database.types.ts";
+} from "/lib/rpcs/labellisationParcours.ts";
+import { Database } from "/lib/database.types.ts";
 
 async function creer_collectivite() {
   // On crée une collectivite de test
