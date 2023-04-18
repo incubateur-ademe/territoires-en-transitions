@@ -1,9 +1,6 @@
-import {ActionAvancement} from 'generated/dataLayer/action_statut_read';
+import {TActionAvancementExt} from 'types/alias';
 
-export const actionAvancementColors: Record<
-  ActionAvancement | 'non_concerne' | 'detaille',
-  string
-> = {
+export const actionAvancementColors: Record<TActionAvancementExt, string> = {
   fait: '#0063CB',
   programme: '#00A95F',
   pas_fait: '#CE0500',

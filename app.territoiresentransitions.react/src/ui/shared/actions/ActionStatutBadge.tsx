@@ -1,10 +1,10 @@
 import classNames from 'classnames';
-import {ActionAvancement} from 'generated/dataLayer/action_statut_read';
 import {avancementToLabel} from 'app/labels';
+import {TActionAvancementExt} from 'types/alias';
 
 type Props = {
   className?: string;
-  statut: ActionAvancement;
+  statut: TActionAvancementExt;
   // Indique si le statut est barré
   barre?: boolean;
   // Rend une version plus petite du composant

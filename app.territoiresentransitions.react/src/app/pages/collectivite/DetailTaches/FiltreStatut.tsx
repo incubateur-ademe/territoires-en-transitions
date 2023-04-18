@@ -7,7 +7,7 @@ import ActionStatutBadge from 'ui/shared/actions/ActionStatutBadge';
 import {ITEM_ALL} from 'ui/shared/filters/commons';
 import {TFiltreProps} from './filters';
 import {ITEMS} from './SelectStatut';
-import {ActionAvancement} from 'generated/dataLayer/action_statut_read';
+import {TActionAvancementExt} from 'types/alias';
 
 const items = [{value: ITEM_ALL, label: 'Tous les statuts'}, ...ITEMS];
 const FILTER_NAME = 'statut';
@@ -30,7 +30,10 @@ export const FiltreStatut = (props: TFiltreProps) => {
         option.value === ITEM_ALL ? (
           <span className="leading-6">Tous les statuts</span>
         ) : (
-          <ActionStatutBadge statut={option.value as ActionAvancement} small />
+          <ActionStatutBadge
+            statut={option.value as TActionAvancementExt}
+            small
+          />
         )
       }
     />

@@ -9,20 +9,18 @@ import {
   useEditActionStatutIsDisabled,
   useSaveActionStatut,
 } from 'core-logic/hooks/useActionStatut';
-import {
-  ActionAvancement,
-  ActionStatutRead,
-} from 'generated/dataLayer/action_statut_read';
 import {toPercentString} from 'utils/score';
 import {CloseDialogButton} from '../CloseDialogButton';
 import {DetailedScore} from '../DetailedScore/DetailedScore';
 import {AvancementValues} from '../DetailedScore/DetailedScoreSlider';
+import {TActionAvancement} from 'types/alias';
+import {Database} from 'types/database.types';
 
 interface SelectableStatut {
   value: number;
   color: string;
   concerne: boolean;
-  avancement: ActionAvancement;
+  avancement: TActionAvancement;
   avancement_detaille?: number[];
   label: string;
 }
@@ -221,7 +219,9 @@ const statutByValue = (value: number): SelectableStatut => {
   return selectables.find(s => s.value === value)!;
 };
 
-const valueByStatut = (statut: ActionStatutRead): SelectableStatut => {
+const valueByStatut = (
+  statut: Database['public']['Tables']['action_statut']['Row']
+): SelectableStatut => {
   const ret = selectables.find(
     s => s.concerne === statut.concerne && s.avancement === statut.avancement
   )!;
