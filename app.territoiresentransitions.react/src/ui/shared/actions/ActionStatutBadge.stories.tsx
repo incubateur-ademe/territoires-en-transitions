@@ -12,3 +12,4 @@ export const PasFait = () => <ActionStatutBadge statut="pas_fait" />;
 export const Programme = () => <ActionStatutBadge statut="programme" />;
 export const Detaille = () => <ActionStatutBadge statut="detaille" />;
 export const Fait = () => <ActionStatutBadge statut="fait" />;
+export const NonConcerne = () => <ActionStatutBadge statut="non_concerne" />;
