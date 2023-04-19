@@ -30,45 +30,47 @@ defineStep(
 defineStep(
   /j'assigne la valeur "([^"]+)" à l'état d'avancement de la tâche "([^"]+)"/,
   (avancement, tache) => {
-    // le composant ne doit pas être désactivé
-    cy.get(`[data-test="task-${tache}"] .MuiInput-root`).should(
-      'not.have.class',
-      'Mui-disabled'
-    );
     // ouvre le composant Select
-    cy.get(`[data-test="task-${tache}"]`).click();
+    cy.get(`[data-test="task-${tache}"] [data-test=SelectStatut]`)
+      .should('be.visible')
+      .click();
+
     // la liste déroulante doit être visible
-    cy.get('.MuiPaper-root').should('be.visible');
-    // et sélectionne l'option voulue
-    cy.get(
-      `.MuiPaper-root [role=option][data-value="${avancementToValue[avancement]}"]`
-    ).click();
+    cy.get('[data-test=SelectStatut-options]')
+      .should('be.visible')
+      // et sélectionne l'option voulue
+      .find(`[data-test="${avancementToValue[avancement]}"]`)
+      .click();
   }
 );
 
 defineStep("l'état d'avancement des tâches n'est pas éditable", () => {
-  // tous les Select sont désactivés
-  cy.get(`[data-test^="task-"] .MuiInput-root`).should(
-    'have.class',
-    'Mui-disabled'
-  );
+  // aucun select n'est affiché
+  cy.get('[data-test^="task-"] [data-test=SelectStatut]').should('not.exist');
 });
 
 defineStep("l'état d'avancement des tâches est éditable", () => {
-  // tous les Select sont activés
-  cy.get(`[data-test^="task-"] .MuiInput-root`).should(
-    'not.have.class',
-    'Mui-disabled'
-  );
+  // récupère le nombre de tâches
+  const taches = '[data-test^="task-"]';
+  cy.get(taches)
+    .its('length')
+    .then(tasksCount => {
+      expect(tasksCount).to.be.greaterThan(0);
+      // et vérifie qu'il y a autant de select que de tâches
+      cy.get(`${taches} [data-test=SelectStatut]`).should(
+        'have.length',
+        tasksCount
+      );
+    });
 });
 
 const avancementToValue = {
-  'Non renseigné': -1,
-  Fait: 1,
-  Programmé: 2,
-  'Pas fait': 3,
-  Détaillé: 4,
-  'Non concerné': 5,
+  'Non renseigné': 'non_renseigne',
+  Fait: 'fait',
+  Programmé: 'programme',
+  'Pas fait': 'pas_fait',
+  Détaillé: 'detaille',
+  'Non concerné': 'non_concerne',
 };
 
 defineStep(
