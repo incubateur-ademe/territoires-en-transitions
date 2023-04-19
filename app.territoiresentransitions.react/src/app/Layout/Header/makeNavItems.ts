@@ -3,6 +3,7 @@ import {
   makeCollectiviteBibliothequeUrl,
   makeCollectiviteIndicateursUrl,
   makeCollectiviteJournalUrl,
+  makeCollectiviteLabellisationRootUrl,
   makeCollectiviteLabellisationUrl,
   makeCollectivitePersoRefUrl,
   makeCollectivitePlansActionsBaseUrl,
@@ -43,6 +44,14 @@ const makeNavItemsBase = (collectivite: CurrentCollectivite): TNavItemsList => {
           collectiviteId,
           referentielId: 'eci',
           referentielVue: '',
+        }),
+        makeCollectiviteLabellisationRootUrl({
+          collectiviteId,
+          referentielId: 'cae',
+        }),
+        makeCollectiviteLabellisationRootUrl({
+          collectiviteId,
+          referentielId: 'eci',
         }),
       ],
       items: [
