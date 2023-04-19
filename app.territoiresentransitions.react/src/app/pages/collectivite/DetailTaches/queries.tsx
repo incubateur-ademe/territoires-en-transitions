@@ -1,11 +1,11 @@
 import {supabaseClient} from 'core-logic/api/supabase';
-import {IActionStatutsRead} from 'generated/dataLayer/action_statuts_read';
+import {TActionStatutsRow} from 'types/alias';
 import {ActionReferentiel} from '../ReferentielTable/useReferentiel';
 import {TFilters} from './filters';
 
 // un sous-ensemble des champs pour alimenter notre table des taches
 export type TacheDetail = ActionReferentiel & ActionStatut;
-export type ActionStatut = Pick<IActionStatutsRead, 'action_id' | 'avancement'>;
+export type ActionStatut = Pick<TActionStatutsRow, 'action_id' | 'avancement'>;
 
 // toutes les entrées d'un référentiel pour une collectivité et des filtres donnés
 export const fetchActionStatutsList = async (

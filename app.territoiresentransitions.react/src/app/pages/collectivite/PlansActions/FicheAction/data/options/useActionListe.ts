@@ -2,9 +2,9 @@ import {useQuery} from 'react-query';
 
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {IActionStatutsRead} from 'generated/dataLayer/action_statuts_read';
+import {TActionStatutsRow} from 'types/alias';
 
-type TFetchedData = IActionStatutsRead[];
+type TFetchedData = TActionStatutsRow[];
 
 const fetchActionListe = async (
   collectivite_id: number

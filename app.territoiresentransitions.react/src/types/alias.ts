@@ -1,4 +1,5 @@
 import {Database} from 'types/database.types';
+import {NonNullableFields} from './utils';
 
 export type TFicheAction = Database['public']['Views']['fiches_action']['Row'];
 export type TFicheActionInsert =
@@ -84,3 +85,7 @@ export type TActionRelationInsert =
 
 export type TActionAvancement = Database['public']['Enums']['avancement'];
 export type TActionAvancementExt = TActionAvancement | 'non_concerne';
+
+export type TActionStatutsRow = NonNullableFields<
+  Database['public']['Views']['action_statuts']['Row']
+>;
