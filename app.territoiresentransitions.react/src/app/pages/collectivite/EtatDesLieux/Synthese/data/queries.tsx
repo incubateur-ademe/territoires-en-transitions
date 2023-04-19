@@ -1,11 +1,11 @@
-import {supabaseClient} from '../../../../../../core-logic/api/supabase';
-import {IActionStatutsRead} from '../../../../../../generated/dataLayer/action_statuts_read';
-import {ActionReferentiel} from '../../../../../../app/pages/collectivite/ReferentielTable/useReferentiel';
+import {supabaseClient} from 'core-logic/api/supabase';
+import {ActionReferentiel} from 'app/pages/collectivite/ReferentielTable/useReferentiel';
+import {TActionStatutsRow} from 'types/alias';
 
 // Sous-ensemble des champs pour alimenter la table
 export type ProgressionRow = ActionReferentiel &
   Pick<
-    IActionStatutsRead,
+    TActionStatutsRow,
     | 'action_id'
     | 'score_realise'
     | 'score_programme'
