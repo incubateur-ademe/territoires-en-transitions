@@ -4,10 +4,10 @@ import {
   assertMatch,
   assertObjectMatch,
 } from "https://deno.land/std@0.163.0/testing/asserts.ts";
-import { supabase } from "../../lib/supabase.ts";
-import { signOut } from "../../lib/auth.ts";
-import { testAddRandomUser } from "../../lib/rpcs/testAddRandomUser.ts";
-import { testReset } from "../../lib/rpcs/testReset.ts";
+import { supabase } from "/lib/supabase.ts";
+import { signOut } from "/lib/auth.ts";
+import { testAddRandomUser } from "/lib/rpcs/testAddRandomUser.ts";
+import { testReset } from "/lib/rpcs/testReset.ts";
 
 Deno.test("Creation d'un utilisateur pour une collectivité", async () => {
   await testReset();
@@ -19,9 +19,10 @@ Deno.test("Creation d'un utilisateur pour une collectivité", async () => {
   assertMatch(user.nom, /D.+d.+/);
 
   // On se connecte avec ses credentials.
-  const signInResponse = await supabase.auth.signInWithPassword(
-    { email: user.email, password: user.password },
-  );
+  const signInResponse = await supabase.auth.signInWithPassword({
+    email: user.email,
+    password: user.password,
+  });
   assertExists(signInResponse!.data);
   assertExists(signInResponse.data!.user);
   assertEquals(
@@ -37,9 +38,11 @@ Deno.test("Creation d'un utilisateur pour une collectivité", async () => {
     // que la RPC ne renvoie pas une liste.
     .single();
   assertEquals(isAuthenticated!.data, true);
-  const isAnyRoleOn = await supabase.rpc("is_any_role_on", {
-    id: 10,
-  }).single();
+  const isAnyRoleOn = await supabase
+    .rpc("is_any_role_on", {
+      id: 10,
+    })
+    .single();
   assertEquals(isAnyRoleOn!.data, true);
 
   // On récupère sa liste de collectivité.
