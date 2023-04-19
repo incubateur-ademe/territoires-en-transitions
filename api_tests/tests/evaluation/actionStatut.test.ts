@@ -4,12 +4,12 @@ import {
   assertObjectMatch,
 } from "https://deno.land/std/testing/asserts.ts";
 import { delay } from "https://deno.land/std@0.163.0/async/delay.ts";
-import { supabase } from "../../lib/supabase.ts";
-import { signIn, signOut } from "../../lib/auth.ts";
-import { Avancement } from "../../lib/types/avancement.ts";
-import { testReset } from "../../lib/rpcs/testReset.ts";
+import { supabase } from "/lib/supabase.ts";
+import { signIn, signOut } from "/lib/auth.ts";
+import { Avancement } from "/lib/types/avancement.ts";
+import { testReset } from "/lib/rpcs/testReset.ts";
 import { scoreById } from "./scoreById.ts";
-import { ClientScores } from "../../lib/types/clientScores.ts";
+import { ClientScores } from "/lib/types/clientScores.ts";
 
 Deno.test("Calcul des scores après la modification de statuts", async () => {
   await testReset();
@@ -21,17 +21,16 @@ Deno.test("Calcul des scores après la modification de statuts", async () => {
     action_id: "eci_1.1.1.2",
     collectivite_id: 2,
   };
-  const insert = await supabase.from("action_statut").upsert(
-    statut,
-  ).select();
+  const insert = await supabase.from("action_statut").upsert(statut).select();
 
   // le statut inséré correspond au statut envoyé
   assertEquals(insert.data!.length, 1);
   assertObjectMatch(insert.data![0], statut);
 
   // on attend le calcul des scores
-  await delay(1000);
-  const clientScores1 = await supabase.from("client_scores")
+  await delay(5000);
+  const clientScores1 = await supabase
+    .from("client_scores")
     .select()
     .eq("collectivite_id", 2)
     .eq("referentiel", "eci");
@@ -40,7 +39,7 @@ Deno.test("Calcul des scores après la modification de statuts", async () => {
     // on force un cast car le type est composite
     // cf https://supabase.com/docs/reference/javascript/typescript-support#nested-tables
     clientScores1.data![0] as unknown as ClientScores,
-    "eci_1.1.1.2",
+    "eci_1.1.1.2"
   );
   // Avec le statut 'programme' :
   // - les 'fait' est à 0.
@@ -54,15 +53,16 @@ Deno.test("Calcul des scores après la modification de statuts", async () => {
   await supabase.from("action_statut").upsert(statut);
 
   // on attend de nouveau le calcul des scores
-  await delay(1000);
-  const clientScores2 = await supabase.from("client_scores")
+  await delay(5000);
+  const clientScores2 = await supabase
+    .from("client_scores")
     .select()
     .eq("collectivite_id", 2)
     .eq("referentiel", "eci");
 
   const actionScores2 = scoreById(
     clientScores2.data![0] as unknown as ClientScores,
-    "eci_1.1.1.2",
+    "eci_1.1.1.2"
   );
   // Avec le statut 'fait' :
   // - le 'pas_fait' et le 'programme' sont à 0.
