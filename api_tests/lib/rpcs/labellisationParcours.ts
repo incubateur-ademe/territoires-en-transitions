@@ -70,7 +70,7 @@ type TCritereScore = {
 };
 
 export async function labellisationParcours(
-  collectivite_id: number
+  collectivite_id: number,
 ): Promise<TLabellisationParcours[]> {
   const { data, error } = await supabase
     .rpc("labellisation_parcours", { collectivite_id })

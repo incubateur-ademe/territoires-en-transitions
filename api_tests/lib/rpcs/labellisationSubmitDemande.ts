@@ -5,7 +5,7 @@ export async function labellisationSubmitDemande(
   collectivite_id: number,
   referentiel: Database["public"]["Enums"]["referentiel"],
   sujet: Database["labellisation"]["Enums"]["sujet_demande"],
-  etoiles?: Database["labellisation"]["Enums"]["etoile"]
+  etoiles?: Database["labellisation"]["Enums"]["etoile"],
 ): Promise<Database["labellisation"]["Tables"]["demande"]["Row"]> {
   const { error, data } = await supabase
     .rpc("labellisation_submit_demande", {
