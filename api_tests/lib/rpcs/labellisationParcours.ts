@@ -2,7 +2,6 @@ import { supabase } from "../supabase.ts";
 import { Database } from "../database.types.ts";
 
 export type TEtoiles = Database["labellisation"]["Enums"]["etoile"];
-export type TSujetDemande = Database["labellisation"]["Enums"]["sujet_demande"];
 
 // typage d'une demande d'audit (tel qu'exporté par gen_types)
 export type TLabellisationDemande =
@@ -75,7 +74,8 @@ export async function labellisationParcours(
   const { data, error } = await supabase
     .rpc("labellisation_parcours", { collectivite_id })
     .select();
-  if (!data) {
+  if (!data || error) {
+    console.error(error);
     throw `La RPC 'labellisation_parcours' devrait renvoyer un parcours`;
   }
 

@@ -7,8 +7,8 @@ export async function saveReponse(params: SaveReponseParams): Promise<void> {
     // @ts-ignore()
     params,
   );
-  if (status !== 204) {
+  if (error) {
     console.error(error);
-    throw `La RPC 'save_reponse' devrait renvoyer un code 204. (${status} != 204)`;
+    throw `La RPC 'save_reponse' devrait renvoyer un code 20x. (${status})`;
   }
 }

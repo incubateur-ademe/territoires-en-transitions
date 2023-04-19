@@ -16,7 +16,7 @@ export async function labellisationSubmitDemande(
       etoiles,
     })
     .single();
-  if (!data) {
+  if (!data || error) {
     console.log(error);
     throw `La RPC 'labellisation_submit_demande' devrait renvoyer une demande d'audit.`;
   }

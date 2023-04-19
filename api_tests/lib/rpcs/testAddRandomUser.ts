@@ -6,14 +6,14 @@ export async function testAddRandomUser(
   collectiviteId: number,
   niveau: NiveauAcces,
 ): Promise<RandomUser> {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .rpc("test_add_random_user", {
       collectivite_id: collectiviteId,
       niveau: niveau,
       cgu_acceptees: true,
     })
     .single();
-  if (!data) {
+  if (!data || error) {
     throw `La RPC 'test_add_random_user' devrait renvoyer un utilisateur.`;
   }
 

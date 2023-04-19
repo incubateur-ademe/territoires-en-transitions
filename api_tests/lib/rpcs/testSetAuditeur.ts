@@ -6,10 +6,11 @@ export async function testSetAuditeur(
   user_id: string,
   audit_en_cours: boolean = false,
 ): Promise<Database["public"]["Tables"]["audit_auditeur"]["Row"]> {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .rpc("test_set_auditeur", { demande_id, user_id, audit_en_cours })
     .single();
-  if (!data) {
+  if (!data || error) {
+    console.error(error);
     throw `La RPC 'test_set_auditeur' devrait renvoyer un audit-auditeur.`;
   }
 
