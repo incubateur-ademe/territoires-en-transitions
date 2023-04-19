@@ -5,8 +5,11 @@ BEGIN;
 alter table cot
     add column
         signataire integer references collectivite;
+comment on column cot.signataire is
+    'La collectivité elle-même ou la collectivité supra.';
 
-update cot set signataire = cot.collectivite_id;
+update cot
+set signataire = cot.collectivite_id;
 
 create function before_insert_add_default_signataire() returns trigger
 as
@@ -24,8 +27,5 @@ create trigger before_insert
     on cot
     for each row
 execute procedure before_insert_add_default_signataire();
-
-
-
 
 COMMIT;
