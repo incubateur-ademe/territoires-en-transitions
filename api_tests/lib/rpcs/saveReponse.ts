@@ -5,7 +5,7 @@ export async function saveReponse(params: SaveReponseParams): Promise<void> {
   const { status, error } = await supabase.rpc(
     "save_reponse",
     // @ts-ignore()
-    params
+    params,
   );
   if (status !== 204) {
     console.error(error);

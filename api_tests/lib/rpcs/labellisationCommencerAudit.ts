@@ -3,7 +3,7 @@ import { Database } from "../database.types.ts";
 
 type Audit = Database["public"]["Views"]["audit"]["Row"];
 export async function labellisationCommencerAudit(
-  audit_id: number
+  audit_id: number,
 ): Promise<Audit> {
   const { data } = await supabase
     .rpc("labellisation_commencer_audit", { audit_id })
