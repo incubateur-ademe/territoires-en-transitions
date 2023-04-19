@@ -1,14 +1,16 @@
 import { supabase } from "../supabase.ts";
-import { delay } from "https://deno.land/std@0.163.0/async/delay.ts";
+import * as retry from "https://deno.land/x/retry@v2.0.0/mod.ts";
 
-export async function testReset(): Promise<void> {
+async function _testReset(): Promise<void> {
   const { status, error } = await supabase.rpc("test_reset");
 
   if (error) {
     console.error(error);
     throw `La RPC 'test_reset' devrait renvoyer un code 20x. (${status})`;
   }
-
-  // Évite les deadlock
-  await delay(100);
 }
+
+export const testReset = retry.retryAsyncDecorator(_testReset, {
+  delay: 100,
+  maxTry: 5,
+});
