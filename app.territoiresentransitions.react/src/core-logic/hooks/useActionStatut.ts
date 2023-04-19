@@ -1,9 +1,9 @@
 import {useMutation, useQuery, useQueryClient} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {ActionStatutWrite} from 'generated/dataLayer/action_statut_write';
 import {useCurrentCollectivite} from './useCurrentCollectivite';
 import {useAudit, useIsAuditeur} from 'app/pages/collectivite/Audit/useAudit';
 import {useActionScore} from './scoreHooks';
+import {Database} from 'types/database.types';
 
 /**
  * Charge le statut d'une action
@@ -60,7 +60,9 @@ export const useSaveActionStatut = (args: TActionStatutParams) => {
   };
 };
 
-const write = async (statut: ActionStatutWrite) =>
+type TActionStatutWrite =
+  Database['public']['Tables']['action_statut']['Insert'];
+const write = async (statut: TActionStatutWrite) =>
   supabaseClient.from('action_statut').upsert([statut], {
     onConflict: 'collectivite_id,action_id',
   });
