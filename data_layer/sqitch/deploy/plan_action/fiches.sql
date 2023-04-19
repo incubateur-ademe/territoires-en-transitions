@@ -1,56 +1,11 @@
--- Deploy tet:plan_action to pg
+-- Deploy tet:plan_action/fiches to pg
 
 BEGIN;
 
-create table fiche_action_lien
-(
-    fiche_une  integer references fiche_action,
-    fiche_deux integer references fiche_action,
-    primary key (fiche_une, fiche_deux)
-);
-comment on table fiche_action_lien is
-    'Liens entre deux fiches actions';
--- Evite les liens doublons car les liens sont bidirectionnels
-create unique index on fiche_action_lien (least(fiche_une, fiche_deux), greatest(fiche_une, fiche_deux));
-
-alter table fiche_action_lien
-    enable row level security;
-
-create policy allow_read on fiche_action_lien using (peut_lire_la_fiche(fiche_une) and peut_lire_la_fiche(fiche_deux));
-create policy allow_insert on fiche_action_lien for insert with check (peut_modifier_la_fiche(fiche_une) and
-                                                                       peut_modifier_la_fiche(fiche_deux));
-create policy allow_update on fiche_action_lien for update using (peut_modifier_la_fiche(fiche_une) and
-                                                                  peut_modifier_la_fiche(fiche_deux));
-create policy allow_delete on fiche_action_lien for delete using (peut_modifier_la_fiche(fiche_une) and
-                                                                  peut_modifier_la_fiche(fiche_deux));
-
-create view fiches_liees_par_fiche as
-(
-select fal.fiche_une as fiche_id, fal.fiche_deux as fiche_liee_id
-from fiche_action_lien fal
-union
-select fal.fiche_deux as fiche_id, fal.fiche_une as fiche_liee_id
-from fiche_action_lien fal
-    );
-comment on view fiches_liees_par_fiche is
-    'Liste toutes les fiches liées par fiche';
-
-create view fiche_resume as
-(
-select array_agg(a.*) as plans,
-       fa.titre       as fiche_nom,
-       fa.id          as fiche_id,
-       fa.statut      as fiche_statut,
-       fa.collectivite_id
-from fiche_action fa
-         left join fiche_action_axe faa on fa.id = faa.fiche_id
-         left join plan_action_chemin pac on faa.axe_id = pac.axe_id
-         left join axe a on pac.plan_id = a.id
-group by fa.titre, fa.id, fa.statut, fa.collectivite_id
-    );
-
-create or replace view fiches_action as
-(
+-- Vue listant les fiches actions et ses données liées
+drop function filter_fiches_action(collectivite_id integer, axes_id integer[], pilotes personne[], niveaux_priorite fiche_action_niveaux_priorite[], statuts fiche_action_statuts[], referents personne[]);
+drop view fiches_action;
+create  view fiches_action as
 select fa.*,
        t.thematiques,
        st.sous_thematiques,
@@ -74,7 +29,6 @@ select fa.*,
                        left join personne_tag pt on far.tag_id = pt.id
                        left join dcp on far.user_id = dcp.user_id
               where far.fiche_id = fa.id) ref)  as referents,
-       anne.annexes,
        pla.axes,
        act.actions,
        (select array_agg(indi.*::indicateur_generique)
@@ -118,11 +72,6 @@ from fiche_action fa
                     from structure_tag st
                              join fiche_action_structure_tag fast on fast.structure_tag_id = st.id
                     group by fast.fiche_id) as s on s.fiche_id = fa.id
-    -- annexes
-         left join (select faa.fiche_id, array_agg(a.*::annexe) as annexes
-                    from annexe a
-                             join fiche_action_annexe faa on faa.annexe_id = a.id
-                    group by faa.fiche_id) as anne on anne.fiche_id = fa.id
     -- axes
          left join (select fapa.fiche_id, array_agg(pa.*::axe) as axes
                     from axe pa
@@ -143,25 +92,27 @@ from fiche_action fa
                     from fiche_resume fr
                              join fiches_liees_par_fiche falpf on falpf.fiche_liee_id = fr.fiche_id
                     group by falpf.fiche_id) as fic on fic.fiche_id = fa.id
-    );
+where can_read_acces_restreint(fa.collectivite_id)
+;
 
+drop trigger if exists upsert on fiches_action;
+drop function upsert_fiche_action();
 create or replace function upsert_fiche_action()
     returns trigger as
 $$
 declare
-    id_fiche        integer;
-    thematique      thematique;
-    sous_thematique sous_thematique;
-    axe             axe;
-    partenaire      partenaire_tag;
-    structure       structure_tag;
-    pilote          personne;
-    referent        personne;
-    action          action_relation;
-    indicateur      indicateur_generique;
-    annexe          annexe;
-    service         service_tag;
-    financeur       financeur_montant;
+    id_fiche         integer;
+    thematique       thematique;
+    sous_thematique  sous_thematique;
+    axe              axe;
+    partenaire       partenaire_tag;
+    structure        structure_tag;
+    pilote           personne;
+    referent         personne;
+    action           action_relation;
+    indicateur       indicateur_generique;
+    service          service_tag;
+    financeur        financeur_montant;
     fiche_liee      fiche_resume;
 begin
     id_fiche = new.id;
@@ -307,16 +258,6 @@ begin
             end loop;
     end if;
 
-    -- Annexes
-    delete from fiche_action_annexe where fiche_id = id_fiche;
-    if new.annexes is not null then
-        foreach annexe in array new.annexes::annexe[]
-            loop
-                perform ajouter_annexe(id_fiche, annexe);
-            end loop;
-    end if;
-
-
     -- Services
     delete from fiche_action_service_tag where fiche_id = id_fiche;
     if new.services is not null then
@@ -349,6 +290,12 @@ begin
 end;
 $$ language plpgsql;
 
+create trigger upsert
+    instead of insert or update
+    on fiches_action
+    for each row
+execute procedure upsert_fiche_action();
+
 create or replace function delete_fiche_action()
     returns trigger as
 $$
@@ -360,7 +307,6 @@ begin
     delete from fiche_action_structure_tag where fiche_id = old.id;
     delete from fiche_action_pilote where fiche_id = old.id;
     delete from fiche_action_referent where fiche_id = old.id;
-    delete from fiche_action_annexe where fiche_id = old.id;
     delete from fiche_action_indicateur where fiche_id = old.id;
     delete from fiche_action_action where fiche_id = old.id;
     delete from fiche_action_axe where fiche_id = old.id;
@@ -370,5 +316,92 @@ begin
     return old;
 end;
 $$ language plpgsql;
+
+
+create or replace function
+    filter_fiches_action(
+    collectivite_id integer,
+    axes_id integer[] default null,
+    pilotes personne[] default null,
+    niveaux_priorite fiche_action_niveaux_priorite[] default null,
+    statuts fiche_action_statuts[] default null,
+    referents personne[] default null
+)
+    returns setof fiches_action
+as
+$$
+    # variable_conflict use_variable
+begin
+    if not can_read_acces_restreint(filter_fiches_action.collectivite_id) then
+        perform set_config('response.status', '403', true);
+        raise 'L''utilisateur n''a pas de droit en lecture sur la collectivité.';
+    end if;
+
+    return query
+        select *
+        from fiches_action fa
+        where fa.collectivite_id = collectivite_id
+          and case
+                  when axes_id is null then true
+                  else fa.id in (with child as (select unnest(array_append(a.descendants, a.axe_id)) as axe_id
+                                                from axe_descendants a
+                                                where a.descendants && (axes_id::integer[])
+                                                   or a.axe_id in (select * from unnest(axes_id::integer[])))
+                                 select fiche_id
+                                 from child
+                                          join fiche_action_axe using (axe_id))
+            end
+          and case
+                  when pilotes is null then true
+                  else fa.id in
+                       (select fap.fiche_id
+                        from fiche_action_pilote fap
+                        where fap.tag_id in (select (pi::personne).tag_id from unnest(pilotes) pi)
+                           or fap.user_id in (select (pi::personne).user_id from unnest(pilotes) pi))
+            end
+          and case
+                  when referents is null then true
+                  else fa.id in
+                       (select far.fiche_id
+                        from fiche_action_referent far
+                        where far.tag_id in (select (re::personne).tag_id from unnest(referents) re)
+                           or far.user_id in (select (re::personne).user_id from unnest(referents) re))
+            end
+          and case
+                  when niveaux_priorite is null then true
+                  else fa.niveau_priorite in (select * from unnest(niveaux_priorite::fiche_action_niveaux_priorite[]))
+            end
+          and case
+                  when statuts is null then true
+                  else fa.statut in (select * from unnest(statuts::fiche_action_statuts[]))
+            end;
+end;
+$$ language plpgsql security definer
+                    stable;
+comment on function filter_fiches_action is
+    'Filtre la vue pour le client.';
+
+create or replace view fiche_resume as
+(
+select array_agg(a.*) as plans,
+       fa.titre       as fiche_nom,
+       fa.id          as fiche_id,
+       fa.statut      as fiche_statut,
+       fa.collectivite_id,
+       (select array_agg(pil.*::personne)
+        from (select coalesce(pt.nom, concat(dcp.prenom, ' ', dcp.nom)) as nom,
+                     pt.collectivite_id,
+                     fap.tag_id,
+                     fap.user_id
+              from fiche_action_pilote fap
+                       left join personne_tag pt on fap.tag_id = pt.id
+                       left join dcp on fap.user_id = dcp.user_id
+              where fap.fiche_id = fa.id) pil)  as pilotes
+from fiche_action fa
+         left join fiche_action_axe faa on fa.id = faa.fiche_id
+         left join plan_action_chemin pac on faa.axe_id = pac.axe_id
+         left join axe a on pac.plan_id = a.id
+group by fa.titre, fa.id, fa.statut, fa.collectivite_id
+    );
 
 COMMIT;
