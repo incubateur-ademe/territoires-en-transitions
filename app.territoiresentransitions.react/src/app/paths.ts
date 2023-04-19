@@ -48,7 +48,8 @@ export const collectiviteIndicateurPath = `${collectivitePath}/indicateurs/:${in
 export const collectiviteReferentielPath = `${collectivitePath}/referentiels/:${referentielParam}/:${referentielVueParam}`;
 export const collectiviteTableauBordPath = `${collectivitePath}/tableau_bord`;
 export const collectiviteActionPath = `${collectivitePath}/action/:${referentielParam}/:${actionParam}/:${actionVueParam}?`;
-export const collectiviteLabellisationPath = `${collectivitePath}/labellisation/:${referentielParam}/:${labellisationVueParam}?`;
+export const collectiviteLabellisationRootPath = `${collectivitePath}/labellisation/:${referentielParam}`;
+export const collectiviteLabellisationPath = `${collectiviteLabellisationRootPath}/:${labellisationVueParam}?`;
 export const collectiviteUsersPath = `${collectivitePath}/users`;
 export const collectiviteAllCollectivitesPath = `${collectivitePath}/toutes_collectivites`;
 export const collectivitePersoRefPath = `${collectivitePath}/personnalisation`;
@@ -135,6 +136,17 @@ export const makeCollectiviteTacheUrl = ({
   const hash = levels.length !== limitedLevels.length ? `#${actionId}` : '';
   return pathname + hash;
 };
+
+export const makeCollectiviteLabellisationRootUrl = ({
+  collectiviteId,
+  referentielId,
+}: {
+  collectiviteId: number;
+  referentielId: ReferentielParamOption;
+}) =>
+  collectiviteLabellisationRootPath
+    .replace(`:${collectiviteParam}`, collectiviteId.toString())
+    .replace(`:${referentielParam}`, referentielId);
 
 export const makeCollectiviteLabellisationUrl = ({
   collectiviteId,
