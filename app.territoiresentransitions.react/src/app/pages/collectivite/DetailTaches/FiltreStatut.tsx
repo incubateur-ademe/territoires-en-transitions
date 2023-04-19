@@ -6,10 +6,14 @@ import ActionStatutBadge from 'ui/shared/actions/ActionStatutBadge';
 
 import {ITEM_ALL} from 'ui/shared/filters/commons';
 import {TFiltreProps} from './filters';
-import {ITEMS} from './SelectStatut';
 import {TActionAvancementExt} from 'types/alias';
+import {DEFAULT_OPTIONS} from 'ui/shared/actions/SelectActionStatut';
 
-const items = [{value: ITEM_ALL, label: 'Tous les statuts'}, ...ITEMS];
+// les options sont celles du sélecteur de statut + une entrée "tous les statuts"
+const items = [
+  {value: ITEM_ALL, label: 'Tous les statuts'},
+  ...DEFAULT_OPTIONS,
+];
 const FILTER_NAME = 'statut';
 
 /**

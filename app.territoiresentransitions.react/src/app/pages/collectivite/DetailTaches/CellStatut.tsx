@@ -1,10 +1,19 @@
 import {useCallback} from 'react';
 import {TCellProps} from './DetailTacheTable';
-import {SelectStatut} from './SelectStatut';
+import {useEditActionStatutIsDisabled} from 'core-logic/hooks/useActionStatut';
+import {
+  SelectActionStatut,
+  TSelectActionStatutProps,
+} from 'ui/shared/actions/SelectActionStatut';
+
+export type TSelectStatutProps = TSelectActionStatutProps & {
+  action_id: string;
+};
 
 /** Affiche le sélecteur permettant de mettre à jour le statut d'une tâche */
 export const CellStatut = ({row, value, updateStatut}: TCellProps) => {
   const {have_children, action_id} = row.original;
+  const isDisabled = useEditActionStatutIsDisabled(action_id);
 
   const handleChange = useCallback(
     (value: string) => {
@@ -13,12 +22,10 @@ export const CellStatut = ({row, value, updateStatut}: TCellProps) => {
     [action_id]
   );
 
-  const currentValue = value || 'non_renseigne';
-
   return have_children ? null : (
-    <SelectStatut
-      action_id={action_id}
-      value={currentValue}
+    <SelectActionStatut
+      disabled={isDisabled}
+      value={value}
       onChange={handleChange}
     />
   );
