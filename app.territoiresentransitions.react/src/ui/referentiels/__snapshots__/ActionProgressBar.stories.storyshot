@@ -46,7 +46,7 @@ exports[`Storyshots ui/referentiels/ActionProgressBar Mixte 1`] = `
         className="transition-width duration-500 ease-in-out"
         style={
           Object {
-            "backgroundColor": "#565656",
+            "backgroundColor": "#E5E5E5",
             "borderRadius": 4,
             "minHeight": 10,
             "minWidth": 100,
@@ -58,7 +58,7 @@ exports[`Storyshots ui/referentiels/ActionProgressBar Mixte 1`] = `
           className="transition-width duration-500 ease-in-out"
           style={
             Object {
-              "backgroundColor": "#CE0500",
+              "backgroundColor": "#F95C5E",
               "borderRadius": 4,
               "left": 0,
               "minHeight": "100%",
@@ -72,7 +72,7 @@ exports[`Storyshots ui/referentiels/ActionProgressBar Mixte 1`] = `
           className="transition-width duration-500 ease-in-out"
           style={
             Object {
-              "backgroundColor": "#00A95F",
+              "backgroundColor": "#7AB1E8",
               "borderRadius": 4,
               "left": 0,
               "minHeight": "100%",
@@ -86,7 +86,7 @@ exports[`Storyshots ui/referentiels/ActionProgressBar Mixte 1`] = `
           className="transition-width duration-500 ease-in-out"
           style={
             Object {
-              "backgroundColor": "#0063CB",
+              "backgroundColor": "#34CB6A",
               "borderRadius": 4,
               "left": 0,
               "minHeight": "100%",
@@ -148,7 +148,7 @@ exports[`Storyshots ui/referentiels/ActionProgressBar Rien Renseigne 1`] = `
         className="transition-width duration-500 ease-in-out"
         style={
           Object {
-            "backgroundColor": "#565656",
+            "backgroundColor": "#E5E5E5",
             "borderRadius": 4,
             "minHeight": 10,
             "minWidth": 100,
@@ -160,7 +160,7 @@ exports[`Storyshots ui/referentiels/ActionProgressBar Rien Renseigne 1`] = `
           className="transition-width duration-500 ease-in-out"
           style={
             Object {
-              "backgroundColor": "#CE0500",
+              "backgroundColor": "#F95C5E",
               "borderRadius": 4,
               "left": 0,
               "minHeight": "100%",
@@ -174,7 +174,7 @@ exports[`Storyshots ui/referentiels/ActionProgressBar Rien Renseigne 1`] = `
           className="transition-width duration-500 ease-in-out"
           style={
             Object {
-              "backgroundColor": "#00A95F",
+              "backgroundColor": "#7AB1E8",
               "borderRadius": 4,
               "left": 0,
               "minHeight": "100%",
@@ -188,7 +188,7 @@ exports[`Storyshots ui/referentiels/ActionProgressBar Rien Renseigne 1`] = `
           className="transition-width duration-500 ease-in-out"
           style={
             Object {
-              "backgroundColor": "#0063CB",
+              "backgroundColor": "#34CB6A",
               "borderRadius": 4,
               "left": 0,
               "minHeight": "100%",
@@ -250,7 +250,7 @@ exports[`Storyshots ui/referentiels/ActionProgressBar Tout Fait 1`] = `
         className="transition-width duration-500 ease-in-out"
         style={
           Object {
-            "backgroundColor": "#565656",
+            "backgroundColor": "#E5E5E5",
             "borderRadius": 4,
             "minHeight": 10,
             "minWidth": 100,
@@ -262,7 +262,7 @@ exports[`Storyshots ui/referentiels/ActionProgressBar Tout Fait 1`] = `
           className="transition-width duration-500 ease-in-out"
           style={
             Object {
-              "backgroundColor": "#CE0500",
+              "backgroundColor": "#F95C5E",
               "borderRadius": 4,
               "left": 0,
               "minHeight": "100%",
@@ -276,7 +276,7 @@ exports[`Storyshots ui/referentiels/ActionProgressBar Tout Fait 1`] = `
           className="transition-width duration-500 ease-in-out"
           style={
             Object {
-              "backgroundColor": "#00A95F",
+              "backgroundColor": "#7AB1E8",
               "borderRadius": 4,
               "left": 0,
               "minHeight": "100%",
@@ -290,7 +290,7 @@ exports[`Storyshots ui/referentiels/ActionProgressBar Tout Fait 1`] = `
           className="transition-width duration-500 ease-in-out"
           style={
             Object {
-              "backgroundColor": "#0063CB",
+              "backgroundColor": "#34CB6A",
               "borderRadius": 4,
               "left": 0,
               "minHeight": "100%",
