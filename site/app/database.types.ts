@@ -2713,6 +2713,7 @@ export interface Database {
           fiche_statut:
             | Database["public"]["Enums"]["fiche_action_statuts"]
             | null
+          pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
           plans: unknown[] | null
         }
       }
@@ -2720,7 +2721,6 @@ export interface Database {
         Row: {
           actions: unknown[] | null
           amelioration_continue: boolean | null
-          annexes: unknown[] | null
           axes: unknown[] | null
           budget_previsionnel: number | null
           calendrier: string | null
@@ -3658,13 +3658,13 @@ export interface Database {
       _get_note:
         | {
             Args: {
-              "": number
+              "": string
             }
             Returns: string
           }
         | {
             Args: {
-              "": string
+              "": number
             }
             Returns: string
           }
@@ -4629,7 +4629,6 @@ export interface Database {
         Returns: {
           actions: unknown[] | null
           amelioration_continue: boolean | null
-          annexes: unknown[] | null
           axes: unknown[] | null
           budget_previsionnel: number | null
           calendrier: string | null
@@ -6249,28 +6248,28 @@ export interface Database {
             Args: {
               bucket_width: unknown
               ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
               origin: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
             }
             Returns: string
           }
@@ -6449,13 +6448,6 @@ export interface Database {
       todo:
         | {
             Args: {
-              why: string
-              how_many: number
-            }
-            Returns: boolean[]
-          }
-        | {
-            Args: {
               how_many: number
               why: string
             }
@@ -6469,6 +6461,13 @@ export interface Database {
           }
         | {
             Args: {
+              how_many: number
+            }
+            Returns: boolean[]
+          }
+        | {
+            Args: {
+              why: string
               how_many: number
             }
             Returns: boolean[]
