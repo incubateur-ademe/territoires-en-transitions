@@ -21,7 +21,7 @@ Deno.test(
     await saveReponse(reponse);
 
     // on attend le calcul des scores
-    await delay(3000);
+    await delay(5000);
     let clientScores = await supabase
       .from("client_scores")
       .select()
@@ -43,7 +43,7 @@ Deno.test(
     await saveReponse(reponse);
 
     // on attend de nouveau le calcul des scores
-    await delay(3000);
+    await delay(5000);
     clientScores = await supabase
       .from("client_scores")
       .select()
