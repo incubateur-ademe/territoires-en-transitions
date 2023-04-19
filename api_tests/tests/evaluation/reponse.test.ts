@@ -30,12 +30,12 @@ Deno.test(
 
     const eci242_1 = scoreById(
       clientScores.data![0] as unknown as ClientScores,
-      "eci_2.4.2"
+      "eci_2.4.2",
     );
     assertEquals(
       eci242_1.desactive,
       true,
-      "Sans la compétence 'dechet_1' l'action devrait être désactivée"
+      "Sans la compétence 'dechet_1' l'action devrait être désactivée",
     );
 
     // on change notre réponse
@@ -52,15 +52,15 @@ Deno.test(
 
     const eci242_2 = scoreById(
       clientScores.data![0] as unknown as ClientScores,
-      "eci_2.4.2"
+      "eci_2.4.2",
     );
     assertEquals(
       eci242_2.desactive,
       false,
-      "Avec la compétence 'dechet_1' l'action ne devrait pas être désactivée"
+      "Avec la compétence 'dechet_1' l'action ne devrait pas être désactivée",
     );
 
     // on se déconnecte pour libérer les ressources
     await signOut();
-  }
+  },
 );

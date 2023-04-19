@@ -50,19 +50,19 @@ Deno.test("Scénario de réponse à `dechets_1` pendant un audit", async () => {
 
   let eci242 = scoreById(
     clientScores.data![0] as unknown as ClientScores,
-    "eci_2.4.2"
+    "eci_2.4.2",
   );
   assertEquals(
     eci242.desactive,
     false,
-    "Avec la compétence 'dechet_1' l'action ne devrait pas être désactivée"
+    "Avec la compétence 'dechet_1' l'action ne devrait pas être désactivée",
   );
 
   // On envoie la demande puis on commence l'audit en tant qu'auditeur
   const demandeLabellisation = await envoyer_demande(collectivite, "cot");
   const { auditeur, auditAuditeur } = await ajouter_auditeur(
     collectivite,
-    demandeLabellisation
+    demandeLabellisation,
   );
   await supabase.auth.signInWithPassword({
     email: auditeur.email,
@@ -70,7 +70,7 @@ Deno.test("Scénario de réponse à `dechets_1` pendant un audit", async () => {
   });
   const demande = await labellisationDemande(
     collectivite.collectivite_id!,
-    "eci"
+    "eci",
   );
   await commencer_audit(auditAuditeur, collectivite, demande, auditeur);
 
@@ -91,12 +91,12 @@ Deno.test("Scénario de réponse à `dechets_1` pendant un audit", async () => {
 
   eci242 = scoreById(
     clientScores.data![0] as unknown as ClientScores,
-    "eci_2.4.2"
+    "eci_2.4.2",
   );
   assertEquals(
     eci242.desactive,
     true,
-    "Sans la compétence 'dechet_1' l'action devrait être désactivée"
+    "Sans la compétence 'dechet_1' l'action devrait être désactivée",
   );
 
   // On vérifie la vue `comparaison_scores_audit` au niveau du référentiel
@@ -111,12 +111,12 @@ Deno.test("Scénario de réponse à `dechets_1` pendant un audit", async () => {
   assertEquals(
     comparaisonEci.courant!.points_max_personnalises,
     465,
-    "Sans la compétence 'dechet_1', le potentiel courant du référentiel ECI devrait être 465"
+    "Sans la compétence 'dechet_1', le potentiel courant du référentiel ECI devrait être 465",
   );
   assertEquals(
     comparaisonEci.pre_audit!.points_max_personnalises,
     500,
-    "Avec la compétence 'dechet_1', le potentiel pre-audit du référentiel ECI devrait être 500"
+    "Avec la compétence 'dechet_1', le potentiel pre-audit du référentiel ECI devrait être 500",
   );
 
   await signOut();

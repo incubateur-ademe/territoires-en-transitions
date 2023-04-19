@@ -39,7 +39,7 @@ Deno.test("Calcul des scores après la modification de statuts", async () => {
     // on force un cast car le type est composite
     // cf https://supabase.com/docs/reference/javascript/typescript-support#nested-tables
     clientScores1.data![0] as unknown as ClientScores,
-    "eci_1.1.1.2"
+    "eci_1.1.1.2",
   );
   // Avec le statut 'programme' :
   // - les 'fait' est à 0.
@@ -62,7 +62,7 @@ Deno.test("Calcul des scores après la modification de statuts", async () => {
 
   const actionScores2 = scoreById(
     clientScores2.data![0] as unknown as ClientScores,
-    "eci_1.1.1.2"
+    "eci_1.1.1.2",
   );
   // Avec le statut 'fait' :
   // - le 'pas_fait' et le 'programme' sont à 0.
