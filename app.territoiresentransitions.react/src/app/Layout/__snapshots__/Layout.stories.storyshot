@@ -169,12 +169,112 @@ exports[`Storyshots app/Layout Exemple 1`] = `
               className="fr-nav__item"
             >
               <button
+                aria-controls="floating-ui-3"
+                aria-expanded={false}
+                className="fr-nav__btn"
+                onClick={[Function]}
+              >
+                État des lieux
+              </button>
+              <div
+                className="fr-menu fr-collapse"
+                id="floating-ui-3"
+              >
+                <ul
+                  className="fr-menu__list"
+                  onClickCapture={[Function]}
+                >
+                  <li
+                    className="fr-nav__item"
+                  >
+                    <a
+                      aria-controls="modal-header__menu"
+                      className="fr-nav__link"
+                      href="/collectivite/1/personnalisation"
+                      onClick={[Function]}
+                      target="_self"
+                    >
+                      Personnalisation des référentiels
+                    </a>
+                  </li>
+                  <li
+                    className="fr-nav__item"
+                  >
+                    <a
+                      aria-controls="modal-header__menu"
+                      className="fr-nav__link"
+                      href="/collectivite/1/referentiels/cae/progression"
+                      onClick={[Function]}
+                      target="_self"
+                    >
+                      Référentiel Climat-Air-Énergie
+                    </a>
+                  </li>
+                  <li
+                    className="fr-nav__item"
+                  >
+                    <a
+                      aria-controls="modal-header__menu"
+                      className="fr-nav__link"
+                      href="/collectivite/1/labellisation/cae/suivi"
+                      onClick={[Function]}
+                      target="_self"
+                    >
+                      Labellisation Climat-Air-Énergie
+                    </a>
+                  </li>
+                  <li
+                    className="fr-nav__item"
+                  >
+                    <a
+                      aria-controls="modal-header__menu"
+                      className="fr-nav__link"
+                      href="/collectivite/1/referentiels/eci/progression"
+                      onClick={[Function]}
+                      target="_self"
+                    >
+                      Référentiel Économie Circulaire
+                    </a>
+                  </li>
+                  <li
+                    className="fr-nav__item"
+                  >
+                    <a
+                      aria-controls="modal-header__menu"
+                      className="fr-nav__link"
+                      href="/collectivite/1/labellisation/eci/suivi"
+                      onClick={[Function]}
+                      target="_self"
+                    >
+                      Labellisation Économie Circulaire
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+            <li
+              className="fr-nav__item"
+            >
+              <a
+                aria-controls="modal-header__menu"
+                className="fr-nav__link"
+                href="/collectivite/1/plans"
+                onClick={[Function]}
+                target="_self"
+              >
+                Plans d'action
+              </a>
+            </li>
+            <li
+              className="fr-nav__item"
+            >
+              <button
                 aria-controls="floating-ui-4"
                 aria-expanded={false}
                 className="fr-nav__btn"
                 onClick={[Function]}
               >
-                Climat Air Énergie
+                Indicateurs
               </button>
               <div
                 className="fr-menu fr-collapse"
@@ -190,72 +290,11 @@ exports[`Storyshots app/Layout Exemple 1`] = `
                     <a
                       aria-controls="modal-header__menu"
                       className="fr-nav__link"
-                      href="/collectivite/1/referentiels/cae/progression"
-                      onClick={[Function]}
-                      target="_self"
-                    >
-                      Référentiel
-                    </a>
-                  </li>
-                  <li
-                    className="fr-nav__item"
-                  >
-                    <a
-                      aria-controls="modal-header__menu"
-                      className="fr-nav__link"
                       href="/collectivite/1/indicateurs/cae"
                       onClick={[Function]}
                       target="_self"
                     >
-                      Indicateurs
-                    </a>
-                  </li>
-                  <li
-                    className="fr-nav__item"
-                  >
-                    <a
-                      aria-controls="modal-header__menu"
-                      className="fr-nav__link"
-                      href="/collectivite/1/labellisation/cae/suivi"
-                      onClick={[Function]}
-                      target="_self"
-                    >
-                      Labellisation
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </li>
-            <li
-              className="fr-nav__item"
-            >
-              <button
-                aria-controls="floating-ui-5"
-                aria-expanded={false}
-                className="fr-nav__btn"
-                onClick={[Function]}
-              >
-                Économie Circulaire
-              </button>
-              <div
-                className="fr-menu fr-collapse"
-                id="floating-ui-5"
-              >
-                <ul
-                  className="fr-menu__list"
-                  onClickCapture={[Function]}
-                >
-                  <li
-                    className="fr-nav__item"
-                  >
-                    <a
-                      aria-controls="modal-header__menu"
-                      className="fr-nav__link"
-                      href="/collectivite/1/referentiels/eci/progression"
-                      onClick={[Function]}
-                      target="_self"
-                    >
-                      Référentiel
+                      Indicateurs Climat-Air-Énergie
                     </a>
                   </li>
                   <li
@@ -268,55 +307,7 @@ exports[`Storyshots app/Layout Exemple 1`] = `
                       onClick={[Function]}
                       target="_self"
                     >
-                      Indicateurs
-                    </a>
-                  </li>
-                  <li
-                    className="fr-nav__item"
-                  >
-                    <a
-                      aria-controls="modal-header__menu"
-                      className="fr-nav__link"
-                      href="/collectivite/1/labellisation/eci/suivi"
-                      onClick={[Function]}
-                      target="_self"
-                    >
-                      Labellisation
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </li>
-            <li
-              className="fr-nav__item"
-            >
-              <button
-                aria-controls="floating-ui-6"
-                aria-expanded={false}
-                className="fr-nav__btn"
-                onClick={[Function]}
-              >
-                Pilotage
-              </button>
-              <div
-                className="fr-menu fr-collapse"
-                id="floating-ui-6"
-              >
-                <ul
-                  className="fr-menu__list"
-                  onClickCapture={[Function]}
-                >
-                  <li
-                    className="fr-nav__item"
-                  >
-                    <a
-                      aria-controls="modal-header__menu"
-                      className="fr-nav__link"
-                      href="/collectivite/1/plans"
-                      onClick={[Function]}
-                      target="_self"
-                    >
-                      Plans d'action
+                      Indicateurs Économie Circulaire
                     </a>
                   </li>
                   <li
@@ -329,7 +320,7 @@ exports[`Storyshots app/Layout Exemple 1`] = `
                       onClick={[Function]}
                       target="_self"
                     >
-                      Indicateurs contrat de relance et de transition écologique (CRTE)
+                      Indicateurs Contrat de Relance Transition Écologique
                     </a>
                   </li>
                   <li
@@ -352,7 +343,7 @@ exports[`Storyshots app/Layout Exemple 1`] = `
               className="fr-nav__item"
             >
               <button
-                aria-controls="floating-ui-7"
+                aria-controls="floating-ui-5"
                 aria-expanded={false}
                 className="fr-nav__btn"
                 onClick={[Function]}
@@ -361,25 +352,12 @@ exports[`Storyshots app/Layout Exemple 1`] = `
               </button>
               <div
                 className="fr-menu fr-collapse"
-                id="floating-ui-7"
+                id="floating-ui-5"
               >
                 <ul
                   className="fr-menu__list"
                   onClickCapture={[Function]}
                 >
-                  <li
-                    className="fr-nav__item"
-                  >
-                    <a
-                      aria-controls="modal-header__menu"
-                      className="fr-nav__link"
-                      href="/collectivite/1/personnalisation"
-                      onClick={[Function]}
-                      target="_self"
-                    >
-                      Personnalisation des référentiels
-                    </a>
-                  </li>
                   <li
                     className="fr-nav__item"
                   >
