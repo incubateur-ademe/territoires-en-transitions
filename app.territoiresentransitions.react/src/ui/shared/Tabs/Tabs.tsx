@@ -6,6 +6,7 @@ import {
   ReactElement,
   KeyboardEvent,
   useState,
+  useEffect,
 } from 'react';
 //import '@gouvfr/dsfr/dist/component/tab/tab.css';
 
@@ -34,6 +35,10 @@ const Tabs = ({
       index,
     })
   );
+
+  useEffect(() => {
+    setActiveTab(defaultActiveTab);
+  }, [defaultActiveTab]);
 
   const changeTab = (index: number) => {
     setActiveTab(index);
