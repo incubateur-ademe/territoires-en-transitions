@@ -555,7 +555,6 @@ export interface Database {
         Row: {
           collectivite_id: number
           commentaire: string
-          fiche_id: number
           fichier_id: number | null
           id: number
           lien: Json | null
@@ -567,7 +566,6 @@ export interface Database {
         Insert: {
           collectivite_id: number
           commentaire?: string
-          fiche_id: number
           fichier_id?: number | null
           id?: number
           lien?: Json | null
@@ -579,7 +577,6 @@ export interface Database {
         Update: {
           collectivite_id?: number
           commentaire?: string
-          fiche_id?: number
           fichier_id?: number | null
           id?: number
           lien?: Json | null
@@ -930,6 +927,20 @@ export interface Database {
           fiche_id?: number
         }
       }
+      fiche_action_annexe: {
+        Row: {
+          annexe_id: number
+          fiche_id: number
+        }
+        Insert: {
+          annexe_id: number
+          fiche_id: number
+        }
+        Update: {
+          annexe_id?: number
+          fiche_id?: number
+        }
+      }
       fiche_action_axe: {
         Row: {
           axe_id: number
@@ -1083,20 +1094,6 @@ export interface Database {
           fiche_id?: number
           indicateur_id?: string | null
           indicateur_personnalise_id?: number | null
-        }
-      }
-      fiche_action_lien: {
-        Row: {
-          fiche_deux: number
-          fiche_une: number
-        }
-        Insert: {
-          fiche_deux: number
-          fiche_une: number
-        }
-        Update: {
-          fiche_deux?: number
-          fiche_une?: number
         }
       }
       fiche_action_partenaire_tag: {
@@ -2560,20 +2557,6 @@ export interface Database {
           parents: number[] | null
         }
       }
-      bibliotheque_annexe: {
-        Row: {
-          collectivite_id: number | null
-          commentaire: string | null
-          created_at: string | null
-          created_by: string | null
-          created_by_nom: string | null
-          fiche_id: number | null
-          fichier: Json | null
-          id: number | null
-          lien: Json | null
-          plan_ids: number[] | null
-        }
-      }
       bibliotheque_fichier: {
         Row: {
           bucket_id: string | null
@@ -2708,20 +2691,11 @@ export interface Database {
           user_id: string | null
         }
       }
-      fiche_resume: {
-        Row: {
-          collectivite_id: number | null
-          id: number | null
-          pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
-          plans: unknown[] | null
-          statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
-          titre: string | null
-        }
-      }
       fiches_action: {
         Row: {
           actions: unknown[] | null
           amelioration_continue: boolean | null
+          annexes: unknown[] | null
           axes: unknown[] | null
           budget_previsionnel: number | null
           calendrier: string | null
@@ -2731,7 +2705,6 @@ export interface Database {
           date_debut: string | null
           date_fin_provisoire: string | null
           description: string | null
-          fiches_liees: unknown[] | null
           financements: string | null
           financeurs:
             | Database["public"]["CompositeTypes"]["financeur_montant"][]
@@ -2764,12 +2737,6 @@ export interface Database {
           structures: unknown[] | null
           thematiques: unknown[] | null
           titre: string | null
-        }
-      }
-      fiches_liees_par_fiche: {
-        Row: {
-          fiche_id: number | null
-          fiche_liee_id: number | null
         }
       }
       historique: {
@@ -4037,6 +4004,23 @@ export interface Database {
         }
         Returns: undefined
       }
+      ajouter_annexe: {
+        Args: {
+          fiche_id: number
+          annexe: unknown
+        }
+        Returns: {
+          collectivite_id: number
+          commentaire: string
+          fichier_id: number | null
+          id: number
+          lien: Json | null
+          modified_at: string
+          modified_by: string
+          titre: string
+          url: string | null
+        }
+      }
       ajouter_fiche_action_dans_un_axe: {
         Args: {
           fiche_id: number
@@ -4525,6 +4509,14 @@ export interface Database {
         }
         Returns: undefined
       }
+      enlever_annexe: {
+        Args: {
+          fiche_id: number
+          annexe: unknown
+          supprimer: boolean
+        }
+        Returns: undefined
+      }
       enlever_fiche_action_d_un_axe: {
         Args: {
           fiche_id: number
@@ -4630,6 +4622,7 @@ export interface Database {
         Returns: {
           actions: unknown[] | null
           amelioration_continue: boolean | null
+          annexes: unknown[] | null
           axes: unknown[] | null
           budget_previsionnel: number | null
           calendrier: string | null
@@ -4639,7 +4632,6 @@ export interface Database {
           date_debut: string | null
           date_fin_provisoire: string | null
           description: string | null
-          fiches_liees: unknown[] | null
           financements: string | null
           financeurs:
             | Database["public"]["CompositeTypes"]["financeur_montant"][]
@@ -5646,23 +5638,42 @@ export interface Database {
           valide: boolean
         }
       }
-      labellisation_demande: {
-        Args: {
-          collectivite_id: number
-          referentiel: Database["public"]["Enums"]["referentiel"]
-        }
-        Returns: {
-          collectivite_id: number
-          date: string
-          en_cours: boolean
-          envoyee_le: string | null
-          etoiles: Database["labellisation"]["Enums"]["etoile"] | null
-          id: number
-          modified_at: string | null
-          referentiel: Database["public"]["Enums"]["referentiel"]
-          sujet: Database["labellisation"]["Enums"]["sujet_demande"]
-        }
-      }
+      labellisation_demande:
+        | {
+            Args: {
+              collectivite_id: number
+              referentiel: Database["public"]["Enums"]["referentiel"]
+              etoiles: Database["labellisation"]["Enums"]["etoile"]
+            }
+            Returns: {
+              collectivite_id: number
+              date: string
+              en_cours: boolean
+              envoyee_le: string | null
+              etoiles: Database["labellisation"]["Enums"]["etoile"] | null
+              id: number
+              modified_at: string | null
+              referentiel: Database["public"]["Enums"]["referentiel"]
+              sujet: Database["labellisation"]["Enums"]["sujet_demande"]
+            }
+          }
+        | {
+            Args: {
+              collectivite_id: number
+              referentiel: Database["public"]["Enums"]["referentiel"]
+            }
+            Returns: {
+              collectivite_id: number
+              date: string
+              en_cours: boolean
+              envoyee_le: string | null
+              etoiles: Database["labellisation"]["Enums"]["etoile"] | null
+              id: number
+              modified_at: string | null
+              referentiel: Database["public"]["Enums"]["referentiel"]
+              sujet: Database["labellisation"]["Enums"]["sujet_demande"]
+            }
+          }
       labellisation_parcours: {
         Args: {
           collectivite_id: number
@@ -5832,12 +5843,6 @@ export interface Database {
         Returns: string
       }
       plan_action: {
-        Args: {
-          id: number
-        }
-        Returns: Json
-      }
-      plan_action_export: {
         Args: {
           id: number
         }
@@ -6168,6 +6173,13 @@ export interface Database {
           statuts: unknown[]
         }
         Returns: Json
+      }
+      test_max_fulfill: {
+        Args: {
+          collectivite_id: number
+          referentiel: Database["public"]["Enums"]["referentiel"]
+        }
+        Returns: undefined
       }
       test_remove_user: {
         Args: {
