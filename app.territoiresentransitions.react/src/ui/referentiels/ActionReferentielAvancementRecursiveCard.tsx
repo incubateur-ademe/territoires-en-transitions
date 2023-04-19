@@ -1,4 +1,4 @@
-import {ActionStatusDropdown} from 'ui/shared/actions/ActionStatusDropdown';
+import {ActionStatusDropdown} from 'ui/referentiels/ActionStatusDropdown';
 import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
 import {ActionReferentielDisplayTitle} from 'ui/referentiels/ActionReferentielDisplayTitle';
 import {ActionReferentielDescription} from 'ui/referentiels/ActionReferentielDescription';
