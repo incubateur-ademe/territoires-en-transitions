@@ -3,12 +3,13 @@ import { Database } from "../database.types.ts";
 
 export async function labellisationDemande(
   collectivite_id: number,
-  referentiel: Database["public"]["Enums"]["referentiel"],
+  referentiel: Database["public"]["Enums"]["referentiel"]
 ): Promise<Database["labellisation"]["Tables"]["demande"]["Row"]> {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .rpc("labellisation_demande", { collectivite_id, referentiel })
     .single();
   if (!data) {
+    console.error(error);
     throw `La RPC 'labellisation_demande' devrait renvoyer une demande d'audit.`;
   }
 
