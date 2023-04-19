@@ -1,7 +1,7 @@
 {
   "collectivites": [
     {
-      "collectivite_id": 2,
+      "collectivite_id": 1,
       "nom": "Ploemeur",
       "type_collectivite": "commune",
       "code_siren_insee": 56162,
