@@ -1,5 +1,5 @@
 import {makeCollectiviteTacheUrl} from 'app/paths';
-import {IActionStatutsRead} from 'generated/dataLayer/action_statuts_read';
+import {TActionStatutsRow} from 'types/alias';
 import ActionStatutBadge from 'ui/shared/actions/ActionStatutBadge';
 import FormField from 'ui/shared/form/FormField';
 import AutocompleteInputSelect from 'ui/shared/select/AutocompleteInputSelect';
@@ -21,13 +21,13 @@ const ActionsLiees = ({actions, onSelect, isReadonly}: Props) => {
   const collectiviteId = useCollectiviteId()!;
 
   const actionsLiees =
-    actionListe?.filter((action: IActionStatutsRead) =>
+    actionListe?.filter((action: TActionStatutsRow) =>
       actions?.some(v => v.id === action.action_id)
     ) ?? [];
 
-  const formatOptions = (actions?: IActionStatutsRead[] | null): TOption[] => {
+  const formatOptions = (actions?: TActionStatutsRow[] | null): TOption[] => {
     const options = actions
-      ? actions.map((action: IActionStatutsRead) => ({
+      ? actions.map((action: TActionStatutsRow) => ({
           value: action.action_id,
           label: `${action.referentiel} ${action.identifiant} - ${action.nom}`,
         }))
@@ -38,7 +38,7 @@ const ActionsLiees = ({actions, onSelect, isReadonly}: Props) => {
 
   const formatSelectActions = (values: string[]): TActionRelationInsert[] => {
     const selectedActions =
-      actionListe?.filter((action: IActionStatutsRead) =>
+      actionListe?.filter((action: TActionStatutsRow) =>
         values.some(v => v === action.action_id)
       ) ?? [];
     const formatedActions: TActionRelationInsert[] = selectedActions.map(

@@ -1,13 +1,13 @@
 import {useCallback, useMemo} from 'react';
 import {useQuery} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {IActionStatutsRead} from 'generated/dataLayer/action_statuts_read';
+import {TActionStatutsRow} from 'types/alias';
 import {useToggleRowExpandedReducer} from './useToggleRowExpandedReducer';
 import {indexBy} from 'utils/indexBy';
 
 // les informations du référentiel à précharger
 export type ActionReferentiel = Pick<
-  IActionStatutsRead,
+  TActionStatutsRow,
   | 'action_id'
   | 'identifiant'
   | 'nom'
@@ -17,7 +17,7 @@ export type ActionReferentiel = Pick<
   | 'phase'
 >;
 
-export type IAction = Pick<IActionStatutsRead, 'action_id'>;
+export type IAction = Pick<TActionStatutsRow, 'action_id'>;
 export type TActionsSubset<ActionSubset> = (ActionSubset & ActionReferentiel)[];
 
 /**

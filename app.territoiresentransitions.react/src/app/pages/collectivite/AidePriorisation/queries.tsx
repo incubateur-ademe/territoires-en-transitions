@@ -1,5 +1,5 @@
 import {supabaseClient} from 'core-logic/api/supabase';
-import {IActionStatutsRead} from 'generated/dataLayer/action_statuts_read';
+import {TActionStatutsRow} from 'types/alias';
 import {ActionReferentiel} from 'app/pages/collectivite/ReferentielTable/useReferentiel';
 import {boundariesToQueryFilter} from 'ui/shared/boundariesToQueryFilter';
 import {filterToBoundaries, TFilters} from './filters';
@@ -9,7 +9,7 @@ import {ITEM_ALL} from 'ui/shared/filters/commons';
 // un sous-ensemble des champs pour alimenter notre table
 export type PriorisationRow = ActionReferentiel &
   Pick<
-    IActionStatutsRead,
+    TActionStatutsRow,
     | 'action_id'
     | 'phase'
     | 'score_realise'
