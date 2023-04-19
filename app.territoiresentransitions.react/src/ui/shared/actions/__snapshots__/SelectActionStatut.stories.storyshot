@@ -1,0 +1,97 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots ui/shared/actions/SelectActionStatut Avec Non Concerne 1`] = `
+<div
+  style={
+    Object {
+      "width": 200,
+    }
+  }
+>
+  <button
+    aria-expanded={false}
+    aria-label="ouvrir le menu"
+    className="flex items-center w-full p-2 text-left text-sm min-w-5rem"
+    data-test="SelectStatut"
+    onClick={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    onMouseDown={[Function]}
+    onPointerDown={[Function]}
+  >
+    <span
+      className="mr-auto w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-grey425 bg-[#EEEEEE] !text-xs !px-1"
+      data-test="ActionStatutBadge"
+    >
+      Non concerné
+    </span>
+    <span
+      className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+    />
+  </button>
+</div>
+`;
+
+exports[`Storyshots ui/shared/actions/SelectActionStatut Avec Selection 1`] = `
+<div
+  style={
+    Object {
+      "width": 200,
+    }
+  }
+>
+  <button
+    aria-expanded={false}
+    aria-label="ouvrir le menu"
+    className="flex items-center w-full p-2 text-left text-sm min-w-5rem"
+    data-test="SelectStatut"
+    onClick={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    onMouseDown={[Function]}
+    onPointerDown={[Function]}
+  >
+    <span
+      className="mr-auto w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-[#18753C] bg-[#B8FEC9] !text-xs !px-1"
+      data-test="ActionStatutBadge"
+    >
+      Fait
+    </span>
+    <span
+      className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+    />
+  </button>
+</div>
+`;
+
+exports[`Storyshots ui/shared/actions/SelectActionStatut Selection Par Defaut 1`] = `
+<div
+  style={
+    Object {
+      "width": 200,
+    }
+  }
+>
+  <button
+    aria-expanded={false}
+    aria-label="ouvrir le menu"
+    className="flex items-center w-full p-2 text-left text-sm min-w-5rem"
+    data-test="SelectStatut"
+    onClick={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    onMouseDown={[Function]}
+    onPointerDown={[Function]}
+  >
+    <span
+      className="mr-auto w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-grey625 bg-white border border-grey925 !text-xs !px-1"
+      data-test="ActionStatutBadge"
+    >
+      Non renseigné
+    </span>
+    <span
+      className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+    />
+  </button>
+</div>
+`;
