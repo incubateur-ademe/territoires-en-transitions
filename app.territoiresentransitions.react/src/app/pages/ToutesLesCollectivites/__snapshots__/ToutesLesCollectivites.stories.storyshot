@@ -946,7 +946,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
       >
         <a
           className="!shadow-none"
-          href="/collectivite/2/tableau_bord"
+          href="/collectivite/1/tableau_bord"
           onClick={[Function]}
         >
           <div
@@ -4041,7 +4041,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
       >
         <a
           className="!shadow-none"
-          href="/collectivite/2/tableau_bord"
+          href="/collectivite/1/tableau_bord"
           onClick={[Function]}
         >
           <div
