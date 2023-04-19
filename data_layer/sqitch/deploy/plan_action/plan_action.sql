@@ -7,6 +7,12 @@ alter table annexe
 
 create view bibliotheque_annexe
 as
+with plan as (
+    select faa.fiche_id, array_agg(d.plan_id) as ids
+    from fiche_action_axe faa
+             join plan_action_chemin d on faa.axe_id = d.axe_id
+    group by faa.fiche_id
+)
 select a.id,
        a.collectivite_id,
        plan.ids                                   as plan_ids,
@@ -20,12 +26,7 @@ select a.id,
 from annexe a
          left join labellisation.bibliotheque_fichier_snippet fs
                    on fs.id = a.fichier_id
-         join lateral (
-    select array_agg(d.parents[1]) as ids
-    from fiche_action_axe faa
-             join axe_descendants d on faa.axe_id = d.axe_id
-    where a.fiche_id = faa.fiche_id
-    ) plan on true
+         left join plan using(fiche_id)
 where can_read_acces_restreint(a.collectivite_id);
 comment on view bibliotheque_annexe is
     'Les fichiers ou les liens pour les annexes des fiches action dans un format similaire à la vue `preuve`';
