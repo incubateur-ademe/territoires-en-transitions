@@ -1,5 +1,5 @@
 import {avancementToLabel} from 'app/labels';
-import {actionAvancementColors_new} from 'app/theme';
+import {actionAvancementColors} from 'app/theme';
 import {useEffect, useState} from 'react';
 import {TableOptions} from 'react-table';
 import ChartCard from 'ui/charts/ChartCard';
@@ -9,12 +9,11 @@ import {getFormattedScore, getIndexTitles} from './utils';
 
 // Définition des couleurs des graphes
 const customColors = {
-  [`${avancementToLabel.fait}_color`]: actionAvancementColors_new.fait,
-  [`${avancementToLabel.programme}_color`]:
-    actionAvancementColors_new.programme,
-  [`${avancementToLabel.pas_fait}_color`]: actionAvancementColors_new.pas_fait,
+  [`${avancementToLabel.fait}_color`]: actionAvancementColors.fait,
+  [`${avancementToLabel.programme}_color`]: actionAvancementColors.programme,
+  [`${avancementToLabel.pas_fait}_color`]: actionAvancementColors.pas_fait,
   [`${avancementToLabel.non_renseigne}_color`]:
-    actionAvancementColors_new.non_renseigne,
+    actionAvancementColors.non_renseigne,
 };
 
 // Définition de la légende des graphes
