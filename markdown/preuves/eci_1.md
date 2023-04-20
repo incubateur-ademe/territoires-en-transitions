@@ -113,7 +113,7 @@ id: cr_reunions_gouvernance
 ```
 
 
-# Délibération relative à l'adoption de la stratégie, comprenant le budget associé
+# Délibération relative à l'adoption de la stratégie, comprenant le budget associé et intégrant les enjeux issus du diagnostic
 ```yaml
 actions: 
   - eci_1.1.4
@@ -155,7 +155,7 @@ actions:
 id: participation_formation_eci
 ```
 
-# Description de l'action co-construite pour chaque compétence, avec l'explication sur ce qui favorise l'économie circulaire
+# Description de(s) l'action co-construite pour chaque compétence, avec l'explication de ce qui favorise l'économie circulaire
 ```yaml
 actions: 
   - eci_1.2.2
