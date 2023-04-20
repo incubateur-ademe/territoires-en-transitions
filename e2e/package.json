@@ -9,7 +9,8 @@
     "format": "prettier cypress --check",
     "format-write": "prettier cypress --write",
     "start": "cross-env TZ=Europe/Paris cypress open",
-    "test": "cross-env TZ=Europe/Paris cypress run"
+    "test": "cross-env TZ=Europe/Paris cypress run",
+    "headed": "cross-env TZ=Europe/Paris cypress run --headed"
   },
   "cypress-cucumber-preprocessor": {
     "stepDefinitions": [
