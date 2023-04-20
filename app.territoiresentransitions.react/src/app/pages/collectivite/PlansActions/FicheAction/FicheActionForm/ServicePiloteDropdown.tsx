@@ -4,6 +4,8 @@ import SelectCreateTagsDropdown from 'ui/shared/select/SelectCreateTagsDropdown'
 import {useServicePiloteListe} from '../data/options/useServicePiloteListe';
 import {TFicheActionServicePiloteInsert} from 'types/alias';
 import {formatNewTag} from '../data/utils';
+import {useDeleteTag} from '../data/options/useTagDelete';
+import {useTagUpdate} from '../data/options/useTagUpdate';
 
 type Props = {
   services: TFicheActionServicePiloteInsert[] | null;
@@ -15,6 +17,16 @@ const ServicePiloteDropdown = ({services, onSelect, isReadonly}: Props) => {
   const collectivite_id = useCollectiviteId();
 
   const {data: serviceListe} = useServicePiloteListe();
+
+  const {mutate: updateTag} = useTagUpdate({
+    key: ['services_pilotes', collectivite_id],
+    tagTableName: 'service_tag',
+  });
+
+  const {mutate: deleteTag} = useDeleteTag({
+    key: ['services_pilotes', collectivite_id],
+    tagTableName: 'service_tag',
+  });
 
   const options: TOption[] = serviceListe
     ? serviceListe.map(service => ({
@@ -44,6 +56,15 @@ const ServicePiloteDropdown = ({services, onSelect, isReadonly}: Props) => {
             : [formatNewTag(inputValue, collectivite_id!)]
         )
       }
+      onUpdateTagName={(tag_id, tag_name) =>
+        updateTag({
+          collectivite_id: collectivite_id!,
+          id: parseInt(tag_id),
+          nom: tag_name,
+        })
+      }
+      onDeleteClick={tag_id => deleteTag(parseInt(tag_id))}
+      userCreatedTagIds={serviceListe?.map(s => s.id.toString())}
       placeholderText="Créer un tag..."
       disabled={isReadonly}
     />

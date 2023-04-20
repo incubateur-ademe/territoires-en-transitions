@@ -4,6 +4,8 @@ import SelectCreateTagsDropdown from 'ui/shared/select/SelectCreateTagsDropdown'
 import {usePartenaireListe} from '../data/options/usePartenaireListe';
 import {TPartenaireInsert} from 'types/alias';
 import {formatNewTag} from '../data/utils';
+import {useDeleteTag} from '../data/options/useTagDelete';
+import {useTagUpdate} from '../data/options/useTagUpdate';
 
 type Props = {
   partenaires: TPartenaireInsert[] | null;
@@ -15,6 +17,16 @@ const PartenairesDropdown = ({partenaires, onSelect, isReadonly}: Props) => {
   const collectivite_id = useCollectiviteId();
 
   const {data: partenaireListe} = usePartenaireListe();
+
+  const {mutate: updateTag} = useTagUpdate({
+    key: ['partenaires', collectivite_id],
+    tagTableName: 'partenaire_tag',
+  });
+
+  const {mutate: deleteTag} = useDeleteTag({
+    key: ['partenaires', collectivite_id],
+    tagTableName: 'partenaire_tag',
+  });
 
   const options: TOption[] = partenaireListe
     ? partenaireListe.map(partenaire => ({
@@ -34,7 +46,9 @@ const PartenairesDropdown = ({partenaires, onSelect, isReadonly}: Props) => {
     <SelectCreateTagsDropdown
       values={partenaires?.map((s: TPartenaireInsert) => s.id!.toString())}
       options={options}
-      onSelect={values => onSelect(formatPartenaires(values))}
+      onSelect={values => {
+        onSelect(formatPartenaires(values));
+      }}
       onCreateClick={inputValue =>
         onSelect(
           partenaires
@@ -42,6 +56,15 @@ const PartenairesDropdown = ({partenaires, onSelect, isReadonly}: Props) => {
             : [formatNewTag(inputValue, collectivite_id!)]
         )
       }
+      onUpdateTagName={(tag_id, tag_name) =>
+        updateTag({
+          collectivite_id: collectivite_id!,
+          id: parseInt(tag_id),
+          nom: tag_name,
+        })
+      }
+      onDeleteClick={tag_id => deleteTag(parseInt(tag_id))}
+      userCreatedTagIds={partenaireListe?.map(p => p.id.toString())}
       placeholderText="Créer un tag..."
       disabled={isReadonly}
     />
