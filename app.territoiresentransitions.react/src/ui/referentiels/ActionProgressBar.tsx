@@ -99,12 +99,12 @@ const formatAvancementScore = (
   avancementPoint: number,
   maxPoint: number
 ): string => {
-  return `${maxPoint ? toFixed((avancementPoint / maxPoint) * 100) : 0}%`;
+  return `${maxPoint ? toFixed((avancementPoint / maxPoint) * 100) : 0} %`;
 };
 
 const Square = ({size, color}: {size: number; color: string}) => (
   <svg width={size} height={size}>
-    <rect fill={color} width={size} height={size} />
+    <rect fill={color} stroke="white" width={size} height={size} />
   </svg>
 );
 
