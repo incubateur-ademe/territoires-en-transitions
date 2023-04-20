@@ -30,7 +30,7 @@ begin
         where pa.parent = plan_action_export.id
         order by naturalsort(lower(pa.nom))
         loop
-            enfants[id_loop] = plan_action(pa_enfant_id);
+            enfants[id_loop] = plan_action_export(pa_enfant_id);
             id_loop = id_loop + 1;
         end loop;
 
