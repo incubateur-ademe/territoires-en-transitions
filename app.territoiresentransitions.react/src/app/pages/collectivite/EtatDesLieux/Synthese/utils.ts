@@ -1,5 +1,5 @@
 import {avancementToLabel} from 'app/labels';
-import {ProgressionRow} from './data/queries';
+import {ProgressionRow} from './data/useProgressionReferentiel';
 
 /**
  * Définition des titres des axes pour les graphes de progression des scores

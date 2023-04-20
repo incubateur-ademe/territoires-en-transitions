@@ -4,7 +4,7 @@ import {useEffect, useState} from 'react';
 import {TableOptions} from 'react-table';
 import ChartCard from 'ui/charts/ChartCard';
 import FilArianeButtons from 'ui/shared/FilArianeButtons';
-import {ProgressionRow} from './data/queries';
+import {ProgressionRow} from './data/useProgressionReferentiel';
 import {getFormattedScore, getIndexTitles} from './utils';
 
 // Définition des couleurs des graphes
