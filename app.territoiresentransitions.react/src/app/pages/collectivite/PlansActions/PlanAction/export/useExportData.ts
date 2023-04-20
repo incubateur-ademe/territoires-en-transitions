@@ -1,5 +1,5 @@
 import {useExportTemplateBase} from 'utils/exportXLSX';
-import {usePlanAction} from '../data/usePlanAction';
+import {usePlanActionExport} from '../data/usePlanAction';
 import {useActionListe} from '../../FicheAction/data/options/useActionListe';
 import {ConfigPlanAction} from './config';
 import {useAnnexesPlanAction} from '../data/useAnnexesPlanAction';
@@ -15,7 +15,7 @@ export const useExportData = (plan_id: number) => {
 
   // charge le plan d'action
   const {data: planAction, isLoading: isLoadingPlanAction} =
-    usePlanAction(plan_id);
+    usePlanActionExport(plan_id);
 
   // charge les données des actions
   const {data: actionListe, isLoading: isLoadingActions} = useActionListe();
