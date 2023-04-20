@@ -171,28 +171,33 @@ actions:
 id: fiche_Optigede_optimisation_collecte
 ```
 
-# Dernier DUERP en date pour les activités liées à la compétence traitement
+# Document Unique d'Evaluation de Risques Professionnels (DUERP) pour les installations sous la responsabilité de la collectivité (DSP et marché inclus)
 ```yaml
 actions: 
   - eci_2.3.0
 id: duerp_traitement
 ```
 
-# La liste des installations ICPE liées à la compétence traitement, précisant le type de ces installations et leur niveau de conformité
+# Tableau précisant la liste des ICPE sous la responsabilité de la collectivité (DSP et marché inclus)
 ```yaml
 actions: 
   - eci_2.3.0
 id: liste_installations_icpe_traitement
 ```
 ## Description
-La liste précise, pour les installations ICPE liées à la compétence collecte, en régie ou sous DSP :
-• Le type de ces installations (autorisation, déclaration, enregistrement).
-• Le niveau de conformité : “Conforme” ou “Présence de non-conformité(s)”.
-En l’absence de non-conformité, un engagement sur l’honneur du Président/e de la collectivité certifiant la sincérité des informations sur la conformité du fonctionnement
-de ces installations est attendue.
-En présence de non-conformités, un engagement par l’exécutif de la collectivité à lever ces non-conformités dans un dialogue constructif avec les services de l'Etat sera à
-produire.
-Pour les compétences déléguées à une autre collectivité, il n’est pas demandé d’engagement relatif aux non-conformités, la liste des installations est néanmoins à produire.
+Le tableau devra préciser, pour chaque ICPE sous la reponsabilité de la collectivité (ce qui inclut les DSP et les autres marchés) :
+ - L’arrêté permettant leur activité ;
+ - Le régime auquel elles sont soumises (déclaration, enregistrement ou autorisation) ; 
+ - Les visites d’inspection ICPE effectuées au cours des 5 dernières années et si, l’une de ces visites a mis en évidence un problème de non-conformité la réponse de l’exploitant et/ou de la collectivité responsable.
+
+# Attestation sur l'honneur
+```yaml
+actions: 
+  - eci_2.3.0
+id: attestation_reglementation_contentieux
+```
+## Description
+Une attestation sur l’honneur datée et signée par le responsable de la collectivité déclarant que la réglementation sociale et environnementale est respectée et qu’aucun contentieux n’est en cours sur ces sujets. Si un contentieux est en cours, préciser son objet et l’avancement de son traitement.
 
 # Rapport(s) d'étude(s)
 ```yaml
@@ -208,7 +213,7 @@ actions:
 id: suivi_deploiement_solutions_optimisation_filieres
 ```
 
-# Documents de production : PV de contrôle qualité, remonté des écarts, trace des actions correctives
+# Documents de production : PV de contrôle qualité, remontée des écarts, trace des actions correctives
 ```yaml
 actions: 
   - eci_2.3.3
