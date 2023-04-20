@@ -310,7 +310,7 @@ begin
         foreach fiche_liee in array new.fiches_liees::fiche_resume[]
             loop
                 insert into fiche_action_lien (fiche_une, fiche_deux)
-                values (id_fiche, fiche_liee.fiche_id);
+                values (id_fiche, fiche_liee.id);
             end loop;
     end if;
 
