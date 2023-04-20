@@ -53,7 +53,7 @@ id: cr_cces
 ## Description
 Preuve identique à la eci_2.1.0 -->
 
-<!--# Délibération stipulant la composition de la CCES
+<!--# Délibération précisant la composition de la CCES
 ```yaml
 actions: 
   - eci_2.1.2
@@ -63,6 +63,13 @@ id: delib_compo_cces
 Preuve identique à la eci_2.1.0 -->
 
 # Bilan et outils de suivi
+```yaml
+actions: 
+  - eci_2.1.3
+id: bilan_outil_suivi_PLPDMA
+```
+
+# Rapport annuel du SPPGD faisant état de l'avancement de la politique de prévention
 ```yaml
 actions: 
   - eci_2.1.3
