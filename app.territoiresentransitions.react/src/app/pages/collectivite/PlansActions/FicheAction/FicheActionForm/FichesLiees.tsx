@@ -29,7 +29,7 @@ const FichesLiees = ({
   const collectiviteId = useCollectiviteId()!;
 
   const ficheListeSansFicheCourante = ficheListe?.filter(
-    fiche => fiche.fiche_id !== ficheCouranteId
+    fiche => fiche.id !== ficheCouranteId
   );
 
   const formatOptions = (fiches?: FicheResume[] | null): any[] => {
@@ -63,8 +63,8 @@ const FichesLiees = ({
                 fiches
                   ?.filter(fiche => !fiche.plans || !fiche.plans[0])
                   .map(fiche => ({
-                    value: fiche.fiche_id!.toString(),
-                    label: fiche.fiche_nom ?? 'Sans titre',
+                    value: fiche.id!.toString(),
+                    label: fiche.titre ?? 'Sans titre',
                   })) ?? [],
             };
           } else {
@@ -78,8 +78,8 @@ const FichesLiees = ({
                       fiche.plans.some(p => p && p.id === plan.id)
                   )
                   .map(fiche => ({
-                    value: fiche.fiche_id!.toString(),
-                    label: fiche.fiche_nom ?? 'Sans titre',
+                    value: fiche.id!.toString(),
+                    label: fiche.titre ?? 'Sans titre',
                   })) ?? [],
             };
           }
@@ -92,7 +92,7 @@ const FichesLiees = ({
   const formatSelectedFiches = (values: string[]) => {
     const selectedFiches =
       ficheListeSansFicheCourante?.filter((fiche: FicheResume) =>
-        values.some(v => v === fiche.fiche_id!.toString())
+        values.some(v => v === fiche.id!.toString())
       ) ?? [];
     return selectedFiches;
   };
@@ -114,9 +114,7 @@ const FichesLiees = ({
       <FormField label="Fiches des plans liées">
         <AutocompleteInputSelect
           containerWidthMatchButton
-          values={fiches?.map((fiche: FicheResume) =>
-            fiche.fiche_id!.toString()
-          )}
+          values={fiches?.map((fiche: FicheResume) => fiche.id!.toString())}
           options={formatOptions(ficheListeSansFicheCourante)}
           onSelect={values => onSelect(formatSelectedFiches(values))}
           placeholderText="Recherchez par mots-clés"
@@ -127,26 +125,26 @@ const FichesLiees = ({
         <div className="grid grid-cols-2 gap-6">
           {fiches.map(fiche => (
             <ActionCard
-              key={fiche.fiche_id}
+              key={fiche.id}
               link={
                 fiche.plans && fiche.plans[0] && fiche.plans[0].id
                   ? makeCollectivitePlanActionFicheUrl({
                       collectiviteId,
-                      ficheUid: fiche.fiche_id!.toString(),
+                      ficheUid: fiche.id!.toString(),
                       planActionUid: fiche.plans[0].id!.toString(),
                     })
                   : makeCollectiviteFicheNonClasseeUrl({
                       collectiviteId,
-                      ficheUid: fiche.fiche_id!.toString(),
+                      ficheUid: fiche.id!.toString(),
                     })
               }
               statutBadge={
-                fiche.fiche_statut && (
-                  <FicheActionBadgeStatut statut={fiche.fiche_statut} small />
+                fiche.statut && (
+                  <FicheActionBadgeStatut statut={fiche.statut} small />
                 )
               }
               details={generateCardDetails(fiche.plans)}
-              title={fiche.fiche_nom ?? 'Sans titre'}
+              title={fiche.titre ?? 'Sans titre'}
             />
           ))}
         </div>
