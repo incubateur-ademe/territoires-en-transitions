@@ -4,6 +4,8 @@ import SelectCreateTagsDropdown from 'ui/shared/select/SelectCreateTagsDropdown'
 import {useStructurePiloteListe} from '../data/options/useStructurePiloteListe';
 import {TFicheActionStructureInsert} from 'types/alias';
 import {formatNewTag} from '../data/utils';
+import {useDeleteTag} from '../data/options/useTagDelete';
+import {useTagUpdate} from '../data/options/useTagUpdate';
 
 type Props = {
   structures: TFicheActionStructureInsert[] | null;
@@ -15,6 +17,16 @@ const StructurePiloteDropdown = ({structures, onSelect, isReadonly}: Props) => {
   const collectivite_id = useCollectiviteId();
 
   const {data: structureListe} = useStructurePiloteListe();
+
+  const {mutate: updateTag} = useTagUpdate({
+    key: ['structures', collectivite_id],
+    tagTableName: 'structure_tag',
+  });
+
+  const {mutate: deleteTag} = useDeleteTag({
+    key: ['structures', collectivite_id],
+    tagTableName: 'structure_tag',
+  });
 
   const options: TOption[] = structureListe
     ? structureListe.map(structure => ({
@@ -44,6 +56,15 @@ const StructurePiloteDropdown = ({structures, onSelect, isReadonly}: Props) => {
             : [formatNewTag(inputValue, collectivite_id!)]
         )
       }
+      onUpdateTagName={(tag_id, tag_name) =>
+        updateTag({
+          collectivite_id: collectivite_id!,
+          id: parseInt(tag_id),
+          nom: tag_name,
+        })
+      }
+      onDeleteClick={tag_id => deleteTag(parseInt(tag_id))}
+      userCreatedTagIds={structureListe?.map(s => s.id.toString())}
       placeholderText="Créer un tag..."
       disabled={isReadonly}
     />
