@@ -50,7 +50,7 @@ export const ToastFloater = ({
               // rajout des 32px de margin left/right pour afficher des marges sur mobile
               left: `calc(50% - (${toastWidth}px + 32px) / 2 )`,
             },
-            className: `mx-4 py-2 px-4 bottom-6 text-white bg-gray-800 rounded-md z-50 ${className}`,
+            className: `mx-4 py-2 px-4 bottom-6 text-white bg-gray-800 rounded-md z-[10000] ${className}`,
           })}
         >
           {children}
