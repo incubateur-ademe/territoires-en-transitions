@@ -25,7 +25,7 @@ id: organigramme_eci
 ## Description
 Organigramme du candidat sur lequel sont surlignés les services et directions qui participent à la politique ECi.
 
-# Justificatif d'une ligne budgétaire dédiée à la stratégie et au programme d'actions Economie Circulaire
+# Justificatif d'une ligne budgétaire dédiée à la stratégie et au programme d'actions Economie Circulaire en précisant la part du budget ECi par rapport au budget global (%)
 ```yaml
 actions: 
   - eci_1.1.1
