@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import DropdownFloater from 'ui/shared/floating-ui/DropdownFloater';
 import {TMultiSelectDropdownProps} from 'ui/shared/select/MultiSelectDropdown';
 import Tag from 'ui/shared/Tag';
-import Options from './Options';
+import Options from '../Options';
 
 import {
   buttonDisplayedClassname,
@@ -15,11 +15,19 @@ import {
   optionButtonClassname,
   TSelectBase,
   TSelectSelectionButtonBase,
-} from './commons';
+} from '../commons';
+import OptionMenu from './OptionMenu';
+
+const isUserCreatedOption = (optionValue: string, options?: string[]) =>
+  options?.some(o => o === optionValue);
 
 type TSelectCreateTagsDropdown<T extends string> =
   TMultiSelectDropdownProps<T> & {
     onCreateClick: (value: string) => void;
+    onDeleteClick?: (id: string) => void;
+    onUpdateTagName?: (tag_id: string, tag_name: string) => void;
+    /** tableau d'id des options crées par un utilisateur */
+    userCreatedTagIds?: string[];
   };
 
 /** Sélecteur de Tag(s) avec un input dans le bouton d'ouverture pour créer un tag */
@@ -28,6 +36,9 @@ const SelectCreateTagsDropdown = <T extends string>({
   options,
   onSelect,
   onCreateClick,
+  onDeleteClick,
+  onUpdateTagName,
+  userCreatedTagIds,
   placement,
   placeholderText,
   disabled,
@@ -73,7 +84,26 @@ const SelectCreateTagsDropdown = <T extends string>({
             values={values}
             options={filterOptions(options, inputValue)}
             onSelect={onSelect}
-            renderOption={option => <Tag title={option.label} />}
+            renderOption={option => (
+              <Tag
+                title={option.label}
+                isUserCreated={isUserCreatedOption(
+                  option.value,
+                  userCreatedTagIds
+                )}
+              />
+            )}
+            renderOptionMenu={({option, close}) =>
+              !disabled &&
+              isUserCreatedOption(option.value, userCreatedTagIds) ? (
+                <OptionMenu
+                  option={option}
+                  onDeleteClick={onDeleteClick}
+                  onUpdateTagName={onUpdateTagName}
+                  close={close}
+                />
+              ) : null
+            }
           />
         </div>
       )}
@@ -88,6 +118,7 @@ const SelectCreateTagsDropdown = <T extends string>({
         onSelect={onSelect as (values: string[]) => void}
         placeholderText={placeholderText}
         disabled={disabled}
+        userCreatedTagIds={userCreatedTagIds}
       />
     </DropdownFloater>
   );
@@ -103,6 +134,8 @@ export type TSelectCreateTagsButtonProps<T extends string> = TSelectBase &
     onInputChange: (value: string) => void;
     // onInputChange: (evt: ChangeEvent<HTMLInputElement>) => void;
     onSelect: (values: T[]) => void;
+    /** tableau d'id des options crées par un utilisateur */
+    userCreatedTagIds?: string[];
   };
 
 /**
@@ -115,6 +148,7 @@ const SelectCreateTagsButton = forwardRef(
       isOpen,
       values,
       options,
+      userCreatedTagIds,
       buttonClassName,
       placeholderText,
       'data-test': dataTest,
@@ -160,6 +194,7 @@ const SelectCreateTagsButton = forwardRef(
                   onCloseClick={() =>
                     onSelect(values.filter(value => value !== v))
                   }
+                  isUserCreated={isUserCreatedOption(v, userCreatedTagIds)}
                 />
               ))}
             {!disabled && (
