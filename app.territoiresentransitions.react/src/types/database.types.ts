@@ -2708,13 +2708,11 @@ export interface Database {
       fiche_resume: {
         Row: {
           collectivite_id: number | null
-          fiche_id: number | null
-          fiche_nom: string | null
-          fiche_statut:
-            | Database["public"]["Enums"]["fiche_action_statuts"]
-            | null
+          id: number | null
           pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
           plans: unknown[] | null
+          statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
+          titre: string | null
         }
       }
       fiches_action: {
@@ -5836,6 +5834,12 @@ export interface Database {
         }
         Returns: Json
       }
+      plan_action_export: {
+        Args: {
+          id: number
+        }
+        Returns: Json
+      }
       plan_action_profondeur: {
         Args: {
           id: number
@@ -6248,28 +6252,28 @@ export interface Database {
             Args: {
               bucket_width: unknown
               ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
               origin: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
             }
             Returns: string
           }
@@ -6371,39 +6375,39 @@ export interface Database {
       time_bucket_gapfill:
         | {
             Args: {
-              bucket_width: number
-              ts: number
-              start?: number
-              finish?: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              start?: number
-              finish?: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              start?: number
-              finish?: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
               bucket_width: unknown
               ts: string
               start?: string
               finish?: string
             }
             Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              start?: number
+              finish?: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              start?: number
+              finish?: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              start?: number
+              finish?: number
+            }
+            Returns: number
           }
         | {
             Args: {
@@ -6448,6 +6452,13 @@ export interface Database {
       todo:
         | {
             Args: {
+              why: string
+              how_many: number
+            }
+            Returns: boolean[]
+          }
+        | {
+            Args: {
               how_many: number
               why: string
             }
@@ -6461,13 +6472,6 @@ export interface Database {
           }
         | {
             Args: {
-              how_many: number
-            }
-            Returns: boolean[]
-          }
-        | {
-            Args: {
-              why: string
               how_many: number
             }
             Returns: boolean[]
