@@ -83,7 +83,7 @@ actions:
 id: arrete_modalites_collecte_dechets
 ```
 
-<!--# Dernier rapport annuel d'activité SPPGD présenté en conseil
+<!--# Dernier rapport annuel d'activité du SPPGD présenté en conseil
 ```yaml
 actions: 
   - eci_2.2.0
@@ -94,6 +94,20 @@ Pour les audits d’une année N, disposer au moins du rapport N-2.
 Le rapport est un vrai document d’information du public et non un simple document de communication. Vous trouverez <a href="https://expertises.ademe.fr/professionnels/collectivites/integrer-lenvironnement-domaines-dintervention/dechets/connaitre/dossier/acceder-donnees/rapport-service-public-prevention-gestion-dechets-menagers-assimiles">ici une page d’information</a> sur le rapport du service public
 de prévention et de gestion des déchets ménagers et assimilés et les exigences associées.
 Preuve identique à la cae_1.2.3.1 / cae_3.3.5.3 / eci_4.1.0 / eci_2.4.3-->
+
+# Guide de collecte ou document assimilé
+```yaml
+actions: 
+  - eci_2.2.0
+id: guide_collecte
+```
+
+# Attestation sur l’honneur du respect de la législation sociale et environnementale pour la collecte et/ou le traitement des déchets et mentionnant l'absen ce de contentieux en cours (si contentieux : préciser leur objet)
+```yaml
+actions: 
+  - eci_2.2.0
+id: attestation_respect_legislation_collecte_traitement_dechets
+```
 
 # Délibération approuvant le règlement de collecte des déchets qui couvre l’ensemble du territoire administratif de l’EPCI
 ```yaml
@@ -134,7 +148,7 @@ actions:
 id: rapports_etudes_service_collecte
 ```
 ## Description
-Les preuves ne doivent pas forcement être récentes (en terme de date), mais d'actualité par rapport à l'état du système de collecte en place.
+Les preuves ne doivent pas forcement être récentes, mais doivent demeurer d'actualité par rapport à l'état du système de collecte en place.
 
 # Plan d'actions
 ```yaml
