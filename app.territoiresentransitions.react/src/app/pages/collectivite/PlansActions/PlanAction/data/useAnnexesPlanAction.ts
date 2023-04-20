@@ -1,6 +1,9 @@
 import {useQuery} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {TPreuve} from 'ui/shared/preuves/Bibliotheque/types';
+import {
+  TFichier,
+  TPreuveLienFields,
+} from 'ui/shared/preuves/Bibliotheque/types';
 
 /** Renvoi les annexes associées aux fiches d'un plan d'action */
 export const useAnnexesPlanAction = (plan_id: number) =>
@@ -19,5 +22,10 @@ const fetchAnnexesPlanAction = async (plan_id: number) => {
     throw new Error(error.message);
   }
 
-  return data.map(a => ({...a, preuve_type: 'annexe'})) as unknown as TPreuve[];
+  return data.map(a => ({
+    ...a,
+    preuve_type: 'annexe',
+    fichier: a.fichier as TFichier | null,
+    lien: a.lien as TPreuveLienFields['lien'] | null,
+  }));
 };

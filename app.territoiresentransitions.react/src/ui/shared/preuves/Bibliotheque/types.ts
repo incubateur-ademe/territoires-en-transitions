@@ -24,7 +24,7 @@ export type TPreuveFichierFields = {
 };
 
 // champs propres aux liens
-type TPreuveLienFields = {
+export type TPreuveLienFields = {
   fichier: null;
   lien: {
     url: string;
