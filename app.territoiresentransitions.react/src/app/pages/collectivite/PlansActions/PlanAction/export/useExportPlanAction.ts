@@ -74,7 +74,7 @@ const ecritPlan = (
   data: TExportData
 ) => {
   const {enfants, fiches} = plan;
-  const {config, getActionLabel, getAnnexeLabel} = data;
+  const {config, getActionLabel, getAnnexes} = data;
   const {data_cols} = config;
   let ligne_courante = ligne;
 
@@ -177,10 +177,9 @@ const ecritPlan = (
       fiche.notes_complementaires;
 
     // libellés (nom du fichier ou titre du lien) des annexes
-    worksheet.getCell(data_cols.annexes + ligne_courante).value = fiche?.annexes
-      ?.map(({id}) => getAnnexeLabel(id!))
-      .filter(s => !!s)
-      .join('\n');
+    worksheet.getCell(data_cols.annexes + ligne_courante).value = getAnnexes(
+      fiche?.id
+    )?.join('\n');
 
     // ligne suivante
     ligne_courante += 1;

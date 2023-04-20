@@ -32,10 +32,15 @@ export const useExportData = (plan_id: number) => {
   // charge les annexes associées aux fiches du plan d'action
   const {data: annexes, isLoading: isLoadingAnnexes} =
     useAnnexesPlanAction(plan_id);
-  // fonction exportée pour donner accès au libellé (nom du fichier ou titre du lien) d'une annexe
-  const getAnnexeLabel = (annexe_id: number) => {
-    const annexe = annexes?.find(({id}) => id === annexe_id);
-    return annexe?.lien?.url || annexe?.fichier?.filename || null;
+  // fonction exportée pour donner accès aux libellés (nom du fichier ou titre
+  // du lien) des annexes d'une fiche
+  const getAnnexes = (fiche_id: number | null) => {
+    return fiche_id
+      ? annexes
+          ?.filter(f => f.fiche_id === fiche_id)
+          .map(annexe => annexe?.lien?.url || annexe?.fichier?.filename || null)
+          .filter(s => !!s)
+      : null;
   };
 
   const isLoading =
@@ -52,7 +57,7 @@ export const useExportData = (plan_id: number) => {
     loadTemplate,
     template: template || null,
     getActionLabel,
-    getAnnexeLabel,
+    getAnnexes,
     config: ConfigPlanAction,
     planAction,
   };
