@@ -3,9 +3,37 @@
 BEGIN;
 
 -- Vue listant les fiches actions et ses données liées
-drop function filter_fiches_action(collectivite_id integer, axes_id integer[], pilotes personne[], niveaux_priorite fiche_action_niveaux_priorite[], statuts fiche_action_statuts[], referents personne[]);
+drop function filter_fiches_action(collectivite_id integer, axes_id integer[], pilotes personne[],
+                                   niveaux_priorite fiche_action_niveaux_priorite[], statuts fiche_action_statuts[],
+                                   referents personne[]);
+
 drop view fiches_action;
-create  view fiches_action as
+drop view fiche_resume;
+
+create or replace view fiche_resume as
+select array_agg(a.*)                          as plans,
+       fa.titre,
+       fa.id,
+       fa.statut,
+       fa.collectivite_id,
+       (select array_agg(pil.*::personne)
+        from (select coalesce(pt.nom, concat(dcp.prenom, ' ', dcp.nom)) as nom,
+                     pt.collectivite_id,
+                     fap.tag_id,
+                     fap.user_id
+              from fiche_action_pilote fap
+                       left join personne_tag pt on fap.tag_id = pt.id
+                       left join dcp on fap.user_id = dcp.user_id
+              where fap.fiche_id = fa.id) pil) as pilotes
+from fiche_action fa
+         left join fiche_action_axe faa on fa.id = faa.fiche_id
+         left join plan_action_chemin pac on faa.axe_id = pac.axe_id
+         left join axe a on pac.plan_id = a.id
+group by fa.titre, fa.id, fa.statut, fa.collectivite_id;
+comment on view fiche_resume is
+    'Le résumé de la fiche nécessaire pour afficher les cartes';
+
+create view fiches_action as
 select fa.*,
        t.thematiques,
        st.sous_thematiques,
@@ -90,7 +118,7 @@ from fiche_action fa
     -- fiches liees
          left join (select falpf.fiche_id, array_agg(fr.*) as fiches_liees
                     from fiche_resume fr
-                             join fiches_liees_par_fiche falpf on falpf.fiche_liee_id = fr.fiche_id
+                             join fiches_liees_par_fiche falpf on falpf.fiche_liee_id = fr.id
                     group by falpf.fiche_id) as fic on fic.fiche_id = fa.id
 where can_read_acces_restreint(fa.collectivite_id)
 ;
@@ -101,18 +129,18 @@ create or replace function upsert_fiche_action()
     returns trigger as
 $$
 declare
-    id_fiche         integer;
-    thematique       thematique;
-    sous_thematique  sous_thematique;
-    axe              axe;
-    partenaire       partenaire_tag;
-    structure        structure_tag;
-    pilote           personne;
-    referent         personne;
-    action           action_relation;
-    indicateur       indicateur_generique;
-    service          service_tag;
-    financeur        financeur_montant;
+    id_fiche        integer;
+    thematique      thematique;
+    sous_thematique sous_thematique;
+    axe             axe;
+    partenaire      partenaire_tag;
+    structure       structure_tag;
+    pilote          personne;
+    referent        personne;
+    action          action_relation;
+    indicateur      indicateur_generique;
+    service         service_tag;
+    financeur       financeur_montant;
     fiche_liee      fiche_resume;
 begin
     id_fiche = new.id;
@@ -380,28 +408,5 @@ $$ language plpgsql security definer
                     stable;
 comment on function filter_fiches_action is
     'Filtre la vue pour le client.';
-
-create or replace view fiche_resume as
-(
-select array_agg(a.*) as plans,
-       fa.titre       as fiche_nom,
-       fa.id          as fiche_id,
-       fa.statut      as fiche_statut,
-       fa.collectivite_id,
-       (select array_agg(pil.*::personne)
-        from (select coalesce(pt.nom, concat(dcp.prenom, ' ', dcp.nom)) as nom,
-                     pt.collectivite_id,
-                     fap.tag_id,
-                     fap.user_id
-              from fiche_action_pilote fap
-                       left join personne_tag pt on fap.tag_id = pt.id
-                       left join dcp on fap.user_id = dcp.user_id
-              where fap.fiche_id = fa.id) pil)  as pilotes
-from fiche_action fa
-         left join fiche_action_axe faa on fa.id = faa.fiche_id
-         left join plan_action_chemin pac on faa.axe_id = pac.axe_id
-         left join axe a on pac.plan_id = a.id
-group by fa.titre, fa.id, fa.statut, fa.collectivite_id
-    );
 
 COMMIT;
