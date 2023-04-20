@@ -13,7 +13,6 @@ import {
   TFinanceurTagInsert,
   TFinanceurMontant,
   TFicheResume,
-  TFicheActionStatuts,
 } from 'types/alias';
 
 export type FicheAction = Omit<
@@ -69,12 +68,6 @@ export type Financeur = Omit<
   financeur_tag: TFinanceurTagInsert;
 };
 
-export type FicheResume = Omit<
-  TFicheResume,
-  'fiche_id' | 'fiche_nom' | 'fiche_statut' | 'plans'
-> & {
-  fiche_id?: number | null;
-  fiche_nom?: string | null;
-  fiche_statut: TFicheActionStatuts | null;
+export type FicheResume = Omit<TFicheResume, 'plans'> & {
   plans: TAxeInsert[] | [null] | null;
 };
