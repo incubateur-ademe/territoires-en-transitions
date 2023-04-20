@@ -16,9 +16,9 @@ begin
     fiches = to_jsonb((select array_agg(ff.*)
                        from (select *
                              from fiche_resume fa
-                                      join fiche_action_axe fapa on fa.fiche_id = fapa.fiche_id
+                                      join fiche_action_axe fapa on fa.id = fapa.fiche_id
                              where fapa.axe_id = plan_action.id
-                             order by naturalsort(lower(fa.fiche_nom))) ff));
+                             order by naturalsort(lower(fa.titre))) ff));
     select * from axe where axe.id = plan_action.id limit 1 into pa_axe;
     if not can_read_acces_restreint(pa_axe.collectivite_id) then
         perform set_config('response.status', '403', true);
