@@ -2,6 +2,7 @@
 
 BEGIN;
 
+drop function labellisation.audit_evaluation_payload;
 create or replace function
     labellisation.audit_evaluation_payload(
     in audit audit,
