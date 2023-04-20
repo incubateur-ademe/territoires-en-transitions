@@ -89,21 +89,11 @@ const FichesLiees = ({
     return options;
   };
 
-  const formatSelectedFiches = (values: string[]): FicheResume[] => {
+  const formatSelectedFiches = (values: string[]) => {
     const selectedFiches =
-      ficheListeSansFicheCourante
-        ?.filter((fiche: FicheResume) =>
-          values.some(v => v === fiche.fiche_id!.toString())
-        )
-        .map(
-          (fiche: FicheResume): FicheResume => ({
-            collectivite_id: fiche.collectivite_id,
-            fiche_id: fiche.fiche_id,
-            fiche_nom: fiche.fiche_nom,
-            fiche_statut: fiche.fiche_statut,
-            plans: fiche.plans,
-          })
-        ) ?? [];
+      ficheListeSansFicheCourante?.filter((fiche: FicheResume) =>
+        values.some(v => v === fiche.fiche_id!.toString())
+      ) ?? [];
     return selectedFiches;
   };
 
