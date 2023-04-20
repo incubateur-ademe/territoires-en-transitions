@@ -1,14 +1,7 @@
 import {useCallback} from 'react';
 import {TCellProps} from './DetailTacheTable';
 import {useEditActionStatutIsDisabled} from 'core-logic/hooks/useActionStatut';
-import {
-  SelectActionStatut,
-  TSelectActionStatutProps,
-} from 'ui/shared/actions/SelectActionStatut';
-
-export type TSelectStatutProps = TSelectActionStatutProps & {
-  action_id: string;
-};
+import {SelectActionStatut} from 'ui/shared/actions/SelectActionStatut';
 
 /** Affiche le sélecteur permettant de mettre à jour le statut d'une tâche */
 export const CellStatut = ({row, value, updateStatut}: TCellProps) => {

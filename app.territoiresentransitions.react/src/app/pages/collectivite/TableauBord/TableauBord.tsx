@@ -152,7 +152,7 @@ const ChiffreCles = ({
                 0
               )} potentiels.`}
               smallText="réalisé"
-              hexColor={actionAvancementColors.fait} // en attendant l'harmonisation des couleurs
+              hexColor={actionAvancementColors.fait}
               doughnutFillPercentage={realisePercentage}
               widthPx={widthPx}
             />
@@ -165,7 +165,7 @@ const ChiffreCles = ({
                 0
               )} potentiels.`}
               smallText="programmé"
-              hexColor={actionAvancementColors.programme} // en attendant l'harmonisation des couleurs
+              hexColor={actionAvancementColors.programme}
               doughnutFillPercentage={previsionnelPercentage}
               widthPx={widthPx}
             />
