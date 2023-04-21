@@ -2,6 +2,8 @@
 
 BEGIN;
 
-select has_function_privilege('evaluation.convert_statut(action_id, avancement, double precision[], boolean)', 'execute');
+select has_function_privilege('evaluation.current_service_configuration()', 'execute');
+select has_function_privilege('evaluation.identite(integer)', 'execute');
+select has_function_privilege('evaluation.service_regles()', 'execute');
 
 ROLLBACK;
