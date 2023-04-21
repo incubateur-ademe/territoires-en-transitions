@@ -77,7 +77,7 @@ export type BarChartProps = {
   inverted?: boolean;
   customColors?: boolean;
   unit?: string;
-  onSelectIndex: (index: string | number) => void;
+  onSelectIndex?: (index: string | number) => void;
 };
 
 /**
@@ -157,7 +157,17 @@ const BarChart = ({
       labelSkipWidth={layout === 'horizontal' ? 10 : 0}
       labelSkipHeight={layout !== 'horizontal' ? 10 : 0}
       tooltip={d => getTooltip(d, localIndexTitles, unit)}
-      onClick={({indexValue}) => onSelectIndex(indexValue)}
+      onClick={({indexValue}) => {
+        if (onSelectIndex) onSelectIndex(indexValue);
+      }}
+      onMouseEnter={() => {
+        if (onSelectIndex)
+          (document.body as HTMLInputElement).style.cursor = 'pointer';
+      }}
+      onMouseLeave={() => {
+        if (onSelectIndex)
+          (document.body as HTMLInputElement).style.cursor = 'default';
+      }}
     />
   );
 };
