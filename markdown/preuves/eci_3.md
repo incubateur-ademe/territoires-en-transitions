@@ -54,10 +54,10 @@ actions:
 id: SPASER
 ```
 ## Description
-Uniquement pour les collectivités dont le montant total annuel des achats est supérieur à 100 millions d’euros H.T
+Uniquement pour les collectivités dont le montant total annuel des achats est supérieur à 50 millions d’euros H.T
 En cas de non-conformité, la collectivité doit justifier d'un plan d'actions correctives et de l'absence de contentieux.
 
-# Politique d'achat, délibération, charte ou SPASER (si achats publics supérieurs à 100 M€)
+# Politique d'achats, délibération, charte ou SPASER (si achats publics supérieurs à 100 M€)
 ```yaml
 actions: 
   - eci_3.2.1
