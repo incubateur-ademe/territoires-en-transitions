@@ -81,7 +81,7 @@ export const ActionStatusDropdown = ({actionId}: {actionId: string}) => {
   }
 
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col items-end w-full">
       <SelectActionStatut
         items={ITEMS_AVEC_NON_CONCERNE}
         disabled={disabled}
@@ -90,7 +90,7 @@ export const ActionStatusDropdown = ({actionId}: {actionId: string}) => {
       />
 
       {avancement === 'detaille' && !score?.desactive ? (
-        <>
+        <div className="flex flex-col items-start w-full">
           {avancement_detaille?.length === 3 ? (
             <ul className="mt-6 text-sm">
               <li>
@@ -138,7 +138,7 @@ export const ActionStatusDropdown = ({actionId}: {actionId: string}) => {
               </Dialog>
             </>
           )}
-        </>
+        </div>
       ) : null}
     </div>
   );
