@@ -3,10 +3,10 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {phaseToLabel} from 'ui/referentiels/ActionPhaseBadge';
 import {ActionReferentiel} from 'app/pages/collectivite/ReferentielTable/useReferentiel';
-import {IActionStatutsRead} from 'generated/dataLayer/action_statuts_read';
+import {TActionStatutsRow} from 'types/alias';
 
 export type PhasesRow = ActionReferentiel &
-  Pick<IActionStatutsRead, 'points_realises' | 'phase'>;
+  Pick<TActionStatutsRow, 'points_realises' | 'phase'>;
 
 /**
  * Récupère les points faits par phase pour un référentiel donné
