@@ -3,13 +3,13 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {TableOptions} from 'react-table';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useReferentiel} from '../../../ReferentielTable/useReferentiel';
-import {IActionStatutsRead} from 'generated/dataLayer/action_statuts_read';
 import {ActionReferentiel} from 'app/pages/collectivite/ReferentielTable/useReferentiel';
+import {TActionStatutsRow} from 'types/alias';
 
 // Sous-ensemble des champs pour alimenter la table
 export type ProgressionRow = ActionReferentiel &
   Pick<
-    IActionStatutsRead,
+    TActionStatutsRow,
     | 'action_id'
     | 'score_realise'
     | 'score_programme'
