@@ -2,7 +2,11 @@
 
 BEGIN;
 
+drop function labellisation.evaluate_audit_statuts;
+drop function labellisation.audit_personnalisation_payload;
 drop function labellisation.audit_evaluation_payload;
+drop function labellisation.pre_audit_reponses;
+
 create or replace function
     labellisation.audit_evaluation_payload(
     in audit audit,
@@ -71,5 +75,6 @@ $$
 comment on function labellisation.evaluate_audit_statuts
     is 'Appel le service d''évaluation pour une collectivité et un référentiel. '
         'Le service écrira une fois le calcul fait dans la table `scores_table`.';
+
 
 COMMIT;
