@@ -163,7 +163,7 @@ actions:
 id: formalisation_actions_conso_responsable
 ```
 
-# Fiches d'actions réalisés ou suivi du plan d'action
+# Fiches d'actions réalisées ou suivi du plan d'action
 ```yaml
 actions: 
   - eci_3.3.3
