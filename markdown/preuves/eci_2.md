@@ -374,3 +374,13 @@ id: justif_action_acteurs_pro
 ```
 ## Description
 Convention d'aide, mise en contact de personnes, mise à disposition de moyens...
+
+
+# Document attestant d'une réflexion collective sur les sujets de prévention de déchets
+```yaml
+actions: 
+  - eci_2.5.3
+id: justif_reflexion_collective_prevention
+```
+## Description
+Besoins en emballages, etc.
