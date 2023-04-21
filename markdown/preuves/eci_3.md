@@ -205,7 +205,7 @@ actions:
 id: rapport_reseau_ecoconception
 ```
 
-# Compte-rendu des réunions du réseau
+# Compte rendu des réunions du réseau
 ```yaml
 actions: 
   - eci_3.4.1
@@ -240,14 +240,14 @@ actions:
 id: cdc_projets_ecoconception
 ```
 
-# Document formalisant la stratégie, si possible validé par un élu
+# Document formalisant la stratégie, si possible validé par un (ou des) élu(s)
 ```yaml
 actions: 
   - eci_3.5.1
 id: strategie_eit
 ```
 
-# Compte-rendu des réunions de travail pour définir la stratégie
+# Compte rendu des réunions de travail pour définir la stratégie
 ```yaml
 actions: 
   - eci_3.5.1
@@ -264,21 +264,21 @@ actions:
 id: com_public_eit
 ```
 
-# Compte-rendu des réunions/ateliers inter-entreprises réalisés
+# Comptes rendus des réunions/ateliers inter-entreprises réalisés
 ```yaml
 actions: 
   - eci_3.5.2
 id: cr_reunion_interentreprise_eit
 ```
 
-# Documents descriptifs de la gouvernance de la démarche EIT, compte-rendu de comités de pilotage
+# Documents descriptifs de la gouvernance de la démarche EIT, comptes rendus de comités de pilotage
 ```yaml
 actions: 
   - eci_3.5.2
 id: cr_copil_eit
 ```
 
-# Compte-rendu des réunions du réseau régional
+# Comptes rendus des réunions du réseau régional
 ```yaml
 actions: 
   - eci_3.5.2
@@ -292,7 +292,7 @@ actions:
 id: fiche_poste_eit
 ```
 
-# Compte rendu de réunions et d'activité liées à la recherche de synergies
+# Comptes rendus de réunions et d'activités liées à la recherche de synergies
 ```yaml
 actions: 
   - eci_3.5.3
@@ -331,7 +331,7 @@ actions:
 id: externalisation_eit
 ```
 
-# Fiche de poste de l'ETP dédié
+# Fiche de poste
 ```yaml
 actions: 
   - eci_3.5.4
