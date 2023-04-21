@@ -227,35 +227,33 @@ actions:
 id: suivi_refus
 ```
 
-# Autorisation d'exploiter pour les sites classés ICPE
+# Document Unique d'Evaluation de Risques Professionnels (DUERP) pour les installations sous la responsabilité de la collectivité (DSP et marché inclus)
 ```yaml
 actions: 
   - eci_2.4.0
-id: autorisation_exploit_icpe
+id: document_unique_evaluation_risques_professionnels
 ```
 
-# Compte-rendu de commission de suivi de site
+# Tableau précisant la liste des ICPE sous la responsabilité de la collectivité
 ```yaml
 actions: 
   - eci_2.4.0
-id: cr_commission_suivi_sites
-```
-
-# DUERP
-```yaml
-actions: 
-  - eci_2.4.0
-id: duerp_traitement_collecte
-```
-
-# Autre preuve de la conformité des installations (selon la nature de l'installation) pour les émissions polluantes et les nuisances (olfactives, sonores, etc.)
-```yaml
-actions: 
-  - eci_2.4.0
-id: conformite_installations
+id: liste_ICPE
 ```
 ## Description
-En présence de non-conformité, la collectivité doit justifier d'un plan d'actions correctives et de l'absence de contentieux.
+Pour chaque ICPE sous la responsabilité de la collectivité, le tableau devra préciser
+  - L'arrêté permettant leur activité ;
+  - Le régime auxquelles elles sont soumises (déclaration, enregistrement ou autorisation) ;
+  - Les visites d'inspection ICPE effectuées au cours des 5 dernières années, et si l'une de ces visites a mis en évidence un problème de non-conformité, la réponse de l'exploitant et/ou de la collectivité responsable.
+
+# Attestation sur l'honneur 
+```yaml
+actions: 
+  - eci_2.4.0
+id: attestation_honneur
+```
+## Description
+Attestation sur l'honneur datée et signée par le responsable de la collectivité déclarant que la réglementation sociale et environnementale est respectée et qu'aucun contentieux n'est en cours sur ces sujets. Si un contentieux est en cours, préciser son objet et l'avancement de son traitement
 
 # Justificatif de décision de la collectivité pour mener l'étude en interne ou en externe 
 ```yaml
@@ -279,6 +277,8 @@ actions:
   - eci_2.4.1
 id: liste_actions_reduction_impact_collecte
 ```
+## Description
+Décision de la collectivité ou un compte rendu qui acte cette formalisation des priorités
 
 # Plan d'actions
 ```yaml
@@ -294,11 +294,18 @@ actions:
 id: realisation_actions_reduction_impact_collecte
 ```
 
-# Tableau de bord de pilotage de progression
+# Tableau de bord de pilotage de la progression
 ```yaml
 actions: 
   - eci_2.4.2
 id: suivi_actions_reduction_impact_collecte
+```
+
+# Comptes rendus de réunions attestants de l'avancement du plan d'actions et du déroulement des travaux
+```yaml
+actions: 
+  - eci_2.4.2
+id: cr_reunions_avancement_plan_actions
 ```
 
 <!--# Rapport annuel déchets
@@ -329,11 +336,25 @@ actions:
 id: suivi_actions_reduction_impact_traitement
 ```
 
-# Rapport annuel diffusé aux particuliers
+# Comptes rendus de réunions attestant de l'avancement du plan d'actions et du déroulement des travaux
+```yaml
+actions: 
+  - eci_2.4.4
+id: cr_reunions_avancement_plan_actions
+```
+
+# Rapport annuel diffusé aux particuliers ou incitation à la consulter en facilitant l'accès
 ```yaml
 actions: 
   - eci_2.4.5
 id: diffusion_rapport_annuel_public
+```
+
+# Derniers comptes rendus des CLIS (Commissions Locales d'Information et de Surveillance) établies sur le territoire de la collectivité
+```yaml
+actions: 
+  - eci_2.4.5
+id: cr_CLIS
 ```
 
 # Autre(s) support(s) de communication 
@@ -343,7 +364,10 @@ actions:
 id: communication_public_impacts
 ```
 ## Description
-Exemples : article dans un journal local, présence d'informations sur les factures, commission locale d'information, etc.
+Exemples : 
+  - Article dans un journal local 
+  - Présence d'informations sur les factures 
+  - Commission Locale d'Information et de Surveillance
 
 # Documents d'information et moyen(s) de diffusion
 ```yaml
