@@ -2,32 +2,7 @@ import {avancementToLabel} from 'app/labels';
 import {ProgressionRow} from './data/useProgressionReferentiel';
 
 /**
- * Définition des titres des axes pour les graphes de progression des scores
- *
- * @param scoreData readonly ProgressionRow[]
- * @param addTotal boolean
- * @returns string[]
- */
-
-export const getIndexTitles = (
-  scoreData: readonly ProgressionRow[],
-  addTotal: boolean
-) => {
-  let indexTitles = scoreData.map(
-    d => `${d.action_id.split('_')[1]}. ${d.nom}`
-  );
-  if (addTotal) indexTitles.push('Total');
-
-  return indexTitles;
-};
-
-/**
  * Met en forme les scores pour les graphes de progression des scores
- *
- * @param scoreData readonly ProgressionRow[]
- * @param indexBy string
- * @param percentage boolean
- * @param customColors {}
  */
 
 export const getFormattedScore = (

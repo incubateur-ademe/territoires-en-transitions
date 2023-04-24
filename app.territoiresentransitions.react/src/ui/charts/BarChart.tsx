@@ -74,6 +74,7 @@ export type BarChartProps = {
   keys: string[];
   indexTitles?: string[];
   layout?: 'horizontal' | 'vertical';
+  groupMode?: 'grouped' | 'stacked';
   inverted?: boolean;
   customColors?: boolean;
   unit?: string;
@@ -88,6 +89,7 @@ export type BarChartProps = {
  * @param keys string[] - éléments utilisés pour déterminer chaque série de données
  * @param indexTitles string[] (optionnel) - permet d'afficher des valeurs différentes de indexBy dans la tooltip
  * @param layout 'horizontal' | 'vertical' (optionnel) - orientation du graphe, par défaut vertical
+ * @param groupMode 'grouped' | 'stacked' (optionnel)
  * @param inverted boolean (optionnel) - inverse l'ordre d'affichage des valeurs sur l'axe indexBy
  * @param customColors boolean (optionnel) - signale la présence de couleurs custom dans le tableau data
  * @param unit string (optionnel) - unité des éléments listés dans keys
@@ -100,6 +102,7 @@ const BarChart = ({
   keys,
   indexTitles = [],
   layout,
+  groupMode,
   inverted = false,
   customColors = false,
   unit = '',
@@ -123,8 +126,16 @@ const BarChart = ({
       data={localData}
       keys={keys}
       indexBy={indexBy}
-      margin={{top: 50, right: 60, bottom: 70, left: 70}}
+      margin={{
+        top: layout === 'horizontal' ? 50 : 85,
+        right: 60,
+        bottom: 70,
+        left: 70,
+      }}
+      padding={layout === 'horizontal' ? 0.1 : 0.5}
+      innerPadding={groupMode === 'grouped' ? 2 : 0}
       layout={layout}
+      groupMode={groupMode}
       colors={customColors ? getCustomColor : defaultColors}
       borderColor={{from: 'color', modifiers: [['darker', 1.6]]}}
       axisTop={null}
@@ -153,7 +164,7 @@ const BarChart = ({
       }}
       label={getLabel}
       enableGridX={layout === 'horizontal'}
-      enableGridY={layout === 'vertical'}
+      enableGridY={layout !== 'horizontal'}
       labelSkipWidth={layout === 'horizontal' ? 10 : 0}
       labelSkipHeight={layout !== 'horizontal' ? 10 : 0}
       tooltip={d => getTooltip(d, localIndexTitles, unit)}
