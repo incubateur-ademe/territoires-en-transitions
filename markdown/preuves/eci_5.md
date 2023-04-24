@@ -86,7 +86,7 @@ actions:
 id: com_acteurseco_eci
 ```
 
-# Historique des supports de présentations des réunions d'informations et les listes de participants
+# Historique des supports de présentation des réunions d'information et les listes de participants
 ```yaml
 actions: 
   - eci_5.3.1
