@@ -19,20 +19,8 @@ const fakeOptions: {
   {value: '4', label: 'Option 4'},
 ];
 
-export const AucuneOptionSelectionee = () => {
+export const Default = () => {
   const [values, setValues] = useState([ITEM_ALL]);
-  return (
-    <MultiSelectFilter
-      values={values}
-      options={fakeOptions}
-      onSelect={(v: string[]) => setValues(v)}
-      placeholderText="Sélectionner une option"
-    />
-  );
-};
-
-export const PlusieursOptionsSelectionees = () => {
-  const [values, setValues] = useState(['2', '3']);
   return (
     <MultiSelectFilter
       values={values}
