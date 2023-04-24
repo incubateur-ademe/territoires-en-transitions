@@ -2,80 +2,83 @@
 
 BEGIN;
 
-/*
- Vue générale “usage” de la fonctionnalité :
- - nom collectivités
- - nombre de plans en ligne
- - nombre de fiches en ligne
- - date dernière modification d’une fiche
- - TODO nombre d’utilisateurs différents ayant agi sur l’onglet plans d’action
- */
-create view retool_plan_action_usage as
-select col.collectivite_id,
-       col.nom,
-       count(distinct axe.id) as nb_plans,
-       count(distinct fac.id) as nb_fiches,
-       max(fac.modified_at) as derniere_modif,
-       null as nb_utilisateurs
-from named_collectivite col
-         left join axe on axe.collectivite_id = col.collectivite_id
-         left join fiche_action fac on fac.collectivite_id = col.collectivite_id
-where axe.parent is null
-group by col.collectivite_id, col.nom;
-
-/*
- Progression hebdo :
- - Nom collectivités
- - création d’une fiche la semaine passée
- - création d’un plan la semaine passée
- */
-create view retool_plan_action_hebdo as
+create materialized view private.retool_plan_action_premier_usage as
 with
-    weeks as (
-        select *
-        from generate_series(DATE '2023-01-02', now(), '7 day') day
-    ),
-    collectivites_by_weeks as (
-        select nc.*, w.day
-        from named_collectivite nc
-                 left join lateral (select * from weeks) w on true
-        order by nc.collectivite_id
-    ),
-    plans as (
-        select cw.collectivite_id, cw.day, count(p.id) as nb_plans, array_agg(distinct dcp.email) as contributeurs
-        from collectivites_by_weeks cw
-                 left join (select * from axe where parent is null) p
-                           on p.collectivite_id = cw.collectivite_id
-                               and p.created_at >= cw.day
-                               and p.created_at < cw.day + interval '7 day'
-                 left join (select * from dcp where limited = false and deleted = false) dcp on p.modified_by = dcp.user_id
-        group by cw.collectivite_id, cw.day
-    ),
-    fiches as (
-        select cw.collectivite_id, cw.day, count(f.id) as nb_fiches, array_agg(distinct dcp.email) as contributeurs
-        from collectivites_by_weeks cw
-                 left join fiche_action f
-                           on f.collectivite_id = cw.collectivite_id
-                               and f.created_at >= cw.day
-                               and f.created_at < cw.day + interval '7 day'
-                 left join (select * from dcp where limited = false and deleted = false) dcp on f.modified_by = dcp.user_id
-        group by cw.collectivite_id, cw.day
+    first as (
+        with
+            fiche_axe as (
+                with
+                    min_fiche as (
+                        -- Récupère la première fiche par collectivité
+                        with min_fiche as (
+                            select collectivite_id, min(created_at) as created_at
+                            from fiche_action
+                            group by collectivite_id
+                        )
+                             -- Prend la fiche avec le plus petit id quand plusieurs ont la même date
+                        select fa.collectivite_id, min(fa.id) as id
+                        from fiche_action fa
+                                 join min_fiche mf on mf.collectivite_id = fa.collectivite_id
+                            and mf.created_at = fa.created_at
+                        group by fa.collectivite_id
+                    ),
+                    min_axe as (
+                        -- Récupère le premier axe par collectivité
+                        with min_axe as (
+                            select collectivite_id, min(created_at) as created_at
+                            from axe
+                            group by collectivite_id
+                        )
+                             -- Prend l'axe avec le plus petit id quand plusieurs ont la même date
+                        select a.collectivite_id, min(a.id) as id
+                        from axe a
+                                 join min_axe ma on ma.collectivite_id = a.collectivite_id
+                            and ma.created_at = a.created_at
+                        group by a.collectivite_id
+                    )
+                    -- Assemble les fiches et les axes
+                select fa.collectivite_id, fa.created_at, fa.modified_by, true as fiche
+                from fiche_action fa
+                         join min_fiche using(id)
+                union
+                select a.collectivite_id, a.created_at, a.modified_by, false as fiche
+                from axe a
+                         join min_axe using(id)
+            ),
+            min_fiche_axe as (
+                -- Récupère la fiche ou l'axe créé en premier par la collectivité
+                select collectivite_id, min(created_at) as created_at
+                from fiche_axe
+                group by collectivite_id
+            )
+            -- Complète les informations de la première utilisation
+        select fa.collectivite_id, fa.created_at, fa.fiche, dcp.email
+        from fiche_axe fa
+                 join min_fiche_axe mfa on fa.collectivite_id = mfa.collectivite_id
+            and fa.created_at = mfa.created_at
+                 left join dcp on fa.modified_by = dcp.user_id
+        order by fa.fiche
     )
-select c.collectivite_id,
-       c.nom,
-       concat(c.day::date, ' - ', (c.day + interval '6' day)::date) as date_range,
-       p.nb_plans,
-       f.nb_fiches,
-       (
-           select array_remove(array_agg(distinct val), null)
-           from unnest(array_cat(p.contributeurs, f.contributeurs)) val
-       ) as contributeurs,
-       c.day
-from collectivites_by_weeks c
-         join plans p on c.collectivite_id = p.collectivite_id and c.day = p.day
-         join fiches f on c.collectivite_id = f.collectivite_id and c.day = f.day
-where p.nb_plans <> 0 or f.nb_fiches <> 0
-    and is_service_role()
-order by c.day desc, c.collectivite_id;
+select nc.collectivite_id,
+       nc.nom,
+       f.fiche,
+       f.created_at,
+       f.email
+from named_collectivite nc
+         join lateral (
+    -- Si premier axe et fiche créé en même temps (import), on en prend qu'un (la fiche via order by)
+    select *
+    from first f
+    where f.collectivite_id = nc.collectivite_id
+    limit 1
+    ) f on true
+order by created_at desc;
+comment on materialized view private.retool_plan_action_premier_usage is
+    'Vue pour identifier la toute première utilisation de la fonctionnalité plan action
+    par les collectivités.';
+
+create view retool_plan_action_premier_usage as
+select * from private.retool_plan_action_premier_usage
+where is_service_role();
 
 COMMIT;
