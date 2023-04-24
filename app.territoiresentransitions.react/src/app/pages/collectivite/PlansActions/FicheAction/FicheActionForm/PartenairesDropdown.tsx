@@ -44,7 +44,9 @@ const PartenairesDropdown = ({partenaires, onSelect, isReadonly}: Props) => {
 
   return (
     <SelectCreateTagsDropdown
-      values={partenaires?.map((s: TPartenaireInsert) => s.id!.toString())}
+      values={partenaires?.map((s: TPartenaireInsert) =>
+        s.id ? s.id.toString() : ''
+      )}
       options={options}
       onSelect={values => {
         onSelect(formatPartenaires(values));

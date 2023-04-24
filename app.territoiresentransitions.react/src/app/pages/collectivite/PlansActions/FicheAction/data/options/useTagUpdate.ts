@@ -28,7 +28,6 @@ export const useTagUpdate = ({key, tagTableName}: Args) => {
           queryClient.getQueryData(key);
 
         queryClient.setQueryData(key, (old?: Tag[]) => {
-          // return old ? old.filter((v: Tag) => v.id !== tag.id) : [];
           return old ? old.map((v: Tag) => (v.id === tag.id ? tag : v)) : [];
         });
 
