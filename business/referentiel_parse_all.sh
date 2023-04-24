@@ -1,28 +1,21 @@
 #!/bin/sh
 python referentiel_cli.py parse-preuves\
     --input-markdown-folder "../markdown/preuves"\
-    --output-json-file "../data_layer/content/preuves.json"
-
-python referentiel_cli.py parse-preuves\
-    --input-markdown-folder "../markdown/preuves"\
-    --output-json-file "../data_layer/content/preuves.json"
+    --output-json-file "../content/preuves.json"
 
 python referentiel_cli.py parse-actions\
     --input-markdown-folder "../markdown/referentiels/cae"\
-    --output-json-file "../data_layer/content/cae.json"
-cp ../data_layer/content/cae.json ../business/tests/data/dl_content/cae.json
+    --output-json-file "../content/cae.json"
 
 python referentiel_cli.py parse-actions\
     --input-markdown-folder "../markdown/referentiels/eci"\
-    --output-json-file "../data_layer/content/eci.json"
-cp ../data_layer/content/eci.json ../business/tests/data/dl_content/eci.json
+    --output-json-file "../content/eci.json"
 
 python referentiel_cli.py parse-indicateurs\
     --input-markdown-folder "../markdown/indicateurs/**"\
-    --output-json-file "../data_layer/content/indicateurs.json"
+    --output-json-file "../content/indicateurs.json"
 
 python referentiel_cli.py parse-personnalisations\
     --questions-markdown-folder "../markdown/questions"\
     --regles-markdown-folder "../markdown/personnalisations"\
-    --output-json-file "../data_layer/content/personnalisations.json"
-cp ../data_layer/content/personnalisations.json ../business/tests/data/dl_content/personnalisations.json
+    --output-json-file "../content/personnalisations.json"
