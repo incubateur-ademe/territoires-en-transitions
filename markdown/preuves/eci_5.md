@@ -72,7 +72,7 @@ actions:
 id: enjeux_collectivités
 ```
 
-# Conventions de partenariat
+# Conventions ou accords de partenariat
 ```yaml
 actions: 
   - eci_5.2.3
