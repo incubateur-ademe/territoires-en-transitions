@@ -314,5 +314,7 @@ plan_action/annexe [plan_action/fiches] 2023-03-27T09:05:59Z Amandine Jacquelin 
 plan_action/plan_action [plan_action/plan_action@v2.21.0] 2023-04-20T07:23:50Z Amandine Jacquelin <conta@LanceLibre> # Utilise fiche_resume au lieu de fiches_action dans plan_action
 plan_action/export 2023-04-20T13:57:47Z Florian <florian@derfurth.com> # RPC plan_action_export
 @v2.22.0 2023-04-20T16:52:01Z Florian <florian@derfurth.com> # Améliorations des plans d'action
+
 stats/locales [stats/locales@v2.22.0] 2023-04-21T14:07:44Z Florian <florian@derfurth.com> # Corrige le comptage des labellisés
 labellisation/cot [labellisation/cot@v2.21.0] 2023-04-18T13:27:48Z Amandine Jacquelin <conta@LanceLibre> # Ajout du signataire
+@v2.23.0 2023-04-24T14:54:21Z Florian <florian@derfurth.com> # Corrige les stats et ajoute le signataire COT
