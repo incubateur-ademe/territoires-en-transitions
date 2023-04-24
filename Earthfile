@@ -95,6 +95,7 @@ load-json-build:
     ENV SERVICE_ROLE_KEY
     ENV API_URL
     COPY ./data_layer/content /content
+    COPY ./data_layer/scripts/load_json_content.sh /content/load.sh
     ENTRYPOINT sh ./content/load.sh
     SAVE IMAGE load-json:latest
 
