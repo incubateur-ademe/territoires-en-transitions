@@ -167,6 +167,14 @@ business-test:
         --env SUPABASE_KEY=$SERVICE_ROLE_KEY \
         business-test:latest
 
+business-parse:
+    FROM +business-build
+    COPY ./markdown /markdown
+    RUN mkdir /content
+    RUN sh ./referentiel_parse_all.sh
+    SAVE ARTIFACT /content AS LOCAL ./data_layer/content
+    SAVE ARTIFACT /content AS LOCAL ./business/tests/data/dl_content
+
 client-deps:
     FROM node:16
     ARG APP_DIR="./app.territoiresentransitions.react"
