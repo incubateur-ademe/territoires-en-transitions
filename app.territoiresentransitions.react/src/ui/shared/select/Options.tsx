@@ -127,28 +127,45 @@ const Option = <T extends string>({
         renderOptionMenu({
           option,
         }) && (
-          <DropdownFloater
-            placement="top"
-            offsetValue={{mainAxis: 8}}
-            render={({close}) => (
-              <div onClick={e => e.stopPropagation()}>
-                {renderOptionMenu({
-                  option,
-                  close,
-                })}
-              </div>
-            )}
-          >
-            <div
-              className="ml-6 mr-4 p-1 cursor-pointer hover:bg-indigo-100"
-              onClick={evt => {
-                evt.stopPropagation();
-              }}
-            >
-              <IconThreeDotHorizontal className="w-4 h-4 fill-bf500" />
-            </div>
-          </DropdownFloater>
+          <OptionMenuFloater
+            renderOptionMenu={renderOptionMenu}
+            option={option}
+          />
         )}
     </button>
+  );
+};
+
+type OptionMenuFloaterProps = {
+  renderOptionMenu: (props: RenderOptionMenuProps) => React.ReactElement | null;
+  option: TOption;
+};
+
+const OptionMenuFloater = ({
+  renderOptionMenu,
+  option,
+}: OptionMenuFloaterProps) => {
+  return (
+    <DropdownFloater
+      placement="top"
+      offsetValue={{mainAxis: 8}}
+      render={({close}) => (
+        <div onClick={e => e.stopPropagation()}>
+          {renderOptionMenu({
+            option,
+            close,
+          })}
+        </div>
+      )}
+    >
+      <div
+        className="ml-6 mr-4 p-1 cursor-pointer hover:bg-indigo-100"
+        onClick={evt => {
+          evt.stopPropagation();
+        }}
+      >
+        <IconThreeDotHorizontal className="w-4 h-4 fill-bf500" />
+      </div>
+    </DropdownFloater>
   );
 };
