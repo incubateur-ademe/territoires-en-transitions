@@ -12,20 +12,8 @@ const options = [
   {value: 'option3', label: 'Option 3'},
 ];
 
-export const AucuneOptionSelectionee = () => {
+export const Default = () => {
   const [value, setValue] = useState(undefined);
-  return (
-    <SelectDropdown
-      value={value}
-      options={options}
-      onSelect={v => setValue(v)}
-      placeholderText="Sélectionner une option"
-    />
-  );
-};
-
-export const OptionSelectionee = () => {
-  const [value, setValue] = useState('option2');
   return (
     <SelectDropdown
       value={value}

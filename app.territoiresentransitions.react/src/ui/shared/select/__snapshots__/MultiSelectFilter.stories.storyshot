@@ -46,6 +46,30 @@ exports[`Storyshots ui/shared/select/MultiSelectFilter Custom Option Et Selectio
 </button>
 `;
 
+exports[`Storyshots ui/shared/select/MultiSelectFilter Default 1`] = `
+<button
+  aria-expanded={false}
+  aria-label="ouvrir le menu"
+  className="flex items-center w-full p-2 text-left text-sm"
+  onClick={[Function]}
+  onKeyDown={[Function]}
+  onKeyUp={[Function]}
+  onMouseDown={[Function]}
+  onPointerDown={[Function]}
+>
+  <span
+    className="mr-auto flex line-clamp-1"
+  >
+    <span>
+      Tous
+    </span>
+  </span>
+  <span
+    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+  />
+</button>
+`;
+
 exports[`Storyshots ui/shared/select/MultiSelectFilter Plusieurs Options Selectionees 1`] = `
 <button
   aria-expanded={false}

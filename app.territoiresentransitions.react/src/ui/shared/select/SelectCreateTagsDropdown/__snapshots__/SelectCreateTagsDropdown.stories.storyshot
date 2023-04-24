@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots ui/shared/select/SelectCreateTagsDropdown Default 1`] = `
+<div
+  aria-expanded={false}
+  aria-label="ouvrir le menu"
+  onClick={[Function]}
+  onKeyDown={[Function]}
+  onKeyUp={[Function]}
+  onMouseDown={[Function]}
+  onPointerDown={[Function]}
+>
+  <div
+    className="flex items-center w-full p-2 text-left text-sm fr-select !bg-none !flex !px-4"
+    onClick={[Function]}
+  >
+    <div
+      className="flex items-center flex-wrap gap-2 grow"
+    >
+      <input
+        className="grow text-sm placeholder:text-gray-500 placeholder:italic"
+        data-test="undefined-input"
+        onChange={[Function]}
+        placeholder="Sélectionner une ou plusieurs options..."
+        type="text"
+        value=""
+      />
+    </div>
+    <span
+      className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+    />
+  </div>
+</div>
+`;
