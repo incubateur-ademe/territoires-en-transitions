@@ -334,3 +334,5 @@ plan_action/tags 2023-04-18T14:20:39Z Florian <florian@derfurth.com> # Ajoute la
 
 stats/export 2023-04-26T13:09:53Z Amandine Jacquelin <conta@LanceLibre> # Ajoute une fonction pour lister les utilisateurs par collectivité et en colonne
 plan_action/plan_action [plan_action/plan_action@v2.26.0] 2023-04-28T13:41:39Z Amandine Jacquelin <conta@LanceLibre> # Ajout cibles
+retool/plan_action [retool/plan_action@v2.23.0] 2023-04-24T15:17:53Z Amandine Jacquelin <conta@LanceLibre> # Ajoute une vue
+cron/refresh_retool_plan_action_premier_usage 2023-05-02T13:06:59Z Amandine Jacquelin <conta@LanceLibre> # Refresh pour vue retool_plan_action_premier_usage

@@ -2,12 +2,20 @@
 
 BEGIN;
 
-select collectivite_id, nom, nb_plans, nb_fiches, derniere_modif, nb_utilisateurs
-from retool_plan_action_usage
+select collectivite_id,
+       nom,
+       fiche,
+       created_at,
+       email
+from retool_plan_action_premier_usage
 where false;
 
-select collectivite_id, nom, date_range, nb_plans, nb_fiches
-from retool_plan_action_hebdo
+select collectivite_id,
+       nom,
+       fiche,
+       created_at,
+       email
+from private.retool_plan_action_premier_usage
 where false;
 
 ROLLBACK;
