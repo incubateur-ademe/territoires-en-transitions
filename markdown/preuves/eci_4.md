@@ -81,7 +81,7 @@ actions:
 ```
 Preuve identique à la eci_4.2.1 -->
 
-# Délibération de principe sur la mise en place de la Tarification incitative
+# Délibération de principe sur la mise en place de la Tarification Incitative (TI)
 ```yaml
 actions: 
   - eci_4.2.4
