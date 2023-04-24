@@ -55,7 +55,10 @@ const IndicateursLies = ({indicateurs, onSelect, isReadonly}: Props) => {
                 to={`${makeCollectiviteIndicateursUrl({
                   collectiviteId: collectiviteId!,
                   indicateurView: getIndicateurGroup(indicateur.indicateur_id),
-                })}#${indicateur.indicateur_id}`}
+                })}#${
+                  indicateur.indicateur_id ??
+                  indicateur.indicateur_personnalise_id
+                }`}
               >
                 <div className="flex h-full py-4 px-6">
                   <div className="mb-auto pr-2 font-bold line-clamp-3">
