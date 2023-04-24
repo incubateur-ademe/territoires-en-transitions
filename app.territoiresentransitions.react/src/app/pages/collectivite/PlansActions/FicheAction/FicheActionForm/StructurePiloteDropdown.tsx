@@ -45,7 +45,7 @@ const StructurePiloteDropdown = ({structures, onSelect, isReadonly}: Props) => {
   return (
     <SelectCreateTagsDropdown
       values={structures?.map((s: TFicheActionStructureInsert) =>
-        s.id!.toString()
+        s.id ? s.id.toString() : ''
       )}
       options={options}
       onSelect={values => onSelect(formatStructures(values))}

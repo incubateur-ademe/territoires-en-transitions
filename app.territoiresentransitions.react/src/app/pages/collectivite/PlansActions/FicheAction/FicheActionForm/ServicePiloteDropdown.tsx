@@ -45,7 +45,7 @@ const ServicePiloteDropdown = ({services, onSelect, isReadonly}: Props) => {
   return (
     <SelectCreateTagsDropdown
       values={services?.map((service: TFicheActionServicePiloteInsert) =>
-        service.id!.toString()
+        service.id ? service.id.toString() : ''
       )}
       options={options}
       onSelect={values => onSelect(formatServicePilote(values))}

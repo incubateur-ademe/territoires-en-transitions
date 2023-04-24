@@ -85,35 +85,41 @@ export const useEditFicheAction = () => {
   const collectivite_id = useCollectiviteId();
 
   return useMutation(upsertFicheAction, {
+    mutationKey: 'edit_fiche',
     onMutate: async fiche => {
-      const ficheActionKey = ['fiche_action', fiche.id];
+      const ficheActionKey = ['fiche_action', fiche.id?.toString()];
       // Cancel any outgoing refetches
       // (so they don't overwrite our optimistic update)
       await queryClient.cancelQueries({queryKey: ficheActionKey});
 
       // Snapshot the previous value
-      const previousAction: {fiche: FicheAction} | undefined =
+      const previousFiche: {fiche: FicheAction} | undefined =
         queryClient.getQueryData(ficheActionKey);
 
       // Optimistically update to the new value
-      queryClient.setQueryData(ficheActionKey, fiche);
+      queryClient.setQueryData(
+        ficheActionKey,
+        (old?: {fiche: FicheAction}) => ({
+          fiche: {
+            ...old?.fiche,
+            ...fiche,
+          },
+        })
+      );
 
       // Return a context object with the snapshotted value
-      return {previousAction};
+      return {previousFiche};
     },
     onSettled: (data, err, fiche, context) => {
       if (err) {
         queryClient.setQueryData(
           ['fiche_action', fiche.id],
-          context?.previousAction
+          context?.previousFiche
         );
       }
-      queryClient.invalidateQueries(['fiche_action', fiche.id]);
-    },
+      queryClient.invalidateQueries(['fiche_action', fiche.id?.toString()]);
 
-    onSuccess: data => {
       queryClient.invalidateQueries(['fiches_non_classees', collectivite_id]);
-      queryClient.invalidateQueries(['fiche_action', data[0].id!.toString()]);
       queryClient.invalidateQueries(['structures', collectivite_id]);
       queryClient.invalidateQueries(['partenaires', collectivite_id]);
       queryClient.invalidateQueries(['personnes_pilotes', collectivite_id]);

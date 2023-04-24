@@ -43,7 +43,7 @@ const FicheActionConnected = () => {
 
   const data = useFicheAction(ficheUid);
 
-  return data ? <FicheAction fiche={data.fiche} /> : <div></div>;
+  return data && data.fiche ? <FicheAction fiche={data.fiche} /> : <div></div>;
 };
 
 export default FicheActionConnected;
