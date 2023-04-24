@@ -116,7 +116,7 @@ actions:
 id: com_externe_financements
 ```
 ## Description
-Exemple: Page internet, Newsletter, Journaux, Blog, etc.
+Exemple: Page internet, Newsletter, Journal, Blog, etc.
 
 # Preuve des démarches proactives de recherche d'acteurs intéressés 
 ```yaml
