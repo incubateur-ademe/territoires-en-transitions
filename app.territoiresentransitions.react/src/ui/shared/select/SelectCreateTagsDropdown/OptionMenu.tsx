@@ -1,4 +1,4 @@
-import {useEffect, useRef} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import InputControlled from 'ui/shared/form/InputControlled';
 import {TOption} from '../commons';
 import Modal from 'ui/shared/floating-ui/Modal';
@@ -14,8 +14,13 @@ type Props = {
 const OptionMenu = ({option, onDeleteClick, onUpdateTagName, close}: Props) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const [showErrorMessage, setShowErrorMessage] = useState(false);
+
   const handleChangeTitle = () => {
     if (inputRef.current && onUpdateTagName) {
+      if (inputRef.current.value.trim().length === 0) {
+        return setShowErrorMessage(true);
+      }
       if (inputRef.current.value !== option.label) {
         onUpdateTagName(option.value, inputRef.current.value.trim());
         close && close();
@@ -47,6 +52,9 @@ const OptionMenu = ({option, onDeleteClick, onUpdateTagName, close}: Props) => {
         placeholder="Titre du tag"
         className="fr-input resize-none !outline-none"
       />
+      {showErrorMessage && (
+        <p className="fr-error-text !mt-2">Vous devez entrer une valeur</p>
+      )}
       <Modal
         size="sm"
         render={({descriptionId, close}) => {
