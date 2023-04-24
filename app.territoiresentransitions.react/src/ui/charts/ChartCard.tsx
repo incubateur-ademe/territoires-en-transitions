@@ -5,6 +5,29 @@ import Modal from 'ui/shared/floating-ui/Modal';
 import BarChart, {BarChartProps} from './BarChart';
 import DonutChart, {DonutChartProps} from './DonutChart';
 
+const Legend = ({
+  legend,
+}: {
+  legend: {name: string; color: string}[];
+}): JSX.Element => {
+  return (
+    <div className="flex flex-row flex-wrap items-center justify-center gap-x-8 gap-y-3 my-6">
+      {legend.map(l => (
+        <div key={l.name} className="flex flex-row items-center gap-3">
+          <div
+            style={{
+              width: '16px',
+              height: '16px',
+              backgroundColor: `${l.color}`,
+            }}
+          ></div>
+          <div>{l.name}</div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
 type ChartCardModalContentProps = {
   chart: JSX.Element;
   chartInfo?: {
@@ -54,22 +77,7 @@ const ChartCardModalContent = ({
         <div className="w-full h-96">{chart}</div>
 
         {/* Légende */}
-        {chartInfo?.legend && (
-          <div className="flex flex-row flex-wrap items-center justify-center gap-x-8 gap-y-3 mt-6">
-            {chartInfo.legend.map(l => (
-              <div key={l.name} className="flex flex-row items-center gap-3">
-                <div
-                  style={{
-                    width: '16px',
-                    height: '16px',
-                    backgroundColor: `${l.color}`,
-                  }}
-                ></div>
-                <div className="shifted-text">{l.name}</div>
-              </div>
-            ))}
-          </div>
-        )}
+        {chartInfo?.legend && <Legend legend={chartInfo.legend} />}
 
         {/* Info additionelles */}
         {chartInfo?.additionalInfo && (
@@ -94,6 +102,7 @@ type ChartCardProps = {
   chartInfo?: {
     title?: string;
     legend?: {name: string; color: string}[];
+    legendOnOverview?: boolean;
     expandable?: boolean;
     downloadedFileName?: string;
     additionalInfo?: string | string[];
@@ -145,7 +154,9 @@ const ChartCard = ({
       {/* En-tête de la carte */}
       <div className="flex flex-row justify-between px-6">
         {/* Titre du graphe */}
-        {chartInfo?.title && <div className="font-bold">{chartInfo.title}</div>}
+        {chartInfo?.title && (
+          <div className="pb-6 font-bold">{chartInfo.title}</div>
+        )}
 
         {/* Bouton + modale permettant un affichage agrandi du graphe */}
         {chartInfo?.expandable && (
@@ -170,10 +181,15 @@ const ChartCard = ({
       </div>
 
       {/* Element additionnel optionnel, ajouté entre le titre et le graphe */}
-      <div className="absolute left-6 top-14 z-10">{topElement}</div>
+      <div className="absolute top-16 z-10 px-6 w-full">{topElement}</div>
 
       {/* Graphe miniature */}
       {chart}
+
+      {/* Légende */}
+      {chartInfo?.legend && chartInfo?.legendOnOverview && (
+        <Legend legend={chartInfo.legend} />
+      )}
     </div>
   );
 };

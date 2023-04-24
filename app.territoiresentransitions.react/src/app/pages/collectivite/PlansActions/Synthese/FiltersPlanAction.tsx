@@ -25,21 +25,21 @@ const FiltersPlanAction = ({
   const fichesNonClassees = useFichesNonClasseesListe(collectiviteId);
 
   // Construction de la liste de filtres par plan d'action
-  const filters = [{id: 'default', name: 'Toutes les fiches'}];
+  const filters = [{value: 'default', label: 'Toutes les fiches'}];
 
   if (plansActions?.plans && plansActions.plans.length) {
     filters.push(
       ...plansActions.plans.map(plan => ({
-        id: plan.id.toString(),
-        name: plan.nom && plan.nom.length > 0 ? plan.nom : 'Sans titre',
+        value: plan.id.toString(),
+        label: plan.nom && plan.nom.length > 0 ? plan.nom : 'Sans titre',
       }))
     );
   }
 
   if (fichesNonClassees?.fiches && fichesNonClassees.fiches.length > 0) {
     filters.push({
-      id: 'nc',
-      name: 'Fiches non classées',
+      value: 'nc',
+      label: 'Fiches non classées',
     });
   }
 

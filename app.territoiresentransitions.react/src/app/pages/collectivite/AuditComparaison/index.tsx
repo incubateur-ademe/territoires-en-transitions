@@ -3,11 +3,18 @@ import {AuditComparaisonTable} from './AuditComparaisonTable';
 import {useReferentielId} from 'core-logic/hooks/params';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {useExportAuditScores} from './export/useExportAuditScore';
+import BarChartCardWithSubrows, {
+  TBarChartScoreTable,
+} from 'ui/charts/BarChartCardWithSubrows';
+import {defaultColors} from 'ui/charts/chartsTheme';
+import {getFormattedScore} from './utils';
+import {TScoreAuditRowData} from './types';
+import {ReferentielParamOption} from 'app/paths';
 
 const AuditComparaison = () => {
   const tableData = useTableData();
 
-  const referentiel = useReferentielId();
+  const referentiel = useReferentielId() as ReferentielParamOption;
   const collectivite = useCurrentCollectivite();
   const {exportAuditScores, isLoading} = useExportAuditScores(
     referentiel,
@@ -27,6 +34,34 @@ const AuditComparaison = () => {
       >
         Exporter
       </button>
+
+      <BarChartCardWithSubrows
+        referentiel={referentiel}
+        score={tableData.table as TBarChartScoreTable}
+        chartProps={{
+          keys: ['Avant audit', 'Après audit'],
+          groupMode: 'grouped',
+        }}
+        chartInfo={{
+          title: 'Comparaison des scores "Réalisé"',
+          legend: ['Avant audit', 'Après audit'].map((el, i) => ({
+            name: el,
+            color: defaultColors[i],
+          })),
+          legendOnOverview: true,
+          expandable: true,
+          downloadable: true,
+          additionalInfo: true,
+        }}
+        customStyle={{height: '550px', marginTop: '30px'}}
+        getFormattedScore={(scoreData, indexBy, percentage) =>
+          getFormattedScore(
+            scoreData as readonly TScoreAuditRowData[],
+            indexBy,
+            percentage
+          )
+        }
+      />
     </>
   );
 };
