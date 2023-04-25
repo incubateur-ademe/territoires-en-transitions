@@ -8,12 +8,14 @@ import {useDeleteTag} from '../data/options/useTagDelete';
 import {useTagUpdate} from '../data/options/useTagUpdate';
 
 type Props = {
+  ficheId: number | null;
   personnes: Personne[] | null;
   onSelect: (personnes: Personne[]) => void;
   isReadonly: boolean;
 };
 
 const PersonneReferenteDropdown = ({
+  ficheId,
   personnes,
   onSelect,
   isReadonly,
@@ -25,11 +27,13 @@ const PersonneReferenteDropdown = ({
   const {mutate: updateTag} = useTagUpdate({
     key: ['personnes', collectivite_id],
     tagTableName: 'personne_tag',
+    keysToInvalidate: [['fiche_action', ficheId?.toString()]],
   });
 
   const {mutate: deleteTag} = useDeleteTag({
     key: ['personnes', collectivite_id],
     tagTableName: 'personne_tag',
+    keysToInvalidate: [['fiche_action', ficheId?.toString()]],
   });
 
   const options: TOption[] = personneListe

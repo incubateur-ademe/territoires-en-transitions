@@ -10,9 +10,10 @@ type Tag = {
 type Args = {
   key: QueryKey;
   tagTableName: string;
+  keysToInvalidate?: QueryKey[];
 };
 
-export const useTagUpdate = ({key, tagTableName}: Args) => {
+export const useTagUpdate = ({key, tagTableName, keysToInvalidate}: Args) => {
   const queryClient = useQueryClient();
 
   return useMutation(
@@ -38,7 +39,7 @@ export const useTagUpdate = ({key, tagTableName}: Args) => {
           queryClient.setQueryData(key, context?.previousdata);
         }
         queryClient.invalidateQueries(key);
-        queryClient.invalidateQueries(['fiche_action', 13]);
+        keysToInvalidate?.forEach(key => queryClient.invalidateQueries(key));
       },
     }
   );

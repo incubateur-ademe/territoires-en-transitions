@@ -219,6 +219,7 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
         </FormField>
         <FormField label="Personne pilote">
           <PersonnePiloteDropdown
+            ficheId={fiche.id}
             personnes={fiche.pilotes}
             onSelect={pilotes => updateFiche({...fiche, pilotes})}
             isReadonly={isReadonly}
@@ -233,6 +234,7 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
         </FormField>
         <FormField label="Élu·e référent·e">
           <PersonneReferenteDropdown
+            ficheId={fiche.id}
             personnes={fiche.referents}
             onSelect={referents => updateFiche({...fiche, referents})}
             isReadonly={isReadonly}
