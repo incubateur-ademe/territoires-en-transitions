@@ -23,6 +23,7 @@ const Financeurs = ({fiche, onUpdate, isReadonly}: Props) => {
   const {mutate: updateTag} = useTagUpdate({
     key: ['financeurs', collectivite_id],
     tagTableName: 'financeur_tag',
+    keysToInvalidate: [['fiche_action', fiche.id?.toString()]],
   });
 
   const {mutate: deleteTag} = useDeleteTag({
