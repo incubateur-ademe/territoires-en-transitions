@@ -13,6 +13,7 @@ import {
   getOptionLabel,
   getOptions,
   optionButtonClassname,
+  sortOptionByAlphabet,
   TSelectBase,
   TSelectSelectionButtonBase,
 } from '../commons';
@@ -82,7 +83,7 @@ const SelectCreateTagsDropdown = <T extends string>({
           <Options
             dataTest={dataTest}
             values={values}
-            options={filterOptions(options, inputValue)}
+            options={sortOptionByAlphabet(filterOptions(options, inputValue))}
             onSelect={onSelect}
             renderOption={option => (
               <Tag

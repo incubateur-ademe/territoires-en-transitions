@@ -66,6 +66,51 @@ export const getOptions = (selectOptions: TSelectOption[]): TOption[] => {
   }
 };
 
+export const sortOptionByAlphabet = (
+  options: TSelectOption[]
+): TSelectOption[] => {
+  const optionArray: TOption[] = [];
+  const sectionArray: TOptionSection[] = [];
+
+  options.forEach(option => {
+    if (isOption(option)) {
+      optionArray.push(option);
+    } else {
+      sectionArray.push(option);
+    }
+  });
+
+  // sort options
+  optionArray.sort((a, b) => {
+    let labelA = a.label.toUpperCase();
+    let labelB = b.label.toUpperCase();
+    if (labelA < labelB) {
+      return -1;
+    }
+    if (labelA > labelB) {
+      return 1;
+    }
+    return 0;
+  });
+
+  // sort sections
+  sectionArray.forEach(section => {
+    section.options.sort((a, b) => {
+      let labelA = a.label.toUpperCase();
+      let labelB = b.label.toUpperCase();
+      if (labelA < labelB) {
+        return -1;
+      }
+      if (labelA > labelB) {
+        return 1;
+      }
+      return 0;
+    });
+  });
+
+  return [...optionArray, ...sectionArray];
+};
+
 /**
  * Filtre les options, quelles soient dans une section ou non.
  * Utilisée dans les sélecteurs avec saisie.
