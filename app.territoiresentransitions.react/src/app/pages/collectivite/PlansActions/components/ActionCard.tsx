@@ -9,7 +9,10 @@ type TActionCard = {
 
 const ActionCard = ({link, statutBadge, details, title}: TActionCard) => {
   return (
-    <div data-test="ActionCarte" className="border border-gray-200">
+    <div
+      data-test="ActionCarte"
+      className="border border-gray-200 hover:bg-[#F6F6F6]"
+    >
       <NavLink to={link}>
         <div className="flex flex-col h-full p-6">
           {statutBadge && <div className="mb-4">{statutBadge}</div>}

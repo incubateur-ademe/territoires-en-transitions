@@ -49,7 +49,7 @@ const IndicateursLies = ({indicateurs, onSelect, isReadonly}: Props) => {
                 indicateur.indicateur_id ??
                 indicateur.indicateur_personnalise_id
               }
-              className="border border-gray-200"
+              className="border border-gray-200 hover:bg-[#F6F6F6]"
             >
               <NavLink
                 to={`${makeCollectiviteIndicateursUrl({
