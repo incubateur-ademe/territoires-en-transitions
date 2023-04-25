@@ -92,13 +92,13 @@ const Financeurs = ({fiche, onUpdate, isReadonly}: Props) => {
     <div>
       {/** Liste des financeurs */}
       {fiche.financeurs?.map((financeur: Financeur, i) => (
-        <div key={financeur.id} className="grid grid-cols-2 gap-4">
+        <div key={financeur.id ?? i} className="grid grid-cols-2 gap-4">
           <FormField label={`Financeur ${i + 1}`}>
             <SelectCreateTagsDropdown
               // On affiche une seule valeur
               values={
                 financeur.financeur_tag.id
-                  ? [financeur.financeur_tag.id?.toString()]
+                  ? [financeur.financeur_tag.id.toString()]
                   : []
               }
               options={options}
@@ -151,7 +151,16 @@ const Financeurs = ({fiche, onUpdate, isReadonly}: Props) => {
                 nom: tag_name,
               })
             }
-            onDeleteClick={tag_id => deleteTag(parseInt(tag_id))}
+            onDeleteClick={tag_id => {
+              deleteTag(parseInt(tag_id));
+              onUpdate({
+                ...fiche,
+                financeurs:
+                  fiche.financeurs?.filter(
+                    (f: Financeur) => f.financeur_tag.id !== parseInt(tag_id)
+                  ) ?? null,
+              });
+            }}
             userCreatedTagIds={userCreatedTagIds}
             placeholderText="Sélectionnez ou créez un tag"
             disabled={isReadonly}
