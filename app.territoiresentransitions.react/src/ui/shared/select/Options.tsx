@@ -7,6 +7,7 @@ import {
 } from './commons';
 import IconThreeDotHorizontal from 'ui/icons/IconThreeDotHorizontal';
 import DropdownFloater from '../floating-ui/DropdownFloater';
+import {forwardRef, Ref} from 'react';
 
 type RenderOptionMenuProps = {
   option: TOption;
@@ -127,45 +128,45 @@ const Option = <T extends string>({
         renderOptionMenu({
           option,
         }) && (
-          <OptionMenuFloater
-            renderOptionMenu={renderOptionMenu}
-            option={option}
-          />
+          <DropdownFloater
+            placement="top"
+            offsetValue={{mainAxis: 8}}
+            render={({close}) => (
+              <div onClick={e => e.stopPropagation()}>
+                {renderOptionMenu({
+                  option,
+                  close,
+                })}
+              </div>
+            )}
+          >
+            <OptionOpenFloaterButton />
+          </DropdownFloater>
         )}
     </button>
   );
 };
 
-type OptionMenuFloaterProps = {
-  renderOptionMenu: (props: RenderOptionMenuProps) => React.ReactElement | null;
-  option: TOption;
+type OptionOpenFloaterButtonProps = {
+  isOpen?: boolean;
 };
 
-const OptionMenuFloater = ({
-  renderOptionMenu,
-  option,
-}: OptionMenuFloaterProps) => {
-  return (
-    <DropdownFloater
-      placement="top"
-      offsetValue={{mainAxis: 8}}
-      render={({close}) => (
-        <div onClick={e => e.stopPropagation()}>
-          {renderOptionMenu({
-            option,
-            close,
-          })}
-        </div>
-      )}
+const OptionOpenFloaterButton = forwardRef(
+  (
+    {isOpen, ...props}: OptionOpenFloaterButtonProps,
+    ref?: Ref<HTMLDivElement>
+  ) => (
+    <div
+      ref={ref}
+      className="ml-6 mr-4 p-1 cursor-pointer hover:bg-indigo-100"
+      onClick={evt => {
+        evt.stopPropagation();
+      }}
     >
-      <div
-        className="ml-6 mr-4 p-1 cursor-pointer hover:bg-indigo-100"
-        onClick={evt => {
-          evt.stopPropagation();
-        }}
-      >
+      {/** Donne les props à un élément enfant afin de pouvoir donner le stopPropagation au parent */}
+      <div {...props}>
         <IconThreeDotHorizontal className="w-4 h-4 fill-bf500" />
       </div>
-    </DropdownFloater>
-  );
-};
+    </div>
+  )
+);
