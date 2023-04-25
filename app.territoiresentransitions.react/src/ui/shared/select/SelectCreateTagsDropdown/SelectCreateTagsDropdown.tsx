@@ -12,8 +12,10 @@ import {
   filterOptions,
   getOptionLabel,
   getOptions,
+  isOption,
   optionButtonClassname,
   sortOptionByAlphabet,
+  TOption,
   TSelectBase,
   TSelectSelectionButtonBase,
 } from '../commons';
@@ -163,6 +165,22 @@ const SelectCreateTagsButton = forwardRef(
   ) => {
     const inputRef: Ref<HTMLInputElement> = useRef(null);
 
+    const valuesAsOptions = options.filter(
+      o => isOption(o) && values?.some(v => v === o.value)
+    ) as TOption[];
+
+    const sortedValues = valuesAsOptions
+      .sort((a, b) => {
+        if (a.label.toUpperCase() < b.label.toUpperCase()) {
+          return -1;
+        }
+        if (a.label.toUpperCase() > b.label.toUpperCase()) {
+          return 1;
+        }
+        return 0;
+      })
+      .map(o => o.value) as T[];
+
     const handleWrapperClick = () => {
       inputRef?.current?.focus();
     };
@@ -186,14 +204,14 @@ const SelectCreateTagsButton = forwardRef(
           onClick={handleWrapperClick}
         >
           <div className="flex items-center flex-wrap gap-2 grow">
-            {values &&
-              values?.length !== 0 &&
-              values.map(v => (
+            {sortedValues &&
+              sortedValues?.length !== 0 &&
+              sortedValues.map(v => (
                 <Tag
                   key={v}
                   title={getOptionLabel(v, getOptions(options))}
                   onCloseClick={() =>
-                    onSelect(values.filter(value => value !== v))
+                    onSelect(sortedValues.filter(value => value !== v))
                   }
                   isUserCreated={isUserCreatedOption(v, userCreatedTagIds)}
                 />
