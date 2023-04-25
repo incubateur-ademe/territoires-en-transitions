@@ -23,7 +23,7 @@ const FicheActionBadgeStatut = ({className, statut, small}: Props) => {
       className={classNames(
         className,
         'w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md',
-        {'!text-xs !px-1': small},
+        {'!text-xs': small},
         statusToColor[statut]
       )}
     >
