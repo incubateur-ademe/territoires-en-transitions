@@ -21,9 +21,7 @@ const MultiSelectTagsDropdown = <T extends string>({
   return (
     <MultiSelectDropdown
       data-test={dataTest}
-      buttonClassName={classNames(`${buttonClassName}`, {
-        'cursor-default': values && values?.length > 0,
-      })}
+      buttonClassName={classNames(buttonClassName)}
       containerWidthMatchButton={containerWidthMatchButton}
       values={values}
       options={options}

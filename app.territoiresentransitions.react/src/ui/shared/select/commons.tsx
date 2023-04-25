@@ -150,13 +150,13 @@ export const filterOptions = (
   }, []);
 
 /* Class génériques */
-export const DSFRbuttonClassname = 'fr-select !flex !px-4 !bg-none';
+export const DSFRbuttonClassname = 'fr-select !flex !px-4 !bg-none !bg-grey975';
 export const buttonDisplayedClassname =
   'flex items-center w-full p-2 text-left text-sm';
 export const buttonDisplayedPlaceholderClassname =
-  'mr-auto text-gray-500 italic line-clamp-1';
+  'mr-auto text-grey425 line-clamp-1';
 export const buttonDisplayedIconClassname =
-  'fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto';
+  'fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto';
 export const optionButtonClassname =
   'flex items-center w-full p-2 text-left text-sm';
 export const optionCheckMarkClassname = 'block fr-fi-check-line scale-75';

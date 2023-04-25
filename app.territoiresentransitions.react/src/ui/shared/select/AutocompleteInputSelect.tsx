@@ -7,6 +7,7 @@ import Tag from 'ui/shared/Tag';
 
 import {
   buttonDisplayedClassname,
+  DSFRbuttonClassname,
   ExpandCollapseIcon,
   filterOptions,
   getOptionLabel,
@@ -55,7 +56,7 @@ const AutocompleteInputSelect = <T extends string>({
     >
       <AutocompleteButton
         data-test={dataTest}
-        buttonClassName="fr-select !bg-none !flex !px-4"
+        buttonClassName={DSFRbuttonClassname}
         options={options}
         values={values}
         inputValue={inputValue}
@@ -140,7 +141,7 @@ const AutocompleteButton = forwardRef(
             <input
               type="text"
               ref={inputRef}
-              className={`grow text-sm placeholder:text-gray-500 placeholder:italic`}
+              className={`grow placeholder:text-grey425`}
               value={inputValue}
               placeholder={placeholderText}
               onChange={e => onInputChange(e.target.value)}
