@@ -19,7 +19,7 @@ create function
     security definer
 begin
     atomic
-    insert into cot
+    insert into cot (collectivite_id, actif)
     values (test_set_cot.collectivite_id, test_set_cot.actif)
     on conflict (collectivite_id) do update set actif = excluded.actif
     returning *;
