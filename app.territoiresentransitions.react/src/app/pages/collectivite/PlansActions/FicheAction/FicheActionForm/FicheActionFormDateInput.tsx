@@ -22,7 +22,7 @@ const FicheActionFormDateInput = <T extends HTMLInputElement>({
     <div className="fr-input-wrap fr-fi-calendar-line">
       <input
         type="date"
-        className="fr-input w-full p-2"
+        className="fr-input w-full p-2 !bg-grey975"
         pattern="\d{4}-\d{2}-\d{2}"
         value={value ?? ''}
         onChange={e => {
