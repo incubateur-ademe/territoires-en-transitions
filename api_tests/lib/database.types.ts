@@ -6247,6 +6247,17 @@ export interface Database {
           created_at: string | null
         }
       }
+      test_set_cot: {
+        Args: {
+          collectivite_id: number
+          actif: boolean
+        }
+        Returns: {
+          actif: boolean
+          collectivite_id: number
+          signataire: number | null
+        }
+      }
       test_write_scores: {
         Args: {
           collectivite_id: number
