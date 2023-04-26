@@ -59,7 +59,7 @@ export const AddPreuveComplementaire = (props: TAddPreuveButtonProps) => {
       render={() => {
         return (
           <>
-            <h4>Ajouter une preuve complémentaire</h4>
+            <h4>Ajouter un document complémentaire</h4>
             {selectSubActionIsRequired ? (
               <SelectSubAction
                 action={action}
@@ -78,7 +78,7 @@ export const AddPreuveComplementaire = (props: TAddPreuveButtonProps) => {
         className="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-fi-add-line"
         onClick={() => setOpened(true)}
       >
-        Ajouter une preuve complémentaire
+        Ajouter un document complémentaire
       </button>
     </Modal>
   );

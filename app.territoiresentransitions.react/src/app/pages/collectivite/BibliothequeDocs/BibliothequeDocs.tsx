@@ -40,7 +40,7 @@ export const BibliothequeDocs = ({
       </section>
 
       <section className="fr-mt-4w">
-        <h2>Preuves</h2>
+        <h2>Documents</h2>
         <PreuvesTabs />
       </section>
     </main>

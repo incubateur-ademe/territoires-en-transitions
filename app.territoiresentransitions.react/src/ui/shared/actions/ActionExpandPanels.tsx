@@ -89,7 +89,7 @@ export const ActionPreuvesExpandPanel = ({
       data-test={`PreuvesPanel-${action.identifiant}`}
     >
       <div className="border-gray-300">
-        <CrossExpandPanelWithNode title="Preuves">
+        <CrossExpandPanelWithNode title="Documents">
           <ActionPreuvePanel action={action} showWarning />
         </CrossExpandPanelWithNode>
       </div>
