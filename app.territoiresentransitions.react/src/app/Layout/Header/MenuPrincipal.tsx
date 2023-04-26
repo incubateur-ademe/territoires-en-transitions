@@ -59,7 +59,7 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
 
 /** Affiche un item de menu */
 const NavItem = (props: HeaderPropsWithModalState & {item: TNavItem}) => {
-  const {item, setModalOpened} = props;
+  const {item, setModalOpened, setOpenedId} = props;
   const {to, label} = item;
   // vérifie si l'item correspond au chemin courant
   const {pathname} = useLocation();
@@ -73,7 +73,10 @@ const NavItem = (props: HeaderPropsWithModalState & {item: TNavItem}) => {
         className="fr-nav__link"
         aria-controls="modal-header__menu"
         aria-current={current}
-        onClick={() => setModalOpened(false)}
+        onClick={() => {
+          setModalOpened(false);
+          setOpenedId(null);
+        }}
       >
         {label}
       </Link>
