@@ -57,7 +57,7 @@ const FicheActionRangerModal = ({fiche}: Props) => {
         );
       }}
     >
-      <button className="fr-btn w-max mb-6 !shadow-none">
+      <button className="fr-btn w-max">
         <IconFolderLine className="fill-white w-4 -ml-2 mt-0.5 mr-2" />
         Ranger la fiche
       </button>
