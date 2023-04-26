@@ -4699,6 +4699,12 @@ export interface Database {
         }
         Returns: string[]
       }
+      flat_axes: {
+        Args: {
+          plan_id: number
+        }
+        Returns: Database["public"]["CompositeTypes"]["flat_axe_node"][]
+      }
       foreign_tables_are: {
         Args: {
           "": unknown[]
@@ -6749,6 +6755,13 @@ export interface Database {
         financeur_tag: unknown
         montant_ttc: number
         id: number
+      }
+      flat_axe_node: {
+        id: number
+        nom: string
+        fiches: unknown
+        ancestors: unknown
+        depth: number
       }
       graphique_tranche: {
         id: string
