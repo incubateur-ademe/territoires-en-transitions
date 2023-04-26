@@ -46,7 +46,7 @@ export const DownloadDocs = (props: TDownloadDocsProps) => {
       disabled={isFetching}
       onClick={() => refetch()}
     >
-      Télécharger toutes les preuves
+      Télécharger tous les documents
     </button>
   ) : null;
 };

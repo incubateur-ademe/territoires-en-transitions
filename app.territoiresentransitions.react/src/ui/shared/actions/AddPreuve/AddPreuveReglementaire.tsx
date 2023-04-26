@@ -34,7 +34,7 @@ export const AddPreuveReglementaire = (props: TAddPreuveButtonProps) => {
       render={() => {
         return (
           <>
-            <h4>Ajouter une preuve attendue</h4>
+            <h4>Ajouter un document attendu</h4>
             <AddPreuveModal
               onClose={() => setOpened(false)}
               handlers={handlers}
