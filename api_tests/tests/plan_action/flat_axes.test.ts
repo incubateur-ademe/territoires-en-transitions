@@ -44,5 +44,10 @@ Deno.test("RPC flat_axes", async () => {
 
   console.log(JSON.stringify(plan, null, 2));
 
+  // pour récupérer les fiches on
+  // - map sur les axes et leurs `children`
+  // - si fiches n'est pas vide, on récupère les fiches :
+  //   supabase.from('fiche_resume').select().in('id', axe.fiches);
+
   await signOut();
 });
