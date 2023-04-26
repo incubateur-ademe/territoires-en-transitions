@@ -43,7 +43,7 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
     <div data-test={`preuves-${action.id}`}>
       {preuvesParActionId ? (
         <>
-          <h5>Preuves attendues</h5>
+          <h5>Documents attendus</h5>
           <div data-test="attendues" className="divide-y divide-[#ddd] -mt-2">
             {
               /** Il peut y avoir plusieurs preuves réglementaires elles même
@@ -70,11 +70,11 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
         </>
       ) : (
         <p className="fr-text--sm">
-          Il n'y a pas de preuve attendue pour cette{' '}
+          Il n'y a pas de document attendu pour cette{' '}
           {withSubActions ? 'action' : 'sous-action'} du référentiel.
         </p>
       )}
-      <h5>Preuves complémentaires</h5>
+      <h5>Documents complémentaires</h5>
       <AddPreuveComplementaire
         action={action}
         addToSubAction={withSubActions}
@@ -92,7 +92,7 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
         <>
           <YellowDivider />
           <p className="text-xs grey625">
-            Toutes les preuves ajoutées seront visibles par les membres de la
+            Tous les documents ajoutés seront visibles par les membres de la
             communauté Territoires en Transitions
           </p>
         </>
