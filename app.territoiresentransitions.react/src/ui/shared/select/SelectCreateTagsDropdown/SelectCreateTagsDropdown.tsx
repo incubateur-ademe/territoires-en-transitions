@@ -32,6 +32,7 @@ type TSelectCreateTagsDropdown<T extends string> =
     onUpdateTagName?: (tag_id: string, tag_name: string) => void;
     /** tableau d'id des options crées par un utilisateur */
     userCreatedTagIds?: string[];
+    closeOptionsOnSelect?: boolean;
   };
 
 /** Sélecteur de Tag(s) avec un input dans le bouton d'ouverture pour créer un tag */
@@ -46,6 +47,7 @@ const SelectCreateTagsDropdown = <T extends string>({
   placement,
   placeholderText,
   disabled,
+  closeOptionsOnSelect,
   'data-test': dataTest,
 }: TSelectCreateTagsDropdown<T>) => {
   const [inputValue, setInputValue] = useState('');
@@ -65,7 +67,7 @@ const SelectCreateTagsDropdown = <T extends string>({
       placement={placement}
       toggle={false}
       enterToToggle={false}
-      render={() => (
+      render={({close}) => (
         <div>
           {inputValue.trim().length > 0 && isNotSimilar && (
             <button
@@ -87,7 +89,10 @@ const SelectCreateTagsDropdown = <T extends string>({
             dataTest={dataTest}
             values={values}
             options={sortOptionByAlphabet(filterOptions(options, inputValue))}
-            onSelect={onSelect}
+            onSelect={values => {
+              onSelect(values);
+              closeOptionsOnSelect && close();
+            }}
             renderOption={option => (
               <Tag
                 title={option.label}
