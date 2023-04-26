@@ -65,7 +65,7 @@ const StructurePiloteDropdown = ({structures, onSelect, isReadonly}: Props) => {
       }
       onDeleteClick={tag_id => deleteTag(parseInt(tag_id))}
       userCreatedTagIds={structureListe?.map(s => s.id.toString())}
-      placeholderText="Créer un tag..."
+      placeholderText="Sélectionnez ou créez un tag"
       disabled={isReadonly}
     />
   );
