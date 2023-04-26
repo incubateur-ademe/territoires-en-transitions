@@ -26,6 +26,7 @@ begin
                     from axe
                     where parent is null
                       and id = plan_id
+                      and can_read_acces_restreint(axe.collectivite_id)
 
                     union all
 
