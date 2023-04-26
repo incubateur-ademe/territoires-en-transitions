@@ -5,6 +5,7 @@ BEGIN;
 create type flat_axe_node as
 (
     id        integer,
+    nom       text,
     fiches    integer[],
     ancestors integer[],
     depth     integer
@@ -18,6 +19,7 @@ begin
     atomic
     with recursive
         parents as (select id,
+                           nom,
                            collectivite_id,
                            0                   as depth,
                            array []::integer[] as ancestors
@@ -28,6 +30,7 @@ begin
                     union all
 
                     select a.id,
+                           a.nom,
                            a.collectivite_id,
                            depth + 1,
                            ancestors || a.parent
@@ -38,7 +41,7 @@ begin
                    from parents a
                             join fiche_action_axe faa on a.id = faa.axe_id
                    group by a.id)
-    select id, fiches, ancestors, depth
+    select id, nom, fiches, ancestors, depth
     from parents
              left join fiches using (id)
     order by depth;
