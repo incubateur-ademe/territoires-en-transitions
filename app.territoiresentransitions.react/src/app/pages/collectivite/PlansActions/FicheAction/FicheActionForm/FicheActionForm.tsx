@@ -60,34 +60,6 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
   return (
     <div className="flex flex-col gap-6">
       <Section isDefaultOpen icon={<PictoInformation />} title="Présentation">
-        {!isReadonly &&
-          plansProfondeur?.plans &&
-          plansProfondeur.plans.length > 0 && (
-            <FicheActionRangerModal fiche={fiche} />
-          )}
-        <FormField
-          label="Nom de la fiche"
-          hint="Exemple : 1.3.2.5 Limiter les émissions liées au chauffage résidentiel au bois"
-          htmlFor="title"
-        >
-          <TextareaControlled
-            id="title"
-            initialValue={fiche.titre ?? ''}
-            onBlur={e => {
-              if (fiche.titre) {
-                e.target.value !== fiche.titre &&
-                  updateFiche({...fiche, titre: e.target.value.trim()});
-              } else {
-                e.target.value.trim().length > 0 &&
-                  updateFiche({...fiche, titre: e.target.value.trim()});
-              }
-            }}
-            placeholder="Écrire ici..."
-            maxLength={300}
-            className="outline-transparent resize-none"
-            disabled={isReadonly}
-          />
-        </FormField>
         <FormField label="Description de l'action" htmlFor="description">
           <TextareaControlled
             id="description"
@@ -128,6 +100,11 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
             isReadonly={isReadonly}
           />
         </FormField>
+        {!isReadonly &&
+          plansProfondeur?.plans &&
+          plansProfondeur.plans.length > 0 && (
+            <FicheActionRangerModal fiche={fiche} />
+          )}
       </Section>
 
       <Section icon={<PictoDataViz />} title="Objectifs et indicateurs">
