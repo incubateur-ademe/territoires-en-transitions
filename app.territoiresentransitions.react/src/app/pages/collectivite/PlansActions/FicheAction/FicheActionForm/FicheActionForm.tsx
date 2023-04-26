@@ -357,18 +357,20 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
                 })
               }
             />
-            <Checkbox
-              label="Action en amélioration continue, sans date de fin"
-              onCheck={() => {
-                updateFiche({
-                  ...fiche,
-                  amelioration_continue: !fiche.amelioration_continue,
-                  date_fin_provisoire: null,
-                });
-              }}
-              checked={fiche.amelioration_continue ?? false}
-              disabled={isReadonly}
-            />
+            <div className="mt-2">
+              <Checkbox
+                label="Action en amélioration continue, sans date de fin"
+                onCheck={() => {
+                  updateFiche({
+                    ...fiche,
+                    amelioration_continue: !fiche.amelioration_continue,
+                    date_fin_provisoire: null,
+                  });
+                }}
+                checked={fiche.amelioration_continue ?? false}
+                disabled={isReadonly}
+              />
+            </div>
           </FormField>
         </div>
         <FormField
@@ -408,7 +410,7 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
           isReadonly={isReadonly}
         />
       </Section>
-      <Section icon={<PictoDocument />} title="Notes">
+      <Section icon={<PictoBook />} title="Notes">
         <FormField
           label="Notes complémentaires"
           hint="Évaluation ou autres informations sur l’action "
@@ -439,7 +441,7 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
           />
         </FormField>
       </Section>
-      <Section icon={<PictoBook />} title="Documents et liens">
+      <Section icon={<PictoDocument />} title="Documents et liens">
         {annexes?.map(doc => (
           <PreuveDoc preuve={doc as unknown as TPreuve} />
         ))}
