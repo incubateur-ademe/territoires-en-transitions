@@ -9,6 +9,7 @@ import {ActionPreuvePanel} from './ActionPreuvePanel';
 import {useToggle} from '../useToggle';
 import {ChangeEvent} from 'react';
 import DOMPurify from 'dompurify';
+import {usePreuves} from '../preuves/Bibliotheque/usePreuves';
 
 const ActionExpandPanelAdemeContent = (props: {
   content?: string;
@@ -59,13 +60,23 @@ export const ActionPreuvesExpandPanel = ({
 }: {
   action: ActionDefinitionSummary;
 }) => {
+  const preuves = usePreuves({
+    action,
+    withSubActions: true,
+    preuve_types: ['reglementaire', 'complementaire'],
+  });
+
   return (
     <div
       className="ActionExpandPanelAdemeContent"
       data-test={`PreuvesPanel-${action.identifiant}`}
     >
       <div className="border-gray-300">
-        <CrossExpandPanelWithNode title="Documents">
+        <CrossExpandPanelWithNode
+          title={`Documents (${
+            preuves.filter(p => p.lien || p.fichier).length
+          })`}
+        >
           <ActionPreuvePanel action={action} showWarning />
         </CrossExpandPanelWithNode>
       </div>

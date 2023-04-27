@@ -122,6 +122,7 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
           <Tab label="Suivi de l'action" icon="seedling">
             <section>
               <ActionCommentaire action={action} />
+
               <h4 className="text-xl fr-mt-4w">
                 Détail des sous-actions et des tâches
               </h4>
@@ -136,10 +137,10 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
                   }}
                 />
               </div>
-              {children.map(action => (
+              {children.map(subAction => (
                 <ActionAvancement
-                  action={action}
-                  key={action.id}
+                  action={subAction}
+                  key={subAction.id}
                   showOnlyActionWithData={showOnlyActionWithData}
                 />
               ))}
