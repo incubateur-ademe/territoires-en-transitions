@@ -7,38 +7,39 @@ exports[`Storyshots ui/shared/actions/ActionPreuvePanel Default 1`] = `
   <p
     className="fr-text--sm"
   >
-    Il n'y a pas de preuve attendue pour cette
+    Il n'y a pas de document attendu pour cette
      
     sous-action
      du référentiel.
   </p>
-  <h5>
-    Preuves complémentaires
-  </h5>
-  <button
-    aria-expanded="false"
-    aria-haspopup="dialog"
-    className="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-fi-add-line"
-    data-test="AddPreuveComplementaire"
-    onClick={[Function]}
-    onKeyDown={[Function]}
-    onKeyUp={[Function]}
-    onMouseDown={[Function]}
-    onPointerDown={[Function]}
-  >
-    Ajouter une preuve complémentaire
-  </button>
   <div
-    className="mt-2 divide-y divide-[#ddd]"
-    data-test="complementaires"
-  />
+    className="flex flex-col gap-4 py-4"
+  >
+    <button
+      aria-expanded="false"
+      aria-haspopup="dialog"
+      className="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-fi-add-line"
+      data-test="AddPreuveComplementaire"
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onPointerDown={[Function]}
+    >
+      Ajouter un document complémentaire
+    </button>
+    <div
+      className="flex flex-col gap-3"
+      data-test="complementaires"
+    />
+  </div>
   <div
     className="border-solid border-t-[1px] border-[#FCC63A] my-4"
   />
   <p
-    className="text-xs grey625"
+    className="text-xs grey625 py-4"
   >
-    Toutes les preuves ajoutées seront visibles par les membres de la communauté Territoires en Transitions
+    Tous les documents ajoutés seront visibles par les membres de la communauté Territoires en Transitions
   </p>
 </div>
 `;
