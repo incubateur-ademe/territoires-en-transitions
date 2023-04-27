@@ -2,7 +2,7 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useMutation, useQueryClient} from 'react-query';
 import {useHistory} from 'react-router-dom';
-import {PlanAction} from './types';
+import {PlanNode} from './types';
 import {removeAxeFromPlan} from './utils';
 
 export const useDeleteAxe = (
@@ -27,11 +27,11 @@ export const useDeleteAxe = (
         await queryClient.cancelQueries({queryKey: planActionKey});
 
         // Snapshot the previous value
-        const previousAction: {plan: PlanAction} | undefined =
+        const previousAction: {plan: PlanNode} | undefined =
           queryClient.getQueryData(planActionKey);
 
         // Optimistically update to the new value
-        queryClient.setQueryData(planActionKey, (old: any | PlanAction) => {
+        queryClient.setQueryData(planActionKey, (old: any | PlanNode) => {
           return removeAxeFromPlan(old, axe_id);
         });
 

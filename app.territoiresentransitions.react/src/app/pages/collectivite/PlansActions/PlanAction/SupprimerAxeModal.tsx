@@ -1,13 +1,12 @@
-import {TAxeRow} from 'types/alias';
 import Modal from 'ui/shared/floating-ui/Modal';
-import {PlanAction} from './data/types';
+import {FlatAxe, PlanNode} from './data/types';
 import {useDeleteAxe} from './data/useDeleteAxe';
 import {checkAxeHasFiche, getAxeinPlan} from './data/utils';
 
 type Props = {
   children: JSX.Element;
-  plan: PlanAction;
-  axe: TAxeRow;
+  plan: PlanNode;
+  axe: FlatAxe;
   redirectURL?: string;
 };
 
@@ -16,9 +15,9 @@ type Props = {
  * Utilisée pour supprimer aussi bien un plan qu'un sous-axe
  */
 const SupprimerAxeModal = ({children, plan, axe, redirectURL}: Props) => {
-  const {mutate: deletePlan} = useDeleteAxe(axe.id, plan.axe.id, redirectURL);
+  const {mutate: deletePlan} = useDeleteAxe(axe.id, plan.id, redirectURL);
 
-  const isPlan = axe.parent === null;
+  const isPlan = axe.ancestors && axe.ancestors.length !== 0;
 
   return (
     <Modal

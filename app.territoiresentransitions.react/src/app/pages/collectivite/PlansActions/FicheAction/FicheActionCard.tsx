@@ -1,35 +1,50 @@
 import ActionCard from '../components/ActionCard';
-import {FicheAction} from './data/types';
+import {FicheAction, FicheResume} from './data/types';
 import FicheActionBadgeStatut from './FicheActionForm/FicheActionBadgeStatut';
 
-type Props = {
-  link: string;
-  ficheAction: FicheAction;
-};
+function isFicheResumeFromAxe(
+  fiche: FicheAction | FicheResume
+): fiche is FicheResume {
+  return (fiche as FicheResume).plans !== undefined;
+}
 
-const FicheActionCard = ({ficheAction, link}: Props) => {
-  const generateDetails = (ficheAction: FicheAction) => {
-    let details = '';
-    if (!ficheAction.axes) {
+const generateDetails = (fiche: FicheAction | FicheResume) => {
+  let details = '';
+  if (isFicheResumeFromAxe(fiche)) {
+    if (!fiche.plans) {
       details = details + 'Fiche non classée';
       // on affiche la barre uniquement si "Fiche non classée" est présent
-      if (ficheAction.pilotes) {
+      if (fiche.pilotes) {
         details = details + ' | ';
       }
     }
-    if (ficheAction.pilotes) {
-      details =
-        details + `Pilote${ficheAction.pilotes.length > 1 ? 's' : ''}: `;
-
-      ficheAction.pilotes.forEach(
-        (pilote: any, index: number, array: unknown[]) =>
-          (details =
-            details + `${pilote.nom}${index < array.length - 1 ? ', ' : ''}`)
-      );
+  } else {
+    if (!fiche.axes) {
+      details = details + 'Fiche non classée';
+      // on affiche la barre uniquement si "Fiche non classée" est présent
+      if (fiche.pilotes) {
+        details = details + ' | ';
+      }
     }
-    return details;
-  };
+  }
+  if (fiche.pilotes) {
+    details = details + `Pilote${fiche.pilotes.length > 1 ? 's' : ''}: `;
 
+    fiche.pilotes.forEach(
+      (pilote: any, index: number, array: unknown[]) =>
+        (details =
+          details + `${pilote.nom}${index < array.length - 1 ? ', ' : ''}`)
+    );
+  }
+  return details;
+};
+
+type Props = {
+  link: string;
+  ficheAction: FicheAction | FicheResume;
+};
+
+const FicheActionCard = ({ficheAction, link}: Props) => {
   return (
     <ActionCard
       link={link}

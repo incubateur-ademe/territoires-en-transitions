@@ -9,16 +9,17 @@ import FicheActionCard from '../FicheAction/FicheActionCard';
 import {makeCollectivitePlanActionFicheUrl} from 'app/paths';
 import {usePlanAction} from './data/usePlanAction';
 import {useEditAxe} from './data/useEditAxe';
-import {PlanAction as PlanActionType} from './data/types';
+import {PlanNode} from './data/types';
 import PlanActionFooter from './PlanActionFooter';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import PlanActionFiltres from './PlanActionFiltres/PlanActionFiltres';
 import {useFichesActionFiltresListe} from '../FicheAction/data/useFichesActionFiltresListe';
 import {checkAxeHasFiche} from './data/utils';
 import HeaderTitle from '../components/HeaderTitle';
+import PlanActionAxeFiches from './PlanActionAxeFiches';
 
 type PlanActionProps = {
-  plan: PlanActionType;
+  plan: PlanNode;
 };
 
 export const PlanAction = ({plan}: PlanActionProps) => {
@@ -26,16 +27,16 @@ export const PlanAction = ({plan}: PlanActionProps) => {
 
   const isReadonly = collectivite?.readonly ?? false;
 
-  const {mutate: updatePlan} = useEditAxe(plan.axe.id);
+  const {mutate: updatePlan} = useEditAxe(plan.id);
 
   const {items: fichesActionsListe, ...ficheFilters} =
-    useFichesActionFiltresListe(plan.axe.id);
+    useFichesActionFiltresListe(plan.id);
 
-  const displaySousAxe = (axe: PlanActionType) => (
+  const displaySousAxe = (node: PlanNode) => (
     <PlanActionAxe
-      key={axe.axe.id}
+      key={node.id}
       planActionGlobal={plan}
-      axe={axe}
+      axe={node}
       displayAxe={displaySousAxe}
       isReadonly={isReadonly}
     />
@@ -45,8 +46,8 @@ export const PlanAction = ({plan}: PlanActionProps) => {
     <div data-test="PlanAction" className="w-full">
       <HeaderTitle
         type="plan"
-        titre={plan.axe.nom}
-        onUpdate={nom => updatePlan({id: plan.axe.id, nom})}
+        titre={plan.nom}
+        onUpdate={nom => updatePlan({id: plan.id, nom})}
         isReadonly={isReadonly}
       />
       <div className="max-w-4xl mx-auto px-10">
@@ -74,7 +75,7 @@ export const PlanAction = ({plan}: PlanActionProps) => {
                   ficheAction={fiche}
                   link={makeCollectivitePlanActionFicheUrl({
                     collectiviteId: collectivite!.collectivite_id!,
-                    planActionUid: plan.axe.id.toString(),
+                    planActionUid: plan.id.toString(),
                     ficheUid: fiche.id!.toString(),
                   })}
                 />
@@ -86,35 +87,25 @@ export const PlanAction = ({plan}: PlanActionProps) => {
             </div>
           )
         ) : // Affiche les fiches et sous-axes s'il y en a, sinon un état vide
-        plan.enfants || plan.fiches ? (
+        plan.children || plan.fiches ? (
           <>
             <div className="mb-4">
               {!isReadonly && (
-                <AxeActions planActionId={plan.axe.id} axeId={plan.axe.id} />
+                <AxeActions planActionId={plan.id} axeId={plan.id} />
               )}
               {/** Affichage des fiches */}
-              {plan.fiches && (
-                <div className="grid grid-cols-2 gap-4 mt-6">
-                  {plan.fiches.map(fiche => (
-                    <FicheActionCard
-                      key={fiche.id}
-                      ficheAction={fiche}
-                      link={makeCollectivitePlanActionFicheUrl({
-                        collectiviteId: fiche.collectivite_id!,
-                        planActionUid: plan.axe.id.toString(),
-                        ficheUid: fiche.id!.toString(),
-                      })}
-                    />
-                  ))}
+              {plan.fiches && plan.fiches.length !== 0 && (
+                <div className="mt-6">
+                  <PlanActionAxeFiches ficheIds={plan.fiches} axeId={plan.id} />
                 </div>
               )}
             </div>
             {/** Affichage des sous-axes */}
-            {plan.enfants &&
-              plan.enfants.length > 0 &&
-              plan.enfants.map(enfant => (
+            {plan.children &&
+              plan.children.length > 0 &&
+              plan.children.map(enfant => (
                 <PlanActionAxe
-                  key={enfant.axe.id}
+                  key={enfant.id}
                   planActionGlobal={plan}
                   axe={enfant}
                   displayAxe={displaySousAxe}
@@ -130,7 +121,7 @@ export const PlanAction = ({plan}: PlanActionProps) => {
                 Aucune arborescence pour l'instant
               </div>
               {!isReadonly && (
-                <AxeActions planActionId={plan.axe.id} axeId={plan.axe.id} />
+                <AxeActions planActionId={plan.id} axeId={plan.id} />
               )}
             </div>
           </div>
