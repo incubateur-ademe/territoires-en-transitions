@@ -45,7 +45,7 @@ begin
     select id, nom, fiches, ancestors, depth
     from parents
              left join fiches using (id)
-    order by depth;
+    order by depth, naturalsort(nom);
 end;
 comment on function flat_axes is
     'Les axes ordonnancés par profondeur d''un plan donné sous forme de nodes prêtes pour reconstituer un arbre coté client.';
