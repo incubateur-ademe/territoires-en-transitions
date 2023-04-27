@@ -47,10 +47,10 @@ begin
     with auditeurs as (select aa.auditeur as user_id
                        from audit_auditeur aa)
 
-    select v.user_id                                        as user_id,
-           'visite'::stats.amplitude_event_type             as event_type,
-           extract(epoch from v.time)::int                  as time,
-           md5('visite' || v.user_id::text || v.time::text) as insert_id,
+    select v.user_id                                                  as user_id,
+           v.page || '_viewed'                                        as event_type,
+           extract(epoch from v.time)::int                            as time,
+           md5('visite' || v.page || v.user_id::text || v.time::text) as insert_id,
            jsonb_build_object(
                    'page', v.page,
                    'tag', v.tag,
