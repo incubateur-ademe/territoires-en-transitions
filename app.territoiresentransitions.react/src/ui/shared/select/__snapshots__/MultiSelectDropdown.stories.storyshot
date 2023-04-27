@@ -12,12 +12,12 @@ exports[`Storyshots ui/shared/select/MultiSelectDropdown Aucune Option Selection
   onPointerDown={[Function]}
 >
   <span
-    className="mr-auto text-gray-500 italic line-clamp-1"
+    className="mr-auto text-grey425 line-clamp-1"
   >
     Sélectionner une ou plusieurs options...
   </span>
   <span
-    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
   />
 </button>
 `;
@@ -48,7 +48,7 @@ exports[`Storyshots ui/shared/select/MultiSelectDropdown Custom Option Et Select
     </span>
   </span>
   <span
-    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
   />
 </button>
 `;
@@ -76,7 +76,7 @@ exports[`Storyshots ui/shared/select/MultiSelectDropdown Plusieurs Options Selec
     </span>
   </span>
   <span
-    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
   />
 </button>
 `;
@@ -100,7 +100,7 @@ exports[`Storyshots ui/shared/select/MultiSelectDropdown Une Option Selectionee 
     </span>
   </span>
   <span
-    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
   />
 </button>
 `;

@@ -119,7 +119,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Référent·e
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+                    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -148,7 +148,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     </div>
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+                    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -190,7 +190,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Admin
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+                    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -238,7 +238,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Équipe technique
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+                    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -270,7 +270,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     </div>
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+                    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -312,7 +312,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Édition
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+                    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -360,7 +360,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Équipe politique
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+                    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -389,7 +389,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     </div>
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+                    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -431,7 +431,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Lecture
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+                    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -478,7 +478,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Lecture
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+                    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -727,7 +727,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Référent·e
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+                    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -756,7 +756,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     </div>
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+                    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -798,7 +798,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Admin
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+                    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -846,7 +846,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Équipe technique
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+                    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -878,7 +878,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     </div>
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+                    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -920,7 +920,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Édition
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+                    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -968,7 +968,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Équipe politique
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+                    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -997,7 +997,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     </div>
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+                    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -1039,7 +1039,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Lecture
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+                    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -1086,7 +1086,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Lecture
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+                    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -1335,7 +1335,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Référent·e
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+                    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -1364,7 +1364,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     </div>
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+                    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -1406,7 +1406,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Admin
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+                    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -1454,7 +1454,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Équipe technique
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+                    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -1486,7 +1486,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     </div>
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+                    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -1528,7 +1528,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Édition
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+                    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -1576,7 +1576,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Équipe politique
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+                    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -1605,7 +1605,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     </div>
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+                    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -1647,7 +1647,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Lecture
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+                    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -1694,7 +1694,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                     Lecture
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+                    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -2056,7 +2056,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Que Lecteur 1`]
                     Équipe politique
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+                    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -2085,7 +2085,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Que Lecteur 1`]
                     </div>
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+                    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
@@ -2127,7 +2127,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Que Lecteur 1`]
                     Lecture
                   </span>
                   <span
-                    className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+                    className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
                   />
                 </button>
               </div>
