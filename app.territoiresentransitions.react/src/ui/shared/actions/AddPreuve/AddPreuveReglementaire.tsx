@@ -45,7 +45,7 @@ export const AddPreuveReglementaire = (props: TAddPreuveButtonProps) => {
     >
       <button
         data-test="AddPreuveReglementaire"
-        className={classNames('fr-btn fr-fi-add-line', {
+        className={classNames('fr-btn fr-icon-add-line box-border', {
           'fr-btn--secondary': isDisabled,
         })}
         title="Ajouter une preuve"

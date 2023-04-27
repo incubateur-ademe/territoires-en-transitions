@@ -10,12 +10,14 @@ import {useEditPreuve} from './useEditPreuve';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {TEditState} from 'core-logic/hooks/useEditState';
 import {ConfirmSupprPreuveBtn} from './ConfirmSupprPreuveBtn';
+import {IdentifiantAction} from './IdentifiantAction';
 
 export type TPreuveDocProps = {
   classComment?: string;
   preuve: TPreuve;
   readonly?: boolean;
   handlers: TEditHandlers;
+  displayIdentifier?: boolean;
 };
 
 const PreuveDocConnected = (props: Omit<TPreuveDocProps, 'handlers'>) => {
@@ -43,8 +45,9 @@ export const PreuveDoc = ({
   preuve,
   readonly,
   handlers,
+  displayIdentifier,
 }: TPreuveDocProps) => {
-  const {commentaire, fichier, rapport} = preuve;
+  const {action, commentaire, fichier, rapport} = preuve;
   const dateVisite = rapport?.date;
 
   const {remove, editComment, editFilename} = handlers;
@@ -53,10 +56,16 @@ export const PreuveDoc = ({
   return (
     <div data-test="item">
       <div className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0 cursor-pointer">
-        <PreuveTitle preuve={preuve} />
-        {!readonly && !isEditing ? (
+        {/* Lien du document */}
+        <div className="flex gap-2">
+          <PreuveTitle preuve={preuve} />
+          {displayIdentifier && action && <IdentifiantAction action={action} />}
+        </div>
+
+        {/* Menu d'édition du document */}
+        {!readonly && !isEditing && (
           <div className="invisible group-hover:visible">
-            {fichier ? (
+            {fichier && (
               <ButtonEdit
                 title="Renommer"
                 onClick={(e: MouseEvent<HTMLButtonElement>) => {
@@ -64,7 +73,7 @@ export const PreuveDoc = ({
                   editFilename.enter();
                 }}
               />
-            ) : null}
+            )}
             <ButtonComment
               title="Décrire"
               onClick={(e: MouseEvent<HTMLButtonElement>) => {
@@ -74,12 +83,16 @@ export const PreuveDoc = ({
             />
             <ConfirmSupprPreuveBtn removePreuve={remove} />
           </div>
-        ) : null}
+        )}
       </div>
-      {commentaire && !readonly && !isEditing ? (
+
+      {/* Commentaire ajouté par l'utilisateur */}
+      {commentaire && !readonly && !isEditing && (
         <p
           data-test="comment"
-          className={`text-xs fr-text-mention--grey mb-0 ${classComment || ''}`}
+          className={`text-xs fr-text-mention--grey mb-1 pl-2 ${
+            classComment || ''
+          }`}
           onClick={(e: MouseEvent<HTMLParagraphElement>) => {
             e.preventDefault();
             editComment.enter();
@@ -87,7 +100,9 @@ export const PreuveDoc = ({
         >
           {commentaire}
         </p>
-      ) : null}
+      )}
+
+      {/* Edition du commentaire / nom du fichier */}
       <TextInputWithEditState
         editState={editComment}
         placeholder="Écrire un commentaire..."
@@ -96,17 +111,23 @@ export const PreuveDoc = ({
         editState={editFilename}
         placeholder="Renommer le fichier..."
       />
-      {dateVisite ? (
-        <p className="text-xs grey625 mb-0">
+
+      {/* Date de visite */}
+      {!!dateVisite && (
+        <p className="text-xs fr-text-mention--grey mb-1 pl-2">
           Visite effectuée le {formatDate(dateVisite)}
         </p>
-      ) : null}
+      )}
+
+      {/* Date de création */}
       {formatCreatedAt(preuve)}
     </div>
   );
 };
 
-// détermine le picto en fonction du type (fichier ou lien)
+/**
+ * Détermine le picto en fonction du type (fichier ou lien)
+ */
 const preuvePicto = (preuve: TPreuve) => {
   const {fichier, lien} = preuve;
   if (fichier) {
@@ -118,30 +139,32 @@ const preuvePicto = (preuve: TPreuve) => {
   return null;
 };
 
-// affiche le titre d'une preuve sous forme de lien
+/**
+ * Affiche le titre d'une preuve sous forme de lien
+ */
 const PreuveTitle = ({preuve}: {preuve: TPreuve}) => {
   const picto = preuvePicto(preuve);
 
-  // désactive un avertissement de lint à propos de l'attribut `href` non
-  // valide, car si on met un <button> à la place comme c'est recommandé et même
-  // avec le style `fr-link` les styles rendus ne sont pas bons (bouton arrondi
-  // au survol et souligné absent)
-  /* eslint-disable jsx-a11y/anchor-is-valid */
   return (
     <a
       data-test="name"
-      href="#"
+      href="/"
       className={classNames('fr-text--sm fr-mb-1v', picto, {
         'fr-link--icon-left': Boolean(picto),
       })}
-      onClick={() => openPreuve(preuve)}
+      onClick={evt => {
+        evt.preventDefault();
+        openPreuve(preuve);
+      }}
     >
       {formatTitle(preuve)}
     </a>
   );
 };
 
-// affiche un champ d'édition associé à un gestionnaire d'édition
+/**
+ * Affiche un champ d'édition associé à un gestionnaire d'édition
+ */
 const TextInputWithEditState = ({
   editState,
   placeholder,
@@ -168,7 +191,9 @@ const TextInputWithEditState = ({
   ) : null;
 };
 
-// formate le titre en fonction du type (fichier ou lien)
+/**
+ * Formate le titre en fonction du type (fichier ou lien)
+ */
 const formatTitle = (preuve: TPreuve) => {
   const {fichier, lien} = preuve;
   if (fichier) {
@@ -184,7 +209,9 @@ const formatTitle = (preuve: TPreuve) => {
   return null;
 };
 
-// formate la date de création et le nom de l'utilisateur associé
+/**
+ * Formate la date de création et le nom de l'utilisateur associé
+ */
 const formatCreatedAt = (preuve: TPreuve) => {
   const {created_at, created_by_nom} = preuve;
   return created_at && created_by_nom
@@ -200,9 +227,9 @@ const formatDateAndAuthor = (
   const le = formatDate(date);
   const modif = isModification ? 'Modifié' : 'Ajouté';
   return (
-    <span className="text-xs grey625">
+    <p className="text-xs fr-text-mention--grey mb-1 pl-2">
       {modif} le {le} par {author}
-    </span>
+    </p>
   );
 };
 

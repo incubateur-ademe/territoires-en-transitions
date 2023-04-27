@@ -135,8 +135,8 @@ export const PreuvesTable = (props: TPreuvesTableProps) => {
                     </div>
                   ) : null}
                   {isExpanded && depth === maxDepth ? (
-                    <div className="row py-5 pl-32">
-                      <ActionPreuvePanel action={action} noIdentifiant />
+                    <div className="row py-5 pl-32 pr-5">
+                      <ActionPreuvePanel action={action} hideIdentifier />
                     </div>
                   ) : null}
                 </Fragment>

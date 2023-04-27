@@ -160,10 +160,10 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
                 }}
               />
             </div>
-            {children.map(action => (
+            {children.map(subAction => (
               <ActionAvancement
-                action={action}
-                key={action.id}
+                action={subAction}
+                key={subAction.id}
                 showOnlyActionWithData={showOnlyActionWithData}
               />
             ))}

@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import {Tooltip} from 'ui/shared/floating-ui/Tooltip';
 import {TPreuve, TPreuveReglementaire} from './types';
 import PreuveDoc from './PreuveDoc';
@@ -7,14 +6,14 @@ import {IdentifiantAction, isDisabledAction} from './IdentifiantAction';
 
 export type TPreuveReglementaireProps = {
   preuves: TPreuveReglementaire[];
-  noIdentifiant?: boolean;
+  hideIdentifier?: boolean;
 };
 
 /**
  * Affiche une preuve règlementaire et les éventuels documents associés
  */
 export const PreuveReglementaire = (props: TPreuveReglementaireProps) => {
-  const {preuves, noIdentifiant} = props;
+  const {preuves, hideIdentifier} = props;
 
   // n'affiche rien quand la liste est vide
   if (!preuves.length) {
@@ -26,37 +25,39 @@ export const PreuveReglementaire = (props: TPreuveReglementaireProps) => {
   const {action, preuve_reglementaire, fichier, lien} = first;
   const {id: preuve_id, nom, description} = preuve_reglementaire;
   const isDisabled = isDisabledAction(action);
-  const haveDoc = fichier || lien;
+  const haveDoc = !!fichier || !!lien;
 
   return (
-    <div className="flex flex-row gap-8 pt-2 pb-4" data-test="preuve">
+    <div className="flex items-start gap-8 py-4" data-test="preuve">
       <div className="flex flex-1 flex-col">
+        {/* Titre du document + Identifiant de l'action associée */}
         <span
           data-test="desc"
-          className={classNames('fr-text--sm pt-2 fr-mb-1v', {
-            'text-black': !isDisabled,
-            'text-grey25': isDisabled,
-          })}
+          className={`fr-text--sm font-medium fr-mb-3v ${
+            isDisabled ? 'text-grey25' : 'text-black'
+          }`}
         >
-          {nom}
-          {description ? (
+          {nom}{' '}
+          {!(hideIdentifier ?? false) && <IdentifiantAction action={action} />}
+          {description && (
             <Tooltip label={description} activatedBy="click">
-              <span className="fr-fi-information-line pl-4 text-bf500 cursor-pointer" />
+              <span className="fr-fi-information-line pl-2 text-bf500 cursor-pointer" />
             </Tooltip>
-          ) : null}
+          )}
         </span>
-        {noIdentifiant ? null : <IdentifiantAction action={action} />}
-      </div>
-      <div className="flex flex-1 flex-col justify-center">
-        {haveDoc ? (
-          <div className="flex flex-1 flex-col justify-center space-y-3 fr-mb-2w">
+
+        {/* Liens vers le documents */}
+        {haveDoc && (
+          <div className="flex flex-col gap-3">
             {preuves.map(preuve => (
               <PreuveDoc key={preuve.id} preuve={preuve as TPreuve} />
             ))}
           </div>
-        ) : null}
-        <AddPreuveReglementaire preuve_id={preuve_id} isDisabled={isDisabled} />
+        )}
       </div>
+
+      {/* Modale d'ajout de documents */}
+      <AddPreuveReglementaire preuve_id={preuve_id} isDisabled={isDisabled} />
     </div>
   );
 };
