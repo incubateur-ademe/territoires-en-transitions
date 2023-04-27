@@ -13,8 +13,8 @@ export const IdentifiantAction = (props: TIdentifiantActionProps) => {
   const {identifiant} = action;
 
   return (
-    <span className="text-xs text-grey625">
-      {identifiant}
+    <span className="text-grey625 leading-6">
+      ({identifiant})
       {isDisabledAction(action) ? (
         <Badge
           status="no-icon"

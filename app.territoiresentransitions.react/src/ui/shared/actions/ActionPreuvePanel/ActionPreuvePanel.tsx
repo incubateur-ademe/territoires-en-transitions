@@ -13,14 +13,14 @@ export type TActionPreuvePanelProps = {
    * visibles..." doit être affiché */
   showWarning?: boolean;
   /** indique si l'identifiant de l'action doit être masqué */
-  noIdentifiant?: boolean;
+  hideIdentifier?: boolean;
 };
 
 /**
  * Affiche le panneau "preuves" d'une action
  */
 const ActionPreuvePanel = (props: TActionPreuvePanelProps) => {
-  const {action, withSubActions, showWarning, noIdentifiant} = props;
+  const {action, withSubActions, showWarning, hideIdentifier} = props;
   const {reglementaire, complementaire} = usePreuvesParType({
     action,
     withSubActions,
@@ -33,7 +33,7 @@ const ActionPreuvePanel = (props: TActionPreuvePanelProps) => {
       reglementaires={reglementaire || []}
       complementaires={complementaire || []}
       showWarning={showWarning}
-      noIdentifiant={noIdentifiant}
+      hideIdentifier={hideIdentifier}
     />
   );
 };
