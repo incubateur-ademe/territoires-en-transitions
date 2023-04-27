@@ -330,3 +330,4 @@ stats/amplitude 2023-04-14T08:17:31Z Florian <florian@derfurth.com> # Envoie des
 
 plan_action/plan_action [plan_action/plan_action@v2.24.0] 2023-04-25T09:47:28Z Florian <florian@derfurth.com> # Nouvelle fonction pour des plans plus performants
 plan_action/tags 2023-04-18T14:20:39Z Florian <florian@derfurth.com> # Ajoute la possibilité de supprimer des tags
+@v2.26.0 2023-04-27T14:53:56Z Florian <florian@derfurth.com> # Améliorations des plans d'action
