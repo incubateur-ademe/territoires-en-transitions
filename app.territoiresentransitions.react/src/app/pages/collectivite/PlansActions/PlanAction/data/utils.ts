@@ -1,5 +1,4 @@
-import {TAxeRow} from 'types/alias';
-import {PlanAction} from './types';
+import {FlatAxe, PlanNode} from './types';
 import {TProfondeurAxe} from './types';
 
 /**
@@ -8,19 +7,16 @@ import {TProfondeurAxe} from './types';
  * @param axe axe à récupérer
  * @return axe as PlanAction | null
  */
-export const getAxeinPlan = (
-  plan: PlanAction,
-  axe: TAxeRow
-): PlanAction | null => {
-  if (plan.axe.id === axe.id) {
+export const getAxeinPlan = (plan: PlanNode, axe: FlatAxe): PlanNode | null => {
+  if (plan.id === axe.id) {
     return plan;
   }
-  if (plan.enfants && plan.enfants.length > 0) {
-    for (let i = 0; i < plan.enfants.length; i++) {
-      if (plan.enfants[i].axe && plan.enfants[i].axe.id === axe.id) {
-        return plan.enfants[i];
-      } else if (plan.enfants[i].enfants) {
-        const resultat = getAxeinPlan(plan.enfants[i], axe);
+  if (plan.children && plan.children.length > 0) {
+    for (let i = 0; i < plan.children.length; i++) {
+      if (plan.children[i] && plan.children[i].id === axe.id) {
+        return plan.children[i];
+      } else if (plan.children[i].children) {
+        const resultat = getAxeinPlan(plan.children[i], axe);
         if (resultat) {
           return resultat;
         }
@@ -37,14 +33,14 @@ export const getAxeinPlan = (
  * @return true si existe, sinon undefined
  */
 export const checkAxeHasFiche = (
-  plan?: PlanAction | null
+  plan?: PlanNode | null
 ): boolean | undefined => {
   if (plan && plan.fiches && plan.fiches?.length > 0) {
     return true;
   }
-  if (plan && plan.enfants && plan.enfants.length > 0) {
-    for (let i = 0; i < plan.enfants.length; i++) {
-      if (checkAxeHasFiche(plan.enfants[i])) {
+  if (plan && plan.children && plan.children.length > 0) {
+    for (let i = 0; i < plan.children.length; i++) {
+      if (checkAxeHasFiche(plan.children[i])) {
         return true;
       }
     }
@@ -82,16 +78,16 @@ export const checkAxeExistInPlanProfondeur = (
  * @return plan d'action complet dans l'axe as PlanAction | undefined
  */
 export const removeAxeFromPlan = (
-  plan: PlanAction,
+  plan: PlanNode,
   axe_id: number
-): PlanAction | undefined => {
-  if (plan.axe.id === axe_id) {
+): PlanNode | undefined => {
+  if (plan.id === axe_id) {
     return undefined;
   }
-  if (plan.enfants && plan.enfants.length > 0) {
-    plan.enfants = plan.enfants.filter(enfant => {
-      if (enfant.axe.id !== axe_id) {
-        if (enfant.enfants && enfant.enfants.length > 0) {
+  if (plan.children && plan.children.length > 0) {
+    plan.children = plan.children.filter(enfant => {
+      if (enfant.id !== axe_id) {
+        if (enfant.children && enfant.children.length > 0) {
           removeAxeFromPlan(enfant, axe_id);
         }
         return enfant;

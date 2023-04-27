@@ -2,19 +2,19 @@ import {makeCollectiviteFichesNonClasseesUrl} from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {BoutonAttention} from 'ui/BoutonAttention';
 import ScrollTopButton from 'ui/shared/ScrollTopButton';
-import {PlanAction} from './data/types';
+import {PlanNode} from './data/types';
 import {checkAxeHasFiche} from './data/utils';
 import {useExportPlanAction} from './export/useExportPlanAction';
 import SupprimerAxeModal from './SupprimerAxeModal';
 
 type TPlanActionFooter = {
-  plan: PlanAction;
+  plan: PlanNode;
   isReadonly: boolean;
 };
 
 const PlanActionFooter = ({plan, isReadonly}: TPlanActionFooter) => {
   const collectivite_id = useCollectiviteId();
-  const {exportPlanAction, isLoading} = useExportPlanAction(plan.axe.id);
+  const {exportPlanAction, isLoading} = useExportPlanAction(plan.id);
 
   return (
     <div className="flex flex-col gap-8 items-start pt-12">
@@ -33,7 +33,7 @@ const PlanActionFooter = ({plan, isReadonly}: TPlanActionFooter) => {
         ) : null}
         {!isReadonly && (
           <SupprimerAxeModal
-            axe={plan.axe}
+            axe={plan}
             plan={plan}
             redirectURL={makeCollectiviteFichesNonClasseesUrl({
               collectiviteId: collectivite_id!,

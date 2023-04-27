@@ -8,6 +8,16 @@ export type PlanAction = {
   enfants?: PlanAction[];
 };
 
+export type FlatAxe = {
+  id: number;
+  nom: string;
+  fiches: number[];
+  ancestors: number[];
+  depth: number;
+};
+
+export type PlanNode = FlatAxe & {children: PlanNode[]};
+
 export type TProfondeurPlan = TPlanActionProfondeur & {
   plan: TProfondeurAxe;
 };

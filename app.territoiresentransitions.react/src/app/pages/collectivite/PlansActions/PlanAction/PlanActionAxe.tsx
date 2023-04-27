@@ -1,20 +1,18 @@
 import {useRef, useState} from 'react';
 import classNames from 'classnames';
 
-import FicheActionCard from '../FicheAction/FicheActionCard';
 import {AxeActions} from './AxeActions';
 
-import {makeCollectivitePlanActionFicheUrl} from 'app/paths';
-import {PlanAction} from './data/types';
+import {PlanNode} from './data/types';
 import {useEditAxe} from './data/useEditAxe';
 import TextareaControlled from 'ui/shared/form/TextareaControlled';
 import SupprimerAxeModal from './SupprimerAxeModal';
-import {FicheAction} from '../FicheAction/data/types';
+import PlanActionAxeFiches from './PlanActionAxeFiches';
 
 type Props = {
-  planActionGlobal: PlanAction;
-  axe: PlanAction;
-  displayAxe: (axe: PlanAction) => void;
+  planActionGlobal: PlanNode;
+  axe: PlanNode;
+  displayAxe: (axe: PlanNode) => void;
   isReadonly: boolean;
 };
 
@@ -24,7 +22,7 @@ const PlanActionAxe = ({
   displayAxe,
   isReadonly,
 }: Props) => {
-  const {mutate: updatePlan} = useEditAxe(planActionGlobal.axe.id);
+  const {mutate: updatePlan} = useEditAxe(planActionGlobal.id);
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -68,14 +66,14 @@ const PlanActionAxe = ({
                 'placeholder:text-gray-900': !isEditable,
               }
             )}
-            initialValue={axe.axe.nom}
+            initialValue={axe.nom}
             placeholder={'Sans titre'}
             disabled={!isEditable}
             onBlur={e => {
               e.target.value &&
                 e.target.value.length > 0 &&
-                e.target.value !== axe.axe.nom &&
-                updatePlan({id: axe.axe.id, nom: e.target.value ?? null});
+                e.target.value !== axe.nom &&
+                updatePlan({id: axe.id, nom: e.target.value ?? null});
               setIsEditable(false);
             }}
           />
@@ -87,7 +85,7 @@ const PlanActionAxe = ({
               className="fr-fi-edit-line invisible group-hover:visible p-2 text-gray-500 scale-90"
               onClick={handleEditButtonClick}
             />
-            <SupprimerAxeModal axe={axe.axe} plan={planActionGlobal}>
+            <SupprimerAxeModal axe={axe} plan={planActionGlobal}>
               <button
                 data-test="SupprimerAxeBouton"
                 className="invisible group-hover:visible fr-btn fr-btn--secondary fr-text-default--error fr-fi-delete-line !shadow-none p-2 text-gray-500 scale-90"
@@ -99,29 +97,14 @@ const PlanActionAxe = ({
       {isOpen && (
         <div className="flex flex-col gap-4 mt-3 ml-12">
           {!isReadonly && (
-            <AxeActions
-              planActionId={planActionGlobal.axe.id}
-              axeId={axe.axe.id}
-            />
+            <AxeActions planActionId={planActionGlobal.id} axeId={axe.id} />
           )}
-          {axe.fiches && (
-            <div className="grid grid-cols-2 gap-4">
-              {axe.fiches.map((fiche: FicheAction) => (
-                <FicheActionCard
-                  key={fiche.id}
-                  ficheAction={fiche}
-                  link={makeCollectivitePlanActionFicheUrl({
-                    collectiviteId: fiche.collectivite_id!,
-                    planActionUid: planActionGlobal.axe.id.toString(),
-                    ficheUid: fiche.id!.toString(),
-                  })}
-                />
-              ))}
-            </div>
+          {axe.fiches && axe.fiches.length !== 0 && (
+            <PlanActionAxeFiches ficheIds={axe.fiches} axeId={axe.id} />
           )}
           <div>
-            {axe.enfants &&
-              axe.enfants.map((axe: PlanAction) => displayAxe(axe))}
+            {axe.children &&
+              axe.children.map((axe: PlanNode) => displayAxe(axe))}
           </div>
         </div>
       )}
