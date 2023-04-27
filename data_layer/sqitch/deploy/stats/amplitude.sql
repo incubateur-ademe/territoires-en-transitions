@@ -12,14 +12,10 @@ comment on table stats.amplitude_configuration is
     'La configuration du service Amplitude pour envoyer les `events` par batch. '
         '`https://www.docs.developers.amplitude.com/analytics/apis/batch-event-upload-api/`';
 
-create type stats.amplitude_event_type as enum ('visite', 'usage');
-comment on type stats.amplitude_event_type is
-    'Permet à Amplitude de distinguer les types d''évènements.';
-
 create type stats.amplitude_event as
 (
     user_id          text,
-    event_type       stats.amplitude_event_type,
+    event_type       text,
     time             int,
     insert_id        text,
     event_properties jsonb,
@@ -39,7 +35,7 @@ order by committed_at;
 comment on view stats.release_version is
     'Les tags sqitch par date de déploiement.';
 
-create or replace function
+create function
     stats.amplitude_visite(range tstzrange)
     returns setof stats.amplitude_event
 begin
@@ -60,8 +56,8 @@ begin
                    'fonction', pcm.fonction,
                    'champ_intervention', pcm.champ_intervention,
                    'collectivite', to_json(c)
-               )                                            as
-                                                               event_properties,
+               )                                                      as
+                                                                         event_properties,
 
            jsonb_build_object(
                    'fonctions',
@@ -73,14 +69,14 @@ begin
                       and m.fonction is not null
                       and pud.active),
                    'auditeur', (v.user_id in ( table auditeurs))
-               )                                            as user_properties,
+               )                                                      as user_properties,
 
            (select name
             from stats.release_version
             where time < v.time
             order by time desc
-            limit 1)                                        as
-                                                               app_version
+            limit 1)                                                  as
+                                                                         app_version
 
     from visite v
              left join private_utilisateur_droit pud
@@ -97,7 +93,6 @@ create table stats.amplitude_log
 (
     response    bigint,
     range       tstzrange,
-    event_type  stats.amplitude_event_type,
     batch_size  integer,
     batch_index integer
 );
@@ -145,8 +140,8 @@ begin
             into response;
 
             -- on enregistre l'id et les paramètres pour diagnostiquer par la suite d'éventuelles erreurs.
-            insert into stats.amplitude_log (response, range, event_type, batch_size, batch_index)
-            values (response, range, 'visite', batch_size, i);
+            insert into stats.amplitude_log (response, range, batch_size, batch_index)
+            values (response, range, batch_size, i);
 
             -- on incrémente le lot
             i := i + 1;
