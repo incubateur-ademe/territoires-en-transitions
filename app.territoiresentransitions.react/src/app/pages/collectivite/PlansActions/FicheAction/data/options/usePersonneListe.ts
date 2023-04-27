@@ -6,7 +6,7 @@ import {Personne} from '../types';
 
 type TFetchedData = Personne[];
 
-const fetchPersonneReferenteListe = async (
+const fetchPersonneListe = async (
   collectivite_id: number
 ): Promise<TFetchedData> => {
   const query = supabaseClient
@@ -26,6 +26,6 @@ export const usePersonneListe = () => {
   const collectivite_id = useCollectiviteId();
 
   return useQuery(['personnes', collectivite_id], () =>
-    fetchPersonneReferenteListe(collectivite_id!)
+    fetchPersonneListe(collectivite_id!)
   );
 };
