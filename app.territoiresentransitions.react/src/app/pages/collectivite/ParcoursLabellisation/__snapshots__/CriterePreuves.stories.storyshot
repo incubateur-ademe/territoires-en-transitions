@@ -189,12 +189,16 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves 
       <div
         className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0 cursor-pointer"
       >
-        <a
-          className="fr-text--sm fr-mb-1v"
-          data-test="name"
-          href="#"
-          onClick={[Function]}
-        />
+        <div
+          className="flex gap-2"
+        >
+          <a
+            className="fr-text--sm fr-mb-1v"
+            data-test="name"
+            href="/"
+            onClick={[Function]}
+          />
+        </div>
         <div
           className="invisible group-hover:visible"
         >
@@ -216,6 +220,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves 
           />
         </div>
       </div>
+      
     </div>
   </div>
 </ul>
@@ -356,12 +361,16 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves 
       <div
         className="flex justify-between group text-sm text-bf500 hover:bg-bf975 px-2 py-1 max-w-2xl mb-0 cursor-pointer"
       >
-        <a
-          className="fr-text--sm fr-mb-1v"
-          data-test="name"
-          href="#"
-          onClick={[Function]}
-        />
+        <div
+          className="flex gap-2"
+        >
+          <a
+            className="fr-text--sm fr-mb-1v"
+            data-test="name"
+            href="/"
+            onClick={[Function]}
+          />
+        </div>
         <div
           className="invisible group-hover:visible"
         >
@@ -383,6 +392,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves 
           />
         </div>
       </div>
+      
     </div>
   </div>
 </ul>
