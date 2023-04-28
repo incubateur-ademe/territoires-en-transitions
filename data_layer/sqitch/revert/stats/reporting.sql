@@ -1,14 +1,22 @@
--- Revert tet:stats/reporting from pg
+-- Deploy tet:stats/reporting to pg
 
 BEGIN;
 
-drop function stats.refresh_reporting;
-drop materialized view stats.report_indicateur_resultat;
-drop materialized view stats.report_reponse_proportion;
-drop materialized view stats.report_reponse_binaire;
-drop materialized view stats.report_reponse_choix;
-drop view stats.report_choix;
-drop view stats.report_question;
-drop materialized view stats.report_scores;
+create or replace function
+    stats.refresh_reporting()
+    returns void
+as
+$$
+begin
+    refresh materialized view stats.report_scores;
+    refresh materialized view stats.report_reponse_choix;
+    refresh materialized view stats.report_reponse_binaire;
+    refresh materialized view stats.report_reponse_proportion;
+    refresh materialized view stats.report_indicateur_resultat;
+end;
+$$ language plpgsql;
+
+drop materialized view stats.report_indicateur_personnalise;
+drop materialized view stats.report_indicateur;
 
 COMMIT;

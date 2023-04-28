@@ -2,94 +2,55 @@
 
 BEGIN;
 
-create materialized view stats.report_scores
+create materialized view stats.report_indicateur
 as
-select c.collectivite_id,
-       c.code_siren_insee,
-       c.nom,
-       ts.referentiel,
-       ts.action_id,
-       ts.score_realise,
-       ts.score_programme,
-       ts.score_realise_plus_programme,
-       ts.score_pas_fait,
-       ts.score_non_renseigne,
-       ts.points_restants,
-       ts.points_realises,
-       ts.points_programmes,
-       ts.points_max_personnalises,
-       ts.points_max_referentiel,
-       ts.avancement,
-       ts.concerne,
-       ts.desactive
-from stats.collectivite c
-         join client_scores cs using (collectivite_id)
-    -- que l'on explose en lignes, une par action
-         join private.convert_client_scores(cs.scores) ccc on true
-    -- puis on converti chacune de ces lignes au format approprié pour les vues tabulaires du client
-         join private.to_tabular_score(ccc) ts on true
-order by c.collectivite_id;
-
-create view stats.report_question
-as
+with resutat_renseignes as (select indicateur_id as id, count(*) as count
+                            from indicateur_resultat
+                                     join stats.collectivite using (collectivite_id)
+                            group by indicateur_id),
+     objectif_renseignes as (select indicateur_id as id, count(*) as count
+                             from indicateur_objectif
+                                      join stats.collectivite using (collectivite_id)
+                             group by indicateur_id),
+     collectivites as (select d.id, array_agg(c.collectivite_id) as collectivite_ids
+                       from stats.collectivite c
+                                join indicateur_definition d on true
+                                left join indicateur_resultat r
+                                          on r.collectivite_id = c.collectivite_id and r.indicateur_id = d.id
+                                left join indicateur_objectif o
+                                          on o.collectivite_id = c.collectivite_id and o.indicateur_id = d.id
+                       group by d.id)
 select id,
-       thematique_id,
-       type,
-       description,
-       formulation
-from question q;
-
-create view stats.report_choix
-as
-select question_id,
-       id,
-       formulation
-from question_choix qc;
-
-create materialized view stats.report_reponse_choix
-as
-select collectivite_id,
-       code_siren_insee,
+       indicateur_group,
+       identifiant,
        nom,
-       question_id,
-       reponse
-from stats.collectivite c
-         join public.reponse_choix rc using (collectivite_id);
+       r.count                           as resultats,
+       o.count                           as objectifs,
+       array_length(collectivite_ids, 1) as collectivites,
+       collectivite_ids
+from indicateur_definition i
+         join resutat_renseignes r using (id)
+         join objectif_renseignes o using (id)
+         join collectivites c using (id);
 
-create materialized view stats.report_reponse_binaire
+create materialized view stats.report_indicateur_personnalise
 as
-select collectivite_id,
-       code_siren_insee,
-       nom,
-       question_id,
-       reponse
-from stats.collectivite c
-         join public.reponse_binaire rb using (collectivite_id);
+select ipd.collectivite_id,
+       ipd.titre,
+       ipd.description,
+       ipd.unite,
+       ipd.commentaire,
+       count(ipo) as objectifs,
+       count(ipr) as resultats
+from indicateur_personnalise_definition ipd
+         left join indicateur_personnalise_objectif ipo on ipd.id = ipo.indicateur_id
+         left join indicateur_personnalise_resultat ipr on ipd.id = ipr.indicateur_id
+where ipo is not null
+   or ipr is not null
+group by ipd.collectivite_id, ipd.titre, ipd.description, ipd.unite, ipd.commentaire;
 
-create materialized view stats.report_reponse_proportion
-as
-select collectivite_id,
-       code_siren_insee,
-       nom,
-       question_id,
-       reponse
-from stats.collectivite c
-         join public.reponse_proportion rp using (collectivite_id);
 
-create materialized view stats.report_indicateur_resultat
-as
-select collectivite_id,
-       code_siren_insee,
-       nom,
-       indicateur_id,
-       annee,
-       valeur
-from stats.collectivite c
-         join public.indicateur_resultat ir using (collectivite_id)
-where valeur is not null
-order by collectivite_id, annee;
-
-create function
+create or replace function
     stats.refresh_reporting()
     returns void
 as
@@ -100,9 +61,9 @@ begin
     refresh materialized view stats.report_reponse_binaire;
     refresh materialized view stats.report_reponse_proportion;
     refresh materialized view stats.report_indicateur_resultat;
+    refresh materialized view stats.report_indicateur;
+    refresh materialized view stats.report_indicateur_personnalise;
 end;
 $$ language plpgsql;
-comment on function stats.refresh_reporting is
-    'Rafraichit les vues matérialisées.';
 
 COMMIT;
