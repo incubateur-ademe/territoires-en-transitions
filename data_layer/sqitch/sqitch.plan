@@ -325,6 +325,8 @@ labellisation/comparaison_audit [labellisation/comparaison_audit@v2.18.0] 2023-0
 labellisation/audit [labellisation/audit@v2.18.0] 2023-04-18T17:15:14Z Florian <florian@derfurth.com> # Améliore la fonction de création d'audit pour les transaction concurrentes
 @v2.24.0 2023-04-24T15:53:11Z Florian <florian@derfurth.com> # Change le calcul pre-audit pour prendre en compte les réponses de personnalisation
 
+stats/export 2023-04-26T13:09:53Z Amandine Jacquelin <conta@LanceLibre> # Ajoute une fonction pour lister les utilisateurs par collectivité et en colonne
+
 stats/amplitude 2023-04-14T08:17:31Z Florian <florian@derfurth.com> # Envoie des visites à Amplitude
 @v2.25.0 2023-04-27T09:24:49Z Florian <florian@derfurth.com> # Integration Amplitude de test
 
