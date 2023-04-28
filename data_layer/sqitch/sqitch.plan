@@ -333,3 +333,4 @@ plan_action/tags 2023-04-18T14:20:39Z Florian <florian@derfurth.com> # Ajoute la
 @v2.26.0 2023-04-27T14:53:56Z Florian <florian@derfurth.com> # Améliorations des plans d'action
 
 stats/export 2023-04-26T13:09:53Z Amandine Jacquelin <conta@LanceLibre> # Ajoute une fonction pour lister les utilisateurs par collectivité et en colonne
+plan_action/plan_action [plan_action/plan_action@v2.26.0] 2023-04-28T13:41:39Z Amandine Jacquelin <conta@LanceLibre> # Ajout cibles

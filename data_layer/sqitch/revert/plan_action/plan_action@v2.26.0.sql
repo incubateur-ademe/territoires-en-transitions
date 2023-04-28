@@ -2,6 +2,7 @@
 
 BEGIN;
 
--- On ne peut pas enlever des valeurs d'enums
+drop function flat_axes;
+drop type flat_axe_node;
 
 COMMIT;
