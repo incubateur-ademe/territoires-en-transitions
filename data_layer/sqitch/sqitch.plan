@@ -339,3 +339,4 @@ cron/refresh_retool_plan_action_premier_usage 2023-05-02T13:06:59Z Amandine Jacq
 @v2.27.0 2023-05-02T14:15:35Z Florian <florian@derfurth.com> # Améliore les plans d'action et les stats
 
 stats/reporting [stats/reporting@v2.26.0] 2023-04-28T14:16:10Z Florian <florian@derfurth.com> # Ajoute les indicateurs
+stats/vues_BI [stats/vues_BI@v2.26.0] 2023-04-28T14:57:00Z Florian <florian@derfurth.com> # Corrige engagement_collectivite pour ne prendre en compte que les dernières labellisation
