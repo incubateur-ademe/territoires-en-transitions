@@ -47,10 +47,18 @@ $$
 
 -- ré active les triggers
     alter table action_statut
-        enable trigger all;
+        enable trigger action_statut_check_insert;
+    alter table action_statut
+        enable trigger action_statut_check_update;
+    alter table action_statut
+        enable trigger after_action_statut_insert;
+    alter table action_statut
+        enable trigger save_history;
     alter table action_commentaire
-        enable trigger all;
-    $$
+        enable trigger save_history;
+    alter table action_commentaire
+        enable trigger set_modified_at_before_action_commentaire_update;
+$$
     language sql
     security definer;
 comment on function test_reset_action_statut_and_desc is
