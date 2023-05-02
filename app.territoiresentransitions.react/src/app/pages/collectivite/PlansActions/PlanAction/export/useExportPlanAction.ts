@@ -7,31 +7,24 @@ import {PlanAction} from '../data/types';
 
 export const useExportPlanAction = (planId: number) => {
   const data = useExportData(planId);
-  const {loadTemplate, template, isLoading} = data;
+  const {loadTemplate, isLoading, loadPlanAction} = data;
 
   const exportPlanAction = () => {
-    // charge le modèle si nécessaire et insère les données
-    if (template) {
-      updateAndSaveXLS(data);
-    } else {
-      loadTemplate().then(({data: fetchedTemplate}) =>
-        updateAndSaveXLS(data, fetchedTemplate)
-      );
-    }
+    Promise.all([loadTemplate(), loadPlanAction()]).then(
+      ([{data: template}, {data: planAction}]) =>
+        updateAndSaveXLS({...data, template, planAction})
+    );
   };
   return {exportPlanAction, isLoading};
 };
 
 // insère les données dans le modèle et sauvegarde le fichier xls résultant
-const updateAndSaveXLS = async (
-  data: TExportData,
-  fetchedTemplate?: ArrayBuffer | null
-) => {
-  const {config, planAction, template: cachedTemplate} = data;
-  const template = fetchedTemplate || cachedTemplate;
+const updateAndSaveXLS = async (data: TExportData) => {
+  const {config, planAction, template} = data;
   if (!planAction || !template) {
     return;
   }
+  const {plan} = planAction;
 
   const {first_data_row} = config;
 
@@ -44,16 +37,13 @@ const updateAndSaveXLS = async (
   const exportedAt = new Date();
 
   // le nom du fichier cible
-  const filename = `Export_${planAction.axe.nom}_${format(
+  const filename = `Export_${plan.axe.nom}_${format(
     exportedAt,
     'yyyy-MM-dd'
   )}.xlsx`;
 
-  // numéro de la 1ère ligne
-  let ligne_courante = first_data_row;
-
   // écrit le plan dans la feuille
-  ecritPlan(planAction, null, ligne_courante, worksheet, data);
+  ecritPlan(plan, null, first_data_row, worksheet, data);
 
   // sauvegarde le fichier modifié
   const buffer = await workbook.xlsx.writeBuffer();
@@ -74,7 +64,8 @@ const ecritPlan = (
   data: TExportData
 ) => {
   const {enfants, fiches} = plan;
-  const {config, getActionLabel, getAnnexes} = data;
+  const {config, getActionLabel, planAction} = data;
+  const {annexes} = planAction || {};
   const {data_cols} = config;
   let ligne_courante = ligne;
 
@@ -178,10 +169,15 @@ const ecritPlan = (
     worksheet.getCell(data_cols.notes_complementaires + ligne_courante).value =
       fiche.notes_complementaires;
 
-    // libellés (nom du fichier ou titre du lien) des annexes
-    worksheet.getCell(data_cols.annexes + ligne_courante).value = getAnnexes(
-      fiche?.id
-    )?.join('\n');
+    // libellés (nom du fichier ou titre du lien) des annexes associées à la fiche
+    const annexesFiche = fiche?.id
+      ? annexes
+          ?.filter(f => f.fiche_id === fiche.id)
+          .map(annexe => annexe?.lien?.url || annexe?.fichier?.filename || null)
+          .filter(s => !!s)
+      : null;
+    worksheet.getCell(data_cols.annexes + ligne_courante).value =
+      annexesFiche?.join('\n');
 
     // ligne suivante
     ligne_courante += 1;
