@@ -3079,6 +3079,15 @@ export interface Database {
           nom: string | null
         }
       }
+      retool_plan_action_premier_usage: {
+        Row: {
+          collectivite_id: number | null
+          created_at: string | null
+          email: string | null
+          fiche: boolean | null
+          nom: string | null
+        }
+      }
       retool_plan_action_usage: {
         Row: {
           collectivite_id: number | null
@@ -6086,6 +6095,12 @@ export interface Database {
       skip:
         | {
             Args: {
+              "": number
+            }
+            Returns: string
+          }
+        | {
+            Args: {
               why: string
               how_many: number
             }
@@ -6094,12 +6109,6 @@ export interface Database {
         | {
             Args: {
               "": string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              "": number
             }
             Returns: string
           }
@@ -6290,28 +6299,28 @@ export interface Database {
             Args: {
               bucket_width: unknown
               ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
               origin: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
             }
             Returns: string
           }
