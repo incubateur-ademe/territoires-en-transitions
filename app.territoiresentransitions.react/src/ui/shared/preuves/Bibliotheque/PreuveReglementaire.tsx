@@ -46,7 +46,7 @@ export const PreuveReglementaire = (props: TPreuveReglementaireProps) => {
           )}
         </span>
 
-        {/* Liens vers le documents */}
+        {/* Liens vers les documents */}
         {haveDoc && (
           <div className="flex flex-col gap-3">
             {preuves.map(preuve => (
