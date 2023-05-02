@@ -3,7 +3,7 @@ import {AnyIndicateurValues} from 'app/pages/collectivite/Indicateurs/AnyIndicat
 import {Chevron} from 'ui/shared/Chevron';
 import {AnyIndicateurRepository} from 'core-logic/api/repositories/AnyIndicateurRepository';
 import {RenderMarkdownText} from 'ui/shared/RenderMarkdownText';
-import {Spacer} from 'ui/shared/Spacer';
+import {Spacer} from 'ui/dividers/Spacer';
 import {useScrollIntoView} from 'utils/useScrollIntoView';
 
 export const AnyIndicateurCard = <T extends string | number>({

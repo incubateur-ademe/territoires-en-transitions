@@ -5,7 +5,7 @@ import {useState} from 'react';
 import {addTargetToContentAnchors} from 'utils/content';
 import {Tabs, Tab} from 'ui/shared/Tabs';
 import {ActionReferentielDisplayTitle} from 'ui/referentiels/ActionReferentielDisplayTitle';
-import {Spacer} from 'ui/shared/Spacer';
+import {Spacer} from 'ui/dividers/Spacer';
 import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
 import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
 import {ActionReferentielAvancementRecursiveCard} from 'ui/referentiels/ActionReferentielAvancementRecursiveCard';

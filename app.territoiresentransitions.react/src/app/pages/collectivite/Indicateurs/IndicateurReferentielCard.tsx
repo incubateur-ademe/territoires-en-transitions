@@ -4,7 +4,7 @@ import {AnyIndicateurValues} from 'app/pages/collectivite/Indicateurs/AnyIndicat
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {AnyIndicateurLineChartExpandable} from './AnyIndicateurLineChartExpandable';
 import {AnyIndicateurCard} from 'app/pages/collectivite/Indicateurs/AnyIndicateurCard';
-import {Spacer} from 'ui/shared/Spacer';
+import {Spacer} from 'ui/dividers/Spacer';
 import {
   indicateurObjectifRepository,
   indicateurResultatRepository,
