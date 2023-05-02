@@ -4,7 +4,7 @@ import {useAnyIndicateurValuesForAllYears} from 'core-logic/hooks/indicateur_val
 import {AnyIndicateurValueRead} from 'generated/dataLayer/any_indicateur_value_write';
 import {Line} from 'react-chartjs-2';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {Spacer} from 'ui/shared/Spacer';
+import {Spacer} from 'ui/dividers/Spacer';
 import {CanvasDownloadButton} from 'ui/charts/CanvasDownloadButton';
 
 const range = (start: number, end: number) => {

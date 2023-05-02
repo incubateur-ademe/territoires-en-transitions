@@ -2,7 +2,7 @@ import {ActionStatusDropdown} from 'ui/referentiels/ActionStatusDropdown';
 import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
 import {ActionReferentielDisplayTitle} from 'ui/referentiels/ActionReferentielDisplayTitle';
 import {ActionReferentielDescription} from 'ui/referentiels/ActionReferentielDescription';
-import {Spacer} from 'ui/shared/Spacer';
+import {Spacer} from 'ui/dividers/Spacer';
 import {
   ActionExemplesExpandPanel,
   ActionPreuvesExpandPanel,
