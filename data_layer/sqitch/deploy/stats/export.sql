@@ -2,7 +2,7 @@
 
 BEGIN;
 
-create or replace function stats.export_utilisateurs_en_colonne_csv_text()
+create function stats.export_utilisateurs_en_colonne_csv_text()
     returns text as $$
 declare
     rank int;
@@ -22,14 +22,13 @@ begin
                           pcm.fonction,
                           pcm.details_fonction,
                           au.last_sign_in_at               as derniere_connexion
-                   from named_collectivite nc
+                   from stats.collectivite nc
                             left join private_utilisateur_droit pud on nc.collectivite_id = pud.collectivite_id
                             join dcp on dcp.user_id = pud.user_id
                             join auth.users au on dcp.user_id = au.id
                             left join private_collectivite_membre pcm
                                       on pcm.user_id = pud.user_id and pcm.collectivite_id = nc.collectivite_id
-                   where pud.active
-                     and nc.nom <> ''#Collectivité Test''';
+                   where pud.active';
 
     -- Calcul le nombre d'utilisateur max pour une collectivité pour adapter le nombre de colonnes
     with nb_users_by_col as
