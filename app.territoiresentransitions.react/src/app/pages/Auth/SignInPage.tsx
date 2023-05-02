@@ -1,7 +1,7 @@
 import {Form, Formik} from 'formik';
 import * as Yup from 'yup';
 import {ValiderButton} from 'ui/shared/ValiderButton';
-import {Spacer} from 'ui/shared/Spacer';
+import {Spacer} from 'ui/dividers/Spacer';
 import {Link} from 'react-router-dom';
 import {signUpPath} from 'app/paths';
 import {ErrorMessage} from 'ui/forms/ErrorMessage';

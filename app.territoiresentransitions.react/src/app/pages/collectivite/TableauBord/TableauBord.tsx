@@ -16,7 +16,7 @@ import {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
 import {ActionScore} from 'types/ClientScore';
 import {DoughnutWithNumber} from 'ui/charts/DoughnutWithNumber';
-import {Spacer} from 'ui/shared/Spacer';
+import {Spacer} from 'ui/dividers/Spacer';
 import {toFixed} from 'utils/toFixed';
 import {NiveauLabellisation} from './NiveauLabellisation';
 import {
