@@ -23,7 +23,7 @@ jobs:
           version: v0.7.0
       - uses: supabase/setup-cli@v1
         with:
-          version: 1.46.5
+          version: 1.52.3
 
       - run: earthly +setup-env
       - run: earthly +dev
