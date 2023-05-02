@@ -64,7 +64,7 @@ select nc.collectivite_id,
        f.fiche,
        f.created_at,
        f.email
-from named_collectivite nc
+from stats.collectivite nc
          join lateral (
     -- Si premier axe et fiche créé en même temps (import), on en prend qu'un (la fiche via order by)
     select *
