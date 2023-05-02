@@ -2,7 +2,7 @@ import {useState} from 'react';
 import {Form, Formik} from 'formik';
 import * as Yup from 'yup';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {Spacer} from 'ui/shared/Spacer';
+import {Spacer} from 'ui/dividers/Spacer';
 import {UiDialogButton} from 'ui/UiDialogButton';
 import {ErrorMessage} from 'ui/forms/ErrorMessage';
 import FormikInput from 'ui/shared/form/formik/FormikInput';

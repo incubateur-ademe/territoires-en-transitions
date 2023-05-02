@@ -1,6 +1,6 @@
 import {lazy, Suspense} from 'react';
 import {renderLoader} from 'utils/renderLoader';
-import {Spacer} from 'ui/shared/Spacer';
+import {Spacer} from 'ui/dividers/Spacer';
 
 const RecoverLanding = lazy(() => import('./RecoverLanding'));
 

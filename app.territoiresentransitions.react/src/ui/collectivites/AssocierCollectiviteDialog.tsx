@@ -3,7 +3,7 @@ import {ReferentContact} from 'core-logic/api/procedures/collectiviteProcedures'
 import {AllCollectiviteRead} from 'generated/dataLayer/all_collectivite_read';
 import React, {useEffect} from 'react';
 import {AutocompleteInput} from 'ui/AutocompleteInput';
-import {Spacer} from 'ui/shared/Spacer';
+import {Spacer} from 'ui/dividers/Spacer';
 import {UiDialogButton} from 'ui/UiDialogButton';
 import {useAllCollectivites} from './useAllCollectivites';
 

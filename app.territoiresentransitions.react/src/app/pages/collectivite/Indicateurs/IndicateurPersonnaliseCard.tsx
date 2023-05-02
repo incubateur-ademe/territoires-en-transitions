@@ -12,7 +12,7 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useAnyIndicateurValuesForAllYears} from 'core-logic/hooks/indicateur_values';
 import {IndicateurPersonnaliseDefinitionRead} from 'generated/dataLayer/indicateur_personnalise_definition_read';
 import React from 'react';
-import {Spacer} from 'ui/shared/Spacer';
+import {Spacer} from 'ui/dividers/Spacer';
 
 const Commentaire = (props: {
   indicateur: IndicateurPersonnaliseDefinitionRead;
