@@ -62,13 +62,6 @@ id: delib_compo_cces
 ## Description
 Preuve identique à la eci_2.1.0 -->
 
-# Bilan et outils de suivi
-```yaml
-actions: 
-  - eci_2.1.3
-id: bilan_outil_suivi_PLPDMA
-```
-
 # Rapport annuel du SPPGD faisant état de l'avancement de la politique de prévention
 ```yaml
 actions: 
