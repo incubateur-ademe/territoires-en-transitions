@@ -1,7 +1,7 @@
 import {useQuery} from 'react-query';
 
 import {supabaseClient} from 'core-logic/api/supabase';
-import {FlatAxe, PlanAction, PlanNode} from './types';
+import {FlatAxe, PlanNode} from './types';
 
 function buildPlan(axes: FlatAxe[]): PlanNode {
   let plan = {...axes[0]!, children: []};
@@ -22,14 +22,5 @@ export const usePlanAction = (plan_id: number) => {
   return useQuery(['plan_action', plan_id], async () => {
     const {data} = await supabaseClient.rpc('flat_axes', {plan_id});
     return buildPlan(data as unknown as FlatAxe[]) as unknown as PlanNode;
-  });
-};
-
-export const usePlanActionExport = (plan_id: number) => {
-  return useQuery(['plan_action_export', plan_id], async () => {
-    const {data} = await supabaseClient.rpc('plan_action_export', {
-      id: plan_id,
-    });
-    return data as unknown as PlanAction;
   });
 };
