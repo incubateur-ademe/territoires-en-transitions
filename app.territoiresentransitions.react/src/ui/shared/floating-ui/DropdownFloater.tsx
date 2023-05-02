@@ -41,7 +41,7 @@ const DropdownFloater = ({
   enterToToggle = true,
   containerWidthMatchButton = false,
   offsetValue = 4,
-  zIndex = 1050,
+  zIndex = 1200,
   'data-test': dataTest,
 }: DropdownFloaterProps) => {
   const [isOpen, setIsOpen] = useState(false);
