@@ -301,13 +301,6 @@ actions:
 id: suivi_actions_reduction_impact_collecte
 ```
 
-# Comptes rendus de réunions attestants de l'avancement du plan d'actions et du déroulement des travaux
-```yaml
-actions: 
-  - eci_2.4.2
-id: cr_reunions_avancement_plan_actions
-```
-
 <!--# Rapport annuel déchets
 ```yaml
 actions: 
@@ -414,15 +407,6 @@ Convention d'aide, mise en contact de personnes, mise à disposition de moyens..
 actions: 
   - eci_2.5.3
 id: justif_reflexion_collective_prevention
-```
-## Description
-Besoins en emballages, etc.
-
-# Documents attestant d’une réflexion collective sur les sujets de prévention de déchets
-```yaml
-actions: 
-  - eci_2.5.3
-id: justif_action_acteurs_pro
 ```
 ## Description
 Par exemple : besoins en emballages, etc.
