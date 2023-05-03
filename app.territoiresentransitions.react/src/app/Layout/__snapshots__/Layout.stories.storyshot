@@ -2,646 +2,654 @@
 
 exports[`Storyshots app/Layout Exemple 1`] = `
 <div
-  className="overflow-hidden"
+  className="flex flex-row h-[100vh] overflow-hidden"
 >
-  <header
-    className="fr-header"
-    role="banner"
+  <div
+    className="w-full overflow-y-auto"
   >
-    <div
-      className="fr-header__body"
+    <header
+      className="fr-header"
+      role="banner"
     >
       <div
-        className="fr-container"
+        className="fr-header__body"
       >
         <div
-          className="fr-header__body-row"
+          className="fr-container"
         >
           <div
-            className="fr-header__brand fr-enlarge-link"
+            className="fr-header__body-row"
           >
             <div
-              className="fr-header__brand-top"
+              className="fr-header__brand fr-enlarge-link"
             >
               <div
-                className="fr-header__logo"
-              >
-                <p
-                  className="fr-logo"
-                >
-                  République
-                  <br />
-                  Française
-                </p>
-              </div>
-              <div
-                className="fr-header__operator"
+                className="fr-header__brand-top"
               >
                 <div
-                  className="fr-grid-row"
+                  className="fr-header__logo"
                 >
-                  <img
-                    alt="ADEME"
-                    height="80"
-                    src="ademe.svg"
-                    width="70"
-                  />
+                  <p
+                    className="fr-logo"
+                  >
+                    République
+                    <br />
+                    Française
+                  </p>
+                </div>
+                <div
+                  className="fr-header__operator"
+                >
+                  <div
+                    className="fr-grid-row"
+                  >
+                    <img
+                      alt="ADEME"
+                      height="80"
+                      src="ademe.svg"
+                      width="70"
+                    />
+                  </div>
+                </div>
+                <div
+                  className="fr-header__navbar"
+                >
+                  <button
+                    aria-controls="modal-header__menu"
+                    aria-haspopup="menu"
+                    className="fr-btn--menu fr-btn"
+                    data-fr-opened={false}
+                    onClick={[Function]}
+                    title="Menu"
+                  >
+                    Menu
+                  </button>
                 </div>
               </div>
               <div
-                className="fr-header__navbar"
+                className="fr-header__service"
               >
-                <button
-                  aria-controls="modal-header__menu"
-                  aria-haspopup="menu"
-                  className="fr-btn--menu fr-btn"
-                  data-fr-opened={false}
+                <a
+                  href="/"
                   onClick={[Function]}
-                  title="Menu"
+                  title="Accueil - Territoires en Transitions"
                 >
-                  Menu
-                </button>
+                  <p
+                    className="fr-header__service-title"
+                  >
+                    Territoires en Transitions
+                  </p>
+                  <p
+                    className="fr-header__service-tagline"
+                  >
+                    Accompagner la transition écologique des collectivités
+                  </p>
+                </a>
               </div>
             </div>
             <div
-              className="fr-header__service"
+              className="fr-header__tools"
             >
-              <a
-                href="/"
-                onClick={[Function]}
-                title="Accueil - Territoires en Transitions"
+              <div
+                className="fr-header__tools-links"
               >
-                <p
-                  className="fr-header__service-title"
+                <ul
+                  className="fr-btns-group"
                 >
-                  Territoires en Transitions
-                </p>
-                <p
-                  className="fr-header__service-tagline"
-                >
-                  Accompagner la transition écologique des collectivités
-                </p>
-              </a>
-            </div>
-          </div>
-          <div
-            className="fr-header__tools"
-          >
-            <div
-              className="fr-header__tools-links"
-            >
-              <ul
-                className="fr-btns-group"
-              >
-                <li
-                  onClick={[Function]}
-                >
-                  <button
-                    className="fr-btn fr-fi-question-line"
-                    data-test="help"
+                  <li
                     onClick={[Function]}
                   >
-                    Aide
-                  </button>
-                </li>
-                <li>
-                  <a
-                    className="fr-btn fr-icon-add-circle-line"
-                    data-test="signup"
-                    href="/auth/signup"
-                    onClick={[Function]}
-                  >
-                    Créer un compte
-                  </a>
-                </li>
-                <li>
-                  <a
-                    className="fr-btn fr-icon-account-line"
-                    data-test="signin"
-                    href="/auth/signin"
-                    onClick={[Function]}
-                  >
-                    Se connecter
-                  </a>
-                </li>
-              </ul>
+                    <button
+                      className="fr-btn fr-fi-question-line"
+                      data-test="help"
+                      onClick={[Function]}
+                    >
+                      Aide
+                    </button>
+                  </li>
+                  <li>
+                    <a
+                      className="fr-btn fr-icon-add-circle-line"
+                      data-test="signup"
+                      href="/auth/signup"
+                      onClick={[Function]}
+                    >
+                      Créer un compte
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      className="fr-btn fr-icon-account-line"
+                      data-test="signin"
+                      href="/auth/signin"
+                      onClick={[Function]}
+                    >
+                      Se connecter
+                    </a>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+      <div
+        className="fr-header__menu fr-modal"
+        id="modal-header__menu"
+      >
+        <div
+          className="fr-container"
+        >
+          <button
+            aria-controls="modal-header__menu"
+            className="fr-btn fr-btn--close"
+            onClick={[Function]}
+          >
+            Fermer
+          </button>
+          <nav
+            aria-label="Menu principal"
+            className="fr-nav flex !justify-between"
+            role="navigation"
+          >
+            <ul
+              className="fr-nav__list"
+            >
+              <li
+                className="fr-nav__item"
+              >
+                <a
+                  aria-controls="modal-header__menu"
+                  className="fr-nav__link"
+                  href="/collectivite/1/tableau_bord"
+                  onClick={[Function]}
+                  target="_self"
+                >
+                  Tableau de bord
+                </a>
+              </li>
+              <li
+                className="fr-nav__item"
+              >
+                <button
+                  aria-controls="floating-ui-3"
+                  aria-expanded={false}
+                  className="fr-nav__btn"
+                  onClick={[Function]}
+                >
+                  État des lieux
+                </button>
+                <div
+                  className="fr-menu fr-collapse"
+                  id="floating-ui-3"
+                >
+                  <ul
+                    className="fr-menu__list"
+                    onClickCapture={[Function]}
+                  >
+                    <li
+                      className="fr-nav__item"
+                    >
+                      <a
+                        aria-controls="modal-header__menu"
+                        className="fr-nav__link"
+                        href="/collectivite/1/personnalisation"
+                        onClick={[Function]}
+                        target="_self"
+                      >
+                        Personnalisation des référentiels
+                      </a>
+                    </li>
+                    <li
+                      className="fr-nav__item"
+                    >
+                      <a
+                        aria-controls="modal-header__menu"
+                        className="fr-nav__link"
+                        href="/collectivite/1/referentiels/cae/progression"
+                        onClick={[Function]}
+                        target="_self"
+                      >
+                        Référentiel Climat-Air-Énergie
+                      </a>
+                    </li>
+                    <li
+                      className="fr-nav__item"
+                    >
+                      <a
+                        aria-controls="modal-header__menu"
+                        className="fr-nav__link"
+                        href="/collectivite/1/labellisation/cae/suivi"
+                        onClick={[Function]}
+                        target="_self"
+                      >
+                        Labellisation Climat-Air-Énergie
+                      </a>
+                    </li>
+                    <li
+                      className="fr-nav__item"
+                    >
+                      <a
+                        aria-controls="modal-header__menu"
+                        className="fr-nav__link"
+                        href="/collectivite/1/referentiels/eci/progression"
+                        onClick={[Function]}
+                        target="_self"
+                      >
+                        Référentiel Économie Circulaire
+                      </a>
+                    </li>
+                    <li
+                      className="fr-nav__item"
+                    >
+                      <a
+                        aria-controls="modal-header__menu"
+                        className="fr-nav__link"
+                        href="/collectivite/1/labellisation/eci/suivi"
+                        onClick={[Function]}
+                        target="_self"
+                      >
+                        Labellisation Économie Circulaire
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </li>
+              <li
+                className="fr-nav__item"
+              >
+                <a
+                  aria-controls="modal-header__menu"
+                  className="fr-nav__link"
+                  href="/collectivite/1/plans"
+                  onClick={[Function]}
+                  target="_self"
+                >
+                  Plans d'action
+                </a>
+              </li>
+              <li
+                className="fr-nav__item"
+              >
+                <button
+                  aria-controls="floating-ui-4"
+                  aria-expanded={false}
+                  className="fr-nav__btn"
+                  onClick={[Function]}
+                >
+                  Indicateurs
+                </button>
+                <div
+                  className="fr-menu fr-collapse"
+                  id="floating-ui-4"
+                >
+                  <ul
+                    className="fr-menu__list"
+                    onClickCapture={[Function]}
+                  >
+                    <li
+                      className="fr-nav__item"
+                    >
+                      <a
+                        aria-controls="modal-header__menu"
+                        className="fr-nav__link"
+                        href="/collectivite/1/indicateurs/cae"
+                        onClick={[Function]}
+                        target="_self"
+                      >
+                        Indicateurs Climat-Air-Énergie
+                      </a>
+                    </li>
+                    <li
+                      className="fr-nav__item"
+                    >
+                      <a
+                        aria-controls="modal-header__menu"
+                        className="fr-nav__link"
+                        href="/collectivite/1/indicateurs/eci"
+                        onClick={[Function]}
+                        target="_self"
+                      >
+                        Indicateurs Économie Circulaire
+                      </a>
+                    </li>
+                    <li
+                      className="fr-nav__item"
+                    >
+                      <a
+                        aria-controls="modal-header__menu"
+                        className="fr-nav__link"
+                        href="/collectivite/1/indicateurs/crte"
+                        onClick={[Function]}
+                        target="_self"
+                      >
+                        Indicateurs Contrat de Relance Transition Écologique
+                      </a>
+                    </li>
+                    <li
+                      className="fr-nav__item"
+                    >
+                      <a
+                        aria-controls="modal-header__menu"
+                        className="fr-nav__link"
+                        href="/collectivite/1/indicateurs/perso"
+                        onClick={[Function]}
+                        target="_self"
+                      >
+                        Indicateurs personnalisés
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </li>
+              <li
+                className="fr-nav__item"
+              >
+                <button
+                  aria-controls="floating-ui-5"
+                  aria-expanded={false}
+                  className="fr-nav__btn"
+                  onClick={[Function]}
+                >
+                  Paramètres
+                </button>
+                <div
+                  className="fr-menu fr-collapse"
+                  id="floating-ui-5"
+                >
+                  <ul
+                    className="fr-menu__list"
+                    onClickCapture={[Function]}
+                  >
+                    <li
+                      className="fr-nav__item"
+                    >
+                      <a
+                        aria-controls="modal-header__menu"
+                        className="fr-nav__link"
+                        href="/collectivite/1/users"
+                        onClick={[Function]}
+                        target="_self"
+                      >
+                        Gestion des membres
+                      </a>
+                    </li>
+                    <li
+                      className="fr-nav__item"
+                    >
+                      <a
+                        aria-controls="modal-header__menu"
+                        className="fr-nav__link"
+                        href="/collectivite/1/bibliotheque"
+                        onClick={[Function]}
+                        target="_self"
+                      >
+                        Bibliothèque de documents
+                      </a>
+                    </li>
+                    <li
+                      className="fr-nav__item"
+                    >
+                      <a
+                        aria-controls="modal-header__menu"
+                        className="fr-nav__link"
+                        href="/collectivite/1/historique"
+                        onClick={[Function]}
+                        target="_self"
+                      >
+                        Journal d'activité
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </li>
+            </ul>
+          </nav>
+          <div
+            className="fr-header__menu-links"
+          >
+            <ul
+              className="fr-btns-group"
+            >
+              <li
+                onClick={[Function]}
+              >
+                <button
+                  className="fr-btn fr-fi-question-line"
+                  data-test="help"
+                  onClick={[Function]}
+                >
+                  Aide
+                </button>
+              </li>
+              <li>
+                <a
+                  className="fr-btn fr-icon-add-circle-line"
+                  data-test="signup"
+                  href="/auth/signup"
+                  onClick={[Function]}
+                >
+                  Créer un compte
+                </a>
+              </li>
+              <li>
+                <a
+                  className="fr-btn fr-icon-account-line"
+                  data-test="signin"
+                  href="/auth/signin"
+                  onClick={[Function]}
+                >
+                  Se connecter
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </header>
     <div
-      className="fr-header__menu fr-modal"
-      id="modal-header__menu"
+      style={
+        Object {
+          "display": "flex",
+          "padding": "4rem",
+        }
+      }
+    >
+      <p
+        style={
+          Object {
+            "margin": "auto",
+          }
+        }
+      >
+        Page
+      </p>
+    </div>
+    <footer
+      className="fr-footer fr-mt-4w"
+      id="footer"
+      role="contentinfo"
     >
       <div
         className="fr-container"
       >
-        <button
-          aria-controls="modal-header__menu"
-          className="fr-btn fr-btn--close"
-          onClick={[Function]}
-        >
-          Fermer
-        </button>
-        <nav
-          aria-label="Menu principal"
-          className="fr-nav flex !justify-between"
-          role="navigation"
-        >
-          <ul
-            className="fr-nav__list"
-          >
-            <li
-              className="fr-nav__item"
-            >
-              <a
-                aria-controls="modal-header__menu"
-                className="fr-nav__link"
-                href="/collectivite/1/tableau_bord"
-                onClick={[Function]}
-                target="_self"
-              >
-                Tableau de bord
-              </a>
-            </li>
-            <li
-              className="fr-nav__item"
-            >
-              <button
-                aria-controls="floating-ui-3"
-                aria-expanded={false}
-                className="fr-nav__btn"
-                onClick={[Function]}
-              >
-                État des lieux
-              </button>
-              <div
-                className="fr-menu fr-collapse"
-                id="floating-ui-3"
-              >
-                <ul
-                  className="fr-menu__list"
-                  onClickCapture={[Function]}
-                >
-                  <li
-                    className="fr-nav__item"
-                  >
-                    <a
-                      aria-controls="modal-header__menu"
-                      className="fr-nav__link"
-                      href="/collectivite/1/personnalisation"
-                      onClick={[Function]}
-                      target="_self"
-                    >
-                      Personnalisation des référentiels
-                    </a>
-                  </li>
-                  <li
-                    className="fr-nav__item"
-                  >
-                    <a
-                      aria-controls="modal-header__menu"
-                      className="fr-nav__link"
-                      href="/collectivite/1/referentiels/cae/progression"
-                      onClick={[Function]}
-                      target="_self"
-                    >
-                      Référentiel Climat-Air-Énergie
-                    </a>
-                  </li>
-                  <li
-                    className="fr-nav__item"
-                  >
-                    <a
-                      aria-controls="modal-header__menu"
-                      className="fr-nav__link"
-                      href="/collectivite/1/labellisation/cae/suivi"
-                      onClick={[Function]}
-                      target="_self"
-                    >
-                      Labellisation Climat-Air-Énergie
-                    </a>
-                  </li>
-                  <li
-                    className="fr-nav__item"
-                  >
-                    <a
-                      aria-controls="modal-header__menu"
-                      className="fr-nav__link"
-                      href="/collectivite/1/referentiels/eci/progression"
-                      onClick={[Function]}
-                      target="_self"
-                    >
-                      Référentiel Économie Circulaire
-                    </a>
-                  </li>
-                  <li
-                    className="fr-nav__item"
-                  >
-                    <a
-                      aria-controls="modal-header__menu"
-                      className="fr-nav__link"
-                      href="/collectivite/1/labellisation/eci/suivi"
-                      onClick={[Function]}
-                      target="_self"
-                    >
-                      Labellisation Économie Circulaire
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </li>
-            <li
-              className="fr-nav__item"
-            >
-              <a
-                aria-controls="modal-header__menu"
-                className="fr-nav__link"
-                href="/collectivite/1/plans"
-                onClick={[Function]}
-                target="_self"
-              >
-                Plans d'action
-              </a>
-            </li>
-            <li
-              className="fr-nav__item"
-            >
-              <button
-                aria-controls="floating-ui-4"
-                aria-expanded={false}
-                className="fr-nav__btn"
-                onClick={[Function]}
-              >
-                Indicateurs
-              </button>
-              <div
-                className="fr-menu fr-collapse"
-                id="floating-ui-4"
-              >
-                <ul
-                  className="fr-menu__list"
-                  onClickCapture={[Function]}
-                >
-                  <li
-                    className="fr-nav__item"
-                  >
-                    <a
-                      aria-controls="modal-header__menu"
-                      className="fr-nav__link"
-                      href="/collectivite/1/indicateurs/cae"
-                      onClick={[Function]}
-                      target="_self"
-                    >
-                      Indicateurs Climat-Air-Énergie
-                    </a>
-                  </li>
-                  <li
-                    className="fr-nav__item"
-                  >
-                    <a
-                      aria-controls="modal-header__menu"
-                      className="fr-nav__link"
-                      href="/collectivite/1/indicateurs/eci"
-                      onClick={[Function]}
-                      target="_self"
-                    >
-                      Indicateurs Économie Circulaire
-                    </a>
-                  </li>
-                  <li
-                    className="fr-nav__item"
-                  >
-                    <a
-                      aria-controls="modal-header__menu"
-                      className="fr-nav__link"
-                      href="/collectivite/1/indicateurs/crte"
-                      onClick={[Function]}
-                      target="_self"
-                    >
-                      Indicateurs Contrat de Relance Transition Écologique
-                    </a>
-                  </li>
-                  <li
-                    className="fr-nav__item"
-                  >
-                    <a
-                      aria-controls="modal-header__menu"
-                      className="fr-nav__link"
-                      href="/collectivite/1/indicateurs/perso"
-                      onClick={[Function]}
-                      target="_self"
-                    >
-                      Indicateurs personnalisés
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </li>
-            <li
-              className="fr-nav__item"
-            >
-              <button
-                aria-controls="floating-ui-5"
-                aria-expanded={false}
-                className="fr-nav__btn"
-                onClick={[Function]}
-              >
-                Paramètres
-              </button>
-              <div
-                className="fr-menu fr-collapse"
-                id="floating-ui-5"
-              >
-                <ul
-                  className="fr-menu__list"
-                  onClickCapture={[Function]}
-                >
-                  <li
-                    className="fr-nav__item"
-                  >
-                    <a
-                      aria-controls="modal-header__menu"
-                      className="fr-nav__link"
-                      href="/collectivite/1/users"
-                      onClick={[Function]}
-                      target="_self"
-                    >
-                      Gestion des membres
-                    </a>
-                  </li>
-                  <li
-                    className="fr-nav__item"
-                  >
-                    <a
-                      aria-controls="modal-header__menu"
-                      className="fr-nav__link"
-                      href="/collectivite/1/bibliotheque"
-                      onClick={[Function]}
-                      target="_self"
-                    >
-                      Bibliothèque de documents
-                    </a>
-                  </li>
-                  <li
-                    className="fr-nav__item"
-                  >
-                    <a
-                      aria-controls="modal-header__menu"
-                      className="fr-nav__link"
-                      href="/collectivite/1/historique"
-                      onClick={[Function]}
-                      target="_self"
-                    >
-                      Journal d'activité
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </li>
-          </ul>
-        </nav>
         <div
-          className="fr-header__menu-links"
+          className="fr-footer__body"
+        >
+          <div
+            className="fr-footer__brand fr-enlarge-link"
+          >
+            <p
+              className="fr-logo"
+              title="république française"
+            >
+              république
+              <br />
+              française
+            </p>
+            <a
+              className="fr-footer__brand-link"
+              href="https://territoiresentransitions.fr"
+              title="Accueil - Territoires en Transitions"
+            >
+              <img
+                alt="ADEME"
+                className="fr-footer__logo"
+                height="146"
+                loading="lazy"
+                src="ademe.svg"
+                width="128"
+              />
+            </a>
+          </div>
+          <div
+            className="fr-footer__content"
+          >
+            <p
+              className="fr-footer__content-desc"
+            >
+              Territoires en Transitions est une startup d'État portée par l'Agence de la Transition Écologique (ADEME) avec le soutien de l'Agence Nationale de la Cohésion des Territoires (ANCT).
+               
+              <a
+                href="https://github.com/betagouv/territoires-en-transitions"
+                rel="noreferrer"
+                target="_blank"
+              >
+                Le code source
+              </a>
+               
+              est en licence libre.
+            </p>
+            <ul
+              className="fr-footer__content-list"
+            >
+              <li
+                className="fr-footer__content-item"
+              >
+                <a
+                  className="fr-footer__content-link"
+                  href="https://www.ademe.fr/"
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  ademe.fr
+                </a>
+              </li>
+              <li
+                className="fr-footer__content-item"
+              >
+                <a
+                  className="fr-footer__content-link"
+                  href="https://beta.gouv.fr/"
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  beta.gouv
+                </a>
+              </li>
+              <li
+                className="fr-footer__content-item"
+              >
+                <a
+                  className="fr-footer__content-link"
+                  href="https://territoireengagetransitionecologique.ademe.fr"
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  territoireengagetransitionecologique.ademe.fr
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div
+          className="fr-footer__bottom"
         >
           <ul
-            className="fr-btns-group"
+            className="fr-footer__bottom-list"
           >
             <li
-              onClick={[Function]}
+              className="fr-footer__bottom-item"
             >
-              <button
-                className="fr-btn fr-fi-question-line"
-                data-test="help"
-                onClick={[Function]}
-              >
-                Aide
-              </button>
-            </li>
-            <li>
               <a
-                className="fr-btn fr-icon-add-circle-line"
-                data-test="signup"
-                href="/auth/signup"
-                onClick={[Function]}
+                className="fr-footer__bottom-link"
+                href="https://aide.territoiresentransitions.fr/fr/article/comment-contacter-lequipe-territoires-en-transitions-ngu7tg/"
               >
-                Créer un compte
+                Nous contacter
               </a>
             </li>
-            <li>
+            <li
+              className="fr-footer__bottom-item"
+            >
               <a
-                className="fr-btn fr-icon-account-line"
-                data-test="signin"
-                href="/auth/signin"
-                onClick={[Function]}
+                className="fr-footer__bottom-link"
+                href="https://territoiresentransitions.fr/stats"
               >
-                Se connecter
+                Statistiques
+              </a>
+            </li>
+            <li
+              className="fr-footer__bottom-item"
+            >
+              <span
+                className="fr-footer__bottom-link"
+              >
+                Accessibilité : partiellement conforme
+              </span>
+            </li>
+            <li
+              className="fr-footer__bottom-item"
+            >
+              <a
+                className="fr-footer__bottom-link"
+                href="https://territoiresentransitions.fr/mentions"
+              >
+                Mentions légales
+              </a>
+            </li>
+            <li
+              className="fr-footer__bottom-item"
+            >
+              <a
+                className="fr-footer__bottom-link"
+                href="https://www.ademe.fr/donnees-personnelles/"
+              >
+                Données personnelles
+              </a>
+            </li>
+            <li
+              className="fr-footer__bottom-item"
+            >
+              <a
+                className="fr-footer__bottom-link"
+                href="https://territoiresentransitions.fr/cgu"
+              >
+                Conditions générales d’utilisation
               </a>
             </li>
           </ul>
+          <div
+            className="fr-footer__bottom-copy"
+          >
+            <p>
+              Sauf mention contraire, tous les contenus de ce site sont sous
+               
+              <a
+                href="https://github.com/etalab/licence-ouverte/blob/master/LO.md"
+                rel="noreferrer"
+                target="_blank"
+              >
+                licence etalab-2.0
+              </a>
+            </p>
+          </div>
         </div>
       </div>
-    </div>
-  </header>
-  <div
-    style={
-      Object {
-        "display": "flex",
-        "padding": "4rem",
-      }
-    }
-  >
-    <p
-      style={
-        Object {
-          "margin": "auto",
-        }
-      }
-    >
-      Page
-    </p>
+    </footer>
   </div>
-  <footer
-    className="fr-footer fr-mt-4w"
-    id="footer"
-    role="contentinfo"
-  >
-    <div
-      className="fr-container"
-    >
-      <div
-        className="fr-footer__body"
-      >
-        <div
-          className="fr-footer__brand fr-enlarge-link"
-        >
-          <p
-            className="fr-logo"
-            title="république française"
-          >
-            république
-            <br />
-            française
-          </p>
-          <a
-            className="fr-footer__brand-link"
-            href="https://territoiresentransitions.fr"
-            title="Accueil - Territoires en Transitions"
-          >
-            <img
-              alt="ADEME"
-              className="fr-footer__logo"
-              height="146"
-              loading="lazy"
-              src="ademe.svg"
-              width="128"
-            />
-          </a>
-        </div>
-        <div
-          className="fr-footer__content"
-        >
-          <p
-            className="fr-footer__content-desc"
-          >
-            Territoires en Transitions est une startup d'État portée par l'Agence de la Transition Écologique (ADEME) avec le soutien de l'Agence Nationale de la Cohésion des Territoires (ANCT).
-             
-            <a
-              href="https://github.com/betagouv/territoires-en-transitions"
-              rel="noreferrer"
-              target="_blank"
-            >
-              Le code source
-            </a>
-             
-            est en licence libre.
-          </p>
-          <ul
-            className="fr-footer__content-list"
-          >
-            <li
-              className="fr-footer__content-item"
-            >
-              <a
-                className="fr-footer__content-link"
-                href="https://www.ademe.fr/"
-                rel="noreferrer"
-                target="_blank"
-              >
-                ademe.fr
-              </a>
-            </li>
-            <li
-              className="fr-footer__content-item"
-            >
-              <a
-                className="fr-footer__content-link"
-                href="https://beta.gouv.fr/"
-                rel="noreferrer"
-                target="_blank"
-              >
-                beta.gouv
-              </a>
-            </li>
-            <li
-              className="fr-footer__content-item"
-            >
-              <a
-                className="fr-footer__content-link"
-                href="https://territoireengagetransitionecologique.ademe.fr"
-                rel="noreferrer"
-                target="_blank"
-              >
-                territoireengagetransitionecologique.ademe.fr
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div
-        className="fr-footer__bottom"
-      >
-        <ul
-          className="fr-footer__bottom-list"
-        >
-          <li
-            className="fr-footer__bottom-item"
-          >
-            <a
-              className="fr-footer__bottom-link"
-              href="https://aide.territoiresentransitions.fr/fr/article/comment-contacter-lequipe-territoires-en-transitions-ngu7tg/"
-            >
-              Nous contacter
-            </a>
-          </li>
-          <li
-            className="fr-footer__bottom-item"
-          >
-            <a
-              className="fr-footer__bottom-link"
-              href="https://territoiresentransitions.fr/stats"
-            >
-              Statistiques
-            </a>
-          </li>
-          <li
-            className="fr-footer__bottom-item"
-          >
-            <span
-              className="fr-footer__bottom-link"
-            >
-              Accessibilité : partiellement conforme
-            </span>
-          </li>
-          <li
-            className="fr-footer__bottom-item"
-          >
-            <a
-              className="fr-footer__bottom-link"
-              href="https://territoiresentransitions.fr/mentions"
-            >
-              Mentions légales
-            </a>
-          </li>
-          <li
-            className="fr-footer__bottom-item"
-          >
-            <a
-              className="fr-footer__bottom-link"
-              href="https://www.ademe.fr/donnees-personnelles/"
-            >
-              Données personnelles
-            </a>
-          </li>
-          <li
-            className="fr-footer__bottom-item"
-          >
-            <a
-              className="fr-footer__bottom-link"
-              href="https://territoiresentransitions.fr/cgu"
-            >
-              Conditions générales d’utilisation
-            </a>
-          </li>
-        </ul>
-        <div
-          className="fr-footer__bottom-copy"
-        >
-          <p>
-            Sauf mention contraire, tous les contenus de ce site sont sous
-             
-            <a
-              href="https://github.com/etalab/licence-ouverte/blob/master/LO.md"
-              rel="noreferrer"
-              target="_blank"
-            >
-              licence etalab-2.0
-            </a>
-          </p>
-        </div>
-      </div>
-    </div>
-  </footer>
+  <aside
+    className="shrink-0 max-w-md border-l border-l-gray-200 bg-white overflow-y-auto"
+    id="right"
+  />
 </div>
 `;
