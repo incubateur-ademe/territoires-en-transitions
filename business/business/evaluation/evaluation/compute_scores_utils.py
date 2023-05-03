@@ -13,19 +13,55 @@ from business.utils.models.personnalisation import ActionPersonnalisationConsequ
 logger = logging.getLogger()
 
 
-def update_scores_from_tache_given_statuses(
+def update_action_scores(
+        referentiel_tree: ActionPointTree,
+        personnalise_tree: ActionPointTree,
+        scores: Dict[ActionId, ActionScore],
+        potentiels: Dict[ActionId, float],
+        action_id: ActionId,
+        status_by_action_id: Dict[str, ActionStatut],
+        action_non_concerne_ids: List[ActionId],
+        action_personnalise_ids: List[ActionId],
+        action_desactive_ids: List[ActionId],
+):
+    if referentiel_tree.is_leaf(action_id) or action_id in status_by_action_id.keys():
+        update_action_scores_from_status(
+            referentiel_tree,
+            personnalise_tree,
+            scores,
+            potentiels,
+            action_id,
+            status_by_action_id,
+            action_non_concerne_ids,
+            action_personnalise_ids,
+            action_desactive_ids,
+        )
+    else:
+        update_action_score_from_children_scores(
+            referentiel_tree,
+            personnalise_tree,
+            scores,
+            potentiels,
+            action_personnalise_ids,
+            action_desactive_ids,
+            action_id,
+        )
+
+
+def update_action_scores_from_status(
         point_tree_referentiel: ActionPointTree,
         point_tree_personnalise: ActionPointTree,
         scores: Dict[ActionId, ActionScore],
         potentiels: Dict[ActionId, float],
-        tache_id: ActionId,
+        action_id: ActionId,
         status_by_action_id: Dict[str, ActionStatut],
         actions_non_concernes_ids: List[ActionId],
         action_personnalises_ids: List[ActionId],
         actions_desactivees_ids: List[ActionId],
 ):
-    tache_points_personnalise = point_tree_personnalise.get_action_point(tache_id)
-    tache_points_referentiel = point_tree_referentiel.get_action_point(tache_id)
+    """Utilise les statuts d'une tâche ou sous-action pour mettre à jour son score"""
+    tache_points_personnalise = point_tree_personnalise.get_action_point(action_id)
+    tache_points_referentiel = point_tree_referentiel.get_action_point(action_id)
 
     assert tache_points_referentiel is not None
     assert tache_points_personnalise is not None

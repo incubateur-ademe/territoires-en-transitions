@@ -103,13 +103,13 @@ class ActionTree:
     def backward_ids(self):
         return self._backward_ids
 
-    def _is_leaf(self, action_id: ActionId):
+    def is_leaf(self, action_id: ActionId):
         return self.get_children(action_id) == []
 
     def _build_tache_ids(self) -> List[ActionId]:
         tache_ids = []
         for action_id in self._backward_ids:
-            if self._is_leaf(action_id):
+            if self.is_leaf(action_id):
                 tache_ids.append(action_id)
         return tache_ids
 
