@@ -28,6 +28,9 @@ def compute_scores(
             + action_desactive_ids
     )
 
+    # 2. Deuxième et troisième passes, on propage les potentiels
+    # - en partant des tâches vers les parents
+    # - puis en partant des actions vers les enfants
     potentiels = compute_potentiels(
         personnalise_tree,
         action_non_concerne_ids,
