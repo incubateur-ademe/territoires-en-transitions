@@ -40,6 +40,9 @@ Fonctionnalité: Modifier l'état d'avancement et visualiser l'évolution des sc
       | eci_1.1.4 | 0 %   |
       | eci_1.1.5 | 0 %   |
 
+  # scénario désactivé en raison d'un exception en mode headless
+  # Ref: https://github.com/cypress-io/cypress/issues/22113
+  @skip
   Scénario: Modifier l'état d'avancement, visualiser et filtrer l'historique
     Dans ce scénario, on teste la mise à jour de l'historique lorsqu'on renseigne un nouvel état d'avancement.
     On teste aussi le comportement des filtres de l'historique
