@@ -29,7 +29,7 @@ const ActionDiscussionsFeed = ({vue, discussions}: Props) => {
 export default ActionDiscussionsFeed;
 
 const ActionDiscussionsFeedVide = ({message}: {message: string}) => (
-  <div className="mt-32 text-sm text-center text-gray-400">
+  <div className="mt-32 text-sm text-center text-gray-400 p-10">
     <img
       src={noCommentIllustration}
       alt="illustration commentaire vide"
