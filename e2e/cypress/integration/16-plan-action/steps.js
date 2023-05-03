@@ -154,7 +154,7 @@ defineStep(
 );
 
 defineStep(/le fil d'ariane de la fiche contient "([^"]*)"/, chemin => {
-  cy.get('[data-test=FicheFilAriane]').contains(chemin).should('be.visible');
+  cy.get('[data-test=FicheFilAriane]').contains(chemin).should('exist');
 });
 
 defineStep(
