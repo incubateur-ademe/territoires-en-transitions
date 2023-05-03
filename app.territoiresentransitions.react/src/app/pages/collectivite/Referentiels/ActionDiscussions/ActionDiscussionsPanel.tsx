@@ -5,6 +5,7 @@ import ActionDiscussionsFeed from './ActionDiscussionsFeed';
 import ActionDiscussionNouvelleDiscussion from './ActionDiscussionNouvelleDiscussion';
 import {useActionDiscussionFeed} from './data/useActionDiscussionFeed';
 import {TActionDiscussion, TActionDiscussionStatut} from './data/types';
+import {setRightPanelContent} from 'app/Layout/Layout';
 
 export type ActionDiscussionsPanelProps = {
   actionId: string;
@@ -25,7 +26,7 @@ export const ActionDiscussionsPanel = ({
 
   return (
     <>
-      {/** Toggle button */}
+      {/** bouton d'ouverture/fermeture du panneau */}
       <div
         data-test="ActionDiscussionsButton"
         className="hidden lg:block absolute top-6 right-6 border border-gray-200"
@@ -38,23 +39,40 @@ export const ActionDiscussionsPanel = ({
           onClick={() => setIsOpen(!isOpen)}
         />
       </div>
-      {/** Panneau de discussion */}
-      <div
-        data-test="ActionDiscussionsPanel"
-        className={classNames('border-l w-full max-w-md border-l-gray-200', {
-          hidden: !isOpen,
-          block: isOpen,
-        })}
-      >
-        <ActionDiscussionsHeader
-          closeActionDiscussions={() => setIsOpen(false)}
-          vue={vue}
-          changeVue={changeVue}
-        />
-        <ActionDiscussionNouvelleDiscussion actionId={actionId} />
-        <ActionDiscussionsFeed vue={vue} discussions={discussions} />
-      </div>
+      {/** contenu du panneau */}
+      {isOpen
+        ? setRightPanelContent(
+            <ActionDiscussionPanelContent
+              onClose={() => setIsOpen(false)}
+              vue={vue}
+              changeVue={changeVue}
+              actionId={actionId}
+              discussions={discussions}
+            />
+          )
+        : null}
     </>
+  );
+};
+
+/** Affiche le contenu du panneau de discussion d'une action */
+export const ActionDiscussionPanelContent = ({
+  onClose,
+  vue,
+  changeVue,
+  actionId,
+  discussions,
+}: ActionDiscussionsPanelProps & {onClose: () => void}) => {
+  return (
+    <div data-test="ActionDiscussionsPanel">
+      <ActionDiscussionsHeader
+        closeActionDiscussions={onClose}
+        vue={vue}
+        changeVue={changeVue}
+      />
+      <ActionDiscussionNouvelleDiscussion actionId={actionId} />
+      <ActionDiscussionsFeed vue={vue} discussions={discussions} />
+    </div>
   );
 };
 
@@ -65,7 +83,7 @@ type ActionDiscussionConnectedProps = {
 const ActionDiscussionConnected = ({
   action_id,
 }: ActionDiscussionConnectedProps) => {
-  /** Gère la vue discussions "ouvertes" ou "fermer" */
+  /** Gère la vue discussions "ouvertes" ou "fermées" */
   const [vue, setVue] = useState<TActionDiscussionStatut>('ouvert');
   const changeVue = (vue: TActionDiscussionStatut) => setVue(vue);
 
