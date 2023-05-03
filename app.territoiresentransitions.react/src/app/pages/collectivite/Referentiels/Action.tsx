@@ -19,6 +19,8 @@ import {useActionVue, useReferentielId} from 'core-logic/hooks/params';
 import HistoriqueListe from 'app/pages/collectivite/Historique/HistoriqueListe';
 import ScrollTopButton from 'ui/shared/ScrollTopButton';
 import {ActionBottomNav} from './ActionNav';
+import ActionPreuvePanel from 'ui/shared/actions/ActionPreuvePanel/ActionPreuvePanel';
+import {DownloadDocs} from './DownloadDocs';
 import ActionAuditStatut from '../Audit/ActionAuditStatut';
 import {ActionAuditDetail} from '../Audit/ActionAuditDetail';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
@@ -26,6 +28,7 @@ import {useActionLinkedIndicateurDefinitions} from './useActionLinkedIndicateurD
 import Alerte from 'ui/shared/Alerte';
 import {usePrevAndNextActionLinks} from './usePrevAndNextActionLinks';
 import {ActionHeader} from './ActionHeader';
+import {ActionSidePanel} from './ActionSidePanel';
 import {usePreuves} from 'ui/shared/preuves/Bibliotheque/usePreuves';
 
 // index des onglets de la page Action
@@ -137,46 +140,20 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
                   }}
                 />
               </div>
-              {children.map(subAction => (
+              {children.map(action => (
                 <ActionAvancement
-                  action={subAction}
-                  key={subAction.id}
+                  action={action}
+                  key={action.id}
                   showOnlyActionWithData={showOnlyActionWithData}
                 />
               ))}
             </section>
           </Tab>
-          <Tab
-            label={`Documents (${
-              preuves.filter(p => p.lien || p.fichier).length
-            })`}
-            icon="file"
-          >
+          <Tab label="Preuves" icon="file">
             {activeTab === TABS_INDEX['preuves'] ? (
               <section>
-                <ActionCommentaire action={action} />
-
-                <h4 className="text-xl fr-mt-4w">
-                  Détail des sous-actions et des tâches
-                </h4>
-                <div className="flex items-center fr-text--sm fr-m-0">
-                  Afficher uniquement les actions non-renseignées
-                  <Switch
-                    color="primary"
-                    checked={showOnlyActionWithData}
-                    inputProps={{'aria-label': 'controlled'}}
-                    onChange={() => {
-                      setShowOnlyActionWithData(!showOnlyActionWithData);
-                    }}
-                  />
-                </div>
-                {children.map(action => (
-                  <ActionAvancement
-                    action={action}
-                    key={action.id}
-                    showOnlyActionWithData={showOnlyActionWithData}
-                  />
-                ))}
+                <ActionPreuvePanel withSubActions showWarning action={action} />
+                <DownloadDocs action={action} />
               </section>
             ) : (
               '...'
