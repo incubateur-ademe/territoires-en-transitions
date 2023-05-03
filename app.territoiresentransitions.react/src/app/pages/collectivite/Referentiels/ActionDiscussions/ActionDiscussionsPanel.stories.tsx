@@ -2,7 +2,7 @@ import React from 'react';
 import {Story, Meta} from '@storybook/react';
 import {action} from '@storybook/addon-actions';
 import {
-  ActionDiscussionsPanel,
+  ActionDiscussionPanelContent,
   ActionDiscussionsPanelProps,
 } from './ActionDiscussionsPanel';
 import {
@@ -12,13 +12,11 @@ import {
 import {TActionDiscussionStatut} from './data/types';
 
 export default {
-  component: ActionDiscussionsPanel,
+  component: ActionDiscussionPanelContent,
 } as Meta;
 
 const Template: Story<ActionDiscussionsPanelProps> = args => (
-  <div className="absolute right-0">
-    <ActionDiscussionsPanel {...args} />
-  </div>
+  <ActionDiscussionPanelContent {...args} onClose={action('onClose')} />
 );
 
 const handlers = {
