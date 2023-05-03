@@ -2,6 +2,7 @@
 
 exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/ActionDiscussionsPanel Vue Fermes 1`] = `
 <div
+  className="w-[28rem]"
   data-test="ActionDiscussionsPanel"
 >
   <div
@@ -210,6 +211,7 @@ exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/Action
 
 exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/ActionDiscussionsPanel Vue Ouverts 1`] = `
 <div
+  className="w-[28rem]"
   data-test="ActionDiscussionsPanel"
 >
   <div
