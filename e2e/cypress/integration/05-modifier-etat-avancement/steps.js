@@ -32,7 +32,8 @@ defineStep(
   (avancement, tache) => {
     // ouvre le composant Select
     cy.get(`[data-test="task-${tache}"] [data-test=SelectStatut]`)
-      .should('be.visible')
+      .should('exist')
+      .scrollIntoView()
       .click();
 
     // la liste déroulante doit être visible

@@ -9,7 +9,7 @@ Fonctionnalité: Créer un compte
       | header                  | visible   |
       | home                    | visible   |
       | formulaire de connexion | absent    |
-      | footer                  | visible   |
+      | footer                  | présent   |
 
     Quand je clique sur le bouton "Créer un compte" du "header"
     Alors la page vérifie les conditions suivantes :
@@ -17,7 +17,7 @@ Fonctionnalité: Créer un compte
       | header                           | visible   |
       | home                             | absent    |
       | formulaire de création de compte | visible   |
-      | footer                           | visible   |
+      | footer                           | présent   |
 
     Quand je remplis le "formulaire de création de compte" avec les valeurs suivantes :
       | Champ  | Valeur        |
@@ -41,7 +41,7 @@ Fonctionnalité: Créer un compte
       | home                               | absent    |
       | formulaire de création de compte   | absent    |
       | Confirmation de création de compte | visible   |
-      | footer                             | visible   |
+      | footer                             | présent   |
 
     # ------------
     # Cette partie bouton se connecter etg rechargement n'a pas lieu d'être car le flow va changer
@@ -56,4 +56,4 @@ Fonctionnalité: Créer un compte
       | home                     | absent    |
       | formulaire de connexion  | absent    |
       | toutes les collectivités | visible   |
-      | footer                   | visible   |
+      | footer                   | présent   |

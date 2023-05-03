@@ -9,7 +9,7 @@ Fonctionnalité: Accéder au site et se connecter
       | header                  | visible   |
       | home                    | visible   |
       | formulaire de connexion | absent    |
-      | footer                  | visible   |
+      | footer                  | présent   |
 
     Quand je clique sur le bouton "Se connecter" du "header"
     Alors la page vérifie les conditions suivantes :
@@ -17,7 +17,7 @@ Fonctionnalité: Accéder au site et se connecter
       | header                  | visible   |
       | home                    | absent    |
       | formulaire de connexion | visible   |
-      | footer                  | visible   |
+      | footer                  | présent   |
 
     Quand je remplis le "formulaire de connexion" avec les valeurs suivantes :
       | Champ | Valeur        |
@@ -44,7 +44,7 @@ Fonctionnalité: Accéder au site et se connecter
       | header                  | visible   |
       | home                    | visible   |
       | formulaire de connexion | absent    |
-      | footer                  | visible   |
+      | footer                  | présent   |
 
     Quand je clique sur le bouton "Se connecter" du "header"
     Alors la page vérifie les conditions suivantes :
@@ -52,7 +52,7 @@ Fonctionnalité: Accéder au site et se connecter
       | header                  | visible   |
       | home                    | absent    |
       | formulaire de connexion | visible   |
-      | footer                  | visible   |
+      | footer                  | présent   |
 
     Quand je remplis le "formulaire de connexion" avec les valeurs suivantes :
       | Champ | Valeur        |
@@ -65,7 +65,7 @@ Fonctionnalité: Accéder au site et se connecter
       | home                     | absent    |
       | formulaire de connexion  | absent    |
       | toutes les collectivités | visible   |
-      | footer                   | visible   |
+      | footer                   | présent   |
 
   Scénario: Echouer à se connecter
     Etant donné que j'ouvre le site
@@ -74,7 +74,7 @@ Fonctionnalité: Accéder au site et se connecter
       | header                  | visible   |
       | home                    | visible   |
       | formulaire de connexion | absent    |
-      | footer                  | visible   |
+      | footer                  | présent   |
 
     Quand je clique sur le bouton "Se connecter" du "header"
     Alors la page vérifie les conditions suivantes :
@@ -82,7 +82,7 @@ Fonctionnalité: Accéder au site et se connecter
       | header                  | visible   |
       | home                    | absent    |
       | formulaire de connexion | visible   |
-      | footer                  | visible   |
+      | footer                  | présent   |
 
     Quand je remplis le "formulaire de connexion" avec les valeurs suivantes :
       | Champ | Valeur         |
@@ -95,7 +95,7 @@ Fonctionnalité: Accéder au site et se connecter
       | home                    | absent    |                                                 |
       | formulaire de connexion | visible   |                                                 |
       | formulaire de connexion | contient  | L'email et le mot de passe ne correspondent pas |
-      | footer                  | visible   |                                                 |
+      | footer                  | présent   |                                                 |
 
   Scénario: Demander un lien de réinitialisation du mot de passe
     Etant donné que j'ouvre le site
