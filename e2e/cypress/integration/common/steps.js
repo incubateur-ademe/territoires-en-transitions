@@ -8,15 +8,26 @@ import {Selectors} from './selectors';
 import {Expectations} from './expectations';
 import {waitForApp, logout} from './shared';
 
+function testReset(retry = 0) {
+  // réinitialise les données fake
+  cy.task('supabase_rpc', {name: 'test_reset'}).then(ret => {
+    if (ret.status !== 200 && retry < 3) {
+      // attends un peu et ré-essaye si ça a échoué
+      cy.wait(100);
+      testReset(++retry);
+    } else {
+      assert(
+        ret.status === 200,
+        'les données de test sont réinitialisées correctement'
+      );
+    }
+  });
+}
+
 // avant chaque test
 beforeEach(function () {
   // réinitialise les données fake
-  cy.task('supabase_rpc', {name: 'test_reset'}).then(ret =>
-    assert(
-      ret.status === 200,
-      'les données de test sont réinitialisées correctement'
-    )
-  );
+  testReset();
 
   // charge l'appli
   cy.visit('/');
