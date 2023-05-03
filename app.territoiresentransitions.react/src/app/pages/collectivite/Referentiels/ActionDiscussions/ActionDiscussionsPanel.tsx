@@ -64,7 +64,7 @@ export const ActionDiscussionPanelContent = ({
   discussions,
 }: ActionDiscussionsPanelProps & {onClose: () => void}) => {
   return (
-    <div data-test="ActionDiscussionsPanel">
+    <div data-test="ActionDiscussionsPanel" className="w-[28rem]">
       <ActionDiscussionsHeader
         closeActionDiscussions={onClose}
         vue={vue}
