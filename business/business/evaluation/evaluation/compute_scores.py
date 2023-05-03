@@ -1,17 +1,9 @@
 from copy import copy
-from typing import Dict, List
-
-from business.utils.models.action_statut import (
-    ActionStatut,
-)
-from business.utils.models.action_score import ActionScore
-from .action_point_tree import ActionPointTree, ActionTree
-from business.utils.models.actions import ActionId
-from business.utils.models.personnalisation import ActionPersonnalisationConsequence
 from business.evaluation.personnalisation.execute_score_personnalisation_factor_regle import (
     execute_score_personnalisation_override_regle,
 )
 from .compute_scores_utils import *
+from .action_point_tree import ActionTree
 
 
 def compute_scores(
