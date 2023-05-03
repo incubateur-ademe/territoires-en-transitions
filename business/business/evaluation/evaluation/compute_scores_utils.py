@@ -30,15 +30,15 @@ def update_scores_from_tache_given_statuses(
     assert tache_points_referentiel is not None
     assert tache_points_personnalise is not None
 
-    tache_point_potentiel = potentiels[tache_id]
+    tache_point_potentiel = potentiels[action_id]
 
-    tache_concerne = tache_id not in actions_non_concernes_ids + actions_desactivees_ids
-    tache_is_personnalise = tache_id in action_personnalises_ids
-    tache_is_desactive = tache_id in actions_desactivees_ids
+    tache_concerne = action_id not in actions_non_concernes_ids + actions_desactivees_ids
+    tache_is_personnalise = action_id in action_personnalises_ids
+    tache_is_desactive = action_id in actions_desactivees_ids
 
     if not tache_concerne:
-        scores[tache_id] = ActionScore(
-            action_id=tache_id,
+        scores[action_id] = ActionScore(
+            action_id=action_id,
             point_fait=0.0,
             point_pas_fait=0.0,
             point_programme=0.0,
@@ -60,7 +60,7 @@ def update_scores_from_tache_given_statuses(
         )
         return
 
-    tache_status = status_by_action_id.get(tache_id)
+    tache_status = status_by_action_id.get(action_id)
     if tache_status and tache_status.detailed_avancement:
         point_fait = (
             tache_point_potentiel * tache_status.detailed_avancement.fait
@@ -92,8 +92,8 @@ def update_scores_from_tache_given_statuses(
             programme_taches_avancement
         ) = pas_fait_taches_avancement = pas_concerne_taches_avancement = 0
 
-    scores[tache_id] = ActionScore(
-        action_id=tache_id,
+    scores[action_id] = ActionScore(
+        action_id=action_id,
         point_pas_fait=point_pas_fait,
         point_programme=point_programme,
         point_non_renseigne=point_non_renseigne,
@@ -115,7 +115,7 @@ def update_scores_from_tache_given_statuses(
     )
 
 
-def update_scores_for_action_given_children_scores(
+def update_action_score_from_children_scores(
         point_tree_referentiel: ActionPointTree,
         point_tree_personnalise: ActionPointTree,
         scores: Dict[ActionId, ActionScore],
