@@ -1,23 +1,37 @@
 import DOMPurify from 'dompurify';
-import {useToggle} from 'ui/shared/useToggle';
+import {useEffect, useState} from 'react';
 
 export type TAccordionProps = {
-  /** classes css supplémentaires */
   className?: string;
-  /** identifiant dans le dom */
   id: string;
-  /** titre de l'accordéon */
   titre: string;
-  /** contenu de l'accordéon */
-  html: string;
-  /** état initial (par défaut false = replié) */
+  html: string | React.ReactNode;
   initialState?: boolean;
+  icon?: string;
 };
 
-/** Affiche une description détaillée dans un composant accordéon  */
+/**
+ * Affiche une description détaillée dans un composant accordéon
+ *
+ * @param className
+ * classes css supplémentaires
+ * @param id
+ * identifiant dans le dom
+ * @param titre
+ * titre de l'accordéon
+ * @param html
+ * contenu de l'accordéon
+ * @param initialState
+ * état initial (par défaut false = replié)
+ * @param icon
+ * icône à afficher à gauche du titre
+ */
+
 export const Accordion = (props: TAccordionProps) => {
-  const {className, id, titre, html, initialState} = props;
-  const [expanded, toggle] = useToggle(initialState || false);
+  const {className, id, titre, html, initialState, icon} = props;
+  const [expanded, setExpanded] = useState(initialState ?? false);
+
+  useEffect(() => setExpanded(initialState ?? false), [initialState]);
 
   return (
     <section className={`fr-accordion ${className || ''}`}>
@@ -26,17 +40,26 @@ export const Accordion = (props: TAccordionProps) => {
           className="fr-accordion__btn font-normal"
           aria-controls={id}
           aria-expanded={expanded}
-          onClick={() => toggle()}
+          onClick={() => setExpanded(prevState => !prevState)}
         >
-          <i className="fr-fi-information-fill text-[#0063cb] fr-mr-3v" />
+          {!!icon && <i className={`${icon} text-[#0063cb] fr-mr-3v`} />}
           {titre}
         </button>
       </h3>
-      <div
-        className={`fr-collapse${expanded ? '--expanded' : ''}`}
-        id={id}
-        dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(html)}}
-      />
+      {typeof html === 'string' ? (
+        <div
+          className={`fr-collapse${expanded ? '--expanded py-3 px-4' : ''}`}
+          id={id}
+          dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(html)}}
+        />
+      ) : (
+        <div
+          className={`fr-collapse${expanded ? '--expanded py-3 px-4' : ''}`}
+          id={id}
+        >
+          {html}
+        </div>
+      )}
     </section>
   );
 };

@@ -73,6 +73,7 @@ const QuestionReponse = (props: TQuestionReponseProps) => {
           id={`accordion-${id}`}
           titre="En savoir plus"
           html={description}
+          icon="fr-fi-information-fill"
         />
       ) : null}
       <Reponse {...props} />
@@ -87,6 +88,7 @@ const QuestionReponse = (props: TQuestionReponseProps) => {
           d'élu de la collectivité / nombre de voix total dans l'organe
           délibératoire de la structure compétente) si cette part est supérieure à
           celle liée au nombre d'habitants."
+          icon="fr-fi-information-fill"
         />
       ) : null}
     </>

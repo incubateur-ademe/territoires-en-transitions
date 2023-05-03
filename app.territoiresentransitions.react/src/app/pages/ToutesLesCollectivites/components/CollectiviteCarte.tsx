@@ -9,6 +9,7 @@ import {Link} from 'react-router-dom';
 import {makeCollectiviteTableauBordUrl} from 'app/paths';
 import classNames from 'classnames';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
+import {CheckIcon} from 'ui/icons/CheckIcon';
 
 export type TCollectiviteCarteProps = {
   collectivite: CollectiviteCarteRead;
@@ -82,22 +83,6 @@ export type TReferentielColProps = {
   concerne: boolean;
 };
 
-const CheckIcon = () => (
-  <svg
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    className="inline-block mr-3"
-  >
-    <path
-      d="M11.602 13.7615L13.014 15.1735L21.48 6.70747L22.894 8.12147L13.014 18.0015L6.65 11.6375L8.064 10.2235L10.189 12.3485L11.602 13.7605V13.7615ZM11.604 10.9335L16.556 5.98047L17.966 7.39047L13.014 12.3435L11.604 10.9335ZM8.777 16.5885L7.364 18.0015L1 11.6375L2.414 10.2235L3.827 11.6365L3.826 11.6375L8.777 16.5885V16.5885Z"
-      fill="#00A95F"
-    />
-  </svg>
-);
-
 /**
  * Une colonne avec les éléments de score pour la carte collectivité.
  */
@@ -112,7 +97,7 @@ export const ReferentielCol = (props: TReferentielColProps) => {
           <CinqEtoiles etoiles={props.etoiles} />
           <div>
             {' '}
-            <CheckIcon />
+            <CheckIcon className="inline-block mr-3" />
             <span className="font-semibold">
               {toPercentString(props.scoreRealise)}
             </span>{' '}

@@ -124,6 +124,34 @@ export const useActionSummaryChildren = (
   return children;
 };
 
+export const useSortedActionSummaryChildren = (
+  action: ActionDefinitionSummary
+): {
+  sortedActions: {
+    [id: string]: ActionDefinitionSummary[];
+  };
+  count: number;
+} => {
+  const actions = useActionSummaryChildren(action);
+
+  let sortedActions: {
+    [id: string]: ActionDefinitionSummary[];
+  } = {};
+
+  actions.forEach(act => {
+    if (sortedActions[act.phase]) {
+      sortedActions[act.phase].push(act);
+    } else {
+      sortedActions = {
+        ...sortedActions,
+        [act.phase]: [act],
+      };
+    }
+  });
+
+  return {sortedActions, count: actions.length};
+};
+
 /**
  * Returns action titles relative to the scope
  */
