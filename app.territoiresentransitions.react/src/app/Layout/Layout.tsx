@@ -20,7 +20,7 @@ const Layout = ({children}: Props) => {
       </div>
       <aside
         id={RIGHT_PANEL_ID}
-        className="shrink-0 max-w-md border-l border-l-gray-200 bg-white overflow-y-auto"
+        className="shrink-0 max-w-md border-l border-l-gray-200 bg-white"
       />
     </div>
   );
