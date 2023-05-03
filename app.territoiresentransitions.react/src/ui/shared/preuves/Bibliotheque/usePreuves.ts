@@ -103,3 +103,62 @@ const groupByType = (preuves: TPreuve[]) => {
     {} as TPreuvesParType
   );
 };
+
+const fetchPreuvesCount = async (
+  collectivite_id: number,
+  filters?: TFilters
+) => {
+  // Liste des preuves de la collectivité
+  const query = supabaseClient
+    .from('preuve')
+    .select(undefined, {head: true, count: 'exact'})
+    .eq('collectivite_id', collectivite_id)
+    .or('lien->>titre.not.is.null, fichier->>filename.not.is.null');
+
+  // éventuellement filtrées par action (et ses sous-actions si `withSubActions` est aussi fourni)
+  const action = filters?.action;
+  if (action) {
+    if (filters?.withSubActions) {
+      query
+        .eq('action->>referentiel' as 'action', action.referentiel)
+        .ilike('action->>identifiant' as 'action', `${action.identifiant}%`);
+    } else {
+      query.eq('action->>action_id' as 'action', action.id);
+    }
+  }
+
+  // ou par demande de labellisation
+  const demande_id = filters?.demande_id;
+  if (demande_id) {
+    query.eq('demande->>id' as 'demande', demande_id);
+  }
+
+  // ou par audit
+  const audit_id = filters?.audit_id;
+  if (audit_id) {
+    query.eq('audit->>id' as 'audit', audit_id);
+  }
+
+  // ou par type(s)
+  const preuve_types = filters?.preuve_types;
+  if (preuve_types) {
+    query.in('preuve_type', preuve_types);
+  }
+
+  const {count, error} = await query;
+
+  if (error || !count) return 0;
+  return count;
+};
+
+/**
+ * Renvoie le nombre de preuves renseignées pour un filtre donné
+ * (exclusion des preuves réglementaires non fournies)
+ */
+export const usePreuvesCount = (filters?: TFilters) => {
+  const collectivite_id = useCollectiviteId();
+  const {data} = useQuery(['preuve_count', collectivite_id, filters], () => {
+    return collectivite_id ? fetchPreuvesCount(collectivite_id, filters) : 0;
+  });
+  return data;
+};

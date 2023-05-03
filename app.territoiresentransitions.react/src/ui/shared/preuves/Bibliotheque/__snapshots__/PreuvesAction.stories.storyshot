@@ -103,7 +103,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Message Av
     </div>
   </div>
   <div
-    className="border-solid border-t-[1px] border-[#FCC63A] my-4"
+    className="border-solid border-t border-[#FCC63A] my-4"
   />
   <p
     className="text-xs grey625 py-4"
@@ -476,7 +476,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
     </div>
   </div>
   <div
-    className="border-solid border-t-[1px] border-[#FCC63A] my-4"
+    className="border-solid border-t border-[#FCC63A] my-4"
   />
   <div
     className="flex flex-col gap-4 py-4"
@@ -1027,7 +1027,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
     </div>
   </div>
   <div
-    className="border-solid border-t-[1px] border-[#FCC63A] my-4"
+    className="border-solid border-t border-[#FCC63A] my-4"
   />
   <div
     className="flex flex-col gap-4 py-4"
