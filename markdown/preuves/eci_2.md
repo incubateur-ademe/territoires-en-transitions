@@ -95,7 +95,7 @@ actions:
 id: guide_collecte
 ```
 
-# Attestation sur l’honneur du respect de la législation sociale et environnementale pour la collecte et/ou le traitement des déchets et mentionnant l'absen ce de contentieux en cours (si contentieux : préciser leur objet)
+# Attestation sur l’honneur du respect de la législation sociale et environnementale pour la collecte et/ou le traitement des déchets et mentionnant l'absence de contentieux en cours (si contentieux : préciser leur objet)
 ```yaml
 actions: 
   - eci_2.2.0
@@ -141,7 +141,7 @@ actions:
 id: rapports_etudes_service_collecte
 ```
 ## Description
-Les preuves ne doivent pas forcement être récentes, mais doivent demeurer d'actualité par rapport à l'état du système de collecte en place.
+Les preuves ne doivent pas forcément être récentes, mais doivent demeurer d'actualité par rapport à l'état du système de collecte en place.
 
 # Plan d'actions
 ```yaml
@@ -236,7 +236,7 @@ id: liste_ICPE
 ## Description
 Pour chaque ICPE sous la responsabilité de la collectivité, le tableau devra préciser
   - L'arrêté permettant leur activité ;
-  - Le régime auxquelles elles sont soumises (déclaration, enregistrement ou autorisation) ;
+  - Le régime auquel elles sont soumises (déclaration, enregistrement ou autorisation) ;
   - Les visites d'inspection ICPE effectuées au cours des 5 dernières années, et si l'une de ces visites a mis en évidence un problème de non-conformité, la réponse de l'exploitant et/ou de la collectivité responsable.
 
 # Attestation sur l'honneur 
