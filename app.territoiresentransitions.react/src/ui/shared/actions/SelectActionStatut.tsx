@@ -45,11 +45,7 @@ export const SelectActionStatut = (props: TSelectActionStatutProps) => {
 
   if (disabled) {
     return (
-      <ActionStatutBadge
-        statut={currentValue as TActionAvancementExt}
-        small
-        className="mr-auto"
-      />
+      <ActionStatutBadge statut={currentValue as TActionAvancementExt} small />
     );
   }
 
@@ -59,7 +55,7 @@ export const SelectActionStatut = (props: TSelectActionStatutProps) => {
       value={currentValue}
       options={options}
       onSelect={onChange}
-      buttonClassName="min-w-5rem w-fit"
+      buttonClassName="min-w-5rem w-fit p-0"
       renderOption={option => (
         <ActionStatutBadge
           statut={option.value as TActionAvancementExt}

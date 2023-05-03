@@ -8,20 +8,30 @@ import {
 } from 'core-logic/hooks/useActionCommentaire';
 import React, {useState} from 'react';
 
+type ActionCommentaireProps = {
+  action: ActionDefinitionSummary;
+  className?: string;
+  autoFocus?: boolean;
+  onSave?: () => void;
+};
+
 export const ActionCommentaire = ({
   action,
-}: {
-  action: ActionDefinitionSummary;
-}) => {
+  className,
+  autoFocus,
+  onSave,
+}: ActionCommentaireProps) => {
   const {actionCommentaire, isLoading} = useActionCommentaire(action.id);
 
   // On utilise le `isLoading` pour masquer l'input, car il gère son state.
   return (
-    <div className="border-gray-300 my-3">
+    <div className={className}>
       {!isLoading && (
         <ActionCommentaireField
           action={action}
           initialValue={actionCommentaire?.commentaire || ''}
+          autoFocus={autoFocus}
+          onSave={onSave}
         />
       )}
     </div>
@@ -31,11 +41,15 @@ export const ActionCommentaire = ({
 export type ActionCommentaireFieldProps = {
   action: ActionDefinitionSummary;
   initialValue: string;
+  autoFocus?: boolean;
+  onSave?: () => void;
 };
 
 export const ActionCommentaireField = ({
   action,
   initialValue,
+  autoFocus = false,
+  onSave,
 }: ActionCommentaireFieldProps) => {
   const collectivite = useCurrentCollectivite();
   const {saveActionCommentaire} = useSaveActionCommentaire();
@@ -43,28 +57,31 @@ export const ActionCommentaireField = ({
 
   return collectivite ? (
     <>
-      <span className="fr-hint-text !mb-2">
-        {action.type === 'action'
-          ? "Description générale de l'état d'avancement"
-          : "Précisions sur l'état d'avancement"}
-      </span>
+      {action.type !== 'tache' && (
+        <p className="text-neutral-900 !mb-2">
+          Explications sur l'état d'avancement
+        </p>
+      )}
       <Textarea
         data-test={`comm-${action.id}`}
-        className="fr-input !outline-none"
+        className="fr-input !outline-none !bg-[#f6f6f6]"
+        minHeight={action.type === 'tache' ? undefined : '5rem'}
         value={commentaire}
         onInputChange={() => null}
         onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) =>
           setCommentaire(event.currentTarget.value)
         }
-        onBlur={() =>
+        onBlur={() => {
           commentaire.trim() !== (initialValue || '') &&
-          saveActionCommentaire({
-            action_id: action.id,
-            collectivite_id: collectivite.collectivite_id,
-            commentaire,
-          })
-        }
+            saveActionCommentaire({
+              action_id: action.id,
+              collectivite_id: collectivite.collectivite_id,
+              commentaire,
+            });
+          onSave && onSave();
+        }}
         disabled={collectivite.readonly}
+        autoFocus={autoFocus}
       />
     </>
   ) : null;

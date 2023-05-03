@@ -70,7 +70,7 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
           <YellowDivider />
         </>
       ) : (
-        <p className="fr-text--sm">
+        <p className="fr-text--sm !mb-0 py-4">
           Il n'y a pas de document attendu pour cette{' '}
           {withSubActions ? 'action' : 'sous-action'} du référentiel.
         </p>
@@ -97,7 +97,7 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
       {showWarning && (
         <>
           <YellowDivider />
-          <p className="text-xs grey625 py-4">
+          <p className="text-xs grey625 py-4 mb-0">
             Tous les documents ajoutés seront visibles par les membres de la
             communauté Territoires en Transitions
           </p>
