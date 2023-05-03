@@ -648,7 +648,7 @@ exports[`Storyshots app/Layout Exemple 1`] = `
     </footer>
   </div>
   <aside
-    className="shrink-0 max-w-md border-l border-l-gray-200 bg-white overflow-y-auto"
+    className="shrink-0 max-w-md border-l border-l-gray-200 bg-white"
     id="right"
   />
 </div>

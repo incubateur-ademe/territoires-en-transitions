@@ -14,7 +14,10 @@ const ActionDiscussionsFeed = ({vue, discussions}: Props) => {
   } pour l’instant`;
 
   return (
-    <div data-test="ActionDiscussionsFeed">
+    <div
+      data-test="ActionDiscussionsFeed"
+      className="overflow-y-auto h-[calc(100vh-12.7rem)]"
+    >
       {discussions.length === 0 ? (
         <ActionDiscussionsFeedVide message={messageFeedVide} />
       ) : (
