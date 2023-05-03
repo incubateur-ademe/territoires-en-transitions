@@ -31,7 +31,7 @@ import ActionAuditStatut from '../Audit/ActionAuditStatut';
 import {ActionAuditDetail} from '../Audit/ActionAuditDetail';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {useActionLinkedIndicateurDefinitions} from './useActionLinkedIndicateurDefinitions';
-import {usePreuves} from 'ui/shared/preuves/Bibliotheque/usePreuves';
+import {usePreuvesCount} from 'ui/shared/preuves/Bibliotheque/usePreuves';
 
 // index des onglets de la page Action
 const TABS_INDEX: Record<ActionVueParamOption, number> = {
@@ -58,7 +58,7 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
   const collectivite = useCurrentCollectivite();
   const collectiviteId = collectivite?.collectivite_id;
   const referentielId = useReferentielId() as ReferentielParamOption;
-  const preuves = usePreuves({
+  const preuvesCount = usePreuvesCount({
     action,
     withSubActions: true,
     preuve_types: ['reglementaire', 'complementaire'],
@@ -170,9 +170,9 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
           </section>
         </Tab>
         <Tab
-          label={`Documents (${
-            preuves.filter(p => p.lien || p.fichier).length
-          })`}
+          label={`Documents${
+            preuvesCount !== undefined ? ` (${preuvesCount})` : ''
+          }`}
           icon="file"
         >
           {activeTab === TABS_INDEX['preuves'] ? (
