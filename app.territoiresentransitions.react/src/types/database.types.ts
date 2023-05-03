@@ -3359,14 +3359,6 @@ export interface Database {
           type_collectivite: string | null
         }
       }
-      stats_engagement_collectivite: {
-        Row: {
-          collectivite_id: number | null
-          cot: boolean | null
-          etoiles_cae: number | null
-          etoiles_eci: number | null
-        }
-      }
       stats_evolution_collectivite_avec_minimum_fiches: {
         Row: {
           collectivites: number | null
@@ -6291,6 +6283,27 @@ export interface Database {
             Args: {
               bucket_width: unknown
               ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
               origin: string
             }
             Returns: string
@@ -6300,27 +6313,6 @@ export interface Database {
               bucket_width: unknown
               ts: string
               origin: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
             }
             Returns: string
           }
