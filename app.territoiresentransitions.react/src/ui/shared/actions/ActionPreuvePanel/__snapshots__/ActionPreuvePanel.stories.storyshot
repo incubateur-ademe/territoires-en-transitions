@@ -34,7 +34,7 @@ exports[`Storyshots ui/shared/actions/ActionPreuvePanel Default 1`] = `
     />
   </div>
   <div
-    className="border-solid border-t-[1px] border-[#FCC63A] my-4"
+    className="border-solid border-t border-[#FCC63A] my-4"
   />
   <p
     className="text-xs grey625 py-4"
