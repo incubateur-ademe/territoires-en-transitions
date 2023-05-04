@@ -346,3 +346,5 @@ utilisateur/visite [utilisateur/visite@v2.28.0] 2023-05-10T08:22:35Z Florian <fl
 stats/amplitude [stats/amplitude@v2.28.0] 2023-05-09T09:26:11Z Florian <florian@derfurth.com> # Améliore l'intégration à Amplitude
 cron/send_to_amplitude 2023-05-09T09:41:49Z Florian <florian@derfurth.com> # Envoie quotidiennement les événements de la veille à Amplitude
 @v2.29.0 2023-05-11T07:32:43Z Florian <florian@derfurth.com> # Améliore les statistiques et le tracking
+
+plan_action/fiches [plan_action/fiches@v2.28.0] 2023-05-03T13:49:52Z Amandine Jacquelin <conta@LanceLibre> # Passe fiches_action en private et déplace la vérification de droits
