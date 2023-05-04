@@ -69,6 +69,14 @@ def convert_preuves_markdown_folder_to_json(folder_path: str, json_filename: str
             "Erreurs dans le format des fichiers preuves :\n- " + "\n- ".join(errors)
         )
 
+    # Vérifie la longueur des ids
+    long_preuve_ids = [preuve["id"] for preuve in preuves if len(preuve["id"]) > 50]
+    if long_preuve_ids:
+        raise Exception(
+            "Les ids des preuves suivantes sont trop longs : "
+            + ", ".join(long_preuve_ids),
+            )
+
     # Vérifie que les ids sont uniques
     duplicated_preuve_ids = find_duplicates([preuve["id"] for preuve in preuves])
     if duplicated_preuve_ids:
