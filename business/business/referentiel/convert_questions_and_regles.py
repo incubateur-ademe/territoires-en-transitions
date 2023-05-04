@@ -10,7 +10,7 @@ from business.referentiel.parse_regles import (
 
 
 def convert_questions_and_regles_from_markdown_folder(
-    questions_folder_path: str, regles_folder_path: str, json_filename: str
+        questions_folder_path: str, regles_folder_path: str, json_filename: str
 ):
     # Lecture et conversion des dossiers de markdowns de questions et de règles
     questions = convert_questions_markdown_folder(questions_folder_path)
@@ -26,7 +26,7 @@ def convert_questions_and_regles_from_markdown_folder(
                 "questions": [asdict(question) for question in questions],
                 "regles": [asdict(action_regles) for action_regles in actions_regles],
             },
-            f,
+            f, indent=2, sort_keys=True
         )
     print(
         "Lecture et conversion réussies, le résultat JSON se trouve dans ",

@@ -162,7 +162,7 @@ def convert_actions_markdown_folder_to_json(folder_path: str, json_filename: str
                 "definitions": [asdict(definition) for definition in definitions],
                 "children": [asdict(children) for children in childrens],
             },
-            f,
+            f, indent=2, sort_keys=True
         )
     print(
         "Lecture et conversion réussies, le résultat JSON se trouve dans ",
