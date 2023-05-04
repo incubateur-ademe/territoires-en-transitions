@@ -85,7 +85,7 @@ def convert_preuves_markdown_folder_to_json(folder_path: str, json_filename: str
             + ", ".join(duplicated_preuve_ids),
         )
     with open(json_filename, "w") as f:
-        json.dump({"preuves": preuves}, f)
+        json.dump({"preuves": preuves}, f, indent=2, sort_keys=True)
     print(
         "Lecture et conversion réussies, le résultat JSON se trouve dans ",
         json_filename,

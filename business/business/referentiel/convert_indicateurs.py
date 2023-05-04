@@ -13,6 +13,7 @@ from business.utils.models.actions import ActionId
 from marshmallow import ValidationError
 from business.utils.exceptions import MarkdownError
 
+
 @dataclass
 class MarkdownIndicateur:
     """Indicateur as defined in markdown files"""
@@ -50,7 +51,7 @@ class Indicateur:
 
 
 def parse_markdown_indicateurs_from_folder(
-    folder_path: str,
+        folder_path: str,
 ) -> Tuple[List[MarkdownIndicateur], List[str]]:
     """Extract a list of indicateurs from a markdown document"""
     markdown_indicateur_schema = marshmallow_dataclass.class_schema(
@@ -85,7 +86,6 @@ def parse_markdown_indicateurs_from_folder(
 
 
 def convert_indicateurs_markdown_folder_to_json(folder_path: str, json_filename: str):
-
     # Parse markdown folder
     md_indicateurs, errors = parse_markdown_indicateurs_from_folder(folder_path)
 
@@ -123,7 +123,8 @@ def convert_indicateurs_markdown_folder_to_json(folder_path: str, json_filename:
     # Save to JSON
     with open(json_filename, "w") as f:
         json.dump(
-            {"indicateurs": [asdict(indicateur) for indicateur in indicateurs]}, f
+            {"indicateurs": [asdict(indicateur) for indicateur in indicateurs]},
+            f, indent=2, sort_keys=True
         )
     print(
         "Lecture et conversion réussies, le résultat JSON se trouve dans ",
