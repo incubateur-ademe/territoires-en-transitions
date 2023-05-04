@@ -99,7 +99,7 @@ id: guide_collecte
 ```yaml
 actions: 
   - eci_2.2.0
-id: attestation_respect_legislation_collecte_traitement_dechets
+id: attestation_regl_collecte_traitement_dechets
 ```
 
 # Délibération approuvant le règlement de collecte des déchets qui couvre l’ensemble du territoire administratif de l’EPCI
