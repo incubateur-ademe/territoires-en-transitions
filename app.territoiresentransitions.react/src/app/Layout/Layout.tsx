@@ -13,7 +13,7 @@ const RIGHT_PANEL_ID = 'right';
 const Layout = ({children}: Props) => {
   return (
     <div className="flex flex-row h-[100vh] overflow-hidden">
-      <div className="w-full overflow-y-auto">
+      <div className="w-full overflow-x-hidden overflow-y-auto">
         <Header />
         {children}
         <Footer />
@@ -29,5 +29,16 @@ const Layout = ({children}: Props) => {
 export default Layout;
 
 /** Permet de définir le contenu du panneau latéral */
-export const setRightPanelContent = (children: ReactNode) =>
-  createPortal(children, document.getElementById(RIGHT_PANEL_ID)!);
+export const setRightPanelContent = (
+  children: ReactNode,
+  attrs?: {dataTest?: string}
+) =>
+  createPortal(
+    <div
+      className="flex flex-col w-[28rem] h-[100vh] fr-pb-6w overflow-hidden"
+      data-test={attrs?.dataTest}
+    >
+      {children}
+    </div>,
+    document.getElementById(RIGHT_PANEL_ID)!
+  );

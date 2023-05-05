@@ -5,7 +5,7 @@ exports[`Storyshots app/Layout Exemple 1`] = `
   className="flex flex-row h-[100vh] overflow-hidden"
 >
   <div
-    className="w-full overflow-y-auto"
+    className="w-full overflow-x-hidden overflow-y-auto"
   >
     <header
       className="fr-header"
