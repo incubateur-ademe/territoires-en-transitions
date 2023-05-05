@@ -1,13 +1,7 @@
 import {
-  actionContexte,
-  ActionContexte,
   actionDownToTache,
   actionExemples,
   ActionExemples,
-  actionPerimetreEvaluation,
-  actionReductionPotentiel,
-  actionRessources,
-  ActionRessources,
   referentielDownToAction,
 } from 'core-logic/api/procedures/referentielProcedures';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
@@ -86,45 +80,5 @@ describe('Retrieve exemples', () => {
     const procedureResponse = await actionExemples('eci_1.1.1');
 
     expect(procedureResponse).toEqual(expect.objectContaining(partialExemple));
-  });
-});
-
-describe('Retrieve contexte', () => {
-  it('should return the action contexte content', async () => {
-    const partialContext: Partial<ActionContexte> = {
-      id: 'eci_2.2',
-    };
-    const procedureResponse = await actionContexte('eci_2.2');
-
-    expect(procedureResponse).toEqual(expect.objectContaining(partialContext));
-    expect(procedureResponse.contexte.length).toBeGreaterThan(0);
-  });
-});
-
-describe('Retrieve ressources', () => {
-  it('should return the action ressources content', async () => {
-    const partialRessources: Partial<ActionRessources> = {
-      id: 'eci_2.2',
-    };
-    const procedureResponse = await actionRessources('eci_2.2');
-
-    expect(procedureResponse).toEqual(
-      expect.objectContaining(partialRessources)
-    );
-    expect(procedureResponse.ressources.length).toBeGreaterThan(0);
-  });
-});
-
-describe('Retrieve perimetre evaluation', () => {
-  it('should return some content for action cae_1.1.1', async () => {
-    const procedureResponse = await actionPerimetreEvaluation('cae_1.1.1');
-    expect(procedureResponse.perimetre_evaluation.length).toBeGreaterThan(0);
-  });
-});
-
-describe('Retrieve reduction potentiel', () => {
-  it('should return some content for action cae_1.1.1', async () => {
-    const procedureResponse = await actionReductionPotentiel('cae_1.1.1');
-    expect(procedureResponse.reduction_potentiel.length).toBeGreaterThan(0);
   });
 });

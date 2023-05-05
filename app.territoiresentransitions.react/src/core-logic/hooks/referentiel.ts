@@ -1,12 +1,8 @@
 import {useEffect, useState} from 'react';
 import {
-  actionContexte,
   actionDownToTache,
   actionExemples,
-  actionPerimetreEvaluation,
   actionPreuve,
-  actionReductionPotentiel,
-  actionRessources,
   referentielDownToAction,
 } from 'core-logic/api/procedures/referentielProcedures';
 import {Referentiel} from 'types/litterals';
@@ -74,44 +70,6 @@ export const useActionExemples = (
 };
 
 /**
- * Returns action context html contents
- */
-export const useActionContexte = (
-  actionId: string,
-  opened: boolean
-): string => {
-  const [contexte, setContexte] = useState<string>('...');
-
-  useEffect(() => {
-    if (opened) {
-      actionContexte(actionId).then(contexte => setContexte(contexte.contexte));
-    }
-  }, [actionId, opened]);
-
-  return contexte;
-};
-
-/**
- * Returns action ressources html contents
- */
-export const useActionResources = (
-  actionId: string,
-  opened: boolean
-): string => {
-  const [ressources, setRessources] = useState<string>('...');
-
-  useEffect(() => {
-    if (opened) {
-      actionRessources(actionId).then(ressources =>
-        setRessources(ressources.ressources)
-      );
-    }
-  }, [actionId, opened]);
-
-  return ressources;
-};
-
-/**
  * Returns action ressources html contents
  */
 export const useActionPreuve = (actionId: string) => {
@@ -122,46 +80,6 @@ export const useActionPreuve = (actionId: string) => {
   }, [actionId]);
 
   return preuve;
-};
-
-/**
- * Returns action preuve html contents
- */
-export const useActionReductionPotentiel = (
-  actionId: string,
-  opened: boolean
-) => {
-  const [reductionPotentiel, setReductionPotentiel] = useState<string>('...');
-
-  useEffect(() => {
-    if (opened) {
-      actionReductionPotentiel(actionId).then(reductionPotentiel =>
-        setReductionPotentiel(reductionPotentiel.reduction_potentiel)
-      );
-    }
-  }, [actionId, opened]);
-
-  return reductionPotentiel;
-};
-
-/**
- * Returns perimetre evaluation html contents
- */
-export const useActionPerimetreEvaluation = (
-  actionId: string,
-  opened: boolean
-) => {
-  const [perimetreEvaluation, setPerimetreEvaluation] = useState<string>('...');
-
-  useEffect(() => {
-    if (opened) {
-      actionPerimetreEvaluation(actionId).then(perimetreEvaluation =>
-        setPerimetreEvaluation(perimetreEvaluation.perimetre_evaluation)
-      );
-    }
-  }, [actionId, opened]);
-
-  return perimetreEvaluation;
 };
 
 /**

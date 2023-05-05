@@ -3,13 +3,7 @@ import {
   CrossExpandPanelBase,
   CrossExpandPanelWithNode,
 } from 'ui/shared/CrossExpandPanelWithHtmlContent';
-import {
-  useActionContexte,
-  useActionExemples,
-  useActionPerimetreEvaluation,
-  useActionReductionPotentiel,
-  useActionResources,
-} from 'core-logic/hooks/referentiel';
+import {useActionExemples} from 'core-logic/hooks/referentiel';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {ActionPreuvePanel} from './ActionPreuvePanel';
 import {useToggle} from '../useToggle';
@@ -39,24 +33,6 @@ const ActionExpandPanelAdemeContent = (props: {
         </CrossExpandPanelBase>
       </div>
     </div>
-  );
-};
-
-export const ActionContexteExpandPanel = ({
-  action,
-}: {
-  action: ActionDefinitionSummary;
-}) => {
-  const [opened, handleToggle] = useToggle(false);
-  const contexte = useActionContexte(action.id, opened);
-
-  return (
-    <ActionExpandPanelAdemeContent
-      content={contexte}
-      title="Contexte et réglementation"
-      opened={opened}
-      onToggle={handleToggle}
-    />
   );
 };
 
@@ -94,59 +70,5 @@ export const ActionPreuvesExpandPanel = ({
         </CrossExpandPanelWithNode>
       </div>
     </div>
-  );
-};
-
-export const ActionRessourcesExpandPanel = ({
-  action,
-}: {
-  action: ActionDefinitionSummary;
-}) => {
-  const [opened, handleToggle] = useToggle(false);
-  const ressources = useActionResources(action.id, opened);
-
-  return (
-    <ActionExpandPanelAdemeContent
-      content={ressources}
-      title="Ressources"
-      opened={opened}
-      onToggle={handleToggle}
-    />
-  );
-};
-
-export const ActionReductionPotentielExpandPanel = ({
-  action,
-}: {
-  action: ActionDefinitionSummary;
-}) => {
-  const [opened, handleToggle] = useToggle(false);
-  const reductionPotentiel = useActionReductionPotentiel(action.id, opened);
-
-  return (
-    <ActionExpandPanelAdemeContent
-      content={reductionPotentiel}
-      title="Réduction de potentiel"
-      opened={opened}
-      onToggle={handleToggle}
-    />
-  );
-};
-
-export const ActionPerimetreEvaluationExpandPanel = ({
-  action,
-}: {
-  action: ActionDefinitionSummary;
-}) => {
-  const [opened, handleToggle] = useToggle(false);
-  const perimetreEvaluation = useActionPerimetreEvaluation(action.id, opened);
-
-  return (
-    <ActionExpandPanelAdemeContent
-      content={perimetreEvaluation}
-      title="Renvois-limite"
-      opened={opened}
-      onToggle={handleToggle}
-    />
   );
 };
