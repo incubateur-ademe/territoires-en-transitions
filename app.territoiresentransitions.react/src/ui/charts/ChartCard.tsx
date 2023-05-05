@@ -37,7 +37,7 @@ type ChartCardModalContentProps = {
     downloadedFileName?: string;
     additionalInfo?: string | string[];
   };
-  topElement?: JSX.Element;
+  topElement?: (id?: string) => JSX.Element;
 };
 
 const ChartCardModalContent = ({
@@ -71,7 +71,9 @@ const ChartCardModalContent = ({
         {chartInfo?.title && <h4>{chartInfo.title}</h4>}
 
         {/* Element additionnel optionnel, ajouté entre le titre et le graphe */}
-        <div data-html2canvas-ignore>{topElement}</div>
+        <div data-html2canvas-ignore>
+          {!!topElement && topElement('detailled')}
+        </div>
 
         {/* Graphe agrandi */}
         <div className="w-full h-96">{chart}</div>
@@ -107,7 +109,7 @@ type ChartCardProps = {
     downloadedFileName?: string;
     additionalInfo?: string | string[];
   };
-  topElement?: JSX.Element;
+  topElement?: (id?: string) => JSX.Element;
   customStyle?: React.CSSProperties;
 };
 
@@ -181,7 +183,9 @@ const ChartCard = ({
       </div>
 
       {/* Element additionnel optionnel, ajouté entre le titre et le graphe */}
-      <div className="absolute top-16 z-10 px-6 w-full">{topElement}</div>
+      <div className="absolute top-16 z-10 px-6 w-full">
+        {!!topElement && topElement('overview')}
+      </div>
 
       {/* Graphe miniature */}
       {chart}

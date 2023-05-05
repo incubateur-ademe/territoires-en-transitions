@@ -161,7 +161,7 @@ const BarChartCardWithSubrows = ({
       chartType="bar"
       chartProps={localChartProps}
       chartInfo={localChartInfo}
-      topElement={
+      topElement={(id?: string): JSX.Element => (
         <div className="flex flex-col gap-4 w-full">
           <div
             style={{
@@ -177,6 +177,7 @@ const BarChartCardWithSubrows = ({
           </div>
           {percentage === undefined && (
             <TagFilters
+              id={id}
               name="scores"
               options={[
                 {value: 'absolue', label: 'Valeur absolue (points)'},
@@ -190,7 +191,7 @@ const BarChartCardWithSubrows = ({
             />
           )}
         </div>
-      }
+      )}
       customStyle={customStyle}
     />
   );
