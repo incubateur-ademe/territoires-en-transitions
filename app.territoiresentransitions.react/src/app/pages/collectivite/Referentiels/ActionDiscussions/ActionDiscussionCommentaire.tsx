@@ -56,7 +56,12 @@ const ActionDiscussionCommentaire = ({commentaire, discussion}: Props) => {
             {format(creationDate, 'd MMMM y', {locale: fr})}
           </span>
         </div>
-        <div className="text-sm whitespace-pre-wrap">{commentaire.message}</div>
+        <p
+          className="text-sm whitespace-pre-wrap fr-mb-0"
+          style={{overflowWrap: 'anywhere'}}
+        >
+          {commentaire.message}
+        </p>
       </div>
       <div className="flex items-center">
         {discussion && (

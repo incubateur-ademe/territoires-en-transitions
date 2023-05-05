@@ -14,16 +14,16 @@ const ActionDiscussionsFeed = ({vue, discussions}: Props) => {
   } pour l’instant`;
 
   return (
-    <div
-      data-test="ActionDiscussionsFeed"
-      className="overflow-y-auto h-[calc(100vh-12.7rem)]"
-    >
+    <div data-test="ActionDiscussionsFeed" className="overflow-y-auto">
       {discussions.length === 0 ? (
         <ActionDiscussionsFeedVide message={messageFeedVide} />
       ) : (
-        discussions.map(
-          d => d.commentaires && <ActionDiscussion key={d.id} discussion={d} />
-        )
+        <div>
+          {discussions.map(
+            d =>
+              d.commentaires && <ActionDiscussion key={d.id} discussion={d} />
+          )}
+        </div>
       )}
     </div>
   );

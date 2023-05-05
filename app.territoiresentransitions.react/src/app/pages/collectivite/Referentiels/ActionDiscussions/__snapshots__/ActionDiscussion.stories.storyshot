@@ -33,11 +33,16 @@ exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/Action
               25 octobre 2022
             </span>
           </div>
-          <div
-            className="text-sm whitespace-pre-wrap"
+          <p
+            className="text-sm whitespace-pre-wrap fr-mb-0"
+            style={
+              Object {
+                "overflowWrap": "anywhere",
+              }
+            }
           >
             Bonjour le monde, ceci est un message.
-          </div>
+          </p>
         </div>
         <div
           className="flex items-center"
@@ -96,11 +101,16 @@ exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/Action
               25 octobre 2022
             </span>
           </div>
-          <div
-            className="text-sm whitespace-pre-wrap"
+          <p
+            className="text-sm whitespace-pre-wrap fr-mb-0"
+            style={
+              Object {
+                "overflowWrap": "anywhere",
+              }
+            }
           >
             Le dernier commentaire est visible
-          </div>
+          </p>
         </div>
         <div
           className="flex items-center"
@@ -150,11 +160,16 @@ exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/Action
               25 octobre 2022
             </span>
           </div>
-          <div
-            className="text-sm whitespace-pre-wrap"
+          <p
+            className="text-sm whitespace-pre-wrap fr-mb-0"
+            style={
+              Object {
+                "overflowWrap": "anywhere",
+              }
+            }
           >
             Bonjour le monde, ceci est un message.
-          </div>
+          </p>
         </div>
         <div
           className="flex items-center"
@@ -209,11 +224,16 @@ exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/Action
               25 octobre 2022
             </span>
           </div>
-          <div
-            className="text-sm whitespace-pre-wrap"
+          <p
+            className="text-sm whitespace-pre-wrap fr-mb-0"
+            style={
+              Object {
+                "overflowWrap": "anywhere",
+              }
+            }
           >
             Bonjour le monde, ceci est un message.
-          </div>
+          </p>
         </div>
         <div
           className="flex items-center"

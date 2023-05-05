@@ -15,7 +15,7 @@ const ActionDiscussionNouvelleDiscussion = ({actionId}: Props) => {
   return (
     <div
       data-test="ActionDiscussionsNouvelleDiscussion"
-      className="py-3 px-4 bg-gray-100"
+      className="fr-pt-2w fr-pb-1w fr-px-2w bg-gray-100"
     >
       <Textarea
         className="bg-white"
