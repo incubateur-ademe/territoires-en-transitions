@@ -1,5 +1,4 @@
 import {Link, useHistory} from 'react-router-dom';
-import {DescriptionContextAndRessourcesDialogButton} from './_DescriptionContextAndRessourcesDialogButton';
 import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
 import {useState} from 'react';
 import {addTargetToContentAnchors} from 'utils/content';
@@ -26,11 +25,11 @@ import ScrollTopButton from 'ui/shared/ScrollTopButton';
 import ActionNav from './ActionNav';
 import ActionPreuvePanel from 'ui/shared/actions/ActionPreuvePanel/ActionPreuvePanel';
 import {DownloadDocs} from './DownloadDocs';
-import DOMPurify from 'dompurify';
 import ActionAuditStatut from '../Audit/ActionAuditStatut';
 import {ActionAuditDetail} from '../Audit/ActionAuditDetail';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {useActionLinkedIndicateurDefinitions} from './useActionLinkedIndicateurDefinitions';
+import Alerte from 'ui/shared/Alerte';
 
 // index des onglets de la page Action
 const TABS_INDEX: Record<ActionVueParamOption, number> = {
@@ -114,30 +113,26 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
       <div className="mt-4">
         <ActionAuditDetail action={action} />
       </div>
-      <div className="mb-16">
-        <div className="flex flex-col w-4/5">
-          {action.have_questions && (
-            <>
-              <Spacer size={2} />
-              <PersoPotentiel actionDef={action} />
-            </>
-          )}
-        </div>
+      <div className="flex flex-col w-4/5">
+        {action.have_questions && (
+          <>
+            <Spacer size={2} />
+            <PersoPotentiel actionDef={action} />
+          </>
+        )}
       </div>
+      <Alerte state="information" classname="fr-my-3w">
+        <div
+          className="htmlContent"
+          dangerouslySetInnerHTML={{
+            __html: addTargetToContentAnchors(action.description ?? ''),
+          }}
+        />
+      </Alerte>
 
       <Tabs defaultActiveTab={activeTab} onChange={handleChange}>
         <Tab label="Suivi de l'action" icon="seedling">
           <section>
-            <div
-              className="htmlContent"
-              dangerouslySetInnerHTML={{
-                __html: DOMPurify.sanitize(
-                  addTargetToContentAnchors(action.description ?? '')
-                ),
-              }}
-            />
-            <DescriptionContextAndRessourcesDialogButton action={action} />
-            <Spacer size={1} />
             <ActionCommentaire action={action} />
 
             <h4 className="text-xl fr-mt-4w">
