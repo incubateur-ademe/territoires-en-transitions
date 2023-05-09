@@ -29,13 +29,9 @@ export const ActionInfoSommaire = ({
   <nav
     className="fr-summary !bg-grey975"
     /** surcharge les espacements de fr-summary */
-    style={{paddingTop: '1.5rem', paddingBottom: '1rem'}}
+    style={{paddingTop: '0', paddingBottom: '0'}}
     role="navigation"
-    aria-labelledby="toc-action-info"
   >
-    <p className="fr-summary__title" id="toc-action-info">
-      Sommaire
-    </p>
     <ol className="fr-summary__list">
       {items.map(({id, label}) => {
         const isCurrent = id === current;

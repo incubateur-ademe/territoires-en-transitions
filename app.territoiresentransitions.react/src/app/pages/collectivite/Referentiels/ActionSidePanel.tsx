@@ -36,9 +36,9 @@ export const ActionSidePanel = (props: TActionSidePanelProps) => {
   );
   // et la même pour les panneaux avec le bouton Fermer en plus
   const PanelToolbar = () => (
-    <div className="flex justify-between fr-p-2w">
+    <div className="flex justify-between fr-px-2w fr-py-1w">
       <button
-        className="p-2 text-gray-400 fr-fi-arrow-right-s-line-double hover:bg-gray-50"
+        className="text-gray-400 fr-icon-close-line hover:bg-gray-50"
         onClick={() => setPanelId(false)}
       />
       <Toolbar />
