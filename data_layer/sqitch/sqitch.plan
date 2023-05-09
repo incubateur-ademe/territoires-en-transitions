@@ -343,3 +343,4 @@ stats/vues_BI [stats/vues_BI@v2.26.0] 2023-04-28T14:57:00Z Florian <florian@derf
 @v2.28.0 2023-05-03T07:30:42Z Florian <florian@derfurth.com> # Ajoute des vues stats
 
 utilisateur/visite [utilisateur/visite@v2.28.0] 2023-05-10T08:22:35Z Florian <florian@derfurth.com> # Ajoute les panneaux comme onglets
+stats/amplitude [stats/amplitude@v2.28.0] 2023-05-09T09:26:11Z Florian <florian@derfurth.com> # Améliore l'intégration à Amplitude
