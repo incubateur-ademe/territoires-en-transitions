@@ -4,7 +4,7 @@ import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinition
 import {setRightPanelContent} from 'app/Layout/Layout';
 import {ToolbarIconToggleButton} from 'ui/shared/ToolbarIconButton';
 import ActionDiscussionsPanel from './ActionDiscussions/ActionDiscussionsPanel';
-import {ActionInfo} from './ActionInfo/ActionInfo';
+import {ActionInfoPanel} from './ActionInfo/ActionInfoPanel';
 
 export type TActionSidePanelProps = {
   action: ActionDefinitionSummary;
@@ -64,7 +64,7 @@ export const ActionSidePanel = (props: TActionSidePanelProps) => {
         ? setRightPanelContent(
             <>
               <PanelToolbar />
-              <ActionInfo action={action} />
+              <ActionInfoPanel action={action} />
             </>
           )
         : null}

@@ -9,7 +9,7 @@ export type TActionInfoProps = {action: ActionDefinitionSummary};
  * Affiche les informations détaillées associées à une action (contextes,
  * exemples, ressources...)
  */
-export const ActionInfo = ({action}: TActionInfoProps) => {
+export const ActionInfoPanel = ({action}: TActionInfoProps) => {
   // items à afficher dans le sommaire
   const items = getItems(action);
 
