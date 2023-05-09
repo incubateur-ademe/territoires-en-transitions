@@ -8,6 +8,7 @@ import {useEditAxe} from './data/useEditAxe';
 import TextareaControlled from 'ui/shared/form/TextareaControlled';
 import SupprimerAxeModal from './SupprimerAxeModal';
 import PlanActionAxeFiches from './PlanActionAxeFiches';
+import IconArrowSFill from 'ui/icons/IconArrowSFill';
 
 type Props = {
   planActionGlobal: PlanNode;
@@ -43,18 +44,15 @@ const PlanActionAxe = ({
     <div data-test="Axe">
       <div className="group relative flex items-center">
         <button
-          className={classNames('flex items-center py-3 pr-4 w-full', {
+          className={classNames('flex items-center py-3 pr-4 pl-2 w-full', {
             'hover:!bg-none active:!bg-none': isEditable,
           })}
           onClick={() => !isEditable && setIsOpen(!isOpen)}
         >
-          <div
-            className={classNames(
-              'fr-fi-arrow-right-s-line scale-90 mt-1 mr-3',
-              {
-                'rotate-90': isOpen,
-              }
-            )}
+          <IconArrowSFill
+            className={classNames({
+              '-rotate-90': !isOpen,
+            })}
           />
           <TextareaControlled
             data-test="TitreAxeInput"
