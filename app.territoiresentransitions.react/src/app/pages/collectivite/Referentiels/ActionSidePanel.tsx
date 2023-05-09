@@ -77,10 +77,8 @@ export type TActionToolbarProps = {
   panelId: TPanelId;
   /** Appeler pour ouvrir/fermer un panneau */
   setPanelId: (panelId: TPanelId) => void;
-  /** Indique si le bouton "Fermer" doit être affiché */
-  showDiscussion: boolean;
   /** Indique si le bouton Commentaires doit être affiché */
-  showCloseButton?: boolean;
+  showDiscussion: boolean;
 };
 
 /** Affiche la barre d'outils permettant d'ouvrir/fermer le panneau latéral */
