@@ -87,7 +87,7 @@ export const PlanAction = ({plan}: PlanActionProps) => {
             </div>
           )
         ) : // Affiche les fiches et sous-axes s'il y en a, sinon un état vide
-        plan.children || plan.fiches ? (
+        plan.children.length > 0 || plan.fiches ? (
           <>
             <div className="mb-4">
               {!isReadonly && (
