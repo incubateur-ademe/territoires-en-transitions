@@ -1,5 +1,5 @@
 import {Prefix} from 'types/utils';
-import {TOC_ITEMS} from './ActionInfoSommaire';
+import {TOC_ITEMS} from './toc-items';
 
 // type d'info associées à une action
 export type TActionInfo = typeof TOC_ITEMS[number]['id'];

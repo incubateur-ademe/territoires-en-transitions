@@ -1,6 +1,7 @@
 import {useState} from 'react';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {getItems, ActionInfoSommaire} from './ActionInfoSommaire';
+import {ActionInfoSommaire} from './ActionInfoSommaire';
+import {getItems} from './toc-items';
 import {ActionInfoDetail} from './ActionInfoDetail';
 
 export type TActionInfoProps = {action: ActionDefinitionSummary};
