@@ -69,7 +69,7 @@ export const OrientationQuickNav = (props: {
   const parent = parents[parents.length - 1];
   const grandParents = parents.slice(1, parents.length - 1);
   return (
-    <nav className="flex flex-row text-sm">
+    <nav className="flex flex-row text-sm items-start">
       <div className="flex flex-row flex-nowrap">
         <Link
           to={makeCollectiviteReferentielUrl({

@@ -30,6 +30,7 @@ import {ActionAuditDetail} from '../Audit/ActionAuditDetail';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {useActionLinkedIndicateurDefinitions} from './useActionLinkedIndicateurDefinitions';
 import Alerte from 'ui/shared/Alerte';
+import {ActionSidePanel} from './ActionSidePanel';
 
 // index des onglets de la page Action
 const TABS_INDEX: Record<ActionVueParamOption, number> = {
@@ -98,8 +99,9 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
 
   return (
     <div className="fr-container" data-test={`Action-${action.identifiant}`}>
-      <div className="mt-8 mb-4">
+      <div className="flex justify-between items-center fr-py-2w">
         <OrientationQuickNav action={action} />
+        <ActionSidePanel action={action} />
       </div>
       <div className="sticky top-0 z-40 flex flex-row justify-between bg-white pr-8 py-4">
         <div className="flex flex-col w-4/5">

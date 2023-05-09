@@ -3,7 +3,6 @@ import {useParams} from 'react-router-dom';
 import {renderLoader} from 'utils/renderLoader';
 import {Referentiel} from 'types/litterals';
 import {useActionDownToTache} from 'core-logic/hooks/referentiel';
-import {ActionSidePanel} from './ActionSidePanel';
 
 const ActionReferentielAvancement = lazy(
   () => import('app/pages/collectivite/Referentiels/Action')
@@ -25,7 +24,6 @@ export const ActionPage = () => {
       {action && (
         <div data-test="Action" className="relative flex">
           <ActionReferentielAvancement action={action} />
-          <ActionSidePanel action={action} />
         </div>
       )}
     </Suspense>
