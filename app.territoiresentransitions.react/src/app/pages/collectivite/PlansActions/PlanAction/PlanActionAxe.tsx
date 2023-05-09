@@ -1,4 +1,4 @@
-import {useRef, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import classNames from 'classnames';
 
 import {AxeActions} from './AxeActions';
@@ -27,69 +27,86 @@ const PlanActionAxe = ({
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const [isEditable, setIsEditable] = useState(false);
-
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  const handleEditButtonClick = () => {
-    setIsEditable(true);
-    setTimeout(() => {
-      if (inputRef && inputRef.current) {
-        inputRef.current.focus();
+  const [isFocus, setIsFocus] = useState(false);
+
+  const handleChangeTitle = () => {
+    if (inputRef.current) {
+      if (axe.nom) {
+        inputRef.current.value !== axe.nom &&
+          updatePlan({id: axe.id, nom: inputRef.current.value.trim()});
+      } else {
+        inputRef.current.value.trim().length > 0 &&
+          updatePlan({id: axe.id, nom: inputRef.current.value.trim()});
       }
-    }, 100);
+    }
   };
+
+  const handleSetFocus = () => {
+    if (document.activeElement === inputRef.current) {
+      setIsFocus(true);
+    } else {
+      setIsFocus(false);
+    }
+  };
+
+  const handleEnterKeydown = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleChangeTitle();
+      inputRef.current?.blur();
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('focusin', handleSetFocus);
+    document.addEventListener('focusout', handleSetFocus);
+    inputRef.current?.addEventListener('keydown', handleEnterKeydown);
+
+    return () => {
+      document.removeEventListener('focusin', handleSetFocus);
+      document.removeEventListener('focusout', handleSetFocus);
+      inputRef.current?.removeEventListener('keydown', handleEnterKeydown);
+    };
+  }, []);
 
   return (
     <div data-test="Axe">
-      <div className="group relative flex items-center">
-        <button
-          className={classNames('flex items-center py-3 pr-4 pl-2 w-full', {
-            'hover:!bg-none active:!bg-none': isEditable,
-          })}
-          onClick={() => !isEditable && setIsOpen(!isOpen)}
-        >
-          <IconArrowSFill
-            className={classNames({
-              '-rotate-90': !isOpen,
-            })}
-          />
-          <TextareaControlled
-            data-test="TitreAxeInput"
-            ref={inputRef}
-            className={classNames(
-              'w-full mb-0 text-left disabled:pointer-events-none disabled:cursor-pointer disabled:text-gray-900 !text-base !outline-none !resize-none',
-              {
-                'font-bold': isOpen && !isEditable,
-                'placeholder:text-gray-900': !isEditable,
-              }
-            )}
-            initialValue={axe.nom}
-            placeholder={'Sans titre'}
-            disabled={!isEditable}
-            onBlur={e => {
-              e.target.value &&
-                e.target.value.length > 0 &&
-                e.target.value !== axe.nom &&
-                updatePlan({id: axe.id, nom: e.target.value ?? null});
-              setIsEditable(false);
-            }}
-          />
-        </button>
-        {!isReadonly && (
-          <>
-            <button
-              data-test="EditerTitreAxeBouton"
-              className="fr-fi-edit-line invisible group-hover:visible p-2 text-gray-500 scale-90"
-              onClick={handleEditButtonClick}
+      <div className="group relative flex items-center py-3 pr-4 pl-2 w-full !bg-white">
+        <div className="flex mr-3 group-hover:outline group-hover:outline-gray-100">
+          <button className="p-0.5" onClick={() => setIsOpen(!isOpen)}>
+            <IconArrowSFill
+              className={classNames({
+                '-rotate-90': !isOpen,
+              })}
             />
-            <SupprimerAxeModal axe={axe} plan={planActionGlobal}>
+          </button>
+        </div>
+        <TextareaControlled
+          data-test="TitreAxeInput"
+          ref={inputRef}
+          className={classNames(
+            'grow mb-0 !px-2 text-left !text-base rounded-none !outline-none !resize-none placeholder:text-gray-900 disabled:pointer-events-none disabled:cursor-pointer disabled:text-gray-900',
+            {
+              'font-bold': isOpen,
+              'placeholder:text-gray-400 !outline !outline-blue-500': isFocus,
+            }
+          )}
+          initialValue={axe.nom}
+          onBlur={handleChangeTitle}
+          placeholder={'Sans titre'}
+          disabled={isReadonly}
+        />
+        {!isReadonly && (
+          <SupprimerAxeModal axe={axe} plan={planActionGlobal}>
+            <div className="flex ml-2 group-hover:outline group-hover:outline-gray-100 scale-75">
               <button
                 data-test="SupprimerAxeBouton"
-                className="invisible group-hover:visible fr-btn fr-btn--secondary fr-text-default--error fr-fi-delete-line !shadow-none p-2 text-gray-500 scale-90"
+                className="invisible group-hover:visible fr-btn fr-btn--secondary fr-text-default--error fr-fi-delete-line !shadow-none p-2 text-gray-500"
               />
-            </SupprimerAxeModal>
-          </>
+            </div>
+          </SupprimerAxeModal>
         )}
       </div>
       {isOpen && (
