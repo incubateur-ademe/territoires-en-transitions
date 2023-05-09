@@ -2,13 +2,13 @@
 
 exports[`Storyshots ui/shared/ToolbarIconButton Default 1`] = `
 <button
-  className="border border-solid border-gray-200 p-2 text-bf500 fr-icon-info-line"
+  className="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-info-line"
 />
 `;
 
 exports[`Storyshots ui/shared/ToolbarIconButton Pressed 1`] = `
 <button
   aria-pressed={true}
-  className="border border-solid border-gray-200 p-2 text-bf500 fr-icon-info-fill bg-gray-200"
+  className="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-info-fill !bg-gray-200"
 />
 `;

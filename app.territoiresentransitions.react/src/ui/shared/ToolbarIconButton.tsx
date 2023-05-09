@@ -24,13 +24,10 @@ export const ToolbarIconButton = forwardRef(
     ref?: Ref<HTMLButtonElement>
   ) => (
     <button
-      className={classNames(
-        'border border-solid border-gray-200 p-2 text-bf500',
-        {
-          [`fr-icon-${icon}-line`]: !pressed,
-          [`fr-icon-${icon}-fill bg-gray-200`]: pressed,
-        }
-      )}
+      className={classNames('fr-btn fr-btn--tertiary fr-btn--sm', {
+        [`fr-icon-${icon}-line`]: !pressed,
+        [`fr-icon-${icon}-fill !bg-gray-200`]: pressed,
+      })}
       aria-pressed={pressed}
       ref={ref}
       {...props}
