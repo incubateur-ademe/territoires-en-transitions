@@ -62,6 +62,7 @@ export const ToolbarIconToggleButton = forwardRef(
       <ToolbarIconButton
         aria-pressed={pressed}
         icon={icon}
+        ref={ref}
         onClick={() => onClick(pressed ? false : icon)}
         {...props}
       />
