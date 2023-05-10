@@ -29,7 +29,7 @@ import Alerte from 'ui/shared/Alerte';
 import {usePrevAndNextActionLinks} from './usePrevAndNextActionLinks';
 import {ActionHeader} from './ActionHeader';
 import {ActionSidePanel} from './ActionSidePanel';
-import {usePreuves} from 'ui/shared/preuves/Bibliotheque/usePreuves';
+import {useActionPreuvesCount} from 'ui/shared/preuves/Bibliotheque/usePreuves';
 
 // index des onglets de la page Action
 const TABS_INDEX: Record<ActionVueParamOption, number> = {
@@ -57,11 +57,7 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
   const collectiviteId = collectivite?.collectivite_id;
   const referentielId = useReferentielId() as ReferentielParamOption;
   const {prevActionLink, nextActionLink} = usePrevAndNextActionLinks(action.id);
-  const preuves = usePreuves({
-    action,
-    withSubActions: true,
-    preuve_types: ['reglementaire', 'complementaire'],
-  });
+  const preuvesCount = useActionPreuvesCount(action);
 
   const actionLinkedIndicateurDefinitions =
     useActionLinkedIndicateurDefinitions(action?.id);
@@ -149,7 +145,12 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
               ))}
             </section>
           </Tab>
-          <Tab label="Preuves" icon="file">
+          <Tab
+            label={`Documents${
+              preuvesCount !== undefined ? ` (${preuvesCount})` : ''
+            }`}
+            icon="file"
+          >
             {activeTab === TABS_INDEX['preuves'] ? (
               <section>
                 <ActionPreuvePanel withSubActions showWarning action={action} />

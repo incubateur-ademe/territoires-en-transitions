@@ -9,7 +9,7 @@ import {ActionPreuvePanel} from './ActionPreuvePanel';
 import {useToggle} from '../useToggle';
 import {ChangeEvent} from 'react';
 import DOMPurify from 'dompurify';
-import {usePreuvesCount} from '../preuves/Bibliotheque/usePreuves';
+import {useActionPreuvesCount} from '../preuves/Bibliotheque/usePreuves';
 
 const ActionExpandPanelAdemeContent = (props: {
   content?: string;
@@ -60,11 +60,7 @@ export const ActionPreuvesExpandPanel = ({
 }: {
   action: ActionDefinitionSummary;
 }) => {
-  const preuvesCount = usePreuvesCount({
-    action,
-    withSubActions: true,
-    preuve_types: ['reglementaire', 'complementaire'],
-  });
+  const preuvesCount = useActionPreuvesCount(action);
 
   return (
     <div

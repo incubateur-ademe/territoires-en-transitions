@@ -113,6 +113,7 @@ export const useRefetchPreuves = (invalidateParcours: boolean = false) => {
     const {collectivite_id} = variables;
     queryClient.invalidateQueries(['preuve', collectivite_id]);
     queryClient.invalidateQueries(['annexes_fiche_action']);
+    queryClient.invalidateQueries(['preuve_count', collectivite_id]);
     if (invalidateParcours) {
       queryClient.invalidateQueries([
         'labellisation_parcours',
