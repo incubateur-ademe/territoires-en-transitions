@@ -298,7 +298,7 @@ def compute_actions_desactivees_ids(
     return list(action_desactive_ids)
 
 
-def _get_action_potentiel_after_redistribution_for_level_greater_than_action_level(
+def _action_potentiel_with_redistribution_remainder(
         action_id: ActionId,
         original_action_potentiel: float,
         actions_non_concernes_ids: List[ActionId],
@@ -364,7 +364,7 @@ def compute_potentiels(
             )
 
         if this_level > action_level:
-            potentiel = _get_action_potentiel_after_redistribution_for_level_greater_than_action_level(
+            potentiel = _action_potentiel_with_redistribution_remainder(
                 action_id,
                 original_action_potentiel,
                 actions_non_concernes_ids,
