@@ -52,8 +52,9 @@ export const PlanAction = ({plan}: PlanActionProps) => {
       />
       <div className="max-w-4xl mx-auto px-10">
         <PlanActionHeader
-          plan={plan}
           collectivite_id={collectivite?.collectivite_id!}
+          plan={plan}
+          isReadonly={isReadonly}
         />
         {/** On vérifie si le plan contient des fiches pour afficher les filtres de fiche */}
         {checkAxeHasFiche(plan) && (
