@@ -19,7 +19,7 @@ const HeaderTitle = ({
 }: Props) => {
   const titreInputRef = useRef<HTMLTextAreaElement>(null);
 
-  const handleEditButtonClick = () => {
+  const handleEditFocus = () => {
     if (titreInputRef && titreInputRef.current) {
       titreInputRef.current.focus();
     }
@@ -56,10 +56,12 @@ const HeaderTitle = ({
     <div
       className={classNames(
         'group flex items-center mx-auto py-6 px-10 xl:mr-6',
+        {'cursor-text': !isReadonly},
         {'bg-indigo-700': type === 'plan'},
         {'bg-indigo-400': type === 'fiche'},
         bgColorClassName
       )}
+      onClick={!isReadonly ? handleEditFocus : undefined}
     >
       <p
         className={classNames('flex grow m-0 font-bold text-white', {
@@ -87,12 +89,6 @@ const HeaderTitle = ({
           <span className="block py-2 px-3">{titre ?? 'Sans titre'}</span>
         )}
       </p>
-      {!isReadonly && onUpdate && (
-        <button
-          className="group-hover:visible invisible fr-fi-edit-line m-auto w-8 h-8 text-white"
-          onClick={handleEditButtonClick}
-        />
-      )}
     </div>
   );
 };
