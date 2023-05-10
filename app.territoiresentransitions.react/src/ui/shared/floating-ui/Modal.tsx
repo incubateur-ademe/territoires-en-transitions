@@ -35,6 +35,7 @@ export type ModalProps = {
   disableDismiss?: boolean;
   /** n'affiche pas le bouton Fermer */
   noCloseButton?: boolean;
+  zIndex?: string | number;
 };
 
 /*
@@ -50,6 +51,7 @@ const Modal = ({
   size = 'md',
   disableDismiss,
   noCloseButton,
+  zIndex,
 }: ModalProps) => {
   const [open, setOpen] = useState(false);
 
@@ -87,7 +89,7 @@ const Modal = ({
               display: 'grid',
               placeItems: 'center',
               background: 'hsla(0deg, 0%, 8.6%, 0.375)',
-              zIndex: 1100,
+              zIndex: zIndex ?? 1100,
             }}
           >
             <FloatingFocusManager context={context}>
