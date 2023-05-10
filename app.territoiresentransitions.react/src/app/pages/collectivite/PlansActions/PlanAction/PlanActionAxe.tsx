@@ -100,12 +100,11 @@ const PlanActionAxe = ({
         />
         {!isReadonly && (
           <SupprimerAxeModal axe={axe} plan={planActionGlobal}>
-            <div className="flex ml-2 group-hover:outline group-hover:outline-gray-100 scale-75">
-              <button
-                data-test="SupprimerAxeBouton"
-                className="invisible group-hover:visible fr-btn fr-btn--secondary fr-text-default--error fr-fi-delete-line !shadow-none p-2 text-gray-500"
-              />
-            </div>
+            <button
+              data-test="SupprimerAxeBouton"
+              className="invisible group-hover:visible fr-btn fr-btn--tertiary fr-btn--sm fr-fi-delete-line"
+              title="Supprimer ce titre"
+            />
           </SupprimerAxeModal>
         )}
       </div>
