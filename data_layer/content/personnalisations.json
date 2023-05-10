@@ -2,415 +2,6 @@
   "questions": [
     {
       "action_ids": [
-        "cae_1.3.2"
-      ],
-      "choix": null,
-      "description": "",
-      "formulation": "La collectivit\u00e9 (y compris tous les organismes li\u00e9s) poss\u00e8de-t-elle des terrains utilisables ou vendables (depuis au plus 10 ans) ?",
-      "id": "amenagement_1",
-      "ordonnnancement": null,
-      "thematique_id": "urbanisme_habitat",
-      "type": "binaire",
-      "types_collectivites_concernees": null
-    },
-    {
-      "action_ids": [
-        "cae_1.3.2"
-      ],
-      "choix": null,
-      "description": "",
-      "formulation": "La collectivit\u00e9 a-t-elle conclu des ventes ou des contrats d'utilisation (comme des contrats de construction) sur les 10 derni\u00e8res ann\u00e9es ?",
-      "id": "amenagement_2",
-      "ordonnnancement": null,
-      "thematique_id": "urbanisme_habitat",
-      "type": "binaire",
-      "types_collectivites_concernees": null
-    },
-    {
-      "action_ids": [
-        "cae_1.3.1",
-        "cae_1.3.3"
-      ],
-      "choix": null,
-      "description": "",
-      "formulation": "La collectivit\u00e9 a-t-elle la comp\u00e9tence \"\u00e9laboration du Plan Local d'Urbanisme\" (PLU) ?",
-      "id": "urba_1",
-      "ordonnnancement": null,
-      "thematique_id": "urbanisme_habitat",
-      "type": "binaire",
-      "types_collectivites_concernees": null
-    },
-    {
-      "action_ids": [
-        "cae_1.3.1"
-      ],
-      "choix": null,
-      "description": "<p>Il s&#x27;agit de la comp\u00e9tence Banatic 4505</p>\n",
-      "formulation": "La collectivit\u00e9 a-t-elle la comp\u00e9tence \"Sch\u00e9ma de Coh\u00e9rence Territoriale\" (SCoT) ?",
-      "id": "SCoT",
-      "ordonnnancement": null,
-      "thematique_id": "urbanisme_habitat",
-      "type": "binaire",
-      "types_collectivites_concernees": null
-    },
-    {
-      "action_ids": [
-        "cae_1.3.3"
-      ],
-      "choix": null,
-      "description": "",
-      "formulation": "La collectivit\u00e9 a-t-elle la comp\u00e9tence d'instruction des permis de construire ?",
-      "id": "urba_2",
-      "ordonnnancement": null,
-      "thematique_id": "urbanisme_habitat",
-      "type": "binaire",
-      "types_collectivites_concernees": null
-    },
-    {
-      "action_ids": [
-        "cae_1.3.3"
-      ],
-      "choix": null,
-      "description": "<p>Il s&#x27;agit de la comp\u00e9tence Banatic 4560</p>\n",
-      "formulation": "La collectivit\u00e9 a-t-elle la comp\u00e9tence d'octroi des permis de construire ?",
-      "id": "urba_3",
-      "ordonnnancement": null,
-      "thematique_id": "urbanisme_habitat",
-      "type": "binaire",
-      "types_collectivites_concernees": null
-    },
-    {
-      "action_ids": [
-        "cae_1.2.4"
-      ],
-      "choix": null,
-      "description": "<p>Il s&#x27;agit des comp\u00e9tences li\u00e9es \u00e0 l&#x27;habitat et au logement</p>\n",
-      "formulation": "La collectivit\u00e9 a-t-elle la comp\u00e9tence habitat ?",
-      "id": "habitat_1",
-      "ordonnnancement": null,
-      "thematique_id": "urbanisme_habitat",
-      "type": "binaire",
-      "types_collectivites_concernees": null
-    },
-    {
-      "action_ids": [
-        "cae_1.2.4",
-        "cae_6.2.1",
-        "cae_6.2.2",
-        "cae_6.2.3"
-      ],
-      "choix": null,
-      "description": "",
-      "formulation": "Quelle est la part de la collectivit\u00e9 dans la structure comp\u00e9tente en mati\u00e8re de logement et d'habitat ?",
-      "id": "habitat_2",
-      "ordonnnancement": null,
-      "thematique_id": "urbanisme_habitat",
-      "type": "proportion",
-      "types_collectivites_concernees": [
-        "commune"
-      ]
-    },
-    {
-      "action_ids": [
-        "cae_6.2.1"
-      ],
-      "choix": null,
-      "description": "",
-      "formulation": "La collectivit\u00e9 participe-t-elle au conseil d'administration d'un bailleur social ?",
-      "id": "habitat_3",
-      "ordonnnancement": null,
-      "thematique_id": "urbanisme_habitat",
-      "type": "binaire",
-      "types_collectivites_concernees": [
-        "commune"
-      ]
-    },
-    {
-      "action_ids": [
-        "cae_1.2.3",
-        "eci_2.2",
-        "eci_2.4",
-        "eci_2.4.2",
-        "eci_2.4.3",
-        "eci_4.1",
-        "eci_4.2",
-        "eci_4.2.1",
-        "eci_4.2.2",
-        "eci_4.2.3",
-        "eci_4.2.4"
-      ],
-      "choix": null,
-      "description": "",
-      "formulation": "La collectivit\u00e9 a-t-elle la comp\u00e9tence collecte des d\u00e9chets ?",
-      "id": "dechets_1",
-      "ordonnnancement": null,
-      "thematique_id": "dechets",
-      "type": "binaire",
-      "types_collectivites_concernees": null
-    },
-    {
-      "action_ids": [
-        "cae_1.2.3",
-        "cae_3.3.5",
-        "eci_2.3",
-        "eci_2.4",
-        "eci_2.4.4",
-        "eci_4.1",
-        "eci_4.2"
-      ],
-      "choix": null,
-      "description": "",
-      "formulation": "La collectivit\u00e9 a-t-elle la comp\u00e9tence traitement des d\u00e9chets ?",
-      "id": "dechets_2",
-      "ordonnnancement": null,
-      "thematique_id": "dechets",
-      "type": "binaire",
-      "types_collectivites_concernees": null
-    },
-    {
-      "action_ids": [
-        "cae_1.2.3",
-        "eci_2.1"
-      ],
-      "choix": null,
-      "description": "",
-      "formulation": "La collectivit\u00e9 est-elle charg\u00e9e de la r\u00e9alisation d'un \"Programme local de pr\u00e9vention des d\u00e9chets m\u00e9nagers et assimil\u00e9s\" (PLPDMA) du fait de sa comp\u00e9tence collecte et/ou par d\u00e9l\u00e9gation d'une autre collectivit\u00e9 ?",
-      "id": "dechets_3",
-      "ordonnnancement": null,
-      "thematique_id": "dechets",
-      "type": "binaire",
-      "types_collectivites_concernees": null
-    },
-    {
-      "action_ids": [
-        "eci_4.2.1",
-        "eci_4.2.3"
-      ],
-      "choix": null,
-      "description": "",
-      "formulation": "La collectivit\u00e9 a-t-elle mise en place la redevance d\u2019enl\u00e8vement des ordures m\u00e9nag\u00e8res (REOM) ?",
-      "id": "REOM",
-      "ordonnnancement": null,
-      "thematique_id": "dechets",
-      "type": "binaire",
-      "types_collectivites_concernees": null
-    },
-    {
-      "action_ids": [
-        "cae_3.3.5"
-      ],
-      "choix": null,
-      "description": "",
-      "formulation": "Si la collectivit\u00e9 a transf\u00e9r\u00e9 le traitement des d\u00e9chets \u00e0 un syndicat comp\u00e9tent en la mati\u00e8re, quelle est la part de la collectivit\u00e9 dans ce syndicat ?",
-      "id": "dechets_4",
-      "ordonnnancement": null,
-      "thematique_id": "dechets",
-      "type": "proportion",
-      "types_collectivites_concernees": [
-        "EPCI"
-      ]
-    },
-    {
-      "action_ids": [
-        "cae_3.3.1"
-      ],
-      "choix": null,
-      "description": "",
-      "formulation": "La collectivit\u00e9 a-t-elle la comp\u00e9tence \"Traitement, adduction et distribution de l'eau\" ?",
-      "id": "eau_1",
-      "ordonnnancement": null,
-      "thematique_id": "eau_assainissement",
-      "type": "binaire",
-      "types_collectivites_concernees": null
-    },
-    {
-      "action_ids": [
-        "cae_3.3.2",
-        "cae_3.3.3"
-      ],
-      "choix": null,
-      "description": "",
-      "formulation": "La collectivit\u00e9 a-t-elle la comp\u00e9tence \"assainissement collectif\" ?",
-      "id": "assainissement_1",
-      "ordonnnancement": null,
-      "thematique_id": "eau_assainissement",
-      "type": "binaire",
-      "types_collectivites_concernees": null
-    },
-    {
-      "action_ids": [
-        "cae_3.3.3"
-      ],
-      "choix": null,
-      "description": "",
-      "formulation": "La collectivit\u00e9 a-t-elle la comp\u00e9tence \"assainissement non collectif\" ?",
-      "id": "assainissement_2",
-      "ordonnnancement": null,
-      "thematique_id": "eau_assainissement",
-      "type": "binaire",
-      "types_collectivites_concernees": null
-    },
-    {
-      "action_ids": [
-        "cae_3.3.3"
-      ],
-      "choix": null,
-      "description": "",
-      "formulation": "En cas de comp\u00e9tence partag\u00e9e ou variable sur le territoire pour la comp\u00e9tence assainissement, quelle est la part des communes ayant d\u00e9l\u00e9gu\u00e9 leur comp\u00e9tence assainissement ?",
-      "id": "assainissement_3",
-      "ordonnnancement": null,
-      "thematique_id": "eau_assainissement",
-      "type": "proportion",
-      "types_collectivites_concernees": [
-        "EPCI"
-      ]
-    },
-    {
-      "action_ids": [
-        "cae_3.3.2"
-      ],
-      "choix": null,
-      "description": "",
-      "formulation": "Une \u00e9tude, portant sur la totalit\u00e9 du p\u00e9rim\u00e8tre d\u2019assainissement, a-t-elle \u00e9t\u00e9 r\u00e9alis\u00e9e pour connaitre le potentiel de valorisation \u00e9nerg\u00e9tique ?",
-      "id": "assainissement_4",
-      "ordonnnancement": 1,
-      "thematique_id": "eau_assainissement",
-      "type": "binaire",
-      "types_collectivites_concernees": null
-    },
-    {
-      "action_ids": [
-        "cae_3.3.2"
-      ],
-      "choix": null,
-      "description": "",
-      "formulation": "Si oui, cette \u00e9tude indique-t-elle un potentiel de valorisation \u00e9nerg\u00e9tique (m\u00e9thanisation ou r\u00e9cup\u00e9ration de chaleur) ?",
-      "id": "assainissement_4bis",
-      "ordonnnancement": 2,
-      "thematique_id": "eau_assainissement",
-      "type": "binaire",
-      "types_collectivites_concernees": null
-    },
-    {
-      "action_ids": [
-        "cae_2.2.3"
-      ],
-      "choix": null,
-      "description": "",
-      "formulation": "La collectivit\u00e9 a-t-elle des besoins en eau chaude sanitaire ?",
-      "id": "ECS",
-      "ordonnnancement": null,
-      "thematique_id": "ultramarin",
-      "type": "binaire",
-      "types_collectivites_concernees": null
-    },
-    {
-      "action_ids": [
-        "eci_3.2.0"
-      ],
-      "choix": null,
-      "description": "<p>Les SPASER concernent les collectivit\u00e9s ayant un montant total annuel des achats sup\u00e9rieur \u00e0 100 millions d\u2019euros hors-taxes.</p>\n<p>L\u2019article D. 2111-3 du code de la commande publique pr\u00e9cise les contrats \u00e0 prendre en compte afin de d\u00e9terminer le montant total annuel des achats et en d\u00e9duire l\u2019obligation d\u2019\u00e9tablir un sch\u00e9ma de promotion des achats publics socialement et \u00e9cologiquement responsables.</p>\n<p>Sont ainsi concern\u00e9s les march\u00e9s publics conclus en application du code de la commande publique qu\u2019il s\u2019agisse de march\u00e9s ou de march\u00e9s de partenariat.</p>\n<p>Seuls les contrats conclus doivent \u00eatre pris en compte, c&#x27;est-\u00e0-dire ceux dont la signature est intervenue au cours de l\u2019ann\u00e9e civile de r\u00e9f\u00e9rence. Pour les accords-cadres (\u00e0 bons de commandes ou \u00e0 march\u00e9s subs\u00e9quents), c\u2019est le montant des bons de commande \u00e9mis et des march\u00e9s subs\u00e9quents conclus sur l\u2019ann\u00e9e qui doit \u00eatre pris en compte.</p>\n",
-      "formulation": "Le montant annuel des achats publics de la collectivit\u00e9 est-il inf\u00e9rieur \u00e0 100 000 000 \u20ac hors-taxes ?",
-      "id": "SPASER",
-      "ordonnnancement": null,
-      "thematique_id": "identite",
-      "type": "binaire",
-      "types_collectivites_concernees": null
-    },
-    {
-      "action_ids": [
-        "eci_3.4.2"
-      ],
-      "choix": null,
-      "description": "",
-      "formulation": "Existe-t-il des \u00e9tablissements de formation initiale et continue sur le territoire ?",
-      "id": "formation",
-      "ordonnnancement": null,
-      "thematique_id": "identite",
-      "type": "binaire",
-      "types_collectivites_concernees": null
-    },
-    {
-      "action_ids": [
-        "cae_6.5.3"
-      ],
-      "choix": null,
-      "description": "",
-      "formulation": "La collectivit\u00e9 est-elle en charge des \u00e9quipements de l'enseignement pr\u00e9-\u00e9lementaire et \u00e9l\u00e9mentaire et/ou des activit\u00e9s p\u00e9riscolaires ?",
-      "id": "scolaire_1",
-      "ordonnnancement": null,
-      "thematique_id": "identite",
-      "type": "binaire",
-      "types_collectivites_concernees": null
-    },
-    {
-      "action_ids": [
-        "cae_6.5.3"
-      ],
-      "choix": null,
-      "description": "<p>La question porte sur les \u00e9tablissements scolaires du cycle primaire (\u00e9cole maternelle et \u00e9l\u00e9mentaire) et dans une moindre mesure secondaire (coll\u00e8ge, lyc\u00e9e). Les structures d\u2019accueil collectif des jeunes enfants peuvent concerner les \u00e9tablissements multi-accueil, les cr\u00e8ches parentales, les jardins d\u2019enfants, les micro-cr\u00e8ches, les haltes-garderies, les maisons et les relais d\u2019assistantes maternelles...</p>\n",
-      "formulation": "Des \u00e9tablissements scolaires et/ou des structure d\u2019accueil de jeunes enfants sont-ils pr\u00e9sents sur le territoire ?",
-      "id": "scolaire_2",
-      "ordonnnancement": null,
-      "thematique_id": "identite",
-      "type": "binaire",
-      "types_collectivites_concernees": null
-    },
-    {
-      "action_ids": [
-        "cae_6.4.1"
-      ],
-      "choix": null,
-      "description": "",
-      "formulation": "Sur le territoire de la collectivit\u00e9, y a-t-il moins de 3 % de Surface Agricole Utile (SAU) ?",
-      "id": "SAU",
-      "ordonnnancement": null,
-      "thematique_id": "identite",
-      "type": "binaire",
-      "types_collectivites_concernees": null
-    },
-    {
-      "action_ids": [
-        "cae_6.4.2"
-      ],
-      "choix": null,
-      "description": "",
-      "formulation": "Sur le territoire de la collectivit\u00e9, y a-t-il moins de 10 % de surfaces foresti\u00e8res (publiques ou priv\u00e9es) ?",
-      "id": "foret",
-      "ordonnnancement": null,
-      "thematique_id": "identite",
-      "type": "binaire",
-      "types_collectivites_concernees": null
-    },
-    {
-      "action_ids": [
-        "cae_4.2.1",
-        "cae_4.2.3"
-      ],
-      "choix": null,
-      "description": "",
-      "formulation": "La collectivit\u00e9 poss\u00e8de-t-elle des centres-bourgs (dans le cas d'une commune) ou des communes (dans le cas d'un EPCI) de plus de 2 000 habitants ?",
-      "id": "centre_polarite",
-      "ordonnnancement": null,
-      "thematique_id": "identite",
-      "type": "binaire",
-      "types_collectivites_concernees": null
-    },
-    {
-      "action_ids": [
-        "cae_1.2.2"
-      ],
-      "choix": null,
-      "description": "",
-      "formulation": "La collectivit\u00e9 poss\u00e8de-t-elle des centres-bourgs (dans le cas d'une commune) ou des communes (dans le cas d'un EPCI) de plus de 5 000 habitants ?",
-      "id": "centre_urbain",
-      "ordonnnancement": null,
-      "thematique_id": "identite",
-      "type": "binaire",
-      "types_collectivites_concernees": null
-    },
-    {
-      "action_ids": [
         "eci_4.3",
         "eci_3.4",
         "eci_1.2.2",
@@ -464,144 +55,6 @@
       "id": "dev_eco_4",
       "ordonnnancement": null,
       "thematique_id": "developpement_economique",
-      "type": "binaire",
-      "types_collectivites_concernees": null
-    },
-    {
-      "action_ids": [
-        "cae_6.3.2"
-      ],
-      "choix": null,
-      "description": "",
-      "formulation": "Quelle est la part de la collectivit\u00e9 dans la structure comp\u00e9tente en mati\u00e8re de tourisme ?",
-      "id": "tourisme_1",
-      "ordonnnancement": null,
-      "thematique_id": "tourisme",
-      "type": "proportion",
-      "types_collectivites_concernees": [
-        "commune"
-      ]
-    },
-    {
-      "action_ids": [
-        "cae_6.3.2"
-      ],
-      "choix": null,
-      "description": "",
-      "formulation": "Le territoire est-il touristique (dot\u00e9 d'un office de tourisme, d'un syndicat d'initiative, d'un bureau d'information touristique) ?",
-      "id": "tourisme_2",
-      "ordonnnancement": null,
-      "thematique_id": "tourisme",
-      "type": "binaire",
-      "types_collectivites_concernees": null
-    },
-    {
-      "action_ids": [
-        "cae_2.3.1"
-      ],
-      "choix": [
-        {
-          "formulation": "Oui sur l'ensemble du territoire",
-          "id": "EP_1_a",
-          "ordonnancement": null
-        },
-        {
-          "formulation": "Oui partiellement (uniquement sur les zones d'int\u00e9r\u00eat communautaire par exemple)",
-          "id": "EP_1_b",
-          "ordonnancement": null
-        },
-        {
-          "formulation": "Non pas du tout",
-          "id": "EP_1_c",
-          "ordonnancement": null
-        }
-      ],
-      "description": "",
-      "formulation": "La collectivit\u00e9 a-t-elle la comp\u00e9tence \"\u00e9clairage public\" ?",
-      "id": "EP_1",
-      "ordonnnancement": null,
-      "thematique_id": "energie",
-      "type": "choix",
-      "types_collectivites_concernees": null
-    },
-    {
-      "action_ids": [
-        "cae_2.3.1"
-      ],
-      "choix": null,
-      "description": "",
-      "formulation": "Quelle est la part de la collectivit\u00e9 dans la structure comp\u00e9tente en mati\u00e8re d'\u00e9clairage public ?",
-      "id": "EP_2",
-      "ordonnnancement": null,
-      "thematique_id": "energie",
-      "type": "proportion",
-      "types_collectivites_concernees": null
-    },
-    {
-      "action_ids": [
-        "cae_3.1.1",
-        "cae_3.1.2"
-      ],
-      "choix": null,
-      "description": "",
-      "formulation": "La collectivit\u00e9 est-elle autorit\u00e9 organisatrice de la distribution (AOD) pour l'\u00e9lectricit\u00e9 ?",
-      "id": "AOD_elec",
-      "ordonnnancement": null,
-      "thematique_id": "energie",
-      "type": "binaire",
-      "types_collectivites_concernees": null
-    },
-    {
-      "action_ids": [
-        "cae_3.1.1",
-        "cae_3.1.2"
-      ],
-      "choix": null,
-      "description": "",
-      "formulation": "La collectivit\u00e9 est-elle autorit\u00e9 organisatrice de la distribution (AOD) pour le gaz ?",
-      "id": "AOD_gaz",
-      "ordonnnancement": null,
-      "thematique_id": "energie",
-      "type": "binaire",
-      "types_collectivites_concernees": null
-    },
-    {
-      "action_ids": [
-        "cae_3.1.1",
-        "cae_3.1.2"
-      ],
-      "choix": null,
-      "description": "",
-      "formulation": "La collectivit\u00e9 est-elle autorit\u00e9 organisatrice de la distribution (AOD) pour la chaleur ?",
-      "id": "AOD_chaleur",
-      "ordonnnancement": null,
-      "thematique_id": "energie",
-      "type": "binaire",
-      "types_collectivites_concernees": null
-    },
-    {
-      "action_ids": [
-        "cae_3.1.2"
-      ],
-      "choix": null,
-      "description": "",
-      "formulation": "Existe-t-il des fournisseurs d\u2019\u00e9nergie ma\u00eetris\u00e9s par la collectivit\u00e9 (Soci\u00e9t\u00e9 d'\u00e9conomie mixte (SEM) ou r\u00e9gie ou exploitants de r\u00e9seau de chaleur urbain li\u00e9s \u00e0 la collectivit\u00e9 par d\u00e9l\u00e9gation de service public) ?",
-      "id": "fournisseur_energie",
-      "ordonnnancement": null,
-      "thematique_id": "energie",
-      "type": "binaire",
-      "types_collectivites_concernees": null
-    },
-    {
-      "action_ids": [
-        "cae_3.2.1"
-      ],
-      "choix": null,
-      "description": "",
-      "formulation": "Existe-t-il des activit\u00e9s industrielles, en nombre assez important, adapt\u00e9es pour la r\u00e9cup\u00e9ration de chaleur fatale ou du potentiel pour la cog\u00e9n\u00e9ration voir la micro-cog\u00e9n\u00e9ration (soit des chaufferies ou des consommateurs suffisants en chaleur ou des producteurs-consommateurs visant l\u2019autoconsommation) ?",
-      "id": "recuperation_cogeneration",
-      "ordonnnancement": null,
-      "thematique_id": "energie",
       "type": "binaire",
       "types_collectivites_concernees": null
     },
@@ -760,6 +213,553 @@
       "id": "versement_mobilite",
       "ordonnnancement": 10,
       "thematique_id": "mobilite",
+      "type": "binaire",
+      "types_collectivites_concernees": null
+    },
+    {
+      "action_ids": [
+        "cae_2.3.1"
+      ],
+      "choix": [
+        {
+          "formulation": "Oui sur l'ensemble du territoire",
+          "id": "EP_1_a",
+          "ordonnancement": null
+        },
+        {
+          "formulation": "Oui partiellement (uniquement sur les zones d'int\u00e9r\u00eat communautaire par exemple)",
+          "id": "EP_1_b",
+          "ordonnancement": null
+        },
+        {
+          "formulation": "Non pas du tout",
+          "id": "EP_1_c",
+          "ordonnancement": null
+        }
+      ],
+      "description": "",
+      "formulation": "La collectivit\u00e9 a-t-elle la comp\u00e9tence \"\u00e9clairage public\" ?",
+      "id": "EP_1",
+      "ordonnnancement": null,
+      "thematique_id": "energie",
+      "type": "choix",
+      "types_collectivites_concernees": null
+    },
+    {
+      "action_ids": [
+        "cae_2.3.1"
+      ],
+      "choix": null,
+      "description": "",
+      "formulation": "Quelle est la part de la collectivit\u00e9 dans la structure comp\u00e9tente en mati\u00e8re d'\u00e9clairage public ?",
+      "id": "EP_2",
+      "ordonnnancement": null,
+      "thematique_id": "energie",
+      "type": "proportion",
+      "types_collectivites_concernees": null
+    },
+    {
+      "action_ids": [
+        "cae_3.1.1",
+        "cae_3.1.2"
+      ],
+      "choix": null,
+      "description": "",
+      "formulation": "La collectivit\u00e9 est-elle autorit\u00e9 organisatrice de la distribution (AOD) pour l'\u00e9lectricit\u00e9 ?",
+      "id": "AOD_elec",
+      "ordonnnancement": null,
+      "thematique_id": "energie",
+      "type": "binaire",
+      "types_collectivites_concernees": null
+    },
+    {
+      "action_ids": [
+        "cae_3.1.1",
+        "cae_3.1.2"
+      ],
+      "choix": null,
+      "description": "",
+      "formulation": "La collectivit\u00e9 est-elle autorit\u00e9 organisatrice de la distribution (AOD) pour le gaz ?",
+      "id": "AOD_gaz",
+      "ordonnnancement": null,
+      "thematique_id": "energie",
+      "type": "binaire",
+      "types_collectivites_concernees": null
+    },
+    {
+      "action_ids": [
+        "cae_3.1.1",
+        "cae_3.1.2"
+      ],
+      "choix": null,
+      "description": "",
+      "formulation": "La collectivit\u00e9 est-elle autorit\u00e9 organisatrice de la distribution (AOD) pour la chaleur ?",
+      "id": "AOD_chaleur",
+      "ordonnnancement": null,
+      "thematique_id": "energie",
+      "type": "binaire",
+      "types_collectivites_concernees": null
+    },
+    {
+      "action_ids": [
+        "cae_3.1.2"
+      ],
+      "choix": null,
+      "description": "",
+      "formulation": "Existe-t-il des fournisseurs d\u2019\u00e9nergie ma\u00eetris\u00e9s par la collectivit\u00e9 (Soci\u00e9t\u00e9 d'\u00e9conomie mixte (SEM) ou r\u00e9gie ou exploitants de r\u00e9seau de chaleur urbain li\u00e9s \u00e0 la collectivit\u00e9 par d\u00e9l\u00e9gation de service public) ?",
+      "id": "fournisseur_energie",
+      "ordonnnancement": null,
+      "thematique_id": "energie",
+      "type": "binaire",
+      "types_collectivites_concernees": null
+    },
+    {
+      "action_ids": [
+        "cae_3.2.1"
+      ],
+      "choix": null,
+      "description": "",
+      "formulation": "Existe-t-il des activit\u00e9s industrielles, en nombre assez important, adapt\u00e9es pour la r\u00e9cup\u00e9ration de chaleur fatale ou du potentiel pour la cog\u00e9n\u00e9ration voir la micro-cog\u00e9n\u00e9ration (soit des chaufferies ou des consommateurs suffisants en chaleur ou des producteurs-consommateurs visant l\u2019autoconsommation) ?",
+      "id": "recuperation_cogeneration",
+      "ordonnnancement": null,
+      "thematique_id": "energie",
+      "type": "binaire",
+      "types_collectivites_concernees": null
+    },
+    {
+      "action_ids": [
+        "cae_2.2.3"
+      ],
+      "choix": null,
+      "description": "",
+      "formulation": "La collectivit\u00e9 a-t-elle des besoins en eau chaude sanitaire ?",
+      "id": "ECS",
+      "ordonnnancement": null,
+      "thematique_id": "ultramarin",
+      "type": "binaire",
+      "types_collectivites_concernees": null
+    },
+    {
+      "action_ids": [
+        "cae_1.2.3",
+        "eci_2.2",
+        "eci_2.4",
+        "eci_2.4.2",
+        "eci_2.4.3",
+        "eci_4.1",
+        "eci_4.2",
+        "eci_4.2.1",
+        "eci_4.2.2",
+        "eci_4.2.3",
+        "eci_4.2.4"
+      ],
+      "choix": null,
+      "description": "",
+      "formulation": "La collectivit\u00e9 a-t-elle la comp\u00e9tence collecte des d\u00e9chets ?",
+      "id": "dechets_1",
+      "ordonnnancement": null,
+      "thematique_id": "dechets",
+      "type": "binaire",
+      "types_collectivites_concernees": null
+    },
+    {
+      "action_ids": [
+        "cae_1.2.3",
+        "cae_3.3.5",
+        "eci_2.3",
+        "eci_2.4",
+        "eci_2.4.4",
+        "eci_4.1",
+        "eci_4.2"
+      ],
+      "choix": null,
+      "description": "",
+      "formulation": "La collectivit\u00e9 a-t-elle la comp\u00e9tence traitement des d\u00e9chets ?",
+      "id": "dechets_2",
+      "ordonnnancement": null,
+      "thematique_id": "dechets",
+      "type": "binaire",
+      "types_collectivites_concernees": null
+    },
+    {
+      "action_ids": [
+        "cae_1.2.3",
+        "eci_2.1"
+      ],
+      "choix": null,
+      "description": "",
+      "formulation": "La collectivit\u00e9 est-elle charg\u00e9e de la r\u00e9alisation d'un \"Programme local de pr\u00e9vention des d\u00e9chets m\u00e9nagers et assimil\u00e9s\" (PLPDMA) du fait de sa comp\u00e9tence collecte et/ou par d\u00e9l\u00e9gation d'une autre collectivit\u00e9 ?",
+      "id": "dechets_3",
+      "ordonnnancement": null,
+      "thematique_id": "dechets",
+      "type": "binaire",
+      "types_collectivites_concernees": null
+    },
+    {
+      "action_ids": [
+        "eci_4.2.1",
+        "eci_4.2.3"
+      ],
+      "choix": null,
+      "description": "",
+      "formulation": "La collectivit\u00e9 a-t-elle mise en place la redevance d\u2019enl\u00e8vement des ordures m\u00e9nag\u00e8res (REOM) ?",
+      "id": "REOM",
+      "ordonnnancement": null,
+      "thematique_id": "dechets",
+      "type": "binaire",
+      "types_collectivites_concernees": null
+    },
+    {
+      "action_ids": [
+        "cae_3.3.5"
+      ],
+      "choix": null,
+      "description": "",
+      "formulation": "Si la collectivit\u00e9 a transf\u00e9r\u00e9 le traitement des d\u00e9chets \u00e0 un syndicat comp\u00e9tent en la mati\u00e8re, quelle est la part de la collectivit\u00e9 dans ce syndicat ?",
+      "id": "dechets_4",
+      "ordonnnancement": null,
+      "thematique_id": "dechets",
+      "type": "proportion",
+      "types_collectivites_concernees": [
+        "EPCI"
+      ]
+    },
+    {
+      "action_ids": [
+        "cae_1.3.2"
+      ],
+      "choix": null,
+      "description": "",
+      "formulation": "La collectivit\u00e9 (y compris tous les organismes li\u00e9s) poss\u00e8de-t-elle des terrains utilisables ou vendables (depuis au plus 10 ans) ?",
+      "id": "amenagement_1",
+      "ordonnnancement": null,
+      "thematique_id": "urbanisme_habitat",
+      "type": "binaire",
+      "types_collectivites_concernees": null
+    },
+    {
+      "action_ids": [
+        "cae_1.3.2"
+      ],
+      "choix": null,
+      "description": "",
+      "formulation": "La collectivit\u00e9 a-t-elle conclu des ventes ou des contrats d'utilisation (comme des contrats de construction) sur les 10 derni\u00e8res ann\u00e9es ?",
+      "id": "amenagement_2",
+      "ordonnnancement": null,
+      "thematique_id": "urbanisme_habitat",
+      "type": "binaire",
+      "types_collectivites_concernees": null
+    },
+    {
+      "action_ids": [
+        "cae_1.3.1",
+        "cae_1.3.3"
+      ],
+      "choix": null,
+      "description": "",
+      "formulation": "La collectivit\u00e9 a-t-elle la comp\u00e9tence \"\u00e9laboration du Plan Local d'Urbanisme\" (PLU) ?",
+      "id": "urba_1",
+      "ordonnnancement": null,
+      "thematique_id": "urbanisme_habitat",
+      "type": "binaire",
+      "types_collectivites_concernees": null
+    },
+    {
+      "action_ids": [
+        "cae_1.3.1"
+      ],
+      "choix": null,
+      "description": "<p>Il s&#x27;agit de la comp\u00e9tence Banatic 4505</p>\n",
+      "formulation": "La collectivit\u00e9 a-t-elle la comp\u00e9tence \"Sch\u00e9ma de Coh\u00e9rence Territoriale\" (SCoT) ?",
+      "id": "SCoT",
+      "ordonnnancement": null,
+      "thematique_id": "urbanisme_habitat",
+      "type": "binaire",
+      "types_collectivites_concernees": null
+    },
+    {
+      "action_ids": [
+        "cae_1.3.3"
+      ],
+      "choix": null,
+      "description": "",
+      "formulation": "La collectivit\u00e9 a-t-elle la comp\u00e9tence d'instruction des permis de construire ?",
+      "id": "urba_2",
+      "ordonnnancement": null,
+      "thematique_id": "urbanisme_habitat",
+      "type": "binaire",
+      "types_collectivites_concernees": null
+    },
+    {
+      "action_ids": [
+        "cae_1.3.3"
+      ],
+      "choix": null,
+      "description": "<p>Il s&#x27;agit de la comp\u00e9tence Banatic 4560</p>\n",
+      "formulation": "La collectivit\u00e9 a-t-elle la comp\u00e9tence d'octroi des permis de construire ?",
+      "id": "urba_3",
+      "ordonnnancement": null,
+      "thematique_id": "urbanisme_habitat",
+      "type": "binaire",
+      "types_collectivites_concernees": null
+    },
+    {
+      "action_ids": [
+        "cae_1.2.4"
+      ],
+      "choix": null,
+      "description": "<p>Il s&#x27;agit des comp\u00e9tences li\u00e9es \u00e0 l&#x27;habitat et au logement</p>\n",
+      "formulation": "La collectivit\u00e9 a-t-elle la comp\u00e9tence habitat ?",
+      "id": "habitat_1",
+      "ordonnnancement": null,
+      "thematique_id": "urbanisme_habitat",
+      "type": "binaire",
+      "types_collectivites_concernees": null
+    },
+    {
+      "action_ids": [
+        "cae_1.2.4",
+        "cae_6.2.1",
+        "cae_6.2.2",
+        "cae_6.2.3"
+      ],
+      "choix": null,
+      "description": "",
+      "formulation": "Quelle est la part de la collectivit\u00e9 dans la structure comp\u00e9tente en mati\u00e8re de logement et d'habitat ?",
+      "id": "habitat_2",
+      "ordonnnancement": null,
+      "thematique_id": "urbanisme_habitat",
+      "type": "proportion",
+      "types_collectivites_concernees": [
+        "commune"
+      ]
+    },
+    {
+      "action_ids": [
+        "cae_6.2.1"
+      ],
+      "choix": null,
+      "description": "",
+      "formulation": "La collectivit\u00e9 participe-t-elle au conseil d'administration d'un bailleur social ?",
+      "id": "habitat_3",
+      "ordonnnancement": null,
+      "thematique_id": "urbanisme_habitat",
+      "type": "binaire",
+      "types_collectivites_concernees": [
+        "commune"
+      ]
+    },
+    {
+      "action_ids": [
+        "cae_6.3.2"
+      ],
+      "choix": null,
+      "description": "",
+      "formulation": "Quelle est la part de la collectivit\u00e9 dans la structure comp\u00e9tente en mati\u00e8re de tourisme ?",
+      "id": "tourisme_1",
+      "ordonnnancement": null,
+      "thematique_id": "tourisme",
+      "type": "proportion",
+      "types_collectivites_concernees": [
+        "commune"
+      ]
+    },
+    {
+      "action_ids": [
+        "cae_6.3.2"
+      ],
+      "choix": null,
+      "description": "",
+      "formulation": "Le territoire est-il touristique (dot\u00e9 d'un office de tourisme, d'un syndicat d'initiative, d'un bureau d'information touristique) ?",
+      "id": "tourisme_2",
+      "ordonnnancement": null,
+      "thematique_id": "tourisme",
+      "type": "binaire",
+      "types_collectivites_concernees": null
+    },
+    {
+      "action_ids": [
+        "cae_3.3.1"
+      ],
+      "choix": null,
+      "description": "",
+      "formulation": "La collectivit\u00e9 a-t-elle la comp\u00e9tence \"Traitement, adduction et distribution de l'eau\" ?",
+      "id": "eau_1",
+      "ordonnnancement": null,
+      "thematique_id": "eau_assainissement",
+      "type": "binaire",
+      "types_collectivites_concernees": null
+    },
+    {
+      "action_ids": [
+        "cae_3.3.2",
+        "cae_3.3.3"
+      ],
+      "choix": null,
+      "description": "",
+      "formulation": "La collectivit\u00e9 a-t-elle la comp\u00e9tence \"assainissement collectif\" ?",
+      "id": "assainissement_1",
+      "ordonnnancement": null,
+      "thematique_id": "eau_assainissement",
+      "type": "binaire",
+      "types_collectivites_concernees": null
+    },
+    {
+      "action_ids": [
+        "cae_3.3.3"
+      ],
+      "choix": null,
+      "description": "",
+      "formulation": "La collectivit\u00e9 a-t-elle la comp\u00e9tence \"assainissement non collectif\" ?",
+      "id": "assainissement_2",
+      "ordonnnancement": null,
+      "thematique_id": "eau_assainissement",
+      "type": "binaire",
+      "types_collectivites_concernees": null
+    },
+    {
+      "action_ids": [
+        "cae_3.3.3"
+      ],
+      "choix": null,
+      "description": "",
+      "formulation": "En cas de comp\u00e9tence partag\u00e9e ou variable sur le territoire pour la comp\u00e9tence assainissement, quelle est la part des communes ayant d\u00e9l\u00e9gu\u00e9 leur comp\u00e9tence assainissement ?",
+      "id": "assainissement_3",
+      "ordonnnancement": null,
+      "thematique_id": "eau_assainissement",
+      "type": "proportion",
+      "types_collectivites_concernees": [
+        "EPCI"
+      ]
+    },
+    {
+      "action_ids": [
+        "cae_3.3.2"
+      ],
+      "choix": null,
+      "description": "",
+      "formulation": "Une \u00e9tude, portant sur la totalit\u00e9 du p\u00e9rim\u00e8tre d\u2019assainissement, a-t-elle \u00e9t\u00e9 r\u00e9alis\u00e9e pour connaitre le potentiel de valorisation \u00e9nerg\u00e9tique ?",
+      "id": "assainissement_4",
+      "ordonnnancement": 1,
+      "thematique_id": "eau_assainissement",
+      "type": "binaire",
+      "types_collectivites_concernees": null
+    },
+    {
+      "action_ids": [
+        "cae_3.3.2"
+      ],
+      "choix": null,
+      "description": "",
+      "formulation": "Si oui, cette \u00e9tude indique-t-elle un potentiel de valorisation \u00e9nerg\u00e9tique (m\u00e9thanisation ou r\u00e9cup\u00e9ration de chaleur) ?",
+      "id": "assainissement_4bis",
+      "ordonnnancement": 2,
+      "thematique_id": "eau_assainissement",
+      "type": "binaire",
+      "types_collectivites_concernees": null
+    },
+    {
+      "action_ids": [
+        "eci_3.2.0"
+      ],
+      "choix": null,
+      "description": "<p>Les SPASER concernent les collectivit\u00e9s ayant un montant total annuel des achats sup\u00e9rieur \u00e0 100 millions d\u2019euros hors-taxes.</p>\n<p>L\u2019article D. 2111-3 du code de la commande publique pr\u00e9cise les contrats \u00e0 prendre en compte afin de d\u00e9terminer le montant total annuel des achats et en d\u00e9duire l\u2019obligation d\u2019\u00e9tablir un sch\u00e9ma de promotion des achats publics socialement et \u00e9cologiquement responsables.</p>\n<p>Sont ainsi concern\u00e9s les march\u00e9s publics conclus en application du code de la commande publique qu\u2019il s\u2019agisse de march\u00e9s ou de march\u00e9s de partenariat.</p>\n<p>Seuls les contrats conclus doivent \u00eatre pris en compte, c&#x27;est-\u00e0-dire ceux dont la signature est intervenue au cours de l\u2019ann\u00e9e civile de r\u00e9f\u00e9rence. Pour les accords-cadres (\u00e0 bons de commandes ou \u00e0 march\u00e9s subs\u00e9quents), c\u2019est le montant des bons de commande \u00e9mis et des march\u00e9s subs\u00e9quents conclus sur l\u2019ann\u00e9e qui doit \u00eatre pris en compte.</p>\n",
+      "formulation": "Le montant annuel des achats publics de la collectivit\u00e9 est-il inf\u00e9rieur \u00e0 100 000 000 \u20ac hors-taxes ?",
+      "id": "SPASER",
+      "ordonnnancement": null,
+      "thematique_id": "identite",
+      "type": "binaire",
+      "types_collectivites_concernees": null
+    },
+    {
+      "action_ids": [
+        "eci_3.4.2"
+      ],
+      "choix": null,
+      "description": "",
+      "formulation": "Existe-t-il des \u00e9tablissements de formation initiale et continue sur le territoire ?",
+      "id": "formation",
+      "ordonnnancement": null,
+      "thematique_id": "identite",
+      "type": "binaire",
+      "types_collectivites_concernees": null
+    },
+    {
+      "action_ids": [
+        "cae_6.5.3"
+      ],
+      "choix": null,
+      "description": "",
+      "formulation": "La collectivit\u00e9 est-elle en charge des \u00e9quipements de l'enseignement pr\u00e9-\u00e9lementaire et \u00e9l\u00e9mentaire et/ou des activit\u00e9s p\u00e9riscolaires ?",
+      "id": "scolaire_1",
+      "ordonnnancement": null,
+      "thematique_id": "identite",
+      "type": "binaire",
+      "types_collectivites_concernees": null
+    },
+    {
+      "action_ids": [
+        "cae_6.5.3"
+      ],
+      "choix": null,
+      "description": "<p>La question porte sur les \u00e9tablissements scolaires du cycle primaire (\u00e9cole maternelle et \u00e9l\u00e9mentaire) et dans une moindre mesure secondaire (coll\u00e8ge, lyc\u00e9e). Les structures d\u2019accueil collectif des jeunes enfants peuvent concerner les \u00e9tablissements multi-accueil, les cr\u00e8ches parentales, les jardins d\u2019enfants, les micro-cr\u00e8ches, les haltes-garderies, les maisons et les relais d\u2019assistantes maternelles...</p>\n",
+      "formulation": "Des \u00e9tablissements scolaires et/ou des structure d\u2019accueil de jeunes enfants sont-ils pr\u00e9sents sur le territoire ?",
+      "id": "scolaire_2",
+      "ordonnnancement": null,
+      "thematique_id": "identite",
+      "type": "binaire",
+      "types_collectivites_concernees": null
+    },
+    {
+      "action_ids": [
+        "cae_6.4.1"
+      ],
+      "choix": null,
+      "description": "",
+      "formulation": "Sur le territoire de la collectivit\u00e9, y a-t-il moins de 3 % de Surface Agricole Utile (SAU) ?",
+      "id": "SAU",
+      "ordonnnancement": null,
+      "thematique_id": "identite",
+      "type": "binaire",
+      "types_collectivites_concernees": null
+    },
+    {
+      "action_ids": [
+        "cae_6.4.2"
+      ],
+      "choix": null,
+      "description": "",
+      "formulation": "Sur le territoire de la collectivit\u00e9, y a-t-il moins de 10 % de surfaces foresti\u00e8res (publiques ou priv\u00e9es) ?",
+      "id": "foret",
+      "ordonnnancement": null,
+      "thematique_id": "identite",
+      "type": "binaire",
+      "types_collectivites_concernees": null
+    },
+    {
+      "action_ids": [
+        "cae_4.2.1",
+        "cae_4.2.3"
+      ],
+      "choix": null,
+      "description": "",
+      "formulation": "La collectivit\u00e9 poss\u00e8de-t-elle des centres-bourgs (dans le cas d'une commune) ou des communes (dans le cas d'un EPCI) de plus de 2 000 habitants ?",
+      "id": "centre_polarite",
+      "ordonnnancement": null,
+      "thematique_id": "identite",
+      "type": "binaire",
+      "types_collectivites_concernees": null
+    },
+    {
+      "action_ids": [
+        "cae_1.2.2"
+      ],
+      "choix": null,
+      "description": "",
+      "formulation": "La collectivit\u00e9 poss\u00e8de-t-elle des centres-bourgs (dans le cas d'une commune) ou des communes (dans le cas d'un EPCI) de plus de 5 000 habitants ?",
+      "id": "centre_urbain",
+      "ordonnnancement": null,
+      "thematique_id": "identite",
       "type": "binaire",
       "types_collectivites_concernees": null
     }
@@ -1064,6 +1064,373 @@
       "titre": "Reduction potentiel cae 6.5.3 liee scolaire"
     },
     {
+      "action_id": "cae_3.1.1",
+      "description": "",
+      "regles": [
+        {
+          "description": "<p>Pour une collectivit\u00e9 non autorit\u00e9 organisatrice de la distribution d&#x27;\u00e9lectricit\u00e9, le score de la 3.1.1 est r\u00e9duit de 30 %.</p>\n<p>Pour une collectivit\u00e9 non autorit\u00e9 organisatrice de la distribution de gaz, le score de la 3.1.1 est r\u00e9duit de 30 %.</p>\n<p>Pour une collectivit\u00e9 non autorit\u00e9 organisatrice de la distribution de chaleur, le score de la 3.1.1 est r\u00e9duit de 40 %.</p>\n<p>Ces r\u00e9ductions sont cumulables dans la limite de 2 points restants pour prendre en compte la part d\u2019influence dans les instances comp\u00e9tentes et les actions partenariales.</p>\n",
+          "formule": "si reponse(AOD_elec, OUI) et reponse(AOD_gaz, OUI) et reponse(AOD_chaleur, OUI) alors 1.0 \nsinon si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 2/10 \nsinon si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) alors 4/10 \nsinon si reponse(AOD_elec, NON) et reponse(AOD_chaleur, NON) alors 3/10 \nsinon si reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 3/10 \nsinon si reponse(AOD_elec, NON) ou reponse(AOD_gaz, NON) alors 7/10 \nsinon si reponse(AOD_chaleur, NON) alors 6/10 \n",
+          "type": "reduction"
+        }
+      ],
+      "titre": "R\u00e9duction potentiel cae 3.1.1 liee autorit\u00e9s organisatrices \u00e9nergie"
+    },
+    {
+      "action_id": "cae_3.1.2",
+      "description": "",
+      "regles": [
+        {
+          "description": "<p>Pour une collectivit\u00e9 non autorit\u00e9 organisatrice de la distribution d&#x27;\u00e9lectricit\u00e9, de gaz et de chaleur, le score de la 3.1.2 est r\u00e9duit de 50 %.</p>\n<p>En l\u2019absence de fournisseurs d\u2019\u00e9nergie ma\u00eetris\u00e9s par la collectivit\u00e9 (SEM/r\u00e9gie/exploitants de r\u00e9seau de chaleur urbain li\u00e9s \u00e0 la collectivit\u00e9 par DSP), le score de la 3.1.2 est r\u00e9duit de 20 % et le statut de la sous-action 3.1.2.2 li\u00e9e aux actions de la facturation est &quot;non concern\u00e9&quot;.</p>\n<p>La r\u00e9duction la plus forte pr\u00e9vaut.</p>\n",
+          "formule": "si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 0.5\nsinon si reponse(fournisseur_energie, NON) alors 0.8\n",
+          "type": "reduction"
+        }
+      ],
+      "titre": "R\u00e9duction potentiel cae 3.1.2 liee autorit\u00e9s organisatrices \u00e9nergie"
+    },
+    {
+      "action_id": "cae_3.1.2.2",
+      "description": "",
+      "regles": [
+        {
+          "description": "",
+          "formule": "si reponse(fournisseur_energie, NON) alors VRAI\n",
+          "type": "desactivation"
+        }
+      ],
+      "titre": "R\u00e9duction potentiel cae 3.1.2.2 liee fournisseurs \u00e9nergie"
+    },
+    {
+      "action_id": "cae_3.2.1",
+      "description": "",
+      "regles": [
+        {
+          "description": "<p>Le nombre de point max pour l&#x27;action 3.2.1 est de 12 points en M\u00e9tropole et de 10 points pour les collectivit\u00e9s DOM.</p>\n<p>Pour une collectivit\u00e9 avec peu d&#x27;activit\u00e9s industrielles adapt\u00e9es pour la r\u00e9cup\u00e9ration de chaleur fatale et peu de potentiel pour la cog\u00e9n\u00e9ration voir la micro-cog\u00e9n\u00e9ration (donc ni de chaufferies ni de consommateurs suffisants en chaleur ni de producteur-consommateur visant l\u2019autoconsommation), le score de la 3.2.1 est r\u00e9duit \u00e0 2 points et les statuts des sous-action 3.2.1.2 et 3.2.1.3 sont &quot;non concern\u00e9e&quot;.</p>\n",
+          "formule": "si reponse(recuperation_cogeneration, OUI) et identite(localisation,DOM) alors 10/12\nsinon si reponse(recuperation_cogeneration, NON) et identite(localisation,DOM) alors 2/10\nsinon si reponse(recuperation_cogeneration, NON) alors 2/12\n",
+          "type": "reduction"
+        }
+      ],
+      "titre": "Modification points cae 3.2.1 liee DOM"
+    },
+    {
+      "action_id": "cae_3.2.1.1",
+      "description": "",
+      "regles": [],
+      "titre": "R\u00e9duction potentiel cae 3.2.1.1"
+    },
+    {
+      "action_id": "cae_3.2.1.2",
+      "description": "",
+      "regles": [
+        {
+          "description": "",
+          "formule": "reponse(recuperation_cogeneration, NON) \n",
+          "type": "desactivation"
+        }
+      ],
+      "titre": "R\u00e9duction potentiel cae 3.2.1.2"
+    },
+    {
+      "action_id": "cae_3.2.1.3",
+      "description": "",
+      "regles": [
+        {
+          "description": "",
+          "formule": "reponse(recuperation_cogeneration, NON) \n",
+          "type": "desactivation"
+        }
+      ],
+      "titre": "R\u00e9duction potentiel cae 3.2.1.3"
+    },
+    {
+      "action_id": "cae_3.2.2",
+      "description": "",
+      "regles": [
+        {
+          "description": "<p>Le nombre de point max pour l&#x27;action 3.2.2 est de 12 points en M\u00e9tropole et de 10 points pour les collectivit\u00e9s DOM.</p>\n",
+          "formule": "si identite(localisation,DOM) alors 10/12\n",
+          "type": "reduction"
+        }
+      ],
+      "titre": "Modification points cae 3.2.2 liee DOM"
+    },
+    {
+      "action_id": "cae_3.2.3",
+      "description": "",
+      "regles": [
+        {
+          "description": "<p>Le nombre de point max pour l&#x27;action 3.2.3 est de 8 points en M\u00e9tropole et de 12 points pour les collectivit\u00e9s DOM.</p>\n",
+          "formule": "si identite(localisation,DOM) alors 12/8\n",
+          "type": "reduction"
+        }
+      ],
+      "titre": "Modification points cae 3.2.3 liee DOM"
+    },
+    {
+      "action_id": "cae_3.3.1",
+      "description": "",
+      "regles": [
+        {
+          "description": "",
+          "formule": "si reponse(eau_1, NON) alors 0/6 \n",
+          "type": "reduction"
+        },
+        {
+          "description": "<p>Pour une collectivit\u00e9 sans la comp\u00e9tence eau potable, le score de la 3.3.1 est r\u00e9duit \u00e0 0 point et le statut de la sous-action est &quot;non concern\u00e9e&quot;.</p>\n",
+          "formule": "reponse(eau_1, NON) \n",
+          "type": "desactivation"
+        }
+      ],
+      "titre": "R\u00e9duction potentiel cae 3.3.1 liee eau potable"
+    },
+    {
+      "action_id": "cae_3.3.2",
+      "description": "",
+      "regles": [
+        {
+          "description": "",
+          "formule": "si reponse(assainissement_1, NON) alors 0/12\nsinon si reponse(assainissement_4, OUI) et reponse(assainissement_4bis, NON) alors 0.5\n",
+          "type": "reduction"
+        },
+        {
+          "description": "<p>Pour une collectivit\u00e9 sans la comp\u00e9tence assainissement collectif, le score de la 3.3.2 est r\u00e9duit \u00e0 0 point et le statut de la sous-action est &quot;non concern\u00e9e&quot;.</p>\n<p>En cas d&#x27;absence de potentiel de valorisation \u00e9nerg\u00e9tique (m\u00e9thanisation ou r\u00e9cup\u00e9ration de chaleur) attest\u00e9e par une \u00e9tude portant sur la totalit\u00e9 du p\u00e9rim\u00e8tre d\u2019assainissement, le score de la 3.3.2 est r\u00e9duit \u00e0 50 %.</p>\n",
+          "formule": "reponse(assainissement_1, NON)\n",
+          "type": "desactivation"
+        }
+      ],
+      "titre": "R\u00e9duction potentiel cae 3.3.2 liee assainissement collectif"
+    },
+    {
+      "action_id": "cae_3.3.3",
+      "description": "",
+      "regles": [
+        {
+          "description": "<p>Pour un EPCI, en cas de comp\u00e9tence &quot;assainissement&quot; partag\u00e9e ou variable sur le territoire, la r\u00e9duction de potentielle est proportionnelle \u00e0 la part des communes ayant d\u00e9l\u00e9gu\u00e9 leur comp\u00e9tence assainissement, dans la limite de moins 50%. Des actions sont possibles sur d\u2019autres comp\u00e9tences, notamment \u00ab gestion des milieux aquatiques et pr\u00e9vention des inondations \u00bb.</p>\n<p>Pour les communes sans comp\u00e9tence assainissement, le score de la 3.3.3 est r\u00e9duit de 50 %.</p>\n",
+          "formule": "si identite(type, EPCI) alors max(reponse(assainissement_3), 0.5)\nsinon si identite(type, commune) et reponse(assainissement_1, NON) et reponse(assainissement_2, NON) alors 0.5\n",
+          "type": "reduction"
+        }
+      ],
+      "titre": "R\u00e9duction potentiel cae 3.3.3 liee assainissement"
+    },
+    {
+      "action_id": "cae_3.3.3.3.4",
+      "description": "",
+      "regles": [
+        {
+          "description": "",
+          "formule": "identite(localisation,DOM)\n",
+          "type": "desactivation"
+        }
+      ],
+      "titre": "R\u00e9duction potentiel cae 3.3.3.3.4"
+    },
+    {
+      "action_id": "cae_3.3.5",
+      "description": "",
+      "regles": [
+        {
+          "description": "<p>Pour une commune, la note est r\u00e9duite \u00e0 2 points en l&#x27;absence de la comp\u00e9tence traitement des d\u00e9chets.</p>\n<p>Pour un EPCI ayant transf\u00e9r\u00e9 la comp\u00e9tence traitement des d\u00e9chets \u00e0 un syndicat comp\u00e9tent en la mati\u00e8re, la note est r\u00e9duite proportionnelle \u00e0 sa participation dans ce syndicat, dans la limite de 2 points restants.</p>\n",
+          "formule": "si identite(type, commune) et reponse(dechets_2, NON) alors 2/12\nsinon si identite(type, EPCI) et reponse(dechets_2, NON) alors max(reponse(dechets_4),2/12)\n",
+          "type": "reduction"
+        },
+        {
+          "description": "<p>Pour favoriser la pr\u00e9vention des d\u00e9chets, la note attribu\u00e9e \u00e0 cette action ne peut d\u00e9passer celle obtenue dans l&#x27;action 1.2.3.</p>\n",
+          "formule": "min(score(cae_1.2.3), score(cae_3.3.5))\n",
+          "type": "score"
+        }
+      ],
+      "titre": "R\u00e9duction potentiel cae 3.3.5 liee dechets"
+    },
+    {
+      "action_id": "cae_1.1.2.0.1",
+      "description": "",
+      "regles": [
+        {
+          "description": "<p>Seuls les EPCI \u00e0 fiscalit\u00e9 propre de plus de 20 000 habitants sont concern\u00e9es par l&#x27;obligation de r\u00e9aliser un PCAET.</p>\n",
+          "formule": "si identite(type, commune) alors VRAI\nsinon si identite(type, EPCI) et identite(population, moins_de_20000) alors VRAI\n",
+          "type": "desactivation"
+        }
+      ],
+      "titre": "Personnalisation cae 1.1.2.0.1 liee obligation PCAET"
+    },
+    {
+      "action_id": "cae_1.1.2.0.2",
+      "description": "",
+      "regles": [
+        {
+          "description": "<p>Les collectivit\u00e9s de moins de 50 000 habitants ne sont pas concern\u00e9es par l&#x27;obligation BEGES.</p>\n",
+          "formule": "identite(population, moins_de_50000)\n",
+          "type": "desactivation"
+        }
+      ],
+      "titre": "Personnalisation cae 1.1.2.0.2 liee obligation BEGES"
+    },
+    {
+      "action_id": "cae_1.1.2.1.5",
+      "description": "",
+      "regles": [
+        {
+          "description": "",
+          "formule": "identite(type, EPCI)\n",
+          "type": "desactivation"
+        }
+      ],
+      "titre": "Desactivation cae 1.1.2.1.5 liee EPCI"
+    },
+    {
+      "action_id": "cae_1.2.2",
+      "description": "",
+      "regles": [
+        {
+          "description": "<p>Pour une collectivit\u00e9 n&#x27;ayant pas la comp\u00e9tence AOM, le score de la 1.2.2 est r\u00e9duit de 50 %.</p>\n<p>Pour une collectivit\u00e9 n&#x27;ayant pas de centre urbain de plus de 5000 habitants ET n&#x27;ayant pas la comp\u00e9tence AOM, le score de la 1.2.2 est r\u00e9duit \u00e0 2 points.</p>\n<p>Pour une collectivit\u00e9 AOM, de plus de 100 000 habitants, la 1.2.2.1 est d\u00e9sactiv\u00e9e et la 1.2.2.5 est \u00e9valu\u00e9e sur 40 % des points.</p>\n",
+          "formule": "si reponse(centre_urbain, NON) et reponse (AOM_1, NON) alors 2/12 \nsinon si reponse (AOM_1, NON) alors 6/12\n",
+          "type": "reduction"
+        }
+      ],
+      "titre": "R\u00e9duction potentiel cae 1.2.2 liee AOM"
+    },
+    {
+      "action_id": "cae_1.2.2.1.1",
+      "description": "",
+      "regles": [
+        {
+          "description": "",
+          "formule": "identite(type, commune)\n",
+          "type": "desactivation"
+        }
+      ],
+      "titre": "Personnalisation cae 1.2.2.1.1 liee EPCI"
+    },
+    {
+      "action_id": "cae_1.2.2.1.3",
+      "description": "",
+      "regles": [
+        {
+          "description": "",
+          "formule": "identite(type, EPCI)\n",
+          "type": "desactivation"
+        }
+      ],
+      "titre": "Personnalisation cae 1.2.2.1.3 liee commmune"
+    },
+    {
+      "action_id": "cae_1.2.2.1",
+      "description": "",
+      "regles": [
+        {
+          "description": "<p>Pour une collectivit\u00e9 AOM, de plus de 100 000 habitants, le potentiel passe de 10% \u00e0 0%.</p>\n",
+          "formule": "si reponse(AOM_1, OUI) et identite(population, plus_de_100000) alors 0.0\n",
+          "type": "reduction"
+        },
+        {
+          "description": "<p>Pour une collectivit\u00e9 AOM, de plus de 100 000 habitants, la 1.2.2.1 est d\u00e9sactiv\u00e9e.</p>\n",
+          "formule": "reponse(AOM_1, OUI) et identite(population, plus_de_100000)\n",
+          "type": "desactivation"
+        }
+      ],
+      "titre": "Personnalisation cae 1.2.2.1 liee AOM > 100 000 hab"
+    },
+    {
+      "action_id": "cae_1.2.2.5",
+      "description": "",
+      "regles": [
+        {
+          "description": "<p>Pour une collectivit\u00e9 AOM, de plus de 100 000 habitants, la 1.2.2.5 est not\u00e9e sur 40 % (au lieu de 30 %).</p>\n",
+          "formule": "si reponse(AOM_1, OUI) et identite(population, plus_de_100000) alors 0.4/0.3\n",
+          "type": "reduction"
+        }
+      ],
+      "titre": "Personnalisation cae 1.2.2.5 liee AOM > 100 000 hab"
+    },
+    {
+      "action_id": "cae_1.2.3",
+      "description": "",
+      "regles": [
+        {
+          "description": "<p>Pour une collectivit\u00e9 ne poss\u00e9dant que partiellement les comp\u00e9tences collecte, traitement des d\u00e9chets et plan de pr\u00e9vention des d\u00e9chets, le score de la 1.2.3 est r\u00e9duit de 25 %.</p>\n<p>Pour une collectivit\u00e9 n&#x27;ayant aucune des comp\u00e9tences collecte, traitement des d\u00e9chets et plan de pr\u00e9vention des d\u00e9chets, le score de la 1.2.3 est r\u00e9duit \u00e0 2 points.</p>\n",
+          "formule": "si reponse(dechets_1, OUI) et reponse(dechets_2, OUI) et reponse(dechets_3, OUI) alors 1.0\nsinon si reponse(dechets_1, NON) et reponse(dechets_2, NON) et reponse(dechets_3, NON) alors 2/10\nsinon si reponse(dechets_1, NON) ou reponse(dechets_2, NON) ou reponse(dechets_3, NON) alors 0.75\n",
+          "type": "reduction"
+        }
+      ],
+      "titre": "R\u00e9duction potentiel cae 1.2.3 liee competences dechets"
+    },
+    {
+      "action_id": "cae_1.2.3.1.4",
+      "description": "",
+      "regles": [
+        {
+          "description": "",
+          "formule": "reponse(dechets_1, NON)\n",
+          "type": "desactivation"
+        }
+      ],
+      "titre": "Personnalisation cae 1.2.3.1.4 liee competence collecte"
+    },
+    {
+      "action_id": "cae_1.2.3.1.5",
+      "description": "",
+      "regles": [
+        {
+          "description": "",
+          "formule": "reponse(dechets_2, NON)\n",
+          "type": "desactivation"
+        }
+      ],
+      "titre": "Personnalisation cae 1.2.3.1.5 liee competence traitement"
+    },
+    {
+      "action_id": "cae_1.2.4",
+      "description": "",
+      "regles": [
+        {
+          "description": "<p>Pour un EPCI n&#x27;ayant pas la comp\u00e9tence habitat, le score de la 1.2.4 est r\u00e9duit \u00e0 8 points.</p>\n<p>Si la collectivit\u00e9 est une commune, le potentiel est r\u00e9duit \u00e0 la part de la commune dans la collectivit\u00e9 comp\u00e9tente en mati\u00e8re de Programme Local de l\u2019Habitat (PLH), dans la limite de 50 %.</p>\n",
+          "formule": "si identite(type, EPCI) et reponse(habitat_1, NON) alors 8/12 \nsinon si identite(type, commune) alors max (reponse(habitat_2), 0.5) \n",
+          "type": "reduction"
+        }
+      ],
+      "titre": "R\u00e9duction potentiel cae 1.2.4 liee habitat"
+    },
+    {
+      "action_id": "cae_1.3.1",
+      "description": "",
+      "regles": [
+        {
+          "description": "<p>Pour une collectivit\u00e9 n&#x27;ayant ni la comp\u00e9tence PLU, ni la comp\u00e9tence SCOT, le score de la 1.3.1 est r\u00e9duit de 50 %.</p>\n<p>Pour une collectivit\u00e9 n&#x27;ayant pas la comp\u00e9tence PLU mais disposant de la comp\u00e9tence SCOT, le score de la 1.3.1 est r\u00e9duit de 30 %.</p>\n",
+          "formule": "si reponse(urba_1, NON) et reponse(SCoT, NON) alors 6/12 \nsinon si reponse(urba_1, NON) et reponse(SCoT, OUI) alors 0.7 \n",
+          "type": "reduction"
+        }
+      ],
+      "titre": "R\u00e9duction potentiel cae 1.3.1 liee competence urba"
+    },
+    {
+      "action_id": "cae_1.3.2",
+      "description": "",
+      "regles": [
+        {
+          "description": "<p>Si une collectivit\u00e9 n&#x27;a pas de terrains utilisables ou vendables ou elle dispose de terrains de ce type mais n&#x27;a pas r\u00e9alis\u00e9 de vente ou de contrats d&#x27;utilisation alors le score de la 1.3.2 est r\u00e9duit de 50 %.</p>\n",
+          "formule": "si reponse(amenagement_1, NON) ou reponse (amenagement_2, NON) alors 5/10 \n",
+          "type": "reduction"
+        }
+      ],
+      "titre": "R\u00e9duction potentiel cae 1.3.2 liee possession terrains"
+    },
+    {
+      "action_id": "cae_1.3.3",
+      "description": "",
+      "regles": [
+        {
+          "description": "",
+          "formule": "reponse(urba_1, NON) et reponse (urba_2, NON) et reponse(urba_3, NON)\n",
+          "type": "desactivation"
+        },
+        {
+          "description": "<p>Pour une collectivit\u00e9 n&#x27;ayant ni la comp\u00e9tence PLU, ni l&#x27;instruction, ni l&#x27;octroi des permis de construire, le score de la 1.3.3 est r\u00e9duit de 100 % et le statut de la 1.3.3 est &quot;non concern\u00e9&quot;.</p>\n<p>Pour une collectivit\u00e9 n&#x27;ayant que l&#x27;une des comp\u00e9tences (PLU, instruction ou octroi des permis de construire), le score de la 1.3.3 est r\u00e9duit de 50 %.</p>\n",
+          "formule": "si reponse(urba_1, NON) et reponse (urba_2, NON) et reponse(urba_3, NON) alors 0\nsinon si reponse(urba_1, OUI) et reponse(urba_2, NON) et reponse(urba_3, NON) alors 0.5\nsinon si reponse(urba_1, NON) et reponse(urba_2, OUI) et reponse(urba_3, NON) alors 0.5\nsinon si reponse(urba_1, NON) et reponse(urba_2, NON) et reponse(urba_3, OUI) alors 0.5\n",
+          "type": "reduction"
+        }
+      ],
+      "titre": "Personnalisation cae 1.3.3 liee competence urba"
+    },
+    {
       "action_id": "cae_4.1.1",
       "description": "",
       "regles": [
@@ -1295,6 +1662,88 @@
         }
       ],
       "titre": "R\u00e9duction potentiel cae 4.3.4 liee AOM"
+    },
+    {
+      "action_id": "cae_2.2.3.1",
+      "description": "",
+      "regles": [
+        {
+          "description": "<p>Pour une collectivit\u00e9 hors France M\u00e9tropolitaine, le statut de la t\u00e2che 2.2.3.1 est &quot;non concern\u00e9e&quot;.</p>\n",
+          "formule": "identite(localisation, DOM) \n",
+          "type": "desactivation"
+        }
+      ],
+      "titre": "D\u00e9sactivation cae 2.2.3.1 liee DOM-ROM"
+    },
+    {
+      "action_id": "cae_2.2.3.2",
+      "description": "",
+      "regles": [
+        {
+          "description": "<p>Pour une collectivit\u00e9 hors France M\u00e9tropolitaine, le statut de la t\u00e2che 2.2.3.2 est &quot;non concern\u00e9e&quot;.</p>\n",
+          "formule": "identite(localisation, DOM) \n",
+          "type": "desactivation"
+        }
+      ],
+      "titre": "D\u00e9sactivation cae 2.2.3.2 liee DOM-ROM"
+    },
+    {
+      "action_id": "cae_2.2.3.3",
+      "description": "",
+      "regles": [
+        {
+          "description": "<p>Pour une collectivit\u00e9 hors France M\u00e9tropolitaine, le statut de la t\u00e2che 2.2.3.3 est &quot;non concern\u00e9e&quot;.</p>\n",
+          "formule": "identite(localisation, DOM) \n",
+          "type": "desactivation"
+        }
+      ],
+      "titre": "D\u00e9sactivation cae 2.2.3.3 liee DOM-ROM"
+    },
+    {
+      "action_id": "cae_2.2.3",
+      "description": "",
+      "regles": [
+        {
+          "description": "<p>Pour une collectivit\u00e9 hors France M\u00e9tropolitaine, et en l&#x27;absence de besoin d&#x27;eau chaude sanitaire, le score de la 2.2.3 est r\u00e9duit de 70 %.</p>\n<p>Pour une collectivit\u00e9 hors France M\u00e9tropolitaine, le statut des t\u00e2ches 2.2.3.1 \u00e0 2.2.3.3 est &quot;non concern\u00e9&quot;.</p>\n",
+          "formule": "si identite(localisation, DOM) et reponse(ECS, NON) alors 0.3\n",
+          "type": "reduction"
+        }
+      ],
+      "titre": "R\u00e9duction potentiel cae 2.2.3 liee eau chaude sanitaire"
+    },
+    {
+      "action_id": "cae_2.3.1",
+      "description": "",
+      "regles": [
+        {
+          "description": "",
+          "formule": "si identite(type, EPCI) et reponse(EP_1, EP_1_b) alors 2/6\nsinon si identite(type, EPCI) et reponse(EP_1, EP_1_c) alors 0\nsinon reponse(EP_2)\n",
+          "type": "reduction"
+        },
+        {
+          "description": "<p>Si la collectivit\u00e9 est un EPCI sans comp\u00e9tence sur l&#x27;\u00e9clairage public, alors le score est r\u00e9duit \u00e0 0 et les statuts sont &quot;non concern\u00e9s&quot;.</p>\n<p>Si la collectivit\u00e9 est un EPCI avec une comp\u00e9tence \u00e9clairage public limit\u00e9e, alors la collectivit\u00e9 est \u00e9valu\u00e9e sur 2 points (au lieu de 6).</p>\n<p>Si la collectivit\u00e9 a d\u00e9l\u00e9gu\u00e9 sa comp\u00e9tence \u00e9clairage public \u00e0 une autre structure, alors le score est proportionnel \u00e0 la participation de la collectivit\u00e9 dans la structure.</p>\n",
+          "formule": "identite(type, EPCI) et reponse(EP_1, EP_1_c)\n",
+          "type": "desactivation"
+        }
+      ],
+      "titre": "R\u00e9duction potentiel cae 2.3.1 liee eclairage public"
+    },
+    {
+      "action_id": "cae_2.3.3",
+      "description": "",
+      "regles": [
+        {
+          "description": "",
+          "formule": "si reponse(voirie_1, voirie_1_b) alors 0.5\nsinon si reponse(voirie_1, voirie_1_c) alors 0/2\n",
+          "type": "reduction"
+        },
+        {
+          "description": "<p>Si la collectivit\u00e9 n&#x27;a pas la comp\u00e9tence voirie, alors le score est r\u00e9duit \u00e0 0 et les statuts sont &quot;non concern\u00e9s&quot;.</p>\n<p>Si la collectivit\u00e9 a une comp\u00e9tence voirie limit\u00e9e, alors la collectivit\u00e9 est \u00e9valu\u00e9e sur 1 point (au lieu de 2).</p>\n",
+          "formule": "reponse(voirie_1, voirie_1_c)\n",
+          "type": "desactivation"
+        }
+      ],
+      "titre": "R\u00e9duction potentiel cae 2.3.3 liee voirie"
     },
     {
       "action_id": "eci_1.2.2",
@@ -1559,455 +2008,6 @@
         }
       ],
       "titre": "D\u00e9sactivation eci_4.3 liee competence dev eco"
-    },
-    {
-      "action_id": "cae_1.1.2.0.1",
-      "description": "",
-      "regles": [
-        {
-          "description": "<p>Seuls les EPCI \u00e0 fiscalit\u00e9 propre de plus de 20 000 habitants sont concern\u00e9es par l&#x27;obligation de r\u00e9aliser un PCAET.</p>\n",
-          "formule": "si identite(type, commune) alors VRAI\nsinon si identite(type, EPCI) et identite(population, moins_de_20000) alors VRAI\n",
-          "type": "desactivation"
-        }
-      ],
-      "titre": "Personnalisation cae 1.1.2.0.1 liee obligation PCAET"
-    },
-    {
-      "action_id": "cae_1.1.2.0.2",
-      "description": "",
-      "regles": [
-        {
-          "description": "<p>Les collectivit\u00e9s de moins de 50 000 habitants ne sont pas concern\u00e9es par l&#x27;obligation BEGES.</p>\n",
-          "formule": "identite(population, moins_de_50000)\n",
-          "type": "desactivation"
-        }
-      ],
-      "titre": "Personnalisation cae 1.1.2.0.2 liee obligation BEGES"
-    },
-    {
-      "action_id": "cae_1.1.2.1.5",
-      "description": "",
-      "regles": [
-        {
-          "description": "",
-          "formule": "identite(type, EPCI)\n",
-          "type": "desactivation"
-        }
-      ],
-      "titre": "Desactivation cae 1.1.2.1.5 liee EPCI"
-    },
-    {
-      "action_id": "cae_1.2.2",
-      "description": "",
-      "regles": [
-        {
-          "description": "<p>Pour une collectivit\u00e9 n&#x27;ayant pas la comp\u00e9tence AOM, le score de la 1.2.2 est r\u00e9duit de 50 %.</p>\n<p>Pour une collectivit\u00e9 n&#x27;ayant pas de centre urbain de plus de 5000 habitants ET n&#x27;ayant pas la comp\u00e9tence AOM, le score de la 1.2.2 est r\u00e9duit \u00e0 2 points.</p>\n<p>Pour une collectivit\u00e9 AOM, de plus de 100 000 habitants, la 1.2.2.1 est d\u00e9sactiv\u00e9e et la 1.2.2.5 est \u00e9valu\u00e9e sur 40 % des points.</p>\n",
-          "formule": "si reponse(centre_urbain, NON) et reponse (AOM_1, NON) alors 2/12 \nsinon si reponse (AOM_1, NON) alors 6/12\n",
-          "type": "reduction"
-        }
-      ],
-      "titre": "R\u00e9duction potentiel cae 1.2.2 liee AOM"
-    },
-    {
-      "action_id": "cae_1.2.2.1.1",
-      "description": "",
-      "regles": [
-        {
-          "description": "",
-          "formule": "identite(type, commune)\n",
-          "type": "desactivation"
-        }
-      ],
-      "titre": "Personnalisation cae 1.2.2.1.1 liee EPCI"
-    },
-    {
-      "action_id": "cae_1.2.2.1.3",
-      "description": "",
-      "regles": [
-        {
-          "description": "",
-          "formule": "identite(type, EPCI)\n",
-          "type": "desactivation"
-        }
-      ],
-      "titre": "Personnalisation cae 1.2.2.1.3 liee commmune"
-    },
-    {
-      "action_id": "cae_1.2.2.1",
-      "description": "",
-      "regles": [
-        {
-          "description": "<p>Pour une collectivit\u00e9 AOM, de plus de 100 000 habitants, le potentiel passe de 10% \u00e0 0%.</p>\n",
-          "formule": "si reponse(AOM_1, OUI) et identite(population, plus_de_100000) alors 0.0\n",
-          "type": "reduction"
-        },
-        {
-          "description": "<p>Pour une collectivit\u00e9 AOM, de plus de 100 000 habitants, la 1.2.2.1 est d\u00e9sactiv\u00e9e.</p>\n",
-          "formule": "reponse(AOM_1, OUI) et identite(population, plus_de_100000)\n",
-          "type": "desactivation"
-        }
-      ],
-      "titre": "Personnalisation cae 1.2.2.1 liee AOM > 100 000 hab"
-    },
-    {
-      "action_id": "cae_1.2.2.5",
-      "description": "",
-      "regles": [
-        {
-          "description": "<p>Pour une collectivit\u00e9 AOM, de plus de 100 000 habitants, la 1.2.2.5 est not\u00e9e sur 40 % (au lieu de 30 %).</p>\n",
-          "formule": "si reponse(AOM_1, OUI) et identite(population, plus_de_100000) alors 0.4/0.3\n",
-          "type": "reduction"
-        }
-      ],
-      "titre": "Personnalisation cae 1.2.2.5 liee AOM > 100 000 hab"
-    },
-    {
-      "action_id": "cae_1.2.3",
-      "description": "",
-      "regles": [
-        {
-          "description": "<p>Pour une collectivit\u00e9 ne poss\u00e9dant que partiellement les comp\u00e9tences collecte, traitement des d\u00e9chets et plan de pr\u00e9vention des d\u00e9chets, le score de la 1.2.3 est r\u00e9duit de 25 %.</p>\n<p>Pour une collectivit\u00e9 n&#x27;ayant aucune des comp\u00e9tences collecte, traitement des d\u00e9chets et plan de pr\u00e9vention des d\u00e9chets, le score de la 1.2.3 est r\u00e9duit \u00e0 2 points.</p>\n",
-          "formule": "si reponse(dechets_1, OUI) et reponse(dechets_2, OUI) et reponse(dechets_3, OUI) alors 1.0\nsinon si reponse(dechets_1, NON) et reponse(dechets_2, NON) et reponse(dechets_3, NON) alors 2/10\nsinon si reponse(dechets_1, NON) ou reponse(dechets_2, NON) ou reponse(dechets_3, NON) alors 0.75\n",
-          "type": "reduction"
-        }
-      ],
-      "titre": "R\u00e9duction potentiel cae 1.2.3 liee competences dechets"
-    },
-    {
-      "action_id": "cae_1.2.3.1.4",
-      "description": "",
-      "regles": [
-        {
-          "description": "",
-          "formule": "reponse(dechets_1, NON)\n",
-          "type": "desactivation"
-        }
-      ],
-      "titre": "Personnalisation cae 1.2.3.1.4 liee competence collecte"
-    },
-    {
-      "action_id": "cae_1.2.3.1.5",
-      "description": "",
-      "regles": [
-        {
-          "description": "",
-          "formule": "reponse(dechets_2, NON)\n",
-          "type": "desactivation"
-        }
-      ],
-      "titre": "Personnalisation cae 1.2.3.1.5 liee competence traitement"
-    },
-    {
-      "action_id": "cae_1.2.4",
-      "description": "",
-      "regles": [
-        {
-          "description": "<p>Pour un EPCI n&#x27;ayant pas la comp\u00e9tence habitat, le score de la 1.2.4 est r\u00e9duit \u00e0 8 points.</p>\n<p>Si la collectivit\u00e9 est une commune, le potentiel est r\u00e9duit \u00e0 la part de la commune dans la collectivit\u00e9 comp\u00e9tente en mati\u00e8re de Programme Local de l\u2019Habitat (PLH), dans la limite de 50 %.</p>\n",
-          "formule": "si identite(type, EPCI) et reponse(habitat_1, NON) alors 8/12 \nsinon si identite(type, commune) alors max (reponse(habitat_2), 0.5) \n",
-          "type": "reduction"
-        }
-      ],
-      "titre": "R\u00e9duction potentiel cae 1.2.4 liee habitat"
-    },
-    {
-      "action_id": "cae_1.3.1",
-      "description": "",
-      "regles": [
-        {
-          "description": "<p>Pour une collectivit\u00e9 n&#x27;ayant ni la comp\u00e9tence PLU, ni la comp\u00e9tence SCOT, le score de la 1.3.1 est r\u00e9duit de 50 %.</p>\n<p>Pour une collectivit\u00e9 n&#x27;ayant pas la comp\u00e9tence PLU mais disposant de la comp\u00e9tence SCOT, le score de la 1.3.1 est r\u00e9duit de 30 %.</p>\n",
-          "formule": "si reponse(urba_1, NON) et reponse(SCoT, NON) alors 6/12 \nsinon si reponse(urba_1, NON) et reponse(SCoT, OUI) alors 0.7 \n",
-          "type": "reduction"
-        }
-      ],
-      "titre": "R\u00e9duction potentiel cae 1.3.1 liee competence urba"
-    },
-    {
-      "action_id": "cae_1.3.2",
-      "description": "",
-      "regles": [
-        {
-          "description": "<p>Si une collectivit\u00e9 n&#x27;a pas de terrains utilisables ou vendables ou elle dispose de terrains de ce type mais n&#x27;a pas r\u00e9alis\u00e9 de vente ou de contrats d&#x27;utilisation alors le score de la 1.3.2 est r\u00e9duit de 50 %.</p>\n",
-          "formule": "si reponse(amenagement_1, NON) ou reponse (amenagement_2, NON) alors 5/10 \n",
-          "type": "reduction"
-        }
-      ],
-      "titre": "R\u00e9duction potentiel cae 1.3.2 liee possession terrains"
-    },
-    {
-      "action_id": "cae_1.3.3",
-      "description": "",
-      "regles": [
-        {
-          "description": "",
-          "formule": "reponse(urba_1, NON) et reponse (urba_2, NON) et reponse(urba_3, NON)\n",
-          "type": "desactivation"
-        },
-        {
-          "description": "<p>Pour une collectivit\u00e9 n&#x27;ayant ni la comp\u00e9tence PLU, ni l&#x27;instruction, ni l&#x27;octroi des permis de construire, le score de la 1.3.3 est r\u00e9duit de 100 % et le statut de la 1.3.3 est &quot;non concern\u00e9&quot;.</p>\n<p>Pour une collectivit\u00e9 n&#x27;ayant que l&#x27;une des comp\u00e9tences (PLU, instruction ou octroi des permis de construire), le score de la 1.3.3 est r\u00e9duit de 50 %.</p>\n",
-          "formule": "si reponse(urba_1, NON) et reponse (urba_2, NON) et reponse(urba_3, NON) alors 0\nsinon si reponse(urba_1, OUI) et reponse(urba_2, NON) et reponse(urba_3, NON) alors 0.5\nsinon si reponse(urba_1, NON) et reponse(urba_2, OUI) et reponse(urba_3, NON) alors 0.5\nsinon si reponse(urba_1, NON) et reponse(urba_2, NON) et reponse(urba_3, OUI) alors 0.5\n",
-          "type": "reduction"
-        }
-      ],
-      "titre": "Personnalisation cae 1.3.3 liee competence urba"
-    },
-    {
-      "action_id": "cae_2.2.3.1",
-      "description": "",
-      "regles": [
-        {
-          "description": "<p>Pour une collectivit\u00e9 hors France M\u00e9tropolitaine, le statut de la t\u00e2che 2.2.3.1 est &quot;non concern\u00e9e&quot;.</p>\n",
-          "formule": "identite(localisation, DOM) \n",
-          "type": "desactivation"
-        }
-      ],
-      "titre": "D\u00e9sactivation cae 2.2.3.1 liee DOM-ROM"
-    },
-    {
-      "action_id": "cae_2.2.3.2",
-      "description": "",
-      "regles": [
-        {
-          "description": "<p>Pour une collectivit\u00e9 hors France M\u00e9tropolitaine, le statut de la t\u00e2che 2.2.3.2 est &quot;non concern\u00e9e&quot;.</p>\n",
-          "formule": "identite(localisation, DOM) \n",
-          "type": "desactivation"
-        }
-      ],
-      "titre": "D\u00e9sactivation cae 2.2.3.2 liee DOM-ROM"
-    },
-    {
-      "action_id": "cae_2.2.3.3",
-      "description": "",
-      "regles": [
-        {
-          "description": "<p>Pour une collectivit\u00e9 hors France M\u00e9tropolitaine, le statut de la t\u00e2che 2.2.3.3 est &quot;non concern\u00e9e&quot;.</p>\n",
-          "formule": "identite(localisation, DOM) \n",
-          "type": "desactivation"
-        }
-      ],
-      "titre": "D\u00e9sactivation cae 2.2.3.3 liee DOM-ROM"
-    },
-    {
-      "action_id": "cae_2.2.3",
-      "description": "",
-      "regles": [
-        {
-          "description": "<p>Pour une collectivit\u00e9 hors France M\u00e9tropolitaine, et en l&#x27;absence de besoin d&#x27;eau chaude sanitaire, le score de la 2.2.3 est r\u00e9duit de 70 %.</p>\n<p>Pour une collectivit\u00e9 hors France M\u00e9tropolitaine, le statut des t\u00e2ches 2.2.3.1 \u00e0 2.2.3.3 est &quot;non concern\u00e9&quot;.</p>\n",
-          "formule": "si identite(localisation, DOM) et reponse(ECS, NON) alors 0.3\n",
-          "type": "reduction"
-        }
-      ],
-      "titre": "R\u00e9duction potentiel cae 2.2.3 liee eau chaude sanitaire"
-    },
-    {
-      "action_id": "cae_2.3.1",
-      "description": "",
-      "regles": [
-        {
-          "description": "",
-          "formule": "si identite(type, EPCI) et reponse(EP_1, EP_1_b) alors 2/6\nsinon si identite(type, EPCI) et reponse(EP_1, EP_1_c) alors 0\nsinon reponse(EP_2)\n",
-          "type": "reduction"
-        },
-        {
-          "description": "<p>Si la collectivit\u00e9 est un EPCI sans comp\u00e9tence sur l&#x27;\u00e9clairage public, alors le score est r\u00e9duit \u00e0 0 et les statuts sont &quot;non concern\u00e9s&quot;.</p>\n<p>Si la collectivit\u00e9 est un EPCI avec une comp\u00e9tence \u00e9clairage public limit\u00e9e, alors la collectivit\u00e9 est \u00e9valu\u00e9e sur 2 points (au lieu de 6).</p>\n<p>Si la collectivit\u00e9 a d\u00e9l\u00e9gu\u00e9 sa comp\u00e9tence \u00e9clairage public \u00e0 une autre structure, alors le score est proportionnel \u00e0 la participation de la collectivit\u00e9 dans la structure.</p>\n",
-          "formule": "identite(type, EPCI) et reponse(EP_1, EP_1_c)\n",
-          "type": "desactivation"
-        }
-      ],
-      "titre": "R\u00e9duction potentiel cae 2.3.1 liee eclairage public"
-    },
-    {
-      "action_id": "cae_2.3.3",
-      "description": "",
-      "regles": [
-        {
-          "description": "",
-          "formule": "si reponse(voirie_1, voirie_1_b) alors 0.5\nsinon si reponse(voirie_1, voirie_1_c) alors 0/2\n",
-          "type": "reduction"
-        },
-        {
-          "description": "<p>Si la collectivit\u00e9 n&#x27;a pas la comp\u00e9tence voirie, alors le score est r\u00e9duit \u00e0 0 et les statuts sont &quot;non concern\u00e9s&quot;.</p>\n<p>Si la collectivit\u00e9 a une comp\u00e9tence voirie limit\u00e9e, alors la collectivit\u00e9 est \u00e9valu\u00e9e sur 1 point (au lieu de 2).</p>\n",
-          "formule": "reponse(voirie_1, voirie_1_c)\n",
-          "type": "desactivation"
-        }
-      ],
-      "titre": "R\u00e9duction potentiel cae 2.3.3 liee voirie"
-    },
-    {
-      "action_id": "cae_3.1.1",
-      "description": "",
-      "regles": [
-        {
-          "description": "<p>Pour une collectivit\u00e9 non autorit\u00e9 organisatrice de la distribution d&#x27;\u00e9lectricit\u00e9, le score de la 3.1.1 est r\u00e9duit de 30 %.</p>\n<p>Pour une collectivit\u00e9 non autorit\u00e9 organisatrice de la distribution de gaz, le score de la 3.1.1 est r\u00e9duit de 30 %.</p>\n<p>Pour une collectivit\u00e9 non autorit\u00e9 organisatrice de la distribution de chaleur, le score de la 3.1.1 est r\u00e9duit de 40 %.</p>\n<p>Ces r\u00e9ductions sont cumulables dans la limite de 2 points restants pour prendre en compte la part d\u2019influence dans les instances comp\u00e9tentes et les actions partenariales.</p>\n",
-          "formule": "si reponse(AOD_elec, OUI) et reponse(AOD_gaz, OUI) et reponse(AOD_chaleur, OUI) alors 1.0 \nsinon si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 2/10 \nsinon si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) alors 4/10 \nsinon si reponse(AOD_elec, NON) et reponse(AOD_chaleur, NON) alors 3/10 \nsinon si reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 3/10 \nsinon si reponse(AOD_elec, NON) ou reponse(AOD_gaz, NON) alors 7/10 \nsinon si reponse(AOD_chaleur, NON) alors 6/10 \n",
-          "type": "reduction"
-        }
-      ],
-      "titre": "R\u00e9duction potentiel cae 3.1.1 liee autorit\u00e9s organisatrices \u00e9nergie"
-    },
-    {
-      "action_id": "cae_3.1.2",
-      "description": "",
-      "regles": [
-        {
-          "description": "<p>Pour une collectivit\u00e9 non autorit\u00e9 organisatrice de la distribution d&#x27;\u00e9lectricit\u00e9, de gaz et de chaleur, le score de la 3.1.2 est r\u00e9duit de 50 %.</p>\n<p>En l\u2019absence de fournisseurs d\u2019\u00e9nergie ma\u00eetris\u00e9s par la collectivit\u00e9 (SEM/r\u00e9gie/exploitants de r\u00e9seau de chaleur urbain li\u00e9s \u00e0 la collectivit\u00e9 par DSP), le score de la 3.1.2 est r\u00e9duit de 20 % et le statut de la sous-action 3.1.2.2 li\u00e9e aux actions de la facturation est &quot;non concern\u00e9&quot;.</p>\n<p>La r\u00e9duction la plus forte pr\u00e9vaut.</p>\n",
-          "formule": "si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 0.5\nsinon si reponse(fournisseur_energie, NON) alors 0.8\n",
-          "type": "reduction"
-        }
-      ],
-      "titre": "R\u00e9duction potentiel cae 3.1.2 liee autorit\u00e9s organisatrices \u00e9nergie"
-    },
-    {
-      "action_id": "cae_3.1.2.2",
-      "description": "",
-      "regles": [
-        {
-          "description": "",
-          "formule": "si reponse(fournisseur_energie, NON) alors VRAI\n",
-          "type": "desactivation"
-        }
-      ],
-      "titre": "R\u00e9duction potentiel cae 3.1.2.2 liee fournisseurs \u00e9nergie"
-    },
-    {
-      "action_id": "cae_3.2.1",
-      "description": "",
-      "regles": [
-        {
-          "description": "<p>Le nombre de point max pour l&#x27;action 3.2.1 est de 12 points en M\u00e9tropole et de 10 points pour les collectivit\u00e9s DOM.</p>\n<p>Pour une collectivit\u00e9 avec peu d&#x27;activit\u00e9s industrielles adapt\u00e9es pour la r\u00e9cup\u00e9ration de chaleur fatale et peu de potentiel pour la cog\u00e9n\u00e9ration voir la micro-cog\u00e9n\u00e9ration (donc ni de chaufferies ni de consommateurs suffisants en chaleur ni de producteur-consommateur visant l\u2019autoconsommation), le score de la 3.2.1 est r\u00e9duit \u00e0 2 points et les statuts des sous-action 3.2.1.2 et 3.2.1.3 sont &quot;non concern\u00e9e&quot;.</p>\n",
-          "formule": "si reponse(recuperation_cogeneration, OUI) et identite(localisation,DOM) alors 10/12\nsinon si reponse(recuperation_cogeneration, NON) et identite(localisation,DOM) alors 2/10\nsinon si reponse(recuperation_cogeneration, NON) alors 2/12\n",
-          "type": "reduction"
-        }
-      ],
-      "titre": "Modification points cae 3.2.1 liee DOM"
-    },
-    {
-      "action_id": "cae_3.2.1.1",
-      "description": "",
-      "regles": [],
-      "titre": "R\u00e9duction potentiel cae 3.2.1.1"
-    },
-    {
-      "action_id": "cae_3.2.1.2",
-      "description": "",
-      "regles": [
-        {
-          "description": "",
-          "formule": "reponse(recuperation_cogeneration, NON) \n",
-          "type": "desactivation"
-        }
-      ],
-      "titre": "R\u00e9duction potentiel cae 3.2.1.2"
-    },
-    {
-      "action_id": "cae_3.2.1.3",
-      "description": "",
-      "regles": [
-        {
-          "description": "",
-          "formule": "reponse(recuperation_cogeneration, NON) \n",
-          "type": "desactivation"
-        }
-      ],
-      "titre": "R\u00e9duction potentiel cae 3.2.1.3"
-    },
-    {
-      "action_id": "cae_3.2.2",
-      "description": "",
-      "regles": [
-        {
-          "description": "<p>Le nombre de point max pour l&#x27;action 3.2.2 est de 12 points en M\u00e9tropole et de 10 points pour les collectivit\u00e9s DOM.</p>\n",
-          "formule": "si identite(localisation,DOM) alors 10/12\n",
-          "type": "reduction"
-        }
-      ],
-      "titre": "Modification points cae 3.2.2 liee DOM"
-    },
-    {
-      "action_id": "cae_3.2.3",
-      "description": "",
-      "regles": [
-        {
-          "description": "<p>Le nombre de point max pour l&#x27;action 3.2.3 est de 8 points en M\u00e9tropole et de 12 points pour les collectivit\u00e9s DOM.</p>\n",
-          "formule": "si identite(localisation,DOM) alors 12/8\n",
-          "type": "reduction"
-        }
-      ],
-      "titre": "Modification points cae 3.2.3 liee DOM"
-    },
-    {
-      "action_id": "cae_3.3.1",
-      "description": "",
-      "regles": [
-        {
-          "description": "",
-          "formule": "si reponse(eau_1, NON) alors 0/6 \n",
-          "type": "reduction"
-        },
-        {
-          "description": "<p>Pour une collectivit\u00e9 sans la comp\u00e9tence eau potable, le score de la 3.3.1 est r\u00e9duit \u00e0 0 point et le statut de la sous-action est &quot;non concern\u00e9e&quot;.</p>\n",
-          "formule": "reponse(eau_1, NON) \n",
-          "type": "desactivation"
-        }
-      ],
-      "titre": "R\u00e9duction potentiel cae 3.3.1 liee eau potable"
-    },
-    {
-      "action_id": "cae_3.3.2",
-      "description": "",
-      "regles": [
-        {
-          "description": "",
-          "formule": "si reponse(assainissement_1, NON) alors 0/12\nsinon si reponse(assainissement_4, OUI) et reponse(assainissement_4bis, NON) alors 0.5\n",
-          "type": "reduction"
-        },
-        {
-          "description": "<p>Pour une collectivit\u00e9 sans la comp\u00e9tence assainissement collectif, le score de la 3.3.2 est r\u00e9duit \u00e0 0 point et le statut de la sous-action est &quot;non concern\u00e9e&quot;.</p>\n<p>En cas d&#x27;absence de potentiel de valorisation \u00e9nerg\u00e9tique (m\u00e9thanisation ou r\u00e9cup\u00e9ration de chaleur) attest\u00e9e par une \u00e9tude portant sur la totalit\u00e9 du p\u00e9rim\u00e8tre d\u2019assainissement, le score de la 3.3.2 est r\u00e9duit \u00e0 50 %.</p>\n",
-          "formule": "reponse(assainissement_1, NON)\n",
-          "type": "desactivation"
-        }
-      ],
-      "titre": "R\u00e9duction potentiel cae 3.3.2 liee assainissement collectif"
-    },
-    {
-      "action_id": "cae_3.3.3",
-      "description": "",
-      "regles": [
-        {
-          "description": "<p>Pour un EPCI, en cas de comp\u00e9tence &quot;assainissement&quot; partag\u00e9e ou variable sur le territoire, la r\u00e9duction de potentielle est proportionnelle \u00e0 la part des communes ayant d\u00e9l\u00e9gu\u00e9 leur comp\u00e9tence assainissement, dans la limite de moins 50%. Des actions sont possibles sur d\u2019autres comp\u00e9tences, notamment \u00ab gestion des milieux aquatiques et pr\u00e9vention des inondations \u00bb.</p>\n<p>Pour les communes sans comp\u00e9tence assainissement, le score de la 3.3.3 est r\u00e9duit de 50 %.</p>\n",
-          "formule": "si identite(type, EPCI) alors max(reponse(assainissement_3), 0.5)\nsinon si identite(type, commune) et reponse(assainissement_1, NON) et reponse(assainissement_2, NON) alors 0.5\n",
-          "type": "reduction"
-        }
-      ],
-      "titre": "R\u00e9duction potentiel cae 3.3.3 liee assainissement"
-    },
-    {
-      "action_id": "cae_3.3.3.3.4",
-      "description": "",
-      "regles": [
-        {
-          "description": "",
-          "formule": "identite(localisation,DOM)\n",
-          "type": "desactivation"
-        }
-      ],
-      "titre": "R\u00e9duction potentiel cae 3.3.3.3.4"
-    },
-    {
-      "action_id": "cae_3.3.5",
-      "description": "",
-      "regles": [
-        {
-          "description": "<p>Pour une commune, la note est r\u00e9duite \u00e0 2 points en l&#x27;absence de la comp\u00e9tence traitement des d\u00e9chets.</p>\n<p>Pour un EPCI ayant transf\u00e9r\u00e9 la comp\u00e9tence traitement des d\u00e9chets \u00e0 un syndicat comp\u00e9tent en la mati\u00e8re, la note est r\u00e9duite proportionnelle \u00e0 sa participation dans ce syndicat, dans la limite de 2 points restants.</p>\n",
-          "formule": "si identite(type, commune) et reponse(dechets_2, NON) alors 2/12\nsinon si identite(type, EPCI) et reponse(dechets_2, NON) alors max(reponse(dechets_4),2/12)\n",
-          "type": "reduction"
-        },
-        {
-          "description": "<p>Pour favoriser la pr\u00e9vention des d\u00e9chets, la note attribu\u00e9e \u00e0 cette action ne peut d\u00e9passer celle obtenue dans l&#x27;action 1.2.3.</p>\n",
-          "formule": "min(score(cae_1.2.3), score(cae_3.3.5))\n",
-          "type": "score"
-        }
-      ],
-      "titre": "R\u00e9duction potentiel cae 3.3.5 liee dechets"
     }
   ]
 }
