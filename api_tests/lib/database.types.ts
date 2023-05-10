@@ -6728,6 +6728,8 @@ export interface Database {
         | "historique"
         | "comparaison"
         | "critere"
+        | "informations"
+        | "commentaires"
       visite_page:
         | "autre"
         | "signin"
@@ -6751,6 +6753,7 @@ export interface Database {
         | "fiche"
         | "plan_axe"
         | "fiches_non_classees"
+        | "synthese_plans"
       visite_tag:
         | "cae"
         | "eci"
