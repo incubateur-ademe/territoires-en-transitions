@@ -75,7 +75,11 @@ const PlanActionAxe = ({
     <div data-test="Axe">
       <div className="group relative flex items-center py-3 pr-4 pl-2 w-full !bg-white">
         <div className="flex mr-3 group-hover:outline group-hover:outline-gray-100">
-          <button className="p-0.5" onClick={() => setIsOpen(!isOpen)}>
+          <button
+            data-test="BoutonDeplierAxe"
+            className="p-0.5"
+            onClick={() => setIsOpen(!isOpen)}
+          >
             <IconArrowSFill
               className={classNames({
                 '-rotate-90': !isOpen,
