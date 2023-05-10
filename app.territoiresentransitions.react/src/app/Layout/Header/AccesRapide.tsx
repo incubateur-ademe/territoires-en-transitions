@@ -1,5 +1,5 @@
 import {Link, useLocation} from 'react-router-dom';
-import {useTracker} from 'core-logic/hooks/useTracker';
+import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 import {HeaderPropsWithModalState} from './types';
 import {allCollectivitesPath, signInPath, signUpPath} from 'app/paths';
 import MenuUtilisateur from './MenuUtilisateur';
@@ -65,7 +65,7 @@ export const AccesRapide = (props: HeaderPropsWithModalState) => {
  * Ouvre le lien vers le centre d'aide.
  */
 const Aide = () => {
-  const tracker = useTracker();
+  const tracker = useFonctionTracker();
 
   const onClick = async () => {
     // on utilise un bouton avec ouverture explicite du lien pour ne pas

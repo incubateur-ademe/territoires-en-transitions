@@ -1,4 +1,4 @@
-import {useTracker} from 'core-logic/hooks/useTracker';
+import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 import {useRef, useState} from 'react';
 import DownloadButton from 'ui/DownloadButton';
 import Modal from 'ui/shared/floating-ui/Modal';
@@ -45,7 +45,7 @@ const ChartCardModalContent = ({
   chartInfo,
   topElement,
 }: ChartCardModalContentProps) => {
-  const tracker = useTracker();
+  const tracker = useFonctionTracker();
 
   // Référence utilisée pour le téléchargement du graphe
   const chartWrapperRef = useRef<HTMLDivElement>(null);

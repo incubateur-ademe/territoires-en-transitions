@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import useWindowSize from 'utils/useWindowSize';
-import {useTracker} from 'core-logic/hooks/useTracker';
+import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 
 export type TPaginationProps = {
   selectedPage: number;
@@ -20,7 +20,7 @@ export const Pagination = (props: TPaginationProps) => {
     number[]
   >([]);
 
-  const tracker = useTracker();
+  const tracker = useFonctionTracker();
   const windowSize = useWindowSize();
   const isMobile = windowSize.width < 992;
 

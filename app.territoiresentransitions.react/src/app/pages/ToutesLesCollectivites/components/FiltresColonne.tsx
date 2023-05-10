@@ -11,7 +11,7 @@ import type {TCollectivitesFilters} from 'app/pages/ToutesLesCollectivites/filtr
 import {RegionRead} from 'generated/dataLayer/region_read';
 import {DepartementRead} from 'generated/dataLayer/departement_read';
 import {InputSearch} from 'ui/UiSearchBar';
-import {useTracker} from 'core-logic/hooks/useTracker';
+import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 
 type UpdateFilters = (newFilters: TCollectivitesFilters) => void;
 
@@ -21,7 +21,7 @@ export const FiltresColonne = (props: {
   filters: TCollectivitesFilters;
   setFilters: UpdateFilters;
 }) => {
-  const tracker = useTracker();
+  const tracker = useFonctionTracker();
 
   return (
     <div className="flex flex-col gap-8">
@@ -34,7 +34,7 @@ export const FiltresColonne = (props: {
         }}
       />
       <RegionFiltre
-        onChange={(selected) => {
+        onChange={selected => {
           props.setFilters({...props.filters, regions: selected});
           tracker({fonction: 'filtre_region', action: 'selection'});
         }}
@@ -42,7 +42,7 @@ export const FiltresColonne = (props: {
         regions={props.regions}
       />
       <DepartementFiltre
-        onChange={(selected) => {
+        onChange={selected => {
           props.setFilters({...props.filters, departments: selected});
           tracker({fonction: 'filtre_departement', action: 'selection'});
         }}
@@ -51,35 +51,35 @@ export const FiltresColonne = (props: {
         regionCodes={props.filters.regions}
       />
       <TypeCollectiviteFiltre
-        onChange={(selected) => {
+        onChange={selected => {
           props.setFilters({...props.filters, types: selected});
           tracker({fonction: 'filtre_type', action: 'selection'});
         }}
         selected={props.filters.types}
       />
       <PopulationCollectiviteFiltre
-        onChange={(selected) => {
+        onChange={selected => {
           props.setFilters({...props.filters, population: selected});
           tracker({fonction: 'filtre_population', action: 'selection'});
         }}
         selected={props.filters.population}
       />
       <ReferentielCollectiviteFiltre
-        onChange={(selected) => {
+        onChange={selected => {
           props.setFilters({...props.filters, referentiel: selected});
           tracker({fonction: 'filtre_referentiel', action: 'selection'});
         }}
         selected={props.filters.referentiel}
       />
       <NiveauDeLabellisationCollectiviteFiltre
-        onChange={(selected) => {
+        onChange={selected => {
           props.setFilters({...props.filters, niveauDeLabellisation: selected});
           tracker({fonction: 'filtre_niveau', action: 'selection'});
         }}
         selected={props.filters.niveauDeLabellisation}
       />
       <TauxRemplissageCollectiviteFiltre
-        onChange={(selected) => {
+        onChange={selected => {
           props.setFilters({...props.filters, tauxDeRemplissage: selected});
           tracker({fonction: 'filtre_remplissage', action: 'selection'});
         }}
