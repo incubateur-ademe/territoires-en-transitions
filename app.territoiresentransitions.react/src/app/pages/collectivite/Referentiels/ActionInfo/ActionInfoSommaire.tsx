@@ -16,27 +16,23 @@ export const ActionInfoSommaire = ({
   current,
   setCurrent,
 }: TActionSommaireProps) => (
-  <nav
-    className="fr-summary !bg-grey975"
-    /** surcharge les espacements de fr-summary */
-    style={{paddingTop: '0', paddingBottom: '0'}}
-    role="navigation"
-  >
-    <ol className="fr-summary__list">
-      {items.map(({id, label}) => {
+  <nav className="bg-grey975 fr-py-1w fr-px-3w text-xs" role="navigation">
+    <ul className="list-none p-0">
+      {items.map(({id, label, num}) => {
         const isCurrent = id === current;
         return (
           <li
             key={id}
             aria-current={isCurrent}
-            className={classNames({'bg-[rgba(0,0,0,0.04)]': isCurrent})}
+            className={classNames('cursor-pointer hover:bg-grey925 p-2', {
+              'bg-[rgba(0,0,0,0.04)]': isCurrent,
+            })}
+            onClick={() => setCurrent(id)}
           >
-            <button className="fr-summary__link" onClick={() => setCurrent(id)}>
-              {label}
-            </button>
+            {num}. {label}
           </li>
         );
       })}
-    </ol>
+    </ul>
   </nav>
 );

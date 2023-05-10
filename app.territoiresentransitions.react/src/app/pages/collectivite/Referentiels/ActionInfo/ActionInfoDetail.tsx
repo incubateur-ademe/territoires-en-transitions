@@ -25,10 +25,10 @@ export const ActionInfoDetail = ({
 
   return (
     <>
-      <p className="bg-[#433EBA] text-white font-bold fr-text--sm fr-px-3w fr-py-3v m-0">
+      <p className="bg-[#433EBA] text-white font-bold fr-text--sm fr-px-3w fr-py-3v !m-0">
         {titre}
       </p>
-      <div ref={ref} className="overflow-y-auto fr-px-3w fr-pb-2w">
+      <div ref={ref} className="overflow-y-auto fr-px-3w fr-py-2w">
         {data ? (
           <div
             className="fr-text--sm"
