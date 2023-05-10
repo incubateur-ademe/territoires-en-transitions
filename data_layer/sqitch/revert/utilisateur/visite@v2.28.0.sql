@@ -2,6 +2,6 @@
 
 BEGIN;
 
--- on n'enlève pas les enums ajoutés
+-- on ne drop pas les valeurs de l'enum
 
 COMMIT;
