@@ -77,6 +77,10 @@ const locationFromPath = (path: string): Localisation => {
     page = 'fiche';
   } else if (path.includes('/plan/')) {
     page = 'plan';
+  } else if (path.endsWith('/plans/synthese')) {
+    page = 'synthese_plans';
+  } else if (path.endsWith('/plans/fiches')) {
+    page = 'fiches_non_classees';
   } else if (path.includes('/personnalisation/')) {
     page = 'personnalisation';
     tag = 'thematique';
