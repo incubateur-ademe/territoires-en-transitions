@@ -353,3 +353,5 @@ plan_action/export [plan_action/export@v2.29.0] 2023-05-17T13:35:25Z Florian <fl
 
 plan_action/export [plan_action/export@v2.30.0] 2023-05-18T08:02:58Z Florian <florian@derfurth.com> # Change l'export pour être plus rapide
 @v2.31.0 2023-05-23T06:56:05Z Florian <florian@derfurth.com> # Permet l'export de plans d'action avec un grand nombre de fiches
+
+stats/reporting [stats/reporting@v2.28.0] 2023-05-10T15:16:17Z Florian <florian@derfurth.com> # Corrige le nombre de collectivités de la vue report_indicateur
