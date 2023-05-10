@@ -5,6 +5,7 @@ import {setRightPanelContent} from 'app/Layout/Layout';
 import {ToolbarIconToggleButton} from 'ui/shared/ToolbarIconButton';
 import ActionDiscussionsPanel from './ActionDiscussions/ActionDiscussionsPanel';
 import {ActionInfoPanel} from './ActionInfo/ActionInfoPanel';
+import {useOngletTracker} from 'core-logic/hooks/useOngletTracker';
 
 export type TActionSidePanelProps = {
   action: ActionDefinitionSummary;
@@ -81,19 +82,38 @@ export type TActionToolbarProps = {
   showDiscussion: boolean;
 };
 
+// correspondances entre les identifiants des panneaux et les identifiants de tracking
+const panelIdToTrackerId: Record<string, 'informations' | 'commentaires'> = {
+  info: 'informations',
+  'question-answer': 'commentaires',
+};
+
 /** Affiche la barre d'outils permettant d'ouvrir/fermer le panneau latéral */
 const ActionSidePanelToolbar = ({
   panelId,
   setPanelId,
   showDiscussion,
 }: TActionToolbarProps) => {
+  const tracker = useOngletTracker();
+
+  const handleClick = (value: string | false) => {
+    // ouvre/ferme un panneau
+    setPanelId(value as TPanelId);
+    const id = value && panelIdToTrackerId[value];
+
+    // enregistre quand un panneau est ouvert
+    if (id) {
+      tracker(id);
+    }
+  };
+
   return (
     <div className="flex gap-4">
       <ToolbarIconToggleButton
         icon="info"
         title="Informations"
         active={panelId}
-        onClick={(value: string | false) => setPanelId(value as TPanelId)}
+        onClick={handleClick}
       />
       {showDiscussion && (
         <ToolbarIconToggleButton
@@ -101,7 +121,7 @@ const ActionSidePanelToolbar = ({
           icon="question-answer"
           title="Commentaires"
           active={panelId}
-          onClick={(value: string | false) => setPanelId(value as TPanelId)}
+          onClick={handleClick}
         />
       )}
     </div>
