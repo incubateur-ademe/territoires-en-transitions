@@ -57,6 +57,7 @@ const OptionMenu = ({option, onDeleteClick, onUpdateTagName, close}: Props) => {
       )}
       <Modal
         size="sm"
+        zIndex={1500}
         render={({descriptionId, close}) => {
           return (
             <>
