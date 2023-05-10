@@ -90,9 +90,9 @@ export const PreuveDoc = ({
       {commentaire && !readonly && !isEditing && (
         <p
           data-test="comment"
-          className={`text-xs fr-text-mention--grey mb-1 pl-2 ${
-            classComment || ''
-          }`}
+          className={classNames('text-xs fr-text-mention--grey mb-1 pl-2', {
+            classComment,
+          })}
           onClick={(e: MouseEvent<HTMLParagraphElement>) => {
             e.preventDefault();
             editComment.enter();
