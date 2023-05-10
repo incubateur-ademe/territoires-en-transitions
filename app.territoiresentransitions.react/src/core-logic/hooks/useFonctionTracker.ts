@@ -29,7 +29,7 @@ const track = async (usage: Usage): Promise<boolean> => {
  * en reprenant la collectivite, l'utilisateur courant
  * et la page en cours de visite.
  */
-export const useTracker = (): (usage: Usage) => Promise<boolean> => {
+export const useFonctionTracker = (): ((usage: Usage) => Promise<boolean>) => {
   const collectivite_id = useCollectiviteId();
   const localisation = useLocalisation();
   const ref = useRef();
@@ -42,10 +42,8 @@ export const useTracker = (): (usage: Usage) => Promise<boolean> => {
 
     const tracker = async (usage: Usage): Promise<boolean> => {
       // on ajoute les valeurs courantes à l'usage
-      if (collectivite_id)
-        usage['collectivite_id'] = collectivite_id;
-      if (user)
-        usage['user_id'] = user.id;
+      if (collectivite_id) usage['collectivite_id'] = collectivite_id;
+      if (user) usage['user_id'] = user.id;
       usage.page = localisation.page;
 
       // on évite d'envoyer un même usage plusieurs fois de suite
@@ -68,9 +66,11 @@ export const useTracker = (): (usage: Usage) => Promise<boolean> => {
 const isEqual = (a: Usage | null, b: Usage | null) => {
   if (!a && !b) return true;
   if (!a || !b) return false;
-  return a.page === b.page
-    && a.action === b.action
-    && a.fonction === b.fonction
-    && a.collectivite_id === b.collectivite_id
-    && a.user_id === b.user_id;
+  return (
+    a.page === b.page &&
+    a.action === b.action &&
+    a.fonction === b.fonction &&
+    a.collectivite_id === b.collectivite_id &&
+    a.user_id === b.user_id
+  );
 };

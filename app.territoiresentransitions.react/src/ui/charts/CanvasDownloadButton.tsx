@@ -1,4 +1,4 @@
-import {useTracker} from "core-logic/hooks/useTracker";
+import {useFonctionTracker} from "core-logic/hooks/useFonctionTracker";
 
 export type TCanvasDownloadButtonProps = {
     fileName: string;
@@ -8,7 +8,7 @@ export type TCanvasDownloadButtonProps = {
 
 export const CanvasDownloadButton = (props: TCanvasDownloadButtonProps) => {
     const linkId = `download_${props.canvasId}`;
-    const tracker = useTracker();
+    const tracker = useFonctionTracker();
     const onClick = () => {
         const canvas = document.getElementById(
             props.canvasId

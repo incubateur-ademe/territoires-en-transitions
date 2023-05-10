@@ -17,7 +17,7 @@ import {MembreFonction} from 'generated/dataLayer/membres';
 import {collectiviteFonctionOptions} from './data';
 import CollectiviteSelectionee from './CollectiviteSelectionee';
 import Success from './Success';
-import {useTracker} from 'core-logic/hooks/useTracker';
+import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 
 /** Schéma de validation du formulaire */
 const formValidation = Yup.object({
@@ -42,7 +42,7 @@ export const RejoindreUneCollectivite = ({
   setSearch,
   getReferentContacts,
 }: RejoindreUneCollectiviteProps) => {
-  const tracker = useTracker();
+  const tracker = useFonctionTracker();
 
   /** Formate la liste des collectivités à afficher dans le select de l'auto complete */
   const listeCollectivites =

@@ -23,7 +23,7 @@ import {
   LabellisationParNiveauRead,
   useLabellisationParNiveau,
 } from './useLabellisationParNiveau';
-import {useTracker} from 'core-logic/hooks/useTracker';
+import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 import {TLabellisationParcours} from 'app/pages/collectivite/ParcoursLabellisation/types';
 import ProgressionReferentiel from '../EtatDesLieux/Synthese/ProgressionReferentiel';
 import {useProgressionReferentiel} from '../EtatDesLieux/Synthese/data/useProgressionReferentiel';
@@ -213,7 +213,7 @@ const ReferentielSection = ({
   const repartitionPhases = useRepartitionPhases(referentielId);
 
   const referentielRoot = actions.find(a => a.type === 'referentiel');
-  const tracker = useTracker();
+  const tracker = useFonctionTracker();
   if (!referentielRoot) return null;
 
   const rootScore = scores.find(
