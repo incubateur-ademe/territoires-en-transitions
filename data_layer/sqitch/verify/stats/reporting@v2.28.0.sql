@@ -13,4 +13,8 @@ select id,
 from stats.report_indicateur
 where false;
 
+select collectivite_id, titre, description, unite, commentaire, objectifs, resultats
+from stats.report_indicateur_personnalise
+where false;
+
 ROLLBACK;
