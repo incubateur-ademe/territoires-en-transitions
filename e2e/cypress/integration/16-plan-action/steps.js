@@ -86,7 +86,6 @@ defineStep(/je le nomme "([^"]*)"/, titre => {
   cy.get('[data-test=Axe]')
     .last()
     .within(() => {
-      cy.get('[data-test=EditerTitreAxeBouton]').last().click({force: true});
       cy.get('[data-test=TitreAxeInput]').type(
         '{selectall}{backspace}' + titre
       );
@@ -100,7 +99,7 @@ defineStep(/j'ajoute une fiche à "([^"]*)"/, titre => {
     .contains(titre)
     .within(() => {
       // le déplie
-      cy.root().click();
+      cy.root().parents().find('[data-test=BoutonDeplierAxe]').click();
       // et demande la création de la fiche
       cy.root()
         .parents('[data-test=Axe]')
