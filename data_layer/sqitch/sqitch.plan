@@ -363,3 +363,6 @@ automatisation/crm [automatisation/crm@v2.31.0] 2023-05-30T14:43:50Z Florian <fl
 
 stats/amplitude [stats/amplitude@v2.31.0] 2023-05-29T07:46:08Z Florian <florian@derfurth.com> # Évènement de création de compte
 @v2.33.0 2023-06-02T12:04:29Z Florian <florian@derfurth.com> # Envoie les créations de compte à Amplitude
+
+plan_action/navigation 2023-05-11T09:29:09Z Florian <florian@derfurth.com> # Axes pour la navigation
+plan_action/fiches [plan_action/fiches@v2.31.0] 2023-05-27T13:29:22Z Florian <florian@derfurth.com> # Permet de filtrer les fiches par axes
