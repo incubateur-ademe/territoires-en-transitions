@@ -4,6 +4,7 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import {ActionReferentiel} from 'app/pages/collectivite/ReferentielTable/useReferentiel';
 import {TActionStatutsRow} from 'types/alias';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import {Referentiel} from 'types/litterals';
 
 export type SuiviScoreRow = ActionReferentiel &
   Pick<
@@ -40,7 +41,10 @@ export const useScoreRealise = (action: ActionDefinitionSummary) => {
 
   // Chargement des données
   const {data} = useQuery(
-    ['suivi_score_realise', collectiviteId, action.referentiel, action.depth],
+    [
+      ...getScoreRealiseQueryKey(collectiviteId, action.referentiel),
+      action.depth,
+    ],
     () => fetchScore(collectiviteId, action.referentiel, action.depth)
   );
 
@@ -51,3 +55,8 @@ export const useScoreRealise = (action: ActionDefinitionSummary) => {
     pointsMax: filteredData[0]?.points_max_personnalises ?? null,
   };
 };
+
+export const getScoreRealiseQueryKey = (
+  collectiviteId: number | null,
+  referentiel: Referentiel
+) => ['suivi_score_realise', collectiviteId, referentiel];

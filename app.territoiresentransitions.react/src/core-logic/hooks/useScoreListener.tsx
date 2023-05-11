@@ -3,6 +3,7 @@ import {useQueryClient} from 'react-query';
 import {RealtimeChannel} from '@supabase/supabase-js';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {getScoreQueryKey} from 'core-logic/hooks/scoreHooks';
+import {getScoreRealiseQueryKey} from 'app/pages/collectivite/EtatDesLieux/Referentiel/data/useScoreRealise';
 
 type TScoreListenerContext = {
   subscribe: (collectiviteId: number | null) => void;
@@ -15,7 +16,7 @@ type TContextData = {
 
 // crée le contexte
 export const ScoreListenerContext = createContext<TScoreListenerContext | null>(
-  null,
+  null
 );
 
 const shouldSubscribe = (contextData: TContextData, collectiviteId: number) => {
@@ -41,7 +42,7 @@ const shouldSubscribe = (contextData: TContextData, collectiviteId: number) => {
 export const useScoreListener = () => useContext(ScoreListenerContext);
 
 // le fournisseur de contexte
-export const ScoreListenerProvider = ({children}: { children: ReactNode }) => {
+export const ScoreListenerProvider = ({children}: {children: ReactNode}) => {
   const contextDataRef = useRef<TContextData>(null);
 
   const queryClient = useQueryClient();
@@ -59,15 +60,19 @@ export const ScoreListenerProvider = ({children}: { children: ReactNode }) => {
         // celle de prod les clefs new/old.
         const row = payload.new || payload.record;
         const {collectivite_id, referentiel} = row;
-        const key = getScoreQueryKey(collectivite_id, referentiel);
-        return queryClient.invalidateQueries(key);
+        const keys = [
+          getScoreQueryKey(collectivite_id, referentiel),
+          getScoreRealiseQueryKey(collectivite_id, referentiel),
+        ];
+        return Promise.all(keys.map(key => queryClient.invalidateQueries(key)));
       };
 
       // Souscrit aux changements de `client_scores_update` pour la collectivité.
       const table = {schema: 'public', table: 'client_scores_update'};
-      const subscription = supabaseClient.channel(
-        `public:client_scores_update:collectivite_id=eq.${collectiviteId}`, // ,referentiel=eq.${referentiel}
-      )
+      const subscription = supabaseClient
+        .channel(
+          `public:client_scores_update:collectivite_id=eq.${collectiviteId}` // ,referentiel=eq.${referentiel}
+        )
         .on('postgres_changes', {event: 'INSERT', ...table}, invalidate)
         .on('postgres_changes', {event: 'UPDATE', ...table}, invalidate)
         .subscribe();
