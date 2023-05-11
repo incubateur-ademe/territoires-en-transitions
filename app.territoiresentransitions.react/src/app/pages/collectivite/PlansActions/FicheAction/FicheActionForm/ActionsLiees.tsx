@@ -67,6 +67,7 @@ const ActionsLiees = ({actions, onSelect, isReadonly}: Props) => {
           {actionsLiees.map(action => (
             <ActionCard
               key={action.action_id}
+              openInNewTab
               link={makeCollectiviteTacheUrl({
                 collectiviteId: collectiviteId,
                 actionId: action.action_id,

@@ -1,19 +1,32 @@
+import classNames from 'classnames';
 import {NavLink} from 'react-router-dom';
 
 type TActionCard = {
+  openInNewTab?: boolean;
   link: string;
   statutBadge?: JSX.Element | null;
   details?: string | null;
   title: string;
 };
 
-const ActionCard = ({link, statutBadge, details, title}: TActionCard) => {
+const ActionCard = ({
+  openInNewTab,
+  link,
+  statutBadge,
+  details,
+  title,
+}: TActionCard) => {
   return (
     <div
       data-test="ActionCarte"
       className="border border-gray-200 hover:bg-grey975"
     >
-      <NavLink to={link}>
+      <NavLink
+        to={link}
+        target={openInNewTab ? '_blank' : undefined}
+        rel={openInNewTab ? 'noopener noreferrer' : undefined}
+        className={classNames({'after:!hidden': openInNewTab})}
+      >
         <div className="flex flex-col h-full p-6">
           {statutBadge && <div className="mb-4">{statutBadge}</div>}
           <div className="-mt-2 mb-3 text-xs text-gray-500">{details}</div>
