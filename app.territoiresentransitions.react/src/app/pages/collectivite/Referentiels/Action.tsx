@@ -1,18 +1,14 @@
+import {useState} from 'react';
 import {Link, useHistory} from 'react-router-dom';
 import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
-import {useState} from 'react';
 import {addTargetToContentAnchors} from 'utils/content';
 import {Tabs, Tab} from 'ui/shared/Tabs';
-import {ActionReferentielDisplayTitle} from 'ui/referentiels/ActionReferentielDisplayTitle';
-import {Spacer} from 'ui/shared/Spacer';
 import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
-import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
 import {ActionReferentielAvancementRecursiveCard} from 'ui/referentiels/ActionReferentielAvancementRecursiveCard';
 import {Switch} from '@material-ui/core';
 import {useActionSummaryChildren} from 'core-logic/hooks/referentiel';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {OrientationQuickNav} from 'app/pages/collectivite/Referentiels/QuickNav';
-import {PersoPotentiel} from '../PersoPotentielModal/PersoPotentiel';
 import {useActionScore} from 'core-logic/hooks/scoreHooks';
 import {
   ActionVueParamOption,
@@ -22,7 +18,7 @@ import {
 import {useActionVue, useReferentielId} from 'core-logic/hooks/params';
 import HistoriqueListe from 'app/pages/collectivite/Historique/HistoriqueListe';
 import ScrollTopButton from 'ui/shared/ScrollTopButton';
-import ActionNav from './ActionNav';
+import {ActionBottomNav} from './ActionNav';
 import ActionPreuvePanel from 'ui/shared/actions/ActionPreuvePanel/ActionPreuvePanel';
 import {DownloadDocs} from './DownloadDocs';
 import ActionAuditStatut from '../Audit/ActionAuditStatut';
@@ -30,7 +26,8 @@ import {ActionAuditDetail} from '../Audit/ActionAuditDetail';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {useActionLinkedIndicateurDefinitions} from './useActionLinkedIndicateurDefinitions';
 import Alerte from 'ui/shared/Alerte';
-import {ActionSidePanel} from './ActionSidePanel';
+import {usePrevAndNextActionLinks} from './usePrevAndNextActionLinks';
+import {ActionHeader} from './ActionHeader';
 
 // index des onglets de la page Action
 const TABS_INDEX: Record<ActionVueParamOption, number> = {
@@ -57,6 +54,7 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
   const collectivite = useCurrentCollectivite();
   const collectiviteId = collectivite?.collectivite_id;
   const referentielId = useReferentielId() as ReferentielParamOption;
+  const {prevActionLink, nextActionLink} = usePrevAndNextActionLinks(action.id);
 
   const actionLinkedIndicateurDefinitions =
     useActionLinkedIndicateurDefinitions(action?.id);
@@ -98,109 +96,97 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
   }
 
   return (
-    <div className="fr-container" data-test={`Action-${action.identifiant}`}>
-      <div className="flex justify-between items-center fr-py-2w">
+    <>
+      <ActionHeader
+        action={action}
+        nextActionLink={nextActionLink}
+        prevActionLink={prevActionLink}
+      />
+      <main className="fr-container" data-test={`Action-${action.identifiant}`}>
         <OrientationQuickNav action={action} />
-        <ActionSidePanel action={action} />
-      </div>
-      <div className="sticky top-0 z-40 flex flex-row justify-between bg-white pr-8 py-4">
-        <div className="flex flex-col w-4/5">
-          <ActionReferentielDisplayTitle action={action} />
-        </div>
-        <div className="w-1/6">
-          <ActionProgressBar actionId={action.id} />
-        </div>
-      </div>
-      <ActionAuditStatut action={action} />
-      <div className="mt-4">
+        <ActionAuditStatut action={action} />
         <ActionAuditDetail action={action} />
-      </div>
-      <div className="flex flex-col w-4/5">
-        {action.have_questions && (
-          <>
-            <Spacer size={2} />
-            <PersoPotentiel actionDef={action} />
-          </>
-        )}
-      </div>
-      <Alerte state="information" classname="fr-my-3w">
-        <div
-          className="htmlContent"
-          dangerouslySetInnerHTML={{
-            __html: addTargetToContentAnchors(action.description ?? ''),
-          }}
-        />
-      </Alerte>
-
-      <Tabs defaultActiveTab={activeTab} onChange={handleChange}>
-        <Tab label="Suivi de l'action" icon="seedling">
-          <section>
-            <ActionCommentaire action={action} />
-
-            <h4 className="text-xl fr-mt-4w">
-              Détail des sous-actions et des tâches
-            </h4>
-            <div className="flex items-center fr-text--sm fr-m-0">
-              Afficher uniquement les actions non-renseignées
-              <Switch
-                color="primary"
-                checked={showOnlyActionWithData}
-                inputProps={{'aria-label': 'controlled'}}
-                onChange={() => {
-                  setShowOnlyActionWithData(!showOnlyActionWithData);
-                }}
-              />
-            </div>
-            {children.map(action => (
-              <ActionAvancement
-                action={action}
-                key={action.id}
-                showOnlyActionWithData={showOnlyActionWithData}
-              />
-            ))}
-          </section>
-        </Tab>
-        <Tab label="Preuves" icon="file">
-          {activeTab === TABS_INDEX['preuves'] ? (
+        <Alerte state="information" classname="fr-my-5v">
+          <div
+            className="htmlContent"
+            dangerouslySetInnerHTML={{
+              __html: addTargetToContentAnchors(action.description ?? ''),
+            }}
+          />
+        </Alerte>
+        <Tabs defaultActiveTab={activeTab} onChange={handleChange}>
+          <Tab label="Suivi de l'action" icon="seedling">
             <section>
-              <ActionPreuvePanel withSubActions showWarning action={action} />
-              <DownloadDocs action={action} />
-            </section>
-          ) : (
-            '...'
-          )}
-        </Tab>
-        <Tab label="Indicateurs" icon="line-chart">
-          {activeTab === TABS_INDEX['indicateurs'] && !noIndicateursTab ? (
-            <section>
-              {actionLinkedIndicateurDefinitions.length === 0 && (
-                <p>Cette action ne comporte pas d'indicateur</p>
-              )}
+              <ActionCommentaire action={action} />
 
-              {actionLinkedIndicateurDefinitions.map(definition => (
-                <IndicateurReferentielCard
-                  key={definition.id}
-                  definition={definition}
+              <h4 className="text-xl fr-mt-4w">
+                Détail des sous-actions et des tâches
+              </h4>
+              <div className="flex items-center fr-text--sm fr-m-0">
+                Afficher uniquement les actions non-renseignées
+                <Switch
+                  color="primary"
+                  checked={showOnlyActionWithData}
+                  inputProps={{'aria-label': 'controlled'}}
+                  onChange={() => {
+                    setShowOnlyActionWithData(!showOnlyActionWithData);
+                  }}
+                />
+              </div>
+              {children.map(action => (
+                <ActionAvancement
+                  action={action}
+                  key={action.id}
+                  showOnlyActionWithData={showOnlyActionWithData}
                 />
               ))}
             </section>
-          ) : (
-            '...'
-          )}
-        </Tab>
-        <Tab label="Historique" icon="history">
-          {activeTab === TABS_INDEX['historique'] ? (
-            <HistoriqueListe actionId={action.id} />
-          ) : (
-            '...'
-          )}
-        </Tab>
-      </Tabs>
-      <ActionNav actionId={action.id} />
-      <div className="mt-8">
-        <ScrollTopButton />
-      </div>
-    </div>
+          </Tab>
+          <Tab label="Preuves" icon="file">
+            {activeTab === TABS_INDEX['preuves'] ? (
+              <section>
+                <ActionPreuvePanel withSubActions showWarning action={action} />
+                <DownloadDocs action={action} />
+              </section>
+            ) : (
+              '...'
+            )}
+          </Tab>
+          <Tab label="Indicateurs" icon="line-chart">
+            {activeTab === TABS_INDEX['indicateurs'] && !noIndicateursTab ? (
+              <section>
+                {actionLinkedIndicateurDefinitions.length === 0 && (
+                  <p>Cette action ne comporte pas d'indicateur</p>
+                )}
+
+                {actionLinkedIndicateurDefinitions.map(definition => (
+                  <IndicateurReferentielCard
+                    key={definition.id}
+                    definition={definition}
+                  />
+                ))}
+              </section>
+            ) : (
+              '...'
+            )}
+          </Tab>
+          <Tab label="Historique" icon="history">
+            {activeTab === TABS_INDEX['historique'] ? (
+              <HistoriqueListe actionId={action.id} />
+            ) : (
+              '...'
+            )}
+          </Tab>
+        </Tabs>
+        <ActionBottomNav
+          prevActionLink={prevActionLink}
+          nextActionLink={nextActionLink}
+        />
+        <div className="mt-8">
+          <ScrollTopButton />
+        </div>
+      </main>
+    </>
   );
 };
 
