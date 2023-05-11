@@ -73,19 +73,21 @@ const PlanActionAxe = ({
 
   return (
     <div data-test="Axe">
-      <div className="group relative flex items-center py-3 pr-4 pl-2 w-full !bg-white">
-        <div className="flex mr-3 group-hover:outline group-hover:outline-gray-100">
-          <button
-            data-test="BoutonDeplierAxe"
-            className="p-0.5"
-            onClick={() => setIsOpen(!isOpen)}
-          >
-            <IconArrowSFill
-              className={classNames({
-                '-rotate-90': !isOpen,
-              })}
-            />
-          </button>
+      <div className="group relative flex items-start py-3 pr-4 pl-2 w-full !bg-white">
+        <div className="-mt-0.5 pt-2">
+          <div className="flex mr-3 group-hover:outline group-hover:outline-gray-100">
+            <button
+              data-test="BoutonDeplierAxe"
+              className="p-0.5"
+              onClick={() => setIsOpen(!isOpen)}
+            >
+              <IconArrowSFill
+                className={classNames({
+                  '-rotate-90': !isOpen,
+                })}
+              />
+            </button>
+          </div>
         </div>
         <TextareaControlled
           data-test="TitreAxeInput"
@@ -104,11 +106,13 @@ const PlanActionAxe = ({
         />
         {!isReadonly && (
           <SupprimerAxeModal axe={axe} plan={planActionGlobal}>
-            <button
-              data-test="SupprimerAxeBouton"
-              className="invisible group-hover:visible fr-btn fr-btn--tertiary fr-btn--sm fr-fi-delete-line"
-              title="Supprimer ce titre"
-            />
+            <div className="-mt-1 pt-2">
+              <button
+                data-test="SupprimerAxeBouton"
+                className="invisible group-hover:visible fr-btn fr-btn--tertiary fr-btn--sm fr-fi-delete-line"
+                title="Supprimer ce titre"
+              />
+            </div>
           </SupprimerAxeModal>
         )}
       </div>
