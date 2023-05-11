@@ -48,7 +48,7 @@ export const Default = () => {
       }}
       onSelect={v => setValues(v)}
       userCreatedTagIds={userGeneratedOptions}
-      placeholderText="Sélectionner une ou plusieurs options..."
+      placeholderText="Sélectionner une ou plusieurs options"
     />
   );
 };

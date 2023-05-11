@@ -159,7 +159,7 @@ const SelectCreateTagsButton = forwardRef(
       options,
       userCreatedTagIds,
       buttonClassName,
-      placeholderText,
+      placeholderText = 'Sélectionnez ou créez un tag',
       'data-test': dataTest,
       inputValue,
       onInputChange,
@@ -229,7 +229,9 @@ const SelectCreateTagsButton = forwardRef(
                 ref={inputRef}
                 className={`grow placeholder:text-grey425`}
                 value={inputValue}
-                placeholder={placeholderText}
+                placeholder={
+                  sortedValues.length === 0 ? placeholderText : undefined
+                }
                 onChange={e => onInputChange(e.target.value)}
               />
             )}
