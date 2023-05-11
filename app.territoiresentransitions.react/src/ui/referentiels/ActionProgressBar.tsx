@@ -7,8 +7,14 @@ import {TweenText} from 'ui/shared/TweenText';
 import {TActionAvancementExt} from 'types/alias';
 import {avancementToLabel} from 'app/labels';
 
-export const ActionProgressBar = ({score}: {score: ActionScore | null}) => {
-  if (score === null) return null;
+export const ActionProgressBar = ({
+  score,
+  className,
+}: {
+  score: ActionScore | null;
+  className?: string;
+}) => {
+  if (score === null || score.point_potentiel < 1e-3) return null;
 
   return (
     <Tooltip
@@ -18,7 +24,7 @@ export const ActionProgressBar = ({score}: {score: ActionScore | null}) => {
         </div>
       }
     >
-      <div data-test={`score-${score.action_id}`}>
+      <div data-test={`score-${score.action_id}`} className={className}>
         <ColoredBar score={score} />
       </div>
     </Tooltip>
@@ -26,7 +32,6 @@ export const ActionProgressBar = ({score}: {score: ActionScore | null}) => {
 };
 
 const ColoredBar = ({score}: {score: ActionScore}) => {
-  if (score.point_potentiel < 1e-3) return null;
   const percentageAgainstPotentiel = (x: number): number =>
     (100 * x) / score.point_potentiel;
   const fait_width = percentageAgainstPotentiel(score.point_fait);
@@ -157,9 +162,15 @@ const ProgressBarTooltipContent = ({score}: {score: ActionScore}) => {
   );
 };
 
-const ActionProgressBarConnected = ({actionId}: {actionId: string}) => {
+const ActionProgressBarConnected = ({
+  actionId,
+  className,
+}: {
+  actionId: string;
+  className?: string;
+}) => {
   const score = useActionScore(actionId);
-  return <ActionProgressBar score={score} />;
+  return <ActionProgressBar score={score} className={className} />;
 };
 
 export default ActionProgressBarConnected;
