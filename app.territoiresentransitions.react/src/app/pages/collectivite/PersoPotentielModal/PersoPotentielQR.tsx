@@ -13,6 +13,7 @@ import {PointsPotentiels} from './PointsPotentiels';
 import {reponseParType} from './Reponse';
 import {TReponse} from 'generated/dataLayer/reponse_read';
 import {Accordion} from 'ui/Accordion';
+import {YellowHighlight} from 'ui/Highlight';
 
 export type TPersoPotentielQRProps = {
   /** Définition de l'action */
@@ -34,7 +35,9 @@ export const PersoPotentielQR = (props: TPersoPotentielQRProps) => {
 
   return (
     <div data-test="PersoPotentielQR">
-      <PointsPotentiels {...props} />
+      <YellowHighlight>
+        <PointsPotentiels {...props} />
+      </YellowHighlight>
       <h6 className="mt-8 mb-0">
         {questionReponses?.length > 1
           ? 'Caractéristiques liées'
