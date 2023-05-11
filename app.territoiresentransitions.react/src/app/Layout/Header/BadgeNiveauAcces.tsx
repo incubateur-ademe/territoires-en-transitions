@@ -1,8 +1,8 @@
 import classNames from 'classnames';
-import {NiveauAcces} from 'generated/dataLayer';
+import {TNiveauAcces} from 'types/alias';
 
 type Props = {
-  acces: NiveauAcces | null;
+  acces: TNiveauAcces | null;
   isAuditeur?: boolean;
   className?: string;
 };

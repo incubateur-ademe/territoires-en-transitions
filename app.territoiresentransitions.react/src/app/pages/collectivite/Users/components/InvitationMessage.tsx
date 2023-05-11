@@ -3,7 +3,7 @@ import DOMPurify from 'dompurify';
 import useCopyToClipboard from 'ui/shared/useCopyToClipboard';
 import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {UserData} from 'core-logic/api/auth/AuthProvider';
-import {NiveauAcces} from 'generated/dataLayer';
+import {TNiveauAcces} from 'types/alias';
 
 // durée (en ms) pendant laquelle le message "copié !" est affiché sur la page
 // après un clic sur le bouton "Copier"
@@ -15,7 +15,7 @@ type TInvitationMessageProps = {
   /** L'utilisateur qui envoie l'invitation */
   currentUser: UserData;
   /** Niveau d'acces pour l'invitation */
-  acces: NiveauAcces;
+  acces: TNiveauAcces;
   /** URL de l'invitation */
   invitationUrl: string;
 };

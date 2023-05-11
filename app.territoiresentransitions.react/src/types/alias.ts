@@ -98,3 +98,5 @@ export type TDepartement = NonNullableFields<
   Database['public']['Views']['departement']['Row']
 >;
 
+export type TNiveauAcces = Database['public']['Enums']['niveau_acces'];
+

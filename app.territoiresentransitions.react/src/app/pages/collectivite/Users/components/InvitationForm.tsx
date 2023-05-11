@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 import {UserData} from 'core-logic/api/auth/AuthProvider';
 import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import InvitationMessage from 'app/pages/collectivite/Users/components/InvitationMessage';
-import {NiveauAcces} from 'generated/dataLayer';
+import {TNiveauAcces} from 'types/alias';
 import {
   AddUserToCollectiviteRequest,
   AddUserToCollectiviteResponse,
@@ -13,11 +13,11 @@ import FormikInput from 'ui/shared/form/formik/FormikInput';
 import FormikSelect from 'ui/shared/form/formik/FormikSelect';
 
 type AccesOption = {
-  value: NiveauAcces;
+  value: TNiveauAcces;
   label: string;
 };
 
-type FormProps = {email: string; acces: '' | NiveauAcces};
+type FormProps = {email: string; acces: '' | TNiveauAcces};
 
 type InvitationFormProps = {
   currentUser: UserData;
@@ -64,7 +64,7 @@ const InvitationForm = ({
 
   const [formIsFilling, setFormIsFilling] = useState(true);
   const [accesInvitationForm, setAccesInvitationForm] = useState<
-    NiveauAcces | undefined
+    TNiveauAcces | undefined
   >(undefined);
 
   const handleClearForm = () => {
@@ -145,7 +145,7 @@ const AddUserResponse = ({
   currentCollectivite: CurrentCollectivite;
   currentUser: UserData;
   handleClearForm: () => void;
-  acces: NiveauAcces;
+  acces: TNiveauAcces;
 }) => {
   if (addUserResponse?.invitationUrl) {
     return (

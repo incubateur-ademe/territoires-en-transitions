@@ -1,4 +1,4 @@
-import {NiveauAcces} from 'generated/dataLayer';
+import {TNiveauAcces} from 'types/alias';
 import {Membre, TRemoveFromCollectivite, TUpdateMembre} from '../types';
 import MembreListTableRow from './MembreListTableRow';
 
@@ -6,7 +6,7 @@ const thClassNames = 'py-3 px-5 whitespace-nowrap';
 
 export type MembreListTableProps = {
   currentUserId: string;
-  currentUserAccess: NiveauAcces;
+  currentUserAccess: TNiveauAcces;
   membres?: Membre[];
   isLoading: boolean;
   updateMembre: TUpdateMembre;
