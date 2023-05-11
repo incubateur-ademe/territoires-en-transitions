@@ -1,7 +1,12 @@
 import {useQuery} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {TQuestionThematiqueCompletudeRead} from 'generated/dataLayer/question_thematique_completude_read';
 import {Referentiel} from 'types/litterals';
+import {NonNullableFields} from 'types/utils';
+import {Database} from 'types/database.types';
+
+export type TQuestionThematiqueCompletudeRead = NonNullableFields<
+  Database['public']['Views']['question_thematique_completude']['Row']
+>;
 
 type TUseQuestionThematiqueCompletude = (
   collectivite_id: number | undefined,
