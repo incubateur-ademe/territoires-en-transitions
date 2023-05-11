@@ -60,21 +60,22 @@ const actionsToMenuItems = (
 export const OrientationQuickNav = (props: {
   action: ActionDefinitionSummary;
 }) => {
+  const {action} = props;
   const collectiviteId = useCollectiviteId()!;
   const titles = useActionTitleList('all');
 
-  if (titles.length === 0) return <></>;
+  if (titles.length === 0) return null;
 
-  const parents = searchAncestors(props.action, titles);
+  const parents = searchAncestors(action, titles);
   const parent = parents[parents.length - 1];
   const grandParents = parents.slice(1, parents.length - 1);
   return (
-    <nav className="flex flex-row text-sm items-start">
+    <nav className="flex flex-row text-sm text-grey425 items-start">
       <div className="flex flex-row flex-nowrap">
         <Link
           to={makeCollectiviteReferentielUrl({
-            collectiviteId: collectiviteId,
-            referentielId: props.action.referentiel,
+            collectiviteId,
+            referentielId: action.referentiel,
           })}
         >
           {displayName(parents[0])}
