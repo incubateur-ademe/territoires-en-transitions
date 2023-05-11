@@ -11,7 +11,7 @@ import {MultiSelectDropdown} from 'app/pages/ToutesLesCollectivites/components/M
 import {SelectDropdown} from 'app/pages/ToutesLesCollectivites/components/SelectDropdown';
 
 import {RegionRead} from 'generated/dataLayer/region_read';
-import {DepartementRead} from 'generated/dataLayer/departement_read';
+import {TDepartement} from 'types/alias';
 
 export const TypeCollectiviteFiltre = (props: {
   selected: string[];
@@ -105,7 +105,7 @@ export const RegionFiltre = (props: {
 
 export const DepartementFiltre = (props: {
   regionCodes: string[];
-  departements: DepartementRead[];
+  departements: TDepartement[];
   selected: string[];
   onChange: (selected: string[]) => void;
 }) => {

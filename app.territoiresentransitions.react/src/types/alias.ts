@@ -94,3 +94,7 @@ export type TNomCollectivite = NonNullableFields<
   Database['public']['Views']['named_collectivite']['Row']
 >;
 
+export type TDepartement = NonNullableFields<
+  Database['public']['Views']['departement']['Row']
+>;
+

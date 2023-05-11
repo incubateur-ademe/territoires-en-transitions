@@ -9,7 +9,7 @@ import {
   fetchAllRegions,
   fetchCollectiviteCards,
 } from 'app/pages/ToutesLesCollectivites/queries';
-import {DepartementRead} from 'generated/dataLayer/departement_read';
+import {TDepartement} from 'types/alias';
 import type {TCollectivitesFilters} from 'app/pages/ToutesLesCollectivites/filtreLibelles';
 
 /**
@@ -32,7 +32,7 @@ export const useRegions = (): {
  */
 export const useDepartements = (): {
   isLoading: boolean;
-  departements: DepartementRead[];
+  departements: TDepartement[];
 } => {
   const {data, isLoading} = useQuery(['departement'], () =>
     fetchAllDepartements()
@@ -40,7 +40,7 @@ export const useDepartements = (): {
 
   return {
     isLoading: isLoading,
-    departements: (data as DepartementRead[]) || [],
+    departements: (data as TDepartement[]) || [],
   };
 };
 

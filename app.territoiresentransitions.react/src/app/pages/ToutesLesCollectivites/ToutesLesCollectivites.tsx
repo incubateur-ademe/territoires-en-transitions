@@ -12,7 +12,7 @@ import {FiltresColonne} from 'app/pages/ToutesLesCollectivites/components/Filtre
 import {CollectiviteCarteRead} from 'generated/dataLayer/collectivite_carte_read';
 import {TrierParFiltre} from 'app/pages/ToutesLesCollectivites/components/Filtres';
 import {RegionRead} from 'generated/dataLayer/region_read';
-import {DepartementRead} from 'generated/dataLayer/departement_read';
+import {TDepartement} from 'types/alias';
 import {Pagination} from 'app/pages/ToutesLesCollectivites/components/Pagination';
 import {NB_CARDS_PER_PAGE} from 'app/pages/ToutesLesCollectivites/queries';
 import {getNumberOfActiveFilters} from 'app/pages/ToutesLesCollectivites/getNumberOfActiveFilters';
@@ -24,7 +24,7 @@ import {DesactiverLesFiltres} from 'ui/shared/filters/DesactiverLesFiltres';
 
 export type TRenderToutesCollectivitesProps = {
   regions: RegionRead[];
-  departements: DepartementRead[];
+  departements: TDepartement[];
   collectivites: CollectiviteCarteRead[];
   collectivitesCount: number;
   filters: TCollectivitesFilters;

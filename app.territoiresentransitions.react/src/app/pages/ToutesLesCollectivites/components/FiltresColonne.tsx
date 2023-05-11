@@ -9,14 +9,14 @@ import {
 } from 'app/pages/ToutesLesCollectivites/components/Filtres';
 import type {TCollectivitesFilters} from 'app/pages/ToutesLesCollectivites/filtreLibelles';
 import {RegionRead} from 'generated/dataLayer/region_read';
-import {DepartementRead} from 'generated/dataLayer/departement_read';
+import {TDepartement} from 'types/alias';
 import {InputSearch} from 'ui/UiSearchBar';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 
 type UpdateFilters = (newFilters: TCollectivitesFilters) => void;
 
 export const FiltresColonne = (props: {
-  departments: DepartementRead[];
+  departments: TDepartement[];
   regions: RegionRead[];
   filters: TCollectivitesFilters;
   setFilters: UpdateFilters;
