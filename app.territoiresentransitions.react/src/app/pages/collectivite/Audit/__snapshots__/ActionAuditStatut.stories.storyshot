@@ -2,7 +2,7 @@
 
 exports[`Storyshots app/pages/collectivite/Audit/ActionAuditStatut Audite 1`] = `
 <div
-  className="px-2 w-full bg-[#e8edff]"
+  className="fr-px-1w fr-mt-2w w-full bg-[#e8edff]"
 >
   <div
     className="w-52"
@@ -37,7 +37,7 @@ exports[`Storyshots app/pages/collectivite/Audit/ActionAuditStatut Audite 1`] = 
 
 exports[`Storyshots app/pages/collectivite/Audit/ActionAuditStatut En Cours 1`] = `
 <div
-  className="px-2 w-full bg-[#e8edff]"
+  className="fr-px-1w fr-mt-2w w-full bg-[#e8edff]"
 >
   <div
     className="w-52"
@@ -72,7 +72,7 @@ exports[`Storyshots app/pages/collectivite/Audit/ActionAuditStatut En Cours 1`] 
 
 exports[`Storyshots app/pages/collectivite/Audit/ActionAuditStatut Non Audite 1`] = `
 <div
-  className="px-2 w-full bg-[#e8edff]"
+  className="fr-px-1w fr-mt-2w w-full bg-[#e8edff]"
 >
   <div
     className="w-52"
@@ -107,10 +107,10 @@ exports[`Storyshots app/pages/collectivite/Audit/ActionAuditStatut Non Audite 1`
 
 exports[`Storyshots app/pages/collectivite/Audit/ActionAuditStatut Read Only 1`] = `
 <div
-  className="px-2 w-full bg-[#e8edff]"
+  className="fr-px-1w fr-mt-2w w-full bg-[#e8edff]"
 >
   <div
-    className="py-2"
+    className="fr-py-1w"
     data-test="action-audit-statut-ro"
   >
     <p
