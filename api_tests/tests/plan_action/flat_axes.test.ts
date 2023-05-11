@@ -14,21 +14,20 @@ type flatAxe = {
 type planNode = flatAxe & { children: planNode[] };
 
 /**
- * Convertit une liste d'axes en arbre.
+ * Convertit une liste d'axes ordonnancée en une liste de plans.
  */
-function buildPlan(axes: flatAxe[]): planNode {
-  let plan = { ...axes[0]!, children: [] };
+function buildPlans(axes: flatAxe[]): planNode[] {
+  let plans: planNode[] = [];
   let nodes = {} as { [key: number]: planNode };
-  nodes[plan.id] = plan;
 
-  if (axes.length > 1) {
-    for (let i = 1; i < axes.length; i++) {
-      let axe: planNode = { ...axes[i], children: [] };
-      nodes[axe.id] = axe;
-      nodes[axe.ancestors[axe.ancestors.length - 1]].children.push(axe);
-    }
+  for (let i = 0; i < axes.length; i++) {
+    let axe: planNode = { ...axes[i], children: [] };
+    nodes[axe.id] = axe;
+    if (axe.depth == 0) plans.push(axe);
+    else nodes[axe.ancestors[axe.ancestors.length - 1]].children.push(axe);
   }
-  return plan;
+
+  return plans;
 }
 
 Deno.test("RPC flat_axes", async () => {
@@ -40,7 +39,7 @@ Deno.test("RPC flat_axes", async () => {
   });
   assertExists(rpcResponse.data);
   const axes = rpcResponse.data as unknown as flatAxe[];
-  const plan = buildPlan(axes);
+  const plan = buildPlans(axes);
 
   console.log(JSON.stringify(plan, null, 2));
 
@@ -48,6 +47,22 @@ Deno.test("RPC flat_axes", async () => {
   // - map sur les axes et leurs `children`
   // - si fiches n'est pas vide, on récupère les fiches :
   //   supabase.from('fiche_resume').select().in('id', axe.fiches);
+
+  await signOut();
+});
+
+Deno.test("RPC navigation_plans", async () => {
+  await testReset();
+  await signIn("yolododo");
+
+  const rpcResponse = await supabase.rpc("navigation_plans", {
+    collectivite_id: 1,
+  });
+  assertExists(rpcResponse.data);
+  const axes = rpcResponse.data as unknown as flatAxe[];
+  const plans = buildPlans(axes);
+
+  console.log(JSON.stringify(plans, null, 2));
 
   await signOut();
 });
