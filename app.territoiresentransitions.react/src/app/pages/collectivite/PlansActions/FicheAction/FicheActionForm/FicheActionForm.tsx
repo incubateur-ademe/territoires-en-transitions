@@ -6,7 +6,6 @@ import PictoInformation from 'ui/pictogrammes/PictoInformation';
 import Checkbox from 'ui/shared/form/Checkbox';
 import FormField from 'ui/shared/form/FormField';
 import TextareaControlled from 'ui/shared/form/TextareaControlled';
-import MultiSelectDropdown from 'ui/shared/select/MultiSelectDropdown';
 import MultiSelectTagsDropdown from 'ui/shared/select/MultiSelectTagsDropdown';
 import SelectDropdown from 'ui/shared/select/SelectDropdown';
 import {
@@ -132,7 +131,7 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
           isReadonly={isReadonly}
         />
         <FormField label="Résultats attendus">
-          <MultiSelectDropdown
+          <MultiSelectTagsDropdown
             buttonClassName={DSFRbuttonClassname}
             values={fiche.resultats_attendus ?? []}
             options={ficheActionResultatsAttendusOptions}
