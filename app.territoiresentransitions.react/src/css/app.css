@@ -121,3 +121,9 @@ input,
 textarea {
   outline-width: 0px !important;
 }
+
+/** rend transparent le fond des liens au moment du clic (le dsfr applique la
+ * teinte --active qui ne passe pas bien sur certains fonds de couleur) */
+a.active-transparent {
+  --active-tint: transparent;
+}
