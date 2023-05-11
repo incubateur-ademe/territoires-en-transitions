@@ -26,7 +26,7 @@ export const ActionAuditDetailBase = (props: TActionAuditDetailBaseProps) => {
   const [avis, setAvis] = useState(avisInitial);
 
   return (
-    <>
+    <div className="fr-mt-2w">
       <FormField
         label="Notes de l’auditeur, auditrice"
         hint="Remarques sur l’action, questions pour la séance d’audit"
@@ -58,7 +58,7 @@ export const ActionAuditDetailBase = (props: TActionAuditDetailBaseProps) => {
           Ajouter cette action à l’ordre du jour de la séance d’audit
         </label>
       </div>
-    </>
+    </div>
   );
 };
 
