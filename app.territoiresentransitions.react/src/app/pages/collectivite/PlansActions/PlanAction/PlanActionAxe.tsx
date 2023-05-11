@@ -106,7 +106,7 @@ const PlanActionAxe = ({
         />
         {!isReadonly && (
           <SupprimerAxeModal axe={axe} plan={planActionGlobal}>
-            <div className="-mt-1 pt-2">
+            <div className="ml-3 -mt-1 pt-2">
               <button
                 data-test="SupprimerAxeBouton"
                 className="invisible group-hover:visible fr-btn fr-btn--tertiary fr-btn--sm fr-fi-delete-line"

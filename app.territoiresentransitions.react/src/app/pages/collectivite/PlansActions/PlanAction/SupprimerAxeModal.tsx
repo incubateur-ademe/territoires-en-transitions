@@ -5,6 +5,7 @@ import {checkAxeHasFiche, getAxeinPlan} from './data/utils';
 
 type Props = {
   children: JSX.Element;
+  isPlan?: boolean;
   plan: PlanNode;
   axe: FlatAxe;
   redirectURL?: string;
@@ -14,16 +15,21 @@ type Props = {
  * Modale pour supprimer un axe.
  * Utilisée pour supprimer aussi bien un plan qu'un sous-axe
  */
-const SupprimerAxeModal = ({children, plan, axe, redirectURL}: Props) => {
+const SupprimerAxeModal = ({
+  children,
+  isPlan,
+  plan,
+  axe,
+  redirectURL,
+}: Props) => {
   const {mutate: deletePlan} = useDeleteAxe(axe.id, plan.id, redirectURL);
-
-  const isPlan = axe.ancestors && axe.ancestors.length !== 0;
 
   return (
     <Modal
+      noCloseButton
       render={({labelId, descriptionId, close}) => {
         return (
-          <div data-test="SupprimerFicheModale">
+          <div data-test="SupprimerFicheModale" className="mt-2">
             <h6 id={labelId} className="fr-h6">
               {isPlan
                 ? 'Souhaitez-vous vraiment supprimer ce plan ?'

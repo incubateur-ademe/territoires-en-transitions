@@ -24,6 +24,7 @@ const PlanActionHeader = ({
         {!isReadonly && (
           <div className="flex items-center gap-4 ml-auto">
             <SupprimerAxeModal
+              isPlan
               axe={plan}
               plan={plan}
               redirectURL={makeCollectiviteFichesNonClasseesUrl({
