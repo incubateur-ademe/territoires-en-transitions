@@ -3,7 +3,7 @@
  */
 import DOMPurify from 'dompurify';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {TPersonnalisationRegleRead} from 'generated/dataLayer/personnalisation_regle_read';
+import {TPersonnalisationRegleRead} from './useRegles';
 import {ActionScore} from 'types/ClientScore';
 import {toLocaleFixed} from 'utils/toFixed';
 

@@ -1,26 +1,21 @@
-import {useEffect, useState} from 'react';
-import {TPersonnalisationRegleRead} from 'generated/dataLayer/personnalisation_regle_read';
-import {personnalisationRegleReadEndpoint} from 'core-logic/api/endpoints/PersonnalisationRegleReadEndpoint';
+import {useQuery} from 'react-query';
+import {supabaseClient} from 'core-logic/api/supabase';
+import {Database} from 'types/database.types';
+
+export type TPersonnalisationRegleRead =
+  Database['public']['Tables']['personnalisation_regle']['Row'];
 
 type TUseRegles = (action_id: string) => TPersonnalisationRegleRead[];
 
 // charge les règles de personnalisation pour une action donnée
 export const useRegles: TUseRegles = action_id => {
-  const [data, setData] = useState<TPersonnalisationRegleRead[]>([]);
+  const query = useQuery(['personnalisation_regle', action_id], async () => {
+    const {data} = await supabaseClient
+      .from('personnalisation_regle')
+      .select()
+      .match({action_id});
+    return data;
+  });
 
-  const fetch = async () => {
-    if (action_id) {
-      const regles = await personnalisationRegleReadEndpoint.getBy({
-        action_id,
-      });
-
-      setData(regles);
-    }
-  };
-
-  useEffect(() => {
-    fetch();
-  }, [action_id]);
-
-  return data;
+  return query?.data || [];
 };
