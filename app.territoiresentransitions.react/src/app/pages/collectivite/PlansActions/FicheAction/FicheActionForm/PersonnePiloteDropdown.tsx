@@ -73,7 +73,6 @@ const PersonnePiloteDropdown = ({
       userCreatedTagIds={personneListe
         ?.filter(p => p.tag_id)
         .map(p => p.tag_id!.toString())}
-      placeholderText="Sélectionnez ou créez un tag"
       disabled={isReadonly}
     />
   );
