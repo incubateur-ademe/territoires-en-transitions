@@ -42,11 +42,13 @@ const generateDetails = (fiche: FicheAction | FicheResume) => {
 type Props = {
   link: string;
   ficheAction: FicheAction | FicheResume;
+  openInNewTab?: boolean;
 };
 
-const FicheActionCard = ({ficheAction, link}: Props) => {
+const FicheActionCard = ({openInNewTab, ficheAction, link}: Props) => {
   return (
     <ActionCard
+      openInNewTab={openInNewTab}
       link={link}
       statutBadge={
         ficheAction.statut && (

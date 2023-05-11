@@ -125,6 +125,7 @@ const FichesLiees = ({
         <div className="grid grid-cols-2 gap-6">
           {fiches.map(fiche => (
             <ActionCard
+              openInNewTab
               key={fiche.id}
               link={
                 fiche.plans && fiche.plans[0] && fiche.plans[0].id

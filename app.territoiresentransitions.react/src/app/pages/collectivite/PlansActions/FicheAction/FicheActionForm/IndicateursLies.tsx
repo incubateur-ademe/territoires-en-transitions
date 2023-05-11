@@ -52,6 +52,9 @@ const IndicateursLies = ({indicateurs, onSelect, isReadonly}: Props) => {
               className="border border-gray-200 hover:bg-grey975"
             >
               <NavLink
+                target="_blank"
+                rel="noopener noreferrer"
+                className="after:!hidden"
                 to={`${makeCollectiviteIndicateursUrl({
                   collectiviteId: collectiviteId!,
                   indicateurView: getIndicateurGroup(indicateur.indicateur_id),
