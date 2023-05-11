@@ -14,6 +14,7 @@ export const SelectCollectivite = (props: HeaderPropsWithModalState) => {
     currentCollectivite,
     ownedCollectivites,
     openedId,
+    modalOpened,
     setOpenedId,
     setModalOpened,
   } = props;
@@ -37,7 +38,12 @@ export const SelectCollectivite = (props: HeaderPropsWithModalState) => {
           aria-expanded={opened}
           onClick={() => setOpenedId(opened ? null : ID)}
         >
-          <b className="mr-auto pointer-events-none">
+          <b
+            className={classNames(
+              'mr-auto pointer-events-none whitespace-nowrap text-ellipsis overflow-hidden',
+              {'md:max-w-[25vw] lg:max-w-[28vw]': !modalOpened}
+            )}
+          >
             {currentCollectivite.nom}
           </b>
           <BadgeNiveauAcces
