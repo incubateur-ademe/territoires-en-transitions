@@ -6,6 +6,7 @@ exports[`Storyshots app/Layout Exemple 1`] = `
 >
   <div
     className="w-full overflow-x-hidden overflow-y-auto"
+    id="main"
   >
     <header
       className="fr-header"
