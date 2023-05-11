@@ -6,7 +6,7 @@ import FormikSelect from 'ui/shared/form/formik/FormikSelect';
 import FormikAutoCompleteInput from 'ui/shared/form/formik/FormikAutoCompleteInput';
 import Aide from './Aide';
 
-import {AllCollectiviteRead} from 'generated/dataLayer';
+import {TNomCollectivite} from 'types/alias';
 import {useFilterCollectivites} from 'core-logic/hooks/useFilterCollectivites';
 import {useClaimCollectivite} from 'core-logic/hooks/useClaimCollectivite';
 import {
@@ -29,7 +29,7 @@ const formValidation = Yup.object({
 type FormProps = {fonction: MembreFonction; collectiviteId: string};
 
 type RejoindreUneCollectiviteProps = {
-  filteredCollectivites: AllCollectiviteRead[];
+  filteredCollectivites: TNomCollectivite[];
   isCollectivitesLoading: boolean;
   setSearch: (search: string) => void;
   getReferentContacts: (collectiviteId: number) => Promise<ReferentContact[]>;
@@ -47,7 +47,7 @@ export const RejoindreUneCollectivite = ({
   /** Formate la liste des collectivités à afficher dans le select de l'auto complete */
   const listeCollectivites =
     filteredCollectivites.length > 0
-      ? filteredCollectivites.map((collectiviteRead: AllCollectiviteRead) => {
+      ? filteredCollectivites.map((collectiviteRead: TNomCollectivite) => {
           return {
             value: collectiviteRead.collectivite_id.toString(),
             label: collectiviteRead.nom,
@@ -57,7 +57,7 @@ export const RejoindreUneCollectivite = ({
 
   /** Permet récupérer le/les référents d'une collectivité et d'afficher son statut */
   const [selectedCollectivite, setSelectedCollectivite] =
-    useState<AllCollectiviteRead>();
+    useState<TNomCollectivite>();
 
   /** Stock les référents à chaque changement de collectivité sélectionnée */
   const [referentContacts, setReferentContacts] = useState<ReferentContact[]>(

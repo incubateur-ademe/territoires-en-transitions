@@ -89,3 +89,8 @@ export type TActionAvancementExt = TActionAvancement | 'non_concerne';
 export type TActionStatutsRow = NonNullableFields<
   Database['public']['Views']['action_statuts']['Row']
 >;
+
+export type TNomCollectivite = NonNullableFields<
+  Database['public']['Views']['named_collectivite']['Row']
+>;
+

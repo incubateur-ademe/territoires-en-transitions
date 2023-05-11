@@ -2,10 +2,10 @@ import {Link} from 'react-router-dom';
 import Alerte from 'ui/shared/Alerte';
 
 import {makeCollectiviteTableauBordUrl} from 'app/paths';
-import {AllCollectiviteRead} from 'generated/dataLayer';
+import {TNomCollectivite} from 'types/alias';
 
 type Props = {
-  collectivite: AllCollectiviteRead;
+  collectivite: TNomCollectivite;
   handleResetForm: () => void;
 };
 
