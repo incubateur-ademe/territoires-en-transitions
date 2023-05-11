@@ -1,6 +1,6 @@
 import {RejoindreOuActiverDialogContent} from 'app/pages/collectivite/RejoindreCetteCollectiviteDialog/RejoindreOuActiverDialogContent';
 import {ReferentContact} from 'core-logic/api/procedures/collectiviteProcedures';
-import {AllCollectiviteRead} from 'generated/dataLayer/all_collectivite_read';
+import {TNomCollectivite} from 'types/alias';
 import React, {useEffect} from 'react';
 import {AutocompleteInput} from 'ui/AutocompleteInput';
 import {Spacer} from 'ui/dividers/Spacer';
@@ -15,7 +15,7 @@ export const AssocierCollectiviteDialog = ({
 }: TAssocierCollectiviteDialogProps) => {
   const [opened, setOpened] = React.useState(false);
   const [selectedCollectivite, setSelectedCollectivite] =
-    React.useState<AllCollectiviteRead>();
+    React.useState<TNomCollectivite>();
   const allCollectivites = useAllCollectivites();
 
   useEffect(() => {

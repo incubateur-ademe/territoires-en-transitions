@@ -1,12 +1,12 @@
 import {ReferentContact} from 'core-logic/api/procedures/collectiviteProcedures';
-import {AllCollectiviteRead} from 'generated/dataLayer/all_collectivite_read';
+import {TNomCollectivite} from 'types/alias';
 import {RejoindreOuActiverDialogContent} from './RejoindreOuActiverDialogContent';
 import React from 'react';
 import {UiDialogButton} from 'ui/UiDialogButton';
 
 export type TRejoindreCetteCollectiviteDialogProps = {
   getReferentContacts: (collectiviteId: number) => Promise<ReferentContact[]>;
-  collectivite: AllCollectiviteRead;
+  collectivite: TNomCollectivite;
 };
 
 export const RejoindreCetteCollectiviteDialog = ({

@@ -1,7 +1,7 @@
 import {useQuery} from 'react-query';
 
 import {supabaseClient} from 'core-logic/api/supabase';
-import {AllCollectiviteRead} from 'generated/dataLayer';
+import {TNomCollectivite} from 'types/alias';
 
 export const NB_ITEMS_FETCH = 10;
 
@@ -14,7 +14,7 @@ export const useFilterCollectivites = (filters: TFilters) => {
   );
   return {
     filteredCollectivites:
-      (data?.filteredCollectivites as AllCollectiviteRead[]) || [],
+      (data?.filteredCollectivites as TNomCollectivite[]) || [],
     isLoading,
   };
 };

@@ -1,7 +1,7 @@
 import {makeCollectiviteTableauBordUrl} from 'app/paths';
 import {ReferentContact} from 'core-logic/api/procedures/collectiviteProcedures';
 import {useClaimCollectivite} from 'core-logic/hooks/useClaimCollectivite';
-import {AllCollectiviteRead} from 'generated/dataLayer/all_collectivite_read';
+import {TNomCollectivite} from 'types/alias';
 import {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
 
@@ -9,7 +9,7 @@ const RejoindreCollectiviteDialogContent = ({
   collectivite,
   referentContacts,
 }: {
-  collectivite: AllCollectiviteRead;
+  collectivite: TNomCollectivite;
   referentContacts: ReferentContact[];
 }) => {
   return referentContacts.length === 1 ? (
@@ -38,7 +38,7 @@ const RejoindreCollectiviteDialogContent = ({
 const ActiverCollectiviteDialogContent = ({
   collectivite,
 }: {
-  collectivite: AllCollectiviteRead;
+  collectivite: TNomCollectivite;
 }) => {
   const {claimCollectivite, lastReply} = useClaimCollectivite();
 
@@ -86,7 +86,7 @@ const ActiverCollectiviteDialogContent = ({
 };
 
 export type TUiRejoindreOuActiverDialogContentProps = {
-  collectivite: AllCollectiviteRead;
+  collectivite: TNomCollectivite;
   referentContacts: ReferentContact[];
 };
 
@@ -94,7 +94,7 @@ export const RejoindreOuActiverDialogContent = ({
   collectivite,
   getReferentContacts,
 }: {
-  collectivite: AllCollectiviteRead;
+  collectivite: TNomCollectivite;
   getReferentContacts: (collectiviteId: number) => Promise<ReferentContact[]>;
 }) => {
   const [referentContacts, setReferentContacts] = useState<ReferentContact[]>(
