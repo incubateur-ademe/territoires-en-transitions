@@ -48,6 +48,7 @@ const SelectCreateTagsDropdown = <T extends string>({
   placeholderText,
   disabled,
   closeOptionsOnSelect,
+  containerWidthMatchButton = true,
   'data-test': dataTest,
 }: TSelectCreateTagsDropdown<T>) => {
   const [inputValue, setInputValue] = useState('');
@@ -64,6 +65,7 @@ const SelectCreateTagsDropdown = <T extends string>({
 
   return (
     <DropdownFloater
+      containerWidthMatchButton={containerWidthMatchButton}
       placement={placement}
       toggle={false}
       enterToToggle={false}
