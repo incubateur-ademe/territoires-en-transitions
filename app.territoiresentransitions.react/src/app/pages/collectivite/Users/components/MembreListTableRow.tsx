@@ -11,6 +11,7 @@ import {
 import {Referentiel} from 'types/litterals';
 import {referentielToName} from 'app/labels';
 import {TNiveauAcces} from 'types/alias';
+import {TMembreFonction} from 'types/alias';
 
 export type TMembreListTableRowProps = {
   currentUserId: string;
@@ -20,7 +21,7 @@ export type TMembreListTableRowProps = {
   removeFromCollectivite: TRemoveFromCollectivite;
 };
 
-const membreFonctions: {value: MembreFonction; label: string}[] = [
+const membreFonctions: {value: TMembreFonction; label: string}[] = [
   {value: 'referent', label: 'Référent·e'},
   {value: 'technique', label: 'Équipe technique'},
   {value: 'politique', label: 'Équipe politique'},
@@ -249,8 +250,8 @@ const FonctionDropdown = ({
   value,
   onChange,
 }: {
-  value?: MembreFonction;
-  onChange: (value: MembreFonction) => void;
+  value?: TMembreFonction;
+  onChange: (value: TMembreFonction) => void;
 }) => (
   <div data-test="fonction-dropdown">
     <SelectDropdown

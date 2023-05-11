@@ -100,3 +100,4 @@ export type TDepartement = NonNullableFields<
 
 export type TNiveauAcces = Database['public']['Enums']['niveau_acces'];
 
+export type TMembreFonction = Database['public']['Enums']['membre_fonction'];

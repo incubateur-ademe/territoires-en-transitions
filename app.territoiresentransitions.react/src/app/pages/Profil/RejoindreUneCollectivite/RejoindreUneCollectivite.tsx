@@ -13,7 +13,7 @@ import {
   getReferentContacts,
   ReferentContact,
 } from 'core-logic/api/procedures/collectiviteProcedures';
-import {MembreFonction} from 'generated/dataLayer/membres';
+import {TMembreFonction} from 'types/alias';
 import {collectiviteFonctionOptions} from './data';
 import CollectiviteSelectionee from './CollectiviteSelectionee';
 import Success from './Success';
@@ -26,7 +26,7 @@ const formValidation = Yup.object({
 });
 
 /** Props */
-type FormProps = {fonction: MembreFonction; collectiviteId: string};
+type FormProps = {fonction: TMembreFonction; collectiviteId: string};
 
 type RejoindreUneCollectiviteProps = {
   filteredCollectivites: TNomCollectivite[];

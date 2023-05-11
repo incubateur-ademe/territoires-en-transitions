@@ -1,7 +1,7 @@
-import {MembreFonction} from 'generated/dataLayer/membres';
+import {TMembreFonction} from 'types/alias';
 import {SelectOption} from 'ui/shared/form/formik/FormikSelect';
 
-export const collectiviteFonctionOptions: SelectOption<MembreFonction>[] = [
+export const collectiviteFonctionOptions: SelectOption<TMembreFonction>[] = [
   {
     value: 'conseiller',
     label: "Bureau d'études",
