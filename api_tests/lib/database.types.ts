@@ -4700,12 +4700,20 @@ export interface Database {
         }
         Returns: string[]
       }
-      flat_axes: {
-        Args: {
-          plan_id: number
-        }
-        Returns: Database["public"]["CompositeTypes"]["flat_axe_node"][]
-      }
+      flat_axes:
+        | {
+            Args: {
+              axe: unknown
+            }
+            Returns: Database["public"]["CompositeTypes"]["flat_axe_node"][]
+          }
+        | {
+            Args: {
+              plan_id: number
+              max_depth?: number
+            }
+            Returns: Database["public"]["CompositeTypes"]["flat_axe_node"][]
+          }
       foreign_tables_are: {
         Args: {
           "": unknown[]
@@ -5774,6 +5782,12 @@ export interface Database {
         }
         Returns: string
       }
+      navigation_plans: {
+        Args: {
+          collectivite_id: number
+        }
+        Returns: Database["public"]["CompositeTypes"]["flat_axe_node"][]
+      }
       no_plan: {
         Args: Record<PropertyKey, never>
         Returns: boolean[]
@@ -6087,12 +6101,6 @@ export interface Database {
       skip:
         | {
             Args: {
-              "": number
-            }
-            Returns: string
-          }
-        | {
-            Args: {
               why: string
               how_many: number
             }
@@ -6101,6 +6109,12 @@ export interface Database {
         | {
             Args: {
               "": string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              "": number
             }
             Returns: string
           }
@@ -6283,27 +6297,6 @@ export interface Database {
             Args: {
               bucket_width: unknown
               ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
               origin: string
             }
             Returns: string
@@ -6313,6 +6306,27 @@ export interface Database {
               bucket_width: unknown
               ts: string
               origin: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
             }
             Returns: string
           }
