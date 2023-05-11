@@ -5,7 +5,7 @@
 import {useState} from 'react';
 import {QuestionReponseList} from '../PersoPotentielModal/PersoPotentielQR';
 import {SwitchLabelLeft} from 'ui/shared/SwitchLabelLeft';
-import {TQuestionThematiqueRead} from 'generated/dataLayer/question_thematique_read';
+import {TQuestionThematiqueRead} from './useThematique';
 import {
   TChangeReponse,
   TQuestionReponse,

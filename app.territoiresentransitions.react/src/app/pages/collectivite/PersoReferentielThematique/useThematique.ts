@@ -1,6 +1,9 @@
 import {supabaseClient} from 'core-logic/api/supabase';
-import {TQuestionThematiqueRead} from 'generated/dataLayer/question_thematique_read';
 import {useQuery} from 'react-query';
+import {Database} from 'types/database.types';
+
+export type TQuestionThematiqueRead =
+  Database['public']['Tables']['question_thematique']['Row'];
 
 type TUseThematique = (
   thematique_id: string | undefined
