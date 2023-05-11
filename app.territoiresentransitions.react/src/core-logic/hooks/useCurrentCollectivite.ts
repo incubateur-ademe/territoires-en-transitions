@@ -2,12 +2,12 @@ import {useQuery} from 'react-query';
 import {useAuth} from 'core-logic/api/auth/AuthProvider';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {NiveauAcces} from 'generated/dataLayer';
+import {TNiveauAcces} from 'types/alias';
 
 export type CurrentCollectivite = {
   collectivite_id: number;
   nom: string;
-  niveau_acces: NiveauAcces | null;
+  niveau_acces: TNiveauAcces | null;
   acces_restreint: boolean;
   est_auditeur: boolean;
   // états dérivés

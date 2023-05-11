@@ -5,13 +5,12 @@ import MultiSelectDropdown from 'ui/shared/select/MultiSelectDropdown';
 import UpdateMemberAccesModal from 'app/pages/collectivite/Users/components/UpdateMembreAccesModal';
 import {
   Membre,
-  TNiveauAcces,
   TRemoveFromCollectivite,
   TUpdateMembre,
 } from 'app/pages/collectivite/Users/types';
 import {Referentiel} from 'types/litterals';
 import {referentielToName} from 'app/labels';
-import {MembreFonction} from 'generated/dataLayer/membres';
+import {TNiveauAcces} from 'types/alias';
 
 export type TMembreListTableRowProps = {
   currentUserId: string;

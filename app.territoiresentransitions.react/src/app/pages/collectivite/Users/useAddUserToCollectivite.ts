@@ -1,12 +1,12 @@
 import {useMutation, useQueryClient} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {NiveauAcces} from 'generated/dataLayer';
+import {TNiveauAcces} from 'types/alias';
 import {makeInvitationLandingPath} from 'app/paths';
 
 export interface AddUserToCollectiviteRequest {
   collectiviteId: number;
   email: string;
-  niveauAcces: NiveauAcces;
+  niveauAcces: TNiveauAcces;
 }
 
 export interface AddUserToCollectiviteResponse {
