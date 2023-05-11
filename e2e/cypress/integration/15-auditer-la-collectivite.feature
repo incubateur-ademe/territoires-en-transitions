@@ -44,8 +44,7 @@ Fonctionnalité: Auditer la collectivité
       | 2.1         |                      | Non audité |
 
     Quand je clique sur la ligne du tableau de suivi de l'audit contenant l'identifiant "2.1"
-    Alors l'état d'avancement des tâches est éditable
-    Et la page vérifie les conditions suivantes :
+    Alors la page vérifie les conditions suivantes :
       | Elément                         | Condition | Valeur     |
       | état audit action               | contient  | Non audité |
       | état audit action lecture seule | absent    |            |
@@ -53,6 +52,7 @@ Fonctionnalité: Auditer la collectivité
       | avis audit                      | activé    |            |
       | ajouter à l'ordre du jour       | décoché   |            |
       | ajouter à l'ordre du jour       | activé    |            |
+    Et l'état d'avancement des tâches est éditable
 
     Quand je sélectionne l'option "en_cours" dans la liste déroulante "état audit action"
     Et que je saisi la valeur "mon commentaire d'audit" dans le champ "avis audit"
