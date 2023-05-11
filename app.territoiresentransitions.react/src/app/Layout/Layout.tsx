@@ -1,7 +1,7 @@
 import React, {ReactNode} from 'react';
-
-import Header from 'app/Layout/Header';
 import {createPortal} from 'react-dom';
+
+import Header from './Header';
 import Footer from './Footer';
 
 type Props = {
@@ -13,7 +13,7 @@ const RIGHT_PANEL_ID = 'right';
 const Layout = ({children}: Props) => {
   return (
     <div className="flex flex-row h-[100vh] overflow-hidden">
-      <div className="w-full overflow-x-hidden overflow-y-auto">
+      <div id="main" className="w-full overflow-x-hidden overflow-y-auto">
         <Header />
         {children}
         <Footer />
