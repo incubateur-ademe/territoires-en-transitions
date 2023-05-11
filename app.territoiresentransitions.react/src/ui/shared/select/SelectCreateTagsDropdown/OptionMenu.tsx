@@ -58,10 +58,11 @@ const OptionMenu = ({option, onDeleteClick, onUpdateTagName, close}: Props) => {
       <Modal
         size="sm"
         zIndex={1500}
+        noCloseButton
         render={({descriptionId, close}) => {
           return (
             <>
-              <p id={descriptionId}>
+              <p id={descriptionId} className="mt-2">
                 Souhaitez-vous vraiment supprimer cette option pour toutes les
                 fiches action de votre collectivité ?
               </p>
