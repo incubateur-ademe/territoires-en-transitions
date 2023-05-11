@@ -21,11 +21,7 @@ export const ActionPage = () => {
 
   return (
     <Suspense fallback={renderLoader()}>
-      {action && (
-        <div data-test="Action" className="relative flex">
-          <ActionReferentielAvancement action={action} />
-        </div>
-      )}
+      {action && <ActionReferentielAvancement action={action} />}
     </Suspense>
   );
 };

@@ -44,7 +44,7 @@ export const CollectivitePages = {
   },
   'Action ECI': {
     route: 'action/eci/eci_3.1',
-    selector: '[data-test=Action]',
+    selector: '[data-test^=Action]',
   },
   'Plans action': {
     route: 'plans',
