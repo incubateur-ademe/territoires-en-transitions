@@ -2,10 +2,8 @@ import {Link, useHistory} from 'react-router-dom';
 import {IndicateurReferentielCard} from 'app/pages/collectivite/Indicateurs/IndicateurReferentielCard';
 import {addTargetToContentAnchors} from 'utils/content';
 import {Tabs, Tab} from 'ui/shared/Tabs';
-import {ActionReferentielAvancementRecursiveCard} from 'ui/referentiels/ActionReferentielAvancementRecursiveCard';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {OrientationQuickNav} from 'app/pages/collectivite/Referentiels/QuickNav';
-import {useActionScore} from 'core-logic/hooks/scoreHooks';
 import {
   ActionVueParamOption,
   makeCollectiviteActionUrl,
@@ -33,15 +31,6 @@ const TABS_INDEX: Record<ActionVueParamOption, number> = {
   preuves: 1,
   indicateurs: 2,
   historique: 3,
-};
-
-const useIsFullyRenseigne = (action: ActionDefinitionSummary): boolean => {
-  const actionScore = useActionScore(action.id);
-  return (
-    !!actionScore &&
-    (actionScore.completed_taches_count === actionScore.total_taches_count ||
-      actionScore.desactive)
-  );
 };
 
 const Action = ({action}: {action: ActionDefinitionSummary}) => {
@@ -169,25 +158,3 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
 };
 
 export default Action;
-
-const ActionAvancement = ({
-  action,
-  showOnlyActionWithData,
-}: {
-  action: ActionDefinitionSummary;
-  showOnlyActionWithData: boolean;
-}) => {
-  const isFullyRenseigne = useIsFullyRenseigne(action);
-
-  if (showOnlyActionWithData && isFullyRenseigne) {
-    return null;
-  }
-
-  return (
-    <ActionReferentielAvancementRecursiveCard
-      action={action}
-      displayAddFicheActionButton={true}
-      displayProgressStat={true}
-    />
-  );
-};

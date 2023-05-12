@@ -54,17 +54,12 @@ export const useReferentielDownToAction = (
 /**
  * Returns action exemples html contents
  */
-export const useActionExemples = (
-  actionId: string,
-  opened: boolean
-): string => {
-  const [exemples, setExemples] = useState<string>('...');
+export const useActionExemples = (actionId: string): string | null => {
+  const [exemples, setExemples] = useState<string | null>(null);
 
   useEffect(() => {
-    if (opened) {
-      actionExemples(actionId).then(exemples => setExemples(exemples.exemples));
-    }
-  }, [actionId, opened]);
+    actionExemples(actionId).then(exemples => setExemples(exemples.exemples));
+  }, [actionId]);
 
   return exemples;
 };
