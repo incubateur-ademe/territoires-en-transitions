@@ -10,7 +10,7 @@ import {
 import {getPasswordStrength} from 'core-logic/api/auth/getPasswordStrength';
 import {signInPath} from 'app/paths';
 import {Spacer} from 'ui/dividers/Spacer';
-import {ValiderButton} from 'ui/shared/ValiderButton';
+import {ValiderButton} from 'ui/buttons/ValiderButton';
 import {PasswordStrengthMeter} from 'ui/forms/PasswordStrengthMeter';
 import FormikInput from 'ui/shared/form/formik/FormikInput';
 

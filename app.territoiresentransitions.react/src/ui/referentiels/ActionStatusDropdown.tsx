@@ -7,7 +7,7 @@ import {
   useEditActionStatutIsDisabled,
   useSaveActionStatut,
 } from 'core-logic/hooks/useActionStatut';
-import {CloseDialogButton} from '../shared/CloseDialogButton';
+import {CloseDialogButton} from '../buttons/CloseDialogButton';
 import {DetailedScore} from '../shared/DetailedScore/DetailedScore';
 import {AvancementValues} from '../shared/DetailedScore/DetailedScoreSlider';
 import {TActionAvancement, TActionAvancementExt} from 'types/alias';

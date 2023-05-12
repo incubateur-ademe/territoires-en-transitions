@@ -11,8 +11,8 @@ import {
 } from 'app/paths';
 import {useActionVue, useReferentielId} from 'core-logic/hooks/params';
 import HistoriqueListe from 'app/pages/collectivite/Historique/HistoriqueListe';
-import ScrollTopButton from 'ui/shared/ScrollTopButton';
 import {ActionBottomNav} from './ActionNav';
+import ScrollTopButton from 'ui/buttons/ScrollTopButton';
 import ActionPreuvePanel from 'ui/shared/actions/ActionPreuvePanel/ActionPreuvePanel';
 import {DownloadDocs} from './DownloadDocs';
 import ActionAuditStatut from '../Audit/ActionAuditStatut';

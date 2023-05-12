@@ -1,7 +1,7 @@
 import Dialog from '@material-ui/core/Dialog';
 import {useState} from 'react';
 import classNames from 'classnames';
-import {CloseDialogButton} from 'ui/shared/CloseDialogButton';
+import {CloseDialogButton} from 'ui/buttons/CloseDialogButton';
 import {TSujetDemande} from './types';
 import {useEnvoiDemande} from './useEnvoiDemande';
 import {

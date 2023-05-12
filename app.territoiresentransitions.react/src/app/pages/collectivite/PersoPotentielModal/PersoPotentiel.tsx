@@ -2,7 +2,7 @@ import {useState} from 'react';
 import {Dialog} from '@material-ui/core';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {CloseDialogButton} from 'ui/shared/CloseDialogButton';
+import {CloseDialogButton} from 'ui/buttons/CloseDialogButton';
 import {PersoPotentielTabs} from './PersoPotentielTabs';
 import {PointsPotentiels} from './PointsPotentiels';
 import {useRegles} from './useRegles';
