@@ -149,9 +149,7 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
           prevActionLink={prevActionLink}
           nextActionLink={nextActionLink}
         />
-        <div className="mt-8">
-          <ScrollTopButton />
-        </div>
+        <ScrollTopButton className="mt-8" />
       </main>
     </>
   );
