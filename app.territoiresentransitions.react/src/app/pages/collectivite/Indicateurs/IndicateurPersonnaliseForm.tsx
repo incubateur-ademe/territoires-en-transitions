@@ -2,7 +2,7 @@ import {useState} from 'react';
 import * as Yup from 'yup';
 import {Form, Formik} from 'formik';
 import {IndicateurPersonnaliseDefinitionWrite} from 'generated/dataLayer/indicateur_personnalise_definition_write';
-import {ValiderButton} from 'ui/shared/ValiderButton';
+import {ValiderButton} from 'ui/buttons/ValiderButton';
 import FormikInput from 'ui/shared/form/formik/FormikInput';
 
 type FormState = 'ready' | 'saving';

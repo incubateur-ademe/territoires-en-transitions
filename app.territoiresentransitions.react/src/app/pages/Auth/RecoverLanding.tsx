@@ -1,7 +1,7 @@
 import * as Yup from 'yup';
 import {Form, Formik} from 'formik';
 import {emailValidator} from 'app/pages/Auth/RegisterForm';
-import {ValiderButton} from 'ui/shared/ValiderButton';
+import {ValiderButton} from 'ui/buttons/ValiderButton';
 import {useRecoveryToken} from 'core-logic/hooks/useRecoveryToken';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useHistory} from 'react-router-dom';

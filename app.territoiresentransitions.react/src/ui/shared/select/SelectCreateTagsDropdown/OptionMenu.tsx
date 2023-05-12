@@ -2,7 +2,7 @@ import {useEffect, useRef, useState} from 'react';
 import InputControlled from 'ui/shared/form/InputControlled';
 import {TOption} from '../commons';
 import Modal from 'ui/shared/floating-ui/Modal';
-import {BoutonAttention} from 'ui/BoutonAttention';
+import {BoutonAttention} from 'ui/buttons/BoutonAttention';
 
 type Props = {
   option: TOption;

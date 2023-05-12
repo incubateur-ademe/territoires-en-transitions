@@ -1,4 +1,4 @@
-import {BoutonAttention} from 'ui/BoutonAttention';
+import {BoutonAttention} from 'ui/buttons/BoutonAttention';
 import Modal from 'ui/shared/floating-ui/Modal';
 import {FicheAction} from './data/types';
 

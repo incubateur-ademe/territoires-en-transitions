@@ -2,7 +2,7 @@ import {useState} from 'react';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {setRightPanelContent} from 'app/Layout/Layout';
-import {ToolbarIconToggleButton} from 'ui/shared/ToolbarIconButton';
+import {ToolbarIconToggleButton} from 'ui/buttons/ToolbarIconButton';
 import ActionDiscussionsPanel from './ActionDiscussions/ActionDiscussionsPanel';
 import {ActionInfoPanel} from './ActionInfo/ActionInfoPanel';
 import {useOngletTracker} from 'core-logic/hooks/useOngletTracker';

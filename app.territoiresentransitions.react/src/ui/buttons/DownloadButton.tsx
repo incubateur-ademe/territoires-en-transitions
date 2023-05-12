@@ -1,5 +1,5 @@
 import {MutableRefObject} from 'react';
-import {downloadFromCanvas} from '../utils/downloadFromCanvas';
+import {downloadFromCanvas} from '../../utils/downloadFromCanvas';
 import html2canvas from 'html2canvas';
 
 /**

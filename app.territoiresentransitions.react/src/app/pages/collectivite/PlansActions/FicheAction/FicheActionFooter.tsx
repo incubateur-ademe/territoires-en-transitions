@@ -1,4 +1,4 @@
-import ScrollTopButton from 'ui/shared/ScrollTopButton';
+import ScrollTopButton from 'ui/buttons/ScrollTopButton';
 import {FicheAction} from './data/types';
 import {useDeleteFicheAction} from './data/useDeleteFicheAction';
 import FicheActionSupprimerModal from './FicheActionSupprimerModal';

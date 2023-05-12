@@ -2,7 +2,7 @@ import {ChangeEvent, KeyboardEvent, MouseEvent} from 'react';
 import classNames from 'classnames';
 import {format} from 'date-fns';
 import {fr} from 'date-fns/locale';
-import {ButtonComment, ButtonEdit} from 'ui/shared/SmallIconButton';
+import {ButtonComment, ButtonEdit} from 'ui/buttons/SmallIconButton';
 import {formatFileSize, getExtension} from 'utils/file';
 import {TPreuve, TEditHandlers} from './types';
 import {openPreuve} from './openPreuve';

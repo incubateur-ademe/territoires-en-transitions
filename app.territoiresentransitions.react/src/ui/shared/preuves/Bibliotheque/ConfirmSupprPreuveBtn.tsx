@@ -1,5 +1,5 @@
 import Modal, {RenderProps} from 'ui/shared/floating-ui/Modal';
-import {ButtonRemove} from 'ui/shared/SmallIconButton';
+import {ButtonRemove} from 'ui/buttons/SmallIconButton';
 
 // Affiche le bouton d'ouverture de la modale de confirmation de suppression
 // d'une preuve

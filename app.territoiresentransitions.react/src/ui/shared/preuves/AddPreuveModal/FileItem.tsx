@@ -6,7 +6,7 @@ import {
   UploadStatusFailed,
 } from 'ui/shared/preuves/AddPreuveModal/types';
 import {useUploader} from 'ui/shared/preuves/AddPreuveModal/useUploader';
-import {ButtonClose} from 'ui/shared/SmallIconButton';
+import {ButtonClose} from 'ui/buttons/SmallIconButton';
 import {ProgressBar} from 'ui/shared/ProgressBar';
 import {formatFileSize} from 'utils/file';
 

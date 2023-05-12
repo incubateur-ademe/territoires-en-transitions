@@ -1,6 +1,6 @@
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 import {useRef, useState} from 'react';
-import DownloadButton from 'ui/DownloadButton';
+import DownloadButton from 'ui/buttons/DownloadButton';
 import Modal from 'ui/shared/floating-ui/Modal';
 import BarChart, {BarChartProps} from './BarChart';
 import DonutChart, {DonutChartProps} from './DonutChart';
