@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {CheckIcon} from 'ui/icons/CheckIcon';
-import {useScoreRealise} from '../../../app/pages/collectivite/EtatDesLieux/Referentiel/data/useScoreRealise';
+import {useScoreRealise} from '../data/useScoreRealise';
 
 type ScoreDisplayProps = {
   action: ActionDefinitionSummary;

@@ -4,7 +4,7 @@ import {useEffect, useState} from 'react';
 import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
 import {ActionStatusDropdown} from 'ui/referentiels/ActionStatusDropdown';
 import {Tooltip} from 'ui/shared/floating-ui/Tooltip';
-import ScoreDisplay from 'ui/shared/actions/ScoreDisplay';
+import ScoreDisplay from 'app/pages/collectivite/EtatDesLieux/Referentiel/SuiviAction/ScoreDisplay';
 
 type SubActionHeaderProps = {
   action: ActionDefinitionSummary;
