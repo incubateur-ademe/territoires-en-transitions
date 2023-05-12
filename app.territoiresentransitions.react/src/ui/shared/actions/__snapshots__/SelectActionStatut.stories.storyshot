@@ -11,7 +11,7 @@ exports[`Storyshots ui/shared/actions/SelectActionStatut Avec Non Concerne 1`] =
   <button
     aria-expanded={false}
     aria-label="ouvrir le menu"
-    className="flex items-center w-full p-2 text-left text-sm min-w-5rem w-fit"
+    className="flex items-center w-full p-2 text-left text-sm min-w-5rem w-fit p-0"
     data-test="SelectStatut"
     onClick={[Function]}
     onKeyDown={[Function]}
@@ -43,7 +43,7 @@ exports[`Storyshots ui/shared/actions/SelectActionStatut Avec Selection 1`] = `
   <button
     aria-expanded={false}
     aria-label="ouvrir le menu"
-    className="flex items-center w-full p-2 text-left text-sm min-w-5rem w-fit"
+    className="flex items-center w-full p-2 text-left text-sm min-w-5rem w-fit p-0"
     data-test="SelectStatut"
     onClick={[Function]}
     onKeyDown={[Function]}
@@ -75,7 +75,7 @@ exports[`Storyshots ui/shared/actions/SelectActionStatut Selection Par Defaut 1`
   <button
     aria-expanded={false}
     aria-label="ouvrir le menu"
-    className="flex items-center w-full p-2 text-left text-sm min-w-5rem w-fit"
+    className="flex items-center w-full p-2 text-left text-sm min-w-5rem w-fit p-0"
     data-test="SelectStatut"
     onClick={[Function]}
     onKeyDown={[Function]}

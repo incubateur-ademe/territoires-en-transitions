@@ -13,4 +13,5 @@ Exemple1.args = {
   id: 'id1',
   titre: 'En savoir plus',
   html: 'contenu <b>HTML</b>',
+  icon: 'fr-fi-information-fill',
 };
