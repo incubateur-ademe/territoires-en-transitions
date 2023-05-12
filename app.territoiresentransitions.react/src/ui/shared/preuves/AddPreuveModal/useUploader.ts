@@ -6,23 +6,23 @@ import {
   UploadStatus,
   UploadStatusCode,
 } from './types';
-import {collectiviteBucketReadEndpoint} from 'core-logic/api/endpoints/CollectiviteBucketReadEndpoint';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {shasum256} from 'utils/shasum256';
 import {useAddFileToLib} from './useAddFileToLib';
 import {useAuthHeaders} from 'core-logic/api/auth/useCurrentSession';
+import {useCollectiviteBucketId} from './useCollectiviteBucketId';
 
 /**
  * Gère l'upload et envoi une notification après un transfert réussi
  * afin de déclencher un refetch aux endroits où c'est nécessaire
  */
 const addFileToBucket = async ({
-  collectivite_id,
+  bucket_id,
   file,
   authHeaders,
   onStatusChange,
 }: {
-  collectivite_id: number;
+  bucket_id: string;
   file: File;
   authHeaders: {authorization: string; apikey: string};
   onStatusChange: (status: UploadStatus) => void;
@@ -38,59 +38,53 @@ const addFileToBucket = async ({
    * Ref: https://github.com/supabase/storage-api/issues/23#issuecomment-973277262
    */
   const xhr = new XMLHttpRequest();
-  const buckets = await collectiviteBucketReadEndpoint.getBy({
-    collectivite_id,
-  });
-  const bucket_id = buckets[0]?.bucket_id;
 
   const abort = () => xhr.abort();
 
-  if (bucket_id) {
-    // url de destination
-    const url = `${ENV.supabase_url!}/storage/v1/object/${bucket_id}/${hash}`;
+  // url de destination
+  const url = `${ENV.supabase_url!}/storage/v1/object/${bucket_id}/${hash}`;
 
-    // attache les écouteurs d'événements
-    xhr.upload.onprogress = (e: ProgressEvent<EventTarget>) => {
-      const progress = (e.loaded / e.total) * 100;
+  // attache les écouteurs d'événements
+  xhr.upload.onprogress = (e: ProgressEvent<EventTarget>) => {
+    const progress = (e.loaded / e.total) * 100;
+    onStatusChange({
+      code: UploadStatusCode.running,
+      progress,
+      abort,
+    });
+  };
+
+  // appelé quand le transfert est terminé
+  xhr.onreadystatechange = function () {
+    if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
       onStatusChange({
-        code: UploadStatusCode.running,
-        progress,
-        abort,
+        code: UploadStatusCode.uploaded,
+        hash,
+        filename: file.name,
       });
-    };
-
-    // appelé quand le transfert est terminé
-    xhr.onreadystatechange = function () {
-      if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-        onStatusChange({
-          code: UploadStatusCode.uploaded,
-          hash,
-          filename: file.name,
-        });
-      }
-    };
-
-    // appelé quand le transfert est interrompu
-    xhr.upload.onabort = () => {
-      onStatusChange({code: UploadStatusCode.aborted});
-    };
-
-    // appelé quand le transfert est terminé en erreur
-    const setError = () => {
-      onStatusChange({
-        code: UploadStatusCode.failed,
-        error: UploadErrorCode.uploadError,
-      });
-    };
-    xhr.upload.onerror = xhr.upload.ontimeout = setError;
-
-    // attache les en-têtes et démarre l'envoi
-    xhr.open('POST', url);
-    for (const [key, value] of Object.entries(authHeaders)) {
-      xhr.setRequestHeader(key, value as string);
     }
-    xhr.send(file);
+  };
+
+  // appelé quand le transfert est interrompu
+  xhr.upload.onabort = () => {
+    onStatusChange({code: UploadStatusCode.aborted});
+  };
+
+  // appelé quand le transfert est terminé en erreur
+  const setError = () => {
+    onStatusChange({
+      code: UploadStatusCode.failed,
+      error: UploadErrorCode.uploadError,
+    });
+  };
+  xhr.upload.onerror = xhr.upload.ontimeout = setError;
+
+  // attache les en-têtes et démarre l'envoi
+  xhr.open('POST', url);
+  for (const [key, value] of Object.entries(authHeaders)) {
+    xhr.setRequestHeader(key, value as string);
   }
+  xhr.send(file);
 };
 
 /**
@@ -110,6 +104,7 @@ export const useUploader = (
   const collectivite_id = useCollectiviteId()!;
   const {addFileToLib} = useAddFileToLib();
   const authHeaders = useAuthHeaders();
+  const bucket_id = useCollectiviteBucketId(collectivite_id);
 
   const onStatusChange = (status: UploadStatus) => {
     if (status.code === UploadStatusCode.uploaded) {
@@ -124,10 +119,10 @@ export const useUploader = (
   };
 
   useEffect(() => {
-    if (collectivite_id && authHeaders) {
-      addFileToBucket({collectivite_id, file, authHeaders, onStatusChange});
+    if (bucket_id && authHeaders) {
+      addFileToBucket({bucket_id, file, authHeaders, onStatusChange});
     }
-  }, [collectivite_id]);
+  }, [collectivite_id, bucket_id]);
 
   return {status};
 };
