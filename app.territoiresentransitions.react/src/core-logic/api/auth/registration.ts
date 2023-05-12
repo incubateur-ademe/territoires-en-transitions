@@ -1,5 +1,6 @@
 import {supabaseClient} from 'core-logic/api/supabase';
-import {DcpWrite} from 'generated/dataLayer/dcp_write';
+import {Database} from 'types/database.types';
+
 export interface InscriptionUtilisateur {
   email: string;
   password: string;
@@ -11,6 +12,8 @@ export interface InscriptionUtilisateur {
 
 export const politique_vie_privee =
   'https://www.ademe.fr/lademe/infos-pratiques/politique-protection-donnees-a-caractere-personnel';
+
+type DcpWrite = Database['public']['Tables']['dcp']['Insert'];
 
 export const registerUser = async (inscription: InscriptionUtilisateur) => {
   if (!inscription.vie_privee_conditions)
