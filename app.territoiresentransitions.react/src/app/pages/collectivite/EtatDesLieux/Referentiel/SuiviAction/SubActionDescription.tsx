@@ -14,7 +14,7 @@ type SubActionDescriptionProps = {
 const SubActionDescription = ({
   subAction,
 }: SubActionDescriptionProps): JSX.Element => {
-  const exemples = useActionExemples(subAction.id, true);
+  const exemples = useActionExemples(subAction.id);
 
   return (
     <div className="flex flex-col gap-4">
