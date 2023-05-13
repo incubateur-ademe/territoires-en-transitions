@@ -6,6 +6,7 @@ import {Cell, Worksheet} from 'exceljs';
 import {useQuery} from 'react-query';
 import {avancementToLabel} from 'app/labels';
 import {Database} from 'types/database.types';
+import {DISABLE_AUTO_REFETCH} from 'core-logic/api/supabase';
 
 export const MIME_XLSX =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
@@ -59,9 +60,7 @@ export const useExportTemplateBase = (fileName: string | null) =>
       // on ne charge les données que lors d'un appel explicite à `refetch`
       enabled: false,
       // et on évite les rechargements automatiques
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
+      ...DISABLE_AUTO_REFETCH,
     }
   );
 

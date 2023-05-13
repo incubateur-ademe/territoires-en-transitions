@@ -1,5 +1,5 @@
 import {useQuery} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
+import {DISABLE_AUTO_REFETCH, supabaseClient} from 'core-logic/api/supabase';
 import {TActionInfo, TRPCName} from './type';
 
 /**
@@ -14,10 +14,6 @@ export const useActionInfoData = (infoType: TActionInfo, actionId: string) => {
       const {data} = await supabaseClient.rpc(rpc, {id: actionId}).single();
       return data?.[infoType] as string;
     },
-    {
-      refetchOnMount: false,
-      refetchOnReconnect: false,
-      refetchOnWindowFocus: false,
-    }
+    DISABLE_AUTO_REFETCH
   );
 };

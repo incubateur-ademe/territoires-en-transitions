@@ -1,5 +1,5 @@
 import {useQuery} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
+import {DISABLE_AUTO_REFETCH, supabaseClient} from 'core-logic/api/supabase';
 
 export const useCollectiviteBucketId = (collectivite_id: number | null) => {
   const query = useQuery(
@@ -15,11 +15,7 @@ export const useCollectiviteBucketId = (collectivite_id: number | null) => {
         .single();
       return data?.bucket_id;
     },
-    {
-      refetchOnMount: false,
-      refetchOnReconnect: false,
-      refetchOnWindowFocus: false,
-    }
+    DISABLE_AUTO_REFETCH
   );
 
   return query?.data || null;

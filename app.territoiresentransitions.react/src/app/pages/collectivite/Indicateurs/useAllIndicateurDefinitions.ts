@@ -1,5 +1,5 @@
 import {useQuery} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
+import {DISABLE_AUTO_REFETCH, supabaseClient} from 'core-logic/api/supabase';
 import {Database} from 'types/database.types';
 
 export type TIndicateurDefinition =
@@ -10,12 +10,7 @@ export const useAllIndicateurDefinitions = () => {
   const {data} = useQuery(
     ['indicateur_definition'],
     fetchAllIndicateurDefinitions,
-    // il n'est pas nécessaire de recharger trop souvent ces définitions
-    {
-      refetchOnMount: false,
-      refetchOnReconnect: false,
-      refetchOnWindowFocus: false,
-    }
+    DISABLE_AUTO_REFETCH
   );
   return data || [];
 };
@@ -44,12 +39,7 @@ export const useAllIndicateurDefinitionsForGroup = (
         indicateurs?.filter(({indicateur_group}) => indicateur_group === group)
       );
     },
-    // il n'est pas nécessaire de trier et filtrer trop souvent les définitions
-    {
-      refetchOnMount: false,
-      refetchOnReconnect: false,
-      refetchOnWindowFocus: false,
-    }
+    DISABLE_AUTO_REFETCH
   );
   return data || [];
 };

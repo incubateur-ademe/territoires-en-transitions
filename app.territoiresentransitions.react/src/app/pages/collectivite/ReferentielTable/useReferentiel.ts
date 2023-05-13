@@ -1,6 +1,6 @@
 import {useCallback, useMemo} from 'react';
 import {useQuery} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
+import {DISABLE_AUTO_REFETCH, supabaseClient} from 'core-logic/api/supabase';
 import {TActionStatutsRow} from 'types/alias';
 import {useToggleRowExpandedReducer} from './useToggleRowExpandedReducer';
 import {indexBy} from 'utils/indexBy';
@@ -93,11 +93,7 @@ export const useReferentielData = (referentiel: string | null) => {
   const {data, isLoading} = useQuery(
     ['action_referentiel', referentiel],
     () => fetchActionsReferentiel(referentiel),
-    {
-      // il n'est pas nécessaire de recharger trop systématiquement ici
-      refetchOnReconnect: false,
-      refetchOnWindowFocus: false,
-    }
+    DISABLE_AUTO_REFETCH
   );
   const {actionById, total, rows} = data || {};
 
