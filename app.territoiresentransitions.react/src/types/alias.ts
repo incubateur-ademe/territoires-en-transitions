@@ -94,10 +94,6 @@ export type TNomCollectivite = NonNullableFields<
   Database['public']['Views']['named_collectivite']['Row']
 >;
 
-export type TDepartement = NonNullableFields<
-  Database['public']['Views']['departement']['Row']
->;
-
 export type TNiveauAcces = Database['public']['Enums']['niveau_acces'];
 
 export type TMembreFonction = Database['public']['Enums']['membre_fonction'];

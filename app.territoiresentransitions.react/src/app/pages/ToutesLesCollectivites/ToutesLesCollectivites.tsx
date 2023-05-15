@@ -1,12 +1,11 @@
 import {useMemo, useState} from 'react';
 import {CollectivitesGrid} from 'app/pages/ToutesLesCollectivites/components/CollectivitesGrid';
 import {
-  filtresVides,
-  useDepartements,
+  NB_CARDS_PER_PAGE,
   useFilteredCollectivites,
-  useRegions,
-  useFiltersParams,
-} from 'app/pages/ToutesLesCollectivites/hooks';
+} from './useFilteredCollectivites';
+import {TDepartement, useDepartements} from './useDepartements';
+import {TRegion, useRegions} from './useRegions';
 import {TCollectivitesFilters} from 'app/pages/ToutesLesCollectivites/filtreLibelles';
 import {FiltresColonne} from 'app/pages/ToutesLesCollectivites/components/FiltresColonne';
 import {CollectiviteCarteRead} from 'generated/dataLayer/collectivite_carte_read';

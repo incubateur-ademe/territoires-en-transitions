@@ -10,8 +10,8 @@ import {MultiSelectCheckboxes} from 'app/pages/ToutesLesCollectivites/components
 import {MultiSelectDropdown} from 'app/pages/ToutesLesCollectivites/components/MultiSelectDropdown';
 import {SelectDropdown} from 'app/pages/ToutesLesCollectivites/components/SelectDropdown';
 
-import {RegionRead} from 'generated/dataLayer/region_read';
-import {TDepartement} from 'types/alias';
+import {TDepartement} from '../useDepartements';
+import {TRegion} from '../useRegions';
 
 export const TypeCollectiviteFiltre = (props: {
   selected: string[];
