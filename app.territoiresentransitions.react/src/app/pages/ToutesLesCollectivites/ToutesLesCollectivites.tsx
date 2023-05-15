@@ -6,23 +6,22 @@ import {
 } from './useFilteredCollectivites';
 import {TDepartement, useDepartements} from './useDepartements';
 import {TRegion, useRegions} from './useRegions';
-import {TCollectivitesFilters} from 'app/pages/ToutesLesCollectivites/filtreLibelles';
-import {FiltresColonne} from 'app/pages/ToutesLesCollectivites/components/FiltresColonne';
+import {TCollectivitesFilters} from './filtreLibelles';
+import {FiltresColonne} from './components/FiltresColonne';
 import {CollectiviteCarteRead} from 'generated/dataLayer/collectivite_carte_read';
-import {TrierParFiltre} from 'app/pages/ToutesLesCollectivites/components/Filtres';
-import {RegionRead} from 'generated/dataLayer/region_read';
-import {TDepartement} from 'types/alias';
-import {Pagination} from 'app/pages/ToutesLesCollectivites/components/Pagination';
-import {NB_CARDS_PER_PAGE} from 'app/pages/ToutesLesCollectivites/queries';
-import {getNumberOfActiveFilters} from 'app/pages/ToutesLesCollectivites/getNumberOfActiveFilters';
+import {TrierParFiltre} from './components/Filtres';
+import {Pagination} from './components/Pagination';
+import {getNumberOfActiveFilters} from './getNumberOfActiveFilters';
 import classNames from 'classnames';
 import './ToutesLesCollectivites.css';
 import AssocierCollectiviteBandeau from 'ui/collectivites/AssocierCollectiviteBandeau';
 import {useOwnedCollectivites} from 'core-logic/hooks/useOwnedCollectivites';
 import {DesactiverLesFiltres} from 'ui/shared/filters/DesactiverLesFiltres';
+import {initialFilters, nameToShortNames} from './filters';
+import {useSearchParams} from 'core-logic/hooks/query';
 
 export type TRenderToutesCollectivitesProps = {
-  regions: RegionRead[];
+  regions: TRegion[];
   departements: TDepartement[];
   collectivites: CollectiviteCarteRead[];
   collectivitesCount: number;
@@ -120,15 +119,18 @@ export const RenderToutesLesCollectivites = (
                 )}
                 {getNumberOfActiveFilters(props.filters) > 0 && (
                   <DesactiverLesFiltres
-                    onClick={() => props.setFilters(filtresVides)}
+                    onClick={() => props.setFilters(initialFilters)}
                   />
                 )}
               </div>
               <TrierParFiltre
                 onChange={selected =>
-                  props.setFilters({...props.filters, trierPar: selected})
+                  props.setFilters({
+                    ...props.filters,
+                    trierPar: selected ? [selected] : undefined,
+                  })
                 }
-                selected={props.filters.trierPar}
+                selected={props.filters.trierPar?.[0]}
               />
             </div>
             <CollectivitesGrid
@@ -136,7 +138,6 @@ export const RenderToutesLesCollectivites = (
               isCardClickable={!hasCollectivites}
               collectivites={props.collectivites}
               collectivitesCount={props.collectivitesCount}
-              desactiverLesFiltres={() => props.setFilters(filtresVides)}
               filters={props.filters}
             />
             {props.collectivitesCount !== 0 && (
@@ -185,7 +186,12 @@ const ToutesLesCollectivites = () => {
   const {regions} = useRegions();
   const {departements} = useDepartements();
 
-  const {filters, setFilters} = useFiltersParams();
+  // filtre initial
+  const [filters, setFilters] = useSearchParams<TCollectivitesFilters>(
+    'collectivites',
+    initialFilters,
+    nameToShortNames
+  );
   const {collectivites, collectivitesCount, isLoading} =
     useFilteredCollectivites(filters);
 

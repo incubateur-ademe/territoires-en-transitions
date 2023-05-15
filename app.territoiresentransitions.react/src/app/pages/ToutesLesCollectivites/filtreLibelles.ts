@@ -1,3 +1,5 @@
+import {TSelectOption} from 'ui/shared/select/commons';
+
 export type TOption = {libelle: string; id: string};
 
 export type TCollectivitesFilters = {
@@ -10,7 +12,7 @@ export type TCollectivitesFilters = {
   niveauDeLabellisation: string[];
   realiseCourant: string[];
   tauxDeRemplissage: string[];
-  trierPar?: string;
+  trierPar?: string[];
   page?: number;
 };
 
@@ -55,10 +57,10 @@ export const referentielCollectiviteOptions: TOption[] = [
   {id: 'cae', libelle: 'Climat Air Énergie'},
 ];
 
-export const trierParOptions: TOption[] = [
-  {id: 'score', libelle: '% Réalisé courant'},
-  {id: 'completude', libelle: 'Taux de remplissage'},
-  {id: 'nom', libelle: 'Ordre alphabétique'},
+export const trierParOptions: TSelectOption[] = [
+  {value: 'score', label: '% Réalisé courant'},
+  {value: 'completude', label: 'Taux de remplissage'},
+  {value: 'nom', label: 'Ordre alphabétique'},
 ];
 
 export const typeCollectiviteOptions: TOption[] = [
