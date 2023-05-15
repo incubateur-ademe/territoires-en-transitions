@@ -4,7 +4,7 @@ BEGIN;
 
 drop function flat_axes;
 create function
-    flat_axes(plan_id integer, max_depth integer default null)
+    flat_axes(axe_id integer, max_depth integer default null)
     returns setof flat_axe_node
     stable
 begin
@@ -16,8 +16,7 @@ begin
                            0                   as depth,
                            array []::integer[] as ancestors
                     from axe
-                    where parent is null
-                      and id = plan_id
+                    where id = axe_id
                       and can_read_acces_restreint(axe.collectivite_id)
 
                     union all
