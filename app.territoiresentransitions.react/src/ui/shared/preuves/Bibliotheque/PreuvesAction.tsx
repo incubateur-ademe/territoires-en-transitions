@@ -82,15 +82,17 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
           action={action}
           addToSubAction={withSubActions}
         />
-        <div data-test="complementaires" className="flex flex-col gap-3">
-          {complementaires?.map(preuve => (
-            <PreuveDoc
-              key={preuve.id}
-              preuve={preuve}
-              displayIdentifier={!(hideIdentifier ?? false)}
-            />
-          ))}
-        </div>
+        {complementaires?.length ? (
+          <div data-test="complementaires" className="flex flex-col gap-3">
+            {complementaires?.map(preuve => (
+              <PreuveDoc
+                key={preuve.id}
+                preuve={preuve}
+                displayIdentifier={!(hideIdentifier ?? false)}
+              />
+            ))}
+          </div>
+        ) : null}
       </div>
 
       {/* Message d'avertissement */}
