@@ -8,16 +8,16 @@ import {
   TypeCollectiviteFiltre,
 } from 'app/pages/ToutesLesCollectivites/components/Filtres';
 import type {TCollectivitesFilters} from 'app/pages/ToutesLesCollectivites/filtreLibelles';
-import {RegionRead} from 'generated/dataLayer/region_read';
-import {TDepartement} from 'types/alias';
 import {InputSearch} from 'ui/UiSearchBar';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
+import {TDepartement} from '../useDepartements';
+import {TRegion} from '../useRegions';
 
 type UpdateFilters = (newFilters: TCollectivitesFilters) => void;
 
 export const FiltresColonne = (props: {
   departments: TDepartement[];
-  regions: RegionRead[];
+  regions: TRegion[];
   filters: TCollectivitesFilters;
   setFilters: UpdateFilters;
 }) => {

@@ -8,7 +8,7 @@ import {
   Select,
 } from '@material-ui/core';
 import {SelectInputProps} from '@material-ui/core/Select/SelectInput';
-import {useRegions} from 'app/pages/ToutesLesCollectivites/hooks';
+import {useRegions} from '../useRegions';
 
 export type TRegionFiltreProps = {
   codes: string[];
