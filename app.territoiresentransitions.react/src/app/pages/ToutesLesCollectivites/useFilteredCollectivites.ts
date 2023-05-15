@@ -1,6 +1,6 @@
 import {useQuery} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {CollectiviteCarteRead} from 'generated/dataLayer/collectivite_carte_read';
+import {TCollectiviteCarte} from './types';
 import {TCollectivitesFilters} from 'app/pages/ToutesLesCollectivites/filtreLibelles';
 
 const screenIsMobile = () =>
@@ -18,7 +18,7 @@ export const useFilteredCollectivites = (
   args: TCollectivitesFilters
 ): {
   isLoading: boolean;
-  collectivites: CollectiviteCarteRead[];
+  collectivites: TCollectiviteCarte[];
   collectivitesCount: number;
 } => {
   const {data, isLoading} = useQuery(['collectivite_card', args], () =>
@@ -41,7 +41,7 @@ const buildQueryFromFilters = (filters: TCollectivitesFilters) => {
     .select('*', {count: 'exact'});
 
   const filter = (
-    column: keyof CollectiviteCarteRead,
+    column: keyof TCollectiviteCarte,
     operator: FilterOperator,
     possibleValues: string[] | number[]
   ) => {
@@ -121,7 +121,7 @@ const buildQueryFromFilters = (filters: TCollectivitesFilters) => {
   }
 
   //  Trier par
-  let orderBy: keyof CollectiviteCarteRead;
+  let orderBy: keyof TCollectiviteCarte;
   let ascending: boolean;
   switch (filters.trierPar?.[0]) {
     case 'nom':
@@ -168,7 +168,7 @@ const buildQueryFromFilters = (filters: TCollectivitesFilters) => {
 export const fetchCollectiviteCards = async (
   filters: TCollectivitesFilters
 ): Promise<{
-  collectivites: CollectiviteCarteRead[];
+  collectivites: TCollectiviteCarte[];
   collectivitesCount: number;
 }> => {
   // la requête

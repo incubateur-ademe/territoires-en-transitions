@@ -8,7 +8,7 @@ import {TDepartement, useDepartements} from './useDepartements';
 import {TRegion, useRegions} from './useRegions';
 import {TCollectivitesFilters} from './filtreLibelles';
 import {FiltresColonne} from './components/FiltresColonne';
-import {CollectiviteCarteRead} from 'generated/dataLayer/collectivite_carte_read';
+import {TCollectiviteCarte} from './types';
 import {TrierParFiltre} from './components/Filtres';
 import {Pagination} from './components/Pagination';
 import {getNumberOfActiveFilters} from './getNumberOfActiveFilters';
@@ -23,7 +23,7 @@ import {useSearchParams} from 'core-logic/hooks/query';
 export type TRenderToutesCollectivitesProps = {
   regions: TRegion[];
   departements: TDepartement[];
-  collectivites: CollectiviteCarteRead[];
+  collectivites: TCollectiviteCarte[];
   collectivitesCount: number;
   filters: TCollectivitesFilters;
   setFilters: (filters: TCollectivitesFilters) => void;
