@@ -35,7 +35,7 @@ Deno.test("RPC flat_axes", async () => {
   await signIn("yolododo");
 
   const rpcResponse = await supabase.rpc("flat_axes", {
-    plan_id: 1,
+    axe_id: 1,
   });
   assertExists(rpcResponse.data);
   const axes = rpcResponse.data as unknown as flatAxe[];
