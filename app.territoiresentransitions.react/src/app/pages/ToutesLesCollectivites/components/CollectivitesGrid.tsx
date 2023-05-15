@@ -28,7 +28,6 @@ export const CollectivitesGrid = (props: {
   isLoading?: boolean;
   collectivites: CollectiviteCarteRead[];
   collectivitesCount: number;
-  desactiverLesFiltres: () => void;
   filters: TCollectivitesFilters;
   isCardClickable: boolean;
 }) => {
