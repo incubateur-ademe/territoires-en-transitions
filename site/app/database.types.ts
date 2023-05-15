@@ -4757,20 +4757,13 @@ export interface Database {
         }
         Returns: string[]
       }
-      flat_axes:
-        | {
-            Args: {
-              axe: unknown
-            }
-            Returns: Database["public"]["CompositeTypes"]["flat_axe_node"][]
-          }
-        | {
-            Args: {
-              plan_id: number
-              max_depth?: number
-            }
-            Returns: Database["public"]["CompositeTypes"]["flat_axe_node"][]
-          }
+      flat_axes: {
+        Args: {
+          axe_id: number
+          max_depth?: number
+        }
+        Returns: Database["public"]["CompositeTypes"]["flat_axe_node"][]
+      }
       foreign_tables_are: {
         Args: {
           "": unknown[]
@@ -6354,6 +6347,27 @@ export interface Database {
             Args: {
               bucket_width: unknown
               ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
               origin: string
             }
             Returns: string
@@ -6363,27 +6377,6 @@ export interface Database {
               bucket_width: unknown
               ts: string
               origin: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
             }
             Returns: string
           }
@@ -6584,13 +6577,13 @@ export interface Database {
       }
       todo_start:
         | {
-            Args: {
-              "": string
-            }
+            Args: Record<PropertyKey, never>
             Returns: boolean[]
           }
         | {
-            Args: Record<PropertyKey, never>
+            Args: {
+              "": string
+            }
             Returns: boolean[]
           }
       types_are: {
