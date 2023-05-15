@@ -28,10 +28,6 @@ exports[`Storyshots ui/shared/actions/ActionPreuvePanel Default 1`] = `
     >
       Ajouter un document complémentaire
     </button>
-    <div
-      className="flex flex-col gap-3"
-      data-test="complementaires"
-    />
   </div>
   <div
     className="border-solid border-t border-[#FCC63A] my-4"
