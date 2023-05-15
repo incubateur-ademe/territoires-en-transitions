@@ -76,7 +76,7 @@ export const ActionCommentaireField = ({
             saveActionCommentaire({
               action_id: action.id,
               collectivite_id: collectivite.collectivite_id,
-              commentaire,
+              commentaire: commentaire.trim(),
             });
           onSave && onSave();
         }}
