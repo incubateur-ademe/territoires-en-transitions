@@ -84,7 +84,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Message Av
           </div>
         </div>
         <p
-          className="text-xs fr-text-mention--grey mb-1 pl-2 "
+          className="text-xs fr-text-mention--grey mb-1 pl-2"
           data-test="comment"
           onClick={[Function]}
         >
@@ -247,7 +247,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
               </div>
             </div>
             <p
-              className="text-xs fr-text-mention--grey mb-1 pl-2 "
+              className="text-xs fr-text-mention--grey mb-1 pl-2"
               data-test="comment"
               onClick={[Function]}
             >
@@ -443,7 +443,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
               </div>
             </div>
             <p
-              className="text-xs fr-text-mention--grey mb-1 pl-2 "
+              className="text-xs fr-text-mention--grey mb-1 pl-2"
               data-test="comment"
               onClick={[Function]}
             >
@@ -550,7 +550,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
           </div>
         </div>
         <p
-          className="text-xs fr-text-mention--grey mb-1 pl-2 "
+          className="text-xs fr-text-mention--grey mb-1 pl-2"
           data-test="comment"
           onClick={[Function]}
         >
@@ -798,7 +798,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
               </div>
             </div>
             <p
-              className="text-xs fr-text-mention--grey mb-1 pl-2 "
+              className="text-xs fr-text-mention--grey mb-1 pl-2"
               data-test="comment"
               onClick={[Function]}
             >
@@ -994,7 +994,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
               </div>
             </div>
             <p
-              className="text-xs fr-text-mention--grey mb-1 pl-2 "
+              className="text-xs fr-text-mention--grey mb-1 pl-2"
               data-test="comment"
               onClick={[Function]}
             >

@@ -103,7 +103,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveDoc Preuve Fichier Comm
     </div>
   </div>
   <p
-    className="text-xs fr-text-mention--grey mb-1 pl-2 "
+    className="text-xs fr-text-mention--grey mb-1 pl-2"
     data-test="comment"
     onClick={[Function]}
   >
@@ -215,7 +215,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveDoc Preuve Lien Comment
     </div>
   </div>
   <p
-    className="text-xs fr-text-mention--grey mb-1 pl-2 "
+    className="text-xs fr-text-mention--grey mb-1 pl-2"
     data-test="comment"
     onClick={[Function]}
   >
