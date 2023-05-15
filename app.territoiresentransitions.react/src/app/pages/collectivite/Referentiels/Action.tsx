@@ -28,7 +28,6 @@ import {useActionLinkedIndicateurDefinitions} from './useActionLinkedIndicateurD
 import Alerte from 'ui/shared/Alerte';
 import {usePrevAndNextActionLinks} from './usePrevAndNextActionLinks';
 import {ActionHeader} from './ActionHeader';
-import {ActionSidePanel} from './ActionSidePanel';
 import {useActionPreuvesCount} from 'ui/shared/preuves/Bibliotheque/usePreuves';
 
 // index des onglets de la page Action
