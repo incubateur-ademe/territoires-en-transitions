@@ -21,7 +21,7 @@ exports[`Storyshots ui/shared/select/SelectCreateTagsDropdown Default 1`] = `
         className="grow placeholder:text-grey425"
         data-test="undefined-input"
         onChange={[Function]}
-        placeholder="Sélectionner une ou plusieurs options..."
+        placeholder="Sélectionner une ou plusieurs options"
         type="text"
         value=""
       />
