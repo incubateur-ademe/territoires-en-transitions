@@ -1,4 +1,4 @@
-import {CollectiviteCarteRead} from 'generated/dataLayer/collectivite_carte_read';
+import {TCollectiviteCarte} from '../types';
 import {Referentiel} from 'types/litterals';
 import {toPercentString} from 'utils/score';
 import {referentielToName} from 'app/labels';
@@ -11,7 +11,7 @@ import classNames from 'classnames';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 
 export type TCollectiviteCarteProps = {
-  collectivite: CollectiviteCarteRead;
+  collectivite: TCollectiviteCarte;
   isCardClickable: boolean;
 };
 
