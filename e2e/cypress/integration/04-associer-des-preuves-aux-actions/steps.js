@@ -95,7 +95,7 @@ defineStep(
     getPreuvePanel(action)
       .find(`[data-test^=preuves] > div`)
       .contains(preuve)
-      .parent()
+      .parentsUntil('[data-test=item]')
       .find(`button[title=${btn}]`)
       .click({force: true}); // force car les boutons ne sont visibles qu'au survol (difficile à simuler dans cypress)
   }
