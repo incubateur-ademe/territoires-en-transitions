@@ -656,10 +656,6 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves At
     >
       Ajouter un document complémentaire
     </button>
-    <div
-      className="flex flex-col gap-3"
-      data-test="complementaires"
-    />
   </div>
 </div>
 `;
@@ -1045,10 +1041,6 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
     >
       Ajouter un document complémentaire
     </button>
-    <div
-      className="flex flex-col gap-3"
-      data-test="complementaires"
-    />
   </div>
 </div>
 `;
