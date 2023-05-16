@@ -1504,6 +1504,29 @@ export interface Database {
           indicateurs?: Json
         }
       }
+      justification: {
+        Row: {
+          collectivite_id: number
+          modified_at: string
+          modified_by: string
+          question_id: string
+          texte: string
+        }
+        Insert: {
+          collectivite_id: number
+          modified_at: string
+          modified_by?: string
+          question_id: string
+          texte: string
+        }
+        Update: {
+          collectivite_id?: number
+          modified_at?: string
+          modified_by?: string
+          question_id?: string
+          texte?: string
+        }
+      }
       labellisation: {
         Row: {
           annee: number | null
@@ -5896,13 +5919,13 @@ export interface Database {
       }
       pass:
         | {
-            Args: {
-              "": string
-            }
+            Args: Record<PropertyKey, never>
             Returns: string
           }
         | {
-            Args: Record<PropertyKey, never>
+            Args: {
+              "": string
+            }
             Returns: string
           }
       personnes_collectivite: {
