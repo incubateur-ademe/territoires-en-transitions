@@ -11,6 +11,7 @@ import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {TEditState} from 'core-logic/hooks/useEditState';
 import {ConfirmSupprPreuveBtn} from './ConfirmSupprPreuveBtn';
 import {IdentifiantAction} from './IdentifiantAction';
+import AnchorAsButton from 'ui/buttons/AnchorAsButton';
 
 export type TPreuveDocProps = {
   classComment?: string;
@@ -146,19 +147,15 @@ const PreuveTitle = ({preuve}: {preuve: TPreuve}) => {
   const picto = preuvePicto(preuve);
 
   return (
-    <a
+    <AnchorAsButton
       data-test="name"
-      href="/"
       className={classNames('fr-text--sm fr-mb-1v', picto, {
         'fr-link--icon-left': Boolean(picto),
       })}
-      onClick={evt => {
-        evt.preventDefault();
-        openPreuve(preuve);
-      }}
+      onClick={() => openPreuve(preuve)}
     >
       {formatTitle(preuve)}
-    </a>
+    </AnchorAsButton>
   );
 };
 

@@ -3,6 +3,7 @@ import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinition
 import {ActionScore} from 'types/ClientScore';
 import {toLocaleFixed} from 'utils/toFixed';
 import {TweenText} from 'ui/shared/TweenText';
+import AnchorAsButton from 'ui/buttons/AnchorAsButton';
 
 export type TPointsPotentielsProps = {
   /** Définition de l'action */
@@ -25,14 +26,12 @@ export const PointsPotentiels = ({
     <div data-test="PointsPotentiels" className="flex items-center">
       <TweenText text={getLabel(actionScore)} align-left />
       {typeof onEdit === 'function' ? (
-        // eslint-disable-next-line jsx-a11y/anchor-is-valid
-        <a
+        <AnchorAsButton
           className="fr-link fr-link--icon-left fr-icon-settings-5-line fr-ml-2w fr-text--sm"
-          href="#"
           onClick={onEdit}
         >
           Personnaliser le potentiel
-        </a>
+        </AnchorAsButton>
       ) : null}
     </div>
   );

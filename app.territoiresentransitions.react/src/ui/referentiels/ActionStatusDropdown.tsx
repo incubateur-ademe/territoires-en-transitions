@@ -16,6 +16,7 @@ import {
   SelectActionStatut,
 } from 'ui/shared/actions/SelectActionStatut';
 import ActionProgressBar from './ActionProgressBar';
+import AnchorAsButton from 'ui/buttons/AnchorAsButton';
 
 // valeurs par défaut de l'avancement détaillé par statut d'avancement
 const AVANCEMENT_DETAILLE_PAR_STATUT: Record<
@@ -97,16 +98,12 @@ export const ActionStatusDropdown = ({actionId}: {actionId: string}) => {
           <ActionProgressBar actionId={actionId} />
           {!disabled && (
             <div className="text-right">
-              <a
+              <AnchorAsButton
                 className="underline_href fr-link fr-link--sm"
-                href="/"
-                onClick={evt => {
-                  evt.preventDefault();
-                  setOpened(true);
-                }}
+                onClick={() => setOpened(true)}
               >
                 Détailler l'avancement
-              </a>
+              </AnchorAsButton>
               <Dialog
                 open={opened}
                 onClose={() => setOpened(false)}

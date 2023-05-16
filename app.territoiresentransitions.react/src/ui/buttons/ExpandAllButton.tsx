@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import AnchorAsButton from './AnchorAsButton';
 
 type ExpendAllButtonProps = {
   open: boolean;
@@ -18,19 +19,15 @@ const ExpandAllButton = ({
 }: ExpendAllButtonProps) => {
   return (
     <div className={className}>
-      <a
+      <AnchorAsButton
         className={classNames('underline_href fr-link fr-link--icon-right', {
           'fr-icon-arrow-up-line': open,
           'fr-icon-arrow-down-line': !open,
         })}
-        href="/"
-        onClick={evt => {
-          evt.preventDefault();
-          onToggleOpen();
-        }}
+        onClick={onToggleOpen}
       >
         {open ? 'Tout replier' : 'Tout déplier'}
-      </a>
+      </AnchorAsButton>
     </div>
   );
 };
