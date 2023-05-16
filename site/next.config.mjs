@@ -1,6 +1,7 @@
 import nextMDX from '@next/mdx';
 import rehypeToc from 'rehype-toc';
 import rehypeSlug from 'rehype-slug';
+import rehypeExternalLinks from 'rehype-external-links';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -33,6 +34,10 @@ const withMDX = nextMDX({
     remarkPlugins: [],
     rehypePlugins: [
       rehypeSlug,
+      [
+        rehypeExternalLinks,
+        {rel: ['noreferrer', 'noopener'], target: '_blank'},
+      ],
       [rehypeToc, {cssClasses: {toc: 'md-toc'}, headings: ['h1', 'h2']}],
     ],
   },
