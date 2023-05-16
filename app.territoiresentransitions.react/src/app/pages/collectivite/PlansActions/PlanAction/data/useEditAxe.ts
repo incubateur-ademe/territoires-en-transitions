@@ -25,7 +25,7 @@ export const useEditAxe = (planId: number) => {
 
   return useMutation(updateAxe, {
     onSuccess: () => {
-      queryClient.invalidateQueries(['plans_actions', collectivite_id]);
+      queryClient.invalidateQueries(['plans_navigation', collectivite_id]);
       queryClient.invalidateQueries(['plan_action', planId]);
     },
   });

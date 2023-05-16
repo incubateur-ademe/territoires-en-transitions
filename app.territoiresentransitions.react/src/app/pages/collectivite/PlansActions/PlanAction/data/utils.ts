@@ -97,3 +97,22 @@ export const removeAxeFromPlan = (
   }
   return plan;
 };
+
+/**
+ * Convertit une liste d'axes ordonnancée en une liste de plans.
+ * @param axes
+ * @returns
+ */
+export const buildPlans = (axes: FlatAxe[]): PlanNode[] => {
+  let plans: PlanNode[] = [];
+  let nodes = {} as {[key: number]: PlanNode};
+
+  for (let i = 0; i < axes.length; i++) {
+    let axe: PlanNode = {...axes[i], children: []};
+    nodes[axe.id] = axe;
+    if (axe.depth === 0) plans.push(axe);
+    else nodes[axe.ancestors[axe.ancestors.length - 1]].children.push(axe);
+  }
+
+  return plans;
+};
