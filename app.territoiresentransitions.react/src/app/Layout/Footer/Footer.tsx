@@ -3,39 +3,25 @@ import ademeLogoImage from 'app/static/img/ademe.svg';
 
 const Footer = () => {
   return (
-    <footer className="fr-footer fr-mt-4w" role="contentinfo" id="footer">
+    <footer className="fr-footer" role="contentinfo" id="footer">
       <div className="fr-container">
         <div className="fr-footer__body">
-          <div className="fr-footer__brand fr-enlarge-link">
+          <div className="fr-footer__brand">
             <LogoRepubliqueFrancaise />
-            <a
-              className="fr-footer__brand-link"
-              href="https://territoiresentransitions.fr"
-              title="Accueil - Territoires en Transitions"
-            >
-              <img
-                className="fr-footer__logo"
-                width="128"
-                height="146"
-                src={ademeLogoImage}
-                alt="ADEME"
-                loading="lazy"
-              />
-            </a>
+            <img
+              className="fr-footer__logo fr-ml-2w"
+              width="128"
+              height="146"
+              src={ademeLogoImage}
+              alt="ADEME"
+              loading="lazy"
+            />
           </div>
           <div className="fr-footer__content">
             <p className="fr-footer__content-desc">
               Territoires en Transitions est une startup d'État portée par
               l'Agence de la Transition Écologique (ADEME) avec le soutien de
-              l'Agence Nationale de la Cohésion des Territoires (ANCT).{' '}
-              <a
-                href="https://github.com/betagouv/territoires-en-transitions"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Le code source
-              </a>{' '}
-              est en licence libre.
+              l'Agence Nationale de la Cohésion des Territoires (ANCT).
             </p>
             <ul className="fr-footer__content-list">
               <li className="fr-footer__content-item">
@@ -76,14 +62,6 @@ const Footer = () => {
             <li className="fr-footer__bottom-item">
               <a
                 className="fr-footer__bottom-link"
-                href="https://aide.territoiresentransitions.fr/fr/article/comment-contacter-lequipe-territoires-en-transitions-ngu7tg/"
-              >
-                Nous contacter
-              </a>
-            </li>
-            <li className="fr-footer__bottom-item">
-              <a
-                className="fr-footer__bottom-link"
                 href="https://territoiresentransitions.fr/stats"
               >
                 Statistiques
@@ -91,7 +69,12 @@ const Footer = () => {
             </li>
             <li className="fr-footer__bottom-item">
               <span className="fr-footer__bottom-link">
-                Accessibilité : partiellement conforme
+                <a
+                  className="fr-footer__bottom-link"
+                  href="https://territoiresentransitions.fr/accessibilite"
+                >
+                  Accessibilité : non conforme
+                </a>
               </span>
             </li>
             <li className="fr-footer__bottom-item">
@@ -106,8 +89,28 @@ const Footer = () => {
               <a
                 className="fr-footer__bottom-link"
                 href="https://www.ademe.fr/donnees-personnelles/"
+                target="_blank"
+                rel="noreferrer"
               >
                 Données personnelles
+              </a>
+            </li>
+            <li className="fr-footer__bottom-item">
+              <a
+                className="fr-footer__bottom-link"
+                href="https://territoiresentransitions.fr/cookies"
+              >
+                Gestion des cookies
+              </a>
+            </li>
+            <li className="fr-footer__bottom-item">
+              <a
+                className="fr-footer__bottom-link"
+                href="https://github.com/betagouv/territoires-en-transitions"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Code source
               </a>
             </li>
             <li className="fr-footer__bottom-item">
