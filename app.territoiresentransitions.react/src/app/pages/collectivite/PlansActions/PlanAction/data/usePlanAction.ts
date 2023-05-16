@@ -2,25 +2,11 @@ import {useQuery} from 'react-query';
 
 import {supabaseClient} from 'core-logic/api/supabase';
 import {FlatAxe, PlanNode} from './types';
+import {buildPlans} from './utils';
 
-function buildPlan(axes: FlatAxe[]): PlanNode {
-  let plan = {...axes[0]!, children: []};
-  let nodes = {} as {[key: number]: PlanNode};
-  nodes[plan.id] = plan;
-
-  if (axes.length > 1) {
-    for (let i = 1; i < axes.length; i++) {
-      let axe: PlanNode = {...axes[i], children: []};
-      nodes[axe.id] = axe;
-      nodes[axe.ancestors[axe.ancestors.length - 1]].children.push(axe);
-    }
-  }
-  return plan;
-}
-
-export const usePlanAction = (plan_id: number) => {
-  return useQuery(['plan_action', plan_id], async () => {
-    const {data} = await supabaseClient.rpc('flat_axes', {plan_id});
-    return buildPlan(data as unknown as FlatAxe[]) as unknown as PlanNode;
+export const usePlanAction = (axe_id: number) => {
+  return useQuery(['plan_action', axe_id], async () => {
+    const {data} = await supabaseClient.rpc('flat_axes', {axe_id});
+    return buildPlans(data as unknown as FlatAxe[])[0] as unknown as PlanNode;
   });
 };
