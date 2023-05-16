@@ -5,6 +5,7 @@ Fonctionnalité: Associer des preuves aux actions
   Scénario: Ajouter un fichier comme preuve complémentaire à une sous-action
     Etant donné que je suis connecté en tant que "yolo"
     Et que je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "1"
+    Et que je déplie la sous-action "1.1.1" du suivi de l'action
     Et que je déplie le panneau Preuves de l'action "1.1.1"
     Et que la liste des preuves complémentaires de la sous-action "1.1.1" est vide
 
@@ -55,6 +56,7 @@ Fonctionnalité: Associer des preuves aux actions
   Scénario: Visualiser une erreur lors de l'ajout d'un fichier preuve trop lourd
     Etant donné que je suis connecté en tant que "yolo"
     Et que je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "1"
+    Et que je déplie la sous-action "1.1.1" du suivi de l'action
     Et que je déplie le panneau Preuves de l'action "1.1.1"
     Et que la liste des preuves complémentaires de la sous-action "1.1.1" est vide
 
@@ -76,6 +78,7 @@ Fonctionnalité: Associer des preuves aux actions
   Scénario: Visualiser une erreur lors de l'ajout d'un fichier preuve dans un format non supporté
     Etant donné que je suis connecté en tant que "yolo"
     Et que je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "1"
+    Et que je déplie la sous-action "1.1.1" du suivi de l'action
     Et que je déplie le panneau Preuves de l'action "1.1.1"
     Et que la liste des preuves complémentaires de la sous-action "1.1.1" est vide
 
@@ -97,6 +100,7 @@ Fonctionnalité: Associer des preuves aux actions
   Scénario: Supprimer un fichier preuve
     Etant donné que je suis connecté en tant que "yolo"
     Et que je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "1"
+    Et que je déplie la sous-action "1.1.1" du suivi de l'action
     Et que je déplie le panneau Preuves de l'action "1.1.1"
     Et que la liste des preuves complémentaires de la sous-action "1.1.1" est vide
 
@@ -115,6 +119,7 @@ Fonctionnalité: Associer des preuves aux actions
   Scénario: Ajouter un lien comme preuve complémentaire à une sous-action
     Etant donné que je suis connecté en tant que "yolo"
     Et que je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "1"
+    Et que je déplie la sous-action "1.1.1" du suivi de l'action
     Et que le bouton "Ajouter une preuve" à l'action "1.1.1" est absent
 
     Quand je déplie le panneau Preuves de l'action "1.1.1"
@@ -149,6 +154,7 @@ Fonctionnalité: Associer des preuves aux actions
       | collectivite_id | action_id | titre   | url              | commentaire |
       | 1               | eci_1.1.1 | Exemple | https://ademe.fr |             |
     Et que je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "1"
+    Et que je déplie la sous-action "1.1.1" du suivi de l'action
 
     Quand je déplie le panneau Preuves de l'action "1.1.1"
     Alors la liste des preuves complémentaires de la sous-action "1.1.1" contient les lignes suivantes :
@@ -164,6 +170,7 @@ Fonctionnalité: Associer des preuves aux actions
       | collectivite_id | action_id | titre   | url              | commentaire |
       | 1               | eci_1.1.1 | Exemple | https://ademe.fr |             |
     Et que je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "1"
+    Et que je déplie la sous-action "1.1.1" du suivi de l'action
 
     Quand je déplie le panneau Preuves de l'action "1.1.1"
     Alors la liste des preuves complémentaires de la sous-action "1.1.1" contient les lignes suivantes :
@@ -182,6 +189,7 @@ Fonctionnalité: Associer des preuves aux actions
       | collectivite_id | action_id | titre   | url              | commentaire     |
       | 1               | eci_1.1.1 | Exemple | https://ademe.fr | mon commentaire |
     Et que je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "1"
+    Et que je déplie la sous-action "1.1.1" du suivi de l'action
 
     Quand je déplie le panneau Preuves de l'action "1.1.1"
     Alors la liste des preuves complémentaires de la sous-action "1.1.1" contient les lignes suivantes :
@@ -203,6 +211,7 @@ Fonctionnalité: Associer des preuves aux actions
       | 2               | eci_1.1.1 | Autre collectivité | https://test1.fr/                    | non visible 1   |
       | 1               | eci_2.1.1 | Autre action       | https://test2.fr/                    | non visible 2   |
     Et que je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "1"
+    Et que je déplie la sous-action "1.1.1" du suivi de l'action
 
     Quand je déplie le panneau Preuves de l'action "1.1.1"
     Alors la liste des preuves complémentaires de la sous-action "1.1.1" contient les lignes suivantes :
@@ -226,6 +235,7 @@ Fonctionnalité: Associer des preuves aux actions
 
     Etant donné que je suis connecté en tant que "yolo"
     Et que je visite le sous-axe "1.3.2" du référentiel "cae" de la collectivité "1"
+    Et que je déplie la sous-action "1.3.2.3" du suivi de l'action
     Et que le bouton "Ajouter une preuve" à l'action "1.3.2.3" est absent
 
     Quand je déplie le panneau Preuves de l'action "1.3.2.3"
