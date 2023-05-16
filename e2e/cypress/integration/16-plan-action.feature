@@ -92,7 +92,8 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     # ajouter une fiche au nouvel axe créé
     Quand j'ajoute une fiche à "Axe 1: les tests passent"
     # ouvrir la modale "Ranger la fiche"
-    Quand j'ouvre la modale "Ranger la fiche"
+    Quand j'ouvre la section "presentation"
+    Et que j'ouvre la modale "Ranger la fiche"
     Alors le "Modale ranger fiche action" est visible
     # enlever la fiche du plan d'action
     # le plan doit apparaitre dans "Sélectionner un nouvel emplacement"
