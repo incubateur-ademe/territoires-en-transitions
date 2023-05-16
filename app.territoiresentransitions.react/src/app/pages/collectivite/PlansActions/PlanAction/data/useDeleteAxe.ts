@@ -47,6 +47,7 @@ export const useDeleteAxe = (
         }
         queryClient.invalidateQueries(['plan_action', planGlobalId]);
         queryClient.invalidateQueries(['plans_actions', collectivite_id]);
+        queryClient.invalidateQueries(['plans_navigation', collectivite_id]);
         redirectURL && history.push(redirectURL);
       },
     }
