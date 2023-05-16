@@ -1,7 +1,5 @@
 import {
   actionDownToTache,
-  actionExemples,
-  ActionExemples,
   referentielDownToAction,
 } from 'core-logic/api/procedures/referentielProcedures';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
@@ -69,16 +67,5 @@ describe('Retrieve action down to tache', () => {
         expect.objectContaining(partialTache),
       ])
     );
-  });
-});
-
-describe('Retrieve exemples', () => {
-  it('should return the action exemples content', async () => {
-    const partialExemple: Partial<ActionExemples> = {
-      id: 'eci_1.1.1',
-    };
-    const procedureResponse = await actionExemples('eci_1.1.1');
-
-    expect(procedureResponse).toEqual(expect.objectContaining(partialExemple));
   });
 });

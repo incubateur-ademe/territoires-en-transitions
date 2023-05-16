@@ -81,7 +81,10 @@ export const ActionStatusDropdown = ({actionId}: {actionId: string}) => {
   }
 
   return (
-    <div className="flex flex-col gap-3 items-end w-full">
+    <div
+      className="flex flex-col gap-3 items-end w-full"
+      onClick={evt => evt.stopPropagation()}
+    >
       <SelectActionStatut
         items={ITEMS_AVEC_NON_CONCERNE}
         disabled={disabled}

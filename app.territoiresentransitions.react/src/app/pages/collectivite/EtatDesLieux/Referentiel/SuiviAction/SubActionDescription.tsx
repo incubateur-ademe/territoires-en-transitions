@@ -1,5 +1,5 @@
+import {useActionInfoData} from 'app/pages/collectivite/Referentiels/ActionInfo/useActionInfoData';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {useActionExemples} from 'core-logic/hooks/referentiel';
 import {Fragment} from 'react';
 import {addTargetToContentAnchors} from 'utils/content';
 
@@ -14,7 +14,7 @@ type SubActionDescriptionProps = {
 const SubActionDescription = ({
   subAction,
 }: SubActionDescriptionProps): JSX.Element => {
-  const exemples = useActionExemples(subAction.id);
+  const {data: exemples} = useActionInfoData('exemples', subAction.id);
 
   return (
     <div className="flex flex-col gap-4">

@@ -1,19 +1,10 @@
 import classNames from 'classnames';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {Database} from 'types/database.types';
+import {phaseToLabel} from './utils';
 
 export type TActionPhaseBadgeProps = {
   action: ActionDefinitionSummary;
   className?: string;
-};
-
-export const phaseToLabel: Record<
-  Database['public']['Enums']['action_categorie'],
-  string
-> = {
-  bases: "S'engager",
-  'mise en œuvre': 'Concrétiser',
-  effets: 'Consolider',
 };
 
 /**

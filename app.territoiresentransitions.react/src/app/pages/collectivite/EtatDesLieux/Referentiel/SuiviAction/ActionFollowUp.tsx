@@ -2,8 +2,9 @@ import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinition
 import {useSortedActionSummaryChildren} from 'core-logic/hooks/referentiel';
 import {useState} from 'react';
 import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
-import ExpendAllButton from 'ui/buttons/ExpendAllButton';
+import ExpandAllButton from 'ui/buttons/ExpandAllButton';
 import SubActionCard from './SubActionCard';
+import {phaseToLabel} from 'ui/referentiels/utils';
 
 type ActionFollowUpProps = {
   action: ActionDefinitionSummary;
@@ -24,13 +25,6 @@ const ActionFollowUp = ({action}: ActionFollowUpProps): JSX.Element => {
   const [openedSubActionsCount, setOpenedSubActionsCount] = useState(
     openAll ? subActions.count : 0
   );
-
-  // Phases des sous-actions
-  const phaseToTitle: Record<string, string> = {
-    bases: "S'engager",
-    'mise en œuvre': 'Concrétiser',
-    effets: 'Consolider',
-  };
 
   // Click sur le bouton "Tout déplier" / "Tout replier"
   const toggleOpenAll = () => {
@@ -55,7 +49,7 @@ const ActionFollowUp = ({action}: ActionFollowUpProps): JSX.Element => {
       <ActionCommentaire action={action} className="mb-10" />
 
       {/* Bouton pour déplier / replier la liste */}
-      <ExpendAllButton
+      <ExpandAllButton
         open={openAll}
         onToggleOpen={toggleOpenAll}
         className="mb-10"
@@ -68,7 +62,7 @@ const ActionFollowUp = ({action}: ActionFollowUpProps): JSX.Element => {
             subActions.sortedActions[phase] && (
               <div key={phase} className="flex flex-col gap-8">
                 <p className="mb-0 font-bold">
-                  {phaseToTitle[phase].toUpperCase()}
+                  {phaseToLabel[phase].toUpperCase()}
                 </p>
                 {subActions.sortedActions[phase].map(subAction => (
                   <SubActionCard

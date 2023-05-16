@@ -1,7 +1,6 @@
 import {useEffect, useState} from 'react';
 import {
   actionDownToTache,
-  actionExemples,
   actionPreuve,
   referentielDownToAction,
 } from 'core-logic/api/procedures/referentielProcedures';
@@ -49,19 +48,6 @@ export const useReferentielDownToAction = (
     );
   }, [referentiel]);
   return summaries;
-};
-
-/**
- * Returns action exemples html contents
- */
-export const useActionExemples = (actionId: string): string | null => {
-  const [exemples, setExemples] = useState<string | null>(null);
-
-  useEffect(() => {
-    actionExemples(actionId).then(exemples => setExemples(exemples.exemples));
-  }, [actionId]);
-
-  return exemples;
 };
 
 /**

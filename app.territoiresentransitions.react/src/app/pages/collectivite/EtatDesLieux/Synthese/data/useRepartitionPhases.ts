@@ -1,9 +1,9 @@
 import {useQuery} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {phaseToLabel} from 'ui/referentiels/ActionPhaseBadge';
 import {ActionReferentiel} from 'app/pages/collectivite/ReferentielTable/useReferentiel';
 import {TActionStatutsRow} from 'types/alias';
+import {phaseToLabel} from 'ui/referentiels/utils';
 
 export type PhasesRow = ActionReferentiel &
   Pick<TActionStatutsRow, 'points_realises' | 'phase'>;

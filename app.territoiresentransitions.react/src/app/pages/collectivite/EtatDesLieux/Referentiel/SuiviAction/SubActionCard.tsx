@@ -1,7 +1,7 @@
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {useActionSummaryChildren} from 'core-logic/hooks/referentiel';
-import {useActionStatut} from 'core-logic/hooks/useActionStatut';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+// import {useActionStatut} from 'core-logic/hooks/useActionStatut';
+// import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {Fragment, useEffect, useState} from 'react';
 import {Accordion} from 'ui/Accordion';
 import {Spacer} from 'ui/dividers/Spacer';
@@ -29,21 +29,20 @@ const SubActionCard = ({
   forceOpen,
   onOpenSubAction,
 }: SubActionCardProps): JSX.Element => {
-  const collectivite = useCurrentCollectivite();
-  const {statut} = useActionStatut({
-    action_id: subAction.id,
-    collectivite_id: collectivite?.collectivite_id || 0,
-  });
+  // const collectivite = useCurrentCollectivite();
+  // const {statut} = useActionStatut({
+  //   action_id: subAction.id,
+  //   collectivite_id: collectivite?.collectivite_id || 0,
+  // });
   const preuvesCount = useActionPreuvesCount(subAction);
   const tasks = useActionSummaryChildren(subAction);
+  const shouldOpen = true;
+  // Condition à décommenter lorsque le statut à la sous-action sera possible
+  // subAction.referentiel === 'eci' ||
+  // (subAction.referentiel === 'cae' && statut?.avancement === 'detaille');
 
+  const [openTasks, setOpenTasks] = useState(false);
   const [openSubAction, setOpenSubAction] = useState(forceOpen);
-  const [openTasks, setOpenTasks] = useState(
-    forceOpen
-      ? subAction.referentiel === 'eci' ||
-          (subAction.referentiel === 'cae' && statut?.avancement === 'detaille')
-      : false
-  );
 
   // Mise à jour de l'ouverture / fermeture de la sous-action
   // en fonction du bouton "Tout déplier" / "Tout replier"
@@ -51,13 +50,7 @@ const SubActionCard = ({
 
   // Mise à jour de l'ouverture / fermeture de la liste des tâches
   useEffect(() => {
-    setOpenTasks(
-      openSubAction
-        ? subAction.referentiel === 'eci' ||
-            (subAction.referentiel === 'cae' &&
-              statut?.avancement === 'detaille')
-        : false
-    );
+    setOpenTasks(openSubAction ? shouldOpen : false);
   }, [openSubAction]);
 
   const handleToggleOpen = () => {
@@ -74,6 +67,7 @@ const SubActionCard = ({
       <SubActionHeader
         action={subAction}
         openSubAction={openSubAction}
+        withStatusDropdown={tasks.length === 0}
         onToggleOpen={handleToggleOpen}
       />
 

@@ -9,6 +9,8 @@ import ScoreDisplay from 'app/pages/collectivite/EtatDesLieux/Referentiel/SuiviA
 type SubActionHeaderProps = {
   action: ActionDefinitionSummary;
   openSubAction?: boolean;
+  withStatusDropdown?: boolean; // param provisoire, à enlever
+  // quand toutes les sous-actions auront un statusDropdown
   onToggleOpen?: () => void;
 };
 
@@ -19,6 +21,7 @@ type SubActionHeaderProps = {
 const SubActionHeader = ({
   action,
   openSubAction = false,
+  withStatusDropdown = false,
   onToggleOpen,
 }: SubActionHeaderProps): JSX.Element => {
   const [open, setOpen] = useState(openSubAction);
@@ -78,9 +81,10 @@ const SubActionHeader = ({
 
       {/* Jauge de progression / Menu de sélection du statut */}
       <div className="col-span-2">
-        {isSubAction ? (
+        {/* Condition provisoire à enlever lorsque le statut à la sous-action sera possible */}
+        {isSubAction && !withStatusDropdown ? (
           <ActionProgressBar actionId={action.id} />
-        ) : isTask ? (
+        ) : isTask || (isSubAction && withStatusDropdown) ? (
           <ActionStatusDropdown actionId={action.id} />
         ) : null}
       </div>
