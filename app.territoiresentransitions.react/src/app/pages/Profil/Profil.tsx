@@ -1,9 +1,9 @@
 import {monComptePath, rejoindreUneCollectivitePath} from 'app/paths';
 import {ProfilRoutes} from './ProfileRoutes';
-import SideNav, {TSideNavLink} from 'ui/shared/SideNav';
+import SideNav, {SideNavLinks} from 'ui/shared/SideNav';
 
 const Profil = () => {
-  const links: TSideNavLink[] = [
+  const links: SideNavLinks = [
     {
       link: monComptePath,
       displayName: 'Mon compte',

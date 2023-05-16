@@ -1,3 +1,5 @@
+import classNames from 'classnames';
+import {useState} from 'react';
 import {NavLink} from 'react-router-dom';
 
 export type TSideNavLink = {
@@ -5,8 +7,21 @@ export type TSideNavLink = {
   displayName: string;
 };
 
+export type TSideNavSection = TSideNavLink & {
+  enfants: TSideNavLink[];
+};
+
+export type SideNavLinks = (TSideNavLink | TSideNavSection)[];
+
+// Type guards
+export function isSideNavSection(
+  element: TSideNavLink | TSideNavSection
+): element is TSideNavSection {
+  return (element as TSideNavSection).enfants !== undefined;
+}
+
 type Props = {
-  links: TSideNavLink[];
+  links: SideNavLinks;
 };
 
 const SideNav = ({links}: Props) => {
@@ -15,23 +30,29 @@ const SideNav = ({links}: Props) => {
       data-test="SideNav"
       className="fr-sidemenu flex w-80 shrink-0 py-8 md:px-8 border-r border-gray-100"
     >
-      <div className="fr-sidemenu-wrapper">
-        <ul className="fr-sidemenu_list">
-          {links.map(link => (
-            <li
-              key={link.link}
-              className="fr-sidemnu_item fr-sidemenu_item--active"
-            >
-              <NavLink
-                className="fr-sidemenu__link"
-                to={link.link}
-                target="_self"
-                aria-current="page"
-              >
-                {link.displayName}
-              </NavLink>
-            </li>
-          ))}
+      <div className="fr-sidemenu-wrapper w-full">
+        <ul className="fr-sidemenu__list">
+          {links.map(element => {
+            if (isSideNavSection(element)) {
+              return <Section section={element} />;
+            } else {
+              return (
+                <li
+                  key={element.link}
+                  className="fr-sidemnu__item fr-sidemenu__item--active"
+                >
+                  <NavLink
+                    className="fr-sidemenu__link"
+                    to={element.link}
+                    target="_self"
+                    aria-current="page"
+                  >
+                    {element.displayName}
+                  </NavLink>
+                </li>
+              );
+            }
+          })}
         </ul>
       </div>
     </nav>
@@ -39,3 +60,61 @@ const SideNav = ({links}: Props) => {
 };
 
 export default SideNav;
+
+type SectionProps = {
+  section: TSideNavSection;
+};
+
+const Section = ({section}: SectionProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <li key={section.link}>
+      <div className="flex items-start w-full">
+        <div className="w-full fr-sidemnu__item fr-sidemenu__item--active">
+          <NavLink
+            className="fr-sidemenu__link"
+            to={section.link}
+            target="_self"
+            aria-current="page"
+          >
+            {section.displayName}
+          </NavLink>
+        </div>
+        <div className="flex pt-2 mt-0.5 ml-2">
+          <button
+            className="p-0.5"
+            title="Ouvrir la section"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            <span
+              className={classNames(
+                'fr-fi-arrow-right-s-line before:scale-75 before:transition-transform',
+                {'before:rotate-90': isOpen}
+              )}
+            />
+          </button>
+        </div>
+      </div>
+      {isOpen && (
+        <ul className="mx-4 fr-sidemenu__list">
+          {section.enfants.map(enfant => (
+            <li
+              key={enfant.link}
+              className="fr-sidemnu__item fr-sidemenu__item--active"
+            >
+              <NavLink
+                className="fr-sidemenu__link"
+                to={enfant.link}
+                target="_self"
+                aria-current="page"
+              >
+                {enfant.displayName}
+              </NavLink>
+            </li>
+          ))}
+        </ul>
+      )}
+    </li>
+  );
+};
