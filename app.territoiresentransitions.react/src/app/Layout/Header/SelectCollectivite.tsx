@@ -3,6 +3,7 @@ import {makeCollectiviteTableauBordUrl} from 'app/paths';
 import {Link} from 'react-router-dom';
 import {BadgeNiveauAcces} from './BadgeNiveauAcces';
 import {HeaderPropsWithModalState} from './types';
+import {Tooltip} from 'ui/shared/floating-ui/Tooltip';
 
 const ID = 'SelectCollectivite';
 
@@ -32,26 +33,28 @@ export const SelectCollectivite = (props: HeaderPropsWithModalState) => {
   return (
     <ul className="fr-nav__list" data-test={ID}>
       <li className="fr-nav__item !relative">
-        <button
-          className="fr-nav__btn min-w-[15rem]"
-          aria-controls={ID}
-          aria-expanded={opened}
-          onClick={() => setOpenedId(opened ? null : ID)}
-        >
-          <b
-            className={classNames(
-              'mr-auto pointer-events-none whitespace-nowrap text-ellipsis overflow-hidden',
-              {'md:max-w-[25vw] lg:max-w-[28vw]': !modalOpened}
-            )}
+        <Tooltip label={currentCollectivite.nom}>
+          <button
+            className="fr-nav__btn min-w-[15rem]"
+            aria-controls={ID}
+            aria-expanded={opened}
+            onClick={() => setOpenedId(opened ? null : ID)}
           >
-            {currentCollectivite.nom}
-          </b>
-          <BadgeNiveauAcces
-            acces={currentCollectivite.niveau_acces}
-            isAuditeur={currentCollectivite.est_auditeur}
-            className="ml-4"
-          />
-        </button>
+            <b
+              className={classNames(
+                'mr-auto pointer-events-none whitespace-nowrap text-ellipsis overflow-hidden',
+                {'md:max-w-[25vw] lg:max-w-[28vw]': !modalOpened}
+              )}
+            >
+              {currentCollectivite.nom}
+            </b>
+            <BadgeNiveauAcces
+              acces={currentCollectivite.niveau_acces}
+              isAuditeur={currentCollectivite.est_auditeur}
+              className="ml-4"
+            />
+          </button>
+        </Tooltip>
         <div
           className={classNames('fr-menu right-0', {
             'fr-collapse': !opened,

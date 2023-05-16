@@ -427,7 +427,13 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
               aria-controls="SelectCollectivite"
               aria-expanded={false}
               className="fr-nav__btn min-w-[15rem]"
+              onBlur={[Function]}
               onClick={[Function]}
+              onFocus={[Function]}
+              onMouseLeave={[Function]}
+              onMouseMove={[Function]}
+              onPointerDown={[Function]}
+              onPointerEnter={[Function]}
             >
               <b
                 className="mr-auto pointer-events-none whitespace-nowrap text-ellipsis overflow-hidden md:max-w-[25vw] lg:max-w-[28vw]"
