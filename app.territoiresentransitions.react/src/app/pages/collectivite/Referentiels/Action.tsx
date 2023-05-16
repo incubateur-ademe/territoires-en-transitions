@@ -92,7 +92,8 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
         <OrientationQuickNav action={action} />
         <ActionAuditStatut action={action} />
         <ActionAuditDetail action={action} />
-        <Alerte state="information" classname="fr-my-5v">
+
+        <Alerte state="information" classname="fr-my-9v">
           <div
             className="htmlContent"
             dangerouslySetInnerHTML={{
@@ -100,6 +101,7 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
             }}
           />
         </Alerte>
+
         <Tabs defaultActiveTab={activeTab} onChange={handleChange}>
           <Tab label="Suivi de l'action" icon="seedling">
             <ActionFollowUp action={action} />

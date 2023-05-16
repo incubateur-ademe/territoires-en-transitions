@@ -19,7 +19,7 @@ const ExpendAllButton = ({
   return (
     <div className={className}>
       <a
-        className={classNames('fr-link fr-link--icon-right', {
+        className={classNames('underline_href fr-link fr-link--icon-right', {
           'fr-icon-arrow-up-line': open,
           'fr-icon-arrow-down-line': !open,
         })}

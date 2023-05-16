@@ -40,6 +40,10 @@ main a[href] {
   background-image: none;
 }
 
+main a[href].underline_href {
+  background-image: var(--underline-img), var(--underline-img);
+}
+
 /* pour supprimer la marge bas des paragraphes */
 .p-mb-0 p {
   margin-bottom: 0;
