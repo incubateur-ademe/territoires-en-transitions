@@ -95,7 +95,7 @@ export const ActionStatusDropdown = ({actionId}: {actionId: string}) => {
           {!disabled && (
             <div className="text-right">
               <a
-                className="fr-link fr-link--sm"
+                className="underline_href fr-link fr-link--sm"
                 href="/"
                 onClick={evt => {
                   evt.preventDefault();

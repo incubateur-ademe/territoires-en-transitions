@@ -2,7 +2,7 @@ const ScrollTopButton = ({className = ''}: {className?: string}) => {
   return (
     <div className={className}>
       <a
-        className="fr-link fr-link--icon-left fr-icon-arrow-up-fill"
+        className="underline_href fr-link fr-link--icon-left fr-icon-arrow-up-fill"
         href="/"
         onClick={evt => {
           evt.preventDefault();
