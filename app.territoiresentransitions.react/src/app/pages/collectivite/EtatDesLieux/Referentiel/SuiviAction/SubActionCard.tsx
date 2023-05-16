@@ -66,7 +66,10 @@ const SubActionCard = ({
   };
 
   return (
-    <div className="border border-[#e5e5e5] rounded-lg">
+    <div
+      data-test={`SousAction-${subAction.identifiant}`}
+      className="border border-[#e5e5e5] rounded-lg"
+    >
       {/* En-tête */}
       <SubActionHeader
         action={subAction}
@@ -98,6 +101,7 @@ const SubActionCard = ({
             <Fragment>
               <Accordion
                 id={`Tâches-${subAction.id}`}
+                dataTest={`TâchesPanel-${subAction.identifiant}`}
                 titre="Tâches"
                 html={<SubActionTasksList tasks={tasks} />}
                 initialState={openTasks}
@@ -109,6 +113,7 @@ const SubActionCard = ({
           {/* Section Documents */}
           <Accordion
             id={`Preuves-${subAction.id}`}
+            dataTest={`PreuvesPanel-${subAction.identifiant}`}
             titre={`Documents${
               preuvesCount !== undefined ? ` (${preuvesCount})` : ''
             }`}

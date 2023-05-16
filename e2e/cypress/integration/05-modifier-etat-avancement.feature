@@ -8,6 +8,8 @@ Fonctionnalité: Modifier l'état d'avancement et visualiser l'évolution des sc
     Etant donné que je suis connecté en tant que "yili"
 
     Quand je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "2"
+    Et que je déplie la sous-action "1.1.1" du suivi de l'action
+    Et que je déplie le panneau Tâches de la sous-action "1.1.1"
     Et l'état d'avancement des tâches est éditable
 
     Quand j'assigne la valeur "Fait" à l'état d'avancement de la tâche "eci_1.1.1.1"
@@ -130,6 +132,8 @@ Fonctionnalité: Modifier l'état d'avancement et visualiser l'évolution des sc
     Etant donné que je suis connecté en tant que "youlou"
 
     Quand je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "1"
+    Et que je déplie la sous-action "1.1.1" du suivi de l'action
+    Et que je déplie le panneau Tâches de la sous-action "1.1.1"
     Alors l'état d'avancement des tâches est éditable
     Et la page vérifie les conditions suivantes :
       | Elément                         | Condition | Valeur     |

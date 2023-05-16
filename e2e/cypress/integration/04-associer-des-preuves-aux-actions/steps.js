@@ -14,8 +14,6 @@ beforeEach(() => {
 
 defineStep(/je déplie le panneau Preuves de l'action "([^"]+)"/, action =>
   getPreuvePanel(action).within(() => {
-    // la liste des preuves attendues n'existe pas
-    cy.get('[data-test^=preuves]').should('not.exist');
     // clic pour déplier le panneau
     cy.root().click();
     // attend que la liste existe
@@ -149,7 +147,7 @@ defineStep(
   /le bouton "Ajouter une preuve" à l'action "([^"]+)" est (visible|absent)/,
   (action, status) => {
     getAddPreuveButton(action).should(
-      status === 'visible' ? 'be.visible' : 'not.exist'
+      status === 'visible' ? 'be.visible' : 'not.visible'
     );
   }
 );

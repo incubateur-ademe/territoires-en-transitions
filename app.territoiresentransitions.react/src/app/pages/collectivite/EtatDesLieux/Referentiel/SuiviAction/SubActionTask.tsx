@@ -17,7 +17,7 @@ const SubActionTask = ({task}: SubActionTaskProps): JSX.Element => {
   const {actionCommentaire} = useActionCommentaire(task.id);
 
   return (
-    <div>
+    <div data-test={`task-${task.id}`}>
       {/* Première ligne */}
       <SubActionHeader action={task} />
 

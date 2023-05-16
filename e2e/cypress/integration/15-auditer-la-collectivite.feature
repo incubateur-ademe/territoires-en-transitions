@@ -44,6 +44,8 @@ Fonctionnalité: Auditer la collectivité
       | 2.1         |                      | Non audité |
 
     Quand je clique sur la ligne du tableau de suivi de l'audit contenant l'identifiant "2.1"
+    Et que je déplie la sous-action "2.1.1" du suivi de l'action
+    Et que je déplie le panneau Tâches de la sous-action "2.1.1"
     Alors la page vérifie les conditions suivantes :
       | Elément                         | Condition | Valeur     |
       | état audit action               | contient  | Non audité |

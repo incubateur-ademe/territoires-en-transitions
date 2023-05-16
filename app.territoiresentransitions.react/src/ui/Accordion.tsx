@@ -4,6 +4,7 @@ import {useEffect, useState} from 'react';
 export type TAccordionProps = {
   className?: string;
   id: string;
+  dataTest?: string;
   titre: string;
   html: string | React.ReactNode;
   initialState?: boolean;
@@ -28,13 +29,13 @@ export type TAccordionProps = {
  */
 
 export const Accordion = (props: TAccordionProps) => {
-  const {className, id, titre, html, initialState, icon} = props;
+  const {className, id, dataTest, titre, html, initialState, icon} = props;
   const [expanded, setExpanded] = useState(initialState ?? false);
 
   useEffect(() => setExpanded(initialState ?? false), [initialState]);
 
   return (
-    <section className={`fr-accordion ${className || ''}`}>
+    <section data-test={dataTest} className={`fr-accordion ${className || ''}`}>
       <h3 className="fr-accordion__title">
         <button
           className="fr-accordion__btn font-normal"
