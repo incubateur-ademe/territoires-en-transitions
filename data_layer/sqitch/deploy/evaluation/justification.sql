@@ -4,16 +4,16 @@ BEGIN;
 
 create table justification
 (
-    id              serial primary key,
     collectivite_id integer                                              not null,
-    question_id     integer references question                          not null,
+    question_id     question_id references question                      not null,
     modified_by     uuid references auth.users default auth.uid()        not null,
-    modified_at     timestamptz                default current_timestamp not null,
-    texte           text                                                 not null
+    texte           text                                                 not null,
+    primary key (collectivite_id, question_id)
 );
 comment on table justification is 'Les justifications aux réponses aux questions de personnalisation.';
 
 select private.add_modified_at_trigger('public', 'justification');
+select private.add_modified_by_trigger('public', 'justification');
 
 alter table justification
     enable row level security;
@@ -37,14 +37,14 @@ create policy allow_update
 create table historique.justification
 (
     id                   serial primary key,
-    collectivite_id      integer not null,
-    question_id          integer not null,
+    collectivite_id      integer     not null,
+    question_id          question_id not null,
     modified_by          uuid,
     previous_modified_by uuid,
     modified_at          timestamp with time zone,
     previous_modified_at timestamp with time zone,
-    texte                text    not null,
-    previous_texte       text    not null
+    texte                text        not null,
+    previous_texte       text
 );
 
 create function historique.save_justification() returns trigger
