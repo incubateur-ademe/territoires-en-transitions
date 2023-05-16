@@ -11,7 +11,7 @@ type ExpendAllButtonProps = {
  * toutes les éléments d'une liste
  */
 
-const ExpendAllButton = ({
+const ExpandAllButton = ({
   open,
   onToggleOpen,
   className = '',
@@ -35,4 +35,4 @@ const ExpendAllButton = ({
   );
 };
 
-export default ExpendAllButton;
+export default ExpandAllButton;

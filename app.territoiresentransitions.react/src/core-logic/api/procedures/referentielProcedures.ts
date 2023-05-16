@@ -77,31 +77,6 @@ export const actionDownToTache = async (
 };
 
 /**
- * Action Exemples
- * The exemples section contents
- */
-export interface ActionExemples {
-  id: string;
-  exemples: string;
-}
-
-/**
- * Returns action exemples text
- */
-export const actionExemples = async (id: string): Promise<ActionExemples> => {
-  const {data, error} = await rpcCache.rpc('action_exemples', {
-    id: id,
-  });
-
-  if (error) {
-    console.error(error);
-    return {id: id, exemples: ''};
-  }
-
-  return data as Object as ActionExemples;
-};
-
-/**
  * Action Preuve
  * The preuve section contents
  */
