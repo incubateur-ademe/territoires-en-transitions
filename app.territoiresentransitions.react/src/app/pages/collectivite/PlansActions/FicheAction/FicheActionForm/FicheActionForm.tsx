@@ -58,7 +58,11 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
 
   return (
     <div className="flex flex-col gap-6">
-      <Section icon={<PictoInformation />} title="Présentation">
+      <Section
+        dataTest="section-presentation"
+        icon={<PictoInformation />}
+        title="Présentation"
+      >
         <FormField label="Description de l'action" htmlFor="description">
           <TextareaControlled
             id="description"
