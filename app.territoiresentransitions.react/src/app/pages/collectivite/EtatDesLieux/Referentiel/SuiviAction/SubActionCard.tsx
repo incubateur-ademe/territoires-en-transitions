@@ -2,9 +2,8 @@ import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinition
 import {useActionSummaryChildren} from 'core-logic/hooks/referentiel';
 // import {useActionStatut} from 'core-logic/hooks/useActionStatut';
 // import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {Fragment, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {Accordion} from 'ui/Accordion';
-import {Spacer} from 'ui/dividers/Spacer';
 import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
 import {ActionPreuvePanel} from 'ui/shared/actions/ActionPreuvePanel';
 import {useActionPreuvesCount} from 'ui/shared/preuves/Bibliotheque/usePreuves';
@@ -80,28 +79,24 @@ const SubActionCard = ({
           {/* Section Description et Exemples */}
           {subAction.referentiel === 'eci' &&
             (subAction.description || subAction.have_exemples) && (
-              <Fragment>
-                <Accordion
-                  id={`Description-${subAction.id}`}
-                  titre="Description"
-                  html={<SubActionDescription subAction={subAction} />}
-                />
-                <Spacer size={3} />
-              </Fragment>
+              <Accordion
+                id={`Description-${subAction.id}`}
+                className="fr-mb-3w"
+                titre="Description"
+                html={<SubActionDescription subAction={subAction} />}
+              />
             )}
 
           {/* Section Tâches */}
           {tasks.length > 0 && (
-            <Fragment>
-              <Accordion
-                id={`Tâches-${subAction.id}`}
-                dataTest={`TâchesPanel-${subAction.identifiant}`}
-                titre="Tâches"
-                html={<SubActionTasksList tasks={tasks} />}
-                initialState={openTasks}
-              />
-              <Spacer size={3} />
-            </Fragment>
+            <Accordion
+              id={`Tâches-${subAction.id}`}
+              dataTest={`TâchesPanel-${subAction.identifiant}`}
+              className="fr-mb-3w"
+              titre="Tâches"
+              html={<SubActionTasksList tasks={tasks} />}
+              initialState={openTasks}
+            />
           )}
 
           {/* Section Documents */}

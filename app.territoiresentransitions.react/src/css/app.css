@@ -32,10 +32,6 @@ details > .content p {
   text-decoration: underline;
 }
 
-.ActionExpandPanelAdemeContent summary.title {
-  font-size: 18px;
-}
-
 main a[href] {
   background-image: none;
 }

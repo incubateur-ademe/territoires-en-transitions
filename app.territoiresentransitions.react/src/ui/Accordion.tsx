@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import DOMPurify from 'dompurify';
 import {useEffect, useState} from 'react';
 
@@ -32,6 +33,11 @@ export const Accordion = (props: TAccordionProps) => {
   const {className, id, dataTest, titre, html, initialState, icon} = props;
   const [expanded, setExpanded] = useState(initialState ?? false);
 
+  const contentClassName = classNames({
+    'fr-collapse--expanded py-3 px-4': expanded,
+    'fr-collapse': !expanded,
+  });
+
   useEffect(() => setExpanded(initialState ?? false), [initialState]);
 
   return (
@@ -49,15 +55,12 @@ export const Accordion = (props: TAccordionProps) => {
       </h3>
       {typeof html === 'string' ? (
         <div
-          className={`fr-collapse${expanded ? '--expanded py-3 px-4' : ''}`}
+          className={contentClassName}
           id={id}
           dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(html)}}
         />
       ) : (
-        <div
-          className={`fr-collapse${expanded ? '--expanded py-3 px-4' : ''}`}
-          id={id}
-        >
+        <div className={contentClassName} id={id}>
           {html}
         </div>
       )}
