@@ -6,7 +6,7 @@ type Props = {
   titre: string | null;
   onUpdate?: (value: string) => void;
   bgColorClassName?: string;
-  type?: 'fiche' | 'plan';
+  type?: 'fiche' | 'plan' | 'axe';
   isReadonly: boolean;
 };
 
@@ -57,6 +57,7 @@ const HeaderTitle = ({
       className={classNames(
         'group flex items-center mx-auto py-6 px-10 xl:mr-6',
         {'cursor-text': !isReadonly},
+        {'bg-indigo-300': type === 'axe'},
         {'bg-indigo-700': type === 'plan'},
         {'bg-indigo-400': type === 'fiche'},
         bgColorClassName
@@ -67,6 +68,7 @@ const HeaderTitle = ({
         className={classNames('flex grow m-0 font-bold text-white', {
           'text-[1.375rem] leading-snug': type === 'fiche',
           'text-[2rem] leading-snug': type === 'plan',
+          'text-[1.75rem] leading-snug text-gray-800': type === 'axe',
         })}
       >
         {onUpdate ? (
@@ -78,6 +80,8 @@ const HeaderTitle = ({
               {
                 'text-[1.375rem] leading-snug': type === 'fiche',
                 'text-[2rem] leading-snug': type === 'plan',
+                'text-[1.75rem] leading-snug placeholder:text-gray-800 focus:placeholder:text-gray-500 disabled:text-gray-800':
+                  type === 'axe',
               }
             )}
             initialValue={titre}
