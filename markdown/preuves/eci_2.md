@@ -340,10 +340,11 @@ id: liste_actions_reduction_impact_collecte
 
 Décision de la collectivité ou un compte rendu qui acte cette formalisation des priorités
 
-# Plan d'actions
+# Plan d'actions pour limiter les impacts de la collecte des déchets
 
 ```yaml
 actions:
+  - eci_2.4.1  
   - eci_2.4.2
 id: plan_actions_reduction_impact_collecte
 ```
@@ -371,7 +372,14 @@ actions:
 Preuve identique à la cae_1.2.3.1 / cae_3.3.5.3 / eci_4.1.0 / eci_2.4.3-->
 ```
 
-# Plan d'actions
+# Autre(s) document(s) attestant de la mise en place du report modal
+```yaml
+actions: 
+  - eci_2.4.3
+id: attestation_report_modal
+```
+
+# Plan d'actions pour limiter les impacts du traitement des déchets
 
 ```yaml
 actions:
