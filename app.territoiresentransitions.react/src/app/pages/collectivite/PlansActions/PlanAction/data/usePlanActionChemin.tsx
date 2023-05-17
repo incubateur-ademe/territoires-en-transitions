@@ -32,7 +32,7 @@ export const generateFilArianeLinks = ({
               : undefined,
           }
         : {
-            displayedName: axe.nom ?? 'Sans titre',
+            displayedName: axe.nom && axe.nom.length ? axe.nom : 'Sans titre',
           }
     ),
     {displayedName: titreFiche ?? 'Sans titre'},

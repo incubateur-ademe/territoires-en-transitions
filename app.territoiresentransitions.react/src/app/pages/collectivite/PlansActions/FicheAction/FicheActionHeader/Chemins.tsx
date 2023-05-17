@@ -65,7 +65,8 @@ const Chemin = ({collectiviteId, axe_id, titreFiche}: CheminProps) => {
           ? generateFilArianeLinks({
               collectiviteId,
               chemin: data.chemin as TAxeRow[],
-              titreFiche: titreFiche ?? 'Sans titre',
+              titreFiche:
+                titreFiche && titreFiche.length > 0 ? titreFiche : 'Sans titre',
             })
           : []
       }
