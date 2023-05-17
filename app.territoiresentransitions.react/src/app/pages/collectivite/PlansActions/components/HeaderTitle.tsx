@@ -40,7 +40,6 @@ const HeaderTitle = ({
   const handleEnterKeydown = (e: KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      handleChangeTitle();
       titreInputRef.current?.blur();
     }
   };
