@@ -2,7 +2,7 @@
 
 BEGIN;
 
-create or replace function plan_action_export(id integer) returns jsonb as
+create function plan_action_export(id integer) returns jsonb as
 $$
 declare
     pa_enfant_id integer; -- Id d'un plan d'action enfant du plan d'action courant
@@ -14,7 +14,7 @@ declare
 begin
     fiches = to_jsonb((select array_agg(ff.*)
                        from (select *
-                             from private.fiches_action fa
+                             from fiches_action fa
                                       join fiche_action_axe fapa on fa.id = fapa.fiche_id
                              where fapa.axe_id = plan_action_export.id
                              order by naturalsort(lower(fa.titre))) ff));
@@ -41,5 +41,7 @@ begin
 end;
 $$ language plpgsql security definer
                     stable;
+comment on function plan_action_export is
+    'Renvoie un JSON contenant le plan d''action avec ses fiches complètes (`fiches_action`).';
 
 COMMIT;
