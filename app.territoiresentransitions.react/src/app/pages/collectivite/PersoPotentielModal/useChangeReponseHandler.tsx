@@ -1,11 +1,11 @@
 import {useMutation, useQueryClient} from 'react-query';
 import {
+  TQuestionRead,
+  TReponse,
   TChangeReponse,
   TReponseWrite,
   TQuestionReponseWrite,
-} from 'generated/dataLayer/reponse_write';
-import {TQuestionRead} from 'generated/dataLayer/question_read';
-import {TReponse} from 'generated/dataLayer/reponse_read';
+} from 'types/personnalisation';
 import {supabaseClient} from 'core-logic/api/supabase';
 
 type TUseChangeReponseHandler = (

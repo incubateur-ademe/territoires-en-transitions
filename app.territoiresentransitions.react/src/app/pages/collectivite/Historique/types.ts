@@ -1,4 +1,4 @@
-import {QuestionType} from 'generated/dataLayer/question_read';
+import {TQuestionType} from 'types/personnalisation';
 import {TFilters, TInitialFilters} from './filters';
 import {TActionAvancement} from 'types/alias';
 
@@ -44,7 +44,7 @@ export type THistoriqueItem = {
 
   /** modif. d'une réponse à une question de personnalisation des référentiels */
   action_ids: string[] | null;
-  question_type: keyof typeof QuestionType | null;
+  question_type: TQuestionType | null;
   question_id: string | null;
   question_formulation: string | null;
   thematique_id: string | null;

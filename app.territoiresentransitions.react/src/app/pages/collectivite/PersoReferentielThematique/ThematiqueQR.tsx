@@ -6,10 +6,7 @@ import {useState} from 'react';
 import {QuestionReponseList} from '../PersoPotentielModal/PersoPotentielQR';
 import {SwitchLabelLeft} from 'ui/shared/SwitchLabelLeft';
 import {TQuestionThematiqueRead} from './useThematique';
-import {
-  TChangeReponse,
-  TQuestionReponse,
-} from 'generated/dataLayer/reponse_write';
+import {TChangeReponse, TQuestionReponse} from 'types/personnalisation';
 import {
   makeCollectivitePersoRefUrl,
   makeCollectivitePersoRefThematiqueUrl,

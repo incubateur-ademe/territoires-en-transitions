@@ -1,8 +1,7 @@
 import {useQueries, useQuery} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {QuestionType, TQuestionRead} from 'generated/dataLayer/question_read';
-import {TReponseRead, TReponse} from 'generated/dataLayer/reponse_read';
+import {TQuestionRead, TReponseRead, TReponse} from 'types/personnalisation';
 
 type TFilters = {
   action_ids?: string[];
@@ -107,14 +106,14 @@ const transform = (row: TReponseRead) => {
   const {type, reponse: reponseValue} = reponse;
 
   // transforme en pourcentage une réponse de type proportion
-  if (type === QuestionType.proportion) {
+  if (type === 'proportion') {
     const value =
       typeof reponseValue === 'number' ? (reponseValue * 100).toFixed(0) : '';
     return setReponseValue(row, value);
   }
 
   // transforme une valeur booléen en id (oui/non) du bouton radio correspondant
-  if (reponseValue !== null && type === QuestionType.binaire) {
+  if (reponseValue !== null && type === 'binaire') {
     if (reponseValue === true) return setReponseValue(row, 'oui');
     if (reponseValue === false) return setReponseValue(row, 'non');
     return setReponseValue(row, null);

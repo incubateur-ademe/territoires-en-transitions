@@ -7,11 +7,11 @@ import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinition
 import {ActionScore} from 'types/ClientScore';
 import {
   TQuestionReponse,
+  TReponse,
   TChangeReponse,
-} from 'generated/dataLayer/reponse_write';
+} from 'types/personnalisation';
 import {PointsPotentiels} from './PointsPotentiels';
 import {reponseParType} from './Reponse';
-import {TReponse} from 'generated/dataLayer/reponse_read';
 import {Accordion} from 'ui/Accordion';
 import {YellowHighlight} from 'ui/Highlight';
 
