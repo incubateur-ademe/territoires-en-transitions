@@ -49,14 +49,15 @@ const PlansActionsNavigation = ({collectivite}: Props) => {
                 collectiviteId: collectivite.collectivite_id,
                 planActionUid: plan.id.toString(),
               }),
-              displayName: plan.nom ?? 'Sans titre',
+              displayName:
+                plan.nom && plan.nom.length > 0 ? plan.nom : 'Sans titre',
               enfants: plan.children.map(e => ({
                 link: makeCollectivitePlanActionAxeUrl({
                   collectiviteId: collectivite.collectivite_id,
                   planActionUid: plan.id.toString(),
                   axeUid: e.id.toString(),
                 }),
-                displayName: e.nom ?? 'Sans titre',
+                displayName: e.nom && e.nom.length > 0 ? e.nom : 'Sans titre',
               })),
             };
           } else {
