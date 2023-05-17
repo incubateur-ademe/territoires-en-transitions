@@ -37,6 +37,13 @@ actions:
 id: sinoe_plpdma
 ```
 
+# PLPDMA en vigueur
+```yaml
+actions: 
+  - eci_2.1.1
+id: plpdma
+```
+
 # Restitution du PLPDMA dans le rapport annuel SPGD
 ```yaml
 actions: 
@@ -362,14 +369,14 @@ actions:
 id: diffusion_rapport_annuel_pro
 ```
 
-# Méthode d'identification des entreprises prioritaires à conseiller
+# Méthode d'identification des acteurs économiques prioritaires à conseiller
 ```yaml
 actions: 
   - eci_2.5.2
 id: identification_entreprises_conseillees
 ```
 
-# Compte-rendu d'activité du service de conseil 
+# Compte-rendu d'activité du service de conseil permettant de calculer le taux de mobilisation (liste des acteurs économiques conseillés / liste des acteurs économiques ciblés x 100)
 ```yaml
 actions: 
   - eci_2.5.2
@@ -378,7 +385,7 @@ id: CR_activite_conseil
 ## Description
 Le compte-rendu doit indiquer le taux de mobilisation (liste des entreprises ciblées et liste des entreprises conseillées)
 
-# Enquête de satisfaction auprès des entreprises conseillées
+# Enquête de satisfaction auprès des acteurs économiques conseillés (en précisant sur quel(s) critère est basé l'appréciation du niveau élevé du taux de satisfaction)
 ```yaml
 actions: 
   - eci_2.5.2
