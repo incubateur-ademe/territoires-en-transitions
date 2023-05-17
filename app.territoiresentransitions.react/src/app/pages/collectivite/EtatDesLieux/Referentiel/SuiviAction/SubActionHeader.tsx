@@ -5,6 +5,7 @@ import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
 import {ActionStatusDropdown} from 'ui/referentiels/ActionStatusDropdown';
 import {Tooltip} from 'ui/shared/floating-ui/Tooltip';
 import ScoreDisplay from 'app/pages/collectivite/EtatDesLieux/Referentiel/SuiviAction/ScoreDisplay';
+import {useActionScore} from 'core-logic/hooks/scoreHooks';
 
 type SubActionHeaderProps = {
   action: ActionDefinitionSummary;
@@ -27,6 +28,10 @@ const SubActionHeader = ({
   const [open, setOpen] = useState(openSubAction);
   const isSubAction = action.type === 'sous-action';
   const isTask = action.type === 'tache';
+
+  // Appel provisoire en attendant d'avoir le
+  // select du statut à la sous-action
+  const score = useActionScore(action.id);
 
   useEffect(() => setOpen(openSubAction), [openSubAction]);
 
@@ -82,10 +87,26 @@ const SubActionHeader = ({
       {/* Jauge de progression / Menu de sélection du statut */}
       <div className="col-span-2">
         {/* Condition provisoire à enlever lorsque le statut à la sous-action sera possible */}
-        {isSubAction && !withStatusDropdown ? (
+        {isSubAction &&
+        !withStatusDropdown &&
+        score?.point_potentiel !== undefined &&
+        score.point_potentiel >= 1e-3 ? (
           <ActionProgressBar actionId={action.id} />
-        ) : isTask || (isSubAction && withStatusDropdown) ? (
-          <ActionStatusDropdown actionId={action.id} />
+        ) : isTask ||
+          (isSubAction &&
+            (withStatusDropdown ||
+              score === null ||
+              (score?.point_potentiel !== undefined &&
+                score.point_potentiel < 1e-3))) ? (
+          <ActionStatusDropdown
+            actionId={action.id}
+            isDisabled={
+              isSubAction &&
+              (score === null ||
+                (score?.point_potentiel !== undefined &&
+                  score.point_potentiel < 1e-3))
+            }
+          />
         ) : null}
       </div>
     </div>

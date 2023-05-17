@@ -30,7 +30,13 @@ const AVANCEMENT_DETAILLE_PAR_STATUT: Record<
   detaille: [0.3, 0.4, 0.3],
 };
 
-export const ActionStatusDropdown = ({actionId}: {actionId: string}) => {
+export const ActionStatusDropdown = ({
+  actionId,
+  isDisabled = false,
+}: {
+  actionId: string;
+  isDisabled?: boolean;
+}) => {
   const [opened, setOpened] = useState(false);
 
   const collectivite = useCurrentCollectivite();
@@ -48,7 +54,8 @@ export const ActionStatusDropdown = ({actionId}: {actionId: string}) => {
   const {saveActionStatut} = useSaveActionStatut(args);
 
   // détermine si l'édition du statut est désactivée
-  const disabled = useEditActionStatutIsDisabled(actionId);
+  // isDisabled : prop provisoire en attendant le select du statut à la sous-action
+  const disabled = useEditActionStatutIsDisabled(actionId) || isDisabled;
 
   const handleChange = (value: TActionAvancementExt) => {
     const {avancement, concerne, avancement_detaille} =
