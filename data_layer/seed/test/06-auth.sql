@@ -22,7 +22,7 @@ $$
 --delete
 --from dcp
 --where user_id not in (select id from test.auth_users);
-truncate table dcp;
+truncate table dcp cascade;
 
 delete
 from private_utilisateur_droit
@@ -109,6 +109,8 @@ on conflict (id) do update
 insert into public.dcp
 select *
 from test.dcp;
+
+update utilisateur_verifie set verifie = true where verifie = false;
 
 $$ language sql security definer;
 comment on function test_reset_users is
