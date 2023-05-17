@@ -283,6 +283,20 @@ Décision de la collectivité ou un compte rendu qui acte cette formalisation de
 # Plan d'actions
 ```yaml
 actions: 
+  - eci_2.4.1
+id: plan_actions_reduction_impact_collecte
+```
+
+# Décision de la collectivité ou un compte-rendu qui acte cette formalisation des priorités
+```yaml
+actions: 
+  - eci_2.4.1
+id: decision_reduction_impact_collecte
+```
+
+# Plan d'actions
+```yaml
+actions: 
   - eci_2.4.2
 id: plan_actions_reduction_impact_collecte
 ```
@@ -301,12 +315,19 @@ actions:
 id: suivi_actions_reduction_impact_collecte
 ```
 
-<!--# Rapport annuel déchets
+<!--# Rapport annuel du SPPGD
 ```yaml
 actions: 
   - eci_2.4.3
 ```
 Preuve identique à la cae_1.2.3.1 / cae_3.3.5.3 / eci_4.1.0 / eci_2.4.3-->
+
+# Autre(s) document(s) attestant de la mise en place du report modal
+```yaml
+actions: 
+  - eci_2.4.4
+id: plan_actions_reduction_impact_traitement
+```
 
 # Plan d'actions
 ```yaml
