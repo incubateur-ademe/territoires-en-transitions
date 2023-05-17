@@ -1,8 +1,7 @@
 import {FC, ReactNode} from 'react';
 import classNames from 'classnames';
-import {TReponse} from 'generated/dataLayer/reponse_read';
 import {TQuestionReponseProps} from './PersoPotentielQR';
-import {TListeChoix} from 'generated/dataLayer/question_read';
+import {TListeChoix, TReponse} from 'types/personnalisation';
 import {useDebouncedInput} from 'ui/shared/useDebouncedInput';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
