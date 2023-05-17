@@ -34,6 +34,7 @@ export type TReponseRead = {
 /** La combinaison d'une question et de sa réponse */
 export type TQuestionReponse = TQuestionRead & {
   reponse?: TReponse;
+  justification?: string | null;
 };
 
 // données pour l'appel à la méthode save du endpoint
