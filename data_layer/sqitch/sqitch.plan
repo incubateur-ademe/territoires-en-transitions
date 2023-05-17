@@ -348,3 +348,4 @@ cron/send_to_amplitude 2023-05-09T09:41:49Z Florian <florian@derfurth.com> # Env
 @v2.29.0 2023-05-11T07:32:43Z Florian <florian@derfurth.com> # Améliore les statistiques et le tracking
 
 plan_action/fiches [plan_action/fiches@v2.28.0] 2023-05-03T13:49:52Z Amandine Jacquelin <conta@LanceLibre> # Passe fiches_action en private et déplace la vérification de droits
+plan_action/export [plan_action/export@v2.29.0] 2023-05-17T13:35:25Z Florian <florian@derfurth.com> # Utilise la vue privée pour les fiches
