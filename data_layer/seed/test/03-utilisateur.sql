@@ -44,8 +44,8 @@ begin
             null, null, '', '', null, default,
             0);
 
-    insert into dcp (user_id, nom, prenom, email)
-    values (user_id, nom, prenom, email);
+    insert into dcp (user_id, nom, prenom, email, verifie)
+    values (user_id, nom, prenom, email, true);
 end;
 $$ language plpgsql security definer;
 comment on function test_create_user is
