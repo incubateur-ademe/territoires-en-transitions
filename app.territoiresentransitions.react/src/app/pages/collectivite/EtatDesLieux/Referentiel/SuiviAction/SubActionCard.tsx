@@ -5,10 +5,9 @@ import {useActionSummaryChildren} from 'core-logic/hooks/referentiel';
 import {useEffect, useState} from 'react';
 import {Accordion} from 'ui/Accordion';
 import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
-import {ActionPreuvePanel} from 'ui/shared/actions/ActionPreuvePanel';
-import {useActionPreuvesCount} from 'ui/shared/preuves/Bibliotheque/usePreuves';
 import SubActionDescription from './SubActionDescription';
 import SubActionHeader from './SubActionHeader';
+import SubActionPreuvesAccordion from './SubActionPreuvesAccordion';
 import SubActionTasksList from './SubActionTasksList';
 
 type SubActionCardProps = {
@@ -33,7 +32,6 @@ const SubActionCard = ({
   //   action_id: subAction.id,
   //   collectivite_id: collectivite?.collectivite_id || 0,
   // });
-  const preuvesCount = useActionPreuvesCount(subAction);
   const tasks = useActionSummaryChildren(subAction);
   const shouldOpen = true;
   // Condition à décommenter lorsque le statut à la sous-action sera possible
@@ -100,14 +98,9 @@ const SubActionCard = ({
           )}
 
           {/* Section Documents */}
-          <Accordion
-            id={`Preuves-${subAction.id}`}
-            dataTest={`PreuvesPanel-${subAction.identifiant}`}
-            titre={`Documents${
-              preuvesCount !== undefined ? ` (${preuvesCount})` : ''
-            }`}
-            html={<ActionPreuvePanel action={subAction} showWarning />}
-            initialState={openSubAction && (preuvesCount ?? 0) > 0}
+          <SubActionPreuvesAccordion
+            subAction={subAction}
+            openSubAction={openSubAction}
           />
         </div>
       )}
