@@ -1,6 +1,6 @@
 -- Fonction pour reset les données fake de la base
 
-create function
+create or replace function
     test_reset()
     returns void
 as
@@ -16,19 +16,24 @@ $$
 -- 07-audit.sql
     select test_reset_audit();
 -- 07-discussion.sql
--- select test_reset_discussion_et_commentaires();
+    select test_reset_discussion_et_commentaires();
 -- 09-reponse.sql
     select test_reset_reponse();
 -- 10-action.sql
     select test_reset_action_statut_and_desc();
+-- 11-scores.sql
+    select test_reset_scores();
 -- 11-plan_action.sql
     select test_reset_plan_action();
--- 14-indicateurs.sql
+-- 14-indicateur.sql
     select test_reset_indicateurs();
 -- 06-auth.sql
     select test_reset_users();
--- Supprime toutes les collectivités de test.
+-- Supprime toutes les collectivités de test et cot.
     delete from collectivite_test cascade where true;
+    delete from cot where true;
+-- Vide maintenance
+    delete from maintenance where true;
 -- Renvoie un code 200
     select set_config('response.status', '200', true);
 $$ language sql security definer;
