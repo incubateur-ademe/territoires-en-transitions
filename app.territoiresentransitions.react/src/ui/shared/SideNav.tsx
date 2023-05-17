@@ -34,7 +34,7 @@ const SideNav = ({links}: Props) => {
         <ul className="fr-sidemenu__list">
           {links.map(element => {
             if (isSideNavSection(element)) {
-              return <Section section={element} />;
+              return <Section key={element.link} section={element} />;
             } else {
               return (
                 <li
