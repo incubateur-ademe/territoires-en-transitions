@@ -3081,6 +3081,7 @@ export interface Database {
       reponse_display: {
         Row: {
           collectivite_id: number | null
+          justification: string | null
           question_id: string | null
           reponse: Json | null
         }
