@@ -13,18 +13,24 @@ export const useQuestionsReponses = (filters: TFilters) => {
   const reponses = useReponses(questions!);
 
   // indexe les réponses par id de question
-  const reponsesByQuestionId = new Map<string, TReponse>();
+  const reponsesByQuestionId = new Map<
+    string,
+    {reponse: TReponse; justification?: string | null}
+  >();
   reponses.forEach(({data}) => {
     if (data) {
-      const {question_id, reponse} = data;
-      reponsesByQuestionId.set(question_id, reponse.reponse);
+      const {question_id, reponse, justification} = data;
+      reponsesByQuestionId.set(question_id, {
+        reponse: reponse.reponse,
+        justification,
+      });
     }
   });
 
   // associe les réponses aux questions
   const qrList = questions?.map(question => {
     const reponse = reponsesByQuestionId.get(question.id);
-    return {...question, reponse};
+    return {...question, ...reponse};
   });
 
   return qrList || [];
