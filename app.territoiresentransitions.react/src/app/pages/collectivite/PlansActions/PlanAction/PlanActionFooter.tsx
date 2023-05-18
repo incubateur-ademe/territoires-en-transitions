@@ -8,7 +8,7 @@ type TPlanActionFooter = {
 
 const PlanActionFooter = ({plan, isReadonly}: TPlanActionFooter) => {
   return (
-    <div className="flex flex-col gap-8 items-start pt-12">
+    <div className="pt-12">
       <ScrollTopButton />
     </div>
   );
