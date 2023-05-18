@@ -8,7 +8,6 @@ import {useEditAxe} from './data/useEditAxe';
 import TextareaControlled from 'ui/shared/form/TextareaControlled';
 import SupprimerAxeModal from './SupprimerAxeModal';
 import PlanActionAxeFiches from './PlanActionAxeFiches';
-import IconArrowSFill from 'ui/icons/IconArrowSFill';
 
 type Props = {
   planActionGlobal: PlanNode;
@@ -81,10 +80,13 @@ const PlanActionAxe = ({
               className="p-0.5"
               onClick={() => setIsOpen(!isOpen)}
             >
-              <IconArrowSFill
-                className={classNames({
-                  '-rotate-90': !isOpen,
-                })}
+              <div
+                className={classNames(
+                  'h-6 fr-icon-arrow-right-s-fill text-bf500',
+                  {
+                    'rotate-90': isOpen,
+                  }
+                )}
               />
             </button>
           </div>
