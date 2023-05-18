@@ -11,6 +11,8 @@ create type fiche_action_export as
     axe_path text[],
     fiche    jsonb
 );
+comment on type fiche_action_export is
+    'Les informations pour lister une fiche dans l''export Excel des plans d''action.';
 
 create function
     plan_action_export(id integer)
@@ -21,9 +23,9 @@ begin
         parents as (select axe.id,
                            axe.nom,
                            axe.collectivite_id,
-                           0                   as depth,
-                           array []::text[]    as path,
-                           '0 ' || nom         as sort_path
+                           0                as depth,
+                           array []::text[] as path,
+                           '0 ' || nom      as sort_path
                     from axe
                     where parent is null
                       and axe.id = plan_action_export.id
@@ -48,9 +50,9 @@ begin
     from parents p
              left join fiches f on p.id = f.axe_id
     order by naturalsort(sort_path);
-end ;
+end;
 comment on function plan_action_export is
-    '.';
+    'Les fiches ordonnancées pour l''export des plans d''action.';
 
 
 COMMIT;
