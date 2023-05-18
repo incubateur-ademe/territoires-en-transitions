@@ -5861,7 +5861,7 @@ export interface Database {
         Args: {
           id: number
         }
-        Returns: Json
+        Returns: Database["public"]["CompositeTypes"]["fiche_action_export"][]
       }
       plan_action_profondeur: {
         Args: {
@@ -6087,6 +6087,12 @@ export interface Database {
       skip:
         | {
             Args: {
+              "": number
+            }
+            Returns: string
+          }
+        | {
+            Args: {
               why: string
               how_many: number
             }
@@ -6095,12 +6101,6 @@ export interface Database {
         | {
             Args: {
               "": string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              "": number
             }
             Returns: string
           }
@@ -6283,52 +6283,52 @@ export interface Database {
             Args: {
               bucket_width: unknown
               ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+              origin: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+              origin: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+              origin: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
               offset: unknown
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              origin: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              origin: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              origin: string
             }
             Returns: string
           }
@@ -6763,6 +6763,12 @@ export interface Database {
         | "personnalise"
     }
     CompositeTypes: {
+      fiche_action_export: {
+        axe_id: number
+        axe_nom: string
+        axe_path: unknown
+        fiche: Json
+      }
       financeur_montant: {
         financeur_tag: unknown
         montant_ttc: number
