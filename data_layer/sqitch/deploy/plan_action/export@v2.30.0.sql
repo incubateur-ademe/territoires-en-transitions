@@ -2,9 +2,6 @@
 
 BEGIN;
 
-drop function plan_action_export;
-drop type fiche_action_export;
-
 create or replace function plan_action_export(id integer) returns jsonb as
 $$
 declare
