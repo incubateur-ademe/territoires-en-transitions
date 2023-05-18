@@ -6,6 +6,7 @@ import {nameToShortNames, TFilters} from './filters';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {FicheAction} from './types';
 import {TPersonne} from 'types/alias';
+import {PlanNode} from '../../PlanAction/data/types';
 
 export type TFichesActionsListe = {
   items: FicheAction[];
@@ -29,8 +30,13 @@ export const fetchFichesActionFiltresListe = async (
     {
       collectivite_id: collectivite_id!,
       axes_id: axes_id,
-      pilotes: pilotes as unknown as TPersonne[],
-      referents: referents as unknown as TPersonne[],
+      // pilotes: pilotes as unknown as TPersonne[],
+      pilotes: pilotes?.map(p =>
+        p.includes('-') ? {user_id: p} : {tag_id: parseInt(p)}
+      ) as unknown as TPersonne[],
+      referents: referents?.map(p =>
+        p.includes('-') ? {user_id: p} : {tag_id: parseInt(p)}
+      ) as unknown as TPersonne[],
       statuts: statuts,
       niveaux_priorite: priorites,
     },
@@ -44,28 +50,35 @@ export const fetchFichesActionFiltresListe = async (
   return {items: (data as unknown as FicheAction[]) || [], total: count || 0};
 };
 
+type Args = {
+  plan: PlanNode;
+  axe?: PlanNode;
+};
 /**
- * Liste de fiches actions au sein d'un plan
+ * Liste de fiches actions au sein d'un axe
  */
-export const useFichesActionFiltresListe = (
-  plan_id: number
-): TFichesActionsListe => {
+export const useFichesActionFiltresListe = ({
+  plan,
+  axe,
+}: Args): TFichesActionsListe => {
   const collectivite_id = useCollectiviteId();
 
   const initialFilters: TFilters = {
     collectivite_id: collectivite_id!,
-    axes_id: [plan_id],
+    axes_id: [axe ? axe.id : plan.id],
   };
 
   const [filters, setFilters, filtersCount] = useSearchParams<TFilters>(
-    `/collectivite/${collectivite_id}/plans/plan/${plan_id}`,
+    axe
+      ? `/collectivite/${collectivite_id}/plans/plan/${plan.id}/${axe.id}`
+      : `/collectivite/${collectivite_id}/plans/plan/${plan.id}`,
     initialFilters,
     nameToShortNames
   );
 
   // charge les données
   const {data} = useQuery(
-    ['fiches_Actions', collectivite_id, plan_id, filters],
+    ['fiches_Actions', collectivite_id, axe ? axe.id : plan.id, filters],
     () => fetchFichesActionFiltresListe(filters)
   );
 

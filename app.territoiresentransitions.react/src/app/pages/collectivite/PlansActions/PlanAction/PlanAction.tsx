@@ -31,7 +31,7 @@ export const PlanAction = ({plan, axe}: PlanActionProps) => {
   const {mutate: updateAxe} = useEditAxe(plan.id);
 
   const {items: fichesActionsListe, ...ficheFilters} =
-    useFichesActionFiltresListe(plan.id);
+    useFichesActionFiltresListe({plan, axe});
 
   const displaySousAxe = (node: PlanNode) => (
     <PlanActionAxe
