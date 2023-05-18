@@ -1,5 +1,4 @@
 import {TFicheActionNiveauxPriorite, TFicheActionStatuts} from 'types/alias';
-import {Personne} from './types';
 
 export const NB_ITEMS_PER_PAGE = 20;
 
@@ -9,9 +8,9 @@ export type TFilters = {
   /** par plan d'action ou axe */
   axes_id: number[];
   /** par personnes pilote */
-  pilotes?: Personne[];
+  pilotes?: string[];
   /** par référents */
-  referents?: Personne[];
+  referents?: string[];
   /** par statuts */
   statuts?: TFicheActionStatuts[];
   /** par priorites */
@@ -28,7 +27,7 @@ export type TFiltreProps = {
 };
 
 export const nameToShortNames = {
-  // pilotes: 'pilotes',
+  pilotes: 'pilotes',
   referents: 'ref',
   statuts: 's',
   priorites: 'prio',

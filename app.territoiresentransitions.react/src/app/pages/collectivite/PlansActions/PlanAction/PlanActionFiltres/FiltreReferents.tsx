@@ -30,7 +30,7 @@ const FiltreReferents = ({filters, setFilters}: TFiltreProps) => {
     <FilterField title="Élu·e référent·e">
       <MultiSelectFilter
         data-test="filtre-referent"
-        values={filters.referents?.map(p => getPersonneId(p))}
+        values={filters.referents}
         options={options}
         onSelect={newValues => {
           // onClick "tous" ou toggle option
@@ -42,9 +42,9 @@ const FiltreReferents = ({filters, setFilters}: TFiltreProps) => {
           } else {
             setFilters({
               ...filters,
-              referents: personnes?.filter(p =>
-                newValues.includes(getPersonneId(p))
-              ),
+              referents: personnes
+                ?.filter(p => newValues.includes(getPersonneId(p)))
+                .map(p => getPersonneId(p)),
             });
           }
         }}

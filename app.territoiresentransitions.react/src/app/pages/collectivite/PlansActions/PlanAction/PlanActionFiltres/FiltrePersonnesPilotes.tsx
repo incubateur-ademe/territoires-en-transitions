@@ -30,7 +30,7 @@ const FiltrePersonnesPilotes = ({filters, setFilters}: TFiltreProps) => {
     <FilterField title="Personne pilote">
       <MultiSelectFilter
         data-test="filtre-personne-pilote"
-        values={filters.pilotes?.map(p => getPersonneId(p))}
+        values={filters.pilotes}
         options={options}
         onSelect={newValues => {
           // onClick "tous" ou toggle option
@@ -42,9 +42,9 @@ const FiltrePersonnesPilotes = ({filters, setFilters}: TFiltreProps) => {
           } else {
             setFilters({
               ...filters,
-              pilotes: personnes?.filter(p =>
-                newValues.includes(getPersonneId(p))
-              ),
+              pilotes: personnes
+                ?.filter(p => newValues.includes(getPersonneId(p)))
+                .map(p => getPersonneId(p)),
             });
           }
         }}
