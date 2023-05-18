@@ -2,9 +2,6 @@
 
 BEGIN;
 
-drop function plan_action_export;
-drop type fiche_action_export;
-
 create or replace function plan_action_export(id integer) returns jsonb as
 $$
 declare
@@ -17,7 +14,7 @@ declare
 begin
     fiches = to_jsonb((select array_agg(ff.*)
                        from (select *
-                             from private.fiches_action fa
+                             from fiches_action fa
                                       join fiche_action_axe fapa on fa.id = fapa.fiche_id
                              where fapa.axe_id = plan_action_export.id
                              order by naturalsort(lower(fa.titre))) ff));
