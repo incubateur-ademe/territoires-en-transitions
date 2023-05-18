@@ -20,14 +20,15 @@ import PlanActionAxeFiches from './PlanActionAxeFiches';
 
 type PlanActionProps = {
   plan: PlanNode;
+  axe?: PlanNode;
 };
 
-export const PlanAction = ({plan}: PlanActionProps) => {
+export const PlanAction = ({plan, axe}: PlanActionProps) => {
   const collectivite = useCurrentCollectivite();
 
   const isReadonly = collectivite?.readonly ?? false;
 
-  const {mutate: updatePlan} = useEditAxe(plan.id);
+  const {mutate: updateAxe} = useEditAxe(plan.id);
 
   const {items: fichesActionsListe, ...ficheFilters} =
     useFichesActionFiltresListe(plan.id);
@@ -45,9 +46,9 @@ export const PlanAction = ({plan}: PlanActionProps) => {
   return (
     <div data-test="PlanAction" className="w-full">
       <HeaderTitle
-        type="plan"
-        titre={plan.nom}
-        onUpdate={nom => updatePlan({id: plan.id, nom})}
+        type={axe ? 'axe' : 'plan'}
+        titre={axe ? axe.nom : plan.nom}
+        onUpdate={nom => updateAxe({id: axe ? axe.id : plan.id, nom})}
         isReadonly={isReadonly}
       />
       <div className="max-w-4xl mx-auto px-10">
@@ -57,7 +58,7 @@ export const PlanAction = ({plan}: PlanActionProps) => {
           isReadonly={isReadonly}
         />
         {/** On vérifie si le plan contient des fiches pour afficher les filtres de fiche */}
-        {checkAxeHasFiche(plan) && (
+        {!axe && checkAxeHasFiche(plan) && (
           <PlanActionFiltres
             itemsNumber={ficheFilters.total}
             initialFilters={ficheFilters.initialFilters}
@@ -88,21 +89,46 @@ export const PlanAction = ({plan}: PlanActionProps) => {
             </div>
           )
         ) : // Affiche les fiches et sous-axes s'il y en a, sinon un état vide
-        plan.children.length > 0 || plan.fiches ? (
+        (!axe &&
+            (plan.children.length > 0 ||
+              (plan.fiches && plan.fiches.length > 0))) ||
+          (axe &&
+            (axe.children.length > 0 ||
+              (axe.fiches && axe.fiches.length > 0))) ? (
           <>
             <div className="mb-4">
               {!isReadonly && (
-                <AxeActions planActionId={plan.id} axeId={plan.id} />
+                <AxeActions
+                  planActionId={plan.id}
+                  axeId={axe ? axe.id : plan.id}
+                />
               )}
               {/** Affichage des fiches */}
-              {plan.fiches && plan.fiches.length !== 0 && (
+              {((plan.fiches && plan.fiches.length !== 0) ||
+                (axe && axe.fiches && axe.fiches.length !== 0)) && (
                 <div className="mt-6">
-                  <PlanActionAxeFiches ficheIds={plan.fiches} axeId={plan.id} />
+                  <PlanActionAxeFiches
+                    ficheIds={axe ? axe.fiches : plan.fiches}
+                    axeId={axe ? axe.id : plan.id}
+                  />
                 </div>
               )}
             </div>
             {/** Affichage des sous-axes */}
-            {plan.children &&
+            {axe &&
+              axe.children &&
+              axe.children.length > 0 &&
+              axe.children.map(enfant => (
+                <PlanActionAxe
+                  key={enfant.id}
+                  planActionGlobal={axe ? axe : plan}
+                  axe={enfant}
+                  displayAxe={displaySousAxe}
+                  isReadonly={isReadonly}
+                />
+              ))}
+            {!axe &&
+              plan.children &&
               plan.children.length > 0 &&
               plan.children.map(enfant => (
                 <PlanActionAxe
@@ -122,7 +148,10 @@ export const PlanAction = ({plan}: PlanActionProps) => {
                 Aucune arborescence pour l'instant
               </div>
               {!isReadonly && (
-                <AxeActions planActionId={plan.id} axeId={plan.id} />
+                <AxeActions
+                  planActionId={plan.id}
+                  axeId={axe ? axe.id : plan.id}
+                />
               )}
             </div>
           </div>
@@ -135,11 +164,19 @@ export const PlanAction = ({plan}: PlanActionProps) => {
 
 const PlanActionConnected = () => {
   const {planUid} = useParams<{planUid: string}>();
+  const {axeUid} = useParams<{axeUid: string}>();
 
-  const {data, isLoading} = usePlanAction(parseInt(planUid));
+  const {data: planData, isLoading: planLoading} = usePlanAction(
+    parseInt(planUid)
+  );
+  const {data: axeData, isLoading: axeLoading} = usePlanAction(
+    parseInt(axeUid)
+  );
 
-  return !isLoading && data ? (
-    <PlanAction plan={data} />
+  const isLoading = planLoading || axeLoading;
+
+  return !isLoading && planData ? (
+    <PlanAction plan={planData} axe={axeData} />
   ) : (
     <div className="h-[6.75rem] w-full bg-indigo-700 xl:mr-6" />
   );
