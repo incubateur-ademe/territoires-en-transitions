@@ -55,6 +55,7 @@ export const PlanAction = ({plan, axe}: PlanActionProps) => {
         <PlanActionHeader
           collectivite_id={collectivite?.collectivite_id!}
           plan={plan}
+          axe={axe}
           isReadonly={isReadonly}
         />
         {/** On vérifie si le plan contient des fiches pour afficher les filtres de fiche */}
