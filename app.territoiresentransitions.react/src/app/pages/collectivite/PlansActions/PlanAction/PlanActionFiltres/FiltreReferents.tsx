@@ -3,11 +3,11 @@ import {TOption} from 'ui/shared/select/commons';
 import {MultiSelectFilter} from 'ui/shared/select/MultiSelectFilter';
 import {TFiltreProps} from '../../FicheAction/data/filters';
 import {getIsAllSelected, ITEM_ALL} from 'ui/shared/filters/commons';
-import {usePersonneReferenteListe} from '../../FicheAction/data/options/usePersonneReferenteListe';
 import {getPersonneId} from '../../FicheAction/data/utils';
+import {usePersonneListe} from '../../FicheAction/data/options/usePersonneListe';
 
 const FiltreReferents = ({filters, setFilters}: TFiltreProps) => {
-  const {data: personnes} = usePersonneReferenteListe();
+  const {data: personnes} = usePersonneListe();
 
   // Initialisation du tableau d'options pour le multi-select
   const options: TOption[] = [];

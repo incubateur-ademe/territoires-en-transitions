@@ -1,13 +1,13 @@
 import FilterField from 'ui/shared/filters/FilterField';
 import {TOption} from 'ui/shared/select/commons';
 import {MultiSelectFilter} from 'ui/shared/select/MultiSelectFilter';
-import {usePersonnePiloteListe} from '../../FicheAction/data/options/usePersonnePiloteListe';
 import {TFiltreProps} from '../../FicheAction/data/filters';
 import {getIsAllSelected, ITEM_ALL} from 'ui/shared/filters/commons';
 import {getPersonneId} from '../../FicheAction/data/utils';
+import {usePersonneListe} from '../../FicheAction/data/options/usePersonneListe';
 
 const FiltrePersonnesPilotes = ({filters, setFilters}: TFiltreProps) => {
-  const {data: personnes} = usePersonnePiloteListe();
+  const {data: personnes} = usePersonneListe();
 
   // Initialisation du tableau d'options pour le multi-select
   const options: TOption[] = [];
