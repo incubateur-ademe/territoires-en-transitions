@@ -16,7 +16,7 @@ export const useDeleteAxe = (
 
   return useMutation(
     async () => {
-      await supabaseClient.rpc('delete_axe_all', {axe_id: axe_id});
+      await supabaseClient.rpc('delete_axe_all', {axe_id});
     },
     {
       mutationKey: 'delete_axe',
@@ -46,6 +46,7 @@ export const useDeleteAxe = (
           );
         }
         queryClient.invalidateQueries(['plan_action', planGlobalId]);
+        queryClient.invalidateQueries(['plan_action', axe_id]);
         queryClient.invalidateQueries(['plans_actions', collectivite_id]);
         queryClient.invalidateQueries(['plans_navigation', collectivite_id]);
         redirectURL && history.push(redirectURL);

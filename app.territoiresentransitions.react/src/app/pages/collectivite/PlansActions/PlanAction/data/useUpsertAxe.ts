@@ -64,6 +64,7 @@ export const useAddAxe = (parentId: number, planActionId: number) => {
       meta: {disableToast: true},
       onSuccess: data => {
         queryClient.invalidateQueries(['plan_action', planActionId]);
+        queryClient.invalidateQueries(['plan_action', parentId]);
         queryClient.invalidateQueries(['plans_navigation', collectivite_id]);
       },
     }
