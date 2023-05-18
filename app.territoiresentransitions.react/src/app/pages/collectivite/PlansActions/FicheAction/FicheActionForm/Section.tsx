@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 import {useState} from 'react';
-import IconArrowSFill from 'ui/icons/IconArrowSFill';
 
 type Props = {
   dataTest?: string;
@@ -25,9 +24,9 @@ const Section = ({dataTest, isDefaultOpen, icon, title, children}: Props) => {
         )}
         onClick={() => setIsOpen(!isOpen)}
       >
-        <IconArrowSFill
-          className={classNames({
-            '-rotate-90': !isOpen,
+        <span
+          className={classNames('h-6 fr-icon-arrow-right-s-fill text-bf500', {
+            'rotate-90': isOpen,
           })}
         />
         <div className="w-12 h-12">{icon}</div>
