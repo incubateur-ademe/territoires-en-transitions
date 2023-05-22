@@ -68,3 +68,8 @@ Scores:
     point_programme: 2.1
     point_pas_fait: 0
     point_potentiel: 4.2
+  cae_1.1.1.7.2:
+    point_fait: 0.7
+    point_programme: 0.7
+    point_pas_fait: 0
+    point_potentiel: 1.4
