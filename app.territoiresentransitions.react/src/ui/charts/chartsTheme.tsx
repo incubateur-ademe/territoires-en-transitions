@@ -54,12 +54,12 @@ export const nivoColorsSet = [
   '#ffed6f',
 ];
 
-export const enum StatusColor {
-  'Abandonné' = '#F95C5E',
-  'En pause' = '#FF9575',
-  'À venir' = '#7AB1E8',
-  'En cours' = '#869ECE',
-  'Réalisé' = '#34CB6A',
-  'NC' = '#CCC',
-  'Sans statut' = '#CCC',
-}
+export const statusColor: Record<string, string> = {
+  Abandonné: '#F95C5E',
+  'En pause': '#FF9575',
+  'À venir': '#7AB1E8',
+  'En cours': '#869ECE',
+  Réalisé: '#34CB6A',
+  NC: '#CCC',
+  'Sans statut': '#CCC',
+};
