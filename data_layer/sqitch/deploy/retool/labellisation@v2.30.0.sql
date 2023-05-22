@@ -2,7 +2,6 @@
 
 BEGIN;
 
-drop view retool_labellisation_demande;
 create or replace view retool_labellisation_demande
 as
 select ld.id,
