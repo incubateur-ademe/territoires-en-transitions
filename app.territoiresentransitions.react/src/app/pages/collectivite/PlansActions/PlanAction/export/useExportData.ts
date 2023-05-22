@@ -3,11 +3,21 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {useExportTemplateBase} from 'utils/exportXLSX';
 import {useActionListe} from '../../FicheAction/data/options/useActionListe';
 import {ConfigPlanAction} from './config';
-import {PlanAction} from '../data/types';
 import {
   TFichier,
   TPreuveLienFields,
 } from 'ui/shared/preuves/Bibliotheque/types';
+import {FicheAction} from '../../FicheAction/data/types';
+
+export type TFicheActionExport = {
+  axe_id: number;
+  axe_nom: string;
+  axe_path: string[];
+  fiche: {
+    axe_id: number;
+    fiche: FicheAction | null;
+  };
+};
 
 /** Fourni les données nécessaires à l'export d'un plan d'action */
 export const useExportData = (plan_id: number) => {
@@ -75,7 +85,7 @@ const fetchPlanAction = async (plan_id: number) => {
   const {data} = await supabaseClient.rpc('plan_action_export', {
     id: plan_id,
   });
-  return data as unknown as PlanAction;
+  return data as unknown as TFicheActionExport[];
 };
 
 // charge la liste des annexes associées aux fiches d'un plan d'action
