@@ -11,11 +11,7 @@ select id, en_cours,
        sujet,
        envoyee_le,
        date,
-       modified_at,
-       demandeur_prenom,
-       demandeur_nom,
-       demandeur_email,
-       demandeur_fonction
+       modified_at
 from retool_labellisation_demande
 where false;
 

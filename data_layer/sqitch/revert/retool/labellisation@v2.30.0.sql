@@ -11,10 +11,7 @@ select ld.id,
        ld.referentiel,
        ld.etoiles,
        ld.date,
-       nc.nom,
-       ld.sujet,
-       ld.envoyee_le,
-       ld.modified_at
+       nc.nom
 from labellisation.demande ld
          left join named_collectivite nc on ld.collectivite_id = nc.collectivite_id;
 
