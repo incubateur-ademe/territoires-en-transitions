@@ -3,6 +3,7 @@
  */
 
 import DOMPurify from 'dompurify';
+import classNames from 'classnames';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {ActionScore} from 'types/ClientScore';
 import {
@@ -14,6 +15,7 @@ import {PointsPotentiels} from './PointsPotentiels';
 import {reponseParType} from './Reponse';
 import {Accordion} from 'ui/Accordion';
 import {YellowHighlight} from 'ui/Highlight';
+import {Justification} from './Justification';
 
 export type TPersoPotentielQRProps = {
   /** Définition de l'action */
@@ -77,6 +79,7 @@ const QuestionReponse = (props: TQuestionReponseProps) => {
         />
       ) : null}
       <Reponse {...props} />
+      <Justification {...props} />
       {hasProportionDescription ? (
         <Accordion
           className="fr-mt-3w"
@@ -107,7 +110,7 @@ export type TQuestionReponseListProps = {
 export const QuestionReponseList = (props: TQuestionReponseListProps) => {
   const {className, questionReponses, onChange} = props;
   return (
-    <div className={`fr-form-group ${className || ''}`}>
+    <div className={classNames('fr-form-group', className)}>
       {questionReponses.map((qr, index) => {
         const {id} = qr;
         return (

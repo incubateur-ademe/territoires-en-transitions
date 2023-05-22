@@ -193,7 +193,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         Caractéristiques liées
       </h6>
       <div
-        className="fr-form-group "
+        className="fr-form-group"
       >
         <fieldset
           className="fr-fieldset !flex-col !items-stretch"
@@ -405,6 +405,38 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
             />
           </div>
           <section
+            className="fr-accordion fr-mt-2w"
+          >
+            <h3
+              className="fr-accordion__title"
+            >
+              <button
+                aria-controls="j-q3"
+                aria-expanded={false}
+                className="fr-accordion__btn font-normal"
+                onClick={[Function]}
+              >
+                <i
+                  className="fr-icon-draft-line text-[#0063cb] fr-mr-3v"
+                />
+                Justifier votre réponse (optionnel)
+              </button>
+            </h3>
+            <div
+              className="fr-collapse"
+              id="j-q3"
+            >
+              <textarea
+                autoFocus={true}
+                className="w-full py-2 px-3 text-sm cursor-text rounded-lg outline outline-offset-0 !outline-1 outline-gray-300 focus:outline-blue-500 fr-input"
+                disabled={false}
+                onBlur={[Function]}
+                onChange={[Function]}
+                value=""
+              />
+            </div>
+          </section>
+          <section
             className="fr-accordion fr-mt-3w"
           >
             <h3
@@ -548,7 +580,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         Caractéristique liée
       </h6>
       <div
-        className="fr-form-group "
+        className="fr-form-group"
       >
         <fieldset
           className="fr-fieldset !flex-col !items-stretch"
@@ -726,7 +758,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         Caractéristique liée
       </h6>
       <div
-        className="fr-form-group "
+        className="fr-form-group"
       >
         <fieldset
           className="fr-fieldset !flex-col !items-stretch"
@@ -743,6 +775,38 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
             className="flex pl-4"
             data-test="reponse"
           />
+          <section
+            className="fr-accordion fr-mt-2w"
+          >
+            <h3
+              className="fr-accordion__title"
+            >
+              <button
+                aria-controls="j-q2"
+                aria-expanded={false}
+                className="fr-accordion__btn font-normal"
+                onClick={[Function]}
+              >
+                <i
+                  className="fr-icon-draft-line text-[#0063cb] fr-mr-3v"
+                />
+                Justifier votre réponse (optionnel)
+              </button>
+            </h3>
+            <div
+              className="fr-collapse"
+              id="j-q2"
+            >
+              <textarea
+                autoFocus={true}
+                className="w-full py-2 px-3 text-sm cursor-text rounded-lg outline outline-offset-0 !outline-1 outline-gray-300 focus:outline-blue-500 fr-input"
+                disabled={false}
+                onBlur={[Function]}
+                onChange={[Function]}
+                value=""
+              />
+            </div>
+          </section>
         </fieldset>
       </div>
     </div>
@@ -859,7 +923,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         Caractéristique liée
       </h6>
       <div
-        className="fr-form-group "
+        className="fr-form-group"
       >
         <fieldset
           className="fr-fieldset !flex-col !items-stretch"
@@ -1087,7 +1151,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         Caractéristique liée
       </h6>
       <div
-        className="fr-form-group "
+        className="fr-form-group"
       >
         <fieldset
           className="fr-fieldset !flex-col !items-stretch"
@@ -1161,6 +1225,38 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
               </div>
             </div>
           </div>
+          <section
+            className="fr-accordion fr-mt-2w"
+          >
+            <h3
+              className="fr-accordion__title"
+            >
+              <button
+                aria-controls="j-q1"
+                aria-expanded={false}
+                className="fr-accordion__btn font-normal"
+                onClick={[Function]}
+              >
+                <i
+                  className="fr-icon-draft-line text-[#0063cb] fr-mr-3v"
+                />
+                Justifier votre réponse (optionnel)
+              </button>
+            </h3>
+            <div
+              className="fr-collapse"
+              id="j-q1"
+            >
+              <textarea
+                autoFocus={true}
+                className="w-full py-2 px-3 text-sm cursor-text rounded-lg outline outline-offset-0 !outline-1 outline-gray-300 focus:outline-blue-500 fr-input"
+                disabled={false}
+                onBlur={[Function]}
+                onChange={[Function]}
+                value=""
+              />
+            </div>
+          </section>
         </fieldset>
       </div>
     </div>
@@ -1277,7 +1373,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         Caractéristique liée
       </h6>
       <div
-        className="fr-form-group "
+        className="fr-form-group"
       >
         <fieldset
           className="fr-fieldset !flex-col !items-stretch"
@@ -1460,7 +1556,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         Caractéristique liée
       </h6>
       <div
-        className="fr-form-group "
+        className="fr-form-group"
       >
         <fieldset
           className="fr-fieldset !flex-col !items-stretch"
@@ -1499,6 +1595,38 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
               value="60"
             />
           </div>
+          <section
+            className="fr-accordion fr-mt-2w"
+          >
+            <h3
+              className="fr-accordion__title"
+            >
+              <button
+                aria-controls="j-q3"
+                aria-expanded={false}
+                className="fr-accordion__btn font-normal"
+                onClick={[Function]}
+              >
+                <i
+                  className="fr-icon-draft-line text-[#0063cb] fr-mr-3v"
+                />
+                Justifier votre réponse (optionnel)
+              </button>
+            </h3>
+            <div
+              className="fr-collapse"
+              id="j-q3"
+            >
+              <textarea
+                autoFocus={true}
+                className="w-full py-2 px-3 text-sm cursor-text rounded-lg outline outline-offset-0 !outline-1 outline-gray-300 focus:outline-blue-500 fr-input"
+                disabled={false}
+                onBlur={[Function]}
+                onChange={[Function]}
+                value=""
+              />
+            </div>
+          </section>
           <section
             className="fr-accordion fr-mt-3w"
           >
