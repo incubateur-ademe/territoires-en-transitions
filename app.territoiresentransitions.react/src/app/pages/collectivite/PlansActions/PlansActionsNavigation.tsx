@@ -104,7 +104,11 @@ const PlansActionsNavigation = ({collectivite}: Props) => {
             <button
               data-test="AjouterPlanAction"
               className="fr-btn fr-btn--tertiary"
-              onClick={() => createPlanAction()}
+              onClick={() =>
+                createPlanAction({
+                  collectivite_id: collectivite.collectivite_id,
+                })
+              }
             >
               Ajouter un plan d'action
             </button>
