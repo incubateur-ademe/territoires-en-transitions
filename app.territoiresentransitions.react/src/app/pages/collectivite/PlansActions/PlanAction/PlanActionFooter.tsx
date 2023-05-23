@@ -8,7 +8,7 @@ type TPlanActionFooter = {
 
 const PlanActionFooter = ({plan, isReadonly}: TPlanActionFooter) => {
   return (
-    <div className="pt-12">
+    <div className="py-12">
       <ScrollTopButton />
     </div>
   );

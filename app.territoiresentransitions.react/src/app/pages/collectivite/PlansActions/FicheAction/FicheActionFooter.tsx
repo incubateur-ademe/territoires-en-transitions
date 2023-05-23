@@ -12,7 +12,7 @@ const FicheActionFooter = ({fiche, isReadonly}: TFicheActionFooter) => {
   const {mutate: deleteFiche} = useDeleteFicheAction();
 
   return (
-    <div className="pt-16">
+    <div className="py-16">
       {!isReadonly && (
         <FicheActionSupprimerModal
           fiche={fiche}
