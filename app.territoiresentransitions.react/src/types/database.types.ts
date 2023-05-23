@@ -97,6 +97,7 @@ export interface Database {
         Row: {
           collectivite_id: number
           date: string
+          demandeur: string | null
           en_cours: boolean
           envoyee_le: string | null
           etoiles: Database["labellisation"]["Enums"]["etoile"] | null
@@ -108,6 +109,7 @@ export interface Database {
         Insert: {
           collectivite_id: number
           date?: string
+          demandeur?: string | null
           en_cours?: boolean
           envoyee_le?: string | null
           etoiles?: Database["labellisation"]["Enums"]["etoile"] | null
@@ -119,6 +121,7 @@ export interface Database {
         Update: {
           collectivite_id?: number
           date?: string
+          demandeur?: string | null
           en_cours?: boolean
           envoyee_le?: string | null
           etoiles?: Database["labellisation"]["Enums"]["etoile"] | null
@@ -3117,6 +3120,12 @@ export interface Database {
         Row: {
           collectivite_id: number | null
           date: string | null
+          demandeur_email: string | null
+          demandeur_fonction:
+            | Database["public"]["Enums"]["membre_fonction"]
+            | null
+          demandeur_nom: string | null
+          demandeur_prenom: string | null
           en_cours: boolean | null
           envoyee_le: string | null
           etoiles: Database["labellisation"]["Enums"]["etoile"] | null
@@ -4534,6 +4543,10 @@ export interface Database {
       }
       diag:
         | {
+            Args: Record<PropertyKey, never>
+            Returns: string
+          }
+        | {
             Args: {
               msg: string
             }
@@ -4543,10 +4556,6 @@ export interface Database {
             Args: {
               msg: unknown
             }
-            Returns: string
-          }
-        | {
-            Args: Record<PropertyKey, never>
             Returns: string
           }
         | {
@@ -5747,6 +5756,7 @@ export interface Database {
         Returns: {
           collectivite_id: number
           date: string
+          demandeur: string | null
           en_cours: boolean
           envoyee_le: string | null
           etoiles: Database["labellisation"]["Enums"]["etoile"] | null
@@ -5790,6 +5800,7 @@ export interface Database {
         Returns: {
           collectivite_id: number
           date: string
+          demandeur: string | null
           en_cours: boolean
           envoyee_le: string | null
           etoiles: Database["labellisation"]["Enums"]["etoile"] | null
@@ -5940,7 +5951,7 @@ export interface Database {
         Args: {
           id: number
         }
-        Returns: Database["public"]["CompositeTypes"]["fiche_action_export"][]
+        Returns: Json
       }
       plan_action_profondeur: {
         Args: {
@@ -6362,52 +6373,52 @@ export interface Database {
             Args: {
               bucket_width: unknown
               ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              origin: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              origin: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              origin: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
               offset: unknown
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+              origin: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+              origin: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+              origin: string
             }
             Returns: string
           }
@@ -6842,12 +6853,6 @@ export interface Database {
         | "personnalise"
     }
     CompositeTypes: {
-      fiche_action_export: {
-        axe_id: number
-        axe_nom: string
-        axe_path: unknown
-        fiche: Json
-      }
       financeur_montant: {
         financeur_tag: unknown
         montant_ttc: number
