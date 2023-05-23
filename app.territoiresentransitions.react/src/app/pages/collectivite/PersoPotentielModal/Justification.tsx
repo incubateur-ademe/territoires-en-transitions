@@ -36,6 +36,7 @@ export const Justification = (props: TQuestionReponseProps) => {
         <Textarea
           className="fr-input"
           value={value || ''}
+          placeholder="Exemple : Cette compétence est transférée à Nom de la Collectivité par délibération du JJ-MM-AAAA OU Cette compétence est exercée par la collectivité sur 2/3 des communes soit 3/4 de la population"
           onInputChange={() => null}
           onChange={evt => setValue(evt.currentTarget.value)}
           onBlur={() => {
