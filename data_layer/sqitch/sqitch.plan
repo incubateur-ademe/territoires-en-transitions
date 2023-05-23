@@ -352,3 +352,4 @@ plan_action/export [plan_action/export@v2.29.0] 2023-05-17T13:35:25Z Florian <fl
 @v2.30.0 2023-05-17T13:57:37Z Florian <florian@derfurth.com> # Accélère la vue fiches et l'export du plan
 
 plan_action/export [plan_action/export@v2.30.0] 2023-05-18T08:02:58Z Florian <florian@derfurth.com> # Change l'export pour être plus rapide
+@v2.31.0 2023-05-23T06:56:05Z Florian <florian@derfurth.com> # Permet l'export de plans d'action avec un grand nombre de fiches
