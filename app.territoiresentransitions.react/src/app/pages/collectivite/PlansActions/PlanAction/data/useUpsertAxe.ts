@@ -4,13 +4,13 @@ import {useMutation, useQueryClient} from 'react-query';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useHistory} from 'react-router-dom';
 import {makeCollectivitePlanActionUrl} from 'app/paths';
-import {TAxeRow} from 'types/alias';
+import {TAxeInsert} from 'types/alias';
 
 /**
  * Upsert un axe pour une collectivité.
  * S'il n'a pas de parent, alors cela est considéré comme un nouveau plan
  */
-export const upsertAxe = async (axe: TAxeRow) => {
+export const upsertAxe = async (axe: TAxeInsert) => {
   let query = supabaseClient.from('axe').upsert(axe).select();
 
   const {error, data} = await query;
@@ -30,23 +30,20 @@ export const useCreatePlanAction = () => {
   const collectivite_id = useCollectiviteId();
   const history = useHistory();
 
-  return useMutation(
-    // Considéré comme un plan d'action car on ne donne pas de parent
-    () => upsertAxe({collectivite_id: collectivite_id!} as never),
-    {
-      meta: {disableToast: true},
-      onSuccess: data => {
-        queryClient.invalidateQueries(['plans_actions', collectivite_id]);
-        queryClient.invalidateQueries(['plans_navigation', collectivite_id]);
-        history.push(
-          makeCollectivitePlanActionUrl({
-            collectiviteId: collectivite_id!,
-            planActionUid: data[0].id!.toString(),
-          })
-        );
-      },
-    }
-  );
+  return useMutation({
+    mutationFn: upsertAxe,
+    meta: {disableToast: true},
+    onSuccess: data => {
+      queryClient.invalidateQueries(['plans_actions', collectivite_id]);
+      queryClient.invalidateQueries(['plans_navigation', collectivite_id]);
+      history.push(
+        makeCollectivitePlanActionUrl({
+          collectiviteId: collectivite_id!,
+          planActionUid: data[0].id!.toString(),
+        })
+      );
+    },
+  });
 };
 
 /**
