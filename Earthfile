@@ -127,12 +127,11 @@ business-build:
     ENV SUPABASE_URL
     ENV SUPABASE_KEY
     WORKDIR /business
-    COPY ./business/requirements.txt .
-    RUN pip install -r requirements.txt
     COPY ./business .
-    RUN pip install -e .
+    RUN pip install pipenv
+    RUN PIPENV_VENV_IN_PROJECT=1 pipenv install
     EXPOSE 8888
-    CMD ["uvicorn", "evaluation_api:app", "--host", "0.0.0.0", "--port", "8888"]
+    CMD pipenv run python ./evaluation_server.py
     SAVE IMAGE business:latest
 
 business:
@@ -152,7 +151,8 @@ business:
 business-test-build:
     FROM +business-build
     COPY ./markdown /markdown
-    CMD pytest tests
+    RUN pip install pytest
+    CMD pipenv run pytest tests
     SAVE IMAGE business-test:latest
 
 business-test:
