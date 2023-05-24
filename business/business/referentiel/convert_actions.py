@@ -21,7 +21,7 @@ from business.utils.exceptions import MarkdownError
 from business.utils.markdown_import.markdown_parser import build_markdown_parser
 from business.utils.markdown_import.markdown_utils import load_md
 from pydantic import ValidationError
-from pydantic.main import BaseModel
+from pydantic import BaseModel
 from tqdm import tqdm
 
 
@@ -41,6 +41,9 @@ class MarkdownAction(BaseModel):
     points: Optional[float] = None
     pourcentage: Optional[float] = None
     categorie: Optional[ActionCategorie] = None
+
+
+MarkdownAction.update_forward_refs()
 
 
 class MarkdownActionTree(MarkdownAction):
