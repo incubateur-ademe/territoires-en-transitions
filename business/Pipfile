@@ -15,5 +15,8 @@ tqdm = "*"
 marshmallow-dataclass = "*"
 pytest = "*"
 requests = "*"
+marshmallow = "*"
+httpx = "*"
+
 uvicorn = {extras = ["standard"], version = "*"}
 business = {editable = true, path = "."}
