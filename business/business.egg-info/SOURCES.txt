@@ -1,11 +1,9 @@
 .coverage
 .env.sample
 .gitignore
-Dockerfile
 Pipfile
 Procfile
 README.md
-pyproject.toml
 setup.py
 benchmark/__init__.py
 benchmark/action_statut.json
@@ -97,6 +95,7 @@ tests/e2e/test_evaluation_scenarios.py
 tests/e2e/test_personnalisation_api.py
 tests/e2e/test_personnalisation_scenarios.py
 tests/e2e/test_referentiel_cli.py
+tests/e2e/test_yaml_scenarios.py
 tests/unit/__init__.py
 tests/unit/evaluation/__init__.py
 tests/unit/evaluation/test_compute_referentiel_scores_for_collectivite.py
