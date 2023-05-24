@@ -123,7 +123,7 @@ update-scores:
         -c "select evaluation.update_late_collectivite_scores($count);"
 
 business-build:
-    FROM python:3.9
+    FROM python:3.10.10
     ENV SUPABASE_URL
     ENV SUPABASE_KEY
     WORKDIR /business
