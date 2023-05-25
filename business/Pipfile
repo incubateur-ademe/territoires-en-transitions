@@ -17,6 +17,7 @@ pytest = "*"
 requests = "*"
 marshmallow = "*"
 httpx = "*"
+click = "*"
 
 uvicorn = {extras = ["standard"], version = "*"}
 business = {editable = true, path = "."}
