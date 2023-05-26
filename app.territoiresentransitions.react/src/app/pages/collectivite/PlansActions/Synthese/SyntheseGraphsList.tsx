@@ -126,7 +126,7 @@ const SyntheseGraphsList = ({
                 chartProps={{
                   data: graph.data,
                   label:
-                    graph.id === 'statuts-avancement' ||
+                    graph.id === 'statut-avancement' ||
                     graph.id === 'niveau-priorite',
                 }}
                 chartInfo={{
