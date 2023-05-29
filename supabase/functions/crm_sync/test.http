@@ -1,0 +1,55 @@
+### Edge function
+POST {{ supabase_url }}/functions/v1/crm_sync
+Authorization: Bearer {{ service_key }}
+Content-Type: application/json
+
+{
+  "token": "{{ airtable_token }}",
+  "personnes": "{{ sync_url }}"
+}
+
+### DCP
+GET {{ supabase_url }}/rest/v1/dcp?select=*
+Authorization: Bearer {{ service_key }}
+Accept: text/csv
+
+
+### Airtable Get bases
+GET https://api.airtable.com/v0/meta/bases
+Authorization: Bearer {{ airtable_token }}
+Content-Type: application/json
+
+
+### Airtable Get base tables
+GET https://api.airtable.com/v0/meta/bases/{{ airtable_base }}/tables
+Authorization: Bearer {{ airtable_token }}
+Content-Type: application/json
+
+
+### Airtable Update up to 10 records
+PATCH https://api.airtable.com/v0/{{ airtable_base }}/collectivités
+Authorization: Bearer {{ airtable_token }}
+Content-Type: application/json
+
+{
+  "performUpsert": {
+    "fieldsToMergeOn": [
+      "collectivite_id"
+    ]
+  },
+  "records": [
+    {
+      "fields": {
+        "collectivite_id": 1,
+        "population_totale": 14514
+      }
+    }
+  ]
+}
+
+### Airtable CSV API
+POST {{ sync_url }}
+Authorization: Bearer {{ airtable_token }}
+Content-Type: text/csv
+
+< ./collectivités.csv
