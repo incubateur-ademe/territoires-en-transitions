@@ -2,9 +2,65 @@
 
 BEGIN;
 
-create or replace
-    function
-    stats.amplitude_send_visites(range tstzrange, batch_size integer default 1000)
+create function
+    stats.amplitude_registered(range tstzrange)
+    returns setof stats.amplitude_event
+begin
+    atomic
+    with auditeurs as (select aa.auditeur as user_id
+                       from audit_auditeur aa)
+
+    select p.user_id                             as user_id,
+           'registered'                          as event_type,
+           extract(epoch from p.created_at)::int as time,
+           md5('registered' || p.user_id)        as insert_id,
+           jsonb_build_object(
+                   'telephone',
+                   p.telephone is not null and p.telephone != ''
+               )                                 as event_properties,
+
+           jsonb_build_object(
+                   'fonctions',
+                   (select array_agg(distinct m.fonction)
+                    from private_collectivite_membre m
+                             join private_utilisateur_droit pud
+                                  on m.user_id = pud.user_id and m.collectivite_id = pud.collectivite_id
+                    where m.user_id = p.user_id
+                      and m.fonction is not null
+                      and pud.active),
+                   'auditeur', (p.user_id in (table auditeurs))
+               )                                 as user_properties,
+
+           (select name
+            from stats.release_version
+            where time < p.created_at
+            order by time desc
+            limit 1)                             as
+                                                    app_version
+
+    from dcp p
+    where amplitude_registered.range @> p.created_at;
+end;
+comment on function stats.amplitude_registered is
+    'Les `events` registered Amplitude construits à partir de la création des DCPs.';
+
+create function
+    stats.amplitude_events(range tstzrange)
+    returns setof stats.amplitude_event
+begin
+    atomic
+    select stats.amplitude_visite(range)
+    union all
+    select stats.amplitude_registered(range);
+end;
+comment on function stats.amplitude_events is
+    'Tous les évènements Amplitude.';
+
+
+drop function stats.amplitude_send_yesterday_events;
+drop function stats.amplitude_send_visites;
+create function
+    stats.amplitude_send_events(range tstzrange, batch_size integer default 1000)
     returns void
 as
 $$
@@ -19,8 +75,8 @@ begin
                     from (select to_jsonb(av.*)                                                         as json_array,
                                  -- en divisant le numéro de la ligne obtenu avec `rank`
                                  -- par la taille du batch, on obtient le nombre `g`
-                                 (rank() over (order by time) / amplitude_send_visites.batch_size)::int as g
-                          from stats.amplitude_visite(amplitude_send_visites.range) av) numbered
+                                 (rank() over (order by time) / amplitude_send_events.batch_size)::int as g
+                          from stats.amplitude_events(amplitude_send_events.range) av) numbered
                     group by g)
     select array_agg(events.batch)
     into batches
@@ -56,5 +112,17 @@ $$ language plpgsql
     security definer
     -- permet d'utiliser pg_net depuis un trigger
     set search_path = public, net;
+
+create function
+    stats.amplitude_send_yesterday_events()
+    returns void
+begin
+    atomic
+    select stats.amplitude_send_events(
+                   range := tstzrange(current_timestamp::date - interval '1 day', current_timestamp::date)
+               );
+end;
+comment on function stats.amplitude_send_yesterday_events is
+    'Envoi les évènements de la veille à Amplitude.';
 
 COMMIT;

@@ -2,10 +2,7 @@
 
 BEGIN;
 
-drop function stats.amplitude_send_yesterday_events;
-drop function stats.amplitude_send_events;
-create
-    function
+create or replace function
     stats.amplitude_send_visites(range tstzrange, batch_size integer default 1000)
     returns void
 as
@@ -51,6 +48,9 @@ begin
 
             -- on incrémente le lot
             i := i + 1;
+
+            -- on attend 1/2 seconde
+            perform pg_sleep(.5);
         end loop;
 end;
 $$ language plpgsql
@@ -58,21 +58,5 @@ $$ language plpgsql
     security definer
     -- permet d'utiliser pg_net depuis un trigger
     set search_path = public, net;
-
-
-create function
-    stats.amplitude_send_yesterday_events()
-    returns void
-begin
-    atomic
-    select stats.amplitude_send_visites(
-                   range := tstzrange(current_timestamp::date - interval '1 day', current_timestamp::date)
-               );
-end;
-comment on function stats.amplitude_send_yesterday_events is
-    'Envoi les évènements de la veille à Amplitude.';
-
-drop function stats.amplitude_events;
-drop function stats.amplitude_registered;
 
 COMMIT;
