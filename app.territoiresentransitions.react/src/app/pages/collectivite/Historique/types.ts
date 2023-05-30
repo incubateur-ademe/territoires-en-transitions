@@ -1,57 +1,25 @@
-import {TQuestionType} from 'types/personnalisation';
 import {TFilters, TInitialFilters} from './filters';
-import {TActionAvancement} from 'types/alias';
+import {Database} from 'types/database.types';
 
-/* Types des données reçu par le data layer */
+/* type de modification enregistrée dans l'historique */
 export type HistoriqueType =
   | 'action_statut'
   | 'action_precision'
   | 'reponse'
+  | 'justification'
   | 'preuve'
   | 'membre'
   | 'indicateur'
   | 'plan_action_arborescence'
   | 'plan_action_fiche';
 
-export type THistoriqueItem = {
-  /** props. communes */
-  collectivite_id: number;
-  type: HistoriqueType;
-  modified_by_id: string;
-  modified_by_nom: string;
-  modified_at: string;
-  previous_modified_by_id: string | null;
-  previous_modified_at: string | null;
-
-  /** modif. d'un statut d'action ou d'une précision */
-  action_id: string | null; // cae_1.2.3
-  action_identifiant: string | null; // 1.2.3
-  action_nom: string | null;
-  tache_identifiant: string | null; // 1.2.3.1
-  tache_nom: string | null;
-
-  /** modif. d'un statut d'action */
-  avancement: TActionAvancement | null;
-  previous_avancement: TActionAvancement | null;
-  avancement_detaille: number[] | null;
-  previous_avancement_detaille: number[] | null;
-  concerne: boolean | null;
-  previous_concerne: boolean | null;
-
-  /** modif. d'une précision (à propos d'une action) */
-  precision: string | null;
-  previous_precision: string | null;
-
-  /** modif. d'une réponse à une question de personnalisation des référentiels */
-  action_ids: string[] | null;
-  question_type: TQuestionType | null;
-  question_id: string | null;
-  question_formulation: string | null;
-  thematique_id: string | null;
-  thematique_nom: string | null;
-  reponse: string | boolean | number | null;
-  previous_reponse: string | boolean | number | null;
-};
+/** un item de l'historique */
+export type THistoriqueItem =
+  Database['public']['Views']['historique']['Row'] & {
+    collectivite_id: number;
+    type: HistoriqueType;
+    modified_at: string;
+  };
 
 export type THistoriqueItemProps = {
   item: THistoriqueItem;
