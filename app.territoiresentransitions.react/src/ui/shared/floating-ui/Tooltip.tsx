@@ -44,7 +44,7 @@ export const Tooltip = ({
 }: TTooltipProps) => {
   const [open, setOpen] = useState(false);
 
-  const {x, y, reference, floating, strategy, context} = useFloating({
+  const {x, y, refs, strategy, context} = useFloating({
     placement,
     open,
     onOpenChange: setOpen,
@@ -62,14 +62,14 @@ export const Tooltip = ({
   ]);
 
   // Preserve the consumer's ref
-  const ref = useMergedRefs([reference, children as never]);
+  const ref = useMergedRefs([refs.setReference, children as never]);
 
   return (
     <>
       {cloneElement(children, getReferenceProps({ref, ...children.props}))}
       {open && (
         <div
-          ref={floating}
+          ref={refs.setFloating}
           className={tooltipClass}
           style={{
             position: strategy,
