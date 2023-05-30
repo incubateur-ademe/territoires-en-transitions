@@ -4,6 +4,15 @@ BEGIN;
 
 drop function navigation_plans;
 drop function flat_axes;
+drop type flat_axe_node;
+create type flat_axe_node as
+(
+    id        integer,
+    nom       text,
+    fiches    integer[],
+    ancestors integer[],
+    depth     integer
+);
 
 create function
     flat_axes(plan_id integer)
