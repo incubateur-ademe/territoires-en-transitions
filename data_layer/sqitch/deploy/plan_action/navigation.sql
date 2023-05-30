@@ -3,6 +3,17 @@
 BEGIN;
 
 drop function flat_axes;
+drop type flat_axe_node;
+create type flat_axe_node as
+(
+    id        integer,
+    nom       text,
+    fiches    integer[],
+    ancestors integer[],
+    depth     integer,
+    sort_path  text
+);
+
 create function
     flat_axes(axe_id integer, max_depth integer default null)
     returns setof flat_axe_node
@@ -14,7 +25,9 @@ begin
                            nom,
                            collectivite_id,
                            0                   as depth,
-                           array []::integer[] as ancestors
+                           array []::integer[] as ancestors,
+                           '0 ' || nom         as sort_path
+
                     from axe
                     where id = axe_id
                       and can_read_acces_restreint(axe.collectivite_id)
@@ -25,7 +38,8 @@ begin
                            a.nom,
                            a.collectivite_id,
                            depth + 1,
-                           ancestors || a.parent
+                           ancestors || a.parent,
+                           parents.sort_path || ' ' || depth + 1 || ' ' || a.nom
                     from parents
                              join axe a on a.parent = parents.id),
         fiches as (select a.id,
@@ -33,7 +47,7 @@ begin
                    from parents a
                             join fiche_action_axe faa on a.id = faa.axe_id
                    group by a.id)
-    select id, nom, fiches, ancestors, depth
+    select id, nom, fiches, ancestors, depth, sort_path
     from parents
              left join fiches using (id)
     where case
@@ -41,7 +55,7 @@ begin
                   then depth <= max_depth
               else true
               end
-    order by depth, naturalsort(nom);
+    order by naturalsort(sort_path);
 end;
 comment on function flat_axes is
     'Les axes ordonnancés par profondeur d''un plan donné sous forme de nodes prêtes pour reconstituer un arbre coté client.';
@@ -56,7 +70,8 @@ begin
     from axe a
              join flat_axes(a.id, 1) flat on true
     where a.collectivite_id = navigation_plans.collectivite_id
-      and a.parent is null;
+      and a.parent is null
+    order by naturalsort(sort_path);
 end;
 comment on function navigation_plans is
     'Les axes ordonnancés par profondeur d''une collectivité donnée pour la navigation.';
