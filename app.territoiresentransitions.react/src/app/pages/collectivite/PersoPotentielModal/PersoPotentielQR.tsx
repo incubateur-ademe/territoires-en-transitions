@@ -33,19 +33,12 @@ export type TPersoPotentielQRProps = {
  * Affiche le potentiel réduit ou augmenté ainsi que la liste des questions/réponses
  */
 export const PersoPotentielQR = (props: TPersoPotentielQRProps) => {
-  const {questionReponses} = props;
-
   return (
     <div data-test="PersoPotentielQR">
       <YellowHighlight>
         <PointsPotentiels {...props} />
       </YellowHighlight>
-      <h6 className="mt-8 mb-0">
-        {questionReponses?.length > 1
-          ? 'Caractéristiques liées'
-          : 'Caractéristique liée'}
-      </h6>
-      <QuestionReponseList {...props} />
+      <QuestionReponseList {...props} variant="modal" />
     </div>
   );
 };
@@ -55,46 +48,61 @@ export type TQuestionReponseProps = {
   /** vrai quand la question est la 1ère de type proportion */
   hasProportionDescription: boolean;
   onChange: (reponse: TReponse) => void;
+  /** Variante suivant que la liste est affichée dans une page Personnalisation
+   * ou dans la modale de personnalisation (depuis une action) */
+  variant?: 'modal' | undefined;
 };
 
 /** Affiche une question/réponse et son éventuel libellé d'aide */
 const QuestionReponse = (props: TQuestionReponseProps) => {
-  const {qr, hasProportionDescription} = props;
+  const {qr, hasProportionDescription, variant} = props;
   const {id, type, formulation, description} = qr;
   const Reponse = reponseParType[type];
 
   return (
-    <>
+    <div
+      className={classNames({
+        'border rounded-md fr-p-2w fr-mb-1w': variant !== 'modal',
+        'fr-my-2w': variant === 'modal',
+      })}
+    >
       <legend
-        className="fr-fieldset__legend fr-fieldset__legend--regular"
+        className={classNames(
+          'fr-fieldset__legend fr-fieldset__legend--regular',
+          {
+            '!font-bold fr-text--lg': variant === 'modal',
+          }
+        )}
         dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(formulation)}}
       />
-      {description ? (
-        <Accordion
-          className="fr-mb-3w"
-          id={`accordion-${id}`}
-          titre="En savoir plus"
-          html={description}
-          icon="fr-fi-information-fill"
-        />
-      ) : null}
-      <Reponse {...props} />
-      <Justification {...props} />
-      {hasProportionDescription ? (
-        <Accordion
-          className="fr-mt-3w"
-          id={`accordion-part-${id}`}
-          titre="Comment calculer la part ?"
-          html="La part se rapporte au nombre d'habitants (nombre d'habitants de la
+      <div className="fr-pl-2w">
+        {description ? (
+          <Accordion
+            className="fr-mb-3w"
+            id={`accordion-${id}`}
+            titre="En savoir plus"
+            html={description}
+            icon="fr-fi-information-fill"
+          />
+        ) : null}
+        <Reponse {...props} />
+        <Justification {...props} />
+        {hasProportionDescription ? (
+          <Accordion
+            className="fr-mt-3w"
+            id={`accordion-part-${id}`}
+            titre="Comment calculer la part ?"
+            html="La part se rapporte au nombre d'habitants (nombre d'habitants de la
           collectivité / nombre d'habitants de la structure compétente) ou au
           pouvoir de la collectivité dans la structure compétente (nombre de voix
           d'élu de la collectivité / nombre de voix total dans l'organe
           délibératoire de la structure compétente) si cette part est supérieure à
           celle liée au nombre d'habitants."
-          icon="fr-fi-information-fill"
-        />
-      ) : null}
-    </>
+            icon="fr-fi-information-fill"
+          />
+        ) : null}
+      </div>
+    </div>
   );
 };
 
@@ -104,11 +112,14 @@ export type TQuestionReponseListProps = {
   questionReponses: TQuestionReponse[];
   /** Fonction appelée quand une réponse est modifiée */
   onChange: TChangeReponse;
+  /** Variante suivant que la liste est affichée dans une page Personnalisation
+   * ou dans la modale de personnalisation (depuis une action) */
+  variant?: 'modal' | undefined;
 };
 
 /** Affiche la liste de questions/réponses */
 export const QuestionReponseList = (props: TQuestionReponseListProps) => {
-  const {className, questionReponses, onChange} = props;
+  const {className, questionReponses, variant, onChange} = props;
   return (
     <div className={classNames('fr-form-group', className)}>
       {questionReponses.map((qr, index) => {
@@ -117,6 +128,7 @@ export const QuestionReponseList = (props: TQuestionReponseListProps) => {
           <fieldset key={id} className="fr-fieldset !flex-col !items-stretch">
             <QuestionReponse
               qr={qr}
+              variant={variant}
               onChange={(reponse: TReponse) => onChange(qr, reponse)}
               hasProportionDescription={hasProportionDescription(
                 questionReponses,
