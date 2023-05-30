@@ -9,6 +9,7 @@ import {useExportPlanAction} from './export/useExportPlanAction';
 import {Link} from 'react-router-dom';
 
 type TPlanActionHeader = {
+  isAxePage: boolean;
   plan: PlanNode;
   axe?: PlanNode;
   collectivite_id: number;
@@ -17,6 +18,7 @@ type TPlanActionHeader = {
 
 const PlanActionHeader = ({
   collectivite_id,
+  isAxePage,
   plan,
   axe,
   isReadonly,
@@ -27,7 +29,7 @@ const PlanActionHeader = ({
     <div className="">
       <div className="py-6 flex items-center justify-between">
         {/** Lien plan d'action page axe */}
-        {axe && (
+        {isAxePage && (
           <Link
             className="p-1 shrink-0 text-xs text-gray-500 underline !bg-none !shadow-none hover:text-gray-600"
             to={makeCollectivitePlanActionUrl({
@@ -42,12 +44,19 @@ const PlanActionHeader = ({
         {!isReadonly && (
           <div className="flex items-center gap-4 ml-auto">
             <SupprimerAxeModal
-              isPlan
+              isPlan={!isAxePage}
               axe={axe ? axe : plan}
               plan={plan}
-              redirectURL={makeCollectiviteFichesNonClasseesUrl({
-                collectiviteId: collectivite_id!,
-              })}
+              redirectURL={
+                isAxePage
+                  ? makeCollectivitePlanActionUrl({
+                      collectiviteId: collectivite_id,
+                      planActionUid: plan.id.toString(),
+                    })
+                  : makeCollectiviteFichesNonClasseesUrl({
+                      collectiviteId: collectivite_id!,
+                    })
+              }
             >
               <button
                 data-test="SupprimerPlanBouton"
@@ -55,7 +64,7 @@ const PlanActionHeader = ({
                 title="Supprimer ce plan d'action"
               />
             </SupprimerAxeModal>
-            {!axe && checkAxeHasFiche(plan) && !isReadonly ? (
+            {!isAxePage && checkAxeHasFiche(plan) && !isReadonly ? (
               <button
                 data-test="export-pa"
                 className="fr-btn fr-btn--tertiary fr-btn--sm fr-fi-download-line"
