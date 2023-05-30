@@ -358,3 +358,4 @@ stats/reporting [stats/reporting@v2.28.0] 2023-05-10T15:16:17Z Florian <florian@
 @v2.31.2 2023-05-31T09:05:19Z Florian <florian@derfurth.com> # Corrige la vue stats des indicateurs pour l'ADEME
 
 labellisation/audit [labellisation/audit@v2.31.0] 2023-05-30T12:04:09Z Florian <florian@derfurth.com> # Répare l'upsert des statuts d'audit
+automatisation/crm [automatisation/crm@v2.31.0] 2023-05-30T14:43:50Z Florian <florian@derfurth.com> # Les vues pour Airtable
