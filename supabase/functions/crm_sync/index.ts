@@ -1,6 +1,12 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+/**
+ * Envoi le contenu d'une `table` ou d'une vue en csv
+ * à un endpoint `sync` Airtable en utilisant un `token` perso.
+ *
+ * https://airtable.com/developers/web/api/post-sync-api-endpoint
+ */
 serve(async (req) => {
   if (
     req.headers.get("authorization") !==
@@ -25,28 +31,31 @@ serve(async (req) => {
     }
   );
 
-  const { token, personnes } = await req.json();
+  const { token, table, sync } = await req.json();
 
-  // Récupère les données au format csv.
-  const dcpTable = await supabase.from("dcp").select().csv();
+  // Récupère les données de la table au format csv.
+  const csvResponse = await supabase.from(table).select().csv();
 
-  // Envoie les données à Airtable.
-  const personnesSync = await fetch(personnes, {
+  // Envoie les données à Airtable vers l'endpoint sync.
+  const syncResponse = await fetch(sync, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "text/csv",
     },
-    body: dcpTable.data,
+    body: csvResponse.data,
   });
 
-  // todo supprimer le retour de test
-  const data = {
-    status: personnesSync.status,
-    text: await personnesSync.text(),
-  };
+  const { success } = await syncResponse.json();
 
-  return new Response(JSON.stringify(data), {
-    headers: { "Content-Type": "application/json" },
-  });
+  // Renvoie le statut pour persister dans les logs Supabase.
+  return new Response(
+    JSON.stringify({
+      status: syncResponse.status,
+      success: success,
+    }),
+    {
+      headers: { "Content-Type": "application/json" },
+    }
+  );
 });
