@@ -2,7 +2,7 @@
 
 exports[`Storyshots app/Layout/Footer Exemple 1`] = `
 <footer
-  className="fr-footer"
+  className="fr-footer fr-mt-4w"
   id="footer"
   role="contentinfo"
 >

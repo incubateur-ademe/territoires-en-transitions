@@ -66,7 +66,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
           <button
             aria-expanded={false}
             aria-label="ouvrir le menu"
-            className="flex items-center w-full p-2 text-left text-sm fr-select !flex !px-4 !bg-none"
+            className="flex items-center w-full p-2 text-left text-sm fr-select !flex !px-4 !bg-none !bg-grey975"
             onClick={[Function]}
             onKeyDown={[Function]}
             onKeyUp={[Function]}
@@ -81,7 +81,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
               </span>
             </span>
             <span
-              className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+              className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
             />
           </button>
         </fieldset>
@@ -94,7 +94,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
           <button
             aria-expanded={false}
             aria-label="ouvrir le menu"
-            className="flex items-center w-full p-2 text-left text-sm fr-select !flex !px-4 !bg-none"
+            className="flex items-center w-full p-2 text-left text-sm fr-select !flex !px-4 !bg-none !bg-grey975"
             onClick={[Function]}
             onKeyDown={[Function]}
             onKeyUp={[Function]}
@@ -102,12 +102,12 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
             onPointerDown={[Function]}
           >
             <span
-              className="mr-auto text-gray-500 italic line-clamp-1"
+              className="mr-auto text-grey425 line-clamp-1"
             >
               Sélectionnez un ou plusieurs départements
             </span>
             <span
-              className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+              className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
             />
           </button>
         </fieldset>
@@ -749,7 +749,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
           <button
             aria-expanded={false}
             aria-label="ouvrir le menu"
-            className="flex items-center w-full p-2 text-left text-sm fr-select !flex !px-4 !bg-none"
+            className="flex items-center w-full p-2 text-left text-sm fr-select !flex !px-4 !bg-none !bg-grey975"
             onClick={[Function]}
             onKeyDown={[Function]}
             onKeyUp={[Function]}
@@ -762,7 +762,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
               
             </span>
             <span
-              className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+              className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
             />
           </button>
         </fieldset>
@@ -3002,7 +3002,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
           <button
             aria-expanded={false}
             aria-label="ouvrir le menu"
-            className="flex items-center w-full p-2 text-left text-sm fr-select !flex !px-4 !bg-none"
+            className="flex items-center w-full p-2 text-left text-sm fr-select !flex !px-4 !bg-none !bg-grey975"
             onClick={[Function]}
             onKeyDown={[Function]}
             onKeyUp={[Function]}
@@ -3010,12 +3010,12 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
             onPointerDown={[Function]}
           >
             <span
-              className="mr-auto text-gray-500 italic line-clamp-1"
+              className="mr-auto text-grey425 line-clamp-1"
             >
               Sélectionnez une ou plusieurs options
             </span>
             <span
-              className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+              className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
             />
           </button>
         </fieldset>
@@ -3028,7 +3028,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
           <button
             aria-expanded={false}
             aria-label="ouvrir le menu"
-            className="flex items-center w-full p-2 text-left text-sm fr-select !flex !px-4 !bg-none"
+            className="flex items-center w-full p-2 text-left text-sm fr-select !flex !px-4 !bg-none !bg-grey975"
             onClick={[Function]}
             onKeyDown={[Function]}
             onKeyUp={[Function]}
@@ -3036,12 +3036,12 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
             onPointerDown={[Function]}
           >
             <span
-              className="mr-auto text-gray-500 italic line-clamp-1"
+              className="mr-auto text-grey425 line-clamp-1"
             >
               Sélectionnez un ou plusieurs départements
             </span>
             <span
-              className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+              className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
             />
           </button>
         </fieldset>
@@ -3665,7 +3665,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
           <button
             aria-expanded={false}
             aria-label="ouvrir le menu"
-            className="flex items-center w-full p-2 text-left text-sm fr-select !flex !px-4 !bg-none"
+            className="flex items-center w-full p-2 text-left text-sm fr-select !flex !px-4 !bg-none !bg-grey975"
             onClick={[Function]}
             onKeyDown={[Function]}
             onKeyUp={[Function]}
@@ -3673,12 +3673,12 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
             onPointerDown={[Function]}
           >
             <span
-              className="mr-auto text-gray-500 italic line-clamp-1"
+              className="mr-auto text-grey425 line-clamp-1"
             >
               
             </span>
             <span
-              className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+              className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
             />
           </button>
         </fieldset>
@@ -5918,7 +5918,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Sans Resultats 1`] = `
           <button
             aria-expanded={false}
             aria-label="ouvrir le menu"
-            className="flex items-center w-full p-2 text-left text-sm fr-select !flex !px-4 !bg-none"
+            className="flex items-center w-full p-2 text-left text-sm fr-select !flex !px-4 !bg-none !bg-grey975"
             onClick={[Function]}
             onKeyDown={[Function]}
             onKeyUp={[Function]}
@@ -5933,7 +5933,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Sans Resultats 1`] = `
               </span>
             </span>
             <span
-              className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+              className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
             />
           </button>
         </fieldset>
@@ -5946,7 +5946,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Sans Resultats 1`] = `
           <button
             aria-expanded={false}
             aria-label="ouvrir le menu"
-            className="flex items-center w-full p-2 text-left text-sm fr-select !flex !px-4 !bg-none"
+            className="flex items-center w-full p-2 text-left text-sm fr-select !flex !px-4 !bg-none !bg-grey975"
             onClick={[Function]}
             onKeyDown={[Function]}
             onKeyUp={[Function]}
@@ -5954,12 +5954,12 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Sans Resultats 1`] = `
             onPointerDown={[Function]}
           >
             <span
-              className="mr-auto text-gray-500 italic line-clamp-1"
+              className="mr-auto text-grey425 line-clamp-1"
             >
               Sélectionnez un ou plusieurs départements
             </span>
             <span
-              className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+              className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
             />
           </button>
         </fieldset>
@@ -6594,7 +6594,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Sans Resultats 1`] = `
           <button
             aria-expanded={false}
             aria-label="ouvrir le menu"
-            className="flex items-center w-full p-2 text-left text-sm fr-select !flex !px-4 !bg-none"
+            className="flex items-center w-full p-2 text-left text-sm fr-select !flex !px-4 !bg-none !bg-grey975"
             onClick={[Function]}
             onKeyDown={[Function]}
             onKeyUp={[Function]}
@@ -6607,7 +6607,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Sans Resultats 1`] = `
               
             </span>
             <span
-              className="fr-fi-arrow-down-s-line mt-1 ml-1 scale-90 ml-auto"
+              className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
             />
           </button>
         </fieldset>

@@ -3,7 +3,7 @@ import ademeLogoImage from 'app/static/img/ademe.svg';
 
 const Footer = () => {
   return (
-    <footer className="fr-footer" role="contentinfo" id="footer">
+    <footer className="fr-footer fr-mt-4w" role="contentinfo" id="footer">
       <div className="fr-container">
         <div className="fr-footer__body">
           <div className="fr-footer__brand">
