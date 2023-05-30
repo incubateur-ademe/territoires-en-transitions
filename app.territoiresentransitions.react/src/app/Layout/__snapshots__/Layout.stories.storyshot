@@ -467,7 +467,7 @@ exports[`Storyshots app/Layout Exemple 1`] = `
       </p>
     </div>
     <footer
-      className="fr-footer"
+      className="fr-footer fr-mt-4w"
       id="footer"
       role="contentinfo"
     >
