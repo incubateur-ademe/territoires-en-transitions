@@ -57,7 +57,7 @@ const Modal = ({
 }: ModalProps) => {
   const [open, setOpen] = useState(false);
 
-  const {reference, floating, context} = useFloating({
+  const {refs, context} = useFloating({
     open: externalOpen ?? open,
     onOpenChange: setExternalOpen ?? setOpen,
   });
@@ -81,7 +81,7 @@ const Modal = ({
       {children &&
         cloneElement(
           children,
-          getReferenceProps({ref: reference, ...children.props})
+          getReferenceProps({ref: refs.setReference, ...children.props})
         )}
       <FloatingPortal>
         {(open || externalOpen) && (
@@ -98,7 +98,7 @@ const Modal = ({
               <div
                 data-test="Modal"
                 {...getFloatingProps({
-                  ref: floating,
+                  ref: refs.setFloating,
                   className: classNames(
                     `
                     mt-8 w-full mx-auto self-end

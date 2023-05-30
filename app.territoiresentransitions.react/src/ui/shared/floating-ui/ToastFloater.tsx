@@ -23,7 +23,7 @@ export const ToastFloater = ({
   className,
   autoHideDuration,
 }: TToastFloater) => {
-  const {floating, context, strategy} = useFloating({
+  const {refs, context, strategy} = useFloating({
     open,
     strategy: 'fixed',
   });
@@ -43,7 +43,7 @@ export const ToastFloater = ({
       {open && (
         <div
           {...getFloatingProps({
-            ref: floating,
+            ref: refs.setFloating,
             style: {
               position: strategy,
               maxWidth: '40rem',

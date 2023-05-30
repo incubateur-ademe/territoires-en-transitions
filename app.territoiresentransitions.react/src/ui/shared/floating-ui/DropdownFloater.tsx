@@ -46,7 +46,7 @@ const DropdownFloater = ({
 }: DropdownFloaterProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const {x, y, strategy, reference, floating, context} = useFloating({
+  const {x, y, strategy, refs, context} = useFloating({
     open: isOpen,
     onOpenChange: setIsOpen,
     placement: placement ?? 'bottom',
@@ -82,7 +82,7 @@ const DropdownFloater = ({
       {cloneElement(
         children,
         getReferenceProps({
-          ref: reference,
+          ref: refs.setReference,
           isOpen,
           onKeyDown(evt) {
             if (
@@ -107,7 +107,7 @@ const DropdownFloater = ({
               data-test={dataTest}
               className="w-max bg-white shadow-md"
               {...getFloatingProps({
-                ref: floating,
+                ref: refs.setFloating,
                 style: {
                   position: strategy,
                   top: y ?? '',
