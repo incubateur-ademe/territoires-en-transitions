@@ -24,6 +24,13 @@ from labellisation.action_audit_state;
 comment on table test.action_audit_state is
     'Copie de la table action_audit_state.';
 
+-- Copie les demandes
+create table test.demande
+as
+select *
+from labellisation.demande;
+comment on table test.demande is
+    'Copie de la table labellisation.demande.';
 
 create function
     test_reset_audit()
@@ -34,6 +41,7 @@ $$
 truncate labellisation.action_audit_state;
 truncate audit_auditeur;
 truncate labellisation.audit cascade;
+truncate labellisation.demande cascade;
 
     -- Restaure les audits
 insert into public.audit
@@ -49,6 +57,12 @@ from test.audit_auditeur;
 insert into labellisation.action_audit_state
 select *
 from test.action_audit_state;
+
+    -- Restaure les demandes
+insert into labellisation.demande
+select *
+from test.demande;
+
 $$ language sql security definer;
 comment on function test_reset_audit is
     'Reinitialise les audits.';
