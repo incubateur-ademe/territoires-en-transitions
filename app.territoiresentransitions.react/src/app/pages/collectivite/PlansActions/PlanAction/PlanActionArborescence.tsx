@@ -5,18 +5,20 @@ import PlanActionAxeFiches from './PlanActionAxeFiches';
 import {PlanNode} from './data/types';
 
 type Props = {
+  isAxePage: boolean;
   plan: PlanNode;
   axe: PlanNode;
   isReadonly: boolean;
 };
 
-const PlanActionArborescence = ({plan, axe, isReadonly}: Props) => {
+const PlanActionArborescence = ({isAxePage, plan, axe, isReadonly}: Props) => {
   const hasContent =
     axe.children.length > 0 || (axe.fiches && axe.fiches.length > 0);
 
   const displaySousAxe = (node: PlanNode) => (
     <PlanActionAxe
       key={node.id}
+      isAxePage={isAxePage}
       planActionGlobal={plan}
       axe={node}
       displayAxe={displaySousAxe}
@@ -30,35 +32,32 @@ const PlanActionArborescence = ({plan, axe, isReadonly}: Props) => {
         <>
           <div className="mb-4">
             {!isReadonly && (
-              <AxeActions planActionId={plan.id} axeId={axe.id} />
+              <AxeActions
+                isAxePage={isAxePage}
+                planActionId={plan.id}
+                axeId={axe.id}
+              />
             )}
             {/** Affichage des fiches */}
             {axe && axe.fiches && axe.fiches.length !== 0 && (
               <div className="mt-6">
-                <PlanActionAxeFiches ficheIds={axe.fiches} axeId={axe.id} />
+                <PlanActionAxeFiches
+                  isAxePage={isAxePage}
+                  ficheIds={axe.fiches}
+                  planId={plan.id}
+                  axeId={axe.id}
+                />
               </div>
             )}
           </div>
           {/** Affichage des sous-axes */}
-          {axe &&
-            axe.children &&
+          {axe.children &&
             axe.children.length > 0 &&
             axe.children.map(enfant => (
               <PlanActionAxe
                 key={enfant.id}
+                isAxePage={isAxePage}
                 planActionGlobal={axe}
-                axe={enfant}
-                displayAxe={displaySousAxe}
-                isReadonly={isReadonly}
-              />
-            ))}
-          {!axe &&
-            plan.children &&
-            plan.children.length > 0 &&
-            plan.children.map(enfant => (
-              <PlanActionAxe
-                key={enfant.id}
-                planActionGlobal={plan}
                 axe={enfant}
                 displayAxe={displaySousAxe}
                 isReadonly={isReadonly}
@@ -74,6 +73,7 @@ const PlanActionArborescence = ({plan, axe, isReadonly}: Props) => {
             </div>
             {!isReadonly && (
               <AxeActions
+                isAxePage={isAxePage}
                 planActionId={plan.id}
                 axeId={axe ? axe.id : plan.id}
               />

@@ -10,6 +10,7 @@ import SupprimerAxeModal from './SupprimerAxeModal';
 import PlanActionAxeFiches from './PlanActionAxeFiches';
 
 type Props = {
+  isAxePage: boolean;
   planActionGlobal: PlanNode;
   axe: PlanNode;
   displayAxe: (axe: PlanNode) => void;
@@ -17,6 +18,7 @@ type Props = {
 };
 
 const PlanActionAxe = ({
+  isAxePage,
   planActionGlobal,
   axe,
   displayAxe,
@@ -121,10 +123,19 @@ const PlanActionAxe = ({
       {isOpen && (
         <div className="flex flex-col gap-4 mt-3 ml-12">
           {!isReadonly && (
-            <AxeActions planActionId={planActionGlobal.id} axeId={axe.id} />
+            <AxeActions
+              isAxePage={isAxePage}
+              planActionId={planActionGlobal.id}
+              axeId={axe.id}
+            />
           )}
           {axe.fiches && axe.fiches.length !== 0 && (
-            <PlanActionAxeFiches ficheIds={axe.fiches} axeId={axe.id} />
+            <PlanActionAxeFiches
+              isAxePage={isAxePage}
+              ficheIds={axe.fiches}
+              planId={planActionGlobal.id}
+              axeId={axe.id}
+            />
           )}
           <div>
             {axe.children &&

@@ -5,6 +5,7 @@ import {useMutation, useQueryClient} from 'react-query';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {
   makeCollectiviteFicheNonClasseeUrl,
+  makeCollectivitePlanActionAxeFicheUrl,
   makeCollectivitePlanActionFicheUrl,
 } from 'app/paths';
 import {FicheAction} from './types';
@@ -32,6 +33,7 @@ const upsertFicheAction = async (fiche: FicheAction) => {
 type Args = {
   axeId?: number;
   planActionId?: number;
+  isAxePage?: boolean;
 };
 
 export const useCreateFicheAction = (args?: Args) => {
@@ -52,14 +54,26 @@ export const useCreateFicheAction = (args?: Args) => {
       meta: {disableToast: true},
       onSuccess: data => {
         if (args && args?.axeId) {
-          queryClient.invalidateQueries(['plan_action', args.planActionId]);
-          history.push(
-            makeCollectivitePlanActionFicheUrl({
-              collectiviteId: collectivite_id!,
-              ficheUid: data[0].id!.toString(),
-              planActionUid: args.planActionId!.toString(),
-            })
-          );
+          if (args.isAxePage) {
+            queryClient.invalidateQueries(['plan_action', args.axeId]);
+            history.push(
+              makeCollectivitePlanActionAxeFicheUrl({
+                collectiviteId: collectivite_id!,
+                ficheUid: data[0].id!.toString(),
+                planActionUid: args.planActionId!.toString(),
+                axeUid: args.axeId.toString(),
+              })
+            );
+          } else {
+            queryClient.invalidateQueries(['plan_action', args.planActionId]);
+            history.push(
+              makeCollectivitePlanActionFicheUrl({
+                collectiviteId: collectivite_id!,
+                ficheUid: data[0].id!.toString(),
+                planActionUid: args.planActionId!.toString(),
+              })
+            );
+          }
         } else {
           queryClient.invalidateQueries([
             'fiches_non_classees',

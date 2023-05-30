@@ -6,6 +6,7 @@ import FichesNonClassees from 'app/pages/collectivite/PlansActions/FichesNonClas
 import {
   collectiviteFicheNonClasseePath,
   CollectiviteFichesNonClasseesPath,
+  collectivitePlanActionAxeFichePath,
   collectivitePlanActionAxePath,
   collectivitePlanActionFichePath,
   collectivitePlanActionPath,
@@ -45,6 +46,7 @@ export const PlansActionsRoutes = ({collectivite_id}: Props) => {
         path={[
           collectiviteFicheNonClasseePath,
           collectivitePlanActionFichePath,
+          collectivitePlanActionAxeFichePath,
         ]}
       >
         <FicheActionPage />
