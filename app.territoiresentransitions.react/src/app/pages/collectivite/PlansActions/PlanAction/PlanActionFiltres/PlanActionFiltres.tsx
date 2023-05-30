@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 
 import FiltrePersonnesPilotes from './FiltrePersonnesPilotes';
 import FiltrePriorites from './FiltrePriorites';
@@ -7,6 +7,7 @@ import FiltreStatuts from './FiltreStatuts';
 import {DesactiverLesFiltres} from 'ui/shared/filters/DesactiverLesFiltres';
 
 import {TFilters} from '../../FicheAction/data/filters';
+import {Accordion} from 'ui/Accordion';
 
 type Props = {
   itemsNumber: number;
@@ -22,35 +23,41 @@ const PlanActionFiltres = ({
   setFilters,
 }: Props) => {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+
+  // On prend à partir de 2 éléments car les filtres "collectivite_id" et "plan/axe id" sont des constantes
+  const isFiltered = Object.keys(filters).length > 2;
+
+  useEffect(() => {
+    if (isFiltered) {
+      setIsFiltersOpen(true);
+    }
+  }, []);
+
   return (
-    <div className="mb-8">
-      <div className="border-y border-gray-200">
-        <button
-          data-test="FiltrerFichesBouton"
-          className="flex items-center justify-between py-3 px-4 w-full"
-          onClick={() => setIsFiltersOpen(!isFiltersOpen)}
-        >
-          <span className="font-bold">Filtrer les fiches</span>
-          <span className="mb-1">{isFiltersOpen ? '-' : '+'}</span>
-        </button>
-      </div>
-      {isFiltersOpen && (
-        <div className="mt-6 grid sm:grid-cols-2 gap-x-8 gap-y-6">
-          <FiltrePersonnesPilotes filters={filters} setFilters={setFilters} />
-          <FiltreStatuts filters={filters} setFilters={setFilters} />
-          <FiltreReferents filters={filters} setFilters={setFilters} />
-          <FiltrePriorites filters={filters} setFilters={setFilters} />
-        </div>
-      )}
-      {Object.keys(filters).length > 2 && (
-        <div className="flex items-baseline gap-6 mt-8 pb-6 border-b border-gray-200">
+    <>
+      <Accordion
+        id="filtres-plan"
+        className="mb-8"
+        titre="Filtrer"
+        html={
+          <div className="grid sm:grid-cols-2 gap-x-8 gap-y-6">
+            <FiltrePersonnesPilotes filters={filters} setFilters={setFilters} />
+            <FiltreStatuts filters={filters} setFilters={setFilters} />
+            <FiltreReferents filters={filters} setFilters={setFilters} />
+            <FiltrePriorites filters={filters} setFilters={setFilters} />
+          </div>
+        }
+        initialState={isFiltersOpen}
+      />
+      {isFiltered && (
+        <div className="flex items-baseline gap-6 my-8">
           <span className="text-sm text-gray-400">
             {itemsNumber} résultat{itemsNumber > 1 && 's'}
           </span>
           <DesactiverLesFiltres onClick={() => setFilters(initialFilters)} />
         </div>
       )}
-    </div>
+    </>
   );
 };
 
