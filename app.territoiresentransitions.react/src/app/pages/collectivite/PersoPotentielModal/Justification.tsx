@@ -25,13 +25,15 @@ export const Justification = (props: TQuestionReponseProps) => {
     return null;
   }
 
+  const hasValue = Boolean(value);
+
   return (
     <Accordion
       id={`j-${id}`}
       className="fr-mt-2w"
       titre="Justifier votre réponse (optionnel)"
       icon="fr-icon-draft-line"
-      initialState={Boolean(value)}
+      initialState={hasValue}
       html={
         <Textarea
           className="fr-input"
@@ -50,7 +52,7 @@ export const Justification = (props: TQuestionReponseProps) => {
               });
           }}
           disabled={collectivite.readonly}
-          autoFocus
+          autoFocus={!hasValue}
         />
       }
     />
