@@ -3730,13 +3730,13 @@ export interface Database {
       _get_note:
         | {
             Args: {
-              "": string
+              "": number
             }
             Returns: string
           }
         | {
             Args: {
-              "": number
+              "": string
             }
             Returns: string
           }
@@ -6577,13 +6577,13 @@ export interface Database {
       }
       todo_start:
         | {
-            Args: Record<PropertyKey, never>
-            Returns: boolean[]
-          }
-        | {
             Args: {
               "": string
             }
+            Returns: boolean[]
+          }
+        | {
+            Args: Record<PropertyKey, never>
             Returns: boolean[]
           }
       types_are: {
