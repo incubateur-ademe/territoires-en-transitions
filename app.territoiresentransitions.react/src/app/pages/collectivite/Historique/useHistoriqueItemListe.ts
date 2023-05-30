@@ -75,6 +75,7 @@ const OBSERVED_MUTATION_KEYS = [
   'action_statut',
   'action_commentaire',
   'save_reponse',
+  'update_justification',
 ];
 
 /**
