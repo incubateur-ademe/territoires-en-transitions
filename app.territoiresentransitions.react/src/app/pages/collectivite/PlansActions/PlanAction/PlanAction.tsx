@@ -1,7 +1,6 @@
 import {useParams} from 'react-router-dom';
 
 import PlanActionHeader from './PlanActionHeader';
-import PlanActionAxe from './PlanActionAxe';
 
 import {usePlanAction} from './data/usePlanAction';
 import {useEditAxe} from './data/useEditAxe';
@@ -46,6 +45,7 @@ export const PlanAction = ({plan, axe}: PlanActionProps) => {
       <div className="max-w-4xl mx-auto px-10">
         <PlanActionHeader
           collectivite_id={collectivite?.collectivite_id!}
+          isAxePage={isAxePage}
           plan={plan}
           axe={axe}
           isReadonly={isReadonly}
