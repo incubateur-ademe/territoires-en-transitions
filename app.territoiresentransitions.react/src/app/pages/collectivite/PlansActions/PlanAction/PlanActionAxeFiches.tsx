@@ -1,14 +1,19 @@
-import {makeCollectivitePlanActionFicheUrl} from 'app/paths';
+import {
+  makeCollectivitePlanActionAxeFicheUrl,
+  makeCollectivitePlanActionFicheUrl,
+} from 'app/paths';
 import FicheActionCard from '../FicheAction/FicheActionCard';
 import {useAxeFiches} from './data/useAxeFiches';
 import {ActionCardSkeleton} from '../components/ActionCard';
 
 type Props = {
+  isAxePage: boolean;
   ficheIds: number[];
+  planId: number;
   axeId: number;
 };
 
-const PlanActionAxeFiches = ({ficheIds, axeId}: Props) => {
+const PlanActionAxeFiches = ({isAxePage, ficheIds, planId, axeId}: Props) => {
   const {data, isLoading} = useAxeFiches({ficheIds, axeId});
 
   return (
@@ -20,11 +25,20 @@ const PlanActionAxeFiches = ({ficheIds, axeId}: Props) => {
             <FicheActionCard
               key={fiche.id}
               ficheAction={fiche}
-              link={makeCollectivitePlanActionFicheUrl({
-                collectiviteId: fiche.collectivite_id!,
-                planActionUid: axeId.toString(),
-                ficheUid: fiche.id!.toString(),
-              })}
+              link={
+                isAxePage
+                  ? makeCollectivitePlanActionAxeFicheUrl({
+                      collectiviteId: fiche.collectivite_id!,
+                      planActionUid: planId.toString(),
+                      ficheUid: fiche.id!.toString(),
+                      axeUid: axeId.toString(),
+                    })
+                  : makeCollectivitePlanActionFicheUrl({
+                      collectiviteId: fiche.collectivite_id!,
+                      planActionUid: planId.toString(),
+                      ficheUid: fiche.id!.toString(),
+                    })
+              }
             />
           ))}
     </div>

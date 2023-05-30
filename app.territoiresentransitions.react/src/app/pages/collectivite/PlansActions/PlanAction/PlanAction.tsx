@@ -65,6 +65,7 @@ export const PlanAction = ({plan, axe}: PlanActionProps) => {
         )}
         {!isFiltered && (
           <PlanActionArborescence
+            isAxePage={isAxePage}
             plan={plan}
             axe={axe ?? plan}
             isReadonly={isReadonly}

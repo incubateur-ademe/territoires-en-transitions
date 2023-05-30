@@ -2,13 +2,18 @@ import {useCreateFicheAction} from '../FicheAction/data/useUpsertFicheAction';
 import {useAddAxe} from './data/useUpsertAxe';
 
 type Props = {
+  isAxePage: boolean;
   axeId: number;
   planActionId: number;
 };
 
-export const AxeActions = ({axeId, planActionId}: Props) => {
+export const AxeActions = ({axeId, isAxePage, planActionId}: Props) => {
   const {mutate: addAxe} = useAddAxe(axeId, planActionId);
-  const {mutate: createFiche} = useCreateFicheAction({axeId, planActionId});
+  const {mutate: createFiche} = useCreateFicheAction({
+    axeId,
+    planActionId,
+    isAxePage,
+  });
 
   return (
     <div className="flex items-center gap-6">
