@@ -3,33 +3,47 @@ import {usePlanActionTableauDeBord} from './data/usePlanActionTableauDeBord';
 import PictoLeaf from 'ui/pictogrammes/PictoLeaf';
 import ChartCard from 'ui/charts/ChartCard';
 
+const getLegendColor = (
+  data: {id: string; value: number; color?: any},
+  dataLength: number,
+  index: number
+) => {
+  if (data.color) {
+    return data.color;
+  }
+  if (dataLength <= defaultColors.length) {
+    return defaultColors[index % defaultColors.length];
+  }
+  return nivoColorsSet[index % nivoColorsSet.length];
+};
+
 const getCustomLegend = (data: {id: string; value: number; color?: any}[]) => {
-  const legend = data.slice(0, 9).map((d, index) => ({
+  // Limitation du nombre d'éléments visibles dans la légende
+  const legendMaxSize = 9;
+
+  // Légendes associées au données sans label
+  const withoutLabelLegends = [
+    'Sans statut',
+    'Sans pilote',
+    'Sans élu·e référent·e',
+    'Non priorisé',
+  ];
+
+  // Légende réduite à afficher
+  const legend = data.slice(0, legendMaxSize).map((d, index) => ({
     name: d.id,
-    color: d.color
-      ? d.color
-      : data.length <= defaultColors.length
-      ? defaultColors[index % defaultColors.length]
-      : nivoColorsSet[index % nivoColorsSet.length],
+    color: getLegendColor(d, data.length, index),
   }));
 
   const lastElement = data[data.length - 1];
+
   if (
-    [
-      'Sans statut',
-      'Sans pilote',
-      'Sans élu·e référent·e',
-      'Non priorisé',
-    ].includes(lastElement.id) &&
-    data.length > 9
+    withoutLabelLegends.includes(lastElement.id) &&
+    data.length > legendMaxSize
   ) {
     legend.push({
       name: lastElement.id,
-      color: lastElement.color
-        ? lastElement.color
-        : data.length <= defaultColors.length
-        ? defaultColors[(data.length - 1) % defaultColors.length]
-        : nivoColorsSet[(data.length - 1) % nivoColorsSet.length],
+      color: getLegendColor(lastElement, data.length, data.length - 1),
     });
   }
 

@@ -1,6 +1,11 @@
 import {PieTooltipProps, ResponsivePie} from '@nivo/pie';
 import {defaultColors, nivoColorsSet, theme} from './chartsTheme';
 
+/**
+ * Suppression des arcLinkLabels si deux tranches de faible
+ * valeur se succèdent dans le graphe
+ * Permet d'éviter le chevauchement des labels
+ */
 const skipArcLinkLabel = (
   data: {
     id: string;
