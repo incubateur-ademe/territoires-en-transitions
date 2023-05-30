@@ -17,6 +17,7 @@ export type TCriterePreuvesProps = {
   collectiviteId: number;
   parcours: TLabellisationParcours;
   preuves: TPreuveLabellisation[];
+  isCOT: boolean;
 };
 
 export const CriterePreuves = (props: TCriterePreuvesProps) => {
@@ -36,7 +37,7 @@ export const CriterePreuves = (props: TCriterePreuvesProps) => {
 };
 
 const MessageCriterePreuve = (props: TCriterePreuvesProps) => {
-  const {parcours} = props;
+  const {parcours, isCOT} = props;
   const {referentiel, etoiles} = parcours;
 
   if (referentiel === 'eci' && etoiles !== '1') {
@@ -50,6 +51,10 @@ const MessageCriterePreuve = (props: TCriterePreuvesProps) => {
 
   if (referentiel === 'cae' && parcours.critere_score.score_fait > 0.35) {
     return <MessageCAE35Plus />;
+  }
+
+  if (isCOT && etoiles === '1') {
+    return null;
   }
 
   return <MessageParDefaut {...props} />;
