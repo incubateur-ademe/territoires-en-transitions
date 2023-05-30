@@ -35,15 +35,15 @@ where is_service_role();
 
 create view crm_droits
 as
-select d.collectivite_id || ' ' || d.user_id     as key,
-       d.user_id                                 as user_id,
-       p.prenom || ' ' || p.nom                  as user_key,
-       d.collectivite_id                         as collectivite_id,
-       c.nom || ' (' || c.collectivite_id || ')' as collectivite_key,
+select d.collectivite_id || ' ' || d.user_id      as key,
+       d.user_id                                  as user_id,
+       p.prenom || ' ' || p.nom                   as user_key,
+       d.collectivite_id                          as collectivite_id,
+       c.nom || ' (' || c.collectivite_id || ')'  as collectivite_key,
        d.niveau_acces,
        m.fonction,
        m.details_fonction,
-       m.champ_intervention
+       array_to_string(m.champ_intervention, ',') as champ_intervention
 from private_utilisateur_droit d
          join stats.collectivite c on d.collectivite_id = c.collectivite_id
          join dcp p on p.user_id = d.user_id
