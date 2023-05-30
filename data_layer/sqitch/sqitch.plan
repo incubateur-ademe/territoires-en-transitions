@@ -356,3 +356,5 @@ plan_action/export [plan_action/export@v2.30.0] 2023-05-18T08:02:58Z Florian <fl
 
 stats/reporting [stats/reporting@v2.28.0] 2023-05-10T15:16:17Z Florian <florian@derfurth.com> # Corrige le nombre de collectivités de la vue report_indicateur
 @v2.31.2 2023-05-31T09:05:19Z Florian <florian@derfurth.com> # Corrige la vue stats des indicateurs pour l'ADEME
+
+labellisation/audit [labellisation/audit@v2.31.0] 2023-05-30T12:04:09Z Florian <florian@derfurth.com> # Répare l'upsert des statuts d'audit
