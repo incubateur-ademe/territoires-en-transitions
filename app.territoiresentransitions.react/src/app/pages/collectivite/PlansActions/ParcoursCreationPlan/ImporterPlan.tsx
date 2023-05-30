@@ -13,17 +13,9 @@ const ImporterPlan = ({onBackClick}: Props) => {
       <div className="flex flex-col mt-2 mb-10 py-14 px-24 bg-gray-100">
         <div className="mb-1 text-sm">Étape 1</div>
         <h6 className="mb-4">Téléchargez le modèle de plan d’action</h6>
-        <p>
+        <p className="!mb-0">
           Ce modèle correspond au format des fiches proposé dans la plateforme.
         </p>
-        <a
-          className="fr-btn fr-btn--icon-left fr-icon-download-line"
-          href="https://docs.google.com/spreadsheets/d/1hmpj74Smtrzp-d5R3Rwlf9VRnokeKVDn/edit#gid=246577666"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Télécharger le modèle
-        </a>
         <div className="h-[1px] my-8 bg-gray-300" />
 
         <div className="mb-1 text-sm">Étape 2</div>
@@ -58,7 +50,16 @@ const ImporterPlan = ({onBackClick}: Props) => {
           >
             Revenir à l’étape précédente
           </button>
-          <button className="fr-btn !mb-0">Valider</button>
+          <a
+            className="!bg-none after:!hidden"
+            href="https://docs.google.com/spreadsheets/d/1hmpj74Smtrzp-d5R3Rwlf9VRnokeKVDn/edit#gid=246577666"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="fr-btn fr-btn--icon-left fr-icon-download-line">
+              Télécharger le modèle
+            </div>
+          </a>
         </div>
       </div>
     </div>
