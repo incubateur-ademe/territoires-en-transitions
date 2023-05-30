@@ -1,56 +1,48 @@
 -- Deploy tet:labellisation/audit to pg
 BEGIN;
 
-create or replace function labellisation.current_audit(col integer, ref referentiel)
-    returns labellisation.audit
-    security definer
-as
+alter table labellisation.action_audit_state
+    add constraint action_audit
+        unique (action_id, audit_id);
+
+create or replace function labellisation.upsert_action_audit()
+    returns trigger as
 $$
-    # variable_conflict use_column
 declare
-    found labellisation.audit;
+    found_audit audit;
 begin
-    select *
-    into found
-    from labellisation.audit a
-    where a.collectivite_id = current_audit.col
-      and a.referentiel = current_audit.ref
-      and now() <@ tstzrange(date_debut, date_fin)
-      -- les audits avec une date de début sont prioritaires sur ceux avec une plage infinie,
-      -- ces derniers comprenant toujours `now()`.
-    order by date_debut desc nulls last
-    limit 1;
-
-    if found is null
-        -- si l'audit n'existe pas.
+    if not have_edition_acces(new.collectivite_id)
     then
-        insert
-        into labellisation.audit (collectivite_id, referentiel, demande_id, date_debut, date_fin)
-        select current_audit.col,
-               current_audit.ref,
-               null,
-               null,
-               null
-        on conflict do nothing
-        returning * into found; -- null en cas de conflit
+        perform set_config('response.status', '403', true);
+        raise 'L''utilisateur n''a pas de droit en édition sur la collectivité.';
     end if;
 
-    if found is null
-        -- l'audit n'existait pas et n'a pas pu être créé
-        -- car il vient d'être créé dans un autre appel
+    found_audit = labellisation.current_audit(
+            new.collectivite_id,
+            (select ar.referentiel
+             from action_relation ar
+             where ar.id = new.action_id)
+        );
+
+    if found_audit.date_debut is null
     then
-        select *
-        into found
-        from labellisation.audit a
-        where a.collectivite_id = current_audit.col
-          and a.referentiel = current_audit.ref
-          and now() <@ tstzrange(date_debut, date_fin)
-        order by date_debut desc nulls last
-        limit 1;
+        raise 'Pas d''audit en cours.';
     end if;
 
-    return found;
-end;
-$$ language plpgsql;
+    if not (select bool_or(auth.uid() = auditeur) from audit_auditeur where audit_id = found_audit.id)
+    then
+        perform set_config('response.status', '403', true);
+        raise 'L''utilisateur n''est pas auditeur sur l''audit de la collectivité.';
+    end if;
+
+    insert into labellisation.action_audit_state (audit_id, action_id, collectivite_id, avis, ordre_du_jour, statut)
+    values (found_audit.id, new.action_id, new.collectivite_id, coalesce(new.avis, ''), new.ordre_du_jour,
+            new.statut)
+    on conflict (action_id, audit_id) do update set avis          = excluded.avis,
+                                                    ordre_du_jour = excluded.ordre_du_jour,
+                                                    statut        = excluded.statut;
+    return new;
+end
+$$ language plpgsql security definer;
 
 COMMIT;
