@@ -8,17 +8,25 @@ export const useUpdateActionAuditStatut = () => {
 
   return useMutation(
     async (actionAuditStatut: TActionAuditStatut) => {
-      const {collectivite_id, action_id, ordre_du_jour, avis, statut} =
-        actionAuditStatut;
-      return supabaseClient
-        .from('action_audit_state')
-        .insert({
+      const {
+        collectivite_id,
+        action_id,
+        ordre_du_jour,
+        avis,
+        statut,
+        audit_id,
+      } = actionAuditStatut;
+      return supabaseClient.from('action_audit_state').upsert(
+        {
           collectivite_id,
           action_id,
+          audit_id,
           ordre_du_jour,
           avis,
           statut,
-        } as never);
+        } as never,
+        {onConflict: 'collectivite_id, action_id, audit_id'}
+      );
     },
     {
       mutationKey: 'update_action_audit_state',
