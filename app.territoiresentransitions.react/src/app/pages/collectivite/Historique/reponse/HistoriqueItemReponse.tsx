@@ -33,7 +33,13 @@ export default HistoriqueItemReponse;
 
 const HistoriqueItemReponseDetails = (props: THistoriqueItemProps) => {
   const {item} = props;
-  const {previous_reponse, reponse, question_formulation, question_type} = item;
+  const {
+    previous_reponse,
+    reponse,
+    question_formulation,
+    question_type,
+    justification,
+  } = item;
 
   return (
     <>
@@ -48,6 +54,11 @@ const HistoriqueItemReponseDetails = (props: THistoriqueItemProps) => {
       <DetailNouvelleModificationWrapper>
         {formatReponseValue(reponse, question_type)}
       </DetailNouvelleModificationWrapper>
+      {justification && (
+        <p className="fr-mt-2w">
+          Justification (lors de la réponse) : {justification}
+        </p>
+      )}
     </>
   );
 };
