@@ -1,103 +1,200 @@
--- Revert tet:utilisateur/invitation_v2 from pg
+-- Deploy tet:utilisateur/invitation_v2 to pg
+-- requires: utilisateur/niveaux_acces
 
 BEGIN;
 
-drop function consume_invitation(id uuid);
-drop function add_user(collectivite_id integer, email text, niveau niveau_acces);
-drop function utilisateur.invite(collectivite_id integer, email text, niveau niveau_acces);
-drop function utilisateur.associate(collectivite_id integer, user_id uuid, niveau niveau_acces, invitation_id uuid);
-alter table private_utilisateur_droit drop constraint unique_user_collectivite;
-alter table private_utilisateur_droit drop column invitation_id;
-drop table utilisateur.invitation;
+
+drop function consume_invitation;
+drop function add_user;
+drop function utilisateur.associate;
+drop function utilisateur.invite;
+
+-- Internal functions.
+create function
+    utilisateur.associate(
+    collectivite_id integer,
+    user_id uuid,
+    niveau niveau_acces,
+    invitation_id uuid
+)
+    returns void
+as
+$$
+insert into private_utilisateur_droit (user_id, collectivite_id, active, niveau_acces, invitation_id)
+values (associate.user_id, associate.collectivite_id, true, associate.niveau, associate.invitation_id)
+on conflict (user_id, collectivite_id)
+    do update set active        = true,
+                  niveau_acces  = associate.niveau,
+                  invitation_id = associate.invitation_id;
+$$ language sql;
+comment on function utilisateur.associate is
+    'Associe un utilisateur à une collectivité avec un niveau d''accès.';
 
 
--- replay invitation v1
-create table private_collectivite_invitation
-(
-    id              uuid primary key         default gen_random_uuid(),
-    role_name       role_name                                          not null,
-    collectivite_id integer references collectivite                    not null,
-    created_by      uuid references auth.users                         not null,
-    created_at      timestamp with time zone default CURRENT_TIMESTAMP not null
-);
-alter table private_collectivite_invitation
-    enable row level security;
-create policy allow_read
-    on private_collectivite_invitation
-    for select
-    using (is_any_role_on(collectivite_id));
-create policy allow_insert
-    on private_collectivite_invitation
-    for insert
-    with check (is_referent_of(collectivite_id));
+create function
+    utilisateur.invite(
+    collectivite_id integer,
+    email text,
+    niveau niveau_acces
+)
+    returns uuid
+as
+$$
+insert into utilisateur.invitation (niveau, email, collectivite_id, created_by)
+values (invite.niveau, invite.email, invite.collectivite_id, auth.uid())
+returning id;
+$$ language sql;
+comment on function utilisateur.invite is
+    'Crée une invitation et renvoie son id.';
 
 
-create or replace function create_agent_invitation(collectivite_id integer)
-    returns json
+-- API exposed RPCs.
+create function add_user(
+    collectivite_id integer,
+    email text,
+    niveau niveau_acces
+) returns json
 as
 $$
 declare
-    invitation_id uuid;
+    existing_user    auth.users;
+    conflicting_user bool;
+    invitation_id    uuid;
 begin
-    if is_referent_of(create_agent_invitation.collectivite_id)
+    if have_edition_acces(collectivite_id) or is_service_role()
     then
-        select gen_random_uuid() into invitation_id;
-        insert into private_collectivite_invitation
-        values (invitation_id, 'agent', create_agent_invitation.collectivite_id, auth.uid());
-        return json_build_object('message', 'L''invitation a été crée.', 'id', invitation_id);
-    else
-        perform set_config('response.status', '401', true);
-        return json_build_object('error', 'Vous n''êtes pas le référent de cette collectivité.');
-    end if;
-end
-$$ language plpgsql security definer;
+        select *
+        from auth.users u
+        where u.email = add_user.email
+        into existing_user;
 
-create function latest_invitation(collectivite_id integer)
-    returns json
-as
-$$
-declare
-    param_collectivite_id integer;
-    invitation_id         uuid;
-begin
-    select collectivite_id into param_collectivite_id;
-    if is_any_role_on(collectivite_id)
-    then
-        select into invitation_id id
-        from private_collectivite_invitation
-        where private_collectivite_invitation.collectivite_id = param_collectivite_id;
-        return json_build_object('id', invitation_id);
+        if FOUND
+        then
+            -- There is an existing user matching the email.
+            select count(*) > 0
+            from private_utilisateur_droit pud
+            where add_user.collectivite_id = pud.collectivite_id
+              and existing_user.id = pud.user_id
+            into conflicting_user;
+
+            if conflicting_user
+            then
+                if (select count(*) > 0
+                    from private_utilisateur_droit pud
+                    where add_user.collectivite_id = pud.collectivite_id
+                      and existing_user.id = pud.user_id
+                      and active = true)
+                then
+                    -- The existing user is already associated with our collectivite.
+                    perform set_config('response.status', '409', true); -- 409: Conflict
+                    return json_build_object(
+                            'error', 'L''utilisateur est déjà associé à cette collectivité.'
+                        );
+                else
+                    -- The existing user's rights to the collectivite had been desactivated.
+                    update private_utilisateur_droit
+                    set active      = true,
+                        modified_at = now(),
+                        niveau_acces=add_user.niveau
+                    where user_id = existing_user.id
+                      and private_utilisateur_droit.collectivite_id = add_user.collectivite_id;
+
+                    return json_build_object(
+                            'added', true,
+                            'message', 'Accès de l''utilisateur ré-activés.'
+                        );
+                end if;
+            else
+                -- Associate the existing user with our collectivite.
+                perform utilisateur.associate(
+                        add_user.collectivite_id,
+                        existing_user.id,
+                        add_user.niveau,
+                        null
+                    );
+                return json_build_object(
+                        'added', true,
+                        'message', 'Utilisateur ajouté.'
+                    );
+            end if;
+
+        else
+            -- No user matching the email was found, we should invite them.
+            select utilisateur.invite(
+                           add_user.collectivite_id,
+                           add_user.email,
+                           add_user.niveau
+                       )
+            into invitation_id;
+            return json_build_object(
+                    'invitation_id', invitation_id,
+                    'message', 'Invitation créée.'
+                );
+        end if;
     else
-        perform set_config('response.status', '401', true);
-        return json_build_object('error', 'Vous n''avez pas rejoint cette collectivité.');
+        -- Not admin nor service role.
+        perform set_config('response.status', '403', true); -- 403: Forbidden
+        return json_build_object('error', 'Vous n''êtes pas administrateur de cette collectivité.');
     end if;
 end;
-$$ language plpgsql;
+$$ language plpgsql security definer;
+comment on function add_user is
+    'Ajoute un utilisateur à une collectivité avec un niveau d''accès.
+        Si l''utilisateur
+        - est déjà associé à la collectivité renvoie une erreur 409.
+        - est dans la base, renvoie un message json {"added": true}.
+        - n''est pas dans la base, renvoie un message json { "invitation_id": uuid }.';
 
-create or replace function accept_invitation(invitation_id uuid)
-    returns json
+
+create function
+    consume_invitation(id uuid)
+    returns void
 as
 $$
 declare
-    invitation_collectivite_id integer;
+    invitation utilisateur.invitation;
 begin
-    select into invitation_collectivite_id collectivite_id
-    from private_collectivite_invitation
-    where id = invitation_id;
-    if (is_any_role_on(invitation_collectivite_id))
+    if is_authenticated()
     then
-        perform set_config('response.status', '401', true);
-        return json_build_object('error', 'Vous avez déjà rejoint cette collectivité.');
+        -- The current user is authenticated.
+        select *
+        from utilisateur.invitation i
+        where i.id = consume_invitation.id
+        into invitation;
+
+        if invitation.pending
+        then
+            -- The invitation is still pending (hasn't been consumed).
+            -- Mark the invitation as consumed.
+            update utilisateur.invitation i
+            set accepted_at = now()
+            where i.id = invitation.id;
+
+            -- Associate the user to the collectivité.
+            perform utilisateur.associate(
+                    invitation.collectivite_id,
+                    auth.uid(),
+                    invitation.niveau,
+                    invitation.id
+                );
+
+            perform set_config('response.status', '201', true); -- 201: Created
+        else
+            -- The invitation is consumed.
+            perform set_config('response.status', '403', true); -- 403: Forbidden
+        end if;
     else
-        insert into private_utilisateur_droit(user_id, collectivite_id, role_name, active)
-        select auth.uid(), collectivite_id, role_name, true
-        from private_collectivite_invitation
-        where id = invitation_id
-        order by created_at
-        limit 1;
-        return json_build_object('message', 'Vous avez rejoint cette collectivité.');
+        -- Not authenticated.
+        perform set_config('response.status', '401', true); -- 401: Unauthorized
     end if;
-end
+end;
 $$ language plpgsql security definer;
+comment on function consume_invitation is
+    'Permet à l''utilisateur d''utiliser une invitation pour rejoindre une collectivité.'
+        ' Renvoie un code 201 en cas de succès.'
+        ' L''invitation n''est plus utilisable par la suite.';
+
+alter table utilisateur.invitation
+drop column fonction;
 
 COMMIT;

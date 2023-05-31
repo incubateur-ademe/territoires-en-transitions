@@ -10,18 +10,15 @@ select id,
        created_at,
        accepted_at,
        consumed,
-       pending
+       pending,
+       fonction
 from utilisateur.invitation
 where false;
 
-select invitation_id
-from private_utilisateur_droit
-where false;
+select has_function_privilege('utilisateur.associate(integer, uuid, niveau_acces, uuid, membre_fonction)', 'execute');
+select has_function_privilege('utilisateur.invite(integer, text,  niveau_acces, membre_fonction)', 'execute');
 
-select has_function_privilege('utilisateur.associate(integer, uuid, niveau_acces, uuid)', 'execute');
-select has_function_privilege('utilisateur.invite(integer, text,  niveau_acces)', 'execute');
-
-select has_function_privilege('add_user(integer, text, niveau_acces)', 'execute');
+select has_function_privilege('add_user(integer, text, niveau_acces, membre_fonction)', 'execute');
 select has_function_privilege('consume_invitation(uuid)', 'execute');
 
 ROLLBACK;

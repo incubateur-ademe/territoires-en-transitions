@@ -3,14 +3,53 @@
 
 BEGIN;
 
+-- Drop deprecated invitation flow.
+drop function create_agent_invitation;
+drop function latest_invitation;
+drop function accept_invitation;
+truncate table private_collectivite_invitation;
+drop table private_collectivite_invitation;
 
+
+-- Create the invitation table in utilisateur schema.
+create table utilisateur.invitation
+(
+    id              uuid primary key default gen_random_uuid(),
+    niveau          niveau_acces                               not null,
+    email           text                                       not null,
+    collectivite_id integer references collectivite            not null,
+
+    created_by      uuid references auth.users                 not null,
+    created_at      timestamptz      default CURRENT_TIMESTAMP not null,
+
+    accepted_at     timestamptz,
+    consumed        bool generated always as (accepted_at is not null) stored,
+    pending         bool generated always as (accepted_at is null and active) stored,
+    active          bool             default true
+);
+comment on table utilisateur.invitation is
+    'Permet d''inviter un utilisateur sur une collectivité.';
+
+-- Add a reference to invitation in private_utilisateur_droit.
+alter table private_utilisateur_droit
+    add invitation_id uuid references utilisateur.invitation;
+comment on column private_utilisateur_droit.invitation_id is
+    'L''id de l''invitation utilisée pour obtenir ce droit.';
+
+-- Invitation RLS
 alter table utilisateur.invitation
-    add column fonction membre_fonction;
+    enable row level security;
 
-drop function consume_invitation;
-drop function add_user;
-drop function utilisateur.associate;
-drop function utilisateur.invite;
+create policy allow_read -- so we expose the data in views for admin purposes.
+    on utilisateur.invitation
+    using (true);
+
+
+-- Add a new constraint on droits.
+alter table private_utilisateur_droit
+    add constraint unique_user_collectivite unique (user_id, collectivite_id);
+comment on constraint unique_user_collectivite on private_utilisateur_droit is
+    'Un utilisateur ne peut avoir qu''un seul droit par collectivité.';
 
 -- Internal functions.
 create function
@@ -18,8 +57,7 @@ create function
     collectivite_id integer,
     user_id uuid,
     niveau niveau_acces,
-    invitation_id uuid,
-    fonction membre_fonction
+    invitation_id uuid
 )
     returns void
 as
@@ -30,10 +68,6 @@ on conflict (user_id, collectivite_id)
     do update set active        = true,
                   niveau_acces  = associate.niveau,
                   invitation_id = associate.invitation_id;
-
-insert into private_collectivite_membre(user_id, collectivite_id, fonction)
-values (associate.user_id, associate.collectivite_id, associate.fonction)
-on conflict (user_id, collectivite_id) do nothing;
 $$ language sql;
 comment on function utilisateur.associate is
     'Associe un utilisateur à une collectivité avec un niveau d''accès.';
@@ -43,14 +77,13 @@ create function
     utilisateur.invite(
     collectivite_id integer,
     email text,
-    niveau niveau_acces,
-    fonction membre_fonction
+    niveau niveau_acces
 )
     returns uuid
 as
 $$
-insert into utilisateur.invitation (niveau, email, collectivite_id, created_by, fonction)
-values (invite.niveau, invite.email, invite.collectivite_id, auth.uid(), invite.fonction)
+insert into utilisateur.invitation (niveau, email, collectivite_id, created_by)
+values (invite.niveau, invite.email, invite.collectivite_id, auth.uid())
 returning id;
 $$ language sql;
 comment on function utilisateur.invite is
@@ -61,8 +94,7 @@ comment on function utilisateur.invite is
 create function add_user(
     collectivite_id integer,
     email text,
-    niveau niveau_acces,
-    fonction membre_fonction
+    niveau niveau_acces
 ) returns json
 as
 $$
@@ -120,8 +152,7 @@ begin
                         add_user.collectivite_id,
                         existing_user.id,
                         add_user.niveau,
-                        null,
-                        add_user.fonction
+                        null
                     );
                 return json_build_object(
                         'added', true,
@@ -134,8 +165,7 @@ begin
             select utilisateur.invite(
                            add_user.collectivite_id,
                            add_user.email,
-                           add_user.niveau,
-                           add_user.fonction
+                           add_user.niveau
                        )
             into invitation_id;
             return json_build_object(
@@ -187,8 +217,7 @@ begin
                     invitation.collectivite_id,
                     auth.uid(),
                     invitation.niveau,
-                    invitation.id,
-                    invitation.fonction
+                    invitation.id
                 );
 
             perform set_config('response.status', '201', true); -- 201: Created
