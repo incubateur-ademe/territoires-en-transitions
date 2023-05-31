@@ -32,6 +32,7 @@ type ChartCardModalContentProps = {
   chart: JSX.Element;
   chartInfo?: {
     title?: string;
+    extendedTitle?: string;
     legend?: {name: string; color: string}[];
     expandable?: boolean;
     downloadedFileName?: string;
@@ -68,7 +69,11 @@ const ChartCardModalContent = ({
 
       <div ref={chartWrapperRef} className="p-3">
         {/* Titre du graphe */}
-        {chartInfo?.title && <h4>{chartInfo.title}</h4>}
+        {chartInfo?.extendedTitle ? (
+          <h4>{chartInfo?.extendedTitle}</h4>
+        ) : (
+          chartInfo?.title && <h4>{chartInfo.title}</h4>
+        )}
 
         {/* Element additionnel optionnel, ajouté entre le titre et le graphe */}
         <div data-html2canvas-ignore>
@@ -103,6 +108,7 @@ type ChartCardProps = {
   chartProps: BarChartProps | DonutChartProps;
   chartInfo?: {
     title?: string;
+    extendedTitle?: string;
     legend?: {name: string; color: string}[];
     legendOnOverview?: boolean;
     expandable?: boolean;

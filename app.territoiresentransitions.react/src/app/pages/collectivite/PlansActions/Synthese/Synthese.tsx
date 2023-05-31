@@ -14,7 +14,10 @@ type SyntheseProps = {
 };
 
 const Synthese = ({collectiviteId}: SyntheseProps): JSX.Element => {
-  const [selectedPlan, setSelectedPlan] = useState<number | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<{
+    id: number | null;
+    name: string;
+  }>({id: null, name: 'Toutes les fiches'});
   const [withoutPlan, setWithoutPlan] = useState<boolean | null>(null);
 
   return (
@@ -35,7 +38,7 @@ const Synthese = ({collectiviteId}: SyntheseProps): JSX.Element => {
         {/* Graphes répartition des fiches */}
         <SyntheseGraphsList
           collectiviteId={collectiviteId}
-          planId={selectedPlan}
+          selectedPlan={selectedPlan}
           withoutPlan={withoutPlan}
         />
       </div>
