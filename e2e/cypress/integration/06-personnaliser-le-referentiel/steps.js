@@ -136,7 +136,7 @@ const getModifyValue = valeur => {
 
 // sélectionne la réponse à partir du libellé de la question
 const getReponseByQuestionLabel = label =>
-  cy.get('legend').contains(label).siblings(`[data-test=reponse]`);
+  cy.get('legend').contains(label).parent().find(`[data-test=reponse]`);
 
 // vérifie qu'un bouton radio est sélectionné
 const assertRadioButtonIsOn = value => {
