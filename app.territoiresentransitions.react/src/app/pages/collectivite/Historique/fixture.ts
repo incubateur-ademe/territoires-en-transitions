@@ -29,6 +29,8 @@ export const fakeBaseHistorique: THistoriqueItem = {
   thematique_nom: null,
   reponse: null,
   previous_reponse: null,
+  justification: null,
+  previous_justification: null,
 };
 
 /* Storybook Action Statut */

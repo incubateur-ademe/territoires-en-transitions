@@ -29,6 +29,8 @@ export const fakeReponseChoix: THistoriqueItem = {
   thematique_id: 'mobilite',
   thematique_nom: 'Mobilité',
   previous_reponse: null,
+  justification: null,
+  previous_justification: null,
 };
 
 export const fakeReponseChoix2: THistoriqueItem = {
@@ -68,6 +70,8 @@ export const fakeReponseBinaire: THistoriqueItem = {
   thematique_id: 'dechets',
   thematique_nom: 'Déchets',
   previous_reponse: null,
+  justification: null,
+  previous_justification: null,
 };
 
 export const fakeReponseBinaire2: THistoriqueItem = {
@@ -106,6 +110,8 @@ export const fakeReponseProportion: THistoriqueItem = {
   thematique_id: 'developpement_economique',
   thematique_nom: 'Développement économique',
   previous_reponse: null,
+  justification: null,
+  previous_justification: null,
 };
 
 export const fakeReponseProportion2: THistoriqueItem = {
