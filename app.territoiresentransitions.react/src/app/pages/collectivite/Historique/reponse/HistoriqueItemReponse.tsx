@@ -4,8 +4,8 @@ import {
   DetailPrecedenteModificationWrapper,
 } from 'app/pages/collectivite/Historique/DetailModificationWrapper';
 import Modification from 'app/pages/collectivite/Historique/Modification';
-import {THistoriqueItem, THistoriqueItemProps} from '../types';
-import {toPercentString} from 'utils/score';
+import {THistoriqueItemProps} from '../types';
+import {formatReponseValue} from './formatReponseValue';
 
 /**
  * Modification d'une réponse à une question de personnalisation du référentiel
@@ -61,22 +61,4 @@ const HistoriqueItemReponseDetails = (props: THistoriqueItemProps) => {
       )}
     </>
   );
-};
-
-const formatReponseValue = (
-  value: THistoriqueItem['reponse'],
-  type: THistoriqueItem['question_type']
-) => {
-  if (value === null) {
-    return <i>Non renseigné</i>;
-  }
-
-  if (type === 'binaire') {
-    return value ? 'Oui' : 'Non';
-  }
-
-  if (type === 'proportion') {
-    return toPercentString(value as number);
-  }
-  return value;
 };
