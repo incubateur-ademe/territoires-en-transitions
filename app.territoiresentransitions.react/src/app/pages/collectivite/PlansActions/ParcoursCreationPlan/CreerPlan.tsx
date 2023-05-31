@@ -1,21 +1,21 @@
 import {Form, Formik} from 'formik';
 import FormikInput from 'ui/shared/form/formik/FormikInput';
-import FormikSelect from 'ui/shared/form/formik/FormikSelect';
+// import FormikSelect from 'ui/shared/form/formik/FormikSelect';
 import * as Yup from 'yup';
 import {useCreatePlanAction} from '../PlanAction/data/useUpsertAxe';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 
-const PlanTypeOptions = [
-  {
-    value: 'Plan Climat Air Énergie territorial',
-    label: 'Plan Climat Air Énergie territorial',
-  },
-  {value: 'Plan Économie circulaire', label: 'Plan Économie circulaire'},
-  {value: 'Plan Territoire Engagé', label: 'Plan Territoire Engagé'},
-  {value: 'Plan thématique', label: 'Plan thématique'},
-  {value: 'Projet de territoire', label: 'Projet de territoire'},
-  {value: 'Autre', label: 'Autre'},
-];
+// const PlanTypeOptions = [
+//   {
+//     value: 'Plan Climat Air Énergie territorial',
+//     label: 'Plan Climat Air Énergie territorial',
+//   },
+//   {value: 'Plan Économie circulaire', label: 'Plan Économie circulaire'},
+//   {value: 'Plan Territoire Engagé', label: 'Plan Territoire Engagé'},
+//   {value: 'Plan thématique', label: 'Plan thématique'},
+//   {value: 'Projet de territoire', label: 'Projet de territoire'},
+//   {value: 'Autre', label: 'Autre'},
+// ];
 
 const formValidation = Yup.object({
   nom: Yup.string(),
@@ -60,12 +60,12 @@ const CreerPlan = ({onBackClick}: Props) => {
               label="Nom du plan d’action"
               hint="Exemple : Plan Climat Air Énergie territorial 2022-2026"
             />
-            <FormikSelect
+            {/* <FormikSelect
               name="type"
               label="Type de plan d’action"
               hint="Cette information sera utile pour vous proposer une arborescence et un format de fiche adaptés"
               options={PlanTypeOptions}
-            />
+            /> */}
             <div className="flex items-center justify-end gap-6 mt-12">
               <button
                 className="fr-btn fr-btn--tertiary fr-btn--icon-left !mb-0 fr-icon-arrow-left-line"
