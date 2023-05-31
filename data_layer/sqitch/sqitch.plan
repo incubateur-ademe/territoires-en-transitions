@@ -355,3 +355,4 @@ plan_action/export [plan_action/export@v2.30.0] 2023-05-18T08:02:58Z Florian <fl
 @v2.31.0 2023-05-23T06:56:05Z Florian <florian@derfurth.com> # Permet l'export de plans d'action avec un grand nombre de fiches
 
 stats/reporting [stats/reporting@v2.28.0] 2023-05-10T15:16:17Z Florian <florian@derfurth.com> # Corrige le nombre de collectivités de la vue report_indicateur
+@v2.31.2 2023-05-31T09:05:19Z Florian <florian@derfurth.com> # Corrige la vue stats des indicateurs pour l'ADEME
