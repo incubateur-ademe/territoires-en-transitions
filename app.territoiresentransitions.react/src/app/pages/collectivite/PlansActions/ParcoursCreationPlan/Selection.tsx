@@ -1,4 +1,4 @@
-import {ParcoursCreationPlanSteps} from './ParcoursCreationPlanModale';
+import {ParcoursCreationPlanSteps} from './ParcoursCreationPlan';
 
 type Props = {
   onStepClick: (step: ParcoursCreationPlanSteps) => void;
@@ -7,10 +7,10 @@ type Props = {
 
 const Selection = ({onStepClick, onBackClick}: Props) => {
   return (
-    <div className="w-full max-w-3xl mx-auto">
+    <div className="w-full mx-auto">
       <h3 className="mb-8">Ajouter un plan d’action</h3>
       <div className="flex flex-col mt-2 mb-10 py-14 px-24 bg-gray-100">
-        <h6>Vous souhaitez</h6>
+        <h6 className="ml-8">Vous souhaitez</h6>
         <div className="flex justify-center gap-6">
           <SelectFlowButton
             title="Importer un plan d’action"

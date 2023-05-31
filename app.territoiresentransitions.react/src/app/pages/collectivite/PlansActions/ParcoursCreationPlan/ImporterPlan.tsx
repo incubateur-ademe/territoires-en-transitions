@@ -6,7 +6,7 @@ type Props = {
 
 const ImporterPlan = ({onBackClick}: Props) => {
   return (
-    <div className="w-full max-w-3xl mx-auto">
+    <div className="w-full mx-auto">
       <h3 className="mb-8">
         <span className="fr-icon-upload-fill mr-2" /> Importer un plan d’action
       </h3>
