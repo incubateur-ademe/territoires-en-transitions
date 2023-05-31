@@ -125,6 +125,11 @@ const SyntheseGraphsList = ({
               }))
             : [],
         },
+        {
+          id: 'echeance',
+          title: 'Répartition par échéance',
+          data: data.echeances ? data.echeances : [],
+        },
         // {
         //   title: 'Répartition par direction pilote',
         //   data: [],

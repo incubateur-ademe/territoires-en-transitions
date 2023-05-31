@@ -8,6 +8,7 @@ export type TPlanActionTableauDeBord = {
   priorites: {id: string; value: number}[];
   referents: {id: string; value: number}[];
   statuts: {id: string; value: number}[];
+  echeances: {id: string; value: number}[];
 };
 
 const fetchDashboardData = async (
@@ -50,7 +51,13 @@ export const usePlanActionTableauDeBord = (
   );
 
   if (data) {
-    if (!data.pilotes && !data.priorites && !data.referents && !data.statuts)
+    if (
+      !data.pilotes &&
+      !data.priorites &&
+      !data.referents &&
+      !data.statuts &&
+      !data.echeances
+    )
       return null;
 
     const sortedData = {
@@ -59,6 +66,7 @@ export const usePlanActionTableauDeBord = (
       priorites: data.priorites ? sortByPriority(data.priorites) : [],
       referents: data.referents ? sortByValue(data.referents) : [],
       statuts: data.statuts ? sortByStatus(data.statuts) : [],
+      echeances: data.echeances ? sortByEcheance(data.echeances) : [],
     };
 
     return sortedData;
@@ -94,6 +102,20 @@ const sortByStatus = (
     'En pause': 4,
     Abandonné: 5,
     NC: 6,
+  };
+  return data.sort((a, b) => rank[a.id] - rank[b.id]);
+};
+
+const sortByEcheance = (
+  data: {id: string; value: number}[]
+): {id: string; value: number}[] => {
+  const rank: {[key: string]: number} = {
+    'Échéance dépassée': 1,
+    'Échéance dans moins de trois mois': 2,
+    'Échéance entre trois mois et 1 an': 3,
+    'Échéance dans plus d’un an': 4,
+    'Action en amélioration continue': 5,
+    'Date de fin non renseignée': 6,
   };
   return data.sort((a, b) => rank[a.id] - rank[b.id]);
 };
