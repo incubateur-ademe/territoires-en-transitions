@@ -49,3 +49,13 @@ export const ReponseQuestionProportionModifiee = Template.bind({});
 ReponseQuestionProportionModifiee.args = {
   item: fakeReponseProportion2,
 };
+
+export const ReponseQuestionProportionJustifiee = Template.bind({});
+ReponseQuestionProportionJustifiee.args = {
+  item: {...fakeReponseProportion, justification: 'Parce que...'},
+};
+
+export const ReponseQuestionProportionModifieeEtJustifiee = Template.bind({});
+ReponseQuestionProportionModifieeEtJustifiee.args = {
+  item: {...fakeReponseProportion2, justification: 'Parce que...'},
+};
