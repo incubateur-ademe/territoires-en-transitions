@@ -15,6 +15,7 @@ Deno.test("Tableau de bord plan action", async () => {
     priorites: { id: string; value: number }[];
     referents: { id: string; value: number }[];
     statuts: { id: string; value: number }[];
+    echeances: { id: string; value: number }[];
   };
 
   // Appel fonction pour toutes les fiches de la collectivité 1
