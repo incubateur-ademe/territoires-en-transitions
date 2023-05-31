@@ -20,7 +20,7 @@ const Chemins = ({fiche}: Props) => {
     <div data-test="FicheFilAriane" className="flex items-center">
       {!fiche.axes || fiche.axes.length === 0 ? (
         <Link
-          className="p-1 text-xs text-gray-500 !shadow-none hover:text-gray-600"
+          className="p-1 text-xs text-gray-500 underline !bg-none !shadow-none hover:text-gray-600"
           to={() =>
             makeCollectiviteFichesNonClasseesUrl({
               collectiviteId: fiche.collectivite_id!,
