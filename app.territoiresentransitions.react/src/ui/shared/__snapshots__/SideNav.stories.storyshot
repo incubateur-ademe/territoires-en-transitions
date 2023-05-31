@@ -1,0 +1,149 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots ui/shared/SideNav Navigation 1 Niveau 1`] = `
+<nav
+  className="fr-sidemenu flex w-80 shrink-0 py-8 md:px-8 border-r border-gray-100"
+  data-test="SideNav"
+>
+  <div
+    className="fr-sidemenu-wrapper w-full"
+  >
+    <ul
+      className="fr-sidemenu__list"
+    >
+      <li
+        className="fr-sidemnu__item fr-sidemenu__item--active"
+      >
+        <a
+          aria-current={null}
+          className="fr-sidemenu__link"
+          href="/link 1"
+          onClick={[Function]}
+          target="_self"
+        >
+          Lien 1
+        </a>
+      </li>
+      <li
+        className="fr-sidemnu__item fr-sidemenu__item--active"
+      >
+        <a
+          aria-current={null}
+          className="fr-sidemenu__link"
+          href="/link 2"
+          onClick={[Function]}
+          target="_self"
+        >
+          Lien 1
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+`;
+
+exports[`Storyshots ui/shared/SideNav Navigation Avec Sections 1`] = `
+<nav
+  className="fr-sidemenu flex w-80 shrink-0 py-8 md:px-8 border-r border-gray-100"
+  data-test="SideNav"
+>
+  <div
+    className="fr-sidemenu-wrapper w-full"
+  >
+    <ul
+      className="fr-sidemenu__list"
+    >
+      <li
+        className="fr-sidemnu__item fr-sidemenu__item--active"
+      >
+        <a
+          aria-current={null}
+          className="fr-sidemenu__link"
+          href="/lien 1"
+          onClick={[Function]}
+          target="_self"
+        >
+          Lien 1
+        </a>
+      </li>
+      <li>
+        <div
+          className="flex items-start w-full"
+        >
+          <div
+            className="w-full fr-sidemnu__item fr-sidemenu__item--active"
+          >
+            <a
+              aria-current={null}
+              className="fr-sidemenu__link"
+              href="/lien 2"
+              onClick={[Function]}
+              target="_self"
+            >
+              Section 1
+            </a>
+          </div>
+          <div
+            className="flex pt-2 mt-0.5 ml-2"
+          >
+            <button
+              className="p-0.5"
+              onClick={[Function]}
+              title="Ouvrir la section"
+            >
+              <span
+                className="fr-fi-arrow-right-s-line before:scale-75 before:transition-transform"
+              />
+            </button>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div
+          className="flex items-start w-full"
+        >
+          <div
+            className="w-full fr-sidemnu__item fr-sidemenu__item--active"
+          >
+            <a
+              aria-current={null}
+              className="fr-sidemenu__link"
+              href="/lien 5"
+              onClick={[Function]}
+              target="_self"
+            >
+              Section 2
+            </a>
+          </div>
+          <div
+            className="flex pt-2 mt-0.5 ml-2"
+          >
+            <button
+              className="p-0.5"
+              onClick={[Function]}
+              title="Ouvrir la section"
+            >
+              <span
+                className="fr-fi-arrow-right-s-line before:scale-75 before:transition-transform"
+              />
+            </button>
+          </div>
+        </div>
+      </li>
+      <li
+        className="fr-sidemnu__item fr-sidemenu__item--active"
+      >
+        <a
+          aria-current={null}
+          className="fr-sidemenu__link"
+          href="/lien 8"
+          onClick={[Function]}
+          target="_self"
+        >
+          Lien 4
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+`;
