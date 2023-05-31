@@ -722,7 +722,7 @@ Array [
             className="text-center w-[56px]"
           >
             <span
-              className="fr-icon fr-icon-checkbox-circle-fill text-[#18753C]"
+              className="fr-icon fr-icon-checkbox-circle-fill text-success"
             />
           </td>
           <td

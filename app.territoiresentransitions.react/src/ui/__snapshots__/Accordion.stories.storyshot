@@ -14,7 +14,7 @@ exports[`Storyshots ui/Accordion Exemple 1 1`] = `
       onClick={[Function]}
     >
       <i
-        className="fr-fi-information-fill text-[#0063cb] fr-mr-3v"
+        className="fr-fi-information-fill text-tDefaultInfo fr-mr-3v"
       />
       En savoir plus
     </button>

@@ -20,7 +20,7 @@ exports[`Storyshots ui/shared/actions/ActionStatutBadge Detaille 1`] = `
 
 exports[`Storyshots ui/shared/actions/ActionStatutBadge Fait 1`] = `
 <span
-  className="w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-[#18753C] bg-[#B8FEC9]"
+  className="w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-success bg-[#B8FEC9]"
   data-test="ActionStatutBadge"
 >
   Fait
