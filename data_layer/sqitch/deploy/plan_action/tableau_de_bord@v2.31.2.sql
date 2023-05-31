@@ -2,8 +2,11 @@
 
 BEGIN;
 
-drop function plan_action_tableau_de_bord;
-drop type plan_action_tableau_de_bord;
+create type graphique_tranche as
+(
+    id text,
+    value integer
+);
 
 create type plan_action_tableau_de_bord as
 (
@@ -12,8 +15,7 @@ create type plan_action_tableau_de_bord as
     statuts graphique_tranche[],
     pilotes graphique_tranche[],
     referents graphique_tranche[],
-    priorites graphique_tranche[],
-    echeances graphique_tranche[]
+    priorites graphique_tranche[]
 );
 
 
@@ -26,22 +28,7 @@ create function plan_action_tableau_de_bord(
 $$
 with
     fiches as (
-        select distinct fa.*,
-                        case
-                            when fa.statut in ('À venir', 'En cours', 'En pause')
-                                then 'NC'
-                            when fa.amelioration_continue
-                                then  'Action en amélioration continue'
-                            when fa.date_fin_provisoire is null
-                                then 'Date de fin non renseignée'
-                            when fa.date_fin_provisoire<now()
-                                then 'Échéance dépassée'
-                            when fa.date_fin_provisoire < (now() + interval '3 months')
-                                then 'Échéance dans moins de trois mois'
-                            when fa.date_fin_provisoire < (now() + interval '1 year')
-                                then 'Échéance entre trois mois et 1 an'
-                            else 'Échéance dans plus d’un an'
-                            end as echeance
+        select distinct fa.*
         from fiche_action fa
                  left join fiche_action_axe faa on faa.fiche_id = fa.id
                  left join plan_action_chemin pac on faa.axe_id = pac.axe_id
@@ -55,6 +42,7 @@ with
                 end
           and fa.collectivite_id = plan_action_tableau_de_bord.collectivite_id
           and is_authenticated()
+
     ),
     personnes as (
         select *
@@ -97,19 +85,11 @@ select
                  from fiches
                  group by coalesce(niveau_priorite::text, 'NC')
              ) t
-    ),
-    (
-        select array_agg((t.*)::graphique_tranche) as echeances
-        from (
-                 select echeance as id, count(*) as value
-                 from fiches
-                 group by echeance
-             ) t
     )
 $$ language sql security definer;
 comment on function plan_action_tableau_de_bord is
     'Retourne les données pour faire des diagrammes circulaires sur les
-    statuts, pilotes, référents, priorités et échéances des fiches actions,
+    statuts, pilotes, référents, et priorités des fiches actions,
     en fonction de la collectivité et/ou d''un plan d''action';
 
 
