@@ -14,6 +14,7 @@ import {
 } from 'core-logic/api/endpoints/AnyIndicateurValueWriteEndpoint';
 import {indicateurCommentaireWriteEndpoint} from 'core-logic/api/endpoints/IndicateurCommentaireWriteEndpoint';
 import {useMutationToast} from 'core-logic/hooks/useMutationToast';
+import classNames from 'classnames';
 
 type Composer<T> = (
   response: PostgrestResponse<T> | null,
@@ -93,6 +94,11 @@ const makeComposer = (messages: {
           elevation={6}
           variant="filled"
           severity={event?.outcome ?? undefined}
+          className={classNames(
+            '!text-white',
+            {'!bg-success': event?.outcome === 'success'},
+            {'!bg-error425': event?.outcome === 'error'}
+          )}
           onClose={onClose}
         >
           {event?.outcome === 'success' &&
@@ -120,7 +126,7 @@ export const Toasters = () => {
           storeSuccess:
             "Le résultat de l'indicateur référentiel est enregistré",
           storeError:
-            "Le résultat de l'indicateur référentiel  n'a pas été enregistré",
+            "Le résultat de l'indicateur référentiel n'a pas été enregistré",
         })}
       />
 
@@ -129,7 +135,7 @@ export const Toasters = () => {
         composer={makeComposer({
           storeSuccess: "L'objectif de l'indicateur référentiel est enregistré",
           storeError:
-            "L'objectif de l'indicateur référentiel  n'a pas été enregistré",
+            "L'objectif de l'indicateur référentiel n'a pas été enregistré",
         })}
       />
 
@@ -139,7 +145,7 @@ export const Toasters = () => {
           storeSuccess:
             "Le résultat de l'indicateur personnalisé est enregistré",
           storeError:
-            "Le résultat de l'indicateur personnalisé  n'a pas été enregistré",
+            "Le résultat de l'indicateur personnalisé n'a pas été enregistré",
         })}
       />
 
@@ -149,7 +155,7 @@ export const Toasters = () => {
           storeSuccess:
             "L'objectif de l'indicateur personnalisé est enregistré",
           storeError:
-            "L'objectif de l'indicateur personnalisé  n'a pas été enregistré",
+            "L'objectif de l'indicateur personnalisé n'a pas été enregistré",
         })}
       />
 
@@ -157,7 +163,7 @@ export const Toasters = () => {
         endpoint={indicateurCommentaireWriteEndpoint}
         composer={makeComposer({
           storeSuccess: "Le commentaire de l'indicateur est enregistré",
-          storeError: "Le commentaire de l'indicateur  n'a pas été enregistré",
+          storeError: "Le commentaire de l'indicateur n'a pas été enregistré",
         })}
       />
     </>

@@ -16,7 +16,6 @@ module.exports = {
         // En rapport avec la dernière version Figma du DSFR
         // nomenclature Figma: light/text/default-info
         // nomenclature tailwind proposée: t = text -> tDefaultInfo
-        tDefaultInfo: '#0063CB',
         bf925: '#E3E3FD',
         bf925hover: '#C1C1FB',
         bf975: '#f5f5fe',
@@ -24,6 +23,9 @@ module.exports = {
         grey625: '#929292',
         grey925: '#E5E5E5',
         grey975: '#F6F6F6',
+        // Couleurs système (info, succès, erreur)
+        tDefaultInfo: '#0063CB',
+        success: '#18753C',
         error425: '#CE0500',
       },
     },

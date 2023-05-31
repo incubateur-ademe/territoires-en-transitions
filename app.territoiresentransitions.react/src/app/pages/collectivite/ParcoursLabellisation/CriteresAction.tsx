@@ -81,7 +81,7 @@ const CritereActionRow = (props: TCriteresActionTable & {rowIndex: number}) => {
       <td className="text-center w-[56px]">
         <span
           className={classNames('fr-icon fr-icon-checkbox-circle-fill', {
-            'text-[#18753C]': rempli,
+            'text-success': rempli,
             'text-[#eee]': !rempli,
           })}
         />
