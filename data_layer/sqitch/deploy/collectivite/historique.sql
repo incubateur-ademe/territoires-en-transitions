@@ -2,18 +2,9 @@
 
 BEGIN;
 
-create view historique_utilisateur
-as
-select collectivite_id,
-       coalesce(modified_by_id, '99999999-9999-9999-9999-999999999999') as modified_by_id,
-       modified_by_nom
-from historique
-group by collectivite_id, modified_by_id, modified_by_nom;
-comment on view historique_utilisateur
-    is 'La liste des utilisateurs ayant apporté des modifications aux données de la collectivité.'
-        'Lorsqu''aucun utilisateur est associé, le modified by id est égal à `99999999-9999-9999-9999-999999999999`';
-
-create or replace view historique
+drop view historique_utilisateur;
+drop view historique;
+create view historique
 as
 with
     -- les listes des actions par question
@@ -39,14 +30,17 @@ with
                            previous_avancement_detaille,
                            concerne,
                            previous_concerne,
-                           -- precision
+                           -- precision sur les actions
                            null::text                              as precision,
                            null::text                              as previous_precision,
                            -- réponse
                            null::question_id                       as question_id,
                            null::question_type                     as question_type,
                            null::jsonb                             as reponse,
-                           null::jsonb                             as previous_reponse
+                           null::jsonb                             as previous_reponse,
+                           -- justification aux réponses
+                           null::text                              as justification,
+                           null::text                              as previous_justification
                     from historique.action_statut s
 
                     union all
@@ -72,6 +66,9 @@ with
                            -- réponse
                            null,
                            null,
+                           null,
+                           null,
+                           -- justification
                            null,
                            null
                     from historique.action_precision p
@@ -99,14 +96,61 @@ with
                            question_id,
                            question_type,
                            reponse,
-                           previous_reponse
-                    from historique.reponse_display),
-    actions as (select * from action_hierarchy ah where ah.type = 'action')
+                           previous_reponse,
+                           -- justification
+                           j.texte,
+                           null
+                    from historique.reponse_display r
+                             left join lateral (select texte
+                                                from historique.justification h
+                                                where h.collectivite_id = r.collectivite_id
+                                                  and h.question_id = r.question_id
+                                                  and h.modified_at <= r.modified_at
+                                                order by h.modified_at desc
+                                                limit 1) j on true
+
+                    union all
+                    select 'justification',
+                           collectivite_id,
+                           modified_by,
+                           previous_modified_by,
+                           modified_at,
+                           previous_modified_at,
+                           -- common to action related
+                           null,
+                           -- statuts
+                           null,
+                           null,
+                           null,
+                           null,
+                           null,
+                           null,
+                           -- precision
+                           null as precision,
+                           null as previous_precision,
+                           -- réponse
+                           question_id,
+                           q.type,
+                           r.reponse,
+                           null,
+                           -- justification
+                           texte,
+                           previous_texte
+                    from historique.justification j
+                             left join question q on q.id = j.question_id
+                             left join lateral (select reponse
+                                                from historique.reponse_display h
+                                                where h.modified_at <= j.modified_at
+                                                  and h.collectivite_id = j.collectivite_id
+                                                  and h.question_id = j.question_id
+                                                order by h.modified_at desc
+                                                limit 1) r on true),
+    actions as (select * from private.action_hierarchy ah where ah.type = 'action')
 
 select -- toutes les colonnes des données historisées
        h.type,
        h.collectivite_id,
-       coalesce(h.modified_by_id, '99999999-9999-9999-9999-999999999999') as modified_by_id,
+       coalesce(h.modified_by_id, '99999999-9999-9999-9999-999999999999')        as modified_by_id,
        h.previous_modified_by_id,
        h.modified_at,
        h.previous_modified_at,
@@ -123,6 +167,8 @@ select -- toutes les colonnes des données historisées
        h.question_type,
        h.reponse,
        h.previous_reponse,
+       h.justification,
+       h.previous_justification,
        -- utilisateur
        coalesce(ud.prenom || ' ' || ud.nom, 'Équipe territoires en transitions') as modified_by_nom,
        -- colonnes liées au actions
@@ -150,6 +196,16 @@ comment on view historique
     is 'La liste des modifications aux données des collectivités.'
         'Lorsqu''aucun utilisateur est associé, le modified by id est égal à `99999999-9999-9999-9999-999999999999`';
 
+create view historique_utilisateur
+as
+select collectivite_id,
+       coalesce(modified_by_id, '99999999-9999-9999-9999-999999999999') as modified_by_id,
+       modified_by_nom
+from historique
+group by collectivite_id, modified_by_id, modified_by_nom;
+comment on view historique_utilisateur
+    is 'La liste des utilisateurs ayant apporté des modifications aux données de la collectivité.'
+        'Lorsqu''aucun utilisateur est associé, le modified by id est égal à `99999999-9999-9999-9999-999999999999`';
 
 
 COMMIT;
