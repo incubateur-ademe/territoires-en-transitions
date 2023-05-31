@@ -61,14 +61,15 @@ export const collectiviteJournalPath = `${collectivitePath}/historique`;
 const ficheParam = 'ficheUid';
 const planParam = 'planUid';
 const axeParam = 'axeUid';
-export const CollectivitePlansActionsBasePath = `${collectivitePath}/plans`;
-export const collectivitePlansActionsSynthesePath = `${CollectivitePlansActionsBasePath}/synthese`;
-export const collectivitePlanActionPath = `${CollectivitePlansActionsBasePath}/plan/:${planParam}`;
+export const collectivitePlansActionsBasePath = `${collectivitePath}/plans`;
+export const collectivitePlansActionsCreationPath = `${collectivitePlansActionsBasePath}/creation`;
+export const collectivitePlansActionsSynthesePath = `${collectivitePlansActionsBasePath}/synthese`;
+export const collectivitePlanActionPath = `${collectivitePlansActionsBasePath}/plan/:${planParam}`;
 export const collectivitePlanActionFichePath = `${collectivitePlanActionPath}/fiche/:${ficheParam}`;
 export const collectivitePlanActionAxePath = `${collectivitePlanActionPath}/:${axeParam}`;
 export const collectivitePlanActionAxeFichePath = `${collectivitePlanActionAxePath}/fiche/:${ficheParam}`;
-export const CollectiviteFichesNonClasseesPath = `${CollectivitePlansActionsBasePath}/fiches`;
-export const collectiviteFicheNonClasseePath = `${CollectiviteFichesNonClasseesPath}/:${ficheParam}`;
+export const collectiviteFichesNonClasseesPath = `${collectivitePlansActionsBasePath}/fiches`;
+export const collectiviteFicheNonClasseePath = `${collectiviteFichesNonClasseesPath}/:${ficheParam}`;
 
 export const makeCollectiviteIndicateursUrl = ({
   collectiviteId,
@@ -171,7 +172,17 @@ export const makeCollectivitePlansActionsBaseUrl = ({
 }: {
   collectiviteId: number;
 }) =>
-  CollectivitePlansActionsBasePath.replace(
+  collectivitePlansActionsBasePath.replace(
+    `:${collectiviteParam}`,
+    collectiviteId.toString()
+  );
+
+export const makeCollectivitePlansActionsCreationUrl = ({
+  collectiviteId,
+}: {
+  collectiviteId: number;
+}) =>
+  collectivitePlansActionsCreationPath.replace(
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );
@@ -191,7 +202,7 @@ export const makeCollectiviteFichesNonClasseesUrl = ({
 }: {
   collectiviteId: number;
 }) =>
-  CollectiviteFichesNonClasseesPath.replace(
+  collectiviteFichesNonClasseesPath.replace(
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );
