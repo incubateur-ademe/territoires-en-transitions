@@ -42,7 +42,7 @@ const CreerPlan = ({onBackClick}: Props) => {
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto">
+    <div className="w-full mx-auto">
       <h3 className="mb-8">
         <span className="fr-icon-edit-box-fill mr-2" />
         Créer un plan d’action
