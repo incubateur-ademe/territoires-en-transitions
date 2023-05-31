@@ -38,6 +38,23 @@ When(/une alerte contient le message "([^"]+)"/, value => {
   cy.get(`.fr-alert`).find('p').should('have.text', value);
 });
 
+const transateStatus = {
+  succès: 'success',
+  information: 'info',
+  erreur: 'error',
+};
+
+defineStep(
+  'une alerte de statut {string} est affichée avec le message {string}',
+  (status, message) => {
+    cy.get(`.fr-alert--${transateStatus[status]}`).should('be.visible');
+    cy.get(`.fr-alert--${transateStatus[status]}`).should(
+      'contain.text',
+      message
+    );
+  }
+);
+
 // lien vers tableau de bord
 When(/je clique sur le lien du formulaire/, () => {
   cy.get('[data-test="formulaire-RejoindreUneCollectivite"]').find('a').click();
