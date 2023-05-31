@@ -2,6 +2,8 @@ import {defaultColors, nivoColorsSet, statusColor} from 'ui/charts/chartsTheme';
 import {usePlanActionTableauDeBord} from './data/usePlanActionTableauDeBord';
 import PictoLeaf from 'ui/pictogrammes/PictoLeaf';
 import ChartCard from 'ui/charts/ChartCard';
+import {Link} from 'react-router-dom';
+import {makeCollectivitePlansActionsCreationUrl} from 'app/paths';
 
 const getLegendColor = (
   data: {id: string; value: number; color?: any},
@@ -54,6 +56,7 @@ type SyntheseGraphsListProps = {
   collectiviteId: number;
   selectedPlan: {id: number | null; name: string};
   withoutPlan: boolean | null;
+  isReadonly: boolean;
 };
 
 /**
@@ -63,11 +66,11 @@ type SyntheseGraphsListProps = {
  * @param planId - (number | null) id du plan d'action affiché
  * @param withoutPlan - (boolean | null) affichage des données sans plan d'action
  */
-
 const SyntheseGraphsList = ({
   collectiviteId,
   selectedPlan,
   withoutPlan,
+  isReadonly,
 }: SyntheseGraphsListProps): JSX.Element => {
   const data = usePlanActionTableauDeBord(
     collectiviteId,
@@ -165,7 +168,21 @@ const SyntheseGraphsList = ({
   ) : (
     <div className="flex flex-col items-center mt-8">
       <PictoLeaf className="w-24 fill-gray-400" />
-      <div className="my-6 text-gray-500">Aucune fiche n'est renseignée</div>
+      <div className="my-6 text-gray-500">
+        Aucune fiche action pour l’instant
+      </div>
+      {!isReadonly && (
+        <div className="flex justify-center mt-6">
+          <Link
+            className="fr-btn"
+            to={makeCollectivitePlansActionsCreationUrl({
+              collectiviteId,
+            })}
+          >
+            Créer ou importer un plan d'action
+          </Link>
+        </div>
+      )}
     </div>
   );
 };

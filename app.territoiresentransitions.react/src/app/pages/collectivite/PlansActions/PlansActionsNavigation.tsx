@@ -2,16 +2,17 @@ import {
   makeCollectiviteFichesNonClasseesUrl,
   makeCollectivitePlanActionAxeUrl,
   makeCollectivitePlanActionUrl,
+  makeCollectivitePlansActionsCreationUrl,
   makeCollectivitePlansActionsSyntheseUrl,
 } from 'app/paths';
 import {useCreateFicheAction} from './FicheAction/data/useUpsertFicheAction';
-import {useCreatePlanAction} from './PlanAction/data/useUpsertAxe';
 import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import SideNav, {SideNavLinks} from 'ui/shared/SideNav';
 import {useFichesNonClasseesListe} from './FicheAction/data/useFichesNonClasseesListe';
 import {usePlansNavigation} from './PlanAction/data/usePlansNavigation';
 import {PlanNode} from './PlanAction/data/types';
 import {generateTitle} from './FicheAction/data/utils';
+import {Link} from 'react-router-dom';
 
 type Props = {
   collectivite: CurrentCollectivite;
@@ -24,8 +25,6 @@ const PlansActionsNavigation = ({collectivite}: Props) => {
   );
 
   const {mutate: createFicheAction} = useCreateFicheAction();
-
-  const {mutate: createPlanAction} = useCreatePlanAction();
 
   const generateLinks = (
     plans?: PlanNode[],
@@ -101,17 +100,15 @@ const PlansActionsNavigation = ({collectivite}: Props) => {
             </button>
           </li>
           <li className="fr-sidemenu_item mt-6 p-0 list-none">
-            <button
+            <Link
               data-test="AjouterPlanAction"
               className="fr-btn fr-btn--tertiary"
-              onClick={() =>
-                createPlanAction({
-                  collectivite_id: collectivite.collectivite_id,
-                })
-              }
+              to={makeCollectivitePlansActionsCreationUrl({
+                collectiviteId: collectivite.collectivite_id,
+              })}
             >
               Ajouter un plan d'action
-            </button>
+            </Link>
           </li>
         </ul>
       )}
