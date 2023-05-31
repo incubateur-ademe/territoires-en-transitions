@@ -2,6 +2,7 @@ import {useState} from 'react';
 import HeaderTitle from '../components/HeaderTitle';
 import FiltersPlanAction from './FiltersPlanAction';
 import SyntheseGraphsList from './SyntheseGraphsList';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
 /**
  * Contenu de la page Synthèse
@@ -14,6 +15,8 @@ type SyntheseProps = {
 };
 
 const Synthese = ({collectiviteId}: SyntheseProps): JSX.Element => {
+  const collectivite = useCurrentCollectivite();
+
   const [selectedPlan, setSelectedPlan] = useState<{
     id: number | null;
     name: string;
@@ -40,6 +43,7 @@ const Synthese = ({collectiviteId}: SyntheseProps): JSX.Element => {
           collectiviteId={collectiviteId}
           selectedPlan={selectedPlan}
           withoutPlan={withoutPlan}
+          isReadonly={collectivite?.readonly ?? true}
         />
       </div>
     </div>
