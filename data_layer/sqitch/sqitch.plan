@@ -379,3 +379,4 @@ plan_action/fiches [plan_action/fiches@v2.35.0] 2023-06-08T09:01:47Z Florian <fl
 utils/modified_by 2023-05-16T10:09:08Z Florian <florian@derfurth.com> # Fonction utilitaire pour maintenir une colonne modified_by
 evaluation/justification [utils/modified_by] 2023-05-12T08:15:53Z Florian <florian@derfurth.com> # Les justifications des réponses aux questions de personnalisation
 evaluation/reponse [evaluation/reponse@v2.29.0] 2023-05-17T08:31:28Z Florian <florian@derfurth.com> # Ajoute le texte de la justification dans la vue reponse_display
+collectivite/historique [collectivite/historique@v2.31.0] 2023-05-31T07:39:48Z Florian <florian@derfurth.com> # Ajoute l'historique des réponses et de leurs justifications

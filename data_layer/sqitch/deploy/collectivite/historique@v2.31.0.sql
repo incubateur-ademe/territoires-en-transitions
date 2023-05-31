@@ -2,8 +2,16 @@
 
 BEGIN;
 
-drop view historique_utilisateur;
-drop view historique;
+create view historique_utilisateur
+as
+select collectivite_id,
+       coalesce(modified_by_id, '99999999-9999-9999-9999-999999999999') as modified_by_id,
+       modified_by_nom
+from historique
+group by collectivite_id, modified_by_id, modified_by_nom;
+comment on view historique_utilisateur
+    is 'La liste des utilisateurs ayant apporté des modifications aux données de la collectivité.'
+        'Lorsqu''aucun utilisateur est associé, le modified by id est égal à `99999999-9999-9999-9999-999999999999`';
 
 create or replace view historique
 as
@@ -142,16 +150,6 @@ comment on view historique
     is 'La liste des modifications aux données des collectivités.'
         'Lorsqu''aucun utilisateur est associé, le modified by id est égal à `99999999-9999-9999-9999-999999999999`';
 
-create view historique_utilisateur
-as
-select collectivite_id,
-       coalesce(modified_by_id, '99999999-9999-9999-9999-999999999999') as modified_by_id,
-       modified_by_nom
-from historique
-group by collectivite_id, modified_by_id, modified_by_nom;
-comment on view historique_utilisateur
-    is 'La liste des utilisateurs ayant apporté des modifications aux données de la collectivité.'
-        'Lorsqu''aucun utilisateur est associé, le modified by id est égal à `99999999-9999-9999-9999-999999999999`';
 
 
 COMMIT;
