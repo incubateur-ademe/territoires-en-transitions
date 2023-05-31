@@ -73,11 +73,20 @@ export const ActionStatusDropdown = ({
   };
 
   const handleSaveDetail = (values: number[]) => {
+    const avancement =
+      values[0] === 1
+        ? 'fait'
+        : values[1] === 1
+        ? 'programme'
+        : values[2] === 1
+        ? 'pas_fait'
+        : 'detaille';
+
     if (statut) {
       saveActionStatut({
         ...args,
         ...statut,
-        avancement: 'detaille',
+        avancement,
         avancement_detaille: values,
       });
       setOpened(false);
