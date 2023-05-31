@@ -52,7 +52,7 @@ const getCustomLegend = (data: {id: string; value: number; color?: any}[]) => {
 
 type SyntheseGraphsListProps = {
   collectiviteId: number;
-  planId: number | null;
+  selectedPlan: {id: number | null; name: string};
   withoutPlan: boolean | null;
 };
 
@@ -66,10 +66,14 @@ type SyntheseGraphsListProps = {
 
 const SyntheseGraphsList = ({
   collectiviteId,
-  planId,
+  selectedPlan,
   withoutPlan,
 }: SyntheseGraphsListProps): JSX.Element => {
-  const data = usePlanActionTableauDeBord(collectiviteId, planId, withoutPlan);
+  const data = usePlanActionTableauDeBord(
+    collectiviteId,
+    selectedPlan.id,
+    withoutPlan
+  );
 
   const graphsData: {
     id: string;
@@ -145,9 +149,12 @@ const SyntheseGraphsList = ({
                 }}
                 chartInfo={{
                   title: graph.title,
+                  extendedTitle: `${selectedPlan.name} - ${graph.title}`,
                   legend: getCustomLegend(graph.data),
                   expandable: true,
-                  downloadedFileName: `repartition-${graph.id}`,
+                  downloadedFileName: `repartition-${
+                    graph.id
+                  }-${selectedPlan.name.toLowerCase().split(' ').join('-')}`,
                 }}
                 customStyle={{height: '350px', borderBottomWidth: '4px'}}
               />

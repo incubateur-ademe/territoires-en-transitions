@@ -12,7 +12,7 @@ import {usePlansActionsListe} from '../PlanAction/data/usePlansActionsListe';
 
 type FiltersPlanActionProps = {
   collectiviteId: number;
-  onChangePlan: (id: number | null) => void;
+  onChangePlan: ({id, name}: {id: number | null; name: string}) => void;
   onChangeWithoutPlan: (value: boolean | null) => void;
 };
 
@@ -46,13 +46,16 @@ const FiltersPlanAction = ({
   // Mise à jour des filtres sélectionnés
   const handleChangeFilter = (id: string) => {
     if (id === 'default') {
-      onChangePlan(null);
+      onChangePlan({id: null, name: 'Toutes les fiches'});
       onChangeWithoutPlan(null);
     } else if (id === 'nc') {
-      onChangePlan(null);
+      onChangePlan({id: null, name: 'Fiches non classées'});
       onChangeWithoutPlan(true);
     } else {
-      onChangePlan(parseInt(id));
+      onChangePlan({
+        id: parseInt(id),
+        name: filters.filter(f => f.value === id)[0].label,
+      });
       onChangeWithoutPlan(false);
     }
   };
