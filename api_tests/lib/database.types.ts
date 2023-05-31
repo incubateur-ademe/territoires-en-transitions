@@ -2880,6 +2880,7 @@ export interface Database {
           avancement_detaille: number[] | null
           collectivite_id: number | null
           concerne: boolean | null
+          justification: string | null
           modified_at: string | null
           modified_by_id: string | null
           modified_by_nom: string | null
@@ -2887,6 +2888,7 @@ export interface Database {
           previous_avancement: Database["public"]["Enums"]["avancement"] | null
           previous_avancement_detaille: number[] | null
           previous_concerne: boolean | null
+          previous_justification: string | null
           previous_modified_at: string | null
           previous_modified_by_id: string | null
           previous_precision: string | null
@@ -5920,13 +5922,13 @@ export interface Database {
       }
       pass:
         | {
-            Args: Record<PropertyKey, never>
-            Returns: string
-          }
-        | {
             Args: {
               "": string
             }
+            Returns: string
+          }
+        | {
+            Args: Record<PropertyKey, never>
             Returns: string
           }
       personnes_collectivite: {
@@ -6520,39 +6522,39 @@ export interface Database {
       time_bucket_gapfill:
         | {
             Args: {
-              bucket_width: number
-              ts: number
-              start?: number
-              finish?: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              start?: number
-              finish?: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              start?: number
-              finish?: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
               bucket_width: unknown
               ts: string
               start?: string
               finish?: string
             }
             Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              start?: number
+              finish?: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              start?: number
+              finish?: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              start?: number
+              finish?: number
+            }
+            Returns: number
           }
         | {
             Args: {
