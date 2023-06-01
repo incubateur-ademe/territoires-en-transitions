@@ -13,7 +13,6 @@ const fetchFichesNonClassees = async (
 ): Promise<TFetchedData> => {
   const query = supabaseClient
     .from('fiche_resume')
-    // .select()
     .select('*', {count: 'exact'})
     .eq('collectivite_id', collectivite_id)
     .is('plans', null)

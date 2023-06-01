@@ -30,7 +30,6 @@ export const fetchFichesActionFiltresListe = async (
     {
       collectivite_id: collectivite_id!,
       axes_id: axes_id,
-      // pilotes: pilotes as unknown as TPersonne[],
       pilotes: pilotes?.map(p =>
         p.includes('-') ? {user_id: p} : {tag_id: parseInt(p)}
       ) as unknown as TPersonne[],
