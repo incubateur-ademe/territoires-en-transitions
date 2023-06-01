@@ -106,7 +106,7 @@ select 'audit',
        utilisateur.modified_by_nom(p.modified_by),
        null,
        null,
-       case when d is not null then to_jsonb(d) end,
+       case when d.id is not null then to_jsonb(d) end,
        null,
        to_jsonb(a)
 from audit a
