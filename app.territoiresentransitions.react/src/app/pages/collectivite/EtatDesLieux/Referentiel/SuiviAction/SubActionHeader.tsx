@@ -86,7 +86,20 @@ const SubActionHeader = ({
 
       {/* Jauge de progression / Menu de sélection du statut */}
       <div className="col-span-2">
-        {/* Condition provisoire à enlever lorsque le statut à la sous-action sera possible */}
+        {/* Conditions provisoires à enlever lorsque le statut à la sous-action sera possible */}
+
+        {/* Si sous-action contenant des tâches (withStatusDropdown === false)
+        et ayant un score potentiel défini et >= 1e-3
+        ==> Affichage de la progress bar  */}
+
+        {/* Si tâche
+        ou sous-action sans tâche (withStatusDropdown === true)
+        ou avec des tâches mais score potentiel non défini ou < 1e-3
+        ==> Affichage du dropdown de sélection de statut */}
+
+        {/* Si sous-action contenant des tâches et avec statut "non concerné"
+        ==> Dropdown disabled */}
+
         {isSubAction &&
         !withStatusDropdown &&
         score?.point_potentiel !== undefined &&
@@ -104,7 +117,8 @@ const SubActionHeader = ({
               isSubAction &&
               (score === null ||
                 (score?.point_potentiel !== undefined &&
-                  score.point_potentiel < 1e-3))
+                  score.point_potentiel < 1e-3)) &&
+              !withStatusDropdown
             }
           />
         ) : null}
