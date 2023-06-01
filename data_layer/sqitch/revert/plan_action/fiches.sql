@@ -2,6 +2,8 @@
 
 BEGIN;
 
+-- on ne revert pas la vue fiche resume
+
 create or replace function
     filter_fiches_action(
     collectivite_id integer,
