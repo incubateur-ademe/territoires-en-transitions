@@ -63,4 +63,31 @@ end;
 $$ language plpgsql security definer
                     stable;
 
+create view private.fiche_resume as
+select case when a.id is null then null else array_agg(a.*) end as plans,
+       fa.titre,
+       fa.id,
+       fa.statut,
+       fa.collectivite_id,
+       (select array_agg(pil.*::personne)
+        from (select coalesce(pt.nom, concat(dcp.prenom, ' ', dcp.nom)) as nom,
+                     pt.collectivite_id,
+                     fap.tag_id,
+                     fap.user_id
+              from fiche_action_pilote fap
+                       left join personne_tag pt on fap.tag_id = pt.id
+                       left join dcp on fap.user_id = dcp.user_id
+              where fap.fiche_id = fa.id) pil)                  as pilotes,
+       fa.modified_at
+from fiche_action fa
+         left join fiche_action_axe faa on fa.id = faa.fiche_id
+         left join plan_action_chemin pac on faa.axe_id = pac.axe_id
+         left join axe a on pac.plan_id = a.id
+group by fa.titre, fa.id, fa.statut, fa.collectivite_id, a.id;
+
+create or replace view public.fiche_resume as
+select *
+from private.fiche_resume
+where can_read_acces_restreint(collectivite_id);
+
 COMMIT;
