@@ -11,7 +11,7 @@ create type flat_axe_node as
     fiches    integer[],
     ancestors integer[],
     depth     integer,
-    sort_path  text
+    sort_path text
 );
 
 create function
@@ -22,11 +22,11 @@ begin
     atomic
     with recursive
         parents as (select id,
-                           nom,
+                           coalesce(nom, '') as nom,
                            collectivite_id,
-                           0                   as depth,
-                           array []::integer[] as ancestors,
-                           '0 ' || nom         as sort_path
+                           0                         as depth,
+                           array []::integer[]       as ancestors,
+                           '0 ' || coalesce(nom, '') as sort_path
 
                     from axe
                     where id = axe_id
@@ -39,7 +39,7 @@ begin
                            a.collectivite_id,
                            depth + 1,
                            ancestors || a.parent,
-                           parents.sort_path || ' ' || depth + 1 || ' ' || a.nom
+                           parents.sort_path || ' ' || depth + 1 || ' ' || coalesce(a.nom, '')
                     from parents
                              join axe a on a.parent = parents.id),
         fiches as (select a.id,
@@ -56,7 +56,7 @@ begin
               else true
               end
     order by naturalsort(sort_path);
-end;
+end ;
 comment on function flat_axes is
     'Les axes ordonnancés par profondeur d''un plan donné sous forme de nodes prêtes pour reconstituer un arbre coté client.';
 
