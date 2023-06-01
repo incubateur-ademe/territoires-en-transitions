@@ -9,7 +9,6 @@ import {useCreatePlanAction} from './PlanAction/data/useUpsertAxe';
 import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import SideNav, {SideNavLinks} from 'ui/shared/SideNav';
 import {useFichesNonClasseesListe} from './FicheAction/data/useFichesNonClasseesListe';
-import {FicheAction} from './FicheAction/data/types';
 import {usePlansNavigation} from './PlanAction/data/usePlansNavigation';
 import {PlanNode} from './PlanAction/data/types';
 
@@ -29,7 +28,7 @@ const PlansActionsNavigation = ({collectivite}: Props) => {
 
   const generateLinks = (
     plans?: PlanNode[],
-    fichesNonClassees?: FicheAction[]
+    fichesNonClasseesTotal?: number | null
   ) => {
     const plansLinks: SideNavLinks = [
       {
@@ -74,7 +73,7 @@ const PlansActionsNavigation = ({collectivite}: Props) => {
       );
     }
 
-    if (fichesNonClassees && fichesNonClassees.length > 0) {
+    if (fichesNonClasseesTotal && fichesNonClasseesTotal > 0) {
       plansLinks.push({
         link: makeCollectiviteFichesNonClasseesUrl({
           collectiviteId: collectivite.collectivite_id,
@@ -89,7 +88,7 @@ const PlansActionsNavigation = ({collectivite}: Props) => {
   return (
     <div data-test="PlansActionNavigation">
       <SideNav
-        links={generateLinks(planListe, fichesNonClasseesListe?.fiches)}
+        links={generateLinks(planListe, fichesNonClasseesListe?.count)}
       />
       {!collectivite.readonly && (
         <ul className="mb-8 -mt-2 px-8">
