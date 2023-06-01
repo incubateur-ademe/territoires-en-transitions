@@ -40,6 +40,7 @@ export type ActionVueParamOption =
   | 'suivi'
   | 'preuves'
   | 'indicateurs'
+  | 'fiches'
   | 'historique';
 export type LabellisationVueParamOption = 'suivi' | 'cycles' | 'criteres';
 
