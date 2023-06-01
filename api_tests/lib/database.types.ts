@@ -2782,6 +2782,7 @@ export interface Database {
         Row: {
           collectivite_id: number | null
           id: number | null
+          modified_at: string | null
           pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
           plans: unknown[] | null
           statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
@@ -3730,13 +3731,13 @@ export interface Database {
       _get_note:
         | {
             Args: {
-              "": number
+              "": string
             }
             Returns: string
           }
         | {
             Args: {
-              "": string
+              "": number
             }
             Returns: string
           }
@@ -6844,6 +6845,7 @@ export interface Database {
         fiches: unknown
         ancestors: unknown
         depth: number
+        sort_path: string
       }
       graphique_tranche: {
         id: string
