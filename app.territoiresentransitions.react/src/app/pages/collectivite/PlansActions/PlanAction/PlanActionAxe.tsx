@@ -55,7 +55,6 @@ const PlanActionAxe = ({
   const handleEnterKeydown = (e: KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      // handleChangeTitle();
       inputRef.current?.blur();
     }
   };
