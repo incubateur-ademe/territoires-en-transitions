@@ -29,11 +29,13 @@ const upsertFicheAction = async (fiche: FicheAction) => {
 /**
  * Crée une nouvelle fiche action pour une collectivité
  * Si l'id d'un axe est donnée en argument, la fiche est ajoutée à cet axe
+ * Si l'id d'une action est donné, la fiche est liée à cette action
  */
 type Args = {
   axeId?: number;
   planActionId?: number;
   isAxePage?: boolean;
+  actionId?: string;
 };
 
 export const useCreateFicheAction = (args?: Args) => {
@@ -49,6 +51,7 @@ export const useCreateFicheAction = (args?: Args) => {
           args && args.axeId
             ? [{id: args?.axeId, collectivite_id: collectivite_id!}]
             : null,
+        actions: args?.actionId ? [{id: args.actionId}] : null,
       } as never),
     {
       meta: {disableToast: true},
