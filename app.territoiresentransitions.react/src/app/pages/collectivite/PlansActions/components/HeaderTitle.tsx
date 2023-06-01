@@ -89,7 +89,9 @@ const HeaderTitle = ({
             disabled={isReadonly}
           />
         ) : (
-          <span className="block py-2 px-3">{titre ?? 'Sans titre'}</span>
+          <span className="block py-2 px-3">
+            {titre && titre.length > 0 ? titre : 'Sans titre'}
+          </span>
         )}
       </p>
     </div>

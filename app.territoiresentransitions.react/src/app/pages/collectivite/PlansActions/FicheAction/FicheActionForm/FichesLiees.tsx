@@ -69,7 +69,7 @@ const FichesLiees = ({
             };
           } else {
             return {
-              title: plan.nom ?? 'Sans titre',
+              title: plan.nom && plan.nom.length > 0 ? plan.nom : 'Sans titre',
               options:
                 fiches
                   ?.filter(
@@ -99,7 +99,7 @@ const FichesLiees = ({
 
   const generateCardDetails = (plans: TAxeInsert[] | [null] | null) => {
     if (plans && plans[0]) {
-      if (plans[0].nom) {
+      if (plans[0].nom && plans[0].nom.length > 0) {
         return plans[0].nom;
       } else {
         return 'Sans titre';
