@@ -24,13 +24,15 @@ import {usePrevAndNextActionLinks} from './usePrevAndNextActionLinks';
 import {ActionHeader} from './ActionHeader';
 import {useActionPreuvesCount} from 'ui/shared/preuves/Bibliotheque/usePreuves';
 import ActionFollowUp from '../EtatDesLieux/Referentiel/SuiviAction/ActionFollowUp';
+import {FichesActionLiees} from './FichesActionLiees';
 
 // index des onglets de la page Action
 const TABS_INDEX: Record<ActionVueParamOption, number> = {
   suivi: 0,
   preuves: 1,
   indicateurs: 2,
-  historique: 3,
+  fiches: 3,
+  historique: 4,
 };
 
 const Action = ({action}: {action: ActionDefinitionSummary}) => {
@@ -135,6 +137,13 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
                   />
                 ))}
               </section>
+            ) : (
+              '...'
+            )}
+          </Tab>
+          <Tab label="Fiches action" icon="todo">
+            {activeTab === TABS_INDEX['fiches'] ? (
+              <FichesActionLiees actionId={action.id} />
             ) : (
               '...'
             )}
