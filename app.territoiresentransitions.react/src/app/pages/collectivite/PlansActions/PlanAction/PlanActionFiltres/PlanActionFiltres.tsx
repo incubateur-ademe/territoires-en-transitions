@@ -44,6 +44,7 @@ const PlanActionFiltres = ({
   return (
     <div>
       <Accordion
+        dataTest="FiltrerFiches"
         id="filtres-plan"
         className="mb-8"
         titre="Filtrer"

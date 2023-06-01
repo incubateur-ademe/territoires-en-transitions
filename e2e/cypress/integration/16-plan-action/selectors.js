@@ -18,7 +18,7 @@ export const LocalSelectors = {
     selector: '[data-test=PlanAction]',
   },
   'Filtrer les fiches': {
-    selector: '[data-test=FiltrerFichesBouton]',
+    selector: '[data-test=FiltrerFiches]',
   },
   'Modale ranger fiche action': {
     selector: '[data-test=RangerFicheModale]',
