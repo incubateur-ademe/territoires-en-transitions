@@ -75,16 +75,13 @@ defineStep(/j'ajoute un nouveau titre/, () => {
   cy.get('[data-test=AjouterAxe]').click();
   // attends que le dernier axe ajouté (celui avec un titre vide) soit visible
   // autorise un timeout un peu plus long car le back peut être lent à répondre en CI
-  cy.get('[data-test=Axe]:nth(-1) textarea', {timeout: 10000}).should(
-    'have.text',
-    ''
-  );
+  cy.get('[data-test=Axe]').first().find('textarea').should('have.text', '');
 });
 
 defineStep(/je le nomme "([^"]*)"/, titre => {
   // sélectionne le dernier axe ajouté
   cy.get('[data-test=Axe]')
-    .last()
+    .first()
     .within(() => {
       cy.get('[data-test=TitreAxeInput]').type(
         '{selectall}{backspace}' + titre
@@ -115,8 +112,8 @@ defineStep(/je reviens sur le plan d'action "([^"]*)"/, titre => {
   cy.get('[data-test=PlansActionNavigation]').contains(titre).click();
 });
 
-defineStep(/je veux supprimer le dernier axe/, () => {
-  cy.get('[data-test=SupprimerAxeBouton]').last().click({force: true});
+defineStep(/je veux supprimer le dernier axe créé/, () => {
+  cy.get('[data-test=SupprimerAxeBouton]').first().click({force: true});
 });
 
 defineStep(/le texte "([^"]*)" est visible/, texte => {
