@@ -38,7 +38,7 @@ When(/une alerte contient le message "([^"]+)"/, value => {
   cy.get(`.fr-alert`).find('p').should('have.text', value);
 });
 
-const transateStatus = {
+const translateStatus = {
   succès: 'success',
   information: 'info',
   erreur: 'error',
@@ -47,8 +47,8 @@ const transateStatus = {
 defineStep(
   'une alerte de statut {string} est affichée avec le message {string}',
   (status, message) => {
-    cy.get(`.fr-alert--${transateStatus[status]}`).should('be.visible');
-    cy.get(`.fr-alert--${transateStatus[status]}`).should(
+    cy.get(`.fr-alert--${translateStatus[status]}`).should('be.visible');
+    cy.get(`.fr-alert--${translateStatus[status]}`).should(
       'contain.text',
       message
     );

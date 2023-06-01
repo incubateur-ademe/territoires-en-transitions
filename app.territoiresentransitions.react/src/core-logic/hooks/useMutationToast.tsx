@@ -47,20 +47,19 @@ export const useMutationToast = () => {
     <ToastFloater
       open={status !== null}
       onClose={() => close()}
-      className={classNames(
-        '!text-white',
-        {'!bg-success': status === 'success'},
-        {'!bg-error425': status === 'error'},
-        {'!bg-tDefaultInfo': status === 'info'}
-      )}
+      className={classNames('!text-white', {
+        '!bg-success': status === 'success',
+        '!bg-error425': status === 'error',
+        '!bg-tDefaultInfo': status === 'info',
+      })}
     >
       <div className="flex items-center">
         <div
-          className={`flex mr-3 ${classNames(
-            {'fr-icon-check-line': status === 'success'},
-            {'fr-icon-close-line': status === 'error'},
-            {'fr-icon-information-line': status === 'info'}
-          )}`}
+          className={`flex mr-3 ${classNames({
+            'fr-icon-check-line': status === 'success',
+            'fr-icon-close-line': status === 'error',
+            'fr-icon-information-line': status === 'info',
+          })}`}
         ></div>
         {message}
       </div>
