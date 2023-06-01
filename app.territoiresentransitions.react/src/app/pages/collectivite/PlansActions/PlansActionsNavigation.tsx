@@ -67,7 +67,7 @@ const PlansActionsNavigation = ({collectivite}: Props) => {
                 planActionUid: plan.id.toString(),
               }),
               displayName:
-                plan.nom && plan.nom.length >= 0 ? plan.nom : 'Sans titre',
+                plan.nom && plan.nom.length > 0 ? plan.nom : 'Sans titre',
             };
           }
         })

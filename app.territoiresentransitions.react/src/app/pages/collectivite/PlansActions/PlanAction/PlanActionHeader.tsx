@@ -37,7 +37,7 @@ const PlanActionHeader = ({
               planActionUid: plan.id.toString(),
             })}
           >
-            {plan.nom ?? 'Sans titre'}
+            {plan.nom && plan.nom.length > 0 ? plan.nom : 'Sans titre'}
           </Link>
         )}
         {/** Actions */}
