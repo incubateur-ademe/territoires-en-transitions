@@ -362,3 +362,4 @@ automatisation/crm [automatisation/crm@v2.31.0] 2023-05-30T14:43:50Z Florian <fl
 @v2.32.0 2023-05-31T12:36:31Z Florian <florian@derfurth.com> # Intégration Airtable et fix les statuts d'audit
 
 stats/amplitude [stats/amplitude@v2.31.0] 2023-05-29T07:46:08Z Florian <florian@derfurth.com> # Évènement de création de compte
+@v2.33.0 2023-06-02T12:04:29Z Florian <florian@derfurth.com> # Envoie les créations de compte à Amplitude
