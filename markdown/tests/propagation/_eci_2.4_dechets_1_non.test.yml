@@ -10,7 +10,7 @@ Statuts:
   eci_2.4.1.3: pas_fait
   eci_2.4.2: fait
   eci_2.4.3: programme
-  eci_2.4.4: [0,25,0,75,0]
+  eci_2.4.4: [0.25,0.75,0]
 #statut Détaillé à 25 % Fait et 75 % Programmé
   eci_2.4.4.1: fait
   eci_2.4.4.2: programme
