@@ -2688,6 +2688,63 @@ export interface Database {
           referentiel: Database["public"]["Enums"]["referentiel"] | null
         }
       }
+      crm_collectivites: {
+        Row: {
+          code_siren_insee: string | null
+          collectivite_id: number | null
+          cot: boolean | null
+          departement_code: string | null
+          departement_name: string | null
+          key: string | null
+          nature_collectivite: string | null
+          nom: string | null
+          population_totale: number | null
+          region_code: string | null
+          region_name: string | null
+          type_collectivite:
+            | Database["public"]["Enums"]["type_collectivite"]
+            | null
+        }
+      }
+      crm_droits: {
+        Row: {
+          champ_intervention: string | null
+          collectivite_id: number | null
+          collectivite_key: string | null
+          details_fonction: string | null
+          fonction: Database["public"]["Enums"]["membre_fonction"] | null
+          key: string | null
+          niveau_acces: Database["public"]["Enums"]["niveau_acces"] | null
+          user_id: string | null
+          user_key: string | null
+        }
+      }
+      crm_personnes: {
+        Row: {
+          email: string | null
+          key: string | null
+          nom: string | null
+          prenom: string | null
+          telephone: string | null
+          user_id: string | null
+        }
+        Insert: {
+          email?: never
+          key?: never
+          nom?: never
+          prenom?: never
+          telephone?: never
+          user_id?: string | null
+        }
+        Update: {
+          email?: never
+          key?: never
+          nom?: never
+          prenom?: never
+          telephone?: never
+          user_id?: string | null
+        }
+      }
       departement: {
         Row: {
           code: string | null
@@ -6087,12 +6144,6 @@ export interface Database {
       skip:
         | {
             Args: {
-              "": number
-            }
-            Returns: string
-          }
-        | {
-            Args: {
               why: string
               how_many: number
             }
@@ -6101,6 +6152,12 @@ export interface Database {
         | {
             Args: {
               "": string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              "": number
             }
             Returns: string
           }
