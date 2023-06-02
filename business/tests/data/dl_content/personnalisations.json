@@ -1668,7 +1668,7 @@
       "description": "",
       "regles": [
         {
-          "description": "<p>Pour une collectivit\u00e9 hors France M\u00e9tropolitaine, le statut de la t\u00e2che 2.2.3.1 est &quot;non concern\u00e9e&quot;.</p>\n",
+          "description": "<p>Pour une collectivit\u00e9 hors France M\u00e9tropolitaine, le statut de la sous-action 2.2.3.1 est &quot;non concern\u00e9e&quot;.</p>\n",
           "formule": "identite(localisation, DOM) \n",
           "type": "desactivation"
         }
@@ -1680,7 +1680,7 @@
       "description": "",
       "regles": [
         {
-          "description": "<p>Pour une collectivit\u00e9 hors France M\u00e9tropolitaine, le statut de la t\u00e2che 2.2.3.2 est &quot;non concern\u00e9e&quot;.</p>\n",
+          "description": "<p>Pour une collectivit\u00e9 hors France M\u00e9tropolitaine, le statut de la sous-action 2.2.3.2 est &quot;non concern\u00e9e&quot;.</p>\n",
           "formule": "identite(localisation, DOM) \n",
           "type": "desactivation"
         }
@@ -1692,7 +1692,7 @@
       "description": "",
       "regles": [
         {
-          "description": "<p>Pour une collectivit\u00e9 hors France M\u00e9tropolitaine, le statut de la t\u00e2che 2.2.3.3 est &quot;non concern\u00e9e&quot;.</p>\n",
+          "description": "<p>Pour une collectivit\u00e9 hors France M\u00e9tropolitaine, le statut de la sous-action 2.2.3.3 est &quot;non concern\u00e9e&quot;.</p>\n",
           "formule": "identite(localisation, DOM) \n",
           "type": "desactivation"
         }
@@ -1704,7 +1704,7 @@
       "description": "",
       "regles": [
         {
-          "description": "<p>Pour une collectivit\u00e9 hors France M\u00e9tropolitaine, et en l&#x27;absence de besoin d&#x27;eau chaude sanitaire, le score de la 2.2.3 est r\u00e9duit de 70 %.</p>\n<p>Pour une collectivit\u00e9 hors France M\u00e9tropolitaine, le statut des t\u00e2ches 2.2.3.1 \u00e0 2.2.3.3 est &quot;non concern\u00e9&quot;.</p>\n",
+          "description": "<p>Pour une collectivit\u00e9 hors France M\u00e9tropolitaine, et en l&#x27;absence de besoin d&#x27;eau chaude sanitaire, le score de la 2.2.3 est r\u00e9duit de 70 %.</p>\n<p>Pour une collectivit\u00e9 hors France M\u00e9tropolitaine, le statut des sous-actions 2.2.3.1 \u00e0 2.2.3.3 est &quot;non concern\u00e9&quot;.</p>\n",
           "formule": "si identite(localisation, DOM) et reponse(ECS, NON) alors 0.3\n",
           "type": "reduction"
         }
