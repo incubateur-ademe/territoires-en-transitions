@@ -4,8 +4,9 @@ Test:
 Collectivité:
   type:
     - EPCI
- Réponse:
-  dev_eco_1 : NON
+
+Réponses:
+  dev_eco_1: NON
 
 Statuts:
   eci_1.2.1.1: fait
@@ -21,15 +22,15 @@ Scores:
   eci_1.2:
     point_referentiel: 30
     point_potentiel: 30
-    point_fait: 12
-    point_programme: 12
+    point_fait: 9
+    point_programme: 15
     point_pas_fait: 6
     desactive: no
   eci_1.2.1:
     point_referentiel: 6
     point_potentiel: 30
-    point_fait: 12
-    point_programme: 12
+    point_fait: 9
+    point_programme: 15
     point_pas_fait: 6
     desactive: no
   eci_1.2.2:
