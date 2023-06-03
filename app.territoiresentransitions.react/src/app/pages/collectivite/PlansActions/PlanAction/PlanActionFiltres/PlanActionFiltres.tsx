@@ -1,4 +1,3 @@
-import {useEffect, useState} from 'react';
 import FiltrePersonnes from './FiltrePersonnes';
 import FiltrePriorites from './FiltrePriorites';
 import FiltreStatuts from './FiltreStatuts';
@@ -31,13 +30,6 @@ const PlanActionFiltres = ({
   isFiltered,
 }: Props) => {
   const collectivite_id = useCollectiviteId();
-  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
-
-  useEffect(() => {
-    if (isFiltered) {
-      setIsFiltersOpen(true);
-    }
-  }, []);
 
   return (
     <div>
@@ -66,7 +58,7 @@ const PlanActionFiltres = ({
             <FiltrePriorites filters={filters} setFilters={setFilters} />
           </div>
         }
-        initialState={isFiltersOpen}
+        initialState={isFiltered}
       />
       {isFiltered && (
         <>
