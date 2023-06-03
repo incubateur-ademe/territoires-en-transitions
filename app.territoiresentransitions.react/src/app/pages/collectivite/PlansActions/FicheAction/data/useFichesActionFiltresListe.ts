@@ -8,6 +8,20 @@ import {FicheAction} from './types';
 import {TPersonne} from 'types/alias';
 import {PlanNode} from '../../PlanAction/data/types';
 
+/**
+ * Renvoie un tableau de Personne.
+ * Chaque objet est créé avec un user_id ou tag_id
+ * en fonction de si l'id contient un "_"
+ */
+export const makePersonnesWithIds = (personnes?: string[]) => {
+  const personnesNouvelles = personnes?.map(p =>
+    p.includes('-')
+      ? {user_id: p, tag_id: null as unknown as number}
+      : {tag_id: parseInt(p)}
+  );
+  return personnesNouvelles as unknown as TPersonne[];
+};
+
 export type TFichesActionsListe = {
   items: FicheAction[];
   total: number;
@@ -30,12 +44,8 @@ export const fetchFichesActionFiltresListe = async (
     {
       collectivite_id: collectivite_id!,
       axes_id: axes_id,
-      pilotes: pilotes?.map(p =>
-        p.includes('-') ? {user_id: p} : {tag_id: parseInt(p)}
-      ) as unknown as TPersonne[],
-      referents: referents?.map(p =>
-        p.includes('-') ? {user_id: p} : {tag_id: parseInt(p)}
-      ) as unknown as TPersonne[],
+      pilotes: makePersonnesWithIds(pilotes),
+      referents: makePersonnesWithIds(referents),
       statuts: statuts,
       niveaux_priorite: priorites,
     },
