@@ -7,6 +7,7 @@ import {
   makeCollectivitePlanActionUrl,
 } from 'app/paths';
 import {TAxeRow} from 'types/alias';
+import {generateTitle} from '../../FicheAction/data/utils';
 
 type FilArianeArgs = {
   collectiviteId: number;
@@ -26,7 +27,7 @@ export const generateFilArianeLinks = ({
       // Lien plan d'action
       if (i === 0) {
         return {
-          displayedName: axe.nom && axe.nom.length > 0 ? axe.nom : 'Sans titre',
+          displayedName: generateTitle(axe.nom),
           path: !noLinks
             ? makeCollectivitePlanActionUrl({
                 collectiviteId,
@@ -38,7 +39,7 @@ export const generateFilArianeLinks = ({
       // Lien axe niveau 1
       if (i === 1) {
         return {
-          displayedName: axe.nom && axe.nom.length > 0 ? axe.nom : 'Sans titre',
+          displayedName: generateTitle(axe.nom),
           path: !noLinks
             ? makeCollectivitePlanActionAxeUrl({
                 collectiviteId,
@@ -50,10 +51,10 @@ export const generateFilArianeLinks = ({
       }
       // Autres axes
       return {
-        displayedName: axe.nom && axe.nom.length > 0 ? axe.nom : 'Sans titre',
+        displayedName: generateTitle(axe.nom),
       };
     }),
-    {displayedName: titreFiche ?? 'Sans titre'},
+    {displayedName: generateTitle(titreFiche)},
   ];
 };
 

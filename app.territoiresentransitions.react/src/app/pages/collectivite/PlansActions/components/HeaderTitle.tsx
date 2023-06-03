@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import {useEffect, useRef} from 'react';
 import TextareaControlled from 'ui/shared/form/TextareaControlled';
+import {generateTitle} from '../FicheAction/data/utils';
 
 type Props = {
   titre: string | null;
@@ -89,9 +90,7 @@ const HeaderTitle = ({
             disabled={isReadonly}
           />
         ) : (
-          <span className="block py-2 px-3">
-            {titre && titre.length > 0 ? titre : 'Sans titre'}
-          </span>
+          <span className="block py-2 px-3">{generateTitle(titre)}</span>
         )}
       </p>
     </div>

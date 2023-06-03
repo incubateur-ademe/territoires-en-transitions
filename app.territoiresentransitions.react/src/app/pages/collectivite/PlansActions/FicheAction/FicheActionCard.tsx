@@ -1,5 +1,6 @@
 import ActionCard from '../components/ActionCard';
 import {FicheAction, FicheResume} from './data/types';
+import {generateTitle} from './data/utils';
 import FicheActionBadgeStatut from './FicheActionForm/FicheActionBadgeStatut';
 
 function isFicheResumeFromAxe(
@@ -56,11 +57,7 @@ const FicheActionCard = ({openInNewTab, ficheAction, link}: Props) => {
         )
       }
       details={generateDetails(ficheAction)}
-      title={
-        ficheAction.titre && ficheAction.titre.length > 0
-          ? ficheAction.titre
-          : 'Sans titre'
-      }
+      title={generateTitle(ficheAction.titre)}
     />
   );
 };

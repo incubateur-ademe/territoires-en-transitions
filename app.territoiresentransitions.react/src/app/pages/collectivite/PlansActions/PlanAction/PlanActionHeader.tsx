@@ -7,6 +7,7 @@ import {PlanNode} from './data/types';
 import {checkAxeHasFiche} from './data/utils';
 import {useExportPlanAction} from './export/useExportPlanAction';
 import {Link} from 'react-router-dom';
+import {generateTitle} from '../FicheAction/data/utils';
 
 type TPlanActionHeader = {
   isAxePage: boolean;
@@ -37,7 +38,7 @@ const PlanActionHeader = ({
               planActionUid: plan.id.toString(),
             })}
           >
-            {plan.nom && plan.nom.length > 0 ? plan.nom : 'Sans titre'}
+            {generateTitle(plan.nom)}
           </Link>
         )}
         {/** Actions */}

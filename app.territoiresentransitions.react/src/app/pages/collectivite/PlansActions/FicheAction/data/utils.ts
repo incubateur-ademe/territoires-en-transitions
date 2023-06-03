@@ -17,3 +17,6 @@ export const formatNewTag = (inputValue: string, collectivite_id: number) => ({
  */
 export const getPersonneId = (personne: Personne): string =>
   personne.tag_id ? personne.tag_id.toString() : personne.user_id!;
+
+/** Renvoie "Sans titre" si le string est undefined ou null */
+export const generateTitle = (title?: string | null) => title || 'Sans titre';

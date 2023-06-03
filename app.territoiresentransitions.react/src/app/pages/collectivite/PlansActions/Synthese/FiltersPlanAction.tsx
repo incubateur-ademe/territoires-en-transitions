@@ -1,6 +1,7 @@
 import TagFilters from 'ui/shared/filters/TagFilters';
 import {useFichesNonClasseesListe} from '../FicheAction/data/useFichesNonClasseesListe';
 import {usePlansActionsListe} from '../PlanAction/data/usePlansActionsListe';
+import {generateTitle} from '../FicheAction/data/utils';
 
 /**
  * Filtres tags par plan d'action
@@ -31,7 +32,7 @@ const FiltersPlanAction = ({
     filters.push(
       ...plansActions.plans.map(plan => ({
         value: plan.id.toString(),
-        label: plan.nom && plan.nom.length > 0 ? plan.nom : 'Sans titre',
+        label: generateTitle(plan.nom),
       }))
     );
   }

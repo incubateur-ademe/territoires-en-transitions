@@ -11,6 +11,7 @@ import SideNav, {SideNavLinks} from 'ui/shared/SideNav';
 import {useFichesNonClasseesListe} from './FicheAction/data/useFichesNonClasseesListe';
 import {usePlansNavigation} from './PlanAction/data/usePlansNavigation';
 import {PlanNode} from './PlanAction/data/types';
+import {generateTitle} from './FicheAction/data/utils';
 
 type Props = {
   collectivite: CurrentCollectivite;
@@ -48,15 +49,14 @@ const PlansActionsNavigation = ({collectivite}: Props) => {
                 collectiviteId: collectivite.collectivite_id,
                 planActionUid: plan.id.toString(),
               }),
-              displayName:
-                plan.nom && plan.nom.length > 0 ? plan.nom : 'Sans titre',
+              displayName: generateTitle(plan.nom),
               enfants: plan.children.map(e => ({
                 link: makeCollectivitePlanActionAxeUrl({
                   collectiviteId: collectivite.collectivite_id,
                   planActionUid: plan.id.toString(),
                   axeUid: e.id.toString(),
                 }),
-                displayName: e.nom && e.nom.length > 0 ? e.nom : 'Sans titre',
+                displayName: generateTitle(e.nom),
               })),
             };
           } else {
@@ -65,8 +65,7 @@ const PlansActionsNavigation = ({collectivite}: Props) => {
                 collectiviteId: collectivite.collectivite_id,
                 planActionUid: plan.id.toString(),
               }),
-              displayName:
-                plan.nom && plan.nom.length > 0 ? plan.nom : 'Sans titre',
+              displayName: generateTitle(plan.nom),
             };
           }
         })
