@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 
 import {TProfondeurAxe} from '../../PlanAction/data/types';
+import {generateTitle} from '../data/utils';
 
 type Props = {
   axe: TProfondeurAxe;
@@ -30,7 +31,7 @@ const TableauAxe = ({
       )}
       onClick={() => selectAxe(axe)}
     >
-      {axe.axe.nom && axe.axe.nom.length > 0 ? axe.axe.nom : 'Sans titre'}
+      {generateTitle(axe.axe.nom)}
       {axe.enfants && (
         <span className="fr-fi-arrow-right-s-line mt-1 ml-auto scale-90" />
       )}

@@ -10,6 +10,7 @@ import {
 import {TAxeInsert, TAxeRow} from 'types/alias';
 import {useState} from 'react';
 import classNames from 'classnames';
+import {generateTitle} from '../data/utils';
 
 type Props = {
   fiche: FicheAction;
@@ -33,13 +34,13 @@ const Chemins = ({fiche}: Props) => {
         <Chemin
           collectiviteId={fiche.collectivite_id!}
           axe_id={fiche.axes[0].id!}
-          titreFiche={fiche.titre ?? 'Sans titre'}
+          titreFiche={generateTitle(fiche.titre)}
         />
       ) : (
         <CheminPlusieursPlans
           collectiviteId={fiche.collectivite_id!}
           axes={fiche.axes}
-          titreFiche={fiche.titre ?? 'Sans titre'}
+          titreFiche={generateTitle(fiche.titre)}
         />
       )}
     </div>
@@ -65,8 +66,7 @@ const Chemin = ({collectiviteId, axe_id, titreFiche}: CheminProps) => {
           ? generateFilArianeLinks({
               collectiviteId,
               chemin: data.chemin as TAxeRow[],
-              titreFiche:
-                titreFiche && titreFiche.length > 0 ? titreFiche : 'Sans titre',
+              titreFiche: generateTitle(titreFiche),
             })
           : []
       }
@@ -111,7 +111,7 @@ const CheminPlusieursPlans = ({
               key={axe.id}
               collectiviteId={collectiviteId}
               axe_id={axe.id!}
-              titreFiche={titreFiche ?? 'Sans titre'}
+              titreFiche={generateTitle(titreFiche)}
             />
           ))}
         </div>

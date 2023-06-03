@@ -11,6 +11,7 @@ import {
 import FicheActionBadgeStatut from './FicheActionBadgeStatut';
 import {FicheResume} from '../data/types';
 import {TAxeInsert} from 'types/alias';
+import {generateTitle} from '../data/utils';
 
 type Props = {
   ficheCouranteId: number | null;
@@ -64,12 +65,12 @@ const FichesLiees = ({
                   ?.filter(fiche => !fiche.plans || !fiche.plans[0])
                   .map(fiche => ({
                     value: fiche.id!.toString(),
-                    label: fiche.titre ?? 'Sans titre',
+                    label: generateTitle(fiche.titre),
                   })) ?? [],
             };
           } else {
             return {
-              title: plan.nom && plan.nom.length > 0 ? plan.nom : 'Sans titre',
+              title: generateTitle(plan.nom),
               options:
                 fiches
                   ?.filter(
@@ -79,7 +80,7 @@ const FichesLiees = ({
                   )
                   .map(fiche => ({
                     value: fiche.id!.toString(),
-                    label: fiche.titre ?? 'Sans titre',
+                    label: generateTitle(fiche.titre),
                   })) ?? [],
             };
           }
@@ -97,10 +98,10 @@ const FichesLiees = ({
     return selectedFiches;
   };
 
-  const generateCardDetails = (plans: TAxeInsert[] | [null] | null) => {
-    if (plans && plans[0]) {
-      if (plans[0].nom && plans[0].nom.length > 0) {
-        return plans[0].nom;
+  const generateCardDetails = (plan: TAxeInsert | null) => {
+    if (plan && plan) {
+      if (plan.nom && plan.nom.length > 0) {
+        return plan.nom;
       } else {
         return 'Sans titre';
       }
@@ -144,8 +145,8 @@ const FichesLiees = ({
                   <FicheActionBadgeStatut statut={fiche.statut} small />
                 )
               }
-              details={generateCardDetails(fiche.plans)}
-              title={fiche.titre ?? 'Sans titre'}
+              details={generateCardDetails(fiche.plans && fiche.plans[0])}
+              title={generateTitle(fiche.titre)}
             />
           ))}
         </div>

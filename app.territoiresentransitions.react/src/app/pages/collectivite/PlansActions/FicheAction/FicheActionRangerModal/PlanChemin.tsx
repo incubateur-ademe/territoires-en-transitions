@@ -6,6 +6,7 @@ import {
 import {TAxeRow} from 'types/alias';
 import {FicheAction} from '../data/types';
 import {useRemoveFicheFromAxe} from '../data/useRemoveFicheFromAxe';
+import {generateTitle} from '../data/utils';
 
 type Props = {
   fiche: FicheAction;
@@ -29,7 +30,7 @@ const PlanChemin = ({fiche, axe_id}: Props) => {
               ? generateFilArianeLinks({
                   collectiviteId: fiche.collectivite_id!,
                   chemin: data.chemin as TAxeRow[],
-                  titreFiche: fiche.titre ?? 'Sans titre',
+                  titreFiche: generateTitle(fiche.titre),
                   noLinks: true,
                 })
               : []
