@@ -1,8 +1,6 @@
 import {useEffect, useState} from 'react';
-
-import FiltrePersonnesPilotes from './FiltrePersonnesPilotes';
+import FiltrePersonnes from './FiltrePersonnes';
 import FiltrePriorites from './FiltrePriorites';
-import FiltreReferents from './FiltreReferents';
 import FiltreStatuts from './FiltreStatuts';
 import {DesactiverLesFiltres} from 'ui/shared/filters/DesactiverLesFiltres';
 
@@ -50,9 +48,21 @@ const PlanActionFiltres = ({
         titre="Filtrer"
         html={
           <div className="grid sm:grid-cols-2 gap-x-8 gap-y-6">
-            <FiltrePersonnesPilotes filters={filters} setFilters={setFilters} />
+            <FiltrePersonnes
+              dataTest="filtre-personne-pilote"
+              label="Personne pilote"
+              filterKey="pilotes"
+              filters={filters}
+              setFilters={setFilters}
+            />
             <FiltreStatuts filters={filters} setFilters={setFilters} />
-            <FiltreReferents filters={filters} setFilters={setFilters} />
+            <FiltrePersonnes
+              dataTest="filtre-referent"
+              label="Élu·e référent·e"
+              filterKey="referents"
+              setFilters={setFilters}
+              filters={filters}
+            />
             <FiltrePriorites filters={filters} setFilters={setFilters} />
           </div>
         }
