@@ -1,6 +1,6 @@
 import {
-  makeCollectiviteFichesNonClasseesUrl,
   makeCollectivitePlanActionUrl,
+  makeCollectivitePlansActionsSyntheseUrl,
 } from 'app/paths';
 import SupprimerAxeModal from './SupprimerAxeModal';
 import {PlanNode} from './data/types';
@@ -54,7 +54,7 @@ const PlanActionHeader = ({
                       collectiviteId: collectivite_id,
                       planActionUid: plan.id.toString(),
                     })
-                  : makeCollectiviteFichesNonClasseesUrl({
+                  : makeCollectivitePlansActionsSyntheseUrl({
                       collectiviteId: collectivite_id!,
                     })
               }
