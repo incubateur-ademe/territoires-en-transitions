@@ -35,7 +35,7 @@ export const PlanAction = ({plan, axe}: PlanActionProps) => {
   const isFiltered = Object.keys(ficheFilters.filters).length > 2;
 
   return (
-    <div data-test="PlanAction" className="w-full">
+    <div data-test={isAxePage ? 'PageAxe' : 'PlanAction'} className="w-full">
       <HeaderTitle
         type={isAxePage ? 'axe' : 'plan'}
         titre={isAxePage ? axe.nom : plan.nom}
