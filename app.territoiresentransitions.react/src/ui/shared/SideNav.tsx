@@ -69,7 +69,7 @@ const Section = ({section}: SectionProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <li key={section.link}>
+    <li key={section.link} data-test="SideNav-section">
       <div className="flex items-start w-full">
         <div className="w-full fr-sidemnu__item fr-sidemenu__item--active">
           <NavLink
@@ -83,6 +83,7 @@ const Section = ({section}: SectionProps) => {
         </div>
         <div className="flex pt-2 mt-0.5 ml-2">
           <button
+            data-test="SideNav-section-toggle-button"
             className="p-0.5"
             title="Ouvrir la section"
             onClick={() => setIsOpen(!isOpen)}
@@ -97,7 +98,10 @@ const Section = ({section}: SectionProps) => {
         </div>
       </div>
       {isOpen && (
-        <ul className="mx-4 fr-sidemenu__list">
+        <ul
+          data-test="SideNav-section-liens"
+          className="mx-4 fr-sidemenu__list"
+        >
           {section.enfants.map(enfant => (
             <li
               key={enfant.link}

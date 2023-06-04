@@ -111,3 +111,48 @@ Fonctionnalité: Gérer les fiches et les plans d'action
 
     Quand je supprime l'axe depuis la modale
     Alors le plan n'est plus présent dans la navigation
+
+  Scénario: Visiter page axe et filtrer les fiches
+    Etant donné que je suis connecté en tant que "yolo"
+    Et que je suis sur la page "Plans action" de la collectivité "1"
+
+    # créer un plan d'action depuis la barre de navigation latérale
+    Quand je clique sur le bouton "Ajouter un plan d'action"
+    Alors le "Plan action" est visible
+
+    # lui donner le titre "Plan test"
+    Quand je saisi la valeur "Plan test" dans le champ "header input"
+    Et que je clique en dehors de la boîte de dialogue
+    Alors le nom du plan d'action est changé en "Plan test" dans la navigation
+
+    # ajouter un nouveau titre et lui donner ce contenu "Axe 1: les tests passent"
+    Quand j'ajoute un nouveau titre
+    Et que je le nomme "Axe 1: les tests passent"
+
+    # naviguer sur la page axe
+    Quand j'ouvre "Plan test" dans la navigation latérale et que je navigue vers "Axe 1: les tests passent"
+    Alors le "Page axe" est visible
+
+    # ajouter un nouveau titre et lui donner ce contenu "Axe 1: les tests passent"
+    Quand j'ajoute un nouveau titre
+    Et que je le nomme "1.1: Sous axe"
+
+    # ajouter une fiche au nouvel axe créé
+    Et que j'ajoute une fiche à "1.1: Sous axe"
+    Et que je saisi la valeur "Fiche test" dans le champ "header input"
+
+    # créer un tag personne pilote "Michel Sapasse"
+    Quand j'ouvre la section "acteurs"
+    Et que je crée un tag "Michel Sapasse" avec le sélecteur de tag "PersonnePilote"
+
+    # ajouter un statut "En cours"
+    Et que j'ouvre la section "modalites"
+    Et que je sélectionne "En cours" dans la liste déroulante "Statut"
+
+    Quand je navigue vers "Axe 1: les tests passent" du fil d'ariane de la fiche
+    Quand j'ouvre les filtres
+    Et que je filtre les fiches par "Yolo Dodo" du filtre "personne-pilote"
+    Alors aucune fiche n'est présente
+
+    Quand je filtre les fiches par "Michel Sapasse" du filtre "personne-pilote"
+    Alors la fiche contenant "Pilote: Michel Sapasse" est visible
