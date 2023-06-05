@@ -93,7 +93,7 @@ with
                            reponse,
                            previous_reponse
                     from historique.reponse_display),
-    actions as (select * from action_hierarchy ah where ah.type = 'action')
+    actions as (select * from private.action_hierarchy ah where ah.type = 'action')
 
 select -- toutes les colonnes des données historisées
        h.type,
