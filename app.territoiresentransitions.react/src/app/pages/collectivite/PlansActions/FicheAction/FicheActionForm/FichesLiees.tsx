@@ -49,9 +49,12 @@ const FichesLiees = ({
     }, []);
 
     /** Supprime tous les doublons */
-    const uniquePlans = plans?.filter(
-      (plan, i, a) => a.findIndex(v => v.id === plan.id) === i
-    );
+    const uniquePlans = plans
+      ?.filter((plan, i, a) => a.findIndex(v => v.id === plan.id) === i)
+      // et tri pas titre de plan
+      .sort((a, b) =>
+        a.nom ? a.nom.localeCompare(b.nom || 'Fiches non classées') : -1
+      );
 
     /** Génère les sections par plan avec fiches en options */
     const options: TOptionSection[] = uniquePlans
