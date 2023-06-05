@@ -52,7 +52,7 @@ const SubActionHeader = ({
     >
       {/* Identifiant de l'action et bouton open / close */}
       <div
-        className={classNames('flex justify-between', {
+        className={classNames('flex justify-between lg:col-span-1 col-span-2', {
           'font-bold': isSubAction,
         })}
       >
@@ -68,7 +68,7 @@ const SubActionHeader = ({
       </div>
 
       {/* Nom de l'action et score réalisé */}
-      <div className="col-span-9 flex flex-col gap-3">
+      <div className="lg:col-span-9 col-span-7 flex flex-col gap-3">
         <div className={classNames({'font-bold': isSubAction})}>
           {action.nom}
           {action.description &&
@@ -85,7 +85,7 @@ const SubActionHeader = ({
       </div>
 
       {/* Jauge de progression / Menu de sélection du statut */}
-      <div className="col-span-2">
+      <div className="lg:col-span-2 col-span-3">
         {/* Conditions provisoires à enlever lorsque le statut à la sous-action sera possible */}
 
         {/* Si sous-action contenant des tâches (withStatusDropdown === false)

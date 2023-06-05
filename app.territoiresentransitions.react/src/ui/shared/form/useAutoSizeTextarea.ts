@@ -17,7 +17,7 @@ export const useAutoSizeTextarea = (
   // Permet de set la taille du textarea au changement de valeur
   useLayoutEffect(() => {
     if (usedRef && usedRef.current) {
-      usedRef.current.style.height = '0px';
+      // usedRef.current.style.height = '0px';
       usedRef.current.style.minHeight = minHeight ?? '2.5rem';
       const scrollHeight = usedRef.current.scrollHeight;
       usedRef.current.style.height = scrollHeight + 'px';
