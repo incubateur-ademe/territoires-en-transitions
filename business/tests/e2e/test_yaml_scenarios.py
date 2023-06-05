@@ -8,7 +8,7 @@ from business.utils.models.action_statut import (
 
 yaml_tests_dir = "../markdown/tests"
 yaml_tests_glob = "**/*.test.yml"
-paths = [(str(path).split('/')[-1], path) for path in list(Path(yaml_tests_dir).glob(yaml_tests_glob))]
+paths = [('/'.join(str(path).split('/')[-2:]), path) for path in list(Path(yaml_tests_dir).glob(yaml_tests_glob))]
 
 
 def test_yaml_files_should_be_present():
