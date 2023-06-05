@@ -34,5 +34,13 @@ const fetch = async (collectivite_id: number, action_id: string) => {
     .eq('fiche_resume.collectivite_id', collectivite_id)
     .like('action_id', `${action_id}%`);
 
-  return data?.map(({fiche_resume}) => fiche_resume as FicheResume);
+  return (
+    data
+      // extrait les fiches
+      ?.map(({fiche_resume}) => fiche_resume as FicheResume)
+      // filtre les fiches non valides
+      .filter(fiche => Boolean(fiche))
+      // dédoublonne les fiches liées à plusieurs sous-actions de la même action
+      ?.filter((fiche, i, a) => a.findIndex(v => v.id === fiche.id) === i)
+  );
 };
