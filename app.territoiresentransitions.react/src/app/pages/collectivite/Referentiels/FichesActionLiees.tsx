@@ -19,15 +19,18 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
   const {mutate: createFicheAction} = useCreateFicheAction({actionId});
   const {mutate: updateFichesActionLiees} =
     useUpdateFichesActionLiees(actionId);
+  const isReadonly = collectivite?.readonly ?? false;
 
   return (
     <>
-      <button
-        className="fr-btn fr-btn--icon-left fr-icon-add-line fr-mb-4w"
-        onClick={() => createFicheAction()}
-      >
-        Créer une fiche action
-      </button>
+      {!isReadonly && (
+        <button
+          className="fr-btn fr-btn--icon-left fr-icon-add-line fr-mb-4w"
+          onClick={() => createFicheAction()}
+        >
+          Créer une fiche action
+        </button>
+      )}
 
       <FichesLiees
         ficheCouranteId={null}
@@ -35,7 +38,7 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
         onSelect={(fiches_liees: FicheResume[]) =>
           updateFichesActionLiees({fiches, fiches_liees})
         }
-        isReadonly={collectivite?.readonly ?? false}
+        isReadonly={isReadonly}
       />
     </>
   );
