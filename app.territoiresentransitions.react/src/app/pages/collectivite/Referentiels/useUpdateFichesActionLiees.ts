@@ -26,10 +26,11 @@ export const useUpdateFichesActionLiees = (action_id: string) => {
 
       // supprime les anciennes entrées
       if (idsToDelete.length) {
-        await supabaseClient.from('fiche_action_action').delete().match({
-          fiche_id: idsToDelete,
-          action_id,
-        });
+        await supabaseClient
+          .from('fiche_action_action')
+          .delete()
+          .match({fiche_id: idsToDelete})
+          .like('action_id', `${action_id}%`);
       }
 
       // et ajoute les nouvelles
