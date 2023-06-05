@@ -27,12 +27,12 @@ export const useFichesActionLiees = (actionId: string) => {
   };
 };
 
-// charge les identifiants des fiches action liées à une action
+// charge les identifiants des fiches action liées à une action (ou ses sous-actions)
 const fetch = async (action_id: string) => {
   const {data} = await supabaseClient
     .from('fiche_action_action')
     .select('fiche_id')
-    .match({action_id});
+    .like('action_id', `${action_id}%`);
 
   return data?.map(({fiche_id}) => fiche_id);
 };
