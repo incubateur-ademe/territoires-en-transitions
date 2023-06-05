@@ -36,59 +36,63 @@ type Args = {
   planActionId?: number;
   isAxePage?: boolean;
   actionId?: string;
+  /** si renseigné la fiche créée sera ouverte dans un nouvel onglet */
+  openInNewTab?: boolean;
 };
 
 export const useCreateFicheAction = (args?: Args) => {
   const queryClient = useQueryClient();
   const collectivite_id = useCollectiviteId();
   const history = useHistory();
+  const {axeId, planActionId, actionId, isAxePage, openInNewTab} = args || {};
+
+  const openUrl = (url: string, openInNewTab?: boolean) => {
+    if (openInNewTab) {
+      window.open(url, '_blank');
+    } else {
+      history.push(url);
+    }
+  };
 
   return useMutation(
     () =>
       upsertFicheAction({
         collectivite_id: collectivite_id!,
-        axes:
-          args && args.axeId
-            ? [{id: args?.axeId, collectivite_id: collectivite_id!}]
-            : null,
-        actions: args?.actionId ? [{id: args.actionId}] : null,
+        axes: axeId ? [{id: axeId, collectivite_id: collectivite_id!}] : null,
+        actions: actionId ? [{id: actionId}] : null,
       } as never),
     {
       meta: {disableToast: true},
       onSuccess: data => {
-        if (args && args?.axeId) {
-          if (args.isAxePage) {
-            queryClient.invalidateQueries(['plan_action', args.axeId]);
-            history.push(
-              makeCollectivitePlanActionAxeFicheUrl({
-                collectiviteId: collectivite_id!,
-                ficheUid: data[0].id!.toString(),
-                planActionUid: args.planActionId!.toString(),
-                axeUid: args.axeId.toString(),
-              })
-            );
-          } else {
-            queryClient.invalidateQueries(['plan_action', args.planActionId]);
-            history.push(
-              makeCollectivitePlanActionFicheUrl({
-                collectiviteId: collectivite_id!,
-                ficheUid: data[0].id!.toString(),
-                planActionUid: args.planActionId!.toString(),
-              })
-            );
-          }
-        } else {
-          queryClient.invalidateQueries([
-            'fiches_non_classees',
-            collectivite_id,
-          ]);
-          history.push(
-            makeCollectiviteFicheNonClasseeUrl({
+        // redirige sur la nouvelle fiche du plan
+        if (axeId) {
+          if (isAxePage) {
+            queryClient.invalidateQueries(['plan_action', axeId]);
+            const url = makeCollectivitePlanActionAxeFicheUrl({
               collectiviteId: collectivite_id!,
               ficheUid: data[0].id!.toString(),
-            })
-          );
+              planActionUid: planActionId!.toString(),
+              axeUid: axeId.toString(),
+            });
+            return openUrl(url);
+          }
+
+          queryClient.invalidateQueries(['plan_action', planActionId]);
+          const url = makeCollectivitePlanActionFicheUrl({
+            collectiviteId: collectivite_id!,
+            ficheUid: data[0].id!.toString(),
+            planActionUid: planActionId!.toString(),
+          });
+          return openUrl(url, openInNewTab);
         }
+
+        // ou sur la nouvelle fiche non classée
+        queryClient.invalidateQueries(['fiches_non_classees', collectivite_id]);
+        const url = makeCollectiviteFicheNonClasseeUrl({
+          collectiviteId: collectivite_id!,
+          ficheUid: data[0].id!.toString(),
+        });
+        openUrl(url, openInNewTab);
       },
     }
   );
