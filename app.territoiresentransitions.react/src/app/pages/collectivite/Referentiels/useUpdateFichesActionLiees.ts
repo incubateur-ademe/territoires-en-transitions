@@ -1,6 +1,7 @@
 import {useMutation, useQueryClient} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {FicheResume} from '../PlansActions/FicheAction/data/types';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 
 type TUpdateFichesActionLieesArgs = {
   /** liste courante des fiches associées à l'action */
@@ -14,6 +15,7 @@ type TUpdateFichesActionLieesArgs = {
  */
 export const useUpdateFichesActionLiees = (action_id: string) => {
   const queryClient = useQueryClient();
+  const collectivite_id = useCollectiviteId();
 
   return useMutation(
     async ({fiches, fiches_liees}: TUpdateFichesActionLieesArgs) => {
@@ -44,7 +46,7 @@ export const useUpdateFichesActionLiees = (action_id: string) => {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(['fiche_action_action', action_id]);
+        queryClient.invalidateQueries(['fiche_action_liees', collectivite_id]);
       },
     }
   );
