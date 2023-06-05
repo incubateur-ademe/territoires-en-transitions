@@ -63,7 +63,7 @@ end;
 $$ language plpgsql security definer
                     stable;
 
-create view private.fiche_resume as
+create or replace view private.fiche_resume as
 select case when a.id is null then null else array_agg(a.*) end as plans,
        fa.titre,
        fa.id,
