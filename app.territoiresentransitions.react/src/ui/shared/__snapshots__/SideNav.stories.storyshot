@@ -66,7 +66,9 @@ exports[`Storyshots ui/shared/SideNav Navigation Avec Sections 1`] = `
           Lien 1
         </a>
       </li>
-      <li>
+      <li
+        data-test="SideNav-section"
+      >
         <div
           className="flex items-start w-full"
         >
@@ -88,6 +90,7 @@ exports[`Storyshots ui/shared/SideNav Navigation Avec Sections 1`] = `
           >
             <button
               className="p-0.5"
+              data-test="SideNav-section-toggle-button"
               onClick={[Function]}
               title="Ouvrir la section"
             >
@@ -98,7 +101,9 @@ exports[`Storyshots ui/shared/SideNav Navigation Avec Sections 1`] = `
           </div>
         </div>
       </li>
-      <li>
+      <li
+        data-test="SideNav-section"
+      >
         <div
           className="flex items-start w-full"
         >
@@ -120,6 +125,7 @@ exports[`Storyshots ui/shared/SideNav Navigation Avec Sections 1`] = `
           >
             <button
               className="p-0.5"
+              data-test="SideNav-section-toggle-button"
               onClick={[Function]}
               title="Ouvrir la section"
             >
