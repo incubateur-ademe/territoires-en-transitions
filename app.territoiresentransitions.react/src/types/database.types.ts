@@ -933,6 +933,7 @@ export interface Database {
         Row: {
           action_id: string
           fiche_id: number
+          fiche_resume: unknown | null
         }
         Insert: {
           action_id: string
@@ -4690,6 +4691,19 @@ export interface Database {
             Args: Record<PropertyKey, never>
             Returns: string
           }
+      fiche_resume: {
+        Args: {
+          "": unknown
+        }
+        Returns: {
+          collectivite_id: number | null
+          id: number | null
+          pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
+          plans: unknown[] | null
+          statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
+          titre: string | null
+        }[]
+      }
       filter_fiches_action: {
         Args: {
           collectivite_id: number
@@ -6064,6 +6078,10 @@ export interface Database {
       }
       runtests:
         | {
+            Args: Record<PropertyKey, never>
+            Returns: string[]
+          }
+        | {
             Args: {
               "": unknown
             }
@@ -6073,10 +6091,6 @@ export interface Database {
             Args: {
               "": string
             }
-            Returns: string[]
-          }
-        | {
-            Args: Record<PropertyKey, never>
             Returns: string[]
           }
       save_reponse: {
