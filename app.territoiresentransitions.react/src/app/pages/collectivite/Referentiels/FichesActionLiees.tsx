@@ -16,7 +16,10 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
   const {actionId} = props;
   const collectivite = useCurrentCollectivite();
   const {data: fiches} = useFichesActionLiees(actionId);
-  const {mutate: createFicheAction} = useCreateFicheAction({actionId});
+  const {mutate: createFicheAction} = useCreateFicheAction({
+    actionId,
+    openInNewTab: true,
+  });
   const {mutate: updateFichesActionLiees} =
     useUpdateFichesActionLiees(actionId);
   const isReadonly = collectivite?.readonly ?? false;
