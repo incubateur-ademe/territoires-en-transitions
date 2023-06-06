@@ -28,7 +28,7 @@ with
     fiches as (
         select distinct fa.*,
                         case
-                            when fa.statut in ('À venir', 'En cours', 'En pause')
+                            when fa.statut not in ('À venir', 'En cours', 'En pause')
                                 then 'NC'
                             when fa.amelioration_continue
                                 then  'Action en amélioration continue'
@@ -103,6 +103,7 @@ select
         from (
                  select echeance as id, count(*) as value
                  from fiches
+                 where echeance <> 'NC'
                  group by echeance
              ) t
     )
