@@ -12,7 +12,7 @@ const fetchActionListe = async (
   const query = supabaseClient
     .from('action_statuts')
     .select('action_id, referentiel, nom, identifiant, avancement')
-    .match({collectivite_id, concerne: true})
+    .eq('collectivite_id', collectivite_id)
     .in('type', ['action', 'sous-action'])
     .order('action_id', {ascending: true});
 
