@@ -53,7 +53,7 @@ const ActionDiscussionCommentaire = ({commentaire, discussion}: Props) => {
             {commentaire.created_by_nom}
           </span>
           <span className="text-gray-400 text-sm">
-            {format(creationDate, 'd MMMM y', {locale: fr})}
+            {format(creationDate, 'dd/mm/y', {locale: fr})}
           </span>
         </div>
         <p
