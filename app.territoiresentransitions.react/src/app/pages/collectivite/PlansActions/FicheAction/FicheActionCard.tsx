@@ -1,6 +1,6 @@
 import ActionCard from '../components/ActionCard';
 import {FicheAction, FicheResume} from './data/types';
-import {generateTitle} from './data/utils';
+import {formatNomPilotes, generateTitle} from './data/utils';
 import FicheActionBadgeStatut from './FicheActionForm/FicheActionBadgeStatut';
 
 function isFicheResumeFromAxe(
@@ -29,13 +29,7 @@ const generateDetails = (fiche: FicheAction | FicheResume) => {
     }
   }
   if (fiche.pilotes) {
-    details = details + `Pilote${fiche.pilotes.length > 1 ? 's' : ''}: `;
-
-    fiche.pilotes.forEach(
-      (pilote: any, index: number, array: unknown[]) =>
-        (details =
-          details + `${pilote.nom}${index < array.length - 1 ? ', ' : ''}`)
-    );
+    details += formatNomPilotes(fiche.pilotes);
   }
   return details;
 };

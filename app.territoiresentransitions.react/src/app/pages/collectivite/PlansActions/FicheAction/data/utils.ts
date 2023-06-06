@@ -20,3 +20,13 @@ export const getPersonneId = (personne: Personne): string =>
 
 /** Renvoie "Sans titre" si le string est undefined ou null */
 export const generateTitle = (title?: string | null) => title || 'Sans titre';
+
+/** formate la liste des personnes pilotes */
+export const formatNomPilotes = (pilotes: Personne[]) => {
+  if (!pilotes?.length) {
+    return '';
+  }
+  return `Pilote${pilotes.length > 1 ? 's' : ''} : ${pilotes
+    .map(({nom}) => nom)
+    .join(', ')}`;
+};
