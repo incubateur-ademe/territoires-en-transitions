@@ -13,12 +13,14 @@ const Selection = ({onStepClick, onBackClick}: Props) => {
         <h6 className="ml-8">Vous souhaitez</h6>
         <div className="flex justify-center gap-6">
           <SelectFlowButton
+            dataTest="ImporterPlan"
             title="Importer un plan d’action"
             subTitle="à partir d’un modèle"
             iconClass="fr-icon-upload-fill"
             onSelect={() => onStepClick(ParcoursCreationPlanSteps.IMPORTER)}
           />
           <SelectFlowButton
+            dataTest="CreerPlan"
             title="Créer un plan d’action"
             subTitle="suivez le guide, pas à pas"
             iconClass="fr-icon-edit-box-fill"
@@ -39,6 +41,7 @@ const Selection = ({onStepClick, onBackClick}: Props) => {
 export default Selection;
 
 type SelectFlowButtonProps = {
+  dataTest?: string;
   onSelect: () => void;
   iconClass: string;
   title: string;
@@ -46,13 +49,14 @@ type SelectFlowButtonProps = {
 };
 
 const SelectFlowButton = ({
+  dataTest,
   onSelect,
   iconClass,
   title,
   subTitle,
 }: SelectFlowButtonProps) => (
   <div className="bg-white border border-gray-200 border-b-4 border-b-bf500">
-    <button className="p-6" onClick={onSelect}>
+    <button data-test={dataTest} className="p-6" onClick={onSelect}>
       <div
         className={`${iconClass} flex !w-20 !h-20 mx-auto mb-6 before:!h-8 before:!w-8 before:!m-auto text-bf500`}
       />

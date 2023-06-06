@@ -56,6 +56,7 @@ const CreerPlan = ({onBackClick}: Props) => {
         >
           <Form>
             <FormikInput
+              data-test="PlanNomInput"
               name="nom"
               label="Nom du plan d’action"
               hint="Exemple : Plan Climat Air Énergie territorial 2022-2026"

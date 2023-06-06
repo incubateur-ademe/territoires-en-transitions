@@ -61,6 +61,11 @@ defineStep(/je navigue vers "([^"]*)" du fil d'ariane de la fiche/, axe => {
 });
 
 /** PLAN D'ACTION */
+defineStep(/je crée le plan "([^"]*)"/, titre => {
+  cy.get('[data-test=CreerPlan]').click();
+  cy.get('[data-test=PlanNomInput]').clear().type(titre);
+  cy.get('button').contains('Valider').click();
+});
 
 defineStep(
   /le nom du plan d'action est changé en "([^"]*)" dans la navigation/,
@@ -100,7 +105,7 @@ defineStep(/j'ajoute une fiche à "([^"]*)"/, titre => {
     .contains(titre)
     .within(() => {
       // le déplie
-      cy.root().parents().find('[data-test=BoutonDeplierAxe]').click();
+      cy.root().parent().find('[data-test=BoutonDeplierAxe]').click();
       // et demande la création de la fiche
       cy.root()
         .parents('[data-test=Axe]')
