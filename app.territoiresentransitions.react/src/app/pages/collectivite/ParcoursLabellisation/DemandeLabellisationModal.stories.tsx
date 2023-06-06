@@ -1,27 +1,38 @@
+import React from 'react';
 import {Story, Meta} from '@storybook/react';
 import {action} from '@storybook/addon-actions';
 import {
-  DemandeLabellisationModal,
+  DemandeLabellisationModalContent,
   TDemandeLabellisationModalProps,
 } from './DemandeLabellisationModal';
 
 export default {
-  component: DemandeLabellisationModal,
-  // on va désactiver les storyshots à cause du composant Dialog de mui
-  parameters: {storyshots: false},
+  component: DemandeLabellisationModalContent,
 } as Meta;
 
 const Template: Story<TDemandeLabellisationModalProps> = args => (
-  <DemandeLabellisationModal opened setOpened={action('setOpened')} {...args} />
+  <DemandeLabellisationModalContent {...args} onClose={action('onClose')} />
 );
 
-export const Etoile1 = Template.bind({});
-Etoile1.args = {
+export const Etoile1_ECI = Template.bind({});
+Etoile1_ECI.args = {
   parcoursLabellisation: {
     status: 'non_demandee',
     parcours: {
       collectivite_id: 1,
       referentiel: 'eci',
+      etoiles: '1',
+    },
+  },
+};
+
+export const Etoile1_CAE = Template.bind({});
+Etoile1_CAE.args = {
+  parcoursLabellisation: {
+    status: 'non_demandee',
+    parcours: {
+      collectivite_id: 1,
+      referentiel: 'cae',
       etoiles: '1',
     },
   },
@@ -51,8 +62,20 @@ Etoile2_3_4_CAE.args = {
   },
 };
 
-export const Etoile5 = Template.bind({});
-Etoile5.args = {
+export const Etoile5_ECI = Template.bind({});
+Etoile5_ECI.args = {
+  parcoursLabellisation: {
+    status: 'non_demandee',
+    parcours: {
+      collectivite_id: 1,
+      etoiles: '5',
+      referentiel: 'eci',
+    },
+  },
+};
+
+export const Etoile5_CAE = Template.bind({});
+Etoile5_CAE.args = {
   parcoursLabellisation: {
     status: 'non_demandee',
     parcours: {

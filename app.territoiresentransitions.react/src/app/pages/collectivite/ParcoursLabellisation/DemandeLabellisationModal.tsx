@@ -1,8 +1,8 @@
-import Dialog from '@material-ui/core/Dialog';
-import {CloseDialogButton} from 'ui/buttons/CloseDialogButton';
+import Modal from 'ui/shared/floating-ui/Modal';
 import {numLabels} from './numLabels';
 import {useEnvoiDemande} from './useEnvoiDemande';
 import {TCycleLabellisation} from './useCycleLabellisation';
+import {MessageCompletudeECi} from './MessageCompletudeECi';
 
 export type TDemandeLabellisationModalProps = {
   parcoursLabellisation: TCycleLabellisation;
@@ -62,83 +62,92 @@ const getMessage = (parcours: TCycleLabellisation['parcours']) => {
 };
 
 /**
- * Affiche la modale d'envoie de la demande d'audit
+ * Affiche la modale d'envoi de la demande d'audit
  */
 export const DemandeLabellisationModal = (
   props: TDemandeLabellisationModalProps
 ) => {
-  const {isLoading, envoiDemande} = useEnvoiDemande();
   const {parcoursLabellisation, opened, setOpened} = props;
   const {parcours, status} = parcoursLabellisation;
-  const {collectivite_id, referentiel, etoiles} = parcours || {};
-  const onClose = () => setOpened(false);
 
   // n'affiche rien si les donnnées ne sont pas valides
   if (
-    !parcours ||
-    !collectivite_id ||
-    (status !== 'non_demandee' && status !== 'demande_envoyee')
+    !parcours?.collectivite_id &&
+    status !== 'non_demandee' &&
+    status !== 'demande_envoyee'
   ) {
     return null;
   }
 
+  return (
+    <Modal
+      externalOpen={opened}
+      setExternalOpen={setOpened}
+      size="lg"
+      render={({close}) => (
+        <DemandeLabellisationModalContent {...props} onClose={close} />
+      )}
+    />
+  );
+};
+
+export const DemandeLabellisationModalContent = (
+  props: TDemandeLabellisationModalProps & {onClose: () => void}
+) => {
+  const {isLoading, envoiDemande} = useEnvoiDemande();
+  const {parcoursLabellisation, onClose} = props;
+  const {parcours, status} = parcoursLabellisation;
+  const {collectivite_id, referentiel, etoiles} = parcours || {};
+
   const canSubmit = referentiel && etoiles;
 
   return (
-    <Dialog
-      data-test="DemandeLabellisationModal"
-      open={opened}
-      onClose={onClose}
-      maxWidth="md"
-      fullWidth
-    >
-      <div className="p-7 flex flex-col">
-        <CloseDialogButton setOpened={setOpened} />
-        <h3>
-          {etoiles === '1'
-            ? 'Demander la première étoile'
-            : `Demander un audit pour la ${numLabels[etoiles!]} étoile`}
-        </h3>
-        <div className="w-full">
-          {status === 'non_demandee' && isLoading ? 'Envoi en cours...' : null}
-          {status === 'demande_envoyee' ? (
-            <div className="fr-alert fr-alert--success">
-              {etoiles === '1' ? submittedEtoile1 : submittedAutresEtoiles}
-            </div>
-          ) : null}
-          {status === 'non_demandee' && !isLoading ? (
-            <>
-              {getMessage(parcours)?.map((line, index) => (
-                <p key={index}>{line}</p>
-              ))}
+    <div className="p-7 flex flex-col" data-test="DemandeLabellisationModal">
+      <h3>
+        {etoiles === '1'
+          ? 'Demander la première étoile'
+          : `Demander un audit pour la ${numLabels[etoiles!]} étoile`}
+      </h3>
+      <div className="w-full">
+        {status === 'non_demandee' && isLoading ? 'Envoi en cours...' : null}
+        {status === 'demande_envoyee' ? (
+          <div className="fr-alert fr-alert--success">
+            {etoiles === '1' ? submittedEtoile1 : submittedAutresEtoiles}
+          </div>
+        ) : null}
+        {status === 'non_demandee' && !isLoading ? (
+          <>
+            {getMessage(parcours)?.map((line, index) => (
+              <p key={index}>{line}</p>
+            ))}
+            <MessageCompletudeECi parcours={parcours} />
+            <button
+              className="fr-btn"
+              data-test="EnvoyerDemandeBtn"
+              disabled={!canSubmit}
+              onClick={() =>
+                canSubmit &&
+                envoiDemande({
+                  collectivite_id: collectivite_id!,
+                  referentiel,
+                  etoiles,
+                  sujet: 'labellisation',
+                })
+              }
+            >
+              Envoyer ma demande
+            </button>
+            {etoiles !== '1' ? (
               <button
-                className="fr-btn"
-                data-test="EnvoyerDemandeBtn"
-                disabled={!canSubmit}
-                onClick={() =>
-                  canSubmit &&
-                  envoiDemande({
-                    collectivite_id,
-                    referentiel,
-                    etoiles,
-                    sujet: 'labellisation',
-                  })
-                }
+                className="fr-btn fr-btn--secondary fr-ml-4w"
+                onClick={onClose}
               >
-                Envoyer ma demande
+                Revenir à la préparation de l’audit
               </button>
-              {etoiles !== '1' ? (
-                <button
-                  className="fr-btn fr-btn--secondary fr-ml-4w"
-                  onClick={onClose}
-                >
-                  Revenir à la préparation de l’audit
-                </button>
-              ) : null}
-            </>
-          ) : null}
-        </div>
+            ) : null}
+          </>
+        ) : null}
       </div>
-    </Dialog>
+    </div>
   );
 };

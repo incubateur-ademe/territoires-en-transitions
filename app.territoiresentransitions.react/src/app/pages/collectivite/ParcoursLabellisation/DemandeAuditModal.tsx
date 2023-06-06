@@ -1,7 +1,6 @@
-import Dialog from '@material-ui/core/Dialog';
 import {useState} from 'react';
 import classNames from 'classnames';
-import {CloseDialogButton} from 'ui/buttons/CloseDialogButton';
+import Modal from 'ui/shared/floating-ui/Modal';
 import {TSujetDemande} from './types';
 import {useEnvoiDemande} from './useEnvoiDemande';
 import {
@@ -9,24 +8,43 @@ import {
   submittedEtoile1,
   submittedAutresEtoiles,
 } from './DemandeLabellisationModal';
+import {MessageCompletudeECi} from './MessageCompletudeECi';
 
 /**
  * Affiche la modale de sélection du type d'audit souhaité et d'envoie de la
  * demande d'audit
  */
 export const DemandeAuditModal = (props: TDemandeLabellisationModalProps) => {
-  const {isLoading, envoiDemande} = useEnvoiDemande();
   const {parcoursLabellisation, opened, setOpened} = props;
-  const {parcours, status, labellisable, preuves} = parcoursLabellisation;
-  const {collectivite_id, referentiel, etoiles} = parcours || {};
-  const [sujet, setSujet] = useState<TSujetDemande | null>(
-    !labellisable ? 'cot' : null
-  );
-  const onClose = () => setOpened(false);
+  const {parcours} = parcoursLabellisation;
+  const {collectivite_id, referentiel} = parcours || {};
 
   if (!collectivite_id || !referentiel) {
     return null;
   }
+
+  return (
+    <Modal
+      externalOpen={opened}
+      setExternalOpen={setOpened}
+      size="lg"
+      render={({close}) => (
+        <DemandeAuditModalContent {...props} onClose={close} />
+      )}
+    />
+  );
+};
+
+export const DemandeAuditModalContent = (
+  props: TDemandeLabellisationModalProps & {onClose: () => void}
+) => {
+  const {isLoading, envoiDemande} = useEnvoiDemande();
+  const {parcoursLabellisation, onClose} = props;
+  const {parcours, status, labellisable, preuves} = parcoursLabellisation;
+  const {collectivite_id, referentiel, etoiles} = parcours || {};
+  const [sujet, setSujet] = useState<TSujetDemande | null>(
+    labellisable ? null : 'cot'
+  );
 
   // on doit afficher un meesage d'aide si la collectivité est non labellisable
   // car le critère fichier n'est pas atteint
@@ -39,24 +57,18 @@ export const DemandeAuditModal = (props: TDemandeLabellisationModalProps) => {
   const asterique = aide ? <sup>*</sup> : null;
 
   return (
-    <Dialog
-      data-test="DemandeAuditModal"
-      open={opened}
-      onClose={onClose}
-      maxWidth="md"
-      fullWidth
-    >
-      <div className="p-7 flex flex-col">
-        <CloseDialogButton setOpened={setOpened} />
-        <h3>Demander un audit</h3>
-        <div className="w-full">
-          {status === 'non_demandee' && isLoading ? 'Envoi en cours...' : null}
-          {status === 'demande_envoyee' ? (
-            <div className="fr-alert fr-alert--success">
-              {etoiles === '1' ? submittedEtoile1 : submittedAutresEtoiles}
-            </div>
-          ) : null}
-          {status === 'non_demandee' && !isLoading ? (
+    <div className="p-7 flex flex-col" data-test="DemandeAuditModal">
+      <h3>Demander un audit</h3>
+      <div className="w-full">
+        {status === 'non_demandee' && isLoading ? 'Envoi en cours...' : null}
+        {status === 'demande_envoyee' ? (
+          <div className="fr-alert fr-alert--success">
+            {etoiles === '1' ? submittedEtoile1 : submittedAutresEtoiles}
+          </div>
+        ) : null}
+        {status === 'non_demandee' && !isLoading ? (
+          <>
+            <MessageCompletudeECi parcours={parcours} />
             <fieldset className="fr-fieldset">
               <legend className="fr-fieldset__legend fr-fieldset__legend--regular">
                 Quel type d’audit souhaitez-vous demander ?
@@ -80,36 +92,36 @@ export const DemandeAuditModal = (props: TDemandeLabellisationModalProps) => {
               >
                 Audit <b>de</b> labellisation{asterique}
               </RadioButton>
-              {aide}
-              <div className={classNames({'fr-mt-2w': !aide})}>
-                <button
-                  className="fr-btn"
-                  data-test="EnvoyerDemandeBtn"
-                  disabled={!sujet}
-                  onClick={() =>
-                    sujet &&
-                    envoiDemande({
-                      collectivite_id,
-                      etoiles: etoiles || null,
-                      referentiel,
-                      sujet,
-                    })
-                  }
-                >
-                  Envoyer ma demande
-                </button>
-                <button
-                  className="fr-btn fr-btn--secondary fr-ml-4w"
-                  onClick={onClose}
-                >
-                  Annuler
-                </button>
-              </div>
             </fieldset>
-          ) : null}
-        </div>
+            {aide}
+            <div className={classNames({'fr-mt-2w': !aide})}>
+              <button
+                className="fr-btn"
+                data-test="EnvoyerDemandeBtn"
+                disabled={!sujet}
+                onClick={() =>
+                  sujet &&
+                  envoiDemande({
+                    collectivite_id: collectivite_id!,
+                    etoiles: etoiles || null,
+                    referentiel: referentiel!,
+                    sujet,
+                  })
+                }
+              >
+                Envoyer ma demande
+              </button>
+              <button
+                className="fr-btn fr-btn--secondary fr-ml-4w"
+                onClick={onClose}
+              >
+                Annuler
+              </button>
+            </div>
+          </>
+        ) : null}
       </div>
-    </Dialog>
+    </div>
   );
 };
 
