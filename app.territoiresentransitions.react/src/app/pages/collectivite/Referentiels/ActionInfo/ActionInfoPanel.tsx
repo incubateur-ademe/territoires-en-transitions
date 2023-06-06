@@ -3,6 +3,7 @@ import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinition
 import {ActionInfoSommaire} from './ActionInfoSommaire';
 import {getItems} from './toc-items';
 import {ActionInfoDetail} from './ActionInfoDetail';
+import {useShowDescIntoInfoPanel} from '../../Audit/useAudit';
 
 export type TActionInfoProps = {action: ActionDefinitionSummary};
 
@@ -12,7 +13,9 @@ export type TActionInfoProps = {action: ActionDefinitionSummary};
  */
 export const ActionInfoPanel = ({action}: TActionInfoProps) => {
   // items à afficher dans le sommaire
-  const items = getItems(action);
+  const showDescIntoInfoPanel =
+    useShowDescIntoInfoPanel() && Boolean(action.description);
+  const items = getItems(action, showDescIntoInfoPanel);
 
   // item sélectionné (le 1er par défaut)
   const [current, setCurrent] = useState(items?.[0].id);
@@ -26,7 +29,7 @@ export const ActionInfoPanel = ({action}: TActionInfoProps) => {
         setCurrent={setCurrent}
       />
       {currentItem ? (
-        <ActionInfoDetail item={currentItem} actionId={action.id} />
+        <ActionInfoDetail item={currentItem} action={action} />
       ) : null}
     </>
   );

@@ -17,6 +17,7 @@ import ActionPreuvePanel from 'ui/shared/actions/ActionPreuvePanel/ActionPreuveP
 import {DownloadDocs} from './DownloadDocs';
 import ActionAuditStatut from '../Audit/ActionAuditStatut';
 import {ActionAuditDetail} from '../Audit/ActionAuditDetail';
+import {useShowDescIntoInfoPanel} from '../Audit/useAudit';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {useActionLinkedIndicateurDefinitions} from './useActionLinkedIndicateurDefinitions';
 import Alerte from 'ui/shared/Alerte';
@@ -43,6 +44,7 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
   const referentielId = useReferentielId() as ReferentielParamOption;
   const {prevActionLink, nextActionLink} = usePrevAndNextActionLinks(action.id);
   const preuvesCount = useActionPreuvesCount(action);
+  const showDescIntoInfoPanel = useShowDescIntoInfoPanel();
 
   const actionLinkedIndicateurDefinitions =
     useActionLinkedIndicateurDefinitions(action?.id);
@@ -95,16 +97,22 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
         <ActionAuditStatut action={action} />
         <ActionAuditDetail action={action} />
 
-        <Alerte state="information" classname="fr-my-9v">
-          <div
-            className="htmlContent"
-            dangerouslySetInnerHTML={{
-              __html: addTargetToContentAnchors(action.description ?? ''),
-            }}
-          />
-        </Alerte>
+        {!showDescIntoInfoPanel && (
+          <Alerte state="information" classname="fr-mt-9v">
+            <div
+              className="htmlContent"
+              dangerouslySetInnerHTML={{
+                __html: addTargetToContentAnchors(action.description || ''),
+              }}
+            />
+          </Alerte>
+        )}
 
-        <Tabs defaultActiveTab={activeTab} onChange={handleChange}>
+        <Tabs
+          defaultActiveTab={activeTab}
+          onChange={handleChange}
+          className="fr-mt-9v"
+        >
           <Tab label="Suivi de l'action" icon="seedling">
             <ActionFollowUp action={action} />
           </Tab>
