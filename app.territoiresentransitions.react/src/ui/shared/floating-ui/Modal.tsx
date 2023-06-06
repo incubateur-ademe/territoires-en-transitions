@@ -28,7 +28,9 @@ export type ModalProps = {
      afin de pouvoir la fermer */
   externalOpen?: boolean;
   /* accompagne "externalOpen" afin de pouvoir fermer la modale */
-  setExternalOpen?: Dispatch<SetStateAction<boolean>>;
+  setExternalOpen?:
+    | Dispatch<SetStateAction<boolean>>
+    | ((opened: boolean) => void);
   /* max-width prédéfinies dans le DSFR, valeur par défaut "md" */
   size?: 'sm' | 'md' | 'lg' | 'xl';
   /** désactive la fermeture lors du clic sur le fond */
