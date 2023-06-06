@@ -155,4 +155,4 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     Alors aucune fiche n'est présente
 
     Quand je filtre les fiches par "Michel Sapasse" du filtre "personne-pilote"
-    Alors la fiche contenant "Pilote: Michel Sapasse" est visible
+    Alors la fiche contenant "Pilote : Michel Sapasse" est visible
