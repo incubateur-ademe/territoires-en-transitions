@@ -11,7 +11,7 @@ import {
 import FicheActionBadgeStatut from './FicheActionBadgeStatut';
 import {FicheResume} from '../data/types';
 import {TAxeInsert} from 'types/alias';
-import {generateTitle} from '../data/utils';
+import {generateTitle, formatNomPilotes} from '../data/utils';
 
 type Props = {
   ficheCouranteId: number | null;
@@ -101,16 +101,15 @@ const FichesLiees = ({
     return selectedFiches;
   };
 
-  const generateCardDetails = (plan: TAxeInsert | null) => {
-    if (plan && plan) {
-      if (plan.nom && plan.nom.length > 0) {
-        return plan.nom;
-      } else {
-        return 'Sans titre';
-      }
-    } else {
-      return 'Fiches non classées';
+  const generateCardDetails = (fiche: FicheResume) => {
+    const {plans, pilotes} = fiche;
+    const plan = plans?.[0];
+
+    let details = plan?.nom || 'Fiches non classées';
+    if (pilotes) {
+      details += ` | ${formatNomPilotes(pilotes)}`;
     }
+    return details;
   };
 
   return (
@@ -148,7 +147,7 @@ const FichesLiees = ({
                   <FicheActionBadgeStatut statut={fiche.statut} small />
                 )
               }
-              details={generateCardDetails(fiche.plans && fiche.plans[0])}
+              details={generateCardDetails(fiche)}
               title={generateTitle(fiche.titre)}
             />
           ))}
