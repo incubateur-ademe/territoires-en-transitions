@@ -373,3 +373,5 @@ labellisation/demande [labellisation/demande@v2.30.0] 2023-05-22T14:38:11Z Amand
 retool/labellisation [retool/labellisation@v2.30.0] 2023-05-22T14:46:23Z Amandine Jacquelin <conta@LanceLibre> # Ajoute les informations du demandeur
 labellisation/preuve_v2 [labellisation/preuve_v2@v2.31.0] 2023-06-01T14:12:28Z Florian <florian@derfurth.com> # Répare le bug de la demande absente
 @v2.35.0 2023-06-07T15:29:06Z Florian <florian@derfurth.com> # Fiches action liées et améliorations
+
+labellisation/parcours [labellisation/parcours@v2.34.0] 2023-06-06T13:43:28Z Amandine Jacquelin <conta@LanceLibre> # Une demande COT 1ère étoile n'a plus besoin de fournir de document
