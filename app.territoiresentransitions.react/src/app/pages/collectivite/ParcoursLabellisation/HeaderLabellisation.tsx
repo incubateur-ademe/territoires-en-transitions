@@ -16,6 +16,7 @@ import {
 import {useStartAudit, TStartAudit} from './useStartAudit';
 import {useValidateAudit, TValidateAudit} from './useValidateAudit';
 import {TEtoiles} from './types';
+import {TAuditeur, useAuditeurs} from '../Audit/useAudit';
 
 export type THeaderLabellisationProps = {
   parcoursLabellisation: TCycleLabellisation;
@@ -35,12 +36,16 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
     labellisable,
     peutCommencerAudit,
   } = parcoursLabellisation;
+  const {data: auditeurs} = useAuditeurs();
 
   if (!parcours) {
     return null;
   }
 
-  const headerMessageContent = getHeaderMessageContent(parcoursLabellisation);
+  const headerMessageContent = getHeaderMessageContent(
+    parcoursLabellisation,
+    auditeurs
+  );
   const {collectivite_id, referentiel, etoiles, audit, completude_ok} =
     parcours;
   const canSubmitDemande = labellisable || (isCOT && completude_ok);
@@ -119,7 +124,8 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
 // renvoi le message d'entête correspondant au positionnement de la collectivité
 // dans le parcours de labellisation
 const getHeaderMessageContent = (
-  parcoursLabellisation: TCycleLabellisation
+  parcoursLabellisation: TCycleLabellisation,
+  auditeurs: TAuditeur[] | null | undefined
 ) => {
   const {status, isAuditeur, peutCommencerAudit} = parcoursLabellisation;
 
@@ -127,12 +133,19 @@ const getHeaderMessageContent = (
     return 'Demande envoyée';
   }
 
+  const listeAuditeurs = auditeurs
+    ?.map(({prenom, nom}) => `${prenom} ${nom}`)
+    .join(', ');
+
   if (status === 'audit_en_cours' && !isAuditeur) {
-    return 'Audit en cours';
+    return 'Audit en cours' + (listeAuditeurs ? `, par ${listeAuditeurs}` : '');
   }
 
   if (status === 'audit_valide') {
-    return 'Labellisation en cours';
+    return (
+      'Labellisation en cours' +
+      (listeAuditeurs ? ` - audité par ${listeAuditeurs}` : '')
+    );
   }
 
   // pas de message dans les autres cas
