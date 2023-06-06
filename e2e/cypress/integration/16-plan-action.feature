@@ -32,6 +32,7 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     Et que je suis sur la page "Plans action" de la collectivité "1"
     # ajouter un nouveau plan d'action
     Quand je clique sur le bouton "Ajouter un plan d'action"
+    Et que je crée le plan "Plan test"
     # ajouter un nouveau titre et lui donner ce contenu "Axe 1: les tests passent"
     Quand j'ajoute un nouveau titre
     Et que je le nomme "Axe 1: les tests passent"
@@ -44,14 +45,14 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     # enlever la fiche du plan d'action
     # le plan doit apparaitre dans "Sélectionner un nouvel emplacement"
     Quand j'enlève la fiche du plan
-    Alors le plan "Sans titre" est visible dans le tableau nouvel emplacement
+    Alors le plan "Plan test" est visible dans le tableau nouvel emplacement
     # fermer la modale
     # le fil d'ariane de la fiche doit contenir "Fiches non classées"
     Quand je clique en dehors de la boîte de dialogue
     Alors le fil d'ariane de la fiche contient "Fiches non classées"
-    # ranger la fiche dans Axe 1: les tests passent du plan "Sans titre"
+    # ranger la fiche dans Axe 1: les tests passent du plan "Plan test"
     Quand j'ouvre la modale "Ranger la fiche"
-    Et que je clique sur l'axe "Sans titre" du tableau nouvel emplacement
+    Et que je clique sur l'axe "Plan test" du tableau nouvel emplacement
     Et que je clique sur l'axe "Axe 1: les tests passent" du tableau nouvel emplacement
     Et que je valide cet emplacement
     Alors l'axe "Axe 1: les tests passent" est visible dans les emplacements sélectionnés pour cette fiche
@@ -66,11 +67,8 @@ Fonctionnalité: Gérer les fiches et les plans d'action
 
     # créer un plan d'action depuis la barre de navigation latérale
     Quand je clique sur le bouton "Ajouter un plan d'action"
+    Et que je crée le plan "Plan test"
     Alors le "Plan action" est visible
-
-    # lui donner le titre "Plan test"
-    Quand je saisi la valeur "Plan test" dans le champ "header input"
-    Et que je clique en dehors de la boîte de dialogue
     Alors le nom du plan d'action est changé en "Plan test" dans la navigation
 
     # ajouter un nouveau titre et lui donner ce contenu "Axe 1: les tests passent"
@@ -118,12 +116,7 @@ Fonctionnalité: Gérer les fiches et les plans d'action
 
     # créer un plan d'action depuis la barre de navigation latérale
     Quand je clique sur le bouton "Ajouter un plan d'action"
-    Alors le "Plan action" est visible
-
-    # lui donner le titre "Plan test"
-    Quand je saisi la valeur "Plan test" dans le champ "header input"
-    Et que je clique en dehors de la boîte de dialogue
-    Alors le nom du plan d'action est changé en "Plan test" dans la navigation
+    Et que je crée le plan "Plan test"
 
     # ajouter un nouveau titre et lui donner ce contenu "Axe 1: les tests passent"
     Quand j'ajoute un nouveau titre
