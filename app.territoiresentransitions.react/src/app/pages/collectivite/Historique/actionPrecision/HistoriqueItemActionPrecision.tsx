@@ -1,5 +1,4 @@
-import {makeCollectiviteTacheUrl, ReferentielParamOption} from 'app/paths';
-import {useReferentielId} from 'core-logic/hooks/params';
+import {makeCollectiviteTacheUrl} from 'app/paths';
 import Modification from 'app/pages/collectivite/Historique/Modification';
 import {THistoriqueItemProps} from '../types';
 import {
@@ -7,9 +6,9 @@ import {
   DetailPrecedenteModificationWrapper,
 } from '../DetailModificationWrapper';
 import classNames from 'classnames';
+import {referentielId} from 'utils/actions';
 
 const HistoriqueItemActionPrecision = (props: THistoriqueItemProps) => {
-  const referentielId = useReferentielId() as ReferentielParamOption;
   const {item} = props;
   const {
     action_id,
@@ -31,7 +30,7 @@ const HistoriqueItemActionPrecision = (props: THistoriqueItemProps) => {
       ]}
       detail={<HistoriqueItemActionPrecisionDetails item={item} />}
       pageLink={makeCollectiviteTacheUrl({
-        referentielId,
+        referentielId: referentielId(action_id || ''),
         collectiviteId: collectivite_id,
         actionId: action_id!,
       })}
