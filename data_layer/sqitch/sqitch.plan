@@ -372,3 +372,4 @@ plan_action/fiches [plan_action/fiches@v2.34.0] 2023-06-05T14:15:31Z Florian <fl
 labellisation/demande [labellisation/demande@v2.30.0] 2023-05-22T14:38:11Z Amandine Jacquelin <conta@LanceLibre> # Ajoute le demandeur à la demande
 retool/labellisation [retool/labellisation@v2.30.0] 2023-05-22T14:46:23Z Amandine Jacquelin <conta@LanceLibre> # Ajoute les informations du demandeur
 labellisation/preuve_v2 [labellisation/preuve_v2@v2.31.0] 2023-06-01T14:12:28Z Florian <florian@derfurth.com> # Répare le bug de la demande absente
+@v2.35.0 2023-06-07T15:29:06Z Florian <florian@derfurth.com> # Fiches action liées et améliorations
