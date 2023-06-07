@@ -91,7 +91,7 @@ seed:
         seed:latest deploy --mode change
 
 load-json-build:
-    FROM curlimages/curl
+    FROM curlimages/curl:8.1.0
     ENV SERVICE_ROLE_KEY
     ENV API_URL
     COPY ./data_layer/content /content
@@ -237,7 +237,7 @@ client-test:
         client-test:latest
 
 curl-test-build:
-    FROM curlimages/curl
+    FROM curlimages/curl:8.1.0
     COPY ./data_layer/scripts/curl_test.sh /curl_test.sh
     ENTRYPOINT sh ./curl_test.sh
     SAVE IMAGE curl-test:latest
