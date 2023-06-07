@@ -1,6 +1,7 @@
+import {useLayoutEffect, useRef, useState} from 'react';
+import {useLocation} from 'react-router-dom';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {useActionCommentaire} from 'core-logic/hooks/useActionCommentaire';
-import {useState} from 'react';
 import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
 import SubActionHeader from './SubActionHeader';
 
@@ -15,9 +16,21 @@ type SubActionTaskProps = {
 const SubActionTask = ({task}: SubActionTaskProps): JSX.Element => {
   const [openCommentaire, setOpenCommentaire] = useState(false);
   const {actionCommentaire} = useActionCommentaire(task.id);
+  const ref = useRef<HTMLDivElement>(null);
+
+  // scroll jusqu'à la tâche indiquée dans l'url
+  const {hash} = useLocation();
+  useLayoutEffect(() => {
+    const id = hash.slice(1); // enlève le "#" au début du hash
+    if (id === task.id && ref.current) {
+      ref.current.scrollIntoView({
+        behavior: 'smooth',
+      });
+    }
+  }, [hash, ref.current]);
 
   return (
-    <div data-test={`task-${task.id}`}>
+    <div data-test={`task-${task.id}`} ref={ref}>
       {/* Première ligne */}
       <SubActionHeader action={task} />
 
