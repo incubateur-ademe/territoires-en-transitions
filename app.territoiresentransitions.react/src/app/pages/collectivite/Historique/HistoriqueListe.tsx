@@ -80,12 +80,16 @@ const makeKey = (item: THistoriqueItem): string => {
     type === 'action_statut' ||
     type === 'action_precision' ||
     type === 'preuve'
-  )
+  ) {
     return `${type}-${action_id}-${timestamp}`;
-  if (type === 'reponse') return `${type}-${question_id}-${timestamp}`;
+  }
+
+  if (type === 'reponse' || type === 'justification') {
+    return `${type}-${question_id}-${timestamp}`;
+  }
 
   // TODO: gérer les autres types de modification
-  return 'TODO';
+  return type;
 };
 
 export default HistoriqueListeConnected;
