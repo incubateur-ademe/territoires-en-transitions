@@ -45,7 +45,7 @@ const ColoredBar = ({score}: {score: ActionScore}) => {
   return (
     <div className="flex gap-3 items-center justify-end">
       <div className="text-sm font-bold">
-        <TweenText text={`${toFixed(fait_width)} %`} align-right />
+        <TweenText text={`${toFixed(fait_width, 0)} %`} align-right />
       </div>
       <div className="flex pt-1">
         <div
@@ -104,7 +104,7 @@ const formatAvancementScore = (
   avancementPoint: number,
   maxPoint: number
 ): string => {
-  return `${maxPoint ? toFixed((avancementPoint / maxPoint) * 100) : 0} %`;
+  return `${maxPoint ? toFixed((avancementPoint / maxPoint) * 100, 0) : 0} %`;
 };
 
 const Square = ({size, color}: {size: number; color: string}) => (
