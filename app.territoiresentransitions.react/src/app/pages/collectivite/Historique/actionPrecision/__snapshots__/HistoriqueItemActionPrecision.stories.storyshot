@@ -96,7 +96,7 @@ exports[`Storyshots app/pages/collectivite/Historique/actionPrecision/Historique
       </div>
       <a
         className="flex items-center ml-auto fr-btn fr-btn--secondary !px-4 border border-bf500"
-        href="/collectivite/1/action/null/cae_1.2/#cae_1.2.3.1"
+        href="/collectivite/1/action/cae/cae_1.2.3/#cae_1.2.3.1"
         onClick={[Function]}
       >
         Voir la page
@@ -206,7 +206,7 @@ exports[`Storyshots app/pages/collectivite/Historique/actionPrecision/Historique
       </div>
       <a
         className="flex items-center ml-auto fr-btn fr-btn--secondary !px-4 border border-bf500"
-        href="/collectivite/1/action/null/cae_1.2/#cae_1.2.3.1"
+        href="/collectivite/1/action/cae/cae_1.2.3/#cae_1.2.3.1"
         onClick={[Function]}
       >
         Voir la page
