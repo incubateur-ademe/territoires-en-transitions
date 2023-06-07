@@ -122,7 +122,7 @@ action_id: eci_3.2.0
 ```formule
 reponse(SPASER, OUI) 
 ```
-Les collectivités ayant un montant total annuel des achats inférieur à 100 millions d’euros hors-taxes ne sont pas concernées par le SPASER.
+Les collectivités ayant un montant total annuel des achats inférieur à 50 millions d’euros hors-taxes ne sont pas concernées par le SPASER.
 
 # Désactivation eci_3.4 liee competence dev eco
 ```yaml
