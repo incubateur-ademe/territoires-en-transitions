@@ -87,48 +87,40 @@ const SyntheseGraphsList = ({
         {
           id: 'statut-avancement',
           title: "Répartition par statut d'avancement",
-          data: data.statuts
-            ? data.statuts.map(st => ({
-                ...st,
-                id: st.id !== 'NC' ? st.id : 'Sans statut',
-                color: statusColor[st.id],
-              }))
-            : [],
+          data: data.statuts.map(st => ({
+            ...st,
+            id: st.id !== 'NC' ? st.id : 'Sans statut',
+            color: statusColor[st.id],
+          })),
         },
         {
           id: 'personne-pilote',
           title: 'Répartition par personne pilote',
-          data: data.pilotes
-            ? data.pilotes.map(pi => ({
-                ...pi,
-                id: pi.id !== 'NC' ? pi.id : 'Sans pilote',
-              }))
-            : [],
+          data: data.pilotes.map(pi => ({
+            ...pi,
+            id: pi.id !== 'NC' ? pi.id : 'Sans pilote',
+          })),
         },
         {
           id: 'elu-referent',
           title: 'Répartition par élu·e référent·e',
-          data: data.referents
-            ? data.referents.map(ref => ({
-                ...ref,
-                id: ref.id !== 'NC' ? ref.id : 'Sans élu·e référent·e',
-              }))
-            : [],
+          data: data.referents.map(ref => ({
+            ...ref,
+            id: ref.id !== 'NC' ? ref.id : 'Sans élu·e référent·e',
+          })),
         },
         {
           id: 'niveau-priorite',
           title: 'Répartition par niveau de priorité',
-          data: data.priorites
-            ? data.priorites.map(pr => ({
-                ...pr,
-                id: pr.id !== 'NC' ? pr.id : 'Non priorisé',
-              }))
-            : [],
+          data: data.priorites.map(pr => ({
+            ...pr,
+            id: pr.id !== 'NC' ? pr.id : 'Non priorisé',
+          })),
         },
         {
           id: 'echeance',
           title: 'Répartition par échéance',
-          data: data.echeances ? data.echeances : [],
+          data: data.echeances,
         },
         // {
         //   title: 'Répartition par direction pilote',
