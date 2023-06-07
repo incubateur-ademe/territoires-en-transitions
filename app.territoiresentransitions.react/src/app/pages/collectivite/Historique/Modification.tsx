@@ -54,7 +54,7 @@ const Modification = ({
   return (
     <div data-test="item" className="flex flex-col gap-4 md:flex-row md:gap-6">
       {/* DATE */}
-      <div className="pr-6 w-min md:border-r md:border-gray-200">
+      <div className="pr-6 min-w-[11rem] md:border-r md:border-gray-200 flex items-start md:justify-end">
         <span
           className="py-1 px-2 text-sm uppercase whitespace-nowrap text-blue-600 bg-blue-100 rounded-md"
           title={`à ${format(modifiedAt, 'HH:mm')}`}

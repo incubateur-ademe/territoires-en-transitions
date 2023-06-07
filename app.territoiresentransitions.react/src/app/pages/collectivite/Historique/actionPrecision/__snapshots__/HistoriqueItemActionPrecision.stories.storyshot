@@ -6,7 +6,7 @@ exports[`Storyshots app/pages/collectivite/Historique/actionPrecision/Historique
   data-test="item"
 >
   <div
-    className="pr-6 w-min md:border-r md:border-gray-200"
+    className="pr-6 min-w-[11rem] md:border-r md:border-gray-200 flex items-start md:justify-end"
   >
     <span
       className="py-1 px-2 text-sm uppercase whitespace-nowrap text-blue-600 bg-blue-100 rounded-md"
@@ -116,7 +116,7 @@ exports[`Storyshots app/pages/collectivite/Historique/actionPrecision/Historique
   data-test="item"
 >
   <div
-    className="pr-6 w-min md:border-r md:border-gray-200"
+    className="pr-6 min-w-[11rem] md:border-r md:border-gray-200 flex items-start md:justify-end"
   >
     <span
       className="py-1 px-2 text-sm uppercase whitespace-nowrap text-blue-600 bg-blue-100 rounded-md"
