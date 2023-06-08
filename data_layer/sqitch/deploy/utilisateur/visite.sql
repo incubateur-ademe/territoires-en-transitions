@@ -3,12 +3,12 @@
 BEGIN;
 
 alter type visite_page
-    add value if not exists 'synthese_plans';
+    add value if not exists 'nouveau_plan';
 
-alter type visite_onglet
-    add value if not exists 'informations';
+alter type visite_page
+    add value if not exists 'nouveau_plan_import';
 
-alter type visite_onglet
-    add value if not exists 'commentaires';
+alter type visite_page
+    add value if not exists 'nouveau_plan_creation';
 
 COMMIT;

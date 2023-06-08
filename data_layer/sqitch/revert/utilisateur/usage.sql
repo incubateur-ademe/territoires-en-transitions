@@ -1,10 +1,7 @@
--- Revert tet:utilisateur/usage from pg
+-- Deploy tet:utilisateur/usage to pg
 
 BEGIN;
 
-drop table usage;
-
-drop type usage_action;
-drop type usage_fonction;
+-- on ne revert pas les enums
 
 COMMIT;
