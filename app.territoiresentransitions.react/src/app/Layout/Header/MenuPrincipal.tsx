@@ -60,10 +60,13 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
 /** Affiche un item de menu */
 const NavItem = (props: HeaderPropsWithModalState & {item: TNavItem}) => {
   const {item, setModalOpened, setOpenedId} = props;
-  const {to, label} = item;
+  const {to, label, urlPrefix} = item;
   // vérifie si l'item correspond au chemin courant
   const {pathname} = useLocation();
-  const current = pathname.startsWith(to) ? 'page' : undefined;
+  const current =
+    pathname.startsWith(to) || (urlPrefix && pathname.startsWith(urlPrefix))
+      ? 'page'
+      : undefined;
 
   return (
     <li className="fr-nav__item">

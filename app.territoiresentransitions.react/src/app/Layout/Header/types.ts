@@ -6,6 +6,7 @@ import {Maintenance} from '../useMaintenance';
 export type TNavItem = {
   label: string;
   to: string;
+  urlPrefix?: string;
   // indique que l'item n'est pas affiché quand la collectivité est en accès restreint
   acces_restreint?: boolean;
 };
