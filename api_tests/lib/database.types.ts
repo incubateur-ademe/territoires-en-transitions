@@ -4733,6 +4733,7 @@ export interface Database {
         Returns: {
           collectivite_id: number | null
           id: number | null
+          modified_at: string | null
           pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
           plans: unknown[] | null
           statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
@@ -6115,10 +6116,6 @@ export interface Database {
       }
       runtests:
         | {
-            Args: Record<PropertyKey, never>
-            Returns: string[]
-          }
-        | {
             Args: {
               "": unknown
             }
@@ -6128,6 +6125,10 @@ export interface Database {
             Args: {
               "": string
             }
+            Returns: string[]
+          }
+        | {
+            Args: Record<PropertyKey, never>
             Returns: string[]
           }
       save_reponse: {
@@ -6522,39 +6523,39 @@ export interface Database {
       time_bucket_gapfill:
         | {
             Args: {
+              bucket_width: number
+              ts: number
+              start?: number
+              finish?: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              start?: number
+              finish?: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              start?: number
+              finish?: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
               bucket_width: unknown
               ts: string
               start?: string
               finish?: string
             }
             Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              start?: number
-              finish?: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              start?: number
-              finish?: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              start?: number
-              finish?: number
-            }
-            Returns: number
           }
         | {
             Args: {
@@ -6599,15 +6600,15 @@ export interface Database {
       todo:
         | {
             Args: {
-              why: string
               how_many: number
+              why: string
             }
             Returns: boolean[]
           }
         | {
             Args: {
-              how_many: number
               why: string
+              how_many: number
             }
             Returns: boolean[]
           }
@@ -6834,6 +6835,8 @@ export interface Database {
         | "filtre_referentiel"
         | "filtre_niveau"
         | "filtre_remplissage"
+        | "annulation"
+        | "modele_import"
       visite_onglet:
         | "progression"
         | "priorisation"
@@ -6870,6 +6873,9 @@ export interface Database {
         | "plan_axe"
         | "fiches_non_classees"
         | "synthese_plans"
+        | "nouveau_plan"
+        | "nouveau_plan_import"
+        | "nouveau_plan_creation"
       visite_tag:
         | "cae"
         | "eci"
