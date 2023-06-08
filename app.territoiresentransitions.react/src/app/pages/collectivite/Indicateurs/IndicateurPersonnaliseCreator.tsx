@@ -1,30 +1,43 @@
+import {useHistory} from 'react-router-dom';
 import {IndicateurPersonnaliseForm} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseForm';
-import {indicateurPersonnaliseDefinitionRepository} from 'core-logic/api/repositories/IndicateurPersonnaliseDefinitionRepository';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {IndicateurPersonnaliseDefinitionWrite} from 'generated/dataLayer/indicateur_personnalise_definition_write';
-import React from 'react';
+import {
+  TIndicateurPersoDefinitionWrite,
+  useUpsertIndicateurPersoDefinition,
+} from './useUpsertIndicateurPersoDefinition';
+import {makeCollectiviteIndicateursUrl} from 'app/paths';
 
 export const IndicateurPersonnaliseCreator = (props: {onClose: () => void}) => {
   const collectiviteId = useCollectiviteId()!;
-  const freshData = (): IndicateurPersonnaliseDefinitionWrite => {
-    return {
-      collectivite_id: collectiviteId,
-      // identifiant: '',
-      titre: '',
-      description: '',
-      unite: '',
-      commentaire: '',
-    };
+  const newDefinition = {
+    collectivite_id: collectiviteId,
+    titre: '',
+    description: '',
+    unite: '',
+    commentaire: '',
   };
-  const [data, setData] = React.useState<IndicateurPersonnaliseDefinitionWrite>(
-    freshData()
-  );
 
-  const onSave = (definition: IndicateurPersonnaliseDefinitionWrite) => {
-    indicateurPersonnaliseDefinitionRepository.save(definition);
-    setData(freshData());
+  const {mutate: save} = useUpsertIndicateurPersoDefinition();
+  const history = useHistory();
+
+  const onSave = (definition: TIndicateurPersoDefinitionWrite) => {
+    save(definition, {
+      onSuccess: () => {
+        // redirige vers la page des indicateurs perso après la création
+        const url = makeCollectiviteIndicateursUrl({
+          collectiviteId,
+          indicateurView: 'perso',
+        });
+        if (history.location.pathname !== url) {
+          console.log(history.location.pathname, url);
+          history.push(url);
+        }
+      },
+    });
     props.onClose();
   };
 
-  return <IndicateurPersonnaliseForm indicateur={data} onSave={onSave} />;
+  return (
+    <IndicateurPersonnaliseForm indicateur={newDefinition} onSave={onSave} />
+  );
 };

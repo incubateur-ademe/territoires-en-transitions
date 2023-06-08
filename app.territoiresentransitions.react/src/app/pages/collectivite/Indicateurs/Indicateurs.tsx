@@ -1,11 +1,12 @@
-import {IndicateurPersonnaliseList} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseList';
-import {ConditionnalIndicateurReferentielList} from './ConditionnalIndicateurReferentielList';
-
-import {Switch} from '@material-ui/core';
-import {useParams} from 'react-router-dom';
 import {useState} from 'react';
+import {useParams} from 'react-router-dom';
+import {SwitchLabelLeft} from 'ui/shared/SwitchLabelLeft';
 import {referentielToName} from 'app/labels';
 import {indicateurViewParam, IndicateurViewParamOption} from 'app/paths';
+import {IndicateursNav} from './IndicateursNav';
+import {IndicateurPersonnaliseList} from './IndicateurPersonnaliseList';
+import {ConditionnalIndicateurReferentielList} from './ConditionnalIndicateurReferentielList';
+import {UiSearchBar} from 'ui/UiSearchBar';
 
 const viewTitles: Record<IndicateurViewParamOption, string> = {
   perso: 'Indicateurs personnalisés',
@@ -20,17 +21,21 @@ const viewTitles: Record<IndicateurViewParamOption, string> = {
 const ConditionnalIndicateurList = (props: {
   view: IndicateurViewParamOption;
   showOnlyIndicateurWithData: boolean;
+  pattern: string;
 }) => {
-  if (props.view === 'perso')
+  const {view, showOnlyIndicateurWithData, pattern} = props;
+  if (view === 'perso')
     return (
       <IndicateurPersonnaliseList
-        showOnlyIndicateurWithData={props.showOnlyIndicateurWithData}
+        showOnlyIndicateurWithData={showOnlyIndicateurWithData}
+        pattern={pattern}
       />
     );
   return (
     <ConditionnalIndicateurReferentielList
-      referentiel={props.view}
-      showOnlyIndicateurWithData={props.showOnlyIndicateurWithData}
+      referentiel={view}
+      showOnlyIndicateurWithData={showOnlyIndicateurWithData}
+      pattern={pattern}
     />
   );
 };
@@ -42,36 +47,44 @@ const Indicateurs = () => {
   const {vue} = useParams<{
     [indicateurViewParam]?: IndicateurViewParamOption;
   }>();
-  const current = vue ?? 'eci';
+  const current = vue || 'perso';
 
   const [showOnlyIndicateurWithData, setShowOnlyIndicateurWithData] =
     useState(false);
+  const [pattern, setPattern] = useState('');
 
   return (
-    <>
-      <div className="flex justify-end">
-        <div className="mr-2 font-light">
-          <div className="flex justify-end mt-24">
-            <div className="flex items-center">
-              Afficher uniquement les indicateurs renseignés
-              <Switch
-                color="primary"
-                checked={showOnlyIndicateurWithData}
-                inputProps={{'aria-label': 'controlled'}}
-                onChange={() => {
-                  setShowOnlyIndicateurWithData(!showOnlyIndicateurWithData);
-                }}
-              />
-            </div>
+    <div className="fr-container !px-0 flex">
+      <IndicateursNav />
+      <div>
+        <div className="flex items-center mx-auto py-6 px-10 bg-indigo-700">
+          <p className="flex grow py-2 px-3 m-0 font-bold text-white text-[2rem] leading-snug">
+            {viewTitles[current]}
+          </p>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <SwitchLabelLeft
+            id="only-filled"
+            checked={showOnlyIndicateurWithData}
+            className="!border-0 w-[28rem] mt-6"
+            onChange={() => {
+              setShowOnlyIndicateurWithData(!showOnlyIndicateurWithData);
+            }}
+          >
+            Afficher uniquement les indicateurs renseignés
+          </SwitchLabelLeft>
+          <div className="w-80 fr-mr-1v">
+            <UiSearchBar value={pattern} search={value => setPattern(value)} />
           </div>
         </div>
+        <ConditionnalIndicateurList
+          view={current}
+          showOnlyIndicateurWithData={showOnlyIndicateurWithData}
+          pattern={pattern}
+        />
       </div>
-      <h2 className="fr-h2">{viewTitles[current]}</h2>
-      <ConditionnalIndicateurList
-        view={current}
-        showOnlyIndicateurWithData={showOnlyIndicateurWithData}
-      />
-    </>
+    </div>
   );
 };
 
