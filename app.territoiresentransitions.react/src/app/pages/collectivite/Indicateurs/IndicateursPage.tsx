@@ -10,10 +10,8 @@ const Indicateurs = lazy(
  */
 export const IndicateursPage = () => {
   return (
-    <div className="fr-container my-5 flex flex-col">
-      <Suspense fallback={renderLoader()}>
-        <Indicateurs />
-      </Suspense>
-    </div>
+    <Suspense fallback={renderLoader()}>
+      <Indicateurs />
+    </Suspense>
   );
 };
