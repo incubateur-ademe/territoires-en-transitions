@@ -443,15 +443,22 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
                   className="fr-collapse"
                   id="j-q3"
                 >
-                  <textarea
-                    autoFocus={true}
-                    className="w-full py-2 px-3 text-sm cursor-text rounded-lg outline outline-offset-0 !outline-1 outline-gray-300 focus:outline-blue-500 fr-input"
-                    disabled={false}
-                    onBlur={[Function]}
-                    onChange={[Function]}
-                    placeholder="Exemple : Cette compétence est transférée à Nom de la Collectivité par délibération du JJ-MM-AAAA OU Cette compétence est exercée par la collectivité sur 2/3 des communes soit 3/4 de la population"
-                    value=""
-                  />
+                  <div
+                    className="flex items-start w-full"
+                  >
+                    <div
+                      className="w-[1px] mr-[-1px]"
+                    />
+                    <textarea
+                      autoFocus={true}
+                      className="resize-none w-full py-2 px-3 text-sm cursor-text rounded-lg outline outline-offset-0 !outline-1 outline-gray-300 focus:outline-blue-500 fr-input"
+                      disabled={false}
+                      onBlur={[Function]}
+                      onChange={[Function]}
+                      placeholder="Exemple : Cette compétence est transférée à Nom de la Collectivité par délibération du JJ-MM-AAAA OU Cette compétence est exercée par la collectivité sur 2/3 des communes soit 3/4 de la population"
+                      value=""
+                    />
+                  </div>
                 </div>
               </section>
               <section
@@ -821,15 +828,22 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
                   className="fr-collapse"
                   id="j-q2"
                 >
-                  <textarea
-                    autoFocus={true}
-                    className="w-full py-2 px-3 text-sm cursor-text rounded-lg outline outline-offset-0 !outline-1 outline-gray-300 focus:outline-blue-500 fr-input"
-                    disabled={false}
-                    onBlur={[Function]}
-                    onChange={[Function]}
-                    placeholder="Exemple : Cette compétence est transférée à Nom de la Collectivité par délibération du JJ-MM-AAAA OU Cette compétence est exercée par la collectivité sur 2/3 des communes soit 3/4 de la population"
-                    value=""
-                  />
+                  <div
+                    className="flex items-start w-full"
+                  >
+                    <div
+                      className="w-[1px] mr-[-1px]"
+                    />
+                    <textarea
+                      autoFocus={true}
+                      className="resize-none w-full py-2 px-3 text-sm cursor-text rounded-lg outline outline-offset-0 !outline-1 outline-gray-300 focus:outline-blue-500 fr-input"
+                      disabled={false}
+                      onBlur={[Function]}
+                      onChange={[Function]}
+                      placeholder="Exemple : Cette compétence est transférée à Nom de la Collectivité par délibération du JJ-MM-AAAA OU Cette compétence est exercée par la collectivité sur 2/3 des communes soit 3/4 de la population"
+                      value=""
+                    />
+                  </div>
                 </div>
               </section>
             </div>
@@ -1278,15 +1292,22 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
                   className="fr-collapse"
                   id="j-q1"
                 >
-                  <textarea
-                    autoFocus={true}
-                    className="w-full py-2 px-3 text-sm cursor-text rounded-lg outline outline-offset-0 !outline-1 outline-gray-300 focus:outline-blue-500 fr-input"
-                    disabled={false}
-                    onBlur={[Function]}
-                    onChange={[Function]}
-                    placeholder="Exemple : Cette compétence est transférée à Nom de la Collectivité par délibération du JJ-MM-AAAA OU Cette compétence est exercée par la collectivité sur 2/3 des communes soit 3/4 de la population"
-                    value=""
-                  />
+                  <div
+                    className="flex items-start w-full"
+                  >
+                    <div
+                      className="w-[1px] mr-[-1px]"
+                    />
+                    <textarea
+                      autoFocus={true}
+                      className="resize-none w-full py-2 px-3 text-sm cursor-text rounded-lg outline outline-offset-0 !outline-1 outline-gray-300 focus:outline-blue-500 fr-input"
+                      disabled={false}
+                      onBlur={[Function]}
+                      onChange={[Function]}
+                      placeholder="Exemple : Cette compétence est transférée à Nom de la Collectivité par délibération du JJ-MM-AAAA OU Cette compétence est exercée par la collectivité sur 2/3 des communes soit 3/4 de la population"
+                      value=""
+                    />
+                  </div>
                 </div>
               </section>
             </div>
@@ -1655,15 +1676,22 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
                   className="fr-collapse"
                   id="j-q3"
                 >
-                  <textarea
-                    autoFocus={true}
-                    className="w-full py-2 px-3 text-sm cursor-text rounded-lg outline outline-offset-0 !outline-1 outline-gray-300 focus:outline-blue-500 fr-input"
-                    disabled={false}
-                    onBlur={[Function]}
-                    onChange={[Function]}
-                    placeholder="Exemple : Cette compétence est transférée à Nom de la Collectivité par délibération du JJ-MM-AAAA OU Cette compétence est exercée par la collectivité sur 2/3 des communes soit 3/4 de la population"
-                    value=""
-                  />
+                  <div
+                    className="flex items-start w-full"
+                  >
+                    <div
+                      className="w-[1px] mr-[-1px]"
+                    />
+                    <textarea
+                      autoFocus={true}
+                      className="resize-none w-full py-2 px-3 text-sm cursor-text rounded-lg outline outline-offset-0 !outline-1 outline-gray-300 focus:outline-blue-500 fr-input"
+                      disabled={false}
+                      onBlur={[Function]}
+                      onChange={[Function]}
+                      placeholder="Exemple : Cette compétence est transférée à Nom de la Collectivité par délibération du JJ-MM-AAAA OU Cette compétence est exercée par la collectivité sur 2/3 des communes soit 3/4 de la population"
+                      value=""
+                    />
+                  </div>
                 </div>
               </section>
               <section
