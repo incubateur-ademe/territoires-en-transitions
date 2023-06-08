@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import DOMPurify from 'dompurify';
 import {ReactElement} from 'react';
 
 type TAlerteState = 'error' | 'information' | 'success' | 'warning';
@@ -33,7 +34,15 @@ const Alerte = ({
     })}
   >
     {titre && <h3 className="fr-alert__title">{titre}</h3>}
-    {children ? children : <p>{description}</p>}
+    {children
+      ? children
+      : description && (
+          <p
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(description),
+            }}
+          />
+        )}
   </div>
 );
 
