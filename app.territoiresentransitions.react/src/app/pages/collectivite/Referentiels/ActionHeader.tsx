@@ -60,7 +60,7 @@ export const ActionHeader = ({
       <div className="fr-container flex justify-between items-center fr-text--sm fr-my-2w">
         <div className="flex gap-4 items-center fr-pl-1v text-grey425">
           <ActionProgressBar
-            actionId={action.id}
+            action={action}
             className="border-r border-r-[#ddd] fr-pr-5v"
           />
           <ScoreDisplay action={action} legend="Score réalisé" size="sm" />

@@ -104,7 +104,7 @@ const SubActionHeader = ({
         !withStatusDropdown &&
         score?.point_potentiel !== undefined &&
         score.point_potentiel >= 1e-3 ? (
-          <ActionProgressBar actionId={action.id} />
+          <ActionProgressBar action={action} />
         ) : isTask ||
           (isSubAction &&
             (withStatusDropdown ||
@@ -112,7 +112,7 @@ const SubActionHeader = ({
               (score?.point_potentiel !== undefined &&
                 score.point_potentiel < 1e-3))) ? (
           <ActionStatusDropdown
-            actionId={action.id}
+            action={action}
             isDisabled={
               isSubAction &&
               (score === null ||

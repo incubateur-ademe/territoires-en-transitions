@@ -17,6 +17,7 @@ import {
 } from 'ui/shared/actions/SelectActionStatut';
 import ActionProgressBar from './ActionProgressBar';
 import AnchorAsButton from 'ui/buttons/AnchorAsButton';
+import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 
 // valeurs par défaut de l'avancement détaillé par statut d'avancement
 const AVANCEMENT_DETAILLE_PAR_STATUT: Record<
@@ -31,23 +32,23 @@ const AVANCEMENT_DETAILLE_PAR_STATUT: Record<
 };
 
 export const ActionStatusDropdown = ({
-  actionId,
+  action,
   isDisabled = false,
 }: {
-  actionId: string;
+  action: ActionDefinitionSummary;
   isDisabled?: boolean;
 }) => {
   const [opened, setOpened] = useState(false);
 
   const collectivite = useCurrentCollectivite();
   const args = {
-    action_id: actionId,
+    action_id: action.id,
     collectivite_id: collectivite?.collectivite_id || 0,
   };
   const {statut} = useActionStatut(args);
   const {avancement, avancement_detaille} = statut || {};
 
-  const score = useActionScore(actionId);
+  const score = useActionScore(action.id);
   const {concerne, desactive} = score || {};
   const avancementExt = getAvancementExt({avancement, desactive, concerne});
 
@@ -55,7 +56,7 @@ export const ActionStatusDropdown = ({
 
   // détermine si l'édition du statut est désactivée
   // isDisabled : prop provisoire en attendant le select du statut à la sous-action
-  const disabled = useEditActionStatutIsDisabled(actionId) || isDisabled;
+  const disabled = useEditActionStatutIsDisabled(action.id) || isDisabled;
 
   const handleChange = (value: TActionAvancementExt) => {
     const {avancement, concerne, avancement_detaille} =
@@ -111,7 +112,7 @@ export const ActionStatusDropdown = ({
 
       {avancement === 'detaille' && !score?.desactive && (
         <div className="flex flex-col gap-3 items-end w-full pr-1">
-          <ActionProgressBar actionId={actionId} />
+          <ActionProgressBar action={action} />
           {!disabled && (
             <div className="text-right">
               <AnchorAsButton

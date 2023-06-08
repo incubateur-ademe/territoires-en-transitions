@@ -3,6 +3,10 @@ import {Referentiel} from 'types/litterals';
 export interface ActionScore {
   referentiel: Referentiel;
   action_id: string;
+  fait_taches_avancement: number;
+  pas_concerne_taches_avancement: number;
+  pas_fait_taches_avancement: number;
+  programme_taches_avancement: number;
   point_fait: number;
   point_programme: number;
   point_pas_fait: number;
