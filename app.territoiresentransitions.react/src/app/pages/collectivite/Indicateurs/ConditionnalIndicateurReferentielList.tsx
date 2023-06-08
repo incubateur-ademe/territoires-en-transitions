@@ -1,8 +1,6 @@
-import {useState} from 'react';
 import FuzzySearch from 'fuzzy-search';
 import {useAllIndicateurDefinitionsForGroup} from 'app/pages/collectivite/Indicateurs/useAllIndicateurDefinitions';
 import {ReferentielOfIndicateur} from 'types/litterals';
-import {UiSearchBar} from 'ui/UiSearchBar';
 import {IndicateurReferentielCard} from './IndicateurReferentielCard';
 
 /**
@@ -11,23 +9,21 @@ import {IndicateurReferentielCard} from './IndicateurReferentielCard';
 export const ConditionnalIndicateurReferentielList = (props: {
   referentiel: ReferentielOfIndicateur;
   showOnlyIndicateurWithData: boolean;
+  pattern: string;
 }) => {
-  const search = useFuzzySearch(props.referentiel);
-  const [query, setQuery] = useState('');
-  const filteredIndicateurDefinitions = search(query);
+  const {referentiel, showOnlyIndicateurWithData, pattern} = props;
+  const search = useFuzzySearch(referentiel);
+  const filteredIndicateurDefinitions = search(pattern);
 
   return (
     <div className="app mx-5 mt-5 ">
-      <div className="-mt-44 float-right w-80">
-        <UiSearchBar search={value => setQuery(value)} />
-      </div>
       <section className="flex flex-col">
         {filteredIndicateurDefinitions?.map(definition => {
           return (
             <IndicateurReferentielCard
               definition={definition}
               key={definition.id}
-              hideIfNoValues={props.showOnlyIndicateurWithData}
+              hideIfNoValues={showOnlyIndicateurWithData}
             />
           );
         })}
