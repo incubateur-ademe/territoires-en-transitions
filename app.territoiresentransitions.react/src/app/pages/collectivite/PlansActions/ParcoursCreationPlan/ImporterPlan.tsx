@@ -28,7 +28,7 @@ const ImporterPlan = ({onBackClick}: Props) => {
         </p>
         <Alerte
           state="information"
-          description="Pour toute question, contactez-nous sur le support en ligne ou par email à contact@territoiresentransitions.fr Nous sommes là pour vous aider !"
+          description="Pour toute question, contactez-nous sur le support en ligne ou par email à contact@territoiresentransitions.fr<br />Nous sommes là pour vous aider !"
         />
         <div className="h-[1px] my-8 bg-gray-300" />
 
