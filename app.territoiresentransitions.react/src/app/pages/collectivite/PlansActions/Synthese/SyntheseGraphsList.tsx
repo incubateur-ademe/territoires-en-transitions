@@ -3,7 +3,7 @@ import {usePlanActionTableauDeBord} from './data/usePlanActionTableauDeBord';
 import PictoLeaf from 'ui/pictogrammes/PictoLeaf';
 import ChartCard from 'ui/charts/ChartCard';
 import {Link} from 'react-router-dom';
-import {makeCollectivitePlansActionsCreationUrl} from 'app/paths';
+import {makeCollectivitePlansActionsNouveauUrl} from 'app/paths';
 
 const getLegendColor = (
   data: {id: string; value: number; color?: any},
@@ -175,7 +175,7 @@ const SyntheseGraphsList = ({
         <div className="flex justify-center mt-6">
           <Link
             className="fr-btn"
-            to={makeCollectivitePlansActionsCreationUrl({
+            to={makeCollectivitePlansActionsNouveauUrl({
               collectiviteId,
             })}
           >
