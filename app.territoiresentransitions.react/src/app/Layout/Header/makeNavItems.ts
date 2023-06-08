@@ -100,37 +100,12 @@ const makeNavItemsBase = (collectivite: CurrentCollectivite): TNavItemsList => {
     },
     {
       acces_restreint,
-      title: 'Indicateurs',
-      items: [
-        {
-          label: 'Indicateurs Climat-Air-Énergie',
-          to: makeCollectiviteIndicateursUrl({
-            collectiviteId,
-            indicateurView: 'cae',
-          }),
-        },
-        {
-          label: 'Indicateurs Économie Circulaire',
-          to: makeCollectiviteIndicateursUrl({
-            collectiviteId,
-            indicateurView: 'eci',
-          }),
-        },
-        {
-          label: 'Indicateurs Contrat de Relance Transition Écologique',
-          to: makeCollectiviteIndicateursUrl({
-            collectiviteId,
-            indicateurView: 'crte',
-          }),
-        },
-        {
-          label: 'Indicateurs personnalisés',
-          to: makeCollectiviteIndicateursUrl({
-            collectiviteId,
-            indicateurView: 'perso',
-          }),
-        },
-      ],
+      label: 'Indicateurs',
+      to: makeCollectiviteIndicateursUrl({
+        collectiviteId,
+        indicateurView: 'perso',
+      }),
+      urlPrefix: makeCollectiviteIndicateursUrl({collectiviteId}),
     },
   ];
 

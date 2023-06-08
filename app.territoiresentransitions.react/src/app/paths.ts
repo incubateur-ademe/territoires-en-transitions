@@ -78,11 +78,11 @@ export const makeCollectiviteIndicateursUrl = ({
   indicateurView,
 }: {
   collectiviteId: number;
-  indicateurView: IndicateurViewParamOption;
+  indicateurView?: IndicateurViewParamOption;
 }) =>
   collectiviteIndicateurPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .replace(`:${indicateurViewParam}`, indicateurView);
+    .replace(`:${indicateurViewParam}`, indicateurView || '');
 
 export const makeCollectiviteRootUrl = (collectiviteId: number) =>
   collectivitePath.replace(':collectiviteId', collectiviteId.toString());
