@@ -32,7 +32,7 @@ export const ExpandableAction = ({
               </div>
             </div>
             <div className="w-1/6">
-              <ActionProgressBar actionId={action.id} />
+              <ActionProgressBar action={action} />
             </div>
           </div>
         }

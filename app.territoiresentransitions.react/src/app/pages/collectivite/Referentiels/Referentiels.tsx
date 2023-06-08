@@ -12,7 +12,7 @@ const ReferentielHead = (props: {referentiel: ActionDefinitionSummary}) => {
     <>
       <header className="flex flex-row mb-6 items-center justify-between">
         <h2 className="fr-h2">{props.referentiel.nom}</h2>
-        <ActionProgressBar actionId={props.referentiel.id} />
+        <ActionProgressBar action={props.referentiel} />
       </header>
     </>
   );

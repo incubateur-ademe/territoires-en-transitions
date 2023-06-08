@@ -36,7 +36,7 @@ export const ActionReferentielLinkCard = ({
           <ActionReferentielDescription action={action} />
         </div>
         <div className="w-1/6 pl-4">
-          <ActionProgressBar actionId={action.id} />
+          <ActionProgressBar action={action} />
         </div>
       </div>
     </article>
