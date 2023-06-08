@@ -5,14 +5,18 @@ import {
 } from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import SideNav, {SideNavLinks} from 'ui/shared/SideNav';
+import {IndicateurPersonnaliseCreationDialog} from './IndicateurPersonnaliseCreationDialog';
 
 /**
- * Affiche les liens vers les pages Indicateurs
+ * Affiche la navigation latérales vers les pages Indicateurs
  */
 export const IndicateursNav = () => {
   const collectivite_id = useCollectiviteId();
   return collectivite_id ? (
-    <SideNav links={generateLinks(collectivite_id)} />
+    <div>
+      <SideNav links={generateLinks(collectivite_id)} />
+      <IndicateurPersonnaliseCreationDialog />
+    </div>
   ) : null;
 };
 
