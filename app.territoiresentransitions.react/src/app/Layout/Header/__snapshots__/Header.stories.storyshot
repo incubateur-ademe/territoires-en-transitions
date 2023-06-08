@@ -281,74 +281,15 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
           <li
             className="fr-nav__item"
           >
-            <button
-              aria-expanded={false}
-              className="fr-nav__btn"
+            <a
+              aria-controls="modal-header__menu"
+              className="fr-nav__link"
+              href="/collectivite/1/indicateurs/perso"
               onClick={[Function]}
+              target="_self"
             >
               Indicateurs
-            </button>
-            <div
-              className="fr-menu fr-collapse"
-            >
-              <ul
-                className="fr-menu__list"
-                onClickCapture={[Function]}
-              >
-                <li
-                  className="fr-nav__item"
-                >
-                  <a
-                    aria-controls="modal-header__menu"
-                    className="fr-nav__link"
-                    href="/collectivite/1/indicateurs/cae"
-                    onClick={[Function]}
-                    target="_self"
-                  >
-                    Indicateurs Climat-Air-Énergie
-                  </a>
-                </li>
-                <li
-                  className="fr-nav__item"
-                >
-                  <a
-                    aria-controls="modal-header__menu"
-                    className="fr-nav__link"
-                    href="/collectivite/1/indicateurs/eci"
-                    onClick={[Function]}
-                    target="_self"
-                  >
-                    Indicateurs Économie Circulaire
-                  </a>
-                </li>
-                <li
-                  className="fr-nav__item"
-                >
-                  <a
-                    aria-controls="modal-header__menu"
-                    className="fr-nav__link"
-                    href="/collectivite/1/indicateurs/crte"
-                    onClick={[Function]}
-                    target="_self"
-                  >
-                    Indicateurs Contrat de Relance Transition Écologique
-                  </a>
-                </li>
-                <li
-                  className="fr-nav__item"
-                >
-                  <a
-                    aria-controls="modal-header__menu"
-                    className="fr-nav__link"
-                    href="/collectivite/1/indicateurs/perso"
-                    onClick={[Function]}
-                    target="_self"
-                  >
-                    Indicateurs personnalisés
-                  </a>
-                </li>
-              </ul>
-            </div>
+            </a>
           </li>
           <li
             className="fr-nav__item"
