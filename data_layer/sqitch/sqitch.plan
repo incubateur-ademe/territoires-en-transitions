@@ -383,3 +383,5 @@ collectivite/historique [collectivite/historique@v2.31.0] 2023-05-31T07:39:48Z F
 @v2.36.0 2023-06-08T13:54:17Z Florian <florian@derfurth.com> # Justification aux réponses et améliorations
 
 automatisation/crm [automatisation/crm@v2.36.0] 2023-06-09T15:47:55Z Florian <florian@derfurth.com> # Ajoute les labellisations et les usages au CRM
+utilisateur/usage [utilisateur/usage@v2.35.0] 2023-06-08T13:19:56Z Florian <florian@derfurth.com> # Ajoute de nouvelles fonctions
+utilisateur/visite [utilisateur/visite@v2.35.0] 2023-06-08T13:21:28Z Florian <florian@derfurth.com> # Ajoute de nouvelles pages
