@@ -48,7 +48,8 @@ const CreerPlan = ({onBackClick}: Props) => {
         Créer un plan d’action
       </h3>
       <div className="flex flex-col mt-2 mb-10 py-14 px-24 bg-[#f6f6f6]">
-        <div className="mb-8 text-gray-500">Aucun champ n’est obligatoire</div>
+        {/* À remettre lorsque l'on activera le champ type */}
+        {/* <div className="mb-8 text-gray-500">Aucun champ n’est obligatoire</div> */}
         <Formik
           initialValues={{nom: '', type: ''}}
           validationSchema={formValidation}
