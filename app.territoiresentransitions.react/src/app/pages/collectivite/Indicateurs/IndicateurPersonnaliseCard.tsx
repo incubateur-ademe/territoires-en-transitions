@@ -7,40 +7,39 @@ import {
   indicateurPersonnaliseObjectifRepository,
   indicateurPersonnaliseResultatRepository,
 } from 'core-logic/api/repositories/AnyIndicateurRepository';
-import {indicateurPersonnaliseDefinitionRepository} from 'core-logic/api/repositories/IndicateurPersonnaliseDefinitionRepository';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useAnyIndicateurValuesForAllYears} from 'core-logic/hooks/indicateur_values';
-import {IndicateurPersonnaliseDefinitionRead} from 'generated/dataLayer/indicateur_personnalise_definition_read';
 import React from 'react';
 import {Spacer} from 'ui/dividers/Spacer';
+import {TIndicateurPersoDefinition} from './useIndicateursPersoDefinitions';
+import {useUpsertIndicateurPersoDefinition} from './useUpsertIndicateurPersoDefinition';
 
-const Commentaire = (props: {
-  indicateur: IndicateurPersonnaliseDefinitionRead;
-}) => {
-  const [value, setValue] = React.useState(props.indicateur.commentaire);
+const Commentaire = (props: {indicateur: TIndicateurPersoDefinition}) => {
+  const {indicateur} = props;
+  const {mutate: save} = useUpsertIndicateurPersoDefinition();
+  const [value, setValue] = React.useState(indicateur.commentaire);
   const [initialValue, setInitialValue] = React.useState(
-    props.indicateur.commentaire
+    indicateur.commentaire
   );
-  if (props.indicateur.commentaire !== initialValue) {
+  if (indicateur.commentaire !== initialValue) {
     // We use an initial value to update the field value on indicateur change.
-    setValue(props.indicateur.commentaire);
-    setInitialValue(props.indicateur.commentaire);
+    setValue(indicateur.commentaire);
+    setInitialValue(indicateur.commentaire);
   }
 
   const handleSave = (event: React.FormEvent<HTMLTextAreaElement>) => {
     const inputValue = event.currentTarget.value;
-    const data = {
-      ...props.indicateur,
-    };
-    data['commentaire'] = inputValue;
-    indicateurPersonnaliseDefinitionRepository.save(data);
+    save({
+      ...indicateur,
+      commentaire: inputValue,
+    });
   };
 
   return <AnyIndicateurCommentaire handleSave={handleSave} value={value} />;
 };
 
 const IndicateurPersonnaliseCardContent = (props: {
-  indicateur: IndicateurPersonnaliseDefinitionRead;
+  indicateur: TIndicateurPersoDefinition;
 }) => {
   return (
     <div>
@@ -65,7 +64,7 @@ const IndicateurPersonnaliseCardContent = (props: {
 };
 
 const IndicateurPersonnaliseHeaderTitle = (props: {
-  indicateur: IndicateurPersonnaliseDefinitionRead;
+  indicateur: TIndicateurPersoDefinition;
 }) => (
   <div className="flex justify-between w-full">
     <div>{props.indicateur.titre}</div>
@@ -79,7 +78,7 @@ export const IndicateurPersonnaliseCard = ({
   indicateur,
   hideIfNoValues = false,
 }: {
-  indicateur: IndicateurPersonnaliseDefinitionRead;
+  indicateur: TIndicateurPersoDefinition;
   hideIfNoValues?: boolean;
 }) => {
   const collectiviteId = useCollectiviteId()!;

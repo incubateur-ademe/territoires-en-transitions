@@ -1,15 +1,15 @@
 import {useState} from 'react';
 import * as Yup from 'yup';
 import {Form, Formik} from 'formik';
-import {IndicateurPersonnaliseDefinitionWrite} from 'generated/dataLayer/indicateur_personnalise_definition_write';
 import {ValiderButton} from 'ui/buttons/ValiderButton';
 import FormikInput from 'ui/shared/form/formik/FormikInput';
+import {TIndicateurPersoDefinitionWrite} from './useUpsertIndicateurPersoDefinition';
 
 type FormState = 'ready' | 'saving';
 
 export const IndicateurPersonnaliseForm = (props: {
-  indicateur: IndicateurPersonnaliseDefinitionWrite;
-  onSave: (data: IndicateurPersonnaliseDefinitionWrite) => void;
+  indicateur: TIndicateurPersoDefinitionWrite;
+  onSave: (data: TIndicateurPersoDefinitionWrite) => void;
 }) => {
   const [state, setState] = useState<FormState>('ready');
   const validation = Yup.object({
@@ -23,14 +23,14 @@ export const IndicateurPersonnaliseForm = (props: {
     commentaire: Yup.string(),
   });
 
-  const save = (data: IndicateurPersonnaliseDefinitionWrite) => {
+  const save = (data: TIndicateurPersoDefinitionWrite) => {
     if (state !== 'ready') return;
     setState('saving');
     props.onSave(data);
   };
 
   return (
-    <Formik<IndicateurPersonnaliseDefinitionWrite>
+    <Formik<TIndicateurPersoDefinitionWrite>
       initialValues={props.indicateur}
       validationSchema={validation}
       onSubmit={save}
