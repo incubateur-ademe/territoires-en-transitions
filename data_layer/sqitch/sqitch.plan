@@ -375,3 +375,4 @@ labellisation/preuve_v2 [labellisation/preuve_v2@v2.31.0] 2023-06-01T14:12:28Z F
 @v2.35.0 2023-06-07T15:29:06Z Florian <florian@derfurth.com> # Fiches action liées et améliorations
 
 labellisation/parcours [labellisation/parcours@v2.34.0] 2023-06-06T13:43:28Z Amandine Jacquelin <conta@LanceLibre> # Une demande COT 1ère étoile n'a plus besoin de fournir de document
+plan_action/fiches [plan_action/fiches@v2.35.0] 2023-06-08T09:01:47Z Florian <florian@derfurth.com> # Répare la fonction d'upsert des fiches
