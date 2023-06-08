@@ -1,10 +1,13 @@
 import {makeCollectivitePlansActionsNouveauUrl} from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
+import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 import {Link} from 'react-router-dom';
 import Alerte from 'ui/shared/Alerte';
 
 const ImporterPlan = () => {
   const collectivite_id = useCollectiviteId();
+
+  const tracker = useFonctionTracker();
 
   return (
     <div className="max-w-3xl m-auto flex flex-col grow py-12">
@@ -60,6 +63,9 @@ const ImporterPlan = () => {
             </Link>
             <a
               className="!bg-none after:!hidden fr-btn"
+              onClick={() =>
+                tracker({fonction: 'modele_import', action: 'telechargement'})
+              }
               href="https://docs.google.com/spreadsheets/d/1hmpj74Smtrzp-d5R3Rwlf9VRnokeKVDn/edit#gid=246577666"
               target="_blank"
               rel="noopener noreferrer"

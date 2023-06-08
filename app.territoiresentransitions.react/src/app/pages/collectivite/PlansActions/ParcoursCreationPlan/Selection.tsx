@@ -3,11 +3,14 @@ import {
   makeCollectivitePlansActionsImporterUrl,
 } from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
+import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 import {Link, useHistory} from 'react-router-dom';
 
 const Selection = () => {
   const collectivite_id = useCollectiviteId();
   const history = useHistory();
+
+  const tracker = useFonctionTracker();
 
   return (
     <div className="max-w-3xl m-auto flex flex-col grow py-12">
@@ -37,7 +40,10 @@ const Selection = () => {
           </div>
           <button
             className="fr-btn fr-btn--tertiary mt-10 ml-auto"
-            onClick={() => history.goBack()}
+            onClick={() => {
+              history.goBack();
+              tracker({fonction: 'annulation', action: 'clic'});
+            }}
           >
             Annuler
           </button>
