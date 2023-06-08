@@ -2,7 +2,7 @@ import {
   makeCollectiviteFichesNonClasseesUrl,
   makeCollectivitePlanActionAxeUrl,
   makeCollectivitePlanActionUrl,
-  makeCollectivitePlansActionsCreationUrl,
+  makeCollectivitePlansActionsNouveauUrl,
   makeCollectivitePlansActionsSyntheseUrl,
 } from 'app/paths';
 import {useCreateFicheAction} from './FicheAction/data/useUpsertFicheAction';
@@ -103,7 +103,7 @@ const PlansActionsNavigation = ({collectivite}: Props) => {
             <Link
               data-test="AjouterPlanAction"
               className="fr-btn fr-btn--tertiary"
-              to={makeCollectivitePlansActionsCreationUrl({
+              to={makeCollectivitePlansActionsNouveauUrl({
                 collectiviteId: collectivite.collectivite_id,
               })}
             >
