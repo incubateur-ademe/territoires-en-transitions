@@ -81,6 +81,12 @@ const locationFromPath = (path: string): Localisation => {
     page = 'synthese_plans';
   } else if (path.endsWith('/plans/fiches')) {
     page = 'fiches_non_classees';
+  } else if (path.endsWith('/plans/nouveau')) {
+    page = 'nouveau_plan';
+  } else if (path.endsWith('/plans/importer')) {
+    page = 'nouveau_plan_import';
+  } else if (path.endsWith('/plans/creer')) {
+    page = 'nouveau_plan_creation';
   } else if (path.includes('/personnalisation/')) {
     page = 'personnalisation';
     tag = 'thematique';
