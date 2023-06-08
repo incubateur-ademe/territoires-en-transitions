@@ -17,14 +17,20 @@ const Selection = ({onStepClick, onBackClick}: Props) => {
             title="Importer un plan d’action"
             subTitle="à partir d’un modèle"
             iconClass="fr-icon-upload-fill"
-            onSelect={() => onStepClick(ParcoursCreationPlanSteps.IMPORTER)}
+            onSelect={() => {
+              onStepClick(ParcoursCreationPlanSteps.IMPORTER);
+              scrollToTop();
+            }}
           />
           <SelectFlowButton
             dataTest="CreerPlan"
             title="Créer un plan d’action"
             subTitle="suivez le guide, pas à pas"
             iconClass="fr-icon-edit-box-fill"
-            onSelect={() => onStepClick(ParcoursCreationPlanSteps.CREER)}
+            onSelect={() => {
+              onStepClick(ParcoursCreationPlanSteps.CREER);
+              scrollToTop();
+            }}
           />
         </div>
         <button
