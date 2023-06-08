@@ -2,6 +2,6 @@
 
 BEGIN;
 
--- on ne revert pas le fix
+drop function fiche_resume;
 
 COMMIT;
