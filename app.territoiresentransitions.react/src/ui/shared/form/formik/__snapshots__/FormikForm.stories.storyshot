@@ -124,15 +124,22 @@ exports[`Storyshots ui/shared/form/formik/FormikForm Defaut 1`] = `
         Text area
       </div>
     </label>
-    <textarea
-      className="w-full py-2 px-3 text-sm cursor-text rounded-lg outline outline-offset-0 !outline-1 outline-gray-300 focus:outline-blue-500 fr-input !outline-none"
-      id="textarea"
-      label="Text area"
-      name="textarea"
-      onBlur={[Function]}
-      onChange={[Function]}
-      type="area"
-    />
+    <div
+      className="flex items-start w-full"
+    >
+      <div
+        className="w-[1px] mr-[-1px]"
+      />
+      <textarea
+        className="resize-none w-full py-2 px-3 text-sm cursor-text rounded-lg outline outline-offset-0 !outline-1 outline-gray-300 focus:outline-blue-500 fr-input !outline-none"
+        id="textarea"
+        label="Text area"
+        name="textarea"
+        onBlur={[Function]}
+        onChange={[Function]}
+        type="area"
+      />
+    </div>
   </div>
   <div
     className="fr-input-group flex-grow"

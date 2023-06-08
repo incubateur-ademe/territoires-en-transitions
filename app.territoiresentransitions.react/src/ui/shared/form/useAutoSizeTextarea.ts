@@ -7,22 +7,28 @@ import {RefObject, useLayoutEffect, useRef} from 'react';
  */
 export const useAutoSizeTextarea = (
   value?: string,
-  minHeight?: string,
-  ref?: RefObject<HTMLTextAreaElement> | null
+  forwardRef?: RefObject<HTMLTextAreaElement> | null
 ) => {
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const ref = useRef<HTMLTextAreaElement | null>(null);
+  const shadowRef = useRef<HTMLDivElement | null>(null);
 
-  const usedRef = ref ? ref : textareaRef;
+  const textareaRef = forwardRef ? forwardRef : ref;
 
   // Permet de set la taille du textarea au changement de valeur
   useLayoutEffect(() => {
-    if (usedRef && usedRef.current) {
-      // usedRef.current.style.height = '0px';
-      usedRef.current.style.minHeight = minHeight ?? '2.5rem';
-      const scrollHeight = usedRef.current.scrollHeight;
-      usedRef.current.style.height = scrollHeight + 'px';
+    if (textareaRef && textareaRef.current && shadowRef && shadowRef.current) {
+      // Permet ensuite de récupérer la hauteur nécessaire dans scrollHeight
+      textareaRef.current.style.height = 'inherit';
+
+      // Met à jour la hauteur en fonction du contenu
+      textareaRef.current.style.height =
+        textareaRef.current.scrollHeight + 'px';
+
+      // Une div invisible permet de conserver la hauteur pour éviter
+      // les sauts dans la page à la mise à jour du texte
+      shadowRef.current.style.height = textareaRef.current.scrollHeight + 'px';
     }
   }, [value]);
 
-  return usedRef;
+  return {textareaRef, shadowRef};
 };
