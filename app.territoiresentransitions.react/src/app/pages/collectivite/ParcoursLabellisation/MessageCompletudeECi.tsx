@@ -9,10 +9,10 @@ export const MessageCompletudeECi = ({
   const {referentiel, etoiles} = parcours || {};
 
   return referentiel === 'eci' && etoiles !== '1' ? (
-    <Alerte state="warning" classname="fr-mb-2w">
+    <Alerte state="warning" classname="fr-mb-4w">
       <>
         <p>
-          Pour les audits ECi, l’ensemble des tâches déclarées « faites » ou «
+          Pour cet audit ECi, l’ensemble des tâches déclarées « faites » ou «
           détaillées » comprenant du « fait » doivent présenter des preuves
           téléchargées au niveau de la sous-action correspondante dans le
           référentiel.{' '}

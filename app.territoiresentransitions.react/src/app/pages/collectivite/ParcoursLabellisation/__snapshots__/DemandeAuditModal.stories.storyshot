@@ -585,10 +585,10 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/DemandeAuditMod
     className="w-full"
   >
     <div
-      className="fr-alert fr-mb-2w fr-alert--warning"
+      className="fr-alert fr-mb-4w fr-alert--warning"
     >
       <p>
-        Pour les audits ECi, l’ensemble des tâches déclarées « faites » ou « détaillées » comprenant du « fait » doivent présenter des preuves téléchargées au niveau de la sous-action correspondante dans le référentiel.
+        Pour cet audit ECi, l’ensemble des tâches déclarées « faites » ou « détaillées » comprenant du « fait » doivent présenter des preuves téléchargées au niveau de la sous-action correspondante dans le référentiel.
          
         <b>
           Aucun auditeur ne pourra être attribué en cas de dossier incomplet.
@@ -735,10 +735,10 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/DemandeAuditMod
     className="w-full"
   >
     <div
-      className="fr-alert fr-mb-2w fr-alert--warning"
+      className="fr-alert fr-mb-4w fr-alert--warning"
     >
       <p>
-        Pour les audits ECi, l’ensemble des tâches déclarées « faites » ou « détaillées » comprenant du « fait » doivent présenter des preuves téléchargées au niveau de la sous-action correspondante dans le référentiel.
+        Pour cet audit ECi, l’ensemble des tâches déclarées « faites » ou « détaillées » comprenant du « fait » doivent présenter des preuves téléchargées au niveau de la sous-action correspondante dans le référentiel.
          
         <b>
           Aucun auditeur ne pourra être attribué en cas de dossier incomplet.
