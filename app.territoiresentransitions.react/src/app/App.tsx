@@ -7,7 +7,7 @@ import {CollectiviteRoutes} from 'app/pages/collectivite/CollectiviteRoutes';
 import Home from 'app/pages/Home';
 import {Redirector} from 'app/Redirector';
 import {Toasters} from 'app/Toasters';
-import {ScrollToTop} from 'app/ScrollToTop';
+import {ScrollToTopOnChangePage} from 'app/ScrollToTop';
 import {createTheme, MuiThemeProvider} from '@material-ui/core';
 
 import {allCollectivitesPath, authBasePath, profilPath} from 'app/paths';
@@ -39,7 +39,7 @@ export const App = () => {
             <ScoreListenerProvider>
               <Layout>
                 <E2E />
-                <ScrollToTop />
+                <ScrollToTopOnChangePage />
                 <Toasters />
                 <Redirector />
                 <VisitTracker />
