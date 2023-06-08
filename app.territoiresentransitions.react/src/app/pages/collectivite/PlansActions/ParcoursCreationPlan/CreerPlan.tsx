@@ -47,7 +47,7 @@ const CreerPlan = ({onBackClick}: Props) => {
         <span className="fr-icon-edit-box-fill mr-2" />
         Créer un plan d’action
       </h3>
-      <div className="flex flex-col mt-2 mb-10 py-14 px-24 bg-gray-100">
+      <div className="flex flex-col mt-2 mb-10 py-14 px-24 bg-[#f6f6f6]">
         <div className="mb-8 text-gray-500">Aucun champ n’est obligatoire</div>
         <Formik
           initialValues={{nom: '', type: ''}}

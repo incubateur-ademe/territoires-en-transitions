@@ -1,3 +1,4 @@
+import {scrollToTop} from 'app/ScrollToTop';
 import {ParcoursCreationPlanSteps} from './ParcoursCreationPlan';
 
 type Props = {
@@ -9,9 +10,9 @@ const Selection = ({onStepClick, onBackClick}: Props) => {
   return (
     <div className="w-full mx-auto">
       <h3 className="mb-8">Ajouter un plan d’action</h3>
-      <div className="flex flex-col mt-2 mb-10 py-14 px-24 bg-gray-100">
-        <h6 className="ml-8">Vous souhaitez</h6>
-        <div className="flex justify-center gap-6">
+      <div className="flex flex-col mt-2 mb-10 py-14 px-24 bg-[#f6f6f6]">
+        <h6>Vous souhaitez</h6>
+        <div className="flex justify-between gap-6">
           <SelectFlowButton
             dataTest="ImporterPlan"
             title="Importer un plan d’action"
@@ -61,8 +62,12 @@ const SelectFlowButton = ({
   title,
   subTitle,
 }: SelectFlowButtonProps) => (
-  <div className="bg-white border border-gray-200 border-b-4 border-b-bf500">
-    <button data-test={dataTest} className="p-6" onClick={onSelect}>
+  <div className="grow bg-white border border-gray-200 border-b-4 border-b-bf500">
+    <button
+      data-test={dataTest}
+      className="w-full p-6 hover:!bg-[#EEEEEE]"
+      onClick={onSelect}
+    >
       <div
         className={`${iconClass} flex !w-20 !h-20 mx-auto mb-6 before:!h-8 before:!w-8 before:!m-auto text-bf500`}
       />

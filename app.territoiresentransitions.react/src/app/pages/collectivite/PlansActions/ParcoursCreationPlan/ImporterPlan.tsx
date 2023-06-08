@@ -10,7 +10,7 @@ const ImporterPlan = ({onBackClick}: Props) => {
       <h3 className="mb-8">
         <span className="fr-icon-upload-fill mr-2" /> Importer un plan d’action
       </h3>
-      <div className="flex flex-col mt-2 mb-10 py-14 px-24 bg-gray-100">
+      <div className="flex flex-col mt-2 mb-10 py-14 px-24 bg-[#f6f6f6]">
         <div className="mb-1 text-sm">Étape 1</div>
         <h6 className="mb-4">Téléchargez le modèle de plan d’action</h6>
         <p className="!mb-0">
@@ -51,14 +51,13 @@ const ImporterPlan = ({onBackClick}: Props) => {
             Revenir à l’étape précédente
           </button>
           <a
-            className="!bg-none after:!hidden"
+            className="!bg-none after:!hidden fr-btn"
             href="https://docs.google.com/spreadsheets/d/1hmpj74Smtrzp-d5R3Rwlf9VRnokeKVDn/edit#gid=246577666"
             target="_blank"
             rel="noopener noreferrer"
           >
-            <div className="fr-btn fr-btn--icon-left fr-icon-download-line">
-              Télécharger le modèle
-            </div>
+            <span className="mr-2 fr-icon-download-line scale-75" />
+            Télécharger le modèle
           </a>
         </div>
       </div>
