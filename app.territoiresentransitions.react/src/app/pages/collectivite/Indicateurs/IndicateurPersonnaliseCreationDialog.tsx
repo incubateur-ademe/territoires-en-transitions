@@ -1,21 +1,20 @@
-import {IndicateurPersonnaliseCreator} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCreator';
-import React from 'react';
+import {useState} from 'react';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {UiDialogButton} from 'ui/UiDialogButton';
+import {IndicateurPersonnaliseCreator} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseCreator';
 
-export const IndicateurPersonnaliseCreationDialog = ({
-  buttonClasses,
-}: {
-  buttonClasses?: string;
-}) => {
-  const [editing, setEditing] = React.useState<boolean>(false);
-  return (
+export const IndicateurPersonnaliseCreationDialog = () => {
+  const currentCollectivite = useCurrentCollectivite();
+  const [editing, setEditing] = useState(false);
+
+  return currentCollectivite?.niveau_acces ? (
     <UiDialogButton
-      title="Créer un nouvel indicateur"
+      title="Créer un indicateur"
       opened={editing}
       setOpened={setEditing}
-      buttonClasses={buttonClasses}
+      buttonClasses="fr-ml-4w fr-btn--tertiary fr-btn--icon-left fr-icon-add-line"
     >
       <IndicateurPersonnaliseCreator onClose={() => setEditing(false)} />
     </UiDialogButton>
-  );
+  ) : null;
 };
