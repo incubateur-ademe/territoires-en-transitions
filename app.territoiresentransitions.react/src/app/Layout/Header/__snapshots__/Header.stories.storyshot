@@ -173,11 +173,11 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
             <a
               aria-controls="modal-header__menu"
               className="fr-nav__link"
-              href="/collectivite/1/tableau_bord"
+              href="/collectivite/1/accueil"
               onClick={[Function]}
               target="_self"
             >
-              Tableau de bord
+              Accueil
             </a>
           </li>
           <li
@@ -455,7 +455,7 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
                   <a
                     aria-controls="modal-header__menu"
                     className="fr-nav__link"
-                    href="/collectivite/2/tableau_bord"
+                    href="/collectivite/2/accueil"
                     onClick={[Function]}
                     target="_self"
                   >
@@ -473,7 +473,7 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
                   <a
                     aria-controls="modal-header__menu"
                     className="fr-nav__link"
-                    href="/collectivite/3/tableau_bord"
+                    href="/collectivite/3/accueil"
                     onClick={[Function]}
                     target="_self"
                   >

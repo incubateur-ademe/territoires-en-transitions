@@ -142,7 +142,7 @@ const BarChartCardWithSubrows = ({
     title: chartInfo?.title
       ? `${chartInfo.title} ${!!indexBy ? `par ${indexBy}` : ''} en valeur ${
           relativeMode ? 'relative' : 'absolue'
-        }`
+        } - ${referentiel.toUpperCase()}`
       : undefined,
     legend: chartInfo?.legend,
     legendOnOverview: chartInfo?.legendOnOverview,

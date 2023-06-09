@@ -1,4 +1,5 @@
 import {avancementToLabel} from 'app/labels';
+import {actionAvancementColors} from 'app/theme';
 import {ProgressionRow} from './data/useProgressionReferentiel';
 
 /**
@@ -82,4 +83,36 @@ export const getFormattedScore = (
   }
 
   return formattedScore;
+};
+
+export const getAggregatedScore = (scoreData: readonly ProgressionRow[]) => {
+  const aggregatedScore: {id: string; value: number; color?: string}[] = [
+    {id: avancementToLabel.fait, value: 0, color: actionAvancementColors.fait},
+    {
+      id: avancementToLabel.programme,
+      value: 0,
+      color: actionAvancementColors.programme,
+    },
+    {
+      id: avancementToLabel.pas_fait,
+      value: 0,
+      color: actionAvancementColors.pas_fait,
+    },
+    {
+      id: avancementToLabel.non_renseigne,
+      value: 0,
+      color: actionAvancementColors.non_renseigne,
+    },
+  ];
+
+  scoreData.forEach(score => {
+    aggregatedScore[0].value += score.points_realises;
+    aggregatedScore[1].value += score.points_programmes;
+    aggregatedScore[2].value +=
+      score.score_pas_fait * score.points_max_personnalises;
+    aggregatedScore[3].value +=
+      score.score_non_renseigne * score.points_max_personnalises;
+  });
+
+  return aggregatedScore;
 };

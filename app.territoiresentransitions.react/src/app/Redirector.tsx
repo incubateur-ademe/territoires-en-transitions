@@ -3,7 +3,7 @@ import {useHistory, useLocation} from 'react-router-dom';
 import {
   homePath,
   invitationPath,
-  makeCollectiviteTableauBordUrl,
+  makeCollectiviteAccueilUrl,
   signInPath,
 } from 'app/paths';
 import {useAuth} from 'core-logic/api/auth/AuthProvider';
@@ -41,7 +41,7 @@ export const Redirector = () => {
         userCollectivites[0].collectivite_id
       ) {
         history.push(
-          makeCollectiviteTableauBordUrl({
+          makeCollectiviteAccueilUrl({
             collectiviteId: userCollectivites[0].collectivite_id,
           })
         );

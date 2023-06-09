@@ -772,7 +772,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
       >
         <a
           className="!shadow-none"
-          href="/collectivite/1/tableau_bord"
+          href="/collectivite/1/accueil"
           onClick={[Function]}
         >
           <div
@@ -1089,7 +1089,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
         </a>
         <a
           className="!shadow-none"
-          href="/collectivite/2/tableau_bord"
+          href="/collectivite/2/accueil"
           onClick={[Function]}
         >
           <div
@@ -1406,7 +1406,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
         </a>
         <a
           className="!shadow-none"
-          href="/collectivite/3/tableau_bord"
+          href="/collectivite/3/accueil"
           onClick={[Function]}
         >
           <div
@@ -1599,7 +1599,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
         </a>
         <a
           className="!shadow-none"
-          href="/collectivite/4/tableau_bord"
+          href="/collectivite/4/accueil"
           onClick={[Function]}
         >
           <div
@@ -1916,7 +1916,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
         </a>
         <a
           className="!shadow-none"
-          href="/collectivite/5/tableau_bord"
+          href="/collectivite/5/accueil"
           onClick={[Function]}
         >
           <div
@@ -2233,7 +2233,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
         </a>
         <a
           className="!shadow-none"
-          href="/collectivite/6/tableau_bord"
+          href="/collectivite/6/accueil"
           onClick={[Function]}
         >
           <div
@@ -2550,7 +2550,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
         </a>
         <a
           className="!shadow-none"
-          href="/collectivite/7/tableau_bord"
+          href="/collectivite/7/accueil"
           onClick={[Function]}
         >
           <div
@@ -3688,7 +3688,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
       >
         <a
           className="!shadow-none"
-          href="/collectivite/1/tableau_bord"
+          href="/collectivite/1/accueil"
           onClick={[Function]}
         >
           <div
@@ -4005,7 +4005,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
         </a>
         <a
           className="!shadow-none"
-          href="/collectivite/2/tableau_bord"
+          href="/collectivite/2/accueil"
           onClick={[Function]}
         >
           <div
@@ -4322,7 +4322,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
         </a>
         <a
           className="!shadow-none"
-          href="/collectivite/3/tableau_bord"
+          href="/collectivite/3/accueil"
           onClick={[Function]}
         >
           <div
@@ -4515,7 +4515,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
         </a>
         <a
           className="!shadow-none"
-          href="/collectivite/4/tableau_bord"
+          href="/collectivite/4/accueil"
           onClick={[Function]}
         >
           <div
@@ -4832,7 +4832,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
         </a>
         <a
           className="!shadow-none"
-          href="/collectivite/5/tableau_bord"
+          href="/collectivite/5/accueil"
           onClick={[Function]}
         >
           <div
@@ -5149,7 +5149,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
         </a>
         <a
           className="!shadow-none"
-          href="/collectivite/6/tableau_bord"
+          href="/collectivite/6/accueil"
           onClick={[Function]}
         >
           <div
@@ -5466,7 +5466,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
         </a>
         <a
           className="!shadow-none"
-          href="/collectivite/7/tableau_bord"
+          href="/collectivite/7/accueil"
           onClick={[Function]}
         >
           <div

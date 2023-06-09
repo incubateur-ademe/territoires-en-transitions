@@ -162,11 +162,11 @@ exports[`Storyshots app/Layout Exemple 1`] = `
                 <a
                   aria-controls="modal-header__menu"
                   className="fr-nav__link"
-                  href="/collectivite/1/tableau_bord"
+                  href="/collectivite/1/accueil"
                   onClick={[Function]}
                   target="_self"
                 >
-                  Tableau de bord
+                  Accueil
                 </a>
               </li>
               <li

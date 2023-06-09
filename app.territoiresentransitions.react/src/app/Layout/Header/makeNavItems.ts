@@ -1,5 +1,6 @@
 import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {
+  makeCollectiviteAccueilUrl,
   makeCollectiviteBibliothequeUrl,
   makeCollectiviteIndicateursUrl,
   makeCollectiviteJournalUrl,
@@ -8,7 +9,6 @@ import {
   makeCollectivitePersoRefUrl,
   makeCollectivitePlansActionsBaseUrl,
   makeCollectiviteReferentielUrl,
-  makeCollectiviteTableauBordUrl,
   makeCollectiviteUsersUrl,
 } from 'app/paths';
 import {TNavDropdown, TNavItem, TNavItemsList} from './types';
@@ -27,8 +27,8 @@ const makeNavItemsBase = (collectivite: CurrentCollectivite): TNavItemsList => {
   // items communs qque soient les droits de l'utilisateur courant
   const common = [
     {
-      label: 'Tableau de bord',
-      to: makeCollectiviteTableauBordUrl({collectiviteId}),
+      label: 'Accueil',
+      to: makeCollectiviteAccueilUrl({collectiviteId}),
     },
     {
       acces_restreint,

@@ -1,7 +1,7 @@
 import {Link} from 'react-router-dom';
 import Alerte from 'ui/shared/Alerte';
 
-import {makeCollectiviteTableauBordUrl} from 'app/paths';
+import {makeCollectiviteAccueilUrl} from 'app/paths';
 import {TNomCollectivite} from 'types/alias';
 
 type Props = {
@@ -22,7 +22,7 @@ const Success = ({collectivite, handleResetForm}: Props) => {
         </button>
         <Link
           className="fr-btn fr-btn--icon-right fr-fi-arrow-right-line"
-          to={makeCollectiviteTableauBordUrl({
+          to={makeCollectiviteAccueilUrl({
             collectiviteId: collectivite.collectivite_id,
           })}
         >
