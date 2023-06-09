@@ -38,8 +38,8 @@ def compute_scores(
         action_level,
     )
 
-    action_personnalises_ids = list(personnalisation_consequences.keys())
-    status_by_action_id: Dict[str, ActionStatut] = {
+    action_personnalise_ids = list(personnalisation_consequences.keys())
+    statuts: Dict[str, ActionStatut] = {
         action_status.action_id: action_status
         for action_status in statuts
         if action_status.is_renseigne
@@ -60,9 +60,9 @@ def compute_scores(
             scores,
             potentiels,
             action_id,
-            status_by_action_id,
+            statuts,
             action_non_concerne_ids,
-            action_personnalises_ids,
+            action_personnalise_ids,
             action_desactive_ids,
         )
     )

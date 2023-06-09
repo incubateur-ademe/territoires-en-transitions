@@ -19,19 +19,19 @@ def update_action_scores(
         scores: Dict[ActionId, ActionScore],
         potentiels: Dict[ActionId, float],
         action_id: ActionId,
-        status_by_action_id: Dict[str, ActionStatut],
+        statuts: Dict[ActionId, ActionStatut],
         action_non_concerne_ids: List[ActionId],
         action_personnalise_ids: List[ActionId],
         action_desactive_ids: List[ActionId],
 ):
-    if referentiel_tree.is_leaf(action_id) or action_id in status_by_action_id.keys():
+    if referentiel_tree.is_leaf(action_id) or action_id in statuts.keys():
         update_action_scores_from_status(
             referentiel_tree,
             personnalise_tree,
             scores,
             potentiels,
             action_id,
-            status_by_action_id,
+            statuts,
             action_non_concerne_ids,
             action_personnalise_ids,
             action_desactive_ids,
@@ -54,10 +54,10 @@ def update_action_scores_from_status(
         scores: Dict[ActionId, ActionScore],
         potentiels: Dict[ActionId, float],
         action_id: ActionId,
-        status_by_action_id: Dict[str, ActionStatut],
-        actions_non_concernes_ids: List[ActionId],
-        action_personnalises_ids: List[ActionId],
-        actions_desactivees_ids: List[ActionId],
+        statuts: Dict[ActionId, ActionStatut],
+        actions_non_concerne_ids: List[ActionId],
+        action_personnalise_ids: List[ActionId],
+        action_desactive_ids: List[ActionId],
 ):
     """Utilise les statuts d'une tâche ou sous-action pour mettre à jour son score"""
     tache_points_personnalise = point_tree_personnalise.get_action_point(action_id)
@@ -66,20 +66,20 @@ def update_action_scores_from_status(
     assert tache_points_referentiel is not None
     assert tache_points_personnalise is not None
 
-    tache_point_potentiel = potentiels[action_id]
+    point_potentiel = potentiels[action_id]
 
-    tache_concerne = action_id not in actions_non_concernes_ids
-    tache_is_personnalise = action_id in action_personnalises_ids
-    tache_is_desactive = action_id in actions_desactivees_ids
+    is_concerne = action_id not in actions_non_concerne_ids
+    is_personnalise = action_id in action_personnalise_ids
+    is_desactive = action_id in action_desactive_ids
 
-    if not tache_concerne:
+    if not is_concerne:
         scores[action_id] = ActionScore(
             action_id=action_id,
             point_fait=0.0,
             point_pas_fait=0.0,
             point_programme=0.0,
-            point_non_renseigne=tache_point_potentiel,
-            point_potentiel=tache_point_potentiel,
+            point_non_renseigne=point_potentiel,
+            point_potentiel=point_potentiel,
             total_taches_count=1,
             completed_taches_count=1,
             fait_taches_avancement=0,
@@ -87,30 +87,30 @@ def update_action_scores_from_status(
             pas_fait_taches_avancement=0,
             pas_concerne_taches_avancement=1,
             point_referentiel=tache_points_referentiel,
-            concerne=tache_concerne,
+            concerne=is_concerne,
             # perso
             point_potentiel_perso=tache_points_personnalise
-            if tache_is_personnalise and not tache_is_desactive
+            if is_personnalise and not is_desactive
             else None,
-            desactive=tache_is_desactive,
+            desactive=is_desactive,
         )
         return
 
-    tache_status = status_by_action_id.get(action_id)
+    tache_status = statuts.get(action_id)
     if tache_status and tache_status.detailed_avancement:
         point_fait = (
-            tache_point_potentiel * tache_status.detailed_avancement.fait
-            if tache_concerne
+            point_potentiel * tache_status.detailed_avancement.fait
+            if is_concerne
             else 0.0
         )
         point_programme = (
-            tache_point_potentiel * tache_status.detailed_avancement.programme
-            if tache_concerne
+            point_potentiel * tache_status.detailed_avancement.programme
+            if is_concerne
             else 0.0
         )
         point_pas_fait = (
-            tache_point_potentiel * tache_status.detailed_avancement.pas_fait
-            if tache_concerne
+            point_potentiel * tache_status.detailed_avancement.pas_fait
+            if is_concerne
             else 0.0
         )
         point_non_renseigne = 0.0
@@ -118,11 +118,11 @@ def update_action_scores_from_status(
         fait_taches_avancement = tache_status.detailed_avancement.fait
         programme_taches_avancement = tache_status.detailed_avancement.programme
         pas_fait_taches_avancement = tache_status.detailed_avancement.pas_fait
-        pas_concerne_taches_avancement = 1 if not tache_concerne else 0.0
+        pas_concerne_taches_avancement = 1 if not is_concerne else 0.0
 
     else:
         point_pas_fait = point_programme = point_fait = 0.0
-        point_non_renseigne = tache_point_potentiel
+        point_non_renseigne = point_potentiel
         completed_taches_count = 0
         fait_taches_avancement = (
             programme_taches_avancement
@@ -134,7 +134,7 @@ def update_action_scores_from_status(
         point_programme=point_programme,
         point_non_renseigne=point_non_renseigne,
         point_fait=point_fait,
-        point_potentiel=tache_point_potentiel,
+        point_potentiel=point_potentiel,
         point_referentiel=tache_points_referentiel,
         completed_taches_count=completed_taches_count,
         total_taches_count=1,
@@ -142,12 +142,12 @@ def update_action_scores_from_status(
         programme_taches_avancement=programme_taches_avancement,
         pas_fait_taches_avancement=pas_fait_taches_avancement,
         pas_concerne_taches_avancement=pas_concerne_taches_avancement,
-        concerne=tache_concerne,
+        concerne=is_concerne,
         # perso
         point_potentiel_perso=tache_points_personnalise
-        if tache_is_personnalise
+        if is_personnalise
         else None,
-        desactive=tache_is_desactive,
+        desactive=is_desactive,
     )
 
 
@@ -156,8 +156,8 @@ def update_action_score_from_children_scores(
         point_tree_personnalise: ActionPointTree,
         scores: Dict[ActionId, ActionScore],
         potentiels: Dict[ActionId, float],
-        action_personnalises_ids: List[ActionId],
-        actions_desactivees_ids: List[ActionId],
+        action_personnalise_ids: List[ActionId],
+        action_desactive_ids: List[ActionId],
         action_id: ActionId,
 ):
     action_children = point_tree_referentiel.get_children(action_id)
@@ -191,8 +191,8 @@ def update_action_score_from_children_scores(
         if action_children_with_scores
         else True
     )  # concerne if any action children is concerne
-    action_is_personnalise = action_id in action_personnalises_ids
-    action_is_desactive = action_id in actions_desactivees_ids
+    is_personnalise = action_id in action_personnalise_ids
+    is_desactive = action_id in action_desactive_ids
     scores[action_id] = ActionScore(
         action_id=action_id,
         point_fait=point_fait,
@@ -240,9 +240,9 @@ def update_action_score_from_children_scores(
         concerne=concerne,
         # perso
         point_potentiel_perso=action_point_personnalise
-        if action_is_personnalise and not action_is_desactive
+        if is_personnalise and not is_desactive
         else None,
-        desactive=action_is_desactive,
+        desactive=is_desactive,
     )
 
 
