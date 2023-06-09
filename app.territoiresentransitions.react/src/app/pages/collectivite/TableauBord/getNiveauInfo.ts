@@ -3,7 +3,7 @@ import {toFixed} from 'utils/toFixed';
 
 export const NIVEAUX = [1, 2, 3, 4, 5];
 
-const scoreRequisParNiveau: {[key: number]: number} = {
+export const scoreRequisParNiveau: {[key: number]: number} = {
   1: 0,
   2: 35,
   3: 50,

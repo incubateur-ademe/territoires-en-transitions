@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import {makeCollectiviteTableauBordUrl} from 'app/paths';
+import {makeCollectiviteAccueilUrl} from 'app/paths';
 import {Link} from 'react-router-dom';
 import {BadgeNiveauAcces} from './BadgeNiveauAcces';
 import {HeaderPropsWithModalState} from './types';
@@ -69,7 +69,7 @@ export const SelectCollectivite = (props: HeaderPropsWithModalState) => {
               ({collectivite_id, nom, niveau_acces, est_auditeur}) => (
                 <li className="fr-nav__item" key={collectivite_id}>
                   <Link
-                    to={makeCollectiviteTableauBordUrl({
+                    to={makeCollectiviteAccueilUrl({
                       collectiviteId: collectivite_id!,
                     })}
                     target="_self"

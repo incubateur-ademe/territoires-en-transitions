@@ -4,11 +4,13 @@ import {defaultColors} from 'ui/charts/chartsTheme';
 type ProgressionParPhaseProps = {
   repartitionPhases: {id: string; value: number}[];
   referentiel: string;
+  customStyle?: React.CSSProperties;
 };
 
 const ProgressionParPhase = ({
   referentiel,
   repartitionPhases,
+  customStyle,
 }: ProgressionParPhaseProps) => {
   const scoreTotal =
     Math.round(
@@ -23,9 +25,11 @@ const ProgressionParPhase = ({
       chartType="donut"
       chartProps={{data: repartitionPhases, label: true}}
       chartInfo={{
-        title: `Répartition du score "Réalisé" par phase (${scoreTotal} point${
-          scoreTotal === 0 || scoreTotal === 1 ? '' : 's'
-        })`,
+        title: `Répartition du score "Réalisé" par phase (${
+          scoreTotal > 1 ? Math.round(scoreTotal) : scoreTotal
+        } point${
+          Math.round(scoreTotal) <= 1 ? '' : 's'
+        }) - ${referentiel.toUpperCase()}`,
         legend: repartitionPhases.map((el, index) => ({
           name: el.id,
           color: defaultColors[index % defaultColors.length],
@@ -33,6 +37,7 @@ const ProgressionParPhase = ({
         expandable: true,
         downloadedFileName: `${referentiel}-realise-par-phase`,
       }}
+      customStyle={customStyle}
     />
   );
 };

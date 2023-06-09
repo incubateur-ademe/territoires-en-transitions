@@ -43,6 +43,7 @@ type ProgressionReferentielProps = {
   >;
   referentiel: ReferentielParamOption;
   percentage?: boolean;
+  customStyle?: React.CSSProperties;
 };
 
 /**
@@ -57,6 +58,7 @@ const ProgressionReferentiel = ({
   score,
   referentiel,
   percentage = false,
+  customStyle,
 }: ProgressionReferentielProps): JSX.Element => {
   return (
     <BarChartCardWithSubrows
@@ -89,6 +91,7 @@ const ProgressionReferentiel = ({
           customColors
         )
       }
+      customStyle={customStyle}
     />
   );
 };

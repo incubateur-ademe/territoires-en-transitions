@@ -1,4 +1,4 @@
-import {makeCollectiviteTableauBordUrl} from 'app/paths';
+import {makeCollectiviteAccueilUrl} from 'app/paths';
 import {ReferentContact} from 'core-logic/api/procedures/collectiviteProcedures';
 import {useClaimCollectivite} from 'core-logic/hooks/useClaimCollectivite';
 import {TNomCollectivite} from 'types/alias';
@@ -69,7 +69,7 @@ const ActiverCollectiviteDialogContent = ({
         <div>Vous avez activé la collectivité {collectivite.nom}</div>
         <Link
           className="fr-btn"
-          to={makeCollectiviteTableauBordUrl({
+          to={makeCollectiviteAccueilUrl({
             collectiviteId: collectivite.collectivite_id,
           })}
         >

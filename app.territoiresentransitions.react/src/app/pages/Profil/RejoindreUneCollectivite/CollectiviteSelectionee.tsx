@@ -2,7 +2,7 @@ import Alerte from 'ui/shared/Alerte';
 
 import {ReferentContact} from 'core-logic/api/procedures/collectiviteProcedures';
 import {Link} from 'react-router-dom';
-import {makeCollectiviteTableauBordUrl} from 'app/paths';
+import {makeCollectiviteAccueilUrl} from 'app/paths';
 
 type Props = {
   selectedCollectiviteId: number;
@@ -44,7 +44,7 @@ const CollectiviteSelectionee = ({
         />
         <Link
           className="fr-btn fr-btn--icon-right fr-fi-arrow-right-line mt-6"
-          to={makeCollectiviteTableauBordUrl({
+          to={makeCollectiviteAccueilUrl({
             collectiviteId: selectedCollectiviteId,
           })}
         >

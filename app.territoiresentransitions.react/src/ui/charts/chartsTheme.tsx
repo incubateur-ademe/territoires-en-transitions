@@ -60,6 +60,6 @@ export const statusColor: Record<string, string> = {
   'À venir': '#7AB1E8',
   'En cours': '#869ECE',
   Réalisé: '#34CB6A',
-  NC: '#CCC',
-  'Sans statut': '#CCC',
+  NC: '#E5E5E5',
+  'Sans statut': '#E5E5E5',
 };

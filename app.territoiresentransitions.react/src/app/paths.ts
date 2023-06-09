@@ -47,6 +47,7 @@ export type LabellisationVueParamOption = 'suivi' | 'cycles' | 'criteres';
 export const collectivitePath = `/collectivite/:${collectiviteParam}`;
 export const collectiviteIndicateurPath = `${collectivitePath}/indicateurs/:${indicateurViewParam}`;
 export const collectiviteReferentielPath = `${collectivitePath}/referentiels/:${referentielParam}/:${referentielVueParam}`;
+export const collectiviteAccueilPath = `${collectivitePath}/accueil`;
 export const collectiviteTableauBordPath = `${collectivitePath}/tableau_bord`;
 export const collectiviteActionPath = `${collectivitePath}/action/:${referentielParam}/:${actionParam}/:${actionVueParam}?`;
 export const collectiviteLabellisationRootPath = `${collectivitePath}/labellisation/:${referentielParam}`;
@@ -295,6 +296,16 @@ export const makeCollectivitePlanActionAxeUrl = ({
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
     .replace(`:${planParam}`, planActionUid)
     .replace(`:${axeParam}`, axeUid);
+
+export const makeCollectiviteAccueilUrl = ({
+  collectiviteId,
+}: {
+  collectiviteId: number;
+}) =>
+  collectiviteAccueilPath.replace(
+    `:${collectiviteParam}`,
+    collectiviteId.toString()
+  );
 
 export const makeCollectiviteTableauBordUrl = ({
   collectiviteId,

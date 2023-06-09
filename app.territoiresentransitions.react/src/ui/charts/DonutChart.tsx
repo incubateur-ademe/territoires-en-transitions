@@ -37,7 +37,8 @@ const getTooltip = (
     id: string;
     value: number;
     color?: string;
-  }[]
+  }[],
+  unit: string
 ) => {
   if (isDefaultData) return null;
 
@@ -72,7 +73,8 @@ const getTooltip = (
       <span style={{paddingBottom: '3px'}}>
         {id} :{' '}
         <strong>
-          {Math.round(value * 10) / 10} ({percentage}%)
+          {Math.round(value * 10) / 10} {unit}
+          {!!unit && value > 1 ? 's' : ''} ({percentage}%)
         </strong>
       </span>
     </div>
@@ -86,6 +88,9 @@ export type DonutChartProps = {
     color?: string;
   }[];
   label?: boolean;
+  unit?: string;
+  customMargin?: {top: number; right: number; bottom: number; left: number};
+  zoomEffect?: boolean;
 };
 
 /**
@@ -93,10 +98,18 @@ export type DonutChartProps = {
  *
  * @param data - tableau de données à afficher
  * @param label - (optionnel) affichage des labels sur le
+ * @param customMargin
+ * @param zoomEffect
  * graphe au lieu de la légende
  */
 
-const DonutChart = ({data, label = false}: DonutChartProps) => {
+const DonutChart = ({
+  data,
+  label = false,
+  unit = '',
+  customMargin,
+  zoomEffect = true,
+}: DonutChartProps) => {
   const defaultData = [{id: 'NA', value: 1, color: '#ccc'}];
 
   let localData = data.map((d, index) => ({
@@ -117,11 +130,11 @@ const DonutChart = ({data, label = false}: DonutChartProps) => {
       data={isDefaultData() ? defaultData : localData}
       theme={theme}
       colors={{datum: 'data.color'}}
-      margin={{top: 40, right: 50, bottom: 60, left: 50}}
+      margin={customMargin ?? {top: 40, right: 50, bottom: 60, left: 50}}
       innerRadius={0.5}
       padAngle={0.7}
       cornerRadius={3}
-      activeOuterRadiusOffset={8}
+      activeOuterRadiusOffset={zoomEffect ? 8 : 0}
       borderWidth={1}
       borderColor={{from: 'color', modifiers: [['darker', 0.2]]}}
       enableArcLinkLabels={
@@ -136,8 +149,8 @@ const DonutChart = ({data, label = false}: DonutChartProps) => {
       arcLabel={d => `${Math.round(d.value)}`}
       arcLabelsSkipAngle={12}
       arcLabelsTextColor={{from: 'color', modifiers: [['darker', 2]]}}
-      animate={false}
-      tooltip={datum => getTooltip(datum, isDefaultData(), localData)}
+      animate={true}
+      tooltip={datum => getTooltip(datum, isDefaultData(), localData, unit)}
     />
   );
 };

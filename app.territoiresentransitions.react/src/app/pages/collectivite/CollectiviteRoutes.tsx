@@ -13,7 +13,8 @@ import {
   collectiviteJournalPath,
   collectiviteBibliothequePath,
   collectivitePlansActionsBasePath,
-  makeCollectiviteTableauBordUrl,
+  makeCollectiviteAccueilUrl,
+  collectiviteAccueilPath,
 } from 'app/paths';
 import {ReferentielsPage} from 'app/pages/collectivite/Referentiels/ReferentielsPage';
 import {ActionPage} from 'app/pages/collectivite/Referentiels/ActionPage';
@@ -28,6 +29,7 @@ import {JournalActivitePage} from './Historique/JournalActivitePage';
 import {BibliothequeDocsPage} from './BibliothequeDocs/BibliothequeDocsPage';
 import {PlansActionsPage} from './PlansActions/PlansActionsPage';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import AccueilPage from './Accueil/AccueilPage';
 
 /**
  * Routes starting with collectivite/:collectiviteId/ see App.ts Router.
@@ -39,6 +41,9 @@ export const CollectiviteRoutes = () => {
     <>
       <Route path={collectiviteReferentielPath}>
         <ReferentielsPage />
+      </Route>
+      <Route path={collectiviteAccueilPath}>
+        <AccueilPage />
       </Route>
       <Route path={collectiviteTableauBordPath}>
         <TableauBordPage />
@@ -94,7 +99,7 @@ const RouteEnAccesRestreint = (props: RouteProps) => {
       render={({location}) =>
         collectivite.acces_restreint && collectivite.readonly ? (
           <Redirect
-            to={makeCollectiviteTableauBordUrl({
+            to={makeCollectiviteAccueilUrl({
               collectiviteId: collectivite.collectivite_id,
             })}
           />
