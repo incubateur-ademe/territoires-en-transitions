@@ -13,7 +13,7 @@ Scores:
     test: le point potentiel ne devrait pas changer les points 
       de la cae_1.1.2.1 devraient être redistribués
     point_referentiel: 10
-    point_potentiel: 10 # BUG 8
+    point_potentiel: 10
   cae_1.1.2.1.5:
     point_referentiel: 0.4
     point_potentiel: 0.0
