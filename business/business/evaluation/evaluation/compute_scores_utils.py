@@ -68,7 +68,7 @@ def update_action_scores_from_status(
 
     tache_point_potentiel = potentiels[action_id]
 
-    tache_concerne = action_id not in actions_non_concernes_ids + actions_desactivees_ids
+    tache_concerne = action_id not in actions_non_concernes_ids
     tache_is_personnalise = action_id in action_personnalises_ids
     tache_is_desactive = action_id in actions_desactivees_ids
 
@@ -246,7 +246,7 @@ def update_action_score_from_children_scores(
     )
 
 
-def _get_non_concerne_action_ids(
+def _propagate_non_concerne(
         action_id: ActionId,
         actions_non_concernes_ids: List[ActionId],
         point_tree: ActionPointTree,
@@ -258,28 +258,28 @@ def _get_non_concerne_action_ids(
         actions_non_concernes_ids.append(action_id)
 
 
-@timeit("compute_actions_non_concernes_ids")
-def compute_actions_non_concernes_ids(
-        point_tree: ActionPointTree, statuses: List[ActionStatut],
+@timeit("compute_action_non_concerne_ids")
+def compute_action_non_concerne_ids(
+        point_tree: ActionPointTree,
+        statuts: List[ActionStatut],
+        action_desactive_ids: List[ActionId]
 ):
-    taches_non_concernes_ids = [
+    action_non_concerne_ids = [
         action_status.action_id
-        for action_status in statuses
+        for action_status in statuts
         if not action_status.concerne
-    ]
+    ] + action_desactive_ids
 
-    # 1. First, calculate all potentiels after 'non concernee' action's points redistribution
-    actions_non_concernes_ids = taches_non_concernes_ids
     point_tree.map_from_taches_to_root(
-        lambda action_id: _get_non_concerne_action_ids(
-            action_id, actions_non_concernes_ids, point_tree
+        lambda action_id: _propagate_non_concerne(
+            action_id, action_non_concerne_ids, point_tree
         )
     )
-    return actions_non_concernes_ids
+    return action_non_concerne_ids
 
 
 @timeit("compute_actions_desactivees_ids")
-def compute_actions_desactivees_ids(
+def compute_action_desactive_ids(
         point_tree_personnalise: ActionPointTree,
         personnalisation_consequences: dict[ActionId, ActionPersonnalisationConsequence]
 ) -> List[ActionId]:

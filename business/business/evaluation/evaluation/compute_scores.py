@@ -8,7 +8,7 @@ from .action_point_tree import ActionTree
 
 def compute_scores(
         referentiel_tree: ActionPointTree,
-        statuses: List[ActionStatut],
+        statuts: List[ActionStatut],
         personnalisation_consequences: dict[ActionId, ActionPersonnalisationConsequence],
         action_level: int,
 ) -> Dict[ActionId, ActionScore]:
@@ -18,14 +18,15 @@ def compute_scores(
     )
 
     # 1. Première passe, calcule la redistribution des potentiels des actions désactivés ou non concernées
-    action_desactive_ids = compute_actions_desactivees_ids(
+    action_desactive_ids = compute_action_desactive_ids(
         personnalise_tree,
         personnalisation_consequences,
     )
 
-    action_non_concerne_ids = (
-            compute_actions_non_concernes_ids(personnalise_tree, statuses)
-            + action_desactive_ids
+    action_non_concerne_ids = compute_action_non_concerne_ids(
+        personnalise_tree,
+        statuts,
+        action_desactive_ids
     )
 
     # 2. Deuxième et troisième passes, on propage les potentiels
@@ -40,7 +41,7 @@ def compute_scores(
     action_personnalises_ids = list(personnalisation_consequences.keys())
     status_by_action_id: Dict[str, ActionStatut] = {
         action_status.action_id: action_status
-        for action_status in statuses
+        for action_status in statuts
         if action_status.is_renseigne
     }
 
