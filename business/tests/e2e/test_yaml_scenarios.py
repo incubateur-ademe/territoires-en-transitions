@@ -1,3 +1,5 @@
+import os
+
 from .fixtures import *
 from pathlib import Path
 import yaml
@@ -7,7 +9,7 @@ from business.utils.models.action_statut import (
 )
 
 yaml_tests_dir = "../markdown/tests"
-yaml_tests_glob = "**/*.test.yml"
+yaml_tests_glob = os.environ.get("YAML_TESTS") or "**/*.test.yml"
 paths = [('/'.join(str(path).split('/')[-2:]), path) for path in list(Path(yaml_tests_dir).glob(yaml_tests_glob))]
 
 
