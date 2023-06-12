@@ -56,7 +56,7 @@ const Indicateurs = () => {
   return (
     <div className="fr-container !px-0 flex">
       <IndicateursNav />
-      <div>
+      <div className="w-full">
         <div className="flex items-center mx-auto py-6 px-10 bg-indigo-700">
           <p className="flex grow py-2 px-3 m-0 font-bold text-white text-[2rem] leading-snug">
             {viewTitles[current]}
