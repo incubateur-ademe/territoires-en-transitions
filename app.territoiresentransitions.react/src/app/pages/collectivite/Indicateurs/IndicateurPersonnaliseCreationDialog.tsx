@@ -7,7 +7,7 @@ export const IndicateurPersonnaliseCreationDialog = () => {
   const currentCollectivite = useCurrentCollectivite();
   const [editing, setEditing] = useState(false);
 
-  return currentCollectivite?.niveau_acces ? (
+  return currentCollectivite && !currentCollectivite.readonly ? (
     <UiDialogButton
       title="Créer un indicateur"
       opened={editing}
