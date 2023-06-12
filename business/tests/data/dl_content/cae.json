@@ -25925,7 +25925,7 @@
     },
     {
       "action_id": "cae_1.1.2.0",
-      "categorie": null,
+      "categorie": "bases",
       "computed_points": 0.0,
       "contexte": "",
       "description": "",
