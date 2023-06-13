@@ -4,7 +4,7 @@ import {useEffect} from 'react';
 export const scrollToTop = () =>
   document.getElementsByClassName('fr-header').item(0)?.scrollIntoView();
 
-export const ScrollToTopOnChangePage = () => {
+export const ScrollToTopOnPageChange = () => {
   const {pathname} = useLocation();
 
   useEffect(() => {
