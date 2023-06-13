@@ -4,7 +4,6 @@ import {Tooltip} from './Tooltip';
 
 export default {
   component: Tooltip,
-  parameters: {storyshots: false},
 } as Meta;
 
 export const Simple = () => (
