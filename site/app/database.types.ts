@@ -2937,6 +2937,16 @@ export interface Database {
           modified_by_nom: string | null
         }
       }
+      indicateur_summary: {
+        Row: {
+          collectivite_id: number | null
+          indicateur_group:
+            | Database["public"]["Enums"]["indicateur_group"]
+            | null
+          indicateur_id: string | null
+          resultats: number | null
+        }
+      }
       indicateurs_collectivite: {
         Row: {
           collectivite_id: number | null
@@ -6238,6 +6248,12 @@ export interface Database {
       skip:
         | {
             Args: {
+              "": number
+            }
+            Returns: string
+          }
+        | {
+            Args: {
               why: string
               how_many: number
             }
@@ -6246,12 +6262,6 @@ export interface Database {
         | {
             Args: {
               "": string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              "": number
             }
             Returns: string
           }
