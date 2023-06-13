@@ -105,7 +105,10 @@ defineStep(/j'ajoute une fiche à "([^"]*)"/, titre => {
     .contains(titre)
     .within(() => {
       // le déplie
-      cy.root().parent().find('[data-test=BoutonDeplierAxe]').click();
+      cy.root()
+        .parents('[data-test=Axe]')
+        .find('[data-test=BoutonDeplierAxe]')
+        .click();
       // et demande la création de la fiche
       cy.root()
         .parents('[data-test=Axe]')
