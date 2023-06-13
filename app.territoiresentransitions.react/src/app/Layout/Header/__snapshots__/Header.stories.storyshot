@@ -184,7 +184,6 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
             className="fr-nav__item"
           >
             <button
-              aria-controls="floating-ui-0"
               aria-expanded={false}
               className="fr-nav__btn"
               onClick={[Function]}
@@ -193,7 +192,6 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
             </button>
             <div
               className="fr-menu fr-collapse"
-              id="floating-ui-0"
             >
               <ul
                 className="fr-menu__list"
@@ -284,7 +282,6 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
             className="fr-nav__item"
           >
             <button
-              aria-controls="floating-ui-1"
               aria-expanded={false}
               className="fr-nav__btn"
               onClick={[Function]}
@@ -293,7 +290,6 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
             </button>
             <div
               className="fr-menu fr-collapse"
-              id="floating-ui-1"
             >
               <ul
                 className="fr-menu__list"
@@ -358,7 +354,6 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
             className="fr-nav__item"
           >
             <button
-              aria-controls="floating-ui-2"
               aria-expanded={false}
               className="fr-nav__btn"
               onClick={[Function]}
@@ -367,7 +362,6 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
             </button>
             <div
               className="fr-menu fr-collapse"
-              id="floating-ui-2"
             >
               <ul
                 className="fr-menu__list"
@@ -430,6 +424,7 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
               onBlur={[Function]}
               onClick={[Function]}
               onFocus={[Function]}
+              onKeyDown={[Function]}
               onMouseLeave={[Function]}
               onMouseMove={[Function]}
               onPointerDown={[Function]}

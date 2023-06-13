@@ -173,7 +173,6 @@ exports[`Storyshots app/Layout Exemple 1`] = `
                 className="fr-nav__item"
               >
                 <button
-                  aria-controls="floating-ui-5"
                   aria-expanded={false}
                   className="fr-nav__btn"
                   onClick={[Function]}
@@ -182,7 +181,6 @@ exports[`Storyshots app/Layout Exemple 1`] = `
                 </button>
                 <div
                   className="fr-menu fr-collapse"
-                  id="floating-ui-5"
                 >
                   <ul
                     className="fr-menu__list"
@@ -273,7 +271,6 @@ exports[`Storyshots app/Layout Exemple 1`] = `
                 className="fr-nav__item"
               >
                 <button
-                  aria-controls="floating-ui-6"
                   aria-expanded={false}
                   className="fr-nav__btn"
                   onClick={[Function]}
@@ -282,7 +279,6 @@ exports[`Storyshots app/Layout Exemple 1`] = `
                 </button>
                 <div
                   className="fr-menu fr-collapse"
-                  id="floating-ui-6"
                 >
                   <ul
                     className="fr-menu__list"
@@ -347,7 +343,6 @@ exports[`Storyshots app/Layout Exemple 1`] = `
                 className="fr-nav__item"
               >
                 <button
-                  aria-controls="floating-ui-7"
                   aria-expanded={false}
                   className="fr-nav__btn"
                   onClick={[Function]}
@@ -356,7 +351,6 @@ exports[`Storyshots app/Layout Exemple 1`] = `
                 </button>
                 <div
                   className="fr-menu fr-collapse"
-                  id="floating-ui-7"
                 >
                   <ul
                     className="fr-menu__list"
