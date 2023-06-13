@@ -56,7 +56,7 @@ deploy:
 deploy-test:
     ARG --required DB_URL
     ARG network=host
-    ARG tag=v2.34.0
+    ARG tag=v2.37.0
     LOCALLY
     RUN earthly +sqitch-build
     RUN docker run --rm \
