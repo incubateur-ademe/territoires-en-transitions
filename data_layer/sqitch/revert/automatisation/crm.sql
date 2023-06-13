@@ -2,7 +2,8 @@
 
 BEGIN;
 
-drop materialized view crm_usages;
+drop view crm_usages;
+drop materialized view stats.crm_usages;
 create view crm_usages
 as
 with premier_rattachements as (select collectivite_id,
