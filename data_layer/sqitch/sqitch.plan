@@ -405,3 +405,4 @@ collectivite/historique [collectivite/historique@v2.39.0] 2023-06-16T11:31:43Z F
 utilisateur/visite [utilisateur/visite@v2.40.0] 2023-06-19T08:08:14Z Florian <florian@derfurth.com> # Ajoute les tags pour les indicateurs
 utilisateur/usage [utilisateur/usage@v2.40.0] 2023-06-19T08:14:06Z Florian <florian@derfurth.com> # Ajoute le tracking des boutons du tableau de bord
 plan_action/tableau_de_bord [plan_action/tableau_de_bord@v2.31.2] 2023-05-31T12:29:38Z Amandine Jacquelin <conta@LanceLibre> # Ajoute le graphique de répartition par échéance
+automatisation/crm [automatisation/crm@v2.37.0] 2023-06-13T15:56:21Z Florian <florian@derfurth.com> # Materialise la vue usages.
