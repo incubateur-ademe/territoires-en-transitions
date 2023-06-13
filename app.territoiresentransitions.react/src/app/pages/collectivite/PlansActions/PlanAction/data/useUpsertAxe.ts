@@ -34,7 +34,6 @@ export const useCreatePlanAction = () => {
     mutationFn: upsertAxe,
     meta: {disableToast: true},
     onSuccess: data => {
-      queryClient.invalidateQueries(['plans_actions', collectivite_id]);
       queryClient.invalidateQueries(['plans_navigation', collectivite_id]);
       history.push(
         makeCollectivitePlanActionUrl({
