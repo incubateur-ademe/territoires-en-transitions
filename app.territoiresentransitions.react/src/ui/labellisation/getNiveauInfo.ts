@@ -1,5 +1,5 @@
-import {LabellisationParNiveauRead} from 'app/pages/collectivite/TableauBord/useLabellisationParNiveau';
 import {toFixed} from 'utils/toFixed';
+import {LabellisationParNiveauRead} from './useLabellisationParNiveau';
 
 export const NIVEAUX = [1, 2, 3, 4, 5];
 

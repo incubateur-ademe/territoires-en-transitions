@@ -4,7 +4,6 @@ import {
   collectiviteActionPath,
   collectiviteIndicateurPath as collectiviteIndicateursPath,
   collectiviteReferentielPath,
-  collectiviteTableauBordPath,
   collectiviteUsersPath,
   collectivitePersoRefPath,
   collectivitePersoRefThematiquePath,
@@ -19,7 +18,6 @@ import {
 import {ReferentielsPage} from 'app/pages/collectivite/Referentiels/ReferentielsPage';
 import {ActionPage} from 'app/pages/collectivite/Referentiels/ActionPage';
 import {IndicateursPage} from 'app/pages/collectivite/Indicateurs/IndicateursPage';
-import {TableauBordPage} from 'app/pages/collectivite/TableauBord/TableauBordPage';
 import {MembresPage} from 'app/pages/collectivite/Users/MembresPage';
 import {PersoReferentielPage} from './PersoReferentiel/PersoReferentielPage';
 import {PersoReferentielThematiquePage} from './PersoReferentielThematique/PersoReferentielThematiquePage';
@@ -44,9 +42,6 @@ export const CollectiviteRoutes = () => {
       </Route>
       <Route path={collectiviteAccueilPath}>
         <AccueilPage />
-      </Route>
-      <Route path={collectiviteTableauBordPath}>
-        <TableauBordPage />
       </Route>
       <Route path={collectiviteActionPath}>
         <ActionPage />
