@@ -26,10 +26,7 @@ type Props = {
 
 const SideNav = ({links}: Props) => {
   return (
-    <nav
-      data-test="SideNav"
-      className="fr-sidemenu flex w-80 shrink-0 py-8 md:px-8 border-r border-gray-100"
-    >
+    <nav data-test="SideNav" className="fr-sidemenu flex">
       <div className="fr-sidemenu-wrapper w-full">
         <ul className="fr-sidemenu__list">
           {links.map(element => {
