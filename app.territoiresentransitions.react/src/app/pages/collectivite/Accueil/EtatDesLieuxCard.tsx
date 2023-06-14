@@ -28,7 +28,7 @@ type EmptyEtatDesLieuxCardProps = {
   collectiviteId: number;
   referentiel: ReferentielParamOption;
   title: string;
-  tags: string[];
+  tags: {label: string; axeId: string}[];
   className?: string;
 };
 
@@ -67,17 +67,20 @@ const EtatDesLieuxCard = ({
     return progressionScore.data.map(d => {
       switch (d.action_id) {
         case 'cae_3':
-          return 'Énergie, eau, assainissement';
+          return {label: 'Énergie, eau, assainissement', axeId: d.action_id};
         case 'eci_1':
-          return 'Stratégie globale';
+          return {label: 'Stratégie globale', axeId: d.action_id};
         case 'eci_2':
-          return 'Réduction, collecte et valorisation des déchets';
+          return {
+            label: 'Réduction, collecte et valorisation des déchets',
+            axeId: d.action_id,
+          };
         case 'eci_3':
-          return "Autres piliers de l'ECI";
+          return {label: "Autres piliers de l'ECI", axeId: d.action_id};
         case 'eci_4':
-          return 'Outils financiers';
+          return {label: 'Outils financiers', axeId: d.action_id};
         default:
-          return d.nom;
+          return {label: d.nom, axeId: d.action_id};
       }
     });
   };
@@ -188,7 +191,17 @@ const EmptyEtatDesLieuxCard = ({
       <ul className="fr-tags-group">
         {tags.map((tag, index) => (
           <li key={index}>
-            <p className="fr-tag !text-[#ff5655] !bg-[#fddfd8]">{tag}</p>
+            <a
+              href={makeCollectiviteReferentielUrl({
+                collectiviteId,
+                referentielId: referentiel,
+                referentielVue: 'progression',
+                axeId: tag.axeId,
+              })}
+              className="fr-tag !text-[#ff5655] hover:!bg-[#ffcdc1] !bg-[#fddfd8]"
+            >
+              {tag.label}
+            </a>
           </li>
         ))}
       </ul>
