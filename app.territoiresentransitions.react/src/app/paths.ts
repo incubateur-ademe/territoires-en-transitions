@@ -92,18 +92,24 @@ export const makeCollectiviteReferentielUrl = ({
   collectiviteId,
   referentielId,
   referentielVue,
+  axeId,
 }: {
   collectiviteId: number;
   referentielId: ReferentielParamOption;
   referentielVue?: ReferentielVueParamOption | '';
-}) =>
-  collectiviteReferentielPath
+  axeId?: string;
+}) => {
+  let pathName = collectiviteReferentielPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
     .replace(`:${referentielParam}`, referentielId)
     .replace(
       `:${referentielVueParam}`,
       referentielVue === undefined ? 'progression' : referentielVue
     );
+
+  if (!!axeId && axeId.length) pathName += `?axe=${axeId}`;
+  return pathName;
+};
 
 export const makeCollectiviteActionUrl = ({
   collectiviteId,
