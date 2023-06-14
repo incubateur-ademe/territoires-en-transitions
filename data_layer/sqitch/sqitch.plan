@@ -386,3 +386,5 @@ automatisation/crm [automatisation/crm@v2.36.0] 2023-06-09T15:47:55Z Florian <fl
 utilisateur/usage [utilisateur/usage@v2.35.0] 2023-06-08T13:19:56Z Florian <florian@derfurth.com> # Ajoute de nouvelles fonctions
 utilisateur/visite [utilisateur/visite@v2.35.0] 2023-06-08T13:21:28Z Florian <florian@derfurth.com> # Ajoute de nouvelles pages
 @v2.37.0 2023-06-13T09:46:06Z Florian <florian@derfurth.com> # Améliorations CRM et tracker
+
+utilisateur/droits_v2 [utilisateur/droits_v2@v2.37.0] 2023-06-14T15:51:57Z Florian <florian@derfurth.com> # Améliore la performance
