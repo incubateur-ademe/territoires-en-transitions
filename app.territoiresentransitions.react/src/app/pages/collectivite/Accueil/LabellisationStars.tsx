@@ -1,8 +1,8 @@
 import {ReferentielParamOption} from 'app/paths';
 import {Tooltip} from 'ui/shared/floating-ui/Tooltip';
 import {useCycleLabellisation} from '../ParcoursLabellisation/useCycleLabellisation';
-import {NIVEAUX} from '../TableauBord/getNiveauInfo';
-import {GreyStar, RedStar} from '../TableauBord/Star';
+import {NIVEAUX} from '../../../../ui/labellisation/getNiveauInfo';
+import {GreyStar, RedStar} from 'ui/labellisation/Star';
 
 type LabellisationStarsProps = {
   referentiel: ReferentielParamOption;
