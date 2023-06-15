@@ -2746,6 +2746,18 @@ export interface Database {
           user_key: string | null
         }
       }
+      crm_labellisations: {
+        Row: {
+          annee: number | null
+          collectivite_key: string | null
+          etoiles: number | null
+          id: number | null
+          obtenue_le: string | null
+          referentiel: Database["public"]["Enums"]["referentiel"] | null
+          score_programme: number | null
+          score_realise: number | null
+        }
+      }
       crm_personnes: {
         Row: {
           email: string | null
@@ -2770,6 +2782,20 @@ export interface Database {
           prenom?: never
           telephone?: never
           user_id?: string | null
+        }
+      }
+      crm_usages: {
+        Row: {
+          collectivite_id: number | null
+          completude_cae: number | null
+          completude_eci: number | null
+          fiches: number | null
+          indicateurs_perso: number | null
+          key: string | null
+          plans: number | null
+          premier_rattachement: string | null
+          resultats_indicateurs: number | null
+          resultats_indicateurs_perso: number | null
         }
       }
       departement: {
@@ -4748,6 +4774,7 @@ export interface Database {
           niveaux_priorite?: Database["public"]["Enums"]["fiche_action_niveaux_priorite"][]
           statuts?: Database["public"]["Enums"]["fiche_action_statuts"][]
           referents?: Database["public"]["CompositeTypes"]["personne"][]
+          limit?: number
         }
         Returns: {
           actions: unknown[] | null
@@ -6009,6 +6036,13 @@ export interface Database {
           parent: number | null
         }[]
       }
+      preuve_count: {
+        Args: {
+          collectivite_id: number
+          action_id: unknown
+        }
+        Returns: number
+      }
       quit_collectivite: {
         Args: {
           id: number
@@ -6600,15 +6634,15 @@ export interface Database {
       todo:
         | {
             Args: {
-              how_many: number
               why: string
+              how_many: number
             }
             Returns: boolean[]
           }
         | {
             Args: {
-              why: string
               how_many: number
+              why: string
             }
             Returns: boolean[]
           }
