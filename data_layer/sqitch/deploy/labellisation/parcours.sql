@@ -69,8 +69,8 @@ begin
 
            criteres.liste                                  as criteres_action,
            criteres.atteints and cs.atteint and
-           -- Pas de document nécessaire pour une demande cot 1ère étoile
-           (case when demande.sujet = 'cot' and demande.etoiles = '1' then true else cf.atteint end) as rempli,
+               -- Pas de document nécessaire pour une demande 1ère étoile par une collectivité cot
+           (case when (demande.etoiles = '1' and cot is not null) then true else cf.atteint end) as rempli,
            calendrier.information,
 
            to_jsonb(demande),
@@ -87,6 +87,8 @@ begin
                        on cf.referentiel = e.referentiel
              left join labellisation_calendrier calendrier
                        on calendrier.referentiel = e.referentiel
+             left join cot
+                 on cot.collectivite_id = labellisation_parcours.collectivite_id
 
              left join lateral (select d.id,
                                        d.en_cours,

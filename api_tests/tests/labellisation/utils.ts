@@ -3,19 +3,19 @@ import {
   assertExists,
   assertObjectMatch,
 } from "https://deno.land/std@0.163.0/testing/asserts.ts";
-import { supabase } from "/lib/supabase.ts";
-import { testSetAuditeur } from "/lib/rpcs/testSetAuditeur.ts";
-import { testAddRandomUser } from "/lib/rpcs/testAddRandomUser.ts";
-import { RandomUser } from "/lib/types/randomUser.ts";
-import { Database } from "/lib/database.types.ts";
+import { supabase } from "../../lib/supabase.ts";
+import { testSetAuditeur } from "../../lib/rpcs/testSetAuditeur.ts";
+import { testAddRandomUser } from "../../lib/rpcs/testAddRandomUser.ts";
+import { RandomUser } from "../../lib/types/randomUser.ts";
+import { Database } from "../../lib/database.types.ts";
 import {
   labellisationParcours,
   TLabellisationDemande,
-} from "/lib/rpcs/labellisationParcours.ts";
-import { labellisationSubmitDemande } from "/lib/rpcs/labellisationSubmitDemande.ts";
-import { labellisationCommencerAudit } from "/lib/rpcs/labellisationCommencerAudit.ts";
-import { labellisationDemande } from "/lib/rpcs/labellisationDemande.ts";
-import { testCreateCollectivite } from "/lib/rpcs/testCreateCollectivite.ts";
+} from "../../lib/rpcs/labellisationParcours.ts";
+import { labellisationSubmitDemande } from "../../lib/rpcs/labellisationSubmitDemande.ts";
+import { labellisationCommencerAudit } from "../../lib/rpcs/labellisationCommencerAudit.ts";
+import { labellisationDemande } from "../../lib/rpcs/labellisationDemande.ts";
+import { testCreateCollectivite } from "../../lib/rpcs/testCreateCollectivite.ts";
 
 export async function creer_collectivite() {
   // On crée une collectivite de test
