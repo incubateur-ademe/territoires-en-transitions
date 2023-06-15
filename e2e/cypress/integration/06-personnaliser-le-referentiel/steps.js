@@ -1,4 +1,4 @@
-import {defineStep} from '@badeball/cypress-cucumber-preprocessor';
+import {When} from '@badeball/cypress-cucumber-preprocessor';
 
 import {LocalSelectors} from './selectors';
 
@@ -8,18 +8,15 @@ beforeEach(() => {
 });
 
 /** Vérification des questions/réponse **/
-defineStep(
-  /la liste des questions contient les entrées suivantes/,
-  dataString => {
-    // sélectionne le dialogue
-    cy.get(
-      LocalSelectors['dialogue Personnaliser le potentiel'].selector
-    ).within(() => {
+When(/la liste des questions contient les entrées suivantes/, dataString => {
+  // sélectionne le dialogue
+  cy.get(LocalSelectors['dialogue Personnaliser le potentiel'].selector).within(
+    () => {
       checkQuestionsReponses(dataString);
-    });
-  }
-);
-defineStep(
+    }
+  );
+});
+When(
   'la page thématique contient entre autres les questions suivantes :',
   dataString => {
     cy.get('[data-test=thematique]').within(() => {
@@ -29,26 +26,25 @@ defineStep(
 );
 
 /** Saisie les réponses */
-defineStep(
-  'je complète les questions avec les valeurs suivantes :',
-  dataString => setReponses(dataString)
+When('je complète les questions avec les valeurs suivantes :', dataString =>
+  setReponses(dataString)
 );
 
-defineStep('je clique sur la thématique {string}', thematique => {
+When('je clique sur la thématique {string}', thematique => {
   cy.get('[data-test=personnalisation] a').contains(thematique).click();
 });
 
-defineStep("je clique sur l'avant-dernière thématique", thematique => {
+When("je clique sur l'avant-dernière thématique", thematique => {
   cy.get('[data-test=personnalisation] a:nth(-2)').click();
 });
-defineStep('je clique sur la dernière thématique', thematique => {
+When('je clique sur la dernière thématique', thematique => {
   cy.get('[data-test=personnalisation] a:nth(-1)').click();
 });
 
-defineStep('la page contient plus de {int} thématiques', count =>
+When('la page contient plus de {int} thématiques', count =>
   cy.get('[data-test=personnalisation] a').should('have.length.gt', count)
 );
-defineStep('la page contient moins de {int} thématiques', count =>
+When('la page contient moins de {int} thématiques', count =>
   cy.get('[data-test=personnalisation] a').should('have.length.lt', count)
 );
 

@@ -1,4 +1,4 @@
-import {defineStep} from '@badeball/cypress-cucumber-preprocessor';
+import {When} from '@badeball/cypress-cucumber-preprocessor';
 import '../04-associer-des-preuves-aux-actions/steps';
 import {
   makeCheckPreuveRows,
@@ -15,10 +15,10 @@ beforeEach(() => {
   });
 });
 
-defineStep("il n'y a pas de documents de labellisation", () => {
+When("il n'y a pas de documents de labellisation", () => {
   getLib().find('[data-test=labellisation]').should('not.exist');
 });
-defineStep(
+When(
   'la liste des documents de labellisation contient les lignes suivantes :',
   dataTable => {
     getLib()
@@ -27,10 +27,10 @@ defineStep(
   }
 );
 
-defineStep('la liste des documents de la page Labellisation est vide', () => {
+When('la liste des documents de la page Labellisation est vide', () => {
   cy.get('[data-test=LabellisationPreuves]').should('not.exist');
 });
-defineStep(
+When(
   'la liste des documents de la page Labellisation contient les lignes suivantes :',
   dataTable => {
     cy.get('[data-test=LabellisationPreuves]').within(
@@ -39,11 +39,11 @@ defineStep(
   }
 );
 
-defineStep("il n'y a pas de rapports de visite annuelle", () => {
+When("il n'y a pas de rapports de visite annuelle", () => {
   getLib().find('[data-test=rapports] [data-test=item]').should('not.exist');
 });
 
-defineStep(
+When(
   'la liste des rapports de visite contient les lignes suivantes :',
   dataTable => {
     getLib()
@@ -52,11 +52,11 @@ defineStep(
   }
 );
 
-defineStep('je saisi comme date de visite {string}', date =>
+When('je saisi comme date de visite {string}', date =>
   cy.get('[data-test=date-visite] input[type=date]').type(date)
 );
 
-defineStep(
+When(
   'je déplie la sous-action {string} du référentiel {string}',
   (actionId, referentiel) => {
     getRefentielIdentifiants(referentiel)
@@ -67,14 +67,14 @@ defineStep(
   }
 );
 
-defineStep(
+When(
   'la liste des preuves complémentaires associées à la sous-action {string} est vide',
   actionId => {
     noPreuvesComplementaires(cy.get(`[data-test="preuves-${actionId}"]`));
   }
 );
 
-defineStep(
+When(
   'la liste des preuves complémentaires associées à la sous-action {string} contient les lignes suivantes :',
   (actionId, dataTable) => {
     checkPreuvesComplementaires(
@@ -84,7 +84,7 @@ defineStep(
   }
 );
 
-defineStep(
+When(
   'je clique sur le bouton "Ajouter une preuve" de la sous-action {string}',
   actionId => {
     cy.get(

@@ -1,4 +1,4 @@
-import {defineStep} from '@badeball/cypress-cucumber-preprocessor';
+import {When} from '@badeball/cypress-cucumber-preprocessor';
 import '../05-modifier-etat-avancement/steps';
 import '../12-utiliser-la-bibliotheque/steps';
 import '../14-demander-un-audit/steps';
@@ -20,7 +20,7 @@ beforeEach(() => {
 
 const suiviAuditTable = '[data-test="suivi-audit"]';
 
-defineStep(
+When(
   "le tableau de suivi de l'audit contient les lignes suivantes :",
   dataTable => {
     const rows = dataTable.rows();
@@ -54,7 +54,7 @@ const checkRow = ([identifiant, odj, avancement]) =>
       cy.get('[role=cell]:nth(2)').should('have.text', avancement);
     });
 
-defineStep(
+When(
   "je clique sur la ligne du tableau de suivi de l'audit contenant l'identifiant {string}",
   identifiant =>
     cy
@@ -64,7 +64,7 @@ defineStep(
       .click()
 );
 
-defineStep(
+When(
   "l'état d'avancement n'est pas éditable depuis le tableau de détail des tâches",
   () => {
     cy.get('[data-test=DetailTacheTable]').within(() => {
@@ -76,7 +76,7 @@ defineStep(
   }
 );
 
-defineStep(
+When(
   "l'état d'avancement est éditable depuis le tableau de détail des tâches",
   () => {
     cy.get('[data-test=DetailTacheTable]').within(() => {
@@ -88,33 +88,33 @@ defineStep(
   }
 );
 
-defineStep("le tableau de suivi de l'audit ne contient pas de résultat", () => {
+When("le tableau de suivi de l'audit ne contient pas de résultat", () => {
   cy.get('[data-test=DetailTacheTable] [role=row] .identifiant').should(
     'have.length.gte',
     0
   );
 });
 
-defineStep("il n'y a pas de rapports d'audit", () => {
+When("il n'y a pas de rapports d'audit", () => {
   cy.get('[data-test=rapports-audit]').should('not.exist');
 });
 
-defineStep(
+When(
   "la liste des rapports d'audit contient les lignes suivantes :",
   dataTable => {
     cy.get('[data-test=rapports-audit]').within(makeCheckPreuveRows(dataTable));
   }
 );
 
-defineStep("l'en-tête contient {string}", text =>
+When("l'en-tête contient {string}", text =>
   cy.get('[data-test=HeaderMessage]').should('contain.text', text)
 );
 
-defineStep("l'en-tête ne contient pas de message", text =>
+When("l'en-tête ne contient pas de message", text =>
   cy.get('[data-test=HeaderMessage]').should('not.exist')
 );
 
-defineStep(
+When(
   'je déplie le sous-axe {string} du tableau de comparaison des scores',
   (actionId, referentiel) => {
     const indexes = actionId.split('.').map(idx => parseInt(idx));
@@ -135,11 +135,11 @@ defineStep(
   }
 );
 
-defineStep(
+When(
   "le potentiel de l'action {string} est de {string} avant audit et {string} pendant l'audit",
   comparePotentiels
 );
-defineStep(
+When(
   "le potentiel de l'action {string} est de {string} avant et pendant l'audit",
   (identifiant, score) => comparePotentiels(identifiant, score, score)
 );
@@ -181,13 +181,13 @@ function comparePotentiels(identifiant, scoreAvant, scorePendant) {
 
 const toFloat = s => parseFloat(s.replace(',', '.'));
 
-defineStep("j'attends que les scores soient calculés", () => {
+When("j'attends que les scores soient calculés", () => {
   // ça peut être très lent en CI :(
   // idéalement il faudrait écouter les màj des scores comme dans l'app mais ce
   // n'est pas évident à faire
   cy.wait(10000);
 });
 
-defineStep('le potentiel de points est {string}', score => {
+When('le potentiel de points est {string}', score => {
   cy.get('[data-test=PointsPotentiels]').should('contain.text', score);
 });

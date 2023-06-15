@@ -1,4 +1,4 @@
-import {defineStep} from '@badeball/cypress-cucumber-preprocessor';
+import {When} from '@badeball/cypress-cucumber-preprocessor';
 
 import {LocalSelectors} from './selectors';
 
@@ -7,23 +7,23 @@ beforeEach(() => {
   cy.wrap(LocalSelectors).as('LocalSelectors', {type: 'static'});
 });
 
-defineStep('un formulaire de modification de compte est affiché', () => {
+When('un formulaire de modification de compte est affiché', () => {
   cy.get(
     LocalSelectors['formulaire de modification de compte'].selector
   ).should('be.visible');
 });
 
-defineStep(/je modifie le champ "([^"]+)" en "([^"]+)"/, (champ, value) => {
+When(/je modifie le champ "([^"]+)" en "([^"]+)"/, (champ, value) => {
   cy.get(`[data-test="${champ}"]`)
     .type('{selectall}{backspace}' + value)
     .blur();
 });
 
-defineStep(/le champ "([^"]+)" doit contenir "([^"]+)"/, (champ, value) => {
+When(/le champ "([^"]+)" doit contenir "([^"]+)"/, (champ, value) => {
   cy.get(`[data-test="${champ}"]`).should('have.value', value);
 });
 
-defineStep("la modale de modification d'email est affichée", () => {
+When("la modale de modification d'email est affichée", () => {
   cy.get(LocalSelectors["modale de modification d'email"].selector).should(
     'be.visible'
   );
@@ -31,7 +31,7 @@ defineStep("la modale de modification d'email est affichée", () => {
 
 const INBUCKET_URL = 'http://localhost:54324/';
 
-defineStep(/je vide la boîte de réception de "([^"]+)"/, email => {
+When(/je vide la boîte de réception de "([^"]+)"/, email => {
   cy.origin(INBUCKET_URL, {args: {email}}, ({email}) => {
     cy.visit(`/m/${email}`);
     cy.get(`.fa-trash`).click();
@@ -40,7 +40,7 @@ defineStep(/je vide la boîte de réception de "([^"]+)"/, email => {
   cy.visit('/');
 });
 
-defineStep(
+When(
   "je clique sur le bouton confirmer de la modale de modification d'email",
   () => {
     cy.get(LocalSelectors["modale de modification d'email"].selector)
@@ -49,7 +49,7 @@ defineStep(
   }
 );
 
-defineStep(
+When(
   /la boîte de réception de "([^"]+)" contient un mail intitulé "([^"]+)"/,
   (email, titre) => {
     cy.origin(INBUCKET_URL, {args: {email, titre}}, ({email, titre}) => {

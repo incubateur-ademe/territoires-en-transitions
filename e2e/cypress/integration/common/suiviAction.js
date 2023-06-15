@@ -1,13 +1,13 @@
-import {defineStep} from '@badeball/cypress-cucumber-preprocessor';
+import {When} from '@badeball/cypress-cucumber-preprocessor';
 
-defineStep("je déplie la sous-action {string} du suivi de l'action", action =>
+When("je déplie la sous-action {string} du suivi de l'action", action =>
   getSousAction(action).within(() => {
     // clic pour déplier le panneau
     cy.root().click();
   })
 );
 
-defineStep('je déplie le panneau Tâches de la sous-action {string}', action =>
+When('je déplie le panneau Tâches de la sous-action {string}', action =>
   getTachesPanel(action).within(() => {
     // click pour déplier le panneau
     cy.root().click();

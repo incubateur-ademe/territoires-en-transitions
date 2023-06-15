@@ -1,7 +1,7 @@
 /**
  * Steps dédiés à la navigation
  */
-import {defineStep} from '@badeball/cypress-cucumber-preprocessor';
+import {When} from '@badeball/cypress-cucumber-preprocessor';
 import {Views, CollectivitePages} from './views';
 
 export const navigateTo = view => {
@@ -11,15 +11,13 @@ export const navigateTo = view => {
 };
 
 // navigue sur une route sans recharger la page
-defineStep(/visite la vue(?:.*)? "(.*)"/, view => navigateTo(view));
+When(/visite la vue(?:.*)? "(.*)"/, view => navigateTo(view));
 
 // navigue sur une sous-route associée à un item de menu
-defineStep(/j'ouvre le dialogue "(.*)"/, menuItem =>
-  navigateToSubRoute(menuItem)
-);
+When(/j'ouvre le dialogue "(.*)"/, menuItem => navigateToSubRoute(menuItem));
 
 // navigue sur un référentiel
-defineStep(
+When(
   /visite le sous-axe "([^"]*)" du référentiel "([^"]*)" de la collectivité "(\d+)"/,
   (action, referentiel, collectiviteId) => {
     cy.visit(
@@ -30,7 +28,7 @@ defineStep(
 );
 
 // navigue sur un référentiel et un onglet
-defineStep(
+When(
   /je visite l'onglet "([^"]*)" de l'action "([^"]*)" du référentiel "([^"]*)" de la collectivité "([^"]*)"/,
   (tabName, action, referentiel, collectiviteId) => {
     cy.visit(
@@ -40,7 +38,7 @@ defineStep(
   }
 );
 
-defineStep(
+When(
   /je visite l'onglet "([^"]*)" du référentiel "([^"]*)" de la collectivité "([^"]*)"/,
   (tabName, referentiel, collectiviteId) => {
     cy.visit(
@@ -50,7 +48,7 @@ defineStep(
 );
 
 // navigue sur une page d'une collectivité
-defineStep(
+When(
   /je suis sur la page "([^"]*)" de la collectivité "(\d+)"/,
   (page, collectiviteId) => {
     const {route, selector} = CollectivitePages[page];
@@ -64,17 +62,17 @@ const isVisibleView = view => {
   const {selector} = Views[view];
   cy.get(selector).should('be.visible');
 };
-defineStep(/voi[rs] la vue(?: des)? "(.*)"/, isVisibleView);
-defineStep(/la page "([^"]*)" est visible/, isVisibleView);
+When(/voi[rs] la vue(?: des)? "(.*)"/, isVisibleView);
+When(/la page "([^"]*)" est visible/, isVisibleView);
 
 // vérifie qu'on est pas sur une route/vue
-defineStep(/ne vois (?:pas|plus) la vue(?: des)? "(.*)"/, view => {
+When(/ne vois (?:pas|plus) la vue(?: des)? "(.*)"/, view => {
   const {selector} = Views[view];
   cy.get(selector).should('not.exist');
 });
 
 // vérifie qu'une vue est masquée
-defineStep(/la vue(?: des)? "(.*)" est masquée/, view => {
+When(/la vue(?: des)? "(.*)" est masquée/, view => {
   const {selector} = Views[view];
   cy.get(selector).should('be.hidden');
 });
