@@ -44,10 +44,6 @@ select -- Le client filtre sur:
        sc.points_max_personnalises,
        sc.points_max_referentiel,
 
-       -- les flags
-       sc.concerne,
-       sc.desactive,
-
        -- les statuts saisis
        s.avancement,
        s.avancement_detaille,
@@ -92,6 +88,9 @@ from collectivite c
     where c.id = statut.collectivite_id
       and statut.action_id = any (d.leaves)
     ) cs on true
+-- on fini par exclure les désactivés et les non concernés.
+where sc is null
+   or (ccc.concerne and not ccc.desactive)
 order by c.id,
          naturalsort(d.identifiant);
 
