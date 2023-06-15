@@ -11,7 +11,6 @@ import {usePeutCommencerAudit} from './usePeutCommencerAudit';
 // données du cycle de labellisation/audit actuel d'une collectivité
 export type TCycleLabellisation = {
   parcours: TLabellisationParcours | null;
-  preuves: TPreuveLabellisation[];
   status: TCycleLabellisationStatus;
   isAuditeur: boolean;
   isCOT: boolean;
@@ -38,12 +37,6 @@ export const useCycleLabellisation = (
   const parcours = useLabellisationParcours({collectivite_id, referentiel});
   const {completude_ok, rempli} = parcours || {};
 
-  // charge les documents de labellisation
-  const preuves = usePreuves({
-    demande_id: parcours?.demande?.id,
-    preuve_types: ['labellisation'],
-  }) as TPreuveLabellisation[];
-
   // vérifie si l'utilisateur courant peut commencer l'audit
   const peutCommencerAudit = usePeutCommencerAudit();
 
@@ -62,7 +55,6 @@ export const useCycleLabellisation = (
 
   return {
     parcours,
-    preuves,
     status,
     isAuditeur,
     isCOT,
@@ -70,3 +62,10 @@ export const useCycleLabellisation = (
     peutCommencerAudit,
   };
 };
+
+// charge les documents de labellisation
+export const usePreuvesLabellisation = (demande_id?: number) =>
+  usePreuves({
+    demande_id,
+    preuve_types: ['labellisation'],
+  }) as TPreuveLabellisation[];
