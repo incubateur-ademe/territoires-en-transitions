@@ -11,7 +11,7 @@ as
 select -- Le client filtre sur:
        c.id                                               as collectivite_id,
        d.action_id,
-       d.referentiel,
+       client_scores.referentiel,
        d.type,
        d.descendants,
        d.ascendants,

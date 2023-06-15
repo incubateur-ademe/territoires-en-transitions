@@ -394,3 +394,4 @@ indicateur/tableau_de_bord 2023-06-13T09:56:16Z Florian <florian@derfurth.com> #
 @v2.38.0 2023-06-15T12:44:41Z Florian <florian@derfurth.com> # Améliorations des performances et nouveau graphique
 
 evaluation/reponse [evaluation/reponse@v2.38.0] 2023-06-15T14:07:04Z Florian <florian@derfurth.com> # Améliore les performances
+referentiel/vue_tabulaire [referentiel/vue_tabulaire@v2.38.0] 2023-06-15T15:11:59Z Florian <florian@derfurth.com> # Permet de meilleurs performances
