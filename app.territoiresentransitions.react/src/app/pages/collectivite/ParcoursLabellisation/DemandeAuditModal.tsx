@@ -9,6 +9,7 @@ import {
   submittedAutresEtoiles,
 } from './DemandeLabellisationModal';
 import {MessageCompletudeECi} from './MessageCompletudeECi';
+import {usePreuvesLabellisation} from './useCycleLabellisation';
 
 /**
  * Affiche la modale de sélection du type d'audit souhaité et d'envoie de la
@@ -40,11 +41,12 @@ export const DemandeAuditModalContent = (
 ) => {
   const {isLoading, envoiDemande} = useEnvoiDemande();
   const {parcoursLabellisation, onClose} = props;
-  const {parcours, status, labellisable, preuves} = parcoursLabellisation;
+  const {parcours, status, labellisable} = parcoursLabellisation;
   const {collectivite_id, referentiel, etoiles} = parcours || {};
   const [sujet, setSujet] = useState<TSujetDemande | null>(
     labellisable ? null : 'cot'
   );
+  const preuves = usePreuvesLabellisation(parcours?.demande?.id);
 
   // on doit afficher un meesage d'aide si la collectivité est non labellisable
   // car le critère fichier n'est pas atteint

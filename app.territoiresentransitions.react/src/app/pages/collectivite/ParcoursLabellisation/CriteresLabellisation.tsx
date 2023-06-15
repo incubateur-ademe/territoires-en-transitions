@@ -6,7 +6,10 @@ import {numLabels} from './numLabels';
 import {CritereCompletude} from './CritereCompletude';
 import {TPreuveLabellisation} from 'ui/shared/preuves/Bibliotheque/types';
 import {useCollectiviteId, useReferentielId} from 'core-logic/hooks/params';
-import {useCycleLabellisation} from './useCycleLabellisation';
+import {
+  useCycleLabellisation,
+  usePreuvesLabellisation,
+} from './useCycleLabellisation';
 
 export type TCriteresLabellisationProps = {
   collectiviteId: number;
@@ -51,7 +54,8 @@ export const CriteresLabellisation = (props: TCriteresLabellisationProps) => {
 const CriteresLabellisationConnected = () => {
   const collectiviteId = useCollectiviteId();
   const referentiel = useReferentielId();
-  const {parcours, preuves} = useCycleLabellisation(referentiel);
+  const {parcours} = useCycleLabellisation(referentiel);
+  const preuves = usePreuvesLabellisation(parcours?.demande?.id);
 
   return collectiviteId && parcours ? (
     <CriteresLabellisation
