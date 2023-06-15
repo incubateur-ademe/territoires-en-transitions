@@ -1,8 +1,13 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import {SideNavLinks} from 'ui/shared/SideNav';
 import SideNavContainer from './SideNavContainer';
-import {PanelProvider, usePanelDispatch, usePanelState} from './PanelContext';
+import {
+  PanelProvider,
+  usePanelDispatch,
+  usePanelState,
+} from './Panel/PanelContext';
 import classNames from 'classnames';
+import Panel from './Panel/Panel';
 
 type Props = {
   children: React.ReactNode;
@@ -57,11 +62,7 @@ const PageLayout = ({children, sideNavLinks}: Props) => {
       {/** Main */}
       <div>{children}</div>
       {/** Panel */}
-      {panelState.isOpen && (
-        <div className="sticky inset-y-0 right-0 h-screen w-full border-l border-l-gray-200 bg-white">
-          {panelState.content}
-        </div>
-      )}
+      {panelState.isOpen && <Panel />}
     </div>
   );
 };
