@@ -1,4 +1,4 @@
-import {defineStep} from '@badeball/cypress-cucumber-preprocessor';
+import {When} from '@badeball/cypress-cucumber-preprocessor';
 
 import {LocalSelectors} from './selectors';
 
@@ -9,11 +9,11 @@ beforeEach(() => {
 
 /** FICHE ACTION */
 
-defineStep(/j'ouvre la section "([^"]+)"/, titre => {
+When(/j'ouvre la section "([^"]+)"/, titre => {
   cy.get(`[data-test=section-${titre}]`).click();
 });
 
-defineStep(
+When(
   /je crée un tag "([^"]*)" avec le sélecteur de tag "([^"]*)"/,
   (tag, selecteur) => {
     cy.get(`[data-test=${selecteur}-input]`).type(
@@ -25,7 +25,7 @@ defineStep(
   }
 );
 
-defineStep(
+When(
   /je sélectionne "([^"]*)" dans la liste déroulante "([^"]*)"/,
   (option, selecteur) => {
     cy.get(`[data-test=${selecteur}]`).click();
@@ -34,7 +34,7 @@ defineStep(
   }
 );
 
-defineStep(
+When(
   /la carte de la fiche créée est présente et affiche le titre "([^"]*)", le pilote "([^"]*)" et le statut "([^"]*)"/,
   (titre, pilote, statut) => {
     cy.get('[data-test=ActionCarte]').contains(titre).should('be.visible');
@@ -43,31 +43,31 @@ defineStep(
   }
 );
 
-defineStep(/je navigue sur la fiche "([^"]*)"/, titre => {
+When(/je navigue sur la fiche "([^"]*)"/, titre => {
   cy.get('[data-test=ActionCarte]').contains(titre).click();
 });
 
-defineStep(/je supprime la fiche/, () => {
+When(/je supprime la fiche/, () => {
   cy.get('[data-test=SupprimerFicheBouton]').click();
   cy.contains('Confirmer').click();
 });
 
-defineStep(/la fiche "([^"]*)" n'est plus présente/, titre => {
+When(/la fiche "([^"]*)" n'est plus présente/, titre => {
   cy.contains(titre).should('not.exist');
 });
 
-defineStep(/je navigue vers "([^"]*)" du fil d'ariane de la fiche/, axe => {
+When(/je navigue vers "([^"]*)" du fil d'ariane de la fiche/, axe => {
   cy.get('[data-test=FicheFilAriane]').contains(axe).click();
 });
 
 /** PLAN D'ACTION */
-defineStep(/je crée le plan "([^"]*)"/, titre => {
+When(/je crée le plan "([^"]*)"/, titre => {
   cy.get('[data-test=CreerPlan]').click();
   cy.get('[data-test=PlanNomInput]').clear().type(titre);
   cy.get('button').contains('Valider').click();
 });
 
-defineStep(
+When(
   /le nom du plan d'action est changé en "([^"]*)" dans la navigation/,
   titre => {
     cy.get('[data-test=PlansActionNavigation]')
@@ -76,18 +76,18 @@ defineStep(
   }
 );
 
-defineStep(/je veux supprimer le plan/, () => {
+When(/je veux supprimer le plan/, () => {
   cy.get('[data-test=SupprimerPlanBouton]').click();
 });
 
-defineStep(/j'ajoute un nouveau titre/, () => {
+When(/j'ajoute un nouveau titre/, () => {
   cy.get('[data-test=AjouterAxe]').click();
   // attends que le dernier axe ajouté (celui avec un titre vide) soit visible
   // autorise un timeout un peu plus long car le back peut être lent à répondre en CI
   cy.get('[data-test=Axe]').first().find('textarea').should('have.text', '');
 });
 
-defineStep(/je le nomme "([^"]*)"/, titre => {
+When(/je le nomme "([^"]*)"/, titre => {
   // sélectionne le dernier axe ajouté
   cy.get('[data-test=Axe]')
     .first()
@@ -99,7 +99,7 @@ defineStep(/je le nomme "([^"]*)"/, titre => {
   cy.get('body').click(10, 10);
 });
 
-defineStep(/j'ajoute une fiche à "([^"]*)"/, titre => {
+When(/j'ajoute une fiche à "([^"]*)"/, titre => {
   // sélectionne l'axe qui contient le titre donné
   cy.get('[data-test=Axe]')
     .contains(titre)
@@ -120,63 +120,60 @@ defineStep(/j'ajoute une fiche à "([^"]*)"/, titre => {
   cy.get('[data-test=FicheAction]').should('be.visible');
 });
 
-defineStep(/je reviens sur le plan d'action "([^"]*)"/, titre => {
+When(/je reviens sur le plan d'action "([^"]*)"/, titre => {
   cy.get('[data-test=PlansActionNavigation]').contains(titre).click();
 });
 
-defineStep(/je veux supprimer le dernier axe créé/, () => {
+When(/je veux supprimer le dernier axe créé/, () => {
   cy.get('[data-test=SupprimerAxeBouton]').first().click({force: true});
 });
 
-defineStep(/le texte "([^"]*)" est visible/, texte => {
+When(/le texte "([^"]*)" est visible/, texte => {
   cy.contains(texte).should('be.visible');
 });
 
-defineStep(/je supprime l'axe depuis la modale/, () => {
+When(/je supprime l'axe depuis la modale/, () => {
   cy.get('[data-test=SupprimerFicheModale]').contains('Confirmer').click();
 });
 
-defineStep(/l'axe "([^"]*)" n'est plus visible/, axe => {
+When(/l'axe "([^"]*)" n'est plus visible/, axe => {
   cy.contains(axe).should('not.exist');
 });
 
-defineStep(/le plan n'est plus présent dans la navigation/, () => {
+When(/le plan n'est plus présent dans la navigation/, () => {
   cy.contains('Plan test').should('not.exist');
 });
 
 /** RANGER FICHE ACTION */
 
-defineStep(/j'ouvre la modale "([^"]*)"/, bouton => {
+When(/j'ouvre la modale "([^"]*)"/, bouton => {
   cy.contains(bouton).click();
 });
 
-defineStep(/j'enlève la fiche du plan/, () => {
+When(/j'enlève la fiche du plan/, () => {
   cy.get('[data-test=EnleverFichePlanBouton]').click({force: true});
 });
 
-defineStep(
+When(
   /le plan "([^"]*)" est visible dans le tableau nouvel emplacement/,
   plan => {
     cy.get('[data-test=TableauAxe]').contains(plan).should('be.visible');
   }
 );
 
-defineStep(/le fil d'ariane de la fiche contient "([^"]*)"/, chemin => {
+When(/le fil d'ariane de la fiche contient "([^"]*)"/, chemin => {
   cy.get('[data-test=FicheFilAriane]').contains(chemin).should('exist');
 });
 
-defineStep(
-  /je clique sur l'axe "([^"]*)" du tableau nouvel emplacement/,
-  axe => {
-    cy.get('[data-test=TableauAxe]').contains(axe).click();
-  }
-);
+When(/je clique sur l'axe "([^"]*)" du tableau nouvel emplacement/, axe => {
+  cy.get('[data-test=TableauAxe]').contains(axe).click();
+});
 
-defineStep(/je valide cet emplacement/, () => {
+When(/je valide cet emplacement/, () => {
   cy.contains('Valider cet emplacement').click();
 });
 
-defineStep(
+When(
   /l'axe "([^"]*)" est visible dans les emplacements sélectionnés pour cette fiche/,
   axe => {
     cy.get('[data-test=PlanChemin]').contains(axe).should('be.visible');
@@ -185,7 +182,7 @@ defineStep(
 
 /** PAGE AXE ET FILTRES */
 
-defineStep(
+When(
   /j'ouvre "([^"]*)" dans la navigation latérale et que je navigue vers "([^"]*)"/,
   (section, axe) => {
     // ouvre la section correspondant au plan donné
@@ -202,11 +199,11 @@ defineStep(
   }
 );
 
-defineStep(/j'ouvre les filtres/, () => {
+When(/j'ouvre les filtres/, () => {
   cy.get('[data-test=FiltrerFiches]').contains('Filtrer').click();
 });
 
-defineStep(
+When(
   /je filtre les fiches par "([^"]*)" du filtre "([^"]*)"/,
   (value, filtre) => {
     cy.get(`[data-test=filtre-${filtre}]`).click();
@@ -215,12 +212,12 @@ defineStep(
   }
 );
 
-defineStep(/aucune fiche n'est présente/, () => {
+When(/aucune fiche n'est présente/, () => {
   cy.root()
     .contains('Aucune fiche ne correspond à votre recherche')
     .should('be.visible');
 });
 
-defineStep(/la fiche contenant "([^"]*)" est visible/, value => {
+When(/la fiche contenant "([^"]*)" est visible/, value => {
   cy.get('[data-test=ActionCarte]').contains(value).should('be.visible');
 });
