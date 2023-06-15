@@ -8,7 +8,8 @@
 BEGIN;
 
 drop view reponse_display;
-create view reponse_display as
+create view reponse_display
+as
 with qr as (select q.id                         as question_id,
                    coalesce(rb.collectivite_id,
                             rp.collectivite_id,
@@ -34,19 +35,15 @@ with qr as (select q.id                         as question_id,
             from question q
                      left join reponse_binaire rb on rb.question_id = q.id
                      left join reponse_proportion rp on rp.question_id = q.id
-                     left join reponse_choix rc on rc.question_id = q.id
-            where have_lecture_acces(coalesce(rb.collectivite_id,
-                                              rp.collectivite_id,
-                                              rc.collectivite_id)))
+                     left join reponse_choix rc on rc.question_id = q.id)
 select collectivite_id,
        question_id,
-       reponse                                       as reponse,
+       reponse                                as reponse,
        (select texte
         from justification j
         where j.collectivite_id = qr.collectivite_id
-          and j.question_id = qr.question_id
-          and have_lecture_acces(j.collectivite_id)) as justification
+          and j.question_id = qr.question_id) as justification
 from qr
-where collectivite_id is not null;
+where have_lecture_acces(collectivite_id);
 
 COMMIT;
