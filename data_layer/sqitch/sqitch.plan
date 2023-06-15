@@ -391,3 +391,4 @@ utilisateur/droits_v2 [utilisateur/droits_v2@v2.37.0] 2023-06-14T15:51:57Z Flori
 plan_action/fiches [plan_action/fiches@v2.37.0] 2023-06-15T08:31:37Z Florian <florian@derfurth.com> # Ajoute une limite à filter fiches
 labellisation/preuve_v2 [labellisation/preuve_v2@v2.37.0] 2023-06-14T18:32:25Z Florian <florian@derfurth.com> # Améliore la performance
 indicateur/tableau_de_bord 2023-06-13T09:56:16Z Florian <florian@derfurth.com> # Vue de synthèse des indicateurs pour le tableau de bord
+@v2.38.0 2023-06-15T12:44:41Z Florian <florian@derfurth.com> # Améliorations des performances et nouveau graphique
