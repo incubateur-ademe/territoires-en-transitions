@@ -32,6 +32,7 @@ from preuve_complementaire pc
          left join labellisation.action_snippet snippet
                    on snippet.action_id = pc.action_id
                        and snippet.collectivite_id = pc.collectivite_id
+
 union all
 
 -- Toutes les preuves réglementaires par collectivité, avec ou sans fichier.
@@ -56,6 +57,7 @@ from collectivite c -- toutes les collectivités ...
          left join labellisation.bibliotheque_fichier_snippet fs on fs.id = pr.fichier_id
          left join labellisation.action_snippet snippet
                    on snippet.action_id = pa.action_id and snippet.collectivite_id = c.id
+
 union all
 
 select 'labellisation',
@@ -93,6 +95,7 @@ select 'rapport',
        null
 from preuve_rapport p
          left join labellisation.bibliotheque_fichier_snippet fs on fs.id = p.fichier_id
+
 union all
 
 select 'audit',
@@ -106,7 +109,7 @@ select 'audit',
        utilisateur.modified_by_nom(p.modified_by),
        null,
        null,
-       case when d is not null then to_jsonb(d) end,
+       case when d.id is not null then to_jsonb(d) end,
        null,
        to_jsonb(a)
 from audit a
@@ -130,5 +133,7 @@ from preuve
     and created_at is not null
 where is_service_role()
 order by collectivite_id, referentiel, naturalsort(action ->> 'identifiant');
+
+drop function preuve_count;
 
 COMMIT;

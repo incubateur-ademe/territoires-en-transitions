@@ -32,8 +32,6 @@ from preuve_complementaire pc
          left join labellisation.action_snippet snippet
                    on snippet.action_id = pc.action_id
                        and snippet.collectivite_id = pc.collectivite_id
-where (select is_authenticated())
-
 union all
 
 -- Toutes les preuves réglementaires par collectivité, avec ou sans fichier.
@@ -58,8 +56,6 @@ from collectivite c -- toutes les collectivités ...
          left join labellisation.bibliotheque_fichier_snippet fs on fs.id = pr.fichier_id
          left join labellisation.action_snippet snippet
                    on snippet.action_id = pa.action_id and snippet.collectivite_id = c.id
-where (select is_authenticated())
-
 union all
 
 select 'labellisation',
@@ -79,7 +75,6 @@ select 'labellisation',
 from labellisation.demande d
          join preuve_labellisation p on p.demande_id = d.id
          left join labellisation.bibliotheque_fichier_snippet fs on fs.id = p.fichier_id
-where (select is_authenticated())
 
 union all
 select 'rapport',
@@ -98,8 +93,6 @@ select 'rapport',
        null
 from preuve_rapport p
          left join labellisation.bibliotheque_fichier_snippet fs on fs.id = p.fichier_id
-where (select is_authenticated())
-
 union all
 
 select 'audit',
@@ -113,14 +106,14 @@ select 'audit',
        utilisateur.modified_by_nom(p.modified_by),
        null,
        null,
-       case when d.id is not null then to_jsonb(d) end,
+       case when d is not null then to_jsonb(d) end,
        null,
        to_jsonb(a)
 from audit a
          join preuve_audit p on p.audit_id = a.id
          left join labellisation.demande d on a.demande_id = d.id
          left join labellisation.bibliotheque_fichier_snippet fs on fs.id = p.fichier_id
-where (select is_authenticated());
+;
 
 create view retool_preuves
 as
@@ -135,40 +128,7 @@ select preuve.collectivite_id,
 from preuve
          join named_collectivite nc on nc.collectivite_id = preuve.collectivite_id
     and created_at is not null
-where (select is_service_role())
+where is_service_role()
 order by collectivite_id, referentiel, naturalsort(action ->> 'identifiant');
-
-
-create function
-    preuve_count(collectivite_id integer, action_id action_id)
-    returns integer
-as
-$$
-begin
-    if not is_authenticated()
-    then
-        perform set_config('response.status', '403', true);
-    end if;
-    return (select (select count(*)
-                    from preuve_action pa
-                             left join preuve_reglementaire pr using (preuve_id)
-                    where (pa.action_id in
-                           (select unnest(descendants)
-                            from private.action_hierarchy ah
-                            where ah.action_id = preuve_count.action_id)
-                        or pa.action_id = preuve_count.action_id)
-                      and pr.collectivite_id = preuve_count.collectivite_id) +
-                   (select count(*)
-                    from preuve_complementaire pc
-                    where pc.collectivite_id = preuve_count.collectivite_id
-                      and (pc.action_id in
-                           (select unnest(descendants)
-                            from private.action_hierarchy ah
-                            where ah.action_id = preuve_count.action_id)
-                        or pc.action_id = preuve_count.action_id)));
-end;
-$$ language plpgsql;
-comment on function preuve_count is
-    'Le nombre de preuves règlementaires et complémentaires rattachées à une action et à ses enfants.';
 
 COMMIT;
