@@ -396,3 +396,4 @@ indicateur/tableau_de_bord 2023-06-13T09:56:16Z Florian <florian@derfurth.com> #
 evaluation/reponse [evaluation/reponse@v2.38.0] 2023-06-15T14:07:04Z Florian <florian@derfurth.com> # Améliore les performances
 referentiel/vue_tabulaire [referentiel/vue_tabulaire@v2.38.0] 2023-06-15T15:11:59Z Florian <florian@derfurth.com> # Permet de meilleurs performances
 labellisation/preuve_v2 [labellisation/preuve_v2@v2.38.0] 2023-06-15T15:30:19Z Florian <florian@derfurth.com> # Ajoute les references aux collectivités pour les tables réponses
+@v2.39.0 2023-06-15T17:04:21Z Florian <florian@derfurth.com> # Amélioration des performances
