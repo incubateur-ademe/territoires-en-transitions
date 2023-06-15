@@ -2,12 +2,14 @@ import React, {useReducer, useContext, createContext} from 'react';
 
 // type PanelAction = 'open' | 'close' | 'toggle';
 type PanelAction = {
-  type: 'open' | 'close';
+  type: 'open' | 'close' | 'setToolbar';
+  toolbar?: React.ReactNode;
   content?: React.ReactNode;
 };
 
 type PanelState = {
   isOpen: boolean;
+  toolbar?: React.ReactNode;
   content?: React.ReactNode;
 };
 
@@ -24,16 +26,22 @@ const PanelDispatchContext = createContext<PanelDispatch | undefined>(
 
 const panelReducer = (state: PanelState, action: PanelAction) => {
   switch (action.type) {
+    case 'setToolbar': {
+      return {
+        ...state,
+        toolbar: action.toolbar,
+      };
+    }
     case 'open': {
       return {
         ...state,
         isOpen: true,
         content: action.content,
+        toolbar: action.toolbar,
       };
     }
     case 'close': {
       return {
-        ...state,
         isOpen: false,
       };
     }
