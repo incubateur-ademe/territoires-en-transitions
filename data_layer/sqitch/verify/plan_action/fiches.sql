@@ -2,4 +2,6 @@
 
 BEGIN;
 
+select has_function_privilege('filter_fiches_action( integer,  integer[],  personne[],  fiche_action_niveaux_priorite[],  fiche_action_statuts[],  personne[], integer)', 'execute');
+
 ROLLBACK;
