@@ -106,21 +106,13 @@ const groupByType = (preuves: TPreuve[]) => {
 
 const fetchActionPreuvesCount = async (
   collectivite_id: number,
-  action: TActionDef
+  action_id: string
 ) => {
-  const query = supabaseClient
-    .from('preuve')
-    .select(undefined, {head: true, count: 'exact'})
-    .eq('collectivite_id', collectivite_id)
-    .eq('action->>referentiel' as 'action', action.referentiel)
-    .ilike('action->>identifiant' as 'action', `${action.identifiant}%`)
-    .in('preuve_type', ['reglementaire', 'complementaire'])
-    .or('lien->>titre.not.is.null, fichier->>filename.not.is.null');
+  const {data} = await supabaseClient
+    .rpc('preuve_count', {collectivite_id, action_id})
+    .single();
 
-  const {count, error} = await query;
-
-  if (error || !count) return 0;
-  return count;
+  return data || 0;
 };
 
 /**
@@ -129,10 +121,10 @@ const fetchActionPreuvesCount = async (
  */
 export const useActionPreuvesCount = (action: TActionDef) => {
   const collectivite_id = useCollectiviteId();
-  const {data} = useQuery(['preuve_count', collectivite_id, action], () => {
-    return collectivite_id
-      ? fetchActionPreuvesCount(collectivite_id, action)
+  const {data} = useQuery(['preuve_count', collectivite_id, action.id], () => {
+    return collectivite_id && action.id
+      ? fetchActionPreuvesCount(collectivite_id, action.id)
       : 0;
   });
-  return data;
+  return data ?? 0;
 };
