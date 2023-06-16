@@ -1,17 +1,17 @@
+import {useState} from 'react';
 import {useParams} from 'react-router-dom';
 
+import HeaderTitle from '../components/HeaderTitle';
 import PlanActionHeader from './PlanActionHeader';
+import PlanActionFooter from './PlanActionFooter';
+import PlanActionArborescence from './PlanActionArborescence';
+import PlanActionFiltresAccordeon from './PlanActionFiltres/PlanActionFiltresAccordeon';
 
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import {checkAxeHasFiche} from './data/utils';
 import {usePlanAction} from './data/usePlanAction';
 import {useEditAxe} from './data/useEditAxe';
 import {PlanNode} from './data/types';
-import PlanActionFooter from './PlanActionFooter';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import PlanActionFiltres from './PlanActionFiltres/PlanActionFiltres';
-import {useFichesActionFiltresListe} from '../FicheAction/data/useFichesActionFiltresListe';
-import {checkAxeHasFiche} from './data/utils';
-import HeaderTitle from '../components/HeaderTitle';
-import PlanActionArborescence from './PlanActionArborescence';
 
 type PlanActionProps = {
   plan: PlanNode;
@@ -27,12 +27,7 @@ export const PlanAction = ({plan, axe}: PlanActionProps) => {
 
   const {mutate: updateAxe} = useEditAxe(plan.id);
 
-  const {items: fichesActionsListe, ...ficheFilters} =
-    useFichesActionFiltresListe({plan, axe});
-
-  // On prend à partir de 2 éléments car
-  // les filtres "collectivite_id" et "plan/axe id" sont des constantes
-  const isFiltered = Object.keys(ficheFilters.filters).length > 2;
+  const [isFiltered, setIsFiltered] = useState(false);
 
   return (
     <div data-test={isAxePage ? 'PageAxe' : 'PlanAction'} className="w-full">
@@ -53,14 +48,11 @@ export const PlanAction = ({plan, axe}: PlanActionProps) => {
         {/** On vérifie si le plan ou l'axe contient des fiches pour afficher les filtres de fiche */}
         {((!isAxePage && checkAxeHasFiche(plan)) ||
           (isAxePage && checkAxeHasFiche(axe))) && (
-          <PlanActionFiltres
-            planId={plan.id.toString()}
-            itemsNumber={ficheFilters.total}
-            initialFilters={ficheFilters.initialFilters}
-            filters={ficheFilters.filters}
-            setFilters={ficheFilters.setFilters}
-            fichesActionsListe={fichesActionsListe}
+          <PlanActionFiltresAccordeon
+            plan={plan}
+            axe={axe}
             isFiltered={isFiltered}
+            setIsFiltered={isFiltered => setIsFiltered(isFiltered)}
           />
         )}
         {!isFiltered && (

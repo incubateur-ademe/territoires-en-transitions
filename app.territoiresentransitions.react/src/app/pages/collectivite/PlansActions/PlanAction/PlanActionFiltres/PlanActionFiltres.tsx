@@ -1,95 +1,64 @@
 import FiltrePersonnes from './FiltrePersonnes';
 import FiltrePriorites from './FiltrePriorites';
 import FiltreStatuts from './FiltreStatuts';
-import {DesactiverLesFiltres} from 'ui/shared/filters/DesactiverLesFiltres';
+import PlanActionFiltresResultats from './PlanActionFiltresResultats';
 
-import {TFilters} from '../../FicheAction/data/filters';
-import {Accordion} from 'ui/Accordion';
-import {FicheAction} from '../../FicheAction/data/types';
-import FicheActionCard from '../../FicheAction/FicheActionCard';
-import {makeCollectivitePlanActionFicheUrl} from 'app/paths';
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import {useFichesActionFiltresListe} from '../../FicheAction/data/useFichesActionFiltresListe';
+import {PlanNode} from '../data/types';
+import {useEffect, useState} from 'react';
 
 type Props = {
-  planId: string;
-  itemsNumber: number;
-  initialFilters: TFilters;
-  filters: TFilters;
-  setFilters: (filters: TFilters) => void;
-  fichesActionsListe: FicheAction[];
-  isFiltered: boolean;
+  plan: PlanNode;
+  axe?: PlanNode;
+  setIsFiltered: (filtered: boolean) => void;
 };
 
-const PlanActionFiltres = ({
-  planId,
-  itemsNumber,
-  initialFilters,
-  filters,
-  setFilters,
-  fichesActionsListe,
-  isFiltered,
-}: Props) => {
-  const collectivite_id = useCollectiviteId();
+const PlanActionFiltres = ({plan, axe, setIsFiltered}: Props) => {
+  const [filtered, setFiltered] = useState(false);
+  const filters = useFichesActionFiltresListe({plan, axe});
+
+  // On prend à partir de 2 éléments car les filtres "collectivite_id" et "plan/axe id" sont des constantes
+  // Et on le passe au parent pour afficher le plan ou les filtres
+  useEffect(() => {
+    const isFiltered =
+      (filters.filters && Object.keys(filters.filters).length > 2) || false;
+    setFiltered(isFiltered);
+    setIsFiltered(isFiltered);
+  }, [filters.filters]);
 
   return (
-    <div>
-      <Accordion
-        dataTest="FiltrerFiches"
-        id="filtres-plan"
-        className="mb-8"
-        titre="Filtrer"
-        html={
-          <div className="grid sm:grid-cols-2 gap-x-8 gap-y-6">
-            <FiltrePersonnes
-              dataTest="filtre-personne-pilote"
-              label="Personne pilote"
-              filterKey="pilotes"
-              filters={filters}
-              setFilters={setFilters}
-            />
-            <FiltreStatuts filters={filters} setFilters={setFilters} />
-            <FiltrePersonnes
-              dataTest="filtre-referent"
-              label="Élu·e référent·e"
-              filterKey="referents"
-              setFilters={setFilters}
-              filters={filters}
-            />
-            <FiltrePriorites filters={filters} setFilters={setFilters} />
-          </div>
-        }
-        initialState={isFiltered}
-      />
-      {isFiltered && (
-        <>
-          <div className="flex items-baseline gap-6 my-8">
-            <span className="text-sm text-gray-400">
-              {itemsNumber} résultat{itemsNumber > 1 && 's'}
-            </span>
-            <DesactiverLesFiltres onClick={() => setFilters(initialFilters)} />
-          </div>
-          {fichesActionsListe.length > 0 ? (
-            <div className="grid grid-cols-2 gap-4">
-              {fichesActionsListe.map(fiche => (
-                <FicheActionCard
-                  key={fiche.id}
-                  ficheAction={fiche}
-                  link={makeCollectivitePlanActionFicheUrl({
-                    collectiviteId: collectivite_id!,
-                    planActionUid: planId,
-                    ficheUid: fiche.id!.toString(),
-                  })}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="mt-16 mb-8">
-              Aucune fiche ne correspond à votre recherche
-            </div>
-          )}
-        </>
+    <>
+      <div className="grid sm:grid-cols-2 gap-x-8 gap-y-6">
+        <FiltrePersonnes
+          dataTest="filtre-personne-pilote"
+          label="Personne pilote"
+          filterKey="pilotes"
+          filters={filters.filters}
+          setFilters={filters.setFilters}
+        />
+        <FiltreStatuts
+          filters={filters.filters}
+          setFilters={filters.setFilters}
+        />
+        <FiltrePersonnes
+          dataTest="filtre-referent"
+          label="Élu·e référent·e"
+          filterKey="referents"
+          setFilters={filters.setFilters}
+          filters={filters.filters}
+        />
+        <FiltrePriorites
+          filters={filters.filters}
+          setFilters={filters.setFilters}
+        />
+      </div>
+      {filtered && (
+        <PlanActionFiltresResultats
+          planId={plan.id.toString()}
+          filters={filters}
+        />
       )}
-    </div>
+    </>
   );
 };
 
