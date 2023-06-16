@@ -30,6 +30,7 @@ export const fetchHistorique = async (
     .from('historique')
     .select('*', {count: 'exact'})
     .match({collectivite_id})
+    .order('modified_at', {ascending: false})
     .limit(NB_ITEMS_PER_PAGE);
 
   // filtre optionnel par action
