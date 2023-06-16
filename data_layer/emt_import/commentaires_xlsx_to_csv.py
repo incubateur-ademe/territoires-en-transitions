@@ -11,10 +11,9 @@ if __name__ == '__main__':
 
         # On lit la premiere feuille avec les commentaires
         sheet = pd.read_excel(path, 0)
-        sheet.columns = ['action_id', 'titre', 'commentaire', 'statut', '_']
-        sheet.drop([0, 2], axis=0, inplace=True)  # supprime les deux premières lignes
+        sheet = sheet.iloc[2:, :4]
+        sheet.columns = ['action_id', 'titre', 'commentaire', 'statut']
         sheet.drop('titre', axis=1, inplace=True)  # supprime la seconde colonne
-        sheet.drop('_', axis=1, inplace=True)  # supprime la seconde colonne
         sheet = sheet[sheet.commentaire.notnull()]  # supprime les lignes sans commentaires
         sheet.commentaire = sheet.commentaire.str.replace('_x000D_', '')  # enlève un string chelou
         save_path = Path("./").joinpath(path.parts[-1].replace('.xlsx', '.csv'))
