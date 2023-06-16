@@ -400,3 +400,4 @@ labellisation/preuve_v2 [labellisation/preuve_v2@v2.38.0] 2023-06-15T15:30:19Z F
 
 labellisation/preuve_v2 [labellisation/preuve_v2@v2.39.0] 2023-06-16T07:46:22Z Florian <florian@derfurth.com> # Répare la RPC preuve_count
 collectivite/historique [collectivite/historique@v2.39.0] 2023-06-16T11:31:43Z Florian <florian@derfurth.com> # Améliore les performances en modifiant les vues, en ajoutant des index
+@v2.40.0 2023-06-16T13:00:09Z Florian <florian@derfurth.com> # Amélioration des performances
