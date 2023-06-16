@@ -10,7 +10,7 @@ type KeyNumbersProps = {
 const KeyNumbers = ({valuesList}: KeyNumbersProps): JSX.Element => {
   return (
     <div
-      className={`grid md:grid-cols-${valuesList.length} md:divide-x md:divide-y-0 divide-x-0 divide-y divide-[#e5e5e5] m-auto md:mb-auto mb-8 w-fit`}
+      className={`grid md:grid-cols-${valuesList.length} md:divide-x md:divide-y-0 divide-x-0 divide-y divide-[#e5e5e5] m-auto md:mb-auto mb-8 md:pb-4 w-fit`}
     >
       {valuesList.map((v, index) => (
         <div
