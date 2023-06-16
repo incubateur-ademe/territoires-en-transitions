@@ -1,3 +1,4 @@
+import {referentielToName} from 'app/labels';
 import {makeCollectiviteIndicateursUrl} from 'app/paths';
 import ButtonWithLink from 'ui/buttons/ButtonWithLink';
 import {PictoIndicateurs} from 'ui/pictogrammes/PictoIndicateurs';
@@ -39,13 +40,13 @@ const IndicateursCard = ({
       value: indicateurs.cae.withValue,
       totalValue: indicateurs.cae.total,
       firstLegend: 'indicateurs',
-      secondLegend: 'Climat Air Énergie',
+      secondLegend: referentielToName.cae,
     },
     {
       value: indicateurs.eci.withValue,
       totalValue: indicateurs.eci.total,
       firstLegend: 'indicateurs',
-      secondLegend: 'Économie circulaire',
+      secondLegend: referentielToName.eci,
     },
     {
       value: indicateurs.perso.total,

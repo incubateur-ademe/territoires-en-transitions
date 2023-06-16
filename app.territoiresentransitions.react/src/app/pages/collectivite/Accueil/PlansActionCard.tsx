@@ -36,7 +36,7 @@ const PlansActionCard = ({
 }: PlanActionCardProps): JSX.Element => {
   const plansActions = usePlansActionsListe(collectiviteId);
 
-  return plansActions && plansActions.plans && plansActions.plans.length ? (
+  return plansActions?.plans?.length ? (
     <FilledPlansActionCard
       collectiviteId={collectiviteId}
       plans={plansActions?.plans}

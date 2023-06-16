@@ -8,14 +8,6 @@ export const referentielToName: Record<ReferentielOfIndicateur, string> = {
   crte: 'Contrat Relance Transition Écologique',
 };
 
-export const epciCard_AxisShortLabel: Record<string, string> = {
-  eci_1: 'Stratégie globale',
-  eci_2: 'Services de réduction, collecte et valorisation des déchets',
-  eci_3: "Autres piliers de l'économie circulaire",
-  eci_4: 'Outils financiers du changement de comportement',
-  eci_5: 'Coopération et engagement',
-};
-
 export const avancementToLabel: Record<TActionAvancementExt, string> = {
   non_renseigne: 'Non renseigné',
   fait: 'Fait',
@@ -23,4 +15,12 @@ export const avancementToLabel: Record<TActionAvancementExt, string> = {
   detaille: 'Détaillé',
   programme: 'Programmé',
   non_concerne: 'Non concerné',
+};
+
+export const actionIdToLabel: Record<string, string> = {
+  cae_3: 'Énergie, eau, assainissement',
+  eci_1: 'Stratégie globale',
+  eci_2: 'Réduction, collecte et valorisation des déchets',
+  eci_3: "Autres piliers de l'ECI",
+  eci_4: 'Outils financiers',
 };
