@@ -25,7 +25,7 @@ const SubActionPreuvesAccordion = (props: SubActionPreuvesAccordionProps) => {
         <ActionPreuvePanel
           action={subAction}
           showWarning
-          disableFetch={!expanded || !preuvesCount}
+          disableFetch={!expanded}
         />
       }
     />
