@@ -8,21 +8,21 @@ type SubActionPreuvesAccordionProps = {
   openSubAction: boolean;
 };
 
-const SubActionPreuvesAccordion = ({
-  subAction,
-  openSubAction,
-}: SubActionPreuvesAccordionProps) => {
+const SubActionPreuvesAccordion = (props: SubActionPreuvesAccordionProps) => {
+  const {subAction, openSubAction} = props;
   const preuvesCount = useActionPreuvesCount(subAction);
+  const accordionContent =
+    openSubAction && preuvesCount > 0 ? (
+      <ActionPreuvePanel action={subAction} showWarning />
+    ) : null;
 
   return (
     <Accordion
       id={`Preuves-${subAction.id}`}
       dataTest={`PreuvesPanel-${subAction.identifiant}`}
-      titre={`Documents${
-        preuvesCount !== undefined ? ` (${preuvesCount})` : ''
-      }`}
-      html={<ActionPreuvePanel action={subAction} showWarning />}
-      initialState={openSubAction && (preuvesCount ?? 0) > 0}
+      titre={`Documents (${preuvesCount})`}
+      html={accordionContent}
+      initialState={!!accordionContent}
     />
   );
 };
