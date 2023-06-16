@@ -33,7 +33,7 @@ export const Justification = (props: TQuestionReponseProps) => {
       className="fr-mt-2w"
       titre="Justifier votre réponse (optionnel)"
       icon="fr-icon-draft-line"
-      isExpanded={hasValue}
+      initialState={hasValue}
       html={
         <Textarea
           className="fr-input"
