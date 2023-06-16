@@ -1,9 +1,11 @@
+import {actionIdToLabel} from 'app/labels';
 import {
   makeCollectiviteLabellisationUrl,
   makeCollectivitePersoRefUrl,
   makeCollectiviteReferentielUrl,
   ReferentielParamOption,
 } from 'app/paths';
+import classNames from 'classnames';
 import {TableOptions} from 'react-table';
 import ButtonWithLink from 'ui/buttons/ButtonWithLink';
 import DonutChart from 'ui/charts/DonutChart';
@@ -43,6 +45,13 @@ type FilledEtatDesLieuxCardProps = {
   className?: string;
 };
 
+const getTags = (scoreData: readonly ProgressionRow[]) => {
+  return scoreData.map(d => ({
+    label: actionIdToLabel[d.action_id] ?? d.nom,
+    axeId: d.action_id,
+  }));
+};
+
 /**
  * Carte "état des lieux"
  */
@@ -55,35 +64,8 @@ const EtatDesLieuxCard = ({
 }: EtatDesLieuxCardProps): JSX.Element => {
   const {table: progressionScore} = useProgressionReferentiel(referentiel);
 
-  const displayEtatDesLieux = progressionScore.data.reduce(
-    (isDisplaying, currValue) => {
-      if (currValue.score_non_renseigne !== 1) return true;
-      return isDisplaying;
-    },
-    false
-  );
-
-  const getTags = () => {
-    return progressionScore.data.map(d => {
-      switch (d.action_id) {
-        case 'cae_3':
-          return {label: 'Énergie, eau, assainissement', axeId: d.action_id};
-        case 'eci_1':
-          return {label: 'Stratégie globale', axeId: d.action_id};
-        case 'eci_2':
-          return {
-            label: 'Réduction, collecte et valorisation des déchets',
-            axeId: d.action_id,
-          };
-        case 'eci_3':
-          return {label: "Autres piliers de l'ECI", axeId: d.action_id};
-        case 'eci_4':
-          return {label: 'Outils financiers', axeId: d.action_id};
-        default:
-          return {label: d.nom, axeId: d.action_id};
-      }
-    });
-  };
+  const displayEtatDesLieux =
+    progressionScore.data.find(d => d.score_non_renseigne !== 1) !== undefined;
 
   return (
     <>
@@ -100,7 +82,7 @@ const EtatDesLieuxCard = ({
           collectiviteId={collectiviteId}
           referentiel={referentiel}
           title={title}
-          tags={getTags()}
+          tags={getTags(progressionScore.data)}
           className={className}
         />
       )}
@@ -128,7 +110,7 @@ const FilledEtatDesLieuxCard = ({
   className,
 }: FilledEtatDesLieuxCardProps): JSX.Element => {
   return (
-    <AccueilCard className={`flex flex-col ${className} relative`}>
+    <AccueilCard className={classNames('flex flex-col relative', className)}>
       {/* En-tête */}
       <div className="flex items-end gap-4 md:pb-0 pb-8">
         <LogoTerritoireEngage />
@@ -180,7 +162,7 @@ const EmptyEtatDesLieuxCard = ({
   className,
 }: EmptyEtatDesLieuxCardProps): JSX.Element => {
   return (
-    <AccueilCard className={`flex flex-col gap-8 ${className}`}>
+    <AccueilCard className={classNames('flex flex-col gap-8', className)}>
       {/* En-tête */}
       <div className="flex items-end gap-4">
         <LogoTerritoireEngage />

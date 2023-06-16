@@ -48,7 +48,6 @@ export const collectivitePath = `/collectivite/:${collectiviteParam}`;
 export const collectiviteIndicateurPath = `${collectivitePath}/indicateurs/:${indicateurViewParam}`;
 export const collectiviteReferentielPath = `${collectivitePath}/referentiels/:${referentielParam}/:${referentielVueParam}`;
 export const collectiviteAccueilPath = `${collectivitePath}/accueil`;
-export const collectiviteTableauBordPath = `${collectivitePath}/tableau_bord`;
 export const collectiviteActionPath = `${collectivitePath}/action/:${referentielParam}/:${actionParam}/:${actionVueParam}?`;
 export const collectiviteLabellisationRootPath = `${collectivitePath}/labellisation/:${referentielParam}`;
 export const collectiviteLabellisationPath = `${collectiviteLabellisationRootPath}/:${labellisationVueParam}?`;
@@ -309,16 +308,6 @@ export const makeCollectiviteAccueilUrl = ({
   collectiviteId: number;
 }) =>
   collectiviteAccueilPath.replace(
-    `:${collectiviteParam}`,
-    collectiviteId.toString()
-  );
-
-export const makeCollectiviteTableauBordUrl = ({
-  collectiviteId,
-}: {
-  collectiviteId: number;
-}) =>
-  collectiviteTableauBordPath.replace(
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );
