@@ -30,15 +30,32 @@ export type TAccordionProps = {
  */
 
 export const Accordion = (props: TAccordionProps) => {
-  const {className, id, dataTest, titre, html, initialState, icon} = props;
+  const {initialState, ...other} = props;
   const [expanded, setExpanded] = useState(initialState ?? false);
+
+  useEffect(() => setExpanded(initialState ?? false), [initialState]);
+  return (
+    <AccordionControlled
+      {...other}
+      expanded={expanded}
+      setExpanded={setExpanded}
+    />
+  );
+};
+
+export const AccordionControlled = (
+  props: Omit<TAccordionProps, 'initialState'> & {
+    expanded: boolean;
+    setExpanded: (value: boolean) => void;
+  }
+) => {
+  const {className, id, dataTest, titre, html, expanded, setExpanded, icon} =
+    props;
 
   const contentClassName = classNames({
     'fr-collapse--expanded py-3 px-4': expanded,
     'fr-collapse': !expanded,
   });
-
-  useEffect(() => setExpanded(initialState ?? false), [initialState]);
 
   return (
     <section data-test={dataTest} className={`fr-accordion ${className || ''}`}>
@@ -47,7 +64,7 @@ export const Accordion = (props: TAccordionProps) => {
           className="fr-accordion__btn font-normal"
           aria-controls={id}
           aria-expanded={expanded}
-          onClick={() => setExpanded(prevState => !prevState)}
+          onClick={() => setExpanded(!expanded)}
         >
           {!!icon && <i className={`${icon} text-[#0063cb] fr-mr-3v`} />}
           {titre}
