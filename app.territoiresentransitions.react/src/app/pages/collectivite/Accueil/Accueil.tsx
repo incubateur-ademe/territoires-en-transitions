@@ -1,10 +1,17 @@
 import {useCollectiviteId} from 'core-logic/hooks/params';
+import {useProgressionReferentiel} from '../EtatDesLieux/Synthese/data/useProgressionReferentiel';
 import EtatDesLieuxCard from './EtatDesLieuxCard';
 import IndicateursCard from './IndicateursCard';
 import PlansActionCard from './PlansActionCard';
 
 const Accueil = (): JSX.Element => {
   const collectiviteId = useCollectiviteId();
+  const {
+    caeTable: caeProgressionScore,
+    eciTable: eciProgressionScore,
+    caeRepartitionPhases,
+    eciRepartitionPhases,
+  } = useProgressionReferentiel();
 
   return (
     <main data-test="TableauBord" className="bg-bf975 -mb-8">
@@ -30,12 +37,16 @@ const Accueil = (): JSX.Element => {
             <div className="grid lg:grid-cols-2 gap-6">
               <EtatDesLieuxCard
                 collectiviteId={collectiviteId}
+                progressionScore={caeProgressionScore}
+                repartitionPhases={caeRepartitionPhases}
                 referentiel="cae"
                 title="Climat Air Énergie"
                 className="order-1"
               />
               <EtatDesLieuxCard
                 collectiviteId={collectiviteId}
+                progressionScore={eciProgressionScore}
+                repartitionPhases={eciRepartitionPhases}
                 referentiel="eci"
                 title="Économie circulaire"
                 className="lg:order-2 order-3"

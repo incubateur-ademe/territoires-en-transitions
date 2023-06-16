@@ -10,10 +10,7 @@ import {TableOptions} from 'react-table';
 import ButtonWithLink from 'ui/buttons/ButtonWithLink';
 import DonutChart from 'ui/charts/DonutChart';
 import logoTerritoireEngage from 'ui/logo/logoTerritoireEngage.png';
-import {
-  ProgressionRow,
-  useProgressionReferentiel,
-} from '../EtatDesLieux/Synthese/data/useProgressionReferentiel';
+import {ProgressionRow} from '../EtatDesLieux/Synthese/data/useProgressionReferentiel';
 import {getAggregatedScore} from '../EtatDesLieux/Synthese/utils';
 import AccueilCard from './AccueilCard';
 import EtatDesLieuxGraphs from './EtatDesLieuxGraphs';
@@ -21,6 +18,11 @@ import LabellisationStars from './LabellisationStars';
 
 type EtatDesLieuxCardProps = {
   collectiviteId: number;
+  progressionScore: Pick<
+    TableOptions<ProgressionRow>,
+    'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded'
+  >;
+  repartitionPhases: {id: string; value: number}[];
   referentiel: ReferentielParamOption;
   title: string;
   className?: string;
@@ -58,12 +60,12 @@ const getTags = (scoreData: readonly ProgressionRow[]) => {
 
 const EtatDesLieuxCard = ({
   collectiviteId,
+  progressionScore,
+  repartitionPhases,
   referentiel,
   title,
   className,
 }: EtatDesLieuxCardProps): JSX.Element => {
-  const {table: progressionScore} = useProgressionReferentiel(referentiel);
-
   const displayEtatDesLieux =
     progressionScore.data.find(d => d.score_non_renseigne !== 1) !== undefined;
 
@@ -90,6 +92,7 @@ const EtatDesLieuxCard = ({
         referentiel={referentiel}
         displayEtatDesLieux={displayEtatDesLieux}
         progressionScore={progressionScore}
+        repartitionPhases={repartitionPhases}
         className={referentiel === 'cae' ? 'lg:order-3 order-2' : 'order-4'}
       />
     </>

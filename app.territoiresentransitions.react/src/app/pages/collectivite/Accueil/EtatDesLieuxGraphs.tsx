@@ -2,7 +2,6 @@ import {ReferentielParamOption} from 'app/paths';
 import classNames from 'classnames';
 import {TableOptions} from 'react-table';
 import {ProgressionRow} from '../EtatDesLieux/Synthese/data/useProgressionReferentiel';
-import {useRepartitionPhases} from '../EtatDesLieux/Synthese/data/useRepartitionPhases';
 import ProgressionParPhase from '../EtatDesLieux/Synthese/ProgressionParPhase';
 import ProgressionReferentiel from '../EtatDesLieux/Synthese/ProgressionReferentiel';
 
@@ -13,6 +12,7 @@ type EtatDesLieuxGraphsProps = {
     TableOptions<ProgressionRow>,
     'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded'
   >;
+  repartitionPhases: {id: string; value: number}[];
   className?: string;
 };
 
@@ -24,10 +24,9 @@ const EtatDesLieuxGraphs = ({
   referentiel,
   displayEtatDesLieux,
   progressionScore,
+  repartitionPhases,
   className,
 }: EtatDesLieuxGraphsProps): JSX.Element => {
-  const repartitionPhases = useRepartitionPhases(referentiel);
-
   const graphStyles = {
     boxShadow: '0px 2px 16px 0px #0063CB0A, 0px 4px 6px 0px #0063CB0F',
     border: 'none',
