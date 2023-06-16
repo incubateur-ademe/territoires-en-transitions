@@ -9,7 +9,7 @@ import classNames from 'classnames';
 import {TableOptions} from 'react-table';
 import ButtonWithLink from 'ui/buttons/ButtonWithLink';
 import DonutChart from 'ui/charts/DonutChart';
-import {LogoTerritoireEngage} from 'ui/logo/LogoTerritoireEngage';
+import logoTerritoireEngage from 'ui/logo/logoTerritoireEngage.png';
 import {
   ProgressionRow,
   useProgressionReferentiel,
@@ -113,7 +113,7 @@ const FilledEtatDesLieuxCard = ({
     <AccueilCard className={classNames('flex flex-col relative', className)}>
       {/* En-tête */}
       <div className="flex items-end gap-4 md:pb-0 pb-8">
-        <LogoTerritoireEngage />
+        <img src={logoTerritoireEngage} alt="Logo Territoire Engage" />
         <div className="text-lg font-bold pb-1">{title}</div>
       </div>
 
@@ -165,7 +165,7 @@ const EmptyEtatDesLieuxCard = ({
     <AccueilCard className={classNames('flex flex-col gap-8', className)}>
       {/* En-tête */}
       <div className="flex items-end gap-4">
-        <LogoTerritoireEngage />
+        <img src={logoTerritoireEngage} alt="Logo Territoire Engage" />
         <div className="text-lg font-bold pb-1">{title}</div>
       </div>
 
