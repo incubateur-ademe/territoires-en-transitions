@@ -14,16 +14,20 @@ export type TActionPreuvePanelProps = {
   showWarning?: boolean;
   /** indique si l'identifiant de l'action doit être masqué */
   hideIdentifier?: boolean;
+  /** désactive le fetch si renseigné */
+  disableFetch?: boolean;
 };
 
 /**
  * Affiche le panneau "preuves" d'une action
  */
 const ActionPreuvePanel = (props: TActionPreuvePanelProps) => {
-  const {action, withSubActions, showWarning, hideIdentifier} = props;
+  const {action, withSubActions, showWarning, hideIdentifier, disableFetch} =
+    props;
   const {reglementaire, complementaire} = usePreuvesParType({
     action,
     withSubActions,
+    disabled: disableFetch,
   });
 
   return (
