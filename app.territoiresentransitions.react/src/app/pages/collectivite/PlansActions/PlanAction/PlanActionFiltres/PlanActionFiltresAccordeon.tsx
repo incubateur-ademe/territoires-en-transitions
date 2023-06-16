@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 
-import {Accordion} from 'ui/Accordion';
+import {AccordionControlled} from 'ui/Accordion';
 import PlanActionFiltres from './PlanActionFiltres';
 
 import {useCollectiviteId} from 'core-logic/hooks/params';
@@ -11,16 +11,10 @@ import {PlanNode} from '../data/types';
 type Props = {
   plan: PlanNode;
   axe?: PlanNode;
-  isFiltered: boolean;
   setIsFiltered: (isFiltered: boolean) => void;
 };
 
-const PlanActionFiltresAccordeon = ({
-  plan,
-  axe,
-  isFiltered,
-  setIsFiltered,
-}: Props) => {
+const PlanActionFiltresAccordeon = ({plan, axe, setIsFiltered}: Props) => {
   const collectivite_id = useCollectiviteId();
 
   // Stock l'état d'ouverture de l'accordéon afin d'afficher ou non la liste les filtres
@@ -37,17 +31,16 @@ const PlanActionFiltresAccordeon = ({
     nameToShortNames
   );
 
-  const isTestFiltered = filters && Object.keys(filters).length > 2;
+  const isFiltered = filters && Object.keys(filters).length > 2;
 
-  useEffect(() => setIsOpen(isTestFiltered), []);
+  useEffect(() => setIsOpen(isFiltered), []);
 
   return (
-    <Accordion
+    <AccordionControlled
       dataTest="FiltrerFiches"
       id="filtres-plan"
       className="mb-8"
       titre="Filtrer"
-      onExpand={isExpand => setIsOpen(isExpand)}
       html={
         isOpen && (
           <PlanActionFiltres
@@ -57,7 +50,8 @@ const PlanActionFiltresAccordeon = ({
           />
         )
       }
-      isExpanded={isOpen}
+      expanded={isOpen}
+      setExpanded={setIsOpen}
     />
   );
 };

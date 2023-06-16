@@ -51,7 +51,6 @@ export const PlanAction = ({plan, axe}: PlanActionProps) => {
           <PlanActionFiltresAccordeon
             plan={plan}
             axe={axe}
-            isFiltered={isFiltered}
             setIsFiltered={isFiltered => setIsFiltered(isFiltered)}
           />
         )}
