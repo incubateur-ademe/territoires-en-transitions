@@ -3,6 +3,7 @@ import {
   makeCollectivitePlansActionsNouveauUrl,
   makeCollectivitePlansActionsSyntheseUrl,
 } from 'app/paths';
+import classNames from 'classnames';
 import {TAxeRow} from 'types/alias';
 import ButtonWithLink from 'ui/buttons/ButtonWithLink';
 import {statusColor} from 'ui/charts/chartsTheme';
@@ -70,8 +71,12 @@ const FilledPlansActionCard = ({
     : 0;
 
   return (
-    <AccueilCard className="grid md:grid-cols-2 gap-8">
-      <div className="flex flex-col">
+    <AccueilCard
+      className={classNames({
+        'grid md:grid-cols-2 gap-8': nbFiches > 0,
+      })}
+    >
+      <div className="flex flex-col h-full">
         {/* Compteurs nombre plans / nombre fiches */}
         <KeyNumbers
           valuesList={[
@@ -104,22 +109,24 @@ const FilledPlansActionCard = ({
       </div>
 
       {/* Graphique de répartition par statut */}
-      <div className="h-[200px] md:order-last order-first">
-        <DonutChart
-          data={
-            planActionsStats && planActionsStats.statuts
-              ? planActionsStats.statuts.map(st => ({
-                  ...st,
-                  id: st.id !== 'NC' ? st.id : 'Sans statut',
-                  color: statusColor[st.id],
-                }))
-              : []
-          }
-          customMargin={{top: 2, right: 0, bottom: 2, left: 0}}
-          zoomEffect={false}
-          unit="fiche"
-        />
-      </div>
+      {nbFiches > 0 && (
+        <div className="h-[200px] md:order-last order-first">
+          <DonutChart
+            data={
+              planActionsStats && planActionsStats.statuts
+                ? planActionsStats.statuts.map(st => ({
+                    ...st,
+                    id: st.id !== 'NC' ? st.id : 'Sans statut',
+                    color: statusColor[st.id],
+                  }))
+                : []
+            }
+            customMargin={{top: 2, right: 0, bottom: 2, left: 0}}
+            zoomEffect={false}
+            unit="fiche"
+          />
+        </div>
+      )}
     </AccueilCard>
   );
 };
