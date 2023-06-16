@@ -93,7 +93,7 @@ const SubActionCard = ({
               className="fr-mb-3w"
               titre="Tâches"
               html={<SubActionTasksList tasks={tasks} />}
-              initialState={openTasks}
+              isExpanded={openTasks}
             />
           )}
 
