@@ -14,6 +14,7 @@ type TFilters = {
   demande_id?: number;
   audit_id?: number;
   preuve_types?: TPreuveType[];
+  disabled?: boolean;
 };
 
 // charge les données
@@ -79,9 +80,15 @@ const fetch = async (collectivite_id: number, filters?: TFilters) => {
  */
 export const usePreuves = (filters?: TFilters) => {
   const collectivite_id = useCollectiviteId();
-  const {data} = useQuery(['preuve', collectivite_id, filters], () => {
-    return collectivite_id ? fetch(collectivite_id, filters) : [];
-  });
+  const {data} = useQuery(
+    ['preuve', collectivite_id, filters],
+    () => {
+      return collectivite_id ? fetch(collectivite_id, filters) : [];
+    },
+    {
+      enabled: !filters?.disabled,
+    }
+  );
   return (data as TPreuve[]) || [];
 };
 
