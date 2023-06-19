@@ -3,16 +3,28 @@
 
 BEGIN;
 
-alter policy allow_read
-    on indicateur_resultat
-    using (is_authenticated());
+alter table indicateur_definition
+    rename column groupe to indicateur_group;
 
-alter policy allow_read
-    on indicateur_objectif
-    using (is_authenticated());
+alter table indicateur_definition
+    drop participation_score;
 
-alter policy allow_read
-    on indicateur_commentaire
-    using (is_authenticated());
+alter table indicateur_definition
+    drop titre_long;
+
+alter table indicateur_definition
+    drop parent;
+
+alter table indicateur_definition
+    add parent integer
+        references indicateur_parent;
+
+alter table indicateur_definition
+    drop source;
+
+alter table indicateur_definition
+    drop type;
+
+drop type indicateur_referentiel_type;
 
 COMMIT;
