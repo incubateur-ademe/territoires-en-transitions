@@ -29,7 +29,6 @@ export const IndicateurPersonnaliseCreator = (props: {onClose: () => void}) => {
           indicateurView: 'perso',
         });
         if (history.location.pathname !== url) {
-          console.log(history.location.pathname, url);
           history.push(url);
         }
       },
