@@ -1,12 +1,12 @@
 from business.referentiel.convert_indicateurs import (
     MarkdownIndicateur,
-    parse_markdown_indicateurs_from_folder,
+    parse_indicateurs,
 )
 from business.utils.models.actions import ActionId
 
 
 def test_parse_markdown_indicateurs_from_ok_folder():
-    markdown_indicateurs, errors = parse_markdown_indicateurs_from_folder(
+    markdown_indicateurs, errors = parse_indicateurs(
         "./tests/data/md_indicateurs_example_ok"
     )
     assert len(errors) == 0

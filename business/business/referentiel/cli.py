@@ -1,6 +1,6 @@
 import click
 from business.referentiel.convert_indicateurs import (
-    convert_indicateurs_markdown_folder_to_json,
+    convert_indicateurs,
 )
 
 from business.referentiel.convert_preuves import (
@@ -91,7 +91,7 @@ def parse_indicateurs(
 ):
     """Parse, convert and store indicateurs given IN/OUT folders."""
     try:
-        convert_indicateurs_markdown_folder_to_json(
+        convert_indicateurs(
             input_markdown_folder, output_json_file
         )
     except Exception as e:
