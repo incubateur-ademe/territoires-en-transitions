@@ -16,7 +16,7 @@ const ActionDiscussion = ({discussion}: ActionDiscussionProps) => {
     useAddCommentaireToDiscussion(discussion.id);
 
   return (
-    <div className="border-b border-gray-200">
+    <div className="border-b border-gray-200 last:border-b-0">
       <div className="p-4 border-l-4 border-yellow-400">
         <ActionDiscussionCommentaireListe discussion={discussion} />
         {discussion.status === 'ouvert' && (

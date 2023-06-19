@@ -3,7 +3,7 @@ import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {useScrollTop} from 'utils/useScrollTop';
 import {ActionTopNav} from './ActionNav';
-import {ActionSidePanel} from './ActionSidePanel';
+import {ActionSidePanelToolbar} from './ActionSidePanelToolbar';
 import {PersoPotentiel} from '../PersoPotentielModal/PersoPotentiel';
 import ScoreDisplay from '../../../../ui/referentiels/ScoreDisplay';
 import {SuiviScoreRow} from '../EtatDesLieux/Referentiel/data/useScoreRealise';
@@ -26,7 +26,7 @@ export const ActionHeader = ({
   // détermine si la page a suffisamment défilée pour afficher la version
   // réduite de l'en-tête
   const scrollTop = useScrollTop('main');
-  const isScrolled = scrollTop >= 170;
+  const isScrolled = scrollTop >= 183;
 
   return (
     <div
@@ -78,7 +78,7 @@ export const ActionHeader = ({
             </div>
           )}
         </div>
-        <ActionSidePanel action={action} />
+        <ActionSidePanelToolbar action={action} />
       </div>
     </div>
   );
