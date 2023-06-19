@@ -2,6 +2,14 @@
 
 BEGIN;
 
+create table indicateurs_json
+(
+    indicateurs jsonb       not null,
+    created_at  timestamptz not null default now()
+);
+alter table indicateurs_json
+    enable row level security;
+
 create or replace function
     private.upsert_indicateurs(indicateurs jsonb)
     returns void
@@ -51,5 +59,26 @@ begin
         end loop;
 end ;
 $$ language plpgsql security definer;
+comment on function private.upsert_indicateurs is
+    'Mets à jour les définitions des indicateurs ansi que les liens avec les actions.';
+
+-- Trigger pour mettre à jour le contenu suite à l'insertion de json.
+create function
+    private.upsert_indicateurs_after_json_insert()
+    returns trigger
+as
+$$
+declare
+begin
+    perform private.upsert_indicateurs(new.indicateurs);
+    return new;
+end;
+$$ language plpgsql;
+
+create trigger after_indicateurs_json
+    after insert
+    on indicateurs_json
+    for each row
+execute procedure private.upsert_indicateurs_after_json_insert();
 
 COMMIT;
