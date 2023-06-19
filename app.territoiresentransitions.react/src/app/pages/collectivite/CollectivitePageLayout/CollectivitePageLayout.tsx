@@ -1,6 +1,5 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import {SideNavLinks} from 'ui/shared/SideNav';
-import SideNavContainer from './SideNavContainer';
+import SideNavContainer, {SideNavContainerProps} from './SideNavContainer';
 import {
   PanelProvider,
   usePanelDispatch,
@@ -11,10 +10,11 @@ import Panel from './Panel/Panel';
 
 type Props = {
   children: React.ReactNode;
-  sideNavLinks?: SideNavLinks;
+  sideNav?: SideNavContainerProps;
+  dataTest?: string;
 };
 
-const PageLayout = ({children, sideNavLinks}: Props) => {
+const PageLayout = ({children, sideNav, dataTest}: Props) => {
   const [isSideNavOpen, setIsSideNavOpen] = useState(true);
 
   const panelState = usePanelState();
@@ -35,27 +35,40 @@ const PageLayout = ({children, sideNavLinks}: Props) => {
   }, [isSideNavOpen]);
 
   const gridCols = useMemo(() => {
-    if (panelState.isOpen) {
-      return `grid-cols-[3rem_minmax(0,_78rem)_24rem] xl:grid-cols-[0_minmax(0,_78rem)_24rem]`;
-    }
+    // s'il n'y a pas side nav on ne la prend pas en compte dans la grille
+    if (!sideNav) {
+      if (panelState.isOpen) {
+        return `grid-cols-[minmax(0,_78rem)_24rem]`;
+      }
+      // Valeur par défaut, une seule colonne
+      return 'grid-cols-[minmax(0,_78rem)]';
+      // s'il y a une sidenav
+    } else {
+      if (panelState.isOpen) {
+        return `grid-cols-[3rem_minmax(0,_78rem)_24rem] xl:grid-cols-[0_minmax(0,_78rem)_24rem]`;
+      }
 
-    if (!isSideNavOpen) {
-      return 'grid-cols-[3rem_minmax(0,_78rem)] xl:grid-cols-[0_minmax(0,_78rem)]';
-    }
+      if (!isSideNavOpen) {
+        return 'grid-cols-[3rem_minmax(0,_78rem)] xl:grid-cols-[0_minmax(0,_78rem)]';
+      }
 
-    // Valeur par défaut, la side nav est ouverte
-    return 'grid-cols-[21rem_minmax(0,_78rem)]';
+      // Valeur par défaut, la side nav est ouverte
+      return 'grid-cols-[21rem_minmax(0,_78rem)]';
+    }
   }, [isSideNavOpen, panelState.isOpen]);
 
   return (
-    <div className={`grid ${gridCols} m-auto xl:max-w-[78rem] xl:px-6`}>
+    <div
+      data-test={dataTest}
+      className={`grid ${gridCols} m-auto xl:max-w-[78rem] xl:px-6`}
+    >
       {/** Side nav */}
-      {sideNavLinks && (
+      {sideNav && (
         <div className={classNames({'xl:-ml-12': !isSideNavOpen})}>
           <SideNavContainer
             isOpen={isSideNavOpen}
             setIsOpen={isOpen => setIsSideNavOpen(isOpen)}
-            sideNavLinks={sideNavLinks}
+            sideNav={sideNav}
           />
         </div>
       )}
@@ -67,10 +80,12 @@ const PageLayout = ({children, sideNavLinks}: Props) => {
   );
 };
 
-const CollectivitePageLayout = ({children, sideNavLinks}: Props) => {
+const CollectivitePageLayout = ({children, sideNav, dataTest}: Props) => {
   return (
     <PanelProvider>
-      <PageLayout sideNavLinks={sideNavLinks}>{children}</PageLayout>
+      <PageLayout dataTest={dataTest} sideNav={sideNav}>
+        {children}
+      </PageLayout>
     </PanelProvider>
   );
 };
