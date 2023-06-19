@@ -31,4 +31,14 @@ alter table indicateur_definition
 drop type indicateur_thematique;
 drop type indicateur_referentiel_type;
 
+
+alter table indicateur_resultat_commentaire
+    rename to indicateur_commentaire;
+
+alter table indicateur_commentaire
+    drop constraint unique_collectivite_indicateur_annee;
+
+alter table indicateur_commentaire
+    drop annee;
+
 COMMIT;
