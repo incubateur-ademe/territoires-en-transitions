@@ -26,7 +26,7 @@ type Props = {
 
 const SideNav = ({links}: Props) => {
   return (
-    <nav data-test="SideNav" className="fr-sidemenu flex">
+    <nav data-test="SideNav" className="fr-sidemenu flex !pr-4">
       <div className="fr-sidemenu-wrapper w-full">
         <ul className="fr-sidemenu__list">
           {links.map(element => {
@@ -70,28 +70,24 @@ const Section = ({section}: SectionProps) => {
       <div className="flex items-start w-full">
         <div className="w-full fr-sidemnu__item fr-sidemenu__item--active">
           <NavLink
-            className="fr-sidemenu__link"
+            data-test="SideNav-section-toggle-button"
+            title="Ouvrir la section"
+            className="fr-sidemenu__link justify-between"
             to={section.link}
+            onClick={() => setIsOpen(!isOpen)}
             target="_self"
             aria-current="page"
           >
             {section.displayName}
+            <div className="p-0.5 ml-2">
+              <span
+                className={classNames(
+                  'fr-fi-arrow-right-s-line before:scale-75 before:transition-transform',
+                  {'before:rotate-90': isOpen}
+                )}
+              />
+            </div>
           </NavLink>
-        </div>
-        <div className="flex pt-2 mt-0.5 ml-2">
-          <button
-            data-test="SideNav-section-toggle-button"
-            className="p-0.5"
-            title="Ouvrir la section"
-            onClick={() => setIsOpen(!isOpen)}
-          >
-            <span
-              className={classNames(
-                'fr-fi-arrow-right-s-line before:scale-75 before:transition-transform',
-                {'before:rotate-90': isOpen}
-              )}
-            />
-          </button>
         </div>
       </div>
       {isOpen && (
