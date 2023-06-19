@@ -1,4 +1,3 @@
-import {referentielToName} from 'app/labels';
 import {
   IndicateurViewParamOption,
   makeCollectiviteIndicateursUrl,
@@ -6,6 +5,7 @@ import {
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import SideNav, {SideNavLinks} from 'ui/shared/SideNav';
 import {IndicateurPersonnaliseCreationDialog} from './IndicateurPersonnaliseCreationDialog';
+import {referentielToName} from 'app/labels';
 
 /**
  * Affiche la navigation latérales vers les pages Indicateurs
@@ -22,8 +22,12 @@ export const IndicateursNav = () => {
 
 // correspondances entre item et libellé
 const LABELS: Record<IndicateurViewParamOption, string> = {
+  //  cle: 'Indicateurs-clé',
+  //  tous: 'Tous les indicateurs',
   perso: 'Indicateurs personnalisés',
-  ...referentielToName,
+  cae: `Indicateurs ${referentielToName.cae}`,
+  eci: `Indicateurs ${referentielToName.eci}`,
+  crte: 'Indicateurs Contrat de relance et de transition écologique (CRTE)',
 };
 
 // items dans l'ordre de l'affichage voulu
