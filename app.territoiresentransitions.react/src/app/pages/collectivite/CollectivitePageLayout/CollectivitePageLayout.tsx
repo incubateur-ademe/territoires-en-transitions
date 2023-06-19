@@ -73,7 +73,7 @@ const PageLayout = ({children, sideNav, dataTest}: Props) => {
         </div>
       )}
       {/** Main */}
-      <div>{children}</div>
+      {children}
       {/** Panel */}
       {panelState.isOpen && <Panel />}
     </div>
