@@ -436,3 +436,4 @@ labellisation/parcours [labellisation/parcours@v2.38.0] 2023-06-15T15:44:08Z Ama
 @v2.48.0 2023-08-02T07:21:59Z Florian <florian@derfurth.com> # Modification des critères de demande première étoile pour les COTs
 
 indicateur/referentiel [indicateur/referentiel@v2.40.0] 2023-06-19T14:55:18Z Florian <florian@derfurth.com> # Mets à jour le modèle
+indicateur/contenu_json [indicateur/contenu_json@v2.40.0] 2023-06-19T16:02:51Z Florian <florian@derfurth.com> # Permet de lire les nouveaux json
