@@ -416,3 +416,5 @@ retool/correction_droit 2023-06-29T13:08:57Z Amandine Jacquelin <conta@LanceLibr
 @v2.43.0 2023-06-30T08:27:10Z Florian <florian@derfurth.com> # Confidentialité des vues Retool
 
 labellisation/prerequis [labellisation/prerequis@v2.42.0] 2023-06-29T14:23:52Z Florian <florian@derfurth.com> # Prise en compte des statuts à la sous-action
+labellisation/comparaison_audit [labellisation/comparaison_audit@v2.40.0] 2023-06-18T12:26:26Z Amandine Jacquelin <conta@LanceLibre> # Ajoute la table post_audit_scores et adapte les fonctions
+labellisation/export 2023-06-19T09:04:41Z Amandine Jacquelin <conta@LanceLibre> # Créé un export des scores d'audit
