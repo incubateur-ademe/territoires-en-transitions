@@ -14,22 +14,34 @@ from marshmallow import ValidationError
 from business.utils.exceptions import MarkdownError
 
 
+Programme = Literal["eci", "cae", "crte", "pcaet", "clef"]
 @dataclass
 class MarkdownIndicateur:
-    """Indicateur as defined in markdown files"""
-
-    id: str
-    identifiant: Any  # str
-    valeur: Optional[str]
+    """Indicateur défini en markdown et yaml"""
     nom: str
-    unite: str
+    "Titre en markdown"
+
     description: str
+    "Partie description en markdown"
+
+    # Valeurs obligatoires de la partie yaml :
+    id: str
+    identifiant: Any
+    unite: str
+
+    # Valeurs optionnelles de la partie yaml :
+    titre_long: Optional[str]
     obligation_cae: Optional[bool]
+    valeur: Optional[str]
     actions: Optional[List[str]]
-    programmes: Optional[List[str]]
+    programmes: Optional[List[Programme]]
     climat_pratic_ids: Optional[List[str]]
+    participation_score: Optional[List[str]]
     source: Optional[str]
     obligation_eci: Optional[bool]
+    thematiques: Optional[List[str]]
+    fnv: Optional[List[str]]
+    parent: Optional[str]
 
 
 IndicateurGroup = Literal["eci", "cae", "crte"]
