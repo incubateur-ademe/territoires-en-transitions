@@ -8,7 +8,7 @@ const Panel = () => {
   return (
     <div
       id="collectivite-page-panel-id"
-      className={`sticky top-0 h-screen flex flex-col w-full border-l border-l-gray-200 bg-white overflow-hidden`}
+      className={`sticky top-0 h-screen flex flex-col w-full border-x border-x-gray-200 bg-white overflow-hidden`}
     >
       <PanelToolbar
         onClose={() => panelDispatch({type: 'close'})}
