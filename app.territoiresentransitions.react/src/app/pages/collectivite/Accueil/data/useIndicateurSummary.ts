@@ -2,7 +2,7 @@ import {useQuery} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useAllIndicateurDefinitionsForGroup} from '../../Indicateurs/useAllIndicateurDefinitions';
-import {useIndicateurPersonnaliseDefinitionList} from 'core-logic/hooks/indicateur_personnalise_definition';
+import {useIndicateursPersoDefinitions} from '../../Indicateurs/useIndicateursPersoDefinitions';
 
 /**
  * Récupère les summary des indicateurs d'un groupe et d'une collectivité données
@@ -44,7 +44,7 @@ export const useIndicateursCount = () => {
   const caeIndicateurs = useAllIndicateurDefinitionsForGroup('cae');
   const eciIndicateurs = useAllIndicateurDefinitionsForGroup('eci');
   const crteIndicateurs = useAllIndicateurDefinitionsForGroup('crte');
-  const persoIndicateurs = useIndicateurPersonnaliseDefinitionList(
+  const {data: persoIndicateurs} = useIndicateursPersoDefinitions(
     collectiviteId!
   );
 
@@ -83,7 +83,7 @@ export const useIndicateursCount = () => {
       withValue: crteIndicateursWithValue?.length ?? 0,
     },
     perso: {
-      total: persoIndicateurs.length,
+      total: persoIndicateurs?.length ?? 0,
     },
   };
 };
