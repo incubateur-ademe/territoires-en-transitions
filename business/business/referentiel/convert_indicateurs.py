@@ -59,8 +59,8 @@ class Indicateur:
     unite: str
     description: str
     participation_score: bool
+    titre_long: str
     valeur_indicateur: Optional[str] = None
-    titre_long: Optional[str] = None
     parent: Optional[str] = None
     source: Optional[str] = None
     type: Optional[str] = None
@@ -119,7 +119,7 @@ def convert_indicateurs(path: str, json_filename: str):
             description=md.description,
             valeur_indicateur=md.valeur,
             participation_score=True if md.participation_score else False,
-            titre_long=md.titre_long,
+            titre_long=md.titre_long or md.nom,
             parent=md.parent,
             source=md.source,
             type=md.type
