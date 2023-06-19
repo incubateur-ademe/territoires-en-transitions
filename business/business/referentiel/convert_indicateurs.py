@@ -54,7 +54,7 @@ class Indicateur:
     """Indicateur en JSON"""
     id: str
     identifiant: str
-    group: str
+    groupe: str
     nom: str
     unite: str
     description: str
@@ -113,7 +113,7 @@ def convert_indicateurs(path: str, json_filename: str):
         Indicateur(
             id=md.id,
             identifiant=md.identifiant,
-            group=md.id.split("_")[0],
+            groupe=md.id.split("_")[0],
             nom=md.nom,
             unite=md.unite,
             description=md.description,
