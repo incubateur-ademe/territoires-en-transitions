@@ -2,7 +2,8 @@
 
 BEGIN;
 
-alter type usage_fonction add value if not exists 'annulation';
-alter type usage_fonction add value if not exists 'modele_import';
+alter type usage_fonction add value if not exists 'cta_plan';
+alter type usage_fonction add value if not exists 'cta_indicateur';
+alter type usage_fonction add value if not exists 'cta_labellisation';
 
 COMMIT;
