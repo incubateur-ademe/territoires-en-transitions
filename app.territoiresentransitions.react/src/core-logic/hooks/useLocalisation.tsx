@@ -92,7 +92,7 @@ const locationFromPath = (path: string): Localisation => {
     tag = 'thematique';
   } else if (path.endsWith('/personnalisation')) {
     page = 'personnalisation';
-  } else if (path.endsWith('/tableau_bord')) {
+  } else if (path.endsWith('/accueil')) {
     page = 'tableau_de_bord';
   } else if (path.includes('/action/')) {
     // page
