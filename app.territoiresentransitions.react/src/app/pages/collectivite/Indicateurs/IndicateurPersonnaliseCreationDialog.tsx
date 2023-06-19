@@ -12,7 +12,7 @@ export const IndicateurPersonnaliseCreationDialog = () => {
       title="Créer un indicateur"
       opened={editing}
       setOpened={setEditing}
-      buttonClasses="fr-ml-4w fr-btn--tertiary fr-btn--icon-left fr-icon-add-line"
+      buttonClasses="fr-ml-4w fr-btn--tertiary"
     >
       <IndicateurPersonnaliseCreator onClose={() => setEditing(false)} />
     </UiDialogButton>
