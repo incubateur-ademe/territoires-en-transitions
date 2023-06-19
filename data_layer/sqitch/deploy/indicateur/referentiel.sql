@@ -49,4 +49,16 @@ alter table indicateur_definition
     add thematiques indicateur_thematique[] default array[]::indicateur_thematique[] not null;
 
 
+alter table indicateur_commentaire
+    add annee integer; -- todo not null
+
+comment on column indicateur_commentaire.annee is
+    'L''année du résultat sur lequel porte le commentaire.';
+
+alter table indicateur_commentaire
+    rename to indicateur_resultat_commentaire;
+
+alter table indicateur_resultat_commentaire
+    add constraint unique_collectivite_indicateur_annee unique (collectivite_id, indicateur_id, annee);
+
 COMMIT;

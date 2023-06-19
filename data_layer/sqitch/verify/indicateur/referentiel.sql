@@ -19,4 +19,13 @@ select modified_at,
 from indicateur_definition
 where false;
 
+select modified_at,
+       collectivite_id,
+       indicateur_id,
+       commentaire,
+       modified_by,
+       annee
+from indicateur_resultat_commentaire
+where false;
+
 ROLLBACK;
