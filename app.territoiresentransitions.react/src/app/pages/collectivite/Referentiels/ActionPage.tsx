@@ -59,7 +59,7 @@ export const ActionPage = () => {
 
   return (
     <Suspense fallback={renderLoader()}>
-      <CollectivitePageLayout sideNavLinks={fakeLinks}>
+      <CollectivitePageLayout sideNav={{links: fakeLinks}}>
         {action && <ActionReferentielAvancement action={action} />}
       </CollectivitePageLayout>
     </Suspense>
