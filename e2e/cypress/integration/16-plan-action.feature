@@ -1,7 +1,7 @@
 # language: fr
 
 Fonctionnalité: Gérer les fiches et les plans d'action
-
+  
   Scénario: Ajouter, éditer et supprimer une fiche action
     Etant donné que je suis connecté en tant que "yolo"
     Et que je suis sur la page "Plans action" de la collectivité "1"
@@ -26,7 +26,7 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     Et que je supprime la fiche
     Et que je suis sur la page "Fiches non classees" de la collectivité "1"
     Alors la fiche "Fiche test" n'est plus présente
-
+ 
   Scénario: Ranger une fiche action
     Etant donné que je suis connecté en tant que "yolo"
     Et que je suis sur la page "Plans action" de la collectivité "1"
@@ -60,8 +60,7 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     # le fil d'ariane de la fiche doit contenir "Axe 1"
     Quand je clique en dehors de la boîte de dialogue
     Alors le fil d'ariane de la fiche contient "Axe 1: les tests passent"
-
-
+  
   Scénario: Ajouter, éditer et supprimer un plan d'action
     Etant donné que je suis connecté en tant que "yolo"
     Et que je suis sur la page "Plans action" de la collectivité "1"
@@ -110,7 +109,7 @@ Fonctionnalité: Gérer les fiches et les plans d'action
 
     Quand je supprime l'axe depuis la modale
     Alors le plan n'est plus présent dans la navigation
-
+  
   Scénario: Visiter page axe et filtrer les fiches
     Etant donné que je suis connecté en tant que "yolo"
     Et que je suis sur la page "Plans action" de la collectivité "1"
