@@ -48,6 +48,8 @@ create type indicateur_thematique as enum ('eci_dechets');
 alter table indicateur_definition
     add thematiques indicateur_thematique[] default array[]::indicateur_thematique[] not null;
 
+alter table indicateur_definition
+    drop obligation_eci;
 
 alter table indicateur_commentaire
     add annee integer; -- todo not null
