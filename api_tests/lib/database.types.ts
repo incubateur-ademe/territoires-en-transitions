@@ -6248,12 +6248,6 @@ export interface Database {
       skip:
         | {
             Args: {
-              "": number
-            }
-            Returns: string
-          }
-        | {
-            Args: {
               why: string
               how_many: number
             }
@@ -6262,6 +6256,12 @@ export interface Database {
         | {
             Args: {
               "": string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              "": number
             }
             Returns: string
           }
@@ -6881,6 +6881,9 @@ export interface Database {
         | "filtre_remplissage"
         | "annulation"
         | "modele_import"
+        | "cta_plan"
+        | "cta_indicateur"
+        | "cta_labellisation"
       visite_onglet:
         | "progression"
         | "priorisation"
@@ -6920,6 +6923,7 @@ export interface Database {
         | "nouveau_plan"
         | "nouveau_plan_import"
         | "nouveau_plan_creation"
+        | "indicateurs"
       visite_tag:
         | "cae"
         | "eci"
@@ -6927,6 +6931,8 @@ export interface Database {
         | "referentiel"
         | "thematique"
         | "personnalise"
+        | "clef"
+        | "tous"
     }
     CompositeTypes: {
       fiche_action_export: {
