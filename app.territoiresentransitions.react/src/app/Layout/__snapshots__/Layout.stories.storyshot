@@ -2,7 +2,7 @@
 
 exports[`Storyshots app/Layout Exemple 1`] = `
 <div
-  className="flex flex-row h-[100vh] overflow-hidden"
+  className="flex flex-col h-[100vh] overflow-hidden"
 >
   <div
     className="w-full overflow-x-hidden overflow-y-auto"
@@ -586,9 +586,5 @@ exports[`Storyshots app/Layout Exemple 1`] = `
       </div>
     </footer>
   </div>
-  <aside
-    className="shrink-0 max-w-md border-l border-l-gray-200 bg-white"
-    id="right"
-  />
 </div>
 `;
