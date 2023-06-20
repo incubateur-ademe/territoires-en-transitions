@@ -11,12 +11,18 @@ $$
 declare
     indicateur jsonb;
 begin
+    -- on utilise une table temporaire pour ne pas avoir les contraintes sur les `valeur_indicateur`
+    create temporary table definition
+    (
+        like indicateur_definition
+    ) on commit drop;
+
     for indicateur in select * from jsonb_array_elements(indicateurs)
         loop
-            insert into indicateur_definition
+            insert into definition
             (id, groupe, identifiant, valeur_indicateur, nom, description, unite,
              parent, participation_score, source, titre_long, type,
-             thematiques)
+             thematiques, modified_at)
             values ((indicateur ->> 'id')::indicateur_id,
                     (indicateur ->> 'groupe')::indicateur_group,
                     indicateur ->> 'identifiant',
@@ -31,22 +37,52 @@ begin
                     (indicateur ->> 'type')::indicateur_referentiel_type,
                     (select array(
                                     select jsonb_array_elements_text((indicateur -> 'thematiques'))
-                                )::indicateur_thematique[]))
-            on conflict (id) do update
-                set groupe              = excluded.groupe,
-                    identifiant         = excluded.identifiant,
-                    valeur_indicateur   = excluded.valeur_indicateur,
-                    nom                 = excluded.nom,
-                    description         = excluded.description,
-                    unite               = excluded.unite,
-                    parent              = excluded.parent,
-                    participation_score = excluded.participation_score,
-                    source              = excluded.source,
-                    titre_long          = excluded.titre_long,
-                    type                = excluded.type,
-                    thematiques         = excluded.thematiques;
+                                )::indicateur_thematique[]),
+                    now());
 
-            -- les liens entre indicateur et action
+        end loop;
+
+    -- on commence par insérer les définitions sans parents
+    insert into indicateur_definition
+    select *
+    from definition
+    where parent is null
+      and valeur_indicateur is null
+    on conflict (id) do update
+        set groupe              = excluded.groupe,
+            identifiant         = excluded.identifiant,
+            nom                 = excluded.nom,
+            description         = excluded.description,
+            unite               = excluded.unite,
+            participation_score = excluded.participation_score,
+            source              = excluded.source,
+            titre_long          = excluded.titre_long,
+            type                = excluded.type,
+            thematiques         = excluded.thematiques;
+
+    -- puis le reste
+    insert into indicateur_definition
+    select *
+    from definition
+    where not (parent is null and valeur_indicateur is null)
+    on conflict (id) do update
+        set groupe              = excluded.groupe,
+            identifiant         = excluded.identifiant,
+            valeur_indicateur   = excluded.valeur_indicateur,
+            nom                 = excluded.nom,
+            description         = excluded.description,
+            unite               = excluded.unite,
+            parent              = excluded.parent,
+            participation_score = excluded.participation_score,
+            source              = excluded.source,
+            titre_long          = excluded.titre_long,
+            type                = excluded.type,
+            thematiques         = excluded.thematiques;
+
+
+    -- les liens entre indicateur et action
+    for indicateur in select * from jsonb_array_elements(indicateurs)
+        loop
             if indicateur -> 'action_ids' != 'null'
             then
                 --- insert les liens
