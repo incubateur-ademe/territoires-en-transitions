@@ -4,12 +4,9 @@ BEGIN;
 
 drop function stats.amplitude_send_yesterday_events;
 drop function stats.amplitude_send_events;
-drop function stats.amplitude_events;
-
-create function
-    stats.amplitude_send_events(amplitude_events stats.amplitude_event[],
-                                range tstzrange,
-                                batch_size integer default 1000)
+create
+    function
+    stats.amplitude_send_visites(range tstzrange, batch_size integer default 1000)
     returns void
 as
 $$
@@ -21,11 +18,11 @@ declare
 begin
     -- on commence par grouper les événements par lot de `batch_size` dans `batches`
     with events as (select jsonb_agg(json_array) as batch
-                    from (select to_jsonb(av.*)                                                        as json_array,
+                    from (select to_jsonb(av.*)                                                         as json_array,
                                  -- en divisant le numéro de la ligne obtenu avec `rank`
                                  -- par la taille du batch, on obtient le nombre `g`
-                                 (rank() over (order by time) / amplitude_send_events.batch_size)::int as g
-                          from (select * from unnest(amplitude_events)) av) numbered
+                                 (rank() over (order by time) / amplitude_send_visites.batch_size)::int as g
+                          from stats.amplitude_visite(amplitude_send_visites.range) av) numbered
                     group by g)
     select array_agg(events.batch)
     into batches
@@ -62,22 +59,20 @@ $$ language plpgsql
     -- permet d'utiliser pg_net depuis un trigger
     set search_path = public, net;
 
+
 create function
     stats.amplitude_send_yesterday_events()
     returns void
-as
-$$
-declare
-    yesterday tstzrange;
 begin
-    yesterday = tstzrange(current_timestamp::date - interval '1 day', current_timestamp::date);
-
-    perform stats.amplitude_send_events(array_agg(e), yesterday)
-    from stats.amplitude_visite(yesterday) e;
-
-    perform stats.amplitude_send_events(array_agg(e),yesterday)
-    from stats.amplitude_registered(yesterday) e;
+    atomic
+    select stats.amplitude_send_visites(
+                   range := tstzrange(current_timestamp::date - interval '1 day', current_timestamp::date)
+               );
 end;
-$$ language plpgsql security definer ;
+comment on function stats.amplitude_send_yesterday_events is
+    'Envoi les évènements de la veille à Amplitude.';
+
+drop function stats.amplitude_events;
+drop function stats.amplitude_registered;
 
 COMMIT;
