@@ -49,6 +49,7 @@ const Textarea = forwardRef(
           onChange={textareaChange}
           value={value}
           placeholder={placeholder}
+          style={{minHeight}}
           {...props}
         />
       </div>
