@@ -407,3 +407,5 @@ utilisateur/usage [utilisateur/usage@v2.40.0] 2023-06-19T08:14:06Z Florian <flor
 plan_action/tableau_de_bord [plan_action/tableau_de_bord@v2.31.2] 2023-05-31T12:29:38Z Amandine Jacquelin <conta@LanceLibre> # Ajoute le graphique de répartition par échéance
 automatisation/crm [automatisation/crm@v2.37.0] 2023-06-13T15:56:21Z Florian <florian@derfurth.com> # Materialise la vue usages.
 @v2.41.0 2023-06-21T14:32:29Z Florian <florian@derfurth.com> # Nouveau graphique et améliorations tracking et crm
+
+stats/amplitude [stats/amplitude@v2.40.0] 2023-06-20T12:50:02Z Florian <florian@derfurth.com> # Nouveaux événements et fonction de rattrapage
