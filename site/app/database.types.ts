@@ -1280,63 +1280,58 @@ export interface Database {
           modified_at?: string
         }
       }
-      indicateur_commentaire: {
-        Row: {
-          collectivite_id: number
-          commentaire: string
-          indicateur_id: string
-          modified_at: string
-          modified_by: string
-        }
-        Insert: {
-          collectivite_id: number
-          commentaire: string
-          indicateur_id: string
-          modified_at?: string
-          modified_by?: string
-        }
-        Update: {
-          collectivite_id?: number
-          commentaire?: string
-          indicateur_id?: string
-          modified_at?: string
-          modified_by?: string
-        }
-      }
       indicateur_definition: {
         Row: {
           description: string
+          groupe: Database["public"]["Enums"]["indicateur_group"]
           id: string
           identifiant: string
-          indicateur_group: Database["public"]["Enums"]["indicateur_group"]
           modified_at: string
           nom: string
-          obligation_eci: boolean
-          parent: number | null
+          parent: string | null
+          participation_score: boolean
+          source: string | null
+          thematiques: Database["public"]["Enums"]["indicateur_thematique"][]
+          titre_long: string
+          type:
+            | Database["public"]["Enums"]["indicateur_referentiel_type"]
+            | null
           unite: string
           valeur_indicateur: string | null
         }
         Insert: {
           description: string
+          groupe: Database["public"]["Enums"]["indicateur_group"]
           id: string
           identifiant: string
-          indicateur_group: Database["public"]["Enums"]["indicateur_group"]
           modified_at?: string
           nom: string
-          obligation_eci: boolean
-          parent?: number | null
+          parent?: string | null
+          participation_score?: boolean
+          source?: string | null
+          thematiques?: Database["public"]["Enums"]["indicateur_thematique"][]
+          titre_long?: string
+          type?:
+            | Database["public"]["Enums"]["indicateur_referentiel_type"]
+            | null
           unite: string
           valeur_indicateur?: string | null
         }
         Update: {
           description?: string
+          groupe?: Database["public"]["Enums"]["indicateur_group"]
           id?: string
           identifiant?: string
-          indicateur_group?: Database["public"]["Enums"]["indicateur_group"]
           modified_at?: string
           nom?: string
-          obligation_eci?: boolean
-          parent?: number | null
+          parent?: string | null
+          participation_score?: boolean
+          source?: string | null
+          thematiques?: Database["public"]["Enums"]["indicateur_thematique"][]
+          titre_long?: string
+          type?:
+            | Database["public"]["Enums"]["indicateur_referentiel_type"]
+            | null
           unite?: string
           valeur_indicateur?: string | null
         }
@@ -1480,6 +1475,32 @@ export interface Database {
           indicateur_id?: string
           modified_at?: string
           valeur?: number | null
+        }
+      }
+      indicateur_resultat_commentaire: {
+        Row: {
+          annee: number | null
+          collectivite_id: number
+          commentaire: string
+          indicateur_id: string
+          modified_at: string
+          modified_by: string
+        }
+        Insert: {
+          annee?: number | null
+          collectivite_id: number
+          commentaire: string
+          indicateur_id: string
+          modified_at?: string
+          modified_by?: string
+        }
+        Update: {
+          annee?: number | null
+          collectivite_id?: number
+          commentaire?: string
+          indicateur_id?: string
+          modified_at?: string
+          modified_by?: string
         }
       }
       indicateur_terristory_json: {
@@ -6864,6 +6885,8 @@ export interface Database {
         | "EPT"
         | "PETR"
       indicateur_group: "cae" | "crte" | "eci"
+      indicateur_referentiel_type: "resultat" | "impact"
+      indicateur_thematique: "eci_dechets" | "energie_et_climat"
       membre_fonction:
         | "referent"
         | "conseiller"
