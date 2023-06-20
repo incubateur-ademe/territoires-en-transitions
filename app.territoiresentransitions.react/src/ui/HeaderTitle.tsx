@@ -68,7 +68,7 @@ const HeaderTitle = ({
   return (
     <div
       className={classNames(
-        'group flex items-center mx-auto py-6 px-10 xl:mr-6',
+        'group flex items-center mx-auto py-6 px-10',
         {'cursor-text': !isReadonly},
         customClass.container
       )}
