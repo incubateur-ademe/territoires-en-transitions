@@ -7,6 +7,9 @@ alter table indicateur_definition
     rename column groupe to indicateur_group;
 
 alter table indicateur_definition
+    add obligation_eci bool not null default false;
+
+alter table indicateur_definition
     drop participation_score;
 
 alter table indicateur_definition
