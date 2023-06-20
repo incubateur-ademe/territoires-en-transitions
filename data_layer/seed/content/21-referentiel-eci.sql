@@ -456,7 +456,7 @@ Outils pratiques sur la restauration collective
 </a>
 <p><strong>Déchèterie</strong></p>
 <a href="https://www.ademe.fr/collectivites-secteur-public/integrer-lenvironnement-domaines-dintervention/dechets/optimiser-collecte/concevoir-decheterie-demain">
-Concevoir la déchèterie de demain 
+Concevoir la déchèterie de demain
 </a>
 <a href="https://www.ademe.fr/sites/default/files/assets/documents/guide-ri-decheterie.pdf">
 Règlement intérieur d’une déchèterie (guide d’aide à l’élaboration et à la rédaction)
@@ -611,7 +611,7 @@ Politique en vigueur
 Centres de tri
 </a>
 <a href="https://www.ademe.fr/expertises/dechets/passer-a-laction/tri-pretraitement/traitement-mecano-biologique">
-Traitement mécano-biologique 
+Traitement mécano-biologique
 </a>
 <p><strong>Contexte : Prétraitement</strong></p>
 <a href="https://www.ademe.fr/expertises/dechets/quoi-parle-t/prevention-gestion-dechets/pretraitement-souvent-indispensable-a-valorisation-dechets">
@@ -642,7 +642,7 @@ Installation de stockage des déchets non dangereux
 <a href="https://www.ademe.fr/dechets-chiffres-cles-infographie-2018">
 Déchets en chiffres
 </a>
- ou 
+ ou
 <a href="https://www.ademe.fr/dechets">
 infographie sur les déchets
 </a>
@@ -1550,7 +1550,7 @@ Salon réinventif
 </a>
 <p><strong>Promotion de la sobriété des acteurs</strong></p>
 <i>
-Couches 
+Couches
 </i>
 <a href="http://www.optigede.ademe.fr/fiche/formation-des-professionnels-lusage-des-changes-lavables-pour-enfants">
 Mise en place d’un service de prêt de différents modèles de couches lavables aux familles
@@ -1784,7 +1784,7 @@ Clauses sociales et environnementales: article 14 du code des marchés publics
 </a>
 <p><strong>Eléments de stratégie</strong></p>
 <a href="https://www.ecologique-solidaire.gouv.fr/orientations-strategiques-des-marches-publics-verts">
-Les orientations stratégiques pour des marchés publics verts 
+Les orientations stratégiques pour des marchés publics verts
 </a>
 <a href="https://www.ecologique-solidaire.gouv.fr/achats-publics-durables#e2">
 Plan National d''action pour les achats publics durables 2015-2020
@@ -1824,7 +1824,7 @@ Réseaux territoriaux «Commande publique et développement durable»
 </a>
 <p><strong>Autres ressources</strong></p>
 <a href="https://www.economie.gouv.fr/daj/liste-des-guides-gem#DD">
-Guides du Groupe d’Etude des Marchés sur l’achat public durable 
+Guides du Groupe d’Etude des Marchés sur l’achat public durable
 </a>
 <a href="http://www.economie.gouv.fr/daj/cout-cycle-vie-consultation">
 Notice sur la prise en compte du coût du cycle de vie dans une consultation (Groupe d’Etude des Marchés sur l’achat public durable, 2016)
@@ -2059,7 +2059,7 @@ Réseau National des Projets Alimentaires Territoriaux (PAT)
 </a>
 ', '<p><strong>Alimentation</strong></p>
 <i>
-Programmes alimentaires territoriaux – diagnostic 
+Programmes alimentaires territoriaux – diagnostic
 </i>
 <a href="https://www.youtube.com/watch?v=p0cHVEf6ipE">
 Plans d’alimentation territoriale: exemple de la métropole nantaise
@@ -2096,7 +2096,7 @@ Approche territoriales ou multi-acteurs
 Enclencher et animer une dynamique territoriale sur le gaspillage alimentaire
 </a>
 <i>
-Entreprises / commerces 
+Entreprises / commerces
 </i>
 <a href="http://www.optigede.ademe.fr/fiche/lutte-contre-le-gaspillage-alimentaire-en-partenariat-avec-des-restaurateurs">
 Lutte contre le gaspillage alimentaire en partenariat avec des restaurateurs
@@ -2634,7 +2634,7 @@ Eco-conception et textile
 Eco-conception et mobilier
 </a>
 <a href="https://www.ecofolio.fr/sites/default/files/asset/document/eco-conception_appliquee_aux_papiers.pdf">
-Eco-conception et papiers 
+Eco-conception et papiers
 </a>
 <p><strong>Retours du réseau A3P</strong></p>
 <i>
@@ -3194,7 +3194,7 @@ L''économie circulaire au service de la préservation des ressources et du clim
  (pdf)
 <p><strong>Ressource OPTIGEDE</strong></p>
 <a href="https://optigede.ademe.fr/la-planification-dans-l-economie-circulaire">
-La planification dans l''économie circulaire 
+La planification dans l''économie circulaire
 </a>
 ', '', '', 30.0, null);
 insert into action_definition(action_id, referentiel, identifiant, nom, description, contexte, exemples, preuve, ressources, perimetre_evaluation, reduction_potentiel, points, pourcentage) values ('eci_1.1.1', 'eci', '1.1.1', 'S''engager politiquement et mettre en place des moyens', '<p>La collectivité justifie d''un portage politique de l''économie circulaire : un élu s’engage à travers l’établissement d’une politique Economie Circulaire.</p>
@@ -4031,7 +4031,7 @@ Mise en place de poulaillers dans les écoles
 Réseau de guide-composteurs pailleurs
 </a>
 <a href="https://www.optigede.ademe.fr/fiche/experience-partenariale-et-territoriale-mobilisation-des-associations-en-faveur-de-la">
-Expérience partenariale et territoriale "Mobilisation des associations en faveur de la Prévention déchets" 
+Expérience partenariale et territoriale "Mobilisation des associations en faveur de la Prévention déchets"
 </a>
  (Ille et Vilaire Nature Environnement)
 <p><strong>Synthèses thématiques du réseau A3P</strong></p>
@@ -4532,120 +4532,3 @@ insert into action_computed_points(action_id, value) values ('eci_5.3.2.7', 2.14
 insert into action_computed_points(action_id, value) values ('eci_2.5.3.1', 1.25);
 insert into action_computed_points(action_id, value) values ('eci_2.5.3.2', 1.25);
 insert into action_computed_points(action_id, value) values ('eci_2.5.3.3', 1.25);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_28', 'eci', '28', null, 'Proportion de l''activité de réemploi et/ou de réutilisation dans l''activité économique (%)', '<p>Nombre d''entreprises de réemploi et/ou de réutilisation (ex. SINOE Structures du réemploi et/ou de réutilisation) / nombre total d''entreprises sur le territoire</p>
-', '%', false, null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_8', 'eci', '8', null, 'Taux de mise en décharge de DMA (%)', '<p>Poids de déchets envoyés en décharge / Poids de déchets produits sur le territoire</p>
-', '%', false, null);insert into indicateur_action(indicateur_id, action_id) values ('eci_8', 'eci_2.3');
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_18', 'eci', '18', null, 'Nombre de synergies d''Ecologie Industrielle et Territoriale (EIT) opérationnelles sur le territoire (nombre)', '<p>Synergie est considérée comme opérationnelle à partir d''au moins un échange matière réalisé ou d''un service de mutualisation utilisé par au moins deux entités</p>
-', 'nombre', false, null);insert into indicateur_action(indicateur_id, action_id) values ('eci_18', 'eci_3.5');
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_9', 'eci', '9', null, 'Part de DMA bénéficiant d''un mode de transport à faible impact (%)', '<p>Mode de transport à faible impact : véhicules électriques, mobilité douce ou active, équipements utilisant la voie fluviale, la voie ferroviaire.</p>
-<p>Tonnes de DMA transportés par les équipements de transport à faible impact / Tonnes de DMA transportés</p>
-', '%', false, null);insert into indicateur_action(indicateur_id, action_id) values ('eci_9', 'eci_2.4');
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_19', 'eci', '19', null, 'Nombre d''entreprises engagées dans les synergie d''EIT (nombre)', '<p>Synergie est considérée comme opérationnelle à partir d''au moins un échange matière réalisé ou d''un service de mutualisation utilisé par au moins deux entités.</p>
-', 'nombre d''entreprises', false, null);insert into indicateur_action(indicateur_id, action_id) values ('eci_19', 'eci_3.5');
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_29', 'eci', '29', null, 'Proportion de l''activité de l''allongement de la durée d''usage dans l''activité économique (%)', '<p>Nombre d''entreprises ayant un code NAF associé à la réparation (véhicules compris) / nombre total d''entreprises sur le territoire.</p>
-<p>Les codes NAF/prodfre/SIREN et sources de données sont identifiés dans la liste &quot;Pilier Allongement de la durée</p>
-<p>d''usage&quot; - Méthodologie de quantification de l’emploi dans l’économie circulaire - P. 44 - 45. https://www.statistiques.developpement-durable.gouv.fr/sites/default/files/2018-10/document-travail-29-methodologie-quantification-emploi-ecocirculaire-fevrier2017.pdf</p>
-', '%', false, null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_32', 'eci', '32', null, 'Part de la population de la collectivité couverte par la Tarification Incitative', '<p>% de la population de la collectivité couverte par la TI</p>
-', '%', false, null);insert into indicateur_action(indicateur_id, action_id) values ('eci_32', 'eci_4.2.4');
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_6', 'eci', '6', null, 'Part de déchets soumis à la collecte séparée dans les Ordures Ménagers et Assimilés (OMR) et la benne tout venant déchetterie (%)', '<p>Poids de déchets soumis à la collecte séparée (d''après le règlement de collecte) dans les OMR  et de la benne tout-venant des déchèteries / Poids des OMR et de la benne tout venant des déchèteries.</p>
-<p>Méthode d''échantillonnage : https://www.sinoe.org/contrib/ademe/carademe/pages/guide_OMCS_echant1.php</p>
-', '%', false, null);insert into indicateur_action(indicateur_id, action_id) values ('eci_6', 'eci_2.2');
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_22', 'eci', '22', null, 'Part des restaurants collectif sous la compétence de la collectivité engagée dans une démarche de réduction du gaspillage alimentaire (%)', '<p>Nombre restaurants collectifs engagés dans une démarche de réduction du gaspillage alimentaire / Nombre de restaurants collectifs total. Pour affiner son action la collectivité peut choisir de distinguer le type d''établissement (écoles, EPHAD, hôpital, etc.).</p>
-', 'nombre', false, null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_2', 'eci', '2', null, 'Part des services de la collectivité formés à l''Economie Circulaire (%)', '<p>Nombre de services avec au moins un salarié actuellement présent dans son poste ayant été formé à l''Economie Circulaire dans les 4 dernières années/ Nombre de services de la collectivité * 100. Les services incluent toutes les thématiques et secteurs, y compris fonctions support.</p>
-', '%', false, null);insert into indicateur_action(indicateur_id, action_id) values ('eci_2', 'eci_1.2');
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_36', 'eci', '36', null, 'Effet de levier d''accompagnement financier des projets de recherche, d''innovation et d''expérimentation en matière d''Economie Circulaire  (1€ public pour X € privé)', '<p>[Total des budgets de projets Economie Circulaire soutenus par la collectivité]-[Total d''aide financière apportée aux projets Economie Circulaire par la collectivité] / [Total d''aide financière apportée aux projets Economie Circulaire par la collectivité]</p>
-', 'Euros', false, null);insert into indicateur_action(indicateur_id, action_id) values ('eci_36', 'eci_3.7');
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_26', 'eci', '26', null, 'Perte en eau du réseau (%)', '<p>Volume d''eau consommée sur le territoire/ volume d''eau dirigée vers le territoire</p>
-', '%', false, null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_12', 'eci', '12', null, 'Nombre de filières animés par la collectivité ou ses partenaires pour la prise en charge des déchets (BTP, DAE…) (nombre)', '<p>La collectivité définit le périmètre des filières pertinent pour le territoire. L''animation sous-entend des actions allant de soutien au dialogue jusqu''à l''accompagnement d''action pour améliorer la dynamique déchets des acteurs économiques (prévention, amélioration de tri, de collecte et de valorisation, etc.)</p>
-', 'nombre', false, null);insert into indicateur_action(indicateur_id, action_id) values ('eci_12', 'eci_2.5');
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_3', 'eci', '3', null, 'Part de formations Economie Circulaire dans le programme de formation de la collectivité (nombre)', '<p>Nombre de formations en Economie Circulaire / Nombre total de formations suivis par les agents *100</p>
-', 'nombre', false, null);insert into indicateur_action(indicateur_id, action_id) values ('eci_3', 'eci_1.2');
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_37', 'eci', '37', null, 'Dépense annuelle consacrée à la gestion des déchets (€/habitant)', '<p>Voir la méthode de calcul de la matrice des coûts. Méthodologie sur SINOE Déchets : https://www.sinoe.org/thematiques/consult/ss-theme/25</p>
-', 'euros/habitant', false, null);insert into indicateur_action(indicateur_id, action_id) values ('eci_37', 'eci_4.1');
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_27', 'eci', '27', null, 'Part d''eau potable économisée (%)', '<p>Mesure de consommation d''eau sur le territoire de l''Année N / Mesure de consommation d''eau sur le territoire de l''Année N-X (périodicité définie par la collectivité).</p>
-<p>Cet indicateur est pertinent si la collectivité choisit l''eau comme un enjeu fort pour le territoire et y associe des actions. Le choix de la périodicité permet de suivre l''impact d''une action ou d''une série d''actions.</p>
-', '%', false, null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_13', 'eci', '13', null, 'Nombre de boucles locales d''économie circulaire mises en place dans les 4 dernières années  (nombre)', '<p>Une boucle locale d’économie circulaire vise à conserver le plus longtemps possible dans l’économie (locale) la valeur d’un produit, de ses composants ou des matières (des ressources). Ainsi on limite la génération de déchets et  développe plusieurs échanges de produits ou matière dans le cycle de vie ou de la chaine de valeur notamment via le partage, la réparation, le réemploi, la réutilisation, la rénovation, la refabrication et le recyclage.</p>
-<p>Une boucle locale d''économie circulaire respecte la hiérarchie des valorisations/traitement des déchets.</p>
-<p>Elle contribue au développement d’activité économique (durable, faible en carbone et réduction de l’utilisation des ressources naturelles) et d’emplois locaux (ou de proximité).</p>
-<p>L''indicateur prend en compte les boucles locales opérationnelles mises en place depuis 4 ans.</p>
-', 'nombre', false, null);insert into indicateur_action(indicateur_id, action_id) values ('eci_13', 'eci_3.1');
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_33', 'eci', '33', null, 'Nombre d''actions de la collectivité en économie de la fonctionnalité et de la coopération (nombre)', '<p>Pour le périmetre de l''économie de la fonctionnalité et de la coopération - Panorama national et pistes d''action pour l''économie de la fonctionnalité (https://librairie.ademe.fr/changement-climatique-et-energie/23-panorama-national-et-pistes-d-action-pour-l-economie-de-la-fonctionnalite.html)</p>
-<p>Les actions : actions de sencibilisation, les commandes publiques, les projets coopératifs, actions collectives.</p>
-', 'nombre d''actions', false, null);insert into indicateur_action(indicateur_id, action_id) values ('eci_33', 'eci_3.6');
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_7', 'eci', '7', null, 'Part des DMA envoyée pour la réutilisation, le recyclage et la valorisation organique ou énergétique (%)', '<p>Poids des DMA envoyés pour la réutilisation, le recyclage ou la valorisation / Poids des DMA produits sur le territoire.</p>
-<p>Il est possible de détailler cet indicateur par voie de valorisation si un suivi plus fin est souhaité. Exemples : DMA envoyés vers les recycleries, les usines de compostage, la méthanisation, etc.</p>
-', '%', false, null);insert into indicateur_action(indicateur_id, action_id) values ('eci_7', 'eci_2.3');
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_17', 'eci', '17', null, 'Part d''entreprises et d''établissements ayant été formées à l''écoconception durant les 4 dernières années (%)', '<p>Nombre d''entreprises et d''établissements ayant été formées à l''écoconception / Nombre d''entreprises et d''établissements sur le territoire</p>
-', '%', false, null);insert into indicateur_action(indicateur_id, action_id) values ('eci_17', 'eci_3.4');
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_23', 'eci', '23', null, 'Ratio d''évolution de terres artificialisés vs. terres agricoles et/ou naturelles et/ou forestières (%)', '<p>Nombre d''hectares artificialisés total / Nombre d''hectares des terres agricoles, naturelles et forestières.</p>
-<p>Dans la logique du Zéro Artificialisation Net.</p>
-', '%', false, null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_34', 'eci', '34', null, 'Nombre d''entreprises ou etablissements sencibilisées ou accompagnées sur les questions de l''économie de la fonctionnalité et de la coopération (nombre)', '<p>Pour le périmetre de l''économie de la fonctionnalité et de la coopération - Panorama national et pistes d''action pour l''économie de la fonctionnalité et de la coopération (https://librairie.ademe.fr/changement-climatique-et-energie/23-panorama-national-et-pistes-d-action-pour-l-economie-de-la-fonctionnalite.html)</p>
-', 'nombre d''entreprises et d''établissements', false, null);insert into indicateur_action(indicateur_id, action_id) values ('eci_34', 'eci_3.6');
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_24', 'eci', '24', null, 'Proportion d''énergie fossile consommé par rapport aux énergies renouvelables consommées (%)', '<p>MWh d''énergie fossile consommée sur le territoire/MWh d''énergie renouvelable consommée sur le territoire.</p>
-<p>Cet indicateur complète l''indicateur &quot;Part des sources d''énergies renouvelables (ENR) locales (%)&quot; pour établir une vision sur la part des ENR locales dans le mix énergétique.</p>
-<p>Cet indicateur est à concidérer car la production d''énergie génère la consommation de ressources naturelles sur le terrioire et en-déhors du territoire de la collectivité.</p>
-', '%', false, null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_10', 'eci', '10', null, 'Emissions GES des Installations de Stockage de Déchets Non-Dangereux (ISDND) (eqtCO2/tonne de déchets entrant)', '<p>Equivalent en tonnes de CO2 par an emis par l''ISDND / volume de déchets entrants en tonnes</p>
-', 'eqtCO2/tonne de déchets entrant', false, null);insert into indicateur_action(indicateur_id, action_id) values ('eci_10', 'eci_2.4');
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_30', 'eci', '30', null, 'Part des compétences obligatoires et facultatives exercées par la collectivité (mobilité, urbanisme, etc.) pour lesquelles l’équipe Economie Circulaire a co-construit au moins une action favorisant l’Economie Circulaire dans les 4 dernières années', '<p>% des compétences obligatoires et facultatives exercées par la collectivité (mobilité, urbanisme, etc.) pour lesquelles l’équipe Economie Circulaire a co-construit au moins une action favorisant l’Economie Circulaire dans les 4 dernières années</p>
-', '%', false, null);insert into indicateur_action(indicateur_id, action_id) values ('eci_30', 'eci_1.2.2');
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_14', 'eci', '14', null, 'Pourcentage de contrat d''achats publiques de la collectivité comportant au moins une considération environnementale (%)', '<p>% de contrat en nombre ou % de contrat en montant (au choix). Les contrat sur une année civile sont pris en compte.</p>
-<p>Voir la notion de la concidération environnementale au PNAAPD 2021-2025 - objectif 100% des marchés comportent une considération environnementale.</p>
-', '% de contrat en nombre ou % de contrat en montant (au choix)', false, null);insert into indicateur_action(indicateur_id, action_id) values ('eci_14', 'eci_3.2');
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_20', 'eci', '20', null, 'Part de l’alimentation sous signe de qualité en restauration collective sous la compétence de la collectivité (%)', '<p>Produits alimentaires (tn ou kg) achetés sous signe de qualité (AOP, IGP, STG, Agriculture Biologique) / Volume glogal de produits alimentaires achetés (tn ou kg).</p>
-<p>Signes de qualité : https://www.economie.gouv.fr/dgccrf/Publications/Vie-pratique/Fiches-pratiques/Signe-de-qualite</p>
-<p>Objectif légal Egalim.</p>
-', '%', false, null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_31', 'eci', '31', null, 'Part des stratégies ou des politiques dans lesquelles l’équipe Economie Circulaire a été associée pour leur conception', '<p>% des stratégies ou des politiques dans lesquelles l’équipe Economie Circulaire a été associée pour leur conception</p>
-', '%', false, null);insert into indicateur_action(indicateur_id, action_id) values ('eci_31', 'eci_1.2.3');
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_5', 'eci', '5', null, 'Production de déchets ménagers et assimilés (avec déblais et gravats) par habitant (kg/hab.an)', '<p>Poids de DMA  (avec déblais et gravats) produits sur le territoire / Population du territoire</p>
-', 'kg/habitant.an', false, null);insert into indicateur_action(indicateur_id, action_id) values ('eci_5', 'eci_2.1');
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_15', 'eci', '15', null, 'Part de biens ou de constructions temporaires acquis annuellement par la collectivité issus du réemploi ou de la réutilisation ou intégrant des matières recyclées (%)', '<p>Données de suivi des objectifs de la loi AGEC articles 56 et 58 (décret n° 2021-254 du 9 mars 2021).</p>
-<p>Objectif de 20 % d''achats reconditionnés.</p>
-', '%', false, null);insert into indicateur_action(indicateur_id, action_id) values ('eci_15', 'eci_3.2');
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_21', 'eci', '21', null, 'Gaspillage alimentaire de la restauration collective sous la compétence de la collectivité (g/repas servi)', '<p>Quantité de déchets alimentaires produits par la restauration collective publique du territoire (d''après l''enquête INSEE sur les déchets non-dangereux en restauration collective) / nombre de repas servis par  la restauration collective publique du territoire. Objectif légal AGEC et Climat et Résilience.</p>
-', 'g/repas servi', false, null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_1', 'eci', '1', null, 'Part du budget consacrée à la politique Economie Circulaire dans le budget global (%)', '<p>La collectivité définit le périmètre de sa politique Economie Circulaire transversale avec d''autres politiques et stratégies.</p>
-<p>La méthodologie &quot;Evaluation climat des budgets des collectivités territoriales&quot; peut être utilisée pour définir le périmetre du budget Economie Circualire.</p>
-<p>Le budget Economie Circulaire peut inclure : https://www.i4ce.org/go_project/cadre-evaluation-climat-budget-collectivites/</p>
-<ul>
-<li>
-<p>les salaires (ou part des salaires) des salariés travaillant sur l''Economie Circulaire,</p>
-</li>
-<li>
-<p>le coût des formations sur l''Economie Circulaire,</p>
-</li>
-<li>
-<p>les soutien financier et non-financier des acteurs du territoires et leurs projets pour l''Economie Circulaire,</p>
-</li>
-<li>
-<p>le financement d''évènements consacrés à l''Economie Circulaire,</p>
-</li>
-<li>
-<p>le financement des projets propres à la collectivité</p>
-</li>
-</ul>
-<p>-etc.</p>
-<p>Le budget peut inclure des instruments financiers mobilisant des financement public d''autres institutions, voire des financements privés.</p>
-<p>Les collectivités utilisant la comptabilité analytique peuvent créer un compte analytique associé.</p>
-', '%', false, null);insert into indicateur_action(indicateur_id, action_id) values ('eci_1', 'eci_1.1');
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_35', 'eci', '35', null, 'Nombre de projets de recherche, d''innovation ou d''expérimentation accompagnés financièrement ou non-financièrement par la collectivité (nombre)', '<p>Les projets peuvent porter sur des sujets techniques, technologiques, organisationnels ou de modèles d''affires. Si la collectivité souhaite aller plus loin dans le suivi, elle peut prendre en compte l''ampleur des projets (budgets, nombre de partenaires, etc.)</p>
-', 'nombre de projets', false, null);insert into indicateur_action(indicateur_id, action_id) values ('eci_35', 'eci_3.7');
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_25', 'eci', '25', null, 'Part des sources d''énergie renouvelable (ENR) locales (%)', '<p>MWh d''énergies renouvelables consommés sur le territoire / MWh d''énergies renouvelables produits sur le territoire *100</p>
-<p>Cet indicateur est à concidérer car la production d''énergie génère la consommation de ressources naturelles sur le terrioire et en-déhors du territoire de la collectivité.</p>
-', '%', false, null);
-insert into indicateur_definition(id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent) values ('eci_11', 'eci', '11', null, 'Emissions GES de la collecte des DMA sur le territoire (eqtCO2/tonne de déchets)', '<p>Méthode de calcul:</p>
-<p>Étape 1 : Constitution d’un catalogue de facteurs d’efficacité énergétique et de facteurs d’émissions</p>
-<p>Étape 2 : Établissement d’hypothèses sur les distances parcourues</p>
-<p>Étape 3 : Calcul des émissions de la collecte DMA</p>
-<p>Cette méthode peut s''appliquer au calcul d''un indicateur d''émission du transport de touts les déchets du territoire en y ajoutant :</p>
-<p>Étape 3 : Calcul des émissions de chaque filière</p>
-<p>Étape 4 : Consolidation des résultats de calcul pour l’ensemble des déchets transportés</p>
-<p>Voir la méthodologie détaillée et données dans l''étude &quot;TRANSPORT ET LOGISTIQUE DES DECHETS: ENJEUX ET EVOLUTIONS DU TRANSPORT ET DE LA LOGISTIQUE DES DECHETS&quot;, 2014, ADEME</p>
-', 'eqtCO2', false, null);insert into indicateur_action(indicateur_id, action_id) values ('eci_11', 'eci_2.4');
