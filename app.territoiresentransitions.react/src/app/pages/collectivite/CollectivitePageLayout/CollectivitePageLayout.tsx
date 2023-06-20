@@ -64,7 +64,10 @@ const PageLayout = ({children, sideNav, dataTest}: Props) => {
     >
       {/** Side nav */}
       {sideNav && (
-        <div className={classNames({'xl:-ml-12': !isSideNavOpen})}>
+        <div
+          data-test="SideNavigation"
+          className={classNames({'xl:-ml-12': !isSideNavOpen})}
+        >
           <SideNavContainer
             isOpen={isSideNavOpen}
             setIsOpen={isOpen => setIsSideNavOpen(isOpen)}
@@ -73,7 +76,7 @@ const PageLayout = ({children, sideNav, dataTest}: Props) => {
         </div>
       )}
       {/** Main */}
-      {children}
+      <div className="w-full">{children}</div>
       {/** Panel */}
       {panelState.isOpen && <Panel />}
     </div>
