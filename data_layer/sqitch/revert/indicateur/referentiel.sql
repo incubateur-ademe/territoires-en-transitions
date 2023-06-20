@@ -25,6 +25,10 @@ alter table indicateur_definition
 alter table indicateur_definition
     drop type;
 
+alter table indicateur_definition
+    drop thematiques;
+
+drop type indicateur_thematique;
 drop type indicateur_referentiel_type;
 
 COMMIT;
