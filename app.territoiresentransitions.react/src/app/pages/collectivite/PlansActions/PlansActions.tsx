@@ -25,6 +25,7 @@ const PlansActions = () => {
 
   return (
     <CollectivitePageLayout
+      dataTest="PlansAction"
       sideNav={{
         links: generatePlanActionNavigationLinks(
           collectivite.collectivite_id,
