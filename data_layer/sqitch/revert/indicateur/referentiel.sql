@@ -44,4 +44,7 @@ alter table indicateur_commentaire
 alter table indicateur_commentaire
     drop annee;
 
+alter table indicateur_commentaire
+    add constraint indicateur_commentaire_pkey unique (collectivite_id, indicateur_id);
+
 COMMIT;
