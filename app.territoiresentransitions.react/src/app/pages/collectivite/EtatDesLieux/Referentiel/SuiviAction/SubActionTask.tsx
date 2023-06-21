@@ -8,6 +8,7 @@ import {TActionAvancementExt} from 'types/alias';
 
 type SubActionTaskProps = {
   task: ActionDefinitionSummary;
+  hideStatus?: boolean;
   onSaveStatus?: (
     actionId: string,
     status: TActionAvancementExt,
@@ -21,6 +22,7 @@ type SubActionTaskProps = {
 
 const SubActionTask = ({
   task,
+  hideStatus = false,
   onSaveStatus,
 }: SubActionTaskProps): JSX.Element => {
   const [openCommentaire, setOpenCommentaire] = useState(false);
@@ -41,7 +43,11 @@ const SubActionTask = ({
   return (
     <div data-test={`task-${task.id}`} ref={ref}>
       {/* Première ligne */}
-      <SubActionHeader action={task} onSaveStatus={onSaveStatus} />
+      <SubActionHeader
+        action={task}
+        hideStatus={hideStatus}
+        onSaveStatus={onSaveStatus}
+      />
 
       {/* Ajout de commentaire */}
       <div className="p-0 pb-4">

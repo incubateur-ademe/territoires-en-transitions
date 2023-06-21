@@ -4,6 +4,7 @@ import SubActionTask from './SubActionTask';
 
 type SubActionTasksListProps = {
   tasks: ActionDefinitionSummary[];
+  hideStatus?: boolean;
   onSaveStatus?: (
     actionId: string,
     status: TActionAvancementExt,
@@ -17,12 +18,18 @@ type SubActionTasksListProps = {
 
 const SubActionTasksList = ({
   tasks,
+  hideStatus = false,
   onSaveStatus,
 }: SubActionTasksListProps): JSX.Element => {
   return (
     <div className="divide-y divide-[#ddd]">
       {tasks.map(task => (
-        <SubActionTask key={task.id} task={task} onSaveStatus={onSaveStatus} />
+        <SubActionTask
+          key={task.id}
+          task={task}
+          hideStatus={hideStatus}
+          onSaveStatus={onSaveStatus}
+        />
       ))}
     </div>
   );

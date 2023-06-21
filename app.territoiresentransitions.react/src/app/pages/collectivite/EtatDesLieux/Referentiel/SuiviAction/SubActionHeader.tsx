@@ -8,6 +8,7 @@ import {TActionAvancementExt} from 'types/alias';
 
 type SubActionHeaderProps = {
   action: ActionDefinitionSummary;
+  hideStatus?: boolean;
   openSubAction?: boolean;
   onToggleOpen?: () => void;
   onSaveStatus?: (
@@ -23,6 +24,7 @@ type SubActionHeaderProps = {
 
 const SubActionHeader = ({
   action,
+  hideStatus = false,
   openSubAction = false,
   onToggleOpen,
   onSaveStatus,
@@ -84,7 +86,9 @@ const SubActionHeader = ({
 
       {/* Menu de sélection du statut */}
       <div className="lg:col-span-2 col-span-3">
-        <ActionStatusDropdown action={action} onSaveStatus={onSaveStatus} />
+        {!hideStatus && (
+          <ActionStatusDropdown action={action} onSaveStatus={onSaveStatus} />
+        )}
       </div>
     </div>
   );
