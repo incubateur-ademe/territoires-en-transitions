@@ -40,4 +40,5 @@ Scores:
     point_pas_fait: 0
     point_potentiel: 0
     point_referentiel: 1.8
-  
+    concerne: no
+
