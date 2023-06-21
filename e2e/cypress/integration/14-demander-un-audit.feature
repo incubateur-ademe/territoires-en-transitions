@@ -136,18 +136,9 @@ Fonctionnalité: Demander un audit
 
     Quand je suis connecté avec les droits en "edition"
     Et que je suis sur la page "Labellisation ECi" de la collectivité courante
-    Alors le bouton "Demander la 1ère étoile" est désactivé
+    Alors le bouton "Demander la 1ère étoile" est activé
     Et le bouton "Demander un audit" est activé
-    Et le bouton "Ajouter un document de labellisation" est activé
-
-    Quand je clique sur le bouton "Ajouter un document de labellisation"
-    Et que je transfère à partir du "dialogue d'ajout d'une preuve" le fichier nommé "doc labellisation.pdf" et contenant "contenu du fichier"
-    Et que je clique sur le bouton "Ajouter" du "formulaire Fichier"
-    Alors la liste des documents de la page Labellisation contient les lignes suivantes :
-      | Titre                 | Commentaire |
-      | doc labellisation.pdf |             |
-    Et le bouton "Demander la 1ère étoile" est activé
-    Et le bouton "Demander un audit" est activé
+    Et le bouton "Ajouter un document de labellisation" est absent
 
     Quand je clique sur le bouton "Demander la 1ère étoile"
     Alors le "choix du type d'audit/labellisation COT" est absent
@@ -162,15 +153,6 @@ Fonctionnalité: Demander un audit
     Et le bouton "Demander la 1ère étoile" est absent
     Et le bouton "Demander un audit" est absent
     Et le "message d'en-tête" contient "Demande envoyée"
-    Et la liste des documents de la page Labellisation contient les lignes suivantes :
-      | Titre                 | Commentaire | Lecture seule |
-      | doc labellisation.pdf |             | oui           |
-
-    Quand je suis sur la page "Bibliothèque de documents" de la collectivité courante
-    Alors la liste des documents de labellisation contient les lignes suivantes :
-      | Titre                 | Commentaire |
-      | doc labellisation.pdf |             |
-    Et la liste des documents de labellisation contient le titre "première étoile" avec l'indication "en cours"
 
   Scénario: Demander la 1ère étoile (pour une collectivité COT) depuis le dialogue de demande d'audit
     On teste l'envoi d'une demande de 1ère étoile pour une collectivité COT depuis le dialogue de demande d'audit.
@@ -182,23 +164,9 @@ Fonctionnalité: Demander un audit
 
     Quand je suis connecté avec les droits en "edition"
     Et que je suis sur la page "Labellisation ECi" de la collectivité courante
-    Alors le bouton "Demander la 1ère étoile" est désactivé
+    Alors le bouton "Demander la 1ère étoile" est activé
     Et le bouton "Demander un audit" est activé
-    Et le bouton "Ajouter un document de labellisation" est activé
-
-    Quand je clique sur le bouton "Ajouter un document de labellisation"
-    Et que je transfère à partir du "dialogue d'ajout d'une preuve" le fichier nommé "doc labellisation.pdf" et contenant "contenu du fichier"
-    Et que je clique sur le bouton "Ajouter" du "formulaire Fichier"
-    Alors la liste des documents de la page Labellisation contient les lignes suivantes :
-      | Titre                 | Commentaire |
-      | doc labellisation.pdf |             |
-    Et le bouton "Demander la 1ère étoile" est activé
-    Et le bouton "Demander un audit" est activé
-
-    Quand je suis sur la page "Bibliothèque de documents" de la collectivité courante
-    Alors la liste des documents de labellisation contient les lignes suivantes :
-      | Titre                 | Commentaire |
-      | doc labellisation.pdf |             |
+    Et le bouton "Ajouter un document de labellisation" est absent
 
     Quand je suis sur la page "Labellisation ECi" de la collectivité courante
     Et que je clique sur le bouton "Demander un audit"
@@ -218,15 +186,6 @@ Fonctionnalité: Demander un audit
     Et le bouton "Demander la 1ère étoile" est absent
     Et le bouton "Demander un audit" est absent
     Et le "message d'en-tête" contient "Demande envoyée"
-    Et la liste des documents de la page Labellisation contient les lignes suivantes :
-      | Titre                 | Commentaire | Lecture seule |
-      | doc labellisation.pdf |             | oui           |
-
-    Quand je suis sur la page "Bibliothèque de documents" de la collectivité courante
-    Alors la liste des documents de labellisation contient les lignes suivantes :
-      | Titre                 | Commentaire |
-      | doc labellisation.pdf |             |
-    Et la liste des documents de labellisation contient le titre "première étoile" avec l'indication "en cours"
 
   Scénario: Demander la 1ère étoile (pour une collectivité sans COT)
     On teste l'envoi d'une demande de 1ère étoile pour une collectivité sans COT.
