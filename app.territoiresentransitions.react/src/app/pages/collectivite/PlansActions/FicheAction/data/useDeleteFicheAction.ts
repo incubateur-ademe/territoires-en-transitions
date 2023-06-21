@@ -5,7 +5,7 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useHistory, useParams} from 'react-router-dom';
 import {
   makeCollectivitePlanActionUrl,
-  makeCollectivitePlansActionsBaseUrl,
+  makeCollectivitePlansActionsSyntheseUrl,
 } from 'app/paths';
 
 /** Supprime une fiche action d'une collectivité */
@@ -44,7 +44,7 @@ export const useDeleteFicheAction = () => {
         );
       } else {
         history.push(
-          makeCollectivitePlansActionsBaseUrl({
+          makeCollectivitePlansActionsSyntheseUrl({
             collectiviteId: collectivite_id!,
           })
         );

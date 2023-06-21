@@ -175,16 +175,6 @@ export const makeCollectiviteLabellisationUrl = ({
     .replace(`:${referentielParam}`, referentielId)
     .replace(`:${labellisationVueParam}`, labellisationVue || 'suivi');
 
-export const makeCollectivitePlansActionsBaseUrl = ({
-  collectiviteId,
-}: {
-  collectiviteId: number;
-}) =>
-  collectivitePlansActionsBasePath.replace(
-    `:${collectiviteParam}`,
-    collectiviteId.toString()
-  );
-
 export const makeCollectivitePlansActionsNouveauUrl = ({
   collectiviteId,
 }: {

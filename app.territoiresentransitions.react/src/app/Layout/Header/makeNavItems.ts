@@ -7,7 +7,7 @@ import {
   makeCollectiviteLabellisationRootUrl,
   makeCollectiviteLabellisationUrl,
   makeCollectivitePersoRefUrl,
-  makeCollectivitePlansActionsBaseUrl,
+  makeCollectivitePlansActionsSyntheseUrl,
   makeCollectiviteReferentielUrl,
   makeCollectiviteUsersUrl,
 } from 'app/paths';
@@ -94,7 +94,7 @@ const makeNavItemsBase = (collectivite: CurrentCollectivite): TNavItemsList => {
     {
       acces_restreint,
       label: "Plans d'action",
-      to: makeCollectivitePlansActionsBaseUrl({
+      to: makeCollectivitePlansActionsSyntheseUrl({
         collectiviteId,
       }),
     },
