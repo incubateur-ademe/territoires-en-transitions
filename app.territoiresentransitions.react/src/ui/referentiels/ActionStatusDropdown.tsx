@@ -1,5 +1,4 @@
-import {useState} from 'react';
-import {Dialog} from '@material-ui/core';
+import {useEffect, useState} from 'react';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {useActionScore} from 'core-logic/hooks/scoreHooks';
 import {
@@ -7,9 +6,6 @@ import {
   useEditActionStatutIsDisabled,
   useSaveActionStatut,
 } from 'core-logic/hooks/useActionStatut';
-import {CloseDialogButton} from '../buttons/CloseDialogButton';
-import {DetailedScore} from '../shared/DetailedScore/DetailedScore';
-import {AvancementValues} from '../shared/DetailedScore/DetailedScoreSlider';
 import {TActionAvancement, TActionAvancementExt} from 'types/alias';
 import {
   ITEMS_AVEC_NON_CONCERNE,
@@ -18,29 +14,29 @@ import {
 import ActionProgressBar from './ActionProgressBar';
 import AnchorAsButton from 'ui/buttons/AnchorAsButton';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-
-// valeurs par défaut de l'avancement détaillé par statut d'avancement
-const AVANCEMENT_DETAILLE_PAR_STATUT: Record<
-  TActionAvancement,
-  number[] | undefined
-> = {
-  non_renseigne: undefined,
-  fait: [1, 0, 0],
-  programme: [0, 1, 0],
-  pas_fait: [0, 0, 1],
-  detaille: [0.3, 0.4, 0.3],
-};
+import ProgressBarWithTooltip from 'ui/score/ProgressBarWithTooltip';
+import {avancementToLabel} from 'app/labels';
+import {actionAvancementColors} from 'app/theme';
+import ScoreAutoModal from './ScoreAutoModal';
+import ScorePersoModal from './ScorePersoModal';
+import {AVANCEMENT_DETAILLE_PAR_STATUT} from './utils';
 
 export const ActionStatusDropdown = ({
   action,
-  isDisabled = false,
+  onSaveStatus,
 }: {
   action: ActionDefinitionSummary;
-  isDisabled?: boolean;
+  onSaveStatus?: (
+    actionId: string,
+    status: TActionAvancementExt,
+    avancementDetaille?: number[]
+  ) => void;
 }) => {
-  const [opened, setOpened] = useState(false);
-
   const collectivite = useCurrentCollectivite();
+
+  const [openScoreAuto, setOpenScoreAuto] = useState(false);
+  const [openScorePerso, setOpenScorePerso] = useState(false);
+
   const args = {
     action_id: action.id,
     collectivite_id: collectivite?.collectivite_id || 0,
@@ -54,22 +50,40 @@ export const ActionStatusDropdown = ({
 
   const {saveActionStatut} = useSaveActionStatut(args);
 
-  // détermine si l'édition du statut est désactivée
-  // isDisabled : prop provisoire en attendant le select du statut à la sous-action
-  const disabled = useEditActionStatutIsDisabled(action.id) || isDisabled;
+  const [localAvancement, setLocalAvancement] = useState(avancementExt);
+  const [localAvancementDetaille, setLocalAvancementDetaille] =
+    useState(avancement_detaille);
+
+  // Détermine si l'édition du statut est désactivée
+  const disabled = useEditActionStatutIsDisabled(action.id);
+
+  useEffect(() => {
+    setLocalAvancement(avancementExt);
+    setLocalAvancementDetaille(avancement_detaille);
+  }, [avancementExt, avancement_detaille]);
 
   const handleChange = (value: TActionAvancementExt) => {
     const {avancement, concerne, avancement_detaille} =
       statutParAvancement(value);
-    saveActionStatut({
-      ...args,
-      ...statut,
-      avancement,
-      concerne,
-      avancement_detaille,
-    });
+
+    setLocalAvancement(value);
+    setLocalAvancementDetaille(avancement_detaille);
+
+    if (onSaveStatus) {
+      onSaveStatus(action.id, value, avancement_detaille);
+    } else {
+      saveActionStatut({
+        ...args,
+        ...statut,
+        avancement,
+        concerne,
+        avancement_detaille,
+      });
+    }
+
     if (avancement === 'detaille') {
-      setOpened(true);
+      if (action.type === 'tache') setOpenScorePerso(true);
+      else setOpenScoreAuto(true);
     }
   };
 
@@ -84,14 +98,45 @@ export const ActionStatusDropdown = ({
         : 'detaille';
 
     if (statut) {
-      saveActionStatut({
-        ...args,
-        ...statut,
-        avancement,
-        avancement_detaille: values,
-      });
-      setOpened(false);
+      setLocalAvancement(avancement);
+      setLocalAvancementDetaille(values);
+
+      if (onSaveStatus) {
+        onSaveStatus(action.id, avancement, values);
+      } else {
+        saveActionStatut({
+          ...args,
+          ...statut,
+          avancement,
+          avancement_detaille: values,
+        });
+      }
+
+      if (action.type === 'tache') setOpenScorePerso(false);
+      else setOpenScoreAuto(false);
     }
+  };
+
+  const handleSaveAutoScore = (
+    newStatus: {
+      actionId: string;
+      status: TActionAvancementExt;
+      avancementDetaille: number[] | undefined;
+    }[]
+  ) => {
+    setOpenScoreAuto(false);
+
+    newStatus.forEach(element => {
+      const {avancement, concerne} = statutParAvancement(element.status);
+
+      saveActionStatut({
+        action_id: element.actionId,
+        avancement,
+        avancement_detaille: element.avancementDetaille,
+        collectivite_id: args.collectivite_id,
+        concerne,
+      });
+    });
   };
 
   if (!collectivite) {
@@ -106,48 +151,80 @@ export const ActionStatusDropdown = ({
       <SelectActionStatut
         items={ITEMS_AVEC_NON_CONCERNE}
         disabled={disabled}
-        value={avancementExt}
+        value={localAvancement}
         onChange={handleChange}
       />
 
-      {avancement === 'detaille' && !score?.desactive && (
+      {localAvancement === 'detaille' && !score?.desactive && (
         <div className="flex flex-col gap-3 items-end w-full pr-1">
-          <ActionProgressBar action={action} />
+          {action.type === 'tache' &&
+            (onSaveStatus === undefined ? (
+              <ActionProgressBar action={action} />
+            ) : (
+              <ProgressBarWithTooltip
+                score={
+                  localAvancementDetaille?.map((a, idx) => ({
+                    value: a,
+                    label: avancementToLabel[getStatusFromIndex(idx)],
+                    color: actionAvancementColors[getStatusFromIndex(idx)],
+                  })) ?? []
+                }
+                total={score?.point_potentiel ?? 0}
+                defaultScore={{
+                  label: avancementToLabel.non_renseigne,
+                  color: actionAvancementColors.non_renseigne,
+                }}
+                valueToDisplay={avancementToLabel.fait}
+                percent
+              />
+            ))}
           {!disabled && (
-            <div className="text-right">
-              <AnchorAsButton
-                className="underline_href fr-link fr-link--sm"
-                onClick={() => setOpened(true)}
-              >
-                Détailler l'avancement
-              </AnchorAsButton>
-              <Dialog
-                open={opened}
-                onClose={() => setOpened(false)}
-                maxWidth="sm"
-                fullWidth={true}
-              >
-                <div className="p-7 flex flex-col items-center">
-                  <CloseDialogButton setOpened={setOpened} />
-                  <h3 className="py-4">Préciser l’avancement de cette tâche</h3>
-                  <div className="w-full">
-                    <DetailedScore
-                      avancement={
-                        (avancement_detaille?.length === 3
-                          ? avancement_detaille
-                          : AVANCEMENT_DETAILLE_PAR_STATUT.detaille) as AvancementValues
-                      }
-                      onSave={handleSaveDetail}
-                    />
-                  </div>
-                </div>
-              </Dialog>
-            </div>
+            <AnchorAsButton
+              className="underline_href fr-link fr-link--sm"
+              onClick={() =>
+                action.type === 'tache'
+                  ? setOpenScorePerso(true)
+                  : setOpenScoreAuto(true)
+              }
+            >
+              Détailler l'avancement
+            </AnchorAsButton>
           )}
         </div>
       )}
+
+      {openScoreAuto && (
+        <ScoreAutoModal
+          action={action}
+          externalOpen={openScoreAuto}
+          setExternalOpen={setOpenScoreAuto}
+          onSaveScore={handleSaveAutoScore}
+        />
+      )}
+
+      {openScorePerso && (
+        <ScorePersoModal
+          actionId={action.id}
+          avancementDetaille={localAvancementDetaille}
+          externalOpen={openScorePerso}
+          saveAtValidation={onSaveStatus === undefined}
+          setExternalOpen={setOpenScorePerso}
+          onSaveScore={handleSaveDetail}
+        />
+      )}
     </div>
   );
+};
+
+const getStatusFromIndex = (index: number): TActionAvancement => {
+  switch (index) {
+    case 0:
+      return 'fait';
+    case 1:
+      return 'programme';
+    default:
+      return 'pas_fait';
+  }
 };
 
 // génère les propriétés de l'objet statut à écrire lors du changement de l'avancement

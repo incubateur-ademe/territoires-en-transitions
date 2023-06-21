@@ -2,6 +2,7 @@ import {ChangeEvent, useState} from 'react';
 import SliderBase from '@material-ui/core/Slider';
 import {withStyles} from '@material-ui/core/styles';
 import {actionAvancementColors} from 'app/theme';
+import TagFilters from '../filters/TagFilters';
 
 export type AvancementValues = [number, number, number];
 type SliderValues = [number, number];
@@ -130,79 +131,64 @@ export const DetailedScoreSlider = (props: TSliderProps) => {
   };
 
   return (
-    <div className="w-full relative">
-      <div
-        className="absolute"
-        style={{
-          top: 10,
-          left: 0,
-          width: `${done}%`,
-          height: TRACK_HEIGHT,
-          borderRadius: '4px 0 0 4px',
-          backgroundColor: actionAvancementColors.fait,
-        }}
+    <div className="w-full">
+      <TagFilters
+        className="mb-14"
+        name="pas_de_notation"
+        options={[
+          {
+            value: `${EXTENDED_STEP_INC}`,
+            label: `Pas de ${EXTENDED_STEP_INC} en ${EXTENDED_STEP_INC}`,
+          },
+          {
+            value: `${DEFAULT_STEP_INC}`,
+            label: `Pas de ${DEFAULT_STEP_INC} en ${DEFAULT_STEP_INC}`,
+          },
+        ]}
+        defaultOption={`${step}`}
+        onChange={value => handleChangeStep(parseInt(value))}
       />
-      <div
-        className="absolute"
-        style={{
-          top: 10,
-          left: `${done}%`,
-          width: `${scheduled}%`,
-          height: TRACK_HEIGHT,
-          backgroundColor: actionAvancementColors.programme,
-        }}
-      />
-      <div
-        className="absolute"
-        style={{
-          top: 10,
-          left: `${done + scheduled}%`,
-          width: `${notDone}%`,
-          height: TRACK_HEIGHT,
-          borderRadius: '0 4px 4px 0',
-          backgroundColor: actionAvancementColors.pas_fait,
-        }}
-      />
-      <Slider marks step={step} value={currentValue} onChange={handleChange} />
 
-      <fieldset
-        className="fr-fieldset fr-mt-4w"
-        aria-labelledby="radio-valid-inline-legend radio-valid-inline-desc-valid"
-        role="group"
-      >
-        <legend
-          className="fr-fieldset__legend fr-text--regular fr-mr-2w"
-          id="radio-valid-inline-legend"
-        >
-          Pas de notation :
-        </legend>
-        <div className="fr-fieldset__element fr-fieldset--inline">
-          <div className="fr-radio-group">
-            <input
-              type="radio"
-              id="default_step"
-              name="radio-valid"
-              checked={step === DEFAULT_STEP_INC}
-              onChange={() => handleChangeStep(DEFAULT_STEP_INC)}
-            />
-            <label className="fr-label" htmlFor="default_step">
-              de {DEFAULT_STEP_INC} en {DEFAULT_STEP_INC}
-            </label>
-          </div>
-          <div className="fr-radio-group">
-            <input
-              type="radio"
-              id="extended_step"
-              name="radio-valid"
-              checked={step === EXTENDED_STEP_INC}
-              onChange={() => handleChangeStep(EXTENDED_STEP_INC)}
-            />
-            <label className="fr-label" htmlFor="extended_step">
-              de {EXTENDED_STEP_INC} en {EXTENDED_STEP_INC}
-            </label>
-          </div>
-        </div>
-      </fieldset>
+      <div className="relative w-9/12 m-auto">
+        <div
+          className="absolute"
+          style={{
+            top: 9,
+            left: 0,
+            width: `${done}%`,
+            height: TRACK_HEIGHT,
+            borderRadius: '4px 0 0 4px',
+            backgroundColor: actionAvancementColors.fait,
+          }}
+        />
+        <div
+          className="absolute"
+          style={{
+            top: 9,
+            left: `${done}%`,
+            width: `${scheduled}%`,
+            height: TRACK_HEIGHT,
+            backgroundColor: actionAvancementColors.programme,
+          }}
+        />
+        <div
+          className="absolute"
+          style={{
+            top: 9,
+            left: `${done + scheduled}%`,
+            width: `${notDone}%`,
+            height: TRACK_HEIGHT,
+            borderRadius: '0 4px 4px 0',
+            backgroundColor: actionAvancementColors.pas_fait,
+          }}
+        />
+        <Slider
+          marks
+          step={step}
+          value={currentValue}
+          onChange={handleChange}
+        />
+      </div>
     </div>
   );
 };

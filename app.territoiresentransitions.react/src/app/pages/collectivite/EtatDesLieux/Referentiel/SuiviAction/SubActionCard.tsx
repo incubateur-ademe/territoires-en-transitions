@@ -64,7 +64,6 @@ const SubActionCard = ({
       <SubActionHeader
         action={subAction}
         openSubAction={openSubAction}
-        withStatusDropdown={tasks.length === 0}
         onToggleOpen={handleToggleOpen}
       />
 
