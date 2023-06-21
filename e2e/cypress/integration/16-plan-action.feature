@@ -61,6 +61,7 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     Quand je clique en dehors de la boîte de dialogue
     Alors le fil d'ariane de la fiche contient "Axe 1: les tests passent"
 
+    @focus
   Scénario: Ajouter, éditer et supprimer un plan d'action
     Etant donné que je suis connecté en tant que "yolo"
     Et que je suis sur la page "Plans action" de la collectivité "1"
@@ -81,14 +82,14 @@ Fonctionnalité: Gérer les fiches et les plans d'action
 
     # ajouter un deuxième axe "Axe 2"
     Quand j'ajoute un nouveau titre
-    Et que je le nomme "Axe 2"
-    # supprimer "Axe 2"
+    Et que je le nomme "Axe 0"
+    # supprimer "Axe 0"
     Et que je veux supprimer le dernier axe créé
     Alors le texte "Il n'y a aucune fiche dans ce niveau et son arborescence" est visible
 
     #confirmer et vérifier
     Quand je supprime l'axe depuis la modale
-    Alors l'axe "Axe 2" n'est plus visible
+    Alors l'axe "Axe 0" n'est plus visible
 
     # vérifier le texte de suppression du plan sans fiche
     Quand je veux supprimer le plan
