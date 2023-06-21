@@ -44,7 +44,7 @@ const translateStatus = {
   erreur: 'error',
 };
 
-defineStep(
+When(
   'une alerte de statut {string} est affichée avec le message {string}',
   (status, message) => {
     cy.get(`.fr-alert--${translateStatus[status]}`).should('be.visible');
