@@ -349,14 +349,13 @@ def compute_potentiels(
     ):
         this_level = point_tree_personnalise._depths_by_action_ids[action_id]
         children = point_tree_personnalise.get_children(action_id)
-        if not children:  # tache
-            original_action_potentiel = (
-                0
-                if action_id in actions_non_concernes_ids
-                else point_tree_personnalise.get_action_point(action_id)
-            )
+
+        if action_id in actions_non_concernes_ids:  # non-concerné
+            potentiel = 0
+        elif not children:  # tache
+            potentiel = point_tree_personnalise.get_action_point(action_id)
         else:
-            original_action_potentiel = sum(
+            potentiel = sum(
                 [
                     potentiels[child_id]
                     for child_id in point_tree_personnalise.get_children(action_id)
@@ -366,13 +365,12 @@ def compute_potentiels(
         if this_level > action_level:
             potentiel = _action_potentiel_with_redistribution_remainder(
                 action_id,
-                original_action_potentiel,
+                potentiel,
                 actions_non_concernes_ids,
                 point_tree_personnalise,
             )
-            potentiels[action_id] = potentiel
-        else:
-            potentiels[action_id] = original_action_potentiel
+
+        potentiels[action_id] = potentiel
 
     point_tree_personnalise.map_from_taches_to_root(
         lambda action_id: _add_action_potentiel_after_redistribution(
