@@ -1,18 +1,20 @@
 import classNames from 'classnames';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {useEffect, useState} from 'react';
-import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
 import {ActionStatusDropdown} from 'ui/referentiels/ActionStatusDropdown';
 import {Tooltip} from 'ui/shared/floating-ui/Tooltip';
 import ScoreDisplay from 'app/pages/collectivite/EtatDesLieux/Referentiel/SuiviAction/ScoreDisplay';
-import {useActionScore} from 'core-logic/hooks/scoreHooks';
+import {TActionAvancementExt} from 'types/alias';
 
 type SubActionHeaderProps = {
   action: ActionDefinitionSummary;
   openSubAction?: boolean;
-  withStatusDropdown?: boolean; // param provisoire, à enlever
-  // quand toutes les sous-actions auront un statusDropdown
   onToggleOpen?: () => void;
+  onSaveStatus?: (
+    actionId: string,
+    status: TActionAvancementExt,
+    avancementDetaille?: number[]
+  ) => void;
 };
 
 /**
@@ -22,16 +24,12 @@ type SubActionHeaderProps = {
 const SubActionHeader = ({
   action,
   openSubAction = false,
-  withStatusDropdown = false,
   onToggleOpen,
+  onSaveStatus,
 }: SubActionHeaderProps): JSX.Element => {
   const [open, setOpen] = useState(openSubAction);
   const isSubAction = action.type === 'sous-action';
   const isTask = action.type === 'tache';
-
-  // Appel provisoire en attendant d'avoir le
-  // select du statut à la sous-action
-  const score = useActionScore(action.id);
 
   useEffect(() => setOpen(openSubAction), [openSubAction]);
 
@@ -84,44 +82,9 @@ const SubActionHeader = ({
         {isSubAction && <ScoreDisplay action={action} size="xs" />}
       </div>
 
-      {/* Jauge de progression / Menu de sélection du statut */}
+      {/* Menu de sélection du statut */}
       <div className="lg:col-span-2 col-span-3">
-        {/* Conditions provisoires à enlever lorsque le statut à la sous-action sera possible */}
-
-        {/* Si sous-action contenant des tâches (withStatusDropdown === false)
-        et ayant un score potentiel défini et >= 1e-3
-        ==> Affichage de la progress bar  */}
-
-        {/* Si tâche
-        ou sous-action sans tâche (withStatusDropdown === true)
-        ou avec des tâches mais score potentiel non défini ou < 1e-3
-        ==> Affichage du dropdown de sélection de statut */}
-
-        {/* Si sous-action contenant des tâches et avec statut "non concerné"
-        ==> Dropdown disabled */}
-
-        {isSubAction &&
-        !withStatusDropdown &&
-        score?.point_potentiel !== undefined &&
-        score.point_potentiel >= 1e-3 ? (
-          <ActionProgressBar action={action} />
-        ) : isTask ||
-          (isSubAction &&
-            (withStatusDropdown ||
-              score === null ||
-              (score?.point_potentiel !== undefined &&
-                score.point_potentiel < 1e-3))) ? (
-          <ActionStatusDropdown
-            action={action}
-            isDisabled={
-              isSubAction &&
-              (score === null ||
-                (score?.point_potentiel !== undefined &&
-                  score.point_potentiel < 1e-3)) &&
-              !withStatusDropdown
-            }
-          />
-        ) : null}
+        <ActionStatusDropdown action={action} onSaveStatus={onSaveStatus} />
       </div>
     </div>
   );
