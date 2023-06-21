@@ -7,11 +7,13 @@ create type stats.amplitude_content_event as
     time    timestamptz,
     user_id uuid
 );
+comment on type stats.amplitude_content_event is 'Un événement qui concerne un utilisateur sur un contenu.';
 
 create type stats.amplitude_crud_type as enum ('created', 'updated');
+comment on type stats.amplitude_crud_type is 'Le type d''événement crud remonté à Amplitude.';
 
 create function
-    stats.amplitude_crud(events stats.amplitude_content_event[], name text, type stats.amplitude_crud_type)
+    stats.amplitude_build_crud_events(events stats.amplitude_content_event[], name text, type stats.amplitude_crud_type)
     returns setof stats.amplitude_event
 begin
     atomic
@@ -41,31 +43,13 @@ begin
             limit 1)                          as
                                                  app_version
 
-    from (select unnest(events) as ev) as e;
+    from (select unnest(events) as ev) as e
+    where (ev).user_id is not null
+      and (ev).time is not null;
 end;
-comment on function stats.amplitude_registered is
-    'Les `events` registered Amplitude construits à partir de la création des DCPs.';
+comment on function stats.amplitude_build_crud_events is
+    'Construit des `events` crud Amplitude à partir d''événements de contenus.';
 
-create function
-    stats.amplitude_send_yesterday_creations()
-    returns void
-as
-$$
-declare
-    yesterday tstzrange;
-begin
-    yesterday = tstzrange(current_timestamp::date - interval '1 day', current_timestamp::date);
-
-    with e as (select array_agg((created_at, modified_by)::stats.amplitude_content_event) as events
-               from fiche_action
-               where yesterday @> created_at
-                 and modified_by is not null)
-    select stats.amplitude_crud(e.events, 'fiche', 'created')
-    from e;
-end;
-$$ language plpgsql;
-comment on function stats.amplitude_send_yesterday_creations is
-    'Envoi les événements de creation de contenus à Amplitude.';
 
 drop function stats.amplitude_send_yesterday_events;
 drop function stats.amplitude_send_events;
@@ -95,6 +79,11 @@ begin
     select array_agg(events.batch)
     into batches
     from events;
+
+    if batches is null
+    then
+        return;
+    end if;
 
     -- puis on itère sur les lots :
     foreach batch in array batches
@@ -144,5 +133,46 @@ begin
     from stats.amplitude_registered(yesterday) e;
 end;
 $$ language plpgsql security definer;
+comment on function stats.amplitude_send_yesterday_events is
+    'Envoi les événements de visite et de creation de compte de la veille à Amplitude.';
+
+create or replace function
+    stats.amplitude_send_yesterday_creations()
+    returns void
+as
+$$
+declare
+    yesterday tstzrange;
+begin
+    yesterday = tstzrange(current_timestamp::date - interval '1 day', current_timestamp::date);
+
+    perform (with -- transforme les fiches de la veille en content events.
+                  ce as (select (created_at, modified_by)::stats.amplitude_content_event as events
+                         from fiche_action
+                         where yesterday @> created_at
+                           and modified_by is not null),
+                  -- transforme les content events en crud events,
+                  crud as (select stats.amplitude_build_crud_events(array_agg(ce.events), 'fiche', 'created') as events
+                           from ce)
+                  -- envoie les crud event et spécifie le range pour le log.
+             select stats.amplitude_send_events(array_agg(crud.events), yesterday)
+             from crud);
+
+    perform (with -- transforme les plans de la veille en content events.
+                  ce as (select (created_at, modified_by)::stats.amplitude_content_event as events
+                         from axe
+                         where yesterday @> created_at
+                           and modified_by is not null
+                           and parent is null),
+                  -- transforme les content events en crud events,
+                  crud as (select stats.amplitude_build_crud_events(array_agg(ce.events), 'plan', 'created') as events
+                           from ce)
+                  -- envoie les crud event et spécifie le range pour le log.
+             select stats.amplitude_send_events(array_agg(crud.events), yesterday)
+             from crud);
+end;
+$$ language plpgsql;
+comment on function stats.amplitude_send_yesterday_creations is
+    'Envoi les événements de creation de contenus de la veille à Amplitude.';
 
 COMMIT;
