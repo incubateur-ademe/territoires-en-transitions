@@ -1,4 +1,4 @@
-import {Redirect, Route} from 'react-router-dom';
+import {Route} from 'react-router-dom';
 
 import {FicheActionPage} from 'app/pages/collectivite/PlansActions/FicheAction/FicheActionPage';
 import {PlanActionPage} from './PlanAction/PlanActionPage';
@@ -10,12 +10,10 @@ import {
   collectivitePlanActionAxePath,
   collectivitePlanActionFichePath,
   collectivitePlanActionPath,
-  collectivitePlansActionsBasePath,
   collectivitePlansActionsCreerPath,
   collectivitePlansActionsImporterPath,
   collectivitePlansActionsNouveauPath,
   collectivitePlansActionsSynthesePath,
-  makeCollectivitePlansActionsSyntheseUrl,
 } from 'app/paths';
 import {SynthesePage} from './Synthese/SynthesePage';
 import {SelectionPage} from './ParcoursCreationPlan/SelectionPage';
@@ -32,14 +30,6 @@ type Props = {
 export const PlansActionsRoutes = ({collectivite_id}: Props) => {
   return (
     <>
-      <Route exact path={[collectivitePlansActionsBasePath]}>
-        {/* Redirection vers la page de synthèse */}
-        <Redirect
-          to={makeCollectivitePlansActionsSyntheseUrl({
-            collectiviteId: collectivite_id,
-          })}
-        />
-      </Route>
       {/* Création */}
       <Route exact path={collectivitePlansActionsNouveauPath}>
         <SelectionPage />
