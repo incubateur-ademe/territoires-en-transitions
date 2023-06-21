@@ -456,6 +456,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
                       onBlur={[Function]}
                       onChange={[Function]}
                       placeholder="Exemple : Cette compétence est transférée à Nom de la Collectivité par délibération du JJ-MM-AAAA OU Cette compétence est exercée par la collectivité sur 2/3 des communes soit 3/4 de la population"
+                      style={
+                        Object {
+                          "minHeight": "2.25rem",
+                        }
+                      }
                       value=""
                     />
                   </div>
@@ -841,6 +846,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
                       onBlur={[Function]}
                       onChange={[Function]}
                       placeholder="Exemple : Cette compétence est transférée à Nom de la Collectivité par délibération du JJ-MM-AAAA OU Cette compétence est exercée par la collectivité sur 2/3 des communes soit 3/4 de la population"
+                      style={
+                        Object {
+                          "minHeight": "2.25rem",
+                        }
+                      }
                       value=""
                     />
                   </div>
@@ -1305,6 +1315,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
                       onBlur={[Function]}
                       onChange={[Function]}
                       placeholder="Exemple : Cette compétence est transférée à Nom de la Collectivité par délibération du JJ-MM-AAAA OU Cette compétence est exercée par la collectivité sur 2/3 des communes soit 3/4 de la population"
+                      style={
+                        Object {
+                          "minHeight": "2.25rem",
+                        }
+                      }
                       value=""
                     />
                   </div>
@@ -1689,6 +1704,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
                       onBlur={[Function]}
                       onChange={[Function]}
                       placeholder="Exemple : Cette compétence est transférée à Nom de la Collectivité par délibération du JJ-MM-AAAA OU Cette compétence est exercée par la collectivité sur 2/3 des communes soit 3/4 de la population"
+                      style={
+                        Object {
+                          "minHeight": "2.25rem",
+                        }
+                      }
                       value=""
                     />
                   </div>
