@@ -47,6 +47,11 @@ Array [
         className="resize-none w-full py-2 px-3 text-sm cursor-text rounded-lg outline outline-offset-0 !outline-1 outline-gray-300 focus:outline-blue-500 bg-white"
         onChange={[Function]}
         placeholder="Écrire un nouveau commentaire..."
+        style={
+          Object {
+            "minHeight": "2.25rem",
+          }
+        }
         value=""
       />
     </div>
@@ -270,6 +275,11 @@ Array [
         className="resize-none w-full py-2 px-3 text-sm cursor-text rounded-lg outline outline-offset-0 !outline-1 outline-gray-300 focus:outline-blue-500 bg-white"
         onChange={[Function]}
         placeholder="Écrire un nouveau commentaire..."
+        style={
+          Object {
+            "minHeight": "2.25rem",
+          }
+        }
         value=""
       />
     </div>
@@ -348,6 +358,11 @@ Array [
               className="resize-none w-full py-2 px-3 text-sm cursor-text rounded-lg outline outline-offset-0 !outline-1 outline-gray-300 focus:outline-blue-500 resize-none"
               onChange={[Function]}
               placeholder="Répondre..."
+              style={
+                Object {
+                  "minHeight": "2.25rem",
+                }
+              }
               value=""
             />
           </div>
@@ -462,6 +477,11 @@ Array [
               className="resize-none w-full py-2 px-3 text-sm cursor-text rounded-lg outline outline-offset-0 !outline-1 outline-gray-300 focus:outline-blue-500 resize-none"
               onChange={[Function]}
               placeholder="Répondre..."
+              style={
+                Object {
+                  "minHeight": "2.25rem",
+                }
+              }
               value=""
             />
           </div>
