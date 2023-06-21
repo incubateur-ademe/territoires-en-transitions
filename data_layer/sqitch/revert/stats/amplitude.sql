@@ -2,10 +2,10 @@
 
 BEGIN;
 
+drop function stats.amplitude_build_crud_events;
+drop function stats.amplitude_send_yesterday_creations;
 drop type stats.amplitude_content_event;
 drop type stats.amplitude_crud_type;
-drop function stats.amplitude_crud;
-drop function stats.amplitude_send_yesterday_creations;
 
 drop function stats.amplitude_send_yesterday_events;
 drop function stats.amplitude_send_events;
