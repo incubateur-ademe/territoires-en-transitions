@@ -6,7 +6,7 @@ import {
   useEditActionStatutIsDisabled,
   useSaveActionStatut,
 } from 'core-logic/hooks/useActionStatut';
-import {TActionAvancement, TActionAvancementExt} from 'types/alias';
+import {TActionAvancementExt} from 'types/alias';
 import {
   ITEMS_AVEC_NON_CONCERNE,
   SelectActionStatut,
@@ -19,7 +19,11 @@ import {avancementToLabel} from 'app/labels';
 import {actionAvancementColors} from 'app/theme';
 import ScoreAutoModal from './ScoreAutoModal';
 import ScorePersoModal from './ScorePersoModal';
-import {AVANCEMENT_DETAILLE_PAR_STATUT} from './utils';
+import {
+  getAvancementExt,
+  getStatusFromIndex,
+  statutParAvancement,
+} from './utils';
 
 export const ActionStatusDropdown = ({
   action,
@@ -41,12 +45,16 @@ export const ActionStatusDropdown = ({
     action_id: action.id,
     collectivite_id: collectivite?.collectivite_id || 0,
   };
-  const {statut} = useActionStatut(args);
+  const {statut, filled} = useActionStatut(args);
   const {avancement, avancement_detaille} = statut || {};
 
   const score = useActionScore(action.id);
   const {concerne, desactive} = score || {};
-  const avancementExt = getAvancementExt({avancement, desactive, concerne});
+  const avancementExt = getAvancementExt({
+    avancement,
+    desactive,
+    concerne,
+  });
 
   const {saveActionStatut} = useSaveActionStatut(args);
 
@@ -57,18 +65,48 @@ export const ActionStatusDropdown = ({
   // Détermine si l'édition du statut est désactivée
   const disabled = useEditActionStatutIsDisabled(action.id);
 
+  // Permet la mise à jour du dropdown si un autre élément
+  // de la sous-action a changé de statut
   useEffect(() => {
-    setLocalAvancement(avancementExt);
+    if (
+      action.type === 'sous-action' &&
+      avancementExt === 'non_renseigne' &&
+      concerne === true &&
+      filled
+    ) {
+      setLocalAvancement('detaille');
+    } else {
+      setLocalAvancement(avancementExt);
+    }
     setLocalAvancementDetaille(avancement_detaille);
-  }, [avancementExt, avancement_detaille]);
+  }, [avancementExt, avancement_detaille, filled]);
 
+  // Mise à jour du statut lorsque une nouvelle valeur
+  // est sélectionnée sur le dropdown
   const handleChange = (value: TActionAvancementExt) => {
-    const {avancement, concerne, avancement_detaille} =
+    let {avancement, concerne, avancement_detaille} =
       statutParAvancement(value);
 
     setLocalAvancement(value);
     setLocalAvancementDetaille(avancement_detaille);
 
+    if (avancement === 'detaille') {
+      // Si "détaillé" est sélectionné sur une sous-action
+      // cela correspond en base à un statut "non renseigné"
+      // avec statuts au niveau des tâches
+      // Si aucune tâche n'est remplie, le statut de la sous-action
+      // passe à "non renseigné"
+      if (action.type === 'sous-action') {
+        avancement = 'non_renseigne';
+        avancement_detaille = undefined;
+        setOpenScoreAuto(true);
+      } else {
+        setOpenScorePerso(true);
+      }
+    }
+
+    // Différencie la sauvegarde auto dans la page
+    // de la mise à jour depuis la modale de score auto
     if (onSaveStatus) {
       onSaveStatus(action.id, value, avancement_detaille);
     } else {
@@ -80,44 +118,11 @@ export const ActionStatusDropdown = ({
         avancement_detaille,
       });
     }
-
-    if (avancement === 'detaille') {
-      if (action.type === 'tache') setOpenScorePerso(true);
-      else setOpenScoreAuto(true);
-    }
   };
 
-  const handleSaveDetail = (values: number[]) => {
-    const avancement =
-      values[0] === 1
-        ? 'fait'
-        : values[1] === 1
-        ? 'programme'
-        : values[2] === 1
-        ? 'pas_fait'
-        : 'detaille';
-
-    if (statut) {
-      setLocalAvancement(avancement);
-      setLocalAvancementDetaille(values);
-
-      if (onSaveStatus) {
-        onSaveStatus(action.id, avancement, values);
-      } else {
-        saveActionStatut({
-          ...args,
-          ...statut,
-          avancement,
-          avancement_detaille: values,
-        });
-      }
-
-      if (action.type === 'tache') setOpenScorePerso(false);
-      else setOpenScoreAuto(false);
-    }
-  };
-
-  const handleSaveAutoScore = (
+  // Mise à jour des statuts des tâches d'une sous-action
+  // à la validation dans la modale de score auto
+  const handleSaveScoreAuto = (
     newStatus: {
       actionId: string;
       status: TActionAvancementExt;
@@ -139,6 +144,41 @@ export const ActionStatusDropdown = ({
     });
   };
 
+  // Mise à jour du statut à la validation dans la modale
+  // de score perso
+  const handleSaveScorePerso = (values: number[]) => {
+    // Si la jauge est à 100% dans un des statuts, le statut
+    // est mis à jour automatiquement
+    const avancement =
+      values[0] === 1
+        ? 'fait'
+        : values[1] === 1
+        ? 'programme'
+        : values[2] === 1
+        ? 'pas_fait'
+        : 'detaille';
+
+    if (statut) {
+      setLocalAvancement(avancement);
+      setLocalAvancementDetaille(values);
+
+      // Différencie la sauvegarde auto dans la page
+      // de la mise à jour depuis la modale de score auto
+      if (onSaveStatus) {
+        onSaveStatus(action.id, avancement, values);
+      } else {
+        saveActionStatut({
+          ...args,
+          ...statut,
+          avancement,
+          avancement_detaille: values,
+        });
+      }
+
+      setOpenScorePerso(false);
+    }
+  };
+
   if (!collectivite) {
     return null;
   }
@@ -148,15 +188,25 @@ export const ActionStatusDropdown = ({
       className="flex flex-col gap-3 items-end w-full"
       onClick={evt => evt.stopPropagation()}
     >
+      {/* Dropdown avec suppression de l'option "non renseigné" sur les sous-actions 
+      quand au moins une des tâches a un statut */}
       <SelectActionStatut
-        items={ITEMS_AVEC_NON_CONCERNE}
+        items={
+          action.type === 'sous-action' &&
+          localAvancement !== 'non_renseigne' &&
+          filled
+            ? ITEMS_AVEC_NON_CONCERNE.filter(item => item !== 'non_renseigne')
+            : ITEMS_AVEC_NON_CONCERNE
+        }
         disabled={disabled}
         value={localAvancement}
         onChange={handleChange}
       />
 
+      {/* Cas particulier des statuts "détaillé" */}
       {localAvancement === 'detaille' && !score?.desactive && (
         <div className="flex flex-col gap-3 items-end w-full pr-1">
+          {/* Affichage de la jauge de score sur les tâches */}
           {action.type === 'tache' &&
             (onSaveStatus === undefined ? (
               <ActionProgressBar action={action} />
@@ -178,6 +228,8 @@ export const ActionStatusDropdown = ({
                 percent
               />
             ))}
+
+          {/* Bouton d'ouverture de la modale pour détailler le score */}
           {!disabled && (
             <AnchorAsButton
               className="underline_href fr-link fr-link--sm"
@@ -193,15 +245,17 @@ export const ActionStatusDropdown = ({
         </div>
       )}
 
+      {/* Modale de score auto / par tâche (pour les sous-actions) */}
       {openScoreAuto && (
         <ScoreAutoModal
           action={action}
           externalOpen={openScoreAuto}
           setExternalOpen={setOpenScoreAuto}
-          onSaveScore={handleSaveAutoScore}
+          onSaveScore={handleSaveScoreAuto}
         />
       )}
 
+      {/* Modale de personnalisation du score (avec jauge manuelle) */}
       {openScorePerso && (
         <ScorePersoModal
           actionId={action.id}
@@ -209,60 +263,9 @@ export const ActionStatusDropdown = ({
           externalOpen={openScorePerso}
           saveAtValidation={onSaveStatus === undefined}
           setExternalOpen={setOpenScorePerso}
-          onSaveScore={handleSaveDetail}
+          onSaveScore={handleSaveScorePerso}
         />
       )}
     </div>
   );
-};
-
-const getStatusFromIndex = (index: number): TActionAvancement => {
-  switch (index) {
-    case 0:
-      return 'fait';
-    case 1:
-      return 'programme';
-    default:
-      return 'pas_fait';
-  }
-};
-
-// génère les propriétés de l'objet statut à écrire lors du changement de l'avancement
-const statutParAvancement = (avancement: TActionAvancementExt) => {
-  // cas spécial pour le faux statut "non concerné"
-  if (avancement === 'non_concerne') {
-    return {
-      avancement: 'non_renseigne' as TActionAvancement,
-      concerne: false,
-    };
-  }
-
-  return {
-    avancement,
-    // quand on change l'avancement, l'avancement détaillé est réinitialisé à la
-    // valeur par défaut correspondante
-    avancement_detaille: AVANCEMENT_DETAILLE_PAR_STATUT[avancement],
-    concerne: true,
-  };
-};
-
-/**
- * Détermine l'avancement "étendu" d'une action (inclus le "non concerné")
- */
-const getAvancementExt = ({
-  avancement,
-  desactive,
-  concerne,
-}: {
-  avancement: TActionAvancement | undefined;
-  desactive: boolean | undefined;
-  concerne: boolean | undefined;
-}): TActionAvancementExt | undefined => {
-  // affiche le statut "non concerné" quand l'action est désactivée par la
-  // personnalisation ou que l'option "non concerné" a été sélectionnée
-  // explicitement par l'utilisateur
-  if (desactive || concerne === false) {
-    return 'non_concerne';
-  }
-  return avancement;
 };

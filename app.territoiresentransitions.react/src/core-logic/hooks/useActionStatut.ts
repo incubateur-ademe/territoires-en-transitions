@@ -13,9 +13,20 @@ export const useActionStatut = (args: TActionStatutParams) => {
   const {data, isLoading} = useQuery(['action_statut', collectivite_id], () =>
     fetchCollectiviteActionStatuts(collectivite_id)
   );
+
   const statut = data?.find(action => action.action_id === action_id) || null;
+
+  const filled =
+    data?.find(
+      action =>
+        action.action_id.includes(action_id) &&
+        action.action_id.split(action_id)[1] !== '' &&
+        action.avancement !== 'non_renseigne'
+    ) || null;
+
   return {
     statut,
+    filled,
     isLoading,
   };
 };

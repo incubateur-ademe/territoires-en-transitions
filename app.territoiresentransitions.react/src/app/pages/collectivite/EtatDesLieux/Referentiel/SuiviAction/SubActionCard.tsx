@@ -1,7 +1,7 @@
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {useActionSummaryChildren} from 'core-logic/hooks/referentiel';
-// import {useActionStatut} from 'core-logic/hooks/useActionStatut';
-// import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import {useActionStatut} from 'core-logic/hooks/useActionStatut';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {useEffect, useState} from 'react';
 import {Accordion} from 'ui/Accordion';
 import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
@@ -27,12 +27,14 @@ const SubActionCard = ({
   forceOpen,
   onOpenSubAction,
 }: SubActionCardProps): JSX.Element => {
-  // const collectivite = useCurrentCollectivite();
-  // const {statut} = useActionStatut({
-  //   action_id: subAction.id,
-  //   collectivite_id: collectivite?.collectivite_id || 0,
-  // });
+  const collectivite = useCurrentCollectivite();
+  const {statut} = useActionStatut({
+    action_id: subAction.id,
+    collectivite_id: collectivite?.collectivite_id || 0,
+  });
   const tasks = useActionSummaryChildren(subAction);
+  const shouldHideTasksStatus =
+    statut?.avancement !== 'non_renseigne' || statut?.concerne === false;
   const shouldOpen = true;
   // Condition à décommenter lorsque le statut à la sous-action sera possible
   // subAction.referentiel === 'eci' ||
@@ -91,7 +93,12 @@ const SubActionCard = ({
               dataTest={`TâchesPanel-${subAction.identifiant}`}
               className="fr-mb-3w"
               titre="Tâches"
-              html={<SubActionTasksList tasks={tasks} />}
+              html={
+                <SubActionTasksList
+                  tasks={tasks}
+                  hideStatus={shouldHideTasksStatus}
+                />
+              }
               initialState={openTasks}
             />
           )}
