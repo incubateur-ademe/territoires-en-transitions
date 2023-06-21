@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 
 import {AccordionControlled} from 'ui/Accordion';
 import PlanActionFiltres from './PlanActionFiltres';
@@ -17,10 +17,6 @@ type Props = {
 const PlanActionFiltresAccordeon = ({plan, axe, setIsFiltered}: Props) => {
   const collectivite_id = useCollectiviteId();
 
-  // Stock l'état d'ouverture de l'accordéon afin d'afficher ou non la liste les filtres
-  // et donc prévenir l'appel à la base s'il n'est pas ouvert
-  const [isOpen, setIsOpen] = useState(false);
-
   // on utilise les params pour savoir si l'URL contient des filtres et
   // ainsi afficher l'accordéon ouvert ou non au montage de la page
   const [filters] = useSearchParams<TFilters>(
@@ -33,7 +29,9 @@ const PlanActionFiltresAccordeon = ({plan, axe, setIsFiltered}: Props) => {
 
   const isFiltered = filters && Object.keys(filters).length > 2;
 
-  useEffect(() => setIsOpen(isFiltered), []);
+  // Stock l'état d'ouverture de l'accordéon afin d'afficher ou non la liste les filtres
+  // et donc prévenir l'appel à la base s'il n'est pas ouvert
+  const [isOpen, setIsOpen] = useState(isFiltered);
 
   return (
     <AccordionControlled
