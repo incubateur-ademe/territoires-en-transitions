@@ -24,7 +24,9 @@ def update_action_scores(
         action_personnalise_ids: List[ActionId],
         action_desactive_ids: List[ActionId],
 ):
-    if referentiel_tree.is_leaf(action_id) or action_id in statuts.keys():
+    if referentiel_tree.is_leaf(action_id) \
+            or action_id in statuts.keys() \
+            or action_id in action_non_concerne_ids:
         update_action_scores_from_status(
             referentiel_tree,
             personnalise_tree,
