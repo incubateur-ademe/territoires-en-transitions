@@ -48,6 +48,11 @@ create type indicateur_thematique as enum ('eci_dechets', 'energie_et_climat');
 alter table indicateur_definition
     add thematiques indicateur_thematique[] default array[]::indicateur_thematique[] not null;
 
+create type indicateur_programme as enum ('clef', 'eci', 'cae', 'pcaet', 'crte');
+
+alter table indicateur_definition
+    add programmes indicateur_programme[] default array[]::indicateur_programme[] not null;
+
 alter table indicateur_definition
     drop obligation_eci;
 
