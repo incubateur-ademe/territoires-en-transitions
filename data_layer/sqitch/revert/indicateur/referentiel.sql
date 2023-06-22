@@ -31,6 +31,10 @@ alter table indicateur_definition
 alter table indicateur_definition
     drop thematiques;
 
+alter table indicateur_definition
+    drop programmes;
+
+drop type indicateur_programme;
 drop type indicateur_thematique;
 drop type indicateur_referentiel_type;
 
