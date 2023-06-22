@@ -2,7 +2,6 @@
 
 BEGIN;
 
-
 create or replace function
     private.upsert_indicateurs(indicateurs jsonb)
     returns void
@@ -22,7 +21,7 @@ begin
             insert into definition
             (id, groupe, identifiant, valeur_indicateur, nom, description, unite,
              parent, participation_score, source, titre_long, type,
-             thematiques, modified_at)
+             thematiques, programmes, modified_at)
             values ((indicateur ->> 'id')::indicateur_id,
                     (indicateur ->> 'groupe')::indicateur_group,
                     indicateur ->> 'identifiant',
@@ -38,8 +37,10 @@ begin
                     (select array(
                                     select jsonb_array_elements_text((indicateur -> 'thematiques'))
                                 )::indicateur_thematique[]),
+                    (select array(
+                                    select jsonb_array_elements_text((indicateur -> 'programmes'))
+                                )::indicateur_programme[]),
                     now());
-
         end loop;
 
     -- on commence par insérer les définitions sans parents
@@ -58,7 +59,9 @@ begin
             source              = excluded.source,
             titre_long          = excluded.titre_long,
             type                = excluded.type,
-            thematiques         = excluded.thematiques;
+            thematiques         = excluded.thematiques,
+            programmes          = excluded.programmes,
+            modified_at         = excluded.modified_at;
 
     -- puis le reste
     insert into indicateur_definition
@@ -77,8 +80,9 @@ begin
             source              = excluded.source,
             titre_long          = excluded.titre_long,
             type                = excluded.type,
-            thematiques         = excluded.thematiques;
-
+            thematiques         = excluded.thematiques,
+            programmes          = excluded.programmes,
+            modified_at         = excluded.modified_at;
 
     -- les liens entre indicateur et action
     for indicateur in select * from jsonb_array_elements(indicateurs)
