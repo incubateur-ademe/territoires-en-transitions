@@ -25,8 +25,8 @@ const ScoreDisplay = ({
   const {pointsRealises, pointsMax} = useScoreRealise(action);
 
   return (
-    <span
-      className={classNames({
+    <div
+      className={classNames('flex items-center', {
         visible: pointsRealises !== null && pointsMax !== null,
         invisible: pointsRealises === null || pointsMax === null,
         'text-xs': size === 'xs',
@@ -43,7 +43,7 @@ const ScoreDisplay = ({
       />
       {legend ? `${legend} : ` : ''}
       {toLocaleFixed(pointsRealises, 2)} / {toLocaleFixed(pointsMax, 2)} points
-    </span>
+    </div>
   );
 };
 

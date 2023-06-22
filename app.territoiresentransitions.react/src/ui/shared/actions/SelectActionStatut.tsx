@@ -63,7 +63,7 @@ export const SelectActionStatut = (props: TSelectActionStatutProps) => {
         />
       )}
       renderSelection={value => (
-        <ActionStatutBadge statut={value} small className="mr-auto" />
+        <ActionStatutBadge statut={value} small className="mr-auto mt-1" />
       )}
     />
   );

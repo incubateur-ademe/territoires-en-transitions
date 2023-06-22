@@ -85,7 +85,7 @@ const SubActionHeader = ({
         </div>
 
         {isSubAction && (
-          <div className="flex gap-8">
+          <div className="flex gap-12">
             <ScoreDisplay action={action} size="xs" />
             {displayProgressBar && <ActionProgressBar action={action} />}
           </div>
