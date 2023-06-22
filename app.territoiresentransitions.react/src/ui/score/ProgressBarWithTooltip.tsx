@@ -24,7 +24,7 @@ const ProgressBarWithTooltip = ({
 }: ProgressBarType): JSX.Element => {
   return (
     <Tooltip
-      className="[&_*]:text-base"
+      className="[&_*]:!text-base"
       label={() => (
         <ProgressBarTooltipContent
           score={score}
