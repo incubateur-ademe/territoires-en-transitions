@@ -14,6 +14,7 @@ import {
   useClick,
 } from '@floating-ui/react';
 import DOMPurify from 'dompurify';
+import classNames from 'classnames';
 
 export type TTooltipProps = {
   /** libellé de l'infobulle (accepte du code HTML ou peut être une fonction de rendu) */
@@ -24,10 +25,11 @@ export type TTooltipProps = {
   children: JSX.Element;
   /** événement déclenchant l'affichage de l'info-bulle */
   activatedBy?: 'hover' | 'click';
+  /** surcharge de la className sur l'infobulle */
+  className?: string;
 };
 
 // les styles de l'infobulle
-// TODO: permettre de les surcharger si nécessaire
 const tooltipClass =
   'pointer-events-none max-w-prose px-2 py-1 bg-[#19271D] text-white text-xs [&_*]:text-xs [&_*]:mb-0 z-[3001]';
 
@@ -41,6 +43,7 @@ export const Tooltip = ({
   label,
   placement = 'bottom-start',
   activatedBy = 'hover',
+  className,
 }: TTooltipProps) => {
   const [open, setOpen] = useState(false);
 
@@ -70,7 +73,7 @@ export const Tooltip = ({
       {open && (
         <div
           ref={refs.setFloating}
-          className={tooltipClass}
+          className={classNames(tooltipClass, className)}
           style={{
             position: strategy,
             top: y ?? 0,

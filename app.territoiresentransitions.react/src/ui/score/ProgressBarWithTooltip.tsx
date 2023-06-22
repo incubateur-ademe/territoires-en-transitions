@@ -1,4 +1,4 @@
-import {Tooltip} from '@material-ui/core';
+import {Tooltip} from 'ui/shared/floating-ui/Tooltip';
 import {toFixed} from 'utils/toFixed';
 import ProgressBar, {ProgressBarType} from './ProgressBar';
 
@@ -24,14 +24,15 @@ const ProgressBarWithTooltip = ({
 }: ProgressBarType): JSX.Element => {
   return (
     <Tooltip
-      title={
+      className="[&_*]:text-base"
+      label={() => (
         <ProgressBarTooltipContent
           score={score}
           total={total}
           defaultScore={defaultScore}
           percent={percent}
         />
-      }
+      )}
     >
       <div>
         <ProgressBar
@@ -59,36 +60,32 @@ const ProgressBarTooltipContent = ({
     score.reduce((sum, currVal) => sum + currVal.value, 0);
 
   return (
-    <div style={{whiteSpace: 'pre-line'}}>
-      <div className="text-base">
-        {/* Liste des éléments dans score */}
-        {score.map(s =>
-          s.value > 1e-3 ? (
-            <ProgressBarTooltipElement
-              key={s.label}
-              label={s.label}
-              value={
-                percent ? s.value * 100 : formatAvancementScore(s.value, total)
-              }
-              color={s.color}
-            />
-          ) : null
-        )}
-
-        {/* Score restant */}
-        {defaultValue > 1e-3 && (
+    <div>
+      {/* Liste des éléments dans score */}
+      {score.map(s =>
+        s.value > 1e-3 ? (
           <ProgressBarTooltipElement
-            key={defaultScore.label}
-            label={defaultScore.label}
+            key={s.label}
+            label={s.label}
             value={
-              percent
-                ? defaultValue
-                : formatAvancementScore(defaultValue, total)
+              percent ? s.value * 100 : formatAvancementScore(s.value, total)
             }
-            color={defaultScore.color}
+            color={s.color}
           />
-        )}
-      </div>
+        ) : null
+      )}
+
+      {/* Score restant */}
+      {defaultValue > 1e-3 && (
+        <ProgressBarTooltipElement
+          key={defaultScore.label}
+          label={defaultScore.label}
+          value={
+            percent ? defaultValue : formatAvancementScore(defaultValue, total)
+          }
+          color={defaultScore.color}
+        />
+      )}
     </div>
   );
 };
