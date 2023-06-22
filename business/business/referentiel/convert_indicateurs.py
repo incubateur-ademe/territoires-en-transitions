@@ -61,6 +61,7 @@ class Indicateur:
     participation_score: bool
     titre_long: str
     thematiques: List[str]
+    programmes: List[str]
     action_ids: List[str]
     valeur_indicateur: Optional[str] = None
     parent: Optional[str] = None
@@ -124,6 +125,7 @@ def convert_indicateurs(path: str, json_filename: str):
             titre_long=md.titre_long or md.nom,
             thematiques=md.thematiques or [],
             action_ids=md.actions or [],
+            programmes=md.programmes or [],
             parent=md.parent,
             source=md.source,
             type=md.type
