@@ -9,6 +9,7 @@
       "nom": "Surface Agricole Utile totale du territoire (ha)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": null,
       "thematiques": [],
       "titre_long": "Surface Agricole Utile totale du territoire (ha)",
@@ -25,6 +26,7 @@
       "nom": "Part de la surface agricole utile en agriculture biologique (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": null,
       "thematiques": [],
       "titre_long": "Part de la surface agricole utile en agriculture biologique (%)",
@@ -41,6 +43,7 @@
       "nom": "Lin\u00e9aire d\u2019am\u00e9nagements cyclables s\u00e9curis\u00e9s",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": null,
       "thematiques": [],
       "titre_long": "Lin\u00e9aire d\u2019am\u00e9nagements cyclables s\u00e9curis\u00e9s",
@@ -57,6 +60,7 @@
       "nom": "Collecte annuelle de d\u00e9chets m\u00e9nagers et assimil\u00e9s avec gravats",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": null,
       "thematiques": [],
       "titre_long": "Collecte annuelle de d\u00e9chets m\u00e9nagers et assimil\u00e9s avec gravats",
@@ -73,6 +77,7 @@
       "nom": "Collecte annuelle de d\u00e9chets m\u00e9nagers et assimil\u00e9s hors gravats (kg/hab)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": null,
       "thematiques": [],
       "titre_long": "Collecte annuelle de d\u00e9chets m\u00e9nagers et assimil\u00e9s hors gravats (kg/hab)",
@@ -89,6 +94,7 @@
       "nom": "Consommation \u00e9nerg\u00e9tique finale annuelle (GWh)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": null,
       "thematiques": [],
       "titre_long": "Consommation \u00e9nerg\u00e9tique finale annuelle (GWh)",
@@ -105,6 +111,7 @@
       "nom": "Consommation \u00e9nerg\u00e9tique finale annuelle (MWh/hab)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": null,
       "thematiques": [],
       "titre_long": "Consommation \u00e9nerg\u00e9tique finale annuelle (MWh/hab)",
@@ -121,6 +128,7 @@
       "nom": "Artificialisation des espaces naturels, agricoles, forestiers (ha)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": null,
       "thematiques": [],
       "titre_long": "Artificialisation des espaces naturels, agricoles, forestiers (ha)",
@@ -137,6 +145,7 @@
       "nom": "Production annuelle d\u2019ENR du territoire hors hydro\u00e9lectrique (MWh / an)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": null,
       "thematiques": [],
       "titre_long": "Production annuelle d\u2019ENR du territoire hors hydro\u00e9lectrique (MWh / an)",
@@ -153,6 +162,7 @@
       "nom": "Production annuelle d\u2019\u00e9nergie hydro\u00e9lectrique du territoire (MWh / an)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": null,
       "thematiques": [],
       "titre_long": "Production annuelle d\u2019\u00e9nergie hydro\u00e9lectrique du territoire (MWh / an)",
@@ -169,6 +179,7 @@
       "nom": "Emissions annuelles de SO2 du territoire (tonnes)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": null,
       "thematiques": [],
       "titre_long": "Emissions annuelles de SO2 du territoire (tonnes)",
@@ -185,6 +196,7 @@
       "nom": "Emissions annuelles de NOx du territoire (tonnes)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": null,
       "thematiques": [],
       "titre_long": "Emissions annuelles de NOx du territoire (tonnes)",
@@ -201,6 +213,7 @@
       "nom": "Emissions annuelles de COVNM du territoire (tonnes)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": null,
       "thematiques": [],
       "titre_long": "Emissions annuelles de COVNM du territoire (tonnes)",
@@ -217,6 +230,7 @@
       "nom": "Emissions annuelles de PM2,5 du territoire (tonnes)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": null,
       "thematiques": [],
       "titre_long": "Emissions annuelles de PM2,5 du territoire (tonnes)",
@@ -233,6 +247,7 @@
       "nom": "Emissions annuelles de NH3 du territoire (tonnes)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": null,
       "thematiques": [],
       "titre_long": "Emissions annuelles de NH3 du territoire (tonnes)",
@@ -249,6 +264,7 @@
       "nom": "Part modale des modes actifs et transports en commun dans les d\u00e9placements domicile-travail",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": null,
       "thematiques": [],
       "titre_long": "Part modale des modes actifs et transports en commun dans les d\u00e9placements domicile-travail",
@@ -265,6 +281,7 @@
       "nom": "Part des cours d\u2019eau en bon \u00e9tat \u00e9cologique (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": null,
       "thematiques": [],
       "titre_long": "Part des cours d\u2019eau en bon \u00e9tat \u00e9cologique (%)",
@@ -281,6 +298,7 @@
       "nom": "Emissions de GES annuelles du territoire (TeqCO2 / an)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": null,
       "thematiques": [],
       "titre_long": "Emissions de GES annuelles du territoire (TeqCO2 / an)",
@@ -297,6 +315,7 @@
       "nom": "Emissions de GES annuelles par habitant (TeqCO2 / an / hab)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": null,
       "thematiques": [],
       "titre_long": "Emissions de GES annuelles par habitant (TeqCO2 / an / hab)",
@@ -313,6 +332,7 @@
       "nom": "Taux de fuite des r\u00e9seaux d\u2019eau du territoire (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": null,
       "thematiques": [],
       "titre_long": "Taux de fuite des r\u00e9seaux d\u2019eau du territoire (%)",
@@ -329,6 +349,7 @@
       "nom": "Indicateur de fragmentation des milieux naturels (km\u00b2)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": null,
       "thematiques": [],
       "titre_long": "Indicateur de fragmentation des milieux naturels (km\u00b2)",
@@ -345,6 +366,7 @@
       "nom": "Population situ\u00e9e dans une zone \u00e0 risque naturel \u00e9lev\u00e9",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": null,
       "thematiques": [],
       "titre_long": "Population situ\u00e9e dans une zone \u00e0 risque naturel \u00e9lev\u00e9",
@@ -361,6 +383,7 @@
       "nom": "Proportion d'\u00e9nergie fossile consomm\u00e9 par rapport aux \u00e9nergies renouvelables consomm\u00e9es (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": "<p>Observatoires \u00e9nergie, PCAET</p>\n",
       "thematiques": [],
       "titre_long": "Proportion d'\u00e9nergie fossile consomm\u00e9 par rapport aux \u00e9nergies renouvelables consomm\u00e9es (%)",
@@ -379,6 +402,7 @@
       "nom": "Part du budget consacr\u00e9e \u00e0 la politique Economie Circulaire dans le budget global (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": "<p>Budget de la collectivit\u00e9</p>\n",
       "thematiques": [],
       "titre_long": "Part du budget consacr\u00e9e \u00e0 la politique Economie Circulaire dans le budget global (%)",
@@ -395,6 +419,7 @@
       "nom": "Proportion de l'activit\u00e9 de r\u00e9emploi et/ou de r\u00e9utilisation dans l'activit\u00e9 \u00e9conomique (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": "<ul>\n<li>\n<a href=\"https://www.sinoe.org/filtres/index/thematique#table-annuaire\">\nAnnuaire SINOE Structures du r\u00e9emploi et/ou de r\u00e9utilisation\n</a>\n</li>\n<li>SIRENE</li>\n</ul>\n",
       "thematiques": [],
       "titre_long": "Proportion de l'activit\u00e9 de r\u00e9emploi et/ou de r\u00e9utilisation dans l'activit\u00e9 \u00e9conomique (%)",
@@ -413,6 +438,7 @@
       "nom": "Part de biens ou de constructions temporaires acquis annuellement par la collectivit\u00e9 issus du r\u00e9emploi ou de la r\u00e9utilisation ou int\u00e9grant des mati\u00e8res recycl\u00e9es (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": "<p>Service Achats ou Comptabilit\u00e9</p>\n",
       "thematiques": [],
       "titre_long": "Part de biens ou de constructions temporaires acquis annuellement par la collectivit\u00e9 issus du r\u00e9emploi ou de la r\u00e9utilisation ou int\u00e9grant des mati\u00e8res recycl\u00e9es (%)",
@@ -431,6 +457,7 @@
       "nom": "Part des DMA envoy\u00e9e pour la r\u00e9utilisation, le recyclage et la valorisation organique ou \u00e9nerg\u00e9tique (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": "<p>Enqu\u00eate collecte de l&#x27;ADEME (sur les zones couvertes en fonction des ann\u00e9es). Suivi interne de la collectivit\u00e9.</p>\n",
       "thematiques": [],
       "titre_long": "Part des DMA envoy\u00e9e pour la r\u00e9utilisation, le recyclage et la valorisation organique ou \u00e9nerg\u00e9tique (%)",
@@ -447,6 +474,7 @@
       "nom": "Part d'eau potable \u00e9conomis\u00e9e (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": "<p>Gestionnaire du r\u00e9seau d&#x27;eau portable</p>\n",
       "thematiques": [],
       "titre_long": "Part d'eau potable \u00e9conomis\u00e9e (%)",
@@ -465,6 +493,7 @@
       "nom": "Part de d\u00e9chets soumis \u00e0 la collecte s\u00e9par\u00e9e dans les Ordures M\u00e9nagers et Assimil\u00e9s (OMR) et la benne tout venant d\u00e9chetterie (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": "<p>Echantillonnage des OMR et benne tour venant de d\u00e9chetterie</p>\n",
       "thematiques": [],
       "titre_long": "Part de d\u00e9chets soumis \u00e0 la collecte s\u00e9par\u00e9e dans les Ordures M\u00e9nagers et Assimil\u00e9s (OMR) et la benne tout venant d\u00e9chetterie (%)",
@@ -481,6 +510,7 @@
       "nom": "Ratio d'\u00e9volution de terres artificialis\u00e9s vs. terres agricoles et/ou naturelles et/ou foresti\u00e8res (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": "<p>Suivi Urbanisme</p>\n",
       "thematiques": [],
       "titre_long": "Ratio d'\u00e9volution de terres artificialis\u00e9s vs. terres agricoles et/ou naturelles et/ou foresti\u00e8res (%)",
@@ -499,6 +529,7 @@
       "nom": "Nombre de boucles locales d'\u00e9conomie circulaire mises en place dans les 4 derni\u00e8res ann\u00e9es  (nombre)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": "<p>Suivi interne en lien avec les services ou partenaires concern\u00e9s</p>\n",
       "thematiques": [],
       "titre_long": "Nombre de boucles locales d'\u00e9conomie circulaire mises en place dans les 4 derni\u00e8res ann\u00e9es  (nombre)",
@@ -517,6 +548,7 @@
       "nom": "Nombre de fili\u00e8res anim\u00e9s par la collectivit\u00e9 ou ses partenaires pour la prise en charge des d\u00e9chets (BTP, DAE\u2026) (nombre)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": "<p>Suivi interne en lien avec les services ou partenaires concern\u00e9s</p>\n",
       "thematiques": [],
       "titre_long": "Nombre de fili\u00e8res anim\u00e9s par la collectivit\u00e9 ou ses partenaires pour la prise en charge des d\u00e9chets (BTP, DAE\u2026) (nombre)",
@@ -535,6 +567,7 @@
       "nom": "Part de DMA b\u00e9n\u00e9ficiant d'un mode de transport \u00e0 faible impact (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": "<p>Rapport annuel d\u00e9chets</p>\n",
       "thematiques": [],
       "titre_long": "Part de DMA b\u00e9n\u00e9ficiant d'un mode de transport \u00e0 faible impact (%)",
@@ -551,6 +584,7 @@
       "nom": "Proportion de l'activit\u00e9 de l'allongement de la dur\u00e9e d'usage dans l'activit\u00e9 \u00e9conomique (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": "<p>SIRENE. Actuellement un traitement de donn\u00e9es n\u00e9cessaire.</p>\n",
       "thematiques": [],
       "titre_long": "Proportion de l'activit\u00e9 de l'allongement de la dur\u00e9e d'usage dans l'activit\u00e9 \u00e9conomique (%)",
@@ -569,6 +603,7 @@
       "nom": "D\u00e9pense annuelle consacr\u00e9e \u00e0 la gestion des d\u00e9chets (\u20ac/habitant)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": "<p>Matrice des co\u00fbts</p>\n",
       "thematiques": [],
       "titre_long": "D\u00e9pense annuelle consacr\u00e9e \u00e0 la gestion des d\u00e9chets (\u20ac/habitant)",
@@ -585,6 +620,7 @@
       "nom": "Gaspillage alimentaire de la restauration collective sous la comp\u00e9tence de la collectivit\u00e9 (g/repas servi)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": "<p>Les restaurants collectifs dont la collectivit\u00e9 a la charge</p>\n",
       "thematiques": [],
       "titre_long": "Gaspillage alimentaire de la restauration collective sous la comp\u00e9tence de la collectivit\u00e9 (g/repas servi)",
@@ -603,6 +639,7 @@
       "nom": "Emissions GES\u00a0de la collecte des DMA sur le territoire (eqtCO2/tonne de d\u00e9chets)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": "<p>Suivi interne du kilom\u00e9trage parcouru par les v\u00e9hicule de collecte. Fiches techniques des v\u00e9hicules pour les \u00e9missions.</p>\n",
       "thematiques": [],
       "titre_long": "Emissions GES\u00a0de la collecte des DMA sur le territoire (eqtCO2/tonne de d\u00e9chets)",
@@ -621,6 +658,7 @@
       "nom": "Nombre d'entreprises ou \u00e9tablissements sensibilis\u00e9es ou accompagn\u00e9es sur les questions de l'\u00e9conomie de la fonctionnalit\u00e9 et de la coop\u00e9ration (nombre)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": "<p>Suivi interne ou suivi par les acteurs d&#x27;animation en \u00e9conomie de la fonctionnalit\u00e9 et de coop\u00e9ration</p>\n",
       "thematiques": [],
       "titre_long": "Nombre d'entreprises ou \u00e9tablissements sensibilis\u00e9es ou accompagn\u00e9es sur les questions de l'\u00e9conomie de la fonctionnalit\u00e9 et de la coop\u00e9ration (nombre)",
@@ -639,6 +677,7 @@
       "nom": "Effet de levier d'accompagnement financier des projets de recherche, d'innovation et d'exp\u00e9rimentation en mati\u00e8re d'Economie Circulaire  (1\u20ac public pour X \u20ac priv\u00e9)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": "<p>Conventions de financement</p>\n",
       "thematiques": [],
       "titre_long": "Effet de levier d'accompagnement financier des projets de recherche, d'innovation et d'exp\u00e9rimentation en mati\u00e8re d'Economie Circulaire  (1\u20ac public pour X \u20ac priv\u00e9)",
@@ -655,6 +694,7 @@
       "nom": "Part des restaurants collectifs sous la comp\u00e9tence de la collectivit\u00e9 engag\u00e9e dans une d\u00e9marche de r\u00e9duction du gaspillage alimentaire (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": "<p>Les restaurants collectifs dont la collectivit\u00e9 a la charge</p>\n",
       "thematiques": [],
       "titre_long": "Part des restaurants collectifs sous la comp\u00e9tence de la collectivit\u00e9 engag\u00e9e dans une d\u00e9marche de r\u00e9duction du gaspillage alimentaire (%)",
@@ -673,6 +713,7 @@
       "nom": "Part de la population de la collectivit\u00e9 couverte par la Tarification Incitative",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": "",
       "thematiques": [],
       "titre_long": "Part de la population de la collectivit\u00e9 couverte par la Tarification Incitative",
@@ -691,6 +732,7 @@
       "nom": "Nombre d'actions de la collectivit\u00e9 en \u00e9conomie de la fonctionnalit\u00e9 et de la coop\u00e9ration (nombre)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": "<p>Suivi interne</p>\n",
       "thematiques": [],
       "titre_long": "Nombre d'actions de la collectivit\u00e9 en \u00e9conomie de la fonctionnalit\u00e9 et de la coop\u00e9ration (nombre)",
@@ -709,6 +751,7 @@
       "nom": "Part de formations Economie Circulaire dans le programme de formation de la collectivit\u00e9 (nombre)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": "<p>Plan de formation</p>\n",
       "thematiques": [],
       "titre_long": "Part de formations Economie Circulaire dans le programme de formation de la collectivit\u00e9 (nombre)",
@@ -725,6 +768,7 @@
       "nom": "Part des sources d'\u00e9nergie renouvelable (ENR) locales (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": "<p>Observatoires \u00e9nergie, PCAET</p>\n",
       "thematiques": [],
       "titre_long": "Part des sources d'\u00e9nergie renouvelable (ENR) locales (%)",
@@ -743,6 +787,7 @@
       "nom": "Pourcentage de contrat d'achats publiques de la collectivit\u00e9 comportant au moins une consid\u00e9ration environnementale (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": "<p>Service Achats ou Comptabilit\u00e9</p>\n",
       "thematiques": [],
       "titre_long": "Pourcentage de contrat d'achats publiques de la collectivit\u00e9 comportant au moins une consid\u00e9ration environnementale (%)",
@@ -761,6 +806,7 @@
       "nom": "Nombre de synergies d'Ecologie Industrielle et Territoriale (EIT) op\u00e9rationnelles sur le territoire (nombre)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": "<p>Suivi interne.</p>\n<p>Donn\u00e9es du r\u00e9seau SYNAPSE: https://www.economiecirculaire.org/eit/h/le-reseau-synapse.html</p>\n",
       "thematiques": [],
       "titre_long": "Nombre de synergies d'Ecologie Industrielle et Territoriale (EIT) op\u00e9rationnelles sur le territoire (nombre)",
@@ -779,6 +825,7 @@
       "nom": "Part des services de la collectivit\u00e9 form\u00e9s \u00e0 l'Economie Circulaire (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": "<p>Attestations de formations Economie Circulaire. Organigramme de la collectivit\u00e9.</p>\n",
       "thematiques": [],
       "titre_long": "Part des services de la collectivit\u00e9 form\u00e9s \u00e0 l'Economie Circulaire (%)",
@@ -797,6 +844,7 @@
       "nom": "Nombre de projets de recherche, d'innovation ou d'exp\u00e9rimentation accompagn\u00e9s financi\u00e8rement ou non-financi\u00e8rement par la collectivit\u00e9 (nombre)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": "<p>Suivi interne</p>\n",
       "thematiques": [],
       "titre_long": "Nombre de projets de recherche, d'innovation ou d'exp\u00e9rimentation accompagn\u00e9s financi\u00e8rement ou non-financi\u00e8rement par la collectivit\u00e9 (nombre)",
@@ -815,6 +863,7 @@
       "nom": "Part d'entreprises et d'\u00e9tablissements ayant \u00e9t\u00e9 form\u00e9es \u00e0 l'\u00e9coconception durant les 4 derni\u00e8res ann\u00e9es (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": "<p>Liste des stagiaires des formations fournis par les organismes d&#x27;enseignement</p>\n",
       "thematiques": [],
       "titre_long": "Part d'entreprises et d'\u00e9tablissements ayant \u00e9t\u00e9 form\u00e9es \u00e0 l'\u00e9coconception durant les 4 derni\u00e8res ann\u00e9es (%)",
@@ -833,6 +882,7 @@
       "nom": "Nombre d'entreprises engag\u00e9es dans les synergie d'EIT (nombre)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": "<p>Suivi interne.</p>\n<p>Donn\u00e9es du r\u00e9seau SYNAPSE: https://www.economiecirculaire.org/eit/h/le-reseau-synapse.html</p>\n",
       "thematiques": [],
       "titre_long": "Nombre d'entreprises engag\u00e9es dans les synergie d'EIT (nombre)",
@@ -851,6 +901,7 @@
       "nom": "Emissions GES des Installations de Stockage de D\u00e9chets Non-Dangereux (ISDND) (eqtCO2/tonne de d\u00e9chets entrant)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": "<p>Gestionnaire des installations</p>\n",
       "thematiques": [],
       "titre_long": "Emissions GES des Installations de Stockage de D\u00e9chets Non-Dangereux (ISDND) (eqtCO2/tonne de d\u00e9chets entrant)",
@@ -869,6 +920,7 @@
       "nom": "Part des comp\u00e9tences obligatoires et facultatives exerc\u00e9es par la collectivit\u00e9 (mobilit\u00e9, urbanisme, etc.) pour lesquelles l\u2019\u00e9quipe Economie Circulaire a co-construit au moins une action favorisant l\u2019Economie Circulaire dans les 4 derni\u00e8res ann\u00e9es",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": "",
       "thematiques": [],
       "titre_long": "Part des comp\u00e9tences obligatoires et facultatives exerc\u00e9es par la collectivit\u00e9 (mobilit\u00e9, urbanisme, etc.) pour lesquelles l\u2019\u00e9quipe Economie Circulaire a co-construit au moins une action favorisant l\u2019Economie Circulaire dans les 4 derni\u00e8res ann\u00e9es",
@@ -887,6 +939,7 @@
       "nom": "Part des strat\u00e9gies ou des politiques dans lesquelles l\u2019\u00e9quipe Economie Circulaire a \u00e9t\u00e9 associ\u00e9e pour leur conception",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": "",
       "thematiques": [],
       "titre_long": "Part des strat\u00e9gies ou des politiques dans lesquelles l\u2019\u00e9quipe Economie Circulaire a \u00e9t\u00e9 associ\u00e9e pour leur conception",
@@ -903,6 +956,7 @@
       "nom": "Perte en eau du r\u00e9seau (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": "<p>Gestionnaire du r\u00e9seau d&#x27;eau potable</p>\n",
       "thematiques": [],
       "titre_long": "Perte en eau du r\u00e9seau (%)",
@@ -919,6 +973,7 @@
       "nom": "Part de l\u2019alimentation sous signe de qualit\u00e9 en restauration collective sous la comp\u00e9tence de la collectivit\u00e9 (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": "<p>Suivi aupr\u00e8s des restaurants collectifs dont la collectivit\u00e9 a la charge. Tableaux de suivi des approvisionnements (obligation l\u00e9gale).</p>\n",
       "thematiques": [],
       "titre_long": "Part de l\u2019alimentation sous signe de qualit\u00e9 en restauration collective sous la comp\u00e9tence de la collectivit\u00e9 (%)",
@@ -937,6 +992,7 @@
       "nom": "Taux de mise en d\u00e9charge de DMA (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [],
       "source": "<p>Enqu\u00eate collecte de l&#x27;ADEME (sur les zones couvertes en fonction des ann\u00e9es)</p>\n",
       "thematiques": [],
       "titre_long": "Taux de mise en d\u00e9charge de DMA (%)",
@@ -955,6 +1011,9 @@
       "nom": "Consommation moyenne d'eau dans les b\u00e2timents de la collectivit\u00e9 (l/m\u00b2.an)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Consommation moyenne d'eau dans les b\u00e2timents de la collectivit\u00e9 (l/m\u00b2.an)",
@@ -973,6 +1032,9 @@
       "nom": "Consommation moyenne d'eau dans les b\u00e2timents \"enseignement/cr\u00e8che\" (l/m\u00b2.an)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Consommation moyenne d'eau dans les b\u00e2timents \"enseignement/cr\u00e8che\" (l/m\u00b2.an)",
@@ -991,6 +1053,9 @@
       "nom": "Consommation moyenne d'eau dans les b\u00e2timents \"administration\" (l/m\u00b2.an)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Consommation moyenne d'eau dans les b\u00e2timents \"administration\" (l/m\u00b2.an)",
@@ -1009,6 +1074,9 @@
       "nom": "Consommation moyenne d'eau dans les b\u00e2timents\"culture/sport\" (l/m\u00b2.an)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Consommation moyenne d'eau dans les b\u00e2timents\"culture/sport\" (l/m\u00b2.an)",
@@ -1027,6 +1095,9 @@
       "nom": "Production d'\u00e9lectricit\u00e9 renouvelable - patrimoine collectivit\u00e9 (MWh)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Production d'\u00e9lectricit\u00e9 renouvelable - patrimoine collectivit\u00e9 (MWh)",
@@ -1045,6 +1116,9 @@
       "nom": "Taux de production d'\u00e9lectricit\u00e9 renouvelable  - patrimoine collectivit\u00e9 (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Taux de production d'\u00e9lectricit\u00e9 renouvelable  - patrimoine collectivit\u00e9 (%)",
@@ -1063,6 +1137,9 @@
       "nom": "Part de la population active couverte par un PDE/PDA (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Part de la population active couverte par un PDE/PDA (%)",
@@ -1081,6 +1158,9 @@
       "nom": "Nombre de dossiers \u00ab\u00a0Habiter mieux\u00a0\u00bb d\u00e9pos\u00e9s \u00e0 l\u2019Anah sur le territoire",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Nombre de dossiers \u00ab\u00a0Habiter mieux\u00a0\u00bb d\u00e9pos\u00e9s \u00e0 l\u2019Anah sur le territoire",
@@ -1099,6 +1179,9 @@
       "nom": "Recyclage mati\u00e8re et organique des d\u00e9chets m\u00e9nagers et assimil\u00e9s (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Recyclage mati\u00e8re et organique des d\u00e9chets m\u00e9nagers et assimil\u00e9s (%)",
@@ -1117,6 +1200,9 @@
       "nom": "Part du budget consacr\u00e9 \u00e0 des projets de coop\u00e9ration d\u00e9centralis\u00e9e en lien avec le climat, l\u2019air ou l\u2019\u00e9nergie (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Part du budget consacr\u00e9 \u00e0 des projets de coop\u00e9ration d\u00e9centralis\u00e9e en lien avec le climat, l\u2019air ou l\u2019\u00e9nergie (%)",
@@ -1135,6 +1221,9 @@
       "nom": "Nombre de manifestations/actions par an sur le climat l'air et l'\u00e9nergie",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Nombre de manifestations/actions par an sur le climat l'air et l'\u00e9nergie",
@@ -1153,6 +1242,9 @@
       "nom": "Quantit\u00e9 annuelle d'eau/m2 d'espaces verts",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Quantit\u00e9 annuelle d'eau/m2 d'espaces verts",
@@ -1171,6 +1263,9 @@
       "nom": "Quantit\u00e9 annuelle d'engrais/m2 d'espaces verts",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Quantit\u00e9 annuelle d'engrais/m2 d'espaces verts",
@@ -1189,6 +1284,10 @@
       "nom": "Consommation \u00e9nerg\u00e9tique globale annuelle du territoire",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
       "source": null,
       "thematiques": [
         "energie_et_climat"
@@ -1209,6 +1308,9 @@
       "nom": "Consommation \u00e9nerg\u00e9tique annuelle du territoire par habitant",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Consommation \u00e9nerg\u00e9tique annuelle du territoire par habitant",
@@ -1227,6 +1329,9 @@
       "nom": "Consommation \u00e9nerg\u00e9tique annuelle du territoire pour la chaleur et le rafra\u00eechissement",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Consommation \u00e9nerg\u00e9tique annuelle du territoire pour la chaleur et le rafra\u00eechissement",
@@ -1245,6 +1350,9 @@
       "nom": "Consommation \u00e9nerg\u00e9tique annuelle du territoire pour l'\u00e9lectricit\u00e9",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Consommation \u00e9nerg\u00e9tique annuelle du territoire pour l'\u00e9lectricit\u00e9",
@@ -1263,6 +1371,10 @@
       "nom": "Consommation \u00e9nerg\u00e9tique du r\u00e9sidentiel",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Consommation \u00e9nerg\u00e9tique du r\u00e9sidentiel",
@@ -1281,6 +1393,10 @@
       "nom": "Consommation \u00e9nerg\u00e9tique du tertiaire",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Consommation \u00e9nerg\u00e9tique du tertiaire",
@@ -1299,6 +1415,10 @@
       "nom": "Consommation \u00e9nerg\u00e9tique  du transport routier",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Consommation \u00e9nerg\u00e9tique  du transport routier",
@@ -1317,6 +1437,10 @@
       "nom": "Consommation \u00e9nerg\u00e9tique du secteur \"autres transports\"",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Consommation \u00e9nerg\u00e9tique du secteur \"autres transports\"",
@@ -1335,6 +1459,10 @@
       "nom": "Consommation \u00e9nerg\u00e9tique de l'agriculture",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Consommation \u00e9nerg\u00e9tique de l'agriculture",
@@ -1353,6 +1481,10 @@
       "nom": "Consommation \u00e9nerg\u00e9tique des d\u00e9chets",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Consommation \u00e9nerg\u00e9tique des d\u00e9chets",
@@ -1371,6 +1503,10 @@
       "nom": "Consommation \u00e9nerg\u00e9tique de l'industrie hors branche \u00e9nergie",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Consommation \u00e9nerg\u00e9tique de l'industrie hors branche \u00e9nergie",
@@ -1389,6 +1525,9 @@
       "nom": "Nombre de places de stationnement v\u00e9lo, hors pince-roues (nb / 100 habitants)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Nombre de places de stationnement v\u00e9lo, hors pince-roues (nb / 100 habitants)",
@@ -1407,6 +1546,9 @@
       "nom": "Quantit\u00e9 moyenne de viande par repas dans la restauration collective publique (g/repas)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Quantit\u00e9 moyenne de viande par repas dans la restauration collective publique (g/repas)",
@@ -1425,6 +1567,9 @@
       "nom": "Emissions directes de polluants atmosph\u00e9riques du secteur agriculture par ha (tonne/ha)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Emissions directes de polluants atmosph\u00e9riques du secteur agriculture par ha (tonne/ha)",
@@ -1444,6 +1589,10 @@
       "nom": "S\u00e9questration nette de dioxyde de carbone des sols et de la for\u00eat (teq CO2)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "S\u00e9questration nette de dioxyde de carbone des sols et de la for\u00eat (teq CO2)",
@@ -1462,6 +1611,10 @@
       "nom": "S\u00e9questration de la for\u00eat  (teq CO2)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "S\u00e9questration de la for\u00eat  (teq CO2)",
@@ -1480,6 +1633,10 @@
       "nom": "S\u00e9questration dans les terres agricoles et les prairies (teq CO2)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "S\u00e9questration dans les terres agricoles et les prairies (teq CO2)",
@@ -1498,6 +1655,10 @@
       "nom": "S\u00e9questration dans les autres sols (teq CO2)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "S\u00e9questration dans les autres sols (teq CO2)",
@@ -1516,6 +1677,9 @@
       "nom": "Compacit\u00e9 des formes urbaines",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Compacit\u00e9 des formes urbaines",
@@ -1534,6 +1698,9 @@
       "nom": "Consommation de l\u2019\u00e9clairage public  (kWh/hab.an)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Consommation de l\u2019\u00e9clairage public  (kWh/hab.an)",
@@ -1552,6 +1719,9 @@
       "nom": "Mix \u00e9nerg\u00e9tique propos\u00e9 par les r\u00e9gies et SEM fournisseur d'\u00e9lectricit\u00e9 (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Mix \u00e9nerg\u00e9tique propos\u00e9 par les r\u00e9gies et SEM fournisseur d'\u00e9lectricit\u00e9 (%)",
@@ -1570,6 +1740,9 @@
       "nom": "Taux de valorisation \u00e9nerg\u00e9tique du biogaz des centres de stockage des d\u00e9chets (en %)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Taux de valorisation \u00e9nerg\u00e9tique du biogaz des centres de stockage des d\u00e9chets (en %)",
@@ -1588,6 +1761,9 @@
       "nom": "Consommation annuelle d'\u00e9nergie des v\u00e9hicules (VP) de la collectivit\u00e9 (kWh/an.employ\u00e9)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Consommation annuelle d'\u00e9nergie des v\u00e9hicules (VP) de la collectivit\u00e9 (kWh/an.employ\u00e9)",
@@ -1606,6 +1782,9 @@
       "nom": "Consommation annuelle d'\u00e9nergie des v\u00e9hicules (VP) de la collectivit\u00e9 (kWh/an.km)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Consommation annuelle d'\u00e9nergie des v\u00e9hicules (VP) de la collectivit\u00e9 (kWh/an.km)",
@@ -1626,6 +1805,9 @@
       "nom": "Indicateur alternatif \u00e0 la part modale TC (\u00e0 d\u00e9finir par la collectivit\u00e9 et son conseiller le cas \u00e9ch\u00e9ant)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Indicateur alternatif \u00e0 la part modale TC (\u00e0 d\u00e9finir par la collectivit\u00e9 et son conseiller le cas \u00e9ch\u00e9ant)",
@@ -1645,6 +1827,9 @@
       "nom": "Part de b\u00e2timents publics de classe F ou G selon le DPE pour l'\u00e9nergie (ou \u00e9quivalent)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Part de b\u00e2timents publics de classe F ou G selon le DPE pour l'\u00e9nergie (ou \u00e9quivalent)",
@@ -1664,6 +1849,9 @@
       "nom": "Part de b\u00e2timents >=701 kWhep/m\u00b2.an (calcul DPE ou \u00e9quivalent) (DOM)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Part de b\u00e2timents >=701 kWhep/m\u00b2.an (calcul DPE ou \u00e9quivalent) (DOM)",
@@ -1683,6 +1871,9 @@
       "nom": "Part de b\u00e2timents publics de classe A ou B selon le DPE pour l'\u00e9nergie (ou \u00e9quivalent)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Part de b\u00e2timents publics de classe A ou B selon le DPE pour l'\u00e9nergie (ou \u00e9quivalent)",
@@ -1702,6 +1893,9 @@
       "nom": "Part de b\u00e2timents =<100 kWhep/m\u00b2.an (calcul DPE ou \u00e9quivalent) (DOM)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Part de b\u00e2timents =<100 kWhep/m\u00b2.an (calcul DPE ou \u00e9quivalent) (DOM)",
@@ -1720,6 +1914,9 @@
       "nom": "Nombre de logements r\u00e9nov\u00e9s \u00e9nerg\u00e9tiquement (nb logements r\u00e9nov\u00e9s/100 logements existants)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Nombre de logements r\u00e9nov\u00e9s \u00e9nerg\u00e9tiquement (nb logements r\u00e9nov\u00e9s/100 logements existants)",
@@ -1739,6 +1936,9 @@
       "nom": "Part modale v\u00e9lo",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Part modale v\u00e9lo",
@@ -1757,6 +1957,9 @@
       "nom": "Part de surface agricole certifi\u00e9e agriculture biologique ou en conversion et haute valeur environnementale (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Part de surface agricole certifi\u00e9e agriculture biologique ou en conversion et haute valeur environnementale (%)",
@@ -1775,6 +1978,9 @@
       "nom": "Part des march\u00e9s int\u00e9grant des clauses environnementales (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Part des march\u00e9s int\u00e9grant des clauses environnementales (%)",
@@ -1793,6 +1999,9 @@
       "nom": "Consommation \u00e9nerg\u00e9tique des STEP kWh/kgDBO5 \u00e9limin\u00e9",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Consommation \u00e9nerg\u00e9tique des STEP kWh/kgDBO5 \u00e9limin\u00e9",
@@ -1811,6 +2020,9 @@
       "nom": "Maillage du territoire par le r\u00e9seau TC",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Maillage du territoire par le r\u00e9seau TC",
@@ -1829,6 +2041,9 @@
       "nom": "Part du budget consacr\u00e9 aux projets de coop\u00e9ration significatifs et multi-acteurs par an sur le climat, l\u2019air et l\u2019\u00e9nergie (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Part du budget consacr\u00e9 aux projets de coop\u00e9ration significatifs et multi-acteurs par an sur le climat, l\u2019air et l\u2019\u00e9nergie (%)",
@@ -1848,6 +2063,9 @@
       "nom": "Part de voiries \u00ab\u00a0apais\u00e9es\u00a0\u00bb (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Part de voiries \u00ab\u00a0apais\u00e9es\u00a0\u00bb (%)",
@@ -1866,6 +2084,9 @@
       "nom": "Puissance photovolta\u00efque install\u00e9e sur le territoire (Wc/hab)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Puissance photovolta\u00efque install\u00e9e sur le territoire (Wc/hab)",
@@ -1884,6 +2105,10 @@
       "nom": "Production de chaleur/froid renouvelable  (MWh)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Production de chaleur/froid renouvelable  (MWh)",
@@ -1902,6 +2127,9 @@
       "nom": "Taux de production d'\u00e9nergie renouvelable pour la chaleur et le rafra\u00eechissement sur le territoire (en %)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Taux de production d'\u00e9nergie renouvelable pour la chaleur et le rafra\u00eechissement sur le territoire (en %)",
@@ -1920,6 +2148,9 @@
       "nom": "Part modale des d\u00e9placements alternatifs \u00e0 la voiture individuelle pour les d\u00e9placements  domicile-travail des agents de la collectivit\u00e9 (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Part modale des d\u00e9placements alternatifs \u00e0 la voiture individuelle pour les d\u00e9placements  domicile-travail des agents de la collectivit\u00e9 (%)",
@@ -1939,6 +2170,9 @@
       "nom": "Part modale pi\u00e9ton",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Part modale pi\u00e9ton",
@@ -1957,6 +2191,9 @@
       "nom": "Taux de couverture des besoins de chaleur du territoire (r\u00e9sidentiel et tertiaire) par les r\u00e9seaux de chaleur ENR&R (en %)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Taux de couverture des besoins de chaleur du territoire (r\u00e9sidentiel et tertiaire) par les r\u00e9seaux de chaleur ENR&R (en %)",
@@ -1975,6 +2212,9 @@
       "nom": "Part de b\u00e2timents de classe F ou G selon le DPE pour les GES (ou \u00e9quivalent) (hors DOM)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Part de b\u00e2timents de classe F ou G selon le DPE pour les GES (ou \u00e9quivalent) (hors DOM)",
@@ -1993,6 +2233,9 @@
       "nom": "Part de b\u00e2timents de classe A ou B selon le DPE pour les GES (ou \u00e9quivalent)  (hors DOM)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Part de b\u00e2timents de classe A ou B selon le DPE pour les GES (ou \u00e9quivalent)  (hors DOM)",
@@ -2011,6 +2254,9 @@
       "nom": "Budget associ\u00e9 \u00e0 la politique climat-air-\u00e9nergie (euros/hab.an)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Budget associ\u00e9 \u00e0 la politique climat-air-\u00e9nergie (euros/hab.an)",
@@ -2029,6 +2275,9 @@
       "nom": "Budget \u00e9tudes/expertises MDE/ENR/qualit\u00e9 de l'air/adaptation au changement climatique (euros)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Budget \u00e9tudes/expertises MDE/ENR/qualit\u00e9 de l'air/adaptation au changement climatique (euros)",
@@ -2047,6 +2296,9 @@
       "nom": "Budget actions communication/sensibilisation climat-air-\u00e9nergie (euros)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Budget actions communication/sensibilisation climat-air-\u00e9nergie (euros)",
@@ -2065,6 +2317,9 @@
       "nom": "Montant des aides financi\u00e8res accord\u00e9es aux particuliers et acteurs priv\u00e9s (euros)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Montant des aides financi\u00e8res accord\u00e9es aux particuliers et acteurs priv\u00e9s (euros)",
@@ -2083,6 +2338,9 @@
       "nom": "Montant des aides financi\u00e8res accord\u00e9es aux particuliers et acteurs priv\u00e9s (euros/hab.an)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Montant des aides financi\u00e8res accord\u00e9es aux particuliers et acteurs priv\u00e9s (euros/hab.an)",
@@ -2101,6 +2359,9 @@
       "nom": "Budget projets de coop\u00e9ration (euros)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Budget projets de coop\u00e9ration (euros)",
@@ -2119,6 +2380,9 @@
       "nom": "Budget politique cyclable (euros)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Budget politique cyclable (euros)",
@@ -2137,6 +2401,9 @@
       "nom": "Budget politique cyclable (euros/hab.an)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Budget politique cyclable (euros/hab.an)",
@@ -2155,6 +2422,9 @@
       "nom": "Budget travaux r\u00e9novation \u00e9nerg\u00e9tique patrimoine public (euros)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Budget travaux r\u00e9novation \u00e9nerg\u00e9tique patrimoine public (euros)",
@@ -2173,6 +2443,9 @@
       "nom": "Budget installations ENR publiques (euros)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Budget installations ENR publiques (euros)",
@@ -2191,6 +2464,9 @@
       "nom": "Taux d\u2019h\u00e9bergements labellis\u00e9s Ecolabel europ\u00e9en (ou \u00e9quivalent)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Taux d\u2019h\u00e9bergements labellis\u00e9s Ecolabel europ\u00e9en (ou \u00e9quivalent)",
@@ -2209,6 +2485,10 @@
       "nom": "Production d'\u00e9lectricit\u00e9 renouvelable  (MWh)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Production d'\u00e9lectricit\u00e9 renouvelable  (MWh)",
@@ -2227,6 +2507,9 @@
       "nom": "Taux de production d'\u00e9lectricit\u00e9 renouvelable sur le territoire (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Taux de production d'\u00e9lectricit\u00e9 renouvelable sur le territoire (%)",
@@ -2245,6 +2528,10 @@
       "nom": "Emissions annuelles de Nox (tonnes)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Emissions annuelles de Nox (tonnes)",
@@ -2263,6 +2550,10 @@
       "nom": "Emissions annuelles de PM10 (tonnes)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Emissions annuelles de PM10 (tonnes)",
@@ -2281,6 +2572,10 @@
       "nom": "Emissions annuelles de PM2,5 (tonnes)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Emissions annuelles de PM2,5 (tonnes)",
@@ -2299,6 +2594,10 @@
       "nom": "Emissions annuelles de COV (tonnes)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Emissions annuelles de COV (tonnes)",
@@ -2317,6 +2616,10 @@
       "nom": "Emissions annuelles de SO2  (tonnes)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Emissions annuelles de SO2  (tonnes)",
@@ -2335,6 +2638,10 @@
       "nom": "Emissions annuelles de NH3 (tonnes)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Emissions annuelles de NH3 (tonnes)",
@@ -2354,6 +2661,9 @@
       "nom": "Part modale TC",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Part modale TC",
@@ -2372,6 +2682,9 @@
       "nom": "Consommation \u00e9nerg\u00e9tique du syst\u00e8me d'alimentation en eau potable (captage/traitement/distribution) en kWh/hab",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Consommation \u00e9nerg\u00e9tique du syst\u00e8me d'alimentation en eau potable (captage/traitement/distribution) en kWh/hab",
@@ -2390,6 +2703,9 @@
       "nom": "Rendement du syst\u00e8me d'alimentation en eau potable (captage/traitement/distribution) en m3 brut/m3 vendu",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Rendement du syst\u00e8me d'alimentation en eau potable (captage/traitement/distribution) en m3 brut/m3 vendu",
@@ -2408,6 +2724,11 @@
       "nom": "Production d\u2019\u00e9nergie renouvelable globale du territoire",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "clef",
+        "cae",
+        "pcaet"
+      ],
       "source": null,
       "thematiques": [
         "energie_et_climat"
@@ -2428,6 +2749,9 @@
       "nom": "Production d\u2019\u00e9nergie renouvelable globale du territoire",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Production d\u2019\u00e9nergie renouvelable globale du territoire",
@@ -2446,6 +2770,9 @@
       "nom": "Consommation de chaleur/rafraichissement renouvelable et de r\u00e9cup\u00e9ration - patrimoine collectivit\u00e9   (MWh)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Consommation de chaleur/rafraichissement renouvelable et de r\u00e9cup\u00e9ration - patrimoine collectivit\u00e9   (MWh)",
@@ -2464,6 +2791,9 @@
       "nom": "Taux de couverture par les \u00e9nergies renouvelables et de r\u00e9cup\u00e9ration des besoins en chaleur et rafraichissement - patrimoine collectivit\u00e9 (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Taux de couverture par les \u00e9nergies renouvelables et de r\u00e9cup\u00e9ration des besoins en chaleur et rafraichissement - patrimoine collectivit\u00e9 (%)",
@@ -2482,6 +2812,9 @@
       "nom": "D\u00e9penses \u00e9nerg\u00e9tiques de la collectivit\u00e9 (euros)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "D\u00e9penses \u00e9nerg\u00e9tiques de la collectivit\u00e9 (euros)",
@@ -2500,6 +2833,9 @@
       "nom": "D\u00e9penses  \u00e9nerg\u00e9tiques - b\u00e2timents (euros)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "D\u00e9penses  \u00e9nerg\u00e9tiques - b\u00e2timents (euros)",
@@ -2518,6 +2854,9 @@
       "nom": "D\u00e9penses \u00e9nerg\u00e9tiques - v\u00e9hicules (euros)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "D\u00e9penses \u00e9nerg\u00e9tiques - v\u00e9hicules (euros)",
@@ -2536,6 +2875,9 @@
       "nom": "D\u00e9penses \u00e9nerg\u00e9tiques - \u00e9clairage public  (euros)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "D\u00e9penses \u00e9nerg\u00e9tiques - \u00e9clairage public  (euros)",
@@ -2554,6 +2896,9 @@
       "nom": "Part de voiries am\u00e9nag\u00e9es pour les cycles (%  Ou \u00e0 d\u00e9faut km/1000hab)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Part de voiries am\u00e9nag\u00e9es pour les cycles (%  Ou \u00e0 d\u00e9faut km/1000hab)",
@@ -2572,6 +2917,9 @@
       "nom": "Part des surfaces agricoles et naturelles (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Part des surfaces agricoles et naturelles (%)",
@@ -2590,6 +2938,9 @@
       "nom": "Part des achats d\u2019\u00e9lectricit\u00e9 renouvelable de la collectivit\u00e9 (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Part des achats d\u2019\u00e9lectricit\u00e9 renouvelable de la collectivit\u00e9 (%)",
@@ -2609,6 +2960,9 @@
       "nom": "Consommation d'\u00e9nergie finale des b\u00e2timents publics (MWh)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Consommation d'\u00e9nergie finale des b\u00e2timents publics (MWh)",
@@ -2628,6 +2982,9 @@
       "nom": "Consommation d'\u00e9nergie finale des b\u00e2timents publics (rapport\u00e9 au nb d'habitant, en kWh/hab)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Consommation d'\u00e9nergie finale des b\u00e2timents publics (rapport\u00e9 au nb d'habitant, en kWh/hab)",
@@ -2647,6 +3004,9 @@
       "nom": "Consommation d'\u00e9nergie finale des b\u00e2timents publics (rapport\u00e9 \u00e0 la surface du patrimoine, en kWh/m\u00b2)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Consommation d'\u00e9nergie finale des b\u00e2timents publics (rapport\u00e9 \u00e0 la surface du patrimoine, en kWh/m\u00b2)",
@@ -2666,6 +3026,10 @@
       "nom": "Production de d\u00e9chets",
       "parent": null,
       "participation_score": true,
+      "programmes": [
+        "cae",
+        "eci"
+      ],
       "source": null,
       "thematiques": [
         "eci_dechets"
@@ -2686,6 +3050,9 @@
       "nom": "Production Ordures m\u00e9nag\u00e8res r\u00e9siduelles (kg/hab)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Production Ordures m\u00e9nag\u00e8res r\u00e9siduelles (kg/hab)",
@@ -2704,6 +3071,9 @@
       "nom": "Production de d\u00e9chets collect\u00e9s s\u00e9lectivement, soit en porte-\u00e0-porte, soit en apport volontaire (kg/hab)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Production de d\u00e9chets collect\u00e9s s\u00e9lectivement, soit en porte-\u00e0-porte, soit en apport volontaire (kg/hab)",
@@ -2722,6 +3092,9 @@
       "nom": "Production de d\u00e9chets occasionnels (kg/hab)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Production de d\u00e9chets occasionnels (kg/hab)",
@@ -2740,6 +3113,9 @@
       "nom": "Surface annuelle artificialis\u00e9e (ha/an)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Surface annuelle artificialis\u00e9e (ha/an)",
@@ -2758,6 +3134,9 @@
       "nom": "Part d'ETP de la collectivit\u00e9 \u00a0d\u00e9di\u00e9 \u00e0 la mise en \u0153uvre de la politique climat air \u00e9nergie ( %)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Part d'ETP de la collectivit\u00e9 \u00a0d\u00e9di\u00e9 \u00e0 la mise en \u0153uvre de la politique climat air \u00e9nergie ( %)",
@@ -2776,6 +3155,9 @@
       "nom": "Rendement \u00e9nerg\u00e9tique UIOM en % (valorisation \u00e9nerg\u00e9tique \u00e9lectricit\u00e9 et chaleur)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Rendement \u00e9nerg\u00e9tique UIOM en % (valorisation \u00e9nerg\u00e9tique \u00e9lectricit\u00e9 et chaleur)",
@@ -2794,6 +3176,9 @@
       "nom": "Part modale de la voiture (en nombre de d\u00e9placements)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Part modale de la voiture (en nombre de d\u00e9placements)",
@@ -2812,6 +3197,11 @@
       "nom": "\u00c9missions de gaz \u00e0 effet de serre",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "clef",
+        "cae",
+        "pcaet"
+      ],
       "source": null,
       "thematiques": [
         "energie_et_climat"
@@ -2832,6 +3222,9 @@
       "nom": "Emissions de gaz \u00e0 effet de serre par habitant",
       "parent": "cae_1.a",
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre par habitant",
@@ -2850,6 +3243,10 @@
       "nom": "Emissions de gaz \u00e0 effet de serre du r\u00e9sidentiel",
       "parent": "cae_1.a",
       "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre du r\u00e9sidentiel",
@@ -2868,6 +3265,10 @@
       "nom": "Emissions de gaz \u00e0 effet de serre du tertiaire",
       "parent": "cae_1.a",
       "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre du tertiaire",
@@ -2886,6 +3287,10 @@
       "nom": "Emissions de gaz \u00e0 effet de serre du transport routier",
       "parent": "cae_1.a",
       "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre du transport routier",
@@ -2904,6 +3309,10 @@
       "nom": "Emissions de gaz \u00e0 effet de serre de secteurs \"autres transports\"",
       "parent": "cae_1.a",
       "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre de secteurs \"autres transports\"",
@@ -2922,6 +3331,10 @@
       "nom": "Emissions de gaz \u00e0 effet de serre de l'agriculture",
       "parent": "cae_1.a",
       "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre de l'agriculture",
@@ -2940,6 +3353,10 @@
       "nom": "Emissions de gaz \u00e0 effet de serre des d\u00e9chets",
       "parent": "cae_1.a",
       "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre des d\u00e9chets",
@@ -2958,6 +3375,10 @@
       "nom": "Emissions de gaz \u00e0 effet de serre de l'industrie hors branche \u00e9nergie",
       "parent": "cae_1.a",
       "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre de l'industrie hors branche \u00e9nergie",
@@ -2976,6 +3397,10 @@
       "nom": "Emissions de gaz \u00e0 effet de serre de l'industrie branche \u00e9nergie",
       "parent": "cae_1.a",
       "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre de l'industrie branche \u00e9nergie",
@@ -2994,6 +3419,9 @@
       "nom": "Part de produits biologiques dans la restauration collective publique (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Part de produits biologiques dans la restauration collective publique (%)",
@@ -3012,6 +3440,9 @@
       "nom": "Nombre de places de stationnement public pour les voitures par habitant (nb/hab)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Nombre de places de stationnement public pour les voitures par habitant (nb/hab)",
@@ -3030,6 +3461,9 @@
       "nom": "Part de surface foresti\u00e8re certifi\u00e9e (%)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Part de surface foresti\u00e8re certifi\u00e9e (%)",
@@ -3048,6 +3482,9 @@
       "nom": "Taux d'\u00e9nergie renouvelable et de r\u00e9cup\u00e9ration (ENR&R) des r\u00e9seaux de chaleur sur le territoire (en %)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Taux d'\u00e9nergie renouvelable et de r\u00e9cup\u00e9ration (ENR&R) des r\u00e9seaux de chaleur sur le territoire (en %)",
@@ -3066,6 +3503,9 @@
       "nom": "Part de b\u00e2timents publics ayant fait l'objet d'un diagnostic \u00e9nerg\u00e9tique",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Part de b\u00e2timents publics ayant fait l'objet d'un diagnostic \u00e9nerg\u00e9tique",
@@ -3084,6 +3524,9 @@
       "nom": "Part d'\u00e9tablissements scolaires couverts par un PDES ou un p\u00e9dibus/v\u00e9lobus",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Part d'\u00e9tablissements scolaires couverts par un PDES ou un p\u00e9dibus/v\u00e9lobus",
@@ -3102,6 +3545,9 @@
       "nom": "Nombre de m\u00e9nages demandeurs et b\u00e9n\u00e9ficiaires du FSL pour l\u2019aide au paiement des factures d\u2019\u00e9nergie sur le territoire",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Nombre de m\u00e9nages demandeurs et b\u00e9n\u00e9ficiaires du FSL pour l\u2019aide au paiement des factures d\u2019\u00e9nergie sur le territoire",
@@ -3120,6 +3566,9 @@
       "nom": "Valorisation des CEE (kWhcumac  valoris\u00e9/an)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Valorisation des CEE (kWhcumac  valoris\u00e9/an)",
@@ -3138,6 +3587,9 @@
       "nom": "Fr\u00e9quentation des TC (voyages/hab)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Fr\u00e9quentation des TC (voyages/hab)",
@@ -3156,6 +3608,9 @@
       "nom": "Energie produite par la valorisation des biod\u00e9chets en kWh/an (\u00e0 d\u00e9faut kg/hab.an de biod\u00e9chets collect\u00e9s de mani\u00e8re s\u00e9parative -m\u00e9thanisation et/ou compostage)",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Energie produite par la valorisation des biod\u00e9chets en kWh/an (\u00e0 d\u00e9faut kg/hab.an de biod\u00e9chets collect\u00e9s de mani\u00e8re s\u00e9parative -m\u00e9thanisation et/ou compostage)",
@@ -3174,6 +3629,9 @@
       "nom": "Nombre d'heures de consultations et de conseils sur la th\u00e9matique climat air \u00e9nergie pour 100 hab / an",
       "parent": null,
       "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
       "source": null,
       "thematiques": [],
       "titre_long": "Nombre d'heures de consultations et de conseils sur la th\u00e9matique climat air \u00e9nergie pour 100 hab / an",
