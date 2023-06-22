@@ -62,11 +62,15 @@ Deno.test("Fiches par echeance", async () => {
   await testReset();
   await signIn("yolododo");
 
-  await supabase.from('fiche_action').update({"amelioration_continue" : true}).eq("id", 1).select();
+  await supabase
+    .from("fiche_action")
+    .update({ amelioration_continue: true })
+    .eq("id", 1)
+    .select();
 
   const filterResponse = await supabase.rpc("filter_fiches_action", {
     collectivite_id: 1,
-    echeance: 'Action en amélioration continue'
+    echeance: "Action en amélioration continue",
   });
   assertExists(filterResponse.data);
   assertEquals(filterResponse.data.length, 1);
@@ -76,18 +80,22 @@ Deno.test("Fiches par echeance", async () => {
   await testReset();
   await signIn("yolododo");
 
-  await supabase.from('fiche_action').update({"date_fin_provisoire" : new Date().toISOString()}).eq("id", 1).select();
+  await supabase
+    .from("fiche_action")
+    .update({ date_fin_provisoire: new Date().toISOString() })
+    .eq("id", 1)
+    .select();
 
   const filterResponse2 = await supabase.rpc("filter_fiches_action", {
     collectivite_id: 1,
-    echeance: 'Échéance dépassée'
+    echeance: "Échéance dépassée",
   });
   assertExists(filterResponse2.data);
   assertEquals(filterResponse2.data.length, 1);
 
   const filterResponse3 = await supabase.rpc("filter_fiches_action", {
     collectivite_id: 1,
-    echeance: 'Échéance dans plus d’un an'
+    echeance: "Échéance dans plus d’un an",
   });
   assertExists(filterResponse3.data);
   assertEquals(filterResponse3.data.length, 0);
@@ -99,11 +107,15 @@ Deno.test("Fiches par budget", async () => {
   await testReset();
   await signIn("yolododo");
 
-  await supabase.from('fiche_action').update({"budget_previsionnel" : 10}).eq("id", 1).select();
+  await supabase
+    .from("fiche_action")
+    .update({ budget_previsionnel: 10 })
+    .eq("id", 1)
+    .select();
 
   const filterResponse = await supabase.rpc("filter_fiches_action", {
     collectivite_id: 1,
-    budget_min: 8
+    budget_min: 8,
   });
   assertExists(filterResponse.data);
   assertEquals(filterResponse.data.length, 1);
@@ -111,7 +123,7 @@ Deno.test("Fiches par budget", async () => {
   const filterResponse2 = await supabase.rpc("filter_fiches_action", {
     collectivite_id: 1,
     budget_min: 8,
-    budget_max : 9
+    budget_max: 9,
   });
   assertExists(filterResponse2.data);
   assertEquals(filterResponse2.data.length, 0);
@@ -125,21 +137,27 @@ Deno.test("Fiches par thematique", async () => {
 
   const filterResponse = await supabase.rpc("filter_fiches_action", {
     collectivite_id: 1,
-    thematiques: [{"thematique" : 'Activités économiques'}]
+    thematiques: [{ thematique: "Activités économiques" }],
   });
   assertExists(filterResponse.data);
   assertEquals(filterResponse.data.length, 10);
 
   const filterResponse2 = await supabase.rpc("filter_fiches_action", {
     collectivite_id: 1,
-    thematiques: [{"thematique" : 'Énergie et climat'}]
+    thematiques: [{ thematique: "Énergie et climat" }],
   });
   assertExists(filterResponse2.data);
   assertEquals(filterResponse2.data.length, 0);
 
   const filterResponse3 = await supabase.rpc("filter_fiches_action", {
     collectivite_id: 1,
-    sous_thematiques: [{"id" : 1, "thematique" : "Activités économiques", "sous_thematique":"Agriculture et alimentation"}]
+    sous_thematiques: [
+      {
+        id: 1,
+        thematique: "Activités économiques",
+        sous_thematique: "Agriculture et alimentation",
+      },
+    ],
   });
   assertExists(filterResponse3.data);
   assertEquals(filterResponse3.data.length, 10);
@@ -160,5 +178,3 @@ Deno.test("Fiches sans plan", async () => {
 
   await signOut();
 });
-
-
