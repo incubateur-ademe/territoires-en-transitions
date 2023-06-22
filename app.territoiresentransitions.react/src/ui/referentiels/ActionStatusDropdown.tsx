@@ -1,6 +1,5 @@
 import {useEffect, useState} from 'react';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {useActionScore} from 'core-logic/hooks/scoreHooks';
 import {
   useActionStatut,
   useEditActionStatutIsDisabled,
@@ -24,6 +23,7 @@ import {
   getStatusFromIndex,
   statutParAvancement,
 } from './utils';
+import {useScoreRealise} from 'app/pages/collectivite/EtatDesLieux/Referentiel/data/useScoreRealise';
 
 export const ActionStatusDropdown = ({
   action,
@@ -48,8 +48,8 @@ export const ActionStatusDropdown = ({
   const {statut, filled} = useActionStatut(args);
   const {avancement, avancement_detaille} = statut || {};
 
-  const score = useActionScore(action.id);
-  const {concerne, desactive} = score || {};
+  const score = useScoreRealise(action);
+  const {concerne, desactive} = score;
   const avancementExt = getAvancementExt({
     avancement,
     desactive,
@@ -219,7 +219,7 @@ export const ActionStatusDropdown = ({
                     color: actionAvancementColors[getStatusFromIndex(idx)],
                   })) ?? []
                 }
-                total={score?.point_potentiel ?? 0}
+                total={score.pointsMaxRef ?? 0}
                 defaultScore={{
                   label: avancementToLabel.non_renseigne,
                   color: actionAvancementColors.non_renseigne,
