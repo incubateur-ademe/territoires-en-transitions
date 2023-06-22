@@ -5,10 +5,12 @@ import {ActionStatusDropdown} from 'ui/referentiels/ActionStatusDropdown';
 import {Tooltip} from 'ui/shared/floating-ui/Tooltip';
 import ScoreDisplay from 'app/pages/collectivite/EtatDesLieux/Referentiel/SuiviAction/ScoreDisplay';
 import {TActionAvancementExt} from 'types/alias';
+import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
 
 type SubActionHeaderProps = {
   action: ActionDefinitionSummary;
   hideStatus?: boolean;
+  displayProgressBar?: boolean;
   openSubAction?: boolean;
   onToggleOpen?: () => void;
   onSaveStatus?: (
@@ -25,6 +27,7 @@ type SubActionHeaderProps = {
 const SubActionHeader = ({
   action,
   hideStatus = false,
+  displayProgressBar = false,
   openSubAction = false,
   onToggleOpen,
   onSaveStatus,
@@ -81,7 +84,12 @@ const SubActionHeader = ({
             )}
         </div>
 
-        {isSubAction && <ScoreDisplay action={action} size="xs" />}
+        {isSubAction && (
+          <div className="flex gap-8">
+            <ScoreDisplay action={action} size="xs" />
+            {displayProgressBar && <ActionProgressBar action={action} />}
+          </div>
+        )}
       </div>
 
       {/* Menu de sélection du statut */}
