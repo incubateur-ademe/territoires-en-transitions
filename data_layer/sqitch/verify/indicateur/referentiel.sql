@@ -10,12 +10,13 @@ select modified_at,
        nom,
        description,
        unite,
-       obligation_eci,
        participation_score,
        titre_long,
        parent,
        source,
-       type
+       type,
+       thematiques,
+       programmes
 from indicateur_definition
 where false;
 
