@@ -3,7 +3,6 @@
 BEGIN;
 
 drop function filter_fiches_action;
-drop type fiche_action_echeances;
 create function
     filter_fiches_action(
     collectivite_id integer,
