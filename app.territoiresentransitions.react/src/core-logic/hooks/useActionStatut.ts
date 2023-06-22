@@ -22,7 +22,7 @@ export const useActionStatut = (args: TActionStatutParams) => {
         action.action_id.includes(action_id) &&
         action.action_id.split(action_id)[1] !== '' &&
         action.avancement !== 'non_renseigne'
-    ) || null;
+    ) !== undefined || null;
 
   return {
     statut,

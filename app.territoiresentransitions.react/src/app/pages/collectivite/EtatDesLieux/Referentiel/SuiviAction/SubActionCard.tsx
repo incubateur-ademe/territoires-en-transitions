@@ -1,7 +1,7 @@
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useActionSummaryChildren} from 'core-logic/hooks/referentiel';
 import {useActionStatut} from 'core-logic/hooks/useActionStatut';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {useEffect, useState} from 'react';
 import {Accordion} from 'ui/Accordion';
 import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
@@ -27,10 +27,10 @@ const SubActionCard = ({
   forceOpen,
   onOpenSubAction,
 }: SubActionCardProps): JSX.Element => {
-  const collectivite = useCurrentCollectivite();
-  const {statut} = useActionStatut({
+  const collectivite_id = useCollectiviteId();
+  const {statut, filled} = useActionStatut({
     action_id: subAction.id,
-    collectivite_id: collectivite?.collectivite_id || 0,
+    collectivite_id: collectivite_id ?? 0,
   });
   const tasks = useActionSummaryChildren(subAction);
   const shouldHideTasksStatus =
@@ -65,6 +65,10 @@ const SubActionCard = ({
       {/* En-tête */}
       <SubActionHeader
         action={subAction}
+        displayProgressBar={
+          statut?.avancement === 'detaille' ||
+          (statut?.avancement === 'non_renseigne' && filled === true)
+        }
         openSubAction={openSubAction}
         onToggleOpen={handleToggleOpen}
       />
