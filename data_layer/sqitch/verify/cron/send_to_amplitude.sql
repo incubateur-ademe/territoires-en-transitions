@@ -2,6 +2,6 @@
 
 BEGIN;
 
-select 1/count(*) from cron.job where jobname = 'amplitude_send_yesterday_events';
+select 1/count(*) from cron.job where jobname = 'amplitude_send_yesterday_creations';
 
 ROLLBACK;
