@@ -1,7 +1,7 @@
--- Revert tet:cron/amplitude from pg
+-- Deploy tet:cron/amplitude to pg
 
 BEGIN;
 
-select cron.unschedule('amplitude_send_yesterday_events');
+select cron.unschedule('amplitude_send_yesterday_creations');
 
 COMMIT;
