@@ -27,7 +27,7 @@ actions: [cae_1.2.3, eci_2.1]
 id: REOM
 type: binaire
 thematique_id: dechets
-actions: [eci_4.2.1, eci_4.2.3]
+actions: [eci_4.2, eci_4.2.1, eci_4.2.3]
 ```
 
 # Si la collectivité a transféré le traitement des déchets à un syndicat compétent en la matière, quelle est la part de la collectivité dans ce syndicat ?
