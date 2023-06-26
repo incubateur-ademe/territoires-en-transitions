@@ -1,9 +1,11 @@
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {TActionAvancementExt} from 'types/alias';
+import {SuiviScoreRow} from '../data/useScoreRealise';
 import SubActionTask from './SubActionTask';
 
 type SubActionTasksListProps = {
   tasks: ActionDefinitionSummary[];
+  actionScores: {[actionId: string]: SuiviScoreRow};
   hideStatus?: boolean;
   onSaveStatus?: (
     actionId: string,
@@ -18,6 +20,7 @@ type SubActionTasksListProps = {
 
 const SubActionTasksList = ({
   tasks,
+  actionScores,
   hideStatus = false,
   onSaveStatus,
 }: SubActionTasksListProps): JSX.Element => {
@@ -27,6 +30,7 @@ const SubActionTasksList = ({
         <SubActionTask
           key={task.id}
           task={task}
+          actionScores={actionScores}
           hideStatus={hideStatus}
           onSaveStatus={onSaveStatus}
         />

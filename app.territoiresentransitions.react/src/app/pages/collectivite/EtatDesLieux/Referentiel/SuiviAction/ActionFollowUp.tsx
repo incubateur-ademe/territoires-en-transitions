@@ -6,9 +6,11 @@ import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
 import ExpandAllButton from 'ui/buttons/ExpandAllButton';
 import SubActionCard from './SubActionCard';
 import {phaseToLabel} from 'ui/referentiels/utils';
+import {SuiviScoreRow} from '../data/useScoreRealise';
 
 type ActionFollowUpProps = {
   action: ActionDefinitionSummary;
+  actionScores: {[actionId: string]: SuiviScoreRow};
 };
 
 /**
@@ -16,7 +18,10 @@ type ActionFollowUpProps = {
  * "Référentiel CAE / ECI" de la page "Etat des lieux"
  */
 
-const ActionFollowUp = ({action}: ActionFollowUpProps): JSX.Element => {
+const ActionFollowUp = ({
+  action,
+  actionScores,
+}: ActionFollowUpProps): JSX.Element => {
   const subActions = useSortedActionSummaryChildren(action);
 
   // Etat du bouton "Tout déplier" / "Tout replier"
@@ -79,6 +84,7 @@ const ActionFollowUp = ({action}: ActionFollowUpProps): JSX.Element => {
                   <SubActionCard
                     key={subAction.id}
                     subAction={subAction}
+                    actionScores={actionScores}
                     forceOpen={openAll}
                     onOpenSubAction={updateOpenedSubActionsCount}
                   />

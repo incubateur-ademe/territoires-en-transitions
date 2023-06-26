@@ -5,6 +5,7 @@ import {useActionStatut} from 'core-logic/hooks/useActionStatut';
 import {useEffect, useState} from 'react';
 import {Accordion} from 'ui/Accordion';
 import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
+import {SuiviScoreRow} from '../data/useScoreRealise';
 import SubActionDescription from './SubActionDescription';
 import SubActionHeader from './SubActionHeader';
 import SubActionPreuvesAccordion from './SubActionPreuvesAccordion';
@@ -12,6 +13,7 @@ import SubActionTasksList from './SubActionTasksList';
 
 type SubActionCardProps = {
   subAction: ActionDefinitionSummary;
+  actionScores: {[actionId: string]: SuiviScoreRow};
   forceOpen: boolean;
   onOpenSubAction: (isOpen: boolean) => void;
 };
@@ -24,6 +26,7 @@ type SubActionCardProps = {
 
 const SubActionCard = ({
   subAction,
+  actionScores,
   forceOpen,
   onOpenSubAction,
 }: SubActionCardProps): JSX.Element => {
@@ -65,6 +68,7 @@ const SubActionCard = ({
       {/* En-tête */}
       <SubActionHeader
         action={subAction}
+        actionScores={actionScores}
         displayProgressBar={
           statut?.avancement === 'detaille' ||
           (statut?.avancement === 'non_renseigne' && filled === true)
@@ -100,6 +104,7 @@ const SubActionCard = ({
               html={
                 <SubActionTasksList
                   tasks={tasks}
+                  actionScores={actionScores}
                   hideStatus={shouldHideTasksStatus}
                 />
               }

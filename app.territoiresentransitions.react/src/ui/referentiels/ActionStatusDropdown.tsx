@@ -23,13 +23,15 @@ import {
   getStatusFromIndex,
   statutParAvancement,
 } from './utils';
-import {useScoreRealise} from 'app/pages/collectivite/EtatDesLieux/Referentiel/data/useScoreRealise';
+import {SuiviScoreRow} from 'app/pages/collectivite/EtatDesLieux/Referentiel/data/useScoreRealise';
 
 export const ActionStatusDropdown = ({
   action,
+  actionScores,
   onSaveStatus,
 }: {
   action: ActionDefinitionSummary;
+  actionScores: {[actionId: string]: SuiviScoreRow};
   onSaveStatus?: (
     actionId: string,
     status: TActionAvancementExt,
@@ -48,7 +50,7 @@ export const ActionStatusDropdown = ({
   const {statut, filled} = useActionStatut(args);
   const {avancement, avancement_detaille} = statut || {};
 
-  const score = useScoreRealise(action);
+  const score = actionScores[action.id] ?? {};
   const {concerne, desactive} = score;
   const avancementExt = getAvancementExt({
     avancement,
@@ -219,7 +221,7 @@ export const ActionStatusDropdown = ({
                     color: actionAvancementColors[getStatusFromIndex(idx)],
                   })) ?? []
                 }
-                total={score.pointsMaxRef ?? 0}
+                total={score.points_max_referentiel ?? 0}
                 defaultScore={{
                   label: avancementToLabel.non_renseigne,
                   color: actionAvancementColors.non_renseigne,
@@ -249,6 +251,7 @@ export const ActionStatusDropdown = ({
       {openScoreAuto && (
         <ScoreAutoModal
           action={action}
+          actionScores={actionScores}
           externalOpen={openScoreAuto}
           setExternalOpen={setOpenScoreAuto}
           onSaveScore={handleSaveScoreAuto}

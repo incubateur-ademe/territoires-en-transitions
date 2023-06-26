@@ -6,9 +6,11 @@ import {Tooltip} from 'ui/shared/floating-ui/Tooltip';
 import ScoreDisplay from 'app/pages/collectivite/EtatDesLieux/Referentiel/SuiviAction/ScoreDisplay';
 import {TActionAvancementExt} from 'types/alias';
 import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
+import {SuiviScoreRow} from '../data/useScoreRealise';
 
 type SubActionHeaderProps = {
   action: ActionDefinitionSummary;
+  actionScores: {[actionId: string]: SuiviScoreRow};
   hideStatus?: boolean;
   displayProgressBar?: boolean;
   openSubAction?: boolean;
@@ -26,6 +28,7 @@ type SubActionHeaderProps = {
 
 const SubActionHeader = ({
   action,
+  actionScores,
   hideStatus = false,
   displayProgressBar = false,
   openSubAction = false,
@@ -86,7 +89,7 @@ const SubActionHeader = ({
 
         {isSubAction && (
           <div className="flex gap-12">
-            <ScoreDisplay action={action} size="xs" />
+            <ScoreDisplay score={actionScores[action.id]} size="xs" />
             {displayProgressBar && <ActionProgressBar action={action} />}
           </div>
         )}
@@ -95,7 +98,11 @@ const SubActionHeader = ({
       {/* Menu de sélection du statut */}
       <div className="lg:col-span-2 col-span-3">
         {!hideStatus && (
-          <ActionStatusDropdown action={action} onSaveStatus={onSaveStatus} />
+          <ActionStatusDropdown
+            action={action}
+            actionScores={actionScores}
+            onSaveStatus={onSaveStatus}
+          />
         )}
       </div>
     </div>

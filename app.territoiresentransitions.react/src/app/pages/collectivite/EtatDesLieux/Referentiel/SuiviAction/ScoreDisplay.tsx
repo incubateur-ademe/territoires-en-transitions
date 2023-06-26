@@ -1,11 +1,10 @@
 import classNames from 'classnames';
-import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {CheckIcon} from 'ui/icons/CheckIcon';
 import {toLocaleFixed} from 'utils/toFixed';
-import {useScoreRealise} from '../data/useScoreRealise';
+import {SuiviScoreRow} from '../data/useScoreRealise';
 
 type ScoreDisplayProps = {
-  action: ActionDefinitionSummary;
+  score: SuiviScoreRow;
   legend?: string;
   size?: 'xs' | 'sm';
   className?: string;
@@ -17,18 +16,20 @@ type ScoreDisplayProps = {
  */
 
 const ScoreDisplay = ({
-  action,
+  score,
   legend,
   size,
   className,
 }: ScoreDisplayProps): JSX.Element => {
-  const {pointsRealises, pointsMax} = useScoreRealise(action);
-
-  return (
+  return !!score ? (
     <div
       className={classNames('flex items-center', {
-        visible: pointsRealises !== null && pointsMax !== null,
-        invisible: pointsRealises === null || pointsMax === null,
+        visible:
+          score.points_realises !== null &&
+          score.points_max_personnalises !== null,
+        invisible:
+          score.points_realises === null ||
+          score.points_max_personnalises === null,
         'text-xs': size === 'xs',
         'text-sm': size === 'sm',
         'text-base': size === undefined,
@@ -42,8 +43,11 @@ const ScoreDisplay = ({
         })}
       />
       {legend ? `${legend} : ` : ''}
-      {toLocaleFixed(pointsRealises, 2)} / {toLocaleFixed(pointsMax, 2)} points
+      {toLocaleFixed(score.points_realises, 2)} /{' '}
+      {toLocaleFixed(score.points_max_personnalises, 2)} points
     </div>
+  ) : (
+    <></>
   );
 };
 
