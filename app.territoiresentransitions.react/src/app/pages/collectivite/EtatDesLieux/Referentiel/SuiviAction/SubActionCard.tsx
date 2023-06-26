@@ -37,7 +37,8 @@ const SubActionCard = ({
   });
   const tasks = useActionSummaryChildren(subAction);
   const shouldHideTasksStatus =
-    statut?.avancement !== 'non_renseigne' || statut?.concerne === false;
+    (statut !== null && statut?.avancement !== 'non_renseigne') ||
+    statut?.concerne === false;
   const shouldOpen = true;
   // Condition à décommenter lorsque le statut à la sous-action sera possible
   // subAction.referentiel === 'eci' ||

@@ -81,7 +81,7 @@ export const ActionStatusDropdown = ({
       setLocalAvancement(avancementExt);
     }
     setLocalAvancementDetaille(avancement_detaille);
-  }, [avancementExt, avancement_detaille, filled]);
+  }, [avancementExt, avancement_detaille, concerne, filled]);
 
   // Mise à jour du statut lorsque une nouvelle valeur
   // est sélectionnée sur le dropdown
@@ -187,7 +187,7 @@ export const ActionStatusDropdown = ({
 
   return (
     <div
-      className="flex flex-col gap-3 items-end w-full"
+      className="flex flex-col gap-3 items-end w-fit ml-auto"
       onClick={evt => evt.stopPropagation()}
     >
       {/* Dropdown avec suppression de l'option "non renseigné" sur les sous-actions 
