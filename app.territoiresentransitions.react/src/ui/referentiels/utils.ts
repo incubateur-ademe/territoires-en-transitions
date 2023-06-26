@@ -58,6 +58,8 @@ export const getAvancementExt = ({
   // explicitement par l'utilisateur
   if (desactive || concerne === false) {
     return 'non_concerne';
+  } else if (avancement === undefined) {
+    return 'non_renseigne';
   }
   return avancement;
 };

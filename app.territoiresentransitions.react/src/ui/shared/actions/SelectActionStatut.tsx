@@ -55,7 +55,7 @@ export const SelectActionStatut = (props: TSelectActionStatutProps) => {
       value={currentValue}
       options={options}
       onSelect={onChange}
-      buttonClassName="min-w-5rem w-fit p-0"
+      buttonClassName="min-w-5rem w-fit p-0 !bg-transparent"
       renderOption={option => (
         <ActionStatutBadge
           statut={option.value as TActionAvancementExt}
