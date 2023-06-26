@@ -1,7 +1,9 @@
 from __future__ import annotations
+import re
 from typing import Callable, List, Optional
-
 from .models.actions import ActionChildren, ActionId
+
+parent_pattern = re.compile(r'(.*)\.')
 
 
 class ActionTreeError(Exception):
@@ -10,6 +12,7 @@ class ActionTreeError(Exception):
 
 class ActionTree:
     """Un arbre d'action avec des méthodes d'itération"""
+
     def __init__(self, actions_children: list[ActionChildren]) -> None:
 
         self.children_ids_by_action_id = {
@@ -25,19 +28,16 @@ class ActionTree:
         return self.children_ids_by_action_id.get(action_id, [])
 
     def get_siblings(self, action_id: ActionId) -> List[ActionId]:
-        action_parent = [
-            parent_id
-            for parent_id, children in self.children_ids_by_action_id.items()
-            if action_id in children
-        ]
-        return self.get_children(action_parent[0]) if action_parent else []
+        match = parent_pattern.match(action_id, 0)
+        parent = match.group(1)
+        return self.get_children(parent) if parent else []
 
     def map_from_taches_to_root(self, callback: Callable[[ActionId], None]):
         for action_id in self._backward_ids:
             callback(action_id)
 
     def map_from_actions_to_taches(
-        self, callback: Callable[[ActionId], None], action_depth: int
+            self, callback: Callable[[ActionId], None], action_depth: int
     ):
         for action_id in self._forward_ids:
             this_depth = self._depths_by_action_ids[action_id]
@@ -45,9 +45,9 @@ class ActionTree:
                 callback(action_id)
 
     def map_from_action_to_taches(
-        self,
-        callback: Callable[[ActionId], None],
-        action_id: ActionId,
+            self,
+            callback: Callable[[ActionId], None],
+            action_id: ActionId,
     ):
         """Appelle la fonction callback en partant de [action_id] jusqu'aux tâches."""
         callback(action_id)
@@ -55,9 +55,9 @@ class ActionTree:
             self.map_from_action_to_taches(callback, action_child)
 
     def map_from_action_to_root(
-        self,
-        callback: Callable[[ActionId], None],
-        action_id: ActionId
+            self,
+            callback: Callable[[ActionId], None],
+            action_id: ActionId
     ):
         callback(action_id)
         action_parent = self._get_parent(action_id)
