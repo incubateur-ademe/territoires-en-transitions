@@ -48,22 +48,18 @@ class ActionTree:
         self,
         callback: Callable[[ActionId], None],
         action_id: ActionId,
-        include_action: bool = True,
     ):
         """Appelle la fonction callback en partant de [action_id] jusqu'aux tâches."""
-        if include_action:
-            callback(action_id)
+        callback(action_id)
         for action_child in self.get_children(action_id):
             self.map_from_action_to_taches(callback, action_child)
 
     def map_from_action_to_root(
         self,
         callback: Callable[[ActionId], None],
-        action_id: ActionId,
-        include_action: bool = True,
+        action_id: ActionId
     ):
-        if include_action:
-            callback(action_id)
+        callback(action_id)
         action_parent = self._get_parent(action_id)
         if action_parent:
             self.map_from_action_to_root(callback, action_parent)

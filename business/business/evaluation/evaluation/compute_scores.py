@@ -88,14 +88,12 @@ def compute_scores(
                 referentiel_tree.map_from_action_to_taches(
                     lambda action_id: apply_factor_to_score_realise(scores, action_id, override_factor),  # type: ignore
                     action_id,
-                    include_action=True,
                 )
                 referentiel_tree.map_from_action_to_root(
                     lambda action_id: set_points_to_children_sum(
                         scores, action_id, referentiel_tree
                     ),
                     action_id,
-                    include_action=False,
                 )
     return {
         action_id: _round_action_score(score) for action_id, score in scores.items()
