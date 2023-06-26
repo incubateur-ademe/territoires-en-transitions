@@ -1,3 +1,4 @@
+import {SuiviScoreRow} from 'app/pages/collectivite/EtatDesLieux/Referentiel/data/useScoreRealise';
 import SubActionTasksList from 'app/pages/collectivite/EtatDesLieux/Referentiel/SuiviAction/SubActionTasksList';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {useActionSummaryChildren} from 'core-logic/hooks/referentiel';
@@ -7,6 +8,7 @@ import Modal from 'ui/shared/floating-ui/Modal';
 
 type ScoreAutoModalProps = {
   action: ActionDefinitionSummary;
+  actionScores: {[actionId: string]: SuiviScoreRow};
   externalOpen: boolean;
   setExternalOpen: Dispatch<SetStateAction<boolean>>;
   onSaveScore: (
@@ -20,6 +22,7 @@ type ScoreAutoModalProps = {
 
 const ScoreAutoModal = ({
   action,
+  actionScores,
   externalOpen,
   setExternalOpen,
   onSaveScore,
@@ -70,6 +73,7 @@ const ScoreAutoModal = ({
             <div className="w-full py-6">
               <SubActionTasksList
                 tasks={tasks}
+                actionScores={actionScores}
                 onSaveStatus={handleChangeStatus}
               />
               <hr />

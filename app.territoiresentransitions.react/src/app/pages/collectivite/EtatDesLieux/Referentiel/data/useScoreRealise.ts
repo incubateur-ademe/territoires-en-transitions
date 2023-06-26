@@ -9,6 +9,7 @@ import {Referentiel} from 'types/litterals';
 export type SuiviScoreRow = ActionReferentiel &
   Pick<
     TActionStatutsRow,
+    | 'action_id'
     | 'concerne'
     | 'desactive'
     | 'points_realises'
@@ -28,9 +29,10 @@ const fetchScore = async (
   const {error, data} = await supabaseClient
     .from('action_statuts')
     .select(
-      'concerne, desactive, points_realises, points_max_personnalises, points_max_referentiel'
+      'action_id, concerne, desactive, points_realises, points_max_personnalises, points_max_referentiel'
     )
-    .match({collectivite_id, referentiel, action_id});
+    .match({collectivite_id, referentiel})
+    .like('action_id', `${action_id}%`);
 
   if (error) throw new Error(error.message);
 
@@ -47,22 +49,23 @@ export const useScoreRealise = (action: ActionDefinitionSummary) => {
   // Chargement des données
   const {data} = useQuery(
     [
-      ...getScoreRealiseQueryKey(collectiviteId, action.referentiel),
+      ...getScoreRealiseQueryKey(collectiviteId, action.referentiel, action.id),
       action.depth,
     ],
     () => fetchScore(collectiviteId, action.referentiel, action.id)
   );
 
-  return {
-    concerne: (data ?? [])[0]?.concerne ?? null,
-    desactive: (data ?? [])[0]?.desactive ?? null,
-    pointsRealises: (data ?? [])[0]?.points_realises ?? null,
-    pointsMax: (data ?? [])[0]?.points_max_personnalises ?? null,
-    pointsMaxRef: (data ?? [])[0]?.points_max_referentiel ?? null,
-  };
+  let formattedData: {[actionId: string]: SuiviScoreRow} = {};
+
+  data?.forEach(d => {
+    formattedData = {...formattedData, [d.action_id]: {...d}};
+  });
+
+  return formattedData;
 };
 
 export const getScoreRealiseQueryKey = (
   collectiviteId: number | null,
-  referentiel: Referentiel
-) => ['suivi_score_realise', collectiviteId, referentiel];
+  referentiel: Referentiel,
+  actionId: string
+) => ['suivi_score_realise', collectiviteId, referentiel, actionId];

@@ -59,10 +59,10 @@ export const ScoreListenerProvider = ({children}: {children: ReactNode}) => {
         // La payload de l'environnement de développement (supabase/realtime:v0.25.1) contient la clef record
         // celle de prod les clefs new/old.
         const row = payload.new || payload.record;
-        const {collectivite_id, referentiel} = row;
+        const {collectivite_id, referentiel, actionId} = row;
         const keys = [
           getScoreQueryKey(collectivite_id, referentiel),
-          getScoreRealiseQueryKey(collectivite_id, referentiel),
+          getScoreRealiseQueryKey(collectivite_id, referentiel, actionId),
         ];
         return Promise.all(keys.map(key => queryClient.invalidateQueries(key)));
       };

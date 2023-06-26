@@ -5,9 +5,11 @@ import {useActionCommentaire} from 'core-logic/hooks/useActionCommentaire';
 import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
 import SubActionHeader from './SubActionHeader';
 import {TActionAvancementExt} from 'types/alias';
+import {SuiviScoreRow} from '../data/useScoreRealise';
 
 type SubActionTaskProps = {
   task: ActionDefinitionSummary;
+  actionScores: {[actionId: string]: SuiviScoreRow};
   hideStatus?: boolean;
   onSaveStatus?: (
     actionId: string,
@@ -22,6 +24,7 @@ type SubActionTaskProps = {
 
 const SubActionTask = ({
   task,
+  actionScores,
   hideStatus = false,
   onSaveStatus,
 }: SubActionTaskProps): JSX.Element => {
@@ -45,6 +48,7 @@ const SubActionTask = ({
       {/* Première ligne */}
       <SubActionHeader
         action={task}
+        actionScores={actionScores}
         hideStatus={hideStatus}
         onSaveStatus={onSaveStatus}
       />

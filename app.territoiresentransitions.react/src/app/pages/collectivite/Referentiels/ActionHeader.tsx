@@ -6,6 +6,7 @@ import {ActionTopNav} from './ActionNav';
 import {ActionSidePanel} from './ActionSidePanel';
 import {PersoPotentiel} from '../PersoPotentielModal/PersoPotentiel';
 import ScoreDisplay from '../EtatDesLieux/Referentiel/SuiviAction/ScoreDisplay';
+import {SuiviScoreRow} from '../EtatDesLieux/Referentiel/data/useScoreRealise';
 
 /**
  * Affiche la partie de l'en-tête de la page Action sensible à la position du
@@ -13,10 +14,12 @@ import ScoreDisplay from '../EtatDesLieux/Referentiel/SuiviAction/ScoreDisplay';
  */
 export const ActionHeader = ({
   action,
+  actionScore,
   nextActionLink,
   prevActionLink,
 }: {
   action: ActionDefinitionSummary;
+  actionScore: SuiviScoreRow;
   nextActionLink: string | undefined;
   prevActionLink: string | undefined;
 }) => {
@@ -63,7 +66,7 @@ export const ActionHeader = ({
             action={action}
             className="border-r border-r-[#ddd] fr-pr-5v"
           />
-          <ScoreDisplay action={action} legend="Score réalisé" size="sm" />
+          <ScoreDisplay score={actionScore} legend="Score réalisé" size="sm" />
           {action.have_questions && (
             <div className="border-l border-l-[#ddd] fr-pl-3v">
               <PersoPotentiel actionDef={action} />
