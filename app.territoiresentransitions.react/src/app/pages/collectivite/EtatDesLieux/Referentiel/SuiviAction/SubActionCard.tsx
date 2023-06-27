@@ -72,7 +72,8 @@ const SubActionCard = ({
         actionScores={actionScores}
         displayProgressBar={
           statut?.avancement === 'detaille' ||
-          (statut?.avancement === 'non_renseigne' && filled === true)
+          (statut?.avancement === 'non_renseigne' && filled === true) ||
+          (statut === null && filled === true)
         }
         openSubAction={openSubAction}
         onToggleOpen={handleToggleOpen}

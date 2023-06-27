@@ -10,6 +10,8 @@ Fonctionnalité: Modifier l'état d'avancement et visualiser l'évolution des sc
     Quand je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "2"
     Et que je déplie la sous-action "1.1.1" du suivi de l'action
     Et que je déplie le panneau Tâches de la sous-action "1.1.1"
+    Et que je déplie la sous-action "1.1.2" du suivi de l'action
+    Et que je déplie le panneau Tâches de la sous-action "1.1.2"
     Et l'état d'avancement des tâches est éditable
 
     Quand j'assigne la valeur "Fait" à l'état d'avancement de la tâche "eci_1.1.1.1"
@@ -17,30 +19,25 @@ Fonctionnalité: Modifier l'état d'avancement et visualiser l'évolution des sc
       | Action    | Score |
       | eci_1.1   | 4 %   |
       | eci_1.1.1 | 20 %  |
-      | eci_1.1.2 | 0 %   |
-      | eci_1.1.3 | 0 %   |
-      | eci_1.1.4 | 0 %   |
-      | eci_1.1.5 | 0 %   |
 
     Quand j'assigne la valeur "Fait" à l'état d'avancement de la tâche "eci_1.1.1.2"
     Alors les scores sont affichés avec les valeurs suivantes :
       | Action    | Score |
       | eci_1.1   | 10 %  |
       | eci_1.1.1 | 50 %  |
-      | eci_1.1.2 | 0 %   |
-      | eci_1.1.3 | 0 %   |
-      | eci_1.1.4 | 0 %   |
-      | eci_1.1.5 | 0 %   |
 
     Quand j'assigne la valeur "Non renseigné" à l'état d'avancement de la tâche "eci_1.1.1.2"
     Alors les scores sont affichés avec les valeurs suivantes :
       | Action    | Score |
       | eci_1.1   | 4 %   |
       | eci_1.1.1 | 20 %  |
-      | eci_1.1.2 | 0 %   |
-      | eci_1.1.3 | 0 %   |
-      | eci_1.1.4 | 0 %   |
-      | eci_1.1.5 | 0 %   |
+
+    Quand j'assigne la valeur "Fait" à l'état d'avancement de la tâche "eci_1.1.2.1"
+    Alors les scores sont affichés avec les valeurs suivantes :
+      | Action    | Score |
+      | eci_1.1   | 8 %   |
+      | eci_1.1.1 | 20 %  |
+      | eci_1.1.2 | 20 %  |
 
   # scénario désactivé en raison d'un exception en mode headless
   # Ref: https://github.com/cypress-io/cypress/issues/22113
