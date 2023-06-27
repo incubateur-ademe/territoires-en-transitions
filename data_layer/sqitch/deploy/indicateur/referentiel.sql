@@ -46,12 +46,12 @@ comment on column indicateur_definition.type is
 create type indicateur_thematique as enum ('eci_dechets', 'energie_et_climat');
 
 alter table indicateur_definition
-    add thematiques indicateur_thematique[] default array[]::indicateur_thematique[] not null;
+    add thematiques indicateur_thematique[] default array []::indicateur_thematique[] not null;
 
 create type indicateur_programme as enum ('clef', 'eci', 'cae', 'pcaet', 'crte');
 
 alter table indicateur_definition
-    add programmes indicateur_programme[] default array[]::indicateur_programme[] not null;
+    add programmes indicateur_programme[] default array []::indicateur_programme[] not null;
 
 alter table indicateur_definition
     drop obligation_eci;
@@ -69,6 +69,24 @@ alter table indicateur_resultat_commentaire
     add constraint unique_collectivite_indicateur_annee unique (collectivite_id, indicateur_id, annee);
 
 alter table indicateur_resultat_commentaire
-drop constraint indicateur_commentaire_pkey;
+    drop constraint indicateur_commentaire_pkey;
+
+create view indicateur_rempli
+as
+select indicateur_id,
+       null         as perso_id,
+       collectivite_id,
+       count(*) > 0 as rempli
+from indicateur_resultat ir
+group by indicateur_id, collectivite_id
+union all
+select null,
+       indicateur_id,
+       collectivite_id,
+       count(*) > 0
+from indicateur_personnalise_resultat ipr
+group by indicateur_id, collectivite_id;
+
+-- indicateur thematique, id, nom
 
 COMMIT;
