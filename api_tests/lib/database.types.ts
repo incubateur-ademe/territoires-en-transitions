@@ -1290,6 +1290,7 @@ export interface Database {
           nom: string
           parent: string | null
           participation_score: boolean
+          programmes: Database["public"]["Enums"]["indicateur_programme"][]
           source: string | null
           thematiques: Database["public"]["Enums"]["indicateur_thematique"][]
           titre_long: string
@@ -1308,6 +1309,7 @@ export interface Database {
           nom: string
           parent?: string | null
           participation_score?: boolean
+          programmes?: Database["public"]["Enums"]["indicateur_programme"][]
           source?: string | null
           thematiques?: Database["public"]["Enums"]["indicateur_thematique"][]
           titre_long?: string
@@ -1326,6 +1328,7 @@ export interface Database {
           nom?: string
           parent?: string | null
           participation_score?: boolean
+          programmes?: Database["public"]["Enums"]["indicateur_programme"][]
           source?: string | null
           thematiques?: Database["public"]["Enums"]["indicateur_thematique"][]
           titre_long?: string
@@ -3004,6 +3007,14 @@ export interface Database {
           collectivite_id: number | null
           modified_by_id: string | null
           modified_by_nom: string | null
+        }
+      }
+      indicateur_rempli: {
+        Row: {
+          collectivite_id: number | null
+          indicateur_id: string | null
+          perso_id: number | null
+          rempli: boolean | null
         }
       }
       indicateur_summary: {
@@ -6885,6 +6896,7 @@ export interface Database {
         | "EPT"
         | "PETR"
       indicateur_group: "cae" | "crte" | "eci"
+      indicateur_programme: "clef" | "eci" | "cae" | "pcaet" | "crte"
       indicateur_referentiel_type: "resultat" | "impact"
       indicateur_thematique: "eci_dechets" | "energie_et_climat"
       membre_fonction:
