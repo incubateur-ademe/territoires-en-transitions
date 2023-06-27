@@ -25,6 +25,8 @@ type TSelectButtonProps<T extends string> = TSelectDropdownBaseProps<T> &
 
 export type TSelectDropdownProps<T extends string> =
   TSelectDropdownBaseProps<T> & {
+    /** si à true, il n'est pas possible de déselectionner une valeur (optionnel) */
+    required?: boolean;
     /** fait le rendu d'une option de la liste (optionnel) */
     renderOption?: (option: TOption) => React.ReactElement;
     /** appelée quand l'option sélectionnée change (reçoit la nouvelle valeur) */
@@ -41,6 +43,7 @@ const SelectDropdown = <T extends string>({
   placeholderText,
   placement,
   disabled,
+  required = false,
   'data-test': dataTest,
 }: TSelectDropdownProps<T>) => {
   return (
@@ -55,7 +58,9 @@ const SelectDropdown = <T extends string>({
             onSelect={values => {
               // comme les options peuvent etre utilisées pour un select simple ou multiple,
               // on ne sélectionne que la dernière valeur du tableau
-              onSelect(values[values.length - 1]);
+              if (values.length > 0 || (values.length === 0 && !required)) {
+                onSelect(values[values.length - 1]);
+              }
               close();
             }}
             renderOption={renderOption}

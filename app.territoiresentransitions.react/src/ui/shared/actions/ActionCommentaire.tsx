@@ -6,7 +6,7 @@ import {
   useActionCommentaire,
   useSaveActionCommentaire,
 } from 'core-logic/hooks/useActionCommentaire';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 type ActionCommentaireProps = {
   action: ActionDefinitionSummary;
@@ -54,6 +54,8 @@ export const ActionCommentaireField = ({
   const collectivite = useCurrentCollectivite();
   const {saveActionCommentaire} = useSaveActionCommentaire();
   const [commentaire, setCommentaire] = useState(initialValue);
+
+  useEffect(() => setCommentaire(initialValue), [initialValue]);
 
   return collectivite ? (
     <>
