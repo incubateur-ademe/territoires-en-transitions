@@ -3,6 +3,8 @@
 
 BEGIN;
 
+drop view indicateur_rempli;
+
 alter table indicateur_definition
     rename column groupe to indicateur_group;
 
