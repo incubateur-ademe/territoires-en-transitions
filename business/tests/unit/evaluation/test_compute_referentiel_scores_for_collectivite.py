@@ -37,6 +37,11 @@ def simple_point_tree_referentiel() -> ActionPointTree:
             make_action_children("eci", ["eci_1", "eci_2"]),
             make_action_children("eci_1", ["eci_1.1", "eci_1.2"]),
             make_action_children("eci_2", ["eci_2.0", "eci_2.1", "eci_2.2"]),
+            make_action_children("eci_2.0", []),
+            make_action_children("eci_2.1", []),
+            make_action_children("eci_2.2", []),
+            make_action_children("eci_1.1", []),
+            make_action_children("eci_1.2", []),
         ],
     )
 
@@ -64,8 +69,17 @@ def deeper_point_tree_deeper_referentiel() -> ActionPointTree:
             make_action_children("eci", ["eci_1", "eci_2"]),
             make_action_children("eci_1", ["eci_1.1", "eci_1.2"]),
             make_action_children("eci_2", ["eci_2.0", "eci_2.1", "eci_2.2"]),
-            make_action_children("eci_2.2", ["eci_2.2.1", "eci_2.2.2", "eci_2.2.3"]),
             make_action_children("eci_2.1", ["eci_2.1.0", "eci_2.1.1", "eci_2.1.2"]),
+            make_action_children("eci_2.2", ["eci_2.2.1", "eci_2.2.2", "eci_2.2.3"]),
+            make_action_children("eci_1.1", []),
+            make_action_children("eci_1.2", []),
+            make_action_children("eci_2.0", []),
+            make_action_children("eci_2.1.0", []),
+            make_action_children("eci_2.1.1", []),
+            make_action_children("eci_2.1.2", []),
+            make_action_children("eci_2.2.1", []),
+            make_action_children("eci_2.2.2", []),
+            make_action_children("eci_2.2.3", []),
         ],
     )
 
@@ -1171,6 +1185,6 @@ def test_notation_when_potentiel_perso_formule_is_given(simple_point_tree_refere
         actual_scores[ActionId("eci_1")].point_fait
         / actual_scores[ActionId("eci_1")].point_potentiel,
         actual_scores[ActionId("eci_2")].point_fait
-        / actual_scores[ActionId("eci_2")].point_potentiel, 
+        / actual_scores[ActionId("eci_2")].point_potentiel,
         rel_tol=3
     )
