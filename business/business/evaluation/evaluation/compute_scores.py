@@ -132,7 +132,6 @@ def set_points_to_children_sum(
 
 
 def _round_action_score(action_score: ActionScore, ndigits=3) -> ActionScore:
-    action_score = copy(action_score)
     action_score.point_potentiel = round(action_score.point_potentiel, ndigits)
     action_score.point_fait = round(action_score.point_fait, ndigits)
     action_score.point_programme = round(action_score.point_programme, ndigits)
