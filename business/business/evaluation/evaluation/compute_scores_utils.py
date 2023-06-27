@@ -73,6 +73,7 @@ def update_action_scores_from_status(
     is_concerne = action_id not in actions_non_concerne_ids
     is_personnalise = action_id in action_personnalise_ids
     is_desactive = action_id in action_desactive_ids
+    tache_count = point_tree_referentiel.leaf_count[action_id]
 
     if not is_concerne:
         scores[action_id] = ActionScore(
@@ -82,12 +83,12 @@ def update_action_scores_from_status(
             point_programme=0.0,
             point_non_renseigne=point_potentiel,
             point_potentiel=point_potentiel,
-            total_taches_count=1,
-            completed_taches_count=1,
+            total_taches_count=tache_count,
+            completed_taches_count=tache_count,
             fait_taches_avancement=0,
             programme_taches_avancement=0,
             pas_fait_taches_avancement=0,
-            pas_concerne_taches_avancement=1,
+            pas_concerne_taches_avancement=tache_count,
             point_referentiel=tache_points_referentiel,
             concerne=is_concerne,
             # perso
@@ -139,7 +140,7 @@ def update_action_scores_from_status(
         point_potentiel=point_potentiel,
         point_referentiel=tache_points_referentiel,
         completed_taches_count=completed_taches_count,
-        total_taches_count=1,
+        total_taches_count=tache_count,
         fait_taches_avancement=fait_taches_avancement,
         programme_taches_avancement=programme_taches_avancement,
         pas_fait_taches_avancement=pas_fait_taches_avancement,
@@ -171,7 +172,7 @@ def update_action_score_from_children_scores(
     ]
 
     point_pas_fait = sum(
-        [scores[child_id].point_pas_fait for child_id in action_children_with_scores]
+        [scores[child_id].point_pas_fait for child_id in action_children]
     )
 
     point_fait = sum(
@@ -195,6 +196,7 @@ def update_action_score_from_children_scores(
     )  # concerne if any action children is concerne
     is_personnalise = action_id in action_personnalise_ids
     is_desactive = action_id in action_desactive_ids
+
     scores[action_id] = ActionScore(
         action_id=action_id,
         point_fait=point_fait,
@@ -267,10 +269,10 @@ def compute_action_non_concerne_ids(
         action_desactive_ids: List[ActionId]
 ):
     action_non_concerne_ids = [
-        action_status.action_id
-        for action_status in statuts
-        if not action_status.concerne
-    ] + action_desactive_ids
+                                  action_status.action_id
+                                  for action_status in statuts
+                                  if not action_status.concerne
+                              ] + action_desactive_ids
 
     point_tree.map_from_taches_to_root(
         lambda action_id: _propagate_non_concerne(
