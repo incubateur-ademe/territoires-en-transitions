@@ -349,7 +349,7 @@ def compute_potentiels(
     def _add_action_potentiel_after_redistribution(
             action_id: ActionId,
     ):
-        this_level = point_tree_personnalise._depths_by_action_ids[action_id]
+        this_level = point_tree_personnalise.depths[action_id]
         children = point_tree_personnalise.get_children(action_id)
 
         if action_id in actions_non_concernes_ids:  # non-concerné
