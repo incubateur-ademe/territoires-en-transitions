@@ -49,7 +49,8 @@ export const useScoreRealise = (action: ActionDefinitionSummary) => {
   // Chargement des données
   const {data} = useQuery(
     [
-      ...getScoreRealiseQueryKey(collectiviteId, action.referentiel, action.id),
+      ...getScoreRealiseQueryKey(collectiviteId, action.referentiel),
+      action.id,
       action.depth,
     ],
     () => fetchScore(collectiviteId, action.referentiel, action.id)
@@ -66,6 +67,5 @@ export const useScoreRealise = (action: ActionDefinitionSummary) => {
 
 export const getScoreRealiseQueryKey = (
   collectiviteId: number | null,
-  referentiel: Referentiel,
-  actionId: string
-) => ['suivi_score_realise', collectiviteId, referentiel, actionId];
+  referentiel: Referentiel
+) => ['suivi_score_realise', collectiviteId, referentiel];
