@@ -3,7 +3,7 @@ import re
 from typing import Callable, List, Optional
 from .models.actions import ActionChildren, ActionId
 
-parent_pattern = re.compile(r'(.*)\.')
+parent_pattern = re.compile(r'(.*)[._]')
 
 
 class ActionTreeError(Exception):
@@ -28,8 +28,7 @@ class ActionTree:
         return self.children_ids_by_action_id.get(action_id, [])
 
     def get_siblings(self, action_id: ActionId) -> List[ActionId]:
-        match = parent_pattern.match(action_id, 0)
-        parent = match.group(1)
+        parent = self._get_parent(action_id)
         return self.get_children(parent) if parent else []
 
     def map_from_taches_to_root(self, callback: Callable[[ActionId], None]):
@@ -70,15 +69,10 @@ class ActionTree:
             return 0
         return 1 + self.infer_depth(parent_id)
 
-    def _get_parent(self, action_id: ActionId) -> Optional[ActionId]:
-        return next(
-            (
-                parent_id
-                for parent_id in self.children_ids_by_action_id
-                if action_id in self.get_children(parent_id)
-            ),
-            None,
-        )
+    @staticmethod
+    def _get_parent(action_id: ActionId) -> Optional[ActionId]:
+        match = parent_pattern.match(action_id, 0)
+        return match.group(1) if match else None
 
     @property
     def forward_ids(self):
