@@ -14,7 +14,6 @@ class ActionTree:
     """Un arbre d'action avec des méthodes d'itération"""
 
     def __init__(self, actions_children: list[ActionChildren]) -> None:
-
         self.depths: dict[ActionId, int] = {}
         self.children: dict[ActionId, list[ActionId]] = {}
         self.leafs: set[ActionId] = set()
@@ -25,11 +24,15 @@ class ActionTree:
             if not action.children:
                 self.leafs.add(action.action_id)
 
-        self._forward_ids = sorted(
+        self._forward_ids: list[ActionId] = sorted(
             self.depths.keys(),
             key=lambda action_id: self.depths[action_id],
         )
-        self._backward_ids = self._forward_ids[::-1]
+        self._backward_ids: list[ActionId] = self._forward_ids[::-1]
+        self.leaf_count: dict[ActionId, int] = {
+            x: max(len({l for l in self.leafs if self._get_parent(l) == x}), 1)
+            for x in self._forward_ids
+        }
 
     def get_children(self, action_id: ActionId) -> List[ActionId]:
         return self.children.get(action_id, [])
