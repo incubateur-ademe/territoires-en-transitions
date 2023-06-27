@@ -167,33 +167,29 @@ def update_action_score_from_children_scores(
     action_point_referentiel = point_tree_referentiel.get_action_point(action_id)
     action_point_personnalise = point_tree_personnalise.get_action_point(action_id)
 
-    action_children_with_scores = [
-        child_id for child_id in action_children if child_id in scores
-    ]
-
     point_pas_fait = sum(
         [scores[child_id].point_pas_fait for child_id in action_children]
     )
 
     point_fait = sum(
-        [scores[child_id].point_fait for child_id in action_children_with_scores]
+        [scores[child_id].point_fait for child_id in action_children]
     )
 
     point_programme = sum(
-        [scores[child_id].point_programme for child_id in action_children_with_scores]
+        [scores[child_id].point_programme for child_id in action_children]
     )
     point_non_renseigne = sum(
         [
             scores[child_id].point_non_renseigne
-            for child_id in action_children_with_scores
+            for child_id in action_children
         ]
     )
     point_potentiel = potentiels[action_id]
     concerne = (
-        any([scores[child_id].concerne for child_id in action_children_with_scores])
-        if action_children_with_scores
+        any([scores[child_id].concerne for child_id in action_children])
+        if action_children
         else True
-    )  # concerne if any action children is concerne
+    )
     is_personnalise = action_id in action_personnalise_ids
     is_desactive = action_id in action_desactive_ids
 
@@ -207,7 +203,7 @@ def update_action_score_from_children_scores(
         completed_taches_count=sum(
             [
                 scores[child_id].completed_taches_count
-                for child_id in action_children_with_scores
+                for child_id in action_children
             ]
         ),
         total_taches_count=sum(
@@ -219,25 +215,25 @@ def update_action_score_from_children_scores(
         fait_taches_avancement=sum(
             [
                 scores[child_id].fait_taches_avancement
-                for child_id in action_children_with_scores
+                for child_id in action_children
             ]
         ),
         programme_taches_avancement=sum(
             [
                 scores[child_id].programme_taches_avancement
-                for child_id in action_children_with_scores
+                for child_id in action_children
             ]
         ),
         pas_fait_taches_avancement=sum(
             [
                 scores[child_id].pas_fait_taches_avancement
-                for child_id in action_children_with_scores
+                for child_id in action_children
             ]
         ),
         pas_concerne_taches_avancement=sum(
             [
                 scores[child_id].pas_concerne_taches_avancement
-                for child_id in action_children_with_scores
+                for child_id in action_children
             ]
         ),
         point_referentiel=action_point_referentiel,
