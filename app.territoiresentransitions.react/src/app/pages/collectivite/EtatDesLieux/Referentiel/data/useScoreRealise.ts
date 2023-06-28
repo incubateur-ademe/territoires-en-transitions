@@ -5,6 +5,7 @@ import {ActionReferentiel} from 'app/pages/collectivite/ReferentielTable/useRefe
 import {TActionStatutsRow} from 'types/alias';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {Referentiel} from 'types/litterals';
+import {indexBy} from 'utils/indexBy';
 
 export type SuiviScoreRow = ActionReferentiel &
   Pick<
@@ -56,13 +57,7 @@ export const useScoreRealise = (action: ActionDefinitionSummary) => {
     () => fetchScore(collectiviteId, action.referentiel, action.id)
   );
 
-  let formattedData: {[actionId: string]: SuiviScoreRow} = {};
-
-  data?.forEach(d => {
-    formattedData = {...formattedData, [d.action_id]: {...d}};
-  });
-
-  return formattedData;
+  return (data && indexBy(data, 'action_id')) || {};
 };
 
 export const getScoreRealiseQueryKey = (
