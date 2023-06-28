@@ -12,6 +12,7 @@ import DonutChart from 'ui/charts/DonutChart';
 import logoTerritoireEngage from 'ui/logo/logoTerritoireEngage.png';
 import {ProgressionRow} from '../EtatDesLieux/Synthese/data/useProgressionReferentiel';
 import {getAggregatedScore} from '../EtatDesLieux/Synthese/utils';
+import {useCycleLabellisation} from '../ParcoursLabellisation/useCycleLabellisation';
 import AccueilCard from './AccueilCard';
 import EtatDesLieuxGraphs from './EtatDesLieuxGraphs';
 import LabellisationStars from './LabellisationStars';
@@ -112,6 +113,8 @@ const FilledEtatDesLieuxCard = ({
   progressionScore,
   className,
 }: FilledEtatDesLieuxCardProps): JSX.Element => {
+  const {parcours, status} = useCycleLabellisation(referentiel);
+
   return (
     <AccueilCard className={classNames('flex flex-col relative', className)}>
       {/* En-tête */}
@@ -124,7 +127,7 @@ const FilledEtatDesLieuxCard = ({
       <div className="h-full grid md:grid-cols-2 gap-8 self-stretch">
         <div className="flex flex-col justify-between">
           {/* Niveau de labellisation */}
-          <LabellisationStars referentiel={referentiel} />
+          <LabellisationStars parcours={parcours} />
 
           {/* Call to action */}
           <ButtonWithLink
@@ -133,9 +136,14 @@ const FilledEtatDesLieuxCard = ({
               referentielId: referentiel,
               labellisationVue: 'suivi',
             })}
+            disabled={
+              status === 'audit_en_cours' || status === 'demande_envoyee'
+            }
             rounded
           >
-            Décrocher les étoiles
+            {status === 'audit_en_cours' || status === 'demande_envoyee'
+              ? 'Demande envoyée'
+              : 'Décrocher les étoiles'}
           </ButtonWithLink>
         </div>
 
@@ -146,6 +154,7 @@ const FilledEtatDesLieuxCard = ({
             customMargin={{top: 2, right: 0, bottom: 2, left: 0}}
             zoomEffect={false}
             unit="point"
+            displayPercentageValue
           />
         </div>
       </div>

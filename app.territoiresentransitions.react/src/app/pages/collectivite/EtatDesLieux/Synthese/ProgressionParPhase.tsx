@@ -1,3 +1,4 @@
+import {referentielToName} from 'app/labels';
 import ChartCard from 'ui/charts/ChartCard';
 import {defaultColors} from 'ui/charts/chartsTheme';
 
@@ -23,13 +24,17 @@ const ProgressionParPhase = ({
   return (
     <ChartCard
       chartType="donut"
-      chartProps={{data: repartitionPhases, label: true}}
+      chartProps={{
+        data: repartitionPhases,
+        label: true,
+        displayPercentageValue: true,
+      }}
       chartInfo={{
-        title: `Répartition du score "Réalisé" par phase (${
+        title: `${
+          referentielToName[referentiel]
+        }\nRépartition du score "Réalisé" par phase (${
           scoreTotal > 1 ? Math.round(scoreTotal) : scoreTotal
-        } point${
-          Math.round(scoreTotal) <= 1 ? '' : 's'
-        }) - ${referentiel.toUpperCase()}`,
+        } point${Math.round(scoreTotal) <= 1 ? '' : 's'})`,
         legend: repartitionPhases.map((el, index) => ({
           name: el.id,
           color: defaultColors[index % defaultColors.length],

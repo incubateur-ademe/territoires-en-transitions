@@ -70,9 +70,11 @@ const ChartCardModalContent = ({
       <div ref={chartWrapperRef} className="p-3">
         {/* Titre du graphe */}
         {chartInfo?.extendedTitle ? (
-          <h4>{chartInfo?.extendedTitle}</h4>
+          <h4 className="whitespace-pre-wrap">{chartInfo?.extendedTitle}</h4>
         ) : (
-          chartInfo?.title && <h4>{chartInfo.title}</h4>
+          chartInfo?.title && (
+            <h4 className="whitespace-pre-wrap">{chartInfo.title}</h4>
+          )
         )}
 
         {/* Element additionnel optionnel, ajouté entre le titre et le graphe */}
@@ -154,7 +156,7 @@ const ChartCard = ({
 
   return (
     <div
-      className={`border border-gray-200 bg-white flex flex-col w-full h-96 relative ${
+      className={`border border-gray-200 bg-white flex flex-col w-full h-[400px] relative ${
         chartInfo?.title || chartInfo?.expandable ? 'pt-6' : ''
       }`}
       style={customStyle}
@@ -163,7 +165,9 @@ const ChartCard = ({
       <div className="flex flex-row justify-between px-6">
         {/* Titre du graphe */}
         {chartInfo?.title && (
-          <div className="pb-6 font-bold">{chartInfo.title}</div>
+          <div className="pb-4 font-bold whitespace-pre-wrap">
+            {chartInfo.title}
+          </div>
         )}
 
         {/* Bouton + modale permettant un affichage agrandi du graphe */}
@@ -189,7 +193,7 @@ const ChartCard = ({
       </div>
 
       {/* Element additionnel optionnel, ajouté entre le titre et le graphe */}
-      <div className="absolute top-16 z-10 px-6 w-full">
+      <div className="px-6 w-full">
         {!!topElement && topElement('overview')}
       </div>
 

@@ -2,6 +2,18 @@ import {PieTooltipProps, ResponsivePie} from '@nivo/pie';
 import {defaultColors, nivoColorsSet, theme} from './chartsTheme';
 
 /**
+ * Conversion d'une valeur en %
+ */
+const getPercentage = (value: number, data: number[]) => {
+  let percentage = value / data.reduce((sum, curVal) => sum + curVal, 0);
+  if (percentage < 0.01) {
+    return Math.round(percentage * 10000) / 100;
+  } else {
+    return Math.round(percentage * 100);
+  }
+};
+
+/**
  * Suppression des arcLinkLabels si deux tranches de faible
  * valeur se succèdent dans le graphe
  * Permet d'éviter le chevauchement des labels
@@ -42,13 +54,6 @@ const getTooltip = (
 ) => {
   if (isDefaultData) return null;
 
-  let percentage = value / data.reduce((sum, curVal) => sum + curVal.value, 0);
-  if (percentage < 0.01) {
-    percentage = Math.round(percentage * 10000) / 100;
-  } else {
-    percentage = Math.round(percentage * 100);
-  }
-
   return (
     <div
       style={{
@@ -74,7 +79,12 @@ const getTooltip = (
         {id} :{' '}
         <strong>
           {Math.round(value * 10) / 10} {unit}
-          {!!unit && value > 1 ? 's' : ''} ({percentage}%)
+          {!!unit && value > 1 ? 's' : ''} (
+          {getPercentage(
+            value,
+            data.map(d => d.value)
+          )}
+          %)
         </strong>
       </span>
     </div>
@@ -91,6 +101,7 @@ export type DonutChartProps = {
   unit?: string;
   customMargin?: {top: number; right: number; bottom: number; left: number};
   zoomEffect?: boolean;
+  displayPercentageValue?: boolean;
 };
 
 /**
@@ -100,6 +111,7 @@ export type DonutChartProps = {
  * @param label - (optionnel) affichage des labels sur le
  * @param customMargin
  * @param zoomEffect
+ * @param displayPercentageValue
  * graphe au lieu de la légende
  */
 
@@ -109,6 +121,7 @@ const DonutChart = ({
   unit = '',
   customMargin,
   zoomEffect = true,
+  displayPercentageValue = false,
 }: DonutChartProps) => {
   const defaultData = [{id: 'NA', value: 1, color: '#ccc'}];
 
@@ -146,11 +159,18 @@ const DonutChart = ({
       arcLinkLabelsThickness={2}
       arcLinkLabelsColor={{from: 'color'}}
       enableArcLabels={isDefaultData() ? false : true}
-      arcLabel={d => `${Math.round(d.value)}`}
       arcLabelsSkipAngle={12}
       arcLabelsTextColor={{from: 'color', modifiers: [['darker', 2]]}}
       animate={true}
       tooltip={datum => getTooltip(datum, isDefaultData(), localData, unit)}
+      valueFormat={value =>
+        displayPercentageValue
+          ? `${getPercentage(
+              value,
+              localData.map(d => d.value)
+            )}%`
+          : `${Math.round(value)}`
+      }
     />
   );
 };

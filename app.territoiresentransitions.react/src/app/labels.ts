@@ -2,7 +2,10 @@ import {TActionAvancementExt} from 'types/alias';
 import type {ReferentielOfIndicateur} from 'types/litterals';
 
 // Define all labels from app
-export const referentielToName: Record<ReferentielOfIndicateur, string> = {
+export const referentielToName: Record<
+  ReferentielOfIndicateur | string,
+  string
+> = {
   cae: 'Climat Air Énergie',
   eci: 'Économie Circulaire',
   crte: 'Contrat Relance Transition Écologique',
