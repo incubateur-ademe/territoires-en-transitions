@@ -24,7 +24,8 @@ const getLabel = (d: ComputedDatum<{}>) => {
 const getTooltip = (
   {id, value, index, indexValue, color}: BarTooltipProps<{}>,
   localIndexTitles: string[],
-  unit: string
+  unit: string,
+  clickable: boolean
 ) => {
   return (
     <div
@@ -64,6 +65,9 @@ const getTooltip = (
           </strong>
         </span>
       </div>
+      {clickable && (
+        <div className="text-[#929292] pt-4">Cliquer pour voir le détail</div>
+      )}
     </div>
   );
 };
@@ -127,9 +131,9 @@ const BarChart = ({
       keys={keys}
       indexBy={indexBy}
       margin={{
-        top: layout === 'horizontal' ? 50 : 85,
+        top: layout === 'horizontal' ? 30 : 85,
         right: 60,
-        bottom: 70,
+        bottom: layout === 'horizontal' ? 80 : 70,
         left: 70,
       }}
       padding={layout === 'horizontal' ? 0.1 : 0.5}
@@ -167,7 +171,9 @@ const BarChart = ({
       enableGridY={layout !== 'horizontal'}
       labelSkipWidth={layout === 'horizontal' ? 10 : 0}
       labelSkipHeight={layout !== 'horizontal' ? 10 : 0}
-      tooltip={d => getTooltip(d, localIndexTitles, unit)}
+      tooltip={d =>
+        getTooltip(d, localIndexTitles, unit, onSelectIndex !== undefined)
+      }
       onClick={({indexValue}) => {
         if (onSelectIndex) onSelectIndex(indexValue);
       }}

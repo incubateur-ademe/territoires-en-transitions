@@ -1,36 +1,42 @@
-import {ReferentielParamOption} from 'app/paths';
 import {Tooltip} from 'ui/shared/floating-ui/Tooltip';
-import {useCycleLabellisation} from '../ParcoursLabellisation/useCycleLabellisation';
 import {NIVEAUX} from '../../../../ui/labellisation/getNiveauInfo';
 import {GreyStar, RedStar} from 'ui/labellisation/Star';
+import {TLabellisationParcours} from '../ParcoursLabellisation/types';
 
 type LabellisationStarsProps = {
-  referentiel: ReferentielParamOption;
+  parcours: TLabellisationParcours | null;
 };
 
-const LabellisationStars = ({referentiel}: LabellisationStarsProps) => {
-  const {parcours} = useCycleLabellisation(referentiel);
+const LabellisationStars = ({parcours}: LabellisationStarsProps) => {
   const etoiles = parcours?.labellisation?.etoiles ?? 0;
   const scoreRealise = parcours?.labellisation?.score_realise ?? 0;
   const dateLabel = parcours?.labellisation?.obtenue_le;
 
   return (
     <Tooltip
-      label={() => (
-        <>
+      label={() =>
+        etoiles === 1 ? (
           <p>
-            Score réalisé : <b>{scoreRealise} %</b>
+            Reconnaissance obtenue
+            {!!dateLabel &&
+              ` le ${new Date(dateLabel).toLocaleDateString('fr')}`}
           </p>
-          {!!dateLabel && (
+        ) : (
+          <>
             <p>
-              Date de la dernière labellisation :{' '}
-              {new Date(dateLabel).toLocaleDateString('fr')}
+              Score réalisé : <b>{scoreRealise} %</b>
             </p>
-          )}
-        </>
-      )}
+            {!!dateLabel && (
+              <p>
+                Date de la dernière labellisation :{' '}
+                {new Date(dateLabel).toLocaleDateString('fr')}
+              </p>
+            )}
+          </>
+        )
+      }
     >
-      <div className="flex md:justify-start justify-center m-0 md:first:-mx-1 md:pt-5 md:pb-12 pb-8">
+      <div className="flex md:justify-start justify-center m-0 md:first:-mx-1 md:mt-5 md:mb-12 mb-8">
         {NIVEAUX.map(niveau => {
           const obtenue = etoiles >= niveau;
           const Star = obtenue ? RedStar : GreyStar;

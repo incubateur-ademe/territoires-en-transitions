@@ -99,6 +99,7 @@ const SyntheseGraphsList = ({
           data: data.pilotes.map(pi => ({
             ...pi,
             id: pi.id !== 'NC' ? pi.id : 'Sans pilote',
+            color: pi.id === 'NC' ? statusColor.NC : undefined,
           })),
         },
         {
@@ -107,6 +108,7 @@ const SyntheseGraphsList = ({
           data: data.referents.map(ref => ({
             ...ref,
             id: ref.id !== 'NC' ? ref.id : 'Sans élu·e référent·e',
+            color: ref.id === 'NC' ? statusColor.NC : undefined,
           })),
         },
         {
@@ -115,12 +117,16 @@ const SyntheseGraphsList = ({
           data: data.priorites.map(pr => ({
             ...pr,
             id: pr.id !== 'NC' ? pr.id : 'Non priorisé',
+            color: pr.id === 'NC' ? statusColor.NC : undefined,
           })),
         },
         {
           id: 'echeance',
           title: 'Répartition par échéance',
-          data: data.echeances,
+          data: data.echeances.map(ech => ({
+            ...ech,
+            color: ech.id === 'NC' ? statusColor.NC : undefined,
+          })),
         },
         // {
         //   title: 'Répartition par direction pilote',

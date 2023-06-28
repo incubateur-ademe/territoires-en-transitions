@@ -1,3 +1,4 @@
+import {referentielToName} from 'app/labels';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useProgressionReferentiel} from '../EtatDesLieux/Synthese/data/useProgressionReferentiel';
 import EtatDesLieuxCard from './EtatDesLieuxCard';
@@ -40,7 +41,7 @@ const Accueil = (): JSX.Element => {
                 progressionScore={caeProgressionScore}
                 repartitionPhases={caeRepartitionPhases}
                 referentiel="cae"
-                title="Climat Air Énergie"
+                title={referentielToName.cae}
                 className="order-1"
               />
               <EtatDesLieuxCard
@@ -48,7 +49,7 @@ const Accueil = (): JSX.Element => {
                 progressionScore={eciProgressionScore}
                 repartitionPhases={eciRepartitionPhases}
                 referentiel="eci"
-                title="Économie circulaire"
+                title={referentielToName.eci}
                 className="lg:order-2 order-3"
               />
             </div>
