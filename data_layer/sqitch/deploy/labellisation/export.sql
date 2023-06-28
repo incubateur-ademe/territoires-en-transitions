@@ -3,7 +3,7 @@
 BEGIN;
 
 
-create view labellisation.export_score_audit as
+create materialized view labellisation.export_score_audit as
 with
     score_audit as (
         with
@@ -53,7 +53,7 @@ with
                    end as programme,
                (s.point_potentiel)::float as points
         from last_audit a
-                 join table_scores s on s.audit_id = a.id and s.action_id::referentiel = a.referentiel
+                 join table_scores s on s.audit_id = a.id and s.action_id::text = a.referentiel::text
     ),
     score_audit_eci as (
         -- Score d'audit pour eci
@@ -101,5 +101,10 @@ from collectivite_carte_identite cci
          left join score_audit_eci sae on cci.collectivite_id = sae.collectivite_id
          left join score_audit_cae sac on cci.collectivite_id = sac.collectivite_id
 order by cci.nom;
+
+create view public.export_score_audit as
+select *
+from labellisation.export_score_audit
+where is_service_role();
 
 COMMIT;

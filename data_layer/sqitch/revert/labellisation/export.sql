@@ -2,6 +2,7 @@
 
 BEGIN;
 
-drop view labellisation.export_score_audit;
+drop view public.export_score_audit;
+drop materialized view labellisation.export_score_audit;
 
 COMMIT;
