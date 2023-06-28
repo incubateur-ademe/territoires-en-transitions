@@ -88,8 +88,8 @@ const SubActionHeader = ({
         </div>
 
         {isSubAction && (
-          <div className="flex gap-12">
-            <div className="w-[115px]">
+          <div className="flex gap-2">
+            <div className="w-[140px]">
               <ScoreDisplay score={actionScores[action.id]} size="xs" />
             </div>
 
