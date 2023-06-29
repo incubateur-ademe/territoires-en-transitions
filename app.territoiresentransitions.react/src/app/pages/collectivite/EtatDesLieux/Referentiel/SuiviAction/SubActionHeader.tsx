@@ -1,10 +1,12 @@
 import classNames from 'classnames';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {useEffect, useState} from 'react';
-import {ActionStatusDropdown} from 'ui/referentiels/ActionStatusDropdown';
+import {
+  ActionStatusDropdown,
+  StatusToSavePayload,
+} from 'ui/referentiels/ActionStatusDropdown';
 import {Tooltip} from 'ui/shared/floating-ui/Tooltip';
 import ScoreDisplay from 'app/pages/collectivite/EtatDesLieux/Referentiel/SuiviAction/ScoreDisplay';
-import {TActionAvancementExt} from 'types/alias';
 import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
 import {SuiviScoreRow} from '../data/useScoreRealise';
 
@@ -15,11 +17,7 @@ type SubActionHeaderProps = {
   displayProgressBar?: boolean;
   openSubAction?: boolean;
   onToggleOpen?: () => void;
-  onSaveStatus?: (
-    actionId: string,
-    status: TActionAvancementExt,
-    avancementDetaille?: number[]
-  ) => void;
+  onSaveStatus?: (payload: StatusToSavePayload) => void;
 };
 
 /**

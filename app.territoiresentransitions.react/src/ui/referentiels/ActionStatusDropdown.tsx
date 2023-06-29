@@ -25,6 +25,26 @@ import {
 } from './utils';
 import {SuiviScoreRow} from 'app/pages/collectivite/EtatDesLieux/Referentiel/data/useScoreRealise';
 
+export type StatusToSavePayload = {
+  actionId: string;
+  statut: {
+    action_id: string;
+    avancement:
+      | 'fait'
+      | 'pas_fait'
+      | 'programme'
+      | 'non_renseigne'
+      | 'detaille';
+    avancement_detaille: number[] | null;
+    collectivite_id: number;
+    concerne: boolean;
+    modified_at?: string;
+    modified_by?: string;
+  } | null;
+  avancement: TActionAvancementExt;
+  avancementDetaille?: number[];
+};
+
 export const ActionStatusDropdown = ({
   action,
   actionScores,
@@ -32,11 +52,7 @@ export const ActionStatusDropdown = ({
 }: {
   action: ActionDefinitionSummary;
   actionScores: {[actionId: string]: SuiviScoreRow};
-  onSaveStatus?: (
-    actionId: string,
-    status: TActionAvancementExt,
-    avancementDetaille?: number[]
-  ) => void;
+  onSaveStatus?: (payload: StatusToSavePayload) => void;
 }) => {
   const collectivite = useCurrentCollectivite();
 
@@ -110,31 +126,30 @@ export const ActionStatusDropdown = ({
     // Différencie la sauvegarde auto dans la page
     // de la mise à jour depuis la modale de score auto
     if (onSaveStatus) {
-      onSaveStatus(action.id, value, avancement_detaille);
+      onSaveStatus({
+        actionId: action.id,
+        statut,
+        avancement: value,
+        avancementDetaille: avancement_detaille,
+      });
     } else {
       saveActionStatut({
         ...args,
         ...statut,
         avancement,
-        concerne,
         avancement_detaille,
+        concerne,
       });
     }
   };
 
   // Mise à jour des statuts des tâches d'une sous-action
   // à la validation dans la modale de score auto
-  const handleSaveScoreAuto = (
-    newStatus: {
-      actionId: string;
-      status: TActionAvancementExt;
-      avancementDetaille: number[] | undefined;
-    }[]
-  ) => {
+  const handleSaveScoreAuto = (newStatus: StatusToSavePayload[]) => {
     setOpenScoreAuto(false);
 
     newStatus.forEach(element => {
-      const {avancement, concerne} = statutParAvancement(element.status);
+      const {avancement, concerne} = statutParAvancement(element.avancement);
 
       saveActionStatut({
         action_id: element.actionId,
@@ -142,6 +157,8 @@ export const ActionStatusDropdown = ({
         avancement_detaille: element.avancementDetaille,
         collectivite_id: args.collectivite_id,
         concerne,
+        modified_at: element.statut?.modified_at,
+        modified_by: element.statut?.modified_by,
       });
     });
   };
@@ -160,25 +177,29 @@ export const ActionStatusDropdown = ({
         ? 'pas_fait'
         : 'detaille';
 
-    if (statut) {
-      setLocalAvancement(avancement);
-      setLocalAvancementDetaille(values);
+    setLocalAvancement(avancement);
+    setLocalAvancementDetaille(values);
 
-      // Différencie la sauvegarde auto dans la page
-      // de la mise à jour depuis la modale de score auto
-      if (onSaveStatus) {
-        onSaveStatus(action.id, avancement, values);
-      } else {
-        saveActionStatut({
-          ...args,
-          ...statut,
-          avancement,
-          avancement_detaille: values,
-        });
-      }
-
-      setOpenScorePerso(false);
+    // Différencie la sauvegarde auto dans la page
+    // de la mise à jour depuis la modale de score auto
+    if (onSaveStatus) {
+      onSaveStatus({
+        actionId: action.id,
+        statut,
+        avancement,
+        avancementDetaille: values,
+      });
+    } else {
+      saveActionStatut({
+        ...statut,
+        ...args,
+        avancement,
+        avancement_detaille: values,
+        concerne: true,
+      });
     }
+
+    setOpenScorePerso(false);
   };
 
   if (!collectivite) {
@@ -255,6 +276,7 @@ export const ActionStatusDropdown = ({
           externalOpen={openScoreAuto}
           setExternalOpen={setOpenScoreAuto}
           onSaveScore={handleSaveScoreAuto}
+          onClose={() => setOpenScoreAuto(false)}
         />
       )}
 

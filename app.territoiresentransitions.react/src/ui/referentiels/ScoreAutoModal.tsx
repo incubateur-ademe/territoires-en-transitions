@@ -3,21 +3,16 @@ import SubActionTasksList from 'app/pages/collectivite/EtatDesLieux/Referentiel/
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {useActionSummaryChildren} from 'core-logic/hooks/referentiel';
 import {Dispatch, SetStateAction, useState} from 'react';
-import {TActionAvancementExt} from 'types/alias';
 import Modal from 'ui/shared/floating-ui/Modal';
+import {StatusToSavePayload} from './ActionStatusDropdown';
 
 type ScoreAutoModalProps = {
   action: ActionDefinitionSummary;
   actionScores: {[actionId: string]: SuiviScoreRow};
   externalOpen: boolean;
   setExternalOpen: Dispatch<SetStateAction<boolean>>;
-  onSaveScore: (
-    newStatus: {
-      actionId: string;
-      status: TActionAvancementExt;
-      avancementDetaille: number[] | undefined;
-    }[]
-  ) => void;
+  onSaveScore: (payload: StatusToSavePayload[]) => void;
+  onClose: () => void;
 };
 
 const ScoreAutoModal = ({
@@ -26,23 +21,22 @@ const ScoreAutoModal = ({
   externalOpen,
   setExternalOpen,
   onSaveScore,
+  onClose,
 }: ScoreAutoModalProps): JSX.Element => {
   const tasks = useActionSummaryChildren(action);
   const [localStatus, setLocalStatus] = useState<{
-    [key: string]: {
-      status: TActionAvancementExt;
-      avancementDetaille: number[] | undefined;
-    };
+    [key: string]: StatusToSavePayload;
   }>({});
 
-  const handleChangeStatus = (
-    actionId: string,
-    status: TActionAvancementExt,
-    avancementDetaille?: number[]
-  ) => {
+  const handleChangeStatus = (payload: StatusToSavePayload) => {
     setLocalStatus(prevState => ({
       ...prevState,
-      [actionId]: {status, avancementDetaille},
+      [payload.actionId]: {
+        actionId: payload.actionId,
+        statut: payload.statut,
+        avancement: payload.avancement,
+        avancementDetaille: payload.avancementDetaille,
+      },
     }));
   };
 
@@ -52,7 +46,8 @@ const ScoreAutoModal = ({
     for (const actionId in localStatus) {
       newStatus.push({
         actionId,
-        status: localStatus[actionId].status,
+        statut: localStatus[actionId].statut,
+        avancement: localStatus[actionId].avancement,
         avancementDetaille: localStatus[actionId].avancementDetaille,
       });
     }
@@ -77,12 +72,12 @@ const ScoreAutoModal = ({
                 onSaveStatus={handleChangeStatus}
               />
               <hr />
-              <div className="w-full flex justify-end">
-                <button
-                  className="fr-btn fr-btn--icon-left fr-fi-save-line"
-                  onClick={handleSaveScoreAuto}
-                >
-                  Enregistrer le score automatique
+              <div className="w-full flex justify-end gap-4">
+                <button className="fr-btn fr-btn--secondary" onClick={onClose}>
+                  Annuler
+                </button>
+                <button className="fr-btn" onClick={handleSaveScoreAuto}>
+                  Valider ce score
                 </button>
               </div>
             </div>
