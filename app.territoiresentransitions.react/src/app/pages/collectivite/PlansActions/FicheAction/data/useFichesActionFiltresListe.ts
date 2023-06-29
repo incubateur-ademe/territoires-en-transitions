@@ -36,18 +36,29 @@ type TFetchedData = {items: FicheAction[]; total: number};
 export const fetchFichesActionFiltresListe = async (
   filters: TFilters
 ): Promise<TFetchedData> => {
-  const {collectivite_id, axes_id, pilotes, statuts, referents, priorites} =
-    filters;
+  const {
+    collectivite_id,
+    axes,
+    pilotes,
+    statuts,
+    referents,
+    priorites,
+    echeance,
+  } = filters;
+
+  // Quand l'écheance vient de l'URL, elle est donnée dans un tableau
+  const echeanceSansTableau = Array.isArray(echeance) ? echeance[0] : echeance;
 
   const {error, data, count} = await supabaseClient.rpc(
     'filter_fiches_action',
     {
       collectivite_id: collectivite_id!,
-      axes_id: axes_id,
+      axes_id: axes,
       pilotes: makePersonnesWithIds(pilotes),
       referents: makePersonnesWithIds(referents),
-      statuts: statuts,
+      statuts,
       niveaux_priorite: priorites,
+      echeance: echeanceSansTableau,
     },
     {count: 'exact'}
   );
