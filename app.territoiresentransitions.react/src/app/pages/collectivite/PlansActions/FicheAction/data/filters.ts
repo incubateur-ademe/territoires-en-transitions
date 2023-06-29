@@ -25,6 +25,8 @@ export type TFilters = {
   page?: number;
 };
 
+export type FiltersKeys = keyof TFilters;
+
 export type TSetFilters = (newFilter: TFilters) => void;
 
 export type TFiltreProps = {
