@@ -1,10 +1,12 @@
 import {ChangeEvent, Fragment, useEffect, useState} from 'react';
 import './TagFilters.css';
+import {TOption} from '../select/commons';
+import {ITEM_ALL} from './commons';
 
 type TagFiltersProps = {
   name: string;
   id?: string;
-  options: {value: string; label: string}[];
+  options: TOption[];
   defaultOption?: string;
   className?: string;
   small?: boolean;
@@ -34,7 +36,7 @@ const TagFilters = ({
   name,
   id,
   options,
-  defaultOption = 'default',
+  defaultOption = ITEM_ALL,
   className = '',
   small = false,
   onChange,
@@ -58,13 +60,13 @@ const TagFilters = ({
             className="hidden"
             type="radio"
             name={`${name}${id ? `-${id}` : ''}`}
-            id={opt.value}
+            id={`${name}-${opt.value}`}
             value={opt.value}
             checked={selectedOption === opt.value}
             onChange={handleChange}
           />
           <label
-            htmlFor={opt.value}
+            htmlFor={`${name}-${opt.value}`}
             className={`block relative m-0 px-4 py-1 rounded-2xl ${
               small ? 'text-xs' : 'text-sm'
             } text-bf500 bg-bf925 hover:bg-bf925hover cursor-pointer`}

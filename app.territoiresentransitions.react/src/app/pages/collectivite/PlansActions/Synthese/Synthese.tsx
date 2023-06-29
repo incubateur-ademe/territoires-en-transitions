@@ -1,6 +1,9 @@
 import {useState} from 'react';
 import HeaderTitle from '../components/HeaderTitle';
-import FiltersPlanAction from './FiltersPlanAction';
+import FiltersPlanAction, {
+  PlanActionFilter,
+  filtreToutesLesFiches,
+} from './FiltersPlanAction';
 import SyntheseGraphsList from './SyntheseGraphsList';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
@@ -17,11 +20,9 @@ type SyntheseProps = {
 const Synthese = ({collectiviteId}: SyntheseProps): JSX.Element => {
   const collectivite = useCurrentCollectivite();
 
-  const [selectedPlan, setSelectedPlan] = useState<{
-    id: number | null;
-    name: string;
-  }>({id: null, name: 'Toutes les fiches'});
-  const [withoutPlan, setWithoutPlan] = useState<boolean | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<PlanActionFilter>(
+    filtreToutesLesFiches
+  );
 
   return (
     <div className="w-full">
@@ -34,18 +35,19 @@ const Synthese = ({collectiviteId}: SyntheseProps): JSX.Element => {
         isReadonly={true}
       />
       <div className="max-w-4xl mx-auto p-10">
-        {/* Filtres par plan d'actions */}
-        <FiltersPlanAction
-          collectiviteId={collectiviteId}
-          onChangePlan={setSelectedPlan}
-          onChangeWithoutPlan={setWithoutPlan}
-        />
+        <div className="mb-6">
+          {/* Filtres par plan d'actions */}
+          <FiltersPlanAction
+            collectiviteId={collectiviteId}
+            onChangePlan={setSelectedPlan}
+          />
+        </div>
 
         {/* Graphes répartition des fiches */}
         <SyntheseGraphsList
           collectiviteId={collectiviteId}
           selectedPlan={selectedPlan}
-          withoutPlan={withoutPlan}
+          withoutPlan={selectedPlan.id === 'nc'}
           isReadonly={collectivite?.readonly ?? true}
         />
       </div>
