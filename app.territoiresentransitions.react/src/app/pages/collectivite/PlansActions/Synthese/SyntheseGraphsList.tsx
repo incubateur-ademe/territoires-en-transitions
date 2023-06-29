@@ -1,9 +1,14 @@
-import {defaultColors, nivoColorsSet, statusColor} from 'ui/charts/chartsTheme';
+import {defaultColors, nivoColorsSet} from 'ui/charts/chartsTheme';
 import {usePlanActionTableauDeBord} from './data/usePlanActionTableauDeBord';
 import PictoLeaf from 'ui/pictogrammes/PictoLeaf';
 import ChartCard from 'ui/charts/ChartCard';
 import {Link} from 'react-router-dom';
-import {makeCollectivitePlansActionsNouveauUrl} from 'app/paths';
+import {
+  makeCollectivitePlansActionsNouveauUrl,
+  makeCollectivitePlansActionsSyntheseVueUrl,
+} from 'app/paths';
+import {PlanActionFilter} from './FiltersPlanAction';
+import {generateGraphData} from './utils';
 
 const getLegendColor = (
   data: {id: string; value: number; color?: any},
@@ -54,7 +59,7 @@ const getCustomLegend = (data: {id: string; value: number; color?: any}[]) => {
 
 type SyntheseGraphsListProps = {
   collectiviteId: number;
-  selectedPlan: {id: number | null; name: string};
+  selectedPlan: PlanActionFilter;
   withoutPlan: boolean | null;
   isReadonly: boolean;
 };
@@ -72,76 +77,23 @@ const SyntheseGraphsList = ({
   withoutPlan,
   isReadonly,
 }: SyntheseGraphsListProps): JSX.Element => {
+  const selectedPlanId = (plan: PlanActionFilter) => {
+    if (plan.id === 'tous' || plan.id === 'nc') {
+      return null;
+    }
+
+    return plan.id;
+  };
+
   const data = usePlanActionTableauDeBord(
     collectiviteId,
-    selectedPlan.id,
+    selectedPlanId(selectedPlan),
     withoutPlan
   );
 
-  const graphsData: {
-    id: string;
-    title: string;
-    data: {id: string; value: number; color?: any}[];
-  }[] = data
-    ? [
-        {
-          id: 'statut-avancement',
-          title: "Répartition par statut d'avancement",
-          data: data.statuts.map(st => ({
-            ...st,
-            id: st.id !== 'NC' ? st.id : 'Sans statut',
-            color: statusColor[st.id],
-          })),
-        },
-        {
-          id: 'personne-pilote',
-          title: 'Répartition par personne pilote',
-          data: data.pilotes.map(pi => ({
-            ...pi,
-            id: pi.id !== 'NC' ? pi.id : 'Sans pilote',
-            color: pi.id === 'NC' ? statusColor.NC : undefined,
-          })),
-        },
-        {
-          id: 'elu-referent',
-          title: 'Répartition par élu·e référent·e',
-          data: data.referents.map(ref => ({
-            ...ref,
-            id: ref.id !== 'NC' ? ref.id : 'Sans élu·e référent·e',
-            color: ref.id === 'NC' ? statusColor.NC : undefined,
-          })),
-        },
-        {
-          id: 'niveau-priorite',
-          title: 'Répartition par niveau de priorité',
-          data: data.priorites.map(pr => ({
-            ...pr,
-            id: pr.id !== 'NC' ? pr.id : 'Non priorisé',
-            color: pr.id === 'NC' ? statusColor.NC : undefined,
-          })),
-        },
-        {
-          id: 'echeance',
-          title: 'Répartition par échéance',
-          data: data.echeances.map(ech => ({
-            ...ech,
-            color: ech.id === 'NC' ? statusColor.NC : undefined,
-          })),
-        },
-        // {
-        //   title: 'Répartition par direction pilote',
-        //   data: [],
-        // },
-        // {
-        //   title: 'Répartition par budget prévisionnel',
-        //   data: [],
-        // },
-      ]
-    : [];
-
   return data ? (
     <div className="fr-grid-row fr-grid-row--gutters">
-      {graphsData.map(
+      {generateGraphData(data).map(
         graph =>
           !!graph.data.length && (
             <div key={graph.title} className="fr-col-sm-12 fr-col-xl-6">
@@ -149,9 +101,7 @@ const SyntheseGraphsList = ({
                 chartType="donut"
                 chartProps={{
                   data: graph.data,
-                  label:
-                    graph.id === 'statut-avancement' ||
-                    graph.id === 'niveau-priorite',
+                  label: graph.id === 'statuts' || graph.id === 'priorites',
                 }}
                 chartInfo={{
                   title: graph.title,
@@ -162,6 +112,14 @@ const SyntheseGraphsList = ({
                     graph.id
                   }-${selectedPlan.name.toLowerCase().split(' ').join('-')}`,
                 }}
+                link={`${makeCollectivitePlansActionsSyntheseVueUrl({
+                  collectiviteId,
+                  vue: graph.id,
+                })}${
+                  typeof selectedPlan.id === 'number'
+                    ? `?axes=${selectedPlan.id}`
+                    : ''
+                }`}
                 customStyle={{height: '350px', borderBottomWidth: '4px'}}
               />
             </div>
