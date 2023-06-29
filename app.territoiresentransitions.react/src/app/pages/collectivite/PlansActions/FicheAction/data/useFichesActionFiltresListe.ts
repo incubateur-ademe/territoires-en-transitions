@@ -6,7 +6,6 @@ import {nameToShortNames, TFilters} from './filters';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {FicheAction} from './types';
 import {TPersonne} from 'types/alias';
-import {PlanNode} from '../../PlanAction/data/types';
 
 /**
  * Renvoie un tableau de Personne.
@@ -59,6 +58,7 @@ export const fetchFichesActionFiltresListe = async (
       statuts,
       niveaux_priorite: priorites,
       echeance: echeanceSansTableau,
+      limit: 20,
     },
     {count: 'exact'}
   );
@@ -71,35 +71,28 @@ export const fetchFichesActionFiltresListe = async (
 };
 
 type Args = {
-  plan: PlanNode;
-  axe?: PlanNode;
+  /** URL à matcher pour récupérer les paramètres */
+  url: string;
+  initialFilters: TFilters;
 };
 /**
  * Liste de fiches actions au sein d'un axe
  */
 export const useFichesActionFiltresListe = ({
-  plan,
-  axe,
+  url,
+  initialFilters,
 }: Args): TFichesActionsListe => {
   const collectivite_id = useCollectiviteId();
 
-  const initialFilters: TFilters = {
-    collectivite_id: collectivite_id!,
-    axes_id: [axe ? axe.id : plan.id],
-  };
-
   const [filters, setFilters, filtersCount] = useSearchParams<TFilters>(
-    axe
-      ? `/collectivite/${collectivite_id}/plans/plan/${plan.id}/${axe.id}`
-      : `/collectivite/${collectivite_id}/plans/plan/${plan.id}`,
+    url,
     initialFilters,
     nameToShortNames
   );
 
   // charge les données
-  const {data} = useQuery(
-    ['fiches_Actions', collectivite_id, axe ? axe.id : plan.id, filters],
-    () => fetchFichesActionFiltresListe(filters)
+  const {data} = useQuery(['fiches_Actions', collectivite_id, filters], () =>
+    fetchFichesActionFiltresListe(filters)
   );
 
   return {
