@@ -6,6 +6,8 @@ import PlanActionFiltresResultats from './PlanActionFiltresResultats';
 import {useFichesActionFiltresListe} from '../../FicheAction/data/useFichesActionFiltresListe';
 import {PlanNode} from '../data/types';
 import {useEffect, useState} from 'react';
+import {TFilters} from '../../FicheAction/data/filters';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 
 type Props = {
   plan: PlanNode;
@@ -14,8 +16,21 @@ type Props = {
 };
 
 const PlanActionFiltres = ({plan, axe, setIsFiltered}: Props) => {
+  const collectivite_id = useCollectiviteId();
+
   const [filtered, setFiltered] = useState(false);
-  const filters = useFichesActionFiltresListe({plan, axe});
+
+  const initialFilters: TFilters = {
+    collectivite_id: collectivite_id!,
+    axes: [axe ? axe.id : plan.id],
+  };
+
+  const filters = useFichesActionFiltresListe({
+    url: axe
+      ? `/collectivite/${collectivite_id}/plans/plan/${plan.id}/${axe.id}`
+      : `/collectivite/${collectivite_id}/plans/plan/${plan.id}`,
+    initialFilters,
+  });
 
   // On prend à partir de 2 éléments car les filtres "collectivite_id" et "plan/axe id" sont des constantes
   // Et on le passe au parent pour afficher le plan ou les filtres
