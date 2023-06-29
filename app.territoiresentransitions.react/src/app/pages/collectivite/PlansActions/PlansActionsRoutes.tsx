@@ -14,11 +14,13 @@ import {
   collectivitePlansActionsImporterPath,
   collectivitePlansActionsNouveauPath,
   collectivitePlansActionsSynthesePath,
+  collectivitePlansActionsSyntheseVuePath,
 } from 'app/paths';
 import {SynthesePage} from './Synthese/SynthesePage';
 import {SelectionPage} from './ParcoursCreationPlan/SelectionPage';
 import {ImporterPlanPage} from './ParcoursCreationPlan/ImporterPlanPage';
 import {CreerPlanPage} from './ParcoursCreationPlan/CreerPlanPage';
+import {SyntheseVuePage} from './Synthese/SyntheseVue/SyntheseVuePage';
 
 type Props = {
   collectivite_id: number;
@@ -43,6 +45,9 @@ export const PlansActionsRoutes = ({collectivite_id}: Props) => {
       {/* Synthèse */}
       <Route exact path={[collectivitePlansActionsSynthesePath]}>
         <SynthesePage collectiviteId={collectivite_id} />
+      </Route>
+      <Route exact path={[collectivitePlansActionsSyntheseVuePath]}>
+        <SyntheseVuePage />
       </Route>
       {/* <FichesNonClassees /> */}
       <Route exact path={[collectiviteFichesNonClasseesPath]}>
