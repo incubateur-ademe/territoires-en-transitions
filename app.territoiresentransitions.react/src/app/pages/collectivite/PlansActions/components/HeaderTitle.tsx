@@ -6,16 +6,29 @@ import {generateTitle} from '../FicheAction/data/utils';
 type Props = {
   titre: string | null;
   onUpdate?: (value: string) => void;
-  bgColorClassName?: string;
-  type?: 'fiche' | 'plan' | 'axe';
+
+  customClass?: {
+    container: string;
+    text: string;
+  };
   isReadonly: boolean;
 };
 
+/**
+ * Titre d'une page plan d'action
+ * @param titre - le titre de la page
+ * @param onUpdate - rend le titre éditable
+ * @param customClass - les classes permettant de styliser le header
+ * @param isReadonly - est ce que le titre peut-il être éditer
+ * @returns
+ */
 const HeaderTitle = ({
   titre,
   onUpdate,
-  type = 'fiche',
-  bgColorClassName,
+  customClass = {
+    container: 'bg-indigo-400',
+    text: 'text-[1.375rem]',
+  },
   isReadonly,
 }: Props) => {
   const titreInputRef = useRef<HTMLTextAreaElement>(null);
@@ -57,32 +70,23 @@ const HeaderTitle = ({
       className={classNames(
         'group flex items-center mx-auto py-6 px-10 xl:mr-6',
         {'cursor-text': !isReadonly},
-        {'bg-indigo-300': type === 'axe'},
-        {'bg-indigo-700': type === 'plan'},
-        {'bg-indigo-400': type === 'fiche'},
-        bgColorClassName
+        customClass.container
       )}
       onClick={!isReadonly ? handleEditFocus : undefined}
     >
       <p
-        className={classNames('flex grow m-0 font-bold text-white', {
-          'text-[1.375rem] leading-snug': type === 'fiche',
-          'text-[2rem] leading-snug': type === 'plan',
-          'text-[1.75rem] leading-snug text-gray-800': type === 'axe',
-        })}
+        className={classNames(
+          'flex grow m-0 font-bold leading-snug text-white',
+          customClass.text
+        )}
       >
         {onUpdate ? (
           <TextareaControlled
             data-test="HeaderTitleInput"
             ref={titreInputRef}
             className={classNames(
-              'w-full placeholder:text-white focus:placeholder:text-gray-200 disabled:text-white !outline-none !resize-none',
-              {
-                'text-[1.375rem] leading-snug': type === 'fiche',
-                'text-[2rem] leading-snug': type === 'plan',
-                'text-[1.75rem] leading-snug placeholder:text-gray-800 focus:placeholder:text-gray-500 disabled:text-gray-800':
-                  type === 'axe',
-              }
+              'w-full leading-snug placeholder:text-white focus:placeholder:text-gray-200 disabled:text-white !outline-none !resize-none',
+              customClass.text
             )}
             initialValue={titre}
             placeholder={'Sans titre'}
