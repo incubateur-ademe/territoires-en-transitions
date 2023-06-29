@@ -26,7 +26,10 @@ const Synthese = ({collectiviteId}: SyntheseProps): JSX.Element => {
   return (
     <div className="w-full">
       <HeaderTitle
-        type="plan"
+        customClass={{
+          container: 'bg-indigo-200',
+          text: 'text-[2rem] text-gray-800 placeholder:text-gray-800 focus:placeholder:text-gray-500 disabled:text-gray-800',
+        }}
         titre="Synthèse des fiches action"
         isReadonly={true}
       />

@@ -32,7 +32,17 @@ export const PlanAction = ({plan, axe}: PlanActionProps) => {
   return (
     <div data-test={isAxePage ? 'PageAxe' : 'PlanAction'} className="w-full">
       <HeaderTitle
-        type={isAxePage ? 'axe' : 'plan'}
+        customClass={
+          isAxePage
+            ? {
+                container: 'bg-indigo-300',
+                text: 'text-[1.75rem] text-gray-800 placeholder:text-gray-800 focus:placeholder:text-gray-500 disabled:text-gray-800',
+              }
+            : {
+                container: 'bg-indigo-700',
+                text: 'text-[2rem]',
+              }
+        }
         titre={isAxePage ? axe.nom : plan.nom}
         onUpdate={nom => updateAxe({id: isAxePage ? axe.id : plan.id, nom})}
         isReadonly={isReadonly}
