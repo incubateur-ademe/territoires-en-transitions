@@ -4,18 +4,14 @@ import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinition
 import {useActionCommentaire} from 'core-logic/hooks/useActionCommentaire';
 import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
 import SubActionHeader from './SubActionHeader';
-import {TActionAvancementExt} from 'types/alias';
 import {SuiviScoreRow} from '../data/useScoreRealise';
+import {StatusToSavePayload} from 'ui/referentiels/ActionStatusDropdown';
 
 type SubActionTaskProps = {
   task: ActionDefinitionSummary;
   actionScores: {[actionId: string]: SuiviScoreRow};
   hideStatus?: boolean;
-  onSaveStatus?: (
-    actionId: string,
-    status: TActionAvancementExt,
-    avancementDetaille?: number[]
-  ) => void;
+  onSaveStatus?: (payload: StatusToSavePayload) => void;
 };
 
 /**

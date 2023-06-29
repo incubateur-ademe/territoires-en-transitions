@@ -6,6 +6,7 @@ import {useState} from 'react';
 import {DetailedScoreSlider, AvancementValues} from './DetailedScoreSlider';
 import {actionAvancementColors} from 'app/theme';
 import {toPercentString} from 'utils/score';
+import classNames from 'classnames';
 
 export type TDetailedScoreProps = {
   avancement: AvancementValues;
@@ -48,17 +49,21 @@ export const DetailedScore = (props: TDetailedScoreProps) => {
         </div>
       </div>
       <p className="mb-16">
-        Pour faciliter la relecture, pensez à bien préciser les raisons de cette
-        répartition dans le champ "Précisions sur l'état d'avancement".
+        Pour faciliter la relecture, vous pouvez préciser les raisons de cette
+        répartition en cliquant sur le bouton{' '}
+        <span className="fr-icon-pencil-line text-bf500" aria-hidden="true" />{' '}
+        situé sous l'intitulé de la tâche.
       </p>
       <div className="w-full flex justify-end">
         <button
-          className="fr-btn fr-btn--icon-left fr-fi-save-line"
+          className={classNames('fr-btn', {
+            'fr-btn--icon-left fr-fi-save-line': saveAtValidation,
+          })}
           onClick={() => onSave(currentAvancement)}
         >
           {saveAtValidation
             ? 'Enregistrer le score personnalisé'
-            : 'Valider le score personnalisé'}
+            : 'Valider la répartition'}
         </button>
       </div>
     </div>
