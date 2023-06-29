@@ -23,7 +23,7 @@ const PlanActionFiltresAccordeon = ({plan, axe, setIsFiltered}: Props) => {
     axe
       ? `/collectivite/${collectivite_id}/plans/plan/${plan.id}/${axe.id}`
       : `/collectivite/${collectivite_id}/plans/plan/${plan.id}`,
-    {collectivite_id: collectivite_id!, axes_id: [axe ? axe.id : plan.id]},
+    {collectivite_id: collectivite_id!, axes: [axe ? axe.id : plan.id]},
     nameToShortNames
   );
 
