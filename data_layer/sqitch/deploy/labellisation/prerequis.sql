@@ -6,49 +6,62 @@
 BEGIN;
 
 create or replace function
-    labellisation.etoiles(collectivite_id integer)
+    labellisation.critere_action(collectivite_id integer)
     returns table
             (
-                referentiel                    referentiel,
-                etoile_labellise               labellisation.etoile,
-                prochaine_etoile_labellisation labellisation.etoile,
-                etoile_score_possible          labellisation.etoile,
-                etoile_objectif                labellisation.etoile
+                referentiel         referentiel,
+                etoiles             labellisation.etoile,
+                action_id           action_id,
+                formulation         text,
+                score_realise       float,
+                min_score_realise   float,
+                score_programme     float,
+                min_score_programme float,
+                atteint             bool,
+                prio                integer
             )
 as
 $$
-with ref as (select unnest(enum_range(null::referentiel)) as referentiel),
-     -- étoile déduite de la labellisation obtenue
-     l_etoile as (select r.referentiel,
-                         em.etoile,
-                         em.prochaine_etoile
-                  from ref r
-                           join public.labellisation l on r.referentiel = l.referentiel
-                           join labellisation.etoile_meta em
-                                on em.etoile = l.etoiles::varchar::labellisation.etoile
-                  where l.collectivite_id = etoiles.collectivite_id
-                  order by l.obtenue_le desc
-                  limit 1),
-     score as (select * from labellisation.referentiel_score(etoiles.collectivite_id)),
-     -- étoile déduite du score
-     s_etoile as (select r.referentiel,
-                         case
-                             when s.complet then max(em.etoile)
-                             end as etoile_atteinte
-                  from ref r
-                           join score s on r.referentiel = s.referentiel
-                           join labellisation.etoile_meta em
-                                on em.min_realise_score <= s.score_fait
-                  group by r.referentiel, s.complet)
-
-select s.referentiel,
-       l.etoile                                                       as etoile_labellise,
-       l.prochaine_etoile                                             as prochaine_etoile_labellisation,
-       s.etoile_atteinte                                              as etoile_score_possible,
-       greatest(l.etoile, l.prochaine_etoile, s.etoile_atteinte, '1') as etoile_objectif
-from s_etoile s
-         left join l_etoile l on l.referentiel = s.referentiel;
+with scores as (select s.*
+                from client_scores cs
+                         join private.convert_client_scores(cs.scores) s on true
+                where cs.collectivite_id = critere_action.collectivite_id)
+select ss.referentiel,
+       cla.etoile,
+       cla.action_id,
+       cla.formulation,
+       ss.proportion_fait,
+       cla.min_realise_percentage,
+       ss.proportion_programme,
+       cla.min_programme_percentage,
+       -- le score fait est >= au critère fait
+       coalesce(ss.proportion_fait * 100 >= cla.min_realise_percentage, false)
+           -- le score fait + programme est >= au critère programme
+           or coalesce((ss.proportion_programme + ss.proportion_fait) * 100 >= cla.min_programme_percentage, false)
+           -- l'action est une tache (a une sous-action parente, qui possiblement a un statut)
+           or (case
+                   when sass is not null
+                       then coalesce(sass.proportion_fait * 100 >= cla.min_realise_percentage, false)
+                       or coalesce((sass.proportion_programme + sass.proportion_fait) * 100 >=
+                                   cla.min_programme_percentage, false)
+                   else false end)
+           as atteint,
+       cla.prio
+from labellisation_action_critere cla
+         join scores sc on sc.action_id = cla.action_id
+         join private.score_summary_of(sc) ss on true
+         join private.action_node a on sc.action_id = a.action_id
+    -- sous-action parente.
+         left join private.action_node sa
+                   on a.action_id = any (sa.descendants)
+                       and a.type = 'tache'
+                       and sa.type = 'sous-action'
+    -- score sous-action parente
+         left join scores sasc on sa.action_id = sasc.action_id
+    -- score summary sous-action parente
+         left join private.score_summary_of(sasc) sass on true
+where not ss.desactive
 $$
-    language sql;
+    language sql stable;
 
 COMMIT;

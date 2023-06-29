@@ -414,3 +414,5 @@ cron/send_to_amplitude [cron/send_to_amplitude@v2.41.0] 2023-06-23T08:27:22Z Flo
 
 retool/correction_droit 2023-06-29T13:08:57Z Amandine Jacquelin <conta@LanceLibre> # Ajoute is_service_role manquant à certaines fonctions retool
 @v2.43.0 2023-06-30T08:27:10Z Florian <florian@derfurth.com> # Confidentialité des vues Retool
+
+labellisation/prerequis [labellisation/prerequis@v2.42.0] 2023-06-29T14:23:52Z Florian <florian@derfurth.com> # Prise en compte des statuts à la sous-action

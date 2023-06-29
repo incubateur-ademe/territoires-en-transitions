@@ -2,6 +2,6 @@
 
 BEGIN;
 
-select has_function_privilege('labellisation.etoiles(integer)', 'execute');
+select has_function_privilege('labellisation.critere_action(integer)', 'execute');
 
 ROLLBACK;
