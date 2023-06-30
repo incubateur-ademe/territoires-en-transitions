@@ -93,6 +93,16 @@ export const ActionStatusDropdown = ({
       filled
     ) {
       setLocalAvancement('detaille');
+
+      // Permet le raffraichissement du score pour l'affichage du score
+      // réalisé et de la jauge après mise à jour dans la modale de score auto
+      saveActionStatut({
+        ...args,
+        avancement: 'non_renseigne',
+        concerne: true,
+        modified_at: statut?.modified_at,
+        modified_by: statut?.modified_by,
+      });
     } else {
       setLocalAvancement(avancementExt);
     }
@@ -125,21 +135,23 @@ export const ActionStatusDropdown = ({
 
     // Différencie la sauvegarde auto dans la page
     // de la mise à jour depuis la modale de score auto
-    if (onSaveStatus) {
-      onSaveStatus({
-        actionId: action.id,
-        statut,
-        avancement: value,
-        avancementDetaille: avancement_detaille,
-      });
-    } else {
-      saveActionStatut({
-        ...args,
-        ...statut,
-        avancement,
-        avancement_detaille,
-        concerne,
-      });
+    if (action.type !== 'sous-action' || avancement !== 'detaille') {
+      if (onSaveStatus) {
+        onSaveStatus({
+          actionId: action.id,
+          statut,
+          avancement: value,
+          avancementDetaille: avancement_detaille,
+        });
+      } else {
+        saveActionStatut({
+          ...args,
+          ...statut,
+          avancement,
+          avancement_detaille,
+          concerne,
+        });
+      }
     }
   };
 
