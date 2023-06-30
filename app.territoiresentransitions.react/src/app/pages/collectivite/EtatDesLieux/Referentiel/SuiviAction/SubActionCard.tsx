@@ -35,11 +35,21 @@ const SubActionCard = ({
     action_id: subAction.id,
     collectivite_id: collectivite_id ?? 0,
   });
+  const {avancement, concerne} = statut || {};
   const tasks = useActionSummaryChildren(subAction);
+
+  const shouldDisplayProgressBar =
+    concerne !== false &&
+    (avancement === 'detaille' ||
+      (avancement === 'non_renseigne' && filled === true) ||
+      (statut === null && filled === true));
+
   const shouldHideTasksStatus =
     (statut !== null && statut?.avancement !== 'non_renseigne') ||
     statut?.concerne === false;
+
   const shouldOpen = true;
+
   // Condition à décommenter lorsque le statut à la sous-action sera possible
   // subAction.referentiel === 'eci' ||
   // (subAction.referentiel === 'cae' && statut?.avancement === 'detaille');
@@ -70,11 +80,7 @@ const SubActionCard = ({
       <SubActionHeader
         action={subAction}
         actionScores={actionScores}
-        displayProgressBar={
-          statut?.avancement === 'detaille' ||
-          (statut?.avancement === 'non_renseigne' && filled === true) ||
-          (statut === null && filled === true)
-        }
+        displayProgressBar={shouldDisplayProgressBar}
         openSubAction={openSubAction}
         onToggleOpen={handleToggleOpen}
       />
