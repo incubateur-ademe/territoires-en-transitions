@@ -64,10 +64,10 @@ export const ActionStatusDropdown = ({
     collectivite_id: collectivite?.collectivite_id || 0,
   };
   const {statut, filled} = useActionStatut(args);
-  const {avancement, avancement_detaille} = statut || {};
+  const {avancement, avancement_detaille, concerne} = statut || {};
 
   const score = actionScores[action.id] ?? {};
-  const {concerne, desactive} = score;
+  const {desactive} = score;
   const avancementExt = getAvancementExt({
     avancement,
     desactive,
@@ -89,7 +89,7 @@ export const ActionStatusDropdown = ({
     if (
       action.type === 'sous-action' &&
       avancementExt === 'non_renseigne' &&
-      concerne === true &&
+      concerne !== false &&
       filled
     ) {
       setLocalAvancement('detaille');
