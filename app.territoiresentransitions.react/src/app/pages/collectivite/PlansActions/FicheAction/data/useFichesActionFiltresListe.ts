@@ -4,7 +4,7 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {useSearchParams} from 'core-logic/hooks/query';
 import {nameToShortNames, TFilters} from './filters';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {FicheAction} from './types';
+import {FicheResume} from './types';
 import {TPersonne} from 'types/alias';
 
 /**
@@ -22,7 +22,7 @@ export const makePersonnesWithIds = (personnes?: string[]) => {
 };
 
 export type TFichesActionsListe = {
-  items: FicheAction[];
+  items: FicheResume[];
   total: number;
   initialFilters: TFilters;
   filters: TFilters;
@@ -30,7 +30,7 @@ export type TFichesActionsListe = {
   setFilters: (filters: TFilters) => void;
 };
 
-type TFetchedData = {items: FicheAction[]; total: number};
+type TFetchedData = {items: FicheResume[]; total: number};
 
 export const fetchFichesActionFiltresListe = async (
   filters: TFilters
@@ -67,7 +67,7 @@ export const fetchFichesActionFiltresListe = async (
     throw new Error(error.message);
   }
 
-  return {items: (data as unknown as FicheAction[]) || [], total: count || 0};
+  return {items: (data as unknown as FicheResume[]) || [], total: count || 0};
 };
 
 type Args = {

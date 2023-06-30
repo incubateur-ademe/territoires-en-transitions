@@ -117,12 +117,13 @@ const SyntheseVue = () => {
             {filters.items.map(fiche => (
               <FicheActionCard
                 key={fiche.id}
+                displayAxe
                 ficheAction={fiche}
                 link={
-                  fiche.axes && fiche.axes.length !== 0
+                  fiche.plans && fiche.plans[0]
                     ? makeCollectivitePlanActionFicheUrl({
                         collectiviteId: collectivite_id!,
-                        planActionUid: fiche.axes[0].id?.toString()!,
+                        planActionUid: fiche.plans[0].id?.toString()!,
                         ficheUid: fiche.id?.toString()!,
                       })
                     : makeCollectiviteFicheNonClasseeUrl({
