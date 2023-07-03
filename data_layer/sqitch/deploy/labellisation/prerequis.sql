@@ -40,7 +40,9 @@ select ss.referentiel,
                and exists(select *
                           from action_statut s
                           where s.action_id = sa.action_id
-                            and s.collectivite_id = critere_action.collectivite_id)
+                            and s.collectivite_id = critere_action.collectivite_id
+                            and s.avancement != 'non_renseigne'
+                            and s.concerne)
                then
                    coalesce(sass.proportion_fait * 100 >= cla.min_realise_percentage, false)
                    or coalesce((sass.proportion_programme + sass.proportion_fait) * 100 >=
