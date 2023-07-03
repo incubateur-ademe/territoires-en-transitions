@@ -98,7 +98,7 @@ const ProgressBarTooltipElement = ({
   return (
     <div key={label} className="flex flex-row items-center">
       <Square size={16} color={color} />
-      <span className="pl-2">{`${label} : ${value} %`}</span>
+      <div className="pl-2 whitespace-nowrap">{`${label} : ${value} %`}</div>
     </div>
   );
 };

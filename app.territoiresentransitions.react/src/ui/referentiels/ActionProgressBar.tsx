@@ -13,14 +13,16 @@ export const ActionProgressBar = ({
   className?: string;
 }) => {
   const score = useActionScore(action.id);
+  const isReglementaire = action.identifiant.split('.').includes('0');
 
-  if (score === null || score.point_potentiel < 1e-3) return null;
+  if (score === null || (score.point_potentiel < 1e-3 && !isReglementaire))
+    return null;
 
   const progressScore = [
     {
       label: avancementToLabel.fait,
       value:
-        action.type === 'tache'
+        action.type === 'tache' || isReglementaire
           ? score.fait_taches_avancement
           : score.point_fait,
       color: actionAvancementColors.fait,
@@ -28,7 +30,7 @@ export const ActionProgressBar = ({
     {
       label: avancementToLabel.programme,
       value:
-        action.type === 'tache'
+        action.type === 'tache' || isReglementaire
           ? score.programme_taches_avancement
           : score.point_programme,
       color: actionAvancementColors.programme,
@@ -36,7 +38,7 @@ export const ActionProgressBar = ({
     {
       label: avancementToLabel.pas_fait,
       value:
-        action.type === 'tache'
+        action.type === 'tache' || isReglementaire
           ? score.pas_fait_taches_avancement
           : score.point_pas_fait,
       color: actionAvancementColors.pas_fait,
@@ -47,7 +49,9 @@ export const ActionProgressBar = ({
     <div data-test={`score-${score.action_id}`} className={className}>
       <ProgressBarWithTooltip
         score={progressScore}
-        total={score.point_potentiel}
+        total={
+          isReglementaire ? score.total_taches_count : score.point_potentiel
+        }
         defaultScore={{
           label: avancementToLabel.non_renseigne,
           color: actionAvancementColors.non_renseigne,
