@@ -426,3 +426,4 @@ utilisateur/visite [utilisateur/visite@v2.44.0] 2023-07-10T09:40:14Z Florian <fl
 
 utilisateur/usage [utilisateur/usage@v2.44.0] 2023-07-11T12:01:48Z Florian <florian@derfurth.com> # Ajoute le tracking des actions du tableau de bord
 stats/amplitude [stats/amplitude@v2.44.0] 2023-07-11T13:14:54Z Florian <florian@derfurth.com> # Envoi les événements de création des réponses et des justifications
+plan_action/import 2023-07-03T09:25:01Z Amandine Jacquelin <conta@LanceLibre> # Corrige la fonction d'import pour les cibles et résultats attendus
