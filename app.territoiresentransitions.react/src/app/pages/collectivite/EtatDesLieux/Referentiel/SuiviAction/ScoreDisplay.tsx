@@ -44,7 +44,8 @@ const ScoreDisplay = ({
       />
       {legend ? `${legend} : ` : ''}
       {toLocaleFixed(score.points_realises, 2)} /{' '}
-      {toLocaleFixed(score.points_max_personnalises, 2)} points
+      {toLocaleFixed(score.points_max_personnalises, 2)} point
+      {score.points_max_personnalises > 1 ? 's' : ''}
     </div>
   ) : (
     <></>
