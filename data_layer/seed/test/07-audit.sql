@@ -4,7 +4,7 @@
 create table test.audit
 as
 select *
-from public.audit;
+from labellisation.audit;
 comment on table test.audit is
     'Copie de la table audit.';
 
@@ -44,7 +44,7 @@ truncate labellisation.audit cascade;
 truncate labellisation.demande cascade;
 
     -- Restaure les audits
-insert into public.audit
+insert into labellisation.audit
 select *
 from test.audit;
 
