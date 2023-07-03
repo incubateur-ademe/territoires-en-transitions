@@ -124,7 +124,7 @@ export const ActionStatusDropdown = ({
       // avec statuts au niveau des tâches
       // Si aucune tâche n'est remplie, le statut de la sous-action
       // passe à "non renseigné"
-      if (action.type === 'sous-action') {
+      if (action.type === 'sous-action' && action.children.length > 0) {
         avancement = 'non_renseigne';
         avancement_detaille = undefined;
         setOpenScoreAuto(true);
@@ -269,9 +269,9 @@ export const ActionStatusDropdown = ({
             <AnchorAsButton
               className="underline_href fr-link fr-link--sm"
               onClick={() =>
-                action.type === 'tache'
-                  ? setOpenScorePerso(true)
-                  : setOpenScoreAuto(true)
+                action.type === 'sous-action' && action.children.length > 0
+                  ? setOpenScoreAuto(true)
+                  : setOpenScorePerso(true)
               }
             >
               Détailler l'avancement
