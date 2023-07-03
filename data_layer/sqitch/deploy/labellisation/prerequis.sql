@@ -34,18 +34,24 @@ select ss.referentiel,
        cla.min_realise_percentage,
        ss.proportion_programme,
        cla.min_programme_percentage,
-       -- le score fait est >= au critère fait
-       coalesce(ss.proportion_fait * 100 >= cla.min_realise_percentage, false)
-           -- le score fait + programme est >= au critère programme
-           or coalesce((ss.proportion_programme + ss.proportion_fait) * 100 >= cla.min_programme_percentage, false)
-           -- l'action est une tache (a une sous-action parente, qui possiblement a un statut)
-           or (case
-                   when sass is not null
-                       then coalesce(sass.proportion_fait * 100 >= cla.min_realise_percentage, false)
-                       or coalesce((sass.proportion_programme + sass.proportion_fait) * 100 >=
-                                   cla.min_programme_percentage, false)
-                   else false end)
-           as atteint,
+       case
+           -- l'action a une sous-action parente `sa`, qui a un statut `exists`
+           when sa is not null
+               and exists(select *
+                          from action_statut s
+                          where s.action_id = sa.action_id
+                            and s.collectivite_id = critere_action.collectivite_id)
+               then
+                   coalesce(sass.proportion_fait * 100 >= cla.min_realise_percentage, false)
+                   or coalesce((sass.proportion_programme + sass.proportion_fait) * 100 >=
+                               cla.min_programme_percentage, false)
+           -- sinon
+           else -- le score fait est >= au critère fait
+                   coalesce(ss.proportion_fait * 100 >= cla.min_realise_percentage, false)
+                   -- le score fait + programme est >= au critère programme
+                   or
+                   coalesce((ss.proportion_programme + ss.proportion_fait) * 100 >= cla.min_programme_percentage, false)
+           end as atteint,
        cla.prio
 from labellisation_action_critere cla
          join scores sc on sc.action_id = cla.action_id
