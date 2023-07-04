@@ -29,6 +29,7 @@ Scores:
     point_potentiel: 0.6
     total_taches_count: 2
     completed_taches_count: 2
+    fait_taches_avancement: 2.0
   cae_1.1.1.1.1:
     point_fait: 0.3
     point_pas_fait: 0
@@ -52,6 +53,7 @@ Scores:
     point_programme: 0
     point_pas_fait: 0
     point_potentiel: 0.6
+    fait_taches_avancement: 3.0
   cae_1.1.1.4.3:
     point_fait: 0
     point_pas_fait: 0
