@@ -99,28 +99,28 @@ def update_action_scores_from_status(
         )
         return
 
-    tache_status = statuts.get(action_id)
-    if tache_status and tache_status.detailed_avancement:
+    statut = statuts.get(action_id)
+    if statut and statut.detailed_avancement:
         point_fait = (
-            point_potentiel * tache_status.detailed_avancement.fait
+            point_potentiel * statut.detailed_avancement.fait
             if is_concerne
             else 0.0
         )
         point_programme = (
-            point_potentiel * tache_status.detailed_avancement.programme
+            point_potentiel * statut.detailed_avancement.programme
             if is_concerne
             else 0.0
         )
         point_pas_fait = (
-            point_potentiel * tache_status.detailed_avancement.pas_fait
+            point_potentiel * statut.detailed_avancement.pas_fait
             if is_concerne
             else 0.0
         )
         point_non_renseigne = 0.0
-        completed_taches_count = 1
-        fait_taches_avancement = tache_status.detailed_avancement.fait
-        programme_taches_avancement = tache_status.detailed_avancement.programme
-        pas_fait_taches_avancement = tache_status.detailed_avancement.pas_fait
+        completed_taches_count = tache_count
+        fait_taches_avancement = statut.detailed_avancement.fait
+        programme_taches_avancement = statut.detailed_avancement.programme
+        pas_fait_taches_avancement = statut.detailed_avancement.pas_fait
         pas_concerne_taches_avancement = 1 if not is_concerne else 0.0
 
     else:
