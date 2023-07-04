@@ -23,8 +23,12 @@ export type TFilters = {
   sans_referent?: number;
   /** par statuts */
   statuts?: TFicheActionStatuts[];
+  /** sans statut */
+  sans_statut?: number;
   /** par priorites */
   priorites?: TFicheActionNiveauxPriorite[];
+  /** sans niveau de priorité */
+  sans_niveau?: number;
   /** par échéance */
   echeance?: TFicheActionEcheances;
   /** index de la page voulue */
@@ -48,7 +52,13 @@ export const nameToShortNames = {
   referents: 'ref',
   sans_referent: 'sr',
   statuts: 's',
+  sans_statut: 'ss',
+  sans_niveau: 'snp',
   priorites: 'prio',
   echeance: 'e',
   page: 'p',
 };
+
+// Constantes
+export const SANS_STATUT = 'sans_statut';
+export const SANS_PRIORITE = 'sans_priorite';

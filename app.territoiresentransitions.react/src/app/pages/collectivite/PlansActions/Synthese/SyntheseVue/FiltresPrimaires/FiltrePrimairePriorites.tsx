@@ -1,39 +1,55 @@
 import TagFilters from 'ui/shared/filters/TagFilters';
-import {ITEM_ALL, getIsAllSelected} from 'ui/shared/filters/commons';
+import {ITEM_ALL} from 'ui/shared/filters/commons';
 import {ficheActionNiveauPrioriteOptions} from '../../../FicheAction/data/options/listesStatiques';
 import {TFicheActionNiveauxPriorite} from 'types/alias';
 import {TFichesActionsListe} from '../../../FicheAction/data/useFichesActionFiltresListe';
+import {SANS_PRIORITE} from '../../../FicheAction/data/filters';
 
 type Props = {
   filtersOptions: TFichesActionsListe;
 };
 
 const FiltrePrimairePriorites = ({filtersOptions}: Props) => {
+  const {filters, setFilters} = filtersOptions;
+
+  const getDefaultOption = () => {
+    if (filters.sans_niveau) {
+      return SANS_PRIORITE;
+    }
+    if (filters.priorites) {
+      return filters.priorites[0];
+    }
+    return ITEM_ALL;
+  };
+
+  const selectPriorite = (priorite: string) => {
+    const newFilters = filters;
+    if (priorite === ITEM_ALL) {
+      delete newFilters.sans_niveau;
+      delete newFilters.priorites;
+      return {...newFilters};
+    } else if (priorite === SANS_PRIORITE) {
+      delete newFilters.priorites;
+      return {...newFilters, sans_niveau: 1};
+    } else {
+      delete newFilters.sans_niveau;
+      return {
+        ...newFilters,
+        priorites: [priorite as TFicheActionNiveauxPriorite],
+      };
+    }
+  };
+
   return (
     <TagFilters
-      defaultOption={
-        filtersOptions.filters.priorites
-          ? filtersOptions.filters.priorites[0]
-          : ITEM_ALL
-      }
+      defaultOption={getDefaultOption()}
       name="priorites"
       options={[
         {value: ITEM_ALL, label: 'Tous les niveaux de priorité'},
+        {value: SANS_PRIORITE, label: 'Sans priorité'},
         ...ficheActionNiveauPrioriteOptions,
       ]}
-      onChange={priorite => {
-        if (getIsAllSelected([priorite])) {
-          const newFilters = filtersOptions.filters;
-          delete newFilters.priorites;
-          filtersOptions.setFilters({...newFilters});
-          // d'une option à l'autre
-        } else {
-          filtersOptions.setFilters({
-            ...filtersOptions.filters,
-            priorites: [priorite as TFicheActionNiveauxPriorite],
-          });
-        }
-      }}
+      onChange={priorite => setFilters(selectPriorite(priorite))}
     />
   );
 };
