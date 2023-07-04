@@ -3,6 +3,10 @@
 
 BEGIN;
 
+drop view indicateur_resultats;
+drop table indicateur_resultat_import;
+drop table indicateur_thematique;
+
 drop view indicateur_rempli;
 
 alter table indicateur_definition
