@@ -42,37 +42,40 @@ export const fetchFichesActionFiltresListe = async (
     pilotes,
     sans_pilote,
     statuts,
+    sans_statut,
     referents,
     sans_referent,
     priorites,
+    sans_niveau,
     echeance,
   } = filters;
 
   // Quand les valeurs viennent de l'URL, elle sont données sous forme de tableau de string
   const echeanceSansTableau = Array.isArray(echeance) ? echeance[0] : echeance;
-  const sansPlanSansTableau = Array.isArray(sans_plan)
-    ? sans_plan[0] === '1'
-    : sans_plan === 1;
-  const sansPiloteSansTableau = Array.isArray(sans_pilote)
-    ? sans_pilote[0] === '1'
-    : sans_pilote === 1;
-  const sansReferentSansTableau = Array.isArray(sans_referent)
-    ? sans_referent[0] === '1'
-    : sans_referent === 1;
+  /** Transforme le filtre en booléen  */
+  const getBooleanFromNumber = (v: number | string[] | undefined) =>
+    Array.isArray(v) ? v[0] === '1' : v === 1;
+  const sansPlan = getBooleanFromNumber(sans_plan);
+  const sansPilote = getBooleanFromNumber(sans_pilote);
+  const sansReferent = getBooleanFromNumber(sans_referent);
+  const sansStatut = getBooleanFromNumber(sans_statut);
+  const sansPriorite = getBooleanFromNumber(sans_niveau);
 
   const {error, data, count} = await supabaseClient.rpc(
     'filter_fiches_action',
     {
       collectivite_id: collectivite_id!,
       axes_id: axes,
-      sans_plan: sansPlanSansTableau || undefined,
+      sans_plan: sansPlan || undefined,
       // sans_plan: sans_plan === 1 || sans_plan[0] === '1',
       pilotes: makePersonnesWithIds(pilotes),
-      sans_pilote: sansPiloteSansTableau || undefined,
+      sans_pilote: sansPilote || undefined,
       referents: makePersonnesWithIds(referents),
-      sans_referent: sansReferentSansTableau || undefined,
+      sans_referent: sansReferent || undefined,
       statuts,
+      sans_statut: sansStatut,
       niveaux_priorite: priorites,
+      sans_niveau: sansPriorite,
       echeance: echeanceSansTableau,
       limit: 20,
     },
