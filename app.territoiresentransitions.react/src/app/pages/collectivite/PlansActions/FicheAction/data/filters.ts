@@ -11,10 +11,16 @@ export type TFilters = {
   collectivite_id: number;
   /** par id plan d'action ou axe */
   axes?: number[];
+  /** par fiches non classées */
+  sans_plan?: number;
   /** par personnes pilote */
   pilotes?: string[];
+  /** sans pilote */
+  sans_pilote?: number;
   /** par référents */
   referents?: string[];
+  /** sans référent */
+  sans_referent?: number;
   /** par statuts */
   statuts?: TFicheActionStatuts[];
   /** par priorites */
@@ -36,8 +42,11 @@ export type TFiltreProps = {
 
 export const nameToShortNames = {
   axes: 'axes',
+  sans_plan: 'nc', // fiches non classées
   pilotes: 'pilotes',
+  sans_pilote: 'sp',
   referents: 'ref',
+  sans_referent: 'sr',
   statuts: 's',
   priorites: 'prio',
   echeance: 'e',

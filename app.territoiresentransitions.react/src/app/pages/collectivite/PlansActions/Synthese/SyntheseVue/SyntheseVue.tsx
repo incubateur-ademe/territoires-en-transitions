@@ -12,10 +12,10 @@ import FiltersPlanAction, {PlanActionFilter} from '../FiltersPlanAction';
 import {FiltersKeys} from '../../FicheAction/data/filters';
 import {useFichesActionFiltresListe} from '../../FicheAction/data/useFichesActionFiltresListe';
 import FicheActionCard from '../../FicheAction/FicheActionCard';
-import {getIsAllSelected} from 'ui/shared/filters/commons';
 import FiltresPrimaires from './FiltresPrimaires/FiltresPrimaires';
 import FiltresSecondaires from './FiltresSecondaires';
-import {generateVue} from '../utils';
+import {generateSyntheseVue} from '../utils';
+import {ITEM_ALL} from 'ui/shared/filters/commons';
 
 const SyntheseVue = () => {
   const collectivite_id = useCollectiviteId();
@@ -26,20 +26,31 @@ const SyntheseVue = () => {
     vue: syntheseVue,
   });
 
-  const vue = generateVue(syntheseVue);
+  const vue = generateSyntheseVue(syntheseVue);
 
-  const filters = useFichesActionFiltresListe({
+  const filtersData = useFichesActionFiltresListe({
     url: pageUrl,
     initialFilters: {
       collectivite_id: collectivite_id!,
     },
   });
 
+  const {items, total, initialFilters, filters, setFilters, filtersCount} =
+    filtersData;
+
   const selectPlan = (plan: PlanActionFilter) => {
-    if (plan.id === 'tous' || plan.id === 'nc') {
-      return undefined;
+    const newFilters = filters;
+    if (plan.id === ITEM_ALL) {
+      delete newFilters.sans_plan;
+      delete newFilters.axes;
+      return {...newFilters};
+    } else if (plan.id === 'nc') {
+      delete newFilters.axes;
+      return {...filters, sans_plan: 1};
+    } else {
+      delete newFilters.sans_plan;
+      return {...filters, axes: [plan.id]};
     }
-    return [plan.id];
   };
 
   if (!vue) return null;
@@ -69,52 +80,45 @@ const SyntheseVue = () => {
         </div>
 
         {/** Graph */}
+        {/* <ChartCard chartType="donut" chartProps={} /> */}
 
         {/** Filtres */}
-        <div className="flex items-baseline ">
-          <h5 className="mb-0 mr-6">Filtrer</h5>
-          <DesactiverLesFiltres
-            onClick={() => filters.setFilters(filters.initialFilters)}
-          />
-        </div>
         <div className="flex flex-col gap-6 my-6">
           <FiltersPlanAction
             collectiviteId={collectivite_id!}
             initialPlan={
-              filters.filters.axes && filters.filters.axes[0].toString()
+              (filters.sans_plan && 'nc') ||
+              (filters.axes && filters.axes[0].toString())
             }
             onChangePlan={plan => {
-              if (typeof plan.id === 'string' && getIsAllSelected([plan.id])) {
-                const newFilters = filters.filters;
-                delete newFilters.axes;
-                filters.setFilters({...newFilters});
-                // d'une option à l'autre
-              } else {
-                filters.setFilters({
-                  ...filters.filters,
-                  axes: selectPlan(plan),
-                });
-              }
+              setFilters(selectPlan(plan));
             }}
           />
-          <FiltresPrimaires vue={vue.id} filters={filters} />
+          <FiltresPrimaires vue={vue.id} filters={filtersData} />
         </div>
         <div className="grid sm:grid-cols-2 gap-x-8 gap-y-6">
           <FiltresSecondaires
             filtresSecondaires={vue.filtresSecondaires}
-            filters={filters}
+            filters={filtersData}
           />
         </div>
 
         {/** Fiches */}
         <div className="my-8 border-b border-gray-200" />
         <div className="mb-16">
-          <p className="text-gray-500">
-            {filters.total} fiche{filters.total > 1 && 's'} action correspond
-            {filters.total > 1 && 'ent'} à votre recherche
-          </p>
+          <div className="flex items-baseline mb-8">
+            <p className="mb-0 mr-6 text-gray-500">
+              {total} fiche{total > 1 && 's'} action correspond
+              {total > 1 && 'ent'} à votre recherche
+            </p>
+            {filtersCount > 1 && (
+              <DesactiverLesFiltres
+                onClick={() => setFilters(initialFilters)}
+              />
+            )}
+          </div>
           <div className="grid grid-cols-2 gap-6">
-            {filters.items.map(fiche => (
+            {items.map(fiche => (
               <FicheActionCard
                 key={fiche.id}
                 displayAxe

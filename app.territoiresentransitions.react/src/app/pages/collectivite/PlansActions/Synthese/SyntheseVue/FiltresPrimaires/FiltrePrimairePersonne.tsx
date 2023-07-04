@@ -1,5 +1,5 @@
 import TagFilters from 'ui/shared/filters/TagFilters';
-import {ITEM_ALL, getIsAllSelected} from 'ui/shared/filters/commons';
+import {ITEM_ALL} from 'ui/shared/filters/commons';
 import {TFichesActionsListe} from '../../../FicheAction/data/useFichesActionFiltresListe';
 import {usePersonneListe} from '../../../FicheAction/data/options/usePersonneListe';
 import {TOption} from 'ui/shared/select/commons';
@@ -21,9 +21,9 @@ const FiltrePrimairePersonne = ({filterKey, filtersOptions}: Props) => {
   if (personnes && personnes.length > 1) {
     options.push({
       value: ITEM_ALL,
-      label: `Tous les personnes ${
-        (filterKey === 'pilotes' && 'pilotes') ||
-        (filterKey === 'referents' && 'référentes')
+      label: `${
+        (filterKey === 'pilotes' && 'Toutes les personnes pilotes') ||
+        (filterKey === 'referents' && 'Tou·tes les élu·es référent·es')
       }`,
     });
   }
@@ -37,12 +37,32 @@ const FiltrePrimairePersonne = ({filterKey, filtersOptions}: Props) => {
       })
     );
 
+  if (filterKey === 'pilotes') {
+    options.push({
+      value: 'sans_pilote',
+      label: 'Sans pilote',
+    });
+  }
+
+  if (filterKey === 'referents') {
+    options.push({
+      value: 'sans_referent',
+      label: 'Sans élu·e référent·e',
+    });
+  }
+
   // Renvoie la bonne valeur en fonction du filtre personne utlisé
   const getDefaultOption = () => {
+    if (filters.sans_pilote) {
+      return 'sans_pilote';
+    }
+    if (filters.sans_referent) {
+      return 'sans_referent';
+    }
     if (filterKey === 'pilotes' && filters.pilotes) {
       return filters.pilotes[0];
     }
-    if (filterKey === 'pilotes' && filters.referents) {
+    if (filterKey === 'referents' && filters.referents) {
       return filters.referents[0];
     }
     return ITEM_ALL;
@@ -50,30 +70,30 @@ const FiltrePrimairePersonne = ({filterKey, filtersOptions}: Props) => {
 
   // onSelect en fonction du filtre personne utilisé
   const onChange = (value: string) => {
-    // onClick "tous" ou toggle option
-    if (getIsAllSelected([value])) {
-      const newFilters = filters;
+    const newFilters = filters;
+    if (value === 'tous') {
+      delete newFilters.sans_pilote;
+      delete newFilters.sans_referent;
       if (filterKey === 'referents') {
         delete newFilters.referents;
       }
       if (filterKey === 'pilotes') {
         delete newFilters.pilotes;
       }
-      setFilters({...newFilters});
-      // d'une option à l'autre
+      return {...newFilters};
+    } else if (value === 'sans_pilote') {
+      delete newFilters.pilotes;
+      return {...newFilters, sans_pilote: 1};
+    } else if (value === 'sans_referent') {
+      delete newFilters.referents;
+      return {...newFilters, sans_referent: 1};
     } else {
-      if (filterKey === 'referents') {
-        setFilters({
-          ...filters,
-          referents: [value],
-        });
-      }
-      if (filterKey === 'pilotes') {
-        setFilters({
-          ...filters,
-          pilotes: [value],
-        });
-      }
+      delete newFilters.sans_pilote;
+      delete newFilters.sans_referent;
+      return {
+        ...newFilters,
+        [filterKey]: [value],
+      };
     }
   };
 
@@ -82,7 +102,7 @@ const FiltrePrimairePersonne = ({filterKey, filtersOptions}: Props) => {
       defaultOption={getDefaultOption()}
       name={filterKey}
       options={options}
-      onChange={onChange}
+      onChange={value => setFilters(onChange(value))}
     />
   );
 };
