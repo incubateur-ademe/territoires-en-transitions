@@ -86,7 +86,7 @@ select null,
        count(*) > 0
 from indicateur_personnalise_resultat ipr
 group by indicateur_id, collectivite_id;
-
--- indicateur thematique, id, nom
+comment on view indicateur_rempli is 'Permet de filtrer les indicateurs par remplissage.';
+comment on column indicateur_rempli.rempli is 'Vrai si un résultat a été saisi.';
 
 COMMIT;
