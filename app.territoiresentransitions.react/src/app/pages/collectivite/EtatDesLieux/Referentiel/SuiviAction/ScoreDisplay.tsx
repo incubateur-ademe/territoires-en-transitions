@@ -1,12 +1,16 @@
 import classNames from 'classnames';
 import {CheckIcon} from 'ui/icons/CheckIcon';
 import {toLocaleFixed} from 'utils/toFixed';
-import {SuiviScoreRow} from '../data/useScoreRealise';
 
 type ScoreDisplayProps = {
-  score: SuiviScoreRow;
+  score: number | null;
+  scoreMax?: number | null;
+  percent?: boolean;
+  icon?: 'check' | string;
+  iconColor?: string;
   legend?: string;
   size?: 'xs' | 'sm';
+  bold?: 'value' | 'legend' | 'all' | undefined;
   className?: string;
 };
 
@@ -17,19 +21,21 @@ type ScoreDisplayProps = {
 
 const ScoreDisplay = ({
   score,
+  scoreMax,
+  percent = false,
+  icon = 'check',
   legend,
   size,
+  bold,
   className,
-}: ScoreDisplayProps): JSX.Element | null => {
-  if (!score) return null;
-
-  const {points_realises, points_max_personnalises} = score;
-
+}: ScoreDisplayProps): JSX.Element => {
   return (
     <div
       className={classNames(
         'flex items-center',
-        points_realises !== null && points_max_personnalises !== null
+        score !== null &&
+          scoreMax !== null &&
+          (scoreMax !== undefined || percent)
           ? 'visible'
           : 'invisible',
         {
@@ -40,16 +46,48 @@ const ScoreDisplay = ({
         }
       )}
     >
-      <CheckIcon
-        className={classNames('h-4 inline-block', {
-          'mr-1': size === 'xs',
-          'mr-2': size === 'sm',
+      {icon === 'check' ? (
+        <CheckIcon
+          className={classNames('h-4 inline-block', {
+            'mr-1': size === 'xs',
+            'mr-2': size === 'sm',
+          })}
+        />
+      ) : (
+        <div
+          className={classNames(
+            'h-4 inline-block scale-75 -mt-1 before:text-[#417DC4]',
+            icon,
+            {
+              'mr-1': size === 'xs',
+              'mr-2': size === 'sm',
+            }
+          )}
+        />
+      )}
+
+      <span
+        className={classNames('whitespace-pre-wrap', {
+          'font-bold': bold === 'legend' || bold === 'all',
         })}
-      />
-      {legend ? `${legend} : ` : ''}
-      {toLocaleFixed(points_realises, 2)} /{' '}
-      {toLocaleFixed(points_max_personnalises, 2)} point
-      {points_max_personnalises > 1 ? 's' : ''}
+      >
+        {legend ? `${legend} : ` : ''}
+      </span>
+      <span
+        className={classNames({
+          'font-bold': bold === 'value' || bold === 'all',
+        })}
+      >
+        {percent
+          ? `${toLocaleFixed(
+              Math.round((score ?? 0) * 10000) / 100,
+              (score ?? 0) < 0.01 ? 2 : 0
+            )} %`
+          : `${toLocaleFixed(score ?? 0, 2)} / ${toLocaleFixed(
+              scoreMax ?? 0,
+              2
+            )} point${scoreMax ?? 0 > 1 ? 's' : ''}`}
+      </span>
     </div>
   );
 };

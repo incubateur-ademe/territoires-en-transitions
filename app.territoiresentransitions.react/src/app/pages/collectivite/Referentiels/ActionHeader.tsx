@@ -66,7 +66,12 @@ export const ActionHeader = ({
             action={action}
             className="border-r border-r-[#ddd] fr-pr-5v"
           />
-          <ScoreDisplay score={actionScore} legend="Score réalisé" size="sm" />
+          <ScoreDisplay
+            score={actionScore?.points_realises ?? null}
+            scoreMax={actionScore?.points_max_personnalises ?? null}
+            legend="Score réalisé"
+            size="sm"
+          />
           {action.have_questions && (
             <div className="border-l border-l-[#ddd] fr-pl-3v">
               <PersoPotentiel actionDef={action} />
