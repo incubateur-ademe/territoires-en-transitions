@@ -15,7 +15,7 @@ import {getAggregatedScore} from '../EtatDesLieux/Synthese/utils';
 import {useCycleLabellisation} from '../ParcoursLabellisation/useCycleLabellisation';
 import AccueilCard from './AccueilCard';
 import EtatDesLieuxGraphs from './EtatDesLieuxGraphs';
-import LabellisationStars from './LabellisationStars';
+import LabellisationInfo from './LabellisationInfo';
 
 type EtatDesLieuxCardProps = {
   collectiviteId: number;
@@ -114,6 +114,7 @@ const FilledEtatDesLieuxCard = ({
   className,
 }: FilledEtatDesLieuxCardProps): JSX.Element => {
   const {parcours, status} = useCycleLabellisation(referentiel);
+  const data = getAggregatedScore(progressionScore.data);
 
   return (
     <AccueilCard className={classNames('flex flex-col relative', className)}>
@@ -126,8 +127,8 @@ const FilledEtatDesLieuxCard = ({
       {/* Contenu */}
       <div className="h-full grid md:grid-cols-2 gap-8 self-stretch">
         <div className="flex flex-col justify-between">
-          {/* Niveau de labellisation */}
-          <LabellisationStars parcours={parcours} />
+          {/* Niveau de labellisation et détails */}
+          <LabellisationInfo parcours={parcours} score={data} />
 
           {/* Call to action */}
           <ButtonWithLink
@@ -150,7 +151,7 @@ const FilledEtatDesLieuxCard = ({
         {/* Graphe donut */}
         <div className="h-[200px] md:w-[246px] md:order-last order-first md:absolute md:top-1/2 md:right-8 md:-translate-y-1/2 static">
           <DonutChart
-            data={getAggregatedScore(progressionScore.data)}
+            data={data.array}
             customMargin={{top: 2, right: 0, bottom: 2, left: 0}}
             zoomEffect={false}
             unit="point"

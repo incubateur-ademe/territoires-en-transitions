@@ -114,5 +114,15 @@ export const getAggregatedScore = (scoreData: readonly ProgressionRow[]) => {
       score.score_non_renseigne * score.points_max_personnalises;
   });
 
-  return aggregatedScore;
+  return {
+    array: aggregatedScore,
+    realises: aggregatedScore[0].value,
+    programmes: aggregatedScore[1].value,
+    pas_fait: aggregatedScore[2].value,
+    non_renseigne: aggregatedScore[3].value,
+    max_personnalise: aggregatedScore.reduce(
+      (sum, currVal) => sum + currVal.value,
+      0
+    ),
+  };
 };

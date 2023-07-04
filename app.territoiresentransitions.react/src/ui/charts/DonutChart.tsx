@@ -168,7 +168,7 @@ const DonutChart = ({
           ? `${getPercentage(
               value,
               localData.map(d => d.value)
-            )}%`
+            )} %`
           : `${Math.round(value)}`
       }
     />

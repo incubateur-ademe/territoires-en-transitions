@@ -36,7 +36,7 @@ const LabellisationStars = ({parcours}: LabellisationStarsProps) => {
         )
       }
     >
-      <div className="flex md:justify-start justify-center m-0 md:first:-mx-1 md:mt-5 md:mb-12 mb-8">
+      <div className="flex m-0 md:first:-mx-1">
         {NIVEAUX.map(niveau => {
           const obtenue = etoiles >= niveau;
           const Star = obtenue ? RedStar : GreyStar;
