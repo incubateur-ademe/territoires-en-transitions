@@ -115,4 +115,22 @@ alter table indicateur_resultat_import
     enable row level security;
 create policy allow_read on indicateur_resultat_import for select using (have_lecture_acces(collectivite_id));
 
+create view indicateur_resultats
+as
+select collectivite_id,
+       indicateur_id,
+       annee,
+       valeur,
+       modified_at
+from indicateur_resultat
+where have_lecture_acces(collectivite_id)
+union all
+select collectivite_id,
+       indicateur_id,
+       annee,
+       valeur,
+       modified_at
+from indicateur_resultat_import
+where have_lecture_acces(collectivite_id);
+
 COMMIT;
