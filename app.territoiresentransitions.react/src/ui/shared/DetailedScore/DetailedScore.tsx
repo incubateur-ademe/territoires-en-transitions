@@ -62,7 +62,7 @@ export const DetailedScore = (props: TDetailedScoreProps) => {
           onClick={() => onSave(currentAvancement)}
         >
           {saveAtValidation
-            ? 'Enregistrer le score personnalisé'
+            ? 'Enregistrer la répartition'
             : 'Valider la répartition'}
         </button>
       </div>

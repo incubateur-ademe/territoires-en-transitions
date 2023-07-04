@@ -50,7 +50,9 @@ export const ActionProgressBar = ({
       <ProgressBarWithTooltip
         score={progressScore}
         total={
-          isReglementaire ? score.total_taches_count : score.point_potentiel
+          isReglementaire
+            ? score.total_taches_count - score.pas_concerne_taches_avancement
+            : score.point_potentiel
         }
         defaultScore={{
           label: avancementToLabel.non_renseigne,

@@ -77,7 +77,7 @@ const ScoreAutoModal = ({
                   Annuler
                 </button>
                 <button className="fr-btn" onClick={handleSaveScoreAuto}>
-                  Valider ce score
+                  Enregistrer ce score
                 </button>
               </div>
             </div>
