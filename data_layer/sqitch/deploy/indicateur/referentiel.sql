@@ -89,4 +89,11 @@ group by indicateur_id, collectivite_id;
 comment on view indicateur_rempli is 'Permet de filtrer les indicateurs par remplissage.';
 comment on column indicateur_rempli.rempli is 'Vrai si un résultat a été saisi.';
 
+create table indicateur_thematique
+(
+    id  text primary key,
+    nom text
+);
+comment on table indicateur_thematique is 'Les ids thématiques et leurs noms.';
+
 COMMIT;
