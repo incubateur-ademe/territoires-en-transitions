@@ -95,5 +95,8 @@ create table indicateur_thematique
     nom text
 );
 comment on table indicateur_thematique is 'Les ids thématiques et leurs noms.';
+alter table indicateur_thematique
+    enable row level security;
+create policy allow_read_for_all on indicateur_thematique for select using (true);
 
 COMMIT;
