@@ -6,6 +6,7 @@ import {AVANCEMENT_DETAILLE_PAR_STATUT} from './utils';
 
 type ScorePersoModalProps = {
   actionId: string;
+  actionType: string;
   avancementDetaille?: number[] | null;
   externalOpen: boolean;
   saveAtValidation?: boolean;
@@ -15,6 +16,7 @@ type ScorePersoModalProps = {
 
 const ScorePersoModal = ({
   actionId,
+  actionType,
   avancementDetaille,
   externalOpen,
   saveAtValidation = true,
@@ -29,12 +31,17 @@ const ScorePersoModal = ({
       render={() => {
         return (
           <>
-            <h4>Personnaliser le score : {actionId.split('_')[1]}</h4>
+            <h4>
+              Détailler l'avancement de cette{' '}
+              {actionType === 'tache' ? 'tâche' : actionType} :{' '}
+              {actionId.split('_')[1]}
+            </h4>
             <hr className="p-1" />
             <div className="w-full">
               <DetailedScore
                 avancement={
-                  (avancementDetaille?.length === 3
+                  (avancementDetaille?.length === 3 &&
+                  !avancementDetaille.find(av => av === 1)
                     ? avancementDetaille
                     : AVANCEMENT_DETAILLE_PAR_STATUT.detaille) as AvancementValues
                 }

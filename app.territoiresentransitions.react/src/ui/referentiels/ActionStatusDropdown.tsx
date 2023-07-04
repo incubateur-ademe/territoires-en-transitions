@@ -115,27 +115,22 @@ export const ActionStatusDropdown = ({
     let {avancement, concerne, avancement_detaille} =
       statutParAvancement(value);
 
-    setLocalAvancement(value);
-    setLocalAvancementDetaille(avancement_detaille);
-
     if (avancement === 'detaille') {
       // Si "détaillé" est sélectionné sur une sous-action
-      // cela correspond en base à un statut "non renseigné"
-      // avec statuts au niveau des tâches
-      // Si aucune tâche n'est remplie, le statut de la sous-action
-      // passe à "non renseigné"
+      // qui contient des tâches, on ouvre simplement la modale associée
+      // et la mise à jour se fera à la validation / fermeture de la modale
       if (action.type === 'sous-action' && action.children.length > 0) {
-        avancement = 'non_renseigne';
-        avancement_detaille = undefined;
         setOpenScoreAuto(true);
       } else {
         setOpenScorePerso(true);
       }
-    }
+    } else {
+      // Mise à jour dans les cas de statuts autres que détaillé
+      setLocalAvancement(value);
+      setLocalAvancementDetaille(avancement_detaille);
 
-    // Différencie la sauvegarde auto dans la page
-    // de la mise à jour depuis la modale de score auto
-    if (action.type !== 'sous-action' || avancement !== 'detaille') {
+      // Différencie la sauvegarde auto dans la page
+      // de la mise à jour depuis la modale de score auto
       if (onSaveStatus) {
         onSaveStatus({
           actionId: action.id,
@@ -160,6 +155,23 @@ export const ActionStatusDropdown = ({
   const handleSaveScoreAuto = (newStatus: StatusToSavePayload[]) => {
     setOpenScoreAuto(false);
 
+    // Si "détaillé" est sélectionné sur une sous-action
+    // cela correspond en base à un statut "non renseigné"
+    // avec statuts au niveau des tâches
+    // Si aucune tâche n'est remplie, le statut de la sous-action
+    // passe à "non renseigné"
+    saveActionStatut({
+      ...args,
+      avancement: 'non_renseigne',
+      concerne: true,
+      modified_at: statut?.modified_at,
+      modified_by: statut?.modified_by,
+    });
+
+    setLocalAvancement(newStatus.length ? 'detaille' : 'non_renseigne');
+    setLocalAvancementDetaille(undefined);
+
+    // Sauvegarde des statuts des tâches
     newStatus.forEach(element => {
       const {avancement, concerne} = statutParAvancement(element.avancement);
 
@@ -178,6 +190,8 @@ export const ActionStatusDropdown = ({
   // Mise à jour du statut à la validation dans la modale
   // de score perso
   const handleSaveScorePerso = (values: number[]) => {
+    setOpenScorePerso(false);
+
     // Si la jauge est à 100% dans un des statuts, le statut
     // est mis à jour automatiquement
     const avancement =
@@ -210,8 +224,6 @@ export const ActionStatusDropdown = ({
         concerne: true,
       });
     }
-
-    setOpenScorePerso(false);
   };
 
   if (!collectivite) {
@@ -296,6 +308,7 @@ export const ActionStatusDropdown = ({
       {openScorePerso && (
         <ScorePersoModal
           actionId={action.id}
+          actionType={action.type}
           avancementDetaille={localAvancementDetaille}
           externalOpen={openScorePerso}
           saveAtValidation={onSaveStatus === undefined}
