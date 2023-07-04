@@ -118,18 +118,19 @@ def update_action_scores_from_status(
         )
         point_non_renseigne = 0.0
         completed_taches_count = tache_count
-        fait_taches_avancement = statut.detailed_avancement.fait
-        programme_taches_avancement = statut.detailed_avancement.programme
-        pas_fait_taches_avancement = statut.detailed_avancement.pas_fait
-        pas_concerne_taches_avancement = 1 if not is_concerne else 0.0
+        fait_taches_avancement = statut.detailed_avancement.fait * tache_count
+        programme_taches_avancement = statut.detailed_avancement.programme * tache_count
+        pas_fait_taches_avancement = statut.detailed_avancement.pas_fait * tache_count
+        pas_concerne_taches_avancement = 0.0
 
     else:
         point_pas_fait = point_programme = point_fait = 0.0
         point_non_renseigne = point_potentiel
         completed_taches_count = 0
-        fait_taches_avancement = (
-            programme_taches_avancement
-        ) = pas_fait_taches_avancement = pas_concerne_taches_avancement = 0
+        fait_taches_avancement = 0
+        programme_taches_avancement = 0
+        pas_fait_taches_avancement = 0
+        pas_concerne_taches_avancement = 0
 
     scores[action_id] = ActionScore(
         action_id=action_id,
