@@ -8,7 +8,7 @@ import {
   makeCollectivitePlansActionsSyntheseVueUrl,
 } from 'app/paths';
 import {PlanActionFilter} from './FiltersPlanAction';
-import {generateGraphData} from './utils';
+import {generateSyntheseGraphData} from './utils';
 
 const getLegendColor = (
   data: {id: string; value: number; color?: any},
@@ -93,7 +93,7 @@ const SyntheseGraphsList = ({
 
   return data ? (
     <div className="fr-grid-row fr-grid-row--gutters">
-      {generateGraphData(data).map(
+      {generateSyntheseGraphData(data).map(
         graph =>
           !!graph.data.length && (
             <div key={graph.title} className="fr-col-sm-12 fr-col-xl-6">

@@ -61,18 +61,18 @@ const FiltersPlanAction = ({
   }
 
   // Mise à jour des filtres sélectionnés
-  const handleChangeFilter = (id: string) => {
+  const handleChangeFilter = (value: string) => {
     // Toutes les fiches
-    if (id === ITEM_ALL) {
+    if (value === ITEM_ALL) {
       onChangePlan(filtreToutesLesFiches);
       // Fiches non classées
-    } else if (id === 'nc') {
+    } else if (value === 'nc') {
       onChangePlan(filtreFichesNonClassees);
       // Les plans d'action
     } else {
       onChangePlan({
-        id: parseInt(id),
-        name: filters.filter(f => f.value === id)[0].label,
+        id: parseInt(value),
+        name: filters.filter(f => f.value === value)[0].label,
       });
     }
   };

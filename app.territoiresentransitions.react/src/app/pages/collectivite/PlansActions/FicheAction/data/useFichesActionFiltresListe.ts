@@ -38,23 +38,39 @@ export const fetchFichesActionFiltresListe = async (
   const {
     collectivite_id,
     axes,
+    sans_plan,
     pilotes,
+    sans_pilote,
     statuts,
     referents,
+    sans_referent,
     priorites,
     echeance,
   } = filters;
 
-  // Quand l'écheance vient de l'URL, elle est donnée dans un tableau
+  // Quand les valeurs viennent de l'URL, elle sont données sous forme de tableau de string
   const echeanceSansTableau = Array.isArray(echeance) ? echeance[0] : echeance;
+  const sansPlanSansTableau = Array.isArray(sans_plan)
+    ? sans_plan[0] === '1'
+    : sans_plan === 1;
+  const sansPiloteSansTableau = Array.isArray(sans_pilote)
+    ? sans_pilote[0] === '1'
+    : sans_pilote === 1;
+  const sansReferentSansTableau = Array.isArray(sans_referent)
+    ? sans_referent[0] === '1'
+    : sans_referent === 1;
 
   const {error, data, count} = await supabaseClient.rpc(
     'filter_fiches_action',
     {
       collectivite_id: collectivite_id!,
       axes_id: axes,
+      sans_plan: sansPlanSansTableau || undefined,
+      // sans_plan: sans_plan === 1 || sans_plan[0] === '1',
       pilotes: makePersonnesWithIds(pilotes),
+      sans_pilote: sansPiloteSansTableau || undefined,
       referents: makePersonnesWithIds(referents),
+      sans_referent: sansReferentSansTableau || undefined,
       statuts,
       niveaux_priorite: priorites,
       echeance: echeanceSansTableau,

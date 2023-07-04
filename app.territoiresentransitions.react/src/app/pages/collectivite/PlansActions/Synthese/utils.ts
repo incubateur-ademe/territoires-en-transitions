@@ -8,7 +8,9 @@ type TSyntheseVue = {
   filtresSecondaires: FiltersKeys[];
 };
 
-export const generateVue = (vueId: FiltersKeys): TSyntheseVue | undefined => {
+export const generateSyntheseVue = (
+  vueId: FiltersKeys
+): TSyntheseVue | undefined => {
   if (vueId === 'statuts') {
     return {
       id: vueId,
@@ -45,7 +47,9 @@ type Graph = {
   data: {id: string; value: number; color?: any}[];
 };
 
-export const generateGraphData = (data: TPlanActionTableauDeBord): Graph[] =>
+export const generateSyntheseGraphData = (
+  data: TPlanActionTableauDeBord
+): Graph[] =>
   data
     ? [
         {
