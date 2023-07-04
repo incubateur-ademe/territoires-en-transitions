@@ -4833,12 +4833,18 @@ export interface Database {
           pilotes?: Database["public"]["CompositeTypes"]["personne"][]
           sans_referent?: boolean
           referents?: Database["public"]["CompositeTypes"]["personne"][]
+          sans_niveau?: boolean
           niveaux_priorite?: Database["public"]["Enums"]["fiche_action_niveaux_priorite"][]
+          sans_statut?: boolean
           statuts?: Database["public"]["Enums"]["fiche_action_statuts"][]
+          sans_thematique?: boolean
           thematiques?: unknown[]
+          sans_sous_thematique?: boolean
           sous_thematiques?: unknown[]
+          sans_budget?: boolean
           budget_min?: number
           budget_max?: number
+          sans_date?: boolean
           date_debut?: string
           date_fin?: string
           echeance?: Database["public"]["Enums"]["fiche_action_echeances"]
@@ -6519,6 +6525,7 @@ export interface Database {
               bucket_width: unknown
               ts: string
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
             }
             Returns: string
@@ -6566,6 +6573,8 @@ export interface Database {
               bucket_width: unknown
               ts: string
 >>>>>>> bd0b6d67b (MAJ database.types.ts)
+=======
+>>>>>>> d8b0e10a9 (update types)
               offset: unknown
             }
             Returns: string
