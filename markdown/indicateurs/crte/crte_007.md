@@ -1,8 +1,17 @@
-# Population située dans une zone à risque naturel élevé
+# Zones à risque naturel 
 ```yaml
 id: crte_7.1
 identifiant: 7.1
 unite: '%'
+
+titre_long: Population située dans une zone à risque naturel élevé
+selection: yes
+programmes:
+  - crte
+climat_pratic_ids:
+  - urbanisme
+thematiques:
+  - nature_environnement_air
 ```
 ## Description
 
