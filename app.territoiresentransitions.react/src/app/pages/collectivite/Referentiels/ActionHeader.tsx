@@ -5,7 +5,7 @@ import {useScrollTop} from 'utils/useScrollTop';
 import {ActionTopNav} from './ActionNav';
 import {ActionSidePanel} from './ActionSidePanel';
 import {PersoPotentiel} from '../PersoPotentielModal/PersoPotentiel';
-import ScoreDisplay from '../EtatDesLieux/Referentiel/SuiviAction/ScoreDisplay';
+import ScoreDisplay from '../../../../ui/referentiels/ScoreDisplay';
 import {SuiviScoreRow} from '../EtatDesLieux/Referentiel/data/useScoreRealise';
 
 /**

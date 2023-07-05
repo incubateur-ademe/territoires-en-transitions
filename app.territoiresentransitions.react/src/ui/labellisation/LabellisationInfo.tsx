@@ -1,5 +1,5 @@
-import ScoreDisplay from '../EtatDesLieux/Referentiel/SuiviAction/ScoreDisplay';
-import {TLabellisationParcours} from '../ParcoursLabellisation/types';
+import ScoreDisplay from '../referentiels/ScoreDisplay';
+import {TLabellisationParcours} from '../../app/pages/collectivite/ParcoursLabellisation/types';
 import LabellisationStars from './LabellisationStars';
 
 type LabellisationInfoProps = {

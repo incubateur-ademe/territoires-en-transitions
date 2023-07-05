@@ -6,7 +6,7 @@ import {usePlansActionsListe} from '../PlansActions/PlanAction/data/usePlansActi
 import AccueilCard from './AccueilCard';
 import AccueilEmptyCardWithPicto from './AccueilEmptyCardWithPicto';
 import {useIndicateursCount} from './data/useIndicateurSummary';
-import KeyNumbers from './KeyNumbers';
+import KeyNumbers from '../../../../ui/score/KeyNumbers';
 
 type IndicateursCardProps = {
   collectiviteId: number;

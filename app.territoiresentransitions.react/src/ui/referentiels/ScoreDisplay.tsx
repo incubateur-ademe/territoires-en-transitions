@@ -16,7 +16,6 @@ type ScoreDisplayProps = {
 
 /**
  * Affichage du score réalisé sur le score total possible
- * pour une action donnée
  */
 
 const ScoreDisplay = ({

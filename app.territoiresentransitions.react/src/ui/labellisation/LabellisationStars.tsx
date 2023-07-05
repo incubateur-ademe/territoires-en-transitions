@@ -1,7 +1,7 @@
 import {Tooltip} from 'ui/shared/floating-ui/Tooltip';
-import {NIVEAUX} from '../../../../ui/labellisation/getNiveauInfo';
-import {GreyStar, RedStar} from 'ui/labellisation/Star';
-import {TLabellisationParcours} from '../ParcoursLabellisation/types';
+import {NIVEAUX} from './getNiveauInfo';
+import {GreyStar, RedStar} from './Star';
+import {TLabellisationParcours} from '../../app/pages/collectivite/ParcoursLabellisation/types';
 import {toLocaleFixed} from 'utils/toFixed';
 
 type LabellisationStarsProps = {
