@@ -9,13 +9,18 @@ import {toPercentString} from 'utils/score';
 import classNames from 'classnames';
 
 export type TDetailedScoreProps = {
+  actionType: string;
   avancement: AvancementValues;
   saveAtValidation: boolean;
   onSave: (values: AvancementValues) => void;
 };
 
-export const DetailedScore = (props: TDetailedScoreProps) => {
-  const {avancement, saveAtValidation, onSave} = props;
+export const DetailedScore = ({
+  actionType,
+  avancement,
+  saveAtValidation,
+  onSave,
+}: TDetailedScoreProps) => {
   const [currentAvancement, setCurrentAvancement] =
     useState<AvancementValues>(avancement);
 
@@ -48,12 +53,14 @@ export const DetailedScore = (props: TDetailedScoreProps) => {
           {toPercentString(currentAvancement[2])}
         </div>
       </div>
-      <p className="mb-16">
-        Pour faciliter la relecture, vous pouvez préciser les raisons de cette
-        répartition en cliquant sur le bouton{' '}
-        <span className="fr-icon-pencil-line text-bf500" aria-hidden="true" />{' '}
-        situé sous l'intitulé de la tâche.
-      </p>
+      {actionType === 'tache' && (
+        <p className="mb-16">
+          Pour faciliter la relecture, vous pouvez préciser les raisons de cette
+          répartition en cliquant sur le bouton{' '}
+          <span className="fr-icon-pencil-line text-bf500" aria-hidden="true" />{' '}
+          situé sous l'intitulé de la tâche.
+        </p>
+      )}
       <div className="w-full flex justify-end">
         <button
           className={classNames('fr-btn', {

@@ -39,6 +39,7 @@ const ScorePersoModal = ({
             <hr className="p-1" />
             <div className="w-full">
               <DetailedScore
+                actionType={actionType}
                 avancement={
                   (avancementDetaille?.length === 3 &&
                   !avancementDetaille.find(av => av === 1)
