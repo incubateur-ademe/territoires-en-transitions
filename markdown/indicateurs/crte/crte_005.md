@@ -1,8 +1,17 @@
-# Part modale des modes actifs et transports en commun dans les déplacements domicile-travail
+# Part modale des modes actifs et transports en commun
 ```yaml
 id: crte_5.1
 identifiant: 5.1
 unite: '%'
+
+titre_long: Part modale des modes actifs et transports en commun dans les déplacements domicile-travail
+parent: modes_de_deplacement
+programmes:
+  - crte
+climat_pratic_ids:
+  - mobilites
+thematiques:
+  - mobilite_et_transport
 ```
 ## Description
 
