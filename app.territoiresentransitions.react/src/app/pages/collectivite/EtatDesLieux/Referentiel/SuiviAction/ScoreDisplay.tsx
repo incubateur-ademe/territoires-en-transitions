@@ -20,21 +20,25 @@ const ScoreDisplay = ({
   legend,
   size,
   className,
-}: ScoreDisplayProps): JSX.Element => {
-  return !!score ? (
+}: ScoreDisplayProps): JSX.Element | null => {
+  if (!score) return null;
+
+  const {points_realises, points_max_personnalises} = score;
+
+  return (
     <div
-      className={classNames('flex items-center', {
-        visible:
-          score.points_realises !== null &&
-          score.points_max_personnalises !== null,
-        invisible:
-          score.points_realises === null ||
-          score.points_max_personnalises === null,
-        'text-xs': size === 'xs',
-        'text-sm': size === 'sm',
-        'text-base': size === undefined,
-        className,
-      })}
+      className={classNames(
+        'flex items-center',
+        points_realises !== null && points_max_personnalises !== null
+          ? 'visible'
+          : 'invisible',
+        {
+          'text-xs': size === 'xs',
+          'text-sm': size === 'sm',
+          'text-base': size === undefined,
+          className,
+        }
+      )}
     >
       <CheckIcon
         className={classNames('h-4 inline-block', {
@@ -43,12 +47,10 @@ const ScoreDisplay = ({
         })}
       />
       {legend ? `${legend} : ` : ''}
-      {toLocaleFixed(score.points_realises, 2)} /{' '}
-      {toLocaleFixed(score.points_max_personnalises, 2)} point
-      {score.points_max_personnalises > 1 ? 's' : ''}
+      {toLocaleFixed(points_realises, 2)} /{' '}
+      {toLocaleFixed(points_max_personnalises, 2)} point
+      {points_max_personnalises > 1 ? 's' : ''}
     </div>
-  ) : (
-    <></>
   );
 };
 
