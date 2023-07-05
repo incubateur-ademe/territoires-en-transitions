@@ -74,16 +74,16 @@ alter table indicateur_resultat_commentaire
 create view indicateur_rempli
 as
 select indicateur_id,
-       null         as perso_id,
+       null              as perso_id,
        collectivite_id,
-       count(*) > 0 as rempli
+       count(valeur) > 0 as rempli
 from indicateur_resultat ir
 group by indicateur_id, collectivite_id
 union all
 select null,
        indicateur_id,
        collectivite_id,
-       count(*) > 0
+       count(valeur) > 0
 from indicateur_personnalise_resultat ipr
 group by indicateur_id, collectivite_id;
 comment on view indicateur_rempli is 'Permet de filtrer les indicateurs par remplissage.';
