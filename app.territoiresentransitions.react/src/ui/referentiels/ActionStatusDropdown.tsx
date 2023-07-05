@@ -112,7 +112,7 @@ export const ActionStatusDropdown = ({
   // Mise à jour du statut lorsque une nouvelle valeur
   // est sélectionnée sur le dropdown
   const handleChange = (value: TActionAvancementExt) => {
-    let {avancement, concerne, avancement_detaille} =
+    const {avancement, concerne, avancement_detaille} =
       statutParAvancement(value);
 
     if (avancement === 'detaille') {
