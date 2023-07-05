@@ -149,7 +149,7 @@ const FilledEtatDesLieuxCard = ({
         </div>
 
         {/* Graphe donut */}
-        <div className="h-[200px] md:w-[246px] md:order-last order-first md:absolute md:top-1/2 md:right-8 md:-translate-y-1/2 static">
+        <div className="h-[200px] w-[246px] mx-auto md:order-last order-first md:absolute md:top-1/2 md:right-8 md:-translate-y-1/2 static">
           <DonutChart
             data={data.array}
             customMargin={{top: 2, right: 0, bottom: 2, left: 0}}
