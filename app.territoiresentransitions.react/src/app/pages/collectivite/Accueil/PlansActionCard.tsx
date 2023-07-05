@@ -110,7 +110,7 @@ const FilledPlansActionCard = ({
 
       {/* Graphique de répartition par statut */}
       {nbFiches > 0 && (
-        <div className="h-[200px] md:order-last order-first">
+        <div className="h-[200px] w-[246px] mx-auto md:order-last order-first">
           <DonutChart
             data={
               planActionsStats && planActionsStats.statuts

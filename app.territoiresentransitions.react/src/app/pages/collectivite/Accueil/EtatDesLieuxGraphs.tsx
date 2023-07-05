@@ -34,7 +34,7 @@ const EtatDesLieuxGraphs = ({
   };
 
   return displayEtatDesLieux ? (
-    <div className={classNames('flex flex-col gap-6', className)}>
+    <div className={classNames('grid grid-cols-1 gap-6', className)}>
       <ProgressionReferentiel
         score={progressionScore}
         referentiel={referentiel}
