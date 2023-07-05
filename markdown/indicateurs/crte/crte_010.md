@@ -8,7 +8,8 @@ valeur: cae_6.a
 titre_long: Quantité de déchets ménagers et assimilés (avec déblais et gravats) produits par an
 programmes:
   - crte
-thématiques: eci_dechets
+thematiques:
+  - eci_dechets
 ```
 ## Description
 
@@ -40,7 +41,8 @@ titre_long: Quantité de déchets ménagers et assimilés (hors gravats) produit
 parent: cae_6.a
 programmes:
   - crte
-thématiques: eci_dechets
+thematiques:
+  - eci_dechets
 ```
 ## Description
 

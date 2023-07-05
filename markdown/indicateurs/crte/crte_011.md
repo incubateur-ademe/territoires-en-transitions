@@ -9,7 +9,7 @@ titre_long: Quantité totale d'émissions de Dioxyde de soufre
 parent: emission_polluants_atmo
 programmes:
   - crte
-thématiques:
+thematiques:
   - nature_environnement_air
 ```
 ## Description
@@ -39,7 +39,7 @@ titre_long: Quantité totale d'émissions d'Oxyde d'azote
 parent: emission_polluants_atmo
 programmes:
   - crte
-thématiques:
+thematiques:
   - nature_environnement_air
 ```
 
@@ -54,7 +54,7 @@ titre_long: Quantité totale d'émissions de Composés organiques volatils non m
 parent: emission_polluants_atmo
 programmes:
   - crte
-thématiques:
+thematiques:
   - nature_environnement_air
 ```
 
@@ -70,7 +70,7 @@ titre_long: Quantité totale d'émissions de particules fines PM 2.5
 parent: emission_polluants_atmo
 programmes:
   - crte
-thématiques:
+thematiques:
   - nature_environnement_air
 ```
 
@@ -86,6 +86,6 @@ titre_long: Quantité totale d'émissions d'Ammoniac
 parent: emission_polluants_atmo
 programmes:
   - crte
-thématiques:
+thematiques:
   - nature_environnement_air
 ```
