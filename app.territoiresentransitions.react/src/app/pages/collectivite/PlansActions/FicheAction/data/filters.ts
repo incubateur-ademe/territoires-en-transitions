@@ -60,5 +60,7 @@ export const nameToShortNames = {
 };
 
 // Constantes
+export const SANS_PILOTE = 'sans_pilote';
+export const SANS_REFERENT = 'sans_referent';
 export const SANS_STATUT = 'sans_statut';
 export const SANS_PRIORITE = 'sans_priorite';

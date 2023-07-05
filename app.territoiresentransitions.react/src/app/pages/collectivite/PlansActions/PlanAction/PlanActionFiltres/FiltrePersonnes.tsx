@@ -1,7 +1,12 @@
 import FilterField from 'ui/shared/filters/FilterField';
 import {TOption} from 'ui/shared/select/commons';
 import {MultiSelectFilter} from 'ui/shared/select/MultiSelectFilter';
-import {TFilters, TFiltreProps} from '../../FicheAction/data/filters';
+import {
+  SANS_PILOTE,
+  SANS_REFERENT,
+  TFilters,
+  TFiltreProps,
+} from '../../FicheAction/data/filters';
 import {getIsAllSelected, ITEM_ALL} from 'ui/shared/filters/commons';
 import {getPersonneId} from '../../FicheAction/data/utils';
 import {usePersonneListe} from '../../FicheAction/data/options/usePersonneListe';
@@ -31,14 +36,14 @@ const FiltrePersonnes = ({
 
   if (filterKey === 'pilotes') {
     options.push({
-      value: 'sans_pilote',
+      value: SANS_PILOTE,
       label: 'Sans pilote',
     });
   }
 
   if (filterKey === 'referents') {
     options.push({
-      value: 'sans_referent',
+      value: SANS_REFERENT,
       label: 'Sans élu·e référent·e',
     });
   }
@@ -56,14 +61,14 @@ const FiltrePersonnes = ({
   const values = (): string[] => {
     if (filterKey === 'pilotes') {
       if (filters.sans_pilote && filters.sans_pilote === 1) {
-        return ['sans_pilote'];
+        return [SANS_PILOTE];
       } else {
         return filters.pilotes || [];
       }
     }
     if (filterKey === 'referents') {
       if (filters.sans_referent && filters.sans_referent === 1) {
-        return ['sans_referent'];
+        return [SANS_REFERENT];
       } else {
         return filters.referents || [];
       }
@@ -92,7 +97,7 @@ const FiltrePersonnes = ({
       return {...newFilters};
     } else {
       if (filterKey === 'pilotes') {
-        if (newValues.includes('sans_pilote')) {
+        if (newValues.includes(SANS_PILOTE)) {
           if (filters.sans_pilote === 1) {
             delete newFilters.sans_pilote;
             return {...newFilters, [filterKey]: newPersonnes};
@@ -108,7 +113,7 @@ const FiltrePersonnes = ({
         }
       }
       if (filterKey === 'referents') {
-        if (newValues.includes('sans_referent')) {
+        if (newValues.includes(SANS_REFERENT)) {
           if (filters.sans_referent === 1) {
             delete newFilters.sans_referent;
             return {...newFilters, [filterKey]: newPersonnes};
