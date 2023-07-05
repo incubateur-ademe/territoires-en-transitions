@@ -10,7 +10,7 @@ const FiltrePriorites = ({filters, setFilters}: TFiltreProps) => {
   // Initialisation du tableau d'options pour le multi-select
   const options: TOption[] = [
     {value: ITEM_ALL, label: 'Tous'},
-    {value: SANS_PRIORITE, label: 'Sans priorité'},
+    {value: SANS_PRIORITE, label: 'Non priorisé'},
     ...ficheActionNiveauPrioriteOptions,
   ];
 
