@@ -89,15 +89,15 @@ group by indicateur_id, collectivite_id;
 comment on view indicateur_rempli is 'Permet de filtrer les indicateurs par remplissage.';
 comment on column indicateur_rempli.rempli is 'Vrai si un résultat a été saisi.';
 
-create table indicateur_thematique
+create table indicateur_thematique_nom
 (
-    id  text primary key,
+    id  indicateur_thematique primary key,
     nom text
 );
-comment on table indicateur_thematique is 'Les ids thématiques et leurs noms.';
-alter table indicateur_thematique
+comment on table indicateur_thematique_nom is 'Les ids thématiques et leurs noms.';
+alter table indicateur_thematique_nom
     enable row level security;
-create policy allow_read_for_all on indicateur_thematique for select using (true);
+create policy allow_read_for_all on indicateur_thematique_nom for select using (true);
 
 create table indicateur_resultat_import
 (
