@@ -1,9 +1,15 @@
-# Artificialisation des espaces naturels, agricoles, forestiers (ha)
+# Surface artificialisée
 ```yaml
 id: crte_13.1
 identifiant: 13.1
 unite: ha
 valeur: cae_11
+
+titre_long: Artificialisation des espaces naturels, agricoles, forestiers (ha)
+programmes:
+  - crte
+thematiques:
+  - urbanisme_et_amenagement
 ```
 ## Description
 
