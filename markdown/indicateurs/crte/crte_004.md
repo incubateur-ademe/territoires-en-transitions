@@ -1,8 +1,17 @@
-# Surface Agricole Utile totale du territoire (ha)
+# Surface Agricole Utile totale
 ```yaml
 id: crte_4.1
 identifiant: 4.1
 unite: ha
+
+titre_long: Surface Agricole Utile totale du territoire
+programmes:
+  - crte
+climat_pratic_ids:
+  - urbanisme
+thematiques:
+  - urbanisme_et_amenagement
+  - agri_alim
 ```
 ## Description
 
@@ -16,12 +25,21 @@ unite: ha
 **Objectif opérationnel national fixé par les documents de référence**: Stratégie “De la Ferme à la Fourchette” (F2F) UE ; Plan ambition bio - Loi Egalim :
 - 15 % de SAU affectée à l’agriculture biologique au 31/12/2022 ; 30 % en 2030
 
-# Part de la surface agricole utile en agriculture biologique (%)
+# Surface agricole utile en agriculture biologique
 ```yaml
 id: crte_4.2
 identifiant: 4.2
 unite: '%'
 valeur: cae_59
+
+titre_long: Part de la surface agricole utile en agriculture biologique
+programmes:
+  - crte
+climat_pratic_ids:
+  - urbanisme
+thematiques:
+  - urbanisme_et_amenagement
+  - agri_alim
 ```
 ## Description
 
