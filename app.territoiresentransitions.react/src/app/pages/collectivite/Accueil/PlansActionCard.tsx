@@ -13,7 +13,7 @@ import {usePlansActionsListe} from '../PlansActions/PlanAction/data/usePlansActi
 import {usePlanActionTableauDeBord} from '../PlansActions/Synthese/data/usePlanActionTableauDeBord';
 import AccueilCard from './AccueilCard';
 import AccueilEmptyCardWithPicto from './AccueilEmptyCardWithPicto';
-import KeyNumbers from './KeyNumbers';
+import KeyNumbers from '../../../../ui/score/KeyNumbers';
 
 type PlanActionCardProps = {
   collectiviteId: number;

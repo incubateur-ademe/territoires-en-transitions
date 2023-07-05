@@ -6,7 +6,7 @@ import {
   StatusToSavePayload,
 } from 'ui/referentiels/ActionStatusDropdown';
 import {Tooltip} from 'ui/shared/floating-ui/Tooltip';
-import ScoreDisplay from 'app/pages/collectivite/EtatDesLieux/Referentiel/SuiviAction/ScoreDisplay';
+import ScoreDisplay from 'ui/referentiels/ScoreDisplay';
 import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
 import {SuiviScoreRow} from '../data/useScoreRealise';
 

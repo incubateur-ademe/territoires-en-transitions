@@ -15,7 +15,7 @@ import {getAggregatedScore} from '../EtatDesLieux/Synthese/utils';
 import {useCycleLabellisation} from '../ParcoursLabellisation/useCycleLabellisation';
 import AccueilCard from './AccueilCard';
 import EtatDesLieuxGraphs from './EtatDesLieuxGraphs';
-import LabellisationInfo from './LabellisationInfo';
+import LabellisationInfo from '../../../../ui/labellisation/LabellisationInfo';
 
 type EtatDesLieuxCardProps = {
   collectiviteId: number;
