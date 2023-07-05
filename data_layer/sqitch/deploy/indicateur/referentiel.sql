@@ -217,4 +217,40 @@ from indicateur_resultat_import
 where have_lecture_acces(collectivite_id);
 comment on view indicateurs is 'Les valeurs des indicateurs consolidées.';
 
+create function
+    rewrite_indicateur_id()
+    returns trigger
+as
+$$
+declare
+    valeur_id indicateur_id;
+begin
+    select valeur_indicateur
+    into valeur_id
+    from indicateur_definition
+    where id = new.indicateur_id;
+
+    if valeur_id is not null
+    then
+        new.indicateur_id = valeur_id;
+    end if;
+
+    return new;
+end;
+$$ language plpgsql;
+comment on function
+    rewrite_indicateur_id is 'Réécrit les ids des indicateurs pour les résultats et les objectifs.';
+
+create trigger rewrite_indicateur_id
+    before insert or update
+    on indicateur_resultat
+    for each row
+execute procedure rewrite_indicateur_id();
+
+create trigger rewrite_indicateur_id
+    before insert or update
+    on indicateur_objectif
+    for each row
+execute procedure rewrite_indicateur_id();
+
 COMMIT;
