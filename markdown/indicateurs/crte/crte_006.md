@@ -1,8 +1,17 @@
-# Linéaire d’aménagements cyclables sécurisés
+# Pistes cyclables : linéaire
 ```yaml
 id: crte_6.1
 identifiant: 6.1
 unite: km
+
+titre_long: Linéaire d’aménagements cyclables sécurisés
+selection: yes
+programmes:
+  - crte
+climat_pratic_ids:
+  - mobilites
+thematiques:
+  - mobilite_et_transport
 ```
 ## Description
 
