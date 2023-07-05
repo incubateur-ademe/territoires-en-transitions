@@ -46,7 +46,7 @@ const FiltrePrimairePriorites = ({filtersOptions}: Props) => {
       name="priorites"
       options={[
         {value: ITEM_ALL, label: 'Tous les niveaux de priorité'},
-        {value: SANS_PRIORITE, label: 'Sans priorité'},
+        {value: SANS_PRIORITE, label: 'Non priorisé'},
         ...ficheActionNiveauPrioriteOptions,
       ]}
       onChange={priorite => setFilters(selectPriorite(priorite))}
