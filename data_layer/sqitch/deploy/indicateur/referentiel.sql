@@ -118,20 +118,86 @@ create policy allow_read on indicateur_resultat_import for select using (have_le
 
 create view indicateur_resultats
 as
-select collectivite_id,
-       indicateur_id,
-       annee,
-       valeur,
-       modified_at
-from indicateur_resultat
-where have_lecture_acces(collectivite_id)
+select 'resultat'::indicateur_valeur_type as type,
+       r.collectivite_id,
+       case
+           when d.valeur_indicateur is null
+               then r.indicateur_id
+           else d.valeur_indicateur
+           end                            as indicateur_id,
+       r.annee,
+       case
+           when d.valeur_indicateur is null
+               then r.valeur
+           else (select valeur
+                 from indicateur_resultat rr
+                 where rr.collectivite_id = r.collectivite_id
+                   and rr.annee = r.annee
+                   and rr.indicateur_id = r.indicateur_id)
+           end                            as valeur,
+       case
+           when d.valeur_indicateur is null
+               then c.commentaire
+           else (select cc.commentaire
+                 from indicateur_resultat_commentaire cc
+                 where cc.collectivite_id = r.collectivite_id
+                   and cc.annee = r.annee
+                   and cc.indicateur_id = r.indicateur_id)
+           end                            as commentaire,
+       null::text                         as source
+from indicateur_resultat r
+         join indicateur_definition d on r.indicateur_id = d.id
+         left join indicateur_resultat_commentaire c
+                   on r.indicateur_id = c.indicateur_id
+                       and r.collectivite_id = c.collectivite_id
+                       and r.annee = c.annee
+where have_lecture_acces(r.collectivite_id)
 union all
-select collectivite_id,
+select 'objectif'::indicateur_valeur_type as type,
+       o.collectivite_id,
+       case
+           when d.valeur_indicateur is null
+               then o.indicateur_id
+           else d.valeur_indicateur
+           end                            as indicateur_id,
+       o.annee,
+       case
+           when d.valeur_indicateur is null
+               then o.valeur
+           else (select valeur
+                 from indicateur_objectif rr
+                 where rr.collectivite_id = o.collectivite_id
+                   and rr.annee = o.annee
+                   and rr.indicateur_id = o.indicateur_id)
+           end                            as valeur,
+
+       case
+           when d.valeur_indicateur is null
+               then c.commentaire
+           else (select cc.commentaire
+                 from indicateur_objectif_commentaire cc
+                 where cc.collectivite_id = o.collectivite_id
+                   and cc.annee = o.annee
+                   and cc.indicateur_id = o.indicateur_id)
+           end                            as commentaire,
+       null::text                         as source
+from indicateur_objectif o
+         join indicateur_definition d on o.indicateur_id = d.id
+         left join indicateur_objectif_commentaire c
+                   on o.indicateur_id = c.indicateur_id
+                       and o.collectivite_id = c.collectivite_id
+                       and o.annee = c.annee
+where have_lecture_acces(o.collectivite_id)
+union all
+select 'import'::indicateur_valeur_type as type,
+       collectivite_id,
        indicateur_id,
        annee,
        valeur,
-       modified_at
+       null,
+       source
 from indicateur_resultat_import
 where have_lecture_acces(collectivite_id);
+comment on view indicateurs is 'Les valeurs des indicateurs consolidées.';
 
 COMMIT;
