@@ -39,6 +39,13 @@ export const generateSyntheseVue = (
       filtresSecondaires: ['pilotes', 'referents', 'statuts', 'echeance'],
     };
   }
+  if (vueId === 'echeance') {
+    return {
+      id: vueId,
+      titre: 'Répartition des fiches par échéance',
+      filtresSecondaires: ['pilotes', 'referents', 'statuts', 'priorites'],
+    };
+  }
 };
 
 type Graph = {
@@ -92,6 +99,11 @@ export const generateSyntheseGraphData = (
                 id: pr.id !== 'NC' ? pr.id : 'Non priorisé',
               }))
             : [],
+        },
+        {
+          id: 'echeance',
+          title: 'Répartition par échéance',
+          data: data.echeances,
         },
         // {
         //   title: 'Répartition par direction pilote',
