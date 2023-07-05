@@ -5,6 +5,7 @@ identifiant: 4.1
 unite: ha
 
 titre_long: Surface Agricole Utile totale du territoire
+selection: yes
 programmes:
   - crte
 climat_pratic_ids:
