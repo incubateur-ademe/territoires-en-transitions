@@ -3,7 +3,12 @@
 id: crte_10.1
 identifiant: 10.1
 unite: kg/hab
-valeur: cae_6.a 
+valeur: cae_6.a
+
+titre_long: Quantité de déchets ménagers et assimilés (avec déblais et gravats) produits par an
+programmes:
+  - crte
+thématiques: eci_dechets
 ```
 ## Description
 
@@ -25,12 +30,17 @@ Pour la production par habitant, la production totale du territoire est rapport�
 - Réduire les quantités de déchets ménagers et assimilés mis en décharge à 10 % des quantités de déchets ménagers et assimilés produits en 2035.
 **Données de référence:** Au niveau national, la production de DMA est de 581kg/hab en 2017. Hors gravats, la production de DMA est de 526kg/hab. (Source : Ademe, janvier 2021 : La collecte des déchets par le service public en France - Résultats 2017)
 
-# Collecte annuelle de déchets ménagers et assimilés hors gravats (kg/hab)
+# Collecte annuelle de déchets ménagers et assimilés hors gravats
 ```yaml
 id: crte_10.2
 identifiant: 10.2
 unite: kg/hab
-valeur: cae_6.a 
+
+titre_long: Quantité de déchets ménagers et assimilés (hors gravats) produits par an
+parent: cae_6.a
+programmes:
+  - crte
+thématiques: eci_dechets
 ```
 ## Description
 
