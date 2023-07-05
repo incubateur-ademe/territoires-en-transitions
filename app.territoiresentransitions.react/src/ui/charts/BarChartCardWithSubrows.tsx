@@ -1,4 +1,3 @@
-import {referentielToName} from 'app/labels';
 import {TScoreAuditRowData} from 'app/pages/collectivite/AuditComparaison/types';
 import {ProgressionRow} from 'app/pages/collectivite/Progression/queries';
 import {ReferentielParamOption} from 'app/paths';
@@ -32,6 +31,7 @@ type BarChartCardWithSubrowsProps = {
   };
   chartInfo?: {
     title?: string;
+    subtitle?: string;
     legend?: {name: string; color: string}[];
     legendOnOverview?: boolean;
     expandable?: boolean;
@@ -141,10 +141,11 @@ const BarChartCardWithSubrows = ({
 
   const localChartInfo = {
     title: chartInfo?.title
-      ? `${referentielToName[referentiel]}\n${chartInfo.title} ${
-          !!indexBy ? `par ${indexBy}` : ''
-        } : ${relativeMode ? 'pourcentages' : 'nombre de points'}`
+      ? `${chartInfo.title} ${!!indexBy ? `par ${indexBy}` : ''} : ${
+          relativeMode ? 'pourcentages' : 'nombre de points'
+        }`
       : undefined,
+    subtitle: chartInfo?.subtitle,
     legend: chartInfo?.legend,
     legendOnOverview: chartInfo?.legendOnOverview,
     expandable: chartInfo?.expandable,

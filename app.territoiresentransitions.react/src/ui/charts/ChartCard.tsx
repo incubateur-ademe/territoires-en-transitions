@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 import {useRef, useState} from 'react';
 import DownloadButton from 'ui/buttons/DownloadButton';
@@ -32,6 +33,7 @@ type ChartCardModalContentProps = {
   chart: JSX.Element;
   chartInfo?: {
     title?: string;
+    subtitle?: string;
     extendedTitle?: string;
     legend?: {name: string; color: string}[];
     expandable?: boolean;
@@ -70,15 +72,36 @@ const ChartCardModalContent = ({
       <div ref={chartWrapperRef} className="p-3">
         {/* Titre du graphe */}
         {chartInfo?.extendedTitle ? (
-          <h4 className="whitespace-pre-wrap">{chartInfo?.extendedTitle}</h4>
+          <h4
+            className={classNames({
+              'pb-2': chartInfo.subtitle !== undefined,
+              'pb-4': chartInfo.subtitle === undefined,
+            })}
+          >
+            {chartInfo?.extendedTitle}
+          </h4>
         ) : (
           chartInfo?.title && (
-            <h4 className="whitespace-pre-wrap">{chartInfo.title}</h4>
+            <h4
+              className={classNames('m-0 font-bold', {
+                'pb-2': chartInfo.subtitle !== undefined,
+                'pb-4': chartInfo.subtitle === undefined,
+              })}
+            >
+              {chartInfo.title}
+            </h4>
           )
         )}
 
+        {/* Sous-titre du graphe */}
+        {chartInfo?.subtitle && (
+          <h4 className="pb-4 m-0 font-medium text-[#666]">
+            {chartInfo.subtitle}
+          </h4>
+        )}
+
         {/* Element additionnel optionnel, ajouté entre le titre et le graphe */}
-        <div data-html2canvas-ignore>
+        <div data-html2canvas-ignore className="pb-2">
           {!!topElement && topElement('detailled')}
         </div>
 
@@ -90,7 +113,7 @@ const ChartCardModalContent = ({
 
         {/* Info additionelles */}
         {chartInfo?.additionalInfo && (
-          <div className="flex flex-col mt-12 text-slate-500">
+          <div className="flex flex-col mt-12 text-[#666]">
             {Array.isArray(chartInfo.additionalInfo) ? (
               chartInfo.additionalInfo.map((info, index) => (
                 <span key={index}>{info}</span>
@@ -110,6 +133,7 @@ type ChartCardProps = {
   chartProps: BarChartProps | DonutChartProps;
   chartInfo?: {
     title?: string;
+    subtitle?: string;
     extendedTitle?: string;
     legend?: {name: string; color: string}[];
     legendOnOverview?: boolean;
@@ -156,19 +180,32 @@ const ChartCard = ({
 
   return (
     <div
-      className={`border border-gray-200 bg-white flex flex-col w-full h-[400px] relative ${
+      className={`border border-gray-200 bg-white flex flex-col w-full h-96 relative ${
         chartInfo?.title || chartInfo?.expandable ? 'pt-6' : ''
       }`}
       style={customStyle}
     >
       {/* En-tête de la carte */}
       <div className="flex flex-row justify-between px-6">
-        {/* Titre du graphe */}
-        {chartInfo?.title && (
-          <div className="pb-4 font-bold whitespace-pre-wrap">
-            {chartInfo.title}
-          </div>
-        )}
+        <div>
+          {/* Titre du graphe */}
+          {chartInfo?.title && (
+            <div
+              className={classNames('font-bold', {
+                'pb-1': chartInfo.subtitle !== undefined,
+                'pb-3': chartInfo.subtitle === undefined,
+              })}
+            >
+              {chartInfo.title}
+            </div>
+          )}
+          {/* Sous-titre du graphe */}
+          {chartInfo?.subtitle && (
+            <div className="pb-3 font-medium text-[#666]">
+              {chartInfo.subtitle}
+            </div>
+          )}
+        </div>
 
         {/* Bouton + modale permettant un affichage agrandi du graphe */}
         {chartInfo?.expandable && (

@@ -2,6 +2,7 @@ import {Tooltip} from 'ui/shared/floating-ui/Tooltip';
 import {NIVEAUX} from '../../../../ui/labellisation/getNiveauInfo';
 import {GreyStar, RedStar} from 'ui/labellisation/Star';
 import {TLabellisationParcours} from '../ParcoursLabellisation/types';
+import {toLocaleFixed} from 'utils/toFixed';
 
 type LabellisationStarsProps = {
   parcours: TLabellisationParcours | null;
@@ -24,7 +25,7 @@ const LabellisationStars = ({parcours}: LabellisationStarsProps) => {
         ) : (
           <>
             <p>
-              Score réalisé : <b>{scoreRealise} %</b>
+              Score réalisé : <b>{toLocaleFixed(scoreRealise ?? 0, 2)} %</b>
             </p>
             {!!dateLabel && (
               <p>

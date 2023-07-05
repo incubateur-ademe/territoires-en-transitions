@@ -1,4 +1,4 @@
-import {avancementToLabel} from 'app/labels';
+import {avancementToLabel, referentielToName} from 'app/labels';
 import {ReferentielParamOption} from 'app/paths';
 import {actionAvancementColors} from 'app/theme';
 import {TableOptions} from 'react-table';
@@ -78,6 +78,7 @@ const ProgressionReferentiel = ({
       }}
       chartInfo={{
         title: 'Progression',
+        subtitle: referentielToName[referentiel],
         legend,
         expandable: true,
         downloadable: true,
