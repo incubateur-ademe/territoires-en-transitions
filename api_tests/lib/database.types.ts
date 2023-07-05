@@ -1362,6 +1362,32 @@ export interface Database {
           valeur?: number | null
         }
       }
+      indicateur_objectif_commentaire: {
+        Row: {
+          annee: number
+          collectivite_id: number
+          commentaire: string
+          indicateur_id: string
+          modified_at: string
+          modified_by: string
+        }
+        Insert: {
+          annee: number
+          collectivite_id: number
+          commentaire: string
+          indicateur_id: string
+          modified_at: string
+          modified_by: string
+        }
+        Update: {
+          annee?: number
+          collectivite_id?: number
+          commentaire?: string
+          indicateur_id?: string
+          modified_at?: string
+          modified_by?: string
+        }
+      }
       indicateur_parent: {
         Row: {
           id: number
@@ -1506,6 +1532,32 @@ export interface Database {
           modified_by?: string
         }
       }
+      indicateur_resultat_import: {
+        Row: {
+          annee: number
+          collectivite_id: number
+          indicateur_id: string
+          modified_at: string
+          source: string
+          valeur: number
+        }
+        Insert: {
+          annee: number
+          collectivite_id: number
+          indicateur_id: string
+          modified_at: string
+          source: string
+          valeur: number
+        }
+        Update: {
+          annee?: number
+          collectivite_id?: number
+          indicateur_id?: string
+          modified_at?: string
+          source?: string
+          valeur?: number
+        }
+      }
       indicateur_terristory_json: {
         Row: {
           created_at: string
@@ -1518,6 +1570,20 @@ export interface Database {
         Update: {
           created_at?: string
           indicateurs?: Json
+        }
+      }
+      indicateur_thematique_nom: {
+        Row: {
+          id: Database["public"]["Enums"]["indicateur_thematique"]
+          nom: string | null
+        }
+        Insert: {
+          id: Database["public"]["Enums"]["indicateur_thematique"]
+          nom?: string | null
+        }
+        Update: {
+          id?: Database["public"]["Enums"]["indicateur_thematique"]
+          nom?: string | null
         }
       }
       indicateurs_json: {
@@ -3025,6 +3091,17 @@ export interface Database {
             | null
           indicateur_id: string | null
           resultats: number | null
+        }
+      }
+      indicateurs: {
+        Row: {
+          annee: number | null
+          collectivite_id: number | null
+          commentaire: string | null
+          indicateur_id: string | null
+          source: string | null
+          type: Database["public"]["Enums"]["indicateur_valeur_type"] | null
+          valeur: number | null
         }
       }
       indicateurs_collectivite: {
@@ -6899,6 +6976,7 @@ export interface Database {
       indicateur_programme: "clef" | "eci" | "cae" | "pcaet" | "crte"
       indicateur_referentiel_type: "resultat" | "impact"
       indicateur_thematique: "eci_dechets" | "energie_et_climat"
+      indicateur_valeur_type: "resultat" | "objectif" | "import"
       membre_fonction:
         | "referent"
         | "conseiller"
