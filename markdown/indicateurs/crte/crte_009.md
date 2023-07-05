@@ -4,7 +4,7 @@ id: crte_9.1
 identifiant: 9.1
 unite: '%'
 
-thématiques:
+thematiques:
   - eau_assainissement
 type: impact
 ```
