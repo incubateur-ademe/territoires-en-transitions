@@ -102,11 +102,12 @@ create policy allow_read_for_all on indicateur_thematique_nom for select using (
 create table indicateur_resultat_import
 (
 
-    collectivite_id integer references collectivite,
-    indicateur_id   indicateur_id references indicateur_definition,
-    annee           integer                  not null,
-    valeur          double precision,
-    modified_at     timestamp with time zone not null,
+    collectivite_id integer          not null references collectivite,
+    indicateur_id   indicateur_id    not null references indicateur_definition,
+    annee           integer          not null,
+    valeur          double precision not null,
+    modified_at     timestamptz      not null,
+    source          text             not null,
     unique (collectivite_id, indicateur_id, annee)
 );
 select private.add_modified_at_trigger('public', 'indicateur_resultat_import');
