@@ -1,8 +1,15 @@
-# Indicateur de fragmentation des milieux naturels (km²)
+# Fragmentation des milieux naturels
 ```yaml
 id: crte_12.1
 identifiant: 12.1
 unite: km²
+
+titre_long: Indicateur de fragmentation des milieux naturels
+selection: yes
+programmes:
+  - crte
+thematiques:
+  - urbanisme_et_amenagement
 ```
 ## Description
 
