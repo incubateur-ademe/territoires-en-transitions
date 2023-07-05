@@ -30,11 +30,10 @@ const ProgressionParPhase = ({
         displayPercentageValue: true,
       }}
       chartInfo={{
-        title: `${
-          referentielToName[referentiel]
-        }\nRépartition du score "Réalisé" par phase (${
+        title: `Répartition du score "Réalisé" par phase (${
           scoreTotal > 1 ? Math.round(scoreTotal) : scoreTotal
         } point${Math.round(scoreTotal) <= 1 ? '' : 's'})`,
+        subtitle: referentielToName[referentiel],
         legend: repartitionPhases.map((el, index) => ({
           name: el.id,
           color: defaultColors[index % defaultColors.length],

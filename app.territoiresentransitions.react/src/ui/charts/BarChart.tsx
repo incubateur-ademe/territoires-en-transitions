@@ -131,7 +131,7 @@ const BarChart = ({
       keys={keys}
       indexBy={indexBy}
       margin={{
-        top: layout === 'horizontal' ? 30 : 85,
+        top: layout === 'horizontal' ? 20 : 85,
         right: 60,
         bottom: layout === 'horizontal' ? 80 : 70,
         left: 70,

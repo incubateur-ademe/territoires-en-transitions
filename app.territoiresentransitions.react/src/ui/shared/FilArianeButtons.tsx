@@ -15,7 +15,7 @@ const FilArianeButtons = ({
   handleClick,
 }: FilArianeButtonsProps): JSX.Element => {
   return (
-    <div className="flex items-center flex-wrap gap-y-0.5 text-xs text-gray-500 h-6">
+    <div className="flex items-center flex-wrap gap-y-0.5 text-xs text-[#666] h-6">
       {displayedNames.map((name, index) => (
         <div key={name} className="flex items-center shrink-0">
           <button

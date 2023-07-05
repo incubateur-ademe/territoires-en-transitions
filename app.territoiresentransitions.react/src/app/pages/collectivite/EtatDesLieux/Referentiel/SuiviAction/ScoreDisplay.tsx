@@ -66,28 +66,30 @@ const ScoreDisplay = ({
         />
       )}
 
-      <span
-        className={classNames('whitespace-pre-wrap', {
-          'font-bold': bold === 'legend' || bold === 'all',
-        })}
-      >
-        {legend ? `${legend} : ` : ''}
-      </span>
-      <span
-        className={classNames({
-          'font-bold': bold === 'value' || bold === 'all',
-        })}
-      >
-        {percent
-          ? `${toLocaleFixed(
-              Math.round((score ?? 0) * 10000) / 100,
-              (score ?? 0) < 0.01 ? 2 : 0
-            )} %`
-          : `${toLocaleFixed(score ?? 0, 2)} / ${toLocaleFixed(
-              scoreMax ?? 0,
-              2
-            )} point${scoreMax ?? 0 > 1 ? 's' : ''}`}
-      </span>
+      <div>
+        <span
+          className={classNames('whitespace-pre-wrap', {
+            'font-bold': bold === 'legend' || bold === 'all',
+          })}
+        >
+          {legend ? `${legend} : ` : ''}
+        </span>
+        <span
+          className={classNames({
+            'font-bold': bold === 'value' || bold === 'all',
+          })}
+        >
+          {percent
+            ? `${toLocaleFixed(
+                Math.round((score ?? 0) * 10000) / 100,
+                (score ?? 0) < 0.01 ? 2 : 0
+              )} %`
+            : `${toLocaleFixed(score ?? 0, 2)} / ${toLocaleFixed(
+                scoreMax ?? 0,
+                2
+              )} point${scoreMax ?? 0 > 1 ? 's' : ''}`}
+        </span>
+      </div>
     </div>
   );
 };
