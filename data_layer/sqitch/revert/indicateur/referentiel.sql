@@ -6,6 +6,7 @@ BEGIN;
 drop view indicateur_resultats;
 drop table indicateur_resultat_import;
 drop table indicateur_thematique_nom;
+drop table indicateur_objectif_commentaire;
 
 drop view indicateur_rempli;
 
