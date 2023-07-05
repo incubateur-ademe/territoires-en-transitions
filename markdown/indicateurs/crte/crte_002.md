@@ -1,9 +1,17 @@
-# Consommation énergétique finale annuelle (GWh)
+# Consommation énergétique finale annuelle
 ```yaml
 id: crte_2.1
 identifiant: 2.1
 unite: GWh
 valeur: cae_2.a
+
+titre_long: Quantité d'énergie consommée par les activités et les habitants par an
+programmes:
+  - crte
+climat_pratic_ids:
+  - strategie
+thematiques:
+  - energie_et_climat
 ```
 ## Description
 
@@ -26,6 +34,14 @@ id: crte_2.1.hab
 identifiant: 2.1.hab
 unite: MWh/hab
 valeur: cae_2.b
+
+parent: crte_2.1
+programmes:
+  - crte
+climat_pratic_ids:
+  - strategie
+thematiques:
+  - energie_et_climat
 ```
 ## Description
 
