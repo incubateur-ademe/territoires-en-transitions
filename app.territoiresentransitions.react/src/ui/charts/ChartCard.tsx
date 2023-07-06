@@ -73,7 +73,7 @@ const ChartCardModalContent = ({
         {/* Titre du graphe */}
         {chartInfo?.extendedTitle ? (
           <h4
-            className={classNames({
+            className={classNames('m-0', {
               'pb-2': chartInfo.subtitle !== undefined,
               'pb-4': chartInfo.subtitle === undefined,
             })}
@@ -83,7 +83,7 @@ const ChartCardModalContent = ({
         ) : (
           chartInfo?.title && (
             <h4
-              className={classNames('m-0 font-bold', {
+              className={classNames('m-0', {
                 'pb-2': chartInfo.subtitle !== undefined,
                 'pb-4': chartInfo.subtitle === undefined,
               })}

@@ -21,7 +21,7 @@ const LabellisationInfo = ({
       <ScoreDisplay
         score={score.realises / score.max_personnalise}
         percent
-        legend="Score réalisé"
+        legend="Score réalisé courant"
         size="sm"
         bold="value"
       />

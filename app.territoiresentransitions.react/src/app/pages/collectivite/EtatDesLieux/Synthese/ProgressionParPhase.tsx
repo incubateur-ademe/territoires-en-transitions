@@ -1,6 +1,7 @@
 import {referentielToName} from 'app/labels';
 import ChartCard from 'ui/charts/ChartCard';
 import {defaultColors} from 'ui/charts/chartsTheme';
+import {toLocaleFixed} from 'utils/toFixed';
 
 type ProgressionParPhaseProps = {
   repartitionPhases: {id: string; value: number}[];
@@ -31,7 +32,7 @@ const ProgressionParPhase = ({
       }}
       chartInfo={{
         title: `Répartition du score "Réalisé" par phase (${
-          scoreTotal > 1 ? Math.round(scoreTotal) : scoreTotal
+          scoreTotal > 1 ? Math.round(scoreTotal) : toLocaleFixed(scoreTotal, 2)
         } point${Math.round(scoreTotal) <= 1 ? '' : 's'})`,
         subtitle: referentielToName[referentiel],
         legend: repartitionPhases.map((el, index) => ({
