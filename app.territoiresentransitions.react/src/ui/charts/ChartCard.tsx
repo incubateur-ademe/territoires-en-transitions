@@ -150,6 +150,8 @@ const ChartCard = ({
   topElement,
   customStyle,
 }: ChartCardProps) => {
+  const tracker = useFonctionTracker();
+
   // Etat d'ouverture de la modale "zoom", disponible si chartInfo.expandable === true
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -204,7 +206,10 @@ const ChartCard = ({
           >
             <button
               className="fr-btn fr-btn--sm fr-btn--secondary fr-icon-zoom-in-line ml-auto"
-              onClick={() => setIsModalOpen(true)}
+              onClick={() => {
+                setIsModalOpen(true);
+                tracker({fonction: 'graphique', action: 'agrandissement'});
+              }}
             />
           </Modal>
         )}
