@@ -33,57 +33,55 @@ const SyntheseVueGraph = ({vue, plan}: Props) => {
   if (!graph) return null;
 
   return (
-    <div className="border border-b-4 border-gray-200">
-      <div className="relative">
-        {/* Bouton de téléchargement, affiché si un nom de fichier est fourni */}
-        <div className="absolute right-4 top-4 z-10">
-          <DownloadButton
-            containerRef={chartWrapperRef}
-            fileName={`repartition-${graph.id}${
-              plan.id === 'nc'
-                ? '-fiches-non-classees'
-                : plan.id !== 'tous'
-                ? `-${plan.name.toLowerCase().split(' ').join('-')}`
-                : ''
-            }`}
-            fileType="png"
-            onClick={
-              () => null
-              //   tracker({fonction: 'graphique', action: 'telechargement'})
-            }
+    <div className="relative">
+      {/* Bouton de téléchargement, affiché si un nom de fichier est fourni */}
+      <div className="absolute right-4 top-4 z-10">
+        <DownloadButton
+          containerRef={chartWrapperRef}
+          fileName={`repartition-${graph.id}${
+            plan.id === 'nc'
+              ? '-fiches-non-classees'
+              : plan.id !== 'tous'
+              ? `-${plan.name.toLowerCase().split(' ').join('-')}`
+              : ''
+          }`}
+          fileType="png"
+          onClick={
+            () => null
+            //   tracker({fonction: 'graphique', action: 'telechargement'})
+          }
+        />
+      </div>
+
+      <div ref={chartWrapperRef} className="p-6">
+        {/* Titre du graphe */}
+        <p className="mb-1 mr-12 font-bold">{graph.title}</p>
+
+        {/** Titre du plan */}
+        <div className="text-gray-500">
+          {plan.id === 'nc'
+            ? 'Fiches non classées'
+            : plan.id === 'tous'
+            ? 'Toutes les fiches'
+            : plan.name}
+        </div>
+
+        {/* Graphe agrandi */}
+        <div className="w-full h-80">
+          <DonutChart
+            {...({
+              data: graph.data,
+              label: true,
+            } as DonutChartProps)}
           />
         </div>
 
-        <div ref={chartWrapperRef} className="p-6">
-          {/* Titre du graphe */}
-          <p className="mb-1 mr-12 font-bold">{graph.title}</p>
-
-          {/** Titre du plan */}
-          <div className="text-gray-500">
-            {plan.id === 'nc'
-              ? 'Fiches non classées'
-              : plan.id === 'tous'
-              ? 'Toutes les fiches'
-              : plan.name}
+        {/* Légende */}
+        {getCustomLegend(graph.data) && (
+          <div className="-mt-8 -mb-6">
+            <Legend legend={getCustomLegend(graph.data)} />
           </div>
-
-          {/* Graphe agrandi */}
-          <div className="w-full h-80">
-            <DonutChart
-              {...({
-                data: graph.data,
-                label: true,
-              } as DonutChartProps)}
-            />
-          </div>
-
-          {/* Légende */}
-          {getCustomLegend(graph.data) && (
-            <div className="-mt-8 -mb-6">
-              <Legend legend={getCustomLegend(graph.data)} />
-            </div>
-          )}
-        </div>
+        )}
       </div>
     </div>
   );
