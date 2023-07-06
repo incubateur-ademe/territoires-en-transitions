@@ -87,7 +87,9 @@ const SyntheseVue = () => {
         </div>
 
         {/** Graph */}
+        <div className="min-h-[27rem] border border-b-4 border-gray-200">
         <SyntheseVueGraph vue={vue} plan={plan} />
+        </div>
 
         {/** Filtres */}
         <div className="flex flex-col gap-6 mt-8 mb-6">
