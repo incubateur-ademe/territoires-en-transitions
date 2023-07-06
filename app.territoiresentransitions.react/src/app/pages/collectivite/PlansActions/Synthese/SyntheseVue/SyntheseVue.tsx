@@ -16,6 +16,8 @@ import FiltresPrimaires from './FiltresPrimaires/FiltresPrimaires';
 import FiltresSecondaires from './FiltresSecondaires';
 import {generateSyntheseVue} from '../utils';
 import {ITEM_ALL} from 'ui/shared/filters/commons';
+import SyntheseVueGraph from './SyntheseVueGraph';
+import {useState} from 'react';
 
 const SyntheseVue = () => {
   const collectivite_id = useCollectiviteId();
@@ -27,6 +29,11 @@ const SyntheseVue = () => {
   });
 
   const vue = generateSyntheseVue(syntheseVue);
+
+  const [plan, setPlan] = useState<PlanActionFilter>({
+    id: ITEM_ALL,
+    name: 'tous',
+  });
 
   const filtersData = useFichesActionFiltresListe({
     url: pageUrl,
@@ -80,18 +87,20 @@ const SyntheseVue = () => {
         </div>
 
         {/** Graph */}
-        {/* <ChartCard chartType="donut" chartProps={} /> */}
+        <SyntheseVueGraph vue={vue} plan={plan} />
 
         {/** Filtres */}
-        <div className="flex flex-col gap-6 my-6">
+        <div className="flex flex-col gap-6 mt-8 mb-6">
           <FiltersPlanAction
             collectiviteId={collectivite_id!}
             initialPlan={
               (filters.sans_plan && 'nc') ||
               (filters.axes && filters.axes[0].toString())
             }
+            getInitialPlan={plan => setPlan(plan)}
             onChangePlan={plan => {
               setFilters(selectPlan(plan));
+              setPlan(plan);
             }}
           />
           <FiltresPrimaires vue={vue.id} filters={filtersData} />

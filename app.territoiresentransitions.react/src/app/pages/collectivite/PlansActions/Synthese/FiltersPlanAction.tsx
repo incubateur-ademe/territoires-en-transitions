@@ -3,6 +3,7 @@ import {useFichesNonClasseesListe} from '../FicheAction/data/useFichesNonClassee
 import {usePlansActionsListe} from '../PlanAction/data/usePlansActionsListe';
 import {generateTitle} from '../FicheAction/data/utils';
 import {ITEM_ALL} from 'ui/shared/filters/commons';
+import {useEffect} from 'react';
 
 export type PlanActionFilter = {id: number | 'nc' | 'tous'; name: string};
 export const filtreToutesLesFiches: PlanActionFilter = {
@@ -25,12 +26,14 @@ export const filtreFichesNonClassees: PlanActionFilter = {
 type FiltersPlanActionProps = {
   collectiviteId: number;
   initialPlan?: string;
+  getInitialPlan?: (plan: PlanActionFilter) => void;
   onChangePlan: ({id, name}: PlanActionFilter) => void;
 };
 
 const FiltersPlanAction = ({
   collectiviteId,
   initialPlan,
+  getInitialPlan,
   onChangePlan,
 }: FiltersPlanActionProps): JSX.Element => {
   const plansActions = usePlansActionsListe(collectiviteId);
@@ -60,22 +63,25 @@ const FiltersPlanAction = ({
     });
   }
 
-  // Mise à jour des filtres sélectionnés
-  const handleChangeFilter = (value: string) => {
+  const generatePlan = (value: string): PlanActionFilter => {
     // Toutes les fiches
     if (value === ITEM_ALL) {
-      onChangePlan(filtreToutesLesFiches);
+      return filtreToutesLesFiches;
       // Fiches non classées
     } else if (value === 'nc') {
-      onChangePlan(filtreFichesNonClassees);
+      return filtreFichesNonClassees;
       // Les plans d'action
     } else {
-      onChangePlan({
+      return {
         id: parseInt(value),
-        name: filters.filter(f => f.value === value)[0].label,
-      });
+        name: filters.filter(f => f.value === value)[0]?.label ?? '',
+      };
     }
   };
+
+  useEffect(() => {
+    initialPlan && getInitialPlan && getInitialPlan(generatePlan(initialPlan));
+  }, []);
 
   return (
     // Filtres affichés si plus d'un plan d'action défini
@@ -84,7 +90,7 @@ const FiltersPlanAction = ({
         defaultOption={initialPlan}
         name="plans_actions"
         options={filters}
-        onChange={handleChangeFilter}
+        onChange={value => onChangePlan(generatePlan(value))}
       />
     ) : (
       <></>

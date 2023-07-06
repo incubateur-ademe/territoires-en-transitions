@@ -1,10 +1,21 @@
-import {statusColor} from 'ui/charts/chartsTheme';
+import {defaultColors, nivoColorsSet, statusColor} from 'ui/charts/chartsTheme';
 import {FiltersKeys} from '../FicheAction/data/filters';
 import {TPlanActionTableauDeBord} from './data/usePlanActionTableauDeBord';
 
-type TSyntheseVue = {
+const statutsGraphTitre = "Répartition par statut d'avancement";
+const pilotesGraphTitre = 'Répartition par personne pilote';
+const referentsGraphTitre = 'Répartition par élu·e référent·e';
+const prioritesGraphTitre = 'Répartition par niveau de priorité';
+const echeanceGraphTitre = 'Répartition par échéance';
+
+/**
+ * VUE DE SYNTHESE
+ */
+
+export type TSyntheseVue = {
   id: FiltersKeys;
   titre: string;
+  graphTitre: string;
   filtresSecondaires: FiltersKeys[];
 };
 
@@ -15,6 +26,7 @@ export const generateSyntheseVue = (
     return {
       id: vueId,
       titre: 'Répartition des fiches par statut',
+      graphTitre: statutsGraphTitre,
       filtresSecondaires: ['pilotes', 'referents', 'priorites', 'echeance'],
     };
   }
@@ -22,6 +34,7 @@ export const generateSyntheseVue = (
     return {
       id: vueId,
       titre: 'Répartition des fiches par personne pilote',
+      graphTitre: pilotesGraphTitre,
       filtresSecondaires: ['statuts', 'referents', 'priorites', 'echeance'],
     };
   }
@@ -29,6 +42,7 @@ export const generateSyntheseVue = (
     return {
       id: vueId,
       titre: 'Répartition des fiches par élu·e référent·e',
+      graphTitre: referentsGraphTitre,
       filtresSecondaires: ['statuts', 'pilotes', 'priorites', 'echeance'],
     };
   }
@@ -36,6 +50,7 @@ export const generateSyntheseVue = (
     return {
       id: vueId,
       titre: 'Répartition des fiches par niveau de priorité',
+      graphTitre: prioritesGraphTitre,
       filtresSecondaires: ['pilotes', 'referents', 'statuts', 'echeance'],
     };
   }
@@ -43,15 +58,63 @@ export const generateSyntheseVue = (
     return {
       id: vueId,
       titre: 'Répartition des fiches par échéance',
+      graphTitre: echeanceGraphTitre,
       filtresSecondaires: ['pilotes', 'referents', 'statuts', 'priorites'],
     };
   }
 };
 
-type Graph = {
+/**
+ * GRAPHIQUES
+ */
+
+type GraphData = {id: string; value: number; color?: any}[];
+
+export const getGraphData = (
+  graphId: FiltersKeys,
+  data: TPlanActionTableauDeBord
+): GraphData => {
+  switch (graphId) {
+    case 'statuts':
+      return (
+        data[graphId].map(st => ({
+          ...st,
+          id: st.id !== 'NC' ? st.id : 'Sans statut',
+          color: statusColor[st.id],
+        })) || []
+      );
+    case 'pilotes':
+      return (
+        data[graphId].map(p => ({
+          ...p,
+          id: p.id !== 'NC' ? p.id : 'Sans pilote',
+        })) || []
+      );
+    case 'referents':
+      return (
+        data[graphId].map(r => ({
+          ...r,
+          id: r.id !== 'NC' ? r.id : 'Sans élu·e référent·e',
+        })) || []
+      );
+    case 'priorites':
+      return (
+        data[graphId].map(prio => ({
+          ...prio,
+          id: prio.id !== 'NC' ? prio.id : 'Non priorisé',
+        })) || []
+      );
+    case 'echeance':
+      return data.echeances;
+    default:
+      return [];
+  }
+};
+
+export type Graph = {
   id: FiltersKeys;
   title: string;
-  data: {id: string; value: number; color?: any}[];
+  data: GraphData;
 };
 
 export const generateSyntheseGraphData = (
@@ -61,48 +124,27 @@ export const generateSyntheseGraphData = (
     ? [
         {
           id: 'statuts',
-          title: "Répartition par statut d'avancement",
-          data: data.statuts
-            ? data.statuts.map(st => ({
-                ...st,
-                id: st.id !== 'NC' ? st.id : 'Sans statut',
-                color: statusColor[st.id],
-              }))
-            : [],
+          title: statutsGraphTitre,
+          data: getGraphData('statuts', data),
         },
         {
           id: 'pilotes',
-          title: 'Répartition par personne pilote',
-          data: data.pilotes
-            ? data.pilotes.map(pi => ({
-                ...pi,
-                id: pi.id !== 'NC' ? pi.id : 'Sans pilote',
-              }))
-            : [],
+          title: pilotesGraphTitre,
+          data: getGraphData('pilotes', data),
         },
         {
           id: 'referents',
-          title: 'Répartition par élu·e référent·e',
-          data: data.referents
-            ? data.referents.map(ref => ({
-                ...ref,
-                id: ref.id !== 'NC' ? ref.id : 'Sans élu·e référent·e',
-              }))
-            : [],
+          title: referentsGraphTitre,
+          data: getGraphData('referents', data),
         },
         {
           id: 'priorites',
-          title: 'Répartition par niveau de priorité',
-          data: data.priorites
-            ? data.priorites.map(pr => ({
-                ...pr,
-                id: pr.id !== 'NC' ? pr.id : 'Non priorisé',
-              }))
-            : [],
+          title: prioritesGraphTitre,
+          data: getGraphData('priorites', data),
         },
         {
           id: 'echeance',
-          title: 'Répartition par échéance',
+          title: echeanceGraphTitre,
           data: data.echeances,
         },
         // {
@@ -115,3 +157,52 @@ export const generateSyntheseGraphData = (
         // },
       ]
     : [];
+
+const getLegendColor = (
+  data: {id: string; value: number; color?: any},
+  dataLength: number,
+  index: number
+) => {
+  if (data.color) {
+    return data.color;
+  }
+  if (dataLength <= defaultColors.length) {
+    return defaultColors[index % defaultColors.length];
+  }
+  return nivoColorsSet[index % nivoColorsSet.length];
+};
+
+export const getCustomLegend = (
+  data: {id: string; value: number; color?: any}[]
+) => {
+  // Limitation du nombre d'éléments visibles dans la légende
+  const legendMaxSize = 9;
+
+  // Légendes associées au données sans label
+  const withoutLabelLegends = [
+    'Sans statut',
+    'Sans pilote',
+    'Sans élu·e référent·e',
+    'Non priorisé',
+  ];
+
+  // Légende réduite à afficher
+  const legend = data.slice(0, legendMaxSize).map((d, index) => ({
+    name: d.id,
+    color: getLegendColor(d, data.length, index),
+  }));
+
+  const lastElement = data[data.length - 1];
+
+  if (
+    withoutLabelLegends.includes(lastElement.id) &&
+    data.length > legendMaxSize
+  ) {
+    legend.push({
+      name: lastElement.id,
+      color: getLegendColor(lastElement, data.length, data.length - 1),
+    });
+  }
+
+  return legend;
+};

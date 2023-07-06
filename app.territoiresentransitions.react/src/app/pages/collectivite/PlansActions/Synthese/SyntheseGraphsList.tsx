@@ -1,4 +1,3 @@
-import {defaultColors, nivoColorsSet} from 'ui/charts/chartsTheme';
 import {usePlanActionTableauDeBord} from './data/usePlanActionTableauDeBord';
 import PictoLeaf from 'ui/pictogrammes/PictoLeaf';
 import ChartCard from 'ui/charts/ChartCard';
@@ -8,54 +7,7 @@ import {
   makeCollectivitePlansActionsSyntheseVueUrl,
 } from 'app/paths';
 import {PlanActionFilter} from './FiltersPlanAction';
-import {generateSyntheseGraphData} from './utils';
-
-const getLegendColor = (
-  data: {id: string; value: number; color?: any},
-  dataLength: number,
-  index: number
-) => {
-  if (data.color) {
-    return data.color;
-  }
-  if (dataLength <= defaultColors.length) {
-    return defaultColors[index % defaultColors.length];
-  }
-  return nivoColorsSet[index % nivoColorsSet.length];
-};
-
-const getCustomLegend = (data: {id: string; value: number; color?: any}[]) => {
-  // Limitation du nombre d'éléments visibles dans la légende
-  const legendMaxSize = 9;
-
-  // Légendes associées au données sans label
-  const withoutLabelLegends = [
-    'Sans statut',
-    'Sans pilote',
-    'Sans élu·e référent·e',
-    'Non priorisé',
-  ];
-
-  // Légende réduite à afficher
-  const legend = data.slice(0, legendMaxSize).map((d, index) => ({
-    name: d.id,
-    color: getLegendColor(d, data.length, index),
-  }));
-
-  const lastElement = data[data.length - 1];
-
-  if (
-    withoutLabelLegends.includes(lastElement.id) &&
-    data.length > legendMaxSize
-  ) {
-    legend.push({
-      name: lastElement.id,
-      color: getLegendColor(lastElement, data.length, data.length - 1),
-    });
-  }
-
-  return legend;
-};
+import {generateSyntheseGraphData, getCustomLegend} from './utils';
 
 type SyntheseGraphsListProps = {
   collectiviteId: number;
