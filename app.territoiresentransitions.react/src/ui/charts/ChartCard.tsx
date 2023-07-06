@@ -4,8 +4,9 @@ import DownloadButton from 'ui/buttons/DownloadButton';
 import Modal from 'ui/shared/floating-ui/Modal';
 import BarChart, {BarChartProps} from './BarChart';
 import DonutChart, {DonutChartProps} from './DonutChart';
+import {Link} from 'react-router-dom';
 
-const Legend = ({
+export const Legend = ({
   legend,
 }: {
   legend: {name: string; color: string}[];
@@ -42,7 +43,7 @@ type ChartCardModalContentProps = {
   topElement?: (id?: string) => JSX.Element;
 };
 
-const ChartCardModalContent = ({
+export const ChartCardModalContent = ({
   chart,
   chartInfo,
   topElement,
@@ -129,6 +130,7 @@ type ChartCardProps = {
     downloadedFileName?: string;
     additionalInfo?: string | string[];
   };
+  link?: string;
   topElement?: (id?: string) => JSX.Element;
   customStyle?: React.CSSProperties;
 };
@@ -139,6 +141,7 @@ type ChartCardProps = {
  * @param chartType 'bar' | 'daughnut'
  * @param chartProps BarChartProps | DoughnutChartProps
  * @param chartInfo title, legend, expandable, downloadFileName, additionalInfo
+ * @param link Lien au click du titre, il doit donc il y avoir un titre de donné
  * @param topElement JSX.Element (affiché entre le titre et le graphe)
  * @param customStyle React.CSSProperties
  */
@@ -147,6 +150,7 @@ const ChartCard = ({
   chartType,
   chartProps,
   chartInfo,
+  link,
   topElement,
   customStyle,
 }: ChartCardProps) => {
