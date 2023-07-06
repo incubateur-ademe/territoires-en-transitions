@@ -24,6 +24,7 @@ export const getFormattedScore = (
         [avancementToLabel.pas_fait]: d.score_pas_fait * 100,
         [avancementToLabel.non_renseigne]: d.score_non_renseigne * 100,
         ...customColors,
+        clickable: `${d.have_children}`,
       }))
     );
 
@@ -65,6 +66,7 @@ export const getFormattedScore = (
           totalPointsMaxPersonnalises) *
         100,
       ...customColors,
+      clickable: 'false',
     });
   } else {
     // Formate les scores en points
@@ -78,6 +80,7 @@ export const getFormattedScore = (
         [avancementToLabel.non_renseigne]:
           d.score_non_renseigne * d.points_max_personnalises,
         ...customColors,
+        clickable: `${d.have_children}`,
       }))
     );
   }
