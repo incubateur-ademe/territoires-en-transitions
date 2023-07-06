@@ -7,7 +7,7 @@ import {
   makeCollectivitePlansActionsSyntheseVueUrl,
 } from 'app/paths';
 import {PlanActionFilter} from './FiltersPlanAction';
-import {generateSyntheseGraphData, getCustomLegend} from './utils';
+import {generateSyntheseGraphData} from './utils';
 
 type SyntheseGraphsListProps = {
   collectiviteId: number;
@@ -49,22 +49,9 @@ const SyntheseGraphsList = ({
         graph =>
           !!graph.data.length && (
             <div key={graph.title} className="fr-col-sm-12 fr-col-xl-6">
-              <ChartCard
-                chartType="donut"
-                chartProps={{
-                  data: graph.data,
-                  label: graph.id === 'statuts' || graph.id === 'priorites',
-                }}
-                chartInfo={{
-                  title: graph.title,
-                  extendedTitle: `${selectedPlan.name} - ${graph.title}`,
-                  legend: getCustomLegend(graph.data),
-                  expandable: true,
-                  downloadedFileName: `repartition-${
-                    graph.id
-                  }-${selectedPlan.name.toLowerCase().split(' ').join('-')}`,
-                }}
-                link={`${makeCollectivitePlansActionsSyntheseVueUrl({
+              <Link
+                className="group fr-col-sm-12 fr-col-xl-6 hover:bg-gray-100"
+                to={`${makeCollectivitePlansActionsSyntheseVueUrl({
                   collectiviteId,
                   vue: graph.id,
                 })}${
@@ -72,8 +59,20 @@ const SyntheseGraphsList = ({
                     ? `?axes=${selectedPlan.id}`
                     : ''
                 }`}
-                customStyle={{height: '350px', borderBottomWidth: '4px'}}
-              />
+              >
+                <ChartCard
+                  chartType="donut"
+                  chartProps={{
+                    data: graph.data,
+                    label: graph.id === 'statuts' || graph.id === 'priorites',
+                  }}
+                  chartInfo={{
+                    title: graph.title,
+                  }}
+                  customStyle={{height: '350px', borderBottomWidth: '4px'}}
+                  classNames="group-hover:bg-gray-50"
+                />
+              </Link>
             </div>
           )
       )}
