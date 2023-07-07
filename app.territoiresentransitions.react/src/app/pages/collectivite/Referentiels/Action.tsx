@@ -27,6 +27,7 @@ import {useActionPreuvesCount} from 'ui/shared/preuves/Bibliotheque/usePreuves';
 import ActionFollowUp from '../EtatDesLieux/Referentiel/SuiviAction/ActionFollowUp';
 import {FichesActionLiees} from './FichesActionLiees';
 import {useScoreRealise} from '../EtatDesLieux/Referentiel/data/useScoreRealise';
+import {useCycleLabellisation} from '../ParcoursLabellisation/useCycleLabellisation';
 
 // index des onglets de la page Action
 const TABS_INDEX: Record<ActionVueParamOption, number> = {
@@ -51,6 +52,8 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
     useActionLinkedIndicateurDefinitions(action?.id);
 
   const actionScores = useScoreRealise(action);
+
+  const {status: auditStatus} = useCycleLabellisation(action.referentiel);
 
   if (!action || !collectivite) {
     return <Link to="./referentiels" />;
@@ -118,7 +121,11 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
           className="fr-mt-9v"
         >
           <Tab label="Suivi de l'action" icon="seedling">
-            <ActionFollowUp action={action} actionScores={actionScores} />
+            <ActionFollowUp
+              action={action}
+              actionScores={actionScores}
+              auditStatus={auditStatus}
+            />
           </Tab>
           <Tab
             label={`Documents${

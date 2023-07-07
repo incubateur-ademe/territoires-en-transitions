@@ -1,3 +1,4 @@
+import {TCycleLabellisationStatus} from 'app/pages/collectivite/ParcoursLabellisation/useCycleLabellisation';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useActionSummaryChildren} from 'core-logic/hooks/referentiel';
@@ -14,6 +15,7 @@ import SubActionTasksList from './SubActionTasksList';
 type SubActionCardProps = {
   subAction: ActionDefinitionSummary;
   actionScores: {[actionId: string]: SuiviScoreRow};
+  auditStatus: TCycleLabellisationStatus;
   forceOpen: boolean;
   onOpenSubAction: (isOpen: boolean) => void;
 };
@@ -27,6 +29,7 @@ type SubActionCardProps = {
 const SubActionCard = ({
   subAction,
   actionScores,
+  auditStatus,
   forceOpen,
   onOpenSubAction,
 }: SubActionCardProps): JSX.Element => {
@@ -81,6 +84,9 @@ const SubActionCard = ({
         action={subAction}
         actionScores={actionScores}
         displayProgressBar={shouldDisplayProgressBar}
+        displayActionCommentaire={
+          auditStatus === 'audit_en_cours' && !openSubAction
+        }
         openSubAction={openSubAction}
         onToggleOpen={handleToggleOpen}
       />
@@ -89,7 +95,9 @@ const SubActionCard = ({
       {openSubAction && (
         <div className="p-6">
           {/* Commentaire associé à la sous-action */}
-          <ActionCommentaire action={subAction} className="mb-10" />
+          {(auditStatus !== 'audit_en_cours' || openSubAction) && (
+            <ActionCommentaire action={subAction} className="mb-10" />
+          )}
 
           {/* Section Description et Exemples */}
           {subAction.referentiel === 'eci' &&
