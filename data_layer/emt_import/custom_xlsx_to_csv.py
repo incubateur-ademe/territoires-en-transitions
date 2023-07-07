@@ -1,6 +1,7 @@
 import pandas as pd
 from pathlib import Path
 
+"Custom import pour CC Pays de l'Aigle"
 if __name__ == '__main__':
     pathlist = Path("./").glob('**/*.xlsx')
 
