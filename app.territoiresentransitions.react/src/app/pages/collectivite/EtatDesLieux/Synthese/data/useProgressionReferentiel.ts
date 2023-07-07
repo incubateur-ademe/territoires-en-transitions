@@ -33,7 +33,7 @@ const fetchRows = async (collectivite_id: number | null) => {
       'action_id,score_realise,score_programme,score_pas_fait,score_non_renseigne,points_realises,points_programmes,points_max_personnalises,phase'
     )
     .match({collectivite_id})
-    .gt('depth', 0);
+    .gte('depth', 0);
 
   if (error) throw new Error(error.message);
 
@@ -119,6 +119,10 @@ export const useProgressionReferentiel = () => {
     eciTable,
     caeRepartitionPhases,
     eciRepartitionPhases,
+    caePotentiel: caeActionsStatut.filter(a => a.action_id === 'cae')[0]
+      ?.points_max_personnalises,
+    eciPotentiel: eciActionsStatut.filter(a => a.action_id === 'eci')[0]
+      ?.points_max_personnalises,
     isLoading: isLoading || isLoadingCae || isLoadingEci,
   };
 };

@@ -12,6 +12,8 @@ const Accueil = (): JSX.Element => {
     eciTable: eciProgressionScore,
     caeRepartitionPhases,
     eciRepartitionPhases,
+    caePotentiel,
+    eciPotentiel,
   } = useProgressionReferentiel();
 
   return (
@@ -40,6 +42,7 @@ const Accueil = (): JSX.Element => {
                 collectiviteId={collectiviteId}
                 progressionScore={caeProgressionScore}
                 repartitionPhases={caeRepartitionPhases}
+                potentiel={caePotentiel}
                 referentiel="cae"
                 title={referentielToName.cae}
                 className="order-1"
@@ -48,6 +51,7 @@ const Accueil = (): JSX.Element => {
                 collectiviteId={collectiviteId}
                 progressionScore={eciProgressionScore}
                 repartitionPhases={eciRepartitionPhases}
+                potentiel={eciPotentiel}
                 referentiel="eci"
                 title={referentielToName.eci}
                 className="lg:order-2 order-3"
