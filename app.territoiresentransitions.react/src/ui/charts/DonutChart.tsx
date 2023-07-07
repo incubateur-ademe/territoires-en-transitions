@@ -1,4 +1,9 @@
-import {PieTooltipProps, ResponsivePie} from '@nivo/pie';
+import {
+  DefaultRawDatum,
+  PieCustomLayerProps,
+  PieTooltipProps,
+  ResponsivePie,
+} from '@nivo/pie';
 import {defaultColors, nivoColorsSet, theme} from './chartsTheme';
 
 /**
@@ -91,6 +96,41 @@ const getTooltip = (
   );
 };
 
+const CenteredMetric =
+  ({title, value}: {title: string; value?: string}) =>
+  ({centerX, centerY}: PieCustomLayerProps<DefaultRawDatum>) => {
+    return (
+      <>
+        <text
+          x={centerX}
+          y={centerY - (value !== undefined ? 10 : 0)}
+          textAnchor="middle"
+          dominantBaseline="central"
+          fill="#666"
+          style={{
+            fontSize: '12px',
+          }}
+        >
+          {title}
+        </text>
+        {value !== undefined && (
+          <text
+            x={centerX}
+            y={centerY + 10}
+            textAnchor="middle"
+            dominantBaseline="central"
+            fill="#666"
+            style={{
+              fontSize: '12px',
+            }}
+          >
+            {value}
+          </text>
+        )}
+      </>
+    );
+  };
+
 export type DonutChartProps = {
   data: {
     id: string;
@@ -98,6 +138,7 @@ export type DonutChartProps = {
     color?: string;
   }[];
   label?: boolean;
+  centeredMetric?: {title: string; value?: string};
   unit?: string;
   customMargin?: {top: number; right: number; bottom: number; left: number};
   zoomEffect?: boolean;
@@ -109,6 +150,8 @@ export type DonutChartProps = {
  *
  * @param data - tableau de données à afficher
  * @param label - (optionnel) affichage des labels sur le
+ * @param centeredMetric
+ * @param unit
  * @param customMargin
  * @param zoomEffect
  * @param displayPercentageValue
@@ -118,6 +161,7 @@ export type DonutChartProps = {
 const DonutChart = ({
   data,
   label = false,
+  centeredMetric,
   unit = '',
   customMargin,
   zoomEffect = true,
@@ -171,6 +215,13 @@ const DonutChart = ({
             )} %`
           : `${Math.round(value)}`
       }
+      layers={[
+        'arcs',
+        'arcLabels',
+        'arcLinkLabels',
+        'legends',
+        CenteredMetric(centeredMetric ?? {title: '', value: ''}),
+      ]}
     />
   );
 };

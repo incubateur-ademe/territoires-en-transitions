@@ -16,6 +16,7 @@ import {useCycleLabellisation} from '../ParcoursLabellisation/useCycleLabellisat
 import AccueilCard from './AccueilCard';
 import EtatDesLieuxGraphs from './EtatDesLieuxGraphs';
 import LabellisationInfo from '../../../../ui/labellisation/LabellisationInfo';
+import {toLocaleFixed} from 'utils/toFixed';
 
 type EtatDesLieuxCardProps = {
   collectiviteId: number;
@@ -24,6 +25,7 @@ type EtatDesLieuxCardProps = {
     'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded'
   >;
   repartitionPhases: {id: string; value: number}[];
+  potentiel: number | undefined;
   referentiel: ReferentielParamOption;
   title: string;
   className?: string;
@@ -45,6 +47,7 @@ type FilledEtatDesLieuxCardProps = {
     TableOptions<ProgressionRow>,
     'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded'
   >;
+  potentiel: number | undefined;
   className?: string;
 };
 
@@ -63,6 +66,7 @@ const EtatDesLieuxCard = ({
   collectiviteId,
   progressionScore,
   repartitionPhases,
+  potentiel,
   referentiel,
   title,
   className,
@@ -78,6 +82,7 @@ const EtatDesLieuxCard = ({
           referentiel={referentiel}
           title={title}
           progressionScore={progressionScore}
+          potentiel={potentiel}
           className={className}
         />
       ) : (
@@ -111,6 +116,7 @@ const FilledEtatDesLieuxCard = ({
   referentiel,
   title,
   progressionScore,
+  potentiel,
   className,
 }: FilledEtatDesLieuxCardProps): JSX.Element => {
   const {parcours, status} = useCycleLabellisation(referentiel);
@@ -152,6 +158,16 @@ const FilledEtatDesLieuxCard = ({
         <div className="h-[200px] w-[246px] mx-auto md:order-last order-first md:absolute md:top-1/2 md:right-1/4 md:-translate-y-1/2 md:translate-x-[47%] static">
           <DonutChart
             data={data.array}
+            centeredMetric={
+              potentiel !== undefined
+                ? {
+                    title: 'Potentiel',
+                    value: `${toLocaleFixed(potentiel, 1)} point${
+                      potentiel > 1 ? 's' : ''
+                    }`,
+                  }
+                : undefined
+            }
             customMargin={{top: 2, right: 0, bottom: 2, left: 0}}
             zoomEffect={false}
             unit="point"
