@@ -7,10 +7,12 @@ import {
   useSaveActionCommentaire,
 } from 'core-logic/hooks/useActionCommentaire';
 import React, {useEffect, useState} from 'react';
+import classNames from 'classnames';
 
 type ActionCommentaireProps = {
   action: ActionDefinitionSummary;
   className?: string;
+  backgroundClassName?: string;
   autoFocus?: boolean;
   onSave?: () => void;
 };
@@ -18,6 +20,7 @@ type ActionCommentaireProps = {
 export const ActionCommentaire = ({
   action,
   className,
+  backgroundClassName,
   autoFocus,
   onSave,
 }: ActionCommentaireProps) => {
@@ -28,6 +31,7 @@ export const ActionCommentaire = ({
     <div className={className}>
       {!isLoading && (
         <ActionCommentaireField
+          backgroundClassName={backgroundClassName}
           action={action}
           initialValue={actionCommentaire?.commentaire || ''}
           autoFocus={autoFocus}
@@ -39,6 +43,7 @@ export const ActionCommentaire = ({
 };
 
 export type ActionCommentaireFieldProps = {
+  backgroundClassName?: string;
   action: ActionDefinitionSummary;
   initialValue: string;
   autoFocus?: boolean;
@@ -46,6 +51,7 @@ export type ActionCommentaireFieldProps = {
 };
 
 export const ActionCommentaireField = ({
+  backgroundClassName,
   action,
   initialValue,
   autoFocus = false,
@@ -66,7 +72,9 @@ export const ActionCommentaireField = ({
       )}
       <Textarea
         data-test={`comm-${action.id}`}
-        className="fr-input !outline-none !bg-[#f6f6f6]"
+        className={classNames('fr-input !outline-none', backgroundClassName, {
+          '!bg-[#f6f6f6]': !backgroundClassName,
+        })}
         minHeight={action.type === 'tache' ? undefined : '5rem'}
         value={commentaire}
         onInputChange={() => null}
