@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 import {useRef, useState} from 'react';
 import DownloadButton from 'ui/buttons/DownloadButton';
@@ -70,40 +69,29 @@ const ChartCardModalContent = ({
       )}
 
       <div ref={chartWrapperRef} className="p-3">
-        {/* Titre du graphe */}
-        {chartInfo?.extendedTitle ? (
-          <h4
-            className={classNames('m-0', {
-              'pb-2': chartInfo.subtitle !== undefined,
-              'pb-4': chartInfo.subtitle === undefined,
-            })}
-          >
-            {chartInfo?.extendedTitle}
-          </h4>
-        ) : (
-          chartInfo?.title && (
-            <h4
-              className={classNames('m-0', {
-                'pb-2': chartInfo.subtitle !== undefined,
-                'pb-4': chartInfo.subtitle === undefined,
-              })}
-            >
-              {chartInfo.title}
-            </h4>
-          )
-        )}
+        <div className="pb-4">
+          {/* Titre du graphe */}
+          {chartInfo?.extendedTitle ? (
+            <h4 className="m-0">{chartInfo?.extendedTitle}</h4>
+          ) : (
+            chartInfo?.title && <h4 className="m-0">{chartInfo.title}</h4>
+          )}
 
-        {/* Sous-titre du graphe */}
-        {chartInfo?.subtitle && (
-          <h4 className="pb-4 m-0 font-medium text-[#666]">
-            {chartInfo.subtitle}
-          </h4>
-        )}
+          {/* Sous-titre du graphe */}
+          {chartInfo?.subtitle && (
+            <h4 className="m-0 pt-2 font-medium text-[#666]">
+              {chartInfo.subtitle}
+            </h4>
+          )}
+        </div>
 
         {/* Element additionnel optionnel, ajouté entre le titre et le graphe */}
-        <div data-html2canvas-ignore className="pb-2">
-          {!!topElement && topElement('detailled')}
-        </div>
+
+        {!!topElement && (
+          <div data-html2canvas-ignore className="pb-2">
+            {topElement('detailled')}
+          </div>
+        )}
 
         {/* Graphe agrandi */}
         <div className="w-full h-96">{chart}</div>
@@ -187,21 +175,14 @@ const ChartCard = ({
     >
       {/* En-tête de la carte */}
       <div className="flex flex-row justify-between px-6">
-        <div>
+        <div className="pb-3">
           {/* Titre du graphe */}
           {chartInfo?.title && (
-            <div
-              className={classNames('font-bold', {
-                'pb-1': chartInfo.subtitle !== undefined,
-                'pb-3': chartInfo.subtitle === undefined,
-              })}
-            >
-              {chartInfo.title}
-            </div>
+            <div className="font-bold">{chartInfo.title}</div>
           )}
           {/* Sous-titre du graphe */}
           {chartInfo?.subtitle && (
-            <div className="pb-3 font-medium text-[#666]">
+            <div className="pt-1 font-medium text-[#666]">
               {chartInfo.subtitle}
             </div>
           )}
