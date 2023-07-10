@@ -2,7 +2,7 @@ import React from 'react';
 import {IndicateurPersonnaliseForm} from 'app/pages/collectivite/Indicateurs/IndicateurPersonnaliseForm';
 import {UiDialogButton} from 'ui/UiDialogButton';
 import {useUpsertIndicateurPersoDefinition} from './useUpsertIndicateurPersoDefinition';
-import {TIndicateurPersoDefinition} from './useIndicateursPersoDefinitions';
+import {TIndicateurPersoDefinition} from './types';
 
 export const IndicateurPersonnaliseEditionDialog = ({
   indicateur,
