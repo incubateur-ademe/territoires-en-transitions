@@ -4,8 +4,12 @@ import {ActionReferentiel} from '../ReferentielTable/useReferentiel';
 import {TFilters} from './filters';
 
 // un sous-ensemble des champs pour alimenter notre table des taches
-export type TacheDetail = ActionReferentiel & ActionStatut;
-export type ActionStatut = Pick<TActionStatutsRow, 'action_id' | 'avancement'>;
+export type TacheDetail = ActionReferentiel &
+  ActionStatut & {isExpanded: boolean};
+export type ActionStatut = Pick<
+  TActionStatutsRow,
+  'action_id' | 'avancement' | 'avancement_descendants'
+>;
 
 // toutes les entrées d'un référentiel pour une collectivité et des filtres donnés
 export const fetchActionStatutsList = async (
@@ -16,7 +20,7 @@ export const fetchActionStatutsList = async (
   // la requête
   let query = supabaseClient
     .from('action_statuts')
-    .select('action_id,avancement')
+    .select('action_id,type,avancement,avancement_descendants')
     .match({collectivite_id, referentiel, concerne: true, desactive: false})
     .gt('depth', 0);
 
@@ -24,17 +28,46 @@ export const fetchActionStatutsList = async (
   const {statut} = filters;
   if (!statut.includes('tous')) {
     // traite les autres filtres à propos de l'avancement
-    const descendants = statut.join(',');
-    const avancement = statut.map(s => `"${s}"`).join(',');
-    const or = statut.length
-      ? [
-          `avancement_descendants.ov.{${descendants}}`,
-          `avancement.in.(${avancement})`,
-        ]
-      : [];
-    // gère le cas où null veut dire "non renseigné"
+    const filteredDescendants = statut
+      .filter(s => s !== 'non_renseigne' && s !== 'detaille')
+      .join(',');
+    const filteredAvancement = statut
+      .filter(s => s !== 'non_renseigne' && s !== 'detaille')
+      .map(s => `"${s}"`)
+      .join(',');
+
+    const or = [];
+
     if (statut.includes('non_renseigne')) {
-      or.push('and(avancement.is.null,have_children.is.false)');
+      or.push(
+        ...[
+          // gère le cas où null veut dire "non renseigné"
+          'and(type.eq.tache,or(avancement.eq.non_renseigne,avancement.is.null))',
+          'and(type.eq.sous-action,and(or(avancement.eq.non_renseigne,avancement.is.null),avancement_descendants.ov.{non_renseigne}))',
+          'and(type.in.(axe,sous-axe,action),avancement_descendants.ov.{non_renseigne})',
+        ]
+      );
+    }
+
+    if (statut.includes('detaille')) {
+      or.push(
+        ...[
+          'and(type.eq.tache,avancement.eq.detaille)',
+          'and(type.eq.sous-action,or(avancement.is.null,avancement.eq.non_renseigne),avancement_descendants.ov.{fait,programme,pas_fait,detaille})',
+          'and(type.in.(axe,sous-axe,action),avancement_descendants.ov.{non_renseigne},avancement_descendants.ov.{fait,programme,pas_fait,detaille})',
+        ]
+      );
+    }
+
+    if (statut.filter(s => s !== 'non_renseigne' && s !== 'detaille').length) {
+      or.push(
+        ...[
+          `and(type.eq.tache,avancement.in.(${filteredAvancement}))`,
+          `and(type.eq.sous-action,avancement.in.(${filteredAvancement}))`,
+          `and(type.eq.sous-action,or(avancement.eq.non_renseigne,avancement.is.null),avancement_descendants.ov.{${filteredDescendants}})`,
+          `and(type.in.(axe,sous-axe,action),avancement_descendants.ov.{${filteredDescendants}})`,
+        ]
+      );
     }
 
     // ajoute les filtres complétaires à la requêtes
@@ -77,7 +110,7 @@ export const updateTacheStatut = async ({
       avancement,
       avancement_detaille:
         avancement_detaille ||
-        (avancement === 'detaille' ? [0.3, 0.4, 0.3] : undefined),
+        (avancement === 'detaille' ? [0.25, 0.5, 0.25] : undefined),
       concerne: true,
     } as never,
     {onConflict: 'collectivite_id, action_id'}

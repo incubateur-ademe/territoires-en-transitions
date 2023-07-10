@@ -4,23 +4,24 @@ import {useCurrentCollectivite} from './useCurrentCollectivite';
 import {useAudit, useIsAuditeur} from 'app/pages/collectivite/Audit/useAudit';
 import {useActionScore} from './scoreHooks';
 import {Database} from 'types/database.types';
+import {useCollectiviteId} from './params';
 
 /**
  * Charge le statut d'une action
  */
-export const useActionStatut = (args: TActionStatutParams) => {
-  const {action_id, collectivite_id} = args;
+export const useActionStatut = (actionId: string) => {
+  const collectivite_id = useCollectiviteId();
   const {data, isLoading} = useQuery(['action_statut', collectivite_id], () =>
-    fetchCollectiviteActionStatuts(collectivite_id)
+    fetchCollectiviteActionStatuts(collectivite_id ?? undefined)
   );
 
-  const statut = data?.find(action => action.action_id === action_id) || null;
+  const statut = data?.find(action => action.action_id === actionId) || null;
 
   const filled =
     data?.find(
       action =>
-        action.action_id.includes(action_id) &&
-        action.action_id.split(action_id)[1] !== '' &&
+        action.action_id.includes(actionId) &&
+        action.action_id.split(actionId)[1] !== '' &&
         action.avancement !== 'non_renseigne'
     ) !== undefined || null;
 
@@ -29,11 +30,6 @@ export const useActionStatut = (args: TActionStatutParams) => {
     filled,
     isLoading,
   };
-};
-
-type TActionStatutParams = {
-  collectivite_id?: number;
-  action_id: string;
 };
 
 const fetchCollectiviteActionStatuts = async (collectivite_id?: number) => {
@@ -55,8 +51,8 @@ const fetchCollectiviteActionStatuts = async (collectivite_id?: number) => {
 /**
  * Met à jour le statut d'une action
  */
-export const useSaveActionStatut = (args: TActionStatutParams) => {
-  const {collectivite_id} = args;
+export const useSaveActionStatut = () => {
+  const collectivite_id = useCollectiviteId();
   const queryClient = useQueryClient();
   const {isLoading, mutate: saveActionStatut} = useMutation(write, {
     mutationKey: 'action_statut',

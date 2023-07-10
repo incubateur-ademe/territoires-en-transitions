@@ -1,4 +1,4 @@
-import {useLayoutEffect, useRef, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {useLocation} from 'react-router-dom';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {useActionCommentaire} from 'core-logic/hooks/useActionCommentaire';
@@ -30,14 +30,19 @@ const SubActionTask = ({
 
   // scroll jusqu'à la tâche indiquée dans l'url
   const {hash} = useLocation();
-  useLayoutEffect(() => {
+
+  useEffect(() => {
     const id = hash.slice(1); // enlève le "#" au début du hash
-    if (id === task.id && ref.current) {
-      ref.current.scrollIntoView({
-        behavior: 'smooth',
-      });
+    if (id === task.id && ref && ref.current) {
+      setTimeout(() => {
+        ref.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+          inline: 'nearest',
+        });
+      }, 0);
     }
-  }, [hash, ref.current]);
+  }, [hash, ref]);
 
   return (
     <div data-test={`task-${task.id}`} ref={ref}>

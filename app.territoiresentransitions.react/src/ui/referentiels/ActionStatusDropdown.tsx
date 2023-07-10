@@ -63,7 +63,7 @@ export const ActionStatusDropdown = ({
     action_id: action.id,
     collectivite_id: collectivite?.collectivite_id || 0,
   };
-  const {statut, filled} = useActionStatut(args);
+  const {statut, filled} = useActionStatut(action.id);
   const {avancement, avancement_detaille, concerne} = statut || {};
 
   const score = actionScores[action.id] ?? {};
@@ -74,7 +74,7 @@ export const ActionStatusDropdown = ({
     concerne,
   });
 
-  const {saveActionStatut} = useSaveActionStatut(args);
+  const {saveActionStatut} = useSaveActionStatut();
 
   const [localAvancement, setLocalAvancement] = useState(avancementExt);
   const [localAvancementDetaille, setLocalAvancementDetaille] =

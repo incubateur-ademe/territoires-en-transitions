@@ -5,14 +5,23 @@ import {DisableAllFilters} from '../ReferentielTable/DisableAllFilters';
 
 const DetailTaches = () => {
   const tableData = useTableData();
-  const {count, total, setFilters, filtersCount} = tableData;
+  const {
+    count,
+    sousActionsCount,
+    total,
+    sousActionsTotal,
+    setFilters,
+    filtersCount,
+  } = tableData;
   const labelFilters = filtersCount > 1 ? 'filtres actifs' : 'filtre actif';
+  const labelSousActions = `sous-action${sousActionsCount > 1 ? 's' : ''}`;
   const labelTaches = 'tâche' + (count > 1 ? 's' : '');
 
   return (
     <>
       <p>
-        {filtersCount} {labelFilters} ; {count} {labelTaches} sur {total}
+        {filtersCount} {labelFilters} ; {sousActionsCount} {labelSousActions}{' '}
+        sur {sousActionsTotal} ; {count} {labelTaches} sur {total}
         <DisableAllFilters
           filtersCount={filtersCount}
           onClick={() => setFilters(noFilters)}

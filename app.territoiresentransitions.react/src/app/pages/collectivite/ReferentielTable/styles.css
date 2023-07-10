@@ -56,10 +56,8 @@
   padding: 1rem;
 }
 
-/** curseur au dessus des lignes */
 .referentiel-table .body .row,
 .referentiel-table .body .row:hover {
-  cursor: pointer;
   overflow: hidden;
   line-height: 36px;
 }

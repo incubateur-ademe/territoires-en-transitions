@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import {Row} from 'react-table';
 
 type RowRendererFactory = <T extends Record<string, unknown>>(
@@ -11,7 +12,7 @@ type RowRendererFactory = <T extends Record<string, unknown>>(
 export const makeRowRenderer: RowRendererFactory =
   (prepareRow, customCellProps) => (row, index, rows) => {
     prepareRow(row);
-    const {original, isExpanded} = row;
+    const {original, isExpanded, canExpand} = row;
     const {depth, nom} = original;
     // dernière ligne avant une nouvelle section
     const isLast =
@@ -24,7 +25,8 @@ export const makeRowRenderer: RowRendererFactory =
     return (
       <div
         {...row.getRowProps()}
-        className={className}
+        onClick={() => row.toggleRowExpanded()}
+        className={classNames(className, {'cursor-pointer': canExpand})}
         title={(nom as string) || ''}
       >
         {row.cells.map(cell => {
