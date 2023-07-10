@@ -38,29 +38,29 @@ const PageLayout = ({children, sideNav, dataTest}: Props) => {
     // s'il n'y a pas side nav on ne la prend pas en compte dans la grille
     if (!sideNav) {
       if (panelState.isOpen) {
-        return `grid-cols-[minmax(0,_78rem)_24rem]`;
+        return `grid-cols-[minmax(0,_90rem)_24rem]`;
       }
       // Valeur par défaut, une seule colonne
-      return 'grid-cols-[minmax(0,_78rem)]';
+      return 'grid-cols-[minmax(0,_90rem)]';
       // s'il y a une sidenav
     } else {
       if (panelState.isOpen) {
-        return `grid-cols-[3rem_minmax(0,_78rem)_24rem] xl:grid-cols-[0_minmax(0,_78rem)_24rem]`;
+        return `grid-cols-[3rem_minmax(0,_90rem)_24rem] xl:grid-cols-[0_minmax(0,_90rem)_24rem]`;
       }
 
       if (!isSideNavOpen) {
-        return 'grid-cols-[3rem_minmax(0,_78rem)] xl:grid-cols-[0_minmax(0,_78rem)]';
+        return 'grid-cols-[3rem_minmax(0,_90rem)] xl:grid-cols-[0_minmax(0,_90rem)]';
       }
 
       // Valeur par défaut, la side nav est ouverte
-      return 'grid-cols-[21rem_minmax(0,_78rem)]';
+      return 'grid-cols-[21rem_minmax(0,_90rem)]';
     }
   }, [isSideNavOpen, panelState.isOpen]);
 
   return (
     <div
       data-test={dataTest}
-      className={`grid ${gridCols} m-auto xl:max-w-[78rem] xl:px-6`}
+      className={`grid ${gridCols} m-auto xl:max-w-[90rem] xl:px-6`}
     >
       {/** Side nav */}
       {sideNav && (
