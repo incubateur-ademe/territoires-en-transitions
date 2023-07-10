@@ -4,8 +4,6 @@ import {
   TFicheActionStatuts,
 } from 'types/alias';
 
-export const NB_ITEMS_PER_PAGE = 20;
-
 export type TFilters = {
   /** filtre par collectivite */
   collectivite_id: number;
@@ -60,6 +58,8 @@ export const nameToShortNames = {
 };
 
 // Constantes
+export const NB_FICHES_PER_PAGE = 20;
+
 export const SANS_PILOTE = 'sans_pilote';
 export const SANS_REFERENT = 'sans_referent';
 export const SANS_STATUT = 'sans_statut';
