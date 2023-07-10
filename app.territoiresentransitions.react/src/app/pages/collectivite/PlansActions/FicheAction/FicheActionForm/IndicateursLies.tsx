@@ -55,13 +55,14 @@ const IndicateursLies = ({indicateurs, onSelect, isReadonly}: Props) => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="after:!hidden"
-                to={`${makeCollectiviteIndicateursUrl({
+                to={makeCollectiviteIndicateursUrl({
                   collectiviteId: collectiviteId!,
                   indicateurView: getIndicateurGroup(indicateur.indicateur_id),
-                })}#${
-                  indicateur.indicateur_id ??
-                  indicateur.indicateur_personnalise_id
-                }`}
+                  indicateurId:
+                    indicateur.indicateur_id ??
+                    indicateur.indicateur_personnalise_id ??
+                    undefined,
+                })}
               >
                 <div className="flex h-full py-4 px-6">
                   <div className="mb-auto pr-2 font-bold line-clamp-3">
