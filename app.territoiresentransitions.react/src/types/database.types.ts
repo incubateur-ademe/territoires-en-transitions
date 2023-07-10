@@ -6524,57 +6524,6 @@ export interface Database {
             Args: {
               bucket_width: unknown
               ts: string
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              origin: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              origin: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              origin: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
->>>>>>> bd0b6d67b (MAJ database.types.ts)
-=======
->>>>>>> d8b0e10a9 (update types)
               offset: unknown
             }
             Returns: string
