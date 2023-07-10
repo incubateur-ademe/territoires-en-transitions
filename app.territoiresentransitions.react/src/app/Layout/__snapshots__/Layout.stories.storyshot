@@ -260,7 +260,7 @@ exports[`Storyshots app/Layout Exemple 1`] = `
                 <a
                   aria-controls="modal-header__menu"
                   className="fr-nav__link"
-                  href="/collectivite/1/plans"
+                  href="/collectivite/1/plans/synthese"
                   onClick={[Function]}
                   target="_self"
                 >
