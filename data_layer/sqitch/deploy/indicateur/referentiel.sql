@@ -314,4 +314,16 @@ create trigger rewrite_indicateur_id
     for each row
 execute procedure rewrite_indicateur_id();
 
+create function
+    fiche_resume(fiche_action_indicateur)
+    returns setof fiche_resume
+    rows 1
+begin
+    atomic
+    select * from fiche_resume where id = $1.fiche_id;
+end;
+comment on function fiche_resume(fiche_action_indicateur) is
+    'Permet de lier une fiche action à un indicateur.';
+
+
 COMMIT;
