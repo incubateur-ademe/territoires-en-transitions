@@ -1,5 +1,5 @@
-import {InputHTMLAttributes, useLayoutEffect, useRef, useState} from 'react';
-import {onlyNumericRegExp, setInputFilter} from 'ui/shared/form/utils';
+import {InputHTMLAttributes, useState} from 'react';
+import {onlyNumericRegExp, useInputFilterRef} from 'ui/shared/form/utils';
 
 type Props<T> = {
   budget: number | null;
@@ -13,14 +13,10 @@ const FicheActionFormBudgetInput = <T extends HTMLInputElement>({
   const [value, setValue] = useState(budget?.toString());
 
   /** Ajoute le filtre numérique sur l'input budget */
-  const inputBudgetRef = useRef<HTMLInputElement>(null);
-  useLayoutEffect(() => {
-    setInputFilter(
-      inputBudgetRef,
-      value => onlyNumericRegExp.test(value),
-      'Nombre uniquement'
-    );
-  }, [inputBudgetRef.current]);
+  const inputBudgetRef = useInputFilterRef<HTMLInputElement>(
+    onlyNumericRegExp,
+    'Nombre uniquement'
+  );
 
   return (
     <div className="flex items-baseline mt-3">
