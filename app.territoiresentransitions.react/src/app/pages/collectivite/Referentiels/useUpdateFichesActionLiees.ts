@@ -1,4 +1,5 @@
 import {useMutation, useQueryClient} from 'react-query';
+import {diff} from 'utils/diff';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {FicheResume} from '../PlansActions/FicheAction/data/types';
 import {useCollectiviteId} from 'core-logic/hooks/params';
@@ -51,6 +52,3 @@ export const useUpdateFichesActionLiees = (action_id: string) => {
     }
   );
 };
-
-const diff = <T>(array1: T[], array2: T[]) =>
-  array1.filter(v => !array2.includes(v));
