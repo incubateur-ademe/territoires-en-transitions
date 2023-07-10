@@ -77,8 +77,15 @@ const locationFromPath = (path: string): Localisation => {
     page = 'fiche';
   } else if (path.includes('/plan/')) {
     page = 'plan';
-  } else if (path.endsWith('/plans/synthese')) {
+  } else if (path.includes('/plans/synthese')) {
+    //page
     page = 'synthese_plans';
+    //tag
+    if (path.includes('/statuts')) tag = 'statuts';
+    else if (path.includes('/pilotes')) tag = 'pilotes';
+    else if (path.includes('/referents')) tag = 'referents';
+    else if (path.includes('/priorites')) tag = 'priorites';
+    else if (path.includes('/echeance')) tag = 'echeances';
   } else if (path.endsWith('/plans/fiches')) {
     page = 'fiches_non_classees';
   } else if (path.endsWith('/plans/nouveau')) {
