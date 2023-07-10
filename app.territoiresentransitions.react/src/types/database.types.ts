@@ -224,12 +224,14 @@ export interface Database {
       audit_evaluation_payload: {
         Args: {
           audit: unknown
+          pre_audit: boolean
         }
         Returns: Record<string, unknown>
       }
       audit_personnalisation_payload: {
         Args: {
           audit_id: number
+          pre_audit: boolean
           scores_table: string
         }
         Returns: Json
@@ -303,19 +305,23 @@ export interface Database {
       evaluate_audit_statuts: {
         Args: {
           audit_id: number
+          pre_audit: boolean
           scores_table: string
         }
         Returns: number
       }
-      pre_audit_reponses: {
+      json_action_statuts_at: {
         Args: {
-          audit: unknown
+          collectivite_id: number
+          referentiel: Database["public"]["Enums"]["referentiel"]
+          date_at: string
         }
         Returns: Json
       }
-      pre_audit_service_statuts: {
+      json_reponses_at: {
         Args: {
-          audit_id: number
+          collectivite_id: number
+          date_at: string
         }
         Returns: Json
       }
@@ -1753,6 +1759,32 @@ export interface Database {
           nom?: string
         }
       }
+      post_audit_scores: {
+        Row: {
+          audit_id: number
+          collectivite_id: number
+          modified_at: string
+          payload_timestamp: string | null
+          referentiel: Database["public"]["Enums"]["referentiel"]
+          scores: Json
+        }
+        Insert: {
+          audit_id: number
+          collectivite_id: number
+          modified_at: string
+          payload_timestamp?: string | null
+          referentiel: Database["public"]["Enums"]["referentiel"]
+          scores: Json
+        }
+        Update: {
+          audit_id?: number
+          collectivite_id?: number
+          modified_at?: string
+          payload_timestamp?: string | null
+          referentiel?: Database["public"]["Enums"]["referentiel"]
+          scores?: Json
+        }
+      }
       pre_audit_scores: {
         Row: {
           audit_id: number
@@ -2813,6 +2845,22 @@ export interface Database {
           code?: string | null
           libelle?: string | null
           region_code?: string | null
+        }
+      }
+      export_score_audit: {
+        Row: {
+          collectivite: string | null
+          cot: boolean | null
+          date_cloture_cae: string | null
+          date_cloture_eci: string | null
+          points_cae: number | null
+          points_eci: number | null
+          programme_cae: number | null
+          programme_eci: number | null
+          realise_cae: number | null
+          realise_eci: number | null
+          region: string | null
+          signataire: string | null
         }
       }
       fiche_action_personne_pilote: {
@@ -6444,6 +6492,67 @@ export interface Database {
             Args: {
               bucket_width: unknown
               ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+              origin: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+              origin: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+              origin: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+              offset: unknown
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+              offset: unknown
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
               offset: unknown
             }
             Returns: string
@@ -6455,67 +6564,6 @@ export interface Database {
               timezone: string
               origin?: string
               offset?: unknown
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              origin: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              origin: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              origin: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              offset: unknown
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              offset: unknown
             }
             Returns: string
           }
@@ -6674,13 +6722,13 @@ export interface Database {
       }
       todo_start:
         | {
-            Args: Record<PropertyKey, never>
-            Returns: boolean[]
-          }
-        | {
             Args: {
               "": string
             }
+            Returns: boolean[]
+          }
+        | {
+            Args: Record<PropertyKey, never>
             Returns: boolean[]
           }
       types_are: {
@@ -6924,6 +6972,7 @@ export interface Database {
         | "nouveau_plan_import"
         | "nouveau_plan_creation"
         | "indicateurs"
+        | "synthese"
       visite_tag:
         | "cae"
         | "eci"
@@ -6933,6 +6982,11 @@ export interface Database {
         | "personnalise"
         | "clef"
         | "tous"
+        | "statuts"
+        | "pilotes"
+        | "referents"
+        | "priorites"
+        | "echeances"
     }
     CompositeTypes: {
       fiche_action_export: {
