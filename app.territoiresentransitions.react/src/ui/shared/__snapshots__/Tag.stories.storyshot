@@ -5,7 +5,7 @@ exports[`Storyshots ui/shared/Tag Avec Icon 1`] = `
   className="flex"
 >
   <div
-    className="flex items-center px-3 py-0.5 bg-white border border-gray-300 text-gray-900 rounded-full pr-2"
+    className="flex items-center px-3 py-0.5 text-white bg-bf500  rounded-full pr-2"
   >
     <span
       className="py-0.5 text-sm"
@@ -29,7 +29,7 @@ exports[`Storyshots ui/shared/Tag Cree Par Utilisateur 1`] = `
   className="flex"
 >
   <div
-    className="flex items-center px-3 py-0.5 bg-white border border-gray-300 text-gray-900 rounded-full !text-white !bg-bf500"
+    className="flex items-center px-3 py-0.5 text-white bg-bf500  rounded-full !bg-white !border !border-gray-300 !text-gray-900"
   >
     <span
       className="py-0.5 text-sm"
@@ -45,7 +45,7 @@ exports[`Storyshots ui/shared/Tag Default 1`] = `
   className="flex"
 >
   <div
-    className="flex items-center px-3 py-0.5 bg-white border border-gray-300 text-gray-900 rounded-full"
+    className="flex items-center px-3 py-0.5 text-white bg-bf500  rounded-full"
   >
     <span
       className="py-0.5 text-sm"
