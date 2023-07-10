@@ -6972,7 +6972,6 @@ export interface Database {
         | "nouveau_plan_import"
         | "nouveau_plan_creation"
         | "indicateurs"
-        | "synthese"
       visite_tag:
         | "cae"
         | "eci"
