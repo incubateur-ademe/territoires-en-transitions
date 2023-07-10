@@ -172,6 +172,7 @@ select 'resultat'::indicateur_valeur_type as type,
                then r.indicateur_id
            else d.valeur_indicateur
            end                            as indicateur_id,
+       null::integer                      as indicateur_perso_id,
        r.annee,
        case
            when d.valeur_indicateur is null
@@ -207,6 +208,7 @@ select 'objectif'::indicateur_valeur_type as type,
                then o.indicateur_id
            else d.valeur_indicateur
            end                            as indicateur_id,
+       null,
        o.annee,
        case
            when d.valeur_indicateur is null
@@ -239,12 +241,41 @@ union all
 select 'import'::indicateur_valeur_type as type,
        collectivite_id,
        indicateur_id,
+       null,
        annee,
        valeur,
        null,
        source
 from indicateur_resultat_import
-where have_lecture_acces(collectivite_id);
+where have_lecture_acces(collectivite_id)
+
+union all
+select 'resultat'::indicateur_valeur_type as type,
+       collectivite_id,
+       null,
+       r.indicateur_id,
+       r.annee,
+       r.valeur,
+       c.commentaire,
+       null
+from indicateur_personnalise_resultat r
+         left join indicateur_perso_resultat_commentaire c using (collectivite_id, indicateur_id, annee)
+where have_lecture_acces(collectivite_id)
+
+union all
+select 'objectif'::indicateur_valeur_type as type,
+       r.collectivite_id,
+       null,
+       r.indicateur_id,
+       r.annee,
+       r.valeur,
+       commentaire,
+       null
+from indicateur_personnalise_resultat r
+         left join indicateur_perso_objectif_commentaire c using (collectivite_id, indicateur_id, annee)
+where have_lecture_acces(collectivite_id)
+;
+
 comment on view indicateurs is 'Les valeurs des indicateurs consolidées.';
 
 create function
