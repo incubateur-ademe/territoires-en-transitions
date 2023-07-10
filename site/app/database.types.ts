@@ -1405,6 +1405,58 @@ export interface Database {
           numero?: string
         }
       }
+      indicateur_perso_objectif_commentaire: {
+        Row: {
+          annee: number
+          collectivite_id: number
+          commentaire: string
+          indicateur_id: number
+          modified_at: string
+          modified_by: string
+        }
+        Insert: {
+          annee: number
+          collectivite_id: number
+          commentaire: string
+          indicateur_id: number
+          modified_at: string
+          modified_by: string
+        }
+        Update: {
+          annee?: number
+          collectivite_id?: number
+          commentaire?: string
+          indicateur_id?: number
+          modified_at?: string
+          modified_by?: string
+        }
+      }
+      indicateur_perso_resultat_commentaire: {
+        Row: {
+          annee: number
+          collectivite_id: number
+          commentaire: string
+          indicateur_id: number
+          modified_at: string
+          modified_by: string
+        }
+        Insert: {
+          annee: number
+          collectivite_id: number
+          commentaire: string
+          indicateur_id: number
+          modified_at: string
+          modified_by: string
+        }
+        Update: {
+          annee?: number
+          collectivite_id?: number
+          commentaire?: string
+          indicateur_id?: number
+          modified_at?: string
+          modified_by?: string
+        }
+      }
       indicateur_personnalise_definition: {
         Row: {
           collectivite_id: number | null
@@ -3099,6 +3151,7 @@ export interface Database {
           collectivite_id: number | null
           commentaire: string | null
           indicateur_id: string | null
+          indicateur_perso_id: number | null
           source: string | null
           type: Database["public"]["Enums"]["indicateur_valeur_type"] | null
           valeur: number | null
