@@ -80,7 +80,7 @@ const ReferentielTabs = () => {
             '...'
           )}
         </Tab>
-        <Tab label="Détail des tâches">
+        <Tab label="Détail des statuts">
           {activeTab === TABS_INDEX['detail'] ? <DetailTacheTable /> : '...'}
         </Tab>
       </Tabs>

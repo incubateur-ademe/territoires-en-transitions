@@ -19,15 +19,14 @@ const paddingByLevel: Record<ReferentielParamOption, Record<number, number>> = {
     2: 16,
     // au dessus de 2 un décalage supplémentaire est appliqué par l'affichage de l'identifiant, il n'est donc pâs reporté ici
     3: 16,
-    4: 26,
-    5: 36,
+    4: 32,
+    5: 48,
   },
   eci: {
     1: 0,
-    2: 4,
-    3: 16,
-    4: 26,
-    5: 36,
+    2: 16,
+    3: 32,
+    4: 48,
   },
 };
 
@@ -84,7 +83,8 @@ export const CellAction = (props: TCellProps) => {
           {depth > 0 ? (
             depth > idDepth ? (
               <Link
-                className="hover:underline"
+                className="hover:underline active:underline active:!bg-transparent"
+                onClick={evt => evt.stopPropagation()}
                 to={makeCollectiviteTacheUrl({
                   collectiviteId,
                   actionId: row.original.action_id,
@@ -129,7 +129,7 @@ const Expand = ({row, referentielId}: TCellProps) => {
   const {depth} = original;
   const invertColor = depth < (referentielId === 'cae' ? 3 : 2);
   const className = [
-    'fr-mr-1w',
+    'fr-mr-1w hover:!bg-transparent',
     isExpanded ? 'arrow-down' : 'arrow-right',
     invertColor ? 'before:bg-white' : 'before:bg-black',
   ].join(' ');
@@ -143,6 +143,10 @@ const Expand = ({row, referentielId}: TCellProps) => {
         {...row.getToggleRowExpandedProps()}
         onMouseOver={undefined}
         title=""
+        onClick={evt => {
+          evt.stopPropagation();
+          row.toggleRowExpanded();
+        }}
       />
     </Tooltip>
   );

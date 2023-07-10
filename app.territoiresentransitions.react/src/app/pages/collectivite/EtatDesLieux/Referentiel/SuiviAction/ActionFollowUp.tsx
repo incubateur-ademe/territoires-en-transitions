@@ -1,5 +1,4 @@
-import {useEffect, useState} from 'react';
-import {useLocation} from 'react-router-dom';
+import {useState} from 'react';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {useSortedActionSummaryChildren} from 'core-logic/hooks/referentiel';
 import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
@@ -51,16 +50,6 @@ const ActionFollowUp = ({
     if (isOpen) setOpenedSubActionsCount(prevState => prevState + 1);
     else setOpenedSubActionsCount(prevState => prevState - 1);
   };
-
-  // déplie tout si une tâche est indiquée dans l'url (afin que le
-  // scrollIntoView dans `SubActionTask` fonctionne)
-  const {hash} = useLocation();
-  useEffect(() => {
-    const id = hash.slice(1); // enlève le "#" au début du hash
-    if (id) {
-      setOpenAll(true);
-    }
-  }, [hash]);
 
   return (
     <section>

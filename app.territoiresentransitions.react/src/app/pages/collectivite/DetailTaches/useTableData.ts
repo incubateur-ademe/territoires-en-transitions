@@ -28,8 +28,10 @@ export type TableData = {
   filtersCount: number;
   /** Nombre de lignes après filtrage */
   count: number;
+  sousActionsCount: number;
   /** Nombre total de lignes */
   total: number;
+  sousActionsTotal: number;
   /** pour remettre à jour les filtres */
   setFilters: (filters: TFilters) => void;
   /** pour changer le statut d'une tâche */
@@ -58,13 +60,77 @@ export const useTableData: UseTableData = () => {
   );
   const {rows: actionsStatut} = data || {};
 
+  const sousActions: string[] = [];
+  const sousActionsWithStatut: string[] = [];
+
+  const processedData: TacheDetail[] | undefined = actionsStatut
+    ? actionsStatut.map(action => {
+        if (
+          action.type === 'sous-action' &&
+          (action.avancement === 'non_renseigne' || !action.avancement)
+        ) {
+          sousActions.push(action.action_id);
+          // Les sous-actions "non renseigné" avec des tâches renseignées
+          // sont mises à jour avec un statut "détaillé"
+          // isExpanded est mis à true
+          // Si c'est un "vrai" non renseignée, alors isExpanded est à false
+          if (
+            action.avancement_descendants?.find(
+              av => !!av && av !== 'non_renseigne'
+            )
+          ) {
+            return {...action, avancement: 'detaille', isExpanded: true};
+          } else return {...action, isExpanded: false};
+        } else if (action.type === 'sous-action') {
+          // Les autres sous-actions ne sont pas dépliées
+          sousActions.push(action.action_id);
+          sousActionsWithStatut.push(action.action_id);
+          return {...action, isExpanded: false};
+        } else if (action.type === 'tache') {
+          // Les tâches ne sont pas dépliées
+          // Les axes / sous-axes / actions sont dépliés
+          return {...action, isExpanded: false};
+        } else return {...action, isExpanded: true};
+      })
+    : undefined;
+
+  const filteredData = processedData?.filter(
+    data =>
+      // Affichage des axes / sous-axes / actions dont
+      // la sous-action a été récupérée
+      (data.type !== 'tache' &&
+        data.type !== 'sous-action' &&
+        sousActions.filter(
+          ssAc => ssAc.includes(data.action_id) && ssAc !== data.action_id
+        ).length > 0) ||
+      // Affichage des sous-actions
+      data.type === 'sous-action' ||
+      // Affichage des tâches dont la sous-action a été récupérée
+      // et n'a pas de statut ou a un statut détaillé (non renseigné en base)
+      (data.type === 'tache' &&
+        sousActions.includes(
+          data.action_id
+            .split('.')
+            .slice(0, data.action_id.split('.').length - 1)
+            .join('.')
+        ) &&
+        !sousActionsWithStatut.includes(
+          data.action_id
+            .split('.')
+            .slice(0, data.action_id.split('.').length - 1)
+            .join('.')
+        ))
+  );
+
   // chargement du référentiel
   const {
     table,
     total,
+    sousActionsTotal,
     count,
+    sousActionsCount,
     isLoading: isLoadingReferentiel,
-  } = useReferentiel(referentiel, collectivite_id, actionsStatut);
+  } = useReferentiel(referentiel, collectivite_id, filteredData);
 
   // met à jour un statut
   const {mutate, isLoading: isSaving} = useMutation(updateTacheStatut);
@@ -89,7 +155,9 @@ export const useTableData: UseTableData = () => {
     isLoading: isLoading || isLoadingReferentiel,
     isSaving,
     count,
+    sousActionsCount,
     total,
+    sousActionsTotal,
     updateStatut,
   };
 };

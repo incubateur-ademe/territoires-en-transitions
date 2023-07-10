@@ -31,7 +31,8 @@ export const useReferentiel = <ActionSubset extends IAction>(
   actions?: ActionSubset[] | 'all'
 ) => {
   // chargement du référentiel
-  const {mergeActions, isLoading, total} = useReferentielData(referentiel);
+  const {mergeActions, isLoading, total, sousActionsTotal} =
+    useReferentielData(referentiel);
 
   // agrège les lignes fournies avec celles du référentiel
   const rows: TActionsSubset<ActionSubset> = useMemo(
@@ -63,6 +64,10 @@ export const useReferentiel = <ActionSubset extends IAction>(
 
   // calcule le nombre de tâches après filtrage
   const count = useMemo(() => rows?.filter(isTache).length || 0, [rows]);
+  const sousActionsCount = useMemo(
+    () => rows.filter(isSousAction).length,
+    [rows]
+  );
 
   // le `stateReducer` de react-table permet de transformer le prochain état de
   // la table avant qu'il ne soit appliqué lors du traitement d'une action
@@ -73,7 +78,9 @@ export const useReferentiel = <ActionSubset extends IAction>(
   return {
     isLoading,
     total,
+    sousActionsTotal,
     count,
+    sousActionsCount,
     table: {
       data,
       getRowId,
@@ -95,7 +102,7 @@ export const useReferentielData = (referentiel: string | null) => {
     () => fetchActionsReferentiel(referentiel),
     DISABLE_AUTO_REFETCH
   );
-  const {actionById, total, rows} = data || {};
+  const {actionById, total, sousActionsTotal, rows} = data || {};
 
   // fusionne avec les informations préchargées du référentiel
   const mergeActions = useCallback(
@@ -126,6 +133,7 @@ export const useReferentielData = (referentiel: string | null) => {
     actionById,
     mergeActions,
     total: total || 0,
+    sousActionsTotal: sousActionsTotal || 0,
     rows: rows || [],
   };
 };
@@ -151,9 +159,12 @@ const fetchActionsReferentiel = async (referentiel: string | null) => {
   return {
     actionById: indexBy(rows, 'action_id'),
     total: rows.filter(isTache).length || 0,
+    sousActionsTotal: rows.filter(isSousAction).length,
     rows,
   };
 };
 
 // détermine si une action est une tâche (n'a pas de descendants)
 const isTache = (action: ActionReferentiel) => action.have_children === false;
+const isSousAction = (action: ActionReferentiel) =>
+  action.type === 'sous-action';

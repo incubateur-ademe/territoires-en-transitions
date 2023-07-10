@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useRef} from 'react';
+import {useEffect, useMemo} from 'react';
 import {
   Column,
   CellProps,
@@ -27,7 +27,7 @@ export type TColumn = Column<TacheDetail>;
 const COLUMNS: TColumn[] = [
   {
     accessor: 'nom', // la clé pour accéder à la valeur
-    Header: 'Tâches', // rendu dans la ligne d'en-tête
+    Header: 'Statuts', // rendu dans la ligne d'en-tête
     Cell: CellAction, // rendu d'une cellule
     width: '100%',
   },
@@ -57,16 +57,17 @@ export const DetailTacheTable = (props: TDetailTacheTableProps) => {
     useExpanded,
     useFlexLayout
   );
-  const {toggleAllRowsExpanded} = tableInstance;
+  const {toggleAllRowsExpanded, toggleRowExpanded} = tableInstance;
 
-  // initialement tout est déplié
-  const isInitialLoading = useRef(true);
+  // Initialement, on déplie jusqu'à la sous-action, et jusqu'aux tâches
+  // pour les sous-actions détaillées
   useEffect(() => {
-    if (table?.data?.length && isInitialLoading.current) {
-      isInitialLoading.current = false;
-      toggleAllRowsExpanded(true);
+    if (tableInstance.flatRows.length && !isSaving) {
+      tableInstance.flatRows.forEach(row =>
+        toggleRowExpanded([row.original.identifiant], row.original.isExpanded)
+      );
     }
-  }, [table?.data?.length, toggleAllRowsExpanded, isInitialLoading]);
+  }, [table?.data?.length, toggleAllRowsExpanded, filters.statut.length]);
 
   // rendu de la table
   return (
