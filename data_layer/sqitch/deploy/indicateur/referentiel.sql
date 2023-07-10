@@ -131,6 +131,36 @@ select private.add_modified_at_trigger('public', 'indicateur_objectif_commentair
 select private.add_modified_by_trigger('public', 'indicateur_objectif_commentaire');
 
 
+create table indicateur_perso_objectif_commentaire
+(
+    collectivite_id integer     not null references collectivite,
+    indicateur_id   integer     not null references indicateur_personnalise_definition,
+    annee           integer     not null,
+    commentaire     text        not null,
+    modified_by     uuid        not null references auth.users,
+    modified_at     timestamptz not null,
+    unique (collectivite_id, indicateur_id, annee)
+);
+
+select private.add_modified_at_trigger('public', 'indicateur_perso_objectif_commentaire');
+select private.add_modified_by_trigger('public', 'indicateur_perso_objectif_commentaire');
+
+
+create table indicateur_perso_resultat_commentaire
+(
+    collectivite_id integer     not null references collectivite,
+    indicateur_id   integer     not null references indicateur_personnalise_definition,
+    annee           integer     not null,
+    commentaire     text        not null,
+    modified_by     uuid        not null references auth.users,
+    modified_at     timestamptz not null,
+    unique (collectivite_id, indicateur_id, annee)
+);
+
+select private.add_modified_at_trigger('public', 'indicateur_perso_resultat_commentaire');
+select private.add_modified_by_trigger('public', 'indicateur_perso_resultat_commentaire');
+
+
 create type indicateur_valeur_type as enum ('resultat', 'objectif', 'import');
 
 create view indicateurs
