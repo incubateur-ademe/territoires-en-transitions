@@ -224,10 +224,13 @@ export interface Database {
       audit_evaluation_payload: {
         Args: {
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> a342e9c9a (update types)
+=======
+>>>>>>> 40ccc466c (Mise à jours des types)
           audit: unknown
           pre_audit: boolean
         }
@@ -241,6 +244,7 @@ export interface Database {
         }
         Returns: Json
       }
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 =======
@@ -270,6 +274,8 @@ export interface Database {
       }
 >>>>>>> d8b0e10a9 (update types)
 >>>>>>> a342e9c9a (update types)
+=======
+>>>>>>> 40ccc466c (Mise à jours des types)
       critere_action: {
         Args: {
           collectivite_id: number
@@ -339,20 +345,19 @@ export interface Database {
       evaluate_audit_statuts: {
         Args: {
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> a342e9c9a (update types)
+=======
+>>>>>>> 40ccc466c (Mise à jours des types)
           audit_id: number
           pre_audit: boolean
-=======
-          audit_id: number
->>>>>>> d8b0e10a9 (update types)
           scores_table: string
         }
         Returns: number
       }
-<<<<<<< HEAD
       json_action_statuts_at: {
         Args: {
           collectivite_id: number
@@ -368,6 +373,7 @@ export interface Database {
         }
         Returns: Json
       }
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 =======
@@ -399,6 +405,8 @@ export interface Database {
       }
 >>>>>>> d8b0e10a9 (update types)
 >>>>>>> a342e9c9a (update types)
+=======
+>>>>>>> 40ccc466c (Mise à jours des types)
       referentiel_score: {
         Args: {
           collectivite_id: number
@@ -2327,16 +2335,11 @@ export interface Database {
           nom: string
         }
         Update: {
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> d8b0e10a9 (update types)
           collectivite_id?: number
           id?: number
           nom?: string
         }
       }
-<<<<<<< HEAD
       post_audit_scores: {
         Row: {
           audit_id: number
@@ -2364,6 +2367,7 @@ export interface Database {
         }
       }
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
           collectivite_id?: number;
@@ -2375,6 +2379,8 @@ export interface Database {
 =======
 >>>>>>> d8b0e10a9 (update types)
 >>>>>>> a342e9c9a (update types)
+=======
+>>>>>>> 40ccc466c (Mise à jours des types)
       pre_audit_scores: {
         Row: {
           audit_id: number
@@ -3433,18 +3439,20 @@ export interface Database {
         }
         Update: {
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> d8b0e10a9 (update types)
 >>>>>>> a342e9c9a (update types)
+=======
+>>>>>>> 40ccc466c (Mise à jours des types)
           code?: string | null
           libelle?: string | null
           region_code?: string | null
         }
       }
-<<<<<<< HEAD
       export_score_audit: {
         Row: {
           collectivite: string | null
@@ -3462,6 +3470,7 @@ export interface Database {
         }
       }
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
           code?: string | null;
@@ -3473,6 +3482,8 @@ export interface Database {
 =======
 >>>>>>> d8b0e10a9 (update types)
 >>>>>>> a342e9c9a (update types)
+=======
+>>>>>>> 40ccc466c (Mise à jours des types)
       fiche_action_personne_pilote: {
         Row: {
           collectivite_id: number | null
@@ -7079,18 +7090,6 @@ export interface Database {
       time_bucket:
         | {
             Args: {
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> d8b0e10a9 (update types)
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-<<<<<<< HEAD
-          }
-        | {
-            Args: {
               bucket_width: unknown
               ts: string
             }
@@ -7102,70 +7101,6 @@ export interface Database {
               ts: string
             }
             Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              origin: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              origin: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              origin: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              offset: unknown
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-<<<<<<< HEAD
-=======
-            }
-            Returns: string
-=======
-              bucket_width: unknown;
-              ts: string;
-              offset: unknown;
-            };
-            Returns: string;
-          }
-        | {
-            Args: {
-              bucket_width: unknown;
-              ts: string;
-            };
-            Returns: string;
->>>>>>> 55e9bca97 (MAJ database.types.ts)
-=======
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
->>>>>>> d8b0e10a9 (update types)
           }
         | {
             Args: {
@@ -7208,28 +7143,11 @@ export interface Database {
           }
         | {
             Args: {
-<<<<<<< HEAD
-<<<<<<< HEAD
-              bucket_width: unknown
-              ts: string
->>>>>>> bd0b6d67b (MAJ database.types.ts)
-              offset: unknown
-            }
-            Returns: string
-=======
-              bucket_width: unknown;
-              ts: string;
-              offset: unknown;
-            };
-            Returns: string;
->>>>>>> 55e9bca97 (MAJ database.types.ts)
-=======
               bucket_width: unknown
               ts: string
               offset: unknown
             }
             Returns: string
->>>>>>> d8b0e10a9 (update types)
           }
         | {
             Args: {
@@ -7405,8 +7323,6 @@ export interface Database {
       todo_start:
         | {
             Args: {
-<<<<<<< HEAD
-<<<<<<< HEAD
               "": string
             }
             Returns: boolean[]
@@ -7415,26 +7331,6 @@ export interface Database {
             Args: Record<PropertyKey, never>
             Returns: boolean[]
           }
-=======
-              "": string;
-            };
-            Returns: boolean[];
-          }
-        | {
-            Args: Record<PropertyKey, never>;
-            Returns: boolean[];
-          };
->>>>>>> 55e9bca97 (MAJ database.types.ts)
-=======
-              "": string
-            }
-            Returns: boolean[]
-          }
-        | {
-            Args: Record<PropertyKey, never>
-            Returns: boolean[]
-          }
->>>>>>> d8b0e10a9 (update types)
       types_are: {
         Args: {
           "": unknown[]
@@ -7718,12 +7614,11 @@ export interface Database {
         | "nouveau_plan"
         | "nouveau_plan_import"
         | "nouveau_plan_creation"
-<<<<<<< HEAD
-<<<<<<< HEAD
         | "indicateurs"
 <<<<<<< HEAD
 =======
         | "synthese"
+<<<<<<< HEAD
 =======
         | "indicateurs";
 >>>>>>> 55e9bca97 (MAJ database.types.ts)
@@ -7734,6 +7629,8 @@ export interface Database {
         | "indicateurs"
 >>>>>>> d8b0e10a9 (update types)
 >>>>>>> 75edc2a5d (update types)
+=======
+>>>>>>> dedef088a (Mise à jours des types)
       visite_tag:
         | "cae"
         | "eci"
@@ -7742,8 +7639,6 @@ export interface Database {
         | "thematique"
         | "personnalise"
         | "clef"
-<<<<<<< HEAD
-<<<<<<< HEAD
         | "tous"
         | "statuts"
         | "pilotes"
@@ -7751,14 +7646,6 @@ export interface Database {
         | "priorites"
         | "echeances"
     }
-=======
-        | "tous";
-    };
->>>>>>> 55e9bca97 (MAJ database.types.ts)
-=======
-        | "tous"
-    }
->>>>>>> d8b0e10a9 (update types)
     CompositeTypes: {
       fiche_action_export: {
         axe_id: number
