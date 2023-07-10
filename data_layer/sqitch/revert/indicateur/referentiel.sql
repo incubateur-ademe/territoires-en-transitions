@@ -3,6 +3,7 @@
 
 BEGIN;
 
+drop function fiche_resume(fiche_action_indicateur);
 drop trigger rewrite_indicateur_id on indicateur_resultat;
 drop trigger rewrite_indicateur_id on indicateur_objectif;
 drop function rewrite_indicateur_id;
