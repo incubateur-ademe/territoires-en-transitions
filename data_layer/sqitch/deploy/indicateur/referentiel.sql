@@ -271,7 +271,7 @@ select 'objectif'::indicateur_valeur_type as type,
        r.valeur,
        commentaire,
        null
-from indicateur_personnalise_resultat r
+from indicateur_personnalise_objectif r
          left join indicateur_perso_objectif_commentaire c using (collectivite_id, indicateur_id, annee)
 where have_lecture_acces(collectivite_id)
 ;
