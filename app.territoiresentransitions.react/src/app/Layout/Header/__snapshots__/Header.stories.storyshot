@@ -284,7 +284,7 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
             <a
               aria-controls="modal-header__menu"
               className="fr-nav__link"
-              href="/collectivite/1/indicateurs/perso"
+              href="/collectivite/1/indicateurs/perso/"
               onClick={[Function]}
               target="_self"
             >
