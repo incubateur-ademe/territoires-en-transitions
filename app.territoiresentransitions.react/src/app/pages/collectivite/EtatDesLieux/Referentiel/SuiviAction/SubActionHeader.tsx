@@ -5,7 +5,7 @@ import {
   ActionStatusDropdown,
   StatusToSavePayload,
 } from 'ui/referentiels/ActionStatusDropdown';
-import {Tooltip} from 'ui/shared/floating-ui/Tooltip';
+import {InfoTooltip} from 'ui/shared/floating-ui/InfoTooltip';
 import ScoreDisplay from 'ui/referentiels/ScoreDisplay';
 import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
 import {SuiviScoreRow} from '../data/useScoreRealise';
@@ -74,11 +74,7 @@ const SubActionHeader = ({
           {action.nom}
           {action.description &&
             ((isSubAction && action.referentiel === 'cae') || isTask) && (
-              <span onClick={evt => evt.stopPropagation()}>
-                <Tooltip label={action.description} activatedBy="click">
-                  <span className="fr-fi-information-line pl-2 text-bf500 cursor-pointer" />
-                </Tooltip>
-              </span>
+              <InfoTooltip label={action.description} />
             )}
         </div>
 
