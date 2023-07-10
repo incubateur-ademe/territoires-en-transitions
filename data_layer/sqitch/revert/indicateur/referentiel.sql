@@ -11,6 +11,9 @@ drop type indicateur_valeur_type;
 drop table indicateur_resultat_import;
 drop table indicateur_thematique_nom;
 drop table indicateur_objectif_commentaire;
+drop table indicateur_perso_resultat_commentaire;
+drop table indicateur_perso_objectif_commentaire;
+
 
 drop view indicateur_rempli;
 
