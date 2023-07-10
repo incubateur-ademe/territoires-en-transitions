@@ -185,8 +185,6 @@ const BarChartCardWithSubrows = ({
           </div>
           {percentage === undefined && (
             <TagFilters
-              id={id}
-              name="scores"
               options={[
                 {value: 'absolue', label: 'Valeur absolue (points)'},
                 {value: 'relative', label: 'Valeur relative (%)'},
