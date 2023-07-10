@@ -50,7 +50,9 @@ const SubActionHeader = ({
 
   return (
     <div
-      className={classNames('py-4 group', {
+      className={classNames('group grid gap-3 items-start py-4', {
+        'grid-cols-[5rem_1fr_fit-content(10rem)]': isSubAction,
+        'grid-cols-[3rem_1fr_fit-content(10rem)]': !isSubAction,
         'rounded-lg cursor-pointer px-6': isSubAction,
         'px-0': isTask,
         'bg-[#f5f5fE]': isSubAction && open,
@@ -58,50 +60,45 @@ const SubActionHeader = ({
       })}
       onClick={handleOnClick}
     >
-      <div className="grid grid-cols-12 gap-4 items-start">
-        {/* Identifiant de l'action et bouton open / close */}
-        <div
-          className={classNames(
-            'flex justify-between lg:col-span-1 col-span-2',
-            {
-              'font-bold': isSubAction,
-            }
-          )}
-        >
-          {isSubAction && <ExpandToggle open={open} />}
-          {action.identifiant}
+      {/* Identifiant de l'action et bouton open / close */}
+      <div
+        className={classNames('flex gap-3', {
+          'font-bold': isSubAction,
+        })}
+      >
+        {isSubAction && <ExpandToggle open={open} />}
+        {action.identifiant}
+      </div>
+
+      {/* Nom de l'action et score réalisé */}
+      <div className="flex flex-col justify-between gap-3">
+        <div className={classNames({'font-bold': isSubAction})}>
+          {action.nom}
+          {action.description &&
+            ((isSubAction && action.referentiel === 'cae') || isTask) && (
+              <InfoTooltip label={action.description} />
+            )}
         </div>
 
-        {/* Nom de l'action et score réalisé */}
-        <div className="lg:col-span-9 col-span-7 flex flex-col gap-3">
-          <div className={classNames({'font-bold': isSubAction})}>
-            {action.nom}
-            {action.description &&
-              ((isSubAction && action.referentiel === 'cae') || isTask) && (
-                <InfoTooltip label={action.description} />
-              )}
-          </div>
-
-          {isSubAction && (
-            <div className="flex gap-2">
-              <div className="w-[140px]">
-                <ScoreDisplay
-                  score={actionScores[action.id]?.points_realises ?? null}
-                  scoreMax={
-                    actionScores[action.id]?.points_max_personnalises ?? null
-                  }
-                  size="xs"
-                />
-              </div>
-
-              {displayProgressBar && (
-                <div className="flex justify-end w-[155px]">
-                  <ActionProgressBar action={action} />
-                </div>
-              )}
+        {isSubAction && (
+          <div className="flex gap-2">
+            <div className="w-[140px]">
+              <ScoreDisplay
+                score={actionScores[action.id]?.points_realises ?? null}
+                scoreMax={
+                  actionScores[action.id]?.points_max_personnalises ?? null
+                }
+                size="xs"
+              />
             </div>
-          )}
-        </div>
+
+            {displayProgressBar && (
+              <div className="flex justify-end w-[155px]">
+                <ActionProgressBar action={action} />
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Menu de sélection du statut */}
         <div className="lg:col-span-2 col-span-3">
