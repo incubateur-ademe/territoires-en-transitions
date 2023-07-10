@@ -7090,6 +7090,36 @@ export interface Database {
       time_bucket:
         | {
             Args: {
+              bucket_width: number
+              ts: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              offset: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              offset: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
               bucket_width: unknown
               ts: string
             }
@@ -7171,36 +7201,6 @@ export interface Database {
             Args: {
               bucket_width: number
               ts: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              offset: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              offset: number
             }
             Returns: number
           }
@@ -7615,22 +7615,6 @@ export interface Database {
         | "nouveau_plan_import"
         | "nouveau_plan_creation"
         | "indicateurs"
-<<<<<<< HEAD
-=======
-        | "synthese"
-<<<<<<< HEAD
-=======
-        | "indicateurs";
->>>>>>> 55e9bca97 (MAJ database.types.ts)
-<<<<<<< HEAD
->>>>>>> 5eb3065f1 (MAJ database.types.ts)
-=======
-=======
-        | "indicateurs"
->>>>>>> d8b0e10a9 (update types)
->>>>>>> 75edc2a5d (update types)
-=======
->>>>>>> dedef088a (Mise à jours des types)
       visite_tag:
         | "cae"
         | "eci"
