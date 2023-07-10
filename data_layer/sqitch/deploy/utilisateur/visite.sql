@@ -2,9 +2,6 @@
 
 BEGIN;
 
-alter type visite_page
-    add value if not exists 'synthese';
-
 alter type visite_tag
     add value if not exists 'statuts';
 
