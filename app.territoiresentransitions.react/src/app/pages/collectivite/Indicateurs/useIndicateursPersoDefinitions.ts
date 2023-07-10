@@ -1,9 +1,11 @@
 import {useQuery} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {Database} from 'types/database.types';
+import {DISABLE_AUTO_REFETCH, supabaseClient} from 'core-logic/api/supabase';
+import {TIndicateurPersoDefinition} from './types';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 
-export const useIndicateursPersoDefinitions = (collectivite_id: number) =>
-  useQuery(
+/** Fourni les définitions de tous les indicateurs personnalisés */
+export const useIndicateursPersoDefinitions = (collectivite_id: number) => {
+  const {data} = useQuery(
     ['indicateur_personnalise_definition', collectivite_id],
     async () => {
       const {data} = await supabaseClient
@@ -12,15 +14,36 @@ export const useIndicateursPersoDefinitions = (collectivite_id: number) =>
         .match({collectivite_id})
         .order('titre', {ascending: true});
 
-      // TODO: décommenter la ligne suivante si le order ne fonctionne pas avec les accents...
-      // return data?.sort((a, b) => a.titre.localeCompare(b.titre));
-      return data as TIndicateurPersoDefinition[];
+      return (
+        (data?.map(definition => ({
+          ...definition,
+          isPerso: true,
+        })) as TIndicateurPersoDefinition[]) || []
+      );
+    },
+    DISABLE_AUTO_REFETCH
+  );
+  return data;
+};
+
+/** Fourni la définition d'un indicateur personnalisé à partir de son id */
+export const useIndicateurPersoDefinition = (id: number) => {
+  const collectivite_id = useCollectiviteId();
+  const {data} = useQuery(
+    ['indicateur_personnalise_definition', collectivite_id, id],
+    async () => {
+      if (!collectivite_id) {
+        return;
+      }
+
+      const {data} = await supabaseClient
+        .from('indicateur_personnalise_definition')
+        .select()
+        .match({collectivite_id, id});
+
+      const definition = data?.[0];
+      return {...definition, isPerso: true} as TIndicateurPersoDefinition;
     }
   );
-
-// TODO: corriger le typage côté back ?
-// collectivite_id: number | null => ne devrait pas pouvoir être `null` ?
-export type TIndicateurPersoDefinition =
-  Database['public']['Tables']['indicateur_personnalise_definition']['Row'] & {
-    collectivite_id: number;
-  };
+  return data;
+};
