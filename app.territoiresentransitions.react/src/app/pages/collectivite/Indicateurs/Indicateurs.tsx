@@ -1,88 +1,69 @@
-import {useState} from 'react';
 import {useParams} from 'react-router-dom';
-import {SwitchLabelLeft} from 'ui/shared/SwitchLabelLeft';
-import {referentielToName} from 'app/labels';
-import {indicateurViewParam, IndicateurViewParamOption} from 'app/paths';
-import {IndicateursNav} from './IndicateursNav';
-import {IndicateurPersonnaliseList} from './IndicateurPersonnaliseList';
-import {ConditionnalIndicateurReferentielList} from './ConditionnalIndicateurReferentielList';
-import {UiSearchBar} from 'ui/UiSearchBar';
+import {
+  indicateurIdParam,
+  indicateurViewParam,
+  IndicateurViewParamOption,
+} from 'app/paths';
+import {IndicateursNav, VIEW_TITLES} from './IndicateursNav';
+import {IndicateursPersonnalisesList} from './IndicateursPersonnalisesList';
+import {IndicateursReferentielList} from './IndicateursReferentielList';
+import {IndicateursClesList} from './IndicateursClesList';
+import {IndicateurPersonnalise} from './IndicateurPersonnalise';
+import {IndicateurPredefini} from './IndicateurPredefini';
+import {HeaderIndicateursList} from './Header';
 
-const viewTitles: Record<IndicateurViewParamOption, string> = {
-  perso: 'Indicateurs personnalisés',
-  cae: referentielToName.cae,
-  eci: referentielToName.eci,
-  crte: referentielToName.crte,
+export const viewTitles: Record<IndicateurViewParamOption, string> = {
+  ...VIEW_TITLES,
+  crte: 'Indicateurs CRTE',
 };
 
 /**
- * Display the list of indicateurs for a given view
+ * Affiche la liste des indicateurs
  */
-const ConditionnalIndicateurList = (props: {
-  view: IndicateurViewParamOption;
-  showOnlyIndicateurWithData: boolean;
-  pattern: string;
-}) => {
-  const {view, showOnlyIndicateurWithData, pattern} = props;
-  if (view === 'perso')
-    return (
-      <IndicateurPersonnaliseList
-        showOnlyIndicateurWithData={showOnlyIndicateurWithData}
-        pattern={pattern}
-      />
-    );
-  return (
-    <ConditionnalIndicateurReferentielList
-      referentiel={view}
-      showOnlyIndicateurWithData={showOnlyIndicateurWithData}
-      pattern={pattern}
-    />
-  );
+const IndicateursList = (props: {view: IndicateurViewParamOption}) => {
+  const {view} = props;
+  // if (view === 'tous') return <AllIndicateursList />;
+  if (view === 'perso') return <IndicateursPersonnalisesList />;
+  if (view === 'cles') return <IndicateursClesList />;
+  return <IndicateursReferentielList referentiel={view} />;
+};
+
+/** Affiche le détail d'un indicateur */
+const IndicateurDetail = (props: {indicateurId: string; isPerso: boolean}) => {
+  const {indicateurId, isPerso} = props;
+  const Indicateur = isPerso ? IndicateurPersonnalise : IndicateurPredefini;
+  return <Indicateur indicateurId={indicateurId} />;
 };
 
 /**
- * IndicateursList show both indicateurs personnalisés and indicateurs référentiel.
+ * Affiche la barre de navigation latérale et la liste des indicateurs ou le
+ * détail d'un indicateur
  */
 const Indicateurs = () => {
-  const {vue} = useParams<{
+  const params = useParams<{
     [indicateurViewParam]?: IndicateurViewParamOption;
+    [indicateurIdParam]?: string;
   }>();
-  const current = vue || 'perso';
-
-  const [showOnlyIndicateurWithData, setShowOnlyIndicateurWithData] =
-    useState(false);
-  const [pattern, setPattern] = useState('');
+  const indicateurId = params[indicateurIdParam];
+  const view = params[indicateurViewParam] || 'perso';
+  const isPerso = view === 'perso';
 
   return (
     <div className="fr-container !px-0 flex">
       <IndicateursNav />
       <div className="w-full">
-        <div className="flex items-center mx-auto py-6 px-10 bg-indigo-700">
-          <p className="flex grow py-2 px-3 m-0 font-bold text-white text-[2rem] leading-snug">
-            {viewTitles[current]}
-          </p>
-        </div>
-
-        <div className="flex items-center justify-between">
-          <SwitchLabelLeft
-            id="only-filled"
-            checked={showOnlyIndicateurWithData}
-            className="!border-0 w-[28rem] mt-6"
-            onChange={() => {
-              setShowOnlyIndicateurWithData(!showOnlyIndicateurWithData);
-            }}
-          >
-            Afficher uniquement les indicateurs renseignés
-          </SwitchLabelLeft>
-          <div className="w-80 fr-mr-1v">
-            <UiSearchBar value={pattern} search={value => setPattern(value)} />
-          </div>
-        </div>
-        <ConditionnalIndicateurList
-          view={current}
-          showOnlyIndicateurWithData={showOnlyIndicateurWithData}
-          pattern={pattern}
-        />
+        {indicateurId !== undefined ? (
+          <IndicateurDetail indicateurId={indicateurId} isPerso={isPerso} />
+        ) : (
+          <>
+            <HeaderIndicateursList view={view} />
+            <div className="px-10 py-8">
+              <section className="flex flex-col">
+                <IndicateursList view={view} />
+              </section>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
