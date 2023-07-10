@@ -1,25 +1,21 @@
-import {ChangeEvent, Fragment, useEffect, useState} from 'react';
-import './TagFilters.css';
-import {TOption} from '../select/commons';
+import {useEffect, useState} from 'react';
+import MultiTagFilters from './MultiTagFilters';
 import {ITEM_ALL} from './commons';
 
+type TOption = {value: string; label: string};
+
 type TagFiltersProps = {
-  name: string;
-  id?: string;
   options: TOption[];
   defaultOption?: string;
   className?: string;
   small?: boolean;
   onChange: (value: string) => void;
 };
+
 /**
- * Ensemble de radio buttons sous formes de tags
+ * Ensemble de boutons sous formes de tags
  * Permet de mettre en place un filtre avec une seule valeur sélectionnée
  *
- * @param name
- * Nom associé au groupe de radio buttons
- * @param id
- * Identifiant supplémentaire lorsque plusieurs éléments avec le même nom sont sur la page (optionnel)
  * @param options
  * Options disponibles dans le filtre
  * @param defaultOption
@@ -31,10 +27,7 @@ type TagFiltersProps = {
  * @param onChange
  * Renvoie la valeur sélectionnée
  */
-
 const TagFilters = ({
-  name,
-  id,
   options,
   defaultOption = ITEM_ALL,
   className = '',
@@ -47,41 +40,17 @@ const TagFilters = ({
     setSelectedOption(defaultOption);
   }, [defaultOption]);
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setSelectedOption(event.target.value);
-    onChange(event.target.value);
-  };
-
   return (
-    <div className={`flex flex-wrap gap-4 ${className} tag-filters`}>
-      {options.map(opt => (
-        <Fragment key={opt.value}>
-          <input
-            className="hidden"
-            type="radio"
-            name={`${name}${id ? `-${id}` : ''}`}
-            id={`${name}-${opt.value}`}
-            value={opt.value}
-            checked={selectedOption === opt.value}
-            onChange={handleChange}
-          />
-          <label
-            htmlFor={`${name}-${opt.value}`}
-            className={`block relative m-0 px-4 py-1 rounded-2xl ${
-              small ? 'text-xs' : 'text-sm'
-            } text-bf500 bg-bf925 hover:bg-bf925hover cursor-pointer`}
-          >
-            {opt.label}
-            <span
-              className={`fr-fi-checkbox-circle-line ${
-                small ? 'scale-[.6]' : 'scale-75'
-              } hidden`}
-              aria-hidden="true"
-            ></span>
-          </label>
-        </Fragment>
-      ))}
-    </div>
+    <MultiTagFilters
+      onChange={value => {
+        setSelectedOption(value);
+        onChange(value);
+      }}
+      options={options}
+      className={className}
+      values={[selectedOption]}
+      small={small}
+    />
   );
 };
 
