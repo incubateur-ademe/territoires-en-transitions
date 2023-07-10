@@ -1,26 +1,28 @@
 import {MouseEventHandler} from 'react';
+import AnchorAsButton from 'ui/buttons/AnchorAsButton';
 
 export type TDisableAllFiltersProps = {
   filtersCount: number;
   onClick: MouseEventHandler;
+  label?: string;
 };
 
 /**
  * Affiche le bouton "Désactiver tous les filtres des vues tabulaires
  */
 export const DisableAllFilters = (props: TDisableAllFiltersProps) => {
-  const {onClick, filtersCount} = props;
+  const {onClick, filtersCount, label = 'Désactiver tous les filtres'} = props;
   if (!filtersCount) {
     return null;
   }
 
   return (
-    <button
-      className="fr-link fr-link--icon-left fr-icon-close-circle-fill fr-ml-2w"
+    <AnchorAsButton
+      className="underline_href fr-link fr-link--icon-left fr-icon-close-circle-fill fr-ml-2w fr-pl-1v"
       data-test="DisableAllFilters"
       onClick={onClick}
     >
-      Désactiver tous les filtres
-    </button>
+      {label}
+    </AnchorAsButton>
   );
 };
