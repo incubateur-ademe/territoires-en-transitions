@@ -18,7 +18,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentiel/ThematiqueList Exemp
     >
       Déchets
       <p
-        className="fr-badge fr-badge--success "
+        className="fr-badge fr-badge--success fr-badge--no-icon"
       >
         Complété
       </p>
@@ -38,7 +38,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentiel/ThematiqueList Exemp
     >
       Énergie
       <p
-        className="fr-badge fr-badge--info "
+        className="fr-badge fr-badge--info fr-badge--no-icon"
       >
         À compléter
       </p>
@@ -58,7 +58,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentiel/ThematiqueList Exemp
     >
       Mobilité
       <p
-        className="fr-badge fr-badge--success "
+        className="fr-badge fr-badge--success fr-badge--no-icon"
       >
         Complété
       </p>

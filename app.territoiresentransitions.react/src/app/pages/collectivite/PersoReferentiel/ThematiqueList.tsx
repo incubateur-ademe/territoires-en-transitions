@@ -2,6 +2,7 @@ import {makeCollectivitePersoRefThematiqueUrl} from 'app/paths';
 import {TQuestionThematiqueCompletudeRead} from './useQuestionThematiqueCompletude';
 import {Referentiel} from 'types/litterals';
 import {Badge} from 'ui/shared/Badge';
+import {BadgeACompleter} from 'ui/shared/Badge/BadgeACompleter';
 
 export type TThematiqueListProps = {
   collectivite: {
@@ -55,13 +56,8 @@ const Item = (
         href={url}
       >
         {nom}
-        {renderByStatus[completude]}
+        <BadgeACompleter a_completer={completude === 'a_completer'} />
       </a>
     </li>
   );
-};
-
-const renderByStatus = {
-  complete: <Badge status="success">Complété</Badge>,
-  a_completer: <Badge status="info">À compléter</Badge>,
 };
