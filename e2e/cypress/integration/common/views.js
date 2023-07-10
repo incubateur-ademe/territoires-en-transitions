@@ -47,7 +47,7 @@ export const CollectivitePages = {
     selector: '[data-test^=Action]',
   },
   'Plans action': {
-    route: 'plans',
+    route: 'plans/synthese',
     selector: '[data-test=PlansAction]',
   },
   'Fiches non classees': {

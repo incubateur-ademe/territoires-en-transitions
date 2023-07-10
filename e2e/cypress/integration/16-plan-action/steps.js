@@ -221,3 +221,12 @@ When(/aucune fiche n'est présente/, () => {
 When(/la fiche contenant "([^"]*)" est visible/, value => {
   cy.get('[data-test=ActionCarte]').contains(value).should('be.visible');
 });
+
+/** SYNTHESE */
+When(/je filtre par "([^"]*)"/, value => {
+  cy.get('[data-test=Filtres]').contains(value).click();
+});
+
+When(/"([^"]*)" fiches action s'affichent/, value => {
+  cy.get('[data-test=NombreFichesAction]').contains(value).should('be.visible');
+});

@@ -1,3 +1,4 @@
+import {useState} from 'react';
 import {Link, useParams} from 'react-router-dom';
 import HeaderTitle from '../../components/HeaderTitle';
 import {
@@ -17,7 +18,6 @@ import FiltresSecondaires from './FiltresSecondaires';
 import {generateSyntheseVue} from '../utils';
 import {ITEM_ALL} from 'ui/shared/filters/commons';
 import SyntheseVueGraph from './SyntheseVueGraph';
-import {useState} from 'react';
 
 const SyntheseVue = () => {
   const collectivite_id = useCollectiviteId();
@@ -63,7 +63,7 @@ const SyntheseVue = () => {
   if (!vue) return null;
 
   return (
-    <div className="w-full">
+    <div data-test="PageGraphSynthese" className="w-full">
       <HeaderTitle
         customClass={{
           container: 'bg-indigo-700',
@@ -88,11 +88,11 @@ const SyntheseVue = () => {
 
         {/** Graph */}
         <div className="min-h-[27rem] border border-b-4 border-gray-200">
-        <SyntheseVueGraph vue={vue} plan={plan} />
+          <SyntheseVueGraph vue={vue} plan={plan} />
         </div>
 
         {/** Filtres */}
-        <div className="flex flex-col gap-6 mt-8 mb-6">
+        <div data-test="Filtres" className="flex flex-col gap-6 mt-8 mb-6">
           <FiltersPlanAction
             collectiviteId={collectivite_id!}
             initialPlan={
@@ -118,7 +118,10 @@ const SyntheseVue = () => {
         <div className="my-8 border-b border-gray-200" />
         <div className="mb-16">
           <div className="flex items-baseline mb-8">
-            <p className="mb-0 mr-6 text-gray-500">
+            <p
+              data-test="NombreFichesAction"
+              className="mb-0 mr-6 text-gray-500"
+            >
               {total} fiche{total > 1 && 's'} action correspond
               {total > 1 && 'ent'} à votre recherche
             </p>

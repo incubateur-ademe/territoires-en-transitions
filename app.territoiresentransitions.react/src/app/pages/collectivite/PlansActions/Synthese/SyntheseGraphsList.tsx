@@ -50,6 +50,7 @@ const SyntheseGraphsList = ({
           !!graph.data.length && (
             <div key={graph.title} className="fr-col-sm-12 fr-col-xl-6">
               <Link
+                data-test={`lien-graph-${graph.id}`}
                 className="group fr-col-sm-12 fr-col-xl-6 hover:bg-gray-100"
                 to={`${makeCollectivitePlansActionsSyntheseVueUrl({
                   collectiviteId,

@@ -23,6 +23,15 @@ export const LocalSelectors = {
   'Filtrer les fiches': {
     selector: '[data-test=FiltrerFiches]',
   },
+  'Répartition par pilote': {
+    selector: '[data-test=lien-graph-pilotes]',
+  },
+  'Page graph de synthèse': {
+    selector: '[data-test=PageGraphSynthese]',
+  },
+  'Désactiver tous les filtres': {
+    selector: '[data-test=desactiver-les-filtres]',
+  },
   'Modale ranger fiche action': {
     selector: '[data-test=RangerFicheModale]',
   },
