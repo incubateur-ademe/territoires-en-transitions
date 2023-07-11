@@ -91,14 +91,17 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
   }
 
   return (
-    <div>
+    <>
       <ActionHeader
         action={action}
         actionScore={actionScores[action.id]}
         nextActionLink={nextActionLink}
         prevActionLink={prevActionLink}
       />
-      <main className="fr-container" data-test={`Action-${action.identifiant}`}>
+      <main
+        className="fr-container mt-6"
+        data-test={`Action-${action.identifiant}`}
+      >
         <OrientationQuickNav action={action} />
         <ActionAuditStatut action={action} />
         <ActionAuditDetail action={action} />
@@ -175,7 +178,7 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
         />
         <ScrollTopButton className="mt-8" />
       </main>
-    </div>
+    </>
   );
 };
 
