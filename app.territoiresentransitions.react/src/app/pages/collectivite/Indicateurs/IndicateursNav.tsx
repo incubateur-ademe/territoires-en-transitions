@@ -14,20 +14,22 @@ export const IndicateursNav = () => {
   const collectivite = useCurrentCollectivite();
   const collectiviteId = collectivite?.collectivite_id;
   return collectiviteId ? (
-    <div>
+    <div className="max-w-[21rem] mt-6 ml-6 border-r border-gray-100">
       <SideNav links={generateLinks(collectiviteId)} />
       {!collectivite.readonly && (
-        <Link
-          data-test="create-perso"
-          className="fr-btn fr-btn--tertiary fr-ml-4w"
-          to={makeCollectiviteIndicateursUrl({
-            collectiviteId,
-            indicateurView: 'perso',
-            indicateurId: 'nouveau',
-          })}
-        >
-          Créer un indicateur
-        </Link>
+        <div className="mt-8">
+          <Link
+            data-test="create-perso"
+            className="fr-btn fr-btn--tertiary fr-ml-4w"
+            to={makeCollectiviteIndicateursUrl({
+              collectiviteId,
+              indicateurView: 'perso',
+              indicateurId: 'nouveau',
+            })}
+          >
+            Créer un indicateur
+          </Link>
+        </div>
       )}
     </div>
   ) : null;
