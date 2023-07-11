@@ -2,20 +2,29 @@ import {
   IndicateurViewParamOption,
   makeCollectiviteIndicateursUrl,
 } from 'app/paths';
+import {Link} from 'react-router-dom';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import SideNav, {SideNavLinks} from 'ui/shared/SideNav';
-import {IndicateurPersonnaliseCreationDialog} from './IndicateurPersonnaliseCreationDialog';
 import {referentielToName} from 'app/labels';
 
 /**
  * Affiche la navigation latérales vers les pages Indicateurs
  */
 export const IndicateursNav = () => {
-  const collectivite_id = useCollectiviteId();
-  return collectivite_id ? (
+  const collectiviteId = useCollectiviteId();
+  return collectiviteId ? (
     <div>
-      <SideNav links={generateLinks(collectivite_id)} />
-      <IndicateurPersonnaliseCreationDialog />
+      <SideNav links={generateLinks(collectiviteId)} />
+      <Link
+        className="fr-btn fr-btn--tertiary fr-ml-4w"
+        to={makeCollectiviteIndicateursUrl({
+          collectiviteId,
+          indicateurView: 'perso',
+          indicateurId: 'nouveau',
+        })}
+      >
+        Créer un indicateur
+      </Link>
     </div>
   ) : null;
 };
