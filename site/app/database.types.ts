@@ -6932,6 +6932,10 @@ export interface Database {
         | "cta_plan"
         | "cta_indicateur"
         | "cta_labellisation"
+        | "cta_plan_creation"
+        | "cta_plan_maj"
+        | "cta_edl_commencer"
+        | "cta_edl_personnaliser"
       visite_onglet:
         | "progression"
         | "priorisation"
