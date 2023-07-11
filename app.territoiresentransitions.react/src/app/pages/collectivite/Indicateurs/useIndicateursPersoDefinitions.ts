@@ -1,5 +1,5 @@
 import {useQuery} from 'react-query';
-import {DISABLE_AUTO_REFETCH, supabaseClient} from 'core-logic/api/supabase';
+import {supabaseClient} from 'core-logic/api/supabase';
 import {TIndicateurPersoDefinition} from './types';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 
@@ -20,8 +20,7 @@ export const useIndicateursPersoDefinitions = (collectivite_id: number) => {
           isPerso: true,
         })) as TIndicateurPersoDefinition[]) || []
       );
-    },
-    DISABLE_AUTO_REFETCH
+    }
   );
   return data;
 };

@@ -1,7 +1,8 @@
-import {IndicateurViewParamOption} from 'app/paths';
 import {ReactNode} from 'react';
 import classNames from 'classnames';
+import {IndicateurViewParamOption} from 'app/paths';
 import {viewTitles} from './Indicateurs';
+import HeaderTitle from '../PlansActions/components/HeaderTitle';
 
 /** Affiche l'en-tête d'une liste d'indicateurs */
 export const HeaderIndicateursList = ({
@@ -31,9 +32,28 @@ export const HeaderIndicateursList = ({
 );
 
 /** Affiche l'en-tête d'une page détail d'un indicateur */
-export const HeaderIndicateur = ({title}: {title: string}) => (
-  <Header className="bg-bf925 text-[#161616]" title={title} />
-);
+type HeaderProps = {
+  title: string;
+  isReadonly?: boolean;
+  onUpdate?: (value: string) => void;
+};
+export const HeaderIndicateur = ({
+  title,
+  isReadonly,
+  onUpdate,
+}: HeaderProps) => {
+  const readonly = isReadonly ?? true;
+
+  return (
+    <HeaderTitle
+      titre={title}
+      type="axe"
+      bgColorClassName={classNames('!bg-bf925', {'pb-0': !readonly})}
+      onUpdate={onUpdate}
+      isReadonly={readonly}
+    />
+  );
+};
 
 /** Affiche un en-tête de page */
 export const Header = ({
@@ -47,7 +67,7 @@ export const Header = ({
 }) => (
   <div
     className={classNames(
-      'flex flex-col justify-center m-0 px-10 py-8 ',
+      'flex flex-col justify-center m-0 px-10 py-8',
       className
     )}
   >
