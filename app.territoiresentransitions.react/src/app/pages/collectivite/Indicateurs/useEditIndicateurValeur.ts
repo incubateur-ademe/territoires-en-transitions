@@ -111,7 +111,7 @@ const useDeleteIndicateurValeur = (args: TEditIndicateurValeurArgs) => {
   return useMutation({
     mutationKey: 'delete_indicateur_valeur',
     mutationFn: async ({annee}: {annee: number}) => {
-      if (!collectivite_id || isNaN(annee) || !indicateur_id) {
+      if (!collectivite_id || isNaN(annee) || indicateur_id === undefined) {
         return;
       }
       return Promise.all([
