@@ -20,6 +20,7 @@ import {
 import {useToggle} from 'ui/shared/useToggle';
 import AnchorAsButton from 'ui/buttons/AnchorAsButton';
 import Textarea from 'ui/shared/form/Textarea';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
 /** Affiche les onglets résultats/objectifs */
 export const IndicateurValuesTabs = ({
@@ -28,17 +29,27 @@ export const IndicateurValuesTabs = ({
   definition: TIndicateurDefinition;
 }) => {
   const {activeTab, onChangeTab} = useActiveTab();
+  const collectivite = useCurrentCollectivite();
+  const isReadonly = !collectivite || collectivite.readonly;
 
   return (
     <Tabs defaultActiveTab={activeTab} onChange={onChangeTab}>
       <Tab label="Résultats" icon="checkbox">
         {activeTab === 0 && (
-          <IndicateurValuesTable definition={definition} type="resultat" />
+          <IndicateurValuesTable
+            definition={definition}
+            type="resultat"
+            isReadonly={isReadonly}
+          />
         )}
       </Tab>
       <Tab label="Objectifs" icon="calendar-2">
         {activeTab === 1 && (
-          <IndicateurValuesTable definition={definition} type="objectif" />
+          <IndicateurValuesTable
+            definition={definition}
+            type="objectif"
+            isReadonly={isReadonly}
+          />
         )}
       </Tab>
     </Tabs>
@@ -49,9 +60,11 @@ export const IndicateurValuesTabs = ({
 const IndicateurValuesTable = ({
   definition,
   type,
+  isReadonly,
 }: {
   definition: TIndicateurDefinition;
   type: 'resultat' | 'objectif';
+  isReadonly: boolean;
 }) => {
   const {data: values} = useIndicateurValeursEtCommentaires({definition, type});
   const editHandlers = useEditIndicateurValeur({definition, type});
@@ -60,6 +73,7 @@ const IndicateurValuesTable = ({
     <ValuesTableBase
       type={type}
       values={values}
+      isReadonly={isReadonly}
       definition={definition}
       editHandlers={editHandlers}
     />
@@ -72,11 +86,13 @@ const ValuesTableBase = ({
   type,
   values,
   definition,
+  isReadonly,
   editHandlers,
 }: {
   type: 'resultat' | 'objectif';
   definition: TIndicateurDefinition;
   values: TIndicateurValeurEtCommentaires[];
+  isReadonly: boolean;
   editHandlers: TEditIndicateurValeurHandlers;
 }) => {
   const {unite} = definition;
@@ -98,14 +114,22 @@ const ValuesTableBase = ({
         </tr>
       </thead>
       <tbody>
-        <ValueTableRow key="new" editHandlers={editHandlers} />
-        {valuesToShow.map(row => (
-          <ValueTableRow
-            key={`${row.type}-${row.annee}`}
-            row={row}
-            editHandlers={editHandlers}
-          />
-        ))}
+        {isReadonly ? (
+          valuesToShow.map(row => (
+            <ValueTableRowReadOnly key={`${row.type}-${row.annee}`} row={row} />
+          ))
+        ) : (
+          <>
+            <ValueTableRow key="new" editHandlers={editHandlers} />
+            {valuesToShow.map(row => (
+              <ValueTableRow
+                key={`${row.type}-${row.annee}`}
+                row={row}
+                editHandlers={editHandlers}
+              />
+            ))}
+          </>
+        )}
         {haveManyValues && (
           <tr>
             <td colSpan={3}>
@@ -269,18 +293,7 @@ const ValueTableRow = ({
       </td>
       <td>
         {isImport ? (
-          <>
-            <span className="text-grey625 font-bold w-fit">{valeur}</span>
-            <InfoTooltip
-              label={() => (
-                <span>
-                  Cette valeur est renseignée <b>automatiquement</b>. Pour toute
-                  question, l’équipe est à votre écoute sur
-                  contact@territoiresentransitions.fr !
-                </span>
-              )}
-            />
-          </>
+          <ValueImported valeur={valeur} />
         ) : (
           <input
             type="text"
@@ -316,6 +329,54 @@ const ValueTableRow = ({
             onSelect={onSelectMenuOption}
           />
         )}
+      </td>
+    </tr>
+  );
+};
+
+/** Affiche une valeur importée */
+const ValueImported = ({valeur}: {valeur: string}) => (
+  <>
+    <span className="text-grey625 font-bold w-fit">{valeur}</span>
+    <InfoTooltip
+      label={() => (
+        <span>
+          Cette valeur est renseignée <b>automatiquement</b>. Pour toute
+          question, l’équipe est à votre écoute sur
+          contact@territoiresentransitions.fr !
+        </span>
+      )}
+    />
+  </>
+);
+
+/** Affiche une ligne du tableau en lecture seule */
+const ValueTableRowReadOnly = ({
+  row,
+}: {
+  row?: TIndicateurValeurEtCommentaires;
+}) => {
+  if (!row) return null;
+
+  const {annee, valeur, commentaire, source, type} = row;
+
+  const isImport = type === 'import';
+  return (
+    <tr>
+      <td className="font-bold">{annee}</td>
+      <td>
+        {isImport ? (
+          <ValueImported valeur={valeur?.toLocaleString('fr')} />
+        ) : (
+          {valeur}
+        )}
+      </td>
+      <td>
+        {isImport
+          ? row?.source && (
+              <span className="text-grey625">Source : {source}</span>
+            )
+          : {commentaire}}
       </td>
     </tr>
   );
