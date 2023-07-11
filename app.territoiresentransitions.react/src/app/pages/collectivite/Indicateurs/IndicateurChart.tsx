@@ -67,6 +67,21 @@ const getChartTitle = (definition: TIndicateurDefinition) => {
   return isPerso ? titre : nom;
 };
 
+// détermine la fréquence des graduations pour l'axe des abscisses
+const getXTickValues = (valeurs: TIndicateurValeur[], isZoomed?: boolean) => {
+  // nombre de valeurs maximum suivant que le graphe est en grand ou non
+  const maxTickValues = isZoomed ? 10 : 5;
+
+  // sélectionne les valeurs distinctes
+  const distinctYears = valeurs?.length
+    ? [...new Set(valeurs.map(({annee}) => annee))]
+    : [];
+
+  // une graduation par année pour éviter les doublons, si en dessous du seuil,
+  // sinon on utilise la valeur seuil pour éviter la superposition de valeurs
+  return distinctYears.length < maxTickValues ? 'every year' : maxTickValues;
+};
+
 /**
  * Affiche un graphique de type "lignes" combinant les valeurs objectif/résultat
  */
@@ -100,7 +115,7 @@ export const IndicateurChartBase = (props: TIndicateurChartBaseProps) => {
           tickSize: 5,
           tickPadding: 12,
           tickRotation: 0,
-          tickValues: isZoomed ? 10 : 5,
+          tickValues: getXTickValues(valeurs, isZoomed),
           format: '%Y',
         },
         // légende au bas du graphique
