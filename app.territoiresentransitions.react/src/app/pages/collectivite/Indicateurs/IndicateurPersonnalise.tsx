@@ -61,6 +61,7 @@ const IndicateurPersonnaliseBase = ({
           <TextareaControlled
             className="fr-input fr-mt-1w !outline-none"
             initialValue={description}
+            readOnly={isReadonly}
             onBlur={e => handleUpdate('description', e.target.value)}
           />
         </FormField>
@@ -69,6 +70,7 @@ const IndicateurPersonnaliseBase = ({
           <InputControlled
             className="fr-input fr-mt-1w !outline-none"
             initialValue={unite}
+            readOnly={isReadonly}
             onBlur={e => handleUpdate('unite', e.target.value)}
           />
         </FormField>
