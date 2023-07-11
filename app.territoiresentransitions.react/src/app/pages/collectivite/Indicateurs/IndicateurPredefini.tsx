@@ -63,19 +63,21 @@ const IndicateurDetail = ({
         )}
       </div>
       <IndicateurValuesTabs definition={definition} />
-      {/** TODO: personne et direction pilote */}
-      {
-        /** actions liées */
-        actionsLiees.length ? (
-          <>
-            <p className="fr-mt-5w fr-mb-1w font-medium">
-              {actionsLiees.length > 1 ? 'Actions liées' : 'Action liée'}
-            </p>
-            <ActionsLieesCards actions={actionsLiees} />
-          </>
-        ) : null
-      }
-      <FichesActionLiees definition={definition} />
+      <div className="fr-mt-5w ">
+        {/** TODO: personne et direction pilote */}
+        {
+          /** actions liées */
+          actionsLiees?.length ? (
+            <>
+              <p className="fr-mb-1w font-medium">
+                {actionsLiees.length > 1 ? 'Actions liées' : 'Action liée'}
+              </p>
+              <ActionsLieesCards actions={actionsLiees} />
+            </>
+          ) : null
+        }
+        <FichesActionLiees definition={definition} />
+      </div>
     </>
   );
 };
