@@ -11,6 +11,7 @@ import {IndicateursClesList} from './IndicateursClesList';
 import {IndicateurPersonnalise} from './IndicateurPersonnalise';
 import {IndicateurPredefini} from './IndicateurPredefini';
 import {HeaderIndicateursList} from './Header';
+import IndicateurPersoNouveau from './IndicateurPersoNouveau';
 
 export const viewTitles: Record<IndicateurViewParamOption, string> = {
   ...VIEW_TITLES,
@@ -31,6 +32,9 @@ const IndicateursList = (props: {view: IndicateurViewParamOption}) => {
 /** Affiche le détail d'un indicateur */
 const IndicateurDetail = (props: {indicateurId: string; isPerso: boolean}) => {
   const {indicateurId, isPerso} = props;
+  if (indicateurId === 'nouveau') {
+    return <IndicateurPersoNouveau className="fr-p-6w" />;
+  }
   const Indicateur = isPerso ? IndicateurPersonnalise : IndicateurPredefini;
   return <Indicateur indicateurId={indicateurId} />;
 };
