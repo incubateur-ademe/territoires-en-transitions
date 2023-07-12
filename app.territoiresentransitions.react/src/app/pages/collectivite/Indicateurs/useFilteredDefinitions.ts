@@ -3,12 +3,11 @@ import {useIndicateurThematiquesLabels} from './useIndicateurDefinitions';
 import {TIndicateurDefinition, TIndicateurReferentielDefinition} from './types';
 import {useSearchParams} from 'core-logic/hooks/query';
 import {useFilterOptions} from './useFilterOptions';
-import {
-  ITEM_PARTICIPE_SCORE,
-  ITEM_TYPE_IMPACT,
-  ITEM_TYPE_RESULTAT,
-  ITEM_SANS_THEMATIQUE,
-} from './filterOptions';
+
+const ITEM_PARTICIPE_SCORE = 'ps';
+const ITEM_SANS_THEMATIQUE = 'st';
+const ITEM_TYPE_IMPACT = 'ti';
+const ITEM_TYPE_RESULTAT = 'tr';
 
 type TFilters = {
   selection?: string[];
