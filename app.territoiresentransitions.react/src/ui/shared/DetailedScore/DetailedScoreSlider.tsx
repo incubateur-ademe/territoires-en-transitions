@@ -134,7 +134,6 @@ export const DetailedScoreSlider = (props: TSliderProps) => {
     <div className="w-full">
       <TagFilters
         className="mb-14"
-        name="pas_de_notation"
         options={[
           {
             value: `${EXTENDED_STEP_INC}`,
