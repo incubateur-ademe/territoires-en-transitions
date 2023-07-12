@@ -22,9 +22,6 @@ class MarkdownIndicateur:
     nom: str
     "Titre en markdown"
 
-    description: str
-    "Partie description en markdown"
-
     # Valeurs obligatoires de la partie yaml :
     id: str
     identifiant: Any
@@ -44,6 +41,9 @@ class MarkdownIndicateur:
     fnv: Optional[List[str]]
     parent: Optional[str]
     type: Optional[str]
+    selection: bool = False
+    description: str = ''
+    "Partie description en markdown"
 
 
 IndicateurGroup = Literal["eci", "cae", "crte"]
@@ -67,6 +67,7 @@ class Indicateur:
     parent: Optional[str] = None
     source: Optional[str] = None
     type: Optional[str] = None
+    selection: Optional[bool] = False
 
 
 def parse_indicateurs(
@@ -128,7 +129,8 @@ def convert_indicateurs(path: str, json_filename: str):
             programmes=md.programmes or [],
             parent=md.parent,
             source=md.source,
-            type=md.type
+            type=md.type,
+            selection=md.selection or False
         )
         for md in md_indicateurs
     ]
