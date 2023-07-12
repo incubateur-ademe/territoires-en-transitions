@@ -37,8 +37,8 @@ id: crte_10.2
 identifiant: 10.2
 unite: kg/hab
 
+parent: crte_10.1
 titre_long: Quantité de déchets ménagers et assimilés (hors gravats) produits par an
-parent: cae_6.a
 programmes:
   - crte
 thematiques:
