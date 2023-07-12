@@ -179,32 +179,12 @@ create type indicateur_valeur_type as enum ('resultat', 'objectif', 'import');
 create view indicateurs
 as
 select 'resultat'::indicateur_valeur_type as type,
-       r.collectivite_id,
-       case
-           when d.valeur_indicateur is null
-               then r.indicateur_id
-           else d.valeur_indicateur
-           end                            as indicateur_id,
+       r.collectivite_id                  as collectivite_id,
+       r.indicateur_id                    as indicateur_id,
        null::integer                      as indicateur_perso_id,
-       r.annee,
-       case
-           when d.valeur_indicateur is null
-               then r.valeur
-           else (select valeur
-                 from indicateur_resultat rr
-                 where rr.collectivite_id = r.collectivite_id
-                   and rr.annee = r.annee
-                   and rr.indicateur_id = r.indicateur_id)
-           end                            as valeur,
-       case
-           when d.valeur_indicateur is null
-               then c.commentaire
-           else (select cc.commentaire
-                 from indicateur_resultat_commentaire cc
-                 where cc.collectivite_id = r.collectivite_id
-                   and cc.annee = r.annee
-                   and cc.indicateur_id = r.indicateur_id)
-           end                            as commentaire,
+       r.annee                            as annee,
+       r.valeur                           as valeur,
+       c.commentaire                      as commentaire,
        null::text                         as source
 from indicateur_resultat r
          join indicateur_definition d on r.indicateur_id = d.id
@@ -214,35 +194,33 @@ from indicateur_resultat r
                        and r.annee = c.annee
 where have_lecture_acces(r.collectivite_id)
 union all
+
+--- indicateurs dont le résultat est en fait celui d'un autre.
+select 'resultat'::indicateur_valeur_type as type,
+       r.collectivite_id,
+       alt.id,
+       null::integer,
+       r.annee,
+       r.valeur,
+       c.commentaire,
+       null::text
+from indicateur_resultat r
+         join indicateur_definition alt on r.indicateur_id = alt.valeur_indicateur
+         left join indicateur_resultat_commentaire c
+                   on r.indicateur_id = c.indicateur_id
+                       and r.collectivite_id = c.collectivite_id
+                       and r.annee = c.annee
+where have_lecture_acces(r.collectivite_id)
+
+union all
 select 'objectif'::indicateur_valeur_type as type,
        o.collectivite_id,
-       case
-           when d.valeur_indicateur is null
-               then o.indicateur_id
-           else d.valeur_indicateur
-           end                            as indicateur_id,
+       d.id,
        null,
        o.annee,
-       case
-           when d.valeur_indicateur is null
-               then o.valeur
-           else (select valeur
-                 from indicateur_objectif rr
-                 where rr.collectivite_id = o.collectivite_id
-                   and rr.annee = o.annee
-                   and rr.indicateur_id = o.indicateur_id)
-           end                            as valeur,
-
-       case
-           when d.valeur_indicateur is null
-               then c.commentaire
-           else (select cc.commentaire
-                 from indicateur_objectif_commentaire cc
-                 where cc.collectivite_id = o.collectivite_id
-                   and cc.annee = o.annee
-                   and cc.indicateur_id = o.indicateur_id)
-           end                            as commentaire,
-       null::text                         as source
+       o.valeur,
+       c.commentaire,
+       null::text
 from indicateur_objectif o
          join indicateur_definition d on o.indicateur_id = d.id
          left join indicateur_objectif_commentaire c
@@ -250,6 +228,25 @@ from indicateur_objectif o
                        and o.collectivite_id = c.collectivite_id
                        and o.annee = c.annee
 where have_lecture_acces(o.collectivite_id)
+union all
+
+--- indicateurs dont l'objectif est en fait celui d'un autre.
+select 'objectif'::indicateur_valeur_type as type,
+       o.collectivite_id,
+       alt.id,
+       null,
+       o.annee,
+       o.valeur,
+       c.commentaire,
+       null::text
+from indicateur_objectif o
+         join indicateur_definition alt on o.indicateur_id = alt.valeur_indicateur
+         left join indicateur_objectif_commentaire c
+                   on o.indicateur_id = c.indicateur_id
+                       and o.collectivite_id = c.collectivite_id
+                       and o.annee = c.annee
+where have_lecture_acces(o.collectivite_id)
+
 union all
 select 'import'::indicateur_valeur_type as type,
        collectivite_id,
