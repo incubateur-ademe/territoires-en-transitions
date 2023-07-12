@@ -93,16 +93,6 @@ export const ActionStatusDropdown = ({
       filled
     ) {
       setLocalAvancement('detaille');
-
-      // Permet le raffraichissement du score pour l'affichage du score
-      // réalisé et de la jauge après mise à jour dans la modale de score auto
-      saveActionStatut({
-        ...args,
-        avancement: 'non_renseigne',
-        concerne: true,
-        modified_at: statut?.modified_at,
-        modified_by: statut?.modified_by,
-      });
     } else {
       setLocalAvancement(avancementExt);
     }
@@ -154,20 +144,6 @@ export const ActionStatusDropdown = ({
   // à la validation dans la modale de score auto
   const handleSaveScoreAuto = (newStatus: StatusToSavePayload[]) => {
     setOpenScoreAuto(false);
-
-    // Si "détaillé" est sélectionné sur une sous-action
-    // cela correspond en base à un statut "non renseigné"
-    // avec statuts au niveau des tâches
-    // Si aucune tâche n'est remplie, le statut de la sous-action
-    // passe à "non renseigné"
-    saveActionStatut({
-      ...args,
-      avancement: 'non_renseigne',
-      concerne: true,
-      modified_at: statut?.modified_at,
-      modified_by: statut?.modified_by,
-    });
-
     setLocalAvancement(newStatus.length ? 'detaille' : 'non_renseigne');
     setLocalAvancementDetaille(undefined);
 
@@ -185,6 +161,22 @@ export const ActionStatusDropdown = ({
         modified_by: element.statut?.modified_by,
       });
     });
+
+    // Si "détaillé" est sélectionné sur une sous-action
+    // cela correspond en base à un statut "non renseigné"
+    // avec statuts au niveau des tâches
+    // Si aucune tâche n'est remplie, le statut de la sous-action
+    // passe à "non renseigné"
+    // Le setTimeout évite des problèmes de raffraichissement de la jauge
+    setTimeout(() => {
+      saveActionStatut({
+        ...args,
+        avancement: 'non_renseigne',
+        concerne: true,
+        modified_at: statut?.modified_at,
+        modified_by: statut?.modified_by,
+      });
+    }, 100);
   };
 
   // Mise à jour du statut à la validation dans la modale
