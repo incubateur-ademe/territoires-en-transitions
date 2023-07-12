@@ -7,6 +7,7 @@ import AccueilCard from './AccueilCard';
 import AccueilEmptyCardWithPicto from './AccueilEmptyCardWithPicto';
 import {useIndicateursCount} from './data/useIndicateurSummary';
 import KeyNumbers from '../../../../ui/score/KeyNumbers';
+import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 
 type IndicateursCardProps = {
   collectiviteId: number;
@@ -87,10 +88,13 @@ const FilledIndicateursCard = ({
   collectiviteId,
   indicateurs,
 }: FilledIndicateursCardProps): JSX.Element => {
+  const tracker = useFonctionTracker();
+
   return (
     <AccueilCard className="flex flex-col">
       <KeyNumbers valuesList={indicateurs} />
       <ButtonWithLink
+        onClick={() => tracker({fonction: 'cta_indicateur', action: 'clic'})}
         href={makeCollectiviteIndicateursUrl({
           collectiviteId,
           indicateurView: 'perso',
@@ -110,6 +114,7 @@ const FilledIndicateursCard = ({
 const EmptyIndicateursCard = ({
   collectiviteId,
 }: EmptyIndicateursCardProps): JSX.Element => {
+  const tracker = useFonctionTracker();
   const plansActions = usePlansActionsListe(collectiviteId);
 
   return (
@@ -120,6 +125,7 @@ const EmptyIndicateursCard = ({
           <b>atteignez vos objectifs !</b>
         </p>
         <ButtonWithLink
+          onClick={() => tracker({fonction: 'cta_indicateur', action: 'clic'})}
           href={makeCollectiviteIndicateursUrl({
             collectiviteId,
             indicateurView:
