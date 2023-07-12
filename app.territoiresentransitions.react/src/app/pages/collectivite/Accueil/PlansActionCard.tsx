@@ -14,6 +14,7 @@ import {usePlanActionTableauDeBord} from '../PlansActions/Synthese/data/usePlanA
 import AccueilCard from './AccueilCard';
 import AccueilEmptyCardWithPicto from './AccueilEmptyCardWithPicto';
 import KeyNumbers from '../../../../ui/score/KeyNumbers';
+import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 
 type PlanActionCardProps = {
   collectiviteId: number;
@@ -57,6 +58,7 @@ const FilledPlansActionCard = ({
   collectiviteId,
   plans,
 }: FilledPlansActionCardProps): JSX.Element => {
+  const tracker = useFonctionTracker();
   const planActionsStats = usePlanActionTableauDeBord(
     collectiviteId,
     null,
@@ -93,6 +95,7 @@ const FilledPlansActionCard = ({
 
         {/* Call to action */}
         <ButtonWithLink
+          onClick={() => tracker({fonction: 'cta_plan_maj', action: 'clic'})}
           href={
             plans.length === 1
               ? makeCollectivitePlanActionUrl({
@@ -139,6 +142,8 @@ const FilledPlansActionCard = ({
 const EmptyPlansActionCard = ({
   collectiviteId,
 }: EmptyPlansActionCardProps): JSX.Element => {
+  const tracker = useFonctionTracker();
+
   return (
     <AccueilEmptyCardWithPicto picto={<PictoPlansAction />}>
       <>
@@ -154,6 +159,9 @@ const EmptyPlansActionCard = ({
           </li>
         </ul>
         <ButtonWithLink
+          onClick={() =>
+            tracker({fonction: 'cta_plan_creation', action: 'clic'})
+          }
           href={makeCollectivitePlansActionsNouveauUrl({collectiviteId})}
           rounded
         >

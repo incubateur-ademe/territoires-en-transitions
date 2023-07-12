@@ -6,6 +6,7 @@ type ButtonWithLinkProps = {
   disabled?: boolean;
   rounded?: boolean;
   secondary?: boolean;
+  onClick?: () => void;
 };
 
 const ButtonWithLink = ({
@@ -14,9 +15,11 @@ const ButtonWithLink = ({
   disabled = false,
   rounded = false,
   secondary = false,
+  onClick,
 }: ButtonWithLinkProps): JSX.Element => {
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     if (disabled) event.preventDefault();
+    if (onClick && !disabled) onClick();
   };
 
   return (

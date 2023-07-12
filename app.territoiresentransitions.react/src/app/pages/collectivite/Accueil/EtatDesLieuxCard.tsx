@@ -17,6 +17,7 @@ import AccueilCard from './AccueilCard';
 import EtatDesLieuxGraphs from './EtatDesLieuxGraphs';
 import LabellisationInfo from '../../../../ui/labellisation/LabellisationInfo';
 import {toLocaleFixed} from 'utils/toFixed';
+import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 
 type EtatDesLieuxCardProps = {
   collectiviteId: number;
@@ -119,6 +120,7 @@ const FilledEtatDesLieuxCard = ({
   potentiel,
   className,
 }: FilledEtatDesLieuxCardProps): JSX.Element => {
+  const tracker = useFonctionTracker();
   const {parcours, status} = useCycleLabellisation(referentiel);
   const data = getAggregatedScore(progressionScore.data);
 
@@ -138,6 +140,9 @@ const FilledEtatDesLieuxCard = ({
 
           {/* Call to action */}
           <ButtonWithLink
+            onClick={() =>
+              tracker({fonction: 'cta_labellisation', action: 'clic'})
+            }
             href={makeCollectiviteLabellisationUrl({
               collectiviteId,
               referentielId: referentiel,
@@ -190,6 +195,8 @@ const EmptyEtatDesLieuxCard = ({
   tags,
   className,
 }: EmptyEtatDesLieuxCardProps): JSX.Element => {
+  const tracker = useFonctionTracker();
+
   return (
     <AccueilCard className={classNames('flex flex-col gap-8', className)}>
       {/* En-tête */}
@@ -220,6 +227,9 @@ const EmptyEtatDesLieuxCard = ({
       {/* Call to action */}
       <div className="grid md:grid-cols-2 gap-4">
         <ButtonWithLink
+          onClick={() =>
+            tracker({fonction: 'cta_edl_commencer', action: 'clic'})
+          }
           href={makeCollectiviteReferentielUrl({
             collectiviteId,
             referentielId: referentiel,
@@ -230,6 +240,9 @@ const EmptyEtatDesLieuxCard = ({
           Commencer l'état des lieux
         </ButtonWithLink>
         <ButtonWithLink
+          onClick={() =>
+            tracker({fonction: 'cta_edl_personnaliser', action: 'clic'})
+          }
           href={makeCollectivitePersoRefUrl({collectiviteId})}
           rounded
           secondary
