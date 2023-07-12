@@ -97,10 +97,22 @@ const IndicateurCompose = ({
     ...enfants,
   ]);
 
+  const enfantsTries = enfants.sort((a, b) =>
+    a.identifiant.localeCompare(b.identifiant)
+  );
+
   return (
     <>
       {/** TODO : ajouter ici le graphe combinant les indicateurs "enfant" */}
-      {enfants.map(enfant => (
+      <IndicateurEnfant
+        key={definition.id}
+        definition={definition}
+        actionsLieesCommunes={actionsLieesCommunes}
+        isOpen
+        className="fr-mb-4w"
+      />
+
+      {enfantsTries.map(enfant => (
         <IndicateurEnfant
           key={enfant.id}
           definition={enfant}

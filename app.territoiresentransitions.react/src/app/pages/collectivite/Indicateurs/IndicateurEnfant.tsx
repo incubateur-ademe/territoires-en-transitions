@@ -13,14 +13,23 @@ import {FichesActionLiees} from './FichesActionLiees';
 export const IndicateurEnfant = ({
   definition,
   actionsLieesCommunes,
+  isOpen,
+  className,
 }: {
   definition: TIndicateurReferentielDefinition;
   actionsLieesCommunes: string[];
+  isOpen?: boolean;
+  className?: string;
 }) => {
-  const [open, toggle] = useToggle(false);
+  const [open, toggle] = useToggle(isOpen || false);
 
   return (
-    <div className="border border-[#e5e5e5] rounded-lg my-4">
+    <div
+      className={classNames(
+        'border border-[#e5e5e5] rounded-lg my-4',
+        className
+      )}
+    >
       <IndicateurEnfantHeader
         definition={definition}
         open={open}
