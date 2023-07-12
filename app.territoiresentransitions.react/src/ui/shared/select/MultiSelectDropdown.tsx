@@ -5,6 +5,7 @@ import DropdownFloater from 'ui/shared/floating-ui/DropdownFloater';
 import {
   buttonDisplayedClassname,
   buttonDisplayedPlaceholderClassname,
+  DSFRbuttonClassname,
   ExpandCollapseIcon,
   getOptions,
   TOption,
@@ -29,6 +30,8 @@ export type TMultiSelectDropdownProps<T extends string> =
     renderOption?: (option: TOption) => React.ReactElement;
     /** appelée quand les options sélectionnées changent (reçoit les nouvelles valeurs) */
     onSelect: (values: T[]) => void;
+    /** Applique les styles DSFR au bouton de sélection */
+    dsfrButton?: boolean;
   };
 
 /**
@@ -38,6 +41,7 @@ const MultiSelectDropdown = <T extends string>({
   values,
   options,
   buttonClassName,
+  dsfrButton,
   containerWidthMatchButton,
   placeholderText = 'Sélectionnez une ou plusieurs options',
   onSelect,
@@ -61,7 +65,10 @@ const MultiSelectDropdown = <T extends string>({
     )}
   >
     <MultiSelectButton
-      buttonClassName={buttonClassName}
+      buttonClassName={classNames(
+        dsfrButton && DSFRbuttonClassname,
+        buttonClassName
+      )}
       options={options}
       values={values}
       placeholderText={placeholderText}

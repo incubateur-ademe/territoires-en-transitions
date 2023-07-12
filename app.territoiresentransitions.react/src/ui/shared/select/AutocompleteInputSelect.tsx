@@ -23,6 +23,8 @@ const AutocompleteInputSelect = <T extends string>({
   options,
   onSelect,
   renderOption,
+  buttonClassName,
+  dsfrButton,
   placement,
   placeholderText,
   containerWidthMatchButton,
@@ -56,7 +58,10 @@ const AutocompleteInputSelect = <T extends string>({
     >
       <AutocompleteButton
         data-test={dataTest}
-        buttonClassName={DSFRbuttonClassname}
+        buttonClassName={classNames(
+          dsfrButton && DSFRbuttonClassname,
+          buttonClassName
+        )}
         options={options}
         values={values}
         inputValue={inputValue}
