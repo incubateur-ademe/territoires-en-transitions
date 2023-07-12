@@ -90,7 +90,7 @@ const IndicateurEnfantContent = ({
 }) => {
   //
   const actionsLiees = definition.actions
-    .filter(action_id => !actionsLieesCommunes.includes(action_id))
+    ?.filter(action_id => !actionsLieesCommunes.includes(action_id))
     .map(id => ({id}));
 
   return (
@@ -103,7 +103,7 @@ const IndicateurEnfantContent = ({
       <IndicateurValuesTabs definition={definition} />
       {
         /** actions liées */
-        actionsLiees.length ? (
+        actionsLiees?.length ? (
           <>
             <p className="fr-mt-4w fr-mb-1w font-medium">
               {actionsLiees.length > 1
