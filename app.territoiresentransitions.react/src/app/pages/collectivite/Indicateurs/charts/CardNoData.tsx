@@ -21,8 +21,12 @@ export const NoData = ({
       {getChartTitle(definition)}
     </span>
     <PictoPie />
-    <span className="text-grey425 text-sm">
-      Aucune valeur renseignée pour l’instant
-    </span>
+    {variant === 'zoomed' ? (
+      <span className="text-grey425 text-sm">
+        Aucune valeur renseignée pour l’instant
+      </span>
+    ) : (
+      <button className="fr-btn rounded-lg">Compléter cet indicateur</button>
+    )}
   </Card>
 );
