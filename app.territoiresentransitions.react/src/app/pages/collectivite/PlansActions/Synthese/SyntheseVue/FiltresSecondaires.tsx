@@ -29,7 +29,7 @@ const FiltresSecondaires = ({filtresSecondaires, filters}: Props) => {
             <FiltrePersonnes
               key={filtre}
               dataTest="filtre-personne-referentes"
-              label="Personne référentes"
+              label="Élu·e référent·e"
               filterKey="referents"
               filters={filters.filters}
               setFilters={filters.setFilters}
