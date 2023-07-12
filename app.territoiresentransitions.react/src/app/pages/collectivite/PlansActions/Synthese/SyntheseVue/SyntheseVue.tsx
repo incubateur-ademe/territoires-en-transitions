@@ -159,7 +159,7 @@ const SyntheseVue = () => {
             </>
           ) : (
             <div className="mt-20 text-center text-gray-500">
-              Sélectionnez des filtres pour afficher la liste des fiches action
+              Sélectionner des filtres pour afficher la liste des fiches action
             </div>
           )}
         </div>
