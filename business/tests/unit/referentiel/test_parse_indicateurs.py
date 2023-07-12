@@ -2,7 +2,6 @@ from business.referentiel.convert_indicateurs import (
     MarkdownIndicateur,
     parse_indicateurs,
 )
-from business.utils.models.actions import ActionId
 
 
 def test_parse_markdown_indicateurs_from_ok_folder():
@@ -24,6 +23,12 @@ def test_parse_markdown_indicateurs_from_ok_folder():
             climat_pratic_ids=["strategie"],
             source=None,
             obligation_eci=None,
+            titre_long=None,
+            participation_score=None,
+            thematiques=None,
+            fnv=None,
+            parent=None,
+            type=None,
         ),
         MarkdownIndicateur(
             id="cae_1.b",
@@ -38,5 +43,11 @@ def test_parse_markdown_indicateurs_from_ok_folder():
             climat_pratic_ids=["strategie"],
             source=None,
             obligation_eci=None,
+            titre_long=None,
+            participation_score=None,
+            thematiques=None,
+            fnv=None,
+            parent=None,
+            type=None,
         ),
     ]
