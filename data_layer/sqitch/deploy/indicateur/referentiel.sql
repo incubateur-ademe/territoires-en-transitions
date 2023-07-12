@@ -3,7 +3,6 @@
 
 BEGIN;
 
-
 alter table indicateur_definition
     drop column parent;
 
@@ -12,6 +11,9 @@ alter table indicateur_definition
 
 alter table indicateur_definition
     add participation_score bool default false not null;
+
+alter table indicateur_definition
+    add selection bool default false not null;
 
 comment on column indicateur_definition.participation_score is
     'Vrai si il est prévu que l''indicateur participe au score du référentiel.';
