@@ -103,7 +103,7 @@ const makeNavItemsBase = (collectivite: CurrentCollectivite): TNavItemsList => {
       label: 'Indicateurs',
       to: makeCollectiviteIndicateursUrl({
         collectiviteId,
-        indicateurView: 'perso',
+        indicateurView: 'cles',
       }),
       urlPrefix: makeCollectiviteIndicateursUrl({collectiviteId}),
     },
