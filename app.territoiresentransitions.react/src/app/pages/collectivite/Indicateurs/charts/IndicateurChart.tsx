@@ -1,14 +1,15 @@
+import {CSSProperties} from 'react';
+import {CustomLayerProps} from '@nivo/line';
 import classNames from 'classnames';
 import {ChartCardContent} from 'ui/charts/ChartCard';
 import LineChart, {
   LineChartProps,
-  generateStyledLines,
   getLabelsBySerieId,
 } from 'ui/charts/LineChart';
 import {defaultColors} from 'ui/charts/chartsTheme';
 import {useIndicateurValeurs} from '../useIndicateurValeurs';
 import {getChartTitle, getXTickValues, prepareData} from './utils';
-import {PathLine, SliceTooltip, lineStyleBySerieId} from './SliceTooltip';
+import {PathLine, SliceTooltip, getLineStyleBySerieId} from './SliceTooltip';
 import {Card} from './Card';
 import {NoData} from './CardNoData';
 import {TIndicateurChartProps, TIndicateurChartBaseProps} from './types';
@@ -35,7 +36,7 @@ export const IndicateurChartBase = (props: TIndicateurChartBaseProps) => {
           'grid',
           'markers',
           'areas',
-          generateStyledLines(lineStyleBySerieId),
+          generateStyledLines(getLineStyleBySerieId),
           'slices',
           'points',
           'axes',
@@ -98,6 +99,28 @@ export const IndicateurChartBase = (props: TIndicateurChartBaseProps) => {
     </Card>
   );
 };
+
+/** Génère les lignes en appliquant le style correspondant à l'id de la série */
+export const generateStyledLines =
+  (getStyleById: (serieId: string | number) => CSSProperties | undefined) =>
+  ({series, lineGenerator, xScale, yScale}: CustomLayerProps) => {
+    return series.map(({id, data, color}) => (
+      <path
+        key={id}
+        d={
+          lineGenerator(
+            data.map(d => ({
+              x: (xScale as any)(d.data.x),
+              y: (yScale as any)(d.data.y),
+            }))
+          ) || undefined
+        }
+        fill="none"
+        stroke={color}
+        style={getStyleById(id)}
+      />
+    ));
+  };
 
 /** Charge les données et affiche le graphique */
 const IndicateurChart = (props: TIndicateurChartProps) => {
