@@ -2,11 +2,21 @@ import {Datum, Serie} from '@nivo/line';
 import {TIndicateurValeur} from '../useIndicateurValeurs';
 import {TIndicateurDefinition} from '../types';
 
+// libellé par défaut pour les séries objectifs/résultats
+const SERIE_LABELS = {
+  objectifs: 'Objectif',
+  resultats: 'Résultat',
+};
+
 /* Transforme les valeurs d'un indicateur en séries "Objectifs" et "Résultats"
 pour affichage dans le graphe */
 export const prepareData = (
   valeurs: TIndicateurValeur[],
-  color: string
+  color: string,
+  serieOptions?: {
+    labels: typeof SERIE_LABELS;
+    idSuffix: string;
+  }
 ): Serie[] => {
   // sépare les valeurs "objectif" des valeurs "résultat" (ou "import")
   const objectifs: TIndicateurValeur[] = [];
@@ -15,16 +25,20 @@ export const prepareData = (
     (v.type === 'objectif' ? objectifs : resultats).push(v)
   );
 
+  // détermine les libellés et le préfixe (optionnel) d'id des séries
+  const labels = serieOptions?.labels || SERIE_LABELS;
+  const suffix = serieOptions?.idSuffix || '';
+
   return [
     {
-      id: 'objectifs',
-      label: 'Objectif',
+      id: `objectifs-${suffix}`,
+      label: labels.objectifs,
       color,
       data: objectifs.map(toDatum),
     },
     {
-      id: 'resultats',
-      label: 'Résultat',
+      id: `resultats-${suffix}`,
+      label: labels.resultats,
       color,
       data: resultats.map(toDatum),
     },
