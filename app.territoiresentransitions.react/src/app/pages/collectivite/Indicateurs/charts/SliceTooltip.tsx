@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import {SliceTooltipProps} from '@nivo/line';
 import {theme} from 'ui/charts/chartsTheme';
 import {TIndicateurDefinition} from '../types';
+import {CSSProperties} from 'react';
 
 // Affiche une ligne (pleine ou hachée) dans la légende et l'infobulle
 const LEGEND_LINE_WIDTH = 12;
@@ -18,13 +19,13 @@ export const PathLine = ({
     d={`M0 1H${LEGEND_LINE_WIDTH}`}
     fill="none"
     stroke={stroke}
-    style={lineStyleBySerieId[serieId]}
+    style={getLineStyleBySerieId(serieId)}
     transform={transform}
   />
 );
 
 // styles de ligne en fonction de l'id de la série
-export const lineStyleBySerieId: Record<string, {}> = {
+const lineStyleBySerieId: Record<string, {}> = {
   objectifs: {
     strokeDasharray: '2, 2',
     strokeWidth: 2,
@@ -32,6 +33,15 @@ export const lineStyleBySerieId: Record<string, {}> = {
   resultats: {
     strokeWidth: 3,
   },
+};
+
+/**
+ * Fourni le style d'une ligne en fonction du préfixe (objectif|résultat) d'un id de série.
+ */
+export const getLineStyleBySerieId = (
+  serieId: string | number
+): CSSProperties | undefined => {
+  return lineStyleBySerieId[serieId.toString().split('-')?.[0]];
 };
 
 // Affiche l'infobulle au-dessus des portions du graphe

@@ -1,9 +1,4 @@
-import {
-  ResponsiveLine,
-  LineSvgProps,
-  Serie,
-  CustomLayerProps,
-} from '@nivo/line';
+import {ResponsiveLine, LineSvgProps, Serie} from '@nivo/line';
 import {defaultColors, theme} from './chartsTheme';
 
 export type LineChartProps = LineSvgProps & {
@@ -75,25 +70,3 @@ export default LineChart;
 /** Indexe les libellés des séries par id */
 export const getLabelsBySerieId = (data: Serie[]): Record<string, string> =>
   data.reduce((byId, {id, label}) => ({...byId, [id]: label}), {});
-
-/** Génère les lignes en appliquant le style correspondant à l'id de la série */
-export const generateStyledLines =
-  (styleById: Record<string, {}>) =>
-  ({series, lineGenerator, xScale, yScale}: CustomLayerProps) => {
-    return series.map(({id, data, color}) => (
-      <path
-        key={id}
-        d={
-          lineGenerator(
-            data.map(d => ({
-              x: (xScale as any)(d.data.x),
-              y: (yScale as any)(d.data.y),
-            }))
-          ) || undefined
-        }
-        fill="none"
-        stroke={color}
-        style={styleById[id] || styleById.default}
-      />
-    ));
-  };
