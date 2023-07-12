@@ -1,6 +1,5 @@
 import FilterField from 'ui/shared/filters/FilterField';
 import {TOption} from 'ui/shared/select/commons';
-import {MultiSelectFilter} from 'ui/shared/select/MultiSelectFilter';
 import {
   SANS_PILOTE,
   SANS_REFERENT,
@@ -10,6 +9,7 @@ import {
 import {getIsAllSelected, ITEM_ALL} from 'ui/shared/filters/commons';
 import {getPersonneId} from '../../FicheAction/data/utils';
 import {usePersonneListe} from '../../FicheAction/data/options/usePersonneListe';
+import AutocompleteInputSelect from 'ui/shared/select/AutocompleteInputSelect';
 
 type Props = TFiltreProps & {
   label: string;
@@ -134,12 +134,13 @@ const FiltrePersonnes = ({
 
   return (
     <FilterField title={label}>
-      <MultiSelectFilter
-        data-test={dataTest}
+      <AutocompleteInputSelect
+        containerWidthMatchButton
+        dsfrButton={false}
         values={values()}
         options={options}
         onSelect={newValues => setFilters(onSelect(newValues))}
-        placeholderText="Sélectionner des options"
+        placeholderText="Rechercher ou sélectionner des options"
         disabled={options.length === 0}
       />
     </FilterField>
