@@ -21,14 +21,19 @@ export const useIndicateurDefinitions = () => {
         throw new Error(error.message);
       }
 
-      // extrait les ids des actions liées aux indicateurs
-      return data?.map(definition => {
-        const {actions} = definition;
-        if (Array.isArray(actions) && actions?.length) {
-          return {...definition, actions: actions.map(a => a.action_id)};
-        }
-        return {...definition, actions: null};
-      }) as TIndicateurReferentielDefinition[];
+      return (
+        data
+          // tri par nom (pour que les diacritiques soient pris en compte)
+          ?.sort((a, b) => a.nom.localeCompare(b.nom))
+          // extrait les ids des actions liées aux indicateurs
+          .map(definition => {
+            const {actions} = definition;
+            if (Array.isArray(actions) && actions?.length) {
+              return {...definition, actions: actions.map(a => a.action_id)};
+            }
+            return {...definition, actions: null};
+          }) as TIndicateurReferentielDefinition[]
+      );
     },
     DISABLE_AUTO_REFETCH
   );

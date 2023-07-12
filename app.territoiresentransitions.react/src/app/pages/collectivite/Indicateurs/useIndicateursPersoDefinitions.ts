@@ -15,10 +15,14 @@ export const useIndicateursPersoDefinitions = (collectivite_id: number) => {
         .order('titre', {ascending: true});
 
       return (
-        (data?.map(definition => ({
-          ...definition,
-          isPerso: true,
-        })) as TIndicateurPersoDefinition[]) || []
+        data
+          // tri par titre (pour que les diacritiques soient pris en compte)
+          ?.sort((a, b) => a.titre.localeCompare(b.titre))
+          // ajoute le flag `isPerso`
+          .map(definition => ({
+            ...definition,
+            isPerso: true,
+          })) as TIndicateurPersoDefinition[]
       );
     }
   );
