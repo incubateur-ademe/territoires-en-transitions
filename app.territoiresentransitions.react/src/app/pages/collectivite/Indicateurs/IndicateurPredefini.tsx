@@ -5,7 +5,7 @@ import {referentielToName} from 'app/labels';
 import {useIndicateur, useIndicateursEnfants} from './useIndicateurDefinitions';
 import {ActionsLieesCards} from '../PlansActions/FicheAction/FicheActionForm/ActionsLiees';
 import {IndicateurSidePanel} from './IndicateurSidePanel';
-import IndicateurChart from './IndicateurChart';
+import IndicateurChart from './charts/IndicateurChart';
 import {HeaderIndicateur} from './Header';
 import {IndicateurValuesTabs} from './IndicateurValuesTabs';
 import {IndicateurEnfant} from './IndicateurEnfant';
