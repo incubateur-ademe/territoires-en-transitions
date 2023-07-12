@@ -133,7 +133,7 @@ const findCommonLinkedActions = (
   return (
     actionsIds
       // enlève les tableaux vides
-      .filter(a => a.length)
+      .filter(a => a?.length)
       // détermine le sous-ensemble des ids communs
       .reduce((a, b) => a.filter(c => b.includes(c)))
   );
