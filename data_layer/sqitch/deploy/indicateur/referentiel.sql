@@ -87,12 +87,22 @@ alter table indicateur_resultat_commentaire
 create view indicateur_rempli
 as
 select indicateur_id,
-       null              as perso_id,
+       null::integer     as perso_id,
        collectivite_id,
        count(valeur) > 0 as rempli
 from indicateur_resultat ir
 group by indicateur_id, collectivite_id
 union all
+
+select alt.id,
+       null              as perso_id,
+       collectivite_id,
+       count(valeur) > 0 as rempli
+from indicateur_resultat ir
+         join indicateur_definition alt on alt.valeur_indicateur = ir.indicateur_id
+group by alt.id, collectivite_id
+union all
+
 select null,
        indicateur_id,
        collectivite_id,
