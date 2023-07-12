@@ -422,3 +422,4 @@ cron/refresh_export_score_audit 2023-06-28T14:03:20Z Amandine Jacquelin <conta@L
 @v2.44.0 2023-07-06T07:57:08Z Florian <florian@derfurth.com> # Statuts à la sous-action et export scores pre et post-audit
 
 utilisateur/visite [utilisateur/visite@v2.44.0] 2023-07-10T09:40:14Z Florian <florian@derfurth.com> # Ajoute les pages synthèse au tracker
+@v2.45.0 2023-07-12T09:51:00Z Florian <florian@derfurth.com> # Tracking pour les futures pages de synthèse
