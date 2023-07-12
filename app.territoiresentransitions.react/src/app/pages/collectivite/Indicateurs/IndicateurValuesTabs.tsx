@@ -105,7 +105,7 @@ const ValuesTableBase = ({
     <table className="w-full fr-table fr-table--bordered fr-mb-0">
       <thead>
         <tr>
-          <th scope="col">Date</th>
+          <th scope="col">Année</th>
           <th scope="col">
             {type === 'resultat' ? 'Résultat' : 'Objectif'}
             {unite && <span className="font-normal"> ({unite})</span>}
@@ -194,7 +194,13 @@ const useTableRowState = ({
   const onChange = (
     key: keyof typeof state,
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => setState({...state, [key]: e.target.value});
+  ) => {
+    if (key === 'annee' && e.target.value.length > 4) {
+      setState({...state, annee: e.target.value.slice(0, 4)});
+    } else {
+      setState({...state, [key]: e.target.value});
+    }
+  };
 
   const onBlur = () => {
     // il faut une date valide pour sauvegarder
@@ -268,7 +274,7 @@ const ValueTableRow = ({
   // ref. pour appliquer un filtre dans les champs de saisie
   const refAnnee = useInputFilterRef<HTMLInputElement>(
     onlyNumericRegExp,
-    'Nombre uniquement'
+    'Écrire ici au format AAAA'
   );
   const refValeur = useInputFilterRef<HTMLInputElement>(
     onlyNumericWithFloatRegExp,
@@ -287,7 +293,7 @@ const ValueTableRow = ({
           placeholder={PLACEHOLDER}
           value={annee}
           readOnly={isReadonly.annee}
-          size={4}
+          size={8}
           onChange={e => onChange('annee', e)}
         />
       </td>
