@@ -1096,6 +1096,7 @@ export interface Database {
           fiche_id: number
           indicateur_id: string | null
           indicateur_personnalise_id: number | null
+          fiche_resume: unknown | null
         }
         Insert: {
           fiche_id: number
@@ -1291,6 +1292,7 @@ export interface Database {
           parent: string | null
           participation_score: boolean
           programmes: Database["public"]["Enums"]["indicateur_programme"][]
+          selection: boolean
           source: string | null
           thematiques: Database["public"]["Enums"]["indicateur_thematique"][]
           titre_long: string
@@ -1310,6 +1312,7 @@ export interface Database {
           parent?: string | null
           participation_score?: boolean
           programmes?: Database["public"]["Enums"]["indicateur_programme"][]
+          selection?: boolean
           source?: string | null
           thematiques?: Database["public"]["Enums"]["indicateur_thematique"][]
           titre_long?: string
@@ -1329,6 +1332,7 @@ export interface Database {
           parent?: string | null
           participation_score?: boolean
           programmes?: Database["public"]["Enums"]["indicateur_programme"][]
+          selection?: boolean
           source?: string | null
           thematiques?: Database["public"]["Enums"]["indicateur_thematique"][]
           titre_long?: string
@@ -4972,20 +4976,35 @@ export interface Database {
             Args: Record<PropertyKey, never>
             Returns: string
           }
-      fiche_resume: {
-        Args: {
-          "": unknown
-        }
-        Returns: {
-          collectivite_id: number | null
-          id: number | null
-          modified_at: string | null
-          pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
-          plans: unknown[] | null
-          statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
-          titre: string | null
-        }[]
-      }
+      fiche_resume:
+        | {
+            Args: {
+              "": unknown
+            }
+            Returns: {
+              collectivite_id: number | null
+              id: number | null
+              modified_at: string | null
+              pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
+              plans: unknown[] | null
+              statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
+              titre: string | null
+            }[]
+          }
+        | {
+            Args: {
+              "": unknown
+            }
+            Returns: {
+              collectivite_id: number | null
+              id: number | null
+              modified_at: string | null
+              pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
+              plans: unknown[] | null
+              statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
+              titre: string | null
+            }[]
+          }
       filter_fiches_action: {
         Args: {
           collectivite_id: number
@@ -7028,7 +7047,17 @@ export interface Database {
       indicateur_group: "cae" | "crte" | "eci"
       indicateur_programme: "clef" | "eci" | "cae" | "pcaet" | "crte"
       indicateur_referentiel_type: "resultat" | "impact"
-      indicateur_thematique: "eci_dechets" | "energie_et_climat"
+      indicateur_thematique:
+        | "eci_dechets"
+        | "energie_et_climat"
+        | "indicateur_thematique"
+        | "agri_alim"
+        | "urbanisme_et_amenagement"
+        | "mobilite_et_transport"
+        | "nature_environnement_air"
+        | "eau_assainissement"
+        | "strategie_orga_interne"
+        | "activites_economiques"
       indicateur_valeur_type: "resultat" | "objectif" | "import"
       membre_fonction:
         | "referent"
