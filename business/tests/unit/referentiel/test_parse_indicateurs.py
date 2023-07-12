@@ -29,6 +29,7 @@ def test_parse_markdown_indicateurs_from_ok_folder():
             fnv=None,
             parent=None,
             type=None,
+            selection=False
         ),
         MarkdownIndicateur(
             id="cae_1.b",
@@ -49,5 +50,6 @@ def test_parse_markdown_indicateurs_from_ok_folder():
             fnv=None,
             parent=None,
             type=None,
+            selection=False
         ),
     ]
