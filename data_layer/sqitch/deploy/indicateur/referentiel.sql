@@ -43,7 +43,18 @@ alter table indicateur_definition
 comment on column indicateur_definition.type is
     'Le type d''indicateur, résultat ou impact.';
 
-create type indicateur_thematique as enum ('eci_dechets', 'energie_et_climat');
+create type indicateur_thematique as enum (
+    'eci_dechets',
+    'energie_et_climat',
+    'indicateur_thematique',
+    'agri_alim',
+    'urbanisme_et_amenagement',
+    'mobilite_et_transport',
+    'nature_environnement_air',
+    'eau_assainissement',
+    'strategie_orga_interne',
+    'activites_economiques'
+    );
 
 alter table indicateur_definition
     add thematiques indicateur_thematique[] default array []::indicateur_thematique[] not null;
