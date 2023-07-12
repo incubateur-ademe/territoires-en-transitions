@@ -6,7 +6,10 @@ import {referentielToName} from 'app/labels';
 import {useFilteredDefinitions} from './useFilteredDefinitions';
 import {FilterSummary} from './FilterSummary';
 
-const REFERENTIEL_TO_NAME = {...referentielToName, crte: 'CRTE'};
+const REFERENTIEL_TO_NAME: typeof referentielToName = {
+  ...referentielToName,
+  crte: 'CRTE',
+};
 
 /**
  * Affiche les indicateurs associés à un référentiel
