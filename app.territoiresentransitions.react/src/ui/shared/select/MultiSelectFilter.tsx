@@ -10,6 +10,7 @@ import {getOptions} from './commons';
 export const MultiSelectFilter = <T extends string>({
   values,
   options,
+  dsfrButton,
   buttonClassName,
   placeholderText,
   onSelect,
@@ -46,6 +47,7 @@ export const MultiSelectFilter = <T extends string>({
   return (
     <MultiSelectDropdown
       data-test={dataTest}
+      dsfrButton={dsfrButton}
       buttonClassName={buttonClassName}
       values={values}
       options={options}

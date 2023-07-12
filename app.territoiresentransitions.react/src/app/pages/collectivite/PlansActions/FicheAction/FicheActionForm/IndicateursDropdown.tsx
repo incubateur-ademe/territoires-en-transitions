@@ -33,6 +33,7 @@ const IndicateursDropdown = ({indicateurs, onSelect, isReadonly}: Props) => {
 
   return (
     <AutocompleteInputSelect
+      dsfrButton
       containerWidthMatchButton
       values={indicateurs?.map((indicateur: Indicateur) =>
         indicateur.indicateur_personnalise_id

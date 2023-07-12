@@ -102,7 +102,7 @@ export const RegionFiltre = (props: {
   <fieldset>
     <label className="font-semibold mb-2 ml-0">Région</label>
     <MultiSelectDropdown
-      buttonClassName={DSFRbuttonClassname}
+      dsfrButton
       options={props.regions.map(({code, libelle}) => ({
         value: code,
         label: libelle,
@@ -123,7 +123,7 @@ export const DepartementFiltre = (props: {
     <fieldset>
       <label className="font-semibold mb-2 ml-0">Département</label>
       <MultiSelectDropdown
-        buttonClassName={DSFRbuttonClassname}
+        dsfrButton
         placeholderText="Sélectionnez un ou plusieurs départements"
         options={props.departements
           .filter(

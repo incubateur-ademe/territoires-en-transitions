@@ -104,6 +104,7 @@ const FichesLiees = ({
     <>
       <FormField label="Fiches des plans liées">
         <AutocompleteInputSelect
+          dsfrButton
           containerWidthMatchButton
           values={fiches?.map((fiche: FicheResume) => fiche.id!.toString())}
           options={formatOptions(ficheListeSansFicheCourante)}

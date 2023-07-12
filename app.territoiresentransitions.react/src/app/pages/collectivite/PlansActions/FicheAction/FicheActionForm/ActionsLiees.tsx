@@ -54,6 +54,7 @@ const ActionsLiees = ({actions, onSelect, isReadonly}: Props) => {
     <>
       <FormField label="Actions des référentiels liées">
         <AutocompleteInputSelect
+          dsfrButton
           containerWidthMatchButton
           values={actions?.map((action: TActionRelationInsert) => action.id)}
           options={formatOptions(actionListe)}
