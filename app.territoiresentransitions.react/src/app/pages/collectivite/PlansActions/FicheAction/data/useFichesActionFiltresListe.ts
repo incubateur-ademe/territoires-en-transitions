@@ -67,7 +67,6 @@ export const fetchFichesActionFiltresListe = async (
       collectivite_id: collectivite_id!,
       axes_id: axes,
       sans_plan: sansPlan || undefined,
-      // sans_plan: sans_plan === 1 || sans_plan[0] === '1',
       pilotes: makePersonnesWithIds(pilotes),
       sans_pilote: sansPilote || undefined,
       referents: makePersonnesWithIds(referents),

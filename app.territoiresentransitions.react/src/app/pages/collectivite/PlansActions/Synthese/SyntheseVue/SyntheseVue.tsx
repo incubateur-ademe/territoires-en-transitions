@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {Link, useParams} from 'react-router-dom';
+import {Link, useLocation, useParams} from 'react-router-dom';
 import HeaderTitle from '../../components/HeaderTitle';
 import {
   makeCollectiviteFicheNonClasseeUrl,
@@ -22,6 +22,7 @@ import SyntheseVueGraph from './SyntheseVueGraph';
 const SyntheseVue = () => {
   const collectivite_id = useCollectiviteId();
   const {syntheseVue} = useParams<{syntheseVue: FiltersKeys}>();
+  const {search} = useLocation();
 
   const pageUrl = makeCollectivitePlansActionsSyntheseVueUrl({
     collectiviteId: collectivite_id!,
@@ -114,44 +115,53 @@ const SyntheseVue = () => {
           />
         </div>
 
-        {/** Fiches */}
+        {/** Divider */}
         <div className="my-8 border-b border-gray-200" />
+        {/** Fiches */}
         <div className="mb-16">
-          <div className="flex items-baseline mb-8">
-            <p
-              data-test="NombreFichesAction"
-              className="mb-0 mr-6 text-gray-500"
-            >
-              {total} fiche{total > 1 && 's'} action correspond
-              {total > 1 && 'ent'} à votre recherche
-            </p>
-            {filtersCount > 1 && (
-              <DesactiverLesFiltres
-                onClick={() => setFilters(initialFilters)}
-              />
-            )}
-          </div>
-          <div className="grid grid-cols-2 gap-6">
-            {items.map(fiche => (
-              <FicheActionCard
-                key={fiche.id}
-                displayAxe
-                ficheAction={fiche}
-                link={
-                  fiche.plans && fiche.plans[0]
-                    ? makeCollectivitePlanActionFicheUrl({
-                        collectiviteId: collectivite_id!,
-                        planActionUid: fiche.plans[0].id?.toString()!,
-                        ficheUid: fiche.id?.toString()!,
-                      })
-                    : makeCollectiviteFicheNonClasseeUrl({
-                        collectiviteId: collectivite_id!,
-                        ficheUid: fiche.id?.toString()!,
-                      })
-                }
-              />
-            ))}
-          </div>
+          {search.length && search.length > 1 ? (
+            <>
+              <div className="flex items-baseline mb-8">
+                <p
+                  data-test="NombreFichesAction"
+                  className="mb-0 mr-6 text-gray-500"
+                >
+                  {total} fiche{total > 1 && 's'} action correspond
+                  {total > 1 && 'ent'} à votre recherche
+                </p>
+                {filtersCount > 1 && (
+                  <DesactiverLesFiltres
+                    onClick={() => setFilters(initialFilters)}
+                  />
+                )}
+              </div>
+              <div className="grid grid-cols-2 gap-6">
+                {items.map(fiche => (
+                  <FicheActionCard
+                    key={fiche.id}
+                    displayAxe
+                    ficheAction={fiche}
+                    link={
+                      fiche.plans && fiche.plans[0]
+                        ? makeCollectivitePlanActionFicheUrl({
+                            collectiviteId: collectivite_id!,
+                            planActionUid: fiche.plans[0].id?.toString()!,
+                            ficheUid: fiche.id?.toString()!,
+                          })
+                        : makeCollectiviteFicheNonClasseeUrl({
+                            collectiviteId: collectivite_id!,
+                            ficheUid: fiche.id?.toString()!,
+                          })
+                    }
+                  />
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className="mt-20 text-center text-gray-500">
+              Sélectionnez des filtres pour afficher la liste des fiches action
+            </div>
+          )}
         </div>
       </div>
     </div>
