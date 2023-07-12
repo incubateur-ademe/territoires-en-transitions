@@ -28,6 +28,9 @@ alter table indicateur_definition
     drop participation_score;
 
 alter table indicateur_definition
+    drop selection;
+
+alter table indicateur_definition
     drop titre_long;
 
 alter table indicateur_definition
