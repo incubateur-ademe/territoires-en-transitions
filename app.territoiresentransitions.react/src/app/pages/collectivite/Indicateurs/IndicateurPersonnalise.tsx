@@ -7,7 +7,7 @@ import {TIndicateurPersoDefinition} from './types';
 import {useIndicateurPersoDefinition} from './useIndicateursPersoDefinitions';
 import {useIndicateurACompleter} from './useIndicateurDefinitions';
 import {useUpsertIndicateurPersoDefinition} from './useUpsertIndicateurPersoDefinition';
-import IndicateurChart from './IndicateurChart';
+import IndicateurChart from './charts/IndicateurChart';
 import {HeaderIndicateur} from './Header';
 import {IndicateurValuesTabs} from './IndicateurValuesTabs';
 import {FichesActionLiees} from './FichesActionLiees';
