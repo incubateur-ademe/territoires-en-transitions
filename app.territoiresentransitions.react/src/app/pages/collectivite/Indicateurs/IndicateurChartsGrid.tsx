@@ -1,7 +1,8 @@
 import {Link} from 'react-router-dom';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useIntersectionObserver} from 'utils/useIntersectionObserver';
-import IndicateurChart, {TIndicateurChartProps} from './IndicateurChart';
+import IndicateurChart from './charts/IndicateurChart';
+import {TIndicateurChartProps} from './charts/types';
 import {TIndicateurDefinition, TIndicateurReferentielDefinition} from './types';
 import {makeCollectiviteIndicateursUrl} from 'app/paths';
 
