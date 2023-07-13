@@ -1,5 +1,5 @@
 import {MouseEventHandler} from 'react';
-import AnchorAsButton from 'ui/buttons/AnchorAsButton';
+import AnchorAsButton from './AnchorAsButton';
 
 export type TDisableAllFiltersProps = {
   filtersCount: number;

@@ -1,7 +1,7 @@
 import {useTableData} from './useTableData';
 import {DetailTacheTable} from './DetailTacheTable';
 import {noFilters} from './filters';
-import {DisableAllFilters} from '../ReferentielTable/DisableAllFilters';
+import {DisableAllFilters} from 'ui/buttons/DisableAllFilters';
 
 const DetailTaches = () => {
   const tableData = useTableData();

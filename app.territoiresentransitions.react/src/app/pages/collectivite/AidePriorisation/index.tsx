@@ -3,7 +3,7 @@ import {Table} from './Table';
 import {getFilterInfoMessage, noFilters} from './filters';
 import {getMaxDepth} from './queries';
 import {useReferentielId} from 'core-logic/hooks/params';
-import {DisableAllFilters} from '../ReferentielTable/DisableAllFilters';
+import {DisableAllFilters} from 'ui/buttons/DisableAllFilters';
 
 const AidePriorisation = () => {
   const tableData = useTableData();
