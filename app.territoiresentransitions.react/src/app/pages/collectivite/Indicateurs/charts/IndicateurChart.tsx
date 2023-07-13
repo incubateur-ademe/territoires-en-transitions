@@ -1,6 +1,7 @@
 import {CSSProperties} from 'react';
 import {CustomLayerProps} from '@nivo/line';
 import classNames from 'classnames';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {ChartCardContent} from 'ui/charts/ChartCard';
 import LineChart, {
   LineChartProps,
@@ -11,7 +12,7 @@ import {useIndicateurValeurs} from '../useIndicateurValeurs';
 import {getChartTitle, getXTickValues, prepareData} from './utils';
 import {PathLine, SliceTooltip, getLineStyleBySerieId} from './SliceTooltip';
 import {Card} from './Card';
-import {NoData} from './CardNoData';
+import {CardNoData} from './CardNoData';
 import {TIndicateurChartProps, TIndicateurChartBaseProps} from './types';
 
 /**
@@ -127,11 +128,12 @@ const IndicateurChart = (props: TIndicateurChartProps) => {
   const {definition} = props;
 
   const {data: valeurs, isLoading} = useIndicateurValeurs(definition);
+  const isReadonly = useCurrentCollectivite()?.readonly ?? true;
 
   const noDataAvailable = !isLoading && !valeurs?.length;
 
   return noDataAvailable ? (
-    <NoData {...props} />
+    <CardNoData {...props} isReadonly={isReadonly} />
   ) : (
     <IndicateurChartBase {...props} valeurs={valeurs!} />
   );
