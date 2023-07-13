@@ -4,13 +4,20 @@ import {TEditIndicateurValeurHandlers} from './useEditIndicateurValeur';
 
 export const OPTION_DELETE = 'delete';
 
+export type TUseTableRowStateArgs = {
+  /** donnée de la ligne (`undefined` pour une nouvelle ligne) */
+  row?: TIndicateurValeurEtCommentaires;
+  /** fonctions pour mettre à jour les données ou supprimer la ligne */
+  editHandlers: TEditIndicateurValeurHandlers;
+  /** appelé quand la valeur d'une nouvelle ligne est enregisrée */
+  onValueSaved?: (annee: number) => void;
+};
+
 export const useTableRowState = ({
   row,
   editHandlers,
-}: {
-  row?: TIndicateurValeurEtCommentaires;
-  editHandlers: TEditIndicateurValeurHandlers;
-}) => {
+  onValueSaved,
+}: TUseTableRowStateArgs) => {
   const {editValeur, editComment, deleteValue} = editHandlers;
 
   const initialState = {
@@ -55,15 +62,15 @@ export const useTableRowState = ({
       setState(initialState);
     }
 
-    // sinon et si la valeur a changé
+    // sinon enregistre la valeur si elle a changé
     else if (valeur !== row?.valeur) {
+      editValeur({annee, valeur});
       // réinitialise l'état si on vient d'ajouter une nouvelle ligne, sinon le
       // refetch après enregistrement provoquera l'affichage de 2 lignes dans le tableau
       if (!row?.annee) {
+        onValueSaved?.(annee);
         setState({annee: '', valeur: '', commentaire: ''});
       }
-      // enregistre la valeur si elle est valide
-      editValeur({annee, valeur});
     }
 
     // vérifie si le commentaire a changé

@@ -14,6 +14,7 @@ import {
   ValueTableRowReadOnly,
   IndicateurValueTableRow,
 } from './IndicateurValueTableRow';
+import {useEffect, useState} from 'react';
 
 /** Charge les données et affiche le tableau des valeurs */
 export const IndicateurValuesTable = ({
@@ -61,6 +62,19 @@ const ValuesTableBase = ({
   const haveManyValues = values.length > SHOW_MORE_THRESHOLD;
   const valuesToShow =
     haveManyValues && !showAll ? values.slice(0, SHOW_MORE_THRESHOLD) : values;
+  const [lastAddedYear, setLastAddedYear] = useState<number | null>(null);
+
+  // affiche tous les résultats si la dernière ligne ajoutée ne fait pas partie
+  // des lignes affichées par défaut
+  useEffect(() => {
+    if (
+      lastAddedYear !== null &&
+      !showAll &&
+      valuesToShow.findIndex(v => v.annee === lastAddedYear) === -1
+    ) {
+      toggleShowAll();
+    }
+  }, [lastAddedYear]);
 
   return (
     <table className="w-full fr-table fr-table--bordered fr-mb-0">
@@ -81,12 +95,17 @@ const ValuesTableBase = ({
           ))
         ) : (
           <>
-            <IndicateurValueTableRow key="new" editHandlers={editHandlers} />
+            <IndicateurValueTableRow
+              key="new"
+              editHandlers={editHandlers}
+              onValueSaved={setLastAddedYear}
+            />
             {valuesToShow.map(row => (
               <IndicateurValueTableRow
                 key={`${row.type}-${row.annee}`}
                 row={row}
                 editHandlers={editHandlers}
+                autoFocus={row.annee === lastAddedYear}
               />
             ))}
           </>

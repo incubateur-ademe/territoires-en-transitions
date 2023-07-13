@@ -1,15 +1,18 @@
 import classNames from 'classnames';
 import ThreeDotMenu from 'ui/shared/select/ThreeDotMenu';
 import {InfoTooltip} from 'ui/shared/floating-ui/InfoTooltip';
+import Textarea from 'ui/shared/form/Textarea';
 import {
   onlyNumericRegExp,
   onlyNumericWithFloatRegExp,
   useInputFilterRef,
 } from 'ui/shared/form/utils';
 import {TIndicateurValeurEtCommentaires} from '../useIndicateurValeurs';
-import {TEditIndicateurValeurHandlers} from './useEditIndicateurValeur';
-import Textarea from 'ui/shared/form/Textarea';
-import {OPTION_DELETE, useTableRowState} from './useTableRowState';
+import {
+  OPTION_DELETE,
+  TUseTableRowStateArgs,
+  useTableRowState,
+} from './useTableRowState';
 
 const PLACEHOLDER = 'Écrire ici...';
 const OPTIONS = [
@@ -23,10 +26,13 @@ const OPTIONS = [
 /** Affiche une ligne du tableau */
 export const IndicateurValueTableRow = ({
   row,
+  autoFocus,
   editHandlers,
-}: {
-  row?: TIndicateurValeurEtCommentaires;
-  editHandlers: TEditIndicateurValeurHandlers;
+  onValueSaved,
+}: TUseTableRowStateArgs & {
+  /** pour garder le focus dans le champ commentaire après l'ajout et le refetch
+   * d'une nouvelle ligne */
+  autoFocus?: boolean;
 }) => {
   const {
     annee,
@@ -37,7 +43,7 @@ export const IndicateurValueTableRow = ({
     onChange,
     onBlur,
     onSelectMenuOption,
-  } = useTableRowState({row, editHandlers});
+  } = useTableRowState({row, editHandlers, onValueSaved});
 
   // ref. pour appliquer un filtre dans les champs de saisie
   const refAnnee = useInputFilterRef<HTMLInputElement>(
@@ -94,6 +100,7 @@ export const IndicateurValueTableRow = ({
             readOnly={isReadonly.commentaire}
             onChange={e => onChange('commentaire', e)}
             onBlur={onBlur}
+            autoFocus={autoFocus}
           />
         )}
         {showDeleteButton && (
