@@ -1,6 +1,9 @@
 import {ITEM_ALL} from 'ui/shared/filters/commons';
-import {useIndicateurThematiquesLabels} from './useIndicateurDefinitions';
-import {TIndicateurDefinition, TIndicateurReferentielDefinition} from './types';
+import {useIndicateurThematiquesLabels} from '../useIndicateurDefinitions';
+import {
+  TIndicateurDefinition,
+  TIndicateurReferentielDefinition,
+} from '../types';
 import {useSearchParams} from 'core-logic/hooks/query';
 import {useFilterOptions} from './useFilterOptions';
 
@@ -35,6 +38,8 @@ type TFilteringParams = {
   /** ajoute le filtre "participe au score" avec le libellé donné si renseigné */
   addParticipationScoreWithLabel?: string;
 };
+
+export type TFilteredDefinitions = ReturnType<typeof useFilteredDefinitions>;
 
 /**
  * Gère le filtrage et les options de filtrage d'un ensemble de définitions d'indicateur
