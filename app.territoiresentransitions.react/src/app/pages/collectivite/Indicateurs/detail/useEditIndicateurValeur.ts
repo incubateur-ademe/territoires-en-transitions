@@ -1,7 +1,7 @@
 import {useMutation, useQueryClient} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {TIndicateurDefinition} from './types';
+import {TIndicateurDefinition} from '../types';
 
 type TypeValeur = 'resultat' | 'objectif';
 
