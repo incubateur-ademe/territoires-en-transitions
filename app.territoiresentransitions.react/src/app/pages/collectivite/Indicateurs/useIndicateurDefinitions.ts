@@ -62,6 +62,10 @@ export const useIndicateursParentsCles = () =>
     programmes?.includes('clef')
   );
 
+/** Fourni les définitions des indicateurs pour la page "Sélection" */
+export const useIndicateursParentsSelection = () =>
+  useIndicateursParents()?.filter(({selection}) => selection);
+
 /** Fourni les définitions des indicateurs liés à une action du référentiel */
 export const useIndicateursAction = (actionId: string) =>
   useIndicateurDefinitions()?.filter(({actions}) =>

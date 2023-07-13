@@ -37,7 +37,8 @@ export type IndicateurViewParamOption =
   | 'eci'
   | 'crte'
   | 'perso'
-  | 'cles';
+  | 'cles'
+  | 'selection';
 export type ReferentielVueParamOption =
   | 'progression'
   | 'priorisation'

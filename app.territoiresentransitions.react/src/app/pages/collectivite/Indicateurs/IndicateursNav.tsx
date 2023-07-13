@@ -31,6 +31,7 @@ export const IndicateursNav = () => {
 
 // correspondances entre item et libellé
 export const VIEW_TITLES: Record<IndicateurViewParamOption, string> = {
+  selection: 'Sélection',
   cles: 'Indicateurs clés',
   //  tous: 'Tous les indicateurs',
   perso: 'Indicateurs personnalisés',
@@ -42,6 +43,7 @@ export const VIEW_TITLES: Record<IndicateurViewParamOption, string> = {
 // items dans l'ordre de l'affichage voulu
 const ITEMS: IndicateurViewParamOption[] = [
   'cles',
+  'selection',
   'perso',
   'cae',
   'eci',
