@@ -202,7 +202,7 @@ from indicateur_resultat r
                    on r.indicateur_id = c.indicateur_id
                        and r.collectivite_id = c.collectivite_id
                        and r.annee = c.annee
-where have_lecture_acces(r.collectivite_id)
+where can_read_acces_restreint(r.collectivite_id)
 union all
 
 --- indicateurs dont le résultat est en fait celui d'un autre.
@@ -220,7 +220,7 @@ from indicateur_resultat r
                    on r.indicateur_id = c.indicateur_id
                        and r.collectivite_id = c.collectivite_id
                        and r.annee = c.annee
-where have_lecture_acces(r.collectivite_id)
+where can_read_acces_restreint(r.collectivite_id)
 
 union all
 select 'objectif'::indicateur_valeur_type as type,
@@ -237,7 +237,7 @@ from indicateur_objectif o
                    on o.indicateur_id = c.indicateur_id
                        and o.collectivite_id = c.collectivite_id
                        and o.annee = c.annee
-where have_lecture_acces(o.collectivite_id)
+where can_read_acces_restreint(o.collectivite_id)
 union all
 
 --- indicateurs dont l'objectif est en fait celui d'un autre.
@@ -255,7 +255,7 @@ from indicateur_objectif o
                    on o.indicateur_id = c.indicateur_id
                        and o.collectivite_id = c.collectivite_id
                        and o.annee = c.annee
-where have_lecture_acces(o.collectivite_id)
+where can_read_acces_restreint(o.collectivite_id)
 
 union all
 select 'import'::indicateur_valeur_type as type,
@@ -267,7 +267,7 @@ select 'import'::indicateur_valeur_type as type,
        null,
        source
 from indicateur_resultat_import
-where have_lecture_acces(collectivite_id)
+where can_read_acces_restreint(collectivite_id)
 
 union all
 select 'resultat'::indicateur_valeur_type as type,
@@ -280,7 +280,7 @@ select 'resultat'::indicateur_valeur_type as type,
        null
 from indicateur_personnalise_resultat r
          left join indicateur_perso_resultat_commentaire c using (collectivite_id, indicateur_id, annee)
-where have_lecture_acces(collectivite_id)
+where can_read_acces_restreint(collectivite_id)
 
 union all
 select 'objectif'::indicateur_valeur_type as type,
@@ -293,7 +293,7 @@ select 'objectif'::indicateur_valeur_type as type,
        null
 from indicateur_personnalise_objectif r
          left join indicateur_perso_objectif_commentaire c using (collectivite_id, indicateur_id, annee)
-where have_lecture_acces(collectivite_id)
+where can_read_acces_restreint(collectivite_id)
 ;
 
 comment on view indicateurs is 'Les valeurs des indicateurs consolidées.';
