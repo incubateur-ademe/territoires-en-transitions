@@ -8,6 +8,7 @@ import {IndicateursNav, VIEW_TITLES} from './IndicateursNav';
 import {IndicateursPersonnalisesList} from './IndicateursPersonnalisesList';
 import {IndicateursReferentielList} from './IndicateursReferentielList';
 import {IndicateursClesList} from './IndicateursClesList';
+import {IndicateursSelectionList} from './IndicateursSelectionList';
 import {IndicateurPersonnalise} from './IndicateurPersonnalise';
 import {IndicateurPredefini} from './IndicateurPredefini';
 import {HeaderIndicateursList} from './Header';
@@ -26,6 +27,8 @@ const IndicateursList = (props: {view: IndicateurViewParamOption}) => {
   // if (view === 'tous') return <AllIndicateursList />;
   if (view === 'perso') return <IndicateursPersonnalisesList />;
   if (view === 'cles') return <IndicateursClesList />;
+  if (view === 'selection') return <IndicateursSelectionList />;
+
   return <IndicateursReferentielList referentiel={view} />;
 };
 
