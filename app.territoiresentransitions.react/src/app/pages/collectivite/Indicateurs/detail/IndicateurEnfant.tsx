@@ -1,14 +1,14 @@
 import classNames from 'classnames';
-import {TIndicateurReferentielDefinition} from './types';
+import {TIndicateurReferentielDefinition} from '../types';
 import {IndicateurValuesTabs} from './IndicateurValuesTabs';
 import {Badge} from 'ui/shared/Badge';
 import {BadgeACompleter} from 'ui/shared/Badge/BadgeACompleter';
 import {useToggle} from 'ui/shared/useToggle';
 import {ExpandToggle} from 'ui/icons/ExpandToggle';
-import {useIndicateurACompleter} from './useIndicateurDefinitions';
-import {ActionsLieesCards} from '../PlansActions/FicheAction/FicheActionForm/ActionsLiees';
-import IndicateurChart from './charts/IndicateurChart';
-import {FichesActionLiees} from './FichesActionLiees';
+import {useIndicateurACompleter} from '../useIndicateurDefinitions';
+import {ActionsLieesCards} from '../../PlansActions/FicheAction/FicheActionForm/ActionsLiees';
+import IndicateurChart from '../charts/IndicateurChart';
+import {FichesActionLiees} from '../FichesActionLiees';
 
 export const IndicateurEnfant = ({
   definition,
