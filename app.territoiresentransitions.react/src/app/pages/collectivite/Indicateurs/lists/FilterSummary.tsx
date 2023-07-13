@@ -1,4 +1,4 @@
-import {DisableAllFilters} from 'app/pages/collectivite/ReferentielTable/DisableAllFilters';
+import {DisableAllFilters} from 'ui/buttons/DisableAllFilters';
 import {ITEM_ALL} from 'ui/shared/filters/commons';
 
 /**
