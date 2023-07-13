@@ -1,5 +1,5 @@
+import {DisableAllFilters} from 'app/pages/collectivite/ReferentielTable/DisableAllFilters';
 import {ITEM_ALL} from 'ui/shared/filters/commons';
-import {DisableAllFilters} from '../ReferentielTable/DisableAllFilters';
 
 /**
  * Affiche le nombre de résultats du filtrage et un bouton pour réinitialiser les filtres
