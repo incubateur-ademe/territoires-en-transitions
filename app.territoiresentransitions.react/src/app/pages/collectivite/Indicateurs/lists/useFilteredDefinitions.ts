@@ -6,6 +6,8 @@ import {
 } from '../types';
 import {useSearchParams} from 'core-logic/hooks/query';
 import {useFilterOptions} from './useFilterOptions';
+import {useEffect} from 'react';
+import {TOption} from 'ui/shared/select/commons';
 
 const ITEM_PARTICIPE_SCORE = 'ps';
 const ITEM_SANS_THEMATIQUE = 'st';
@@ -39,7 +41,20 @@ type TFilteringParams = {
   addParticipationScoreWithLabel?: string;
 };
 
-export type TFilteredDefinitions = ReturnType<typeof useFilteredDefinitions>;
+export type TFilteredDefinitions = {
+  /** options de filtrage valides */
+  options: TOption[];
+  /** options de filtrage sans résultat (grisées) */
+  optionsWithoutResults: TOption[];
+  /** sous-ensemble d'indicateurs après filtrage */
+  definitions: TIndicateurDefinition[];
+  /** options de filtrage sélectionnées (extraites de l'url) */
+  selection: string[];
+  /** ajoute ou supprime une option de filtrage de la sélection */
+  updateSelection: (value: string) => void;
+  /** réinitialise la sélection à la valeur par défaut */
+  resetSelection: () => void;
+};
 
 /**
  * Gère le filtrage et les options de filtrage d'un ensemble de définitions d'indicateur
@@ -112,8 +127,23 @@ export const useFilteredDefinitions = ({
   // réinitialise la sélection de filtres
   const resetSelection = () => setFilters(initialFilters);
 
+  // réinitialise la sélection si une option sélectionnée n'est plus valide
+  // c'est le cas notamment lorsque le filtre "à compléter" est sélectionné mais
+  // que le dernier indicateur vient d'être complété après une saisie et que
+  // l'utilisateur revient en arrière sur la liste
+  const {options, optionsWithoutResults} = getOptionsWithCounters();
+  const invalidOptions = optionsWithoutResults.map(o => o.value);
+  const invalidSelection =
+    selection.filter(value => invalidOptions.includes(value)).length > 0;
+  useEffect(() => {
+    if (invalidSelection) {
+      resetSelection();
+    }
+  }, [invalidSelection]);
+
   return {
-    ...getOptionsWithCounters(),
+    options,
+    optionsWithoutResults,
     definitions: applyFilters(selection),
     selection,
     updateSelection,
