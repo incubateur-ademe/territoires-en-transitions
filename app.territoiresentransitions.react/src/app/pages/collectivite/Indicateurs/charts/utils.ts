@@ -1,4 +1,5 @@
 import {Datum, Serie} from '@nivo/line';
+import {} from '@nivo/core';
 import {TIndicateurValeur} from '../useIndicateurValeurs';
 import {TIndicateurDefinition} from '../types';
 
@@ -70,7 +71,10 @@ export const getXTickValues = (
     ? [...new Set(valeurs.map(({annee}) => annee))]
     : [];
 
+  // puis l'écart entre le max et le min qui donne le nombre de graduations maximum
+  const ticksCount = Math.max(...distinctYears) - Math.min(...distinctYears);
+
   // une graduation par année pour éviter les doublons, si en dessous du seuil,
   // sinon on utilise la valeur seuil pour éviter la superposition de valeurs
-  return distinctYears.length < maxTickValues ? 'every year' : maxTickValues;
+  return ticksCount < maxTickValues ? 'every year' : maxTickValues;
 };
