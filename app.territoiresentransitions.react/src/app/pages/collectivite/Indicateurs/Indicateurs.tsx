@@ -5,10 +5,10 @@ import {
   IndicateurViewParamOption,
 } from 'app/paths';
 import {IndicateursNav, VIEW_TITLES} from './IndicateursNav';
-import {IndicateursPersonnalisesList} from './IndicateursPersonnalisesList';
-import {IndicateursReferentielList} from './IndicateursReferentielList';
-import {IndicateursClesList} from './IndicateursClesList';
-import {IndicateursSelectionList} from './IndicateursSelectionList';
+import {IndicateursPersonnalisesList} from './lists/IndicateursPersonnalisesList';
+import {IndicateursPredefinisList} from './lists/IndicateursPredefinisList';
+import {IndicateursClesList} from './lists/IndicateursClesList';
+import {IndicateursSelectionList} from './lists/IndicateursSelectionList';
 import {IndicateurPersonnalise} from './IndicateurPersonnalise';
 import {IndicateurPredefini} from './IndicateurPredefini';
 import {HeaderIndicateursList} from './Header';
@@ -24,12 +24,10 @@ export const viewTitles: Record<IndicateurViewParamOption, string> = {
  */
 const IndicateursList = (props: {view: IndicateurViewParamOption}) => {
   const {view} = props;
-  // if (view === 'tous') return <AllIndicateursList />;
   if (view === 'perso') return <IndicateursPersonnalisesList />;
   if (view === 'cles') return <IndicateursClesList />;
   if (view === 'selection') return <IndicateursSelectionList />;
-
-  return <IndicateursReferentielList referentiel={view} />;
+  return <IndicateursPredefinisList referentiel={view} />;
 };
 
 /** Affiche le détail d'un indicateur */

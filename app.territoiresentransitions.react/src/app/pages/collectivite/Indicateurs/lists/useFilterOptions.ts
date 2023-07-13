@@ -1,7 +1,7 @@
 import {ITEM_ALL} from 'ui/shared/filters/commons';
 import {TOption} from 'ui/shared/select/commons';
-import {useIndicateursNonRemplis} from './useIndicateurDefinitions';
-import {TIndicateurDefinition} from './types';
+import {useIndicateursNonRemplis} from '../useIndicateurDefinitions';
+import {TIndicateurDefinition} from '../types';
 
 export const ITEM_A_COMPLETER = 'ac';
 

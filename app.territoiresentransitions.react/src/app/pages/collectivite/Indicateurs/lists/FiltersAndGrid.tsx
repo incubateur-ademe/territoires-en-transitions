@@ -1,10 +1,15 @@
 import MultiTagFilters from 'ui/shared/filters/MultiTagFilters';
 import IndicateurChartsGrid from './IndicateurChartsGrid';
-import {useIndicateursParentsCles} from './useIndicateurDefinitions';
-import {useFilteredDefinitions} from './useFilteredDefinitions';
+import {TFilteredDefinitions} from './useFilteredDefinitions';
 import {FilterSummary} from './FilterSummary';
 
-export const IndicateursClesList = () => {
+/** Affiche les filtres et la grille d'indicateurs donnés */
+export const FiltersAndGrid = ({
+  filteredDefinitions,
+}: {
+  /** données fournies par `useFilteredDefinitions` */
+  filteredDefinitions: TFilteredDefinitions;
+}) => {
   // charge et filtre les définitions
   const {
     definitions,
@@ -13,10 +18,7 @@ export const IndicateursClesList = () => {
     selection,
     updateSelection,
     resetSelection,
-  } = useFilteredDefinitions({
-    definitions: useIndicateursParentsCles(),
-    defaultOptionLabel: 'Tous les indicateurs clés',
-  });
+  } = filteredDefinitions;
 
   return (
     <>

@@ -27,7 +27,7 @@ import {FichesActionLiees} from './FichesActionLiees';
 import {useScoreRealise} from '../EtatDesLieux/Referentiel/data/useScoreRealise';
 import {useCycleLabellisation} from '../ParcoursLabellisation/useCycleLabellisation';
 import {useIndicateursAction} from '../Indicateurs/useIndicateurDefinitions';
-import IndicateurChartsGrid from '../Indicateurs/IndicateurChartsGrid';
+import IndicateurChartsGrid from '../Indicateurs/lists/IndicateurChartsGrid';
 
 // index des onglets de la page Action
 const TABS_INDEX: Record<ActionVueParamOption, number> = {
