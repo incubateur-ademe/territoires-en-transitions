@@ -3,8 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "predev": "only-include-used-icons",
-    "prebuild": "only-include-used-icons",
     "dev": "next dev",
     "build": "next build",
     "start": "next start -p $PORT",
