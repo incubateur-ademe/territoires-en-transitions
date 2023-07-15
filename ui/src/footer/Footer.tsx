@@ -1,22 +1,19 @@
-import Image from 'next/image';
+import LogoRepubliqueFrancaise from "../logo/LogoRepubliqueFrancaise";
 
-const AppFooter = () => {
+export const Footer = () => {
   return (
     <footer className="fr-footer" role="contentinfo" id="footer">
       <div className="fr-container">
         <div className="fr-footer__body">
           <div className="fr-footer__brand">
-            <p className="fr-logo">
-              République
-              <br />
-              Française
-            </p>
-            <Image
-              src="/ademe.jpg"
-              alt="ADEME"
+            <LogoRepubliqueFrancaise />
+            <img
+              className="fr-footer__logo fr-ml-2w"
               width="128"
               height="146"
-              className="fr-ml-2w"
+              src="/ademe.svg"
+              alt="ADEME"
+              loading="lazy"
             />
           </div>
           <div className="fr-footer__content">
@@ -111,7 +108,7 @@ const AppFooter = () => {
           </ul>
           <div className="fr-footer__bottom-copy">
             <p>
-              Sauf mention contraire, tous les contenus de ce site sont sous{' '}
+              Sauf mention contraire, tous les contenus de ce site sont sous{" "}
               <a
                 href="https://github.com/etalab/licence-ouverte/blob/master/LO.md"
                 target="_blank"
@@ -126,5 +123,3 @@ const AppFooter = () => {
     </footer>
   );
 };
-
-export default AppFooter;
