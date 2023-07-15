@@ -1,5 +1,5 @@
 import AppHeader from './AppHeader';
-import AppFooter from './AppFooter';
+import {Footer} from '@tet/ui';
 import '@gouvfr/dsfr/dist/dsfr.css';
 import './global.css';
 
@@ -30,7 +30,7 @@ export default function RootLayout({children}: {children: JSX.Element}) {
       <body>
         <AppHeader />
         {children}
-        <AppFooter />
+        <Footer />
       </body>
     </html>
   );
