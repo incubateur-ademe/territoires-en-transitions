@@ -3,9 +3,12 @@ import {
   referentielDownToAction,
 } from 'core-logic/api/procedures/referentielProcedures';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import {supabaseClient} from "../supabase";
+import {yuluCredentials} from "../../../test_utils/collectivites";
 
 describe('Retrieve referentiel down to action', () => {
   it('should return the referentiel content', async () => {
+    await supabaseClient.auth.signInWithPassword(yuluCredentials);
     const partialRoot: Partial<ActionDefinitionSummary> = {
       id: 'eci',
       referentiel: 'eci',
@@ -44,6 +47,7 @@ describe('Retrieve referentiel down to action', () => {
 
 describe('Retrieve action down to tache', () => {
   it('should return the action content', async () => {
+    await supabaseClient.auth.signInWithPassword(yuluCredentials);
     const partialAction: Partial<ActionDefinitionSummary> = {
       id: 'eci_1.1.1',
       referentiel: 'eci',
