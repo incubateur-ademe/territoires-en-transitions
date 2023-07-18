@@ -6,7 +6,6 @@ unite: '%'
 valeur: eci_26
 
 titre_long: Taux de fuite des réseaux d’eau du territoire
-selection: yes
 programmes:
   - crte
 thematiques:
