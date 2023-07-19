@@ -69,6 +69,21 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
   useEffect(() => {
     if (userData) {
       setCrispUserData(userData);
+
+      let environment = process.env.NODE_ENV;
+      if (window.location.href.includes('upcoming')) environment = 'test';
+      if (window.location.href.includes('localhost'))
+        environment = 'development';
+
+      if (environment === 'production' || environment === 'test') {
+        // @ts-ignore
+        window.userGuiding.identify(userData.user_id, {
+          Environment: environment,
+          Surname: userData.nom,
+          Name: userData.prenom,
+          Email: userData.email,
+        });
+      }
     } else {
       clearCrispUserData();
     }
