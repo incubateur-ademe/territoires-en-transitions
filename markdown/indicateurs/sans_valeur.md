@@ -32,7 +32,7 @@ L'indicateur comptabilise le nombre d'habitants couverts par un Plan de Déplace
 
 # Émissions de polluants atmosphériques 
 ```yaml
-id: polluants_atmo
+id: emission_polluants_atmo
 unite: tonnes
 
 titre_long: Quantité totale d'émissions de polluants atmosphériques
