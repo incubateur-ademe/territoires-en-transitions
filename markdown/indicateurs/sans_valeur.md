@@ -5,6 +5,8 @@ unite: '%'
 
 titre_long: Part des personnes utilisant un mode de déplacement par rapport à l'ensemble des personnes qui se déplacent
 selection: yes
+programmes:
+  - cae
 thematiques:
   - mobilite_et_transport
 ```
@@ -20,6 +22,8 @@ unite: '%'
 
 titre_long: Couverture des Plans de déplacements 
 selection: yes
+programmes:
+  - cae
 thematiques:
   - mobilite_et_transport
 ```
@@ -33,6 +37,10 @@ unite: tonnes
 
 titre_long: Quantité totale d'émissions de polluants atmosphériques
 selection: yes
+programmes:
+  - clef
+  - cae
+  - crte
 thematiques:
   - nature_environnement_air
 ```
