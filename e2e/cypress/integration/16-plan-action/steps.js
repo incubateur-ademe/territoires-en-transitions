@@ -230,3 +230,10 @@ When(/je filtre par "([^"]*)"/, value => {
 When(/"([^"]*)" fiches action s'affichent/, value => {
   cy.get('[data-test=NombreFichesAction]').contains(value).should('be.visible');
 });
+
+When(
+  /un message demandant à l'utilisateur de sélectionner un filtre s'affiche/,
+  value => {
+    cy.get('[data-test=SelectionnerFiltre]').should('exist');
+  }
+);

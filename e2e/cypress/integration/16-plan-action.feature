@@ -61,7 +61,7 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     Quand je clique en dehors de la boîte de dialogue
     Alors le fil d'ariane de la fiche contient "Axe 1: les tests passent"
 
-  
+
   Scénario: Ajouter, éditer et supprimer un plan d'action
     Etant donné que je suis connecté en tant que "yolo"
     Et que je suis sur la page "Plans action" de la collectivité "1"
@@ -174,4 +174,4 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     # Alors "1" fiches action s'affichent
 
     Quand je clique sur le bouton "Désactiver tous les filtres"
-    Alors "13" fiches action s'affichent
+    Alors un message demandant à l'utilisateur de sélectionner un filtre s'affiche
