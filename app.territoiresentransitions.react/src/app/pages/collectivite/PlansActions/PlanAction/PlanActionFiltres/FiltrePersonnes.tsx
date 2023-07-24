@@ -135,6 +135,7 @@ const FiltrePersonnes = ({
   return (
     <FilterField title={label}>
       <AutocompleteInputSelect
+        data-test={dataTest}
         containerWidthMatchButton
         dsfrButton={false}
         values={values()}
