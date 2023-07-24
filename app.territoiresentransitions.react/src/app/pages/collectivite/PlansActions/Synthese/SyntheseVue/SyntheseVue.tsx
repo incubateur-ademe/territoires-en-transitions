@@ -18,6 +18,7 @@ import FiltresSecondaires from './FiltresSecondaires';
 import {generateSyntheseVue} from '../utils';
 import {ITEM_ALL} from 'ui/shared/filters/commons';
 import SyntheseVueGraph from './SyntheseVueGraph';
+import {FicheResume} from '../../FicheAction/data/types';
 
 const SyntheseVue = () => {
   const collectivite_id = useCollectiviteId();
@@ -140,12 +141,19 @@ const SyntheseVue = () => {
                   <FicheActionCard
                     key={fiche.id}
                     displayAxe
-                    ficheAction={fiche}
+                    ficheAction={
+                      ficheWithSelectedPlan(fiche, plan) as FicheResume
+                    }
                     link={
-                      fiche.plans && fiche.plans[0]
+                      plan.id !== 'nc'
                         ? makeCollectivitePlanActionFicheUrl({
                             collectiviteId: collectivite_id!,
-                            planActionUid: fiche.plans[0].id?.toString()!,
+                            planActionUid:
+                              fiche.plans &&
+                              fiche.plans[0] &&
+                              plan.id === ITEM_ALL
+                                ? fiche.plans[0].id?.toString()!
+                                : plan.id.toString(),
                             ficheUid: fiche.id?.toString()!,
                           })
                         : makeCollectiviteFicheNonClasseeUrl({
@@ -169,3 +177,14 @@ const SyntheseVue = () => {
 };
 
 export default SyntheseVue;
+
+const ficheWithSelectedPlan = (fiche: FicheResume, plan: PlanActionFilter) => {
+  if (plan.id !== ITEM_ALL && fiche.plans && fiche.plans) {
+    const index = fiche.plans.findIndex(p => p?.id === plan.id);
+    return {
+      ...fiche,
+      plans: [fiche.plans[index]],
+    };
+  }
+  return fiche;
+};
