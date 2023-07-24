@@ -104,7 +104,7 @@ begin
                   -- transforme les content events en crud events,
                   crud as (select stats.amplitude_build_crud_events(
                                           array_agg(ce.event),
-                                          'plan',
+                                          'reponse',
                                           'created',
                                           question_id := ce.question_id) as events
                            from ce
@@ -122,7 +122,7 @@ begin
                   -- transforme les content events en crud events,
                   crud as (select stats.amplitude_build_crud_events(
                                           array_agg(ce.event),
-                                          'plan',
+                                          'justification',
                                           'created',
                                           question_id := ce.question_id) as events
                            from ce
