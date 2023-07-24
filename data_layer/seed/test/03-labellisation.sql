@@ -66,7 +66,7 @@ select test_write_scores.collectivite_id,
        now()
 from test.generate_scores((select array_agg(s) from private.action_score s)) s
 group by s.referentiel;
-$$ language sql;
+$$ language sql security definer;
 comment on function test_write_scores is
     'Écrit de faux scores *fait* par default interpolés avec des scores optionnels donnés '
         'afin de tester les critères labellisation en fonction de scores. '
