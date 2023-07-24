@@ -105,7 +105,15 @@ export const getGraphData = (
         })) || []
       );
     case 'echeance':
-      return data.echeances;
+      return (
+        data['echeances'].map(echeance => ({
+          ...echeance,
+          id:
+            echeance.id !== 'Date de fin non renseignée'
+              ? echeance.id
+              : 'Sans échéance',
+        })) || []
+      );
     default:
       return [];
   }
