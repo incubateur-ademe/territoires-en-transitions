@@ -8,6 +8,7 @@ import {
 } from 'app/paths';
 import {PlanActionFilter} from './FiltersPlanAction';
 import {generateSyntheseGraphData} from './utils';
+import classNames from 'classnames';
 
 type SyntheseGraphsListProps = {
   collectiviteId: number;
@@ -51,15 +52,21 @@ const SyntheseGraphsList = ({
             <div key={graph.title} className="fr-col-sm-12 fr-col-xl-6">
               <Link
                 data-test={`lien-graph-${graph.id}`}
-                className="group fr-col-sm-12 fr-col-xl-6 hover:bg-gray-100"
-                to={`${makeCollectivitePlansActionsSyntheseVueUrl({
-                  collectiviteId,
-                  vue: graph.id,
-                })}${
-                  typeof selectedPlan.id === 'number'
-                    ? `?axes=${selectedPlan.id}`
-                    : ''
-                }`}
+                className={classNames('group fr-col-sm-12 fr-col-xl-6', {
+                  'cursor-default': graph.id === 'echeance',
+                })}
+                to={
+                  graph.id === 'echeance'
+                    ? '#'
+                    : `${makeCollectivitePlansActionsSyntheseVueUrl({
+                        collectiviteId,
+                        vue: graph.id,
+                      })}${
+                        typeof selectedPlan.id === 'number'
+                          ? `?axes=${selectedPlan.id}`
+                          : ''
+                      }`
+                }
               >
                 <ChartCard
                   chartType="donut"
@@ -71,7 +78,9 @@ const SyntheseGraphsList = ({
                     title: graph.title,
                   }}
                   customStyle={{height: '350px', borderBottomWidth: '4px'}}
-                  classNames="group-hover:bg-gray-50"
+                  classNames={classNames({
+                    'group-hover:bg-gray-50': graph.id !== 'echeance',
+                  })}
                 />
               </Link>
             </div>
