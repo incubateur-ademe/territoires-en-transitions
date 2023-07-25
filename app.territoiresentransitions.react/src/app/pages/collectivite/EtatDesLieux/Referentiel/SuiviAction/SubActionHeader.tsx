@@ -50,7 +50,7 @@ const SubActionHeader = ({
 
   return (
     <div
-      className={classNames('group grid gap-3 items-start py-4', {
+      className={classNames('group grid gap-y-10 gap-x-3 items-start py-4', {
         'grid-cols-[5rem_1fr_fit-content(10rem)]': isSubAction,
         'grid-cols-[3rem_1fr_fit-content(10rem)]': !isSubAction,
         'rounded-lg cursor-pointer px-6': isSubAction,
@@ -109,10 +109,9 @@ const SubActionHeader = ({
         />
       )}
       {displayActionCommentaire && (
-        <div onClick={evt => evt.stopPropagation()}>
+        <div className="col-span-full" onClick={evt => evt.stopPropagation()}>
           <ActionCommentaire
             action={action}
-            className="mt-10"
             backgroundClassName="!bg-[#f6f6f6] group-hover:!bg-[#eee]"
           />
         </div>

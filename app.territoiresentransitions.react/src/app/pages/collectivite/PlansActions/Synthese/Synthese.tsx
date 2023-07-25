@@ -36,10 +36,12 @@ const Synthese = ({collectiviteId}: SyntheseProps): JSX.Element => {
       />
       <div className="mx-auto p-10">
         {/* Filtres par plan d'actions */}
-        <FiltersPlanAction
-          collectiviteId={collectiviteId}
-          onChangePlan={setSelectedPlan}
-        />
+        <div className="mb-8">
+          <FiltersPlanAction
+            collectiviteId={collectiviteId}
+            onChangePlan={setSelectedPlan}
+          />
+        </div>
 
         {/* Graphes répartition des fiches */}
         <SyntheseGraphsList
