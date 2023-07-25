@@ -10,9 +10,9 @@ programmes:
   - crte
 climat_pratic_ids:
   - urbanisme
+  - agri_alim
 thematiques:
   - urbanisme_et_amenagement
-  - agri_alim
 ```
 ## Description
 
@@ -38,9 +38,9 @@ programmes:
   - crte
 climat_pratic_ids:
   - urbanisme
+  - agri_alim
 thematiques:
   - urbanisme_et_amenagement
-  - agri_alim
 ```
 ## Description
 
