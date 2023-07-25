@@ -29,7 +29,7 @@ export const useChangeReponseHandler: TUseChangeReponseHandler =
       }
 
       const newReponse = transform({collectivite_id, question, reponse});
-      const ret = await supabaseClient.rpc('save_reponse', newReponse as any);
+      const ret = await supabaseClient.rpc('save_reponse', {json:newReponse} as any);
       if (ret?.error) {
         throw Error(ret.error.message);
       }
