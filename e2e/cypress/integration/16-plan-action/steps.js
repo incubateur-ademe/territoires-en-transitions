@@ -118,7 +118,7 @@ When(/j'ajoute une fiche à "([^"]*)"/, titre => {
   cy.get('[data-test=FicheAction]').should('be.visible');
 });
 
-defineStep(/je reviens sur le plan d'action "([^"]*)"/, titre => {
+When(/je reviens sur le plan d'action "([^"]*)"/, titre => {
   cy.get('[data-test=SideNavigation]').contains(titre).click();
 });
 
