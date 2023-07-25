@@ -99,18 +99,15 @@ const SubActionHeader = ({
             )}
           </div>
         )}
-
-        {/* Menu de sélection du statut */}
-        <div className="lg:col-span-2 col-span-3">
-          {!hideStatus && (
-            <ActionStatusDropdown
-              action={action}
-              actionScores={actionScores}
-              onSaveStatus={onSaveStatus}
-            />
-          )}
-        </div>
       </div>
+      {/* Menu de sélection du statut */}
+      {!hideStatus && (
+        <ActionStatusDropdown
+          action={action}
+          actionScores={actionScores}
+          onSaveStatus={onSaveStatus}
+        />
+      )}
       {displayActionCommentaire && (
         <div onClick={evt => evt.stopPropagation()}>
           <ActionCommentaire
