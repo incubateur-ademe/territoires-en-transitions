@@ -39,14 +39,14 @@ values
 select ok((select count(*)=3 from fiche_action), 'Il devrait y avoir trois fiches action');
 
 -- Test thematique
-select ajouter_thematique(1, 'Activités économiques');
-select ajouter_thematique(1, 'Énergie et climat');
-select enlever_thematique (1, 'Énergie et climat');
+select private.ajouter_thematique(1, 'Activités économiques');
+select private.ajouter_thematique(1, 'Énergie et climat');
+select private.enlever_thematique (1, 'Énergie et climat');
 select ok((select count(*)=1 from fiche_action_thematique), 'Il devrait y avoir une thématique');
 
-select ajouter_sous_thematique(1, 1);
-select ajouter_sous_thematique(1, 2);
-select enlever_sous_thematique (1, 2);
+select private.ajouter_sous_thematique(1, 1);
+select private.ajouter_sous_thematique(1, 2);
+select private.enlever_sous_thematique (1, 2);
 select ok((select count(*)=1 from fiche_action_sous_thematique), 'Il devrait y avoir une sous_thématique');
 
 -- Test axe
@@ -68,35 +68,35 @@ select ok ((select count(*)=4 from fiche_action_axe),
            'Il devrait y avoir 4 entrées dans fiche_action_axe');
 
 -- Test partenaire
-select ajouter_partenaire(1, (select pt.*::partenaire_tag from (select null as id, 'part1' as nom, 1 as collectivite_id) pt limit 1));
-select ajouter_partenaire(1, (select pt.*::partenaire_tag from (select null as id, 'part2' as nom, 1 as collectivite_id) pt limit 1));
-select ajouter_partenaire(2, (select pt.*::partenaire_tag from (select null as id, 'part3' as nom, 2 as collectivite_id) pt limit 1));
-select enlever_partenaire(3, (select ajouter_partenaire(3, (select pt.*::partenaire_tag from (select null as id, 'part4' as nom, 2 as collectivite_id) pt limit 1))));
+select private.ajouter_partenaire(1, (select pt.*::partenaire_tag from (select null as id, 'part1' as nom, 1 as collectivite_id) pt limit 1));
+select private.ajouter_partenaire(1, (select pt.*::partenaire_tag from (select null as id, 'part2' as nom, 1 as collectivite_id) pt limit 1));
+select private.ajouter_partenaire(2, (select pt.*::partenaire_tag from (select null as id, 'part3' as nom, 2 as collectivite_id) pt limit 1));
+select private.enlever_partenaire(3, (select private.ajouter_partenaire(3, (select pt.*::partenaire_tag from (select null as id, 'part4' as nom, 2 as collectivite_id) pt limit 1))));
 select ok ((select count(*)=4 from partenaire_tag),
            'Il devrait y avoir 3 entrées dans partenaire_tag');
 select ok ((select count(*)=3 from fiche_action_partenaire_tag),
            'Il devrait y avoir 3 entrées dans fiche_action_partenaire_tag');
 
 -- Test structure
-select ajouter_structure(1, (select st.*::structure_tag from (select null as id, 'stru1' as nom, 1 as collectivite_id) st limit 1));
-select ajouter_structure(1, (select st.*::structure_tag from (select null as id, 'stru2' as nom, 1 as collectivite_id) st limit 1));
-select ajouter_structure(2, (select st.*::structure_tag from (select null as id, 'stru3' as nom, 2 as collectivite_id) st limit 1));
-select enlever_structure(3, (select ajouter_structure(3, (select st.*::structure_tag from (select null as id, 'stru4' as nom, 2 as collectivite_id) st limit 1))));
+select private.ajouter_structure(1, (select st.*::structure_tag from (select null as id, 'stru1' as nom, 1 as collectivite_id) st limit 1));
+select private.ajouter_structure(1, (select st.*::structure_tag from (select null as id, 'stru2' as nom, 1 as collectivite_id) st limit 1));
+select private.ajouter_structure(2, (select st.*::structure_tag from (select null as id, 'stru3' as nom, 2 as collectivite_id) st limit 1));
+select private.enlever_structure(3, (select private.ajouter_structure(3, (select st.*::structure_tag from (select null as id, 'stru4' as nom, 2 as collectivite_id) st limit 1))));
 select ok ((select count(*)=4 from structure_tag),
            'Il devrait y avoir 4 entrées dans structure_tag');
 select ok ((select count(*)=3 from fiche_action_structure_tag),
            'Il devrait y avoir 3 entrées dans fiche_action_structure_tag');
 
 -- Test personne
-select ajouter_pilote(1, (select pe.*::personne from (select 'pe1' as nom, 1 as collectivite_id, null as tag_id, null as user_id) pe limit 1));
-select ajouter_pilote(1, (select pe.*::personne from (select null as nom, 1 as collectivite_id, null as tag_id, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9' as user_id) pe limit 1));
-select enlever_pilote(3, (select ajouter_pilote(3, (select pe.*::personne from (select 'pe2' as nom, 1 as collectivite_id, null as tag_id, null as user_id) pe limit 1))));
+select private.ajouter_pilote(1, (select pe.*::personne from (select 'pe1' as nom, 1 as collectivite_id, null as tag_id, null as user_id) pe limit 1));
+select private.ajouter_pilote(1, (select pe.*::personne from (select null as nom, 1 as collectivite_id, null as tag_id, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9' as user_id) pe limit 1));
+select private.enlever_pilote(3, (select private.ajouter_pilote(3, (select pe.*::personne from (select 'pe2' as nom, 1 as collectivite_id, null as tag_id, null as user_id) pe limit 1))));
 select ok ((select count(*)=2 from personne_tag),
            'Il devrait y avoir 2 entrées dans personne_tag');
 select ok ((select count(*)=2 from fiche_action_pilote),
            'Il devrait y avoir 2 entrées dans fiche_action_pilote');
-select enlever_referent(3, (select ajouter_referent(3, (select pe.*::personne from (select 'pe3' as nom, 1 as collectivite_id, null as tag_id, null as user_id) pe limit 1))));
-select ajouter_referent(1, (select pe.*::personne from (select pt.nom, pt.collectivite_id, pt.id as tag_id, null as user_id from personne_tag pt where nom = 'pe2') pe limit 1));
+select private.enlever_referent(3, (select private.ajouter_referent(3, (select pe.*::personne from (select 'pe3' as nom, 1 as collectivite_id, null as tag_id, null as user_id) pe limit 1))));
+select private.ajouter_referent(1, (select pe.*::personne from (select pt.nom, pt.collectivite_id, pt.id as tag_id, null as user_id from personne_tag pt where nom = 'pe2') pe limit 1));
 select ok ((select count(*)=3 from personne_tag),
            'Il devrait y avoir 3 entrées dans personne_tag');
 select ok ((select count(*)=1 from fiche_action_referent),
@@ -133,21 +133,21 @@ insert into annexe (collectivite_id, fichier_id, url, fiche_id)
 select collectivite_id, id, null, 1
 from bibliotheque_fichier;
 
-select ajouter_annexe((select a.*::annexe from (select null as id, bf.collectivite_id, bf.id as fichier_id, null as url, '' as titre, '' as commentaire, null as modified_by, null as modified_at, null as lien, 1 as fiche_id from bibliotheque_fichier bf limit 1) a limit 1));
+select private.ajouter_annexe((select a.*::annexe from (select null as id, bf.collectivite_id, bf.id as fichier_id, null as url, '' as titre, '' as commentaire, null as modified_by, null as modified_at, null as lien, 1 as fiche_id from bibliotheque_fichier bf limit 1) a limit 1));
 
 select ok ((select count(*)=2 from annexe),
            'Il devrait y avoir 2 entrée dans annexe');
 -- Test action
-select ajouter_action(1, 'eci_2.1');
-select ajouter_action(3, 'eci_2.2');
-select enlever_action(3, 'eci_2.2');
+select private.ajouter_action(1, 'eci_2.1');
+select private.ajouter_action(3, 'eci_2.2');
+select private.enlever_action(3, 'eci_2.2');
 select ok ((select count(*)=1 from fiche_action_action),
            'Il devrait y avoir 1 entrées dans fiche_action_action');
 -- Test indicateur
-select ajouter_indicateur(1, (select pe.*::indicateur_generique from (select 'eci_5' as indicateur_id, null as indicateur_personnalise_id, null as nom, null as description, null as unite) pe limit 1));
-select ajouter_indicateur(2, (select pe.*::indicateur_generique from (select null as indicateur_id, 0 as indicateur_personnalise_id, null as nom, null as description, null as unite) pe limit 1));
-select ajouter_indicateur(3, (select pe.*::indicateur_generique from (select 'eci_5' as indicateur_id, null as indicateur_personnalise_id, null as nom, null as description, null as unite) pe limit 1));
-select enlever_indicateur(3, (select pe.*::indicateur_generique from (select 'eci_5' as indicateur_id, null as indicateur_personnalise_id, null as nom, null as description, null as unite) pe limit 1));
+select private.ajouter_indicateur(1, (select pe.*::indicateur_generique from (select 'eci_5' as indicateur_id, null as indicateur_personnalise_id, null as nom, null as description, null as unite) pe limit 1));
+select private.ajouter_indicateur(2, (select pe.*::indicateur_generique from (select null as indicateur_id, 0 as indicateur_personnalise_id, null as nom, null as description, null as unite) pe limit 1));
+select private.ajouter_indicateur(3, (select pe.*::indicateur_generique from (select 'eci_5' as indicateur_id, null as indicateur_personnalise_id, null as nom, null as description, null as unite) pe limit 1));
+select private.enlever_indicateur(3, (select pe.*::indicateur_generique from (select 'eci_5' as indicateur_id, null as indicateur_personnalise_id, null as nom, null as description, null as unite) pe limit 1));
 select ok ((select count(*)=2 from fiche_action_indicateur),
            'Il devrait y avoir 2 entrées dans fiche_action_indicateur');
 
@@ -163,17 +163,17 @@ where id=1;
 select ok((select objectifs = 'objectif' from fiches_action where id = 1));
 
 -- Test service
-select ajouter_service(1, (select pt.*::service_tag from (select null as id, 'serv1' as nom, 1 as collectivite_id) pt limit 1));
-select ajouter_service(1, (select pt.*::service_tag from (select null as id, 'serv2' as nom, 1 as collectivite_id) pt limit 1));
-select ajouter_service(2, (select pt.*::service_tag from (select null as id, 'serv3' as nom, 2 as collectivite_id) pt limit 1));
-select enlever_service(3, (select ajouter_service(3, (select pt.*::service_tag from (select null as id, 'serv4' as nom, 2 as collectivite_id) pt limit 1))));
+select private.ajouter_service(1, (select pt.*::service_tag from (select null as id, 'serv1' as nom, 1 as collectivite_id) pt limit 1));
+select private.ajouter_service(1, (select pt.*::service_tag from (select null as id, 'serv2' as nom, 1 as collectivite_id) pt limit 1));
+select private.ajouter_service(2, (select pt.*::service_tag from (select null as id, 'serv3' as nom, 2 as collectivite_id) pt limit 1));
+select private.enlever_service(3, (select private.ajouter_service(3, (select pt.*::service_tag from (select null as id, 'serv4' as nom, 2 as collectivite_id) pt limit 1))));
 select ok ((select count(*)=4 from service_tag),
            'Il devrait y avoir 3 entrées dans service_tag');
 select ok ((select count(*)=3 from fiche_action_service_tag),
            'Il devrait y avoir 3 entrées dans fiche_action_service_tag');
 
 -- Test financeur
-select ajouter_financeur(1,(
+select private.ajouter_financeur(1,(
 select pt.*::financeur_montant
     from (
              select
@@ -190,7 +190,7 @@ select pt.*::financeur_montant
          ) pt
     limit 1
 ));
-select ajouter_financeur(1,(
+select private.ajouter_financeur(1,(
     select pt.*::financeur_montant
     from (
              select
@@ -207,7 +207,7 @@ select ajouter_financeur(1,(
          ) pt
     limit 1
 ));
-select ajouter_financeur(2,(
+select private.ajouter_financeur(2,(
     select pt.*::financeur_montant
     from (
              select
