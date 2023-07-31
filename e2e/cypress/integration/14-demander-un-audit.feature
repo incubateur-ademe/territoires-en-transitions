@@ -14,7 +14,7 @@ Fonctionnalité: Demander un audit
     Et que je suis sur la page "Labellisation ECi" de la collectivité courante
     Alors le bouton "Demander un audit" est absent
 
-    Quand le score permet d'obtenir la 2ème étoile
+    Quand le score permet d'obtenir la 1ère étoile
     Et que je suis sur la page "Labellisation ECi" de la collectivité courante
     Alors le bouton "Demander un audit" est activé
     Et je ne vois aucun onglet
