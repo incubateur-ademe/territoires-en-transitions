@@ -13,8 +13,11 @@ if __name__ == '__main__':
         sheet = pd.read_excel(path, 0)
         sheet = sheet.iloc[2:, :4]
         sheet.columns = ['action_id', 'titre', 'commentaire', 'statut']
-        sheet.drop('titre', axis=1, inplace=True)  # supprime la seconde colonne
-        sheet = sheet[sheet.commentaire.notnull()]  # supprime les lignes sans commentaires
-        sheet.commentaire = sheet.commentaire.str.replace('_x000D_', '')  # enlève un string chelou
+        # supprime la seconde colonne
+        sheet.drop('titre', axis=1, inplace=True)
+        # supprime les lignes sans commentaires ni statuts
+        sheet = sheet.dropna(subset=['commentaire', 'statut'], how='all')
+        # enlève un caractère chelou
+        sheet.commentaire = sheet.commentaire.str.replace('_x000D_', '')
         save_path = Path("./").joinpath(path.parts[-1].replace('.xlsx', '.csv'))
         sheet.to_csv(save_path, index=False, header=False, encoding='UTF-8')
