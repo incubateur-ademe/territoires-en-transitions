@@ -5,6 +5,7 @@ import {TCycleLabellisation} from './useCycleLabellisation';
 import {MessageCompletudeECi} from './MessageCompletudeECi';
 
 export type TDemandeLabellisationModalProps = {
+  isCOT: boolean;
   parcoursLabellisation: TCycleLabellisation;
   opened: boolean;
   setOpened: (opened: boolean) => void;
