@@ -40,7 +40,7 @@ export const DemandeAuditModalContent = (
   props: TDemandeLabellisationModalProps & {onClose: () => void}
 ) => {
   const {isLoading, envoiDemande} = useEnvoiDemande();
-  const {parcoursLabellisation, onClose} = props;
+  const {parcoursLabellisation, onClose, isCOT} = props;
   const {parcours, status, labellisable} = parcoursLabellisation;
   const {collectivite_id, referentiel, etoiles} = parcours || {};
   const [sujet, setSujet] = useState<TSujetDemande | null>(
@@ -65,7 +65,9 @@ export const DemandeAuditModalContent = (
         {status === 'non_demandee' && isLoading ? 'Envoi en cours...' : null}
         {status === 'demande_envoyee' ? (
           <div className="fr-alert fr-alert--success">
-            {etoiles === '1' ? submittedEtoile1 : submittedAutresEtoiles}
+            {etoiles === '1' && !isCOT
+              ? submittedEtoile1
+              : submittedAutresEtoiles}
           </div>
         ) : null}
         {status === 'non_demandee' && !isLoading ? (
