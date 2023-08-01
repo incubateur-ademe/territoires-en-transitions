@@ -9,3 +9,4 @@ pytest
 requests
 uvicorn
 httpx
+typeguard
