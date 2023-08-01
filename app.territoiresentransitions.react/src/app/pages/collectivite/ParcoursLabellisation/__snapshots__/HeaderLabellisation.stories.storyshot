@@ -296,7 +296,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
     <button
       className="fr-btn self-start"
       data-test="SubmitDemandeBtn"
-      disabled={false}
+      disabled={true}
       onClick={[Function]}
     >
       Demander la première étoile
@@ -322,7 +322,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
     <button
       className="fr-btn self-start fr-mr-2w"
       data-test="1ereEtoileCOT"
-      disabled={false}
+      disabled={true}
       onClick={[Function]}
     >
       Demander la première étoile
@@ -330,7 +330,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
     <button
       className="fr-btn self-start"
       data-test="SubmitDemandeBtn"
-      disabled={false}
+      disabled={true}
       onClick={[Function]}
     >
       Demander un audit
@@ -424,7 +424,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
     <button
       className="fr-btn self-start"
       data-test="SubmitDemandeBtn"
-      disabled={false}
+      disabled={true}
       onClick={[Function]}
     >
       Demander un audit
