@@ -55,7 +55,8 @@ create type indicateur_thematique as enum (
     'nature_environnement_air',
     'eau_assainissement',
     'strategie_orga_interne',
-    'activites_economiques'
+    'activites_economiques',
+    'solidarite_lien_social'
     );
 
 alter table indicateur_definition
