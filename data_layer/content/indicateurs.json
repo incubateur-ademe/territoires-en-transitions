@@ -2298,8 +2298,7 @@
     },
     {
       "action_ids": [
-        "cae_1.2.4",
-        "cae_6.5.4"
+        "cae_1.2.4"
       ],
       "description": "<p>L'indicateur mesure le nombre annuel de logements r\u00e9nov\u00e9s via les dispositifs de subventionnement et d\u2019accompagnement dont la collectivit\u00e9 est partenaire, ramen\u00e9 au nombre de logements du territoire (pour 100 logements).</p>\n<p>Pour rappel l\u2019objectif national du plan de r\u00e9novation \u00e9nerg\u00e9tique de l\u2019habitat est de 500\u00a0000 logements r\u00e9nov\u00e9s par an, soit 1,4 logements r\u00e9nov\u00e9s pour 100 logements existants (36,1 millions de logements en 2020 selon l\u2019INSEE).</p>\n",
       "groupe": "cae",
