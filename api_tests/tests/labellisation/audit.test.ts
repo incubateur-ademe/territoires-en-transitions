@@ -19,6 +19,8 @@ import {
 } from "./utils.ts";
 import {labellisationParcours} from "../../lib/rpcs/labellisationParcours.ts";
 
+await new Promise((r) => setTimeout(r, 0));
+
 Deno.test("Scénario de demande d'audit COT", async () => {
   await testReset();
   const collectivite = await creer_collectivite();
