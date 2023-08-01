@@ -120,59 +120,44 @@ const SyntheseVue = () => {
         <div className="my-8 border-b border-gray-200" />
         {/** Fiches */}
         <div className="mb-16">
-          {search.length && search.length > 1 ? (
-            <>
-              <div className="flex items-baseline mb-8">
-                <p
-                  data-test="NombreFichesAction"
-                  className="mb-0 mr-6 text-gray-500"
-                >
-                  {total} fiche{total > 1 && 's'} action correspond
-                  {total > 1 && 'ent'} à votre recherche
-                </p>
-                {filtersCount > 1 && (
-                  <DesactiverLesFiltres
-                    onClick={() => setFilters(initialFilters)}
-                  />
-                )}
-              </div>
-              <div className="grid grid-cols-2 gap-6">
-                {items.map(fiche => (
-                  <FicheActionCard
-                    key={fiche.id}
-                    displayAxe
-                    ficheAction={
-                      ficheWithSelectedPlan(fiche, plan) as FicheResume
-                    }
-                    link={
-                      plan.id !== 'nc'
-                        ? makeCollectivitePlanActionFicheUrl({
-                            collectiviteId: collectivite_id!,
-                            planActionUid:
-                              fiche.plans &&
-                              fiche.plans[0] &&
-                              plan.id === ITEM_ALL
-                                ? fiche.plans[0].id?.toString()!
-                                : plan.id.toString(),
-                            ficheUid: fiche.id?.toString()!,
-                          })
-                        : makeCollectiviteFicheNonClasseeUrl({
-                            collectiviteId: collectivite_id!,
-                            ficheUid: fiche.id?.toString()!,
-                          })
-                    }
-                  />
-                ))}
-              </div>
-            </>
-          ) : (
-            <div
-              data-test="SelectionnerFiltre"
-              className="mt-20 text-center text-gray-500"
+          <div className="flex items-baseline mb-8">
+            <p
+              data-test="NombreFichesAction"
+              className="mb-0 mr-6 text-gray-500"
             >
-              Sélectionner des filtres pour afficher la liste des fiches action
-            </div>
-          )}
+              {total} fiche{total > 1 && 's'} action correspond
+              {total > 1 && 'ent'} à votre recherche
+            </p>
+            {filtersCount > 1 && (
+              <DesactiverLesFiltres
+                onClick={() => setFilters(initialFilters)}
+              />
+            )}
+          </div>
+          <div className="grid grid-cols-2 gap-6">
+            {items.map(fiche => (
+              <FicheActionCard
+                key={fiche.id}
+                displayAxe
+                ficheAction={ficheWithSelectedPlan(fiche, plan) as FicheResume}
+                link={
+                  plan.id !== 'nc'
+                    ? makeCollectivitePlanActionFicheUrl({
+                        collectiviteId: collectivite_id!,
+                        planActionUid:
+                          fiche.plans && fiche.plans[0] && plan.id === ITEM_ALL
+                            ? fiche.plans[0].id?.toString()!
+                            : plan.id.toString(),
+                        ficheUid: fiche.id?.toString()!,
+                      })
+                    : makeCollectiviteFicheNonClasseeUrl({
+                        collectiviteId: collectivite_id!,
+                        ficheUid: fiche.id?.toString()!,
+                      })
+                }
+              />
+            ))}
+          </div>
         </div>
       </div>
     </div>
