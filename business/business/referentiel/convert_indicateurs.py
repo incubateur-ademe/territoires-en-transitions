@@ -3,7 +3,7 @@ import os
 from dataclasses import asdict, dataclass
 from glob import glob
 from pathlib import Path
-from typing import Any, List, Literal, Optional, Tuple
+from typing import Any, List, Literal, Optional, Tuple, Union
 
 import marshmallow_dataclass
 from business.utils.find_duplicates import find_duplicates
@@ -35,7 +35,7 @@ class MarkdownIndicateur:
     actions: Optional[List[str]]
     programmes: Optional[List[Programme]]
     climat_pratic_ids: Optional[List[str]]
-    participation_score: Optional[List[str]]
+    participation_score: Optional[Union[List[str], bool]]
     source: Optional[str]
     thematiques: Optional[List[str]]
     fnv: Optional[List[str]]
