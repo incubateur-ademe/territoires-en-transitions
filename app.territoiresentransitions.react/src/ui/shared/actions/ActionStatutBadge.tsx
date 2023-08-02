@@ -16,7 +16,7 @@ const statusToClassNames = {
   pas_fait: 'text-error425 bg-[#FFE9E9]',
   programme: 'text-tDefaultInfo bg-[#E8EDFF]',
   detaille: 'text-bf500 bg-bf925',
-  fait: 'text-[#18753C] bg-[#B8FEC9]',
+  fait: 'text-success bg-[#B8FEC9]',
   non_concerne: 'text-grey425 bg-[#EEEEEE]',
 };
 

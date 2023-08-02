@@ -33,7 +33,11 @@ Array [
         <tr>
           <td
             className="text-center w-[56px]"
-          />
+          >
+            <span
+              className="fr-icon fr-icon-checkbox-circle-fill text-[#eee]"
+            />
+          </td>
           <td
             className="text-right text-xs w-[40px] text-grey625"
           >
@@ -60,7 +64,11 @@ Array [
         <tr>
           <td
             className="text-center w-[56px]"
-          />
+          >
+            <span
+              className="fr-icon fr-icon-checkbox-circle-fill text-[#eee]"
+            />
+          </td>
           <td
             className="text-right text-xs w-[40px] text-grey625"
           >
@@ -87,7 +95,11 @@ Array [
         <tr>
           <td
             className="text-center w-[56px]"
-          />
+          >
+            <span
+              className="fr-icon fr-icon-checkbox-circle-fill text-[#eee]"
+            />
+          </td>
           <td
             className="text-right text-xs w-[40px] text-grey625"
           >
@@ -114,7 +126,11 @@ Array [
         <tr>
           <td
             className="text-center w-[56px]"
-          />
+          >
+            <span
+              className="fr-icon fr-icon-checkbox-circle-fill text-[#eee]"
+            />
+          </td>
           <td
             className="text-right text-xs w-[40px] text-grey625"
           >
@@ -141,7 +157,11 @@ Array [
         <tr>
           <td
             className="text-center w-[56px]"
-          />
+          >
+            <span
+              className="fr-icon fr-icon-checkbox-circle-fill text-[#eee]"
+            />
+          </td>
           <td
             className="text-right text-xs w-[40px] text-grey625"
           >
@@ -168,7 +188,11 @@ Array [
         <tr>
           <td
             className="text-center w-[56px]"
-          />
+          >
+            <span
+              className="fr-icon fr-icon-checkbox-circle-fill text-[#eee]"
+            />
+          </td>
           <td
             className="text-right text-xs w-[40px] text-grey625"
           >
@@ -195,7 +219,11 @@ Array [
         <tr>
           <td
             className="text-center w-[56px]"
-          />
+          >
+            <span
+              className="fr-icon fr-icon-checkbox-circle-fill text-[#eee]"
+            />
+          </td>
           <td
             className="text-right text-xs w-[40px] text-grey625"
           >
@@ -222,7 +250,11 @@ Array [
         <tr>
           <td
             className="text-center w-[56px]"
-          />
+          >
+            <span
+              className="fr-icon fr-icon-checkbox-circle-fill text-[#eee]"
+            />
+          </td>
           <td
             className="text-right text-xs w-[40px] text-grey625"
           >
@@ -249,7 +281,11 @@ Array [
         <tr>
           <td
             className="text-center w-[56px]"
-          />
+          >
+            <span
+              className="fr-icon fr-icon-checkbox-circle-fill text-[#eee]"
+            />
+          </td>
           <td
             className="text-right text-xs w-[40px] text-grey625"
           >
@@ -276,7 +312,11 @@ Array [
         <tr>
           <td
             className="text-center w-[56px]"
-          />
+          >
+            <span
+              className="fr-icon fr-icon-checkbox-circle-fill text-[#eee]"
+            />
+          </td>
           <td
             className="text-right text-xs w-[40px] text-grey625"
           >
@@ -303,7 +343,11 @@ Array [
         <tr>
           <td
             className="text-center w-[56px]"
-          />
+          >
+            <span
+              className="fr-icon fr-icon-checkbox-circle-fill text-[#eee]"
+            />
+          </td>
           <td
             className="text-right text-xs w-[40px] text-grey625"
           >
@@ -330,7 +374,11 @@ Array [
         <tr>
           <td
             className="text-center w-[56px]"
-          />
+          >
+            <span
+              className="fr-icon fr-icon-checkbox-circle-fill text-[#eee]"
+            />
+          </td>
           <td
             className="text-right text-xs w-[40px] text-grey625"
           >
@@ -357,7 +405,11 @@ Array [
         <tr>
           <td
             className="text-center w-[56px]"
-          />
+          >
+            <span
+              className="fr-icon fr-icon-checkbox-circle-fill text-[#eee]"
+            />
+          </td>
           <td
             className="text-right text-xs w-[40px] text-grey625"
           >
@@ -384,7 +436,11 @@ Array [
         <tr>
           <td
             className="text-center w-[56px]"
-          />
+          >
+            <span
+              className="fr-icon fr-icon-checkbox-circle-fill text-[#eee]"
+            />
+          </td>
           <td
             className="text-right text-xs w-[40px] text-grey625"
           >
@@ -411,7 +467,11 @@ Array [
         <tr>
           <td
             className="text-center w-[56px]"
-          />
+          >
+            <span
+              className="fr-icon fr-icon-checkbox-circle-fill text-[#eee]"
+            />
+          </td>
           <td
             className="text-right text-xs w-[40px] text-grey625"
           >
@@ -438,7 +498,11 @@ Array [
         <tr>
           <td
             className="text-center w-[56px]"
-          />
+          >
+            <span
+              className="fr-icon fr-icon-checkbox-circle-fill text-[#eee]"
+            />
+          </td>
           <td
             className="text-right text-xs w-[40px] text-grey625"
           >
@@ -465,7 +529,11 @@ Array [
         <tr>
           <td
             className="text-center w-[56px]"
-          />
+          >
+            <span
+              className="fr-icon fr-icon-checkbox-circle-fill text-[#eee]"
+            />
+          </td>
           <td
             className="text-right text-xs w-[40px] text-grey625"
           >
@@ -528,7 +596,11 @@ Array [
         <tr>
           <td
             className="text-center w-[56px]"
-          />
+          >
+            <span
+              className="fr-icon fr-icon-checkbox-circle-fill text-[#eee]"
+            />
+          </td>
           <td
             className="text-right text-xs w-[40px] text-grey625"
           >
@@ -555,7 +627,11 @@ Array [
         <tr>
           <td
             className="text-center w-[56px]"
-          />
+          >
+            <span
+              className="fr-icon fr-icon-checkbox-circle-fill text-[#eee]"
+            />
+          </td>
           <td
             className="text-right text-xs w-[40px] text-grey625"
           >
@@ -582,7 +658,11 @@ Array [
         <tr>
           <td
             className="text-center w-[56px]"
-          />
+          >
+            <span
+              className="fr-icon fr-icon-checkbox-circle-fill text-[#eee]"
+            />
+          </td>
           <td
             className="text-right text-xs w-[40px] text-grey625"
           >
@@ -609,7 +689,11 @@ Array [
         <tr>
           <td
             className="text-center w-[56px]"
-          />
+          >
+            <span
+              className="fr-icon fr-icon-checkbox-circle-fill text-[#eee]"
+            />
+          </td>
           <td
             className="text-right text-xs w-[40px] text-grey625"
           >
@@ -637,8 +721,8 @@ Array [
           <td
             className="text-center w-[56px]"
           >
-            <i
-              className="fr-icon fr-icon-checkbox-circle-fill before:text-[#5FD68C]"
+            <span
+              className="fr-icon fr-icon-checkbox-circle-fill text-success"
             />
           </td>
           <td

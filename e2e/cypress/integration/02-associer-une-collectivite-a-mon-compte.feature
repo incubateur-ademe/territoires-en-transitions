@@ -57,7 +57,7 @@ Fonctionnalité: Associer une collectivité à mon compte
     Alors le "formulaire rejoindre une collectivité" est visible
 
     Quand je recherche la collectivité "Ambérieu-en-Bugey" dans le champ "collectivité"
-    Alors une alerte contient le titre "Collectivité déjà activée"
+    Alors une alerte de statut "information" est affichée avec le message "Contactez l’admin Yolo Dodo à l’adresse yolo@dodo.com pour recevoir un lien d’invitation."
 
     Quand je clique sur le lien du formulaire
     Alors la page vérifie les conditions suivantes :

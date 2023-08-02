@@ -35,10 +35,18 @@ export const SelectCollectivite = (props: HeaderPropsWithModalState) => {
       <li className="fr-nav__item !relative">
         <Tooltip label={currentCollectivite.nom}>
           <button
-            className="fr-nav__btn min-w-[15rem]"
+            className={classNames(
+              {
+                'fr-nav__btn': listCollectivites.length,
+                'fr-nav__link': !listCollectivites.length,
+              },
+              'min-w-[15rem]'
+            )}
             aria-controls={ID}
             aria-expanded={opened}
-            onClick={() => setOpenedId(opened ? null : ID)}
+            onClick={() =>
+              listCollectivites.length && setOpenedId(opened ? null : ID)
+            }
           >
             <b
               className={classNames(

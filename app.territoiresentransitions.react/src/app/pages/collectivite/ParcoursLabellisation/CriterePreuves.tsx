@@ -17,14 +17,20 @@ export type TCriterePreuvesProps = {
   collectiviteId: number;
   parcours: TLabellisationParcours;
   preuves: TPreuveLabellisation[];
+  isCOT: boolean;
 };
 
 export const CriterePreuves = (props: TCriterePreuvesProps) => {
-  const {parcours, preuves} = props;
-  const {demande} = parcours;
+  const {parcours, preuves, isCOT} = props;
+  const {demande, etoiles} = parcours;
 
   // critère nécessitant l'ajout d'une ou plusieurs preuves
   const rempli = preuves.length > 0;
+
+  if (isCOT && etoiles === '1') {
+    return null;
+  }
+
   return (
     <>
       <MessageCriterePreuve {...props} />

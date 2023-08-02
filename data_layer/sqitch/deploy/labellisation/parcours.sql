@@ -12,11 +12,11 @@ create or replace function
                 completude_ok   boolean,
                 critere_score   jsonb,
                 criteres_action jsonb,
-                rempli          boolean,
+                rempli          boolean, -- critère fichier rempli
                 calendrier      text,
-                demande         jsonb, -- labellisation.demande
-                labellisation   jsonb, -- labellisation
-                audit           jsonb  -- audit
+                demande         jsonb,   -- labellisation.demande
+                labellisation   jsonb,   -- labellisation
+                audit           jsonb    -- audit
             )
     security definer
 begin
@@ -59,18 +59,19 @@ begin
                             group by c.referentiel) ral)
     select e.referentiel,
            e.etoile_objectif,
-           rs.complet                                      as completude_ok,
+           rs.complet                                                as completude_ok,
 
            jsonb_build_object(
                    'score_a_realiser', cs.score_a_realiser,
                    'score_fait', cs.score_fait,
                    'atteint', cs.atteint,
-                   'etoiles', cs.etoile_objectif)          as critere_score,
+                   'etoiles', cs.etoile_objectif)                    as critere_score,
 
-           criteres.liste                                  as criteres_action,
-           criteres.atteints and cs.atteint and
-           -- Pas de document nécessaire pour une demande cot 1ère étoile
-           (case when demande.sujet = 'cot' and demande.etoiles = '1' then true else cf.atteint end) as rempli,
+           criteres.liste                                            as criteres_action,
+           criteres.atteints
+               and cs.atteint
+               -- Pas de document nécessaire pour une demande par une collectivité cot
+               and (case when cot is not null then true else cf.atteint end) as rempli,
            calendrier.information,
 
            to_jsonb(demande),
@@ -87,6 +88,8 @@ begin
                        on cf.referentiel = e.referentiel
              left join labellisation_calendrier calendrier
                        on calendrier.referentiel = e.referentiel
+             left join cot
+                       on cot.collectivite_id = labellisation_parcours.collectivite_id
 
              left join lateral (select d.id,
                                        d.en_cours,

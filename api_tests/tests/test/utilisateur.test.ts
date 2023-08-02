@@ -9,6 +9,8 @@ import { signOut } from "/lib/auth.ts";
 import { testAddRandomUser } from "/lib/rpcs/testAddRandomUser.ts";
 import { testReset } from "/lib/rpcs/testReset.ts";
 
+await new Promise((r) => setTimeout(r, 0));
+
 Deno.test("Creation d'un utilisateur pour une collectivité", async () => {
   await testReset();
 

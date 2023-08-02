@@ -12,6 +12,8 @@ import { supabase } from "../lib/supabase.ts";
 import { Database } from "../lib/database.types.ts";
 import { testReset } from "../lib/rpcs/testReset.ts";
 
+await new Promise((r) => setTimeout(r, 0));
+
 Deno.test("Deno test: Génération des login/mdp de test", () => {
   assertEquals(
     fakeCredentials("yolododo"),
