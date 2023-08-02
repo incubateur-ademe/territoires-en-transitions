@@ -55,7 +55,7 @@ Les utilisateurs saisissent pour le compte de leur collectivité des données qu
 ### Les données d'évaluation
 
 Les données utilisateurs rattachées aux référentiels sont évaluées par le service évaluation du `business` qui inscrit
-les résultats en base et les transmets au `client` via les WebSockets
+les résultats en base et les transmet au `client` via les WebSockets
 de [supabase realtime](https://github.com/supabase/realtime)
 
 ## Design
@@ -135,15 +135,18 @@ développement soient installées.
 Néanmoins, on peut lancer les tests avec `earthly` en utilisant des conteneurs :
 
 ```shell
-# Lance le projet suivi de tout les tests.
+# Lance le projet
 earthly +dev
 
-# Lance les tests indépendamment
-earthly --push +db-test
-earthly --push +business-test
-earthly --push +client-test
-earthly --push +api-test
-earthly --push +deploy-test
+# Lance tous les tests
+earthly +test
+
+# Lance chaque test indépendamment
+earthly +db-test
+earthly +business-test
+earthly +client-test
+earthly +api-test
+earthly +deploy-test
 ```
 
 ## Déploiement
