@@ -127,6 +127,21 @@ On peut écrire par exemple :
 earthly +dev --stop=yes --datalayer=yes --business=yes --client=no
 ```
 
+### Développer le front-end et le site
+
+Le front et le site partagent les composants situés dans `./ui`, pour ce faire, on utilise les [workspaces](https://pnpm.io/workspaces) de [pnpm](https://github.com/pnpm/pnpm).
+
+`pnpm` étant un package manager, on n'utilise donc plus `npm` pour installer les dépendances.
+ 
+
+```shell
+# Installer les deps
+pnpm -r install
+
+# Lancer les projets en parallèle
+pnpm -r --parallel run dev
+```
+
 ### Lancer les tests
 
 Les trois services sont des projets indépendants qui peuvent-être testés en local sous reserve que les dépendances de
