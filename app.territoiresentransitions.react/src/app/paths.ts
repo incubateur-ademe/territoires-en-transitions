@@ -61,11 +61,13 @@ export const collectiviteJournalPath = `${collectivitePath}/historique`;
 const ficheParam = 'ficheUid';
 const planParam = 'planUid';
 const axeParam = 'axeUid';
+const syntheseParam = 'syntheseVue';
 export const collectivitePlansActionsBasePath = `${collectivitePath}/plans`;
 export const collectivitePlansActionsNouveauPath = `${collectivitePlansActionsBasePath}/nouveau`;
 export const collectivitePlansActionsCreerPath = `${collectivitePlansActionsBasePath}/creer`;
 export const collectivitePlansActionsImporterPath = `${collectivitePlansActionsBasePath}/importer`;
 export const collectivitePlansActionsSynthesePath = `${collectivitePlansActionsBasePath}/synthese`;
+export const collectivitePlansActionsSyntheseVuePath = `${collectivitePlansActionsSynthesePath}/:${syntheseParam}`;
 export const collectivitePlanActionPath = `${collectivitePlansActionsBasePath}/plan/:${planParam}`;
 export const collectivitePlanActionFichePath = `${collectivitePlanActionPath}/fiche/:${ficheParam}`;
 export const collectivitePlanActionAxePath = `${collectivitePlanActionPath}/:${axeParam}`;
@@ -175,16 +177,6 @@ export const makeCollectiviteLabellisationUrl = ({
     .replace(`:${referentielParam}`, referentielId)
     .replace(`:${labellisationVueParam}`, labellisationVue || 'suivi');
 
-export const makeCollectivitePlansActionsBaseUrl = ({
-  collectiviteId,
-}: {
-  collectiviteId: number;
-}) =>
-  collectivitePlansActionsBasePath.replace(
-    `:${collectiviteParam}`,
-    collectiviteId.toString()
-  );
-
 export const makeCollectivitePlansActionsNouveauUrl = ({
   collectiviteId,
 }: {
@@ -224,6 +216,17 @@ export const makeCollectivitePlansActionsSyntheseUrl = ({
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );
+
+export const makeCollectivitePlansActionsSyntheseVueUrl = ({
+  collectiviteId,
+  vue,
+}: {
+  collectiviteId: number;
+  vue: string;
+}) =>
+  collectivitePlansActionsSyntheseVuePath
+    .replace(`:${collectiviteParam}`, collectiviteId.toString())
+    .replace(`:${syntheseParam}`, vue);
 
 export const makeCollectiviteFichesNonClasseesUrl = ({
   collectiviteId,

@@ -1,46 +1,39 @@
 import ActionCard from '../components/ActionCard';
-import {FicheAction, FicheResume} from './data/types';
+import {FicheResume} from './data/types';
 import {formatNomPilotes, generateTitle} from './data/utils';
 import FicheActionBadgeStatut from './FicheActionForm/FicheActionBadgeStatut';
 
-function isFicheResumeFromAxe(
-  fiche: FicheAction | FicheResume
-): fiche is FicheResume {
-  return (fiche as FicheResume).plans !== undefined;
-}
-
-const generateDetails = (fiche: FicheAction | FicheResume) => {
+const generateDetails = (fiche: FicheResume, displayAxe: boolean) => {
+  const {plans, pilotes} = fiche;
   let details = '';
-  if (isFicheResumeFromAxe(fiche)) {
-    if (!fiche.plans) {
-      details = details + 'Fiche non classée';
-      // on affiche la barre uniquement si "Fiche non classée" est présent
-      if (fiche.pilotes) {
-        details = details + ' | ';
-      }
-    }
-  } else {
-    if (!fiche.axes) {
-      details = details + 'Fiche non classée';
-      // on affiche la barre uniquement si "Fiche non classée" est présent
-      if (fiche.pilotes) {
-        details = details + ' | ';
-      }
-    }
+
+  const plan = plans?.[0];
+
+  if (displayAxe) {
+    details = plan?.nom || 'Fiches non classées';
   }
-  if (fiche.pilotes) {
-    details += formatNomPilotes(fiche.pilotes);
+  if (displayAxe && pilotes) {
+    details += ' | ';
+  }
+  if (pilotes) {
+    details += `${formatNomPilotes(pilotes)}`;
   }
   return details;
 };
 
 type Props = {
   link: string;
-  ficheAction: FicheAction | FicheResume;
+  ficheAction: FicheResume;
+  displayAxe?: boolean;
   openInNewTab?: boolean;
 };
 
-const FicheActionCard = ({openInNewTab, ficheAction, link}: Props) => {
+const FicheActionCard = ({
+  openInNewTab,
+  ficheAction,
+  displayAxe = false,
+  link,
+}: Props) => {
   return (
     <ActionCard
       openInNewTab={openInNewTab}
@@ -50,7 +43,7 @@ const FicheActionCard = ({openInNewTab, ficheAction, link}: Props) => {
           <FicheActionBadgeStatut statut={ficheAction.statut} small />
         )
       }
-      details={generateDetails(ficheAction)}
+      details={generateDetails(ficheAction, displayAxe)}
       title={generateTitle(ficheAction.titre)}
     />
   );

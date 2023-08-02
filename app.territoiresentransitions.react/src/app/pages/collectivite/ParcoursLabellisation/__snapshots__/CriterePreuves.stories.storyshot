@@ -162,7 +162,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves 
     </li>
   </ul>
   <i
-    className="flex fr-icon fr-icon-checkbox-circle-fill before:text-[#5FD68C] before:pr-3 fr-text--sm fr-mb-0 fr-ml-3w fr-mb-2w"
+    className="flex fr-icon fr-icon-checkbox-circle-fill before:text-success before:pr-3 fr-text--sm fr-mb-0 fr-ml-3w fr-mb-2w"
   >
     Terminé
   </i>
@@ -334,7 +334,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves 
     </a>
   </li>
   <i
-    className="flex fr-icon fr-icon-checkbox-circle-fill before:text-[#5FD68C] before:pr-3 fr-text--sm fr-mb-0 fr-ml-3w fr-mb-2w"
+    className="flex fr-icon fr-icon-checkbox-circle-fill before:text-success before:pr-3 fr-text--sm fr-mb-0 fr-ml-3w fr-mb-2w"
   >
     Terminé
   </i>

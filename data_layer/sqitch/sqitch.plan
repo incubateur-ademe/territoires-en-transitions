@@ -428,3 +428,9 @@ utilisateur/usage [utilisateur/usage@v2.44.0] 2023-07-11T12:01:48Z Florian <flor
 stats/amplitude [stats/amplitude@v2.44.0] 2023-07-11T13:14:54Z Florian <florian@derfurth.com> # Envoi les événements de création des réponses et des justifications
 plan_action/import 2023-07-03T09:25:01Z Amandine Jacquelin <conta@LanceLibre> # Corrige la fonction d'import pour les cibles et résultats attendus
 @v2.46.0 2023-07-24T15:55:28Z Florian <florian@derfurth.com> # Amélioration du tracking et de l'import des plans
+
+plan_action/fiches [plan_action/fiches@v2.41.0] 2023-06-22T08:59:13Z Amandine Jacquelin <conta@LanceLibre> # Ajoute des filtres à filter_fiches_action et retourne fiche_resume au lieu de fiches_action
+@v2.47.0 2023-08-01T08:29:18Z Florian <florian@derfurth.com> # Filtres pour les vues de synthèse
+
+labellisation/parcours [labellisation/parcours@v2.38.0] 2023-06-15T15:44:08Z Amandine Jacquelin <conta@LanceLibre> # Corrige la condition pour une demande 1ère étoile par une collectivité cot
+@v2.48.0 2023-08-02T07:21:59Z Florian <florian@derfurth.com> # Modification des critères de demande première étoile pour les COTs

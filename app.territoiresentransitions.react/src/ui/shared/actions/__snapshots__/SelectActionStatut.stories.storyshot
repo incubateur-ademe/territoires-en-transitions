@@ -52,7 +52,7 @@ exports[`Storyshots ui/shared/actions/SelectActionStatut Avec Selection 1`] = `
     onPointerDown={[Function]}
   >
     <span
-      className="mr-auto mt-1 w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-[#18753C] bg-[#B8FEC9] !text-xs !px-1"
+      className="mr-auto mt-1 w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-success bg-[#B8FEC9] !text-xs !px-1"
       data-test="ActionStatutBadge"
     >
       Fait

@@ -15,6 +15,7 @@ export type TCycleLabellisation = {
   isAuditeur: boolean;
   isCOT: boolean;
   labellisable: boolean;
+  peutDemanderEtoile: boolean;
   peutCommencerAudit: boolean;
 };
 
@@ -35,7 +36,7 @@ export const useCycleLabellisation = (
 
   // charge les données du parcours
   const parcours = useLabellisationParcours({collectivite_id, referentiel});
-  const {completude_ok, rempli} = parcours || {};
+  const {completude_ok, rempli, etoiles} = parcours || {};
 
   // vérifie si l'utilisateur courant peut commencer l'audit
   const peutCommencerAudit = usePeutCommencerAudit();
@@ -43,8 +44,9 @@ export const useCycleLabellisation = (
   // états dérivés
   const status = getParcoursStatus(parcours);
   const isCOT = Boolean(identite?.is_cot);
-  // on peut soumettre la demande de labellisation si...
-  const labellisable = Boolean(
+
+  // on peut demander une étoile si...
+  const peutDemanderEtoile = Boolean(
     // pas d'audit ou de labellisation demandée
     status === 'non_demandee' &&
       // et le référentiel est rempli
@@ -53,13 +55,17 @@ export const useCycleLabellisation = (
       rempli
   );
 
+  // on peut soumettre une demande de labellisation si...
+  const labellisable = peutDemanderEtoile && etoiles !== '1';
+
   return {
     parcours,
     status,
     isAuditeur,
     isCOT,
-    labellisable,
+    peutDemanderEtoile,
     peutCommencerAudit,
+    labellisable,
   };
 };
 

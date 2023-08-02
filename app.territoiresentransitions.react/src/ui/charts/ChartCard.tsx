@@ -5,7 +5,7 @@ import Modal from 'ui/shared/floating-ui/Modal';
 import BarChart, {BarChartProps} from './BarChart';
 import DonutChart, {DonutChartProps} from './DonutChart';
 
-const Legend = ({
+export const Legend = ({
   legend,
 }: {
   legend: {name: string; color: string}[];
@@ -42,7 +42,7 @@ type ChartCardModalContentProps = {
   topElement?: (id?: string) => JSX.Element;
 };
 
-const ChartCardModalContent = ({
+export const ChartCardModalContent = ({
   chart,
   chartInfo,
   topElement,
@@ -131,6 +131,7 @@ type ChartCardProps = {
   };
   topElement?: (id?: string) => JSX.Element;
   customStyle?: React.CSSProperties;
+  classNames?: string;
 };
 
 /**
@@ -149,6 +150,7 @@ const ChartCard = ({
   chartInfo,
   topElement,
   customStyle,
+  classNames,
 }: ChartCardProps) => {
   const tracker = useFonctionTracker();
 
@@ -172,7 +174,7 @@ const ChartCard = ({
     <div
       className={`border border-gray-200 bg-white flex flex-col w-full h-96 relative ${
         chartInfo?.title || chartInfo?.expandable ? 'pt-6' : ''
-      }`}
+      } ${classNames ? classNames : ''}`}
       style={customStyle}
     >
       {/* En-tête de la carte */}

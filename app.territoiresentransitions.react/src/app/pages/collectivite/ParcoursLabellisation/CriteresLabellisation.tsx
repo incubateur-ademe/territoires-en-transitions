@@ -15,6 +15,7 @@ export type TCriteresLabellisationProps = {
   collectiviteId: number;
   parcours: TLabellisationParcours;
   preuves: TPreuveLabellisation[];
+  isCOT: boolean;
 };
 
 /**
@@ -54,7 +55,7 @@ export const CriteresLabellisation = (props: TCriteresLabellisationProps) => {
 const CriteresLabellisationConnected = () => {
   const collectiviteId = useCollectiviteId();
   const referentiel = useReferentielId();
-  const {parcours} = useCycleLabellisation(referentiel);
+  const {parcours, isCOT} = useCycleLabellisation(referentiel);
   const preuves = usePreuvesLabellisation(parcours?.demande?.id);
 
   return collectiviteId && parcours ? (
@@ -62,6 +63,7 @@ const CriteresLabellisationConnected = () => {
       collectiviteId={collectiviteId}
       parcours={parcours}
       preuves={preuves}
+      isCOT={isCOT}
     />
   ) : null;
 };

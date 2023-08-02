@@ -3,6 +3,7 @@
 BEGIN;
 
 drop function filter_fiches_action;
+drop type fiche_action_echeances;
 create function
     filter_fiches_action(
     collectivite_id integer,
@@ -10,7 +11,8 @@ create function
     pilotes personne[] default null,
     niveaux_priorite fiche_action_niveaux_priorite[] default null,
     statuts fiche_action_statuts[] default null,
-    referents personne[] default null
+    referents personne[] default null,
+    "limit" integer default 10
 )
     returns setof fiches_action
 as
@@ -59,7 +61,8 @@ begin
           and case
                   when statuts is null then true
                   else fa.statut in (select * from unnest(statuts::fiche_action_statuts[]))
-            end;
+            end
+        limit filter_fiches_action."limit";
 end;
 $$ language plpgsql security definer
                     stable;

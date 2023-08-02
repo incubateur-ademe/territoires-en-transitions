@@ -61,7 +61,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
                   onClick={[Function]}
                 >
                   <i
-                    className="fr-fi-information-fill text-[#0063cb] fr-mr-3v"
+                    className="fr-fi-information-fill text-tDefaultInfo fr-mr-3v"
                   />
                   En savoir plus
                 </button>
@@ -275,7 +275,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
                   onClick={[Function]}
                 >
                   <i
-                    className="fr-icon-draft-line text-[#0063cb] fr-mr-3v"
+                    className="fr-icon-draft-line text-tDefaultInfo fr-mr-3v"
                   />
                   Justifier votre réponse (optionnel)
                 </button>
@@ -315,7 +315,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
                   onClick={[Function]}
                 >
                   <i
-                    className="fr-fi-information-fill text-[#0063cb] fr-mr-3v"
+                    className="fr-fi-information-fill text-tDefaultInfo fr-mr-3v"
                   />
                   Comment calculer la part ?
                 </button>
@@ -417,7 +417,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
                   onClick={[Function]}
                 >
                   <i
-                    className="fr-fi-information-fill text-[#0063cb] fr-mr-3v"
+                    className="fr-fi-information-fill text-tDefaultInfo fr-mr-3v"
                   />
                   En savoir plus
                 </button>
@@ -631,7 +631,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
                   onClick={[Function]}
                 >
                   <i
-                    className="fr-icon-draft-line text-[#0063cb] fr-mr-3v"
+                    className="fr-icon-draft-line text-tDefaultInfo fr-mr-3v"
                   />
                   Justifier votre réponse (optionnel)
                 </button>
@@ -671,7 +671,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
                   onClick={[Function]}
                 >
                   <i
-                    className="fr-fi-information-fill text-[#0063cb] fr-mr-3v"
+                    className="fr-fi-information-fill text-tDefaultInfo fr-mr-3v"
                   />
                   Comment calculer la part ?
                 </button>
@@ -849,7 +849,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
                   onClick={[Function]}
                 >
                   <i
-                    className="fr-fi-information-fill text-[#0063cb] fr-mr-3v"
+                    className="fr-fi-information-fill text-tDefaultInfo fr-mr-3v"
                   />
                   En savoir plus
                 </button>
@@ -1063,7 +1063,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
                   onClick={[Function]}
                 >
                   <i
-                    className="fr-icon-draft-line text-[#0063cb] fr-mr-3v"
+                    className="fr-icon-draft-line text-tDefaultInfo fr-mr-3v"
                   />
                   Justifier votre réponse (optionnel)
                 </button>
@@ -1103,7 +1103,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
                   onClick={[Function]}
                 >
                   <i
-                    className="fr-fi-information-fill text-[#0063cb] fr-mr-3v"
+                    className="fr-fi-information-fill text-tDefaultInfo fr-mr-3v"
                   />
                   Comment calculer la part ?
                 </button>

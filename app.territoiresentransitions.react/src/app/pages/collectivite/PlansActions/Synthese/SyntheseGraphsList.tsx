@@ -1,60 +1,18 @@
-import {defaultColors, nivoColorsSet, statusColor} from 'ui/charts/chartsTheme';
 import {usePlanActionTableauDeBord} from './data/usePlanActionTableauDeBord';
 import PictoLeaf from 'ui/pictogrammes/PictoLeaf';
 import ChartCard from 'ui/charts/ChartCard';
 import {Link} from 'react-router-dom';
-import {makeCollectivitePlansActionsNouveauUrl} from 'app/paths';
-
-const getLegendColor = (
-  data: {id: string; value: number; color?: any},
-  dataLength: number,
-  index: number
-) => {
-  if (data.color) {
-    return data.color;
-  }
-  if (dataLength <= defaultColors.length) {
-    return defaultColors[index % defaultColors.length];
-  }
-  return nivoColorsSet[index % nivoColorsSet.length];
-};
-
-const getCustomLegend = (data: {id: string; value: number; color?: any}[]) => {
-  // Limitation du nombre d'éléments visibles dans la légende
-  const legendMaxSize = 9;
-
-  // Légendes associées au données sans label
-  const withoutLabelLegends = [
-    'Sans statut',
-    'Sans pilote',
-    'Sans élu·e référent·e',
-    'Non priorisé',
-  ];
-
-  // Légende réduite à afficher
-  const legend = data.slice(0, legendMaxSize).map((d, index) => ({
-    name: d.id,
-    color: getLegendColor(d, data.length, index),
-  }));
-
-  const lastElement = data[data.length - 1];
-
-  if (
-    withoutLabelLegends.includes(lastElement.id) &&
-    data.length > legendMaxSize
-  ) {
-    legend.push({
-      name: lastElement.id,
-      color: getLegendColor(lastElement, data.length, data.length - 1),
-    });
-  }
-
-  return legend;
-};
+import {
+  makeCollectivitePlansActionsNouveauUrl,
+  makeCollectivitePlansActionsSyntheseVueUrl,
+} from 'app/paths';
+import {PlanActionFilter} from './FiltersPlanAction';
+import {generateSyntheseGraphData} from './utils';
+import classNames from 'classnames';
 
 type SyntheseGraphsListProps = {
   collectiviteId: number;
-  selectedPlan: {id: number | null; name: string};
+  selectedPlan: PlanActionFilter;
   withoutPlan: boolean | null;
   isReadonly: boolean;
 };
@@ -72,98 +30,59 @@ const SyntheseGraphsList = ({
   withoutPlan,
   isReadonly,
 }: SyntheseGraphsListProps): JSX.Element => {
+  const selectedPlanId = (plan: PlanActionFilter) => {
+    if (plan.id === 'tous' || plan.id === 'nc') {
+      return null;
+    }
+
+    return plan.id;
+  };
+
   const data = usePlanActionTableauDeBord(
     collectiviteId,
-    selectedPlan.id,
+    selectedPlanId(selectedPlan),
     withoutPlan
   );
 
-  const graphsData: {
-    id: string;
-    title: string;
-    data: {id: string; value: number; color?: any}[];
-  }[] = data
-    ? [
-        {
-          id: 'statut-avancement',
-          title: "Répartition par statut d'avancement",
-          data: data.statuts.map(st => ({
-            ...st,
-            id: st.id !== 'NC' ? st.id : 'Sans statut',
-            color: statusColor[st.id],
-          })),
-        },
-        {
-          id: 'personne-pilote',
-          title: 'Répartition par personne pilote',
-          data: data.pilotes.map(pi => ({
-            ...pi,
-            id: pi.id !== 'NC' ? pi.id : 'Sans pilote',
-            color: pi.id === 'NC' ? statusColor.NC : undefined,
-          })),
-        },
-        {
-          id: 'elu-referent',
-          title: 'Répartition par élu·e référent·e',
-          data: data.referents.map(ref => ({
-            ...ref,
-            id: ref.id !== 'NC' ? ref.id : 'Sans élu·e référent·e',
-            color: ref.id === 'NC' ? statusColor.NC : undefined,
-          })),
-        },
-        {
-          id: 'niveau-priorite',
-          title: 'Répartition par niveau de priorité',
-          data: data.priorites.map(pr => ({
-            ...pr,
-            id: pr.id !== 'NC' ? pr.id : 'Non priorisé',
-            color: pr.id === 'NC' ? statusColor.NC : undefined,
-          })),
-        },
-        {
-          id: 'echeance',
-          title: 'Répartition par échéance',
-          data: data.echeances.map(ech => ({
-            ...ech,
-            color: ech.id === 'NC' ? statusColor.NC : undefined,
-          })),
-        },
-        // {
-        //   title: 'Répartition par direction pilote',
-        //   data: [],
-        // },
-        // {
-        //   title: 'Répartition par budget prévisionnel',
-        //   data: [],
-        // },
-      ]
-    : [];
-
   return data ? (
     <div className="fr-grid-row fr-grid-row--gutters">
-      {graphsData.map(
+      {generateSyntheseGraphData(data).map(
         graph =>
           !!graph.data.length && (
             <div key={graph.title} className="fr-col-sm-12 fr-col-xl-6">
-              <ChartCard
-                chartType="donut"
-                chartProps={{
-                  data: graph.data,
-                  label:
-                    graph.id === 'statut-avancement' ||
-                    graph.id === 'niveau-priorite',
-                }}
-                chartInfo={{
-                  title: graph.title,
-                  extendedTitle: `${selectedPlan.name} - ${graph.title}`,
-                  legend: getCustomLegend(graph.data),
-                  expandable: true,
-                  downloadedFileName: `repartition-${
-                    graph.id
-                  }-${selectedPlan.name.toLowerCase().split(' ').join('-')}`,
-                }}
-                customStyle={{height: '350px', borderBottomWidth: '4px'}}
-              />
+              <Link
+                data-test={`lien-graph-${graph.id}`}
+                className={classNames('group fr-col-sm-12 fr-col-xl-6', {
+                  'cursor-default': graph.id === 'echeance',
+                })}
+                to={
+                  graph.id === 'echeance'
+                    ? '#'
+                    : `${makeCollectivitePlansActionsSyntheseVueUrl({
+                        collectiviteId,
+                        vue: graph.id,
+                      })}${
+                        typeof selectedPlan.id === 'number'
+                          ? `?axes=${selectedPlan.id}`
+                          : ''
+                      }`
+                }
+              >
+                <ChartCard
+                  chartType="donut"
+                  chartProps={{
+                    data: graph.data,
+                    label: graph.id === 'statuts' || graph.id === 'priorites',
+                  }}
+                  chartInfo={{
+                    title: graph.title,
+                  }}
+                  customStyle={{height: '350px', borderBottomWidth: '4px'}}
+                  classNames={classNames({
+                    'group-hover:bg-gray-50': graph.id !== 'echeance',
+                  })}
+                />
+              </Link>
             </div>
           )
       )}

@@ -61,7 +61,7 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     Quand je clique en dehors de la boîte de dialogue
     Alors le fil d'ariane de la fiche contient "Axe 1: les tests passent"
 
-    @focus
+
   Scénario: Ajouter, éditer et supprimer un plan d'action
     Etant donné que je suis connecté en tant que "yolo"
     Et que je suis sur la page "Plans action" de la collectivité "1"
@@ -150,3 +150,28 @@ Fonctionnalité: Gérer les fiches et les plans d'action
 
     Quand je filtre les fiches par "Michel Sapasse" du filtre "personne-pilote"
     Alors la fiche contenant "Pilote : Michel Sapasse" est visible
+
+  Scénario: Visiter page graphique de synthèse et filter les fiches
+    Etant donné que je suis connecté en tant que "yolo"
+    Et que je suis sur la page "Plans action" de la collectivité "1"
+
+    Quand je clique sur le bouton "Répartition par pilote"
+    Alors le "Page graph de synthèse" est visible
+
+    Quand je filtre par "Plan Vélo 2020-2024"
+    Alors "6" fiches action s'affichent
+
+    Quand je filtre par "Sans pilote"
+    Alors "2" fiches action s'affichent
+
+    Quand je filtre par "Harry Cot"
+    Alors "2" fiches action s'affichent
+
+    Quand je filtre les fiches par "Sans élu·e référent·e" du filtre "personne-referentes"
+    Alors "1" fiches action s'affichent
+
+    # Quand je recharge la page
+    # Alors "1" fiches action s'affichent
+
+    Quand je clique sur le bouton "Désactiver tous les filtres"
+    Alors un message demandant à l'utilisateur de sélectionner un filtre s'affiche

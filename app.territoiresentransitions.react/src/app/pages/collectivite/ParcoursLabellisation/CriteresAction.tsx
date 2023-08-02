@@ -2,6 +2,7 @@ import {TLabellisationParcours} from 'app/pages/collectivite/ParcoursLabellisati
 import {referentielToName} from 'app/labels';
 import {makeCollectiviteTacheUrl} from 'app/paths';
 import './CriteresAction.css';
+import classNames from 'classnames';
 
 export type TCriteresActionProps = {
   collectiviteId: number;
@@ -78,9 +79,12 @@ const CritereActionRow = (props: TCriteresActionTable & {rowIndex: number}) => {
   return (
     <tr>
       <td className="text-center w-[56px]">
-        {rempli ? (
-          <i className="fr-icon fr-icon-checkbox-circle-fill before:text-[#5FD68C]" />
-        ) : null}
+        <span
+          className={classNames('fr-icon fr-icon-checkbox-circle-fill', {
+            'text-success': rempli,
+            'text-[#eee]': !rempli,
+          })}
+        />
       </td>
       <td className="text-right text-xs w-[40px] text-grey625">
         <span>{action_identifiant}</span>

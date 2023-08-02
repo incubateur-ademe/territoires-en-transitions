@@ -2,11 +2,10 @@ import {useQuery} from 'react-query';
 
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useSearchParams} from 'core-logic/hooks/query';
-import {nameToShortNames, TFilters} from './filters';
+import {nameToShortNames, NB_FICHES_PER_PAGE, TFilters} from './filters';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {FicheAction} from './types';
+import {FicheResume} from './types';
 import {TPersonne} from 'types/alias';
-import {PlanNode} from '../../PlanAction/data/types';
 
 /**
  * Renvoie un tableau de Personne.
@@ -23,7 +22,7 @@ export const makePersonnesWithIds = (personnes?: string[]) => {
 };
 
 export type TFichesActionsListe = {
-  items: FicheAction[];
+  items: FicheResume[];
   total: number;
   initialFilters: TFilters;
   filters: TFilters;
@@ -31,23 +30,53 @@ export type TFichesActionsListe = {
   setFilters: (filters: TFilters) => void;
 };
 
-type TFetchedData = {items: FicheAction[]; total: number};
+type TFetchedData = {items: FicheResume[]; total: number};
 
 export const fetchFichesActionFiltresListe = async (
   filters: TFilters
 ): Promise<TFetchedData> => {
-  const {collectivite_id, axes_id, pilotes, statuts, referents, priorites} =
-    filters;
+  const {
+    collectivite_id,
+    axes,
+    sans_plan,
+    pilotes,
+    sans_pilote,
+    statuts,
+    sans_statut,
+    referents,
+    sans_referent,
+    priorites,
+    sans_niveau,
+    echeance,
+  } = filters;
+
+  // Quand les valeurs viennent de l'URL, elle sont données sous forme de tableau de string
+  const echeanceSansTableau = Array.isArray(echeance) ? echeance[0] : echeance;
+  /** Transforme le filtre en booléen  */
+  const getBooleanFromNumber = (v: number | string[] | undefined) =>
+    Array.isArray(v) ? v[0] === '1' : v === 1;
+  const sansPlan = getBooleanFromNumber(sans_plan);
+  const sansPilote = getBooleanFromNumber(sans_pilote);
+  const sansReferent = getBooleanFromNumber(sans_referent);
+  const sansStatut = getBooleanFromNumber(sans_statut);
+  const sansPriorite = getBooleanFromNumber(sans_niveau);
 
   const {error, data, count} = await supabaseClient.rpc(
     'filter_fiches_action',
     {
       collectivite_id: collectivite_id!,
-      axes_id: axes_id,
+      axes_id: axes,
+      sans_plan: sansPlan || undefined,
       pilotes: makePersonnesWithIds(pilotes),
+      sans_pilote: sansPilote || undefined,
       referents: makePersonnesWithIds(referents),
-      statuts: statuts,
+      sans_referent: sansReferent || undefined,
+      statuts,
+      sans_statut: sansStatut,
       niveaux_priorite: priorites,
+      sans_niveau: sansPriorite,
+      echeance: echeanceSansTableau,
+      limit: NB_FICHES_PER_PAGE,
     },
     {count: 'exact'}
   );
@@ -56,39 +85,32 @@ export const fetchFichesActionFiltresListe = async (
     throw new Error(error.message);
   }
 
-  return {items: (data as unknown as FicheAction[]) || [], total: count || 0};
+  return {items: (data as unknown as FicheResume[]) || [], total: count || 0};
 };
 
 type Args = {
-  plan: PlanNode;
-  axe?: PlanNode;
+  /** URL à matcher pour récupérer les paramètres */
+  url: string;
+  initialFilters: TFilters;
 };
 /**
  * Liste de fiches actions au sein d'un axe
  */
 export const useFichesActionFiltresListe = ({
-  plan,
-  axe,
+  url,
+  initialFilters,
 }: Args): TFichesActionsListe => {
   const collectivite_id = useCollectiviteId();
 
-  const initialFilters: TFilters = {
-    collectivite_id: collectivite_id!,
-    axes_id: [axe ? axe.id : plan.id],
-  };
-
   const [filters, setFilters, filtersCount] = useSearchParams<TFilters>(
-    axe
-      ? `/collectivite/${collectivite_id}/plans/plan/${plan.id}/${axe.id}`
-      : `/collectivite/${collectivite_id}/plans/plan/${plan.id}`,
+    url,
     initialFilters,
     nameToShortNames
   );
 
   // charge les données
-  const {data} = useQuery(
-    ['fiches_Actions', collectivite_id, axe ? axe.id : plan.id, filters],
-    () => fetchFichesActionFiltresListe(filters)
+  const {data} = useQuery(['fiches_Actions', collectivite_id, filters], () =>
+    fetchFichesActionFiltresListe(filters)
   );
 
   return {

@@ -39,7 +39,6 @@ const CollectiviteSelectionee = ({
       <>
         <Alerte
           state="information"
-          titre="Collectivité déjà activée"
           description={generateReferentContactsDescription(referentContacts)}
         />
         <Link

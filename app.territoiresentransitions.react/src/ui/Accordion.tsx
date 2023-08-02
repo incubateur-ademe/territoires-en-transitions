@@ -66,7 +66,7 @@ export const AccordionControlled = (
           aria-expanded={expanded}
           onClick={() => setExpanded(!expanded)}
         >
-          {!!icon && <i className={`${icon} text-[#0063cb] fr-mr-3v`} />}
+          {!!icon && <i className={`${icon} text-tDefaultInfo fr-mr-3v`} />}
           {titre}
         </button>
       </h3>

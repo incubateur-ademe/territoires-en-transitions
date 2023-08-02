@@ -1,5 +1,4 @@
 import FormField from 'ui/shared/form/FormField';
-import ActionCard from '../../components/ActionCard';
 import AutocompleteInputSelect from 'ui/shared/select/AutocompleteInputSelect';
 import {TOptionSection} from 'ui/shared/select/commons';
 import {useCollectiviteId} from 'core-logic/hooks/params';
@@ -8,10 +7,10 @@ import {
   makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
 } from 'app/paths';
-import FicheActionBadgeStatut from './FicheActionBadgeStatut';
 import {FicheResume} from '../data/types';
 import {TAxeInsert} from 'types/alias';
-import {generateTitle, formatNomPilotes} from '../data/utils';
+import {generateTitle} from '../data/utils';
+import FicheActionCard from '../FicheActionCard';
 
 type Props = {
   ficheCouranteId: number | null;
@@ -101,21 +100,11 @@ const FichesLiees = ({
     return selectedFiches;
   };
 
-  const generateCardDetails = (fiche: FicheResume) => {
-    const {plans, pilotes} = fiche;
-    const plan = plans?.[0];
-
-    let details = plan?.nom || 'Fiches non classées';
-    if (pilotes) {
-      details += ` | ${formatNomPilotes(pilotes)}`;
-    }
-    return details;
-  };
-
   return (
     <>
       <FormField label="Fiches des plans liées">
         <AutocompleteInputSelect
+          dsfrButton
           containerWidthMatchButton
           values={fiches?.map((fiche: FicheResume) => fiche.id!.toString())}
           options={formatOptions(ficheListeSansFicheCourante)}
@@ -127,9 +116,11 @@ const FichesLiees = ({
       {fiches && fiches.length > 0 && (
         <div className="grid grid-cols-2 gap-6">
           {fiches.map(fiche => (
-            <ActionCard
-              openInNewTab
+            <FicheActionCard
               key={fiche.id}
+              openInNewTab
+              displayAxe
+              ficheAction={fiche}
               link={
                 fiche.plans && fiche.plans[0] && fiche.plans[0].id
                   ? makeCollectivitePlanActionFicheUrl({
@@ -142,13 +133,6 @@ const FichesLiees = ({
                       ficheUid: fiche.id!.toString(),
                     })
               }
-              statutBadge={
-                fiche.statut && (
-                  <FicheActionBadgeStatut statut={fiche.statut} small />
-                )
-              }
-              details={generateCardDetails(fiche)}
-              title={generateTitle(fiche.titre)}
             />
           ))}
         </div>

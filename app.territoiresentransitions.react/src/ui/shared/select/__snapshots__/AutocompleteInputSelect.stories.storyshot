@@ -11,7 +11,7 @@ exports[`Storyshots ui/shared/select/AutocompleteInputSelect Default 1`] = `
   onPointerDown={[Function]}
 >
   <div
-    className="flex items-center w-full p-2 text-left text-sm fr-select !flex !px-4 !bg-none !bg-grey975"
+    className="flex items-center w-full p-2 text-left text-sm"
     onClick={[Function]}
   >
     <div

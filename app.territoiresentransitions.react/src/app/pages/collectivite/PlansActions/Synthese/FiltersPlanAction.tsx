@@ -2,6 +2,18 @@ import TagFilters from 'ui/shared/filters/TagFilters';
 import {useFichesNonClasseesListe} from '../FicheAction/data/useFichesNonClasseesListe';
 import {usePlansActionsListe} from '../PlanAction/data/usePlansActionsListe';
 import {generateTitle} from '../FicheAction/data/utils';
+import {ITEM_ALL} from 'ui/shared/filters/commons';
+import {useEffect} from 'react';
+
+export type PlanActionFilter = {id: number | 'nc' | 'tous'; name: string};
+export const filtreToutesLesFiches: PlanActionFilter = {
+  id: ITEM_ALL,
+  name: 'Toutes les fiches',
+};
+export const filtreFichesNonClassees: PlanActionFilter = {
+  id: 'nc',
+  name: 'Fiches non classées',
+};
 
 /**
  * Filtres tags par plan d'action
@@ -13,20 +25,27 @@ import {generateTitle} from '../FicheAction/data/utils';
 
 type FiltersPlanActionProps = {
   collectiviteId: number;
-  onChangePlan: ({id, name}: {id: number | null; name: string}) => void;
-  onChangeWithoutPlan: (value: boolean | null) => void;
+  initialPlan?: string;
+  getInitialPlan?: (plan: PlanActionFilter) => void;
+  onChangePlan: ({id, name}: PlanActionFilter) => void;
 };
 
 const FiltersPlanAction = ({
   collectiviteId,
+  initialPlan,
+  getInitialPlan,
   onChangePlan,
-  onChangeWithoutPlan,
 }: FiltersPlanActionProps): JSX.Element => {
   const plansActions = usePlansActionsListe(collectiviteId);
   const fichesNonClassees = useFichesNonClasseesListe(collectiviteId);
 
   // Construction de la liste de filtres par plan d'action
-  const filters = [{value: 'default', label: 'Toutes les fiches'}];
+  const filters = [
+    {
+      value: filtreToutesLesFiches.id?.toString(),
+      label: filtreToutesLesFiches.name,
+    },
+  ];
 
   if (plansActions?.plans && plansActions.plans.length) {
     filters.push(
@@ -39,36 +58,39 @@ const FiltersPlanAction = ({
 
   if (fichesNonClassees?.fiches && fichesNonClassees.fiches.length > 0) {
     filters.push({
-      value: 'nc',
-      label: 'Fiches non classées',
+      value: filtreFichesNonClassees.id.toString(),
+      label: filtreFichesNonClassees.name,
     });
   }
 
-  // Mise à jour des filtres sélectionnés
-  const handleChangeFilter = (id: string) => {
-    if (id === 'default') {
-      onChangePlan({id: null, name: 'Toutes les fiches'});
-      onChangeWithoutPlan(null);
-    } else if (id === 'nc') {
-      onChangePlan({id: null, name: 'Fiches non classées'});
-      onChangeWithoutPlan(true);
+  const generatePlan = (value: string): PlanActionFilter => {
+    // Toutes les fiches
+    if (value === ITEM_ALL) {
+      return filtreToutesLesFiches;
+      // Fiches non classées
+    } else if (value === 'nc') {
+      return filtreFichesNonClassees;
+      // Les plans d'action
     } else {
-      onChangePlan({
-        id: parseInt(id),
-        name: filters.filter(f => f.value === id)[0].label,
-      });
-      onChangeWithoutPlan(false);
+      return {
+        id: parseInt(value),
+        name: filters.filter(f => f.value === value)[0]?.label ?? '',
+      };
     }
   };
+
+  useEffect(() => {
+    initialPlan && getInitialPlan && getInitialPlan(generatePlan(initialPlan));
+  }, []);
 
   return (
     // Filtres affichés si plus d'un plan d'action défini
     filters.length > 2 ? (
       <TagFilters
+        defaultOption={initialPlan}
         name="plans_actions"
         options={filters}
-        className="pb-10"
-        onChange={handleChangeFilter}
+        onChange={value => onChangePlan(generatePlan(value))}
       />
     ) : (
       <></>

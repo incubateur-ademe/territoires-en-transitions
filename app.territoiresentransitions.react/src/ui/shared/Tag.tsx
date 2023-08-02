@@ -14,10 +14,10 @@ const Tag = ({className, title, onCloseClick, isUserCreated}: TTag) => {
   return (
     <div
       className={classNames(
-        'flex items-center px-3 py-0.5 bg-white border border-gray-300 text-gray-900 rounded-full',
+        'flex items-center px-3 py-0.5 text-white bg-bf500  rounded-full',
         {'pr-2': onCloseClick},
         {
-          '!text-white !bg-bf500': isUserCreated,
+          '!bg-white !border !border-gray-300 !text-gray-900': isUserCreated,
         },
         className
       )}

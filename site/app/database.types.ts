@@ -4827,57 +4827,36 @@ export interface Database {
       filter_fiches_action: {
         Args: {
           collectivite_id: number
+          sans_plan?: boolean
           axes_id?: number[]
+          sans_pilote?: boolean
           pilotes?: Database["public"]["CompositeTypes"]["personne"][]
-          niveaux_priorite?: Database["public"]["Enums"]["fiche_action_niveaux_priorite"][]
-          statuts?: Database["public"]["Enums"]["fiche_action_statuts"][]
+          sans_referent?: boolean
           referents?: Database["public"]["CompositeTypes"]["personne"][]
+          sans_niveau?: boolean
+          niveaux_priorite?: Database["public"]["Enums"]["fiche_action_niveaux_priorite"][]
+          sans_statut?: boolean
+          statuts?: Database["public"]["Enums"]["fiche_action_statuts"][]
+          sans_thematique?: boolean
+          thematiques?: unknown[]
+          sans_sous_thematique?: boolean
+          sous_thematiques?: unknown[]
+          sans_budget?: boolean
+          budget_min?: number
+          budget_max?: number
+          sans_date?: boolean
+          date_debut?: string
+          date_fin?: string
+          echeance?: Database["public"]["Enums"]["fiche_action_echeances"]
           limit?: number
         }
         Returns: {
-          actions: unknown[] | null
-          amelioration_continue: boolean | null
-          axes: unknown[] | null
-          budget_previsionnel: number | null
-          calendrier: string | null
-          cibles: Database["public"]["Enums"]["fiche_action_cibles"][] | null
           collectivite_id: number | null
-          created_at: string | null
-          date_debut: string | null
-          date_fin_provisoire: string | null
-          description: string | null
-          fiches_liees: unknown[] | null
-          financements: string | null
-          financeurs:
-            | Database["public"]["CompositeTypes"]["financeur_montant"][]
-            | null
           id: number | null
-          indicateurs:
-            | Database["public"]["CompositeTypes"]["indicateur_generique"][]
-            | null
-          maj_termine: boolean | null
           modified_at: string | null
-          modified_by: string | null
-          niveau_priorite:
-            | Database["public"]["Enums"]["fiche_action_niveaux_priorite"]
-            | null
-          notes_complementaires: string | null
-          objectifs: string | null
-          partenaires: unknown[] | null
-          piliers_eci:
-            | Database["public"]["Enums"]["fiche_action_piliers_eci"][]
-            | null
           pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
-          referents: Database["public"]["CompositeTypes"]["personne"][] | null
-          ressources: string | null
-          resultats_attendus:
-            | Database["public"]["Enums"]["fiche_action_resultats_attendus"][]
-            | null
-          services: unknown[] | null
-          sous_thematiques: unknown[] | null
+          plans: unknown[] | null
           statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
-          structures: unknown[] | null
-          thematiques: unknown[] | null
           titre: string | null
         }[]
       }
@@ -6840,6 +6819,13 @@ export interface Database {
         | "Collectivité elle-même"
         | "Elus locaux"
         | "Agents"
+      fiche_action_echeances:
+        | "Action en amélioration continue"
+        | "Sans échéance"
+        | "Échéance dépassée"
+        | "Échéance dans moins de trois mois"
+        | "Échéance entre trois mois et 1 an"
+        | "Échéance dans plus d’un an"
       fiche_action_niveaux_priorite: "Élevé" | "Moyen" | "Bas"
       fiche_action_piliers_eci:
         | "Approvisionnement durable"

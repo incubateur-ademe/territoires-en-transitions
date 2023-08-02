@@ -6,11 +6,13 @@ import MultiSelectDropdown from './MultiSelectDropdown';
 type TMultiSelectTagsDropdown<T extends string> = TSelectBase & {
   values?: T[];
   onSelect: (values: T[]) => void;
+  dsfrButton?: boolean;
 };
 
 const MultiSelectTagsDropdown = <T extends string>({
   values,
   options,
+  dsfrButton,
   buttonClassName,
   placeholderText,
   onSelect,
@@ -21,6 +23,7 @@ const MultiSelectTagsDropdown = <T extends string>({
   return (
     <MultiSelectDropdown
       data-test={dataTest}
+      dsfrButton={dsfrButton}
       buttonClassName={classNames(buttonClassName)}
       containerWidthMatchButton={containerWidthMatchButton}
       values={values}
