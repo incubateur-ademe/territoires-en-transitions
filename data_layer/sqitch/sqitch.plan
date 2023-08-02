@@ -396,7 +396,6 @@ indicateur/tableau_de_bord 2023-06-13T09:56:16Z Florian <florian@derfurth.com> #
 evaluation/reponse [evaluation/reponse@v2.38.0] 2023-06-15T14:07:04Z Florian <florian@derfurth.com> # Améliore les performances
 referentiel/vue_tabulaire [referentiel/vue_tabulaire@v2.38.0] 2023-06-15T15:11:59Z Florian <florian@derfurth.com> # Permet de meilleurs performances
 labellisation/preuve_v2 [labellisation/preuve_v2@v2.38.0] 2023-06-15T15:30:19Z Florian <florian@derfurth.com> # Ajoute les references aux collectivités pour les tables réponses
-labellisation/parcours [labellisation/parcours@v2.38.0] 2023-06-15T15:44:08Z Amandine Jacquelin <conta@LanceLibre> # Corrige la condition pour une demande 1ère étoile par une collectivité cot
 @v2.39.0 2023-06-15T17:04:21Z Florian <florian@derfurth.com> # Amélioration des performances
 
 labellisation/preuve_v2 [labellisation/preuve_v2@v2.39.0] 2023-06-16T07:46:22Z Florian <florian@derfurth.com> # Répare la RPC preuve_count
@@ -405,7 +404,6 @@ collectivite/historique [collectivite/historique@v2.39.0] 2023-06-16T11:31:43Z F
 
 utilisateur/visite [utilisateur/visite@v2.40.0] 2023-06-19T08:08:14Z Florian <florian@derfurth.com> # Ajoute les tags pour les indicateurs
 utilisateur/usage [utilisateur/usage@v2.40.0] 2023-06-19T08:14:06Z Florian <florian@derfurth.com> # Ajoute le tracking des boutons du tableau de bord
-
 plan_action/tableau_de_bord [plan_action/tableau_de_bord@v2.31.2] 2023-05-31T12:29:38Z Amandine Jacquelin <conta@LanceLibre> # Ajoute le graphique de répartition par échéance
 automatisation/crm [automatisation/crm@v2.37.0] 2023-06-13T15:56:21Z Florian <florian@derfurth.com> # Materialise la vue usages.
 @v2.41.0 2023-06-21T14:32:29Z Florian <florian@derfurth.com> # Nouveau graphique et améliorations tracking et crm
@@ -433,3 +431,5 @@ plan_action/import 2023-07-03T09:25:01Z Amandine Jacquelin <conta@LanceLibre> # 
 
 plan_action/fiches [plan_action/fiches@v2.41.0] 2023-06-22T08:59:13Z Amandine Jacquelin <conta@LanceLibre> # Ajoute des filtres à filter_fiches_action et retourne fiche_resume au lieu de fiches_action
 @v2.47.0 2023-08-01T08:29:18Z Florian <florian@derfurth.com> # Filtres pour les vues de synthèse
+
+labellisation/parcours [labellisation/parcours@v2.38.0] 2023-06-15T15:44:08Z Amandine Jacquelin <conta@LanceLibre> # Corrige la condition pour une demande 1ère étoile par une collectivité cot
