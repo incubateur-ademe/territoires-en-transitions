@@ -433,3 +433,4 @@ plan_action/fiches [plan_action/fiches@v2.41.0] 2023-06-22T08:59:13Z Amandine Ja
 @v2.47.0 2023-08-01T08:29:18Z Florian <florian@derfurth.com> # Filtres pour les vues de synthèse
 
 labellisation/parcours [labellisation/parcours@v2.38.0] 2023-06-15T15:44:08Z Amandine Jacquelin <conta@LanceLibre> # Corrige la condition pour une demande 1ère étoile par une collectivité cot
+@v2.48.0 2023-08-02T07:21:59Z Florian <florian@derfurth.com> # Modification des critères de demande première étoile pour les COTs
