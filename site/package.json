@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@gouvfr/dsfr": "^1.9.3",
+    "@mdx-js/loader": "^2.3.0",
     "@next/font": "13.1.1",
     "@next/mdx": "^13.1.6",
     "@nivo/core": "^0.81.0",
@@ -23,7 +24,7 @@
     "@nivo/stream": "^0.81.0",
     "@nivo/waffle": "^0.81.0",
     "@supabase/supabase-js": "^2.2.3",
-    "@tet/ui": "workspace:^1.0.0",
+    "@tet/ui": "workspace:*",
     "@types/node": "18.11.18",
     "@types/react": "18.0.26",
     "@types/react-dom": "18.0.10",
