@@ -21,7 +21,7 @@ export async function fetchCollection(path: collection): Promise<Array<JSON>> {
 }
 
 export async function fetchItem(path: string, id: id): Promise<JSON> {
-  const url = `${baseURL}/api/${path}/${id}`;
+  const url = `${baseURL}/api/${path}/${id}?populate=*`;
 
   const response = await fetch(`${url}`, {
     method: 'GET',
