@@ -1,3 +1,5 @@
+'use server';
+
 import {fetchCollection} from 'src/strapi';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
 import {StrapiItem} from 'src/StrapiItem';
