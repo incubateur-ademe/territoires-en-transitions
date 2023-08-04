@@ -10,9 +10,9 @@
     "format": "prettier --write \"**/*.{js,ts,jsx,tsx}\""
   },
   "dependencies": {
-    "@gouvfr/dsfr": "^1.9.3",
-    "@next/font": "13.1.1",
-    "@next/mdx": "^13.1.6",
+    "@gouvfr/dsfr": "^1.10.0",
+    "@mdx-js/loader": "^2.3.0",
+    "@next/mdx": "^13.4.12",
     "@nivo/core": "^0.81.0",
     "@nivo/geo": "^0.81.0",
     "@nivo/legends": "^0.81.0",
@@ -20,27 +20,27 @@
     "@nivo/pie": "^0.81.0",
     "@nivo/stream": "^0.81.0",
     "@nivo/waffle": "^0.81.0",
-    "@supabase/supabase-js": "^2.2.3",
-    "@types/node": "18.11.18",
-    "@types/react": "18.0.26",
-    "@types/react-dom": "18.0.10",
+    "@supabase/supabase-js": "^2.31.0",
+    "@types/node": "20.4.7",
+    "@types/react": "^18.2.18",
+    "@types/react-dom": "18.2.7",
     "d3-scale": "^4.0.2",
     "encoding": "^0.1.13",
-    "next": "13.1.1",
+    "next": "^13.4.12",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-leaflet": "^4.2.0",
+    "react-leaflet": "^4.2.1",
     "rehype-external-links": "^2.1.0",
     "rehype-slug": "^5.1.0",
     "rehype-toc": "^3.0.2",
-    "swr": "^2.0.0",
     "remark": "^14.0.3",
     "remark-html": "^15.0.2",
-    "typescript": "4.9.4"
+    "swr": "^2.2.0",
+    "typescript": "^5.1.6"
   },
   "devDependencies": {
-    "eslint": "8.31.0",
-    "eslint-config-next": "13.1.1",
-    "prettier": "2.8.4"
+    "eslint": "8.46.0",
+    "eslint-config-next": "13.4.12",
+    "prettier": "3.0.1"
   }
 }
