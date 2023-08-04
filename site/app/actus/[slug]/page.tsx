@@ -8,35 +8,37 @@ import {StrapiImage} from '@components/strapiImage/StrapiImage';
 
 export default async function Page({params}: {params: {slug: string}}) {
   const id = parseInt(params.slug);
-  const data = await fetchItem('actualites', id);
+  const actu = await fetchItem('actualites', id);
 
-  if (!data) return notFound();
+  if (!actu) return notFound();
+
+  const processedContent = await remark()
+    .use(html)
+    .process(`${actu['attributes']['Corps']}`);
+  const bodyHtml = processedContent.toString();
 
   return (
     <div className="fr-container">
       <div className="fr-mt-1w fr-mt-md-4w fr-mb-5w">
-        {/* @ts-expect-error Async Server Component */}
-        <Actu actu={data} />
+        <Actu bodyHtml={bodyHtml} actu={actu} />
       </div>
     </div>
   );
 }
 
-async function Actu(props: {actu: StrapiItem}) {
-  const actu = props.actu;
-  const processedContent = await remark()
-    .use(html)
-    .process(`${actu['attributes']['Corps']}`);
-  const contentHtml = processedContent.toString();
-
+function Actu(props: {actu: StrapiItem; bodyHtml: string}) {
   return (
     <div>
       <StrapiImage
-        data={actu['attributes']['Couverture']['data'] as unknown as StrapiItem}
+        data={
+          props.actu['attributes']['Couverture'][
+            'data'
+          ] as unknown as StrapiItem
+        }
         size="small"
       />
-      <h1 className="fr-title">{`${actu['attributes']['Titre']}`}</h1>
-      <div dangerouslySetInnerHTML={{__html: contentHtml}} />
+      <h1 className="fr-title">{`${props.actu['attributes']['Titre']}`}</h1>
+      <div dangerouslySetInnerHTML={{__html: props.bodyHtml}} />
     </div>
   );
 }
