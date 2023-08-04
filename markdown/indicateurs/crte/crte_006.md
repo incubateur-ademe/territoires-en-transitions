@@ -1,4 +1,4 @@
-# Pistes cyclables : linéaire
+# Linéaire d’aménagements cyclables sécurisés
 ```yaml
 id: crte_6.1
 identifiant: 6.1
