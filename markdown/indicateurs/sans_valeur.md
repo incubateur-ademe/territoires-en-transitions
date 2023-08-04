@@ -47,3 +47,28 @@ thematiques:
 ## Description
 Ces indicateurs estiment les émissions annuelles des six polluants atmosphériques exigés dans le contenu réglementaire des PCAET (décret n°2016-849 du 28 juin 2016 et arrêté du 4 août 2016 relatifs au plan climat-air-énergie territorial) : oxydes d’azote (NOx), les particules PM 10 et PM 2,5 et les composés organiques volatils (COV), tels que définis au I de l’article R. 221-1 du même code, ainsi que le dioxyde de soufre (SO2 ) et l’ammoniac (NH3).
 Les données peuvent être fournies notamment par les associations agrées pour la surveillance de la qualité de l'air (AASQA). 
+
+# Compacité des formes urbaines
+```yaml
+id: cae_9
+identifiant: 9
+
+titre_long: Compacité des formes urbaines
+selection: yes
+actions:
+  - cae_1.3.1
+programmes:
+  - cae
+climat_pratic_ids:
+  - urbanisme
+thematiques:
+  - urbanisme_et_amenagement
+```
+## Description
+Les trois indicateurs permettent d'évaluer la compacité des formes urbaines. Il est conseillé de suivre celui qui a le plus de sens pour la collectivité, si elle ne dispose pas des informations pour renseigner les 3.
+
+- Rapport annuel entre nouvelle surface construite ou réhabilitée sur des sites en reconversion (sites déjà urbanisés : friches industrielles, dents creuses, habitat insalubre...) / nouvelle surface construite en extension (en limite d'urbanisation ou sur des espaces naturels ou agricoles). La comptabilisation se fait sur la base des permis de construire. Pour une agglomération, le ratio de 2 (soit 1/3 en extension et 2/3 en renouvellement) est une bonne performance ; pour une ville-centre les objectifs visés pourront être plus élevés.
+
+- Nombre de nouveaux logements collectifs et individuels groupés / nb total de logements autorisés dans l’année (disponibles dans la base SITADEL) la valeur moyenne des régions françaises est indiquée pour information (45 %).
+
+- Part du foncier en friche : L’indicateur permet d’identifier et caractériser les gisements fonciers locaux qualifiés comme étant « en friche ». Les enjeux sont d’effectuer une veille foncière, d’anticiper la formation de friches et d’étudier la mutabilité des espaces en friche. Compacité des formes urbaines
