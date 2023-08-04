@@ -1,7 +1,7 @@
 import AppHeader from './AppHeader';
-import AppFooter from './AppFooter';
 import '@gouvfr/dsfr/dist/dsfr.css';
 import './global.css';
+import {Footer} from '@components/footer/Footer';
 
 export default function RootLayout({children}: {children: JSX.Element}) {
   return (
@@ -30,7 +30,7 @@ export default function RootLayout({children}: {children: JSX.Element}) {
       <body>
         <AppHeader />
         {children}
-        <AppFooter />
+        <Footer />
       </body>
     </html>
   );
