@@ -29,8 +29,7 @@ function Actu(actu: StrapiItem) {
                   href={`/actus/${actu['id']}`}
                 >{`${actu['attributes']['Titre']}`}</a>
               </h3>
-
-              <p className="fr-card__desc">{`${actu['attributes']['Corps']}`}</p>
+              <p className="fr-card__desc">{`${actu['attributes']['Resume']}`}</p>
             </div>
           </div>
           <div className="fr-card__header">
