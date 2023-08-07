@@ -144,7 +144,7 @@ export const generateStyledLines =
 const IndicateurChart = (props: TIndicateurChartProps) => {
   const {definition} = props;
 
-  const {data: valeurs, isLoading} = useIndicateurValeurs(definition);
+  const {data: valeurs, isLoading} = useIndicateurValeurs(definition, true);
   const isReadonly = useCurrentCollectivite()?.readonly ?? true;
 
   const noDataAvailable = !isLoading && !valeurs?.length;
