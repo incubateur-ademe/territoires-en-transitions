@@ -6,6 +6,9 @@
   "directories": {
     "doc": "docs"
   },
+  "dependencies": {
+    "@strapi/strapi": "4.12.0"
+  },
   "devDependencies": {
     "supabase": "1.88.0"
   },
