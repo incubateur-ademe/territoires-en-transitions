@@ -9,7 +9,12 @@ import LineChart, {
 } from 'ui/charts/LineChart';
 import {defaultColors} from 'ui/charts/chartsTheme';
 import {useIndicateurValeurs} from '../useIndicateurValeurs';
-import {getChartTitle, getXTickValues, prepareData} from './utils';
+import {
+  getChartTitle,
+  getDistinctYears,
+  getXTickValues,
+  prepareData,
+} from './utils';
 import {PathLine, SliceTooltip, getLineStyleBySerieId} from './SliceTooltip';
 import {Card} from './Card';
 import {CardNoData} from './CardNoData';
@@ -20,11 +25,16 @@ import {TIndicateurChartProps, TIndicateurChartBaseProps} from './types';
  */
 export const IndicateurChartBase = (props: TIndicateurChartBaseProps) => {
   const {valeurs, definition, variant, className} = props;
+  if (!valeurs) return null;
 
   const data = prepareData(valeurs, defaultColors[0]);
   const labelBySerieId = getLabelsBySerieId(data);
   const title = getChartTitle(definition);
   const isZoomed = variant === 'zoomed';
+
+  const annees = getDistinctYears(valeurs);
+  const anneeMax =
+    annees?.length < 4 ? Math.max(...annees) + (4 - annees.length) : 'auto';
 
   const chart = (
     <LineChart
@@ -50,6 +60,13 @@ export const IndicateurChartBase = (props: TIndicateurChartBaseProps) => {
           tickRotation: 0,
           tickValues: getXTickValues(valeurs, isZoomed),
           format: '%Y',
+        },
+        xScale: {
+          type: 'time',
+          precision: 'year',
+          format: '%Y',
+          min: 'auto',
+          max: anneeMax,
         },
         // légende au bas du graphique
         legends: [
