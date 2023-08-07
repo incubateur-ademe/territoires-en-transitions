@@ -73,7 +73,9 @@ const IndicateurEnfantHeader = ({
       </div>
       <div>
         {definition.participation_score && (
-          <Badge status="no-icon">Participe au score</Badge>
+          <Badge status="no-icon" className="fr-mr-1w">
+            Participe au score
+          </Badge>
         )}
         <BadgeACompleter className="min-w-max" a_completer={a_completer} />
       </div>
