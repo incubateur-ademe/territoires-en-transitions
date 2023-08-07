@@ -16,7 +16,13 @@ export type TIndicateurValeurEtCommentaires = TIndicateurValeur & {
 };
 
 /** Charge toutes les valeurs associées à un indicateur (pour le graphe) */
-export const useIndicateurValeurs = ({id, isPerso}: TIndicateurDefinition) => {
+export const useIndicateurValeurs = (
+  {id, isPerso}: TIndicateurDefinition,
+  /** passer `true` pour le cas où le graphe est sur la page détail car
+   * les valeurs peuvent être éditées dans un autre onglet et un autre
+   * indicateur (cas indicateur lié à un autre) */
+  autoRefetch?: boolean
+) => {
   const collectivite_id = useCollectiviteId();
   return useQuery(
     ['indicateur_valeurs', collectivite_id, id],
@@ -38,7 +44,7 @@ export const useIndicateurValeurs = ({id, isPerso}: TIndicateurDefinition) => {
       const {data} = await query;
       return filtreImportOuResultat(data);
     },
-    DISABLE_AUTO_REFETCH
+    autoRefetch ? undefined : DISABLE_AUTO_REFETCH
   );
 };
 
@@ -77,8 +83,7 @@ export const useIndicateurValeursEtCommentaires = ({
 
       const {data} = await query.returns<TIndicateurValeurEtCommentaires>();
       return filtreImportOuResultat(data);
-    },
-    DISABLE_AUTO_REFETCH
+    }
   );
 };
 

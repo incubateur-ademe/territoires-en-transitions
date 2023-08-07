@@ -1,4 +1,4 @@
-import {ChangeEvent, useState} from 'react';
+import {ChangeEvent, useEffect, useState} from 'react';
 import {TIndicateurValeurEtCommentaires} from '../useIndicateurValeurs';
 import {TEditIndicateurValeurHandlers} from './useEditIndicateurValeur';
 
@@ -13,6 +13,12 @@ export type TUseTableRowStateArgs = {
   onValueSaved?: (annee: number) => void;
 };
 
+const getInitialState = (row?: TIndicateurValeurEtCommentaires) => ({
+  annee: row?.annee?.toString() || '',
+  valeur: row?.valeur?.toString() || '',
+  commentaire: row?.commentaire || '',
+});
+
 export const useTableRowState = ({
   row,
   editHandlers,
@@ -20,12 +26,14 @@ export const useTableRowState = ({
 }: TUseTableRowStateArgs) => {
   const {editValeur, editComment, deleteValue} = editHandlers;
 
-  const initialState = {
-    annee: row?.annee?.toString() || '',
-    valeur: row?.valeur?.toString() || '',
-    commentaire: row?.commentaire || '',
-  };
+  const initialState = getInitialState(row);
   const [state, setState] = useState(initialState);
+
+  // remet à jour l'état interne si l'état initial a changé
+  const initialStateSerialized = JSON.stringify(initialState);
+  useEffect(() => {
+    setState(initialState);
+  }, [initialStateSerialized]);
 
   const isImport = row && row.type === 'import';
 
