@@ -1,11 +1,7 @@
 import {useQuery} from 'react-query';
 import {DISABLE_AUTO_REFETCH, supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {
-  TIndicateurDefinition,
-  TIndicateurReferentielDefinition,
-  TIndicateurThematiqueId,
-} from './types';
+import {TIndicateurDefinition, TIndicateurReferentielDefinition} from './types';
 
 /** Charge et cache les définitions de tous les indicateurs */
 export const useIndicateurDefinitions = () => {
@@ -146,13 +142,28 @@ const ID_INDICATEURS_REMPLIS: TIndicateursRemplis = {
   indicateursPerso: [],
 };
 
-/** Fourni les id et libellés des thématiques associées à une série d'indicateurs */
-// TODO: à lire et trier (order by label desc) depuis la base quand la table existera
-type TIndicateursThematiques = {id: TIndicateurThematiqueId; label: string}[];
-const TMP_THEMATIQUES: TIndicateursThematiques = [
-  {id: 'eci_dechets', label: 'Économie circulaire et déchets'},
-  {id: 'energie_et_climat', label: 'Énergie et climat'},
-];
+/** Fourni les id et libellés des thématiques associées aux indicateurs */
 export const useIndicateurThematiquesLabels = () => {
-  return TMP_THEMATIQUES;
+  const {data} = useQuery(
+    ['indicateur_thematique_nom'],
+    async () => {
+      const {data, error} = await supabaseClient
+        .from('indicateur_thematique_nom')
+        .select('*')
+        .order('nom', {ascending: true});
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return (
+        data
+          ?.map(({id, nom}) => ({id, label: nom || ''}))
+          // tri par nom (pour que les diacritiques soient pris en compte)
+          .sort((a, b) => a.label.localeCompare(b.label))
+      );
+    },
+    DISABLE_AUTO_REFETCH
+  );
+  return data || [];
 };
