@@ -1,4 +1,5 @@
 import {Datum, Serie} from '@nivo/line';
+import {dedup} from 'utils/dedup';
 import {TIndicateurValeur} from '../useIndicateurValeurs';
 import {TIndicateurDefinition} from '../types';
 
@@ -77,4 +78,4 @@ export const getXTickValues = (
 };
 
 export const getDistinctYears = (valeurs: TIndicateurValeur[]) =>
-  valeurs?.length ? [...new Set(valeurs.map(({annee}) => annee))] : [];
+  valeurs?.length ? dedup(valeurs.map(({annee}) => annee)) : [];
