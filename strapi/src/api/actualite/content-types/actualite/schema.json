@@ -4,7 +4,8 @@
   "info": {
     "singularName": "actualite",
     "pluralName": "actualites",
-    "displayName": "Actualité"
+    "displayName": "Actualité",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -18,14 +19,19 @@
       "type": "richtext"
     },
     "Couverture": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
       "allowedTypes": [
         "images",
         "files",
         "videos",
         "audios"
-      ],
-      "type": "media",
-      "multiple": false
+      ]
+    },
+    "Resume": {
+      "type": "string",
+      "required": false
     }
   }
 }
