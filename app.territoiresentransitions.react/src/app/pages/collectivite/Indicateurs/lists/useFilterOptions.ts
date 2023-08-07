@@ -1,3 +1,4 @@
+import {dedup} from 'utils/dedup';
 import {ITEM_ALL} from 'ui/shared/filters/commons';
 import {TOption} from 'ui/shared/select/commons';
 import {useIndicateursNonRemplis} from '../useIndicateurDefinitions';
@@ -86,13 +87,11 @@ export const useFilterOptions = ({
     }
 
     // agrège les sous-ensembles correspondants à la sélection de filtres et dédoublonne
-    const uniqIds = [
-      ...new Set(
-        selectedValues?.flatMap(
-          value => valueToSubset[value]?.map(({id}) => id) || []
-        )
-      ),
-    ];
+    const uniqIds = dedup(
+      selectedValues?.flatMap(
+        value => valueToSubset[value]?.map(({id}) => id) || []
+      )
+    );
 
     // renvoi la sélection
     return definitions.filter(({id}) => uniqIds.includes(id));
