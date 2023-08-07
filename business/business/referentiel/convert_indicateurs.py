@@ -24,10 +24,10 @@ class MarkdownIndicateur:
 
     # Valeurs obligatoires de la partie yaml :
     id: str
-    identifiant: Any
     unite: str
 
     # Valeurs optionnelles de la partie yaml :
+    identifiant: Optional[Any]
     titre_long: Optional[str]
     obligation_cae: Optional[bool]
     obligation_eci: Optional[bool]
@@ -53,7 +53,6 @@ IndicateurGroup = Literal["eci", "cae", "crte"]
 class Indicateur:
     """Indicateur en JSON"""
     id: str
-    identifiant: str
     groupe: str
     nom: str
     unite: str
@@ -63,6 +62,7 @@ class Indicateur:
     thematiques: List[str]
     programmes: List[str]
     action_ids: List[str]
+    identifiant: Optional[str] = None
     valeur_indicateur: Optional[str] = None
     parent: Optional[str] = None
     source: Optional[str] = None
