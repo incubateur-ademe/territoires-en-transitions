@@ -7066,6 +7066,7 @@ export interface Database {
         | "eau_assainissement"
         | "strategie_orga_interne"
         | "activites_economiques"
+        | "solidarite_lien_social"
       indicateur_valeur_type: "resultat" | "objectif" | "import"
       membre_fonction:
         | "referent"
