@@ -116,7 +116,7 @@ comment on column indicateur_rempli.rempli is 'Vrai si un résultat a été sais
 create table indicateur_thematique_nom
 (
     id  indicateur_thematique primary key,
-    nom text
+    nom text not null
 );
 comment on table indicateur_thematique_nom is 'Les ids thématiques et leurs noms.';
 alter table indicateur_thematique_nom
