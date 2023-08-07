@@ -74,6 +74,9 @@ alter table indicateur_definition
 alter table indicateur_definition
     drop obligation_eci;
 
+alter table indicateur_definition
+    alter column identifiant drop not null;
+
 alter table indicateur_commentaire
     add annee integer; -- todo not null
 
