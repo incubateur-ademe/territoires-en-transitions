@@ -24,9 +24,13 @@ export async function fetchCollection(
   return body['data'];
 }
 
-export async function fetchItem(path: string, id: number): Promise<StrapiItem> {
-  const url = `${baseURL}/api/${path}/${id}?populate=*`;
-
+export async function fetchItem(
+  path: string,
+  id: number,
+  params: [string, string][] = [['populate', '*']],
+): Promise<StrapiItem> {
+  const url = new URL(`${baseURL}/api/${path}/${id}`);
+  params.forEach(p => url.searchParams.append(...p));
   const response = await fetch(`${url}`, {
     cache: 'no-store',
     method: 'GET',
