@@ -29,8 +29,8 @@ export const IndicateurChartBase = (props: TIndicateurChartBaseProps) => {
 
   const data = prepareData(valeurs, defaultColors[0]);
   const labelBySerieId = getLabelsBySerieId(data);
-  const title = getChartTitle(definition);
   const isZoomed = variant === 'zoomed';
+  const title = getChartTitle(definition, isZoomed);
 
   const annees = getDistinctYears(valeurs);
   const anneeMax =
