@@ -10,11 +10,12 @@ type Attributes = {[key: string]: Attributes};
 
 export function StrapiImage(props: {data: ImageData; size: Size}) {
   const attributes = props.data['attributes'];
+  const url = `${attributes['formats'][props.size]['url']}`;
 
   return (
     <img
       className="fr-responsive-img"
-      src={`${baseURL}${attributes['formats'][props.size]['url']}`}
+      src={url.startsWith('http') ? url : `${baseURL}${url}`}
       alt={`${attributes['alternativeText']}`}
     />
   );
