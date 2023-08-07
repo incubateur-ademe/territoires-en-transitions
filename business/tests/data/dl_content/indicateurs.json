@@ -50,7 +50,7 @@
       "groupe": "crte",
       "id": "crte_6.1",
       "identifiant": 6.1,
-      "nom": "Pistes cyclables : lin\u00e9aire",
+      "nom": "Lin\u00e9aire d\u2019am\u00e9nagements cyclables s\u00e9curis\u00e9s",
       "parent": null,
       "participation_score": false,
       "programmes": [
@@ -554,7 +554,7 @@
       "groupe": "eci",
       "id": "eci_15",
       "identifiant": 15,
-      "nom": "Biens ou constructions temporaires issus du r\u00e9emploi ou de la r\u00e9utilisation ou int\u00e9grant des mati\u00e8res recycl\u00e9es",
+      "nom": "Biens ou constructions temporaires issus du r\u00e9emploi ou r\u00e9utilisation ou recyclage",
       "parent": null,
       "participation_score": false,
       "programmes": [],
@@ -754,8 +754,7 @@
       "parent": null,
       "participation_score": false,
       "programmes": [
-        "eci",
-        "clef"
+        "eci"
       ],
       "selection": true,
       "source": null,
@@ -1161,11 +1160,11 @@
       "action_ids": [
         "eci_1.2.3"
       ],
-      "description": "<p>% des strat\u00e9gies ou des politiques dans lesquelles l\u2019\u00e9quipe Economie Circulaire a \u00e9t\u00e9 associ\u00e9e pour leur conception</p>\n",
+      "description": "",
       "groupe": "eci",
       "id": "eci_31",
       "identifiant": 31,
-      "nom": "Association de l'\u00e9quipe Economie Circulaire dans la conception des strat\u00e9gies ou des politiques de la collectivit\u00e9",
+      "nom": "Co-conception des strat\u00e9gies ou politiques de la collectivit\u00e9 avec prisme ECi",
       "parent": null,
       "participation_score": false,
       "programmes": [],
@@ -1275,7 +1274,7 @@
       "groupe": "cae",
       "id": "cae_21.b",
       "identifiant": "21.b",
-      "nom": "Consommation d'eau dans les b\u00e2timents d'enseignement et les cr\u00e8ches",
+      "nom": "Consommation d'eau - b\u00e2timents d'enseignement et cr\u00e8ches",
       "parent": "cae_21.a",
       "participation_score": true,
       "programmes": [
@@ -1299,7 +1298,7 @@
       "groupe": "cae",
       "id": "cae_21.c",
       "identifiant": "21.c",
-      "nom": "Consommation d'eau dans les b\u00e2timents administratifs",
+      "nom": "Consommation d'eau - b\u00e2timents administratifs",
       "parent": "cae_21.a",
       "participation_score": true,
       "programmes": [
@@ -1323,7 +1322,7 @@
       "groupe": "cae",
       "id": "cae_21.d",
       "identifiant": "21.d",
-      "nom": "Consommation d'eau dans les b\u00e2timents culturels et sportifs",
+      "nom": "Consommation d'eau - b\u00e2timents culturels et sportifs",
       "parent": "cae_21.a",
       "participation_score": true,
       "programmes": [
@@ -1536,7 +1535,7 @@
       "action_ids": [
         "cae_3.3.4"
       ],
-      "description": "<p>L'objectif est de mesurer les efforts de la collectivit\u00e9 en mati\u00e8re de limitation des consommations d'eau pour l'arrosage de ses espaces verts. Le volume annuel d'eau est divis\u00e9 par la surface d'espaces verts g\u00e9r\u00e9s par la collectivit\u00e9. L'unit\u00e9 de l'indicateur est en m3/m2. Les espaces verts sont entendus au sens large, \u00e0 savoir : parcs et jardins, espaces sportifs v\u00e9g\u00e9talis\u00e9s, ronds-points ou accotement enherb\u00e9es de la comp\u00e9tence de la collectivit\u00e9.</p>\n",
+      "description": "<p>L'objectif est de mesurer les efforts de la collectivit\u00e9 en mati\u00e8re de limitation des consommations d'eau pour l'arrosage de ses espaces verts. Le volume annuel d'eau est divis\u00e9 par la surface d'espaces verts g\u00e9r\u00e9s par la collectivit\u00e9. L'unit\u00e9 de l'indicateur est en m\u00b3 /m\u00b2. Les espaces verts sont entendus au sens large, \u00e0 savoir : parcs et jardins, espaces sportifs v\u00e9g\u00e9talis\u00e9s, ronds-points ou accotement enherb\u00e9es de la comp\u00e9tence de la collectivit\u00e9.</p>\n",
       "groupe": "cae",
       "id": "cae_31",
       "identifiant": 31,
@@ -1553,7 +1552,7 @@
       ],
       "titre_long": "Consommation annuelle d'eau pour l'arrosage des espaces verts",
       "type": null,
-      "unite": "m3/m2",
+      "unite": "m\u00b3/m\u00b2",
       "valeur_indicateur": null
     },
     {
@@ -1588,7 +1587,7 @@
       "groupe": "cae",
       "id": "cae_2.a",
       "identifiant": "2.a",
-      "nom": "Consommation \u00e9nerg\u00e9tique",
+      "nom": "Consommation \u00e9nerg\u00e9tique territoriale",
       "parent": null,
       "participation_score": false,
       "programmes": [
@@ -1601,7 +1600,7 @@
       "thematiques": [
         "energie_et_climat"
       ],
-      "titre_long": "Consommation \u00e9nerg\u00e9tique globale annuelle du territoire (GWh)",
+      "titre_long": "Consommation \u00e9nerg\u00e9tique finale du territoire (GWh)",
       "type": null,
       "unite": "GWh",
       "valeur_indicateur": null
@@ -1885,7 +1884,7 @@
       "action_ids": [
         "cae_6.4.1"
       ],
-      "description": "<p>Indicateur exig\u00e9 dans la r\u00e8glementation PCAET (diagnostic). Arr\u00eat\u00e9 du 4 ao\u00fbt 2016 relatif au plan climat-air-\u00e9nergie territorial. Ramen\u00e9 \u00e0 l\u2019hectare pour comparaison.</p>\n<p>Le NH3 est suivi en priorit\u00e9. Pour les quelques territoires o\u00f9 le NH3 ne serait pas le polluant majoritaire du secteur agricole, et ou le suivi d'un autre polluant serait plus pertinent pour la collectivit\u00e9,  l'indiquer en commentaire.</p>\n",
+      "description": "<p>Indicateur exig\u00e9 dans la r\u00e8glementation PCAET (diagnostic). Arr\u00eat\u00e9 du 4 ao\u00fbt 2016 relatif au plan climat-air-\u00e9nergie territorial. Ramen\u00e9 \u00e0 l\u2019hectare pour comparaison.</p>\n<p>Le NH3 est suivi en priorit\u00e9. Pour les quelques territoires o\u00f9 le NH3 ne serait pas le polluant majoritaire du secteur agricole, et o\u00f9 le suivi d'un autre polluant serait plus pertinent pour la collectivit\u00e9, l'indiquer en commentaire.</p>\n",
       "groupe": "cae",
       "id": "cae_58",
       "identifiant": 58,
@@ -2005,23 +2004,70 @@
       "action_ids": [
         "cae_1.3.1"
       ],
-      "description": "<p>Trois indicateurs au choix :</p>\n<ul>\n<li>\n<p>Rapport annuel entre nouvelle surface construite ou r\u00e9habilit\u00e9e sur des sites en reconversion (sites d\u00e9j\u00e0 urbanis\u00e9s : friches industrielles, dents creuses, habitat insalubre...) / nouvelle surface construite en extension (en limite d'urbanisation ou sur des espaces naturels ou agricoles). La comptabilisation se fait sur la base des permis de construire. Pour une agglom\u00e9ration, le ratio de 2 (soit 1/3 en extension et 2/3 en renouvellement) est une bonne performance ; pour une ville-centre les objectifs vis\u00e9s pourront \u00eatre plus \u00e9lev\u00e9s.</p>\n</li>\n<li>\n<p>Nombre de nouveaux logements collectifs et individuels group\u00e9s / nb total de logements autoris\u00e9s dans l\u2019ann\u00e9e (disponibles dans la base SITADEL) la valeur moyenne des r\u00e9gions fran\u00e7aises est indiqu\u00e9e pour information (45 %).</p>\n</li>\n<li>\n<p>Part du foncier en friche : L\u2019indicateur permet d\u2019identifier et caract\u00e9riser les gisements fonciers locaux qualifi\u00e9s comme \u00e9tant \u00ab en friche \u00bb. Les enjeux sont d\u2019effectuer une veille fonci\u00e8re, d\u2019anticiper la formation de friches et d\u2019\u00e9tudier la mutabilit\u00e9 des espaces en friche. Compacit\u00e9 des formes urbaines</p>\n</li>\n</ul>\n",
+      "description": "",
       "groupe": "cae",
-      "id": "cae_9",
-      "identifiant": 9,
-      "nom": "Compacit\u00e9 des formes urbaines",
+      "id": "cae_9.a",
+      "identifiant": "9.a",
+      "nom": "Part des surfaces construites ou r\u00e9habilit\u00e9es sur des sites en reconversion",
       "parent": null,
       "participation_score": false,
       "programmes": [
-        "cae",
-        "clef"
+        "cae"
       ],
       "selection": true,
       "source": null,
       "thematiques": [
         "urbanisme_et_amenagement"
       ],
-      "titre_long": "Compacit\u00e9 des formes urbaines",
+      "titre_long": "Part des nouvelles surfaces construites ou r\u00e9habilit\u00e9es sur des sites en reconversion par rapport aux nouvelles surfaces construites en extension",
+      "type": null,
+      "unite": "%",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [
+        "cae_1.3.1"
+      ],
+      "description": "",
+      "groupe": "cae",
+      "id": "cae_9.b",
+      "identifiant": "9.b",
+      "nom": "Part des nouveaux logements collectifs et individuels group\u00e9s",
+      "parent": null,
+      "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
+      "selection": true,
+      "source": null,
+      "thematiques": [
+        "urbanisme_et_amenagement"
+      ],
+      "titre_long": "Part des nouveaux logements collectifs et individuels group\u00e9s dans les logements autoris\u00e9s dans l\u2019ann\u00e9e",
+      "type": null,
+      "unite": "%",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [
+        "cae_1.3.1"
+      ],
+      "description": "",
+      "groupe": "cae",
+      "id": "cae_9.c",
+      "identifiant": "9.c",
+      "nom": "Part du foncier en friche",
+      "parent": null,
+      "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
+      "selection": true,
+      "source": null,
+      "thematiques": [
+        "urbanisme_et_amenagement"
+      ],
+      "titre_long": "Part du foncier en friche",
       "type": null,
       "unite": "%",
       "valeur_indicateur": null
@@ -2084,7 +2130,7 @@
       "identifiant": 34,
       "nom": "Valorisation \u00e9nerg\u00e9tique du biogaz des centres de stockage des d\u00e9chets",
       "parent": null,
-      "participation_score": false,
+      "participation_score": true,
       "programmes": [
         "cae"
       ],
@@ -2298,7 +2344,8 @@
     },
     {
       "action_ids": [
-        "cae_1.2.4"
+        "cae_1.2.4",
+        "cae_6.2.3"
       ],
       "description": "<p>L'indicateur mesure le nombre annuel de logements r\u00e9nov\u00e9s via les dispositifs de subventionnement et d\u2019accompagnement dont la collectivit\u00e9 est partenaire, ramen\u00e9 au nombre de logements du territoire (pour 100 logements).</p>\n<p>Pour rappel l\u2019objectif national du plan de r\u00e9novation \u00e9nerg\u00e9tique de l\u2019habitat est de 500\u00a0000 logements r\u00e9nov\u00e9s par an, soit 1,4 logements r\u00e9nov\u00e9s pour 100 logements existants (36,1 millions de logements en 2020 selon l\u2019INSEE).</p>\n",
       "groupe": "cae",
@@ -2717,7 +2764,7 @@
       "id": "cae_49.a-hab",
       "identifiant": "49.a-hab",
       "nom": "Budget climat-air-\u00e9nergie par habitant",
-      "parent": null,
+      "parent": "cae_49.a",
       "participation_score": false,
       "programmes": [
         "cae"
@@ -2980,7 +3027,7 @@
       "groupe": "cae",
       "id": "cae_25.a",
       "identifiant": "25.a",
-      "nom": "Production d'\u00e9lectricit\u00e9 renouvelable",
+      "nom": "Production d'\u00e9lectricit\u00e9 renouvelable - territoire",
       "parent": "cae_3.a",
       "participation_score": false,
       "programmes": [
@@ -3258,7 +3305,7 @@
       "groupe": "cae",
       "id": "cae_3.a",
       "identifiant": "3.a",
-      "nom": "Production d\u2019\u00e9nergie renouvelable",
+      "nom": "Production d\u2019\u00e9nergie renouvelable du territoire",
       "parent": null,
       "participation_score": false,
       "programmes": [
@@ -3308,7 +3355,7 @@
       "groupe": "cae",
       "id": "cae_16.a",
       "identifiant": "16.a",
-      "nom": "Consommation de chaleur/rafraichissement renouvelable et de r\u00e9cup\u00e9ration - patrimoine collectivit\u00e9",
+      "nom": "Consommation de chaleur/froid ENR&R - patrimoine collectivit\u00e9",
       "parent": null,
       "participation_score": false,
       "programmes": [
@@ -3332,7 +3379,7 @@
       "groupe": "cae",
       "id": "cae_16.b",
       "identifiant": "16.b",
-      "nom": "Couverture des besoins en chaleur et rafraichissement par les ENR&R - patrimoine collectivit\u00e9",
+      "nom": "Couverture des besoins en chaleur et froid par les ENR&R - patrimoine collectivit\u00e9",
       "parent": null,
       "participation_score": true,
       "programmes": [
@@ -3446,7 +3493,7 @@
       "groupe": "cae",
       "id": "cae_44",
       "identifiant": 44,
-      "nom": "Pistes cyclables : part",
+      "nom": "Pistes cyclables",
       "parent": null,
       "participation_score": true,
       "programmes": [
@@ -3735,7 +3782,7 @@
       "identifiant": 32,
       "nom": "Rendement \u00e9nerg\u00e9tique UIOM",
       "parent": null,
-      "participation_score": false,
+      "participation_score": true,
       "programmes": [
         "cae"
       ],
@@ -4231,7 +4278,7 @@
       "identifiant": 33,
       "nom": "Valorisation \u00e9nerg\u00e9tique des biod\u00e9chets",
       "parent": null,
-      "participation_score": false,
+      "participation_score": true,
       "programmes": [
         "cae"
       ],
@@ -4266,7 +4313,99 @@
       ],
       "titre_long": "Nombre d'heures de consultations et de conseils sur la th\u00e9matique climat air \u00e9nergie pour 100 hab / an",
       "type": null,
-      "unite": "Nombre d'heures de consultations et de conseils",
+      "unite": "Nombre d'heures",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "<p>La part modale est une part modale en nombre de d\u00e9placements.</p>\n<p>Les valeurs limites et cibles des diff\u00e9rentes parts modales sont donn\u00e9es \u00e0 titre indicatif : il faut \u00e9galement juger de l'\u00e9volution de la part modale au fil du temps et des caract\u00e9ristiques du territoire. A d\u00e9faut de poss\u00e9der les parts modales issues d'une enqu\u00eate m\u00e9nages, les collectivit\u00e9s peuvent utiliser les donn\u00e9es INSEE donnant les parts modales des d\u00e9placements domicile-travail pour la population active (tableau NAV2A ou NAV2B).</p>\n",
+      "groupe": "modes",
+      "id": "modes_de_deplacement",
+      "identifiant": null,
+      "nom": "Modes de d\u00e9placement",
+      "parent": null,
+      "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
+      "selection": true,
+      "source": null,
+      "thematiques": [
+        "mobilite_et_transport"
+      ],
+      "titre_long": "Part des personnes utilisant un mode de d\u00e9placement par rapport \u00e0 l'ensemble des personnes qui se d\u00e9placent",
+      "type": null,
+      "unite": "%",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "<p>L'indicateur comptabilise le nombre d'habitants couverts par un Plan de D\u00e9placements sur le territoire et le rapporte \u00e0 la population du territoire. Ce chiffre doit \u00eatre en augmentation chaque ann\u00e9e. Des valeurs indicatives limites et cibles sont donn\u00e9es, bas\u00e9es sur des donn\u00e9es ADEME et les meilleurs scores des collectivit\u00e9s du programme Territoire Engag\u00e9.</p>\n",
+      "groupe": "plans",
+      "id": "plans_de_deplacement",
+      "identifiant": null,
+      "nom": "Couverture des Plans de d\u00e9placements",
+      "parent": null,
+      "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
+      "selection": true,
+      "source": null,
+      "thematiques": [
+        "mobilite_et_transport"
+      ],
+      "titre_long": "Couverture des Plans de d\u00e9placements",
+      "type": null,
+      "unite": "%",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "<p>Ces indicateurs estiment les \u00e9missions annuelles des six polluants atmosph\u00e9riques exig\u00e9s dans le contenu r\u00e9glementaire des PCAET (d\u00e9cret n\u00b02016-849 du 28 juin 2016 et arr\u00eat\u00e9 du 4 ao\u00fbt 2016 relatifs au plan climat-air-\u00e9nergie territorial) : oxydes d\u2019azote (NOx), les particules PM 10 et PM 2,5 et les compos\u00e9s organiques volatils (COV), tels que d\u00e9finis au I de l\u2019article R. 221-1 du m\u00eame code, ainsi que le dioxyde de soufre (SO2 ) et l\u2019ammoniac (NH3).</p>\n<p>Les donn\u00e9es peuvent \u00eatre fournies notamment par les associations agr\u00e9es pour la surveillance de la qualit\u00e9 de l'air (AASQA).</p>\n",
+      "groupe": "emission",
+      "id": "emission_polluants_atmo",
+      "identifiant": null,
+      "nom": "\u00c9missions de polluants atmosph\u00e9riques",
+      "parent": null,
+      "participation_score": false,
+      "programmes": [
+        "clef",
+        "cae",
+        "crte"
+      ],
+      "selection": true,
+      "source": null,
+      "thematiques": [
+        "nature_environnement_air"
+      ],
+      "titre_long": "Quantit\u00e9 totale d'\u00e9missions de polluants atmosph\u00e9riques",
+      "type": null,
+      "unite": "tonnes",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [
+        "cae_1.3.1"
+      ],
+      "description": "<p>Les trois indicateurs permettent d'\u00e9valuer la compacit\u00e9 des formes urbaines. Il est conseill\u00e9 de suivre celui qui a le plus de sens pour la collectivit\u00e9, si elle ne dispose pas des informations pour renseigner les 3.</p>\n<ul>\n<li>\n<p>Rapport annuel entre nouvelle surface construite ou r\u00e9habilit\u00e9e sur des sites en reconversion (sites d\u00e9j\u00e0 urbanis\u00e9s : friches industrielles, dents creuses, habitat insalubre...) / nouvelle surface construite en extension (en limite d'urbanisation ou sur des espaces naturels ou agricoles). La comptabilisation se fait sur la base des permis de construire. Pour une agglom\u00e9ration, le ratio de 2 (soit 1/3 en extension et 2/3 en renouvellement) est une bonne performance ; pour une ville-centre les objectifs vis\u00e9s pourront \u00eatre plus \u00e9lev\u00e9s.</p>\n</li>\n<li>\n<p>Nombre de nouveaux logements collectifs et individuels group\u00e9s / nb total de logements autoris\u00e9s dans l\u2019ann\u00e9e (disponibles dans la base SITADEL) la valeur moyenne des r\u00e9gions fran\u00e7aises est indiqu\u00e9e pour information (45 %).</p>\n</li>\n<li>\n<p>Part du foncier en friche : L\u2019indicateur permet d\u2019identifier et caract\u00e9riser les gisements fonciers locaux qualifi\u00e9s comme \u00e9tant \u00ab en friche \u00bb. Les enjeux sont d\u2019effectuer une veille fonci\u00e8re, d\u2019anticiper la formation de friches et d\u2019\u00e9tudier la mutabilit\u00e9 des espaces en friche. Compacit\u00e9 des formes urbaines</p>\n</li>\n</ul>\n",
+      "groupe": "cae",
+      "id": "cae_9",
+      "identifiant": 9,
+      "nom": "Compacit\u00e9 des formes urbaines",
+      "parent": null,
+      "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
+      "selection": true,
+      "source": null,
+      "thematiques": [
+        "urbanisme_et_amenagement"
+      ],
+      "titre_long": "Compacit\u00e9 des formes urbaines",
+      "type": null,
+      "unite": "%",
       "valeur_indicateur": null
     }
   ]
