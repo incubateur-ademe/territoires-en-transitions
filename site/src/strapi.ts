@@ -11,11 +11,12 @@ const headers = {
 type Collection = 'actualites';
 
 export async function fetchCollection(
-  path: Collection
+  path: Collection,
 ): Promise<Array<StrapiItem>> {
   const url = `${baseURL}/api/${path}?populate=*`;
 
   const response = await fetch(`${url}`, {
+    cache: 'no-store',
     method: 'GET',
     headers,
   });
@@ -27,6 +28,7 @@ export async function fetchItem(path: string, id: number): Promise<StrapiItem> {
   const url = `${baseURL}/api/${path}/${id}?populate=*`;
 
   const response = await fetch(`${url}`, {
+    cache: 'no-store',
     method: 'GET',
     headers,
   });
