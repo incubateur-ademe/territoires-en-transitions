@@ -53,9 +53,15 @@ const toDatum = ({annee: x, valeur: y}: TIndicateurValeur): Datum => ({
 });
 
 // fourni le titre du graphe à partir d'une définition (perso ou prédéfinie)
-export const getChartTitle = (definition: TIndicateurDefinition) => {
+export const getChartTitle = (
+  definition: TIndicateurDefinition,
+  isZoomed?: boolean
+) => {
   const {isPerso, nom, titre} = definition;
-  return isPerso ? titre : nom;
+  if (isPerso) {
+    return titre;
+  }
+  return isZoomed && definition.titre_long ? definition.titre_long : nom;
 };
 
 // détermine la fréquence des graduations pour l'axe des abscisses
