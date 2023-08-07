@@ -32,6 +32,11 @@
     "Resume": {
       "type": "string",
       "required": false
+    },
+    "Sections": {
+      "type": "component",
+      "repeatable": true,
+      "component": "contenu.section"
     }
   }
 }
