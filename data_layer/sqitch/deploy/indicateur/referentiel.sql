@@ -59,6 +59,10 @@ create type indicateur_thematique as enum (
     'solidarite_lien_social'
     );
 
+alter type indicateur_group add value 'modes';
+alter type indicateur_group add value 'plans';
+alter type indicateur_group add value 'emission';
+
 alter table indicateur_definition
     add thematiques indicateur_thematique[] default array []::indicateur_thematique[] not null;
 
