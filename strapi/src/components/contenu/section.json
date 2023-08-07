@@ -1,0 +1,25 @@
+{
+  "collectionName": "components_contenu_sections",
+  "info": {
+    "displayName": "Section"
+  },
+  "options": {},
+  "attributes": {
+    "Titre": {
+      "type": "string"
+    },
+    "Image": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": false
+    },
+    "Contenu": {
+      "type": "richtext"
+    }
+  }
+}
