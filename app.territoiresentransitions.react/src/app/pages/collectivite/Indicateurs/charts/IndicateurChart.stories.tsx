@@ -2,7 +2,7 @@ import React from 'react';
 import {Story, Meta} from '@storybook/react';
 import {IndicateurChartBase} from './IndicateurChart';
 import {TIndicateurChartBaseProps} from './types';
-import {NoData} from './CardNoData';
+import {CardNoData} from './CardNoData';
 
 export default {
   component: IndicateurChartBase,
@@ -60,5 +60,12 @@ IndicateurRefentiel.args = {
 };
 
 export const NonRenseigne = () => (
-  <NoData definition={IndicateurRefentiel.args.definition} />
+  <CardNoData
+    definition={IndicateurRefentiel.args.definition}
+    isReadonly={false}
+  />
+);
+
+export const NonRenseigneLectureSeule = () => (
+  <CardNoData definition={IndicateurRefentiel.args.definition} isReadonly />
 );
