@@ -51,6 +51,7 @@ Les données peuvent être fournies notamment par les associations agrées pour 
 # Compacité des formes urbaines
 ```yaml
 id: cae_9
+unite: "%"
 identifiant: 9
 
 titre_long: Compacité des formes urbaines
