@@ -123,6 +123,17 @@ alter table indicateur_thematique_nom
     enable row level security;
 create policy allow_read_for_all on indicateur_thematique_nom for select using (true);
 
+insert into indicateur_thematique_nom (id, nom)
+values ('strategie_orga_interne', 'Stratégie et organisation interne'),
+       ('eci_dechets', 'Économie circulaire et déchets'),
+       ('activites_economiques', 'Activités économiques'),
+       ('energie_et_climat', 'Énergie et climat'),
+       ('urbanisme_et_amenagement', 'Urbanisme et aménagement'),
+       ('mobilite_et_transport', 'Mobilité et transport'),
+       ('eau_assainissement', 'Eau et assainissement'),
+       ('solidarite_lien_social', 'Solidarité et lien social'),
+       ('nature_environnement_air', 'Nature, environnement, air');
+
 create table indicateur_resultat_import
 (
 
