@@ -59,6 +59,20 @@ IndicateurRefentiel.args = {
   ],
 };
 
+export const IndicateurUneSeuleValeur = Template.bind({});
+IndicateurUneSeuleValeur.args = {
+  definition: {
+    id: 1,
+    unite: 'teq CO2',
+    isPerso: true,
+    titre: 'Mon indicateur',
+  },
+  valeurs: [
+    {type: 'resultat', annee: 2021, valeur: 22.33},
+    {type: 'objectif', annee: 2021, valeur: 23.33},
+  ],
+};
+
 export const NonRenseigne = () => (
   <CardNoData
     definition={IndicateurRefentiel.args.definition}
