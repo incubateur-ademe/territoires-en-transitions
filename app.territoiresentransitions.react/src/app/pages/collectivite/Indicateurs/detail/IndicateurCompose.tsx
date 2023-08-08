@@ -24,21 +24,28 @@ export const IndicateurCompose = ({
   return (
     <>
       {/** TODO : ajouter ici le graphe combinant les indicateurs "enfant" */}
-      <IndicateurEnfant
-        key={definition.id}
-        definition={definition}
-        actionsLieesCommunes={actionsLieesCommunes}
-        isOpen
-        className="fr-mb-4w"
-      />
 
-      {enfantsTries.map(enfant => (
+      {/** indicateur parent (sauf si il est marqué "sans valeur") */}
+      {!definition.sans_valeur && (
         <IndicateurEnfant
-          key={enfant.id}
-          definition={enfant}
+          key={definition.id}
+          definition={definition}
           actionsLieesCommunes={actionsLieesCommunes}
+          isOpen
+          className="fr-mb-4w"
         />
-      ))}
+      )}
+
+      {
+        /** indicateurs enfants */
+        enfantsTries.map(enfant => (
+          <IndicateurEnfant
+            key={enfant.id}
+            definition={enfant}
+            actionsLieesCommunes={actionsLieesCommunes}
+          />
+        ))
+      }
     </>
   );
 };
