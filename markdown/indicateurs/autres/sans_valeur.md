@@ -5,6 +5,7 @@ unite: '%'
 
 titre_long: Part des personnes utilisant un mode de déplacement par rapport à l'ensemble des personnes qui se déplacent
 selection: yes
+sans_valeur: yes
 programmes:
   - cae
 thematiques:
@@ -13,14 +14,15 @@ thematiques:
 ## Description
 La part modale est une part modale en nombre de déplacements.
 
-Les valeurs limites et cibles des différentes parts modales sont données à titre indicatif : il faut également juger de l'évolution de la part modale au fil du temps et des caractéristiques du territoire. A défaut de posséder les parts modales issues d'une enquête ménages, les collectivités peuvent utiliser les données INSEE donnant les parts modales des déplacements domicile-travail pour la population active (tableau NAV2A ou NAV2B).
+Les valeurs limites et cibles des différentes parts modales sont données à titre indicatif : il faut également juger de l'évolution de la part modale au fil du temps et des caractéristiques du territoire. À défaut de posséder les parts modales issues d'une enquête ménages, les collectivités peuvent utiliser les données INSEE donnant les parts modales des déplacements domicile-travail pour la population active (tableau NAV2A ou NAV2B).
 
 # Couverture des Plans de déplacements 
 ```yaml
 id: plans_de_deplacement
 unite: '%'
 
-titre_long: Couverture des Plans de déplacements 
+titre_long: Couverture des Plans de déplacements
+sans_valeur: yes
 selection: yes
 programmes:
   - cae
@@ -36,6 +38,7 @@ id: emission_polluants_atmo
 unite: tonnes
 
 titre_long: Quantité totale d'émissions de polluants atmosphériques
+sans_valeur: yes
 selection: yes
 programmes:
   - clef
@@ -45,8 +48,8 @@ thematiques:
   - nature_environnement_air
 ```
 ## Description
-Ces indicateurs estiment les émissions annuelles des six polluants atmosphériques exigés dans le contenu réglementaire des PCAET (décret n°2016-849 du 28 juin 2016 et arrêté du 4 août 2016 relatifs au plan climat-air-énergie territorial) : oxydes d’azote (NOx), les particules PM 10 et PM 2,5 et les composés organiques volatils (COV), tels que définis au I de l’article R. 221-1 du même code, ainsi que le dioxyde de soufre (SO2 ) et l’ammoniac (NH3).
-Les données peuvent être fournies notamment par les associations agrées pour la surveillance de la qualité de l'air (AASQA). 
+Ces indicateurs estiment les émissions annuelles des six polluants atmosphériques exigés dans le contenu réglementaire des PCAET (décret n°2016-849 du 28 juin 2016 et arrêté du 4 août 2016 relatifs au plan climat-air-énergie territorial) : oxydes d’azote (NOx), les particules PM 10 et PM 2,5 et les composés organiques volatils (COV), tels que définis au I de l’article R. 221-1 du même code, ainsi que le dioxyde de soufre (SO2) et l’ammoniac (NH3).
+Les données peuvent être fournies notamment par les associations agréées pour la surveillance de la qualité de l'air (AASQA). 
 
 # Compacité des formes urbaines
 ```yaml
@@ -55,6 +58,7 @@ unite: "%"
 identifiant: 9
 
 titre_long: Compacité des formes urbaines
+sans_valeur: yes
 selection: yes
 actions:
   - cae_1.3.1
