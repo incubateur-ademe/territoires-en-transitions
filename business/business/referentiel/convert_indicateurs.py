@@ -41,6 +41,7 @@ class MarkdownIndicateur:
     fnv: Optional[List[str]]
     parent: Optional[str]
     type: Optional[str]
+    sans_valeur: Optional[bool] = False
     selection: bool = False
     description: str = ''
     "Partie description en markdown"
@@ -68,6 +69,7 @@ class Indicateur:
     source: Optional[str] = None
     type: Optional[str] = None
     selection: Optional[bool] = False
+    sans_valeur: Optional[bool] = False
 
 
 def parse_indicateurs(
@@ -130,7 +132,8 @@ def convert_indicateurs(path: str, json_filename: str):
             parent=md.parent,
             source=md.source,
             type=md.type,
-            selection=md.selection or False
+            selection=md.selection or False,
+            sans_valeur=md.sans_valeur or False
         )
         for md in md_indicateurs
     ]
