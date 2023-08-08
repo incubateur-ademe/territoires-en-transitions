@@ -1286,12 +1286,13 @@ export interface Database {
           description: string
           groupe: Database["public"]["Enums"]["indicateur_group"]
           id: string
-          identifiant: string
+          identifiant: string | null
           modified_at: string
           nom: string
           parent: string | null
           participation_score: boolean
           programmes: Database["public"]["Enums"]["indicateur_programme"][]
+          sans_valeur: boolean
           selection: boolean
           source: string | null
           thematiques: Database["public"]["Enums"]["indicateur_thematique"][]
@@ -1306,12 +1307,13 @@ export interface Database {
           description: string
           groupe: Database["public"]["Enums"]["indicateur_group"]
           id: string
-          identifiant: string
+          identifiant?: string | null
           modified_at?: string
           nom: string
           parent?: string | null
           participation_score?: boolean
           programmes?: Database["public"]["Enums"]["indicateur_programme"][]
+          sans_valeur?: boolean
           selection?: boolean
           source?: string | null
           thematiques?: Database["public"]["Enums"]["indicateur_thematique"][]
@@ -1326,12 +1328,13 @@ export interface Database {
           description?: string
           groupe?: Database["public"]["Enums"]["indicateur_group"]
           id?: string
-          identifiant?: string
+          identifiant?: string | null
           modified_at?: string
           nom?: string
           parent?: string | null
           participation_score?: boolean
           programmes?: Database["public"]["Enums"]["indicateur_programme"][]
+          sans_valeur?: boolean
           selection?: boolean
           source?: string | null
           thematiques?: Database["public"]["Enums"]["indicateur_thematique"][]
@@ -1631,15 +1634,15 @@ export interface Database {
       indicateur_thematique_nom: {
         Row: {
           id: Database["public"]["Enums"]["indicateur_thematique"]
-          nom: string | null
+          nom: string
         }
         Insert: {
           id: Database["public"]["Enums"]["indicateur_thematique"]
-          nom?: string | null
+          nom: string
         }
         Update: {
           id?: Database["public"]["Enums"]["indicateur_thematique"]
-          nom?: string | null
+          nom?: string
         }
       }
       indicateurs_json: {
@@ -4017,13 +4020,13 @@ export interface Database {
       _get_note:
         | {
             Args: {
-              "": string
+              "": number
             }
             Returns: string
           }
         | {
             Args: {
-              "": number
+              "": string
             }
             Returns: string
           }
@@ -7044,7 +7047,7 @@ export interface Database {
         | "CA"
         | "EPT"
         | "PETR"
-      indicateur_group: "cae" | "crte" | "eci"
+      indicateur_group: "cae" | "crte" | "eci" | "modes" | "plans" | "emission"
       indicateur_programme: "clef" | "eci" | "cae" | "pcaet" | "crte"
       indicateur_referentiel_type: "resultat" | "impact"
       indicateur_thematique:
