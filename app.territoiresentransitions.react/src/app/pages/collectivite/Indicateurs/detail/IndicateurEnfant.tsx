@@ -9,6 +9,7 @@ import {useIndicateurACompleter} from '../useIndicateurDefinitions';
 import {ActionsLieesCards} from '../../PlansActions/FicheAction/FicheActionForm/ActionsLiees';
 import IndicateurChart from '../charts/IndicateurChart';
 import {FichesActionLiees} from '../FichesActionLiees';
+import {Spacer} from 'ui/dividers/Spacer';
 
 export const IndicateurEnfant = ({
   definition,
@@ -114,7 +115,9 @@ const IndicateurEnfantContent = ({
             </p>
             <ActionsLieesCards actions={actionsLiees} />
           </>
-        ) : null
+        ) : (
+          <Spacer size={3} />
+        )
       }
       <FichesActionLiees definition={definition} />
     </div>
