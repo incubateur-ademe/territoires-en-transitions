@@ -1,176 +1,122 @@
+/* eslint-disable react/no-unescaped-entities */
+import ButtonWithLink from '@components/buttons/ButtonWithLink';
+import Card from '@components/cards/Card';
+import CardsWrapper from '@components/cards/CardsWrapper';
+import TestimonyCard from '@components/cards/TestimonyCard';
+import Section from '@components/sections/Section';
+import CardsSection from '@components/sections/CardsSection';
+import Slideshow from '@components/slideshow/Slideshow';
+import CalendarPicto from 'public/pictogrammes/CalendarPicto';
+import CommunityPicto from 'public/pictogrammes/CommunityPicto';
+import InformationPicto from 'public/pictogrammes/InformationPicto';
+import PictoWithBackground from 'public/pictogrammes/PictoWithBackground';
+import SearchInput from '@components/inputs/SearchInput';
+import {testimonies} from './data';
+
 export default function Accueil() {
   return (
-    <div className="fr-container-fluid fr-mt-3w fr-mt-md-9w fr-mb-3w fr-mb-md-9w">
-      <div className="container fr-container">
-        <div className="fr-grid-row fr-grid-row--gutters">
-          <div className="fr-mb-5w text-center">
-            <h2 className="">
-              Pilotez efficacement la transition écologique de votre
-              collectivité
-            </h2>
-            <p className="">
-              Territoires en Transitions est une plateforme pour accompagner les
-              démarches des collectivités engagées en transition écologique sur
-              les thématiques climat, air, énergie et économie circulaire.
-            </p>
-          </div>
+    <>
+      <Section className="flex-col lg:flex-row">
+        <div className="lg:mr-10 xl:mr-20 mb-8 lg:mb-0">
+          <h1>Accélérez la transition écologique de votre collectivité</h1>
+          <p>Quelles sont les prochaines étapes pour ma collectivité ?</p>
+          <SearchInput
+            id="collectivite"
+            placeholder="Rechercher un EPCI, un syndicat, une commune, un PETR, un EPT"
+          />
+          <a
+            href="/programme#carte"
+            className="fr-link fr-icon-arrow-right-line fr-link--icon-right"
+          >
+            Voir la carte de toutes les collectivités
+          </a>
         </div>
-      </div>
+        <picture className="w-full lg:w-3/5 xl:w-2/5">
+          <img src="accueil/homepage.png" alt="" className="w-full" />
+        </picture>
+      </Section>
 
-      <div className="container fr-container  ">
-        <div className="fr-grid-row fr-grid-row--gutters">
-          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4">
-            <div className="fr-card fr-card--no-arrow">
-              <div className="fr-card__body">
-                <h3 className="fr-card__title">
-                  Situez-vous par rapport aux référentiels nationaux
-                </h3>
-                <p className="fr-card__desc fr-text--sm">
-                  Évaluez vos politiques économie circulaire et
-                  climat-air-énergie et faites labelliser le score de
-                  performance de vos actions réalisées.
-                </p>
-              </div>
-              <img
-                src="accueil/picto-4.svg"
-                title="Titre"
-                alt=""
-                className=" fr-ratio-1x1"
+      <CardsSection
+        title="Bénéficiez d’un accompagnement adapté à vos besoins"
+        description="Votre territoire est unique. Avancez étape par étape dans 
+        la transition écologique selon vos compétences et vos moyens avec le programme 
+        Territoire Engagé Transition Écologique."
+        cardsList={
+          <CardsWrapper cols={2}>
+            <Card
+              title="Engagez votre collectivité dans la transition écologique"
+              description="Réalisez votre état des lieux et bénéficiez d'un accompagnement personnalisé"
+              button={{title: 'Découvrir le programme', href: '/programme'}}
+              image={
+                <picture>
+                  <img
+                    src="territoire-engage.jpg"
+                    alt=""
+                    className="max-h-[150px]"
+                  />
+                </picture>
+              }
+            />
+            <Card
+              title="Suivez vos plans d'action et vos indicateurs"
+              description="Collaborez de manière transversale pour atteindre vos objectifs"
+              button={{
+                title: 'Créer un compte',
+                href: 'https://app.territoiresentransitions.fr/auth/signup',
+              }}
+              image={
+                <picture>
+                  <img src="accueil/compte.png" alt="" />
+                </picture>
+              }
+            />
+          </CardsWrapper>
+        }
+      />
+
+      <CardsSection
+        title="Rejoignez une communauté de collectivités engagées"
+        cardsList={
+          <Slideshow
+            className="my-6 xl:mx-auto xl:w-5/6 "
+            slides={testimonies.map(t => (
+              <TestimonyCard
+                key={t.id}
+                content={t.content}
+                author={t.author}
+                role={t.role}
+                imageSrc={t.image}
               />
-            </div>
-          </div>
-          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4 ">
-            <div className="fr-card fr-card--no-arrow">
-              <div className="fr-card__body">
-                <h3 className="fr-card__title">
-                  Gérez votre plan d&apos;actions{' '}
-                </h3>
-                <p className="fr-card__desc fr-text--sm">
-                  Créez ou embarquez votre plan d&apos;actions existant dans
-                  l&apos;outil. Complétez ou renforcez votre plan avec les
-                  actions des référentiels nationaux des programmes
-                  climat-air-énergie (Cit&apos;ergie) et économie circulaire.
-                </p>
-              </div>
-              <div className="fr-card__img">
-                <img
-                  src="accueil/picto-1.svg"
-                  title="Titre"
-                  alt=""
-                  className=" fr-ratio-1x1"
-                />
-              </div>
-            </div>
-          </div>
-          <div className="Cards fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4 ">
-            <div className="fr-card fr-card--no-arrow">
-              <div className="fr-card__body">
-                <h3 className="fr-card__title">Suivez vos indicateurs</h3>
-                <p className="fr-card__desc fr-text--sm">
-                  Gérez collectivement et facilement la mise à jour des actions
-                  et des données. Intégrez vos propres indicateurs et comparez
-                  vos résultats aux autres collectivités.
-                </p>
-              </div>
-              <div className="fr-card__img">
-                <img
-                  src="accueil/picto-2.svg"
-                  title="Titre"
-                  alt=""
-                  className=" fr-ratio-1x1"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+            ))}
+          />
+        }
+      />
 
-      <div className="container fr-container fr-mt-10w ">
-        <div className="fr-grid-row fr-grid-row--gutters">
-          <h2 className="">A vous de jouer !</h2>
-          <p className="">
-            Territoires en Transitions est un outil public gratuit et
-            open-source pour les collectivités, financé par l&apos;ADEME.
-            Actuellement à ses débuts, la plateforme a besoin de vous pour
-            évoluer dans le sens de vos besoins. Rejoignez-nous dans sa
-            co-construction en créant votre compte en moins d&apos;une minute.
-          </p>
-        </div>
-        <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-mb-10w">
-          <p></p>
-          <div className="fr-col-md-3 fr-grid-row fr-grid-row--center">
-            <a
-              href="https://app.territoiresentransitions.fr/auth/signup"
-              className="fr-btn fr-btn"
-            >
-              Créer un compte
-            </a>
-          </div>
-          <p></p>
-        </div>
-      </div>
-
-      <div className="container fr-container fr-mt-10w ">
-        <div className="fr-grid-row fr-grid-row--gutters">
-          <h2 className="">
-            Territoires en Transitions - Deux offres complémentaires
-          </h2>
-          <p className="">
-            Renforcez, structurez et valorisez votre projet territorial, suivez
-            vos plans d&apos;actions et vos indicateurs sur les dimensions
-            Climat, Air, Énergie et Économie Circulaire avec l&apos;appui des
-            référentiels nationaux du programme Territoire Engagé Transition
-            Écologique,{' '}
-            <a
-              href="https://territoiresentransitions.fr/"
-              rel="external"
-              className=""
-            >
-              https://territoiresentransitions.fr/
-            </a>
-            .
-          </p>
-          <p className="">
-            Pour en savoir plus sur le programme Territoire Engagé Transition
-            Écologique et les labels, rendez-vous sur :{' '}
-            <a
-              href="https://territoireengagetransitionecologique.ademe.fr/"
-              rel="external"
-              className=""
-            >
-              https://territoireengagetransitionecologique.ademe.fr/
-            </a>
-            .
-          </p>
-          <p className="">
-            Développez une approche collaborative des enjeux de transition
-            écologique au-delà des thématiques Climat, Air, Énergie et Économie
-            Circulaire (sociaux, environnementaux, économiques) dans votre
-            projet de territoire, et accédez à des fonctionnalités de pilotage
-            global, avec la plateforme des territoires démonstrateurs de la
-            transition écologique,{' '}
-            <a
-              href="https://territoires-en-transition.ecologie.gouv.fr/"
-              rel="external"
-              className=""
-            >
-              https://territoires-en-transition.ecologie.gouv.fr/
-            </a>
-            .
-          </p>
-          <h2 className="">Contactez-nous</h2>
-          <p className="">
-            Nous sommes à votre disposition pour répondre à toutes vos questions
-            et écouter vos retours. Contactez nous par mail à{' '}
-            <a
-              href="mailto:contact@territoiresentransitions.fr?subject=Contact%20via%20territoiresentransitions.fr"
-              className=""
-            >
-              contact@territoiresentransitions.fr
-            </a>
-          </p>
-        </div>
-      </div>
-    </div>
+      <CardsSection
+        title="Vous souhaitez plus d’informations ?"
+        cardsList={
+          <CardsWrapper cols={3} className="!gap-14">
+            <div className="flex flex-col items-center gap-8">
+              <PictoWithBackground pictogram={<InformationPicto />} />
+              <ButtonWithLink href="/faq" secondary fullWidth>
+                Lire les questions fréquentes
+              </ButtonWithLink>
+            </div>
+            <div className="flex flex-col items-center gap-8">
+              <PictoWithBackground pictogram={<CommunityPicto />} />
+              <ButtonWithLink href="/contact" secondary fullWidth>
+                Contacter l'équipe
+              </ButtonWithLink>
+            </div>
+            <div className="flex flex-col items-center gap-8">
+              <PictoWithBackground pictogram={<CalendarPicto />} />
+              <ButtonWithLink href="/" fullWidth>
+                Participer à une démo
+              </ButtonWithLink>
+            </div>
+          </CardsWrapper>
+        }
+      />
+    </>
   );
 }

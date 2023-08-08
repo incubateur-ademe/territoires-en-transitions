@@ -27,9 +27,13 @@ export default function RootLayout({children}: {children: JSX.Element}) {
           href="/favicon-16x16.png"
         />
       </head>
-      <body>
-        <AppHeader />
-        {children}
+      <body className="min-h-screen flex flex-col justify-between">
+        <div>
+          <AppHeader />
+          <div className="homepage-container fr-container-fluid">
+            {children}
+          </div>
+        </div>
         <Footer />
       </body>
     </html>

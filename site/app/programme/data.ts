@@ -1,0 +1,90 @@
+export const articles = [
+  {
+    id: 1,
+    title: 'Labellisation',
+    description:
+      'Pour finaliser et valoriser votre projet de transition écologique.',
+    image: 'programme/labellisation.png',
+    href: 'https://app.territoiresentransitions.fr/',
+  },
+  {
+    id: 2,
+    title: 'Accompagnement',
+    description:
+      'L’ADEME met à votre disposition un·e conseiller·e pour vous accompagner.',
+    image: 'programme/accompagnement.png',
+  },
+  {
+    id: 3,
+    title: 'Mise en réseau',
+    description:
+      "De l'information, des webinaires, des événements locaux ou nationaux.",
+  },
+  {
+    id: 4,
+    title: 'Formation',
+    description:
+      'Des formations adaptées à votre maturité, avec des modules variés.',
+    image: 'programme/formation.png',
+  },
+  {
+    id: 5,
+    title: 'Soutien financier',
+    description:
+      'Des aides financières peuvent être attribuées en concertation avec votre direction régionale.',
+    image: 'programme/soutien.png',
+  },
+];
+
+export const benefits = [
+  {
+    id: 1,
+    title: 'Structurer',
+    description:
+      "Structurez votre démarche, dans une logique d'amélioration continue, avec des outils opérationnels pour avancer de façon autonome et progressive : les référentiels d’action et la plateforme numérique.",
+  },
+  {
+    id: 2,
+    title: 'Agir',
+    description:
+      'Atteignez les objectifs définis par vos politiques territoriales dans vos champs de compétence : performance énergétique des bâtiments, mobilité durable, énergies renouvelables, réduction et valorisation des déchets, achat durable...',
+  },
+  {
+    id: 3,
+    title: 'Valoriser',
+    description:
+      "Bénéficiez d'une reconnaissance grâce à la labellisation. Valorisez et faites reconnaître auprès des citoyen·nes votre implication dans la transition écologique.",
+  },
+  {
+    id: 4,
+    title: 'Former',
+    description:
+      'Formez vos équipes à la transition écologique. Faites monter en compétences vos chargé·es de mission avec des modules experts.',
+  },
+];
+
+export const steps = [
+  {
+    id: 1,
+    title: 'Etat des lieux',
+    description:
+      "Identification de tous les champs, des acteurs et des priorités d'action.",
+  },
+  {
+    id: 2,
+    title: 'Plan d’action sur 4 ans',
+    description:
+      'Mise en œuvre concrète des actions prévues avec les moyens humains et financiers à hauteur du défi.',
+  },
+  {
+    id: 3,
+    title: 'Mise en œuvre des actions collectivité',
+    description: 'Action directe de la collectivité et de ses partenaires.',
+  },
+  {
+    id: 4,
+    title: 'Évaluation, amélioration continue, labellisation',
+    description:
+      "Progression grâce au plan d'action, puis valorisation et évaluation grâce au label.",
+  },
+];

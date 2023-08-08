@@ -13,13 +13,13 @@ const StatsLayout = ({children}: {children: React.ReactNode}) => {
   const [title, setTitle] = useState<string | null>(null);
 
   return (
-    <div className="fr-container-fluid">
+    <>
       <section className={`fr-container fr-mb-4w`}>
         <h1 className={'fr-mt-4w'}>Statistiques{title ? ` - ${title}` : ''}</h1>
         <RegionAndDeptFilters onChange={setTitle} />
       </section>
       {children}
-    </div>
+    </>
   );
 };
 
