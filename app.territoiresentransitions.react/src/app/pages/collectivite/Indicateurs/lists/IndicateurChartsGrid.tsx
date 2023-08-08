@@ -3,11 +3,11 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useIntersectionObserver} from 'utils/useIntersectionObserver';
 import IndicateurChart from '../charts/IndicateurChart';
 import {TIndicateurChartProps} from '../charts/types';
+import {TIndicateurDefinition} from '../types';
 import {
-  TIndicateurDefinition,
-  TIndicateurReferentielDefinition,
-} from '../types';
-import {makeCollectiviteIndicateursUrl} from 'app/paths';
+  IndicateurViewParamOption,
+  makeCollectiviteIndicateursUrl,
+} from 'app/paths';
 
 type TIndicateurChartsGridProps = {
   definitions: TIndicateurDefinition[];
@@ -36,7 +36,7 @@ const IndicateurChartContainer = (props: TIndicateurChartProps) => {
     collectiviteId,
     indicateurView: definition.isPerso
       ? 'perso'
-      : (definition as TIndicateurReferentielDefinition).groupe,
+      : (definition.groupe as IndicateurViewParamOption),
     indicateurId: definition.id,
   });
 
