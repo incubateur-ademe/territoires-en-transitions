@@ -20,7 +20,7 @@ begin
         loop
             insert into definition
             (id, groupe, identifiant, valeur_indicateur, nom, description, unite,
-             parent, participation_score, selection, source, titre_long, type,
+             parent, participation_score, selection, sans_valeur, source, titre_long, type,
              thematiques, programmes, modified_at)
             values ((indicateur ->> 'id')::indicateur_id,
                     (indicateur ->> 'groupe')::indicateur_group,
@@ -32,6 +32,7 @@ begin
                     indicateur ->> 'parent',
                     (indicateur -> 'participation_score')::bool,
                     (indicateur -> 'selection')::bool,
+                    (indicateur -> 'sans_valeur')::bool,
                     indicateur ->> 'source',
                     indicateur ->> 'titre_long',
                     (indicateur ->> 'type')::indicateur_referentiel_type,
@@ -58,6 +59,7 @@ begin
             unite               = excluded.unite,
             participation_score = excluded.participation_score,
             selection           = excluded.selection,
+            sans_valeur         = excluded.sans_valeur,
             source              = excluded.source,
             titre_long          = excluded.titre_long,
             type                = excluded.type,
@@ -80,6 +82,7 @@ begin
             parent              = excluded.parent,
             participation_score = excluded.participation_score,
             selection           = excluded.selection,
+            sans_valeur         = excluded.sans_valeur,
             source              = excluded.source,
             titre_long          = excluded.titre_long,
             type                = excluded.type,
