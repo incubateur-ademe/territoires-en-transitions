@@ -58,56 +58,61 @@ const SubActionHeader = ({
       })}
       onClick={handleOnClick}
     >
-      {/* Identifiant de l'action et bouton open / close */}
-      <div
-        className={classNames('flex justify-between lg:col-span-1 col-span-2', {
-          'font-bold': isSubAction,
-        })}
-      >
-        {isSubAction && <ExpandToggle open={open} />}
-        {action.identifiant}
-      </div>
-
-      {/* Nom de l'action et score réalisé */}
-      <div className="lg:col-span-9 col-span-7 flex flex-col gap-3">
-        <div className={classNames({'font-bold': isSubAction})}>
-          {action.nom}
-          {action.description &&
-            ((isSubAction && action.referentiel === 'cae') || isTask) && (
-              <InfoTooltip label={action.description} />
-            )}
+      <div className="grid grid-cols-12 gap-4 items-start">
+        {/* Identifiant de l'action et bouton open / close */}
+        <div
+          className={classNames(
+            'flex justify-between lg:col-span-1 col-span-2',
+            {
+              'font-bold': isSubAction,
+            }
+          )}
+        >
+          {isSubAction && <ExpandToggle open={open} />}
+          {action.identifiant}
         </div>
 
-        {isSubAction && (
-          <div className="flex gap-2">
-            <div className="w-[140px]">
-              <ScoreDisplay
-                score={actionScores[action.id]?.points_realises ?? null}
-                scoreMax={
-                  actionScores[action.id]?.points_max_personnalises ?? null
-                }
-                size="xs"
-              />
-            </div>
-
-            {displayProgressBar && (
-              <div className="flex justify-end w-[155px]">
-                <ActionProgressBar action={action} />
-              </div>
-            )}
+        {/* Nom de l'action et score réalisé */}
+        <div className="lg:col-span-9 col-span-7 flex flex-col gap-3">
+          <div className={classNames({'font-bold': isSubAction})}>
+            {action.nom}
+            {action.description &&
+              ((isSubAction && action.referentiel === 'cae') || isTask) && (
+                <InfoTooltip label={action.description} />
+              )}
           </div>
-        )}
-      </div>
 
-      {/* Menu de sélection du statut */}
-      <div className="lg:col-span-2 col-span-3">
-        {!hideStatus && (
-          <ActionStatusDropdown
-            action={action}
-            actionScores={actionScores}
-            onSaveStatus={onSaveStatus}
-          />
-        )}
+          {isSubAction && (
+            <div className="flex gap-2">
+              <div className="w-[140px]">
+                <ScoreDisplay
+                  score={actionScores[action.id]?.points_realises ?? null}
+                  scoreMax={
+                    actionScores[action.id]?.points_max_personnalises ?? null
+                  }
+                  size="xs"
+                />
+              </div>
+
+              {displayProgressBar && (
+                <div className="flex justify-end w-[155px]">
+                  <ActionProgressBar action={action} />
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Menu de sélection du statut */}
+        <div className="lg:col-span-2 col-span-3">
+          {!hideStatus && (
+            <ActionStatusDropdown
+              action={action}
+              actionScores={actionScores}
+              onSaveStatus={onSaveStatus}
+            />
+          )}
+        </div>
       </div>
       {displayActionCommentaire && (
         <div onClick={evt => evt.stopPropagation()}>

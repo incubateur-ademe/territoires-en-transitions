@@ -101,7 +101,6 @@ const FiltrePrimairePersonne = ({filterKey, filtersOptions}: Props) => {
   return (
     <TagFilters
       defaultOption={getDefaultOption()}
-      name={filterKey}
       options={options}
       onChange={value => setFilters(onChange(value))}
     />

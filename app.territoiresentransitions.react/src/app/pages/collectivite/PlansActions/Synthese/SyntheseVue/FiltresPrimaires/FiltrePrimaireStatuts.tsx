@@ -40,7 +40,6 @@ const FiltrePrimaireStatuts = ({filtersOptions}: Props) => {
   return (
     <TagFilters
       defaultOption={getDefaultOption()}
-      name="statuts"
       options={[
         {value: ITEM_ALL, label: 'Tous les statuts'},
         {value: SANS_STATUT, label: 'Sans statut'},
