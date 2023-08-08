@@ -26,6 +26,17 @@ const IndicateurChartsGrid = (props: TIndicateurChartsGridProps) => {
   );
 };
 
+// renvoi la vue par défaut associée à une définition d'indicateur (pour construire son url)
+const GROUPES = ['cae', 'crte', 'eci'];
+const getViewId = (definition: TIndicateurDefinition) => {
+  if (definition.isPerso) return 'perso';
+  if (GROUPES.includes(definition.groupe))
+    return definition.groupe as IndicateurViewParamOption;
+  if (definition.programmes?.includes('clef')) return 'cles';
+  if (definition.selection) return 'selection';
+  return definition.groupe as IndicateurViewParamOption;
+};
+
 /** Affiche le graphique uniquement lorsque son conteneur devient visible */
 const IndicateurChartContainer = (props: TIndicateurChartProps) => {
   const {ref, entry} = useIntersectionObserver();
@@ -34,9 +45,7 @@ const IndicateurChartContainer = (props: TIndicateurChartProps) => {
   const {definition} = props;
   const url = makeCollectiviteIndicateursUrl({
     collectiviteId,
-    indicateurView: definition.isPerso
-      ? 'perso'
-      : (definition.groupe as IndicateurViewParamOption),
+    indicateurView: getViewId(definition),
     indicateurId: definition.id,
   });
 
