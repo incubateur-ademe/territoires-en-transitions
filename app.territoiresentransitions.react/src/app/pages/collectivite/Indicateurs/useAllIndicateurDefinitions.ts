@@ -36,7 +36,7 @@ export const useAllIndicateurDefinitionsForGroup = (
     async () => {
       const indicateurs = await fetchAllIndicateurDefinitions();
       return sortIndicateurDefinitionsByIdentifiant(
-        indicateurs?.filter(({indicateur_group}) => indicateur_group === group)
+        indicateurs?.filter(({groupe}) => groupe === group)
       );
     },
     DISABLE_AUTO_REFETCH
@@ -51,6 +51,7 @@ export const sortIndicateurDefinitionsByIdentifiant = (
   definitions.sort((def_a, def_b) => {
     const identifiant_a = def_a.identifiant;
     const identifiant_b = def_b.identifiant;
+    if (identifiant_a === null || identifiant_b === null) return 0;
     const a_groups = identifiant_a.match(indicateurIdentifiantRegexp)?.groups;
     const b_groups = identifiant_b.match(indicateurIdentifiantRegexp)?.groups;
     if (!a_groups || !b_groups)
