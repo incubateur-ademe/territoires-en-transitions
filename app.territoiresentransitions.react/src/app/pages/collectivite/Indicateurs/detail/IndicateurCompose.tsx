@@ -16,9 +16,10 @@ export const IndicateurCompose = ({
     ...enfants,
   ]);
 
-  const enfantsTries = enfants.sort((a, b) =>
-    a.identifiant.localeCompare(b.identifiant)
-  );
+  const enfantsTries = enfants.sort((a, b) => {
+    if (a.identifiant === null || b.identifiant === null) return 0;
+    return a.identifiant.localeCompare(b.identifiant);
+  });
 
   return (
     <>
