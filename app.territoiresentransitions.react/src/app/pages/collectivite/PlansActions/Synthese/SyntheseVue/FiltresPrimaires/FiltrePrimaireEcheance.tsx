@@ -27,7 +27,6 @@ const FiltrePrimaireEcheance = ({filtersOptions}: Props) => {
   return (
     <TagFilters
       defaultOption={filters.echeance}
-      name="echeances"
       options={[
         {value: ITEM_ALL, label: 'Toutes les échéances'},
         ...ficheActionEcheanceOptions,
