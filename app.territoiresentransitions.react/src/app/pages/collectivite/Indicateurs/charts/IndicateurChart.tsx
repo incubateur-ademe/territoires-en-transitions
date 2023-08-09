@@ -103,6 +103,7 @@ export const IndicateurChartBase = (props: TIndicateurChartBaseProps) => {
   return (
     <Card
       className={classNames({'rounded-none h-[540px]': isZoomed}, className)}
+      dataTest={`chart-${definition.id}`}
     >
       <ChartCardContent
         chart={chart}

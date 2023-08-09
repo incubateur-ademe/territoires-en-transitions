@@ -18,6 +18,7 @@ export const IndicateursNav = () => {
       <SideNav links={generateLinks(collectiviteId)} />
       {!collectivite.readonly && (
         <Link
+          data-test="create-perso"
           className="fr-btn fr-btn--tertiary fr-ml-4w"
           to={makeCollectiviteIndicateursUrl({
             collectiviteId,
