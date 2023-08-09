@@ -76,6 +76,7 @@ const ThreeDotButton = forwardRef(
     ref?: Ref<HTMLButtonElement>
   ) => (
     <button
+      aria-label="sous-menu"
       ref={ref}
       data-test={dataTest}
       className={classNames(

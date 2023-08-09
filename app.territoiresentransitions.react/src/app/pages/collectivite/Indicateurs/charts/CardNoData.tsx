@@ -19,6 +19,7 @@ export const CardNoData = ({
         {'rounded-none': isZoomed},
         className
       )}
+      dataTest={`chart-${definition.id}`}
     >
       <span className="font-bold text-[#161616]">
         {getChartTitle(definition, isZoomed)}
