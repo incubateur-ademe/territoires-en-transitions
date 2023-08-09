@@ -136,7 +136,6 @@ export const ValueTableRowReadOnly = ({
   row?: TIndicateurValeurEtCommentaires;
 }) => {
   if (!row) return null;
-
   const {annee, valeur, commentaire, source, type} = row;
 
   const isImport = type === 'import';
@@ -147,7 +146,7 @@ export const ValueTableRowReadOnly = ({
         {isImport ? (
           <ValueImported valeur={valeur?.toLocaleString('fr')} />
         ) : (
-          {valeur}
+          valeur
         )}
       </td>
       <td>
@@ -155,7 +154,7 @@ export const ValueTableRowReadOnly = ({
           ? row?.source && (
               <span className="text-grey625">Source : {source}</span>
             )
-          : {commentaire}}
+          : commentaire}
       </td>
     </tr>
   );
