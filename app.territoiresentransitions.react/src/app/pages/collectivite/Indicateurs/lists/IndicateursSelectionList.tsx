@@ -11,5 +11,10 @@ export const IndicateursSelectionList = () => {
     addThematiqueOptions: true,
   });
 
-  return <FiltersAndGrid filteredDefinitions={filteredDefinitions} />;
+  return (
+    <FiltersAndGrid
+      filteredDefinitions={filteredDefinitions}
+      view="selection"
+    />
+  );
 };
