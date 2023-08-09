@@ -54,4 +54,12 @@ export const CollectivitePages = {
     route: 'plans/fiches',
     selector: '[data-test=FichesNonClassees]',
   },
+  'Indicateurs CAE': {
+    route: 'indicateurs/cae',
+    selector: '[data-test=ind-v-cae]',
+  },
+  'Indicateurs personnalisés': {
+    route: 'indicateurs/perso',
+    selector: '[data-test=ind-v-perso]',
+  },
 };
