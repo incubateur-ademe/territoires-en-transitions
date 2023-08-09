@@ -54,7 +54,12 @@ const Indicateurs = () => {
   const isPerso = view === 'perso';
 
   return (
-    <div className="fr-container !px-0 flex">
+    <div
+      className="fr-container !px-0 flex"
+      data-test={
+        indicateurId !== undefined ? `ind-${indicateurId}` : `ind-v-${view}`
+      }
+    >
       <IndicateursNav />
       <div className="w-full">
         {indicateurId !== undefined ? (
