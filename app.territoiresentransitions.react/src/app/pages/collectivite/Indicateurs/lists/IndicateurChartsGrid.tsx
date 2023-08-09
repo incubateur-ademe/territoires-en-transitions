@@ -11,16 +11,21 @@ import {
 
 type TIndicateurChartsGridProps = {
   definitions: TIndicateurDefinition[];
+  view?: IndicateurViewParamOption;
 };
 
 /** Affiche une grille de graphiques d'indicateur */
 const IndicateurChartsGrid = (props: TIndicateurChartsGridProps) => {
-  const {definitions} = props;
+  const {definitions, view} = props;
 
   return (
     <div className="grid lg:grid-cols-2 gap-x-6 gap-y-8">
       {definitions?.map(definition => (
-        <IndicateurChartContainer key={definition.id} definition={definition} />
+        <IndicateurChartContainer
+          key={definition.id}
+          definition={definition}
+          view={view}
+        />
       ))}
     </div>
   );
@@ -38,14 +43,16 @@ const getViewId = (definition: TIndicateurDefinition) => {
 };
 
 /** Affiche le graphique uniquement lorsque son conteneur devient visible */
-const IndicateurChartContainer = (props: TIndicateurChartProps) => {
+const IndicateurChartContainer = (
+  props: TIndicateurChartProps & {view?: IndicateurViewParamOption}
+) => {
   const {ref, entry} = useIntersectionObserver();
   const collectiviteId = useCollectiviteId()!;
 
-  const {definition} = props;
+  const {definition, view} = props;
   const url = makeCollectiviteIndicateursUrl({
     collectiviteId,
-    indicateurView: getViewId(definition),
+    indicateurView: view || getViewId(definition),
     indicateurId: definition.id,
   });
 

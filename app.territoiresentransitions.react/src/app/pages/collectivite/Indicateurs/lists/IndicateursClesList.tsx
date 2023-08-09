@@ -10,5 +10,7 @@ export const IndicateursClesList = () => {
     defaultOptionLabel: 'Tous les indicateurs clés',
   });
 
-  return <FiltersAndGrid filteredDefinitions={filteredDefinitions} />;
+  return (
+    <FiltersAndGrid filteredDefinitions={filteredDefinitions} view="cles" />
+  );
 };
