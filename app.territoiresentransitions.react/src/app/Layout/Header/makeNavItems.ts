@@ -1,6 +1,7 @@
 import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {
   makeCollectiviteAccueilUrl,
+  makeCollectiviteActionUrl,
   makeCollectiviteBibliothequeUrl,
   makeCollectiviteIndicateursUrl,
   makeCollectiviteJournalUrl,
@@ -53,6 +54,16 @@ const makeNavItemsBase = (collectivite: CurrentCollectivite): TNavItemsList => {
           collectiviteId,
           referentielId: 'eci',
         }),
+        makeCollectiviteActionUrl({
+          collectiviteId,
+          referentielId: 'cae',
+          actionId: '',
+        }),
+        makeCollectiviteActionUrl({
+          collectiviteId,
+          referentielId: 'eci',
+          actionId: '',
+        }),
       ],
       items: [
         {
@@ -67,6 +78,18 @@ const makeNavItemsBase = (collectivite: CurrentCollectivite): TNavItemsList => {
             collectiviteId,
             referentielId: 'cae',
           }),
+          urlPrefix: [
+            makeCollectiviteReferentielUrl({
+              collectiviteId,
+              referentielId: 'cae',
+              referentielVue: '',
+            }),
+            makeCollectiviteActionUrl({
+              collectiviteId,
+              referentielId: 'cae',
+              actionId: '',
+            }),
+          ],
         },
         {
           label: 'Labellisation Climat-Air-Énergie',
@@ -74,6 +97,7 @@ const makeNavItemsBase = (collectivite: CurrentCollectivite): TNavItemsList => {
             collectiviteId,
             referentielId: 'cae',
           }),
+          urlPrefix: ['/labellisation/cae'],
         },
         {
           label: 'Référentiel Économie Circulaire',
@@ -81,6 +105,18 @@ const makeNavItemsBase = (collectivite: CurrentCollectivite): TNavItemsList => {
             collectiviteId,
             referentielId: 'eci',
           }),
+          urlPrefix: [
+            makeCollectiviteReferentielUrl({
+              collectiviteId,
+              referentielId: 'eci',
+              referentielVue: '',
+            }),
+            makeCollectiviteActionUrl({
+              collectiviteId,
+              referentielId: 'eci',
+              actionId: '',
+            }),
+          ],
         },
         {
           label: 'Labellisation Économie Circulaire',
@@ -88,6 +124,7 @@ const makeNavItemsBase = (collectivite: CurrentCollectivite): TNavItemsList => {
             collectiviteId,
             referentielId: 'eci',
           }),
+          urlPrefix: ['/labellisation/eci'],
         },
       ],
     },
@@ -97,6 +134,7 @@ const makeNavItemsBase = (collectivite: CurrentCollectivite): TNavItemsList => {
       to: makeCollectivitePlansActionsSyntheseUrl({
         collectiviteId,
       }),
+      urlPrefix: ['/plans/'],
     },
     {
       acces_restreint,
@@ -105,7 +143,7 @@ const makeNavItemsBase = (collectivite: CurrentCollectivite): TNavItemsList => {
         collectiviteId,
         indicateurView: 'cles',
       }),
-      urlPrefix: makeCollectiviteIndicateursUrl({collectiviteId}),
+      urlPrefix: [makeCollectiviteIndicateursUrl({collectiviteId})],
     },
   ];
 
