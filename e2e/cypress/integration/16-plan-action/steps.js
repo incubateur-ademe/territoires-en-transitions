@@ -128,10 +128,6 @@ When(/je veux supprimer le dernier axe créé/, () => {
   cy.get('[data-test=SupprimerAxeBouton]').first().click({force: true});
 });
 
-When(/le texte "([^"]*)" est visible/, texte => {
-  cy.contains(texte).should('be.visible');
-});
-
 When(/je supprime l'axe depuis la modale/, () => {
   cy.get('[data-test=SupprimerFicheModale]').contains('Confirmer').click();
 });

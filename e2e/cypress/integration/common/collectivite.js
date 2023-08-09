@@ -7,13 +7,13 @@ import {waitForApp, logout} from './shared';
 
 // crée une collectivité de test
 When('une collectivité nommée {string}', createCollectivite);
-function createCollectivite(nom) {
+function createCollectivite(nom, alias = 'collectivite') {
   cy.task('supabase_rpc', {
     name: 'test_create_collectivite',
     params: {nom},
   })
     .then(res => res.data)
-    .as('collectivite');
+    .as(alias);
 }
 
 // passe cette collectivité en COT
@@ -88,6 +88,17 @@ function setAuditeur(demande_id, user_id) {
     .then(({data}) => data)
     .as('audit_auditeur');
 }
+
+When('je me reconnecte en tant que visiteur', function () {
+  logout();
+  waitForApp();
+  createCollectivite('une autre collectivité', 'autre_collectivite');
+  cy.get('@autre_collectivite').then(function (autre_collectivite) {
+    const {collectivite_id} = autre_collectivite;
+    addRandomUser(collectivite_id, 'edition', 'visiteur');
+    loginAs.call(this, '@visiteur');
+  });
+});
 
 When("l'audit est commencé", commencerAudit);
 function commencerAudit() {
@@ -201,6 +212,18 @@ When(
         `/collectivite/${collectivite_id}/action/${referentiel}/${action}`
       );
       cy.get(`[data-test="Action-${identifiant}"]`).should('be.visible');
+    });
+  }
+);
+
+When(
+  "je visite l'indicateur {string} de la collectivité courante",
+  function (indicateur_id) {
+    cy.get('@collectivite').then(({collectivite_id}) => {
+      cy.visit(`/collectivite/${collectivite_id}/indicateurs/${indicateur_id}`);
+      cy.get(`[data-test="ind-${indicateur_id.split('/').pop()}"]`).should(
+        'be.visible'
+      );
     });
   }
 );

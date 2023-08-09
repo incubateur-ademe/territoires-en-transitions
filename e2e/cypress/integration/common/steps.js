@@ -319,3 +319,17 @@ When(/l'onglet "([^"]+)" est sélectionné/, tabName =>
     .contains(tabName)
     .should('have.attr', 'aria-selected', 'true')
 );
+
+When('le badge {string} est visible', text => {
+  cy.get('.fr-badge').contains(text).should('be.visible');
+});
+When('le badge {string} est absent', text => {
+  cy.get('.fr-badge').contains(text).should('not.exist');
+});
+
+When(/le texte "([^"]*)" est visible/, texte => {
+  cy.contains(texte).should('be.visible');
+});
+When(/le texte "([^"]*)" est absent/, texte => {
+  cy.contains(texte).should('not.exist');
+});
