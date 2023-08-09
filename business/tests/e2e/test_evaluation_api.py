@@ -1,9 +1,43 @@
 from dataclasses import asdict
 
 from business.evaluation.api import (
-    EvaluatePayload,
+    EvaluatePayload, DatalayerEvaluationPayload, DatalayerPersonnalisationPayload,
 )
 from .fixtures import *
+
+
+def test_dl_evaluation(execution_api):
+    path = 'tests/data/payloads/dl_evaluation.json'
+
+    with open(path, 'r') as file:
+        json_data = json.load(file)
+
+    payload = DatalayerEvaluationPayload(**json_data)
+    assert isinstance(payload, DatalayerEvaluationPayload)
+
+    response = execution_api.post(
+        "/dl_evaluation/",
+        headers={"X-Token": "coneofsilence"},
+        json=json_data,
+    )
+    assert response.status_code == 200
+
+
+def test_dl_personnalisation(execution_api):
+    path = 'tests/data/payloads/dl_personnalisation.json'
+
+    with open(path, 'r') as file:
+        json_data = json.load(file)
+
+    payload = DatalayerPersonnalisationPayload(**json_data)
+    assert isinstance(payload, DatalayerPersonnalisationPayload)
+
+    response = execution_api.post(
+        "/dl_personnalisation/",
+        headers={"X-Token": "coneofsilence"},
+        json=json_data,
+    )
+    assert response.status_code == 200
 
 
 def test_evaluate_eci(execution_api, eci_evaluation_ref):
