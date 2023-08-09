@@ -23,10 +23,10 @@ $$
     select test_reset_action_statut_and_desc();
 -- 11-plan_action.sql
     select test_reset_plan_action();
--- 06-auth.sql
-    select test_reset_users();
 -- 14-indicateurs.sql
     select test_reset_indicateurs();
+-- 06-auth.sql
+    select test_reset_users();
 -- Supprime toutes les collectivités de test.
     delete from collectivite_test cascade where true;
 -- Renvoie un code 200
