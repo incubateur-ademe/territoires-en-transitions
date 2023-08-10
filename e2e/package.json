@@ -30,8 +30,8 @@
     "clipboardy": "^3.0.0",
     "cross-env": "^7.0.3",
     "cy-verify-downloads": "^0.1.14",
-    "cypress": "^12.9.0",
-    "cypress-real-events": "^1.7.6",
+    "cypress": "^12.17.3",
+    "cypress-real-events": "^1.10.0",
     "dotenv": "^16.0.3",
     "esbuild": "^0.17.15",
     "prettier": "^2.8.7"
