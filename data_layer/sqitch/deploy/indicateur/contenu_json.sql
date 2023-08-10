@@ -19,11 +19,10 @@ begin
     for indicateur in select * from jsonb_array_elements(indicateurs)
         loop
             insert into definition
-            (id, groupe, identifiant, valeur_indicateur, nom, description, unite,
+            (id, identifiant, valeur_indicateur, nom, description, unite,
              parent, participation_score, selection, sans_valeur, source, titre_long, type,
              thematiques, programmes, modified_at)
             values ((indicateur ->> 'id')::indicateur_id,
-                    (indicateur ->> 'groupe')::indicateur_group,
                     indicateur ->> 'identifiant',
                     (indicateur ->> 'valeur_indicateur')::indicateur_id,
                     indicateur ->> 'nom',
@@ -52,8 +51,7 @@ begin
     where parent is null
       and valeur_indicateur is null
     on conflict (id) do update
-        set groupe              = excluded.groupe,
-            identifiant         = excluded.identifiant,
+        set identifiant         = excluded.identifiant,
             nom                 = excluded.nom,
             description         = excluded.description,
             unite               = excluded.unite,
@@ -73,8 +71,7 @@ begin
     from definition
     where not (parent is null and valeur_indicateur is null)
     on conflict (id) do update
-        set groupe              = excluded.groupe,
-            identifiant         = excluded.identifiant,
+        set identifiant         = excluded.identifiant,
             valeur_indicateur   = excluded.valeur_indicateur,
             nom                 = excluded.nom,
             description         = excluded.description,
