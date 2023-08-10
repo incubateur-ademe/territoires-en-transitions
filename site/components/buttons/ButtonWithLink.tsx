@@ -4,6 +4,7 @@ type ButtonWithLinkProps = {
   children: React.ReactNode;
   href: string;
   secondary?: boolean;
+  external?: boolean;
   fullWidth?: boolean;
   className?: string;
 };
@@ -12,6 +13,7 @@ const ButtonWithLink = ({
   children,
   href,
   secondary = false,
+  external = false,
   fullWidth = false,
   className,
 }: ButtonWithLinkProps): JSX.Element => {
@@ -21,6 +23,8 @@ const ButtonWithLink = ({
         'fr-btn--secondary': secondary,
         '!w-full': fullWidth,
       })}
+      target={external ? '_blank' : undefined}
+      rel={external ? 'noreferrer noopener' : undefined}
       href={href}
     >
       <span className="w-full text-center">{children}</span>

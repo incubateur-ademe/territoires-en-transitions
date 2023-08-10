@@ -9,6 +9,7 @@ type CardProps = {
     title: string;
     href: string;
     secondary?: boolean;
+    external?: boolean;
   };
   image?: React.ReactNode;
   className?: string;
@@ -55,6 +56,7 @@ const Card = ({
         <ButtonWithLink
           href={button.href}
           secondary={button.secondary}
+          external={button.external}
           fullWidth
         >
           {button.title}

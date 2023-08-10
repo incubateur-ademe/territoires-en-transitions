@@ -117,6 +117,15 @@ export default function Accueil() {
           </CardsWrapper>
         }
       />
+
+      <Section className="flex-col gap-0">
+        <h3 className="mb-3">
+          Suivez les actualités du programme Territoire Engagé Transition
+          Écologique
+        </h3>
+        <p>Infolettre trimestrielle - 1 email par mois maximum.</p>
+        <ButtonWithLink href="/inscription">S'inscrire</ButtonWithLink>
+      </Section>
     </>
   );
 }
