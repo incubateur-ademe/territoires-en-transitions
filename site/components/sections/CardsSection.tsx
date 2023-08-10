@@ -19,7 +19,7 @@ const CardsSection = ({
 }: CardsSectionProps) => (
   <Section id={id} className="flex-col" customBackground={customBackground}>
     <h3>{title}</h3>
-    {description && <p>{description}</p>}
+    {description && <p className="text-xl">{description}</p>}
     {cardsList}
     {children}
   </Section>

@@ -8,7 +8,7 @@ import Section from '@components/sections/Section';
 import CardsSection from '@components/sections/CardsSection';
 import CodingPicto from 'public/pictogrammes/CodingPicto';
 import DocumentPicto from 'public/pictogrammes/DocumentPicto';
-import {articles, benefits, steps} from './data';
+import {articles, benefits, resources, steps} from './data';
 
 const Programme = () => {
   return (
@@ -20,6 +20,13 @@ const Programme = () => {
           disposition une ingénierie territoriale et un accompagnement
           personnalisé.
         </p>
+        <iframe
+          className="aspect-video w-full lg:w-4/5 mx-auto"
+          src="https://www.youtube.com/embed/gAc_B6j1qcY"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+          title="Découvrez le programme Territoire Engagé Transition Écologique"
+        />
       </Section>
 
       <CardsSection
@@ -86,7 +93,7 @@ const Programme = () => {
       />
 
       <CardsSection
-        title="Une offre socle et des services complémentaires sur-mesure"
+        title="Des services complémentaires sur-mesure"
         cardsList={
           <CardsWrapper cols={3}>
             {articles.map(a => (
@@ -104,10 +111,12 @@ const Programme = () => {
 
       <InfoSection
         content="Une offre socle qui comprend deux référentiels d'action Climat-Air-Énergie et Économie Circulaire, hébergés sur notre plateforme numérique"
-        button={{
-          title: 'Créer un compte',
-          href: 'https://app.territoiresentransitions.fr/auth/signup',
-        }}
+        buttons={[
+          {
+            title: 'Créer un compte',
+            href: 'https://app.territoiresentransitions.fr/auth/signup',
+          },
+        ]}
         pictogram={<CodingPicto />}
       />
 
@@ -154,10 +163,7 @@ const Programme = () => {
 
       <InfoSection
         content="Besoin de précisions avant de m'engager !"
-        button={{
-          title: 'Consulter les ressources',
-          href: '/',
-        }}
+        buttons={resources.map(r => ({...r, external: true}))}
         pictogram={<DocumentPicto />}
         customBackground="#6a6af4"
         customTextStyle="text-white font-bold"

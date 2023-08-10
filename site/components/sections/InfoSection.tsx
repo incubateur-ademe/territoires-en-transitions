@@ -7,7 +7,12 @@ type InfoSectionProps = {
   id?: string;
   content: string;
   pictogram: React.ReactNode;
-  button: {title: string; href: string};
+  buttons: {
+    title: string;
+    href: string;
+    secondary?: boolean;
+    external?: boolean;
+  }[];
   customBackground?: string;
   customTextStyle?: string;
 };
@@ -16,7 +21,7 @@ const InfoSection = ({
   id,
   content,
   pictogram,
-  button,
+  buttons,
   customBackground,
   customTextStyle,
 }: InfoSectionProps) => {
@@ -29,7 +34,19 @@ const InfoSection = ({
       <PictoWithBackground pictogram={pictogram} />
       <div className="text-center lg:text-left">
         <p className={classNames('text-xl', customTextStyle)}>{content}</p>
-        <ButtonWithLink href={button.href}>{button.title}</ButtonWithLink>
+        <div className="fr-btns-group fr-btns-group--inline-md">
+          {buttons.length > 0 &&
+            buttons.map(button => (
+              <ButtonWithLink
+                key={button.title}
+                href={button.href}
+                secondary={button.secondary}
+                external={button.external}
+              >
+                {button.title}
+              </ButtonWithLink>
+            ))}
+        </div>
       </div>
     </Section>
   );
