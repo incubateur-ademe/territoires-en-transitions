@@ -9,7 +9,7 @@ with r as (select indicateur_id, collectivite_id, count(*)
            group by indicateur_id, collectivite_id)
 select collectivite_id,
        indicateur_id,
-       indicateur_group,
+       programmes,
        r.count as resultats
 from indicateur_definition id
          join r on id.id = r.indicateur_id
