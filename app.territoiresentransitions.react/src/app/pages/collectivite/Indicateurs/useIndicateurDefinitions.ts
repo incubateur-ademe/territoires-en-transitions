@@ -47,10 +47,14 @@ export const useIndicateursParents = () =>
 /** Fourni les définitions des indicateurs par groupe d'indicateurs prédéfinis */
 export const useIndicateursParentsGroup = (
   group: TIndicateurReferentielDefinition['groupe']
-) =>
-  useIndicateursParents()?.filter(
+) => {
+  // on affiche que les indicateurs parents sauf dans le cas CRTE
+  const tous = useIndicateurDefinitions();
+  const parents = useIndicateursParents();
+  return (group === 'crte' ? tous : parents)?.filter(
     ({groupe: indicateur_group}) => indicateur_group === group
   );
+};
 
 /** Fourni les définitions des indicateurs clés */
 export const useIndicateursParentsCles = () =>
