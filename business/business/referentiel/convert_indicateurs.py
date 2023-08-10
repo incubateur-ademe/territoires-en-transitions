@@ -110,7 +110,7 @@ def programmes(md: MarkdownIndicateur):
     prefix = md.id.split("_")[0]
     if prefix in ['cae', 'eci', 'crte']:
         programmes.append(prefix)
-    return programmes
+    return list(set(programmes))
 
 
 def convert_indicateurs(path: str, json_filename: str):
