@@ -47,23 +47,19 @@ export const useIndicateursCount = () => {
   const persoIndicateurs = useIndicateursPersoDefinitions(collectiviteId!);
 
   const indicateursWithValue = useIndicateurSummary();
-  let caeIndicateursWithValue = [];
-  let eciIndicateursWithValue = [];
-  let crteIndicateursWithValue = [];
+  const caeIndicateursWithValue = [];
+  const eciIndicateursWithValue = [];
+  const crteIndicateursWithValue = [];
 
   indicateursWithValue?.forEach(ind => {
-    switch (ind.indicateur_group) {
-      case 'cae':
-        caeIndicateursWithValue.push(ind);
-        break;
-      case 'eci':
-        eciIndicateursWithValue.push(ind);
-        break;
-      case 'crte':
-        crteIndicateursWithValue.push(ind);
-        break;
-      default:
-        break;
+    if (ind.programmes?.includes('cae')) {
+      caeIndicateursWithValue.push(ind);
+    }
+    if (ind.programmes?.includes('eci')) {
+      eciIndicateursWithValue.push(ind);
+    }
+    if (ind.programmes?.includes('crte')) {
+      crteIndicateursWithValue.push(ind);
     }
   });
 
