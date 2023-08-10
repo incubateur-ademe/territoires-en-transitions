@@ -2,7 +2,6 @@
 
 BEGIN;
 
-drop view indicateur_summary;
 create view indicateur_summary
 as
 with r as (select indicateur_id, collectivite_id, count(*)
