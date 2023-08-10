@@ -4,7 +4,6 @@ BEGIN;
 
 select modified_at,
        id,
-       groupe,
        identifiant,
        valeur_indicateur,
        nom,

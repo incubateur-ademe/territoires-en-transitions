@@ -3,11 +3,17 @@
 
 BEGIN;
 
+drop view indicateur_summary;
+drop view indicateurs_collectivite;
+drop view if exists retool_stats_usages;
+drop materialized view if exists stats.retool_stats_usages;
+drop materialized view if exists stats.report_indicateur; -- todo restore
+
 alter table indicateur_definition
     drop column parent;
 
 alter table indicateur_definition
-    rename column indicateur_group to groupe;
+    drop column indicateur_group;
 
 alter table indicateur_definition
     add participation_score bool default false not null;
@@ -59,10 +65,6 @@ create type indicateur_thematique as enum (
     'solidarite_lien_social'
     );
 
-alter type indicateur_group add value 'modes';
-alter type indicateur_group add value 'plans';
-alter type indicateur_group add value 'emission';
-
 alter table indicateur_definition
     add thematiques indicateur_thematique[] default array []::indicateur_thematique[] not null;
 
@@ -94,6 +96,26 @@ alter table indicateur_resultat_commentaire
 
 alter table indicateur_resultat_commentaire
     drop constraint indicateur_commentaire_pkey;
+
+create view indicateurs_collectivite as
+select null                         as indicateur_id,
+       ipd.id                       as indicateur_personnalise_id,
+       ipd.titre                    as nom,
+       ipd.description,
+       ipd.unite,
+       null::indicateur_programme[] as programmes,
+       ipd.collectivite_id
+from indicateur_personnalise_definition ipd
+union
+select id.id  as tag_id,
+       null   as indicateur_personnalise_id,
+       id.nom as nom,
+       id.description,
+       id.unite,
+       id.programmes,
+       null   as collectivite_id
+from indicateur_definition id;
+comment on view indicateurs_collectivite is 'Liste les indicateurs (globaux et personnalisés) d''une collectivite';
 
 create view indicateur_rempli
 as
