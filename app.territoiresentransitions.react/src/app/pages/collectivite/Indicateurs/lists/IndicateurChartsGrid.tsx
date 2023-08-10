@@ -3,7 +3,7 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useIntersectionObserver} from 'utils/useIntersectionObserver';
 import IndicateurChart from '../charts/IndicateurChart';
 import {TIndicateurChartProps} from '../charts/types';
-import {TIndicateurDefinition} from '../types';
+import {TIndicateurDefinition, TIndicateurProgramme} from '../types';
 import {
   IndicateurViewParamOption,
   makeCollectiviteIndicateursUrl,
@@ -32,14 +32,22 @@ const IndicateurChartsGrid = (props: TIndicateurChartsGridProps) => {
 };
 
 // renvoi la vue par défaut associée à une définition d'indicateur (pour construire son url)
-const GROUPES = ['cae', 'crte', 'eci'];
+const VUES_PROGRAMME = ['cae', 'eci', 'crte'];
 const getViewId = (definition: TIndicateurDefinition) => {
+  // indicateur perso
   if (definition.isPerso) return 'perso';
-  if (GROUPES.includes(definition.groupe))
-    return definition.groupe as IndicateurViewParamOption;
+
+  // indicateur faisant partie d'un programme avec une vue associée
+  const vue = VUES_PROGRAMME.find(g =>
+    definition.programmes.includes(g as TIndicateurProgramme)
+  );
+  if (vue) return vue as IndicateurViewParamOption;
+
+  // indicateur clé
   if (definition.programmes?.includes('clef')) return 'cles';
-  if (definition.selection) return 'selection';
-  return definition.groupe as IndicateurViewParamOption;
+
+  // par défaut => vue "sélection"
+  /* if (definition.selection) */ return 'selection';
 };
 
 /** Affiche le graphique uniquement lorsque son conteneur devient visible */

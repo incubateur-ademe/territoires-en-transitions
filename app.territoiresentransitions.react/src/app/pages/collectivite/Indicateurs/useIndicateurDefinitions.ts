@@ -2,6 +2,7 @@ import {useQuery} from 'react-query';
 import {DISABLE_AUTO_REFETCH, supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {TIndicateurDefinition, TIndicateurReferentielDefinition} from './types';
+import {ReferentielOfIndicateur} from 'types/litterals';
 
 /** Charge et cache les définitions de tous les indicateurs */
 export const useIndicateurDefinitions = () => {
@@ -45,14 +46,12 @@ export const useIndicateursParents = () =>
   useIndicateurDefinitions()?.filter(({parent}) => parent === null);
 
 /** Fourni les définitions des indicateurs par groupe d'indicateurs prédéfinis */
-export const useIndicateursParentsGroup = (
-  group: TIndicateurReferentielDefinition['groupe']
-) => {
+export const useIndicateursParentsGroup = (group: ReferentielOfIndicateur) => {
   // on affiche que les indicateurs parents sauf dans le cas CRTE
   const tous = useIndicateurDefinitions();
   const parents = useIndicateursParents();
-  return (group === 'crte' ? tous : parents)?.filter(
-    ({groupe: indicateur_group}) => indicateur_group === group
+  return (group === 'crte' ? tous : parents)?.filter(({programmes}) =>
+    programmes.includes(group)
   );
 };
 

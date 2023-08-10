@@ -23,3 +23,6 @@ export type TIndicateurDefinition =
 
 export type TIndicateurThematiqueId =
   Database['public']['Enums']['indicateur_thematique'];
+
+export type TIndicateurProgramme =
+  Database['public']['Enums']['indicateur_programme'];
