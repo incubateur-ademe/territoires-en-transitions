@@ -54,7 +54,6 @@ IndicateurGroup = Literal["eci", "cae", "crte"]
 class Indicateur:
     """Indicateur en JSON"""
     id: str
-    groupe: str
     nom: str
     unite: str
     description: str
@@ -105,6 +104,15 @@ def parse_indicateurs(
     return md_indicateurs, parsing_errors
 
 
+def programmes(md: MarkdownIndicateur):
+    programmes = md.programmes or []
+    # Ajoute les programmes manquants
+    prefix = md.id.split("_")[0]
+    if prefix in ['cae', 'eci', 'crte']:
+        programmes.append(prefix)
+    return programmes
+
+
 def convert_indicateurs(path: str, json_filename: str):
     # Parse markdown folder
     md_indicateurs, errors = parse_indicateurs(path)
@@ -119,7 +127,6 @@ def convert_indicateurs(path: str, json_filename: str):
         Indicateur(
             id=md.id,
             identifiant=md.identifiant,
-            groupe=md.id.split("_")[0],
             nom=md.nom,
             unite=md.unite,
             description=md.description,
@@ -128,7 +135,7 @@ def convert_indicateurs(path: str, json_filename: str):
             titre_long=md.titre_long or md.nom,
             thematiques=md.thematiques or [],
             action_ids=md.actions or [],
-            programmes=md.programmes or [],
+            programmes=programmes(md),
             parent=md.parent,
             source=md.source,
             type=md.type,
