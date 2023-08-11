@@ -148,10 +148,12 @@ export const ChartCardContent = ({
     'absolute right-2 -top-3 z-10'
   );
 
+  const downloadable = !!chartInfo?.downloadedFileName;
+
   return (
     <div className="relative">
       {/* Bouton de téléchargement, affiché si un nom de fichier est fourni */}
-      {chartInfo?.downloadedFileName && (
+      {downloadable && (
         <div className="absolute -mr-2 right-0 top-3 z-10">
           <DownloadChartButton />
         </div>
@@ -159,7 +161,11 @@ export const ChartCardContent = ({
 
       <div ref={chartWrapperRef} className="p-3">
         {/* Titre du graphe */}
-        {chartInfo?.title && <p className="font-bold">{chartInfo.title}</p>}
+        {chartInfo?.title && (
+          <p className={classNames('font-bold', {'mr-12': downloadable})}>
+            {chartInfo.title}
+          </p>
+        )}
 
         {/* Element additionnel optionnel, ajouté entre le titre et le graphe */}
         <div data-html2canvas-ignore>
