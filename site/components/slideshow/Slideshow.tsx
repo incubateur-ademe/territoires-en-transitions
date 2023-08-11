@@ -5,6 +5,8 @@ import {useEffect, useState} from 'react';
 
 type SlideshowProps = {
   slides: React.ReactNode[];
+  autoSlide?: boolean;
+  autoSlideDelay?: number;
   className?: string;
 };
 
@@ -12,10 +14,23 @@ type SlideshowProps = {
  * Diaporama manuel sur un tableau de composants donnés en props
  */
 
-const Slideshow = ({slides, className}: SlideshowProps) => {
+const Slideshow = ({
+  slides,
+  className,
+  autoSlide = false,
+  autoSlideDelay = 5000,
+}: SlideshowProps) => {
   const [slideIndex, setSlideIndex] = useState(0);
 
   useEffect(() => setSlideIndex(0), [slides.length]);
+
+  useEffect(() => {
+    if (autoSlide) {
+      setTimeout(() => {
+        handleChangeIndex(1);
+      }, autoSlideDelay);
+    }
+  }, [slideIndex]);
 
   const handleChangeIndex = (increment: number) => {
     const index = slideIndex + increment;
@@ -25,7 +40,12 @@ const Slideshow = ({slides, className}: SlideshowProps) => {
   };
 
   return (
-    <div className={classNames('flex justify-between items-center', className)}>
+    <div
+      className={classNames(
+        'flex justify-between items-center min-h-[250px]',
+        className,
+      )}
+    >
       {slides.length > 1 && (
         <button
           className="fr-btn fr-icon-arrow-left-s-line rounded-md"
