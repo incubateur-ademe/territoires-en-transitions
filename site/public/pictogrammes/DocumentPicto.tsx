@@ -8,20 +8,20 @@ const DocumentPicto = ({className}: {className?: string}) => (
     xmlns="http://www.w3.org/2000/svg"
   >
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M93.75 78.4453C93.0607 78.4453 92.5 77.8846 92.5 77.1953C92.5 76.506 93.0607 75.9453 93.75 75.9453C94.4393 75.9453 95 76.506 95 77.1953C95 77.8846 94.4393 78.4453 93.75 78.4453Z"
       fill="white"
     />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M68.75 5.94531C68.0607 5.94531 67.5 5.38456 67.5 4.69531C67.5 4.006 68.0607 3.44531 68.75 3.44531C69.4393 3.44531 70 4.006 70 4.69531C70 5.38456 69.4393 5.94531 68.75 5.94531Z"
       fill="white"
     />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M3.75 68.4453C3.06075 68.4453 2.5 67.8846 2.5 67.1953C2.5 66.506 3.06075 65.9453 3.75 65.9453C4.43925 65.9453 5 66.506 5 67.1953C5 67.8846 4.43925 68.4453 3.75 68.4453Z"
       fill="white"
     />
@@ -58,8 +58,8 @@ const DocumentPicto = ({className}: {className?: string}) => (
       fill="#000091"
     />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M25 13.4453H72.5C73.1904 13.4453 73.75 14.005 73.75 14.6953V82.1953C73.75 82.8857 73.1904 83.4453 72.5 83.4453H25C24.3096 83.4453 23.75 82.8857 23.75 82.1953V14.6953C23.75 14.005 24.3096 13.4453 25 13.4453ZM71.25 80.9453V15.9453H26.25V80.9453H71.25Z"
       fill="#000091"
     />
