@@ -74,23 +74,26 @@ export default function Accueil() {
         }
       />
 
-      <CardsSection
-        title="Rejoignez une communauté de collectivités engagées"
-        cardsList={
-          <Slideshow
-            className="my-6 xl:mx-auto xl:w-5/6 "
-            slides={testimonies.map(t => (
-              <TestimonyCard
-                key={t.id}
-                content={t.content}
-                author={t.author}
-                role={t.role}
-                imageSrc={t.image}
-              />
-            ))}
-          />
-        }
-      />
+      {testimonies.length > 1 && (
+        <CardsSection
+          title="Rejoignez une communauté de collectivités engagées"
+          cardsList={
+            <Slideshow
+              className="my-6 xl:mx-auto xl:w-5/6"
+              autoSlide
+              slides={testimonies.map(t => (
+                <TestimonyCard
+                  key={t.id}
+                  content={t.content}
+                  author={t.author}
+                  role={t.role}
+                  imageSrc={t.image}
+                />
+              ))}
+            />
+          }
+        />
+      )}
 
       <CardsSection
         title="Vous souhaitez plus d’informations ?"
