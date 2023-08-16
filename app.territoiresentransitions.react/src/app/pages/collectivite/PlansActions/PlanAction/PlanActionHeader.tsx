@@ -2,10 +2,11 @@ import {
   makeCollectivitePlanActionUrl,
   makeCollectivitePlansActionsSyntheseUrl,
 } from 'app/paths';
+import SmallIconContextMenu from 'ui/shared/select/SmallIconContextMenu';
 import SupprimerAxeModal from './SupprimerAxeModal';
 import {PlanNode} from './data/types';
 import {checkAxeHasFiche} from './data/utils';
-import {useExportPlanAction} from './export/useExportPlanAction';
+import {useExportPlanAction} from './data/useExportPlanAction';
 import {generateTitle} from '../FicheAction/data/utils';
 import FilAriane from 'ui/shared/FilAriane';
 
@@ -17,6 +18,11 @@ type TPlanActionHeader = {
   isReadonly?: boolean;
 };
 
+const EXPORT_OPTIONS = [
+  {value: 'xlsx', label: 'Format Excel (.xlsx)'},
+  {value: 'docx', label: 'Format Word (.docx)'},
+];
+
 const PlanActionHeader = ({
   collectivite_id,
   isAxePage,
@@ -24,7 +30,7 @@ const PlanActionHeader = ({
   axe,
   isReadonly,
 }: TPlanActionHeader) => {
-  const {exportPlanAction, isLoading} = useExportPlanAction(plan.id);
+  const {mutate: exportPlanAction, isLoading} = useExportPlanAction(plan.id);
 
   return (
     <div className="">
@@ -71,14 +77,14 @@ const PlanActionHeader = ({
               />
             </SupprimerAxeModal>
             {!isAxePage && checkAxeHasFiche(plan) && !isReadonly ? (
-              <button
-                data-test="export-pa"
-                className="fr-btn fr-btn--tertiary fr-btn--sm fr-fi-download-line"
+              <SmallIconContextMenu
+                dataTest="export-pa"
                 title="Exporter"
                 disabled={isLoading}
-                onClick={() => {
-                  exportPlanAction();
-                }}
+                options={EXPORT_OPTIONS}
+                buttonClassname="fr-icon-download-line fr-btn--sm"
+                hideDefaultIcon
+                onSelect={format => exportPlanAction(format as any)}
               />
             ) : null}
           </div>
