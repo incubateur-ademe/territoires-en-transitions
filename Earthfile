@@ -123,17 +123,6 @@ update-scores:
         psql:latest $DB_URL -v ON_ERROR_STOP=1 \
         -c "select evaluation.update_late_collectivite_scores($count);"
 
-strapi-db:
-    ARG --required DB_URL
-    ARG count=20
-    ARG network=host
-    LOCALLY
-    RUN earthly +psql-build
-    RUN docker run --rm \
-        --network $network \
-        psql:latest $DB_URL -v ON_ERROR_STOP=1 \
-        -c "create database strapi;"
-
 business-build:
     FROM python:3.10.10
     ENV SUPABASE_URL
@@ -405,7 +394,6 @@ dev:
 
 strapi-dev:
     LOCALLY
-    RUN earthly +strapi-db || true
     RUN cd strapi && npm install && npm run develop
 
 stop:
