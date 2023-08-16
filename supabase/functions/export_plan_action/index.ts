@@ -1,0 +1,49 @@
+/**
+ * Exporte un plan d'actions
+ */
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { corsHeaders } from '../_shared/cors.ts';
+import { getSupabaseClient } from '../_shared/getSupabaseClient.ts';
+import { exportXLSX } from './exportXLSX.ts';
+import { exportDOCX } from './exportDOCX.ts';
+
+serve(async (req) => {
+  // permet l'appel de la fonction depuis le navigateur
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders });
+  }
+
+  const { planId, format } = await req.json();
+
+  try {
+    const supabaseClient = getSupabaseClient(req);
+
+    // exporte les données dans le format voulu
+    let data;
+    if (format === 'xlsx') {
+      data = await exportXLSX(supabaseClient, planId);
+    }
+    if (format === 'docx') {
+      data = await exportDOCX(supabaseClient, planId);
+    }
+    if (!data) {
+      throw Error('Export failed');
+    }
+
+    // renvoi les données exportées
+    const { buffer, filename } = data;
+    const blob = new Blob([buffer], { type: 'application/octet-stream' });
+    return new Response(blob, {
+      headers: {
+        ...corsHeaders,
+        'Content-disposition': `attachment; filename=${filename}`,
+        filename,
+      },
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      headers: { ...corsHeaders },
+      status: 400,
+    });
+  }
+});
