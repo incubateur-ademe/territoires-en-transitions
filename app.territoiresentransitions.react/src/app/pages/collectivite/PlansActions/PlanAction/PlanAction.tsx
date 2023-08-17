@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import {useParams} from 'react-router-dom';
 
-import HeaderTitle from '../components/HeaderTitle';
+import HeaderTitle from 'ui/HeaderTitle';
 import PlanActionHeader from './PlanActionHeader';
 import PlanActionFooter from './PlanActionFooter';
 import PlanActionArborescence from './PlanActionArborescence';
