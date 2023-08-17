@@ -97,6 +97,7 @@ const ValuesTableBase = ({
           <>
             <IndicateurValueTableRow
               key="new"
+              values={values}
               editHandlers={editHandlers}
               onValueSaved={setLastAddedYear}
             />
