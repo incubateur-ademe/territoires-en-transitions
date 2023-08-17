@@ -52,9 +52,11 @@ begin
       and valeur_indicateur is null
     on conflict (id) do update
         set identifiant         = excluded.identifiant,
+            valeur_indicateur   = excluded.valeur_indicateur,
             nom                 = excluded.nom,
             description         = excluded.description,
             unite               = excluded.unite,
+            parent              = excluded.parent,
             participation_score = excluded.participation_score,
             selection           = excluded.selection,
             sans_valeur         = excluded.sans_valeur,
