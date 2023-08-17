@@ -36,7 +36,7 @@ const IndicateurPersonnaliseBase = ({
   ) => {
     const nouveau = value?.trim();
     if (nouveau !== definition[name]) {
-      saveDefinition({...definitionToUpdate, [name]: nouveau});
+      saveDefinition({definition: {...definitionToUpdate, [name]: nouveau}});
     }
   };
 
