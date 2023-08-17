@@ -1,12 +1,35 @@
 /* eslint-disable react/no-unescaped-entities */
+'use client';
+
 import Accordion from '@components/accordion/Accordion';
 import ButtonWithLink from '@components/buttons/ButtonWithLink';
 import Section from '@components/sections/Section';
 import CommunityPicto from 'public/pictogrammes/CommunityPicto';
 import PictoWithBackground from 'public/pictogrammes/PictoWithBackground';
-import {questions} from './data';
+import {Attributes, useEffect, useState} from 'react';
+import {fetchCollection} from 'src/strapi';
 
 const Faq = () => {
+  const [questions, setQuestions] = useState<
+    {id: number; titre: Attributes; contenu: Attributes}[]
+  >([]);
+
+  const fecthQuestions = async () => {
+    const data = await fetchCollection('faqs');
+
+    const formattedData = data.map(d => ({
+      id: d.id,
+      titre: d.attributes.Titre,
+      contenu: d.attributes.Corps,
+    }));
+
+    setQuestions(formattedData);
+  };
+
+  useEffect(() => {
+    fecthQuestions();
+  }, []);
+
   return (
     <>
       <Section className="flex-col">
@@ -16,8 +39,8 @@ const Faq = () => {
             <Accordion
               key={q.id}
               id={q.id.toString()}
-              title={q.question}
-              content={q.answer}
+              title={q.titre as string}
+              content={q.contenu as string}
             />
           ))}
         </div>
