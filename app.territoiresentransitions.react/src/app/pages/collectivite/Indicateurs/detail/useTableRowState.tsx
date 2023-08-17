@@ -9,6 +9,9 @@ export type TUseTableRowStateArgs = {
   row?: TIndicateurValeurEtCommentaires;
   /** fonctions pour mettre à jour les données ou supprimer la ligne */
   editHandlers: TEditIndicateurValeurHandlers;
+  /** valeurs courantes pour pouvoir vérifier si une nouvelle ligne va écraser
+   * une valeur existante */
+  values?: TIndicateurValeurEtCommentaires[];
   /** appelé quand la valeur d'une nouvelle ligne est enregisrée */
   onValueSaved?: (annee: number) => void;
 };
@@ -17,17 +20,25 @@ const getInitialState = (row?: TIndicateurValeurEtCommentaires) => ({
   annee: row?.annee?.toString() || '',
   valeur: row?.valeur?.toString() || '',
   commentaire: row?.commentaire || '',
+  confirmAvantEcrasement: null,
 });
+type TState = Omit<
+  ReturnType<typeof getInitialState>,
+  'confirmAvantEcrasement'
+> & {
+  confirmAvantEcrasement: null | TIndicateurValeurEtCommentaires;
+};
 
 export const useTableRowState = ({
   row,
+  values,
   editHandlers,
   onValueSaved,
 }: TUseTableRowStateArgs) => {
   const {editValeur, editComment, deleteValue} = editHandlers;
 
   const initialState = getInitialState(row);
-  const [state, setState] = useState(initialState);
+  const [state, setState] = useState<TState>(initialState);
 
   // remet à jour l'état interne si l'état initial a changé
   const initialStateSerialized = JSON.stringify(initialState);
@@ -58,6 +69,10 @@ export const useTableRowState = ({
   };
 
   const onBlur = () => {
+    saveChange(false);
+  };
+
+  const saveChange = (dismissConfirm: boolean) => {
     // il faut une date valide pour sauvegarder
     const annee = parseInt(state.annee || '');
     if (isNaN(annee)) {
@@ -72,12 +87,24 @@ export const useTableRowState = ({
 
     // sinon enregistre la valeur si elle a changé
     else if (valeur !== row?.valeur) {
+      const isNewRow = !row?.annee;
+
+      // mais pour une nouvelle ligne on vérifie d'abord si l'année est déjà
+      // présente dans les valeurs existantes
+      if (isNewRow && !dismissConfirm) {
+        const existingRow = values?.find(v => v.annee === annee);
+        if (existingRow && existingRow.valeur !== valeur) {
+          setState({...state, confirmAvantEcrasement: existingRow});
+          return;
+        }
+      }
+
       editValeur({annee, valeur});
       // réinitialise l'état si on vient d'ajouter une nouvelle ligne, sinon le
       // refetch après enregistrement provoquera l'affichage de 2 lignes dans le tableau
-      if (!row?.annee) {
+      if (isNewRow) {
         onValueSaved?.(annee);
-        setState({annee: '', valeur: '', commentaire: ''});
+        setState(getInitialState(undefined));
       }
     }
 
@@ -98,6 +125,14 @@ export const useTableRowState = ({
     }
   };
 
+  const onDismissConfirm = (confirm: boolean) => {
+    if (confirm) {
+      saveChange(true);
+    } else {
+      setState({...state, confirmAvantEcrasement: null});
+    }
+  };
+
   return {
     ...state,
     isImport,
@@ -105,5 +140,6 @@ export const useTableRowState = ({
     onChange,
     onBlur,
     onSelectMenuOption,
+    onDismissConfirm,
   };
 };
