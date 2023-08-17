@@ -32,7 +32,10 @@ function MenuItem(props: MenuItemProps) {
 export function MenuPrincipal() {
   return (
     <ul className="fr-nav__list">
-      <MenuItem href="/stats">Statistiques</MenuItem>
+      <MenuItem href="/">Accueil</MenuItem>
+      <MenuItem href="/programme">Le programme Territoire Engagé</MenuItem>
+      <MenuItem href="/faq">Questions fréquentes</MenuItem>
+      <MenuItem href="/contact">Contact</MenuItem>
     </ul>
   );
 }

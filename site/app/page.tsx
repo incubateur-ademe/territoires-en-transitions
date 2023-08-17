@@ -19,7 +19,7 @@ export default function Accueil() {
       <Section className="flex-col lg:flex-row">
         <div className="lg:mr-10 xl:mr-20 mb-8 lg:mb-0">
           <h1>Accélérez la transition écologique de votre collectivité</h1>
-          <p>Quelles sont les prochaines étapes pour ma collectivité ?</p>
+          {/* <p>Quelles sont les prochaines étapes pour ma collectivité ?</p>
           <SearchInput
             id="collectivite"
             placeholder="Rechercher un EPCI, un syndicat, une commune, un PETR, un EPT"
@@ -29,10 +29,15 @@ export default function Accueil() {
             className="fr-link fr-icon-arrow-right-line fr-link--icon-right"
           >
             Voir la carte de toutes les collectivités
-          </a>
+          </a> */}
+          <p>
+            Territoires en Transitions est une plateforme pour accompagner les
+            démarches des collectivités engagées en transition écologique sur
+            les thématiques climat, air, énergie et économie circulaire.
+          </p>
         </div>
-        <picture className="w-full lg:w-3/5 xl:w-2/5">
-          <img src="accueil/homepage.png" alt="" className="w-full" />
+        <picture className="w-full lg:w-3/5 xl:w-2/5 min-w-[350px]">
+          <img src="accueil/homepage.png" alt="" className="w-auto" />
         </picture>
       </Section>
 
