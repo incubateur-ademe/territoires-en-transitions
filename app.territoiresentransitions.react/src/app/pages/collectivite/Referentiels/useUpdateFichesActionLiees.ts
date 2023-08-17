@@ -24,8 +24,7 @@ export const useUpdateFichesActionLiees = (action_id: string) => {
       const current_ids = fiches.map(f => f.id);
       const new_ids = fiches_liees.map(f => f.id);
       // extrait les ids des fiches à ajouter ou supprimer
-      const idsToDelete = diff(current_ids, new_ids);
-      const idsToAdd = diff(new_ids, current_ids);
+      const [idsToDelete, idsToAdd] = diff(current_ids, new_ids);
 
       // supprime les anciennes entrées
       if (idsToDelete.length) {
