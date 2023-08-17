@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import {useEffect, useRef} from 'react';
 import TextareaControlled from 'ui/shared/form/TextareaControlled';
-import {generateTitle} from '../FicheAction/data/utils';
+import {generateTitle} from '../app/pages/collectivite/PlansActions/FicheAction/data/utils';
 
 type Props = {
   titre: string | null;

@@ -5,7 +5,7 @@ import FicheActionFooter from './FicheActionFooter';
 import {useParams} from 'react-router-dom';
 import {useFicheAction} from './data/useFicheAction';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import HeaderTitle from '../components/HeaderTitle';
+import HeaderTitle from 'ui/HeaderTitle';
 import {useEditFicheAction} from './data/useUpsertFicheAction';
 import {FicheAction as FicheActionType} from './data/types';
 
