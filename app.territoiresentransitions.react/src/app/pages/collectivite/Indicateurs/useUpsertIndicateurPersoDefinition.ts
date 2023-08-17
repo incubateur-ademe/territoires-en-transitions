@@ -16,18 +16,36 @@ export const useUpsertIndicateurPersoDefinition = (options?: {
 
   return useMutation({
     mutationKey: 'upsert_indicateur_perso_def',
-    mutationFn: async (definition: TIndicateurPersoDef['Insert']) => {
-      const {data} = await supabaseClient
+    mutationFn: async ({
+      definition,
+      ficheId,
+    }: {
+      definition: TIndicateurPersoDef['Insert'];
+      ficheId?: number | null;
+    }) => {
+      const {data, error} = await supabaseClient
         .from('indicateur_personnalise_definition')
         .upsert(definition)
         .select();
+
+      // rattache le nouvel indicateur à une fiche action si un `ficheId` est spécifié
+      if (!error && ficheId) {
+        const indicateur_personnalise_id = data?.[0]?.id;
+        if (!isNaN(indicateur_personnalise_id)) {
+          await supabaseClient.from('fiche_action_indicateur').upsert({
+            fiche_id: ficheId,
+            indicateur_personnalise_id,
+            indicateur_id: null,
+          });
+        }
+      }
       return data;
     },
     meta: {
       success: "L'indicateur personnalisé est enregistré",
       error: "L'indicateur personnalisé n'a pas été enregistré",
     },
-    onSuccess: (data, {collectivite_id}) => {
+    onSuccess: (data, {definition: {collectivite_id}}) => {
       queryClient.invalidateQueries([
         'indicateur_personnalise_definition',
         collectivite_id,

@@ -45,6 +45,7 @@ import {useAnnexesFicheAction} from '../data/useAnnexesFicheAction';
 import {TPreuve} from 'ui/shared/preuves/Bibliotheque/types';
 import FichesLiees from './FichesLiees';
 import IndicateursLies from './IndicateursLies';
+import {IndicateurPersonnaliseCreationDialog} from 'app/pages/collectivite/Indicateurs/IndicateurPersoModal';
 
 type TFicheActionForm = {
   fiche: FicheAction;
@@ -134,6 +135,7 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
           onSelect={indicateurs => updateFiche({...fiche, indicateurs})}
           isReadonly={isReadonly}
         />
+        <IndicateurPersonnaliseCreationDialog ficheId={fiche.id} />
         <FormField label="Résultats attendus">
           <MultiSelectTagsDropdown
             buttonClassName={DSFRbuttonClassname}

@@ -11,9 +11,12 @@ import classNames from 'classnames';
 /** Affiche la page de création d'un indicateur personnalisé  */
 const IndicateurPersoNouveau = ({
   className,
+  ficheId,
   onClose,
 }: {
   className?: string;
+  /** Identifiant de la fiche action à laquelle rattacher le nouvel indicateur */
+  ficheId?: number;
   onClose?: () => void;
 }) => {
   const collectiviteId = useCollectiviteId()!;
@@ -35,13 +38,17 @@ const IndicateurPersoNouveau = ({
         indicateurView: 'perso',
         indicateurId: data.id,
       });
-      history.push(url);
       onClose?.();
+      if (ficheId !== undefined) {
+        window.open(url, '_blank');
+      } else {
+        history.push(url);
+      }
     },
   });
 
   const onSave = (definition: TIndicateurPersoDefinitionWrite) => {
-    save(definition);
+    save({definition, ficheId});
   };
 
   return (
