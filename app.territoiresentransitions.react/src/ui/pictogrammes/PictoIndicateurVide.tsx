@@ -1,4 +1,4 @@
-const PictoPie = ({className}: {className?: string}) => (
+const PictoIndicateurVide = ({className}: {className?: string}) => (
   <svg
     width="161"
     height="129"
@@ -41,4 +41,4 @@ const PictoPie = ({className}: {className?: string}) => (
   </svg>
 );
 
-export default PictoPie;
+export default PictoIndicateurVide;
