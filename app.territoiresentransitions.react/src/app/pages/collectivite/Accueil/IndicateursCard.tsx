@@ -1,11 +1,11 @@
 import {referentielToName} from 'app/labels';
 import {makeCollectiviteIndicateursUrl} from 'app/paths';
 import ButtonWithLink from 'ui/buttons/ButtonWithLink';
-import {PictoIndicateurs} from 'ui/pictogrammes/PictoIndicateurs';
+import {PictoIndicateurs} from 'ui/pictogrammes/PictoIndicateur';
 import AccueilCard from './AccueilCard';
 import AccueilEmptyCardWithPicto from './AccueilEmptyCardWithPicto';
 import {useIndicateursCount} from './data/useIndicateurSummary';
-import KeyNumbers from '../../../../ui/score/KeyNumbers';
+import KeyNumbers from 'ui/score/KeyNumbers';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 
 type IndicateursCardProps = {
