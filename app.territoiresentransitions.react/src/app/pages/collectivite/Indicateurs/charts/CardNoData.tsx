@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import PictoPie from 'ui/pictogrammes/PictoPie';
+import PictoIndicateurVide from 'ui/pictogrammes/PictoIndicateurVide';
 import {getChartTitle} from './utils';
 import {Card} from './Card';
 import {TIndicateurChartProps} from './types';
@@ -24,7 +24,7 @@ export const CardNoData = ({
       <span className="font-bold text-[#161616]">
         {getChartTitle(definition, isZoomed)}
       </span>
-      <PictoPie className={classNames({'fr-my-4w': isReadonly})} />
+      <PictoIndicateurVide className={classNames({'fr-my-4w': isReadonly})} />
       {isZoomed ? (
         <span className="text-grey425 text-sm">
           Aucune valeur renseignée pour l’instant
