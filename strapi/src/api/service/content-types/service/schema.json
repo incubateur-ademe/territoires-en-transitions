@@ -1,0 +1,35 @@
+{
+  "kind": "collectionType",
+  "collectionName": "services",
+  "info": {
+    "singularName": "service",
+    "pluralName": "services",
+    "displayName": "Service"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Titre": {
+      "type": "string",
+      "required": true
+    },
+    "Description": {
+      "type": "string"
+    },
+    "Image": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": false
+    },
+    "URL": {
+      "type": "string"
+    }
+  }
+}

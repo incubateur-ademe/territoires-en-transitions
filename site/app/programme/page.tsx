@@ -8,7 +8,8 @@ import Section from '@components/sections/Section';
 import CardsSection from '@components/sections/CardsSection';
 import CodingPicto from 'public/pictogrammes/CodingPicto';
 import DocumentPicto from 'public/pictogrammes/DocumentPicto';
-import {articles, benefits, resources, steps} from './data';
+import {benefits, resources, steps} from './data';
+import Services from './Services';
 
 const Programme = () => {
   return (
@@ -92,22 +93,7 @@ const Programme = () => {
         customBackground="#fff6f0"
       />
 
-      <CardsSection
-        title="Des services complémentaires sur-mesure"
-        cardsList={
-          <CardsWrapper cols={3}>
-            {articles.map(a => (
-              <BlogCard
-                key={a.id}
-                title={a.title}
-                description={a.description}
-                imageSrc={a.image}
-                href={a.href}
-              />
-            ))}
-          </CardsWrapper>
-        }
-      />
+      <Services />
 
       <InfoSection
         content="Une offre socle qui comprend deux référentiels d'action Climat-Air-Énergie et Économie Circulaire, hébergés sur notre plateforme numérique"

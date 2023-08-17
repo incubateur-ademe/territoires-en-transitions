@@ -2,8 +2,8 @@ import classNames from 'classnames';
 
 type BlogCardProps = {
   title: string;
-  description: string;
-  imageSrc?: string;
+  description?: string;
+  image?: React.ReactNode;
   href?: string;
 };
 
@@ -12,7 +12,7 @@ type BlogCardProps = {
  * Style DSFR
  */
 
-const BlogCard = ({title, description, imageSrc, href}: BlogCardProps) => {
+const BlogCard = ({title, description, image, href}: BlogCardProps) => {
   return (
     <div className={classNames('fr-card', {'fr-enlarge-link': !!href})}>
       <div className="fr-card__body">
@@ -20,18 +20,22 @@ const BlogCard = ({title, description, imageSrc, href}: BlogCardProps) => {
           <h3 className="fr-card__title">
             {href ? <a href={href}>{title}</a> : <>{title}</>}
           </h3>
-          <p className="fr-card__desc">{description}</p>
+          {description && <p className="fr-card__desc">{description}</p>}
         </div>
       </div>
       <div className="fr-card__header">
         <div className="fr-card__img border-b border-[#e5e7eb]">
-          <picture>
-            <img
-              className="fr-responsive-img"
-              src={imageSrc ? imageSrc : 'placeholder.png'}
-              alt=""
-            />
-          </picture>
+          {image ? (
+            <picture>{image}</picture>
+          ) : (
+            <picture>
+              <img
+                className="fr-responsive-image w-full"
+                src="placeholder.png"
+                alt=""
+              />
+            </picture>
+          )}
         </div>
       </div>
     </div>
