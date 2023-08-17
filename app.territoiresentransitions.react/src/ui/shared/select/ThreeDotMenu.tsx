@@ -52,7 +52,7 @@ const ThreeDotMenu = ({
       )}
     >
       <ThreeDotButton
-        dataTest={`${dataTest}-Button`}
+        dataTest={`${dataTest}Button`}
         className={buttonClassname}
       />
     </DropdownFloater>
