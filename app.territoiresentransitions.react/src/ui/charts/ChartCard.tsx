@@ -52,11 +52,13 @@ const useDownloadChartButton = (
   // Référence utilisée pour le téléchargement du graphe
   const chartWrapperRef = useRef<HTMLDivElement>(null);
   const tracker = useFonctionTracker();
+  const downloadable = !!fileName;
 
   return {
     chartWrapperRef,
+    downloadable,
     DownloadChartButton: () =>
-      fileName ? (
+      downloadable ? (
         <div className={className}>
           <DownloadButton
             containerRef={chartWrapperRef}
@@ -143,21 +145,16 @@ export const ChartCardContent = ({
   topElement,
 }: ChartCardModalContentProps) => {
   // Référence utilisée pour le téléchargement du graphe
-  const {chartWrapperRef, DownloadChartButton} = useDownloadChartButton(
-    chartInfo?.downloadedFileName,
-    'absolute right-2 -top-3 z-10'
-  );
-
-  const downloadable = !!chartInfo?.downloadedFileName;
+  const {chartWrapperRef, downloadable, DownloadChartButton} =
+    useDownloadChartButton(
+      chartInfo?.downloadedFileName,
+      'absolute right-0 top-0 z-10'
+    );
 
   return (
     <div className="relative">
       {/* Bouton de téléchargement, affiché si un nom de fichier est fourni */}
-      {downloadable && (
-        <div className="absolute -mr-2 right-0 top-3 z-10">
-          <DownloadChartButton />
-        </div>
-      )}
+      <DownloadChartButton />
 
       <div ref={chartWrapperRef} className="p-3">
         {/* Titre du graphe */}
