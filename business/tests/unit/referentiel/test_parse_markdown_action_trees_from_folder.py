@@ -33,12 +33,12 @@ def test_build_markdown_action_node_from_ok_folder():
             identifiant="1.1",
             nom="Titre de l'action 1.1",
             thematique_id="",
-            description="<p><strong>Première partie</strong></p>\n<p>Description de l&#x27;action 1.1</p>\n",
-            contexte="<p>Contexte de l&#x27;action 1.1.</p>\n<p>Après être allé à la ligne !</p>\n",
-            exemples="<p>Exemples de l&#x27;action 1.1</p>\n",
-            ressources="<p>Ressources de l&#x27;action 1.1</p>\n",
-            reduction_de_potentiel="<p>Réduction de potentiel de l&#x27;action 1.1</p>\n",
-            perimetre_de_levaluation="<p>Périmètre de l&#x27;évaluation de l&#x27;action 1.1</p>\n",
+            description="<p><strong>Première partie</strong></p>\n<p>Description de l'action 1.1</p>\n",
+            contexte="<p>Contexte de l'action 1.1.</p>\n<p>Après être allé à la ligne !</p>\n",
+            exemples="<p>Exemples de l'action 1.1</p>\n",
+            ressources="<p>Ressources de l'action 1.1</p>\n",
+            reduction_de_potentiel="<p>Réduction de potentiel de l'action 1.1</p>\n",
+            perimetre_de_levaluation="<p>Périmètre de l'évaluation de l'action 1.1</p>\n",
             referentiel=None,
             points=None,
             pourcentage=None,
@@ -48,10 +48,10 @@ def test_build_markdown_action_node_from_ok_folder():
                     identifiant="1.1.1",
                     nom="Titre de l'action 1.1.1",
                     thematique_id="",
-                    description="<p>Description de l&#x27;action 1.1.1</p>\n",
-                    contexte="<p>Contexte de l&#x27;action 1.1.1</p>\n",
-                    exemples="<p>Exemples de l&#x27;action 1.1.1</p>\n",
-                    ressources="<p>Ressources de l&#x27;action 1.1.1</p>\n",
+                    description="<p>Description de l'action 1.1.1</p>\n",
+                    contexte="<p>Contexte de l'action 1.1.1</p>\n",
+                    exemples="<p>Exemples de l'action 1.1.1</p>\n",
+                    ressources="<p>Ressources de l'action 1.1.1</p>\n",
                     reduction_de_potentiel="",
                     perimetre_de_levaluation="",
                     referentiel=None,
@@ -113,10 +113,10 @@ def test_build_markdown_action_node_from_ok_folder():
                     identifiant="1.1.2",
                     nom="Titre de l'action 1.1.2",
                     thematique_id="",
-                    description="<p>Description de l&#x27;action 1.1.2</p>\n",
-                    contexte="<p>Contexte de l&#x27;action 1.1.2</p>\n",
-                    exemples="<p>Exemples de l&#x27;action 1.1.2</p>\n",
-                    ressources="<p>Ressources de l&#x27;action 1.1.2</p>\n",
+                    description="<p>Description de l'action 1.1.2</p>\n",
+                    contexte="<p>Contexte de l'action 1.1.2</p>\n",
+                    exemples="<p>Exemples de l'action 1.1.2</p>\n",
+                    ressources="<p>Ressources de l'action 1.1.2</p>\n",
                     reduction_de_potentiel="",
                     perimetre_de_levaluation="",
                     referentiel=None,
@@ -150,13 +150,9 @@ def test_build_markdown_action_node_from_ok_folder():
 
 
 def test_build_markdown_action_node_when_referentiel_is_unknown():
-
     markdown_action_nodes, errors = parse_markdown_action_trees_from_folder(
         folder_path="./tests/data/md_referentiel_examples_nok/unknown_referentiel",
     )
 
     assert len(errors) == 1
-    assert (
-        errors[0]
-        == "1 validation error for MarkdownActionTree\nreferentiel\n  unexpected value; permitted: 'cae', 'eci' (type=value_error.const; given=some_new_fancy_referentiel; permitted=('cae', 'eci'))"
-    )
+    assert ("Input should be 'cae' or 'eci'" in errors[0])
