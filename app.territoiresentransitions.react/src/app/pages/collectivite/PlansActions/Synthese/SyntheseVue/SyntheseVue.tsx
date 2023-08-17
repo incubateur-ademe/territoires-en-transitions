@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import {Link, useLocation, useParams} from 'react-router-dom';
-import HeaderTitle from '../../components/HeaderTitle';
+import HeaderTitle from 'ui/HeaderTitle';
 import {
   makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
