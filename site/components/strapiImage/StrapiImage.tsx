@@ -1,22 +1,29 @@
+/* eslint-disable @next/next/no-img-element */
+import classNames from 'classnames';
+import {StrapiItem} from 'src/StrapiItem';
+
 const baseURL = process.env.NEXT_PUBLIC_STRAPI_URL;
 
 type Size = 'large' | 'medium' | 'small' | 'thumbnail';
 
-type ImageData = {
-  id: number;
-  attributes: Attributes;
+type StrapiImageProps = {
+  data: StrapiItem;
+  size?: Size;
+  className?: string;
 };
-type Attributes = {[key: string]: Attributes};
 
-export function StrapiImage(props: {data: ImageData; size: Size}) {
-  const attributes = props.data['attributes'];
-  const url = `${attributes['formats'][props.size]['url']}`;
+export function StrapiImage({data, size, className}: StrapiImageProps) {
+  const attributes = data.attributes;
+  const url =
+    size && attributes.formats.size
+      ? `${attributes.formats[size].url}`
+      : `${attributes.url}`;
 
   return (
     <img
-      className="fr-responsive-img"
+      className={classNames('fr-responsive-img', className)}
       src={url.startsWith('http') ? url : `${baseURL}${url}`}
-      alt={`${attributes['alternativeText']}`}
+      alt={`${attributes.alternativeText}`}
     />
   );
 }

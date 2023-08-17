@@ -13,10 +13,12 @@
   "pluginOptions": {},
   "attributes": {
     "Titre": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "Corps": {
-      "type": "richtext"
+      "type": "richtext",
+      "required": true
     }
   }
 }

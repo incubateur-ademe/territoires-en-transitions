@@ -8,12 +8,12 @@ const headers = {
   Authorization: `Bearer ${apiKey}`,
 };
 
-type Collection = 'actualites' | 'faqs';
+type Collection = 'actualites' | 'faqs' | 'services';
 
 export async function fetchCollection(
   path: Collection,
 ): Promise<Array<StrapiItem>> {
-  const url = `${baseURL}/api/${path}`;
+  const url = `${baseURL}/api/${path}?populate=*`;
 
   const response = await fetch(`${url}`, {
     cache: 'no-store',
