@@ -26,7 +26,6 @@ const ActionDiscussionCommentaireDropdown = ({commentaire_id}: Props) => {
         }
       }}
       dataTest="ActionDiscussionCommentaireMenu"
-      dataTestButton="ActionDiscussionCommentaireMenuButton"
     />
   );
 };
