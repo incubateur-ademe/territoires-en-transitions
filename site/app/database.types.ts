@@ -4469,7 +4469,6 @@ export interface Database {
       col_is_null:
         | {
             Args: {
-              schema_name: unknown
               table_name: unknown
               column_name: unknown
               description?: string
@@ -4478,6 +4477,7 @@ export interface Database {
           }
         | {
             Args: {
+              schema_name: unknown
               table_name: unknown
               column_name: unknown
               description?: string
@@ -4504,13 +4504,13 @@ export interface Database {
           }
       collect_tap:
         | {
-            Args: Record<PropertyKey, never>
-            Returns: string
-          }
-        | {
             Args: {
               "": string[]
             }
+            Returns: string
+          }
+        | {
+            Args: Record<PropertyKey, never>
             Returns: string
           }
       collectivite_membres: {
@@ -6018,13 +6018,13 @@ export interface Database {
       }
       pass:
         | {
-            Args: Record<PropertyKey, never>
-            Returns: string
-          }
-        | {
             Args: {
               "": string
             }
+            Returns: string
+          }
+        | {
+            Args: Record<PropertyKey, never>
             Returns: string
           }
       personnes_collectivite: {
@@ -6506,28 +6506,28 @@ export interface Database {
             Args: {
               bucket_width: unknown
               ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
               origin: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
             }
             Returns: string
           }
@@ -6629,6 +6629,33 @@ export interface Database {
       time_bucket_gapfill:
         | {
             Args: {
+              bucket_width: number
+              ts: number
+              start?: number
+              finish?: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              start?: number
+              finish?: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              start?: number
+              finish?: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
               bucket_width: unknown
               ts: string
               start?: string
@@ -6644,33 +6671,6 @@ export interface Database {
               finish?: string
             }
             Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              start?: number
-              finish?: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              start?: number
-              finish?: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              start?: number
-              finish?: number
-            }
-            Returns: number
           }
         | {
             Args: {
