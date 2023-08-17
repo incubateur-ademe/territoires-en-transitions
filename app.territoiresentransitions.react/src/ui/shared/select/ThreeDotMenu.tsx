@@ -10,8 +10,6 @@ type TOptionWithIcon = TOption & {icon?: string};
 const ThreeDotMenu = ({
   /** id du menu déroulant pour les tests */
   dataTest,
-  /** id du bouton d'ouverture du menu déroulant pour les tests */
-  dataTestButton,
   /** options du menu */
   options,
   /** styles complémentaires pour le bouton */
@@ -20,7 +18,6 @@ const ThreeDotMenu = ({
   onSelect,
 }: {
   dataTest?: string;
-  dataTestButton?: string;
   options: TOptionWithIcon[];
   buttonClassname?: string;
   onSelect: (value: string) => void;
@@ -54,7 +51,10 @@ const ThreeDotMenu = ({
         </nav>
       )}
     >
-      <ThreeDotButton dataTest={dataTestButton} className={buttonClassname} />
+      <ThreeDotButton
+        dataTest={`${dataTest}-Button`}
+        className={buttonClassname}
+      />
     </DropdownFloater>
   );
 };
