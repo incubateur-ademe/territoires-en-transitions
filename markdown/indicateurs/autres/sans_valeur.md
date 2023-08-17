@@ -41,9 +41,7 @@ titre_long: Quantité totale d'émissions de polluants atmosphériques
 sans_valeur: yes
 selection: yes
 programmes:
-  - clef
   - cae
-  - crte
 thematiques:
   - nature_environnement_air
 ```
@@ -61,7 +59,6 @@ sans_valeur: yes
 selection: yes
 programmes:
   - clef
-  - cae
   - crte
 thematiques:
   - nature_environnement_air
