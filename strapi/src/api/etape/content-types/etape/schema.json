@@ -1,0 +1,25 @@
+{
+  "kind": "collectionType",
+  "collectionName": "etapes",
+  "info": {
+    "singularName": "etape",
+    "pluralName": "etapes",
+    "displayName": "Étape"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Titre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100
+    },
+    "Corps": {
+      "type": "text",
+      "required": true,
+      "maxLength": 250
+    }
+  }
+}

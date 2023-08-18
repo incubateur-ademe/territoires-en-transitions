@@ -14,7 +14,7 @@ const Faq = () => {
     {id: number; titre: Attributes; contenu: Attributes}[]
   >([]);
 
-  const fecthQuestions = async () => {
+  const fetchQuestions = async () => {
     const data = await fetchCollection('faqs');
 
     const formattedData = data.map(d => ({
@@ -27,7 +27,7 @@ const Faq = () => {
   };
 
   useEffect(() => {
-    fecthQuestions();
+    fetchQuestions();
   }, []);
 
   return (

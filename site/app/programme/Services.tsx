@@ -19,7 +19,7 @@ const Services = () => {
     }[]
   >([]);
 
-  const fecthServices = async () => {
+  const fetchServices = async () => {
     const data = await fetchCollection('services');
 
     const formattedData = data.map(d => ({
@@ -34,7 +34,7 @@ const Services = () => {
   };
 
   useEffect(() => {
-    fecthServices();
+    fetchServices();
   }, []);
 
   return (

@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "objectifs",
+  "info": {
+    "singularName": "objectif",
+    "pluralName": "objectifs",
+    "displayName": "Objectif"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Description": {
+      "type": "richtext",
+      "required": true,
+      "maxLength": 75
+    },
+    "Pictogramme": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false,
+      "required": true
+    }
+  }
+}
