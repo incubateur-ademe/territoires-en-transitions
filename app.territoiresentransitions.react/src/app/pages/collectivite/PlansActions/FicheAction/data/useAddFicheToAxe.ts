@@ -2,14 +2,15 @@ import {useMutation, useQueryClient} from 'react-query';
 
 import {supabaseClient} from 'core-logic/api/supabase';
 import {FicheAction} from './types';
-import {TProfondeurAxe} from '../../PlanAction/data/types';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {TAxeInsert} from 'types/alias';
 
 type Args = {
-  planAction_id: number;
   fiche_id: number;
-  axe: TProfondeurAxe;
+  axe: {
+    id: number;
+    nom: string | null;
+  };
 };
 
 export const useAddFicheToAxe = () => {
@@ -19,7 +20,7 @@ export const useAddFicheToAxe = () => {
   return useMutation(
     async ({axe, fiche_id}: Args) => {
       await supabaseClient.rpc('ajouter_fiche_action_dans_un_axe', {
-        axe_id: axe.axe.id,
+        axe_id: axe.id,
         fiche_id,
       });
     },
@@ -39,9 +40,10 @@ export const useAddFicheToAxe = () => {
         queryClient.setQueryData(ficheActionKey, (old: any) => {
           const formatedNewAxe: TAxeInsert = {
             collectivite_id: collectivite_id!,
-            id: args.axe.axe.id,
-            nom: args.axe.axe.nom,
+            id: args.axe.id,
+            nom: args.axe.nom,
           };
+
           return {
             fiche: {
               ...old.fiche,
