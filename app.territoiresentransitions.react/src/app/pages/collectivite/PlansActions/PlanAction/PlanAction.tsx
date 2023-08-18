@@ -4,8 +4,8 @@ import {useParams} from 'react-router-dom';
 import HeaderTitle from 'ui/HeaderTitle';
 import PlanActionHeader from './PlanActionHeader';
 import PlanActionFooter from './PlanActionFooter';
-import PlanActionArborescence from './PlanActionArborescence';
 import PlanActionFiltresAccordeon from './PlanActionFiltres/PlanActionFiltresAccordeon';
+import Arborescence from './DragAndDropNestedContainers/Arborescence';
 
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {checkAxeHasFiche} from './data/utils';
@@ -31,6 +31,7 @@ export const PlanAction = ({plan, axe}: PlanActionProps) => {
 
   return (
     <div data-test={isAxePage ? 'PageAxe' : 'PlanAction'} className="w-full">
+      {/** Titre page */}
       <HeaderTitle
         customClass={
           isAxePage
@@ -47,7 +48,8 @@ export const PlanAction = ({plan, axe}: PlanActionProps) => {
         onUpdate={nom => updateAxe({id: isAxePage ? axe.id : plan.id, nom})}
         isReadonly={isReadonly}
       />
-      <div className="mx-auto px-10">
+      <div className="max-w-4xl mx-auto px-10">
+        {/** Header */}
         <PlanActionHeader
           collectivite_id={collectivite?.collectivite_id!}
           isAxePage={isAxePage}
@@ -55,7 +57,10 @@ export const PlanAction = ({plan, axe}: PlanActionProps) => {
           axe={axe}
           isReadonly={isReadonly}
         />
-        {/** On vérifie si le plan ou l'axe contient des fiches pour afficher les filtres de fiche */}
+        {/**
+         * Filtres
+         * On vérifie si le plan ou l'axe contient des fiches pour afficher les filtres de fiche
+         **/}
         {((!isAxePage && checkAxeHasFiche(plan)) ||
           (isAxePage && checkAxeHasFiche(axe))) && (
           <PlanActionFiltresAccordeon
@@ -64,14 +69,9 @@ export const PlanAction = ({plan, axe}: PlanActionProps) => {
             setIsFiltered={isFiltered => setIsFiltered(isFiltered)}
           />
         )}
-        {!isFiltered && (
-          <PlanActionArborescence
-            isAxePage={isAxePage}
-            plan={plan}
-            axe={axe ?? plan}
-            isReadonly={isReadonly}
-          />
-        )}
+        {/** Arboresence (fiches + sous-axes) */}
+        {!isFiltered && <Arborescence plan={plan} isAxePage={isAxePage} />}
+        {/** Footer */}
         <PlanActionFooter plan={plan} isReadonly={isReadonly} />
       </div>
     </div>
