@@ -268,24 +268,27 @@ api-test-build:
     ENV SUPABASE_KEY
     WORKDIR tests
     COPY ./api_tests .
-    RUN deno cache tests/smoke.test.ts
-    CMD deno test --allow-net --allow-env --allow-read tests/smoke.test.ts --location 'http://localhost' && \
-        deno test --allow-net --allow-env --allow-read tests/test/utilisateur.test.ts --location 'http://localhost' && \
-        deno test --allow-net --allow-env --allow-read tests/labellisation/audit.test.ts --location 'http://localhost'
+    RUN deno cache tests/base/smoke.test.ts
+    RUN deno cache tests/base/utilisateur.test.ts
+    CMD deno
     SAVE IMAGE api-test:latest
 
 api-test:
     ARG --required SERVICE_ROLE_KEY
     ARG --required API_URL
     ARG network=host
+    ARG tests='base droit evaluation historique labellisation plan_action scoring utilisateur'
     LOCALLY
     RUN earthly +api-test-build
-    RUN docker run --rm \
-        --name api_test_tet \
-        --network $network \
-        --env SUPABASE_KEY=$SERVICE_ROLE_KEY \
-        --env SUPABASE_URL=$API_URL \
-        api-test:latest
+    FOR test IN $tests
+      RUN echo "Running tests for tests/$test'"
+      RUN docker run --rm \
+              --name api_test_tet \
+              --network $network \
+              --env SUPABASE_KEY=$SERVICE_ROLE_KEY \
+              --env SUPABASE_URL=$API_URL \
+              api-test:latest test -A tests/$test/*.test.ts --location 'http://localhost'
+    END
 
 cypress-wip:
     FROM cypress/included:12.3.0
