@@ -18,6 +18,8 @@ import { saveReponse } from "/lib/rpcs/saveReponse.ts";
 import { scoreById } from "../evaluation/scoreById.ts";
 import { ClientScores } from "/lib/types/clientScores.ts";
 
+await new Promise((r) => setTimeout(r, 0));
+
 Deno.test(
   "Scénario réponse à `dechets_1` oui -> non pendant un audit",
   async () => {
