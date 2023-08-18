@@ -7,16 +7,19 @@ import {TProfondeurAxe} from './types';
  * @param axe axe à récupérer
  * @return axe as PlanAction | null
  */
-export const getAxeinPlan = (plan: PlanNode, axe: FlatAxe): PlanNode | null => {
-  if (plan.id === axe.id) {
+export const getAxeInPlan = (
+  plan: PlanNode,
+  axeId: number
+): PlanNode | null => {
+  if (plan.id === axeId) {
     return plan;
   }
   if (plan.children && plan.children.length > 0) {
     for (let i = 0; i < plan.children.length; i++) {
-      if (plan.children[i] && plan.children[i].id === axe.id) {
+      if (plan.children[i] && plan.children[i].id === axeId) {
         return plan.children[i];
       } else if (plan.children[i].children) {
-        const resultat = getAxeinPlan(plan.children[i], axe);
+        const resultat = getAxeInPlan(plan.children[i], axeId);
         if (resultat) {
           return resultat;
         }
@@ -99,7 +102,7 @@ export const removeAxeFromPlan = (
 };
 
 /**
- * Convertit une liste d'axes ordonnancée en une liste de plans.
+ * Convertit une liste d'axes ordonnancés en une liste de plans.
  * @param axes
  * @returns
  */
