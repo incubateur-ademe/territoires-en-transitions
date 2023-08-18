@@ -4,7 +4,8 @@
   "info": {
     "singularName": "service",
     "pluralName": "services",
-    "displayName": "Service"
+    "displayName": "[Programme] Services",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -13,20 +14,20 @@
   "attributes": {
     "Titre": {
       "type": "string",
-      "required": true
+      "required": true,
+      "maxLength": 100
     },
     "Description": {
-      "type": "string"
+      "type": "string",
+      "maxLength": 250
     },
     "Image": {
-      "allowedTypes": [
-        "images",
-        "files",
-        "videos",
-        "audios"
-      ],
       "type": "media",
-      "multiple": false
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
     },
     "URL": {
       "type": "string"

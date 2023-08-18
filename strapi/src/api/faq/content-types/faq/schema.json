@@ -16,7 +16,7 @@
       "type": "string",
       "required": true
     },
-    "Corps": {
+    "Contenu": {
       "type": "richtext",
       "required": true
     }

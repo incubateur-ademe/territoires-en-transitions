@@ -20,7 +20,7 @@ const Faq = () => {
     const formattedData = data.map(d => ({
       id: d.id,
       titre: d.attributes.Titre,
-      contenu: d.attributes.Corps,
+      contenu: d.attributes.Contenu,
     }));
 
     setQuestions(formattedData);

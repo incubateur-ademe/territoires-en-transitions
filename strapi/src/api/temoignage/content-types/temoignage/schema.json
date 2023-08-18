@@ -4,7 +4,8 @@
   "info": {
     "singularName": "temoignage",
     "pluralName": "temoignages",
-    "displayName": "Témoignage"
+    "displayName": "[Accueil] Témoignages",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -13,24 +14,25 @@
   "attributes": {
     "Auteur": {
       "type": "string",
-      "required": true
+      "required": true,
+      "maxLength": 100
     },
     "Description": {
-      "type": "string"
+      "type": "string",
+      "maxLength": 200
     },
     "Contenu": {
       "type": "text",
-      "required": true
+      "required": true,
+      "maxLength": 300
     },
     "Image": {
-      "allowedTypes": [
-        "images",
-        "files",
-        "videos",
-        "audios"
-      ],
       "type": "media",
-      "multiple": false
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
     }
   }
 }

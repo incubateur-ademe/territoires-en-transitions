@@ -4,7 +4,7 @@
   "info": {
     "singularName": "benefice",
     "pluralName": "benefices",
-    "displayName": "Bénéfice",
+    "displayName": "[Programme] Bénéfices",
     "description": ""
   },
   "options": {
@@ -17,7 +17,7 @@
       "required": true,
       "maxLength": 100
     },
-    "Corps": {
+    "Contenu": {
       "type": "text",
       "required": true,
       "maxLength": 350
