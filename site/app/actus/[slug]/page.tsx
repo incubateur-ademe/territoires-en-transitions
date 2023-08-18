@@ -38,7 +38,11 @@ function Actu(props: {actu: StrapiItem; bodyHtml: string}) {
   return (
     <div>
       {couverture ? (
-        <StrapiImage data={couverture as unknown as StrapiItem} size="small" />
+        <StrapiImage
+          data={couverture as unknown as StrapiItem}
+          size="small"
+          className="fr-responsive-img"
+        />
       ) : null}
       <h1 className="fr-title">{`${props.actu['attributes']['Titre']}`}</h1>
       <div dangerouslySetInnerHTML={{__html: props.bodyHtml}} />

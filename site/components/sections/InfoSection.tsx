@@ -34,7 +34,7 @@ const InfoSection = ({
       <PictoWithBackground pictogram={pictogram} />
       <div className="text-center lg:text-left">
         <p className={classNames('text-xl', customTextStyle)}>{content}</p>
-        <div className="fr-btns-group fr-btns-group--inline-md">
+        <div className="fr-btns-group fr-btns-group--inline-md justify-center lg:justify-start">
           {buttons.length > 0 &&
             buttons.map(button => (
               <ButtonWithLink
