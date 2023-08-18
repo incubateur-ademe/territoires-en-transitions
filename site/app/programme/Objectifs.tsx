@@ -20,8 +20,6 @@ const Objectifs = () => {
   const fetchObjectifs = async () => {
     const data = await fetchCollection('objectifs');
 
-    console.log(data);
-
     const formattedData = data.map(d => ({
       id: d.id,
       description: d.attributes.Description,

@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_bloc_temoignages",
+  "info": {
+    "displayName": "Temoignages",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "Titre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200,
+      "default": "Rejoignez une communauté de collectivités engagées"
+    },
+    "Description": {
+      "type": "text"
+    }
+  }
+}

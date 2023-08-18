@@ -17,6 +17,8 @@ type Collection =
   | 'services'
   | 'temoignages';
 
+type Single = 'accueil';
+
 export async function fetchCollection(
   path: Collection,
 ): Promise<Array<StrapiItem>> {
@@ -30,6 +32,22 @@ export async function fetchCollection(
   const body = await response.json();
   return body['data'];
 }
+
+export const fetchSingle = async (
+  path: Single,
+  params: [string, string][] = [['populate', '*']],
+): Promise<StrapiItem> => {
+  const url = new URL(`${baseURL}/api/${path}`);
+  params.forEach(p => url.searchParams.append(...p));
+
+  const response = await fetch(`${url}`, {
+    cache: 'no-store',
+    method: 'GET',
+    headers,
+  });
+  const body = await response.json();
+  return body['data'];
+};
 
 export async function fetchItem(
   path: string,

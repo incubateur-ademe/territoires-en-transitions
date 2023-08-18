@@ -8,7 +8,12 @@ import {Attributes, useEffect, useState} from 'react';
 import {fetchCollection} from 'src/strapi';
 import {StrapiItem} from 'src/StrapiItem';
 
-const Temoignages = () => {
+type TemoignagesProps = {
+  titre: string;
+  description?: string;
+};
+
+const Temoignages = ({titre, description}: TemoignagesProps) => {
   const [temoignages, setTemoignages] = useState<
     {
       id: number;
@@ -39,7 +44,8 @@ const Temoignages = () => {
 
   return temoignages.length > 1 ? (
     <CardsSection
-      title="Rejoignez une communauté de collectivités engagées"
+      title={titre}
+      description={description}
       cardsList={
         <Slideshow
           className="my-6 xl:mx-auto xl:w-5/6"
