@@ -16,7 +16,7 @@ import {
   envoyer_demande,
   valider_audit,
   verifier_avant_commencement,
-} from "./utils.ts";
+} from "../labellisation/utils.ts";
 import { labellisationParcours } from "../../lib/rpcs/labellisationParcours.ts";
 
 await new Promise((r) => setTimeout(r, 0));
@@ -147,56 +147,59 @@ Deno.test("Scénario de demande d'audit de labellisation", async () => {
   await signOut();
 });
 
-Deno.test("Scénario de demande labellisation 1ere etoile par collectivite COT", async () => {
-  await testReset();
-  const collectivite = await creer_collectivite();
-  const editeur = await ajouter_editeur(collectivite);
+Deno.test(
+  "Scénario de demande labellisation 1ere etoile par collectivite COT",
+  async () => {
+    await testReset();
+    const collectivite = await creer_collectivite();
+    const editeur = await ajouter_editeur(collectivite);
 
-  // On se connecte avec ses credentials.
-  await supabase.auth.signInWithPassword({
-    email: editeur.email,
-    password: editeur.password,
-  });
+    // On se connecte avec ses credentials.
+    await supabase.auth.signInWithPassword({
+      email: editeur.email,
+      password: editeur.password,
+    });
 
-  // Passe la collectivite en COT
-  const cot = await testSetCot(collectivite.collectivite_id!, true);
-  assertExists(cot);
-  assertObjectMatch(cot, {
-    collectivite_id: collectivite.collectivite_id!,
-    actif: true,
-  });
+    // Passe la collectivite en COT
+    const cot = await testSetCot(collectivite.collectivite_id!, true);
+    assertExists(cot);
+    assertObjectMatch(cot, {
+      collectivite_id: collectivite.collectivite_id!,
+      actif: true,
+    });
 
-  // Fait atteindre les critères de scores à la collectivité de test pour les deux référentiels.
-  await testFullfill(collectivite.collectivite_id!, "1");
-  const demandeLabellisation = await envoyer_demande(
-    collectivite,
-    "labellisation",
-    "1",
-  );
-  const { auditeur } = await ajouter_auditeur(
-    collectivite,
-    demandeLabellisation,
-  );
+    // Fait atteindre les critères de scores à la collectivité de test pour les deux référentiels.
+    await testFullfill(collectivite.collectivite_id!, "1");
+    const demandeLabellisation = await envoyer_demande(
+      collectivite,
+      "labellisation",
+      "1",
+    );
+    const { auditeur } = await ajouter_auditeur(
+      collectivite,
+      demandeLabellisation,
+    );
 
-  await supabase.auth.signInWithPassword({
-    email: auditeur.email,
-    password: auditeur.password,
-  });
+    await supabase.auth.signInWithPassword({
+      email: auditeur.email,
+      password: auditeur.password,
+    });
 
-  // On récupère sa liste de collectivité.
-  const mesCollectivitesAvantAuditResponse = await supabase
-    .from("mes_collectivites")
-    .select();
-  const collectivitesAvantAudit = mesCollectivitesAvantAuditResponse.data;
-  assertExists(collectivitesAvantAudit);
-  assertObjectMatch(collectivitesAvantAudit[0], {
-    collectivite_id: collectivite.collectivite_id,
-    niveau_acces: "edition",
-    est_auditeur: false, // l'audit n'est encore commencé
-  });
+    // On récupère sa liste de collectivité.
+    const mesCollectivitesAvantAuditResponse = await supabase
+      .from("mes_collectivites")
+      .select();
+    const collectivitesAvantAudit = mesCollectivitesAvantAuditResponse.data;
+    assertExists(collectivitesAvantAudit);
+    assertObjectMatch(collectivitesAvantAudit[0], {
+      collectivite_id: collectivite.collectivite_id,
+      niveau_acces: "edition",
+      est_auditeur: false, // l'audit n'est encore commencé
+    });
 
-  const parcours = await labellisationParcours(collectivite.collectivite_id!);
-  assertEquals(parcours[0].rempli, true);
+    const parcours = await labellisationParcours(collectivite.collectivite_id!);
+    assertEquals(parcours[0].rempli, true);
 
-  await signOut();
-});
+    await signOut();
+  },
+);
