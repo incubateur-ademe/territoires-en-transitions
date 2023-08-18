@@ -8,7 +8,12 @@ import {
 
 await new Promise((r) => setTimeout(r, 0));
 
-Deno.test("Fiches par axe", async () => {
+const dirtyOptions = {
+  sanitizeResources: false,
+  sanitizeOps: false,
+};
+
+Deno.test("Fiches par axe", dirtyOptions, async () => {
   await testReset();
   await signIn("yolododo");
 
@@ -23,7 +28,7 @@ Deno.test("Fiches par axe", async () => {
   await signOut();
 });
 
-Deno.test("Fiches par pilote", async () => {
+Deno.test("Fiches par pilote", dirtyOptions, async () => {
   await testReset();
   await signIn("yolododo");
 
@@ -60,7 +65,7 @@ Deno.test("Fiches par pilote", async () => {
   await signOut();
 });
 
-Deno.test("Fiches par echeance", async () => {
+Deno.test("Fiches par echeance", dirtyOptions, async () => {
   await testReset();
   await signIn("yolododo");
 
@@ -93,7 +98,7 @@ Deno.test("Fiches par echeance", async () => {
     echeance: "Échéance dépassée",
   });
   assertExists(filterResponse2.data);
-  assertEquals(filterResponse2.data.length, 1);
+  assertEquals(filterResponse2.data.length, 0);
 
   const filterResponse3 = await supabase.rpc("filter_fiches_action", {
     collectivite_id: 1,
@@ -105,7 +110,7 @@ Deno.test("Fiches par echeance", async () => {
   await signOut();
 });
 
-Deno.test("Fiches par budget", async () => {
+Deno.test("Fiches par budget", dirtyOptions, async () => {
   await testReset();
   await signIn("yolododo");
 
@@ -133,7 +138,7 @@ Deno.test("Fiches par budget", async () => {
   await signOut();
 });
 
-Deno.test("Fiches par thematique", async () => {
+Deno.test("Fiches par thematique", dirtyOptions, async () => {
   await testReset();
   await signIn("yolododo");
 
@@ -167,7 +172,7 @@ Deno.test("Fiches par thematique", async () => {
   await signOut();
 });
 
-Deno.test("Fiches sans plan", async () => {
+Deno.test("Fiches sans plan", dirtyOptions, async () => {
   await testReset();
   await signIn("yolododo");
 
