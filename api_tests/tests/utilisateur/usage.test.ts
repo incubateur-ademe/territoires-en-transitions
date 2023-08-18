@@ -4,6 +4,8 @@ import { signIn, signOut } from "/lib/auth.ts";
 import { testReset } from "/lib/rpcs/testReset.ts";
 import { Database } from "/lib/database.types.ts";
 
+await new Promise((r) => setTimeout(r, 0));
+
 Deno.test("Enregistre des usages", async (t) => {
   await testReset();
   const { data } = await signIn("yolododo");

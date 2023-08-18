@@ -12,6 +12,7 @@ const dirtyOptions = {
   sanitizeOps: false,
 };
 
+await new Promise((r) => setTimeout(r, 0));
 // fiche_action
 Deno.test("Test accès fiche_action", async () => {
   await testReset();
@@ -25,8 +26,8 @@ Deno.test("Test accès fiche_action", async () => {
     .from("fiche_action")
     .select()
     .eq("collectivite_id", 1);
-  //assertExists(result1.data);
-  //assertEquals(true, result1.data.length>0);
+  assertExists(result1.data);
+  assertEquals(true, result1.data.length > 0);
   await signOut();
 
   // Test que yulududu, qui n'appartient pas à la collectivite 1,
@@ -83,7 +84,7 @@ Deno.test("Test accès fiches_action", dirtyOptions, async () => {
   assertEquals(
     true,
     result1.data.length > 0,
-    "Yolododo, qui appartient à la collectivite 1, a accès aux données de la collectivité 1"
+    "Yolododo, qui appartient à la collectivite 1, a accès aux données de la collectivité 1",
   );
   await signOut();
 
@@ -98,7 +99,7 @@ Deno.test("Test accès fiches_action", dirtyOptions, async () => {
   assertEquals(
     true,
     result2.data.length > 0,
-    "Yulududu, qui n'appartient pas à la collectivite 1, a accès aux données de la collectivité 1"
+    "Yulududu, qui n'appartient pas à la collectivite 1, a accès aux données de la collectivité 1",
   );
   await signOut();
 
@@ -116,7 +117,7 @@ Deno.test("Test accès fiches_action", dirtyOptions, async () => {
   assertEquals(
     true,
     result3.data.length > 0,
-    "Yolododo, qui appartient à la collectivite 1, a toujours accès aux données de la collectivité 1"
+    "Yolododo, qui appartient à la collectivite 1, a toujours accès aux données de la collectivité 1",
   );
   await signOut();
 
@@ -131,7 +132,7 @@ Deno.test("Test accès fiches_action", dirtyOptions, async () => {
   assertEquals(
     true,
     result4.data.length == 0,
-    "Yulududu, qui n'appartient pas à la collectivite 1, n'a plus accès aux données de la collectivité 1"
+    "Yulududu, qui n'appartient pas à la collectivite 1, n'a plus accès aux données de la collectivité 1",
   );
   await signOut();
 });
@@ -1525,7 +1526,7 @@ Deno.test("Test accès plan_action", dirtyOptions, async () => {
     .eq("collectivite_id", 1);
   assertExists(
     result4.error,
-    "La RPC `plan_action` devrait renvoyer une erreur."
+    "La RPC `plan_action` devrait renvoyer une erreur.",
   );
   await signOut();
 });

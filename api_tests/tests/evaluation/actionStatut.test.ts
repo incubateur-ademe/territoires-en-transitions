@@ -11,6 +11,8 @@ import { testReset } from "/lib/rpcs/testReset.ts";
 import { scoreById } from "./scoreById.ts";
 import { ClientScores } from "/lib/types/clientScores.ts";
 
+await new Promise((r) => setTimeout(r, 0));
+
 Deno.test("Calcul des scores après la modification de statuts", async () => {
   await testReset();
   await signIn("yolododo");

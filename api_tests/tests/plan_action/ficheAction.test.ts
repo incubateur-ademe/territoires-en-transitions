@@ -6,6 +6,8 @@ import { supabase } from "/lib/supabase.ts";
 import { signIn, signOut } from "/lib/auth.ts";
 import { testReset } from "/lib/rpcs/testReset.ts";
 
+await new Promise((r) => setTimeout(r, 0));
+
 Deno.test("Suppression d'une fiche", async () => {
   await testReset();
   await signIn("yolododo");
@@ -74,7 +76,6 @@ Deno.test("Plan d'action", async () => {
   // Une fiche dans les données de test
   const selectResponse1 = await supabase.rpc("plan_action", { id: 1 });
   assertExists(selectResponse1.data);
-  console.log(selectResponse1);
 
   await signOut();
 });
@@ -89,7 +90,6 @@ Deno.test("Plan d'actions d'une collectivité", async () => {
     .eq("collectivite_id", 1)
     .is("parent", null);
   assertExists(selectResponse1.data);
-  console.log(selectResponse1);
 
   await signOut();
 });

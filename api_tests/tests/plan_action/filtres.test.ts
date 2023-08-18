@@ -6,6 +6,8 @@ import {
   assertExists,
 } from "https://deno.land/std@0.113.0/testing/asserts.ts";
 
+await new Promise((r) => setTimeout(r, 0));
+
 Deno.test("Fiches par axe", async () => {
   await testReset();
   await signIn("yolododo");

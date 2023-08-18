@@ -7,6 +7,8 @@ import { testReset } from "/lib/rpcs/testReset.ts";
 import { saveReponse } from "/lib/rpcs/saveReponse.ts";
 import { scoreById } from "./scoreById.ts";
 
+await new Promise((r) => setTimeout(r, 0));
+
 Deno.test(
   "Calcul de 'eci_2.4.2' après la réponse à la question 'dechets_1'",
   async (t) => {

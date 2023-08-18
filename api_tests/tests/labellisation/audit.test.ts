@@ -17,7 +17,7 @@ import {
   valider_audit,
   verifier_avant_commencement,
 } from "./utils.ts";
-import {labellisationParcours} from "../../lib/rpcs/labellisationParcours.ts";
+import { labellisationParcours } from "../../lib/rpcs/labellisationParcours.ts";
 
 await new Promise((r) => setTimeout(r, 0));
 
@@ -168,10 +168,14 @@ Deno.test("Scénario de demande labellisation 1ere etoile par collectivite COT",
 
   // Fait atteindre les critères de scores à la collectivité de test pour les deux référentiels.
   await testFullfill(collectivite.collectivite_id!, "1");
-  const demandeLabellisation = await envoyer_demande(collectivite, "labellisation", "1");
+  const demandeLabellisation = await envoyer_demande(
+    collectivite,
+    "labellisation",
+    "1",
+  );
   const { auditeur } = await ajouter_auditeur(
-      collectivite,
-      demandeLabellisation,
+    collectivite,
+    demandeLabellisation,
   );
 
   await supabase.auth.signInWithPassword({
@@ -181,8 +185,8 @@ Deno.test("Scénario de demande labellisation 1ere etoile par collectivite COT",
 
   // On récupère sa liste de collectivité.
   const mesCollectivitesAvantAuditResponse = await supabase
-      .from("mes_collectivites")
-      .select();
+    .from("mes_collectivites")
+    .select();
   const collectivitesAvantAudit = mesCollectivitesAvantAuditResponse.data;
   assertExists(collectivitesAvantAudit);
   assertObjectMatch(collectivitesAvantAudit[0], {
