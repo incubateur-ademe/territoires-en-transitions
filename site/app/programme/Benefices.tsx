@@ -6,7 +6,12 @@ import CardsSection from '@components/sections/CardsSection';
 import {Attributes, useEffect, useState} from 'react';
 import {fetchCollection} from 'src/strapi';
 
-const Benefices = () => {
+type BeneficesProps = {
+  titre: string;
+  description?: string;
+};
+
+const Benefices = ({titre, description}: BeneficesProps) => {
   const [benefices, setBenefices] = useState<
     {
       id: number;
@@ -31,9 +36,10 @@ const Benefices = () => {
     fetchBenefices();
   }, []);
 
-  return (
+  return benefices.length ? (
     <CardsSection
-      title="Les bénéfices"
+      title={titre}
+      description={description}
       cardsList={
         <CardsWrapper cols={2}>
           {benefices.map(b => (
@@ -47,7 +53,7 @@ const Benefices = () => {
         </CardsWrapper>
       }
     />
-  );
+  ) : null;
 };
 
 export default Benefices;

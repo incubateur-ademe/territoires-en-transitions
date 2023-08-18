@@ -8,7 +8,12 @@ import {Attributes, useEffect, useState} from 'react';
 import {fetchCollection} from 'src/strapi';
 import {StrapiItem} from 'src/StrapiItem';
 
-const Services = () => {
+type ServicesProps = {
+  titre: string;
+  description?: string;
+};
+
+const Services = ({titre, description}: ServicesProps) => {
   const [services, setServices] = useState<
     {
       id: number;
@@ -37,9 +42,10 @@ const Services = () => {
     fetchServices();
   }, []);
 
-  return (
+  return services.length ? (
     <CardsSection
-      title="Des services complémentaires sur-mesure"
+      title={titre}
+      description={description}
       cardsList={
         <CardsWrapper cols={3}>
           {services.length > 0 &&
@@ -59,7 +65,7 @@ const Services = () => {
         </CardsWrapper>
       }
     />
-  );
+  ) : null;
 };
 
 export default Services;

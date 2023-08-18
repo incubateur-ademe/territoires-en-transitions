@@ -8,7 +8,12 @@ import {StrapiItem} from 'src/StrapiItem';
 import {marked} from 'marked';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
 
-const Objectifs = () => {
+type ObjectifsProps = {
+  titre: string;
+  description?: string;
+};
+
+const Objectifs = ({titre, description}: ObjectifsProps) => {
   const [objectifs, setObjectifs] = useState<
     {
       id: number;
@@ -33,9 +38,10 @@ const Objectifs = () => {
     fetchObjectifs();
   }, []);
 
-  return (
+  return objectifs.length ? (
     <CardsSection
-      title="Pourquoi engager votre collectivité ?"
+      title={titre}
+      description={description}
       cardsList={
         <CardsWrapper cols={5}>
           {objectifs.map((o, index) => (
@@ -57,7 +63,7 @@ const Objectifs = () => {
       }
       customBackground="#fff6f0"
     />
-  );
+  ) : null;
 };
 
 export default Objectifs;

@@ -1,0 +1,54 @@
+{
+  "kind": "singleType",
+  "collectionName": "programmes",
+  "info": {
+    "singularName": "programme",
+    "pluralName": "programmes",
+    "displayName": "Programme",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Titre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200,
+      "default": "Découvrez le programme Territoire Engagé Transition Écologique"
+    },
+    "Description": {
+      "type": "text",
+      "default": "L'outil opérationnel de planification écologique qui met à votre disposition une ingénierie territoriale et un accompagnement personnalisé."
+    },
+    "YoutubeURL": {
+      "type": "string",
+      "default": "https://youtu.be/gAc_B6j1qcY"
+    },
+    "Objectifs": {
+      "type": "component",
+      "repeatable": false,
+      "component": "bloc.objectifs",
+      "required": true
+    },
+    "Services": {
+      "type": "component",
+      "repeatable": false,
+      "component": "bloc.services",
+      "required": true
+    },
+    "Benefices": {
+      "type": "component",
+      "repeatable": false,
+      "component": "bloc.benefices",
+      "required": true
+    },
+    "Etapes": {
+      "type": "component",
+      "repeatable": false,
+      "component": "bloc.etapes",
+      "required": true
+    }
+  }
+}

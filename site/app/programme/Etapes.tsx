@@ -7,7 +7,12 @@ import CardsSection from '@components/sections/CardsSection';
 import {Attributes, useEffect, useState} from 'react';
 import {fetchCollection} from 'src/strapi';
 
-const Etapes = () => {
+type EtapesProps = {
+  titre: string;
+  description?: string;
+};
+
+const Etapes = ({titre, description}: EtapesProps) => {
   const [etapes, setEtapes] = useState<
     {
       id: number;
@@ -32,9 +37,10 @@ const Etapes = () => {
     fetchEtapes();
   }, []);
 
-  return (
+  return etapes.length ? (
     <CardsSection
-      title="Les étapes"
+      title={titre}
+      description={description}
       cardsList={
         <CardsWrapper cols={4}>
           {etapes.map((e, index) => (
@@ -53,7 +59,7 @@ const Etapes = () => {
         Contactez-nous
       </ButtonWithLink>
     </CardsSection>
-  );
+  ) : null;
 };
 
 export default Etapes;
