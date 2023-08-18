@@ -1,4 +1,4 @@
-import { ActionScore, ClientScores } from "/lib/types/clientScores.ts";
+import { ActionScore, ClientScores } from "../../lib/types/clientScores.ts";
 
 export function scoreById(
   clientScores: ClientScores,

@@ -2,9 +2,9 @@ import {
   assertEquals,
   assertExists,
 } from "https://deno.land/std/testing/asserts.ts";
-import { supabase } from "/lib/supabase.ts";
-import { signIn, signOut } from "/lib/auth.ts";
-import { testReset } from "/lib/rpcs/testReset.ts";
+import { supabase } from "../../lib/supabase.ts";
+import { signIn, signOut } from "../../lib/auth.ts";
+import { testReset } from "../../lib/rpcs/testReset.ts";
 
 await new Promise((r) => setTimeout(r, 0));
 

@@ -4,10 +4,10 @@ import {
   assertMatch,
   assertObjectMatch,
 } from "https://deno.land/std@0.163.0/testing/asserts.ts";
-import { supabase } from "/lib/supabase.ts";
-import { signOut } from "/lib/auth.ts";
-import { testAddRandomUser } from "/lib/rpcs/testAddRandomUser.ts";
-import { testReset } from "/lib/rpcs/testReset.ts";
+import { supabase } from "../../lib/supabase.ts";
+import { signOut } from "../../lib/auth.ts";
+import { testAddRandomUser } from "../../lib/rpcs/testAddRandomUser.ts";
+import { testReset } from "../../lib/rpcs/testReset.ts";
 
 await new Promise((r) => setTimeout(r, 0));
 

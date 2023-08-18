@@ -1,5 +1,5 @@
-import { supabase } from "/lib/supabase.ts";
-import { signIn, signOut } from "/lib/auth.ts";
+import { supabase } from "../../lib/supabase.ts";
+import { signIn, signOut } from "../../lib/auth.ts";
 import {
   assertEquals,
   assertExists,

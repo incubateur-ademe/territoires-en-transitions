@@ -3,27 +3,23 @@
  * tests fonctionne.
  */
 
-import {
-  assertEquals,
-  assertExists,
-} from "https://deno.land/std@0.163.0/testing/asserts.ts";
-import { fakeCredentials, signIn, signOut } from "../lib/auth.ts";
-import { supabase } from "../lib/supabase.ts";
-import { Database } from "../lib/database.types.ts";
-import { testReset } from "../lib/rpcs/testReset.ts";
+import { assertEquals } from "https://deno.land/std@0.163.0/testing/asserts.ts";
+import { fakeCredentials, signIn, signOut } from "../../lib/auth.ts";
+import { supabase } from "../../lib/supabase.ts";
+import { testReset } from "../../lib/rpcs/testReset.ts";
 
 await new Promise((r) => setTimeout(r, 0));
 
 Deno.test("Deno test: Génération des login/mdp de test", () => {
-  assertEquals(
-    fakeCredentials("yolododo"),
-    { email: "yolo@dodo.com", password: "yolododo" },
-  );
+  assertEquals(fakeCredentials("yolododo"), {
+    email: "yolo@dodo.com",
+    password: "yolododo",
+  });
 
-  assertEquals(
-    fakeCredentials("youloudoudou"),
-    { email: "youlou@doudou.com", password: "youloudoudou" },
-  );
+  assertEquals(fakeCredentials("youloudoudou"), {
+    email: "youlou@doudou.com",
+    password: "youloudoudou",
+  });
 });
 
 Deno.test("Authentification et DCP", async () => {
