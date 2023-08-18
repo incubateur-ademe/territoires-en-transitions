@@ -41,8 +41,6 @@ Deno.test("RPC flat_axes", async () => {
   const axes = rpcResponse.data as unknown as flatAxe[];
   const plan = buildPlans(axes);
 
-  console.log(JSON.stringify(plan, null, 2));
-
   // pour récupérer les fiches on
   // - map sur les axes et leurs `children`
   // - si fiches n'est pas vide, on récupère les fiches :
@@ -61,8 +59,6 @@ Deno.test("RPC navigation_plans", async () => {
   assertExists(rpcResponse.data);
   const axes = rpcResponse.data as unknown as flatAxe[];
   const plans = buildPlans(axes);
-
-  console.log(JSON.stringify(plans, null, 2));
 
   await signOut();
 });
