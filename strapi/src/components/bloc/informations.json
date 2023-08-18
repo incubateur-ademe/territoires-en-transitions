@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_bloc_informations",
+  "info": {
+    "displayName": "Informations"
+  },
+  "options": {},
+  "attributes": {
+    "Titre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200,
+      "default": "Vous souhaitez plus d’informations ?"
+    },
+    "Description": {
+      "type": "text"
+    }
+  }
+}

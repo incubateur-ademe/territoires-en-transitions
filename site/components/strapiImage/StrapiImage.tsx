@@ -15,7 +15,7 @@ type StrapiImageProps = {
 export function StrapiImage({data, size, className}: StrapiImageProps) {
   const attributes = data.attributes;
   const url =
-    size && attributes.formats.size
+    size && attributes.formats?.size
       ? `${attributes.formats[size].url}`
       : `${attributes.url}`;
 

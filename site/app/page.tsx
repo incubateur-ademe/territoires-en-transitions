@@ -1,118 +1,138 @@
-/* eslint-disable react/no-unescaped-entities */
-import ButtonWithLink from '@components/buttons/ButtonWithLink';
-import Card from '@components/cards/Card';
-import CardsWrapper from '@components/cards/CardsWrapper';
-import Section from '@components/sections/Section';
-import CardsSection from '@components/sections/CardsSection';
-import CalendarPicto from 'public/pictogrammes/CalendarPicto';
-import CommunityPicto from 'public/pictogrammes/CommunityPicto';
-import InformationPicto from 'public/pictogrammes/InformationPicto';
-import PictoWithBackground from 'public/pictogrammes/PictoWithBackground';
-import SearchInput from '@components/inputs/SearchInput';
+'use client';
+
 import Temoignages from './Temoignages';
+import {useEffect, useState} from 'react';
+import {fetchSingle} from 'src/strapi';
+import {StrapiItem} from 'src/StrapiItem';
+import Accompagnement from './Accompagnement';
+import Informations from './Informations';
+import AccueilBanner from './AccueilBanner';
+import Newsletter from './Newsletter';
+
+type AccueilData = {
+  titre: string;
+  couverture?: StrapiItem;
+  accompagnement: {
+    titre: string;
+    description: string;
+    contenu: {
+      titre: string;
+      description: string;
+      image: StrapiItem;
+      button: {titre: string; href: string};
+    }[];
+  };
+  temoignages: {
+    titre: string;
+    description: string;
+  };
+  informations: {
+    titre: string;
+    description: string;
+  };
+  newsletter: {
+    titre: string;
+    description: string;
+  };
+};
 
 export default function Accueil() {
-  return (
+  const [data, setData] = useState<AccueilData | undefined>();
+
+  const fetchData = async () => {
+    const data = await fetchSingle('accueil', [
+      ['populate[0]', 'Titre'],
+      ['populate[1]', 'Couverture'],
+      ['populate[2]', 'Accompagnement'],
+      ['populate[3]', 'Accompagnement.Programme'],
+      ['populate[4]', 'Accompagnement.Programme.Image'],
+      ['populate[5]', 'Accompagnement.Compte'],
+      ['populate[6]', 'Accompagnement.Compte.Image'],
+      ['populate[7]', 'Temoignages'],
+      ['populate[8]', 'Informations'],
+      ['populate[9]', 'Newsletter'],
+    ]);
+
+    const formattedData = {
+      titre: data.attributes.Titre as unknown as string,
+      couverture:
+        (data.attributes.Couverture.data as unknown as StrapiItem) ?? undefined,
+      accompagnement: {
+        titre: data.attributes.Accompagnement.Titre as unknown as string,
+        description: data.attributes.Accompagnement
+          .Description as unknown as string,
+        contenu: [
+          {
+            titre: data.attributes.Accompagnement.Programme
+              .Titre as unknown as string,
+            description: data.attributes.Accompagnement.Programme
+              .Description as unknown as string,
+            image: data.attributes.Accompagnement.Programme.Image
+              .data as unknown as StrapiItem,
+            button: {titre: 'Découvrir le programme', href: '/programme'},
+          },
+          {
+            titre: data.attributes.Accompagnement.Compte
+              .Titre as unknown as string,
+            description: data.attributes.Accompagnement.Compte
+              .Description as unknown as string,
+            image: data.attributes.Accompagnement.Compte.Image
+              .data as unknown as StrapiItem,
+            button: {
+              titre: 'Créer un compte',
+              href: 'https://app.territoiresentransitions.fr/auth/signup',
+            },
+          },
+        ],
+      },
+      temoignages: {
+        titre: data.attributes.Temoignages.Titre as unknown as string,
+        description: data.attributes.Temoignages
+          .Description as unknown as string,
+      },
+      informations: {
+        titre: data.attributes.Informations.Titre as unknown as string,
+        description: data.attributes.Informations
+          .Description as unknown as string,
+      },
+      newsletter: {
+        titre: data.attributes.Newsletter.Titre as unknown as string,
+        description: data.attributes.Newsletter
+          .Description as unknown as string,
+      },
+    };
+
+    setData(formattedData);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  return data ? (
     <>
-      <Section className="flex-col lg:flex-row">
-        <div className="lg:mr-10 xl:mr-20 mb-8 lg:mb-0">
-          <h1>Accélérez la transition écologique de votre collectivité</h1>
-          {/* <p>Quelles sont les prochaines étapes pour ma collectivité ?</p>
-          <SearchInput
-            id="collectivite"
-            placeholder="Rechercher un EPCI, un syndicat, une commune, un PETR, un EPT"
-          />
-          <a
-            href="/programme#carte"
-            className="fr-link fr-icon-arrow-right-line fr-link--icon-right"
-          >
-            Voir la carte de toutes les collectivités
-          </a> */}
-          <p>
-            Territoires en Transitions est une plateforme pour accompagner les
-            démarches des collectivités engagées en transition écologique sur
-            les thématiques climat, air, énergie et économie circulaire.
-          </p>
-        </div>
-        <picture className="w-full lg:w-3/5 xl:w-2/5 min-w-[350px]">
-          <img src="accueil/homepage.png" alt="" className="w-auto" />
-        </picture>
-      </Section>
+      <AccueilBanner titre={data.titre} couverture={data.couverture} />
 
-      <CardsSection
-        title="Bénéficiez d’un accompagnement adapté à vos besoins"
-        description="Votre territoire est unique. Avancez étape par étape dans 
-        la transition écologique selon vos compétences et vos moyens avec le programme 
-        Territoire Engagé Transition Écologique."
-        cardsList={
-          <CardsWrapper cols={2}>
-            <Card
-              title="Engagez votre collectivité dans la transition écologique"
-              description="Réalisez votre état des lieux et bénéficiez d'un accompagnement personnalisé"
-              button={{title: 'Découvrir le programme', href: '/programme'}}
-              image={
-                <picture>
-                  <img
-                    src="territoire-engage.jpg"
-                    alt=""
-                    className="max-h-[150px]"
-                  />
-                </picture>
-              }
-            />
-            <Card
-              title="Suivez vos plans d'action et vos indicateurs"
-              description="Collaborez de manière transversale pour atteindre vos objectifs"
-              button={{
-                title: 'Créer un compte',
-                href: 'https://app.territoiresentransitions.fr/auth/signup',
-              }}
-              image={
-                <picture>
-                  <img src="accueil/compte.png" alt="" />
-                </picture>
-              }
-            />
-          </CardsWrapper>
-        }
+      <Accompagnement
+        titre={data.accompagnement.titre}
+        description={data.accompagnement.description}
+        contenu={data.accompagnement.contenu}
       />
 
-      <Temoignages />
-
-      <CardsSection
-        title="Vous souhaitez plus d’informations ?"
-        cardsList={
-          <CardsWrapper cols={3} className="!gap-14">
-            <div className="flex flex-col items-center gap-8">
-              <PictoWithBackground pictogram={<InformationPicto />} />
-              <ButtonWithLink href="/faq" secondary fullWidth>
-                Lire les questions fréquentes
-              </ButtonWithLink>
-            </div>
-            <div className="flex flex-col items-center gap-8">
-              <PictoWithBackground pictogram={<CommunityPicto />} />
-              <ButtonWithLink href="/contact" secondary fullWidth>
-                Contacter l'équipe
-              </ButtonWithLink>
-            </div>
-            <div className="flex flex-col items-center gap-8">
-              <PictoWithBackground pictogram={<CalendarPicto />} />
-              <ButtonWithLink href="/" fullWidth>
-                Participer à une démo
-              </ButtonWithLink>
-            </div>
-          </CardsWrapper>
-        }
+      <Temoignages
+        titre={data.temoignages.titre}
+        description={data.temoignages.description}
       />
 
-      <Section className="flex-col gap-0">
-        <h3 className="mb-3">
-          Suivez les actualités du programme Territoire Engagé Transition
-          Écologique
-        </h3>
-        <p>Infolettre trimestrielle - 1 email par mois maximum.</p>
-        <ButtonWithLink href="/inscription">S'inscrire</ButtonWithLink>
-      </Section>
+      <Informations
+        titre={data.informations.titre}
+        description={data.informations.description}
+      />
+
+      <Newsletter
+        titre={data.newsletter.titre}
+        description={data.newsletter.description}
+      />
     </>
-  );
+  ) : null;
 }

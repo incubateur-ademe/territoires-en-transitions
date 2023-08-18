@@ -1,0 +1,29 @@
+{
+  "collectionName": "components_bloc_programmes",
+  "info": {
+    "displayName": "Programme"
+  },
+  "options": {},
+  "attributes": {
+    "Titre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200,
+      "default": "Engagez votre collectivité dans la transition écologique"
+    },
+    "Description": {
+      "type": "text",
+      "default": "Réalisez votre état des lieux et bénéficiez d'un accompagnement personnalisé",
+      "required": true,
+      "maxLength": 200
+    },
+    "Image": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false,
+      "required": true
+    }
+  }
+}

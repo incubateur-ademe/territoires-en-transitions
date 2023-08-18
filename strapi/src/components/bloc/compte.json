@@ -1,0 +1,29 @@
+{
+  "collectionName": "components_bloc_comptes",
+  "info": {
+    "displayName": "Compte"
+  },
+  "options": {},
+  "attributes": {
+    "Titre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200,
+      "default": "Suivez vos plans d'action et vos indicateurs"
+    },
+    "Description": {
+      "type": "text",
+      "default": "Collaborez de manière transversale pour atteindre vos objectifs",
+      "required": true,
+      "maxLength": 200
+    },
+    "Image": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false,
+      "required": true
+    }
+  }
+}
