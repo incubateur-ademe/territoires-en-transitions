@@ -4,7 +4,8 @@
   "info": {
     "singularName": "objectif",
     "pluralName": "objectifs",
-    "displayName": "Objectif"
+    "displayName": "[Programme] Objectifs",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -17,12 +18,12 @@
       "maxLength": 75
     },
     "Pictogramme": {
-      "allowedTypes": [
-        "images"
-      ],
       "type": "media",
       "multiple": false,
-      "required": true
+      "required": true,
+      "allowedTypes": [
+        "images"
+      ]
     }
   }
 }

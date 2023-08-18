@@ -4,7 +4,8 @@
   "info": {
     "singularName": "etape",
     "pluralName": "etapes",
-    "displayName": "Étape"
+    "displayName": "[Programme] Étapes",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -16,7 +17,7 @@
       "required": true,
       "maxLength": 100
     },
-    "Corps": {
+    "Contenu": {
       "type": "text",
       "required": true,
       "maxLength": 250

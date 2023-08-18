@@ -21,7 +21,7 @@ const Benefices = () => {
     const formattedData = data.map(d => ({
       id: d.id,
       titre: d.attributes.Titre,
-      description: d.attributes.Corps,
+      description: d.attributes.Contenu,
     }));
 
     setBenefices(formattedData);
