@@ -42,7 +42,7 @@ Deno.test(
       question_id: "dechets_1",
       reponse: true,
     };
-    await saveReponse(reponseAvantAudit);
+    await saveReponse({ json: reponseAvantAudit });
 
     // On attend le calcul des scores et on vérifie la désactivation de `eci_2.4.2`
     await delay(5000);
@@ -84,7 +84,7 @@ Deno.test(
       question_id: "dechets_1",
       reponse: false,
     };
-    await saveReponse(reponseApresAudit);
+    await saveReponse({ json: reponseApresAudit });
 
     await delay(5000);
     clientScores = await supabase
@@ -149,7 +149,7 @@ Deno.test(
       question_id: "dechets_1",
       reponse: false,
     };
-    await saveReponse(reponseAvantAudit);
+    await saveReponse({ json: reponseAvantAudit });
 
     // On attend le calcul des scores et on vérifie la désactivation de `eci_2.4.2`
     await delay(5000);
@@ -191,7 +191,7 @@ Deno.test(
       question_id: "dechets_1",
       reponse: true,
     };
-    await saveReponse(reponseApresAudit);
+    await saveReponse({ json: reponseApresAudit });
 
     await delay(5000);
     clientScores = await supabase
