@@ -1,0 +1,26 @@
+{
+  "kind": "collectionType",
+  "collectionName": "benefices",
+  "info": {
+    "singularName": "benefice",
+    "pluralName": "benefices",
+    "displayName": "Bénéfice",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Titre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100
+    },
+    "Corps": {
+      "type": "text",
+      "required": true,
+      "maxLength": 350
+    }
+  }
+}

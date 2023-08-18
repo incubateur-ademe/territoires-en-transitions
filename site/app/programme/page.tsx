@@ -1,15 +1,13 @@
 /* eslint-disable react/no-unescaped-entities */
-import ButtonWithLink from '@components/buttons/ButtonWithLink';
-import BlogCard from '@components/cards/BlogCard';
-import Card from '@components/cards/Card';
-import CardsWrapper from '@components/cards/CardsWrapper';
 import InfoSection from '@components/sections/InfoSection';
 import Section from '@components/sections/Section';
-import CardsSection from '@components/sections/CardsSection';
 import CodingPicto from 'public/pictogrammes/CodingPicto';
 import DocumentPicto from 'public/pictogrammes/DocumentPicto';
-import {benefits, resources, steps} from './data';
+import {resources} from './data';
 import Services from './Services';
+import Benefices from './Benefices';
+import Etapes from './Etapes';
+import Objectifs from './Objectifs';
 
 const Programme = () => {
   return (
@@ -30,68 +28,7 @@ const Programme = () => {
         />
       </Section>
 
-      <CardsSection
-        title="Pourquoi engager votre collectivité ?"
-        cardsList={
-          <CardsWrapper cols={5}>
-            <div className="flex flex-col items-center gap-8">
-              <div className="w-[140px] h-[140px] bg-white rounded-full flex items-center justify-center">
-                <picture>
-                  <img src="programme/attractif.png" alt="" />
-                </picture>
-              </div>
-              <p className="text-center">
-                Rendre votre territoire <strong>attractif</strong> et durable
-              </p>
-            </div>
-            <div className="flex flex-col items-center gap-8">
-              <div className="w-[140px] h-[140px] bg-white rounded-full flex items-center justify-center">
-                <picture>
-                  <img src="programme/sobriete.png" alt="" />
-                </picture>
-              </div>
-              <p className="text-center">
-                Viser la <strong>sobriété</strong> énergétique et
-                environnementale
-              </p>
-            </div>
-            <div className="flex flex-col items-center gap-8">
-              <div className="w-[140px] h-[140px] bg-white rounded-full flex items-center justify-center">
-                <picture>
-                  <img src="programme/sante.png" alt="" />
-                </picture>
-              </div>
-              <p className="text-center">
-                Améliorer le <strong>cadre de vie</strong> et la{' '}
-                <strong>santé</strong> de votre population
-              </p>
-            </div>
-            <div className="flex flex-col items-center gap-8">
-              <div className="w-[140px] h-[140px] bg-white rounded-full flex items-center justify-center">
-                <picture>
-                  <img src="programme/ressources.png" alt="" />
-                </picture>
-              </div>
-              <p className="text-center">
-                Assurer et préserver vos <strong>approvisionnements</strong> en
-                ressources et en énergie
-              </p>
-            </div>
-            <div className="flex flex-col items-center gap-8">
-              <div className="w-[140px] h-[140px] bg-white rounded-full flex items-center justify-center">
-                <picture>
-                  <img src="programme/resilience.png" alt="" />
-                </picture>
-              </div>
-              <p className="text-center">
-                Renforcer la <strong>résilience</strong> face aux changements
-                climatiques
-              </p>
-            </div>
-          </CardsWrapper>
-        }
-        customBackground="#fff6f0"
-      />
+      <Objectifs />
 
       <Services />
 
@@ -106,42 +43,9 @@ const Programme = () => {
         pictogram={<CodingPicto />}
       />
 
-      <CardsSection
-        title="Les bénéfices"
-        cardsList={
-          <CardsWrapper cols={2}>
-            {benefits.map(b => (
-              <Card
-                key={b.id}
-                title={b.title}
-                description={b.description}
-                className="border border-[#ddd]"
-              />
-            ))}
-          </CardsWrapper>
-        }
-      />
+      <Benefices />
 
-      <CardsSection
-        title="Les étapes"
-        cardsList={
-          <CardsWrapper cols={4}>
-            {steps.map((s, index) => (
-              <Card
-                key={s.id}
-                step={index + 1}
-                title={s.title}
-                description={s.description}
-                className="border border-black"
-              />
-            ))}
-          </CardsWrapper>
-        }
-      >
-        <ButtonWithLink href="/contact" className="mt-6">
-          Contactez-nous
-        </ButtonWithLink>
-      </CardsSection>
+      <Etapes />
 
       {/* <Section id="carte">
         <h3>De nombreuses collectivités ont déjà franchi le cap !</h3>

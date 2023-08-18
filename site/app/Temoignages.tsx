@@ -19,7 +19,7 @@ const Temoignages = () => {
     }[]
   >([]);
 
-  const fecthTemoignages = async () => {
+  const fetchTemoignages = async () => {
     const data = await fetchCollection('temoignages');
 
     const formattedData = data.map(d => ({
@@ -34,7 +34,7 @@ const Temoignages = () => {
   };
 
   useEffect(() => {
-    fecthTemoignages();
+    fetchTemoignages();
   }, []);
 
   return temoignages.length > 1 ? (
