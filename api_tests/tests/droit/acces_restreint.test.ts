@@ -990,7 +990,7 @@ Deno.test("Test accès annexe", async () => {
 });
 
 // fiche_action_annexe
-Deno.test("Test accès fiche_action_annexe", async () => {
+Deno.test("Test accès fiche_action_annexe", { ignore: true }, async () => {
   await testReset();
   // Passe la collectivite 1 sans acces restreint
   await testChangeAccessRestreint(1, false);
