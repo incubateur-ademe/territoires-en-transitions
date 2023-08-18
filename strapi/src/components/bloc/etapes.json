@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_bloc_etapes",
+  "info": {
+    "displayName": "Etapes"
+  },
+  "options": {},
+  "attributes": {
+    "Titre": {
+      "type": "string",
+      "default": "Les étapes",
+      "required": true,
+      "maxLength": 200
+    },
+    "Description": {
+      "type": "text"
+    }
+  }
+}

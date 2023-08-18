@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_bloc_services",
+  "info": {
+    "displayName": "Services"
+  },
+  "options": {},
+  "attributes": {
+    "Titre": {
+      "type": "string",
+      "default": "Des services complémentaires sur-mesure",
+      "required": true,
+      "maxLength": 200
+    },
+    "Description": {
+      "type": "text"
+    }
+  }
+}
