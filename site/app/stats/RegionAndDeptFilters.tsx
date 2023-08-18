@@ -4,7 +4,7 @@ import useSWR from 'swr';
 import {supabase} from '../initSupabase';
 import {useEffect, useRef, useState} from 'react';
 import {usePathname, useRouter} from 'next/navigation';
-import Select from '../Select';
+import Select from '../../components/inputs/Select';
 
 /**
  * Toutes les régions.
@@ -61,7 +61,7 @@ const RegionAndDeptFilters = ({onChange}: RegionAndDeptFiltersProps) => {
 
   const changeDepartmentName = () => {
     const newDepartment = departments?.find(
-      dept => dept.code === selectedDepartment
+      dept => dept.code === selectedDepartment,
     );
     onChange(newDepartment?.libelle ?? null);
   };

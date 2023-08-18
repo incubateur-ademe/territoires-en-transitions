@@ -1,31 +1,35 @@
 import QuoteIcon from 'public/icones/QuoteIcon';
 
-type TestimonyCardProps = {
+type TestimonialCardProps = {
   content: string;
   author: string;
   role?: string;
-  imageSrc?: string;
+  image?: React.ReactNode;
 };
 
 /**
  * Carte pour l'affichage d'un témoignage
  */
 
-const TestimonyCard = ({
+const TestimonialCard = ({
   content,
   author,
   role,
-  imageSrc,
-}: TestimonyCardProps) => {
+  image,
+}: TestimonialCardProps) => {
   return (
     <div className="flex flex-col lg:flex-row gap-8 items-center">
-      <picture>
-        <img
-          src={imageSrc ? imageSrc : 'placeholder.png'}
-          alt={`${author} - ${role}`}
-          className="w-[185px] h-[185px] object-cover rounded-full"
-        />
-      </picture>
+      {image ? (
+        <picture>{image}</picture>
+      ) : (
+        <picture>
+          <img
+            className="w-[185px] h-[185px] object-cover rounded-full"
+            src="placeholder.png"
+            alt=""
+          />
+        </picture>
+      )}
 
       <div className="lg:border-l px-8 lg:pr-0 lg:pl-8 max-w-[600px]">
         <QuoteIcon className="mb-6" />
@@ -39,4 +43,4 @@ const TestimonyCard = ({
   );
 };
 
-export default TestimonyCard;
+export default TestimonialCard;

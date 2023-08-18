@@ -22,18 +22,20 @@ const Slideshow = ({
 }: SlideshowProps) => {
   const [slideIndex, setSlideIndex] = useState(0);
 
-  useEffect(() => setSlideIndex(0), [slides.length]);
-
   useEffect(() => {
+    let interval: ReturnType<typeof setInterval>;
+
     if (autoSlide) {
-      setTimeout(() => {
-        handleChangeIndex(1);
+      interval = setInterval(() => {
+        handleChangeIndex('next');
       }, autoSlideDelay);
     }
+
+    return () => clearInterval(interval);
   }, [slideIndex]);
 
-  const handleChangeIndex = (increment: number) => {
-    const index = slideIndex + increment;
+  const handleChangeIndex = (increment: 'next' | 'previous') => {
+    const index = slideIndex + (increment === 'next' ? 1 : -1);
     if (index < 0) setSlideIndex(slides.length - 1);
     else if (index >= slides.length) setSlideIndex(0);
     else setSlideIndex(index);
@@ -48,19 +50,33 @@ const Slideshow = ({
     >
       {slides.length > 1 && (
         <button
-          className="fr-btn fr-icon-arrow-left-s-line rounded-md"
+          className="fr-btn fr-icon-arrow-left-s-line rounded-md min-w-[40px]"
           title="previous"
-          onClick={() => handleChangeIndex(-1)}
+          onClick={() => handleChangeIndex('previous')}
         />
       )}
 
-      <div className="mx-auto">{slides[slideIndex]}</div>
+      <div className="overflow-hidden">
+        <div
+          className="whitespace-nowrap"
+          style={{
+            transition: 'ease 1000ms',
+            transform: `translate3d(${-slideIndex * 100}%, 0, 0)`,
+          }}
+        >
+          {slides.map((slide, index) => (
+            <div key={index} className="inline-block whitespace-normal w-full">
+              <div className="flex justify-center">{slide}</div>
+            </div>
+          ))}
+        </div>
+      </div>
 
       {slides.length > 1 && (
         <button
-          className="fr-btn fr-icon-arrow-right-s-line rounded-md"
+          className="fr-btn fr-icon-arrow-right-s-line rounded-md min-w-[40px]"
           title="next"
-          onClick={() => handleChangeIndex(1)}
+          onClick={() => handleChangeIndex('next')}
         />
       )}
     </div>

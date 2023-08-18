@@ -2,16 +2,14 @@
 import ButtonWithLink from '@components/buttons/ButtonWithLink';
 import Card from '@components/cards/Card';
 import CardsWrapper from '@components/cards/CardsWrapper';
-import TestimonyCard from '@components/cards/TestimonyCard';
 import Section from '@components/sections/Section';
 import CardsSection from '@components/sections/CardsSection';
-import Slideshow from '@components/slideshow/Slideshow';
 import CalendarPicto from 'public/pictogrammes/CalendarPicto';
 import CommunityPicto from 'public/pictogrammes/CommunityPicto';
 import InformationPicto from 'public/pictogrammes/InformationPicto';
 import PictoWithBackground from 'public/pictogrammes/PictoWithBackground';
 import SearchInput from '@components/inputs/SearchInput';
-import {testimonies} from './data';
+import Temoignages from './Temoignages';
 
 export default function Accueil() {
   return (
@@ -79,26 +77,7 @@ export default function Accueil() {
         }
       />
 
-      {testimonies.length > 1 && (
-        <CardsSection
-          title="Rejoignez une communauté de collectivités engagées"
-          cardsList={
-            <Slideshow
-              className="my-6 xl:mx-auto xl:w-5/6"
-              autoSlide
-              slides={testimonies.map(t => (
-                <TestimonyCard
-                  key={t.id}
-                  content={t.content}
-                  author={t.author}
-                  role={t.role}
-                  imageSrc={t.image}
-                />
-              ))}
-            />
-          }
-        />
-      )}
+      <Temoignages />
 
       <CardsSection
         title="Vous souhaitez plus d’informations ?"

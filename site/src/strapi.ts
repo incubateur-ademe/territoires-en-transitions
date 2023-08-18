@@ -8,7 +8,7 @@ const headers = {
   Authorization: `Bearer ${apiKey}`,
 };
 
-type Collection = 'actualites' | 'faqs' | 'services';
+type Collection = 'actualites' | 'faqs' | 'services' | 'temoignages';
 
 export async function fetchCollection(
   path: Collection,
