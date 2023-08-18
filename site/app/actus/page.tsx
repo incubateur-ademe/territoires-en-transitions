@@ -42,6 +42,7 @@ function Actu(actu: StrapiItem) {
                     ] as unknown as StrapiItem
                   }
                   size="small"
+                  className="fr-responsive-img"
                 />
               </div>
             ) : null}
