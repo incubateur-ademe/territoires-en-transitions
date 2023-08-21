@@ -1557,8 +1557,8 @@
       "parent": "cae_3.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -1606,8 +1606,8 @@
       "parent": "cae_3.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -1913,8 +1913,8 @@
       "parent": null,
       "participation_score": false,
       "programmes": [
-        "pcaet",
         "cae",
+        "pcaet",
         "clef"
       ],
       "sans_valeur": false,
@@ -2005,8 +2005,8 @@
       "parent": "cae_2.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -2028,8 +2028,8 @@
       "parent": "cae_2.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -2051,8 +2051,8 @@
       "parent": "cae_2.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -2074,8 +2074,8 @@
       "parent": "cae_2.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -2097,8 +2097,8 @@
       "parent": "cae_2.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -2120,8 +2120,8 @@
       "parent": "cae_2.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -2143,8 +2143,8 @@
       "parent": "cae_2.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -2166,8 +2166,8 @@
       "parent": "emission_polluants_atmo",
       "participation_score": false,
       "programmes": [
-        "pcaet",
         "cae",
+        "pcaet",
         "clef"
       ],
       "sans_valeur": false,
@@ -2192,8 +2192,8 @@
       "parent": "emission_polluants_atmo",
       "participation_score": false,
       "programmes": [
-        "pcaet",
         "cae",
+        "pcaet",
         "clef"
       ],
       "sans_valeur": false,
@@ -2218,8 +2218,8 @@
       "parent": "emission_polluants_atmo",
       "participation_score": false,
       "programmes": [
-        "pcaet",
         "cae",
+        "pcaet",
         "clef"
       ],
       "sans_valeur": false,
@@ -2244,8 +2244,8 @@
       "parent": "emission_polluants_atmo",
       "participation_score": false,
       "programmes": [
-        "pcaet",
         "cae",
+        "pcaet",
         "clef"
       ],
       "sans_valeur": false,
@@ -2270,8 +2270,8 @@
       "parent": "emission_polluants_atmo",
       "participation_score": false,
       "programmes": [
-        "pcaet",
         "cae",
+        "pcaet",
         "clef"
       ],
       "sans_valeur": false,
@@ -2296,8 +2296,8 @@
       "parent": "emission_polluants_atmo",
       "participation_score": false,
       "programmes": [
-        "pcaet",
         "cae",
+        "pcaet",
         "clef"
       ],
       "sans_valeur": false,
@@ -2346,8 +2346,8 @@
       "parent": null,
       "participation_score": false,
       "programmes": [
-        "pcaet",
         "cae",
+        "pcaet",
         "clef"
       ],
       "sans_valeur": false,
@@ -3170,8 +3170,8 @@
       "parent": null,
       "participation_score": false,
       "programmes": [
-        "pcaet",
         "cae",
+        "pcaet",
         "clef"
       ],
       "sans_valeur": false,
@@ -3218,8 +3218,8 @@
       "parent": "cae_1.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -3241,8 +3241,8 @@
       "parent": "cae_1.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -3264,8 +3264,8 @@
       "parent": "cae_1.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -3287,8 +3287,8 @@
       "parent": "cae_1.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -3310,8 +3310,8 @@
       "parent": "cae_1.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -3333,8 +3333,8 @@
       "parent": "cae_1.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -3356,8 +3356,8 @@
       "parent": "cae_1.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -3379,8 +3379,8 @@
       "parent": "cae_1.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -4052,8 +4052,8 @@
       "parent": null,
       "participation_score": false,
       "programmes": [
-        "pcaet",
         "cae",
+        "pcaet",
         "clef"
       ],
       "sans_valeur": false,
@@ -4078,8 +4078,8 @@
       "parent": "cae_63.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -4101,8 +4101,8 @@
       "parent": "cae_63.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -4124,8 +4124,8 @@
       "parent": "cae_63.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -4453,8 +4453,8 @@
       "parent": null,
       "participation_score": false,
       "programmes": [
-        "clef",
-        "crte"
+        "crte",
+        "clef"
       ],
       "sans_valeur": true,
       "selection": true,
