@@ -1,4 +1,4 @@
-import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
+import { assertEquals } from "https://deno.land/std@0.163.0/testing/asserts.ts";
 import { delay } from "https://deno.land/std@0.163.0/async/delay.ts";
 import { supabase } from "../../lib/supabase.ts";
 import { signIn, signOut } from "../../lib/auth.ts";
