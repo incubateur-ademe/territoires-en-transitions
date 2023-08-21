@@ -66,6 +66,7 @@ LabellisableCOT.args = {
   parcoursLabellisation: {
     status: 'non_demandee',
     labellisable: true,
+    peutDemanderEtoile: true,
     isCOT: true,
     parcours: {
       etoiles: '1',
