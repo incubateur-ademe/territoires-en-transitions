@@ -4626,6 +4626,14 @@ export interface Database {
         }
         Returns: undefined
       }
+      deplacer_fiche_action_dans_un_axe: {
+        Args: {
+          fiche_id: number
+          old_axe_id: number
+          new_axe_id: number
+        }
+        Returns: undefined
+      }
       detach_data_node: {
         Args: {
           node_name: unknown
@@ -6471,28 +6479,28 @@ export interface Database {
             Args: {
               bucket_width: unknown
               ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
               origin: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
             }
             Returns: string
           }
@@ -6594,33 +6602,6 @@ export interface Database {
       time_bucket_gapfill:
         | {
             Args: {
-              bucket_width: number
-              ts: number
-              start?: number
-              finish?: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              start?: number
-              finish?: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              start?: number
-              finish?: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
               bucket_width: unknown
               ts: string
               start?: string
@@ -6636,6 +6617,33 @@ export interface Database {
               finish?: string
             }
             Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              start?: number
+              finish?: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              start?: number
+              finish?: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              start?: number
+              finish?: number
+            }
+            Returns: number
           }
         | {
             Args: {
