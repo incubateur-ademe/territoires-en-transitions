@@ -73,7 +73,11 @@ Fonctionnalité: Visualiser et éditer les indicateurs
 
     Quand je clique sur le 1er graphique
     Et que j'ajoute le résultat 123 pour l'année 2000
-    Et que j'ajoute le résultat 456 pour l'année 2001
+    Alors le tableau des résultats de l'indicateur contient :
+      | Année | Résultat | Commentaire |
+      | 2000  | 123      |             |
+
+    Quand j'ajoute le résultat 456 pour l'année 2001
     Alors le tableau des résultats de l'indicateur contient :
       | Année | Résultat | Commentaire |
       | 2001  | 456      |             |
