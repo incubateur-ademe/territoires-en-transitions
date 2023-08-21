@@ -440,3 +440,4 @@ indicateur/contenu_json [indicateur/contenu_json@v2.40.0] 2023-06-19T16:02:51Z F
 labellisation/comparaison_audit [labellisation/comparaison_audit@v2.48.0] 2023-08-09T14:44:20Z Florian <florian@derfurth.com> # Répare la payload de personnalisation
 evaluation/score_service [evaluation/score_service@v2.48.0] 2023-08-09T15:00:40Z Florian <florian@derfurth.com> # Répare la payload de personnalisation
 indicateur/tableau_de_bord [indicateur/tableau_de_bord@v2.48.0] 2023-08-10T08:47:15Z Florian <florian@derfurth.com> # Remplace les groupes par les programmes
+@v2.49.0 2023-08-21T11:13:31Z Florian <florian@derfurth.com> # Indicateurs v2
