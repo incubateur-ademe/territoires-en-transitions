@@ -8,7 +8,7 @@ Fonctionnalité: Ajouter un membre au profil de la collectivité
     Quand je suis sur la page "Gestion des membres" de la collectivité "1"
     Alors un formulaire d'invitation est affiché
 
-    Quand je renseigne l'email "nono@dodo.com" de la personne à inviter en "admin"
+    Quand je renseigne l'email "NoNo@dodo.com" de la personne à inviter en "admin"
     Et que je valide le formulaire
     Alors un message d'invitation est affiché
 
@@ -27,7 +27,7 @@ Fonctionnalité: Ajouter un membre au profil de la collectivité
     Quand je clique sur le bouton "Créer un compte" du "header"
     Et que je remplis le "formulaire de création de compte" avec les valeurs suivantes :
       | Champ  | Valeur        |
-      | email  | nono@dodo.com |
+      | email  | nOnO@DODO.com |
       | mdp    | Noo0000oo00!! |
       | prenom | Nono          |
       | nom    | Dodo          |
@@ -54,6 +54,20 @@ Fonctionnalité: Ajouter un membre au profil de la collectivité
     Quand je suis sur la page "Gestion des membres" de la collectivité "1"
     Alors le tableau des membres doit contenir l'utilisateur "nono@dodo.com"
 
+    Quand je me déconnecte
+    Et que je clique sur le bouton "Se connecter" du "header"
+    Et que je remplis le "formulaire de connexion" avec les valeurs suivantes :
+      | Champ | Valeur        |
+      | email | NONO@DODO.COM |
+      | mdp   | Noo0000oo00!! |
+    Et que je clique sur le bouton "Valider" du "formulaire de connexion"
+    Alors la page vérifie les conditions suivantes :
+      | Elément                               | Condition |
+      | header                                | visible   |
+      | home                                  | absent    |
+      | formulaire de connexion               | absent    |
+      | le tableau de bord de la collectivité | visible   |
+      | footer                                | présent   |
 
 
 
