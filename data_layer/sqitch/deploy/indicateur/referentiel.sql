@@ -97,6 +97,10 @@ alter table indicateur_resultat_commentaire
 alter table indicateur_resultat_commentaire
     drop constraint indicateur_commentaire_pkey;
 
+alter policy allow_insert on indicateur_resultat_commentaire with check (have_edition_acces(collectivite_id) or private.est_auditeur(collectivite_id));
+alter policy allow_update on indicateur_resultat_commentaire using (have_edition_acces(collectivite_id) or private.est_auditeur(collectivite_id));
+
+
 create view indicateurs_collectivite as
 select null                         as indicateur_id,
        ipd.id                       as indicateur_personnalise_id,
@@ -197,6 +201,10 @@ create table indicateur_objectif_commentaire
 select private.add_modified_at_trigger('public', 'indicateur_objectif_commentaire');
 select private.add_modified_by_trigger('public', 'indicateur_objectif_commentaire');
 
+create policy allow_read on indicateur_objectif_commentaire for select using (can_read_acces_restreint(collectivite_id));
+create policy allow_insert on indicateur_objectif_commentaire for insert with check (have_edition_acces(collectivite_id) or private.est_auditeur(collectivite_id));
+create policy allow_update on indicateur_objectif_commentaire for update using (have_edition_acces(collectivite_id) or private.est_auditeur(collectivite_id));
+
 
 create table indicateur_perso_objectif_commentaire
 (
@@ -211,6 +219,10 @@ create table indicateur_perso_objectif_commentaire
 
 select private.add_modified_at_trigger('public', 'indicateur_perso_objectif_commentaire');
 select private.add_modified_by_trigger('public', 'indicateur_perso_objectif_commentaire');
+create policy allow_read on indicateur_perso_objectif_commentaire for select using (can_read_acces_restreint(collectivite_id));
+create policy allow_insert on indicateur_perso_objectif_commentaire for insert with check (have_edition_acces(collectivite_id));
+create policy allow_update on indicateur_perso_objectif_commentaire for update using (have_edition_acces(collectivite_id));
+
 
 
 create table indicateur_perso_resultat_commentaire
@@ -226,6 +238,9 @@ create table indicateur_perso_resultat_commentaire
 
 select private.add_modified_at_trigger('public', 'indicateur_perso_resultat_commentaire');
 select private.add_modified_by_trigger('public', 'indicateur_perso_resultat_commentaire');
+create policy allow_read on indicateur_perso_resultat_commentaire for select using (can_read_acces_restreint(collectivite_id));
+create policy allow_insert on indicateur_perso_resultat_commentaire for insert with check (have_edition_acces(collectivite_id));
+create policy allow_update on indicateur_perso_resultat_commentaire for update using (have_edition_acces(collectivite_id));
 
 
 create type indicateur_valeur_type as enum ('resultat', 'objectif', 'import');
