@@ -1,22 +1,25 @@
 import {FicheAction} from '../data/types';
+import {useExportFicheAction} from '../data/useExportFicheAction';
 import Chemins from './Chemins';
 
-type TFicheActionHeader = {fiche: FicheAction};
+type TFicheActionHeader = {
+  fiche: FicheAction;
+  isReadonly?: boolean;
+};
 
-const FicheActionHeader = ({fiche}: TFicheActionHeader) => {
+const FicheActionHeader = ({fiche, isReadonly}: TFicheActionHeader) => {
+  const {mutate: exportFiche, isLoading} = useExportFicheAction(fiche.id);
   return (
-    <div className="">
-      <div className="py-6 flex justify-between">
-        <Chemins fiche={fiche} />
-        {/** Actions */}
-        {/* <div className="flex items-center gap-4">
-          <div className="border border-gray-300">
-            <button className="p-2">
-              <div className="fr-icon-quote-line" />
-            </button>
-          </div>
-        </div> */}
-      </div>
+    <div className="py-6 flex justify-between">
+      <Chemins fiche={fiche} />
+      {!isReadonly && (
+        <button
+          className="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-download-line"
+          disabled={isLoading}
+          title="Exporter cette fiche"
+          onClick={() => exportFiche('docx')}
+        />
+      )}
     </div>
   );
 };

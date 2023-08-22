@@ -24,8 +24,8 @@ export const FicheAction = ({fiche}: FicheActionProps) => {
         onUpdate={titre => updateFiche({...fiche, titre: titre})}
         isReadonly={collectivite?.readonly ?? false}
       />
-      <div className="mx-auto px-10">
-        <FicheActionHeader fiche={fiche} />
+      <div className="max-w-4xl mx-auto px-10">
+        <FicheActionHeader fiche={fiche} isReadonly={collectivite?.readonly} />
         <FicheActionForm
           fiche={fiche}
           isReadonly={collectivite?.readonly ?? false}

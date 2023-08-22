@@ -1,6 +1,7 @@
 import { TSupabaseClient } from '../_shared/getSupabaseClient.ts';
 import { TFicheActionExport, TFichier, TLien } from './types.ts';
 
+/** charge les données nécessaires à l'export du plan complet */
 export const fetchData = async (
   supabaseClient: TSupabaseClient,
   plan_id: number
@@ -73,10 +74,12 @@ const fetchAnnexesPlanAction = async (
 };
 
 // charge les libellés des actions données
-const fetchActionLabels = async (
+export const fetchActionLabels = async (
   supabaseClient: TSupabaseClient,
-  action_ids: string[]
+  action_ids?: string[]
 ) => {
+  if (!action_ids?.length) return {};
+
   const query = supabaseClient
     .from('action_definition')
     .select('action_id,referentiel, nom, identifiant')
@@ -89,9 +92,9 @@ const fetchActionLabels = async (
   }
 
   return Object.fromEntries(
-    data.map((d) => [
+    data?.map((d) => [
       d.action_id,
       `${d.referentiel} ${d.identifiant} - ${d.nom}`,
-    ])
+    ]) || []
   );
 };
