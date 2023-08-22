@@ -224,7 +224,7 @@ export const ActionStatusDropdown = ({
 
   return (
     <div
-      className="flex flex-col justify-between items-end h-full w-fit ml-auto"
+      className="flex flex-col justify-between items-end gap-2 h-full w-fit ml-auto"
       onClick={evt => evt.stopPropagation()}
     >
       {/* Dropdown avec suppression de l'option "non renseigné" sur les sous-actions 
