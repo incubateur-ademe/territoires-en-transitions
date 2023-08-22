@@ -4,17 +4,18 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 import {saveBlob} from 'ui/shared/preuves/Bibliotheque/saveBlob';
 
-export const useExportPlanAction = (planId: number) => {
+export const useExportFicheAction = (ficheId: number | null) => {
   const tracker = useFonctionTracker();
 
   return useMutation(
-    ['export_plan_action', planId],
+    ['export_fiche_action', ficheId],
     async (format: 'xlsx' | 'docx') => {
-      const titre = await fetchPlansActionsTitle(planId);
+      if (!ficheId) return;
+      const titre = await fetchFicheActionTitle(ficheId);
       const {data} = await supabaseClient.functions.invoke(
         'export_plan_action',
         {
-          body: {planId, format},
+          body: {ficheId, format},
         }
       );
 
@@ -26,7 +27,7 @@ export const useExportPlanAction = (planId: number) => {
         saveBlob(data, filename);
 
         tracker({
-          page: 'plan',
+          page: 'fiche',
           action: 'telechargement',
           fonction: `export_${format}`,
         });
@@ -41,17 +42,16 @@ export const useExportPlanAction = (planId: number) => {
   );
 };
 
-const fetchPlansActionsTitle = async (planId: number) => {
+const fetchFicheActionTitle = async (ficheId: number) => {
   const query = supabaseClient
-    .from('axe')
-    .select('nom')
-    .eq('id', planId)
-    .is('parent', null);
+    .from('fiche_action')
+    .select('titre')
+    .eq('id', ficheId);
 
   const {error, data} = await query;
   if (error) {
     throw new Error(error.message);
   }
 
-  return data?.[0]?.nom;
+  return data?.[0]?.titre;
 };

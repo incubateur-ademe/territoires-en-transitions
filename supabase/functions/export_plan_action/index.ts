@@ -6,6 +6,7 @@ import { corsHeaders } from '../_shared/cors.ts';
 import { getSupabaseClient } from '../_shared/getSupabaseClient.ts';
 import { exportXLSX } from './exportXLSX.ts';
 import { exportDOCX } from './exportDOCX.ts';
+import { exportDOCXFiche } from './exportDOCXFiche.ts';
 
 serve(async (req) => {
   // permet l'appel de la fonction depuis le navigateur
@@ -13,7 +14,7 @@ serve(async (req) => {
     return new Response('ok', { headers: corsHeaders });
   }
 
-  const { planId, format } = await req.json();
+  const { planId, ficheId, format } = await req.json();
 
   try {
     const supabaseClient = getSupabaseClient(req);
@@ -24,7 +25,11 @@ serve(async (req) => {
       data = await exportXLSX(supabaseClient, planId);
     }
     if (format === 'docx') {
-      data = await exportDOCX(supabaseClient, planId);
+      if (planId) {
+        data = await exportDOCX(supabaseClient, planId);
+      } else if (ficheId) {
+        data = await exportDOCXFiche(supabaseClient, ficheId);
+      }
     }
     if (!data) {
       throw Error('Export failed');
@@ -41,6 +46,7 @@ serve(async (req) => {
       },
     });
   } catch (error) {
+    console.error(error);
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...corsHeaders },
       status: 400,

@@ -29,7 +29,7 @@ export const exportDOCX = async (
   const data = await fetchData(supabaseClient, planId);
 
   // extrait la 1ère ligne (titre du plan)
-  const { plan } = data;
+  const { plan, actionLabels } = data;
   const ligne1 = plan.shift();
   if (!ligne1) {
     return;
@@ -43,13 +43,18 @@ export const exportDOCX = async (
     'yyyy-MM-dd'
   )}.docx`;
 
-  // transforme le plan en sections du document
-  const sections = exportPlan(title, data);
-
+  // transforme le plan en document
   const doc = new Document({
     externalStyles: styles,
     title,
-    sections,
+    sections: [
+      {
+        properties: { titlePage: true },
+        headers: getHeaders(title),
+        footers: getFooters(),
+        children: plan?.flatMap((fiche) => exportFiche(fiche, data)),
+      },
+    ],
   });
 
   // exporte le fichier modifié
@@ -60,24 +65,7 @@ export const exportDOCX = async (
   };
 };
 
-const exportPlan = (
-  title: string,
-  // données de l'export
-  data: TExportData
-) => {
-  const { plan, actionLabels } = data || {};
-
-  return [
-    {
-      properties: { titlePage: true },
-      headers: getHeaders(title),
-      footers: getFooters(),
-      children: plan?.flatMap((fiche) => exportFiche(fiche, data)),
-    },
-  ];
-};
-
-const getHeaders = (title: string) => {
+export const getHeaders = (title: string) => {
   const today = formatDate(new Date());
 
   return {
@@ -100,7 +88,7 @@ const getHeaders = (title: string) => {
   };
 };
 
-const getFooters = () => ({
+export const getFooters = () => ({
   default: new Footer({
     children: [
       new Paragraph({
@@ -111,19 +99,26 @@ const getFooters = () => ({
   }),
 });
 
-const exportFiche = (ficheAction: TFicheActionExport, data: TExportData) => {
+export const exportFiche = (
+  ficheAction: TFicheActionExport,
+  data: TExportData
+) => {
   const { axe_path, axe_nom, fiche: ficheObj } = ficheAction;
   const { fiche } = ficheObj || {};
   if (!fiche) return [];
 
   const { actionLabels, annexes } = data;
-  const path = [...axe_path.slice(1), axe_nom].join(' > ');
+  const path =
+    axe_path && axe_nom
+      ? [...axe_path.slice(1), axe_nom].join(' > ')
+      : undefined;
+
   return [
     new Paragraph({
       children: [new TextRun(fiche.titre)],
       style: 'Title',
     }),
-    NormalText(path),
+    path ? NormalText(path) : '',
 
     Heading1('Présentation'),
     Heading2('Description de l’action'),
