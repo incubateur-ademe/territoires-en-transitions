@@ -1096,6 +1096,7 @@ export interface Database {
           fiche_id: number
           indicateur_id: string | null
           indicateur_personnalise_id: number | null
+          fiche_resume: unknown | null
         }
         Insert: {
           fiche_id: number
@@ -1280,63 +1281,64 @@ export interface Database {
           modified_at?: string
         }
       }
-      indicateur_commentaire: {
-        Row: {
-          collectivite_id: number
-          commentaire: string
-          indicateur_id: string
-          modified_at: string
-          modified_by: string
-        }
-        Insert: {
-          collectivite_id: number
-          commentaire: string
-          indicateur_id: string
-          modified_at?: string
-          modified_by?: string
-        }
-        Update: {
-          collectivite_id?: number
-          commentaire?: string
-          indicateur_id?: string
-          modified_at?: string
-          modified_by?: string
-        }
-      }
       indicateur_definition: {
         Row: {
           description: string
           id: string
-          identifiant: string
-          indicateur_group: Database["public"]["Enums"]["indicateur_group"]
+          identifiant: string | null
           modified_at: string
           nom: string
-          obligation_eci: boolean
-          parent: number | null
+          parent: string | null
+          participation_score: boolean
+          programmes: Database["public"]["Enums"]["indicateur_programme"][]
+          sans_valeur: boolean
+          selection: boolean
+          source: string | null
+          thematiques: Database["public"]["Enums"]["indicateur_thematique"][]
+          titre_long: string
+          type:
+            | Database["public"]["Enums"]["indicateur_referentiel_type"]
+            | null
           unite: string
           valeur_indicateur: string | null
         }
         Insert: {
           description: string
           id: string
-          identifiant: string
-          indicateur_group: Database["public"]["Enums"]["indicateur_group"]
+          identifiant?: string | null
           modified_at?: string
           nom: string
-          obligation_eci: boolean
-          parent?: number | null
+          parent?: string | null
+          participation_score?: boolean
+          programmes?: Database["public"]["Enums"]["indicateur_programme"][]
+          sans_valeur?: boolean
+          selection?: boolean
+          source?: string | null
+          thematiques?: Database["public"]["Enums"]["indicateur_thematique"][]
+          titre_long?: string
+          type?:
+            | Database["public"]["Enums"]["indicateur_referentiel_type"]
+            | null
           unite: string
           valeur_indicateur?: string | null
         }
         Update: {
           description?: string
           id?: string
-          identifiant?: string
-          indicateur_group?: Database["public"]["Enums"]["indicateur_group"]
+          identifiant?: string | null
           modified_at?: string
           nom?: string
-          obligation_eci?: boolean
-          parent?: number | null
+          parent?: string | null
+          participation_score?: boolean
+          programmes?: Database["public"]["Enums"]["indicateur_programme"][]
+          sans_valeur?: boolean
+          selection?: boolean
+          source?: string | null
+          thematiques?: Database["public"]["Enums"]["indicateur_thematique"][]
+          titre_long?: string
+          type?:
+            | Database["public"]["Enums"]["indicateur_referentiel_type"]
+            | null
           unite?: string
           valeur_indicateur?: string | null
         }
@@ -1364,6 +1366,32 @@ export interface Database {
           valeur?: number | null
         }
       }
+      indicateur_objectif_commentaire: {
+        Row: {
+          annee: number
+          collectivite_id: number
+          commentaire: string
+          indicateur_id: string
+          modified_at: string
+          modified_by: string
+        }
+        Insert: {
+          annee: number
+          collectivite_id: number
+          commentaire: string
+          indicateur_id: string
+          modified_at: string
+          modified_by: string
+        }
+        Update: {
+          annee?: number
+          collectivite_id?: number
+          commentaire?: string
+          indicateur_id?: string
+          modified_at?: string
+          modified_by?: string
+        }
+      }
       indicateur_parent: {
         Row: {
           id: number
@@ -1379,6 +1407,58 @@ export interface Database {
           id?: number
           nom?: string
           numero?: string
+        }
+      }
+      indicateur_perso_objectif_commentaire: {
+        Row: {
+          annee: number
+          collectivite_id: number
+          commentaire: string
+          indicateur_id: number
+          modified_at: string
+          modified_by: string
+        }
+        Insert: {
+          annee: number
+          collectivite_id: number
+          commentaire: string
+          indicateur_id: number
+          modified_at: string
+          modified_by: string
+        }
+        Update: {
+          annee?: number
+          collectivite_id?: number
+          commentaire?: string
+          indicateur_id?: number
+          modified_at?: string
+          modified_by?: string
+        }
+      }
+      indicateur_perso_resultat_commentaire: {
+        Row: {
+          annee: number
+          collectivite_id: number
+          commentaire: string
+          indicateur_id: number
+          modified_at: string
+          modified_by: string
+        }
+        Insert: {
+          annee: number
+          collectivite_id: number
+          commentaire: string
+          indicateur_id: number
+          modified_at: string
+          modified_by: string
+        }
+        Update: {
+          annee?: number
+          collectivite_id?: number
+          commentaire?: string
+          indicateur_id?: number
+          modified_at?: string
+          modified_by?: string
         }
       }
       indicateur_personnalise_definition: {
@@ -1482,6 +1562,58 @@ export interface Database {
           valeur?: number | null
         }
       }
+      indicateur_resultat_commentaire: {
+        Row: {
+          annee: number | null
+          collectivite_id: number
+          commentaire: string
+          indicateur_id: string
+          modified_at: string
+          modified_by: string
+        }
+        Insert: {
+          annee?: number | null
+          collectivite_id: number
+          commentaire: string
+          indicateur_id: string
+          modified_at?: string
+          modified_by?: string
+        }
+        Update: {
+          annee?: number | null
+          collectivite_id?: number
+          commentaire?: string
+          indicateur_id?: string
+          modified_at?: string
+          modified_by?: string
+        }
+      }
+      indicateur_resultat_import: {
+        Row: {
+          annee: number
+          collectivite_id: number
+          indicateur_id: string
+          modified_at: string
+          source: string
+          valeur: number
+        }
+        Insert: {
+          annee: number
+          collectivite_id: number
+          indicateur_id: string
+          modified_at: string
+          source: string
+          valeur: number
+        }
+        Update: {
+          annee?: number
+          collectivite_id?: number
+          indicateur_id?: string
+          modified_at?: string
+          source?: string
+          valeur?: number
+        }
+      }
       indicateur_terristory_json: {
         Row: {
           created_at: string
@@ -1494,6 +1626,20 @@ export interface Database {
         Update: {
           created_at?: string
           indicateurs?: Json
+        }
+      }
+      indicateur_thematique_nom: {
+        Row: {
+          id: Database["public"]["Enums"]["indicateur_thematique"]
+          nom: string
+        }
+        Insert: {
+          id: Database["public"]["Enums"]["indicateur_thematique"]
+          nom: string
+        }
+        Update: {
+          id?: Database["public"]["Enums"]["indicateur_thematique"]
+          nom?: string
         }
       }
       indicateurs_json: {
@@ -2985,14 +3131,34 @@ export interface Database {
           modified_by_nom: string | null
         }
       }
+      indicateur_rempli: {
+        Row: {
+          collectivite_id: number | null
+          indicateur_id: string | null
+          perso_id: number | null
+          rempli: boolean | null
+        }
+      }
       indicateur_summary: {
         Row: {
           collectivite_id: number | null
-          indicateur_group:
-            | Database["public"]["Enums"]["indicateur_group"]
-            | null
           indicateur_id: string | null
+          programmes:
+            | Database["public"]["Enums"]["indicateur_programme"][]
+            | null
           resultats: number | null
+        }
+      }
+      indicateurs: {
+        Row: {
+          annee: number | null
+          collectivite_id: number | null
+          commentaire: string | null
+          indicateur_id: string | null
+          indicateur_perso_id: number | null
+          source: string | null
+          type: Database["public"]["Enums"]["indicateur_valeur_type"] | null
+          valeur: number | null
         }
       }
       indicateurs_collectivite: {
@@ -3002,6 +3168,9 @@ export interface Database {
           indicateur_id: string | null
           indicateur_personnalise_id: number | null
           nom: string | null
+          programmes:
+            | Database["public"]["Enums"]["indicateur_programme"][]
+            | null
           unite: string | null
         }
       }
@@ -3305,167 +3474,6 @@ export interface Database {
           "Pourcentage réalisé": number | null
           referentiel: Database["public"]["Enums"]["referentiel"] | null
           Titre: string | null
-        }
-      }
-      retool_stats_usages: {
-        Row: {
-          admin_champs_intervention_1:
-            | Database["public"]["Enums"]["referentiel"][]
-            | null
-          admin_champs_intervention_10:
-            | Database["public"]["Enums"]["referentiel"][]
-            | null
-          admin_champs_intervention_2:
-            | Database["public"]["Enums"]["referentiel"][]
-            | null
-          admin_champs_intervention_3:
-            | Database["public"]["Enums"]["referentiel"][]
-            | null
-          admin_champs_intervention_4:
-            | Database["public"]["Enums"]["referentiel"][]
-            | null
-          admin_champs_intervention_5:
-            | Database["public"]["Enums"]["referentiel"][]
-            | null
-          admin_champs_intervention_6:
-            | Database["public"]["Enums"]["referentiel"][]
-            | null
-          admin_champs_intervention_7:
-            | Database["public"]["Enums"]["referentiel"][]
-            | null
-          admin_champs_intervention_8:
-            | Database["public"]["Enums"]["referentiel"][]
-            | null
-          admin_champs_intervention_9:
-            | Database["public"]["Enums"]["referentiel"][]
-            | null
-          admin_derniere_connexion_1: string | null
-          admin_derniere_connexion_10: string | null
-          admin_derniere_connexion_2: string | null
-          admin_derniere_connexion_3: string | null
-          admin_derniere_connexion_4: string | null
-          admin_derniere_connexion_5: string | null
-          admin_derniere_connexion_6: string | null
-          admin_derniere_connexion_7: string | null
-          admin_derniere_connexion_8: string | null
-          admin_derniere_connexion_9: string | null
-          admin_detail_fonction_1: string | null
-          admin_detail_fonction_10: string | null
-          admin_detail_fonction_2: string | null
-          admin_detail_fonction_3: string | null
-          admin_detail_fonction_4: string | null
-          admin_detail_fonction_5: string | null
-          admin_detail_fonction_6: string | null
-          admin_detail_fonction_7: string | null
-          admin_detail_fonction_8: string | null
-          admin_detail_fonction_9: string | null
-          admin_email_1: string | null
-          admin_email_10: string | null
-          admin_email_2: string | null
-          admin_email_3: string | null
-          admin_email_4: string | null
-          admin_email_5: string | null
-          admin_email_6: string | null
-          admin_email_7: string | null
-          admin_email_8: string | null
-          admin_email_9: string | null
-          admin_fonction_1:
-            | Database["public"]["Enums"]["membre_fonction"]
-            | null
-          admin_fonction_10:
-            | Database["public"]["Enums"]["membre_fonction"]
-            | null
-          admin_fonction_2:
-            | Database["public"]["Enums"]["membre_fonction"]
-            | null
-          admin_fonction_3:
-            | Database["public"]["Enums"]["membre_fonction"]
-            | null
-          admin_fonction_4:
-            | Database["public"]["Enums"]["membre_fonction"]
-            | null
-          admin_fonction_5:
-            | Database["public"]["Enums"]["membre_fonction"]
-            | null
-          admin_fonction_6:
-            | Database["public"]["Enums"]["membre_fonction"]
-            | null
-          admin_fonction_7:
-            | Database["public"]["Enums"]["membre_fonction"]
-            | null
-          admin_fonction_8:
-            | Database["public"]["Enums"]["membre_fonction"]
-            | null
-          admin_fonction_9:
-            | Database["public"]["Enums"]["membre_fonction"]
-            | null
-          admin_nom_1: string | null
-          admin_nom_10: string | null
-          admin_nom_2: string | null
-          admin_nom_3: string | null
-          admin_nom_4: string | null
-          admin_nom_5: string | null
-          admin_nom_6: string | null
-          admin_nom_7: string | null
-          admin_nom_8: string | null
-          admin_nom_9: string | null
-          admin_prenom_1: string | null
-          admin_prenom_10: string | null
-          admin_prenom_2: string | null
-          admin_prenom_3: string | null
-          admin_prenom_4: string | null
-          admin_prenom_5: string | null
-          admin_prenom_6: string | null
-          admin_prenom_7: string | null
-          admin_prenom_8: string | null
-          admin_prenom_9: string | null
-          admin_telephone_1: string | null
-          admin_telephone_10: string | null
-          admin_telephone_2: string | null
-          admin_telephone_3: string | null
-          admin_telephone_4: string | null
-          admin_telephone_5: string | null
-          admin_telephone_6: string | null
-          admin_telephone_7: string | null
-          admin_telephone_8: string | null
-          admin_telephone_9: string | null
-          code_siren_insee: string | null
-          collectivite_id: number | null
-          completude_cae: number | null
-          completude_eci: number | null
-          cot: boolean | null
-          date_activation: string | null
-          departement_code: string | null
-          departement_name: string | null
-          nature_collectivite: Database["public"]["Enums"]["nature"] | null
-          nb_admin: number | null
-          nb_ecriture: number | null
-          nb_fiches: number | null
-          nb_indicateurs: number | null
-          nb_indicateurs_cae: number | null
-          nb_indicateurs_eci: number | null
-          nb_indicateurs_personnalises: number | null
-          nb_lecture: number | null
-          nb_plans: number | null
-          nb_users_actifs: number | null
-          nb_valeurs_indicateurs: number | null
-          niveau_label_cae: number | null
-          niveau_label_eci: number | null
-          nom: string | null
-          population_totale: number | null
-          programme_courant_cae: number | null
-          programme_courant_eci: number | null
-          programme_label_cae: number | null
-          programme_label_eci: number | null
-          realise_courant_cae: number | null
-          realise_courant_eci: number | null
-          realise_label_cae: number | null
-          realise_label_eci: number | null
-          region_code: string | null
-          region_name: string | null
-          type_collectivite:
-            | Database["public"]["Enums"]["filterable_type_collectivite"]
-            | null
         }
       }
       retool_user_collectivites_list: {
@@ -4461,7 +4469,6 @@ export interface Database {
       col_is_null:
         | {
             Args: {
-              schema_name: unknown
               table_name: unknown
               column_name: unknown
               description?: string
@@ -4470,6 +4477,7 @@ export interface Database {
           }
         | {
             Args: {
+              schema_name: unknown
               table_name: unknown
               column_name: unknown
               description?: string
@@ -4496,13 +4504,13 @@ export interface Database {
           }
       collect_tap:
         | {
-            Args: Record<PropertyKey, never>
-            Returns: string
-          }
-        | {
             Args: {
               "": string[]
             }
+            Returns: string
+          }
+        | {
+            Args: Record<PropertyKey, never>
             Returns: string
           }
       collectivite_membres: {
@@ -4810,20 +4818,35 @@ export interface Database {
             Args: Record<PropertyKey, never>
             Returns: string
           }
-      fiche_resume: {
-        Args: {
-          "": unknown
-        }
-        Returns: {
-          collectivite_id: number | null
-          id: number | null
-          modified_at: string | null
-          pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
-          plans: unknown[] | null
-          statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
-          titre: string | null
-        }[]
-      }
+      fiche_resume:
+        | {
+            Args: {
+              "": unknown
+            }
+            Returns: {
+              collectivite_id: number | null
+              id: number | null
+              modified_at: string | null
+              pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
+              plans: unknown[] | null
+              statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
+              titre: string | null
+            }[]
+          }
+        | {
+            Args: {
+              "": unknown
+            }
+            Returns: {
+              collectivite_id: number | null
+              id: number | null
+              modified_at: string | null
+              pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
+              plans: unknown[] | null
+              statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
+              titre: string | null
+            }[]
+          }
       filter_fiches_action: {
         Args: {
           collectivite_id: number
@@ -6410,6 +6433,10 @@ export interface Database {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      test_reset_indicateurs: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       test_reset_membres: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -6864,6 +6891,21 @@ export interface Database {
         | "EPT"
         | "PETR"
       indicateur_group: "cae" | "crte" | "eci"
+      indicateur_programme: "clef" | "eci" | "cae" | "pcaet" | "crte"
+      indicateur_referentiel_type: "resultat" | "impact"
+      indicateur_thematique:
+        | "eci_dechets"
+        | "energie_et_climat"
+        | "indicateur_thematique"
+        | "agri_alim"
+        | "urbanisme_et_amenagement"
+        | "mobilite_et_transport"
+        | "nature_environnement_air"
+        | "eau_assainissement"
+        | "strategie_orga_interne"
+        | "activites_economiques"
+        | "solidarite_lien_social"
+      indicateur_valeur_type: "resultat" | "objectif" | "import"
       membre_fonction:
         | "referent"
         | "conseiller"

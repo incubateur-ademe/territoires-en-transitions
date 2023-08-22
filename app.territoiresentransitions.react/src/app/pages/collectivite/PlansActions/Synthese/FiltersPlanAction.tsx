@@ -88,7 +88,6 @@ const FiltersPlanAction = ({
     filters.length > 2 ? (
       <TagFilters
         defaultOption={initialPlan}
-        name="plans_actions"
         options={filters}
         onChange={value => onChangePlan(generatePlan(value))}
       />

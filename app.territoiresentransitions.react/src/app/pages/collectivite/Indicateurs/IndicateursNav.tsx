@@ -1,28 +1,42 @@
+import {Link} from 'react-router-dom';
 import {
   IndicateurViewParamOption,
   makeCollectiviteIndicateursUrl,
 } from 'app/paths';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import SideNav, {SideNavLinks} from 'ui/shared/SideNav';
-import {IndicateurPersonnaliseCreationDialog} from './IndicateurPersonnaliseCreationDialog';
 import {referentielToName} from 'app/labels';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import SideNav, {SideNavLinks} from 'ui/shared/SideNav';
 
 /**
  * Affiche la navigation latérales vers les pages Indicateurs
  */
 export const IndicateursNav = () => {
-  const collectivite_id = useCollectiviteId();
-  return collectivite_id ? (
+  const collectivite = useCurrentCollectivite();
+  const collectiviteId = collectivite?.collectivite_id;
+  return collectiviteId ? (
     <div>
-      <SideNav links={generateLinks(collectivite_id)} />
-      <IndicateurPersonnaliseCreationDialog />
+      <SideNav links={generateLinks(collectiviteId)} />
+      {!collectivite.readonly && (
+        <Link
+          data-test="create-perso"
+          className="fr-btn fr-btn--tertiary fr-ml-4w"
+          to={makeCollectiviteIndicateursUrl({
+            collectiviteId,
+            indicateurView: 'perso',
+            indicateurId: 'nouveau',
+          })}
+        >
+          Créer un indicateur
+        </Link>
+      )}
     </div>
   ) : null;
 };
 
 // correspondances entre item et libellé
-const LABELS: Record<IndicateurViewParamOption, string> = {
-  //  cle: 'Indicateurs-clé',
+export const VIEW_TITLES: Record<IndicateurViewParamOption, string> = {
+  selection: 'Indicateurs prioritaires',
+  cles: 'Indicateurs clés',
   //  tous: 'Tous les indicateurs',
   perso: 'Indicateurs personnalisés',
   cae: `Indicateurs ${referentielToName.cae}`,
@@ -31,12 +45,19 @@ const LABELS: Record<IndicateurViewParamOption, string> = {
 };
 
 // items dans l'ordre de l'affichage voulu
-const ITEMS: IndicateurViewParamOption[] = ['perso', 'cae', 'eci', 'crte'];
+const ITEMS: IndicateurViewParamOption[] = [
+  'cles',
+  'selection',
+  'perso',
+  'cae',
+  'eci',
+  'crte',
+];
 
 // génère les liens à afficher dans la navigation latérale
 const generateLinks = (collectiviteId: number): SideNavLinks => {
   return ITEMS.map(indicateurView => ({
-    displayName: LABELS[indicateurView],
+    displayName: VIEW_TITLES[indicateurView],
     link: makeCollectiviteIndicateursUrl({collectiviteId, indicateurView}),
   }));
 };

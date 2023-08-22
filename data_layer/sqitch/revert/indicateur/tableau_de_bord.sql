@@ -1,4 +1,4 @@
--- Revert tet:indicateur/tableau_de_bord from pg
+-- Deploy tet:indicateur/tableau_de_bord to pg
 
 BEGIN;
 

@@ -1,8 +1,17 @@
-# Production annuelle d’ENR du territoire hors hydroélectrique (MWh / an)
+# Production annuelle d’ENR du territoire hors hydroélectrique
 ```yaml
 id: crte_3.1
 identifiant: 3.1
 unite: MWh
+
+titre_long: Production annuelle d’énergies renouvelables du territoire hors hydroélectrique
+parent: cae_3.a
+programmes:
+  - crte
+climat_pratic_ids:
+  - strategie
+thematiques:
+  - energie_et_climat
 ```
 ## Description
 
@@ -37,11 +46,20 @@ La production annuelle d’énergie hydroélectrique sur le territoire est compt
 - Production de chaleur renouvelable : 196 TWh en 2023 ; 218 à 247 TWh en 2028
 - Capacités de production d’électricité renouvelables installées: 73,5 GW en 2023, soit + 50 % par rapport à 2017 ; 101 à 113 GW en 2028, soit x2 par rapport à 2017
 
-# Production annuelle d’énergie hydroélectrique du territoire (MWh / an)
+# Production annuelle d’énergie hydroélectrique du territoire 
 ```yaml
 id: crte_3.2
 identifiant: 3.2
 unite: MWh
+
+titre_long: Production annuelle d’énergies hydroélectrique
+parent: cae_3.a
+programmes:
+  - crte
+climat_pratic_ids:
+  - strategie
+thematiques:
+  - energie_et_climat
 ```
 ## Description
 

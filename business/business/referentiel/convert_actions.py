@@ -50,12 +50,12 @@ class MarkdownActionTree(MarkdownAction):
     actions: List[MarkdownActionTree] = []
 
     def is_ancestor_of(
-        self,
-        child: MarkdownActionTree,
+            self,
+            child: MarkdownActionTree,
     ) -> bool:
         return (
-            child.identifiant.startswith(self.identifiant)
-            and self.identifiant != child.identifiant
+                child.identifiant.startswith(self.identifiant)
+                and self.identifiant != child.identifiant
         )
 
     def is_parent_of(self, child: MarkdownActionTree) -> bool:
@@ -69,11 +69,16 @@ class MarkdownActionTree(MarkdownAction):
         return len(self.identifiant.split("."))
 
 
-MarkdownActionTree.update_forward_refs()
+def convert_identifiant(action: dict):
+    """Convertit les identifiants de l'action et de ses enfants en chaine de caractères"""
+    action['identifiant'] = str(action['identifiant'])
+    if action['actions']:
+        for a in action['actions']:
+            convert_identifiant(a)
 
 
 def parse_markdown_action_trees_from_folder(
-    folder_path: str,
+        folder_path: str,
 ) -> tuple[list[MarkdownActionTree], list[str]]:
     md_files = glob(os.path.join(folder_path, "*.md"))
     print(
@@ -85,6 +90,7 @@ def parse_markdown_action_trees_from_folder(
         actions_as_dict = build_actions_as_dict_from_md(md_file)
         for action_as_dict in actions_as_dict:
             try:
+                convert_identifiant(action_as_dict)
                 action_node = MarkdownActionTree(**action_as_dict)
                 action_nodes.append(action_node)
             except ValidationError as validation_error:
@@ -93,7 +99,7 @@ def parse_markdown_action_trees_from_folder(
 
 
 def compute_definitions_and_childrens(
-    markdown_action_tree: MarkdownActionTree,
+        markdown_action_tree: MarkdownActionTree,
 ) -> tuple[list[ActionDefinition], list[ActionChildren]]:
     referentiel = markdown_action_tree.referentiel
     if not referentiel:
@@ -190,7 +196,7 @@ def build_actions_as_dict_from_md(path: str) -> List[dict]:
 
 
 def _find_parent_within_tree(
-    child: MarkdownActionTree, tree: MarkdownActionTree
+        child: MarkdownActionTree, tree: MarkdownActionTree
 ) -> Optional[MarkdownActionTree]:
     if not tree.is_ancestor_of(child):
         return
@@ -206,7 +212,7 @@ def _find_parent_within_tree(
 
 
 def referentiel_from_actions(
-    actions: List[MarkdownActionTree],
+        actions: List[MarkdownActionTree],
 ) -> MarkdownActionTree:
     """Nest actions into a root referentiel action.
     This function is tightly coupled with the way markdowns are organized in each referentiels directories
@@ -260,8 +266,8 @@ def referentiel_from_actions(
 # Functions used to compute children, definitions and points from a MarkdownActionNode.
 # -------------------------------------------------------------------------------------
 def _check_all_children_points_sum_to_parent_points(
-    points_by_action_id: Dict[ActionId, float],
-    children_entities: Dict[ActionId, ActionChildren],
+        points_by_action_id: Dict[ActionId, float],
+        children_entities: Dict[ActionId, ActionChildren],
 ):
     for children_entity in children_entities.values():
         children_ids = children_entity.children
@@ -277,7 +283,7 @@ def _check_all_children_points_sum_to_parent_points(
 
 
 def _check_all_action_points_have_been_infered(
-    action_tree: ActionTree, points_by_identifiant: Dict[ActionId, float]
+        action_tree: ActionTree, points_by_identifiant: Dict[ActionId, float]
 ):
     for action_id in action_tree.forward_ids:
         point_value = points_by_identifiant.get(action_id, math.nan)
@@ -288,9 +294,9 @@ def _check_all_action_points_have_been_infered(
 
 
 def _infer_computed_points_by_id_from_md_points_and_pourcentages(
-    action_tree: ActionTree,
-    md_points_by_id: Dict[ActionId, float],
-    md_pourcentages_by_id: Dict[ActionId, float],
+        action_tree: ActionTree,
+        md_points_by_id: Dict[ActionId, float],
+        md_pourcentages_by_id: Dict[ActionId, float],
 ) -> Dict[ActionId, float]:
     """Infer points of all actions given definitions
 
@@ -354,19 +360,19 @@ def _infer_computed_points_by_id_from_md_points_and_pourcentages(
                         child_points = 0.0
                     else:
                         child_points = action_points / (
-                            len(children_ids) - len(child_ids_with_percentage_0)
+                                len(children_ids) - len(child_ids_with_percentage_0)
                         )
                 else:
                     child_points = (
-                        md_pourcentages_by_id.get(child_id, 0.0) / 100
-                    ) * action_points
+                                           md_pourcentages_by_id.get(child_id, 0.0) / 100
+                                   ) * action_points
                     # if some pourcentage amongst siblings are specified, then those that are not have a pourcentage of 0.
                 points_by_id[child_id] = child_points
     return points_by_id
 
 
 def _infer_markdown_actions_by_id_from_tree(
-    md_action_tree: MarkdownActionTree, referentiel: ActionReferentiel
+        md_action_tree: MarkdownActionTree, referentiel: ActionReferentiel
 ) -> Dict[ActionId, MarkdownAction]:
     """Convert a MarkdownActionNode to a list of ActionDefinition"""
     action_definition_entities: Dict[ActionId, MarkdownAction] = {}
@@ -400,7 +406,7 @@ def _infer_markdown_actions_by_id_from_tree(
 
 
 def _infer_children_by_id_from_markdown_root_node(
-    root_node: MarkdownActionTree, referentiel: ActionReferentiel
+        root_node: MarkdownActionTree, referentiel: ActionReferentiel
 ) -> Dict[ActionId, ActionChildren]:
     """Convert a MarkdownActionNode to a list of ActionDefinition"""
     action_children_entities: Dict[ActionId, ActionChildren] = {}

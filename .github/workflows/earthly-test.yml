@@ -28,5 +28,10 @@ jobs:
       - run: earthly +setup-env
       - run: earthly +dev
       - run: docker restart supabase_rest_tet
-      - run: earthly +test
+      - run: earthly +curl-test
+      - run: earthly +db-test
+      - run: earthly +business-test
+      - run: earthly +api-test --tests 'base droit evaluation historique labellisation plan_action utilisateur'
+      - run: earthly +deploy-test
+      - run: earthly +client-test
 

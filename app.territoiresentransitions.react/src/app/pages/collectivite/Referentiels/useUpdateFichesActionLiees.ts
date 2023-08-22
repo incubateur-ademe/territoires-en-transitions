@@ -1,4 +1,5 @@
 import {useMutation, useQueryClient} from 'react-query';
+import {diff} from 'utils/diff';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {FicheResume} from '../PlansActions/FicheAction/data/types';
 import {useCollectiviteId} from 'core-logic/hooks/params';
@@ -23,8 +24,7 @@ export const useUpdateFichesActionLiees = (action_id: string) => {
       const current_ids = fiches.map(f => f.id);
       const new_ids = fiches_liees.map(f => f.id);
       // extrait les ids des fiches à ajouter ou supprimer
-      const idsToDelete = diff(current_ids, new_ids);
-      const idsToAdd = diff(new_ids, current_ids);
+      const [idsToDelete, idsToAdd] = diff(current_ids, new_ids);
 
       // supprime les anciennes entrées
       if (idsToDelete.length) {
@@ -51,6 +51,3 @@ export const useUpdateFichesActionLiees = (action_id: string) => {
     }
   );
 };
-
-const diff = <T>(array1: T[], array2: T[]) =>
-  array1.filter(v => !array2.includes(v));

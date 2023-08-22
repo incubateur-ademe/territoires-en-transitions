@@ -35,7 +35,6 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
     isCOT,
     peutDemanderEtoile,
     peutCommencerAudit,
-    labellisable,
   } = parcoursLabellisation;
   const {data: auditeurs} = useAuditeurs();
 
@@ -49,7 +48,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
   );
   const {collectivite_id, referentiel, etoiles, audit, completude_ok} =
     parcours;
-  const canSubmitDemande = labellisable || (isCOT && completude_ok);
+  const canSubmitDemande = peutDemanderEtoile || (isCOT && completude_ok);
   const DemandeModal = isCOT ? DemandeAuditModal : DemandeLabellisationModal;
 
   return (
@@ -71,7 +70,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
           <button
             className="fr-btn self-start"
             data-test="SubmitDemandeBtn"
-            disabled={!peutDemanderEtoile}
+            disabled={!canSubmitDemande}
             onClick={() => setOpened(true)}
           >
             {etoiles === '1' && !isCOT

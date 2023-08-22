@@ -3,33 +3,48 @@ import os
 from dataclasses import asdict, dataclass
 from glob import glob
 from pathlib import Path
-from typing import Any, List, Literal, Optional, Tuple
+from typing import Any, List, Literal, Optional, Tuple, Union
 
 import marshmallow_dataclass
 from business.utils.find_duplicates import find_duplicates
 from business.utils.markdown_import.markdown_parser import build_markdown_parser
 from business.utils.markdown_import.markdown_utils import load_md
-from business.utils.models.actions import ActionId
 from marshmallow import ValidationError
 from business.utils.exceptions import MarkdownError
+
+Programme = Literal["eci", "cae", "crte", "pcaet", "clef"]
+Type = Literal["impact", "resultat"]
 
 
 @dataclass
 class MarkdownIndicateur:
-    """Indicateur as defined in markdown files"""
-
-    id: str
-    identifiant: Any  # str
-    valeur: Optional[str]
+    """Indicateur défini en markdown et yaml"""
     nom: str
+    "Titre en markdown"
+
+    # Valeurs obligatoires de la partie yaml :
+    id: str
     unite: str
-    description: str
+
+    # Valeurs optionnelles de la partie yaml :
+    identifiant: Optional[Any]
+    titre_long: Optional[str]
     obligation_cae: Optional[bool]
-    actions: Optional[List[str]]
-    programmes: Optional[List[str]]
-    climat_pratic_ids: Optional[List[str]]
-    source: Optional[str]
     obligation_eci: Optional[bool]
+    valeur: Optional[str]
+    actions: Optional[List[str]]
+    programmes: Optional[List[Programme]]
+    climat_pratic_ids: Optional[List[str]]
+    participation_score: Optional[Union[List[str], bool]]
+    source: Optional[str]
+    thematiques: Optional[List[str]]
+    fnv: Optional[List[str]]
+    parent: Optional[str]
+    type: Optional[str]
+    sans_valeur: Optional[bool] = False
+    selection: bool = False
+    description: str = ''
+    "Partie description en markdown"
 
 
 IndicateurGroup = Literal["eci", "cae", "crte"]
@@ -37,30 +52,34 @@ IndicateurGroup = Literal["eci", "cae", "crte"]
 
 @dataclass
 class Indicateur:
-    """Indicateur as saved to JSON"""
-
-    indicateur_id: str
-    identifiant: str
-    indicateur_group: IndicateurGroup
+    """Indicateur en JSON"""
+    id: str
     nom: str
     unite: str
-    action_ids: List[ActionId]
     description: str
+    participation_score: bool
+    titre_long: str
+    thematiques: List[str]
+    programmes: List[str]
+    action_ids: List[str]
+    identifiant: Optional[str] = None
     valeur_indicateur: Optional[str] = None
-    obligation_eci: bool = False
+    parent: Optional[str] = None
+    source: Optional[str] = None
+    type: Optional[str] = None
+    selection: Optional[bool] = False
+    sans_valeur: Optional[bool] = False
 
 
-def parse_markdown_indicateurs_from_folder(
-        folder_path: str,
+def parse_indicateurs(
+        path: str,
 ) -> Tuple[List[MarkdownIndicateur], List[str]]:
-    """Extract a list of indicateurs from a markdown document"""
-    markdown_indicateur_schema = marshmallow_dataclass.class_schema(
-        MarkdownIndicateur
-    )()
+    """Extract a list of indicateurs from a Markdown document"""
+    markdown_schema = marshmallow_dataclass.class_schema(MarkdownIndicateur)()
 
-    md_files = glob(os.path.join(folder_path, "*.md"))
+    md_files = glob(os.path.join(path, "*.md"))
     print(
-        f"Lecture de {len(md_files)} fichiers indicateurs depuis le dossier {folder_path} :) "
+        f"Lecture de {len(md_files)} fichiers indicateurs depuis le dossier {path} :) "
     )
 
     md_indicateurs: List[MarkdownIndicateur] = []
@@ -78,16 +97,25 @@ def parse_markdown_indicateurs_from_folder(
 
         for md_indicateur_as_dict in md_indicateurs_as_dict:
             try:
-                md_indicateur = markdown_indicateur_schema.load(md_indicateur_as_dict)
-                md_indicateurs.append(md_indicateur)  # type: ignore
+                md_indicateur = markdown_schema.load(md_indicateur_as_dict)
+                md_indicateurs.append(md_indicateur)
             except ValidationError as error:
                 parsing_errors.append(f"In file {Path(md_file).name} {str(error)}")
     return md_indicateurs, parsing_errors
 
 
-def convert_indicateurs_markdown_folder_to_json(folder_path: str, json_filename: str):
+def programmes(md: MarkdownIndicateur):
+    programmes = md.programmes or []
+    # Ajoute les programmes manquants
+    prefix = md.id.split("_")[0]
+    if prefix in ['cae', 'eci', 'crte']:
+        programmes.append(prefix)
+    return list(set(programmes))
+
+
+def convert_indicateurs(path: str, json_filename: str):
     # Parse markdown folder
-    md_indicateurs, errors = parse_markdown_indicateurs_from_folder(folder_path)
+    md_indicateurs, errors = parse_indicateurs(path)
 
     # Raise if any errors
     if errors:
@@ -97,27 +125,34 @@ def convert_indicateurs_markdown_folder_to_json(folder_path: str, json_filename:
         )
     indicateurs = [
         Indicateur(
-            indicateur_id=md_indicateur.id,
-            identifiant=md_indicateur.identifiant,
-            indicateur_group=md_indicateur.id.split("_")[0],  # type: ignore (TODO : fail if not in crte/cae/eci ?)
-            nom=md_indicateur.nom,
-            unite=md_indicateur.unite,
-            action_ids=md_indicateur.actions,  # type: ignore
-            description=md_indicateur.description,
-            valeur_indicateur=None,
-            obligation_eci=False,
+            id=md.id,
+            identifiant=md.identifiant,
+            nom=md.nom,
+            unite=md.unite,
+            description=md.description,
+            valeur_indicateur=md.valeur,
+            participation_score=True if md.participation_score else False,
+            titre_long=md.titre_long or md.nom,
+            thematiques=md.thematiques or [],
+            action_ids=md.actions or [],
+            programmes=programmes(md),
+            parent=md.parent,
+            source=md.source,
+            type=md.type,
+            selection=md.selection or False,
+            sans_valeur=md.sans_valeur or False
         )
-        for md_indicateur in md_indicateurs
+        for md in md_indicateurs
     ]
 
     # Check that ids are unique
-    duplicated_indicateurs_ids = find_duplicates(
-        [indicateur.indicateur_id for indicateur in indicateurs]
+    duplicated_ids = find_duplicates(
+        [indicateur.id for indicateur in indicateurs]
     )
-    if duplicated_indicateurs_ids:
-        raise Exception(
+    if duplicated_ids:
+        raise AssertionError(
             "Les ids des indicateurs suivants ne sont pas uniques : "
-            + ", ".join(duplicated_indicateurs_ids),
+            + ", ".join(duplicated_ids),
         )
 
     # Save to JSON

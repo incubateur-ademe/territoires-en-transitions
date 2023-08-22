@@ -43,7 +43,6 @@ const FiltrePrimairePriorites = ({filtersOptions}: Props) => {
   return (
     <TagFilters
       defaultOption={getDefaultOption()}
-      name="priorites"
       options={[
         {value: ITEM_ALL, label: 'Tous les niveaux de priorité'},
         {value: SANS_PRIORITE, label: 'Non priorisé'},

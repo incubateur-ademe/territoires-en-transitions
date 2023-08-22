@@ -2,14 +2,6 @@
 
 BEGIN;
 
-create table indicateurs_json
-(
-    indicateurs jsonb       not null,
-    created_at  timestamptz not null default now()
-);
-alter table indicateurs_json
-    enable row level security;
-
 create or replace function
     private.upsert_indicateurs(indicateurs jsonb)
     returns void
@@ -18,67 +10,104 @@ $$
 declare
     indicateur jsonb;
 begin
+    -- on utilise une table temporaire pour ne pas avoir les contraintes sur les `valeur_indicateur`
+    create temporary table definition
+    (
+        like indicateur_definition
+    ) on commit drop;
+
     for indicateur in select * from jsonb_array_elements(indicateurs)
         loop
-            insert into indicateur_definition
-            (id, indicateur_group, identifiant, valeur_indicateur, nom, description, unite, obligation_eci, parent)
-            values ((indicateur ->> 'indicateur_id')::indicateur_id,
-                    (indicateur ->> 'indicateur_group')::indicateur_group,
+            insert into definition
+            (id, identifiant, valeur_indicateur, nom, description, unite,
+             parent, participation_score, selection, sans_valeur, source, titre_long, type,
+             thematiques, programmes, modified_at)
+            values ((indicateur ->> 'id')::indicateur_id,
                     indicateur ->> 'identifiant',
                     (indicateur ->> 'valeur_indicateur')::indicateur_id,
                     indicateur ->> 'nom',
                     indicateur ->> 'description',
                     indicateur ->> 'unite',
-                    (indicateur ->> 'obligation_eci')::bool,
-                    null)
-            on conflict (id) do update
-                set indicateur_group  = excluded.indicateur_group,
-                    identifiant       = excluded.identifiant,
-                    valeur_indicateur = excluded.valeur_indicateur,
-                    nom               = excluded.nom,
-                    description       = excluded.description,
-                    unite             = excluded.unite,
-                    obligation_eci    = excluded.obligation_eci,
-                    parent            = excluded.parent;
+                    indicateur ->> 'parent',
+                    (indicateur -> 'participation_score')::bool,
+                    (indicateur -> 'selection')::bool,
+                    (indicateur -> 'sans_valeur')::bool,
+                    indicateur ->> 'source',
+                    indicateur ->> 'titre_long',
+                    (indicateur ->> 'type')::indicateur_referentiel_type,
+                    (select array(
+                                    select jsonb_array_elements_text((indicateur -> 'thematiques'))
+                                )::indicateur_thematique[]),
+                    (select array(
+                                    select jsonb_array_elements_text((indicateur -> 'programmes'))
+                                )::indicateur_programme[]),
+                    now());
+        end loop;
 
-            -- les liens entre indicateur et action
+    -- on commence par insérer les définitions sans parents
+    insert into indicateur_definition
+    select *
+    from definition
+    where parent is null
+      and valeur_indicateur is null
+    on conflict (id) do update
+        set identifiant         = excluded.identifiant,
+            valeur_indicateur   = excluded.valeur_indicateur,
+            nom                 = excluded.nom,
+            description         = excluded.description,
+            unite               = excluded.unite,
+            parent              = excluded.parent,
+            participation_score = excluded.participation_score,
+            selection           = excluded.selection,
+            sans_valeur         = excluded.sans_valeur,
+            source              = excluded.source,
+            titre_long          = excluded.titre_long,
+            type                = excluded.type,
+            thematiques         = excluded.thematiques,
+            programmes          = excluded.programmes,
+            modified_at         = excluded.modified_at;
+
+    -- puis le reste
+    insert into indicateur_definition
+    select *
+    from definition
+    where not (parent is null and valeur_indicateur is null)
+    on conflict (id) do update
+        set identifiant         = excluded.identifiant,
+            valeur_indicateur   = excluded.valeur_indicateur,
+            nom                 = excluded.nom,
+            description         = excluded.description,
+            unite               = excluded.unite,
+            parent              = excluded.parent,
+            participation_score = excluded.participation_score,
+            selection           = excluded.selection,
+            sans_valeur         = excluded.sans_valeur,
+            source              = excluded.source,
+            titre_long          = excluded.titre_long,
+            type                = excluded.type,
+            thematiques         = excluded.thematiques,
+            programmes          = excluded.programmes,
+            modified_at         = excluded.modified_at;
+
+    -- les liens entre indicateur et action
+    for indicateur in select * from jsonb_array_elements(indicateurs)
+        loop
             if indicateur -> 'action_ids' != 'null'
             then
                 --- insert les liens
                 insert into indicateur_action (indicateur_id, action_id)
-                select indicateur ->> 'indicateur_id',
+                select indicateur ->> 'id',
                        jsonb_array_elements_text(indicateur -> 'action_ids')::action_id
                 on conflict (indicateur_id, action_id) do nothing;
                 --- enlève les liens qui n'existent plus
                 delete
                 from indicateur_action ia
-                where ia.indicateur_id = (indicateur ->> 'indicateur_id')::indicateur_id
+                where ia.indicateur_id = (indicateur ->> 'id')::indicateur_id
                   and ia.action_id not in
                       (select id::action_id from jsonb_array_elements_text(indicateur -> 'action_ids') as id);
             end if;
         end loop;
 end ;
 $$ language plpgsql security definer;
-comment on function private.upsert_indicateurs is
-    'Mets à jour les définitions des indicateurs ansi que les liens avec les actions.';
-
--- Trigger pour mettre à jour le contenu suite à l'insertion de json.
-create function
-    private.upsert_indicateurs_after_json_insert()
-    returns trigger
-as
-$$
-declare
-begin
-    perform private.upsert_indicateurs(new.indicateurs);
-    return new;
-end;
-$$ language plpgsql;
-
-create trigger after_indicateurs_json
-    after insert
-    on indicateurs_json
-    for each row
-execute procedure private.upsert_indicateurs_after_json_insert();
 
 COMMIT;

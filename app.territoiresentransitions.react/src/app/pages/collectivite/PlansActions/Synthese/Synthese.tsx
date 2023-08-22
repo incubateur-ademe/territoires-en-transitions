@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import HeaderTitle from '../components/HeaderTitle';
+import HeaderTitle from 'ui/HeaderTitle';
 import FiltersPlanAction, {
   PlanActionFilter,
   filtreToutesLesFiches,

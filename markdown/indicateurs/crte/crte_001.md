@@ -1,9 +1,18 @@
-# Emissions de GES annuelles du territoire (TeqCO2 / an)
+# Émissions de gaz à effet de serre
 ```yaml
 id: crte_1.1
 identifiant: 1.1
 unite: teq CO2
 valeur: cae_1.a
+
+titre_long: Emissions de GES annuelles du territoire
+programmes:
+  - crte
+climat_pratic_ids:
+  - strategie
+thematiques:
+  - energie_et_climat
+
 ```
 ## Description
 
@@ -31,6 +40,14 @@ id: crte_1.2
 identifiant: 1.2
 unite: teq CO2/hab
 valeur: cae_1.b
+
+parent: crte_1.1
+programmes:
+  - crte
+climat_pratic_ids:
+  - strategie
+thematiques:
+  - energie_et_climat
 ```
 ## Description
 

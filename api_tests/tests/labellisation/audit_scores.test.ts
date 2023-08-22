@@ -1,8 +1,8 @@
 import { assertEquals } from "https://deno.land/std@0.163.0/testing/asserts.ts";
-import { supabase } from "/lib/supabase.ts";
-import { signOut } from "/lib/auth.ts";
-import { testReset } from "/lib/rpcs/testReset.ts";
-import { testMaxFullfill } from "/lib/rpcs/testMaxFullfill.ts";
+import { supabase } from "../../lib/supabase.ts";
+import { signOut } from "../../lib/auth.ts";
+import { testReset } from "../../lib/rpcs/testReset.ts";
+import { testMaxFullfill } from "../../lib/rpcs/testMaxFullfill.ts";
 
 import {
   ajouter_auditeur,
@@ -12,11 +12,13 @@ import {
   envoyer_demande,
 } from "./utils.ts";
 
-import { labellisationDemande } from "/lib/rpcs/labellisationDemande.ts";
+import { labellisationDemande } from "../../lib/rpcs/labellisationDemande.ts";
 import { delay } from "https://deno.land/std@0.163.0/async/delay.ts";
-import { saveReponse } from "/lib/rpcs/saveReponse.ts";
-import { scoreById } from "../evaluation/scoreById.ts";
-import { ClientScores } from "/lib/types/clientScores.ts";
+import { saveReponse } from "../../lib/rpcs/saveReponse.ts";
+import { ClientScores } from "../../lib/types/clientScores.ts";
+import { scoreById } from "../scoring/scoreById.ts";
+
+await new Promise((r) => setTimeout(r, 0));
 
 Deno.test(
   "Scénario réponse à `dechets_1` oui -> non pendant un audit",

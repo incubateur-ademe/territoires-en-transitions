@@ -5,7 +5,7 @@ import {getMaxDepth} from './queries';
 import {useReferentielId} from 'core-logic/hooks/params';
 import {getFilterInfoMessage} from '../AidePriorisation/filters';
 import {ColumnSelector} from './ColumnSelector';
-import {DisableAllFilters} from '../ReferentielTable/DisableAllFilters';
+import {DisableAllFilters} from 'ui/buttons/DisableAllFilters';
 
 const Progression = () => {
   const tableData = useTableData();

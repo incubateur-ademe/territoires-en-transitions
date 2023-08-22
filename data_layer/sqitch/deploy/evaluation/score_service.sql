@@ -2,43 +2,34 @@
 
 BEGIN;
 
-create function
-    evaluation.service_regles()
-    returns jsonb
-    stable
-begin
-    atomic
-    select jsonb_agg(sr) from evaluation.service_regles sr;
-end;
-comment on function evaluation.service_regles is
-    'Toutes les règles d''évaluation de la vue `service_regles`.';
-
-create function
-    evaluation.identite(collectivite_id integer)
-    returns jsonb
-    stable
-begin
-    atomic
-    select jsonb_build_object('population', ci.population,
-                              'type', ci.type,
-                              'localisation', ci.localisation)
-    from collectivite_identite ci
-    where ci.id = collectivite_id;
-end;
-comment on function evaluation.identite is
-    'L''identité d''une collectivité pour le service d''évaluation.';
-
-create function
-    evaluation.current_service_configuration()
-    returns evaluation.service_configuration
-begin
-    atomic
-    select *
-    from evaluation.service_configuration
-    order by created_at desc
-    limit 1;
-end;
-comment on function evaluation.current_service_configuration is
-    'La dernière configuration en date du service d''évaluation.';
+create or replace function
+    evaluation.evaluation_payload(
+    in collectivite_id integer,
+    in referentiel referentiel,
+    out referentiel jsonb,
+    out statuts jsonb,
+    out consequences jsonb
+)
+as
+$$
+with statuts as (select s.data
+                 from evaluation.service_statuts s
+                 where s.referentiel = evaluation_payload.referentiel
+                   and s.collectivite_id = evaluation_payload.collectivite_id),
+     consequences as ( -- on ne garde que les conséquences du référentiel concerné
+         select jsonb_object_agg(tuple.key, tuple.value) as filtered
+         from personnalisation_consequence pc
+                  join jsonb_each(pc.consequences) tuple on true
+                  join action_relation ar on tuple.key = ar.id
+         where pc.collectivite_id = evaluation_payload.collectivite_id
+           and ar.referentiel = evaluation_payload.referentiel)
+select r.data                                    as referentiel,
+       coalesce(s.data, to_jsonb('{}'::jsonb[])) as statuts,
+       coalesce(c.filtered, '{}'::jsonb)         as consequences
+from evaluation.service_referentiel as r
+         left join statuts s on true
+         left join consequences c on true
+where r.referentiel = evaluation_payload.referentiel
+$$ language sql stable;
 
 COMMIT;

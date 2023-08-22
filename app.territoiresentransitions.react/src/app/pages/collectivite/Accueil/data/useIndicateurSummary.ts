@@ -1,7 +1,7 @@
 import {useQuery} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useAllIndicateurDefinitionsForGroup} from '../../Indicateurs/useAllIndicateurDefinitions';
+import {useIndicateursParentsGroup} from '../../Indicateurs/useIndicateurDefinitions';
 import {useIndicateursPersoDefinitions} from '../../Indicateurs/useIndicateursPersoDefinitions';
 
 /**
@@ -41,31 +41,25 @@ export const useIndicateurSummary = () => {
 export const useIndicateursCount = () => {
   const collectiviteId = useCollectiviteId();
 
-  const caeIndicateurs = useAllIndicateurDefinitionsForGroup('cae');
-  const eciIndicateurs = useAllIndicateurDefinitionsForGroup('eci');
-  const crteIndicateurs = useAllIndicateurDefinitionsForGroup('crte');
-  const {data: persoIndicateurs} = useIndicateursPersoDefinitions(
-    collectiviteId!
-  );
+  const caeIndicateurs = useIndicateursParentsGroup('cae');
+  const eciIndicateurs = useIndicateursParentsGroup('eci');
+  const crteIndicateurs = useIndicateursParentsGroup('crte');
+  const persoIndicateurs = useIndicateursPersoDefinitions(collectiviteId!);
 
   const indicateursWithValue = useIndicateurSummary();
-  let caeIndicateursWithValue = [];
-  let eciIndicateursWithValue = [];
-  let crteIndicateursWithValue = [];
+  const caeIndicateursWithValue = [];
+  const eciIndicateursWithValue = [];
+  const crteIndicateursWithValue = [];
 
   indicateursWithValue?.forEach(ind => {
-    switch (ind.indicateur_group) {
-      case 'cae':
-        caeIndicateursWithValue.push(ind);
-        break;
-      case 'eci':
-        eciIndicateursWithValue.push(ind);
-        break;
-      case 'crte':
-        crteIndicateursWithValue.push(ind);
-        break;
-      default:
-        break;
+    if (ind.programmes?.includes('cae')) {
+      caeIndicateursWithValue.push(ind);
+    }
+    if (ind.programmes?.includes('eci')) {
+      eciIndicateursWithValue.push(ind);
+    }
+    if (ind.programmes?.includes('crte')) {
+      crteIndicateursWithValue.push(ind);
     }
   });
 

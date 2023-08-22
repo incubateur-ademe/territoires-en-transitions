@@ -13,7 +13,7 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
   const {currentCollectivite, ownedCollectivites, modalOpened, setOpenedId} =
     props;
 
-  // enregistre un écouter d'événemens pour fermer un éventuel sous-menu ouvert
+  // enregistre un écouteur d'événements pour fermer un éventuel sous-menu ouvert
   // quand on clique en dehors
   useEffect(() => {
     const onClickOutside = (evt: globalThis.MouseEvent) => {
@@ -61,10 +61,11 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
 const NavItem = (props: HeaderPropsWithModalState & {item: TNavItem}) => {
   const {item, setModalOpened, setOpenedId} = props;
   const {to, label, urlPrefix} = item;
-  // vérifie si l'item correspond au chemin courant
+
+  // vérifie si l'item correspond au début du chemin courant
   const {pathname} = useLocation();
   const current =
-    pathname.startsWith(to) || (urlPrefix && pathname.startsWith(urlPrefix))
+    pathname.startsWith(to) || pathIncludes(pathname, urlPrefix)
       ? 'page'
       : undefined;
 
@@ -102,7 +103,7 @@ const NavDropdown = (
   // vérifie si le menu contient un item correspondant au chemin courant
   const {pathname} = useLocation();
   const current =
-    (urlPrefix && urlPrefix.find(url => pathname.startsWith(url))) ||
+    pathIncludes(pathname, urlPrefix) ||
     items.findIndex(({to}) => pathname.startsWith(to)) !== -1
       ? 'true'
       : undefined;
@@ -127,4 +128,24 @@ const NavDropdown = (
       </div>
     </li>
   );
+};
+
+// nettoie le prefixe attendu (si il existe) pour éviter les segments vides
+const cleanUrlPrefix = (urlPrefix?: string) => {
+  if (!urlPrefix) return undefined;
+
+  const prefix = urlPrefix
+    .split('/')
+    .filter(s => s && s !== '?')
+    .join('/');
+
+  if (!prefix) return undefined;
+  return `/${prefix}`;
+};
+
+// renvoi `true` si le chemin contient un des segments donnés
+const pathIncludes = (pathname: string, urlPrefix?: string[]) => {
+  return urlPrefix
+    ?.map(prefix => cleanUrlPrefix(prefix))
+    .find(prefix => prefix && pathname.includes(prefix));
 };

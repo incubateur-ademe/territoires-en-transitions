@@ -2,7 +2,7 @@
 
 BEGIN;
 
-select collectivite_id, indicateur_id, indicateur_group, resultats
+select collectivite_id, indicateur_id, programmes, resultats
 from indicateur_summary
 where false;
 

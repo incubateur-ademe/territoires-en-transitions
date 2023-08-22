@@ -78,7 +78,7 @@ const SyntheseGraphsList = ({
                     title: graph.title,
                   }}
                   customStyle={{height: '350px', borderBottomWidth: '4px'}}
-                  classNames={classNames({
+                  className={classNames({
                     'group-hover:bg-gray-50': graph.id !== 'echeance',
                   })}
                 />

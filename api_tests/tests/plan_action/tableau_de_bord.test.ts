@@ -1,9 +1,11 @@
-import { supabase } from "/lib/supabase.ts";
-import { signIn, signOut } from "/lib/auth.ts";
+import { supabase } from "../../lib/supabase.ts";
+import { signIn, signOut } from "../../lib/auth.ts";
 import {
   assertEquals,
   assertExists,
 } from "https://deno.land/std@0.113.0/testing/asserts.ts";
+
+await new Promise((r) => setTimeout(r, 0));
 
 Deno.test("Tableau de bord plan action", async () => {
   await signIn("yolododo");

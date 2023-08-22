@@ -1,8 +1,15 @@
-# Taux de fuite des réseaux d’eau du territoire (%)
+# Fuite des réseaux d’eau
 ```yaml
 id: crte_8.1
 identifiant: 8.1
 unite: '%'
+valeur: eci_26
+
+titre_long: Taux de fuite des réseaux d’eau du territoire
+programmes:
+  - crte
+thematiques:
+  - eau_assainissement
 ```
 ## Description
 

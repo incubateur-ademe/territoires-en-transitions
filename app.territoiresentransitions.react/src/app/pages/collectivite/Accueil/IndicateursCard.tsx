@@ -1,12 +1,11 @@
 import {referentielToName} from 'app/labels';
 import {makeCollectiviteIndicateursUrl} from 'app/paths';
 import ButtonWithLink from 'ui/buttons/ButtonWithLink';
-import {PictoIndicateurs} from 'ui/pictogrammes/PictoIndicateurs';
-import {usePlansActionsListe} from '../PlansActions/PlanAction/data/usePlansActionsListe';
+import {PictoIndicateurs} from 'ui/pictogrammes/PictoIndicateur';
 import AccueilCard from './AccueilCard';
 import AccueilEmptyCardWithPicto from './AccueilEmptyCardWithPicto';
 import {useIndicateursCount} from './data/useIndicateurSummary';
-import KeyNumbers from '../../../../ui/score/KeyNumbers';
+import KeyNumbers from 'ui/score/KeyNumbers';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 
 type IndicateursCardProps = {
@@ -97,7 +96,7 @@ const FilledIndicateursCard = ({
         onClick={() => tracker({fonction: 'cta_indicateur', action: 'clic'})}
         href={makeCollectiviteIndicateursUrl({
           collectiviteId,
-          indicateurView: 'perso',
+          indicateurView: 'cles',
         })}
         rounded
       >
@@ -115,7 +114,6 @@ const EmptyIndicateursCard = ({
   collectiviteId,
 }: EmptyIndicateursCardProps): JSX.Element => {
   const tracker = useFonctionTracker();
-  const plansActions = usePlansActionsListe(collectiviteId);
 
   return (
     <AccueilEmptyCardWithPicto picto={<PictoIndicateurs />}>
@@ -128,10 +126,7 @@ const EmptyIndicateursCard = ({
           onClick={() => tracker({fonction: 'cta_indicateur', action: 'clic'})}
           href={makeCollectiviteIndicateursUrl({
             collectiviteId,
-            indicateurView:
-              plansActions && plansActions.plans && plansActions.plans.length
-                ? 'perso'
-                : 'cae',
+            indicateurView: 'cles',
           })}
           rounded
         >

@@ -1,7 +1,7 @@
 import {useTableData} from './useTableData';
 import {Table} from './Table';
 import {noFilters} from './filters';
-import {DisableAllFilters} from '../ReferentielTable/DisableAllFilters';
+import {DisableAllFilters} from 'ui/buttons/DisableAllFilters';
 
 const AuditSuivi = () => {
   const tableData = useTableData();
