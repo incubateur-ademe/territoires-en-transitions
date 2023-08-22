@@ -21,8 +21,10 @@ type Single = 'accueil' | 'contact' | 'programme';
 
 export async function fetchCollection(
   path: Collection,
+  params: [string, string][] = [['populate', '*']],
 ): Promise<Array<StrapiItem>> {
-  const url = `${baseURL}/api/${path}?populate=*`;
+  const url = new URL(`${baseURL}/api/${path}`);
+  params.forEach(p => url.searchParams.append(...p));
 
   const response = await fetch(`${url}`, {
     cache: 'no-store',

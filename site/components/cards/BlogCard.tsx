@@ -2,9 +2,11 @@ import classNames from 'classnames';
 
 type BlogCardProps = {
   title: string;
+  date?: Date;
   description?: string;
   image?: React.ReactNode;
   href?: string;
+  backgroundColor?: string;
 };
 
 /**
@@ -12,19 +14,55 @@ type BlogCardProps = {
  * Style DSFR
  */
 
-const BlogCard = ({title, description, image, href}: BlogCardProps) => {
+const BlogCard = ({
+  title,
+  date,
+  description,
+  image,
+  href,
+  backgroundColor,
+}: BlogCardProps) => {
+  const getParsedDate = (date: Date): string => {
+    let parsedDate = '';
+    const newDate = new Date(date);
+    parsedDate += `${newDate.getDate()} `;
+    parsedDate += `${new Intl.DateTimeFormat('fr-FR', {month: 'long'}).format(
+      newDate,
+    )} `;
+    parsedDate += newDate.getFullYear();
+    return parsedDate;
+  };
+
   return (
-    <div className={classNames('fr-card', {'fr-enlarge-link': !!href})}>
+    <div
+      className={classNames(
+        'fr-card fr-card--no-border group border rounded-lg',
+        `bg-[${backgroundColor}] ${
+          backgroundColor ? `border-[${backgroundColor}]` : 'border-[#e5e7eb]'
+        }`,
+        {
+          'fr-enlarge-link': !!href,
+        },
+      )}
+    >
       <div className="fr-card__body">
         <div className="fr-card__content">
           <h3 className="fr-card__title">
             {href ? <a href={href}>{title}</a> : <>{title}</>}
           </h3>
           {description && <p className="fr-card__desc">{description}</p>}
+          <div className="fr-card__start">
+            {date && <p className="fr-card__detail">{getParsedDate(date)}</p>}
+          </div>
         </div>
       </div>
-      <div className="fr-card__header">
-        <div className="fr-card__img border-b border-[#e5e7eb]">
+      <div
+        className={classNames(
+          'fr-card__header overflow-hidden rounded-t-lg border-[#e5e7eb]',
+          {'border-b': !backgroundColor},
+        )}
+      >
+        <div className="fr-card__img group-hover:scale-105 duration-700">
           {image ? (
             <picture>{image}</picture>
           ) : (
