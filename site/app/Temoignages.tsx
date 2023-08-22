@@ -4,7 +4,7 @@ import TestimonialCard from '@components/cards/TestimonialCard';
 import CardsSection from '@components/sections/CardsSection';
 import Slideshow from '@components/slideshow/Slideshow';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import {Attributes, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {fetchCollection} from 'src/strapi';
 import {StrapiItem} from 'src/StrapiItem';
 
@@ -17,9 +17,9 @@ const Temoignages = ({titre, description}: TemoignagesProps) => {
   const [temoignages, setTemoignages] = useState<
     {
       id: number;
-      auteur: Attributes;
-      description: Attributes;
-      contenu: Attributes;
+      auteur: string;
+      description: string;
+      contenu: string;
       image: StrapiItem;
     }[]
   >([]);
@@ -29,9 +29,9 @@ const Temoignages = ({titre, description}: TemoignagesProps) => {
 
     const formattedData = data.map(d => ({
       id: d.id,
-      auteur: d.attributes.Auteur,
-      description: d.attributes.Description ?? undefined,
-      contenu: d.attributes.Contenu,
+      auteur: d.attributes.Auteur as unknown as string,
+      description: (d.attributes.Description as unknown as string) ?? undefined,
+      contenu: d.attributes.Contenu as unknown as string,
       image: (d.attributes.Image.data as unknown as StrapiItem) ?? undefined,
     }));
 
@@ -53,9 +53,9 @@ const Temoignages = ({titre, description}: TemoignagesProps) => {
           slides={temoignages.map(t => (
             <TestimonialCard
               key={t.id}
-              content={t.contenu as string}
-              author={t.auteur as string}
-              role={t.description as string}
+              content={t.contenu}
+              author={t.auteur}
+              role={t.description}
               image={
                 t.image ? (
                   <StrapiImage

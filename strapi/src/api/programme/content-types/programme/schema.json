@@ -38,6 +38,13 @@
       "component": "bloc.services",
       "required": true
     },
+    "Offre": {
+      "displayName": "Offre",
+      "type": "component",
+      "repeatable": false,
+      "component": "bloc.offre",
+      "required": true
+    },
     "Benefices": {
       "type": "component",
       "repeatable": false,
@@ -48,6 +55,13 @@
       "type": "component",
       "repeatable": false,
       "component": "bloc.etapes",
+      "required": true
+    },
+    "Ressources": {
+      "displayName": "Ressources",
+      "type": "component",
+      "repeatable": false,
+      "component": "bloc.ressources",
       "required": true
     }
   }

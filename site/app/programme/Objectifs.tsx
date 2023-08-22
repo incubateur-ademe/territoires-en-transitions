@@ -2,9 +2,10 @@
 
 import CardsWrapper from '@components/cards/CardsWrapper';
 import CardsSection from '@components/sections/CardsSection';
-import {Attributes, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {fetchCollection} from 'src/strapi';
 import {StrapiItem} from 'src/StrapiItem';
+import DOMPurify from 'dompurify';
 import {marked} from 'marked';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
 
@@ -17,7 +18,7 @@ const Objectifs = ({titre, description}: ObjectifsProps) => {
   const [objectifs, setObjectifs] = useState<
     {
       id: number;
-      description: Attributes;
+      description: string;
       picto: StrapiItem;
     }[]
   >([]);
@@ -27,7 +28,7 @@ const Objectifs = ({titre, description}: ObjectifsProps) => {
 
     const formattedData = data.map(d => ({
       id: d.id,
-      description: d.attributes.Description,
+      description: d.attributes.Description as unknown as string,
       picto: d.attributes.Pictogramme.data as unknown as StrapiItem,
     }));
 
@@ -54,7 +55,7 @@ const Objectifs = ({titre, description}: ObjectifsProps) => {
               <p
                 className="text-center"
                 dangerouslySetInnerHTML={{
-                  __html: marked.parse(o.description as string),
+                  __html: DOMPurify.sanitize(marked.parse(o.description)),
                 }}
               />
             </div>

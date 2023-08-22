@@ -6,12 +6,12 @@ import ButtonWithLink from '@components/buttons/ButtonWithLink';
 import Section from '@components/sections/Section';
 import CommunityPicto from 'public/pictogrammes/CommunityPicto';
 import PictoWithBackground from 'public/pictogrammes/PictoWithBackground';
-import {Attributes, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {fetchCollection} from 'src/strapi';
 
 const Faq = () => {
   const [questions, setQuestions] = useState<
-    {id: number; titre: Attributes; contenu: Attributes}[]
+    {id: number; titre: string; contenu: string}[]
   >([]);
 
   const fetchQuestions = async () => {
@@ -19,8 +19,8 @@ const Faq = () => {
 
     const formattedData = data.map(d => ({
       id: d.id,
-      titre: d.attributes.Titre,
-      contenu: d.attributes.Contenu,
+      titre: d.attributes.Titre as unknown as string,
+      contenu: d.attributes.Contenu as unknown as string,
     }));
 
     setQuestions(formattedData);
@@ -39,8 +39,8 @@ const Faq = () => {
             <Accordion
               key={q.id}
               id={q.id.toString()}
-              title={q.titre as string}
-              content={q.contenu as string}
+              title={q.titre}
+              content={q.contenu}
             />
           ))}
         </div>

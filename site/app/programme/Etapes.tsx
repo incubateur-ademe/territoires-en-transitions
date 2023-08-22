@@ -4,7 +4,7 @@ import ButtonWithLink from '@components/buttons/ButtonWithLink';
 import Card from '@components/cards/Card';
 import CardsWrapper from '@components/cards/CardsWrapper';
 import CardsSection from '@components/sections/CardsSection';
-import {Attributes, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {fetchCollection} from 'src/strapi';
 
 type EtapesProps = {
@@ -16,8 +16,8 @@ const Etapes = ({titre, description}: EtapesProps) => {
   const [etapes, setEtapes] = useState<
     {
       id: number;
-      titre: Attributes;
-      description: Attributes;
+      titre: string;
+      description: string;
     }[]
   >([]);
 
@@ -26,8 +26,8 @@ const Etapes = ({titre, description}: EtapesProps) => {
 
     const formattedData = data.map(d => ({
       id: d.id,
-      titre: d.attributes.Titre,
-      description: d.attributes.Contenu,
+      titre: d.attributes.Titre as unknown as string,
+      description: d.attributes.Contenu as unknown as string,
     }));
 
     setEtapes(formattedData);
@@ -47,8 +47,8 @@ const Etapes = ({titre, description}: EtapesProps) => {
             <Card
               key={e.id}
               step={index + 1}
-              title={e.titre as string}
-              description={e.description as string}
+              title={e.titre}
+              description={e.description}
               className="border border-black"
             />
           ))}
