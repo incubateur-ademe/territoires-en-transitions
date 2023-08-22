@@ -37,13 +37,14 @@ const BlogCard = ({
     <div
       className={classNames(
         'fr-card fr-card--no-border group border rounded-lg',
-        `bg-[${backgroundColor}] ${
-          backgroundColor ? `border-[${backgroundColor}]` : 'border-[#e5e7eb]'
-        }`,
         {
           'fr-enlarge-link': !!href,
         },
       )}
+      style={{
+        backgroundColor: backgroundColor ? backgroundColor : '#fff',
+        borderColor: backgroundColor ? backgroundColor : '#e5e7eb',
+      }}
     >
       <div className="fr-card__body">
         <div className="fr-card__content">

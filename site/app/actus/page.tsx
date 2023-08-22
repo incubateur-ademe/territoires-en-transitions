@@ -10,7 +10,7 @@ import BlogCard from '@components/cards/BlogCard';
 const Actualites = () => {
   const [data, setData] = useState<StrapiItem[] | undefined>();
   const [dataGallery, setDataGallery] = useState<StrapiItem[][]>(Array(3));
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [windowWidth, setWindowWidth] = useState<number | undefined>();
   const [columns, setColumns] = useState(3);
 
   const fetchData = async () => {
@@ -37,12 +37,14 @@ const Actualites = () => {
 
   // Met à jour le nombre de colonnes
   useEffect(() => {
-    if (windowWidth <= 768) {
-      setColumns(1);
-    } else if (windowWidth <= 1280) {
-      setColumns(2);
-    } else {
-      setColumns(3);
+    if (windowWidth) {
+      if (windowWidth <= 768) {
+        setColumns(1);
+      } else if (windowWidth <= 1280) {
+        setColumns(2);
+      } else {
+        setColumns(3);
+      }
     }
   }, [windowWidth]);
 
