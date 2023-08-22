@@ -2,11 +2,10 @@ import {useMutation, useQueryClient} from 'react-query';
 
 import {supabaseClient} from 'core-logic/api/supabase';
 import {FicheResume} from './types';
-import {PlanNode} from '../../PlanAction/data/types';
 import {ficheChangeAxeDansPlan} from '../../PlanAction/data/utils';
 
 type Args = {
-  fiche_id: number;
+  fiche: FicheResume;
   plan_id: number;
   old_axe_id: number;
   new_axe_id: number;
@@ -16,9 +15,9 @@ export const useFicheChangeAxe = () => {
   const queryClient = useQueryClient();
 
   return useMutation(
-    async ({fiche_id, new_axe_id, old_axe_id}: Args) => {
+    async ({fiche, new_axe_id, old_axe_id}: Args) => {
       await supabaseClient.rpc('deplacer_fiche_action_dans_un_axe', {
-        fiche_id,
+        fiche_id: fiche.id!,
         new_axe_id,
         old_axe_id,
       });
@@ -26,51 +25,60 @@ export const useFicheChangeAxe = () => {
     {
       mutationKey: 'fiche_change_axe',
       onMutate: async args => {
-        const planActionKey = ['plan_action', args.plan_id];
-        // /** TEST PLAN_ACTION KEY */
-        // Cancel any outgoing refetches
-        // (so they don't overwrite our optimistic update)
-        await queryClient.cancelQueries({queryKey: planActionKey});
+        const {fiche, new_axe_id, old_axe_id, plan_id} = args;
+        const fiche_id = fiche.id!;
 
-        // Snapshot the previous value
-        const previousAction: {plan: PlanNode} | undefined =
-          queryClient.getQueryData(planActionKey);
+        // clés dans le cache
+        const planActionKey = ['plan_action', plan_id];
+        const oldAxeKey = ['axe_fiches', old_axe_id];
+        const newAxeKey = ['axe_fiches', new_axe_id];
 
+        // copie l'état précédent avant de modifier le cache
+        const previousState = [
+          [planActionKey, queryClient.getQueryData(planActionKey)],
+          [oldAxeKey, queryClient.getQueryData(oldAxeKey)],
+          [newAxeKey, queryClient.getQueryData(newAxeKey)],
+        ];
+
+        // met à jour les listes d'id de fiches dans l'arborescence
         queryClient.setQueryData(planActionKey, (old: any) => {
-          return ficheChangeAxeDansPlan(
-            old,
-            args.fiche_id,
-            args.old_axe_id,
-            args.new_axe_id
-          );
+          return ficheChangeAxeDansPlan(old, fiche_id, old_axe_id, new_axe_id);
         });
 
+        // supprime la fiche de l'axe source
         queryClient.setQueryData(
-          ['axe_fiches', args.old_axe_id],
+          ['axe_fiches', old_axe_id],
           (old: FicheResume[] | undefined): FicheResume[] => {
-            console.log(old);
-            console.log(args.fiche_id);
             return (
-              old?.filter((fiche: FicheResume) => fiche.id !== args.fiche_id) ||
-              []
+              old?.filter((fiche: FicheResume) => fiche.id !== fiche_id) || []
             );
           }
         );
 
-        // Return a context object with the snapshotted value
-        return {previousAction};
+        // ajoute la fiche dans l'axe destination
+        queryClient.setQueryData(
+          ['axe_fiches', new_axe_id],
+          (old: FicheResume[] | undefined): FicheResume[] => {
+            return [...(old || []), fiche].sort(byTitle);
+          }
+        );
+
+        // renvoi l'état précédent
+        return previousState;
       },
-      onSettled: (data, err, args, context) => {
-        if (err) {
-          queryClient.setQueryData(
-            ['plan_action', args.plan_id],
-            context?.previousAction
-          );
-        }
-        queryClient.invalidateQueries(['plan_action', args.plan_id]);
-        queryClient.invalidateQueries(['axe_fiches', args.old_axe_id]);
-        queryClient.invalidateQueries(['axe_fiches', args.new_axe_id]);
+      onError: (err, args, previousState) => {
+        // en cas d'erreur restaure l'état précédent
+        previousState?.forEach(([key, data]) =>
+          queryClient.setQueryData(key as string[], data)
+        );
       },
     }
   );
+};
+
+// tri local des fiches par titre
+const byTitle = (a: FicheResume, b: FicheResume) => {
+  if (!a.titre) return -1;
+  if (!b.titre) return 1;
+  return a.titre.localeCompare(b.titre);
 };
