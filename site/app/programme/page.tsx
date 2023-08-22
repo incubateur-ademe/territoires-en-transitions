@@ -1,11 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client';
 
-import InfoSection from '@components/sections/InfoSection';
-import Section from '@components/sections/Section';
-import CodingPicto from 'public/pictogrammes/CodingPicto';
-import DocumentPicto from 'public/pictogrammes/DocumentPicto';
-import {resources} from './data';
 import Services from './Services';
 import Benefices from './Benefices';
 import Etapes from './Etapes';
@@ -13,6 +8,8 @@ import Objectifs from './Objectifs';
 import {useEffect, useState} from 'react';
 import {fetchSingle} from 'src/strapi';
 import ProgrammeBanner from './ProgrammeBanner';
+import Offre from './Offre';
+import Ressources from './Ressources';
 
 type ProgrammeData = {
   titre: string;
@@ -26,6 +23,9 @@ type ProgrammeData = {
     titre: string;
     description: string;
   };
+  offre: {
+    description: string;
+  };
   benefices: {
     titre: string;
     description: string;
@@ -33,6 +33,13 @@ type ProgrammeData = {
   etapes: {
     titre: string;
     description: string;
+  };
+  ressources: {
+    description: string;
+    buttons: {
+      titre: string;
+      href: string;
+    }[];
   };
 };
 
@@ -56,6 +63,9 @@ const Programme = () => {
         titre: data.attributes.Services.Titre as unknown as string,
         description: data.attributes.Services.Description as unknown as string,
       },
+      offre: {
+        description: data.attributes.Offre.Description as unknown as string,
+      },
       benefices: {
         titre: data.attributes.Benefices.Titre as unknown as string,
         description: data.attributes.Benefices.Description as unknown as string,
@@ -63,6 +73,26 @@ const Programme = () => {
       etapes: {
         titre: data.attributes.Etapes.Titre as unknown as string,
         description: data.attributes.Etapes.Description as unknown as string,
+      },
+      ressources: {
+        description: data.attributes.Ressources
+          .Description as unknown as string,
+        buttons: [
+          {
+            titre: 'Règlement CAE',
+            href: data.attributes.Ressources
+              .ReglementCaeURL as unknown as string,
+          },
+          {
+            titre: 'Règlement ECI',
+            href: data.attributes.Ressources
+              .ReglementEciURL as unknown as string,
+          },
+          {
+            titre: 'Annuaire des conseillers',
+            href: data.attributes.Ressources.AnnuaireURL as unknown as string,
+          },
+        ],
       },
     };
 
@@ -91,16 +121,7 @@ const Programme = () => {
         description={data.services.description}
       />
 
-      <InfoSection
-        content="Une offre socle qui comprend deux référentiels d'action Climat-Air-Énergie et Économie Circulaire, hébergés sur notre plateforme numérique"
-        buttons={[
-          {
-            title: 'Créer un compte',
-            href: 'https://app.territoiresentransitions.fr/auth/signup',
-          },
-        ]}
-        pictogram={<CodingPicto />}
-      />
+      <Offre description={data.offre.description} />
 
       <Benefices
         titre={data.benefices.titre}
@@ -113,12 +134,9 @@ const Programme = () => {
         <h3>De nombreuses collectivités ont déjà franchi le cap !</h3>
       </Section> */}
 
-      <InfoSection
-        content="Besoin de précisions avant de m'engager !"
-        buttons={resources.map(r => ({...r, external: true}))}
-        pictogram={<DocumentPicto />}
-        customBackground="#6a6af4"
-        customTextStyle="text-white font-bold"
+      <Ressources
+        description={data.ressources.description}
+        buttons={data.ressources.buttons}
       />
     </>
   ) : null;

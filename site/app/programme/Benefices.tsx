@@ -3,7 +3,7 @@
 import Card from '@components/cards/Card';
 import CardsWrapper from '@components/cards/CardsWrapper';
 import CardsSection from '@components/sections/CardsSection';
-import {Attributes, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {fetchCollection} from 'src/strapi';
 
 type BeneficesProps = {
@@ -15,8 +15,8 @@ const Benefices = ({titre, description}: BeneficesProps) => {
   const [benefices, setBenefices] = useState<
     {
       id: number;
-      titre: Attributes;
-      description: Attributes;
+      titre: string;
+      description: string;
     }[]
   >([]);
 
@@ -25,8 +25,8 @@ const Benefices = ({titre, description}: BeneficesProps) => {
 
     const formattedData = data.map(d => ({
       id: d.id,
-      titre: d.attributes.Titre,
-      description: d.attributes.Contenu,
+      titre: d.attributes.Titre as unknown as string,
+      description: d.attributes.Contenu as unknown as string,
     }));
 
     setBenefices(formattedData);
@@ -45,8 +45,8 @@ const Benefices = ({titre, description}: BeneficesProps) => {
           {benefices.map(b => (
             <Card
               key={b.id}
-              title={b.titre as string}
-              description={b.description as string}
+              title={b.titre}
+              description={b.description}
               className="border border-[#ddd]"
             />
           ))}

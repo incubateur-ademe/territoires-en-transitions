@@ -1,6 +1,7 @@
 'use client';
 
 import classNames from 'classnames';
+import DOMPurify from 'dompurify';
 import {marked} from 'marked';
 import {useState} from 'react';
 
@@ -41,7 +42,7 @@ const Accordion = ({
           className={contentClassName}
           id={id}
           dangerouslySetInnerHTML={{
-            __html: marked.parse(content),
+            __html: DOMPurify.sanitize(marked.parse(content)),
           }}
         />
       ) : (

@@ -1,5 +1,7 @@
 import ButtonWithLink from '@components/buttons/ButtonWithLink';
 import classNames from 'classnames';
+import DOMPurify from 'dompurify';
+import {marked} from 'marked';
 import PictoWithBackground from 'public/pictogrammes/PictoWithBackground';
 import Section from './Section';
 
@@ -33,7 +35,12 @@ const InfoSection = ({
     >
       <PictoWithBackground pictogram={pictogram} />
       <div className="text-center lg:text-left">
-        <p className={classNames('text-xl', customTextStyle)}>{content}</p>
+        <p
+          className={classNames('text-xl', customTextStyle)}
+          dangerouslySetInnerHTML={{
+            __html: DOMPurify.sanitize(marked.parse(content)),
+          }}
+        />
         <div className="fr-btns-group fr-btns-group--inline-md justify-center lg:justify-start">
           {buttons.length > 0 &&
             buttons.map(button => (
