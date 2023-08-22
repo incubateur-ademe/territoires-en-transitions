@@ -56,7 +56,7 @@ unite: tonnes
 
 titre_long: Quantité totale d'émissions de polluants atmosphériques
 sans_valeur: yes
-selection: yes
+selection: no
 programmes:
   - clef
   - crte
