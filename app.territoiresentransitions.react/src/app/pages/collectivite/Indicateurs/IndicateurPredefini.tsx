@@ -1,9 +1,9 @@
 import ScrollTopButton from 'ui/buttons/ScrollTopButton';
 import {useIndicateur, useIndicateursEnfants} from './useIndicateurDefinitions';
-import {IndicateurSidePanel} from './IndicateurSidePanel';
 import {HeaderIndicateur} from './Header';
 import {IndicateurDetail} from './detail/IndicateurDetail';
 import {IndicateurCompose} from './detail/IndicateurCompose';
+import {IndicateurSidePanelToolbar} from './IndicateurSidePanelToolbar';
 
 /** Charge et affiche le détail d'un indicateur prédéfini et de ses éventuels "enfants" */
 export const IndicateurPredefini = ({indicateurId}: {indicateurId: string}) => {
@@ -16,7 +16,7 @@ export const IndicateurPredefini = ({indicateurId}: {indicateurId: string}) => {
       <HeaderIndicateur title={definition.nom} />
       <div className="px-10 py-4">
         <div className="flex flex-row justify-end fr-mb-2w">
-          <IndicateurSidePanel definition={definition} />
+          <IndicateurSidePanelToolbar definition={definition} />
         </div>
         {/** affiche les indicateurs "enfants" */}
         {enfants.length ? (
