@@ -1,54 +1,102 @@
-'use server';
+'use client';
 
 import {fetchCollection} from 'src/strapi';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
 import {StrapiItem} from 'src/StrapiItem';
+import {useEffect, useState} from 'react';
+import Section from '@components/sections/Section';
+import BlogCard from '@components/cards/BlogCard';
 
-export default async function Page() {
-  const data = await fetchCollection('actualites');
+const Actualites = () => {
+  const [data, setData] = useState<StrapiItem[] | undefined>();
+  const [dataGallery, setDataGallery] = useState<StrapiItem[][]>(Array(3));
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [columns, setColumns] = useState(3);
 
-  return (
-    <div className="fr-container">
-      <div className="fr-mt-1w fr-mt-md-4w fr-mb-5w">
-        <h1 className="fr-header__body">Actualités</h1>
-        {data.map(actu => Actu(actu))}
-      </div>
-    </div>
-  );
-}
+  const fetchData = async () => {
+    const data = await fetchCollection('actualites', [
+      ['populate[0]', 'Couverture'],
+      ['sort[0]', 'DateCreation:asc'],
+      ['sort[1]', 'createdAt:asc'],
+    ]);
+    setData(data);
+  };
 
-function Actu(actu: StrapiItem) {
-  return (
-    <div key={actu['id']} className="fr-grid-row fr-mb-3w">
-      <div className="fr-col fr-col-md-6">
-        <div className="fr-card fr-enlarge-link">
-          <div className="fr-card__body">
-            <div className="fr-card__content">
-              <h3 className="fr-card__title">
-                <a
-                  href={`/actus/${actu['id']}`}
-                >{`${actu['attributes']['Titre']}`}</a>
-              </h3>
-              <p className="fr-card__desc">{`${actu['attributes']['Resume']}`}</p>
-            </div>
-          </div>
-          <div className="fr-card__header">
-            {actu['attributes']['Couverture'] ? (
-              <div className="fr-card__img">
-                <StrapiImage
-                  data={
-                    actu['attributes']['Couverture'][
-                      'data'
-                    ] as unknown as StrapiItem
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  // Détecte le changement de taille de la fenêtre
+  useEffect(() => {
+    window.addEventListener('resize', () => setWindowWidth(window.innerWidth));
+    return () =>
+      window.removeEventListener('resize', () =>
+        setWindowWidth(window.innerWidth),
+      );
+  }, []);
+
+  // Met à jour le nombre de colonnes
+  useEffect(() => {
+    if (windowWidth <= 768) {
+      setColumns(1);
+    } else if (windowWidth <= 1280) {
+      setColumns(2);
+    } else {
+      setColumns(3);
+    }
+  }, [windowWidth]);
+
+  // Organise les articles par colonne
+  useEffect(() => {
+    const newGalleryContent: StrapiItem[][] = [];
+    for (let i = 0; i < columns; i++) newGalleryContent.push([]);
+
+    if (data) {
+      data.forEach((element, index) => {
+        newGalleryContent[index % columns].push(element);
+      });
+    }
+
+    setDataGallery(newGalleryContent);
+  }, [data, columns]);
+
+  return data ? (
+    <>
+      <Section className="flex-col">
+        <h2>Actualités</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+          {dataGallery.map((column, index) => (
+            <div key={index} className="grid grid-cols-1 gap-8 h-fit">
+              {column.map(actu => (
+                <BlogCard
+                  key={actu.id}
+                  backgroundColor="#f5f5fe"
+                  title={actu.attributes.Titre as unknown as string}
+                  date={
+                    (actu.attributes.DateCreation as unknown as Date) ??
+                    actu.attributes.createdAt
                   }
-                  size="small"
-                  className="fr-responsive-img"
+                  description={actu.attributes.Resume as unknown as string}
+                  image={
+                    actu.attributes.Couverture.data ? (
+                      <StrapiImage
+                        data={
+                          actu.attributes.Couverture
+                            .data as unknown as StrapiItem
+                        }
+                        className="w-full"
+                      />
+                    ) : undefined
+                  }
+                  href={`/actus/${actu.id}`}
                 />
-              </div>
-            ) : null}
-          </div>
+              ))}
+            </div>
+          ))}
         </div>
-      </div>
-    </div>
-  );
-}
+      </Section>
+    </>
+  ) : null;
+};
+
+export default Actualites;

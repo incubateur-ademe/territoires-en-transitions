@@ -34,6 +34,7 @@ export function MenuPrincipal() {
     <ul className="fr-nav__list">
       <MenuItem href="/">Accueil</MenuItem>
       <MenuItem href="/programme">Le programme Territoire Engagé</MenuItem>
+      <MenuItem href="/actus">Actualités</MenuItem>
       <MenuItem href="/faq">Questions fréquentes</MenuItem>
       <MenuItem href="/contact">Contact</MenuItem>
     </ul>
