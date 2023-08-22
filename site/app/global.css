@@ -57,6 +57,16 @@ h6 {
   font-size: 1.25rem;
 }
 
+.fr-card.fr-enlarge-link:hover {
+  background-color: #f6f6f6 !important;
+  transition-duration: 700ms;
+}
+
+.fr-card.fr-enlarge-link:hover .fr-card__img {
+  filter: brightness(var(--brightness));
+  transition-duration: 700ms;
+}
+
 /** appliquable au sommaire généré à partir d'un mdx avec rehype-toc  */
 nav.md-toc {
   background-color: #f6f6f6;
