@@ -12,10 +12,10 @@ import {
 import {AxeDndData} from './Axe';
 import {PlanNode} from '../data/types';
 import {useEditAxe} from '../data/useEditAxe';
-import {useAddFicheToAxe} from '../../FicheAction/data/useAddFicheToAxe';
 import {generateTitle} from '../../FicheAction/data/utils';
 import {getAxeInPlan} from '../data/utils';
 import NestedDroppableContainers from './NestedDroppableContainers';
+import {useFicheChangeAxe} from '../../FicheAction/data/useFicheChangeAxe';
 
 interface Props {
   plan: PlanNode;
@@ -23,7 +23,7 @@ interface Props {
 }
 
 function Arborescence({plan, isAxePage}: Props) {
-  const {mutate: addFicheToAxe, isLoading} = useAddFicheToAxe();
+  const {mutate: changeAxeFiche} = useFicheChangeAxe();
 
   const [droppedContainerData, setDroppedContainerData] =
     useState<AxeDndData>();
@@ -64,6 +64,15 @@ function Arborescence({plan, isAxePage}: Props) {
       // si c'est une fiche
       if (activeData?.type === 'fiche') {
         console.log('fiche');
+        // si on déplace à la racine de la page plan/axe
+        if (plan.id === overData.axe.id) {
+          changeAxeFiche({
+            fiche_id: activeData.fiche.id,
+            plan_id: plan.id,
+            new_axe_id: plan.id,
+            old_axe_id: activeData.axeId,
+          });
+        }
         // Si la fiche n'existe pas déjà dans l'axe on l'ajoute
         if (
           !activeData?.fiche.plans.some(
@@ -72,9 +81,11 @@ function Arborescence({plan, isAxePage}: Props) {
         ) {
           const axe = getAxeInPlan(plan, overData.axe.id);
           if (axe) {
-            addFicheToAxe({
-              axe,
+            changeAxeFiche({
               fiche_id: activeData.fiche.id,
+              plan_id: plan.id,
+              new_axe_id: axe.id,
+              old_axe_id: activeData.axeId,
             });
           }
         }
