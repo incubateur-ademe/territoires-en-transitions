@@ -23,9 +23,7 @@ type Props = {
 };
 
 const Axe = ({plan, axe, isAxePage, isReadonly}: Props) => {
-  // TODO faire mieux
-  // Si j'utilise uuid, cela fait planté l'app
-  const uniqueId = axe.id + 200000000;
+  const uniqueId = `axe-${axe.id}`;
 
   const {
     isOver,
@@ -151,7 +149,7 @@ const Axe = ({plan, axe, isAxePage, isReadonly}: Props) => {
           )}
         </div>
         {isDroppable && (
-          <span className="block mt-2 mb-2 mx-12 p-4 text-sm text-bf525 rounded-md border border-dashed border-bf525">
+          <span className="block mt-2 mb-2 mx-12 p-4 text-sm text-indigo-400 rounded-md border border-dashed border-bf525">
             Déplacer dans cet axe
           </span>
         )}

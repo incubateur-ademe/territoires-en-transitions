@@ -38,7 +38,7 @@ const Fiche = ({axeId, url, fiche}: Props) => {
     active.data.current?.type === 'fiche';
 
   return (
-    <div className="relative">
+    <div className="relative self-stretch">
       {/** Drag overlay */}
       {isDragging &&
         createPortal(
@@ -50,7 +50,7 @@ const Fiche = ({axeId, url, fiche}: Props) => {
           document.body
         )}
       {!active && (
-        <div className="relative group">
+        <div className="relative group h-full">
           {/** Drag handle */}
           <div className="absolute top-0 -left-10 w-10 h-16 flex">
             <button
