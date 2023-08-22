@@ -63,11 +63,10 @@ function Arborescence({plan, isAxePage}: Props) {
     if (over && overData) {
       // si c'est une fiche
       if (activeData?.type === 'fiche') {
-        console.log('fiche');
         // si on déplace à la racine de la page plan/axe
         if (plan.id === overData.axe.id) {
           changeAxeFiche({
-            fiche_id: activeData.fiche.id,
+            fiche: activeData.fiche,
             plan_id: plan.id,
             new_axe_id: plan.id,
             old_axe_id: activeData.axeId,
@@ -82,7 +81,7 @@ function Arborescence({plan, isAxePage}: Props) {
           const axe = getAxeInPlan(plan, overData.axe.id);
           if (axe) {
             changeAxeFiche({
-              fiche_id: activeData.fiche.id,
+              fiche: activeData.fiche,
               plan_id: plan.id,
               new_axe_id: axe.id,
               old_axe_id: activeData.axeId,
@@ -99,7 +98,6 @@ function Arborescence({plan, isAxePage}: Props) {
           activeData?.axe.ancestors[activeData.axe.ancestors.length - 1] !==
             overData?.axe.id
         ) {
-          console.log('axe');
           updateAxe({
             id: activeData.axe.id as number,
             parent: overData?.axe.id as number,
