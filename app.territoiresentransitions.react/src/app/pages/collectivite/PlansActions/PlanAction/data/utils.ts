@@ -78,7 +78,7 @@ export const checkAxeExistInPlanProfondeur = (
  * Fonction recursive qui supprime un axe et son arborescence d'un plan.
  * @param plan plan d'action complet
  * @param axe_id id de l'axe à supprimer
- * @return plan d'action complet dans l'axe as PlanAction | undefined
+ * @return plan d'action complet sans l'axe as PlanAction | undefined
  */
 export const removeAxeFromPlan = (
   plan: PlanNode,
@@ -118,4 +118,81 @@ export const buildPlans = (axes: FlatAxe[]): PlanNode[] => {
   }
 
   return plans;
+};
+
+/**
+ * Fonction recursive qui supprime un axe et son arborescence d'un plan.
+ * @param plan plan d'action complet
+ * @param axe_id id de l'axe à supprimer
+ * @return plan d'action complet dans l'axe as PlanAction | undefined
+ */
+export const ficheChangeAxeDansPlan = (
+  axe: PlanNode,
+  fiche_id: number,
+  old_axe_id: number,
+  new_axe_id: number
+): PlanNode | undefined => {
+  // console.log(axe.children[0]?.fiches);
+  // console.log(axe.children[1]?.fiches);
+  // console.log(axe);
+  const tempAxe = deleteFicheFromAxe(axe, fiche_id, old_axe_id);
+  const newAxe = tempAxe && addFicheToAxe(tempAxe, fiche_id, new_axe_id);
+  // console.log(tempAxe.children[0]?.fiches);
+  // console.log(newAxe.children[0]?.fiches);
+  // console.log(newAxe.children[1]?.fiches);
+  // console.log(axe === addFicheToAxe(tempAxe, fiche_id, new_axe_id));
+  return newAxe;
+};
+
+const deleteFicheFromAxe = (
+  axe: PlanNode,
+  fiche_id: number,
+  old_axe_id: number
+) => {
+  if (axe.id === old_axe_id) {
+    return {...axe, fiches: axe.fiches.filter(f => f !== fiche_id)};
+  }
+  if (axe.children && axe.children.length > 0) {
+    axe.children.forEach(enfant => {
+      if (enfant.id === old_axe_id) {
+        if (enfant.fiches && enfant.fiches.length > 0) {
+          enfant.fiches = enfant.fiches.filter(fiche => fiche !== fiche_id);
+        }
+      } else {
+        if (enfant.children && enfant.children.length > 0) {
+          deleteFicheFromAxe(enfant, fiche_id, old_axe_id);
+        }
+      }
+    });
+  }
+  return axe;
+};
+
+const addFicheToAxe = (axe: PlanNode, fiche_id: number, new_axe_id: number) => {
+  const newAxe = axe;
+  if (axe.id === new_axe_id) {
+    if (axe.fiches) {
+      newAxe.fiches = [...axe.fiches, fiche_id];
+    } else {
+      newAxe.fiches = [fiche_id];
+    }
+  }
+  if (axe.children && axe.children.length > 0) {
+    for (let index = 0; index < axe.children.length; index++) {
+      const element = axe.children[index];
+      if (element.id !== new_axe_id) {
+        if (element.children && element.children.length > 0) {
+          addFicheToAxe(element, fiche_id, new_axe_id);
+        }
+      } else {
+        if (element.fiches) {
+          element.fiches = [...element.fiches, fiche_id];
+        } else {
+          element.fiches = [fiche_id];
+        }
+        axe.children[index] = element;
+      }
+    }
+  }
+  return newAxe;
 };
