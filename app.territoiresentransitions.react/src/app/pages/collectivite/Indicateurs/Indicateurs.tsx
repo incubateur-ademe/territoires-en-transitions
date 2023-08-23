@@ -97,19 +97,17 @@ const Indicateurs = () => {
       sideNav={{
         links: generateIndicateursNavLinks(collectivite.collectivite_id),
         actions: !collectivite.readonly && (
-          <div className="mt-8">
-            <Link
-              data-test="create-perso"
-              className="fr-btn fr-btn--tertiary fr-ml-4w"
-              to={makeCollectiviteIndicateursUrl({
-                collectiviteId: collectivite.collectivite_id,
-                indicateurView: 'perso',
-                indicateurId: 'nouveau',
-              })}
-            >
-              Créer un indicateur
-            </Link>
-          </div>
+          <Link
+            data-test="create-perso"
+            className="fr-btn fr-btn--tertiary"
+            to={makeCollectiviteIndicateursUrl({
+              collectiviteId: collectivite.collectivite_id,
+              indicateurView: 'perso',
+              indicateurId: 'nouveau',
+            })}
+          >
+            Créer un indicateur
+          </Link>
         ),
       }}
     >

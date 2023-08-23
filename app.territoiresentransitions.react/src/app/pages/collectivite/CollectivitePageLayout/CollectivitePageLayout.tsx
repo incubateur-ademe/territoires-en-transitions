@@ -45,11 +45,11 @@ const PageLayout = ({children, sideNav, dataTest}: Props) => {
       // s'il y a une sidenav
     } else {
       if (panelState.isOpen) {
-        return `grid-cols-[3rem_minmax(0,_90rem)_24rem] xl:grid-cols-[0_minmax(0,_90rem)_24rem]`;
+        return `grid-cols-[3rem_minmax(0,_90rem)_24rem] 2xl:grid-cols-[0_minmax(0,_90rem)_24rem]`;
       }
 
       if (!isSideNavOpen) {
-        return 'grid-cols-[3rem_minmax(0,_90rem)] xl:grid-cols-[0_minmax(0,_90rem)]';
+        return 'grid-cols-[3rem_minmax(0,_90rem)] 2xl:grid-cols-[0rem_minmax(0,_90rem)]';
       }
 
       // Valeur par défaut, la side nav est ouverte
@@ -60,13 +60,16 @@ const PageLayout = ({children, sideNav, dataTest}: Props) => {
   return (
     <div
       data-test={dataTest}
-      className={`grid ${gridCols} m-auto xl:max-w-[90rem] xl:px-6`}
+      className={`grid ${gridCols} m-auto xl:max-w-[90rem] 2xl:px-6`}
     >
       {/** Side nav */}
       {sideNav && (
         <div
           data-test="SideNavigation"
-          className={classNames({'xl:-ml-12': !isSideNavOpen})}
+          className={classNames(
+            {'2xl:-ml-12': !isSideNavOpen},
+            {'pl-6 2xl:pl-0': isSideNavOpen}
+          )}
         >
           <SideNavContainer
             isOpen={isSideNavOpen}
