@@ -1,5 +1,3 @@
-'use client';
-
 import InfoSection from '@components/sections/InfoSection';
 import CodingPicto from 'public/pictogrammes/CodingPicto';
 

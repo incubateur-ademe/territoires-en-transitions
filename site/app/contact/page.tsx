@@ -1,10 +1,9 @@
 /* eslint-disable react/no-unescaped-entities */
-'use client';
+'use server';
 
 import Section from '@components/sections/Section';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
 import PhoneIcon from 'public/icones/PhoneIcon';
-import {useEffect, useState} from 'react';
 import {fetchSingle} from 'src/strapi';
 import {StrapiItem} from 'src/StrapiItem';
 
@@ -14,26 +13,22 @@ type ContactData = {
   couverture?: StrapiItem;
 };
 
-const Contact = () => {
-  const [data, setData] = useState<ContactData | undefined>();
+export const getData = async () => {
+  const data = await fetchSingle('contact');
 
-  const fetchData = async () => {
-    const data = await fetchSingle('contact');
-
-    const formattedData = {
-      titre: data.attributes.Titre as unknown as string,
-      description:
-        (data.attributes.Description as unknown as string) ?? undefined,
-      couverture:
-        (data.attributes.Couverture.data as unknown as StrapiItem) ?? undefined,
-    };
-
-    setData(formattedData);
+  const formattedData = {
+    titre: data.attributes.Titre as unknown as string,
+    description:
+      (data.attributes.Description as unknown as string) ?? undefined,
+    couverture:
+      (data.attributes.Couverture.data as unknown as StrapiItem) ?? undefined,
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  return formattedData;
+};
+
+const Contact = async () => {
+  const data: ContactData = await getData();
 
   return data ? (
     <Section className="flex-col">

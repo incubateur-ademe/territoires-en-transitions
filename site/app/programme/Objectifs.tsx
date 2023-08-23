@@ -2,60 +2,52 @@
 
 import CardsWrapper from '@components/cards/CardsWrapper';
 import CardsSection from '@components/sections/CardsSection';
-import {useEffect, useState} from 'react';
-import {fetchCollection} from 'src/strapi';
-import {StrapiItem} from 'src/StrapiItem';
-import DOMPurify from 'dompurify';
-import {marked} from 'marked';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
+import {processMarkedContent} from 'src/utils/processMarkedContent';
+import {useEffect, useState} from 'react';
+import {Content} from './utils';
 
 type ObjectifsProps = {
   titre: string;
   description?: string;
+  contenu: Content[];
 };
 
-const Objectifs = ({titre, description}: ObjectifsProps) => {
-  const [objectifs, setObjectifs] = useState<
-    {
-      id: number;
-      description: string;
-      picto: StrapiItem;
-    }[]
-  >([]);
+const Objectifs = ({titre, description, contenu}: ObjectifsProps) => {
+  const [processedContent, setProcessedContent] = useState<Content[]>([]);
 
-  const fetchObjectifs = async () => {
-    const data = await fetchCollection('objectifs');
+  const processContent = async () => {
+    const newContent = [...contenu];
 
-    const formattedData = data.map(d => ({
-      id: d.id,
-      description: d.attributes.Description as unknown as string,
-      picto: d.attributes.Pictogramme.data as unknown as StrapiItem,
-    }));
+    newContent.forEach(async c => {
+      const newDescription = await processMarkedContent(c.description);
+      c.description = newDescription;
+    });
 
-    setObjectifs(formattedData);
+    setProcessedContent(newContent);
   };
 
   useEffect(() => {
-    fetchObjectifs();
+    processContent();
   }, []);
 
-  return objectifs.length ? (
+  return processedContent.length ? (
     <CardsSection
       title={titre}
       description={description}
       cardsList={
         <CardsWrapper cols={5}>
-          {objectifs.map((o, index) => (
+          {processedContent.map((c, index) => (
             <div key={index} className="flex flex-col items-center gap-8">
               <div className="w-[140px] h-[140px] bg-white rounded-full flex items-center justify-center">
                 <picture>
-                  <StrapiImage data={o.picto} />
+                  <StrapiImage data={c.image} />
                 </picture>
               </div>
               <p
                 className="text-center"
                 dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(marked.parse(o.description)),
+                  __html: c.description,
                 }}
               />
             </div>
