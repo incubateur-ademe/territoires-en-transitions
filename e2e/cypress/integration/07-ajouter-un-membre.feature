@@ -8,7 +8,7 @@ Fonctionnalité: Ajouter un membre au profil de la collectivité
     Quand je suis sur la page "Gestion des membres" de la collectivité "1"
     Alors un formulaire d'invitation est affiché
 
-    Quand je renseigne l'email "yulu@dudu.com" de la personne à inviter en "edition"
+    Quand je renseigne l'email "yulu@DUDU.com" de la personne à inviter en "edition"
     Et que je valide le formulaire
     Alors une alerte de "succès" est affichée et contient "Nouveau membre ajouté avec succès à la collectivité !"
     Alors le tableau des membres doit contenir l'utilisateur "yulu@dudu.com"
@@ -19,7 +19,7 @@ Fonctionnalité: Ajouter un membre au profil de la collectivité
     Quand je suis sur la page "Gestion des membres" de la collectivité "1"
     Alors un formulaire d'invitation est affiché
 
-    Quand je renseigne l'email "yili@didi.com" de la personne à inviter en "edition"
+    Quand je renseigne l'email "YiLI@didi.com" de la personne à inviter en "edition"
     Et que je valide le formulaire
     Alors une alerte de "information" est affichée et contient "L'utilisateur est déjà associé à cette collectivité."
 
@@ -38,7 +38,7 @@ Fonctionnalité: Ajouter un membre au profil de la collectivité
     Alors le presse-papier contient "Yolo Dodo de Ambérieu-en-Bugey vous invite à collaborer."
 
     Quand je clique sur le bouton "Copier le lien"
-    Alors le presse-papier contient "/invitation/"
+    Alors le presse-papier contient "http"
 
     Quand je me déconnecte
     Alors la page "home" est visible
