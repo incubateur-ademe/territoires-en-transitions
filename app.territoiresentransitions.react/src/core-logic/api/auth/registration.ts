@@ -21,7 +21,6 @@ export const registerUser = async (inscription: InscriptionUtilisateur) => {
       'La politique de protection des données personnelles doit être acceptée.'
     );
 
-  // todo fix signup with existing user email.
   const email = inscription.email.toLowerCase();
   const {data, error} = await supabaseClient.auth.signUp({
     email,
