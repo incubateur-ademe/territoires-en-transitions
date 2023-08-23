@@ -35,12 +35,9 @@ const BlogCard = ({
 
   return (
     <div
-      className={classNames(
-        'fr-card fr-card--no-border group border rounded-lg',
-        {
-          'fr-enlarge-link': !!href,
-        },
-      )}
+      className={classNames('fr-card fr-card--no-border border rounded-lg', {
+        'fr-enlarge-link': !!href,
+      })}
       style={{
         backgroundColor: backgroundColor ? backgroundColor : '#fff',
         borderColor: backgroundColor ? backgroundColor : '#e5e7eb',
@@ -63,7 +60,7 @@ const BlogCard = ({
           {'border-b': !backgroundColor},
         )}
       >
-        <div className="fr-card__img group-hover:scale-105 duration-700">
+        <div className="fr-card__img duration-700">
           {image ? (
             <picture>{image}</picture>
           ) : (
