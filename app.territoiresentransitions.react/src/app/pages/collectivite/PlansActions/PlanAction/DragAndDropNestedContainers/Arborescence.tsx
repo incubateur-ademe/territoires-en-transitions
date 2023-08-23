@@ -1,4 +1,3 @@
-import {useState} from 'react';
 import {
   DndContext,
   DragEndEvent,
@@ -9,10 +8,8 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 
-import {AxeDndData} from './Axe';
 import {PlanNode} from '../data/types';
 import {useEditAxe} from '../data/useEditAxe';
-import {generateTitle} from '../../FicheAction/data/utils';
 import {getAxeInPlan} from '../data/utils';
 import NestedDroppableContainers from './NestedDroppableContainers';
 import {useFicheChangeAxe} from '../../FicheAction/data/useFicheChangeAxe';
@@ -24,20 +21,12 @@ interface Props {
 
 function Arborescence({plan, isAxePage}: Props) {
   const {mutate: changeAxeFiche} = useFicheChangeAxe();
-
-  const [droppedContainerData, setDroppedContainerData] =
-    useState<AxeDndData>();
+  const {mutate: updateAxe} = useEditAxe(plan.id);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor)
   );
-
-  const {mutate: updateAxe} = useEditAxe(plan.id, {
-    success: `Élément déplacé dans ${generateTitle(
-      droppedContainerData?.axe.nom
-    )}`,
-  });
 
   return (
     <DndContext
@@ -56,8 +45,6 @@ function Arborescence({plan, isAxePage}: Props) {
 
     const activeData = active.data.current;
     const overData = over?.data.current;
-
-    setDroppedContainerData(overData as AxeDndData);
 
     // il faut que l'élément drag soit au dessus d'un drop pour faire une action
     if (over && overData) {

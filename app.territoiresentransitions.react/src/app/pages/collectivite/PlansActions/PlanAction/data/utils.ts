@@ -121,10 +121,12 @@ export const buildPlans = (axes: FlatAxe[]): PlanNode[] => {
 };
 
 /**
- * Fonction recursive qui supprime un axe et son arborescence d'un plan.
- * @param plan plan d'action complet
- * @param axe_id id de l'axe à supprimer
- * @return plan d'action complet dans l'axe as PlanAction | undefined
+ * Fonction recursive qui supprime une fiche d'un axe et l'ajoute dans l'axe de réception.
+ * @param axe axe racine qui contient les l'ancien et le nouvel axe pour la fiche
+ * @param fiche_id id de la fiche à bouger
+ * @param old_axe_id id de l'axe à où il faut supprimer la fiche
+ * @param new_axe_id id de l'axe à où il faut ajouter la fiche
+ * @return l'axe racine avec les fiche déplacée dans le bon axe
  */
 export const ficheChangeAxeDansPlan = (
   axe: PlanNode,
@@ -132,18 +134,12 @@ export const ficheChangeAxeDansPlan = (
   old_axe_id: number,
   new_axe_id: number
 ): PlanNode | undefined => {
-  // console.log(axe.children[0]?.fiches);
-  // console.log(axe.children[1]?.fiches);
-  // console.log(axe);
   const tempAxe = deleteFicheFromAxe(axe, fiche_id, old_axe_id);
   const newAxe = tempAxe && addFicheToAxe(tempAxe, fiche_id, new_axe_id);
-  // console.log(tempAxe.children[0]?.fiches);
-  // console.log(newAxe.children[0]?.fiches);
-  // console.log(newAxe.children[1]?.fiches);
-  // console.log(axe === addFicheToAxe(tempAxe, fiche_id, new_axe_id));
   return newAxe;
 };
 
+/** Permet de façon récursive de supprimer la fiche d'un axe */
 const deleteFicheFromAxe = (
   axe: PlanNode,
   fiche_id: number,
@@ -168,6 +164,7 @@ const deleteFicheFromAxe = (
   return axe;
 };
 
+/** Permet de façon récursive d'ajouter la fiche à un axe */
 const addFicheToAxe = (axe: PlanNode, fiche_id: number, new_axe_id: number) => {
   const newAxe = axe;
   if (axe.id === new_axe_id) {

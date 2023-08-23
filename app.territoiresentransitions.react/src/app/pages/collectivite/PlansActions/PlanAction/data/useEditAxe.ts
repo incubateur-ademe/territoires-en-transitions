@@ -19,19 +19,11 @@ const updateAxe = async (axe: TAxeUpdate) => {
 /**
  * Édite un axe dans un plan d'action
  */
-export const useEditAxe = (
-  planId: number,
-  toastMessage?: {success?: string; error?: string}
-) => {
+export const useEditAxe = (planId: number) => {
   const queryClient = useQueryClient();
   const collectivite_id = useCollectiviteId();
 
   return useMutation(updateAxe, {
-    meta: {
-      success: toastMessage?.success,
-      error: toastMessage?.error,
-      autoHideDuration: 7500,
-    },
     onSuccess: () => {
       queryClient.invalidateQueries(['plans_navigation', collectivite_id]);
       queryClient.invalidateQueries(['plan_action', planId]);
