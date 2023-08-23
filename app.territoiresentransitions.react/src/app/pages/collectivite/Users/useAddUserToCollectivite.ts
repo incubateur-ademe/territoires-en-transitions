@@ -51,7 +51,7 @@ const addUserToCollectivite = async (
 ): Promise<AddUserToCollectiviteResponse | null> => {
   const {data, error} = await supabaseClient.rpc('add_user', {
     collectivite_id: req.collectiviteId,
-    email: req.email,
+    email: req.email?.toLowerCase(),
     niveau: req.niveauAcces,
   });
   if (error) {
