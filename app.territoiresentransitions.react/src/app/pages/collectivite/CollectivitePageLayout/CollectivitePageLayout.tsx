@@ -24,6 +24,8 @@ const PageLayout = ({children, sideNav, dataTest}: Props) => {
   useEffect(() => {
     if (panelState.isOpen) {
       setIsSideNavOpen(false);
+    } else {
+      setIsSideNavOpen(true);
     }
   }, [panelState]);
 
