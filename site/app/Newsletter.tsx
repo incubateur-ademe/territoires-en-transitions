@@ -12,7 +12,12 @@ const Newsletter = ({titre, description}: NewsletterProps) => {
     <Section className="flex-col gap-0">
       <h3 className="mb-3">{titre}</h3>
       <p>{description}</p>
-      <ButtonWithLink href="/inscription">S'inscrire</ButtonWithLink>
+      <ButtonWithLink
+        href="https://cloud.contact.ademe.fr/inscription-tete"
+        external
+      >
+        S'inscrire
+      </ButtonWithLink>
     </Section>
   );
 };
