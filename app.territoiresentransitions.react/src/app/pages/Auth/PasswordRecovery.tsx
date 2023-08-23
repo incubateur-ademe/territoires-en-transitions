@@ -33,21 +33,21 @@ type TResetPwdHookReturn = [
 const useResetPassword = (): TResetPwdHookReturn => {
   const [error, setError] = useState('');
 
-  const resetPassword = ({email}: {email: string}) =>
-    supabaseClient.auth
+  const resetPassword = (args: {email: string}) => {
+    const email = args.email.toLowerCase();
+    return supabaseClient.auth
       .resetPasswordForEmail(email)
       .then(response => {
         if (response.error) {
-          console.log(response.error?.message);
           setError("L'envoi du lien de réinitialisation a échoué");
           return false;
         }
         return email;
       })
       .catch(error => {
-        console.log('resetPasswordForEmail error: ', error);
         return false;
       });
+  };
 
   return [error, resetPassword];
 };
