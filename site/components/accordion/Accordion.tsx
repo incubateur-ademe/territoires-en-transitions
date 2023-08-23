@@ -1,9 +1,8 @@
 'use client';
 
 import classNames from 'classnames';
-import DOMPurify from 'dompurify';
-import {marked} from 'marked';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
+import {processMarkedContent} from 'src/utils/processMarkedContent';
 
 type AccordionType = {
   id: string;
@@ -19,6 +18,18 @@ const Accordion = ({
   initialState = false,
 }: AccordionType) => {
   const [expanded, setExpanded] = useState(initialState ?? false);
+  const [processedContent, setProcessedContent] = useState<
+    string | undefined
+  >();
+
+  const processContent = async (content: string) => {
+    const newContent = await processMarkedContent(content);
+    setProcessedContent(newContent);
+  };
+
+  useEffect(() => {
+    if (typeof content === 'string') processContent(content);
+  }, []);
 
   const contentClassName = classNames({
     'fr-collapse--expanded py-3 px-4': expanded,
@@ -37,12 +48,12 @@ const Accordion = ({
           {title}
         </button>
       </h3>
-      {typeof content === 'string' ? (
+      {processedContent ? (
         <div
           className={contentClassName}
           id={id}
           dangerouslySetInnerHTML={{
-            __html: DOMPurify.sanitize(marked.parse(content)),
+            __html: processedContent,
           }}
         />
       ) : (

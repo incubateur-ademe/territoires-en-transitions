@@ -1,34 +1,33 @@
 /* eslint-disable react/no-unescaped-entities */
-'use client';
+'use server';
 
 import Accordion from '@components/accordion/Accordion';
 import ButtonWithLink from '@components/buttons/ButtonWithLink';
 import Section from '@components/sections/Section';
 import CommunityPicto from 'public/pictogrammes/CommunityPicto';
 import PictoWithBackground from 'public/pictogrammes/PictoWithBackground';
-import {useEffect, useState} from 'react';
 import {fetchCollection} from 'src/strapi';
 
-const Faq = () => {
-  const [questions, setQuestions] = useState<
-    {id: number; titre: string; contenu: string}[]
-  >([]);
+type FaqData = {
+  id: number;
+  titre: string;
+  contenu: string;
+};
 
-  const fetchQuestions = async () => {
-    const data = await fetchCollection('faqs');
+export const getData = async () => {
+  const data = await fetchCollection('faqs');
 
-    const formattedData = data.map(d => ({
-      id: d.id,
-      titre: d.attributes.Titre as unknown as string,
-      contenu: d.attributes.Contenu as unknown as string,
-    }));
+  const formattedData = data.map(d => ({
+    id: d.id,
+    titre: d.attributes.Titre as unknown as string,
+    contenu: d.attributes.Contenu as unknown as string,
+  }));
 
-    setQuestions(formattedData);
-  };
+  return formattedData;
+};
 
-  useEffect(() => {
-    fetchQuestions();
-  }, []);
+const Faq = async () => {
+  const questions: FaqData[] = await getData();
 
   return (
     <>

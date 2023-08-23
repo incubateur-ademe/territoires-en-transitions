@@ -4,15 +4,17 @@ import CardsSection from '@components/sections/CardsSection';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
 import {StrapiItem} from 'src/StrapiItem';
 
+export type AccompagnementContent = {
+  titre: string;
+  description: string;
+  image: StrapiItem;
+  button: {titre: string; href: string};
+};
+
 type AccompagnementProps = {
   titre: string;
   description?: string;
-  contenu: {
-    titre: string;
-    description: string;
-    image: StrapiItem;
-    button: {titre: string; href: string};
-  }[];
+  contenu: AccompagnementContent[];
 };
 
 const Accompagnement = ({titre, description, contenu}: AccompagnementProps) => {

@@ -1,8 +1,10 @@
+'use client';
+
 import ButtonWithLink from '@components/buttons/ButtonWithLink';
 import classNames from 'classnames';
-import DOMPurify from 'dompurify';
-import {marked} from 'marked';
 import PictoWithBackground from 'public/pictogrammes/PictoWithBackground';
+import {useEffect, useState} from 'react';
+import {processMarkedContent} from 'src/utils/processMarkedContent';
 import Section from './Section';
 
 type InfoSectionProps = {
@@ -27,6 +29,17 @@ const InfoSection = ({
   customBackground,
   customTextStyle,
 }: InfoSectionProps) => {
+  const [processedContent, setProcessedContent] = useState('');
+
+  const processContent = async () => {
+    const newContent = await processMarkedContent(content);
+    setProcessedContent(newContent);
+  };
+
+  useEffect(() => {
+    processContent();
+  }, []);
+
   return (
     <Section
       id={id}
@@ -38,7 +51,7 @@ const InfoSection = ({
         <p
           className={classNames('text-xl', customTextStyle)}
           dangerouslySetInnerHTML={{
-            __html: DOMPurify.sanitize(marked.parse(content)),
+            __html: processedContent,
           }}
         />
         <div className="fr-btns-group fr-btns-group--inline-md justify-center lg:justify-start">
