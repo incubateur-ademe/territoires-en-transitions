@@ -16,8 +16,7 @@ const Actualites = () => {
   const fetchData = async () => {
     const data = await fetchCollection('actualites', [
       ['populate[0]', 'Couverture'],
-      ['sort[0]', 'DateCreation:asc'],
-      ['sort[1]', 'createdAt:asc'],
+      ['sort[0]', 'createdAt:desc'],
     ]);
     setData(data);
   };

@@ -65,6 +65,7 @@ h6 {
 .fr-card.fr-enlarge-link:hover .fr-card__img {
   filter: brightness(var(--brightness));
   transition-duration: 700ms;
+  transform: scale(1.05);
 }
 
 /** appliquable au sommaire généré à partir d'un mdx avec rehype-toc  */
