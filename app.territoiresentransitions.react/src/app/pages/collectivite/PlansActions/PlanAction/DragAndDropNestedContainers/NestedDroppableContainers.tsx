@@ -9,10 +9,11 @@ import {AxeActions} from '../AxeActions';
 
 interface Props {
   plan: PlanNode;
+  axe: PlanNode;
   isAxePage: boolean;
 }
 
-function NestedDroppableContainers({plan, isAxePage}: Props) {
+function NestedDroppableContainers({plan, axe, isAxePage}: Props) {
   const collectivite = useCurrentCollectivite();
 
   const {
@@ -20,10 +21,10 @@ function NestedDroppableContainers({plan, isAxePage}: Props) {
     active,
     setNodeRef: droppableRef,
   } = useDroppable({
-    id: plan.id * 50,
+    id: axe.id * 50,
     data: {
       type: 'axe',
-      axe: plan,
+      axe,
     } as AxeDndData,
   });
 
@@ -32,9 +33,9 @@ function NestedDroppableContainers({plan, isAxePage}: Props) {
       active.data.current.axe.ancestors &&
       active.data.current.axe.ancestors[
         active.data.current.axe.ancestors.length - 1
-      ] !== plan.id) ||
+      ] !== axe.id) ||
     (active?.data.current?.type === 'fiche' &&
-      active.data.current.axeId !== plan.id);
+      active.data.current.axeId !== axe.id);
 
   return (
     <div className="flex flex-col">
@@ -43,7 +44,7 @@ function NestedDroppableContainers({plan, isAxePage}: Props) {
           <AxeActions
             isAxePage={isAxePage}
             planActionId={plan.id}
-            axeId={plan.id}
+            axeId={axe.id}
           />
         </div>
       )}
@@ -58,17 +59,17 @@ function NestedDroppableContainers({plan, isAxePage}: Props) {
           Glisser l'élément ici pour le mettre à la racine
         </div>
       )}
-      {plan.fiches && plan.fiches.length > 0 && (
+      {axe.fiches && axe.fiches.length > 0 && (
         <Fiches
           isDndActive={active !== null}
           isAxePage={isAxePage}
-          ficheIds={plan.fiches}
+          ficheIds={axe.fiches}
           planId={plan.id}
-          axeId={plan.id}
+          axeId={axe.id}
         />
       )}
-      {plan.children.length > 0 &&
-        plan.children.map(axe => (
+      {axe.children.length > 0 &&
+        axe.children.map(axe => (
           <Axe
             key={axe.id}
             plan={plan}

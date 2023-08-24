@@ -70,7 +70,14 @@ export const PlanAction = ({plan, axe}: PlanActionProps) => {
           />
         )}
         {/** Arboresence (fiches + sous-axes) */}
-        {!isFiltered && <Arborescence plan={plan} isAxePage={isAxePage} />}
+        {!isFiltered && (
+          <Arborescence
+            plan={plan}
+            axe={axe ?? plan}
+            isAxePage={isAxePage}
+            isReadonly={isReadonly}
+          />
+        )}
         {/** Footer */}
         <PlanActionFooter plan={plan} isReadonly={isReadonly} />
       </div>
