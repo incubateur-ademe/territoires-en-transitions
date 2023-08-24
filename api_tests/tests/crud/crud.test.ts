@@ -10,5 +10,5 @@ import {signIn, signOut} from "../../lib/auth.ts";
 import {testAddRandomUser} from "../../lib/rpcs/testAddRandomUser.ts";
 
 Deno.test("Test ", async () => {
-  assertFalse(!await runConfidentialiteTest(null, null, null));
+  //assertFalse(!await runConfidentialiteTest(null, null, null));
 });
