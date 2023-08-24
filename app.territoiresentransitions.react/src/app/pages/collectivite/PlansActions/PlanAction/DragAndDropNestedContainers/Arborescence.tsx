@@ -13,20 +13,27 @@ import {useEditAxe} from '../data/useEditAxe';
 import {getAxeInPlan} from '../data/utils';
 import NestedDroppableContainers from './NestedDroppableContainers';
 import {useFicheChangeAxe} from '../../FicheAction/data/useFicheChangeAxe';
+import PictoLeaf from 'ui/pictogrammes/PictoLeaf';
+import {AxeActions} from '../AxeActions';
 
 interface Props {
   plan: PlanNode;
+  axe: PlanNode;
   isAxePage: boolean;
+  isReadonly: boolean;
 }
 
-function Arborescence({plan, isAxePage}: Props) {
+function Arborescence({plan, axe, isAxePage, isReadonly}: Props) {
   const {mutate: changeAxeFiche} = useFicheChangeAxe();
-  const {mutate: updateAxe} = useEditAxe(plan.id);
+  const {mutate: updateAxe} = useEditAxe(axe.id);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor)
   );
+
+  const hasContent =
+    axe.children.length > 0 || (axe.fiches && axe.fiches.length > 0);
 
   return (
     <DndContext
@@ -36,7 +43,27 @@ function Arborescence({plan, isAxePage}: Props) {
         handleDragEnd(event);
       }}
     >
-      <NestedDroppableContainers plan={plan} isAxePage={isAxePage} />
+      {hasContent ? (
+        <NestedDroppableContainers
+          plan={plan}
+          axe={axe}
+          isAxePage={isAxePage}
+        />
+      ) : (
+        <div className="flex flex-col items-center my-8">
+          <PictoLeaf className="w-24 fill-gray-400" />
+          <div className="my-6 text-gray-500">
+            Aucune arborescence pour l'instant
+          </div>
+          {!isReadonly && (
+            <AxeActions
+              isAxePage={isAxePage}
+              planActionId={plan.id}
+              axeId={axe ? axe.id : plan.id}
+            />
+          )}
+        </div>
+      )}
     </DndContext>
   );
 
@@ -51,28 +78,29 @@ function Arborescence({plan, isAxePage}: Props) {
       // si c'est une fiche
       if (activeData?.type === 'fiche') {
         // si on déplace à la racine de la page plan/axe
-        if (plan.id === overData.axe.id) {
+        if (axe.id === overData.axe.id) {
           changeAxeFiche({
             fiche: activeData.fiche,
-            plan_id: plan.id,
-            new_axe_id: plan.id,
+            plan_id: axe.id,
+            new_axe_id: axe.id,
             old_axe_id: activeData.axeId,
           });
-        }
-        // Si la fiche n'existe pas déjà dans l'axe on l'ajoute
-        if (
-          !activeData?.fiche.plans.some(
-            (plan: PlanNode) => plan.id === overData.axe.id
-          )
-        ) {
-          const axe = getAxeInPlan(plan, overData.axe.id);
-          if (axe) {
-            changeAxeFiche({
-              fiche: activeData.fiche,
-              plan_id: plan.id,
-              new_axe_id: axe.id,
-              old_axe_id: activeData.axeId,
-            });
+        } else {
+          // Si la fiche n'existe pas déjà dans l'axe on l'ajoute
+          if (
+            !activeData?.fiche.plans.some(
+              (plan: PlanNode) => plan.id === overData.axe.id
+            )
+          ) {
+            const newAxe = getAxeInPlan(axe, overData.axe.id);
+            if (newAxe) {
+              changeAxeFiche({
+                fiche: activeData.fiche,
+                plan_id: axe.id,
+                new_axe_id: newAxe.id,
+                old_axe_id: activeData.axeId,
+              });
+            }
           }
         }
       }
