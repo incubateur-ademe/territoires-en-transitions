@@ -1,0 +1,14 @@
+{
+  "collectionName": "components_contenu_infos",
+  "info": {
+    "displayName": "Info",
+    "icon": "information"
+  },
+  "options": {},
+  "attributes": {
+    "Texte": {
+      "type": "richtext",
+      "required": true
+    }
+  }
+}

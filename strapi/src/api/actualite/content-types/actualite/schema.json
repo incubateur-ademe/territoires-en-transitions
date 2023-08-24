@@ -15,30 +15,33 @@
     "Titre": {
       "type": "string",
       "required": true,
-      "maxLength": 300
+      "maxLength": 255
     },
     "DateCreation": {
-      "type": "datetime"
-    },
-    "Corps": {
-      "type": "richtext"
+      "type": "date"
     },
     "Couverture": {
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": [
-        "images"
-      ]
+      "allowedTypes": ["images"]
     },
     "Resume": {
       "type": "string",
-      "required": false
+      "required": false,
+      "maxLength": 255
     },
     "Sections": {
-      "type": "component",
-      "repeatable": true,
-      "component": "contenu.section"
+      "type": "dynamiczone",
+      "components": [
+        "contenu.paragraphe",
+        "contenu.image",
+        "contenu.gallerie",
+        "contenu.video",
+        "contenu.info"
+      ],
+      "required": true,
+      "min": 1
     }
   }
 }
