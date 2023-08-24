@@ -99,24 +99,19 @@ When(/je le nomme "([^"]*)"/, titre => {
   cy.get('body').click(10, 10);
 });
 
-When(/j'ajoute une fiche à "([^"]*)"/, titre => {
-  // sélectionne l'axe qui contient le titre donné
-  cy.get('[data-test=Axe]')
-    .contains(titre)
-    .within(() => {
-      // le déplie
-      cy.root()
-        .parents('[data-test=Axe]')
-        .find('[data-test=BoutonDeplierAxe]')
-        .click();
-      // et demande la création de la fiche
-      cy.root()
-        .parents('[data-test=Axe]')
-        .find('button')
-        .contains('Créer une fiche action')
-        .click();
-    });
-  // puis attend que la fiche soit visible
+When(/j'ajoute une fiche au plan d'action/, () => {
+  cy.get('[data-test=PlanAction]')
+    .find('button')
+    .contains('Créer une fiche action')
+    .click();
+  cy.get('[data-test=FicheAction]').should('be.visible');
+});
+
+When(/j'ajoute une fiche à la page axe/, () => {
+  cy.get('[data-test=PageAxe]')
+    .find('button')
+    .contains('Créer une fiche action')
+    .click();
   cy.get('[data-test=FicheAction]').should('be.visible');
 });
 
@@ -178,22 +173,21 @@ When(
 
 /** PAGE AXE ET FILTRES */
 
-When(
-  /j'ouvre "([^"]*)" dans la navigation latérale et que je navigue vers "([^"]*)"/,
-  (section, axe) => {
-    // ouvre la section correspondant au plan donné
-    cy.get('[data-test=SideNav-section]')
-      .contains(section)
-      .parent()
-      .parent()
-      .within(() => {
-        // le déplie
-        cy.root().get('[data-test=SideNav-section-toggle-button]').click();
-      });
-    // et navigue vers l'axe donné
-    cy.get('[data-test=SideNav-section-liens]').contains(axe).click();
-  }
-);
+When(/j'ouvre "([^"]*)" dans la navigation latérale/, (section, axe) => {
+  // ouvre la section correspondant au plan donné
+  cy.get('[data-test=SideNav-section]')
+    .contains(section)
+    .parent()
+    .parent()
+    .within(() => {
+      // le déplie
+      cy.root().get('[data-test=SideNav-section-toggle-button]').click();
+    });
+});
+
+When(/je navigue vers "([^"]*)"/, axe => {
+  cy.get('[data-test=SideNav-section-liens]').contains(axe).click();
+});
 
 When(/j'ouvre les filtres/, () => {
   cy.get('[data-test=FiltrerFiches]').contains('Filtrer').click();
