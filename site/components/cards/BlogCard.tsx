@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import {getLocalDateString} from 'src/utils/getLocalDateString';
 
 type BlogCardProps = {
   title: string;
@@ -22,17 +23,6 @@ const BlogCard = ({
   href,
   backgroundColor,
 }: BlogCardProps) => {
-  const getParsedDate = (date: Date): string => {
-    let parsedDate = '';
-    const newDate = new Date(date);
-    parsedDate += `${newDate.getDate()} `;
-    parsedDate += `${new Intl.DateTimeFormat('fr-FR', {month: 'long'}).format(
-      newDate,
-    )} `;
-    parsedDate += newDate.getFullYear();
-    return parsedDate;
-  };
-
   return (
     <div
       className={classNames('fr-card fr-card--no-border border rounded-lg', {
@@ -50,7 +40,9 @@ const BlogCard = ({
           </h3>
           {description && <p className="fr-card__desc">{description}</p>}
           <div className="fr-card__start">
-            {date && <p className="fr-card__detail">{getParsedDate(date)}</p>}
+            {date && (
+              <p className="fr-card__detail">{getLocalDateString(date)}</p>
+            )}
           </div>
         </div>
       </div>

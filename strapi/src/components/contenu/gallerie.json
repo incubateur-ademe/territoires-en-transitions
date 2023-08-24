@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_contenu_galleries",
+  "info": {
+    "displayName": "Gallerie",
+    "icon": "grid",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "Gallerie": {
+      "type": "media",
+      "multiple": true,
+      "required": true,
+      "allowedTypes": [
+        "images"
+      ]
+    }
+  }
+}

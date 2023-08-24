@@ -1,70 +1,86 @@
-import {fetchItem} from 'src/strapi';
-
-import {remark} from 'remark';
-import html from 'remark-html';
 import {notFound} from 'next/navigation';
 import {StrapiItem} from 'src/StrapiItem';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
+import Section from '@components/sections/Section';
+import {getLocalDateString} from 'src/utils/getLocalDateString';
+import ParagrapheArticle from './ParagrapheArticle';
+import InfoArticle from './InfoArticle';
+import {ParagrapheArticleData} from './types';
+import {getData} from './utils';
+import GallerieArticle from './GallerieArticle';
+import EmbededVideo from '@components/video/EmbededVideo';
 
-export default async function Page({params}: {params: {slug: string}}) {
+const Article = async ({params}: {params: {slug: string}}) => {
   const id = parseInt(params.slug);
-  const actu = await fetchItem('actualites', id, [
-    ['populate[0]', 'Couverture'],
-    ['populate[1]', 'Sections'],
-    ['populate[2]', 'Sections.Image'],
-  ]);
+  const data = await getData(id);
 
-  if (!actu) return notFound();
-
-  const processedContent = await remark()
-    .use(html)
-    .process(`${actu['attributes']['Corps']}`);
-  const bodyHtml = processedContent.toString();
+  if (!data) return notFound();
 
   return (
-    <div className="fr-container">
-      <div className="fr-mt-1w fr-mt-md-4w fr-mb-5w">
-        <Actu bodyHtml={bodyHtml} actu={actu} />
-      </div>
-    </div>
-  );
-}
-
-function Actu(props: {actu: StrapiItem; bodyHtml: string}) {
-  const couverture = props.actu['attributes']['Couverture']['data'];
-  const sections = props.actu['attributes'][
-    'Sections'
-  ] as unknown as SectionContenu[];
-  return (
-    <div>
-      {couverture ? (
+    <>
+      <Section className="flex-col gap-8">
+        {/* Image de couverture */}
         <StrapiImage
-          data={couverture as unknown as StrapiItem}
-          size="small"
-          className="fr-responsive-img"
+          data={data.couverture}
+          className="fr-responsive-img max-h-[550px] object-cover"
         />
-      ) : null}
-      <h1 className="fr-title">{`${props.actu['attributes']['Titre']}`}</h1>
-      <div dangerouslySetInnerHTML={{__html: props.bodyHtml}} />
-      {sections ? sections.map(s => <Section key={s.id} contenu={s} />) : null}
-    </div>
-  );
-}
 
-type SectionContenu = {
-  id: number;
-  Titre?: string;
-  Contenu?: string;
-  Image?: {data?: any};
+        <div>
+          {/* Titre */}
+          <h2>{data.titre}</h2>
+
+          {/* Date de création et date d'édition */}
+          <p className="text-sm text-[#666]">
+            Le {getLocalDateString(data.dateCreation)}
+            {data.dateEdition &&
+            getLocalDateString(data.dateCreation) !==
+              getLocalDateString(data.dateEdition) ? (
+              <span>
+                {' '}
+                &bull; Mis à jour le {getLocalDateString(data.dateEdition)}
+              </span>
+            ) : (
+              ''
+            )}
+          </p>
+        </div>
+      </Section>
+
+      {/* Contenu de l'article */}
+      {data.contenu.map((section, index) => (
+        <Section
+          key={index}
+          customBackground="#fff"
+          containerClassName={index === 0 ? '!pt-0 !pb-6' : '!py-6'}
+        >
+          {
+            // Contenu de type parapraphe (titre, texte, image)
+            section.type === 'paragraphe' ? (
+              <ParagrapheArticle
+                paragraphe={section.data as ParagrapheArticleData}
+              />
+            ) : // Contenu de type image
+            section.type === 'image' ? (
+              <picture className="w-full h-full flex justify-center items-center">
+                <StrapiImage data={section.data as StrapiItem} />
+              </picture>
+            ) : // Contenu de type gallerie d'images
+            section.type === 'gallerie' ? (
+              <GallerieArticle images={section.data as StrapiItem[]} />
+            ) : // Contenu de type vidéo Youtube ou Dailymotion
+            section.type === 'video' ? (
+              <EmbededVideo url={section.data as string} />
+            ) : // Contenu de type info (dans un cadre bleu)
+            section.type === 'info' ? (
+              <InfoArticle texte={section.data as string} />
+            ) : (
+              <></>
+            )
+          }
+        </Section>
+      ))}
+    </>
+  );
 };
 
-const Section = (props: {contenu: SectionContenu}) => {
-  const {Titre, Contenu, Image} = props.contenu;
-  return (
-    <section>
-      {Titre ? <h2>{Titre}</h2> : null}
-      {Contenu ? <div>{Contenu}</div> : null}
-      {Image?.data ? <StrapiImage data={Image.data} size="medium" /> : null}
-    </section>
-  );
-};
+export default Article;

@@ -86,6 +86,7 @@ nav.md-toc ~ h2:before {
   content: counter(h2counter) '.\0000a0';
 }
 
-.fr-accordion ul {
+.fr-accordion ul,
+.fr-callout ul {
   list-style: inside;
 }
