@@ -1,7 +1,7 @@
 # language: fr
 
 Fonctionnalité: Gérer les fiches et les plans d'action
-  
+
   Scénario: Ajouter, éditer et supprimer une fiche action
     Etant donné que je suis connecté en tant que "yolo"
     Et que je suis sur la page "Plans action" de la collectivité "1"
@@ -26,7 +26,7 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     Et que je supprime la fiche
     Et que je suis sur la page "Fiches non classees" de la collectivité "1"
     Alors la fiche "Fiche test" n'est plus présente
- 
+
   Scénario: Ranger une fiche action
     Etant donné que je suis connecté en tant que "yolo"
     Et que je suis sur la page "Plans action" de la collectivité "1"
@@ -37,7 +37,7 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     Quand j'ajoute un nouveau titre
     Et que je le nomme "Axe 1: les tests passent"
     # ajouter une fiche au nouvel axe créé
-    Quand j'ajoute une fiche à "Axe 1: les tests passent"
+    Quand j'ajoute une fiche au plan d'action
     # ouvrir la modale "Ranger la fiche"
     Quand j'ouvre la section "presentation"
     Et que j'ouvre la modale "Ranger la fiche"
@@ -60,7 +60,7 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     # le fil d'ariane de la fiche doit contenir "Axe 1"
     Quand je clique en dehors de la boîte de dialogue
     Alors le fil d'ariane de la fiche contient "Axe 1: les tests passent"
-  
+
   Scénario: Ajouter, éditer et supprimer un plan d'action
     Etant donné que je suis connecté en tant que "yolo"
     Et que je suis sur la page "Plans action" de la collectivité "1"
@@ -71,15 +71,12 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     Alors le "Plan action" est visible
     Alors le nom du plan d'action est changé en "Plan test" dans la navigation
 
-    # ajouter un nouveau titre et lui donner ce contenu "Axe 1: les tests passent"
-    Quand j'ajoute un nouveau titre
-    Et que je le nomme "Axe 1: les tests passent"
-    # ajouter une fiche au nouvel axe créé
-    Et que j'ajoute une fiche à "Axe 1: les tests passent"
+    # ajouter une fiche au plan d'action
+    Quand j'ajoute une fiche au plan d'action
     Et que je reviens sur le plan d'action "Plan test"
     Alors le "Filtrer les fiches" est visible
 
-    # ajouter un deuxième axe "Axe 2"
+    # ajouter un deuxième axe "Axe 0"
     Quand j'ajoute un nouveau titre
     Et que je le nomme "Axe 0"
     # supprimer "Axe 0"
@@ -95,13 +92,11 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     Alors le texte "Souhaitez-vous supprimer ce plan, son arborescence et les fiches qui y sont liées" est visible
 
     Quand je clique en dehors de la boîte de dialogue
-    # supprimer "Axe 1: les tests passent"
-    Et que je veux supprimer le dernier axe créé
-    Alors le texte "Souhaitez-vous supprimer ce niveau et les fiches qui y sont liées ?" est visible
 
-    # confirmer et vérifier
-    Quand je supprime l'axe depuis la modale
-    Alors l'axe "Axe 1: les tests passent" n'est plus visible
+    # supprimer la fiche crée précédemment
+    Quand je navigue sur la fiche "Sans titre"
+    Et que je supprime la fiche
+    Alors la fiche "Sans titre" n'est plus présente
 
     # supprimer le plan d'action
     Quand je veux supprimer le plan
@@ -109,7 +104,7 @@ Fonctionnalité: Gérer les fiches et les plans d'action
 
     Quand je supprime l'axe depuis la modale
     Alors le plan n'est plus présent dans la navigation
-  
+
   Scénario: Visiter page axe et filtrer les fiches
     Etant donné que je suis connecté en tant que "yolo"
     Et que je suis sur la page "Plans action" de la collectivité "1"
@@ -123,15 +118,12 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     Et que je le nomme "Axe 1: les tests passent"
 
     # naviguer sur la page axe
-    Quand j'ouvre "Plan test" dans la navigation latérale et que je navigue vers "Axe 1: les tests passent"
+    Quand j'ouvre "Plan test" dans la navigation latérale
+    Et que je navigue vers "Axe 1: les tests passent"
     Alors le "Page axe" est visible
 
     # ajouter un nouveau titre et lui donner ce contenu "Axe 1: les tests passent"
-    Quand j'ajoute un nouveau titre
-    Et que je le nomme "1.1: Sous axe"
-
-    # ajouter une fiche au nouvel axe créé
-    Et que j'ajoute une fiche à "1.1: Sous axe"
+    Quand j'ajoute une fiche à la page axe
     Et que je saisi la valeur "Fiche test" dans le champ "header input"
 
     # créer un tag personne pilote "Michel Sapasse"
@@ -142,7 +134,7 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     Et que j'ouvre la section "modalites"
     Et que je sélectionne "En cours" dans la liste déroulante "Statut"
 
-    Quand je navigue vers "Axe 1: les tests passent" du fil d'ariane de la fiche
+    Quand je navigue vers "Axe 1: les tests passent"
     Quand j'ouvre les filtres
     Et que je filtre les fiches par "Yolo Dodo" du filtre "personne-pilote"
     Alors aucune fiche n'est présente
