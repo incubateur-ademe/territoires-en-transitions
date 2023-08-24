@@ -1521,13 +1521,11 @@ Deno.test("Test accès plan_action", dirtyOptions, async () => {
   // n'a plus accès aux données de la collectivité 1
   await signIn("yulududu");
   const result4 = await supabase
-    .from("plan_action")
-    .select()
-    .eq("collectivite_id", 1);
-  assertExists(
-    result4.error,
-    "La RPC `plan_action` devrait renvoyer une erreur.",
-  );
+      .from("plan_action")
+      .select()
+      .eq("collectivite_id", 1);
+  assertExists(result4.data);
+  assertEquals(true, result4.data.length==0);
   await signOut();
 });
 
@@ -1580,7 +1578,7 @@ Deno.test("Test accès plan_action_profondeur", dirtyOptions, async () => {
     .from("plan_action_profondeur")
     .select()
     .eq("collectivite_id", 1);
-  //assertExists(result4.data);
-  //assertEquals(true, result4.data.length==0);
+  assertExists(result4.data);
+  assertEquals(true, result4.data.length==0);
   await signOut();
 });
