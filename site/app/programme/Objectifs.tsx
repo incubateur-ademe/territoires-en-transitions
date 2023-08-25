@@ -41,11 +41,13 @@ const Objectifs = ({titre, description, contenu}: ObjectifsProps) => {
         <CardsWrapper cols={5}>
           {processedContent.map((c, index) => (
             <div key={index} className="flex flex-col items-center gap-8">
-              <div className="w-[140px] h-[140px] bg-white rounded-full flex items-center justify-center">
-                <picture>
-                  <StrapiImage data={c.image} />
-                </picture>
-              </div>
+              {c.image && (
+                <div className="w-[140px] h-[140px] bg-white rounded-full flex items-center justify-center">
+                  <picture>
+                    <StrapiImage data={c.image} />
+                  </picture>
+                </div>
+              )}
               <p
                 className="text-center"
                 dangerouslySetInnerHTML={{
