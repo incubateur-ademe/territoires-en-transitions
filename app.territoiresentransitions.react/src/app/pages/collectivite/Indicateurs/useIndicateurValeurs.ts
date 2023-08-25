@@ -75,7 +75,7 @@ export const useIndicateurGrapheInfo = (definition: TIndicateurDefinition) => {
       count === total
     ) {
       const premierRempli = enfants.find(definition =>
-        indicateursRemplis.indicateurs.includes(definition.id)
+        indicateursRemplis?.includes(definition.id)
       );
       return {id: premierRempli?.id || id};
     }
@@ -91,13 +91,13 @@ export const useIndicateurGrapheInfo = (definition: TIndicateurDefinition) => {
 // compte dans une liste d'indicateurs ceux qui sont remplis
 const nombreIndicateursRemplis = (
   liste: TIndicateurReferentielDefinition[],
-  indicateursRemplis: {indicateurs: string[]; indicateursPerso: number[]}
+  indicateursRemplis: (string | number)[] | undefined
 ) =>
-  liste.reduce(
+  indicateursRemplis?.length ? liste.reduce(
     (count, d) =>
-      count + (indicateursRemplis.indicateurs.includes(d.id) ? 1 : 0),
+      count + (indicateursRemplis.includes(d.id) ? 1 : 0),
     0
-  );
+  ) : 0;
 
 /** Charge les valeurs et les commentaires associées à un indicateur (pour les tableaux) */
 export const useIndicateurValeursEtCommentaires = ({
