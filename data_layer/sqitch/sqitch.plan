@@ -481,4 +481,6 @@ plan_action/import [plan_action/import@v2.57.0] 2023-09-04T15:52:12Z Amandine Ja
 collectivite/identite [collectivite/identite@v2.58.0] 2023-09-06T14:29:27Z Florian <florian@derfurth.com> # Améliore la performance de `collectivite_type`
 site/contact 2023-09-01T12:37:28Z Florian <florian@derfurth.com> # Permet de stocker les messages de la page contact
 @v2.59.0 2023-09-06T15:40:45Z Florian <florian@derfurth.com> # Amélioration des performances et préparation du nouveau site
+
 utilisateur/usage [utilisateur/usage@v2.59.0] 2023-09-07T07:46:54Z Florian <florian@derfurth.com> # Ajoute le tracking des exports
+plan_action/export [plan_action/export@v2.49.0] 2023-08-25T10:07:37Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute le tri des fiches par titre dans l'export
