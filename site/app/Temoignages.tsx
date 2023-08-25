@@ -33,14 +33,7 @@ const Temoignages = ({titre, description, contenu}: TemoignagesProps) => {
               content={t.contenu}
               author={t.auteur}
               role={t.description}
-              image={
-                t.image ? (
-                  <StrapiImage
-                    data={t.image}
-                    className="w-[185px] h-[185px] object-cover rounded-full"
-                  />
-                ) : undefined
-              }
+              image={t.image}
             />
           ))}
         />
