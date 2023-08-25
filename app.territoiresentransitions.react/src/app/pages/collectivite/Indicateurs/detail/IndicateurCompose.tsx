@@ -6,11 +6,12 @@ import {TIndicateurReferentielDefinition} from '../types';
  */
 export const IndicateurCompose = ({
   definition,
-  enfants,
 }: {
   definition: TIndicateurReferentielDefinition;
-  enfants: TIndicateurReferentielDefinition[];
 }) => {
+  const {enfants} = definition;
+  if (!enfants?.length) return null;
+
   const actionsLieesCommunes = findCommonLinkedActions([
     definition,
     ...enfants,
