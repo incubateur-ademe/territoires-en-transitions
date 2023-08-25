@@ -8,7 +8,10 @@ import LineChart, {
   getLabelsBySerieId,
 } from 'ui/charts/LineChart';
 import {defaultColors} from 'ui/charts/chartsTheme';
-import {useIndicateurValeurs} from '../useIndicateurValeurs';
+import {
+  useIndicateurGrapheInfo,
+  useIndicateurValeurs,
+} from '../useIndicateurValeurs';
 import {
   getChartTitle,
   getDistinctYears,
@@ -144,14 +147,24 @@ export const generateStyledLines =
 /** Charge les données et affiche le graphique */
 const IndicateurChart = (props: TIndicateurChartProps) => {
   const {definition} = props;
+  const {isPerso} = definition;
 
-  const {data: valeurs, isLoading} = useIndicateurValeurs(definition, true);
   const isReadonly = useCurrentCollectivite()?.readonly ?? true;
+  const {id: grapheId, count, total} = useIndicateurGrapheInfo(definition);
 
+  // charge les valeurs à afficher dans le graphe
+  const {data: valeurs, isLoading} = useIndicateurValeurs(
+    {id: grapheId, isPerso},
+    true
+  );
   const noDataAvailable = !isLoading && !valeurs?.length;
 
   return noDataAvailable ? (
-    <CardNoData {...props} isReadonly={isReadonly} />
+    <CardNoData
+      {...props}
+      isReadonly={isReadonly}
+      aCompleter={{count, total}}
+    />
   ) : (
     <IndicateurChartBase {...props} valeurs={valeurs!} />
   );

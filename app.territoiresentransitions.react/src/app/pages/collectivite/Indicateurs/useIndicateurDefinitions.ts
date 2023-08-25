@@ -101,32 +101,39 @@ export const useIndicateursNonRemplis = (
 };
 
 /** Fourni les identifiants des indicateurs qui ont au moins un résultat */
-export const useIndicateursRemplis = () => {
+export const useIndicateursRemplis = (disableAutoRefetch?: boolean) => {
   const collectivite_id = useCollectiviteId();
-  const {data} = useQuery(['indicateur_rempli', collectivite_id], async () => {
-    if (!collectivite_id) {
-      return;
-    }
-    const {data, error} = await supabaseClient
-      .from('indicateur_rempli')
-      .select('indicateur_id,perso_id')
-      .match({collectivite_id})
-      .is('rempli', true);
-
-    if (error) {
-      throw new Error(error.message);
-    }
-
-    return data?.reduce((acc, {indicateur_id, perso_id}) => {
-      if (indicateur_id !== null) {
-        return {...acc, indicateurs: [...acc.indicateurs, indicateur_id]};
+  const {data} = useQuery(
+    ['indicateur_rempli', collectivite_id],
+    async () => {
+      if (!collectivite_id) {
+        return;
       }
-      if (perso_id !== null) {
-        return {...acc, indicateursPerso: [...acc.indicateursPerso, perso_id]};
+      const {data, error} = await supabaseClient
+        .from('indicateur_rempli')
+        .select('indicateur_id,perso_id')
+        .match({collectivite_id})
+        .is('rempli', true);
+
+      if (error) {
+        throw new Error(error.message);
       }
-      return acc;
-    }, ID_INDICATEURS_REMPLIS);
-  });
+
+      return data?.reduce((acc, {indicateur_id, perso_id}) => {
+        if (indicateur_id !== null) {
+          return {...acc, indicateurs: [...acc.indicateurs, indicateur_id]};
+        }
+        if (perso_id !== null) {
+          return {
+            ...acc,
+            indicateursPerso: [...acc.indicateursPerso, perso_id],
+          };
+        }
+        return acc;
+      }, ID_INDICATEURS_REMPLIS);
+    },
+    disableAutoRefetch ? DISABLE_AUTO_REFETCH : undefined
+  );
 
   return data || ID_INDICATEURS_REMPLIS;
 };
