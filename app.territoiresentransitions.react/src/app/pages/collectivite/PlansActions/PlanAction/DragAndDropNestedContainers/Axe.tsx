@@ -101,6 +101,7 @@ const Axe = ({plan, axe, isAxePage, isReadonly}: Props) => {
             <div className="absolute top-0 -left-10 w-10 h-16 flex">
               <button
                 ref={draggableRef}
+                title="Déplacer"
                 className={classNames('my-auto p-2', {
                   'hidden group-hover:block': !isDragging,
                   'hover:!bg-none': isDragging,
