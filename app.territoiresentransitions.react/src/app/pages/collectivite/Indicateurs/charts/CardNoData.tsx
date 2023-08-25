@@ -10,8 +10,15 @@ export const CardNoData = ({
   variant,
   className,
   isReadonly,
-}: TIndicateurChartProps & {isReadonly: boolean}) => {
+  aCompleter,
+}: TIndicateurChartProps & {
+  isReadonly: boolean;
+  aCompleter?: {count?: number; total?: number};
+}) => {
   const isZoomed = variant === 'zoomed';
+  const {count, total} = aCompleter || {};
+  const restant = count && total && total - count;
+
   return (
     <Card
       className={classNames(
@@ -32,7 +39,11 @@ export const CardNoData = ({
       ) : (
         !isReadonly && (
           <button className="fr-btn rounded-lg">
-            Compléter cet indicateur
+            {restant
+              ? `Compléter ${restant} indicateur${
+                  restant > 1 ? 's' : ''
+                } sur ${total}`
+              : 'Compléter cet indicateur'}
           </button>
         )
       )}
