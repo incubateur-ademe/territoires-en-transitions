@@ -52,9 +52,10 @@ const Fiche = ({axeId, url, fiche}: Props) => {
       {!active && (
         <div className="relative group h-full">
           {/** Drag handle */}
-          <div className="absolute top-0 -left-10 w-10 h-16 flex">
+          <div className="absolute top-2 right-2">
             <button
               ref={draggableRef}
+              title="Déplacer"
               className={classNames('my-auto p-2', {
                 'hidden group-hover:block bg-white': !isDragging,
                 'hover:!bg-none': isDragging,
