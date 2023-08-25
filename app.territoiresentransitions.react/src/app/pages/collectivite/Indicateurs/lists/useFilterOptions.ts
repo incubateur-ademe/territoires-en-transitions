@@ -1,7 +1,7 @@
 import {dedup} from 'utils/dedup';
 import {ITEM_ALL} from 'ui/shared/filters/commons';
 import {TOption} from 'ui/shared/select/commons';
-import {useIndicateursNonRemplis} from '../useIndicateurDefinitions';
+import {useIndicateursNonRemplis} from '../useIndicateurACompleter';
 import {TIndicateurDefinition} from '../types';
 
 export const ITEM_A_COMPLETER = 'ac';

@@ -6,7 +6,7 @@ import IndicateurChart from '../charts/IndicateurChart';
 import {IndicateurValuesTabs} from './IndicateurValuesTabs';
 import {TIndicateurReferentielDefinition} from '../types';
 import {FichesActionLiees} from '../FichesActionLiees';
-import {useIndicateurACompleter} from '../useIndicateurDefinitions';
+import {useIndicateurACompleter} from '../useIndicateurACompleter';
 
 /**
  * Affiche le détail d'un indicateur sans enfant

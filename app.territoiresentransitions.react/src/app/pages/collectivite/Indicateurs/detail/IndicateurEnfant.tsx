@@ -5,7 +5,7 @@ import {Badge} from 'ui/shared/Badge';
 import {BadgeACompleter} from 'ui/shared/Badge/BadgeACompleter';
 import {useToggle} from 'ui/shared/useToggle';
 import {ExpandToggle} from 'ui/icons/ExpandToggle';
-import {useIndicateurACompleter} from '../useIndicateurDefinitions';
+import {useIndicateurACompleter} from '../useIndicateurACompleter';
 import {ActionsLieesCards} from '../../PlansActions/FicheAction/FicheActionForm/ActionsLieesCards';
 import IndicateurChart from '../charts/IndicateurChart';
 import {FichesActionLiees} from '../FichesActionLiees';
