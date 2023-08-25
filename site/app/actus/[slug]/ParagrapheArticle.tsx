@@ -25,7 +25,7 @@ const ParagrapheArticle = ({
   }, []);
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 w-full">
       {/* Titre du paragraphe */}
       {titre && <h4 className="text-center w-full mt-8">{titre}</h4>}
 
@@ -35,7 +35,7 @@ const ParagrapheArticle = ({
         {image && alignementImage !== 'Centre' && (
           <picture
             className={classNames(
-              'w-full md:w-auto md:max-w-[35%] h-full md:h-auto flex md:block justify-center items-center mb-6 md:mb-0',
+              'w-full md:w-auto md:max-w-[35%] md:!min-w-[200px] h-full md:h-auto flex md:block justify-center items-center mb-6 md:mb-0',
               {
                 'float-left md:mr-6': alignementImage === 'Gauche',
                 'float-right md:ml-6': alignementImage === 'Droite',
@@ -49,7 +49,7 @@ const ParagrapheArticle = ({
         {/* Texte */}
         {processedText && (
           <p
-            className="text-lg"
+            className="text-lg break-words sm:break-normal"
             dangerouslySetInnerHTML={{
               __html: processedText,
             }}

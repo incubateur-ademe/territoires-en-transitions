@@ -79,6 +79,34 @@ const Article = async ({params}: {params: {slug: string}}) => {
           }
         </Section>
       ))}
+
+      <Section
+        customBackground="#fff"
+        className="flex-wrap justify-between gap-y-14"
+      >
+        {data.prevId && (
+          <a
+            className="fr-link fr-icon-arrow-left-line fr-link--icon-left order-1"
+            href={`/actus/${data.prevId}`}
+          >
+            Précédent
+          </a>
+        )}
+        <a
+          className="fr-link mx-auto max-[455px]:order-last order-2"
+          href="/actus"
+        >
+          Retour à la liste des articles
+        </a>
+        {data.nextId && (
+          <a
+            className="fr-link fr-icon-arrow-right-line fr-link--icon-right order-3"
+            href={`/actus/${data.nextId}`}
+          >
+            Suivant
+          </a>
+        )}
+      </Section>
     </>
   );
 };

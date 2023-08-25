@@ -31,7 +31,10 @@ export const getData = async () => {
     couverture: d.attributes.Couverture.data as unknown as StrapiItem,
   }));
 
-  return formattedData;
+  return formattedData.sort(
+    (a, b) =>
+      new Date(b.dateCreation).getTime() - new Date(a.dateCreation).getTime(),
+  );
 };
 
 const Actualites = async () => {
