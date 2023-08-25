@@ -5,23 +5,16 @@ import {TIndicateurDefinition} from './types';
 
 /** Détermine si un indicateur est "à compléter" */
 export const useIndicateurACompleter = (indicateurId: string | number) => {
-  const {indicateurs, indicateursPerso} = useIndicateursRemplis();
-  if (typeof indicateurId === 'string') {
-    return !indicateurs.includes(indicateurId);
-  }
-  return !indicateursPerso.includes(indicateurId);
+  const indicateursRemplis = useIndicateursRemplis();
+  return !indicateursRemplis?.includes(indicateurId);
 };
 
 /** Fourni les définitions de tous les indicateurs "à compléter" */
 export const useIndicateursNonRemplis = (
   definitions: TIndicateurDefinition[]
 ) => {
-  const {indicateurs, indicateursPerso} = useIndicateursRemplis();
-  return definitions?.filter(({id}) =>
-    typeof id === 'string'
-      ? !indicateurs.includes(id)
-      : !indicateursPerso.includes(id)
-  );
+  const indicateursRemplis = useIndicateursRemplis();
+  return definitions?.filter(({id}) => !indicateursRemplis?.includes(id));
 };
 
 /** Fourni les identifiants des indicateurs qui ont au moins un résultat */
@@ -43,29 +36,12 @@ export const useIndicateursRemplis = (disableAutoRefetch?: boolean) => {
         throw new Error(error.message);
       }
 
-      return data?.reduce((acc, {indicateur_id, perso_id}) => {
-        if (indicateur_id !== null) {
-          return {...acc, indicateurs: [...acc.indicateurs, indicateur_id]};
-        }
-        if (perso_id !== null) {
-          return {
-            ...acc,
-            indicateursPerso: [...acc.indicateursPerso, perso_id],
-          };
-        }
-        return acc;
-      }, ID_INDICATEURS_REMPLIS);
+      return data
+        ?.map(({indicateur_id, perso_id}) => indicateur_id || perso_id)
+        .filter(id => id !== null) as (string | number)[];
     },
     disableAutoRefetch ? DISABLE_AUTO_REFETCH : undefined
   );
 
-  return data || ID_INDICATEURS_REMPLIS;
-};
-type TIndicateursRemplis = {
-  indicateurs: string[];
-  indicateursPerso: number[];
-};
-const ID_INDICATEURS_REMPLIS: TIndicateursRemplis = {
-  indicateurs: [],
-  indicateursPerso: [],
+  return data;
 };
