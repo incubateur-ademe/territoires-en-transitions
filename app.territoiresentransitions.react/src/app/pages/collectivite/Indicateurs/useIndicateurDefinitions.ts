@@ -11,7 +11,7 @@ export const useIndicateurDefinitions = () => {
     async () => {
       const {data, error} = await supabaseClient
         .from('indicateur_definition')
-        .select('*, actions: indicateur_action (action_id)')
+        .select('*, action_ids: indicateur_action (action_id)')
         .order('nom', {ascending: true});
 
       if (error) {
@@ -22,24 +22,28 @@ export const useIndicateurDefinitions = () => {
         data
           // tri par nom (pour que les diacritiques soient pris en compte)
           ?.sort((a, b) => a.nom.localeCompare(b.nom))
-          // extrait les ids des actions liées aux indicateurs
-          .map(definition => {
-            const {actions} = definition;
-            if (Array.isArray(actions) && actions?.length) {
-              return {...definition, actions: actions.map(a => a.action_id)};
-            }
-            return {...definition, actions: null};
-          }) as TIndicateurReferentielDefinition[]
+          // enrichie la définition avec...
+          .map((definition, index, tous) => {
+            const {action_ids, id} = definition;
+
+            // - les liens sur les définitions enfants
+            const enfants = tous?.filter(d => d.parent === id);
+
+            // - les ids des actions liées aux indicateurs
+            const actions =
+              (Array.isArray(action_ids) &&
+                action_ids?.length &&
+                action_ids.map(a => a.action_id)) ||
+              null;
+
+            return {...definition, actions, enfants};
+          }) as unknown as TIndicateurReferentielDefinition[]
       );
     },
     DISABLE_AUTO_REFETCH
   );
   return data || [];
 };
-
-/** Fourni les définitions des indicateurs "enfants" à partir de l'id du parent */
-export const useIndicateursEnfants = (parentId: string) =>
-  useIndicateurDefinitions()?.filter(({parent}) => parent === parentId);
 
 /** Fourni les définitions des indicateurs "parents" */
 export const useIndicateursParents = () =>
