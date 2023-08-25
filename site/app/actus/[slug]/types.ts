@@ -1,4 +1,4 @@
-import {StrapiItem} from 'src/StrapiItem';
+import {StrapiItem} from 'src/strapi/StrapiItem';
 
 export type ArticleData = {
   titre: string;

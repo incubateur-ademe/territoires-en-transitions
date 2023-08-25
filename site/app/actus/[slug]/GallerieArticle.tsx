@@ -1,5 +1,5 @@
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import {StrapiItem} from 'src/StrapiItem';
+import {StrapiItem} from 'src/strapi/StrapiItem';
 
 type GallerieArticleProps = {
   images: StrapiItem[];

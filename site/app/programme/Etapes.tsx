@@ -7,11 +7,11 @@ import {Content} from './utils';
 type EtapesProps = {
   titre: string;
   description?: string;
-  contenu: Content[];
+  contenu: Content[] | null;
 };
 
 const Etapes = ({titre, description, contenu}: EtapesProps) => {
-  return contenu.length ? (
+  return contenu && contenu.length ? (
     <CardsSection
       title={titre}
       description={description}

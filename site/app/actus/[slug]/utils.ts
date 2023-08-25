@@ -1,5 +1,5 @@
-import {fetchCollection, fetchItem} from 'src/strapi';
-import {StrapiItem} from 'src/StrapiItem';
+import {fetchCollection, fetchItem} from 'src/strapi/strapi';
+import {StrapiItem} from 'src/strapi/StrapiItem';
 import {
   ArticleData,
   ContenuArticleFetchedData,
@@ -27,22 +27,31 @@ export const getData = async (id: number) => {
     ]);
 
     const sortedIds = idList
-      .map(d => ({
-        id: d.id,
-        dateCreation:
-          (d.attributes.DateCreation as unknown as Date) ??
-          (d.attributes.createdAt as unknown as Date),
-      }))
-      .sort(
-        (a, b) =>
-          new Date(b.dateCreation).getTime() -
-          new Date(a.dateCreation).getTime(),
-      );
+      ? idList
+          .map(d => ({
+            id: d.id,
+            dateCreation:
+              (d.attributes.DateCreation as unknown as Date) ??
+              (d.attributes.createdAt as unknown as Date),
+          }))
+          .sort(
+            (a, b) =>
+              new Date(b.dateCreation).getTime() -
+              new Date(a.dateCreation).getTime(),
+          )
+      : null;
 
-    const idPosition = sortedIds.findIndex(el => el.id === id);
-    const prevId = idPosition !== 0 ? sortedIds[idPosition - 1].id : null;
-    const nextId =
-      idPosition !== sortedIds.length - 1 ? sortedIds[idPosition + 1].id : null;
+    const idPosition = sortedIds ? sortedIds.findIndex(el => el.id === id) : 0;
+    const prevId = sortedIds
+      ? idPosition !== 0
+        ? sortedIds[idPosition - 1].id
+        : null
+      : null;
+    const nextId = sortedIds
+      ? idPosition !== sortedIds.length - 1
+        ? sortedIds[idPosition + 1].id
+        : null
+      : null;
 
     const formattedData: ArticleData = {
       titre: data.attributes.Titre as unknown as string,

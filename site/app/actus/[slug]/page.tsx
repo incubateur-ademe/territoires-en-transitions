@@ -1,5 +1,5 @@
 import {notFound} from 'next/navigation';
-import {StrapiItem} from 'src/StrapiItem';
+import {StrapiItem} from 'src/strapi/StrapiItem';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
 import Section from '@components/sections/Section';
 import {getLocalDateString} from 'src/utils/getLocalDateString';

@@ -1,11 +1,12 @@
 /* eslint-disable react/no-unescaped-entities */
 'use server';
 
+import NoResult from '@components/info/NoResult';
 import Section from '@components/sections/Section';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
 import PhoneIcon from 'public/icones/PhoneIcon';
-import {fetchSingle} from 'src/strapi';
-import {StrapiItem} from 'src/StrapiItem';
+import {fetchSingle} from 'src/strapi/strapi';
+import {StrapiItem} from 'src/strapi/StrapiItem';
 
 type ContactData = {
   titre: string;
@@ -16,19 +17,22 @@ type ContactData = {
 export const getData = async () => {
   const data = await fetchSingle('contact');
 
-  const formattedData = {
-    titre: data.attributes.Titre as unknown as string,
-    description:
-      (data.attributes.Description as unknown as string) ?? undefined,
-    couverture:
-      (data.attributes.Couverture.data as unknown as StrapiItem) ?? undefined,
-  };
+  const formattedData = data
+    ? {
+        titre: data.attributes.Titre as unknown as string,
+        description:
+          (data.attributes.Description as unknown as string) ?? undefined,
+        couverture:
+          (data.attributes.Couverture.data as unknown as StrapiItem) ??
+          undefined,
+      }
+    : null;
 
   return formattedData;
 };
 
 const Contact = async () => {
-  const data: ContactData = await getData();
+  const data: ContactData | null = await getData();
 
   return data ? (
     <Section className="flex-col">
@@ -144,7 +148,9 @@ const Contact = async () => {
         </picture>
       )}
     </Section>
-  ) : null;
+  ) : (
+    <NoResult />
+  );
 };
 
 export default Contact;

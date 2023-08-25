@@ -1,5 +1,5 @@
-import {fetchCollection, fetchSingle} from 'src/strapi';
-import {StrapiItem} from 'src/StrapiItem';
+import {fetchCollection, fetchSingle} from 'src/strapi/strapi';
+import {StrapiItem} from 'src/strapi/StrapiItem';
 
 export type Content = {
   id: number;
@@ -16,12 +16,12 @@ export type ProgrammeData = {
   objectifs: {
     titre: string;
     description: string;
-    contenu: Content[];
+    contenu: Content[] | null;
   };
   services: {
     titre: string;
     description: string;
-    contenu: Content[];
+    contenu: Content[] | null;
   };
   offre: {
     description: string;
@@ -29,12 +29,12 @@ export type ProgrammeData = {
   benefices: {
     titre: string;
     description: string;
-    contenu: Content[];
+    contenu: Content[] | null;
   };
   etapes: {
     titre: string;
     description: string;
-    contenu: Content[];
+    contenu: Content[] | null;
   };
   ressources: {
     description: string;
@@ -49,92 +49,109 @@ export const getData = async () => {
   // Fetch de la liste des objectifs
   const objectifs = await fetchCollection('objectifs');
 
-  const formattedObjectifs: Content[] = objectifs.map(d => ({
-    id: d.id,
-    description: d.attributes.Description as unknown as string,
-    image: d.attributes.Pictogramme.data as unknown as StrapiItem,
-  }));
+  const formattedObjectifs: Content[] | null = objectifs
+    ? objectifs.map(d => ({
+        id: d.id,
+        description: d.attributes.Description as unknown as string,
+        image: d.attributes.Pictogramme.data as unknown as StrapiItem,
+      }))
+    : null;
 
   // Fetch de la liste des services
   const services = await fetchCollection('services');
 
-  const formattedServices: Content[] = services.map(d => ({
-    id: d.id,
-    titre: d.attributes.Titre as unknown as string,
-    description: (d.attributes.Description as unknown as string) ?? undefined,
-    image: (d.attributes.Image.data as unknown as StrapiItem) ?? undefined,
-    href: (d.attributes.URL as unknown as string) ?? undefined,
-  }));
+  const formattedServices: Content[] | null = services
+    ? services.map(d => ({
+        id: d.id,
+        titre: d.attributes.Titre as unknown as string,
+        description:
+          (d.attributes.Description as unknown as string) ?? undefined,
+        image: (d.attributes.Image.data as unknown as StrapiItem) ?? undefined,
+        href: (d.attributes.URL as unknown as string) ?? undefined,
+      }))
+    : null;
 
   // Fetch de la liste des bénéfices
   const benefices = await fetchCollection('benefices');
 
-  const formattedBenefices: Content[] = benefices.map(d => ({
-    id: d.id,
-    titre: d.attributes.Titre as unknown as string,
-    description: d.attributes.Contenu as unknown as string,
-  }));
+  const formattedBenefices: Content[] | null = benefices
+    ? benefices.map(d => ({
+        id: d.id,
+        titre: d.attributes.Titre as unknown as string,
+        description: d.attributes.Contenu as unknown as string,
+      }))
+    : null;
 
   // Fetch de la liste des étapes
   const etapes = await fetchCollection('etapes');
 
-  const formattedEtapes: Content[] = etapes.map(d => ({
-    id: d.id,
-    titre: d.attributes.Titre as unknown as string,
-    description: d.attributes.Contenu as unknown as string,
-  }));
+  const formattedEtapes: Content[] | null = etapes
+    ? etapes.map(d => ({
+        id: d.id,
+        titre: d.attributes.Titre as unknown as string,
+        description: d.attributes.Contenu as unknown as string,
+      }))
+    : null;
 
   // Fetch du contenu de la page programme
   const data = await fetchSingle('programme');
 
   // Formattage de la data
-  const formattedData: ProgrammeData = {
-    titre: data.attributes.Titre as unknown as string,
-    description:
-      (data.attributes.Description as unknown as string) ?? undefined,
-    couvertureURL:
-      (data.attributes.YoutubeURL as unknown as string) ?? undefined,
-    objectifs: {
-      titre: data.attributes.Objectifs.Titre as unknown as string,
-      description: data.attributes.Objectifs.Description as unknown as string,
-      contenu: formattedObjectifs,
-    },
-    services: {
-      titre: data.attributes.Services.Titre as unknown as string,
-      description: data.attributes.Services.Description as unknown as string,
-      contenu: formattedServices,
-    },
-    offre: {
-      description: data.attributes.Offre.Description as unknown as string,
-    },
-    benefices: {
-      titre: data.attributes.Benefices.Titre as unknown as string,
-      description: data.attributes.Benefices.Description as unknown as string,
-      contenu: formattedBenefices,
-    },
-    etapes: {
-      titre: data.attributes.Etapes.Titre as unknown as string,
-      description: data.attributes.Etapes.Description as unknown as string,
-      contenu: formattedEtapes,
-    },
-    ressources: {
-      description: data.attributes.Ressources.Description as unknown as string,
-      buttons: [
-        {
-          titre: 'Règlement CAE',
-          href: data.attributes.Ressources.ReglementCaeURL as unknown as string,
+  const formattedData: ProgrammeData | null = data
+    ? {
+        titre: data.attributes.Titre as unknown as string,
+        description:
+          (data.attributes.Description as unknown as string) ?? undefined,
+        couvertureURL:
+          (data.attributes.YoutubeURL as unknown as string) ?? undefined,
+        objectifs: {
+          titre: data.attributes.Objectifs.Titre as unknown as string,
+          description: data.attributes.Objectifs
+            .Description as unknown as string,
+          contenu: formattedObjectifs,
         },
-        {
-          titre: 'Règlement ECI',
-          href: data.attributes.Ressources.ReglementEciURL as unknown as string,
+        services: {
+          titre: data.attributes.Services.Titre as unknown as string,
+          description: data.attributes.Services
+            .Description as unknown as string,
+          contenu: formattedServices,
         },
-        {
-          titre: 'Annuaire des conseillers',
-          href: data.attributes.Ressources.AnnuaireURL as unknown as string,
+        offre: {
+          description: data.attributes.Offre.Description as unknown as string,
         },
-      ],
-    },
-  };
+        benefices: {
+          titre: data.attributes.Benefices.Titre as unknown as string,
+          description: data.attributes.Benefices
+            .Description as unknown as string,
+          contenu: formattedBenefices,
+        },
+        etapes: {
+          titre: data.attributes.Etapes.Titre as unknown as string,
+          description: data.attributes.Etapes.Description as unknown as string,
+          contenu: formattedEtapes,
+        },
+        ressources: {
+          description: data.attributes.Ressources
+            .Description as unknown as string,
+          buttons: [
+            {
+              titre: 'Règlement CAE',
+              href: data.attributes.Ressources
+                .ReglementCaeURL as unknown as string,
+            },
+            {
+              titre: 'Règlement ECI',
+              href: data.attributes.Ressources
+                .ReglementEciURL as unknown as string,
+            },
+            {
+              titre: 'Annuaire des conseillers',
+              href: data.attributes.Ressources.AnnuaireURL as unknown as string,
+            },
+          ],
+        },
+      }
+    : null;
 
   return formattedData;
 };
