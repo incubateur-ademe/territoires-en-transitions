@@ -103,7 +103,7 @@ export const getData = async () => {
         description:
           (data.attributes.Description as unknown as string) ?? undefined,
         couvertureURL:
-          (data.attributes.YoutubeURL as unknown as string) ?? undefined,
+          (data.attributes.VideoURL as unknown as string) ?? undefined,
         objectifs: {
           titre: data.attributes.Objectifs.Titre as unknown as string,
           description: data.attributes.Objectifs
