@@ -7,11 +7,11 @@ import {Content} from './utils';
 type ServicesProps = {
   titre: string;
   description?: string;
-  contenu: Content[];
+  contenu: Content[] | null;
 };
 
 const Services = ({titre, description, contenu}: ServicesProps) => {
-  return contenu.length ? (
+  return contenu && contenu.length ? (
     <CardsSection
       title={titre}
       description={description}

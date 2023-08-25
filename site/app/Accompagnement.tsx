@@ -2,7 +2,7 @@ import Card from '@components/cards/Card';
 import CardsWrapper from '@components/cards/CardsWrapper';
 import CardsSection from '@components/sections/CardsSection';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import {StrapiItem} from 'src/StrapiItem';
+import {StrapiItem} from 'src/strapi/StrapiItem';
 
 export type AccompagnementContent = {
   titre: string;

@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import Section from '@components/sections/Section';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import {StrapiItem} from 'src/StrapiItem';
+import {StrapiItem} from 'src/strapi/StrapiItem';
 
 type AccueilBannerProps = {
   titre: string;

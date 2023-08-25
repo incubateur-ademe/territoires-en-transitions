@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import {StrapiItem} from 'src/StrapiItem';
+import {StrapiItem} from 'src/strapi/StrapiItem';
 
 const baseURL = process.env.NEXT_PUBLIC_STRAPI_URL;
 

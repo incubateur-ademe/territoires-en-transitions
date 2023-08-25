@@ -6,11 +6,11 @@ import {Content} from './utils';
 type BeneficesProps = {
   titre: string;
   description?: string;
-  contenu: Content[];
+  contenu: Content[] | null;
 };
 
 const Benefices = ({titre, description, contenu}: BeneficesProps) => {
-  return contenu.length ? (
+  return contenu && contenu.length ? (
     <CardsSection
       title={titre}
       description={description}

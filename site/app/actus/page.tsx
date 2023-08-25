@@ -1,8 +1,8 @@
 'use server';
 
-import {fetchCollection} from 'src/strapi';
+import {fetchCollection} from 'src/strapi/strapi';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import {StrapiItem} from 'src/StrapiItem';
+import {StrapiItem} from 'src/strapi/StrapiItem';
 import Section from '@components/sections/Section';
 import BlogCard from '@components/cards/BlogCard';
 import Gallery from '@components/gallery/Gallery';
@@ -21,24 +21,29 @@ export const getData = async () => {
     ['sort[0]', 'createdAt:desc'],
   ]);
 
-  const formattedData: ActuCard[] = data.map(d => ({
-    id: d.id,
-    titre: d.attributes.Titre as unknown as string,
-    dateCreation:
-      (d.attributes.DateCreation as unknown as Date) ??
-      (d.attributes.createdAt as unknown as Date),
-    resume: (d.attributes.Resume as unknown as string) ?? undefined,
-    couverture: d.attributes.Couverture.data as unknown as StrapiItem,
-  }));
+  const formattedData: ActuCard[] | null = data
+    ? data.map(d => ({
+        id: d.id,
+        titre: d.attributes.Titre as unknown as string,
+        dateCreation:
+          (d.attributes.DateCreation as unknown as Date) ??
+          (d.attributes.createdAt as unknown as Date),
+        resume: (d.attributes.Resume as unknown as string) ?? undefined,
+        couverture: d.attributes.Couverture.data as unknown as StrapiItem,
+      }))
+    : null;
 
-  return formattedData.sort(
-    (a, b) =>
-      new Date(b.dateCreation).getTime() - new Date(a.dateCreation).getTime(),
-  );
+  return formattedData
+    ? formattedData.sort(
+        (a, b) =>
+          new Date(b.dateCreation).getTime() -
+          new Date(a.dateCreation).getTime(),
+      )
+    : null;
 };
 
 const Actualites = async () => {
-  const data: ActuCard[] = await getData();
+  const data: ActuCard[] | null = await getData();
 
   return data ? (
     <Section className="flex-col">

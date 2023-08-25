@@ -10,28 +10,30 @@ import {Content} from './utils';
 type ObjectifsProps = {
   titre: string;
   description?: string;
-  contenu: Content[];
+  contenu: Content[] | null;
 };
 
 const Objectifs = ({titre, description, contenu}: ObjectifsProps) => {
   const [processedContent, setProcessedContent] = useState<Content[]>([]);
 
   const processContent = async () => {
-    const newContent = [...contenu];
+    if (contenu) {
+      const newContent = [...contenu];
 
-    newContent.forEach(async c => {
-      const newDescription = await processMarkedContent(c.description);
-      c.description = newDescription;
-    });
+      newContent.forEach(async c => {
+        const newDescription = await processMarkedContent(c.description);
+        c.description = newDescription;
+      });
 
-    setProcessedContent(newContent);
+      setProcessedContent(newContent);
+    }
   };
 
   useEffect(() => {
     processContent();
   }, []);
 
-  return processedContent.length ? (
+  return contenu && processedContent.length ? (
     <CardsSection
       title={titre}
       description={description}

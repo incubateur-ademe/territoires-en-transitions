@@ -9,9 +9,10 @@ import ProgrammeBanner from './ProgrammeBanner';
 import Offre from './Offre';
 import Ressources from './Ressources';
 import {getData, ProgrammeData} from './utils';
+import NoResult from '@components/info/NoResult';
 
 const Programme = async () => {
-  const data: ProgrammeData = await getData();
+  const data: ProgrammeData | null = await getData();
 
   return data ? (
     <>
@@ -56,7 +57,9 @@ const Programme = async () => {
         buttons={data.ressources.buttons}
       />
     </>
-  ) : null;
+  ) : (
+    <NoResult />
+  );
 };
 
 export default Programme;

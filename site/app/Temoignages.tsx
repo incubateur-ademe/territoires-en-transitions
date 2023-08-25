@@ -2,7 +2,7 @@ import TestimonialCard from '@components/cards/TestimonialCard';
 import CardsSection from '@components/sections/CardsSection';
 import Slideshow from '@components/slideshow/Slideshow';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import {StrapiItem} from 'src/StrapiItem';
+import {StrapiItem} from 'src/strapi/StrapiItem';
 
 export type Temoignage = {
   id: number;

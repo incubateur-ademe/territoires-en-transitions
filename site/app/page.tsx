@@ -6,9 +6,10 @@ import Informations from './Informations';
 import AccueilBanner from './AccueilBanner';
 import Newsletter from './Newsletter';
 import {AccueilData, getData} from './utils';
+import NoResult from '@components/info/NoResult';
 
 const Accueil = async () => {
-  const data: AccueilData = await getData();
+  const data: AccueilData | null = await getData();
 
   return data ? (
     <>
@@ -20,11 +21,13 @@ const Accueil = async () => {
         contenu={data.accompagnement.contenu}
       />
 
-      <Temoignages
-        titre={data.temoignages.titre}
-        description={data.temoignages.description}
-        contenu={data.temoignages.contenu}
-      />
+      {data.temoignages && (
+        <Temoignages
+          titre={data.temoignages.titre}
+          description={data.temoignages.description}
+          contenu={data.temoignages.contenu}
+        />
+      )}
 
       <Informations
         titre={data.informations.titre}
@@ -36,7 +39,9 @@ const Accueil = async () => {
         description={data.newsletter.description}
       />
     </>
-  ) : null;
+  ) : (
+    <NoResult />
+  );
 };
 
 export default Accueil;
