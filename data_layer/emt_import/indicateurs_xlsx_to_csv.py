@@ -1,12 +1,28 @@
-import numpy as np
+import re
+
 import pandas as pd
 from pathlib import Path
 
-def clean_up(value):
-    value = str(value)
-    value.replace(',', '. ');
 
-    return pd.to_numeric(value, errors='coerce"')
+def clean_up_value(value):
+    value = str(value)
+    value = value.replace(',', '.')
+    value = value.replace(' ', '')
+    found = re.search(r'\d+[.]?[\d+]?', value)
+    value = found.group() if found else ''
+    return pd.to_numeric(value, errors='coerce')
+
+
+def clean_up_year(year):
+    year = str(year)
+    year = year.replace(',', '')
+    year = year.replace('.0', '')
+    year = year.replace('.', '')
+    year = year.replace(' ', '')
+    if len(year) != 4:
+        year = ''
+    return pd.to_numeric(year, errors='coerce')
+
 
 if __name__ == '__main__':
     pathlist = Path("./").glob('**/*.xlsx')
@@ -27,11 +43,15 @@ if __name__ == '__main__':
                       'valeur_4', 'annee_4', 'commentaire_4']
 
         # on convertit les colonnes valeurs et années en valeurs numériques, les valeurs inconvertibles seront N/A
-        df[['valeur_1', 'valeur_2', 'valeur_3', 'valeur_4', 'annee_1', 'annee_2', 'annee_3', 'annee_4']] = \
-            df[['valeur_1', 'valeur_2', 'valeur_3', 'valeur_4', 'annee_1', 'annee_2', 'annee_3', 'annee_4']].apply(pd.to_numeric, errors='coerce')
+        df[['valeur_1', 'valeur_2', 'valeur_3', 'valeur_4']] = \
+            df[['valeur_1', 'valeur_2', 'valeur_3', 'valeur_4']].applymap(clean_up_value)
+
+        df[['annee_1', 'annee_2', 'annee_3', 'annee_4']] = \
+            df[['annee_1', 'annee_2', 'annee_3', 'annee_4']].applymap(clean_up_year)
 
         # on convertit les années en entiers
-        df[['annee_1', 'annee_2', 'annee_3', 'annee_4']] = df[['annee_1', 'annee_2', 'annee_3', 'annee_4']].astype('Int64')
+        df[['annee_1', 'annee_2', 'annee_3', 'annee_4']] = \
+            df[['annee_1', 'annee_2', 'annee_3', 'annee_4']].astype('Int64')
 
         # enfin on sauvegarde la dataframe en csv.
         save_path = Path("./").joinpath(path.parts[-1].replace('.xlsx', '.csv'))
