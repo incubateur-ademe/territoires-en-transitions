@@ -11,7 +11,7 @@ type ParagrapheArticleProps = {
 };
 
 const ParagrapheArticle = ({
-  paragraphe: {titre, texte, image, alignementImage},
+  paragraphe: {titre, texte, image, alignementImage, legendeImage},
 }: ParagrapheArticleProps) => {
   const [processedText, setProcessedText] = useState<string | undefined>();
 
@@ -30,37 +30,47 @@ const ParagrapheArticle = ({
       {titre && <h4 className="text-center w-full mt-8">{titre}</h4>}
 
       {/* Contenu du paragraphe */}
-      <div className="flex flex-col gap-6 md:block">
-        {/* Image si alignement à gauche ou à droite */}
-        {image && alignementImage !== 'Centre' && (
-          <picture
-            className={classNames(
-              'w-full md:w-auto md:max-w-[35%] md:!min-w-[200px] h-full md:h-auto flex md:block justify-center items-center mb-6 md:mb-0',
-              {
-                'float-left md:mr-6': alignementImage === 'Gauche',
-                'float-right md:ml-6': alignementImage === 'Droite',
-              },
-            )}
-          >
-            <StrapiImage data={image} className="max-h-full" />
-          </picture>
-        )}
+      {(processedText || (image && alignementImage !== 'Centre')) && (
+        <div className="flex flex-col gap-6 md:block">
+          {/* Image si alignement à gauche ou à droite */}
+          {image && alignementImage !== 'Centre' && (
+            <picture
+              className={classNames(
+                'w-full md:w-auto md:max-w-[35%] md:!min-w-[200px] h-full md:h-auto flex flex-col md:block justify-center items-center mb-6 md:mb-0',
+                {
+                  'float-left md:mr-6': alignementImage === 'Gauche',
+                  'float-right md:ml-6': alignementImage === 'Droite',
+                },
+              )}
+            >
+              <StrapiImage data={image} className="max-h-full" />
+              {legendeImage && (
+                <span className="!text-sm text-[#666] mt-2">
+                  {legendeImage}
+                </span>
+              )}
+            </picture>
+          )}
 
-        {/* Texte */}
-        {processedText && (
-          <p
-            className="text-lg break-words sm:break-normal"
-            dangerouslySetInnerHTML={{
-              __html: processedText,
-            }}
-          />
-        )}
-      </div>
+          {/* Texte */}
+          {processedText && (
+            <p
+              className="text-lg break-words sm:break-normal"
+              dangerouslySetInnerHTML={{
+                __html: processedText,
+              }}
+            />
+          )}
+        </div>
+      )}
 
       {/* Image si alignement au centre */}
       {image && alignementImage === 'Centre' && (
-        <picture className="max-w-full lg:max-w-[80%] h-full flex justify-center items-center my-6 mx-auto">
+        <picture className="max-w-full lg:max-w-[80%] h-full flex flex-col justify-center items-center my-6 mx-auto">
           <StrapiImage data={image} />
+          {legendeImage && (
+            <span className="!text-sm text-[#666] mt-2">{legendeImage}</span>
+          )}
         </picture>
       )}
     </div>

@@ -5,7 +5,11 @@ import Section from '@components/sections/Section';
 import {getLocalDateString} from 'src/utils/getLocalDateString';
 import ParagrapheArticle from './ParagrapheArticle';
 import InfoArticle from './InfoArticle';
-import {GallerieArticleData, ParagrapheArticleData} from './types';
+import {
+  GallerieArticleData,
+  ImageArticleData,
+  ParagrapheArticleData,
+} from './types';
 import {getData} from './utils';
 import GallerieArticle from './GallerieArticle';
 import EmbededVideo from '@components/video/EmbededVideo';
@@ -63,8 +67,13 @@ const Article = async ({params}: {params: {slug: string}}) => {
               />
             ) : // Contenu de type image
             section.type === 'image' ? (
-              <picture className="max-w-full lg:max-w-[80%] h-full flex justify-center items-center mx-auto mb-6">
-                <StrapiImage data={section.data as StrapiItem} />
+              <picture className="max-w-full lg:max-w-[80%] h-full flex flex-col justify-center items-center mx-auto mb-6">
+                <StrapiImage data={(section.data as ImageArticleData).data} />
+                {(section.data as ImageArticleData).legende && (
+                  <span className="!text-sm text-[#666] mt-2">
+                    {(section.data as ImageArticleData).legende}
+                  </span>
+                )}
               </picture>
             ) : // Contenu de type gallerie d'images
             section.type === 'gallerie' ? (

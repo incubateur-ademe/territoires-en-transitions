@@ -72,12 +72,16 @@ export const getData = async (id: number) => {
               image: (section as ParagrapheFetchedData).Image.data,
               alignementImage: (section as ParagrapheFetchedData)
                 .AlignementImage,
+              legendeImage: (section as ParagrapheFetchedData).LegendeImage,
             } as ParagrapheArticleData,
           };
         } else if (section.__component === 'contenu.image') {
           return {
             type: 'image',
-            data: (section as ImageFetchedData).Image.data,
+            data: {
+              data: (section as ImageFetchedData).Image.data,
+              legende: (section as ImageFetchedData).Legende,
+            },
           };
         } else if (section.__component === 'contenu.gallerie') {
           return {
@@ -85,6 +89,7 @@ export const getData = async (id: number) => {
             data: {
               data: (section as GallerieFetchedData).Gallerie.data,
               colonnes: (section as GallerieFetchedData).NombreColonnes,
+              legende: (section as GallerieFetchedData).Legende,
             },
           };
         } else if (section.__component === 'contenu.video') {

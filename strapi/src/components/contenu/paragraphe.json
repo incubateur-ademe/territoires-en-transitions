@@ -31,6 +31,10 @@
         "Centre"
       ],
       "default": "Centre"
+    },
+    "LegendeImage": {
+      "type": "string",
+      "maxLength": 255
     }
   }
 }
