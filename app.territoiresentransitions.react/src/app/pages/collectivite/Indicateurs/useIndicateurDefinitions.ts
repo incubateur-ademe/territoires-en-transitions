@@ -76,18 +76,8 @@ export const useIndicateursAction = (actionId: string) =>
   );
 
 /** Fourni la définition d'un indicateur à partir de son id */
-export const useIndicateur = (indicateurId: string) => {
-  const definition = useIndicateurDefinitions()?.find(
-    ({id}) => id === indicateurId
-  );
-  const a_completer = useIndicateurACompleter(indicateurId);
-  return definition
-    ? {
-        ...definition,
-        a_completer,
-      }
-    : undefined;
-};
+export const useIndicateur = (indicateurId: string) =>
+  useIndicateurDefinitions()?.find(({id}) => id === indicateurId);
 
 /** Détermine si un indicateur est "à compléter" */
 export const useIndicateurACompleter = (indicateurId: string | number) => {

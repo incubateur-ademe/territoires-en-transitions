@@ -6,6 +6,7 @@ import IndicateurChart from '../charts/IndicateurChart';
 import {IndicateurValuesTabs} from './IndicateurValuesTabs';
 import {TIndicateurReferentielDefinition} from '../types';
 import {FichesActionLiees} from '../FichesActionLiees';
+import {useIndicateurACompleter} from '../useIndicateurDefinitions';
 
 /**
  * Affiche le détail d'un indicateur sans enfant
@@ -13,9 +14,10 @@ import {FichesActionLiees} from '../FichesActionLiees';
 export const IndicateurDetail = ({
   definition,
 }: {
-  definition: TIndicateurReferentielDefinition & {a_completer: boolean};
+  definition: TIndicateurReferentielDefinition;
 }) => {
-  const {a_completer, actions} = definition;
+  const {actions} = definition;
+  const a_completer = useIndicateurACompleter(definition.id);
 
   // converti la liste d'id en liste d'objets pour être compatible avec `ActionsLieesCards`
   const actionsLiees = actions?.map(id => ({id}));
