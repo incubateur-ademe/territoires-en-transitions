@@ -1,4 +1,4 @@
-import {fetchItem} from 'src/strapi';
+import {fetchCollection, fetchItem} from 'src/strapi';
 import {StrapiItem} from 'src/StrapiItem';
 import {
   ArticleData,
@@ -20,6 +20,30 @@ export const getData = async (id: number) => {
   ]);
 
   if (data) {
+    const idList = await fetchCollection('actualites', [
+      ['fields[0]', 'DateCreation'],
+      ['fields[1]', 'createdAt'],
+      ['sort[0]', 'createdAt:desc'],
+    ]);
+
+    const sortedIds = idList
+      .map(d => ({
+        id: d.id,
+        dateCreation:
+          (d.attributes.DateCreation as unknown as Date) ??
+          (d.attributes.createdAt as unknown as Date),
+      }))
+      .sort(
+        (a, b) =>
+          new Date(b.dateCreation).getTime() -
+          new Date(a.dateCreation).getTime(),
+      );
+
+    const idPosition = sortedIds.findIndex(el => el.id === id);
+    const prevId = idPosition !== 0 ? sortedIds[idPosition - 1].id : null;
+    const nextId =
+      idPosition !== sortedIds.length - 1 ? sortedIds[idPosition + 1].id : null;
+
     const formattedData: ArticleData = {
       titre: data.attributes.Titre as unknown as string,
       dateCreation:
@@ -63,6 +87,8 @@ export const getData = async (id: number) => {
           };
         } else return {type: 'paragraphe', data: {}};
       }),
+      prevId,
+      nextId,
     };
 
     return formattedData;

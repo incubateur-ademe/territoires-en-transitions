@@ -6,6 +6,8 @@ export type ArticleData = {
   dateCreation: Date;
   dateEdition: Date;
   contenu: SectionArticleData[];
+  prevId: number | null;
+  nextId: number | null;
 };
 
 export type SectionArticleData = {
