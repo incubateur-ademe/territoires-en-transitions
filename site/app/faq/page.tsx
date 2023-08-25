@@ -14,7 +14,7 @@ type FaqData = {
   contenu: string;
 };
 
-export const getData = async () => {
+const getData = async () => {
   const data = await fetchCollection('faqs');
 
   const formattedData = data

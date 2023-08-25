@@ -14,7 +14,7 @@ type ContactData = {
   couverture?: StrapiItem;
 };
 
-export const getData = async () => {
+const getData = async () => {
   const data = await fetchSingle('contact');
 
   const formattedData = data
