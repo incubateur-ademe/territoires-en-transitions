@@ -82,7 +82,10 @@ export const getData = async (id: number) => {
         } else if (section.__component === 'contenu.gallerie') {
           return {
             type: 'gallerie',
-            data: (section as GallerieFetchedData).Gallerie.data,
+            data: {
+              data: (section as GallerieFetchedData).Gallerie.data,
+              colonnes: (section as GallerieFetchedData).NombreColonnes,
+            },
           };
         } else if (section.__component === 'contenu.video') {
           return {

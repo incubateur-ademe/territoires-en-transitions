@@ -1,9 +1,12 @@
+import classNames from 'classnames';
+
 type EmbededVideoProps = {
   url: string;
   title?: string;
+  className?: string;
 };
 
-const EmbededVideo = ({url, title}: EmbededVideoProps) => {
+const EmbededVideo = ({url, title, className}: EmbededVideoProps) => {
   let embedLink = '';
 
   if (url.includes('youtu.be') || url.includes('youtube')) {
@@ -24,7 +27,7 @@ const EmbededVideo = ({url, title}: EmbededVideoProps) => {
 
   return embedLink.length ? (
     <iframe
-      className="aspect-video w-full lg:w-4/5 mx-auto"
+      className={classNames('aspect-video w-full lg:w-4/5 mx-auto', className)}
       src={embedLink}
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
       allowFullScreen
