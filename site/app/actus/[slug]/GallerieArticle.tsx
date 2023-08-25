@@ -1,18 +1,30 @@
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import {StrapiItem} from 'src/strapi/StrapiItem';
+import classNames from 'classnames';
+import {GallerieArticleData} from './types';
 
 type GallerieArticleProps = {
-  images: StrapiItem[];
+  data: GallerieArticleData;
 };
 
-const GallerieArticle = ({images}: GallerieArticleProps) => {
+const GallerieArticle = ({data: {data, colonnes}}: GallerieArticleProps) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 w-full lg:w-4/5 mx-auto gap-6">
-      {images.map((image, index) => (
+    <div
+      className={classNames(
+        'grid grid-cols-1 w-full lg:w-4/5 mx-auto gap-6 mb-6',
+        {
+          'md:grid-cols-2': colonnes >= 2,
+          'lg:grid-cols-3': colonnes >= 3,
+          'xl:grid-cols-4': colonnes === 4,
+        },
+      )}
+    >
+      {data.map((image, index) => (
         <picture key={index}>
           <StrapiImage
             data={image}
-            className="w-full h-full max-h-[350px] object-cover"
+            className={classNames(
+              'w-full h-full min-h-[250px] max-h-[300px] object-cover',
+            )}
           />
         </picture>
       ))}

@@ -59,7 +59,7 @@ const ParagrapheArticle = ({
 
       {/* Image si alignement au centre */}
       {image && alignementImage === 'Centre' && (
-        <picture className="w-full h-full flex justify-center items-center mb-6">
+        <picture className="max-w-full lg:max-w-[80%] h-full flex justify-center items-center my-6 mx-auto">
           <StrapiImage data={image} />
         </picture>
       )}

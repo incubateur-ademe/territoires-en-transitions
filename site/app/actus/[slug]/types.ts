@@ -12,7 +12,7 @@ export type ArticleData = {
 
 export type SectionArticleData = {
   type: 'paragraphe' | 'image' | 'gallerie' | 'video' | 'info';
-  data: ParagrapheArticleData | StrapiItem | StrapiItem[] | string;
+  data: ParagrapheArticleData | StrapiItem | GallerieArticleData | string;
 };
 
 export type ParagrapheArticleData = {
@@ -20,6 +20,11 @@ export type ParagrapheArticleData = {
   texte?: string;
   image?: StrapiItem;
   alignementImage?: string;
+};
+
+export type GallerieArticleData = {
+  data: StrapiItem[];
+  colonnes: number;
 };
 
 export type ContenuArticleFetchedData = (
@@ -46,6 +51,7 @@ export type ImageFetchedData = {
 export type GallerieFetchedData = {
   __component: string;
   Gallerie: {data: StrapiItem[]};
+  NombreColonnes: number;
 };
 
 export type VideoFetchedData = {
