@@ -22,9 +22,8 @@
       "type": "text",
       "default": "L'outil opérationnel de planification écologique qui met à votre disposition une ingénierie territoriale et un accompagnement personnalisé."
     },
-    "YoutubeURL": {
-      "type": "string",
-      "default": "https://youtu.be/gAc_B6j1qcY"
+    "VideoURL": {
+      "type": "string"
     },
     "Objectifs": {
       "type": "component",
