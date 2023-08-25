@@ -1,10 +1,12 @@
+import {StrapiImage} from '@components/strapiImage/StrapiImage';
 import QuoteIcon from 'public/icones/QuoteIcon';
+import {StrapiItem} from 'src/strapi/StrapiItem';
 
 type TestimonialCardProps = {
   content: string;
   author: string;
   role?: string;
-  image?: React.ReactNode;
+  image?: StrapiItem;
 };
 
 /**
@@ -20,7 +22,12 @@ const TestimonialCard = ({
   return (
     <div className="flex flex-col lg:flex-row gap-8 items-center">
       {image ? (
-        <picture>{image}</picture>
+        <picture>
+          <StrapiImage
+            data={image}
+            className="w-[185px] h-[185px] object-cover rounded-full"
+          />
+        </picture>
       ) : (
         <picture>
           <img
