@@ -1,4 +1,5 @@
-import React, {useReducer, useContext, createContext} from 'react';
+import React, {useReducer, useContext, createContext, useEffect} from 'react';
+import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 
 // type PanelAction = 'open' | 'close' | 'toggle';
 type PanelAction = {
@@ -21,7 +22,7 @@ const initialState: PanelState = {
 
 const PanelStateContext = createContext<PanelState | undefined>(undefined);
 const PanelDispatchContext = createContext<PanelDispatch | undefined>(
-  undefined
+  undefined,
 );
 
 const panelReducer = (state: PanelState, action: PanelAction) => {
@@ -48,6 +49,14 @@ const panelReducer = (state: PanelState, action: PanelAction) => {
 /** Contient le CollectivitePageLayout afin de  rendre accessible les contextes à tous les enfants */
 export const PanelProvider: React.FC = ({children}) => {
   const [state, dispatch] = useReducer(panelReducer, initialState);
+  const tracker = useFonctionTracker();
+
+  useEffect(() => {
+    tracker({
+      fonction: 'panneau_lateral',
+      action: state.isOpen ? 'ouverture' : 'fermeture',
+    });
+  }, [state]);
 
   return (
     <PanelStateContext.Provider value={state}>
