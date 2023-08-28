@@ -72,7 +72,11 @@ const Axe = ({plan, axe, isAxePage, isReadonly}: Props) => {
   }, [isOver]);
 
   return (
-    <div data-test="Axe" className="relative flex flex-col">
+    <div
+      data-test="Axe"
+      id={axe.id.toString()}
+      className="relative flex flex-col"
+    >
       {/** Drag overlay */}
       {isDragging &&
         createPortal(
