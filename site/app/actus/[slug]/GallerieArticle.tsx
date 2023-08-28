@@ -10,7 +10,7 @@ const GallerieArticle = ({
   data: {data, colonnes, legende},
 }: GallerieArticleProps) => {
   return (
-    <div className="flex flex-col mb-6 items-center">
+    <div className="flex flex-col mb-6 items-center mx-auto">
       <div
         className={classNames(
           'grid grid-cols-1 w-full lg:w-4/5 mx-auto gap-6',
@@ -32,7 +32,11 @@ const GallerieArticle = ({
           </picture>
         ))}
       </div>
-      {legende && <span className="!text-sm text-[#666] mt-4">{legende}</span>}
+      {legende && (
+        <span className="!text-sm text-[#666] mt-4 w-full text-center">
+          {legende}
+        </span>
+      )}
     </div>
   );
 };

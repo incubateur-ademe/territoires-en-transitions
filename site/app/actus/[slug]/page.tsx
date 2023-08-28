@@ -70,7 +70,7 @@ const Article = async ({params}: {params: {slug: string}}) => {
               <picture className="max-w-full lg:max-w-[80%] h-full flex flex-col justify-center items-center mx-auto mb-6">
                 <StrapiImage data={(section.data as ImageArticleData).data} />
                 {(section.data as ImageArticleData).legende && (
-                  <span className="!text-sm text-[#666] mt-2">
+                  <span className="!text-sm text-[#666] mt-2 w-full text-center">
                     {(section.data as ImageArticleData).legende}
                   </span>
                 )}

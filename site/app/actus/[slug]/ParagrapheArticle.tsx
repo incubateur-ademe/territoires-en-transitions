@@ -25,13 +25,13 @@ const ParagrapheArticle = ({
   }, []);
 
   return (
-    <div className="flex flex-col gap-6 w-full">
+    <div className="flex flex-col w-full">
       {/* Titre du paragraphe */}
-      {titre && <h4 className="text-center w-full mt-8">{titre}</h4>}
+      {titre && <h4 className="text-center w-full mt-8 mb-6">{titre}</h4>}
 
       {/* Contenu du paragraphe */}
       {(processedText || (image && alignementImage !== 'Centre')) && (
-        <div className="flex flex-col gap-6 md:block">
+        <div className="flex flex-col md:block">
           {/* Image si alignement à gauche ou à droite */}
           {image && alignementImage !== 'Centre' && (
             <picture
@@ -45,7 +45,7 @@ const ParagrapheArticle = ({
             >
               <StrapiImage data={image} className="max-h-full" />
               {legendeImage && (
-                <span className="!text-sm text-[#666] mt-2">
+                <span className="!text-sm text-[#666] mt-2 text-center">
                   {legendeImage}
                 </span>
               )}
@@ -54,7 +54,7 @@ const ParagrapheArticle = ({
 
           {/* Texte */}
           {processedText && (
-            <p
+            <div
               className="text-lg break-words sm:break-normal"
               dangerouslySetInnerHTML={{
                 __html: processedText,
@@ -66,10 +66,12 @@ const ParagrapheArticle = ({
 
       {/* Image si alignement au centre */}
       {image && alignementImage === 'Centre' && (
-        <picture className="max-w-full lg:max-w-[80%] h-full flex flex-col justify-center items-center my-6 mx-auto">
+        <picture className="max-w-full lg:max-w-[80%] h-full flex flex-col justify-center items-center mb-6 mx-auto">
           <StrapiImage data={image} />
           {legendeImage && (
-            <span className="!text-sm text-[#666] mt-2">{legendeImage}</span>
+            <span className="!text-sm text-[#666] mt-2 w-full text-center">
+              {legendeImage}
+            </span>
           )}
         </picture>
       )}

@@ -7,20 +7,22 @@ export const Footer = () => {
         <div className="fr-footer__body">
           <div className="fr-footer__brand">
             <LogoRepubliqueFrancaise />
-            <img
-              className="fr-footer__logo fr-ml-2w"
-              width="128"
-              height="146"
-              src="/ademe.svg"
-              alt="ADEME"
-              loading="lazy"
-            />
+            <picture>
+              <img
+                className="fr-footer__logo fr-ml-2w"
+                width="128"
+                height="146"
+                src="/ademe.svg"
+                alt="ADEME"
+                loading="lazy"
+              />
+            </picture>
           </div>
           <div className="fr-footer__content">
             <p className="fr-footer__content-desc">
-              Territoires en Transitions est une startup d`&apos;État portée par
-              l`&apos;Agence de la Transition Écologique (ADEME) avec le soutien
-              de l`&apos;Agence Nationale de la Cohésion des Territoires (ANCT).
+              Territoires en Transitions est une startup d&apos;État portée par
+              l&apos;Agence de la Transition Écologique (ADEME) avec le soutien
+              de l&apos;Agence Nationale de la Cohésion des Territoires (ANCT).
             </p>
             <ul className="fr-footer__content-list">
               <li className="fr-footer__content-item">
