@@ -2,10 +2,9 @@
 
 BEGIN;
 
-alter type usage_fonction add value if not exists 'cta_plan_creation';
-alter type usage_fonction add value if not exists 'cta_plan_maj';
-alter type usage_fonction add value if not exists 'cta_edl_commencer';
-alter type usage_fonction add value if not exists 'cta_edl_personnaliser';
-alter type usage_action add value if not exists 'agrandissement';
+alter type usage_fonction add value if not exists 'navigation_laterale';
+alter type usage_fonction add value if not exists 'panneau_lateral';
+alter type usage_action add value if not exists 'ouverture';
+alter type usage_action add value if not exists 'fermeture';
 
 COMMIT;
