@@ -6,9 +6,9 @@ import {DragOverlay, useDraggable, useDroppable} from '@dnd-kit/core';
 import Fiches from './Fiches';
 import AxeTitre from './AxeTitre';
 import SupprimerAxeModal from '../SupprimerAxeModal';
-import DragIcon from './DragIcon';
 import {PlanNode} from '../data/types';
 import {generateTitle} from '../../FicheAction/data/utils';
+import IconDrag from 'ui/icons/IconDrag';
 
 export type AxeDndData = {
   type: 'axe';
@@ -106,14 +106,14 @@ const Axe = ({plan, axe, isAxePage, isReadonly}: Props) => {
               <button
                 ref={draggableRef}
                 title="Déplacer"
-                className={classNames('my-auto p-2', {
+                className={classNames('my-auto p-1 cursor-grab', {
                   'hidden group-hover:block': !isDragging,
                   'hover:!bg-none': isDragging,
                 })}
                 {...listeners}
                 {...attributes}
               >
-                {!isDragging && <DragIcon />}
+                {!isDragging && <IconDrag />}
               </button>
             </div>
           )}

@@ -4,7 +4,7 @@ import {DragOverlay, useDraggable} from '@dnd-kit/core';
 
 import FicheActionCard from '../../FicheAction/FicheActionCard';
 import {FicheResume} from '../../FicheAction/data/types';
-import DragIcon from './DragIcon';
+import IconDrag from 'ui/icons/IconDrag';
 
 export type FicheDndData = {
   type: 'fiche';
@@ -43,7 +43,7 @@ const Fiche = ({axeId, url, fiche}: Props) => {
       {isDragging &&
         createPortal(
           <DragOverlay dropAnimation={null}>
-            <div className="w-[24rem] ml-1 opacity-80 cursor-grabbing">
+            <div className="w-[24rem] ml-1 opacity-80 !cursor-grabbing">
               <FicheActionCard ficheAction={fiche} link="" />
             </div>
           </DragOverlay>,
@@ -56,14 +56,14 @@ const Fiche = ({axeId, url, fiche}: Props) => {
             <button
               ref={draggableRef}
               title="Déplacer"
-              className={classNames('my-auto p-2', {
+              className={classNames('my-auto p-1 cursor-grab', {
                 'hidden group-hover:block bg-white': !isDragging,
                 'hover:!bg-none': isDragging,
               })}
               {...listeners}
               {...attributes}
             >
-              {!isDragging && <DragIcon />}
+              {!isDragging && <IconDrag />}
             </button>
           </div>
           <FicheActionCard key={fiche.id} ficheAction={fiche} link={url} />
