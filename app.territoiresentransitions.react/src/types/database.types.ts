@@ -4469,6 +4469,7 @@ export interface Database {
       col_is_null:
         | {
             Args: {
+              schema_name: unknown
               table_name: unknown
               column_name: unknown
               description?: string
@@ -4477,7 +4478,6 @@ export interface Database {
           }
         | {
             Args: {
-              schema_name: unknown
               table_name: unknown
               column_name: unknown
               description?: string
@@ -4504,13 +4504,13 @@ export interface Database {
           }
       collect_tap:
         | {
-            Args: {
-              "": string[]
-            }
+            Args: Record<PropertyKey, never>
             Returns: string
           }
         | {
-            Args: Record<PropertyKey, never>
+            Args: {
+              "": string[]
+            }
             Returns: string
           }
       collectivite_membres: {
@@ -4631,6 +4631,14 @@ export interface Database {
       delete_job: {
         Args: {
           job_id: number
+        }
+        Returns: undefined
+      }
+      deplacer_fiche_action_dans_un_axe: {
+        Args: {
+          fiche_id: number
+          old_axe_id: number
+          new_axe_id: number
         }
         Returns: undefined
       }
@@ -6298,6 +6306,13 @@ export interface Database {
       skip:
         | {
             Args: {
+              why: string
+              how_many: number
+            }
+            Returns: string
+          }
+        | {
+            Args: {
               "": string
             }
             Returns: string
@@ -6305,13 +6320,6 @@ export interface Database {
         | {
             Args: {
               "": number
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              why: string
-              how_many: number
             }
             Returns: string
           }
@@ -6498,27 +6506,6 @@ export interface Database {
             Args: {
               bucket_width: unknown
               ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
               origin: string
             }
             Returns: string
@@ -6528,6 +6515,27 @@ export interface Database {
               bucket_width: unknown
               ts: string
               origin: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
             }
             Returns: string
           }
@@ -6944,6 +6952,8 @@ export interface Database {
         | "saisie"
         | "selection"
         | "agrandissement"
+        | "ouverture"
+        | "fermeture"
       usage_fonction:
         | "aide"
         | "preuve"
@@ -6970,6 +6980,8 @@ export interface Database {
         | "cta_plan_maj"
         | "cta_edl_commencer"
         | "cta_edl_personnaliser"
+        | "navigation_laterale"
+        | "panneau_lateral"
       visite_onglet:
         | "progression"
         | "priorisation"
