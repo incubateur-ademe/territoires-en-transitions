@@ -1,3 +1,14 @@
+/** Layout global **/
+@media (min-width: 90em) {
+  .fr-container,
+  .fr-container-sm,
+  .fr-container-md,
+  .fr-container-lg,
+  .fr-container-xl {
+    max-width: 90rem;
+  }
+}
+
 .htmlContent ul {
   list-style: disc;
   margin-left: 1.5rem;

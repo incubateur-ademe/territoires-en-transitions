@@ -30,7 +30,7 @@ export const PointsPotentiels = ({
           className="fr-link fr-link--icon-left fr-icon-settings-5-line fr-ml-2w fr-text--sm"
           onClick={onEdit}
         >
-          Personnaliser le potentiel
+          Personnaliser
         </AnchorAsButton>
       ) : null}
     </div>

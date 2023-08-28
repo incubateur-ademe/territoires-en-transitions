@@ -10,7 +10,7 @@ const ImporterPlan = () => {
   const tracker = useFonctionTracker();
 
   return (
-    <div className="max-w-3xl m-auto flex flex-col grow py-12">
+    <div className="max-w-3xl mx-auto flex flex-col grow py-12">
       <div className="w-full mx-auto">
         <h3 className="mb-8">
           <span className="fr-icon-upload-fill mr-2" /> Importer un plan

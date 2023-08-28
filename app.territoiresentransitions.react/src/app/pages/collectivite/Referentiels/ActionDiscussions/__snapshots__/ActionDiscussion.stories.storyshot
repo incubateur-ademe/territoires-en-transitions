@@ -2,7 +2,7 @@
 
 exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/ActionDiscussion Avec Commentaires Masques 1`] = `
 <div
-  className="border-b border-gray-200"
+  className="border-b border-gray-200 last:border-b-0"
 >
   <div
     className="p-4 border-l-4 border-yellow-400"
@@ -30,7 +30,7 @@ exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/Action
             <span
               className="text-gray-400 text-sm"
             >
-              25 octobre 2022
+              25/17/2022
             </span>
           </div>
           <p
@@ -98,7 +98,7 @@ exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/Action
             <span
               className="text-gray-400 text-sm"
             >
-              25 octobre 2022
+              25/17/2022
             </span>
           </div>
           <p
@@ -136,7 +136,7 @@ exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/Action
 
 exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/ActionDiscussion Fermee 1`] = `
 <div
-  className="border-b border-gray-200"
+  className="border-b border-gray-200 last:border-b-0"
 >
   <div
     className="p-4 border-l-4 border-yellow-400"
@@ -164,7 +164,7 @@ exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/Action
             <span
               className="text-gray-400 text-sm"
             >
-              25 octobre 2022
+              25/17/2022
             </span>
           </div>
           <p
@@ -200,7 +200,7 @@ exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/Action
 
 exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/ActionDiscussion Ouverte 1`] = `
 <div
-  className="border-b border-gray-200"
+  className="border-b border-gray-200 last:border-b-0"
 >
   <div
     className="p-4 border-l-4 border-yellow-400"
@@ -228,7 +228,7 @@ exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/Action
             <span
               className="text-gray-400 text-sm"
             >
-              25 octobre 2022
+              25/17/2022
             </span>
           </div>
           <p

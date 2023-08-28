@@ -70,9 +70,7 @@ When(/je crée le plan "([^"]*)"/, titre => {
 When(
   /le nom du plan d'action est changé en "([^"]*)" dans la navigation/,
   titre => {
-    cy.get('[data-test=PlansActionNavigation]')
-      .contains(titre)
-      .should('be.visible');
+    cy.get(`[data-test=SideNavigation]`).contains(titre).should('be.visible');
   }
 );
 
@@ -121,7 +119,7 @@ When(/j'ajoute une fiche à "([^"]*)"/, titre => {
 });
 
 When(/je reviens sur le plan d'action "([^"]*)"/, titre => {
-  cy.get('[data-test=PlansActionNavigation]').contains(titre).click();
+  cy.get('[data-test=SideNavigation]').contains(titre).click();
 });
 
 When(/je veux supprimer le dernier axe créé/, () => {

@@ -13,7 +13,7 @@ const Selection = () => {
   const tracker = useFonctionTracker();
 
   return (
-    <div className="max-w-3xl m-auto flex flex-col grow py-12">
+    <div className="max-w-3xl mx-auto flex flex-col grow py-12">
       <div className="w-full mx-auto">
         <h3 className="mb-8">Ajouter un plan d’action</h3>
         <div className="flex flex-col mt-2 mb-10 py-14 px-24 bg-[#f6f6f6]">

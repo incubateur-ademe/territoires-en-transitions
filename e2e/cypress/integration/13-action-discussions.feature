@@ -1,6 +1,7 @@
 # language: fr
 
 Fonctionnalité: Utiliser les discussions dans une action d'un référentiel
+
   Scénario: Créer une discussion
     Etant donné que je suis connecté en tant que "yolo"
     Et que les discussions sont réinitialisées
@@ -10,7 +11,7 @@ Fonctionnalité: Utiliser les discussions dans une action d'un référentiel
     Quand je saisis "Mon premier commentaire" dans le champs nouvelle discussion
     Et que je clique sur "publier" une nouvelle discussion
     Alors le commentaire "Mon premier commentaire" est visible
-
+  # @skip
   Scénario: Répondre à un commentaire
     Etant donné que je suis connecté en tant que "yolo"
     Et que je suis sur la page "Action ECI" de la collectivité "1"

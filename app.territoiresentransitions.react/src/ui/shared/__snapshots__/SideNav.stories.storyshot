@@ -2,7 +2,7 @@
 
 exports[`Storyshots ui/shared/SideNav Navigation 1 Niveau 1`] = `
 <nav
-  className="fr-sidemenu flex w-80 shrink-0 py-8 md:px-8 border-r border-gray-100"
+  className="fr-sidemenu flex !pr-4"
   data-test="SideNav"
 >
   <div
@@ -44,7 +44,7 @@ exports[`Storyshots ui/shared/SideNav Navigation 1 Niveau 1`] = `
 
 exports[`Storyshots ui/shared/SideNav Navigation Avec Sections 1`] = `
 <nav
-  className="fr-sidemenu flex w-80 shrink-0 py-8 md:px-8 border-r border-gray-100"
+  className="fr-sidemenu flex !pr-4"
   data-test="SideNav"
 >
   <div
@@ -77,27 +77,22 @@ exports[`Storyshots ui/shared/SideNav Navigation Avec Sections 1`] = `
           >
             <a
               aria-current={null}
-              className="fr-sidemenu__link"
+              className="fr-sidemenu__link justify-between"
+              data-test="SideNav-section-toggle-button"
               href="/lien 2"
               onClick={[Function]}
               target="_self"
-            >
-              Section 1
-            </a>
-          </div>
-          <div
-            className="flex pt-2 mt-0.5 ml-2"
-          >
-            <button
-              className="p-0.5"
-              data-test="SideNav-section-toggle-button"
-              onClick={[Function]}
               title="Ouvrir la section"
             >
-              <span
-                className="fr-fi-arrow-right-s-line before:scale-75 before:transition-transform"
-              />
-            </button>
+              Section 1
+              <div
+                className="p-0.5 ml-2"
+              >
+                <span
+                  className="fr-fi-arrow-right-s-line before:scale-75 before:transition-transform"
+                />
+              </div>
+            </a>
           </div>
         </div>
       </li>
@@ -112,27 +107,22 @@ exports[`Storyshots ui/shared/SideNav Navigation Avec Sections 1`] = `
           >
             <a
               aria-current={null}
-              className="fr-sidemenu__link"
+              className="fr-sidemenu__link justify-between"
+              data-test="SideNav-section-toggle-button"
               href="/lien 5"
               onClick={[Function]}
               target="_self"
-            >
-              Section 2
-            </a>
-          </div>
-          <div
-            className="flex pt-2 mt-0.5 ml-2"
-          >
-            <button
-              className="p-0.5"
-              data-test="SideNav-section-toggle-button"
-              onClick={[Function]}
               title="Ouvrir la section"
             >
-              <span
-                className="fr-fi-arrow-right-s-line before:scale-75 before:transition-transform"
-              />
-            </button>
+              Section 2
+              <div
+                className="p-0.5 ml-2"
+              >
+                <span
+                  className="fr-fi-arrow-right-s-line before:scale-75 before:transition-transform"
+                />
+              </div>
+            </a>
           </div>
         </div>
       </li>

@@ -16,7 +16,7 @@ When(/le commentaire "([^"]+)" n'est plus visible/, value => {
 });
 
 When(/le commentaire "([^"]+)" est visible/, value => {
-  getFirstDiscussion().contains(value).should('be.visible');
+  getFirstDiscussion().scrollIntoView().contains(value).should('be.visible');
 });
 
 // Scénario: Consulter les discussions d'une action

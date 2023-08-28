@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/ActionDiscussionsPanel Vue Fermes 1`] = `
-Array [
+<div
+  className="flex flex-col pt-4 grow overflow-hidden"
+>
   <div
     className="flex fr-px-2w fr-pb-2w"
   >
@@ -32,7 +34,7 @@ Array [
         />
       </button>
     </div>
-  </div>,
+  </div>
   <div
     className="fr-pt-2w fr-pb-1w fr-px-2w bg-gray-100"
     data-test="ActionDiscussionsNouvelleDiscussion"
@@ -50,14 +52,14 @@ Array [
         value=""
       />
     </div>
-  </div>,
+  </div>
   <div
-    className="overflow-y-auto"
+    className="grow overflow-y-auto"
     data-test="ActionDiscussionsFeed"
   >
     <div>
       <div
-        className="border-b border-gray-200"
+        className="border-b border-gray-200 last:border-b-0"
       >
         <div
           className="p-4 border-l-4 border-yellow-400"
@@ -85,7 +87,7 @@ Array [
                   <span
                     className="text-gray-400 text-sm"
                   >
-                    25 octobre 2022
+                    25/17/2022
                   </span>
                 </div>
                 <p
@@ -118,7 +120,7 @@ Array [
         </div>
       </div>
       <div
-        className="border-b border-gray-200"
+        className="border-b border-gray-200 last:border-b-0"
       >
         <div
           className="p-4 border-l-4 border-yellow-400"
@@ -146,7 +148,7 @@ Array [
                   <span
                     className="text-gray-400 text-sm"
                   >
-                    25 octobre 2022
+                    25/17/2022
                   </span>
                 </div>
                 <p
@@ -197,7 +199,7 @@ Array [
                   <span
                     className="text-gray-400 text-sm"
                   >
-                    25 octobre 2022
+                    25/17/2022
                   </span>
                 </div>
                 <p
@@ -219,12 +221,14 @@ Array [
         </div>
       </div>
     </div>
-  </div>,
-]
+  </div>
+</div>
 `;
 
 exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/ActionDiscussionsPanel Vue Ouverts 1`] = `
-Array [
+<div
+  className="flex flex-col pt-4 grow overflow-hidden"
+>
   <div
     className="flex fr-px-2w fr-pb-2w"
   >
@@ -255,7 +259,7 @@ Array [
         />
       </button>
     </div>
-  </div>,
+  </div>
   <div
     className="fr-pt-2w fr-pb-1w fr-px-2w bg-gray-100"
     data-test="ActionDiscussionsNouvelleDiscussion"
@@ -273,14 +277,14 @@ Array [
         value=""
       />
     </div>
-  </div>,
+  </div>
   <div
-    className="overflow-y-auto"
+    className="grow overflow-y-auto"
     data-test="ActionDiscussionsFeed"
   >
     <div>
       <div
-        className="border-b border-gray-200"
+        className="border-b border-gray-200 last:border-b-0"
       >
         <div
           className="p-4 border-l-4 border-yellow-400"
@@ -308,7 +312,7 @@ Array [
                   <span
                     className="text-gray-400 text-sm"
                   >
-                    25 octobre 2022
+                    25/17/2022
                   </span>
                 </div>
                 <p
@@ -354,7 +358,7 @@ Array [
         </div>
       </div>
       <div
-        className="border-b border-gray-200"
+        className="border-b border-gray-200 last:border-b-0"
       >
         <div
           className="p-4 border-l-4 border-yellow-400"
@@ -382,7 +386,7 @@ Array [
                   <span
                     className="text-gray-400 text-sm"
                   >
-                    25 octobre 2022
+                    25/17/2022
                   </span>
                 </div>
                 <p
@@ -433,7 +437,7 @@ Array [
                   <span
                     className="text-gray-400 text-sm"
                   >
-                    25 octobre 2022
+                    25/17/2022
                   </span>
                 </div>
                 <p
@@ -468,6 +472,6 @@ Array [
         </div>
       </div>
     </div>
-  </div>,
-]
+  </div>
+</div>
 `;
