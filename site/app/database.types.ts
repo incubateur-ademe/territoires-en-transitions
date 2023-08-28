@@ -5271,45 +5271,6 @@ export interface Database {
           }
         ]
       }
-      commune_pop_legale: {
-        Row: {
-          codarr: string | null
-          codcan: string | null
-          codcom: string | null
-          coddep: string | null
-          codreg: string | null
-          com: string | null
-          pcap: number | null
-          pmun: number | null
-          ptot: number | null
-          reg: string | null
-        }
-        Insert: {
-          codarr?: string | null
-          codcan?: string | null
-          codcom?: string | null
-          coddep?: string | null
-          codreg?: string | null
-          com?: string | null
-          pcap?: number | null
-          pmun?: number | null
-          ptot?: number | null
-          reg?: string | null
-        }
-        Update: {
-          codarr?: string | null
-          codcan?: string | null
-          codcom?: string | null
-          coddep?: string | null
-          codreg?: string | null
-          com?: string | null
-          pcap?: number | null
-          pmun?: number | null
-          ptot?: number | null
-          reg?: string | null
-        }
-        Relationships: []
-      }
       confidentialite_crud: {
         Row: {
           c: Database["public"]["Enums"]["confidentialite_option_crud"]
@@ -9708,6 +9669,43 @@ export interface Database {
           }
         ]
       }
+      indicateur_personnalise_pilote: {
+        Row: {
+          indicateur_id: number
+          tag_id: number | null
+          user_id: string | null
+        }
+        Insert: {
+          indicateur_id: number
+          tag_id?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          indicateur_id?: number
+          tag_id?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "indicateur_personnalise_pilote_indicateur_id_fkey"
+            columns: ["indicateur_id"]
+            referencedRelation: "indicateur_personnalise_definition"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicateur_personnalise_pilote_tag_id_fkey"
+            columns: ["tag_id"]
+            referencedRelation: "personne_tag"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicateur_personnalise_pilote_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       indicateur_personnalise_resultat: {
         Row: {
           annee: number
@@ -10035,6 +10033,402 @@ export interface Database {
             foreignKeyName: "indicateur_personnalise_resultat_indicateur_id_fkey"
             columns: ["indicateur_id"]
             referencedRelation: "indicateur_personnalise_definition"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      indicateur_personnalise_service_tag: {
+        Row: {
+          indicateur_id: number
+          service_tag_id: number
+        }
+        Insert: {
+          indicateur_id: number
+          service_tag_id: number
+        }
+        Update: {
+          indicateur_id?: number
+          service_tag_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "indicateur_personnalise_service_tag_indicateur_id_fkey"
+            columns: ["indicateur_id"]
+            referencedRelation: "indicateur_personnalise_definition"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicateur_personnalise_service_tag_service_tag_id_fkey"
+            columns: ["service_tag_id"]
+            referencedRelation: "service_tag"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      indicateur_personnalise_thematique: {
+        Row: {
+          indicateur_id: number
+          thematique: string
+        }
+        Insert: {
+          indicateur_id: number
+          thematique: string
+        }
+        Update: {
+          indicateur_id?: number
+          thematique?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "indicateur_personnalise_thematique_indicateur_id_fkey"
+            columns: ["indicateur_id"]
+            referencedRelation: "indicateur_personnalise_definition"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicateur_personnalise_thematique_thematique_fkey"
+            columns: ["thematique"]
+            referencedRelation: "thematique"
+            referencedColumns: ["thematique"]
+          }
+        ]
+      }
+      indicateur_pilote: {
+        Row: {
+          collectivite_id: number
+          indicateur_id: string
+          tag_id: number | null
+          user_id: string | null
+        }
+        Insert: {
+          collectivite_id: number
+          indicateur_id: string
+          tag_id?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          collectivite_id?: number
+          indicateur_id?: string
+          tag_id?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_membre_crm"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_plan_action"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivites_crm"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "late_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "action_snippet"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_plan_action_premier_usage"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "action_statuts"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "active_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "auditeurs"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "audits"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_card"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_carte_identite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_identite"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_niveau_acces"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "comparaison_scores_audit"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "crm_collectivites"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "crm_usages"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "named_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "question_display"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "question_thematique_completude"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_active_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_completude"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_completude_compute"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_plan_action_hebdo"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_plan_action_premier_usage"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_plan_action_usage"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_score"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "stats_active_real_collectivites"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "stats_carte_collectivite_active"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "stats_locales_engagement_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "suivi_audit"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "carte_collectivite_active"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_action_statut"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_plan_action"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_referentiel"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_utilisateur"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "crm_usages"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "engagement_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "locales_engagement_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "locales_pourcentage_completude"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "rattachement"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "report_indicateur_resultat"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "report_reponse_binaire"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "report_reponse_choix"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "report_reponse_proportion"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "report_scores"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_indicateur_id_fkey"
+            columns: ["indicateur_id"]
+            referencedRelation: "indicateur_definition"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_tag_id_fkey"
+            columns: ["tag_id"]
+            referencedRelation: "personne_tag"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "users"
             referencedColumns: ["id"]
           }
         ]
@@ -11040,6 +11434,337 @@ export interface Database {
             foreignKeyName: "indicateur_resultat_import_indicateur_id_fkey"
             columns: ["indicateur_id"]
             referencedRelation: "indicateur_definition"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      indicateur_service_tag: {
+        Row: {
+          collectivite_id: number
+          indicateur_id: string
+          service_tag_id: number
+        }
+        Insert: {
+          collectivite_id: number
+          indicateur_id: string
+          service_tag_id: number
+        }
+        Update: {
+          collectivite_id?: number
+          indicateur_id?: string
+          service_tag_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_membre_crm"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_plan_action"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivites_crm"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "late_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "action_snippet"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_plan_action_premier_usage"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "action_statuts"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "active_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "auditeurs"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "audits"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_card"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_carte_identite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_identite"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_niveau_acces"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "comparaison_scores_audit"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "crm_collectivites"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "crm_usages"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "named_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "question_display"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "question_thematique_completude"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_active_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_completude"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_completude_compute"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_plan_action_hebdo"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_plan_action_premier_usage"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_plan_action_usage"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_score"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "stats_active_real_collectivites"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "stats_carte_collectivite_active"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "stats_locales_engagement_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "suivi_audit"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "carte_collectivite_active"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_action_statut"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_plan_action"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_referentiel"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_utilisateur"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "crm_usages"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "engagement_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "locales_engagement_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "locales_pourcentage_completude"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "rattachement"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "report_indicateur_resultat"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "report_reponse_binaire"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "report_reponse_choix"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "report_reponse_proportion"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "report_scores"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_indicateur_id_fkey"
+            columns: ["indicateur_id"]
+            referencedRelation: "indicateur_definition"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_service_tag_id_fkey"
+            columns: ["service_tag_id"]
+            referencedRelation: "service_tag"
             referencedColumns: ["id"]
           }
         ]
@@ -19591,6 +20316,21 @@ export interface Database {
         }
         Relationships: []
       }
+      indicateur_resume: {
+        Row: {
+          collectivite_id: number | null
+          description: string | null
+          indicateur_personnalise: number | null
+          indicateur_referentiel: string | null
+          pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
+          plans: unknown[] | null
+          services: unknown[] | null
+          thematiques: unknown[] | null
+          titre: string | null
+          unite: string | null
+        }
+        Relationships: []
+      }
       indicateur_summary: {
         Row: {
           collectivite_id: number | null
@@ -23589,10 +24329,6 @@ export interface Database {
       }
       diag:
         | {
-            Args: Record<PropertyKey, never>
-            Returns: string
-          }
-        | {
             Args: {
               msg: string
             }
@@ -23602,6 +24338,10 @@ export interface Database {
             Args: {
               msg: unknown
             }
+            Returns: string
+          }
+        | {
+            Args: Record<PropertyKey, never>
             Returns: string
           }
         | {
@@ -23719,13 +24459,25 @@ export interface Database {
       fiche_resume:
         | {
             Args: {
-              fiche_action_action: unknown
+              fiche_action_indicateur: unknown
             }
-            Returns: unknown[]
+            Returns: {
+              collectivite_id: number | null
+              date_fin_provisoire: string | null
+              id: number | null
+              modified_at: string | null
+              niveau_priorite:
+                | Database["public"]["Enums"]["fiche_action_niveaux_priorite"]
+                | null
+              pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
+              plans: unknown[] | null
+              statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
+              titre: string | null
+            }[]
           }
         | {
             Args: {
-              fiche_action_indicateur: unknown
+              fiche_action_action: unknown
             }
             Returns: {
               collectivite_id: number | null
@@ -23779,6 +24531,32 @@ export interface Database {
           plans: unknown[] | null
           statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
           titre: string | null
+        }[]
+      }
+      filter_indicateurs: {
+        Args: {
+          collectivite_id: number
+          sans_plan?: boolean
+          axes_id?: number[]
+          sans_pilote?: boolean
+          pilotes?: Database["public"]["CompositeTypes"]["personne"][]
+          sans_service?: boolean
+          services?: Database["public"]["CompositeTypes"]["personne"][]
+          sans_thematique?: boolean
+          thematiques?: unknown[]
+          limit?: number
+        }
+        Returns: {
+          collectivite_id: number | null
+          description: string | null
+          indicateur_personnalise: number | null
+          indicateur_referentiel: string | null
+          pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
+          plans: unknown[] | null
+          services: unknown[] | null
+          thematiques: unknown[] | null
+          titre: string | null
+          unite: string | null
         }[]
       }
       findfuncs: {
@@ -25394,51 +26172,6 @@ export interface Database {
             Args: {
               bucket_width: unknown
               ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              origin: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              origin: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              origin: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
               offset: unknown
             }
             Returns: string
@@ -25448,6 +26181,51 @@ export interface Database {
               bucket_width: unknown
               ts: string
               offset: unknown
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+              origin: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+              origin: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+              origin: string
             }
             Returns: string
           }
