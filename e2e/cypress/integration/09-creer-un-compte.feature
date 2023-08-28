@@ -57,3 +57,37 @@ Fonctionnalité: Créer un compte
       | formulaire de connexion  | absent    |
       | toutes les collectivités | visible   |
       | footer                   | présent   |
+
+  Scénario: Ne pas pouvoir créer un compte avec un email qui existe déjà
+    Etant donné que j'ouvre le site
+
+    Quand je clique sur le bouton "Créer un compte" du "header"
+    Et que je remplis le "formulaire de création de compte" avec les valeurs suivantes :
+      | Champ  | Valeur        |
+      | email  | nono@dodo.com |
+      | mdp    | Noo0000oo00!! |
+      | prenom | Nono          |
+      | nom    | Dodo          |
+    Et que je clique sur le bouton "Valider" du "formulaire de création de compte"
+    Et que je clique sur le bouton "cgu" du "formulaire de création de compte"
+    Et que je clique sur le bouton "Valider" du "formulaire de création de compte"
+    Alors la page vérifie les conditions suivantes :
+      | Elément                            | Condition |
+      | header                             | visible   |
+      | home                               | absent    |
+      | formulaire de création de compte   | absent    |
+      | Confirmation de création de compte | visible   |
+      | footer                             | présent   |
+
+    # essai de création du compte avec le même email mais une casse différente
+    Quand  je clique sur le bouton "se connecter" de la page "confirmation de creation de compte"
+    Et que je clique sur le bouton "Créer un compte" du "header"
+    Et que je remplis le "formulaire de création de compte" avec les valeurs suivantes :
+      | Champ  | Valeur        |
+      | email  | NoNo@dOdO.cOm |
+      | mdp    | Noo0000oo00!! |
+      | prenom | Nono          |
+      | nom    | Dodo          |
+    Et que je clique sur le bouton "cgu" du "formulaire de création de compte"
+    Et que je clique sur le bouton "Valider" du "formulaire de création de compte"
+    Alors le texte "Le compte n'a pas pu être créé." est visible

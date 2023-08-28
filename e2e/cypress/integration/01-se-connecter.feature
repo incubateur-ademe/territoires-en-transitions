@@ -21,7 +21,7 @@ Fonctionnalité: Accéder au site et se connecter
 
     Quand je remplis le "formulaire de connexion" avec les valeurs suivantes :
       | Champ | Valeur        |
-      | email | yolo@dodo.com |
+      | email | YoLO@dodo.com |
       | mdp   | yolododo      |
     Et que je vais vérifier les données envoyées à la chatbox
     Et que je clique sur le bouton "Valider" du "formulaire de connexion"
@@ -56,7 +56,7 @@ Fonctionnalité: Accéder au site et se connecter
 
     Quand je remplis le "formulaire de connexion" avec les valeurs suivantes :
       | Champ | Valeur        |
-      | email | yulu@dudu.com |
+      | email | YuLu@DUDU.COM |
       | mdp   | yulududu      |
     Et que je clique sur le bouton "Valider" du "formulaire de connexion"
     Alors la page vérifie les conditions suivantes :
@@ -113,7 +113,7 @@ Fonctionnalité: Accéder au site et se connecter
 
     Quand je remplis le "demande de lien de réinitialisation du mdp" avec les valeurs suivantes :
       | Champ | Valeur        |
-      | email | yolo@dodo.com |
+      | email | YoLO@dodo.cOm |
     Et que l'appel à "auth.resetPasswordForEmail" va répondre "ok"
     Et que je clique sur le bouton "Valider" du "demande de lien de réinitialisation du mdp"
     Alors la page vérifie les conditions suivantes :
@@ -165,7 +165,7 @@ Fonctionnalité: Accéder au site et se connecter
 
     Quand je remplis le "formulaire de connexion OTP" avec les valeurs suivantes :
       | Champ | Valeur        |
-      | email | yolo@dodo.com |
+      | email | Yolo@DoDO.com |
     Et que je clique sur le bouton "Valider" du "formulaire de connexion OTP"
     Alors le "formulaire de réinitialisation du mdp" est visible
 

@@ -2,6 +2,6 @@
 
 BEGIN;
 
-drop function deplacer_fiche_action_dans_un_axe;
+-- On ne peut pas enlever des valeurs d'enums
 
 COMMIT;

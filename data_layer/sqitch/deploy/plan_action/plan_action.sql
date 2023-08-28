@@ -2,22 +2,18 @@
 
 BEGIN;
 
-alter type fiche_action_cibles
-    add value if not exists 'Public Scolaire'
-        after 'Grand public et associations';
-alter type fiche_action_cibles
-    add value if not exists 'Acteurs économiques du secteur primaire';
-alter type fiche_action_cibles
-    add value if not exists 'Acteurs économiques du secteur secondaire';
-alter type fiche_action_cibles
-    add value if not exists 'Acteurs économiques du secteur tertiaire';
-alter type fiche_action_cibles
-    add value if not exists 'Partenaires';
-alter type fiche_action_cibles
-    add value if not exists 'Collectivité elle-même';
-alter type fiche_action_cibles
-    add value if not exists 'Elus locaux';
-alter type fiche_action_cibles
-    add value if not exists 'Agents';
+create function deplacer_fiche_action_dans_un_axe(
+    fiche_id integer,
+    old_axe_id integer,
+    new_axe_id integer
+) returns void as
+$$
+begin
+    perform ajouter_fiche_action_dans_un_axe(fiche_id, new_axe_id);
+    perform enlever_fiche_action_d_un_axe(fiche_id, old_axe_id);
+end;
+$$ language plpgsql;
+comment on function deplacer_fiche_action_dans_un_axe is
+    'Déplace une fiche d''un axe à l''autre.';
 
 COMMIT;

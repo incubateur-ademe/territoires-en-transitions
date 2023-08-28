@@ -441,3 +441,7 @@ labellisation/comparaison_audit [labellisation/comparaison_audit@v2.48.0] 2023-0
 evaluation/score_service [evaluation/score_service@v2.48.0] 2023-08-09T15:00:40Z Florian <florian@derfurth.com> # Répare la payload de personnalisation
 indicateur/tableau_de_bord [indicateur/tableau_de_bord@v2.48.0] 2023-08-10T08:47:15Z Florian <florian@derfurth.com> # Remplace les groupes par les programmes
 @v2.49.0 2023-08-21T11:13:31Z Florian <florian@derfurth.com> # Indicateurs v2
+
+plan_action/plan_action [plan_action/plan_action@v2.48.0] 2023-08-21T08:27:44Z Florian <florian@derfurth.com> # RPC pour déplacer une fiche d'un axe à l'autre
+indicateur/referentiel [indicateur/referentiel@v2.49.0] 2023-08-23T07:29:55Z Florian <florian@derfurth.com> # Active les RLS des tables commentaires
+@v2.50.0 2023-08-28T09:23:42Z Florian <florian@derfurth.com> # Drag and drop et fix des droits sur les commentaires

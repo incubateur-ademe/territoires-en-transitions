@@ -9,7 +9,7 @@ Le rapport est un vrai document d’information du public et non un simple docum
 de prévention et de gestion des déchets ménagers et assimilés et les exigences associées.
 Preuve identique à la eci_2.2.0 / 2.4.3 et cae_1.2.3.1 et 3.3.5.3 -->
 
-# Procès-verbal du conseil syndical ou intercommunal faisant état de la présentation du rapport d'activité SPPGD
+# Procès-verbal du conseil syndical ou intercommunal faisant état de la présentation du rapport en assemblée et/ou de son adoption
 ```yaml
 actions: 
   - eci_4.1.0
