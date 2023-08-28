@@ -445,4 +445,6 @@ indicateur/tableau_de_bord [indicateur/tableau_de_bord@v2.48.0] 2023-08-10T08:47
 plan_action/plan_action [plan_action/plan_action@v2.48.0] 2023-08-21T08:27:44Z Florian <florian@derfurth.com> # RPC pour déplacer une fiche d'un axe à l'autre
 indicateur/referentiel [indicateur/referentiel@v2.49.0] 2023-08-23T07:29:55Z Florian <florian@derfurth.com> # Active les RLS des tables commentaires
 @v2.50.0 2023-08-28T09:23:42Z Florian <florian@derfurth.com> # Drag and drop et fix des droits sur les commentaires
+
 utilisateur/usage [utilisateur/usage@v2.50.0] 2023-08-28T14:41:20Z Florian <florian@derfurth.com> # Ajoute le tracking des actions du nouveau layout
+@v2.51.0 2023-08-28T15:24:34Z Florian <florian@derfurth.com> # Nouveau layout
