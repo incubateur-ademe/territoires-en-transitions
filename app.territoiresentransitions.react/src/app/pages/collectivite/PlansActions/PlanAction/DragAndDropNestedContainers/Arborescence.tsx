@@ -9,12 +9,12 @@ import {
 } from '@dnd-kit/core';
 
 import {PlanNode} from '../data/types';
-import {useEditAxe} from '../data/useEditAxe';
 import {getAxeInPlan} from '../data/utils';
 import NestedDroppableContainers from './NestedDroppableContainers';
 import {useFicheChangeAxe} from '../../FicheAction/data/useFicheChangeAxe';
 import PictoLeaf from 'ui/pictogrammes/PictoLeaf';
 import {AxeActions} from '../AxeActions';
+import {useDragAxe} from '../data/useDragAxe';
 
 interface Props {
   plan: PlanNode;
@@ -25,7 +25,7 @@ interface Props {
 
 function Arborescence({plan, axe, isAxePage, isReadonly}: Props) {
   const {mutate: changeAxeFiche} = useFicheChangeAxe();
-  const {mutate: updateAxe} = useEditAxe(axe.id);
+  const {mutate: updateAxe} = useDragAxe(axe.id);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -124,3 +124,13 @@ function Arborescence({plan, axe, isAxePage, isReadonly}: Props) {
 }
 
 export default Arborescence;
+
+/** Animation utilisée au drop d'un élément (axe ou fiche) */
+export const dropAnimation = (elementId: string) => {
+  const element = document.getElementById(elementId);
+  element?.scrollIntoView({behavior: 'smooth', block: 'center'});
+  element?.classList.add('bg-indigo-100');
+  setTimeout(() => {
+    element?.classList.remove('bg-indigo-100');
+  }, 1500);
+};
