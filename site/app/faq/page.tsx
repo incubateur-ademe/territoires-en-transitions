@@ -48,12 +48,12 @@ const Faq = async () => {
           </div>
         )}
       </Section>
-      <Section className="justify-between items-center">
-        <p className="mb-0">
+      <Section className="justify-between items-center gap-8 flex-wrap">
+        <p className="mb-0 flex-auto text-center">
           Cette page n’a pas répondu à votre question ? Notre équipe est à votre
           écoute !
         </p>
-        <div className="flex justify-between items-center gap-8">
+        <div className="flex-auto flex justify-center items-center gap-8 flex-wrap">
           <PictoWithBackground pictogram={<CommunityPicto />} />
           <ButtonWithLink href="/contact" secondary>
             Contacter l'équipe
