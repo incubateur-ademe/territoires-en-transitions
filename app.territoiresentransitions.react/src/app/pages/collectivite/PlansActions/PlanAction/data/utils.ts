@@ -102,6 +102,52 @@ export const removeAxeFromPlan = (
 };
 
 /**
+ * Fonction recursive qui ajoute un axe et son arborescence à un axe.
+ * @param plan plan d'action complet ou page axe
+ * @param axe l'axe à ajouter
+ * @param axeParentId id du nouveau parent de l'axe
+ * @return plan d'action complet avec l'axe ranger dans le bon axe parent
+ */
+export const addAxeToPlan = (
+  plan: PlanNode,
+  axe: PlanNode,
+  axeParentId: number
+) => {
+  if (axeParentId === plan.id) {
+    if (plan.children && plan.children.length > 0) {
+      plan.children = [...plan.children, axe].sort(byTitle);
+    } else {
+      plan.children = [axe];
+    }
+  }
+  if (plan.children && plan.children.length > 0) {
+    for (let index = 0; index < plan.children.length; index++) {
+      const element = plan.children[index];
+      if (element.id !== axeParentId) {
+        if (element.children && element.children.length > 0) {
+          addAxeToPlan(element, axe, axeParentId);
+        }
+      } else {
+        if (plan.children && plan.children.length > 0) {
+          element.children = [...element.children, axe].sort(byTitle);
+        } else {
+          element.children = [axe];
+        }
+        plan.children[index] = element;
+      }
+    }
+  }
+  return plan;
+};
+
+// tri des axes par nom
+const byTitle = (a: PlanNode, b: PlanNode) => {
+  if (!a.nom) return -1;
+  if (!b.nom) return 1;
+  return a.nom.localeCompare(b.nom);
+};
+
+/**
  * Convertit une liste d'axes ordonnancés en une liste de plans.
  * @param axes
  * @returns
