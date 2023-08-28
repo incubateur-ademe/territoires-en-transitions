@@ -3,6 +3,7 @@ import {useMutation, useQueryClient} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {FicheResume} from './types';
 import {ficheChangeAxeDansPlan} from '../../PlanAction/data/utils';
+import {dropAnimation} from '../../PlanAction/DragAndDropNestedContainers/Arborescence';
 
 type Args = {
   fiche: FicheResume;
@@ -71,6 +72,9 @@ export const useFicheChangeAxe = () => {
         previousState?.forEach(([key, data]) =>
           queryClient.setQueryData(key as string[], data)
         );
+      },
+      onSuccess: (data, args) => {
+        args.fiche.id && dropAnimation(args.fiche.id.toString());
       },
     }
   );
