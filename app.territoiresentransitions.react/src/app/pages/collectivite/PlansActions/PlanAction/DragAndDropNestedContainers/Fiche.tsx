@@ -38,7 +38,7 @@ const Fiche = ({axeId, url, fiche}: Props) => {
     active.data.current?.type === 'fiche';
 
   return (
-    <div className="relative self-stretch">
+    <div id={fiche.id?.toString()} className="relative self-stretch">
       {/** Drag overlay */}
       {isDragging &&
         createPortal(
