@@ -81,18 +81,21 @@ const HeaderTitle = ({
         )}
       >
         {onUpdate ? (
-          <TextareaControlled
-            data-test="HeaderTitleInput"
-            ref={titreInputRef}
-            className={classNames(
-              'w-full leading-snug placeholder:text-white focus:placeholder:text-gray-200 disabled:text-white !outline-none !resize-none',
-              customClass.text
-            )}
-            initialValue={titre}
-            placeholder={'Sans titre'}
-            onBlur={handleChangeTitle}
-            disabled={isReadonly}
-          />
+          <>
+            <TextareaControlled
+              data-test="HeaderTitleInput"
+              ref={titreInputRef}
+              className={classNames(
+                'w-full leading-snug placeholder:text-white focus:placeholder:text-gray-200 disabled:text-white !outline-none !resize-none',
+                customClass.text
+              )}
+              initialValue={titre}
+              placeholder={'Sans titre'}
+              onBlur={handleChangeTitle}
+              disabled={isReadonly}
+            />
+            <span className="fr-fi-edit-line my-auto ml-6 hidden group-hover:block" />
+          </>
         ) : (
           <span className="block py-2 px-3">{generateTitle(titre)}</span>
         )}
