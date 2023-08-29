@@ -264,7 +264,7 @@ drop policy critere_read_for_all on labellisation_action_critere;
 create policy allow_read on labellisation_action_critere for select using (est_verifie());
 
 -- Table labellisation_calendrier
-drop policy read_for_all on labellisation_calendrier;
+drop policy if exists read_for_all on labellisation_calendrier;
 create policy allow_read on labellisation_calendrier for select using (est_verifie());
 
 -- Table labellisation_fichier_critere
