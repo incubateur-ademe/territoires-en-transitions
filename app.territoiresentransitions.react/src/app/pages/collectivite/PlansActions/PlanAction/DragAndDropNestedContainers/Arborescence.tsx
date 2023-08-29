@@ -16,6 +16,8 @@ import PictoLeaf from 'ui/pictogrammes/PictoLeaf';
 import {AxeActions} from '../AxeActions';
 import {useDragAxe} from '../data/useDragAxe';
 
+import './dropAnimation.css';
+
 interface Props {
   plan: PlanNode;
   axe: PlanNode;
@@ -129,8 +131,5 @@ export default Arborescence;
 export const dropAnimation = (elementId: string) => {
   const element = document.getElementById(elementId);
   element?.scrollIntoView({behavior: 'smooth', block: 'center'});
-  element?.classList.add('bg-indigo-100');
-  setTimeout(() => {
-    element?.classList.remove('bg-indigo-100');
-  }, 1500);
+  element?.classList.add('drop-animation');
 };

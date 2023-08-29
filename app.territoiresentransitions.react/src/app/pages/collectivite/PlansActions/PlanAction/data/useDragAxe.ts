@@ -44,7 +44,7 @@ export const useDragAxe = (planId: number) => {
       queryClient.invalidateQueries(['plans_navigation', collectivite_id]);
       queryClient.invalidateQueries(['plan_action', planId]);
 
-      args.id && dropAnimation(args.id.toString());
+      args.id && dropAnimation(`axe-${args.id.toString()}`);
     },
   });
 };
