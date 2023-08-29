@@ -25,7 +25,7 @@ export const AxeActions = ({axeId, isAxePage, planActionId}: Props) => {
         Ajouter un nouveau titre
       </button>
       <button
-        className="fr-btn fr-btn--sm fr-btn--secondary"
+        className="fr-btn fr-btn--sm fr-btn--primary"
         onClick={() => createFiche()}
       >
         Créer une fiche action
