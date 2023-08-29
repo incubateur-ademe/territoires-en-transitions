@@ -1,8 +1,7 @@
 import dynamic from 'next/dynamic';
+import Content from './accessibilite.mdx';
 
 export default function Page() {
-  const Content = dynamic(import('./accessibilite.mdx'));
-
   return (
     <div className="fr-container">
       <div className="fr-mt-1w fr-mt-md-4w fr-mb-5w">
