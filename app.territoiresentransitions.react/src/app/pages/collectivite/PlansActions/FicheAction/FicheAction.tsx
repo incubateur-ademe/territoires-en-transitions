@@ -16,24 +16,19 @@ type FicheActionProps = {
 export const FicheAction = ({fiche}: FicheActionProps) => {
   const collectivite = useCurrentCollectivite();
   const {mutate: updateFiche} = useEditFicheAction();
+  const isReadonly = collectivite?.readonly ?? false;
   return (
     <div data-test="FicheAction" className="w-full">
       <HeaderTitle
         customClass={{container: 'bg-bf525', text: '!text-[1.375rem]'}}
         titre={fiche.titre}
         onUpdate={titre => updateFiche({...fiche, titre: titre})}
-        isReadonly={collectivite?.readonly ?? false}
+        isReadonly={isReadonly}
       />
       <div className="mx-auto px-10">
-        <FicheActionHeader fiche={fiche} />
-        <FicheActionForm
-          fiche={fiche}
-          isReadonly={collectivite?.readonly ?? false}
-        />
-        <FicheActionFooter
-          fiche={fiche}
-          isReadonly={collectivite?.readonly ?? false}
-        />
+        <FicheActionHeader fiche={fiche} isReadonly={isReadonly} />
+        <FicheActionForm fiche={fiche} isReadonly={isReadonly} />
+        <FicheActionFooter />
       </div>
     </div>
   );

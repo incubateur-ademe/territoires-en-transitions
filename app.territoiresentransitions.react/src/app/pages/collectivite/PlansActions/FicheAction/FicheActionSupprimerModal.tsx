@@ -1,4 +1,3 @@
-import {BoutonAttention} from 'ui/buttons/BoutonAttention';
 import Modal from 'ui/shared/floating-ui/Modal';
 import {FicheAction} from './data/types';
 
@@ -49,9 +48,11 @@ const FicheActionSupprimerModal = ({fiche, onDelete}: Props) => {
         );
       }}
     >
-      <BoutonAttention data-test="SupprimerFicheBouton">
-        Supprimer cette fiche
-      </BoutonAttention>
+      <button
+        data-test="SupprimerFicheBouton"
+        className="fr-btn fr-btn--tertiary fr-btn--sm fr-fi-delete-line"
+        title="Supprimer la fiche"
+      />
     </Modal>
   );
 };
