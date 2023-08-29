@@ -1,6 +1,7 @@
 begin;
 select plan(6);
 
+select test.identify_as('yolo@dodo.com');
 -- test the view used by the client.
 select *
 into nantes_display

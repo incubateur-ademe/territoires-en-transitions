@@ -1,4 +1,6 @@
 import {getReferentContacts} from 'core-logic/api/procedures/collectiviteProcedures';
+import { yuluCredentials } from 'test_utils/collectivites';
+import {supabaseClient} from "../supabase";
 
 describe('Claim and remove collectivite Remote Procedure Call', () => {
   it('should return true when user is first to claim this collectivite', async () => {
@@ -13,6 +15,7 @@ describe('Claim and remove collectivite Remote Procedure Call', () => {
 
 describe('Request referent contacts', () => {
   it('should return all referent contacts of owned collectivite if exists', async () => {
+    await supabaseClient.auth.signInWithPassword(yuluCredentials);
     const procedureResponse = await getReferentContacts(1);
     expect(procedureResponse).not.toBeNull();
     expect(procedureResponse).toEqual([
@@ -24,6 +27,7 @@ describe('Request referent contacts', () => {
     ]);
   });
   it('should return an empty list if no referent yet', async () => {
+    await supabaseClient.auth.signInWithPassword(yuluCredentials);
     const procedureResponse = await getReferentContacts(40);
     expect(procedureResponse).toBeDefined();
     expect(procedureResponse).toHaveLength(0);

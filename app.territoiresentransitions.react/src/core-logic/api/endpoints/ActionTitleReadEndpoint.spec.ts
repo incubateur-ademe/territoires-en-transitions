@@ -3,9 +3,12 @@ import {
   ActionTitleRead,
   actionTitleReadEndpoint,
 } from 'core-logic/api/endpoints/ActionTitleReadEndpoint';
+import {supabaseClient} from "../supabase";
+import {yuluCredentials} from "../../../test_utils/collectivites";
 
 describe('Action title endpoint', () => {
   it('should retrieve all titles', async () => {
+    await supabaseClient.auth.signInWithPassword(yuluCredentials);
     const partialTitle: Partial<ActionTitleRead> = {
       id: 'eci_1.1.1',
     };
@@ -17,6 +20,7 @@ describe('Action title endpoint', () => {
   });
 
   it('should retrieve only title for a given referentiel', async () => {
+    await supabaseClient.auth.signInWithPassword(yuluCredentials);
     const partialEciTitle: Partial<ActionTitleRead> = {
       id: 'eci_1.1.1',
     };

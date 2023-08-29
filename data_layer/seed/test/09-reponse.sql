@@ -49,9 +49,11 @@ $$
         disable trigger set_modified_at_before_reponse_proportion_update;
 
     -- Vide les tables des réponses
+    truncate justification;
     truncate reponse_binaire;
     truncate reponse_choix;
     truncate reponse_proportion;
+    truncate personnalisation_consequence;
 
     -- Restaure les copies
     insert into public.reponse_binaire

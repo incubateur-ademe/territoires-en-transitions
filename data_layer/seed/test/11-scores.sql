@@ -241,3 +241,42 @@ end;
 $$ language plpgsql;
 comment on function test_enable_fake_score_generation is
     'Réactive les appels aux service de notation.';
+
+
+create table test.pre_audit_scores
+as
+select *
+from public.pre_audit_scores;
+comment on table test.pre_audit_scores is
+    'Copie de la table pre_audit_scores.';
+
+create table test.post_audit_scores
+as
+select *
+from public.post_audit_scores;
+comment on table test.post_audit_scores is
+    'Copie de la table post_audit_scores.';
+
+create table test.labellisation
+as
+select *
+from public.labellisation;
+comment on table test.labellisation is
+    'Copie de la table labellisation.';
+
+create or replace function
+    test_reset_scores()
+    returns  void as
+$$
+begin
+    truncate pre_audit_scores cascade;
+    truncate post_audit_scores cascade;
+    truncate labellisation cascade;
+
+    insert into public.pre_audit_scores select * from test.pre_audit_scores;
+    insert into public.post_audit_scores select * from test.post_audit_scores;
+
+end;
+$$ language plpgsql security definer;
+comment on function test_reset_scores is
+    'Reinitialise les scores.';

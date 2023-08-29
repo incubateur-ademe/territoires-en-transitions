@@ -46,6 +46,7 @@ begin
 
     insert into dcp (user_id, nom, prenom, email)
     values (user_id, nom, prenom, email);
+    update utilisateur_verifie set verifie = true where utilisateur_verifie.user_id = test_create_user.user_id;
 end;
 $$ language plpgsql security definer;
 comment on function test_create_user is

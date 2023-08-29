@@ -10,59 +10,61 @@ import { scoreById } from "./scoreById.ts";
 await new Promise((r) => setTimeout(r, 0));
 
 Deno.test(
-  "Calcul de 'eci_2.4.2' après la réponse à la question 'dechets_1'",
-  async (t) => {
-    await testReset();
-    await signIn("yolododo");
+    "Calcul de 'eci_2.4.2' après la réponse à la question 'dechets_1'",
+    async () => {
+        await testReset();
+        await signIn("yolododo");
 
-    const reponse = {
-      collectivite_id: 2,
-      question_id: "dechets_1",
-      reponse: false,
-    };
-    await saveReponse(reponse);
+        const reponse = {
+            json:{
+                collectivite_id: 2,
+                question_id: "dechets_1",
+                reponse: false,
+            }
+        };
+        await saveReponse(reponse);
 
-    // on attend le calcul des scores
-    await delay(5000);
-    let clientScores = await supabase
-      .from("client_scores")
-      .select()
-      .eq("collectivite_id", 2)
-      .eq("referentiel", "eci");
+        // on attend le calcul des scores
+        await delay(5000);
+        let clientScores = await supabase
+            .from("client_scores")
+            .select()
+            .eq("collectivite_id", 2)
+            .eq("referentiel", "eci");
 
-    const eci242_1 = scoreById(
-      clientScores.data![0] as unknown as ClientScores,
-      "eci_2.4.2",
-    );
-    assertEquals(
-      eci242_1.desactive,
-      true,
-      "Sans la compétence 'dechet_1' l'action devrait être désactivée",
-    );
+        const eci242_1 = scoreById(
+            clientScores.data![0] as unknown as ClientScores,
+            "eci_2.4.2",
+        );
+        assertEquals(
+            eci242_1.desactive,
+            true,
+            "Sans la compétence 'dechet_1' l'action devrait être désactivée",
+        );
 
-    // on change notre réponse
-    reponse.reponse = true;
-    await saveReponse(reponse);
+        // on change notre réponse
+        reponse.json.reponse = true;
+        await saveReponse(reponse);
 
-    // on attend de nouveau le calcul des scores
-    await delay(5000);
-    clientScores = await supabase
-      .from("client_scores")
-      .select()
-      .eq("collectivite_id", 2)
-      .eq("referentiel", "eci");
+        // on attend de nouveau le calcul des scores
+        await delay(5000);
+        clientScores = await supabase
+            .from("client_scores")
+            .select()
+            .eq("collectivite_id", 2)
+            .eq("referentiel", "eci");
 
-    const eci242_2 = scoreById(
-      clientScores.data![0] as unknown as ClientScores,
-      "eci_2.4.2",
-    );
-    assertEquals(
-      eci242_2.desactive,
-      false,
-      "Avec la compétence 'dechet_1' l'action ne devrait pas être désactivée",
-    );
+        const eci242_2 = scoreById(
+            clientScores.data![0] as unknown as ClientScores,
+            "eci_2.4.2",
+        );
+        assertEquals(
+            eci242_2.desactive,
+            false,
+            "Avec la compétence 'dechet_1' l'action ne devrait pas être désactivée",
+        );
 
-    // on se déconnecte pour libérer les ressources
-    await signOut();
-  },
+        // on se déconnecte pour libérer les ressources
+        await signOut();
+    },
 );

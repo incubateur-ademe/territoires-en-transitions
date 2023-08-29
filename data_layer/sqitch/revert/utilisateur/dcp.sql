@@ -3,8 +3,12 @@
 
 BEGIN;
 
-drop function accepter_cgu;
-alter table dcp
-    drop column cgu_acceptees_le;
+drop trigger after_insert_droit on dcp;
+drop function after_insert_dcp_add_rights;
+drop function est_verifie;
+drop function est_support;
+drop table utilisateur_verifie;
+drop table utilisateur_support;
+
 
 COMMIT;
