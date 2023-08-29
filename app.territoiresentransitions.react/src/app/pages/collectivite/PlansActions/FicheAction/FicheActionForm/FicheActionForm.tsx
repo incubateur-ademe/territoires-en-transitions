@@ -282,6 +282,7 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
             disabled={isReadonly}
           />
         </FormField>
+        <div className="mb-6 border-t border-gray-300" />
         <div className="grid grid-cols-2 gap-4">
           <FormField label="Statut">
             <SelectDropdown
