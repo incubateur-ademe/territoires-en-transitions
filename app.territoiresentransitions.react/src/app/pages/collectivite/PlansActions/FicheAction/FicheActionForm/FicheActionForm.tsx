@@ -154,19 +154,18 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
         title="Acteurs"
         dataTest="section-acteurs"
       >
-        <FormField label="Cibles">
-          <MultiSelectTagsDropdown
-            buttonClassName={DSFRbuttonClassname}
-            values={fiche.cibles ?? []}
-            options={ficheActionCiblesOptions}
-            onSelect={values => updateFiche({...fiche, cibles: values})}
-            disabled={isReadonly}
-          />
-        </FormField>
         <FormField label="Structure pilote">
           <StructurePiloteDropdown
             structures={fiche.structures}
             onSelect={structures => updateFiche({...fiche, structures})}
+            isReadonly={isReadonly}
+          />
+        </FormField>
+        <FormField label="Personne pilote">
+          <PersonnePiloteDropdown
+            ficheId={fiche.id}
+            personnes={fiche.pilotes}
+            onSelect={pilotes => updateFiche({...fiche, pilotes})}
             isReadonly={isReadonly}
           />
         </FormField>
@@ -192,18 +191,12 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
             disabled={isReadonly}
           />
         </FormField>
-        <FormField label="Partenaires">
-          <PartenairesDropdown
-            partenaires={fiche.partenaires}
-            onSelect={partenaires => updateFiche({...fiche, partenaires})}
-            isReadonly={isReadonly}
-          />
-        </FormField>
-        <FormField label="Personne pilote">
-          <PersonnePiloteDropdown
+        <div className="mb-6 border-t border-gray-300" />
+        <FormField label="Élu·e référent·e">
+          <PersonneReferenteDropdown
             ficheId={fiche.id}
-            personnes={fiche.pilotes}
-            onSelect={pilotes => updateFiche({...fiche, pilotes})}
+            personnes={fiche.referents}
+            onSelect={referents => updateFiche({...fiche, referents})}
             isReadonly={isReadonly}
           />
         </FormField>
@@ -214,12 +207,22 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
             isReadonly={isReadonly}
           />
         </FormField>
-        <FormField label="Élu·e référent·e">
-          <PersonneReferenteDropdown
-            ficheId={fiche.id}
-            personnes={fiche.referents}
-            onSelect={referents => updateFiche({...fiche, referents})}
+        <div className="mb-6 border-t border-gray-300" />
+        <FormField label="Partenaires">
+          <PartenairesDropdown
+            partenaires={fiche.partenaires}
+            onSelect={partenaires => updateFiche({...fiche, partenaires})}
             isReadonly={isReadonly}
+          />
+        </FormField>
+        <div className="mb-6 border-t border-gray-300" />
+        <FormField label="Cibles">
+          <MultiSelectTagsDropdown
+            buttonClassName={DSFRbuttonClassname}
+            values={fiche.cibles ?? []}
+            options={ficheActionCiblesOptions}
+            onSelect={values => updateFiche({...fiche, cibles: values})}
+            disabled={isReadonly}
           />
         </FormField>
       </Section>
