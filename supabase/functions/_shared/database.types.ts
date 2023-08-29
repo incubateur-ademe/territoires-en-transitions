@@ -6928,6 +6928,8 @@ export interface Database {
         | "cta_plan_maj"
         | "cta_edl_commencer"
         | "cta_edl_personnaliser"
+        | "export_xlsx"
+        | "export_docx"
       visite_onglet:
         | "progression"
         | "priorisation"
