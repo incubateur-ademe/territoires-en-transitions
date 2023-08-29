@@ -18,7 +18,7 @@ export const useAutoSizeTextarea = (
   useLayoutEffect(() => {
     if (textareaRef && textareaRef.current && shadowRef && shadowRef.current) {
       // Permet ensuite de récupérer la hauteur nécessaire dans scrollHeight
-      textareaRef.current.style.height = 'inherit';
+      textareaRef.current.style.height = '0px';
 
       // Met à jour la hauteur en fonction du contenu
       textareaRef.current.style.height =

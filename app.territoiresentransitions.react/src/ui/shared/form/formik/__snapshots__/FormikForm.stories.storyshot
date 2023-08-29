@@ -137,6 +137,11 @@ exports[`Storyshots ui/shared/form/formik/FormikForm Defaut 1`] = `
         name="textarea"
         onBlur={[Function]}
         onChange={[Function]}
+        style={
+          Object {
+            "minHeight": "4rem",
+          }
+        }
         type="area"
       />
     </div>

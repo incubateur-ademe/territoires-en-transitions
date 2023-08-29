@@ -22,6 +22,9 @@ export const useMutationToast = () => {
 
   const [status, setStatus] = useState<ToastStatus>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [autoHideDuration, setAutoHideDuration] = useState<number | undefined>(
+    undefined
+  );
 
   const close = () => {
     setStatus(null);
@@ -37,8 +40,11 @@ export const useMutationToast = () => {
       ) {
         const message =
           (mutation?.meta?.[status] as string) || DEFAULT_MESSAGE[status];
+        const hideDuration =
+          (mutation?.meta?.autoHideDuration as number) || undefined;
         setMessage(message);
         setStatus(status);
+        setAutoHideDuration(hideDuration);
       }
     });
   }, []);
@@ -52,6 +58,7 @@ export const useMutationToast = () => {
         '!bg-error425': status === 'error',
         '!bg-tDefaultInfo': status === 'info',
       })}
+      autoHideDuration={autoHideDuration}
     >
       <div className="flex items-center">
         <div

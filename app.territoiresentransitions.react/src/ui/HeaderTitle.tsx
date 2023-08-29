@@ -74,7 +74,7 @@ const HeaderTitle = ({
       )}
       onClick={!isReadonly ? handleEditFocus : undefined}
     >
-      <p
+      <div
         className={classNames(
           'flex grow m-0 font-bold leading-snug text-white',
           customClass.text
@@ -96,7 +96,7 @@ const HeaderTitle = ({
         ) : (
           <span className="block py-2 px-3">{generateTitle(titre)}</span>
         )}
-      </p>
+      </div>
     </div>
   );
 };

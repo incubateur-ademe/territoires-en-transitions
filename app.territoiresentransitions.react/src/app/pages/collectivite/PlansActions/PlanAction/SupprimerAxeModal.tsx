@@ -1,7 +1,7 @@
 import Modal from 'ui/shared/floating-ui/Modal';
 import {FlatAxe, PlanNode} from './data/types';
 import {useDeleteAxe} from './data/useDeleteAxe';
-import {checkAxeHasFiche, getAxeinPlan} from './data/utils';
+import {checkAxeHasFiche, getAxeInPlan} from './data/utils';
 
 type Props = {
   children: JSX.Element;
@@ -36,7 +36,7 @@ const SupprimerAxeModal = ({
                 : 'Souhaitez-vous vraiment supprimer ce niveau ?'}
             </h6>
             {/** Vérifie si un axe contient un ou plusieurs fiches */}
-            {checkAxeHasFiche(getAxeinPlan(plan, axe)) ? (
+            {checkAxeHasFiche(getAxeInPlan(plan, axe.id)) ? (
               <>
                 <p id={descriptionId} className="mb-4">
                   {isPlan

@@ -19,13 +19,13 @@ export const AxeActions = ({axeId, isAxePage, planActionId}: Props) => {
     <div className="flex items-center gap-6">
       <button
         data-test="AjouterAxe"
-        className="fr-btn fr-btn--secondary"
+        className="fr-btn fr-btn--sm fr-btn--secondary"
         onClick={() => addAxe()}
       >
         Ajouter un nouveau titre
       </button>
       <button
-        className="fr-btn fr-btn--secondary"
+        className="fr-btn fr-btn--sm fr-btn--secondary"
         onClick={() => createFiche()}
       >
         Créer une fiche action

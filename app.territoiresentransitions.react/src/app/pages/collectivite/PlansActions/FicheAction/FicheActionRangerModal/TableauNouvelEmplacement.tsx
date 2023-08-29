@@ -137,10 +137,10 @@ const TableauNouvelEmplacement = ({fiche}: Props) => {
             aria-label="Confirmer"
             className="fr-btn ml-auto"
             onClick={() => {
+              const axe = selectedAxes[selectedAxes.length - 1];
               addFicheToAxe({
-                axe: selectedAxes[selectedAxes.length - 1],
+                axe: {id: axe.axe.id, nom: axe.axe.nom},
                 fiche_id: fiche.id!,
-                planAction_id: selectedAxes[0].axe.id,
               });
               setSelectedAxes([]);
             }}
