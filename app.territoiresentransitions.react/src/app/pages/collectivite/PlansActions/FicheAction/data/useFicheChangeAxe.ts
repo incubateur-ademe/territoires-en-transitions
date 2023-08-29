@@ -74,7 +74,7 @@ export const useFicheChangeAxe = () => {
         );
       },
       onSuccess: (data, args) => {
-        args.fiche.id && dropAnimation(args.fiche.id.toString());
+        args.fiche.id && dropAnimation(`fiche-${args.fiche.id.toString()}`);
       },
     }
   );
