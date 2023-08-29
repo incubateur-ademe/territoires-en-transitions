@@ -1,6 +1,7 @@
 'use client';
 
 import {useState} from 'react';
+import {supabase} from '../initSupabase';
 
 type FormData = {
   object: string;
@@ -82,9 +83,14 @@ const ContactForm = () => {
     }));
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     console.log(formData);
+
+    const {data, error} = await supabase.functions.invoke('site_send_message', {
+      body: formData,
+    });
+    console.log(data);
   };
 
   return (
