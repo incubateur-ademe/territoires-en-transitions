@@ -74,7 +74,7 @@ const Axe = ({plan, axe, isAxePage, isReadonly}: Props) => {
   return (
     <div
       data-test="Axe"
-      id={axe.id.toString()}
+      id={`axe-${axe.id.toString()}`}
       className="relative flex flex-col"
     >
       {/** Drag overlay */}
