@@ -2,7 +2,15 @@
 
 BEGIN;
 
-select has_function_privilege('est_verifie()', 'execute');
-select has_function_privilege('can_read_acces_restreint(integer)', 'execute');
+select code,
+       libelle,
+       region_code
+from departement
+where false;
+
+select code,
+       libelle
+from region
+where false;
 
 ROLLBACK;
