@@ -768,6 +768,35 @@ export interface Database {
           nom?: string
         }
       }
+      confidentialite_crud: {
+        Row: {
+          c: Database["public"]["Enums"]["confidentialite_option_crud"]
+          d: Database["public"]["Enums"]["confidentialite_option_crud"]
+          nom_element: string
+          profil: Database["public"]["Enums"]["confidentialite_profil"]
+          r: Database["public"]["Enums"]["confidentialite_option_crud"]
+          type_element: Database["public"]["Enums"]["confidentialite_type_element"]
+          u: Database["public"]["Enums"]["confidentialite_option_crud"]
+        }
+        Insert: {
+          c: Database["public"]["Enums"]["confidentialite_option_crud"]
+          d: Database["public"]["Enums"]["confidentialite_option_crud"]
+          nom_element: string
+          profil: Database["public"]["Enums"]["confidentialite_profil"]
+          r: Database["public"]["Enums"]["confidentialite_option_crud"]
+          type_element: Database["public"]["Enums"]["confidentialite_type_element"]
+          u: Database["public"]["Enums"]["confidentialite_option_crud"]
+        }
+        Update: {
+          c?: Database["public"]["Enums"]["confidentialite_option_crud"]
+          d?: Database["public"]["Enums"]["confidentialite_option_crud"]
+          nom_element?: string
+          profil?: Database["public"]["Enums"]["confidentialite_profil"]
+          r?: Database["public"]["Enums"]["confidentialite_option_crud"]
+          type_element?: Database["public"]["Enums"]["confidentialite_type_element"]
+          u?: Database["public"]["Enums"]["confidentialite_option_crud"]
+        }
+      }
       cot: {
         Row: {
           actif: boolean
@@ -942,7 +971,6 @@ export interface Database {
         Row: {
           action_id: string
           fiche_id: number
-          fiche_resume: unknown | null
         }
         Insert: {
           action_id: string
@@ -1096,7 +1124,6 @@ export interface Database {
           fiche_id: number
           indicateur_id: string | null
           indicateur_personnalise_id: number | null
-          fiche_resume: unknown | null
         }
         Insert: {
           fiche_id: number
@@ -1463,7 +1490,7 @@ export interface Database {
       }
       indicateur_personnalise_definition: {
         Row: {
-          collectivite_id: number | null
+          collectivite_id: number
           commentaire: string
           description: string
           id: number
@@ -1473,7 +1500,7 @@ export interface Database {
           unite: string
         }
         Insert: {
-          collectivite_id?: number | null
+          collectivite_id: number
           commentaire: string
           description: string
           id?: number
@@ -1483,7 +1510,7 @@ export interface Database {
           unite: string
         }
         Update: {
-          collectivite_id?: number | null
+          collectivite_id?: number
           commentaire?: string
           description?: string
           id?: number
@@ -2560,6 +2587,34 @@ export interface Database {
           user_id?: string | null
         }
       }
+      utilisateur_support: {
+        Row: {
+          support: boolean
+          user_id: string
+        }
+        Insert: {
+          support?: boolean
+          user_id: string
+        }
+        Update: {
+          support?: boolean
+          user_id?: string
+        }
+      }
+      utilisateur_verifie: {
+        Row: {
+          user_id: string
+          verifie: boolean
+        }
+        Insert: {
+          user_id: string
+          verifie?: boolean
+        }
+        Update: {
+          user_id?: string
+          verifie?: boolean
+        }
+      }
       visite: {
         Row: {
           collectivite_id: number | null
@@ -2801,30 +2856,6 @@ export interface Database {
           filesize: number | null
           hash: string | null
           id: number | null
-        }
-      }
-      business_action_children: {
-        Row: {
-          children: unknown[] | null
-          id: string | null
-          parent: string | null
-          referentiel: Database["public"]["Enums"]["referentiel"] | null
-        }
-      }
-      business_action_statut: {
-        Row: {
-          action_id: string | null
-          avancement: Database["public"]["Enums"]["avancement"] | null
-          avancement_detaille: number[] | null
-          collectivite_id: number | null
-          concerne: boolean | null
-          referentiel: Database["public"]["Enums"]["referentiel"] | null
-        }
-      }
-      business_reponse: {
-        Row: {
-          collectivite_id: number | null
-          reponses: Json[] | null
         }
       }
       client_action_statut: {
@@ -3292,13 +3323,6 @@ export interface Database {
           types_collectivites_concernees:
             | Database["public"]["Enums"]["type_collectivite"][]
             | null
-        }
-      }
-      question_engine: {
-        Row: {
-          choix_ids: unknown[] | null
-          id: string | null
-          type: Database["public"]["Enums"]["question_type"] | null
         }
       }
       question_thematique_completude: {
@@ -4230,92 +4254,10 @@ export interface Database {
         }
         Returns: Json
       }
-      ajouter_action: {
-        Args: {
-          fiche_id: number
-          action_id: unknown
-        }
-        Returns: undefined
-      }
       ajouter_fiche_action_dans_un_axe: {
         Args: {
           fiche_id: number
           axe_id: number
-        }
-        Returns: undefined
-      }
-      ajouter_financeur: {
-        Args: {
-          fiche_id: number
-          financeur: Database["public"]["CompositeTypes"]["financeur_montant"]
-        }
-        Returns: Database["public"]["CompositeTypes"]["financeur_montant"]
-      }
-      ajouter_indicateur: {
-        Args: {
-          fiche_id: number
-          indicateur: Database["public"]["CompositeTypes"]["indicateur_generique"]
-        }
-        Returns: undefined
-      }
-      ajouter_partenaire: {
-        Args: {
-          fiche_id: number
-          partenaire: unknown
-        }
-        Returns: {
-          collectivite_id: number
-          id: number
-          nom: string
-        }
-      }
-      ajouter_pilote: {
-        Args: {
-          fiche_id: number
-          pilote: Database["public"]["CompositeTypes"]["personne"]
-        }
-        Returns: Database["public"]["CompositeTypes"]["personne"]
-      }
-      ajouter_referent: {
-        Args: {
-          fiche_id: number
-          referent: Database["public"]["CompositeTypes"]["personne"]
-        }
-        Returns: Database["public"]["CompositeTypes"]["personne"]
-      }
-      ajouter_service: {
-        Args: {
-          fiche_id: number
-          service: unknown
-        }
-        Returns: {
-          collectivite_id: number
-          id: number
-          nom: string
-        }
-      }
-      ajouter_sous_thematique: {
-        Args: {
-          fiche_id: number
-          thematique_id: number
-        }
-        Returns: undefined
-      }
-      ajouter_structure: {
-        Args: {
-          fiche_id: number
-          structure: unknown
-        }
-        Returns: {
-          collectivite_id: number
-          id: number
-          nom: string
-        }
-      }
-      ajouter_thematique: {
-        Args: {
-          fiche_id: number
-          thematique: string
         }
         Returns: undefined
       }
@@ -4387,28 +4329,6 @@ export interface Database {
         }
         Returns: undefined
       }
-      business_insert_actions: {
-        Args: {
-          relations: unknown[]
-          definitions: unknown[]
-          computed_points: unknown[]
-        }
-        Returns: undefined
-      }
-      business_update_actions: {
-        Args: {
-          definitions: unknown[]
-          computed_points: unknown[]
-        }
-        Returns: undefined
-      }
-      business_upsert_indicateurs: {
-        Args: {
-          indicateur_definitions: unknown[]
-          indicateur_actions: unknown[]
-        }
-        Returns: undefined
-      }
       can: {
         Args: {
           "": unknown[]
@@ -4469,6 +4389,7 @@ export interface Database {
       col_is_null:
         | {
             Args: {
+              schema_name: unknown
               table_name: unknown
               column_name: unknown
               description?: string
@@ -4477,7 +4398,6 @@ export interface Database {
           }
         | {
             Args: {
-              schema_name: unknown
               table_name: unknown
               column_name: unknown
               description?: string
@@ -4535,6 +4455,10 @@ export interface Database {
           if_not_compressed?: boolean
         }
         Returns: unknown
+      }
+      confidentialite_init_test: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
       consume_invitation: {
         Args: {
@@ -4634,6 +4558,14 @@ export interface Database {
         }
         Returns: undefined
       }
+      deplacer_fiche_action_dans_un_axe: {
+        Args: {
+          fiche_id: number
+          old_axe_id: number
+          new_axe_id: number
+        }
+        Returns: undefined
+      }
       detach_data_node: {
         Args: {
           node_name: unknown
@@ -4718,73 +4650,10 @@ export interface Database {
         }
         Returns: string[]
       }
-      enlever_action: {
-        Args: {
-          fiche_id: number
-          action_id: unknown
-        }
-        Returns: undefined
-      }
       enlever_fiche_action_d_un_axe: {
         Args: {
           fiche_id: number
           axe_id: number
-        }
-        Returns: undefined
-      }
-      enlever_indicateur: {
-        Args: {
-          fiche_id: number
-          indicateur: Database["public"]["CompositeTypes"]["indicateur_generique"]
-        }
-        Returns: undefined
-      }
-      enlever_partenaire: {
-        Args: {
-          fiche_id: number
-          partenaire: unknown
-        }
-        Returns: undefined
-      }
-      enlever_pilote: {
-        Args: {
-          fiche_id: number
-          pilote: Database["public"]["CompositeTypes"]["personne"]
-        }
-        Returns: undefined
-      }
-      enlever_referent: {
-        Args: {
-          fiche_id: number
-          referent: Database["public"]["CompositeTypes"]["personne"]
-        }
-        Returns: undefined
-      }
-      enlever_service: {
-        Args: {
-          fiche_id: number
-          service: unknown
-        }
-        Returns: undefined
-      }
-      enlever_sous_thematique: {
-        Args: {
-          fiche_id: number
-          thematique_id: number
-        }
-        Returns: undefined
-      }
-      enlever_structure: {
-        Args: {
-          fiche_id: number
-          structure: unknown
-        }
-        Returns: undefined
-      }
-      enlever_thematique: {
-        Args: {
-          fiche_id: number
-          thematique: string
         }
         Returns: undefined
       }
@@ -4799,6 +4668,39 @@ export interface Database {
           collectivite: number
           referentiel: Database["public"]["Enums"]["referentiel"]
         }
+        Returns: boolean
+      }
+      est_auditeur_action: {
+        Args: {
+          collectivite_id: number
+          action_id: unknown
+        }
+        Returns: boolean
+      }
+      est_auditeur_audit: {
+        Args: {
+          audit_id: number
+        }
+        Returns: boolean
+      }
+      est_auditeur_demande: {
+        Args: {
+          demande_id: number
+        }
+        Returns: boolean
+      }
+      est_auditeur_discussion: {
+        Args: {
+          discussion_id: number
+        }
+        Returns: boolean
+      }
+      est_support: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
+      est_verifie: {
+        Args: Record<PropertyKey, never>
         Returns: boolean
       }
       extensions_are: {
@@ -4821,7 +4723,7 @@ export interface Database {
       fiche_resume:
         | {
             Args: {
-              "": unknown
+              fiche_action_action: unknown
             }
             Returns: {
               collectivite_id: number | null
@@ -4835,7 +4737,7 @@ export interface Database {
           }
         | {
             Args: {
-              "": unknown
+              fiche_action_indicateur: unknown
             }
             Returns: {
               collectivite_id: number | null
@@ -5542,6 +5444,12 @@ export interface Database {
         }
         Returns: boolean
       }
+      have_discussion_admin_acces: {
+        Args: {
+          discussion_id: number
+        }
+        Returns: boolean
+      }
       have_discussion_edition_acces: {
         Args: {
           id: number
@@ -5562,13 +5470,6 @@ export interface Database {
       }
       have_lecture_acces: {
         Args: {
-          id: number
-        }
-        Returns: boolean
-      }
-      have_one_of_niveaux_acces: {
-        Args: {
-          niveaux: Database["public"]["Enums"]["niveau_acces"][]
           id: number
         }
         Returns: boolean
@@ -5672,12 +5573,6 @@ export interface Database {
             }
             Returns: number
           }
-      is_agent_of: {
-        Args: {
-          id: number
-        }
-        Returns: boolean
-      }
       is_aggregate: {
         Args: {
           "": unknown
@@ -5968,7 +5863,7 @@ export interface Database {
       }
       naturalsort: {
         Args: {
-          "": string
+          text: string
         }
         Returns: string
       }
@@ -6103,18 +5998,6 @@ export interface Database {
         }
         Returns: number
       }
-      quit_collectivite: {
-        Args: {
-          id: number
-        }
-        Returns: Json
-      }
-      referent_contact: {
-        Args: {
-          id: number
-        }
-        Returns: Json
-      }
       referent_contacts: {
         Args: {
           id: number
@@ -6227,7 +6110,7 @@ export interface Database {
           }
       save_reponse: {
         Args: {
-          "": Json
+          json: Json
         }
         Returns: undefined
       }
@@ -6450,6 +6333,10 @@ export interface Database {
         Returns: undefined
       }
       test_reset_reponse: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      test_reset_scores: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
@@ -6834,6 +6721,17 @@ export interface Database {
         | "non_renseigne"
         | "detaille"
       collectivite_filtre_type: "population" | "score" | "remplissage"
+      confidentialite_option_crud: "oui" | "non" | "restreint" | "soi"
+      confidentialite_profil:
+        | "public"
+        | "connecte"
+        | "verifie"
+        | "support"
+        | "lecture"
+        | "edition"
+        | "admin"
+        | "auditeur"
+      confidentialite_type_element: "table" | "vue" | "fonction"
       fiche_action_cibles:
         | "Grand public et associations"
         | "Public Scolaire"
@@ -6944,6 +6842,8 @@ export interface Database {
         | "saisie"
         | "selection"
         | "agrandissement"
+        | "ouverture"
+        | "fermeture"
       usage_fonction:
         | "aide"
         | "preuve"
@@ -6970,6 +6870,8 @@ export interface Database {
         | "cta_plan_maj"
         | "cta_edl_commencer"
         | "cta_edl_personnaliser"
+        | "navigation_laterale"
+        | "panneau_lateral"
         | "export_xlsx"
         | "export_docx"
       visite_onglet:
