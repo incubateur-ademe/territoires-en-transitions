@@ -1,190 +1,196 @@
 'use client';
 
+import {ToastFloater} from '@components/Toast/ToastFloater';
+import classNames from 'classnames';
 import {useState} from 'react';
 import {supabase} from '../initSupabase';
+import {options} from './data';
 
 type FormData = {
-  object: string;
-  name: string;
-  surname: string;
+  categorie: string;
+  objet: {value: number | string; label: string};
+  prenom: string;
+  nom: string;
   email: string;
   message: string;
 };
 
-const options = [
-  {
-    group:
-      'Questions relatives au programme Territoire Engagé Transition Écologique',
-    options: [
-      {
-        value: 1,
-        label:
-          'Informations sur le programme Territoire Engagé Transition Écologique',
-      },
-      {
-        value: 2,
-        label: 'Processus d’audit et de labellisation',
-      },
-      {
-        value: 3,
-        label: 'Référentiel Climat Air Énergie',
-      },
-      {
-        value: 4,
-        label: 'Référentiel Économie circulaire',
-      },
-    ],
-  },
-  {
-    group: 'Questions relatives à la plateforme Territoires en transitions',
-    options: [
-      {
-        value: 5,
-        label: 'Création de compte ou connexion',
-      },
-      {
-        value: 6,
-        label: 'Suggestions d’améliorations',
-      },
-      {
-        value: 7,
-        label: 'Questions sur l’utilisation de la plateforme',
-      },
-    ],
-  },
-  {
-    group: 'Aucun de ces sujets ?',
-    options: [
-      {
-        value: 8,
-        label: 'Autre',
-      },
-    ],
-  },
-];
+const initFormData: FormData = {
+  categorie: '',
+  objet: {value: '', label: ''},
+  prenom: '',
+  nom: '',
+  email: '',
+  message: '',
+};
 
 const ContactForm = () => {
-  const [formData, setFormData] = useState<FormData>({
-    object: '',
-    name: '',
-    surname: '',
-    email: '',
-    message: '',
-  });
+  const [formData, setFormData] = useState<FormData>(initFormData);
+  const [status, setStatus] = useState<'success' | 'error' | null>(null);
 
   const handleChange = (
-    event: React.ChangeEvent<
-      HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement
-    >,
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
+    setFormData(prevState => {
+      return {
+        ...prevState,
+        [event.target.name]: event.target.value,
+      };
+    });
+  };
+
+  const handleChangeSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const option = event.target.options[event.target.selectedIndex];
+    const categorie = option.closest('optgroup')?.label ?? '';
+
     setFormData(prevState => ({
       ...prevState,
-      [event.target.name]: event.target.value,
+      categorie,
+      objet: {value: event.target.value, label: option.innerText},
     }));
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log(formData);
+
+    const sentData = {
+      ...formData,
+      objet: formData.objet.label,
+    };
 
     const {data, error} = await supabase.functions.invoke('site_send_message', {
-      body: formData,
+      body: sentData,
     });
-    console.log(data);
+
+    if (data) {
+      setStatus('success');
+      setFormData(initFormData);
+    } else if (error) {
+      console.error(error);
+      setStatus('error');
+    } else {
+      console.error('site_send_message : aucune donnée reçue');
+      setStatus('error');
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="fr-input-group">
-        <label className="fr-label" htmlFor="input-objet">
-          Objet de votre message
-        </label>
-        <select
-          className="fr-select"
-          id="object"
-          name="object"
-          required
-          onChange={handleChange}
-          value={formData.object}
-        >
-          <option value="" disabled hidden>
-            Selectionnez une option
-          </option>
-          {options.map(group => (
-            <optgroup key={group.group} label={group.group}>
-              {group.options.map(opt => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </optgroup>
-          ))}
-        </select>
-      </div>
+    <>
+      <form onSubmit={handleSubmit}>
+        <div className="fr-input-group">
+          <label className="fr-label" htmlFor="input-objet">
+            Objet de votre message
+          </label>
+          <select
+            className="fr-select"
+            id="objet"
+            name="objet"
+            required
+            onChange={handleChangeSelect}
+            value={formData.objet.value}
+          >
+            <option value="" disabled hidden>
+              Selectionnez une option
+            </option>
+            {options.map(group => (
+              <optgroup key={group.group} label={group.group}>
+                {group.options.map(opt => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </optgroup>
+            ))}
+          </select>
+        </div>
 
-      <div className="fr-input-group">
-        <label className="fr-label" htmlFor="input-name">
-          Votre prénom
-        </label>
-        <input
-          className="fr-input"
-          type="text"
-          id="name"
-          name="name"
-          required
-          onChange={handleChange}
-          value={formData.name}
-        />
-      </div>
+        <div className="fr-input-group">
+          <label className="fr-label" htmlFor="input-name">
+            Votre prénom
+          </label>
+          <input
+            className="fr-input"
+            type="text"
+            id="prenom"
+            name="prenom"
+            required
+            onChange={handleChange}
+            value={formData.prenom}
+          />
+        </div>
 
-      <div className="fr-input-group">
-        <label className="fr-label" htmlFor="input-surname">
-          Votre nom
-        </label>
-        <input
-          className="fr-input"
-          type="text"
-          id="surname"
-          name="surname"
-          required
-          onChange={handleChange}
-          value={formData.surname}
-        />
-      </div>
+        <div className="fr-input-group">
+          <label className="fr-label" htmlFor="input-surname">
+            Votre nom
+          </label>
+          <input
+            className="fr-input"
+            type="text"
+            id="nom"
+            name="nom"
+            required
+            onChange={handleChange}
+            value={formData.nom}
+          />
+        </div>
 
-      <div className="fr-input-group">
-        <label className="fr-label" htmlFor="input-email">
-          Votre adresse email professionnelle
-        </label>
-        <input
-          className="fr-input"
-          type="email"
-          id="email"
-          name="email"
-          required
-          onChange={handleChange}
-          value={formData.email}
-        />
-      </div>
+        <div className="fr-input-group">
+          <label className="fr-label" htmlFor="input-email">
+            Votre adresse email professionnelle
+          </label>
+          <input
+            className="fr-input"
+            type="email"
+            id="email"
+            name="email"
+            required
+            onChange={handleChange}
+            value={formData.email}
+          />
+        </div>
 
-      <div className="fr-input-group">
-        <label className="fr-label" htmlFor="input-message">
-          Votre message
-        </label>
-        <textarea
-          className="fr-input"
-          id="message"
-          name="message"
-          required
-          onChange={handleChange}
-          value={formData.message}
-        />
-      </div>
+        <div className="fr-input-group">
+          <label className="fr-label" htmlFor="input-message">
+            Votre message
+          </label>
+          <textarea
+            className="fr-input"
+            id="message"
+            name="message"
+            required
+            onChange={handleChange}
+            value={formData.message}
+          />
+        </div>
 
-      <div className="flex justify-end">
-        <button className="fr-btn rounded-lg">Envoyer</button>
-      </div>
-    </form>
+        <div className="flex justify-end">
+          <button className="fr-btn rounded-lg">Envoyer</button>
+        </div>
+      </form>
+
+      <ToastFloater
+        open={status !== null}
+        onClose={() => setStatus(null)}
+        className={classNames('!text-white', {
+          '!bg-[#18753C]': status === 'success',
+          '!bg-[#CE0500]': status === 'error',
+        })}
+      >
+        <div className="flex items-center">
+          <div
+            className={`flex mr-3 ${classNames({
+              'fr-icon-check-line': status === 'success',
+              'fr-icon-close-line': status === 'error',
+            })}`}
+          />
+          {status === 'success'
+            ? 'Votre message a bien été envoyé'
+            : status === 'error'
+            ? "Une erreur est survenue lors de l'envoi de votre message"
+            : ''}
+        </div>
+      </ToastFloater>
+    </>
   );
 };
 

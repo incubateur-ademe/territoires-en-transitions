@@ -1,27 +1,64 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { getSupabaseClient } from "../_shared/getSupabaseClient.ts";
-import { corsHeaders } from "../_shared/cors.ts";
+import {serve} from 'https://deno.land/std@0.168.0/http/server.ts';
+import {getSupabaseClient} from '../_shared/getSupabaseClient.ts';
+import {corsHeaders} from '../_shared/cors.ts';
 
 /**
  *
  */
-serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
-  }
-  const supabase = getSupabaseClient(req);
+serve(async (req: Request) => {
+	if (req.method === 'OPTIONS') {
+		return new Response('ok', {headers: corsHeaders});
+	}
 
-  const { nom, email } = await req.json();
+	try {
+		const {categorie, objet, prenom, nom, email, message} = await req.json();
 
-  // Renvoie le statut pour persister dans les logs Supabase.
-  return new Response(
-    JSON.stringify({
-      status: 200,
-      success: true,
-      digest: `Un email à été envoyé par ${nom} ${email}`,
-    }),
-    {
-      headers: { "Content-Type": "application/json", ...corsHeaders },
-    },
-  );
+		let destEmail = '';
+
+		if (
+			categorie ===
+			'Questions relatives au programme Territoire Engagé Transition Écologique'
+		) {
+			// Adresse à mettre à jour
+			destEmail = 'contact@territoiresentransitions.fr';
+		} else if (
+			categorie ===
+			'Questions relatives à la plateforme Territoires en transitions'
+		) {
+			destEmail = 'contact@territoiresentransitions.fr';
+		} else {
+			destEmail = 'contact@territoiresentransitions.fr';
+		}
+
+		const res = await fetch('https://api.resend.com/emails', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${Deno.env.get('RESEND_API_KEY')}`
+			},
+			body: JSON.stringify({
+				from: 'contact@territoiresentransitions.fr',
+				to: destEmail,
+				subject: `Homepage : ${objet}`,
+				html: `<p>De : ${prenom} ${nom} (${email})</p><p>${message}</p>`
+			})
+		});
+
+		const data = await res.json();
+
+		if (data.statusCode !== 200) throw data;
+
+		// const supabaseClient = getSupabaseClient(req);
+
+		// Renvoie le statut pour persister dans les logs Supabase.
+		return new Response(JSON.stringify(data), {
+			headers: {'Content-Type': 'application/json', ...corsHeaders},
+			status: data.status || data.statusCode
+		});
+	} catch (error) {
+		return new Response(JSON.stringify({error: error.message}), {
+			headers: {...corsHeaders},
+			status: error.status || error.statusCode
+		});
+	}
 });
