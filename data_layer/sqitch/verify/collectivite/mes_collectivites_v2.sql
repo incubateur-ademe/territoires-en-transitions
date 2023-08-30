@@ -2,8 +2,8 @@
 
 BEGIN;
 
-select collectivite_id, nom, niveau_acces, est_auditeur, access_restreint
-from collectivite_niveau_acces
+select collectivite_id, nom, niveau_acces, est_auditeur
+from public.mes_collectivites
 where false;
 
 ROLLBACK;

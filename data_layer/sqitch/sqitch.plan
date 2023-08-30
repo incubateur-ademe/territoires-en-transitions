@@ -453,3 +453,5 @@ utilisateur/dcp [utilisateur/dcp@v2.28.0] 2023-05-09T14:59:45Z Amandine Jacqueli
 utilisateur/droits_v2 [utilisateur/droits_v2@v2.40.0] 2023-06-22T07:43:28Z Amandine Jacquelin <conta@LanceLibre> # Corrige les fonctionnalités avec les nouveaux droits
 plan_action/fiches [plan_action/fiches@v2.49.0] 2023-07-26T17:09:22Z Amandine Jacquelin <conta@LanceLibre> # Supprime ou passe certaines fonctions en privée
 @v2.52.0 2023-08-29T14:03:28Z Florian <florian@derfurth.com> # Corrige et teste les droits
+
+collectivite/mes_collectivites_v2 [collectivite/mes_collectivites_v2@v2.52.0] 2023-08-30T08:01:37Z Florian <florian@derfurth.com> # Améliore les performances de la vue
