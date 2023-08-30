@@ -5,8 +5,9 @@ import Accompagnement from './Accompagnement';
 import Informations from './Informations';
 import AccueilBanner from './AccueilBanner';
 import Newsletter from './Newsletter';
-import {AccueilData, getData} from './utils';
+import {getData} from './utils';
 import NoResult from '@components/info/NoResult';
+import {AccueilData} from './types';
 
 const Accueil = async () => {
   const data: AccueilData | null = await getData();

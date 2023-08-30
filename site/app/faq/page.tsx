@@ -4,6 +4,7 @@
 import Accordion from '@components/accordion/Accordion';
 import ButtonWithLink from '@components/buttons/ButtonWithLink';
 import Section from '@components/sections/Section';
+import {sortByRank} from 'app/utils';
 import CommunityPicto from 'public/pictogrammes/CommunityPicto';
 import PictoWithBackground from 'public/pictogrammes/PictoWithBackground';
 import {fetchCollection} from 'src/strapi/strapi';
@@ -18,7 +19,7 @@ const getData = async () => {
   const data = await fetchCollection('faqs');
 
   const formattedData = data
-    ? data.map(d => ({
+    ? sortByRank(data).map(d => ({
         id: d.id,
         titre: d.attributes.Titre as unknown as string,
         contenu: d.attributes.Contenu as unknown as string,

@@ -12,6 +12,10 @@
   },
   "pluginOptions": {},
   "attributes": {
+    "Rang": {
+      "type": "integer",
+      "unique": true
+    },
     "Titre": {
       "type": "string",
       "required": true,
@@ -25,9 +29,7 @@
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": [
-        "images"
-      ]
+      "allowedTypes": ["images"]
     },
     "URL": {
       "type": "string"

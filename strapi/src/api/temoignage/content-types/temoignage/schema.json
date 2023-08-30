@@ -12,6 +12,10 @@
   },
   "pluginOptions": {},
   "attributes": {
+    "Rang": {
+      "type": "integer",
+      "unique": true
+    },
     "Auteur": {
       "type": "string",
       "required": true,
@@ -30,9 +34,7 @@
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": [
-        "images"
-      ]
+      "allowedTypes": ["images"]
     }
   }
 }

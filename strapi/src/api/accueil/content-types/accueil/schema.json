@@ -22,9 +22,7 @@
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": [
-        "images"
-      ]
+      "allowedTypes": ["images"]
     },
     "Accompagnement": {
       "type": "component",
@@ -35,19 +33,19 @@
     "Temoignages": {
       "type": "component",
       "repeatable": false,
-      "component": "bloc.temoignages",
+      "component": "bloc.description",
       "required": true
     },
     "Informations": {
       "type": "component",
       "repeatable": false,
-      "component": "bloc.informations",
+      "component": "bloc.description",
       "required": true
     },
     "Newsletter": {
       "type": "component",
       "repeatable": false,
-      "component": "bloc.newsletter",
+      "component": "bloc.description",
       "required": true
     }
   }

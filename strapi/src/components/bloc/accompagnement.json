@@ -19,13 +19,13 @@
     "Programme": {
       "type": "component",
       "repeatable": false,
-      "component": "bloc.programme",
+      "component": "bloc.description-avec-image",
       "required": true
     },
     "Compte": {
       "type": "component",
       "repeatable": false,
-      "component": "bloc.compte",
+      "component": "bloc.description-avec-image",
       "required": true
     }
   }

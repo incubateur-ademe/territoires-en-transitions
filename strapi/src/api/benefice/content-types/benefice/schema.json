@@ -12,6 +12,10 @@
   },
   "pluginOptions": {},
   "attributes": {
+    "Rang": {
+      "type": "integer",
+      "unique": true
+    },
     "Titre": {
       "type": "string",
       "required": true,
