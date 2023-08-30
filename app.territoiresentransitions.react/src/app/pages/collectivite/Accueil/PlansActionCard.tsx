@@ -2,6 +2,7 @@ import {
   makeCollectivitePlanActionUrl,
   makeCollectivitePlansActionsNouveauUrl,
   makeCollectivitePlansActionsSyntheseUrl,
+  makeCollectivitePlansActionsSyntheseVueUrl,
 } from 'app/paths';
 import classNames from 'classnames';
 import {TAxeRow} from 'types/alias';
@@ -15,6 +16,7 @@ import AccueilCard from './AccueilCard';
 import AccueilEmptyCardWithPicto from './AccueilEmptyCardWithPicto';
 import KeyNumbers from '../../../../ui/score/KeyNumbers';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
+import {useHistory} from 'react-router-dom';
 
 type PlanActionCardProps = {
   collectiviteId: number;
@@ -59,6 +61,7 @@ const FilledPlansActionCard = ({
   plans,
 }: FilledPlansActionCardProps): JSX.Element => {
   const tracker = useFonctionTracker();
+  const history = useHistory();
   const planActionsStats = usePlanActionTableauDeBord(
     collectiviteId,
     null,
@@ -128,6 +131,14 @@ const FilledPlansActionCard = ({
             zoomEffect={false}
             unit="fiche"
             displayPercentageValue
+            onClick={() => {
+              history.push(
+                makeCollectivitePlansActionsSyntheseVueUrl({
+                  collectiviteId,
+                  vue: 'statuts',
+                })
+              );
+            }}
           />
         </div>
       )}
