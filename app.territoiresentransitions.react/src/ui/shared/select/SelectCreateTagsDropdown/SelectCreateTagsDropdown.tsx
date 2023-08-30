@@ -33,6 +33,7 @@ type TSelectCreateTagsDropdown<T extends string> =
     /** tableau d'id des options crées par un utilisateur */
     userCreatedTagIds?: string[];
     closeOptionsOnSelect?: boolean;
+    noOptionPlaceholder?: string;
   };
 
 /** Sélecteur de Tag(s) avec un input dans le bouton d'ouverture pour créer un tag */
@@ -46,6 +47,7 @@ const SelectCreateTagsDropdown = <T extends string>({
   userCreatedTagIds,
   placement,
   placeholderText,
+  noOptionPlaceholder,
   disabled,
   closeOptionsOnSelect,
   containerWidthMatchButton = true,
@@ -115,6 +117,7 @@ const SelectCreateTagsDropdown = <T extends string>({
                 />
               ) : null
             }
+            noOptionPlaceholder={noOptionPlaceholder}
           />
         </div>
       )}
