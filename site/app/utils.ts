@@ -1,32 +1,19 @@
 import {fetchCollection, fetchSingle} from 'src/strapi/strapi';
 import {StrapiItem} from 'src/strapi/StrapiItem';
-import {AccompagnementContent} from './Accompagnement';
-import {Temoignage} from './Temoignages';
+import {AccueilData} from './types';
 
-export type AccueilData = {
-  titre: string;
-  couverture?: StrapiItem;
-  accompagnement: {
-    titre: string;
-    description: string;
-    contenu: AccompagnementContent[];
-  };
-  temoignages: {
-    titre: string;
-    description: string;
-    contenu: Temoignage[];
-  } | null;
-  informations: {
-    titre: string;
-    description: string;
-  };
-  newsletter: {
-    titre: string;
-    description: string;
-  };
-};
+export const sortByRank = (array: StrapiItem[]): StrapiItem[] =>
+  array.sort((a, b) => {
+    const aRank = (a.attributes.Rang as unknown as number) ?? undefined;
+    const bRank = (b.attributes.Rang as unknown as number) ?? undefined;
 
-export const getData = async () => {
+    if (aRank && bRank) return aRank - bRank;
+    else if (aRank && !bRank) return -1;
+    else if (!aRank && bRank) return 1;
+    else return a.id - b.id;
+  });
+
+export const getData = async (): Promise<AccueilData | null> => {
   // Fetch du contenu de la page d'accueil
   const data = await fetchSingle('accueil', [
     ['populate[0]', 'Titre'],
@@ -42,10 +29,13 @@ export const getData = async () => {
   ]);
 
   // Fetch de la liste des témoignages
-  const temoignages = await fetchCollection('temoignages');
+  const temoignages = await fetchCollection('temoignages', [
+    ['populate[0]', 'Image'],
+    ['sort[0]', 'Rang:asc'],
+  ]);
 
   // Formattage de la data
-  const formattedData = data
+  const formattedData: AccueilData | null = data
     ? {
         titre: data.attributes.Titre as unknown as string,
         couverture:
@@ -84,7 +74,7 @@ export const getData = async () => {
               titre: data.attributes.Temoignages.Titre as unknown as string,
               description: data.attributes.Temoignages
                 .Description as unknown as string,
-              contenu: temoignages.map(d => ({
+              contenu: sortByRank(temoignages).map(d => ({
                 id: d.id,
                 auteur: d.attributes.Auteur as unknown as string,
                 description:

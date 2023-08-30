@@ -1,15 +1,14 @@
 {
-  "collectionName": "components_bloc_objectifs",
+  "collectionName": "components_bloc_descriptions",
   "info": {
-    "displayName": "Objectifs"
+    "displayName": "Description"
   },
   "options": {},
   "attributes": {
     "Titre": {
       "type": "string",
       "required": true,
-      "maxLength": 200,
-      "default": "Pourquoi engager votre collectivité ?"
+      "maxLength": 255
     },
     "Description": {
       "type": "text"

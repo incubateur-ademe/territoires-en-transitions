@@ -15,7 +15,7 @@
     "Titre": {
       "type": "string",
       "required": true,
-      "maxLength": 200,
+      "maxLength": 255,
       "default": "Contacter l'équipe"
     },
     "Description": {
@@ -29,6 +29,17 @@
       "allowedTypes": [
         "images"
       ]
+    },
+    "Telephone": {
+      "type": "string",
+      "default": "04 15 09 82 07",
+      "required": true
+    },
+    "Horaires": {
+      "type": "string",
+      "default": "Permanence de 9h à 12h30 et de 14h à 16h30, du lundi au vendredi",
+      "required": true,
+      "maxLength": 255
     }
   }
 }

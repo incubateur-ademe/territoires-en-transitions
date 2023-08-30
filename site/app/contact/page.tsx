@@ -12,6 +12,8 @@ import ContactForm from './ContactForm';
 type ContactData = {
   titre: string;
   description: string;
+  telephone: string;
+  horaires: string;
   couverture?: StrapiItem;
 };
 
@@ -21,8 +23,9 @@ const getData = async () => {
   const formattedData = data
     ? {
         titre: data.attributes.Titre as unknown as string,
-        description:
-          (data.attributes.Description as unknown as string) ?? undefined,
+        description: data.attributes.Description as unknown as string,
+        telephone: data.attributes.Telephone as unknown as string,
+        horaires: data.attributes.Horaires as unknown as string,
         couverture:
           (data.attributes.Couverture.data as unknown as StrapiItem) ??
           undefined,
@@ -48,11 +51,9 @@ const Contact = async () => {
       <div>
         <p className="font-bold flex gap-2 mb-0">
           <PhoneIcon />
-          Tél. : 04 15 09 82 07
+          Tél. : {data.telephone}
         </p>
-        <p className="text-[#666]">
-          Permanence de 9h à 12h30 et de 14h à 16h30, du lundi au vendredi
-        </p>
+        <p className="text-[#666]">{data.horaires}</p>
       </div>
 
       {!!data.couverture && (

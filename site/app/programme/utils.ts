@@ -1,3 +1,4 @@
+import {sortByRank} from 'app/utils';
 import {fetchCollection, fetchSingle} from 'src/strapi/strapi';
 import {StrapiItem} from 'src/strapi/StrapiItem';
 
@@ -47,10 +48,13 @@ export type ProgrammeData = {
 
 export const getData = async () => {
   // Fetch de la liste des objectifs
-  const objectifs = await fetchCollection('objectifs');
+  const objectifs = await fetchCollection('objectifs', [
+    ['populate[0]', 'Pictogramme'],
+    ['sort[0]', 'Rang:asc'],
+  ]);
 
   const formattedObjectifs: Content[] | null = objectifs
-    ? objectifs.map(d => ({
+    ? sortByRank(objectifs).map(d => ({
         id: d.id,
         description: d.attributes.Description as unknown as string,
         image: d.attributes.Pictogramme.data as unknown as StrapiItem,
@@ -58,10 +62,13 @@ export const getData = async () => {
     : null;
 
   // Fetch de la liste des services
-  const services = await fetchCollection('services');
+  const services = await fetchCollection('services', [
+    ['populate[0]', 'Image'],
+    ['sort[0]', 'Rang:asc'],
+  ]);
 
   const formattedServices: Content[] | null = services
-    ? services.map(d => ({
+    ? sortByRank(services).map(d => ({
         id: d.id,
         titre: d.attributes.Titre as unknown as string,
         description:
@@ -72,10 +79,12 @@ export const getData = async () => {
     : null;
 
   // Fetch de la liste des bénéfices
-  const benefices = await fetchCollection('benefices');
+  const benefices = await fetchCollection('benefices', [
+    ['sort[0]', 'Rang:asc'],
+  ]);
 
   const formattedBenefices: Content[] | null = benefices
-    ? benefices.map(d => ({
+    ? sortByRank(benefices).map(d => ({
         id: d.id,
         titre: d.attributes.Titre as unknown as string,
         description: d.attributes.Contenu as unknown as string,
@@ -83,10 +92,10 @@ export const getData = async () => {
     : null;
 
   // Fetch de la liste des étapes
-  const etapes = await fetchCollection('etapes');
+  const etapes = await fetchCollection('etapes', [['sort[0]', 'Rang:asc']]);
 
   const formattedEtapes: Content[] | null = etapes
-    ? etapes.map(d => ({
+    ? sortByRank(etapes).map(d => ({
         id: d.id,
         titre: d.attributes.Titre as unknown as string,
         description: d.attributes.Contenu as unknown as string,

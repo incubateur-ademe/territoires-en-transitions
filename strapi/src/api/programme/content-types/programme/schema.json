@@ -28,13 +28,13 @@
     "Objectifs": {
       "type": "component",
       "repeatable": false,
-      "component": "bloc.objectifs",
+      "component": "bloc.description",
       "required": true
     },
     "Services": {
       "type": "component",
       "repeatable": false,
-      "component": "bloc.services",
+      "component": "bloc.description",
       "required": true
     },
     "Offre": {
@@ -47,13 +47,13 @@
     "Benefices": {
       "type": "component",
       "repeatable": false,
-      "component": "bloc.benefices",
+      "component": "bloc.description",
       "required": true
     },
     "Etapes": {
       "type": "component",
       "repeatable": false,
-      "component": "bloc.etapes",
+      "component": "bloc.description",
       "required": true
     },
     "Ressources": {
