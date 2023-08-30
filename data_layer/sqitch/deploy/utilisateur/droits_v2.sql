@@ -36,13 +36,14 @@ create or replace function
 begin
     atomic
     select case
-               when access_restreint
+               when (select access_restreint
+                     from collectivite
+                     where id = can_read_acces_restreint.collectivite_id
+                     limit 1)
                    then have_lecture_acces(can_read_acces_restreint.collectivite_id)
                    or est_support()
-                   or private.est_auditeur(collectivite_id)
-               else est_verifie() end
-    from collectivite
-    where id = can_read_acces_restreint.collectivite_id;
+                   or private.est_auditeur(can_read_acces_restreint.collectivite_id)
+               else est_verifie() end;
 end;
 
 create or replace function
