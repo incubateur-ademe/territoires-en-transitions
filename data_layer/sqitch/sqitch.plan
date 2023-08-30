@@ -459,3 +459,4 @@ utilisateur/droits_v2 [utilisateur/droits_v2@v2.52.0] 2023-08-30T09:21:09Z Flori
 @v2.53.0 2023-08-30T13:34:34Z Florian <florian@derfurth.com> # Améliorations des performances
 
 plan_action/tableau_de_bord [plan_action/tableau_de_bord@v2.53.0] 2023-08-30T14:28:18Z Florian <florian@derfurth.com> # Améliore la performance de la RPC
+plan_action/fiches [plan_action/fiches@v2.53.0] 2023-08-30T15:50:10Z Florian <florian@derfurth.com> # Améliore les performances
