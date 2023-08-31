@@ -1,36 +1,40 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import pl from 'https://esm.sh/nodejs-polars@0.8.1';
-import { corsHeaders } from '../_shared/cors.ts';
-import { getSupabaseClient } from '../_shared/getSupabaseClient.ts';
-import { exportXLSX } from '../export_plan_action/exportXLSX.ts';
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { corsHeaders } from "../_shared/cors.ts";
+import { getSupabaseClient } from "../_shared/getSupabaseClient.ts";
+import { XLSXToPlan } from "./importXLSX.ts";
+import * as xlsx from "https://deno.land/x/sheetjs@v0.18.3/xlsx.mjs";
+import * as cptable from "https://deno.land/x/sheetjs@v0.18.3/dist/cpexcel.full.mjs";
+
+xlsx.set_cptable(cptable);
 
 /**
- * Importe (xls) une nouvelle version d'un plan d'actions existant
+ * Import (xls) d'un plan d'action
  */
 serve(async (req) => {
   // permet l'appel de la fonction depuis le navigateur
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
   }
 
-  const { planId, file } = await req.json();
+  const data = await req.formData();
+  const planId = data.get("planId") as string;
+  const planNom = data.get("planNom") as string;
+  const file = data.get("file") as File;
+  const collectivite_id = data.get("collectivite_id") as string;
+
+  const workbook = xlsx.read(await file.arrayBuffer(), { type: "array" });
 
   try {
     const supabaseClient = getSupabaseClient(req);
-
-    // exporte les données existantes
-    const data = await exportXLSX(supabaseClient, planId, 'csv');
-    if (!data) {
-      throw Error('Export failed');
-    }
-
-    // compare les données existantes à celles du fichier uploadé
-    // pl.readCSV(data.buffer);
-
-    // met à jour la base avec les différences
+    const res = await XLSXToPlan(
+      supabaseClient,
+      workbook,
+      parseInt(collectivite_id),
+      planNom,
+    );
 
     // renvoi ok
-    return new Response('ok', {
+    return new Response(res, {
       headers: { ...corsHeaders },
       status: 200,
     });
@@ -38,7 +42,7 @@ serve(async (req) => {
     console.error(error);
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...corsHeaders },
-      status: 400,
+      status: 200,
     });
   }
 });
