@@ -1,57 +1,11 @@
 import {sortByRank} from 'app/utils';
 import {fetchCollection, fetchSingle} from 'src/strapi/strapi';
 import {StrapiItem} from 'src/strapi/StrapiItem';
-
-export type Content = {
-  id: number;
-  titre?: string;
-  description: string;
-  image?: StrapiItem;
-  href?: string;
-};
-
-export type ProgrammeData = {
-  titre: string;
-  description?: string;
-  couvertureURL?: string;
-  objectifs: {
-    titre: string;
-    description: string;
-    contenu: Content[] | null;
-  };
-  services: {
-    titre: string;
-    description: string;
-    contenu: Content[] | null;
-  };
-  offre: {
-    description: string;
-  };
-  benefices: {
-    titre: string;
-    description: string;
-    contenu: Content[] | null;
-  };
-  etapes: {
-    titre: string;
-    description: string;
-    contenu: Content[] | null;
-  };
-  ressources: {
-    description: string;
-    buttons: {
-      titre: string;
-      href: string;
-    }[];
-  };
-};
+import {Content, ProgrammeData} from './types';
 
 export const getData = async () => {
   // Fetch de la liste des objectifs
-  const objectifs = await fetchCollection('objectifs', [
-    ['populate[0]', 'Pictogramme'],
-    ['sort[0]', 'Rang:asc'],
-  ]);
+  const objectifs = await fetchCollection('objectifs');
 
   const formattedObjectifs: Content[] | null = objectifs
     ? sortByRank(objectifs).map(d => ({
@@ -62,10 +16,7 @@ export const getData = async () => {
     : null;
 
   // Fetch de la liste des services
-  const services = await fetchCollection('services', [
-    ['populate[0]', 'Image'],
-    ['sort[0]', 'Rang:asc'],
-  ]);
+  const services = await fetchCollection('services');
 
   const formattedServices: Content[] | null = services
     ? sortByRank(services).map(d => ({
@@ -79,9 +30,7 @@ export const getData = async () => {
     : null;
 
   // Fetch de la liste des bénéfices
-  const benefices = await fetchCollection('benefices', [
-    ['sort[0]', 'Rang:asc'],
-  ]);
+  const benefices = await fetchCollection('benefices');
 
   const formattedBenefices: Content[] | null = benefices
     ? sortByRank(benefices).map(d => ({
@@ -92,7 +41,7 @@ export const getData = async () => {
     : null;
 
   // Fetch de la liste des étapes
-  const etapes = await fetchCollection('etapes', [['sort[0]', 'Rang:asc']]);
+  const etapes = await fetchCollection('etapes');
 
   const formattedEtapes: Content[] | null = etapes
     ? sortByRank(etapes).map(d => ({

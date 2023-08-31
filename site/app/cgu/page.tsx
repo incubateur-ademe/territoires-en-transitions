@@ -1,4 +1,3 @@
-import dynamic from 'next/dynamic';
 import CGU from './cgu.mdx';
 
 export default function Page() {
