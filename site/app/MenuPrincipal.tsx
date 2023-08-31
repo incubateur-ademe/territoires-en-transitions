@@ -3,14 +3,15 @@
 import {usePathname} from 'next/navigation';
 import Link from 'next/link';
 import {ReactNode} from 'react';
+import {MenuProps} from './AppHeader';
 
 type MenuItemProps = {
   children: ReactNode;
   href: string;
-};
+} & MenuProps;
 
 function MenuItem(props: MenuItemProps) {
-  const {href, children} = props;
+  const {href, children, setMenuOpened} = props;
   const pathName = usePathname();
   const pathNameBase = pathName?.split('/').splice(0, 2).join('/');
 
@@ -22,6 +23,7 @@ function MenuItem(props: MenuItemProps) {
         aria-controls="modal-header__menu"
         className="fr-nav__link"
         aria-current={href === pathNameBase ? 'page' : undefined}
+        onClick={() => setMenuOpened(false)}
       >
         {children}
       </Link>
@@ -29,14 +31,24 @@ function MenuItem(props: MenuItemProps) {
   );
 }
 
-export function MenuPrincipal() {
+export function MenuPrincipal(props: MenuProps) {
   return (
     <ul className="fr-nav__list">
-      <MenuItem href="/">Accueil</MenuItem>
-      <MenuItem href="/programme">Le programme Territoire Engagé</MenuItem>
-      <MenuItem href="/actus">Actualités</MenuItem>
-      <MenuItem href="/faq">Questions fréquentes</MenuItem>
-      <MenuItem href="/contact">Contact</MenuItem>
+      <MenuItem href="/" {...props}>
+        Accueil
+      </MenuItem>
+      <MenuItem href="/programme" {...props}>
+        Le programme Territoire Engagé
+      </MenuItem>
+      <MenuItem href="/actus" {...props}>
+        Actualités
+      </MenuItem>
+      <MenuItem href="/faq" {...props}>
+        Questions fréquentes
+      </MenuItem>
+      <MenuItem href="/contact" {...props}>
+        Contact
+      </MenuItem>
     </ul>
   );
 }
