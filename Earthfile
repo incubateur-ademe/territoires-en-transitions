@@ -324,6 +324,17 @@ setup-env:
     RUN export $(cat .arg | xargs) && sh ./make_dot_env.sh
     RUN earthly +stop
 
+copy-volume:
+     ARG --required from
+     ARG --required to
+     LOCALLY
+     RUN docker volume rm $to || echo "volume $to not found"
+     RUN docker volume create --name $to
+     RUN docker run --rm \
+        -v $from:/from \
+        -v $to:/to \
+        alpine ash -c "cd /from ; cp -av . /to"
+
 dev:
     LOCALLY
     ARG stop=yes
