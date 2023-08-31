@@ -337,17 +337,25 @@ copy-volume:
 
 dev:
     LOCALLY
+    ARG --required DB_URL
+    ARG network=host
     ARG stop=yes
     ARG datalayer=yes
     ARG business=yes
     ARG client=no
     ARG eco=no
+    ARG fast=no
+    ARG version=HEAD # version du plan
 
     IF [ "$stop" = "yes" ]
         RUN earthly +stop --npx=$npx
     END
 
     IF [ "$datalayer" = "yes" ]
+        IF [ "$fast" = "yes" ]
+            RUN earthly +restore-state
+        END
+
         IF [ "$CI" = "true" ]
             RUN supabase start
             RUN docker stop supabase_studio_tet
@@ -362,8 +370,15 @@ dev:
             RUN docker stop supabase_pg_meta_tet
         END
 
-        RUN earthly +deploy
-        RUN earthly +seed
+        RUN earthly +deploy --to @$version
+
+        # Seed si aucune collectivité en base
+        RUN docker run --rm \
+            --network $network \
+            psql:latest $DB_URL -v ON_ERROR_STOP=1 \
+            -c "select 1 / count(*) from collectivite;" \
+            || earthly +seed
+
         RUN earthly +load-json
     END
 
@@ -384,6 +399,34 @@ stop:
         RUN npx supabase stop
     END
     RUN docker ps --filter name=_tet --filter status=running -aq | xargs docker stop | xargs docker rm || exit 0
+    RUN earthly +clear-state
+
+prepare-fast:
+    ARG version=v2.52.0 # version du plan
+    LOCALLY
+    RUN earthly +dev --stop=yes --business=no --client=no --fast=no --version=$version
+    RUN earthly +save-state
+
+clear-state:
+    ARG saved=no
+    LOCALLY
+    RUN docker volume rm supabase_db_tet || echo "could not clear current state: not found"
+    RUN docker volume rm supabase_storage_tet || echo "could not clear current state: not found"
+
+    IF [ "$saved" = "yes" ]
+        RUN docker volume rm supabase_db_tet_save || echo "could not clear saved state: not found"
+        RUN docker volume rm supabase_storage_tet_save || echo "could not clear saved state: not found"
+    END
+
+save-state:
+    LOCALLY
+    RUN earthly +copy-volume --from supabase_db_tet --to supabase_db_tet_save
+    RUN earthly +copy-volume --from supabase_storage_tet --to supabase_storage_tet_save
+
+restore-state:
+    LOCALLY
+    RUN earthly +copy-volume --from supabase_db_tet_save --to supabase_db_tet || echo "could not restore state"
+    RUN earthly +copy-volume --from supabase_storage_tet_save --to supabase_storage_tet || echo "could not restore state"
 
 test:
     LOCALLY
