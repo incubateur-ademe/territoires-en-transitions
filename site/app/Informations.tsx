@@ -33,7 +33,11 @@ const Informations = ({titre, description}: InformationsProps) => {
           </div>
           <div className="flex flex-col items-center gap-8">
             <PictoWithBackground pictogram={<CalendarPicto />} />
-            <ButtonWithLink href="/" fullWidth>
+            <ButtonWithLink
+              href="https://calendly.com/territoiresentransitions"
+              fullWidth
+              external
+            >
               Participer à une démo
             </ButtonWithLink>
           </div>
