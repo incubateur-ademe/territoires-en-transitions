@@ -38,7 +38,7 @@ const SyntheseGraphsList = ({
     return plan.id;
   };
 
-  const data = usePlanActionTableauDeBord(
+  const {data, isLoading} = usePlanActionTableauDeBord(
     collectiviteId,
     selectedPlanId(selectedPlan),
     withoutPlan
@@ -87,6 +87,8 @@ const SyntheseGraphsList = ({
           )
       )}
     </div>
+  ) : isLoading ? (
+    <div>Chargement en cours.</div>
   ) : (
     <div className="flex flex-col items-center mt-8">
       <PictoLeaf className="w-24 fill-gray-400" />

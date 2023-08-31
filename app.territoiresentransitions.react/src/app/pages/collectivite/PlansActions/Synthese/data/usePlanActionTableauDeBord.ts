@@ -11,6 +11,11 @@ export type TPlanActionTableauDeBord = {
   echeances: {id: string; value: number}[];
 };
 
+export type TPlanActionTableauDeBordQuery = {
+  data: TPlanActionTableauDeBord | null;
+  isLoading: boolean;
+};
+
 const fetchDashboardData = async (
   collectivite_id: number,
   plan_id: number | null,
@@ -44,8 +49,8 @@ export const usePlanActionTableauDeBord = (
   collectivite_id: number,
   plan_id: number | null,
   sans_plan: boolean | null
-): TPlanActionTableauDeBord | null => {
-  const {data} = useQuery(
+): TPlanActionTableauDeBordQuery => {
+  const {data, isLoading} = useQuery(
     ['plan_action_tableau_de_bord', collectivite_id, plan_id, sans_plan],
     () => fetchDashboardData(collectivite_id, plan_id, sans_plan)
   );
@@ -58,7 +63,7 @@ export const usePlanActionTableauDeBord = (
       !data.statuts &&
       !data.echeances
     )
-      return null;
+      return {data: null, isLoading};
 
     const sortedData = {
       ...data,
@@ -69,8 +74,8 @@ export const usePlanActionTableauDeBord = (
       echeances: data.echeances ? sortByEcheance(data.echeances) : [],
     };
 
-    return sortedData;
-  } else return null;
+    return {data: sortedData, isLoading};
+  } else return {data: null, isLoading};
 };
 
 const sortByValue = (
