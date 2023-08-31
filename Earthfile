@@ -46,12 +46,13 @@ db-test:
 deploy:
     ARG --required DB_URL
     ARG network=host
+    ARG to=@HEAD
     LOCALLY
     RUN earthly +sqitch-build
     RUN docker run --rm \
         --network $network \
         --env SQITCH_TARGET=db:$DB_URL \
-        sqitch:latest deploy --mode change
+        sqitch:latest deploy --to $to --mode change
 
 deploy-test:
     ARG --required DB_URL
