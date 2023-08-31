@@ -62,7 +62,7 @@ const FilledPlansActionCard = ({
 }: FilledPlansActionCardProps): JSX.Element => {
   const tracker = useFonctionTracker();
   const history = useHistory();
-  const planActionsStats = usePlanActionTableauDeBord(
+  const {data: planActionsStats} = usePlanActionTableauDeBord(
     collectiviteId,
     null,
     null
