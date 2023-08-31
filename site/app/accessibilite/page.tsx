@@ -1,4 +1,3 @@
-import dynamic from 'next/dynamic';
 import Content from './accessibilite.mdx';
 
 export default function Page() {
