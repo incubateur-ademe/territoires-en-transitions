@@ -5,7 +5,7 @@ import CardsSection from '@components/sections/CardsSection';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
 import {processMarkedContent} from 'src/utils/processMarkedContent';
 import {useEffect, useState} from 'react';
-import {Content} from './utils';
+import {Content} from './types';
 
 type ObjectifsProps = {
   titre: string;
