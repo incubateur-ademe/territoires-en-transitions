@@ -3,7 +3,7 @@
 
 BEGIN;
 
-create or replace view departement
+create view departement
 as
 select code, libelle, region_code
 from imports.departement
