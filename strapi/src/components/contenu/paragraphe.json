@@ -28,9 +28,10 @@
       "enum": [
         "Gauche",
         "Droite",
-        "Centre"
+        "Centre Bas",
+        "Centre Haut"
       ],
-      "default": "Centre"
+      "default": "Centre Bas"
     },
     "LegendeImage": {
       "type": "string",

@@ -8,7 +8,9 @@ type GalleryProps = {
 
 const Gallery = ({data}: GalleryProps) => {
   const [dataGallery, setDataGallery] = useState<ReactNode[][]>(Array(3));
-  const [windowWidth, setWindowWidth] = useState<number | undefined>();
+  const [windowWidth, setWindowWidth] = useState<number | undefined>(
+    window.innerWidth,
+  );
   const [columns, setColumns] = useState(3);
 
   // Détecte le changement de taille de la fenêtre

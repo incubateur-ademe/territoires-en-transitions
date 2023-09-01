@@ -40,7 +40,7 @@ const Contact = async () => {
 
   return data ? (
     <Section className="flex-col">
-      <h1>{data.titre}</h1>
+      <h2>{data.titre}</h2>
 
       <p className="text-xl">{data.description}</p>
 
