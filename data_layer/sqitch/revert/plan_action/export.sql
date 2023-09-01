@@ -2,19 +2,7 @@
 
 BEGIN;
 
-drop function plan_action_export;
-
-create type fiche_action_export as
-(
-    axe_id   integer,
-    axe_nom  text,
-    axe_path text[],
-    fiche    jsonb
-);
-comment on type fiche_action_export is
-    'Les informations pour lister une fiche dans l''export Excel des plans d''action.';
-
-create function
+create or replace function
     plan_action_export(id integer)
     returns setof fiche_action_export
 begin
@@ -53,6 +41,5 @@ begin
 end;
 comment on function plan_action_export is
     'Les fiches ordonnancées pour l''export des plans d''action.';
-
 
 COMMIT;
