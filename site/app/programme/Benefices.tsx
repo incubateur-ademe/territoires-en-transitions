@@ -1,7 +1,7 @@
 import Card from '@components/cards/Card';
 import CardsWrapper from '@components/cards/CardsWrapper';
 import CardsSection from '@components/sections/CardsSection';
-import {Content} from './utils';
+import {Content} from './types';
 
 type BeneficesProps = {
   titre: string;

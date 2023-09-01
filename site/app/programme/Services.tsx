@@ -2,7 +2,7 @@ import BlogCard from '@components/cards/BlogCard';
 import CardsWrapper from '@components/cards/CardsWrapper';
 import CardsSection from '@components/sections/CardsSection';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import {Content} from './utils';
+import {Content} from './types';
 
 type ServicesProps = {
   titre: string;
