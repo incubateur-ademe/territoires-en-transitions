@@ -45,7 +45,7 @@ const Contact = async () => {
       <p className="text-xl">{data.description}</p>
 
       <div className="p-4 md:p-14 lg:px-28 bg-gray-100 mb-6">
-        <p className="text-sm">Information requises</p>
+        <p className="text-sm">Tous les champs sont obligatoires</p>
         <ContactForm />
       </div>
       <div>
