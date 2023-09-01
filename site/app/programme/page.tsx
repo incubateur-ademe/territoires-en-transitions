@@ -8,8 +8,9 @@ import Objectifs from './Objectifs';
 import ProgrammeBanner from './ProgrammeBanner';
 import Offre from './Offre';
 import Ressources from './Ressources';
-import {getData, ProgrammeData} from './utils';
+import {ProgrammeData} from './types';
 import NoResult from '@components/info/NoResult';
+import {getData} from './utils';
 
 const Programme = async () => {
   const data: ProgrammeData | null = await getData();
