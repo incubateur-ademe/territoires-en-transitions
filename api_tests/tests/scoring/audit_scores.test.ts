@@ -10,7 +10,7 @@ import {
   commencer_audit,
   creer_collectivite,
   envoyer_demande,
-} from "./utils.ts";
+} from "../labellisation/utils.ts";
 
 import { labellisationDemande } from "../../lib/rpcs/labellisationDemande.ts";
 import { delay } from "https://deno.land/std@0.163.0/async/delay.ts";
