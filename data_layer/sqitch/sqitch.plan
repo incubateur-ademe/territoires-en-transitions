@@ -479,3 +479,4 @@ plan_action/import [plan_action/import@v2.57.0] 2023-09-04T15:52:12Z Amandine Ja
 @v2.58.0 2023-09-06T11:42:01Z Florian <florian@derfurth.com> # Améliorations plan d'action, personnalisation et outillage interne
 
 collectivite/identite [collectivite/identite@v2.58.0] 2023-09-06T14:29:27Z Florian <florian@derfurth.com> # Améliore la performance de `collectivite_type`
+site/contact 2023-09-01T12:37:28Z Florian <florian@derfurth.com> # Permet de stocker les messages de la page contact
