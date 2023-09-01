@@ -3,7 +3,7 @@
 
 BEGIN;
 
-create or replace view region
+create view region
 as
 select code, libelle
 from imports.region

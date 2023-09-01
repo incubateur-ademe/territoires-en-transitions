@@ -1,7 +1,14 @@
--- Revert tet:collectivite/departement from pg
+-- Deploy tet:collectivite/departement to pg
+-- requires: collectivite/imports
 
 BEGIN;
 
-drop view departement;
+create or replace view departement(code, libelle, region_code) as
+SELECT departement.code,
+       departement.libelle,
+       departement.region_code
+FROM imports.departement
+where is_authenticated()
+ORDER BY departement.code;
 
 COMMIT;
