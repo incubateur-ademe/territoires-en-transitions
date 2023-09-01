@@ -5,6 +5,7 @@ export type TIndicateurReferentielDefinition =
     isPerso?: undefined;
     titre?: undefined;
     actions: string[];
+    enfants?: TIndicateurReferentielDefinition[];
   };
 
 // TODO: corriger le typage côté back ?

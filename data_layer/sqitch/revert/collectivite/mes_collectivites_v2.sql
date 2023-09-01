@@ -3,7 +3,11 @@
 
 BEGIN;
 
-alter function private.est_auditeur(integer) set schema public;
--- on ne restaure pas l'ancienne fonction car elle se réfère à une colonne qui n'existe plus
+create or replace view mes_collectivites
+as
+select *
+from collectivite_niveau_acces
+where niveau_acces is not null
+order by unaccent(nom);
 
 COMMIT;

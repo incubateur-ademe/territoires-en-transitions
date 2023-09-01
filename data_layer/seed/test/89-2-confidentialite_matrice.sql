@@ -1741,7 +1741,7 @@ values
     ('vue', 'crm_usages', 'admin', 'non', 'non', 'non', 'non'),
     ('vue', 'crm_usages', 'auditeur', 'non', 'non', 'non', 'non'),
     -- Vue departement
-    ('vue', 'departement', 'public', 'non', 'non', 'non', 'non'),
+    ('vue', 'departement', 'public', 'non', 'oui', 'non', 'non'),
     ('vue', 'departement', 'connecte', 'non', 'oui', 'non', 'non'),
     ('vue', 'departement', 'verifie', 'non', 'oui', 'non', 'non'),
     ('vue', 'departement', 'support', 'non', 'oui', 'non', 'non'),
@@ -1957,7 +1957,7 @@ values
     ('vue', 'question_thematique_display', 'admin', 'non', 'oui', 'non', 'non'),
     ('vue', 'question_thematique_display', 'auditeur', 'non', 'oui', 'non', 'non'),
     -- Vue region
-    ('vue', 'region', 'public', 'non', 'non', 'non', 'non'),
+    ('vue', 'region', 'public', 'non', 'oui', 'non', 'non'),
     ('vue', 'region', 'connecte', 'non', 'oui', 'non', 'non'),
     ('vue', 'region', 'verifie', 'non', 'oui', 'non', 'non'),
     ('vue', 'region', 'support', 'non', 'oui', 'non', 'non'),

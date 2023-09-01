@@ -5,7 +5,7 @@ import ScrollTopButton from 'ui/buttons/ScrollTopButton';
 import FormField from 'ui/shared/form/FormField';
 import {TIndicateurPersoDefinition} from './types';
 import {useIndicateurPersoDefinition} from './useIndicateursPersoDefinitions';
-import {useIndicateurACompleter} from './useIndicateurDefinitions';
+import {useIndicateurACompleter} from './useIndicateurACompleter';
 import {useUpsertIndicateurPersoDefinition} from './useUpsertIndicateurPersoDefinition';
 import IndicateurChart from './charts/IndicateurChart';
 import {HeaderIndicateur} from './Header';

@@ -3,11 +3,10 @@
 
 BEGIN;
 
-create or replace view region
+create view region
 as
 select code, libelle
 from imports.region
-where is_authenticated()
-ORDER BY departement.code;
+order by unaccent(libelle);
 
 COMMIT;
