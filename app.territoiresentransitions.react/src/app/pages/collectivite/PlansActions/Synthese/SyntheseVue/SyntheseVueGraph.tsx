@@ -15,7 +15,7 @@ type Props = {
 const SyntheseVueGraph = ({vue, plan}: Props) => {
   const collectivite_id = useCollectiviteId();
 
-  const data = usePlanActionTableauDeBord(
+  const {data} = usePlanActionTableauDeBord(
     collectivite_id!,
     plan.id === 'tous' || plan.id === 'nc' ? null : plan.id,
     plan.id === 'nc' || null

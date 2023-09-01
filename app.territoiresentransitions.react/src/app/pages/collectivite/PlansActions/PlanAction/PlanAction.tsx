@@ -48,7 +48,7 @@ export const PlanAction = ({plan, axe}: PlanActionProps) => {
         onUpdate={nom => updateAxe({id: isAxePage ? axe.id : plan.id, nom})}
         isReadonly={isReadonly}
       />
-      <div className="max-w-4xl mx-auto px-10">
+      <div className="mx-auto px-10">
         {/** Header */}
         <PlanActionHeader
           collectivite_id={collectivite?.collectivite_id!}

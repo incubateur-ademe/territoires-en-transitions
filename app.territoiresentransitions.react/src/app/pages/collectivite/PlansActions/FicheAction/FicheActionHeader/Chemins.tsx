@@ -1,4 +1,4 @@
-import {Link} from 'react-router-dom';
+import {Link, useParams} from 'react-router-dom';
 
 import FilAriane from 'ui/shared/FilAriane';
 import {makeCollectiviteFichesNonClasseesUrl} from 'app/paths';
@@ -18,7 +18,7 @@ type Props = {
 
 const Chemins = ({fiche}: Props) => {
   return (
-    <div data-test="FicheFilAriane" className="flex items-center">
+    <div data-test="FicheFilAriane">
       {!fiche.axes || fiche.axes.length === 0 ? (
         <Link
           className="p-1 text-xs text-gray-500 underline !bg-none !shadow-none hover:text-gray-600"
@@ -88,10 +88,21 @@ const CheminPlusieursPlans = ({
 }: CheminPlusieursPlansProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
+  const {axeUid} = useParams<{axeUid: string}>();
+
+  const axesWithoutCurrentAxe = axes.filter(
+    axe => axe.id?.toString() !== axeUid
+  );
+
   return (
-    <div>
+    <>
+      <Chemin
+        collectiviteId={collectiviteId}
+        axe_id={parseInt(axeUid)}
+        titreFiche={titreFiche}
+      />
       <button
-        className="flex items-center p-1 text-gray-500 hover:text-gray-600"
+        className="flex items-center mt-4 p-1 text-gray-500 hover:text-gray-600"
         onClick={() => setIsOpen(!isOpen)}
       >
         <span className="underline text-xs">
@@ -106,16 +117,16 @@ const CheminPlusieursPlans = ({
       </button>
       {isOpen && (
         <div className="flex flex-col gap-4 mt-4">
-          {axes.map((axe: TAxeInsert) => (
+          {axesWithoutCurrentAxe.map((axe: TAxeInsert) => (
             <Chemin
               key={axe.id}
               collectiviteId={collectiviteId}
               axe_id={axe.id!}
-              titreFiche={generateTitle(titreFiche)}
+              titreFiche={titreFiche}
             />
           ))}
         </div>
       )}
-    </div>
+    </>
   );
 };

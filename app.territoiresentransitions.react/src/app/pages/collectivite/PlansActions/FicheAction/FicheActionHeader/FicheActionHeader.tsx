@@ -1,22 +1,27 @@
-import {FicheAction} from '../data/types';
 import Chemins from './Chemins';
+import FicheActionSupprimerModal from '../FicheActionSupprimerModal';
 
-type TFicheActionHeader = {fiche: FicheAction};
+import {useDeleteFicheAction} from '../data/useDeleteFicheAction';
+import {FicheAction} from '../data/types';
 
-const FicheActionHeader = ({fiche}: TFicheActionHeader) => {
+type TFicheActionHeader = {fiche: FicheAction; isReadonly: boolean};
+
+const FicheActionHeader = ({fiche, isReadonly}: TFicheActionHeader) => {
+  const {mutate: deleteFiche} = useDeleteFicheAction();
+
   return (
-    <div className="">
-      <div className="py-6 flex justify-between">
-        <Chemins fiche={fiche} />
-        {/** Actions */}
-        {/* <div className="flex items-center gap-4">
-          <div className="border border-gray-300">
-            <button className="p-2">
-              <div className="fr-icon-quote-line" />
-            </button>
-          </div>
-        </div> */}
-      </div>
+    <div className="py-6">
+      {/** Actions */}
+      {!isReadonly && (
+        <div className="mb-6 flex items-center justify-end gap-4">
+          <FicheActionSupprimerModal
+            fiche={fiche}
+            onDelete={() => deleteFiche(fiche.id!)}
+          />
+        </div>
+      )}
+      {/** Fils d'ariane */}
+      <Chemins fiche={fiche} />
     </div>
   );
 };

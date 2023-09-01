@@ -37,7 +37,7 @@ const PlansActions = () => {
             <li className="fr-sidemenu_item p-0 list-none">
               <button
                 data-test="CreerFicheAction"
-                className="fr-btn fr-btn--secondary"
+                className="fr-btn fr-btn--primary"
                 onClick={() => createFicheAction()}
               >
                 Créer une fiche action

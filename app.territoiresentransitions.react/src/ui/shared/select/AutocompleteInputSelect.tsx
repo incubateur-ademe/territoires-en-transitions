@@ -17,6 +17,11 @@ import {
 } from './commons';
 import Options from './Options';
 
+type TAutocompleteInputSelectProps<T extends string> =
+  TMultiSelectDropdownProps<T> & {
+    noOptionPlaceholder?: string;
+  };
+
 /** Sélecteur avec un input dans le bouton d'ouverture pour faire une recherche dans la liste d'options */
 const AutocompleteInputSelect = <T extends string>({
   values,
@@ -27,10 +32,11 @@ const AutocompleteInputSelect = <T extends string>({
   dsfrButton,
   placement,
   placeholderText,
+  noOptionPlaceholder,
   containerWidthMatchButton,
   disabled,
   'data-test': dataTest,
-}: TMultiSelectDropdownProps<T>) => {
+}: TAutocompleteInputSelectProps<T>) => {
   const [inputValue, setInputValue] = useState('');
 
   const onInputChange = (value: string) => {
@@ -53,6 +59,7 @@ const AutocompleteInputSelect = <T extends string>({
             onInputChange('');
           }}
           renderOption={renderOption}
+          noOptionPlaceholder={noOptionPlaceholder}
         />
       )}
     >

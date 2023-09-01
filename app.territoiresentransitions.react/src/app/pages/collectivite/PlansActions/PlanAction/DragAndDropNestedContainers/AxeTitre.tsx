@@ -59,6 +59,7 @@ const AxeTitre = ({planActionId, axe, isOpen, isReadonly}: Props) => {
     <TextareaControlled
       data-test="TitreAxeInput"
       ref={inputRef}
+      id={`axe-titre-${axe.id.toString()}`}
       className={classNames(
         'grow mb-0 !px-2 text-left !text-base rounded-none !outline-none !resize-none placeholder:text-gray-900 disabled:pointer-events-none disabled:cursor-pointer disabled:text-gray-900',
         {

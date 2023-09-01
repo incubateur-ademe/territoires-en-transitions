@@ -22,6 +22,7 @@ type Props<T extends string> = {
   renderOptionMenu?: (
     props: RenderOptionMenuProps
   ) => React.ReactElement | null;
+  noOptionPlaceholder?: string;
   dataTest?: string;
 };
 
@@ -31,6 +32,7 @@ const Options = <T extends string>({
   onSelect,
   renderOption,
   renderOptionMenu,
+  noOptionPlaceholder,
   dataTest,
 }: Props<T>) => {
   return (
@@ -70,7 +72,7 @@ const Options = <T extends string>({
         })
       ) : (
         <div className="p-4 text-sm text-gray-500">
-          Aucune option disponible
+          {noOptionPlaceholder || 'Aucune option disponible'}
         </div>
       )}
     </div>

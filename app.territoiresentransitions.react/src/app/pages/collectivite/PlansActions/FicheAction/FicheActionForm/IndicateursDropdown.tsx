@@ -47,6 +47,7 @@ const IndicateursDropdown = ({indicateurs, onSelect, isReadonly}: Props) => {
           ? 'Recherchez par mots-clés'
           : 'Recherchez par mots-clés ou sélectionnez dans la liste'
       }
+      noOptionPlaceholder="Aucun résultat - Recherchez un autre mot ou créez un indicateur personnalisé"
       disabled={isReadonly}
     />
   );

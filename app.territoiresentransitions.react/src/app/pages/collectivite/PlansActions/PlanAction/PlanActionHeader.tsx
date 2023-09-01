@@ -6,8 +6,8 @@ import SupprimerAxeModal from './SupprimerAxeModal';
 import {PlanNode} from './data/types';
 import {checkAxeHasFiche} from './data/utils';
 import {useExportPlanAction} from './export/useExportPlanAction';
-import {Link} from 'react-router-dom';
 import {generateTitle} from '../FicheAction/data/utils';
+import FilAriane from 'ui/shared/FilAriane';
 
 type TPlanActionHeader = {
   isAxePage: boolean;
@@ -30,16 +30,19 @@ const PlanActionHeader = ({
     <div className="">
       <div className="py-6 flex items-center justify-between">
         {/** Lien plan d'action page axe */}
-        {isAxePage && (
-          <Link
-            className="p-1 shrink-0 text-xs text-gray-500 underline !bg-none !shadow-none hover:text-gray-600"
-            to={makeCollectivitePlanActionUrl({
-              collectiviteId: collectivite_id,
-              planActionUid: plan.id.toString(),
-            })}
-          >
-            {generateTitle(plan.nom)}
-          </Link>
+        {isAxePage && axe && (
+          <FilAriane
+            links={[
+              {
+                path: makeCollectivitePlanActionUrl({
+                  collectiviteId: collectivite_id,
+                  planActionUid: plan.id.toString(),
+                }),
+                displayedName: generateTitle(plan.nom),
+              },
+              {displayedName: generateTitle(axe.nom)},
+            ]}
+          />
         )}
         {/** Actions */}
         {!isReadonly && (
@@ -62,7 +65,9 @@ const PlanActionHeader = ({
               <button
                 data-test="SupprimerPlanBouton"
                 className="fr-btn fr-btn--tertiary fr-btn--sm fr-fi-delete-line"
-                title="Supprimer ce plan d'action"
+                title={
+                  isAxePage ? 'Supprimer cet axe' : "Supprimer ce plan d'action"
+                }
               />
             </SupprimerAxeModal>
             {!isAxePage && checkAxeHasFiche(plan) && !isReadonly ? (

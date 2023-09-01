@@ -143,6 +143,7 @@ export type DonutChartProps = {
   customMargin?: {top: number; right: number; bottom: number; left: number};
   zoomEffect?: boolean;
   displayPercentageValue?: boolean;
+  onClick?: () => void;
 };
 
 /**
@@ -166,6 +167,7 @@ const DonutChart = ({
   customMargin,
   zoomEffect = true,
   displayPercentageValue = false,
+  onClick,
 }: DonutChartProps) => {
   const defaultData = [{id: 'NA', value: 1, color: '#ccc'}];
 
@@ -184,6 +186,12 @@ const DonutChart = ({
 
   return (
     <ResponsivePie
+      onClick={onClick}
+      onMouseEnter={(_datum, event) => {
+        if (onClick) {
+          event.currentTarget.style.cursor = 'pointer';
+        }
+      }}
       data={isDefaultData() ? defaultData : localData}
       theme={theme}
       colors={{datum: 'data.color'}}
