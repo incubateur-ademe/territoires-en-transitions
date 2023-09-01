@@ -1,5 +1,5 @@
 import {serve} from 'https://deno.land/std@0.168.0/http/server.ts';
-import {getSupabaseClient} from '../_shared/getSupabaseClient.ts';
+import {createClient} from 'https://esm.sh/@supabase/supabase-js@2';
 import {corsHeaders} from '../_shared/cors.ts';
 
 /**
@@ -20,7 +20,7 @@ serve(async (req: Request) => {
 			'Questions relatives au programme Territoire Engagé Transition Écologique'
 		) {
 			// Adresse à mettre à jour
-			destEmail = 'contact@territoiresentransitions.fr';
+			destEmail = 'territoireengage@ademe.fr';
 		} else if (
 			categorie ===
 			'Questions relatives à la plateforme Territoires en transitions'
@@ -44,16 +44,46 @@ serve(async (req: Request) => {
 			})
 		});
 
-		const data = await res.json();
+		const resendData = await res.json();
 
-		if (data.statusCode !== 200) throw data;
+		if (resendData.statusCode !== 200) throw resendData;
 
-		// const supabaseClient = getSupabaseClient(req);
+		const supabase = createClient(
+			Deno.env.get('SUPABASE_URL')!,
+			// Utilise le service role afin de récupérer les DCPs.
+			Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+			{
+				db: {schema: 'public'},
+				auth: {
+					// Pour fonctionner avec deno hors du navigateur.
+					persistSession: false
+				}
+			}
+		);
+
+		const query = supabase
+			.from('site_contact')
+			.insert({
+				email: email,
+				formulaire: JSON.stringify({
+					categorie,
+					objet,
+					prenom,
+					nom,
+					email,
+					message
+				})
+			})
+			.select();
+
+		const {error, data} = await query;
+
+		if (error) throw error;
 
 		// Renvoie le statut pour persister dans les logs Supabase.
 		return new Response(JSON.stringify(data), {
 			headers: {'Content-Type': 'application/json', ...corsHeaders},
-			status: data.status || data.statusCode
+			status: resendData.status || resendData.statusCode
 		});
 	} catch (error) {
 		return new Response(JSON.stringify({error: error.message}), {
