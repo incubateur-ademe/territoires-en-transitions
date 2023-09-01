@@ -35,7 +35,7 @@ const Faq = async () => {
   return (
     <>
       <Section className="flex-col">
-        <h1>Questions fréquentes</h1>
+        <h2>Questions fréquentes</h2>
         {questions && (
           <div>
             {questions.map(q => (

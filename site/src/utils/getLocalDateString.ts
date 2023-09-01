@@ -7,5 +7,11 @@ export const getLocalDateString = (date: Date): string => {
     day: 'numeric',
   });
 
+  if (newDate.getDate() === 1) {
+    const dateArray = parsedDate.split(' ');
+    dateArray.splice(0, 1, '1er');
+    return dateArray.join(' ');
+  }
+
   return parsedDate;
 };
