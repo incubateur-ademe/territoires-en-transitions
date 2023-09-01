@@ -3,7 +3,6 @@
 BEGIN;
 
 drop view crm_usages;
-drop materialized view stats.crm_usages;
 
 create materialized view stats.crm_usages
 as
@@ -58,5 +57,6 @@ as
 select *
 from stats.crm_usages
 where is_service_role();
+
 
 COMMIT;

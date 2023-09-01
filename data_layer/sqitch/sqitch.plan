@@ -468,3 +468,5 @@ evaluation/thematique_completude [evaluation/thematique_completude@v2.54.0] 2023
 collectivite/region [collectivite/region@v2.55.0] 2023-09-01T07:36:05Z Florian <florian@derfurth.com> # Répare les permissions
 collectivite/departement [collectivite/departement@v2.55.0] 2023-09-01T07:36:29Z Florian <florian@derfurth.com> # Répare les permissions
 @v2.56.0 2023-09-01T07:38:39Z Florian <florian@derfurth.com> # Répare la selection des territoires pour les stats
+
+automatisation/crm [automatisation/crm@v2.56.0] 2023-09-01T14:43:31Z Florian <florian@derfurth.com> # Ajoute les colonnes plan d'action aux usages

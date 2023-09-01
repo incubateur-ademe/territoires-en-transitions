@@ -3,6 +3,7 @@
 BEGIN;
 
 drop view crm_usages;
+drop materialized view stats.crm_usages;
 
 create materialized view stats.crm_usages
 as
@@ -44,7 +45,35 @@ select collectivite_id,
        x.resultats_indicateurs,
        x.indicateurs_perso,
        x.resultats_indicateurs_perso,
-       pr.date                               as premier_rattachement
+       pr.date                               as premier_rattachement,
+       (select count(*)
+        from fiche_action f
+        where f.collectivite_id = c.collectivite_id
+          and f.titre is not null
+          and (f.description is not null or f.objectifs is not null)) as fiches_initiees,
+       (select count(*)
+        from fiche_action f
+        where f.collectivite_id = c.collectivite_id
+          and (f.statut is not null
+            or f.niveau_priorite is not null
+            or f.date_debut is not null
+            or f.date_fin_provisoire is not null
+            or f.id in (select fiche_id from fiche_action_structure_tag)
+            or f.id in (select fiche_id from fiche_action_pilote st)
+            or f.id in (select fiche_id from fiche_action_service_tag)
+            ))                                                        as fiches_pilotage,
+       (select count(*)
+        from fiche_action f
+        where f.collectivite_id = c.collectivite_id
+          and f.id in (select fiche_id from fiche_action_indicateur)) as fiches_indicateur,
+       (select count(*)
+        from fiche_action f
+        where f.collectivite_id = c.collectivite_id
+          and f.id in (select fiche_id from fiche_action_action))     as fiches_action_referentiel,
+       (select count(*)
+        from fiche_action f
+        where f.collectivite_id = c.collectivite_id
+          and f.id in (select fiche_id from fiches_liees_par_fiche))  as fiches_fiche_liee
 from stats.collectivite c
          join stats.collectivite_active using (collectivite_id)
          left join comptes x using (collectivite_id)
@@ -57,6 +86,5 @@ as
 select *
 from stats.crm_usages
 where is_service_role();
-
 
 COMMIT;
