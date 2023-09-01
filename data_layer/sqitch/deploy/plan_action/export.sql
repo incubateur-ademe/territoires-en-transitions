@@ -2,9 +2,7 @@
 
 BEGIN;
 
-drop function plan_action_export;
-
-create function
+create or replace function
     plan_action_export(id integer)
     returns setof fiche_action_export
 begin
