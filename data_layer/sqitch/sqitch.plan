@@ -474,3 +474,4 @@ automatisation/crm [automatisation/crm@v2.56.0] 2023-09-01T14:43:31Z Florian <fl
 
 evaluation/thematique_completude [evaluation/thematique_completude@v2.57.0] 2023-09-05T16:12:42Z Florian <florian@derfurth.com> # Répare et améliore le comptage des réponses par thématique
 automatisation/crm [automatisation/crm@v2.57.0] 2023-09-05T13:20:56Z Florian <florian@derfurth.com> # Ajoute les usages mensuels des plans d'action
+plan_action/fiches [plan_action/fiches@v2.57.0] 2023-09-04T13:28:35Z Amandine Jacquelin <conta@LanceLibre> # Ajoute security definer aux fonctions fiche_resume
