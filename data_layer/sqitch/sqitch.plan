@@ -492,3 +492,4 @@ plan_action/plan_action [plan_action/plan_action@v2.60.0] 2023-09-19T08:56:17Z A
 @v2.61.0 2023-09-19T13:52:45Z Florian <florian@derfurth.com> # Correction des invitations et des imports PA en tant que service role
 
 evaluation/thematique_completude [evaluation/thematique_completude@v2.60.0] 2023-09-13T09:28:43Z Amandine Jacquelin <conta@LanceLibre> # Corrige le count de reponse_count_by_thematique
+site/labellisation 2023-09-04T12:46:47Z Florian <florian@derfurth.com> # Ajoute une vue pour la recherche de collectivité sur le site
