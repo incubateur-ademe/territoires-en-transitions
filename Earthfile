@@ -319,7 +319,6 @@ gen-types:
     END
     RUN cp ./app.territoiresentransitions.react/src/types/database.types.ts ./api_tests/lib/database.types.ts
     RUN cp ./app.territoiresentransitions.react/src/types/database.types.ts ./site/app/database.types.ts
-    RUN cp ./app.territoiresentransitions.react/src/types/database.types.ts ./supabase/functions/_shared/database.types.ts
 
 setup-env:
     LOCALLY
@@ -402,9 +401,7 @@ dev:
         RUN earthly +client
     END
 
-strapi-dev:
-    LOCALLY
-    RUN cd strapi && npm install && npm run develop
+    RUN earthly +refresh-views
 
 stop:
     LOCALLY
