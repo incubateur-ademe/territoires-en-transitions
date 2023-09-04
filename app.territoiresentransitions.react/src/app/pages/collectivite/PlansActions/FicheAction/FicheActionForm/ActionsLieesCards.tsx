@@ -22,22 +22,24 @@ export const ActionsLieesCards = ({
   return actionsLiees.length > 0 ? (
     <div className="grid grid-cols-2 gap-6 mb-8">
       {actionsLiees.map(action => (
-        <ActionCard
-          key={action.action_id}
-          openInNewTab
-          link={makeCollectiviteTacheUrl({
-            collectiviteId: collectiviteId,
-            actionId: action.action_id,
-            referentielId: action.referentiel,
-          })}
-          statutBadge={
-            action.avancement && (
-              <ActionStatutBadge statut={action.avancement} small />
-            )
-          }
-          details={`Référentiel ${referentielToName[action.referentiel]}`}
-          title={`${action.identifiant} ${action.nom}`}
-        />
+        <div className="relative self-stretch">
+          <ActionCard
+            key={action.action_id}
+            openInNewTab
+            link={makeCollectiviteTacheUrl({
+              collectiviteId: collectiviteId,
+              actionId: action.action_id,
+              referentielId: action.referentiel,
+            })}
+            statutBadge={
+              action.avancement && (
+                <ActionStatutBadge statut={action.avancement} small />
+              )
+            }
+            details={`Référentiel ${referentielToName[action.referentiel]}`}
+            title={`${action.identifiant} ${action.nom}`}
+          />
+        </div>
       ))}
     </div>
   ) : null;

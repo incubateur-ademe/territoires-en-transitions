@@ -116,24 +116,26 @@ const FichesLiees = ({
       {fiches && fiches.length > 0 && (
         <div className="grid grid-cols-2 gap-6">
           {fiches.map(fiche => (
-            <FicheActionCard
-              key={fiche.id}
-              openInNewTab
-              displayAxe
-              ficheAction={fiche}
-              link={
-                fiche.plans && fiche.plans[0] && fiche.plans[0].id
-                  ? makeCollectivitePlanActionFicheUrl({
-                      collectiviteId,
-                      ficheUid: fiche.id!.toString(),
-                      planActionUid: fiche.plans[0].id!.toString(),
-                    })
-                  : makeCollectiviteFicheNonClasseeUrl({
-                      collectiviteId,
-                      ficheUid: fiche.id!.toString(),
-                    })
-              }
-            />
+            <div className="relative self-stretch">
+              <FicheActionCard
+                key={fiche.id}
+                openInNewTab
+                displayAxe
+                ficheAction={fiche}
+                link={
+                  fiche.plans && fiche.plans[0] && fiche.plans[0].id
+                    ? makeCollectivitePlanActionFicheUrl({
+                        collectiviteId,
+                        ficheUid: fiche.id!.toString(),
+                        planActionUid: fiche.plans[0].id!.toString(),
+                      })
+                    : makeCollectiviteFicheNonClasseeUrl({
+                        collectiviteId,
+                        ficheUid: fiche.id!.toString(),
+                      })
+                }
+              />
+            </div>
           ))}
         </div>
       )}
