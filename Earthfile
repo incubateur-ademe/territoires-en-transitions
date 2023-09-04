@@ -123,6 +123,16 @@ update-scores:
         psql:latest $DB_URL -v ON_ERROR_STOP=1 \
         -c "select evaluation.update_late_collectivite_scores($count);"
 
+refresh-views:
+    ARG --required DB_URL
+    ARG network=host
+    LOCALLY
+    RUN earthly +psql-build
+    RUN docker run --rm \
+        --network $network \
+        psql:latest $DB_URL -v ON_ERROR_STOP=1 \
+        -c "refresh materialized view stats.collectivite; refresh materialized view site_labellisation;"
+
 business-build:
     FROM python:3.10.10
     ENV SUPABASE_URL
