@@ -473,3 +473,4 @@ automatisation/crm [automatisation/crm@v2.56.0] 2023-09-01T14:43:31Z Florian <fl
 @v2.57.0 2023-09-01T15:00:35Z Florian <florian@derfurth.com> # Amélioration de la table usage du CRM
 
 evaluation/thematique_completude [evaluation/thematique_completude@v2.57.0] 2023-09-05T16:12:42Z Florian <florian@derfurth.com> # Répare et améliore le comptage des réponses par thématique
+automatisation/crm [automatisation/crm@v2.57.0] 2023-09-05T13:20:56Z Florian <florian@derfurth.com> # Ajoute les usages mensuels des plans d'action
