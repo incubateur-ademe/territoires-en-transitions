@@ -32,8 +32,6 @@ import {
   TThematiqueRow,
 } from 'types/alias';
 import {DSFRbuttonClassname} from 'ui/shared/select/commons';
-import FicheActionRangerModal from '../FicheActionRangerModal/FicheActionRangerModal';
-import {usePlanActionProfondeur} from '../../PlanAction/data/usePlanActionProfondeur';
 import ServicePiloteDropdown from './ServicePiloteDropdown';
 import Financeurs from './Financeurs';
 import PictoLeaf from 'ui/pictogrammes/PictoLeaf';
@@ -54,7 +52,6 @@ type TFicheActionForm = {
 
 const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
   const {mutate: updateFiche} = useEditFicheAction();
-  const plansProfondeur = usePlanActionProfondeur();
   const {data: annexes} = useAnnexesFicheAction(fiche.id);
 
   return (
@@ -104,11 +101,6 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
             isReadonly={isReadonly}
           />
         </FormField>
-        {!isReadonly &&
-          plansProfondeur?.plans &&
-          plansProfondeur.plans.length > 0 && (
-            <FicheActionRangerModal fiche={fiche} />
-          )}
       </Section>
 
       <Section icon={<PictoDataViz />} title="Objectifs et indicateurs">

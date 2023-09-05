@@ -1,5 +1,4 @@
 import {TAxeInsert} from 'types/alias';
-import IconFolderLine from 'ui/icons/IconFolderLine';
 import Alerte from 'ui/shared/Alerte';
 import Modal from 'ui/shared/floating-ui/Modal';
 import {FicheAction} from '../data/types';
@@ -8,10 +7,11 @@ import PlanChemin from './PlanChemin';
 import TableauNouvelEmplacement from './TableauNouvelEmplacement';
 
 type Props = {
+  toggleButtonTitle?: string;
   fiche: FicheAction;
 };
 
-const FicheActionRangerModal = ({fiche}: Props) => {
+const FicheActionRangerModal = ({fiche, toggleButtonTitle}: Props) => {
   return (
     <Modal
       size="xl"
@@ -57,10 +57,10 @@ const FicheActionRangerModal = ({fiche}: Props) => {
         );
       }}
     >
-      <button className="fr-btn w-max">
-        <IconFolderLine className="fill-white w-4 -ml-2 mt-0.5 mr-2" />
-        Ranger la fiche
-      </button>
+      <button
+        className="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-folder-2-line"
+        title={toggleButtonTitle}
+      />
     </Modal>
   );
 };
