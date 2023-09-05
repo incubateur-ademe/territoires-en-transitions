@@ -1,5 +1,6 @@
 import {createPortal} from 'react-dom';
 import {useEffect, useState} from 'react';
+import {useParams} from 'react-router-dom';
 import classNames from 'classnames';
 import {DragOverlay, useDraggable, useDroppable} from '@dnd-kit/core';
 
@@ -28,7 +29,12 @@ type Props = {
 const Axe = ({plan, axe, isAxePage, isReadonly}: Props) => {
   const uniqueId = `axe-${axe.id}`;
 
-  const {mutate: addAxe} = useAddAxe(axe.id, plan.id);
+  const {axeUid} = useParams<{axeUid: string}>();
+
+  const {mutate: addAxe} = useAddAxe(
+    axe.id,
+    axeUid ? parseInt(axeUid) : plan.id
+  );
   const {mutate: createFiche} = useCreateFicheAction({
     axeId: axe.id,
     planActionId: plan.id,
@@ -162,8 +168,8 @@ const Axe = ({plan, axe, isAxePage, isReadonly}: Props) => {
                 className="invisible group-hover:visible fr-btn fr-btn--tertiary fr-btn--sm ml-3 mt-1 !px-2"
                 title="Créer un sous-titre"
                 onClick={() => {
-                  setIsOpen(true)
-                  addAxe()
+                  setIsOpen(true);
+                  addAxe();
                 }}
               >
                 <IconFolderAddLine className="h-4 w-4 fill-bf500" />
