@@ -16,7 +16,7 @@ import { labellisationDemande } from "../../lib/rpcs/labellisationDemande.ts";
 import { delay } from "https://deno.land/std@0.163.0/async/delay.ts";
 import { saveReponse } from "../../lib/rpcs/saveReponse.ts";
 import { ClientScores } from "../../lib/types/clientScores.ts";
-import { scoreById } from "../scoring/scoreById.ts";
+import { scoreById } from "./scoreById.ts";
 
 await new Promise((r) => setTimeout(r, 0));
 
@@ -49,7 +49,7 @@ Deno.test(
     let clientScores = await supabase
       .from("client_scores")
       .select()
-      .eq("collectivite_id", collectivite.collectivite_id)
+      .eq("collectivite_id", collectivite.collectivite_id!)
       .eq("referentiel", "eci");
 
     let eci242 = scoreById(
@@ -90,7 +90,7 @@ Deno.test(
     clientScores = await supabase
       .from("client_scores")
       .select()
-      .eq("collectivite_id", collectivite.collectivite_id)
+      .eq("collectivite_id", collectivite.collectivite_id!)
       .eq("referentiel", "eci");
 
     eci242 = scoreById(
@@ -107,7 +107,7 @@ Deno.test(
     const comparaisonReponse = await supabase
       .from("comparaison_scores_audit")
       .select()
-      .eq("collectivite_id", collectivite.collectivite_id)
+      .eq("collectivite_id", collectivite.collectivite_id!)
       .eq("action_id", "eci");
 
     const comparaisonEci = comparaisonReponse.data![0];
@@ -156,7 +156,7 @@ Deno.test(
     let clientScores = await supabase
       .from("client_scores")
       .select()
-      .eq("collectivite_id", collectivite.collectivite_id)
+      .eq("collectivite_id", collectivite.collectivite_id!)
       .eq("referentiel", "eci");
 
     let eci242 = scoreById(
@@ -197,7 +197,7 @@ Deno.test(
     clientScores = await supabase
       .from("client_scores")
       .select()
-      .eq("collectivite_id", collectivite.collectivite_id)
+      .eq("collectivite_id", collectivite.collectivite_id!)
       .eq("referentiel", "eci");
 
     eci242 = scoreById(
@@ -214,7 +214,7 @@ Deno.test(
     const comparaisonReponse = await supabase
       .from("comparaison_scores_audit")
       .select()
-      .eq("collectivite_id", collectivite.collectivite_id)
+      .eq("collectivite_id", collectivite.collectivite_id!)
       .eq("action_id", "eci");
 
     const comparaisonEci = comparaisonReponse.data![0];
