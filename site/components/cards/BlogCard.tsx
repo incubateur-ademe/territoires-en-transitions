@@ -6,6 +6,7 @@ type BlogCardProps = {
   date?: Date;
   description?: string;
   image?: React.ReactNode;
+  badge?: string;
   href?: string;
   backgroundColor?: string;
 };
@@ -20,6 +21,7 @@ const BlogCard = ({
   date,
   description,
   image,
+  badge,
   href,
   backgroundColor,
 }: BlogCardProps) => {
@@ -65,6 +67,11 @@ const BlogCard = ({
             </picture>
           )}
         </div>
+        {badge && (
+          <div className="fr-badges-group">
+            <p className="fr-badge fr-badge--blue-ecume">{badge}</p>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -11,6 +11,7 @@ type ActuCard = {
   id: number;
   titre: string;
   dateCreation: Date;
+  epingle: boolean;
   resume?: string;
   couverture: StrapiItem;
 };
@@ -28,17 +29,22 @@ const getData = async () => {
         dateCreation:
           (d.attributes.DateCreation as unknown as Date) ??
           (d.attributes.createdAt as unknown as Date),
+        epingle: (d.attributes.Epingle as unknown as boolean) ?? false,
         resume: (d.attributes.Resume as unknown as string) ?? undefined,
         couverture: d.attributes.Couverture.data as unknown as StrapiItem,
       }))
     : null;
 
   return formattedData
-    ? formattedData.sort(
-        (a, b) =>
+    ? formattedData.sort((a, b) => {
+        if (a.epingle && !b.epingle) return -1;
+        if (!a.epingle && b.epingle) return 1;
+
+        return (
           new Date(b.dateCreation).getTime() -
-          new Date(a.dateCreation).getTime(),
-      )
+          new Date(a.dateCreation).getTime()
+        );
+      })
     : null;
 };
 
@@ -65,6 +71,7 @@ const Actualites = async () => {
                 />
               ) : undefined
             }
+            badge={actu.epingle ? 'A la une' : undefined}
             href={`/actus/${actu.id}`}
           />
         ))}
