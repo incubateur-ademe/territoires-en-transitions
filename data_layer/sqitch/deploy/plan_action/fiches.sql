@@ -2,31 +2,40 @@
 
 BEGIN;
 
+
 create or replace view private.fiche_resume(plans, titre, id, statut, collectivite_id, pilotes, modified_at) as
-SELECT CASE
-           WHEN array_agg(a.*) = '{NULL}'::axe[] THEN NULL::axe[]
-           ELSE array_agg(a.*)
-           END                                 AS plans,
+select (with recursive chemin as (select axe.id as axe_id,
+                                         axe.parent,
+                                         axe    as plan
+                                  from axe
+                                  where axe.parent is null
+                                    and axe.collectivite_id = fa.collectivite_id
+                                  union all
+                                  select a.id as axe_id,
+                                         a.parent,
+                                         p.plan
+                                  from axe a
+                                           join chemin p on a.parent = p.axe_id)
+        select case when count(*) > 0 then array_agg(plan) end
+        from chemin
+        where chemin.axe_id in (select faa.axe_id from fiche_action_axe faa where faa.fiche_id = fa.id)) as plans,
        fa.titre,
        fa.id,
        fa.statut,
        fa.collectivite_id,
-       (SELECT array_agg(ROW (pil.nom, pil.collectivite_id, pil.tag_id, pil.user_id)::personne) AS array_agg
-        FROM (SELECT COALESCE(pt.nom, concat(dcp.prenom, ' ', dcp.nom)) AS nom,
+       (select array_agg(row (pil.nom, pil.collectivite_id, pil.tag_id, pil.user_id)::personne) as array_agg
+        from (select coalesce(pt.nom, concat(dcp.prenom, ' ', dcp.nom)) as nom,
                      pt.collectivite_id,
                      fap.tag_id,
                      fap.user_id
-              FROM fiche_action_pilote fap
-                       LEFT JOIN personne_tag pt ON fap.tag_id = pt.id
-                       LEFT JOIN dcp ON fap.user_id = dcp.user_id
-              WHERE fap.fiche_id = fa.id) pil) AS pilotes,
+              from fiche_action_pilote fap
+                       left join personne_tag pt on fap.tag_id = pt.id
+                       left join dcp on fap.user_id = dcp.user_id
+              where fap.fiche_id = fa.id) pil)                                                           as pilotes,
        fa.modified_at
-FROM fiche_action fa
-         LEFT JOIN fiche_action_axe faa ON fa.id = faa.fiche_id
-         LEFT JOIN plan_action_chemin pac ON faa.axe_id = pac.axe_id
-         LEFT JOIN axe a ON pac.plan_id = a.id
-GROUP BY fa.titre, fa.id, fa.statut, fa.collectivite_id
-ORDER BY naturalsort(fa.titre);
+from fiche_action fa
+group by fa.titre, fa.id, fa.statut, fa.collectivite_id
+order by naturalsort(fa.titre);
 
 create or replace function fiche_resume(fiche_action_action fiche_action_action) returns SETOF fiche_resume
     rows 1
