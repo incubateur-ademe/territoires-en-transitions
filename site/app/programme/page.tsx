@@ -11,6 +11,7 @@ import Ressources from './Ressources';
 import {ProgrammeData} from './types';
 import NoResult from '@components/info/NoResult';
 import {getData} from './utils';
+import Carte from './Carte';
 
 const Programme = async () => {
   const data: ProgrammeData | null = await getData();
@@ -49,9 +50,7 @@ const Programme = async () => {
         contenu={data.etapes.contenu}
       />
 
-      {/* <Section id="carte">
-        <h3>De nombreuses collectivités ont déjà franchi le cap !</h3>
-      </Section> */}
+      <Carte />
 
       <Ressources
         description={data.ressources.description}
