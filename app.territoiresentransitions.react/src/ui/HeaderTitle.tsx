@@ -8,8 +8,8 @@ type Props = {
   onUpdate?: (value: string) => void;
 
   customClass?: {
-    container: string;
-    text: string;
+    container?: string;
+    text?: string;
   };
   isReadonly: boolean;
 };
@@ -22,15 +22,7 @@ type Props = {
  * @param isReadonly - est ce que le titre peut-il être éditer
  * @returns
  */
-const HeaderTitle = ({
-  titre,
-  onUpdate,
-  customClass = {
-    container: 'bg-indigo-400',
-    text: 'text-[1.375rem]',
-  },
-  isReadonly,
-}: Props) => {
+const HeaderTitle = ({titre, onUpdate, customClass, isReadonly}: Props) => {
   const titreInputRef = useRef<HTMLTextAreaElement>(null);
 
   const handleEditFocus = () => {
@@ -70,14 +62,14 @@ const HeaderTitle = ({
       className={classNames(
         'group flex items-center mx-auto py-6 px-10',
         {'cursor-text': !isReadonly},
-        customClass.container
+        customClass?.container || 'bg-bf525'
       )}
       onClick={!isReadonly ? handleEditFocus : undefined}
     >
       <div
         className={classNames(
           'flex grow m-0 font-bold leading-snug text-white',
-          customClass.text
+          customClass?.text || 'text-[1.375rem]'
         )}
       >
         {onUpdate ? (
@@ -87,7 +79,7 @@ const HeaderTitle = ({
               ref={titreInputRef}
               className={classNames(
                 'w-full leading-snug placeholder:text-white focus:placeholder:text-gray-200 disabled:text-white !outline-none !resize-none',
-                customClass.text
+                customClass?.text || '!text-[1.375rem]'
               )}
               initialValue={titre}
               placeholder={'Sans titre'}
