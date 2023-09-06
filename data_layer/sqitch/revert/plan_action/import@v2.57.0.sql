@@ -1,39 +1,6 @@
--- Deploy tet:plan_action/import to pg
+-- Revert tet:plan_action/import from pg
 
 BEGIN;
-
--- Fonction upsert_axe
-create or replace function upsert_axe(nom text, collectivite_id integer, parent integer) returns integer
-    language plpgsql
-as
-$$
-declare
-    existing_axe_id integer;
-    axe_id          integer;
-begin
-    if have_edition_acces(collectivite_id) then
-        select a.id
-        from axe a
-        where a.nom = trim(upsert_axe.nom)
-          and a.collectivite_id = upsert_axe.collectivite_id
-          and ((a.parent is null and upsert_axe.parent is null)
-            or (a.parent = upsert_axe.parent))
-        limit 1
-        into existing_axe_id;
-        if existing_axe_id is null then
-            insert into axe (nom, collectivite_id, parent)
-            values (trim(upsert_axe.nom), upsert_axe.collectivite_id, parent)
-            returning id into axe_id;
-        else
-            axe_id = existing_axe_id;
-        end if;
-        return axe_id;
-    else
-        perform set_config('response.status', '403', true);
-        raise 'L''utilisateur n''a pas de droit en edition sur la collectivité.';
-    end if;
-end;
-$$;
 
 create or replace function import_plan_action_csv() returns trigger
     language plpgsql
@@ -58,8 +25,8 @@ begin
                    new.description,
                    null,
                    new.objectifs,
-                   case when new.resultats_attendus <> '' then regexp_split_to_array(new.resultats_attendus, ' - ')::fiche_action_resultats_attendus[] else array[]::fiche_action_resultats_attendus[] end,
-                   case when new.cibles <> '' then regexp_split_to_array(new.cibles, ' - ')::fiche_action_cibles[] else array[]::fiche_action_cibles[] end,
+                   case when new.resultats_attendus <> '' then regexp_split_to_array(new.resultats_attendus, '-')::fiche_action_resultats_attendus[] else array[]::fiche_action_resultats_attendus[] end,
+                   case when new.cibles <> '' then regexp_split_to_array(new.cibles, '-')::fiche_action_cibles[] else array[]::fiche_action_cibles[] end,
                    new.moyens,
                    new.financements,
                    case when new.budget <> '' then new.budget::integer end,

@@ -35,7 +35,7 @@ export const CriterePreuves = (props: TCriterePreuvesProps) => {
     <>
       <MessageCriterePreuve {...props} />
       {rempli ? <CritereRempli className="fr-mb-2w" /> : null}
-      {!demande || demande?.en_cours ? <AddDocsButton /> : null}
+      <AddDocsButton />
       {demande ? <LabellisationPreuves {...props} /> : null}
     </>
   );
@@ -49,7 +49,6 @@ const MessageCriterePreuve = (props: TCriterePreuvesProps) => {
     return (
       <>
         <MessageECi2Plus {...props} />
-        <MessageParDefaut {...props} />
       </>
     );
   }
@@ -80,6 +79,7 @@ const MessageECi2Plus = (props: TCriterePreuvesProps) => {
           <b>Arrêté préfectoral de création de l’EPCI</b> (Établissement public
           de coopération intercommunale)
         </li>
+        <MessageParDefaut {...props} />
       </ul>
     </>
   );

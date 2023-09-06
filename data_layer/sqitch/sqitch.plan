@@ -468,3 +468,16 @@ evaluation/thematique_completude [evaluation/thematique_completude@v2.54.0] 2023
 collectivite/region [collectivite/region@v2.55.0] 2023-09-01T07:36:05Z Florian <florian@derfurth.com> # Répare les permissions
 collectivite/departement [collectivite/departement@v2.55.0] 2023-09-01T07:36:29Z Florian <florian@derfurth.com> # Répare les permissions
 @v2.56.0 2023-09-01T07:38:39Z Florian <florian@derfurth.com> # Répare la selection des territoires pour les stats
+
+automatisation/crm [automatisation/crm@v2.56.0] 2023-09-01T14:43:31Z Florian <florian@derfurth.com> # Ajoute les colonnes plan d'action aux usages
+@v2.57.0 2023-09-01T15:00:35Z Florian <florian@derfurth.com> # Amélioration de la table usage du CRM
+
+evaluation/thematique_completude [evaluation/thematique_completude@v2.57.0] 2023-09-05T16:12:42Z Florian <florian@derfurth.com> # Répare et améliore le comptage des réponses par thématique
+automatisation/crm [automatisation/crm@v2.57.0] 2023-09-05T13:20:56Z Florian <florian@derfurth.com> # Ajoute les usages mensuels des plans d'action
+plan_action/fiches [plan_action/fiches@v2.57.0] 2023-09-04T13:28:35Z Amandine Jacquelin <conta@LanceLibre> # Ajoute security definer aux fonctions fiche_resume
+plan_action/import [plan_action/import@v2.57.0] 2023-09-04T15:52:12Z Amandine Jacquelin <conta@LanceLibre> # Corrige l'import csv des plans d'action
+@v2.58.0 2023-09-06T11:42:01Z Florian <florian@derfurth.com> # Améliorations plan d'action, personnalisation et outillage interne
+
+collectivite/identite [collectivite/identite@v2.58.0] 2023-09-06T14:29:27Z Florian <florian@derfurth.com> # Améliore la performance de `collectivite_type`
+site/contact 2023-09-01T12:37:28Z Florian <florian@derfurth.com> # Permet de stocker les messages de la page contact
+@v2.59.0 2023-09-06T15:40:45Z Florian <florian@derfurth.com> # Amélioration des performances et préparation du nouveau site
