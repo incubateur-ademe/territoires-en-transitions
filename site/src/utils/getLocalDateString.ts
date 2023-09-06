@@ -5,6 +5,7 @@ export const getLocalDateString = (date: Date): string => {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
+    timeZone: 'Europe/Paris',
   });
 
   if (newDate.getDate() === 1) {
