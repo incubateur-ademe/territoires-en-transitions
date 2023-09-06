@@ -24,9 +24,12 @@ const Accompagnement = ({titre, description, contenu}: AccompagnementProps) => {
               description={c.description}
               button={{title: c.button.titre, href: c.button.href}}
               image={
-                <picture className="w-full h-full flex justify-center items-start">
-                  <StrapiImage data={c.image} className="max-h-[200px]" />
-                </picture>
+                <StrapiImage
+                  data={c.image}
+                  className="max-h-[200px]"
+                  containerClassName="w-full h-full flex justify-center items-start"
+                  displayCaption={false}
+                />
               }
             />
           ))}

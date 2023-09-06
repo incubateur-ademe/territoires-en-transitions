@@ -40,6 +40,10 @@
       "default": "Permanence de 9h à 12h30 et de 14h à 16h30, du lundi au vendredi",
       "required": true,
       "maxLength": 255
+    },
+    "LegendeVisible": {
+      "type": "boolean",
+      "default": false
     }
   }
 }

@@ -15,6 +15,7 @@ type ContactData = {
   telephone: string;
   horaires: string;
   couverture?: StrapiItem;
+  legendeVisible?: boolean;
 };
 
 const getData = async () => {
@@ -29,6 +30,8 @@ const getData = async () => {
         couverture:
           (data.attributes.Couverture.data as unknown as StrapiItem) ??
           undefined,
+        legendeVisible:
+          (data.attributes.LegendeVisinle as unknown as boolean) ?? false,
       }
     : null;
 
@@ -57,9 +60,12 @@ const Contact = async () => {
       </div>
 
       {!!data.couverture && (
-        <picture className="w-full my-6">
-          <StrapiImage data={data.couverture} className="w-full" />
-        </picture>
+        <StrapiImage
+          data={data.couverture}
+          className="w-full"
+          containerClassName="w-full my-6"
+          displayCaption={data.legendeVisible}
+        />
       )}
     </Section>
   ) : (

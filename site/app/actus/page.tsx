@@ -58,7 +58,11 @@ const Actualites = async () => {
             description={actu.resume}
             image={
               actu.couverture ? (
-                <StrapiImage data={actu.couverture} className="w-full" />
+                <StrapiImage
+                  data={actu.couverture}
+                  className="w-full"
+                  displayCaption={false}
+                />
               ) : undefined
             }
             href={`/actus/${actu.id}`}

@@ -25,6 +25,10 @@
     "Legende": {
       "type": "string",
       "maxLength": 255
+    },
+    "LegendeVisible": {
+      "type": "boolean",
+      "default": false
     }
   }
 }

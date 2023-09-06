@@ -7,7 +7,7 @@ type GallerieArticleProps = {
 };
 
 const GallerieArticle = ({
-  data: {data, colonnes, legende},
+  data: {data, colonnes, legende, legendeVisible},
 }: GallerieArticleProps) => {
   return (
     <div className="flex flex-col mb-6 items-center mx-auto">
@@ -22,17 +22,17 @@ const GallerieArticle = ({
         )}
       >
         {data.map((image, index) => (
-          <picture key={index}>
-            <StrapiImage
-              data={image}
-              className={classNames(
-                'w-full h-full min-h-[250px] max-h-[300px] object-cover',
-              )}
-            />
-          </picture>
+          <StrapiImage
+            key={index}
+            data={image}
+            className={classNames(
+              'w-full h-full min-h-[250px] max-h-[300px] object-cover',
+            )}
+            displayCaption={false}
+          />
         ))}
       </div>
-      {legende && (
+      {legende && legendeVisible && (
         <span className="!text-sm text-[#666] mt-4 w-full text-center">
           {legende}
         </span>
