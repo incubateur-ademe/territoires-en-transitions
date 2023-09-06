@@ -63,30 +63,30 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves 
       </b>
        (Établissement public de coopération intercommunale)
     </li>
+    <li
+      className="fr-mb-1w"
+    >
+      Signer un
+       
+      <a
+        href="/Acte_engagement.docx"
+        rel="noopener"
+        target="_blank"
+      >
+        acte d’engagement
+      </a>
+       
+      dans le programme affirmant votre adhésion
+       
+      <a
+        href="/Reglement_label_ECi_20220316.pdf"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        au règlement du label
+      </a>
+    </li>
   </ul>
-  <li
-    className="fr-mb-1w"
-  >
-    Signer un
-     
-    <a
-      href="/Acte_engagement.docx"
-      rel="noopener"
-      target="_blank"
-    >
-      acte d’engagement
-    </a>
-     
-    dans le programme affirmant votre adhésion
-     
-    <a
-      href="/Reglement_label_ECi_20220316.pdf"
-      rel="noopener noreferrer"
-      target="_blank"
-    >
-      au règlement du label
-    </a>
-  </li>
   <button
     aria-expanded="false"
     aria-haspopup="dialog"

@@ -49,7 +49,6 @@ const MessageCriterePreuve = (props: TCriterePreuvesProps) => {
     return (
       <>
         <MessageECi2Plus {...props} />
-        <MessageParDefaut {...props} />
       </>
     );
   }
@@ -80,6 +79,7 @@ const MessageECi2Plus = (props: TCriterePreuvesProps) => {
           <b>Arrêté préfectoral de création de l’EPCI</b> (Établissement public
           de coopération intercommunale)
         </li>
+        <MessageParDefaut {...props} />
       </ul>
     </>
   );
