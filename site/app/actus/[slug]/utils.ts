@@ -23,6 +23,7 @@ export const getData = async (id: number) => {
     const idList = await fetchCollection('actualites', [
       ['fields[0]', 'DateCreation'],
       ['fields[1]', 'createdAt'],
+      ['fields[2]', 'Epingle'],
       ['sort[0]', 'createdAt:desc'],
     ]);
 
@@ -30,15 +31,20 @@ export const getData = async (id: number) => {
       ? idList
           .map(d => ({
             id: d.id,
+            epingle: (d.attributes.Epingle as unknown as boolean) ?? false,
             dateCreation:
               (d.attributes.DateCreation as unknown as Date) ??
               (d.attributes.createdAt as unknown as Date),
           }))
-          .sort(
-            (a, b) =>
+          .sort((a, b) => {
+            if (a.epingle && !b.epingle) return -1;
+            if (!a.epingle && b.epingle) return 1;
+
+            return (
               new Date(b.dateCreation).getTime() -
-              new Date(a.dateCreation).getTime(),
-          )
+              new Date(a.dateCreation).getTime()
+            );
+          })
       : null;
 
     const idPosition = sortedIds ? sortedIds.findIndex(el => el.id === id) : 0;
