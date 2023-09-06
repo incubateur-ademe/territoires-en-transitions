@@ -1,6 +1,6 @@
 import FormField from 'ui/shared/form/FormField';
 import AutocompleteInputSelect from 'ui/shared/select/AutocompleteInputSelect';
-import {TOptionSection} from 'ui/shared/select/commons';
+import {TOption, TOptionSection} from 'ui/shared/select/commons';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useFicheResumeListe} from '../data/useFicheResumeListe';
 import {
@@ -11,6 +11,7 @@ import {FicheResume} from '../data/types';
 import {TAxeInsert} from 'types/alias';
 import {generateTitle} from '../data/utils';
 import FicheActionCard from '../FicheActionCard';
+import {naturalSort} from 'utils/naturalSort';
 
 type Props = {
   ficheCouranteId: number | null;
@@ -51,9 +52,10 @@ const FichesLiees = ({
     const uniquePlans = plans
       ?.filter((plan, i, a) => a.findIndex(v => v.id === plan.id) === i)
       // et tri pas titre de plan
-      .sort((a, b) =>
-        a.nom ? a.nom.localeCompare(b.nom || 'Fiches non classées') : -1
-      );
+      .sort((a, b) => {
+        if (!a.nom) return -1;
+        return naturalSort(a.nom, b.nom || 'Fiches non classées');
+      });
 
     /** Génère les sections par plan avec fiches en options */
     const options: TOptionSection[] = uniquePlans
@@ -68,7 +70,7 @@ const FichesLiees = ({
                   .map(fiche => ({
                     value: fiche.id!.toString(),
                     label: generateTitle(fiche.titre),
-                  })) ?? [],
+                  })).sort(byLabel) ?? [],
             };
           } else {
             return {
@@ -83,13 +85,20 @@ const FichesLiees = ({
                   .map(fiche => ({
                     value: fiche.id!.toString(),
                     label: generateTitle(fiche.titre),
-                  })) ?? [],
+                  }))
+                  .sort(byLabel) ?? [],
             };
           }
         })
       : [];
 
     return options;
+  };
+
+  const byLabel = (a: TOption, b: TOption) => {
+    if (!a.label) return -1;
+    if (!b.label) return 1;
+    return naturalSort(a.label, b.label);
   };
 
   const formatSelectedFiches = (values: string[]) => {
