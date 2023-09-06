@@ -35,7 +35,7 @@ export const CriterePreuves = (props: TCriterePreuvesProps) => {
     <>
       <MessageCriterePreuve {...props} />
       {rempli ? <CritereRempli className="fr-mb-2w" /> : null}
-      {!demande || demande?.en_cours ? <AddDocsButton /> : null}
+      <AddDocsButton />
       {demande ? <LabellisationPreuves {...props} /> : null}
     </>
   );
