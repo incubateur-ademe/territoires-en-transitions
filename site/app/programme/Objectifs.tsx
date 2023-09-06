@@ -43,9 +43,7 @@ const Objectifs = ({titre, description, contenu}: ObjectifsProps) => {
             <div key={index} className="flex flex-col items-center gap-8">
               {c.image && (
                 <div className="w-[140px] h-[140px] bg-white rounded-full flex items-center justify-center">
-                  <picture>
-                    <StrapiImage data={c.image} />
-                  </picture>
+                  <StrapiImage data={c.image} displayCaption={false} />
                 </div>
               )}
               <p

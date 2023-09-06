@@ -25,7 +25,11 @@ const Services = ({titre, description, contenu}: ServicesProps) => {
                 description={c.description}
                 image={
                   c.image ? (
-                    <StrapiImage data={c.image} className="w-full" />
+                    <StrapiImage
+                      data={c.image}
+                      className="w-full"
+                      displayCaption={false}
+                    />
                   ) : undefined
                 }
                 href={c.href}

@@ -19,23 +19,16 @@
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": [
-        "images"
-      ]
+      "allowedTypes": ["images"]
     },
     "AlignementImage": {
       "type": "enumeration",
-      "enum": [
-        "Gauche",
-        "Droite",
-        "Centre Bas",
-        "Centre Haut"
-      ],
+      "enum": ["Gauche", "Droite", "Centre Bas", "Centre Haut"],
       "default": "Centre Bas"
     },
-    "LegendeImage": {
-      "type": "string",
-      "maxLength": 255
+    "LegendeVisible": {
+      "type": "boolean",
+      "default": false
     }
   }
 }

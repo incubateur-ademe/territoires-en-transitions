@@ -54,13 +54,13 @@ const BlogCard = ({
       >
         <div className="fr-card__img duration-700">
           {image ? (
-            <picture>{image}</picture>
+            image
           ) : (
             <picture>
               <img
                 className="fr-responsive-image w-full"
                 src="placeholder.png"
-                alt=""
+                alt="pas d'image disponible"
               />
             </picture>
           )}

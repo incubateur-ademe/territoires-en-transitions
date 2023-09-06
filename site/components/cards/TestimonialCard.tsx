@@ -22,18 +22,17 @@ const TestimonialCard = ({
   return (
     <div className="flex flex-col lg:flex-row gap-8 items-center">
       {image ? (
-        <picture>
-          <StrapiImage
-            data={image}
-            className="w-[185px] h-[185px] object-cover rounded-full"
-          />
-        </picture>
+        <StrapiImage
+          data={image}
+          className="w-[185px] h-[185px] object-cover rounded-full"
+          displayCaption={false}
+        />
       ) : (
         <picture>
           <img
             className="w-[185px] h-[185px] object-cover rounded-full"
             src="placeholder.png"
-            alt=""
+            alt="pas d'image disponible"
           />
         </picture>
       )}

@@ -20,18 +20,19 @@ export type ParagrapheArticleData = {
   texte?: string;
   image?: StrapiItem;
   alignementImage?: string;
-  legendeImage?: string;
+  legendeVisible?: boolean;
 };
 
 export type ImageArticleData = {
   data: StrapiItem;
-  legende?: string;
+  legendeVisible?: boolean;
 };
 
 export type GallerieArticleData = {
   data: StrapiItem[];
   colonnes: number;
   legende?: string;
+  legendeVisible?: boolean;
 };
 
 export type ContenuArticleFetchedData = (
@@ -48,13 +49,13 @@ export type ParagrapheFetchedData = {
   Texte: string;
   Image: {data: StrapiItem};
   AlignementImage: string;
-  LegendeImage: string;
+  LegendeVisible: boolean;
 };
 
 export type ImageFetchedData = {
   __component: string;
   Image: {data: StrapiItem};
-  Legende: string;
+  LegendeVisible: boolean;
 };
 
 export type GallerieFetchedData = {
@@ -62,6 +63,7 @@ export type GallerieFetchedData = {
   Gallerie: {data: StrapiItem[]};
   NombreColonnes: number;
   Legende: string;
+  LegendeVisible: boolean;
 };
 
 export type VideoFetchedData = {

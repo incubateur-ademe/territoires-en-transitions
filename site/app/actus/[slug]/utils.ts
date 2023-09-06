@@ -72,7 +72,7 @@ export const getData = async (id: number) => {
               image: (section as ParagrapheFetchedData).Image.data,
               alignementImage: (section as ParagrapheFetchedData)
                 .AlignementImage,
-              legendeImage: (section as ParagrapheFetchedData).LegendeImage,
+              legendeVisible: (section as ParagrapheFetchedData).LegendeVisible,
             } as ParagrapheArticleData,
           };
         } else if (section.__component === 'contenu.image') {
@@ -80,7 +80,7 @@ export const getData = async (id: number) => {
             type: 'image',
             data: {
               data: (section as ImageFetchedData).Image.data,
-              legende: (section as ImageFetchedData).Legende,
+              legendeVisible: (section as ImageFetchedData).LegendeVisible,
             },
           };
         } else if (section.__component === 'contenu.gallerie') {
@@ -90,6 +90,7 @@ export const getData = async (id: number) => {
               data: (section as GallerieFetchedData).Gallerie.data,
               colonnes: (section as GallerieFetchedData).NombreColonnes,
               legende: (section as GallerieFetchedData).Legende,
+              legendeVisible: (section as GallerieFetchedData).LegendeVisible,
             },
           };
         } else if (section.__component === 'contenu.video') {
