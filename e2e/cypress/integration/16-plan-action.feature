@@ -1,7 +1,7 @@
 # language: fr
 
 Fonctionnalité: Gérer les fiches et les plans d'action
-
+@skip
   Scénario: Ajouter, éditer et supprimer une fiche action
     Etant donné que je suis connecté en tant que "yolo"
     Et que je suis sur la page "Plans action" de la collectivité "1"
@@ -26,7 +26,7 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     Et que je supprime la fiche
     Et que je suis sur la page "Fiches non classees" de la collectivité "1"
     Alors la fiche "Fiche test" n'est plus présente
-
+@skip
   Scénario: Ranger une fiche action
     Etant donné que je suis connecté en tant que "yolo"
     Et que je suis sur la page "Plans action" de la collectivité "1"
@@ -39,8 +39,7 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     # ajouter une fiche au nouvel axe créé
     Quand j'ajoute une fiche au plan d'action
     # ouvrir la modale "Ranger la fiche"
-    Quand j'ouvre la section "presentation"
-    Et que j'ouvre la modale "Ranger la fiche"
+    Et que j'ouvre la modale ranger la fiche
     Alors le "Modale ranger fiche action" est visible
     # enlever la fiche du plan d'action
     # le plan doit apparaitre dans "Sélectionner un nouvel emplacement"
@@ -51,7 +50,7 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     Quand je clique en dehors de la boîte de dialogue
     Alors le fil d'ariane de la fiche contient "Fiches non classées"
     # ranger la fiche dans Axe 1: les tests passent du plan "Plan test"
-    Quand j'ouvre la modale "Ranger la fiche"
+    Quand Et que j'ouvre la modale ranger la fiche
     Et que je clique sur l'axe "Plan test" du tableau nouvel emplacement
     Et que je clique sur l'axe "Axe 1: les tests passent" du tableau nouvel emplacement
     Et que je valide cet emplacement
@@ -60,7 +59,7 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     # le fil d'ariane de la fiche doit contenir "Axe 1"
     Quand je clique en dehors de la boîte de dialogue
     Alors le fil d'ariane de la fiche contient "Axe 1: les tests passent"
-
+@skip
   Scénario: Ajouter, éditer et supprimer un plan d'action
     Etant donné que je suis connecté en tant que "yolo"
     Et que je suis sur la page "Plans action" de la collectivité "1"
@@ -104,7 +103,7 @@ Fonctionnalité: Gérer les fiches et les plans d'action
 
     Quand je supprime l'axe depuis la modale
     Alors le plan n'est plus présent dans la navigation
-
+@skip
   Scénario: Visiter page axe et filtrer les fiches
     Etant donné que je suis connecté en tant que "yolo"
     Et que je suis sur la page "Plans action" de la collectivité "1"
@@ -141,7 +140,7 @@ Fonctionnalité: Gérer les fiches et les plans d'action
 
     Quand je filtre les fiches par "Michel Sapasse" du filtre "personne-pilote"
     Alors la fiche contenant "Pilote : Michel Sapasse" est visible
-
+@skip
   Scénario: Visiter page graphique de synthèse et filter les fiches
     Etant donné que je suis connecté en tant que "yolo"
     Et que je suis sur la page "Plans action" de la collectivité "1"

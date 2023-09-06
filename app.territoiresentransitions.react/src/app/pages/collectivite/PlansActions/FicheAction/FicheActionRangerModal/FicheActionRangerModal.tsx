@@ -58,6 +58,7 @@ const FicheActionRangerModal = ({fiche, toggleButtonTitle}: Props) => {
       }}
     >
       <button
+        data-test="BoutonRangerFiche"
         className="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-folder-2-line"
         title={toggleButtonTitle}
       />
