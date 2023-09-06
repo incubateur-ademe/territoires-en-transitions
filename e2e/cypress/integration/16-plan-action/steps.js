@@ -135,8 +135,8 @@ When(/le plan n'est plus présent dans la navigation/, () => {
 
 /** RANGER FICHE ACTION */
 
-When(/j'ouvre la modale "([^"]*)"/, bouton => {
-  cy.contains(bouton).click();
+When(/j'ouvre la modale ranger la fiche/, () => {
+  cy.get('[data-test=BoutonRangerFiche]').click();
 });
 
 When(/j'enlève la fiche du plan/, () => {
