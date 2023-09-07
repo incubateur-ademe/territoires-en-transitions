@@ -1,0 +1,34 @@
+{
+  "collectionName": "components_contenu_paragraphes",
+  "info": {
+    "displayName": "Paragraphe",
+    "description": "",
+    "icon": "file"
+  },
+  "options": {},
+  "attributes": {
+    "Titre": {
+      "type": "string",
+      "maxLength": 255
+    },
+    "Texte": {
+      "type": "richtext",
+      "required": false
+    },
+    "Image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "AlignementImage": {
+      "type": "enumeration",
+      "enum": ["Gauche", "Droite", "Centre Bas", "Centre Haut"],
+      "default": "Centre Bas"
+    },
+    "LegendeVisible": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

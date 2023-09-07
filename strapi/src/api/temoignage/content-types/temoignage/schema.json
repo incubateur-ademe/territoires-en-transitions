@@ -1,0 +1,40 @@
+{
+  "kind": "collectionType",
+  "collectionName": "temoignages",
+  "info": {
+    "singularName": "temoignage",
+    "pluralName": "temoignages",
+    "displayName": "[Accueil] Témoignages",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Rang": {
+      "type": "integer",
+      "unique": true
+    },
+    "Auteur": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100
+    },
+    "Description": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "Contenu": {
+      "type": "text",
+      "required": true,
+      "maxLength": 300
+    },
+    "Image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    }
+  }
+}

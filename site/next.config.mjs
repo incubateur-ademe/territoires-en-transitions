@@ -14,6 +14,8 @@ const nextConfig = {
     appDir: true,
     // permet le chargement de nivo
     esmExternals: 'loose',
+    // Utilisation des server actions : https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions
+    serverActions: true,
   },
   // surcharge la config webpack
   webpack: config => {

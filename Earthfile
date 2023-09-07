@@ -392,6 +392,10 @@ dev:
         RUN earthly +client
     END
 
+strapi-dev:
+    LOCALLY
+    RUN cd strapi && npm install && npm run develop
+
 stop:
     LOCALLY
     IF [ "$CI" = "true" ]

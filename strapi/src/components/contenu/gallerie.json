@@ -1,0 +1,34 @@
+{
+  "collectionName": "components_contenu_galleries",
+  "info": {
+    "displayName": "Gallerie",
+    "icon": "grid",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "Gallerie": {
+      "type": "media",
+      "multiple": true,
+      "required": true,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "NombreColonnes": {
+      "type": "integer",
+      "default": 2,
+      "required": true,
+      "min": 1,
+      "max": 4
+    },
+    "Legende": {
+      "type": "string",
+      "maxLength": 255
+    },
+    "LegendeVisible": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

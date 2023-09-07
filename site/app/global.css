@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 * {
   box-sizing: border-box;
   padding: 0;
@@ -8,6 +12,62 @@ html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
+}
+
+.homepage-container > section:nth-of-type(even) {
+  background-color: #f5f5fe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+ul,
+ol {
+  margin-bottom: 1.5rem;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 700;
+}
+
+h1 {
+  font-size: 2.5rem;
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+h3 {
+  font-size: 1.75rem;
+}
+
+h4 {
+  font-size: 1.375rem;
+}
+
+h6 {
+  font-size: 1.25rem;
+}
+
+.fr-card.fr-enlarge-link:hover {
+  background-color: #f6f6f6 !important;
+  transition-duration: 700ms;
+}
+
+.fr-card.fr-enlarge-link:hover .fr-card__img {
+  filter: brightness(var(--brightness));
+  transition-duration: 700ms;
+  transform: scale(1.05);
 }
 
 /** appliquable au sommaire généré à partir d'un mdx avec rehype-toc  */
@@ -26,4 +86,9 @@ h1 {
 nav.md-toc ~ h2:before {
   counter-increment: h2counter;
   content: counter(h2counter) '.\0000a0';
+}
+
+ul:not(.fr-footer__content-list, .fr-btns-group),
+ol {
+  list-style: inside;
 }

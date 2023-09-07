@@ -1,18 +1,12 @@
-import {DsfrHead} from '@codegouvfr/react-dsfr/next-appdir/DsfrHead';
-import {DsfrProvider} from '@codegouvfr/react-dsfr/next-appdir/DsfrProvider';
-import {getColorSchemeHtmlAttributes} from '@codegouvfr/react-dsfr/next-appdir/getColorSchemeHtmlAttributes';
-import StartDsfr from './StartDsfr';
-import {defaultColorScheme} from './defaultColorScheme';
 import AppHeader from './AppHeader';
-import AppFooter from './AppFooter';
+import '@gouvfr/dsfr/dist/dsfr.css';
 import './global.css';
+import {Footer} from '@components/footer/Footer';
 
 export default function RootLayout({children}: {children: JSX.Element}) {
   return (
-    <html {...getColorSchemeHtmlAttributes({defaultColorScheme})}>
+    <html>
       <head>
-        <StartDsfr />
-        <DsfrHead defaultColorScheme={defaultColorScheme} />
         <title>Territoires en Transitions</title>
         <meta content="width=device-width, initial-scale=1" name="viewport" />
         <meta
@@ -33,12 +27,14 @@ export default function RootLayout({children}: {children: JSX.Element}) {
           href="/favicon-16x16.png"
         />
       </head>
-      <body>
-        <DsfrProvider defaultColorScheme={defaultColorScheme}>
+      <body className="min-h-screen flex flex-col justify-between">
+        <div>
           <AppHeader />
-          {children}
-          <AppFooter />
-        </DsfrProvider>
+          <div className="homepage-container fr-container-fluid">
+            {children}
+          </div>
+        </div>
+        <Footer />
       </body>
     </html>
   );

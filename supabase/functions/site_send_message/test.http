@@ -1,0 +1,10 @@
+### Edge function
+POST {{ supabase_url }}/functions/v1/site_send_message
+Authorization: Bearer {{ anon }}
+Content-Type: application/json
+
+{
+  "nom": "yolo",
+  "email": "yolo"
+}
+

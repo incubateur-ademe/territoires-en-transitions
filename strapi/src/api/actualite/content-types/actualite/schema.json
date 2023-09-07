@@ -1,0 +1,50 @@
+{
+  "kind": "collectionType",
+  "collectionName": "actualites",
+  "info": {
+    "singularName": "actualite",
+    "pluralName": "actualites",
+    "displayName": "Actualités",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Titre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "DateCreation": {
+      "type": "datetime"
+    },
+    "Epingle": {
+      "type": "boolean",
+      "default": false
+    },
+    "Couverture": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": ["images"]
+    },
+    "Resume": {
+      "type": "string",
+      "required": false,
+      "maxLength": 255
+    },
+    "Sections": {
+      "type": "dynamiczone",
+      "components": [
+        "contenu.paragraphe",
+        "contenu.image",
+        "contenu.gallerie",
+        "contenu.video",
+        "contenu.info"
+      ],
+      "required": false
+    }
+  }
+}

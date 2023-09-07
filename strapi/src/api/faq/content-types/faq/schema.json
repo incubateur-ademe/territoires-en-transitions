@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "faqs",
+  "info": {
+    "singularName": "faq",
+    "pluralName": "faqs",
+    "displayName": "FAQ",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Rang": {
+      "type": "integer",
+      "unique": true
+    },
+    "Titre": {
+      "type": "string",
+      "required": true
+    },
+    "Contenu": {
+      "type": "richtext",
+      "required": true
+    }
+  }
+}
