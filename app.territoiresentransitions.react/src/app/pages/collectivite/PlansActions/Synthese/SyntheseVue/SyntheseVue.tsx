@@ -67,10 +67,7 @@ const SyntheseVue = () => {
   return (
     <div data-test="PageGraphSynthese" className="w-full">
       <HeaderTitle
-        customClass={{
-          container: 'bg-indigo-700',
-          text: 'text-[1.375rem]',
-        }}
+        customClass={{text: 'text-[1.375rem]'}}
         titre={vue.titre}
         isReadonly
       />

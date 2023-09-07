@@ -20,7 +20,6 @@ export const FicheAction = ({fiche}: FicheActionProps) => {
   return (
     <div data-test="FicheAction" className="w-full">
       <HeaderTitle
-        customClass={{container: 'bg-bf525', text: '!text-[1.375rem]'}}
         titre={fiche.titre}
         onUpdate={titre => updateFiche({...fiche, titre: titre})}
         isReadonly={isReadonly}

@@ -18737,6 +18737,14 @@ export interface Database {
           completude_cae: number | null
           completude_eci: number | null
           fiches: number | null
+          fiches_action_referentiel: number | null
+          fiches_fiche_liee: number | null
+          fiches_indicateur: number | null
+          fiches_initiees: number | null
+          fiches_mod_1mois: number | null
+          fiches_mod_3mois: number | null
+          fiches_mod_6mois: number | null
+          fiches_pilotage: number | null
           indicateurs_perso: number | null
           key: string | null
           plans: number | null
@@ -23636,13 +23644,13 @@ export interface Database {
       }
       fail:
         | {
-            Args: {
-              "": string
-            }
+            Args: Record<PropertyKey, never>
             Returns: string
           }
         | {
-            Args: Record<PropertyKey, never>
+            Args: {
+              "": string
+            }
             Returns: string
           }
       fiche_resume:
@@ -25106,12 +25114,6 @@ export interface Database {
       skip:
         | {
             Args: {
-              "": number
-            }
-            Returns: string
-          }
-        | {
-            Args: {
               why: string
               how_many: number
             }
@@ -25120,6 +25122,12 @@ export interface Database {
         | {
             Args: {
               "": string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              "": number
             }
             Returns: string
           }
@@ -25797,6 +25805,8 @@ export interface Database {
         | "cta_edl_personnaliser"
         | "navigation_laterale"
         | "panneau_lateral"
+        | "export_xlsx"
+        | "export_docx"
       visite_onglet:
         | "progression"
         | "priorisation"

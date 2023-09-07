@@ -59,16 +59,17 @@ export const useAddAxe = (parentId: number, planActionId: number) => {
     {
       meta: {disableToast: true},
       onSuccess: data => {
-        queryClient.invalidateQueries(['plan_action', planActionId]);
         queryClient.invalidateQueries(['plans_navigation', collectivite_id]);
-        queryClient.invalidateQueries(['plan_action', parentId]).then(() => {
-          // scroll au niveau du nouvel axe créé
-          document
-            .getElementById(`axe-${data[0].id}`)
-            ?.scrollIntoView({behavior: 'smooth', block: 'center'});
-          // donne le focus à son titre
-          document.getElementById(`axe-titre-${data[0].id}`)?.focus();
-        });
+        queryClient
+          .invalidateQueries(['plan_action', planActionId])
+          .then(() => {
+            // scroll au niveau du nouvel axe créé
+            document
+              .getElementById(`axe-${data[0].id}`)
+              ?.scrollIntoView({behavior: 'smooth', block: 'center'});
+            // donne le focus à son titre
+            document.getElementById(`axe-titre-${data[0].id}`)?.focus();
+          });
       },
     }
   );

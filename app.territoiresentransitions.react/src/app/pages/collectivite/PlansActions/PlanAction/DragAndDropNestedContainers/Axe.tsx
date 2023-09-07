@@ -1,5 +1,6 @@
 import {createPortal} from 'react-dom';
 import {useEffect, useState} from 'react';
+import {useParams} from 'react-router-dom';
 import classNames from 'classnames';
 import {DragOverlay, useDraggable, useDroppable} from '@dnd-kit/core';
 
@@ -9,6 +10,9 @@ import SupprimerAxeModal from '../SupprimerAxeModal';
 import {PlanNode} from '../data/types';
 import {generateTitle} from '../../FicheAction/data/utils';
 import IconDrag from 'ui/icons/IconDrag';
+import IconFolderAddLine from 'ui/icons/IconFolderAddLine';
+import {useAddAxe} from '../data/useUpsertAxe';
+import {useCreateFicheAction} from '../../FicheAction/data/useUpsertFicheAction';
 
 export type AxeDndData = {
   type: 'axe';
@@ -24,6 +28,18 @@ type Props = {
 
 const Axe = ({plan, axe, isAxePage, isReadonly}: Props) => {
   const uniqueId = `axe-${axe.id}`;
+
+  const {axeUid} = useParams<{axeUid: string}>();
+
+  const {mutate: addAxe} = useAddAxe(
+    axe.id,
+    axeUid ? parseInt(axeUid) : plan.id
+  );
+  const {mutate: createFiche} = useCreateFicheAction({
+    axeId: axe.id,
+    planActionId: plan.id,
+    isAxePage,
+  });
 
   const {
     isOver,
@@ -142,15 +158,30 @@ const Axe = ({plan, axe, isAxePage, isReadonly}: Props) => {
             isReadonly={isReadonly}
           />
           {!isReadonly && (
-            <SupprimerAxeModal axe={axe} plan={plan}>
-              <div className="ml-3 -mt-1 pt-2">
+            <>
+              <button
+                className="invisible group-hover:visible fr-btn fr-btn--tertiary fr-btn--sm fr-icon-file-add-line ml-3 mt-1"
+                title="Créer une fiche"
+                onClick={() => createFiche()}
+              />
+              <button
+                className="invisible group-hover:visible fr-btn fr-btn--tertiary fr-btn--sm ml-3 mt-1 !px-2"
+                title="Créer un sous-titre"
+                onClick={() => {
+                  setIsOpen(true);
+                  addAxe();
+                }}
+              >
+                <IconFolderAddLine className="h-4 w-4 fill-bf500" />
+              </button>
+              <SupprimerAxeModal axe={axe} plan={plan}>
                 <button
                   data-test="SupprimerAxeBouton"
-                  className="invisible group-hover:visible fr-btn fr-btn--tertiary fr-btn--sm fr-fi-delete-line"
+                  className="invisible group-hover:visible fr-btn fr-btn--tertiary fr-btn--sm fr-fi-delete-line ml-3 mt-1"
                   title="Supprimer ce titre"
                 />
-              </div>
-            </SupprimerAxeModal>
+              </SupprimerAxeModal>
+            </>
           )}
         </div>
         {isDroppable && (

@@ -1,3 +1,4 @@
+import {naturalSort} from 'utils/naturalSort';
 import {FlatAxe, PlanNode} from './types';
 import {TProfondeurAxe} from './types';
 
@@ -115,7 +116,7 @@ export const addAxeToPlan = (
 ) => {
   if (axeParentId === plan.id) {
     if (plan.children && plan.children.length > 0) {
-      plan.children = [...plan.children, axe].sort(byTitle);
+      plan.children = [...plan.children, axe].sort(byNom);
     } else {
       plan.children = [axe];
     }
@@ -129,7 +130,7 @@ export const addAxeToPlan = (
         }
       } else {
         if (plan.children && plan.children.length > 0) {
-          element.children = [...element.children, axe].sort(byTitle);
+          element.children = [...element.children, axe].sort(byNom);
         } else {
           element.children = [axe];
         }
@@ -141,10 +142,10 @@ export const addAxeToPlan = (
 };
 
 // tri des axes par nom
-const byTitle = (a: PlanNode, b: PlanNode) => {
+const byNom = (a: PlanNode, b: PlanNode) => {
   if (!a.nom) return -1;
   if (!b.nom) return 1;
-  return a.nom.localeCompare(b.nom);
+  return naturalSort(a.nom, b.nom);
 };
 
 /**

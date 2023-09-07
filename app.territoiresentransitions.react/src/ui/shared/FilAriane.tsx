@@ -13,7 +13,7 @@ const FilAriane = ({links}: Props) => {
   return (
     <div className="flex items-center flex-wrap gap-y-0.5 pr-6 text-xs text-gray-500">
       {links.map((link, i) => (
-        <div key={i} className="flex items-center shrink-0">
+        <div key={i} className="flex items-center shrink-0 max-w-full">
           {link.path ? (
             <Link
               className="p-1 shrink-0 text-gray-500 underline !bg-none !shadow-none hover:text-gray-600"

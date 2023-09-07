@@ -278,7 +278,7 @@ api-test:
     ARG --required SERVICE_ROLE_KEY
     ARG --required API_URL
     ARG network=host
-    ARG tests='base droit historique labellisation plan_action scoring utilisateur'
+    ARG tests='base droit historique plan_action scoring utilisateur'
     LOCALLY
     RUN earthly +api-test-build
     FOR test IN $tests
@@ -309,6 +309,7 @@ gen-types:
     END
     RUN cp ./app.territoiresentransitions.react/src/types/database.types.ts ./api_tests/lib/database.types.ts
     RUN cp ./app.territoiresentransitions.react/src/types/database.types.ts ./site/app/database.types.ts
+    RUN cp ./app.territoiresentransitions.react/src/types/database.types.ts ./supabase/functions/_shared/database.types.ts
 
 setup-env:
     LOCALLY

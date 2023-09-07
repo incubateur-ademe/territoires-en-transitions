@@ -2,6 +2,7 @@ import Modal from 'ui/shared/floating-ui/Modal';
 import {FlatAxe, PlanNode} from './data/types';
 import {useDeleteAxe} from './data/useDeleteAxe';
 import {checkAxeHasFiche, getAxeInPlan} from './data/utils';
+import {useParams} from 'react-router-dom';
 
 type Props = {
   children: JSX.Element;
@@ -22,7 +23,13 @@ const SupprimerAxeModal = ({
   axe,
   redirectURL,
 }: Props) => {
-  const {mutate: deletePlan} = useDeleteAxe(axe.id, plan.id, redirectURL);
+  const {axeUid} = useParams<{axeUid: string}>();
+
+  const {mutate: deletePlan} = useDeleteAxe(
+    axe.id,
+    axeUid ? parseInt(axeUid) : plan.id,
+    redirectURL
+  );
 
   return (
     <Modal

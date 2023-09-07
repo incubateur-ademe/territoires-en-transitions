@@ -14,13 +14,7 @@ type FilterOperator = 'in' | 'ov';
 /**
  * Renvoi une liste de collectivités en fonction d'un ensemble de filtres
  */
-export const useFilteredCollectivites = (
-  args: TCollectivitesFilters
-): {
-  isLoading: boolean;
-  collectivites: TCollectiviteCarte[];
-  collectivitesCount: number;
-} => {
+export const useFilteredCollectivites = (args: TCollectivitesFilters) => {
   const {data, isLoading} = useQuery(['collectivite_card', args], () =>
     fetchCollectiviteCards(args)
   );
@@ -167,10 +161,7 @@ const buildQueryFromFilters = (filters: TCollectivitesFilters) => {
  */
 export const fetchCollectiviteCards = async (
   filters: TCollectivitesFilters
-): Promise<{
-  collectivites: TCollectiviteCarte[];
-  collectivitesCount: number;
-}> => {
+) => {
   // la requête
   const query = buildQueryFromFilters(filters);
 
@@ -181,7 +172,7 @@ export const fetchCollectiviteCards = async (
     throw new Error(error.message);
   }
   return {
-    collectivites: data || [],
+    collectivites: (data as TCollectiviteCarte[]) || [],
     collectivitesCount: count ?? 0,
   };
 };

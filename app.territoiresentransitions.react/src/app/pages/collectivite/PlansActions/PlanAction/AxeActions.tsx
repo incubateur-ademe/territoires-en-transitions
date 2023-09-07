@@ -1,3 +1,4 @@
+import {useParams} from 'react-router-dom';
 import {useCreateFicheAction} from '../FicheAction/data/useUpsertFicheAction';
 import {useAddAxe} from './data/useUpsertAxe';
 
@@ -8,7 +9,12 @@ type Props = {
 };
 
 export const AxeActions = ({axeId, isAxePage, planActionId}: Props) => {
-  const {mutate: addAxe} = useAddAxe(axeId, planActionId);
+  const {axeUid} = useParams<{axeUid: string}>();
+
+  const {mutate: addAxe} = useAddAxe(
+    axeId,
+    axeUid ? parseInt(axeUid) : planActionId
+  );
   const {mutate: createFiche} = useCreateFicheAction({
     axeId,
     planActionId,

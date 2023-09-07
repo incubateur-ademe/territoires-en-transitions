@@ -1,77 +1,68 @@
-import {Workbook, Worksheet} from 'exceljs';
-import {format, isValid} from 'date-fns';
-import {saveBlob} from 'ui/shared/preuves/Bibliotheque/saveBlob';
-import {MIME_XLSX, setEuroValue} from 'utils/exportXLSX';
-import {TExportData, TFicheActionExport, useExportData} from './useExportData';
+/**
+ * Export d'un plan d'action au format Excel
+ */
+import { Workbook, Worksheet } from 'https://esm.sh/exceljs@4.3.0';
+import { TSupabaseClient } from '../_shared/getSupabaseClient.ts';
+import { ConfigPlanAction } from './config.ts';
+import { getAnnexesLabels, formatDate, setEuroValue } from './utils.ts';
+import { TExportData, fetchData } from './fetchData.ts';
+import { fetchTemplate } from './fetchTemplate.ts';
 
-export const useExportPlanAction = (planId: number) => {
-  const data = useExportData(planId);
-  const {loadTemplate, isLoading, loadPlanAction} = data;
-
-  const exportPlanAction = () => {
-    Promise.all([loadTemplate(), loadPlanAction()]).then(
-      ([{data: template}, {data: planAction}]) =>
-        updateAndSaveXLS({...data, template, planAction})
-    );
-  };
-  return {exportPlanAction, isLoading};
-};
-
-// insère les données dans le modèle et sauvegarde le fichier xls résultant
-const updateAndSaveXLS = async (data: TExportData) => {
-  const {config, planAction, template} = data;
-  if (!planAction || !template) {
-    return;
-  }
-  const {plan} = planAction;
+// insère les données dans le modèle et sauvegarde le fichier xlsx en résultant
+export const exportXLSX = async (
+  supabaseClient: TSupabaseClient,
+  planId: number
+) => {
+  // charge les données et le template de fichier
+  const data = await fetchData(supabaseClient, planId);
+  const template = await fetchTemplate('export_plan_action.xlsx');
 
   // extrait la 1ère ligne (titre du plan)
+  const { plan } = data;
   const ligne1 = plan.shift();
   if (!ligne1) {
     return;
   }
   const titre = ligne1.axe_nom;
 
-  const {first_data_row} = config;
-
   // ouvre le classeur et sélectionne la première feuille de calcul
   const workbook = new Workbook();
   await workbook.xlsx.load(template);
   const worksheet = workbook.worksheets[0];
 
-  // date d'export
+  // nom du fichier cible
   const exportedAt = new Date();
-
-  // le nom du fichier cible
-  const filename = `Export_${titre}_${format(exportedAt, 'yyyy-MM-dd')}.xlsx`;
+  const filename = `Export_${titre}_${formatDate(
+    exportedAt,
+    'yyyy-MM-dd'
+  )}.xlsx`;
 
   // écrit le plan dans la feuille
-  ecritPlan(plan, first_data_row, worksheet, data);
+  exportPlan(worksheet, data);
 
-  // sauvegarde le fichier modifié
+  // exporte le fichier modifié
   const buffer = await workbook.xlsx.writeBuffer();
-  const blob = new Blob([buffer], {type: MIME_XLSX});
-  saveBlob(blob, filename);
+  return {
+    buffer,
+    filename,
+  };
 };
 
-const ecritPlan = (
-  // le plan à écrire
-  fiches: TFicheActionExport[],
-  // numéro de la ligne à partir de laquelle écrire
-  ligne: number,
+const exportPlan = (
   // feuille de calcul dans laquelle écrire
   worksheet: Worksheet,
   // données de l'export
   data: TExportData
 ) => {
-  const {config, getActionLabel, planAction} = data;
-  const {annexes} = planAction || {};
-  const {data_cols} = config;
-  let ligne_courante = ligne;
+  const { actionLabels, annexes, plan } = data || {};
+  const { data_cols, first_data_row } = ConfigPlanAction;
 
-  // écrit les fiches à ce niveau
-  fiches?.forEach(({axe_path, axe_nom, fiche: ficheObj}) => {
-    const {fiche} = ficheObj || {};
+  // numéro de la ligne à partir de laquelle écrire
+  let ligne_courante = first_data_row;
+
+  // parcours les fiches
+  plan?.forEach(({ axe_path, axe_nom, fiche: ficheObj }) => {
+    const { fiche } = ficheObj || {};
 
     // chemin dans le plan
     const path = [...axe_path.slice(1), axe_nom];
@@ -88,10 +79,10 @@ const ecritPlan = (
       worksheet.getCell(data_cols.description + ligne_courante).value =
         fiche.description;
       worksheet.getCell(data_cols.thematiques + ligne_courante).value =
-        fiche.thematiques?.map(({thematique}) => thematique).join(',');
+        fiche.thematiques?.map(({ thematique }) => thematique).join(',');
       worksheet.getCell(data_cols.sous_thematiques + ligne_courante).value =
         fiche.sous_thematiques
-          ?.map(({sous_thematique}) => sous_thematique)
+          ?.map(({ sous_thematique }) => sous_thematique)
           .join(',');
 
       // Objectifs et indicateurs
@@ -160,24 +151,17 @@ const ecritPlan = (
         fiche.calendrier;
       worksheet.getCell(data_cols.actions + ligne_courante).value =
         fiche.actions
-          ?.map(({id}) => getActionLabel(id))
-          .filter(s => !!s)
+          ?.map(({ id }) => actionLabels[id])
+          .filter((s) => !!s)
           .join(',');
       worksheet.getCell(data_cols.fiches_liees + ligne_courante).value =
-        fiche.fiches_liees?.map(f => f.titre).join('\n');
+        fiche.fiches_liees?.map((f) => f.titre).join('\n');
       worksheet.getCell(
         data_cols.notes_complementaires + ligne_courante
       ).value = fiche.notes_complementaires;
 
       // libellés (nom du fichier ou titre du lien) des annexes associées à la fiche
-      const annexesFiche = fiche?.id
-        ? annexes
-            ?.filter(f => f.fiche_id === fiche.id)
-            .map(
-              annexe => annexe?.lien?.url || annexe?.fichier?.filename || null
-            )
-            .filter(s => !!s)
-        : null;
+      const annexesFiche = getAnnexesLabels(annexes, fiche.id);
       worksheet.getCell(data_cols.annexes + ligne_courante).value =
         annexesFiche?.join('\n');
     }
@@ -185,17 +169,7 @@ const ecritPlan = (
     // ligne suivante
     ligne_courante += 1;
   });
-
-  return ligne_courante;
 };
 
-const joinNames = (items: Array<{nom: string}> | null) =>
-  items?.map(({nom}) => nom).join(', ');
-
-const formatDate = (strDate: string | null) => {
-  if (!strDate) {
-    return null;
-  }
-  const d = new Date(strDate);
-  return isValid(d) ? format(d, 'dd/MM/yyyy') : null;
-};
+const joinNames = (items: Array<{ nom: string }> | null) =>
+  items?.map(({ nom }) => nom).join(', ');

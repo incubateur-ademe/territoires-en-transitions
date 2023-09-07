@@ -88,17 +88,18 @@ const CheminPlusieursPlans = ({
 }: CheminPlusieursPlansProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
+  const {planUid} = useParams<{planUid: string}>();
   const {axeUid} = useParams<{axeUid: string}>();
 
-  const axesWithoutCurrentAxe = axes.filter(
-    axe => axe.id?.toString() !== axeUid
+  const axesWithoutCurrentAxe = axes.filter(axe =>
+    axeUid ? axe.id?.toString() !== axeUid : axe.id?.toString() !== planUid
   );
 
   return (
     <>
       <Chemin
         collectiviteId={collectiviteId}
-        axe_id={parseInt(axeUid)}
+        axe_id={parseInt(axeUid ?? planUid)}
         titreFiche={titreFiche}
       />
       <button

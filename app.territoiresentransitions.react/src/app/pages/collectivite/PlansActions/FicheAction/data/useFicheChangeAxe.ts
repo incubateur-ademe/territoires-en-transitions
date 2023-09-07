@@ -4,6 +4,7 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {FicheResume} from './types';
 import {ficheChangeAxeDansPlan} from '../../PlanAction/data/utils';
 import {dropAnimation} from '../../PlanAction/DragAndDropNestedContainers/Arborescence';
+import {naturalSort} from 'utils/naturalSort';
 
 type Args = {
   fiche: FicheResume;
@@ -84,5 +85,5 @@ export const useFicheChangeAxe = () => {
 const byTitle = (a: FicheResume, b: FicheResume) => {
   if (!a.titre) return -1;
   if (!b.titre) return 1;
-  return a.titre.localeCompare(b.titre);
+  return naturalSort(a.titre, b.titre);
 };
