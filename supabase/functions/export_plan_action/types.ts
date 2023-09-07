@@ -11,14 +11,13 @@ export type TFicheActionExport = {
 };
 
 type TFicheAction = Database['public']['Views']['fiches_action']['Row'];
-type TThematiqueInsert = Database['public']['Tables']['thematique']['Insert'];
-type TSousThematiqueInsert =
-  Database['public']['Tables']['sous_thematique']['Insert'];
+type TThematique = Database['public']['Tables']['thematique']['Row'];
+type TSousThematique = Database['public']['Tables']['sous_thematique']['Row'];
 type TPartenaireInsert =
   Database['public']['Tables']['partenaire_tag']['Insert'];
 type TFicheActionStructureInsert =
   Database['public']['Tables']['structure_tag']['Insert'];
-type TAnnexeInsert = Database['public']['Tables']['annexe']['Insert'];
+type TAnnexe = Database['public']['Tables']['annexe']['Row'];
 type TAxeInsert = Database['public']['Tables']['axe']['Insert'];
 type TActionInsert = Database['public']['Tables']['action_relation']['Insert'];
 type TFicheActionServicePiloteInsert =
@@ -39,13 +38,13 @@ type FicheAction = Omit<
   | 'financeurs'
   | 'fiches_liees'
 > & {
-  thematiques: TThematiqueInsert[] | null;
-  sous_thematiques: TSousThematiqueInsert[] | null;
+  thematiques: TThematique[] | null;
+  sous_thematiques: TSousThematique[] | null;
   partenaires: TPartenaireInsert[] | null;
   structures: TFicheActionStructureInsert[] | null;
   pilotes: Personne[] | null;
   referents: Personne[] | null;
-  annexes: TAnnexeInsert[] | null;
+  annexes: TAnnexe[] | null;
   axes: TAxeInsert[] | null;
   actions: TActionInsert[] | null;
   indicateurs: Indicateur[] | null;
@@ -73,7 +72,7 @@ type TFinanceurMontant =
   Database['public']['CompositeTypes']['financeur_montant'];
 type TFinanceurTagInsert =
   Database['public']['Tables']['financeur_tag']['Insert'];
-type Financeur = Omit<
+export type Financeur = Omit<
   TFinanceurMontant,
   'id' | 'montant_ttc' | 'financeur_tag'
 > & {

@@ -4,8 +4,8 @@
 import { Workbook, Worksheet } from 'https://esm.sh/exceljs@4.3.0';
 import { TSupabaseClient } from '../_shared/getSupabaseClient.ts';
 import { ConfigPlanAction } from './config.ts';
-import { getAnnexesLabels, formatDate, setEuroValue } from './utils.ts';
-import { TExportData, fetchData } from './fetchData.ts';
+import { formatDate, setEuroValue } from './utils.ts';
+import { TExportData, fetchData, getAnnexesLabels } from './fetchData.ts';
 import { fetchTemplate } from './fetchTemplate.ts';
 
 // insère les données dans le modèle et sauvegarde le fichier xlsx en résultant
