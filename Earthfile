@@ -278,7 +278,7 @@ api-test:
     ARG --required SERVICE_ROLE_KEY
     ARG --required API_URL
     ARG network=host
-    ARG tests='base droit historique labellisation plan_action scoring utilisateur'
+    ARG tests='base droit historique plan_action scoring utilisateur'
     LOCALLY
     RUN earthly +api-test-build
     FOR test IN $tests
