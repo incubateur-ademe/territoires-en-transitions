@@ -89,7 +89,18 @@ seed:
     RUN docker run --rm \
         --network $network \
         --env PG_URL=$DB_URL \
-        seed:latest deploy --mode change
+        seed:latest
+
+seed-geojson:
+    ARG --required DB_URL
+    ARG network=host
+    LOCALLY
+    RUN earthly +seed-build
+    RUN docker run --rm \
+        --network $network \
+        --env PG_URL=$DB_URL \
+        --entrypoint sh \
+        seed:latest ./seed/geojson.sh
 
 load-json-build:
     FROM curlimages/curl:8.1.0
