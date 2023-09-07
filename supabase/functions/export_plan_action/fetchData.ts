@@ -98,3 +98,14 @@ export const fetchActionLabels = async (
     ]) || []
   );
 };
+
+export const getAnnexesLabels = (
+  annexes: TExportData['annexes'],
+  ficheId: number | null
+) =>
+  ficheId && annexes
+    ? (annexes
+        .filter((annexe) => annexe.fiche_id === ficheId)
+        .map((annexe) => annexe?.lien?.url || annexe?.fichier?.filename || null)
+        .filter((s) => !!s) as string[])
+    : [];

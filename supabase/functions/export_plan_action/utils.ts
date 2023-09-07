@@ -33,7 +33,7 @@ export const setNumValue = (
 
 // formate une date
 export const formatDate = (
-  strDate: string | Date | null,
+  strDate: string | Date | null | undefined,
   pattern = 'dd/MM/yyyy'
 ) => {
   if (!strDate) {
@@ -93,12 +93,3 @@ export const setEuroValue = (cell: Cell, value: number | undefined | null) => {
   cell.numFmt = '#,##0.00 [$€-1]';
   cell.value = value || null;
 };
-
-export const getAnnexesLabels = (
-  annexes: TExportData['annexes'],
-  ficheId: number
-) =>
-  annexes
-    ?.filter((annexe) => annexe.fiche_id === ficheId)
-    .map((annexe) => annexe?.lien?.url || annexe?.fichier?.filename || null)
-    .filter((s) => !!s);

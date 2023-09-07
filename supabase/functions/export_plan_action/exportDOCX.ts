@@ -4,8 +4,8 @@
 import {
   AlignmentType,
   Document,
-  Footer,
   Header,
+  Footer,
   Packer,
   PageBreak,
   PageNumber,
@@ -16,9 +16,9 @@ import {
   TextRun,
 } from 'https://esm.sh/docx@8.2.2';
 import { TSupabaseClient } from '../_shared/getSupabaseClient.ts';
-import { getAnnexesLabels, formatDate, setEuroValue } from './utils.ts';
-import { TExportData, TFicheActionExport, fetchData } from './fetchData.ts';
-import { Financeur } from './types.ts';
+import { formatDate } from './utils.ts';
+import { TExportData, fetchData, getAnnexesLabels } from './fetchData.ts';
+import { Financeur, TFicheActionExport } from './types.ts';
 import { styles } from './styles.xml.ts';
 
 export const exportDOCX = async (
@@ -29,7 +29,7 @@ export const exportDOCX = async (
   const data = await fetchData(supabaseClient, planId);
 
   // extrait la 1ère ligne (titre du plan)
-  const { plan, actionLabels } = data;
+  const { plan } = data;
   const ligne1 = plan.shift();
   if (!ligne1) {
     return;
@@ -74,7 +74,7 @@ export const getHeaders = (title: string) => {
         new Paragraph({
           children: [
             new TextRun({ text: title, bold: true }),
-            new TextRun({ children: [new Tab(), today] }),
+            new TextRun({ children: [new Tab(), today || ''] }),
           ],
           tabStops: [
             {
@@ -115,10 +115,10 @@ export const exportFiche = (
 
   return [
     new Paragraph({
-      children: [new TextRun(fiche.titre)],
+      children: [new TextRun(fiche.titre || '')],
       style: 'Title',
     }),
-    path ? NormalText(path) : '',
+    NormalText(path),
 
     Heading1('Présentation'),
     Heading2('Description de l’action'),
@@ -224,14 +224,22 @@ const formatEuro = (value: number | undefined | null) =>
 
 const Heading1 = (text: string) => new Paragraph({ text, style: 'Heading1' });
 const Heading2 = (text: string) => new Paragraph({ text, style: 'Heading2' });
-const Bullets = (list: string[], level: number = 0) => {
+const Bullets = (list: string[] | null | undefined, level = 0) => {
   const bullets = list
     ?.filter((text) => !!text)
     .map((text) => new Paragraph({ text, bullet: { level } }));
   return bullets?.length ? bullets : [NonRenseigne];
 };
 
-const BulletsList = (
-  items: Array<{ [k: string]: string }> | null,
-  key: string = 'nom'
-) => Bullets(items?.map((it) => it[key]));
+const BulletsList = <
+  ArrayOfObj extends Array<Record<string | number | symbol, unknown>>,
+  Key extends keyof ArrayOfObj[0]
+>(
+  items: ArrayOfObj | null | undefined,
+  key?: Key
+) => {
+  const list = items
+    ?.map((it) => it[key || 'nom']?.toString() || '')
+    .filter(Boolean);
+  return Bullets(list);
+};
