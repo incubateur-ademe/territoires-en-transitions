@@ -4,6 +4,7 @@ import {useDeleteFicheAction} from '../data/useDeleteFicheAction';
 import {FicheAction} from '../data/types';
 import {usePlanActionProfondeur} from '../../PlanAction/data/usePlanActionProfondeur';
 import FicheActionRangerModal from '../FicheActionRangerModal/FicheActionRangerModal';
+import {useExportFicheAction} from '../data/useExportFicheAction';
 
 type TFicheActionHeader = {
   fiche: FicheAction;
