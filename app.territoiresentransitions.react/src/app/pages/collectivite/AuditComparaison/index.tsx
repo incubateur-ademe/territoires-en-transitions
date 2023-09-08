@@ -2,7 +2,7 @@ import {useTableData} from './useTableData';
 import {AuditComparaisonTable} from './AuditComparaisonTable';
 import {useReferentielId} from 'core-logic/hooks/params';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {useExportAuditScores} from './export/useExportAuditScore';
+import {useExportAuditScores} from './useExportAuditScore';
 import BarChartCardWithSubrows, {
   TBarChartScoreTable,
 } from 'ui/charts/BarChartCardWithSubrows';
@@ -16,7 +16,7 @@ const AuditComparaison = () => {
 
   const referentiel = useReferentielId() as ReferentielParamOption;
   const collectivite = useCurrentCollectivite();
-  const {exportAuditScores, isLoading} = useExportAuditScores(
+  const {mutate: exportAuditScores, isLoading} = useExportAuditScores(
     referentiel,
     collectivite
   );
