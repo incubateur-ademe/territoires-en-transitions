@@ -57,6 +57,7 @@ const Card = ({
           href={button.href}
           secondary={button.secondary}
           external={button.external}
+          rounded
           fullWidth
         >
           {button.title}

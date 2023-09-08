@@ -29,7 +29,7 @@ const Etapes = ({titre, description, contenu}: EtapesProps) => {
         </CardsWrapper>
       }
     >
-      <ButtonWithLink href="/contact" className="mt-6">
+      <ButtonWithLink href="/contact" className="mt-6" rounded>
         Contactez-nous
       </ButtonWithLink>
     </CardsSection>

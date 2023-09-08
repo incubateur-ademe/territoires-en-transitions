@@ -4,15 +4,11 @@ import Section from '@components/sections/Section';
 import {getLocalDateString} from 'src/utils/getLocalDateString';
 import ParagrapheArticle from './ParagrapheArticle';
 import InfoArticle from './InfoArticle';
-import {
-  GallerieArticleData,
-  ImageArticleData,
-  ParagrapheArticleData,
-} from './types';
+import {GallerieArticleData, ImageArticleData} from '../../types';
 import {getData} from './utils';
 import GallerieArticle from './GallerieArticle';
 import EmbededVideo from '@components/video/EmbededVideo';
-import './style.css';
+import {ParagrapheCustomArticleData} from 'app/types';
 
 const Article = async ({params}: {params: {slug: string}}) => {
   const id = parseInt(params.slug);
@@ -63,7 +59,7 @@ const Article = async ({params}: {params: {slug: string}}) => {
             // Contenu de type parapraphe (titre, texte, image)
             section.type === 'paragraphe' ? (
               <ParagrapheArticle
-                paragraphe={section.data as ParagrapheArticleData}
+                paragraphe={section.data as ParagrapheCustomArticleData}
               />
             ) : // Contenu de type image
             section.type === 'image' ? (

@@ -1,3 +1,7 @@
+import {
+  ParagrapheCustomArticleData,
+  ParagrapheCustomFetchedData,
+} from 'app/types';
 import {fetchCollection, fetchItem} from 'src/strapi/strapi';
 import {StrapiItem} from 'src/strapi/StrapiItem';
 import {
@@ -6,10 +10,8 @@ import {
   GallerieFetchedData,
   ImageFetchedData,
   InfoFetchedData,
-  ParagrapheArticleData,
-  ParagrapheFetchedData,
   VideoFetchedData,
-} from './types';
+} from '../../types';
 
 export const getData = async (id: number) => {
   const data = await fetchItem('actualites', id, [
@@ -73,13 +75,14 @@ export const getData = async (id: number) => {
           return {
             type: 'paragraphe',
             data: {
-              titre: (section as ParagrapheFetchedData).Titre,
-              texte: (section as ParagrapheFetchedData).Texte,
-              image: (section as ParagrapheFetchedData).Image.data,
-              alignementImage: (section as ParagrapheFetchedData)
+              titre: (section as ParagrapheCustomFetchedData).Titre,
+              texte: (section as ParagrapheCustomFetchedData).Texte,
+              image: (section as ParagrapheCustomFetchedData).Image.data,
+              alignementImage: (section as ParagrapheCustomFetchedData)
                 .AlignementImage,
-              legendeVisible: (section as ParagrapheFetchedData).LegendeVisible,
-            } as ParagrapheArticleData,
+              legendeVisible: (section as ParagrapheCustomFetchedData)
+                .LegendeVisible,
+            } as ParagrapheCustomArticleData,
           };
         } else if (section.__component === 'contenu.image') {
           return {

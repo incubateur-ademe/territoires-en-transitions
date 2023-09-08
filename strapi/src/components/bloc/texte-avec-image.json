@@ -1,0 +1,24 @@
+{
+  "collectionName": "components_contenu_texte_avec_images",
+  "info": {
+    "displayName": "TexteAvecImage",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "Texte": {
+      "type": "richtext",
+      "required": true
+    },
+    "Image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "LegendeVisible": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}
