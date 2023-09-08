@@ -1,11 +1,7 @@
 import { supabase } from '../../lib/supabase.ts';
 import { signIn, signOut } from '../../lib/auth.ts';
 import { testReset } from '../../lib/rpcs/testReset.ts';
-import {
-  assertExists,
-  assertInstanceOf,
-  assertAlmostEquals,
-} from 'https://deno.land/std@0.198.0/assert/mod.ts';
+import { assertIsBlobWithExpectedSize } from '../../lib/assert.ts';
 
 Deno.test("Exporter un plan d'action", async (t) => {
   await testReset();
@@ -44,10 +40,3 @@ Deno.test("Exporter un plan d'action", async (t) => {
 
   await signOut();
 });
-
-// vérifie qu'on a des données et que la taille est celle attendue +/- 1ko
-const assertIsBlobWithExpectedSize = (data: any, expectedSize: number) => {
-  assertExists(data);
-  assertInstanceOf(data, Blob);
-  assertAlmostEquals(data.size, expectedSize, 1 * 1024);
-};
