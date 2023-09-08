@@ -16,7 +16,7 @@ import {
   TextRun,
 } from 'https://esm.sh/docx@8.2.2';
 import { TSupabaseClient } from '../_shared/getSupabaseClient.ts';
-import { formatDate } from './utils.ts';
+import { formatDate } from '../_shared/exportUtils.ts';
 import { TExportData, fetchData, getAnnexesLabels } from './fetchData.ts';
 import { Financeur, TFicheActionExport } from './types.ts';
 import { styles } from './styles.xml.ts';

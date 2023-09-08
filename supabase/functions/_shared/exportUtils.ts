@@ -8,6 +8,26 @@ import {
   Style,
   Worksheet,
 } from 'https://esm.sh/exceljs@4.3.0';
+import { format, isValid } from 'https://esm.sh/date-fns@2.30.0';
+import { fr } from 'https://esm.sh/date-fns@2.30.0/locale';
+
+/** Fixe le formatage d'une cellule contenant une date */
+export const formatDate = (
+  strDate: string | Date | null | undefined,
+  pattern = 'dd/MM/yyyy'
+) => {
+  if (!strDate) {
+    return null;
+  }
+  const d = new Date(strDate);
+  return isValid(d) ? format(d, pattern, { locale: fr }) : null;
+};
+
+/** Fixe le formatage d'une cellule contenant un montant en euros */
+export const setEuroValue = (cell: Cell, value: number | undefined | null) => {
+  cell.numFmt = '#,##0.00 [$€-1]';
+  cell.value = value || null;
+};
 
 /** Fixe le formatage numérique d'une cellule en fonction de sa valeur */
 export const setCellNumFormat = (cell: Cell, numFmt?: string) => {
@@ -16,6 +36,16 @@ export const setCellNumFormat = (cell: Cell, numFmt?: string) => {
     alignment: { horizontal: 'center' },
     numFmt: getNumberFormat(cell.value, numFmt),
   };
+};
+
+/* Fixe la valeur et le formatage numérique d'une cellule */
+export const setNumValue = (
+  cell: Cell,
+  value: number | null,
+  numFmt?: string
+) => {
+  cell.value = value;
+  setCellNumFormat(cell, numFmt);
 };
 
 /** Génère le format utilisé pour les nombres */
