@@ -1,5 +1,5 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { getSupabaseClientWithServiceRole } from '../_shared/getSupabaseClient.ts';
 
 /**
  * Envoi le contenu d'une `table` ou d'une vue en csv
@@ -9,27 +9,14 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
  */
 serve(async (req) => {
   if (
-    req.headers.get("authorization") !==
-    `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`
+    req.headers.get('authorization') !==
+    `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`
   ) {
     // Seule la service key permet d'exécuter cette fonction.
-    return new Response("Execute access forbidden", { status: 403 });
+    return new Response('Execute access forbidden', { status: 403 });
   }
 
-  const supabase = createClient(
-    Deno.env.get("SUPABASE_URL")!,
-    // Utilise le service role afin de récupérer les DCPs.
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-    {
-      db: {
-        schema: "public",
-      },
-      auth: {
-        // Pour fonctionner avec deno hors du navigateur.
-        persistSession: false,
-      },
-    }
-  );
+  const supabase = getSupabaseClientWithServiceRole();
 
   const { token, table, sync } = await req.json();
 
@@ -38,10 +25,10 @@ serve(async (req) => {
 
   // Envoie les données à Airtable vers l'endpoint sync.
   const syncResponse = await fetch(sync, {
-    method: "POST",
+    method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "text/csv",
+      'Content-Type': 'text/csv',
     },
     body: csvResponse.data,
   });
@@ -55,7 +42,7 @@ serve(async (req) => {
       success: success,
     }),
     {
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
     }
   );
 });
