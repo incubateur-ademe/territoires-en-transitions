@@ -56,7 +56,7 @@ const Faq = async () => {
         </p>
         <div className="flex-auto flex justify-center items-center gap-8 flex-wrap">
           <PictoWithBackground pictogram={<CommunityPicto />} />
-          <ButtonWithLink href="/contact" secondary>
+          <ButtonWithLink href="/contact" rounded secondary>
             Contacter l'équipe
           </ButtonWithLink>
         </div>

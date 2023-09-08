@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_contenu_citations",
+  "info": {
+    "displayName": "Citation",
+    "icon": "discuss"
+  },
+  "options": {},
+  "attributes": {
+    "Texte": {
+      "type": "text",
+      "required": true
+    },
+    "Auteur": {
+      "type": "string",
+      "required": true
+    },
+    "Description": {
+      "type": "string"
+    }
+  }
+}

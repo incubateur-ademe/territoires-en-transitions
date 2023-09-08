@@ -1,13 +1,13 @@
 'use client';
 
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
+import {ParagrapheCustomArticleData} from 'app/types';
 import classNames from 'classnames';
 import {useEffect, useState} from 'react';
 import {processMarkedContent} from 'src/utils/processMarkedContent';
-import {ParagrapheArticleData} from './types';
 
 type ParagrapheArticleProps = {
-  paragraphe: ParagrapheArticleData;
+  paragraphe: ParagrapheCustomArticleData;
 };
 
 const ParagrapheArticle = ({

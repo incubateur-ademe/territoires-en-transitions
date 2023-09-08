@@ -35,9 +35,9 @@ export function StrapiImage({
         alt={`${attributes.alternativeText ?? ''}`}
       />
       {displayCaption && !!attributes.caption && (
-        <span className="!text-sm text-[#666] mt-2 w-full text-center">
+        <p className="!text-sm text-[#666] mt-2 mb-0 w-full text-center">
           {`${attributes.caption}`}
-        </span>
+        </p>
       )}
     </picture>
   );

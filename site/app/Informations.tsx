@@ -21,13 +21,13 @@ const Informations = ({titre, description}: InformationsProps) => {
         <CardsWrapper cols={3} className="!gap-14">
           <div className="flex flex-col items-center gap-8">
             <PictoWithBackground pictogram={<InformationPicto />} />
-            <ButtonWithLink href="/faq" secondary fullWidth>
+            <ButtonWithLink href="/faq" secondary fullWidth rounded>
               Lire les questions fréquentes
             </ButtonWithLink>
           </div>
           <div className="flex flex-col items-center gap-8">
             <PictoWithBackground pictogram={<CommunityPicto />} />
-            <ButtonWithLink href="/contact" secondary fullWidth>
+            <ButtonWithLink href="/contact" secondary fullWidth rounded>
               Contacter l'équipe
             </ButtonWithLink>
           </div>
@@ -37,6 +37,7 @@ const Informations = ({titre, description}: InformationsProps) => {
               href="https://calendly.com/territoiresentransitions"
               fullWidth
               external
+              rounded
             >
               Participer à une démo
             </ButtonWithLink>

@@ -62,6 +62,7 @@ const InfoSection = ({
                 href={button.href}
                 secondary={button.secondary}
                 external={button.external}
+                rounded
               >
                 {button.title}
               </ButtonWithLink>

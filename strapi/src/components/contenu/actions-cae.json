@@ -1,0 +1,40 @@
+{
+  "collectionName": "components_contenu_actions_caes",
+  "info": {
+    "displayName": "ActionsCAE",
+    "icon": "seed"
+  },
+  "options": {},
+  "attributes": {
+    "PlanificationTerritoriale": {
+      "type": "component",
+      "repeatable": false,
+      "component": "bloc.texte-avec-image"
+    },
+    "PatrimoineCollectivite": {
+      "type": "component",
+      "repeatable": false,
+      "component": "bloc.texte-avec-image"
+    },
+    "ApprovisionnementEnergie": {
+      "type": "component",
+      "repeatable": false,
+      "component": "bloc.texte-avec-image"
+    },
+    "Mobilite": {
+      "type": "component",
+      "repeatable": false,
+      "component": "bloc.texte-avec-image"
+    },
+    "OrganisationInterne": {
+      "type": "component",
+      "repeatable": false,
+      "component": "bloc.texte-avec-image"
+    },
+    "CommunicationCooperation": {
+      "type": "component",
+      "repeatable": false,
+      "component": "bloc.texte-avec-image"
+    }
+  }
+}

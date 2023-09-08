@@ -1,0 +1,48 @@
+{
+  "kind": "collectionType",
+  "collectionName": "collectivites",
+  "info": {
+    "singularName": "collectivite",
+    "pluralName": "collectivites",
+    "displayName": "Collectivités",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Slug": {
+      "type": "uid",
+      "required": true,
+      "targetField": "Nom"
+    },
+    "Nom": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "Logos": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "Introduction": {
+      "type": "richtext"
+    },
+    "Sections": {
+      "type": "dynamiczone",
+      "components": [
+        "contenu.performance-collectivite",
+        "contenu.citation",
+        "contenu.actions-cae",
+        "contenu.paragraphe",
+        "contenu.image",
+        "contenu.gallerie",
+        "contenu.video",
+        "contenu.info"
+      ]
+    }
+  }
+}

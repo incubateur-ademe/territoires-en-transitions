@@ -15,6 +15,7 @@ const Newsletter = ({titre, description}: NewsletterProps) => {
       <ButtonWithLink
         href="https://cloud.contact.ademe.fr/inscription-tete"
         external
+        rounded
       >
         S'inscrire
       </ButtonWithLink>

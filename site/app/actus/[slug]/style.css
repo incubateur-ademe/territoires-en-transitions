@@ -1,7 +1,0 @@
-.article *:not(h1, h2, h3, h4, h5, h6) {
-  font-size: 18px;
-}
-
-.article a {
-  color: var(--text-action-high-blue-france);
-}

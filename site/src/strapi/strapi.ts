@@ -11,6 +11,7 @@ const headers = {
 type Collection =
   | 'actualites'
   | 'benefices'
+  | 'collectivites'
   | 'etapes'
   | 'faqs'
   | 'objectifs'
