@@ -210,7 +210,7 @@ const fetchAuditeurs = async (
     throw new Error(error.message);
   }
 
-  return (data[0].noms as TAuditeur[]) || [];
+  return (data[0]?.noms as TAuditeur[]) || [];
 };
 
 /**
