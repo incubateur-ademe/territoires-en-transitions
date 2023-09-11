@@ -48,6 +48,7 @@ export const useActionAuditStatut = (action: TActionDef) => {
     () =>
       collectivite_id && referentiel
         ? fetch(collectivite_id, action).then(data => data || defaultStatut)
-        : defaultStatut
+        : defaultStatut,
+    {keepPreviousData: true}
   );
 };
