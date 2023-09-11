@@ -22385,6 +22385,7 @@ export interface Database {
           cae_score_realise: number | null
           code_siren_insee: string | null
           collectivite_id: number | null
+          cot: boolean | null
           departement_code: string | null
           departement_name: string | null
           eci_etoiles: number | null
