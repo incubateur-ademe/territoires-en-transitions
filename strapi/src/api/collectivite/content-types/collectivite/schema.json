@@ -12,12 +12,12 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "Slug": {
-      "type": "uid",
-      "required": true,
-      "targetField": "Nom"
-    },
     "Nom": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "SIREN": {
       "type": "string",
       "required": true,
       "unique": true

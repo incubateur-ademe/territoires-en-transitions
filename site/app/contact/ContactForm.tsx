@@ -1,6 +1,6 @@
 'use client';
 
-import {ToastFloater} from '@components/Toast/ToastFloater';
+import {ToastFloater} from '@components/floating-ui/ToastFloater';
 import classNames from 'classnames';
 import {useState} from 'react';
 import {supabase} from '../initSupabase';
