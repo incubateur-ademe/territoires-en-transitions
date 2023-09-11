@@ -14,18 +14,11 @@ import {
   ParagrapheCustomFetchedData,
   ParagrapheFetchedData,
   VideoFetchedData,
-} from '../../types';
+} from '../../../types';
 
-export const getData = async (name: string) => {
-  const slug = name
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .split(' ')
-    .join('-');
-
+export const getData = async (codeSirenInsee: string) => {
   const data = await fetchCollection('collectivites', [
-    ['filters[Slug]', `${slug}`],
+    ['filters[SIREN]', `${codeSirenInsee}`],
     ['populate[0]', 'Logos'],
     ['populate[1]', 'Sections'],
     ['populate[2]', 'Sections.Image'],

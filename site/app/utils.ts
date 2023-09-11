@@ -101,3 +101,12 @@ export const getData = async (): Promise<AccueilData | null> => {
 
   return formattedData;
 };
+
+export const convertNameToSlug = (name: string) => {
+  return name
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .split(' ')
+    .join('-');
+};

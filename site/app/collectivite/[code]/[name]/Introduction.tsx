@@ -27,28 +27,30 @@ const Introduction = ({description, logos}: IntroductionProps) => {
     <Section
       customBackground="#fff"
       containerClassName="!pt-0 !pb-6"
-      className="article flex-col md:block"
+      className="article h-fit"
     >
-      {/* Logos de la collectivités */}
-      {logos && (
-        <div className="flex flex-wrap md:flex-nowrap items-end justify-center gap-8 mr-8 mb-4 float-left w-full md:w-auto md:max-w-[35%]">
-          {logos.map(l => (
-            <StrapiImage
-              key={l.id}
-              data={l}
-              className="max-h-[300px]"
-              displayCaption={false}
-            />
-          ))}
-        </div>
-      )}
-
-      {/* Texte de présentation */}
-      <div
-        dangerouslySetInnerHTML={{
-          __html: processedText,
-        }}
-      />
+      <div className="h-fit flex flex-col md:block">
+        {/* Logos de la collectivités */}
+        {logos && (
+          <div className="flex flex-wrap md:flex-nowrap items-end justify-center gap-8 mr-8 mb-4 float-left w-full md:w-auto md:max-w-[35%] h-fit">
+            {logos.map(l => (
+              <StrapiImage
+                key={l.id}
+                data={l}
+                className="max-h-[300px]"
+                containerClassName="h-fit"
+                displayCaption={false}
+              />
+            ))}
+          </div>
+        )}
+        {/* Texte de présentation */}
+        <div
+          dangerouslySetInnerHTML={{
+            __html: processedText,
+          }}
+        />
+      </div>
     </Section>
   );
 };
