@@ -46,6 +46,9 @@ export function MenuPrincipal(props: MenuProps) {
       <MenuItem href="/faq" {...props}>
         Questions fréquentes
       </MenuItem>
+      <MenuItem href="/stats" {...props}>
+        Statistiques
+      </MenuItem>
       <MenuItem href="/contact" {...props}>
         Contact
       </MenuItem>
