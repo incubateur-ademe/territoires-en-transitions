@@ -10,6 +10,7 @@ import {
   makeSolidFill,
   setCellsStyle,
   makeEmptyCells,
+  capitalize,
 } from '../_shared/exportUtils.ts';
 import {
   ALIGN_CENTER,
@@ -133,6 +134,9 @@ export const exportXLSX = async (
   worksheet.getColumn(colIndex.commentaires).alignment = ALIGN_LEFT_WRAP;
   worksheet.getColumn(colIndex.docs).alignment = ALIGN_LEFT_WRAP;
   worksheet.getColumn(colIndex.points_max_referentiel).font = ITALIC;
+  if (colIndex.phase) {
+    worksheet.getColumn(colIndex.phase).alignment = ALIGN_CENTER;
+  }
   worksheet.getCell('A1').fill = Fills.grey;
   worksheet.getCell('B2').fill = Fills.yellow;
   worksheet.getCell('B3').fill = Fills.yellow;
@@ -222,7 +226,8 @@ const getColIndex = (colOffset: number) => {
   return {
     arbo: 1,
     intitule: 2,
-    points_max_referentiel: 3,
+    phase: colOffset === 0 ? 3 : undefined,
+    points_max_referentiel: 4 + colOffset,
     pre_audit,
     courant,
     commentaires,
@@ -273,7 +278,7 @@ const getRowValues = (
 
   // insère la colonne "phase" si nécessaire
   if (referentiel === 'cae') {
-    values.splice(2, 1, action?.phase);
+    values.splice(2, 0, capitalize(action?.phase));
   }
 
   return values;
