@@ -1379,8 +1379,8 @@
       "parent": null,
       "participation_score": false,
       "programmes": [
-        "crte",
-        "clef"
+        "clef",
+        "crte"
       ],
       "sans_valeur": true,
       "selection": false,
@@ -1757,8 +1757,8 @@
       "participation_score": false,
       "programmes": [
         "cae",
-        "pcaet",
-        "clef"
+        "clef",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -4138,8 +4138,8 @@
       "participation_score": false,
       "programmes": [
         "cae",
-        "pcaet",
-        "clef"
+        "clef",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": true,
