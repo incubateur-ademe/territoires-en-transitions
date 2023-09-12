@@ -95,3 +95,10 @@ export const setCellsStyle = (
 /** Génère des cellules sans valeur */
 export const makeEmptyCells = (count: number) =>
   new Array(count).fill(undefined);
+
+/** Passe la 1ère lettre d'une chaîne en capitale */
+export const capitalize = (s: string | undefined | null) => {
+  if (!s?.length) return '';
+  const first = s.charAt(0).toUpperCase();
+  return first + s.slice(1);
+};
