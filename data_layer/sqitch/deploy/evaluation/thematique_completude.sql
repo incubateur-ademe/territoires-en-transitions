@@ -19,7 +19,10 @@ begin
              left join reponse_choix rc
                        on rc.question_id = q.id
                            and rc.collectivite_id = reponse_count_by_thematique.collectivite_id
-    where q.thematique_id = reponse_count_by_thematique.thematique_id;
+    where q.thematique_id = reponse_count_by_thematique.thematique_id
+      and (q.types_collectivites_concernees @>
+           private.collectivite_type(reponse_count_by_thematique.collectivite_id)
+        or q.types_collectivites_concernees is null);
 end;
 
 COMMIT;
