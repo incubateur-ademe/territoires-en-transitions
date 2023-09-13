@@ -16,6 +16,7 @@ import {
   ALIGN_CENTER,
   ALIGN_LEFT_WRAP,
   BG_COLOR3,
+  BG_COLOR4,
   BG_COLORS,
   BOLD,
   BORDER_MEDIUM,
@@ -181,7 +182,7 @@ export const exportXLSX = async (
         row.outlineLevel = action?.depth;
       }
       // couleur de fond
-      const color = getRowColor(action);
+      const color = getRowColor(action, referentiel);
       if (color) row.fill = makeSolidFill(color);
     }
 
@@ -206,10 +207,14 @@ const setScoreFormats = (row: Row, colIndex: number) => {
 };
 
 // détermine la couleur de fond d'une ligne en fonction de la profondeur dans l'arbo
-const getRowColor = (action?: TActionReferentiel) => {
+const getRowColor = (
+  action?: TActionReferentiel,
+  referentiel: Enums<'referentiel'>
+) => {
   if (action) {
     const { depth, identifiant } = action;
     if (depth === 3) return BG_COLOR3;
+    if (depth === 4 && referentiel === 'cae') return BG_COLOR4;
 
     const axe = parseInt(identifiant.split('.')[0]);
     const colors = BG_COLORS[axe];

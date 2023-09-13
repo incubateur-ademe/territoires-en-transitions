@@ -39,7 +39,8 @@ export const BG_COLORS: Record<number, string[]> = {
 };
 
 // couleur de fond ligne sous-sous-axe
-export const BG_COLOR3 = 'bfbfbf';
+export const BG_COLOR3 = 'bfbfbf'; // niveau 3
+export const BG_COLOR4 = 'd8d8d8'; // niveau 4 (CAE seulement)
 
 // bordures
 export const BORDER_MEDIUM = { style: 'medium' } as Partial<Border>;
