@@ -88,7 +88,7 @@ const getColumns = (headerData?: TComparaisonScoreAudit): TColumn[] => {
     {
       accessor: 'nom', // la clé pour accéder à la valeur
       Header: 'TOTAL', // rendu dans la ligne d'en-tête
-      Cell: CellAction, // rendu d'une cellule
+      Cell: CellAction as any, // rendu d'une cellule
       width: '100%',
     },
     {
