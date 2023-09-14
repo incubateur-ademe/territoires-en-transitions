@@ -30,7 +30,7 @@ const COLUMNS: TColumn[] = [
   {
     accessor: 'nom', // la clé pour accéder à la valeur
     Header: 'Sous-actions', // rendu dans la ligne d'en-tête
-    Cell: CellAction, // rendu d'une cellule
+    Cell: CellAction as any, // rendu d'une cellule
     width: '100%',
   },
   {
@@ -41,20 +41,20 @@ const COLUMNS: TColumn[] = [
   },
   {
     accessor: 'score_realise',
-    Header: makeFiltrePourcentage('score_realise', '% Réalisé'),
+    Header: makeFiltrePourcentage('score_realise', '% Réalisé') as any,
     Cell: CellPercent,
     width: 150,
   },
   {
     accessor: 'score_programme',
-    Header: makeFiltrePourcentage('score_programme', '% Programmé'),
+    Header: makeFiltrePourcentage('score_programme', '% Programmé') as any,
     Cell: CellPercent,
     width: 175,
   },
   {
     accessor: 'phase',
-    Header: FiltrePhase,
-    Cell: CellPhase,
+    Header: FiltrePhase as any,
+    Cell: CellPhase as any,
     width: 120,
   },
 ];

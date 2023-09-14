@@ -12,6 +12,7 @@ import {
   useRole,
   useDismiss,
   useClick,
+  ReferenceType,
 } from '@floating-ui/react';
 import DOMPurify from 'dompurify';
 import classNames from 'classnames';
@@ -95,7 +96,7 @@ export const Tooltip = ({
 
 // https://github.com/gregberge/react-merge-refs/issues/5#issuecomment-643341631
 const useMergedRefs = (refs: Array<unknown>) =>
-  useCallback(current => {
+  useCallback((current: ReferenceType) => {
     refs.forEach(ref => {
       if (typeof ref === 'function') {
         ref(current);
