@@ -41,7 +41,7 @@ export const PersoPotentiel = (props: TPersoPotentielButtonProps) => {
       <Modal
         size="lg"
         render={() => (
-          <div className="p-7 flex flex-col">
+          <div className="p-7 flex flex-col" data-test="PersoPotentielDlg">
             <h3>Personnaliser le potentiel de points</h3>
             <span className="fr-text--md font-bold">
               {type[0].toUpperCase() + type.slice(1)} {identifiant} : {nom}
