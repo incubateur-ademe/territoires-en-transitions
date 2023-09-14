@@ -771,12 +771,12 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
         className="grid lg:grid-cols-2 gap-4"
       >
         <a
-          className="!shadow-none"
+          className="!bg-none shadow-sm rounded-md border border-gray-200 border-b-gray-400"
           href="/collectivite/1/accueil"
           onClick={[Function]}
         >
           <div
-            className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            className="flex flex-col w-full max-w-full h-full p-3 md:p-6 hover:bg-gray-100"
             data-test="CollectiviteCarte"
           >
             <div
@@ -1088,12 +1088,12 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
           </div>
         </a>
         <a
-          className="!shadow-none"
+          className="!bg-none shadow-sm rounded-md border border-gray-200 border-b-gray-400"
           href="/collectivite/2/accueil"
           onClick={[Function]}
         >
           <div
-            className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            className="flex flex-col w-full max-w-full h-full p-3 md:p-6 hover:bg-gray-100"
             data-test="CollectiviteCarte"
           >
             <div
@@ -1405,12 +1405,12 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
           </div>
         </a>
         <a
-          className="!shadow-none"
+          className="!bg-none shadow-sm rounded-md border border-gray-200 border-b-gray-400"
           href="/collectivite/3/accueil"
           onClick={[Function]}
         >
           <div
-            className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            className="flex flex-col w-full max-w-full h-full p-3 md:p-6 hover:bg-gray-100"
             data-test="CollectiviteCarte"
           >
             <div
@@ -1598,12 +1598,12 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
           </div>
         </a>
         <a
-          className="!shadow-none"
+          className="!bg-none shadow-sm rounded-md border border-gray-200 border-b-gray-400"
           href="/collectivite/4/accueil"
           onClick={[Function]}
         >
           <div
-            className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            className="flex flex-col w-full max-w-full h-full p-3 md:p-6 hover:bg-gray-100"
             data-test="CollectiviteCarte"
           >
             <div
@@ -1915,12 +1915,12 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
           </div>
         </a>
         <a
-          className="!shadow-none"
+          className="!bg-none shadow-sm rounded-md border border-gray-200 border-b-gray-400"
           href="/collectivite/5/accueil"
           onClick={[Function]}
         >
           <div
-            className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            className="flex flex-col w-full max-w-full h-full p-3 md:p-6 hover:bg-gray-100"
             data-test="CollectiviteCarte"
           >
             <div
@@ -2232,12 +2232,12 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
           </div>
         </a>
         <a
-          className="!shadow-none"
+          className="!bg-none shadow-sm rounded-md border border-gray-200 border-b-gray-400"
           href="/collectivite/6/accueil"
           onClick={[Function]}
         >
           <div
-            className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            className="flex flex-col w-full max-w-full h-full p-3 md:p-6 hover:bg-gray-100"
             data-test="CollectiviteCarte"
           >
             <div
@@ -2549,12 +2549,12 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
           </div>
         </a>
         <a
-          className="!shadow-none"
+          className="!bg-none shadow-sm rounded-md border border-gray-200 border-b-gray-400"
           href="/collectivite/7/accueil"
           onClick={[Function]}
         >
           <div
-            className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            className="flex flex-col w-full max-w-full h-full p-3 md:p-6 hover:bg-gray-100"
             data-test="CollectiviteCarte"
           >
             <div
@@ -3687,12 +3687,12 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
         className="grid lg:grid-cols-2 gap-4"
       >
         <a
-          className="!shadow-none"
+          className="!bg-none shadow-sm rounded-md border border-gray-200 border-b-gray-400"
           href="/collectivite/1/accueil"
           onClick={[Function]}
         >
           <div
-            className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            className="flex flex-col w-full max-w-full h-full p-3 md:p-6 hover:bg-gray-100"
             data-test="CollectiviteCarte"
           >
             <div
@@ -4004,12 +4004,12 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
           </div>
         </a>
         <a
-          className="!shadow-none"
+          className="!bg-none shadow-sm rounded-md border border-gray-200 border-b-gray-400"
           href="/collectivite/2/accueil"
           onClick={[Function]}
         >
           <div
-            className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            className="flex flex-col w-full max-w-full h-full p-3 md:p-6 hover:bg-gray-100"
             data-test="CollectiviteCarte"
           >
             <div
@@ -4321,12 +4321,12 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
           </div>
         </a>
         <a
-          className="!shadow-none"
+          className="!bg-none shadow-sm rounded-md border border-gray-200 border-b-gray-400"
           href="/collectivite/3/accueil"
           onClick={[Function]}
         >
           <div
-            className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            className="flex flex-col w-full max-w-full h-full p-3 md:p-6 hover:bg-gray-100"
             data-test="CollectiviteCarte"
           >
             <div
@@ -4514,12 +4514,12 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
           </div>
         </a>
         <a
-          className="!shadow-none"
+          className="!bg-none shadow-sm rounded-md border border-gray-200 border-b-gray-400"
           href="/collectivite/4/accueil"
           onClick={[Function]}
         >
           <div
-            className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            className="flex flex-col w-full max-w-full h-full p-3 md:p-6 hover:bg-gray-100"
             data-test="CollectiviteCarte"
           >
             <div
@@ -4831,12 +4831,12 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
           </div>
         </a>
         <a
-          className="!shadow-none"
+          className="!bg-none shadow-sm rounded-md border border-gray-200 border-b-gray-400"
           href="/collectivite/5/accueil"
           onClick={[Function]}
         >
           <div
-            className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            className="flex flex-col w-full max-w-full h-full p-3 md:p-6 hover:bg-gray-100"
             data-test="CollectiviteCarte"
           >
             <div
@@ -5148,12 +5148,12 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
           </div>
         </a>
         <a
-          className="!shadow-none"
+          className="!bg-none shadow-sm rounded-md border border-gray-200 border-b-gray-400"
           href="/collectivite/6/accueil"
           onClick={[Function]}
         >
           <div
-            className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            className="flex flex-col w-full max-w-full h-full p-3 md:p-6 hover:bg-gray-100"
             data-test="CollectiviteCarte"
           >
             <div
@@ -5465,12 +5465,12 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
           </div>
         </a>
         <a
-          className="!shadow-none"
+          className="!bg-none shadow-sm rounded-md border border-gray-200 border-b-gray-400"
           href="/collectivite/7/accueil"
           onClick={[Function]}
         >
           <div
-            className="MuiPaper-root MuiCard-root flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100 hover:bg-gray-100 MuiPaper-elevation1 MuiPaper-rounded"
+            className="flex flex-col w-full max-w-full h-full p-3 md:p-6 hover:bg-gray-100"
             data-test="CollectiviteCarte"
           >
             <div
