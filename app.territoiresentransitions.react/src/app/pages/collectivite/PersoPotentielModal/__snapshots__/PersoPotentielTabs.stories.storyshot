@@ -163,7 +163,6 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         }
       >
         <div
-          className="flex items-center"
           data-test="PointsPotentiels"
         >
           <div
@@ -582,7 +581,6 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         }
       >
         <div
-          className="flex items-center"
           data-test="PointsPotentiels"
         >
           <div
@@ -763,7 +761,6 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         }
       >
         <div
-          className="flex items-center"
           data-test="PointsPotentiels"
         >
           <div
@@ -944,7 +941,6 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         }
       >
         <div
-          className="flex items-center"
           data-test="PointsPotentiels"
         >
           <div
@@ -1175,7 +1171,6 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         }
       >
         <div
-          className="flex items-center"
           data-test="PointsPotentiels"
         >
           <div
@@ -1413,7 +1408,6 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         }
       >
         <div
-          className="flex items-center"
           data-test="PointsPotentiels"
         >
           <div
@@ -1599,7 +1593,6 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
         }
       >
         <div
-          className="flex items-center"
           data-test="PointsPotentiels"
         >
           <div
