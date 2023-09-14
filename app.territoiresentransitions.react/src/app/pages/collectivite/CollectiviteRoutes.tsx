@@ -1,3 +1,4 @@
+import {ReactNode} from 'react';
 import {Redirect, Route, RouteProps} from 'react-router-dom';
 
 import {
@@ -99,7 +100,7 @@ const RouteEnAccesRestreint = (props: RouteProps) => {
             })}
           />
         ) : (
-          children
+          (children as ReactNode)
         )
       }
     />
