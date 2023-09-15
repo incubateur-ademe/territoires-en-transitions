@@ -22379,6 +22379,7 @@ export interface Database {
       }
       site_labellisation: {
         Row: {
+          active: boolean | null
           cae_etoiles: number | null
           cae_obtenue_le: string | null
           cae_score_programme: number | null
@@ -22392,7 +22393,8 @@ export interface Database {
           eci_obtenue_le: string | null
           eci_score_programme: number | null
           eci_score_realise: number | null
-          labellise: boolean | null
+          engagee: boolean | null
+          labellisee: boolean | null
           nature_collectivite: string | null
           nom: string | null
           population_totale: number | null
@@ -23659,7 +23661,7 @@ export interface Database {
       fiche_resume:
         | {
             Args: {
-              fiche_action_indicateur: unknown
+              fiche_action_action: unknown
             }
             Returns: {
               collectivite_id: number | null
@@ -23673,7 +23675,7 @@ export interface Database {
           }
         | {
             Args: {
-              fiche_action_action: unknown
+              fiche_action_indicateur: unknown
             }
             Returns: {
               collectivite_id: number | null
