@@ -23,20 +23,29 @@ select c.collectivite_id,
        c.departement_code,
        c.population_totale,
 
-       (select c.collectivite_id in (select collectivite_id from cot where actif)) as cot,
+       ca is not null                as active,
+
+       coalesce(cot.actif, false)    as cot,
+
        dl_cae.obtenue_le is not null or
-       dl_eci.obtenue_le is not null
-                                                                                   as labellise,
-       dl_cae.obtenue_le                                                           as cae_obtenue_le,
-       dl_cae.etoiles                                                              as cae_etoiles,
-       dl_cae.score_realise                                                        as cae_score_realise,
-       dl_cae.score_programme                                                      as cae_score_programme,
-       dl_eci.obtenue_le                                                           as eci_obtenue_le,
-       dl_eci.etoiles                                                              as eci_etoiles,
-       dl_eci.score_realise                                                        as eci_score_realise,
-       dl_eci.score_programme                                                      as eci_score_programme
+       dl_eci.obtenue_le is not null or
+       coalesce(cot.actif, false)    as engagee,
+
+       dl_cae.obtenue_le is not null or
+       dl_eci.obtenue_le is not null as labellisee,
+
+       dl_cae.obtenue_le             as cae_obtenue_le,
+       dl_cae.etoiles                as cae_etoiles,
+       dl_cae.score_realise          as cae_score_realise,
+       dl_cae.score_programme        as cae_score_programme,
+       dl_eci.obtenue_le             as eci_obtenue_le,
+       dl_eci.etoiles                as eci_etoiles,
+       dl_eci.score_realise          as eci_score_realise,
+       dl_eci.score_programme        as eci_score_programme
 
 from stats.collectivite c
+         left join stats.collectivite_active ca using (collectivite_id)
+         left join cot using (collectivite_id)
          left join lateral (select l.*
                             from dl
                                      join labellisation l
