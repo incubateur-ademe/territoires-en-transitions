@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import {Field, FieldAttributes, FieldProps} from 'formik';
 import {v4 as uuid} from 'uuid';
 import classNames from 'classnames';
-import Autocomplete from '@material-ui/lab/Autocomplete';
+import Autocomplete from '@mui/material/Autocomplete';
 import {useDebouncedCallback} from 'use-debounce';
 
 /**
@@ -116,7 +116,7 @@ const AutoCompleteInputField = <T extends string>({
         noOptionsText="Aucune option"
         options={props.options}
         getOptionLabel={option => option.label}
-        getOptionSelected={(option, value) => option.value === value.value}
+        isOptionEqualToValue={(option, value) => option.value === value.value}
         onChange={(evt, newSelection) => {
           props.setFieldValue(field.name, newSelection?.value);
           props.onSelectChange(newSelection?.value);
