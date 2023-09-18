@@ -1,5 +1,4 @@
 import {createRoot} from 'react-dom/client';
-import {defaults} from 'react-chartjs-2';
 import * as Sentry from '@sentry/react';
 import {App} from 'app/App';
 import {ENV} from 'environmentVariables';
@@ -21,9 +20,6 @@ if (ENV.sentry_dsn) {
     replaysOnErrorSampleRate: 1.0,
   });
 }
-
-// typo par défaut pour les graphiques
-defaults.font = {...defaults.font, family: 'Marianne', size: 14};
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
