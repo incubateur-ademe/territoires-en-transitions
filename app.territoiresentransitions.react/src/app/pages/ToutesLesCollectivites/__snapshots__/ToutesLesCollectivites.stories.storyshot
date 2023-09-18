@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des Filtres 1`] = `
+exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Résultats Et Des Filtres 1`] = `
 <div
   className="app fr-container my-16"
   data-test="ToutesLesCollectivites"
@@ -758,9 +758,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
           >
             <span
               className="mr-auto flex line-clamp-1"
-            >
-              
-            </span>
+            />
             <span
               className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
             />
@@ -2936,7 +2934,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Et Des F
 </div>
 `;
 
-exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Filtres 1`] = `
+exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Résultats Sans Filtres 1`] = `
 <div
   className="app fr-container my-16"
   data-test="ToutesLesCollectivites"
@@ -3674,9 +3672,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
           >
             <span
               className="mr-auto text-grey425 line-clamp-1"
-            >
-              
-            </span>
+            />
             <span
               className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
             />
@@ -5852,7 +5848,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Resultats Sans Fil
 </div>
 `;
 
-exports[`Storyshots app/pages/ToutesLesCollectivites Sans Resultats 1`] = `
+exports[`Storyshots app/pages/ToutesLesCollectivites Sans Résultats 1`] = `
 <div
   className="app fr-container my-16"
   data-test="ToutesLesCollectivites"
@@ -6603,9 +6599,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Sans Resultats 1`] = `
           >
             <span
               className="mr-auto flex line-clamp-1"
-            >
-              
-            </span>
+            />
             <span
               className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
             />
