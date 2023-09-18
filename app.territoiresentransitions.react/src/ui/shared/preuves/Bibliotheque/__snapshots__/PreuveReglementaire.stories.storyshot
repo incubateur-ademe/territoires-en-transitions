@@ -297,7 +297,6 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Lien 1`] 
             />
           </div>
         </div>
-        
         <p
           className="text-xs fr-text-mention--grey mb-1 pl-2"
         >
@@ -461,7 +460,6 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Multiple 
             />
           </div>
         </div>
-        
         <p
           className="text-xs fr-text-mention--grey mb-1 pl-2"
         >
