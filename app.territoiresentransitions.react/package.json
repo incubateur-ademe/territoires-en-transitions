@@ -111,6 +111,12 @@
   "overrides": {
     "storybook-react-router": {
       "@storybook/addon-actions": "^7.4.2"
+    },
+    "@mui/styles": {
+      "react": "^18.2.0"
+    },
+    "react-scripts": {
+      "typescript": "^5.2.2"
     }
   },
   "readme": "",
