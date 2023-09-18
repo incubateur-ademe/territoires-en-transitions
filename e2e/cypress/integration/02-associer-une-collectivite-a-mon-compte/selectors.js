@@ -5,7 +5,7 @@ export const LocalSelectors = {
   'dialogue Associer une collectivité à mon compte': {
     selector: '[data-test=dialog-AssocierCollectivite]',
     children: {
-      'Nom de la collectivité': '[role=combobox] input',
+      'Nom de la collectivité': 'input[role=combobox]',
       'vous ne trouvez pas la collectivité que vous cherchez':
         '[data-test=no-selection-msg]',
       'Contenu pour activer la collectivité':
