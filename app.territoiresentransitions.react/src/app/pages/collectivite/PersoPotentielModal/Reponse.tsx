@@ -28,6 +28,7 @@ const ReponseChoix = ({qr, onChange}: TQuestionReponseProps) => {
       {choices?.map(({id: choiceId, label}) => {
         return (
           <RadioButton
+            key={questionId + choiceId}
             disabled={collectivite.readonly}
             questionId={questionId}
             choiceId={choiceId}
