@@ -27,4 +27,4 @@ export const useValidateAudit = () => {
 };
 
 const validateAudit = async (audit: TAudit) =>
-  supabaseClient.from('audit').update({valide: true}).eq('id', audit.id);
+  supabaseClient.from('audit').update({valide: true}).eq('id', audit.id!);
