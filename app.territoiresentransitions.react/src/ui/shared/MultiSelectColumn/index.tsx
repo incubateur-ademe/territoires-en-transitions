@@ -1,7 +1,6 @@
-import {ChangeEvent} from 'react';
-import {MenuProps} from '@material-ui/core';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
+import {MenuProps} from '@mui/material';
+import Select, {SelectChangeEvent} from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 
 type TItem = {value: string; label: string};
 type TSeparator = {separator: string};
@@ -31,7 +30,6 @@ const menuOptions: Partial<MenuProps> = {
     vertical: 'top',
     horizontal: 'left',
   },
-  getContentAnchorEl: null,
 };
 
 /**
@@ -49,7 +47,7 @@ export const MultiSelectColumn = (props: TMultiSelectColumnProps) => {
       : `${hiddenColsCount} colonne masquée`;
 
   // gère la sélection/déselection d'item dans la liste
-  const handleChange = (event: ChangeEvent<{value: unknown}>) => {
+  const handleChange = (event: SelectChangeEvent<string[]>) => {
     onChange((event?.target.value as string[]) || []);
   };
 

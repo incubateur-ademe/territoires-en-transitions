@@ -8,7 +8,7 @@ import {
   findChildren,
   searchAncestors,
 } from 'utils/actions';
-import {Menu, MenuItem} from '@material-ui/core';
+import {Menu, MenuItem} from '@mui/material';
 import NestedMenuItem from 'app/pages/collectivite/Referentiels/NestedMenuItem';
 import {makeCollectiviteReferentielUrl} from 'app/paths';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
@@ -138,7 +138,6 @@ const OrientationSwitcher = (props: {
         open={opened}
         onClose={handleClose}
         anchorEl={anchorEl}
-        getContentAnchorEl={null}
         anchorOrigin={{vertical: 'bottom', horizontal: 'left'}}
         transformOrigin={{vertical: 'top', horizontal: 'left'}}
       >
