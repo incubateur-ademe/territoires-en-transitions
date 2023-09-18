@@ -1,13 +1,9 @@
 'use client';
-import {
-  MapContainer,
-  TileLayer,
-  useMap,
-} from 'react-leaflet';
+import {MapContainer, TileLayer, useMap} from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css';
 import 'leaflet-defaulticon-compatibility';
-import {ReactNode} from "react";
+import {ReactNode} from 'react';
 
 /**
  * Permet d'utiliser l'objet map dans la console
@@ -28,21 +24,19 @@ function Debugger() {
  *
  * @example
  * const CarteNoSSR = dynamic(() => import('./Carte'), {ssr: false})
+ *
  */
 function Carte(props: {children: ReactNode}) {
   return (
     <MapContainer
-      center={[46.6, 2.2]}
-      zoom={5}
+      center={[46.5, 2.3]}
+      zoom={5.7}
+      zoomSnap={0.1}
       scrollWheelZoom={false}
-      style={{height: 600}}
+      style={{height: 600, background: '#d9efff'}}
       className="aspect-square"
     >
       <Debugger />
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
       {props.children}
     </MapContainer>
   );
