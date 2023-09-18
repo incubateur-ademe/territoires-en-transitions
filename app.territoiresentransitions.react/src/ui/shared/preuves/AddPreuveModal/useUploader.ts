@@ -1,5 +1,6 @@
 import {ENV} from 'environmentVariables';
 import {useEffect, useState} from 'react';
+import {useDebouncedCallback} from 'use-debounce';
 import {
   TUploader,
   UploadErrorCode,
@@ -106,6 +107,7 @@ export const useUploader = (
   const authHeaders = useAuthHeaders();
   const bucket_id = useCollectiviteBucketId(collectivite_id);
 
+  // appelée quand l'upload est terminé
   const onStatusChange = (status: UploadStatus) => {
     if (status.code === UploadStatusCode.uploaded) {
       const {filename, hash} = status;
@@ -118,9 +120,13 @@ export const useUploader = (
     }
   };
 
+  // pour éviter les uploads multiples du même fichier
+  const upload = useDebouncedCallback(addFileToBucket, 500);
+
+  // démarre l'upload du fichier
   useEffect(() => {
     if (bucket_id && authHeaders) {
-      addFileToBucket({bucket_id, file, authHeaders, onStatusChange});
+      upload({bucket_id, file, authHeaders, onStatusChange});
     }
   }, [collectivite_id, bucket_id]);
 
