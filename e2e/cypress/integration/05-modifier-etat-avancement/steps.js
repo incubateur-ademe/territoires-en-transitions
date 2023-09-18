@@ -74,7 +74,10 @@ const avancementToValue = {
 When(
   /je saisi "([^"]+)" dans le champ "Précisions" de la tâche "([^"]+)"/,
   (commentaire, tache) => {
-    cy.get(`[data-test="comm-${tache}"]`)
+    // clique pour afficher le champ de saisie
+    cy.get(`[data-test="task-${tache}"] button.fr-icon-pencil-line`).click();
+    // puis saisi la valeur voulue
+    cy.get(`[data-test="task-${tache}"] textarea`)
       .type('{selectall}{backspace}' + commentaire)
       .blur();
   }
