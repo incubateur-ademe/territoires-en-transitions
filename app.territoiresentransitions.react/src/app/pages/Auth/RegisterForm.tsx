@@ -7,6 +7,7 @@ import {
   politique_vie_privee,
   registerUser,
 } from 'core-logic/api/auth/registration';
+import {useQueryClient} from 'react-query';
 import {getPasswordStrength} from 'core-logic/api/auth/getPasswordStrength';
 import {signInPath} from 'app/paths';
 import {Spacer} from 'ui/dividers/Spacer';
@@ -100,6 +101,7 @@ const CGU = ({showWarning}: {showWarning?: boolean}) => (
  */
 const RegistrationForm = () => {
   const [state, setState] = useState<FormState>('ready');
+  const queryClient = useQueryClient();
 
   if (state === 'failure') {
     return (
@@ -147,6 +149,7 @@ const RegistrationForm = () => {
   const register = (data: InscriptionUtilisateur) => {
     registerUser(data)
       .then(() => {
+        queryClient.invalidateQueries('dcp');
         setState('success');
       })
       .catch(() => {
