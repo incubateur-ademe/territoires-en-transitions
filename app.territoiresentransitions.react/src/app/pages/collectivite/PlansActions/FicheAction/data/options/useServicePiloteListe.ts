@@ -5,7 +5,7 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import {TFicheActionServicePiloteRow} from 'types/alias';
 
 export const useServicePiloteListe = () => {
-  const collectivite_id = useCollectiviteId();
+  const collectivite_id = useCollectiviteId()!;
 
   return useQuery(['services_pilotes', collectivite_id], async () => {
     const {data} = await supabaseClient

@@ -5,7 +5,7 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import {TFinanceurTagRow} from 'types/alias';
 
 export const useFinanceurListe = () => {
-  const collectivite_id = useCollectiviteId();
+  const collectivite_id = useCollectiviteId()!;
 
   return useQuery(['financeurs', collectivite_id], async () => {
     const {data} = await supabaseClient
