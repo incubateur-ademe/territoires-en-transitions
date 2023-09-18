@@ -88,7 +88,6 @@
     "@storybook/node-logger": "^7.4.2",
     "@storybook/preset-create-react-app": "^7.4.2",
     "@storybook/react-webpack5": "^7.4.2",
-    "@tailwindcss/line-clamp": "^0.4.2",
     "@types/dompurify": "^2.3.4",
     "@types/node": "^12.20.20",
     "@types/react-router-dom": "^5.1.8",
@@ -104,7 +103,7 @@
     "react-test-renderer": "^18.2.0",
     "storybook": "^7.4.2",
     "storybook-react-router": "^1.0.8",
-    "tailwindcss": "^3.1.8",
+    "tailwindcss": "^3.3.3",
     "typescript": "^5.2.2",
     "webpack": "^5.74.0"
   },
