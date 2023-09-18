@@ -4,6 +4,7 @@
 module.exports = {
   // pattern de recherche des stories
   stories: ['../src/**/*.stories.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)'],
+
   // extensions chargées
   addons: [
     // pour faire des liens entre les stories
@@ -12,11 +13,14 @@ module.exports = {
     '@storybook/addon-essentials',
     '@storybook/preset-create-react-app',
   ],
-  framework: '@storybook/react',
-  core: {
-    builder: 'webpack5',
+
+  framework: {
+    name: '@storybook/react-webpack5',
+    options: {},
   },
+
   staticDirs: ['../public'],
+
   typescript: {
     reactDocgen: 'react-docgen-typescript',
     reactDocgenTypescriptOptions: {
@@ -26,6 +30,7 @@ module.exports = {
       },
     },
   },
+
   // chargement des mocks pour le bon fonctionnement des stories dans le storybook
   // ATTENTION : il faut aussi charger les mocks dans setupTests pour qu'ils
   // soient accessibles lors du snapshot testing (storyshots)
@@ -35,5 +40,12 @@ module.exports = {
         '../src/core-logic/hooks/__mocks__/useCurrentCollectivite.ts'
       );
     return config;
+  },
+
+  docs: {
+    autodocs: true,
+  },
+  core: {
+    disableTelemetry: true,
   },
 };
