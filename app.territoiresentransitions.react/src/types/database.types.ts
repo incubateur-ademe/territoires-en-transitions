@@ -5271,6 +5271,45 @@ export interface Database {
           }
         ]
       }
+      commune_pop_legale: {
+        Row: {
+          codarr: string | null
+          codcan: string | null
+          codcom: string | null
+          coddep: string | null
+          codreg: string | null
+          com: string | null
+          pcap: number | null
+          pmun: number | null
+          ptot: number | null
+          reg: string | null
+        }
+        Insert: {
+          codarr?: string | null
+          codcan?: string | null
+          codcom?: string | null
+          coddep?: string | null
+          codreg?: string | null
+          com?: string | null
+          pcap?: number | null
+          pmun?: number | null
+          ptot?: number | null
+          reg?: string | null
+        }
+        Update: {
+          codarr?: string | null
+          codcan?: string | null
+          codcom?: string | null
+          coddep?: string | null
+          codreg?: string | null
+          com?: string | null
+          pcap?: number | null
+          pmun?: number | null
+          ptot?: number | null
+          reg?: string | null
+        }
+        Relationships: []
+      }
       confidentialite_crud: {
         Row: {
           c: Database["public"]["Enums"]["confidentialite_option_crud"]
@@ -22406,6 +22445,21 @@ export interface Database {
         }
         Relationships: []
       }
+      site_region: {
+        Row: {
+          insee: string | null
+          libelle: string | null
+        }
+        Insert: {
+          insee?: string | null
+          libelle?: string | null
+        }
+        Update: {
+          insee?: string | null
+          libelle?: string | null
+        }
+        Relationships: []
+      }
       stats_active_real_collectivites: {
         Row: {
           collectivite_id: number | null
@@ -24090,12 +24144,19 @@ export interface Database {
         }
         Returns: unknown
       }
-      geojson: {
-        Args: {
-          site_labellisation: unknown
-        }
-        Returns: Json[]
-      }
+      geojson:
+        | {
+            Args: {
+              site_labellisation: unknown
+            }
+            Returns: Json[]
+          }
+        | {
+            Args: {
+              site_region: unknown
+            }
+            Returns: Json[]
+          }
       get_telemetry_report: {
         Args: Record<PropertyKey, never>
         Returns: Json
