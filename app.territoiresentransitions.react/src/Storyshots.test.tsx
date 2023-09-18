@@ -7,15 +7,18 @@ import initStoryshots, {
   Stories2SnapsConverter,
 } from '@storybook/addon-storyshots';
 import {act, create} from 'react-test-renderer';
+import {render} from '@testing-library/react';
 
 const converter = new Stories2SnapsConverter();
 
 initStoryshots({
   asyncJest: true,
+  renderer: render,
+
   // fonction de test spécifique pour éviter certains avertissements
   // Ref: https://github.com/storybookjs/storybook/issues/7745
   test: async ({story, context, done}) => {
-    const filename = '../' + converter.getSnapshotFileName(context);
+    const filename = converter.getSnapshotFileName(context);
     if (!filename || !done) {
       return;
     }
