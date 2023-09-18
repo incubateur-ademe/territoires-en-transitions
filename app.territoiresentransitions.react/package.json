@@ -32,8 +32,8 @@
     "@nivo/pie": "^0.80.0",
     "@sentry/react": "^7.55.1",
     "@storybook/react": "^7.4.2",
-    "@supabase/realtime-js": "^2.1.0",
-    "@supabase/supabase-js": "^2.1.2",
+    "@supabase/realtime-js": "^2.7.4",
+    "@supabase/supabase-js": "^2.33.2",
     "@testing-library/jest-dom": "^5.11.8",
     "@testing-library/react": "^11.2.3",
     "@testing-library/user-event": "^12.6.0",
@@ -113,7 +113,7 @@
   },
   "overrides": {
     "storybook-react-router": {
-      "@storybook/addon-actions": "^6.4.13"
+      "@storybook/addon-actions": "^7.4.2"
     }
   },
   "readme": "",
