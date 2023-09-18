@@ -37,6 +37,9 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
   // restaure une éventuelle session précédente
   const session = useCurrentSession();
   const [user, setUser] = useState<User | null>(session?.user ?? null);
+  useEffect(() => {
+    setUser(session?.user || null);
+  }, [session?.user]);
 
   // pour stocker la dernière erreur d'authentification
   const [authError, setAuthError] = useState<string | null>(null);
