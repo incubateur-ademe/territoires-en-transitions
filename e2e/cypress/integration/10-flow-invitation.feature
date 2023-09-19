@@ -2,7 +2,6 @@
 
 Fonctionnalité: Ajouter un membre au profil de la collectivité
 
-  @skip
   Scénario: J'invite Nono qui n'est pas un utilisateur
     Etant donné que je suis connecté en tant que "yolo"
 
