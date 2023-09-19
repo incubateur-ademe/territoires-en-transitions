@@ -15,7 +15,7 @@ const DetailCodeCollectivite = ({params}: {params: {code: string}}) => {
 
   router.push(
     `/collectivite/${params.code}/${convertNameToSlug(
-      data ? data[0].nom : '',
+      data && data[0].nom ? data[0].nom : '',
     )}`,
   );
 };

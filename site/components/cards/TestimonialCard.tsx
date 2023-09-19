@@ -1,5 +1,5 @@
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import QuoteIcon from 'public/icones/QuoteIcon';
+import QuoteIcon from '@components/icones/QuoteIcon';
 import {StrapiItem} from 'src/strapi/StrapiItem';
 
 type TestimonialCardProps = {

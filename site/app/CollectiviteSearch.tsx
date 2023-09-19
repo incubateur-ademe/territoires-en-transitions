@@ -48,10 +48,10 @@ const CollectiviteSearchConnected = () => {
   return (
     <CollectiviteSearch
       filteredCollectivites={
-        data.data?.filteredCollectivites.map(c => ({
+        (data.data?.filteredCollectivites.map(c => ({
           value: c.code_siren_insee,
           label: c.nom,
-        })) ?? []
+        })) ?? []) as {value: string; label: string}[]
       }
       isCollectivitesLoading={data.isLoading}
       setSearch={setSearch}
