@@ -57,7 +57,7 @@ deploy:
 deploy-test:
     ARG --required DB_URL
     ARG network=host
-    ARG tag=v2.56.0
+    ARG tag=v2.60.0
     LOCALLY
     RUN earthly +sqitch-build
     RUN docker run --rm \
@@ -425,7 +425,7 @@ stop:
     RUN earthly +clear-state
 
 prepare-fast:
-    ARG version=v2.56.0 # version du plan
+    ARG version=v2.60.0 # version du plan
     LOCALLY
     RUN earthly +dev --stop=yes --business=no --client=no --fast=no --version=$version
     RUN earthly +save-state
