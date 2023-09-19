@@ -1,6 +1,6 @@
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
 import classNames from 'classnames';
-import {GallerieArticleData} from './types';
+import {GallerieArticleData} from 'app/types';
 
 type GallerieArticleProps = {
   data: GallerieArticleData;

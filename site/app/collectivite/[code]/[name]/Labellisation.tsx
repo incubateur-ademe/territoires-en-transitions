@@ -3,6 +3,7 @@
 
 import ButtonWithLink from '@components/buttons/ButtonWithLink';
 import Section from '@components/sections/Section';
+import LabellisationCarte from './LabellisationCarte';
 import {useCollectivite} from './useCollectivite';
 
 type LabellisationProps = {
@@ -11,8 +12,6 @@ type LabellisationProps = {
 
 const Labellisation = ({code}: LabellisationProps) => {
   const {data} = useCollectivite(code);
-
-  console.log(data);
 
   if (!data) return null;
   const collectivite = data[0];
@@ -27,16 +26,20 @@ const Labellisation = ({code}: LabellisationProps) => {
       <div className="flex flex-wrap gap-2">
         <span className="fr-tag">{collectivite.region_name}</span>
         <span className="fr-tag">{collectivite.departement_name}</span>
-        <span className="fr-tag">
-          {collectivite.type_collectivite.charAt(0).toUpperCase() +
-            collectivite.type_collectivite.slice(1)}
-        </span>
-        <span className="fr-tag">
-          {collectivite.population_totale
-            .toString()
-            .replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}{' '}
-          habitants
-        </span>
+        {collectivite.type_collectivite && (
+          <span className="fr-tag">
+            {collectivite.type_collectivite.charAt(0).toUpperCase() +
+              collectivite.type_collectivite.slice(1)}
+          </span>
+        )}
+        {collectivite.population_totale && (
+          <span className="fr-tag">
+            {collectivite.population_totale
+              .toString()
+              .replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}{' '}
+            habitants
+          </span>
+        )}
       </div>
       <p className="text-sm">
         Vous êtes membre de cette collectivité ?{' '}
@@ -49,13 +52,28 @@ const Labellisation = ({code}: LabellisationProps) => {
       </p>
 
       {collectivite.active ? (
-        collectivite.engage ? (
+        collectivite.engagee ? (
           <>
             <p className="text-lg">
               Cette collectivité est <strong>activée sur la plateforme</strong>{' '}
               et <strong>engagée dans le programme</strong> Territoire Engagé
               Transition Écologique.
             </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <LabellisationCarte
+                titre="Climat Air Énergie"
+                etoiles={collectivite.cae_etoiles}
+                score={collectivite.cae_score_realise}
+                dateLabel={collectivite.cae_obtenue_le}
+              />
+              <LabellisationCarte
+                titre="Économie Circulaire"
+                etoiles={collectivite.eci_etoiles}
+                score={collectivite.eci_score_realise}
+                dateLabel={collectivite.eci_obtenue_le}
+              />
+            </div>
           </>
         ) : (
           <>
