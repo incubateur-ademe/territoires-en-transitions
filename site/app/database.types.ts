@@ -18862,8 +18862,12 @@ export interface Database {
       fiche_resume: {
         Row: {
           collectivite_id: number | null
+          date_fin_provisoire: string | null
           id: number | null
           modified_at: string | null
+          niveau_priorite:
+            | Database["public"]["Enums"]["fiche_action_niveaux_priorite"]
+            | null
           pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
           plans: unknown[] | null
           statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
@@ -23585,6 +23589,10 @@ export interface Database {
       }
       diag:
         | {
+            Args: Record<PropertyKey, never>
+            Returns: string
+          }
+        | {
             Args: {
               msg: string
             }
@@ -23594,10 +23602,6 @@ export interface Database {
             Args: {
               msg: unknown
             }
-            Returns: string
-          }
-        | {
-            Args: Record<PropertyKey, never>
             Returns: string
           }
         | {
@@ -23717,15 +23721,7 @@ export interface Database {
             Args: {
               fiche_action_action: unknown
             }
-            Returns: {
-              collectivite_id: number | null
-              id: number | null
-              modified_at: string | null
-              pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
-              plans: unknown[] | null
-              statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
-              titre: string | null
-            }[]
+            Returns: unknown[]
           }
         | {
             Args: {
@@ -23733,8 +23729,12 @@ export interface Database {
             }
             Returns: {
               collectivite_id: number | null
+              date_fin_provisoire: string | null
               id: number | null
               modified_at: string | null
+              niveau_priorite:
+                | Database["public"]["Enums"]["fiche_action_niveaux_priorite"]
+                | null
               pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
               plans: unknown[] | null
               statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
@@ -23769,8 +23769,12 @@ export interface Database {
         }
         Returns: {
           collectivite_id: number | null
+          date_fin_provisoire: string | null
           id: number | null
           modified_at: string | null
+          niveau_priorite:
+            | Database["public"]["Enums"]["fiche_action_niveaux_priorite"]
+            | null
           pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
           plans: unknown[] | null
           statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
@@ -25388,44 +25392,6 @@ export interface Database {
       time_bucket:
         | {
             Args: {
-              bucket_width: number
-              ts: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              offset: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              offset: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              offset: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
               bucket_width: unknown
               ts: string
             }
@@ -25507,6 +25473,44 @@ export interface Database {
             Args: {
               bucket_width: number
               ts: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              offset: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              offset: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              offset: number
             }
             Returns: number
           }
