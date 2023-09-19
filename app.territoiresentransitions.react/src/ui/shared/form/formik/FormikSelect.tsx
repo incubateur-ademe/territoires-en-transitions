@@ -47,12 +47,12 @@ const SelectField = ({
       errorMessage={isError ? errorMessage : undefined}
     >
       <select
+        {...field}
+        {...props}
+        id={props.label}
         className={classNames('fr-select', {
           'fr-select--error': isError,
         })}
-        id={props.label}
-        {...field}
-        {...props}
       >
         <option value="" disabled hidden>
           Sélectionnez une option
