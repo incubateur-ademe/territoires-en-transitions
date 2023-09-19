@@ -1265,15 +1265,15 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
                       htmlFor="q1-c3"
                     >
                       Non
-                      <button
-                        className="fr-link fr-link--icon-left fr-fi-edit-line fr-ml-3w"
-                        onClick={[Function]}
-                      >
-                        Modifier
-                      </button>
                     </label>
                   </div>
                 </div>
+                <button
+                  className="fr-link fr-link--icon-left fr-icon-edit-line fr-ml-3w fr-mb-2w !max-w-fit"
+                  onClick={[Function]}
+                >
+                  Modifier
+                </button>
               </div>
               <section
                 className="fr-accordion fr-mt-2w"
