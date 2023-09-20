@@ -28,7 +28,7 @@ const Performance = ({
     <>
       {titre && <h2 className="text-center">{titre}</h2>}
 
-      <div className="lg:relative lg:min-h-[480px] mb-6">
+      <div className="lg:relative mb-6">
         {processedText && (
           <div
             className={classNames('w-full rounded-xl bg-[#f5f5fe] p-6', {
