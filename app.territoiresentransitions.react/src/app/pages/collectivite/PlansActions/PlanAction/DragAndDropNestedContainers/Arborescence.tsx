@@ -30,7 +30,11 @@ function Arborescence({plan, axe, isAxePage, isReadonly}: Props) {
   const {mutate: updateAxe} = useDragAxe(axe.id);
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 20,
+      },
+    }),
     useSensor(KeyboardSensor)
   );
 

@@ -1,10 +1,8 @@
 import {createPortal} from 'react-dom';
-import classNames from 'classnames';
 import {DragOverlay, useDraggable} from '@dnd-kit/core';
 
 import FicheActionCard from '../../FicheAction/FicheActionCard';
 import {FicheResume} from '../../FicheAction/data/types';
-import IconDrag from 'ui/icons/IconDrag';
 
 export type FicheDndData = {
   type: 'fiche';
@@ -50,23 +48,13 @@ const Fiche = ({axeId, url, fiche}: Props) => {
           document.body
         )}
       {!active && (
-        <div className="relative group h-full">
-          {/** Drag handle */}
-          <div className="absolute top-2 right-2">
-            <button
-              ref={draggableRef}
-              title="Déplacer"
-              className={classNames('my-auto p-1 cursor-grab', {
-                'hidden group-hover:block bg-white': !isDragging,
-                'hover:!bg-none': isDragging,
-              })}
-              {...listeners}
-              {...attributes}
-            >
-              {!isDragging && <IconDrag />}
-            </button>
-          </div>
-          <FicheActionCard key={fiche.id} ficheAction={fiche} link={url} />
+        <div ref={draggableRef} {...listeners} {...attributes}>
+          <FicheActionCard
+            key={fiche.id}
+            ficheAction={fiche}
+            link={url}
+            isEditable
+          />
         </div>
       )}
     </div>
