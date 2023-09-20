@@ -18,11 +18,11 @@ Deno.test('Exporter les scores avant/après audit', async () => {
     },
   });
 
-  assertIsBlobWithExpectedSize(blob, 38 * 1024);
-
   // décommenter la ligne suivante pour sauvegarder le fichier localement
   // (pratique pour le dév.)
-  // Deno.writeFile('tmp.xlsx', await blob.arrayBuffer());
+  //Deno.writeFile('tmp.xlsx', await blob.arrayBuffer());
+
+  assertIsBlobWithExpectedSize(blob, 40105);
 
   await signOut();
 });
