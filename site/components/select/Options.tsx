@@ -130,12 +130,12 @@ const Option = <T extends string>({
         }
       }}
       role="option"
-      tabIndex={index === activeIndex ? 0 : -1}
+      tabIndex={0}
       aria-selected={
         values?.includes(option.value as T) && index === activeIndex
       }
       className={classNames(
-        'outline-0 focus:bg-[#f6f6f6]',
+        '!outline-0 focus:bg-[#f6f6f6]',
         optionButtonClassname,
       )}
       onClick={() => {
