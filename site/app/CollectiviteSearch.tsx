@@ -24,7 +24,7 @@ const CollectiviteSearch = ({
       <AutocompleteInputSelect
         dsfrButton
         containerWidthMatchButton
-        buttonClassName="shadow-none border-b-2 border-[#000091]"
+        buttonClassName="!shadow-none !border-b-2 !border-[#000091]"
         values={[]}
         options={filteredCollectivites}
         onSelect={values => {
