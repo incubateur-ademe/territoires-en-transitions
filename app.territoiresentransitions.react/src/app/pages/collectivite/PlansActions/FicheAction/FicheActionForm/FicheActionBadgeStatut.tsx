@@ -26,6 +26,7 @@ const FicheActionBadgeStatut = ({className, statut, small}: Props) => {
         {'!text-xs': small},
         statusToColor[statut]
       )}
+      title="Statut"
     >
       {statut}
     </span>

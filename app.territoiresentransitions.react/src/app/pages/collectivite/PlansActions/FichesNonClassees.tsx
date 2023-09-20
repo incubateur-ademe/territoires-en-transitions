@@ -34,6 +34,7 @@ const FichesNonClassees = () => {
                 collectiviteId: f.collectivite_id!,
                 ficheUid: f.id!.toString(),
               })}
+              isEditable
             />
           ))}
         </div>
