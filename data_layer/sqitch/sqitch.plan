@@ -494,3 +494,4 @@ plan_action/plan_action [plan_action/plan_action@v2.60.0] 2023-09-19T08:56:17Z A
 evaluation/thematique_completude [evaluation/thematique_completude@v2.60.0] 2023-09-13T09:28:43Z Amandine Jacquelin <conta@LanceLibre> # Corrige le count de reponse_count_by_thematique
 site/labellisation 2023-09-04T12:46:47Z Florian <florian@derfurth.com> # Ajoute une vue pour la recherche de collectivité sur le site
 site/carto 2023-09-07T14:54:09Z Florian <florian@derfurth.com> # Ajoute la relation geojson
+@v2.62.0 2023-09-20T12:21:18Z Florian <florian@derfurth.com> # Répare le calcul de la complétude des thématique et prépare la prochaine version du site
