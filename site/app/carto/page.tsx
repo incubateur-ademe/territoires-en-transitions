@@ -9,7 +9,7 @@ import CarteCollectivites from './CarteCollectivites';
 export default async function Page() {
   return (
     <div>
-      <h2 className="mt-20">Labellisées</h2>
+      {/* <h2 className="mt-20">Labellisées</h2>
       <CarteCollectivites filtre="labellisees" />
 
       <h2 className="mt-20">Labellisées ECI</h2>
@@ -19,7 +19,7 @@ export default async function Page() {
       <CarteCollectivites filtre="labellisees_cae" />
 
       <h2 className="mt-20">COT</h2>
-      <CarteCollectivites filtre="cot" />
+      <CarteCollectivites filtre="cot" /> */}
     </div>
   );
 }
