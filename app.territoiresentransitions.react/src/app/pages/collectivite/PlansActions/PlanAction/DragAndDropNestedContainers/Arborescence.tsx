@@ -68,11 +68,7 @@ function Arborescence({plan, axe, isAxePage, isReadonly}: Props) {
             Aucune arborescence pour l'instant
           </div>
           {!isReadonly && (
-            <AxeActions
-              isAxePage={isAxePage}
-              planActionId={plan.id}
-              axeId={axe ? axe.id : plan.id}
-            />
+            <AxeActions planActionId={plan.id} axeId={axe ? axe.id : plan.id} />
           )}
         </div>
       )}

@@ -38,7 +38,6 @@ const Axe = ({plan, axe, isAxePage, isReadonly}: Props) => {
   const {mutate: createFiche} = useCreateFicheAction({
     axeId: axe.id,
     planActionId: plan.id,
-    isAxePage,
   });
 
   const {

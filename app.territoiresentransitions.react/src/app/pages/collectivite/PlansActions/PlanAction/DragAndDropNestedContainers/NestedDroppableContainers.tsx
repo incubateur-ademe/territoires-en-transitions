@@ -41,11 +41,7 @@ function NestedDroppableContainers({plan, axe, isAxePage}: Props) {
     <div className="flex flex-col">
       {!collectivite?.readonly && (
         <div className="mb-4">
-          <AxeActions
-            isAxePage={isAxePage}
-            planActionId={plan.id}
-            axeId={axe.id}
-          />
+          <AxeActions planActionId={plan.id} axeId={axe.id} />
         </div>
       )}
       {isDroppable && (
