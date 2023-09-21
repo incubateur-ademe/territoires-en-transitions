@@ -12,11 +12,11 @@ export const useUpdateFicheResume = (axeId?: number) => {
 
   return useMutation(
     async (fiche: FicheResume) => {
-      const {titre, statut} = fiche;
+      const {titre, statut, niveau_priorite, date_fin_provisoire} = fiche;
       await supabaseClient
         .from('fiche_action')
-        .update({titre, statut})
-        .eq('id', fiche.id);
+        .update({titre, statut, niveau_priorite, date_fin_provisoire})
+        .eq('id', fiche.id!);
     },
     {
       onSuccess: () => {
