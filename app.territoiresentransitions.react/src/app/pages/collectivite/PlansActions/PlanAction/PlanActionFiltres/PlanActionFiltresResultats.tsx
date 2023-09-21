@@ -1,5 +1,5 @@
 import {DesactiverLesFiltres} from 'ui/shared/filters/DesactiverLesFiltres';
-import FicheActionCard from '../../FicheAction/FicheActionCard';
+import FicheActionCard from '../../FicheAction/Carte/FicheActionCard';
 
 import {makeCollectivitePlanActionFicheUrl} from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
