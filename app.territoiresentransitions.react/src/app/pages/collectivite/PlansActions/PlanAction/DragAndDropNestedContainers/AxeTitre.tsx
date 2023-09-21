@@ -69,7 +69,7 @@ const AxeTitre = ({planActionId, axe, isOpen, isReadonly}: Props) => {
         'grow mb-0 !px-2 text-left !text-base rounded-none !outline-none !resize-none placeholder:text-gray-900 disabled:pointer-events-none disabled:cursor-pointer disabled:text-gray-900',
         {
           'font-bold': isOpen,
-          'placeholder:text-gray-400 !outline !outline-blue-500': isFocus,
+          'placeholder:!text-gray-400 !outline !outline-blue-500': isFocus,
         }
       )}
       initialValue={axe.nom}
