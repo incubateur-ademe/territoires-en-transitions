@@ -497,3 +497,4 @@ site/carto 2023-09-07T14:54:09Z Florian <florian@derfurth.com> # Ajoute la relat
 @v2.62.0 2023-09-20T12:21:18Z Florian <florian@derfurth.com> # Répare le calcul de la complétude des thématique et prépare la prochaine version du site
 
 indicateur/referentiel [indicateur/referentiel@v2.61.0] 2023-09-20T09:08:07Z Florian <florian@derfurth.com> # Ajoute les résultats importés aux indicateurs dont le résultat est celui d'un autre
+collectivite/identite [collectivite/identite@v2.62.0] 2023-09-21T12:55:05Z Florian <florian@derfurth.com> # Mets à jour les sources des populations
