@@ -31,7 +31,7 @@ jobs:
       - run: earthly +curl-test
       - run: earthly +db-test
       - run: earthly +business-test
-      - run: earthly +api-test --tests 'base droit historique plan_action utilisateur'
+      - run: earthly +api-test --tests 'base droit historique plan_action labellisation utilisateur'
       - run: earthly +deploy-test
       - run: earthly +client-test
 
