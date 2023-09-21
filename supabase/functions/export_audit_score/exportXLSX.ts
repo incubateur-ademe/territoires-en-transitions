@@ -13,10 +13,14 @@ import {
 } from '../_shared/fetchActionsReferentiel.ts';
 import { fetchData, TComparaisonScoreAudit } from './fetchData.ts';
 
+export type TExportArgs = {
+  collectivite_id: number;
+  referentiel: Enums<'referentiel'>;
+};
+
 export const exportXLSX = async (
   supabaseClient: TSupabaseClient,
-  collectivite_id: number,
-  referentiel: Enums<'referentiel'>
+  { collectivite_id, referentiel }: TExportArgs
 ) => {
   // charge les données
   const data = await fetchData(supabaseClient, collectivite_id, referentiel);
