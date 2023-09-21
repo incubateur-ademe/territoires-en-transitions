@@ -10,8 +10,13 @@ import {SelectCollectivite} from './SelectCollectivite';
  * Affiche la nvaigation principale et le sélecteur de collectivité
  */
 export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
-  const {currentCollectivite, ownedCollectivites, modalOpened, setOpenedId} =
-    props;
+  const {
+    currentCollectivite,
+    ownedCollectivites,
+    modalOpened,
+    setOpenedId,
+    auth,
+  } = props;
 
   // enregistre un écouteur d'événements pour fermer un éventuel sous-menu ouvert
   // quand on clique en dehors
@@ -33,7 +38,7 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
   }
 
   // récupère la liste des items à afficher dans le menu
-  const items = makeNavItems(currentCollectivite);
+  const items = makeNavItems(currentCollectivite, auth.user);
 
   return (
     <nav
