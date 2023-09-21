@@ -16,4 +16,5 @@ export const fakeUserData: UserData = {
   role: 'authenticated',
   updated_at: '2022-07-26T12:38:33.382147Z',
   user_metadata: {},
+  isSupport: false,
 };

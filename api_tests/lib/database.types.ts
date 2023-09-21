@@ -245,6 +245,12 @@ export interface Database {
           {
             foreignKeyName: "action_audit_state_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_audit_state_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -252,12 +258,6 @@ export interface Database {
             foreignKeyName: "action_audit_state_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -582,6 +582,12 @@ export interface Database {
           {
             foreignKeyName: "audit_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "audit_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -589,12 +595,6 @@ export interface Database {
             foreignKeyName: "audit_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -916,6 +916,12 @@ export interface Database {
           {
             foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -923,12 +929,6 @@ export interface Database {
             foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -1256,6 +1256,12 @@ export interface Database {
           {
             foreignKeyName: "demande_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "demande_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -1263,12 +1269,6 @@ export interface Database {
             foreignKeyName: "demande_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -1623,6 +1623,12 @@ export interface Database {
           {
             foreignKeyName: "preuve_base_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "preuve_base_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -1630,12 +1636,6 @@ export interface Database {
             foreignKeyName: "preuve_base_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -2192,6 +2192,12 @@ export interface Database {
           {
             foreignKeyName: "action_commentaire_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_commentaire_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -2199,12 +2205,6 @@ export interface Database {
             foreignKeyName: "action_commentaire_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_commentaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -2621,6 +2621,12 @@ export interface Database {
           {
             foreignKeyName: "action_discussion_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_discussion_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -2628,12 +2634,6 @@ export interface Database {
             foreignKeyName: "action_discussion_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -3032,6 +3032,12 @@ export interface Database {
           {
             foreignKeyName: "action_statut_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_statut_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -3039,12 +3045,6 @@ export interface Database {
             foreignKeyName: "action_statut_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -3488,6 +3488,12 @@ export interface Database {
           {
             foreignKeyName: "axe_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "axe_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -3495,12 +3501,6 @@ export interface Database {
             foreignKeyName: "axe_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -3837,6 +3837,12 @@ export interface Database {
           {
             foreignKeyName: "client_scores_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "client_scores_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -3844,12 +3850,6 @@ export interface Database {
             foreignKeyName: "client_scores_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -4156,6 +4156,12 @@ export interface Database {
           {
             foreignKeyName: "client_scores_update_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "client_scores_update_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -4163,12 +4169,6 @@ export interface Database {
             foreignKeyName: "client_scores_update_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_update_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -4499,6 +4499,12 @@ export interface Database {
           {
             foreignKeyName: "collectivite_bucket_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_bucket_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -4506,12 +4512,6 @@ export interface Database {
             foreignKeyName: "collectivite_bucket_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_bucket_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -4818,6 +4818,12 @@ export interface Database {
           {
             foreignKeyName: "collectivite_test_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_test_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -4825,12 +4831,6 @@ export interface Database {
             foreignKeyName: "collectivite_test_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_test_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -5140,6 +5140,12 @@ export interface Database {
           {
             foreignKeyName: "commune_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "commune_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -5147,12 +5153,6 @@ export interface Database {
             foreignKeyName: "commune_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "commune_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -5270,6 +5270,45 @@ export interface Database {
             referencedColumns: ["collectivite_id"]
           }
         ]
+      }
+      commune_pop_legale: {
+        Row: {
+          codarr: string | null
+          codcan: string | null
+          codcom: string | null
+          coddep: string | null
+          codreg: string | null
+          com: string | null
+          pcap: number | null
+          pmun: number | null
+          ptot: number | null
+          reg: string | null
+        }
+        Insert: {
+          codarr?: string | null
+          codcan?: string | null
+          codcom?: string | null
+          coddep?: string | null
+          codreg?: string | null
+          com?: string | null
+          pcap?: number | null
+          pmun?: number | null
+          ptot?: number | null
+          reg?: string | null
+        }
+        Update: {
+          codarr?: string | null
+          codcan?: string | null
+          codcom?: string | null
+          coddep?: string | null
+          codreg?: string | null
+          com?: string | null
+          pcap?: number | null
+          pmun?: number | null
+          ptot?: number | null
+          reg?: string | null
+        }
+        Relationships: []
       }
       confidentialite_crud: {
         Row: {
@@ -5489,6 +5528,12 @@ export interface Database {
           {
             foreignKeyName: "cot_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "cot_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -5496,12 +5541,6 @@ export interface Database {
             foreignKeyName: "cot_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -5789,6 +5828,12 @@ export interface Database {
           {
             foreignKeyName: "cot_signataire_fkey"
             columns: ["signataire"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "cot_signataire_fkey"
+            columns: ["signataire"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -5796,12 +5841,6 @@ export interface Database {
             foreignKeyName: "cot_signataire_fkey"
             columns: ["signataire"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_signataire_fkey"
-            columns: ["signataire"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -6160,6 +6199,12 @@ export interface Database {
           {
             foreignKeyName: "epci_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "epci_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -6167,12 +6212,6 @@ export interface Database {
             foreignKeyName: "epci_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "epci_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -6554,6 +6593,12 @@ export interface Database {
           {
             foreignKeyName: "fiche_action_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "fiche_action_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -6561,12 +6606,6 @@ export interface Database {
             foreignKeyName: "fiche_action_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -7823,6 +7862,12 @@ export interface Database {
           {
             foreignKeyName: "indicateur_objectif_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_objectif_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -7830,12 +7875,6 @@ export interface Database {
             foreignKeyName: "indicateur_objectif_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_objectif_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -8157,6 +8196,12 @@ export interface Database {
           {
             foreignKeyName: "indicateur_objectif_commentaire_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_objectif_commentaire_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -8164,12 +8209,6 @@ export interface Database {
             foreignKeyName: "indicateur_objectif_commentaire_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_objectif_commentaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -8515,6 +8554,12 @@ export interface Database {
           {
             foreignKeyName: "indicateur_perso_objectif_commentaire_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_perso_objectif_commentaire_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -8522,12 +8567,6 @@ export interface Database {
             foreignKeyName: "indicateur_perso_objectif_commentaire_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_perso_objectif_commentaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -8855,6 +8894,12 @@ export interface Database {
           {
             foreignKeyName: "indicateur_perso_resultat_commentaire_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_perso_resultat_commentaire_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -8862,12 +8907,6 @@ export interface Database {
             foreignKeyName: "indicateur_perso_resultat_commentaire_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_perso_resultat_commentaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -9201,6 +9240,12 @@ export interface Database {
           {
             foreignKeyName: "indicateur_personnalise_definition_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_personnalise_definition_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -9208,12 +9253,6 @@ export interface Database {
             foreignKeyName: "indicateur_personnalise_definition_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_personnalise_definition_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -9532,6 +9571,12 @@ export interface Database {
           {
             foreignKeyName: "indicateur_personnalise_objectif_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_personnalise_objectif_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -9539,12 +9584,6 @@ export interface Database {
             foreignKeyName: "indicateur_personnalise_objectif_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_personnalise_objectif_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -9863,6 +9902,12 @@ export interface Database {
           {
             foreignKeyName: "indicateur_personnalise_resultat_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_personnalise_resultat_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -9870,12 +9915,6 @@ export interface Database {
             foreignKeyName: "indicateur_personnalise_resultat_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_personnalise_resultat_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -10194,6 +10233,12 @@ export interface Database {
           {
             foreignKeyName: "indicateur_resultat_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_resultat_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -10201,12 +10246,6 @@ export interface Database {
             foreignKeyName: "indicateur_resultat_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_resultat_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -10528,6 +10567,12 @@ export interface Database {
           {
             foreignKeyName: "indicateur_commentaire_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_commentaire_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -10535,12 +10580,6 @@ export interface Database {
             foreignKeyName: "indicateur_commentaire_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_commentaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -10868,6 +10907,12 @@ export interface Database {
           {
             foreignKeyName: "indicateur_resultat_import_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_resultat_import_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -10875,12 +10920,6 @@ export interface Database {
             foreignKeyName: "indicateur_resultat_import_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_resultat_import_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -11302,6 +11341,12 @@ export interface Database {
           {
             foreignKeyName: "labellisation_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "labellisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -11309,12 +11354,6 @@ export interface Database {
             foreignKeyName: "labellisation_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -11761,6 +11800,12 @@ export interface Database {
           {
             foreignKeyName: "personnalisation_consequence_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "personnalisation_consequence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -11768,12 +11813,6 @@ export interface Database {
             foreignKeyName: "personnalisation_consequence_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personnalisation_consequence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -12324,6 +12363,12 @@ export interface Database {
           {
             foreignKeyName: "preuve_collectivite_id"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "preuve_collectivite_id"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -12331,12 +12376,6 @@ export interface Database {
             foreignKeyName: "preuve_collectivite_id"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -12664,6 +12703,12 @@ export interface Database {
           {
             foreignKeyName: "preuve_collectivite_id"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "preuve_collectivite_id"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -12671,12 +12716,6 @@ export interface Database {
             foreignKeyName: "preuve_collectivite_id"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -13010,6 +13049,12 @@ export interface Database {
           {
             foreignKeyName: "preuve_collectivite_id"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "preuve_collectivite_id"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -13017,12 +13062,6 @@ export interface Database {
             foreignKeyName: "preuve_collectivite_id"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -13362,6 +13401,12 @@ export interface Database {
           {
             foreignKeyName: "preuve_collectivite_id"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "preuve_collectivite_id"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -13369,12 +13414,6 @@ export interface Database {
             foreignKeyName: "preuve_collectivite_id"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -13702,6 +13741,12 @@ export interface Database {
           {
             foreignKeyName: "preuve_collectivite_id"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "preuve_collectivite_id"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -13709,12 +13754,6 @@ export interface Database {
             foreignKeyName: "preuve_collectivite_id"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -14078,6 +14117,12 @@ export interface Database {
           {
             foreignKeyName: "private_collectivite_membre_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "private_collectivite_membre_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -14085,12 +14130,6 @@ export interface Database {
             foreignKeyName: "private_collectivite_membre_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_collectivite_membre_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -14418,6 +14457,12 @@ export interface Database {
           {
             foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -14425,12 +14470,6 @@ export interface Database {
             foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -14920,6 +14959,12 @@ export interface Database {
           {
             foreignKeyName: "reponse_binaire_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "reponse_binaire_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -14927,12 +14972,6 @@ export interface Database {
             foreignKeyName: "reponse_binaire_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_binaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -15260,6 +15299,12 @@ export interface Database {
           {
             foreignKeyName: "reponse_choix_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "reponse_choix_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -15267,12 +15312,6 @@ export interface Database {
             foreignKeyName: "reponse_choix_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_choix_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -15612,6 +15651,12 @@ export interface Database {
           {
             foreignKeyName: "reponse_proportion_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "reponse_proportion_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -15619,12 +15664,6 @@ export interface Database {
             foreignKeyName: "reponse_proportion_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_proportion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -16218,6 +16257,12 @@ export interface Database {
           {
             foreignKeyName: "audit_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "audit_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -16225,12 +16270,6 @@ export interface Database {
             foreignKeyName: "audit_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -16567,6 +16606,12 @@ export interface Database {
           {
             foreignKeyName: "action_discussion_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_discussion_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -16574,12 +16619,6 @@ export interface Database {
             foreignKeyName: "action_discussion_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -16986,6 +17025,12 @@ export interface Database {
           {
             foreignKeyName: "audit_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "audit_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -16993,12 +17038,6 @@ export interface Database {
             foreignKeyName: "audit_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -17329,6 +17368,12 @@ export interface Database {
           {
             foreignKeyName: "audit_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "audit_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -17336,12 +17381,6 @@ export interface Database {
             foreignKeyName: "audit_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -17728,6 +17767,12 @@ export interface Database {
           {
             foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -17735,12 +17780,6 @@ export interface Database {
             foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -18065,6 +18104,12 @@ export interface Database {
           {
             foreignKeyName: "action_statut_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_statut_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -18072,12 +18117,6 @@ export interface Database {
             foreignKeyName: "action_statut_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -18547,6 +18586,12 @@ export interface Database {
           {
             foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -18554,12 +18599,6 @@ export interface Database {
             foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -19002,6 +19041,12 @@ export interface Database {
           {
             foreignKeyName: "fiche_action_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "fiche_action_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -19009,12 +19054,6 @@ export interface Database {
             foreignKeyName: "fiche_action_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -19352,6 +19391,12 @@ export interface Database {
           {
             foreignKeyName: "fiche_action_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "fiche_action_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -19359,12 +19404,6 @@ export interface Database {
             foreignKeyName: "fiche_action_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -19729,6 +19768,12 @@ export interface Database {
           {
             foreignKeyName: "indicateur_resultat_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_resultat_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -19736,12 +19781,6 @@ export interface Database {
             foreignKeyName: "indicateur_resultat_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_resultat_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -20073,6 +20112,12 @@ export interface Database {
           {
             foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -20080,12 +20125,6 @@ export interface Database {
             foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -20428,6 +20467,12 @@ export interface Database {
           {
             foreignKeyName: "axe_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "axe_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -20435,12 +20480,6 @@ export interface Database {
             foreignKeyName: "axe_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -20756,6 +20795,12 @@ export interface Database {
           {
             foreignKeyName: "axe_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "axe_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -20763,12 +20808,6 @@ export interface Database {
             foreignKeyName: "axe_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -21179,6 +21218,12 @@ export interface Database {
           {
             foreignKeyName: "audit_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "audit_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -21186,12 +21231,6 @@ export interface Database {
             foreignKeyName: "audit_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -21519,6 +21558,12 @@ export interface Database {
           {
             foreignKeyName: "labellisation_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "labellisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -21526,12 +21571,6 @@ export interface Database {
             foreignKeyName: "labellisation_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -21841,6 +21880,12 @@ export interface Database {
           {
             foreignKeyName: "demande_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "demande_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -21848,12 +21893,6 @@ export interface Database {
             foreignKeyName: "demande_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -22240,6 +22279,12 @@ export interface Database {
           {
             foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
             columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
+            columns: ["collectivite_id"]
             referencedRelation: "stats_active_real_collectivites"
             referencedColumns: ["collectivite_id"]
           },
@@ -22247,12 +22292,6 @@ export interface Database {
             foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            referencedRelation: "stats_derniere_labellisation"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -22377,6 +22416,50 @@ export interface Database {
           }
         ]
       }
+      site_labellisation: {
+        Row: {
+          active: boolean | null
+          cae_etoiles: number | null
+          cae_obtenue_le: string | null
+          cae_score_programme: number | null
+          cae_score_realise: number | null
+          code_siren_insee: string | null
+          collectivite_id: number | null
+          cot: boolean | null
+          departement_code: string | null
+          departement_name: string | null
+          eci_etoiles: number | null
+          eci_obtenue_le: string | null
+          eci_score_programme: number | null
+          eci_score_realise: number | null
+          engagee: boolean | null
+          labellisee: boolean | null
+          nature_collectivite: string | null
+          nom: string | null
+          population_totale: number | null
+          region_code: string | null
+          region_name: string | null
+          type_collectivite:
+            | Database["public"]["Enums"]["type_collectivite"]
+            | null
+        }
+        Relationships: []
+      }
+      site_region: {
+        Row: {
+          insee: string | null
+          libelle: string | null
+        }
+        Insert: {
+          insee?: string | null
+          libelle?: string | null
+        }
+        Update: {
+          insee?: string | null
+          libelle?: string | null
+        }
+        Relationships: []
+      }
       stats_active_real_collectivites: {
         Row: {
           collectivite_id: number | null
@@ -22417,30 +22500,6 @@ export interface Database {
           actives: number | null
           total: number | null
           type_collectivite: string | null
-        }
-        Relationships: []
-      }
-      stats_derniere_labellisation: {
-        Row: {
-          annee: number | null
-          code_siren_insee: string | null
-          collectivite_id: number | null
-          departement_code: string | null
-          departement_iso_3166: string | null
-          departement_name: string | null
-          etoiles: number | null
-          nature_collectivite: string | null
-          nom: string | null
-          population_totale: number | null
-          referentiel: Database["public"]["Enums"]["referentiel"] | null
-          region_code: string | null
-          region_iso_3166: string | null
-          region_name: string | null
-          score_programme: number | null
-          score_realise: number | null
-          type_collectivite:
-            | Database["public"]["Enums"]["type_collectivite"]
-            | null
         }
         Relationships: []
       }
@@ -23644,19 +23703,19 @@ export interface Database {
       }
       fail:
         | {
-            Args: Record<PropertyKey, never>
-            Returns: string
-          }
-        | {
             Args: {
               "": string
             }
             Returns: string
           }
+        | {
+            Args: Record<PropertyKey, never>
+            Returns: string
+          }
       fiche_resume:
         | {
             Args: {
-              fiche_action_indicateur: unknown
+              fiche_action_action: unknown
             }
             Returns: {
               collectivite_id: number | null
@@ -23670,7 +23729,7 @@ export interface Database {
           }
         | {
             Args: {
-              fiche_action_action: unknown
+              fiche_action_indicateur: unknown
             }
             Returns: {
               collectivite_id: number | null
@@ -24085,6 +24144,19 @@ export interface Database {
         }
         Returns: unknown
       }
+      geojson:
+        | {
+            Args: {
+              site_labellisation: unknown
+            }
+            Returns: Json[]
+          }
+        | {
+            Args: {
+              site_region: unknown
+            }
+            Returns: Json[]
+          }
       get_telemetry_report: {
         Args: Record<PropertyKey, never>
         Returns: Json

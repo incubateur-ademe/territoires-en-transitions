@@ -28,12 +28,12 @@ const COLUMNS: TColumn[] = [
   {
     accessor: 'nom', // la clé pour accéder à la valeur
     Header: 'Statuts', // rendu dans la ligne d'en-tête
-    Cell: CellAction, // rendu d'une cellule
+    Cell: CellAction as any, // rendu d'une cellule
     width: '100%',
   },
   {
     accessor: 'avancement',
-    Header: FiltreStatut,
+    Header: FiltreStatut as any,
     Cell: CellStatut,
     width: 185,
   },

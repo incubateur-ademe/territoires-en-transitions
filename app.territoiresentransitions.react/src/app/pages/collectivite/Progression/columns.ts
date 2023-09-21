@@ -1,4 +1,4 @@
-import {Column} from 'react-table';
+import {CellProps, Column} from 'react-table';
 import {CellAction} from '../ReferentielTable/CellAction';
 import {CellPercent, CellPoints} from '../AidePriorisation/Cells';
 import {makeFiltrePourcentage} from '../AidePriorisation/FiltrePourcentage';
@@ -11,18 +11,18 @@ export const columns: TColumn[] = [
   {
     accessor: 'nom', // la clé pour accéder à la valeur
     Header: 'Actions', // rendu dans la ligne d'en-tête
-    Cell: CellAction, // rendu d'une cellule
+    Cell: CellAction as any, // rendu d'une cellule
     width: '100%',
   },
   {
     accessor: 'score_realise',
-    Header: makeFiltrePourcentage('score_realise', '% Réalisé'),
+    Header: makeFiltrePourcentage('score_realise', '% Réalisé') as any,
     Cell: CellPercent,
     width: 120,
   },
   {
     accessor: 'score_programme',
-    Header: makeFiltrePourcentage('score_programme', '% Programmé'),
+    Header: makeFiltrePourcentage('score_programme', '% Programmé') as any,
     Cell: CellPercent,
     width: 128,
   },
@@ -31,19 +31,22 @@ export const columns: TColumn[] = [
     Header: makeFiltrePourcentage(
       'score_realise_plus_programme',
       '% Réa. + Prog.'
-    ),
+    ) as any,
     Cell: CellPercent,
     width: 125,
   },
   {
     accessor: 'score_pas_fait',
-    Header: makeFiltrePourcentage('score_pas_fait', '% Pas fait'),
+    Header: makeFiltrePourcentage('score_pas_fait', '% Pas fait') as any,
     Cell: CellPercent,
     width: 125,
   },
   {
     accessor: 'score_non_renseigne',
-    Header: makeFiltrePourcentage('score_non_renseigne', '% Non renseigné'),
+    Header: makeFiltrePourcentage(
+      'score_non_renseigne',
+      '% Non renseigné'
+    ) as any,
     Cell: CellPercent,
     width: 125,
   },

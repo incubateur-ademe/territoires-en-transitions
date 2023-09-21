@@ -32,7 +32,7 @@ class RpcCache {
     const queryResponse = await this.promises[key];
     delete this.promises[key];
 
-    this.cache[key] = queryResponse;
+    this.cache[key] = queryResponse as PostgrestResponse<unknown>;
 
     return this.cache[key];
   }

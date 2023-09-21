@@ -1,5 +1,6 @@
 'use client';
 
+import Section from '@components/sections/Section';
 import {useState} from 'react';
 import RegionAndDeptFilters from './RegionAndDeptFilters';
 
@@ -14,10 +15,14 @@ const StatsLayout = ({children}: {children: React.ReactNode}) => {
 
   return (
     <>
-      <section className={`fr-container fr-mb-4w`}>
-        <h1 className={'fr-mt-4w'}>Statistiques{title ? ` - ${title}` : ''}</h1>
+      <Section
+        className="flex-col"
+        containerClassName="!pb-0"
+        customBackground="#fff"
+      >
+        <h2>Statistiques{title ? ` - ${title}` : ''}</h2>
         <RegionAndDeptFilters onChange={setTitle} />
-      </section>
+      </Section>
       {children}
     </>
   );

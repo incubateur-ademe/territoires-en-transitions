@@ -29,18 +29,18 @@ const COLUMNS: TColumn[] = [
   {
     accessor: 'nom', // la clé pour accéder à la valeur
     Header: 'Sous-actions', // rendu dans la ligne d'en-tête
-    Cell: CellAction, // rendu d'une cellule
+    Cell: CellAction as any, // rendu d'une cellule
     width: '100%',
   },
   {
     accessor: 'ordre_du_jour',
-    Header: FiltreOrdreDuJour,
+    Header: FiltreOrdreDuJour as any,
     Cell: CellCheckmark,
     width: 180,
   },
   {
     accessor: 'statut',
-    Header: FiltreAuditStatut,
+    Header: FiltreAuditStatut as any,
     Cell: CellAuditStatut,
     width: 165,
   },

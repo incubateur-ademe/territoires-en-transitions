@@ -1,5 +1,5 @@
 {
-  "extends": ["react-app", "react-app/jest"],
+  "extends": ["react-app", "react-app/jest", "plugin:storybook/recommended"],
   "overrides": [
     {
       "files": ["**/*.ts?(x)"],
@@ -13,14 +13,6 @@
       "files": ["**/*.stories.ts?(x)"],
       "rules": {
         "import/no-anonymous-default-export": "off"
-      }
-    },
-    {
-      "files": ["src/types/database.types.ts"],
-      "plugins": ["typescript-sort-keys"],
-      "rules": {
-        "typescript-sort-keys/interface": "error",
-        "typescript-sort-keys/string-enum": "error"
       }
     }
   ]

@@ -41,7 +41,6 @@ Fonctionnalité: Modifier l'état d'avancement et visualiser l'évolution des sc
 
   # scénario désactivé en raison d'un exception en mode headless
   # Ref: https://github.com/cypress-io/cypress/issues/22113
-  @skip
   Scénario: Modifier l'état d'avancement, visualiser et filtrer l'historique
     Dans ce scénario, on teste la mise à jour de l'historique lorsqu'on renseigne un nouvel état d'avancement.
     On teste aussi le comportement des filtres de l'historique
@@ -53,7 +52,13 @@ Fonctionnalité: Modifier l'état d'avancement et visualiser l'évolution des sc
     Alors aucun historique n'est affiché
 
     Quand je visite le sous-axe "1.1" du référentiel "eci" de la collectivité "2"
-    Et que j'assigne la valeur "Fait" à l'état d'avancement de la tâche "eci_1.1.1.1"
+    Et que je déplie la sous-action "1.1.1" du suivi de l'action
+    Et que je déplie le panneau Tâches de la sous-action "1.1.1"
+    Et que je déplie la sous-action "1.1.2" du suivi de l'action
+    Et que je déplie le panneau Tâches de la sous-action "1.1.2"
+    Alors l'état d'avancement des tâches est éditable
+
+    Quand j'assigne la valeur "Fait" à l'état d'avancement de la tâche "eci_1.1.1.1"
     Et que je clique sur l'onglet "Historique"
     Alors l'historique contient 1 entrée
     Et l'entrée 1 de l'historique est affichée avec les valeurs suivantes :
@@ -72,6 +77,8 @@ Fonctionnalité: Modifier l'état d'avancement et visualiser l'évolution des sc
     Alors le détail de l'entrée 1 de l'historique n'est pas affiché
 
     Quand je clique sur l'onglet "Suivi de l'action"
+    Et que je déplie la sous-action "1.1.1" du suivi de l'action
+    Et que je déplie le panneau Tâches de la sous-action "1.1.1"
     Et que je saisi "mon commentaire" dans le champ "Précisions" de la tâche "eci_1.1.1.1"
     Et que je clique sur l'onglet "Historique"
     Alors l'historique contient 2 entrées
@@ -141,9 +148,22 @@ Fonctionnalité: Modifier l'état d'avancement et visualiser l'évolution des sc
       | ajouter à l'ordre du jour       | décoché   |            |
       | ajouter à l'ordre du jour       | activé    |            |
 
+    Quand je clique sur la case "ajouter à l'ordre du jour"
+    Alors la page vérifie les conditions suivantes :
+      | Elément                   | Condition | Valeur     |
+      | état audit action         | contient  | Non audité |
+      | avis audit                | contient  |            |
+      | ajouter à l'ordre du jour | coché     |            |
+
+    Quand je saisi la valeur "mon commentaire d'audit" dans le champ "avis audit"
+    Alors la page vérifie les conditions suivantes :
+      | Elément                   | Condition | Valeur                  |
+      | état audit action         | contient  | Non audité              |
+      | avis audit                | contient  | mon commentaire d'audit |
+      | ajouter à l'ordre du jour | coché     |                         |
+
+
     Quand je sélectionne l'option "en_cours" dans la liste déroulante "état audit action"
-    Et que je saisi la valeur "mon commentaire d'audit" dans le champ "avis audit"
-    Et que je clique sur la case "ajouter à l'ordre du jour"
     Alors la page vérifie les conditions suivantes :
       | Elément                   | Condition | Valeur                  |
       | état audit action         | contient  | Audit en cours          |

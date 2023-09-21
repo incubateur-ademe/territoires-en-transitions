@@ -1,11 +1,9 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import {defaults} from 'react-chartjs-2';
+import {createRoot} from 'react-dom/client';
 import * as Sentry from '@sentry/react';
 import {App} from 'app/App';
 import {ENV} from 'environmentVariables';
-
 import 'css';
+import React from 'react';
 
 // traçage des perf. et erreurs
 if (ENV.sentry_dsn) {
@@ -23,12 +21,10 @@ if (ENV.sentry_dsn) {
   });
 }
 
-// typo par défaut pour les graphiques
-defaults.font = {...defaults.font, family: 'Marianne', size: 14};
-
-ReactDOM.render(
+const container = document.getElementById('root');
+const root = createRoot(container!);
+root.render(
   <React.StrictMode>
     <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+  </React.StrictMode>
 );

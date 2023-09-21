@@ -2,7 +2,6 @@
 
 exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels Augmente 1`] = `
 <div
-  className="flex items-center"
   data-test="PointsPotentiels"
 >
   <div
@@ -29,7 +28,6 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels 
 
 exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels Desactive 1`] = `
 <div
-  className="flex items-center"
   data-test="PointsPotentiels"
 >
   <div
@@ -51,19 +49,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels 
       Potentiel réduit : 0 point
     </div>
   </div>
-  <a
-    className="fr-link fr-link--icon-left fr-icon-settings-5-line fr-ml-2w fr-text--sm"
-    href="/"
-    onClick={[Function]}
-  >
-    Personnaliser
-  </a>
 </div>
 `;
 
 exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels Non Personnalise 1`] = `
 <div
-  className="flex items-center"
   data-test="PointsPotentiels"
 >
   <div
@@ -90,7 +80,6 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels 
 
 exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels Personnalise Et Editable 1`] = `
 <div
-  className="flex items-center"
   data-test="PointsPotentiels"
 >
   <div
@@ -112,19 +101,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels 
       Potentiel réduit : 3,3 points
     </div>
   </div>
-  <a
-    className="fr-link fr-link--icon-left fr-icon-settings-5-line fr-ml-2w fr-text--sm"
-    href="/"
-    onClick={[Function]}
-  >
-    Personnaliser
-  </a>
 </div>
 `;
 
 exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels Personnalise Score Zero 1`] = `
 <div
-  className="flex items-center"
   data-test="PointsPotentiels"
 >
   <div
@@ -146,19 +127,11 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels 
       Potentiel réduit : 0 point
     </div>
   </div>
-  <a
-    className="fr-link fr-link--icon-left fr-icon-settings-5-line fr-ml-2w fr-text--sm"
-    href="/"
-    onClick={[Function]}
-  >
-    Personnaliser
-  </a>
 </div>
 `;
 
 exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels Reduit 1`] = `
 <div
-  className="flex items-center"
   data-test="PointsPotentiels"
 >
   <div
@@ -185,7 +158,6 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels 
 
 exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PointsPotentiels Reduit Deux Digits 1`] = `
 <div
-  className="flex items-center"
   data-test="PointsPotentiels"
 >
   <div

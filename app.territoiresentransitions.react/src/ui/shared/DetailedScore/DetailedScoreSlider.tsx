@@ -1,6 +1,6 @@
-import {ChangeEvent, useState} from 'react';
-import SliderBase from '@material-ui/core/Slider';
-import {withStyles} from '@material-ui/core/styles';
+import {useState} from 'react';
+import SliderBase from '@mui/material/Slider';
+import {withStyles} from '@mui/styles';
 import {actionAvancementColors} from 'app/theme';
 import TagFilters from '../filters/TagFilters';
 
@@ -111,10 +111,7 @@ export const DetailedScoreSlider = (props: TSliderProps) => {
   const [done, scheduled, notDone] = sliderValuesToAvancement(currentValue);
 
   // met à jour les valeurs courantes lorsque les curseurs sont bougés
-  const handleChange = (
-    e: ChangeEvent<{}> | null,
-    newValue: number | number[]
-  ) => {
+  const handleChange = (e: Event | null, newValue: number | number[]) => {
     onChange(
       sliderValuesToAvancement(newValue as SliderValues).map(
         v => v / 100
@@ -152,7 +149,7 @@ export const DetailedScoreSlider = (props: TSliderProps) => {
         <div
           className="absolute"
           style={{
-            top: 9,
+            top: 0,
             left: 0,
             width: `${done}%`,
             height: TRACK_HEIGHT,
@@ -163,7 +160,7 @@ export const DetailedScoreSlider = (props: TSliderProps) => {
         <div
           className="absolute"
           style={{
-            top: 9,
+            top: 0,
             left: `${done}%`,
             width: `${scheduled}%`,
             height: TRACK_HEIGHT,
@@ -173,7 +170,7 @@ export const DetailedScoreSlider = (props: TSliderProps) => {
         <div
           className="absolute"
           style={{
-            top: 9,
+            top: 0,
             left: `${done + scheduled}%`,
             width: `${notDone}%`,
             height: TRACK_HEIGHT,

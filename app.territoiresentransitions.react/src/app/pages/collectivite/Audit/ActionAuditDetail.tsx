@@ -14,7 +14,7 @@ export type TActionAuditDetailProps = {
 export type TActionAuditDetailBaseProps = {
   auditStatut: TActionAuditStatut;
   readonly: boolean;
-  onChange: (data: {avis: string} | {ordre_du_jour: boolean}) => void;
+  onChange: (data: {avis: string; ordre_du_jour: boolean}) => void;
 };
 
 /**
@@ -39,7 +39,9 @@ export const ActionAuditDetailBase = (props: TActionAuditDetailBaseProps) => {
           onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) =>
             setAvis(event.currentTarget.value)
           }
-          onBlur={() => avis.trim() !== avisInitial && onChange({avis})}
+          onBlur={() => {
+            onChange({...auditStatut, avis: avis.trim()});
+          }}
           disabled={readonly}
         />
       </FormField>
@@ -50,9 +52,12 @@ export const ActionAuditDetailBase = (props: TActionAuditDetailBaseProps) => {
           name="ordre_du_jour"
           checked={ordre_du_jour}
           disabled={readonly}
-          onChange={(evt: ChangeEvent<HTMLInputElement>) =>
-            onChange({ordre_du_jour: evt.target.checked})
-          }
+          onChange={(evt: ChangeEvent<HTMLInputElement>) => {
+            onChange({
+              avis,
+              ordre_du_jour: evt.currentTarget.checked,
+            });
+          }}
         />
         <label htmlFor="ordre_du_jour">
           Ajouter cette action à l’ordre du jour de la séance d’audit

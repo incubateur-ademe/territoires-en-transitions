@@ -54,27 +54,29 @@ const InputField = ({field, form, ...props}: FormikInputProps & FieldProps) => {
     >
       {inputType === 'text' && (
         <input
+          {...field}
+          {...props}
           id={field.name}
           type={inputType}
           className={classNames('fr-input', {'fr-input--error': isError})}
           maxLength={props.maxLength}
           onKeyDown={preventSubmit}
-          {...field}
-          {...props}
         />
       )}
       {inputType === 'password' && (
         <input
+          {...field}
+          {...props}
           id={field.name}
           type={inputType}
           className={classNames('fr-input', {'fr-input--error': isError})}
           maxLength={props.maxLength}
-          {...field}
-          {...props}
         />
       )}
       {inputType === 'area' && (
         <Textarea
+          {...field}
+          {...props}
           id={field.name}
           className={classNames('fr-input !outline-none', {
             'fr-input--error': isError,
@@ -82,8 +84,6 @@ const InputField = ({field, form, ...props}: FormikInputProps & FieldProps) => {
           onInputChange={() => null}
           maxLength={props.maxLength}
           minHeight={props.minHeight ?? '4rem'}
-          {...field}
-          {...props}
         />
       )}
     </FormField>

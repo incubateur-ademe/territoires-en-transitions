@@ -1,7 +1,6 @@
 import {Link} from 'react-router-dom';
 import {makeCollectiviteActionUrl} from 'app/paths';
 import {ActionReferentielDescription} from 'ui/referentiels/ActionReferentielDescription';
-import {ArrowNarrowRightIcon} from '@heroicons/react/solid';
 import {ActionReferentielDisplayTitle} from 'ui/referentiels/ActionReferentielDisplayTitle';
 import {referentielId} from 'utils/actions';
 import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
@@ -31,7 +30,7 @@ export const ActionReferentielLinkCard = ({
             className="flex flex-row justify-between items-center"
           >
             <ActionReferentielDisplayTitle action={action} />
-            <ArrowNarrowRightIcon className="w-5 h-5" />
+            <div className="flex fr-icon-arrow-right-line before:!w-5 before:!h-5" />
           </Link>
           <ActionReferentielDescription action={action} />
         </div>

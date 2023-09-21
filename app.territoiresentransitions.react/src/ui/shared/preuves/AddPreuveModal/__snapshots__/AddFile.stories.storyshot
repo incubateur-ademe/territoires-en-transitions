@@ -35,7 +35,6 @@ exports[`Storyshots ui/shared/preuves/AddPreuveModal/AddFile Exemple 1 1`] = `
         onChange={[Function]}
         type="file"
       />
-      
     </div>
     <div
       className="pt-2 overflow-y-auto max-h-[220px]"

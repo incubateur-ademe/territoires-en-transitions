@@ -27,7 +27,7 @@ export type TColumn = Column<ActionReferentiel>;
 const COLUMNS: TColumn[] = [
   {
     accessor: 'nom', // la clé pour accéder à la valeur,
-    Cell: CellAction, // rendu d'une cellule
+    Cell: CellAction as any, // rendu d'une cellule
     width: '100%',
   },
 ];

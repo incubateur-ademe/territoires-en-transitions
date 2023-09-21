@@ -73,9 +73,9 @@ const MenuUtilisateurBtn = forwardRef(
     <div ref={ref} {...props}>
       <button
         data-test="connectedMenu"
-        className={`user-menu fr-btn fr-icon-account-${
-          isUserPath ? 'fill' : 'line'
-        }`}
+        className={`user-menu fr-btn fr-icon-${
+          user.isSupport ? 'customer-service' : 'account'
+        }-${isUserPath ? 'fill' : 'line'}`}
         style={{maxWidth: '15rem'}}
         aria-expanded={isOpen}
       >

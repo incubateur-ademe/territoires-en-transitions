@@ -9,7 +9,7 @@ import {TIndicateurDefinition} from './types';
  * Charge la liste des fiches action liées à un indicateur
  */
 export const useFichesActionLiees = (definition: TIndicateurDefinition) => {
-  const collectivite_id = useCollectiviteId();
+  const collectivite_id = useCollectiviteId()!;
 
   const {id, isPerso} = definition;
 

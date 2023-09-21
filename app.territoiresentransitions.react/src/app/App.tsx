@@ -8,7 +8,7 @@ import Home from 'app/pages/Home';
 import {Redirector} from 'app/Redirector';
 import {Toasters} from 'app/Toasters';
 import {ScrollToTopOnPageChange} from 'app/ScrollToTopOnPageChange';
-import {createTheme, MuiThemeProvider} from '@material-ui/core';
+import {createTheme, ThemeProvider} from '@mui/material/styles';
 
 import {allCollectivitesPath, authBasePath, profilPath} from 'app/paths';
 import {ToutesLesCollectivitesPage} from 'app/pages/ToutesLesCollectivites/ToutesLesCollectivitesPage';
@@ -33,7 +33,7 @@ export const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <MuiThemeProvider theme={theme}>
+        <ThemeProvider theme={theme}>
           <ReactQueryDevtools initialIsOpen={false} />
           <Router>
             <ScoreListenerProvider>
@@ -65,7 +65,7 @@ export const App = () => {
               </Layout>
             </ScoreListenerProvider>
           </Router>
-        </MuiThemeProvider>
+        </ThemeProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

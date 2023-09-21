@@ -11,9 +11,8 @@ import {
   Placement,
   autoUpdate,
   size,
+  OffsetOptions,
 } from '@floating-ui/react';
-
-import {Options} from '@floating-ui/core/src/middleware/offset';
 
 type DropdownFloaterProps = {
   children: JSX.Element;
@@ -26,8 +25,7 @@ type DropdownFloaterProps = {
   /** Pour que la largeur des options soit égale au bouton d'ouverture. Défaut `false` */
   containerWidthMatchButton?: boolean;
   /** Placement offset */
-  offsetValue?: Options;
-  // offsetValue?: number;
+  offsetValue?: OffsetOptions;
   /** z-index */
   zIndex?: number;
   'data-test'?: string;

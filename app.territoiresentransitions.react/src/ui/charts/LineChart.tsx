@@ -27,7 +27,7 @@ const LineChart = (props: LineChartProps) => {
       }}
       yScale={{
         type: 'linear',
-        min: 'auto',
+        min: 0,
         max: 'auto',
       }}
       // on interpole la ligne de façon bien passer sur les points

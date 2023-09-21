@@ -16,5 +16,5 @@ export const formatReponseValue = (
   if (type === 'proportion') {
     return toPercentString(value as number);
   }
-  return value;
+  return value as string;
 };

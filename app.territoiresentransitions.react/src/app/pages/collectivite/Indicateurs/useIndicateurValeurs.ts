@@ -42,7 +42,7 @@ export const useIndicateurValeurs = (
         )
         .not('valeur', 'is', null)
         .order('annee', {ascending: false})
-        .returns<TIndicateurValeur>();
+        .returns<TIndicateurValeur[]>();
 
       const {data} = await query;
       return filtreImportOuResultat(data);
@@ -93,11 +93,12 @@ const nombreIndicateursRemplis = (
   liste: TIndicateurReferentielDefinition[],
   indicateursRemplis: (string | number)[] | undefined
 ) =>
-  indicateursRemplis?.length ? liste.reduce(
-    (count, d) =>
-      count + (indicateursRemplis.includes(d.id) ? 1 : 0),
-    0
-  ) : 0;
+  indicateursRemplis?.length
+    ? liste.reduce(
+        (count, d) => count + (indicateursRemplis.includes(d.id) ? 1 : 0),
+        0
+      )
+    : 0;
 
 /** Charge les valeurs et les commentaires associées à un indicateur (pour les tableaux) */
 export const useIndicateurValeursEtCommentaires = ({
@@ -132,7 +133,7 @@ export const useIndicateurValeursEtCommentaires = ({
         query.in('type', ['resultat', 'import']);
       }
 
-      const {data} = await query.returns<TIndicateurValeurEtCommentaires>();
+      const {data} = await query.returns<TIndicateurValeurEtCommentaires[]>();
       return filtreImportOuResultat(data);
     }
   );

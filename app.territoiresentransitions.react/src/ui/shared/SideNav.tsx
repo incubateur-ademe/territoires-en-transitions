@@ -34,10 +34,7 @@ const SideNav = ({links}: Props) => {
               return <Section key={element.link} section={element} />;
             } else {
               return (
-                <li
-                  key={element.link}
-                  className="fr-sidemnu__item fr-sidemenu__item--active"
-                >
+                <li key={element.link} className="fr-sidemenu__item">
                   <NavLink
                     className="fr-sidemenu__link"
                     to={element.link}
@@ -68,7 +65,7 @@ const Section = ({section}: SectionProps) => {
   return (
     <li key={section.link} data-test="SideNav-section">
       <div className="flex items-start w-full">
-        <div className="w-full fr-sidemnu__item fr-sidemenu__item--active">
+        <div className="w-full fr-sidemenu__item">
           <NavLink
             data-test="SideNav-section-toggle-button"
             title="Ouvrir la section"
@@ -96,10 +93,7 @@ const Section = ({section}: SectionProps) => {
           className="mx-4 fr-sidemenu__list"
         >
           {section.enfants.map(enfant => (
-            <li
-              key={enfant.link}
-              className="fr-sidemnu__item fr-sidemenu__item--active"
-            >
+            <li key={enfant.link} className="fr-sidemenu__item">
               <NavLink
                 className="fr-sidemenu__link"
                 to={enfant.link}

@@ -89,7 +89,18 @@ seed:
     RUN docker run --rm \
         --network $network \
         --env PG_URL=$DB_URL \
-        seed:latest deploy --mode change
+        seed:latest
+
+seed-geojson:
+    ARG --required DB_URL
+    ARG network=host
+    LOCALLY
+    RUN earthly +seed-build
+    RUN docker run --rm \
+        --network $network \
+        --env PG_URL=$DB_URL \
+        --entrypoint sh \
+        seed:latest ./seed/geojson.sh
 
 load-json-build:
     FROM curlimages/curl:8.1.0
@@ -122,6 +133,16 @@ update-scores:
         --network $network \
         psql:latest $DB_URL -v ON_ERROR_STOP=1 \
         -c "select evaluation.update_late_collectivite_scores($count);"
+
+refresh-views:
+    ARG --required DB_URL
+    ARG network=host
+    LOCALLY
+    RUN earthly +psql-build
+    RUN docker run --rm \
+        --network $network \
+        psql:latest $DB_URL -v ON_ERROR_STOP=1 \
+        -c "refresh materialized view stats.collectivite; refresh materialized view site_labellisation;"
 
 business-build:
     FROM python:3.10.10
@@ -278,7 +299,7 @@ api-test:
     ARG --required SERVICE_ROLE_KEY
     ARG --required API_URL
     ARG network=host
-    ARG tests='base droit historique plan_action scoring utilisateur'
+    ARG tests='base droit historique plan_action scoring labellisation utilisateur'
     LOCALLY
     RUN earthly +api-test-build
     FOR test IN $tests
@@ -309,7 +330,6 @@ gen-types:
     END
     RUN cp ./app.territoiresentransitions.react/src/types/database.types.ts ./api_tests/lib/database.types.ts
     RUN cp ./app.territoiresentransitions.react/src/types/database.types.ts ./site/app/database.types.ts
-    RUN cp ./app.territoiresentransitions.react/src/types/database.types.ts ./supabase/functions/_shared/database.types.ts
 
 setup-env:
     LOCALLY
@@ -392,9 +412,7 @@ dev:
         RUN earthly +client
     END
 
-strapi-dev:
-    LOCALLY
-    RUN cd strapi && npm install && npm run develop
+    RUN earthly +refresh-views
 
 stop:
     LOCALLY

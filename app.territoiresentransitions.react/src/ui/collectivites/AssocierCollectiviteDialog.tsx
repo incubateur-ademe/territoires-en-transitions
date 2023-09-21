@@ -1,4 +1,4 @@
-import {RejoindreOuActiverDialogContent} from 'app/pages/collectivite/RejoindreCetteCollectiviteDialog/RejoindreOuActiverDialogContent';
+import {RejoindreOuActiverDialogContent} from 'app/pages/collectivite/RejoindreCetteCollectiviteContent/RejoindreOuActiverDialogContent';
 import {ReferentContact} from 'core-logic/api/procedures/collectiviteProcedures';
 import {TNomCollectivite} from 'types/alias';
 import React, {useEffect} from 'react';

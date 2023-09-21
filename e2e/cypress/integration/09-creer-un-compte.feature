@@ -79,8 +79,11 @@ Fonctionnalité: Créer un compte
       | Confirmation de création de compte | visible   |
       | footer                             | présent   |
 
-    # essai de création du compte avec le même email mais une casse différente
     Quand  je clique sur le bouton "se connecter" de la page "confirmation de creation de compte"
+    Alors la page "Toutes les collectivités" est visible
+
+    # essai de création du compte avec le même email mais une casse différente
+    Quand je me déconnecte
     Et que je clique sur le bouton "Créer un compte" du "header"
     Et que je remplis le "formulaire de création de compte" avec les valeurs suivantes :
       | Champ  | Valeur        |

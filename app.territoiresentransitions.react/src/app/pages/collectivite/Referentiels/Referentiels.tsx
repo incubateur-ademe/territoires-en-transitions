@@ -2,7 +2,7 @@ import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
 import {useReferentielDownToAction} from 'core-logic/hooks/referentiel';
 import {ExpandableAction} from 'ui/shared/actions/ExpandableAction';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {useExportScores} from './export/useExportScores';
+import {useExportScore} from './useExportScore';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {useReferentielId} from 'core-logic/hooks/params';
 import {Referentiel} from 'types/litterals';
@@ -27,7 +27,7 @@ export const ActionsReferentiels = () => {
   const referentiel = actions.find(a => a.type === 'referentiel')!;
 
   const collectivite = useCurrentCollectivite();
-  const {exportScores, isLoading} = useExportScores(
+  const {mutate: exportScore, isLoading} = useExportScore(
     referentielId,
     collectivite
   );
@@ -47,7 +47,7 @@ export const ActionsReferentiels = () => {
         className="fr-btn fr-btn--icon-left fr-fi-download-line fr-mt-6w"
         disabled={isLoading}
         onClick={() => {
-          exportScores();
+          exportScore();
         }}
       >
         Exporter

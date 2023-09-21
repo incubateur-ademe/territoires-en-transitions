@@ -1,5 +1,6 @@
 'use client';
 
+import Section from '@components/sections/Section';
 import ActiveUsers from './ActiveUsers';
 import CarteEpciParDepartement from './CarteEpciParDepartement';
 import CollectiviteActivesEtTotalParType from './CollectiviteActivesEtTotalParType';
@@ -31,8 +32,8 @@ const StatisticsDisplay = ({
   const nationalStats: boolean = !regionCode && !departmentCode;
 
   return (
-    <div className="fr-container-fluid">
-      <section className="fr-container">
+    <>
+      <Section className="flex-col" customBackground="#fff">
         {nationalStats ? (
           <p>
             Territoires en Transitions est une plateforme publique gratuite et
@@ -95,9 +96,9 @@ const StatisticsDisplay = ({
             />
           </div>
         </div>
-      </section>
+      </Section>
 
-      <section className="fr-container">
+      <Section className="flex-col" customBackground="#fff">
         <SectionHead>
           Outiller les personnes chargées de la planification écologique
         </SectionHead>
@@ -116,9 +117,9 @@ const StatisticsDisplay = ({
           region={regionCode}
           department={departmentCode}
         />
-      </section>
+      </Section>
 
-      <section className="fr-container">
+      <Section className="flex-col" customBackground="#fff">
         <SectionHead>
           Connaître l’état des lieux des forces et faiblesses de chaque
           territoire
@@ -130,9 +131,9 @@ const StatisticsDisplay = ({
           Climat, Air, Energie et Economie Circulaire de l’ADEME.
         </p>
         <EtatDesLieux region={regionCode} department={departmentCode} />
-      </section>
+      </Section>
 
-      <section className="fr-container">
+      <Section className="flex-col" customBackground="#fff">
         <SectionHead>
           Planifier et prioriser les actions en faveur de la transition
           écologique
@@ -147,9 +148,9 @@ const StatisticsDisplay = ({
           plans.
         </p>
         <EvolutionPlansAction region={regionCode} department={departmentCode} />
-      </section>
+      </Section>
 
-      <section className="fr-container">
+      <Section className="flex-col" customBackground="#fff">
         <SectionHead>
           Suivre les indicateurs clés de réalisation et d’impact de la
           transition écologique
@@ -160,9 +161,9 @@ const StatisticsDisplay = ({
           d’impact de référence ou personnalisés.
         </p>
         <EvolutionIndicateurs region={regionCode} department={departmentCode} />
-      </section>
+      </Section>
 
-      <section className="fr-container">
+      <Section className="flex-col" customBackground="#fff">
         <SectionHead>
           Partager et valoriser la progression de chaque territoire
         </SectionHead>
@@ -198,8 +199,8 @@ const StatisticsDisplay = ({
             />
           </div>
         </div>
-      </section>
-    </div>
+      </Section>
+    </>
   );
 };
 

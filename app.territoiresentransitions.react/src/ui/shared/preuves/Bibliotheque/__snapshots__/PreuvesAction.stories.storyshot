@@ -352,7 +352,6 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
                 />
               </div>
             </div>
-            
             <p
               className="text-xs fr-text-mention--grey mb-1 pl-2"
             >
@@ -398,7 +397,6 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
             1.1.4
             )
           </span>
-          
         </span>
         <div
           className="flex flex-col gap-3"
@@ -612,7 +610,6 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
             />
           </div>
         </div>
-        
         <p
           className="text-xs fr-text-mention--grey mb-1 pl-2"
         >
@@ -899,7 +896,6 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
                 />
               </div>
             </div>
-            
             <p
               className="text-xs fr-text-mention--grey mb-1 pl-2"
             >
@@ -945,7 +941,6 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
             1.1.4
             )
           </span>
-          
         </span>
         <div
           className="flex flex-col gap-3"

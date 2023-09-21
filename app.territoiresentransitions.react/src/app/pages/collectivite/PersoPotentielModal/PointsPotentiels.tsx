@@ -1,38 +1,18 @@
-import {MouseEventHandler} from 'react';
-import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {ActionScore} from 'types/ClientScore';
 import {toLocaleFixed} from 'utils/toFixed';
 import {TweenText} from 'ui/shared/TweenText';
-import AnchorAsButton from 'ui/buttons/AnchorAsButton';
 
 export type TPointsPotentielsProps = {
-  /** Définition de l'action */
-  actionDef: ActionDefinitionSummary;
   /** Détail du score associé à l'action */
   actionScore: ActionScore;
-  /** Fonction appelée quand le bouton Personnaliser est cliqué (le bouton ne
-   * s'affiche pas si absent) */
-  onEdit?: MouseEventHandler;
 };
 
 /** Affiche le potentiel de points (normal ou réduit) ainsi qu'un bouton
  * "Personnaliser" si nécessaire */
-export const PointsPotentiels = ({
-  actionDef,
-  actionScore,
-  onEdit,
-}: TPointsPotentielsProps) => {
+export const PointsPotentiels = ({actionScore}: TPointsPotentielsProps) => {
   return (
-    <div data-test="PointsPotentiels" className="flex items-center">
+    <div data-test="PointsPotentiels">
       <TweenText text={getLabel(actionScore)} align-left />
-      {typeof onEdit === 'function' ? (
-        <AnchorAsButton
-          className="fr-link fr-link--icon-left fr-icon-settings-5-line fr-ml-2w fr-text--sm"
-          onClick={onEdit}
-        >
-          Personnaliser
-        </AnchorAsButton>
-      ) : null}
     </div>
   );
 };

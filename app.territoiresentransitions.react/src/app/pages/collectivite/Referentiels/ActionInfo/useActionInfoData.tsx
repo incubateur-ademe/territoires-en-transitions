@@ -21,7 +21,7 @@ export const useActionInfoData = (
 
       const rpc = `action_${infoType}` as TRPCName;
       const {data} = await supabaseClient.rpc(rpc, {id: actionId}).single();
-      return data?.[infoType] as string;
+      return data?.[infoType] as string | undefined;
     },
     DISABLE_AUTO_REFETCH
   );

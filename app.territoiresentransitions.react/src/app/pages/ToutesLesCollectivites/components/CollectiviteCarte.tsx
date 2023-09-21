@@ -4,7 +4,6 @@ import {toPercentString} from 'utils/score';
 import {referentielToName} from 'app/labels';
 import {NIVEAUX} from 'ui/labellisation/getNiveauInfo';
 import {GreenStar, GreyStar} from 'ui/labellisation/Star';
-import {Card} from '@material-ui/core';
 import {Link} from 'react-router-dom';
 import {makeCollectiviteAccueilUrl} from 'app/paths';
 import classNames from 'classnames';
@@ -37,14 +36,17 @@ export const CollectiviteCarte = (props: TCollectiviteCarteProps) => {
             })
           : '#'
       }
-      className={classNames('!shadow-none', {
-        'cursor-default, pointer-events-none': !props.isCardClickable,
-      })}
+      className={classNames(
+        '!bg-none shadow-sm rounded-md border border-gray-200 border-b-gray-400',
+        {
+          'cursor-default, pointer-events-none': !props.isCardClickable,
+        }
+      )}
     >
-      <Card
+      <div
         data-test="CollectiviteCarte"
         className={classNames(
-          'flex flex-col w-full max-w-full h-full p-3 md:p-6 border border-gray-100',
+          'flex flex-col w-full max-w-full h-full p-3 md:p-6',
           {
             'hover:bg-gray-100': props.isCardClickable,
           }
@@ -70,7 +72,7 @@ export const CollectiviteCarte = (props: TCollectiviteCarteProps) => {
             concerne={true}
           />
         </div>
-      </Card>
+      </div>
     </Link>
   );
 };

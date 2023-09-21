@@ -485,3 +485,17 @@ site/contact 2023-09-01T12:37:28Z Florian <florian@derfurth.com> # Permet de sto
 utilisateur/usage [utilisateur/usage@v2.59.0] 2023-09-07T07:46:54Z Florian <florian@derfurth.com> # Ajoute le tracking des exports
 plan_action/export [plan_action/export@v2.49.0] 2023-08-25T10:07:37Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute le tri des fiches par titre dans l'export
 @v2.60.0 2023-09-07T09:36:40Z Florian <florian@derfurth.com> # Amélioration des exports plan d'action
+
+utilisateur/dcp [utilisateur/dcp@v2.60.0] 2023-09-18T13:54:20Z Amandine Jacquelin <conta@LanceLibre> # Gère le conflit potentiel avec consume_invitation
+utilisateur/invitation_v2 [utilisateur/invitation_v2@v2.60.0] 2023-09-18T13:56:52Z Amandine Jacquelin <conta@LanceLibre> # Ajoute le droit vérifié dans consume_invitation
+plan_action/plan_action [plan_action/plan_action@v2.60.0] 2023-09-19T08:56:17Z Amandine Jacquelin <conta@LanceLibre> # Ajoute le droit service role à ajouter_fiche_action_dans_un_axe
+@v2.61.0 2023-09-19T13:52:45Z Florian <florian@derfurth.com> # Correction des invitations et des imports PA en tant que service role
+
+evaluation/thematique_completude [evaluation/thematique_completude@v2.60.0] 2023-09-13T09:28:43Z Amandine Jacquelin <conta@LanceLibre> # Corrige le count de reponse_count_by_thematique
+site/labellisation 2023-09-04T12:46:47Z Florian <florian@derfurth.com> # Ajoute une vue pour la recherche de collectivité sur le site
+site/carto 2023-09-07T14:54:09Z Florian <florian@derfurth.com> # Ajoute la relation geojson
+@v2.62.0 2023-09-20T12:21:18Z Florian <florian@derfurth.com> # Répare le calcul de la complétude des thématique et prépare la prochaine version du site
+
+indicateur/referentiel [indicateur/referentiel@v2.61.0] 2023-09-20T09:08:07Z Florian <florian@derfurth.com> # Ajoute les résultats importés aux indicateurs dont le résultat est celui d'un autre
+collectivite/identite [collectivite/identite@v2.62.0] 2023-09-21T12:55:05Z Florian <florian@derfurth.com> # Mets à jour les sources des populations
+@v2.63.0 2023-09-21T14:10:58Z Florian <florian@derfurth.com> # Améliore les indicateurs et la partie identité des collectivités

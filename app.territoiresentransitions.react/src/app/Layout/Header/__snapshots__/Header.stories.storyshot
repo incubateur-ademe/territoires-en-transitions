@@ -493,6 +493,933 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
 </header>
 `;
 
+exports[`Storyshots app/Layout/Header Connected Visite 1`] = `
+<header
+  className="fr-header"
+  role="banner"
+>
+  <div
+    className="fr-header__body"
+  >
+    <div
+      className="fr-container"
+    >
+      <div
+        className="fr-header__body-row"
+      >
+        <div
+          className="fr-header__brand fr-enlarge-link"
+        >
+          <div
+            className="fr-header__brand-top"
+          >
+            <div
+              className="fr-header__logo"
+            >
+              <p
+                className="fr-logo"
+              >
+                République
+                <br />
+                Française
+              </p>
+            </div>
+            <div
+              className="fr-header__operator"
+            >
+              <div
+                className="fr-grid-row"
+              >
+                <img
+                  alt="ADEME"
+                  height="80"
+                  src="ademe.svg"
+                  width="70"
+                />
+              </div>
+            </div>
+            <div
+              className="fr-header__navbar"
+            >
+              <button
+                aria-controls="modal-header__menu"
+                aria-haspopup="menu"
+                className="fr-btn--menu fr-btn"
+                data-fr-opened={false}
+                onClick={[Function]}
+                title="Menu"
+              >
+                Menu
+              </button>
+            </div>
+          </div>
+          <div
+            className="fr-header__service"
+          >
+            <a
+              href="/"
+              onClick={[Function]}
+              title="Accueil - Territoires en Transitions"
+            >
+              <p
+                className="fr-header__service-title"
+              >
+                Territoires en Transitions
+              </p>
+              <p
+                className="fr-header__service-tagline"
+              >
+                Accompagner la transition écologique des collectivités
+              </p>
+            </a>
+          </div>
+        </div>
+        <div
+          className="fr-header__tools"
+        >
+          <div
+            className="fr-header__tools-links"
+          >
+            <ul
+              className="fr-btns-group"
+            >
+              <li>
+                <a
+                  className="fr-btn fr-icon-seedling-line"
+                  href="/toutes_collectivites"
+                  onClick={[Function]}
+                >
+                  Collectivités
+                </a>
+              </li>
+              <li
+                onClick={[Function]}
+              >
+                <button
+                  className="fr-btn fr-fi-question-line"
+                  data-test="help"
+                  onClick={[Function]}
+                >
+                  Aide
+                </button>
+              </li>
+              <li>
+                <div
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
+                >
+                  <button
+                    aria-expanded={false}
+                    className="user-menu fr-btn fr-icon-account-line"
+                    data-test="connectedMenu"
+                    style={
+                      Object {
+                        "maxWidth": "15rem",
+                      }
+                    }
+                  >
+                    <span
+                      className="line-clamp-1"
+                    >
+                      Yolo
+                    </span>
+                    <i
+                      className="fr-fi-arrow-down-s-line ml-2 transition-all"
+                    />
+                  </button>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="fr-header__menu fr-modal"
+    id="modal-header__menu"
+  >
+    <div
+      className="fr-container"
+    >
+      <button
+        aria-controls="modal-header__menu"
+        className="fr-btn fr-btn--close"
+        onClick={[Function]}
+      >
+        Fermer
+      </button>
+      <nav
+        aria-label="Menu principal"
+        className="fr-nav flex !justify-between"
+        role="navigation"
+      >
+        <ul
+          className="fr-nav__list"
+        >
+          <li
+            className="fr-nav__item"
+          >
+            <a
+              aria-controls="modal-header__menu"
+              className="fr-nav__link"
+              href="/collectivite/1/accueil"
+              onClick={[Function]}
+              target="_self"
+            >
+              Accueil
+            </a>
+          </li>
+          <li
+            className="fr-nav__item"
+          >
+            <button
+              aria-expanded={false}
+              className="fr-nav__btn"
+              onClick={[Function]}
+            >
+              État des lieux
+            </button>
+            <div
+              className="fr-menu fr-collapse"
+            >
+              <ul
+                className="fr-menu__list"
+                onClickCapture={[Function]}
+              >
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    aria-controls="modal-header__menu"
+                    className="fr-nav__link"
+                    href="/collectivite/1/personnalisation"
+                    onClick={[Function]}
+                    target="_self"
+                  >
+                    Personnalisation des référentiels
+                  </a>
+                </li>
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    aria-controls="modal-header__menu"
+                    className="fr-nav__link"
+                    href="/collectivite/1/referentiels/cae/progression"
+                    onClick={[Function]}
+                    target="_self"
+                  >
+                    Référentiel Climat-Air-Énergie
+                  </a>
+                </li>
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    aria-controls="modal-header__menu"
+                    className="fr-nav__link"
+                    href="/collectivite/1/labellisation/cae/suivi"
+                    onClick={[Function]}
+                    target="_self"
+                  >
+                    Labellisation Climat-Air-Énergie
+                  </a>
+                </li>
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    aria-controls="modal-header__menu"
+                    className="fr-nav__link"
+                    href="/collectivite/1/referentiels/eci/progression"
+                    onClick={[Function]}
+                    target="_self"
+                  >
+                    Référentiel Économie Circulaire
+                  </a>
+                </li>
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    aria-controls="modal-header__menu"
+                    className="fr-nav__link"
+                    href="/collectivite/1/labellisation/eci/suivi"
+                    onClick={[Function]}
+                    target="_self"
+                  >
+                    Labellisation Économie Circulaire
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li
+            className="fr-nav__item"
+          >
+            <a
+              aria-controls="modal-header__menu"
+              className="fr-nav__link"
+              href="/collectivite/1/plans/synthese"
+              onClick={[Function]}
+              target="_self"
+            >
+              Plans d'action
+            </a>
+          </li>
+          <li
+            className="fr-nav__item"
+          >
+            <a
+              aria-controls="modal-header__menu"
+              className="fr-nav__link"
+              href="/collectivite/1/indicateurs/cles/"
+              onClick={[Function]}
+              target="_self"
+            >
+              Indicateurs
+            </a>
+          </li>
+        </ul>
+        <ul
+          className="fr-nav__list"
+          data-test="SelectCollectivite"
+        >
+          <li
+            className="fr-nav__item !relative"
+          >
+            <button
+              aria-controls="SelectCollectivite"
+              aria-expanded={false}
+              className="fr-nav__btn min-w-[15rem]"
+              onBlur={[Function]}
+              onClick={[Function]}
+              onFocus={[Function]}
+              onKeyDown={[Function]}
+              onMouseLeave={[Function]}
+              onMouseMove={[Function]}
+              onPointerDown={[Function]}
+              onPointerEnter={[Function]}
+            >
+              <b
+                className="mr-auto pointer-events-none whitespace-nowrap text-ellipsis overflow-hidden md:max-w-[25vw] lg:max-w-[28vw]"
+              >
+                Collectivité test
+              </b>
+              <span
+                className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--new ml-4"
+              >
+                visite
+              </span>
+            </button>
+            <div
+              className="fr-menu right-0 fr-collapse"
+              id="SelectCollectivite"
+            >
+              <ul
+                className="fr-menu__list"
+                onClickCapture={[Function]}
+              >
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    aria-controls="modal-header__menu"
+                    className="fr-nav__link"
+                    href="/collectivite/2/accueil"
+                    onClick={[Function]}
+                    target="_self"
+                  >
+                    Collectivité test 2
+                    <span
+                      className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--info float-right"
+                    >
+                      édition
+                    </span>
+                  </a>
+                </li>
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    aria-controls="modal-header__menu"
+                    className="fr-nav__link"
+                    href="/collectivite/3/accueil"
+                    onClick={[Function]}
+                    target="_self"
+                  >
+                    Collectivité test 3
+                    <span
+                      className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--info float-right"
+                    >
+                      lecture
+                    </span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </nav>
+      <div
+        className="fr-header__menu-links"
+      >
+        <ul
+          className="fr-btns-group"
+        >
+          <li>
+            <a
+              className="fr-btn fr-icon-seedling-line"
+              href="/toutes_collectivites"
+              onClick={[Function]}
+            >
+              Collectivités
+            </a>
+          </li>
+          <li
+            onClick={[Function]}
+          >
+            <button
+              className="fr-btn fr-fi-question-line"
+              data-test="help"
+              onClick={[Function]}
+            >
+              Aide
+            </button>
+          </li>
+          <li>
+            <div
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onPointerDown={[Function]}
+            >
+              <button
+                aria-expanded={false}
+                className="user-menu fr-btn fr-icon-account-line"
+                data-test="connectedMenu"
+                style={
+                  Object {
+                    "maxWidth": "15rem",
+                  }
+                }
+              >
+                <span
+                  className="line-clamp-1"
+                >
+                  Yolo
+                </span>
+                <i
+                  className="fr-fi-arrow-down-s-line ml-2 transition-all"
+                />
+              </button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</header>
+`;
+
+exports[`Storyshots app/Layout/Header Connected Visite Support 1`] = `
+<header
+  className="fr-header"
+  role="banner"
+>
+  <div
+    className="fr-header__body"
+  >
+    <div
+      className="fr-container"
+    >
+      <div
+        className="fr-header__body-row"
+      >
+        <div
+          className="fr-header__brand fr-enlarge-link"
+        >
+          <div
+            className="fr-header__brand-top"
+          >
+            <div
+              className="fr-header__logo"
+            >
+              <p
+                className="fr-logo"
+              >
+                République
+                <br />
+                Française
+              </p>
+            </div>
+            <div
+              className="fr-header__operator"
+            >
+              <div
+                className="fr-grid-row"
+              >
+                <img
+                  alt="ADEME"
+                  height="80"
+                  src="ademe.svg"
+                  width="70"
+                />
+              </div>
+            </div>
+            <div
+              className="fr-header__navbar"
+            >
+              <button
+                aria-controls="modal-header__menu"
+                aria-haspopup="menu"
+                className="fr-btn--menu fr-btn"
+                data-fr-opened={false}
+                onClick={[Function]}
+                title="Menu"
+              >
+                Menu
+              </button>
+            </div>
+          </div>
+          <div
+            className="fr-header__service"
+          >
+            <a
+              href="/"
+              onClick={[Function]}
+              title="Accueil - Territoires en Transitions"
+            >
+              <p
+                className="fr-header__service-title"
+              >
+                Territoires en Transitions
+              </p>
+              <p
+                className="fr-header__service-tagline"
+              >
+                Accompagner la transition écologique des collectivités
+              </p>
+            </a>
+          </div>
+        </div>
+        <div
+          className="fr-header__tools"
+        >
+          <div
+            className="fr-header__tools-links"
+          >
+            <ul
+              className="fr-btns-group"
+            >
+              <li>
+                <a
+                  className="fr-btn fr-icon-seedling-line"
+                  href="/toutes_collectivites"
+                  onClick={[Function]}
+                >
+                  Collectivités
+                </a>
+              </li>
+              <li
+                onClick={[Function]}
+              >
+                <button
+                  className="fr-btn fr-fi-question-line"
+                  data-test="help"
+                  onClick={[Function]}
+                >
+                  Aide
+                </button>
+              </li>
+              <li>
+                <div
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onPointerDown={[Function]}
+                >
+                  <button
+                    aria-expanded={false}
+                    className="user-menu fr-btn fr-icon-customer-service-line"
+                    data-test="connectedMenu"
+                    style={
+                      Object {
+                        "maxWidth": "15rem",
+                      }
+                    }
+                  >
+                    <span
+                      className="line-clamp-1"
+                    >
+                      Yolo
+                    </span>
+                    <i
+                      className="fr-fi-arrow-down-s-line ml-2 transition-all"
+                    />
+                  </button>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="fr-header__menu fr-modal"
+    id="modal-header__menu"
+  >
+    <div
+      className="fr-container"
+    >
+      <button
+        aria-controls="modal-header__menu"
+        className="fr-btn fr-btn--close"
+        onClick={[Function]}
+      >
+        Fermer
+      </button>
+      <nav
+        aria-label="Menu principal"
+        className="fr-nav flex !justify-between"
+        role="navigation"
+      >
+        <ul
+          className="fr-nav__list"
+        >
+          <li
+            className="fr-nav__item"
+          >
+            <a
+              aria-controls="modal-header__menu"
+              className="fr-nav__link"
+              href="/collectivite/1/accueil"
+              onClick={[Function]}
+              target="_self"
+            >
+              Accueil
+            </a>
+          </li>
+          <li
+            className="fr-nav__item"
+          >
+            <button
+              aria-expanded={false}
+              className="fr-nav__btn"
+              onClick={[Function]}
+            >
+              État des lieux
+            </button>
+            <div
+              className="fr-menu fr-collapse"
+            >
+              <ul
+                className="fr-menu__list"
+                onClickCapture={[Function]}
+              >
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    aria-controls="modal-header__menu"
+                    className="fr-nav__link"
+                    href="/collectivite/1/personnalisation"
+                    onClick={[Function]}
+                    target="_self"
+                  >
+                    Personnalisation des référentiels
+                  </a>
+                </li>
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    aria-controls="modal-header__menu"
+                    className="fr-nav__link"
+                    href="/collectivite/1/referentiels/cae/progression"
+                    onClick={[Function]}
+                    target="_self"
+                  >
+                    Référentiel Climat-Air-Énergie
+                  </a>
+                </li>
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    aria-controls="modal-header__menu"
+                    className="fr-nav__link"
+                    href="/collectivite/1/labellisation/cae/suivi"
+                    onClick={[Function]}
+                    target="_self"
+                  >
+                    Labellisation Climat-Air-Énergie
+                  </a>
+                </li>
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    aria-controls="modal-header__menu"
+                    className="fr-nav__link"
+                    href="/collectivite/1/referentiels/eci/progression"
+                    onClick={[Function]}
+                    target="_self"
+                  >
+                    Référentiel Économie Circulaire
+                  </a>
+                </li>
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    aria-controls="modal-header__menu"
+                    className="fr-nav__link"
+                    href="/collectivite/1/labellisation/eci/suivi"
+                    onClick={[Function]}
+                    target="_self"
+                  >
+                    Labellisation Économie Circulaire
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li
+            className="fr-nav__item"
+          >
+            <a
+              aria-controls="modal-header__menu"
+              className="fr-nav__link"
+              href="/collectivite/1/plans/synthese"
+              onClick={[Function]}
+              target="_self"
+            >
+              Plans d'action
+            </a>
+          </li>
+          <li
+            className="fr-nav__item"
+          >
+            <a
+              aria-controls="modal-header__menu"
+              className="fr-nav__link"
+              href="/collectivite/1/indicateurs/cles/"
+              onClick={[Function]}
+              target="_self"
+            >
+              Indicateurs
+            </a>
+          </li>
+          <li
+            className="fr-nav__item"
+          >
+            <button
+              aria-expanded={false}
+              className="fr-nav__btn"
+              onClick={[Function]}
+            >
+              Paramètres
+            </button>
+            <div
+              className="fr-menu fr-collapse"
+            >
+              <ul
+                className="fr-menu__list"
+                onClickCapture={[Function]}
+              >
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    aria-controls="modal-header__menu"
+                    className="fr-nav__link"
+                    href="/collectivite/1/users"
+                    onClick={[Function]}
+                    target="_self"
+                  >
+                    Gestion des membres
+                  </a>
+                </li>
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    aria-controls="modal-header__menu"
+                    className="fr-nav__link"
+                    href="/collectivite/1/bibliotheque"
+                    onClick={[Function]}
+                    target="_self"
+                  >
+                    Bibliothèque de documents
+                  </a>
+                </li>
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    aria-controls="modal-header__menu"
+                    className="fr-nav__link"
+                    href="/collectivite/1/historique"
+                    onClick={[Function]}
+                    target="_self"
+                  >
+                    Journal d'activité
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+        <ul
+          className="fr-nav__list"
+          data-test="SelectCollectivite"
+        >
+          <li
+            className="fr-nav__item !relative"
+          >
+            <button
+              aria-controls="SelectCollectivite"
+              aria-expanded={false}
+              className="fr-nav__btn min-w-[15rem]"
+              onBlur={[Function]}
+              onClick={[Function]}
+              onFocus={[Function]}
+              onKeyDown={[Function]}
+              onMouseLeave={[Function]}
+              onMouseMove={[Function]}
+              onPointerDown={[Function]}
+              onPointerEnter={[Function]}
+            >
+              <b
+                className="mr-auto pointer-events-none whitespace-nowrap text-ellipsis overflow-hidden md:max-w-[25vw] lg:max-w-[28vw]"
+              >
+                Collectivité test
+              </b>
+              <span
+                className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--new ml-4"
+              >
+                visite
+              </span>
+            </button>
+            <div
+              className="fr-menu right-0 fr-collapse"
+              id="SelectCollectivite"
+            >
+              <ul
+                className="fr-menu__list"
+                onClickCapture={[Function]}
+              >
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    aria-controls="modal-header__menu"
+                    className="fr-nav__link"
+                    href="/collectivite/2/accueil"
+                    onClick={[Function]}
+                    target="_self"
+                  >
+                    Collectivité test 2
+                    <span
+                      className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--info float-right"
+                    >
+                      édition
+                    </span>
+                  </a>
+                </li>
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    aria-controls="modal-header__menu"
+                    className="fr-nav__link"
+                    href="/collectivite/3/accueil"
+                    onClick={[Function]}
+                    target="_self"
+                  >
+                    Collectivité test 3
+                    <span
+                      className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--info float-right"
+                    >
+                      lecture
+                    </span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </nav>
+      <div
+        className="fr-header__menu-links"
+      >
+        <ul
+          className="fr-btns-group"
+        >
+          <li>
+            <a
+              className="fr-btn fr-icon-seedling-line"
+              href="/toutes_collectivites"
+              onClick={[Function]}
+            >
+              Collectivités
+            </a>
+          </li>
+          <li
+            onClick={[Function]}
+          >
+            <button
+              className="fr-btn fr-fi-question-line"
+              data-test="help"
+              onClick={[Function]}
+            >
+              Aide
+            </button>
+          </li>
+          <li>
+            <div
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onPointerDown={[Function]}
+            >
+              <button
+                aria-expanded={false}
+                className="user-menu fr-btn fr-icon-customer-service-line"
+                data-test="connectedMenu"
+                style={
+                  Object {
+                    "maxWidth": "15rem",
+                  }
+                }
+              >
+                <span
+                  className="line-clamp-1"
+                >
+                  Yolo
+                </span>
+                <i
+                  className="fr-fi-arrow-down-s-line ml-2 transition-all"
+                />
+              </button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</header>
+`;
+
 exports[`Storyshots app/Layout/Header Not Connected 1`] = `
 <header
   className="fr-header"

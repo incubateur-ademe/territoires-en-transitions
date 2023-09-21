@@ -1,3 +1,4 @@
+import {UserData} from 'core-logic/api/auth/AuthProvider';
 import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {
   makeCollectiviteAccueilUrl,
@@ -16,12 +17,16 @@ import {TNavDropdown, TNavItem, TNavItemsList} from './types';
 
 /** Génère les liens de navigation pour une collectivité donnée */
 export const makeNavItems = (
-  collectivite: CurrentCollectivite
+  collectivite: CurrentCollectivite,
+  user: UserData | null
 ): TNavItemsList => {
-  return filtreItemsEnAccesRestreint(makeNavItemsBase(collectivite));
+  return filtreItemsEnAccesRestreint(makeNavItemsBase(collectivite, user));
 };
 
-const makeNavItemsBase = (collectivite: CurrentCollectivite): TNavItemsList => {
+const makeNavItemsBase = (
+  collectivite: CurrentCollectivite,
+  user: UserData | null
+): TNavItemsList => {
   const collectiviteId = collectivite.collectivite_id;
   const acces_restreint = collectivite.acces_restreint && collectivite.readonly;
 
@@ -148,7 +153,7 @@ const makeNavItemsBase = (collectivite: CurrentCollectivite): TNavItemsList => {
   ];
 
   // droit "visiteur" uniquement => renvoi que les items communs
-  if (collectivite.niveau_acces === null) {
+  if (collectivite.niveau_acces === null && !user?.isSupport) {
     return common;
   }
 

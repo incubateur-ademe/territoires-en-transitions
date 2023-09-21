@@ -5,7 +5,7 @@
 import { Document, Packer } from 'https://esm.sh/docx@8.2.2';
 import { fetchDataFiche } from './fetchDataFiche.ts';
 import { getHeaders, getFooters, exportFiche } from './exportDOCX.ts';
-import { formatDate } from './utils.ts';
+import { formatDate } from '../_shared/exportUtils.ts';
 import { styles } from './styles.xml.ts';
 
 export const exportDOCXFiche = async (

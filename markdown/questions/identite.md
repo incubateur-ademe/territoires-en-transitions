@@ -1,4 +1,4 @@
-# Le montant annuel des achats publics de la collectivité est-il inférieur à 100 000 000 € hors-taxes ?
+# Le montant annuel des achats publics de la collectivité est-il inférieur à 50 000 000 € hors-taxes ?
 ```yaml
 id: SPASER
 type: binaire
@@ -6,7 +6,7 @@ thematique_id: identite
 actions: [eci_3.2.0]
 ```
 ## Description
-Les SPASER concernent les collectivités ayant un montant total annuel des achats supérieur à 100 millions d’euros hors-taxes.
+Les SPASER concernent les collectivités ayant un montant total annuel des achats supérieur à 50 millions d’euros hors-taxes.
 L’article D. 2111-3 du code de la commande publique précise les contrats à prendre en compte afin de déterminer le montant total annuel des achats et en déduire l’obligation d’établir un schéma de promotion des achats publics socialement et écologiquement responsables.
 Sont ainsi concernés les marchés publics conclus en application du code de la commande publique qu’il s’agisse de marchés ou de marchés de partenariat.
 Seuls les contrats conclus doivent être pris en compte, c'est-à-dire ceux dont la signature est intervenue au cours de l’année civile de référence. Pour les accords-cadres (à bons de commandes ou à marchés subséquents), c’est le montant des bons de commande émis et des marchés subséquents conclus sur l’année qui doit être pris en compte.

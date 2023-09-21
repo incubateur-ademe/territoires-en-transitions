@@ -59,7 +59,7 @@ When(
 
 // vérifie qu'on est sur une route/vue
 const isVisibleView = view => {
-  const {selector} = Views[view];
+  const {selector} = Views[view] || CollectivitePages[view];
   cy.get(selector).should('be.visible');
 };
 When(/voi[rs] la vue(?: des)? "(.*)"/, isVisibleView);

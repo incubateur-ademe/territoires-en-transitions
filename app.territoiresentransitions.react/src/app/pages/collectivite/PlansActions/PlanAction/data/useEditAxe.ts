@@ -5,7 +5,7 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import {TAxeUpdate} from 'types/alias';
 
 export const updateAxe = async (axe: TAxeUpdate) => {
-  let query = supabaseClient.from('axe').update(axe).eq('id', axe.id);
+  let query = supabaseClient.from('axe').update(axe).eq('id', axe.id!);
 
   const {error, data} = await query;
 

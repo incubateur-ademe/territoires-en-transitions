@@ -1,7 +1,7 @@
 import {v4 as uuid} from 'uuid';
 import {useState} from 'react';
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import {TextField, TextFieldProps} from '@material-ui/core';
+import Autocomplete from '@mui/material/Autocomplete';
+import {TextField, TextFieldProps} from '@mui/material';
 
 export type Option<T extends string> = {
   value: T;
