@@ -5,6 +5,7 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useHistory} from 'react-router-dom';
 import {makeCollectivitePlanActionUrl} from 'app/paths';
 import {TAxeInsert} from 'types/alias';
+import {waitForMarkup} from 'utils/waitForMarkup';
 
 /**
  * Upsert un axe pour une collectivité.
@@ -63,12 +64,12 @@ export const useAddAxe = (parentId: number, planActionId: number) => {
         queryClient
           .invalidateQueries(['plan_action', planActionId])
           .then(() => {
-            // scroll au niveau du nouvel axe créé
-            document
-              .getElementById(`axe-${data[0].id}`)
-              ?.scrollIntoView({behavior: 'smooth', block: 'center'});
-            // donne le focus à son titre
-            document.getElementById(`axe-titre-${data[0].id}`)?.focus();
+            waitForMarkup(`#axe-${data[0].id}`).then(el => {
+              // scroll au niveau du nouvel axe créé
+              el?.scrollIntoView({behavior: 'smooth', block: 'center'});
+              // donne le focus à son titre
+              document.getElementById(`axe-titre-${data[0].id}`)?.focus();
+            });
           });
       },
     }
