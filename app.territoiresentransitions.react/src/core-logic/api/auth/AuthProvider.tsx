@@ -19,7 +19,7 @@ export type TAuthContext = {
   authError: string | null;
   isConnected: boolean;
 };
-export type UserData = User & DCP;
+export type UserData = User & DCP & {isSupport: boolean | undefined};
 export type DCP = {
   nom?: string;
   prenom?: string;
@@ -46,8 +46,9 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
 
   // charge les données associées à l'utilisateur courant
   const {data: dcp} = useDCP(user?.id);
+  const {data: isSupport} = useIsSupport(user?.id);
   const userData = useMemo(
-    () => (user && dcp ? {...user, ...dcp} : null),
+    () => (user && dcp ? {...user, ...dcp, isSupport} : null),
     [user, dcp]
   );
 
@@ -176,3 +177,11 @@ export const useDCP = (user_id?: string) => {
 
   return {data};
 };
+
+// vérifie si l'utilisateur courant à le droit "support"
+const useIsSupport = (user_id?: string) =>
+  useQuery(['is_support', user_id], async () => {
+    if (!user_id) return false;
+    const {data} = await supabaseClient.rpc('est_support');
+    return data || false;
+  });
