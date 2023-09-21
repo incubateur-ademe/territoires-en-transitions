@@ -71,3 +71,24 @@ export const Connected = () => (
     maintenance={null}
   />
 );
+
+export const ConnectedVisite = () => (
+  <Header
+    auth={connectedAuth}
+    currentCollectivite={{...currentCollectivite, niveau_acces: null}}
+    ownedCollectivites={ownedCollectivites}
+    maintenance={null}
+  />
+);
+
+export const ConnectedVisiteSupport = () => (
+  <Header
+    auth={{
+      ...connectedAuth,
+      user: {...connectedAuth.user, isSupport: true},
+    }}
+    currentCollectivite={{...currentCollectivite, niveau_acces: null}}
+    ownedCollectivites={ownedCollectivites}
+    maintenance={null}
+  />
+);
