@@ -32,18 +32,20 @@ const Fiches = ({isDndActive, isAxePage, ficheIds, planId, axeId}: Props) => {
               axeId={axeId}
               fiche={fiche}
               url={
-                isAxePage
-                  ? makeCollectivitePlanActionAxeFicheUrl({
-                      collectiviteId: fiche.collectivite_id!,
-                      planActionUid: planId.toString(),
-                      ficheUid: fiche.id!.toString(),
-                      axeUid: axeId.toString(),
-                    })
-                  : makeCollectivitePlanActionFicheUrl({
-                      collectiviteId: fiche.collectivite_id!,
-                      planActionUid: planId.toString(),
-                      ficheUid: fiche.id!.toString(),
-                    })
+                fiche.id
+                  ? isAxePage
+                    ? makeCollectivitePlanActionAxeFicheUrl({
+                        collectiviteId: fiche.collectivite_id!,
+                        planActionUid: planId.toString(),
+                        ficheUid: fiche.id.toString(),
+                        axeUid: axeId.toString(),
+                      })
+                    : makeCollectivitePlanActionFicheUrl({
+                        collectiviteId: fiche.collectivite_id!,
+                        planActionUid: planId.toString(),
+                        ficheUid: fiche.id!.toString(),
+                      })
+                  : undefined
               }
             />
           ))}

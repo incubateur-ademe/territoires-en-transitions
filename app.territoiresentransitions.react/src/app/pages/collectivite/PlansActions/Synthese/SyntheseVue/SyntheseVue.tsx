@@ -12,7 +12,7 @@ import {DesactiverLesFiltres} from 'ui/shared/filters/DesactiverLesFiltres';
 import FiltersPlanAction, {PlanActionFilter} from '../FiltersPlanAction';
 import {FiltersKeys} from '../../FicheAction/data/filters';
 import {useFichesActionFiltresListe} from '../../FicheAction/data/useFichesActionFiltresListe';
-import FicheActionCard from '../../FicheAction/FicheActionCard';
+import FicheActionCard from '../../FicheAction/Carte/FicheActionCard';
 import FiltresPrimaires from './FiltresPrimaires/FiltresPrimaires';
 import FiltresSecondaires from './FiltresSecondaires';
 import {generateSyntheseVue} from '../utils';
@@ -137,7 +137,6 @@ const SyntheseVue = () => {
                 {items.map(fiche => (
                   <FicheActionCard
                     key={fiche.id}
-                    displayAxe
                     ficheAction={
                       ficheWithSelectedPlan(fiche, plan) as FicheResume
                     }

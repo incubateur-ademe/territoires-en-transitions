@@ -1,7 +1,7 @@
 import {createPortal} from 'react-dom';
 import {DragOverlay, useDraggable} from '@dnd-kit/core';
 
-import FicheActionCard from '../../FicheAction/FicheActionCard';
+import FicheActionCard from '../../FicheAction/Carte/FicheActionCard';
 import {FicheResume} from '../../FicheAction/data/types';
 
 export type FicheDndData = {
@@ -12,7 +12,7 @@ export type FicheDndData = {
 
 type Props = {
   axeId: number;
-  url: string;
+  url?: string;
   fiche: FicheResume;
 };
 
@@ -48,7 +48,12 @@ const Fiche = ({axeId, url, fiche}: Props) => {
           document.body
         )}
       {!active && (
-        <div ref={draggableRef} {...listeners} {...attributes}>
+        <div
+          className="h-full"
+          ref={draggableRef}
+          {...listeners}
+          {...attributes}
+        >
           <FicheActionCard
             key={fiche.id}
             ficheAction={fiche}

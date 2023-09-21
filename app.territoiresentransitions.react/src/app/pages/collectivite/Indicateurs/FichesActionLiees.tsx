@@ -1,5 +1,4 @@
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-//import {useCreateFicheAction} from '../PlansActions/FicheAction/data/useUpsertFicheAction';
 import FichesLiees from '../PlansActions/FicheAction/FicheActionForm/FichesLiees';
 import {FicheResume} from '../PlansActions/FicheAction/data/types';
 import {

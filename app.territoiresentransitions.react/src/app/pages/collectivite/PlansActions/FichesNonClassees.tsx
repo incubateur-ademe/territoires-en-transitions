@@ -1,5 +1,5 @@
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import FicheActionCard from './FicheAction/FicheActionCard';
+import FicheActionCard from './FicheAction/Carte/FicheActionCard';
 import {useFichesNonClasseesListe} from './FicheAction/data/useFichesNonClasseesListe';
 import {makeCollectiviteFicheNonClasseeUrl} from 'app/paths';
 import PictoLeaf from 'ui/pictogrammes/PictoLeaf';
