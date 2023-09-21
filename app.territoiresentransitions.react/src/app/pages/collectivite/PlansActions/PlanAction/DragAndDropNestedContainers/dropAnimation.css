@@ -2,17 +2,11 @@
   from {
     background-color: rgb(215, 223, 249);
   }
-  33% {
-    background-color: rgb(234, 238, 251);
-  }
-  66% {
-    background-color: rgb(215, 223, 249);
-  }
   to {
     background-color: rgb(234, 238, 251);
   }
 }
 
 .drop-animation {
-  animation: 2s cubic-bezier(0.17, 0.67, 0.84, 0.62) drop;
+  animation: 1.25s cubic-bezier(0.17, 0.67, 0.84, 0.62) drop;
 }
