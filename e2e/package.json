@@ -2,7 +2,7 @@
   "name": "e2e",
   "version": "1.0.0",
   "engines": {
-    "node": "16"
+    "node": "20"
   },
   "private": true,
   "scripts": {
