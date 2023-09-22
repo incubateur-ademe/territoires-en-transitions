@@ -34,7 +34,7 @@ export const PlanAction = ({plan, axe}: PlanActionProps) => {
       {/** Titre page */}
       <HeaderTitle
         customClass={
-          isAxePage ? {text: 'text-[1.75rem]'} : {text: 'text-[2rem]'}
+          isAxePage ? {text: '!text-[1.75rem]'} : {text: '!text-[2rem]'}
         }
         titre={isAxePage ? axe.nom : plan.nom}
         onUpdate={nom => updateAxe({id: isAxePage ? axe.id : plan.id, nom})}
