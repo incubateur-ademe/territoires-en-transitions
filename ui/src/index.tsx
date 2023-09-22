@@ -1,0 +1,1 @@
+export { HotPink } from "./HotPink";
