@@ -36,8 +36,8 @@ const FicheActionHeader = ({fiche, isReadonly}: TFicheActionHeader) => {
             />
           )}
           <FicheActionSupprimerModal
-            fiche={fiche}
-            onDelete={() => deleteFiche(fiche.id!)}
+            isInMultipleAxes={(fiche.axes && fiche.axes.length > 1) || false}
+            onDelete={() => deleteFiche({ficheId: fiche.id!})}
           />
           <button
             className="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-download-line"

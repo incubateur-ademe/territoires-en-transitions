@@ -8,6 +8,8 @@ import {generateTitle} from '../data/utils';
 import FicheActionBadgeStatut from '../FicheActionForm/FicheActionBadgeStatut';
 import FicheActionBadgePriorite from '../FicheActionForm/FicheActionBadgePriorite';
 import Titre from './Titre';
+import FicheActionSupprimerModal from '../FicheActionSupprimerModal';
+import {useDeleteFicheAction} from '../data/useDeleteFicheAction';
 
 type Props = {
   link?: string;
@@ -15,6 +17,8 @@ type Props = {
   openInNewTab?: boolean;
   /** Pour invalider la liste des fiches d'un axe à la suppression de la fiche */
   axeId?: number;
+  /** Pour invalider le plan à la suppression de la fiche */
+  planId?: number;
   /** Permet d'afficher le menu d'option de la carte */
   isEditable?: boolean;
 };
@@ -23,9 +27,12 @@ const FicheActionCard = ({
   openInNewTab,
   ficheAction,
   axeId,
+  planId,
   link,
   isEditable = false,
 }: Props) => {
+  const {mutate: deleteFiche} = useDeleteFicheAction();
+
   const editButtonRef = useRef<HTMLButtonElement>(null);
 
   const [isEdit, _setIsEdit] = useState(false);
@@ -98,6 +105,18 @@ const FicheActionCard = ({
               )}
             />
           )}
+          <FicheActionSupprimerModal
+            isInMultipleAxes={
+              (ficheAction.plans && ficheAction.plans.length > 1) || false
+            }
+            onDelete={() =>
+              deleteFiche({
+                ficheId: ficheAction.id!,
+                planActionId: planId,
+                axeId,
+              })
+            }
+          />
         </div>
       )}
       {/** Carte */}
