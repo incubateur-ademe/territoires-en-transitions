@@ -4,6 +4,7 @@ import Image from 'next/image';
 import {MenuPrincipal} from './MenuPrincipal';
 import '@gouvfr/dsfr/dist/utility/icons/icons-user/icons-user.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-system/icons-system.css';
+import {HotPink} from '@tet/ui';
 import {Dispatch, SetStateAction, useState} from 'react';
 import classNames from 'classnames';
 
@@ -20,6 +21,7 @@ function Brand({menuOpened, setMenuOpened}: MenuProps) {
           République
           <br />
           Française
+          <HotPink />
         </p>
       </div>
       <div className="fr-header__operator">
