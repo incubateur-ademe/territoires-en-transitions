@@ -161,7 +161,10 @@ const Axe = ({plan, axe, isAxePage, isReadonly}: Props) => {
               <button
                 className="invisible group-hover:visible fr-btn fr-btn--tertiary fr-btn--sm fr-icon-file-add-line ml-3 mt-1"
                 title="Créer une fiche"
-                onClick={() => createFiche()}
+                onClick={() => {
+                  setIsOpen(true);
+                  createFiche();
+                }}
               />
               <button
                 className="invisible group-hover:visible fr-btn fr-btn--tertiary fr-btn--sm ml-3 mt-1 !px-2"
