@@ -1,0 +1,7 @@
+a {
+  background-image: none !important;
+}
+
+.leaflet-touch .leaflet-bar a {
+  line-height: 26px;
+}
