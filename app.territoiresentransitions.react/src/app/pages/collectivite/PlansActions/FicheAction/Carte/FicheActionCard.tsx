@@ -93,7 +93,7 @@ const FicheActionCard = ({
                 'after:!hidden': openInNewTab,
               })}
             >
-              <span className="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-arrow-right-line" />
+              <span className="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-arrow-right-line hover:!bg-gray-200" />
             </NavLink>
           ) : (
             <button
@@ -101,7 +101,7 @@ const FicheActionCard = ({
               title="Éditer"
               id={`fiche-${ficheAction.id}-edit-button`}
               className={classNames(
-                'fr-btn fr-btn--tertiary fr-btn--sm fr-icon-edit-line'
+                'fr-btn fr-btn--tertiary fr-btn--sm fr-icon-edit-line hover:!bg-gray-200'
               )}
             />
           )}
