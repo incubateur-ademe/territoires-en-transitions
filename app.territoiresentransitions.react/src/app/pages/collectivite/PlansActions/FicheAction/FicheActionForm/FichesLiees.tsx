@@ -10,7 +10,7 @@ import {
 import {FicheResume} from '../data/types';
 import {TAxeInsert} from 'types/alias';
 import {generateTitle} from '../data/utils';
-import FicheActionCard from '../FicheActionCard';
+import FicheActionCard from '../Carte/FicheActionCard';
 import {naturalSort} from 'utils/naturalSort';
 
 type Props = {
@@ -70,7 +70,8 @@ const FichesLiees = ({
                   .map(fiche => ({
                     value: fiche.id!.toString(),
                     label: generateTitle(fiche.titre),
-                  })).sort(byLabel) ?? [],
+                  }))
+                  .sort(byLabel) ?? [],
             };
           } else {
             return {
@@ -129,7 +130,6 @@ const FichesLiees = ({
               <FicheActionCard
                 key={fiche.id}
                 openInNewTab
-                displayAxe
                 ficheAction={fiche}
                 link={
                   fiche.plans && fiche.plans[0] && fiche.plans[0].id

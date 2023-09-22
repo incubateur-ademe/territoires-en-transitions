@@ -11,12 +11,13 @@ export type FicheDndData = {
 };
 
 type Props = {
+  planId: number;
   axeId: number;
   url?: string;
   fiche: FicheResume;
 };
 
-const Fiche = ({axeId, url, fiche}: Props) => {
+const Fiche = ({planId, axeId, url, fiche}: Props) => {
   const {
     active,
     attributes,
@@ -57,6 +58,8 @@ const Fiche = ({axeId, url, fiche}: Props) => {
           <FicheActionCard
             key={fiche.id}
             ficheAction={fiche}
+            planId={planId}
+            axeId={axeId}
             link={url}
             isEditable
           />

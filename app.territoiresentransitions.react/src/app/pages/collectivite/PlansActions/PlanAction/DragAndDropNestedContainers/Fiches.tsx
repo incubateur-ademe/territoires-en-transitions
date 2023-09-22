@@ -30,6 +30,7 @@ const Fiches = ({isDndActive, isAxePage, ficheIds, planId, axeId}: Props) => {
             <Fiche
               key={fiche.id}
               axeId={axeId}
+              planId={planId}
               fiche={fiche}
               url={
                 fiche.id
