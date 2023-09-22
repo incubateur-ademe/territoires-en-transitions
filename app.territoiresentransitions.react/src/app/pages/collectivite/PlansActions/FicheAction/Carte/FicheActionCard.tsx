@@ -13,6 +13,8 @@ type Props = {
   link?: string;
   ficheAction: FicheResume;
   openInNewTab?: boolean;
+  /** Pour invalider la liste des fiches d'un axe à la suppression de la fiche */
+  axeId?: number;
   /** Permet d'afficher le menu d'option de la carte */
   isEditable?: boolean;
 };
@@ -20,6 +22,7 @@ type Props = {
 const FicheActionCard = ({
   openInNewTab,
   ficheAction,
+  axeId,
   link,
   isEditable = false,
 }: Props) => {
@@ -159,7 +162,12 @@ const FicheActionCard = ({
                 : 'Fiches non classées'}
             </div>
           )}
-          <Titre fiche={ficheAction} isEdit={isEdit} setIsEdit={setIsEdit} />
+          <Titre
+            fiche={ficheAction}
+            axeId={axeId}
+            isEdit={isEdit}
+            setIsEdit={setIsEdit}
+          />
         </div>
       </NavLink>
     </div>
