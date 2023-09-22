@@ -6,13 +6,14 @@ import {FicheResume} from '../data/types';
 import classNames from 'classnames';
 
 type Props = {
+  axeId?: number;
   isEdit: boolean;
   setIsEdit: (isEdit: boolean) => void;
   fiche: FicheResume;
 };
 
-const Titre = ({fiche, isEdit, setIsEdit}: Props) => {
-  const {mutate: updateFiche} = useUpdateFicheResume();
+const Titre = ({fiche, axeId, isEdit, setIsEdit}: Props) => {
+  const {mutate: updateFiche} = useUpdateFicheResume(axeId);
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
 

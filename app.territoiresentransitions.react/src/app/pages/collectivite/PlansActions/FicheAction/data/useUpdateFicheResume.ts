@@ -19,12 +19,38 @@ export const useUpdateFicheResume = (axeId?: number) => {
         .eq('id', fiche.id!);
     },
     {
-      onSuccess: () => {
+      onMutate: async args => {
+        const fiche = args;
+
+        if (axeId) {
+          const axeKey = ['axe_fiches', axeId];
+
+          const previousState = [[axeKey, queryClient.getQueryData(axeKey)]];
+
+          queryClient.setQueryData(
+            axeKey,
+            (old: FicheResume[] | undefined): FicheResume[] => {
+              const ficheIndex = old?.findIndex(f => f.id === fiche.id);
+              return (ficheIndex && old?.splice(ficheIndex, 1, fiche)) || [];
+            }
+          );
+
+          return previousState;
+        }
+      },
+      onError: (err, args, previousState) => {
+        // en cas d'erreur restaure l'état précédent
+        previousState?.forEach(([key, data]) =>
+          queryClient.setQueryData(key as string[], data)
+        );
+      },
+      onSuccess: (data, fiche) => {
         queryClient.invalidateQueries([
           'fiches_resume_collectivite',
           collectivite_id,
         ]);
         queryClient.invalidateQueries(['axe_fiches', axeId]);
+        queryClient.invalidateQueries(['fiche_action', fiche.id]);
       },
     }
   );
