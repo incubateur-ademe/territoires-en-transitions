@@ -1,13 +1,11 @@
 import Modal from 'ui/shared/floating-ui/Modal';
-import {FicheAction} from './data/types';
 
 type Props = {
-  fiche: FicheAction;
+  isInMultipleAxes: boolean;
   onDelete: () => void;
 };
 
-const FicheActionSupprimerModal = ({fiche, onDelete}: Props) => {
-  const isFicheInMultipleAxes = fiche.axes && fiche.axes.length > 1;
+const FicheActionSupprimerModal = ({isInMultipleAxes, onDelete}: Props) => {
   return (
     <Modal
       render={({labelId, descriptionId, close}) => {
@@ -17,7 +15,7 @@ const FicheActionSupprimerModal = ({fiche, onDelete}: Props) => {
               Supprimer la fiche action
             </h4>
             <p id={descriptionId}>
-              {isFicheInMultipleAxes ? (
+              {isInMultipleAxes ? (
                 <span>
                   Cette fiche action est présente dans plusieurs plans.
                   <br />
@@ -37,7 +35,10 @@ const FicheActionSupprimerModal = ({fiche, onDelete}: Props) => {
                 Annuler
               </button>
               <button
-                onClick={onDelete}
+                onClick={() => {
+                  onDelete();
+                  close();
+                }}
                 aria-label="Confirmer"
                 className="fr-btn"
               >
@@ -50,7 +51,7 @@ const FicheActionSupprimerModal = ({fiche, onDelete}: Props) => {
     >
       <button
         data-test="SupprimerFicheBouton"
-        className="fr-btn fr-btn--tertiary fr-btn--sm fr-fi-delete-line"
+        className="fr-btn fr-btn--tertiary fr-btn--sm fr-fi-delete-line hover:!bg-gray-200"
         title="Supprimer la fiche"
       />
     </Modal>
