@@ -1,12 +1,21 @@
 // Composant copié depuis l'app
 
-export const Star = ({fill, title}: {fill: string; title?: string}) => (
+export const Star = ({
+  fill,
+  title,
+  className,
+}: {
+  fill: string;
+  title?: string;
+  className?: string;
+}) => (
   <svg
     width="39"
     height="38"
     viewBox="0 0 39 38"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
+    className={className}
   >
     {title ? <title>{title}</title> : null}
     <path
@@ -16,15 +25,15 @@ export const Star = ({fill, title}: {fill: string; title?: string}) => (
   </svg>
 );
 
-export const GreyStar = (props: {title?: string}) => (
+export const GreyStar = (props: {title?: string; className?: string}) => (
   <Star {...props} fill="#e5e5e5" />
 );
-export const BlueStar = (props: {title?: string}) => (
+export const BlueStar = (props: {title?: string; className?: string}) => (
   <Star {...props} fill="#0063CB" />
 );
-export const GreenStar = (props: {title?: string}) => (
+export const GreenStar = (props: {title?: string; className?: string}) => (
   <Star {...props} fill="#00A95F" />
 );
-export const RedStar = (props: {title?: string}) => (
+export const RedStar = (props: {title?: string; className?: string}) => (
   <Star {...props} fill="#FF5655" />
 );
