@@ -1,8 +1,8 @@
 {
   "name": "territoiresentransitions.fr",
+  "private": true,
   "version": "1.0.0",
   "description": "Dans le cadre des programmes d'accompagnement des collectivités dans leurs démarches de transition écologique, l'[ADEME (l'Agence de la transition écologique)](https://www.ademe.fr/) s'est associée à [beta.gouv.fr](https://beta.gouv.fr/) pour lancer une plateforme numérique pour faciliter et accélérer la mise en œuvre des actions de transition écologique dans les collectivités territoriales.",
-  "main": "index.js",
   "directories": {
     "doc": "docs"
   },
