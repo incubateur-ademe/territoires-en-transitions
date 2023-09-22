@@ -3,12 +3,10 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {useMutation, useQueryClient} from 'react-query';
 
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {
-  makeCollectiviteFicheNonClasseeUrl,
-  makeCollectivitePlanActionAxeFicheUrl,
-  makeCollectivitePlanActionFicheUrl,
-} from 'app/paths';
-import {FicheAction} from './types';
+import {makeCollectiviteFicheNonClasseeUrl} from 'app/paths';
+import {FicheAction, FicheResume} from './types';
+import {dropAnimation} from '../../PlanAction/DragAndDropNestedContainers/Arborescence';
+import {waitForMarkup} from 'utils/waitForMarkup';
 
 /** Upsert une fiche action pour une collectivité */
 const upsertFicheAction = async (fiche: FicheAction) => {
@@ -34,7 +32,6 @@ const upsertFicheAction = async (fiche: FicheAction) => {
 type Args = {
   axeId?: number;
   planActionId?: number;
-  isAxePage?: boolean;
   actionId?: string;
   /** si renseigné la fiche créée sera ouverte dans un nouvel onglet */
   openInNewTab?: boolean;
@@ -44,7 +41,7 @@ export const useCreateFicheAction = (args?: Args) => {
   const queryClient = useQueryClient();
   const collectivite_id = useCollectiviteId();
   const history = useHistory();
-  const {axeId, planActionId, actionId, isAxePage, openInNewTab} = args || {};
+  const {axeId, planActionId, actionId, openInNewTab} = args || {};
 
   const openUrl = (url: string, openInNewTab?: boolean) => {
     if (openInNewTab) {
@@ -63,36 +60,76 @@ export const useCreateFicheAction = (args?: Args) => {
       } as never),
     {
       meta: {disableToast: true},
-      onSuccess: data => {
-        // redirige sur la nouvelle fiche du plan
+      onMutate: async args => {
+        // Nous avons besoin de l'update optimiste uniquement dans l'arborescence d'un plan d'action
         if (axeId) {
-          if (isAxePage) {
-            queryClient.invalidateQueries(['plan_action', axeId]);
-            const url = makeCollectivitePlanActionAxeFicheUrl({
-              collectiviteId: collectivite_id!,
-              ficheUid: data[0].id!.toString(),
-              planActionUid: planActionId!.toString(),
-              axeUid: axeId.toString(),
-            });
-            return openUrl(url);
-          }
+          // clés dans le cache
+          const axeKey = ['axe_fiches', axeId];
 
-          queryClient.invalidateQueries(['plan_action', planActionId]);
-          const url = makeCollectivitePlanActionFicheUrl({
+          // copie l'état précédent avant de modifier le cache
+          const previousState = [[axeKey, queryClient.getQueryData(axeKey)]];
+
+          // met à jour les listes des fiches d'un axe
+          queryClient.setQueryData(axeKey, (old: any) => {
+            console.log(old);
+            const newFiche = {
+              id: null,
+              collectivite_id: collectivite_id!,
+              plans: [{id: axeId, collectivite_id: collectivite_id!}],
+            };
+            return old ? [...old, newFiche] : [newFiche];
+          });
+
+          // Return a context object with the snapshotted value
+          return previousState;
+        }
+      },
+      onError: (err, args, previousState) => {
+        // en cas d'erreur restaure l'état précédent
+        previousState?.forEach(([key, data]) =>
+          queryClient.setQueryData(key as string[], data)
+        );
+      },
+      onSuccess: data => {
+        if (axeId) {
+          const ficheId = data[0].id;
+          queryClient.setQueryData(
+            ['axe_fiches', axeId],
+            (old: FicheResume[] | undefined): FicheResume[] => {
+              if (old) {
+                const index = old.findIndex(f => f.id === null);
+                if (index !== -1) {
+                  old[index].id = ficheId;
+                }
+              }
+              return old || [];
+            }
+          );
+          queryClient
+            .invalidateQueries(['plan_action', planActionId])
+            .then(() => {
+              waitForMarkup(`#fiche-${data[0].id}`).then(() => {
+                // scroll au niveau de la nouvelle fiche créée
+                dropAnimation(`fiche-${data[0].id}`);
+                // on la rend éditable
+                document
+                  .getElementById(`fiche-${data[0].id}-edit-button`)
+                  ?.click();
+                // donne le focus à son titre
+                document.getElementById(`fiche-titre-${data[0].id}`)?.focus();
+              });
+            });
+        } else {
+          queryClient.invalidateQueries([
+            'fiches_non_classees',
+            collectivite_id,
+          ]);
+          const url = makeCollectiviteFicheNonClasseeUrl({
             collectiviteId: collectivite_id!,
             ficheUid: data[0].id!.toString(),
-            planActionUid: planActionId!.toString(),
           });
-          return openUrl(url, openInNewTab);
+          openUrl(url, openInNewTab);
         }
-
-        // ou sur la nouvelle fiche non classée
-        queryClient.invalidateQueries(['fiches_non_classees', collectivite_id]);
-        const url = makeCollectiviteFicheNonClasseeUrl({
-          collectiviteId: collectivite_id!,
-          ficheUid: data[0].id!.toString(),
-        });
-        openUrl(url, openInNewTab);
       },
     }
   );

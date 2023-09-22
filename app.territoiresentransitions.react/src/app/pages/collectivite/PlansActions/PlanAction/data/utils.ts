@@ -187,7 +187,7 @@ export const ficheChangeAxeDansPlan = (
 };
 
 /** Permet de façon récursive de supprimer la fiche d'un axe */
-const deleteFicheFromAxe = (
+export const deleteFicheFromAxe = (
   axe: PlanNode,
   fiche_id: number,
   old_axe_id: number
@@ -212,7 +212,11 @@ const deleteFicheFromAxe = (
 };
 
 /** Permet de façon récursive d'ajouter la fiche à un axe */
-const addFicheToAxe = (axe: PlanNode, fiche_id: number, new_axe_id: number) => {
+export const addFicheToAxe = (
+  axe: PlanNode,
+  fiche_id: number,
+  new_axe_id: number
+) => {
   const newAxe = axe;
   if (axe.id === new_axe_id) {
     if (axe.fiches) {
