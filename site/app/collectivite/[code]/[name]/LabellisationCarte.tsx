@@ -20,7 +20,7 @@ const LabellisationCarte = ({
 }: LabellisationCarteProps) => {
   return (
     <div
-      className="h-full bg-white rounded-lg p-12 pt-8 flex flex-col relative"
+      className="bg-white rounded-lg p-12 pt-8 flex flex-col relative"
       style={{
         boxShadow: '0px 2px 16px 0px #0063CB0A, 0px 4px 6px 0px #0063CB0F',
       }}
