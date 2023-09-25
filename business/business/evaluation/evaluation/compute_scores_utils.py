@@ -248,15 +248,18 @@ def update_action_score_from_children_scores(
 
 
 def _propagate_non_concerne(
-        action_id: ActionId,
-        actions_non_concernes_ids: List[ActionId],
         point_tree: ActionPointTree,
+        action_id: ActionId,
+        action_concerne_ids: List[ActionId],
+        action_non_concerne_ids: List[ActionId],
 ):
-    if action_id in actions_non_concernes_ids:
+    if action_id in action_non_concerne_ids:
+        return
+    if action_id in action_concerne_ids:
         return
     children = point_tree.get_children(action_id)
-    if children and all([child in actions_non_concernes_ids for child in children]):
-        actions_non_concernes_ids.append(action_id)
+    if children and all([child in action_non_concerne_ids for child in children]):
+        action_non_concerne_ids.append(action_id)
 
 
 @timeit("compute_action_non_concerne_ids")
@@ -265,15 +268,26 @@ def compute_action_non_concerne_ids(
         statuts: List[ActionStatut],
         action_desactive_ids: List[ActionId]
 ):
+    action_concerne_ids = [
+        action_status.action_id
+        for action_status in statuts
+        if action_status.concerne
+    ]
+
     action_non_concerne_ids = [
-                                  action_status.action_id
-                                  for action_status in statuts
-                                  if not action_status.concerne
-                              ] + action_desactive_ids
+        action_status.action_id
+        for action_status in statuts
+        if not action_status.concerne
+    ]
+
+    action_non_concerne_ids += action_desactive_ids
 
     point_tree.map_from_taches_to_root(
         lambda action_id: _propagate_non_concerne(
-            action_id, action_non_concerne_ids, point_tree
+            point_tree,
+            action_id,
+            action_concerne_ids,
+            action_non_concerne_ids,
         )
     )
     return action_non_concerne_ids
