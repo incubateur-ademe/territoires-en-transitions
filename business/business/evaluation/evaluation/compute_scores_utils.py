@@ -354,10 +354,17 @@ def _action_potentiel_with_redistribution_remainder(
 @timeit("compute_potentiels")
 def compute_potentiels(
         point_tree_personnalise: ActionPointTree,
-        actions_non_concernes_ids: List[ActionId],
+        statuts: List[ActionStatut],
+        action_non_concerne_ids: List[ActionId],
         action_level: int,
 ) -> Dict[ActionId, float]:
     potentiels = {}
+
+    action_concerne_ids = [
+        action_status.action_id
+        for action_status in statuts
+        if action_status.concerne
+    ]
 
     def _add_action_potentiel_after_redistribution(
             action_id: ActionId,
@@ -365,8 +372,10 @@ def compute_potentiels(
         this_level = point_tree_personnalise.depths[action_id]
         children = point_tree_personnalise.get_children(action_id)
 
-        if action_id in actions_non_concernes_ids:  # non-concerné
+        if action_id in action_non_concerne_ids:  # non-concerné
             potentiel = 0
+        elif action_id in action_concerne_ids:  # action avec un statut
+            potentiel = point_tree_personnalise.get_action_point(action_id)
         elif not children:  # tache
             potentiel = point_tree_personnalise.get_action_point(action_id)
         else:
@@ -381,7 +390,7 @@ def compute_potentiels(
             potentiel = _action_potentiel_with_redistribution_remainder(
                 action_id,
                 potentiel,
-                actions_non_concernes_ids,
+                action_non_concerne_ids,
                 point_tree_personnalise,
             )
 
