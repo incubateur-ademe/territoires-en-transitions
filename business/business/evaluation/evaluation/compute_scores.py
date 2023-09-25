@@ -34,6 +34,7 @@ def compute_scores(
     # - puis en partant des actions vers les enfants
     potentiels = compute_potentiels(
         personnalise_tree,
+        statuts,
         action_non_concerne_ids,
         action_level,
     )
