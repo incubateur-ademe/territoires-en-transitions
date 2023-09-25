@@ -8,7 +8,11 @@ export const useFilteredCollectivites = (search: string) => {
       .map(w => w.trim())
       .join(' & ');
 
-    const query = supabase.from('site_labellisation').select().limit(10);
+    const query = supabase
+      .from('site_labellisation')
+      .select()
+      .order('nom')
+      .limit(10);
 
     if (search) {
       query.textSearch('nom', name, {
