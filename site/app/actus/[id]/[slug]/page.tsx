@@ -25,7 +25,7 @@ const Article = async ({params}: {params: {id: string}}) => {
 
   return (
     <>
-      <Section className="flex-col gap-8">
+      <Section className="gap-8">
         {/* Image de couverture */}
         <StrapiImage
           data={data.couverture}
@@ -35,7 +35,7 @@ const Article = async ({params}: {params: {id: string}}) => {
 
         <div>
           {/* Titre */}
-          <h2>{data.titre}</h2>
+          <h1>{data.titre}</h1>
 
           {/* Date de création et date d'édition */}
           <p className="text-sm text-[#666]">
@@ -95,7 +95,7 @@ const Article = async ({params}: {params: {id: string}}) => {
 
       <Section
         customBackground="#fff"
-        className="flex-wrap justify-between gap-y-14"
+        className="!flex-row flex-wrap justify-between gap-y-14"
       >
         {data.prevId && (
           <a

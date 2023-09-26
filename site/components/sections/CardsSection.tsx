@@ -17,8 +17,8 @@ const CardsSection = ({
   children,
   customBackground,
 }: CardsSectionProps) => (
-  <Section id={id} className="flex-col" customBackground={customBackground}>
-    <h3>{title}</h3>
+  <Section id={id} customBackground={customBackground}>
+    <h2>{title}</h2>
     {description && <p className="text-xl">{description}</p>}
     {cardsList}
     {children}

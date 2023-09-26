@@ -7,8 +7,8 @@ import CarteAvecFiltres from '@components/carte/CarteAvecFiltres';
 
 const Carte = () => {
   return (
-    <Section id="carte" className="flex-col">
-      <h3>De nombreuses collectivités ont déjà franchi le cap !</h3>
+    <Section id="carte">
+      <h2>De nombreuses collectivités ont déjà franchi le cap !</h2>
 
       <CarteAvecFiltres />
 

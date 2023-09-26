@@ -60,8 +60,8 @@ const Actualites = async () => {
   const data: ActuCard[] | null = await getData();
 
   return data ? (
-    <Section className="flex-col">
-      <h2>Actualités</h2>
+    <Section>
+      <h1>Actualités</h1>
       <Gallery
         data={data.map(actu => (
           <BlogCard

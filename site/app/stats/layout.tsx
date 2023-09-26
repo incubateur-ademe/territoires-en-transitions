@@ -15,12 +15,8 @@ const StatsLayout = ({children}: {children: React.ReactNode}) => {
 
   return (
     <>
-      <Section
-        className="flex-col"
-        containerClassName="!pb-0"
-        customBackground="#fff"
-      >
-        <h2>Statistiques{title ? ` - ${title}` : ''}</h2>
+      <Section containerClassName="!pb-0" customBackground="#fff">
+        <h1>Statistiques{title ? ` - ${title}` : ''}</h1>
         <RegionAndDeptFilters onChange={setTitle} />
       </Section>
       {children}

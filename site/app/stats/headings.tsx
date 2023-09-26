@@ -6,7 +6,7 @@ type Props = {children: React.ReactNode};
 
 // titre au dessus d'une section
 export function SectionHead({children}: Props) {
-  return <h3>{children}</h3>;
+  return <h2>{children}</h2>;
 }
 
 // titre au dessus d'un groupe de graphes

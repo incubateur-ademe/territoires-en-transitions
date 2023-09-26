@@ -45,26 +45,11 @@ export const Footer = () => {
                   beta.gouv
                 </a>
               </li>
-              <li className="fr-footer__content-item">
-                <a
-                  className="fr-footer__content-link"
-                  href="https://territoireengagetransitionecologique.ademe.fr"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  territoireengagetransitionecologique.ademe.fr
-                </a>
-              </li>
             </ul>
           </div>
         </div>
         <div className="fr-footer__bottom">
           <ul className="fr-footer__bottom-list">
-            <li className="fr-footer__bottom-item">
-              <a className="fr-footer__bottom-link" href="/stats">
-                Statistiques
-              </a>
-            </li>
             <li className="fr-footer__bottom-item">
               <span className="fr-footer__bottom-link">
                 <a className="fr-footer__bottom-link" href="/accessibilite">

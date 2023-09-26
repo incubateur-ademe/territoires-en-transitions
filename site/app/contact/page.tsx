@@ -49,8 +49,8 @@ const Contact = async () => {
   const data: ContactData | null = await getData();
 
   return data ? (
-    <Section className="flex-col">
-      <h2>{data.titre}</h2>
+    <Section>
+      <h1>{data.titre}</h1>
 
       <p className="text-xl">{data.description}</p>
 

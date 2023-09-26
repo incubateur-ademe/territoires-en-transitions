@@ -27,7 +27,7 @@ const ParagrapheArticle = ({
   return (
     <div className="flex flex-col w-full">
       {/* Titre du paragraphe */}
-      {titre && <h4 className="text-center w-full mt-8 mb-6">{titre}</h4>}
+      {titre && <h2 className="text-center w-full mt-8 mb-6">{titre}</h2>}
 
       {/* Image si alignement au centre haut */}
       {image && alignementImage === 'Centre Haut' && (

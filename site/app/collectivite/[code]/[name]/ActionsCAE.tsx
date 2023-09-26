@@ -51,13 +51,13 @@ const ActionsCAE = ({data}: ActionsCaeProp) => {
               })}
             >
               {action.titre && (
-                <h4
+                <h3
                   className={classNames('text-[#000091]', {
                     'mt-10': index !== 0,
                   })}
                 >
                   {action.titre.toUpperCase()}
-                </h4>
+                </h3>
               )}
               {action.texte && (
                 <div
