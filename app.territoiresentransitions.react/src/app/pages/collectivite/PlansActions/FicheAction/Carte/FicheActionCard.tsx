@@ -83,13 +83,13 @@ const FicheActionCard = ({
     >
       {/** Menu d'options */}
       {isEditable && (
-        <div className="absolute top-4 right-4 invisible group-hover:visible !flex">
+        <div className="group absolute top-4 right-4 !flex">
           {isEdit ? (
             <NavLink
               to={link || '#'}
               target={openInNewTab ? '_blank' : undefined}
               rel={openInNewTab ? 'noopener noreferrer' : undefined}
-              className={classNames('!bg-none', {
+              className={classNames('invisible group-hover:visible !bg-none', {
                 'after:!hidden': openInNewTab,
               })}
             >
@@ -97,11 +97,12 @@ const FicheActionCard = ({
             </NavLink>
           ) : (
             <button
+              data-test="EditerFicheBouton"
               ref={editButtonRef}
               title="Éditer"
               id={`fiche-${ficheAction.id}-edit-button`}
               className={classNames(
-                'fr-btn fr-btn--tertiary fr-btn--sm fr-icon-edit-line hover:!bg-gray-200'
+                'invisible group-hover:visible fr-btn fr-btn--tertiary fr-btn--sm fr-icon-edit-line hover:!bg-gray-200'
               )}
             />
           )}
