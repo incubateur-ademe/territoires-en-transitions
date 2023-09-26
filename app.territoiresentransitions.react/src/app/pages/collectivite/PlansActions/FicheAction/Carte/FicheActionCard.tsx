@@ -107,6 +107,7 @@ const FicheActionCard = ({
             />
           )}
           <FicheActionSupprimerModal
+            buttonClassname="invisible group-hover:visible"
             isInMultipleAxes={
               (ficheAction.plans && ficheAction.plans.length > 1) || false
             }

@@ -1,17 +1,24 @@
+import classNames from 'classnames';
 import Modal from 'ui/shared/floating-ui/Modal';
 
 type Props = {
   isInMultipleAxes: boolean;
   onDelete: () => void;
+  buttonClassname?: string;
 };
 
-const FicheActionSupprimerModal = ({isInMultipleAxes, onDelete}: Props) => {
+const FicheActionSupprimerModal = ({
+  isInMultipleAxes,
+  onDelete,
+  buttonClassname,
+}: Props) => {
   return (
     <Modal
+      noCloseButton
       render={({labelId, descriptionId, close}) => {
         return (
-          <div data-test="supprimer-fiche-modale">
-            <h4 id={labelId} className="fr-h4">
+          <div data-test="supprimer-fiche-modale" className="mt-2">
+            <h4 id={labelId} className="fr-h6">
               Supprimer la fiche action
             </h4>
             <p id={descriptionId}>
@@ -51,7 +58,10 @@ const FicheActionSupprimerModal = ({isInMultipleAxes, onDelete}: Props) => {
     >
       <button
         data-test="SupprimerFicheBouton"
-        className="fr-btn fr-btn--tertiary fr-btn--sm fr-fi-delete-line hover:!bg-gray-200"
+        className={classNames(
+          'fr-btn fr-btn--tertiary fr-btn--sm fr-fi-delete-line hover:!bg-gray-200',
+          buttonClassname
+        )}
         title="Supprimer la fiche"
       />
     </Modal>
