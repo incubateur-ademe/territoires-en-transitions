@@ -7,6 +7,7 @@ import Section from '@components/sections/Section';
 import BlogCard from '@components/cards/BlogCard';
 import Gallery from '@components/gallery/Gallery';
 import {Metadata} from 'next';
+import {convertNameToSlug} from 'app/utils';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -61,6 +62,28 @@ const Actualites = async () => {
   return data ? (
     <Section className="flex-col">
       <h2>Actualités</h2>
+      <Gallery
+        data={data.map(actu => (
+          <BlogCard
+            key={actu.id}
+            backgroundColor="#f5f5fe"
+            title={actu.titre}
+            date={actu.dateCreation}
+            description={actu.resume}
+            image={
+              actu.couverture ? (
+                <StrapiImage
+                  data={actu.couverture}
+                  className="w-full"
+                  displayCaption={false}
+                />
+              ) : undefined
+            }
+            badge={actu.epingle ? 'A la une' : undefined}
+            href={`/actus/${actu.id}/${convertNameToSlug(actu.titre)}`}
+          />
+        ))}
+      />
     </Section>
   ) : null;
 };

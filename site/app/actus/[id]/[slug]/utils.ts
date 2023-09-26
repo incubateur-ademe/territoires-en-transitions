@@ -11,7 +11,7 @@ import {
   ImageFetchedData,
   InfoFetchedData,
   VideoFetchedData,
-} from '../../types';
+} from '../../../types';
 
 export const getData = async (id: number) => {
   const data = await fetchItem('actualites', id, [
