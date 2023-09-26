@@ -9,6 +9,13 @@ import {getData} from './utils';
 import GallerieArticle from './GallerieArticle';
 import EmbededVideo from '@components/video/EmbededVideo';
 import {ParagrapheCustomArticleData} from 'app/types';
+import {Metadata} from 'next';
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: 'Actus',
+  };
+}
 
 const Article = async ({params}: {params: {slug: string}}) => {
   const id = parseInt(params.slug);

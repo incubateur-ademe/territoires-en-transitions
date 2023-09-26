@@ -2,6 +2,16 @@ import {fetchCollection, fetchSingle} from 'src/strapi/strapi';
 import {StrapiItem} from 'src/strapi/StrapiItem';
 import {AccueilData} from './types';
 
+export const getMetaData = async () => {
+  const data = await fetchSingle('metadata');
+
+  return {
+    title: (data?.attributes.Titre as unknown as string) ?? undefined,
+    description:
+      (data?.attributes.Description as unknown as string) ?? undefined,
+  };
+};
+
 export const sortByRank = (array: StrapiItem[]): StrapiItem[] =>
   array.sort((a, b) => {
     const aRank = (a.attributes.Rang as unknown as number) ?? undefined;

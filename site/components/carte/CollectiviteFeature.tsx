@@ -1,6 +1,6 @@
 'use client';
 
-import {FeatureGroup, GeoJSON, Popup, Tooltip} from 'react-leaflet';
+import {FeatureGroup, GeoJSON, Tooltip} from 'react-leaflet';
 import {GeoJsonObject} from 'geojson';
 import {Database, Json} from '../../app/database.types';
 import {PathOptions} from 'leaflet';

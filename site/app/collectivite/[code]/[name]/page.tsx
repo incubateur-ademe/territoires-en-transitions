@@ -14,12 +14,19 @@ import {
   ParagrapheArticleData,
   ParagrapheCustomArticleData,
 } from 'app/types';
+import {Metadata} from 'next';
 import ActionsCAE from './ActionsCAE';
 import Citation from './Citation';
 import Introduction from './Introduction';
 import Labellisation from './Labellisation';
 import Performance from './Performance';
 import {getData} from './utils';
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: 'Collectivités',
+  };
+}
 
 const DetailCollectivite = async ({params}: {params: {code: string}}) => {
   const data = await getData(params.code);

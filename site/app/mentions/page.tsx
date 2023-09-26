@@ -1,4 +1,14 @@
-export default function Home() {
+'use server';
+
+import {Metadata} from 'next';
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: 'Mentions Légales',
+  };
+}
+
+export default async function Home() {
   return (
     <div className="fr-container">
       <div className="fr-mt-1w fr-mt-md-4w fr-mb-5w">

@@ -8,6 +8,13 @@ import PhoneIcon from '@components/icones/PhoneIcon';
 import {fetchSingle} from 'src/strapi/strapi';
 import {StrapiItem} from 'src/strapi/StrapiItem';
 import ContactForm from './ContactForm';
+import {Metadata} from 'next';
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: 'Contact',
+  };
+}
 
 type ContactData = {
   titre: string;

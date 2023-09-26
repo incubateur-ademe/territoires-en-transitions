@@ -12,6 +12,13 @@ import {ProgrammeData} from './types';
 import NoResult from '@components/info/NoResult';
 import {getData} from './utils';
 import Carte from './Carte';
+import {Metadata} from 'next';
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: 'Programme',
+  };
+}
 
 const Programme = async () => {
   const data: ProgrammeData | null = await getData();
