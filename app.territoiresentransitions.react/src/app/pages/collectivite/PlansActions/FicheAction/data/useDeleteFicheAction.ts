@@ -13,6 +13,7 @@ import {deleteFicheFromAxe} from '../../PlanAction/data/utils';
 
 type Args = {
   ficheId: number;
+  /** Invalider la cle axe_fiches et savoir s'il faut rediriger ou non */
   axeId?: number;
   planActionId?: number;
 };
@@ -74,22 +75,25 @@ export const useDeleteFicheAction = () => {
           queryClient.setQueryData(key as string[], data)
         );
       },
-      onSuccess: () => {
+      onSuccess: (data, args) => {
         queryClient.invalidateQueries(['fiches_non_classees', collectivite_id]);
+        queryClient.invalidateQueries(['plan_action', args.axeId]);
         queryClient.invalidateQueries(['plan_action', planUid]);
-        if (planUid) {
-          history.push(
-            makeCollectivitePlanActionUrl({
-              collectiviteId: collectivite_id!,
-              planActionUid: planUid,
-            })
-          );
-        } else {
-          history.push(
-            makeCollectivitePlansActionsSyntheseUrl({
-              collectiviteId: collectivite_id!,
-            })
-          );
+        if (!args.axeId) {
+          if (planUid) {
+            history.push(
+              makeCollectivitePlanActionUrl({
+                collectiviteId: collectivite_id!,
+                planActionUid: planUid,
+              })
+            );
+          } else {
+            history.push(
+              makeCollectivitePlansActionsSyntheseUrl({
+                collectiviteId: collectivite_id!,
+              })
+            );
+          }
         }
       },
     }
