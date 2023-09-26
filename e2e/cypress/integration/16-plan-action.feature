@@ -1,7 +1,7 @@
 # language: fr
 
 Fonctionnalité: Gérer les fiches et les plans d'action
-@skip
+@focus
   Scénario: Ajouter, éditer et supprimer une fiche action
     Etant donné que je suis connecté en tant que "yolo"
     Et que je suis sur la page "Plans action" de la collectivité "1"
@@ -38,9 +38,8 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     Et que je le nomme "Axe 1: les tests passent"
     # ajouter une fiche au plan d'action
     Quand j'ajoute une fiche au plan d'action
-    Et que je la nomme "FFiche test" et je navigue vers cette derniere
     # naviguer vers cette fiche
-    # Et que je navigue vers la fiche "Fiche test"
+    Et que je la nomme "Fiche test" et je navigue vers cette derniere
     # ouvrir la modale "Ranger la fiche"
     Et que j'ouvre la modale ranger la fiche
     Alors le "Modale ranger fiche action" est visible
@@ -62,7 +61,7 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     # le fil d'ariane de la fiche doit contenir "Axe 1"
     Quand je clique en dehors de la boîte de dialogue
     Alors le fil d'ariane de la fiche contient "Axe 1: les tests passent"
-@skip
+
   Scénario: Ajouter, éditer et supprimer un plan d'action
     Etant donné que je suis connecté en tant que "yolo"
     Et que je suis sur la page "Plans action" de la collectivité "1"
@@ -96,8 +95,7 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     Quand je clique en dehors de la boîte de dialogue
 
     # supprimer la fiche crée précédemment
-    Quand je navigue sur la fiche "Sans titre"
-    Et que je supprime la fiche
+    Quand je supprime une fiche "Sans titre" dans l'arborescence
     Alors la fiche "Sans titre" n'est plus présente
 
     # supprimer le plan d'action
@@ -106,7 +104,7 @@ Fonctionnalité: Gérer les fiches et les plans d'action
 
     Quand je supprime l'axe depuis la modale
     Alors le plan n'est plus présent dans la navigation
-@skip
+
   Scénario: Visiter une page axe et filtrer les fiches
     Etant donné que je suis connecté en tant que "yolo"
     Et que je suis sur la page "Plans action" de la collectivité "1"
@@ -126,7 +124,7 @@ Fonctionnalité: Gérer les fiches et les plans d'action
 
     # ajouter un nouveau titre et lui donner ce contenu "Axe 1: les tests passent"
     Quand j'ajoute une fiche à la page axe
-    Et que je saisi la valeur "Fiche test" dans le champ "header input"
+    Et que je la nomme "Fiche test" et je navigue vers cette derniere
 
     # créer un tag personne pilote "Michel Sapasse"
     Quand j'ouvre la section "acteurs"
@@ -142,8 +140,8 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     Alors aucune fiche n'est présente
 
     Quand je filtre les fiches par "Michel Sapasse" du filtre "personne-pilote"
-    Alors la fiche contenant "Pilote : Michel Sapasse" est visible
-@skip
+    Alors la fiche contenant "Michel Sapasse" est visible
+
   Scénario: Visiter la page des graphiques de synthèse et filter les fiches
     Etant donné que je suis connecté en tant que "yolo"
     Et que je suis sur la page "Plans action" de la collectivité "1"

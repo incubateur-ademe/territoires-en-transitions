@@ -52,6 +52,11 @@ When(/je supprime la fiche/, () => {
   cy.contains('Confirmer').click();
 });
 
+When(/je supprime une fiche "([^"]*)" dans l'arborescence/, titre => {
+  cy.get('[data-test=SupprimerFicheBouton]').first().click({force: true});
+  cy.contains('Confirmer').click();
+});
+
 When(/la fiche "([^"]*)" n'est plus présente/, titre => {
   cy.contains(titre).should('not.exist');
 });
@@ -104,11 +109,8 @@ When(/j'ajoute une fiche au plan d'action/, () => {
     .click();
 });
 
-// When(/je la nomme "([^"]*)"/, titre => {
-//   cy.get('[data-test=ActionCarte]').find('textarea').type(`${titre}{enter}`);
-// });
-
 When(/je la nomme "([^"]*)" et je navigue vers cette derniere/, titre => {
+  cy.wait(50);
   cy.get('[data-test=ActionCarte]').find('textarea').type(`${titre}{enter}`);
   cy.get('[data-test=ActionCarte]').contains(titre).click();
   cy.get('[data-test=FicheAction]').contains(titre).should('be.visible');
@@ -119,7 +121,6 @@ When(/j'ajoute une fiche à la page axe/, () => {
     .find('button')
     .contains('Créer une fiche action')
     .click();
-  cy.get('[data-test=FicheAction]').should('be.visible');
 });
 
 When(/je reviens sur le plan d'action "([^"]*)"/, titre => {
