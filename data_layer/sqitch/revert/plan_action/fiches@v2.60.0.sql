@@ -2,10 +2,7 @@
 
 BEGIN;
 
-drop function fiche_resume(fiche_action_action fiche_action_action);
-drop function fiche_resume(fiche_action_indicateur fiche_action_indicateur);
-
-create or replace view private.fiche_resume(plans, titre, id, statut, collectivite_id, pilotes, modified_at, date_fin_provisoire, niveau_priorite) as
+create or replace view private.fiche_resume(plans, titre, id, statut, collectivite_id, pilotes, modified_at) as
 select (with recursive chemin as (select axe.id as axe_id,
                                          axe.parent,
                                          axe    as plan
@@ -34,23 +31,14 @@ select (with recursive chemin as (select axe.id as axe_id,
                        left join personne_tag pt on fap.tag_id = pt.id
                        left join dcp on fap.user_id = dcp.user_id
               where fap.fiche_id = fa.id) pil)                                                           as pilotes,
-       fa.modified_at,
-       fa.date_fin_provisoire,
-       fa.niveau_priorite
+       fa.modified_at
 from fiche_action fa
-group by fa.titre, fa.id, fa.statut, fa.collectivite_id
-order by naturalsort(fa.titre);
+group by fa.titre, fa.id, fa.statut, fa.collectivite_id;
 
-create or replace view fiche_resume as
-select fr.*
-from private.fiche_resume fr
-where can_read_acces_restreint(fr.collectivite_id);
-
-create or replace function fiche_resume(fiche_action_action fiche_action_action) returns SETOF private.fiche_resume
+create or replace function fiche_resume(fiche_action_action fiche_action_action) returns SETOF fiche_resume
     rows 1
     language sql
     stable
-    security definer
 begin
     atomic
     select fr.plans,
@@ -59,9 +47,7 @@ begin
            fr.statut,
            fr.collectivite_id,
            fr.pilotes,
-           fr.modified_at,
-           fr.date_fin_provisoire,
-           fr.niveau_priorite
+           fr.modified_at
     from private.fiche_resume as fr
     where fr.id = fiche_action_action.fiche_id
       and can_read_acces_restreint(fr.collectivite_id);
@@ -71,7 +57,6 @@ create or replace function fiche_resume(fiche_action_indicateur fiche_action_ind
     rows 1
     language sql
     stable
-    security definer
 begin
     atomic
     select fr.plans,
@@ -80,9 +65,7 @@ begin
            fr.statut,
            fr.collectivite_id,
            fr.pilotes,
-           fr.modified_at,
-           fr.date_fin_provisoire,
-           fr.niveau_priorite
+           fr.modified_at
     from private.fiche_resume as fr
     where fr.id = fiche_action_indicateur.fiche_id
       and can_read_acces_restreint(fr.collectivite_id);

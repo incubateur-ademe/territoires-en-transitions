@@ -2,9 +2,6 @@
 
 BEGIN;
 
-select collectivite_id, id, nom, referentiels, completude
-from question_thematique_completude
-where false;
-
+select has_function_privilege('private.reponse_count_by_thematique(integer, varchar)', 'execute');
 
 ROLLBACK;

@@ -98,7 +98,9 @@ def test_scores_should_match_yaml_expectations(test_post_personnalize, test_post
             print(f'- want {want}')
             # On compare chaque valeur avec l'objet obtenu par l'API
             for k in [k for k in want.keys() if k != 'test' and have[k] != want[k]]:
-                print(f'> Erreur sur "{k}" de "{action_id}"')
+                print(f'> Erreur sur "{k}" de "{action_id}":')
+                print(f'\t- have: {have[k]}')
+                print(f'\t- want: {want[k]}')
                 failures += 1
 
         assert failures == 0, f'{failures} comparaisons ont échouées pour {data["Test"]}'

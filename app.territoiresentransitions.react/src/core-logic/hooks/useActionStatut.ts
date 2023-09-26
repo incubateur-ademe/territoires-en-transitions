@@ -12,7 +12,7 @@ import {useCollectiviteId} from './params';
 export const useActionStatut = (actionId: string) => {
   const collectivite_id = useCollectiviteId();
   const {data, isLoading} = useQuery(['action_statut', collectivite_id], () =>
-    fetchCollectiviteActionStatuts(collectivite_id ?? undefined)
+    fetchCollectiviteActionStatuts(collectivite_id ?? undefined),
   );
 
   const statut = data?.find(action => action.action_id === actionId) || null;
@@ -22,7 +22,7 @@ export const useActionStatut = (actionId: string) => {
       action =>
         action.action_id.includes(actionId) &&
         action.action_id.split(actionId)[1] !== '' &&
-        action.avancement !== 'non_renseigne'
+        action.avancement !== 'non_renseigne',
     ) !== undefined || null;
 
   return {
@@ -69,10 +69,13 @@ export const useSaveActionStatut = () => {
 
 type TActionStatutWrite =
   Database['public']['Tables']['action_statut']['Insert'];
-const write = async (statut: TActionStatutWrite) =>
-  supabaseClient.from('action_statut').upsert([statut], {
+const write = async (statut: TActionStatutWrite) => {
+  delete statut.modified_at;
+  delete statut.modified_by;
+  return supabaseClient.from('action_statut').upsert([statut], {
     onConflict: 'collectivite_id,action_id',
   });
+};
 
 /**
  * Détermine si l'utilisateur a le droit de modifier le statut d'une action
@@ -88,6 +91,6 @@ export const useEditActionStatutIsDisabled = (actionId: string) => {
       collectivite.readonly ||
       !score ||
       score.desactive ||
-      (audit && (!isAuditeur || audit.valide))
+      (audit && (!isAuditeur || audit.valide)),
   );
 };

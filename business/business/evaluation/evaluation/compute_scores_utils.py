@@ -248,15 +248,18 @@ def update_action_score_from_children_scores(
 
 
 def _propagate_non_concerne(
-        action_id: ActionId,
-        actions_non_concernes_ids: List[ActionId],
         point_tree: ActionPointTree,
+        action_id: ActionId,
+        action_concerne_ids: List[ActionId],
+        action_non_concerne_ids: List[ActionId],
 ):
-    if action_id in actions_non_concernes_ids:
+    if action_id in action_non_concerne_ids:
+        return
+    if action_id in action_concerne_ids:
         return
     children = point_tree.get_children(action_id)
-    if children and all([child in actions_non_concernes_ids for child in children]):
-        actions_non_concernes_ids.append(action_id)
+    if children and all([child in action_non_concerne_ids for child in children]):
+        action_non_concerne_ids.append(action_id)
 
 
 @timeit("compute_action_non_concerne_ids")
@@ -265,15 +268,26 @@ def compute_action_non_concerne_ids(
         statuts: List[ActionStatut],
         action_desactive_ids: List[ActionId]
 ):
+    action_concerne_ids = [
+        action_status.action_id
+        for action_status in statuts
+        if action_status.concerne
+    ]
+
     action_non_concerne_ids = [
-                                  action_status.action_id
-                                  for action_status in statuts
-                                  if not action_status.concerne
-                              ] + action_desactive_ids
+        action_status.action_id
+        for action_status in statuts
+        if not action_status.concerne
+    ]
+
+    action_non_concerne_ids += action_desactive_ids
 
     point_tree.map_from_taches_to_root(
         lambda action_id: _propagate_non_concerne(
-            action_id, action_non_concerne_ids, point_tree
+            point_tree,
+            action_id,
+            action_concerne_ids,
+            action_non_concerne_ids,
         )
     )
     return action_non_concerne_ids
@@ -340,10 +354,17 @@ def _action_potentiel_with_redistribution_remainder(
 @timeit("compute_potentiels")
 def compute_potentiels(
         point_tree_personnalise: ActionPointTree,
-        actions_non_concernes_ids: List[ActionId],
+        statuts: List[ActionStatut],
+        action_non_concerne_ids: List[ActionId],
         action_level: int,
 ) -> Dict[ActionId, float]:
     potentiels = {}
+
+    action_concerne_ids = [
+        action_status.action_id
+        for action_status in statuts
+        if action_status.concerne
+    ]
 
     def _add_action_potentiel_after_redistribution(
             action_id: ActionId,
@@ -351,8 +372,10 @@ def compute_potentiels(
         this_level = point_tree_personnalise.depths[action_id]
         children = point_tree_personnalise.get_children(action_id)
 
-        if action_id in actions_non_concernes_ids:  # non-concerné
+        if action_id in action_non_concerne_ids:  # non-concerné
             potentiel = 0
+        elif action_id in action_concerne_ids:  # action avec un statut
+            potentiel = point_tree_personnalise.get_action_point(action_id)
         elif not children:  # tache
             potentiel = point_tree_personnalise.get_action_point(action_id)
         else:
@@ -367,7 +390,7 @@ def compute_potentiels(
             potentiel = _action_potentiel_with_redistribution_remainder(
                 action_id,
                 potentiel,
-                actions_non_concernes_ids,
+                action_non_concerne_ids,
                 point_tree_personnalise,
             )
 

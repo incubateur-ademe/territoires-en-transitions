@@ -13,7 +13,7 @@ type labellisation_w_geojson =
 export function CollectiviteFeature(props: {item: labellisation_w_geojson}) {
   const {item} = props;
   const geojson = item.geojson as unknown as GeoJsonObject;
-  const style = item.labellise
+  const style = item.labellisee
     ? {
         fillColor: '#476c9b',
         color: '#164988',
