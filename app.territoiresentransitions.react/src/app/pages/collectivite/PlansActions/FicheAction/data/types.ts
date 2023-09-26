@@ -1,6 +1,5 @@
 import {
   TActionInsert,
-  TAnnexeInsert,
   TAxeInsert,
   TFicheAction,
   TIndicateur,
@@ -23,7 +22,6 @@ export type FicheAction = Omit<
   | 'structures'
   | 'pilotes'
   | 'referents'
-  | 'annexes'
   | 'axes'
   | 'actions'
   | 'indicateurs'
@@ -37,7 +35,6 @@ export type FicheAction = Omit<
   structures: TFicheActionStructureInsert[] | null;
   pilotes: Personne[] | null;
   referents: Personne[] | null;
-  annexes: TAnnexeInsert[] | null;
   axes: TAxeInsert[] | null;
   actions: TActionInsert[] | null;
   indicateurs: Indicateur[] | null;
