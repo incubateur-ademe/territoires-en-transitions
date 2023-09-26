@@ -75,7 +75,7 @@ export const useCreateFicheAction = (args?: Args) => {
               id: null,
               collectivite_id: collectivite_id!,
             };
-            return old ? [...old, newFiche] : [newFiche];
+            return old ? [newFiche, ...old] : [newFiche];
           });
 
           // Return a context object with the snapshotted value
@@ -103,7 +103,7 @@ export const useCreateFicheAction = (args?: Args) => {
               return old || [];
             }
           );
-          queryClient.invalidateQueries(['axe_fiches', axeId]);
+          queryClient.invalidateQueries(['plan_action', axeId]);
           queryClient
             .invalidateQueries(['plan_action', planActionId])
             .then(() => {

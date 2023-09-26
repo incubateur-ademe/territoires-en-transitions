@@ -2,6 +2,7 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {useMutation, useQueryClient} from 'react-query';
 import {FicheResume} from './types';
 import {useCollectiviteId} from 'core-logic/hooks/params';
+import {ficheResumeByTitle} from './utils';
 
 /**
  * Édite un axe dans un plan d'action
@@ -31,7 +32,7 @@ export const useUpdateFicheResume = (axeId?: number) => {
             axeKey,
             (old: FicheResume[] | undefined): FicheResume[] => {
               const newFiches = old?.map(f => (f.id !== fiche.id ? f : fiche));
-              return newFiches || [];
+              return newFiches?.sort(ficheResumeByTitle) || [];
             }
           );
 
@@ -49,7 +50,7 @@ export const useUpdateFicheResume = (axeId?: number) => {
           'fiches_resume_collectivite',
           collectivite_id,
         ]);
-        queryClient.invalidateQueries(['axe_fiches', axeId]);
+        // queryClient.invalidateQueries(['axe_fiches', axeId]);
         queryClient.invalidateQueries(['fiche_action', fiche.id]);
       },
     }

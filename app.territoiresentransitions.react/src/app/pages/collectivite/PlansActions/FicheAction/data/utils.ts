@@ -1,4 +1,6 @@
 import {FicheAction, FicheResume, Personne} from './types';
+import {naturalSort} from 'utils/naturalSort';
+import {FicheResume, Personne} from './types';
 
 /**
  * Formate un nouveau tag qui nécessite un type minimum collectivite_id, nom
@@ -73,4 +75,9 @@ export const updateFichesResumeFromFicheAction = ({
     statut: null,
   };
   return fichesResume.map(f => (f.id !== null ? f : newFiche));
+/** Ordonne les fiches résumé par titre */
+export const ficheResumeByTitle = (a: FicheResume, b: FicheResume) => {
+  if (!a.titre) return -1;
+  if (!b.titre) return 1;
+  return naturalSort(a.titre, b.titre);
 };
