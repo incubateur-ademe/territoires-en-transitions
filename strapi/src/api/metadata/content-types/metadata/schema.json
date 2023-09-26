@@ -1,0 +1,22 @@
+{
+  "kind": "singleType",
+  "collectionName": "metadatas",
+  "info": {
+    "singularName": "metadata",
+    "pluralName": "metadatas",
+    "displayName": "Metadata",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Titre": {
+      "type": "string"
+    },
+    "Description": {
+      "type": "text"
+    }
+  }
+}

@@ -5,6 +5,14 @@ import {StrapiImage} from '@components/strapiImage/StrapiImage';
 import {StrapiItem} from 'src/strapi/StrapiItem';
 import Section from '@components/sections/Section';
 import BlogCard from '@components/cards/BlogCard';
+import Gallery from '@components/gallery/Gallery';
+import {Metadata} from 'next';
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: 'Actus',
+  };
+}
 
 type ActuCard = {
   id: number;

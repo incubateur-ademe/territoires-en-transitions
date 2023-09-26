@@ -2,17 +2,26 @@ import AppHeader from './AppHeader';
 import '@gouvfr/dsfr/dist/dsfr.css';
 import './global.css';
 import {Footer} from '@components/footer/Footer';
+import {Metadata} from 'next';
+import {getMetaData} from './utils';
+
+export async function generateMetadata(): Promise<Metadata> {
+  const data = await getMetaData();
+
+  return {
+    title: {
+      default: data.title ?? 'Territoires en Transitions',
+      template: `%s | ${data.title ?? 'Territoires en Transitions'}`,
+    },
+    description: data.description,
+  };
+}
 
 export default function RootLayout({children}: {children: JSX.Element}) {
   return (
     <html>
       <head>
-        <title>Territoires en Transitions</title>
         <meta content="width=device-width, initial-scale=1" name="viewport" />
-        <meta
-          name="description"
-          content="Territoires en transitions accompagne les collectivités afin de les aider à piloter plus facilement leur transition écologique."
-        />
         <link rel="icon" href="/favicon.ico" />
         <link
           rel="icon"
