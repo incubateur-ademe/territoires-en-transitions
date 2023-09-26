@@ -71,11 +71,9 @@ export const useCreateFicheAction = (args?: Args) => {
 
           // met à jour les listes des fiches d'un axe
           queryClient.setQueryData(axeKey, (old: any) => {
-            console.log(old);
             const newFiche = {
               id: null,
               collectivite_id: collectivite_id!,
-              plans: [{id: axeId, collectivite_id: collectivite_id!}],
             };
             return old ? [...old, newFiche] : [newFiche];
           });
@@ -105,18 +103,20 @@ export const useCreateFicheAction = (args?: Args) => {
               return old || [];
             }
           );
+          queryClient.invalidateQueries(['axe_fiches', axeId]);
           queryClient
             .invalidateQueries(['plan_action', planActionId])
             .then(() => {
-              waitForMarkup(`#fiche-${data[0].id}`).then(() => {
+              const ficheId = data[0].id;
+              waitForMarkup(`#fiche-${ficheId}`).then(() => {
                 // scroll au niveau de la nouvelle fiche créée
-                dropAnimation(`fiche-${data[0].id}`);
+                dropAnimation(`fiche-${ficheId}`);
                 // on la rend éditable
                 document
-                  .getElementById(`fiche-${data[0].id}-edit-button`)
+                  .getElementById(`fiche-${ficheId}-edit-button`)
                   ?.click();
                 // donne le focus à son titre
-                document.getElementById(`fiche-titre-${data[0].id}`)?.focus();
+                document.getElementById(`fiche-titre-${ficheId}`)?.focus();
               });
             });
         } else {

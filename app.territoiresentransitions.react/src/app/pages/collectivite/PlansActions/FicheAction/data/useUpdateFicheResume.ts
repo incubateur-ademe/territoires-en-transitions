@@ -30,8 +30,8 @@ export const useUpdateFicheResume = (axeId?: number) => {
           queryClient.setQueryData(
             axeKey,
             (old: FicheResume[] | undefined): FicheResume[] => {
-              const ficheIndex = old?.findIndex(f => f.id === fiche.id);
-              return (ficheIndex && old?.splice(ficheIndex, 1, fiche)) || [];
+              const newFiches = old?.map(f => (f.id !== fiche.id ? f : fiche));
+              return newFiches || [];
             }
           );
 

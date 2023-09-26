@@ -1,4 +1,4 @@
-import {Personne} from './types';
+import {FicheAction, FicheResume, Personne} from './types';
 
 /**
  * Formate un nouveau tag qui nécessite un type minimum collectivite_id, nom
@@ -20,3 +20,57 @@ export const getPersonneId = (personne: Personne): string =>
 
 /** Renvoie "Sans titre" si le string est undefined ou null */
 export const generateTitle = (title?: string | null) => title || 'Sans titre';
+
+export const createFicheResume = ({
+  collectivite_id,
+  axeId,
+}: {
+  collectivite_id: number;
+  axeId: number;
+}): FicheResume => {
+  const newFiche = {
+    id: null,
+    collectivite_id,
+    modified_at: null,
+    // plans: [{id: axeId, collectivite_id}],
+    plans: [
+      {
+        collectivite_id,
+        id: axeId,
+        // created_at: null,
+        // modified_at: string,
+        // modified_by: null,
+        // nom: string | null
+        // parent: number | null
+      },
+    ],
+    titre: null,
+    date_fin_provisoire: null,
+    niveau_priorite: null,
+    pilotes: null,
+    statut: null,
+  };
+  return newFiche;
+};
+
+export const updateFichesResumeFromFicheAction = ({
+  fichesResume,
+  ficheAction,
+}: {
+  fichesResume: FicheResume[];
+  ficheAction: FicheAction;
+}): FicheResume[] => {
+  const newFiche = {
+    id: ficheAction.id,
+    collectivite_id: ficheAction.collectivite_id,
+    modified_at: ficheAction.modified_at,
+    // plans: ficheAction?.map(f => (f.id !== fiche.id ? f : fiche)),
+    plans: [],
+    titre: null,
+    date_fin_provisoire: null,
+    niveau_priorite: null,
+    pilotes: null,
+    statut: null,
+  };
+  return fichesResume.map(f => (f.id !== null ? f : newFiche));
+};
