@@ -2,38 +2,6 @@
 
 BEGIN;
 
--- Fonction upsert_axe
-create or replace function upsert_axe(nom text, collectivite_id integer, parent integer) returns integer
-    language plpgsql
-as
-$$
-declare
-    existing_axe_id integer;
-    axe_id          integer;
-begin
-    if have_edition_acces(collectivite_id) or is_service_role() then
-        select a.id
-        from axe a
-        where a.nom = trim(upsert_axe.nom)
-          and a.collectivite_id = upsert_axe.collectivite_id
-          and ((a.parent is null and upsert_axe.parent is null)
-            or (a.parent = upsert_axe.parent))
-        limit 1
-        into existing_axe_id;
-        if existing_axe_id is null then
-            insert into axe (nom, collectivite_id, parent)
-            values (trim(upsert_axe.nom), upsert_axe.collectivite_id, parent)
-            returning id into axe_id;
-        else
-            axe_id = existing_axe_id;
-        end if;
-        return axe_id;
-    else
-        perform set_config('response.status', '403', true);
-        raise 'L''utilisateur n''a pas de droit en edition sur la collectivité.';
-    end if;
-end;
-$$;
 
 create or replace function import_plan_action_csv() returns trigger
     language plpgsql
@@ -45,7 +13,7 @@ declare
     elem_id integer;
     elem text;
     col_id integer;
-    regex_split text = E'\(et/ou|[–,/+?&;]|\n|\r| - | -|- |^-| et (?!de)\)(?![^(]*[)])(?![^«]*[»])';
+    regex_split text = E'\(et/ou|[,/+?&;]|\n|\r| - | -|- |^-| et (?!de)\)(?![^(]*[)])(?![^«]*[»])';
     regex_date text = E'^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[012])/([0-9]{4})$';
     regex_nom text = E'\\t|\\r|\\n';
 begin
