@@ -38,6 +38,10 @@ export const ALIGN_LEFT_WRAP = {
   horizontal: 'left',
   wrapText: true,
 } as Partial<Alignment>;
+export const ALIGN_CENTER_WRAP = {
+  ...ALIGN_CENTER,
+  wrapText: true,
+};
 
 // styles de fonte
 export const BOLD = { bold: true };
@@ -87,14 +91,14 @@ export const getNumberFormat = (value: CellValue, numFmt?: string) => {
 
   // pas de virgule si le nombre est entier (ou null => forcé à 0)
   if (value === null || value === undefined || Number.isInteger(value)) {
-    return `0${suffix}`;
+    return `#,##0${suffix}`;
   }
   if (numFmt === FORMAT_PERCENT) {
     // un seul chiffre après la virgule pour les pourcentages
     return `0.#${suffix}`;
   }
   // deux chiffres après la virgule
-  return `0.0#${suffix}`;
+  return `#,##0.0#${suffix}`;
 };
 
 /** Génère les options pour avoir une couleur de remplissage pour une/des cellule(s) d'une feuille xlsx */
