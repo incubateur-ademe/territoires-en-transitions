@@ -4,7 +4,7 @@ import Section from '@components/sections/Section';
 import {getLocalDateString} from 'src/utils/getLocalDateString';
 import ParagrapheArticle from './ParagrapheArticle';
 import InfoArticle from './InfoArticle';
-import {GallerieArticleData, ImageArticleData} from '../../types';
+import {GallerieArticleData, ImageArticleData} from '../../../types';
 import {getData} from './utils';
 import GallerieArticle from './GallerieArticle';
 import EmbededVideo from '@components/video/EmbededVideo';
@@ -17,8 +17,8 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-const Article = async ({params}: {params: {slug: string}}) => {
-  const id = parseInt(params.slug);
+const Article = async ({params}: {params: {id: string}}) => {
+  const id = parseInt(params.id);
   const data = await getData(id);
 
   if (!data) return notFound();

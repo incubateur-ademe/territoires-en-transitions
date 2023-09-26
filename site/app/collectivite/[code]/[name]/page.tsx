@@ -4,9 +4,9 @@
 import Section from '@components/sections/Section';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
 import EmbededVideo from '@components/video/EmbededVideo';
-import GallerieArticle from 'app/actus/[slug]/GallerieArticle';
-import InfoArticle from 'app/actus/[slug]/InfoArticle';
-import ParagrapheArticle from 'app/actus/[slug]/ParagrapheArticle';
+import GallerieArticle from 'app/actus/[id]/[slug]/GallerieArticle';
+import InfoArticle from 'app/actus/[id]/[slug]/InfoArticle';
+import ParagrapheArticle from 'app/actus/[id]/[slug]/ParagrapheArticle';
 import {
   CitationCollectiviteData,
   GallerieArticleData,
