@@ -20,7 +20,7 @@ const Section = ({
     className={classNames('section fr-py-7w', containerClassName)}
     style={{backgroundColor: customBackground}}
   >
-    <div className={classNames('fr-container flex gap-4', className)}>
+    <div className={classNames('fr-container flex flex-col gap-4', className)}>
       {children}
     </div>
   </section>

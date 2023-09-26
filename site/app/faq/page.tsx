@@ -41,8 +41,8 @@ const Faq = async () => {
 
   return (
     <>
-      <Section className="flex-col">
-        <h2>Questions fréquentes</h2>
+      <Section>
+        <h1>Questions fréquentes</h1>
         {questions && (
           <div>
             {questions.map(q => (
@@ -56,7 +56,7 @@ const Faq = async () => {
           </div>
         )}
       </Section>
-      <Section className="justify-between items-center gap-8 flex-wrap">
+      <Section className="!flex-row justify-between items-center gap-8 flex-wrap">
         <p className="mb-0 flex-auto text-center">
           Cette page n’a pas répondu à votre question ? Notre équipe est à votre
           écoute !

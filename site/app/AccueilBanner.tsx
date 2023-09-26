@@ -22,7 +22,7 @@ const AccueilBanner = ({titre, couverture}: AccueilBannerProps) => {
           'lg:mr-10 xl:mr-20': !!couverture,
         })}
       >
-        <h1>{titre}</h1>
+        <h1 className="text-[2.5rem]">{titre}</h1>
         <p>Quelles sont les prochaines étapes pour ma collectivité ?</p>
         <CollectiviteSearch />
         <a

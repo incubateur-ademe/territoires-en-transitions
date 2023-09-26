@@ -34,11 +34,7 @@ const DetailCollectivite = async ({params}: {params: {code: string}}) => {
   return (
     <>
       {/* En-tête de la page collectivité */}
-      <Section
-        className="flex-col"
-        containerClassName="!pb-6"
-        customBackground="#fff"
-      >
+      <Section containerClassName="!pb-6" customBackground="#fff">
         <a
           className="fr-link fr-icon-arrow-left-line fr-link--icon-left w-fit text-[#666] text-sm mb-8"
           href="/"
@@ -65,7 +61,7 @@ const DetailCollectivite = async ({params}: {params: {code: string}}) => {
             containerClassName={
               index === 0 && !data.description ? '!pt-0 !pb-6' : '!py-6'
             }
-            className="article flex-col"
+            className="article"
           >
             {section.type === 'performance' ? (
               <Performance data={section.data as ParagrapheArticleData} />

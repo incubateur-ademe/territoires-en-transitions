@@ -14,8 +14,8 @@ const ProgrammeBanner = ({
   couvertureURL,
 }: ProgrammeBannerProps) => {
   return (
-    <Section className="flex-col">
-      <h2>{titre}</h2>
+    <Section>
+      <h1>{titre}</h1>
       {description && <p className="text-[1.375rem]">{description}</p>}
       {couvertureURL && (
         <EmbededVideo

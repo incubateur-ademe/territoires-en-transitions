@@ -43,7 +43,7 @@ const InfoSection = ({
   return (
     <Section
       id={id}
-      className="items-center lg:px-52 !gap-10 flex-col lg:flex-row"
+      className="items-center lg:px-52 !gap-10 lg:flex-row"
       customBackground={customBackground}
     >
       <PictoWithBackground pictogram={pictogram} />

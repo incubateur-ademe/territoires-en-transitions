@@ -17,12 +17,8 @@ const Labellisation = ({code}: LabellisationProps) => {
   const collectivite = data[0];
 
   return (
-    <Section
-      className="flex-col"
-      containerClassName="!pt-0"
-      customBackground="#fff"
-    >
-      <h2 className="mb-0">{collectivite.nom}</h2>
+    <Section containerClassName="!pt-0" customBackground="#fff">
+      <h1 className="mb-0">{collectivite.nom}</h1>
       <div className="flex flex-wrap gap-2">
         <span className="fr-tag">{collectivite.region_name}</span>
         <span className="fr-tag">{collectivite.departement_name}</span>
