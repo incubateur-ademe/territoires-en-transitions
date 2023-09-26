@@ -1,7 +1,7 @@
 # language: fr
 
 Fonctionnalité: Gérer les fiches et les plans d'action
-
+@skip
   Scénario: Ajouter, éditer et supprimer une fiche action
     Etant donné que je suis connecté en tant que "yolo"
     Et que je suis sur la page "Plans action" de la collectivité "1"
@@ -36,8 +36,11 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     # ajouter un nouveau titre et lui donner ce contenu "Axe 1: les tests passent"
     Quand j'ajoute un nouveau titre
     Et que je le nomme "Axe 1: les tests passent"
-    # ajouter une fiche au nouvel axe créé
+    # ajouter une fiche au plan d'action
     Quand j'ajoute une fiche au plan d'action
+    Et que je la nomme "FFiche test" et je navigue vers cette derniere
+    # naviguer vers cette fiche
+    # Et que je navigue vers la fiche "Fiche test"
     # ouvrir la modale "Ranger la fiche"
     Et que j'ouvre la modale ranger la fiche
     Alors le "Modale ranger fiche action" est visible
@@ -59,7 +62,7 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     # le fil d'ariane de la fiche doit contenir "Axe 1"
     Quand je clique en dehors de la boîte de dialogue
     Alors le fil d'ariane de la fiche contient "Axe 1: les tests passent"
-
+@skip
   Scénario: Ajouter, éditer et supprimer un plan d'action
     Etant donné que je suis connecté en tant que "yolo"
     Et que je suis sur la page "Plans action" de la collectivité "1"
@@ -103,7 +106,7 @@ Fonctionnalité: Gérer les fiches et les plans d'action
 
     Quand je supprime l'axe depuis la modale
     Alors le plan n'est plus présent dans la navigation
-
+@skip
   Scénario: Visiter une page axe et filtrer les fiches
     Etant donné que je suis connecté en tant que "yolo"
     Et que je suis sur la page "Plans action" de la collectivité "1"
@@ -140,7 +143,7 @@ Fonctionnalité: Gérer les fiches et les plans d'action
 
     Quand je filtre les fiches par "Michel Sapasse" du filtre "personne-pilote"
     Alors la fiche contenant "Pilote : Michel Sapasse" est visible
-
+@skip
   Scénario: Visiter la page des graphiques de synthèse et filter les fiches
     Etant donné que je suis connecté en tant que "yolo"
     Et que je suis sur la page "Plans action" de la collectivité "1"

@@ -102,7 +102,16 @@ When(/j'ajoute une fiche au plan d'action/, () => {
     .find('button')
     .contains('Créer une fiche action')
     .click();
-  cy.get('[data-test=FicheAction]').should('be.visible');
+});
+
+// When(/je la nomme "([^"]*)"/, titre => {
+//   cy.get('[data-test=ActionCarte]').find('textarea').type(`${titre}{enter}`);
+// });
+
+When(/je la nomme "([^"]*)" et je navigue vers cette derniere/, titre => {
+  cy.get('[data-test=ActionCarte]').find('textarea').type(`${titre}{enter}`);
+  cy.get('[data-test=ActionCarte]').contains(titre).click();
+  cy.get('[data-test=FicheAction]').contains(titre).should('be.visible');
 });
 
 When(/j'ajoute une fiche à la page axe/, () => {
