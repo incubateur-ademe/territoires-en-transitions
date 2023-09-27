@@ -24,7 +24,7 @@ export const ToolbarIconButton = forwardRef(
     ref?: Ref<HTMLButtonElement>
   ) => (
     <button
-      className={classNames('fr-btn fr-btn--tertiary fr-btn--sm', {
+      className={classNames('fr-btn fr-btn--tertiary fr-btn--sm', className, {
         [`fr-icon-${icon}-line`]: !pressed,
         [`fr-icon-${icon}-fill !bg-gray-200`]: pressed,
       })}
