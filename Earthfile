@@ -199,7 +199,7 @@ business-parse:
     SAVE ARTIFACT /content AS LOCAL ./business/tests/data/dl_content
 
 client-deps:
-    FROM node:16
+    FROM node:20
     ARG APP_DIR="./app.territoiresentransitions.react"
     ENV LANG fr_FR.UTF-8
     RUN apt-get update && apt-get install -y locales && rm -rf /var/lib/apt/lists/* && locale-gen "fr_FR.UTF-8"
