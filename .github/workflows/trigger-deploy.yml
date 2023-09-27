@@ -17,7 +17,7 @@ jobs:
       # This step uses a GitHub Personal Access Token. If the CI is broken
       # because of that, you can login into your own GitHub account, generate
       # a new Personal Access Token and set it in the project secrets.
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
