@@ -14,7 +14,7 @@ jobs:
 
     steps:
       # cf. https://github.com/actions/checkout
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       # Cache Node modules
       - name: Cache node modules
@@ -56,7 +56,7 @@ jobs:
       # This step uses a GitHub Personal Access Token. If the CI is broken
       # because of that, you can login into your own GitHub account, generate
       # a new Personal Access Token and set it in the project secrets.
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       # Download the previously built client app.
       - name: Download exported client app
