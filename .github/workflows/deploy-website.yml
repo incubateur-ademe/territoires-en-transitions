@@ -18,7 +18,7 @@ jobs:
 
       # Cache Node modules
       - name: Cache node modules
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         env:
           cache-name: cache-node-modules
         with:
@@ -67,7 +67,7 @@ jobs:
 
       # Restore cache or create a new one for awscli-plugin-endpoint
       - name: Set up Python cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         env:
           python-deploy-cache-name: python-deploy-cache
         with:
