@@ -12,7 +12,7 @@ export const Views = {
     selector: '[data-test=MonCompte]',
   },
   'Rejoindre une collectivité': {
-    route: 'profil/rejoindre-une-collectivite',
+    route: '/profil/rejoindre-une-collectivite',
     selector: '[data-test=RejoindreUneCollectivite]',
   },
 };
