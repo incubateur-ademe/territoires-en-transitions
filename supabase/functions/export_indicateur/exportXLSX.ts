@@ -48,7 +48,11 @@ export const exportXLSX = async (
       return genIndicateurWorkbook(id, data).then(({ buffer, filename }) => {
         // et l'ajoute au zip
         if (filename) {
-          return zipWriter.add(filename, new BlobReader(new Blob([buffer])));
+          return zipWriter.add(
+            // enlève les "/" qui créent des sous-dossiers non voulus dans le zip
+            filename.replaceAll('/', '-'),
+            new BlobReader(new Blob([buffer]))
+          );
         }
       });
     })
