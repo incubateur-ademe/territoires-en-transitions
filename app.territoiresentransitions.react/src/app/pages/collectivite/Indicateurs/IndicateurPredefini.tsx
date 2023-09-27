@@ -1,20 +1,35 @@
 import ScrollTopButton from 'ui/buttons/ScrollTopButton';
+import {ToolbarIconButton} from 'ui/buttons/ToolbarIconButton';
 import {useIndicateur} from './useIndicateurDefinitions';
 import {HeaderIndicateur} from './Header';
 import {IndicateurDetail} from './detail/IndicateurDetail';
 import {IndicateurCompose} from './detail/IndicateurCompose';
 import {IndicateurSidePanelToolbar} from './IndicateurSidePanelToolbar';
+import {TIndicateurReferentielDefinition} from './types';
+import {useExportIndicateurs} from './useExportIndicateurs';
 
 /** Charge et affiche le détail d'un indicateur prédéfini et de ses éventuels "enfants" */
-export const IndicateurPredefini = ({indicateurId}: {indicateurId: string}) => {
-  const definition = useIndicateur(indicateurId);
-  if (!definition) return null;
+export const IndicateurPredefiniBase = ({
+  definition,
+}: {
+  definition: TIndicateurReferentielDefinition;
+}) => {
+  const {mutate: exportIndicateurs, isLoading} = useExportIndicateurs([
+    definition,
+  ]);
 
   return (
     <>
       <HeaderIndicateur title={definition.nom} />
       <div className="px-10 py-4">
         <div className="flex flex-row justify-end fr-mb-2w">
+          <ToolbarIconButton
+            className="fr-mr-1w"
+            disabled={isLoading}
+            icon="download"
+            title="Exporter"
+            onClick={() => exportIndicateurs()}
+          />
           <IndicateurSidePanelToolbar definition={definition} />
         </div>
         {/** affiche les indicateurs "enfants" */}
@@ -28,4 +43,11 @@ export const IndicateurPredefini = ({indicateurId}: {indicateurId: string}) => {
       </div>
     </>
   );
+};
+
+export const IndicateurPredefini = ({indicateurId}: {indicateurId: string}) => {
+  const definition = useIndicateur(indicateurId);
+  if (!definition) return null;
+
+  return <IndicateurPredefiniBase definition={definition} />;
 };
