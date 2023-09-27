@@ -12,16 +12,23 @@ export const FilterSummary = ({
   count: number;
   resetSelection: () => void;
   selection: string[];
-}) =>
-  count && !selection.includes(ITEM_ALL) ? (
-    <p>
-      <span className="fr-mr-2w">
-        {count} {count > 1 ? 'indicateurs trouvés' : 'indicateur trouvé'}
-      </span>
+}) => (
+  <div className="flex flex-row">
+    <span className="fr-mr-2w">{getLabel(count, selection)}</span>
+    {count && !selection.includes(ITEM_ALL) ? (
       <DisableAllFilters
         filtersCount={selection?.length}
         onClick={resetSelection}
         label="Réinitialiser les filtres"
       />
-    </p>
-  ) : null;
+    ) : null}
+  </div>
+);
+
+const getLabel = (count: number, selection: string[]) => {
+  if (!count) return '';
+  if (selection.includes(ITEM_ALL)) {
+    return `${count} indicateur${count > 1 ? 's' : ''}`;
+  }
+  return `${count} ${count > 1 ? 'indicateurs trouvés' : 'indicateur trouvé'}`;
+};
