@@ -29,5 +29,10 @@ export const IndicateursPredefinisList = (props: {
         : undefined,
   });
 
-  return <FiltersAndGrid filteredDefinitions={filteredDefinitions} />;
+  return (
+    <FiltersAndGrid
+      filteredDefinitions={filteredDefinitions}
+      view={referentiel}
+    />
+  );
 };
