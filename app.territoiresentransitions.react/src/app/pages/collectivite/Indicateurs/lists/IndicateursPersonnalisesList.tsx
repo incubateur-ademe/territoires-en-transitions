@@ -24,7 +24,10 @@ export const IndicateursPersonnalisesList = () => {
   return (
     <>
       {definitions?.length ? (
-        <FiltersAndGrid filteredDefinitions={filteredDefinitions} />
+        <FiltersAndGrid
+          filteredDefinitions={filteredDefinitions}
+          view="perso"
+        />
       ) : (
         <div className="flex flex-col items-center justify-center">
           <p className="fr-my-8w">Aucun indicateur personnalisé</p>
