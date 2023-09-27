@@ -49,7 +49,7 @@ export const HeaderIndicateur = ({
       titre={title}
       customClass={{
         container: classNames('!bg-bf925', {'pb-0': !readonly}),
-        text: 'text-[#3a3a3a]',
+        text: classNames('!text-[#3a3a3a] text-[1rem]', {'pb-4': !readonly}),
       }}
       onUpdate={onUpdate}
       isReadonly={readonly}
