@@ -240,6 +240,7 @@ export const ActionStatusDropdown = ({
         disabled={disabled}
         value={localAvancement}
         onChange={handleChange}
+        buttonClassName="-mr-2"
       />
 
       {/* Cas particulier des statuts "détaillé" */}
