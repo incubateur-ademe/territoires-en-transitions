@@ -3,10 +3,12 @@ import TextareaControlled from 'ui/shared/form/TextareaControlled';
 import InputControlled from 'ui/shared/form/InputControlled';
 import ScrollTopButton from 'ui/buttons/ScrollTopButton';
 import FormField from 'ui/shared/form/FormField';
+import {ToolbarIconButton} from 'ui/buttons/ToolbarIconButton';
 import {TIndicateurPersoDefinition} from './types';
 import {useIndicateurPersoDefinition} from './useIndicateursPersoDefinitions';
 import {useIndicateurACompleter} from './useIndicateurACompleter';
 import {useUpsertIndicateurPersoDefinition} from './useUpsertIndicateurPersoDefinition';
+import {useExportIndicateurs} from './useExportIndicateurs';
 import IndicateurChart from './charts/IndicateurChart';
 import {HeaderIndicateur} from './Header';
 import {IndicateurValuesTabs} from './detail/IndicateurValuesTabs';
@@ -24,6 +26,9 @@ const IndicateurPersonnaliseBase = ({
   const {mutate: saveDefinition} = useUpsertIndicateurPersoDefinition();
   const collectivite = useCurrentCollectivite();
   const isReadonly = !collectivite || collectivite?.readonly;
+  const {mutate: exportIndicateurs, isLoading} = useExportIndicateurs([
+    definition,
+  ]);
 
   // l'objet à enregistrer ne peut pas contenir `isPerso` qui est un champ ajouté
   // lors du chargement pour des besoins internes au front
@@ -48,6 +53,15 @@ const IndicateurPersonnaliseBase = ({
         onUpdate={value => handleUpdate('titre', value)}
       />
       <div className="px-10 py-4">
+        <div className="flex flex-row justify-end fr-mb-2w">
+          <ToolbarIconButton
+            className="fr-mr-1w"
+            disabled={isLoading}
+            icon="download"
+            title="Exporter"
+            onClick={() => exportIndicateurs()}
+          />
+        </div>
         <IndicateurChart variant="zoomed" definition={definition} />
         <BadgeACompleter
           a_completer={a_completer}
