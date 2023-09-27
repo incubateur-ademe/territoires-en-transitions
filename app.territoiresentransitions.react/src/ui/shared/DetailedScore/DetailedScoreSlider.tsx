@@ -12,7 +12,7 @@ export type TSliderProps = {
   onChange: ([done, scheduled, notDone]: AvancementValues) => void;
 };
 
-const TRACK_HEIGHT = 6;
+const TRACK_HEIGHT = 8;
 
 // version stylée du composant de base
 const Slider = withStyles(SliderBase, {
@@ -20,36 +20,28 @@ const Slider = withStyles(SliderBase, {
     color: 'transparent',
     height: TRACK_HEIGHT,
     padding: 0,
+    display: 'block',
   },
   thumb: {
-    height: 20,
-    width: 20,
-    backgroundColor: '#666',
-    border: 0,
-    marginTop: -11,
-    marginLeft: -10,
-    boxShadow: '#ebebeb 0 2px 2px',
+    height: 22,
+    width: 22,
+    backgroundColor: '#fff',
+    border: '2px solid #bfbfbf',
     '&:focus, &:hover, &:active': {
-      boxShadow: '#ccc 0 2px 3px 1px',
+      boxShadow: '0px 0px 0px 6px rgba(191, 191, 191, 0.16)',
     },
   },
   track: {
+    color: 'transparent',
     height: TRACK_HEIGHT,
   },
   rail: {
     color: 'transparent',
-    opacity: 1,
     height: TRACK_HEIGHT,
   },
   mark: {
-    backgroundColor: '#bfbfbf',
-    height: TRACK_HEIGHT,
-    width: 1,
-    marginTop: -3,
-    // pour masquer la 1ère et la dernière graduation
-    '&[data-index="0"], &[data-index="10"]': {
-      visibility: 'hidden',
-    },
+    backgroundColor: '#fff',
+    height: TRACK_HEIGHT * 0.7,
   },
 });
 
@@ -68,8 +60,8 @@ const avancementToSliderValues = ([
   done,
   scheduled,
 ]: AvancementValues): SliderValues => [
-  done * 100, // done
-  (done + scheduled) * 100, // not done
+  Math.round(done * 100), // done
+  Math.round((done + scheduled) * 100), // not done
 ];
 
 // pas par défaut et pas étendu (de 25 en 25)
@@ -91,6 +83,15 @@ const getDefaultStep = (value: SliderValues) => {
     return EXTENDED_STEP_INC;
   }
   return DEFAULT_STEP_INC;
+};
+
+const getMarksValues = (step: number) => {
+  const slots = 100 / step;
+  let values = [];
+  for (let i = 1; i < slots; i++) {
+    values.push({value: i * step});
+  }
+  return values;
 };
 
 /**
@@ -145,7 +146,7 @@ export const DetailedScoreSlider = (props: TSliderProps) => {
         onChange={value => handleChangeStep(parseInt(value))}
       />
 
-      <div className="relative w-9/12 m-auto">
+      <div className="relative w-9/12 h-fit mx-auto my-4">
         <div
           className="absolute"
           style={{
@@ -178,8 +179,9 @@ export const DetailedScoreSlider = (props: TSliderProps) => {
             backgroundColor: actionAvancementColors.pas_fait,
           }}
         />
+
         <Slider
-          marks
+          marks={getMarksValues(step)}
           step={step}
           value={currentValue}
           onChange={handleChange}
