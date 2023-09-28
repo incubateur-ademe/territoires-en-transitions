@@ -804,6 +804,15 @@ values
     ('table', 'service_tag', 'edition', 'oui', 'oui', 'oui', 'oui'),
     ('table', 'service_tag', 'admin', 'oui', 'oui', 'oui', 'oui'),
     ('table', 'service_tag', 'auditeur', 'non', 'oui', 'non', 'non'),
+    -- Table site_contact
+    ('table', 'site_contact', 'public', 'non', 'non', 'non', 'non'),
+    ('table', 'site_contact', 'connecte', 'non', 'non', 'non', 'non'),
+    ('table', 'site_contact', 'verifie', 'non', 'non', 'non', 'non'),
+    ('table', 'site_contact', 'support', 'non', 'non', 'non', 'non'),
+    ('table', 'site_contact', 'lecture', 'non', 'non', 'non', 'non'),
+    ('table', 'site_contact', 'edition', 'non', 'non', 'non', 'non'),
+    ('table', 'site_contact', 'admin', 'non', 'non', 'non', 'non'),
+    ('table', 'site_contact', 'auditeur', 'non', 'non', 'non', 'non'),
     -- Table sous_thematique
     ('table', 'sous_thematique', 'public', 'non', 'non', 'non', 'non'),
     ('table', 'sous_thematique', 'connecte', 'non', 'oui', 'non', 'non'),
@@ -2100,6 +2109,15 @@ values
     ('vue', 'retool_user_list', 'edition', 'non', 'non', 'non', 'non'),
     ('vue', 'retool_user_list', 'admin', 'non', 'non', 'non', 'non'),
     ('vue', 'retool_user_list', 'auditeur', 'non', 'non', 'non', 'non'),
+    -- Vue site_region
+    ('vue', 'site_region', 'public', 'non', 'oui', 'non', 'non'),
+    ('vue', 'site_region', 'connecte', 'non', 'oui', 'non', 'non'),
+    ('vue', 'site_region', 'verifie', 'non', 'oui', 'non', 'non'),
+    ('vue', 'site_region', 'support', 'non', 'oui', 'non', 'non'),
+    ('vue', 'site_region', 'lecture', 'non', 'oui', 'non', 'non'),
+    ('vue', 'site_region', 'edition', 'non', 'oui', 'non', 'non'),
+    ('vue', 'site_region', 'admin', 'non', 'oui', 'non', 'non'),
+    ('vue', 'site_region', 'auditeur', 'non', 'oui', 'non', 'non'),
     -- Vue stats_active_real_collectivites
     ('vue', 'stats_active_real_collectivites', 'public', 'non', 'oui', 'non', 'non'),
     ('vue', 'stats_active_real_collectivites', 'connecte', 'non', 'oui', 'non', 'non'),

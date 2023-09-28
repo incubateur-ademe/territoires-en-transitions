@@ -17,7 +17,7 @@ where routine_schema = 'public'
   and data_type != 'trigger'
   and routine_name not like 'test_%'
   and routine_name not like 'confidentialite_%'
-  and routine_name != 'fiche_resume' -- fonction en doublon
+  and routine_name != 'fiche_resume' and routine_name != 'geojson' -- fonction en doublon
 order by routine_name;
 comment on materialized view confidentialite_fonctions_a_tester is 'Liste des fonctions à tester';
 
