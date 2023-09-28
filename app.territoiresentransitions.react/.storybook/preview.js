@@ -1,7 +1,7 @@
 /**
  * Configuration de la pré-visualisation des composants
  */
-import StoryRouter from 'storybook-react-router';
+import StoryRouter from './storyRouterDecorator';
 import {QueryClient, QueryClientProvider} from 'react-query';
 import {AuthContext} from '../src/core-logic/api/auth/AuthProvider';
 
