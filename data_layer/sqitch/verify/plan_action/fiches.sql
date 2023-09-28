@@ -2,6 +2,6 @@
 
 BEGIN;
 
-select has_function_privilege('fiche_resume(fiche_action_action)', 'execute');
+select has_function_privilege('upsert_fiche_action()', 'execute');
 
 ROLLBACK;
