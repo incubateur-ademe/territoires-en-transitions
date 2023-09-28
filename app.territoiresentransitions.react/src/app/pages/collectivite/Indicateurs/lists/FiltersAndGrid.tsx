@@ -48,7 +48,9 @@ export const FiltersAndGrid = ({
           className="fr-mr-1w"
           disabled={isLoading}
           icon="download"
-          title="Exporter"
+          title={`Exporter ${definitions.length} indicateur${
+            definitions.length > 1 ? 's' : ''
+          }`}
           onClick={() => exportIndicateurs()}
         />
       </div>
