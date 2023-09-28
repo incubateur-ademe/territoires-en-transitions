@@ -102,7 +102,6 @@
     "postcss": "^8.4.16",
     "react-test-renderer": "^18.2.0",
     "storybook": "^7.4.2",
-    "storybook-react-router": "^1.0.8",
     "tailwindcss": "^3.3.3",
     "typescript": "^5.2.2",
     "webpack": "^5.74.0"
