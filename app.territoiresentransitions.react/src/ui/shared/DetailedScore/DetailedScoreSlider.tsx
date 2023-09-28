@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import SliderBase from '@mui/material/Slider';
-import {withStyles} from '@mui/styles';
+import {withStyles} from 'tss-react/mui';
 import {actionAvancementColors} from 'app/theme';
 import TagFilters from '../filters/TagFilters';
 
@@ -15,7 +15,7 @@ export type TSliderProps = {
 const TRACK_HEIGHT = 6;
 
 // version stylée du composant de base
-const Slider = withStyles({
+const Slider = withStyles(SliderBase, {
   root: {
     color: 'transparent',
     height: TRACK_HEIGHT,
@@ -51,7 +51,7 @@ const Slider = withStyles({
       visibility: 'hidden',
     },
   },
-})(SliderBase);
+});
 
 // converti les valeurs du slider en un tableau de pourcentage
 const sliderValuesToAvancement = ([
