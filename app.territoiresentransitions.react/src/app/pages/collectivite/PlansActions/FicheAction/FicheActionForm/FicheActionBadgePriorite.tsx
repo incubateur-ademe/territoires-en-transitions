@@ -23,7 +23,7 @@ const FicheActionBadgePriorite = ({className, priorite, small}: Props) => {
         {'!text-xs': small},
         statusToColor[priorite]
       )}
-      title="Statut"
+      title="Priorité"
     >
       {priorite}
     </span>

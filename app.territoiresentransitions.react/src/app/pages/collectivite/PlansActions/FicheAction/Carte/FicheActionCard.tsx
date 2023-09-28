@@ -141,10 +141,7 @@ const FicheActionCard = ({
                 <FicheActionBadgeStatut statut={ficheAction.statut} small />
               )}
               {ficheAction.niveau_priorite && (
-                <div
-                  title="Priorité"
-                  className={classNames({'ml-4': ficheAction.statut})}
-                >
+                <div className={classNames({'ml-4': ficheAction.statut})}>
                   <FicheActionBadgePriorite
                     priorite={ficheAction.niveau_priorite}
                     small
