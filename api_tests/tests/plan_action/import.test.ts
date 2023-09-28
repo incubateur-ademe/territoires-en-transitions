@@ -36,7 +36,7 @@ Deno.test("Importer un nouveau plan d'action", dirtyOptions, async (t) => {
     await signOut();
 });
 
-Deno.test("Importer un plan d'action avec une erreur de budget", async (t) => {
+Deno.test("Importer un plan d'action avec une erreur de budget", dirtyOptions, async (t) => {
     await testReset();
     await signIn('yolododo');
 
@@ -49,7 +49,7 @@ Deno.test("Importer un plan d'action avec une erreur de budget", async (t) => {
     await signOut();
 });
 
-Deno.test("Importer un plan d'action avec une erreur de colonnes", async (t) => {
+Deno.test("Importer un plan d'action avec une erreur de colonnes", dirtyOptions, async (t) => {
     await testReset();
     await signIn('yolododo');
 
@@ -61,6 +61,29 @@ Deno.test("Importer un plan d'action avec une erreur de colonnes", async (t) => 
 
     await signOut();
 });
+
+
+Deno.test("Envoyer un plan d'action avec fetch", dirtyOptions, async () => {
+    await testReset();
+
+    const url = `${Deno.env.get("SUPABASE_URL")}/functions/v1/import_plan_action`;
+    const headers = {
+        apikey: Deno.env.get("SERVICE_ROLE_KEY")!,
+        Authorization: `Bearer ${Deno.env.get("SERVICE_ROLE_KEY")}`,
+    };
+    const path = "./ressources/Plan_nouveau.xlsx";
+
+    const formData = await pathToFormData(path);
+
+    const reponse = await fetch(url, {
+        method: "POST",
+        body: formData,
+        headers: headers,
+    });
+
+    assertEquals(await reponse.text(), "ok");
+});
+
 
 
 
