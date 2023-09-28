@@ -12,7 +12,7 @@ import {useCollectiviteId} from './params';
 export const useActionStatut = (actionId: string) => {
   const collectivite_id = useCollectiviteId();
   const {data, isLoading} = useQuery(['action_statut', collectivite_id], () =>
-    fetchCollectiviteActionStatuts(collectivite_id ?? undefined),
+    fetchCollectiviteActionStatuts(collectivite_id ?? undefined)
   );
 
   const statut = data?.find(action => action.action_id === actionId) || null;
@@ -22,7 +22,7 @@ export const useActionStatut = (actionId: string) => {
       action =>
         action.action_id.includes(actionId) &&
         action.action_id.split(actionId)[1] !== '' &&
-        action.avancement !== 'non_renseigne',
+        action.avancement !== 'non_renseigne'
     ) !== undefined || null;
 
   return {
@@ -30,6 +30,30 @@ export const useActionStatut = (actionId: string) => {
     filled,
     isLoading,
   };
+};
+
+export const useTasksStatus = (tasksIds: string[]) => {
+  const collectivite_id = useCollectiviteId();
+  const {data, isLoading} = useQuery(['action_statut', collectivite_id], () =>
+    fetchCollectiviteActionStatuts(collectivite_id ?? undefined)
+  );
+
+  let tasksStatus: {
+    [key: string]:
+      | 'fait'
+      | 'pas_fait'
+      | 'programme'
+      | 'non_renseigne'
+      | 'detaille';
+  } = {};
+
+  tasksIds.forEach(taskId => {
+    const task = data?.find(action => action.action_id === taskId);
+    if (task !== undefined)
+      tasksStatus = {...tasksStatus, [taskId]: task.avancement};
+  });
+
+  return {tasksStatus, isLoading};
 };
 
 const fetchCollectiviteActionStatuts = async (collectivite_id?: number) => {
@@ -91,6 +115,6 @@ export const useEditActionStatutIsDisabled = (actionId: string) => {
       collectivite.readonly ||
       !score ||
       score.desactive ||
-      (audit && (!isAuditeur || audit.valide)),
+      (audit && (!isAuditeur || audit.valide))
   );
 };
