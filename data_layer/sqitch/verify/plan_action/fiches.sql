@@ -2,16 +2,6 @@
 
 BEGIN;
 
-select plans,
-       titre,
-       id,
-       statut,
-       collectivite_id,
-       pilotes,
-       modified_at,
-       date_fin_provisoire,
-       niveau_priorite
-from private.fiche_resume
-where false;
+select has_function_privilege('fiche_resume(fiche_action_action)', 'execute');
 
 ROLLBACK;
