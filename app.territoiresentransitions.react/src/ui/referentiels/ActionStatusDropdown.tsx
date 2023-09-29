@@ -17,7 +17,7 @@ import ProgressBarWithTooltip from 'ui/score/ProgressBarWithTooltip';
 import {avancementToLabel} from 'app/labels';
 import {actionAvancementColors} from 'app/theme';
 import ScoreAutoModal from './ScoreAutoModal';
-import ScorePersoModal from './ScorePersoModal';
+import ScoreDetailleModal from './ScoreDetailleModal';
 import {
   getAvancementExt,
   getStatusFromIndex,
@@ -57,6 +57,7 @@ export const ActionStatusDropdown = ({
   const collectivite = useCurrentCollectivite();
 
   const [openScoreAuto, setOpenScoreAuto] = useState(false);
+  const [openScoreDetaille, setOpenScoreDetaille] = useState(false);
   const [openScorePerso, setOpenScorePerso] = useState(false);
 
   const args = {
@@ -112,7 +113,7 @@ export const ActionStatusDropdown = ({
       if (action.type === 'sous-action' && action.children.length > 0) {
         setOpenScoreAuto(true);
       } else {
-        setOpenScorePerso(true);
+        setOpenScoreDetaille(true);
       }
     } else {
       // Mise à jour dans les cas de statuts autres que détaillé
@@ -181,8 +182,8 @@ export const ActionStatusDropdown = ({
 
   // Mise à jour du statut à la validation dans la modale
   // de score perso
-  const handleSaveScorePerso = (values: number[]) => {
-    setOpenScorePerso(false);
+  const handleSaveScoreDetaille = (values: number[]) => {
+    setOpenScoreDetaille(false);
 
     // Si la jauge est à 100% dans un des statuts, le statut
     // est mis à jour automatiquement
@@ -273,11 +274,13 @@ export const ActionStatusDropdown = ({
           {!disabled && (
             <AnchorAsButton
               className="underline_href fr-link fr-link--sm"
-              onClick={() =>
+              onClick={() => {
                 action.type === 'sous-action' && action.children.length > 0
-                  ? setOpenScoreAuto(true)
-                  : setOpenScorePerso(true)
-              }
+                  ? avancement === 'detaille'
+                    ? setOpenScorePerso(true)
+                    : setOpenScoreAuto(true)
+                  : setOpenScoreDetaille(true);
+              }}
             >
               Détailler l'avancement
             </AnchorAsButton>
@@ -293,20 +296,25 @@ export const ActionStatusDropdown = ({
           externalOpen={openScoreAuto}
           setExternalOpen={setOpenScoreAuto}
           onSaveScore={handleSaveScoreAuto}
-          onClose={() => setOpenScoreAuto(false)}
+          onOpenScorePerso={() => setOpenScorePerso(true)}
         />
       )}
 
       {/* Modale de personnalisation du score (avec jauge manuelle) */}
-      {openScorePerso && (
-        <ScorePersoModal
+      {(openScoreDetaille || openScorePerso) && (
+        <ScoreDetailleModal
           actionId={action.id}
           actionType={action.type}
           avancementDetaille={localAvancementDetaille}
-          externalOpen={openScorePerso}
+          externalOpen={openScoreDetaille || openScorePerso}
           saveAtValidation={onSaveStatus === undefined}
-          setExternalOpen={setOpenScorePerso}
-          onSaveScore={handleSaveScorePerso}
+          isScorePerso={openScorePerso}
+          setExternalOpen={value => {
+            if (openScoreDetaille) setOpenScoreDetaille(value);
+            else setOpenScorePerso(value);
+          }}
+          onSaveScore={handleSaveScoreDetaille}
+          onOpenScoreAuto={() => setOpenScoreAuto(true)}
         />
       )}
     </div>

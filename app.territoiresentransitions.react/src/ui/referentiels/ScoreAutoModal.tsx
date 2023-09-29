@@ -13,7 +13,7 @@ type ScoreAutoModalProps = {
   externalOpen: boolean;
   setExternalOpen: Dispatch<SetStateAction<boolean>>;
   onSaveScore: (payload: StatusToSavePayload[]) => void;
-  onClose: () => void;
+  onOpenScorePerso?: () => void;
 };
 
 const ScoreAutoModal = ({
@@ -22,7 +22,7 @@ const ScoreAutoModal = ({
   externalOpen,
   setExternalOpen,
   onSaveScore,
-  onClose,
+  onOpenScorePerso,
 }: ScoreAutoModalProps): JSX.Element => {
   const tasks = useActionSummaryChildren(action);
   const {tasksStatus} = useTasksStatus(tasks.map(task => task.id));
@@ -116,7 +116,7 @@ const ScoreAutoModal = ({
                 {action.referentiel === 'eci' && (
                   <button
                     className="fr-btn fr-btn--secondary"
-                    onClick={onClose}
+                    onClick={() => setExternalOpen(false)}
                   >
                     Annuler
                   </button>
@@ -128,6 +128,12 @@ const ScoreAutoModal = ({
                 </button>
                 {action.referentiel === 'cae' && (
                   <button
+                    onClick={() => {
+                      if (JSON.stringify(localStatus) !== '{}')
+                        handleSaveScoreAuto();
+                      if (onOpenScorePerso) onOpenScorePerso();
+                      setExternalOpen(false);
+                    }}
                     disabled={!isCustomScoreGranted()}
                     className="fr-btn fr-btn--secondary fr-btn--icon-right fr-icon-arrow-right-line"
                   >
