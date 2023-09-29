@@ -86,7 +86,7 @@ values
     ('table', 'action_discussion_commentaire', 'auditeur', 'oui', 'oui', 'soi', 'soi'),
     -- Table action_relation
     ('table', 'action_relation', 'public', 'non', 'non', 'non', 'non'),
-    ('table', 'action_relation', 'connecte', 'non', 'non', 'non', 'non'),
+    ('table', 'action_relation', 'connecte', 'non', 'oui', 'non', 'non'),
     ('table', 'action_relation', 'verifie', 'non', 'oui', 'non', 'non'),
     ('table', 'action_relation', 'support', 'non', 'oui', 'non', 'non'),
     ('table', 'action_relation', 'lecture', 'non', 'oui', 'non', 'non'),
@@ -914,7 +914,7 @@ values
     ('fonction', 'action_contexte', 'auditeur', 'non', 'oui', 'non', 'non'),
     -- Fonction action_down_to_tache
     ('fonction', 'action_down_to_tache', 'public', 'non', 'non', 'non', 'non'),
-    ('fonction', 'action_down_to_tache', 'connecte', 'non', 'non', 'non', 'non'),
+    ('fonction', 'action_down_to_tache', 'connecte', 'non', 'oui', 'non', 'non'),
     ('fonction', 'action_down_to_tache', 'verifie', 'non', 'oui', 'non', 'non'),
     ('fonction', 'action_down_to_tache', 'support', 'non', 'oui', 'non', 'non'),
     ('fonction', 'action_down_to_tache', 'lecture', 'non', 'oui', 'non', 'non'),
@@ -1418,7 +1418,7 @@ values
     ('fonction', 'referent_contacts', 'auditeur', 'non', 'oui', 'non', 'non'),
     -- Fonction referentiel_down_to_action
     ('fonction', 'referentiel_down_to_action', 'public', 'non', 'non', 'non', 'non'),
-    ('fonction', 'referentiel_down_to_action', 'connecte', 'non', 'non', 'non', 'non'),
+    ('fonction', 'referentiel_down_to_action', 'connecte', 'non', 'oui', 'non', 'non'),
     ('fonction', 'referentiel_down_to_action', 'verifie', 'non', 'oui', 'non', 'non'),
     ('fonction', 'referentiel_down_to_action', 'support', 'non', 'oui', 'non', 'non'),
     ('fonction', 'referentiel_down_to_action', 'lecture', 'non', 'oui', 'non', 'non'),
@@ -1940,7 +1940,7 @@ values
     ('vue', 'preuve_count', 'auditeur', 'non', 'oui', 'non', 'non'),
     -- Vue question_display
     ('vue', 'question_display', 'public', 'non', 'non', 'non', 'non'),
-    ('vue', 'question_display', 'connecte', 'non', 'non', 'non', 'non'),
+    ('vue', 'question_display', 'connecte', 'non', 'oui', 'non', 'non'),
     ('vue', 'question_display', 'verifie', 'non', 'oui', 'non', 'non'),
     ('vue', 'question_display', 'support', 'non', 'oui', 'non', 'non'),
     ('vue', 'question_display', 'lecture', 'non', 'oui', 'non', 'non'),
@@ -1958,7 +1958,7 @@ values
     ('vue', 'question_thematique_completude', 'auditeur', 'non', 'oui', 'non', 'non'),
     -- Vue question_thematique_display
     ('vue', 'question_thematique_display', 'public', 'non', 'non', 'non', 'non'),
-    ('vue', 'question_thematique_display', 'connecte', 'non', 'non', 'non', 'non'),
+    ('vue', 'question_thematique_display', 'connecte', 'non', 'oui', 'non', 'non'),
     ('vue', 'question_thematique_display', 'verifie', 'non', 'oui', 'non', 'non'),
     ('vue', 'question_thematique_display', 'support', 'non', 'oui', 'non', 'non'),
     ('vue', 'question_thematique_display', 'lecture', 'non', 'oui', 'non', 'non'),
@@ -2110,14 +2110,14 @@ values
     ('vue', 'retool_user_list', 'admin', 'non', 'non', 'non', 'non'),
     ('vue', 'retool_user_list', 'auditeur', 'non', 'non', 'non', 'non'),
     -- Vue site_region
-    ('vue', 'site_region', 'public', 'non', 'oui', 'non', 'non'),
-    ('vue', 'site_region', 'connecte', 'non', 'oui', 'non', 'non'),
-    ('vue', 'site_region', 'verifie', 'non', 'oui', 'non', 'non'),
-    ('vue', 'site_region', 'support', 'non', 'oui', 'non', 'non'),
-    ('vue', 'site_region', 'lecture', 'non', 'oui', 'non', 'non'),
-    ('vue', 'site_region', 'edition', 'non', 'oui', 'non', 'non'),
-    ('vue', 'site_region', 'admin', 'non', 'oui', 'non', 'non'),
-    ('vue', 'site_region', 'auditeur', 'non', 'oui', 'non', 'non'),
+    ('vue', 'site_region', 'public', 'non', 'non', 'non', 'non'),
+    ('vue', 'site_region', 'connecte', 'non', 'non', 'non', 'non'),
+    ('vue', 'site_region', 'verifie', 'non', 'non', 'non', 'non'),
+    ('vue', 'site_region', 'support', 'non', 'non', 'non', 'non'),
+    ('vue', 'site_region', 'lecture', 'non', 'non', 'non', 'non'),
+    ('vue', 'site_region', 'edition', 'non', 'non', 'non', 'non'),
+    ('vue', 'site_region', 'admin', 'non', 'non', 'non', 'non'),
+    ('vue', 'site_region', 'auditeur', 'non', 'non', 'non', 'non'),
     -- Vue stats_active_real_collectivites
     ('vue', 'stats_active_real_collectivites', 'public', 'non', 'oui', 'non', 'non'),
     ('vue', 'stats_active_real_collectivites', 'connecte', 'non', 'oui', 'non', 'non'),
