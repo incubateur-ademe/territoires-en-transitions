@@ -173,6 +173,7 @@ export const ActionStatusDropdown = ({
       saveActionStatut({
         ...args,
         avancement: 'non_renseigne',
+        avancement_detaille: localAvancementDetaille,
         concerne: true,
         modified_at: statut?.modified_at,
         modified_by: statut?.modified_by,
@@ -241,7 +242,7 @@ export const ActionStatusDropdown = ({
         disabled={disabled}
         value={localAvancement}
         onChange={handleChange}
-        buttonClassName="-mr-2"
+        buttonClassName="-mr-2 -mt-2"
       />
 
       {/* Cas particulier des statuts "détaillé" */}
