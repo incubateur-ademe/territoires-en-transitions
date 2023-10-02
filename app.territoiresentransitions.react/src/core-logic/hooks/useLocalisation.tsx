@@ -76,7 +76,8 @@ const locationFromPath = (path: string): Localisation => {
   } else if (path.includes('/fiche/')) {
     page = 'fiche';
   } else if (path.includes('/plan/')) {
-    page = 'plan';
+    if (/(\d+)\/(\d+)/.exec(path)) page = 'plan_axe';
+    else page = 'plan';
   } else if (path.includes('/plans/synthese')) {
     //page
     page = 'synthese_plans';
