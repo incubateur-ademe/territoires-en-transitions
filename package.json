@@ -22,5 +22,10 @@
   "bugs": {
     "url": "https://github.com/betagouv/territoires-en-transitions/issues"
   },
-  "homepage": "https://github.com/betagouv/territoires-en-transitions#readme"
+  "homepage": "https://github.com/betagouv/territoires-en-transitions#readme",
+  "workspaces": [
+    "ui",
+    "site",
+    "app.territoiresentransitions.react"
+  ]
 }
