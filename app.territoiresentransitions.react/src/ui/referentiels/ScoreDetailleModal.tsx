@@ -1,9 +1,13 @@
+import {avancementToLabel} from 'app/labels';
+import {useTasksScoreRepartition} from 'app/pages/collectivite/EtatDesLieux/Referentiel/data/useTasksScores';
+import {actionAvancementColors} from 'app/theme';
 import classNames from 'classnames';
 import {Dispatch, SetStateAction, useState} from 'react';
+import ProgressBarWithTooltip from 'ui/score/ProgressBarWithTooltip';
 import {DetailedScore} from 'ui/shared/DetailedScore/DetailedScore';
 import {AvancementValues} from 'ui/shared/DetailedScore/DetailedScoreSlider';
 import Modal from 'ui/shared/floating-ui/Modal';
-import {AVANCEMENT_DETAILLE_PAR_STATUT} from './utils';
+import {AVANCEMENT_DETAILLE_PAR_STATUT, getStatusFromIndex} from './utils';
 
 type ScoreDetailleModalProps = {
   actionId: string;
@@ -34,6 +38,7 @@ const ScoreDetailleModal = ({
       ? avancementDetaille
       : AVANCEMENT_DETAILLE_PAR_STATUT.detaille) as AvancementValues
   );
+  const scores = useTasksScoreRepartition(actionId);
 
   return (
     <Modal
@@ -52,10 +57,35 @@ const ScoreDetailleModal = ({
               : {actionId.split('_')[1]}
             </h4>
 
+            {/* Score automatique */}
+            {isScorePerso &&
+              scores &&
+              scores.avancementDetaille &&
+              scores.scoreMax && (
+                <div className="flex items-start mt-2 mb-6">
+                  <p className="mb-0 text-sm mr-4">Score automatique</p>
+                  <ProgressBarWithTooltip
+                    score={
+                      scores.avancementDetaille?.map((a, idx) => ({
+                        value: a,
+                        label: avancementToLabel[getStatusFromIndex(idx)],
+                        color: actionAvancementColors[getStatusFromIndex(idx)],
+                      })) ?? []
+                    }
+                    total={scores.scoreMax ?? 0}
+                    defaultScore={{
+                      label: avancementToLabel.non_renseigne,
+                      color: actionAvancementColors.non_renseigne,
+                    }}
+                    valueToDisplay={avancementToLabel.fait}
+                  />
+                </div>
+              )}
+
             <hr className="p-1" />
 
             <div className="w-full flex flex-col">
-              {/* Jauge de score et détails */}
+              {/* Slider du score et détails */}
               <DetailedScore
                 avancement={currentAvancement}
                 setCurrentAvancement={setCurrentAvancement}
@@ -75,7 +105,7 @@ const ScoreDetailleModal = ({
               )}
 
               {/* Boutons retour / enregistrement */}
-              <div className="w-full flex justify-end gap-4">
+              <div className="w-full flex justify-end gap-4 mb-4">
                 {isScorePerso && (
                   <button
                     onClick={() => {
