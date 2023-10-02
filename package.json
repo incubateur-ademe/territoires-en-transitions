@@ -27,5 +27,8 @@
     "ui",
     "site",
     "app.territoiresentransitions.react"
-  ]
+  ],
+  "overrides": {
+    "react-refresh": "^0.11.0"
+  }
 }
