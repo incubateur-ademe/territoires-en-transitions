@@ -1,4 +1,5 @@
 VERSION 0.7
+ARG --global APP_DIR='./app.territoiresentransitions.react'
 
 postgres:
     FROM postgres:15
@@ -198,65 +199,127 @@ business-parse:
     SAVE ARTIFACT /content AS LOCAL ./data_layer/content
     SAVE ARTIFACT /content AS LOCAL ./business/tests/data/dl_content
 
-client-deps:
-    FROM node:20
-    ARG APP_DIR="./app.territoiresentransitions.react"
+
+node-fr: ## image de base pour les images utilisant node
+    ARG TARGETPLATFORM
+    # `--PLATFORM=<platform>` pour forcer la plateforme cible, sinon ce sera la
+    # même que celle sur laquelle le build est fait
+    ARG PLATFORM=$TARGETPLATFORM
+    FROM --platform=$PLATFORM node:20
     ENV LANG fr_FR.UTF-8
     RUN apt-get update && apt-get install -y locales && rm -rf /var/lib/apt/lists/* && locale-gen "fr_FR.UTF-8"
+    USER node:node
     WORKDIR "/app"
-    COPY $APP_DIR/package.json ./
-    COPY $APP_DIR/package-lock.json ./
-    RUN npm i
-    COPY $APP_DIR .
-    EXPOSE 3000
-    CMD npm start
+    SAVE IMAGE node-fr:latest
 
-client-build:
-    FROM +client-deps
+node-fr-deps: ## modèle d'image contenant les dépendances d'un module front
+    ARG --required MODULE_DIR
+    FROM +node-fr
+    # dépendances globales
+    COPY ./package.json ./
+    COPY ./package-lock.json ./
+    # dépendances du module
+    COPY $MODULE_DIR/package.json ./$MODULE_DIR/
+    # dépendances du module partagé
+    COPY ./packages/ui/package.json ./packages/ui/
+    # installe les dépendances
+    RUN npm ci
+    SAVE IMAGE node-fr-deps:latest
+
+app-deps: ## dépendances pour l'app
+    FROM +node-fr-deps --MODULE_DIR=$APP_DIR
+    SAVE IMAGE app-deps:latest
+
+app-build: ## build l'app
+    ARG PLATFORM
     ARG --required ANON_KEY
     ARG --required BROWSER_API_URL
     ARG --required SERVER_API_URL
+    FROM +app-deps
     ENV REACT_APP_SUPABASE_URL=$BROWSER_API_URL
     ENV REACT_APP_SUPABASE_KEY=$ANON_KEY
     ENV ZIP_ORIGIN_OVERRIDE=$SERVER_API_URL
-    RUN npm run build
-    SAVE IMAGE client:latest
+    # copie les sources des modules à construire
+    COPY $APP_DIR/. ./$APP_DIR/
+    COPY ./packages/ui ./packages/ui
+    RUN npm run build -w @tet/ui -w @tet/app
+    EXPOSE 3000
+    CMD npm -w @tet/app start
+    SAVE IMAGE app:latest
 
-client:
+app-run: ## build et lance l'app en local
     ARG --required ANON_KEY
     ARG --required API_URL
     ARG internal_url=http://supabase_kong_tet:8000
     ARG network=supabase_network_tet
     LOCALLY
-    RUN earthly +client-build --ANON_KEY=$ANON_KEY --BROWSER_API_URL=$API_URL --SERVER_API_URL=$internal_url
+    RUN earthly +app-build --ANON_KEY=$ANON_KEY --BROWSER_API_URL=$API_URL --SERVER_API_URL=$internal_url
     RUN docker run -d --rm \
-        --name client_tet \
+        --name app_tet \
         --network $network \
         --publish 3000:3000 \
-        client:latest
+        app:latest
 
-client-test-build:
-    FROM +client-deps
+app-test-build: ## build une image pour exécuter les tests unitaires de l'app
+    FROM +app-deps
     ENV REACT_APP_SUPABASE_URL
     ENV REACT_APP_SUPABASE_KEY
     ENV ZIP_ORIGIN_OVERRIDE
-    ENV CI=true
-    CMD npm run test
-    SAVE IMAGE client-test:latest
+    # copie les sources du module à tester
+    COPY $APP_DIR/. ./$APP_DIR/
+    COPY ./packages/ui ./packages/ui
+    # la commande utilisée pour lancer les tests
+    CMD npm run test -w @tet/app
+    SAVE IMAGE app-test:latest
 
-client-test:
+app-test: ## lance les tests unitaires de l'app
     ARG --required ANON_KEY
     ARG url=http://supabase_kong_tet:8000
     ARG network=supabase_network_tet
     LOCALLY
-    RUN earthly +client-test-build
+    RUN earthly +app-test-build
     RUN docker run --rm \
-        --name client-test_tet \
+        --name app-test_tet \
         --network $network \
+        --env CI=true \ # désactive le mode watch quand on lance la commande en local
         --env REACT_APP_SUPABASE_URL=$url \
         --env REACT_APP_SUPABASE_KEY=$ANON_KEY \
         --env ZIP_ORIGIN_OVERRIDE=$url \
-        client-test:latest
+        app-test:latest
+
+site-deps: ## dépendances pour le site
+    FROM +node-fr-deps --MODULE_DIR="./packages/site"
+
+site-build: ## build le site
+    ARG PLATFORM
+    ARG --required ANON_KEY
+    ARG --required API_URL
+    ARG --required STRAPI_KEY
+    ARG --required STRAPI_URL
+    FROM +site-deps
+    ENV NEXT_PUBLIC_STRAPI_KEY=$STRAPI_KEY
+    ENV NEXT_PUBLIC_STRAPI_URL=$STRAPI_URL
+    ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$ANON_KEY
+    ENV NEXT_PUBLIC_SUPABASE_URL=$API_URL
+    ENV NEXT_TELEMETRY_DISABLED=1
+    ENV PORT=80
+    EXPOSE $PORT
+    # copie les sources des modules à construire
+    COPY ./packages/site ./packages/site
+    COPY ./packages/ui ./packages/ui
+    RUN npm run build -w @tet/ui -w @tet/site
+    CMD npm start -w @tet/site
+    SAVE IMAGE site:latest
+
+site-run: ## build et lance le site en local
+    ARG network=supabase_network_tet
+    FROM +site-build
+    LOCALLY
+    RUN docker run -d --rm \
+        --name site_tet \
+        --network $network \
+        --publish 3001:80 \
+        site:latest
 
 curl-test-build:
     FROM curlimages/curl:8.1.0
@@ -321,15 +384,15 @@ cypress-wip:
     COPY ./e2e/ /e2e
     RUN npm test
 
-gen-types:
+gen-types: ## génère le typage à partir de la base de données
     LOCALLY
     IF [ "$CI" = "true" ]
-        RUN supabase gen types typescript --local --schema public --schema labellisation > ./app.territoiresentransitions.react/src/types/database.types.ts
+        RUN supabase gen types typescript --local --schema public --schema labellisation > $APP_DIR/src/types/database.types.ts
     ELSE
-        RUN npx supabase gen types typescript --local --schema public --schema labellisation > ./app.territoiresentransitions.react/src/types/database.types.ts
+        RUN npx supabase gen types typescript --local --schema public --schema labellisation > $APP_DIR/src/types/database.types.ts
     END
-    RUN cp ./app.territoiresentransitions.react/src/types/database.types.ts ./api_tests/lib/database.types.ts
-    RUN cp ./app.territoiresentransitions.react/src/types/database.types.ts ./site/app/database.types.ts
+    RUN cp $APP_DIR/src/types/database.types.ts ./api_tests/lib/database.types.ts
+    RUN cp $APP_DIR/src/types/database.types.ts ./packages/site/app/database.types.ts
 
 setup-env:
     LOCALLY
@@ -363,7 +426,7 @@ dev:
     ARG stop=yes
     ARG datalayer=yes
     ARG business=yes
-    ARG client=no
+    ARG app=no
     ARG eco=no
     ARG fast=no
     ARG version=HEAD # version du plan
@@ -408,8 +471,8 @@ dev:
         RUN earthly +update-scores
     END
 
-    IF [ "$client" = "yes" ]
-        RUN earthly +client
+    IF [ "$app" = "yes" ]
+        RUN earthly +app-run
     END
 
     RUN earthly +refresh-views
@@ -425,9 +488,11 @@ stop:
     RUN earthly +clear-state
 
 prepare-fast:
-    ARG version=v2.63.0 # version du plan
+    ARG version  # version du plan
     LOCALLY
-    RUN earthly +dev --stop=yes --business=no --client=no --fast=no --version=$version
+    # si la version du plan n'est pas spécifiée on utilise le tag courant
+    ARG v=$(if [ -z $version ]; then sqitch status | grep @v | sed -E 's/.*@(v[0-9.]*)/\1/'; else echo $version; fi)
+    RUN earthly +dev --stop=yes --business=no --app=no --fast=no --version=$v
     RUN earthly +save-state
 
 clear-state:
@@ -458,5 +523,8 @@ test:
     RUN earthly +business-test
     RUN earthly +api-test
     RUN earthly +deploy-test
-    RUN earthly +client-test
+    RUN earthly +app-test
 
+help: ## affiche ce message d'aide
+    LOCALLY
+    RUN grep -h "##" ./Earthfile | grep -v grep | sed -e 's/##//'
