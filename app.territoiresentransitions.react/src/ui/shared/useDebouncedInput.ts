@@ -28,7 +28,9 @@ export const useDebouncedInput: TDebouncedInputHook = (
     }
     // puis ajoute un nouveau timer pour appeler en différé le callback
     // (si il n'y a pas de nouveaux changements de la valeur d'ici là)
-    setTimeoutId(setTimeout(callback, debouncePeriod, value));
+    setTimeoutId(
+      setTimeout(callback, debouncePeriod, value) as unknown as number
+    );
     // met à jour l'état interne avec la nouvelle valeur
     setQuery(value);
   };
