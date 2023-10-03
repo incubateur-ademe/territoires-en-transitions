@@ -20,6 +20,7 @@ Ce dépôt Git contient :
     - le [client](./app.territoiresentransitions.react)
 - les données des référentiels en [markdown](./markdown)
 - le [code du site statique](./territoiresentransitions.fr)
+- les [composants partagés](./ui/) entre le client et le site
 
 Chaque dossier à la racine contient son propre `README.md` et peut a priori fonctionner de manière autonome.
 
@@ -149,3 +150,43 @@ earthly --push +deploy-test
 ## Déploiement
 
 Aujourd'hui le `business` et le `client` sont déployés chez [Scalingo](https://scalingo.com/), le `data layer` est chez [Supabase](https://supabase.com/) en mode BaaS.
+
+## Workspaces NPM
+
+Les [workspaces NPM](https://docs.npmjs.com/cli/v10/using-npm/workspaces) sont utilisés pour partager du code entre différents modules _front_ du projet (`ui`, `app` et `site`).
+
+Tous les modules du projet utilisent l'espace de nommage `@tet` (exemple: `@tet/app` pour l'application).
+
+Les chemins des workspaces sont listés dans la propriétés `workspaces` du fichier `package.json` à la racine du dépôt.
+
+Dans ce contexte les différentes commandes NPM habituelles peuvent être lancées depuis le répertoire racine en précisant avec l'option `-w` (ou `--workspace`) le(s) workspace(s) dans le(s)quel(s) la commande doit s'exécuter.
+
+Exemples :
+
+- Installer les dépendances pour les modules `ui` et `site` : `npm i -w @tet/ui -w @tet/site`
+
+- Ajouter une dépendance externe dans le module `app` : `npm i <nom-module-npm-externe> -w @tet/app`
+
+- Ajouter une dépendance interne dans le module `app` : `npm i @tet/<nom-module-interne> -w @tet/app`
+
+- Lancer le serveur de développement du module `ui` : `npm run dev -w @tet/ui`
+
+Les modules `site` et `app` étant dépendants du module partagé `ui`, des commandes permettant de lancer en parallèle les serveurs de développement sont disponibles à la racine du projet.
+
+- Démarrer les serveurs de dev `ui` et `app` : `npm run dev:app`
+
+- Démarrer les serveurs de dev `ui` et `site` : `npm run dev:site`
+
+- Démarrer les serveurs de dev `ui`, `app` et `site` : `npm run dev`
+
+De la même manière pour faire le build de production du site et de l'app il faut aussi faire le build des modules partagés.
+
+- Faire le build de production de `app` : `npm run build:app`
+
+- Faire le build de production de `site` : `npm run build:site`
+
+Enfin pour faire le build depuis Scalingo la variable d'environnement `SCALINGO_BUILD` est attendue pour contrôler le fonctionnement de la commande `npm run build`.
+
+- Lorsque la variable est renseignée, les dépendances nécessaires au build sont installées.
+
+- Lorsque la variable vaut `site`, la commande `build:site` est lancée, et sinon la commande `build:app`.
