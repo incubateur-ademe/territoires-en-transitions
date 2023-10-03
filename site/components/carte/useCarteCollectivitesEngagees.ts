@@ -2,12 +2,13 @@ import {Database, Json} from 'app/database.types';
 import {supabase} from 'app/initSupabase';
 import useSWR from 'swr';
 
-type labellisation_w_geojson =
+export type labellisation_w_geojson =
   Database['public']['Views']['site_labellisation']['Row'] & {geojson?: Json};
 
-type region_w_geojson = Database['public']['Views']['site_region']['Row'] & {
-  geojson?: Json;
-};
+export type region_w_geojson =
+  Database['public']['Views']['site_region']['Row'] & {
+    geojson?: Json;
+  };
 
 export const useCarteCollectivitesEngagees = () => {
   return useSWR('site_labellisation-carte-engagees', async () => {
