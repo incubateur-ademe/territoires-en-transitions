@@ -173,14 +173,18 @@ id: rapports_etudes_service_collecte
 Les preuves ne doivent pas forcément être récentes, mais doivent demeurer d'actualité par rapport à l'état du système de
 collecte en place.
 
-# Plan d'actions
+# Plan d'actions d'optimisation de la collecte
 
 ```yaml
 actions:
   - eci_2.2.2
 id: plan_actions_eci
 ```
+```commentaire
+on conserve l'id plan_actions_eci car des preuves y ont été associées. Ne confondre avec l'id au singulier:
 
+plan_action_eci: Programme d'actions formalisé
+```
 # Délibération validant le plan d'actions
 
 ```yaml
