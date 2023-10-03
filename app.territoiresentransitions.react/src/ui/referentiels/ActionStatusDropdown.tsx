@@ -304,8 +304,7 @@ export const ActionStatusDropdown = ({
       {/* Modale de personnalisation du score (avec jauge manuelle) */}
       {(openScoreDetaille || openScorePerso) && (
         <ScoreDetailleModal
-          actionId={action.id}
-          actionType={action.type}
+          action={action}
           avancementDetaille={localAvancementDetaille}
           externalOpen={openScoreDetaille || openScorePerso}
           saveAtValidation={onSaveStatus === undefined}

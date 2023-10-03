@@ -25,17 +25,27 @@ export const ActionCommentaire = ({
   onSave,
 }: ActionCommentaireProps) => {
   const {actionCommentaire, isLoading} = useActionCommentaire(action.id);
+  const {saveActionCommentaire} = useSaveActionCommentaire();
 
   // On utilise le `isLoading` pour masquer l'input, car il gère son state.
   return (
     <div className={className}>
       {!isLoading && (
         <ActionCommentaireField
+          dataTest={`comm-${action.id}`}
           backgroundClassName={backgroundClassName}
           action={action}
           initialValue={actionCommentaire?.commentaire || ''}
+          title={
+            action.type !== 'tache'
+              ? "Explications sur l'état d'avancement"
+              : undefined
+          }
           autoFocus={autoFocus}
-          onSave={onSave}
+          onSave={payload => {
+            saveActionCommentaire(payload);
+            onSave && onSave();
+          }}
         />
       )}
     </div>
@@ -43,35 +53,43 @@ export const ActionCommentaire = ({
 };
 
 export type ActionCommentaireFieldProps = {
+  dataTest: string;
   backgroundClassName?: string;
   action: ActionDefinitionSummary;
   initialValue: string;
   autoFocus?: boolean;
-  onSave?: () => void;
+  title?: string;
+  subtitle?: string;
+  onSave: (payload: {
+    action_id: string;
+    collectivite_id: number;
+    commentaire: string;
+    modified_at?: string | undefined;
+    modified_by?: string | undefined;
+  }) => void;
 };
 
 export const ActionCommentaireField = ({
+  dataTest,
   backgroundClassName,
   action,
   initialValue,
+  title,
+  subtitle,
   autoFocus = false,
   onSave,
 }: ActionCommentaireFieldProps) => {
   const collectivite = useCurrentCollectivite();
-  const {saveActionCommentaire} = useSaveActionCommentaire();
   const [commentaire, setCommentaire] = useState(initialValue);
 
   useEffect(() => setCommentaire(initialValue), [initialValue]);
 
   return collectivite ? (
     <>
-      {action.type !== 'tache' && (
-        <p className="text-neutral-900 !mb-2">
-          Explications sur l'état d'avancement
-        </p>
-      )}
+      {title && <p className="text-neutral-900 !mb-2">{title}</p>}
+      {subtitle && <p className="text-[#666] !mb-2 text-xs">{subtitle}</p>}
       <Textarea
-        data-test={`comm-${action.id}`}
+        data-test={dataTest}
         className={classNames('fr-input !outline-none', backgroundClassName, {
           '!bg-[#f6f6f6]': !backgroundClassName,
         })}
@@ -83,12 +101,11 @@ export const ActionCommentaireField = ({
         }
         onBlur={() => {
           commentaire.trim() !== (initialValue || '') &&
-            saveActionCommentaire({
+            onSave({
               action_id: action.id,
               collectivite_id: collectivite.collectivite_id,
               commentaire: commentaire.trim(),
             });
-          onSave && onSave();
         }}
         disabled={collectivite.readonly}
         autoFocus={autoFocus}

@@ -5,6 +5,7 @@ import {useActionStatut} from 'core-logic/hooks/useActionStatut';
 import {useEffect, useRef, useState} from 'react';
 import {useLocation} from 'react-router-dom';
 import {Accordion} from 'ui/Accordion';
+import ActionJustification from 'app/pages/collectivite/EtatDesLieux/Referentiel/SuiviAction/ActionJustification';
 import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
 import {SuiviScoreRow} from '../data/useScoreRealise';
 import SubActionDescription from './SubActionDescription';
@@ -109,6 +110,7 @@ const SubActionCard = ({
       <SubActionHeader
         action={subAction}
         actionScores={actionScores}
+        actionAvancement={avancement}
         displayProgressBar={shouldDisplayProgressBar}
         displayActionCommentaire={
           auditStatus === 'audit_en_cours' && !openSubAction
@@ -122,7 +124,16 @@ const SubActionCard = ({
         <div className="p-6">
           {/* Commentaire associé à la sous-action */}
           {(auditStatus !== 'audit_en_cours' || openSubAction) && (
-            <ActionCommentaire action={subAction} className="mb-10" />
+            <>
+              <ActionCommentaire action={subAction} className="mb-10" />
+              {subAction.referentiel === 'cae' && avancement === 'detaille' && (
+                <ActionJustification
+                  action={subAction}
+                  className="mb-10"
+                  title="Justification de l’ajustement manuel du score"
+                />
+              )}
+            </>
           )}
 
           {/* Section Description et Exemples */}
