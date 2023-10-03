@@ -10,8 +10,6 @@ const nextConfig = {
   // active la minification
   swcMinify: true,
   experimental: {
-    // utilise le dossier "app" plutôt que "pages" pour le routage
-    appDir: true,
     // permet le chargement de nivo
     esmExternals: 'loose',
     // Utilisation des server actions : https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions
