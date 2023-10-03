@@ -525,3 +525,4 @@ evaluation/seuils_de_population [evaluation/seuils_de_population@v2.66.0] 2023-1
 @v2.68.0 2023-10-27T09:27:06Z Florian <florian@derfurth.com> # Permet de nouvelles règles de personnalisation
 
 collectivite/mes_collectivites_v2 [collectivite/mes_collectivites_v2@v2.64.1] 2023-09-29T13:29:06Z Amandine Jacquelin <conta@LanceLibre> # Ajoute les collectivités de l'auditeur
+indicateur/referentiel [indicateur/referentiel@v2.65.0] 2023-10-03T09:37:00Z Amandine Jacquelin <conta@LanceLibre> # Ajoute les indicateurs importés au count pour les indicateurs remplis

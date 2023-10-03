@@ -3,114 +3,27 @@
 
 BEGIN;
 
-create or replace view indicateurs
-as
-select 'resultat'::indicateur_valeur_type as type,
-       r.collectivite_id                  as collectivite_id,
-       r.indicateur_id                    as indicateur_id,
-       null::integer                      as indicateur_perso_id,
-       r.annee                            as annee,
-       r.valeur                           as valeur,
-       c.commentaire                      as commentaire,
-       null::text                         as source
-from indicateur_resultat r
-         join indicateur_definition d on r.indicateur_id = d.id
-         left join indicateur_resultat_commentaire c
-                   on r.indicateur_id = c.indicateur_id
-                       and r.collectivite_id = c.collectivite_id
-                       and r.annee = c.annee
-where can_read_acces_restreint(r.collectivite_id)
-union all
-
---- indicateurs dont le résultat est en fait celui d'un autre.
-select 'resultat'::indicateur_valeur_type as type,
-       r.collectivite_id,
-       alt.id,
-       null::integer,
-       r.annee,
-       r.valeur,
-       c.commentaire,
-       null::text
-from indicateur_resultat r
-         join indicateur_definition alt on r.indicateur_id = alt.valeur_indicateur
-         left join indicateur_resultat_commentaire c
-                   on r.indicateur_id = c.indicateur_id
-                       and r.collectivite_id = c.collectivite_id
-                       and r.annee = c.annee
-where can_read_acces_restreint(r.collectivite_id)
-
-union all
-select 'objectif'::indicateur_valeur_type as type,
-       o.collectivite_id,
-       d.id,
-       null,
-       o.annee,
-       o.valeur,
-       c.commentaire,
-       null::text
-from indicateur_objectif o
-         join indicateur_definition d on o.indicateur_id = d.id
-         left join indicateur_objectif_commentaire c
-                   on o.indicateur_id = c.indicateur_id
-                       and o.collectivite_id = c.collectivite_id
-                       and o.annee = c.annee
-where can_read_acces_restreint(o.collectivite_id)
-union all
-
---- indicateurs dont l'objectif est en fait celui d'un autre.
-select 'objectif'::indicateur_valeur_type as type,
-       o.collectivite_id,
-       alt.id,
-       null,
-       o.annee,
-       o.valeur,
-       c.commentaire,
-       null::text
-from indicateur_objectif o
-         join indicateur_definition alt on o.indicateur_id = alt.valeur_indicateur
-         left join indicateur_objectif_commentaire c
-                   on o.indicateur_id = c.indicateur_id
-                       and o.collectivite_id = c.collectivite_id
-                       and o.annee = c.annee
-where can_read_acces_restreint(o.collectivite_id)
-
-union all
-select 'import'::indicateur_valeur_type as type,
-       collectivite_id,
-       indicateur_id,
-       null,
-       annee,
-       valeur,
-       null,
-       source
-from indicateur_resultat_import
-where can_read_acces_restreint(collectivite_id)
-
-union all
-select 'resultat'::indicateur_valeur_type as type,
-       collectivite_id,
-       null,
-       r.indicateur_id,
-       r.annee,
-       r.valeur,
-       c.commentaire,
-       null
-from indicateur_personnalise_resultat r
-         left join indicateur_perso_resultat_commentaire c using (collectivite_id, indicateur_id, annee)
-where can_read_acces_restreint(collectivite_id)
-
-union all
-select 'objectif'::indicateur_valeur_type as type,
-       r.collectivite_id,
-       null,
-       r.indicateur_id,
-       r.annee,
-       r.valeur,
-       commentaire,
-       null
-from indicateur_personnalise_objectif r
-         left join indicateur_perso_objectif_commentaire c using (collectivite_id, indicateur_id, annee)
-where can_read_acces_restreint(collectivite_id)
-;
+create or replace view indicateur_rempli(indicateur_id, perso_id, collectivite_id, rempli) as
+SELECT ir.indicateur_id,
+       NULL::integer        AS perso_id,
+       ir.collectivite_id,
+       count(ir.valeur) > 0 AS rempli
+FROM indicateur_resultat ir
+GROUP BY ir.indicateur_id, ir.collectivite_id
+UNION ALL
+SELECT alt.id               AS indicateur_id,
+       NULL::integer        AS perso_id,
+       ir.collectivite_id,
+       count(ir.valeur) > 0 AS rempli
+FROM indicateur_resultat ir
+         JOIN indicateur_definition alt ON alt.valeur_indicateur::text = ir.indicateur_id::text
+GROUP BY alt.id, ir.collectivite_id
+UNION ALL
+SELECT NULL::character varying AS indicateur_id,
+       ipr.indicateur_id       AS perso_id,
+       ipr.collectivite_id,
+       count(ipr.valeur) > 0   AS rempli
+FROM indicateur_personnalise_resultat ipr
+GROUP BY ipr.indicateur_id, ipr.collectivite_id;
 
 COMMIT;

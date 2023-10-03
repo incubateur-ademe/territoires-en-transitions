@@ -2,14 +2,8 @@
 
 BEGIN;
 
-select type,
-       collectivite_id,
-       indicateur_id,
-       indicateur_perso_id,
-       annee,
-       valeur,
-       commentaire,
-       source
-from indicateurs;
+select indicateur_id, perso_id, collectivite_id, rempli
+from indicateur_rempli
+where false;
 
 ROLLBACK;
