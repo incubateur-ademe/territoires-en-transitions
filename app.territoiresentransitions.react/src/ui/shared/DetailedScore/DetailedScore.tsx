@@ -19,7 +19,7 @@ export const DetailedScore = ({
   return (
     <div className="flex flex-col items-center py-6">
       <DetailedScoreSlider value={avancement} onChange={setCurrentAvancement} />
-      <div className="grid grid-cols-2 gap-y-4 gap-x-3 mt-8 mb-16">
+      <div className="grid grid-cols-2 gap-y-4 gap-x-3 my-8">
         <div>Fait</div>
         <div
           style={{color: actionAvancementColors.fait}}

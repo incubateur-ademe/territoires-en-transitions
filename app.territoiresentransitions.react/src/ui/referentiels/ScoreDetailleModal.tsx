@@ -1,17 +1,22 @@
 import {avancementToLabel} from 'app/labels';
+import {
+  useActionJustification,
+  useSaveActionJustification,
+} from 'app/pages/collectivite/EtatDesLieux/Referentiel/data/useActionJustification';
 import {useTasksScoreRepartition} from 'app/pages/collectivite/EtatDesLieux/Referentiel/data/useTasksScores';
 import {actionAvancementColors} from 'app/theme';
 import classNames from 'classnames';
-import {Dispatch, SetStateAction, useState} from 'react';
+import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import {Dispatch, SetStateAction, useEffect, useState} from 'react';
 import ProgressBarWithTooltip from 'ui/score/ProgressBarWithTooltip';
 import {DetailedScore} from 'ui/shared/DetailedScore/DetailedScore';
 import {AvancementValues} from 'ui/shared/DetailedScore/DetailedScoreSlider';
 import Modal from 'ui/shared/floating-ui/Modal';
+import ActionJustification from '../../app/pages/collectivite/EtatDesLieux/Referentiel/SuiviAction/ActionJustification';
 import {AVANCEMENT_DETAILLE_PAR_STATUT, getStatusFromIndex} from './utils';
 
 type ScoreDetailleModalProps = {
-  actionId: string;
-  actionType: string;
+  action: ActionDefinitionSummary;
   avancementDetaille?: number[] | null;
   externalOpen: boolean;
   saveAtValidation?: boolean;
@@ -22,8 +27,7 @@ type ScoreDetailleModalProps = {
 };
 
 const ScoreDetailleModal = ({
-  actionId,
-  actionType,
+  action,
   avancementDetaille,
   externalOpen,
   saveAtValidation = true,
@@ -38,7 +42,23 @@ const ScoreDetailleModal = ({
       ? avancementDetaille
       : AVANCEMENT_DETAILLE_PAR_STATUT.detaille) as AvancementValues
   );
-  const scores = useTasksScoreRepartition(actionId);
+  const [justificationPayload, setJustificationPayload] = useState<
+    | {
+        collectivite_id: number;
+        action_id: string;
+        texte: string;
+        modified_at: string;
+      }
+    | undefined
+  >();
+
+  const scores = useTasksScoreRepartition(action.id);
+  const {actionJustification} = useActionJustification(action.id);
+  const {saveActionJustification} = useSaveActionJustification();
+
+  useEffect(() => {
+    if (actionJustification) setJustificationPayload(actionJustification);
+  }, [actionJustification]);
 
   return (
     <Modal
@@ -53,8 +73,8 @@ const ScoreDetailleModal = ({
               {isScorePerso
                 ? 'Personnaliser le score'
                 : `Détailler l'avancement de cette 
-              ${actionType === 'tache' ? 'tâche' : actionType}`}{' '}
-              : {actionId.split('_')[1]}
+              ${action.type === 'tache' ? 'tâche' : action.type}`}{' '}
+              : {action.id.split('_')[1]}
             </h4>
 
             {/* Score automatique */}
@@ -92,7 +112,7 @@ const ScoreDetailleModal = ({
               />
 
               {/* Message d'info pour les tâches */}
-              {actionType === 'tache' && (
+              {action.type === 'tache' && (
                 <p className="mb-16">
                   Pour faciliter la relecture, vous pouvez préciser les raisons
                   de cette répartition en cliquant sur le bouton{' '}
@@ -104,8 +124,18 @@ const ScoreDetailleModal = ({
                 </p>
               )}
 
+              {/* Champ de justification pour les scores personnalisés */}
+              {isScorePerso && (
+                <ActionJustification
+                  action={action}
+                  title="Justification de l’ajustement manuel (obligatoire)"
+                  subtitle="Précisez les raisons de cette répartition, dont les initiatives complémentaires à valoriser, pour faciliter la relecture et l’audit"
+                  onSave={setJustificationPayload}
+                />
+              )}
+
               {/* Boutons retour / enregistrement */}
-              <div className="w-full flex justify-end gap-4 mb-4">
+              <div className="w-full flex justify-end gap-4 mt-12 mb-4">
                 {isScorePerso && (
                   <button
                     onClick={() => {
@@ -124,7 +154,12 @@ const ScoreDetailleModal = ({
                   onClick={() => {
                     onSaveScore(currentAvancement);
                     setExternalOpen(false);
+                    saveAtValidation &&
+                      isScorePerso &&
+                      justificationPayload &&
+                      saveActionJustification(justificationPayload);
                   }}
+                  disabled={isScorePerso && !justificationPayload?.texte}
                 >
                   {saveAtValidation
                     ? isScorePerso

@@ -11,10 +11,17 @@ import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
 import {SuiviScoreRow} from '../data/useScoreRealise';
 import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
 import {ExpandToggle} from 'ui/icons/ExpandToggle';
+import ActionJustification from 'app/pages/collectivite/EtatDesLieux/Referentiel/SuiviAction/ActionJustification';
 
 type SubActionHeaderProps = {
   action: ActionDefinitionSummary;
   actionScores: {[actionId: string]: SuiviScoreRow};
+  actionAvancement?:
+    | 'fait'
+    | 'pas_fait'
+    | 'programme'
+    | 'non_renseigne'
+    | 'detaille';
   hideStatus?: boolean;
   displayProgressBar?: boolean;
   displayActionCommentaire?: boolean;
@@ -30,6 +37,7 @@ type SubActionHeaderProps = {
 const SubActionHeader = ({
   action,
   actionScores,
+  actionAvancement,
   hideStatus = false,
   displayProgressBar = false,
   displayActionCommentaire = false,
@@ -114,6 +122,13 @@ const SubActionHeader = ({
             action={action}
             backgroundClassName="!bg-[#f6f6f6] group-hover:!bg-[#eee]"
           />
+          {action.referentiel === 'cae' && actionAvancement === 'detaille' && (
+            <ActionJustification
+              action={action}
+              className="mt-10"
+              title="Justification de l’ajustement manuel du score"
+            />
+          )}
         </div>
       )}
     </div>

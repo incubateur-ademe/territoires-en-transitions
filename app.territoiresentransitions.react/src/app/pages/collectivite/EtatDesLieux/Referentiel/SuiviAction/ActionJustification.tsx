@@ -1,0 +1,67 @@
+import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import {ActionCommentaireField} from 'ui/shared/actions/ActionCommentaire';
+import {
+  useActionJustification,
+  useSaveActionJustification,
+} from '../data/useActionJustification';
+
+type ActionJustificationProps = {
+  action: ActionDefinitionSummary;
+  className?: string;
+  backgroundClassName?: string;
+  title?: string;
+  subtitle?: string;
+  autoFocus?: boolean;
+  onSave?: (payload: {
+    collectivite_id: number;
+    action_id: string;
+    texte: string;
+    modified_at: string;
+  }) => void;
+};
+
+const ActionJustification = ({
+  action,
+  className,
+  backgroundClassName,
+  title,
+  subtitle,
+  autoFocus,
+  onSave,
+}: ActionJustificationProps) => {
+  const {actionJustification, isLoading} = useActionJustification(action.id);
+  const {saveActionJustification} = useSaveActionJustification();
+
+  return (
+    <div className={className}>
+      {!isLoading && (
+        <ActionCommentaireField
+          dataTest={`just-${action.id}`}
+          backgroundClassName={backgroundClassName}
+          action={action}
+          initialValue={actionJustification?.texte ?? ''}
+          title={title}
+          subtitle={subtitle}
+          autoFocus={autoFocus}
+          onSave={payload => {
+            onSave
+              ? onSave({
+                  collectivite_id: payload.collectivite_id,
+                  action_id: payload.action_id,
+                  texte: payload.commentaire,
+                  modified_at: new Date().toLocaleDateString(),
+                })
+              : saveActionJustification({
+                  collectivite_id: payload.collectivite_id,
+                  action_id: payload.action_id,
+                  texte: payload.commentaire,
+                  modified_at: new Date().toLocaleDateString(),
+                });
+          }}
+        />
+      )}
+    </div>
+  );
+};
+
+export default ActionJustification;
