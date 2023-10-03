@@ -1,5 +1,5 @@
-/* eslint-disable react/no-unescaped-entities */
 'use server';
+/* eslint-disable react/no-unescaped-entities */
 
 import Accordion from '@components/accordion/Accordion';
 import ButtonWithLink from '@components/buttons/ButtonWithLink';
