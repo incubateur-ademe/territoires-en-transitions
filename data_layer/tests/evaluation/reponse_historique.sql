@@ -343,7 +343,7 @@ select ok((select count(*) = 2 from historique.reponse_proportion), 'Il devrait 
 select isnt((select modified_by from historique.reponse_proportion limit 1),
             (select modified_by from historique.reponse_proportion limit 1 offset 1),
             'Les deux réponses historisées devraient avoir des `modified_by` différents.');
-select is((select array_agg(modified_by_nom) from historique),
+select is((select array_agg(modified_by_nom order by modified_at desc) from historique),
           (select array ['Yili Didi', 'Yolo Dodo']),
           'La vue client devrait lister une modification par Yili suivie d''une par Yolo');
 
@@ -376,7 +376,7 @@ select ok((select count(*) = 2 from historique.reponse_choix), 'Il devrait y avo
 select isnt((select modified_by from historique.reponse_choix limit 1),
             (select modified_by from historique.reponse_choix limit 1 offset 1),
             'Les deux réponses historisées devraient avoir des `modified_by` différents.');
-select is((select array_agg(modified_by_nom) from historique),
+select is((select array_agg(modified_by_nom order by modified_at desc) from historique),
           (select array ['Yili Didi', 'Yolo Dodo']),
           'La vue client devrait lister une modification par Yili suivie d''une par Yolo');
 
@@ -409,7 +409,7 @@ select ok((select count(*) = 2 from historique.reponse_binaire), 'Il devrait y a
 select isnt((select modified_by from historique.reponse_binaire limit 1),
             (select modified_by from historique.reponse_binaire limit 1 offset 1),
             'Les deux réponses historisées devraient avoir des `modified_by` différents.');
-select is((select array_agg(modified_by_nom) from historique),
+select is((select array_agg(modified_by_nom order by modified_at desc) from historique),
           (select array ['Yili Didi', 'Yolo Dodo']),
           'La vue client devrait lister une modification par Yili suivie d''une par Yolo');
 
