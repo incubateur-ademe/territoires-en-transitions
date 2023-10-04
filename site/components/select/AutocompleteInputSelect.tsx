@@ -25,6 +25,7 @@ type TAutocompleteInputSelectProps<T extends string> =
     noOptionPlaceholder?: string;
     isLoading?: boolean;
     debounce?: boolean;
+    externalOptionsFiltering?: boolean;
   };
 
 /** Sélecteur avec un input dans le bouton d'ouverture pour faire une recherche dans la liste d'options */
@@ -43,6 +44,7 @@ const AutocompleteInputSelect = <T extends string>({
   containerWidthMatchButton,
   disabled,
   debounce = false,
+  externalOptionsFiltering = false,
   'data-test': dataTest,
 }: TAutocompleteInputSelectProps<T>) => {
   /**
@@ -84,7 +86,11 @@ const AutocompleteInputSelect = <T extends string>({
           listRef={listRef}
           activeIndex={activeIndex}
           values={values}
-          options={filterOptions(options, inputValue)}
+          options={
+            externalOptionsFiltering
+              ? options
+              : filterOptions(options, inputValue)
+          }
           onSelect={values => {
             onSelect(values);
             setInputValue('');
