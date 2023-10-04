@@ -36,6 +36,7 @@ const CollectiviteSearch = ({
         placeholderText="Rechercher un EPCI, un syndicat, une commune, un PETR, un EPT"
         isLoading={isCollectivitesLoading}
         debounce
+        externalOptionsFiltering
       />
     </div>
   );

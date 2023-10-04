@@ -3,11 +3,6 @@ import useSWR from 'swr';
 
 export const useFilteredCollectivites = (search: string) => {
   return useSWR(`site_labellisation-filtered-${search}`, async () => {
-    const name = `${search}:*`
-      .split(' ')
-      .map(w => w.trim())
-      .join(' & ');
-
     const query = supabase
       .from('site_labellisation')
       .select()
@@ -15,9 +10,21 @@ export const useFilteredCollectivites = (search: string) => {
       .limit(10);
 
     if (search) {
-      query.textSearch('nom', name, {
-        config: 'french',
-      });
+      const processedSearch = search
+        .split(' ')
+        .map(w => w.trim())
+        .filter(w => w !== '')
+        .join(' ');
+
+      const processedSearchWithDash = processedSearch.split(' ').join('-');
+      const processedSearchWithDashAndSpace = processedSearch
+        .split(' ')
+        .join(' - ');
+      const processedSearchWithoutDash = processedSearch.split('-').join(' ');
+
+      query.or(
+        `"nom".ilike.%${processedSearch}%,"nom".ilike.%${processedSearchWithDash}%,"nom".ilike.%${processedSearchWithDashAndSpace}%,"nom".ilike.%${processedSearchWithoutDash}%`,
+      );
     }
 
     const {error, data} = await query;
