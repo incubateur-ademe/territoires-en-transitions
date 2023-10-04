@@ -72,7 +72,7 @@ const AutocompleteInputSelect = <T extends string>({
   useEffect(() => {
     if (debounce) handleDebouncedInputChange();
     else if (onInputChange) onInputChange(inputValue);
-  }, [inputValue]);
+  }, [inputValue, onInputChange, debounce, handleDebouncedInputChange]);
 
   return (
     <DropdownFloater
@@ -168,7 +168,7 @@ const AutocompleteButton = forwardRef(
       if (!isOpen) {
         onInputChange('');
       }
-    }, [isOpen]);
+    }, [isOpen, onInputChange]);
 
     return (
       <div

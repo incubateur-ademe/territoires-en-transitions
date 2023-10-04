@@ -22,7 +22,7 @@ const Performance = ({
 
   useEffect(() => {
     if (texte) processContent(texte);
-  }, []);
+  }, [texte]);
 
   return (
     <>

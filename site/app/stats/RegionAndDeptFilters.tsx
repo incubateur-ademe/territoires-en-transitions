@@ -2,7 +2,7 @@
 
 import useSWR from 'swr';
 import {supabase} from '../initSupabase';
-import {useEffect, useRef, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import {usePathname, useRouter} from 'next/navigation';
 import Select from '../../components/inputs/Select';
 
@@ -59,17 +59,17 @@ const RegionAndDeptFilters = ({onChange}: RegionAndDeptFiltersProps) => {
   const regions = useRegion().data;
   const departments = useDepartment(selectedRegion).data;
 
-  const changeDepartmentName = () => {
+  const changeDepartmentName = useCallback(() => {
     const newDepartment = departments?.find(
       dept => dept.code === selectedDepartment,
     );
     onChange(newDepartment?.libelle ?? null);
-  };
+  }, [departments, selectedDepartment, onChange]);
 
-  const changeRegionName = () => {
+  const changeRegionName = useCallback(() => {
     const newRegion = regions?.find(region => region.code === selectedRegion);
     onChange(newRegion?.libelle ?? null);
-  };
+  }, [regions, selectedRegion, onChange]);
 
   useEffect(() => {
     // Mise à jour des states selectedDepartment et selectedRegion
@@ -90,14 +90,21 @@ const RegionAndDeptFilters = ({onChange}: RegionAndDeptFiltersProps) => {
         changeDepartmentName();
       }
     }
-  }, [pathName]);
+  }, [pathName, changeRegionName, changeDepartmentName, onChange]);
 
   useEffect(() => {
     // Permet la mise à jour du titre quand l'url
     // est mis à jour manuellement
     if (selectedDepartment) changeDepartmentName();
     else if (selectedRegion) changeRegionName();
-  }, [regions, departments]);
+  }, [
+    regions,
+    departments,
+    selectedRegion,
+    selectedDepartment,
+    changeRegionName,
+    changeDepartmentName,
+  ]);
 
   useEffect(() => {
     // Redirige vers la nouvelle page stats quand
@@ -109,7 +116,7 @@ const RegionAndDeptFilters = ({onChange}: RegionAndDeptFiltersProps) => {
         router.push(`/stats/region/${selectedRegion}`);
       } else router.push(`/stats/`);
     }
-  }, [selectedDepartment]);
+  }, [selectedDepartment, selectedRegion, router]);
 
   useEffect(() => {
     // Redirige vers la nouvelle page stats quand
@@ -117,7 +124,7 @@ const RegionAndDeptFilters = ({onChange}: RegionAndDeptFiltersProps) => {
     if (!!selectedRegion) {
       router.push(`/stats/region/${selectedRegion}`);
     } else router.push(`/stats/`);
-  }, [selectedRegion]);
+  }, [selectedRegion, router]);
 
   if (!regions || !departments) return null;
 

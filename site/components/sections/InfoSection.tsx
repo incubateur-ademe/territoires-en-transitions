@@ -31,14 +31,14 @@ const InfoSection = ({
 }: InfoSectionProps) => {
   const [processedContent, setProcessedContent] = useState('');
 
-  const processContent = async () => {
-    const newContent = await processMarkedContent(content);
-    setProcessedContent(newContent);
-  };
-
   useEffect(() => {
+    const processContent = async () => {
+      const newContent = await processMarkedContent(content);
+      setProcessedContent(newContent);
+    };
+
     processContent();
-  }, []);
+  }, [content]);
 
   return (
     <Section

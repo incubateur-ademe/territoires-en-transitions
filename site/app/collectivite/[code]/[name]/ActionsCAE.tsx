@@ -28,7 +28,7 @@ const ActionsCAE = ({data}: ActionsCaeProp) => {
 
   useEffect(() => {
     if (data.length) processContent(data);
-  }, []);
+  }, [data, data.length]);
 
   return (
     <>

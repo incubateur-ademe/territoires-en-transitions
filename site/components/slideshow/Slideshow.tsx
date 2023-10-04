@@ -1,7 +1,7 @@
 'use client';
 
 import classNames from 'classnames';
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 
 type SlideshowProps = {
   slides: React.ReactNode[];
@@ -22,6 +22,16 @@ const Slideshow = ({
 }: SlideshowProps) => {
   const [slideIndex, setSlideIndex] = useState(0);
 
+  const handleChangeIndex = useCallback(
+    (increment: 'next' | 'previous') => {
+      const index = slideIndex + (increment === 'next' ? 1 : -1);
+      if (index < 0) setSlideIndex(slides.length - 1);
+      else if (index >= slides.length) setSlideIndex(0);
+      else setSlideIndex(index);
+    },
+    [slideIndex, slides.length],
+  );
+
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
 
@@ -32,14 +42,7 @@ const Slideshow = ({
     }
 
     return () => clearInterval(interval);
-  }, [slideIndex]);
-
-  const handleChangeIndex = (increment: 'next' | 'previous') => {
-    const index = slideIndex + (increment === 'next' ? 1 : -1);
-    if (index < 0) setSlideIndex(slides.length - 1);
-    else if (index >= slides.length) setSlideIndex(0);
-    else setSlideIndex(index);
-  };
+  }, [slideIndex, autoSlide, autoSlideDelay, handleChangeIndex]);
 
   return (
     <div
