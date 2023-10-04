@@ -512,3 +512,5 @@ evaluation/thematique_completude [evaluation/thematique_completude@v2.64.0] 2023
 
 plan_action/fiches [plan_action/fiches@v2.64.1] 2023-09-28T07:46:21Z Florian <florian@derfurth.com> # Répare la relation calculée entre fiche_resume et fiche_action_action
 @v2.65.0 2023-09-28T12:52:40Z Florian <florian@derfurth.com> # Répare les fiches action dans les référentiels
+
+referentiel/justification_ajustement 2023-10-04T09:01:17Z Florian <florian@derfurth.com> # Ajoute la justification des ajustements des scores détaillés
