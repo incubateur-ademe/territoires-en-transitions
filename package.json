@@ -6,6 +6,9 @@
   "directories": {
     "doc": "docs"
   },
+  "engines": {
+    "node": "20"
+  },
   "devDependencies": {
     "concurrently": "^8.2.1",
     "supabase": "1.88.0"

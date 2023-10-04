@@ -4,6 +4,9 @@
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "private": true,
+  "engines": {
+    "node": "20"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsc -w",
