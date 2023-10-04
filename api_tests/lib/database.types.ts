@@ -5271,45 +5271,6 @@ export interface Database {
           }
         ]
       }
-      commune_pop_legale: {
-        Row: {
-          codarr: string | null
-          codcan: string | null
-          codcom: string | null
-          coddep: string | null
-          codreg: string | null
-          com: string | null
-          pcap: number | null
-          pmun: number | null
-          ptot: number | null
-          reg: string | null
-        }
-        Insert: {
-          codarr?: string | null
-          codcan?: string | null
-          codcom?: string | null
-          coddep?: string | null
-          codreg?: string | null
-          com?: string | null
-          pcap?: number | null
-          pmun?: number | null
-          ptot?: number | null
-          reg?: string | null
-        }
-        Update: {
-          codarr?: string | null
-          codcan?: string | null
-          codcom?: string | null
-          coddep?: string | null
-          codreg?: string | null
-          com?: string | null
-          pcap?: number | null
-          pmun?: number | null
-          ptot?: number | null
-          reg?: string | null
-        }
-        Relationships: []
-      }
       confidentialite_crud: {
         Row: {
           c: Database["public"]["Enums"]["confidentialite_option_crud"]
@@ -11134,6 +11095,343 @@ export interface Database {
             foreignKeyName: "justification_question_id_fkey"
             columns: ["question_id"]
             referencedRelation: "report_question"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      justification_ajustement: {
+        Row: {
+          action_id: string
+          collectivite_id: number
+          modified_at: string
+          modified_by: string
+          texte: string
+        }
+        Insert: {
+          action_id: string
+          collectivite_id: number
+          modified_at: string
+          modified_by?: string
+          texte: string
+        }
+        Update: {
+          action_id?: string
+          collectivite_id?: number
+          modified_at?: string
+          modified_by?: string
+          texte?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "justification_ajustement_action_id_fkey"
+            columns: ["action_id"]
+            referencedRelation: "action_relation"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_membre_crm"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_plan_action"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivites_crm"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "late_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "action_snippet"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_plan_action_premier_usage"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "action_statuts"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "active_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "auditeurs"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "audits"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_card"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_carte_identite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_identite"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_niveau_acces"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "comparaison_scores_audit"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "crm_collectivites"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "crm_usages"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "named_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "question_display"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "question_thematique_completude"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_active_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_completude"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_completude_compute"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_plan_action_hebdo"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_plan_action_premier_usage"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_plan_action_usage"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_score"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "stats_active_real_collectivites"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "stats_carte_collectivite_active"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "stats_locales_engagement_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "suivi_audit"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "carte_collectivite_active"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_action_statut"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_plan_action"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_referentiel"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_utilisateur"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "crm_usages"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "engagement_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "locales_engagement_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "locales_pourcentage_completude"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "rattachement"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "report_indicateur_resultat"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "report_reponse_binaire"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "report_reponse_choix"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "report_reponse_proportion"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "report_scores"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "justification_ajustement_modified_by_fkey"
+            columns: ["modified_by"]
+            referencedRelation: "users"
             referencedColumns: ["id"]
           }
         ]
@@ -23385,7 +23683,6 @@ export interface Database {
       col_is_null:
         | {
             Args: {
-              schema_name: unknown
               table_name: unknown
               column_name: unknown
               description?: string
@@ -23394,6 +23691,7 @@ export interface Database {
           }
         | {
             Args: {
+              schema_name: unknown
               table_name: unknown
               column_name: unknown
               description?: string
@@ -23403,7 +23701,6 @@ export interface Database {
       col_not_null:
         | {
             Args: {
-              schema_name: unknown
               table_name: unknown
               column_name: unknown
               description?: string
@@ -23412,6 +23709,7 @@ export interface Database {
           }
         | {
             Args: {
+              schema_name: unknown
               table_name: unknown
               column_name: unknown
               description?: string
@@ -23589,10 +23887,6 @@ export interface Database {
       }
       diag:
         | {
-            Args: Record<PropertyKey, never>
-            Returns: string
-          }
-        | {
             Args: {
               msg: string
             }
@@ -23602,6 +23896,10 @@ export interface Database {
             Args: {
               msg: unknown
             }
+            Returns: string
+          }
+        | {
+            Args: Record<PropertyKey, never>
             Returns: string
           }
         | {
@@ -23721,7 +24019,19 @@ export interface Database {
             Args: {
               fiche_action_action: unknown
             }
-            Returns: unknown[]
+            Returns: {
+              collectivite_id: number | null
+              date_fin_provisoire: string | null
+              id: number | null
+              modified_at: string | null
+              niveau_priorite:
+                | Database["public"]["Enums"]["fiche_action_niveaux_priorite"]
+                | null
+              pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
+              plans: unknown[] | null
+              statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
+              titre: string | null
+            }[]
           }
         | {
             Args: {
@@ -25392,6 +25702,44 @@ export interface Database {
       time_bucket:
         | {
             Args: {
+              bucket_width: number
+              ts: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              offset: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              offset: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              offset: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
               bucket_width: unknown
               ts: string
             }
@@ -25473,44 +25821,6 @@ export interface Database {
             Args: {
               bucket_width: number
               ts: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              offset: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              offset: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              offset: number
             }
             Returns: number
           }
