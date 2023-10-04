@@ -18,8 +18,8 @@
     "dev:app": "concurrently --names \"ui,app\" -c \"bgBlue.bold,bgGreen.bold\" \"npm run dev -w @tet/ui\" \"npm run dev -w @tet/app\"",
     "dev:site": "concurrently --names \"ui,site\" -c \"bgBlue.bold,bgYellow.bold\" \"npm run dev -w @tet/ui\" \"npm run dev -w @tet/site -- -p 3001\"",
     "build": "if [ \"$SCALINGO_BUILD\" = \"site\" ]; then npm run build:site; else npm run build:app; fi",
-    "build:app": "if [ -n \"$SCALINGO_BUILD\" ]; then npm ci -w -w @tet/ui -w @tet/app; fi; npm run build -w @tet/ui -w @tet/app",
-    "build:site": "if [ -n \"$SCALINGO_BUILD\" ]; then npm ci -w -w @tet/ui -w @tet/site; fi; npm run build -w @tet/ui -w @tet/site",
+    "build:app": "npm run build -w @tet/ui -w @tet/app",
+    "build:site": "npm run build -w @tet/ui -w @tet/site",
     "start": "if [ \"$SCALINGO_BUILD\" = \"site\" ]; then npm start -w @tet/site; else npm start -w @tet/app; fi"
   },
   "repository": {
