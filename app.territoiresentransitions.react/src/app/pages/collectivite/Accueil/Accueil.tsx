@@ -4,7 +4,6 @@ import {useProgressionReferentiel} from '../EtatDesLieux/Synthese/data/useProgre
 import EtatDesLieuxCard from './EtatDesLieuxCard';
 import IndicateursCard from './IndicateursCard';
 import PlansActionCard from './PlansActionCard';
-import {HotPink} from '@tet/ui';
 
 const Accueil = (): JSX.Element => {
   const collectiviteId = useCollectiviteId();
@@ -19,7 +18,6 @@ const Accueil = (): JSX.Element => {
 
   return (
     <main data-test="TableauBord" className="bg-bf975 -mb-8">
-      <HotPink />
       {!!collectiviteId && (
         <div className="fr-container flex flex-col py-16 gap-16">
           {/* Première ligne - Plans d'action et Indicateurs */}
