@@ -146,7 +146,7 @@ select ok((select count(*) = 2 from historique.action_statut), 'Il devrait y avo
 select isnt((select modified_by from historique.action_statut limit 1),
             (select modified_by from historique.action_statut limit 1 offset 1),
             'Les deux statuts historisés devraient avoir des `modified_by` différents.');
-select is((select array_agg(modified_by_nom) from historique),
+select is((select array_agg(modified_by_nom order by modified_at desc) from historique),
           (select array ['Yili Didi', 'Yolo Dodo']),
           'La vue client devrait lister une modification par Yili suivie d''une par Yolo');
 
