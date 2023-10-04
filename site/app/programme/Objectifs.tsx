@@ -16,22 +16,21 @@ type ObjectifsProps = {
 const Objectifs = ({titre, description, contenu}: ObjectifsProps) => {
   const [processedContent, setProcessedContent] = useState<Content[]>([]);
 
-  const processContent = async () => {
-    if (contenu) {
-      const newContent = [...contenu];
-
-      newContent.forEach(async c => {
-        const newDescription = await processMarkedContent(c.description);
-        c.description = newDescription;
-      });
-
-      setProcessedContent(newContent);
-    }
-  };
-
   useEffect(() => {
+    const processContent = async () => {
+      if (contenu) {
+        const newContent = [...contenu];
+
+        newContent.forEach(async c => {
+          const newDescription = await processMarkedContent(c.description);
+          c.description = newDescription;
+        });
+
+        setProcessedContent(newContent);
+      }
+    };
     processContent();
-  }, []);
+  }, [contenu]);
 
   return contenu && processedContent.length ? (
     <CardsSection

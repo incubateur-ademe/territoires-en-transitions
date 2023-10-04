@@ -17,7 +17,7 @@ const InfoArticle = ({texte}: InfoArticleProps) => {
 
   useEffect(() => {
     if (texte) processContent(texte);
-  }, []);
+  }, [texte]);
 
   return (
     <div

@@ -45,22 +45,27 @@ const CarteCollectivites = ({filtre, etoiles}: CarteCollectivitesProps) => {
     });
   };
 
-  const processData = (
-    data:
-      | {collectivites: labellisation_w_geojson[]; regions: region_w_geojson[]}
-      | null
-      | undefined,
-  ) => {
-    if (data) {
-      return {
-        collectivites: sortCollectivites(data.collectivites),
-        regions: data.regions,
-      };
-    }
-    return data;
-  };
+  useEffect(() => {
+    const processData = (
+      data:
+        | {
+            collectivites: labellisation_w_geojson[];
+            regions: region_w_geojson[];
+          }
+        | null
+        | undefined,
+    ) => {
+      if (data) {
+        return {
+          collectivites: sortCollectivites(data.collectivites),
+          regions: data.regions,
+        };
+      }
+      return data;
+    };
 
-  useEffect(() => setLocalData(processData(data)), [data]);
+    setLocalData(processData(data));
+  }, [data]);
 
   useEffect(() => {
     if (data) {

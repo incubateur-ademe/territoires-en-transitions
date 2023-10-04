@@ -37,7 +37,7 @@ export const ToastFloater = ({
 
   useLayoutEffect(() => {
     setToastWidth(context.refs.floating.current?.getBoundingClientRect().width);
-  });
+  }, [context.refs.floating]);
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
@@ -49,7 +49,7 @@ export const ToastFloater = ({
     }
 
     return () => clearInterval(interval);
-  }, [open]);
+  }, [open, autoHideDuration, onClose]);
 
   return (
     <FloatingPortal>

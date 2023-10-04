@@ -22,7 +22,7 @@ const ParagrapheArticle = ({
 
   useEffect(() => {
     if (texte) processContent(texte);
-  }, []);
+  }, [texte]);
 
   return (
     <div className="flex flex-col w-full">

@@ -29,7 +29,7 @@ const Accordion = ({
 
   useEffect(() => {
     if (typeof content === 'string') processContent(content);
-  }, []);
+  }, [content]);
 
   const contentClassName = classNames({
     'fr-collapse--expanded py-3 px-4': expanded,

@@ -21,7 +21,7 @@ const Introduction = ({description, logos}: IntroductionProps) => {
 
   useEffect(() => {
     if (description) processContent(description);
-  }, []);
+  }, [description]);
 
   return (
     <Section
