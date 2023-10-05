@@ -207,7 +207,7 @@ node-fr: ## image de base pour les images utilisant node
     ARG PLATFORM=$TARGETPLATFORM
     FROM --platform=$PLATFORM node:20
     ENV LANG fr_FR.UTF-8
-    RUN apt-get update && apt-get install -y locales && rm -rf /var/lib/apt/lists/* && locale-gen "fr_FR.UTF-8"
+    RUN apt-get update && apt-get install -y locales dumb-init && rm -rf /var/lib/apt/lists/* && locale-gen "fr_FR.UTF-8"
     USER node:node
     WORKDIR "/app"
     SAVE IMAGE node-fr:latest
@@ -244,7 +244,8 @@ app-build: ## build l'app
     COPY ./packages/ui ./packages/ui
     RUN npm run build -w @tet/ui -w @tet/app
     EXPOSE 3000
-    CMD npm -w @tet/app start
+    WORKDIR $APP_DIR
+    CMD ["dumb-init", "node", "server.js"]
     SAVE IMAGE app:latest
 
 app-run: ## build et lance l'app en local
@@ -289,6 +290,7 @@ app-test: ## lance les tests unitaires de l'app
 
 site-deps: ## dépendances pour le site
     FROM +node-fr-deps --MODULE_DIR="./packages/site"
+    SAVE IMAGE site-deps:latest
 
 site-build: ## build le site
     ARG PLATFORM
@@ -308,7 +310,8 @@ site-build: ## build le site
     COPY ./packages/site ./packages/site
     COPY ./packages/ui ./packages/ui
     RUN npm run build -w @tet/ui -w @tet/site
-    CMD npm start -w @tet/site
+    WORKDIR ./packages/site
+    CMD ["dumb-init", "./node_modules/.bin/next", "start"]
     SAVE IMAGE site:latest
 
 site-run: ## build et lance le site en local
