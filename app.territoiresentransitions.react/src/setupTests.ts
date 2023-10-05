@@ -9,8 +9,9 @@ import '@testing-library/jest-dom';
 // qu'ils soient disponibles pour l'affichage des stories dans le storybook
 jest.mock('core-logic/hooks/useCurrentCollectivite.ts');
 
-// ce mock n'est importé qu'ici car la version d'origine fonctionne dans le navigateur
+// ces mocks ne sont importés qu'ici car la version d'origine fonctionne dans le navigateur
 jest.mock('utils/shasum256.ts');
+jest.mock('app/pages/collectivite/Historique/useHistoriqueUtilisateurListe.ts');
 
 // corrige une génération aléatoire d'ids
 // https://github.com/floating-ui/floating-ui/issues/2319
@@ -22,5 +23,9 @@ jest.mock('@floating-ui/react', () => {
     useId: jest.fn(() => 'mocked-id'),
   };
 });
+
+// évite une erreur dans le chargement de IndicateurChart.stories.tsx
+// Ref: https://stackoverflow.com/questions/69075510/jest-tests-failing-on-d3-import
+jest.mock('d3-scale', () => ({}));
 
 jest.setTimeout(60000);
