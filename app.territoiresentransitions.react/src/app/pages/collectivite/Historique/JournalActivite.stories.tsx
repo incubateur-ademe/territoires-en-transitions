@@ -17,7 +17,10 @@ export const Exemple1 = Template.bind({});
 Exemple1.args = {
   items: [
     fakeModificationSimpleADetailleActionStatutHistorique,
-    fakeAjoutActionPrecisionHistorique,
+    {
+      ...fakeAjoutActionPrecisionHistorique,
+      modified_at: '2022-08-08T15:12:22.00+00:00',
+    },
   ],
   total: 2,
   filters: {},
