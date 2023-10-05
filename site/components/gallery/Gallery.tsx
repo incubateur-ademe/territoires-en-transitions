@@ -8,13 +8,14 @@ type GalleryProps = {
 
 const Gallery = ({data}: GalleryProps) => {
   const [dataGallery, setDataGallery] = useState<ReactNode[][]>(Array(3));
-  const [windowWidth, setWindowWidth] = useState<number | undefined>(
-    window.innerWidth,
-  );
+  const [windowWidth, setWindowWidth] = useState<number | undefined>();
   const [columns, setColumns] = useState(3);
 
-  // Détecte le changement de taille de la fenêtre
   useEffect(() => {
+    // Initialisation de windowWith au chargement de la page
+    setWindowWidth(window.innerWidth);
+
+    // Détecte le changement de taille de la fenêtre
     window.addEventListener('resize', () => setWindowWidth(window.innerWidth));
     return () =>
       window.removeEventListener('resize', () =>
