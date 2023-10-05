@@ -2,7 +2,7 @@
 
 import useSWR from 'swr';
 import {supabase} from '../initSupabase';
-import {useCallback, useEffect, useRef, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {usePathname, useRouter} from 'next/navigation';
 import Select from '../../components/inputs/Select';
 
@@ -59,17 +59,17 @@ const RegionAndDeptFilters = ({onChange}: RegionAndDeptFiltersProps) => {
   const regions = useRegion().data;
   const departments = useDepartment(selectedRegion).data;
 
-  const changeDepartmentName = useCallback(() => {
+  const changeDepartmentName = () => {
     const newDepartment = departments?.find(
       dept => dept.code === selectedDepartment,
     );
     onChange(newDepartment?.libelle ?? null);
-  }, [departments, selectedDepartment, onChange]);
+  };
 
-  const changeRegionName = useCallback(() => {
+  const changeRegionName = () => {
     const newRegion = regions?.find(region => region.code === selectedRegion);
     onChange(newRegion?.libelle ?? null);
-  }, [regions, selectedRegion, onChange]);
+  };
 
   useEffect(() => {
     // Mise à jour des states selectedDepartment et selectedRegion
@@ -84,46 +84,44 @@ const RegionAndDeptFilters = ({onChange}: RegionAndDeptFiltersProps) => {
       if (pathArray[2] === 'region') {
         setSelectedRegion(pathArray[3]);
         setSelectedDepartment(emptyString);
-        changeRegionName();
       } else if (pathArray[2] === 'departement') {
         setSelectedDepartment(pathArray[3]);
-        changeDepartmentName();
       }
     }
-  }, [pathName, changeRegionName, changeDepartmentName, onChange]);
+  }, [pathName, onChange]);
 
   useEffect(() => {
     // Permet la mise à jour du titre quand l'url
     // est mis à jour manuellement
+    // (enclenche le rechargement de regions et departements)
     if (selectedDepartment) changeDepartmentName();
     else if (selectedRegion) changeRegionName();
-  }, [
-    regions,
-    departments,
-    selectedRegion,
-    selectedDepartment,
-    changeRegionName,
-    changeDepartmentName,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [regions, departments]);
 
   useEffect(() => {
     // Redirige vers la nouvelle page stats quand
     // selectedDepartment est modifié
     if (!!selectedDepartment) {
+      changeDepartmentName();
       router.push(`/stats/departement/${selectedDepartment}`);
     } else {
       if (!!selectedRegion) {
+        changeRegionName();
         router.push(`/stats/region/${selectedRegion}`);
       } else router.push(`/stats/`);
     }
-  }, [selectedDepartment, selectedRegion, router]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedDepartment, router]);
 
   useEffect(() => {
     // Redirige vers la nouvelle page stats quand
     // selectedRegion est modifié
     if (!!selectedRegion) {
+      changeRegionName();
       router.push(`/stats/region/${selectedRegion}`);
     } else router.push(`/stats/`);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedRegion, router]);
 
   if (!regions || !departments) return null;

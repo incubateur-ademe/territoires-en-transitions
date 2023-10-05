@@ -4,13 +4,17 @@
 import ButtonWithLink from '@components/buttons/ButtonWithLink';
 import Section from '@components/sections/Section';
 import CarteAvecFiltres from '@components/carte/CarteAvecFiltres';
-import {useEffect, useRef} from 'react';
+import {useEffect, useRef, useState} from 'react';
 
 const Carte = () => {
   const ref = useRef<HTMLDivElement>(null);
+  const [anchor, setAnchor] = useState('');
 
-  const url = window.location.href;
-  const anchor = url.split('#')[1];
+  useEffect(() => {
+    const url = window.location.href;
+    const anchor = url.split('#')[1];
+    setAnchor(anchor);
+  }, []);
 
   useEffect(() => {
     if (anchor && anchor === 'carte' && ref && ref.current) {

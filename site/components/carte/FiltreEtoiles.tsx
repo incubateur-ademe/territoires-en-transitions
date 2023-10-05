@@ -23,6 +23,7 @@ const FiltreEtoiles = ({initEtoiles, onChangeEtoiles}: FiltreEtoilesProps) => {
         else return false;
       }),
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initEtoiles.length]);
 
   useEffect(() => {
@@ -31,7 +32,7 @@ const FiltreEtoiles = ({initEtoiles, onChangeEtoiles}: FiltreEtoilesProps) => {
       if (etoile) etoilesFiltrees.push(index + 1);
     });
     onChangeEtoiles(etoilesFiltrees);
-  }, [etoiles]);
+  }, [etoiles, onChangeEtoiles]);
 
   return (
     <div className="flex flex-col items-start gap-4">
