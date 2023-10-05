@@ -33,4 +33,4 @@ jobs:
       - run: earthly +business-test
       - run: earthly +api-test --tests 'base droit historique plan_action labellisation indicateurs utilisateur'
       - run: earthly +deploy-test
-      - run: earthly +client-test
+      - run: earthly +app-test

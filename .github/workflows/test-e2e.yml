@@ -42,7 +42,7 @@ jobs:
           sudo update-locale LANG=${{env.LANG}}
 
       - run: earthly +setup-env
-      - run: earthly +dev --client=yes
+      - run: earthly +dev --app=yes
       - run: docker restart supabase_rest_tet
       - run: earthly +curl-test
 

@@ -115,17 +115,17 @@ Pour lancer les services en local avec docker, on utilise la commande `dev` :
 earthly +dev
 ```
 
-Par default le client n'est pas lancé, on peut néanmoins spécifier les options suivantes :
+Par default le client (`app`) n'est pas lancé, on peut néanmoins spécifier les options suivantes :
 
 - `stop` : commence par stopper les services.
 - `datalayer` : lance supabase.
 - `business` : build et lance le business.
-- `client` : build et lance le client
+- `app` : build et lance l'app
 
 On peut écrire par exemple :
 
 ```shell
-earthly +dev --stop=yes --datalayer=yes --business=yes --client=no
+earthly +dev --stop=yes --datalayer=yes --business=yes --app=no
 ```
 
 ### Lancer les tests
@@ -142,7 +142,7 @@ earthly +dev
 # Lance les tests indépendamment
 earthly --push +db-test
 earthly --push +business-test
-earthly --push +client-test
+earthly --push +app-test
 earthly --push +api-test
 earthly --push +deploy-test
 ```
