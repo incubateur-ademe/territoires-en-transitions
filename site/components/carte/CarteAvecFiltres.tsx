@@ -10,13 +10,13 @@ import FiltreLabels from './FiltreLabels';
 const CarteAvecFiltres = () => {
   const [filtre, setFiltre] = useState<FiltresLabels | null>(null);
   const [etoiles, setEtoiles] = useState<number[]>([1, 2, 3, 4, 5]);
-  const [windowWidth, setWindowWidth] = useState<number | undefined>(
-    window.innerWidth,
-  );
+  const [windowWidth, setWindowWidth] = useState<number | undefined>();
 
   useEffect(() => setFiltre('engagees'), []);
 
   useEffect(() => {
+    setWindowWidth(window.innerWidth);
+
     window.addEventListener('resize', () => setWindowWidth(window.innerWidth));
     return () =>
       window.removeEventListener('resize', () =>
@@ -85,7 +85,7 @@ const CarteAvecFiltres = () => {
               </p>
               <FiltreEtoiles
                 initEtoiles={etoiles}
-                onChangeEtoiles={etoiles => setEtoiles(etoiles)}
+                onChangeEtoiles={setEtoiles}
               />
             </div>
           )}
