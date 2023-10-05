@@ -16,7 +16,7 @@ const RadioAsButton = ({
   onCheck,
 }: RadioAsButtonProps) => {
   return (
-    <div className="button block relative fr-btn fr-btn--secondary rounded-md h-fit w-full">
+    <div className="button block relative fr-btn fr-btn--secondary rounded-md h-fit !w-full">
       <input
         className="opacity-0 block absolute top-0 bottom-0 left-0 right-0"
         type="radio"
