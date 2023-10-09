@@ -152,40 +152,43 @@ export const ActionStatusDropdown = ({
   // à la validation dans la modale de score auto
   const handleSaveScoreAuto = (newStatus: StatusToSavePayload[]) => {
     setOpenScoreAuto(false);
-    setLocalAvancement(newStatus.length ? 'detaille' : 'non_renseigne');
-    setLocalAvancementDetaille(undefined);
 
-    // Sauvegarde des statuts des tâches
-    newStatus.forEach(element => {
-      const {avancement, concerne} = statutParAvancement(element.avancement);
+    if (newStatus.length) {
+      setLocalAvancement('detaille');
+      setLocalAvancementDetaille(undefined);
 
-      saveActionStatut({
-        action_id: element.actionId,
-        avancement,
-        avancement_detaille: element.avancementDetaille,
-        collectivite_id: args.collectivite_id,
-        concerne,
-        modified_at: element.statut?.modified_at,
-        modified_by: element.statut?.modified_by,
+      // Sauvegarde des statuts des tâches
+      newStatus.forEach(element => {
+        const {avancement, concerne} = statutParAvancement(element.avancement);
+
+        saveActionStatut({
+          action_id: element.actionId,
+          avancement,
+          avancement_detaille: element.avancementDetaille,
+          collectivite_id: args.collectivite_id,
+          concerne,
+          modified_at: element.statut?.modified_at,
+          modified_by: element.statut?.modified_by,
+        });
       });
-    });
 
-    // Si "détaillé" est sélectionné sur une sous-action
-    // cela correspond en base à un statut "non renseigné"
-    // avec statuts au niveau des tâches
-    // Si aucune tâche n'est remplie, le statut de la sous-action
-    // passe à "non renseigné"
-    // Le setTimeout évite des problèmes de raffraichissement de la jauge
-    setTimeout(() => {
-      saveActionStatut({
-        ...args,
-        avancement: 'non_renseigne',
-        avancement_detaille: localAvancementDetaille,
-        concerne: true,
-        modified_at: statut?.modified_at,
-        modified_by: statut?.modified_by,
-      });
-    }, 100);
+      // Si "détaillé" est sélectionné sur une sous-action
+      // cela correspond en base à un statut "non renseigné"
+      // avec statuts au niveau des tâches
+      // Si aucune tâche n'est remplie, le statut de la sous-action
+      // passe à "non renseigné"
+      // Le setTimeout évite des problèmes de raffraichissement de la jauge
+      setTimeout(() => {
+        saveActionStatut({
+          ...args,
+          avancement: 'non_renseigne',
+          avancement_detaille: localAvancementDetaille,
+          concerne: true,
+          modified_at: statut?.modified_at,
+          modified_by: statut?.modified_by,
+        });
+      }, 100);
+    }
   };
 
   // Mise à jour du statut à la validation dans la modale
