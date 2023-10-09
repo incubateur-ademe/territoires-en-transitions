@@ -138,7 +138,10 @@ export const ActionStatusDropdown = ({
           ...args,
           ...statut,
           avancement,
-          avancement_detaille,
+          avancement_detaille:
+            action.type === 'sous-action'
+              ? localAvancementDetaille
+              : avancement_detaille,
           concerne,
         });
       }
