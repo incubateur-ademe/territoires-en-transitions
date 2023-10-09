@@ -26,13 +26,15 @@ export type TTooltipProps = {
   children: JSX.Element;
   /** événement déclenchant l'affichage de l'info-bulle */
   activatedBy?: 'hover' | 'click';
+  /** délai d'ouverture de la tooltip */
+  delay?: number;
   /** surcharge de la className sur l'infobulle */
   className?: string;
 };
 
 // les styles de l'infobulle
 const tooltipClass =
-  'pointer-events-none max-w-prose px-2 py-1 bg-[#19271D] text-white text-xs [&_*]:text-xs [&_*]:mb-0 z-[3001]';
+  'pointer-events-none max-w-prose px-2 py-1 bg-[#19271D] text-white text-xs [&_*]:text-xs [&_*]:mb-0 z-[4000]';
 
 /**
  * Affiche une info-bulle
@@ -44,6 +46,7 @@ export const Tooltip = ({
   label,
   placement = 'bottom-start',
   activatedBy = 'hover',
+  delay = 1000,
   className,
 }: TTooltipProps) => {
   const [open, setOpen] = useState(false);
@@ -58,7 +61,7 @@ export const Tooltip = ({
 
   const {getReferenceProps, getFloatingProps} = useInteractions([
     (activatedBy === 'click' ? useClick : useHover)(context, {
-      delay: {open: 1000, close: 0},
+      delay: {open: delay, close: 0},
     }),
     useFocus(context),
     useRole(context, {role: 'tooltip'}),

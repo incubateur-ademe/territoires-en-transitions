@@ -7,6 +7,7 @@ type SubActionTasksListProps = {
   tasks: ActionDefinitionSummary[];
   actionScores: {[actionId: string]: SuiviScoreRow};
   hideStatus?: boolean;
+  statusWarningMessage?: boolean;
   onSaveStatus?: (payload: StatusToSavePayload) => void;
 };
 
@@ -18,6 +19,7 @@ const SubActionTasksList = ({
   tasks,
   actionScores,
   hideStatus = false,
+  statusWarningMessage = false,
   onSaveStatus,
 }: SubActionTasksListProps): JSX.Element => {
   return (
@@ -28,6 +30,7 @@ const SubActionTasksList = ({
           task={task}
           actionScores={actionScores}
           hideStatus={hideStatus}
+          statusWarningMessage={statusWarningMessage}
           onSaveStatus={onSaveStatus}
         />
       ))}

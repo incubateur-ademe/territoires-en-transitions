@@ -23,6 +23,7 @@ type SubActionHeaderProps = {
     | 'non_renseigne'
     | 'detaille';
   hideStatus?: boolean;
+  statusWarningMessage?: boolean;
   displayProgressBar?: boolean;
   displayActionCommentaire?: boolean;
   openSubAction?: boolean;
@@ -39,6 +40,7 @@ const SubActionHeader = ({
   actionScores,
   actionAvancement,
   hideStatus = false,
+  statusWarningMessage = false,
   displayProgressBar = false,
   displayActionCommentaire = false,
   openSubAction = false,
@@ -113,6 +115,7 @@ const SubActionHeader = ({
         <ActionStatusDropdown
           action={action}
           actionScores={actionScores}
+          statusWarningMessage={statusWarningMessage}
           onSaveStatus={onSaveStatus}
         />
       )}

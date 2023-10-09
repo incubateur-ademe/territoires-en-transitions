@@ -24,6 +24,8 @@ import {
   statutParAvancement,
 } from './utils';
 import {SuiviScoreRow} from 'app/pages/collectivite/EtatDesLieux/Referentiel/data/useScoreRealise';
+import {Tooltip} from 'ui/shared/floating-ui/Tooltip';
+import classNames from 'classnames';
 
 export type StatusToSavePayload = {
   actionId: string;
@@ -48,10 +50,12 @@ export type StatusToSavePayload = {
 export const ActionStatusDropdown = ({
   action,
   actionScores,
+  statusWarningMessage = false,
   onSaveStatus,
 }: {
   action: ActionDefinitionSummary;
   actionScores: {[actionId: string]: SuiviScoreRow};
+  statusWarningMessage?: boolean;
   onSaveStatus?: (payload: StatusToSavePayload) => void;
 }) => {
   const collectivite = useCurrentCollectivite();
@@ -231,19 +235,31 @@ export const ActionStatusDropdown = ({
     >
       {/* Dropdown avec suppression de l'option "non renseigné" sur les sous-actions 
       quand au moins une des tâches a un statut */}
-      <SelectActionStatut
-        items={
-          action.type === 'sous-action' &&
-          localAvancement !== 'non_renseigne' &&
-          filled
-            ? ITEMS_AVEC_NON_CONCERNE.filter(item => item !== 'non_renseigne')
-            : ITEMS_AVEC_NON_CONCERNE
-        }
-        disabled={disabled}
-        value={localAvancement}
-        onChange={handleChange}
-        buttonClassName="-mr-2 -mt-2"
-      />
+      <Tooltip
+        label="Le score a été ajusté manuellement à la sous-action : la
+        modification du statut de la tâche ne sera pas pris en compte pour
+        le score."
+        delay={0}
+        className={classNames({hidden: !statusWarningMessage})}
+      >
+        <div>
+          <SelectActionStatut
+            items={
+              action.type === 'sous-action' &&
+              localAvancement !== 'non_renseigne' &&
+              filled
+                ? ITEMS_AVEC_NON_CONCERNE.filter(
+                    item => item !== 'non_renseigne'
+                  )
+                : ITEMS_AVEC_NON_CONCERNE
+            }
+            disabled={disabled}
+            value={localAvancement}
+            onChange={handleChange}
+            buttonClassName="-mr-2 -mt-2"
+          />
+        </div>
+      </Tooltip>
 
       {/* Cas particulier des statuts "détaillé" */}
       {localAvancement === 'detaille' && !score?.desactive && (
