@@ -48,7 +48,9 @@ const SubActionCard = ({
       (statut === null && filled === true));
 
   const shouldHideTasksStatus =
-    (statut !== null && statut?.avancement !== 'non_renseigne') ||
+    (statut !== null &&
+      statut?.avancement !== 'non_renseigne' &&
+      statut?.avancement !== 'detaille') ||
     statut?.concerne === false;
 
   // Déplie les tâches si
@@ -159,6 +161,9 @@ const SubActionCard = ({
                   tasks={tasks}
                   actionScores={actionScores}
                   hideStatus={shouldHideTasksStatus}
+                  statusWarningMessage={
+                    statut !== null && statut?.avancement === 'detaille'
+                  }
                 />
               }
               initialState={openTasks}
