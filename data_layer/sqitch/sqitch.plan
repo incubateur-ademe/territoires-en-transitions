@@ -515,3 +515,4 @@ plan_action/fiches [plan_action/fiches@v2.64.1] 2023-09-28T07:46:21Z Florian <fl
 
 indicateur/personnalise [indicateur/personnalise@v2.65.0] 2023-10-09T12:26:22Z Amandine Jacquelin <conta@LanceLibre> # Ajoute personne, service pilote et thématiques aux indicateurs
 indicateur/referentiel [indicateur/referentiel@v2.65.0] 2023-10-09T12:26:43Z Amandine Jacquelin <conta@LanceLibre> # Ajoute personne et service pilote aux indicateurs référentiels
+indicateur/filtre 2023-10-09T13:14:50Z Amandine Jacquelin <conta@LanceLibre> # Ajoute la possibilité de filtrer les indicateurs
